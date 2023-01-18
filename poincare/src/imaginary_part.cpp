@@ -22,7 +22,7 @@ Expression ImaginaryPartNode::shallowReduce(const ReductionContext& reductionCon
   return ImaginaryPart(this).shallowReduce(reductionContext);
 }
 
-Expression ImaginaryPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ImaginaryPart::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

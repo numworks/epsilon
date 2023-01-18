@@ -222,7 +222,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
     if (input().recursivelyMatches(Expression::IsPercent, context)) {
       /* When the input contains percent, the exact expression is not fully
        * reduced so we need to reduce it again prior to computing equal sign */
-      PoincareHelpers::CloneAndSimplify(&exactOutputExpression, context, Poincare::ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      PoincareHelpers::CloneAndSimplify(&exactOutputExpression, context, Poincare::ReductionTarget::User, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     }
     m_equalSign = Expression::ExactAndApproximateExpressionsAreEqual(exactOutputExpression, approximateOutput(NumberOfSignificantDigits::UserDefined)) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;
@@ -293,7 +293,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   if (o.hasUnit()) {
     AdditionalInformations additionalInformations = {};
     Expression unit;
-    PoincareHelpers::ReduceAndRemoveUnit(&o, globalContext, ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
+    PoincareHelpers::ReduceAndRemoveUnit(&o, globalContext, ReductionTarget::User, &unit, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, UnitConversion::None);
     double value = PoincareHelpers::ApproximateToScalar<double>(o, globalContext);
     if (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())
         || UnitComparison::ShouldDisplayUnitComparison(value, unit)) {

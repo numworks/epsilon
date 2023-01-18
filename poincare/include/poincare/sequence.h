@@ -47,8 +47,8 @@ public:
 
   // Simplification
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) { return *this; }
+  Expression shallowReduce(ReductionContext reductionContext);
+  Expression deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) { return *this; }
 };
 
 }

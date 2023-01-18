@@ -37,7 +37,7 @@ private:
 class MatrixInverse final : public ExpressionOneChild<MatrixInverse, MatrixInverseNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

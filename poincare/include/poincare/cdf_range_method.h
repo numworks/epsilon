@@ -15,7 +15,7 @@ class CDFRangeMethod final : public DistributionMethod {
     return distribution->cumulativeDistributiveFunctionForRange(x[0], x[1], parameters);
   }
 
-  Expression shallowReduce(Expression * abscissae, const Distribution * distribution, Expression * parameters, ExpressionNode::ReductionContext reductionContext, Expression * expression) const override;
+  Expression shallowReduce(Expression * abscissae, const Distribution * distribution, Expression * parameters, ReductionContext reductionContext, Expression * expression) const override;
 
 };
 

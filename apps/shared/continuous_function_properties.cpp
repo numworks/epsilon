@@ -307,9 +307,9 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
   }
 
   // f(x) = a*cos(b*x+c) + d*sin(e*x+f) + g*tan(h*x+k) + z
-  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context);
+  ReductionContext reductionContext = ReductionContext::DefaultReductionContextForAnalysis(context);
   // tan(x) is reduced to sin(x)/cos(x) unless the target is User
-  reductionContext.setTarget(ExpressionNode::ReductionTarget::User);
+  reductionContext.setTarget(ReductionTarget::User);
   Expression userReducedExpression = analyzedExpression.cloneAndReduce(reductionContext);
   if (userReducedExpression.isLinearCombinationOfFunction(
     context,
@@ -417,7 +417,7 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(const Expression& 
    * 1/cos(theta) --> Vertical line
    * 1/cos(theta + pi/2) --> Horizontal line
    */
-  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context);
+  ReductionContext reductionContext = ReductionContext::DefaultReductionContextForAnalysis(context);
   Expression denominator, numerator;
   if (analyzedExpression.type() == ExpressionNode::Type::Multiplication) {
     static_cast<const Multiplication&>(analyzedExpression).splitIntoNormalForm(numerator, denominator, reductionContext);
@@ -511,7 +511,7 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
     static_cast<Addition&>(variableY).removeConstantTerms(context, Function::k_unknownName);
   }
   Expression quotient = Division::Builder(variableX, variableY);
-  quotient = quotient.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
+  quotient = quotient.cloneAndReduce(ReductionContext::DefaultReductionContextForAnalysis(context));
   if (quotient.polynomialDegree(context, Function::k_unknownName) == 0) {
     setCaption(I18n::Message::ParametricLineType);
     return;
@@ -551,7 +551,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
               return (!e.isUninitialized() && e.isIdenticalTo(Symbol::Builder(*symbol))) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
             },
             nullptr,
-            ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol,
+            SymbolicComputation::DoNotReplaceAnySymbol,
             static_cast<void *>(&symbol));
 }
 
@@ -563,7 +563,7 @@ bool ContinuousFunctionProperties::HasNonNullCoefficients(const Expression equat
   int degree = equation.getPolynomialReducedCoefficients(
       symbolName, coefficients, context, complexFormat, angleUnit,
       k_defaultUnitFormat,
-      ExpressionNode::SymbolicComputation::
+      SymbolicComputation::
           ReplaceAllDefinedSymbolsWithDefinition);
   // Degree should be >= 0 but reduction failure may result in a -1 degree.
   assert(degree <= Expression::k_maxPolynomialDegree);

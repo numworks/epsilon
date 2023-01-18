@@ -433,7 +433,7 @@ Decimal Decimal::Builder(size_t size, const Integer & m, int e) {
   return static_cast<Decimal &>(h);
 }
 
-Expression Decimal::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Decimal::shallowReduce(ReductionContext reductionContext) {
   int exp = node()->exponent();
   Integer mantissa = node()->signedMantissa();
   /* To avoid uselessly big numbers, we get rid of useless 0s

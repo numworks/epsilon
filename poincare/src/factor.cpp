@@ -72,7 +72,7 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   return m;
 }
 
-Expression Factor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Factor::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
@@ -89,7 +89,7 @@ Expression Factor::shallowReduce(ExpressionNode::ReductionContext reductionConte
   return *this;
 }
 
-Expression Factor::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Factor::shallowBeautify(const ReductionContext& reductionContext) {
   Expression c = childAtIndex(0);
   if (c.type() != ExpressionNode::Type::Rational) {
     return replaceWithUndefinedInPlace();

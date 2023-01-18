@@ -152,7 +152,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
           return false;
         }
       };
-      if (f->expressionReduced(context).recursivelyMatches(yieldPiecewise, context, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, &p)) {
+      if (f->expressionReduced(context).recursivelyMatches(yieldPiecewise, context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, &p)) {
         assert(!p.isUninitialized() && p.type() == ExpressionNode::Type::PiecewiseOperator);
         zoom.fitConditions(static_cast<PiecewiseOperator &>(p), evaluator<float>, f.operator->(), ContinuousFunction::k_unknownName, Preferences::sharedPreferences()->complexFormat(), Preferences::sharedPreferences()->angleUnit(), alongY);
       }

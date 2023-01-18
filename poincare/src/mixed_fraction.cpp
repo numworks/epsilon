@@ -41,7 +41,7 @@ template <typename T> Evaluation<T> MixedFractionNode::templateApproximate(const
 
 }
 
-Expression MixedFraction::shallowReduce(ExpressionNode::ReductionContext context) {
+Expression MixedFraction::shallowReduce(ReductionContext context) {
   Expression integerPart = childAtIndex(0);
   Expression fractionPart = childAtIndex(1);
   if (integerPart.type() != ExpressionNode::Type::Rational || fractionPart.type() != ExpressionNode::Type::Rational) {

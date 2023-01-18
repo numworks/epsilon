@@ -38,7 +38,7 @@ Expression GreatCommonDivisor::shallowBeautify(Context * context) {
   return *this;
 }
 
-Expression GreatCommonDivisor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression GreatCommonDivisor::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

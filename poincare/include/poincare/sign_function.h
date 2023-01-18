@@ -48,8 +48,8 @@ class SignFunction final : public ExpressionOneChild<SignFunction, SignFunctionN
 public:
   using ExpressionBuilder::ExpressionBuilder;
 
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  Expression shallowReduce(ReductionContext reductionContext);
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 };
 
 }

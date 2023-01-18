@@ -103,7 +103,7 @@ public:
   static Comparison Builder(Expression child0, ComparisonNode::OperatorType operatorType, Expression child1);
   Comparison addComparison(ComparisonNode::OperatorType operatorType, Expression child);
 
-  Expression shallowReduce(ExpressionNode::ReductionContext ReductionContext);
+  Expression shallowReduce(ReductionContext ReductionContext);
   ComparisonNode::OperatorType operatorAtIndex(int i) const { return node()->operatorAtIndex(i); }
 private:
   ComparisonNode * node() const { return static_cast<ComparisonNode *>(Expression::node()); }

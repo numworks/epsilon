@@ -17,7 +17,7 @@ void TrigonometryListController::setExpression(Expression e) {
   size_t index = 0;
 
   Expression unit;
-  Shared::PoincareHelpers::ReduceAndRemoveUnit(&e, context, ExpressionNode::ReductionTarget::User, &unit);
+  Shared::PoincareHelpers::ReduceAndRemoveUnit(&e, context, ReductionTarget::User, &unit);
   assert(unit.isUninitialized() || static_cast<Unit &>(unit).representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector());
 
   // Convert angle in radian once for all
@@ -32,7 +32,7 @@ void TrigonometryListController::setExpression(Expression e) {
   Expression twoPi = Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π"));
   // Use the reduction of frac part to compute mod 1 on rationals
   Expression angleReduced = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
-  Shared::PoincareHelpers::CloneAndReduce(&angleReduced, context, ExpressionNode::ReductionTarget::User);
+  Shared::PoincareHelpers::CloneAndReduce(&angleReduced, context, ReductionTarget::User);
   // If frac part is still there, the exact angle is probably not interesting
   if (angleReduced.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; })) {
     /* Do not approximate the FracPart, which could lead to truncation error

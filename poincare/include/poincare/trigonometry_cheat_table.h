@@ -29,7 +29,7 @@ public:
   };
   static const TrigonometryCheatTable * Table();
   // Only call simplify on expressions which have reduced children
-  Expression simplify(const Expression e, ExpressionNode::Type type, const ExpressionNode::ReductionContext& reductionContext) const;
+  Expression simplify(const Expression e, ExpressionNode::Type type, const ReductionContext& reductionContext) const;
 
 private:
 
@@ -42,7 +42,7 @@ private:
     public:
       constexpr Pair(const char * expression, float value = NAN) :
         m_expression(expression), m_value(value) {}
-      Expression reducedExpression(bool assertNotUninitialized, const ExpressionNode::ReductionContext& reductionContext) const;
+      Expression reducedExpression(bool assertNotUninitialized, const ReductionContext& reductionContext) const;
       float value() const { return m_value; }
     private:
       const char * m_expression;
@@ -56,7 +56,7 @@ private:
       assert(((int) t) >= 0 && ((int) t) < k_numberOfPairs);
       return m_pairs[(int)t].value();
     }
-    Expression expressionForType(Type t, bool assertNotUninitialized, const ExpressionNode::ReductionContext& reductionContext) const {
+    Expression expressionForType(Type t, bool assertNotUninitialized, const ReductionContext& reductionContext) const {
       assert(((int) t) >= 0 && ((int) t) < k_numberOfPairs);
       return m_pairs[(int)t].reducedExpression(assertNotUninitialized, reductionContext);
     }
@@ -71,7 +71,7 @@ private:
     assert(i >= 0 && i < k_numberOfEntries);
     return m_rows[i].floatForType(t);
   }
-  Expression expressionForTypeAtIndex(Type t, int i, bool assertNotUninitialized, const ExpressionNode::ReductionContext& reductionContext) const {
+  Expression expressionForTypeAtIndex(Type t, int i, bool assertNotUninitialized, const ReductionContext& reductionContext) const {
     assert(i >= 0 && i < k_numberOfEntries);
     return m_rows[i].expressionForType(t, assertNotUninitialized, reductionContext);
   }

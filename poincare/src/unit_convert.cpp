@@ -36,28 +36,28 @@ Evaluation<T> UnitConvertNode::templatedApproximate(const ApproximationContext& 
   return Complex<T>::Undefined();
 }
 
-void UnitConvert::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
+void UnitConvert::deepReduceChildren(const ReductionContext& reductionContext) {
   childAtIndex(0).deepReduce(reductionContext);
-  ExpressionNode::ReductionContext childContext = reductionContext;
-  childContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
-  childContext.setUnitConversion(ExpressionNode::UnitConversion::None);
+  ReductionContext childContext = reductionContext;
+  childContext.setSymbolicComputation(SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+  childContext.setUnitConversion(UnitConversion::None);
   // Don't transform the targeted unit
   childAtIndex(1).deepReduce(childContext);
 }
 
-Expression UnitConvert::deepBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression UnitConvert::deepBeautify(const ReductionContext& reductionContext) {
   Expression e = shallowBeautify(reductionContext);
-  ExpressionNode::ReductionContext childContext = reductionContext;
-  childContext.setUnitConversion(ExpressionNode::UnitConversion::None);
+  ReductionContext childContext = reductionContext;
+  childContext.setUnitConversion(UnitConversion::None);
   SimplificationHelper::deepBeautifyChildren(e, childContext);
   return e;
 }
 
-Expression UnitConvert::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression UnitConvert::shallowBeautify(const ReductionContext& reductionContext) {
   // Discard cases like 4 -> _m/_km
   {
-    ExpressionNode::ReductionContext reductionContextWithUnits = reductionContext;
-    reductionContextWithUnits.setSymbolicComputation(ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+    ReductionContext reductionContextWithUnits = reductionContext;
+    reductionContextWithUnits.setSymbolicComputation(SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     Expression unit;
     Expression childWithoutUnit = childAtIndex(1).clone().reduceAndRemoveUnit(reductionContextWithUnits, &unit);
     if (childWithoutUnit.isUndefined() || unit.isUninitialized()) {
@@ -105,9 +105,9 @@ Expression UnitConvert::shallowBeautify(const ExpressionNode::ReductionContext& 
   }
   Expression result = Multiplication::Builder(division, unit);
   replaceWithInPlace(result);
-  ExpressionNode::ReductionContext childContext = reductionContext;
-  childContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
-  childContext.setUnitConversion(ExpressionNode::UnitConversion::None);
+  ReductionContext childContext = reductionContext;
+  childContext.setSymbolicComputation(SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+  childContext.setUnitConversion(UnitConversion::None);
   result = result.shallowReduce(childContext);
   result = result.shallowBeautify(childContext);
   return result;

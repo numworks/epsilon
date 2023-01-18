@@ -41,7 +41,7 @@ Expression CeilingNode::shallowReduce(const ReductionContext& reductionContext) 
 }
 
 
-Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Ceiling::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

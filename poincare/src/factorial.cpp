@@ -75,7 +75,7 @@ int FactorialNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 
-Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Factorial::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

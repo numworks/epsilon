@@ -145,7 +145,7 @@ int Number::NaturalOrder(const Number & i, const Number & j) {
   }
 }
 
-bool Number::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool Number::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   replaceWithInPlace(Rational::Builder(0));
   return true;
 }

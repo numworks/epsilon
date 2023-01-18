@@ -42,7 +42,7 @@ private:
 class Ceiling final : public ExpressionOneChild<Ceiling, CeilingNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

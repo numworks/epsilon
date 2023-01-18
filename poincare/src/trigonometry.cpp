@@ -155,7 +155,7 @@ bool Trigonometry::ExpressionIsEquivalentToInverseOfTangent(const Expression & e
   return ExpressionIsTangentOrInverseOfTangent(e, true);
 }
 
-Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ReductionContext reductionContext) {
   assert(isDirectTrigonometryFunction(e));
 
   // Step 0.0 Map on list child if possible
@@ -358,7 +358,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
   return e;
 }
 
-Expression Trigonometry::shallowReduceInverseFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+Expression Trigonometry::shallowReduceInverseFunction(Expression & e, ReductionContext reductionContext) {
   assert(isInverseTrigonometryFunction(e));
   // Step 0. Map on list child if possible
   {
@@ -384,7 +384,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
   bool isArcTanOfSinCos = e.type() == ExpressionNode::Type::ArcTangent && ExpressionIsEquivalentToTangent(e.childAtIndex(0));
   if (isArcTanOfSinCos || AreInverseFunctions(e.childAtIndex(0), e)) {
     Expression result = isArcTanOfSinCos ? e.childAtIndex(0).childAtIndex(0).childAtIndex(0) : e.childAtIndex(0).childAtIndex(0);
-    float x = result.node()->approximate(float(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
+    float x = result.node()->approximate(float(), ApproximationContext(reductionContext, true)).toScalar();
     if (!(std::isinf(x) || std::isnan(x))) {
       // We translate the result within [-π,π] for acos(cos), [-π/2,π/2] for asin(sin) and atan(tan)
       float k = (e.type() == ExpressionNode::Type::ArcCosine) ? std::floor(x/pi) : std::floor((x+pi/2.0f)/pi);
@@ -485,7 +485,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
   return e;
 }
 
-Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, ReductionContext reductionContext) {
   /* Since the child always ends in a direct function, angle units are left
    * untouched here */
   assert(isAdvancedTrigonometryFunction(e));
@@ -527,7 +527,7 @@ Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, Expressio
   return p.shallowReduce(reductionContext);
 }
 
-Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
+Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, ReductionContext reductionContext) {
   assert(isInverseAdvancedTrigonometryFunction(e));
   {
     Expression eReduced = SimplificationHelper::defaultShallowReduce(
@@ -551,7 +551,7 @@ Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, Ex
       return result.shallowReduce(reductionContext);
     }
     // Step 1.2. Do not reduce ArcCotangent when we do not know if child is null and target is not User
-    if (isNull == TrinaryBoolean::Unknown && reductionContext.target() != ExpressionNode::ReductionTarget::User) {
+    if (isNull == TrinaryBoolean::Unknown && reductionContext.target() != ReductionTarget::User) {
       return e;
     }
   }
@@ -612,7 +612,7 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, 
   return c;
 }
 
- bool Trigonometry::DetectLinearPatternOfCosOrSin(const Expression& e, ExpressionNode::ReductionContext reductionContext, const char * symbol, bool acceptAddition, double * coefficientBeforeCos, double * coefficientBeforeSymbol, double * angle) {
+ bool Trigonometry::DetectLinearPatternOfCosOrSin(const Expression& e, ReductionContext reductionContext, const char * symbol, bool acceptAddition, double * coefficientBeforeCos, double * coefficientBeforeSymbol, double * angle) {
   if (e.type() == ExpressionNode::Type::Multiplication || (acceptAddition && e.type() == ExpressionNode::Type::Addition)) {
     /* Check if expression is a*b*cos(theta+constant) or if
      * expression is a*cos(theta+b)+constant */

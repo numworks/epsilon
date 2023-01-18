@@ -32,7 +32,7 @@ Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Prefer
   return Complex<T>::Builder(std::arg(c));
 }
 
-Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

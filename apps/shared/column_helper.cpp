@@ -132,7 +132,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     }
   }
   StoreContext storeContext(store(), m_parentContext);
-  PoincareHelpers::CloneAndSimplify(&formula, &storeContext, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  PoincareHelpers::CloneAndSimplify(&formula, &storeContext, ReductionTarget::SystemForApproximation, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (formula.isUndefined()) {
       return displayNotSuitableWarning();
   }

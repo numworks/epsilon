@@ -7,7 +7,7 @@ using namespace Poincare;
 template <int N>
 void assert_roots_of_polynomial_are(const char * polynomial, const char * const (&roots)[N], const char * delta, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit = Radian, const char * symbol = "x") {
   Shared::GlobalContext context;
-  ExpressionNode::ReductionContext reductionContext(&context, complexFormat, angleUnit, MetricUnitFormat, User);
+  ReductionContext reductionContext(&context, complexFormat, angleUnit, MetricUnitFormat, User);
 
   Expression polynomialExp = parse_expression(polynomial, &context, false).cloneAndReduce(reductionContext);
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];

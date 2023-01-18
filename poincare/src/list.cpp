@@ -137,7 +137,7 @@ Expression List::Ones(int length) {
 }
 
 
-Expression List::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression List::shallowReduce(ReductionContext reductionContext) {
   // A list can't contain a matrix or a list
   if (node()->hasMatrixOrListChild(reductionContext.context())) {
     Expression myParent = parent();
@@ -159,8 +159,8 @@ Expression List::shallowReduce(ExpressionNode::ReductionContext reductionContext
   return *this;
 }
 
-Expression List::extremum(const ExpressionNode::ReductionContext& reductionContext, bool minimum) {
-  const ExpressionNode::ApproximationContext approximationContext(reductionContext, true);
+Expression List::extremum(const ReductionContext& reductionContext, bool minimum) {
+  const ApproximationContext approximationContext(reductionContext, true);
   int extremumIndex = node()->extremumIndex(approximationContext, minimum, true);
   if (extremumIndex < 0) {
     return Undefined::Builder();

@@ -34,7 +34,7 @@ class RandintNoRepeat : public ExpressionThreeChildren<RandintNoRepeat, RandintN
 public:
   using ExpressionBuilder::ExpressionBuilder;
 
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

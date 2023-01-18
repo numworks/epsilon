@@ -43,7 +43,7 @@ public:
   constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("gcd", 2, INT_MAX, &UntypedBuilderMultipleChildren<GreatCommonDivisor>);
 
   // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
   Expression shallowBeautify(Context * context);
 };
 

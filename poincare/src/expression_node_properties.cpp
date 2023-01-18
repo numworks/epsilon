@@ -51,7 +51,7 @@ Expression ExpressionNode::denominator(const ReductionContext& reductionContext)
   return Expression();
 }
 
-Expression ExpressionNode::deepBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ExpressionNode::deepBeautify(const ReductionContext& reductionContext) {
   if (type() == Type::UnitConvert) {
     return Expression(this).convert<UnitConvert>().deepBeautify(reductionContext);
   } else if (type() == Type::PercentAddition) {
@@ -63,7 +63,7 @@ Expression ExpressionNode::deepBeautify(const ExpressionNode::ReductionContext& 
   }
 }
 
-void ExpressionNode::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
+void ExpressionNode::deepReduceChildren(const ReductionContext& reductionContext) {
   if (type() == Type::Store) {
     Expression(this).convert<Store>().deepReduceChildren(reductionContext);
     return;

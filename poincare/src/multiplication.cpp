@@ -500,7 +500,7 @@ static bool CanSimplifyUnitProduct(
   return isSimpler;
 }
 
-Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Multiplication::shallowBeautify(const ReductionContext& reductionContext) {
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Recognize derived units in the product of units
@@ -525,7 +525,7 @@ Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContex
     Expression units;
     /* removeUnit has to be called on reduced expression but we want to modify
      * the least the expression so we use the uninvasive reduction context. */
-    self = self.reduceAndRemoveUnit(ExpressionNode::ReductionContext::NonInvasiveReductionContext(reductionContext), &units);
+    self = self.reduceAndRemoveUnit(ReductionContext::NonInvasiveReductionContext(reductionContext), &units);
 
     if (self.isUndefined() || units.isUninitialized()) {
       // TODO: handle error "Invalid unit"
@@ -533,9 +533,9 @@ Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContex
       goto replace_by_result;
     }
 
-    ExpressionNode::UnitConversion unitConversionMode = reductionContext.unitConversion();
+    UnitConversion unitConversionMode = reductionContext.unitConversion();
     if (units.isPureAngleUnit()) {
-      if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
+      if (unitConversionMode == UnitConversion::Default) {
         // Pure angle unit is the only unit allowed to be evaluated exactly
         double value = self.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
         Expression toUnit = units.clone();
@@ -555,7 +555,7 @@ Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContex
       return result;
     }
 
-    if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
+    if (unitConversionMode == UnitConversion::Default) {
       /* Step 2a: Recognize derived units
        * - Look up in the table of derived units, the one which itself or its inverse simplifies 'units' the most.
        * - If an entry is found, simplify 'units' and add the corresponding unit or its inverse in 'unitsAccu'.
@@ -651,7 +651,7 @@ Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContex
       // If the value is undefined, return "undef" without any unit
       result = Undefined::Builder();
     } else {
-      if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
+      if (unitConversionMode == UnitConversion::Default) {
         // Find the right unit prefix
         /* In most cases, unit composition works the same for imperial and
          * metric units. However, in imperial, we want volumes to be displayed
@@ -711,7 +711,7 @@ replace_by_result:
   return result;
 }
 
-Expression Multiplication::denominator(const ExpressionNode::ReductionContext& reductionContext) const {
+Expression Multiplication::denominator(const ReductionContext& reductionContext) const {
   /* TODO ?
    * Turn the denominator const method into an extractDenominator method
    * (non const) in the same same way as extractUnits.
@@ -722,7 +722,7 @@ Expression Multiplication::denominator(const ExpressionNode::ReductionContext& r
   return denom;
 }
 
-bool Multiplication::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool Multiplication::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   {
     Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
     if (!e.isUninitialized()) {
@@ -745,7 +745,7 @@ bool Multiplication::derivate(const ExpressionNode::ReductionContext& reductionC
   return true;
 }
 
-Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext, SimplificationHelper::BooleanReduction::UndefinedOnBooleans);
     if (!e.isUninitialized()) {
@@ -883,7 +883,7 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
    * for example : tan(3)ln(2)+π --> sin(3)/cos(3)ln(2)+π --> (sin(3)ln(2) + πcos(3)) / cos(3)
    * won't be beautificated into tan(3)ln(2)+π */
   bool hasFactorizedTangent = false;
-  if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
+  if (reductionContext.target() == ReductionTarget::User) {
     int childrenNumber = numberOfChildren();
     for (int i = 0; i < childrenNumber; i++) {
       Expression o1 = childAtIndex(i);
@@ -1060,7 +1060,7 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
 /* This function factorizes two children which have a common base. For example
   * if this is Multiplication::Builder(pi^2, pi^3), then pi^2 and pi^3 could be merged
   * and this turned into Multiplication::Builder(pi^5). */
-void Multiplication::factorizeBase(int i, int j, const ExpressionNode::ReductionContext& reductionContext, List dependenciesCreatedDuringReduction) {
+void Multiplication::factorizeBase(int i, int j, const ReductionContext& reductionContext, List dependenciesCreatedDuringReduction) {
   Expression e = childAtIndex(j);
   // Step 1: Get rid of the child j
   removeChildAtIndexInPlace(j);
@@ -1068,7 +1068,7 @@ void Multiplication::factorizeBase(int i, int j, const ExpressionNode::Reduction
   mergeInChildByFactorizingBase(i, e, reductionContext, dependenciesCreatedDuringReduction);
 }
 
-void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, const ExpressionNode::ReductionContext& reductionContext, List dependenciesCreatedDuringReduction) {
+void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, const ReductionContext& reductionContext, List dependenciesCreatedDuringReduction) {
   /* This function replace the child at index i by its factorization with e. e
    * and childAtIndex(i) are supposed to have a common base. */
   // Step 1: Find the new exponent
@@ -1103,7 +1103,7 @@ void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, const Ex
   }
 }
 
-bool Multiplication::factorizeExponent(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
+bool Multiplication::factorizeExponent(int i, int j, const ReductionContext& reductionContext) {
   /* This function factorizes children which share a common exponent. For
    * example, it turns Multiplication::Builder(2^x,3^x) into Multiplication::Builder(6^x). */
 
@@ -1140,7 +1140,7 @@ bool Multiplication::factorizeExponent(int i, int j, const ExpressionNode::Reduc
   return true;
 }
 
-Expression Multiplication::gatherLikeTerms(const ExpressionNode::ReductionContext & reductionContext) {
+Expression Multiplication::gatherLikeTerms(const ReductionContext & reductionContext) {
   /* Gather like terms. For example, turn pi^2*pi^3 into pi^5. Thanks to
    * the simplification order, such terms are guaranteed to be next to each
    * other. */
@@ -1201,7 +1201,7 @@ Expression Multiplication::gatherLikeTerms(const ExpressionNode::ReductionContex
   return Expression();
 }
 
-bool Multiplication::gatherRationalPowers(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
+bool Multiplication::gatherRationalPowers(int i, int j, const ReductionContext& reductionContext) {
   /* Turn x^(a/b)*y^(p/q) into (x^(ak/b)*y^(pk/q))^(1/k) where k = lcm(b,q)
    * This effectively gathers all roots into a single root.
    * Returns true if operation was successful. */
@@ -1235,7 +1235,7 @@ bool Multiplication::gatherRationalPowers(int i, int j, const ExpressionNode::Re
   return true;
 }
 
-Expression Multiplication::distributeOnOperandAtIndex(int i, const ExpressionNode::ReductionContext& reductionContext) {
+Expression Multiplication::distributeOnOperandAtIndex(int i, const ReductionContext& reductionContext) {
   /* This method creates a*...*b*y... + a*...*c*y... + ... from
    * a*...*(b+c+...)*y... */
   assert(i >= 0 && i < numberOfChildren());
@@ -1255,7 +1255,7 @@ Expression Multiplication::distributeOnOperandAtIndex(int i, const ExpressionNod
   return a.shallowReduce(reductionContext); // Order terms, put under a common denominator if needed
 }
 
-void Multiplication::addMissingFactors(Expression factor, const ExpressionNode::ReductionContext& reductionContext) {
+void Multiplication::addMissingFactors(Expression factor, const ReductionContext& reductionContext) {
   if (factor.type() == ExpressionNode::Type::Multiplication) {
     int childrenNumber = factor.numberOfChildren();
     /* WARNING: This is wrong in general case.
@@ -1313,7 +1313,7 @@ void Multiplication::addMissingFactors(Expression factor, const ExpressionNode::
   sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context(), reductionContext.shouldCheckMatrices());
 }
 
-bool Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
+bool Multiplication::factorizeSineAndCosine(int i, int j, const ReductionContext& reductionContext) {
   /* This function turn sin(x)^p * cos(x)^q into either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
    * - tan(x)^(-q)*sin(x)^(p+q) otherwise */
@@ -1420,7 +1420,7 @@ bool Multiplication::TermIsPowerOfRationals(const Expression & e) {
   return e.childAtIndex(0).type() == ExpressionNode::Type::Rational && e.childAtIndex(1).type() == ExpressionNode::Type::Rational;
 }
 
-void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, const ExpressionNode::ReductionContext& reductionContext) const {
+void Multiplication::splitIntoNormalForm(Expression & numerator, Expression & denominator, const ReductionContext& reductionContext) const {
   Multiplication mNumerator = Multiplication::Builder();
   Multiplication mDenominator = Multiplication::Builder();
   int numberOfFactorsInNumerator = 0;

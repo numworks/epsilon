@@ -50,7 +50,7 @@ private:
 class RealPart final : public ExpressionOneChild<RealPart, RealPartNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

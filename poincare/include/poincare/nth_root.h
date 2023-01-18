@@ -39,7 +39,7 @@ private:
 class NthRoot final : public ExpressionTwoChildren<NthRoot, NthRootNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

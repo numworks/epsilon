@@ -58,7 +58,7 @@ void FunctionApp::concludeIntrusiveStorageChange() {
      * it aware of parametered expressions. */
     if (f.recursivelyMatches([](const Expression e, Context * context, void * symbol) {
       return e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).isIdenticalTo(*static_cast<Symbol*>(symbol));
-    }, context(), ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol, &symbol)) {
+    }, context(), SymbolicComputation::DoNotReplaceAnySymbol, &symbol)) {
       shouldUpdateFunctions = true;
       break;
     }

@@ -23,7 +23,7 @@ Expression RealPartNode::shallowReduce(const ReductionContext& reductionContext)
   return RealPart(this).shallowReduce(reductionContext);
 }
 
-Expression RealPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression RealPart::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

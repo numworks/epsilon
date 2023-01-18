@@ -58,7 +58,7 @@ public:
 
   double doubleApproximation() const { return node()->doubleApproximation(); };
 
-  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 protected:
   Number() : Expression() {}
   NumberNode * node() const { return static_cast<NumberNode *>(Expression::node()); }

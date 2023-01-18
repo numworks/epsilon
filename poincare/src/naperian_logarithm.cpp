@@ -23,7 +23,7 @@ Expression NaperianLogarithmNode::shallowReduce(const ReductionContext& reductio
 }
 
 
-Expression NaperianLogarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression NaperianLogarithm::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

@@ -70,7 +70,7 @@ Evaluation<T> RandintNoRepeatNode::templatedApproximate(const ApproximationConte
   return std::move(result);
 }
 
-Expression RandintNoRepeat::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression RandintNoRepeat::shallowReduce(ReductionContext reductionContext) {
   SetReductionEncounteredUndistributedList(true);
   return *this;
 }

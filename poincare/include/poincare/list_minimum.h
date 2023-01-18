@@ -34,7 +34,7 @@ private:
 class ListMinimum : public ExpressionOneChild<ListMinimum, ListMinimumNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

@@ -52,7 +52,7 @@ public:
   constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("piecewise", 1, INT_MAX, &UntypedBuilder);
 
   // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 
   // Returns -1 if every condition is false
   int indexOfFirstTrueConditionWithValueForSymbol(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

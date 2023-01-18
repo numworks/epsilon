@@ -157,7 +157,7 @@ bool Sequence::isSimplyRecursive(Context * context) {
     Expression child = seq.childAtIndex(0);
     const Poincare::Symbol symbol = static_cast<const Poincare::Symbol&>(child);
     return symbol.isSystemSymbol() ? TrinaryBoolean::False : TrinaryBoolean::True;
-  }, context, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(buffer));
+  }, context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(buffer));
 }
 
 void Sequence::tidyDownstreamPoolFrom(char * treePoolCursor) const {

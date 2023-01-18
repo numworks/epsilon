@@ -37,7 +37,7 @@ private:
 class MatrixIdentity final : public ExpressionOneChild<MatrixIdentity, MatrixIdentityNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

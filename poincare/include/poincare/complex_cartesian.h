@@ -53,24 +53,24 @@ public:
   Expression imag() const { return childAtIndex(1); }
 
   // Simplification
-  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(const ReductionContext& reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 
   // Common operations (done in-place)
-  Expression squareNorm(const ExpressionNode::ReductionContext& reductionContext);
-  Expression norm(const ExpressionNode::ReductionContext& reductionContext);
-  Expression argument(const ExpressionNode::ReductionContext& reductionContext);
-  ComplexCartesian inverse(const ExpressionNode::ReductionContext& reductionContext);
-  ComplexCartesian squareRoot(const ExpressionNode::ReductionContext& reductionContext);
-  ComplexCartesian powerInteger(int n, const ExpressionNode::ReductionContext& reductionContext);
-  ComplexCartesian multiply(ComplexCartesian & other,const ExpressionNode::ReductionContext& reductionContext);
-  ComplexCartesian power(ComplexCartesian & other, const ExpressionNode::ReductionContext& reductionContext);
+  Expression squareNorm(const ReductionContext& reductionContext);
+  Expression norm(const ReductionContext& reductionContext);
+  Expression argument(const ReductionContext& reductionContext);
+  ComplexCartesian inverse(const ReductionContext& reductionContext);
+  ComplexCartesian squareRoot(const ReductionContext& reductionContext);
+  ComplexCartesian powerInteger(int n, const ReductionContext& reductionContext);
+  ComplexCartesian multiply(ComplexCartesian & other,const ReductionContext& reductionContext);
+  ComplexCartesian power(ComplexCartesian & other, const ReductionContext& reductionContext);
 private:
   constexpr static int k_maxNumberOfNodesBeforeInterrupting = 50;
-  void factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, const ExpressionNode::ReductionContext& reductionContext);
+  void factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, const ReductionContext& reductionContext);
   ComplexCartesian interruptComputationIfManyNodes();
-  static Multiplication squareRootHelper(Expression e, const ExpressionNode::ReductionContext& reductionContext);
-  static Expression powerHelper(Expression norm, Expression trigo, const ExpressionNode::ReductionContext& reductionContext);
+  static Multiplication squareRootHelper(Expression e, const ReductionContext& reductionContext);
+  static Expression powerHelper(Expression norm, Expression trigo, const ReductionContext& reductionContext);
 };
 
 }

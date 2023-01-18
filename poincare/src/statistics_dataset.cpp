@@ -8,7 +8,7 @@
 namespace Poincare {
 
 template<typename T>
-StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(const ExpressionNode * e, const ExpressionNode::ApproximationContext& approximationContext, ListComplex<T> evaluationArray[]) {
+StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(const ExpressionNode * e, const ApproximationContext& approximationContext, ListComplex<T> evaluationArray[]) {
   int n = e->numberOfChildren();
   if (n == 0) {
     return StatisticsDataset<T>();

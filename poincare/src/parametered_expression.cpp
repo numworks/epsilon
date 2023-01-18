@@ -144,7 +144,7 @@ Expression ParameteredExpression::replaceSymbolWithExpression(const SymbolAbstra
   return *this;
 }
 
-Expression ParameteredExpression::deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
+Expression ParameteredExpression::deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
   /* All children replaceable symbols should be replaced apart from symbols that
    * are parameters in parametered expressions.*/
   int childrenCount = numberOfChildren();

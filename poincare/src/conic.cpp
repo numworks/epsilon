@@ -44,12 +44,12 @@ CartesianConic::CartesianConic(const Expression e, Context * context, const char
   Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
-  ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
+  SymbolicComputation symbolicComputation = SymbolicComputation::DoNotReplaceAnySymbol;
   // Reduce Conic for analysis
   Expression reducedExpression = e.cloneAndReduce(
-      ExpressionNode::ReductionContext(
+      ReductionContext(
           context, complexFormat, angleUnit, unitFormat,
-          ExpressionNode::ReductionTarget::SystemForAnalysis));
+          ReductionTarget::SystemForAnalysis));
   // Extracting y parameters : C, B+E and A+D+F
   Expression coefficientsY[Expression::k_maxNumberOfPolynomialCoefficients];
   int dy = reducedExpression.getPolynomialReducedCoefficients(
@@ -412,7 +412,7 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   // Reduce Conic for analysis
-  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForAnalysis);
+  ReductionContext reductionContext = ReductionContext(context, complexFormat, angleUnit, unitFormat, ReductionTarget::SystemForAnalysis);
   Expression reducedExpression = e.cloneAndReduce(reductionContext);
 
   // Detect the pattern r = a
@@ -490,7 +490,7 @@ ParametricConic::ParametricConic(const Expression& e, Context * context, const c
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   // Reduce Conic for analysis
-  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForAnalysis);
+  ReductionContext reductionContext = ReductionContext(context, complexFormat, angleUnit, unitFormat, ReductionTarget::SystemForAnalysis);
   Expression reducedExpression = e.cloneAndReduce(reductionContext);
   assert(reducedExpression.type() == ExpressionNode::Type::Matrix
         && static_cast<Matrix&>(reducedExpression).numberOfColumns() == 1
@@ -510,13 +510,13 @@ ParametricConic::ParametricConic(const Expression& e, Context * context, const c
   // Detect parabola (x , y) = (a*f(t) , b*f(t)^2)
   // TODO: This does not detect parabolas of the form (a*f(t)+c, b*f(t)^2+d)
   Expression quotientWithXSquared = Division::Builder(Power::Builder(xOfT.clone(), Rational::Builder(2)), yOfT.clone());
-  quotientWithXSquared = quotientWithXSquared.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
+  quotientWithXSquared = quotientWithXSquared.cloneAndReduce(ReductionContext::DefaultReductionContextForAnalysis(context));
   if (quotientWithXSquared.polynomialDegree(context, symbol) == 0) {
     m_shape = Shape::Parabola;
     return;
   }
   Expression quotientWithYSquared = Division::Builder(Power::Builder(yOfT.clone(), Rational::Builder(2)), xOfT.clone());
-  quotientWithYSquared = quotientWithYSquared.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
+  quotientWithYSquared = quotientWithYSquared.cloneAndReduce(ReductionContext::DefaultReductionContextForAnalysis(context));
   if (quotientWithYSquared.polynomialDegree(context, symbol) == 0) {
     m_shape = Shape::Parabola;
     return;

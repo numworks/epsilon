@@ -74,7 +74,7 @@ Evaluation<T> IntegralNode::templatedApproximate(const ApproximationContext& app
     alternativeIntegrand.b = b;
     /* We need SystemForAnalysis to remove the constant part by expanding
      * polynomials introduced by the replacement, e.g. 1-(1-x)^2 -> 2x-x^2 */
-    const ExpressionNode::ReductionContext reductionContext(approximationContext.context(), approximationContext.complexFormat(), approximationContext.angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
+    const ReductionContext reductionContext(approximationContext.context(), approximationContext.complexFormat(), approximationContext.angleUnit(), Preferences::UnitFormat::Metric, ReductionTarget::SystemForAnalysis);
     /* Rewrite the integrand to be able to compute it directly at abscissa a + x */
     if (fIsNanInA && a != 0) {
       alternativeIntegrand.integrandNearA = rewriteIntegrandNear(childAtIndex(2), reductionContext);
@@ -169,7 +169,7 @@ T IntegralNode::integrand(T x, Substitution<T> substitution, const Approximation
   }
 }
 
-Expression IntegralNode::rewriteIntegrandNear(Expression bound, const ExpressionNode::ReductionContext& reductionContext) const {
+Expression IntegralNode::rewriteIntegrandNear(Expression bound, const ReductionContext& reductionContext) const {
   Expression integrand = Expression(childAtIndex(0)).clone();
   Symbol symbol = Expression(childAtIndex(1)).clone().convert<Symbol>();
   integrand.replaceSymbolWithExpression(symbol, Addition::Builder(bound.clone(), symbol));
@@ -410,10 +410,10 @@ Expression Integral::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
-void Integral::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
+void Integral::deepReduceChildren(const ReductionContext& reductionContext) {
   /* First child is reduced with target SystemForAnalysis */
-  ExpressionNode::ReductionContext childContext = reductionContext;
-  childContext.setTarget(ExpressionNode::ReductionTarget::SystemForAnalysis);
+  ReductionContext childContext = reductionContext;
+  childContext.setTarget(ReductionTarget::SystemForAnalysis);
   childAtIndex(0).deepReduce(childContext);
 
   /* Other children are reduced with the same reduction target as the parent */
@@ -424,7 +424,7 @@ void Integral::deepReduceChildren(const ExpressionNode::ReductionContext& reduct
   }
 }
 
-Expression Integral::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Integral::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

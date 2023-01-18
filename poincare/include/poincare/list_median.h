@@ -29,7 +29,7 @@ private:
 class ListMedian : public ExpressionUpToTwoChildren<ListMedian, ListMedianNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 
 private:
   void approximationHelper(int * index1, int * index2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;

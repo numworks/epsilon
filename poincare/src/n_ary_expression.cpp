@@ -74,7 +74,7 @@ int NAryExpression::allChildrenAreReal(Context * context, bool canContainMatrice
   return result;
 }
 
-Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(const ExpressionNode::ReductionContext& reductionContext) {
+Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(const ReductionContext& reductionContext) {
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; ++i) {
     Expression c = childAtIndex(i);

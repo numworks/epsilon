@@ -120,7 +120,7 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
 
 int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, bool inPlace) {
   Expression m;
-  ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation);
+  ReductionContext systemReductionContext = ReductionContext(context, complexFormat, angleUnit, unitFormat, ReductionTarget::SystemForApproximation);
 
   {
     ExceptionCheckpoint ecp;
@@ -214,7 +214,7 @@ int Matrix::ArrayInverse(T * array, int numberOfRows, int numberOfColumns) {
   return 0;
 }
 
-Matrix Matrix::rowCanonize(const ExpressionNode::ReductionContext& reductionContext, Expression * determinant, bool reduced) {
+Matrix Matrix::rowCanonize(const ReductionContext& reductionContext, Expression * determinant, bool reduced) {
   // The matrix children have to be reduced to be able to spot 0
   deepReduceChildren(reductionContext);
 
@@ -410,7 +410,7 @@ Matrix Matrix::createTranspose() const {
   return matrix;
 }
 
-Expression Matrix::createRef(const ExpressionNode::ReductionContext& reductionContext, bool * couldComputeRef, bool reduced) const {
+Expression Matrix::createRef(const ReductionContext& reductionContext, bool * couldComputeRef, bool reduced) const {
   // Compute Matrix Row Echelon Form
   /* If the matrix is too big, the rowCanonization might not be computed exactly
    * because of a pool allocation error, but we might still be able to compute
@@ -440,7 +440,7 @@ Expression Matrix::createRef(const ExpressionNode::ReductionContext& reductionCo
   }
 }
 
-Expression Matrix::createInverse(const ExpressionNode::ReductionContext& reductionContext, bool * couldComputeInverse) const {
+Expression Matrix::createInverse(const ReductionContext& reductionContext, bool * couldComputeInverse) const {
   int dim = numberOfRows();
   if (dim != numberOfColumns()) {
     *couldComputeInverse = true;
@@ -451,7 +451,7 @@ Expression Matrix::createInverse(const ExpressionNode::ReductionContext& reducti
   return result;
 }
 
-Expression Matrix::determinant(const ExpressionNode::ReductionContext& reductionContext, bool * couldComputeDeterminant, bool inPlace) {
+Expression Matrix::determinant(const ReductionContext& reductionContext, bool * couldComputeDeterminant, bool inPlace) {
   // Determinant must be called on a reduced matrix only.
   *couldComputeDeterminant = true;
   Matrix m = inPlace ? *this : clone().convert<Matrix>();
@@ -509,7 +509,7 @@ Expression Matrix::determinant(const ExpressionNode::ReductionContext& reduction
   return result;
 }
 
-Expression Matrix::norm(const ExpressionNode::ReductionContext& reductionContext) const {
+Expression Matrix::norm(const ReductionContext& reductionContext) const {
   // Norm is defined on vectors only
   assert(vectorType() != Array::VectorType::None);
   Addition sum = Addition::Builder();
@@ -526,7 +526,7 @@ Expression Matrix::norm(const ExpressionNode::ReductionContext& reductionContext
   return result;
 }
 
-Expression Matrix::dot(Matrix * b, const ExpressionNode::ReductionContext& reductionContext) const {
+Expression Matrix::dot(Matrix * b, const ReductionContext& reductionContext) const {
   // Dot product is defined between two vectors of same size and type
   assert(vectorType() != Array::VectorType::None && vectorType() == b->vectorType() && numberOfChildren() == b->numberOfChildren());
   Addition sum = Addition::Builder();
@@ -539,7 +539,7 @@ Expression Matrix::dot(Matrix * b, const ExpressionNode::ReductionContext& reduc
   return std::move(sum);
 }
 
-Matrix Matrix::cross(Matrix * b, const ExpressionNode::ReductionContext& reductionContext) const {
+Matrix Matrix::cross(Matrix * b, const ReductionContext& reductionContext) const {
   // Cross product is defined between two vectors of size 3 and of same type.
   assert(vectorType() != Array::VectorType::None && vectorType() == b->vectorType() && numberOfChildren() == 3 && b->numberOfChildren() == 3);
   Matrix matrix = Matrix::Builder();
@@ -558,7 +558,7 @@ Matrix Matrix::cross(Matrix * b, const ExpressionNode::ReductionContext& reducti
   return matrix;
 }
 
-Expression Matrix::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Matrix::shallowReduce(ReductionContext reductionContext) {
   if (node()->hasMatrixOrListChild(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
   }
@@ -569,7 +569,7 @@ Expression Matrix::shallowReduce(ExpressionNode::ReductionContext reductionConte
   return *this;
 }
 
-Expression Matrix::computeInverseOrDeterminant(bool computeDeterminant, const ExpressionNode::ReductionContext& reductionContext, bool * couldCompute) const {
+Expression Matrix::computeInverseOrDeterminant(bool computeDeterminant, const ReductionContext& reductionContext, bool * couldCompute) const {
   assert(numberOfRows() == numberOfColumns());
   int dim = numberOfRows();
   /* If the matrix is too big, the rowCanonization might not be computed exactly

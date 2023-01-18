@@ -59,7 +59,7 @@ private:
     Expression integrandNearA;
     Expression integrandNearB;
   };
-  Expression rewriteIntegrandNear(Expression bound, const ExpressionNode::ReductionContext& reductionContext) const;
+  Expression rewriteIntegrandNear(Expression bound, const ReductionContext& reductionContext) const;
   template<typename T> T integrand(T x, Substitution<T> substitution, const ApproximationContext& approximationContext) const;
   template<typename T> T integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand, const ApproximationContext& approximationContext) const;
   template<typename T> DetailedResult<T> tanhSinhQuadrature(int level, AlternativeIntegrand alternativeIntegrand, const ApproximationContext& approximationContext) const;
@@ -79,8 +79,8 @@ public:
   constexpr static char k_defaultXNTChar = 'x';
 
   // Expression
-  void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  void deepReduceChildren(const ReductionContext& reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

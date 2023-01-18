@@ -16,7 +16,7 @@
 namespace Poincare {
 
 
-void SimplificationHelper::deepBeautifyChildren(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
+void SimplificationHelper::deepBeautifyChildren(Expression e, const ReductionContext& reductionContext) {
   const int nbChildren = e.numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     Expression child = e.childAtIndex(i);
@@ -28,7 +28,7 @@ void SimplificationHelper::deepBeautifyChildren(Expression e, const ExpressionNo
   }
 }
 
-void SimplificationHelper::defaultDeepReduceChildren(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
+void SimplificationHelper::defaultDeepReduceChildren(Expression e, const ReductionContext& reductionContext) {
   const int childrenCount = e.numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     assert(childrenCount == e.numberOfChildren());
@@ -36,7 +36,7 @@ void SimplificationHelper::defaultDeepReduceChildren(Expression e, const Express
   }
 }
 
-Expression SimplificationHelper::defaultShallowReduce(Expression e, ExpressionNode::ReductionContext * reductionContext,  BooleanReduction booleanParameter, UnitReduction unitParameter, MatrixReduction matrixParameter, ListReduction listParameter) {
+Expression SimplificationHelper::defaultShallowReduce(Expression e, ReductionContext * reductionContext,  BooleanReduction booleanParameter, UnitReduction unitParameter, MatrixReduction matrixParameter, ListReduction listParameter) {
   // Step1. Shallow reduce undefined
   Expression res = shallowReduceUndefined(e);
   if (!res.isUninitialized()) {
@@ -116,7 +116,7 @@ Expression SimplificationHelper::shallowReduceBanningUnits(Expression e) {
   return Expression();
 }
 
-Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
+Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(Expression e, const ReductionContext& reductionContext) {
   Expression child = e.childAtIndex(0);
   Expression unit;
   child.removeUnit(&unit);
@@ -137,7 +137,7 @@ Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(Express
   return Expression();
 }
 
-Expression SimplificationHelper::undefinedOnMatrix(Expression e, ExpressionNode::ReductionContext * reductionContext) {
+Expression SimplificationHelper::undefinedOnMatrix(Expression e, ReductionContext * reductionContext) {
   if (!reductionContext->shouldCheckMatrices()) {
     return Expression();
   }
@@ -161,7 +161,7 @@ Expression SimplificationHelper::undefinedOnBooleans(Expression e) {
   return Expression();
 }
 
-Expression SimplificationHelper::distributeReductionOverLists(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
+Expression SimplificationHelper::distributeReductionOverLists(Expression e, const ReductionContext& reductionContext) {
   int listLength = e.lengthOfListChildren();
   if (listLength == Expression::k_noList) {
     /* No list in children, shallow reduce as usual. */
@@ -209,7 +209,7 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, cons
 }
 
 
-Expression SimplificationHelper::bubbleUpDependencies(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
+Expression SimplificationHelper::bubbleUpDependencies(Expression e, const ReductionContext& reductionContext) {
   assert(e.type() != ExpressionNode::Type::Store);
   if (e.type() == ExpressionNode::Type::Comparison) {
     return Expression();

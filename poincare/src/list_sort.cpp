@@ -32,7 +32,7 @@ template<typename T> Evaluation<T> ListSortNode::templatedApproximate(const Appr
   return std::move(listChild);
 }
 
-Expression ListSort::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListSort::shallowReduce(ReductionContext reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     if (!child.deepIsList(reductionContext.context())) {
@@ -41,7 +41,7 @@ Expression ListSort::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return *this;
   }
   List list = static_cast<List &>(child);
-  ExpressionNode::ApproximationContext approximationContext(reductionContext, true);
+  ApproximationContext approximationContext(reductionContext, true);
   void * pack[] = {list.node(), &approximationContext, const_cast<bool *>(&k_nanIsGreatest), &list};
   Helpers::Sort(
       // Swap

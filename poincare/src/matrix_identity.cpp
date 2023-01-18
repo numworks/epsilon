@@ -40,7 +40,7 @@ Evaluation<T> MatrixIdentityNode::templatedApproximate(const ApproximationContex
 }
 
 
-Expression MatrixIdentity::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression MatrixIdentity::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

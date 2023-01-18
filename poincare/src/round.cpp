@@ -45,7 +45,7 @@ Evaluation<T> RoundNode::templatedApproximate(const ApproximationContext& approx
       });
 }
 
-Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Round::shallowReduce(ReductionContext reductionContext) {
   {
     if (numberOfChildren() == 2 && childAtIndex(1).hasUnit()) {
       // Number of digits cannot have units

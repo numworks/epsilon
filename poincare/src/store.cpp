@@ -22,14 +22,14 @@ Evaluation<T> StoreNode::templatedApproximate(const ApproximationContext& approx
   return Complex<T>::Undefined();
 }
 
-void Store::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
+void Store::deepReduceChildren(const ReductionContext& reductionContext) {
   // Only the value of a symbol should have no free variables
   if (symbol().type() == ExpressionNode::Type::Symbol) {
     childAtIndex(0).deepReduce(reductionContext);
   }
 }
 
-Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Store::shallowReduce(ReductionContext reductionContext) {
   /* Stores are kept by the reduction and the app will do the effective store if
    * deemed necessary. Side-effects of the storage modification will therefore
    * happen outside of the checkpoint. */

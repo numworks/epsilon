@@ -29,12 +29,12 @@ Expression HyperbolicSineNode::unaryFunctionDifferential(const ReductionContext&
   return HyperbolicSine(this).unaryFunctionDifferential(reductionContext);
 }
 
-bool HyperbolicSine::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool HyperbolicSine::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression HyperbolicSine::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
+Expression HyperbolicSine::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return HyperbolicCosine::Builder(childAtIndex(0).clone());
 }
 

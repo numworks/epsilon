@@ -90,13 +90,13 @@ public:
   static Addition Builder(Expression e1) { return Addition::Builder({e1}); }
   static Addition Builder(Expression e1, Expression e2) { return Addition::Builder({e1, e2}); }
   // Expression
-  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowBeautify(const ReductionContext& reductionContext);
   /* WARNING: If the parent of an addition is also an addition (or a
    * subtraction), the reduction won't do anything and let the parent
    * do the reduction. So a child addition can't be reduced without
    * reducing its parent addition. */
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  Expression shallowReduce(ReductionContext reductionContext);
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canContainMatrices = true) {
     NAryExpression::sortChildrenInPlace(order, context, true, canContainMatrices);
@@ -117,12 +117,12 @@ private:
    * "base" is unintialized or "base" == x.
    * Set "coefficient" to y. If "base" is uninitialized, set "base" to x
    * Set cosine to true if it's a cosine, to false if it's a sine. */
-  static bool TermHasSquaredTrigFunctionWithBase(const Expression & e, const ExpressionNode::ReductionContext& reductionContext, Expression & base, Expression & coefficient, bool * cosine);
-  static bool TermHasSquaredCos(const Expression & e, const ExpressionNode::ReductionContext& reductionContext, Expression & baseOfCos);
+  static bool TermHasSquaredTrigFunctionWithBase(const Expression & e, const ReductionContext& reductionContext, Expression & base, Expression & coefficient, bool * cosine);
+  static bool TermHasSquaredCos(const Expression & e, const ReductionContext& reductionContext, Expression & baseOfCos);
 
-  Expression factorizeOnCommonDenominator(ExpressionNode::ReductionContext reductionContext);
-  void factorizeChildrenAtIndexesInPlace(int index1, int index2, const ExpressionNode::ReductionContext& reductionContext);
-  Expression factorizeSquaredTrigFunction(Expression & baseOfTrigFunction, const ExpressionNode::ReductionContext& reductionContext);
+  Expression factorizeOnCommonDenominator(ReductionContext reductionContext);
+  void factorizeChildrenAtIndexesInPlace(int index1, int index2, const ReductionContext& reductionContext);
+  Expression factorizeSquaredTrigFunction(Expression & baseOfTrigFunction, const ReductionContext& reductionContext);
   AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }
 };
 

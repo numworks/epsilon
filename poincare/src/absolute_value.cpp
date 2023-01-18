@@ -33,7 +33,7 @@ bool AbsoluteValueNode::derivate(const ReductionContext& reductionContext, Symbo
   return AbsoluteValue(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
@@ -51,7 +51,7 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
 
   // |x| = ±x if x is real
   if (c.isReal(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
-    double app = c.node()->approximate(double(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
+    double app = c.node()->approximate(double(), ApproximationContext(reductionContext, true)).toScalar();
     if (!std::isnan(app)) {
       if ((c.isNumber() && app >= 0) || app >= Float<double>::EpsilonLax()) {
         /* abs(a) = a with a >= 0
@@ -127,7 +127,7 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
 }
 
 // Derivate of |f(x)| is f'(x)*sg(x) (and undef in 0) = f'(x)*(f(x)/|f(x)|)
-bool AbsoluteValue::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool AbsoluteValue::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   {
     Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
     if (!e.isUninitialized()) {

@@ -56,7 +56,7 @@ Evaluation<T> NthRootNode::templatedApproximate(const ApproximationContext& appr
       });
 }
 
-Expression NthRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression NthRoot::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

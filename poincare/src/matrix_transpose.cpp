@@ -37,7 +37,7 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(const ApproximationConte
 }
 
 
-Expression MatrixTranspose::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression MatrixTranspose::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

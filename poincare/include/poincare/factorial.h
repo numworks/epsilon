@@ -52,7 +52,7 @@ private:
 class Factorial final : public ExpressionOneChild<Factorial, FactorialNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 private:
   constexpr static int k_maxOperandValue = 100;
 };

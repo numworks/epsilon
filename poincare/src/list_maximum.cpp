@@ -30,7 +30,7 @@ template<typename T> Evaluation<T> ListMaximumNode::templatedApproximate(const A
   return static_cast<ListNode *>(child)->extremumApproximation<T>(approximationContext, false);
 }
 
-Expression ListMaximum::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListMaximum::shallowReduce(ReductionContext reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List || child.numberOfChildren() == 0) {
     return replaceWithUndefinedInPlace();

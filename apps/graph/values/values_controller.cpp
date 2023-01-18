@@ -335,7 +335,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
     Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
     abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
-    PoincareHelpers::CloneAndSimplify(&result, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
+    PoincareHelpers::CloneAndSimplify(&result, &abscissaContext, Poincare::ReductionTarget::User);
     if (!m_exactValuesAreActivated || ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(function->originalEquation(), result, context)) {
       // Do not show exact expressions in certain cases, use approximate result
       result = PoincareHelpers::Approximate<double>(result, context);

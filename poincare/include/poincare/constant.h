@@ -96,8 +96,8 @@ public:
   ConstantNode::ConstantInfo constantInfo() const { return node()->constantInfo(); }
 
   // Simplification
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  Expression shallowReduce(ReductionContext reductionContext);
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 
   /* Some of these are currently not tested in simplification.cpp because
    * their units are weirdly simplified. These tests whould be updated when

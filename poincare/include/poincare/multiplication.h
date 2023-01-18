@@ -100,30 +100,30 @@ public:
   // Approximation
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Simplification
-  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression denominator(const ExpressionNode::ReductionContext& reductionContext) const;
+  Expression shallowBeautify(const ReductionContext& reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
+  Expression denominator(const ReductionContext& reductionContext) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canContainMatrices = true) {
     NAryExpression::sortChildrenInPlace(order, context, false, canContainMatrices);
   }
   // Derivation
-  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 
-  void splitIntoNormalForm(Expression & numerator, Expression & denominator, const ExpressionNode::ReductionContext& reductionContext) const;
+  void splitIntoNormalForm(Expression & numerator, Expression & denominator, const ReductionContext& reductionContext) const;
 private:
   // Unit
   Expression removeUnit(Expression * unit);
 
   // Simplification
-  void factorizeBase(int i, int j, const ExpressionNode::ReductionContext& reductionContext, List dependenciesCreatedDuringReduction);
-  void mergeInChildByFactorizingBase(int i, Expression e, const ExpressionNode::ReductionContext& reductionContext, List dependenciesCreatedDuringReduction = List());
-  bool factorizeExponent(int i, int j, const ExpressionNode::ReductionContext& reductionContext);
-  Expression gatherLikeTerms(const ExpressionNode::ReductionContext & reductionContext);
-  bool gatherRationalPowers(int i, int j, const ExpressionNode::ReductionContext& reductionContext);
-  Expression distributeOnOperandAtIndex(int index, const ExpressionNode::ReductionContext& reductionContext);
+  void factorizeBase(int i, int j, const ReductionContext& reductionContext, List dependenciesCreatedDuringReduction);
+  void mergeInChildByFactorizingBase(int i, Expression e, const ReductionContext& reductionContext, List dependenciesCreatedDuringReduction = List());
+  bool factorizeExponent(int i, int j, const ReductionContext& reductionContext);
+  Expression gatherLikeTerms(const ReductionContext & reductionContext);
+  bool gatherRationalPowers(int i, int j, const ReductionContext& reductionContext);
+  Expression distributeOnOperandAtIndex(int index, const ReductionContext& reductionContext);
   // factor must be a reduced expression
-  void addMissingFactors(Expression factor, const ExpressionNode::ReductionContext& reductionContext);
-  bool factorizeSineAndCosine(int i, int j, const ExpressionNode::ReductionContext& reductionContext);
+  void addMissingFactors(Expression factor, const ReductionContext& reductionContext);
+  bool factorizeSineAndCosine(int i, int j, const ReductionContext& reductionContext);
   static bool HaveSameNonNumeralFactors(const Expression & e1, const Expression & e2);
   static bool TermsHaveIdenticalBase(const Expression & e1, const Expression & e2);
   static bool TermsHaveIdenticalExponent(const Expression & e1, const Expression & e2);

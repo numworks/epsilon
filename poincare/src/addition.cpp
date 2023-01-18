@@ -167,7 +167,7 @@ Expression Addition::removeConstantTerms(Context * context, const char * symbolN
   return *this;
 }
 
-Expression Addition::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Addition::shallowBeautify(const ReductionContext& reductionContext) {
   /* Step 1 : Sort children in decreasing order of degree.
    * 1+x+x^3+y^2+x*y+sqrt(x) --> x^3+y^2+x*y+x+1+sqrt(x)
    * sqrt(2)+1 = 1+sqrt(2)
@@ -266,7 +266,7 @@ Expression Addition::shallowBeautify(const ExpressionNode::ReductionContext& red
   return result;
 }
 
-Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Addition::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext, SimplificationHelper::BooleanReduction::UndefinedOnBooleans);
     if (!e.isUninitialized()) {
@@ -498,14 +498,14 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
    * This step is done only for ReductionTarget::User if the parent expression
    * is not an addition. */
   Expression p = result.parent();
-  if (reductionContext.target() == ExpressionNode::ReductionTarget::User && result == *this && (p.isUninitialized() || p.type() != ExpressionNode::Type::Addition)) {
+  if (reductionContext.target() == ReductionTarget::User && result == *this && (p.isUninitialized() || p.type() != ExpressionNode::Type::Addition)) {
     // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
      result = factorizeOnCommonDenominator(reductionContext);
   }
   return result;
 }
 
-bool Addition::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool Addition::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   {
     Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
     if (!e.isUninitialized()) {
@@ -566,7 +566,7 @@ bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const 
   }
 }
 
-Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionContext reductionContext) {
+Expression Addition::factorizeOnCommonDenominator(ReductionContext reductionContext) {
   /* We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d), except if one of
    * the denominators contains random, in which case the factors with random
    * should stay appart. */
@@ -609,7 +609,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
 
   /* Step 2: Create the numerator. We start with this being a/b+c/d+e/b and we
    * want to create numerator = a/b*b*d + c/d*b*d + e/b*b*d = a*d + c*b + e*d */
-  assert(reductionContext.target() ==  ExpressionNode::ReductionTarget::User); // Else, before, the algorithm used User target -> put back ?
+  assert(reductionContext.target() ==  ReductionTarget::User); // Else, before, the algorithm used User target -> put back ?
   Addition numerator = Addition::Builder();
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
@@ -638,8 +638,8 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
    * parent here), which would be replaced with undef.
    * Example: int((e^(-x))-x^(0.5), x, 0, 3), when creating the common
    * denominator for the integrand. */
-  ExpressionNode::SymbolicComputation previousSymbolicComputation = reductionContext.symbolicComputation();
-  reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+  SymbolicComputation previousSymbolicComputation = reductionContext.symbolicComputation();
+  reductionContext.setSymbolicComputation(SymbolicComputation::DoNotReplaceAnySymbol);
 
   // Step 4: Simplify the numerator
   numerator.shallowReduce(reductionContext);
@@ -665,7 +665,7 @@ Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionConte
   return std::move(a);
 }
 
-void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, const ExpressionNode::ReductionContext& reductionContext) {
+void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, const ReductionContext& reductionContext) {
   /* This function factorizes two children which only differ by a rational
    * factor. For example, if this is AdditionNode(2*pi, 3*pi), then 2*pi and 3*pi
    * could be merged, and this turned into AdditionNode(5*pi). */
@@ -704,14 +704,14 @@ void Addition::factorizeChildrenAtIndexesInPlace(int index1, int index2, const E
   m.shallowReduce(reductionContext);
 }
 
-bool Addition::TermHasSquaredCos(const Expression & e, const ExpressionNode::ReductionContext& reductionContext, Expression & baseOfCos) {
+bool Addition::TermHasSquaredCos(const Expression & e, const ReductionContext& reductionContext, Expression & baseOfCos) {
   bool isCosine;
   Expression temp;
   bool isSquaredTrigFunction = TermHasSquaredTrigFunctionWithBase(e, reductionContext, baseOfCos, temp, &isCosine);
   return isSquaredTrigFunction && isCosine;
 }
 
-bool Addition::TermHasSquaredTrigFunctionWithBase(const Expression & e, const ExpressionNode::ReductionContext& reductionContext, Expression & base, Expression & coefficient, bool * cosine) {
+bool Addition::TermHasSquaredTrigFunctionWithBase(const Expression & e, const ReductionContext& reductionContext, Expression & base, Expression & coefficient, bool * cosine) {
   if (e.type() == ExpressionNode::Type::Power && (e.childAtIndex(0).type() == ExpressionNode::Type::Cosine || e.childAtIndex(0).type() == ExpressionNode::Type::Sine) && e.childAtIndex(1).isIdenticalTo(Rational::Builder(2))) {
     *cosine = e.childAtIndex(0).type() == ExpressionNode::Type::Cosine;
     coefficient = Rational::Builder(1);
@@ -737,7 +737,7 @@ bool Addition::TermHasSquaredTrigFunctionWithBase(const Expression & e, const Ex
   return false;
 }
 
-Expression Addition::factorizeSquaredTrigFunction(Expression & baseOfTrigFunction, const ExpressionNode::ReductionContext& reductionContext) {
+Expression Addition::factorizeSquaredTrigFunction(Expression & baseOfTrigFunction, const ReductionContext& reductionContext) {
   Addition totalCoefOfSine = Addition::Builder();
   Addition totalCoefOfCosine = Addition::Builder();
   Expression thisClone = clone();

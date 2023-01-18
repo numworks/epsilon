@@ -147,14 +147,14 @@ template <typename U> Evaluation<U> PercentAdditionNode::templateApproximate(con
 
 /* PercentSimple */
 
-Expression PercentSimple::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression PercentSimple::shallowBeautify(const ReductionContext& reductionContext) {
   // Beautify Percent into what is actually computed : a% -> a/100
   Expression result = Division::Builder(childAtIndex(0), Rational::Builder(100));
   replaceWithInPlace(result);
   return result;
 }
 
-Expression PercentSimple::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression PercentSimple::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
@@ -175,7 +175,7 @@ Expression PercentSimple::shallowReduce(ExpressionNode::ReductionContext reducti
 
 /* PercentAddition */
 
-Expression PercentAddition::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression PercentAddition::shallowBeautify(const ReductionContext& reductionContext) {
   // Beautify Percent into what is actually computed
   Expression ratio;
   Expression positiveArg = childAtIndex(1).makePositiveAnyNegativeNumeralFactor(reductionContext);
@@ -191,7 +191,7 @@ Expression PercentAddition::shallowBeautify(const ExpressionNode::ReductionConte
   return result;
 }
 
-Expression PercentAddition::deepBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression PercentAddition::deepBeautify(const ReductionContext& reductionContext) {
   Expression e = shallowBeautify(reductionContext);
   /* Overriding deepBeautify to prevent the shallow reduce of the addition
     * because we need to preserve the order. */

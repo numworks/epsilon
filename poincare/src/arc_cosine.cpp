@@ -29,7 +29,7 @@ Expression ArcCosineNode::shallowReduce(const ReductionContext& reductionContext
   return Trigonometry::shallowReduceInverseFunction(e, reductionContext);
 }
 
-bool ArcCosineNode::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcCosineNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return ArcCosine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -62,12 +62,12 @@ Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-bool ArcCosine::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcCosine::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression ArcCosine::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ArcCosine::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Power::Builder(
       Multiplication::Builder(
         Rational::Builder(-1),

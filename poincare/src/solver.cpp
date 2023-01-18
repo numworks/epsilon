@@ -141,7 +141,7 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Expression & e1, const Express
   }
   assert(memoizedDifference);
   if (memoizedDifference->isUninitialized()) {
-    ExpressionNode::ReductionContext reductionContext(m_context, m_complexFormat, m_angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
+    ReductionContext reductionContext(m_context, m_complexFormat, m_angleUnit, Preferences::UnitFormat::Metric, ReductionTarget::SystemForAnalysis);
     *memoizedDifference = Subtraction::Builder(e1.clone(), e2.clone()).cloneAndSimplify(reductionContext);
   }
   nextRoot(*memoizedDifference);
@@ -395,7 +395,7 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Expression & e) const {
           return k_zero < exponent && exponent < static_cast<T>(1.);
         },
         context,
-        ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+        SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
         aux);
   };
   T xChildrenRoot = nextRootInChildren(e, test, const_cast<Solver<T> *>(this)).x1();

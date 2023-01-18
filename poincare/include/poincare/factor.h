@@ -47,8 +47,8 @@ public:
   Multiplication createMultiplicationOfIntegerPrimeDecomposition(Integer i) const;
 
   // Expression
-  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(const ReductionContext& reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

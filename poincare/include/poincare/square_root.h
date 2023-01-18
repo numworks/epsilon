@@ -49,9 +49,9 @@ class SquareRoot final : public ExpressionOneChild<SquareRoot, SquareRootNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
   /* Reduce an expression of the form √(a√b + c√d) */
-  static Expression ReduceNestedRadicals(Expression a, Expression b, Expression c, Expression d, const ExpressionNode::ReductionContext& reductionContext);
+  static Expression ReduceNestedRadicals(Expression a, Expression b, Expression c, Expression d, const ReductionContext& reductionContext);
   static bool SplitRadical(Expression term, Expression * factor, Expression * underRoot);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

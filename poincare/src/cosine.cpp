@@ -42,12 +42,12 @@ Expression CosineNode::unaryFunctionDifferential(const ReductionContext& reducti
   return Cosine(this).unaryFunctionDifferential(reductionContext);
 }
 
-bool Cosine::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool Cosine::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression Cosine::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Cosine::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Multiplication::Builder(Rational::Builder(-1), Trigonometry::UnitConversionFactor(reductionContext.angleUnit(), Preferences::AngleUnit::Radian), Sine::Builder(childAtIndex(0).clone()));
 }
 

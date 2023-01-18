@@ -655,7 +655,7 @@ Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer &
   Expression quo = DivisionQuotient::Reduce(num, denom);
   Expression rem = DivisionRemainder::Reduce(num, denom);
   Expression e = Comparison::Builder(Rational::Builder(num), ComparisonNode::OperatorType::Equal, Addition::Builder(Multiplication::Builder(Rational::Builder(denom), quo), rem));
-  ExpressionNode::ReductionContext defaultReductionContext = ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  ReductionContext defaultReductionContext = ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, ReductionTarget::User, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   e = e.deepBeautify(defaultReductionContext);
   return e;
 }

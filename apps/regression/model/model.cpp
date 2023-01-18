@@ -23,7 +23,7 @@ Layout Model::layout() {
 Poincare::Expression Model::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
   Expression e = expression(modelCoefficients);
   if (!e.isUninitialized()) {
-    PoincareHelpers::CloneAndSimplify(&e, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+    PoincareHelpers::CloneAndSimplify(&e, context, ReductionTarget::SystemForApproximation);
   }
   return e;
 }

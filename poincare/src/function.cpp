@@ -140,8 +140,8 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   return *this;
 }
 
-Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
+Expression Function::shallowReduce(ReductionContext reductionContext) {
+  if (reductionContext.symbolicComputation() == SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
 
@@ -151,7 +151,7 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
     return e;
   }
 
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol) {
+  if (reductionContext.symbolicComputation() == SymbolicComputation::DoNotReplaceAnySymbol) {
     return *this;
   }
   /* Symbols that have a definition while also being the parameter of a
@@ -162,9 +162,9 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
    * Symbols will be handled in deepReduce, which is aware of parametered
    * expressions context. For example, with 1->x and 1+x->f(x), f(x) within
    * diff(f(x),x,1) should be reduced to 1+x instead of 2. */
-  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
+  Expression result = SymbolAbstract::Expand(*this, reductionContext.context(), true, SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions);
   if (result.isUninitialized()) {
-    if (reductionContext.symbolicComputation() != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+    if (reductionContext.symbolicComputation() != SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
     }
     return replaceWithUndefinedInPlace();
@@ -175,11 +175,11 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result.deepReduce(reductionContext);
 }
 
-Expression Function::deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
+Expression Function::deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
   /* These two symbolic computations parameters make no sense in this method.
    * They are therefore not handled. */
-  assert(symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined
-    && symbolicComputation != ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+  assert(symbolicComputation != SymbolicComputation::ReplaceAllSymbolsWithUndefined
+    && symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol);
   assert(*isCircular != TrinaryBoolean::True);
 
   /* Check for circularity only when a function is encountered so that
@@ -206,7 +206,7 @@ Expression Function::deepReplaceReplaceableSymbols(Context * context, TrinaryBoo
   /* On undefined function, ReplaceDefinedFunctionsWithDefinitions is equivalent
    * to ReplaceAllDefinedSymbolsWithDefinition, like in shallowReduce. */
   if (e.isUninitialized()) {
-    if (symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
+    if (symbolicComputation != SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
       return *this;
     }
     return replaceWithUndefinedInPlace();

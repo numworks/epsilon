@@ -45,7 +45,7 @@ class DivisionRemainder final : public ExpressionTwoChildren<DivisionRemainder, 
 public:
   using ExpressionBuilder::ExpressionBuilder;
   // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
   static Expression Reduce(const Integer & a, const Integer & b);
 };
 

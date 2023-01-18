@@ -23,8 +23,8 @@ template<typename T> Evaluation<T> ListMedianNode::templatedApproximate(const Ap
   return Complex<T>::Builder(dataset.median());
 }
 
-Expression ListMedian::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  ExpressionNode::ApproximationContext approximationContext(reductionContext, true);
+Expression ListMedian::shallowReduce(ReductionContext reductionContext) {
+  ApproximationContext approximationContext(reductionContext, true);
   for (int k = 0; k < numberOfChildren(); k++) {
     Expression listChild = childAtIndex(k);
     int n = listChild.numberOfChildren();

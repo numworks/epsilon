@@ -38,7 +38,7 @@ Infinity Infinity::Builder(bool negative) {
   return static_cast<Infinity &>(h);
 }
 
-bool Infinity::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool Infinity::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   replaceWithUndefinedInPlace();
   return true;
 }

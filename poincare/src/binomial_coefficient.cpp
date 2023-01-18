@@ -72,7 +72,7 @@ T BinomialCoefficientNode::compute(T k, T n) {
 }
 
 
-Expression BinomialCoefficient::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression BinomialCoefficient::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

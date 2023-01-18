@@ -45,7 +45,7 @@ private:
 class FracPart final : public ExpressionOneChild<FracPart, FracPartNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

@@ -49,19 +49,19 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(const Ap
 
 // Dependency
 
-void Dependency::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
+void Dependency::deepReduceChildren(const ReductionContext& reductionContext) {
   assert(numberOfChildren() == 2);
 
   /* Main expression is reduced with the same reduction target as the parent */
   childAtIndex(0).deepReduce(reductionContext);
 
   /* List of dependencies is reduced with target SystemForAnalysis */
-  ExpressionNode::ReductionContext depContext = reductionContext;
-  depContext.setTarget(ExpressionNode::ReductionTarget::SystemForAnalysis);
+  ReductionContext depContext = reductionContext;
+  depContext.setTarget(ReductionTarget::SystemForAnalysis);
   childAtIndex(1).deepReduce(depContext);
 }
 
-Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Dependency::shallowReduce(ReductionContext reductionContext) {
   /* Undefined and dependencies are bubbled-up from list of dependencies.
    * We do this here because we do not want to do this in List::shallowReduce
    * since most of lists do not want to bubble up their undef and dependencies.
@@ -159,7 +159,7 @@ Expression Dependency::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<List>());
 }
 
-Expression Dependency::removeUselessDependencies(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Dependency::removeUselessDependencies(const ReductionContext& reductionContext) {
   // Step 1: Break dependencies into smaller expressions
   Expression dependenciesExpression = childAtIndex(k_indexOfDependenciesList);
   assert(dependenciesExpression.type() == ExpressionNode::Type::List);

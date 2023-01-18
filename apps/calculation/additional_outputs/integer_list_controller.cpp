@@ -33,7 +33,7 @@ void IntegerListController::setExpression(Poincare::Expression e) {
   }
   // Computing factorExpression
   Expression factor = Factor::Builder(m_expression);
-  PoincareHelpers::CloneAndSimplify(&factor, App::app()->localContext(), ExpressionNode::ReductionTarget::User);
+  PoincareHelpers::CloneAndSimplify(&factor, App::app()->localContext(), ReductionTarget::User);
   if (!factor.isUndefined()) {
     m_layouts[k_indexOfFactorExpression] = PoincareHelpers::CreateLayout(factor, App::app()->localContext());
   }

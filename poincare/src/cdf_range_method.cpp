@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-Expression CDFRangeMethod::shallowReduce(Expression * abscissae, const Distribution * distribution, Expression * parameters, ExpressionNode::ReductionContext reductionContext, Expression * expression) const {
+Expression CDFRangeMethod::shallowReduce(Expression * abscissae, const Distribution * distribution, Expression * parameters, ReductionContext reductionContext, Expression * expression) const {
   Expression x = abscissae[0];
   Expression y = abscissae[1];
 

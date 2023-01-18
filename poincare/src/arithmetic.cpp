@@ -122,7 +122,7 @@ Expression Arithmetic::LCM(const Expression & expression) {
 }
 
 template<typename T>
-Evaluation<T> applyAssociativeFunctionOnChildren(const ExpressionNode & expressionNode, uint32_t (*f)(uint32_t, uint32_t, bool *), const ExpressionNode::ApproximationContext& approximationContext) {
+Evaluation<T> applyAssociativeFunctionOnChildren(const ExpressionNode & expressionNode, uint32_t (*f)(uint32_t, uint32_t, bool *), const ApproximationContext& approximationContext) {
   /* Use function associativity to compute a function of expression's children.
    * The function can be GCD or LCM. */
   bool isUndefined = false;
@@ -145,13 +145,13 @@ Evaluation<T> applyAssociativeFunctionOnChildren(const ExpressionNode & expressi
 }
 
 template<typename T>
-Evaluation<T> Arithmetic::GCD(const ExpressionNode & expressionNode, const ExpressionNode::ApproximationContext& approximationContext) {
+Evaluation<T> Arithmetic::GCD(const ExpressionNode & expressionNode, const ApproximationContext& approximationContext) {
   // Evaluate GCD of expression's children
   return applyAssociativeFunctionOnChildren<T>(expressionNode, Arithmetic::GCD, approximationContext);
 }
 
 template<typename T>
-Evaluation<T> Arithmetic::LCM(const ExpressionNode & expressionNode, const ExpressionNode::ApproximationContext& approximationContext) {
+Evaluation<T> Arithmetic::LCM(const ExpressionNode & expressionNode, const ApproximationContext& approximationContext) {
   // Evaluate LCM of expression's children
   return applyAssociativeFunctionOnChildren<T>(expressionNode, Arithmetic::LCM, approximationContext);
 }
@@ -270,8 +270,8 @@ void Arithmetic::resetLock() {
   s_lock = nullptr;
 }
 
-template Evaluation<double> Arithmetic::GCD<double>(const ExpressionNode & expressionNode, const ExpressionNode::ApproximationContext& approximationContext);
-template Evaluation<float> Arithmetic::GCD<float>(const ExpressionNode & expressionNode, const ExpressionNode::ApproximationContext& approximationContext);
-template Evaluation<double> Arithmetic::LCM<double>(const ExpressionNode & expressionNode, const ExpressionNode::ApproximationContext& approximationContext);
-template Evaluation<float> Arithmetic::LCM<float>(const ExpressionNode & expressionNode, const ExpressionNode::ApproximationContext& approximationContext);
+template Evaluation<double> Arithmetic::GCD<double>(const ExpressionNode & expressionNode, const ApproximationContext& approximationContext);
+template Evaluation<float> Arithmetic::GCD<float>(const ExpressionNode & expressionNode, const ApproximationContext& approximationContext);
+template Evaluation<double> Arithmetic::LCM<double>(const ExpressionNode & expressionNode, const ApproximationContext& approximationContext);
+template Evaluation<float> Arithmetic::LCM<float>(const ExpressionNode & expressionNode, const ApproximationContext& approximationContext);
 }

@@ -51,6 +51,16 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     if (function->canDisplayDerivative()) {
       // Use the local derivative to slow down the cursor's step if needed
       double slope = function->approximateDerivative(t, context, subCurveIndex ? *subCurveIndex : 0);
+      if (std::isnan(slope)) {
+        /* If the derivative could not bet computed, compute the derivative one
+         * step further. */
+        slope = function->approximateDerivative(t + dir * step * pixelWidth, context, subCurveIndex ? *subCurveIndex : 0);
+        if (std::isnan(slope)) {
+          /* If the derivative is still NAN, it might mean that it's NAN
+           * everywhere, so just set slope to a default value */
+          slope = 1.0;
+        }
+      }
       // If yGridUnit is twice xGridUnit, visible slope is halved
       slope *= range->xGridUnit() / range->yGridUnit();
       /* Assuming the curve is a straight line of slope s. To move the cursor at a
@@ -58,7 +68,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
       * t' = t * cos(θ) with θ the angle between the line and the x-axis.
       * We also have tan(θ) = (s * t) / t = s
       * As a result, t' = t * cos(atan(s)) = t / sqrt(1 + s^2) */
-      slopeMultiplicator /= std::sqrt(1.0 + slope*slope);
+      slopeMultiplicator /= std::sqrt(1.0 + slope * slope);
       // Add a sqrt(2) factor so that y=x isn't slowed down
       slopeMultiplicator *= std::sqrt(2.0);
       /* Cap the scroll speed reduction to be able to cross vertical asymptotes

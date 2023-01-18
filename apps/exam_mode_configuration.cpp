@@ -257,5 +257,8 @@ I18n::Message ExamModeConfiguration::examModeTitleBarMessage(Poincare::Preferenc
   if (mode == Preferences::ExamMode::English) {
     return I18n::Message::ExamModeTitleBarUK;
   }
+  if (mode == Preferences::ExamMode::Dutch) {
+    return I18n::Message::ExamModeTitleBarNL;
+  }
   return I18n::Message::Default;
 }

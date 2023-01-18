@@ -32,4 +32,8 @@ bool ChainedTextFieldDelegate::textFieldIsEditable(AbstractTextField * textField
   return m_parentDelegate ? m_parentDelegate->textFieldIsEditable(textField) : TextFieldDelegate::textFieldIsEditable(textField);
 }
 
+bool ChainedTextFieldDelegate::textFieldIsStorable(AbstractTextField * textField) {
+  return m_parentDelegate ? m_parentDelegate->textFieldIsStorable(textField) : TextFieldDelegate::textFieldIsStorable(textField);
+}
+
 }

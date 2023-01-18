@@ -19,6 +19,7 @@ public:
   bool textFieldDidHandleEvent(AbstractTextField * textField, bool returnValue, bool textDidChange) override;
   void textFieldDidStartEditing(AbstractTextField * textField) override;
   bool textFieldIsEditable(AbstractTextField * textField) override;
+  bool textFieldIsStorable(AbstractTextField * textField) override;
 
 private:
   TextFieldDelegate * m_parentDelegate;

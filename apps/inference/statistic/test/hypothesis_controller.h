@@ -37,6 +37,7 @@ public:
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
   bool textFieldIsEditable(Escher::AbstractTextField * textField) override { return selectedRow() != 0 || m_test->significanceTestType() != SignificanceTestType::Slope; }
+  bool textFieldIsStorable(Escher::AbstractTextField * textField) override { return false; }
 
   // DropdownCallback
   void onDropdownSelected(int selectedRow) override;

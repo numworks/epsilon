@@ -57,9 +57,10 @@ void App::didExitPage(ViewController * controller) {
   (void)c;
 }
 
+constexpr static App::Descriptor sDescriptor;
+
 const App::Descriptor * App::Snapshot::descriptor() const {
-  static App::Descriptor s_descriptor;
-  return &s_descriptor;
+  return &sDescriptor;
 }
 
 void App::Snapshot::reset() {

@@ -2,6 +2,7 @@
 #include <poincare/autocompleted_bracket_pair_layout.h>
 #include <poincare/bracket_pair_layout.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/combined_code_points_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
@@ -25,34 +26,6 @@ Layout Layout::LayoutFromAddress(const void * address, size_t size) {
     return Layout();
   }
   return Layout(static_cast<LayoutNode *>(TreePool::sharedPool()->copyTreeFromAddress(address, size)));
-}
-
-bool Layout::representsAnEquation() const {
-  if (type() != Poincare::LayoutNode::Type::HorizontalLayout) {
-    return false;
-  }
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    Poincare::Layout child = childAtIndex(i);
-    if (child.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(child).codePoint().isEquationOperator()) {
-      return true;
-    }
-  }
-  return false;
-}
-
-bool Layout::representsAComparison() const {
-  if (type() != Poincare::LayoutNode::Type::HorizontalLayout) {
-    return false;
-  }
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    Poincare::Layout child = childAtIndex(i);
-    if (child.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(child).codePoint().isComparisonOperator()) {
-      return true;
-    }
-  }
-  return false;
 }
 
 int Layout::serializeParsedExpression(char * buffer, int bufferSize, Context * context) const {
@@ -379,6 +352,20 @@ void Layout::collapseSiblings(LayoutCursor * cursor) {
   if (collapsed) {
     node()->didCollapseSiblings(cursor);
   }
+}
+
+bool Layout::hasCodePointVerifying(bool (CodePoint::*test)() const) const {
+  if (type() != Poincare::LayoutNode::Type::HorizontalLayout) {
+    return false;
+  }
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    Poincare::Layout child = childAtIndex(i);
+    if (child.type() == Poincare::LayoutNode::Type::CodePointLayout && (static_cast<Poincare::CodePointLayout &>(child).codePoint().*test)()) {
+      return true;
+    }
+  }
+  return false;
 }
 
 }

@@ -43,8 +43,8 @@ class HyperbolicCosine final : public ExpressionOneChild<HyperbolicCosine, Hyper
 public:
   using ExpressionBuilder::ExpressionBuilder;
 
-  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
-  Expression unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext);
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  Expression unaryFunctionDifferential(const ReductionContext& reductionContext);
 };
 
 }

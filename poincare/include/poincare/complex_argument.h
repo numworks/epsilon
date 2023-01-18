@@ -43,7 +43,7 @@ private:
 class ComplexArgument final : public ExpressionOneChild<ComplexArgument, ComplexArgumentNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

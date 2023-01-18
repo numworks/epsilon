@@ -85,9 +85,9 @@ public:
   using ExpressionBuilder::ExpressionBuilder;
 
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
-  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  Expression shallowBeautify(const ReductionContext& reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 
   enum class DependencyType : uint8_t {
     None = 0,
@@ -96,8 +96,8 @@ public:
     Both
   };
 
-  DependencyType typeOfDependency(const ExpressionNode::ReductionContext& reductionContext) const;
-  static void AddPowerToListOfDependenciesIfNeeded(Expression e, Power compareTo, List l, const ExpressionNode::ReductionContext& reductionContext, bool clone);
+  DependencyType typeOfDependency(const ReductionContext& reductionContext) const;
+  static void AddPowerToListOfDependenciesIfNeeded(Expression e, Power compareTo, List l, const ReductionContext& reductionContext, bool clone);
 
   constexpr static AliasesList k_exponentialName = "exp";
   static Expression ExponentialBuilder(Expression children);
@@ -110,19 +110,19 @@ private:
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
 
   // Simplification
-  static Expression PowerRationalRational(Rational base, Rational index, const ExpressionNode::ReductionContext& reductionContext);
-  static Expression PowerIntegerRational(Integer base, Rational index, const ExpressionNode::ReductionContext& reductionContext);
-  static Expression CreateComplexExponent(const Expression & r, const ExpressionNode::ReductionContext& reductionContext); // Returns e^(i*pi*r)
+  static Expression PowerRationalRational(Rational base, Rational index, const ReductionContext& reductionContext);
+  static Expression PowerIntegerRational(Integer base, Rational index, const ReductionContext& reductionContext);
+  static Expression CreateComplexExponent(const Expression & r, const ReductionContext& reductionContext); // Returns e^(i*pi*r)
   static bool RationalExponentShouldNotBeReduced(const Rational & b, const Rational & r);
   static bool IsLogarithmOfBase(const Expression e, const Expression base);
-  static Expression ReduceLogarithmLinearCombination(const ExpressionNode::ReductionContext& reductionContext, Expression linearCombination, const Expression baseOfLogarithmToReduce);
+  static Expression ReduceLogarithmLinearCombination(const ReductionContext& reductionContext, Expression linearCombination, const Expression baseOfLogarithmToReduce);
   bool isLogarithmOfSameBase(Expression e) const;
   bool isNthRootOfUnity() const;
 
   // Unit
   Expression removeUnit(Expression * unit);
 
-  Expression denominator(const ExpressionNode::ReductionContext& reductionContext) const;
+  Expression denominator(const ReductionContext& reductionContext) const;
 };
 
 }

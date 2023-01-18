@@ -41,7 +41,7 @@ public:
   using ExpressionBuilder::ExpressionBuilder;
 
   // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 private:
   constexpr static int k_maxNValue = 300;
 };

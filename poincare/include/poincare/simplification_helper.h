@@ -31,9 +31,9 @@ public:
     UndefinedOnBooleans
   };
 
-  static void defaultDeepReduceChildren(Expression e, const ExpressionNode::ReductionContext& reductionContext);
+  static void defaultDeepReduceChildren(Expression e, const ReductionContext& reductionContext);
   // DeepBeautify children and add parentheses if needed.
-  static void deepBeautifyChildren(Expression e, const ExpressionNode::ReductionContext& reductionContext);
+  static void deepBeautifyChildren(Expression e, const ReductionContext& reductionContext);
 
   /* Apply the default reduction that almost all nodes do.
    * Step 1. shallowReduceUndefined
@@ -43,14 +43,14 @@ public:
    * Step 5. Apply the list reduction depending on parameter
    * Step 6. Apply the boolean reduction depending on parameter
    * (Steps 3, 4, 5 and 6 do nothing if parameter = 0) */
-  static Expression defaultShallowReduce(Expression e, ExpressionNode::ReductionContext * reductionContext, BooleanReduction booleanParameter = BooleanReduction::DefinedOnBooleans, UnitReduction unitParameter = UnitReduction::KeepUnits, MatrixReduction matrixParameter = MatrixReduction::DefinedOnMatrix, ListReduction listParameter = ListReduction::DoNotDistributeOverLists);
+  static Expression defaultShallowReduce(Expression e, ReductionContext * reductionContext, BooleanReduction booleanParameter = BooleanReduction::DefinedOnBooleans, UnitReduction unitParameter = UnitReduction::KeepUnits, MatrixReduction matrixParameter = MatrixReduction::DefinedOnMatrix, ListReduction listParameter = ListReduction::DoNotDistributeOverLists);
 
   // This will shallowReduce the resulting expression.
-  static Expression bubbleUpDependencies(Expression e, const ExpressionNode::ReductionContext& reductionContext);
+  static Expression bubbleUpDependencies(Expression e, const ReductionContext& reductionContext);
 
   /* This method should be called only on expressions which have all their
    * children reduced */
-  static Expression distributeReductionOverLists(Expression e, const ExpressionNode::ReductionContext& reductionContext);
+  static Expression distributeReductionOverLists(Expression e, const ReductionContext& reductionContext);
 
   // Returns true if the child is a symbol or an integer.
   static bool extractIntegerChildAtIndex(Expression e, int integerChildIndex, int * integerChildReturnValue, bool * isSymbolReturnValue);
@@ -66,10 +66,10 @@ private:
   /* *In place* shallowReduce while keeping the units from first child.
    * The returned expression is the result with the units if units were handled.
    * Otherwise returns uninitialized handle. */
-  static Expression shallowReduceKeepingUnitsFromFirstChild(Expression e, const ExpressionNode::ReductionContext& reductionContext);
+  static Expression shallowReduceKeepingUnitsFromFirstChild(Expression e, const ReductionContext& reductionContext);
 
   static Expression undefinedOnBooleans(Expression e);
-  static Expression undefinedOnMatrix(Expression e, ExpressionNode::ReductionContext * reductionContext);
+  static Expression undefinedOnMatrix(Expression e, ReductionContext * reductionContext);
 };
 }
 

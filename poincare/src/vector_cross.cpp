@@ -38,7 +38,7 @@ Evaluation<T> VectorCrossNode::templatedApproximate(const ApproximationContext& 
   return static_cast<MatrixComplex<T>&>(input0).cross(static_cast<MatrixComplex<T> *>(&input1));
 }
 
-Expression VectorCross::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression VectorCross::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

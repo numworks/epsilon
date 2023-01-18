@@ -11,14 +11,14 @@ public:
   bool shouldBeClearedBeforeRemove() override {
     return false;
   }
-  Poincare::Expression standardForm(Poincare::Context * context, bool replaceFunctionsButNotSymbols, Poincare::ExpressionNode::ReductionTarget reductionTarget) const { return m_model.standardForm(this, context, replaceFunctionsButNotSymbols, reductionTarget); }
-  bool containsIComplex(Poincare::Context * context, Poincare::ExpressionNode::SymbolicComputation replaceSymbols) const;
+  Poincare::Expression standardForm(Poincare::Context * context, bool replaceFunctionsButNotSymbols, Poincare::ReductionTarget reductionTarget) const { return m_model.standardForm(this, context, replaceFunctionsButNotSymbols, reductionTarget); }
+  bool containsIComplex(Poincare::Context * context, Poincare::SymbolicComputation replaceSymbols) const;
   CodePoint symbol() const override { return 0; }
 
 private:
   class Model : public Shared::ExpressionModel {
   public:
-    Poincare::Expression standardForm(const Ion::Storage::Record * record, Poincare::Context * context, bool replaceFunctionsButNotSymbols, Poincare::ExpressionNode::ReductionTarget reductionTarget) const;
+    Poincare::Expression standardForm(const Ion::Storage::Record * record, Poincare::Context * context, bool replaceFunctionsButNotSymbols, Poincare::ReductionTarget reductionTarget) const;
   private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
     size_t expressionSize(const Ion::Storage::Record * record) const override;

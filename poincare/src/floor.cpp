@@ -40,7 +40,7 @@ Expression FloorNode::shallowReduce(const ReductionContext& reductionContext) {
   return Floor(this).shallowReduce(reductionContext);
 }
 
-Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Floor::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

@@ -40,7 +40,7 @@ private:
 class Round final : public ExpressionUpToTwoChildren<Round, RoundNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

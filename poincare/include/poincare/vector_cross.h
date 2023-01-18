@@ -37,7 +37,7 @@ private:
 class VectorCross final : public ExpressionTwoChildren<VectorCross, VectorCrossNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

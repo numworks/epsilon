@@ -55,7 +55,7 @@ Expression TangentNode::unaryFunctionDifferential(const ReductionContext& reduct
   return Tangent(this).unaryFunctionDifferential(reductionContext);
 }
 
-Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Tangent::shallowReduce(ReductionContext reductionContext) {
   Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
   if (newExpression.type() == ExpressionNode::Type::Tangent) {
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());
@@ -69,12 +69,12 @@ Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionCont
   return newExpression;
 }
 
-bool Tangent::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool Tangent::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression Tangent::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Tangent::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Multiplication::Builder(Trigonometry::UnitConversionFactor(reductionContext.angleUnit(), Preferences::AngleUnit::Radian), Power::Builder(Cosine::Builder(childAtIndex(0).clone()), Rational::Builder(-2)));
 }
 

@@ -157,7 +157,7 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
   int d = equation.getPolynomialReducedCoefficients(
       k_unknownName, coefficients, context, complexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(),
       ContinuousFunctionProperties::k_defaultUnitFormat,
-      ExpressionNode::SymbolicComputation::
+      SymbolicComputation::
           ReplaceAllSymbolsWithDefinitionsOrUndefined);
   assert(d <= 1);
   // Degree might vary depending on symbols definition and complex format.
@@ -391,10 +391,10 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
           preferences.complexFormat(),
           preferences.angleUnit(),
           ContinuousFunctionProperties::k_defaultUnitFormat,
-          ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
           true);
       assert(!willBeAlongX || degree == yDegree);
-      ExpressionNode::ReductionContext reductionContext(context, preferences.complexFormat(), preferences.angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
+      ReductionContext reductionContext(context, preferences.complexFormat(), preferences.angleUnit(), Preferences::UnitFormat::Metric, ReductionTarget::SystemForAnalysis);
       if (degree == 1) {
         Polynomial::LinearPolynomialRoots(
           coefficients[1],
@@ -456,8 +456,8 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
         PoincareHelpers::CloneAndReduce(
             &resultForApproximation,
             context,
-            ExpressionNode::ReductionTarget::SystemForApproximation,
-            ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol,
+            ReductionTarget::SystemForApproximation,
+            SymbolicComputation::DoNotReplaceAnySymbol,
             PoincareHelpers::k_defaultUnitConversion,
             &preferences, false);
         if (resultForApproximation.numberOfDescendants(true) < m_expression.numberOfDescendants(true)) {
@@ -479,8 +479,8 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(con
     PoincareHelpers::CloneAndReduce(
         &result,
         context,
-        ExpressionNode::ReductionTarget::SystemForAnalysis,
-        ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol, // Symbols have already been replaced.
+        ReductionTarget::SystemForAnalysis,
+        SymbolicComputation::DoNotReplaceAnySymbol, // Symbols have already been replaced.
         PoincareHelpers::k_defaultUnitConversion,
         &preferences, false);
   }
@@ -609,7 +609,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
       * A workaround could be to identify big functions to skip simplification
       * at the cost of possible inaccurate evaluations (such as diff(abs(x),x,0)
       * not being undefined). */
-      PoincareHelpers::CloneAndSimplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, PoincareHelpers::k_defaultUnitConversion, &preferences, false);
+      PoincareHelpers::CloneAndSimplify(&m_expressionDerivate, context, ReductionTarget::SystemForApproximation, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, PoincareHelpers::k_defaultUnitConversion, &preferences, false);
     }
   }
   return m_expressionDerivate;

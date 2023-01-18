@@ -49,7 +49,7 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(const ApproximationCont
       });
   }
 
-Expression DivisionQuotient::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression DivisionQuotient::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

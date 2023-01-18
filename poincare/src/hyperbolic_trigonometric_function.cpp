@@ -9,7 +9,7 @@ Expression HyperbolicTrigonometricFunctionNode::shallowReduce(const ReductionCon
   return HyperbolicTrigonometricFunction(this).shallowReduce(reductionContext);
 }
 
-Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression HyperbolicTrigonometricFunction::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

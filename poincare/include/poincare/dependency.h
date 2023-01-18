@@ -45,17 +45,17 @@ public:
   Dependency(const DependencyNode * n) : Expression(n) {}
   static Dependency Builder(Expression expression, List dependencies = List::Builder()) { return TreeHandle::FixedArityBuilder<Dependency, DependencyNode>({expression, dependencies}); }
 
-  void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  void deepReduceChildren(const ReductionContext& reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 
   int numberOfDependencies() const { return childAtIndex(k_indexOfDependenciesList).numberOfChildren(); }
   void addDependency(Expression newDependency);
 
   /* Store the dependecies in l and replace the dependency node with the true expression. */
   Expression extractDependencies(List l);
-  bool dependencyRecursivelyMatches(ExpressionTrinaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const { return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols, auxiliary); }
+  bool dependencyRecursivelyMatches(ExpressionTrinaryTest test, Context * context, SymbolicComputation replaceSymbols = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const { return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols, auxiliary); }
 
-  Expression removeUselessDependencies(const ExpressionNode::ReductionContext& reductionContext);
+  Expression removeUselessDependencies(const ReductionContext& reductionContext);
 
   // Parser utils
   static Expression UntypedBuilder(Expression children);

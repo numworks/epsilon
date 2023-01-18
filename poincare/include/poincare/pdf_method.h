@@ -15,7 +15,7 @@ class PDFMethod final : public DistributionMethod {
     return distribution->evaluateAtAbscissa(x[0], parameters);
   }
 
-  Expression shallowReduce(Expression * abscissae, const Distribution * distribution, Expression * parameters, ExpressionNode::ReductionContext reductionContext, Expression * expression) const override;
+  Expression shallowReduce(Expression * abscissae, const Distribution * distribution, Expression * parameters, ReductionContext reductionContext, Expression * expression) const override;
 
 };
 

@@ -53,8 +53,8 @@ public:
   static List Builder() { return TreeHandle::NAryBuilder<List, ListNode>(); }
   static Expression Ones(int length);
   ListNode * node() const { return static_cast<ListNode *>(Expression::node()); }
-  Expression extremum(const ExpressionNode::ReductionContext& reductionContext, bool minimum);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression extremum(const ReductionContext& reductionContext, bool minimum);
+  Expression shallowReduce(ReductionContext reductionContext);
   using TreeHandle::addChildAtIndexInPlace;
   using TreeHandle::removeChildAtIndexInPlace;
 };

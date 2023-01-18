@@ -43,7 +43,7 @@ private:
 class Floor final : public ExpressionOneChild<Floor, FloorNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

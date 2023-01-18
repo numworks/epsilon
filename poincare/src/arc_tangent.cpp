@@ -52,7 +52,7 @@ Expression ArcTangentNode::shallowReduce(const ReductionContext& reductionContex
   return Trigonometry::shallowReduceInverseFunction(e, reductionContext);
 }
 
-bool ArcTangentNode::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcTangentNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return ArcTangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -60,12 +60,12 @@ Expression ArcTangentNode::unaryFunctionDifferential(const ReductionContext& red
   return ArcTangent(this).unaryFunctionDifferential(reductionContext);
 }
 
-bool ArcTangent::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcTangent::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression ArcTangent::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ArcTangent::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Power::Builder(
       Multiplication::Builder(
         Trigonometry::UnitConversionFactor(

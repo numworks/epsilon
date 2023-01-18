@@ -49,7 +49,7 @@ Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferenc
 }
 
 
-Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression SignFunction::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
@@ -72,12 +72,12 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
   if (s == TrinaryBoolean::False) {
     resultSign = Rational::Builder(-1);
   } else {
-    Evaluation<float> childApproximated = child.node()->approximate(1.0f, ExpressionNode::ApproximationContext(reductionContext, true));
+    Evaluation<float> childApproximated = child.node()->approximate(1.0f, ApproximationContext(reductionContext, true));
     assert(childApproximated.type() == EvaluationNode<float>::Type::Complex);
     Complex<float> c = static_cast<Complex<float>&>(childApproximated);
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
       // c's approximation has no sign (c is complex or NAN)
-      if (reductionContext.target() == ExpressionNode::ReductionTarget::User && s == TrinaryBoolean::True) {
+      if (reductionContext.target() == ReductionTarget::User && s == TrinaryBoolean::True) {
         // For the user, we want sign(abs(x)) = 1
       } else {
         // sign(-x) = -sign(x)
@@ -101,7 +101,7 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
   return std::move(resultSign);
 }
 
-bool SignFunction::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool SignFunction::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   {
     Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
     if (!e.isUninitialized()) {

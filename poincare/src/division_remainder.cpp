@@ -40,7 +40,7 @@ Evaluation<T> DivisionRemainderNode::templatedApproximate(const ApproximationCon
       });
 }
 
-Expression DivisionRemainder::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression DivisionRemainder::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

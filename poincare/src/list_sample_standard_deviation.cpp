@@ -23,7 +23,7 @@ template<typename T> Evaluation<T> ListSampleStandardDeviationNode::templatedApp
   return Complex<T>::Builder(dataset.sampleStandardDeviation());
 }
 
-Expression ListSampleStandardDeviation::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListSampleStandardDeviation::shallowReduce(ReductionContext reductionContext) {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
   Expression children[2];
   if (!static_cast<ListFunctionWithOneOrTwoParametersNode *>(node())->getChildrenIfNonEmptyList(children)) {

@@ -42,7 +42,7 @@ bool ApproximationHelper::IsIntegerRepresentationAccurate(T x) {
   return digits <= (sizeof(T) == sizeof(double) ? DBL_MANT_DIG : FLT_MANT_DIG);
 }
 
-template <typename T> uint32_t ApproximationHelper::PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, const ExpressionNode::ApproximationContext& approximationContext) {
+template <typename T> uint32_t ApproximationHelper::PositiveIntegerApproximationIfPossible(const ExpressionNode * expression, bool * isUndefined, const ApproximationContext& approximationContext) {
   Evaluation<T> evaluation = expression->approximate(T(), approximationContext);
   T scalar = std::abs(evaluation.toScalar());
   if (std::isnan(scalar) || scalar != std::round(scalar) || scalar > UINT32_MAX || !IsIntegerRepresentationAccurate(scalar)) {
@@ -118,7 +118,7 @@ template<typename T> ListComplex<T> ElementWiseOnLists(const ListComplex<T> l1, 
  * over lists, currently hgeomcdfrange(m,q,N,K,n) */
 constexpr static int k_maxNumberOfParametersForMap = 5;
 
-template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexesCompute<T> compute, BooleansCompute<T> booleansCompute, bool mapOnList, void * context) {
+template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, const ApproximationContext& approximationContext, ComplexesCompute<T> compute, BooleansCompute<T> booleansCompute, bool mapOnList, void * context) {
 
   Evaluation<T> evaluationArray[k_maxNumberOfParametersForMap];
   int numberOfParameters = expression->numberOfChildren();
@@ -195,7 +195,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   return std::move(resultList);
 }
 
-template<typename T> Evaluation<T> ApproximationHelper::MapOneChild(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexCompute<T> compute, BooleanCompute<T> booleanCompute, bool mapOnList) {
+template<typename T> Evaluation<T> ApproximationHelper::MapOneChild(const ExpressionNode * expression, const ApproximationContext& approximationContext, ComplexCompute<T> compute, BooleanCompute<T> booleanCompute, bool mapOnList) {
   assert(expression->numberOfChildren() == 1);
   void * context[] = {reinterpret_cast<void *>(compute), reinterpret_cast<void *>(booleanCompute)};
   return Map<T>(expression,
@@ -271,7 +271,7 @@ template<typename T> Evaluation<T> ApproximationHelper::Reduce(
 
 template<typename T> Evaluation<T> ApproximationHelper::MapReduce(
     const ExpressionNode * expression,
-    const ExpressionNode::ApproximationContext& approximationContext,
+    const ApproximationContext& approximationContext,
     ReductionFunction<T> reductionFunction
     ) {
   assert(expression->numberOfChildren() > 0);
@@ -313,22 +313,22 @@ template<typename T> MatrixComplex<T> ApproximationHelper::ElementWiseOnMatrices
 template bool Poincare::ApproximationHelper::IsIntegerRepresentationAccurate<float>(float x);
 template bool Poincare::ApproximationHelper::IsIntegerRepresentationAccurate<double>(double x);
 
-template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(Poincare::ExpressionNode const*, bool*, const ExpressionNode::ApproximationContext&);
-template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(Poincare::ExpressionNode const*, bool*, const ExpressionNode::ApproximationContext&);
+template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<float>(Poincare::ExpressionNode const*, bool*, const ApproximationContext&);
+template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfPossible<double>(Poincare::ExpressionNode const*, bool*, const ApproximationContext&);
 
 template std::complex<float> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<float>(std::complex<float>,std::complex<float>,std::complex<float>,bool);
 template std::complex<double> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<double>(std::complex<double>,std::complex<double>,std::complex<double>,bool);
 template std::complex<float> Poincare::ApproximationHelper::MakeResultRealIfInputIsReal<float>(std::complex<float>,std::complex<float>);
 template std::complex<double> Poincare::ApproximationHelper::MakeResultRealIfInputIsReal<double>(std::complex<double>,std::complex<double>);
 
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexesCompute<float> compute, Poincare::ApproximationHelper::BooleansCompute<float> booleansCompute, bool mapOnList, void * context);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexesCompute<double> compute, Poincare::ApproximationHelper::BooleansCompute<double> booleansCompute, bool mapOnList, void * context);
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, const ApproximationContext&, Poincare::ApproximationHelper::ComplexesCompute<float> compute, Poincare::ApproximationHelper::BooleansCompute<float> booleansCompute, bool mapOnList, void * context);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, const ApproximationContext&, Poincare::ApproximationHelper::ComplexesCompute<double> compute, Poincare::ApproximationHelper::BooleansCompute<double> booleansCompute, bool mapOnList, void * context);
 
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexCompute<float> compute,  Poincare::ApproximationHelper::BooleanCompute<float> booleanCompute, bool mapOnList);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexCompute<double> compute, Poincare::ApproximationHelper::BooleanCompute<double> booleanCompute, bool mapOnList);
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, const ApproximationContext&, Poincare::ApproximationHelper::ComplexCompute<float> compute,  Poincare::ApproximationHelper::BooleanCompute<float> booleanCompute, bool mapOnList);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, const ApproximationContext&, Poincare::ApproximationHelper::ComplexCompute<double> compute, Poincare::ApproximationHelper::BooleanCompute<double> booleanCompute, bool mapOnList);
 
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce<float>(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, Poincare::ApproximationHelper::ReductionFunction<float> reductionFunction);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapReduce<double>(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, Poincare::ApproximationHelper::ReductionFunction<double> reductionFunction);
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce<float>(const Poincare::ExpressionNode * expression, const ApproximationContext& approximationContext, Poincare::ApproximationHelper::ReductionFunction<float> reductionFunction);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapReduce<double>(const Poincare::ExpressionNode * expression, const ApproximationContext& approximationContext, Poincare::ApproximationHelper::ReductionFunction<double> reductionFunction);
 
 template Poincare::MatrixComplex<float> Poincare::ApproximationHelper::ElementWiseOnMatrixAndComplex<float>(const Poincare::MatrixComplex<float>, const std::complex<float>, Poincare::Preferences::ComplexFormat, Poincare::Complex<float> (*)(std::complex<float>, std::complex<float>, Poincare::Preferences::ComplexFormat));
 template Poincare::MatrixComplex<double> Poincare::ApproximationHelper::ElementWiseOnMatrixAndComplex<double>(const Poincare::MatrixComplex<double>, std::complex<double> const, Poincare::Preferences::ComplexFormat, Poincare::Complex<double> (*)(std::complex<double>, std::complex<double>, Poincare::Preferences::ComplexFormat));

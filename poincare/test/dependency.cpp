@@ -10,12 +10,12 @@ void assert_expression_simplify_to_with_dependencies(
     const char * expression,
     const char * simplifiedExpression,
     const char * const (&dependencies)[N],
-    ExpressionNode::ReductionTarget target = User,
+    ReductionTarget target = User,
     Preferences::AngleUnit angleUnit = Radian,
     Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Preferences::ComplexFormat complexFormat = Cartesian,
-    ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition,
-    ExpressionNode::UnitConversion unitConversion = DefaultUnitConversion)
+    SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition,
+    UnitConversion unitConversion = DefaultUnitConversion)
 {
   if (N == 1 && dependencies[0][0] == '\0') {
     assert_parsed_expression_simplify_to(expression, simplifiedExpression, target, angleUnit, unitFormat, complexFormat, symbolicComputation, unitConversion);
@@ -24,7 +24,7 @@ void assert_expression_simplify_to_with_dependencies(
 
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
-  ExpressionNode::ReductionContext reductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target, symbolicComputation, unitConversion);
+  ReductionContext reductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target, symbolicComputation, unitConversion);
   Expression d = e.cloneAndSimplify(reductionContext);
 
   quiz_assert_print_if_failure(d.type() == ExpressionNode::Type::Dependency, expression);

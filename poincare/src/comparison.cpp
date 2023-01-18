@@ -237,7 +237,7 @@ Comparison Comparison::addComparison(ComparisonNode::OperatorType operatorType, 
   return static_cast<Comparison &>(h);
 }
 
-Expression Comparison::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Comparison::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

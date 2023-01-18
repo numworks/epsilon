@@ -69,7 +69,7 @@ public:
 
   Infinity(InfinityNode * n) : Number(n) {}
   Expression setSign(bool positive);
-  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 private:
   InfinityNode * node() const { return static_cast<InfinityNode *>(Number::node()); }
 };

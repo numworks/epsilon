@@ -47,7 +47,7 @@ Evaluation<T> SumAndProductNode::templatedApproximate(const ApproximationContext
   return result;
 }
 
-Expression SumAndProduct::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression SumAndProduct::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

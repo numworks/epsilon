@@ -64,7 +64,7 @@ Expression DistributionDispatcherNode::shallowReduce(const ReductionContext& red
   return DistributionDispatcher(this).shallowReduce(reductionContext);
 }
 
-Expression DistributionDispatcher::shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction) {
+Expression DistributionDispatcher::shallowReduce(ReductionContext reductionContext, bool * stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
   }

@@ -106,7 +106,7 @@ Expression Sequence::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   return *this;
 }
 
-Expression Sequence::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Sequence::shallowReduce(ReductionContext reductionContext) {
   Expression e = SimplificationHelper::defaultShallowReduce(
       *this,
       &reductionContext,
@@ -116,7 +116,7 @@ Expression Sequence::shallowReduce(ExpressionNode::ReductionContext reductionCon
   if (!e.isUninitialized()) {
     return e;
   }
-  if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
+  if (reductionContext.symbolicComputation() == SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
   return *this;

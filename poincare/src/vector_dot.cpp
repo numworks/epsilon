@@ -39,7 +39,7 @@ Evaluation<T> VectorDotNode::templatedApproximate(const ApproximationContext& ap
 }
 
 
-Expression VectorDot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression VectorDot::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

@@ -32,8 +32,8 @@ void VectorListController::setExpression(Poincare::Expression e) {
   size_t index = 0;
   size_t messageIndex = 0;
 
-  constexpr static ExpressionNode::ReductionTarget k_target = ExpressionNode::ReductionTarget::SystemForApproximation;
-  constexpr static ExpressionNode::SymbolicComputation k_symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
+  constexpr static ReductionTarget k_target = ReductionTarget::SystemForApproximation;
+  constexpr static SymbolicComputation k_symbolicComputation = SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
   // 1. Vector norm
   Expression norm = VectorNorm::Builder(m_expression);
   PoincareHelpers::CloneAndReduce(&norm, context, k_target, k_symbolicComputation);

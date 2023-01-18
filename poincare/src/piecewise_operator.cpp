@@ -81,7 +81,7 @@ Expression PiecewiseOperator::UntypedBuilder(Expression children) {
   return UntypedBuilderMultipleChildren<PiecewiseOperator>(children);
 }
 
-Expression PiecewiseOperator::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
   {
     /* Do not use defaultShallowReduce since it calls shallowReduceUndfined
      * and a piecewiseOperator can be defined even with an undefined child. */
@@ -125,7 +125,7 @@ int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(const char * 
   assert(numberOfChildren() > 0);
   VariableContext variableContext = VariableContext(symbol, context);
   variableContext.setApproximationForVariable<float>(x);
-  ExpressionNode::ApproximationContext approximationContext = ExpressionNode::ApproximationContext(&variableContext, complexFormat, angleUnit);
+  ApproximationContext approximationContext = ApproximationContext(&variableContext, complexFormat, angleUnit);
   return static_cast<PiecewiseOperatorNode *>(node())->indexOfFirstTrueCondition<float>(approximationContext);
 }
 

@@ -52,7 +52,7 @@ public:
   static int RandomInt(int a, int b) { return std::floor(Random::random<float>() * (b + 1 - a) + a); }
   using ExpressionBuilder::ExpressionBuilder;
 
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 

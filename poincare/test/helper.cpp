@@ -52,10 +52,10 @@ void build_failure_infos(char * returnedInformationsBuffer, size_t bufferSize, c
   Poincare::Print::SafeCustomPrintf(returnedInformationsBuffer, bufferSize," %s\n processed to\n %s\n instead of\n %s", expression, result, expectedResult);
 }
 
-void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits) {
+void assert_parsed_expression_process_to(const char * expression, const char * result, ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation, UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
-  Expression m = process(e, ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target, symbolicComputation, unitConversion));
+  Expression m = process(e, ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target, symbolicComputation, unitConversion));
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   m.serialize(buffer, bufferSize, DecimalMode, numberOfSignifiantDigits);
@@ -74,7 +74,7 @@ Poincare::Expression parse_expression(const char * expression, Context * context
 }
 
 
-void assert_reduce_and_store(const char * expression, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target) {
+void assert_reduce_and_store(const char * expression, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ReductionTarget target) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   assert_expression_reduce(e, angleUnit, unitFormat, complexFormat, target, expression);
@@ -82,18 +82,18 @@ void assert_reduce_and_store(const char * expression, Preferences::AngleUnit ang
   static_cast<Store&>(e).storeValueForSymbol(&globalContext);
 }
 
-void assert_expression_reduce(Expression e, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target, const char * printIfFailure) {
+void assert_expression_reduce(Expression e, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ReductionTarget target, const char * printIfFailure) {
   Shared::GlobalContext globalContext;
-  ExpressionNode::ReductionContext context = ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target);
+  ReductionContext context = ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, target);
   bool reductionFailure = false;
   e = e.cloneAndDeepReduceWithSystemCheckpoint(&context, &reductionFailure);
   quiz_assert_print_if_failure(!reductionFailure, printIfFailure);
 }
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ExpressionNode::ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
-  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, unitFormat, symbolicComputation, unitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, ReductionTarget target, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, SymbolicComputation symbolicComputation, UnitConversion unitConversion) {
+  assert_parsed_expression_process_to(expression, simplifiedExpression, target, complexFormat, angleUnit, unitFormat, symbolicComputation, unitConversion, [](Expression e, ReductionContext reductionContext) {
       Expression simplifiedExpression;
-      if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
+      if (reductionContext.target() == ReductionTarget::User) {
         e.cloneAndSimplifyAndApproximate(&simplifiedExpression, nullptr, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation(), reductionContext.unitConversion());
       } else {
         simplifiedExpression = e.cloneAndSimplify(reductionContext);
@@ -106,14 +106,14 @@ template<typename T>
 void assert_expression_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
-  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ReductionContext reductionContext) {
       return e.approximate<T>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     }, numberOfDigits);
 }
 
 void assert_expression_simplifies_and_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : PrintFloat::k_numberOfStoredSignificantDigits;
-  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ReductionContext reductionContext) {
       Expression reduced;
       Expression approximated;
       e.cloneAndSimplifyAndApproximate(&reduced, &approximated, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation());
@@ -125,7 +125,7 @@ template<typename T>
 void assert_expression_simplifies_approximates_to(const char * expression, const char * approximation, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits : numberOfDigits;
-  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ExpressionNode::ReductionContext reductionContext) {
+  assert_parsed_expression_process_to(expression, approximation, SystemForApproximation, complexFormat, angleUnit, unitFormat, ReplaceAllSymbolsWithDefinitionsOrUndefined, DefaultUnitConversion, [](Expression e, ReductionContext reductionContext) {
       e = e.cloneAndSimplify(reductionContext);
       return e.approximate<T>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     }, numberOfDigits);

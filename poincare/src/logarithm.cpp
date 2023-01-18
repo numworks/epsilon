@@ -38,7 +38,7 @@ int LogarithmNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Logarithm::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression LogarithmNode::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression LogarithmNode::shallowReduce(const ReductionContext& reductionContext) {
   return Logarithm(this).shallowReduce(reductionContext);
 }
 
@@ -81,7 +81,7 @@ template<typename U> Evaluation<U> LogarithmNode::templatedApproximate(const App
       });
 }
 
-void Logarithm::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
+void Logarithm::deepReduceChildren(const ReductionContext& reductionContext) {
   assert(numberOfChildren() == 2);
   /* We reduce the base first because of the case log(x1^y, x2) with x1 == x2.
    * When reducing x1^y, we want to be able to compare x1 of x2 so x2 need to be
@@ -90,7 +90,7 @@ void Logarithm::deepReduceChildren(const ExpressionNode::ReductionContext& reduc
   childAtIndex(0).deepReduce(reductionContext);
 }
 
-Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
   if (numberOfChildren() == 1) {
     Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
     replaceWithInPlace(log);
@@ -221,7 +221,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
   return *this;
 }
 
-Expression Logarithm::simpleShallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Logarithm::simpleShallowReduce(const ReductionContext& reductionContext) {
   assert(numberOfChildren() == 2);
   Expression c = childAtIndex(0);
   Expression b = childAtIndex(1);
@@ -290,7 +290,7 @@ Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base
   return i;
 }
 
-bool Logarithm::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool Logarithm::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   assert(numberOfChildren() == 2);
   {
     Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
@@ -309,7 +309,7 @@ bool Logarithm::derivate(const ExpressionNode::ReductionContext& reductionContex
   return true;
 }
 
-Expression Logarithm::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Logarithm::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   assert(numberOfChildren() == 2);
   /* log(x, b)` = (ln(x)/ln(b))`
    *            = 1 / (x * ln(b))
@@ -317,7 +317,7 @@ Expression Logarithm::unaryFunctionDifferential(const ExpressionNode::ReductionC
   return Power::Builder(Multiplication::Builder(childAtIndex(0).clone(), NaperianLogarithm::Builder(childAtIndex(1).clone())), Rational::Builder(-1));
 }
 
-Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, const ExpressionNode::ReductionContext& reductionContext) {
+Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, const ReductionContext& reductionContext) {
   assert(numberOfChildren() == 2);
   assert(!i.isZero());
   assert(!i.isNegative());

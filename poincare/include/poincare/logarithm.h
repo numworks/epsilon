@@ -54,16 +54,16 @@ class Logarithm final : public ExpressionUpToTwoChildren<Logarithm, LogarithmNod
   friend class LogarithmNode;
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
   Expression shallowBeautify();
-  bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
-  Expression unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext);
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+  Expression unaryFunctionDifferential(const ReductionContext& reductionContext);
 
 private:
-  void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext);
-  Expression simpleShallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  void deepReduceChildren(const ReductionContext& reductionContext);
+  Expression simpleShallowReduce(const ReductionContext& reductionContext);
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
-  Expression splitLogarithmInteger(Integer i, bool isDenominator, const ExpressionNode::ReductionContext& reductionContext);
+  Expression splitLogarithmInteger(Integer i, bool isDenominator, const ReductionContext& reductionContext);
   bool parentIsAPowerOfSameBase() const;
 };
 

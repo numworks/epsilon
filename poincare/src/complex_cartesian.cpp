@@ -60,7 +60,7 @@ Complex<T> ComplexCartesianNode::templatedApproximate(const ApproximationContext
   return Complex<T>::Builder(a.real(), b.real());
 }
 
-Expression ComplexCartesian::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ComplexCartesian::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
@@ -80,7 +80,7 @@ Expression ComplexCartesian::shallowReduce(ExpressionNode::ReductionContext redu
   return *this;
 }
 
-Expression ComplexCartesian::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ComplexCartesian::shallowBeautify(const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(reductionContext);
@@ -97,7 +97,7 @@ Expression ComplexCartesian::shallowBeautify(const ExpressionNode::ReductionCont
   return e;
 }
 
-void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, const ExpressionNode::ReductionContext& reductionContext) {
+void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, const ReductionContext& reductionContext) {
   if (e.type() == searchedType) {
     *factor = Rational::Builder(1);
     *argument = e.childAtIndex(0);
@@ -119,7 +119,7 @@ void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode:
   }
 }
 
-Expression ComplexCartesian::squareNorm(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ComplexCartesian::squareNorm(const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   Expression aFactor, bFactor, aArgument, bArgument;
@@ -138,7 +138,7 @@ Expression ComplexCartesian::squareNorm(const ExpressionNode::ReductionContext& 
   return std::move(add);
 }
 
-Expression ComplexCartesian::norm(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ComplexCartesian::norm(const ReductionContext& reductionContext) {
   Expression a;
   // Special case for pure real or pure imaginary cartesian
   if (imag().isNull(reductionContext.context()) == TrinaryBoolean::True) {
@@ -159,7 +159,7 @@ Expression ComplexCartesian::norm(const ExpressionNode::ReductionContext& reduct
   return n;
 }
 
-Expression ComplexCartesian::argument(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ComplexCartesian::argument(const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   if (b.isNull(reductionContext.context()) != TrinaryBoolean::True) {
@@ -193,7 +193,7 @@ Expression ComplexCartesian::argument(const ExpressionNode::ReductionContext& re
   }
 }
 
-ComplexCartesian ComplexCartesian::inverse(const ExpressionNode::ReductionContext& reductionContext) {
+ComplexCartesian ComplexCartesian::inverse(const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   // 1/(a+ib) = a/(a^2+b^2)+i*(-b/(a^2+b^2))
@@ -215,7 +215,7 @@ ComplexCartesian ComplexCartesian::inverse(const ExpressionNode::ReductionContex
   return result.interruptComputationIfManyNodes();
 }
 
-Multiplication ComplexCartesian::squareRootHelper(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
+Multiplication ComplexCartesian::squareRootHelper(Expression e, const ReductionContext& reductionContext) {
   //(1/2)*sqrt(2*e)
   Multiplication doubleE = Multiplication::Builder(Rational::Builder(2), e);
   e.shallowReduce(reductionContext);
@@ -226,7 +226,7 @@ Multiplication ComplexCartesian::squareRootHelper(Expression e, const Expression
   return result;
 }
 
-ComplexCartesian ComplexCartesian::squareRoot(const ExpressionNode::ReductionContext& reductionContext) {
+ComplexCartesian ComplexCartesian::squareRoot(const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   // A: (1/2)*sqrt(2*(sqrt(a^2+b^2)+a))
@@ -252,7 +252,7 @@ ComplexCartesian ComplexCartesian::squareRoot(const ExpressionNode::ReductionCon
 }
 
 
-ComplexCartesian ComplexCartesian::powerInteger(int n, const ExpressionNode::ReductionContext& reductionContext) {
+ComplexCartesian ComplexCartesian::powerInteger(int n, const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   assert(n > 0);
@@ -311,7 +311,7 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, const ExpressionNode::Red
   return result;
 }
 
-ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, const ExpressionNode::ReductionContext& reductionContext) {
+ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   Expression c = other.real();
@@ -335,14 +335,14 @@ ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, const Expr
   return result.interruptComputationIfManyNodes();
 }
 
-Expression ComplexCartesian::powerHelper(Expression norm, Expression trigo, const ExpressionNode::ReductionContext& reductionContext) {
+Expression ComplexCartesian::powerHelper(Expression norm, Expression trigo, const ReductionContext& reductionContext) {
   Multiplication m = Multiplication::Builder(norm, trigo);
   norm.shallowReduce(reductionContext);
   trigo.shallowReduce(reductionContext);
   return std::move(m);
 }
 
-ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, const ExpressionNode::ReductionContext& reductionContext) {
+ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, const ReductionContext& reductionContext) {
   Expression r = clone().convert<ComplexCartesian>().norm(reductionContext);
   Expression rclone = r.clone();
   Expression th = argument(reductionContext);

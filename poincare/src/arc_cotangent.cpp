@@ -35,7 +35,7 @@ Expression ArcCotangentNode::shallowReduce(const ReductionContext& reductionCont
   return Trigonometry::shallowReduceInverseAdvancedFunction(e, reductionContext);
 }
 
-bool ArcCotangentNode::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcCotangentNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return ArcCotangent(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -43,12 +43,12 @@ Expression ArcCotangentNode::unaryFunctionDifferential(const ReductionContext& r
   return ArcCotangent(this).unaryFunctionDifferential(reductionContext);
 }
 
-bool ArcCotangent::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcCotangent::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression ArcCotangent::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ArcCotangent::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Multiplication::Builder(
     Power::Builder(
       Multiplication::Builder(

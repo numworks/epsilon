@@ -104,7 +104,7 @@ ConstantNode::ConstantInfo Constant::ConstantInfoFromName(const char * name, int
   return ConstantNode::ConstantInfo("", -1);
 }
 
-Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Constant::shallowReduce(ReductionContext reductionContext) {
   ConstantNode::ConstantInfo info = constantInfo();
   if (isConstant("e", info) || isConstant("π", info)) {
     return *this;
@@ -113,7 +113,7 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
   if (isConstant("i", info)) {
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       result = Nonreal::Builder();
-    } else if (reductionContext.target() == ExpressionNode::ReductionTarget::User) {
+    } else if (reductionContext.target() == ReductionTarget::User) {
       result = ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(1));
     } else {
       return *this;
@@ -129,7 +129,7 @@ Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result;
 }
 
-bool Constant::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool Constant::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   ConstantNode::ConstantInfo info = constantInfo();
   if (info.unit() == nullptr && !std::isnan(info.value())) {
     replaceWithInPlace(Rational::Builder(0));

@@ -31,7 +31,7 @@ Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>::Builder(std::conj(c));
 }
 
-Expression Conjugate::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Conjugate::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

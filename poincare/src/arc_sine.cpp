@@ -28,7 +28,7 @@ Expression ArcSineNode::shallowReduce(const ReductionContext& reductionContext) 
   return Trigonometry::shallowReduceInverseFunction(e, reductionContext);
 }
 
-bool ArcSineNode::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcSineNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return ArcSine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
@@ -61,12 +61,12 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::C
   return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-bool ArcSine::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcSine::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
   return true;
 }
 
-Expression ArcSine::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ArcSine::unaryFunctionDifferential(const ReductionContext& reductionContext) {
   return Power::Builder(
       Multiplication::Builder(
         Trigonometry::UnitConversionFactor(

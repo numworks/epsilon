@@ -70,7 +70,7 @@ private:
 class Division final : public ExpressionTwoChildren<Division, DivisionNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

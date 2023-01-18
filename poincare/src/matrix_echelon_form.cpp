@@ -35,7 +35,7 @@ Evaluation<T> MatrixEchelonFormNode::templatedApproximate(const ApproximationCon
 }
 
 
-Expression MatrixEchelonForm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression MatrixEchelonForm::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

@@ -53,7 +53,7 @@ Expression ListSequence::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2));
 }
 
-Expression ListSequence::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListSequence::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

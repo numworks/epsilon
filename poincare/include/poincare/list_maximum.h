@@ -33,7 +33,7 @@ private:
 class ListMaximum : public ExpressionOneChild<ListMaximum, ListMaximumNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

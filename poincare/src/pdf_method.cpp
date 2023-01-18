@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-Expression PDFMethod::shallowReduce(Expression * abscissae, const Distribution * distribution, Expression * parameters, ExpressionNode::ReductionContext reductionContext, Expression * expression) const {
+Expression PDFMethod::shallowReduce(Expression * abscissae, const Distribution * distribution, Expression * parameters, ReductionContext reductionContext, Expression * expression) const {
   Expression x = abscissae[0];
 
   if (x.type() == ExpressionNode::Type::Infinity) {

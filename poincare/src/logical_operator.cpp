@@ -72,7 +72,7 @@ Expression LogicalOperatorNotNode::shallowReduce(const ReductionContext& reducti
   return LogicalOperatorNot(this).shallowReduce(reductionContext);
 }
 
-Expression LogicalOperatorNot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression LogicalOperatorNot::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
@@ -174,7 +174,7 @@ Expression BinaryLogicalOperatorNode::shallowReduce(const ReductionContext& redu
   return BinaryLogicalOperator(this).shallowReduce(reductionContext);
 }
 
-Expression BinaryLogicalOperator::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression BinaryLogicalOperator::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

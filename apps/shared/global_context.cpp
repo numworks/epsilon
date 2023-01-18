@@ -153,7 +153,7 @@ const Expression GlobalContext::expressionForSequence(const SymbolAbstract & sym
   Sequence seq(r);
   Expression rank = symbol.childAtIndex(0).clone();
   bool rankIsInteger = false;
-  PoincareHelpers::CloneAndSimplify(&rank, ctx, ExpressionNode::ReductionTarget::SystemForApproximation);
+  PoincareHelpers::CloneAndSimplify(&rank, ctx, ReductionTarget::SystemForApproximation);
   double rankValue = PoincareHelpers::ApproximateToScalar<double>(rank, ctx);
   if (rank.type() == ExpressionNode::Type::Rational) {
     Rational n = static_cast<Rational &>(rank);
@@ -172,7 +172,7 @@ const Expression GlobalContext::expressionForSequence(const SymbolAbstract & sym
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
   Expression expressionToStore = expression;
-  PoincareHelpers::CloneAndSimplify(&expressionToStore, this, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  PoincareHelpers::CloneAndSimplify(&expressionToStore, this, ReductionTarget::User, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   // Do not store exact derivative, etc.
   if (ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(expression, expressionToStore, this)) {
     /* "approximateKeepingUnits" is called because the expression might contain
@@ -180,7 +180,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(co
      */
     Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
     Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionToStore, this);
-    expressionToStore = expressionToStore.approximateKeepingUnits<double>(Poincare::ExpressionNode::ReductionContext(this, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, Poincare::ExpressionNode::UnitConversion::Default));
+    expressionToStore = expressionToStore.approximateKeepingUnits<double>(Poincare::ReductionContext(this, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ReductionTarget::User, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, Poincare::UnitConversion::Default));
   }
   ExpressionNode::Type type = expressionToStore.type();
   const char * extension;

@@ -17,14 +17,14 @@ using namespace Shared;
 
 namespace Solver {
 
-bool Equation::containsIComplex(Context * context, ExpressionNode::SymbolicComputation replaceSymbols) const {
+bool Equation::containsIComplex(Context * context, SymbolicComputation replaceSymbols) const {
   return expressionClone().hasComplexI(context, replaceSymbols);
 }
 
-Expression Equation::Model::standardForm(const Storage::Record * record, Context * context, bool replaceFunctionsButNotSymbols, ExpressionNode::ReductionTarget reductionTarget) const {
+Expression Equation::Model::standardForm(const Storage::Record * record, Context * context, bool replaceFunctionsButNotSymbols, ReductionTarget reductionTarget) const {
   Expression returnedExpression = Expression();
   // In any case, undefined symbols must be preserved.
-  ExpressionNode::SymbolicComputation symbolicComputation = replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+  SymbolicComputation symbolicComputation = replaceFunctionsButNotSymbols ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
   Expression expressionInputWithoutFunctions = Expression::ExpressionWithoutSymbols(expressionClone(record), context, symbolicComputation);
   if (expressionInputWithoutFunctions.isUninitialized()) {
     // The expression is circularly-defined
@@ -49,7 +49,7 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
   } else if (ComparisonNode::IsBinaryEquality(simplifiedInput)) {
     Preferences * preferences = Preferences::sharedPreferences();
     returnedExpression = Subtraction::Builder(simplifiedInput.childAtIndex(0), simplifiedInput.childAtIndex(1));
-    returnedExpression = returnedExpression.cloneAndReduce(ExpressionNode::ReductionContext(contextToUse, Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget));
+    returnedExpression = returnedExpression.cloneAndReduce(ReductionContext(contextToUse, Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget));
   } else {
     assert(simplifiedInput.type() == ExpressionNode::Type::Boolean || simplifiedInput.type() == ExpressionNode::Type::List);
     /* The equality has disappeared after reduction. This may be because:

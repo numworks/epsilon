@@ -76,25 +76,25 @@ public:
   template<typename T> static int ArrayInverse(T * array, int numberOfRows, int numberOfColumns);
   static Matrix CreateIdentity(int dim);
   Matrix createTranspose() const;
-  Expression createRef(const ExpressionNode::ReductionContext& reductionContext, bool * couldComputeRef, bool reduced) const;
+  Expression createRef(const ReductionContext& reductionContext, bool * couldComputeRef, bool reduced) const;
   /* createInverse can be called on any matrix, reduced or not, approximated or
    * not. */
-  Expression createInverse(const ExpressionNode::ReductionContext& reductionContext, bool * couldComputeInverse) const;
-  Expression determinant(const ExpressionNode::ReductionContext& reductionContext, bool * couldComputeDeterminant, bool inPlace);
-  Expression norm(const ExpressionNode::ReductionContext& reductionContext) const;
-  Expression dot(Matrix * b, const ExpressionNode::ReductionContext& reductionContext) const;
-  Matrix cross(Matrix * b, const ExpressionNode::ReductionContext& reductionContext) const;
+  Expression createInverse(const ReductionContext& reductionContext, bool * couldComputeInverse) const;
+  Expression determinant(const ReductionContext& reductionContext, bool * couldComputeDeterminant, bool inPlace);
+  Expression norm(const ReductionContext& reductionContext) const;
+  Expression dot(Matrix * b, const ReductionContext& reductionContext) const;
+  Matrix cross(Matrix * b, const ReductionContext& reductionContext) const;
 
   // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 
 private:
   MatrixNode * node() const { return static_cast<MatrixNode *>(Expression::node()); }
   void setNumberOfRows(int rows) { node()->setNumberOfRows(rows); }
   void setNumberOfColumns(int columns) { node()->setNumberOfColumns(columns); }
-  Expression computeInverseOrDeterminant(bool computeDeterminant, const ExpressionNode::ReductionContext& reductionContext, bool * couldCompute) const;
+  Expression computeInverseOrDeterminant(bool computeDeterminant, const ReductionContext& reductionContext, bool * couldCompute) const;
   // rowCanonize turns a matrix in its row echelon form, reduced or not.
-  Matrix rowCanonize(const ExpressionNode::ReductionContext& reductionContext, Expression * determinant, bool reduced = true);
+  Matrix rowCanonize(const ReductionContext& reductionContext, Expression * determinant, bool reduced = true);
   // Row canonize the array in place
   template<typename T> static void ArrayRowCanonize(T * array, int numberOfRows, int numberOfColumns, T * c = nullptr, bool reduced = true);
 

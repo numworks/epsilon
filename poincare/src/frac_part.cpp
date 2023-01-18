@@ -30,7 +30,7 @@ Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c, Preferences::
 }
 
 
-Expression FracPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression FracPart::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

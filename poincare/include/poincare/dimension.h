@@ -38,7 +38,7 @@ private:
 class Dimension final : public ExpressionOneChild<Dimension, DimensionNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

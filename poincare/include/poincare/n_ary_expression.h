@@ -52,7 +52,7 @@ protected:
     node()->sortChildrenInPlace(order, context, canSwapMatrices, canContainMatrices);
   }
   NAryExpressionNode * node() const { return static_cast<NAryExpressionNode *>(Expression::node()); }
-  Expression checkChildrenAreRationalIntegersAndUpdate(const ExpressionNode::ReductionContext& reductionContext);
+  Expression checkChildrenAreRationalIntegersAndUpdate(const ReductionContext& reductionContext);
 };
 
 }

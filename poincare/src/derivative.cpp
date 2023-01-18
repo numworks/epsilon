@@ -199,10 +199,10 @@ T DerivativeNode::riddersApproximation(int order, const ApproximationContext& ap
   return ans;
 }
 
-void Derivative::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
+void Derivative::deepReduceChildren(const ReductionContext& reductionContext) {
   /* First child is reduced with target SystemForAnalysis */
-  ExpressionNode::ReductionContext childContext = reductionContext;
-  childContext.setTarget(ExpressionNode::ReductionTarget::SystemForAnalysis);
+  ReductionContext childContext = reductionContext;
+  childContext.setTarget(ReductionTarget::SystemForAnalysis);
   childAtIndex(0).deepReduce(childContext);
 
   /* Other children are reduced with the same reduction target as the parent */
@@ -213,7 +213,7 @@ void Derivative::deepReduceChildren(const ExpressionNode::ReductionContext& redu
   }
 }
 
-Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Derivative::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
@@ -254,8 +254,8 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
    * This will not impact the function derivate since it only
    * use the angle unit of the reduction context, but it will
    * impact the function deepReduce */
-  ExpressionNode::ReductionTarget initialTarget = reductionContext.target();
-  reductionContext.setTarget(ExpressionNode::ReductionTarget::SystemForAnalysis);
+  ReductionTarget initialTarget = reductionContext.target();
+  reductionContext.setTarget(ReductionTarget::SystemForAnalysis);
 
   int currentDerivationOrder = derivationOrder;
   /* Since derivand is a child to the derivative node, it can be replaced in
@@ -309,7 +309,7 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   return d.shallowReduce(reductionContext);
 }
 
-void Derivative::DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, const ExpressionNode::ReductionContext& reductionContext) {
+void Derivative::DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, const ReductionContext& reductionContext) {
   {
     Expression e = Derivative::DefaultDerivate(function, reductionContext, symbol);
     if (!e.isUninitialized()) {
@@ -323,7 +323,7 @@ void Derivative::DerivateUnaryFunction(Expression function, Symbol symbol, Expre
   function.replaceWithInPlace(Multiplication::Builder(df, dg));
 }
 
-Expression Derivative::DefaultDerivate(Expression function, const ExpressionNode::ReductionContext& reductionContext, Symbol symbol) {
+Expression Derivative::DefaultDerivate(Expression function, const ReductionContext& reductionContext, Symbol symbol) {
   int polynomialDegree = function.polynomialDegree(reductionContext.context(), symbol.name());
   if (polynomialDegree == 0) {
     Expression result = Rational::Builder(0);

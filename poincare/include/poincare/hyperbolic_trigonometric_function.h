@@ -24,7 +24,7 @@ private:
 class HyperbolicTrigonometricFunction : public Expression {
 public:
   HyperbolicTrigonometricFunction(const HyperbolicTrigonometricFunctionNode * n) : Expression(n) {}
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 private:
   HyperbolicTrigonometricFunctionNode * node() const { return static_cast<HyperbolicTrigonometricFunctionNode *>(Expression::node()); }
 };

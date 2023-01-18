@@ -85,7 +85,7 @@ void EquationStore::setIntervalBound(int index, double value) {
 
 void EquationStore::approximateSolve(Poincare::Context * context, bool shouldReplaceFunctionsButNotSymbols) {
   m_hasMoreThanMaxNumberOfApproximateSolution = false;
-  Expression undevelopedExpression = modelForRecord(definedRecordAtIndex(0))->standardForm(context, shouldReplaceFunctionsButNotSymbols, ExpressionNode::ReductionTarget::SystemForApproximation);
+  Expression undevelopedExpression = modelForRecord(definedRecordAtIndex(0))->standardForm(context, shouldReplaceFunctionsButNotSymbols, ReductionTarget::SystemForApproximation);
   m_userVariablesUsed = !shouldReplaceFunctionsButNotSymbols;
   assert(m_variables[0][0] != 0 && m_variables[1][0] == 0);
   assert(m_type == Type::Monovariable);
@@ -156,7 +156,7 @@ EquationStore::Error EquationStore::exactSolve(Poincare::Context * context, bool
 
 EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * context, bool replaceFunctionsButNotSymbols) {
   m_userVariablesUsed = !replaceFunctionsButNotSymbols;
-  ExpressionNode::SymbolicComputation symbolicComputation = replaceFunctionsButNotSymbols ? ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+  SymbolicComputation symbolicComputation = replaceFunctionsButNotSymbols ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
 
   // Step 1. Get unknown and user-defined variables
   m_variables[0][0] = 0;
@@ -174,7 +174,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
     /* Start by looking for user variables, so that if we escape afterwards, we
      * know  if it might be due to a user variable. */
     if (m_numberOfUserVariables < Expression::k_maxNumberOfVariables) {
-      const Expression eWithSymbols = eq->standardForm(context, true, ExpressionNode::ReductionTarget::SystemForAnalysis);
+      const Expression eWithSymbols = eq->standardForm(context, true, ReductionTarget::SystemForAnalysis);
       /* If replaceFunctionsButNotSymbols is true we can memoize the expressions
        * for the rest of the function. Otherwise, we will memoize them at the
        * next call to standardForm */
@@ -186,7 +186,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
     }
     if (simplifiedExpressions[i].isUninitialized()) {
       // The expression was not memoized before.
-      simplifiedExpressions[i] = eq->standardForm(context, replaceFunctionsButNotSymbols, ExpressionNode::ReductionTarget::SystemForAnalysis);
+      simplifiedExpressions[i] = eq->standardForm(context, replaceFunctionsButNotSymbols, ReductionTarget::SystemForAnalysis);
     }
     const Expression e = simplifiedExpressions[i];
     if (e.isUninitialized() || e.type() == ExpressionNode::Type::Undefined || e.recursivelyMatches(Expression::IsMatrix, context, symbolicComputation)) {
@@ -363,7 +363,7 @@ EquationStore::Error EquationStore::oneDimensionalPolynomialSolve(Expression exa
   /* Equation ax^2+bx+c = 0 */
   Expression delta;
   bool solutionsAreApproximated = false;
-  ExpressionNode::ReductionContext reductionContext(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User);
+  ReductionContext reductionContext(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ReductionTarget::User);
   if (m_degree == 2) {
     m_numberOfSolutions = Poincare::Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], exactSolutions, exactSolutions + 1, &delta, reductionContext);
   } else {
@@ -405,7 +405,7 @@ bool EquationStore::isExplicitlyComplex(Context * context) {
   int definedModelsTotal = numberOfDefinedModels();
   for (int i = 0; i < definedModelsTotal; i++) {
     // Ignore defined symbols if user variables are not used
-    if (modelForRecord(definedRecordAtIndex(i))->containsIComplex(context, m_userVariablesUsed ? ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition : ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions)) {
+    if (modelForRecord(definedRecordAtIndex(i))->containsIComplex(context, m_userVariablesUsed ? SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition : SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions)) {
       return true;
     }
   }

@@ -109,7 +109,7 @@ template<typename T> Evaluation<T> ListAccessNode<2>::templatedApproximate(const
   return std::move(returnList);
 }
 
-Expression ListElement::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListElement::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
     if (!e.isUninitialized()) {
@@ -143,7 +143,7 @@ Expression ListElement::shallowReduce(ExpressionNode::ReductionContext reduction
   return element;
 }
 
-Expression ListSlice::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression ListSlice::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
     if (!e.isUninitialized()) {

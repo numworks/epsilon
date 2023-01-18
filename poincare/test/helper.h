@@ -15,17 +15,17 @@ const char * BigOverflowedIntegerString(); // OverflowedIntegerString with a 2 o
 const char * MaxParsedIntegerString();
 const char * ApproximatedParsedIntegerString();
 
-constexpr Poincare::ExpressionNode::ReductionTarget SystemForApproximation = Poincare::ExpressionNode::ReductionTarget::SystemForApproximation;
-constexpr Poincare::ExpressionNode::ReductionTarget SystemForAnalysis = Poincare::ExpressionNode::ReductionTarget::SystemForAnalysis;
-constexpr Poincare::ExpressionNode::ReductionTarget User = Poincare::ExpressionNode::ReductionTarget::User;
-constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceAllDefinedSymbolsWithDefinition = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceAllSymbolsWithDefinitionsOrUndefined = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
-constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceDefinedFunctionsWithDefinitions = Poincare::ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
-constexpr Poincare::ExpressionNode::SymbolicComputation ReplaceAllSymbolsWithUndefined = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined;
-constexpr Poincare::ExpressionNode::SymbolicComputation DoNotReplaceAnySymbol = Poincare::ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
-constexpr Poincare::ExpressionNode::UnitConversion NoUnitConversion = Poincare::ExpressionNode::UnitConversion::None;
-constexpr Poincare::ExpressionNode::UnitConversion DefaultUnitConversion = Poincare::ExpressionNode::UnitConversion::Default;
-constexpr Poincare::ExpressionNode::UnitConversion InternationalSystemUnitConversion = Poincare::ExpressionNode::UnitConversion::InternationalSystem;
+constexpr Poincare::ReductionTarget SystemForApproximation = Poincare::ReductionTarget::SystemForApproximation;
+constexpr Poincare::ReductionTarget SystemForAnalysis = Poincare::ReductionTarget::SystemForAnalysis;
+constexpr Poincare::ReductionTarget User = Poincare::ReductionTarget::User;
+constexpr Poincare::SymbolicComputation ReplaceAllDefinedSymbolsWithDefinition = Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+constexpr Poincare::SymbolicComputation ReplaceAllSymbolsWithDefinitionsOrUndefined = Poincare::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
+constexpr Poincare::SymbolicComputation ReplaceDefinedFunctionsWithDefinitions = Poincare::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions;
+constexpr Poincare::SymbolicComputation ReplaceAllSymbolsWithUndefined = Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined;
+constexpr Poincare::SymbolicComputation DoNotReplaceAnySymbol = Poincare::SymbolicComputation::DoNotReplaceAnySymbol;
+constexpr Poincare::UnitConversion NoUnitConversion = Poincare::UnitConversion::None;
+constexpr Poincare::UnitConversion DefaultUnitConversion = Poincare::UnitConversion::Default;
+constexpr Poincare::UnitConversion InternationalSystemUnitConversion = Poincare::UnitConversion::InternationalSystem;
 constexpr Poincare::Preferences::AngleUnit Radian = Poincare::Preferences::AngleUnit::Radian;
 constexpr Poincare::Preferences::AngleUnit Degree = Poincare::Preferences::AngleUnit::Degree;
 constexpr Poincare::Preferences::AngleUnit Gradian = Poincare::Preferences::AngleUnit::Gradian;
@@ -41,9 +41,9 @@ constexpr Poincare::Preferences::PrintFloatMode EngineeringMode = Poincare::Pref
 void quiz_assert_print_if_failure(bool test, const char * information);
 void quiz_assert_log_if_failure(bool test, Poincare::TreeHandle tree);
 
-typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::ExpressionNode::ReductionContext reductionContext);
+typedef Poincare::Expression (*ProcessExpression)(Poincare::Expression, Poincare::ReductionContext reductionContext);
 
-void assert_parsed_expression_process_to(const char * expression, const char * result, Poincare::ExpressionNode::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::Preferences::UnitFormat unitFormat, Poincare::ExpressionNode::SymbolicComputation symbolicComputation, Poincare::ExpressionNode::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+void assert_parsed_expression_process_to(const char * expression, const char * result, Poincare::ReductionTarget target, Poincare::Preferences::ComplexFormat complexFormat, Poincare::Preferences::AngleUnit angleUnit, Poincare::Preferences::UnitFormat unitFormat, Poincare::SymbolicComputation symbolicComputation, Poincare::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
 
 // Parsing
 
@@ -51,11 +51,11 @@ Poincare::Expression parse_expression(const char * expression, Poincare::Context
 
 // Simplification
 
-void assert_reduce_and_store(const char * expression, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, Poincare::ExpressionNode::ReductionTarget target = User);
+void assert_reduce_and_store(const char * expression, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, Poincare::ReductionTarget target = User);
 
-void assert_expression_reduce(Poincare::Expression expression, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, Poincare::ExpressionNode::ReductionTarget target = User, const char * printIfFailure = "Error");
+void assert_expression_reduce(Poincare::Expression expression, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, Poincare::ReductionTarget target = User, const char * printIfFailure = "Error");
 
-void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Poincare::ExpressionNode::ReductionTarget target = User, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, Poincare::ExpressionNode::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion unitConversion = DefaultUnitConversion);
+void assert_parsed_expression_simplify_to(const char * expression, const char * simplifiedExpression, Poincare::ReductionTarget target = User, Poincare::Preferences::AngleUnit angleUnit = Radian, Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, Poincare::SymbolicComputation symbolicComputation = ReplaceAllDefinedSymbolsWithDefinition, Poincare::UnitConversion unitConversion = DefaultUnitConversion);
 
 // Approximation
 

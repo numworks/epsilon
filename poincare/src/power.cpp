@@ -449,7 +449,7 @@ static int indexOfChildWithSquare(Expression e) {
   return -1;
 }
 
-Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Power::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
@@ -892,7 +892,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
      * SystemForApproximation, as developping would increase the number of
      * operations and thus reduce precision. */
     if (rationalIndex.isInteger() && !rationalIndex.isMinusOne() && !rationalIndex.isZero()
-      && reductionContext.target() != ExpressionNode::ReductionTarget::SystemForApproximation) {
+      && reductionContext.target() != ReductionTarget::SystemForApproximation) {
       Integer n = rationalIndex.unsignedIntegerNumerator();
       /* If n is above 25, the resulting sum would have more than
        * k_maxNumberOfTermsInExpandedMultinome terms so we do not expand it. */
@@ -1090,7 +1090,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   return *this;
 }
 
-Expression Power::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Power::shallowBeautify(const ReductionContext& reductionContext) {
   // Step 1: X^-y -> 1/(X->shallowBeautify)^y
   Expression p = denominator(reductionContext);
   // If the denominator is initialized, the index of the power is of form -y
@@ -1131,7 +1131,7 @@ Expression Power::shallowBeautify(const ExpressionNode::ReductionContext& reduct
   return *this;
 }
 
-bool Power::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool Power::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   {
     Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
     if (!e.isUninitialized()) {
@@ -1157,8 +1157,8 @@ bool Power::derivate(const ExpressionNode::ReductionContext& reductionContext, S
   /* Reduce the derived g, to check for its null status and, if null, prevent
    * using naperian logarithm of f, which rely on the sign of f. Prevent the
    * replacement of any symbols to preserve the local symbols. */
-  ExpressionNode::ReductionContext childContext = reductionContext;
-  childContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+  ReductionContext childContext = reductionContext;
+  childContext.setSymbolicComputation(SymbolicComputation::DoNotReplaceAnySymbol);
   derivedFromExponent.deepReduceChildren(childContext);
   if (derivedFromExponent.childAtIndex(0).isNull(reductionContext.context()) != TrinaryBoolean::True) {
     derivedFromExponent.addChildAtIndexInPlace(NaperianLogarithm::Builder(base.clone()), 1, 1);
@@ -1178,7 +1178,7 @@ bool Power::derivate(const ExpressionNode::ReductionContext& reductionContext, S
   return true;
 }
 
-Power::DependencyType Power::typeOfDependency(const ExpressionNode::ReductionContext& reductionContext) const {
+Power::DependencyType Power::typeOfDependency(const ReductionContext& reductionContext) const {
   /* When a power node is disppearing during reduction, you sometimes
    * have to add a dependency.
    * There are two cases where this is true:
@@ -1213,7 +1213,7 @@ Power::DependencyType Power::typeOfDependency(const ExpressionNode::ReductionCon
   return result;
 }
 
-void Power::AddPowerToListOfDependenciesIfNeeded(Expression e, Power compareTo, List l, const ExpressionNode::ReductionContext& reductionContext, bool clone) {
+void Power::AddPowerToListOfDependenciesIfNeeded(Expression e, Power compareTo, List l, const ReductionContext& reductionContext, bool clone) {
   if (e.type() == ExpressionNode::Type::Power) {
     DependencyType depType = static_cast<Power &>(e).typeOfDependency(reductionContext);
     if (depType != DependencyType::None && depType != compareTo.typeOfDependency(reductionContext)) {
@@ -1240,7 +1240,7 @@ Expression Power::ChainedPowerBuilder(Expression leftSide, Expression rightSide)
 // Private
 
 // Simplification
-Expression Power::denominator(const ExpressionNode::ReductionContext& reductionContext) const {
+Expression Power::denominator(const ReductionContext& reductionContext) const {
   if (childAtIndex(0).type() == ExpressionNode::Type::Unit) {
     return Expression();
   }
@@ -1258,7 +1258,7 @@ Expression Power::denominator(const ExpressionNode::ReductionContext& reductionC
   return pow;
 }
 
-Expression Power::PowerRationalRational(Rational base, Rational index, const ExpressionNode::ReductionContext& reductionContext) {
+Expression Power::PowerRationalRational(Rational base, Rational index, const ReductionContext& reductionContext) {
   assert(!base.numeratorOrDenominatorIsInfinity() && !index.numeratorOrDenominatorIsInfinity());
   /* Handle this case right now to always reduce to Nonreal if needed. */
   if (base.isNegative()) {
@@ -1348,7 +1348,7 @@ Expression Power::PowerRationalRational(Rational base, Rational index, const Exp
   return m.shallowReduce(reductionContext);
 }
 
-Expression Power::PowerIntegerRational(Integer base, Rational index, const ExpressionNode::ReductionContext& reductionContext) {
+Expression Power::PowerIntegerRational(Integer base, Rational index, const ReductionContext& reductionContext) {
   assert(!index.isNegative());
   if (base.isZero()) {
     if (index.isZero()) {
@@ -1434,7 +1434,7 @@ bool Power::IsLogarithmOfBase(const Expression e, const Expression base) {
  * but if so, it needs a rework since for now, this reduces "log(a)+log(b)" into "log(a*b)"
  * but does nothing to "log(a)+log(b)+anything_that_is_not_a_log"
  * */
-Expression Power::ReduceLogarithmLinearCombination(const ExpressionNode::ReductionContext& reductionContext, Expression linearCombination, const Expression base) {
+Expression Power::ReduceLogarithmLinearCombination(const ReductionContext& reductionContext, Expression linearCombination, const Expression base) {
   if (linearCombination.isUninitialized()) {
     return Expression();
   }
@@ -1531,7 +1531,7 @@ bool Power::isNthRootOfUnity() const {
   return n == 2 || index.childAtIndex(0).type() == ExpressionNode::Type::Rational;
 }
 
-Expression Power::CreateComplexExponent(const Expression & r, const ExpressionNode::ReductionContext& reductionContext) {
+Expression Power::CreateComplexExponent(const Expression & r, const ReductionContext& reductionContext) {
   // Returns e^(i*pi*r)
   const Constant exp = Constant::Builder("e");
   Constant iComplex = Constant::Builder("i");
@@ -1588,7 +1588,7 @@ template Complex<float> PowerNode::computeNotPrincipalRealRootOfRationalPow<floa
 template Evaluation<float> Poincare::PowerNode::Compute<float>(Evaluation<float> eval1, Evaluation<float> eval2, Preferences::ComplexFormat complexFormat);
 template Evaluation<double> Poincare::PowerNode::Compute<double>(Evaluation<double> eval1, Evaluation<double> eval2, Preferences::ComplexFormat complexFormat);
 
-template Evaluation<float> Poincare::PowerNode::templatedApproximate<float>(const Poincare::ExpressionNode::ApproximationContext& approximationContext) const;
-template Evaluation<double> Poincare::PowerNode::templatedApproximate<double>(const Poincare::ExpressionNode::ApproximationContext& approximationContext) const;
+template Evaluation<float> Poincare::PowerNode::templatedApproximate<float>(const Poincare::ApproximationContext& approximationContext) const;
+template Evaluation<double> Poincare::PowerNode::templatedApproximate<double>(const Poincare::ApproximationContext& approximationContext) const;
 
 }

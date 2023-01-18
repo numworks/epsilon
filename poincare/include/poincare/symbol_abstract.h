@@ -81,7 +81,7 @@ protected:
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
 
 private:
-  static Expression Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation);
+  static Expression Expand(const SymbolAbstract & symbol, Context * context, bool clone, SymbolicComputation symbolicComputation);
 };
 
 }

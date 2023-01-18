@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-Expression InverseMethod::shallowReduce(Expression * x, const Distribution * distribution, Expression * parameters, ExpressionNode::ReductionContext reductionContext, Expression * expression) const {
+Expression InverseMethod::shallowReduce(Expression * x, const Distribution * distribution, Expression * parameters, ReductionContext reductionContext, Expression * expression) const {
   Expression a = x[0];
   // Check a
   if (a.type() != ExpressionNode::Type::Rational) {

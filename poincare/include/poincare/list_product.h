@@ -33,7 +33,7 @@ private:
 class ListProduct : public ExpressionOneChild<ListProduct, ListProductNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

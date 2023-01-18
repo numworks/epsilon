@@ -62,11 +62,11 @@ size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t le
 
 bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTrinaryTest test, Context * context, void * auxiliary) {
   // Undefined symbols must be preserved.
-  Expression e = SymbolAbstract::Expand(symbol, context, false, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
-  return !e.isUninitialized() && e.recursivelyMatches(test, context, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol, auxiliary);
+  Expression e = SymbolAbstract::Expand(symbol, context, false, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  return !e.isUninitialized() && e.recursivelyMatches(test, context, SymbolicComputation::DoNotReplaceAnySymbol, auxiliary);
 }
 
-Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation) {
+Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, SymbolicComputation symbolicComputation) {
   assert(context);
   Expression e = context->expressionForSymbolAbstract(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when

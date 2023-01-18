@@ -75,15 +75,15 @@ private:
 class PercentSimple : public ExpressionOneChild<PercentSimple, PercentSimpleNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowBeautify(const ReductionContext& reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 class PercentAddition final : public ExpressionTwoChildren<PercentAddition, PercentAdditionNode, PercentSimple> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression deepBeautify(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowBeautify(const ReductionContext& reductionContext);
+  Expression deepBeautify(const ReductionContext& reductionContext);
 };
 
 }

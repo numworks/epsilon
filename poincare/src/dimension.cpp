@@ -41,7 +41,7 @@ Evaluation<T> DimensionNode::templatedApproximate(const ApproximationContext& ap
 }
 
 
-Expression Dimension::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression Dimension::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,

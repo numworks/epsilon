@@ -70,7 +70,7 @@ public:
   using ExpressionBuilder::ExpressionBuilder, ExpressionBuilder::Builder;
   static Subtraction Builder() { return TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(); }
   // Expression
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 
 };
 

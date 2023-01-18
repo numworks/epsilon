@@ -48,7 +48,7 @@ private:
 class ImaginaryPart final : public ExpressionOneChild<ImaginaryPart, ImaginaryPartNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

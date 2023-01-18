@@ -50,7 +50,7 @@ private:
 class NaperianLogarithm final : public ExpressionOneChild<NaperianLogarithm, NaperianLogarithmNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+  Expression shallowReduce(ReductionContext reductionContext);
 };
 
 }

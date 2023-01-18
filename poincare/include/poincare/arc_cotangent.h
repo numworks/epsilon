@@ -52,8 +52,8 @@ public:
    using ExpressionBuilder::ExpressionBuilder;
 
    // Derivation
-   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
-   Expression unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext);
+   bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+   Expression unaryFunctionDifferential(const ReductionContext& reductionContext);
 };
 
 }

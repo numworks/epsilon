@@ -739,9 +739,7 @@ bool AbstractTextField::storeInClipboard() const {
 bool AbstractTextField::handleStoreEvent() {
   if (!isEditing()) {
     Container::activeApp()->storeValue(text());
-    return true;
-  }
-  if (!nonEditableContentView()->selectionIsEmpty()) {
+  } else if (!nonEditableContentView()->selectionIsEmpty()) {
     const char * start = nonEditableContentView()->selectionStart();
     static_assert(TextField::MaxBufferSize() == Escher::Clipboard::k_bufferSize);
     char buffer[Escher::Clipboard::k_bufferSize];

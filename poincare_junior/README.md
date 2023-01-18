@@ -29,7 +29,7 @@ The EditionPool contains the tree that is being edited.
 
 At the end of a procedure, only one single tree exists on the EditionPool but within a procedure editing the tree, the EditionPool can host several trees.
 
-We use EditionReference to interact with Node while they're being edited. EditionReference are an intern tool that should not be available outside Poincare.
+We use EditionReference to interact with Node while they're being edited. EditionReference are an internal tool that should not be available outside Poincare.
 
 
 ## Tree representation
@@ -182,7 +182,7 @@ Optional optimizations:
 - Align float and double by letting empty blocks
 - Create special type for common integer INT_ONE or INT_SHORT
 
-Instead of stocking meta data in a header AND a footer we could store them only in a header and suffix nodes with their length. This means that all nodes are at least 2-lock long but variable-sized nodes are shorter (integer, string...)
+Instead of stocking meta data in a header AND a footer we could store them only in a header and suffix nodes with their length. This means that all nodes are at least 2-block long but variable-sized nodes are shorter (integer, string...)
 
 Cache invalidation:
 
@@ -191,7 +191,7 @@ When trying to push on sandbox the block that overflows, the sandbox automatical
 --> This means that tree block addresses might become invalid without any notice in tree-manipulating function...
 
 Attempt 2:
-When trying to push the overflowing block on the sandbox, it raises an exception. All entry points of Poincaré are wrapted by an handler doing:
+When trying to push the overflowing block on the sandbox, it raises an exception. All entry points of Poincaré are wrapped by an handler doing:
 void cacheHandler(action) {
   if (setCheckpoint) {
     action()

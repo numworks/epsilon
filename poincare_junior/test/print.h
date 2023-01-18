@@ -6,25 +6,12 @@
 
 #if POINCARE_MEMORY_TREE_LOG
 #include <iostream>
-#else
-
-class DummyStream {
-public:
-  template <typename T>
-  DummyStream & operator<<(const T& any) { return *this; }
-};
-
-namespace std {
-static DummyStream cout;
-static char endl = '\n';
-}
-
 #endif
 
 using namespace PoincareJ;
 
 inline EditionReference createSimpleExpression() {
-  std::cout << "\n---------------- Create (1 + 2) * 3 * 4 ----------------" << std::endl;
+  std::cout << "\n--- Create (1 + 2) * 3 * (4 + 5) ---" << std::endl;
   EditionReference multiplication = EditionReference::Push<BlockType::Multiplication>(3);
   EditionReference::Push<BlockType::Addition>(2);
   EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));

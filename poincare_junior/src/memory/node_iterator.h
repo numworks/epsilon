@@ -54,7 +54,7 @@ protected: // templates force us to define some protected classes firstA
   class Iterator : private DirectionPolicy, private EditablePolicy {
   public:
     typedef typename EditablePolicy::NodeType NodeType;
-    typedef std::array<NodeType ,N> ArrayType;
+    typedef std::array<NodeType, N> ArrayType;
 
     Iterator(ArrayType array, int index) : m_array(array), m_index(index) {}
     std::pair<ArrayType, int> operator*() { return std::pair(convertToArrayType(convertFromArrayType(m_array, offset())), m_index); }
@@ -83,7 +83,7 @@ public:
   class ChildrenScanner : private DirectionPolicy, private EditablePolicy {
   public:
     typedef typename EditablePolicy::NodeType NodeType;
-    typedef std::array<NodeType ,N> ArrayType;
+    typedef std::array<NodeType, N> ArrayType;
 
     ChildrenScanner(ArrayType array) : m_array(array) {}
     Iterator<DirectionPolicy, EditablePolicy, N> begin() const { return Iterator<DirectionPolicy, EditablePolicy, N>(convertToArrayType(firstElement(convertFromArrayType(m_array)), offset()), 0); }
@@ -212,7 +212,7 @@ public:
     typedef typename EditablePolicy::NodeType NodeType;
     ChildrenScanner(NodeType node) : m_scanner(std::array<NodeType, 1>({node})) {}
     Iterator<DirectionPolicy, EditablePolicy> begin() const { return Iterator<DirectionPolicy, EditablePolicy>(m_scanner.begin()); }
-    Iterator<DirectionPolicy, EditablePolicy>  end() const { return Iterator<DirectionPolicy, EditablePolicy>(m_scanner.end()); }
+    Iterator<DirectionPolicy, EditablePolicy> end() const { return Iterator<DirectionPolicy, EditablePolicy>(m_scanner.end()); }
   protected:
     MultipleNodesIterator::ChildrenScanner<DirectionPolicy, EditablePolicy, 1> m_scanner;
   };

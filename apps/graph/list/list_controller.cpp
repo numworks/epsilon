@@ -173,7 +173,7 @@ bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     const char * text = textField->text();
     Poincare::Expression e = Poincare::Expression::Parse(text, App::app()->localContext());
-    if (!Poincare::ComparisonNode::IsEquation(e)) {
+    if (!Poincare::ComparisonNode::IsComparisonWithoutNotEqualOperator(e)) {
       // Inserted text must be an equation
       textField->setCursorLocation(text);
       CodePoint symbol = textRepresentsPolarFunction(text)

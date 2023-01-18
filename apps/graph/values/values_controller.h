@@ -16,7 +16,7 @@
 
 namespace Graph {
 
-class ValuesController : public Shared::ValuesController, public Escher::SelectableTableViewDelegate, public Shared::PrefacedTableViewDelegate {
+class ValuesController : public Shared::ValuesController, public Shared::PrefacedTableViewDelegate {
 public:
   ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, FunctionParameterController * functionParameterController);
   bool displayButtonExactValues() const;

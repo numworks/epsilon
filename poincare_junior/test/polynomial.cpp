@@ -28,9 +28,9 @@ void testPolynomialParsing() {
     );
 
   assert_polynomial_is_parsed(
-      /* π^1.2 */ Pow(u'π'_n, 1.2_fn),
-      /* variables = {π^1.2} */ Set(Pow(u'π'_n, 1.2_fn)),
-      /* polynomial */ Pol({1}, Pow(u'π'_n, 1.2_fn), "1"_n)
+      /* π^1.2 */ Pow(u'π'_n, 1.2_n),
+      /* variables = {π^1.2} */ Set(Pow(u'π'_n, 1.2_n)),
+      /* polynomial */ Pol({1}, Pow(u'π'_n, 1.2_n), "1"_n)
     );
 
   // TODO: parse polynomial with float coefficients?

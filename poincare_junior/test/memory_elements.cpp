@@ -103,7 +103,7 @@ void testConstexprTreeConstructor() {
   assert_tree_equals_blocks("-129"_n, {TypeBlock(BlockType::IntegerNegBig), ValueBlock(1), ValueBlock(129), ValueBlock(1), TypeBlock(BlockType::IntegerNegBig)});
 
   assert_tree_equals_blocks(u'π'_n, {TypeBlock(BlockType::Constant), ValueBlock(static_cast<uint8_t>(Constant::Type::Pi)), TypeBlock(BlockType::Constant)});
-  assert_tree_equals_blocks(2.0_fn, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0), ValueBlock(0), ValueBlock(64), TypeBlock(BlockType::Float)});
+  assert_tree_equals_blocks(2.0_n, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0), ValueBlock(0), ValueBlock(64), TypeBlock(BlockType::Float)});
   assert_tree_equals_blocks("-1"_n, {MinusOneBlock});
   assert_tree_equals_blocks("1"_n, {OneBlock});
   assert_tree_equals_blocks(Add("1"_n, "2"_n), {TypeBlock(BlockType::Addition), ValueBlock(2), TypeBlock(BlockType::Addition), OneBlock, TwoBlock});

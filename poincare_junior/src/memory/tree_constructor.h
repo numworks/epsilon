@@ -148,15 +148,17 @@ constexpr unsigned TreeSize() {
   const char * chars = S.m_data;
   size_t size = S.size();
   constexpr_assert(size > 1);
+  if (OMG::Print::IsLowercaseLetter(*chars)) {
+    // Symbol
+    return size - 1 + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol);
+  }
   if (chars[0] == '-') {
     // Negative integer
     return IntegerTreeSize<S>({'1'}, -INT8_MIN, BlockType::IntegerNegBig);
-  } else if (OMG::Print::IsDigit(chars[0])) {
-    // Positive integer
-    return IntegerTreeSize<S>({'0', '1', '2'}, INT8_MAX, BlockType::IntegerPosBig);
   } else {
-    // Symbol
-    return size - 1 + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol);
+    // Positive integer
+    constexpr_assert(OMG::Print::IsDigit(chars[0]));
+    return IntegerTreeSize<S>({'0', '1', '2'}, INT8_MAX, BlockType::IntegerPosBig);
   }
 }
 
@@ -224,9 +226,8 @@ constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _
   return tree;
 }
 
-// TODO: improve suffix format
-
-constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> operator "" _fn(long double value) {
+constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> operator "" _n(long double value) {
+  // TODO: integrate to template <String S> operator"" _n() to be able to parse "-1.2"_n
   Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> tree;
   CreateNode<BlockType::Float>(&tree, static_cast<float>(value));
   return tree;

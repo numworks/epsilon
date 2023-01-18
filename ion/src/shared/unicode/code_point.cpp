@@ -14,7 +14,3 @@ bool CodePoint::isEquationOperator() const {
       || m_code == UCodePointInferiorEqual
       || m_code == UCodePointSuperiorEqual;
 }
-
-bool CodePoint::isComparisonOperator() const {
-  return isEquationOperator() || m_code == UCodePointNotEqual;
-}

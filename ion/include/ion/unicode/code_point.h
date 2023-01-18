@@ -38,7 +38,6 @@ public:
     return 0x3b1 <= m_code && m_code <= 0x3c9;
   }
   bool isEquationOperator() const; // <, =, >, ≤, ≥
-  bool isComparisonOperator() const; // <, =, >, ≤, ≥, ≠
 private:
   uint32_t m_code;
 };
@@ -72,6 +71,7 @@ constexpr static CodePoint UCodePointMiddleDot                = 0xb7;    // ·
 constexpr static CodePoint UCodePointMultiplicationSign       = 0xd7;    // ×
 constexpr static CodePoint UCodePointCombiningCircumflex      = 0x302;   // COMBINING CIRCUMFLEX
 constexpr static CodePoint UCodePointCombiningOverline        = 0x305;   // COMBINING OVERLINE
+constexpr static CodePoint UCodePointCombiningLongSolidusOverlay = 0x338;   // COMBINING COMBINING LONG SOLIDUS OVERLAY
 constexpr static CodePoint UCodePointGreekSmallLetterTheta    = 0x3b8;   // θ
 constexpr static CodePoint UCodePointGreekSmallLetterPi       = 0x3c0;   // π
 constexpr static CodePoint UCodePointGreekSmallLetterSigma    = 0x3c3;   // σ
@@ -84,7 +84,6 @@ constexpr static CodePoint UCodePointNArySummation            = 0x2211;  // ∑
 constexpr static CodePoint UCodePointSquareRoot               = 0x221a;  // √
 constexpr static CodePoint UCodePointInfinity                 = 0x221e;  // ∞
 constexpr static CodePoint UCodePointIntegral                 = 0x222b;  // ∫
-constexpr static CodePoint UCodePointNotEqual                 = 0x2260;  // ≠
 constexpr static CodePoint UCodePointInferiorEqual            = 0x2264;  // ≤
 constexpr static CodePoint UCodePointSuperiorEqual            = 0x2265;  // ≥
 constexpr static CodePoint UCodePointLeftAngleBracket         = 0x27E8;  // ⟨

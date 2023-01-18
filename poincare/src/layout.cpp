@@ -354,14 +354,15 @@ void Layout::collapseSiblings(LayoutCursor * cursor) {
   }
 }
 
-bool Layout::hasCodePointVerifying(bool (CodePoint::*test)() const) const {
+bool Layout::privateRepresentsComparison(bool includingNotEqual) const {
   if (type() != Poincare::LayoutNode::Type::HorizontalLayout) {
     return false;
   }
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     Poincare::Layout child = childAtIndex(i);
-    if (child.type() == Poincare::LayoutNode::Type::CodePointLayout && (static_cast<Poincare::CodePointLayout &>(child).codePoint().*test)()) {
+    if ((child.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(child).codePoint().isEquationOperator())
+     || (includingNotEqual && child.type() == Poincare::LayoutNode::Type::CombinedCodePointsLayout && static_cast<Poincare::CombinedCodePointsLayout &>(child).node()->isNotEqualOperator())) {
       return true;
     }
   }

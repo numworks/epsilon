@@ -89,7 +89,8 @@ Expression SignFunction::shallowReduce(ReductionContext reductionContext) {
       Expression sign = *this;
       Multiplication m = Multiplication::Builder(Rational::Builder(-1));
       replaceWithInPlace(m);
-      m.addChildAtIndexInPlace(sign, 1, 1); // sign does not need to be shallowReduced because x = NAN --> x = NAN
+      m.addChildAtIndexInPlace(sign, 1, 1);
+      // sign does not need to be shallowReduced because x = -NAN --> x = NAN
       return std::move(m); // m does not need to be shallowReduced, -1*sign cannot be reduced
     }
     resultSign = Rational::Builder(c.real() > 0 ? 1 : (c.real() < 0 ? -1 : 0));

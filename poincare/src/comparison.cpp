@@ -80,7 +80,7 @@ bool ComparisonNode::IsBinaryComparison(Expression e, OperatorType * operatorTyp
   return true;
 }
 
-bool ComparisonNode::IsEquation(Expression e) {
+bool ComparisonNode::IsComparisonWithoutNotEqualOperator(Expression e) {
   if (e.type() != Type::Comparison) {
     return false;
   }

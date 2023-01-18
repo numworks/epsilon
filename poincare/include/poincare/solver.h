@@ -58,7 +58,7 @@ public:
   Coordinate2D<T> nextRoot(const Expression & e);
   Coordinate2D<T> nextRoot(FunctionEvaluation f, const void * aux) { return next(f, aux, EvenOrOddRootInBracket, CompositeBrentForRoot); }
   Coordinate2D<T> nextMinimum(const Expression & e);
-  Coordinate2D<T> nextMaximum(const Expression & e) { return next(e, MaximumInBracket, BrentMaximum); }
+  Coordinate2D<T> nextMaximum(const Expression & e) { return next(e, MaximumInBracket, SafeBrentMaximum); }
   /* Caller of nextIntersection may provide a place to store the difference
    * between the two expressions, in case the method needs to be called several
    * times in a row. */
@@ -86,11 +86,12 @@ private:
   constexpr static T k_minimalPracticalStep = std::max(static_cast<T>(1e-6), k_minimalAbsoluteStep);
   constexpr static T k_absolutePrecision = k_relativePrecision * k_minimalAbsoluteStep;
 
-  // Call SolverAlgorithms::BrentMinimum on the opposite evaluation
-  static Coordinate2D<T> BrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
+  static Coordinate2D<T> SafeBrentMinimum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
+  static Coordinate2D<T> SafeBrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
 
   static void ExcludeDiscontinuityFromBracket(Coordinate2D<T> * p1, Coordinate2D<T> * p2, Coordinate2D<T> * p3, FunctionEvaluation f, const void * aux, T minimalSizeOfInterval);
+  static bool FunctionSeemsConstantOnTheInterval(Solver<T>::FunctionEvaluation f, const void * aux, T xMin, T xMax);
 
   T maximalStep() const { return m_maximalXStep; }
   T minimalStep(T x, T slope = static_cast<T>(1.)) const;

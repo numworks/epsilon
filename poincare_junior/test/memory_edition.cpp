@@ -8,7 +8,7 @@ void testEditionPool() {
   CachePool * cachePool = CachePool::sharedCachePool();
   EditionPool * pool = cachePool->editionPool();
 
-  constexpr Tree k_expression = Mult(Add(1_sn, 2_sn), 3_n, 4_n);
+  constexpr Tree k_expression = Mult(Add("1"_n, "2"_n), "3"_n, "4"_n);
   const Node handingNode = static_cast<Node>(k_expression);
   const Node editedNode = pool->initFromTree(handingNode);
   assert(pool->size() == handingNode.treeSize());
@@ -47,8 +47,8 @@ void testEditionReference() {
   CachePool * cachePool = CachePool::sharedCachePool();
   EditionPool * editionPool = cachePool->editionPool();
 
-  constexpr Tree k_expression0 = Mult(Add(1_sn, 2_sn), 3_n, 4_n);
-  constexpr Tree k_expression1 = Pow(Sub(5_n, 6_n), 7_n);
+  constexpr Tree k_expression0 = Mult(Add("1"_n, "2"_n), "3"_n, "4"_n);
+  constexpr Tree k_expression1 = Pow(Sub("5"_n, "6"_n), "7"_n);
 
   // Operator ==
   EditionReference reference0;
@@ -66,56 +66,56 @@ void testEditionReference() {
   // Constructors
   EditionReference::Clone(reference0);
   EditionReference reference3 = EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(8));
-  assert_pool_contains(editionPool, {k_expression0, k_expression1, k_expression0, 8_n});
+  assert_pool_contains(editionPool, {k_expression0, k_expression1, k_expression0, "8"_n});
 
   // Insertions
-  reference3.insertNodeAfterNode(9_n);
-  assert_pool_contains(editionPool, {k_expression0, k_expression1, k_expression0, 8_n, 9_n});
-  reference3.insertNodeAfterNode(EditionReference(10_n));
-  assert_pool_contains(editionPool, {k_expression0, k_expression1, k_expression0, 8_n, 10_n, 9_n});
+  reference3.insertNodeAfterNode("9"_n);
+  assert_pool_contains(editionPool, {k_expression0, k_expression1, k_expression0, "8"_n, "9"_n});
+  reference3.insertNodeAfterNode(EditionReference("10"_n));
+  assert_pool_contains(editionPool, {k_expression0, k_expression1, k_expression0, "8"_n, "10"_n, "9"_n});
   reference3.insertTreeAfterNode(reference0);
-  assert_pool_contains(editionPool, {k_expression1, k_expression0, 8_n, k_expression0, 10_n, 9_n});
-  reference3.insertNodeBeforeNode(EditionReference(10_n));
-  assert_pool_contains(editionPool, {k_expression1, k_expression0, 10_n, 8_n, k_expression0, 10_n, 9_n});
+  assert_pool_contains(editionPool, {k_expression1, k_expression0, "8"_n, k_expression0, "10"_n, "9"_n});
+  reference3.insertNodeBeforeNode(EditionReference("10"_n));
+  assert_pool_contains(editionPool, {k_expression1, k_expression0, "10"_n, "8"_n, k_expression0, "10"_n, "9"_n});
   reference3.insertTreeBeforeNode(reference1);
-  assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression1, 8_n, k_expression0, 10_n, 9_n});
+  assert_pool_contains(editionPool, {k_expression0, "10"_n, k_expression1, "8"_n, k_expression0, "10"_n, "9"_n});
 
   // Replacements
   reference3.replaceNodeByNode(reference3);
-  assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression1, 8_n, k_expression0, 10_n, 9_n});
-  reference3.replaceNodeByNode(11_n);
-  assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression1, 11_n, k_expression0, 10_n, 9_n});
+  assert_pool_contains(editionPool, {k_expression0, "10"_n, k_expression1, "8"_n, k_expression0, "10"_n, "9"_n});
+  reference3.replaceNodeByNode("11"_n);
+  assert_pool_contains(editionPool, {k_expression0, "10"_n, k_expression1, "11"_n, k_expression0, "10"_n, "9"_n});
   reference3.replaceNodeByTree(k_expression1);
-  assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression1, k_expression1, k_expression0, 10_n, 9_n});
-  reference0.replaceTreeByNode(12_n);
-  assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression1, k_expression1, 12_n, 10_n, 9_n});
+  assert_pool_contains(editionPool, {k_expression0, "10"_n, k_expression1, k_expression1, k_expression0, "10"_n, "9"_n});
+  reference0.replaceTreeByNode("12"_n);
+  assert_pool_contains(editionPool, {k_expression0, "10"_n, k_expression1, k_expression1, "12"_n, "10"_n, "9"_n});
   reference1.replaceTreeByTree(k_expression0);
-  assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression0, k_expression1, 12_n, 10_n, 9_n});
+  assert_pool_contains(editionPool, {k_expression0, "10"_n, k_expression0, k_expression1, "12"_n, "10"_n, "9"_n});
 
   // Removals
   reference0.removeNode();
-  assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression0, k_expression1, 10_n, 9_n});
+  assert_pool_contains(editionPool, {k_expression0, "10"_n, k_expression0, k_expression1, "10"_n, "9"_n});
   reference1.removeTree();
-  assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression1, 10_n, 9_n});
+  assert_pool_contains(editionPool, {k_expression0, "10"_n, k_expression1, "10"_n, "9"_n});
 
   // Detach
   reference3.childAtIndex(0).detachTree();
-  reference3.insertTreeAfterNode(13_n);
-  assert_pool_contains(editionPool, {k_expression0, 10_n, Pow(13_n, 7_n), 10_n, 9_n, Sub(5_n, 6_n)});
+  reference3.insertTreeAfterNode("13"_n);
+  assert_pool_contains(editionPool, {k_expression0, "10"_n, Pow("13"_n, "7"_n), "10"_n, "9"_n, Sub("5"_n, "6"_n)});
   reference3.childAtIndex(1).detachNode();
-  reference3.insertTreeAfterNode(14_n);
-  assert_pool_contains(editionPool, {k_expression0, 10_n, Pow(14_n, 13_n), 10_n, 9_n, Sub(5_n, 6_n), 7_n});
+  reference3.insertTreeAfterNode("14"_n);
+  assert_pool_contains(editionPool, {k_expression0, "10"_n, Pow("14"_n, "13"_n), "10"_n, "9"_n, Sub("5"_n, "6"_n), "7"_n});
 }
 
 void testEditionReferenceReallocation() {
-  constexpr Tree k_expression = 1_sn;
+  constexpr Tree k_expression = "1"_n;
 
-  EditionReference reference0(0_sn);
+  EditionReference reference0("0"_n);
   for (size_t i = 0; i < EditionPool::k_maxNumberOfReferences - 1; i++) {
-    EditionReference reference1(1_sn);
+    EditionReference reference1("1"_n);
   }
   /* The reference table is now full but we can reference a new node of another
    * one is out-dated. */
   reference0.removeTree();
-  EditionReference reference2(2_sn);
+  EditionReference reference2("2"_n);
 }

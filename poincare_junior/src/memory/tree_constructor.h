@@ -2,11 +2,11 @@
 #define POINCARE_MEMORY_TREE_CONSTRUCTOR_H
 
 #include <array>
-#include <omg/print.h>
-#include <omg/print.h>
 #include "node_constructor.h"
 #include "node.h"
 #include <poincare_junior/src/expression/integer.h>
+#include <utils/assert.h>
+#include <utils/print.h>
 
 namespace Poincare {
 
@@ -100,23 +100,36 @@ template<unsigned ...Len> static constexpr auto Pol(std::array<uint8_t, sizeof..
 }
 
 // TODO: move in OMG?
-constexpr static uint64_t Value(const char * str, size_t len) {
+constexpr static uint64_t Value(const char * str, size_t size) {
   uint64_t value = 0;
-  for (int i = 0; i < len; i++) {
+  for (int i = 0; i < size - 1; i++) {
     uint8_t digit = OMG::Print::DigitForCharacter(str[i]);
     // No overflow
-    assert(value <= (UINT64_MAX - digit)/10);
+    constexpr_assert(value <= (UINT64_MAX - digit)/10);
     value = 10 * value + digit;
   }
   return value;
 }
 
-template <char... str>
+template<size_t N>
+struct String {
+  char m_data[N];
+  constexpr size_t size() const { return N; }
+  template <std::size_t... Is>
+  constexpr String(const char (&arr)[N], std::integer_sequence<std::size_t, Is...>) : m_data{arr[Is]...} {}
+  constexpr String(char const(&arr)[N]) : String(arr, std::make_integer_sequence<std::size_t, N>()) {}
+};
+
+template <String S>
 constexpr unsigned IntegerTreeSize(std::initializer_list<char> specialChars, uint64_t maxValueInShortInteger, BlockType genericBlockType) {
-  constexpr unsigned size = sizeof...(str);
-  char chars[size] = {static_cast<char>(str)...};
-  assert(size > 0);
-  if (size == 1) {
+  const char * chars = S.m_data;
+  size_t size = S.size();
+  constexpr_assert(size > 1);
+  if (chars[0] == '-') {
+    size--;
+    chars = chars + 1;
+  }
+  if (size == 2) {
     for (char c : specialChars) {
       if (c == chars[0]) {
         return 1;
@@ -130,100 +143,79 @@ constexpr unsigned IntegerTreeSize(std::initializer_list<char> specialChars, uin
   return TypeBlock::NumberOfMetaBlocks(genericBlockType) + Integer::NumberOfDigits(value);
 }
 
-
-template <char... str>
-constexpr unsigned SignedIntegerTreeSize() {
-  return IntegerTreeSize<str...>({'1'}, -INT8_MIN, BlockType::IntegerNegBig);
+template<String S>
+constexpr unsigned TreeSize() {
+  const char * chars = S.m_data;
+  size_t size = S.size();
+  constexpr_assert(size > 1);
+  if (chars[0] == '-') {
+    // Negative integer
+    return IntegerTreeSize<S>({'1'}, -INT8_MIN, BlockType::IntegerNegBig);
+  } else if (OMG::Print::IsDigit(chars[0])) {
+    // Positive integer
+    return IntegerTreeSize<S>({'0', '1', '2'}, INT8_MAX, BlockType::IntegerPosBig);
+  } else {
+    // Symbol
+    return size - 1 + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol);
+  }
 }
 
-template <char... str>
-constexpr unsigned UnsignedIntegerTreeSize() {
-  return IntegerTreeSize<str...>({'0', '1', '2'}, INT8_MAX, BlockType::IntegerPosBig);
-}
-
-template <char... str>
-constexpr Tree<UnsignedIntegerTreeSize<str...>()> operator"" _ui_n()
-{
-  constexpr unsigned size = sizeof...(str);
-  char chars[size] = {static_cast<char>(str)...};
-  constexpr unsigned treeSize = UnsignedIntegerTreeSize<str...>();
+template <String S>
+constexpr Tree<TreeSize<S>()> operator"" _n() {
+  constexpr unsigned treeSize = TreeSize<S>();
   Tree<treeSize> tree;
+  const char * chars = S.m_data;
+  size_t size = S.size();
+  constexpr_assert(S.size() > 1);
+  if (OMG::Print::IsLowercaseLetter(*chars)) {
+    // Symbol
+    CreateNode<BlockType::UserSymbol>(&tree, S.m_data, size - 1);
+    return tree;
+  }
+  // Integer
+  bool negativeInt = chars[0] == '-';
+  if (negativeInt) {
+    chars = chars + 1;
+    size--;
+  }
+  constexpr_assert(OMG::Print::IsDigit(*chars));
   if (treeSize == 1) {
-    assert(size == 1);
-    switch (chars[0]) {
+    constexpr_assert(size == 2);
+    switch (*chars) {
       case '0':
         CreateNode<BlockType::Zero>(&tree);
-        break;
+        return tree;
       case '1':
-        CreateNode<BlockType::One>(&tree);
-        break;
+      {
+        if (negativeInt) {
+          CreateNode<BlockType::MinusOne>(&tree);
+        } else {
+          CreateNode<BlockType::One>(&tree);
+        }
+        return tree;
+      }
       case '2':
         CreateNode<BlockType::Two>(&tree);
-        break;
+        return tree;
       default:
-        assert(false);
+          constexpr_assert(false);
     }
   } else {
     uint64_t value = Value(chars, size);
     if (treeSize == 3) {
-      assert(value != 0 && value != 1 && value != 2);
-      assert(value <= INT8_MAX);
-      CreateNode<BlockType::IntegerShort>(&tree, static_cast<int8_t>(value));
+      constexpr_assert(value != 0 && value != 1 && value != 2);
+      constexpr_assert(value <= INT8_MAX);
+      int8_t truncatedValue = static_cast<int8_t>(negativeInt ? -value : value);
+      CreateNode<BlockType::IntegerShort>(&tree, truncatedValue);
     } else {
-      CreateNode<BlockType::IntegerPosBig>(&tree, value);
+      if (negativeInt) {
+        CreateNode<BlockType::IntegerNegBig>(&tree, value);
+      } else {
+        CreateNode<BlockType::IntegerPosBig>(&tree, value);
+      }
     }
   }
   return tree;
-}
-
-
-template <char... str>
-constexpr Tree<SignedIntegerTreeSize<str...>()> operator"" _si_n()
-{
-  constexpr unsigned size = sizeof...(str);
-  char chars[size] = {static_cast<char>(str)...};
-  constexpr unsigned treeSize = SignedIntegerTreeSize<str...>();
-  Tree<treeSize> tree;
-  if (treeSize == 1) {
-    assert(size == 1);
-    switch (chars[0]) {
-      case '1':
-        CreateNode<BlockType::MinusOne>(&tree);
-        break;
-      default:
-        assert(false);
-    }
-  } else {
-    uint64_t value = Value(chars, size);
-    if (treeSize == 3) {
-      assert(value != 1);
-      assert(value <= -INT8_MIN);
-      CreateNode<BlockType::IntegerShort>(&tree, static_cast<int8_t>(-value));
-    } else {
-      CreateNode<BlockType::IntegerNegBig>(&tree, value);
-    }
-  }
-  return tree;
-}
-
-template<size_t N>
-struct String {
-  char m_data[N];
-  constexpr size_t size() const { return N; }
-  template <std::size_t... Is>
-  constexpr String(const char (&arr)[N], std::integer_sequence<std::size_t, Is...>) : m_data{arr[Is]...} {}
-  constexpr String(char const(&arr)[N]) : String(arr, std::make_integer_sequence<std::size_t, N>()) {}
-
-};
-
-template<String S>
-constexpr Tree<S.size() + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol)> operator"" _uds_n() {
-  constexpr size_t size = S.size();
-  constexpr size_t treeSize = size + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol);
-  Tree<treeSize> tree;
-  CreateNode<BlockType::UserSymbol>(&tree, S.m_data, size);
-  return tree;
-
 }
 
 constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _n(char16_t name) {
@@ -233,44 +225,6 @@ constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _
 }
 
 // TODO: improve suffix format
-
-constexpr Tree<1> operator "" _nsn(unsigned long long value) { // single-block node
-  Tree<1> tree;
-  switch (value) {
-    case 1:
-      CreateNode<BlockType::MinusOne>(&tree);
-      break;
-    default:
-      assert(false);
-  }
-  return tree;
-}
-
-constexpr Tree<1> operator "" _sn(unsigned long long value) { // single-block node
-  Tree<1> tree;
-  switch (value) {
-    case 0:
-      CreateNode<BlockType::Zero>(&tree);
-      break;
-    case 1:
-      CreateNode<BlockType::One>(&tree);
-      break;
-    case 2:
-      CreateNode<BlockType::Two>(&tree);
-      break;
-    default:
-      assert(false);
-  }
-  return tree;
-}
-
-constexpr Tree<3> operator "" _n(unsigned long long value) {
-  assert(value != 0 && value != -1 && value != 1 && value != 2); // TODO: make this robust
-  assert(value < 128); // TODO: handle negative small numbers?
-  Tree<3> tree;
-  CreateNode<BlockType::IntegerShort>(&tree, static_cast<int8_t>(value));
-  return tree;
-}
 
 constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> operator "" _fn(long double value) {
   Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> tree;

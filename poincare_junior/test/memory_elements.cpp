@@ -89,30 +89,30 @@ void assert_tree_equals_blocks(Tree<N> tree, std::initializer_list<Block> blocks
 }
 
 void testConstexprTreeConstructor() {
-  Node n = 12_ui_n;
-  assert_tree_equals_blocks(0_ui_n, {TypeBlock(BlockType::Zero)});
-  assert_tree_equals_blocks(1_ui_n, {TypeBlock(BlockType::One)});
-  assert_tree_equals_blocks(2_ui_n, {TypeBlock(BlockType::Two)});
-  assert_tree_equals_blocks(12_ui_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(12), TypeBlock(BlockType::IntegerShort)});
-  assert_tree_equals_blocks(127_ui_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(127), TypeBlock(BlockType::IntegerShort)});
-  assert_tree_equals_blocks(128_ui_n, {TypeBlock(BlockType::IntegerPosBig), ValueBlock(1), ValueBlock(128), ValueBlock(1), TypeBlock(BlockType::IntegerPosBig)});
-  assert_tree_equals_blocks(256_ui_n, {TypeBlock(BlockType::IntegerPosBig), ValueBlock(2), ValueBlock(0), ValueBlock(1), ValueBlock(2), TypeBlock(BlockType::IntegerPosBig)});
-  assert_tree_equals_blocks(1_si_n, {TypeBlock(BlockType::MinusOne)});
-  assert_tree_equals_blocks(12_si_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(-12), TypeBlock(BlockType::IntegerShort)});
-  assert_tree_equals_blocks(128_si_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(-128), TypeBlock(BlockType::IntegerShort)});
-  assert_tree_equals_blocks(129_si_n, {TypeBlock(BlockType::IntegerNegBig), ValueBlock(1), ValueBlock(129), ValueBlock(1), TypeBlock(BlockType::IntegerNegBig)});
+  Node n = "12"_n;
+  assert_tree_equals_blocks("0"_n, {TypeBlock(BlockType::Zero)});
+  assert_tree_equals_blocks("1"_n, {TypeBlock(BlockType::One)});
+  assert_tree_equals_blocks("2"_n, {TypeBlock(BlockType::Two)});
+  assert_tree_equals_blocks("12"_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(12), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks("127"_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(127), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks("128"_n, {TypeBlock(BlockType::IntegerPosBig), ValueBlock(1), ValueBlock(128), ValueBlock(1), TypeBlock(BlockType::IntegerPosBig)});
+  assert_tree_equals_blocks("256"_n, {TypeBlock(BlockType::IntegerPosBig), ValueBlock(2), ValueBlock(0), ValueBlock(1), ValueBlock(2), TypeBlock(BlockType::IntegerPosBig)});
+  assert_tree_equals_blocks("-1"_n, {TypeBlock(BlockType::MinusOne)});
+  assert_tree_equals_blocks("-12"_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(-12), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks("-128"_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(-128), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks("-129"_n, {TypeBlock(BlockType::IntegerNegBig), ValueBlock(1), ValueBlock(129), ValueBlock(1), TypeBlock(BlockType::IntegerNegBig)});
 
   assert_tree_equals_blocks(u'π'_n, {TypeBlock(BlockType::Constant), ValueBlock(static_cast<uint8_t>(Constant::Type::Pi)), TypeBlock(BlockType::Constant)});
   assert_tree_equals_blocks(2.0_fn, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0), ValueBlock(0), ValueBlock(64), TypeBlock(BlockType::Float)});
-  assert_tree_equals_blocks(1_nsn, {MinusOneBlock});
-  assert_tree_equals_blocks(1_sn, {OneBlock});
-  assert_tree_equals_blocks(Add(1_sn, 2_sn), {TypeBlock(BlockType::Addition), ValueBlock(2), TypeBlock(BlockType::Addition), OneBlock, TwoBlock});
-  assert_tree_equals_blocks(Mult(1_sn, 2_sn, 1_nsn), {TypeBlock(BlockType::Multiplication), ValueBlock(3), TypeBlock(BlockType::Multiplication), OneBlock, TwoBlock, MinusOneBlock});
-  assert_tree_equals_blocks(Set(1_sn), {TypeBlock(BlockType::Set), ValueBlock(1), TypeBlock(BlockType::Set), OneBlock});
-  assert_tree_equals_blocks(Pow(1_sn, 2_sn), {TypeBlock(BlockType::Power), OneBlock, TwoBlock});
-  assert_tree_equals_blocks(Sub(1_sn, 2_sn), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
-  assert_tree_equals_blocks(Sub(1_sn, 2_sn), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
-  assert_tree_equals_blocks("var"_uds_n, {TypeBlock(BlockType::UserSymbol), ValueBlock(3), ValueBlock('v'), ValueBlock('a'), ValueBlock('r'), ValueBlock(3), TypeBlock(BlockType::UserSymbol)});
+  assert_tree_equals_blocks("-1"_n, {MinusOneBlock});
+  assert_tree_equals_blocks("1"_n, {OneBlock});
+  assert_tree_equals_blocks(Add("1"_n, "2"_n), {TypeBlock(BlockType::Addition), ValueBlock(2), TypeBlock(BlockType::Addition), OneBlock, TwoBlock});
+  assert_tree_equals_blocks(Mult("1"_n, "2"_n, "-1"_n), {TypeBlock(BlockType::Multiplication), ValueBlock(3), TypeBlock(BlockType::Multiplication), OneBlock, TwoBlock, MinusOneBlock});
+  assert_tree_equals_blocks(Set("1"_n), {TypeBlock(BlockType::Set), ValueBlock(1), TypeBlock(BlockType::Set), OneBlock});
+  assert_tree_equals_blocks(Pow("1"_n, "2"_n), {TypeBlock(BlockType::Power), OneBlock, TwoBlock});
+  assert_tree_equals_blocks(Sub("1"_n, "2"_n), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
+  assert_tree_equals_blocks(Sub("1"_n, "2"_n), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
+  assert_tree_equals_blocks("var"_n, {TypeBlock(BlockType::UserSymbol), ValueBlock(3), ValueBlock('v'), ValueBlock('a'), ValueBlock('r'), ValueBlock(3), TypeBlock(BlockType::UserSymbol)});
 }
 
 void testEditionNodeConstructor() {
@@ -122,10 +122,10 @@ void testEditionNodeConstructor() {
 }
 
 void testNodeIterator() {
-  constexpr Tree k_simpleExpression = Mult(Add(1_sn, 2_sn), 3_n, 4_n);
+  constexpr Tree k_simpleExpression = Mult(Add("1"_n, "2"_n), "3"_n, "4"_n);
   EditionReference mult(k_simpleExpression);
   size_t numberOfChildren = mult.numberOfChildren();
-  Node children[] = {Add(1_sn, 2_sn), 3_n, 4_n};
+  Node children[] = {Add("1"_n, "2"_n), "3"_n, "4"_n};
 
   // Scan children forward
   for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult)) {
@@ -138,7 +138,7 @@ void testNodeIterator() {
   }
 
   // Edit children forward
-  Node newChildren[] = {6_n, 7_n, 8_n};
+  Node newChildren[] = {"6"_n, "7"_n, "8"_n};
   for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(mult)) {
     std::get<EditionReference>(indexedRef).replaceTreeByTree(newChildren[std::get<int>(indexedRef)]);
   }
@@ -156,10 +156,10 @@ void testNodeIterator() {
     assert_trees_are_equal(std::get<Node>(indexedNode), newChildren[numberOfChildren - 1 - std::get<int>(indexedNode)]);
   }
 
-  constexpr Tree k_secondSimpleExpression = Mult(Add(1_sn, 2_sn), 3_n);
+  constexpr Tree k_secondSimpleExpression = Mult(Add("1"_n, "2"_n), "3"_n);
   EditionReference mult2(k_secondSimpleExpression);
   size_t numberOfChildren2 = mult2.numberOfChildren();
-  Node children2[] = {Add(1_sn, 2_sn), 3_n};
+  Node children2[] = {Add("1"_n, "2"_n), "3"_n};
   // Scan two nodes children forward
   for (std::pair<std::array<Node, 2>, int> indexedArray : MultipleNodesIterator::Children<Forward, NoEditable, 2>(std::array<Node, 2>({mult, mult2}))) {
     std::array<Node, 2> childrenPair = std::get<0>(indexedArray);
@@ -176,8 +176,8 @@ void testNodeIterator() {
     assert_trees_are_equal(childrenPair[1], children2[numberOfChildren2 - 1 - pairIndex]);
   }
 
-  Node newChildren1[] = {10_n, 11_n};
-  Node newChildren2[] = {13_n, 14_n};
+  Node newChildren1[] = {"10"_n, "11"_n};
+  Node newChildren2[] = {"13"_n, "14"_n};
   // Edit two nodes children forward
   for (std::pair<std::array<EditionReference, 2>, int> indexedRefs : MultipleNodesIterator::Children<Forward, Editable, 2>(std::array<EditionReference, 2>({mult, mult2}))) {
     std::array<EditionReference, 2> childrenPair = std::get<0>(indexedRefs);
@@ -186,7 +186,7 @@ void testNodeIterator() {
     childrenPair[1].replaceTreeByTree(newChildren2[pairIndex]);
   }
   // Check edition
-  Node children1[] = {10_n, 11_n, 6_n};
+  Node children1[] = {"10"_n, "11"_n, "6"_n};
   for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), children1[std::get<int>(indexedNode)]);
   }
@@ -202,7 +202,7 @@ void testNodeIterator() {
     childrenPair[1].replaceTreeByTree(newChildren2[pairIndex]);
   }
   // Check edition
-  Node editedChildren1[] = {10_n, 11_n, 10_n};
+  Node editedChildren1[] = {"10"_n, "11"_n, "10"_n};
   for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), editedChildren1[std::get<int>(indexedNode)]);
   }
@@ -216,21 +216,21 @@ void testNode() {
   EditionPool * editionPool = cachePool->editionPool();
 
   // operator==
-  Node node0 = 42_n;
+  Node node0 = "42"_n;
   Node node1 = EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(42));
   assert(node0 != node1 && *node0.block() == *node1.block());
   Node node2(editionPool->firstBlock());
   assert(node2 == node1);
 
   // Node navigation
-  constexpr Tree e1 = Mult(Add(1_sn, 2_sn), 3_n, 4_n);
-  constexpr Tree e2 = Pow(5_n, 6_n);
+  constexpr Tree e1 = Mult(Add("1"_n, "2"_n), "3"_n, "4"_n);
+  constexpr Tree e2 = Pow("5"_n, "6"_n);
   Node n1 = EditionReference(e1);
   Node n2 = EditionReference(e2);
   assert(n1.treeSize() == 14); // TODO: Magic Number
-  assert_trees_are_equal(n1.nextNode(), Add(1_sn, 2_sn));
+  assert_trees_are_equal(n1.nextNode(), Add("1"_n, "2"_n));
   assert_trees_are_equal(n1.nextTree(), e2);
-  assert_trees_are_equal(n2.previousNode(), 4_n);
+  assert_trees_are_equal(n2.previousNode(), "4"_n);
   assert_trees_are_equal(n2.previousTree(), e1);
   assert_trees_are_equal(n1.nextNode().nextNode().parent(), n1.nextNode());
   assert_trees_are_equal(n1.nextNode().nextNode().root(), n1);

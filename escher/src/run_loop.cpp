@@ -27,13 +27,16 @@ void RunLoop::run() {
 }
 
 void RunLoop::runWhile(bool (*callback)(void * ctx), void * ctx) {
-  bool noTerminationEventFired = true;
-  while (!m_breakAllLoops && (callback == nullptr || callback(ctx)) && (noTerminationEventFired = step())) {
-  }
+  bool continueCurrentRunLoop = true;
 
-  if (!noTerminationEventFired) {
-    m_breakAllLoops = true;
-  }
+  while (
+    !m_breakAllLoops &&
+    (callback == nullptr || callback(ctx)) &&
+    (continueCurrentRunLoop = step()))
+  {}
+
+  // Events::Termination was fired. Break all parent loops.
+  m_breakAllLoops = m_breakAllLoops || !continueCurrentRunLoop;
 }
 
 bool RunLoop::step() {

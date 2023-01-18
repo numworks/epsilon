@@ -188,9 +188,9 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(Solver<double>::FunctionEval
   }
   assert(xMin < xMax);
 
-  if (DetectApproximationErrorsForMinimum(f, aux, xMin, xMax)) {
+  if (FunctionSeemsConstantOnTheInterval(f, aux, xMin, xMax)) {
     /* Some fake minimums can be detected due to approximations errors like in
-     * f(x) = x/abs(x) (in complex mode). */
+     * f(x) = x/abs(x) in complex mode. */
     return Coordinate2D<double>(NAN, NAN);
   }
 
@@ -297,33 +297,21 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(Solver<double>::FunctionEval
   return Coordinate2D<double>(NAN, NAN);
 }
 
-bool SolverAlgorithms::DetectApproximationErrorsForMinimum(Solver<double>::FunctionEvaluation f, const void * aux, double xMin, double xMax) {
+bool SolverAlgorithms::FunctionSeemsConstantOnTheInterval(Solver<double>::FunctionEvaluation f, const void * aux, double xMin, double xMax) {
   assert(xMin < xMax);
-  constexpr int k_numberOfValuesToBeSignificant = 6;
-  constexpr int k_numberOfSteps = 10;
-  double previousValue = f(xMin, aux);
-  bool changedDirection = false;
-  double values[k_numberOfSteps + 1];
-  double valuesCount[k_numberOfSteps + 1];
-  values[0] = previousValue;
-  valuesCount[0] = 1;
-  int currentNumberOfValues = 1;
-  /* This loop checks two things:
-   *  - If a value is too often taken by f on the interval, it might mean that
-   *    f is a constant function equal to this value but approximation erros
-   *    led to thinking there was a minimum in the interval.
-   *  - If f changes twice of direction (it should go down at first and then up
-   *    and not go down again), it is also an indication of an approximation
-   *    error and not a normal behaviour. */
-  for (int i = 1; i <= k_numberOfSteps; i++) {
+  constexpr int k_numberOfSteps = 20;
+  double values[k_numberOfSteps];
+  int valuesCount[k_numberOfSteps];
+  int currentNumberOfValues = 0;
+  /* This loop computes 20 values of f on the interval and then checks the
+   * repartition of these values. If the function takes a few number of
+   * different values, it might mean that f is a constant function but
+   * approximation errors led to thinking there was a minimum in the interval.
+   * To mesure this "repartition" of values, the entropy of the data is
+   * then calculated.
+   * */
+  for (int i = 0; i < k_numberOfSteps; i++) {
     double currentValue = f(xMin + (static_cast<double>(i) / k_numberOfSteps) * (xMax - xMin), aux);
-    if (currentValue > previousValue) {
-      changedDirection = true;
-    } else if (currentValue < previousValue && changedDirection) {
-      // The function changed twice direction on the interval
-      return true;
-    }
-    previousValue = currentValue;
     bool addValueToArray = true;
     for (int k = 0; k < currentNumberOfValues; k++) {
       if (values[k] == currentValue) {
@@ -334,19 +322,29 @@ bool SolverAlgorithms::DetectApproximationErrorsForMinimum(Solver<double>::Funct
     }
     if (addValueToArray) {
       values[currentNumberOfValues] = currentValue;
-      valuesCount[currentNumberOfValues]++;
+      valuesCount[currentNumberOfValues] = 1;
       currentNumberOfValues++;
     }
   }
 
+  /* Entropy = -sum(log(pk)*pk) where pk is the probability of taking the
+   * k-th value. */
+  double entropy = 0.;
   for (int k = 0; k < currentNumberOfValues; k++) {
-    if (valuesCount[k] >= k_numberOfValuesToBeSignificant) {
-      // More than 6 values are equal on [xMin, xMax]
-      return true;
-    }
+    double probabilityOfValue = static_cast<double>(valuesCount[k]) / (k_numberOfSteps + 1);
+    entropy += - std::log(probabilityOfValue) * probabilityOfValue;
   }
 
-  return false;
+  // Unfortunately, std::log is not constexpr
+  double maxEntropy = std::log(static_cast<double>(k_numberOfSteps));
+  assert(entropy >= 0 && entropy <= maxEntropy);
+  /* If the entropy of the data is lower than 0.5 * maxEntropy, it is assumed
+   * that the function is constant on [xMin, xMax].
+   * The value of 0.5 has be chosen because of good experimental results but
+   * could be tweaked.
+   * */
+  constexpr double k_entropyThreshold = 0.5;
+  return entropy < maxEntropy * k_entropyThreshold;
 }
 
 // Explicit template instantiations

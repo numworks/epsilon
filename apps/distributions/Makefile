@@ -47,7 +47,7 @@ tests_src += $(addprefix apps/distributions/test/,\
 )
 
 # Allow #include "distributions/..."
-sources = apps/apps_container.cpp apps/apps_container_storage.cpp apps/main.cpp $(app_distributions_src) $(app_distributions_test_src) $(tests_src)
+sources = apps/apps_container.cpp apps/apps_container_storage.cpp apps/init.cpp apps/main.cpp $(app_distributions_src) $(app_distributions_test_src) $(tests_src)
 $(call object_for,$(sources)): SFLAGS += -Iapps
 
 # Image dependencies

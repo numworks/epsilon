@@ -354,7 +354,7 @@ void Layout::collapseSiblings(LayoutCursor * cursor) {
   }
 }
 
-bool Layout::privateRepresentsComparison(bool includingNotEqual) const {
+bool Layout::privatehasTopLevelComparisonSymbol(bool includingNotEqual) const {
   if (type() != Poincare::LayoutNode::Type::HorizontalLayout) {
     return false;
   }

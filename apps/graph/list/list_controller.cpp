@@ -133,7 +133,7 @@ bool ListController::completeEquation(InputEventHandler * equationField, CodePoi
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   m_parameterColumnSelected = false;
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    if (!layoutField->layout().representsAnEquation()) {
+    if (!layoutField->layout().hasTopLevelEquationSymbol()) {
       layoutField->putCursorOnOneSide(Poincare::LayoutCursor::Position::Left);
       CodePoint symbol = layoutRepresentsPolarFunction(layoutField->layout())
                              ? ContinuousFunction::k_polarSymbol

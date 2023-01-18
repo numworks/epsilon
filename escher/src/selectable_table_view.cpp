@@ -3,6 +3,7 @@
 #include <escher/clipboard.h>
 #include <escher/metric.h>
 #include <assert.h>
+#include <string.h>
 
 namespace Escher {
 
@@ -163,19 +164,29 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     if (cell == nullptr) {
       return false;
     }
+    constexpr int bufferSize = TextField::MaxBufferSize();
     const char * text = cell->text();
     if (text) {
-      if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-        return Container::activeApp()->storeValue(text, cell->canOpenStoreMenu());
+      char buffer[bufferSize];
+      if (m_delegate && !m_delegate->canStoreContentOfCellAtLocation(this, col, row)) {
+        strlcpy(buffer, "", bufferSize);
+      } else {
+        strlcpy(buffer, text, bufferSize);
       }
-      Escher::Clipboard::SharedClipboard()->store(text);
+      if (event == Ion::Events::Sto || event == Ion::Events::Var) {
+        return Container::activeApp()->storeValue(buffer, cell->canOpenStoreMenu());
+      }
+      Escher::Clipboard::SharedClipboard()->store(buffer);
       return true;
     }
     Poincare::Layout l = cell->layout();
     if (!l.isUninitialized()) {
-      constexpr int bufferSize = TextField::MaxBufferSize();
       char buffer[bufferSize];
-      l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
+      if (m_delegate && !m_delegate->canStoreContentOfCellAtLocation(this, col, row)) {
+        strlcpy(buffer, "", bufferSize);
+      } else {
+        l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
+      }
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
         return Container::activeApp()->storeValue(buffer, cell->canOpenStoreMenu());
       }

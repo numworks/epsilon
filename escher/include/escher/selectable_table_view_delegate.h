@@ -16,6 +16,7 @@ public:
    * when the selection change is 'real' or within temporary selection. */
   virtual void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) {}
   virtual void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) {}
+  virtual bool canStoreContentOfCellAtLocation(SelectableTableView * t, int col, int row) const { return true; }
 };
 
 }

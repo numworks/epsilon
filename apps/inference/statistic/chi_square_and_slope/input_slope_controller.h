@@ -27,6 +27,9 @@ public:
   }
   void viewWillAppear() override;
 
+  // SelectableTableViewDelegate
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return row > 0; }
+
 private:
   class PrivateStackViewController: public Escher::StackViewController {
   public:

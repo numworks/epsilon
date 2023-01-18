@@ -16,7 +16,6 @@ public:
   virtual void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBaseline(KDCoordinate baseline);
-  bool canOpenStoreMenu() const override { return false; }
 protected:
   constexpr static KDCoordinate k_separatorThickness = Escher::Metric::CellSeparatorThickness;
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;

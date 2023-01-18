@@ -2,6 +2,7 @@
 #define OMG_GLOBAL_BOX_H
 
 #include <stdint.h>
+#include <new>
 
 /* This template wraps another type and manually control when its constructor
  * is called. It is useful to declare global variables and yet avoid the static

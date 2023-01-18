@@ -19,6 +19,10 @@ int RandintNoRepeatNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RandintNoRepeat::s_functionHelper.aliasesList().mainAlias());
 }
 
+Expression RandintNoRepeatNode::shallowReduce(const ReductionContext& reductionContext) {
+  return RandintNoRepeat(this).shallowReduce(reductionContext);
+}
+
 template<typename T>
 Evaluation<T> RandintNoRepeatNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   T ta = childAtIndex(0)->approximate(T(), approximationContext).toScalar();
@@ -64,6 +68,11 @@ Evaluation<T> RandintNoRepeatNode::templatedApproximate(const ApproximationConte
   assert(result.numberOfChildren() == n);
 
   return std::move(result);
+}
+
+Expression RandintNoRepeat::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  SetReductionEncounteredUndistributedList(true);
+  return *this;
 }
 
 }

@@ -33,8 +33,8 @@ public:
   // Properties
   LayoutNode::Type type() const { return node()->type(); }
   bool isIdenticalTo(Layout l, bool makeEditable = false) { return isUninitialized() ? l.isUninitialized() : node()->isIdenticalTo(l, makeEditable); }
-  bool hasTopLevelEquationSymbol() const { return privatehasTopLevelComparisonSymbol(false); }
-  bool hasTopLevelComparisonSymbol() const { return privatehasTopLevelComparisonSymbol(true); }
+  bool hasTopLevelEquationSymbol() const { return privateHasTopLevelComparisonSymbol(false); }
+  bool hasTopLevelComparisonSymbol() const { return privateHasTopLevelComparisonSymbol(true); }
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = Escher::Palette::Select) {
@@ -127,7 +127,7 @@ private:
     Right
   };
   bool collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor);
-  bool privatehasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;
+  bool privateHasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;
 };
 
 template<typename T, typename U, int N, typename Parent>

@@ -80,6 +80,21 @@ bool ComparisonNode::IsBinaryComparison(Expression e, OperatorType * operatorTyp
   return true;
 }
 
+bool ComparisonNode::IsEquation(Expression e) {
+  if (e.type() != Type::Comparison) {
+    return false;
+  }
+  Comparison c = static_cast<Comparison &>(e);
+  const int operatorCount = c.numberOfOperators();
+  for (int i = 0; i < operatorCount; i++) {
+    if (c.operatorAtIndex(i) == OperatorType::NotEqual) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
 bool ComparisonNode::IsBinaryComparisonWithOperator(Expression e, OperatorType operatorType) {
   OperatorType operatorTypeOfE;
   return IsBinaryComparison(e, &operatorTypeOfE) && operatorTypeOfE == operatorType;

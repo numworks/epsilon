@@ -41,6 +41,20 @@ bool Layout::representsAnEquation() const {
   return false;
 }
 
+bool Layout::representsAComparison() const {
+  if (type() != Poincare::LayoutNode::Type::HorizontalLayout) {
+    return false;
+  }
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    Poincare::Layout child = childAtIndex(i);
+    if (child.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(child).codePoint().isComparisonOperator()) {
+      return true;
+    }
+  }
+  return false;
+}
+
 int Layout::serializeParsedExpression(char * buffer, int bufferSize, Context * context) const {
   /* This method fixes the following problem:
    * Some layouts have a special serialization so they can be parsed afterwards,

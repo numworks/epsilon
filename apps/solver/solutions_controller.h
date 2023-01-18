@@ -19,7 +19,8 @@ namespace Solver {
 class SolutionsController : public Escher::ViewController, public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableTableViewDataSource, public Escher::TableViewDataSource, public Escher::SelectableTableViewDelegate {
 public:
   SolutionsController(Escher::Responder * parentResponder, EquationStore * equationStore);
-  /* ViewController */
+
+  // ViewController
   const char * title() override;
   Escher::View * view() override { return &m_contentView; }
   void viewWillAppear() override;
@@ -27,21 +28,26 @@ public:
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   TELEMETRY_ID("Solutions");
 
-  /* AlternateEmptyViewDefaultDelegate */
+  // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override { return false; }  // View cannot be empty
   I18n::Message emptyMessage() override { assert(false); return static_cast<I18n::Message>(0); }
   Escher::Responder * responderWhenEmpty() override;
-  /* TableViewDataSource */
+
+  // TableViewDataSource
   int numberOfRows() const override;
   int numberOfColumns() const override { return 2; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
-  /* Responder */
+
+  // Responder
   void didBecomeFirstResponder() override;
-  /* SelectableTableViewDelegate */
+
+  // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return col > 0; }
+
 private:
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int i) override { return i == 0 ? k_symbolCellWidth : k_valueCellWidth; }

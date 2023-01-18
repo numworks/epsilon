@@ -41,13 +41,13 @@ void AbstractPlotView::drawRect(KDContext * ctx, KDRect rect) const {
   drawPlot(ctx, rect);
 }
 
-float AbstractPlotView::floatToPixel(Axis axis, float f) const {
+float AbstractPlotView::floatToFloatPixel(Axis axis, float f) const {
   float res = axis == Axis::Horizontal ? (f - m_range->xMin()) / pixelWidth() : (m_range->yMax() - f) / pixelHeight();
   return std::clamp(res, static_cast<float>(KDCOORDINATE_MIN), static_cast<float>(KDCOORDINATE_MAX));
 }
 
 KDCoordinate AbstractPlotView::floatToPixelIndex(Axis axis, float f) const {
-  return std::round(floatToPixel(axis, f));
+  return std::round(floatToFloatPixel(axis, f));
 }
 
 float AbstractPlotView::pixelToFloat(Axis axis, KDCoordinate p) const {
@@ -277,8 +277,8 @@ void AbstractPlotView::drawArc(KDContext * ctx, KDRect rect, Poincare::Coordinat
     }
     previousX = x;
     previousY = y;
-    x = floatToPixel(Axis::Horizontal, std::cos(t) * radius);
-    y = floatToPixel(Axis::Vertical, std::sin(t) * radius);
+    x = floatToFloatPixel(Axis::Horizontal, std::cos(t) * radius);
+    y = floatToFloatPixel(Axis::Vertical, std::sin(t) * radius);
     if (std::isnan(previousX)) {
       continue;
     }

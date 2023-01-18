@@ -36,7 +36,7 @@ Sequence * addSequence(SequenceStore * store, Sequence::Type type, const char * 
 
 void check_sequences_defined_by(double result[SequenceStore::k_maxNumberOfSequences][10], Sequence::Type types[SequenceStore::k_maxNumberOfSequences], const char * definitions[SequenceStore::k_maxNumberOfSequences], const char * conditions1[SequenceStore::k_maxNumberOfSequences], const char * conditions2[SequenceStore::k_maxNumberOfSequences]) {
   Shared::GlobalContext globalContext;
-  SequenceStore * store = globalContext.sequenceStore();
+  SequenceStore * store = globalContext.sequenceStore;
   SequenceContext * sequenceContext = globalContext.sequenceContext();
 
   Sequence * seqs[SequenceStore::k_maxNumberOfSequences];
@@ -61,7 +61,7 @@ void check_sequences_defined_by(double result[SequenceStore::k_maxNumberOfSequen
 
 void check_sum_of_sequence_between_bounds(double result, double start, double end, Sequence::Type type, const char * definition, const char * condition1, const char * condition2) {
   Shared::GlobalContext globalContext;
-  SequenceStore * store = globalContext.sequenceStore();
+  SequenceStore * store = globalContext.sequenceStore;
   SequenceContext * sequenceContext = globalContext.sequenceContext();
 
   Sequence * seq = addSequence(store, type, definition, condition1, condition2, sequenceContext);
@@ -493,7 +493,7 @@ QUIZ_CASE(sequence_context) {
   assert_expression_simplifies_approximates_to<double>("f(u(0))", "undef");
 
   Shared::GlobalContext globalContext;
-  SequenceStore * store = globalContext.sequenceStore();
+  SequenceStore * store = globalContext.sequenceStore;
   SequenceContext * sequenceContext = globalContext.sequenceContext();
   addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr, sequenceContext);
   assert_expression_simplifies_approximates_to<double>("f(u(2))", "3");
@@ -518,7 +518,7 @@ QUIZ_CASE(sequence_context) {
 
 QUIZ_CASE(sequence_order) {
   Shared::GlobalContext globalContext;
-  SequenceStore * store = globalContext.sequenceStore();
+  SequenceStore * store = globalContext.sequenceStore;
   SequenceContext * sequenceContext = globalContext.sequenceContext();
 
   Sequence * u = addSequence(store, Sequence::Type::Explicit, "", nullptr, nullptr, sequenceContext);
@@ -556,7 +556,7 @@ QUIZ_CASE(sequence_sum_evaluation) {
 
 QUIZ_CASE(sequence_simply_recursive) {
   Shared::GlobalContext globalContext;
-  SequenceStore * store = globalContext.sequenceStore();
+  SequenceStore * store = globalContext.sequenceStore;
   SequenceContext * sequenceContext = globalContext.sequenceContext();
   quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence, "3(u(n)+2)+u(n)", "0", nullptr, sequenceContext)->isSimplyRecursive(sequenceContext));
   store->removeAll();

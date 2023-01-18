@@ -27,7 +27,7 @@ public:
     App * unpack(Escher::Container * container) override;
     void reset() override;
     const Descriptor * descriptor() const override;
-    Shared::ContinuousFunctionStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->continuousFunctionStore(); }
+    Shared::ContinuousFunctionStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->continuousFunctionStore; }
     Shared::InteractiveCurveViewRange * graphRange() { return &m_graphRange; }
     Shared::Interval * intervalForSymbolType(Shared::ContinuousFunctionProperties::SymbolType symbolType) {
       return m_interval + static_cast<size_t>(symbolType);

@@ -30,7 +30,7 @@ public:
     void updateInterval();
     void reset() override;
     const Descriptor * descriptor() const override;
-    Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceStore(); }
+    Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceStore; }
     CurveViewRange * graphRange() { return &m_graphRange; }
     Shared::Interval * interval() { return &m_interval; }
     bool intervalModifiedByUser() { return m_intervalModifiedByUser; }
@@ -48,7 +48,7 @@ public:
   // NestedMenuController * variableBox(InputEventHandler * textInput) override;
   CodePoint XNT() override { return 'n'; }
   Shared::SequenceContext * localContext() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceContext(); }
-  Shared::SequenceStore * functionStore() const override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceStore(); }
+  Shared::SequenceStore * functionStore() const override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceStore; }
   Shared::Interval * interval() { return snapshot()->interval(); }
   ValuesController * valuesController() override { return &m_valuesController; }
   Escher::InputViewController * inputViewController() override { return &m_inputViewController; }

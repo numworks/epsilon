@@ -7,6 +7,7 @@
 #include <poincare/decimal.h>
 #include <poincare/symbol.h>
 #include <ion/storage/file_system.h>
+#include <omg/global_box.h>
 #include <assert.h>
 #include "sequence_store.h"
 #include "sequence_context.h"
@@ -27,14 +28,14 @@ public:
   // Destroy records
   static void DestroyRecordsBaseNamedWithoutExtension(const char * baseName, const char * extension);
 
-  GlobalContext() : m_sequenceContext(this, sequenceStore()) {};
+  GlobalContext() : m_sequenceContext(this, sequenceStore) {};
   /* Expression for symbol
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
   bool setExpressionForSymbolAbstract(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol) override;
-  static SequenceStore * sequenceStore();
-  static ContinuousFunctionStore * continuousFunctionStore();
+  static OMG::GlobalBox<SequenceStore> sequenceStore;
+  static OMG::GlobalBox<ContinuousFunctionStore> continuousFunctionStore;
   void storageDidChangeForRecord(const Ion::Storage::Record record);
   SequenceContext * sequenceContext() { return &m_sequenceContext; }
   void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) override;

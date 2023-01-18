@@ -1,6 +1,7 @@
 #include "quiz.h"
 #include "symbols.h"
 #include <ion.h>
+#include <apps/init.h>
 #include <escher/init.h>
 #include <poincare/init.h>
 #include <poincare/tree_pool.h>
@@ -80,6 +81,8 @@ static inline void ion_main_inner(const char * testFilter) {
 void ion_main(int argc, const char * const argv[]) {
   Poincare::Init(); // Initialize Poincare::TreePool::sharedPool
   Escher::Init();
+  Apps::Init();
+
   const char * testFilter = nullptr;
   sSkipAssertions = false;
 #if !PLATFORM_DEVICE

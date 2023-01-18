@@ -19,20 +19,13 @@ namespace Shared {
 
 constexpr const char * GlobalContext::k_extensions[];
 
-SequenceStore * GlobalContext::sequenceStore() {
-  static SequenceStore sequenceStore;
-  return &sequenceStore;
-}
-
-ContinuousFunctionStore * GlobalContext::continuousFunctionStore() {
-  static ContinuousFunctionStore continuousFunctionStore;
-  return &continuousFunctionStore;
-}
+OMG::GlobalBox<SequenceStore> GlobalContext::sequenceStore;
+OMG::GlobalBox<ContinuousFunctionStore> GlobalContext::continuousFunctionStore;
 
 void GlobalContext::storageDidChangeForRecord(Ion::Storage::Record record) {
   m_sequenceContext.resetCache();
-  GlobalContext::sequenceStore()->storageDidChangeForRecord(record);
-  GlobalContext::continuousFunctionStore()->storageDidChangeForRecord(record);
+  GlobalContext::sequenceStore->storageDidChangeForRecord(record);
+  GlobalContext::continuousFunctionStore->storageDidChangeForRecord(record);
 }
 
 bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
@@ -222,7 +215,7 @@ Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(const char 
 }
 
 void GlobalContext::tidyDownstreamPoolFrom(char * treePoolCursor) {
-  sequenceStore()->tidyDownstreamPoolFrom(treePoolCursor);
+  sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
 
 }

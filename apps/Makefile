@@ -43,6 +43,7 @@ apps_src += $(addprefix apps/,\
 tests_src += $(addprefix apps/,\
   apps_container_helper_tests.cpp \
   exam_mode_configuration.cpp \
+  init_tests.cpp \
 )
 
 
@@ -93,4 +94,5 @@ apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_graph_te
 
 apps_tests_src += $(addprefix apps/,\
   global_preferences.cpp \
+  init_tests.cpp \
 )

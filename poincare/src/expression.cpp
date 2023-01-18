@@ -40,6 +40,7 @@
 namespace Poincare {
 
 static bool s_approximationEncounteredComplex = false;
+static bool s_reductionEncounteredUndistributedList = false;
 
 /* Constructor & Destructor */
 
@@ -758,6 +759,10 @@ bool Expression::isReal(Context * context, bool canContainMatrices) const {
   return false;
 }
 
+void Expression::SetReductionEncounteredUndistributedList(bool encounter) {
+  s_reductionEncounteredUndistributedList = encounter;
+}
+
 /* Comparison */
 
 bool Expression::isIdenticalTo(const Expression e) const {
@@ -924,7 +929,7 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
   Preferences::ComplexFormat complexFormat = userReductionContext.complexFormat();
   /* Case 1: the reduced expression is ComplexCartesian or pure real, we can
    * take into account the complex format to display a+i*b or r*e^(i*th) */
-  if ((type() == ExpressionNode::Type::ComplexCartesian || isReal(context)) && !hasUnits) {
+  if ((type() == ExpressionNode::Type::ComplexCartesian || isReal(context)) && !hasUnits && !s_reductionEncounteredUndistributedList) {
     ComplexCartesian ecomplex = type() == ExpressionNode::Type::ComplexCartesian ? convert<ComplexCartesian>() : ComplexCartesian::Builder(*this, Rational::Builder(0));
     if (approximateExpression) {
       /* Step 1: Approximation
@@ -1011,6 +1016,8 @@ void Expression::SimplifyAndApproximateChildren(Expression input, Expression * s
 void Expression::cloneAndSimplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) const {
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   assert(!approximateExpression || approximateExpression->isUninitialized());
+
+  s_reductionEncounteredUndistributedList = false;
 
   // Step 1: we reduce the expression
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion);

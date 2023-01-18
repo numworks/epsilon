@@ -598,7 +598,6 @@ void assert_no_duplicates_in_list(const char * expression) {
   }
 }
 
-
 QUIZ_CASE(poincare_approximation_unique_random) {
   assert_expression_approximates_to<double>("randintnorep(10,1,3)", Undefined::Name());
   assert_expression_approximates_to<double>("randintnorep(1,10,100)", Undefined::Name());
@@ -610,6 +609,10 @@ QUIZ_CASE(poincare_approximation_unique_random) {
 
   // Random lists can be sorted
   assert_expression_approximates_to<double>("sort(randintnorep(5,8,4))", "{5,6,7,8}");
+
+  /* The simplification process should understand that the expression is not a
+   * scalar if it encounters a randintnorep. */
+  assert_expression_simplifies_and_approximates_to("rem(randintnorep(1,10,5),1)", "{0,0,0,0,0}");
 }
 
 QUIZ_CASE(poincare_approximation_integral) {

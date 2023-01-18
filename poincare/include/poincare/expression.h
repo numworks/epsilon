@@ -264,6 +264,8 @@ public:
   // WARNING: this methods must be called on reduced expressions
   bool isReal(Context * context, bool canContainMatrices = true) const;
 
+  static void SetReductionEncounteredUndistributedList(bool encounter);
+
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have
    * same structures and all their nodes have same types and values (ie,

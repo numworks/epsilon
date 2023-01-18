@@ -1606,7 +1606,7 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("sign(abs(x))", "sign(abs(x))", SystemForApproximation);
   assert_parsed_expression_simplify_to("sign(abs(x))", "1", User);
 
-  // abs(x) is reduction depends on the target and the complex format
+  // Reduction of abs(x) depends on the target and the complex format
   assert_parsed_expression_simplify_to("x/abs(x)", "\u0014dep(1/sign(x),{1/x})", SystemForAnalysis, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("x/abs(x)", "x/abs(x)", User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("x/abs(x)", "x/abs(x)", SystemForAnalysis, Radian, MetricUnitFormat, Cartesian);

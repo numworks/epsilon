@@ -132,7 +132,7 @@ public:
   bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 
 private:
-  // Return -1 if the name does design a constant
+  // Return -1 if the name does not refer to a constant
   static int ConstantInfoIndexFromName(const char * name, int length);
   ConstantNode * node() const { return static_cast<ConstantNode *>(Expression::node()); }
 };

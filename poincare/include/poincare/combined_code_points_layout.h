@@ -35,6 +35,8 @@ public:
     stream << " CombinedCodePoints=\"" << buffer << "\"";
   }
 #endif
+
+  bool isNotEqualOperator() const { return m_codePoint == '=' && m_CombinedCodePoints == UCodePointCombiningLongSolidusOverlay;}
 private:
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   bool protectedIsIdenticalTo(Layout l) override;
@@ -47,7 +49,6 @@ public:
   CombinedCodePointsLayout(const CodePointLayoutNode * n) : CodePointLayout(n) {}
   static CombinedCodePointsLayout Builder(CodePoint mainCodePoint, CodePoint CombinedCodePoints);
   CodePoint CombinedCodePoints() const { return const_cast<CombinedCodePointsLayout *>(this)->node()->CombinedCodePoints(); }
-private:
   CombinedCodePointsLayoutNode * node() { return static_cast<CombinedCodePointsLayoutNode *>(Layout::node()); }
 };
 

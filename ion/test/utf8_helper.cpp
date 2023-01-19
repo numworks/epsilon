@@ -311,6 +311,8 @@ QUIZ_CASE(ion_utf8_code_point_at_glyph_offset) {
   quiz_assert(UTF8Helper::CodePointAtGlyphOffset(s, 2) == s+2);
   s = "a∑∫ity";
   quiz_assert(UTF8Helper::CodePointAtGlyphOffset(s, 4) == s + strlen(s) - 2);
+  s = "fée";
+  quiz_assert(UTF8Helper::CodePointAtGlyphOffset(s, 2) == s + strlen(s) - 1);
 }
 
 QUIZ_CASE(ion_utf8_glyph_offset_at_code_point) {

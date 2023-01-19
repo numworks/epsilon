@@ -301,13 +301,13 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args, mp_map_t* kw_args )
     }
 
     mp_float_t binWidth = (max-min)/nBins;
-    // Create a array of bins
-    edgeItems = m_new(mp_obj_t, nBins + 1);
     // Handle empty range case
     if (max - min <= FLT_EPSILON) {
       binWidth = 1.0;
       nBins = 1;
     }
+    // Create a array of bins
+    edgeItems = m_new(mp_obj_t, nBins + 1);
 
     // Fill the bin edges list
     for (size_t i = 0; i < nBins+1; i++) {

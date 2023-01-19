@@ -259,18 +259,15 @@ int UnitNode::Prefix::serialize(char * buffer, int bufferSize) const {
   return std::min<int>(strlcpy(buffer, m_symbol, bufferSize), bufferSize - 1);
 }
 
-const UnitNode::Representative * UnitNode::Representative::DefaultFindBestRepresentative(double value, double exponent, const UnitNode::Representative * representatives, int length, const Prefix * * prefix) {
+const UnitNode::Representative * UnitNode::Representative::defaultFindBestRepresentative(double value, double exponent, const UnitNode::Representative * representatives, int length, const Prefix * * prefix) const {
   assert(length >= 1);
-  const Representative * result = representatives;
-  double accuracy = std::fabs(value / std::pow(result->ratio(), exponent));
-  if (*prefix) {
-    *prefix = result->findBestPrefix(accuracy, exponent);
-  }
-  if (length == 1) {
-    return result;
-  }
+  /* Return this if every other representative gives an accuracy of 0 or Inf.
+   * This can happen when searching for an Imperial representative for 1m^20000
+   * for example. */
+  const Representative * result = this;
+  double accuracy = 0.;
   const Prefix * currentPrefix = Prefix::EmptyPrefix();
-  const Representative * currentRepresentative = result + 1;
+  const Representative * currentRepresentative = representatives;
   while (currentRepresentative < representatives + length) {
     double currentAccuracy = std::fabs(value / std::pow(currentRepresentative->ratio(), exponent));
     if (*prefix) {
@@ -460,9 +457,9 @@ int UnitNode::TimeRepresentative::setAdditionalExpressions(double value, Express
 const UnitNode::Representative * UnitNode::DistanceRepresentative::standardRepresentative(double value, double exponent, const ReductionContext& reductionContext, const Prefix * * prefix) const {
   return (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ?
     /* Exclude imperial units from the search. */
-    DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), Unit::k_inchRepresentativeIndex, prefix) :
+    defaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), Unit::k_inchRepresentativeIndex, prefix) :
     /* Exclude m form the search. */
-    DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + 1, numberOfRepresentatives() - 1, prefix);
+    defaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + 1, numberOfRepresentatives() - 1, prefix);
 }
 
 int UnitNode::DistanceRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ReductionContext& reductionContext) const {
@@ -493,7 +490,7 @@ const UnitNode::Representative * UnitNode::AngleRepresentative::DefaultRepresent
 
 const UnitNode::Representative * UnitNode::AngleRepresentative::standardRepresentative(double value, double exponent, const ReductionContext& reductionContext, const Prefix * * prefix) const {
   if (reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Degree) {
-    return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_arcSecondRepresentativeIndex, 3, prefix);
+    return defaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_arcSecondRepresentativeIndex, 3, prefix);
   }
   return DefaultRepresentative(reductionContext);
 }
@@ -538,12 +535,12 @@ const UnitNode::Prefix * UnitNode::MassRepresentative::basePrefix() const {
 
 const UnitNode::Representative * UnitNode::MassRepresentative::standardRepresentative(double value, double exponent, const ReductionContext& reductionContext, const Prefix * * prefix) const {
   if (reductionContext.unitFormat() == Preferences::UnitFormat::Imperial) {
-    return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_ounceRepresentativeIndex, Unit::k_shortTonRepresentativeIndex - Unit::k_ounceRepresentativeIndex + 1, prefix);
+    return defaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_ounceRepresentativeIndex, Unit::k_shortTonRepresentativeIndex - Unit::k_ounceRepresentativeIndex + 1, prefix);
   }
   assert(reductionContext.unitFormat() == Preferences::UnitFormat::Metric);
   bool useTon = exponent == 1. && value >= (representativesOfSameDimension() + Unit::k_tonRepresentativeIndex)->ratio();
   int representativeIndex = useTon ? Unit::k_tonRepresentativeIndex : Unit::k_gramRepresentativeIndex;
-  return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + representativeIndex, 1, prefix);
+  return defaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + representativeIndex, 1, prefix);
 }
 
 int UnitNode::MassRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ReductionContext& reductionContext) const {
@@ -660,7 +657,7 @@ const UnitNode::Representative * UnitNode::VolumeRepresentative::standardReprese
     *prefix = representativesOfSameDimension()->findBestPrefix(value, exponent);
     return representativesOfSameDimension();
   }
-  return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + 1, numberOfRepresentatives() - 1, prefix);
+  return defaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + 1, numberOfRepresentatives() - 1, prefix);
 }
 
 int UnitNode::VolumeRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ReductionContext& reductionContext) const {

@@ -24,7 +24,7 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
                                            InputSlopeController * inputSlopeController,
                                            InputEventHandlerDelegate * handler,
                                            Test * test) :
-      Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(parent),
+      Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(parent, this),
       m_inputController(inputController),
       m_inputSlopeController(inputSlopeController),
       m_operatorDataSource(test),

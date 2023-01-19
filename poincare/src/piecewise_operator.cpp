@@ -121,12 +121,13 @@ Expression PiecewiseOperator::shallowReduce(ReductionContext reductionContext) {
   return replaceWithUndefinedInPlace();
 }
 
-int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+template<typename T>
+int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(const char * symbol, T x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   assert(numberOfChildren() > 0);
   VariableContext variableContext = VariableContext(symbol, context);
-  variableContext.setApproximationForVariable<float>(x);
+  variableContext.setApproximationForVariable<T>(x);
   ApproximationContext approximationContext = ApproximationContext(&variableContext, complexFormat, angleUnit);
-  return static_cast<PiecewiseOperatorNode *>(node())->indexOfFirstTrueCondition<float>(approximationContext);
+  return static_cast<PiecewiseOperatorNode *>(node())->indexOfFirstTrueCondition<T>(approximationContext);
 }
 
 template Evaluation<float> PiecewiseOperatorNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
@@ -134,5 +135,8 @@ template Evaluation<double> PiecewiseOperatorNode::templatedApproximate<double>(
 
 template int PiecewiseOperatorNode::indexOfFirstTrueCondition<float>(const ApproximationContext& approximationContext) const;
 template int PiecewiseOperatorNode::indexOfFirstTrueCondition<double>(const ApproximationContext& approximationContext) const;
+
+template int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol<float>(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol<double>(const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
 }

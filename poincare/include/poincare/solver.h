@@ -27,6 +27,7 @@ public:
   typedef T (*FunctionEvaluation)(T, const void *);
   typedef Interest (*BracketTest)(Coordinate2D<T>, Coordinate2D<T>, Coordinate2D<T>, const void *);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void *, T, T, Interest, T);
+  typedef bool (*DiscontinuityEvaluation)(T, T, const void *);
 
   constexpr static T k_relativePrecision = Float<T>::Epsilon();
   constexpr static T k_minimalAbsoluteStep = 2. * Helpers::SquareRoot(2. * k_relativePrecision);
@@ -54,7 +55,7 @@ public:
   /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)
    * closest to xStart, or NAN if it does not exist. */
   Coordinate2D<T> next(const Expression & e, BracketTest test, HoneResult hone);
-  Coordinate2D<T> next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone);
+  Coordinate2D<T> next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone, DiscontinuityEvaluation discontinuityTest = nullptr);
   Coordinate2D<T> nextRoot(const Expression & e);
   Coordinate2D<T> nextRoot(FunctionEvaluation f, const void * aux) { return next(f, aux, EvenOrOddRootInBracket, CompositeBrentForRoot); }
   Coordinate2D<T> nextMinimum(const Expression & e);
@@ -101,7 +102,7 @@ private:
   Coordinate2D<T> nextRootInChildren(const Expression & e, Expression::ExpressionTestAuxiliary test, void * aux) const;
   Coordinate2D<T> nextRootInMultiplication(const Expression & m) const;
   Coordinate2D<T> nextRootInAddition(const Expression & m) const;
-  void registerSolution(Coordinate2D<T> solution, Interest interest, FunctionEvaluation f = nullptr, const void * aux = nullptr);
+  void registerSolution(Coordinate2D<T> solution, Interest interest, FunctionEvaluation f = nullptr, const void * aux = nullptr, DiscontinuityEvaluation discontinuityTest = nullptr);
 
   T m_xStart;
   T m_xEnd;

@@ -1,4 +1,5 @@
 #include <poincare/solver.h>
+#include <poincare/piecewise_operator.h>
 #include <poincare/subtraction.h>
 #include <poincare/solver_algorithms.h>
 
@@ -18,7 +19,7 @@ Solver<T>::Solver(T xStart, T xEnd, const char * unknown, Context * context, Pre
 {}
 
 template<typename T>
-Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone) {
+Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone, DiscontinuityEvaluation discontinuityTest) {
   Coordinate2D<T> p1, p2(start(), f(start(), aux)), p3(nextX(p2.x1(), end(), static_cast<T>(1.)), k_NAN);
   p3.setX2(f(p3.x1(), aux));
   Coordinate2D<T> finalSolution;
@@ -62,7 +63,7 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
     }
   }
 
-  registerSolution(finalSolution, finalInterest, f, aux);
+  registerSolution(finalSolution, finalInterest, f, aux, discontinuityTest);
   return result();
 }
 
@@ -77,8 +78,16 @@ Coordinate2D<T> Solver<T>::next(const Expression & e, BracketTest test, HoneResu
     const FunctionEvaluationParameters * p = reinterpret_cast<const FunctionEvaluationParameters *>(aux);
     return p->expression.approximateWithValueForSymbol(p->unknown, x, p->context, p->complexFormat, p->angleUnit);
   };
+  DiscontinuityEvaluation discontinuityTest = [](T x1, T x2, const void * aux) {
+    const FunctionEvaluationParameters * p = reinterpret_cast<const FunctionEvaluationParameters *>(aux);
+    if (p->expression.type() != ExpressionNode::Type::PiecewiseOperator) {
+      return false;
+    }
+    const PiecewiseOperator piecewise = static_cast<const PiecewiseOperator &>(p->expression);
+    return piecewise.indexOfFirstTrueConditionWithValueForSymbol(p->unknown,x1, p->context, p->complexFormat, p->angleUnit) !=  piecewise.indexOfFirstTrueConditionWithValueForSymbol(p->unknown, x2, p->context, p->complexFormat, p->angleUnit);
+  };
 
-  return next(f, &parameters, test, hone);
+  return next(f, &parameters, test, hone, discontinuityTest);
 }
 
 template<typename T>
@@ -496,7 +505,7 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Expression & e) const {
 }
 
 template<typename T>
-void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, FunctionEvaluation f, const void * aux) {
+void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, FunctionEvaluation f, const void * aux, DiscontinuityEvaluation discontinuityTest) {
   T x = solution.x1();
 
   if (f && !std::isnan(x)) {
@@ -508,12 +517,23 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, Fu
     if (!std::isnan(roundX) && validSolution(roundX)) {
       T fIntX = f(roundX, aux);
       T fx = f(x, aux);
-      bool roundXIsBetter =
+      /* Filter out solutions that are close to a discontinuity. This can
+       * happen with functions such as  y = (-x when x < 0, x-1 otherwise)
+       * with which a root is found in (0,0) when it should not.
+       * It is assumed that the piecewise condition are more often than not
+       * integers or of a magnitude closer to roundX than x. So if the
+       * condition of roundX is different from x, this means that the solution
+       * found is probably on an open interval.
+       * */
+      if (discontinuityTest && discontinuityTest(x, roundX, aux)) {
+        x = k_NAN;
+      } else if (
         fIntX == fx ||
         (interest == Interest::Root && std::fabs(fIntX) < std::fabs(fx)) ||
         (interest == Interest::LocalMinimum && fIntX < fx) ||
-        (interest == Interest::LocalMaximum && fIntX > fx);
-      if (roundXIsBetter) {
+        (interest == Interest::LocalMaximum && fIntX > fx))
+      {
+        // Round is better
         x = roundX;
       }
     }
@@ -538,7 +558,7 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, Fu
 // Explicit template instanciations
 
 template Solver<double>::Solver(double, double, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
-template Coordinate2D<double> Solver<double>::next(FunctionEvaluation, const void *, BracketTest, HoneResult);
+template Coordinate2D<double> Solver<double>::next(FunctionEvaluation, const void *, BracketTest, HoneResult, DiscontinuityEvaluation discontinuityTest);
 template Coordinate2D<double> Solver<double>::nextRoot(const Expression &);
 template Coordinate2D<double> Solver<double>::nextMinimum(const Expression &);
 template Coordinate2D<double> Solver<double>::nextIntersection(const Expression &, const Expression &, Expression *);
@@ -550,7 +570,7 @@ template bool Solver<double>::FunctionSeemsConstantOnTheInterval(Solver<double>:
 
 template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void *);
 template Solver<float>::Solver(float, float, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
-template Coordinate2D<float> Solver<float>::next(FunctionEvaluation, const void *, BracketTest, HoneResult);
+template Coordinate2D<float> Solver<float>::next(FunctionEvaluation, const void *, BracketTest, HoneResult, DiscontinuityEvaluation discontinuityTest);
 template float Solver<float>::MaximalStep(float);
 
 }

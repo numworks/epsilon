@@ -34,9 +34,12 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     constexpr size_t size = Escher::Clipboard::k_bufferSize;
     char buffer[size];
     int index = selectedRow();
+    const DataField * dataField = DataFieldForRow(index);
     Layout l = DataFieldForRow(index)->getLayout(App::app()->elementsViewDataSource()->selectedElement(), PrintFloat::k_numberOfStoredSignificantDigits);
     int length;
-    if (l.isIdenticalTo(DataField::UnknownValueLayout())) {
+    if (l.isIdenticalTo(DataField::UnknownValueLayout()) // N/A value
+     || dataField == &ElementsDataBase::GroupField       // Group field
+     || dataField == &ElementsDataBase::StateField) {    // State field
       length = strlcpy(buffer, "", size);
     } else {
       length = l.serializeForParsing(buffer, size);

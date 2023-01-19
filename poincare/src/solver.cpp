@@ -85,7 +85,7 @@ Coordinate2D<T> Solver<T>::next(const Expression & e, BracketTest test, HoneResu
       return false;
     }
     const PiecewiseOperator piecewise = static_cast<const PiecewiseOperator &>(p->expression);
-    return piecewise.indexOfFirstTrueConditionWithValueForSymbol(p->unknown,x1, p->context, p->complexFormat, p->angleUnit) !=  piecewise.indexOfFirstTrueConditionWithValueForSymbol(p->unknown, x2, p->context, p->complexFormat, p->angleUnit);
+    return piecewise.indexOfFirstTrueConditionWithValueForSymbol<T>(p->unknown, x1, p->context, p->complexFormat, p->angleUnit) != piecewise.indexOfFirstTrueConditionWithValueForSymbol(p->unknown, x2, p->context, p->complexFormat, p->angleUnit);
   };
 
   return next(f, &parameters, test, hone, discontinuityTest);

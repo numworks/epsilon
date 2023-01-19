@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <poincare/float_list.h>
+#include <poincare/range.h>
 #include "global_context.h"
 #include <algorithm>
 
@@ -104,7 +105,7 @@ public:
    * updates the valid series, and stores the lists in the storage
    * */
   virtual bool updateSeries(int series, bool delayUpdate = false);
-  virtual bool valueValidInColumn(double value, int relativeColumn) const { return !std::isnan(value); }
+  virtual bool valueValidInColumn(double value, int relativeColumn) const { return !std::isnan(value) && value >= -Poincare::Range1D::k_maxFloat && value <= Poincare::Range1D::k_maxFloat; }
 protected:
   void initListsInPool();
   double defaultValue(int series, int i, int j) const;

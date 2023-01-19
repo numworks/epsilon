@@ -114,9 +114,7 @@ public:
   // DoublePairStore
   void updateSeriesValidity(int series) override;
   bool deleteValueAtIndex(int series, int i, int j, bool authorizeNonEmptyRowDeletion = true, bool delayUpdate = false) override;
-  bool valueValidInColumn(double value, int relativeColumn) const override {
-    return DoublePairStore::valueValidInColumn(value, relativeColumn) && (relativeColumn != 1 || value >= 0.0) && value >= -Poincare::Range1D::k_maxFloat && value <= Poincare::Range1D::k_maxFloat;
-  }
+  bool valueValidInColumn(double value, int relativeColumn) const override { return DoublePairStore::valueValidInColumn(value, relativeColumn) && (relativeColumn != 1 || value >= 0.0); }
 
   typedef double (Store::*CalculPointer)(int) const;
   static bool ValidSeriesAndValidTotalNormalProbabilities(const DoublePairStore * store, int series) {

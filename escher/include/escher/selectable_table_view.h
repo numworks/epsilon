@@ -69,7 +69,6 @@ private:
   int indexOfNextSelectableColumn(int delta, int currentColumn, int currentRow) { return indexOfNextSelectableColumnOrRow(delta, currentColumn, currentRow, false); }
   int firstSelectableColumnOrRow(bool searchForRoww);
   int firstOrLastSelectableColumnOrRow(bool first, bool searchForRow);
-  void handleStoreEvent(bool inClipboard);
 };
 
 }

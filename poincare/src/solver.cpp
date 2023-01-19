@@ -503,7 +503,8 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, Fu
     /* When searching for an extremum, the function can take the extremal value
      * on several abscissas, and Brent can pick up any of them. This deviation
      * is particularly visible if the theoretical solution is an integer. */
-    T roundX = std::copysign(k_minimalPracticalStep * std::floor(std::fabs(x) / k_minimalPracticalStep), x);
+    constexpr T k_roundingOrder = 2. * k_minimalPracticalStep;
+    T roundX = k_roundingOrder * std::round(x / k_roundingOrder);
     if (!std::isnan(roundX) && validSolution(roundX)) {
       T fIntX = f(roundX, aux);
       bool roundXIsBetter = fIntX == solution.x2() || (interest == Interest::Root && fIntX == k_zero) || (interest == Interest::LocalMinimum && fIntX < solution.x2()) || (interest == Interest::LocalMaximum && fIntX > solution.x2());

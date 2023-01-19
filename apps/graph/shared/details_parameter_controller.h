@@ -13,7 +13,7 @@
 
 namespace Graph {
 
-class DetailsParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
+class DetailsParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>, public Escher::SelectableTableViewDelegate {
 public:
   DetailsParameterController(Escher::Responder * parentResponder);
 
@@ -33,10 +33,15 @@ public:
   Escher::MessageTableCellWithMessageWithBuffer * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfDataPoints; }
   int typeAtIndex(int index) const override { return 0; }
+
+  // SelectableTableViewDelegate
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return row != k_indexOfCurveTypeRow; }
+
   // Number of sections to display in the ContinuousFunction's detail menu
   int detailsNumberOfSections() const;
   void setRecord(Ion::Storage::Record record);
 private:
+  constexpr static int k_indexOfCurveTypeRow = 0;
   constexpr static size_t k_lineDetailsSections = 3;
   constexpr static size_t k_circleDetailsSections = 3;
   constexpr static size_t k_ellipseDetailsSections = 6;

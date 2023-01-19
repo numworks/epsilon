@@ -304,16 +304,18 @@ bool Solver<T>::FunctionSeemsConstantOnTheInterval(Solver<T>::FunctionEvaluation
     entropy += - std::log(probabilityOfValue) * probabilityOfValue;
   }
 
-  // Unfortunately, std::log is not constexpr
-  double maxEntropy = std::log(static_cast<T>(k_numberOfSteps));
-  assert(entropy >= 0 && entropy <= maxEntropy);
+  // maxEntropy = ln(k_numberOfSteps), unfortunately std::log is not constexpr
+  constexpr T k_maxEntropy = static_cast<T>(2.995733);
+  // Check that k_maxEntropy ~ ln(k_numberOfSteps)
+  assert(std::log(static_cast<T>(k_numberOfSteps)) <= k_maxEntropy && std::log(static_cast<T>(k_numberOfSteps)) > k_maxEntropy - static_cast<T>(1E-6));
+  assert(entropy >= 0 && entropy <= k_maxEntropy);
   /* If the entropy of the data is lower than 0.5 * maxEntropy, it is assumed
    * that the function is constant on [xMin, xMax].
-   * The value of 0.5 has be chosen because of good experimental results but
+   * The value of 0.5 has been chosen because of good experimental results but
    * could be tweaked.
    * */
   constexpr T k_entropyThreshold = static_cast<T>(0.5);
-  return entropy < maxEntropy * k_entropyThreshold;
+  return entropy < k_maxEntropy * k_entropyThreshold;
 }
 
 template<typename T>

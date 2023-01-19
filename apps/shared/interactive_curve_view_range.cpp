@@ -6,6 +6,7 @@
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/ieee754.h>
 #include <poincare/preferences.h>
+#include <poincare/helpers.h>
 #include <poincare/zoom.h>
 #include <algorithm>
 #include <math.h>
@@ -190,6 +191,7 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       const float newXMax = std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth + xMax();
       protectedSetX(Range1D(newXMax - xRange, newXMax), k_maxFloat);
     }
+    assert(Poincare::Helpers::RelativelyEqual<float>(xMax() - xMin(), xRange, 0.01));
   }
   if (std::isfinite(y)) {
     const float yRange = yMax() - yMin();
@@ -204,6 +206,7 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       moved = true;
       protectedSetY(Range1D(y + topMargin - yRange, y + topMargin), k_maxFloat);
     }
+    assert(Poincare::Helpers::RelativelyEqual<float>(yMax() - yMin(), yRange, 0.01));
   }
 
   if (moved) {

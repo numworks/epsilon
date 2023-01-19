@@ -115,7 +115,7 @@ public:
     virtual const Representative * representativesOfSameDimension() const { return nullptr; };
     virtual const Prefix * basePrefix() const { return Prefix::EmptyPrefix(); }
     virtual bool isBaseUnit() const { return false; }
-    virtual const Representative * standardRepresentative(double value, double exponent, const ReductionContext& reductionContext, const Prefix * * prefix) const { return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), numberOfRepresentatives(), prefix); }
+    virtual const Representative * standardRepresentative(double value, double exponent, const ReductionContext& reductionContext, const Prefix * * prefix) const { return defaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), numberOfRepresentatives(), prefix); }
     /* hasSpecialAdditionalExpressions return true if the unit has special
      * forms suchas as splits (for time and imperial units) or common
      * conversions (such as speed and energy). */
@@ -135,7 +135,7 @@ public:
     Expression ratioExpressionReduced(const ReductionContext& reductionContext) const { return Expression::Parse(m_ratioExpression, nullptr).deepReduce(reductionContext); }
 
   protected:
-    static const Representative * DefaultFindBestRepresentative(double value, double exponent, const Representative * representatives, int length, const Prefix * * prefix);
+    const Representative * defaultFindBestRepresentative(double value, double exponent, const Representative * representatives, int length, const Prefix * * prefix) const;
 
 
     AliasesList m_rootSymbols;

@@ -34,7 +34,7 @@ I18n::Message GraphController::emptyMessage() {
 }
 
 void GraphController::viewWillAppear() {
-  m_view.drawTangent(false);
+  m_view.setTangentDisplay(false);
   m_view.setInterest(Solver<double>::Interest::None);
   m_cursorView.resetMemoization();
   m_view.setCursorView(&m_cursorView);

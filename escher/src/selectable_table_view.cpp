@@ -178,6 +178,10 @@ void SelectableTableView::handleStoreEvent(bool inClipboard) {
 
   // Step 1: Determine text to store
   if (m_delegate && !m_delegate->canStoreContentOfCellAtLocation(this, selectedColumn(), selectedRow())) {
+    if (inClipboard) {
+      // We don't want to store an empty text in clipboard
+      return;
+    }
     strlcpy(buffer, "", bufferSize);
   } else {
     const char * text = cell->text();

@@ -9,6 +9,9 @@ void ResidualPlotRange::calibrate(double xMin, double xMax, double yMin, double 
 
 void ResidualPlotRange::calibrateXorY(bool isX, double min, double max, KDCoordinate height, KDCoordinate bannerHeight) {
   Poincare::Range1D range(min, max);
+  if (std::isnan(range.length())) {
+    range = Poincare::Range1D(-1, 1);
+  }
 
   /* Proportional model handles datasets with a single abscissa value. Residuals
    * y values could also be very close. They are shifted by both k_minLength

@@ -174,7 +174,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
         strlcpy(buffer, text, bufferSize);
       }
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-        return Container::activeApp()->storeValue(buffer, cell->canOpenStoreMenu());
+        return Container::activeApp()->storeValue(buffer);
       }
       Escher::Clipboard::SharedClipboard()->store(buffer);
       return true;
@@ -188,7 +188,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
         l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
       }
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-        return Container::activeApp()->storeValue(buffer, cell->canOpenStoreMenu());
+        return Container::activeApp()->storeValue(buffer);
       }
       Escher::Clipboard::SharedClipboard()->store(buffer);
       return true;

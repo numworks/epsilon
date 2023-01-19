@@ -181,14 +181,15 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
     if (x < xMin() + leftMargin && xMin() > -k_maxFloat) {
       moved = true;
       /* The panning increment is a whole number of pixels so that the caching
-       * for cartesian functions is not invalidated. */
-      const float newXMin = std::floor((x - leftMargin - xMin()) / pixelWidth) * pixelWidth + xMin();
+       * for cartesian functions is not invalidated.
+       * Cap to -k_maxFloat so that xRange is preserved. */
+      const float newXMin = std::max(-k_maxFloat, std::floor((x - leftMargin - xMin()) / pixelWidth) * pixelWidth + xMin());
       protectedSetX(Range1D(newXMin, newXMin + xRange), k_maxFloat);
     }
     const float rightMargin = rightMarginRatio * xRange;
     if (x > xMax() - rightMargin && xMax() < k_maxFloat) {
       moved = true;
-      const float newXMax = std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth + xMax();
+      const float newXMax = std::min(k_maxFloat, std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth + xMax());
       protectedSetX(Range1D(newXMax - xRange, newXMax), k_maxFloat);
     }
     assert(Poincare::Helpers::RelativelyEqual<float>(xMax() - xMin(), xRange, 0.01));
@@ -198,13 +199,14 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
     const float bottomMargin = bottomMarginRatio * yRange;
     if (y < yMin() + bottomMargin && yMin() > -k_maxFloat) {
       moved = true;
-      const float newYMin = y - bottomMargin;
+      const float newYMin = std::max(-k_maxFloat, y - bottomMargin);
       protectedSetY(Range1D(newYMin, newYMin + yRange), k_maxFloat);
     }
     const float topMargin = topMarginRatio * yRange;
     if (y > yMax() - topMargin && yMax() < k_maxFloat) {
       moved = true;
-      protectedSetY(Range1D(y + topMargin - yRange, y + topMargin), k_maxFloat);
+      const float newYMax = std::min(k_maxFloat, y + topMargin);
+      protectedSetY(Range1D(newYMax - yRange, newYMax), k_maxFloat);
     }
     assert(Poincare::Helpers::RelativelyEqual<float>(yMax() - yMin(), yRange, 0.01));
   }

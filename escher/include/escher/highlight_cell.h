@@ -19,7 +19,6 @@ public:
   void hide() { setVisible(false); }
 
   bool isSelectable() { return isVisible() && protectedIsSelectable(); }
-  virtual bool canOpenStoreMenu() const { return true; }
 
   virtual void setHighlighted(bool highlight);
   void setHighlightedWithoutReload(bool highlight) { m_state = highlight ? State::Highlighted : State::Visible; }

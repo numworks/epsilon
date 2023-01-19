@@ -285,7 +285,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     } else if (Trigonometry::isDirectTrigonometryFunction(o)) {
       directExpression = o;
     }
-    if (!directExpression.isUninitialized() && !directExpression.childAtIndex(0).hasDefinedComplexApproximation(globalContext, Preferences::ComplexFormat::Cartesian, preferences->angleUnit())) {
+    if (!directExpression.isUninitialized() && std::isfinite(PoincareHelpers::ApproximateToScalar<double>(directExpression.childAtIndex(0), globalContext))) {
       // The angle must be real.
       return AdditionalInformations {.directTrigonometry = true};
     }

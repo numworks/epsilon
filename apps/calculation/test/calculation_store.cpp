@@ -554,6 +554,7 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("{i}", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("ln(3+4)", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("cos(i)", {}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("cos(i%)", {}, &globalContext, &store);
   assertMainCalculationOutputIs("i→z", "i", &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("z+1", {.complex = true}, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("z.exp").destroy();

@@ -161,36 +161,36 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto || event == Ion::Events::Var) {
     HighlightCell * cell = selectedCell();
-    if (cell == nullptr) {
-      return false;
-    }
-    bool inClipboard = event == Ion::Events::Copy || event == Ion::Events::Cut;
-    const char * text = cell->text();
-    if (text) {
-      handleStoreEvent(text, inClipboard);
-      return true;
-    }
-    Poincare::Layout l = cell->layout();
-    if (!l.isUninitialized()) {
-      constexpr int bufferSize = TextField::MaxBufferSize();
-      char buffer[bufferSize];
-      l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
-      handleStoreEvent(buffer, inClipboard);
+    if (cell && (cell->text() || !cell->layout().isUninitialized())) {
+      handleStoreEvent(event == Ion::Events::Copy || event == Ion::Events::Cut);
       return true;
     }
   }
   return false;
 }
 
-void SelectableTableView::handleStoreEvent(const char * text, bool inClipboard) {
-  assert(text);
+void SelectableTableView::handleStoreEvent(bool inClipboard) {
+  HighlightCell * cell = selectedCell();
+  assert(cell);
+  assert(cell->text() || !cell->layout().isUninitialized());
   constexpr int bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
+
+  // Step 1: Determine text to store
   if (m_delegate && !m_delegate->canStoreContentOfCellAtLocation(this, selectedColumn(), selectedRow())) {
     strlcpy(buffer, "", bufferSize);
   } else {
-    strlcpy(buffer, text, bufferSize);
+    const char * text = cell->text();
+    Poincare::Layout l = cell->layout();
+    if (text) {
+      strlcpy(buffer, text, bufferSize);
+    } else {
+      assert(!l.isUninitialized());
+      l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
+    }
   }
+
+  // Step 2: Determine where to store it
   if (inClipboard) {
     Escher::Clipboard::SharedClipboard()->store(buffer);
   } else {

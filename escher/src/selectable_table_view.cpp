@@ -174,9 +174,10 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
         strlcpy(buffer, text, bufferSize);
       }
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-        return Container::activeApp()->storeValue(buffer);
+        Container::activeApp()->storeValue(buffer);
+      } else {
+        Escher::Clipboard::SharedClipboard()->store(buffer);
       }
-      Escher::Clipboard::SharedClipboard()->store(buffer);
       return true;
     }
     Poincare::Layout l = cell->layout();
@@ -188,9 +189,10 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
         l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
       }
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-        return Container::activeApp()->storeValue(buffer);
+        Container::activeApp()->storeValue(buffer);
+      } else {
+        Escher::Clipboard::SharedClipboard()->store(buffer);
       }
-      Escher::Clipboard::SharedClipboard()->store(buffer);
       return true;
     }
   }

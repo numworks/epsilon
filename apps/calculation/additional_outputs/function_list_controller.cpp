@@ -32,7 +32,7 @@ void FunctionListController::setExactAndApproximateExpression(Poincare::Expressi
   exactExpression.replaceNumericalValuesWithSymbol(variable);
 
   Expression reducedExpression = exactExpression;
-  PoincareHelpers::CloneAndReduce(&reducedExpression, context, ReductionTarget::SystemForApproximation);
+  PoincareHelpers::CloneAndSimplify(&reducedExpression, context, ReductionTarget::SystemForApproximation);
 
   /* Use the approximate expression to compute the ordinate to ensure that
    * it's coherent with the output of the calculation.

@@ -36,16 +36,15 @@ void VectorListController::setExpression(Poincare::Expression e) {
   constexpr static SymbolicComputation k_symbolicComputation = SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
   // 1. Vector norm
   Expression norm = VectorNorm::Builder(m_expression);
-  PoincareHelpers::CloneAndReduce(&norm, context, k_target, k_symbolicComputation);
+  PoincareHelpers::CloneAndSimplify(&norm, context, k_target, k_symbolicComputation);
   m_indexMessageMap[index] = messageIndex++;
-  Layout exact = getLayoutFromExpression(norm, context, &preferencesCopy);
   Expression approximatedNorm = PoincareHelpers::Approximate<double>(norm, context);
   setLineAtIndex(index++, Expression(), norm, context, &preferencesCopy);
 
   if (!norm.isUndefined() && approximatedNorm.isNull(context) == TrinaryBoolean::False && !Expression::IsInfinity(approximatedNorm, context)) {
     // 2. Normalized vector
     Expression normalized = Division::Builder(m_expression, norm);
-    PoincareHelpers::CloneAndReduce(&normalized, context, k_target, k_symbolicComputation);
+    PoincareHelpers::CloneAndSimplify(&normalized, context, k_target, k_symbolicComputation);
     if (normalized.type() != ExpressionNode::Type::Matrix) {
       // The reduction might have failed
       return;

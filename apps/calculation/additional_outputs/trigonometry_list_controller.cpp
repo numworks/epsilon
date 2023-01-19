@@ -32,7 +32,7 @@ void TrigonometryListController::setExpression(Expression e) {
   Expression twoPi = Multiplication::Builder(Rational::Builder(2), Poincare::Constant::PiBuilder());
   // Use the reduction of frac part to compute mod 1 on rationals
   Expression angleReduced = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
-  Shared::PoincareHelpers::CloneAndReduce(&angleReduced, context, ReductionTarget::User);
+  Shared::PoincareHelpers::CloneAndSimplify(&angleReduced, context, ReductionTarget::User);
   // If frac part is still there, the exact angle is probably not interesting
   if (angleReduced.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; })) {
     /* Do not approximate the FracPart, which could lead to truncation error

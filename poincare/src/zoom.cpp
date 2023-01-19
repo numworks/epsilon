@@ -104,7 +104,7 @@ void Zoom::fitFullFunction(Function2DWithContext<float> f, const void * model) {
 }
 
 static Solver<float>::Interest pointIsInterestingHelper(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c, const void * aux) {
-  Solver<float>::BracketTest tests[] = { Solver<float>::OddRootInBracket, Solver<float>::MinimumInBracket, Solver<float>::MaximumInBracket, Solver<float>::DiscontinuityInBracket };
+  Solver<float>::BracketTest tests[] = { Solver<float>::OddRootInBracket, Solver<float>::MinimumInBracket, Solver<float>::MaximumInBracket, Solver<float>::UndefinedInBracket };
   Solver<float>::Interest interest = Solver<float>::Interest::None;
   for (Solver<float>::BracketTest & test : tests) {
     interest = test(a, b, c, aux);

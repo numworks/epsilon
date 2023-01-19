@@ -41,7 +41,7 @@ public:
   static Interest EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *);
   static Interest MinimumInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest(b.x2() < a.x2() && b.x2() < c.x2(), Interest::LocalMinimum); }
   static Interest MaximumInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest(a.x2() < b.x2() && c.x2() < b.x2(), Interest::LocalMaximum); }
-  static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest((std::isfinite(a.x2()) && std::isnan(c.x2())) || (std::isfinite(c.x2()) && std::isnan(a.x2())), Interest::Discontinuity); }
+  static Interest UndefinedInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest((std::isfinite(a.x2()) && std::isnan(c.x2())) || (std::isfinite(c.x2()) && std::isnan(a.x2())), Interest::Discontinuity); }
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
@@ -91,7 +91,7 @@ private:
   static Coordinate2D<T> SafeBrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
 
-  static void ExcludeDiscontinuityFromBracket(Coordinate2D<T> * p1, Coordinate2D<T> * p2, Coordinate2D<T> * p3, FunctionEvaluation f, const void * aux, T minimalSizeOfInterval);
+  static void ExcludeUndefinedFromBracket(Coordinate2D<T> * p1, Coordinate2D<T> * p2, Coordinate2D<T> * p3, FunctionEvaluation f, const void * aux, T minimalSizeOfInterval);
   static bool FunctionSeemsConstantOnTheInterval(Solver<T>::FunctionEvaluation f, const void * aux, T xMin, T xMax);
 
   T maximalStep() const { return m_maximalXStep; }

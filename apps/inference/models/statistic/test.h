@@ -59,7 +59,7 @@ public:
    * of landing is inferior to a given significance level. */
   bool canRejectNull();
   double thresholdAbscissa(Poincare::ComparisonNode::OperatorType op, double factor = 1.0) const;
-  bool isGraphable() const override { return !std::isnan(m_testCriticalValue) && !std::isnan(m_pValue); }
+  bool isGraphable() const override { return std::isfinite(m_testCriticalValue) && std::isfinite(m_pValue); }
 
   // Output
   int numberOfResults() const override { return 2 + numberOfEstimates() + hasDegreeOfFreedom(); }

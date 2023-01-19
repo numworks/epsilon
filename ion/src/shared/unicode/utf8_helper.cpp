@@ -412,21 +412,10 @@ const char * CodePointAtGlyphOffset(const char * buffer, int position) {
   }
 
   UTF8Decoder decoder(buffer);
-  const char * codePointPointer = decoder.stringPosition();
-  CodePoint codePoint = decoder.nextCodePoint();
-  int glyphIndex = 0;
-  while (codePoint != UCodePointNull) {
-    if (glyphIndex == position) {
-      assert(!codePoint.isCombining());
-      return codePointPointer;
-    }
-    if (!codePoint.isCombining()) {
-      glyphIndex++;
-    }
-    codePointPointer = decoder.stringPosition();
-    codePoint = decoder.nextCodePoint();
+  for (int i = 0; i < position; i++) {
+    decoder.nextGlyphPosition();
   }
-  return codePointPointer;
+  return decoder.stringPosition();
 }
 
 size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position) {

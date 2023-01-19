@@ -102,7 +102,8 @@ private:
   Coordinate2D<T> nextRootInChildren(const Expression & e, Expression::ExpressionTestAuxiliary test, void * aux) const;
   Coordinate2D<T> nextRootInMultiplication(const Expression & m) const;
   Coordinate2D<T> nextRootInAddition(const Expression & m) const;
-  void registerSolution(Coordinate2D<T> solution, Interest interest, FunctionEvaluation f = nullptr, const void * aux = nullptr, DiscontinuityEvaluation discontinuityTest = nullptr);
+  Coordinate2D<T> honeAndRoundSolution(FunctionEvaluation f, const void * aux, T start, T end, Interest interest, HoneResult hone, DiscontinuityEvaluation discontinuityTest);
+  void registerSolution(Coordinate2D<T> solution, Interest interest);
 
   T m_xStart;
   T m_xEnd;

@@ -54,7 +54,7 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
     }
 
     if (interest != Interest::None) {
-      Coordinate2D<T> solution = hone(f, aux, start.x1(), end.x1(), interest, k_absolutePrecision);
+      Coordinate2D<T> solution = honeAndRoundSolution(f, aux, start.x1(), end.x1(), interest, hone, discontinuityTest);
       if (std::isfinite(solution.x1()) && validSolution(solution.x1())) {
         finalSolution = solution;
         finalInterest = interest;
@@ -63,7 +63,7 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
     }
   }
 
-  registerSolution(finalSolution, finalInterest, f, aux, discontinuityTest);
+  registerSolution(finalSolution, finalInterest);
   return result();
 }
 
@@ -505,51 +505,56 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Expression & e) const {
 }
 
 template<typename T>
-void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, FunctionEvaluation f, const void * aux, DiscontinuityEvaluation discontinuityTest) {
-  T x = solution.x1();
-
-  if (f && !std::isnan(x)) {
-    /* When searching for an extremum, the function can take the extremal value
-     * on several abscissas, and Brent can pick up any of them. This deviation
-     * is particularly visible if the theoretical solution is an integer. */
-    constexpr T k_roundingOrder = 2. * k_minimalPracticalStep;
-    T roundX = k_roundingOrder * std::round(x / k_roundingOrder);
-    if (!std::isnan(roundX) && validSolution(roundX)) {
-      T fIntX = f(roundX, aux);
-      T fx = f(x, aux);
-      /* Filter out solutions that are close to a discontinuity. This can
-       * happen with functions such as  y = (-x when x < 0, x-1 otherwise)
-       * with which a root is found in (0,0) when it should not.
-       * It is assumed that the piecewise condition are more often than not
-       * integers or of a magnitude closer to roundX than x. So if the
-       * condition of roundX is different from x, this means that the solution
-       * found is probably on an open interval.
-       * */
-      if (discontinuityTest && discontinuityTest(x, roundX, aux)) {
-        x = k_NAN;
-      } else if (
-        fIntX == fx ||
-        (interest == Interest::Root && std::fabs(fIntX) < std::fabs(fx)) ||
-        (interest == Interest::LocalMinimum && fIntX < fx) ||
-        (interest == Interest::LocalMaximum && fIntX > fx))
-      {
-        // Round is better
-        x = roundX;
-      }
-    }
+Coordinate2D<T> Solver<T>::honeAndRoundSolution(FunctionEvaluation f, const void * aux, T start, T end, Interest interest, HoneResult hone, DiscontinuityEvaluation discontinuityTest) {
+  Coordinate2D<T> solution = hone(f, aux, start, end, interest, k_absolutePrecision);
+  if (!std::isfinite(solution.x1()) || !validSolution(solution.x1())) {
+    return solution;
   }
 
-  if (std::isnan(x)) {
+  T x = solution.x1();
+  /* When searching for an extremum, the function can take the extremal value
+   * on several abscissas, and Brent can pick up any of them. This deviation
+   * is particularly visible if the theoretical solution is an integer. */
+  constexpr T k_roundingOrder = 2. * k_minimalPracticalStep; // Magic number
+  T roundX = k_roundingOrder * std::round(x / k_roundingOrder);
+  if (std::isfinite(roundX) && validSolution(roundX)) {
+    T fIntX = f(roundX, aux);
+    T fx = f(x, aux); // f(x) is different from the honed solution when searching intersections
+    /* Filter out solutions that are close to a discontinuity. This can
+     * happen with functions such as  y = (-x when x < 0, x-1 otherwise)
+     * with which a root is found in (0,0) when it should not.
+     * It is assumed that the piecewise condition are more often than not
+     * integers or of a magnitude closer to roundX than x. So if the
+     * condition of roundX is different from x, this means that the solution
+     * found is probably on an open interval.
+     * */
+    if (discontinuityTest && discontinuityTest(x, roundX, aux)) {
+      solution = Coordinate2D<T>(k_NAN, k_NAN);
+    } else if (
+      fIntX == fx ||
+      (interest == Interest::Root && std::fabs(fIntX) < std::fabs(fx)) ||
+      (interest == Interest::LocalMinimum && fIntX < fx) ||
+      (interest == Interest::LocalMaximum && fIntX > fx))
+    {
+      // Round is better
+      solution.setX1(roundX);
+    }
+  }
+  return solution;
+}
+
+template<typename T>
+void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
+  if (std::isnan(solution.x1())) {
     m_lastInterest = Interest::None;
     m_xStart = k_NAN;
     m_yResult = k_NAN;
     return;
   }
-
-  assert(validSolution(x));
-  m_xStart = x;
+  assert(validSolution(solution.x1()));
+  m_xStart = solution.x1();
   m_yResult = solution.x2();
-  if (std::fabs(m_yResult) < NullTolerance(x)) {
+  if (std::fabs(m_yResult) < NullTolerance(solution.x1())) {
     m_yResult = k_zero;
   }
   m_lastInterest = interest;

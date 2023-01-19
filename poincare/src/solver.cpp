@@ -79,16 +79,14 @@ Coordinate2D<T> Solver<T>::next(const Expression & e, BracketTest test, HoneResu
     const FunctionEvaluationParameters * p = reinterpret_cast<const FunctionEvaluationParameters *>(aux);
     return p->expression.approximateWithValueForSymbol(p->unknown, x, p->context, p->complexFormat, p->angleUnit);
   };
-  DiscontinuityEvaluation discontinuityTest = [](T x1, T x2, const void * aux) {
+  DiscontinuityEvaluation discontinuityTestForPiecewise = [](T x1, T x2, const void * aux) {
     const FunctionEvaluationParameters * p = reinterpret_cast<const FunctionEvaluationParameters *>(aux);
-    if (p->expression.type() != ExpressionNode::Type::PiecewiseOperator) {
-      return false;
-    }
+    assert(p->expression.type() == ExpressionNode::Type::PiecewiseOperator);
     const PiecewiseOperator piecewise = static_cast<const PiecewiseOperator &>(p->expression);
     return piecewise.indexOfFirstTrueConditionWithValueForSymbol<T>(p->unknown, x1, p->context, p->complexFormat, p->angleUnit) != piecewise.indexOfFirstTrueConditionWithValueForSymbol(p->unknown, x2, p->context, p->complexFormat, p->angleUnit);
   };
 
-  return next(f, &parameters, test, hone, discontinuityTest);
+  return next(f, &parameters, test, hone, e.type() == ExpressionNode::Type::PiecewiseOperator ? discontinuityTestForPiecewise : nullptr);
 }
 
 template<typename T>

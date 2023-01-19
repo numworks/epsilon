@@ -14,7 +14,6 @@ public:
   static bool ShouldEnterOnEvent(Ion::Events::Event event) {
     return (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right);
   }
-  bool canOpenStoreMenu() const override { return false; }
 
 private:
   ChevronView m_accessoryView;

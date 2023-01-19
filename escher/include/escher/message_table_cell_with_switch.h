@@ -11,7 +11,6 @@ public:
   using MessageTableCell::MessageTableCell;
   const View * accessoryView() const override { return &m_accessoryView; }
   void setState(bool state) { m_accessoryView.setState(state); }
-  bool canOpenStoreMenu() const override { return false; }
 private:
   SwitchView m_accessoryView;
 };

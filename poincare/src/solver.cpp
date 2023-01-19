@@ -499,12 +499,12 @@ template<typename T>
 void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, FunctionEvaluation f, const void * aux) {
   T x = solution.x1();
 
-  if (f) {
+  if (f && !std::isnan(x)) {
     /* When searching for an extremum, the function can take the extremal value
      * on several abscissas, and Brent can pick up any of them. This deviation
      * is particularly visible if the theoretical solution is an integer. */
     T roundX = std::copysign(k_minimalPracticalStep * std::floor(std::fabs(x) / k_minimalPracticalStep), x);
-    if (validSolution(roundX)) {
+    if (!std::isnan(roundX) && validSolution(roundX)) {
       T fIntX = f(roundX, aux);
       bool roundXIsBetter = fIntX == solution.x2() || (interest == Interest::Root && fIntX == k_zero) || (interest == Interest::LocalMinimum && fIntX < solution.x2()) || (interest == Interest::LocalMaximum && fIntX > solution.x2());
       if (roundXIsBetter) {
@@ -517,15 +517,16 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, Fu
     m_lastInterest = Interest::None;
     m_xStart = k_NAN;
     m_yResult = k_NAN;
-  } else {
-    assert(validSolution(x));
-    m_xStart = x;
-    m_yResult = solution.x2();
-    if (std::fabs(m_yResult) < NullTolerance(x)) {
-      m_yResult = k_zero;
-    }
-    m_lastInterest = interest;
+    return;
   }
+
+  assert(validSolution(x));
+  m_xStart = x;
+  m_yResult = solution.x2();
+  if (std::fabs(m_yResult) < NullTolerance(x)) {
+    m_yResult = k_zero;
+  }
+  m_lastInterest = interest;
 }
 
 // Explicit template instanciations

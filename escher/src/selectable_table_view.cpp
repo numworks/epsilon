@@ -164,39 +164,38 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     if (cell == nullptr) {
       return false;
     }
-    constexpr int bufferSize = TextField::MaxBufferSize();
+    bool inClipboard = event == Ion::Events::Copy || event == Ion::Events::Cut;
     const char * text = cell->text();
     if (text) {
-      char buffer[bufferSize];
-      if (m_delegate && !m_delegate->canStoreContentOfCellAtLocation(this, col, row)) {
-        strlcpy(buffer, "", bufferSize);
-      } else {
-        strlcpy(buffer, text, bufferSize);
-      }
-      if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-        Container::activeApp()->storeValue(buffer);
-      } else {
-        Escher::Clipboard::SharedClipboard()->store(buffer);
-      }
+      handleStoreEvent(text, inClipboard);
       return true;
     }
     Poincare::Layout l = cell->layout();
     if (!l.isUninitialized()) {
+      constexpr int bufferSize = TextField::MaxBufferSize();
       char buffer[bufferSize];
-      if (m_delegate && !m_delegate->canStoreContentOfCellAtLocation(this, col, row)) {
-        strlcpy(buffer, "", bufferSize);
-      } else {
-        l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
-      }
-      if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-        Container::activeApp()->storeValue(buffer);
-      } else {
-        Escher::Clipboard::SharedClipboard()->store(buffer);
-      }
+      l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
+      handleStoreEvent(buffer, inClipboard);
       return true;
     }
   }
   return false;
+}
+
+void SelectableTableView::handleStoreEvent(const char * text, bool inClipboard) {
+  assert(text);
+  constexpr int bufferSize = TextField::MaxBufferSize();
+  char buffer[bufferSize];
+  if (m_delegate && !m_delegate->canStoreContentOfCellAtLocation(this, selectedColumn(), selectedRow())) {
+    strlcpy(buffer, "", bufferSize);
+  } else {
+    strlcpy(buffer, text, bufferSize);
+  }
+  if (inClipboard) {
+    Escher::Clipboard::SharedClipboard()->store(buffer);
+  } else {
+    Container::activeApp()->storeValue(buffer);
+  }
 }
 
 void SelectableTableView::unhighlightSelectedCell() {

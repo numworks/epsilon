@@ -15,6 +15,7 @@ public:
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return col > 0 && row > 0; }
 
 private:
   int indexOfSignificanceCell() const override { return k_indexOfTableCell + 1; }

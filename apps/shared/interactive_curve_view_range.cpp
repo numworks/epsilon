@@ -8,6 +8,7 @@
 #include <poincare/preferences.h>
 #include <poincare/zoom.h>
 #include <algorithm>
+#include <math.h>
 
 using namespace Poincare;
 
@@ -173,7 +174,7 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
 
 bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth) {
   bool moved = false;
-  if (!std::isinf(x) && !std::isnan(x)) {
+  if (std::isfinite(x)) {
     const float xRange = xMax() - xMin();
     const float leftMargin = leftMarginRatio * xRange;
     if (x < xMin() + leftMargin) {
@@ -190,7 +191,7 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       protectedSetX(Range1D(newXMax - xRange, newXMax), k_maxFloat);
     }
   }
-  if (!std::isinf(y) && !std::isnan(y)) {
+  if (std::isfinite(y)) {
     const float yRange = yMax() - yMin();
     const float bottomMargin = bottomMarginRatio * yRange;
     if (y < yMin() + bottomMargin) {

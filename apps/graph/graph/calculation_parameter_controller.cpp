@@ -63,10 +63,11 @@ void CalculationParameterController::didBecomeFirstResponder() {
 template<class T> void CalculationParameterController::push(T * controller, bool pop) {
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   controller->setRecord(m_record);
+  bool hasControllerToPush = !pop || App::app()->functionStore()->modelForRecord(m_record)->isActive();
   if (pop) {
-    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
+    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, !hasControllerToPush);
   }
-  if (!pop || App::app()->functionStore()->modelForRecord(m_record)->isActive()) {
+  if (hasControllerToPush) {
     stack->push(controller);
   }
 }

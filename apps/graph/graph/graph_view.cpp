@@ -13,11 +13,11 @@ GraphView::GraphView(InteractiveCurveViewRange * graphRange,
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
   m_interestView(this),
   m_nextPointOfInterestIndex(0),
-  m_tangent(false)
+  m_tangentDisplay(false)
 {}
 
 void GraphView::reload(bool resetInterrupted, bool force) {
-  if (m_tangent) {
+  if (m_tangentDisplay) {
     markRectAsDirty(boundsWithoutBanner());
   }
   return FunctionGraphView::reload(resetInterrupted, force);
@@ -201,7 +201,7 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
   }
 
   // - Draw tangent
-  if (m_tangent && m_selectedRecord == record) {
+  if (m_tangentDisplay && m_selectedRecord == record) {
     assert(f->canDisplayDerivative());
     /* TODO : We could handle tangent on second curve here by finding out
      * which of the two curves is selected. */

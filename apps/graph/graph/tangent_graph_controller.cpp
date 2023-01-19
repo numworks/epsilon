@@ -25,7 +25,7 @@ const char * TangentGraphController::title() {
 
 void TangentGraphController::viewWillAppear() {
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();
-  m_graphView->drawTangent(true);
+  m_graphView->setTangentDisplay(true);
   m_graphView->setFocus(true);
   m_bannerView->setDisplayParameters(false, true, true);
   reloadBannerView();

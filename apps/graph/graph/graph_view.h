@@ -32,7 +32,7 @@ public:
   void setInterest(Poincare::Solver<double>::Interest interest) { m_interest = interest; }
   void resumePointsOfInterestDrawing();
 
-  void drawTangent(bool tangent) { m_tangent = tangent; }
+  void setTangentDisplay(bool display) { m_tangentDisplay = display; }
 
 private:
   constexpr static int k_externRectMargin = 2;
@@ -51,7 +51,7 @@ private:
   mutable int m_nextPointOfInterestIndex;
   Poincare::Solver<double>::Interest m_interest;
   bool m_computePointsOfInterest;
-  bool m_tangent;
+  bool m_tangentDisplay;
 };
 
 }

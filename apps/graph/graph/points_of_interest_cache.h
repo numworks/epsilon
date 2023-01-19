@@ -45,7 +45,7 @@ private:
   constexpr static int k_maxNumberOfDisplayablePoints = 64;
   constexpr static float k_numberOfSteps = 25.0;
 
-  float step() const { return (m_end - m_start) / k_numberOfSteps; }
+  float step() const;
 
   void stripOutOfBounds();
   void computeBetween(float start, float end);

@@ -114,6 +114,14 @@ bool PointsOfInterestCache::hasDisplayableInterestAtCoordinates(double x, double
   return PointsOfInterestCache::hasInterestAtCoordinates(x, y, interest);
 }
 
+float PointsOfInterestCache::step() const {
+  /* If the bounds are large enough, there might be less than k_numberOfSteps
+   * floats between them. */
+  float result = (m_end - m_start) / k_numberOfSteps;
+  float minimalStep = std::max(std::fabs(m_end), std::fabs(m_start)) * Float<float>::Epsilon();
+  return std::max(result, minimalStep);
+}
+
 void PointsOfInterestCache::stripOutOfBounds() {
   assert(!m_list.isUninitialized());
 

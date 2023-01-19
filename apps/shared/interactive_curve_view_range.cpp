@@ -177,7 +177,7 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
   if (std::isfinite(x)) {
     const float xRange = xMax() - xMin();
     const float leftMargin = leftMarginRatio * xRange;
-    if (x < xMin() + leftMargin) {
+    if (x < xMin() + leftMargin && xMin() > -k_maxFloat) {
       moved = true;
       /* The panning increment is a whole number of pixels so that the caching
        * for cartesian functions is not invalidated. */
@@ -185,7 +185,7 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       protectedSetX(Range1D(newXMin, newXMin + xRange), k_maxFloat);
     }
     const float rightMargin = rightMarginRatio * xRange;
-    if (x > xMax() - rightMargin) {
+    if (x > xMax() - rightMargin && xMax() < k_maxFloat) {
       moved = true;
       const float newXMax = std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth + xMax();
       protectedSetX(Range1D(newXMax - xRange, newXMax), k_maxFloat);
@@ -194,13 +194,13 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
   if (std::isfinite(y)) {
     const float yRange = yMax() - yMin();
     const float bottomMargin = bottomMarginRatio * yRange;
-    if (y < yMin() + bottomMargin) {
+    if (y < yMin() + bottomMargin && yMin() > -k_maxFloat) {
       moved = true;
       const float newYMin = y - bottomMargin;
       protectedSetY(Range1D(newYMin, newYMin + yRange), k_maxFloat);
     }
     const float topMargin = topMarginRatio * yRange;
-    if (y > yMax() - topMargin) {
+    if (y > yMax() - topMargin && yMax() < k_maxFloat) {
       moved = true;
       protectedSetY(Range1D(y + topMargin - yRange, y + topMargin), k_maxFloat);
     }

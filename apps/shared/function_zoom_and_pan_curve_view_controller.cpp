@@ -27,6 +27,10 @@ void FunctionZoomAndPanCurveViewController::viewWillAppear() {
   m_contentView.curveView()->reload(true);
 }
 
+void FunctionZoomAndPanCurveViewController::viewDidDisappear() {
+  setLegendVisible(false);
+}
+
 void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
   m_contentView.layoutSubviews();
 }

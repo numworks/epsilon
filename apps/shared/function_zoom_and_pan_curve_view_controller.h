@@ -17,6 +17,7 @@ public:
   const char * title() override;
   Escher::View * view() override { return &m_contentView; }
   void viewWillAppear() override;
+  void viewDidDisappear() override;
   TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayNoTitle; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;

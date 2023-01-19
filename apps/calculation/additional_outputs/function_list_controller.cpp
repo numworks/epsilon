@@ -31,16 +31,16 @@ void FunctionListController::setExactAndApproximateExpression(Poincare::Expressi
   Symbol variable = Symbol::Builder(UCodePointUnknown);
   exactExpression.replaceNumericalValuesWithSymbol(variable);
 
-  Expression reducedExpression = exactExpression;
-  PoincareHelpers::CloneAndSimplify(&reducedExpression, context, ReductionTarget::SystemForApproximation);
+  Expression simplifiedExpression = exactExpression;
+  PoincareHelpers::CloneAndSimplify(&simplifiedExpression, context, ReductionTarget::SystemForApproximation);
 
   /* Use the approximate expression to compute the ordinate to ensure that
    * it's coherent with the output of the calculation.
    * Sometimes when the reduction has some mistakes, the approximation of
-   * reducedExpression(abscissa) can differ for the approximateExpression.
+   * simplifiedExpression(abscissa) can differ for the approximateExpression.
    */
   float ordinate = PoincareHelpers::ApproximateToScalar<float>(approximateExpression, context);
-  m_model.setParameters(reducedExpression, abscissa, ordinate);
+  m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
   m_layouts[0] = HorizontalLayout::Builder(LayoutHelper::String("y="), exactExpression.replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol)).createLayout(preferences->displayMode(), preferences->numberOfSignificantDigits(), context));
 

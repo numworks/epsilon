@@ -31,10 +31,10 @@ void TrigonometryListController::setExpression(Expression e) {
   // Compute angle modulus 2π
   Expression twoPi = Multiplication::Builder(Rational::Builder(2), Poincare::Constant::PiBuilder());
   // Use the reduction of frac part to compute mod 1 on rationals
-  Expression angleReduced = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
-  Shared::PoincareHelpers::CloneAndSimplify(&angleReduced, context, ReductionTarget::User);
+  Expression simplifiedAngle = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
+  Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context, ReductionTarget::User);
   // If frac part is still there, the exact angle is probably not interesting
-  if (angleReduced.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; })) {
+  if (simplifiedAngle.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; })) {
     /* Do not approximate the FracPart, which could lead to truncation error
      * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
      * the same sine and cosine. */
@@ -48,7 +48,7 @@ void TrigonometryListController::setExpression(Expression e) {
     e = angleApproximate;
     m_anglesAreEqual = false;
   } else {
-    e = angleReduced;
+    e = simplifiedAngle;
     m_anglesAreEqual = true;
   }
   m_layouts[index] = LayoutHelper::String("θ");

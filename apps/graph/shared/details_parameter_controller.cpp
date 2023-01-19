@@ -12,7 +12,7 @@ using namespace Poincare;
 namespace Graph {
 
 DetailsParameterController::DetailsParameterController(Responder * parentResponder) :
-  SelectableListViewController(parentResponder)
+  SelectableListViewController(parentResponder, this)
 {
 }
 
@@ -51,7 +51,7 @@ KDCoordinate DetailsParameterController::nonMemoizedRowHeight(int j) {
 void DetailsParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(0 <= index && index < k_numberOfDataPoints);
   MessageTableCellWithMessageWithBuffer * myCell = static_cast<MessageTableCellWithMessageWithBuffer *>(cell);
-  if (index == 0) {
+  if (index == k_indexOfCurveTypeRow) {
     myCell->setMessage(I18n::Message::CurveType);
     myCell->setSubLabelMessage(I18n::Message::Default);
     myCell->setAccessoryText(I18n::translate(function()->properties().caption()));

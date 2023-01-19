@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_INTEGER_H
 
 #include <omg/bit_helper.h>
+#include <omg/enums.h>
 #include <utils/bit.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
@@ -107,10 +108,10 @@ private:
 
 class Integer {
 public:
+  static EditionReference Push(const char * digits, size_t length, OMG::Base base);
+  static IntegerHandler Handler(const Node expression);
   static bool IsUint8(const Node expression);
   static uint8_t Uint8(const Node expression);
-  static EditionReference Addition(IntegerHandler a, IntegerHandler b);
-  static std::pair<EditionReference, EditionReference> Division(IntegerHandler a, IntegerHandler b);
 
   constexpr static uint8_t NumberOfDigits(uint64_t value) {
     uint8_t numberOfDigits = 0;

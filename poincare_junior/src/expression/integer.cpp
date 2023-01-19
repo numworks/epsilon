@@ -1,5 +1,6 @@
 #include "integer.h"
 #include "rational.h"
+#include <omg/print.h>
 #include <poincare_junior/src/memory/value_block.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <utils/arithmetic.h>
@@ -496,20 +497,36 @@ EditionReference IntegerHandler::Factorial(const IntegerHandler & i) {
 
 /* Integer */
 
+EditionReference Integer::Push(const char * digits, size_t length, OMG::Base base) {
+  EditionReference result = IntegerHandler(static_cast<uint8_t>(0)).pushOnEditionPool();
+  NonStrictSign sign = NonStrictSign::Positive;
+  if (digits != nullptr && *digits == '-') {
+    sign = NonStrictSign::Negative;
+    digits++;
+    length--;
+  }
+  assert(digits != nullptr);
+  IntegerHandler baseInteger(static_cast<uint8_t>(base));
+  for (size_t i = 0; i < length; i++) {
+    result = IntegerHandler::Multiplication(Integer::Handler(result), baseInteger);
+    result = IntegerHandler::Addition(Integer::Handler(result), IntegerHandler(OMG::Print::DigitForCharacter(*digits++)));
+  }
+}
+
 // TODO: tests
 
+IntegerHandler Integer::Handler(const Node expression) {
+  assert(Rational::Denominator(expression).isOne());
+  return Rational::Numerator(expression);
+}
+
 bool Integer::IsUint8(const Node expression) {
-  return expression.block()->isInteger() && Rational::Numerator(expression).isUnsignedType<uint8_t>();
+  return expression.block()->isInteger() && Integer::Handler(expression).isUnsignedType<uint8_t>();
 }
 
 uint8_t Integer::Uint8(const Node expression) {
   assert(IsUint8(expression));
-  return static_cast<uint8_t>(Rational::Numerator(expression));
-}
-
-std::pair<EditionReference, EditionReference> Integer::Division(IntegerHandler a, IntegerHandler b) {
-  // TODO
-  return std::make_pair(EditionReference(&OneBlock), EditionReference(&TwoBlock));
+  return static_cast<uint8_t>(Integer::Handler(expression));
 }
 
 }

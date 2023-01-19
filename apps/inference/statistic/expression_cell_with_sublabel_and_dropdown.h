@@ -33,7 +33,6 @@ public:
     Escher::ExpressionTableCellWithMessage::setHighlighted(highlight);
   }
   bool forceAlignLabelAndAccessory() const override { return true; }
-  bool canOpenStoreMenu() const override { return false; }
 
 private:
   Escher::Dropdown m_dropdown;

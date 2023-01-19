@@ -18,7 +18,7 @@
 
 namespace Inference {
 
-class HypothesisController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>, public Escher::TextFieldDelegate, public Escher::DropdownCallback {
+class HypothesisController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>, public Escher::TextFieldDelegate, public Escher::DropdownCallback, public Escher::SelectableTableViewDelegate {
 public:
   HypothesisController(Escher::StackViewController * parent, InputController * inputController, InputSlopeController * inputSlopeController, Escher::InputEventHandlerDelegate * handler, Test * test);
   static bool ButtonAction(HypothesisController * controller, void * s);
@@ -38,6 +38,9 @@ public:
   bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
   bool textFieldIsEditable(Escher::AbstractTextField * textField) override { return selectedRow() != 0 || m_test->significanceTestType() != SignificanceTestType::Slope; }
   bool textFieldIsStorable(Escher::AbstractTextField * textField) override { return false; }
+
+  // SelectableTableViewDelegate
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return false; }
 
   // DropdownCallback
   void onDropdownSelected(int selectedRow) override;

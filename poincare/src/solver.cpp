@@ -507,7 +507,12 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, Fu
     T roundX = k_roundingOrder * std::round(x / k_roundingOrder);
     if (!std::isnan(roundX) && validSolution(roundX)) {
       T fIntX = f(roundX, aux);
-      bool roundXIsBetter = fIntX == solution.x2() || (interest == Interest::Root && fIntX == k_zero) || (interest == Interest::LocalMinimum && fIntX < solution.x2()) || (interest == Interest::LocalMaximum && fIntX > solution.x2());
+      T fx = f(x, aux);
+      bool roundXIsBetter =
+        fIntX == fx ||
+        (interest == Interest::Root && std::fabs(fIntX) < std::fabs(fx)) ||
+        (interest == Interest::LocalMinimum && fIntX < fx) ||
+        (interest == Interest::LocalMaximum && fIntX > fx);
       if (roundXIsBetter) {
         x = roundX;
       }

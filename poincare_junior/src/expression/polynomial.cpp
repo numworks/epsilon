@@ -163,7 +163,7 @@ static void extractDegreeAndLeadingCoefficient(EditionReference pol, EditionRefe
 std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(EditionReference polA, EditionReference polB) {
   if (polA.type() != BlockType::Polynomial && polB.type() != BlockType::Polynomial) {
     assert(polA.block()->isInteger() && polB.block()->isInteger());
-    auto [quotient, remainder] = Integer::Division(Rational::Numerator(polA), Rational::Numerator(polB));
+    auto [quotient, remainder] = IntegerHandler::Division(Integer::Handler(polA), Integer::Handler(polB));
     polB.removeTree();
     if (remainder.type() == BlockType::Zero) {
       polA.removeTree();
@@ -187,13 +187,16 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(Edition
   extractDegreeAndLeadingCoefficient(polB, x, &degreeB, &leadingCoeffB);
   EditionReference currentQuotient(&ZeroBlock);
   while (degreeA >= degreeB) {
-    auto [quotient, remainder] = PseudoDivision(leadingCoeffA, leadingCoeffB);
-    if (remainder.type() != BlockType::Zero) {
+    auto [quotient, remainder] = PseudoDivision(EditionReference::Clone(leadingCoeffA), EditionReference::Clone(leadingCoeffB));
+    bool stopCondition = remainder.type() != BlockType::Zero;
+    remainder.removeTree();
+    if (stopCondition) {
+      quotient.removeTree();
       break;
     }
-    EditionReference xPowerDegAMinusDegB = Polynomial::PushMonomial(x, degreeA - degreeB);
+    EditionReference xPowerDegAMinusDegB = Polynomial::PushMonomial(EditionReference::Clone(x), degreeA - degreeB);
     currentQuotient = Polynomial::Addition(currentQuotient, Polynomial::Multiplication(EditionReference::Clone(quotient), EditionReference::Clone(xPowerDegAMinusDegB)));
-    polA = Polynomial::Subtraction(polA, Polynomial::Multiplication(quotient, Polynomial::Multiplication(polB, xPowerDegAMinusDegB)));
+    polA = Polynomial::Subtraction(polA, Polynomial::Multiplication(quotient, Polynomial::Multiplication(EditionReference::Clone(polB), xPowerDegAMinusDegB)));
     extractDegreeAndLeadingCoefficient(polA, x, &degreeA, &leadingCoeffA);
   }
   polB.removeTree();

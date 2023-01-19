@@ -117,9 +117,10 @@ inline Poincare::Expression ParseAndSimplify(
   const char * text,
   Poincare::Context * context,
   Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinitionOrUndefined,
-  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences())
+  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences(),
+  bool * reductionFailure = nullptr)
 {
-  return Poincare::Expression::ParseAndSimplify(text, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
+  return Poincare::Expression::ParseAndSimplify(text, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation, k_defaultUnitConversion, reductionFailure);
 }
 
 inline void CloneAndSimplify(
@@ -129,9 +130,10 @@ inline void CloneAndSimplify(
   Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
   Poincare::UnitConversion unitConversion = k_defaultUnitConversion,
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences(),
-  bool updateComplexFormatAndAngleUnit = true)
+  bool updateComplexFormatAndAngleUnit = true,
+  bool * reductionFailure = nullptr)
 {
-  *e = e->cloneAndSimplify(Poincare::ReductionContext(context, ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit, *e, context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), target, symbolicComputation, unitConversion));
+  *e = e->cloneAndSimplify(Poincare::ReductionContext(context, ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit, *e, context), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), target, symbolicComputation, unitConversion), reductionFailure);
 }
 
 inline void CloneAndSimplifyAndApproximate(

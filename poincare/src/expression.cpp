@@ -880,13 +880,13 @@ int Expression::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 
 /* Simplification */
 
-Expression Expression::ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation, UnitConversion unitConversion) {
+Expression Expression::ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation, UnitConversion unitConversion, bool * reductionFailure) {
   Expression exp = Parse(text, context, false);
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
   complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
-  exp = exp.cloneAndSimplify(ReductionContext(context, complexFormat, angleUnit, unitFormat, ReductionTarget::User, symbolicComputation, unitConversion));
+  exp = exp.cloneAndSimplify(ReductionContext(context, complexFormat, angleUnit, unitFormat, ReductionTarget::User, symbolicComputation, unitConversion), reductionFailure);
   assert(!exp.isUninitialized());
   return exp;
 }
@@ -905,9 +905,12 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
   assert(!simplifiedExpression->isUninitialized() && (!approximateExpression || !approximateExpression->isUninitialized()));
 }
 
-Expression Expression::cloneAndSimplify(ReductionContext reductionContext) {
+Expression Expression::cloneAndSimplify(ReductionContext reductionContext, bool * reductionFailure) {
   bool reduceFailure = false;
   Expression e = cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
+  if (reductionFailure) {
+    *reductionFailure = reduceFailure;
+  }
   if (reduceFailure || (type() == ExpressionNode::Type::Store && !static_cast<const Store *>(this)->isTrulyReducedInShallowReduce())) {
     // We can't beautify unreduced expression
     return e;

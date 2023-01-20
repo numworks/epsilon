@@ -104,7 +104,7 @@ public:
    * It deletes the pairs of empty values and the trailing undef values,
    * updates the valid series, and stores the lists in the storage
    * */
-  virtual bool updateSeries(int series, bool delayUpdate = false, bool updateDisplayAdditionalColumn = true);
+  virtual bool updateSeries(int series, bool delayUpdate = false, bool updateDisplayAdditionalColumn = true); // TODO: find a better way than adding bool updateDisplayAdditionalColumn
   virtual bool valueValidInColumn(double value, int relativeColumn) const { return !std::isnan(value) && value >= -Poincare::Range1D::k_maxFloat && value <= Poincare::Range1D::k_maxFloat; }
 protected:
   void initListsInPool();

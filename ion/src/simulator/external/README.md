@@ -38,3 +38,7 @@ Apply the additional fixes mentioned above that are still in a future version.
 ## SDL version compatibilities
 Our web simulator is tied to a specific emscripten version, and recent SDL releases no longer support it.
 As of now, the SDL cannot be updated past a certain release (At least `release-2.0.22` isn't compatible) without updating emscripten.
+
+# dlfcn
+
+The dlfcn repository contains [dlfcn-win32](https://github.com/dlfcn-win32/dlfcn-win32) release 1.3.1

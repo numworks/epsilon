@@ -34,16 +34,18 @@ void StoreParameterController::initializeColumnParameters() {
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   int type = typeAtIndex(selectedRow());
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && ((type == k_displayCumulatedFrequencyCellType || type == k_hideCumulatedFrequencyCellType))) {
-    bool state = !m_store->displayCumulatedFrequenciesForSeries(m_storeColumnHelper->selectedSeries());
-    m_store->setDisplayCumulatedFrequenciesForSeries(m_storeColumnHelper->selectedSeries(), state);
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && (type == k_displayCumulatedFrequencyCellType || type == k_hideCumulatedFrequencyCellType)) {
+    bool previousStatus = m_store->displayCumulatedFrequenciesForSeries(m_storeColumnHelper->selectedSeries());
+    m_store->setDisplayCumulatedFrequenciesForSeries(m_storeColumnHelper->selectedSeries(), !previousStatus);
     if (type == k_hideCumulatedFrequencyCellType) {
-      assert(!state);
+      // We are in the options of column CF
+      assert(previousStatus);
       m_storeColumnHelper->selectColumn(m_columnIndex - 1);
       m_hideCumulatedFrequencyCell.setHighlighted(false);
       stackView()->pop();
     } else {
-      m_displayCumulatedFrequencyCell.setState(state);
+      // We are in the options of column V1 or N1
+      m_displayCumulatedFrequencyCell.setState(!previousStatus);
     }
     return true;
   }

@@ -108,9 +108,6 @@ WithCurves::CurveDrawing::CurveDrawing(Curve2D curve, void * context, float tSta
   m_patternWithoutCurve(false),
   m_drawStraightLinesEarly(true)
 {
-  if (m_tStart > m_tEnd) {
-    std::swap(m_tStart, m_tEnd);
-  }
   // Assert that the chosen step is not too small (ad-hoc value)
   assert((m_tEnd - m_tStart) / m_tStep < 10e5);
 }
@@ -133,7 +130,9 @@ void WithCurves::CurveDrawing::setPrecisionOptions(bool drawStraightLinesEarly, 
 
 void WithCurves::CurveDrawing::draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   assert(plotView);
-  assert(m_tStart <= m_tEnd);
+  if (m_tStart > m_tEnd) {
+    return;
+  }
 
   plotView->setDashed(m_dashed);
 

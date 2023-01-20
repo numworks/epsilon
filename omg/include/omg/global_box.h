@@ -34,17 +34,20 @@ public:
     m_initialized = false;
 #endif
   }
-  T * operator->() {
+
+  T * get() {
 #if ASSERTIONS
     assert(m_initialized);
 #endif
-    return reinterpret_cast<T *>(m_buffer);
+    return reinterpret_cast< T*>(m_buffer);
   }
+
+  T * operator->() {
+    return get();
+  }
+
   operator T*() {
-#if ASSERTIONS
-    assert(m_initialized);
-#endif
-    return reinterpret_cast<T *>(m_buffer);
+    return get();
   }
 
 private:

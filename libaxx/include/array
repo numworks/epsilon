@@ -28,8 +28,7 @@ class array {
       m_array[index++] = u;
     }
   }
-  constexpr U operator[](unsigned int n) {
-    // assert(n < N);
+  constexpr U& operator[](unsigned int n) {
     return m_array[n];
   }
 

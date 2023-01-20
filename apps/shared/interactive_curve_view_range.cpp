@@ -192,7 +192,8 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       const float newXMax = std::min(k_maxFloat, std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth + xMax());
       protectedSetX(Range1D(newXMax - xRange, newXMax), k_maxFloat);
     }
-    assert(Poincare::Helpers::RelativelyEqual<float>(xMax() - xMin(), xRange, 0.01));
+    // Range setters may stretch if range was too small for the new magnitude
+    assert(Poincare::Helpers::RelativelyEqual<float>(xMax() - xMin(), xRange, 0.01) || xMax() - xMin() < Poincare::Range1D::k_minLength);
   }
   if (std::isfinite(y)) {
     const float yRange = yMax() - yMin();
@@ -208,7 +209,8 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       const float newYMax = std::min(k_maxFloat, y + topMargin);
       protectedSetY(Range1D(newYMax - yRange, newYMax), k_maxFloat);
     }
-    assert(Poincare::Helpers::RelativelyEqual<float>(yMax() - yMin(), yRange, 0.01));
+    // Range setters may stretch if range was too small for the new magnitude
+    assert(Poincare::Helpers::RelativelyEqual<float>(yMax() - yMin(), yRange, 0.01) || xMax() - xMin() < Poincare::Range1D::k_minLength);
   }
 
   if (moved) {

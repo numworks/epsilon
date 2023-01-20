@@ -4,7 +4,7 @@ PLATFORM ?= device
 DEBUG ?= 0
 DEVELOPMENT ?= 0
 
-EPSILON_VERSION ?= 20.1.1
+EPSILON_VERSION ?= 20.2.0
 EXTERNAL_APPS_API_LEVEL ?= 0
 EPSILON_APPS ?= calculation graph code statistics distributions inference solver sequence regression elements finance settings
 EPSILON_I18N ?= en fr nl pt it de es

@@ -23,6 +23,11 @@ public:
   TrinaryBoolean isNull(Context * context) const override { return childAtIndex(0)->isNull(context); }
   Type type() const override { return Type::Parenthesis; }
   int polynomialDegree(Context * context, const char * symbolName) const override;
+  /* This implementation of getPolynomialCoefficients is only supposed to be
+   * called if a reduction failure occured. If other unreduced nodes prove
+   * problematic, we might want to signal the reduction failure to the caller
+   * so that it does not attempt to analyze the unreduced expression. */
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override { return childAtIndex(0)->getPolynomialCoefficients(context, symbolName, coefficients); }
   Expression removeUnit(Expression * unit) override { assert(false); return ExpressionNode::removeUnit(unit); }
 
   // Layout

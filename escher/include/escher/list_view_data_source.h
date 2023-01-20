@@ -91,6 +91,26 @@ class SimpleListViewDataSource : public RegularListViewDataSource {
   int typeAtIndex(int i) const override final { return 0; }
 };
 
+/* This class is a MemoizedListViewDataSource where each cell has its own
+ * type. It basically means that the reusableCell mecanism is erased which
+ * results in easier manipulation of heterogeneous cells but should not be used
+ * in list with a long or dynamic cell count. */
+class ExplicitListViewDataSource : public MemoizedListViewDataSource {
+ public:
+  int typeAtIndex(int index) const override final { return index; }
+  int reusableCellCount(int type) override final { return 1; }
+  HighlightCell* reusableCell(int index, int type) override final {
+    return cell(type);
+  }
+  // HighlightCell * selectedCell() { return cell(selectedRow()); }
+  void initCellSize(TableView* view) override;
+  bool cellAtLocationIsSelectable(HighlightCell* cell, int i, int j) override;
+
+ protected:
+  virtual HighlightCell* cell(int index) = 0;
+  virtual void fillCell(HighlightCell* cell) {}
+};
+
 }  // namespace Escher
 
 #endif

@@ -2,7 +2,6 @@
 #define SHARED_LIST_PARAMETER_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/explicit_selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_message_with_switch.h>
 #include <escher/selectable_table_view_delegate.h>

@@ -2,7 +2,6 @@
 #define SEQUENCE_CURVE_PARAMETER_CONTROLLER_H
 
 #include <apps/shared/with_record.h>
-#include <escher/explicit_selectable_list_view_controller.h>
 
 #include "cobweb_controller.h"
 #include "go_to_parameter_controller.h"

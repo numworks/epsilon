@@ -38,6 +38,13 @@ class SelectableListViewController : public SelectableViewController,
   SelectableTableView m_selectableTableView;
 };
 
+class ExplicitSelectableListViewController
+    : public SelectableListViewController<ExplicitListViewDataSource> {
+ protected:
+  using SelectableListViewController::SelectableListViewController;
+  HighlightCell* selectedCell() { return cell(selectedRow()); }
+};
+
 /*
  * This Class is useful to create a SelectableListViewController of
  * the same type of cells with a constant number of rows that all have their own

@@ -16,11 +16,11 @@ public:
 #if ASSERTIONS
   GlobalBox() : m_initialized(false) {}
 #endif
-  void init() {
+  template <typename... Args> void init(Args... args) {
 #if ASSERTIONS
     assert(!m_initialized);
 #endif
-    new (m_buffer) T();
+    new (m_buffer) T(args...);
 #if ASSERTIONS
     m_initialized = true;
 #endif

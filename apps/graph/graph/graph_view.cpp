@@ -389,11 +389,14 @@ void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
     if (canDisplayPoints && !pointsOfInterestCache->canDisplayPoints(m_interest)) {
       canDisplayPoints = false;
       // Hide the interest points by redrawing everything but them.
-      assert(cursorView());
-      cursorView()->setCursorFrame(cursorFrame(), true);
+      if (cursorView()) {
+        cursorView()->setCursorFrame(cursorFrame(), true);
+      }
       // Redraw curve and cursor without any interest point
       drawRect(ctx, rect);
-      static_cast<MemoizedCursorView *>(cursorView())->redrawCursor(rect);
+      if (cursorView()) {
+        static_cast<MemoizedCursorView *>(cursorView())->redrawCursor(rect);
+      }
     }
 
     if (!canDisplayPoints) {
@@ -411,7 +414,7 @@ void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
       continue;
     }
     // If the dot is below the cursor, erase the cursor and redraw it
-    KDRect frameOfCursor = cursorFrame();
+    KDRect frameOfCursor = cursorView() ? cursorFrame() : KDRectZero;
     bool redrawCursor = frameOfCursor.intersects(rectForDot);
     if (redrawCursor) {
       // Erase cursor and make rect dirty

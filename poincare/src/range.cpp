@@ -61,6 +61,7 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
     (isMin ? m_max : m_min) = *bound;
   }
   if (length() < k_minLength) {
+    // TODO : l could be set to k_minLength at low enough coordinates
     float l = DefaultLengthAt(m_min);
     if (m_min != limit && (isMin || m_max == -limit)) {
       m_max += l;

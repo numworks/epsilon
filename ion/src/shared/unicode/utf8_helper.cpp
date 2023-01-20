@@ -413,7 +413,9 @@ const char * CodePointAtGlyphOffset(const char * buffer, int position) {
 
   UTF8Decoder decoder(buffer);
   for (int i = 0; i < position; i++) {
-    decoder.nextGlyphPosition();
+    if (*decoder.nextGlyphPosition() == '\0') {
+      break;
+    }
   }
   return decoder.stringPosition();
 }

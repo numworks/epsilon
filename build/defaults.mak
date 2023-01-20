@@ -37,6 +37,11 @@ SFLAGS += -Wall
 # Flags - Header dependency tracking
 SFLAGS += -MD -MP
 
+# Flags - Export symbols
+# This is required to export symbols in resulting binaries. This is required to
+# let NWB files call functions that are defined in the simulator.
+LD_EXPORT_SYMBOLS_FLAG = -rdynamic
+
 # Building directory
 ifeq ($(DEBUG),1)
   BUILD_TYPE = debug

@@ -130,7 +130,10 @@ void testNodeIterator() {
   constexpr Tree k_simpleExpression = Mult(Add("1"_n, "2"_n), "3"_n, "4"_n);
   EditionReference mult(k_simpleExpression);
   size_t numberOfChildren = mult.numberOfChildren();
-  Node children[] = {Add("1"_n, "2"_n), "3"_n, "4"_n};
+  Tree a = Add("1"_n, "2"_n);
+  Tree b = "3"_n;
+  Tree c = "4"_n;
+  Node children[] = {a, b, c};
 
   // Scan children forward
   for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult)) {
@@ -143,7 +146,10 @@ void testNodeIterator() {
   }
 
   // Edit children forward
-  Node newChildren[] = {"6"_n, "7"_n, "8"_n};
+  Tree e = "6"_n;
+  Tree f = "7"_n;
+  Tree g = "8"_n;
+  Node newChildren[] = {e, f, g};
   for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(mult)) {
     std::get<EditionReference>(indexedRef).replaceTreeByTree(newChildren[std::get<int>(indexedRef)]);
   }
@@ -164,7 +170,7 @@ void testNodeIterator() {
   constexpr Tree k_secondSimpleExpression = Mult(Add("1"_n, "2"_n), "3"_n);
   EditionReference mult2(k_secondSimpleExpression);
   size_t numberOfChildren2 = mult2.numberOfChildren();
-  Node children2[] = {Add("1"_n, "2"_n), "3"_n};
+  Node children2[] = {a, b};
   // Scan two nodes children forward
   for (std::pair<std::array<Node, 2>, int> indexedArray : MultipleNodesIterator::Children<Forward, NoEditable, 2>(std::array<Node, 2>({mult, mult2}))) {
     std::array<Node, 2> childrenPair = std::get<std::array<Node, 2>>(indexedArray);
@@ -181,8 +187,13 @@ void testNodeIterator() {
     assert_trees_are_equal(childrenPair[1], children2[numberOfChildren2 - 1 - pairIndex]);
   }
 
-  Node newChildren1[] = {"10"_n, "11"_n};
-  Node newChildren2[] = {"13"_n, "14"_n};
+  Tree n6 = "6"_n;
+  Tree n10 = "10"_n;
+  Tree n11 = "11"_n;
+  Tree n13 = "13"_n;
+  Tree n14 = "14"_n;
+  Node newChildren1[] = {n10, n11};
+  Node newChildren2[] = {n13, n14};
   // Edit two nodes children forward
   for (std::pair<std::array<EditionReference, 2>, int> indexedRefs : MultipleNodesIterator::Children<Forward, Editable, 2>(std::array<EditionReference, 2>({mult, mult2}))) {
     std::array<EditionReference, 2> childrenPair = std::get<std::array<EditionReference, 2>>(indexedRefs);
@@ -191,7 +202,7 @@ void testNodeIterator() {
     childrenPair[1].replaceTreeByTree(newChildren2[pairIndex]);
   }
   // Check edition
-  Node children1[] = {"10"_n, "11"_n, "6"_n};
+  Node children1[] = {n10, n11, n6};
   for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), children1[std::get<int>(indexedNode)]);
   }
@@ -207,7 +218,7 @@ void testNodeIterator() {
     childrenPair[1].replaceTreeByTree(newChildren2[pairIndex]);
   }
   // Check edition
-  Node editedChildren1[] = {"10"_n, "11"_n, "10"_n};
+  Node editedChildren1[] = {n10, n11, n10};
   for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), editedChildren1[std::get<int>(indexedNode)]);
   }

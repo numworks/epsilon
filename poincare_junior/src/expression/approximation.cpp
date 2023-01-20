@@ -2,6 +2,7 @@
 #include "constant.h"
 #include "rational.h"
 #include <poincare_junior/src/memory/node_iterator.h>
+#include <bit>
 
 namespace PoincareJ {
 
@@ -15,8 +16,10 @@ T Approximation::To(const Node node) {
   switch (node.type()) {
     case BlockType::Constant:
       return Constant::To<T>(Constant::Type(node));
-    case BlockType::Float:
-      return *reinterpret_cast<float *>(node.block()->next());
+    case BlockType::Float: {
+      volatile const uint32_t value = *reinterpret_cast<const uint32_t *>(node.block()->next());
+      return std::bit_cast<float>(value);
+    }
     case BlockType::Addition:
       return Approximation::MapAndReduce(node, FloatAddition<T>);
     case BlockType::Multiplication:

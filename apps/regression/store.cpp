@@ -152,17 +152,17 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
 
 /* Series */
 
-void Store::updateSeriesValidity(int series) {
-  LinearRegressionStore::updateSeriesValidity(series);
+void Store::updateSeriesValidity(int series, bool updateDisplayAdditionalColumn) {
+  LinearRegressionStore::updateSeriesValidity(series, updateDisplayAdditionalColumn);
   if (!m_validSeries[series]) {
     // Reset series regression type to None
     m_regressionTypes[series] = Model::Type::None;
   }
 }
 
-bool Store::updateSeries(int series, bool delayUpdate) {
+bool Store::updateSeries(int series, bool delayUpdate, bool updateDisplayAdditionalColumn) {
   m_recomputeCoefficients[series] = true;
-  return DoublePairStore::updateSeries(series, delayUpdate);
+  return DoublePairStore::updateSeries(series, delayUpdate, updateDisplayAdditionalColumn);
 }
 
 /* Calculations */

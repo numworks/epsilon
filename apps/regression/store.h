@@ -49,7 +49,7 @@ public:
   Model * regressionModel(Model::Type type) { return regressionModel(static_cast<int>(type)); }
 
   // Series
-  void updateSeriesValidity(int series) override;
+  void updateSeriesValidity(int series, bool updateDisplayAdditionalColumn = true) override;
 
   // Calculation
   void updateCoefficients(int series, Poincare::Context * globalContext);
@@ -66,7 +66,7 @@ public:
   float minValueOfColumn(int series, int i) const;
 
   // Double Pair Store
-  bool updateSeries(int series, bool delayUpdate = false) override;
+  bool updateSeries(int series, bool delayUpdate = false, bool updateDisplayAdditionalColumn = true) override;
 
 private:
   double computeDeterminationCoefficient(int series, Poincare::Context * globalContext);

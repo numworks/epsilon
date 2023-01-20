@@ -68,7 +68,7 @@ public:
   static bool DefaultValidSeries(const DoublePairStore * store, int series) { return store->seriesIsValid(series); }
   // These methods can be implemented with a different validity method
   bool hasValidSeries(ValidSeries validSeriesMethod = &DefaultValidSeries) const;
-  virtual void updateSeriesValidity(int series);
+  virtual void updateSeriesValidity(int series, bool updateDisplayAdditionalColumn = true);
   int numberOfValidSeries(ValidSeries validSeriesMethod = &DefaultValidSeries) const;
   int indexOfKthValidSeries(int k, ValidSeries validSeriesMethod = &DefaultValidSeries) const;
 
@@ -104,7 +104,7 @@ public:
    * It deletes the pairs of empty values and the trailing undef values,
    * updates the valid series, and stores the lists in the storage
    * */
-  virtual bool updateSeries(int series, bool delayUpdate = false);
+  virtual bool updateSeries(int series, bool delayUpdate = false, bool updateDisplayAdditionalColumn = true);
   virtual bool valueValidInColumn(double value, int relativeColumn) const { return !std::isnan(value) && value >= -Poincare::Range1D::k_maxFloat && value <= Poincare::Range1D::k_maxFloat; }
 protected:
   void initListsInPool();

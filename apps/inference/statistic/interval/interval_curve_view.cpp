@@ -24,7 +24,6 @@ void IntervalAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axi
    * create a visual artifact. This hack enables us to avoid creating another bool. */
   KDCoordinate spaceBetweenBounds = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, high) - plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, low);
   m_realignLabels = 0 < spaceBetweenBounds && spaceBetweenBounds <= k_glyphLength * KDFont::GlyphWidth(AbstractPlotView::k_font);
-  assert(spaceBetweenBounds > 0 || low == high);
 
   convertFloatToText(low, m_labels[0], k_bufferSize);
   convertFloatToText(high, m_labels[1], k_bufferSize);

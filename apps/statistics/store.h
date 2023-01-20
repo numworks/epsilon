@@ -112,7 +112,7 @@ public:
   double normalProbabilityResultAtIndex(int series, int i) const;
 
   // DoublePairStore
-  void updateSeriesValidity(int series) override;
+  void updateSeriesValidity(int series, bool updateDisplayAdditionalColumn = true) override;
   bool deleteValueAtIndex(int series, int i, int j, bool authorizeNonEmptyRowDeletion = true, bool delayUpdate = false) override;
   bool valueValidInColumn(double value, int relativeColumn) const override { return DoublePairStore::valueValidInColumn(value, relativeColumn) && (relativeColumn != 1 || value >= 0.0); }
 
@@ -124,7 +124,7 @@ public:
   static bool SumOfOccurrencesUnderMax(const DoublePairStore * store, int series) {
     return store->seriesIsValid(series) && static_cast<const Store *>(store)->sumOfOccurrences(series) <= k_maxNumberOfPairs;
   }
-  bool updateSeries(int series, bool delayUpdate = false) override;
+  bool updateSeries(int series, bool delayUpdate = false, bool updateDisplayAdditionalColumn = true) override;
 private:
   constexpr static I18n::Message k_quantilesName[k_numberOfQuantiles] = {
     I18n::Message::StatisticsBoxLowerWhisker,

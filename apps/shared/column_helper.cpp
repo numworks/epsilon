@@ -63,7 +63,7 @@ bool StoreColumnHelper::switchSelectedColumnHideStatus() {
     return true;
   } else {
     // Series may still be invalid, in that case nothing happens
-    store()->updateSeriesValidity(series);
+    store()->updateSeriesValidity(series, false);
     return selectedSeriesIsValid();
   }
 }
@@ -166,7 +166,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
       evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
     }
   }
-  if (!store()->updateSeries(seriesToFill)) {
+  if (!store()->updateSeries(seriesToFill, false, false)) {
     return false;
   }
   reloadSeriesVisibleCells(seriesToFill);

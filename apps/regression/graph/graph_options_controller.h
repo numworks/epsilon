@@ -3,7 +3,6 @@
 
 #include <apps/shared/curve_view_cursor.h>
 #include <escher/button_cell.h>
-#include <escher/explicit_selectable_list_view_controller.h>
 #include <escher/expression_table_cell_with_message.h>
 #include <escher/expression_table_cell_with_message_with_buffer.h>
 #include <escher/message_table_cell.h>

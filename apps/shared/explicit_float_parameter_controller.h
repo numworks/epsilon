@@ -1,7 +1,6 @@
 #ifndef SHARED_EXPLICIT_FLOAT_PARAMETER_CONTROLLER
 #define SHARED_EXPLICIT_FLOAT_PARAMETER_CONTROLLER
 
-#include <escher/explicit_selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>

@@ -3,7 +3,6 @@
 
 #include <apps/i18n.h>
 #include <escher/buffer_table_cell.h>
-#include <escher/explicit_selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/message_table_cell_with_switch.h>
 

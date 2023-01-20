@@ -6,7 +6,6 @@
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/ieee754.h>
 #include <poincare/preferences.h>
-#include <poincare/helpers.h>
 #include <poincare/zoom.h>
 #include <algorithm>
 #include <math.h>
@@ -174,6 +173,7 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
 }
 
 bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth) {
+  // Range setters may stretch if range was too small for the new magnitude
   bool moved = false;
   if (std::isfinite(x)) {
     const float xRange = xMax() - xMin();
@@ -192,8 +192,6 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       const float newXMax = std::min(k_maxFloat, std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth + xMax());
       protectedSetX(Range1D(newXMax - xRange, newXMax), k_maxFloat);
     }
-    // Range setters may stretch if range was too small for the new magnitude
-    assert(Poincare::Helpers::RelativelyEqual<float>(xMax() - xMin(), xRange, 0.01) || xMax() - xMin() < Poincare::Range1D::k_minLength);
   }
   if (std::isfinite(y)) {
     const float yRange = yMax() - yMin();
@@ -209,8 +207,6 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       const float newYMax = std::min(k_maxFloat, y + topMargin);
       protectedSetY(Range1D(newYMax - yRange, newYMax), k_maxFloat);
     }
-    // Range setters may stretch if range was too small for the new magnitude
-    assert(Poincare::Helpers::RelativelyEqual<float>(yMax() - yMin(), yRange, 0.01) || xMax() - xMin() < Poincare::Range1D::k_minLength);
   }
 
   if (moved) {

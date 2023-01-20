@@ -112,7 +112,7 @@ bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     const char * text = textField->text();
     Poincare::Expression e = Poincare::Expression::Parse(text, App::app()->localContext());
-    if (e.type() != Poincare::ExpressionNode::Type::Comparison) {
+    if (!e.isUninitialized() && e.type() != Poincare::ExpressionNode::Type::Comparison) {
       textField->setCursorLocation(text + strlen(text));
       if (!textField->handleEventWithText("=0")) {
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);

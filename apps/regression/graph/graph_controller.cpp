@@ -367,8 +367,8 @@ bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex
   return InteractiveCurveViewController::closestCurveIndexIsSuitable(newIndex, currentIndex, newSubIndex, currentSubIndex) && m_store->seriesIsActive(newIndex);
 }
 
-Coordinate2D<double> GraphController::xyValues(int curveIndex, double x, Poincare::Context * context, int subCurveIndex) const {
-  return Coordinate2D<double>(x, yValue(curveIndex, x, context));
+Coordinate2D<double> GraphController::xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex) const {
+  return Coordinate2D<double>(t, yValue(curveIndex, t, context));
 }
 
 double GraphController::yValue(int curveIndex, double x, Poincare::Context * context) const {

@@ -70,6 +70,7 @@ ComparisonNode::OperatorType ComparisonNode:: SwitchInferiorSuperior(OperatorTyp
 }
 
 bool ComparisonNode::IsBinaryComparison(Expression e, OperatorType * operatorType) {
+  assert(!e.isUninitialized());
   if (e.type() != Type::Comparison || e.numberOfChildren() != 2) {
     return false;
   }
@@ -81,6 +82,7 @@ bool ComparisonNode::IsBinaryComparison(Expression e, OperatorType * operatorTyp
 }
 
 bool ComparisonNode::IsComparisonWithoutNotEqualOperator(Expression e) {
+  assert(!e.isUninitialized());
   if (e.type() != Type::Comparison) {
     return false;
   }

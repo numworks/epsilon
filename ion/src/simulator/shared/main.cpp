@@ -17,6 +17,12 @@
 #include "screenshot.h"
 #include <signal.h>
 #include "actions.h"
+#include <stdio.h>
+extern "C" {
+  extern char * eadk_external_data;
+  extern size_t eadk_external_data_size;
+}
+#include <dlfcn.h>
 #endif
 
 /* The Args class allows parsing and editing command-line arguments
@@ -83,6 +89,40 @@ std::vector<const char *>::const_iterator Args::find(const char * name) const {
   );
 }
 
+#if ION_SIMULATOR_FILES
+static inline int load_eadk_external_data(const char * path) {
+  if (path == nullptr) {
+    return 0;
+  }
+  if (eadk_external_data != nullptr || eadk_external_data_size != 0) {
+    fprintf(stderr, "Warning: eadk_external_data already loaded\n");
+    return -1;
+  }
+  FILE * f = fopen(path, "rb");
+  if (f == NULL) {
+    fprintf(stderr, "Error loading external data file %s\n", path);
+    return -1;
+  }
+  fseek(f, 0, SEEK_END);
+  eadk_external_data_size = ftell(f);
+  fseek(f, 0, SEEK_SET);
+  eadk_external_data = static_cast<char *>(malloc(eadk_external_data_size));
+  if (eadk_external_data == nullptr) {
+    fprintf(stderr, "Error allocating external data file\n");
+    fclose(f);
+    return -1;
+  }
+  size_t ret = fread(eadk_external_data, 1, eadk_external_data_size, f);
+  if (ret != eadk_external_data_size) {
+    printf("Error reading %s into eadk_external_data\n", path);
+    fclose(f);
+    return -1;
+  }
+  fclose(f);
+  return 0;
+}
+#endif
+
 using namespace Ion::Simulator;
 
 int main(int argc, char * argv[]) {
@@ -144,7 +184,32 @@ int main(int argc, char * argv[]) {
     Window::init();
     Haptics::init();
   }
-  ion_main(args.argc(), args.argv());
+
+#if ION_SIMULATOR_FILES
+  const char * nws = args.pop("--nws");
+  if (nws) {
+    if (load_eadk_external_data(args.pop("--nws-external-data"))) {
+      return -1;
+    }
+    void * handle = dlopen(nws, RTLD_LAZY);
+    if (handle == nullptr) {
+      fprintf(stderr, "Error loading %s: %s\n", nws, dlerror());
+      return -1;
+    }
+    int (*nws_main)(int argc, const char * const argv[]);
+    *(void**)(&nws_main) = dlsym(handle, "main");
+    if (nws_main == nullptr) {
+      fprintf(stderr, "Could not locate nws_main symbol: %s\n", dlerror());
+      return -1;
+    }
+    nws_main(args.argc(), args.argv());
+    dlclose(handle);
+  } else {
+#endif
+    ion_main(args.argc(), args.argv());
+#if ION_SIMULATOR_FILES
+  }
+#endif
   if (!headless) {
     Haptics::shutdown();
     Window::shutdown();

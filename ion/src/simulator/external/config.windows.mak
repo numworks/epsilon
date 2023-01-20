@@ -62,3 +62,6 @@ LDFLAGS += -luser32
 LDFLAGS += -lversion
 LDFLAGS += -lwinmm
 LDFLAGS += -static-libgcc
+
+SFLAGS += -Iion/src/simulator/external/dlfcn
+ion_src += ion/src/simulator/external/dlfcn/dlfcn.c

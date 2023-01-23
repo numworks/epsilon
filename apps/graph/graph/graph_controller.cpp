@@ -11,11 +11,10 @@
 
 using namespace Poincare;
 using namespace Shared;
-using namespace Escher;
 
 namespace Graph {
 
-GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * interactiveRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor) :
+GraphController::GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * interactiveRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, &m_view, cursor, indexFunctionSelectedByCursor),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(interactiveRange, m_cursor, &m_bannerView, &m_cursorView),

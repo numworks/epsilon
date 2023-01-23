@@ -178,8 +178,6 @@ bool NestedMenuController::returnToPreviousMenu() {
   }
 
   loadState(state);
-
-  Container::activeApp()->setFirstResponder(&m_listController);
   return true;
 }
 
@@ -191,7 +189,6 @@ bool NestedMenuController::returnToRootMenu() {
     m_breadcrumbController.resetTitle();
     StackViewController::pop();
   }
-  Container::activeApp()->setFirstResponder(&m_listController);
   return true;
 }
 

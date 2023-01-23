@@ -23,30 +23,39 @@ public:
 
   InteractiveCurveViewController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, I18n::Message calculusButtonMessage);
 
-  const char * title() override;
-  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::NeverDisplayOwnTitle; }
+  // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
+
+  // ViewController
+  const char * title() override { return I18n::translate(I18n::Message::GraphTab); }
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::NeverDisplayOwnTitle; }
+  void viewWillAppear() override;
   TELEMETRY_ID("Graph");
 
-  RangeParameterController * rangeParameterController();
-  ViewController * zoomParameterController();
+  // TextFieldDelegate
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
+  // ButtonRowController
   int numberOfButtons(Escher::ButtonRowController::Position position) const override;
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
+  // AlternateEmptyViewDelegate
   Escher::Responder * responderWhenEmpty() override;
-
-  void viewWillAppear() override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
-  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
 
   virtual bool openMenuForCurveAtIndex(int index) = 0;
   virtual void moveCursorAndCenterIfNeeded(double t);
+  RangeParameterController * rangeParameterController();
+  ViewController * zoomParameterController();
 
 protected:
   constexpr static float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
+
+  // ZoomCurveViewController
+  bool handleEnter() override { return openMenu(); }
+  bool handleZoom(Ion::Events::Event event) override;
 
   Escher::TabViewController * tabController() const;
   Escher::StackViewController * stackController() const;
@@ -72,14 +81,9 @@ protected:
   virtual int numberOfSubCurves(int curveIndex) const = 0;
   virtual bool isAlongY(int curveIndex) const = 0;
 
-  // SimpleInteractiveCurveViewController
-  bool handleEnter() override { return openMenu(); }
-  bool handleZoom(Ion::Events::Event event) override;
-
   int m_selectedSubCurveIndex;
 private:
   constexpr static KDFont::Size k_buttonFont = KDFont::Size::Small;
-  void refreshCursor(bool ignoreMargins = false, bool forceFiniteY = false);
 
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical, bool isMin) const override;
@@ -88,6 +92,7 @@ private:
 
   void setCurveViewAsMainView(bool resetInterrupted, bool forceReload);
   bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };
+  void refreshCursor(bool ignoreMargins = false, bool forceFiniteY = false);
 
   // Button invocations
   Escher::Invocation autoButtonInvocation();

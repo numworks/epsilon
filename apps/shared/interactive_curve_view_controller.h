@@ -62,7 +62,6 @@ protected:
   virtual Poincare::Coordinate2D<double> selectedModelXyValues(double t) const = 0;
   bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };
   virtual CurveSelectionController * curveSelectionController() const = 0;
-  Escher::Invocation calculusButtonInvocation();
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex = 0, int * subCurveIndex = nullptr) const;
@@ -94,6 +93,7 @@ private:
   /* This method returns the new status for the button,
    * ie m_interactiveRange->zoomAuto(). */
   bool autoButtonAction();
+  Escher::Invocation calculusButtonInvocation();
 
   RangeParameterController m_rangeParameterController;
   FunctionZoomAndPanCurveViewController m_zoomParameterController;

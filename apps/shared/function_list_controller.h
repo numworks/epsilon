@@ -24,12 +24,12 @@ public:
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
   /* Responder */
+  void didEnterResponderChain(Escher::Responder * nextFirstResponder) override;
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
   void didBecomeFirstResponder() override;
 
   /* ViewController */
   ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::NeverDisplayOwnTitle; }
-  void viewWillAppear() override;
 protected:
   Escher::StackViewController * stackController() const;
   void configureFunction(Ion::Storage::Record record);

@@ -21,13 +21,6 @@ FunctionGraphController::FunctionGraphController(Responder * parentResponder, Es
 {
 }
 
-bool FunctionGraphController::isEmpty() const {
-  if (numberOfCurves() == 0) {
-    return true;
-  }
-  return false;
-}
-
 void FunctionGraphController::didBecomeFirstResponder() {
   if (curveView()->hasFocus()) {
     bannerView()->abscissaValue()->setParentResponder(this);
@@ -132,8 +125,7 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record, bool
     // Using first subCurve for default cursor.
     currentY = function->evaluateXYAtParameter(currentX, context, 0).x2();
     iterations++;
-  } while (xMin < currentX && currentX < xMax &&
-           !isCursorVisibleAtPosition(Coordinate2D<float>(currentX, currentY), ignoreMargins));
+  } while (xMin < currentX && currentX < xMax && !isCursorVisibleAtPosition(Coordinate2D<float>(currentX, currentY), ignoreMargins));
 
   if (!isCursorVisibleAtPosition(Coordinate2D<float>(currentX, currentY), ignoreMargins)) {
     // If no positions make the cursor visible, return the middle value

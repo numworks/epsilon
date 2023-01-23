@@ -100,7 +100,7 @@ bool MainController::textFieldShouldFinishEditing(Escher::AbstractTextField * te
 
 bool MainController::textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) {
   // Sto event needs to be handled here before AbstractTextField handles it.
-  if (event == Ion::Events::Sto) {
+  if (event == Ion::Events::Sto || event == Ion::Events::Var) {
     /* ElementsView only redraws its background when appearing to avoid blinking
      * It needs to be redrawn after the store menu */
     m_view.elementsView()->dirtyBackground();

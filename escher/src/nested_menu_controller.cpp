@@ -65,7 +65,7 @@ void NestedMenuController::BreadcrumbController::updateTitle() {
 void NestedMenuController::ListController::didBecomeFirstResponder() {
   m_selectableTableView->reloadData();
   Container::activeApp()->setFirstResponder(m_selectableTableView);
-  m_selectableTableView->selectCellAtLocation(0, m_firstSelectedRow);
+  m_selectableTableView->selectCellAtLocation(0, 0);
 }
 
 /* NestedMenuController */
@@ -160,7 +160,6 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
   m_breadcrumbController.pushTitle(subTitle());
   StackViewController::push(&m_breadcrumbController);
 
-  m_listController.setFirstSelectedRow(0);
   Container::activeApp()->setFirstResponder(&m_listController);
   return true;
 }
@@ -192,14 +191,13 @@ bool NestedMenuController::returnToRootMenu() {
     m_breadcrumbController.resetTitle();
     StackViewController::pop();
   }
-  m_listController.setFirstSelectedRow(0);
   Container::activeApp()->setFirstResponder(&m_listController);
   return true;
 }
 
 void NestedMenuController::loadState(NestedMenuController::StackState state) {
   bool isStateValid = state.selectedRow() < numberOfRows();
-  m_listController.setFirstSelectedRow(isStateValid ? state.selectedRow() : 0);
+  m_selectableTableView.selectCellAtLocation(0, isStateValid ? state.selectedRow() : 0);
   KDPoint scroll = m_selectableTableView.contentOffset();
   m_selectableTableView.setContentOffset(KDPoint(scroll.x(), isStateValid ? state.verticalScroll() : 0));
 }

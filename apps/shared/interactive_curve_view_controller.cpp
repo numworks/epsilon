@@ -326,13 +326,12 @@ void InteractiveCurveViewController::setCurveViewAsMainView(bool resetInterrupte
   curveView()->reload(resetInterrupted, forceReload);
 }
 
-bool InteractiveCurveViewController::autoButtonAction() {
+void InteractiveCurveViewController::autoButtonAction() {
   m_interactiveRange->setZoomAuto(!m_interactiveRange->zoomAuto());
   m_interactiveRange->computeRanges();
   if (m_interactiveRange->zoomAuto()) {
     setCurveViewAsMainView(true, true);
   }
-  return m_interactiveRange->zoomAuto();
 }
 
 void InteractiveCurveViewController::navigationButtonAction() {

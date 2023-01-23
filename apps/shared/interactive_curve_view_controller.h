@@ -90,10 +90,9 @@ private:
 
   void setCurveViewAsMainView(bool resetInterrupted, bool forceReload);
 
+  // Button actions
+  void autoButtonAction();
   void navigationButtonAction();
-  /* This method returns the new status for the button,
-   * ie m_interactiveRange->zoomAuto(). */
-  bool autoButtonAction();
   Escher::Invocation calculusButtonInvocation();
 
   RangeParameterController m_rangeParameterController;

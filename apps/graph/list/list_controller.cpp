@@ -65,7 +65,7 @@ void ListController::viewWillAppear() {
   /* FunctionListcontroller::didEnterResponderChain might not be called,
    * (if the list tab is displayed but not selected using Back-Back)
    * therefore we also need to manually reload the table here. */
-  selectableTableView()->reloadData(false, false);
+  selectableTableView()->reloadData(false);
 }
 
 // Fills buffer with a default function equation, such as "f(x)=", "y=" or "r="
@@ -272,7 +272,6 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   assert(cell != nullptr);
   EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j%2 == 0);
-  evenOddCell->setHighlighted(j == selectedRow());
   int type = typeAtIndex(j);
   if (type == k_addNewModelType) {
     evenOddCell->reloadCell();

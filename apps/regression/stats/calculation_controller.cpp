@@ -102,7 +102,6 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
   EvenOddCell * myCell = static_cast<EvenOddCell *>(cell);
   myCell->setEven(j%2 == 0);
-  myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
 
   // Coordinate and series title
   if (j == 0 && i > 1) {

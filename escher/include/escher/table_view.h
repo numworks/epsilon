@@ -26,12 +26,16 @@ public:
   void reloadCellAtLocation(int col, int row, bool forceSetFrame = false) { m_contentView.reloadCellAtLocation(col, row, forceSetFrame); }
   void initSize(KDRect rect);
   void reloadVisibleCellsAtColumn(int column);
+
 protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override { return "TableView"; }
 #endif
   TableViewDataSource * dataSource() { return m_contentView.dataSource(); }
   void layoutSubviews(bool force = false) override;
+  int numberOfDisplayableCells() { return m_contentView.numberOfDisplayableCells(); }
+  HighlightCell * reusableCellAtIndex(int index) { return m_contentView.reusableCellAtIndex(index); }
+
   class ContentView : public View {
   public:
     ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlap, KDCoordinate verticalCellOverlap);
@@ -52,6 +56,8 @@ protected:
     KDRect cellFrame(int col, int row) const;
     void layoutSubviews(bool force = false) override { layoutSubviews(force, false); }
     void layoutSubviews(bool force, bool updateCellContent);
+    int numberOfDisplayableCells() const { return numberOfDisplayableRows() * numberOfDisplayableColumns(); }
+    HighlightCell * reusableCellAtIndex(int index);
   protected:
 #if ESCHER_VIEW_LOGGING
     const char * className() const override { return "TableView::ContentView"; }
@@ -60,9 +66,9 @@ protected:
     KDCoordinate height() const { return m_dataSource->cumulatedHeightBeforeIndex(m_dataSource->numberOfRows()) + m_verticalCellOverlap; }
     KDCoordinate width() const;
 
-    int numberOfSubviews() const override { return numberOfDisplayableRows() * numberOfDisplayableColumns(); }
+    int numberOfSubviews() const override { return numberOfDisplayableCells(); }
     View * subview(int index) override;
-    View * subviewAtIndex(int index) override;
+    View * subviewAtIndex(int index) override { return static_cast<View *>(reusableCellAtIndex(index)); }
 
     /* These two methods transform a positive index (of subview for instance)
      * into coordinates that refer to the data source entire table */
@@ -72,6 +78,7 @@ protected:
     /* This method transform a index (of subview for instance) into an index
      * refering to the set of cells of type "type". */
     int typeIndexFromSubviewIndex(int index, int type) const;
+
     TableView * m_tableView;
     TableViewDataSource * m_dataSource;
     KDCoordinate m_horizontalCellOverlap;

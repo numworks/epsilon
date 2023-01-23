@@ -82,6 +82,9 @@ bool SelectableTableView::selectCellAtLocation(int col, int row, bool setFirstRe
   // There should always be at least 1 selectable cell in the column
   assert(cellAtLocationIsSelectable(col, row));
 
+  // Unhighlight previous cell
+  unhighlightSelectedCell();
+
   int previousColumn = selectedColumn();
   int previousRow = selectedRow();
   selectColumn(col);
@@ -99,15 +102,6 @@ bool SelectableTableView::selectCellAtLocation(int col, int row, bool setFirstRe
 
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, previousColumn, previousRow, withinTemporarySelection);
-    if (selectedColumn() == previousColumn && selectedRow() == previousRow) {
-      return false;
-    }
-  }
-
-  // Unhighlight previous cell
-  HighlightCell * previousCell = cellAtLocation(previousColumn, previousRow);
-  if (previousCell) {
-    previousCell->setHighlighted(false); // Must be done before scrolling because if previousCell becomes hidden, setHighlighted will not reload
   }
 
   // Scroll
@@ -213,24 +207,13 @@ void SelectableTableView::deselectTable(bool withinTemporarySelection) {
   }
 }
 
-void SelectableTableView::reloadData(bool setFirstResponder, bool setSelection) {
+void SelectableTableView::reloadData(bool setFirstResponder) {
   dataSource()->initCellSize(this);
   int col = selectedColumn();
   int row = selectedRow();
-  // TODO: remove setSelection? (Cf comment in DynamicCellsDataSource)
-  if (setSelection) {
-    deselectTable(true);
-  }
-  /* FIXME: The problem with calling deselectTable is that at this point in time
-   * the datasource's model is very likely to have changed. Therefore it's
-   * rather complicated to get a pointer to the currently selected cell (in
-   * order to deselect it). */
-  /* As a workaround, datasources can reset the highlighted state in their
-   * willDisplayCell callback. */
-  TableView::layoutSubviews();
-  if (setSelection) {
-    selectCellAtLocation(col, row, setFirstResponder, true);
-  }
+  deselectTable(true);
+  SelectableTableView::layoutSubviews();
+  selectCellAtLocation(col, row, setFirstResponder, true);
 }
 
 void SelectableTableView::didBecomeFirstResponder() {
@@ -252,6 +235,21 @@ void SelectableTableView::didEnterResponderChain(Responder * previousFirstRespon
 void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder != nullptr) {
     unhighlightSelectedCell();
+  }
+}
+
+void SelectableTableView::layoutSubviews(bool force) {
+  TableView::layoutSubviews(force);
+  /* The highlighting/unhighlighting of cells might have failed when
+   * the table was reloaded because the reusable cells were not populated.
+   * To prevent this, their Highlight status is reloaded here. */
+  int nReusableCells = numberOfDisplayableCells();
+  HighlightCell * thisSelectedCell = selectedCell();
+  for (int cellIndex = 0; cellIndex < nReusableCells; cellIndex++) {
+    HighlightCell * cell = reusableCellAtIndex(cellIndex);
+    if (cell && cell->isVisible()) {
+      cell->setHighlighted(thisSelectedCell == cell);
+    }
   }
 }
 

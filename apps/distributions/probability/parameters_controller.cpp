@@ -61,9 +61,6 @@ int ParametersController::numberOfRows() const {
 
 void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (index == numberOfRows() - 1) {
-    if (selectedRow() != numberOfRows() - 1) {
-      cell->setHighlighted(false);
-    }
     return;
   }
   ExpressionCellWithEditableTextWithMessage * myCell =

@@ -33,9 +33,6 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
   if (dataSource()->rowHeight(j) <= bounds().height()) {
     return;
   }
-  /* As we scroll, the selected calculation does not use the same history view
-   * cell, thus, we want to deselect the previous used history view cell. (*) */
-  unhighlightSelectedCell();
 
   /* Main part of the scroll */
   HistoryViewCell * cell = static_cast<HistoryViewCell *>(selectedCell());
@@ -97,7 +94,6 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
    * relayouted in "setContentOffset".*/
   cell = static_cast<HistoryViewCell *>(selectedCell());
   assert(cell);
-  cell->setHighlighted(true);
   Container::activeApp()->setFirstResponder(cell);
 }
 

@@ -17,13 +17,7 @@ template <typename T, int N>
 void DynamicCellsDataSource<T, N>::createCells() {
   if (m_cells == nullptr) {
     createCellsWithOffset(0);
-    // TODO: reloadData(setFirstResponder = false, setSelection = false),
-    // selSelection argument was made especially for this local use. Should we
-    // use 'm_delegate->tableView()->deselectTable();' and ensure that the
-    // SelectionDataSource represents the selection correctly (before/after
-    // the table first/last cell to make sure to re-select the right cell when
-    // selecting the table).
-    m_delegate->tableView()->reloadData(false, false);
+    m_delegate->tableView()->reloadData(false);
   }
 }
 

@@ -189,7 +189,6 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
   }
   EvenOddCell * myCell = static_cast<EvenOddCell *>(cell);
   myCell->setEven(modelIndexForRow(j)%2 == 0);
-  myCell->setHighlighted(i == selectedColumn() && j == selectedRow());
   myCell->reloadCell();
 }
 

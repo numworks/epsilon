@@ -34,13 +34,14 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void unhighlightSelectedCell();
   void deselectTable(bool withinTemporarySelection = false);
-  void reloadData(bool setFirstResponder = true, bool setSelection = true);
+  void reloadData(bool setFirstResponder = true);
 
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 
 protected:
+  void layoutSubviews(bool force = false) override;
   SelectableTableViewDataSource * m_selectionDataSource;
   SelectableTableViewDelegate * m_delegate;
 

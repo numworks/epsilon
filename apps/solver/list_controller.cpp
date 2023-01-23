@@ -67,7 +67,6 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (!isAddEmptyRow(index)) {
     willDisplayExpressionCellAtIndex(cell, index);
   }
-  cell->setHighlighted(index == selectedRow());
 }
 
 bool ListController::handleEvent(Ion::Events::Event event) {

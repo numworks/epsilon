@@ -150,7 +150,6 @@ void Dropdown::DropdownPopupController::willDisplayCellForIndex(HighlightCell * 
                                                                 int index) {
   PopupItemView * popupView = static_cast<PopupItemView *>(cell);
   popupView->setInnerCell(m_listViewDataSource->reusableCell(index, typeAtIndex(index)));
-  popupView->setHighlighted(m_selectionDataSource.selectedRow() == index);
   popupView->setPopping(true);
   m_listViewDataSource->willDisplayCellForIndex(popupView->innerCell(), index);
 }
@@ -182,8 +181,7 @@ bool Dropdown::handleEvent(Ion::Events::Event e) {
 void Dropdown::reloadAllCells() {
   // Reload popup list
   m_popup.resetMemoization();  // Reset computed width
-  // No need to set selection when m_selectableTableView is not visible.
-  m_popup.m_selectableTableView.reloadData(false, m_isPoppingUp);
+  m_popup.m_selectableTableView.reloadData(false);
   if (!m_isPoppingUp) {
     /* Build the innerCell so that is has the right width.
      * Mimicking Dropdown::DropdownPopupController::willDisplayCellForIndex
@@ -193,12 +191,6 @@ void Dropdown::reloadAllCells() {
     PopupItemView * cell = static_cast<PopupItemView *>(m_popup.reusableCell(index, 0));
     cell->setInnerCell(m_popup.innerCellAtIndex(index));
     m_popup.m_listViewDataSource->willDisplayCellForIndex(cell->innerCell(), index);
-  }
-
-  if (innerCell()) {
-    // Highlight state was corrupted by m_selectableTableView
-    innerCell()->setHighlighted(isHighlighted());
-    innerCell()->reloadCell();
   }
   PopupItemView::reloadCell();
 }
@@ -218,11 +210,7 @@ void Dropdown::open() {
   m_popup.m_selectableTableView.reloadData(false);
 
   KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);
-  Container::activeApp()->displayModalViewController(&m_popup,
-                                                             0.f,
-                                                             0.f,
-                                                             topLeftAngle.y(),
-                                                             topLeftAngle.x());
+  Container::activeApp()->displayModalViewController(&m_popup, 0.f, 0.f, topLeftAngle.y(), topLeftAngle.x());
 }
 
 void Dropdown::close() {

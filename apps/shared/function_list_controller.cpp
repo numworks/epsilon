@@ -41,8 +41,8 @@ AbstractButtonCell * FunctionListController::buttonAtIndex(int index, ButtonRowC
 
 /* Responder */
 
-void FunctionListController::didEnterResponderChain(Responder * nextFirstResponder) {
-  selectableTableView()->reloadData(false, false);
+void FunctionListController::didEnterResponderChain(Responder * previousFirstResponder) {
+  selectableTableView()->reloadData(false);
 }
 
 void FunctionListController::willExitResponderChain(Responder * nextFirstResponder) {

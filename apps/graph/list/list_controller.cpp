@@ -59,8 +59,12 @@ const char * ListController::title() {
 }
 
 void ListController::viewWillAppear() {
-  resetMemoization(); // A function could have been deleted
+  // A function could have been deleted from the option menu of the Graph tab.
+  resetMemoization();
   Shared::FunctionListController::viewWillAppear();
+  /* FunctionListcontroller::didEnterResponderChain might not be called,
+   * (if the list tab is displayed but not selected using Back-Back)
+   * therefore we also need to manually reload the table here. */
   selectableTableView()->reloadData(false, false);
 }
 

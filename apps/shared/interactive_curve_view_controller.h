@@ -79,7 +79,6 @@ protected:
   int m_selectedSubCurveIndex;
 private:
   constexpr static KDFont::Size k_buttonFont = KDFont::Size::Small;
-  constexpr static float k_viewHeight = Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::TabHeight - Escher::Metric::ButtonRowPlainStyleHeight - 1;
   void refreshCursor(bool ignoreMargins = false, bool forceFiniteY = false);
 
   // InteractiveCurveViewRangeDelegate

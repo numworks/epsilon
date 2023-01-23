@@ -39,7 +39,6 @@ void GraphController::viewWillAppear() {
   m_cursorView.resetMemoization();
   m_smallestRank = m_sequenceStore->smallestInitialRank();
   FunctionGraphController::viewWillAppear();
-  selectFunctionWithCursor(indexFunctionSelectedByCursor(), true);
 }
 
 float GraphController::interestingXMin() const {

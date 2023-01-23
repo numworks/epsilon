@@ -49,6 +49,7 @@ void FunctionGraphController::viewWillAppear() {
   }
 
   InteractiveCurveViewController::viewWillAppear();
+  selectFunctionWithCursor(indexFunctionSelectedByCursor(), true);
 }
 
 bool FunctionGraphController::openMenuForCurveAtIndex(int index) {

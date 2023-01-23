@@ -90,20 +90,25 @@ private:
 
   void setCurveViewAsMainView(bool resetInterrupted, bool forceReload);
 
-  // Button actions
-  void autoButtonAction();
-  void navigationButtonAction();
+  // Button invocations
+  Escher::Invocation autoButtonInvocation();
+  Escher::Invocation rangeButtonInvocation();
+  Escher::Invocation navigationButtonInvocation();
   Escher::Invocation calculusButtonInvocation();
 
   RangeParameterController m_rangeParameterController;
   FunctionZoomAndPanCurveViewController m_zoomParameterController;
   InteractiveCurveViewRange * m_interactiveRange;
+  // Auto button
   Escher::ButtonState m_autoButton;
   Escher::ToggleableDotView m_autoDotView;
-  Escher::AbstractButtonCell m_navigationButton;
+  // Range button
   Escher::ButtonState m_rangeButton;
-  Escher::AbstractButtonCell m_calculusButton;
   Escher::UnequalView m_rangeUnequalView;
+  // Navigation button
+  Escher::AbstractButtonCell m_navigationButton;
+  // Calculus button
+  Escher::AbstractButtonCell m_calculusButton;
 };
 
 }

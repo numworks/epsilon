@@ -34,7 +34,9 @@ void TrigonometryListController::setExpression(Expression e) {
   // Use the reduction of frac part to compute mod 1 on rationals
   Expression simplifiedAngle = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
   Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context, ReductionTarget::User);
-  // If frac part is still there, the exact angle is probably not interesting
+  /* Approximate the angle if the fractional part could not be reduced (because
+   * the angle is not a multiple of pi), or if displaying the exact expression
+   * is forbidden. */
   if (simplifiedAngle.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; }) || Shared::ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(simplifiedAngle, context)) {
     /* Do not approximate the FracPart, which could lead to truncation error
      * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with

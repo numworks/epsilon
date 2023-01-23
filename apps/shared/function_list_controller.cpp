@@ -41,6 +41,10 @@ AbstractButtonCell * FunctionListController::buttonAtIndex(int index, ButtonRowC
 
 /* Responder */
 
+void FunctionListController::didEnterResponderChain(Responder * nextFirstResponder) {
+  selectableTableView()->reloadData(false, false);
+}
+
 void FunctionListController::willExitResponderChain(Responder * nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
@@ -65,12 +69,6 @@ void FunctionListController::didBecomeFirstResponder() {
   if (inputViewController->isDisplayingModal()) {
     Container::activeApp()->setFirstResponder(inputViewController);
   }
-}
-
-/* ViewController */
-
-void FunctionListController::viewWillAppear() {
-  selectableTableView()->reloadData(false, false);
 }
 
 /* ExpressionModelListController */

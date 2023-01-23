@@ -61,6 +61,7 @@ const char * ListController::title() {
 void ListController::viewWillAppear() {
   resetMemoization(); // A function could have been deleted
   Shared::FunctionListController::viewWillAppear();
+  selectableTableView()->reloadData(false, false);
 }
 
 // Fills buffer with a default function equation, such as "f(x)=", "y=" or "r="

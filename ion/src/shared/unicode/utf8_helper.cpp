@@ -407,7 +407,7 @@ int RemovePreviousGlyph(const char * text, char * location, CodePoint * c) {
 
 const char * CodePointAtGlyphOffset(const char * buffer, int position) {
   assert(buffer != nullptr);
-  if (position < 0) {
+  if (position < 0 || buffer[0] == '\0') {
     return buffer;
   }
 

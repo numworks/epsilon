@@ -18,13 +18,12 @@ using namespace Escher;
 namespace Regression {
 
 GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Shared::InteractiveCurveViewRange * range, Store * store, CurveViewCursor * cursor, int * selectedDotIndex, int * selectedSeriesIndex) :
-  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, range, &m_view, cursor),
+  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, range, &m_view, cursor, I18n::Message::Regression),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(range, store, m_cursor, &m_bannerView, &m_cursorView),
   m_store(store),
   m_graphOptionsController(this, inputEventHandlerDelegate, range, m_store, m_cursor, this),
   m_seriesSelectionController(this),
-  m_calculusButton(this, I18n::Message::Regression, calculusButtonInvocation(), KDFont::Size::Small),
   m_selectedDotIndex(selectedDotIndex),
   m_selectedSeriesIndex(selectedSeriesIndex),
   m_selectedModelType((Model::Type)-1)

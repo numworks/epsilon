@@ -80,16 +80,13 @@ private:
 
   class ListController : public ViewController {
   public:
-    ListController(Responder * parentResponder, SelectableTableView * tableView, I18n::Message title) : ViewController(parentResponder), m_selectableTableView(tableView), m_firstSelectedRow(0), m_title(title) {}
+    ListController(Responder * parentResponder, SelectableTableView * tableView, I18n::Message title) : ViewController(parentResponder), m_selectableTableView(tableView), m_title(title) {}
     const char * title() override { return I18n::translate(m_title); }
     void setTitle(I18n::Message title) { m_title = title; }
     View * view() override { return m_selectableTableView; }
     void didBecomeFirstResponder() override;
-    void setFirstSelectedRow(int firstSelectedRow) { m_firstSelectedRow = firstSelectedRow; }
-    SelectableTableView * selectableTableView() { return m_selectableTableView; }
   private:
     SelectableTableView * m_selectableTableView;
-    int m_firstSelectedRow;
     I18n::Message m_title;
   };
 

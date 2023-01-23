@@ -18,20 +18,9 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   m_rangeParameterController(this, inputEventHandlerDelegate, interactiveRange),
   m_zoomParameterController(this, interactiveRange, curveView),
   m_interactiveRange(interactiveRange),
-  m_autoButton(this, I18n::Message::DefaultSetting, Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
-    graphController->autoButtonAction();
-    return true;
-  }, this), &m_autoDotView, k_buttonFont),
-  m_navigationButton(this, I18n::Message::Navigate, Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
-    graphController->navigationButtonAction();
-    return true;
-  }, this), k_buttonFont),
-  m_rangeButton(this, I18n::Message::Axis, Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
-    graphController->rangeParameterController()->setRange(graphController->interactiveCurveViewRange());
-    StackViewController * stack = graphController->stackController();
-    stack->push(graphController->rangeParameterController());
-    return true;
-  }, this), &m_rangeUnequalView, k_buttonFont),
+  m_autoButton(this, I18n::Message::DefaultSetting, autoButtonInvocation(), &m_autoDotView, k_buttonFont),
+  m_rangeButton(this, I18n::Message::Axis, rangeButtonInvocation(), &m_rangeUnequalView, k_buttonFont),
+  m_navigationButton(this, I18n::Message::Navigate, navigationButtonInvocation(), k_buttonFont),
   m_calculusButton(this, calculusButtonMessage, calculusButtonInvocation(), k_buttonFont)
 {
   m_autoButton.setState(m_interactiveRange->zoomAuto());
@@ -326,17 +315,32 @@ void InteractiveCurveViewController::setCurveViewAsMainView(bool resetInterrupte
   curveView()->reload(resetInterrupted, forceReload);
 }
 
-void InteractiveCurveViewController::autoButtonAction() {
-  m_interactiveRange->setZoomAuto(!m_interactiveRange->zoomAuto());
-  m_interactiveRange->computeRanges();
-  if (m_interactiveRange->zoomAuto()) {
-    setCurveViewAsMainView(true, true);
-  }
+Invocation InteractiveCurveViewController::autoButtonInvocation() {
+  return Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
+    graphController->m_interactiveRange->setZoomAuto(!graphController->m_interactiveRange->zoomAuto());
+    graphController->m_interactiveRange->computeRanges();
+    if (graphController->m_interactiveRange->zoomAuto()) {
+      graphController->setCurveViewAsMainView(true, true);
+    }
+    return true;
+  }, this);
 }
 
-void InteractiveCurveViewController::navigationButtonAction() {
-  static_cast<TabViewController *>(tabController())->setDisplayTabs(false);
-  stackController()->push(zoomParameterController());
+Invocation InteractiveCurveViewController::rangeButtonInvocation() {
+  return Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
+    graphController->rangeParameterController()->setRange(graphController->interactiveCurveViewRange());
+    StackViewController * stack = graphController->stackController();
+    stack->push(graphController->rangeParameterController());
+    return true;
+  }, this);
+}
+
+Invocation InteractiveCurveViewController::navigationButtonInvocation() {
+  return Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
+    static_cast<TabViewController *>(graphController->tabController())->setDisplayTabs(false);
+    graphController->stackController()->push(graphController->zoomParameterController());
+    return true;
+  }, this);
 }
 
 Invocation InteractiveCurveViewController::calculusButtonInvocation() {

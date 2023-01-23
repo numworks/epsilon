@@ -15,22 +15,30 @@ class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
   GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * range, Store * store, Shared::CurveViewCursor * cursor, int * selectedDotIndex, int * selectedSeriesIndex);
-  bool isEmpty() const override;
-  I18n::Message emptyMessage() override;
-  void viewWillAppear() override;
-  void selectRegressionCurve() { *m_selectedDotIndex = -1; }
-  int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
-  Poincare::Context * globalContext() const;
 
+  // Responder
   void didBecomeFirstResponder() override;
 
-  // moveCursorHorizontally and Vertically are public to be used in tests
+  // ViewController
+  void viewWillAppear() override;
+
+  // AlternateEmptyViewDelegate
+  bool isEmpty() const override;
+  I18n::Message emptyMessage() override;
+
+  // SimpleInteractiveCurveViewController
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
+
+  // InteractiveCurveViewController
   bool moveCursorVertically(int direction) override;
 
   // InteractiveCurveViewRangeDelegate
   Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange) const override;
   void tidyModels() override {}
+
+  void selectRegressionCurve() { *m_selectedDotIndex = -1; }
+  int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
+  Poincare::Context * globalContext() const;
 
 private:
   constexpr static size_t k_bannerViewTextBufferSize = Shared::BannerView::k_maxLengthDisplayed + sizeof("ŷ");
@@ -49,34 +57,35 @@ private:
     CurveSelectionCellWithChevron m_cells[Store::k_numberOfSeries];
   };
 
-  void setAbscissaInputAsFirstResponder();
-
-  bool buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
-  bool selectedSeriesIsScatterPlot() const { return m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::None; }
+  // ZoomCurveViewController
+  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return const_cast<const GraphController *>(this)->interactiveCurveViewRange(); }
+  Shared::AbstractPlotView * curveView() override;
 
   // SimpleInteractiveCurveViewController
   float cursorBottomMarginRatio() const override { return cursorBottomMarginRatioForBannerHeight(m_bannerView.minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
-  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return const_cast<const GraphController *>(this)->interactiveCurveViewRange(); }
-  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() const;
-  Shared::AbstractPlotView * curveView() override;
 
   // InteractiveCurveViewController
+  bool openMenuForCurveAtIndex(int index) override;
   void initCursorParameters(bool ignoreMargins = false) override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
-  int selectedCurveIndex(bool relativeIndex = true) const override;
+  SeriesSelectionController * curveSelectionController() const override { return const_cast<SeriesSelectionController *>(&m_seriesSelectionController); }
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const override;
+  int selectedCurveIndex(bool relativeIndex = true) const override;
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
-  double yValue(int curveIndex, double x, Poincare::Context * context) const;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override;
   int numberOfSubCurves(int curveIndex) const override { return 1; }
   bool isAlongY(int curveIndex) const override { return false; }
-  bool openMenuForCurveAtIndex(int index) override;
-  SeriesSelectionController * curveSelectionController() const override { return const_cast<SeriesSelectionController *>(&m_seriesSelectionController); }
 
+  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() const;
+  void setAbscissaInputAsFirstResponder();
+  bool buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
+  bool selectedSeriesIsScatterPlot() const { return m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::None; }
   void setRoundCrossCursorView();
+  double yValue(int curveIndex, double x, Poincare::Context * context) const;
+
   Shared::ToggleableRingRoundCursorView m_cursorView;
   BannerView m_bannerView;
   GraphView m_view;

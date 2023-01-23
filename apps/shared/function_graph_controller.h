@@ -12,14 +12,24 @@ namespace Shared {
 class FunctionGraphController : public InteractiveCurveViewController, public FunctionBannerDelegate {
 public:
   FunctionGraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor);
-  bool isEmpty() const override;
+
+  // Responder
   void didBecomeFirstResponder() override;
+
+  // ViewController
   void viewWillAppear() override;
 
+  // AlternateEmptyViewDelegate
+  bool isEmpty() const override;
+
+  // InteractiveCurveViewRangeDelegate
   void tidyModels() override;
+
+  // InteractiveCurveViewController
   int numberOfCurves() const override;
 
 protected:
+
   class FunctionSelectionController : public CurveSelectionController {
   public:
     FunctionSelectionController(FunctionGraphController * graphController) : CurveSelectionController(graphController) {}
@@ -27,40 +37,40 @@ protected:
     int numberOfRows() const override { return graphController()->functionStore()->numberOfActiveFunctions(); }
     void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
     void didBecomeFirstResponder() override;
-
   protected:
     KDCoordinate nonMemoizedRowHeight(int j) override;
     FunctionGraphController * graphController() const { return static_cast<FunctionGraphController *>(const_cast<InteractiveCurveViewController *>(m_graphController)); }
     virtual Poincare::Layout nameLayoutAtIndex(int j) const = 0;
-
   private:
     constexpr static KDFont::Size k_font = KDFont::Size::Large;
   };
 
+  // ZoomCurveViewController
+  AbstractPlotView * curveView() override;
+
+  // SimpleInteractiveCurveViewController
   float cursorTopMarginRatio() const override { return 0.068f; }
   float cursorBottomMarginRatio() const override { return cursorBottomMarginRatioForBannerHeight(const_cast<FunctionGraphController *>(this)->bannerView()->minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
+
+  // InteractiveCurveViewController
   bool openMenuForCurveAtIndex(int index) override;
+  void initCursorParameters(bool ignorMargins) override;
   bool moveCursorVertically(int direction) override;
+  bool selectedModelIsValid() const override;
+  Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
+  int selectedCurveIndex(bool relativeIndex = true) const override { return *m_indexFunctionSelectedByCursor; }
+  Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
+  int numberOfSubCurves(int curveIndex) const override;
+  bool isAlongY(int curveIndex) const override;
 
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
   void selectFunctionWithCursor(int functionIndex, bool willBeVisible);
   virtual double defaultCursorT(Ion::Storage::Record record, bool ignoreMargins);
   virtual FunctionStore * functionStore() const;
-
-  // Closest vertical curve helper
   virtual int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {
     return closestCurveIndexVertically(goingUp, currentSelectedCurve, context, currentSubCurveIndex, subCurveIndex);
   }
-  int selectedCurveIndex(bool relativeIndex = true) const override { return *m_indexFunctionSelectedByCursor; }
-  Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
-  int numberOfSubCurves(int curveIndex) const override;
-  bool isAlongY(int curveIndex) const override;
-  void initCursorParameters(bool ignorMargins) override;
-  bool selectedModelIsValid() const override;
-  Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
-  AbstractPlotView * curveView() override;
-
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
 
 private:

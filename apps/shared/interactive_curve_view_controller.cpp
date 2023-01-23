@@ -27,10 +27,6 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
 }
 
-const char * InteractiveCurveViewController::title() {
-  return I18n::translate(I18n::Message::GraphTab);
-}
-
 bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
   if (!curveView()->hasFocus()) {
     if (event == Ion::Events::Down) {

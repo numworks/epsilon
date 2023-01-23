@@ -14,30 +14,30 @@ namespace OMG {
 template <typename T> class GlobalBox {
 public:
 #if ASSERTIONS
-  GlobalBox() : m_initialized(false) {}
+  GlobalBox() : m_isInitialized(false) {}
 #endif
   template <typename... Args> void init(Args... args) {
 #if ASSERTIONS
-    assert(!m_initialized);
+    assert(!m_isInitialized);
 #endif
     new (m_buffer) T(args...);
 #if ASSERTIONS
-    m_initialized = true;
+    m_isInitialized = true;
 #endif
   }
-  void shutdown() {
+  void deinit() {
 #if ASSERTIONS
-    assert(m_initialized);
+    assert(m_isInitialized);
 #endif
-    // TODO: Placement delete
+    get()->~T();
 #if ASSERTIONS
-    m_initialized = false;
+    m_isInitialized = false;
 #endif
   }
 
   T * get() {
 #if ASSERTIONS
-    assert(m_initialized);
+    assert(m_isInitialized);
 #endif
     return reinterpret_cast< T*>(m_buffer);
   }
@@ -47,33 +47,30 @@ public:
 private:
   uint8_t m_buffer[sizeof(T)];
 #if ASSERTIONS
-  bool m_initialized;
+  bool m_isInitialized;
 #endif
 };
 
 template <typename T> class TrackedGlobalBox : public GlobalBox<T> {
 public:
-  TrackedGlobalBox() : GlobalBox<T>(), m_initialized(false) {}
+  TrackedGlobalBox() : GlobalBox<T>(), m_isInitialized(false) {}
   template <typename... Args> void init(Args... args) {
-    GlobalBox<T>::init(args...);
-    m_initialized = true;
+    if (!m_isInitialized) {
+      GlobalBox<T>::init(args...);
+      m_isInitialized = true;
+    }
   }
-  void shutdown() {
-    GlobalBox<T>::shutdown();
-    m_initialized = false;
-  }
-
-  T * get() {
-    if (m_initialized) {
-      return GlobalBox<T>::get();
-    } else {
-      return nullptr;
+  void deinit() {
+    if (m_isInitialized) {
+      GlobalBox<T>::deinit();
+      m_isInitialized = false;
     }
   }
 
-  bool initialized() const { return m_initialized; }
+  bool isInitialized() const { return m_isInitialized; }
+
 private:
-  bool m_initialized;
+  bool m_isInitialized;
 };
 
 }

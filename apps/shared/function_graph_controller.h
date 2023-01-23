@@ -44,7 +44,6 @@ protected:
   bool moveCursorVertically(int direction) override;
 
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
-  Escher::AbstractButtonCell * calculusButton() const override { return const_cast<Escher::AbstractButtonCell * >(&m_calculusButton); }
   void selectFunctionWithCursor(int functionIndex, bool willBeVisible);
   virtual double defaultCursorT(Ion::Storage::Record record, bool ignoreMargins);
   virtual FunctionStore * functionStore() const;
@@ -65,8 +64,6 @@ protected:
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
 
 private:
-  constexpr static KDFont::Size k_font = KDFont::Size::Small;
-
   virtual FunctionGraphView * functionGraphView() = 0;
 
   /* These two methods are likely to point to the same object but they are
@@ -76,7 +73,6 @@ private:
 
   void computeDefaultPositionForFunctionAtIndex(int index, double * t, Poincare::Coordinate2D<double> * xy, bool ignoreMargins);
 
-  Escher::AbstractButtonCell m_calculusButton;
   int * m_indexFunctionSelectedByCursor;
 };
 

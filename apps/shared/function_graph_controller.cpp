@@ -16,8 +16,7 @@ using namespace Poincare;
 namespace Shared {
 
 FunctionGraphController::FunctionGraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor) :
-  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor),
-  m_calculusButton(this, I18n::Message::GraphCalculus, calculusButtonInvocation(), k_font),
+  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, I18n::Message::GraphCalculus),
   m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
 {
 }

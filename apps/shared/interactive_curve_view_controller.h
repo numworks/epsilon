@@ -21,7 +21,7 @@ class InteractiveCurveViewController : public SimpleInteractiveCurveViewControll
 public:
   constexpr static int k_graphControllerStackDepth = 1;
 
-  InteractiveCurveViewController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor);
+  InteractiveCurveViewController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, I18n::Message calculusButtonMessage);
 
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::NeverDisplayOwnTitle; }
@@ -62,7 +62,6 @@ protected:
   virtual Poincare::Coordinate2D<double> selectedModelXyValues(double t) const = 0;
   bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };
   virtual CurveSelectionController * curveSelectionController() const = 0;
-  virtual Escher::AbstractButtonCell * calculusButton() const = 0;
   Escher::Invocation calculusButtonInvocation();
 
   // Closest vertical curve helper
@@ -103,6 +102,7 @@ private:
   Escher::ToggleableDotView m_autoDotView;
   Escher::AbstractButtonCell m_navigationButton;
   Escher::ButtonState m_rangeButton;
+  Escher::AbstractButtonCell m_calculusButton;
   Escher::UnequalView m_rangeUnequalView;
 };
 

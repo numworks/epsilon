@@ -194,7 +194,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
 }
 
 InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() const {
-  return App::app()->range();
+  return App::app()->graphRange();
 }
 
 AbstractPlotView * GraphController::curveView() {

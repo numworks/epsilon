@@ -23,7 +23,7 @@ public:
 
   // Layout
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override { assert(false); return Layout(); }
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override { assert(false); return childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context); }
   LayoutShape leftLayoutShape() const override { return childAtIndex(0)->leftLayoutShape(); }
 
   // Evaluation

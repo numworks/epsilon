@@ -60,7 +60,6 @@ protected:
 
   virtual bool selectedModelIsValid() const = 0;
   virtual Poincare::Coordinate2D<double> selectedModelXyValues(double t) const = 0;
-  bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };
   virtual CurveSelectionController * curveSelectionController() const = 0;
 
   // Closest vertical curve helper
@@ -89,6 +88,7 @@ private:
   void refreshCursorAfterComputingRange() override { refreshCursor(true, true); }
 
   void setCurveViewAsMainView(bool resetInterrupted, bool forceReload);
+  bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };
 
   // Button invocations
   Escher::Invocation autoButtonInvocation();

@@ -41,20 +41,39 @@ public:
 #endif
     return reinterpret_cast< T*>(m_buffer);
   }
-
-  T * operator->() {
-    return get();
-  }
-
-  operator T*() {
-    return get();
-  }
+  T * operator->() { return get(); }
+  operator T*() { return get(); }
 
 private:
   uint8_t m_buffer[sizeof(T)];
 #if ASSERTIONS
   bool m_initialized;
 #endif
+};
+
+template <typename T> class TrackedGlobalBox : public GlobalBox<T> {
+public:
+  TrackedGlobalBox() : GlobalBox<T>(), m_initialized(false) {}
+  template <typename... Args> void init(Args... args) {
+    GlobalBox<T>::init(args...);
+    m_initialized = true;
+  }
+  void shutdown() {
+    GlobalBox<T>::shutdown();
+    m_initialized = false;
+  }
+
+  T * get() {
+    if (m_initialized) {
+      return GlobalBox<T>::get();
+    } else {
+      return nullptr;
+    }
+  }
+
+  bool initialized() const { return m_initialized; }
+private:
+  bool m_initialized;
 };
 
 }

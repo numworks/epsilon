@@ -17,7 +17,7 @@ namespace Graph {
 
 class GraphController : public Shared::FunctionGraphController, public GraphControllerHelper {
 public:
-  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, Escher::ButtonRowController * header);
+  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * interactiveRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor);
 
   // Responder
   void didBecomeFirstResponder() override;

@@ -13,15 +13,15 @@ using namespace Escher;
 
 namespace Sequence {
 
-GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, SequenceStore * sequenceStore, CurveViewRange * graphRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, ButtonRowController * header) :
-  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, graphRange, &m_view, cursor, indexFunctionSelectedByCursor),
+GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, CurveViewRange * interactiveRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, SequenceStore * sequenceStore) :
+  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, &m_view, cursor, indexFunctionSelectedByCursor),
   m_bannerView(this, inputEventHandlerDelegate, this),
-  m_view(sequenceStore, graphRange, m_cursor, &m_bannerView, &m_cursorView),
-  m_graphRange(graphRange),
-  m_curveParameterController(inputEventHandlerDelegate, this, &m_cobwebController, graphRange, m_cursor),
+  m_view(sequenceStore, interactiveRange, m_cursor, &m_bannerView, &m_cursorView),
+  m_graphRange(interactiveRange),
+  m_curveParameterController(inputEventHandlerDelegate, this, &m_cobwebController, interactiveRange, m_cursor),
   m_sequenceSelectionController(this),
-  m_termSumController(this, inputEventHandlerDelegate, &m_view, graphRange, m_cursor),
-  m_cobwebController(this, inputEventHandlerDelegate, this, &m_view, graphRange, m_cursor, &m_bannerView, &m_cursorView, sequenceStore),
+  m_termSumController(this, inputEventHandlerDelegate, &m_view, interactiveRange, m_cursor),
+  m_cobwebController(this, inputEventHandlerDelegate, this, &m_view, interactiveRange, m_cursor, &m_bannerView, &m_cursorView, sequenceStore),
   m_sequenceStore(sequenceStore)
 {
   m_graphRange->setDelegate(this);

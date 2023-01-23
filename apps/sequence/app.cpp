@@ -77,7 +77,7 @@ bool App::isAcceptableExpression(const Poincare::Expression exp) {
 App::App(Snapshot * snapshot) :
   FunctionApp(snapshot, &m_listController, &m_graphController, &m_valuesController),
   m_listController(&m_listFooter, this, &m_listHeader, &m_listFooter),
-  m_graphController(&m_graphAlternateEmptyViewController, this, snapshot->functionStore(), snapshot->graphRange(), snapshot->cursor(), snapshot->indexFunctionSelectedByCursor(), &m_graphHeader),
+  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, snapshot->graphRange(), snapshot->cursor(), snapshot->indexFunctionSelectedByCursor(), snapshot->functionStore()),
   m_valuesController(&m_valuesAlternateEmptyViewController, this, &m_valuesHeader)
 {
 }

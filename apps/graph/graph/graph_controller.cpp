@@ -39,7 +39,6 @@ void GraphController::viewWillAppear() {
   m_cursorView.resetMemoization();
   m_view.setCursorView(&m_cursorView);
   FunctionGraphController::viewWillAppear();
-  selectFunctionWithCursor(indexFunctionSelectedByCursor(), true);
 }
 
 void GraphController::didBecomeFirstResponder() {

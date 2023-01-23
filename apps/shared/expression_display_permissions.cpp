@@ -28,7 +28,7 @@ bool ShouldNeverDisplayReduction(Poincare::Expression input, Poincare::Context *
       }, context);
 }
 
-bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context) {
+bool ShouldNeverDisplayExactOutput(Poincare::Expression exactOutput, Poincare::Context * context) {
   return
     // Force all outputs to be ApproximateOnly if required by the exam mode configuration
     ExamModeConfiguration::exactExpressionIsForbidden(exactOutput) ||
@@ -50,8 +50,12 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
         },
         context
       ) ||
-      ShouldNeverDisplayReduction(input, context) ||
       (exactOutput.hasUnit() && !exactOutput.isInRadians(context));
+}
+
+bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context) {
+  return ShouldNeverDisplayExactOutput(exactOutput, context) ||
+         ShouldNeverDisplayReduction(input, context);
 }
 
 }

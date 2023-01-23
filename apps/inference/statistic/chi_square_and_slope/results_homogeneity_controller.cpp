@@ -23,7 +23,7 @@ ResultsHomogeneityController::ResultsTableController::ResultsTableController(Esc
 {}
 
 void ResultsHomogeneityController::ResultsTableController::viewWillAppear() {
-  m_selectableTableView.reloadData(false, false);
+  m_selectableTableView.reloadData(false);
   CategoricalController::viewWillAppear();
 }
 

@@ -623,9 +623,6 @@ bool MathToolbox::displayMessageTreeDisabledPopUp(const Escher::ToolboxMessageTr
 }
 
 void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  /* Unhighlight reusableCell to prevent display of multiple selected rows.
-   * See SelectableTableView::reloadData comment. */
-  cell->setHighlighted(false);
   const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(index);
   KDColor textColor = isMessageTreeDisabled(messageTree) ? Palette::GrayDark : KDColorBlack;
   if (messageTree->numberOfChildren() == 0) {

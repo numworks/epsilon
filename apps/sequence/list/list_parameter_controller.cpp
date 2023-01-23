@@ -70,7 +70,6 @@ HighlightCell * ListParameterController::cell(int index) {
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData()
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_typeCell && !m_record.isNull()) {
     m_typeCell.setLayout(sequence()->definitionName());

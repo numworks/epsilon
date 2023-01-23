@@ -164,7 +164,6 @@ void MenuController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
     willDisplayScriptTitleCellForIndex(cell, j);
   }
   static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
-  cell->setHighlighted(i == selectedColumn() && j == selectedRow());
 }
 
 KDCoordinate MenuController::nonMemoizedColumnWidth(int i) {
@@ -281,7 +280,6 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField * textField, co
     } else if (event == Ion::Events::Up && currentRow > 0) {
       m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow - 1);
     }
-    m_selectableTableView.selectedCell()->setHighlighted(true);
     reloadConsole();
     Container::activeApp()->setFirstResponder(&m_selectableTableView);
     AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);

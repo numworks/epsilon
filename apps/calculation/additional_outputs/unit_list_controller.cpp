@@ -53,7 +53,6 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int index) {
 }
 
 void UnitListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  cell->setHighlighted(false);
   if (typeAtIndex(index) == k_expressionCellType) {
     return ExpressionsListController::willDisplayCellForIndex(cell, index);
   }

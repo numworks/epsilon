@@ -24,7 +24,7 @@ void SlopeTableCell::willAppear() {
      * model was a valid DoublePairStore. */
     fillColumnName(i, const_cast<char *>(m_header[i].text()));
   }
-  m_selectableTableView.reloadData(false, false);
+  m_selectableTableView.reloadData(false);
 }
 
 InputViewController * SlopeTableCell::inputViewController() {

@@ -45,10 +45,6 @@ void CategoricalController::scrollViewDidChangeOffset(ScrollViewDataSource * scr
    * displayable cells as its real number of cells. Since the CategoricalController
    * needs at most 3 cells, we delegate the scroll handling to the
    * CategoricalTableCell. */
-
-  /* First, unselect the CategoricalTableCell cell; indeed, the offset is about
-   * to change, the categoricalTableCell cells will be relayouted. */
-  categoricalTableCell()->selectableTableView()->unhighlightSelectedCell();
   KDPoint currentOffset = categoricalTableCell()->selectableTableView()->contentOffset();
   KDCoordinate maximalOffsetY = m_selectableTableView.minimalSizeForOptimalDisplay().height() - m_selectableTableView.bounds().height();
   KDCoordinate offsetToAdd = scrollViewDataSource->offset().y();
@@ -100,7 +96,7 @@ void CategoricalController::tableViewDidChangeSelection(SelectableTableView * t,
     categoricalTableCell()->selectableTableView()->scrollToCell(col, row);
     if (categoricalTableCell()->selectableTableView()->contentOffset().y() != verticalOffset) {
       // Relayout the whole Categorical table if the scroll change
-      m_selectableTableView.reloadData(false, false);
+      m_selectableTableView.reloadData(false);
     }
   }
 }
@@ -169,7 +165,7 @@ void InputCategoricalController::tableViewDataSourceDidChangeSize() {
    * its width might change but it won't relayout as its frame isn't changed by
    * the InputCategoricalController */
   categoricalTableCell()->selectableTableView()->reloadData(false);
-  m_selectableTableView.reloadData(false, false);
+  m_selectableTableView.reloadData(false);
 }
 
 HighlightCell * InputCategoricalController::reusableCell(int index, int type) {

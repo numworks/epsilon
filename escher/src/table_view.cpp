@@ -143,21 +143,20 @@ View * TableView::ContentView::subview(int index) {
   return View::subview(numberOfSubviews() - 1 - index);
 }
 
-View * TableView::ContentView::subviewAtIndex(int index) {
+HighlightCell * TableView::ContentView::reusableCellAtIndex(int index) {
   int type = typeOfSubviewAtIndex(index);
   int typeIndex = typeIndexFromSubviewIndex(index, type);
   return m_dataSource->reusableCell(typeIndex, type);
 }
 
 void TableView::ContentView::layoutSubviews(bool force, bool updateCellContent) {
-  /* The number of subviews might change during the layouting so it needs to be
+  /* The number of cells might change during the layouting so it needs to be
    * recomputed at each step of the for loop. */
-  for (int index = 0; index < numberOfSubviews(); index++) {
-    View * subview = subviewAtIndex(index);
+  for (int index = 0; index < numberOfDisplayableCells(); index++) {
+    HighlightCell * cell = reusableCellAtIndex(index);
     int col = absoluteColumnIndexFromSubviewIndex(index);
     int row = absoluteRowIndexFromSubviewIndex(index);
-    assert(cellAtLocation(col, row) == subview);
-    HighlightCell * cell = static_cast<HighlightCell *>(subview);
+    assert(cellAtLocation(col, row) == cell);
     if (updateCellContent) {
       m_dataSource->willDisplayCellAtLocation(cell, col, row);
     }

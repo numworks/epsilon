@@ -68,7 +68,6 @@ int CalculationController::numberOfColumns() const {
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   EvenOddCell * evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j%2 == 0);
-  evenOddCell->setHighlighted(i == selectedColumn() && j == selectedRow());
   int type = typeAtLocation(i, j);
   int numberOfFixedRows = fixedNumberOfRows();
   switch (type) {

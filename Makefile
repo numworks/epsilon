@@ -137,7 +137,7 @@ include build/targets.mak
 # after defaults.mak was applied.
 include build/debug_flags.mak
 
-all_src = $(apps_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(runner_src) $(ion_device_flasher_src) $(ion_device_bench_src) $(ion_device_bootloader_src) $(ion_device_userland_src) $(tests_src) $(omg_src)
+all_src = $(apps_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(poincare_junior_src) $(python_src) $(runner_src) $(ion_device_flasher_src) $(ion_device_bench_src) $(ion_device_bootloader_src) $(ion_device_userland_src) $(tests_src) $(omg_src)
 
 # Ensure kandinsky fonts are generated first
 $(call object_for,$(all_src)): $(kandinsky_deps)

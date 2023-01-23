@@ -12,13 +12,13 @@
 
 namespace Shared {
 
-class DoublePairTableController : public TabTableController, public Escher::RegularHeightTableViewDataSource, public Escher::ButtonRowDelegate, public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableTableViewDelegate, public PrefacedTableView::MarginDelegate {
+class DoublePairTableController : public TabTableController, public Escher::RegularHeightTableViewDataSource, public Escher::ButtonRowDelegate, public Escher::AlternateEmptyViewDelegate, public Escher::SelectableTableViewDelegate, public PrefacedTableView::MarginDelegate {
 public:
   constexpr static int k_titleNumberOfChars = 22;
 
   DoublePairTableController(Escher::Responder * parentResponder, Escher::ButtonRowController * header);
 
-  // AlternateEmptyViewDefaultDelegate
+  // AlternateEmptyViewDelegate
   bool isEmpty() const override { return !store()->hasActiveSeries(); }
   I18n::Message emptyMessage() override { return I18n::Message::NoValueToCompute; }
   Escher::Responder * responderWhenEmpty() override;

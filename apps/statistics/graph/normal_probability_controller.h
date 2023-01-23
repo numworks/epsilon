@@ -8,7 +8,7 @@
 
 namespace Statistics {
 
-class NormalProbabilityController : public PlotController, public Escher::AlternateEmptyViewDefaultDelegate {
+class NormalProbabilityController : public PlotController, public Escher::AlternateEmptyViewDelegate {
 public:
   NormalProbabilityController(
     Escher::Responder * parentResponder,
@@ -19,7 +19,7 @@ public:
     Store * store
   );
 
-  // AlternateEmptyViewDefaultDelegate
+  // AlternateEmptyViewDelegate
   bool isEmpty() const override { return !m_store->hasActiveSeries(validSerieMethod()); }
   Escher::Responder * responderWhenEmpty() override { return this; }
   // Only two causes : either too many or non-integer frequencies

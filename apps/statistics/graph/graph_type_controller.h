@@ -14,7 +14,7 @@
 namespace Statistics {
 
 constexpr int k_numberOfCells = 4;
-class GraphTypeController : public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableCellListPage<Escher::TransparentImageCellWithMessage, k_numberOfCells, Escher::RegularListViewDataSource> {
+class GraphTypeController : public Escher::AlternateEmptyViewDelegate, public Escher::SelectableCellListPage<Escher::TransparentImageCellWithMessage, k_numberOfCells, Escher::RegularListViewDataSource> {
 public:
   GraphTypeController(Escher::Responder * parentResponder,
                  Escher::TabViewController * tabController,
@@ -22,7 +22,7 @@ public:
                  Store * store,
                  GraphViewModel * graphViewModel);
 
-  // AlternateEmptyViewDefaultDelegate
+  // AlternateEmptyViewDelegate
   bool isEmpty() const override { return !m_store->hasActiveSeries(); }
   I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
   Escher::Responder * responderWhenEmpty() override;

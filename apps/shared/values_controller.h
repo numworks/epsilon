@@ -18,7 +18,7 @@
 
 namespace Shared {
 
-class ValuesController : public EditableCellTableViewController, public Escher::ButtonRowDelegate,  public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableTableViewDelegate {
+class ValuesController : public EditableCellTableViewController, public Escher::ButtonRowDelegate,  public Escher::AlternateEmptyViewDelegate, public Escher::SelectableTableViewDelegate {
 public:
   ValuesController(Escher::Responder * parentResponder, Escher::ButtonRowController * header);
 

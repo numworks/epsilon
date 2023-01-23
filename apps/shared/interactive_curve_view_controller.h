@@ -49,7 +49,7 @@ protected:
   constexpr static float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
 
   Escher::TabViewController * tabController() const;
-  virtual Escher::StackViewController * stackController() const;
+  Escher::StackViewController * stackController() const;
 
   virtual void initCursorParameters(bool ignoreMargins) = 0;
   virtual bool moveCursorVertically(int direction) = 0;

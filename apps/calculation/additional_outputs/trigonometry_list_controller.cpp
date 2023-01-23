@@ -34,7 +34,7 @@ void TrigonometryListController::setExpression(Expression e) {
   Expression simplifiedAngle = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
   Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context, ReductionTarget::User);
   // If frac part is still there, the exact angle is probably not interesting
-  if (simplifiedAngle.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; })) {
+  if (simplifiedAngle.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart || e.type() == ExpressionNode::Type::Dependency; })) {
     /* Do not approximate the FracPart, which could lead to truncation error
      * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
      * the same sine and cosine. */

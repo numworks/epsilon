@@ -35,7 +35,8 @@ public:
     m_speed(k_defaultSpeed),
     m_penSize(k_defaultPenSize),
     m_mileage(0),
-    m_drawn(false)
+    m_drawn(false),
+    m_animationStep(0)
   {
   }
 
@@ -173,7 +174,7 @@ private:
 
   uint16_t m_mileage;
   bool m_drawn;
-
+  int m_animationStep;
 };
 
 #endif

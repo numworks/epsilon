@@ -39,6 +39,7 @@ void Turtle::reset() {
   m_speed = k_defaultSpeed;
   m_penSize = k_defaultPenSize;
   m_mileage = 0;
+  m_animationStep = 0;
 
   // Draw the turtle
   draw(true);
@@ -297,9 +298,8 @@ bool Turtle::draw(bool force) {
 
     // Draw the paws
 
-    static int j = 0;
-    int mod = 12;
-    j = (j+1)%mod;
+    constexpr int mod = 12;
+    m_animationStep = (m_animationStep+1)%mod;
 
     /*  Our turtle walk:
      *
@@ -310,19 +310,19 @@ bool Turtle::draw(bool force) {
      *  °  °     °      °     °  °     °  °
      * */
 
-    if (j < mod/4) {
+    if (m_animationStep < mod/4) {
       // First walking position
       drawPaw(PawType::FrontRight, PawPosition::HalfBackwards);
       drawPaw(PawType::BackRight, PawPosition::HalfBackwards);
       drawPaw(PawType::FrontLeft, PawPosition::HalfForward);
       drawPaw(PawType::BackLeft, PawPosition::HalfForward);
-    } else if (j < mod/2) {
+    } else if (m_animationStep < mod/2) {
       // Second walking position
       drawPaw(PawType::FrontRight, PawPosition::Forward);
       drawPaw(PawType::BackRight, PawPosition::Backwards);
       drawPaw(PawType::FrontLeft, PawPosition::Normal);
       drawPaw(PawType::BackLeft, PawPosition::Normal);
-    } else if (j < 3*mod/4) {
+    } else if (m_animationStep < 3*mod/4) {
       // Third walking position
       drawPaw(PawType::FrontRight, PawPosition::HalfForward);
       drawPaw(PawType::BackRight, PawPosition::HalfForward);

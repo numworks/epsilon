@@ -1,6 +1,7 @@
 #include "trigonometry_list_controller.h"
 #include "../app.h"
 #include <apps/shared/poincare_helpers.h>
+#include <apps/shared/expression_display_permissions.h>
 #include <poincare_expressions.h>
 #include <poincare/trigonometry.h>
 #include <poincare/layout_helper.h>
@@ -34,7 +35,7 @@ void TrigonometryListController::setExpression(Expression e) {
   Expression simplifiedAngle = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
   Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context, ReductionTarget::User);
   // If frac part is still there, the exact angle is probably not interesting
-  if (simplifiedAngle.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart || e.type() == ExpressionNode::Type::Dependency; })) {
+  if (simplifiedAngle.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; }) || Shared::ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(e, context)) {
     /* Do not approximate the FracPart, which could lead to truncation error
      * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
      * the same sine and cosine. */

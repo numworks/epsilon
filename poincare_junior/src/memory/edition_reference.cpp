@@ -2,6 +2,7 @@
 #include "edition_pool.h"
 #include "node_constructor.h"
 #include "node_iterator.h"
+#include "context.h"
 #include <string.h>
 
 namespace PoincareJ {
@@ -80,6 +81,10 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
       pool->insertBlocks(oldBlock + minSize, newBlock + minSize, newSize - oldSize);
     }
   }
+}
+
+EditionReference EditionReference::rewrite(const Node pattern, const Node structure) {
+  return Context::Match(pattern, static_cast<Node>(*this)).build(structure);
 }
 
 void EditionReference::remove(bool isTree) {

@@ -71,7 +71,8 @@ void Node::logName(std::ostream & stream) const {
     "Set",
     "List",
     "Polynomial",
-    "HorizontalLayout"
+    "HorizontalLayout",
+    "Placeholder",
   };
   static_assert(sizeof(names)/sizeof(const char *) == static_cast<uint8_t>(BlockType::NumberOfTypes));
   stream << names[static_cast<uint8_t>(*m_block)];

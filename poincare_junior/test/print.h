@@ -1,3 +1,6 @@
+#ifndef POINCAREJ_TEST_PRINT_H
+#define POINCAREJ_TEST_PRINT_H
+
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_pool.h>
@@ -103,3 +106,5 @@ inline void assert_pool_contains(Pool * pool, std::initializer_list<const Node> 
   }
   assert(tree.block() == pool->lastBlock());
 }
+
+#endif

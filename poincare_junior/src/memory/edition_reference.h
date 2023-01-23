@@ -72,6 +72,8 @@ public:
   typedef void (*InPlaceTreeFunction)(EditionReference reference);
   void recursivelyEdit(InPlaceTreeFunction treeFunction);
 
+  EditionReference rewrite(const Node pattern, const Node structure);
+
 private:
   void insert(Node nodeToInsert, bool before, bool isTree);
   void replaceBy(Node n, bool oldIsTree, bool newIsTree);

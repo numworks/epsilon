@@ -3,6 +3,7 @@
 
 #include <utility>
 #include "type_block.h"
+#include "placeholder.h"
 
 #if POINCARE_MEMORY_TREE_LOG
 #include <iostream>
@@ -25,6 +26,10 @@ public:
 
   bool operator==(const Node& n) const { return n.m_block == m_block; }
   bool operator!=(const Node& n) { return n.m_block != m_block; }
+
+  bool isIdenticalTo(const Node &other) const {
+    return std::memcmp(m_block, other.m_block, treeSize()) == 0;
+  }
 
 #if POINCARE_MEMORY_TREE_LOG
   __attribute__((__used__)) void log() const { return log(std::cout); }
@@ -129,6 +134,18 @@ public:
   // Recursive helper
   typedef void (*InPlaceConstTreeFunction)(const Node node);
   void recursivelyGet(InPlaceConstTreeFunction treeFunction) const;
+
+  class Blocks {
+  public:
+    Blocks(const Node * node) : m_begin(node->block()), m_end(node->block() + node->nodeSize()) {}
+    const Block * begin() { return m_begin; }
+    const Block * end() { return m_end; }
+  private:
+    const Block * m_begin;
+    const Block * m_end;
+  };
+
+  Blocks blocks() const { return Blocks(this); }
 
 private:
   const Node previousRelative(bool parent) const;

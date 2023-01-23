@@ -21,6 +21,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression.o \
   memory/cache_pool.o \
   memory/cache_reference.o \
+  memory/context.o \
   memory/edition_pool.o \
   memory/edition_reference.o \
   memory/exception_checkpoint.o \
@@ -57,6 +58,7 @@ tests_src += $(addprefix poincare_junior/src/,\
   expression.cpp \
   memory/cache_pool.cpp \
   memory/cache_reference.cpp \
+  memory/context.cpp \
   memory/edition_pool.cpp \
   memory/edition_reference.cpp \
   memory/exception_checkpoint.cpp \
@@ -70,6 +72,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   elementary_tree_manipulations.cpp \
   expression_comparison.cpp \
   graph.cpp \
+  match.cpp \
   memory_elements.cpp \
   memory_edition.cpp \
   memory_cache.cpp \

@@ -85,13 +85,17 @@ enum class BlockType : uint8_t {
   Polynomial,
   NumberOfExpressions,
 
-  HorizontalLayout = NumberOfExpressions,
+  FirstLayout = NumberOfExpressions,
+  HorizontalLayout = FirstLayout,
+  LastLayout = HorizontalLayout,
+
+  Placeholder,
   NumberOfTypes
 };
 
 #define BLOCK_TYPE_IS_EXPRESSION_NUMBER(type) static_assert(type >= static_cast<BlockType>(0) && type < BlockType::NumberOfNumbersExpression);
 #define BLOCK_TYPE_IS_EXPRESSION(type) static_assert(type >= BlockType::NumberOfNumbersExpression && type < BlockType::NumberOfExpressions);
-#define BLOCK_TYPE_IS_LAYOUT(type) static_assert(type >= BlockType::NumberOfExpressions && type < BlockType::NumberOfTypes);
+#define BLOCK_TYPE_IS_LAYOUT(type) static_assert(type >= BlockType::FirstLayout && type <= BlockType::LastLayout);
 
 BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::Zero);
 BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::One);
@@ -159,6 +163,7 @@ public:
   constexpr static size_t NumberOfMetaBlocks(BlockType type) {
     switch (type) {
       case BlockType::IntegerShort:
+      case BlockType::Placeholder:
         return 3;
       case BlockType::IntegerPosBig:
       case BlockType::IntegerNegBig:

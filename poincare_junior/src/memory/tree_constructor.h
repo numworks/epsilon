@@ -19,6 +19,7 @@ class Tree {
 public:
   // TODO: make all constructor consteval
   constexpr Tree() {}
+  constexpr Tree(Placeholder &&placeholder);
   constexpr Block & operator[] (size_t n) { return m_blocks[n]; }
   constexpr operator Node() const { return Node(const_cast<TypeBlock *>(m_blocks)); }
 private:
@@ -228,6 +229,14 @@ constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> operator "" _n(l
   Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> tree;
   CreateNode<BlockType::Float>(&tree, static_cast<float>(value));
   return tree;
+}
+
+// Deduction guide
+Tree(Placeholder placeholder) -> Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Placeholder)>;
+
+template <>
+constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Placeholder)>::Tree(Placeholder &&placeholder) {
+  CreateNode<BlockType::Placeholder>(this, placeholder);
 }
 
 }

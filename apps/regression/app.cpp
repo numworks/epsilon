@@ -56,7 +56,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),
-  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, snapshot->range(), snapshot->cursor(), snapshot->graphSelectedDotIndex(), snapshot->selectedSeriesIndex(), &m_store),
+  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, snapshot->graphRange(), snapshot->cursor(), snapshot->graphSelectedDotIndex(), snapshot->selectedSeriesIndex(), &m_store),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader, Escher::StackViewController::Style::WhiteUniform),

@@ -29,7 +29,7 @@ public:
     App * unpack(Escher::Container * container) override;
     void reset() override;
     const Descriptor * descriptor() const override;
-    Shared::InteractiveCurveViewRange * range() { return &m_range; }
+    Shared::InteractiveCurveViewRange * graphRange() { return &m_graphRange; }
     Shared::CurveViewCursor * cursor() { return &m_cursor; }
     int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }
     int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
@@ -37,7 +37,7 @@ public:
     Shared::DoublePairStorePreferences * storePreferences() { return &m_storePreferences; }
 
   private:
-    Shared::InteractiveCurveViewRange m_range;
+    Shared::InteractiveCurveViewRange m_graphRange;
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;
     int m_selectedSeriesIndex;
@@ -53,7 +53,7 @@ public:
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
   GraphController * graphController() { return &m_graphController; }
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Shared::ExpressionFieldDelegateApp::snapshot()); }
-  Shared::InteractiveCurveViewRange * range() const { return snapshot()->range(); }
+  Shared::InteractiveCurveViewRange * graphRange() const { return snapshot()->graphRange(); }
 
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);

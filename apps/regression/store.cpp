@@ -64,8 +64,8 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
       continue;
     }
     int numberOfPoints = numberOfPairsOfSeries(series);
-    float xMin = App::app()->range()->xMin();
-    float xMax = App::app()->range()->xMax();
+    float xMin = App::app()->graphRange()->xMin();
+    float xMax = App::app()->graphRange()->xMax();
     bool displayMean = seriesRegressionType(series) != Model::Type::None;
     for (int i = 0; i < numberOfPoints + displayMean; i++) {
       double currentX = i < numberOfPoints ? get(series, 0, i) : meanOfColumn(series, 0);
@@ -235,7 +235,7 @@ double Store::yValueForXValue(int series, double x, Poincare::Context * globalCo
 double Store::xValueForYValue(int series, double y, Poincare::Context * globalContext) {
   Model * model = regressionModel(m_regressionTypes[series]);
   double * coefficients = coefficientsForSeries(series, globalContext);
-  return model->levelSet(coefficients, App::app()->range()->xMin(), App::app()->range()->xMax(), y, globalContext);
+  return model->levelSet(coefficients, App::app()->graphRange()->xMin(), App::app()->graphRange()->xMax(), y, globalContext);
 }
 
 double Store::residualAtIndexForSeries(int series, int index, Poincare::Context * globalContext) {

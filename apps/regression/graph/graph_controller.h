@@ -14,7 +14,7 @@ namespace Regression {
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
-  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * range, Store * store, Shared::CurveViewCursor * cursor, int * selectedDotIndex, int * selectedSeriesIndex);
+  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * interactiveRange, Shared::CurveViewCursor * cursor, int * selectedDotIndex, int * selectedSeriesIndex, Store * store);
 
   // Responder
   void didBecomeFirstResponder() override;

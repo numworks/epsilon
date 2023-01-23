@@ -15,12 +15,12 @@ using namespace Escher;
 
 namespace Graph {
 
-GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, ButtonRowController * header) :
-  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor),
+GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * interactiveRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor) :
+  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, &m_view, cursor, indexFunctionSelectedByCursor),
   m_bannerView(this, inputEventHandlerDelegate, this),
-  m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
-  m_graphRange(curveViewRange),
-  m_curveParameterController(inputEventHandlerDelegate, curveViewRange, &m_bannerView, m_cursor, &m_view, this),
+  m_view(interactiveRange, m_cursor, &m_bannerView, &m_cursorView),
+  m_graphRange(interactiveRange),
+  m_curveParameterController(inputEventHandlerDelegate, interactiveRange, &m_bannerView, m_cursor, &m_view, this),
   m_functionSelectionController(this)
 {
   m_graphRange->setDelegate(this);

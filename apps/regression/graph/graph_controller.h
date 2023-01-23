@@ -33,7 +33,6 @@ public:
   void tidyModels() override {}
 
 private:
-  constexpr static float k_displayHorizontalMarginRatio = 0.05f;
   constexpr static size_t k_bannerViewTextBufferSize = Shared::BannerView::k_maxLengthDisplayed + sizeof("ŷ");
 
   class SeriesSelectionController : public Shared::CurveSelectionController {

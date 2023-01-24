@@ -3,7 +3,7 @@ SFLAGS += -Iquiz/include
 define rule_for_quiz_symbols
 $$(BUILD_DIR)/quiz/src/$(subst _src,,$(1))_symbols.c: $$($(1)) | $$$$(@D)/.
 	@ echo "AWK     $$@"
-	$$(Q) awk -f quiz/src/symbols.awk $$($(1)) > $$@
+	$$(Q) awk -v QUIZ_TEST_FILTER=$(QUIZ_TEST_FILTER) -f quiz/src/symbols.awk $$($(1)) > $$@
 endef
 
 $(eval $(call rule_for_quiz_symbols,tests_src))

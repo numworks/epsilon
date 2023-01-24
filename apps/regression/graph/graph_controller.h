@@ -23,7 +23,6 @@ public:
   void viewWillAppear() override;
 
   // AlternateEmptyViewDelegate
-  bool isEmpty() const override { return numberOfCurves() == 0; }
   I18n::Message emptyMessage() override;
 
   // SimpleInteractiveCurveViewController

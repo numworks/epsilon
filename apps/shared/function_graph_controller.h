@@ -19,9 +19,6 @@ public:
   // ViewController
   void viewWillAppear() override;
 
-  // AlternateEmptyViewDelegate
-  bool isEmpty() const override { return numberOfCurves() == 0; }
-
   // InteractiveCurveViewRangeDelegate
   void tidyModels() override;
 

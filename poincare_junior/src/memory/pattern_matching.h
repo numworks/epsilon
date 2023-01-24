@@ -27,11 +27,13 @@ public:
     const Node& operator[](Placeholder placeholder) const {
       return m_array[static_cast<uint8_t>(placeholder)];
     }
+
+    bool isUninitialized() const;
   private:
     Node m_array[k_numberOfPlaceholders];
   };
 
-  static Context Match(const Node pattern, Node source);
+  static Context Match(const Node pattern, Node source, Context context = Context());
   static EditionReference Create(const Node structure, const Context context);
 };
 

@@ -2,8 +2,16 @@
 
 using namespace PoincareJ;
 
-PatternMatching::Context PatternMatching::Match(const Node pattern, Node source) {
-  Context result;
+bool PatternMatching::Context::isUninitialized() const {
+  for (const Node &node : m_array) {
+    if (node.isUninitialized()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+PatternMatching::Context PatternMatching::Match(const Node pattern, Node source, Context result) {
   Pool::Nodes patternNodes = Pool::Nodes(pattern.block(), pattern.nextTree().block() - pattern.block());
   for (const Node node : patternNodes) {
     if (node.type() == BlockType::Placeholder) {

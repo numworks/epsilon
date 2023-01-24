@@ -338,22 +338,6 @@ bool GraphController::moveCursorVertically(int direction) {
   return false;
 }
 
-int GraphController::selectedCurveIndex(bool relativeIndex) const {
-  int res = *m_selectedSeriesIndex;
-  if (res < 0) {
-    return -1;
-  }
-  if (!relativeIndex) {
-    return res;
-  }
-  for (int i = 0; i < *m_selectedSeriesIndex; i++) {
-    if (!m_store->seriesIsActive(i)) {
-      res--;
-    }
-  }
-  return res;
-}
-
 Coordinate2D<double> GraphController::xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex) const {
   int seriesIndex = seriesIndexFromCurveIndex(curveIndex);
   return Coordinate2D<double>(t, m_store->yValueForXValue(seriesIndex, t, context));

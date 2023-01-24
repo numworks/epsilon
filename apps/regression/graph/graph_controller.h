@@ -70,7 +70,7 @@ private:
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   SeriesSelectionController * curveSelectionController() const override { return const_cast<SeriesSelectionController *>(&m_seriesSelectionController); }
-  int selectedCurveIndex(bool relativeIndex = true) const override;
+  int selectedCurveIndex() const override { return curveIndexFromSeriesIndex(*m_selectedSeriesIndex); }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override { return m_store->numberOfActiveSeries(); }

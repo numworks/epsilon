@@ -2,7 +2,7 @@
 #include "edition_pool.h"
 #include "node_constructor.h"
 #include "node_iterator.h"
-#include "context.h"
+#include "pattern_matching.h"
 #include <string.h>
 
 namespace PoincareJ {
@@ -83,8 +83,9 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
   }
 }
 
-EditionReference EditionReference::rewrite(const Node pattern, const Node structure) {
-  return Context::Match(pattern, static_cast<Node>(*this)).build(structure);
+EditionReference EditionReference::matchAndRewrite(const Node pattern, const Node structure) {
+  PatternMatching::Context ctx = PatternMatching::Match(pattern, static_cast<Node>(*this));
+  return PatternMatching::Create(structure, ctx);
 }
 
 void EditionReference::remove(bool isTree) {

@@ -21,11 +21,11 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression.o \
   memory/cache_pool.o \
   memory/cache_reference.o \
-  memory/context.o \
   memory/edition_pool.o \
   memory/edition_reference.o \
   memory/exception_checkpoint.o \
   memory/node.o \
+  memory/pattern_matching.o \
   memory/pool.o \
   n_ary.o \
 )
@@ -58,11 +58,11 @@ tests_src += $(addprefix poincare_junior/src/,\
   expression.cpp \
   memory/cache_pool.cpp \
   memory/cache_reference.cpp \
-  memory/context.cpp \
   memory/edition_pool.cpp \
   memory/edition_reference.cpp \
   memory/exception_checkpoint.cpp \
   memory/node.cpp \
+  memory/pattern_matching.cpp \
   memory/pool.cpp \
   n_ary.cpp \
 )

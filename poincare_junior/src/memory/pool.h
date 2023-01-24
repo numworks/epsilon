@@ -11,7 +11,7 @@
 namespace PoincareJ {
 
 class Pool {
-  friend class Context;
+  friend class PatternMatching;
 public:
   /* We delete the assignment operator because copying without care the
    * ReferenceTable would corrupt the m_referenceTable.m_pool pointer. */

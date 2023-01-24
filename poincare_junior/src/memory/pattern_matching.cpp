@@ -1,0 +1,39 @@
+#include "pattern_matching.h"
+
+using namespace PoincareJ;
+
+PatternMatching::Context PatternMatching::Match(const Node pattern, Node source) {
+  Context result;
+  Pool::Nodes patternNodes = Pool::Nodes(pattern.block(), pattern.nextTree().block() - pattern.block());
+  for (const Node node : patternNodes) {
+    if (node.type() == BlockType::Placeholder) {
+      Placeholder placeholder = static_cast<Placeholder>(static_cast<uint8_t>(*node.block()->next()));
+      if (result[placeholder].isUninitialized()) {
+        result[placeholder] = source;
+        source = source.nextTree();
+      } else if (!result[placeholder].isIdenticalTo(source)) {
+        return Context();
+      }
+    } else {
+      source = source.nextNode();
+    }
+  }
+  return result;
+}
+
+EditionReference PatternMatching::Create(const Node structure, const Context context)  {
+  EditionReference top(EditionPool::sharedEditionPool()->lastBlock());
+  // TODO introduce a DFS iterator in node_iterator and use it here
+  Pool::Nodes nodes = Pool::Nodes(structure.block(), structure.nextTree().block() - structure.block());
+  for (const Node node : nodes) {
+    if (node.type() == BlockType::Placeholder) {
+      EditionPool::sharedEditionPool()->initFromTree(context[static_cast<Placeholder>(static_cast<uint8_t>(*node.block()->next()))]);
+    } else {
+      for (const Block block : node.blocks()) {
+        EditionPool::sharedEditionPool()->pushBlock(block);
+      }
+    }
+  }
+  return top;
+}
+

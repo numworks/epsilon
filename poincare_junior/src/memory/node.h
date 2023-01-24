@@ -3,7 +3,6 @@
 
 #include <utility>
 #include "type_block.h"
-#include "placeholder.h"
 
 #if POINCARE_MEMORY_TREE_LOG
 #include <iostream>

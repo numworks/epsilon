@@ -7,7 +7,6 @@
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
 #include "value_block.h"
-#include "placeholder.h"
 
 namespace PoincareJ {
 
@@ -37,8 +36,7 @@ private:
 
   template <BlockType blockType, typename... Types>
   constexpr static bool SpecializedCreateBlockAtIndexForType(Block * block, size_t blockIndex, Types... args) {
-    static_assert(blockType != BlockType::Placeholder &&
-                  blockType != BlockType::Constant &&
+    static_assert(blockType != BlockType::Constant &&
                   blockType != BlockType::Float &&
                   blockType != BlockType::UserSymbol &&
                   blockType != BlockType::IntegerPosBig &&
@@ -63,11 +61,6 @@ private:
     return false;
   }
 };
-
-  template <>
-  constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Placeholder>(Block * block, size_t blockIndex, Placeholder placeholder) {
-    return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Placeholder, placeholder);
-  }
 
   template <>
   constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Constant>(Block * block, size_t blockIndex, char16_t name) {

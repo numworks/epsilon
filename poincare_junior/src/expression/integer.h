@@ -1,9 +1,9 @@
 #ifndef POINCARE_EXPRESSION_INTEGER_H
 #define POINCARE_EXPRESSION_INTEGER_H
 
-#include <omgpj/bit_helper.h>
-#include <omgpj/enums.h>
-#include <utils/bit.h>
+#include <omg/bit_helper.h>
+#include <omgpj/bit.h>
+#include <omg/enums.h>
 #include <stdlib.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 

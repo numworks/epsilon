@@ -4,7 +4,8 @@
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
-#include <omgpj/bit.h>
+#include <omg/bit_helper.h>
+#include <omg/enums.h>
 #include "value_block.h"
 #include "placeholder.h"
 

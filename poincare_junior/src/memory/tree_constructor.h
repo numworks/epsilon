@@ -5,8 +5,9 @@
 #include "node_constructor.h"
 #include "node.h"
 #include <poincare_junior/src/expression/integer.h>
-#include <utils/assert.h>
-#include <utils/print.h>
+#include <omgpj/assert.h>
+#include <omg/print.h>
+#include <omgpj/print.h>
 
 namespace PoincareJ {
 

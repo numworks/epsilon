@@ -1,6 +1,9 @@
 #ifndef UTILS_BIT_H
 #define UTILS_BIT_H
 
+#include <stdint.h>
+#include <assert.h>
+
 namespace Bit {
 
 // TODO use in ion/src/device/shared/regs/register.h

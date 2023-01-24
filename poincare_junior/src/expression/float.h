@@ -4,7 +4,7 @@
 #include <bit>
 #include <omgpj/bit.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Float {
 public:

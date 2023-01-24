@@ -1,10 +1,9 @@
 #include "integer.h"
 #include "rational.h"
-#include <omg/print.h>
 #include <poincare_junior/src/memory/value_block.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
-#include <utils/arithmetic.h>
-#include <utils/bit.h>
+#include <omgpj/arithmetic.h>
+#include <omg/print.h>
 
 namespace PoincareJ {
 

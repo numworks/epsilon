@@ -42,12 +42,12 @@ void FunctionGraphController::viewWillAppear() {
   }
 
   InteractiveCurveViewController::viewWillAppear();
-  selectFunctionWithCursor(*m_selectedCurveIndex, true);
+  selectCurveAtIndex(*m_selectedCurveIndex, true);
 }
 
 bool FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (curveIndex != *m_selectedCurveIndex) {
-    selectFunctionWithCursor(curveIndex, false);
+    selectCurveAtIndex(curveIndex, false);
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), textFieldDelegateApp()->localContext(), m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
@@ -58,13 +58,13 @@ bool FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
   return true;
 }
 
-void FunctionGraphController::selectFunctionWithCursor(int functionIndex, bool willBeVisible) {
-  if (functionIndex != *m_selectedCurveIndex) {
+void FunctionGraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible) {
+  if (curveIndex != *m_selectedCurveIndex) {
     m_selectedSubCurveIndex = 0;
-    *m_selectedCurveIndex = functionIndex;
+    *m_selectedCurveIndex = curveIndex;
   }
 
-  Ion::Storage::Record r = recordAtCurveIndex(functionIndex);
+  Ion::Storage::Record r = recordAtCurveIndex(curveIndex);
   functionGraphView()->selectRecord(r);
   functionGraphView()->cursorView()->setColor(functionStore()->colorForRecord(r));
   // Force reload to display the selected function on top
@@ -163,7 +163,7 @@ void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
   }
 
   m_cursor->moveTo(t, xy.x1(), xy.x2());
-  selectFunctionWithCursor(functionIndex, false);
+  selectCurveAtIndex(functionIndex, false);
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {
@@ -183,7 +183,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   }
   Poincare::Coordinate2D<double> cursorPosition = f->evaluateXYAtParameter(clippedT, context, nextSubCurve);
   m_cursor->moveTo(clippedT, cursorPosition.x1(), cursorPosition.x2());
-  selectFunctionWithCursor(nextActiveFunctionIndex, true);
+  selectCurveAtIndex(nextActiveFunctionIndex, true);
   // Prevent the abscissaValue from edition if the function is along y
   Escher::Responder * responder = isAlongY(*m_selectedCurveIndex) ? static_cast<Responder*>(this) : bannerView()->abscissaValue();
   if (Container::activeApp()->firstResponder() != responder) {

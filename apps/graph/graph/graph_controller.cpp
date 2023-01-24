@@ -373,7 +373,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
   }
   m_cursor->moveTo(nextT, nextT, nextY);
   m_selectedSubCurveIndex = nextSubCurve;
-  selectFunctionWithCursor(nextCurveIndex, true);
+  selectCurveAtIndex(nextCurveIndex, true);
   return;
 }
 

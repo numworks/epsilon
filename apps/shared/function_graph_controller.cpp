@@ -45,10 +45,10 @@ void FunctionGraphController::viewWillAppear() {
   selectFunctionWithCursor(indexFunctionSelectedByCursor(), true);
 }
 
-bool FunctionGraphController::openMenuForCurveAtIndex(int index) {
-  if (index != *m_indexFunctionSelectedByCursor) {
-    selectFunctionWithCursor(index, false);
-    Coordinate2D<double> xy = xyValues(index, m_cursor->t(), textFieldDelegateApp()->localContext(), m_selectedSubCurveIndex);
+bool FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
+  if (curveIndex != *m_indexFunctionSelectedByCursor) {
+    selectFunctionWithCursor(curveIndex, false);
+    Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), textFieldDelegateApp()->localContext(), m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());

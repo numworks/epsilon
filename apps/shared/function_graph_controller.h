@@ -54,7 +54,7 @@ protected:
   void reloadBannerView() override;
 
   // InteractiveCurveViewController
-  bool openMenuForCurveAtIndex(int index) override;
+  bool openMenuForCurveAtIndex(int curveIndex) override;
   void initCursorParameters(bool ignorMargins) override;
   bool moveCursorVertically(int direction) override;
   bool selectedModelIsValid() const override;

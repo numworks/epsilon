@@ -23,7 +23,7 @@ public:
   void viewWillAppear() override;
 
   // AlternateEmptyViewDelegate
-  bool isEmpty() const override;
+  bool isEmpty() const override { return !m_store->hasValidSeries(); }
   I18n::Message emptyMessage() override;
 
   // SimpleInteractiveCurveViewController
@@ -59,14 +59,14 @@ private:
 
   // ZoomCurveViewController
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return const_cast<const GraphController *>(this)->interactiveCurveViewRange(); }
-  Shared::AbstractPlotView * curveView() override;
+  Shared::AbstractPlotView * curveView() override { return &m_view; }
 
   // SimpleInteractiveCurveViewController
   float cursorBottomMarginRatio() const override { return cursorBottomMarginRatioForBannerHeight(m_bannerView.minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
 
   // InteractiveCurveViewController
-  bool openMenuForCurveAtIndex(int index) override;
+  bool openMenuForCurveAtIndex(int curveIndex) override;
   void initCursorParameters(bool ignoreMargins = false) override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;

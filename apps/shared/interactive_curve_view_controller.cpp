@@ -199,7 +199,7 @@ bool InteractiveCurveViewController::isCursorVisibleAtPosition(Coordinate2D<floa
            y <= range->yMax() - (ignoreMargins ? 0.f : cursorTopMarginRatio() * yRange)));
 }
 
-int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {
+int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex, int * newSubCurveIndex) const {
   /* Vertical curves are quite hard to handle when moving the cursor.
    * To simplify things here, we consider vertical curves as if it they were
    * rotated by 90 degrees by swapping x and y when dealing with them. */
@@ -217,16 +217,15 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
   int nextCurveIndex = -1;
   int nextSubCurveIndex = 0;
   int curvesCount = numberOfCurves();
-  for (int i = 0; i < curvesCount; i++) {
-    int currentIndexScore = 2*currentCurveIndex + currentSubCurveIndex;
-    for (int iSecondary = 0; iSecondary < numberOfSubCurves(i); iSecondary++) {
-      if (!closestCurveIndexIsSuitable(i, currentCurveIndex, iSecondary, currentSubCurveIndex)) {
+  for (int curveIndex = 0; curveIndex < curvesCount; curveIndex++) {
+    for (int subCurveIndex = 0; subCurveIndex < numberOfSubCurves(curveIndex); subCurveIndex++) {
+      if (!closestCurveIndexIsSuitable(curveIndex, currentCurveIndex, subCurveIndex, currentSubCurveIndex)) {
         // Nothing to check for
         continue;
       }
-      Poincare::Coordinate2D<double> newXY = xyValues(i, x, context, iSecondary);
+      Poincare::Coordinate2D<double> newXY = xyValues(curveIndex, x, context, subCurveIndex);
       double newY = newXY.x2();
-      if (isAlongY(i)) {
+      if (isAlongY(curveIndex)) {
         newY = newXY.x1();
       }
       if (!suitableYValue(newY)) {
@@ -247,12 +246,13 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
        * - Of lowest index score possible.
        * Index score is computed so that both primary and sub curve (with
        * a lesser weight) indexes are taken into account. */
-      int newIndexScore = 2*i + iSecondary;
+      int currentIndexScore = 2 * currentCurveIndex + currentSubCurveIndex;
+      int newIndexScore = 2 * curveIndex + subCurveIndex;
       if (goingUp) {
         if (newY > y && newY < nextY) {
           isNextCurve = true;
         } else if (newY == nextY) {
-          assert(newIndexScore > 2*nextCurveIndex + nextSubCurveIndex);
+          assert(newIndexScore > 2 * nextCurveIndex + nextSubCurveIndex);
           if (newY != y || currentIndexScore < 0 || newIndexScore < currentIndexScore) {
             isNextCurve = true;
           }
@@ -263,20 +263,20 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
         if (newY < y && newY > nextY) {
           isNextCurve = true;
         } else if (newY == nextY) {
-          assert(newIndexScore > 2*nextCurveIndex + nextSubCurveIndex);
+          assert(newIndexScore > 2 * nextCurveIndex + nextSubCurveIndex);
         } else if (newY == y && newIndexScore > currentIndexScore) {
           isNextCurve = true;
         }
       }
       if (isNextCurve) {
         nextY = newY;
-        nextCurveIndex = i;
-        nextSubCurveIndex = iSecondary;
+        nextCurveIndex = curveIndex;
+        nextSubCurveIndex = subCurveIndex;
       }
     }
   }
-  if (subCurveIndex) {
-    *subCurveIndex = nextSubCurveIndex;
+  if (newSubCurveIndex) {
+    *newSubCurveIndex = nextSubCurveIndex;
   }
   return nextCurveIndex;
 }

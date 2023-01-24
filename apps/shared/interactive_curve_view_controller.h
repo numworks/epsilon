@@ -45,7 +45,7 @@ public:
   // AlternateEmptyViewDelegate
   Escher::Responder * responderWhenEmpty() override;
 
-  virtual bool openMenuForCurveAtIndex(int index) = 0;
+  virtual bool openMenuForCurveAtIndex(int curveIndex) = 0;
   virtual void moveCursorAndCenterIfNeeded(double t);
   RangeParameterController * rangeParameterController();
   ViewController * zoomParameterController();
@@ -72,7 +72,7 @@ protected:
   virtual CurveSelectionController * curveSelectionController() const = 0;
 
   // Closest vertical curve helper
-  int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex = 0, int * subCurveIndex = nullptr) const;
+  int closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex = 0, int * newSubCurveIndex = nullptr) const;
   virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const;
   virtual int selectedCurveIndex(bool relativeIndex = true) const = 0;
   virtual Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const = 0;

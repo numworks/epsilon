@@ -112,7 +112,7 @@ bool DataViewController::moveSelectionVertically(int direction) {
     header()->setSelectedButton(0);
   } else {
     int previousSelectedSeries = m_selectedSeries;
-    m_selectedSeries = m_store->indexOfKthActiveSeries(nextSelectedSubview, validSerieMethod());
+    m_selectedSeries = m_store->seriesIndexFromActiveSeriesIndex(nextSelectedSubview, validSerieMethod());
     updateHorizontalIndexAfterSelectingNewSeries(previousSelectedSeries);
     dataView()->selectViewForSeries(m_selectedSeries);
     highlightSelection();

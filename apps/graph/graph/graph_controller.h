@@ -34,7 +34,7 @@ public:
 
   bool displayDerivativeInBanner() const;
   PointsOfInterestCache * pointsOfInterestForRecord(Ion::Storage::Record record);
-  PointsOfInterestCache * pointsOfInterestForSelectedRecord() { return pointsOfInterestForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor())); }
+  PointsOfInterestCache * pointsOfInterestForSelectedRecord() { return pointsOfInterestForRecord(recordAtSelectedCurveIndex()); }
 
 private:
 

@@ -45,7 +45,7 @@ float GraphController::interestingXMin() const {
   int nmin = INT_MAX;
   int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < nbOfActiveModels; i++) {
-    Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    Shared::Sequence * s = functionStore()->modelForRecord(recordAtCurveIndex(i));
     nmin = std::min(nmin, s->initialRank());
   }
   assert(nmin < INT_MAX);
@@ -88,7 +88,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     Zoom zoom(result.xMin(), result.xMax(), InteractiveCurveViewRange::NormalYXRatio(), textFieldDelegateApp()->localContext(), k_maxFloat);
     int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
     for (int i = 0; i < nbOfActiveModels; i++) {
-      Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+      Shared::Sequence * s = functionStore()->modelForRecord(recordAtCurveIndex(i));
       zoom.fitFullFunction(evaluator, s);
     }
     *result.y() = *zoom.range(true, false).y();
@@ -104,7 +104,7 @@ Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) co
 }
 
 bool GraphController::openMenuForCurveAtIndex(int curveIndex) {
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(curveIndex);
+  Ion::Storage::Record record = recordAtCurveIndex(curveIndex);
   m_termSumController.setRecord(record);
   return FunctionGraphController::openMenuForCurveAtIndex(curveIndex);
 }
@@ -121,7 +121,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   if (x < 0.0) {
     return false;
   }
-  Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  Shared::Sequence * s = functionStore()->modelForRecord(recordAtSelectedCurveIndex());
   double y = s->evaluateXYAtParameter(x, textFieldDelegateApp()->localContext()).x2();
   m_cursor->moveTo(x, x, y);
   return true;

@@ -51,7 +51,7 @@ bool FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), textFieldDelegateApp()->localContext(), m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  Ion::Storage::Record record = recordAtSelectedCurveIndex();
   curveParameterControllerWithRecord()->setRecord(record);
   StackViewController * stack = stackController();
   stack->push(curveParameterController());
@@ -64,7 +64,7 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex, bool w
     *m_indexFunctionSelectedByCursor = functionIndex;
   }
 
-  Ion::Storage::Record r = functionStore()->activeRecordAtIndex(functionIndex);
+  Ion::Storage::Record r = recordAtCurveIndex(functionIndex);
   functionGraphView()->selectRecord(r);
   functionGraphView()->cursorView()->setColor(functionStore()->colorForRecord(r));
   // Force reload to display the selected function on top
@@ -76,13 +76,13 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex, bool w
 
 KDCoordinate FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(int j) {
   assert(j < graphController()->numberOfCurves());
-  ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(j));
+  ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->recordAtCurveIndex(j));
   return std::max(function->layout().layoutSize(k_font).height(), nameLayoutAtIndex(j).layoutSize(k_font).height()) + Metric::CellTopMargin + Metric::CellBottomMargin + Metric::CellSeparatorThickness;
 }
 
 void FunctionGraphController::FunctionSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index < graphController()->numberOfCurves());
-  ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(index));
+  ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->recordAtCurveIndex(index));
   static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(function->color());
   static_cast<CurveSelectionCellWithChevron *>(cell)->setLayout(function->layout().clone());
 }
@@ -100,7 +100,7 @@ void FunctionGraphController::FunctionSelectionController::didBecomeFirstRespond
 
 void FunctionGraphController::reloadBannerView() {
   assert(numberOfCurves() > 0);
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  Ion::Storage::Record record = recordAtSelectedCurveIndex();
   reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 
@@ -139,7 +139,7 @@ FunctionStore * FunctionGraphController::functionStore() const {
 }
 
 void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(int index, double * t, Coordinate2D<double> * xy, bool ignoreMargins) {
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(index);
+  Ion::Storage::Record record = recordAtCurveIndex(index);
   ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
   *t = defaultCursorT(record, ignoreMargins);
   *xy = function->evaluateXYAtParameter(*t, textFieldDelegateApp()->localContext(), 0);
@@ -175,7 +175,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
     return false;
   }
   // Clip the current t to the domain of the next function
-  ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(nextActiveFunctionIndex));
+  ExpiringPointer<Function> f = functionStore()->modelForRecord(recordAtCurveIndex(nextActiveFunctionIndex));
   double clippedT = m_cursor->t();
   if (!std::isnan(f->tMin())) {
     assert(!std::isnan(f->tMax()));
@@ -209,15 +209,15 @@ AbstractPlotView * FunctionGraphController::curveView() {
 }
 
 Coordinate2D<double> FunctionGraphController::xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex) const {
-  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->evaluateXYAtParameter(t, context, subCurveIndex);
+  return functionStore()->modelForRecord(recordAtCurveIndex(curveIndex))->evaluateXYAtParameter(t, context, subCurveIndex);
 }
 
 int FunctionGraphController::numberOfSubCurves(int curveIndex) const {
-  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->numberOfSubCurves();
+  return functionStore()->modelForRecord(recordAtCurveIndex(curveIndex))->numberOfSubCurves();
 }
 
 bool FunctionGraphController::isAlongY(int curveIndex) const {
-  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->isAlongY();
+  return functionStore()->modelForRecord(recordAtCurveIndex(curveIndex))->isAlongY();
 }
 
 int FunctionGraphController::numberOfCurves() const {
@@ -227,7 +227,7 @@ int FunctionGraphController::numberOfCurves() const {
 void FunctionGraphController::tidyModels() {
   int nbOfFunctions = numberOfCurves();
   for (int i = 0; i < nbOfFunctions; i++) {
-    ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+    ExpiringPointer<Function> f = functionStore()->modelForRecord(recordAtCurveIndex(i));
     f->tidyDownstreamPoolFrom();
   }
 }

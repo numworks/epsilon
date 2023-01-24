@@ -289,9 +289,14 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
     }
     Poincare::Layout exactLayout = m_equationStore->exactSolutionLayoutAtIndex(j, true);
     Poincare::Layout approximateLayout = m_equationStore->exactSolutionLayoutAtIndex(j, false);
-    KDCoordinate exactLayoutHeight = exactLayout.layoutSize(k_solutionsFont).height();
     KDCoordinate approximateLayoutHeight = approximateLayout.layoutSize(k_solutionsFont).height();
-    KDCoordinate layoutHeight = std::max(exactLayout.baseline(k_solutionsFont), approximateLayout.baseline(k_solutionsFont)) + std::max(exactLayoutHeight-exactLayout.baseline(k_solutionsFont), approximateLayoutHeight-approximateLayout.baseline(k_solutionsFont));
+    KDCoordinate layoutHeight;
+    if (exactLayout.isUninitialized()) {
+      layoutHeight = approximateLayoutHeight;
+    } else {
+      KDCoordinate exactLayoutHeight = exactLayout.isUninitialized() ? 0 : exactLayout.layoutSize(k_solutionsFont).height();
+      layoutHeight = std::max(exactLayout.baseline(k_solutionsFont), approximateLayout.baseline(k_solutionsFont)) + std::max(exactLayoutHeight-exactLayout.baseline(k_solutionsFont), approximateLayoutHeight-approximateLayout.baseline(k_solutionsFont));
+    }
     return layoutHeight + 2 * Metric::CommonSmallMargin;
   }
   if (j == rowOfUserVariablesMessage || j == rowOfUserVariablesMessage - 1 ) {

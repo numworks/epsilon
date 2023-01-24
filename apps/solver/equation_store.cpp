@@ -1,7 +1,7 @@
 #include "equation_store.h"
 #include <apps/constant.h>
+#include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
-#include <apps/exam_mode_configuration.h>
 #include <apps/global_preferences.h>
 #include <limits.h>
 #include <poincare/addition.h>
@@ -256,45 +256,53 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
       return Error::RequireApproximateSolution;
     }
   }
+
   // Create the results' layouts
   // Some exam mode configuration requires to display only approximate solutions
   int solutionIndex = 0;
   int initialNumberOfSolutions = m_numberOfSolutions <= k_maxNumberOfExactSolutions ? m_numberOfSolutions : -1;
   // We iterate through the solutions and the potential delta
   for (int i = 0; i < initialNumberOfSolutions; i++) {
-    if (!exactSolutions[i].isUninitialized()) {
-      assert(!exactSolutionsApproximations[i].isUninitialized());
-      if (exactSolutionsApproximations[i].type() == ExpressionNode::Type::Nonreal) {
-        // Discard nonreal solutions.
-        m_numberOfSolutions--;
-        continue;
-      } else if (exactSolutionsApproximations[i].type() == ExpressionNode::Type::Undefined) {
-        /* The solution is undefined, which means that the equation contained
-         * unreduced undefined terms, such as a sequence or an integral. */
-        m_numberOfSolutions--;
-        error = Error::EquationUndefined;
-        continue;
-      }
-      m_exactSolutionExactLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutions[i], context);
-      m_exactSolutionApproximateLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutionsApproximations[i], context);
+    if (exactSolutions[i].isUninitialized()) {
+      continue;
+    }
+    assert(!exactSolutionsApproximations[i].isUninitialized());
+    if (exactSolutionsApproximations[i].type() == ExpressionNode::Type::Nonreal) {
+      // Discard nonreal solutions.
+      m_numberOfSolutions--;
+      continue;
+    } else if (exactSolutionsApproximations[i].type() == ExpressionNode::Type::Undefined) {
+      /* The solution is undefined, which means that the equation contained
+       * unreduced undefined terms, such as a sequence or an integral. */
+      m_numberOfSolutions--;
+      error = Error::EquationUndefined;
+      continue;
+    }
+
+    m_exactSolutionApproximateLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutionsApproximations[i], context);
+    if (ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(exactSolutions[i], context)) {
+      /* Cheat: declare exact and approximate solutions to be identical in when
+       * the exam mode forbids this exact solution to display only the
+       * approximate solutions. */
+      m_exactSolutionIdentity[solutionIndex] = true;
+    } else {
       // Check for identity between exact and approximate layouts
+      m_exactSolutionExactLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutions[i], context);
       char exactBuffer[::Constant::MaxSerializedExpressionSize];
       char approximateBuffer[::Constant::MaxSerializedExpressionSize];
       m_exactSolutionExactLayouts[solutionIndex].serializeForParsing(exactBuffer, ::Constant::MaxSerializedExpressionSize);
       m_exactSolutionApproximateLayouts[solutionIndex].serializeForParsing(approximateBuffer, ::Constant::MaxSerializedExpressionSize);
-      /* Cheat: declare exact and approximate solutions to be identical in when
-       * the exam mode forbids this exact solution to display only the
-       * approximate solutions. */
-      m_exactSolutionIdentity[solutionIndex] = ExamModeConfiguration::exactExpressionIsForbidden(exactSolutions[i]) || strcmp(exactBuffer, approximateBuffer) == 0;
+      m_exactSolutionIdentity[solutionIndex] = strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
         /* We parse approximateBuffer instead of using directly exactSolutionsApproximations[i] because
          * exactSolutionsApproximations[i] is Float and ExactAndApproximateExpressionsAreEqual
          * is always false for Float. Indeed we Parse like in Calculation (see Calculation::approximateOutput) */
         m_exactSolutionEquality[solutionIndex] = Expression::ExactAndApproximateExpressionsAreEqual(exactSolutions[i], Expression::Parse(approximateBuffer, nullptr));
       }
-      solutionIndex++;
     }
+    solutionIndex++;
   }
+
   // Assert the remaining layouts had been properly tidied.
   assert(error != Error::NoError
      || solutionIndex >= k_maxNumberOfExactSolutions

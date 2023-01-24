@@ -92,12 +92,9 @@ void NestedMenuController::viewWillAppear() {
   StackViewController::viewWillAppear();
   m_selectableTableView.reloadData();
 
-  // Load last state
   int checksum = controlChecksum();
-  if (checksum != m_savedChecksum) {
+  if (checksum != m_savedChecksum || numberOfRows() == 0) {
     m_savedChecksum = checksum;
-    returnToRootMenu();
-  } else if (numberOfRows() == 0) {
     returnToRootMenu();
   }
 }

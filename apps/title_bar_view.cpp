@@ -69,10 +69,10 @@ void TitleBarView::layoutSubviews(bool force) {
   m_preferenceView.setFrame(KDRect(Metric::TitleBarExternHorizontalMargin, 0, m_preferenceView.minimalSizeForOptimalDisplay().width(), bounds().height()), force);
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
   m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize), force);
-  if (Preferences::sharedPreferences()->isInExamMode()) {
+  if (Preferences::sharedPreferences->isInExamMode()) {
     m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight), force);
     m_examModeTextView.setFrame(KDRect(k_examIconMargin - k_examTextWidth, k_verticalShift, k_examTextWidth, bounds().height() - k_verticalShift), force);
-    m_examModeTextView.setMessage(ExamModeConfiguration::examModeTitleBarMessage(Preferences::sharedPreferences()->examMode()));
+    m_examModeTextView.setMessage(ExamModeConfiguration::examModeTitleBarMessage(Preferences::sharedPreferences->examMode()));
   } else {
     m_examModeIconView.setFrame(KDRectZero, force);
     m_examModeTextView.setMessage(I18n::Message::Default);
@@ -84,7 +84,7 @@ void TitleBarView::layoutSubviews(bool force) {
 void TitleBarView::refreshPreferences() {
   constexpr size_t bufferSize = 13;
   char buffer[bufferSize];
-  Preferences * preferences = Preferences::sharedPreferences();
+  Preferences * preferences = Preferences::sharedPreferences;
   // Display Sci/ or Eng/ if the print float mode is not decimal
   const Preferences::PrintFloatMode printFloatMode = preferences->displayMode();
   I18n::Message floatModeMessage = printFloatMode == Preferences::PrintFloatMode::Decimal ? I18n::Message::Default : (printFloatMode == Preferences::PrintFloatMode::Scientific ? I18n::Message::Sci : I18n::Message::Eng);

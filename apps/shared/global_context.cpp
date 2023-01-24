@@ -178,9 +178,9 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(co
     /* "approximateKeepingUnits" is called because the expression might contain
      * units, and juste calling "approximate" would return undef
      */
-    Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
+    Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences;
     Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionToStore, this);
-    expressionToStore = expressionToStore.approximateKeepingUnits<double>(Poincare::ReductionContext(this, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ReductionTarget::User, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, Poincare::UnitConversion::Default));
+    expressionToStore = expressionToStore.approximateKeepingUnits<double>(Poincare::ReductionContext(this, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences->unitFormat(), ReductionTarget::User, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, Poincare::UnitConversion::Default));
   }
   ExpressionNode::Type type = expressionToStore.type();
   const char * extension;

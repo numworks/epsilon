@@ -64,7 +64,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   } else {
     const int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(Preferences::VeryLargeNumberOfSignificantDigits);
     char buffer[bufferSize];
-    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, Preferences::VeryLargeNumberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
+    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, Preferences::VeryLargeNumberOfSignificantDigits, Preferences::sharedPreferences->displayMode());
     myCell->setText(buffer);
     KDColor textColor = m_store->seriesIsActive(m_store->seriesAtColumn(i)) ? KDColorBlack : Palette::GrayDark;
     myCell->setTextColor(textColor);

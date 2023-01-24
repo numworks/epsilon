@@ -668,7 +668,7 @@ Expression Integer::CreateMixedFraction(const Integer & num, const Integer & den
   Expression integerPart = Rational::Builder(division.quotient);
   Rational fractionPart = Rational::Builder(division.remainder, denomPositive);
   // If mixed fractions are enabled
-  if (Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
+  if (Preferences::sharedPreferences->mixedFractionsAreEnabled()) {
     Expression mixedFraction = MixedFraction::Builder(integerPart, Rational::Builder(fractionPart.unsignedIntegerNumerator()), Rational::Builder(fractionPart.integerDenominator()));
     if (num.isNegative() != denom.isNegative()) {
       mixedFraction = Opposite::Builder(mixedFraction);

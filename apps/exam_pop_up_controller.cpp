@@ -12,10 +12,10 @@ ExamPopUpController::ExamPopUpController() :
     Invocation::Builder<ExamPopUpController>(
       [](ExamPopUpController * controller, void * sender) {
         Poincare::Preferences::ExamMode mode = controller->targetExamMode();
-        Poincare::Preferences::ExamMode previousMode = Poincare::Preferences::sharedPreferences()->examMode();
+        Poincare::Preferences::ExamMode previousMode = Poincare::Preferences::sharedPreferences->examMode();
         assert(mode != Poincare::Preferences::ExamMode::Unknown);
         assert(mode == Poincare::Preferences::ExamMode::PressToTest || controller->targetPressToTestParams().isInactive());
-        Poincare::Preferences::sharedPreferences()->setExamMode(mode, controller->targetPressToTestParams());
+        Poincare::Preferences::sharedPreferences->setExamMode(mode, controller->targetPressToTestParams());
         AppsContainer * container = AppsContainer::sharedAppsContainer();
         if (mode == Poincare::Preferences::ExamMode::Off) {
           if (previousMode == Poincare::Preferences::ExamMode::PressToTest) {

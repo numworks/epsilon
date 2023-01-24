@@ -61,7 +61,7 @@ template<typename U> Evaluation<U> LogarithmNode::templatedApproximate(const App
     return ApproximationHelper::MapOneChild<U>(this, approximationContext, computeOnComplex<U>);
   }
   Evaluation<U> n = childAtIndex(1)->approximate(U(), approximationContext);
-  if (Poincare::Preferences::sharedPreferences()->basedLogarithmIsForbidden()
+  if (Poincare::Preferences::sharedPreferences->basedLogarithmIsForbidden()
       && n.toScalar() != static_cast<U>(10.0)
       && n.toScalar() != Complex<U>::Builder(M_E).toScalar()) {
     return Complex<U>::Undefined();
@@ -110,7 +110,7 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
     }
   }
   Expression base = childAtIndex(1);
-  if (Poincare::Preferences::sharedPreferences()->basedLogarithmIsForbidden()) {
+  if (Poincare::Preferences::sharedPreferences->basedLogarithmIsForbidden()) {
     if (!((base.type() == ExpressionNode::Type::ConstantMaths && static_cast<Constant&>(base).isExponentialE()) ||
           (base.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(base).isTen()))) {
       return replaceWithUndefinedInPlace();

@@ -146,8 +146,8 @@ void GraphOptionsController::fillCell(HighlightCell * cell) {
     m_changeRegressionCell.setSubtitle(model->name());
     return;
   }
-  const int significantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
-  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
+  const int significantDigits = Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
+  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences->displayMode();
   if (cell == &m_regressionEquationCell) {
     // Regression equation uses at most 5 coefficients and a few chars (Quartic)
     constexpr int bufferSize = (Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits)-1)*5 + sizeof("y=·x^4+·x^3+·x^2+·x+");

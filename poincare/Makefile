@@ -265,6 +265,7 @@ poincare_bench_src = $(addprefix poincare/src/,\
   helpers.cpp \
   init.cpp \
   integer.cpp \
+  preferences.cpp \
   print_float.cpp \
   print_int.cpp \
   serialization_helper.cpp \

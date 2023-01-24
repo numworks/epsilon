@@ -24,7 +24,7 @@ void ResultController::didBecomeFirstResponder() {
   constexpr int maxUserPrecision = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
   constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(maxUserPrecision);
   char buffer[bufferSize];
-  int precision = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
+  int precision = Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
   Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
   cellAtIndex(0)->setAccessoryText(buffer);
   resetMemoization(true);

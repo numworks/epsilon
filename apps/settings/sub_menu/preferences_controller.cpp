@@ -132,7 +132,7 @@ KDCoordinate PreferencesController::nonMemoizedRowHeight(int index) {
 }
 
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, int valueIndex) {
-  Preferences * preferences = Preferences::sharedPreferences();
+  Preferences * preferences = Preferences::sharedPreferences;
   if (message == I18n::Message::AngleUnit) {
     preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
   } else if (message == I18n::Message::DisplayMode) {
@@ -149,13 +149,13 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message, i
   } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
-    GlobalPreferences::sharedGlobalPreferences()->setFont(valueIndex == 0 ? KDFont::Size::Large : KDFont::Size::Small);
+    GlobalPreferences::sharedGlobalPreferences->setFont(valueIndex == 0 ? KDFont::Size::Large : KDFont::Size::Small);
   }
 
 }
 
 int PreferencesController::valueIndexForPreference(I18n::Message message) const {
-  Preferences * preferences = Preferences::sharedPreferences();
+  Preferences * preferences = Preferences::sharedPreferences;
   if (message == I18n::Message::AngleUnit) {
     return (int)preferences->angleUnit();
   }
@@ -169,7 +169,7 @@ int PreferencesController::valueIndexForPreference(I18n::Message message) const 
     return (int)preferences->complexFormat();
   }
   if (message == I18n::Message::FontSizes) {
-    return GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::Size::Large ? 0 : 1;
+    return GlobalPreferences::sharedGlobalPreferences->font() == KDFont::Size::Large ? 0 : 1;
   }
   return 0;
 }

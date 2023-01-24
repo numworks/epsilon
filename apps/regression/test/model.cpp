@@ -243,18 +243,18 @@ QUIZ_CASE(median_regression2) {
 
 void assert_trigonometric_regression_is(double * xi, double * yi, int numberOfPoints, double * trueCoefficients, double trueR2, Poincare::Preferences::AngleUnit trueCoeffcientsUnit) {
   // Test the trigonometric regression at all angle units
-  const Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();
+  const Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences->angleUnit();
   const Poincare::Preferences::AngleUnit units[3] = {Poincare::Preferences::AngleUnit::Radian, Poincare::Preferences::AngleUnit::Degree, Poincare::Preferences::AngleUnit::Gradian};
   for (int i = 0; i < 3; ++i) {
     Poincare::Preferences::AngleUnit unit = units[i];
-    Poincare::Preferences::sharedPreferences()->setAngleUnit(unit);
+    Poincare::Preferences::sharedPreferences->setAngleUnit(unit);
     double unitFactor = Trigonometry::PiInAngleUnit(unit) / Trigonometry::PiInAngleUnit(trueCoeffcientsUnit);
     // True coefficients b and c are converted to the tested angle unit
     double coefficientsUnit[] = {trueCoefficients[0], trueCoefficients[1] * unitFactor, trueCoefficients[2] * unitFactor, trueCoefficients[3]};
     assert_regression_is(xi, yi, numberOfPoints, Model::Type::Trigonometric, coefficientsUnit, trueR2);
   }
   // Restore previous angleUnit
-  Poincare::Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);
+  Poincare::Preferences::sharedPreferences->setAngleUnit(previousAngleUnit);
 }
 
 QUIZ_CASE(trigonometric_regression1) {

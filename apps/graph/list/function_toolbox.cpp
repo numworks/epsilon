@@ -29,7 +29,7 @@ void FunctionToolbox::setAddedCellsContent(AddedCellsContent content) {
   }
   constexpr CodePoint codepoints[k_maxNumberOfAddedCells] = {UCodePointInferiorEqual, UCodePointSuperiorEqual};
   m_addedCellsContent = content;
-  Preferences * pref = Preferences::sharedPreferences();
+  Preferences * pref = Preferences::sharedPreferences;
   switch (content) {
   case AddedCellsContent::None:
     m_addedCellLayout[0] = Layout();

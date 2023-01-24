@@ -46,14 +46,14 @@ void assert_check_function_properties(const char * expression, FunctionPropertie
 QUIZ_CASE(graph_function_properties) {
   // Test the plot type under different Press-to-test parameters :
   Preferences::PressToTestParams pressToTestParams = Preferences::k_inactivePressToTest;
-  Poincare::Preferences::sharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Cartesian);
+  Poincare::Preferences::sharedPreferences->setComplexFormat(Preferences::ComplexFormat::Cartesian);
   for (size_t config = 0; config < 4; config++) {
     bool noInequations = (config == 1 || config == 3);
     bool noImplicitPlot = (config == 2 || config == 3);
     // Set the Press-to-test mode
     pressToTestParams.m_inequalityGraphingIsForbidden = noInequations;
     pressToTestParams.m_implicitPlotsAreForbidden = noImplicitPlot;
-    Poincare::Preferences::sharedPreferences()->setExamMode((noInequations || noImplicitPlot) ? Poincare::Preferences::ExamMode::PressToTest : Poincare::Preferences::ExamMode::Off, pressToTestParams);
+    Poincare::Preferences::sharedPreferences->setExamMode((noInequations || noImplicitPlot) ? Poincare::Preferences::ExamMode::PressToTest : Poincare::Preferences::ExamMode::Off, pressToTestParams);
 
     // === Cartesian functions ====
 
@@ -653,7 +653,7 @@ QUIZ_CASE(graph_function_properties) {
 
     // === Updated complex format ===
 
-    assert(Poincare::Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Cartesian);
+    assert(Poincare::Preferences::sharedPreferences->complexFormat() == Preferences::ComplexFormat::Cartesian);
     assert_check_function_properties("y=(√(-1))^2", k_horizontalLineProperties);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties(
@@ -671,7 +671,7 @@ QUIZ_CASE(graph_function_properties) {
     );
 
 
-    Poincare::Preferences::sharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Real);
+    Poincare::Preferences::sharedPreferences->setComplexFormat(Preferences::ComplexFormat::Real);
     assert_check_function_properties("y=(√(-1))^2", k_unhandledCartesian);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties(
@@ -688,10 +688,10 @@ QUIZ_CASE(graph_function_properties) {
       }
     );
     // Restore preferences
-    Poincare::Preferences::sharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Cartesian);
+    Poincare::Preferences::sharedPreferences->setComplexFormat(Preferences::ComplexFormat::Cartesian);
   }
   // Restore an Off exam mode.
-  Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Off);
+  Poincare::Preferences::sharedPreferences->setExamMode(Poincare::Preferences::ExamMode::Off);
 }
 
 QUIZ_CASE(graph_function_properties_with_predefined_variables) {

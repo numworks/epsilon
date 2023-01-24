@@ -20,7 +20,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
   static_assert(k_maxNumberOfRows >= k_maxNumberOfOutputRows, "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   Context * context = App::app()->localContext();
-  Poincare::Preferences preferencesCopy = Preferences::ClonePreferencesWithNewComplexFormat(Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(Poincare::Preferences::sharedPreferences()->complexFormat(), e, context));
+  Poincare::Preferences preferencesCopy = Preferences::ClonePreferencesWithNewComplexFormat(Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(Poincare::Preferences::sharedPreferences->complexFormat(), e, context));
 
   setShowIllustration(false);
 

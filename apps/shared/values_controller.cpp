@@ -133,7 +133,7 @@ int ValuesController::numberOfColumns() const {
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
+  willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences->displayMode());
   int typeAtLoc = typeAtLocation(i,j);
   // The cell is not a title cell and not editable
   if (typeAtLoc == k_notEditableValueCellType) {

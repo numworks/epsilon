@@ -86,9 +86,9 @@ void UnitListController::setExpression(Poincare::Expression e) {
   double value = Shared::PoincareHelpers::ApproximateToScalar<double>(copy, App::app()->localContext());
   ReductionContext reductionContext(
       App::app()->localContext(),
-      Preferences::UpdatedComplexFormatWithExpressionInput(Preferences::sharedPreferences()->complexFormat(), m_expression, App::app()->localContext()),
-      Preferences::sharedPreferences()->angleUnit(),
-      GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
+      Preferences::UpdatedComplexFormatWithExpressionInput(Preferences::sharedPreferences->complexFormat(), m_expression, App::app()->localContext()),
+      Preferences::sharedPreferences->angleUnit(),
+      GlobalPreferences::sharedGlobalPreferences->unitFormat(),
       ReductionTarget::User,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   int numberOfExpressions = Unit::SetAdditionalExpressions(units, value, expressions, k_maxNumberOfExpressionCells, reductionContext, m_expression);

@@ -132,10 +132,10 @@ QUIZ_CASE(calculation_ans) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer,calculationBufferSize);
   // Setup complex format and exam mode
-  Poincare::Preferences::ComplexFormat previousComplexFormat = Poincare::Preferences::sharedPreferences()->complexFormat();
-  Poincare::Preferences::ExamMode previousExamMode = Poincare::Preferences::sharedPreferences()->examMode();
-  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
-  Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Off);
+  Poincare::Preferences::ComplexFormat previousComplexFormat = Poincare::Preferences::sharedPreferences->complexFormat();
+  Poincare::Preferences::ExamMode previousExamMode = Poincare::Preferences::sharedPreferences->examMode();
+  Poincare::Preferences::sharedPreferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
+  Poincare::Preferences::sharedPreferences->setExamMode(Poincare::Preferences::ExamMode::Off);
 
   store.push("1+3/4", &globalContext, dummyHeight);
   store.push("ans+2/3", &globalContext, dummyHeight);
@@ -158,14 +158,14 @@ QUIZ_CASE(calculation_ans) {
 
   assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
 
-  Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Dutch);
+  Poincare::Preferences::sharedPreferences->setExamMode(Poincare::Preferences::ExamMode::Dutch);
   assert(ExamModeConfiguration::exactExpressionIsForbidden(SquareRoot::Builder(Rational::Builder(2))));
 
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 
   // Restore complex format and exam mode
-  Poincare::Preferences::sharedPreferences()->setExamMode(previousExamMode);
-  Poincare::Preferences::sharedPreferences()->setComplexFormat(previousComplexFormat);
+  Poincare::Preferences::sharedPreferences->setExamMode(previousExamMode);
+  Poincare::Preferences::sharedPreferences->setComplexFormat(previousComplexFormat);
   store.deleteAll();
 }
 
@@ -201,8 +201,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
-  Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();
-  Preferences::sharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
+  Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences->angleUnit();
+  Preferences::sharedPreferences->setAngleUnit(Preferences::AngleUnit::Degree);
 
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate, EqualSign::Equal, "1/2", "0.5", "0.5", &globalContext, &store);
   assertCalculationIs("1/3", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1/3", "0.3333333333", "0.33333333333333", &globalContext, &store);
@@ -246,18 +246,18 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("(1/11)_°", DisplayOutput::ApproximateOnly, EqualSign::Approximation, nullptr, "5.454545455×_'", "5.4545454545455×_'", &globalContext, &store);
   assertCalculationIs("180→rad", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "π×_rad", "3.141592654×_rad", "3.1415926535898×_rad", &globalContext, &store);
   assertCalculationIs("45→gon", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "50×_gon", "50×_gon", &globalContext, &store);
-  Preferences::sharedPreferences()->setAngleUnit(Preferences::AngleUnit::Radian);
+  Preferences::sharedPreferences->setAngleUnit(Preferences::AngleUnit::Radian);
   assertCalculationIs("π/2→°", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "90×_°", "90×_°", &globalContext, &store);
   assertCalculationIs("πrad/2→°", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "90×_°", "90×_°", &globalContext, &store);
   assertCalculationIs("(1/6)_rad^(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "0.1666666667×_rad^\u0012-1\u0013", "0.16666666666667×_rad^\u0012-1\u0013", &globalContext, &store);
   assertCalculationIs("diff(x^2,x,3)_rad", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "6×_rad", "6×_rad", &globalContext, &store);
   assertCalculationIs("(1/6)_rad→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1/6×_rad", "0.1666666667×_rad", "0.16666666666667×_rad", &globalContext, &store);
   assertCalculationIs("diff(x^2,x,3)_rad→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "6×_rad", "6×_rad", &globalContext, &store);
-  Preferences::sharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
+  Preferences::sharedPreferences->setAngleUnit(Preferences::AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 
-  Poincare::Preferences::ExamMode previousExamMode = Poincare::Preferences::sharedPreferences()->examMode();
-  Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Dutch);
+  Poincare::Preferences::ExamMode previousExamMode = Poincare::Preferences::sharedPreferences->examMode();
+  Poincare::Preferences::sharedPreferences->setExamMode(Poincare::Preferences::ExamMode::Dutch);
 
   assertCalculationIs("1+1", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "2", "2", &globalContext, &store);
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate, EqualSign::Equal, "1/2", "0.5", nullptr, &globalContext, &store);
@@ -268,8 +268,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("_G", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("_g0", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
 
-  Poincare::Preferences::sharedPreferences()->setExamMode(previousExamMode);
-  Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);
+  Poincare::Preferences::sharedPreferences->setExamMode(previousExamMode);
+  Preferences::sharedPreferences->setAngleUnit(previousAngleUnit);
 }
 
 void assertMainCalculationOutputIs(const char * input, const char * output, Context * context, CalculationStore * store) {
@@ -453,7 +453,7 @@ QUIZ_CASE(calculation_complex_format) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
-  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
+  Poincare::Preferences::sharedPreferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
   assertCalculationIs("1+i", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1+i", "1+i", &globalContext, &store);
   assertCalculationIs("√(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "nonreal", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "nonreal", "nonreal", &globalContext, &store);
@@ -462,7 +462,7 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("(-8)^(2/3)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "4", "4", &globalContext, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "nonreal", "nonreal", &globalContext, &store);
 
-  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
+  Poincare::Preferences::sharedPreferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   assertCalculationIs("1+i", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1+i", "1+i", &globalContext, &store);
   assertCalculationIs("√(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "i", "i", &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "ln(-2)", nullptr, nullptr, &globalContext, &store);
@@ -471,7 +471,7 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "-2+2×√(3)×i", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "root(8,4)/2+root(8,4)/2×i", nullptr, nullptr, &globalContext, &store);
 
-  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Polar);
+  Poincare::Preferences::sharedPreferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Polar);
   assertCalculationIs("1+i", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "√(2)×e^\u0012π/4×i\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("√(-1)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "e^\u0012π/2×i\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "ln(-2)", nullptr, nullptr, &globalContext, &store);
@@ -480,7 +480,7 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "4×e^\u0012\u00122×π\u0013/3×i\u0013", nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "root(2,4)×e^\u0012π/4×i\u0013", nullptr, nullptr, &globalContext, &store);
 
-  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
+  Poincare::Preferences::sharedPreferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
 }
 
 QUIZ_CASE(calculation_involving_sequence) {
@@ -519,7 +519,7 @@ QUIZ_CASE(calculation_additional_results) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
-  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
+  Poincare::Preferences::sharedPreferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
   assertCalculationAdditionalResultTypeHas("1+1", {.integer = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("π-π", {.integer = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("2/24", {.rational = true, .scientificNotation = true}, &globalContext, &store);
@@ -546,9 +546,9 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("π+π", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("e^(2+3)", {.scientificNotation = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("2i", {.complex = true}, &globalContext, &store);
-  Poincare::Preferences::sharedPreferences()->setDisplayMode(Poincare::Preferences::PrintFloatMode::Scientific);
+  Poincare::Preferences::sharedPreferences->setDisplayMode(Poincare::Preferences::PrintFloatMode::Scientific);
   assertCalculationAdditionalResultTypeHas("e^(2+3)", {}, &globalContext, &store);
-  Poincare::Preferences::sharedPreferences()->setDisplayMode(Poincare::Preferences::PrintFloatMode::Decimal);
+  Poincare::Preferences::sharedPreferences->setDisplayMode(Poincare::Preferences::PrintFloatMode::Decimal);
 
   assertCalculationAdditionalResultTypeHas("√(-1)", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("{1}", {}, &globalContext, &store);
@@ -560,6 +560,6 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("z+1", {.complex = true}, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("z.exp").destroy();
 
-  Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
+  Poincare::Preferences::sharedPreferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   assertCalculationAdditionalResultTypeHas("√(-1)", {.complex = true}, &globalContext, &store);
 }

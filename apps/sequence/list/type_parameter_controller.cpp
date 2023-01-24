@@ -62,7 +62,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
         App::app()->localContext()->resetCache();
         // Reset the first index if the new type is "Explicit"
         if (sequenceType == Shared::Sequence::Type::Explicit) {
-          sequence()->setInitialRank(GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank());
+          sequence()->setInitialRank(GlobalPreferences::sharedGlobalPreferences->sequencesInitialRank());
         }
       }
       StackViewController * stack = stackController();
@@ -79,7 +79,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     Ion::Storage::Record record = sequenceStore()->recordAtIndex(sequenceStore()->numberOfModels()-1);
     Shared::Sequence * newSequence = sequenceStore()->modelForRecord(record);
-    newSequence->setInitialRank(GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank());
+    newSequence->setInitialRank(GlobalPreferences::sharedGlobalPreferences->sequencesInitialRank());
     newSequence->setType(static_cast<Shared::Sequence::Type>(selectedRow()));
     // Make all the lines of the added sequence visible
     m_listController->showLastSequence();

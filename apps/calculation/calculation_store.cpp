@@ -18,7 +18,7 @@ CalculationStore::CalculationStore(char * buffer, size_t bufferSize) :
   m_buffer(buffer),
   m_bufferSize(bufferSize),
   m_numberOfCalculations(0),
-  m_inUsePreferences(*Preferences::sharedPreferences())
+  m_inUsePreferences(*Preferences::sharedPreferences)
 {}
 
 ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int index) const {
@@ -66,7 +66,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Poincare:
    */
   constexpr int maxNumberOfDigits = PrintFloat::k_numberOfStoredSignificantDigits;
 
-  m_inUsePreferences = *Preferences::sharedPreferences();
+  m_inUsePreferences = *Preferences::sharedPreferences;
   char * cursor = endOfCalculations();
 
   CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);

@@ -50,7 +50,7 @@ void DisplayModeController::willDisplayCellForIndex(HighlightCell * cell, int in
     GenericSubController::willDisplayCellForIndex(myCell->messageTableCellWithEditableText(), index);
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
-    Integer(Preferences::sharedPreferences()->numberOfSignificantDigits()).serialize(buffer, bufferSize);
+    Integer(Preferences::sharedPreferences->numberOfSignificantDigits()).serialize(buffer, bufferSize);
     myCell->messageTableCellWithEditableText()->setAccessoryText(buffer);
     return;
   }
@@ -70,13 +70,13 @@ bool DisplayModeController::textFieldDidFinishEditing(AbstractTextField * textFi
   if (floatBody < 1.0) {
    floatBody = 1.0;
   }
-  if (Preferences::sharedPreferences()->displayMode() == Preferences::PrintFloatMode::Engineering && floatBody < 3.0) {
+  if (Preferences::sharedPreferences->displayMode() == Preferences::PrintFloatMode::Engineering && floatBody < 3.0) {
     floatBody = 3.0;
   }
   if (floatBody > PrintFloat::k_numberOfStoredSignificantDigits) {
     floatBody = PrintFloat::k_numberOfStoredSignificantDigits;
   }
-  Preferences::sharedPreferences()->setNumberOfSignificantDigits((char)std::round(floatBody));
+  Preferences::sharedPreferences->setNumberOfSignificantDigits((char)std::round(floatBody));
   m_selectableTableView.reloadCellAtLocation(0, selectedRow());
   if (event == Ion::Events::Up || event == Ion::Events::OK) {
     m_selectableTableView.handleEvent(event);

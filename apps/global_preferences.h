@@ -4,11 +4,13 @@
 #include <apps/i18n.h>
 #include <kandinsky/font.h>
 #include <ion.h>
+#include <omg/global_box.h>
 #include <poincare/preferences.h>
 
 class GlobalPreferences {
+  friend OMG::GlobalBox<GlobalPreferences>;
 public:
-  static GlobalPreferences * sharedGlobalPreferences();
+  static OMG::GlobalBox<GlobalPreferences> sharedGlobalPreferences;
   I18n::Language language() const { return m_language; }
   void setLanguage(I18n::Language language) { m_language = language; }
   I18n::Country country() const { return m_country; }

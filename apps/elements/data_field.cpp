@@ -28,7 +28,7 @@ bool DoubleDataField::hasDouble(AtomicNumber z) const {
 
 Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   assert(hasDouble(z));
-  Preferences::PrintFloatMode floatDisplayMode = Preferences::sharedPreferences()->displayMode();
+  Preferences::PrintFloatMode floatDisplayMode = Preferences::sharedPreferences->displayMode();
   double v = getDouble(z);
   if (!std::isfinite(v)) {
     return DataField::UnknownValueLayout();

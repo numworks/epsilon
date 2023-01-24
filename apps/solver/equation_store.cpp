@@ -212,8 +212,8 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
   EquationStore::Error error;
 
   bool isLinear = true; // Invalid the linear system if one equation is non-linear
-  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences->angleUnit();
+  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences->unitFormat();
   const int nbOfDefinedModels = numberOfDefinedModels();
   assert(nbOfDefinedModels <= k_maxNumberOfEquations);
   {
@@ -312,8 +312,8 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
 }
 
 EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolutions[k_maxNumberOfExactSolutions], Expression exactSolutionsApproximations[k_maxNumberOfExactSolutions], Expression coefficients[k_maxNumberOfEquations][Expression::k_maxNumberOfVariables], Expression constants[k_maxNumberOfEquations], Context * context) {
-  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
-  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences->angleUnit();
+  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences->unitFormat();
   // n unknown variables
   int n = 0;
   while (n < Expression::k_maxNumberOfVariables && m_variables[n][0] != 0) {
@@ -371,7 +371,7 @@ EquationStore::Error EquationStore::oneDimensionalPolynomialSolve(Expression exa
   /* Equation ax^2+bx+c = 0 */
   Expression delta;
   bool solutionsAreApproximated = false;
-  ReductionContext reductionContext(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), Preferences::UnitFormat::Metric, ReductionTarget::User);
+  ReductionContext reductionContext(context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences->angleUnit(), Preferences::UnitFormat::Metric, ReductionTarget::User);
   if (m_degree == 2) {
     m_numberOfSolutions = Poincare::Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], exactSolutions, exactSolutions + 1, &delta, reductionContext);
   } else {
@@ -385,7 +385,7 @@ EquationStore::Error EquationStore::oneDimensionalPolynomialSolve(Expression exa
     } else {
       Expression exactSolution = exactSolutions[i];
       exactSolutions[i] = Expression();
-      exactSolution.cloneAndSimplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat());
+      exactSolution.cloneAndSimplifyAndApproximate(exactSolutions + i, exactSolutionsApproximations + i, context, updatedComplexFormat(context), Poincare::Preferences::sharedPreferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences->unitFormat());
     }
   }
   return Error::NoError;
@@ -402,7 +402,7 @@ void EquationStore::tidySolution(char * treePoolCursor) {
 }
 
 Preferences::ComplexFormat EquationStore::updatedComplexFormat(Context * context) {
-  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
+  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences->complexFormat();
   if (complexFormat == Preferences::ComplexFormat::Real && isExplicitlyComplex(context)) {
     return Preferences::ComplexFormat::Cartesian;
   }

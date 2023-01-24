@@ -556,8 +556,8 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
 }
 
 bool ContinuousFunctionProperties::HasNonNullCoefficients(const Expression equation, const char * symbolName, Context * context, TrinaryBoolean * highestDegreeCoefficientIsPositive) {
-  Preferences::ComplexFormat complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(Preferences::sharedPreferences()->complexFormat(), equation, context);
-  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::ComplexFormat complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(Preferences::sharedPreferences->complexFormat(), equation, context);
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences->angleUnit();
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Symbols will be replaced anyway to compute isNull
   int degree = equation.getPolynomialReducedCoefficients(

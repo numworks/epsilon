@@ -148,7 +148,7 @@ SelectableTableViewDataSource * Controller::selectionDataSource() const {
 void Controller::switchToSelectedApp() {
   AppsContainer * container = AppsContainer::sharedAppsContainer();
   int appIdx = indexOfAppAtColumnAndRow(selectionDataSource()->selectedColumn(), selectionDataSource()->selectedRow());
-  Poincare::Preferences::ExamMode examMode = Poincare::Preferences::sharedPreferences()->examMode();
+  Poincare::Preferences::ExamMode examMode = Poincare::Preferences::sharedPreferences->examMode();
   if (appIdx < container->numberOfBuiltinApps()) {
     ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx));
     if (ExamModeConfiguration::appIsForbidden(selectedSnapshot->descriptor()->name())) {

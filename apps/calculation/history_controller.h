@@ -34,7 +34,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1) override;
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
-  void recomputeHistoryCellHeightsIfNeeded() { m_calculationStore->recomputeHeightsIfPreferencesHaveChanged(Poincare::Preferences::sharedPreferences(), HistoryViewCell::Height); }
+  void recomputeHistoryCellHeightsIfNeeded() { m_calculationStore->recomputeHeightsIfPreferencesHaveChanged(Poincare::Preferences::sharedPreferences, HistoryViewCell::Height); }
 
 private:
   KDCoordinate nonMemoizedRowHeight(int j) override;

@@ -21,25 +21,25 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(Consol
 
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
-  ctx->drawString(m_line->text(), KDPointZero, GlobalPreferences::sharedGlobalPreferences()->font(), textColor(m_line), defaultBackgroundColor());
+  ctx->drawString(m_line->text(), KDPointZero, GlobalPreferences::sharedGlobalPreferences->font(), textColor(m_line), defaultBackgroundColor());
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::minimalSizeForOptimalDisplay() const {
-  return m_line ? KDFont::Font(GlobalPreferences::sharedGlobalPreferences()->font())->stringSize(m_line->text()) : KDSizeZero;
+  return m_line ? KDFont::Font(GlobalPreferences::sharedGlobalPreferences->font())->stringSize(m_line->text()) : KDSizeZero;
 }
 
 ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder * parentResponder) :
   ScrollableView(parentResponder, &m_consoleLineView, this)
 {
   setDecoratorType(Escher::ScrollView::Decorator::Type::Arrows);
-  setDecoratorFont(GlobalPreferences::sharedGlobalPreferences()->font());
+  setDecoratorFont(GlobalPreferences::sharedGlobalPreferences->font());
   setBackgroundColor(KDColorWhite);
 }
 
 ConsoleLineCell::ConsoleLineCell(Responder * parentResponder) :
   HighlightCell(),
   Responder(parentResponder),
-  m_promptView(GlobalPreferences::sharedGlobalPreferences()->font(),
+  m_promptView(GlobalPreferences::sharedGlobalPreferences->font(),
                I18n::Message::ConsolePrompt, KDContext::k_alignLeft, KDContext::k_alignCenter),
   m_scrollableView(this)
 {
@@ -84,7 +84,7 @@ View * ConsoleLineCell::subviewAtIndex(int index) {
 
 void ConsoleLineCell::layoutSubviews(bool force) {
   if (m_line.isCommand()) {
-    KDSize promptSize = KDFont::Font(GlobalPreferences::sharedGlobalPreferences()->font())->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
+    KDSize promptSize = KDFont::Font(GlobalPreferences::sharedGlobalPreferences->font())->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
     m_promptView.setFrame(KDRect(KDPointZero, promptSize.width(), bounds().height()), force);
     m_scrollableView.setFrame(KDRect(KDPoint(promptSize.width(), 0), bounds().width() - promptSize.width(), bounds().height()), force);
     return;

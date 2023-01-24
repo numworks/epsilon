@@ -34,7 +34,7 @@ void App::didBecomeActive(Window * window) {
   // Disable spinner
   Ion::Events::setSpinner(false);
   // Force a core reset to exit
-  if (!(Poincare::Preferences::sharedPreferences()->isInExamMode() && ExamModeConfiguration::examModeColor(Poincare::Preferences::sharedPreferences()->examMode()) != KDColorBlack)) {
+  if (!(Poincare::Preferences::sharedPreferences->isInExamMode() && ExamModeConfiguration::examModeColor(Poincare::Preferences::sharedPreferences->examMode()) != KDColorBlack)) {
     // Forbid standby in exam mode with led since it disables the led
     Ion::Power::selectStandbyMode(true);
   }

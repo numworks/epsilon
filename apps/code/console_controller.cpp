@@ -240,7 +240,7 @@ int ConsoleController::numberOfRows() const {
 }
 
 KDCoordinate ConsoleController::defaultRowHeight() {
-  return KDFont::GlyphHeight(GlobalPreferences::sharedGlobalPreferences()->font());
+  return KDFont::GlyphHeight(GlobalPreferences::sharedGlobalPreferences->font());
 }
 
 HighlightCell * ConsoleController::reusableCell(int index, int type) {

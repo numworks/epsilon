@@ -18,7 +18,7 @@ using namespace Shared;
 namespace Regression {
 
 static double toRadians() {
-  return M_PI / Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit());
+  return M_PI / Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences->angleUnit());
 }
 
 int TrigonometricModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
@@ -160,7 +160,7 @@ void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoeffic
   // Init the "amplitude" coefficient a
   modelCoefficients[0] = (yMax - yMin) / 2.0;
   // Init the "period" coefficient b
-  double piInAngleUnit = Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit());
+  double piInAngleUnit = Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences->angleUnit());
   double period = 2.0 * std::fabs(xMax - xMin);
   if (period > 0) {
     /* b/(2*piInAngleUnit) is the frequency of the sine.
@@ -183,7 +183,7 @@ void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoeffic
 
 void TrigonometricModel::uniformizeCoefficientsFromFit(double * modelCoefficients) const {
   // Coefficients must be unique.
-  double piInAngleUnit = Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit());
+  double piInAngleUnit = Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences->angleUnit());
   // A must be positive.
   if (modelCoefficients[0] < 0.0) {
     // A * sin(B * x + C) + D = -A * sin(B * x + C + π) + D

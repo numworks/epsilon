@@ -240,7 +240,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
         LayoutHelper::String(buffer, strlen(buffer)),
         endLayout);
     if (step == Step::Result) {
-      int resultPrecision = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
+      int resultPrecision = Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
       PoincareHelpers::ConvertFloatToText<double>(result, buffer, k_editableZoneBufferSize, resultPrecision);
       if (functionLayout.isUninitialized()) {
         /* If function is uninitialized, display "Area = "

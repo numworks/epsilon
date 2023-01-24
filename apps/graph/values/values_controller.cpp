@@ -342,7 +342,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         Poincare::ReductionTarget::User,
         Poincare::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
         Poincare::UnitConversion::Default,
-        Poincare::Preferences::sharedPreferences(),
+        Poincare::Preferences::sharedPreferences,
         true,
         &simplificationFailure);
     /* Approximate in case of simplification failure, as we cannot display a non-beautified expression. */

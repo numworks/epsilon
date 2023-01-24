@@ -68,7 +68,7 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
 
 bool ExpressionField::handleDivision() {
   assert(m_divisionCycleWithAns != Poincare::TrinaryBoolean::Unknown);
-  bool mixedFractionsEnabled = Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled();
+  bool mixedFractionsEnabled = Poincare::Preferences::sharedPreferences->mixedFractionsAreEnabled();
   bool editionIn1D = editionIsInTextField();
   Ion::Events::Event event = Ion::Events::Division;
   bool handled = true;

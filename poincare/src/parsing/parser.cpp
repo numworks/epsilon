@@ -1045,7 +1045,7 @@ bool IsIntegerBaseTenOrEmptyExpression(Expression e) {
           || e.type() == ExpressionNode::Type::EmptyExpression;
 }
 bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
-  if (m_parsingContext.context() && !Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
+  if (m_parsingContext.context() && !Preferences::sharedPreferences->mixedFractionsAreEnabled()) {
     /* If m_context == nullptr, the expression has already been parsed.
      * We do not escape here because we want to parse it the same way it was
      * parsed the first time.

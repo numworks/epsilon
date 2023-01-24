@@ -50,8 +50,8 @@ void LogoController::viewDidDisappear() {
     Ion::LED::setColor(m_previousLEDColor);
     /* TODO: instead of setting again the exam mode, put the previous led color
      * AND BLINKING.*/
-    if (Poincare::Preferences::sharedPreferences()->isInExamMode()) {
-      AppsContainer::sharedAppsContainer()->activateExamMode(Poincare::Preferences::sharedPreferences()->examMode());
+    if (Poincare::Preferences::sharedPreferences->isInExamMode()) {
+      AppsContainer::sharedAppsContainer()->activateExamMode(Poincare::Preferences::sharedPreferences->examMode());
     }
   }
   ViewController::viewDidDisappear();

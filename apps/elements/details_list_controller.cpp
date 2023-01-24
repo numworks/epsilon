@@ -112,7 +112,7 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
 
   typedCell->setSubLabelMessage(sublabel);
-  int significantDigits = Preferences::sharedPreferences()->numberOfSignificantDigits();
+  int significantDigits = Preferences::sharedPreferences->numberOfSignificantDigits();
   typedCell->setLayouts(dataField->fieldSymbolLayout(), dataField->getLayout(z, significantDigits));
 }
 

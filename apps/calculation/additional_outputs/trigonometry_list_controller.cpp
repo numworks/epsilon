@@ -13,7 +13,7 @@ namespace Calculation {
 void TrigonometryListController::setExpression(Expression e) {
   IllustratedExpressionsListController::setExpression(e);
 
-  Preferences * preferences = Preferences::sharedPreferences();
+  Preferences * preferences = Preferences::sharedPreferences;
   Preferences::AngleUnit userAngleUnit = preferences->angleUnit();
   Context * context = App::app()->localContext();
   size_t index = 0;

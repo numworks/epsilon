@@ -26,7 +26,7 @@ protected:
   virtual void reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context, bool cappedNumberOfSignificantDigits = false);
   virtual XYBannerView * bannerView() = 0;
   virtual int numberOfSignificantDigits(bool capped = false) const {
-    int userDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
+    int userDigits = Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
     return capped && userDigits > k_cappedNumberOfSignificantDigits ? k_cappedNumberOfSignificantDigits : userDigits;
   }
 };

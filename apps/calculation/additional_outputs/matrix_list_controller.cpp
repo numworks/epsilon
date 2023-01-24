@@ -21,7 +21,7 @@ void MatrixListController::setExpression(Poincare::Expression e) {
   assert(!m_expression.isUninitialized());
   static_assert(k_maxNumberOfRows >= k_maxNumberOfOutputRows, "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
+  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences;
   Poincare::Preferences::ComplexFormat currentComplexFormat = preferences->complexFormat();
   if (currentComplexFormat == Poincare::Preferences::ComplexFormat::Real) {
     /* Temporary change complex format to avoid all additional expressions to be

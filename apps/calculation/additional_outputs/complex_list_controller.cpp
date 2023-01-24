@@ -24,7 +24,7 @@ void ComplexListController::viewWillAppear() {
 void ComplexListController::setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) {
   IllustratedExpressionsListController::setExactAndApproximateExpression(exactExpression, approximateExpression);
 
-  Poincare::Preferences preferencesComplex = *Preferences::sharedPreferences();
+  Poincare::Preferences preferencesComplex = *Preferences::sharedPreferences;
   preferencesComplex.setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   Context * context = App::app()->localContext();
 

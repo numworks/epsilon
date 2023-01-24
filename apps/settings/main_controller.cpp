@@ -58,7 +58,7 @@ void MainController::didBecomeFirstResponder() {
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
-  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
+  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences;
   int type = typeAtIndex(selectedRow());
 
   if (type == k_resetCellType) {
@@ -174,8 +174,8 @@ int MainController::typeAtIndex(int index) const {
 }
 
 void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
-  Preferences * preferences = Preferences::sharedPreferences();
+  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences;
+  Preferences * preferences = Preferences::sharedPreferences;
   int modelIndex = getModelIndex(index);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
   int type = typeAtIndex(index);
@@ -224,7 +224,7 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       childIndex = (int)preferences->complexFormat();
       break;
     case I18n::Message::FontSizes:
-      childIndex = GlobalPreferences::sharedGlobalPreferences()->font() == KDFont::Size::Large ? 0 : 1;
+      childIndex = GlobalPreferences::sharedGlobalPreferences->font() == KDFont::Size::Large ? 0 : 1;
       break;
     default:
       childIndex = -1;

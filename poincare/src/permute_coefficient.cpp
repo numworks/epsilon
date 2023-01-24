@@ -18,7 +18,7 @@ namespace Poincare {
 int PermuteCoefficientNode::numberOfChildren() const { return PermuteCoefficient::s_functionHelper.numberOfChildren(); }
 
 Layout PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  if (Preferences::sharedPreferences()->combinatoricSymbols() == Preferences::CombinatoricSymbols::Default) {
+  if (Preferences::sharedPreferences->combinatoricSymbols() == Preferences::CombinatoricSymbols::Default) {
     return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.aliasesList().mainAlias(), context);
   } else {
     return LetterAWithSubAndSuperscriptLayout::Builder(

@@ -44,7 +44,7 @@ int Layout::serializeParsedExpression(char * buffer, int bufferSize, Context * c
     buffer[0] = 0;
     return 0;
   }
-  return e.serialize(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode());
+  return e.serialize(buffer, bufferSize, Poincare::Preferences::sharedPreferences->displayMode());
 }
 
 Layout Layout::recursivelyMatches(LayoutTest test) const {

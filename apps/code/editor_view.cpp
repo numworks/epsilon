@@ -13,8 +13,8 @@ namespace Code {
 EditorView::EditorView(Responder * parentResponder, App * pythonDelegate) :
   Responder(parentResponder),
   View(),
-  m_textArea(parentResponder, pythonDelegate, GlobalPreferences::sharedGlobalPreferences()->font()),
-  m_gutterView(GlobalPreferences::sharedGlobalPreferences()->font())
+  m_textArea(parentResponder, pythonDelegate, GlobalPreferences::sharedGlobalPreferences->font()),
+  m_gutterView(GlobalPreferences::sharedGlobalPreferences->font())
 {
   m_textArea.setScrollViewDelegate(this);
 }

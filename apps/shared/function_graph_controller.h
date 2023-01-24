@@ -72,6 +72,8 @@ protected:
     return closestCurveIndexVertically(goingUp, currentSelectedCurve, context, currentSubCurveIndex, subCurveIndex);
   }
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
+  Ion::Storage::Record recordAtCurveIndex(int curveIndex) const { return functionStore()->activeRecordAtIndex(curveIndex); }
+  Ion::Storage::Record recordAtSelectedCurveIndex() const { return recordAtCurveIndex(indexFunctionSelectedByCursor()); }
 
 private:
   virtual FunctionGraphView * functionGraphView() = 0;

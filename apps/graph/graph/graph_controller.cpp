@@ -42,7 +42,7 @@ void GraphController::viewWillAppear() {
 
 void GraphController::didBecomeFirstResponder() {
   FunctionGraphController::didBecomeFirstResponder();
-  m_view.selectRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  m_view.selectRecord(recordAtSelectedCurveIndex());
 }
 
 bool GraphController::handleEvent(Ion::Events::Event event) {
@@ -229,13 +229,13 @@ Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) co
 }
 
 bool GraphController::displayDerivativeInBanner() const {
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  Ion::Storage::Record record = recordAtSelectedCurveIndex();
   return functionStore()->modelForRecord(record)->displayDerivative() &&
     functionStore()->modelForRecord(record)->canDisplayDerivative();
 }
 
  void GraphController::reloadBannerView() {
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  Ion::Storage::Record record = recordAtSelectedCurveIndex();
   bool displayDerivative = displayDerivativeInBanner();
   m_bannerView.setDisplayParameters(true, displayDerivative, false);
   FunctionGraphController::reloadBannerView();
@@ -246,7 +246,7 @@ bool GraphController::displayDerivativeInBanner() const {
 }
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  Ion::Storage::Record record = recordAtSelectedCurveIndex();
   assert(m_selectedSubCurveIndex < App::app()->functionStore()->modelForRecord(record)->numberOfSubCurves());
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
 }
@@ -259,7 +259,7 @@ int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedC
   }
   // Handle for sub curve in current function
   if (!goingUp) {
-    ExpiringPointer<ContinuousFunction> currentF = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(currentSelectedCurve));
+    ExpiringPointer<ContinuousFunction> currentF = functionStore()->modelForRecord(recordAtCurveIndex(currentSelectedCurve));
     if (currentF->numberOfSubCurves() > currentSubCurveIndex + 1) {
       // Switch to next sub curve
       *nextSubCurveIndex = currentSubCurveIndex + 1;
@@ -277,7 +277,7 @@ int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedC
   }
   if (goingUp) {
     // Select last sub curve in next function when going up
-    ExpiringPointer<ContinuousFunction> nextF = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(nextActiveFunctionIndex));
+    ExpiringPointer<ContinuousFunction> nextF = functionStore()->modelForRecord(recordAtCurveIndex(nextActiveFunctionIndex));
     *nextSubCurveIndex = nextF->numberOfSubCurves() - 1;
   } else {
     // Select first sub curve in next function
@@ -331,7 +331,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
   double nextT = 0.0;
   int nextSubCurve = 0;
   for (int i = 0; i < functionsCount; i++) {
-    Ion::Storage::Record currentRecord = functionStore()->activeRecordAtIndex(i);
+    Ion::Storage::Record currentRecord = recordAtCurveIndex(i);
     if (currentRecord == record) {
       continue;
     }

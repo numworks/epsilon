@@ -74,7 +74,7 @@ void SumLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColo
   // Render the Sum symbol.
   KDColor workingBuffer[SymbolWidth(font)*SymbolHeight(font)];
   KDRect symbolFrame(p.x() + std::max({0, (upperBoundSize.width()-SymbolWidth(font))/2, (lowerBoundNEqualsSize.width()-SymbolWidth(font))/2}),
-      p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline(font)-(SymbolHeight(font)+1)/2),
+      p.y() + std::max(upperBoundSize.height()+BoundVerticalMargin(font), argumentLayout()->baseline(font)-(SymbolHeight(font)+1)/2),
       SymbolWidth(font), SymbolHeight(font));
   ctx->blendRectWithMask(symbolFrame, expressionColor, (const uint8_t *)symbolPixel, (KDColor *)workingBuffer);
 

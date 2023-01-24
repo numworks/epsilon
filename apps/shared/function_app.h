@@ -21,12 +21,12 @@ public:
     Snapshot();
     CurveViewCursor * cursor() { return &m_cursor; }
     virtual FunctionStore * functionStore() = 0;
-    int * indexFunctionSelectedByCursor() { return &m_indexFunctionSelectedByCursor; }
+    int * selectedCurveIndex() { return &m_selectedCurveIndex; }
     void reset() override;
   protected:
     CurveViewCursor m_cursor;
   private:
-    int m_indexFunctionSelectedByCursor;
+    int m_selectedCurveIndex;
   };
   static FunctionApp * app() {
     return static_cast<FunctionApp *>(Escher::Container::activeApp());

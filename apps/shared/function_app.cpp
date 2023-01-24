@@ -6,12 +6,12 @@ using namespace Poincare;
 namespace Shared {
 
 FunctionApp::Snapshot::Snapshot() :
-  m_indexFunctionSelectedByCursor(0)
+  m_selectedCurveIndex(0)
 {
 }
 
 void FunctionApp::Snapshot::reset() {
-  m_indexFunctionSelectedByCursor = 0;
+  m_selectedCurveIndex = 0;
   setActiveTab(0);
 }
 

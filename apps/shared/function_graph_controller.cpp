@@ -15,9 +15,9 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor) :
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, int * selectedCurveIndex) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, I18n::Message::GraphCalculus),
-  m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
+  m_selectedCurveIndex(selectedCurveIndex)
 {
 }
 
@@ -25,7 +25,7 @@ void FunctionGraphController::didBecomeFirstResponder() {
   if (curveView()->hasFocus()) {
     bannerView()->abscissaValue()->setParentResponder(this);
     bannerView()->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
-    if (!isAlongY(*m_indexFunctionSelectedByCursor)) {
+    if (!isAlongY(*m_selectedCurveIndex)) {
       Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
     }
   } else {
@@ -42,11 +42,11 @@ void FunctionGraphController::viewWillAppear() {
   }
 
   InteractiveCurveViewController::viewWillAppear();
-  selectFunctionWithCursor(*m_indexFunctionSelectedByCursor, true);
+  selectFunctionWithCursor(*m_selectedCurveIndex, true);
 }
 
 bool FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
-  if (curveIndex != *m_indexFunctionSelectedByCursor) {
+  if (curveIndex != *m_selectedCurveIndex) {
     selectFunctionWithCursor(curveIndex, false);
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), textFieldDelegateApp()->localContext(), m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
@@ -59,9 +59,9 @@ bool FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
 }
 
 void FunctionGraphController::selectFunctionWithCursor(int functionIndex, bool willBeVisible) {
-  if (functionIndex != *m_indexFunctionSelectedByCursor) {
+  if (functionIndex != *m_selectedCurveIndex) {
     m_selectedSubCurveIndex = 0;
-    *m_indexFunctionSelectedByCursor = functionIndex;
+    *m_selectedCurveIndex = functionIndex;
   }
 
   Ion::Storage::Record r = recordAtCurveIndex(functionIndex);
@@ -167,7 +167,7 @@ void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {
-  int currentActiveFunctionIndex = *m_indexFunctionSelectedByCursor;
+  int currentActiveFunctionIndex = *m_selectedCurveIndex;
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   int nextSubCurve = 0;
   int nextActiveFunctionIndex = nextCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context, m_selectedSubCurveIndex, &nextSubCurve);
@@ -185,7 +185,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   m_cursor->moveTo(clippedT, cursorPosition.x1(), cursorPosition.x2());
   selectFunctionWithCursor(nextActiveFunctionIndex, true);
   // Prevent the abscissaValue from edition if the function is along y
-  Escher::Responder * responder = isAlongY(*m_indexFunctionSelectedByCursor) ? static_cast<Responder*>(this) : bannerView()->abscissaValue();
+  Escher::Responder * responder = isAlongY(*m_selectedCurveIndex) ? static_cast<Responder*>(this) : bannerView()->abscissaValue();
   if (Container::activeApp()->firstResponder() != responder) {
     Container::activeApp()->setFirstResponder(responder);
   }
@@ -194,14 +194,14 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
 }
 
 bool FunctionGraphController::selectedModelIsValid() const {
-  int curveIndex = *m_indexFunctionSelectedByCursor;
+  int curveIndex = *m_selectedCurveIndex;
   return curveIndex < numberOfCurves() && m_selectedSubCurveIndex < numberOfSubCurves(curveIndex);
 }
 
 Poincare::Coordinate2D<double> FunctionGraphController::selectedModelXyValues(double t) const {
   assert(selectedModelIsValid());
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  return xyValues(*m_indexFunctionSelectedByCursor, t, context, m_selectedSubCurveIndex);
+  return xyValues(*m_selectedCurveIndex, t, context, m_selectedSubCurveIndex);
 }
 
 AbstractPlotView * FunctionGraphController::curveView() {

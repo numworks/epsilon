@@ -13,8 +13,8 @@ using namespace Escher;
 
 namespace Sequence {
 
-GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, CurveViewRange * interactiveRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, SequenceStore * sequenceStore) :
-  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, &m_view, cursor, indexFunctionSelectedByCursor),
+GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, CurveViewRange * interactiveRange, CurveViewCursor * cursor, int * selectedCurveIndex, SequenceStore * sequenceStore) :
+  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, &m_view, cursor, selectedCurveIndex),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(sequenceStore, interactiveRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(interactiveRange),

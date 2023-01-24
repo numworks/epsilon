@@ -25,7 +25,7 @@ void FunctionGraphController::didBecomeFirstResponder() {
   if (curveView()->hasFocus()) {
     bannerView()->abscissaValue()->setParentResponder(this);
     bannerView()->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
-    if (!isAlongY(indexFunctionSelectedByCursor())) {
+    if (!isAlongY(*m_indexFunctionSelectedByCursor)) {
       Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
     }
   } else {
@@ -42,7 +42,7 @@ void FunctionGraphController::viewWillAppear() {
   }
 
   InteractiveCurveViewController::viewWillAppear();
-  selectFunctionWithCursor(indexFunctionSelectedByCursor(), true);
+  selectFunctionWithCursor(*m_indexFunctionSelectedByCursor, true);
 }
 
 bool FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
@@ -167,7 +167,7 @@ void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {
-  int currentActiveFunctionIndex = indexFunctionSelectedByCursor();
+  int currentActiveFunctionIndex = *m_indexFunctionSelectedByCursor;
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   int nextSubCurve = 0;
   int nextActiveFunctionIndex = nextCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context, m_selectedSubCurveIndex, &nextSubCurve);
@@ -185,7 +185,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   m_cursor->moveTo(clippedT, cursorPosition.x1(), cursorPosition.x2());
   selectFunctionWithCursor(nextActiveFunctionIndex, true);
   // Prevent the abscissaValue from edition if the function is along y
-  Escher::Responder * responder = isAlongY(indexFunctionSelectedByCursor()) ? static_cast<Responder*>(this) : bannerView()->abscissaValue();
+  Escher::Responder * responder = isAlongY(*m_indexFunctionSelectedByCursor) ? static_cast<Responder*>(this) : bannerView()->abscissaValue();
   if (Container::activeApp()->firstResponder() != responder) {
     Container::activeApp()->setFirstResponder(responder);
   }
@@ -194,14 +194,14 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
 }
 
 bool FunctionGraphController::selectedModelIsValid() const {
-  int curveIndex = indexFunctionSelectedByCursor();
+  int curveIndex = *m_indexFunctionSelectedByCursor;
   return curveIndex < numberOfCurves() && m_selectedSubCurveIndex < numberOfSubCurves(curveIndex);
 }
 
 Poincare::Coordinate2D<double> FunctionGraphController::selectedModelXyValues(double t) const {
   assert(selectedModelIsValid());
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  return xyValues(indexFunctionSelectedByCursor(), t, context, m_selectedSubCurveIndex);
+  return xyValues(*m_indexFunctionSelectedByCursor, t, context, m_selectedSubCurveIndex);
 }
 
 AbstractPlotView * FunctionGraphController::curveView() {

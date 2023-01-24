@@ -8,8 +8,6 @@
 
 namespace Poincare {
 
-constexpr KDCoordinate SequenceLayoutNode::k_symbolWidth;
-
 void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == upperBoundLayout())
   {
@@ -164,13 +162,13 @@ KDSize SequenceLayoutNode::computeSize(KDFont::Size font) {
     argumentSize.width() + 2*ParenthesisLayoutNode::k_parenthesisWidth,
     ParenthesisLayoutNode::HeightGivenChildHeight(argumentSize.height()));
   KDSize result = KDSize(
-    std::max({k_symbolWidth, totalLowerBoundSize.width(), upperBoundSize.width()})+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
-    baseline(font) + std::max(k_symbolHeight/2+k_boundHeightMargin+totalLowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline(font)));
+    std::max({SymbolWidth(font), totalLowerBoundSize.width(), upperBoundSize.width()})+k_argumentWidthMargin+argumentSizeWithParentheses.width(),
+    baseline(font) + std::max(SymbolHeight(font)/2+k_boundHeightMargin+totalLowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline(font)));
   return result;
 }
 
 KDCoordinate SequenceLayoutNode::computeBaseline(KDFont::Size font) {
-  return std::max<KDCoordinate>(upperBoundLayout()->layoutSize(font).height()+k_boundHeightMargin+(k_symbolHeight+1)/2, argumentLayout()->baseline(font));
+  return std::max<KDCoordinate>(upperBoundLayout()->layoutSize(font).height()+k_boundHeightMargin+(SymbolHeight(font)+1)/2, argumentLayout()->baseline(font));
 }
 
 KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
@@ -181,15 +179,15 @@ KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
   KDCoordinate y = 0;
   if (l == variableLayout()) {
     x = completeLowerBoundX(font);
-    y = baseline(font) + k_symbolHeight/2 + k_boundHeightMargin + subscriptBaseline(font) - variableLayout()->baseline(font);
+    y = baseline(font) + SymbolHeight(font)/2 + k_boundHeightMargin + subscriptBaseline(font) - variableLayout()->baseline(font);
   } else if (l == lowerBoundLayout()) {
     x = completeLowerBoundX(font) + equalSize.width() + variableSize.width();
-    y = baseline(font) + k_symbolHeight/2 + k_boundHeightMargin + subscriptBaseline(font) - lowerBoundLayout()->baseline(font);
+    y = baseline(font) + SymbolHeight(font)/2 + k_boundHeightMargin + subscriptBaseline(font) - lowerBoundLayout()->baseline(font);
   } else if (l == upperBoundLayout()) {
-    x = std::max({0, (k_symbolWidth-upperBoundSize.width())/2, (lowerBoundSizeWithVariableEquals(font).width()-upperBoundSize.width())/2});
-    y = baseline(font) - (k_symbolHeight+1)/2- k_boundHeightMargin-upperBoundSize.height();
+    x = std::max({0, (SymbolWidth(font)-upperBoundSize.width())/2, (lowerBoundSizeWithVariableEquals(font).width()-upperBoundSize.width())/2});
+    y = baseline(font) - (SymbolHeight(font)+1)/2- k_boundHeightMargin-upperBoundSize.height();
   } else if (l == argumentLayout()) {
-    x = std::max({k_symbolWidth, lowerBoundSizeWithVariableEquals(font).width(), upperBoundSize.width()})+k_argumentWidthMargin+ParenthesisLayoutNode::k_parenthesisWidth;
+    x = std::max({SymbolWidth(font), lowerBoundSizeWithVariableEquals(font).width(), upperBoundSize.width()})+k_argumentWidthMargin+ParenthesisLayoutNode::k_parenthesisWidth;
     y = baseline(font) - argumentLayout()->baseline(font);
   } else {
     assert(false);
@@ -256,7 +254,7 @@ void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, K
 
 KDCoordinate SequenceLayoutNode::completeLowerBoundX(KDFont::Size font) {
   KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
- return std::max({0, (k_symbolWidth-lowerBoundSizeWithVariableEquals(font).width())/2,
+ return std::max({0, (SymbolWidth(font)-lowerBoundSizeWithVariableEquals(font).width())/2,
           (upperBoundSize.width()-lowerBoundSizeWithVariableEquals(font).width())/2});
 }
 

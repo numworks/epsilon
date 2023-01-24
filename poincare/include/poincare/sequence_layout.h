@@ -8,8 +8,17 @@ namespace Poincare {
 
 class SequenceLayoutNode : public LayoutNode {
 public:
-  constexpr static KDCoordinate k_symbolHeight = 29;
-  constexpr static KDCoordinate k_symbolWidth = 22;
+  constexpr static KDCoordinate k_symbolHeightLargeFont = 29;
+  constexpr static KDCoordinate k_symbolWidthLargeFont = 22;
+  constexpr static KDCoordinate k_symbolHeightSmallFont = 21;
+  constexpr static KDCoordinate k_symbolWidthSmallFont = 16;
+
+  constexpr static KDCoordinate SymbolHeight(KDFont::Size font) {
+    return font == KDFont::Size::Large ? k_symbolHeightLargeFont : k_symbolHeightSmallFont;
+  }
+  constexpr static KDCoordinate SymbolWidth(KDFont::Size font) {
+    return font == KDFont::Size::Large ? k_symbolWidthLargeFont : k_symbolWidthSmallFont;
+  }
 
   using LayoutNode::LayoutNode;
 

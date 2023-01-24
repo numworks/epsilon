@@ -64,7 +64,7 @@ protected:
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;
 
-  void selectFunctionWithCursor(int functionIndex, bool willBeVisible);
+  void selectCurveAtIndex(int curveIndex, bool willBeVisible);
   virtual double defaultCursorT(Ion::Storage::Record record, bool ignoreMargins);
   virtual FunctionStore * functionStore() const;
   virtual int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {

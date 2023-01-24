@@ -9,43 +9,6 @@ include poincare_junior/omgpj/Makefile
 poincare_junior_src += $(omgpj_src)
 
 poincare_junior_src += $(addprefix poincare_junior/src/,\
-  expression/algebraic.o \
-  expression/approximation.o \
-  expression/comparison.o \
-  expression/integer.o \
-  expression/polynomial.o \
-  expression/rational.o \
-  expression/simplification.o \
-  expression/set.o \
-  expression/symbol.o \
-  expression.o \
-  memory/cache_pool.o \
-  memory/cache_reference.o \
-  memory/edition_pool.o \
-  memory/edition_reference.o \
-  memory/exception_checkpoint.o \
-  memory/node.o \
-  memory/pattern_matching.o \
-  memory/pool.o \
-  n_ary.o \
-)
-
-poincare_junior_src += $(addprefix poincare_junior/test/,\
-  calculation.o \
-  elementary_tree_manipulations.o \
-  expression_comparison.o \
-  graph.o \
-  main.o \
-  memory_elements.o \
-  memory_edition.o \
-  memory_cache.o \
-  polynomial.o \
-  set.o \
-)
-poincare_junior_src += ion/src/simulator/shared/crc32.o
-poincare_junior_src += ion/src/shared/crc32_eat_byte.o
-
-tests_src += $(addprefix poincare_junior/src/,\
   expression/algebraic.cpp \
   expression/approximation.cpp \
   expression/comparison.cpp \
@@ -86,5 +49,7 @@ tests_src += $(addprefix poincare_junior/omgpj/src/,\
   memory.cpp \
   list.cpp \
 )
+
+tests_src += $(poincare_junior_src)
 
 SFLAGS += -DPOINCARE_MEMORY_TREE_LOG=1

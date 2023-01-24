@@ -178,7 +178,7 @@ Event getPlatformEvent() {
        * modifiers status. Indeed, on the device, this is done in the
        * updateModifiersFromEvent function that's called from sharedGetEvent,
        * but we're past this point. So we need to enforce it. */
-        Events::removeShift();
+        Events::SharedModifierState->removeShift();
         break;
       }
     }

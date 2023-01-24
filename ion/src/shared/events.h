@@ -3,20 +3,50 @@
 
 #include <ion/events.h>
 #include <ion/keyboard.h>
+#include <omg/global_box.h>
 
 namespace Ion {
 namespace Events {
 
+class State {
+public:
+  State() :
+    m_lastEvent(Events::None),
+    m_lastKeyboardState(0),
+    m_currentKeyboardState(0),
+    m_keysSeenUp(-1),
+    m_lastEventShift(false),
+    m_lastEventAlpha(false),
+    m_idleWasSent(false)
+  {}
+  Event sharedGetEvent(int * timeout);
+  void resetKeyboardState();
+private:
+  Event privateSharedGetEvent(int * timeout);
+
+  Event m_lastEvent;
+  Keyboard::State m_lastKeyboardState;
+  Keyboard::State m_currentKeyboardState;
+  uint64_t m_keysSeenUp;
+  /* WARNING: It seems that if there are not exactly 3 bools here, the input
+   * repetition breaks on n0120, but we do not know why. */
+  bool m_lastEventShift;
+  bool m_lastEventAlpha;
+  bool m_idleWasSent;
+};
+
+extern OMG::GlobalBox<State> SharedState;
+
+// Functions defined in events.cpp
 Event sharedGetEvent(int * timeout);
 size_t sharedCopyText(uint8_t eventId, char * buffer, size_t bufferSize);
 bool sharedIsDefined(uint8_t eventId);
+void resetKeyboardState();
 
-/* Platform specific functions */
-
+// Externally-provided functions
 bool handlePreemption(bool stalling);
 void setPreemptiveKeyboardState(Keyboard::State s);
 void resetPreemptiveKeyboardState();
-void resetKeyboardState();
 
 Event getPlatformEvent();
 void didPressNewKey();

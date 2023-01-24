@@ -14,6 +14,7 @@ void TrigonometryListController::setExpression(Expression e) {
   IllustratedExpressionsListController::setExpression(e);
 
   Poincare::Preferences * preferences = Preferences::sharedPreferences();
+  Poincare::Preferences::AngleUnit angleUnit = preferences->angleUnit();
   Context * context = App::app()->localContext();
   size_t index = 0;
 
@@ -21,18 +22,9 @@ void TrigonometryListController::setExpression(Expression e) {
   Shared::PoincareHelpers::ReduceAndRemoveUnit(&e, context, ReductionTarget::User, &unit);
   assert(unit.isUninitialized() || static_cast<Unit &>(unit).representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector());
 
-  // Convert angle in radian once for all
-  if (unit.isUninitialized() && preferences->angleUnit() != Preferences::AngleUnit::Radian) {
-    e = Multiplication::Builder(e, Trigonometry::UnitConversionFactor(preferences->angleUnit(), Preferences::AngleUnit::Radian));
-  }
-
-  Poincare::Preferences preferencesRadian = *preferences;
-  preferencesRadian.setAngleUnit(Preferences::AngleUnit::Radian);
-
-  // Compute angle modulus 2π
-  Expression twoPi = Multiplication::Builder(Rational::Builder(2), Poincare::Constant::PiBuilder());
+  Expression period = Multiplication::Builder(Rational::Builder(2), Trigonometry::PiExpressionInAngleUnit(angleUnit));
   // Use the reduction of frac part to compute mod 1 on rationals
-  Expression simplifiedAngle = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
+  Expression simplifiedAngle = Multiplication::Builder(FracPart::Builder(Division::Builder(e, period.clone())), period.clone());
   Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context, ReductionTarget::User);
   /* Approximate the angle if the fractional part could not be reduced (because
    * the angle is not a multiple of pi), or if displaying the exact expression
@@ -42,11 +34,11 @@ void TrigonometryListController::setExpression(Expression e) {
      * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
      * the same sine and cosine. */
     Expression angleApproximate = ArcCosine::Builder(Cosine::Builder(e));
-    angleApproximate = Shared::PoincareHelpers::Approximate<double>(angleApproximate, context, &preferencesRadian);
+    angleApproximate = Shared::PoincareHelpers::Approximate<double>(angleApproximate, context, preferences);
     /* acos has its values in [0,π[, use the sign of the sine to find the right
      * semicircle. */
-    if (Shared::PoincareHelpers::ApproximateToScalar<double>(Sine::Builder(e), context, &preferencesRadian) < 0) {
-      angleApproximate = Shared::PoincareHelpers::Approximate<double>(Subtraction::Builder(twoPi.clone(), angleApproximate), context, &preferencesRadian);
+    if (Shared::PoincareHelpers::ApproximateToScalar<double>(Sine::Builder(e), context, preferences) < 0) {
+      angleApproximate = Shared::PoincareHelpers::Approximate<double>(Subtraction::Builder(period.clone(), angleApproximate), context, preferences);
     }
     e = angleApproximate;
     m_anglesAreEqual = false;
@@ -54,21 +46,26 @@ void TrigonometryListController::setExpression(Expression e) {
     e = simplifiedAngle;
     m_anglesAreEqual = true;
   }
+
   m_layouts[index] = LayoutHelper::String("θ");
-  Expression radian = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex);
+  Expression radians = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex);
   Expression degrees = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_degreeRepresentativeIndex);
-  Expression inRadian = Multiplication::Builder(e, radian);
-  m_exactLayouts[index] = getLayoutFromExpression(inRadian, context, &preferencesRadian);
-  m_approximatedLayouts[index] = getLayoutFromExpression(UnitConvert::Builder(inRadian, degrees), context, &preferencesRadian);
+  Expression gradians = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_gradianRepresentativeIndex);
+  Expression withAngleUnit = Multiplication::Builder(e.clone(), angleUnit == Preferences::AngleUnit::Degree ? degrees.clone() : (angleUnit == Preferences::AngleUnit::Radian ? radians.clone() : gradians.clone()));
+
+  m_exactLayouts[index] = getLayoutFromExpression(UnitConvert::Builder(withAngleUnit.clone(), radians), context, preferences);
+  m_approximatedLayouts[index] = getLayoutFromExpression(UnitConvert::Builder(withAngleUnit, degrees), context, preferences);
   index++;
 
   Expression theta = Symbol::Builder(k_symbol);
-  setLineAtIndex(index++, Cosine::Builder(theta), Cosine::Builder(e), context, &preferencesRadian);
-  setLineAtIndex(index++, Sine::Builder(theta), Sine::Builder(e), context, &preferencesRadian);
-  setLineAtIndex(index++, Tangent::Builder(theta), Tangent::Builder(e), context, &preferencesRadian);
+  setLineAtIndex(index++, Cosine::Builder(theta), Cosine::Builder(e.clone()), context, preferences);
+  setLineAtIndex(index++, Sine::Builder(theta), Sine::Builder(e.clone()), context, preferences);
+  setLineAtIndex(index++, Tangent::Builder(theta), Tangent::Builder(e.clone()), context, preferences);
 
   // Set illustration
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(e, context);
+  // Convert angle to radians
+  angle = angle * M_PI / Trigonometry::PiInAngleUnit(angleUnit);
   assert(std::isfinite(angle));
   m_model.setAngle(angle);
   setShowIllustration(true);

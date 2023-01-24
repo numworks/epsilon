@@ -103,7 +103,7 @@ public:
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;
 
-  AbstractLabeledAxis() : m_hidden(false) {}
+  AbstractLabeledAxis() : m_lastDrawnRect(KDRectZero), m_hidden(false) {}
 
   void reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) override;
   void setOtherAxis(bool other) override { m_otherAxis = other; }
@@ -114,12 +114,13 @@ protected:
   virtual char * mutableLabel(int i) = 0;
   const char * label(int i) const { return const_cast<AbstractLabeledAxis *>(this)->mutableLabel(i); }
   virtual int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis);
-  virtual bool labelWillBeDisplayed(int i, KDRect rect) const { return true; }
+  virtual bool labelWillBeDisplayed(int i, KDRect rect) const;
   KDRect labelRect(int i, float t, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
   void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color = k_color) const override;
   void computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
 
   mutable float m_labelsPosition;
+  mutable KDRect m_lastDrawnRect;
   mutable AbstractPlotView::RelativePosition m_relativePosition : 2;
   bool m_hidden : 1;
   bool m_otherAxis : 1;

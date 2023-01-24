@@ -41,8 +41,8 @@ CartesianConic::CartesianConic(const Expression e, Context * context, const char
    * A*x^2 + B*x*y + C*y^2 + D*x + E*y + F = 0
    * In this constructor, we extract the coefficients parameters.
    * We then compute the conic's type and canonize the coefficients. */
-  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
-  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences->complexFormat();
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   SymbolicComputation symbolicComputation = SymbolicComputation::DoNotReplaceAnySymbol;
   // Reduce Conic for analysis
@@ -389,7 +389,7 @@ double CartesianConic::getParameter() const {
   assert(isCanonical());
   assert(m_shape == Shape::Parabola);
   double defaultParameter = std::abs(m_e) / 2;
-  return Preferences::sharedPreferences()->parabolaParameter() == Preferences::ParabolaParameter::FocalLength ? defaultParameter / 2 : defaultParameter;
+  return Preferences::sharedPreferences->parabolaParameter() == Preferences::ParabolaParameter::FocalLength ? defaultParameter / 2 : defaultParameter;
 }
 
 void CartesianConic::getSummit(double * sx, double * sy) const {
@@ -408,8 +408,8 @@ double CartesianConic::getRadius() const {
 }
 
 PolarConic::PolarConic(const Expression& e, Context * context, const char * theta) {
-  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
-  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences->complexFormat();
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   // Reduce Conic for analysis
   ReductionContext reductionContext = ReductionContext(context, complexFormat, angleUnit, unitFormat, ReductionTarget::SystemForAnalysis);
@@ -486,8 +486,8 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
 }
 
 ParametricConic::ParametricConic(const Expression& e, Context * context, const char * symbol) {
-  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
-  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences->complexFormat();
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
   // Reduce Conic for analysis
   ReductionContext reductionContext = ReductionContext(context, complexFormat, angleUnit, unitFormat, ReductionTarget::SystemForAnalysis);

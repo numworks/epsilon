@@ -97,7 +97,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
         double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(pixelWidth));
         t = magnitude * std::round(t / magnitude);
         // Also round t so that f(x) matches f evaluated at displayed x
-        t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, context, Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
+        t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, context, Preferences::sharedPreferences->numberOfSignificantDigits(), pixelWidth, false);
       }
     }
     // Snap to interest could have corrupted ExpiringPointer
@@ -109,7 +109,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     step = (tMax-tMin)/k_definitionDomainDivisor;
     t += dir * step * scrollSpeed;
     // If possible, round t so that f(x) matches f evaluated at displayed x
-    t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences()->numberOfSignificantDigits(), 0.05 * step, true);
+    t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences->numberOfSignificantDigits(), 0.05 * step, true);
   }
   // t must have changed
   assert(tCursorPosition != t);
@@ -162,7 +162,7 @@ double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Sh
   char buffer[bufferSize];
   int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize);
   assert(function->canDisplayDerivative());
-  Poincare::Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "=%*.*ed", derivative, Poincare::Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits());
+  Poincare::Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "=%*.*ed", derivative, Poincare::Preferences::sharedPreferences->displayMode(), Preferences::sharedPreferences->numberOfSignificantDigits());
   bannerView()->derivativeView()->setText(buffer);
   bannerView()->reload();
 

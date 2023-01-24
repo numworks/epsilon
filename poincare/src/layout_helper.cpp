@@ -154,7 +154,7 @@ Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
 
   int baseIndex;
   VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::VerticalPosition::Subscript);
-  if (Preferences::sharedPreferences()->logarithmBasePosition() == Preferences::LogarithmBasePosition::TopLeft) {
+  if (Preferences::sharedPreferences->logarithmBasePosition() == Preferences::LogarithmBasePosition::TopLeft) {
     baseIndex = 0;
     offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix);
   } else {

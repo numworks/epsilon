@@ -10,7 +10,7 @@ namespace OnBoarding {
 int LocalizationController::indexOfCellToSelectOnReset() const {
   return mode() == Mode::Language ?
     Shared::LocalizationController::indexOfCellToSelectOnReset() :
-    IndexOfCountry(I18n::DefaultCountryForLanguage[static_cast<uint8_t>(GlobalPreferences::sharedGlobalPreferences()->language())]);
+    IndexOfCountry(I18n::DefaultCountryForLanguage[static_cast<uint8_t>(GlobalPreferences::sharedGlobalPreferences->language())]);
 }
 
 bool LocalizationController::handleEvent(Ion::Events::Event event) {

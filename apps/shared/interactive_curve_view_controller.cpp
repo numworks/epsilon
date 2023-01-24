@@ -169,7 +169,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(AbstractTextField
   }
   /* If possible, round floatBody so that we go to the evaluation of the
    * displayed floatBody */
-  floatBody = FunctionBannerDelegate::GetValueDisplayedOnBanner(floatBody, textFieldDelegateApp()->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), curveView()->pixelWidth(), false);
+  floatBody = FunctionBannerDelegate::GetValueDisplayedOnBanner(floatBody, textFieldDelegateApp()->localContext(), Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(), curveView()->pixelWidth(), false);
   moveCursorAndCenterIfNeeded(floatBody);
   return true;
 }

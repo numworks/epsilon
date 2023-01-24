@@ -105,7 +105,7 @@ void GraphController::SeriesSelectionController::willDisplayCellForIndex(Highlig
 }
 
 bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  int length = Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%s=", GlobalPreferences::sharedGlobalPreferences()->yPredictedSymbol());
+  int length = Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%s=", GlobalPreferences::sharedGlobalPreferences->yPredictedSymbol());
   if (length >= static_cast<int>(bufferSize)) {
     return false;
   }
@@ -120,8 +120,8 @@ bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize
 // SimpleInteractiveCurveViewController
 
 void GraphController::reloadBannerView() {
-  const int significantDigits = Preferences::sharedPreferences()->numberOfSignificantDigits();
-  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
+  const int significantDigits = Preferences::sharedPreferences->numberOfSignificantDigits();
+  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences->displayMode();
 
   // If any coefficient is NAN, display that data is not suitable
   bool coefficientsAreDefined = m_store->coefficientsAreDefined(*m_selectedSeriesIndex, globalContext());
@@ -162,7 +162,7 @@ void GraphController::reloadBannerView() {
   double y = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 1) : m_cursor->y();
   Poincare::Print::CustomPrintf(
     buffer, k_bannerViewTextBufferSize, "%s=%*.*ed",
-    (displayMean ? "y\xCC\x85" : (displayEquation ? GlobalPreferences::sharedGlobalPreferences()->yPredictedSymbol() : "y")),
+    (displayMean ? "y\xCC\x85" : (displayEquation ? GlobalPreferences::sharedGlobalPreferences->yPredictedSymbol() : "y")),
     y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 

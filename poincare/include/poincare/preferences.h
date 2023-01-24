@@ -4,6 +4,7 @@
 #include <poincare/context.h>
 #include <ion/include/ion/persisting_bytes.h>
 #include <omg/bit_helper.h>
+#include <omg/global_box.h>
 #include <assert.h>
 #include <stdint.h>
 
@@ -131,9 +132,9 @@ public:
 #endif
 
   Preferences();
-  static Preferences * sharedPreferences();
+  static OMG::GlobalBox<Preferences> sharedPreferences;
 
-  static Preferences ClonePreferencesWithNewComplexFormat(ComplexFormat complexFormat, Preferences * preferences = sharedPreferences());
+  static Preferences ClonePreferencesWithNewComplexFormat(ComplexFormat complexFormat, Preferences * preferences = sharedPreferences);
 
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(ComplexFormat complexFormat, const Expression & e, Context * context);
 

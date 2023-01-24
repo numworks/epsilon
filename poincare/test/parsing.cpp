@@ -55,7 +55,7 @@ void assert_text_not_parsable(const char * text, Context * context = nullptr) {
 
 void assert_parsed_expression_is(const char * expression, Poincare::Expression r, bool addParentheses = false, bool parseForAssignment = false, Preferences::MixedFractions mixedFractionsParameter = Preferences::MixedFractions::Enabled) {
   Shared::GlobalContext context;
-  Preferences::sharedPreferences()->enableMixedFractions(mixedFractionsParameter);
+  Preferences::sharedPreferences->enableMixedFractions(mixedFractionsParameter);
   Expression e = parse_expression(expression, &context, addParentheses, parseForAssignment);
   quiz_assert_print_if_failure(e.isIdenticalTo(r), expression);
 }

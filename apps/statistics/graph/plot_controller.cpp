@@ -50,8 +50,8 @@ bool PlotController::reloadBannerView() {
   }
   KDCoordinate previousHeight = m_bannerView.minimalSizeForOptimalDisplay().height();
 
-  int precision = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
-  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
+  int precision = Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
+  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences->displayMode();
   constexpr static int k_bufferSize = 1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
   char buffer[k_bufferSize] = "";
 

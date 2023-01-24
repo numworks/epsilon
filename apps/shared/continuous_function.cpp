@@ -96,7 +96,7 @@ int ContinuousFunction::printValue(double cursorT, double cursorX, double cursor
 
 
   if (thisProperties.isParametric()) {
-    Preferences::PrintFloatMode mode = Poincare::Preferences::sharedPreferences()->displayMode();
+    Preferences::PrintFloatMode mode = Poincare::Preferences::sharedPreferences->displayMode();
     return Poincare::Print::CustomPrintf(buffer, bufferSize, "(%*.*ed;%*.*ed)", cursorX, mode, precision, cursorY, mode, precision);
   }
   if (thisProperties.isPolar()) {
@@ -145,7 +145,7 @@ bool ContinuousFunction::isNamed() const {
 
 bool ContinuousFunction::isDiscontinuousBetweenFloatValues(float x1, float x2, Poincare::Context * context) const {
   Expression equation = expressionReduced(context);
-  return equation.isDiscontinuousBetweenValuesForSymbol(k_unknownName, x1, x2, context, complexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
+  return equation.isDiscontinuousBetweenValuesForSymbol(k_unknownName, x1, x2, context, complexFormat(context), Poincare::Preferences::sharedPreferences->angleUnit());
 }
 
 void ContinuousFunction::getLineParameters(double * slope, double * intercept, Context * context) const {
@@ -155,7 +155,7 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
-      k_unknownName, coefficients, context, complexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(),
+      k_unknownName, coefficients, context, complexFormat(context), Poincare::Preferences::sharedPreferences->angleUnit(),
       ContinuousFunctionProperties::k_defaultUnitFormat,
       SymbolicComputation::
           ReplaceAllSymbolsWithDefinitionsOrUndefined);
@@ -166,11 +166,11 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
     *slope = NAN;
     *intercept = NAN;
   } else {
-    *intercept = coefficients[0].approximateToScalar<double>(context, complexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
+    *intercept = coefficients[0].approximateToScalar<double>(context, complexFormat(context), Poincare::Preferences::sharedPreferences->angleUnit());
     if (d == 0) {
       *slope = 0.0;
     } else {
-      *slope = coefficients[1].approximateToScalar<double>(context, complexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
+      *slope = coefficients[1].approximateToScalar<double>(context, complexFormat(context), Poincare::Preferences::sharedPreferences->angleUnit());
     }
   }
 }
@@ -270,7 +270,7 @@ void ContinuousFunction::setTAuto(bool tAuto) {
 }
 
 float ContinuousFunction::autoTMax() const {
-  return properties().isCartesian() ? INFINITY : 2.0 * Trigonometry::PiInAngleUnit(Preferences::sharedPreferences()->angleUnit());
+  return properties().isCartesian() ? INFINITY : 2.0 * Trigonometry::PiInAngleUnit(Preferences::sharedPreferences->angleUnit());
 }
 
 float ContinuousFunction::autoTMin() const {
@@ -315,7 +315,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Context * 
   if (!properties().isPolar()) {
     return x1x2;
   }
-  const T angle = x1x2.x1() * M_PI / Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit());
+  const T angle = x1x2.x1() * M_PI / Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences->angleUnit());
   return Coordinate2D<T>(x1x2.x2() * std::cos(angle),
                          x1x2.x2() * std::sin(angle));
 }

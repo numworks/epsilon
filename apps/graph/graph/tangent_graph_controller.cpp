@@ -73,11 +73,11 @@ void TangentGraphController::reloadBannerView() {
   int precision = numberOfSignificantDigits();
 
   double coefficientA = GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", coefficientA, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", coefficientA, Poincare::Preferences::sharedPreferences->displayMode(), precision);
   m_bannerView->aView()->setText(buffer);
 
   double coefficientB = -coefficientA * m_cursor->x() + m_cursor->y();
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "b=%*.*ed", coefficientB, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "b=%*.*ed", coefficientB, Poincare::Preferences::sharedPreferences->displayMode(), precision);
   m_bannerView->bView()->setText(buffer);
   m_bannerView->reload();
 }

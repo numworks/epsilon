@@ -132,11 +132,11 @@ void assert_solves_numerically_to(const char * equation, double min, double max,
 }
 
 void set_complex_format(Preferences::ComplexFormat format) {
-  Preferences::sharedPreferences()->setComplexFormat(format);
+  Preferences::sharedPreferences->setComplexFormat(format);
 }
 void reset_complex_format() {
   Preferences defaultPreferences;
-  Preferences::sharedPreferences()->setComplexFormat(defaultPreferences.complexFormat());
+  Preferences::sharedPreferences->setComplexFormat(defaultPreferences.complexFormat());
 }
 
 void set(const char * variable, const char * value) {
@@ -155,9 +155,9 @@ void set(const char * variable, const char * value) {
   Expression e = Expression::ParseAndSimplify(
     buffer,
     &solverContext,
-    Preferences::sharedPreferences()->complexFormat(),
-    Preferences::sharedPreferences()->angleUnit(),
-    GlobalPreferences::sharedGlobalPreferences()->unitFormat()
+    Preferences::sharedPreferences->complexFormat(),
+    Preferences::sharedPreferences->angleUnit(),
+    GlobalPreferences::sharedGlobalPreferences->unitFormat()
   );
   static_cast<Store&>(e).storeValueForSymbol(&globalContext);
 }

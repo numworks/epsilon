@@ -668,7 +668,7 @@ Layout HorizontalLayout::squashUnaryHierarchyInPlace() {
 }
 
 void HorizontalLayout::serializeChildren(int firstIndex, int lastIndex, char * buffer, int bufferSize) {
-  static_cast<HorizontalLayoutNode *>(node())->serializeChildrenBetweenIndexes(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), true, firstIndex, lastIndex);
+  static_cast<HorizontalLayoutNode *>(node())->serializeChildrenBetweenIndexes(buffer, bufferSize, Poincare::Preferences::sharedPreferences->displayMode(), Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(), true, firstIndex, lastIndex);
 }
 
 void HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, bool shouldRemoveOnRight, LayoutCursor * cursor) {

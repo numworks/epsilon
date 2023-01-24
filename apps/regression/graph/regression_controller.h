@@ -29,7 +29,7 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfCells; }
   int numberOfRows() const override {
-    return GlobalPreferences::sharedGlobalPreferences()->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Default ? k_defaultNumberOfRows : k_variantNumberOfRows;
+    return GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Default ? k_defaultNumberOfRows : k_variantNumberOfRows;
   }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
@@ -76,10 +76,10 @@ private:
   constexpr static int VariantIndexOfModelType(Model::Type type) { return VariantModelIndex[static_cast<int>(type)]; }
 
   static Model::Type ModelTypeAtIndex(int index) {
-    return GlobalPreferences::sharedGlobalPreferences()->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Default ? DefaultModelTypeAtIndex(index) : VariantModelTypeAtIndex(index);
+    return GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Default ? DefaultModelTypeAtIndex(index) : VariantModelTypeAtIndex(index);
   }
   static int IndexOfModelType(Model::Type type) {
-    return GlobalPreferences::sharedGlobalPreferences()->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Default ? DefaultIndexOfModelType(type) : VariantIndexOfModelType(type);
+    return GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Default ? DefaultIndexOfModelType(type) : VariantIndexOfModelType(type);
   }
   constexpr static int k_numberOfCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::TabHeight + 2 * Escher::Metric::StackTitleHeight); // Remaining cell can be above and below so we add +2
   constexpr static KDFont::Size k_modelLayoutFont = KDFont::Size::Small;

@@ -28,8 +28,8 @@ void ResidualPlotController::updateCursor() {
   m_cursor.moveTo(x, x, y);
   m_cursorView.setColor(Escher::Palette::DataColor[m_selectedSeriesIndex]);
 
-  const int significantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
-  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
+  const int significantDigits = Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
+  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences->displayMode();
   constexpr size_t bufferSize = Shared::BannerView::k_maxLengthDisplayed - 2; // -2 for "x="
   char buffer[bufferSize];
 

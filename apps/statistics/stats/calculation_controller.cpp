@@ -227,7 +227,7 @@ int CalculationController::typeAtLocation(int i, int j) {
 int CalculationController::findCellIndex(int i) const {
   int returnIndex = 0;
   while (returnIndex <= fixedNumberOfRows()) {
-    if (i == (GlobalPreferences::sharedGlobalPreferences()->statsRowsLayout() == CountryPreferences::StatsRowsLayout::Variant1 ? k_calculationRows[returnIndex].variant1Index : k_calculationRows[returnIndex].defaultIndex)) {
+    if (i == (GlobalPreferences::sharedGlobalPreferences->statsRowsLayout() == CountryPreferences::StatsRowsLayout::Variant1 ? k_calculationRows[returnIndex].variant1Index : k_calculationRows[returnIndex].defaultIndex)) {
       return returnIndex;
     }
     returnIndex++;
@@ -238,7 +238,7 @@ int CalculationController::findCellIndex(int i) const {
 
 int CalculationController::fixedNumberOfRows() const {
   // Hide SampleMean under default StatsRowLayout
-  return GlobalPreferences::sharedGlobalPreferences()->statsRowsLayout() == CountryPreferences::StatsRowsLayout::Variant1 ? k_fixedMaxNumberOfRows : k_fixedMaxNumberOfRows - 1;
+  return GlobalPreferences::sharedGlobalPreferences->statsRowsLayout() == CountryPreferences::StatsRowsLayout::Variant1 ? k_fixedMaxNumberOfRows : k_fixedMaxNumberOfRows - 1;
 }
 
 void CalculationController::resetMemoization(bool force) {

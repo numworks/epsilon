@@ -32,7 +32,7 @@ void ExamModeController::didEnterResponderChain(Responder * previousFirstRespond
   selectCellAtLocation(0, initialSelectedRow());
   m_contentView.reload();
   // We add a message when the mode exam is on
-  if (Preferences::sharedPreferences()->isInExamMode()) {
+  if (Preferences::sharedPreferences->isInExamMode()) {
     I18n::Message deactivateMessages[] = {I18n::Message::ToDeactivateExamMode1, I18n::Message::ToDeactivateExamMode2, I18n::Message::ToDeactivateExamMode3};
     m_contentView.setMessages(deactivateMessages, k_numberOfDeactivationMessageLines);
   } else {
@@ -72,9 +72,9 @@ int ExamModeController::initialSelectedRow() const {
 
 Preferences::ExamMode ExamModeController::examMode() {
   Preferences::ExamMode mode = ExamModeConfiguration::examModeAtIndex(selectedRow());
-  if (Preferences::sharedPreferences()->isInExamMode()) {
+  if (Preferences::sharedPreferences->isInExamMode()) {
     // If the exam mode is already on, this re-activate the same exam mode
-    mode = Preferences::sharedPreferences()->examMode();
+    mode = Preferences::sharedPreferences->examMode();
   }
   return mode;
 }

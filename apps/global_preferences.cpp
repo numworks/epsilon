@@ -1,16 +1,13 @@
 #include "global_preferences.h"
 
-GlobalPreferences * GlobalPreferences::sharedGlobalPreferences() {
-  static GlobalPreferences globalPreferences;
-  return &globalPreferences;
-}
+OMG::GlobalBox<GlobalPreferences> GlobalPreferences::sharedGlobalPreferences;
 
 void GlobalPreferences::setCountry(I18n::Country country) {
   m_country = country;
-  Poincare::Preferences::sharedPreferences()->setCombinatoricSymbols(combinatoricsSymbols());
-  Poincare::Preferences::sharedPreferences()->enableMixedFractions(mixedFractions());
-  Poincare::Preferences::sharedPreferences()->setLogarithmBasePosition(logarithmBasePosition());
-  Poincare::Preferences::sharedPreferences()->setParabolaParameter(parabolaParameter());
+  Poincare::Preferences::sharedPreferences->setCombinatoricSymbols(combinatoricsSymbols());
+  Poincare::Preferences::sharedPreferences->enableMixedFractions(mixedFractions());
+  Poincare::Preferences::sharedPreferences->setLogarithmBasePosition(logarithmBasePosition());
+  Poincare::Preferences::sharedPreferences->setParabolaParameter(parabolaParameter());
 }
 
 void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {

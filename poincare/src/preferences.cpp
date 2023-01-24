@@ -12,6 +12,8 @@ constexpr int Preferences::MediumNumberOfSignificantDigits;
 constexpr int Preferences::ShortNumberOfSignificantDigits;
 constexpr int Preferences::VeryShortNumberOfSignificantDigits;
 
+OMG::GlobalBox<Preferences> Preferences::sharedPreferences;
+
 Preferences::Preferences() :
   m_angleUnit(AngleUnit::Radian),
   m_displayMode(Preferences::PrintFloatMode::Decimal),
@@ -20,11 +22,6 @@ Preferences::Preferences() :
   m_numberOfSignificantDigits(Preferences::DefaultNumberOfPrintedSignificantDigits),
   m_examMode(ExamMode::Unknown)
 {}
-
-Preferences * Preferences::sharedPreferences() {
-  static Preferences preferences;
-  return &preferences;
-}
 
 Preferences Preferences::ClonePreferencesWithNewComplexFormat(ComplexFormat complexFormat, Preferences * preferences) {
   Preferences result = *preferences;

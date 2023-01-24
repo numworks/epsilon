@@ -23,7 +23,7 @@ protected:
   virtual const char * equationTemplate() const { return "%*.*ed·x%+*.*ed"; }
 
 private:
-  static bool UseMxpbForm() { return GlobalPreferences::sharedGlobalPreferences()->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Variant1; }
+  static bool UseMxpbForm() { return GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Variant1; }
 
   void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override = 0;
 };

@@ -433,7 +433,7 @@ int CalculationController::numberOfDisplayedBCDECoefficients() const {
 }
 
 bool CalculationController::shouldDisplayMCoefficient() const {
-  if (GlobalPreferences::sharedGlobalPreferences()->regressionModelOrder() != CountryPreferences::RegressionModelOrder::Variant1) {
+  if (GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() != CountryPreferences::RegressionModelOrder::Variant1) {
     // LinearAxpb is displayed as mx+b in Variant1 only
     return false;
   }
@@ -449,7 +449,7 @@ bool CalculationController::shouldDisplayMCoefficient() const {
 }
 
 bool CalculationController::shouldDisplayACoefficient() const {
-  bool canDisplayM = (GlobalPreferences::sharedGlobalPreferences()->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Variant1);
+  bool canDisplayM = (GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Variant1);
   int numberOfDefinedSeries = m_store->numberOfActiveSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
     int series = m_store->indexOfKthActiveSeries(i);

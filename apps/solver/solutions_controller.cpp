@@ -106,7 +106,7 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   m_deltaCell(KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, k_deltaFont),
   m_contentView(this)
 {
-  const char * delta = GlobalPreferences::sharedGlobalPreferences()->discriminantSymbol();
+  const char * delta = GlobalPreferences::sharedGlobalPreferences->discriminantSymbol();
   size_t lenDelta = strlen(delta);
   const char * equalB = "=b";
   m_delta2Layout = Poincare::HorizontalLayout::Builder(
@@ -148,7 +148,7 @@ void SolutionsController::viewWillAppear() {
   } else if (m_equationStore->type() == EquationStore::Type::PolynomialMonovariable && numberOfDisplayedSolutions() == 1) {
     // There are no real solutions
     if (m_equationStore->degree() == 2) {
-      assert(Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Real);
+      assert(Preferences::sharedPreferences->complexFormat() == Preferences::ComplexFormat::Real);
       m_contentView.setWarningMessages(I18n::Message::PolynomeHasNoRealSolution0, I18n::Message::PolynomeHasNoRealSolution1);
     } else {
       // TODO : Message could be updated. The user did not input any interval.

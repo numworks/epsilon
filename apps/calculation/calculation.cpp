@@ -238,7 +238,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       || strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), "undef") == 0) {
     return AdditionalInformations();
   }
-  Preferences * preferences = Preferences::sharedPreferences();
+  Preferences * preferences = Preferences::sharedPreferences;
   Context * globalContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression i = input();
   Expression a = approximateOutput(NumberOfSignificantDigits::Maximal);
@@ -301,7 +301,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     Expression unit;
     PoincareHelpers::ReduceAndRemoveUnit(&o, globalContext, ReductionTarget::User, &unit, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, UnitConversion::None);
     double value = PoincareHelpers::ApproximateToScalar<double>(o, globalContext);
-    if (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())
+    if (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences->unitFormat())
         || UnitComparison::ShouldDisplayUnitComparison(value, unit)) {
       additionalInformations.unit = true;
     }

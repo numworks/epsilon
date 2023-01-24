@@ -24,7 +24,7 @@ void FunctionListController::setExactAndApproximateExpression(Poincare::Expressi
   assert(!m_expression.isUninitialized());
   static_assert(k_maxNumberOfRows >= k_maxNumberOfOutputRows, "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  Preferences * preferences = Preferences::sharedPreferences();
+  Preferences * preferences = Preferences::sharedPreferences;
   Context * context = App::app()->localContext();
 
   float abscissa = exactExpression.getNumericalValue();

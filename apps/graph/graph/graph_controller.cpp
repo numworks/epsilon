@@ -154,7 +154,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
       };
       if (f->expressionReduced(context).recursivelyMatches(yieldPiecewise, context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, &p)) {
         assert(!p.isUninitialized() && p.type() == ExpressionNode::Type::PiecewiseOperator);
-        zoom.fitConditions(static_cast<PiecewiseOperator &>(p), evaluator<float>, f.operator->(), ContinuousFunction::k_unknownName, Preferences::sharedPreferences()->complexFormat(), Preferences::sharedPreferences()->angleUnit(), alongY);
+        zoom.fitConditions(static_cast<PiecewiseOperator &>(p), evaluator<float>, f.operator->(), ContinuousFunction::k_unknownName, Preferences::sharedPreferences->complexFormat(), Preferences::sharedPreferences->angleUnit(), alongY);
       }
 
       /* Do not compute intersections if store is full because re-creating a

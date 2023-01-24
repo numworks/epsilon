@@ -72,7 +72,7 @@ def print_implementation(implementation, data):
         f.write('static_assert(' + styles[i] + 'AppsPermutation[0] == 0, "The Home apps must always be at index 0");\n\n')
 
     f.write("int PermutedAppSnapshotIndex(int index) {\n")
-    f.write("  CountryPreferences::HomeAppsLayout currentLayout = GlobalPreferences::sharedGlobalPreferences()->homeAppsLayout();\n")
+    f.write("  CountryPreferences::HomeAppsLayout currentLayout = GlobalPreferences::sharedGlobalPreferences->homeAppsLayout();\n")
     for i in range(len(styles)):
         f.write("  if (currentLayout == CountryPreferences::HomeAppsLayout::" + styles[i] + ") {\n")
         f.write("    return " + styles[i] + "AppsPermutation[index];")

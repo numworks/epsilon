@@ -82,7 +82,7 @@ MathVariableBoxController * AppsContainer::variableBoxController() {
 
 void AppsContainer::didSuspend(bool checkIfOnOffKeyReleased) {
   resetShiftAlphaStatus();
-  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
+  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences;
   // Display the prompt if it has a message to display
   if (promptController() != nullptr && s_activeApp->snapshot()!= onBoardingAppSnapshot() && s_activeApp->snapshot() != hardwareTestAppSnapshot() && globalPreferences->showPopUp()) {
     s_activeApp->displayModalViewController(promptController(), 0.f, 0.f);
@@ -113,7 +113,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   if (event.isKeyPress()) {
     m_backlightDimmingTimer.reset();
     m_suspendTimer.reset();
-    Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
+    Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences->brightnessLevel());
   }
   if (!didProcessEvent && alphaLockWantsRedraw) {
     window()->redraw();
@@ -126,7 +126,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBEnumeration) {
     if (Ion::USB::isPlugged()) {
-      if (m_firstUSBEnumeration && Poincare::Preferences::sharedPreferences()->isInExamMode()) {
+      if (m_firstUSBEnumeration && Poincare::Preferences::sharedPreferences->isInExamMode()) {
         displayExamModePopUp(Poincare::Preferences::ExamMode::Off);
         // Warning: if the window is dirtied, you need to call window()->redraw()
         window()->redraw();
@@ -158,7 +158,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   if (event == Ion::Events::USBPlug) {
     if (Ion::USB::isPlugged()) {
       Ion::USB::enable();
-      Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
+      Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences->brightnessLevel());
     } else {
       m_firstUSBEnumeration = true;
       Ion::USB::clearEnumerationInterrupt();
@@ -241,7 +241,7 @@ void AppsContainer::run() {
    * and it is visible when reflashing a N0100 (there is some noise on the
    * screen before the logo appears). */
   Ion::Display::pushRectUniform(KDRectScreen, KDColorWhite);
-  Poincare::Preferences * poincarePreferences = Poincare::Preferences::sharedPreferences();
+  Poincare::Preferences * poincarePreferences = Poincare::Preferences::sharedPreferences;
   if (poincarePreferences->isInExamMode()) {
     activateExamMode(poincarePreferences->examMode());
   }
@@ -268,7 +268,7 @@ void AppsContainer::run() {
        * loaded the checkpoint and did not call AppsContainer::dispatchEvent */
       m_backlightDimmingTimer.reset();
       m_suspendTimer.reset();
-      Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
+      Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences->brightnessLevel());
       Ion::Events::setSpinner(true);
       Ion::Display::setScreenshotCallback(ShowCursor);
       handleRunException(false);
@@ -329,7 +329,7 @@ void AppsContainer::shutdownDueToLowBattery() {
   }
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY && !Ion::USB::isPlugged()) {
     Ion::Backlight::setBrightness(0);
-    if (!Poincare::Preferences::sharedPreferences()->isInExamMode()) {
+    if (!Poincare::Preferences::sharedPreferences->isInExamMode()) {
       /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
        * low battery event happened during the Power-On Self-Test, a LED might
        * have stayed lit up. */

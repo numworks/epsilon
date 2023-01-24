@@ -143,7 +143,7 @@ KDCoordinate FunctionModelsParameterController::nonMemoizedRowHeight(int j) {
 }
 
 const FunctionModelsParameterController::Model * FunctionModelsParameterController::Models() {
-  CountryPreferences::GraphTemplatesLayout layout = GlobalPreferences::sharedGlobalPreferences()->graphTemplatesLayout();
+  CountryPreferences::GraphTemplatesLayout layout = GlobalPreferences::sharedGlobalPreferences->graphTemplatesLayout();
   switch (layout) {
   case CountryPreferences::GraphTemplatesLayout::Variant1:
     return layoutVariant1;

@@ -19,7 +19,7 @@ bool FunctionGoToParameterController::confirmParameterAtIndex(int parameterIndex
   FunctionApp * app = FunctionApp::app();
   // If possible, round f so that we go to the evaluation of the displayed f
   double pixelWidth = (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
-  f = FunctionBannerDelegate::GetValueDisplayedOnBanner(f, app->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
+  f = FunctionBannerDelegate::GetValueDisplayedOnBanner(f, app->localContext(), Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(), pixelWidth, false);
   m_graphController->moveCursorAndCenterIfNeeded(f);
 
   return true;

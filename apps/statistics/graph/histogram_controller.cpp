@@ -70,7 +70,7 @@ static bool fillBufferWithIntervalFormula(char * buffer, int bufferSize, double 
     I18n::translate(I18n::Message::ColonConvention),
     lowerBound, displayMode, precision,
     upperBound, displayMode, precision,
-    GlobalPreferences::sharedGlobalPreferences()->openIntervalChar(false)
+    GlobalPreferences::sharedGlobalPreferences->openIntervalChar(false)
     );
 }
 
@@ -80,8 +80,8 @@ bool HistogramController::reloadBannerView() {
   }
   KDCoordinate previousHeight = m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 
-  int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
-  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
+  int precision = Preferences::sharedPreferences->numberOfSignificantDigits();
+  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences->displayMode();
   constexpr static int k_bufferSize = 1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
   char buffer[k_bufferSize] = "";
 
@@ -237,7 +237,7 @@ void HistogramController::initBarParameters() {
   if (allValuesAreIntegers) {
     // With integer values, the histogram is better with an integer bar width
     barWidth = std::ceil(barWidth);
-    if (GlobalPreferences::sharedGlobalPreferences()->histogramOffset() == CountryPreferences::HistogramsOffset::OnIntegerValues) {
+    if (GlobalPreferences::sharedGlobalPreferences->histogramOffset() == CountryPreferences::HistogramsOffset::OnIntegerValues) {
       // Bars are offsetted right to center the bars around the labels.
       xMin -= barWidth/2.0;
       m_store->setFirstDrawnBarAbscissa(xMin);

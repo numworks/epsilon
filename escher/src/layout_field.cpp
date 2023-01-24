@@ -466,7 +466,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   }
   // The text is parsable, we create its layout an insert it.
   Layout resultLayout = resultExpression.createLayout(
-    Poincare::Preferences::sharedPreferences()->displayMode(),
+    Poincare::Preferences::sharedPreferences->displayMode(),
     Poincare::PrintFloat::k_numberOfStoredSignificantDigits,
     Container::activeApp() ? Container::activeApp()->localContext() : nullptr,
     true);

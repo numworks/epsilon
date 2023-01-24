@@ -629,7 +629,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     assert(static_cast<void *>(m_nodeCells) > static_cast<void *>(cell) ||
            static_cast<void *>(cell) >= static_cast<void *>(m_nodeCells + k_maxNumberOfDisplayedRows));
     // Message is leaf
-    if (GlobalPreferences::sharedGlobalPreferences()->listsStatsOrderInToolbox() == CountryPreferences::ListsStatsOrderInToolbox::Alternate && m_messageTreeModel->childrenList() == listsStatsChildren) {
+    if (GlobalPreferences::sharedGlobalPreferences->listsStatsOrderInToolbox() == CountryPreferences::ListsStatsOrderInToolbox::Alternate && m_messageTreeModel->childrenList() == listsStatsChildren) {
       // We are in lists stats sub-menu
       messageTree = messageTreeModelAtIndex(alternateListsStatsOrder[index]);
     }
@@ -637,7 +637,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     const char * text = I18n::translate(messageTree->label());
     Layout resultLayout;
 
-    if (Poincare::Preferences::sharedPreferences()->editionMode() == Poincare::Preferences::EditionMode::Edition2D) {
+    if (Poincare::Preferences::sharedPreferences->editionMode() == Poincare::Preferences::EditionMode::Edition2D) {
       Poincare::ExceptionCheckpoint ecp;
       // Try a 2D layout. If it fails, fall back on a lighter 1D edition layout
       if (ExceptionRun(ecp)) {
@@ -645,7 +645,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
         Expression resultExpression = Expression::Parse(text, nullptr);
         if (!resultExpression.isUninitialized()) {
           // The text is parsable, we create its layout an insert it.
-          resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits, Container::activeApp()->localContext());
+          resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits, Container::activeApp()->localContext());
         }
       }
     }
@@ -674,7 +674,7 @@ bool MathToolbox::selectSubMenu(int selectedRow) {
 
 bool MathToolbox::selectLeaf(int selectedRow) {
   assert(typeAtIndex(selectedRow) == k_leafCellType);
-  if (GlobalPreferences::sharedGlobalPreferences()->listsStatsOrderInToolbox() == CountryPreferences::ListsStatsOrderInToolbox::Alternate && m_messageTreeModel->childrenList() == listsStatsChildren) {
+  if (GlobalPreferences::sharedGlobalPreferences->listsStatsOrderInToolbox() == CountryPreferences::ListsStatsOrderInToolbox::Alternate && m_messageTreeModel->childrenList() == listsStatsChildren) {
     // We are in lists stats sub-menu
     selectedRow = alternateListsStatsOrder[selectedRow];
   }
@@ -716,17 +716,17 @@ int MathToolbox::maxNumberOfDisplayedRows() {
 }
 
 int MathToolbox::controlChecksum() const {
-  return static_cast<int>(Preferences::sharedPreferences()->examMode()) * I18n::NumberOfCountries + static_cast<int>(GlobalPreferences::sharedGlobalPreferences()->country());
+  return static_cast<int>(Preferences::sharedPreferences->examMode()) * I18n::NumberOfCountries + static_cast<int>(GlobalPreferences::sharedGlobalPreferences->country());
 }
 
 int MathToolbox::indexAfterFork(const ToolboxMessageTree * forkMessageTree) const {
   if (forkMessageTree->childrenList() == arithmeticFork) {
-    if (Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
+    if (Poincare::Preferences::sharedPreferences->mixedFractionsAreEnabled()) {
       return 0;
     }
     return 1;
   }
-  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences()->unitFormat();
+  Preferences::UnitFormat unitFormat = GlobalPreferences::sharedGlobalPreferences->unitFormat();
   if (unitFormat == Preferences::UnitFormat::Metric) {
     return 0;
   }

@@ -9,7 +9,7 @@ namespace Settings {
 int LocalizationController::indexOfCellToSelectOnReset() const {
   return mode() == Mode::Language ?
     Shared::LocalizationController::indexOfCellToSelectOnReset() :
-    IndexOfCountry(GlobalPreferences::sharedGlobalPreferences()->country());
+    IndexOfCountry(GlobalPreferences::sharedGlobalPreferences->country());
 }
 
 bool LocalizationController::handleEvent(Ion::Events::Event event) {

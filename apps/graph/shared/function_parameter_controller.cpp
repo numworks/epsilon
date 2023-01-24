@@ -46,7 +46,7 @@ void FunctionParameterController::setRecord(Ion::Storage::Record record) {
 
 const char * intervalBracket(double value, bool opening) {
   if (std::isinf(value)) {
-    return GlobalPreferences::sharedGlobalPreferences()->openIntervalChar(opening);
+    return GlobalPreferences::sharedGlobalPreferences->openIntervalChar(opening);
   }
   return opening ? "[" : "]";
 }
@@ -78,7 +78,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, 
       double max = function->tMax();
       constexpr int bufferSize = BufferTextView::k_maxNumberOfChar;
       char buffer[bufferSize];
-      writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
+      writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits, Preferences::sharedPreferences->displayMode());
       // Cell's layout will adapt to fit the subLabel.
       m_functionDomainCell.setSubLabelText(buffer);
     }

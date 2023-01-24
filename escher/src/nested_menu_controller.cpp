@@ -103,11 +103,6 @@ void NestedMenuController::viewWillAppear() {
   }
 }
 
-void NestedMenuController::viewDidDisappear() {
-  StackViewController::viewDidDisappear();
-  m_selectableTableView.deselectTable();
-}
-
 HighlightCell * NestedMenuController::reusableCell(int index, int type) {
   assert(type < 2);
   assert(index >= 0);

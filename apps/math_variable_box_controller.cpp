@@ -65,7 +65,6 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
         // The varbox was dismissed by prepareForIntrusiveStorageChange
         return true;
       }
-      m_selectableTableView.deselectTable();
       int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
       selectCellAtLocation(selectedColumn(), newSelectedRow);
       resetMemoization();
@@ -231,13 +230,11 @@ void MathVariableBoxController::setPage(Page page) {
 }
 
 bool MathVariableBoxController::selectSubMenu(int selectedRow) {
-  m_selectableTableView.deselectTable();
   setPage(pageAtIndex(selectedRow));
   return NestedMenuController::selectSubMenu(selectedRow);
 }
 
 bool MathVariableBoxController::returnToPreviousMenu() {
-  m_selectableTableView.deselectTable();
   setPage(Page::RootMenu);
   return NestedMenuController::returnToPreviousMenu();
 }
@@ -250,7 +247,6 @@ bool MathVariableBoxController::returnToRootMenu() {
 bool MathVariableBoxController::selectLeaf(int selectedRow) {
   // Deselect the table
   assert(selectedRow >= 0 && selectedRow < numberOfRows());
-  m_selectableTableView.deselectTable();
 
   // Get the name text to insert
   Storage::Record record = recordAtIndex(selectedRow);

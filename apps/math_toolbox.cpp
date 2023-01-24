@@ -685,7 +685,6 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   if (displayMessageTreeDisabledPopUp(messageTree)) {
     return true;
   }
-  m_selectableTableView.deselectTable();
 
   // Translate the message
   const char * text = I18n::translate(messageTree->insertedText());

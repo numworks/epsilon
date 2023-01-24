@@ -24,6 +24,7 @@ extern "C" {
 }
 #include <dlfcn.h>
 #endif
+#include <ion/src/shared/init.h>
 
 /* The Args class allows parsing and editing command-line arguments
  * The editing part allows us to add/remove arguments before forwarding them to
@@ -206,6 +207,7 @@ int main(int argc, char * argv[]) {
     dlclose(handle);
   } else {
 #endif
+    Ion::Init();
     ion_main(args.argc(), args.argv());
 #if ION_SIMULATOR_FILES
   }

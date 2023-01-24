@@ -14,6 +14,10 @@ extern "C" {
 namespace Ion {
 namespace Events {
 
+OMG::GlobalBox<State> SharedState;
+
+// Implementation of public Ion::Events functions
+
 const char * EventData::text() const {
   if (m_data == nullptr || m_data[0] == 0) {
     return nullptr;
@@ -63,24 +67,9 @@ const char * Event::defaultText() const {
   return s_dataForEvent[m_id].text();
 }
 
-Event sLastEvent = Events::None;
-Keyboard::State sLastKeyboardState(0);
-Keyboard::State sCurrentKeyboardState(0);
-uint64_t sKeysSeenUp = -1;
-/* WARNING: It seems that if there are not exactly 3 bools here, the input
- * repetition breaks on n0120, but we do not know why.
- * */
-bool sLastEventShift = false;
-bool sLastEventAlpha = false;
-bool sIdleWasSent = false;
+// Internal functions
 
-void resetKeyboardState() {
-  sKeysSeenUp = -1;
-  /* Set the keyboard state of reference to -1 to prevent event repetition. */
-  sLastKeyboardState = -1;
-}
-
-Event privateSharedGetEvent(int * timeout) {
+Event State::privateSharedGetEvent(int * timeout) {
   constexpr int delayBeforeRepeat = 200;
   constexpr int delayBetweenRepeat = 50;
   assert(*timeout > delayBeforeRepeat);
@@ -95,7 +84,7 @@ Event privateSharedGetEvent(int * timeout) {
     Event platformEvent = getPlatformEvent();
     if (platformEvent != None) {
       /* WARNING: events that can repeat should not be handled here since
-       * sLastKeyboardState is not updated and is used to know if the event
+       * m_lastKeyboardState is not updated and is used to know if the event
        * is repeated at line "bool isRepeatableEvent = ..."
        * On device this is not a problem.
        * On simulator, most repeating events are handled as Keyboard::States
@@ -106,29 +95,29 @@ Event privateSharedGetEvent(int * timeout) {
        * TODO: Find a solution. Either add Backspace to sKeyPairs and find
        * another solution for the shift+backspace issue (see comment in
        * keyboard.cpp). Or find a way to register computer keyboard state
-       * in sLastKeyboardState, by using SDL_Event::type::KEY_UP */
-      (platformEvent == sLastEvent) ? incrementRepetition() : resetRepetition();
-      sLastEvent = platformEvent;
+       * in m_lastKeyboardState, by using SDL_Event::type::KEY_UP */
+      (platformEvent == m_lastEvent) ? SharedModifierState->incrementRepetition() : SharedModifierState->resetRepetition();
+      m_lastEvent = platformEvent;
       return platformEvent;
     }
 
-    bool lock = isLockActive();
+    bool lock = SharedModifierState->isLockActive();
     uint64_t keysSeenTransitioningFromUpToDown;
     Keyboard::State state;
     while ((state = Keyboard::popState()) != Keyboard::State(-1)) {
-      sCurrentKeyboardState = state;
-      keysSeenTransitioningFromUpToDown = state & sKeysSeenUp;
-      sKeysSeenUp = ~state;
+      m_currentKeyboardState = state;
+      keysSeenTransitioningFromUpToDown = state & m_keysSeenUp;
+      m_keysSeenUp = ~state;
 
-      if (wasShiftReleased(state)) {
+      if (SharedModifierState->wasShiftReleased(state)) {
         return Event::PlainKey(Keyboard::Key::Shift);
       }
-      if (wasAlphaReleased(state)) {
+      if (SharedModifierState->wasAlphaReleased(state)) {
         return Event::PlainKey(Keyboard::Key::Alpha);
       }
 
       if (keysSeenTransitioningFromUpToDown != 0) {
-        resetLongPress();
+        SharedModifierState->resetLongPress();
         /* The key that triggered the event corresponds to the first non-zero bit
          * in "match". This is a rather simple logic operation for the which many
          * processors have an instruction (ARM thumb uses CLZ).
@@ -136,23 +125,23 @@ Event privateSharedGetEvent(int * timeout) {
          * to resort to using a builtin function. */
         Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitioningFromUpToDown));
         didPressNewKey();
-        sLastEventShift = isShiftActive();
-        sLastEventAlpha = isAlphaActive();
-        Event event(key, sLastEventShift, sLastEventAlpha, lock);
-        updateModifiersFromEvent(event, state);
-        (event == sLastEvent) ? incrementRepetition() : resetRepetition();
-        sLastEvent = event;
-        sLastKeyboardState = state;
+        m_lastEventShift = SharedModifierState->isShiftActive();
+        m_lastEventAlpha = SharedModifierState->isAlphaActive();
+        Event event(key, m_lastEventShift, m_lastEventAlpha, lock);
+        SharedModifierState->updateModifiersFromEvent(event, state);
+        (event == m_lastEvent) ? SharedModifierState->incrementRepetition() : SharedModifierState->resetRepetition();
+        m_lastEvent = event;
+        m_lastKeyboardState = state;
         return event;
       }
     }
 
     int maximumDelay = *timeout;
     int delayForRepeat = INT_MAX;
-    bool isRepeatableEvent = canRepeatEvent(sLastEvent)
-                          && sLastKeyboardState == sCurrentKeyboardState
-                          && sLastEventShift == (sCurrentKeyboardState.keyDown(Keyboard::Key::Shift) || (sLastEventShift && lock))
-                          && sLastEventAlpha == (sCurrentKeyboardState.keyDown(Keyboard::Key::Alpha) || lock);
+    bool isRepeatableEvent = canRepeatEvent(m_lastEvent)
+                          && m_lastKeyboardState == m_currentKeyboardState
+                          && m_lastEventShift == (m_currentKeyboardState.keyDown(Keyboard::Key::Shift) || (m_lastEventShift && lock))
+                          && m_lastEventAlpha == (m_currentKeyboardState.keyDown(Keyboard::Key::Alpha) || lock);
     if (isRepeatableEvent) {
       delayForRepeat = isRepeating() ? delayBetweenRepeat : delayBeforeRepeat;
       maximumDelay = std::min(maximumDelay, delayForRepeat);
@@ -163,7 +152,7 @@ Event privateSharedGetEvent(int * timeout) {
     }
 
     if (*timeout == 0) {
-      resetLongPress();
+      SharedModifierState->resetLongPress();
       return None;
     }
 
@@ -173,24 +162,34 @@ Event privateSharedGetEvent(int * timeout) {
      * always been zero. In other words, no new key has been pressed. */
     if (elapsedTime >= delayForRepeat) {
       assert(isRepeatableEvent);
-      Ion::Events::incrementLongPress();
-      return sLastEvent;
+      SharedModifierState->incrementLongPress();
+      return m_lastEvent;
     }
 
   }
 }
 
-Event sharedGetEvent(int * timeout) {
+Event State::sharedGetEvent(int * timeout) {
   Event event = privateSharedGetEvent(timeout);
   if (event == None) {
-    if (!sIdleWasSent) {
-      sIdleWasSent = true;
+    if (!m_idleWasSent) {
+      m_idleWasSent = true;
       return Idle;
     }
   } else {
-    sIdleWasSent = false;
+    m_idleWasSent = false;
   }
   return event;
+}
+
+void State::resetKeyboardState() {
+  m_keysSeenUp = -1;
+  /* Set the keyboard state of reference to -1 to prevent event repetition. */
+  m_lastKeyboardState = -1;
+}
+
+Event sharedGetEvent(int * timeout) {
+  return SharedState->sharedGetEvent(timeout);
 }
 
 size_t sharedCopyText(uint8_t eventId, char * buffer, size_t bufferSize) {
@@ -209,6 +208,10 @@ bool sharedIsDefined(uint8_t eventId) {
   } else {
     return (e == None || e == Termination || e == USBEnumeration || e == USBPlug || e == BatteryCharging || e == ExternalText || e == Idle);
   }
+}
+
+void resetKeyboardState() {
+  SharedState->resetKeyboardState();
 }
 
 }

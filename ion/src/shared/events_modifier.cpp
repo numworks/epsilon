@@ -4,121 +4,134 @@
 namespace Ion {
 namespace Events {
 
-static ShiftAlphaStatus sShiftAlphaStatus = ShiftAlphaStatus::Default;
-static bool sShiftIsHeldAndUsed = false;
-static bool sAlphaIsHeldAndUsed = false;
+OMG::GlobalBox<ModifierState> SharedModifierState;
+
+// Implementation of public Ion::Events functions
 
 ShiftAlphaStatus shiftAlphaStatus() {
-  return sShiftAlphaStatus;
+  return SharedModifierState->shiftAlphaStatus();
 }
-
-void removeShift() {
-  if (sShiftAlphaStatus == ShiftAlphaStatus::Shift) {
-    sShiftAlphaStatus = ShiftAlphaStatus::Default;
-  } else if (sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha ) {
-    sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
-  } else if (sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock) {
-    sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
-  }
-}
-
-void removeAlpha() {
-  if (sShiftAlphaStatus == ShiftAlphaStatus::Alpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock) {
-    sShiftAlphaStatus = ShiftAlphaStatus::Default;
-  } else if (sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock) {
-    sShiftAlphaStatus = ShiftAlphaStatus::Shift;
-  }
-}
-
-bool isShiftActive() {
-  return sShiftAlphaStatus == ShiftAlphaStatus::Shift || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
-}
-
-bool isAlphaActive() {
-  return sShiftAlphaStatus == ShiftAlphaStatus::Alpha || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
-}
-
-bool isLockActive() {
-  return sShiftAlphaStatus == ShiftAlphaStatus::AlphaLock || sShiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
-}
-
 void setShiftAlphaStatus(ShiftAlphaStatus s) {
+  SharedModifierState->setShiftAlphaStatus(s);
+}
+
+int repetitionFactor() {
+  return SharedModifierState->repetitionFactor();
+}
+
+int longPressCounter() {
+  return SharedModifierState->longPressCounter();
+}
+
+// Internal functions
+
+void ModifierState::removeShift() {
+  if (m_shiftAlphaStatus == ShiftAlphaStatus::Shift) {
+    m_shiftAlphaStatus = ShiftAlphaStatus::Default;
+  } else if (m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha ) {
+    m_shiftAlphaStatus = ShiftAlphaStatus::Alpha;
+  } else if (m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock) {
+    m_shiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+  }
+}
+
+void ModifierState::removeAlpha() {
+  if (m_shiftAlphaStatus == ShiftAlphaStatus::Alpha || m_shiftAlphaStatus == ShiftAlphaStatus::AlphaLock) {
+    m_shiftAlphaStatus = ShiftAlphaStatus::Default;
+  } else if (m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock) {
+    m_shiftAlphaStatus = ShiftAlphaStatus::Shift;
+  }
+}
+
+bool ModifierState::isShiftActive() {
+  return m_shiftAlphaStatus == ShiftAlphaStatus::Shift || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+}
+
+bool ModifierState::isAlphaActive() {
+  return m_shiftAlphaStatus == ShiftAlphaStatus::Alpha || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || m_shiftAlphaStatus == ShiftAlphaStatus::AlphaLock || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+}
+
+bool ModifierState::isLockActive() {
+  return m_shiftAlphaStatus == ShiftAlphaStatus::AlphaLock || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+}
+
+void ModifierState::setShiftAlphaStatus(ShiftAlphaStatus s) {
   if (static_cast<uint8_t>(s) >= static_cast<uint8_t>(ShiftAlphaStatus::NumberOfStatus)) {
     return;
   }
-  sShiftAlphaStatus = s;
+  m_shiftAlphaStatus = s;
 }
 
-bool wasShiftReleased(Keyboard::State state) {
-  if (sShiftIsHeldAndUsed && !state.keyDown(Keyboard::Key::Shift)) {
-    sShiftIsHeldAndUsed = false;
+bool ModifierState::wasShiftReleased(Keyboard::State state) {
+  if (m_shiftIsHeldAndUsed && !state.keyDown(Keyboard::Key::Shift)) {
+    m_shiftIsHeldAndUsed = false;
     removeShift();
     return true;
   }
   return false;
 }
 
-bool wasAlphaReleased(Keyboard::State state) {
-  if (sAlphaIsHeldAndUsed && !state.keyDown(Keyboard::Key::Alpha)) {
-    sAlphaIsHeldAndUsed = false;
+bool ModifierState::wasAlphaReleased(Keyboard::State state) {
+  if (m_alphaIsHeldAndUsed && !state.keyDown(Keyboard::Key::Alpha)) {
+    m_alphaIsHeldAndUsed = false;
     removeAlpha();
     return true;
   }
   return false;
 }
 
-void updateModifiersFromEvent(Event e, Keyboard::State state) {
+void ModifierState::updateModifiersFromEvent(Event e, Keyboard::State state) {
   assert(e.isKeyboardEvent());
   bool shiftKeyDown = state.keyDown(Keyboard::Key::Shift);
   bool alphaKeyDown = state.keyDown(Keyboard::Key::Alpha);
   if (e != Shift && shiftKeyDown) {
-    sShiftIsHeldAndUsed = true;
+    m_shiftIsHeldAndUsed = true;
   }
   if (e != Alpha && alphaKeyDown) {
-    sAlphaIsHeldAndUsed = true;
+    m_alphaIsHeldAndUsed = true;
   }
-  switch (sShiftAlphaStatus) {
+  switch (m_shiftAlphaStatus) {
     case ShiftAlphaStatus::Default:
       if (e == Shift) {
-        sShiftAlphaStatus = ShiftAlphaStatus::Shift;
+        m_shiftAlphaStatus = ShiftAlphaStatus::Shift;
       } else if (e == Alpha) {
-        sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
+        m_shiftAlphaStatus = ShiftAlphaStatus::Alpha;
       }
       break;
     case ShiftAlphaStatus::Shift:
       if (e == Shift) {
-        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        m_shiftAlphaStatus = ShiftAlphaStatus::Default;
       } else if (e == Alpha) {
-        sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
+        m_shiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
       } else {
         if (!shiftKeyDown) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Default;
+          m_shiftAlphaStatus = ShiftAlphaStatus::Default;
         }
       }
       break;
     case ShiftAlphaStatus::Alpha:
       if (e == Shift) {
-        sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
+        m_shiftAlphaStatus = ShiftAlphaStatus::ShiftAlpha;
       } else if (e == Alpha) {
-        sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+        m_shiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
       } else {
         if (!alphaKeyDown) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Default;
+          m_shiftAlphaStatus = ShiftAlphaStatus::Default;
         }
       }
       break;
     case ShiftAlphaStatus::ShiftAlpha:
       if (e == Shift) {
-        sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
+        m_shiftAlphaStatus = ShiftAlphaStatus::Alpha;
       } else if (e == Alpha) {
-        sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
+        m_shiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
       } else {
         if (!shiftKeyDown && !alphaKeyDown) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Default;
+          m_shiftAlphaStatus = ShiftAlphaStatus::Default;
         } else if (!shiftKeyDown) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Alpha;
+          m_shiftAlphaStatus = ShiftAlphaStatus::Alpha;
         } else if (!alphaKeyDown) {
-          sShiftAlphaStatus = ShiftAlphaStatus::Shift;
+          m_shiftAlphaStatus = ShiftAlphaStatus::Shift;
         } else {
           // Do nothing, both shift and alpha keys are down
         }
@@ -126,51 +139,21 @@ void updateModifiersFromEvent(Event e, Keyboard::State state) {
       break;
     case ShiftAlphaStatus::AlphaLock:
       if (e == Shift) {
-        sShiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
+        m_shiftAlphaStatus = ShiftAlphaStatus::ShiftAlphaLock;
       } else if (e == Alpha) {
-        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        m_shiftAlphaStatus = ShiftAlphaStatus::Default;
       }
       break;
     case ShiftAlphaStatus::ShiftAlphaLock:
       if (e == Shift) {
-        sShiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
+        m_shiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
       } else if (e == Alpha) {
-        sShiftAlphaStatus = ShiftAlphaStatus::Default;
+        m_shiftAlphaStatus = ShiftAlphaStatus::Default;
       }
       break;
     default:
       assert(false);
   }
-}
-
-// Two factors are available :
-static int sLongPressCounter = 0;
-static int sRepetitionCounter = 0;
-
-// How long the event has been pressed (Computed value)
-int longPressCounter() {
-  return sLongPressCounter;
-}
-
-// How much the event has been repeatedly pressed (Raw value)
-int repetitionFactor() {
-  return sRepetitionCounter;
-}
-
-void resetLongPress() {
-  sLongPressCounter = 0;
-}
-
-void resetRepetition() {
-  sRepetitionCounter = 0;
-}
-
-void incrementLongPress() {
-  sLongPressCounter++;
-}
-
-void incrementRepetition() {
-  sRepetitionCounter++;
 }
 
 }

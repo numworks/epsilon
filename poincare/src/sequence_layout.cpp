@@ -163,12 +163,12 @@ KDSize SequenceLayoutNode::computeSize(KDFont::Size font) {
     ParenthesisLayoutNode::HeightGivenChildHeight(argumentSize.height()));
   KDSize result = KDSize(
     std::max({SymbolWidth(font), totalLowerBoundSize.width(), upperBoundSize.width()})+ArgumentHorizontalMargin(font)+argumentSizeWithParentheses.width(),
-    baseline(font) + std::max(SymbolHeight(font)/2+BoundVerticalMargin(font)+totalLowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline(font)));
+    baseline(font) + std::max(SymbolHeight(font) / 2 + LowerBoundVerticalMargin(font) + totalLowerBoundSize.height(), argumentSizeWithParentheses.height() - argumentLayout()->baseline(font)));
   return result;
 }
 
 KDCoordinate SequenceLayoutNode::computeBaseline(KDFont::Size font) {
-  return std::max<KDCoordinate>(upperBoundLayout()->layoutSize(font).height()+BoundVerticalMargin(font)+(SymbolHeight(font)+1)/2, argumentLayout()->baseline(font));
+  return std::max<KDCoordinate>(upperBoundLayout()->layoutSize(font).height() + UpperBoundVerticalMargin(font) + (SymbolHeight(font) + 1) / 2, argumentLayout()->baseline(font));
 }
 
 KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
@@ -179,15 +179,15 @@ KDPoint SequenceLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
   KDCoordinate y = 0;
   if (l == variableLayout()) {
     x = completeLowerBoundX(font);
-    y = baseline(font) + SymbolHeight(font)/2 + BoundVerticalMargin(font) + subscriptBaseline(font) - variableLayout()->baseline(font);
+    y = baseline(font) + SymbolHeight(font) / 2 + LowerBoundVerticalMargin(font) + subscriptBaseline(font) - variableLayout()->baseline(font);
   } else if (l == lowerBoundLayout()) {
     x = completeLowerBoundX(font) + equalSize.width() + variableSize.width();
-    y = baseline(font) + SymbolHeight(font)/2 + BoundVerticalMargin(font) + subscriptBaseline(font) - lowerBoundLayout()->baseline(font);
+    y = baseline(font) + SymbolHeight(font) / 2 + LowerBoundVerticalMargin(font) + subscriptBaseline(font) - lowerBoundLayout()->baseline(font);
   } else if (l == upperBoundLayout()) {
     x = std::max({0, (SymbolWidth(font)-upperBoundSize.width())/2, (lowerBoundSizeWithVariableEquals(font).width()-upperBoundSize.width())/2});
-    y = baseline(font) - (SymbolHeight(font)+1)/2- BoundVerticalMargin(font)-upperBoundSize.height();
+    y = baseline(font) - (SymbolHeight(font) + 1) / 2- UpperBoundVerticalMargin(font)-upperBoundSize.height();
   } else if (l == argumentLayout()) {
-    x = std::max({SymbolWidth(font), lowerBoundSizeWithVariableEquals(font).width(), upperBoundSize.width()})+ArgumentHorizontalMargin(font)+ParenthesisLayoutNode::k_parenthesisWidth;
+    x = std::max({SymbolWidth(font), lowerBoundSizeWithVariableEquals(font).width(), upperBoundSize.width()}) + ArgumentHorizontalMargin(font) + ParenthesisLayoutNode::k_parenthesisWidth;
     y = baseline(font) - argumentLayout()->baseline(font);
   } else {
     assert(false);

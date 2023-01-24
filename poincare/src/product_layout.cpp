@@ -17,8 +17,8 @@ void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KD
   // Render the Product symbol.
   ctx->fillRect(
       KDRect(
-        p.x() + std::max({0, (upperBoundSize.width()-SymbolWidth(font))/2, (lowerBoundNEqualsSize.width()-SymbolWidth(font))/2}),
-        p.y() + std::max(upperBoundSize.height()+BoundVerticalMargin(font), argumentLayout()->baseline(font)-(SymbolHeight(font)+1)/2),
+        p.x() + std::max({0, (upperBoundSize.width() - SymbolWidth(font)) / 2, (lowerBoundNEqualsSize.width() - SymbolWidth(font)) / 2}),
+        p.y() + std::max(upperBoundSize.height() + UpperBoundVerticalMargin(font), argumentLayout()->baseline(font) - (SymbolHeight(font) + 1) / 2),
         k_lineThickness,
         SymbolHeight(font)
       ),
@@ -26,8 +26,8 @@ void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KD
     );
   ctx->fillRect(
       KDRect(
-        p.x() + std::max({0, (upperBoundSize.width()-SymbolWidth(font))/2, (lowerBoundNEqualsSize.width()-SymbolWidth(font))/2}),
-        p.y() + std::max(upperBoundSize.height()+BoundVerticalMargin(font), argumentLayout()->baseline(font)-(SymbolHeight(font)+1)/2),
+        p.x() + std::max({0, (upperBoundSize.width() - SymbolWidth(font)) / 2, (lowerBoundNEqualsSize.width() - SymbolWidth(font)) / 2}),
+        p.y() + std::max(upperBoundSize.height() + UpperBoundVerticalMargin(font), argumentLayout()->baseline(font) - (SymbolHeight(font) + 1) / 2),
         SymbolWidth(font),
         k_lineThickness
       ),
@@ -35,8 +35,8 @@ void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KD
     );
   ctx->fillRect(
       KDRect(
-        p.x() + std::max({0, (upperBoundSize.width()-SymbolWidth(font))/2, (lowerBoundNEqualsSize.width()-SymbolWidth(font))/2})+SymbolWidth(font),
-        p.y() + std::max(upperBoundSize.height()+BoundVerticalMargin(font), argumentLayout()->baseline(font)-(SymbolHeight(font)+1)/2),
+        p.x() + std::max({0, (upperBoundSize.width() - SymbolWidth(font)) / 2, (lowerBoundNEqualsSize.width() - SymbolWidth(font)) / 2}) + SymbolWidth(font),
+        p.y() + std::max(upperBoundSize.height() + UpperBoundVerticalMargin(font), argumentLayout()->baseline(font) - (SymbolHeight(font) + 1) / 2),
         k_lineThickness,
         SymbolHeight(font)
       ),

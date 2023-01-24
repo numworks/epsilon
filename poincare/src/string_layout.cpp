@@ -88,7 +88,7 @@ StringLayout StringLayout::Builder(const char * string, int stringSize) {
   if (stringSize < 1) {
     stringSize = strlen(string) + 1;
   }
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(StringLayoutNode) + sizeof(char) * stringSize);
+  void * bufferNode = TreePool::sharedPool->alloc(sizeof(StringLayoutNode) + sizeof(char) * stringSize);
   StringLayoutNode * node = new (bufferNode) StringLayoutNode(string, stringSize);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<StringLayout &>(h);

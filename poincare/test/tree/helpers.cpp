@@ -3,7 +3,7 @@
 #include <quiz.h>
 
 int pool_size() {
-  return Poincare::TreePool::sharedPool()->numberOfNodes();
+  return Poincare::TreePool::sharedPool->numberOfNodes();
 }
 
 void assert_pool_size(int i) {
@@ -21,9 +21,9 @@ void assert_pool_size(int i) {
 
 #if POINCARE_TREE_LOG
 void log_pool() {
-  Poincare::TreePool::sharedPool()->treeLog(std::cout);
+  Poincare::TreePool::sharedPool->treeLog(std::cout);
 }
 void log_pool_tree() {
-  Poincare::TreePool::sharedPool()->treeLog(std::cout);
+  Poincare::TreePool::sharedPool->treeLog(std::cout);
 }
 #endif

@@ -12,13 +12,13 @@ namespace Poincare {
 
 TreeHandle TreeHandle::clone() const {
   assert(!isUninitialized());
-  TreeNode * nodeCopy = TreePool::sharedPool()->deepCopy(node());
+  TreeNode * nodeCopy = TreePool::sharedPool->deepCopy(node());
   nodeCopy->deleteParentIdentifier();
   return TreeHandle(nodeCopy);
 }
 
 /* Hierarchy operations */
-TreeNode * TreeHandle::node() const { assert(hasNode(m_identifier)); return TreePool::sharedPool()->node(m_identifier); }
+TreeNode * TreeHandle::node() const { assert(hasNode(m_identifier)); return TreePool::sharedPool->node(m_identifier); }
 
 size_t TreeHandle::size() const { return node()->deepSize(node()->numberOfChildren()); }
 
@@ -71,12 +71,12 @@ void TreeHandle::replaceChildInPlace(TreeHandle oldChild, TreeHandle newChild) {
 
   // Move the new child
   assert(newChild.isGhost() || newChild.parent().isUninitialized());
-  TreePool::sharedPool()->move(oldChild.node(), newChild.node(), newChild.numberOfChildren());
+  TreePool::sharedPool->move(oldChild.node(), newChild.node(), newChild.numberOfChildren());
   newChild.node()->retain();
   newChild.setParentIdentifier(identifier());
 
   // Move the old child
-  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), oldChild.node(), oldChild.numberOfChildren());
+  TreePool::sharedPool->move(TreePool::sharedPool->last(), oldChild.node(), oldChild.numberOfChildren());
   oldChild.node()->release(oldChild.numberOfChildren());
   oldChild.deleteParentIdentifier();
 }
@@ -101,9 +101,9 @@ void TreeHandle::mergeChildrenAtIndexInPlace(TreeHandle t, int i) {
   // Steal operands
   int numberOfNewChildren = t.numberOfChildren();
   if (i < numberOfChildren()) {
-    TreePool::sharedPool()->moveChildren(node()->childAtIndex(i), t.node());
+    TreePool::sharedPool->moveChildren(node()->childAtIndex(i), t.node());
   } else {
-    TreePool::sharedPool()->moveChildren(node()->lastDescendant()->next(), t.node());
+    TreePool::sharedPool->moveChildren(node()->lastDescendant()->next(), t.node());
   }
   node()->incrementNumberOfChildren(numberOfNewChildren);
   t.node()->eraseNumberOfChildren();
@@ -127,8 +127,8 @@ void TreeHandle::swapChildrenInPlace(int i, int j) {
   int secondChildIndex = i > j ? i : j;
   TreeHandle firstChild = childAtIndex(firstChildIndex);
   TreeHandle secondChild = childAtIndex(secondChildIndex);
-  TreePool::sharedPool()->move(firstChild.node()->nextSibling(), secondChild.node(), secondChild.numberOfChildren());
-  TreePool::sharedPool()->move(childAtIndex(secondChildIndex).node()->nextSibling(), firstChild.node(), firstChild.numberOfChildren());
+  TreePool::sharedPool->move(firstChild.node()->nextSibling(), secondChild.node(), secondChild.numberOfChildren());
+  TreePool::sharedPool->move(childAtIndex(secondChildIndex).node()->nextSibling(), firstChild.node(), firstChild.numberOfChildren());
 }
 
 #if POINCARE_TREE_LOG
@@ -157,7 +157,7 @@ void TreeHandle::addChildAtIndexInPlace(TreeHandle t, int index, int currentNumb
   for (int i = 0; i < index; i++) {
     newChildPosition = newChildPosition->nextSibling();
   }
-  TreePool::sharedPool()->move(newChildPosition, t.node(), t.numberOfChildren());
+  TreePool::sharedPool->move(newChildPosition, t.node(), t.numberOfChildren());
   t.node()->retain();
   node()->incrementNumberOfChildren();
   t.setParentIdentifier(identifier());
@@ -179,7 +179,7 @@ void TreeHandle::removeChildAtIndexInPlace(int i) {
 
 void TreeHandle::removeChildInPlace(TreeHandle t, int childNumberOfChildren) {
   assert(!isUninitialized());
-  TreePool::sharedPool()->move(TreePool::sharedPool()->last(), t.node(), childNumberOfChildren);
+  TreePool::sharedPool->move(TreePool::sharedPool->last(), t.node(), childNumberOfChildren);
   t.node()->release(childNumberOfChildren);
   t.deleteParentIdentifier();
   node()->incrementNumberOfChildren(-1);
@@ -188,7 +188,7 @@ void TreeHandle::removeChildInPlace(TreeHandle t, int childNumberOfChildren) {
 void TreeHandle::removeChildrenInPlace(int currentNumberOfChildren) {
   assert(!isUninitialized());
   deleteParentIdentifierInChildren();
-  TreePool::sharedPool()->removeChildren(node(), currentNumberOfChildren);
+  TreePool::sharedPool->removeChildren(node(), currentNumberOfChildren);
 }
 
 /* Private */
@@ -211,13 +211,13 @@ TreeHandle::TreeHandle(const TreeNode * node) : TreeHandle() {
 
 template <class U>
 TreeHandle TreeHandle::Builder() {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(U));
+  void * bufferNode = TreePool::sharedPool->alloc(sizeof(U));
   U * node = new (bufferNode) U();
   return TreeHandle::BuildWithGhostChildren(node);
 }
 
 TreeHandle TreeHandle::Builder(TreeNode::Initializer initializer, size_t size, int numberOfChildren) {
-  void * bufferNode = TreePool::sharedPool()->alloc(size);
+  void * bufferNode = TreePool::sharedPool->alloc(size);
   TreeNode * node = initializer(bufferNode);
   node->setNumberOfChildren(numberOfChildren);
   return TreeHandle::BuildWithGhostChildren(node);
@@ -255,7 +255,7 @@ T TreeHandle::FixedArityBuilder(const Tuple & children) {
 
 TreeHandle TreeHandle::BuildWithGhostChildren(TreeNode * node) {
   assert(node != nullptr);
-  TreePool * pool = TreePool::sharedPool();
+  TreePool * pool = TreePool::sharedPool;
   int expectedNumberOfChildren = node->numberOfChildren();
   /* Ensure the pool is syntaxically correct by creating ghost children for
    * nodes that have a fixed, non-zero number of children. */
@@ -293,7 +293,7 @@ void TreeHandle::release(uint16_t identifier) {
   if (!hasNode(identifier)) {
     return;
   }
-  TreeNode * node = TreePool::sharedPool()->node(identifier);
+  TreeNode * node = TreePool::sharedPool->node(identifier);
   if (node == nullptr) {
     /* The identifier is valid, but not the node: there must have been an
      * exception that deleted the pool. */

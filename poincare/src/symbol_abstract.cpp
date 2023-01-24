@@ -45,7 +45,7 @@ T SymbolAbstract::Builder(const char * name, int length) {
     length = strlen(name);
   }
   size_t size = sizeof(U) + length + 1;
-  void * bufferNode = TreePool::sharedPool()->alloc(size);
+  void * bufferNode = TreePool::sharedPool->alloc(size);
   U * node = new (bufferNode) U(name, length);
   assert(node->size() == size);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

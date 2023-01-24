@@ -10,7 +10,7 @@ Expression BooleanEvaluationNode<T>::complexToExpression(Preferences::Preference
 
 template <typename T>
 BooleanEvaluation<T> BooleanEvaluation<T>::Builder(bool value) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(BooleanEvaluationNode<T>));
+  void * bufferNode = TreePool::sharedPool->alloc(sizeof(BooleanEvaluationNode<T>));
   BooleanEvaluationNode<T> * node = new (bufferNode) BooleanEvaluationNode<T>(value);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<BooleanEvaluation<T> &>(h);
@@ -30,7 +30,7 @@ int BooleanNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 }
 
 Boolean Boolean::Builder(bool value) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(BooleanNode));
+  void * bufferNode = TreePool::sharedPool->alloc(sizeof(BooleanNode));
   BooleanNode * node = new (bufferNode) BooleanNode(value);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<Boolean &>(h);

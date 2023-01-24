@@ -32,7 +32,7 @@ class Checkpoint {
 public:
   static TreeNode * TopmostEndOfPool();
 
-  Checkpoint() : m_parent(s_topmost), m_endOfPool(TreePool::sharedPool()->last()) {
+  Checkpoint() : m_parent(s_topmost), m_endOfPool(TreePool::sharedPool->last()) {
     assert(!m_parent || m_endOfPool >= m_parent->m_endOfPool);
   }
   Checkpoint(const Checkpoint &) = delete;
@@ -44,7 +44,7 @@ public:
 protected:
   static Checkpoint * s_topmost;
 
-  void rollback() const { TreePool::sharedPool()->freePoolFromNode(m_endOfPool); }
+  void rollback() const { TreePool::sharedPool->freePoolFromNode(m_endOfPool); }
   void protectedDiscard() const;
 
   Checkpoint * const m_parent;

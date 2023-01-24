@@ -12,7 +12,7 @@ namespace Poincare {
 bool TreePool::s_treePoolLocked = false;
 #endif
 
-TreePool * TreePool::SharedStaticPool = nullptr;
+OMG::GlobalBox<TreePool> TreePool::sharedPool;
 
 void TreePool::freeIdentifier(uint16_t identifier) {
   if (TreeNode::IsValidIdentifier(identifier) && identifier < MaxNumberOfNodes) {

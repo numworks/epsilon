@@ -66,7 +66,7 @@ Expression Expression::ExpressionFromAddress(const void * address, size_t size) 
     return Expression();
   }
   // Build the Expression in the Tree Pool
-  return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool()->copyTreeFromAddress(address, size)));
+  return Expression(static_cast<ExpressionNode *>(TreePool::sharedPool->copyTreeFromAddress(address, size)));
 }
 
 /* Hierarchy */
@@ -1119,7 +1119,7 @@ failure:
 #else
   Expression e;
   {
-    char * treePoolCursor = TreePool::sharedPool()->cursor();
+    char * treePoolCursor = TreePool::sharedPool->cursor();
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
       e = clone().deepReduce(*reductionContext);

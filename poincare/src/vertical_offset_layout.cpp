@@ -273,7 +273,7 @@ bool VerticalOffsetLayoutNode::protectedIsIdenticalTo(Layout l) {
 }
 
 VerticalOffsetLayout VerticalOffsetLayout::Builder(Layout l, VerticalOffsetLayoutNode::VerticalPosition verticalPosition, VerticalOffsetLayoutNode::HorizontalPosition horizontalPosition) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(VerticalOffsetLayoutNode));
+  void * bufferNode = TreePool::sharedPool->alloc(sizeof(VerticalOffsetLayoutNode));
   VerticalOffsetLayoutNode * node = new (bufferNode) VerticalOffsetLayoutNode(verticalPosition, horizontalPosition);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, l);

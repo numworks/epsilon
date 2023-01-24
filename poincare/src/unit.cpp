@@ -791,7 +791,7 @@ Evaluation<T> UnitNode::templatedApproximate(const ApproximationContext& approxi
 
 // Unit
 Unit Unit::Builder(const Unit::Representative * representative, const Prefix * prefix) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(UnitNode));
+  void * bufferNode = TreePool::sharedPool->alloc(sizeof(UnitNode));
   UnitNode * node = new (bufferNode) UnitNode(representative, prefix);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<Unit &>(h);

@@ -238,7 +238,7 @@ bool NthRootLayoutNode::protectedIsIdenticalTo(Layout l) {
 }
 
 NthRootLayout NthRootLayout::Builder(Layout child) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(NthRootLayoutNode));
+  void * bufferNode = TreePool::sharedPool->alloc(sizeof(NthRootLayoutNode));
   NthRootLayoutNode * node = new (bufferNode) NthRootLayoutNode(false);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, child);
@@ -246,7 +246,7 @@ NthRootLayout NthRootLayout::Builder(Layout child) {
 }
 
 NthRootLayout NthRootLayout::Builder(Layout child, Layout index) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(NthRootLayoutNode));
+  void * bufferNode = TreePool::sharedPool->alloc(sizeof(NthRootLayoutNode));
   NthRootLayoutNode * node = new (bufferNode) NthRootLayoutNode(true);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, child);

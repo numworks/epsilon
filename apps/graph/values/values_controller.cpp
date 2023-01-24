@@ -340,7 +340,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         &result,
         &abscissaContext,
         Poincare::ReductionTarget::User,
-        Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+        Poincare::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
         Poincare::UnitConversion::Default,
         Poincare::Preferences::sharedPreferences(),
         true,

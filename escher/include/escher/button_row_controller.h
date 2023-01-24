@@ -67,6 +67,8 @@ private:
     Size m_size;
   };
 
+  void privateModalViewAltersFirstResponder(FirstResponderAlteration alteration) override;
+
   ContentView m_contentView;
 };
 

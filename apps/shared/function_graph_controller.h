@@ -64,7 +64,6 @@ protected:
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;
 
-  int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
   void selectFunctionWithCursor(int functionIndex, bool willBeVisible);
   virtual double defaultCursorT(Ion::Storage::Record record, bool ignoreMargins);
   virtual FunctionStore * functionStore() const;
@@ -73,7 +72,7 @@ protected:
   }
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
   Ion::Storage::Record recordAtCurveIndex(int curveIndex) const { return functionStore()->activeRecordAtIndex(curveIndex); }
-  Ion::Storage::Record recordAtSelectedCurveIndex() const { return recordAtCurveIndex(indexFunctionSelectedByCursor()); }
+  Ion::Storage::Record recordAtSelectedCurveIndex() const { return recordAtCurveIndex(*m_indexFunctionSelectedByCursor); }
 
 private:
   virtual FunctionGraphView * functionGraphView() = 0;

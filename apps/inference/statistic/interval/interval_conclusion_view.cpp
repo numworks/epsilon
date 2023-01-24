@@ -23,10 +23,17 @@ void IntervalConclusionView::setInterval(double center, double marginOfError) {
   defaultConvertFloatToText(center, bufferCenter, bufferSize);
   defaultConvertFloatToText(marginOfError, buffermarginOfError, bufferSize);
   // Use the same precision as in StatisticCurveView::drawInterval
-  Poincare::Print::CustomPrintf(m_buffer, k_maxNumberOfChar, "%s\n%*.*ed ± %*.*ed",
-           I18n::translate(I18n::Message::ConfidenceInterval),
-           center, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::LargeNumberOfSignificantDigits,
-           marginOfError, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::LargeNumberOfSignificantDigits);
+  Poincare::Print::CustomPrintf(
+    m_buffer,
+    k_maxNumberOfChar,
+    "%s\n%*.*ed ± %*.*ed",
+    I18n::translate(I18n::Message::ConfidenceInterval),
+    center,
+    Poincare::Preferences::PrintFloatMode::Decimal,
+    Poincare::Preferences::LargeNumberOfSignificantDigits,
+    marginOfError,
+    Poincare::Preferences::PrintFloatMode::Decimal,
+    Poincare::Preferences::LargeNumberOfSignificantDigits);
 }
 
 }

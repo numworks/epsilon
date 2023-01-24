@@ -28,7 +28,7 @@ public:
   bool operator!=(const Node& n) { return n.m_block != m_block; }
 
   bool isIdenticalTo(const Node &other) const {
-    return std::memcmp(m_block, other.m_block, treeSize()) == 0;
+    return memcmp(m_block, other.m_block, treeSize()) == 0;
   }
 
 #if POINCARE_MEMORY_TREE_LOG

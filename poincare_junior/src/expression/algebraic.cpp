@@ -83,7 +83,7 @@ EditionReference Algebraic::NormalFormator(EditionReference expression, bool num
   BlockType type = expression.type();
   if (type == BlockType::Power) {
     EditionReference exponent = expression.childAtIndex(1);
-    bool negativeRationalExponent = exponent.block()->isRational() && Rational::StrictSign(exponent) == StrictSign::Negative;
+    bool negativeRationalExponent = exponent.block()->isRational() && Rational::RationalStrictSign(exponent) == StrictSign::Negative;
     if (!numerator && negativeRationalExponent) {
       Rational::SetSign(exponent, NonStrictSign::Positive);
     }

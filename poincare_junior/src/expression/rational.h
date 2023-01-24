@@ -12,7 +12,7 @@ public:
   static IntegerHandler Denominator(const Node node);
   static EditionReference PushNode(IntegerHandler numerator, IntegerHandler denominator);
   static NonStrictSign Sign(const Node node) { return Numerator(node).sign(); }
-  static StrictSign StrictSign(const Node node) { return Numerator(node).strictSign(); }
+  static StrictSign RationalStrictSign(const Node node) { return Numerator(node).strictSign(); }
   static void SetSign(EditionReference reference, NonStrictSign sign);
 
   // In-place??

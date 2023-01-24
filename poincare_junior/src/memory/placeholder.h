@@ -1,7 +1,7 @@
 #ifndef POINCARE_MEMORY_PLACEHOLDER_H
 #define POINCARE_MEMORY_PLACEHOLDER_H
 
-#include <cstdint>
+#include <stdint.h>
 
 namespace PoincareJ {
 

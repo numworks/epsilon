@@ -1,3 +1,5 @@
+#include <new>
+#include <algorithm>
 #include "integer.h"
 #include "rational.h"
 #include <poincare_junior/src/memory/value_block.h>

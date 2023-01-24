@@ -71,11 +71,10 @@ private:
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   SeriesSelectionController * curveSelectionController() const override { return const_cast<SeriesSelectionController *>(&m_seriesSelectionController); }
-  bool closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const override;
   int selectedCurveIndex(bool relativeIndex = true) const override;
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   bool suitableYValue(double y) const override;
-  int numberOfCurves() const override;
+  int numberOfCurves() const override { return m_store->numberOfActiveSeries(); }
   int numberOfSubCurves(int curveIndex) const override { return 1; }
   bool isAlongY(int curveIndex) const override { return false; }
 
@@ -85,6 +84,7 @@ private:
   bool selectedSeriesIsScatterPlot() const { return m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::None; }
   void setRoundCrossCursorView();
   int seriesIndexFromCurveIndex(int curveIndex) const { return m_store->seriesIndexFromActiveSeriesIndex(curveIndex); }
+  int curveIndexFromSeriesIndex(int seriesIndex) const { return m_store->activeSeriesIndexFromSeriesIndex(seriesIndex); }
 
   Shared::ToggleableRingRoundCursorView m_cursorView;
   BannerView m_bannerView;

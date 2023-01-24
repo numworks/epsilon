@@ -168,7 +168,7 @@ bool InteractiveCurveViewController::textFieldDidReceiveEvent(AbstractTextField 
 }
 
 void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
-  Coordinate2D<double> xy = xyValues(selectedCurveIndex(false), t, textFieldDelegateApp()->localContext(), 0);
+  Coordinate2D<double> xy = xyValues(selectedCurveIndex(), t, textFieldDelegateApp()->localContext(), 0);
   m_cursor->moveTo(t, xy.x1(), xy.x2());
   reloadBannerView();
   if (!isCursorCurrentlyVisible(false, true)) {
@@ -219,7 +219,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
   int curvesCount = numberOfCurves();
   for (int curveIndex = 0; curveIndex < curvesCount; curveIndex++) {
     for (int subCurveIndex = 0; subCurveIndex < numberOfSubCurves(curveIndex); subCurveIndex++) {
-      if (!closestCurveIndexIsSuitable(curveIndex, currentCurveIndex, subCurveIndex, currentSubCurveIndex)) {
+      if (curveIndex == currentCurveIndex && subCurveIndex == currentSubCurveIndex) {
         // Nothing to check for
         continue;
       }
@@ -279,10 +279,6 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     *newSubCurveIndex = nextSubCurveIndex;
   }
   return nextCurveIndex;
-}
-
-bool InteractiveCurveViewController::closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const {
-  return newIndex != currentIndex || newSubIndex != currentSubIndex;
 }
 
 bool InteractiveCurveViewController::handleZoom(Ion::Events::Event event) {

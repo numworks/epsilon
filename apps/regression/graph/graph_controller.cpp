@@ -197,7 +197,7 @@ bool GraphController::openMenuForCurveAtIndex(int curveIndex) {
   int activeIndex = seriesIndexFromCurveIndex(curveIndex);
   if (*m_selectedSeriesIndex != activeIndex) {
     *m_selectedSeriesIndex = activeIndex;
-    Coordinate2D<double> xy = xyValues(activeIndex, m_cursor->t(), textFieldDelegateApp()->localContext());
+    Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), textFieldDelegateApp()->localContext());
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
   if (selectedSeriesIsScatterPlot()) {
@@ -240,7 +240,7 @@ bool GraphController::selectedModelIsValid() const {
 Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(double t) const {
   assert(selectedModelIsValid());
   if (*m_selectedDotIndex == -1) {
-    return xyValues(*m_selectedSeriesIndex, t, globalContext());
+    return xyValues(curveIndexFromSeriesIndex(*m_selectedSeriesIndex), t, globalContext());
   } else if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex) && !selectedSeriesIsScatterPlot()) {
     return Coordinate2D<double>(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
   }
@@ -253,7 +253,7 @@ bool GraphController::moveCursorVertically(int direction) {
   double y = m_cursor->y();
 
   // Find the closest regression
-  int selectedRegressionIndex = *m_selectedDotIndex == -1 ? *m_selectedSeriesIndex : -1;
+  int selectedRegressionIndex = *m_selectedDotIndex == -1 ? curveIndexFromSeriesIndex(*m_selectedSeriesIndex) : -1;
   int closestRegressionSeries = closestCurveIndexVertically(direction > 0, selectedRegressionIndex, context);
 
   // Find the closest dot
@@ -354,20 +354,13 @@ int GraphController::selectedCurveIndex(bool relativeIndex) const {
   return res;
 }
 
-bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const {
-  return InteractiveCurveViewController::closestCurveIndexIsSuitable(newIndex, currentIndex, newSubIndex, currentSubIndex) && m_store->seriesIsActive(newIndex);
-}
-
 Coordinate2D<double> GraphController::xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex) const {
-  return Coordinate2D<double>(t, m_store->yValueForXValue(curveIndex, t, context));
+  int seriesIndex = seriesIndexFromCurveIndex(curveIndex);
+  return Coordinate2D<double>(t, m_store->yValueForXValue(seriesIndex, t, context));
 }
 
 bool GraphController::suitableYValue(double y) const {
   return interactiveCurveViewRange()->yMin() <= y && y <= interactiveCurveViewRange()->yMax();
-}
-
-int GraphController::numberOfCurves() const {
-  return Store::k_numberOfSeries;
 }
 
 void GraphController::setRoundCrossCursorView() {

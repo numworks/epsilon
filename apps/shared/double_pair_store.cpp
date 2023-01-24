@@ -253,6 +253,17 @@ int DoublePairStore::seriesIndexFromActiveSeriesIndex(int activeSeriesIndex, Act
   return 0;
 }
 
+int DoublePairStore::activeSeriesIndexFromSeriesIndex(int seriesIndex, ActiveSeriesTest activeSeriesTest) const {
+  assert(0 <= seriesIndex && seriesIndex < k_numberOfSeries);
+  assert(activeSeriesTest(this, seriesIndex));
+  int activeSeriesCount = 0;
+  for (int i = 0; i < seriesIndex; i++) {
+    activeSeriesCount += activeSeriesTest(this, i);
+  }
+  assert(activeSeriesCount < numberOfActiveSeries());
+  return activeSeriesCount;
+}
+
 static void swapRows(int a, int b, void * ctx, int numberOfElements) {
   // Swap X and Y values
   void ** pack = reinterpret_cast<void **>(ctx);

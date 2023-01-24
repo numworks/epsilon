@@ -4,6 +4,13 @@
 
 namespace Escher {
 
+void Responder::modalViewAltersFirstResponder(FirstResponderAlteration alteration) {
+  privateModalViewAltersFirstResponder(alteration);
+  if (m_parentResponder) {
+    m_parentResponder->modalViewAltersFirstResponder(alteration);
+  }
+}
+
 bool Responder::hasAncestor(Responder * responder) const {
   if (responder == nullptr) {
     return false;

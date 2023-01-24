@@ -26,7 +26,6 @@ public:
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void willResignFirstResponder() override;
-  void modalViewAltersFirstResponder(FirstResponderAlteration alteration) override { contentView()->setStalled(alteration == FirstResponderAlteration::WillSpoil); }
 
   // ScrollView
   void setBackgroundColor(KDColor backgroundColor) override;
@@ -130,6 +129,8 @@ protected:
   ContentView * contentView() { return const_cast<ContentView *>(nonEditableContentView()); }
 
 private:
+  void privateModalViewAltersFirstResponder(FirstResponderAlteration alteration) override { contentView()->setStalled(alteration == FirstResponderAlteration::WillSpoil); }
+
   virtual void removeWholeText();
   void removePreviousGlyphIfRepetition(bool defaultXNTHasChanged);
   bool privateHandleEventWhileEditing(Ion::Events::Event event);

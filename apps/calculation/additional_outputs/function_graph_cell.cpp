@@ -43,7 +43,7 @@ void FunctionAxis<N>::drawAxis(const AbstractPlotView * plotView, KDContext * ct
 
 template<size_t N>
 bool FunctionAxis<N>::labelWillBeDisplayed(int i, KDRect labelRect) const {
-  return i == N || !labelRect.intersects(m_specialLabelRect);
+  return i == N || (!labelRect.intersects(m_specialLabelRect) && PlotPolicy::LabeledAxis<N>::labelWillBeDisplayed(i, labelRect));
 }
 
 void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {

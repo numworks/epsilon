@@ -176,6 +176,7 @@ float SimpleAxis::tickStep(const AbstractPlotView * plotView, AbstractPlotView::
 
 void AbstractLabeledAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
   size_t n = numberOfLabels();
+  m_lastDrawnRect = KDRectZero;
   for (size_t i = 0; i < n; i++) {
     computeLabel(i, plotView, axis);
   }
@@ -184,6 +185,10 @@ void AbstractLabeledAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotVi
 int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
   float t = tickPosition(i, plotView, axis);
   return Poincare::PrintFloat::ConvertFloatToText(t, mutableLabel(i), k_labelBufferMaxSize, k_labelBufferMaxGlyphLength, k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal).GlyphLength;
+}
+
+bool AbstractLabeledAxis::labelWillBeDisplayed(int i, KDRect rect) const {
+  return !rect.intersects(m_lastDrawnRect);
 }
 
 KDRect AbstractLabeledAxis::labelRect(int i, float t, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
@@ -226,6 +231,7 @@ void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plo
   const char * text = label(i);
   KDRect thisLabelRect = labelRect(i, t, plotView, axis);
   if (thisLabelRect.intersects(rect) && labelWillBeDisplayed(i, thisLabelRect)) {
+    m_lastDrawnRect = thisLabelRect.paddedWith(AbstractPlotView::k_labelMargin);
     plotView->drawLabel(ctx, rect, text, thisLabelRect, color);
   }
 }

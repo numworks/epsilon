@@ -246,4 +246,18 @@ void ButtonRowController::viewDidDisappear() {
   m_contentView.mainViewController()->viewDidDisappear();
 }
 
+void ButtonRowController::privateModalViewAltersFirstResponder(FirstResponderAlteration alteration) {
+  if (alteration != FirstResponderAlteration::DidRestore) {
+    return;
+  }
+  int n = m_contentView.numberOfButtons();
+  Responder * firstResponder = Container::activeApp()->firstResponder();
+  for (int i = 0; i < n; i++) {
+    if (static_cast<Responder *>(m_contentView.buttonAtIndex(i)) == firstResponder) {
+      setSelectedButton(i);
+      return;
+    }
+  }
+}
+
 }

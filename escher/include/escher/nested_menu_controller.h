@@ -27,7 +27,6 @@ public:
   // MemoizedListViewDataSource
   HighlightCell * reusableCell(int index, int type) override;
 
-  void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
   void open() override;
 
 protected:
@@ -97,7 +96,6 @@ private:
   BreadcrumbController m_breadcrumbController;
   ListController m_listController;
   Ion::RingBuffer<StackState, k_maxModelTreeDepth> m_stack;
-  StackState m_lastState;
   int m_savedChecksum;
   constexpr static int k_nestedMenuStackDepth = 1;
 };

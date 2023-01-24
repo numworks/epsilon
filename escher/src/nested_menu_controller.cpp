@@ -65,7 +65,9 @@ void NestedMenuController::BreadcrumbController::updateTitle() {
 void NestedMenuController::ListController::didBecomeFirstResponder() {
   m_selectableTableView->reloadData();
   Container::activeApp()->setFirstResponder(m_selectableTableView);
-  m_selectableTableView->selectCellAtLocation(0, 0);
+  if (m_selectableTableView->selectedRow() < 0) {
+    m_selectableTableView->selectCellAtLocation(0, 0);
+  }
 }
 
 /* NestedMenuController */
@@ -75,7 +77,6 @@ NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Me
   m_selectableTableView(&m_listController, this, this, this),
   m_breadcrumbController(this, &m_selectableTableView),
   m_listController(this, &m_selectableTableView, title),
-  m_lastState(0),
   m_savedChecksum(0)
 {
   m_selectableTableView.setMargins(0);
@@ -98,8 +99,6 @@ void NestedMenuController::viewWillAppear() {
     returnToRootMenu();
   } else if (numberOfRows() == 0) {
     returnToRootMenu();
-  } else {
-    loadState(m_lastState);
   }
 }
 
@@ -154,7 +153,7 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
   }
   m_breadcrumbController.pushTitle(subTitle());
   StackViewController::push(&m_breadcrumbController);
-
+  m_selectableTableView.selectRow(0);
   Container::activeApp()->setFirstResponder(&m_listController);
   return true;
 }
@@ -178,6 +177,7 @@ bool NestedMenuController::returnToPreviousMenu() {
 
 bool NestedMenuController::returnToRootMenu() {
   resetMemoization();
+  m_selectableTableView.selectRow(0);
   if (stackDepth() > 0) {
     // Reset breadcrumb and stack
     m_stack.reset();
@@ -192,12 +192,6 @@ void NestedMenuController::loadState(NestedMenuController::StackState state) {
   m_selectableTableView.selectCellAtLocation(0, isStateValid ? state.selectedRow() : 0);
   KDPoint scroll = m_selectableTableView.contentOffset();
   m_selectableTableView.setContentOffset(KDPoint(scroll.x(), isStateValid ? state.verticalScroll() : 0));
-}
-
-void NestedMenuController::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
-  if (selectedRow() >= 0) {
-    m_lastState = currentState(); // Persist current state
-  }
 }
 
 void NestedMenuController::open() {

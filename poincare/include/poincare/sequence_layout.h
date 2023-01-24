@@ -35,10 +35,16 @@ public:
   int numberOfChildren() const override { return 4; }
 
 protected:
-  constexpr static KDCoordinate k_boundVerticalMarginLargeFont = 2;
-  constexpr static KDCoordinate k_boundVerticalMarginSmallFont = 1;
-  constexpr static KDCoordinate BoundVerticalMargin(KDFont::Size font) {
-    return font == KDFont::Size::Large ? k_boundVerticalMarginLargeFont : k_boundVerticalMarginSmallFont;
+  constexpr static KDCoordinate k_upperBoundVerticalMarginLargeFont = 2;
+  constexpr static KDCoordinate k_lowerBoundVerticalMarginLargeFont = 2;
+  // There is already a natural margin under the upperbound expression
+  constexpr static KDCoordinate k_upperBoundVerticalMarginSmallFont = 0;
+  constexpr static KDCoordinate k_lowerBoundVerticalMarginSmallFont = 1;
+  constexpr static KDCoordinate UpperBoundVerticalMargin(KDFont::Size font) {
+    return font == KDFont::Size::Large ? k_upperBoundVerticalMarginLargeFont : k_upperBoundVerticalMarginSmallFont;
+  }
+  constexpr static KDCoordinate LowerBoundVerticalMargin(KDFont::Size font) {
+    return font == KDFont::Size::Large ? k_lowerBoundVerticalMarginLargeFont : k_lowerBoundVerticalMarginSmallFont;
   }
 
   constexpr static KDCoordinate k_argumentHorizontalMarginLargeFont = 2;

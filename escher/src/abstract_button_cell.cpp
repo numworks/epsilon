@@ -10,24 +10,11 @@ AbstractButtonCell::AbstractButtonCell(Responder * parentResponder, I18n::Messag
   m_messageTextView(font, textBody, KDContext::k_alignCenter, KDContext::k_alignCenter, textColor),
   m_invocation(invocation),
   m_font(font)
-{
-}
-
-void AbstractButtonCell::setMessage(I18n::Message message) {
-  m_messageTextView.setMessage(message);
-}
-
-int AbstractButtonCell::numberOfSubviews() const {
-  return 1;
-}
+{}
 
 View * AbstractButtonCell::subviewAtIndex(int index) {
   assert(index == 0);
   return &m_messageTextView;
-}
-
-void AbstractButtonCell::layoutSubviews(bool force) {
-  m_messageTextView.setFrame(bounds(), force);
 }
 
 bool AbstractButtonCell::handleEvent(Ion::Events::Event event) {

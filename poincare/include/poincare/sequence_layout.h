@@ -35,8 +35,17 @@ public:
   int numberOfChildren() const override { return 4; }
 
 protected:
-  constexpr static KDCoordinate k_boundHeightMargin = 2;
-  constexpr static KDCoordinate k_argumentWidthMargin = 2;
+  constexpr static KDCoordinate k_boundVerticalMarginLargeFont = 2;
+  constexpr static KDCoordinate k_boundVerticalMarginSmallFont = 1;
+  constexpr static KDCoordinate BoundVerticalMargin(KDFont::Size font) {
+    return font == KDFont::Size::Large ? k_boundVerticalMarginLargeFont : k_boundVerticalMarginSmallFont;
+  }
+
+  constexpr static KDCoordinate k_argumentHorizontalMarginLargeFont = 2;
+  constexpr static KDCoordinate k_argumentHorizontalMarginSmallFont = 0;
+  constexpr static KDCoordinate ArgumentHorizontalMargin(KDFont::Size font) {
+    return font == KDFont::Size::Large ? k_argumentHorizontalMarginLargeFont : k_argumentHorizontalMarginSmallFont;
+  }
   constexpr static const char * k_equal = "=";
 
   KDSize lowerBoundSizeWithVariableEquals(KDFont::Size font);

@@ -18,18 +18,31 @@ void IntervalAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axi
   float low = plotInterval->estimate() - plotInterval->marginOfError();
   float high = plotInterval->estimate() + plotInterval->marginOfError();
 
-  /* If ticks are too close, labels might overlap.
-   * If ticks are at the exact same position, values and thus labels should
-   * be the same and drawing both labels at the same position should not
-   * create a visual artifact. This hack enables us to avoid creating another bool. */
-  KDCoordinate spaceBetweenBounds = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, high) - plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, low);
-  m_realignLabels = 0 < spaceBetweenBounds && spaceBetweenBounds <= static_cast<KDCoordinate>(k_glyphLength * KDFont::GlyphWidth(AbstractPlotView::k_font));
-
   convertFloatToText(low, m_labels[0], k_bufferSize);
   convertFloatToText(high, m_labels[1], k_bufferSize);
   /* Memoize the interval bounds, as at the time of display, there is no guarantee the bounds will be correct. */
   m_ticks[0] = low;
   m_ticks[1] = high;
+
+  KDCoordinate leftLabelPosition = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, low);
+  KDCoordinate rightLabelPosition = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, high);
+  KDCoordinate spaceBetweenBounds = rightLabelPosition - leftLabelPosition;
+  KDCoordinate labelMaxWidth = static_cast<KDCoordinate>(k_glyphLength * KDFont::GlyphWidth(AbstractPlotView::k_font));
+  if (spaceBetweenBounds > 0 && spaceBetweenBounds < labelMaxWidth + KDFont::GlyphWidth(AbstractPlotView::k_font)) {
+    /* If ticks are too close, labels might overlap.
+     * spaceBetweenBounds > 0 is checked because if ticks are at the exact same
+     * position, values and thus labels should  be the same and drawing both
+     * labels at the same position should not create a visual artifact.
+     * KDFont::GlyphWidth(AbstractPlotView::k_font) is added to labelMaxWidth
+     * to leave a space of at least 1 char between labels. */
+    m_positionOfLeftLabel = AbstractPlotView::RelativePosition::Before;
+  } else if (leftLabelPosition < (labelMaxWidth + 1)/ 2) {
+    /* If ticks are too much on the left or right of the screen, they might be
+     * cropped out of the window. */
+    m_positionOfLeftLabel = AbstractPlotView::RelativePosition::After;
+  } else {
+    m_positionOfLeftLabel = AbstractPlotView::RelativePosition::There;
+  }
 }
 
 float IntervalAxis::tickPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis) const {
@@ -40,9 +53,14 @@ float IntervalAxis::tickPosition(int i, const AbstractPlotView * plotView, Abstr
 }
 
 void IntervalAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color) const {
-  AbstractPlotView::RelativePosition yRelative = AbstractPlotView::RelativePosition::After;
-  AbstractPlotView::RelativePosition xRelative = m_realignLabels ? (i == 0 ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::After) : AbstractPlotView::RelativePosition::There;
-  plotView->drawLabel(ctx, rect, m_labels[i], Coordinate2D<float>(t, 0.f), xRelative, yRelative, color);
+  // Take the opposite of m_positionLeftLabel for the right label.
+  AbstractPlotView::RelativePosition xRelative =
+    i == 1 && m_positionOfLeftLabel != AbstractPlotView::RelativePosition::There ?
+      (m_positionOfLeftLabel == AbstractPlotView::RelativePosition::After ?
+        AbstractPlotView::RelativePosition::Before :
+        AbstractPlotView::RelativePosition::After) :
+      m_positionOfLeftLabel;
+  plotView->drawLabel(ctx, rect, m_labels[i], Coordinate2D<float>(t, 0.f), xRelative, AbstractPlotView::RelativePosition::After, color);
 }
 
 // IntervalPlotPolicy

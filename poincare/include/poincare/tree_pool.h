@@ -19,8 +19,11 @@ class TreePool final {
   friend class TreeHandle;
   friend class Checkpoint;
 public:
-  static TreePool * sharedPool() { assert(SharedStaticPool != nullptr); return SharedStaticPool; }
-  static void RegisterPool(TreePool * pool) { assert(SharedStaticPool == nullptr); SharedStaticPool = pool; }
+  static OMG::GlobalBox<TreePool> sharedPool
+#if PLATFORM_DEVICE
+    __attribute__((section(".bss.$poincare_pool")))
+#endif
+  ;
   static void Lock() {
 #if ASSERTIONS
     s_treePoolLocked = true;
@@ -67,8 +70,6 @@ private:
   constexpr static int BufferSize = 32768;
   constexpr static int MaxNumberOfNodes = BufferSize/sizeof(TreeNode);
   constexpr static int k_maxNodeOffset = BufferSize/ByteAlignment;
-
-  static TreePool * SharedStaticPool;
 #if ASSERTIONS
   static bool s_treePoolLocked;
 #endif
@@ -102,7 +103,7 @@ private:
       }
     };
     Iterator begin() const { return Iterator(m_node); }
-    Iterator end() const { return Iterator(TreePool::sharedPool()->last()); }
+    Iterator end() const { return Iterator(TreePool::sharedPool->last()); }
   private:
     TreeNode * m_node;
   };
@@ -120,7 +121,7 @@ private:
       }
     };
     Iterator begin() const { return Iterator(m_node); }
-    Iterator end() const { return Iterator(TreePool::sharedPool()->last()); }
+    Iterator end() const { return Iterator(TreePool::sharedPool->last()); }
   private:
     TreeNode * m_node;
   };

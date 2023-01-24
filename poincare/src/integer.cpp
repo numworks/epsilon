@@ -98,7 +98,7 @@ Integer Integer::BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, b
 // Private constructor
 
 Integer::Integer(native_uint_t * digits, uint16_t numberOfDigits, bool negative) {
-  void * bufferNode = TreePool::sharedPool()->alloc(IntegerSize(numberOfDigits));
+  void * bufferNode = TreePool::sharedPool->alloc(IntegerSize(numberOfDigits));
   IntegerNode * node = new (bufferNode) IntegerNode(digits, numberOfDigits);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   /* Integer is a TreeHandle that keeps an extra integer. We cannot just cast

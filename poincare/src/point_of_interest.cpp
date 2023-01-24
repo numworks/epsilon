@@ -5,7 +5,7 @@ namespace Poincare {
 // PointOfInterest
 
 PointOfInterest PointOfInterest::Builder(double abscissa, double ordinate, typename Solver<double>::Interest interest, uint32_t data, bool inverted, int subCurveIndex) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(PointOfInterestNode));
+  void * bufferNode = TreePool::sharedPool->alloc(sizeof(PointOfInterestNode));
   PointOfInterestNode * node = new (bufferNode) PointOfInterestNode(abscissa, ordinate ,interest, data, inverted, subCurveIndex);
   TreeHandle handle = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<PointOfInterest &>(handle);

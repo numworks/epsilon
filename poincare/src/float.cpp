@@ -33,7 +33,7 @@ Layout FloatNode<T>::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 
 template<typename T>
 Float<T> Float<T>::Builder(T value) {
-  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(FloatNode<T>));
+  void * bufferNode = TreePool::sharedPool->alloc(sizeof(FloatNode<T>));
   FloatNode<T> * node = new (bufferNode) FloatNode<T>(value);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<Float &>(h);

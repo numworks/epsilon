@@ -25,7 +25,7 @@ Layout Layout::LayoutFromAddress(const void * address, size_t size) {
   if (address == nullptr || size == 0) {
     return Layout();
   }
-  return Layout(static_cast<LayoutNode *>(TreePool::sharedPool()->copyTreeFromAddress(address, size)));
+  return Layout(static_cast<LayoutNode *>(TreePool::sharedPool->copyTreeFromAddress(address, size)));
 }
 
 int Layout::serializeParsedExpression(char * buffer, int bufferSize, Context * context) const {

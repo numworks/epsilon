@@ -232,7 +232,7 @@ Expression ComparisonNode::shallowReduce(const ReductionContext& reductionContex
 }
 
 Comparison Comparison::Builder(Expression child0, ComparisonNode::OperatorType operatorType, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(SizeOfComparisonNodeWithOperators(1));
+  void * bufferNode = TreePool::sharedPool->alloc(SizeOfComparisonNodeWithOperators(1));
   ComparisonNode * node = new (bufferNode) ComparisonNode(operatorType);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, child0);
@@ -242,7 +242,7 @@ Comparison Comparison::Builder(Expression child0, ComparisonNode::OperatorType o
 
 Comparison Comparison::addComparison(ComparisonNode::OperatorType operatorType, Expression child) {
   int numberOfOperands = numberOfChildren() + 1;
-  void * bufferNode = TreePool::sharedPool()->alloc(SizeOfComparisonNodeWithOperators(numberOfOperands - 1));
+  void * bufferNode = TreePool::sharedPool->alloc(SizeOfComparisonNodeWithOperators(numberOfOperands - 1));
   ComparisonNode::OperatorType * listOfOperators = node()->listOfOperators();
   ComparisonNode * node = new (bufferNode) ComparisonNode(numberOfOperands, listOfOperators, operatorType);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

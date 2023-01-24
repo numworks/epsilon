@@ -15,14 +15,17 @@ public:
   virtual void willExitResponderChain(Responder * nextFirstResponder) {}
 
   enum class FirstResponderAlteration { WillSpoil, DidRestore };
-  virtual void modalViewAltersFirstResponder(FirstResponderAlteration alteration) {}
+  void modalViewAltersFirstResponder(FirstResponderAlteration alteration);
 
   Responder * parentResponder() const { return m_parentResponder; }
   bool hasAncestor(Responder * responder) const;
   Responder * commonAncestorWith(Responder * responder);
   void setParentResponder(Responder * responder) { m_parentResponder = responder; }
+
 private:
   bool privateHasAncestor(Responder * responder) const;
+  virtual void privateModalViewAltersFirstResponder(FirstResponderAlteration alteration) {}
+
   Responder * m_parentResponder;
 };
 

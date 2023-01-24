@@ -17,28 +17,28 @@ void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KD
   // Render the Product symbol.
   ctx->fillRect(
       KDRect(
-        p.x() + std::max({0, (upperBoundSize.width()-k_symbolWidth)/2, (lowerBoundNEqualsSize.width()-k_symbolWidth)/2}),
-        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline(font)-(k_symbolHeight+1)/2),
+        p.x() + std::max({0, (upperBoundSize.width()-SymbolWidth(font))/2, (lowerBoundNEqualsSize.width()-SymbolWidth(font))/2}),
+        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline(font)-(SymbolHeight(font)+1)/2),
         k_lineThickness,
-        k_symbolHeight
+        SymbolHeight(font)
       ),
       expressionColor
     );
   ctx->fillRect(
       KDRect(
-        p.x() + std::max({0, (upperBoundSize.width()-k_symbolWidth)/2, (lowerBoundNEqualsSize.width()-k_symbolWidth)/2}),
-        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline(font)-(k_symbolHeight+1)/2),
-        k_symbolWidth,
+        p.x() + std::max({0, (upperBoundSize.width()-SymbolWidth(font))/2, (lowerBoundNEqualsSize.width()-SymbolWidth(font))/2}),
+        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline(font)-(SymbolHeight(font)+1)/2),
+        SymbolWidth(font),
         k_lineThickness
       ),
       expressionColor
     );
   ctx->fillRect(
       KDRect(
-        p.x() + std::max({0, (upperBoundSize.width()-k_symbolWidth)/2, (lowerBoundNEqualsSize.width()-k_symbolWidth)/2})+k_symbolWidth,
-        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline(font)-(k_symbolHeight+1)/2),
+        p.x() + std::max({0, (upperBoundSize.width()-SymbolWidth(font))/2, (lowerBoundNEqualsSize.width()-SymbolWidth(font))/2})+SymbolWidth(font),
+        p.y() + std::max(upperBoundSize.height()+k_boundHeightMargin, argumentLayout()->baseline(font)-(SymbolHeight(font)+1)/2),
         k_lineThickness,
-        k_symbolHeight
+        SymbolHeight(font)
       ),
       expressionColor
     );

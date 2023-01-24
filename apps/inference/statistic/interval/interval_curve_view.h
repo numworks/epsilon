@@ -22,7 +22,7 @@ private:
 
   float m_ticks[k_numberOfLabels];
   char m_labels[k_numberOfLabels][k_bufferSize];
-  bool m_realignLabels;
+  Shared::AbstractPlotView::RelativePosition m_positionOfLeftLabel;
 };
 
 typedef Shared::PlotPolicy::Axes<Shared::PlotPolicy::NoGrid, IntervalAxis, Shared::PlotPolicy::NoAxis> IntervalAxes;

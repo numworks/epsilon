@@ -43,6 +43,7 @@ public:
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
   // AlternateEmptyViewDelegate
+  bool isEmpty() const override { return numberOfCurves() == 0; }
   Escher::Responder * responderWhenEmpty() override;
 
   virtual bool openMenuForCurveAtIndex(int curveIndex) = 0;

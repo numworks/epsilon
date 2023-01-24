@@ -39,7 +39,7 @@ View * MultipleDataView::subviewAtIndex(int index) {
   if (index == MultipleDataView::numberOfSubviews() -1) {
     return bannerView();
   }
-  return plotViewForSeries(m_store->indexOfKthActiveSeries(index, Shared::DoublePairStore::DefaultActiveSeriesTest));
+  return plotViewForSeries(m_store->seriesIndexFromActiveSeriesIndex(index, Shared::DoublePairStore::DefaultActiveSeriesTest));
 }
 
 void MultipleDataView::layoutDataSubviews(bool force) {

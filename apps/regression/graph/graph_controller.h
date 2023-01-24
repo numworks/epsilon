@@ -84,7 +84,7 @@ private:
   bool buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
   bool selectedSeriesIsScatterPlot() const { return m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::None; }
   void setRoundCrossCursorView();
-  int seriesIndexFromCurveIndex(int curveIndex) const { return m_store->indexOfKthActiveSeries(curveIndex); }
+  int seriesIndexFromCurveIndex(int curveIndex) const { return m_store->seriesIndexFromActiveSeriesIndex(curveIndex); }
 
   Shared::ToggleableRingRoundCursorView m_cursorView;
   BannerView m_bannerView;

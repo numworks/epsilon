@@ -31,10 +31,6 @@ GraphController::GraphController(Responder * parentResponder, Escher::InputEvent
   interactiveRange->setDelegate(this);
 }
 
-bool GraphController::isEmpty() const {
-  return !m_store->hasActiveSeries();
-}
-
 I18n::Message GraphController::emptyMessage() {
   return I18n::Message::NoDataToPlot;
 }
@@ -197,12 +193,8 @@ InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() const {
   return App::app()->graphRange();
 }
 
-AbstractPlotView * GraphController::curveView() {
-  return &m_view;
-}
-
-bool GraphController::openMenuForCurveAtIndex(int index) {
-  int activeIndex = m_store->indexOfKthActiveSeries(index);
+bool GraphController::openMenuForCurveAtIndex(int curveIndex) {
+  int activeIndex = m_store->indexOfKthActiveSeries(curveIndex);
   if (*m_selectedSeriesIndex != activeIndex) {
     *m_selectedSeriesIndex = activeIndex;
     Coordinate2D<double> xy = xyValues(activeIndex, m_cursor->t(), textFieldDelegateApp()->localContext());

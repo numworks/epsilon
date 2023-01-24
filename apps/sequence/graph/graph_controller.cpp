@@ -103,10 +103,10 @@ Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) co
   return sequence->definitionName().clone();
 }
 
-bool GraphController::openMenuForCurveAtIndex(int index) {
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(index);
+bool GraphController::openMenuForCurveAtIndex(int curveIndex) {
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(curveIndex);
   m_termSumController.setRecord(record);
-  return FunctionGraphController::openMenuForCurveAtIndex(index);
+  return FunctionGraphController::openMenuForCurveAtIndex(curveIndex);
 }
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {

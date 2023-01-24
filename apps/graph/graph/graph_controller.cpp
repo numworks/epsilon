@@ -14,8 +14,8 @@ using namespace Shared;
 
 namespace Graph {
 
-GraphController::GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * interactiveRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor) :
-  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, &m_view, cursor, indexFunctionSelectedByCursor),
+GraphController::GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * interactiveRange, CurveViewCursor * cursor, int * selectedCurveIndex) :
+  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, &m_view, cursor, selectedCurveIndex),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(interactiveRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(interactiveRange),

@@ -11,7 +11,7 @@ namespace Shared {
 
 class FunctionGraphController : public InteractiveCurveViewController, public FunctionBannerDelegate {
 public:
-  FunctionGraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor);
+  FunctionGraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, int * selectedCurveIndex);
 
   // Responder
   void didBecomeFirstResponder() override;
@@ -59,7 +59,7 @@ protected:
   bool moveCursorVertically(int direction) override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
-  int selectedCurveIndex(bool relativeIndex = true) const override { return *m_indexFunctionSelectedByCursor; }
+  int selectedCurveIndex(bool relativeIndex = true) const override { return *m_selectedCurveIndex; }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;
@@ -72,7 +72,7 @@ protected:
   }
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
   Ion::Storage::Record recordAtCurveIndex(int curveIndex) const { return functionStore()->activeRecordAtIndex(curveIndex); }
-  Ion::Storage::Record recordAtSelectedCurveIndex() const { return recordAtCurveIndex(*m_indexFunctionSelectedByCursor); }
+  Ion::Storage::Record recordAtSelectedCurveIndex() const { return recordAtCurveIndex(*m_selectedCurveIndex); }
 
 private:
   virtual FunctionGraphView * functionGraphView() = 0;
@@ -84,7 +84,7 @@ private:
 
   void computeDefaultPositionForFunctionAtIndex(int index, double * t, Poincare::Coordinate2D<double> * xy, bool ignoreMargins);
 
-  int * m_indexFunctionSelectedByCursor;
+  int * m_selectedCurveIndex;
 };
 
 }

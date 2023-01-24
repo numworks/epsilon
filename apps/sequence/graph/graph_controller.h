@@ -16,7 +16,7 @@ namespace Sequence {
 
 class GraphController final : public Shared::FunctionGraphController {
 public:
-  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, CurveViewRange * interactiveRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, Shared::SequenceStore * sequenceStore);
+  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, CurveViewRange * interactiveRange, Shared::CurveViewCursor * cursor, int * selectedCurveIndex, Shared::SequenceStore * sequenceStore);
 
   // ViewController
   void viewWillAppear() override;

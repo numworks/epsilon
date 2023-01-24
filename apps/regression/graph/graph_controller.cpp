@@ -187,7 +187,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   } else {
     double step = direction * scrollSpeed * static_cast<double>(interactiveCurveViewRange()->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
     x = m_cursor->x() + step;
-    y = yValue(*m_selectedSeriesIndex, x, globalContext());
+    y = m_store->yValueForXValue(*m_selectedSeriesIndex, x, globalContext());
   }
   m_cursor->moveTo(x, x, y);
   return true;
@@ -286,7 +286,7 @@ bool GraphController::moveCursorVertically(int direction) {
       validDot = false;
     } else {
       // Compare the y distances
-      double regressionDistanceY = std::fabs(yValue(closestRegressionSeries, x, context) - y);
+      double regressionDistanceY = std::fabs(m_store->yValueForXValue(closestRegressionSeries, x, context) - y);
       double dotDistanceY = (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) ?
         std::fabs(m_store->meanOfColumn(closestDotSeries, 1) - y) :
         std::fabs(m_store->get(closestDotSeries, 1, dotSelected) - y);
@@ -311,7 +311,7 @@ bool GraphController::moveCursorVertically(int direction) {
     }
     *m_selectedDotIndex = -1;
     setRoundCrossCursorView();
-    m_cursor->moveTo(x, x, yValue(*m_selectedSeriesIndex, x, context));
+    m_cursor->moveTo(x, x, m_store->yValueForXValue(*m_selectedSeriesIndex, x, context));
     setAbscissaInputAsFirstResponder();
     return true;
   }
@@ -367,11 +367,7 @@ bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex
 }
 
 Coordinate2D<double> GraphController::xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex) const {
-  return Coordinate2D<double>(t, yValue(curveIndex, t, context));
-}
-
-double GraphController::yValue(int curveIndex, double x, Poincare::Context * context) const {
-  return m_store->yValueForXValue(curveIndex, x, context);
+  return Coordinate2D<double>(t, m_store->yValueForXValue(curveIndex, t, context));
 }
 
 bool GraphController::suitableYValue(double y) const {

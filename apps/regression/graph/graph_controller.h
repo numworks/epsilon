@@ -23,7 +23,7 @@ public:
   void viewWillAppear() override;
 
   // AlternateEmptyViewDelegate
-  bool isEmpty() const override { return !m_store->hasValidSeries(); }
+  bool isEmpty() const override { return numberOfCurves() == 0; }
   I18n::Message emptyMessage() override;
 
   // SimpleInteractiveCurveViewController
@@ -47,7 +47,7 @@ private:
   public:
     SeriesSelectionController(GraphController * graphController) : Shared::CurveSelectionController(graphController) {}
     const char * title() override { return I18n::translate(I18n::Message::Regression); }
-    int numberOfRows() const override { return graphController()->m_store->numberOfActiveSeries(); }
+    int numberOfRows() const override { return graphController()->numberOfCurves(); }
     CurveSelectionCellWithChevron * reusableCell(int index, int type) override { assert(index >= 0 && index < Store::k_numberOfSeries); return m_cells + index; }
     int reusableCellCount(int type) override { return Store::k_numberOfSeries; }
     void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

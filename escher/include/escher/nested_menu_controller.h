@@ -23,7 +23,6 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override { Container::activeApp()->setFirstResponder(&m_listController); }
   void viewWillAppear() override;
-  void viewDidDisappear() override;
 
   // MemoizedListViewDataSource
   HighlightCell * reusableCell(int index, int type) override;

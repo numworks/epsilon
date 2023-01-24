@@ -393,8 +393,6 @@ int VariableBoxController::typeAndOriginAtLocation(int i, uint8_t * resultOrigin
 
 bool VariableBoxController::selectLeaf(int rowIndex) {
   assert(rowIndex >= 0 && rowIndex < numberOfRows());
-  m_selectableTableView.deselectTable();
-
   int cumulatedOriginsCount = 0;
   int cellType = typeAndOriginAtLocation(rowIndex, nullptr, &cumulatedOriginsCount);
   assert(cellType == k_itemCellType);

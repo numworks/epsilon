@@ -486,7 +486,6 @@ bool PythonToolbox::handleEvent(Ion::Events::Event event) {
 }
 
 bool PythonToolbox::selectLeaf(int selectedRow) {
-  m_selectableTableView.deselectTable();
   const ToolboxMessageTree * node = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(selectedRow));
   const char * editedText = I18n::translate(node->insertedText());
   // strippedEditedText array needs to be in the same scope as editedText
@@ -572,7 +571,6 @@ void PythonToolbox::scrollToLetter(char letter) {
 
 void PythonToolbox::scrollToAndSelectChild(int i) {
   assert(i >=0 && i<m_messageTreeModel->numberOfChildren());
-  m_selectableTableView.deselectTable();
   m_selectableTableView.scrollToCell(0, i);
   m_selectableTableView.selectCellAtLocation(0, i);
 }

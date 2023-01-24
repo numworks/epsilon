@@ -44,14 +44,12 @@ int Toolbox::typeAtIndex(int index) const {
 }
 
 bool Toolbox::selectSubMenu(int selectedRow) {
-  m_selectableTableView.deselectTable();
   assert(typeAtIndex(selectedRow) == k_nodeCellType);
   m_messageTreeModel = messageTreeModelAtIndex(selectedRow);
   return NestedMenuController::selectSubMenu(selectedRow);
 }
 
 bool Toolbox::returnToPreviousMenu() {
-  m_selectableTableView.deselectTable();
   // Start from root to find parent messageTreeModel
   int currentDepth = stack()->length();
   int stateDepth = 0;
@@ -64,7 +62,6 @@ bool Toolbox::returnToPreviousMenu() {
 }
 
 bool Toolbox::returnToRootMenu() {
-  m_selectableTableView.deselectTable();
   m_messageTreeModel = rootModel();
   return NestedMenuController::returnToRootMenu();
 }

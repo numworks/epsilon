@@ -186,9 +186,9 @@ void DoublePairStore::resetColumn(int series, int i, bool delayUpdate) {
   updateSeries(series, delayUpdate);
 }
 
-void DoublePairStore::hideSeries(int series) {
+void DoublePairStore::setSeriesHidden(int series, bool hidden) {
   assert(series >= 0 && series < k_numberOfSeries);
-  return m_storePreferences->setSeriesValid(series, false);
+  return m_storePreferences->setSeriesHidden(series, hidden);
 }
 
 bool DoublePairStore::seriesIsValid(int series) const {

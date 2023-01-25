@@ -62,7 +62,7 @@ public:
   void deleteAllPairs(bool delayUpdate = false);
 
   // Series validity
-  void hideSeries(int series);
+  void setSeriesHidden(int series, bool hidden);
   bool seriesIsValid(int series) const;
   typedef bool (*ValidSeries)(const DoublePairStore *, int);
   static bool DefaultValidSeries(const DoublePairStore * store, int series) { return store->seriesIsValid(series); }

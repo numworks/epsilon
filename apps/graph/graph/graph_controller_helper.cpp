@@ -15,18 +15,17 @@ namespace Graph {
 bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, float pixelWidth, int scrollSpeed, int * subCurveIndex) {
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   assert(!subCurveIndex || *subCurveIndex < function->numberOfSubCurves());
-  double tCursorPosition = cursor->t();
-  double t = tCursorPosition;
+  const double tCursor = cursor->t();
   double tMin = function->tMin();
   double tMax = function->tMax();
   int functionsCount = -1;
   bannerView()->emptyInterestMessages(graphView()->cursorView());
 
-  if (((direction > 0 && std::abs(t-tMax) < DBL_EPSILON)
-        || (direction < 0 && std::abs(t-tMin) < DBL_EPSILON))
+  if (((direction > 0 && std::abs(tCursor-tMax) < DBL_EPSILON)
+        || (direction < 0 && std::abs(tCursor-tMin) < DBL_EPSILON))
       && !App::app()->functionStore()->displaysNonCartesianFunctions(&functionsCount))
   {
-    jumpToLeftRightCurve(t, direction, functionsCount, record);
+    jumpToLeftRightCurve(tCursor, direction, functionsCount, record);
     return true;
   }
   Poincare::Context * context = App::app()->localContext();
@@ -38,7 +37,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   if (function->properties().isConic() && function->numberOfSubCurves() == 2) {
     assert(subCurveIndex != nullptr);
     // previousXY will be needed for conic's special horizontal cursor moves.
-    specialConicCursorMove = std::isfinite(function->evaluateXYAtParameter(t, context, *subCurveIndex).x2());
+    specialConicCursorMove = std::isfinite(function->evaluateXYAtParameter(tCursor, context, *subCurveIndex).x2());
     if (*subCurveIndex == 1 && !function->properties().isCartesianHyperbolaOfDegreeTwo()) {
       // On the sub curve, pressing left actually moves the cursor right
       dir *= -1.0;
@@ -46,16 +45,17 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   }
 
   double step;
+  float t = tCursor;
   if (function->properties().isCartesian()) {
     step = static_cast<double>(range->xGridUnit())/numberOfStepsInGradUnit;
     double slopeMultiplicator = 1.0;
     if (function->canDisplayDerivative()) {
       // Use the local derivative to slow down the cursor's step if needed
-      double slope = function->approximateDerivative(t, context, subCurveIndex ? *subCurveIndex : 0);
+      double slope = function->approximateDerivative(tCursor, context, subCurveIndex ? *subCurveIndex : 0);
       if (std::isnan(slope)) {
         /* If the derivative could not bet computed, compute the derivative one
          * step further. */
-        slope = function->approximateDerivative(t + dir * step * pixelWidth, context, subCurveIndex ? *subCurveIndex : 0);
+        slope = function->approximateDerivative(tCursor + dir * step * pixelWidth, context, subCurveIndex ? *subCurveIndex : 0);
         if (std::isnan(slope)) {
           /* If the derivative is still NAN, it might mean that it's NAN
            * everywhere, so just set slope to a default value */
@@ -64,41 +64,39 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
       }
       // If yGridUnit is twice xGridUnit, visible slope is halved
       slope *= range->xGridUnit() / range->yGridUnit();
-      /* Assuming the curve is a straight line of slope s. To move the cursor at a
-      * fixed distance t along the line, the actual x-axis distance needed is
-      * t' = t * cos(θ) with θ the angle between the line and the x-axis.
-      * We also have tan(θ) = (s * t) / t = s
-      * As a result, t' = t * cos(atan(s)) = t / sqrt(1 + s^2) */
+      /* Assuming the curve is a straight line of slope s. To move the cursor at
+       * a fixed distance d along the line, the actual x-axis distance needed is
+       * d' = d * cos(θ) with θ the angle between the line and the x-axis.
+       * We also have tan(θ) = (s * d) / d = s
+       * As a result, d' = d * cos(atan(s)) = d / sqrt(1 + s^2) */
       slopeMultiplicator /= std::sqrt(1.0 + slope * slope);
       // Add a sqrt(2) factor so that y=x isn't slowed down
       slopeMultiplicator *= std::sqrt(2.0);
       /* Cap the scroll speed reduction to be able to cross vertical asymptotes
        * Using pixelWidth / (step * static_cast<double>(scrollSpeed)) as cap
-       * ensures that t moves at least by one pixel.
-       */
+       * ensures that t moves at least by one pixel. */
       slopeMultiplicator = std::max(pixelWidth / (step * static_cast<double>(scrollSpeed)), slopeMultiplicator);
     }
 
     float tStep = dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
-    if (snapToInterestAndUpdateCursor(cursor, t, t + tStep * k_snapFactor, subCurveIndex ? *subCurveIndex : 0)) {
+    if (snapToInterestAndUpdateCursor(cursor, tCursor, tCursor + tStep * k_snapFactor, subCurveIndex ? *subCurveIndex : 0)) {
         // Cursor should have been updated by snapToInterest
-        assert(tCursorPosition != cursor->t());
+        assert(tCursor != cursor->t());
         return true;
+    }
+    t += tStep;
+    /* assert that it moved at least of 1 pixel.
+     * round(t/pxWidth) is used by CurveView to compute the cursor's position. */
+    if (std::fabs(static_cast<float>(tCursor)) >= pixelWidth && ((dir < 0) != (tCursor < 0)) && std::fabs(static_cast<float>(t)) < pixelWidth) {
+      // Use a pixel width as a margin, ensuring t mostly stays at the same pixel
+      // Round t to 0 if it is going into that direction, and is close enough
+      t = 0.0;
     } else {
-      t += tStep;
-      /* assert that it moved at least of 1 pixel.
-       * round(t/pxWidth) is used by CurveView to compute the cursor's position. */
-      if (std::fabs(static_cast<float>(tCursorPosition)) >= pixelWidth && ((dir < 0) != (tCursorPosition < 0)) && std::fabs(static_cast<float>(t)) < pixelWidth) {
-        // Use a pixel width as a margin, ensuring t mostly stays at the same pixel
-        // Round t to 0 if it is going into that direction, and is close enough
-        t = 0.0;
-      } else {
-        // Round t to a simpler value, displayed at the same index
-        double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(pixelWidth));
-        t = magnitude * std::round(t / magnitude);
-        // Also round t so that f(x) matches f evaluated at displayed x
-        t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, context, Preferences::sharedPreferences->numberOfSignificantDigits(), pixelWidth, false);
-      }
+      // Round t to a simpler value, displayed at the same index
+      double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(pixelWidth));
+      t = magnitude * std::round(t / magnitude);
+      // Also round t so that f(x) matches f evaluated at displayed x
+      t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, context, Preferences::sharedPreferences->numberOfSignificantDigits(), pixelWidth, false);
     }
     // Snap to interest could have corrupted ExpiringPointer
     function = App::app()->functionStore()->modelForRecord(record);
@@ -106,19 +104,19 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     /* If function is not along X or Y, the cursor speed along t should not
      * depend on pixelWidth since the t interval can be very small even if the
      * pixel width is very large. */
-    step = (tMax-tMin)/k_definitionDomainDivisor;
+    step = (tMax - tMin) / k_definitionDomainDivisor;
     t += dir * step * scrollSpeed;
     // If possible, round t so that f(x) matches f evaluated at displayed x
     t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences->numberOfSignificantDigits(), 0.05 * step, true);
   }
   const float minimalAbsoluteStep = dir * pixelWidth;
-  if (t - tCursorPosition < minimalAbsoluteStep) {
-    t = tCursorPosition + minimalAbsoluteStep;
+  if (t - tCursor < minimalAbsoluteStep) {
+    t = tCursor + minimalAbsoluteStep;
   }
   // t must have changed
-  assert(tCursorPosition != t);
+  assert(tCursor != t);
 
-  t = std::max(tMin, std::min(tMax, t));
+  t = std::max(tMin, std::min(tMax, static_cast<double>(t)));
   int subCurveIndexValue = subCurveIndex == nullptr ? 0 : *subCurveIndex;
   Coordinate2D<double> xy = function->evaluateXYAtParameter(t, context, subCurveIndexValue);
 
@@ -142,7 +140,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     } else {
       /* The cursor would end up out of the conic's bounds, do not move the
        * cursor and switch to the other sub curve (with inverted dir) */
-      t = tCursorPosition;
+      t = tCursor;
       *subCurveIndex = 1 - *subCurveIndex;
       xy = function->evaluateXYAtParameter(t, context, *subCurveIndex);
     }

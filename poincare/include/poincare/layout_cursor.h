@@ -84,7 +84,6 @@ public:
   LayoutCursor cursorAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, bool forSelection = false, int step = 1);
 
   /* Select */
-  void select(OMG::Direction direction, bool * shouldRecomputeLayout, Layout * selection);
   LayoutCursor selectAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, Layout * selection);
 
   /* Layout modification */

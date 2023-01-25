@@ -109,17 +109,14 @@ LayoutCursor LayoutCursor::cursorAtDirection(OMG::Direction direction, bool * sh
 
 /* Select */
 
-void LayoutCursor::select(OMG::Direction direction, bool * shouldRecomputeLayout, Layout * selection) {
-  if (direction == OMG::Direction::Right || direction == OMG::Direction::Left) {
-    selectLeftRight(direction == OMG::Direction::Right, shouldRecomputeLayout, selection);
-  } else {
-    selectUpDown(direction == OMG::Direction::Up, shouldRecomputeLayout, selection);
-  }
-}
-
 LayoutCursor LayoutCursor::selectAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, Layout * selection) {
   LayoutCursor result = *this;
-  result.select(direction, shouldRecomputeLayout, selection);
+  if (direction == OMG::Direction::Right || direction == OMG::Direction::Left) {
+    result.selectLeftRight(direction == OMG::Direction::Right, shouldRecomputeLayout, selection);
+  } else {
+    assert(direction == OMG::Direction::Up || direction == OMG::Direction::Down);
+    result.selectUpDown(direction == OMG::Direction::Up, shouldRecomputeLayout, selection);
+  }
   return result;
 }
 

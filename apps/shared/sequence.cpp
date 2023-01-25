@@ -44,14 +44,6 @@ int Sequence::nameWithArgumentAndType(char * buffer, size_t bufferSize) {
   return result;
 }
 
-Sequence::Type Sequence::type() const {
-  return recordData()->type();
-}
-
-int Sequence::initialRank() const {
-  return recordData()->initialRank();
-}
-
 void Sequence::setType(Type t) {
   if (t == type()) {
     return;

@@ -12,6 +12,8 @@
 
 namespace Shared {
 
+class DoublePairStorePreferences;
+
 class DoublePairStore {
 public:
   constexpr static int k_columnNamesLength = 2; // 1 char for prefix, 1 char for index
@@ -23,7 +25,7 @@ public:
   constexpr static const char * k_statisticsColumNames[] = {"V", "N"}; // Must be 1 char long or change the name-related methods.
   static_assert(sizeof(k_statisticsColumNames) / sizeof(char *) == k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Statistics.");
 
-  DoublePairStore(GlobalContext * context, class DoublePairStorePreferences * preferences);
+  DoublePairStore(GlobalContext * context, DoublePairStorePreferences * preferences);
   // Delete the implicit copy constructor: the object is heavy
   DoublePairStore(const DoublePairStore&) = delete;
 
@@ -114,7 +116,7 @@ protected:
   virtual double defaultValueForColumn1() const = 0;
 
   Poincare::FloatList<double> m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
-  class DoublePairStorePreferences * m_storePreferences;
+  DoublePairStorePreferences * m_storePreferences;
 
 private:
   static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");

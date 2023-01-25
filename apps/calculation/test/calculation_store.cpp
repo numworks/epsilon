@@ -525,6 +525,7 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("2/24", {.rational = true, .scientificNotation = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("1+i", {.complex = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("sin(π)", {.directTrigonometry = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("cos(45°)", {.directTrigonometry = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("acos(0.5)", {.inverseTrigonometry = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("sin(iπ)", {.complex = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("ln(2)", {.function = true, .scientificNotation = true}, &globalContext, &store);

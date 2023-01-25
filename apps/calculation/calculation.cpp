@@ -285,9 +285,15 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     } else if (Trigonometry::isDirectTrigonometryFunction(o)) {
       directExpression = o;
     }
-    if (!directExpression.isUninitialized() && std::isfinite(PoincareHelpers::ApproximateToScalar<double>(directExpression.childAtIndex(0), globalContext))) {
+
+    if (!directExpression.isUninitialized()) {
+      Expression angle = directExpression.childAtIndex(0);
+      Expression unit;
+      PoincareHelpers::ReduceAndRemoveUnit(&angle, globalContext, ReductionTarget::SystemForApproximation, &unit);
       // The angle must be real.
-      return AdditionalInformations {.directTrigonometry = true};
+      if ((unit.isPureAngleUnit() || unit.isUninitialized()) && std::isfinite(PoincareHelpers::ApproximateToScalar<double>(angle, globalContext))) {
+        return AdditionalInformations {.directTrigonometry = true};
+      }
     }
   }
   if (o.hasUnit()) {

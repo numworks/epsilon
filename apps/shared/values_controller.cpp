@@ -171,11 +171,11 @@ int ValuesController::reusableCellCount(int type) {
     case k_abscissaTitleCellType:
       return abscissaTitleCellsCount();
     case k_functionTitleCellType:
-      return maxNumberOfDisplayableFunctions();
+      return k_maxNumberOfDisplayableColumns;
     case k_editableValueCellType:
       return abscissaCellsCount();
     case k_notEditableValueCellType:
-      return maxNumberOfCells();
+      return k_maxNumberOfDisplayableCells;
     default:
       assert(false);
       return 0;
@@ -271,7 +271,7 @@ void ValuesController::didChangeCell(int column, int row) {
   }
 
   // Update the memoization of rows linked to the changed cell
-  int nbOfMemoizedColumns = maxNumberOfDisplayableFunctions();
+  int nbOfMemoizedColumns = k_maxNumberOfDisplayableColumns;
   int nbOfColumnsForAbscissa = numberOfColumnsForAbscissaColumn(abscissaColumn);
   for (int i = abscissaColumn+1; i < abscissaColumn+nbOfColumnsForAbscissa; i++) {
     int memoizedI = valuesColumnForAbsoluteColumn(i) - m_firstMemoizedColumn;
@@ -313,18 +313,15 @@ FunctionStore * ValuesController::functionStore() const {
 // Function evaluation memoization
 
 void ValuesController::resetLayoutMemoization() {
-  const int numberOfMemoizedCell = k_maxNumberOfDisplayableRows * maxNumberOfDisplayableFunctions();
-  for (int i = 0; i < numberOfMemoizedCell; i++) {
+  const int numberOfCells = k_maxNumberOfDisplayableCells;
+  for (int i = 0; i < numberOfCells; i++) {
     *memoizedLayoutAtIndex(i) = Layout();
-  }
-  const int numberOfValueCells = maxNumberOfCells();
-  for (int i = 0; i < numberOfValueCells; i++) {
     EvenOddExpressionCell * valueCell = valueCells(i);
     assert(valueCell);
     valueCell->setLayout(Layout());
   }
-  const int numberOfFunctionRows = maxNumberOfDisplayableFunctions();
-  for (int i = 0; i < numberOfFunctionRows; i++) {
+  const int numberOfFunctionColumns = k_maxNumberOfDisplayableColumns;
+  for (int i = 0; i < numberOfFunctionColumns; i++) {
     ExpressionFunctionTitleCell * titleCell = functionTitleCells(i);
     assert(titleCell);
     titleCell->setLayout(Layout());
@@ -336,7 +333,7 @@ void ValuesController::resetLayoutMemoization() {
 }
 
 Layout ValuesController::memoizedLayoutForCell(int i, int j) {
-  const int nbOfMemoizedColumns = maxNumberOfDisplayableFunctions();
+  const int nbOfMemoizedColumns = k_maxNumberOfDisplayableColumns;
   // Conversion of coordinates from absolute table to values table
   int valuesI = valuesColumnForAbsoluteColumn(i);
   int valuesJ = valuesRowForAbsoluteRow(j);
@@ -436,7 +433,7 @@ void ValuesController::initializeInterval() {
 }
 
 void ValuesController::initValueCells() {
-  int numberOfValueCells = maxNumberOfCells();
+  int numberOfValueCells = k_maxNumberOfDisplayableCells;
   for (int i = 0; i < numberOfValueCells; i++) {
     EvenOddExpressionCell * valueCell = valueCells(i);
     assert(valueCell);

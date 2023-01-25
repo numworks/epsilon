@@ -393,7 +393,7 @@ I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) 
 }
 
 Shared::ExpressionFunctionTitleCell * ValuesController::functionTitleCells(int j) {
-  assert(j >= 0 && j < k_maxNumberOfDisplayableFunctions);
+  assert(j >= 0 && j < k_maxNumberOfDisplayableColumns);
   return &m_functionTitleCells[j];
 }
 

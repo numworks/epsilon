@@ -62,6 +62,8 @@ protected:
   constexpr static int k_editableValueCellType = 2;
   constexpr static int k_notEditableValueCellType = 3; // Must be last for Graph::ValuesController
   constexpr static int k_maxNumberOfDisplayableRows = 10;
+  constexpr static int k_maxNumberOfDisplayableColumns = 4;
+  constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableColumns;
   constexpr static int k_numberOfTitleRows = 1;
 
   void initValueCells();
@@ -80,10 +82,10 @@ protected:
 
   // Model getters
   virtual FunctionStore * functionStore() const;
-  virtual Ion::Storage::Record recordAtColumn(int i);
+  virtual Ion::Storage::Record recordAtColumn(int i) = 0;
 
   // Number of columns memoization
-  virtual void updateNumberOfColumns() const { m_numberOfColumns = numberOfAbscissaColumns() + functionStore()->numberOfActiveFunctions(); }
+  virtual void updateNumberOfColumns() const = 0;
   mutable int m_numberOfColumns;
   mutable bool m_numberOfColumnsNeedUpdate;
 
@@ -147,8 +149,6 @@ private:
 
   virtual Interval * intervalAtColumn(int columnIndex) = 0;
   virtual I18n::Message valuesParameterMessageAtColumn(int columnIndex) const = 0;
-  virtual int maxNumberOfCells() = 0;
-  virtual int maxNumberOfDisplayableFunctions() = 0;
   virtual ExpressionFunctionTitleCell * functionTitleCells(int j) = 0;
   virtual Escher::EvenOddExpressionCell * valueCells(int j) = 0;
   virtual int abscissaCellsCount() const = 0;

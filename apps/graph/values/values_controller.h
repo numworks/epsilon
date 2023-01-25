@@ -47,10 +47,8 @@ public:
 
 private:
   constexpr static size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunctionProperties::k_numberOfSymbolTypes;
-  constexpr static int k_maxNumberOfDisplayableFunctions = 4;
   constexpr static int k_maxNumberOfDisplayableSymbolTypes = 2;
   constexpr static int k_maxNumberOfDisplayableAbscissaCells = k_maxNumberOfDisplayableSymbolTypes * k_maxNumberOfDisplayableRows;
-  constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableFunctions * k_maxNumberOfDisplayableRows;
   constexpr static int k_valuesCellBufferSize = 2 * Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) + 3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
   constexpr static KDCoordinate k_maxColumnWidth = 2 * k_cellWidth;
   constexpr static KDCoordinate k_maxRowHeight = 5 * k_cellHeight;
@@ -89,8 +87,6 @@ private:
   void updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int changedRow) override;
   Shared::Interval * intervalAtColumn(int columnIndex) override;
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
-  int maxNumberOfCells() override { return k_maxNumberOfDisplayableCells; }
-  int maxNumberOfDisplayableFunctions() override { return k_maxNumberOfDisplayableFunctions; }
   Shared::ExpressionFunctionTitleCell * functionTitleCells(int j) override;
   Escher::EvenOddExpressionCell * valueCells(int j) override;
   int abscissaCellsCount() const override { return k_maxNumberOfDisplayableAbscissaCells; }
@@ -110,7 +106,7 @@ private:
   Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(int * column) const;
 
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
-  Shared::ExpressionFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];
+  Shared::ExpressionFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableColumns];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
   AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];

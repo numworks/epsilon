@@ -23,8 +23,6 @@ public:
   IntervalParameterController * intervalParameterController() override { return &m_intervalParameterController; }
 
 private:
-  constexpr static int k_maxNumberOfDisplayableSequences = 3;
-  constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableSequences * k_maxNumberOfDisplayableRows;
   constexpr static int k_valuesCellBufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
 
   // TableViewDataSource
@@ -40,14 +38,15 @@ private:
 
   // Shared::ValuesController
   Shared::SequenceStore * functionStore() const override { return static_cast<Shared::SequenceStore *>(Shared::ValuesController::functionStore()); }
+  Ion::Storage::Record recordAtColumn(int i) override { return recordAtColumn(i, nullptr); }
+  Ion::Storage::Record recordAtColumn(int i, bool * isSumColumn);
+  void updateNumberOfColumns() const override;
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
   Poincare::Layout functionTitleLayout(int columnIndex, bool forceShortVersion = false) override;
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override { setDefaultStartEndMessages(); }
   void createMemoizedLayout(int i, int j, int index) override;
   Shared::Interval * intervalAtColumn(int columnIndex) override;
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override { return I18n::Message::N; }
-  int maxNumberOfCells() override { return k_maxNumberOfDisplayableCells; }
-  int maxNumberOfDisplayableFunctions() override { return k_maxNumberOfDisplayableSequences; }
   Shared::ExpressionFunctionTitleCell * functionTitleCells(int j) override;
   Escher::EvenOddExpressionCell * valueCells(int j) override;
   int abscissaCellsCount() const override { return k_maxNumberOfDisplayableRows; }
@@ -59,7 +58,7 @@ private:
 
   void setDefaultStartEndMessages();
 
-  Shared::ExpressionFunctionTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
+  Shared::ExpressionFunctionTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableColumns];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
   Escher::EvenOddMessageTextCell m_abscissaTitleCell;
   Escher::EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfDisplayableRows];

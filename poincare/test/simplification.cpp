@@ -1417,6 +1417,9 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("0_K→_°F", "-459.67×_°F");
   assert_parsed_expression_simplify_to("0_°F→_K", "255.37222222222×_K");
   assert_parsed_expression_simplify_to("_°F→_K", "255.92777777778×_K");
+
+  assert_parsed_expression_simplify_to("0_°→_rad", "0×_rad");
+  assert_parsed_expression_simplify_to("180_°→_rad", "π×_rad");
 }
 
 QUIZ_CASE(poincare_simplification_complex_format) {

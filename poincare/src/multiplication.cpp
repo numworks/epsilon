@@ -752,12 +752,9 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  bool shouldExpand = reductionContext.shouldExpandMultiplication();
-  bool productHasUnit = hasUnit();
-
   /* Before merging with multiplication children, we must catch a forbidden
    * case of unit reduction. */
-  if (productHasUnit && Unit::IsForbiddenTemperatureProduct(*this)) {
+  if (hasUnit() && Unit::IsForbiddenTemperatureProduct(*this)) {
     return replaceWithUndefinedInPlace();
   }
 
@@ -952,6 +949,8 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
     i++;
   }
 
+  bool productHasUnit = hasUnit();
+
    /* If the first child is zero, the multiplication result is zero. We
     * do this after merging the rational children, because the merge takes care
     * of turning 0*inf into undef. We still have to check that no other child
@@ -959,28 +958,50 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
     * If the first child is 1, we remove it if there are other children. */
   {
     const Expression c = childAtIndex(0);
-    if (productHasUnit) {
-      // Do not expand Multiplication in presence of units
-      shouldExpand = false;
-    } else if (c.type() != ExpressionNode::Type::Rational) {
-    } else if (static_cast<const Rational &>(c).isZero()) {
-      // Check that other children don't match inf or matrix
-      if (!recursivelyMatches([](const Expression e, Context * context) { return IsInfinity(e, context) || IsMatrix(e, context); }, context)) {
-        if (numberOfChildren() > 1) {
-          /* If we replace the multiplication with 0, we must add a dependency
-           * in case the other terms of the multiplication are undef.
-           * For example, if f(x) = 0*(1/x), then f(0) = undef. */
-          Dependency dep = Dependency::Builder(c, List::Builder());
-          removeChildAtIndexInPlace(0);
-          replaceWithInPlace(dep);
-          dep.addDependency(numberOfChildren() > 1 ? *this : childAtIndex(0));
-          return dep.shallowReduce(reductionContext);
+    bool hasOneOrZeroInfrontOfMultiplication = c.type() == ExpressionNode::Type::Rational && (static_cast<const Rational &>(c).isOne() || static_cast<const Rational &>(c).isZero());
+    if (hasOneOrZeroInfrontOfMultiplication) {
+      // Do not remove 1 or the 0 in front of 1km or 0ft^2
+      bool canRemoveOneOrZero = !productHasUnit;
+      if (productHasUnit) {
+        /* Check if there is an other child without unit.
+         * Examples: 1 * π * rad -> 1 can be removed
+         *           1 * m * s^-2 -> 1 can't be removed */
+        int nChildren = numberOfChildren();
+        for (int i = 1; i < nChildren; i++) {
+          if (!childAtIndex(i).hasUnit()) {
+            canRemoveOneOrZero = true;
+            break;
+          }
         }
-        replaceWithInPlace(c);
-        return c;
       }
-    } else if (static_cast<const Rational &>(c).isOne() && numberOfChildren() > 1) {
-      removeChildAtIndexInPlace(0);
+      if (canRemoveOneOrZero && static_cast<const Rational &>(c).isZero()) {
+        // Check that other children don't match inf or matrix
+        if (!recursivelyMatches([](const Expression e, Context * context) { return IsInfinity(e, context) || IsMatrix(e, context); }, context)) {
+          Expression result = Rational::Builder(0);
+          if (productHasUnit) {
+            // Replace with 0 * unit
+            Expression unit;
+            removeUnit(&unit);
+            assert(!unit.isUninitialized());
+            result = Multiplication::Builder(result, unit);
+            result = static_cast<Multiplication&>(result).squashUnaryHierarchyInPlace();
+          }
+          if (numberOfChildren() > 1) {
+            /* If we replace the multiplication with 0, we must add a dependency
+             * in case the other terms of the multiplication are undef.
+             * For example, if f(x) = 0*(1/x), then f(0) = undef. */
+            Dependency dep = Dependency::Builder(result, List::Builder());
+            removeChildAtIndexInPlace(0);
+            replaceWithInPlace(dep);
+            dep.addDependency(numberOfChildren() > 1 ? *this : childAtIndex(0));
+            return dep.shallowReduce(reductionContext);
+          }
+          replaceWithInPlace(result);
+          return result;
+        }
+      } else if (canRemoveOneOrZero && static_cast<const Rational &>(c).isOne() && numberOfChildren() > 1) {
+        removeChildAtIndexInPlace(0);
+      }
     }
   }
 
@@ -993,9 +1014,10 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
    * If there is a random somewhere, do not expand. */
   Expression p = parent();
   bool hasRandom = recursivelyMatches(Expression::IsRandom, context);
-  if (shouldExpand
-      && (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication)
-      && !hasRandom)
+  if (reductionContext.shouldExpandMultiplication() &&
+      !productHasUnit && // Do not expand in presence of units
+      (p.isUninitialized() || p.type() != ExpressionNode::Type::Multiplication) &&
+      !hasRandom)
   {
     int childrenNumber = numberOfChildren();
     for (int i = 0; i < childrenNumber; i++) {

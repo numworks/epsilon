@@ -43,11 +43,4 @@ tests_src += $(addprefix poincare_junior/test/,\
   set.cpp \
 )
 
-tests_src += $(addprefix poincare_junior/omgpj/src/,\
-  arithmetic.cpp \
-  float.cpp \
-  memory.cpp \
-  list.cpp \
-)
-
 tests_src += $(poincare_junior_src)

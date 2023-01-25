@@ -158,12 +158,12 @@ void FirstOrderDerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool 
 
 void HigherOrderDerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))
-      || (cursor->layoutNode() == orderLayout() && m_orderSlot == OrderSlot::Numerator)) {
+      || (cursor->layoutNode()->hasAncestor(orderLayout(), true) && m_orderSlot == OrderSlot::Numerator)) {
     setOrderSlot(OrderSlot::Denominator, shouldRecomputeLayout);
     orderLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
-  if (cursor->layoutNode() == orderLayout() && m_orderSlot == OrderSlot::Denominator) {
+  if (cursor->layoutNode() == orderLayout() && m_orderSlot == OrderSlot::Denominator && cursor->position() == LayoutCursor::Position::Left) {
     setVariableSlot(VariableSlot::Fraction, shouldRecomputeLayout);
     variableLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
@@ -190,13 +190,14 @@ void FirstOrderDerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * 
 }
 
 void HigherOrderDerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode() == variableLayout() && m_variableSlot == VariableSlot::Fraction) {
+  if (cursor->isEquivalentTo(LayoutCursor(variableLayout(), LayoutCursor::Position::Right)) && m_variableSlot == VariableSlot::Fraction) {
     setOrderSlot(OrderSlot::Denominator, shouldRecomputeLayout);
     orderLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
   if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))
-      || (cursor->layoutNode() == orderLayout() && m_orderSlot == OrderSlot::Denominator)) {
+      || (cursor->layoutNode()->hasAncestor(orderLayout(), true) && m_orderSlot == OrderSlot::Denominator)
+      || (cursor->layoutNode()->hasAncestor(variableLayout(), true) && m_variableSlot == VariableSlot::Fraction)) {
     setOrderSlot(OrderSlot::Numerator, shouldRecomputeLayout);
     orderLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
     return;

@@ -2,9 +2,6 @@
 #define GRAPH_DERIVATIVE_PARAM_CONTROLLER_H
 
 #include <escher/message_table_cell.h>
-#include <escher/message_table_cell_with_chevron.h>
-#include <escher/message_table_cell_with_editable_text.h>
-#include <escher/selectable_list_view_controller.h>
 #include <apps/shared/continuous_function_store.h>
 #include "../../shared/column_parameter_controller.h"
 

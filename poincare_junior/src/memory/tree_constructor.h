@@ -15,6 +15,61 @@ namespace PoincareJ {
 // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
 // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
 
+template <BlockType... Blocks>
+class CTree {
+public:
+  consteval CTree() {
+    size_t i = 0;
+    for (BlockType block : { Blocks... }) {
+      m_blocks[i++] = TypeBlock(block);
+    }
+  }
+
+  inline operator const Node () {
+    static constexpr CTree tree;
+    return tree.m_blocks;
+  }
+private:
+  Block m_blocks[sizeof...(Blocks)];
+};
+
+template <uint8_t V> using Int = CTree<BlockType::IntegerShort, static_cast<BlockType>(V), BlockType::IntegerShort>;
+
+template <BlockType... B1> CTree<BlockType::Factorial, B1...> Fact(CTree<B1...>) {
+  return CTree<BlockType::Factorial, B1...>();
+}
+
+template <BlockType... B1, BlockType... B2> CTree<BlockType::Addition, static_cast<BlockType>(2), BlockType::Addition, B1..., B2...> Addi(CTree<B1...>, CTree<B2...>) {
+  return CTree<BlockType::Addition, static_cast<BlockType>(2), BlockType::Addition, B1..., B2...>();
+}
+
+template <BlockType... B1, BlockType... B2, BlockType... B3> CTree<BlockType::Addition, static_cast<BlockType>(3), BlockType::Addition, B1..., B2..., B3...> Addi(CTree<B1...>, CTree<B2...>, CTree<B3...>) {
+  return CTree<BlockType::Addition, static_cast<BlockType>(3), BlockType::Addition, B1..., B2..., B3...>();
+}
+
+template <BlockType B, BlockType... B1, BlockType... B2> auto NAry(CTree<B1...>, CTree<B2...>) {
+  return CTree<B, static_cast<BlockType>(2), B, B1..., B2...>();
+}
+
+template <BlockType B, BlockType... B1, BlockType... B2, BlockType... B3> auto NAry(CTree<B1...>, CTree<B2...>,  CTree<B3...>) {
+  return CTree<B, static_cast<BlockType>(3), B, B1..., B2..., B3...>();
+}
+
+// Attempt to define Multi from a general NAry using a function pointer,
+// it does not work since variable templates require arguments when used
+template <BlockType...B> constexpr auto Multi = NAry<BlockType::Multiplication, B...>;
+
+
+
+
+
+
+
+
+
+
+
+
 
 template <unsigned N>
 class Tree {

@@ -126,6 +126,8 @@ public:
       case BlockType::Subtraction:
       case BlockType::Division:
         return 2;
+      case BlockType::Factorial:
+        return 1;
       default:
         return 0;
     }

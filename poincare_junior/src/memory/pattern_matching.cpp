@@ -23,6 +23,9 @@ PatternMatching::Context PatternMatching::Match(const Node pattern, Node source,
         return Context();
       }
     } else {
+      if (!node.isIdenticalTo(source)) {
+        return Context();
+      }
       source = source.nextNode();
     }
   }

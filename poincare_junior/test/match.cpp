@@ -37,6 +37,9 @@ void testMatch() {
   constexpr Tree p2 = Add(p, "1"_n);
   PatternMatching::Context ctx2 = PatternMatching::Match(p2, t);
   assert_nodes_are_equal(ctx2[A], "2"_n);
+  constexpr Tree p3 = Add(p, "2"_n);
+  PatternMatching::Context ctx3 = PatternMatching::Match(p3, t);
+  quiz_assert(ctx3.isUninitialized());
 }
 QUIZ_CASE(pcj_match) { testMatch(); }
 

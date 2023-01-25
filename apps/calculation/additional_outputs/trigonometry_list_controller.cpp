@@ -13,16 +13,23 @@ namespace Calculation {
 void TrigonometryListController::setExpression(Expression e) {
   IllustratedExpressionsListController::setExpression(e);
 
-  Poincare::Preferences * preferences = Preferences::sharedPreferences();
-  Poincare::Preferences::AngleUnit angleUnit = preferences->angleUnit();
+  Preferences * preferences = Preferences::sharedPreferences();
+  Preferences::AngleUnit userAngleUnit = preferences->angleUnit();
   Context * context = App::app()->localContext();
   size_t index = 0;
 
   Expression unit;
   Shared::PoincareHelpers::ReduceAndRemoveUnit(&e, context, ReductionTarget::User, &unit);
-  assert(unit.isUninitialized() || static_cast<Unit &>(unit).representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector());
 
-  Expression period = Multiplication::Builder(Rational::Builder(2), Trigonometry::PiExpressionInAngleUnit(angleUnit));
+  if (!unit.isUninitialized()) {
+    assert(unit.isPureAngleUnit() && static_cast<Unit&>(unit).representative() == Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex);
+    /* After a reduction, all angle units are converted to radians, so we
+     * convert e again here to fit the angle unit that will be used in
+     * reductions below. */
+    e = Multiplication::Builder(e, Trigonometry::UnitConversionFactor(Preferences::AngleUnit::Radian, userAngleUnit));
+  }
+
+  Expression period = Multiplication::Builder(Rational::Builder(2), Trigonometry::PiExpressionInAngleUnit(userAngleUnit));
   // Use the reduction of frac part to compute mod 1 on rationals
   Expression simplifiedAngle = Multiplication::Builder(FracPart::Builder(Division::Builder(e, period.clone())), period.clone());
   Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context, ReductionTarget::User);
@@ -48,13 +55,14 @@ void TrigonometryListController::setExpression(Expression e) {
   }
 
   m_layouts[index] = LayoutHelper::String("θ");
-  Expression radians = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex);
-  Expression degrees = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_degreeRepresentativeIndex);
-  Expression gradians = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_gradianRepresentativeIndex);
-  Expression withAngleUnit = Multiplication::Builder(e.clone(), angleUnit == Preferences::AngleUnit::Degree ? degrees.clone() : (angleUnit == Preferences::AngleUnit::Radian ? radians.clone() : gradians.clone()));
 
+  Expression withAngleUnit = Multiplication::Builder(e.clone(), Unit::Builder(Unit::AngleRepresentativeForAngleUnit(userAngleUnit)));
+
+  Expression radians = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex);
   m_exactLayouts[index] = getLayoutFromExpression(UnitConvert::Builder(withAngleUnit.clone(), radians), context, preferences);
-  m_approximatedLayouts[index] = getLayoutFromExpression(UnitConvert::Builder(withAngleUnit, degrees), context, preferences);
+
+  Expression degrees = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_degreeRepresentativeIndex);
+  m_approximatedLayouts[index] = getLayoutFromExpression(UnitConvert::Builder(withAngleUnit.clone(), degrees), context, preferences);
   index++;
 
   Expression theta = Symbol::Builder(k_symbol);
@@ -65,7 +73,7 @@ void TrigonometryListController::setExpression(Expression e) {
   // Set illustration
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(e, context);
   // Convert angle to radians
-  angle = angle * M_PI / Trigonometry::PiInAngleUnit(angleUnit);
+  angle = angle * M_PI / Trigonometry::PiInAngleUnit(userAngleUnit);
   assert(std::isfinite(angle));
   m_model.setAngle(angle);
   setShowIllustration(true);

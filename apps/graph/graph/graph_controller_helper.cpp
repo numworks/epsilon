@@ -86,7 +86,6 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
         return true;
     } else {
       t += tStep;
-      assert(std::round(static_cast<float>(t)/pixelWidth) != std::round(static_cast<float>(tCursorPosition)/pixelWidth));
       /* assert that it moved at least of 1 pixel.
        * round(t/pxWidth) is used by CurveView to compute the cursor's position. */
       if (std::fabs(static_cast<float>(tCursorPosition)) >= pixelWidth && ((dir < 0) != (tCursorPosition < 0)) && std::fabs(static_cast<float>(t)) < pixelWidth) {

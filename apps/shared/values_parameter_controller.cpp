@@ -45,7 +45,7 @@ void ValuesParameterController::initializeColumnParameters() {
 }
 
 
-ClearColumnHelper * ValuesParameterController::clearColumnHelper() {
+ColumnNameHelper * ValuesParameterController::columnNameHelper() {
   return m_valuesController;
 }
 

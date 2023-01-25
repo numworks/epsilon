@@ -16,6 +16,7 @@ namespace Sequence {
 ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header),
   m_intervalParameterController(this, inputEventHandlerDelegate),
+  m_sequenceColumnParameterController(this),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation::Builder<ValuesController>([](ValuesController * valuesController, void * sender) {
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     IntervalParameterController * controller = valuesController->intervalParameterController();
@@ -170,6 +171,18 @@ Escher::EvenOddMessageTextCell * ValuesController::abscissaTitleCells(int j) {
 
 void ValuesController::setDefaultStartEndMessages() {
   m_intervalParameterController.setStartEndMessages(I18n::Message::NStart, I18n::Message::NEnd);
+}
+
+Shared::ColumnParameterController * ValuesController::sequenceColumnParameterController() {
+  int col = selectedColumn();
+  assert(col > 0);
+  bool isSumColumn = false;
+  Ion::Storage::Record currentRecord = recordAtColumn(col, &isSumColumn);
+  if (isSumColumn) {
+    return nullptr;
+  }
+  m_sequenceColumnParameterController.setRecord(currentRecord);
+  return &m_sequenceColumnParameterController;
 }
 
 }

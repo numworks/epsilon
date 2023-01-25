@@ -4,6 +4,7 @@
 #include <apps/shared/expression_function_title_cell.h>
 #include <apps/shared/sequence_store.h>
 #include <apps/shared/values_controller.h>
+#include <apps/sequence/values/sequence_column_parameter_controller.h>
 #include "interval_parameter_controller.h"
 
 namespace Sequence {
@@ -60,8 +61,10 @@ private:
   Escher::EvenOddEditableTextCell * abscissaCells(int j) override;
   int abscissaTitleCellsCount() const override { return 1; }
   Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) override;
-  Shared::ColumnParameterController * functionParameterController() override { return nullptr; }
-  Shared::ColumnParameters * functionParameters() override { return nullptr; }
+
+  Escher::SelectableViewController * functionParameterController() override { return sequenceColumnParameterController(); }
+  Shared::ColumnParameters * functionParameters() override { return sequenceColumnParameterController(); }
+  Shared::ColumnParameterController * sequenceColumnParameterController();
 
   void setDefaultStartEndMessages();
 
@@ -71,6 +74,7 @@ private:
   Escher::EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfDisplayableRows];
 
   IntervalParameterController m_intervalParameterController;
+  SequenceColumnParameterController m_sequenceColumnParameterController;
   Escher::AbstractButtonCell m_setIntervalButton;
   mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
 

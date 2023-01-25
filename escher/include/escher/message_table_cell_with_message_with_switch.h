@@ -13,8 +13,8 @@ public:
     m_alignLabelAndAccessory(alignLabelAndAccessory) {}
   const View * accessoryView() const override { return &m_accessoryView; }
   void setState(bool state) { m_accessoryView.setState(state); }
-protected:
   bool state() const { return m_accessoryView.state(); }
+protected:
   bool forceAlignLabelAndAccessory() const override { return m_alignLabelAndAccessory; }
 private:
   SwitchView m_accessoryView;

@@ -469,7 +469,7 @@ bool Store::updateSeries(int series, bool delayUpdate, bool updateDisplayAdditio
 }
 
 double Store::sumOfValuesBetween(int series, double x1, double x2, bool strictUpperBound) const {
-  if (!seriesIsActive(series)) {
+  if (!seriesIsValid(series)) {
     return NAN;
   }
   /* Use roughly_equal to handle impossible double representations such as

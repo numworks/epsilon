@@ -52,7 +52,7 @@ bool App::storageCanChangeForRecordName(const Ion::Storage::Record::Name recordN
 
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
-  m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(), snapshot->regressionTypes()),
+  m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(), snapshot->storePreferences(), snapshot->regressionTypes()),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),

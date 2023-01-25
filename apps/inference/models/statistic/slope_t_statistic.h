@@ -1,6 +1,7 @@
 #ifndef INFERENCE_MODELS_STATISTIC_SLOPE_T_STATISTIC_H
 #define INFERENCE_MODELS_STATISTIC_SLOPE_T_STATISTIC_H
 
+#include <apps/shared/double_pair_store_preferences.h>
 #include <apps/shared/linear_regression_store.h>
 #include "interfaces/significance_tests.h"
 #include "table.h"
@@ -9,7 +10,7 @@ namespace Inference {
 
 class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
 public:
-  SlopeTStatistic(Shared::GlobalContext * context) : Shared::LinearRegressionStore(context) {
+  SlopeTStatistic(Shared::GlobalContext * context) : Shared::LinearRegressionStore(context, &m_concreteStorePreferences) {
     initListsFromStorage();
   }
 
@@ -24,14 +25,18 @@ public:
   int maxNumberOfRows() const override { return k_maxNumberOfPairs; }
 
   constexpr static int k_maxNumberOfColumns = 2;
+
 protected:
   int numberOfTableParameters() const { return k_maxNumberOfPairs * k_maxNumberOfColumns; }
   bool authorizedParameterAtIndex(double p, int i) const;
   double computeStandardError() const;
   bool validateInputs() { return seriesIsValid(0) && numberOfPairsOfSeries(0) > 2; }
+
 private:
   // Table
   Index2D initialDimensions() const override { return Index2D{.row = 1, .col = 2}; }
+
+  Shared::DoublePairStorePreferences m_concreteStorePreferences;
 };
 
 }

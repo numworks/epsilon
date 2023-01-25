@@ -34,6 +34,7 @@ public:
     int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }
     int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
     Model::Type * regressionTypes() { return m_regressionTypes; }
+    Shared::DoublePairStorePreferences * storePreferences() { return &m_storePreferences; }
 
   private:
     Shared::InteractiveCurveViewRange m_range;
@@ -41,6 +42,7 @@ public:
     int m_graphSelectedDotIndex;
     int m_selectedSeriesIndex;
     Model::Type m_regressionTypes[Store::k_numberOfSeries];
+    Shared::DoublePairStorePreferences m_storePreferences;
   };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }

@@ -1,14 +1,14 @@
 #ifndef SHARED_DOUBLE_PAIR_STORE_H
 #define SHARED_DOUBLE_PAIR_STORE_H
 
-#include <kandinsky/color.h>
+#include "global_context.h"
 #include <escher/palette.h>
-#include <stdint.h>
-#include <assert.h>
+#include <kandinsky/color.h>
 #include <poincare/float_list.h>
 #include <poincare/range.h>
-#include "global_context.h"
 #include <algorithm>
+#include <assert.h>
+#include <stdint.h>
 
 namespace Shared {
 
@@ -23,7 +23,7 @@ public:
   constexpr static const char * k_statisticsColumNames[] = {"V", "N"}; // Must be 1 char long or change the name-related methods.
   static_assert(sizeof(k_statisticsColumNames) / sizeof(char *) == k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Statistics.");
 
-  DoublePairStore(GlobalContext * context);
+  DoublePairStore(GlobalContext * context, class DoublePairStorePreferences * preferences);
   // Delete the implicit copy constructor: the object is heavy
   DoublePairStore(const DoublePairStore&) = delete;
 
@@ -62,7 +62,7 @@ public:
   void deleteAllPairs(bool delayUpdate = false);
 
   // Series validity
-  void hideSeries(int series) { m_validSeries[series] = false; }
+  void hideSeries(int series);
   bool seriesIsValid(int series) const;
   typedef bool (*ValidSeries)(const DoublePairStore *, int);
   static bool DefaultValidSeries(const DoublePairStore * store, int series) { return store->seriesIsValid(series); }
@@ -106,12 +106,15 @@ public:
    * */
   virtual bool updateSeries(int series, bool delayUpdate = false, bool updateDisplayAdditionalColumn = true); // TODO: find a better way than adding bool updateDisplayAdditionalColumn
   virtual bool valueValidInColumn(double value, int relativeColumn) const { return !std::isnan(value) && value >= -Poincare::Range1D::k_maxFloat && value <= Poincare::Range1D::k_maxFloat; }
+
 protected:
   void initListsInPool();
   double defaultValue(int series, int i, int j) const;
   virtual double defaultValueForColumn1() const = 0;
-  bool m_validSeries[k_numberOfSeries];
+
   Poincare::FloatList<double> m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
+  class DoublePairStorePreferences * m_storePreferences;
+
 private:
   static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
   bool storeColumn(int series, int i) const;

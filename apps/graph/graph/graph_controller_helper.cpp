@@ -111,6 +111,10 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     // If possible, round t so that f(x) matches f evaluated at displayed x
     t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences->numberOfSignificantDigits(), 0.05 * step, true);
   }
+  const float minimalAbsoluteStep = dir * pixelWidth;
+  if (t - tCursorPosition < minimalAbsoluteStep) {
+    t = tCursorPosition + minimalAbsoluteStep;
+  }
   // t must have changed
   assert(tCursorPosition != t);
 

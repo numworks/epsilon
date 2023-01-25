@@ -78,12 +78,6 @@ void HigherOrderDerivativeLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool
 
 void DerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   assert(cursor->layoutNode() != variableLayout() || m_variableSlot == VariableSlot::Assignment); // This is handled by child classes
-  if (cursor->layoutNode() == variableLayout() && m_variableSlot == VariableSlot::Fraction) {
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    cursor->setLayoutNode(derivandLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
   if (cursor->layoutNode() == derivandLayout()) {
     assert(cursor->position() == LayoutCursor::Position::Right);
     setVariableSlot(VariableSlot::Assignment, shouldRecomputeLayout);
@@ -103,12 +97,7 @@ void DerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
     return;
   }
   assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    setVariableSlot(VariableSlot::Fraction, shouldRecomputeLayout);
-    cursor->setLayoutNode(variableLayout());
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Right);
+  assert(cursor->position() == LayoutCursor::Position::Right); // Left case is handled by child classes
   askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right, cursor, shouldRecomputeLayout);
 }
 
@@ -117,6 +106,11 @@ void FirstOrderDerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, bool
     assert(cursor->position() == LayoutCursor::Position::Right);
     cursor->setLayoutNode(derivandLayout());
     cursor->setPosition(LayoutCursor::Position::Left);
+    return;
+  }
+  if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Left) {
+    setVariableSlot(VariableSlot::Fraction, shouldRecomputeLayout);
+    cursor->setLayoutNode(variableLayout());
     return;
   }
   DerivativeLayoutNode::moveCursorRight(cursor, shouldRecomputeLayout, forSelection);
@@ -145,11 +139,7 @@ void HigherOrderDerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, boo
 }
 
 void DerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))) {
-    setVariableSlot(VariableSlot::Fraction, shouldRecomputeLayout);
-    variableLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
+  assert(!cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))); // Handle by child classes
   if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Right))) {
     abscissaLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
@@ -182,6 +172,7 @@ void HigherOrderDerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool
 }
 
 void DerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+  assert(!(cursor->layoutNode() == variableLayout() && m_variableSlot == VariableSlot::Fraction)); // Handle by child classes
   if (cursor->layoutNode() == abscissaLayout()
       || (cursor->layoutNode() == variableLayout() && m_variableSlot == VariableSlot::Assignment)) {
     derivandLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);

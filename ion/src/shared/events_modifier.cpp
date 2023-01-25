@@ -156,5 +156,13 @@ void ModifierState::updateModifiersFromEvent(Event e, Keyboard::State state) {
   }
 }
 
+void ModifierState::incrementOrResetRepetition(bool increment) {
+  if (increment) {
+    m_repetitionCounter++;
+  } else {
+    m_repetitionCounter = 0;
+  }
+}
+
 }
 }

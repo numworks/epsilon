@@ -169,7 +169,7 @@ bool Store::updateSeries(int series, bool delayUpdate, bool updateDisplayAdditio
 
 void Store::updateCoefficients(int series, Poincare::Context * globalContext) {
   assert(series >= 0 && series <= k_numberOfSeries);
-  assert(seriesIsValid(series));
+  assert(seriesIsActive(series));
   if (m_recomputeCoefficients[series]) {
     Model * seriesModel = modelForSeries(series);
     seriesModel->fit(this, series, m_regressionCoefficients[series], globalContext);

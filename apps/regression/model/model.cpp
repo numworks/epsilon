@@ -207,7 +207,7 @@ int Model::solveLinearSystem(double * solutions, double * coefficients, double *
 }
 
 void Model::initCoefficientsForFit(double * modelCoefficients, double defaultValue, bool forceDefaultValue, Store * store, int series) const {
-  assert(forceDefaultValue || (store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsValid(series)));
+  assert(forceDefaultValue || (store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsActive(series)));
   if (forceDefaultValue) {
     Model::specializedInitCoefficientsForFit(modelCoefficients, defaultValue);
   } else {

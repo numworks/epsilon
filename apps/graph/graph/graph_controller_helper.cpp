@@ -44,9 +44,9 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
   }
 
-  const float minimalAbsoluteStep = dir * pixelWidth;
+  const double minimalAbsoluteStep = dir * pixelWidth;
   double step;
-  float t = tCursor;
+  double t = tCursor;
   if (function->properties().isCartesian()) {
     step = static_cast<double>(range->xGridUnit())/numberOfStepsInGradUnit;
     double slopeMultiplicator = 1.0;
@@ -76,7 +76,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
 
     // Prevent tStep from being too small before any snapping or rounding.
-    float tStep = std::max(static_cast<float>(dir * step * slopeMultiplicator) * static_cast<float>(scrollSpeed), minimalAbsoluteStep);
+    double tStep = std::max(dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed), minimalAbsoluteStep);
     if (snapToInterestAndUpdateCursor(cursor, tCursor, tCursor + tStep * k_snapFactor, subCurveIndex ? *subCurveIndex : 0)) {
         // Cursor should have been updated by snapToInterest
         assert(tCursor != cursor->t());
@@ -85,7 +85,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     t += tStep;
     /* assert that it moved at least of 1 pixel.
      * round(t/pxWidth) is used by CurveView to compute the cursor's position. */
-    if (std::fabs(static_cast<float>(tCursor)) >= pixelWidth && ((dir < 0) != (tCursor < 0)) && std::fabs(static_cast<float>(t)) < pixelWidth) {
+    if (std::fabs(static_cast<float>(tCursor)) >= pixelWidth && ((dir < 0.0) != (tCursor < 0.0)) && std::fabs(static_cast<float>(t)) < pixelWidth) {
       // Use a pixel width as a margin, ensuring t mostly stays at the same pixel
       // Round t to 0 if it is going into that direction, and is close enough
       t = 0.0;
@@ -114,7 +114,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   // t must have changed
   assert(tCursor != t);
 
-  t = std::max(tMin, std::min(tMax, static_cast<double>(t)));
+  t = std::max(tMin, std::min(tMax, t));
   int subCurveIndexValue = subCurveIndex == nullptr ? 0 : *subCurveIndex;
   Coordinate2D<double> xy = function->evaluateXYAtParameter(t, context, subCurveIndexValue);
 

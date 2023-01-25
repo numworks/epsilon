@@ -44,7 +44,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
   }
 
-  const double minimalAbsoluteStep = dir * pixelWidth;
+  const double minimalAbsoluteStep = pixelWidth;
   double step;
   double t = tCursor;
   if (function->properties().isCartesian()) {
@@ -76,7 +76,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
 
     // Prevent tStep from being too small before any snapping or rounding.
-    double tStep = std::max(dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed), minimalAbsoluteStep);
+    double tStep = dir * std::max(step * slopeMultiplicator * static_cast<double>(scrollSpeed), minimalAbsoluteStep);
     if (snapToInterestAndUpdateCursor(cursor, tCursor, tCursor + tStep * k_snapFactor, subCurveIndex ? *subCurveIndex : 0)) {
         // Cursor should have been updated by snapToInterest
         assert(tCursor != cursor->t());
@@ -108,8 +108,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences->numberOfSignificantDigits(), 0.05 * step, true);
   }
   // Ensure a minimal tStep again, allowing the crossing of asymptotes.
-  if (t - tCursor < minimalAbsoluteStep) {
-    t = tCursor + minimalAbsoluteStep;
+  if (std::abs(t - tCursor) < minimalAbsoluteStep) {
+    t = tCursor + dir * minimalAbsoluteStep;
   }
   // t must have changed
   assert(tCursor != t);

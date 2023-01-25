@@ -23,8 +23,8 @@ public:
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
   int validSeriesIndex(int series, ValidSeries = &DefaultValidSeries) const;
-  bool displayCumulatedFrequenciesForSeries(int series) const { return m_userPreferences->displayCumulatedFrequencies(series); }
-  void setDisplayCumulatedFrequenciesForSeries(int series, bool state) { m_userPreferences->setDisplayCumulatedFrequencies(series, state); }
+  bool displayCumulatedFrequenciesForSeries(int series) const { return userPreferences()->displayCumulatedFrequencies(series); }
+  void setDisplayCumulatedFrequenciesForSeries(int series, bool state) { userPreferences()->setDisplayCumulatedFrequencies(series, state); }
   int seriesAtColumn(int column) const override { return computeRelativeColumnAndSeries(&column); }
   int relativeColumnIndex(int columnIndex) const override;
 
@@ -36,10 +36,10 @@ public:
   }
 
   // Histogram bars
-  double barWidth() const { return m_userPreferences->barWidth(); }
+  double barWidth() const { return userPreferences()->barWidth(); }
   void setBarWidth(double barWidth);
-  double firstDrawnBarAbscissa() const { return m_userPreferences->firstDrawnBarAbscissa(); }
-  void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa) { m_userPreferences->setFirstDrawnBarAbscissa(firstDrawnBarAbscissa);}
+  double firstDrawnBarAbscissa() const { return userPreferences()->firstDrawnBarAbscissa(); }
+  void setFirstDrawnBarAbscissa(double firstDrawnBarAbscissa) { userPreferences()->setFirstDrawnBarAbscissa(firstDrawnBarAbscissa);}
   double heightOfBarAtIndex(int series, int index) const;
   double maxHeightOfBar(int series) const;
   double heightOfBarAtValue(int series, double value) const;
@@ -47,8 +47,8 @@ public:
   double endOfBarAtIndex(int series, int index) const;
   int numberOfBars(int series) const;
   // Box plot
-  bool displayOutliers() const { return m_userPreferences->displayOutliers(); }
-  void setDisplayOutliers(bool displayOutliers) { m_userPreferences->setDisplayOutliers(displayOutliers); }
+  bool displayOutliers() const { return userPreferences()->displayOutliers(); }
+  void setDisplayOutliers(bool displayOutliers) { userPreferences()->setDisplayOutliers(displayOutliers); }
   I18n::Message boxPlotCalculationMessageAtIndex(int series, int index) const;
   double boxPlotCalculationAtIndex(int series, int index) const;
   bool boxPlotCalculationIsOutlier(int series, int index) const;
@@ -160,8 +160,8 @@ private:
   // Return the value index from its sorted index (a 0 sorted index is the min)
   uint8_t valueIndexAtSortedIndex(int series, int i) const;
   bool frequenciesAreValid(int series) const;
+  UserPreferences * userPreferences() const { return static_cast<UserPreferences *>(m_storePreferences); }
 
-  UserPreferences * m_userPreferences;
   // Sorted value indexes are memoized to save computation
   static_assert(k_maxNumberOfPairs <= UINT8_MAX, "k_maxNumberOfPairs is too large.");
   /* The dataset memoizes the sorted indexes */

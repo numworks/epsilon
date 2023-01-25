@@ -2,13 +2,14 @@
 #define STATISTICS_USER_PREFERENCES_H
 
 #include <apps/shared/double_pair_store.h>
+#include <apps/shared/double_pair_store_preferences.h>
 #include <apps/global_preferences.h>
 
 namespace Statistics {
 
 // These preferences are memoized in snapshot.
 
-class UserPreferences {
+class UserPreferences : public Shared::DoublePairStorePreferences {
 public:
   UserPreferences() :
     m_displayCumulatedFrequencies{false, false, false},

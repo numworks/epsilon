@@ -1,4 +1,5 @@
 #include "double_pair_store.h"
+#include "double_pair_store_preferences.h"
 #include "poincare_helpers.h"
 #include <poincare/helpers.h>
 #include <poincare/list.h>
@@ -14,11 +15,10 @@ using namespace Ion::Storage;
 
 namespace Shared {
 
-DoublePairStore::DoublePairStore(GlobalContext * context) :
-  m_validSeries{false,false,false},
+DoublePairStore::DoublePairStore(GlobalContext * context, DoublePairStorePreferences * preferences) :
+  m_storePreferences(preferences),
   m_context(context)
-{
-}
+{}
 
 void DoublePairStore::initListsInPool() {
   // Initialize empty list in the pool
@@ -186,27 +186,32 @@ void DoublePairStore::resetColumn(int series, int i, bool delayUpdate) {
   updateSeries(series, delayUpdate);
 }
 
+void DoublePairStore::hideSeries(int series) {
+  assert(series >= 0 && series < k_numberOfSeries);
+  return m_storePreferences->setSeriesValid(series, false);
+}
+
 bool DoublePairStore::seriesIsValid(int series) const {
   assert(series >= 0 && series < k_numberOfSeries);
-  return m_validSeries[series];
+  return m_storePreferences->seriesIsValid(series);
 }
 
 void DoublePairStore::updateSeriesValidity(int series, bool updateDisplayAdditionalColumn) {
   assert(series >= 0 && series < k_numberOfSeries);
   int numberOfPairs = numberOfPairsOfSeries(series);
   if (numberOfPairs == 0 || lengthOfColumn(series, 0) != lengthOfColumn(series, 1)) {
-    m_validSeries[series] = false;
+    m_storePreferences->setSeriesValid(series, false);
     return;
   }
   for (int i = 0 ; i < k_numberOfColumnsPerSeries; i++) {
     for (int j = 0 ; j < numberOfPairs; j ++) {
       if (!valueValidInColumn(get(series, i, j), i)) {
-        m_validSeries[series] = false;
+        m_storePreferences->setSeriesValid(series, false);
         return;
       }
     }
   }
-  m_validSeries[series] = true;
+  m_storePreferences->setSeriesValid(series, true);
 }
 
 bool DoublePairStore::hasValidSeries(ValidSeries validSeries) const {

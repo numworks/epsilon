@@ -19,8 +19,8 @@ double LinearModelHelper::YIntercept(double meanOfY, double meanOfX, double slop
 
 /* Linear Regression Store */
 
-LinearRegressionStore::LinearRegressionStore(GlobalContext * context) :
-  DoublePairStore(context)
+LinearRegressionStore::LinearRegressionStore(GlobalContext * context, DoublePairStorePreferences * preferences) :
+  DoublePairStore(context, preferences)
 {}
 
 /* Calculations */

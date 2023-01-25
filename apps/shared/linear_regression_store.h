@@ -18,7 +18,7 @@ class LinearRegressionStore : public Shared::DoublePairStore {
 public:
   constexpr static const char * const * k_columnNames = DoublePairStore::k_regressionColumNames;
 
-  LinearRegressionStore(Shared::GlobalContext * context);
+  LinearRegressionStore(Shared::GlobalContext * context, DoublePairStorePreferences * preferences);
 
   // DoublePairStore
   char columnNamePrefixAtIndex(int column) const override {

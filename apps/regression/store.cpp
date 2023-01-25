@@ -27,8 +27,8 @@ const char * Store::SeriesTitle(int series) {
   }
 }
 
-Store::Store(Shared::GlobalContext * context, Model::Type * regressionTypes) :
-  LinearRegressionStore(context),
+Store::Store(Shared::GlobalContext * context, DoublePairStorePreferences * preferences, Model::Type * regressionTypes) :
+  LinearRegressionStore(context, preferences),
   m_regressionTypes(regressionTypes),
   m_exponentialAbxModel(true),
   m_linearApbxModel(true),
@@ -154,7 +154,7 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
 
 void Store::updateSeriesValidity(int series, bool updateDisplayAdditionalColumn) {
   LinearRegressionStore::updateSeriesValidity(series, updateDisplayAdditionalColumn);
-  if (!m_validSeries[series]) {
+  if (!seriesIsValid(series)) {
     // Reset series regression type to None
     m_regressionTypes[series] = Model::Type::None;
   }

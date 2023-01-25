@@ -14,6 +14,7 @@
 #include "model/quadratic_model.h"
 #include "model/quartic_model.h"
 #include "model/trigonometric_model.h"
+#include <apps/shared/double_pair_store_preferences.h>
 #include <apps/shared/interactive_curve_view_range.h>
 #include <apps/shared/linear_regression_store.h>
 #include <escher/responder.h>
@@ -26,7 +27,7 @@ public:
   constexpr static const char * const * k_columnNames = DoublePairStore::k_regressionColumNames;
   static const char * SeriesTitle(int series);
 
-  Store(Shared::GlobalContext * context, Model::Type * regressionTypes);
+  Store(Shared::GlobalContext * context, Shared::DoublePairStorePreferences * preferences, Model::Type * regressionTypes);
 
   void reset();
 

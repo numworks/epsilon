@@ -19,8 +19,7 @@ constexpr I18n::Message Store::k_quantilesName[Store::k_numberOfQuantiles];
 constexpr Store::CalculPointer Store::k_quantileCalculation[Store::k_numberOfQuantiles];
 
 Store::Store(GlobalContext * context, UserPreferences * userPreferences) :
-  DoublePairStore(context),
-  m_userPreferences(userPreferences),
+  DoublePairStore(context, userPreferences),
   m_memoizedMaxNumberOfModes(-1),
   m_graphViewInvalidated(true)
 {
@@ -59,7 +58,7 @@ int Store::relativeColumnIndex(int i) const {
 
 void Store::setBarWidth(double barWidth) {
   assert(barWidth > 0.0);
-  m_userPreferences->setBarWidth(barWidth);
+  userPreferences()->setBarWidth(barWidth);
 }
 
 double Store::heightOfBarAtIndex(int series, int index) const {
@@ -154,14 +153,14 @@ int Store::numberOfBoxPlotCalculations(int series) const {
 
 void Store::updateSeriesValidity(int series, bool updateDisplayAdditionalColumn) {
   assert(series >= 0 && series < k_numberOfSeries);
-  bool oldValidity = m_validSeries[series];
+  bool oldValidity = seriesIsValid(series);
   DoublePairStore::updateSeriesValidity(series, updateDisplayAdditionalColumn);
-  m_validSeries[series] = m_validSeries[series] && frequenciesAreValid(series);
+  userPreferences()->setSeriesValid(series, seriesIsValid(series) && frequenciesAreValid(series));
   // Reset the graph view any time one of the series gets invalidated
-  m_graphViewInvalidated = m_graphViewInvalidated || (oldValidity && !m_validSeries[series]);
+  m_graphViewInvalidated = m_graphViewInvalidated || (oldValidity && !seriesIsValid(series));
   if (updateDisplayAdditionalColumn && m_graphViewInvalidated && numberOfPairsOfSeries(series) == 0) {
     // Hide the cumulated frequencies if series is invalidated and empty
-    m_userPreferences->setDisplayCumulatedFrequencies(series, false);
+    userPreferences()->setDisplayCumulatedFrequencies(series, false);
   }
 }
 

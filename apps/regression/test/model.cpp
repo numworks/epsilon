@@ -29,7 +29,8 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
   int series = 0;
   Shared::GlobalContext globalContext;
   Model::Type regressionTypes[] = { Model::Type::None, Model::Type::None, Model::Type::None };
-  Regression::Store store(&globalContext, regressionTypes);
+  Shared::DoublePairStorePreferences storePreferences;
+  Regression::Store store(&globalContext, &storePreferences, regressionTypes);
 
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);
   store.setSeriesRegressionType(series, modelType);
@@ -358,8 +359,9 @@ QUIZ_CASE(logistic_regression) {
 void assert_column_calculations_is(double * xi, int numberOfPoints, double trueMean, double trueSum, double trueSquaredSum, double trueStandardDeviation, double trueVariance) {
   int series = 0;
   Shared::GlobalContext globalContext;
+  Shared::DoublePairStorePreferences storePreferences;
   Model::Type regressionTypes[] = { Model::Type::None, Model::Type::None, Model::Type::None };
-  Regression::Store store(&globalContext, regressionTypes);
+  Regression::Store store(&globalContext, &storePreferences, regressionTypes);
 
   setRegressionPoints(&store, series, numberOfPoints, xi);
 
@@ -408,8 +410,9 @@ QUIZ_CASE(constant_column_calculation) {
 void assert_regression_calculations_is(double * xi, double * yi, int numberOfPoints, double trueCovariance, double trueProductSum, double trueR) {
   int series = 0;
   Shared::GlobalContext globalContext;
+  Shared::DoublePairStorePreferences storePreferences;
   Model::Type regressionTypes[] = { Model::Type::None, Model::Type::None, Model::Type::None };
-  Regression::Store store(&globalContext, regressionTypes);
+  Regression::Store store(&globalContext, &storePreferences, regressionTypes);
 
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);
 

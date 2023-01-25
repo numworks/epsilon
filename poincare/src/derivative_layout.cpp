@@ -136,6 +136,11 @@ void HigherOrderDerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, boo
     cursor->setPosition(LayoutCursor::Position::Left);
     return;
   }
+  if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Left) {
+    setOrderSlot(OrderSlot::Numerator, shouldRecomputeLayout);
+    cursor->setLayoutNode(orderLayout());
+    return;
+  }
   DerivativeLayoutNode::moveCursorRight(cursor, shouldRecomputeLayout, forSelection);
 }
 

@@ -59,11 +59,11 @@ bool StoreColumnHelper::switchSelectedColumnHideStatus() {
   bool previousStatus = store()->seriesIsValid(series);
   if (previousStatus) {
     // Any previously valid series can be hidden
-    store()->hideSeries(series);
+    store()->setSeriesHidden(series, true);
     return true;
   } else {
     // Series may still be invalid, in that case nothing happens
-    store()->updateSeriesValidity(series, false);
+    store()->setSeriesHidden(series, false);
     return selectedSeriesIsValid();
   }
 }

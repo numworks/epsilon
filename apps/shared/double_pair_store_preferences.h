@@ -7,14 +7,16 @@ namespace Shared {
 
 class DoublePairStorePreferences {
 public:
-  DoublePairStorePreferences() : m_validSeries{false, false, false} {}
-  static_assert(DoublePairStore::k_numberOfSeries == 3, "Initialization of DoublePairStorePreferences::m_validSeries is wrong.");
+  DoublePairStorePreferences() : m_valid{false, false, false}, m_hidden{false, false, false} {}
+  static_assert(DoublePairStore::k_numberOfSeries == 3, "Initialization of flags in DoublePairStorePreferences is wrong.");
 
-  bool seriesIsValid(int series) const { return m_validSeries[series]; }
-  void setSeriesValid(int series, bool valid) { m_validSeries[series] = valid; }
+  bool seriesIsValid(int series) const { return m_valid[series] && !m_hidden[series]; }
+  void setSeriesValid(int series, bool valid) { m_valid[series] = valid; }
+  void setSeriesHidden(int series, bool hidden) { m_hidden[series] = hidden; }
 
 private:
-  bool m_validSeries[DoublePairStore::k_numberOfSeries];
+  bool m_valid[DoublePairStore::k_numberOfSeries];
+  bool m_hidden[DoublePairStore::k_numberOfSeries];
 };
 
 }

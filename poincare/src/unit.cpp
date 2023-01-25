@@ -477,22 +477,23 @@ int UnitNode::DistanceRepresentative::setAdditionalExpressions(double value, Exp
   return 1;
 }
 
-const UnitNode::Representative * UnitNode::AngleRepresentative::DefaultRepresentative(const ReductionContext& reductionContext) {
-  if (reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Radian) {
-    return &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
+const UnitNode::Representative * UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(Preferences::AngleUnit angleUnit) {
+  switch (angleUnit) {
+  case Preferences::AngleUnit::Degree:
+    return Unit::k_angleRepresentatives + Unit::k_degreeRepresentativeIndex;
+  case Preferences::AngleUnit::Radian:
+    return Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex;
+  default:
+    assert(angleUnit == Preferences::AngleUnit::Gradian);
+    return Unit::k_angleRepresentatives + Unit::k_gradianRepresentativeIndex;
   }
-  if (reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Gradian) {
-    return &Unit::k_angleRepresentatives[Unit::k_gradianRepresentativeIndex];
-  }
-  assert(reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Degree);
-  return &Unit::k_angleRepresentatives[Unit::k_degreeRepresentativeIndex];
 }
 
 const UnitNode::Representative * UnitNode::AngleRepresentative::standardRepresentative(double value, double exponent, const ReductionContext& reductionContext, const Prefix * * prefix) const {
   if (reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Degree) {
     return defaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_arcSecondRepresentativeIndex, 3, prefix);
   }
-  return DefaultRepresentative(reductionContext);
+  return DefaultRepresentativeForAngleUnit(reductionContext.angleUnit());
 }
 
 Expression UnitNode::AngleRepresentative::convertInto(Expression value, const UnitNode::Representative * other , const ReductionContext& reductionContext) const {
@@ -1014,18 +1015,6 @@ bool Unit::ForceMarginLeftOfUnit(const Unit& unit) {
     }
   }
   return true;
-}
-
-const Unit::AngleRepresentative * Unit::AngleRepresentativeForAngleUnit(Preferences::AngleUnit angleUnit) {
-  switch (angleUnit) {
-  case Preferences::AngleUnit::Degree:
-    return k_angleRepresentatives + k_degreeRepresentativeIndex;
-  case Preferences::AngleUnit::Radian:
-    return k_angleRepresentatives + k_radianRepresentativeIndex;
-  default:
-    assert(angleUnit == Preferences::AngleUnit::Gradian);
-    return k_angleRepresentatives + k_gradianRepresentativeIndex;
-  }
 }
 
 Expression Unit::shallowReduce(ReductionContext reductionContext) {

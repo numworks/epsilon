@@ -91,7 +91,7 @@ Expression UnitConvert::shallowBeautify(const ReductionContext& reductionContext
   if (!divisionUnit.isUninitialized()) {
     if (unit.isPureAngleUnit()) {
       // Try again with the current angle unit
-      Unit currentAngleUnit = Unit::Builder(UnitNode::AngleRepresentative::DefaultRepresentative(reductionContext));
+      Unit currentAngleUnit = Unit::Builder(UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(reductionContext.angleUnit()));
       division = Multiplication::Builder(division, divisionUnit, currentAngleUnit);
       divisionUnit = Expression();
       division = division.reduceAndRemoveUnit(reductionContext, &divisionUnit);

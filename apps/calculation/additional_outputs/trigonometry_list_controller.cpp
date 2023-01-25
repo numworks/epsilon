@@ -56,7 +56,7 @@ void TrigonometryListController::setExpression(Expression e) {
 
   m_layouts[index] = LayoutHelper::String("θ");
 
-  Expression withAngleUnit = Multiplication::Builder(e.clone(), Unit::Builder(Unit::AngleRepresentativeForAngleUnit(userAngleUnit)));
+  Expression withAngleUnit = Multiplication::Builder(e.clone(), Unit::Builder(UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(userAngleUnit)));
 
   Expression radians = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex);
   m_exactLayouts[index] = getLayoutFromExpression(UnitConvert::Builder(withAngleUnit.clone(), radians), context, preferences);

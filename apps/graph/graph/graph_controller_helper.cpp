@@ -44,6 +44,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
   }
 
+  const float minimalAbsoluteStep = dir * pixelWidth;
   double step;
   float t = tCursor;
   if (function->properties().isCartesian()) {
@@ -72,13 +73,10 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
       slopeMultiplicator /= std::sqrt(1.0 + slope * slope);
       // Add a sqrt(2) factor so that y=x isn't slowed down
       slopeMultiplicator *= std::sqrt(2.0);
-      /* Cap the scroll speed reduction to be able to cross vertical asymptotes
-       * Using pixelWidth / (step * static_cast<double>(scrollSpeed)) as cap
-       * ensures that t moves at least by one pixel. */
-      slopeMultiplicator = std::max(pixelWidth / (step * static_cast<double>(scrollSpeed)), slopeMultiplicator);
     }
 
-    float tStep = dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
+    // Prevent tStep from being too small before any snapping or rounding.
+    float tStep = std::max(static_cast<float>(dir * step * slopeMultiplicator) * static_cast<float>(scrollSpeed), minimalAbsoluteStep);
     if (snapToInterestAndUpdateCursor(cursor, tCursor, tCursor + tStep * k_snapFactor, subCurveIndex ? *subCurveIndex : 0)) {
         // Cursor should have been updated by snapToInterest
         assert(tCursor != cursor->t());
@@ -109,7 +107,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     // If possible, round t so that f(x) matches f evaluated at displayed x
     t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences->numberOfSignificantDigits(), 0.05 * step, true);
   }
-  const float minimalAbsoluteStep = dir * pixelWidth;
+  // Ensure a minimal tStep again, allowing the crossing of asymptotes.
   if (t - tCursor < minimalAbsoluteStep) {
     t = tCursor + minimalAbsoluteStep;
   }

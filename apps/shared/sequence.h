@@ -31,12 +31,17 @@ public:
   I18n::Message parameterMessageName() const override;
   CodePoint symbol() const override { return 'n'; }
   int nameWithArgumentAndType(char * buffer, size_t bufferSize);
+
   // MetaData getters
-  Type type() const;
-  int initialRank() const;
+  Type type() const { return recordData()->type(); }
+  int initialRank() const { return recordData()->initialRank(); }
+  bool displaySum() const { return recordData()->displaySum(); }
+
   // MetaData setters
   void setType(Type type);
   void setInitialRank(int rank);
+  void setDisplaySum(bool display) { recordData()->setDisplaySum(display); }
+
   // Definition
   Poincare::Layout definitionName() { return m_definition.name(this); }
   // First initial condition
@@ -93,7 +98,8 @@ private:
       Function::RecordDataBuffer(color),
       m_type(Type::Explicit),
       m_initialRank(0),
-      m_initialConditionSizes{0,0}
+      m_initialConditionSizes{0,0},
+      m_displaySum(false)
     {}
     Type type() const { return m_type; }
     void setType(Type type) { m_type = type; }
@@ -107,6 +113,8 @@ private:
       assert(conditionIndex >= 0 && conditionIndex < 2);
       m_initialConditionSizes[conditionIndex] = size;
     }
+    bool displaySum() const { return m_displaySum; }
+    void setDisplaySum(bool display) { m_displaySum = display; }
   private:
     static_assert((1 << 8*sizeof(uint16_t)) >= Ion::Storage::FileSystem::k_storageSize, "Potential overflows of Sequence initial condition sizes");
     Type m_type;
@@ -118,6 +126,7 @@ private:
 #else
     uint16_t m_initialConditionSizes[2];
 #endif
+    bool m_displaySum;
   };
 
   class SequenceModel : public ExpressionModel {

@@ -63,9 +63,10 @@ public:
 
   // Series validity
   void setSeriesHidden(int series, bool hidden);
+  bool seriesIsActive(int series) const;
   bool seriesIsValid(int series) const;
   typedef bool (*ValidSeries)(const DoublePairStore *, int);
-  static bool DefaultValidSeries(const DoublePairStore * store, int series) { return store->seriesIsValid(series); }
+  static bool DefaultValidSeries(const DoublePairStore * store, int series) { return store->seriesIsActive(series); }
   // These methods can be implemented with a different validity method
   bool hasValidSeries(ValidSeries validSeriesMethod = &DefaultValidSeries) const;
   virtual void updateSeriesValidity(int series, bool updateDisplayAdditionalColumn = true);

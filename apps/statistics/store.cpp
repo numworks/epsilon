@@ -378,7 +378,7 @@ int Store::totalNumberOfModes() const {
   }
   int maxNumberOfModes = 0;
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    if (seriesIsValid(i) && shouldDisplayModes(i)) {
+    if (seriesIsActive(i) && shouldDisplayModes(i)) {
       maxNumberOfModes = std::max(maxNumberOfModes, numberOfModes(i));
     }
   }
@@ -469,7 +469,7 @@ bool Store::updateSeries(int series, bool delayUpdate, bool updateDisplayAdditio
 }
 
 double Store::sumOfValuesBetween(int series, double x1, double x2, bool strictUpperBound) const {
-  if (!seriesIsValid(series)) {
+  if (!seriesIsActive(series)) {
     return NAN;
   }
   /* Use roughly_equal to handle impossible double representations such as
@@ -576,7 +576,7 @@ double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
 }
 
 int Store::totalNormalProbabilityValues(int series) const {
-  if (!seriesIsValid(series) || !columnIsIntegersOnly(series, 1)) {
+  if (!seriesIsActive(series) || !columnIsIntegersOnly(series, 1)) {
     return 0;
   }
   double result = sumOfOccurrences(series);

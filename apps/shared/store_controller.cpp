@@ -31,7 +31,7 @@ bool StoreController::textFieldDidFinishEditing(AbstractTextField * textField, c
   // First row is not editable.
   assert(selectedRow() != 0);
   int series = m_store->seriesAtColumn(selectedColumn());
-  bool wasSeriesValid = m_store->seriesIsValid(series);
+  bool wasSeriesValid = m_store->seriesIsActive(series);
   if (text[0] == 0) { // If text = "", delete the cell
     bool didDeleteRow = false;
     handleDeleteEvent(true, &didDeleteRow);
@@ -43,7 +43,7 @@ bool StoreController::textFieldDidFinishEditing(AbstractTextField * textField, c
     return true;
   }
   bool result = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
-  if (wasSeriesValid != m_store->seriesIsValid(series)) {
+  if (wasSeriesValid != m_store->seriesIsActive(series)) {
     // Series changed validity, series' cells have changed color.
     reloadSeriesVisibleCells(series);
   }
@@ -90,7 +90,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
     Shared::StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->show();
     myCell->setSeparatorLeft(i > 0 && (m_store->relativeColumnIndex(i) == 0));
-    KDColor textColor = (m_store->seriesIsValid(m_store->seriesAtColumn(i)) || m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(i)) == 0) ? KDColorBlack : Palette::GrayDark;
+    KDColor textColor = (m_store->seriesIsActive(m_store->seriesAtColumn(i)) || m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(i)) == 0) ? KDColorBlack : Palette::GrayDark;
     myCell->editableTextCell()->textField()->setTextColor(textColor);
   }
   willDisplayCellAtLocationWithDisplayMode(cell, i, j, Preferences::sharedPreferences()->displayMode());
@@ -106,7 +106,7 @@ void StoreController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
   int seriesIndex = m_store->seriesAtColumn(columnIndex);
   int realColumnIndex = m_store->relativeColumnIndex(columnIndex);
   Shared::StoreTitleCell * myCell = static_cast<Shared::StoreTitleCell *>(cell);
-  myCell->setColor(!m_store->seriesIsValid(seriesIndex) ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
+  myCell->setColor(!m_store->seriesIsActive(seriesIndex) ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
   myCell->setSeparatorLeft(columnIndex > 0 && ( realColumnIndex == 0));
 }
 

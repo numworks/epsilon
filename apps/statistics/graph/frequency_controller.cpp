@@ -131,7 +131,7 @@ int FrequencyController::nextSubviewWhenMovingVertically(int direction) const {
      * loop. */
     int seriesIndex = (m_selectedSeries + direction * s + Store::k_numberOfSeries) % Store::k_numberOfSeries;
     assert(seriesIndex != m_selectedSeries);
-    if (!seriesIsValid(seriesIndex)) {
+    if (!seriesIsActive(seriesIndex)) {
       continue;
     }
     double y = yValueAtAbscissa(seriesIndex, cursorX);

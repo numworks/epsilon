@@ -49,7 +49,7 @@ bool Model::dataSuitableForFit(Store * store, int series) const {
   if (!store->seriesNumberOfAbscissaeGreaterOrEqualTo(series, numberOfCoefficients())) {
     return false;
   }
-  return store->seriesIsValid(series);
+  return store->seriesIsActive(series);
 }
 
 void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Context * context) {

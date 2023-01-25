@@ -44,7 +44,7 @@ public:
   /* Hide series */
   // Return false if the series can't switch hide status because it's invalid
   bool switchSelectedColumnHideStatus();
-  bool selectedSeriesIsValid() { return store()->seriesIsValid(selectedSeries()); }
+  bool selectedSeriesIsActive() { return store()->seriesIsActive(selectedSeries()); }
   int selectedSeries() { return store()->seriesAtColumn(m_clearColumnHelper->table()->selectedColumn()); }
 
   /* Sort series */

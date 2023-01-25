@@ -36,7 +36,7 @@ class Product final : public SumAndProduct {
 friend class ProductNode;
 public:
   Product(const ProductNode * n) : SumAndProduct(n) {}
-  static Product Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Product, ProductNode>({child0, child1, child2, child3}); }
+  static Product Builder(Expression argument, Symbol symbol, Expression subScript, Expression superScript) { return TreeHandle::FixedArityBuilder<Product, ProductNode>({argument, symbol, subScript, superScript}); }
   static Expression UntypedBuilder(Expression children);
 
   constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("product", 4, &UntypedBuilder);

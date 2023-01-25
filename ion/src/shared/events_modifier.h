@@ -29,9 +29,8 @@ public:
   int longPressCounter() { return m_longPressCounter; }
   int repetitionFactor() { return m_repetitionCounter; }
   void resetLongPress() { m_longPressCounter = 0; }
-  void resetRepetition() { m_repetitionCounter = 0; }
   void incrementLongPress() { m_longPressCounter++; }
-  void incrementRepetition() { m_repetitionCounter++; }
+  void incrementOrResetRepetition(bool increment);
 private:
   ShiftAlphaStatus m_shiftAlphaStatus;
   bool m_shiftIsHeldAndUsed;

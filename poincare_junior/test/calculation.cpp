@@ -32,8 +32,10 @@ Calculation::Calculation(const char * textInput) {
 
 void testCalculation() {
   Calculation calculation("(1-2)/3/4");
+#if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n---------------- Push Calculation (1-2)/3/4 ----------------" << std::endl;
   calculation.output().log();
+#endif
 }
 QUIZ_CASE(pcj_calculation) { testCalculation(); }
 

@@ -88,6 +88,7 @@ void Pool::log(std::ostream & stream, LogFormat format, bool verbose) {
   stream << std::endl;
 }
 
+#endif
 
 Pool::Nodes Pool::allNodes() {
   if (firstBlock() == nullptr) {
@@ -103,5 +104,4 @@ Pool::Trees Pool::trees() {
   return Trees(firstBlock(), lastBlock() - static_cast<Block *>(firstBlock()));
 }
 
-#endif
 }

@@ -51,5 +51,3 @@ tests_src += $(addprefix poincare_junior/omgpj/src/,\
 )
 
 tests_src += $(poincare_junior_src)
-
-SFLAGS += -DPOINCARE_MEMORY_TREE_LOG=1

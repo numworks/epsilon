@@ -65,6 +65,7 @@ public:
   void logReferences(std::ostream & stream, LogFormat format, bool verbose = true) { return referenceTable()->log(stream, format, verbose); }
   __attribute__((__used__)) void log() { log(std::cout, LogFormat::Tree, false); }
   __attribute__((__used__)) void logReferences() { logReferences(std::cout, LogFormat::Tree, false); }
+#endif
 
 protected:
 
@@ -114,7 +115,6 @@ protected:
     int m_numberOfBlocks;
   };
   Trees trees();
-#endif
 };
 
 }

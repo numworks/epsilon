@@ -10,6 +10,7 @@ EPSILON_APPS ?= calculation graph code statistics distributions inference solver
 EPSILON_GETOPT ?= 0
 ESCHER_LOG_EVENTS_BINARY ?= 0
 ESCHER_LOG_EVENTS_NAME ?= $(DEBUG)
+POINCARE_MEMORY_TREE_LOG ?= 0
 I18N_COMPRESS ?= 0
 ASSERTIONS ?= $(DEBUG)
 HWTEST_ALL_KEYS ?= 0

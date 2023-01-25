@@ -14,7 +14,9 @@
 using namespace PoincareJ;
 
 inline EditionReference createSimpleExpression() {
+#if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n--- Create (1 + 2) * 3 * (4 + 5) ---" << std::endl;
+#endif
   EditionReference multiplication = EditionReference::Push<BlockType::Multiplication>(3);
   EditionReference::Push<BlockType::Addition>(2);
   EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));

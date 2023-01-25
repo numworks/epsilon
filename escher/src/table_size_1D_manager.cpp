@@ -153,7 +153,7 @@ void MemoizedTableSize1DManager<N>::updateMemoizationForIndex(int index, KDCoord
   if (index >= m_memoizedIndexOffset + k_memoizedLinesCount) {
     return;
   }
-  if (index <= m_memoizedIndexOffset) {
+  if (index < m_memoizedIndexOffset) {
     m_memoizedCumulatedSizeOffset = m_memoizedCumulatedSizeOffset - previousSize + newSize;
     return;
   }

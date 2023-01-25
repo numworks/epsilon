@@ -26,8 +26,12 @@ public:
   bool operator==(const Node& n) const { return n.m_block == m_block; }
   bool operator!=(const Node& n) { return n.m_block != m_block; }
 
-  bool isIdenticalTo(const Node &other) const {
+  bool treeIsIdenticalTo(const Node &other) const {
     return memcmp(m_block, other.m_block, treeSize()) == 0;
+  }
+
+  bool isIdenticalTo(const Node &other) const {
+    return memcmp(m_block, other.m_block, nodeSize()) == 0;
   }
 
 #if POINCARE_MEMORY_TREE_LOG

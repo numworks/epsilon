@@ -4,11 +4,11 @@ using namespace PoincareJ;
 
 bool PatternMatching::Context::isUninitialized() const {
   for (const Node &node : m_array) {
-    if (node.isUninitialized()) {
-      return true;
+    if (!node.isUninitialized()) {
+      return false;
     }
   }
-  return false;
+  return true;
 }
 
 PatternMatching::Context PatternMatching::Match(const Node pattern, Node source, Context result) {
@@ -19,7 +19,7 @@ PatternMatching::Context PatternMatching::Match(const Node pattern, Node source,
       if (result[placeholder].isUninitialized()) {
         result[placeholder] = source;
         source = source.nextTree();
-      } else if (!result[placeholder].isIdenticalTo(source)) {
+      } else if (!result[placeholder].treeIsIdenticalTo(source)) {
         return Context();
       }
     } else {

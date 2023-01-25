@@ -1,5 +1,5 @@
-#ifndef LIBAXX_PAIR
-#define LIBAXX_PAIR
+#ifndef LIBAXX__PAIR
+#define LIBAXX__PAIR
 
 #include <stddef.h>
 namespace std {

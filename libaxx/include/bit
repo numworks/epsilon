@@ -1,3 +1,6 @@
+#ifndef LIBAXX_BIT
+#define LIBAXX_BIT
+
 namespace std {
 
 template <class To, class From>
@@ -7,3 +10,5 @@ constexpr To bit_cast(const From& src) noexcept
 }
 
 }
+
+#endif

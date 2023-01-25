@@ -43,8 +43,7 @@ bool BoxController::reloadBannerView() {
 
   int precision = Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
-  // Should fit in one line
-  constexpr static int k_bufferSize = 1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small) - sizeof("V1/N1");
+  constexpr int k_bufferSize = 1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
   char buffer[k_bufferSize] = "";
 
   // Display series name

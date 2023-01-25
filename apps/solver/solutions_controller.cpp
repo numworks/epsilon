@@ -294,7 +294,7 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
     if (exactLayout.isUninitialized()) {
       layoutHeight = approximateLayoutHeight;
     } else {
-      KDCoordinate exactLayoutHeight = exactLayout.isUninitialized() ? 0 : exactLayout.layoutSize(k_solutionsFont).height();
+      KDCoordinate exactLayoutHeight = exactLayout.layoutSize(k_solutionsFont).height();
       layoutHeight = std::max(exactLayout.baseline(k_solutionsFont), approximateLayout.baseline(k_solutionsFont)) + std::max(exactLayoutHeight-exactLayout.baseline(k_solutionsFont), approximateLayoutHeight-approximateLayout.baseline(k_solutionsFont));
     }
     return layoutHeight + 2 * Metric::CommonSmallMargin;

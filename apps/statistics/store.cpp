@@ -66,7 +66,7 @@ double Store::heightOfBarAtIndex(int series, int index) const {
 }
 
 double Store::maxHeightOfBar(int series) const {
-  assert(seriesIsValid(series));
+  assert(seriesIsActive(series));
   double maxHeight = -DBL_MAX;
   double endOfBar = startOfBarAtIndex(series, 0);
   const int myNumberOfBars = numberOfBars(series);
@@ -209,7 +209,7 @@ double Store::minValueForAllSeries(bool handleNullFrequencies, ValidSeries valid
 }
 
 double Store::maxValue(int series, bool handleNullFrequencies) const {
-  assert(seriesIsValid(series));
+  assert(seriesIsActive(series));
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = numberOfPairs - 1; k >= 0; k--) {
     // Unless handleNullFrequencies is true, look for the last non null value.
@@ -222,7 +222,7 @@ double Store::maxValue(int series, bool handleNullFrequencies) const {
 }
 
 double Store::minValue(int series, bool handleNullFrequencies) const {
-  assert(seriesIsValid(series));
+  assert(seriesIsActive(series));
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
     // Unless handleNullFrequencies is true, look for the first non null value.

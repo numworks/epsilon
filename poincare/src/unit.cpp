@@ -1016,6 +1016,18 @@ bool Unit::ForceMarginLeftOfUnit(const Unit& unit) {
   return true;
 }
 
+const Unit::AngleRepresentative * Unit::AngleRepresentativeForAngleUnit(Preferences::AngleUnit angleUnit) {
+  switch (angleUnit) {
+  case Preferences::AngleUnit::Degree:
+    return k_angleRepresentatives + k_degreeRepresentativeIndex;
+  case Preferences::AngleUnit::Radian:
+    return k_angleRepresentatives + k_radianRepresentativeIndex;
+  default:
+    assert(angleUnit == Preferences::AngleUnit::Gradian);
+    return k_angleRepresentatives + k_gradianRepresentativeIndex;
+  }
+}
+
 Expression Unit::shallowReduce(ReductionContext reductionContext) {
   if (reductionContext.unitConversion() == UnitConversion::None
       || isBaseUnit()) {

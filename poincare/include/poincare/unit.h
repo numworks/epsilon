@@ -809,6 +809,8 @@ public:
 
   static bool ForceMarginLeftOfUnit(const Unit& unit);
 
+  static const AngleRepresentative * AngleRepresentativeForAngleUnit(Preferences::AngleUnit angleUnit);
+
   // Simplification
   Expression shallowReduce(ReductionContext reductionContext);
   Expression shallowBeautify();

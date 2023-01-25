@@ -72,7 +72,7 @@ HighlightCell * StoreParameterController::reusableCell(int index, int type) {
 
 void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   if (typeAtIndex(index) == k_hideCellType) {
-    m_hideCell.setState(m_storeColumnHelper->selectedSeriesIsValid());
+    m_hideCell.setState(m_storeColumnHelper->selectedSeriesIsActive());
   }
 }
 

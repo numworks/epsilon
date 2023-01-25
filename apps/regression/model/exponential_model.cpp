@@ -68,7 +68,7 @@ double ExponentialModel::levelSet(double * modelCoefficients, double xMin, doubl
 }
 
 void ExponentialModel::privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
-  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsValid(series));
+  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsActive(series));
   /* By the change of variable z=ln(y), the equation y=a*exp(b*x) becomes
    * z=c*x+d with c=b and d=ln(a). That change of variable does not preserve the
    * default regression error function, so default R2 isn't optimal.

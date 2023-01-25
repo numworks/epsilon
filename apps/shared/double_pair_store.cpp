@@ -191,6 +191,11 @@ void DoublePairStore::setSeriesHidden(int series, bool hidden) {
   return m_storePreferences->setSeriesHidden(series, hidden);
 }
 
+bool DoublePairStore::seriesIsActive(int series) const {
+  assert(series >= 0 && series < k_numberOfSeries);
+  return m_storePreferences->seriesIsActive(series);
+}
+
 bool DoublePairStore::seriesIsValid(int series) const {
   assert(series >= 0 && series < k_numberOfSeries);
   return m_storePreferences->seriesIsValid(series);
@@ -334,7 +339,7 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
   uint32_t crc = 0;
   /* If serie is not valid, it can mean it has been hidden
    * thus checksum must change. */
-  if (numberOfPairsOfSeries(series) == 0 || !seriesIsValid(series)) {
+  if (numberOfPairsOfSeries(series) == 0 || !seriesIsActive(series)) {
     return crc;
   }
   for (int j = 0; j < numberOfPairsOfSeries(series); j++) {

@@ -122,7 +122,7 @@ public:
     return SumOfOccurrencesUnderMax(store, series) && static_cast<const Store *>(store)->columnIsIntegersOnly(series, 1);
   }
   static bool SumOfOccurrencesUnderMax(const DoublePairStore * store, int series) {
-    return store->seriesIsValid(series) && static_cast<const Store *>(store)->sumOfOccurrences(series) <= k_maxNumberOfPairs;
+    return store->seriesIsActive(series) && static_cast<const Store *>(store)->sumOfOccurrences(series) <= k_maxNumberOfPairs;
   }
   bool updateSeries(int series, bool delayUpdate = false, bool updateDisplayAdditionalColumn = true) override;
 private:

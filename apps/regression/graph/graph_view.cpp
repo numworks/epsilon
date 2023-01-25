@@ -31,7 +31,7 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, K
     if (s == Store::k_numberOfSeries) {
       series = selectedSeries;
     }
-    if (!m_store->seriesIsValid(series)) {
+    if (!m_store->seriesIsActive(series)) {
       continue;
     }
     assert(series < Palette::numberOfDataColors());

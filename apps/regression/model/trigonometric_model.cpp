@@ -146,7 +146,7 @@ void findExtrema(double * xMinExtremum, double * xMaxExtremum, double * yMinExtr
 }
 
 void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
-  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsValid(series));
+  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsActive(series));
   /* With trigonometric model, a good fit heavily depends on good starting
    * parameters. We try to find two successive extrema, and from them deduce the
    * amplitude, period, y-delta and phase.

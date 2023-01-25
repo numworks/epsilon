@@ -45,7 +45,7 @@ void GraphController::viewWillAppear() {
   /* At this point, some series might have been removed from the model. We need
    * to reinitialize the selected series index if the current selection is
    * either null (right after construction) or refering a removed series. */
-  if (*m_selectedSeriesIndex < 0 || !m_store->seriesIsValid(*m_selectedSeriesIndex)) {
+  if (*m_selectedSeriesIndex < 0 || !m_store->seriesIsActive(*m_selectedSeriesIndex)) {
     *m_selectedSeriesIndex = m_store->indexOfKthValidSeries(0);
     m_selectedModelType = (Model::Type)-1;
   }
@@ -239,7 +239,7 @@ void GraphController::initCursorParameters(bool ignoreMargins) {
 }
 
 bool GraphController::selectedModelIsValid() const {
-  if (!m_store->seriesIsValid(*m_selectedSeriesIndex)) {
+  if (!m_store->seriesIsActive(*m_selectedSeriesIndex)) {
     return false;
   }
   uint8_t numberOfPairs = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
@@ -355,7 +355,7 @@ int GraphController::selectedCurveIndex(bool relativeIndex) const {
     return res;
   }
   for (int i = 0; i < *m_selectedSeriesIndex; i++) {
-    if (!m_store->seriesIsValid(i)) {
+    if (!m_store->seriesIsActive(i)) {
       res--;
     }
   }
@@ -363,7 +363,7 @@ int GraphController::selectedCurveIndex(bool relativeIndex) const {
 }
 
 bool GraphController::closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const {
-  return InteractiveCurveViewController::closestCurveIndexIsSuitable(newIndex, currentIndex, newSubIndex, currentSubIndex) && m_store->seriesIsValid(newIndex);
+  return InteractiveCurveViewController::closestCurveIndexIsSuitable(newIndex, currentIndex, newSubIndex, currentSubIndex) && m_store->seriesIsActive(newIndex);
 }
 
 Coordinate2D<double> GraphController::xyValues(int curveIndex, double x, Poincare::Context * context, int subCurveIndex) const {
@@ -394,7 +394,7 @@ void GraphController::setRoundCrossCursorView() {
 Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
   Range1D xRange, yRange;
   for (int series = 0; series < Store::k_numberOfSeries; series++) {
-    if (!m_store->seriesIsValid(series)) {
+    if (!m_store->seriesIsActive(series)) {
       continue;
     }
 

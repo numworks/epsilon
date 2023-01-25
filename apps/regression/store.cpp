@@ -58,7 +58,7 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
   double nextY = INFINITY;
   int selectedDot = -1;
   for (int series = 0; series < k_numberOfSeries; series++) {
-    if (!seriesIsValid(series) || (currentDot >= 0 && currentSeries == series)) {
+    if (!seriesIsActive(series) || (currentDot >= 0 && currentSeries == series)) {
       /* If the currentDot is valid, the next series should not be the current
        * series */
       continue;

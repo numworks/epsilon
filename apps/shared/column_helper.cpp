@@ -56,7 +56,7 @@ StoreColumnHelper::StoreColumnHelper(Escher::Responder * responder, Context * pa
 
 bool StoreColumnHelper::switchSelectedColumnHideStatus() {
   int series = selectedSeries();
-  bool previousStatus = store()->seriesIsValid(series);
+  bool previousStatus = store()->seriesIsActive(series);
   if (previousStatus) {
     // Any previously valid series can be hidden
     store()->setSeriesHidden(series, true);
@@ -64,7 +64,7 @@ bool StoreColumnHelper::switchSelectedColumnHideStatus() {
   } else {
     // Series may still be invalid, in that case nothing happens
     store()->setSeriesHidden(series, false);
-    return selectedSeriesIsValid();
+    return selectedSeriesIsActive();
   }
 }
 

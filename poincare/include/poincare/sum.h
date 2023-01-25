@@ -36,7 +36,7 @@ class Sum final : public SumAndProduct {
 friend class SumNode;
 public:
   Sum(const SumNode * n) : SumAndProduct(n) {}
-  static Sum Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Sum, SumNode>({child0, child1, child2, child3}); }
+  static Sum Builder(Expression argument, Symbol symbol, Expression subScript, Expression superScript) { return TreeHandle::FixedArityBuilder<Sum, SumNode>({argument, symbol, subScript, superScript}); }
   static Expression UntypedBuilder(Expression children);
 
   constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sum", 4, &UntypedBuilder);

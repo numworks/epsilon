@@ -38,7 +38,7 @@ void Store::invalidateSortedIndexes() {
   }
 }
 
-int Store::validSeriesIndex(int series, ActiveSeriesTest isActiveSeries) const {
+int Store::activeSeriesIndex(int series, ActiveSeriesTest isActiveSeries) const {
   assert(isActiveSeries(this, series));
   int index = 0;
   for (int i = 0; i < series; i++) {

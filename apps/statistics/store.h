@@ -22,7 +22,7 @@ public:
   void invalidateSortedIndexes();
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
-  int validSeriesIndex(int series, ActiveSeriesTest = &DefaultActiveSeriesTest) const;
+  int activeSeriesIndex(int series, ActiveSeriesTest = &DefaultActiveSeriesTest) const;
   bool displayCumulatedFrequenciesForSeries(int series) const { return userPreferences()->displayCumulatedFrequencies(series); }
   void setDisplayCumulatedFrequenciesForSeries(int series, bool state) { userPreferences()->setDisplayCumulatedFrequencies(series, state); }
   int seriesAtColumn(int column) const override { return computeRelativeColumnAndSeries(&column); }

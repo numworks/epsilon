@@ -219,7 +219,7 @@ void DoublePairStore::updateSeriesValidity(int series, bool updateDisplayAdditio
   m_storePreferences->setSeriesValid(series, true);
 }
 
-bool DoublePairStore::hasValidSeries(ActiveSeriesTest isActiveSeries) const {
+bool DoublePairStore::hasActiveSeries(ActiveSeriesTest isActiveSeries) const {
   for (int i = 0; i < k_numberOfSeries; i++) {
     if (isActiveSeries(this, i)) {
       return true;

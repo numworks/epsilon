@@ -69,7 +69,7 @@ public:
   bool seriesIsValid(int series) const;
   typedef bool (*ActiveSeriesTest)(const DoublePairStore *, int);
   static bool DefaultActiveSeriesTest(const DoublePairStore * store, int series) { return store->seriesIsActive(series); }
-  bool hasValidSeries(ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
+  bool hasActiveSeries(ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
   virtual void updateSeriesValidity(int series, bool updateDisplayAdditionalColumn = true);
   int numberOfValidSeries(ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
   int indexOfKthValidSeries(int k, ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;

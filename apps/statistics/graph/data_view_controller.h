@@ -34,10 +34,10 @@ public:
 protected:
   /* Some DataViewController implementations may have a stricter condition.
    * To simplify the code, views and ranges of controllers using this default
-   * implementation directly use Shared::DoublePairStore::DefaultValidSeries.
+   * implementation directly use Shared::DoublePairStore::DefaultActiveSeriesTest.
    * They should be updated accordingly if their controllers override this
    * method. */
-  virtual Shared::DoublePairStore::ValidSeries validSerieMethod() const { return Shared::DoublePairStore::DefaultValidSeries; };
+  virtual Shared::DoublePairStore::ValidSeries validSerieMethod() const { return Shared::DoublePairStore::DefaultActiveSeriesTest; };
   void sanitizeSeriesIndex();
   virtual void viewWillAppearBeforeReload() {}
   virtual bool reloadBannerView() = 0;

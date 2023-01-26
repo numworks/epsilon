@@ -22,7 +22,7 @@ public:
   void invalidateSortedIndexes();
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }
-  int validSeriesIndex(int series, ValidSeries = &DefaultValidSeries) const;
+  int validSeriesIndex(int series, ValidSeries = &DefaultActiveSeriesTest) const;
   bool displayCumulatedFrequenciesForSeries(int series) const { return userPreferences()->displayCumulatedFrequencies(series); }
   void setDisplayCumulatedFrequenciesForSeries(int series, bool state) { userPreferences()->setDisplayCumulatedFrequencies(series, state); }
   int seriesAtColumn(int column) const override { return computeRelativeColumnAndSeries(&column); }
@@ -58,8 +58,8 @@ public:
   // Calculation
   double sumOfOccurrences(int series) const;
   // If handleNullFrequencies, values with a null frequency are accounted for
-  double maxValueForAllSeries(bool handleNullFrequencies = false, ValidSeries = &DefaultValidSeries) const;
-  double minValueForAllSeries(bool handleNullFrequencies = false, ValidSeries = &DefaultValidSeries) const;
+  double maxValueForAllSeries(bool handleNullFrequencies = false, ValidSeries = &DefaultActiveSeriesTest) const;
+  double minValueForAllSeries(bool handleNullFrequencies = false, ValidSeries = &DefaultActiveSeriesTest) const;
   double maxValue(int series, bool handleNullFrequencies) const;
   double minValue(int series, bool handleNullFrequencies) const;
   // Overloading minValue and maxValue so they can be casted as CalculPointer

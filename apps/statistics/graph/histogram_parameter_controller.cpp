@@ -102,7 +102,7 @@ bool HistogramParameterController::authorizedParameters(double barWidth, double 
   }
   assert(DoublePairStore::k_numberOfSeries > 0);
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    if (!Shared::DoublePairStore::DefaultValidSeries(m_store, i)) {
+    if (!Shared::DoublePairStore::DefaultActiveSeriesTest(m_store, i)) {
       continue;
     }
     const double min = std::min(m_store->minValue(i), firstDrawnBarAbscissa);

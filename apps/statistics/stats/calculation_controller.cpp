@@ -62,7 +62,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
 // TableViewDataSource
 
 int CalculationController::numberOfColumns() const {
-  return 2 + m_store->numberOfValidSeries();
+  return 2 + m_store->numberOfActiveSeries();
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

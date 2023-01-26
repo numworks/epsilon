@@ -71,7 +71,7 @@ public:
   static bool DefaultActiveSeriesTest(const DoublePairStore * store, int series) { return store->seriesIsActive(series); }
   bool hasActiveSeries(ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
   virtual void updateSeriesValidity(int series, bool updateDisplayAdditionalColumn = true);
-  int numberOfValidSeries(ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
+  int numberOfActiveSeries(ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
   int indexOfKthValidSeries(int k, ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
 
   // Series and columns

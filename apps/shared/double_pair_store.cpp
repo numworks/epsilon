@@ -238,7 +238,7 @@ int DoublePairStore::numberOfActiveSeries(ActiveSeriesTest isActiveSeries) const
   return nonEmptySeriesCount;
 }
 
-int DoublePairStore::indexOfKthValidSeries(int k, ActiveSeriesTest isActiveSeries) const {
+int DoublePairStore::indexOfKthActiveSeries(int k, ActiveSeriesTest isActiveSeries) const {
   assert(k >= 0 && k < numberOfActiveSeries());
   int activeSeriesCount = 0;
   for (int i = 0; i < k_numberOfSeries; i++) {

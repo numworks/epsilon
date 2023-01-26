@@ -72,7 +72,7 @@ public:
   bool hasActiveSeries(ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
   virtual void updateSeriesValidity(int series, bool updateDisplayAdditionalColumn = true);
   int numberOfActiveSeries(ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
-  int indexOfKthValidSeries(int k, ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
+  int indexOfKthActiveSeries(int k, ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
 
   // Series and columns
   virtual int relativeColumnIndex(int columnIndex) const { return columnIndex % k_numberOfColumnsPerSeries; }

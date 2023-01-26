@@ -46,7 +46,7 @@ void GraphController::viewWillAppear() {
    * to reinitialize the selected series index if the current selection is
    * either null (right after construction) or refering a removed series. */
   if (*m_selectedSeriesIndex < 0 || !m_store->seriesIsActive(*m_selectedSeriesIndex)) {
-    *m_selectedSeriesIndex = m_store->indexOfKthValidSeries(0);
+    *m_selectedSeriesIndex = m_store->indexOfKthActiveSeries(0);
     m_selectedModelType = (Model::Type)-1;
   }
 
@@ -98,7 +98,7 @@ KDCoordinate GraphController::SeriesSelectionController::nonMemoizedRowHeight(in
 }
 
 void GraphController::SeriesSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  int series = graphController()->m_store->indexOfKthValidSeries(index);
+  int series = graphController()->m_store->indexOfKthActiveSeries(index);
   const char * name = Store::SeriesTitle(series);
   static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(DoublePairStore::colorOfSeriesAtIndex(series));
   static_cast<CurveSelectionCellWithChevron *>(cell)->setLayout(LayoutHelper::String(name));
@@ -203,7 +203,7 @@ AbstractPlotView * GraphController::curveView() {
 }
 
 bool GraphController::openMenuForCurveAtIndex(int index) {
-  int activeIndex = m_store->indexOfKthValidSeries(index);
+  int activeIndex = m_store->indexOfKthActiveSeries(index);
   if (*m_selectedSeriesIndex != activeIndex) {
     *m_selectedSeriesIndex = activeIndex;
     Coordinate2D<double> xy = xyValues(activeIndex, m_cursor->t(), textFieldDelegateApp()->localContext());

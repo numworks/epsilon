@@ -74,7 +74,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   switch (type) {
   case k_seriesTitleCellType: {
     // Display a series title cell
-    int seriesNumber = m_store->indexOfKthValidSeries(i-2);
+    int seriesNumber = m_store->indexOfKthActiveSeries(i-2);
     char titleBuffer[] = {'V', static_cast<char>('1'+seriesNumber), '/', 'N', static_cast<char>('1'+seriesNumber), 0};
     StoreTitleCell * storeTitleCell = static_cast<StoreTitleCell *>(cell);
     storeTitleCell->setText(titleBuffer);
@@ -119,7 +119,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
   case k_calculationCellType: {
     // Display a calculation cell
-    int seriesIndex = m_store->indexOfKthValidSeries(i-2);
+    int seriesIndex = m_store->indexOfKthActiveSeries(i-2);
     double calculation;
     EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);
     if (j - 1 < (numberOfFixedRows - 1)) {

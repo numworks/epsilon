@@ -49,6 +49,26 @@ EditionReference::operator const Node() const {
   return n;
 }
 
+EditionReference EditionReference::replaceNodeByNode(EditionReference t) {
+  replaceNodeByNode(static_cast<Node>(t));
+  return t;
+}
+
+EditionReference EditionReference::replaceNodeByTree(EditionReference t) {
+  replaceNodeByTree(static_cast<Node>(t));
+  return t;
+}
+
+EditionReference EditionReference::replaceTreeByNode(EditionReference t) {
+  replaceTreeByNode(static_cast<Node>(t));
+  return t;
+}
+
+EditionReference EditionReference::replaceTreeByTree(EditionReference t) {
+  replaceTreeByTree(static_cast<Node>(t));
+  return t;
+}
+
 void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
   for (auto [child, index] : NodeIterator::Children<Forward, Editable>(*this)) {
     child.recursivelyEdit(treeFunction);

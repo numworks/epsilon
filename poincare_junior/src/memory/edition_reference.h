@@ -64,10 +64,10 @@ public:
   void insertTreeAfterNode(EditionReference treeToInsert) { insertTreeAfterNode(static_cast<Node>(treeToInsert)); }
   void insertNodeBeforeNode(EditionReference nodeToInsert) { insertNodeBeforeNode(static_cast<Node>(nodeToInsert)); }
   void insertTreeBeforeNode(EditionReference treeToInsert) { insertTreeBeforeNode(static_cast<Node>(treeToInsert)); }
-  void replaceNodeByNode(EditionReference t) { replaceNodeByNode(static_cast<Node>(t)); }
-  void replaceNodeByTree(EditionReference t) { replaceNodeByTree(static_cast<Node>(t)); }
-  void replaceTreeByNode(EditionReference t) { replaceTreeByNode(static_cast<Node>(t)); }
-  void replaceTreeByTree(EditionReference t) { replaceTreeByTree(static_cast<Node>(t)); }
+  EditionReference replaceNodeByNode(EditionReference t);
+  EditionReference replaceNodeByTree(EditionReference t);
+  EditionReference replaceTreeByNode(EditionReference t);
+  EditionReference replaceTreeByTree(EditionReference t);
 
   typedef void (*InPlaceTreeFunction)(EditionReference reference);
   void recursivelyEdit(InPlaceTreeFunction treeFunction);

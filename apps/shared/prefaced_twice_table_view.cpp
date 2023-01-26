@@ -63,18 +63,13 @@ void PrefacedTwiceTableView::resetContentOffset() {
 }
 
 void PrefacedTwiceTableView::layoutSubviews(bool force) {
-  bool loop = true;
-  while (loop) {
-    privateLayoutSubviews(force);
-    loop = m_prefacedDelegate && m_columnPrefaceDataSource.setPrefaceColumn(m_prefacedDelegate->columnToFreeze());
+  if (m_prefacedDelegate) {
+    m_columnPrefaceDataSource.setPrefaceColumn(m_prefacedDelegate->columnToFreeze());
   }
-}
-
-void PrefacedTwiceTableView::privateLayoutSubviews(bool force) {
-  bool hideColumnPreface = m_mainTableView->selectedRow() == -1 || m_columnPrefaceDataSource.prefaceIsAfterOffset(m_mainTableView->contentOffset().x(), m_mainTableView->leftMargin());
+  bool hideColumnPreface = m_mainTableView->selectedRow() == -1 || m_columnPrefaceDataSource.prefaceColumn() == -1 || m_columnPrefaceDataSource.prefaceIsAfterOffset(m_mainTableView->contentOffset().x(), m_mainTableView->leftMargin());
   if (hideColumnPreface) {
     // Main table and row preface
-    m_mainTableView->setLeftMargin(m_prefacedDelegate && m_columnPrefaceDataSource.prefaceColumn() != m_prefacedDelegate->firstFeezableColumn() ? 0 : m_mainTableViewLeftMargin);
+    m_mainTableView->setLeftMargin(m_prefacedDelegate && m_columnPrefaceDataSource.prefaceColumn() > m_prefacedDelegate->firstFeezableColumn() ? 0 : m_mainTableViewLeftMargin);
     m_rowPrefaceView.setLeftMargin(m_mainTableView->leftMargin());
     layoutSubviewsInRect(bounds(), force);
 
@@ -97,14 +92,6 @@ void PrefacedTwiceTableView::privateLayoutSubviews(bool force) {
     m_columnPrefaceView.setFrame(KDRect(0, rowPrefaceHeight, columnPrefaceWidth, bounds().height() - rowPrefaceHeight), force);
     m_prefaceIntersectionView.setFrame(KDRect(0, 0, rowPrefaceHeight ? columnPrefaceWidth : 0, rowPrefaceHeight), force);
   }
-}
-
-bool PrefacedTwiceTableView::ColumnPrefaceDataSource::setPrefaceColumn(int column) {
-  if (m_prefaceColumn != column) {
-    m_prefaceColumn = column;
-    return true;
-  }
-  return false;
 }
 
 bool PrefacedTwiceTableView::ColumnPrefaceDataSource::prefaceIsAfterOffset(KDCoordinate offsetX, KDCoordinate leftMargin) const {

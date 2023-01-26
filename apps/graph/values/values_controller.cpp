@@ -108,8 +108,8 @@ Escher::AbstractButtonCell * ValuesController::buttonAtIndex(int index, Escher::
 
 int ValuesController::columnToFreeze() {
   assert(numberOfColumns() > 0 && numberOfAbscissaColumns() > 0);
-  if (selectedRow() == -1 || numberOfAbscissaColumns() == 1) {
-    return 0;
+  if (selectedRow() == -1) {
+    return -1;
   }
   int indexOfLastColumn = -1;
   for (size_t symbolType = 0; symbolType < k_maxNumberOfSymbolTypes; symbolType++) {
@@ -120,8 +120,17 @@ int ValuesController::columnToFreeze() {
     int nbColumns = nbOfValuesColumns + 1;
     assert(nbColumns == numberOfColumnsForSymbolType(symbolType));
     indexOfLastColumn += nbColumns;
+    int indexOfAbscissaColumn = indexOfLastColumn - nbOfValuesColumns;
     if (cumulatedWidthBeforeIndex(indexOfLastColumn) >= offset().x()) {
-      return indexOfLastColumn - nbOfValuesColumns;
+      // First abscissa for which last values column is not yet hidden
+      KDCoordinate subTableWidth = cumulatedWidthBeforeIndex(indexOfLastColumn + 1) - cumulatedWidthBeforeIndex(indexOfAbscissaColumn);
+      if (subTableWidth <= m_prefacedTwiceTableView.minVisibleContentWidth()) {
+        /* Abscissa column and its last values column can be displayed
+         * at the same time in table view frame, thus there is no need
+         * to freeze this abscissa column. */
+        return -1;
+      }
+      return indexOfAbscissaColumn;
     }
   }
   assert(false);

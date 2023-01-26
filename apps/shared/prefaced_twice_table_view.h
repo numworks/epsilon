@@ -15,6 +15,7 @@ public:
 
   Escher::TableView * columnPrefaceView() { return &m_columnPrefaceView; }
   void resetDataSourceSizeMemoization() override;
+  KDCoordinate minVisibleContentWidth() const { return bounds().width() - std::max(m_mainTableViewLeftMargin, m_mainTableView->rightMargin()); }
 
 private:
   class ColumnPrefaceDataSource : public IntermediaryDataSource {
@@ -22,7 +23,7 @@ private:
     ColumnPrefaceDataSource(int prefaceColumn, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceColumn(prefaceColumn) {}
 
     int prefaceColumn() const { return m_prefaceColumn; }
-    bool setPrefaceColumn(int column);
+    void setPrefaceColumn(int column) { m_prefaceColumn = column; }
     bool prefaceIsAfterOffset(KDCoordinate offsetX, KDCoordinate leftMargin) const;
     int numberOfColumns() const override { return 1; }
 
@@ -52,7 +53,6 @@ private:
   int numberOfSubviews() const override { return 4; }
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  void privateLayoutSubviews(bool force);
   void resetContentOffset() override;
 
   ColumnPrefaceDataSource m_columnPrefaceDataSource;

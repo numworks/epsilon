@@ -76,7 +76,7 @@ void StoreParameterController::willDisplayCellForIndex(Escher::HighlightCell * c
   }
 }
 
-ClearColumnHelper * StoreParameterController::clearColumnHelper() {
+ColumnNameHelper * StoreParameterController::columnNameHelper() {
   return m_storeColumnHelper->clearColumnHelper();
 }
 

@@ -34,7 +34,7 @@ protected:
   StoreColumnHelper * m_storeColumnHelper;
   Escher::BufferTableCell m_clearColumn;
 private:
-  ClearColumnHelper * clearColumnHelper() override;
+  ColumnNameHelper * columnNameHelper() override;
   virtual I18n::Message sortMessage() { return I18n::Message::SortValues; }
 
   Escher::MessageTableCell m_fillFormula;

@@ -118,7 +118,7 @@ void FunctionParameterController::initializeColumnParameters() {
   Shared::ColumnParameters::initializeColumnParameters();
 }
 
-Shared::ClearColumnHelper * FunctionParameterController::clearColumnHelper() {
+Shared::ColumnNameHelper * FunctionParameterController::columnNameHelper() {
   return m_valuesController;
 }
 

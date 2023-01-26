@@ -10,6 +10,12 @@ using namespace Poincare;
 
 namespace Shared {
 
+/* ColumnNameHelper */
+
+int ColumnNameHelper::FillColumnNameWithMessage(char * buffer, I18n::Message message) {
+  return Poincare::Print::CustomPrintf(buffer, k_maxSizeOfColumnName, I18n::translate(message));
+}
+
 /* ClearColumnHelper */
 
 ClearColumnHelper::ClearColumnHelper() :
@@ -33,10 +39,6 @@ void ClearColumnHelper::setClearPopUpContent() {
   char columnNameBuffer[ColumnParameterController::k_titleBufferSize];
   fillColumnName(table()->selectedColumn(), columnNameBuffer);
   m_confirmPopUpController.setMessageWithPlaceholders(I18n::Message::ClearColumnConfirmation, columnNameBuffer);
-}
-
-int ClearColumnHelper::fillColumnNameWithMessage(char * buffer, I18n::Message message) {
-  return Poincare::Print::CustomPrintf(buffer, k_maxSizeOfColumnName, I18n::translate(message));
 }
 
 /* StoreColumnHelper */

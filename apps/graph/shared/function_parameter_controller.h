@@ -35,7 +35,7 @@ private:
 
   // ColumnParameters
   void initializeColumnParameters() override;
-  Shared::ClearColumnHelper * clearColumnHelper() override;
+  Shared::ColumnNameHelper * columnNameHelper() override;
 
   Escher::MessageTableCellWithChevronAndMessage m_detailsCell;
   Escher::MessageTableCellWithChevronAndBuffer m_functionDomainCell;

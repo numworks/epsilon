@@ -10,6 +10,7 @@
 namespace PoincareJ {
 
 /* Most significant digit last
+ * TODO: try with uint8_t native_uint_t! I'm really not sure we're speeding up things here...
  * */
 typedef uint16_t half_native_uint_t;
 typedef uint32_t native_uint_t;
@@ -61,6 +62,7 @@ public:
   bool isMinusOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && m_sign == NonStrictSign::Negative); };
   bool isTwo() const { return (numberOfDigits() == 1 && digit(0) == 2 && m_sign == NonStrictSign::Positive); };
   bool isZero() const;
+  bool isEven() const { return ((digit(0) & 1) == 0); }
 
   template <typename T> bool isSignedType() const;
   template <typename T> bool isUnsignedType() const;

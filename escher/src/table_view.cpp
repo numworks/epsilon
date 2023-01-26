@@ -153,15 +153,17 @@ void TableView::ContentView::layoutSubviews(bool force, bool updateCellContent) 
   /* The number of subviews might change during the layouting so it needs to be
    * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfSubviews(); index++) {
-    View * cell = subviewAtIndex(index);
-    int i = absoluteColumnIndexFromSubviewIndex(index);
-    int j = absoluteRowIndexFromSubviewIndex(index);
+    View * subview = subviewAtIndex(index);
+    int col = absoluteColumnIndexFromSubviewIndex(index);
+    int row = absoluteRowIndexFromSubviewIndex(index);
+    assert(cellAtLocation(col, row) == subview);
+    HighlightCell * cell = static_cast<HighlightCell *>(subview);
     if (updateCellContent) {
-      m_dataSource->willDisplayCellAtLocation(static_cast<HighlightCell *>(cell), i, j);
+      m_dataSource->willDisplayCellAtLocation(cell, col, row);
     }
     /* Cell's content might change and fit in the same frame. LayoutSubviews
      * must be called on each cells even with an unchanged frame. */
-    cell->setFrame(cellFrame(i,j), true);
+    cell->setFrame(cellFrame(col, row), true);
   }
 }
 

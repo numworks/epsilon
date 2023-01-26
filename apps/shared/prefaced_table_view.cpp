@@ -49,13 +49,18 @@ void PrefacedTableView::tableViewDidChangeSelection(Escher::SelectableTableView 
   }
 }
 
+void PrefacedTableView::resetContentOffset() {
+  m_mainTableView->setContentOffset(KDPointZero);
+  m_rowPrefaceView.setContentOffset(KDPointZero);
+}
+
 void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   assert(t == m_mainTableView);
   if (m_mainTableDelegate) {
     m_mainTableDelegate->tableViewDidChangeSelectionAndDidScroll(t, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
   }
   if (m_mainTableView->selectedRow() == -1) {
-    m_mainTableView->setContentOffset(KDPointZero);
+    resetContentOffset();
   }
   layoutSubviews();
 }

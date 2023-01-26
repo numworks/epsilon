@@ -48,6 +48,11 @@ View * PrefacedTwiceTableView::subviewAtIndex(int index) {
   }
 }
 
+void PrefacedTwiceTableView::resetContentOffset() {
+  PrefacedTableView::resetContentOffset();
+  m_columnPrefaceView.setContentOffset(KDPointZero);
+}
+
 void PrefacedTwiceTableView::layoutSubviews(bool force) {
   bool loop = true;
   while (loop) {

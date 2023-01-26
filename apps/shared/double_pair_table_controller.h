@@ -19,7 +19,7 @@ public:
   DoublePairTableController(Escher::Responder * parentResponder, Escher::ButtonRowController * header);
 
   // AlternateEmptyViewDefaultDelegate
-  bool isEmpty() const override { return !store()->hasValidSeries(); }
+  bool isEmpty() const override { return !store()->hasActiveSeries(); }
   I18n::Message emptyMessage() override { return I18n::Message::NoValueToCompute; }
   Escher::Responder * responderWhenEmpty() override;
 

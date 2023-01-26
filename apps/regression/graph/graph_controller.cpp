@@ -33,7 +33,7 @@ GraphController::GraphController(Responder * parentResponder, Escher::InputEvent
 }
 
 bool GraphController::isEmpty() const {
-  return !m_store->hasValidSeries();
+  return !m_store->hasActiveSeries();
 }
 
 I18n::Message GraphController::emptyMessage() {

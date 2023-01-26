@@ -23,7 +23,7 @@ public:
                  GraphViewModel * graphViewModel);
 
   // AlternateEmptyViewDefaultDelegate
-  bool isEmpty() const override { return !m_store->hasValidSeries(); }
+  bool isEmpty() const override { return !m_store->hasActiveSeries(); }
   I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
   Escher::Responder * responderWhenEmpty() override;
 

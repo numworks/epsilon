@@ -39,7 +39,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
       m_tabController->selectTab();
       return true;
     }
-    if (event == Ion::Events::Down && m_store->hasValidSeries(validSerieMethod())) {
+    if (event == Ion::Events::Down && m_store->hasActiveSeries(validSerieMethod())) {
       header()->setSelectedButton(-1);
       Escher::Container::activeApp()->setFirstResponder(this);
       dataView()->setDisplayBanner(true);
@@ -50,7 +50,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
     }
     return buttonAtIndex(selectedButton, Escher::ButtonRowController::Position::Top)->handleEvent(event);
   }
-  assert(m_selectedSeries >= 0 && m_store->hasValidSeries(validSerieMethod()));
+  assert(m_selectedSeries >= 0 && m_store->hasActiveSeries(validSerieMethod()));
   bool isVerticalEvent = (event == Ion::Events::Down || event == Ion::Events::Up);
   if ((isVerticalEvent || event == Ion::Events::Left || event == Ion::Events::Right)) {
     int direction = (event == Ion::Events::Up || event == Ion::Events::Left) ? -1 : 1;
@@ -65,7 +65,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void DataViewController::didEnterResponderChain(Responder * firstResponder) {
-  if (!m_store->hasValidSeries(validSerieMethod()) || !dataView()->plotViewForSeries(m_selectedSeries)->hasFocus()) {
+  if (!m_store->hasActiveSeries(validSerieMethod()) || !dataView()->plotViewForSeries(m_selectedSeries)->hasFocus()) {
     header()->setSelectedButton(0);
   } else {
     assert(validSerieMethod()(m_store, m_selectedSeries));
@@ -80,7 +80,7 @@ void DataViewController::willExitResponderChain(Responder * nextFirstResponder) 
     assert(m_tabController != nullptr);
     if (header()->selectedButton() >= 0) {
       header()->setSelectedButton(-1);
-    } else if (m_store->hasValidSeries(validSerieMethod())) {
+    } else if (m_store->hasActiveSeries(validSerieMethod())) {
       assert(m_selectedSeries >= 0);
       dataView()->deselectViewForSeries(m_selectedSeries);
       dataView()->setDisplayBanner(false);

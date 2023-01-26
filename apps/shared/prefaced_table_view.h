@@ -97,6 +97,7 @@ protected:
   };
 
   void layoutSubviewsInRect(KDRect rect, bool force);
+  virtual void resetContentOffset();
 
   RowPrefaceDataSource m_rowPrefaceDataSource;
   Escher::TableView m_rowPrefaceView;

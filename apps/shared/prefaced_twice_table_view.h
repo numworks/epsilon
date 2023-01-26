@@ -49,6 +49,7 @@ private:
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   void privateLayoutSubviews(bool force);
+  void resetContentOffset() override;
 
   ColumnPrefaceDataSource m_columnPrefaceDataSource;
   Escher::TableView m_columnPrefaceView;

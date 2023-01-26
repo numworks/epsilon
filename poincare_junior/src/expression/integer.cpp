@@ -12,8 +12,8 @@ namespace PoincareJ {
 /* WorkingBuffer */
 
 WorkingBuffer::WorkingBuffer() :
-  m_start(reinterpret_cast<native_uint_t *>(EditionPool::sharedEditionPool()->lastBlock())),
-  m_remainingSize((EditionPool::sharedEditionPool()->fullSize()- EditionPool::sharedEditionPool()->size())/ sizeof(native_uint_t))
+  m_start(initialStartOfBuffer()),
+  m_remainingSize(initialSizeOfBuffer())
 {
 }
 
@@ -33,9 +33,8 @@ native_uint_t * WorkingBuffer::allocate(size_t size) {
 void WorkingBuffer::garbageCollect(std::initializer_list<IntegerHandler *> keptIntegers) {
   uint8_t * previousStart = reinterpret_cast<uint8_t *>(m_start);
   uint8_t * previousEnd = reinterpret_cast<uint8_t *>(m_start + m_remainingSize);
-  EditionPool * pool = EditionPool::sharedEditionPool();
-  m_start = reinterpret_cast<native_uint_t *>(pool->lastBlock());
-  m_remainingSize = (pool->fullSize() - pool->size()) / sizeof(native_uint_t);
+  m_start = initialStartOfBuffer();
+  m_remainingSize = initialSizeOfBuffer();
   for (IntegerHandler * integer : keptIntegers) {
     // TODO: assert that the Integer are sorted by digits() pointer
     if (previousStart <= integer->digits() && integer->digits() < previousEnd) {
@@ -48,6 +47,14 @@ void WorkingBuffer::garbageCollect(std::initializer_list<IntegerHandler *> keptI
 }
 
 /* IntegerHandler */
+
+IntegerHandler::Digits::Digits(const uint8_t * digits, uint8_t numberOfDigits) {
+  if (numberOfDigits == 1) {
+    m_digit = digits[0];
+  } else {
+    m_digits = numberOfDigits == 0 ? nullptr : digits;
+  }
+}
 
 template <typename T>
 IntegerHandler::IntegerHandler(const T * digits, uint8_t numberOfDigits, NonStrictSign sign) {
@@ -223,7 +230,7 @@ EditionReference IntegerHandler::Subtraction(const IntegerHandler & a, const Int
 }
 
 IntegerHandler IntegerHandler::Sum(const IntegerHandler & a, const IntegerHandler & b, bool inverseBNegative, WorkingBuffer * workingBuffer, bool oneDigitOverflow) {
-  NonStrictSign bSign = inverseBNegative ? b.sign() : InvertSign(b.sign());
+  NonStrictSign bSign = inverseBNegative ? InvertSign(b.sign()) : b.sign();
   IntegerHandler usum;
   if (a.sign() == bSign) {
     usum = Usum(a, b, false, workingBuffer, oneDigitOverflow);
@@ -322,7 +329,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler & a, const IntegerHandl
       }
     }
   }
-  return IntegerHandler(multBuffer, size);
+  return IntegerHandler(multBuffer, size, a.sign() == b.sign() ? NonStrictSign::Positive : NonStrictSign::Negative);
 }
 
 std::pair<EditionReference, EditionReference> IntegerHandler::Division(const IntegerHandler & numerator, const IntegerHandler & denominator) {
@@ -515,9 +522,14 @@ EditionReference Integer::Push(const char * digits, size_t length, OMG::Base bas
   assert(digits != nullptr);
   IntegerHandler baseInteger(static_cast<uint8_t>(base));
   for (size_t i = 0; i < length; i++) {
-    result = IntegerHandler::Multiplication(Integer::Handler(result), baseInteger);
-    result = IntegerHandler::Addition(Integer::Handler(result), IntegerHandler(OMG::Print::DigitForCharacter(*digits++)));
+    EditionReference multiplication = IntegerHandler::Multiplication(Integer::Handler(result), baseInteger);
+    result = result.replaceTreeByTree(multiplication);
+    IntegerHandler digit = IntegerHandler(OMG::Print::DigitForCharacter(*digits++));
+    digit.setSign(sign);
+    EditionReference addition = IntegerHandler::Addition(Integer::Handler(result), digit);
+    result = result.replaceTreeByTree(addition);
   }
+  return result;
 }
 
 // TODO: tests

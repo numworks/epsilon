@@ -33,6 +33,12 @@ public:
   void garbageCollect(std::initializer_list<IntegerHandler *> keptIntegers);
   native_uint_t * start() { return m_start; }
 private:
+  /* We let an offset of 2 blocks at the end of the edition pool before the
+   * working buffer to be able to push the meta blocks of a Big Int before
+   * moving the digits around. */
+  constexpr static size_t k_blockOffset = TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig)/2;
+  native_uint_t * initialStartOfBuffer() { return reinterpret_cast<native_uint_t *>(EditionPool::sharedEditionPool()->lastBlock() + k_blockOffset); }
+  size_t initialSizeOfBuffer() { return (EditionPool::sharedEditionPool()->fullSize() - EditionPool::sharedEditionPool()->size() - k_blockOffset)/ sizeof(native_uint_t); }
   native_uint_t * m_start;
   size_t m_remainingSize;
 };
@@ -41,9 +47,9 @@ private:
 class IntegerHandler final {
 friend class WorkingBuffer;
 public:
-  IntegerHandler(const uint8_t * digits = nullptr, uint8_t numberOfDigits = 0, NonStrictSign sign = NonStrictSign::Positive) : m_sign(sign), m_digitAccessor({.m_digits = digits}), m_numberOfDigits(numberOfDigits) {}
+  IntegerHandler(const uint8_t * digits = nullptr, uint8_t numberOfDigits = 0, NonStrictSign sign = NonStrictSign::Positive) : m_sign(sign), m_digitAccessor(digits, numberOfDigits), m_numberOfDigits(numberOfDigits) {}
   IntegerHandler(int8_t value) : IntegerHandler(abs(value), value >= 0 ? NonStrictSign::Positive : NonStrictSign::Negative) {}
-  IntegerHandler(uint8_t value, NonStrictSign sign) : m_sign(sign), m_digitAccessor({.m_digit = value}), m_numberOfDigits(value != 0 ? 1 : 0) {}
+  IntegerHandler(uint8_t value, NonStrictSign sign) : m_sign(sign), m_digitAccessor(value), m_numberOfDigits(value != 0 ? 1 : 0) {}
 
   uint8_t numberOfDigits() const { return m_numberOfDigits; }
   const uint8_t * digits() const;
@@ -101,6 +107,8 @@ private:
   bool usesImmediateDigit() const { return m_numberOfDigits == 1; }
   NonStrictSign m_sign;
   union Digits {
+    Digits(uint8_t digit = 0) : m_digit(digit) {}
+    Digits(const uint8_t * digits, uint8_t numberOfDigits);
     // In little-endian format
     const uint8_t * m_digits;
     uint8_t m_digit;
@@ -111,7 +119,7 @@ private:
 
 class Integer {
 public:
-  static EditionReference Push(const char * digits, size_t length, OMG::Base base);
+  static EditionReference Push(const char * digits, size_t length, OMG::Base base = OMG::Base::Decimal);
   static IntegerHandler Handler(const Node expression);
   static bool IsUint8(const Node expression);
   static uint8_t Uint8(const Node expression);
@@ -124,7 +132,6 @@ public:
     }
     return numberOfDigits;
   }
-
   constexpr static uint8_t DigitAtIndex(uint64_t value, int index) {
     return Bit::getByteAtIndex(value, index);
   }

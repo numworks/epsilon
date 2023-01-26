@@ -13,7 +13,7 @@ DerivativeParameterController::DerivativeParameterController(ValuesController * 
   m_valuesController(valuesController)
 {}
 
-Shared::ClearColumnHelper * DerivativeParameterController::clearColumnHelper() {
+Shared::ColumnNameHelper * DerivativeParameterController::columnNameHelper() {
   return m_valuesController;
 }
 

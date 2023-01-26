@@ -10,23 +10,23 @@
 
 namespace Shared {
 
-class ClearColumnHelper {
-friend class StoreColumnHelper;
+class ColumnNameHelper {
 public:
+  virtual Escher::SelectableTableView * table() = 0;
   // this is an ad hoc value. Most of the time, colum_name are very short like "X1", "n" or "f(x)"
   constexpr static int k_maxSizeOfColumnName = 16;
+  virtual int fillColumnName(int columnIndex, char * buffer) = 0;
+protected:
+  static int FillColumnNameWithMessage(char * buffer, I18n::Message message);
+  virtual int numberOfElementsInColumn(int columnIndex) const = 0;
+};
 
+class ClearColumnHelper : public ColumnNameHelper {
+public:
   ClearColumnHelper();
   void presentClearSelectedColumnPopupIfClearable();
-  virtual int fillColumnName(int columnIndex, char * buffer) = 0;
-  virtual Escher::SelectableTableView * table() = 0;
-
 protected:
-  virtual int numberOfElementsInColumn(int columnIndex) const = 0;
-  int fillColumnNameWithMessage(char * buffer, I18n::Message message);
-
   Shared::BufferPopUpController m_confirmPopUpController;
-
 private:
   virtual void clearSelectedColumn() = 0;
   virtual void setClearPopUpContent();

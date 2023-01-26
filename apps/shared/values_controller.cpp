@@ -395,7 +395,7 @@ void ValuesController::clearSelectedColumn() {
 
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {
   assert(typeAtLocation(columnIndex, 0) ==  k_abscissaTitleCellType);
-  return fillColumnNameWithMessage(buffer, valuesParameterMessageAtColumn(columnIndex));
+  return FillColumnNameWithMessage(buffer, valuesParameterMessageAtColumn(columnIndex));
 }
 
 void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {

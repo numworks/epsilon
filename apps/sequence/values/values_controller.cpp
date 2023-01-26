@@ -61,12 +61,14 @@ int ValuesController::computeIndexAfterCumulatedSize(KDCoordinate offset, KDCoor
 // ColumnHelper
 
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {
-  /* The column names U_n, V_n, etc. are implemented as layout for now (see setTitleCellText of this file)
-   * Since there is no column parameters for these column, the fillColumnName is not yet implemented. */
-  if (typeAtLocation(columnIndex, 0) == k_functionTitleCellType) {
-    return functionTitleLayout(columnIndex).serializeParsedExpression(buffer, k_maxSizeOfColumnName, textFieldDelegateApp()->localContext());
+  if (typeAtLocation(columnIndex, 0) != k_functionTitleCellType) {
+    return Shared::ValuesController::fillColumnName(columnIndex, buffer);
   }
-  return Shared::ValuesController::fillColumnName(columnIndex, buffer);
+  bool isSumColumn = false;
+  Ion::Storage::Record record = recordAtColumn(columnIndex, &isSumColumn);
+  assert(!isSumColumn);
+  Shared::ExpiringPointer<Shared::Sequence> seq = functionStore()->modelForRecord(record);
+  return seq->nameWithArgument(buffer, k_maxSizeOfColumnName);
 }
 
 // EditableCellTableViewController

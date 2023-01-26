@@ -43,6 +43,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   expression_comparison.cpp \
   layout.cpp \
   graph.cpp \
+  integer.cpp \
   match.cpp \
   memory_elements.cpp \
   memory_edition.cpp \

@@ -107,7 +107,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   // Coordinate and series title
   if (j == 0 && i > 1) {
     ColumnTitleCell * myCell = static_cast<ColumnTitleCell *>(cell);
-    size_t seriesNumber = m_store->indexOfKthValidSeries(i - k_numberOfHeaderColumns);
+    size_t seriesNumber = m_store->indexOfKthActiveSeries(i - k_numberOfHeaderColumns);
     assert(seriesNumber < DoublePairStore::k_numberOfSeries);
     char buffer[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
     m_store->fillColumnName(seriesNumber, 0, buffer);
@@ -133,7 +133,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     return;
   }
 
-  size_t seriesNumber = m_store->indexOfKthValidSeries(i - k_numberOfHeaderColumns);
+  size_t seriesNumber = m_store->indexOfKthActiveSeries(i - k_numberOfHeaderColumns);
   assert(seriesNumber < DoublePairStore::k_numberOfSeries);
 
   assert(i > 1 && j > 0);
@@ -245,7 +245,7 @@ KDCoordinate CalculationController::nonMemoizedColumnWidth(int i) {
   if (i == 1) {
     return k_symbolColumnWidth;
   }
-  Model::Type currentType = m_store->seriesRegressionType(m_store->indexOfKthValidSeries(i - k_numberOfHeaderColumns));
+  Model::Type currentType = m_store->seriesRegressionType(m_store->indexOfKthActiveSeries(i - k_numberOfHeaderColumns));
   if (currentType == Model::Type::Quartic) {
     return k_quarticCalculationCellWidth;
   }
@@ -408,7 +408,7 @@ bool CalculationController::shouldSeriesDisplay(int series, DisplayCondition con
 bool CalculationController::hasSeriesDisplaying(DisplayCondition condition) const {
   int numberOfDefinedSeries = m_store->numberOfActiveSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
-    if (shouldSeriesDisplay(m_store->indexOfKthValidSeries(i), condition)) {
+    if (shouldSeriesDisplay(m_store->indexOfKthActiveSeries(i), condition)) {
       return true;
     }
   }
@@ -425,7 +425,7 @@ int CalculationController::numberOfDisplayedBCDECoefficients() const {
   /* "mx+b" is the only model having a "m": coefficient. It is only available in
    * Variant1 of RegressionModelOrder. */
   for (int i = 0; i < numberOfDefinedSeries; i++) {
-    int series = m_store->indexOfKthValidSeries(i);
+    int series = m_store->indexOfKthActiveSeries(i);
     int numberOfCoefficients = m_store->modelForSeries(series)->numberOfCoefficients();
     // Ignore the first coefficient A or M
     maxNumberCoefficients = std::max(maxNumberCoefficients, numberOfCoefficients - 1);
@@ -440,7 +440,7 @@ bool CalculationController::shouldDisplayMCoefficient() const {
   }
   int numberOfDefinedSeries = m_store->numberOfActiveSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
-    int series = m_store->indexOfKthValidSeries(i);
+    int series = m_store->indexOfKthActiveSeries(i);
     if (m_store->seriesRegressionType(series) == Model::Type::LinearAxpb) {
       // This series needs a M coefficient.
       return true;
@@ -453,7 +453,7 @@ bool CalculationController::shouldDisplayACoefficient() const {
   bool canDisplayM = (GlobalPreferences::sharedGlobalPreferences()->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Variant1);
   int numberOfDefinedSeries = m_store->numberOfActiveSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
-    int series = m_store->indexOfKthValidSeries(i);
+    int series = m_store->indexOfKthActiveSeries(i);
     if (!(canDisplayM && m_store->seriesRegressionType(series) == Model::Type::LinearAxpb) && m_store->modelForSeries(series)->numberOfCoefficients() > 0) {
       // This series needs a A coefficient.
       return true;

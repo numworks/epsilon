@@ -67,12 +67,12 @@ public:
   void setSeriesHidden(int series, bool hidden);
   bool seriesIsActive(int series) const;
   bool seriesIsValid(int series) const;
-  typedef bool (*ValidSeries)(const DoublePairStore *, int);
+  typedef bool (*ActiveSeriesTest)(const DoublePairStore *, int);
   static bool DefaultActiveSeriesTest(const DoublePairStore * store, int series) { return store->seriesIsActive(series); }
-  bool hasValidSeries(ValidSeries isActiveSeries = &DefaultActiveSeriesTest) const;
+  bool hasValidSeries(ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
   virtual void updateSeriesValidity(int series, bool updateDisplayAdditionalColumn = true);
-  int numberOfValidSeries(ValidSeries isActiveSeries = &DefaultActiveSeriesTest) const;
-  int indexOfKthValidSeries(int k, ValidSeries isActiveSeries = &DefaultActiveSeriesTest) const;
+  int numberOfValidSeries(ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
+  int indexOfKthValidSeries(int k, ActiveSeriesTest isActiveSeries = &DefaultActiveSeriesTest) const;
 
   // Series and columns
   virtual int relativeColumnIndex(int columnIndex) const { return columnIndex % k_numberOfColumnsPerSeries; }

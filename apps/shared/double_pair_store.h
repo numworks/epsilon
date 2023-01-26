@@ -69,11 +69,10 @@ public:
   bool seriesIsValid(int series) const;
   typedef bool (*ValidSeries)(const DoublePairStore *, int);
   static bool DefaultActiveSeriesTest(const DoublePairStore * store, int series) { return store->seriesIsActive(series); }
-  // These methods can be implemented with a different validity method
-  bool hasValidSeries(ValidSeries validSeriesMethod = &DefaultActiveSeriesTest) const;
+  bool hasValidSeries(ValidSeries isActiveSeries = &DefaultActiveSeriesTest) const;
   virtual void updateSeriesValidity(int series, bool updateDisplayAdditionalColumn = true);
-  int numberOfValidSeries(ValidSeries validSeriesMethod = &DefaultActiveSeriesTest) const;
-  int indexOfKthValidSeries(int k, ValidSeries validSeriesMethod = &DefaultActiveSeriesTest) const;
+  int numberOfValidSeries(ValidSeries isActiveSeries = &DefaultActiveSeriesTest) const;
+  int indexOfKthValidSeries(int k, ValidSeries isActiveSeries = &DefaultActiveSeriesTest) const;
 
   // Series and columns
   virtual int relativeColumnIndex(int columnIndex) const { return columnIndex % k_numberOfColumnsPerSeries; }

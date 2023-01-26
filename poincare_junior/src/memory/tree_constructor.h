@@ -18,56 +18,50 @@ namespace PoincareJ {
 template <BlockType... Blocks>
 class CTree {
 public:
-  consteval CTree() {
-    size_t i = 0;
-    for (BlockType block : { Blocks... }) {
-      m_blocks[i++] = TypeBlock(block);
-    }
-  }
-
-  inline operator const Node () {
-    static constexpr CTree tree;
-    return tree.m_blocks;
-  }
-private:
-  Block m_blocks[sizeof...(Blocks)];
+  static constexpr TypeBlock blocks[] = { Blocks... };
+  constexpr operator const Node () { return blocks; }
 };
+
+// Helpers
+
+template <BlockType Tag, BlockType... B1> consteval auto Unary(CTree<B1...>) {
+  return CTree<Tag, B1...>();
+}
+
+template <BlockType Tag, BlockType... B1, BlockType... B2> consteval auto Binary(CTree<B1...>, CTree<B2...>) {
+  return CTree<Tag, B1..., B2...>();
+}
+
+template <BlockType Tag, BlockType... B1, BlockType... B2> consteval auto NAry(CTree<B1...>, CTree<B2...>) {
+  return CTree<Tag, static_cast<BlockType>(2), Tag, B1..., B2...>();
+}
+
+template <BlockType Tag, BlockType... B1, BlockType... B2, BlockType... B3> consteval auto NAry(CTree<B1...>, CTree<B2...>, CTree<B3...>) {
+  return CTree<Tag, static_cast<BlockType>(3), Tag, B1..., B2..., B3...>();
+}
+
+template <BlockType Tag, BlockType... B1, BlockType... B2, BlockType... B3, BlockType... B4> consteval auto NAry(CTree<B1...>, CTree<B2...>, CTree<B3...>, CTree<B4...>) {
+  return CTree<Tag, static_cast<BlockType>(4), Tag, B1..., B2..., B3..., B4...>();
+}
+
+
+// Constructors
 
 template <uint8_t V> using Int = CTree<BlockType::IntegerShort, static_cast<BlockType>(V), BlockType::IntegerShort>;
 
-template <BlockType... B1> CTree<BlockType::Factorial, B1...> Fact(CTree<B1...>) {
-  return CTree<BlockType::Factorial, B1...>();
-}
+template <class...Args> consteval auto Fact(Args...args) { return Unary<BlockType::Factorial>(args...); }
 
-template <BlockType... B1, BlockType... B2> CTree<BlockType::Addition, static_cast<BlockType>(2), BlockType::Addition, B1..., B2...> Addi(CTree<B1...>, CTree<B2...>) {
-  return CTree<BlockType::Addition, static_cast<BlockType>(2), BlockType::Addition, B1..., B2...>();
-}
+template <class...Args> consteval auto Div(Args...args) { return Binary<BlockType::Division>(args...); }
 
-template <BlockType... B1, BlockType... B2, BlockType... B3> CTree<BlockType::Addition, static_cast<BlockType>(3), BlockType::Addition, B1..., B2..., B3...> Addi(CTree<B1...>, CTree<B2...>, CTree<B3...>) {
-  return CTree<BlockType::Addition, static_cast<BlockType>(3), BlockType::Addition, B1..., B2..., B3...>();
-}
+template <class...Args> consteval auto Sub(Args...args) { return Binary<BlockType::Subtraction>(args...); }
 
-template <BlockType B, BlockType... B1, BlockType... B2> auto NAry(CTree<B1...>, CTree<B2...>) {
-  return CTree<B, static_cast<BlockType>(2), B, B1..., B2...>();
-}
+template <class...Args> consteval auto Pow(Args...args) { return Binary<BlockType::Power>(args...); }
 
-template <BlockType B, BlockType... B1, BlockType... B2, BlockType... B3> auto NAry(CTree<B1...>, CTree<B2...>,  CTree<B3...>) {
-  return CTree<B, static_cast<BlockType>(3), B, B1..., B2..., B3...>();
-}
+template <class...Args> consteval auto Add(Args...args) { return NAry<BlockType::Addition>(args...); }
 
-// Attempt to define Multi from a general NAry using a function pointer,
-// it does not work since variable templates require arguments when used
-template <BlockType...B> constexpr auto Multi = NAry<BlockType::Multiplication, B...>;
+template <class...Args> consteval auto Mult(Args...args) { return NAry<BlockType::Multiplication>(args...); }
 
-
-
-
-
-
-
-
-
-
+template <class...Args> consteval auto Set(Args...args) { return NAry<BlockType::Set>(args...); }
 
 
 

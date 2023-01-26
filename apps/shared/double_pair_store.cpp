@@ -219,7 +219,7 @@ void DoublePairStore::updateSeriesValidity(int series, bool updateDisplayAdditio
   m_storePreferences->setSeriesValid(series, true);
 }
 
-bool DoublePairStore::hasValidSeries(ValidSeries isActiveSeries) const {
+bool DoublePairStore::hasValidSeries(ActiveSeriesTest isActiveSeries) const {
   for (int i = 0; i < k_numberOfSeries; i++) {
     if (isActiveSeries(this, i)) {
       return true;
@@ -228,7 +228,7 @@ bool DoublePairStore::hasValidSeries(ValidSeries isActiveSeries) const {
   return false;
 }
 
-int DoublePairStore::numberOfValidSeries(ValidSeries isActiveSeries) const {
+int DoublePairStore::numberOfValidSeries(ActiveSeriesTest isActiveSeries) const {
   int nonEmptySeriesCount = 0;
   for (int i = 0; i< k_numberOfSeries; i++) {
     if (isActiveSeries(this, i)) {
@@ -238,7 +238,7 @@ int DoublePairStore::numberOfValidSeries(ValidSeries isActiveSeries) const {
   return nonEmptySeriesCount;
 }
 
-int DoublePairStore::indexOfKthValidSeries(int k, ValidSeries isActiveSeries) const {
+int DoublePairStore::indexOfKthValidSeries(int k, ActiveSeriesTest isActiveSeries) const {
   assert(k >= 0 && k < numberOfValidSeries());
   int activeSeriesCount = 0;
   for (int i = 0; i < k_numberOfSeries; i++) {

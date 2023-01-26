@@ -37,7 +37,7 @@ protected:
    * implementation directly use Shared::DoublePairStore::DefaultActiveSeriesTest.
    * They should be updated accordingly if their controllers override this
    * method. */
-  virtual Shared::DoublePairStore::ValidSeries validSerieMethod() const { return Shared::DoublePairStore::DefaultActiveSeriesTest; };
+  virtual Shared::DoublePairStore::ActiveSeriesTest validSerieMethod() const { return Shared::DoublePairStore::DefaultActiveSeriesTest; };
   void sanitizeSeriesIndex();
   virtual void viewWillAppearBeforeReload() {}
   virtual bool reloadBannerView() = 0;

@@ -36,7 +36,7 @@ public:
 private:
   // PlotController
   // Hide series having invalid total values.
-  Shared::DoublePairStore::ValidSeries validSerieMethod() const override { return Store::ValidSeriesAndValidTotalNormalProbabilities; };
+  Shared::DoublePairStore::ActiveSeriesTest validSerieMethod() const override { return Store::ValidSeriesAndValidTotalNormalProbabilities; };
   bool moveSelectionHorizontally(int deltaIndex) override;
   void computeYBounds(float * yMin, float *yMax) const override;
   bool handleNullFrequencies() const override { return false; }

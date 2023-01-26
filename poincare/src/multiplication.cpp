@@ -982,9 +982,10 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
             // Replace with 0 * unit
             Expression unit;
             removeUnit(&unit);
-            assert(!unit.isUninitialized());
-            result = Multiplication::Builder(result, unit);
-            result = static_cast<Multiplication&>(result).squashUnaryHierarchyInPlace();
+            if (!unit.isUninitialized()) {
+              result = Multiplication::Builder(result, unit);
+              result = static_cast<Multiplication&>(result).squashUnaryHierarchyInPlace();
+            }
           }
           if (numberOfChildren() > 1) {
             /* If we replace the multiplication with 0, we must add a dependency

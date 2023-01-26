@@ -22,7 +22,7 @@ namespace PoincareJ {
 class Node {
 public:
   constexpr Node(TypeBlock * block = nullptr) : m_block(block) {}
-  Node(const Block * block) : m_block(static_cast<TypeBlock *>(const_cast<Block *>(block))) {}
+  constexpr Node(const Block * block) : m_block(static_cast<TypeBlock *>(const_cast<Block *>(block))) {}
 
   bool operator==(const Node& n) const { return n.m_block == m_block; }
   bool operator!=(const Node& n) { return n.m_block != m_block; }

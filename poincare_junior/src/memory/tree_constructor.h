@@ -47,8 +47,6 @@ template <BlockType Tag, BlockType... B1, BlockType... B2, BlockType... B3, Bloc
 
 // Constructors
 
-template <uint8_t V> using Int = CTree<BlockType::IntegerShort, static_cast<BlockType>(V), BlockType::IntegerShort>;
-
 template <class...Args> consteval auto Fact(Args...args) { return Unary<BlockType::Factorial>(args...); }
 
 template <class...Args> consteval auto Div(Args...args) { return Binary<BlockType::Division>(args...); }
@@ -63,6 +61,32 @@ template <class...Args> consteval auto Mult(Args...args) { return NAry<BlockType
 
 template <class...Args> consteval auto Set(Args...args) { return NAry<BlockType::Set>(args...); }
 
+// Integers
+
+static constexpr int k_minIntegerShort = -(1 << 7);
+static constexpr int k_maxIntegerShort = (1 << 7) - 1; // INT8MAX
+static constexpr int k_maxIntegerPosBigTwoBytes = (1 << 16) - 1;
+static constexpr int k_maxIntegerPosBigThreeBytes = (1 << 24) - 1;
+static constexpr int k_minIntegerNegBigTwoBytes = - (1 << 16) - 1;
+
+template <int V> requires (V >= k_minIntegerShort && V <= k_maxIntegerShort) consteval auto Int() {
+  return CTree<BlockType::IntegerShort, static_cast<BlockType>(V), BlockType::IntegerShort>();
+}
+
+// TODO produce the following with a template
+
+template <int V> requires (V > k_maxIntegerShort && V <= k_maxIntegerPosBigTwoBytes) consteval auto Int() {
+  return CTree<BlockType::IntegerPosBig, static_cast<BlockType>(2), static_cast<BlockType>(V%256), static_cast<BlockType>(V/256), static_cast<BlockType>(2), BlockType::IntegerPosBig>();
+}
+
+template <int V> requires (V < k_minIntegerShort && V >= k_minIntegerNegBigTwoBytes) consteval auto Int() {
+  return CTree<BlockType::IntegerNegBig, static_cast<BlockType>(2), static_cast<BlockType>((-V)%256), static_cast<BlockType>((-V)/256), static_cast<BlockType>(2), BlockType::IntegerNegBig>();
+}
+
+template<> consteval auto Int<-1>() { return CTree<BlockType::MinusOne>(); }
+template<> consteval auto Int<0>() { return CTree<BlockType::Zero>(); }
+template<> consteval auto Int<1>() { return CTree<BlockType::One>(); }
+template<> consteval auto Int<2>() { return CTree<BlockType::Two>(); }
 
 
 template <unsigned N>

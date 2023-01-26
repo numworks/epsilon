@@ -32,6 +32,31 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   initValueCells();
 }
 
+// TableSize1DManager (height)
+bool ValuesController::hasAtLeastOneSumColumn() {
+  return numberOfColumns() > (1 + functionStore()->numberOfActiveFunctions());
+}
+
+KDCoordinate ValuesController::computeSizeAtIndex(int i) {
+  return
+    (i == 0 && hasAtLeastOneSumColumn()) ?
+      k_sumLayoutHeight :
+      RegularTableSize1DManager::computeSizeAtIndex(i);
+}
+
+KDCoordinate ValuesController::computeCumulatedSizeBeforeIndex(int i, KDCoordinate defaultSize) {
+  return
+    RegularTableSize1DManager::computeCumulatedSizeBeforeIndex(i, defaultSize) +
+    (i > 0 && hasAtLeastOneSumColumn()) * (k_sumLayoutHeight - defaultSize);
+}
+
+int ValuesController::computeIndexAfterCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) {
+  return
+    RegularTableSize1DManager::computeIndexAfterCumulatedSize(
+      offset - (offset >= defaultSize && hasAtLeastOneSumColumn()) * (k_sumLayoutHeight - defaultSize),
+      defaultSize);
+}
+
 // ColumnHelper
 
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {

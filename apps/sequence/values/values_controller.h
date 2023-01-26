@@ -8,7 +8,7 @@
 
 namespace Sequence {
 
-class ValuesController : public Shared::ValuesController {
+class ValuesController : public Shared::ValuesController, Escher::RegularTableSize1DManager {
 public:
   ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header);
 
@@ -27,7 +27,14 @@ private:
 
   // TableViewDataSource
   Escher::TableSize1DManager * columnWidthManager() override { return &m_widthManager; }
-  Escher::TableSize1DManager * rowHeightManager() override { return &m_heightManager; }
+  Escher::TableSize1DManager * rowHeightManager() override { return this; }
+
+  // TableSize1DManager (height)
+  constexpr static KDCoordinate k_sumLayoutHeight = 52;
+  bool hasAtLeastOneSumColumn();
+  KDCoordinate computeSizeAtIndex(int i) override;
+  KDCoordinate computeCumulatedSizeBeforeIndex(int i, KDCoordinate defaultSize) override;
+  int computeIndexAfterCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) override;
 
   // ColumnHelper
   int fillColumnName(int columnIndex, char * buffer) override;
@@ -68,7 +75,6 @@ private:
   mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
 
   Escher::RegularTableSize1DManager m_widthManager;
-  Escher::RegularTableSize1DManager m_heightManager;
 };
 
 }

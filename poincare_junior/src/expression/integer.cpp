@@ -58,6 +58,7 @@ IntegerHandler::Digits::Digits(const uint8_t * digits, uint8_t numberOfDigits) {
 
 template <typename T>
 IntegerHandler::IntegerHandler(const T * digits, uint8_t numberOfDigits, NonStrictSign sign) {
+  assert(numberOfDigits <= k_maxNumberOfDigits / sizeof(T));
   uint8_t sizeInByte = numberOfDigits * sizeof(T);
   const uint8_t * byteDigits = reinterpret_cast<const uint8_t *>(digits);
   while (sizeInByte > 0 && byteDigits[sizeInByte - 1] == 0) {
@@ -206,10 +207,11 @@ int8_t IntegerHandler::Ucmp(const IntegerHandler & a, const IntegerHandler & b) 
     return 1;
   }
   assert(a.numberOfDigits<native_uint_t>() == b.numberOfDigits<native_uint_t>());
-  for (uint16_t i = 0; i < a.numberOfDigits<native_uint_t>(); i++) {
+  uint8_t numberOfDigits = a.numberOfDigits<native_uint_t>();
+  for (int8_t i = numberOfDigits - 1; i >= 0; i--) {
     // Digits are stored most-significant last
-    uint8_t aDigit = a.digit<native_uint_t>(a.numberOfDigits()-i-1);
-    uint8_t bDigit = b.digit<native_uint_t>(b.numberOfDigits()-i-1);
+    native_uint_t aDigit = a.digit<native_uint_t>(i);
+    native_uint_t bDigit = b.digit<native_uint_t>(i);
     if (aDigit < bDigit) {
       return -1;
     } else if (aDigit > bDigit) {

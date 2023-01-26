@@ -14,7 +14,7 @@ namespace Statistics {
 typedef AbstractPlotView::Axis Axis;
 
 void BoxPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
-  int numberOfSeries = m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultActiveSeriesTest);
+  int numberOfSeries = m_store->numberOfActiveSeries(Shared::DoublePairStore::DefaultActiveSeriesTest);
   assert(plotView->bounds().height() == BoxFrameHeight(numberOfSeries));
   KDColor color = plotView->hasFocus() ? DoublePairStore::colorLightOfSeriesAtIndex(m_series) : Palette::GrayWhite;
 
@@ -67,7 +67,7 @@ void BoxPlotPolicy::drawCalculation(const AbstractPlotView * plotView, KDContext
 void BoxPlotPolicy::drawBar(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound, KDColor color, bool isSelected) const {
   plotView->drawStraightSegment(ctx, rect, Axis::Vertical, calculation, lowBound, upBound, color, k_quantileBarWidth);
   if (isSelected) {
-    lowBound = plotView->pixelToFloat(Axis::Vertical, k_verticalSideSize + BoxHeight(m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultActiveSeriesTest)) + k_chevronMargin - 1);
+    lowBound = plotView->pixelToFloat(Axis::Vertical, k_verticalSideSize + BoxHeight(m_store->numberOfActiveSeries(Shared::DoublePairStore::DefaultActiveSeriesTest)) + k_chevronMargin - 1);
     upBound = plotView->pixelToFloat(Axis::Vertical, k_verticalSideSize - k_chevronMargin);
     drawChevronSelection(plotView, ctx, rect, calculation, lowBound, upBound);
   }
@@ -125,7 +125,7 @@ KDRect BoxView::selectedCalculationRect() const {
   KDCoordinate minX = floatToKDCoordinatePixel(Axis::Horizontal, calculation) - k_leftSideSize;
   KDCoordinate width = k_leftSideSize + k_rightSideSize;
   // Transpose the rect into parent's view coordinates
-  return KDRect(minX, 0, width, BoxFrameHeight(m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultActiveSeriesTest))).translatedBy(m_frame.origin());
+  return KDRect(minX, 0, width, BoxFrameHeight(m_store->numberOfActiveSeries(Shared::DoublePairStore::DefaultActiveSeriesTest))).translatedBy(m_frame.origin());
 }
 
 bool BoxView::canIncrementSelectedCalculation(int deltaIndex) const {
@@ -146,7 +146,7 @@ KDRect BoxView::rectToReload() {
 KDRect BoxView::boxRect() const {
   KDCoordinate minX = floatToKDCoordinatePixel(Axis::Horizontal, m_store->minValue(m_series)) - k_leftSideSize;
   KDCoordinate maxX = floatToKDCoordinatePixel(Axis::Horizontal, m_store->maxValue(m_series)) + k_rightSideSize;
-  return KDRect(minX, 0, maxX - minX, BoxFrameHeight(m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultActiveSeriesTest)));
+  return KDRect(minX, 0, maxX - minX, BoxFrameHeight(m_store->numberOfActiveSeries(Shared::DoublePairStore::DefaultActiveSeriesTest)));
 }
 
 }

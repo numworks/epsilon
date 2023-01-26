@@ -7,7 +7,7 @@ using namespace Escher;
 namespace Statistics {
 
 KDCoordinate MultipleDataView::subviewHeight() {
-  int numberDataSubviews = m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultActiveSeriesTest);
+  int numberDataSubviews = m_store->numberOfActiveSeries(Shared::DoublePairStore::DefaultActiveSeriesTest);
   assert(numberDataSubviews > 0);
   KDCoordinate bannerHeight = bannerView()->minimalSizeForOptimalDisplay().height();
   // +1 to make sure that all pixel rows are drawn
@@ -24,7 +24,7 @@ void MultipleDataView::reload() {
 }
 
 int MultipleDataView::numberOfSubviews() const {
-  int result = m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultActiveSeriesTest);
+  int result = m_store->numberOfActiveSeries(Shared::DoublePairStore::DefaultActiveSeriesTest);
   assert(result <= Store::k_numberOfSeries);
   return result + 1; // +1 for the banner view
 }

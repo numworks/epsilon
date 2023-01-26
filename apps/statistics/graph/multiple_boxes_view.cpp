@@ -23,7 +23,7 @@ BoxView *  MultipleBoxesView::plotViewForSeries(int series) {
 }
 
 void MultipleBoxesView::layoutDataSubviews(bool force) {
-  int numberOfDataSubviews = m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultActiveSeriesTest);
+  int numberOfDataSubviews = m_store->numberOfActiveSeries(Shared::DoublePairStore::DefaultActiveSeriesTest);
   assert(numberOfDataSubviews > 0);
   KDCoordinate bannerHeight = bannerFrame().height();
   KDCoordinate boxYPosition = TopToFirstBoxMargin(numberOfDataSubviews);

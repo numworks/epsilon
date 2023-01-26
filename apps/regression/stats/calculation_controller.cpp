@@ -93,7 +93,7 @@ int CalculationController::numberOfRows() const {
 }
 
 int CalculationController::numberOfColumns() const {
-  return 2 + m_store->numberOfValidSeries();
+  return 2 + m_store->numberOfActiveSeries();
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -406,7 +406,7 @@ bool CalculationController::shouldSeriesDisplay(int series, DisplayCondition con
 }
 
 bool CalculationController::hasSeriesDisplaying(DisplayCondition condition) const {
-  int numberOfDefinedSeries = m_store->numberOfValidSeries();
+  int numberOfDefinedSeries = m_store->numberOfActiveSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
     if (shouldSeriesDisplay(m_store->indexOfKthValidSeries(i), condition)) {
       return true;
@@ -421,7 +421,7 @@ int CalculationController::numberOfDisplayedCoefficients() const {
 
 int CalculationController::numberOfDisplayedBCDECoefficients() const {
   int maxNumberCoefficients = 0;
-  int numberOfDefinedSeries = m_store->numberOfValidSeries();
+  int numberOfDefinedSeries = m_store->numberOfActiveSeries();
   /* "mx+b" is the only model having a "m": coefficient. It is only available in
    * Variant1 of RegressionModelOrder. */
   for (int i = 0; i < numberOfDefinedSeries; i++) {
@@ -438,7 +438,7 @@ bool CalculationController::shouldDisplayMCoefficient() const {
     // LinearAxpb is displayed as mx+b in Variant1 only
     return false;
   }
-  int numberOfDefinedSeries = m_store->numberOfValidSeries();
+  int numberOfDefinedSeries = m_store->numberOfActiveSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
     int series = m_store->indexOfKthValidSeries(i);
     if (m_store->seriesRegressionType(series) == Model::Type::LinearAxpb) {
@@ -451,7 +451,7 @@ bool CalculationController::shouldDisplayMCoefficient() const {
 
 bool CalculationController::shouldDisplayACoefficient() const {
   bool canDisplayM = (GlobalPreferences::sharedGlobalPreferences()->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Variant1);
-  int numberOfDefinedSeries = m_store->numberOfValidSeries();
+  int numberOfDefinedSeries = m_store->numberOfActiveSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
     int series = m_store->indexOfKthValidSeries(i);
     if (!(canDisplayM && m_store->seriesRegressionType(series) == Model::Type::LinearAxpb) && m_store->modelForSeries(series)->numberOfCoefficients() > 0) {

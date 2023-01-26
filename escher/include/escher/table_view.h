@@ -21,9 +21,9 @@ public:
 
   /* This method computes the minimal scrolling needed to properly display the
    * requested cell. */
-  virtual void scrollToCell(int i, int j) { scrollToContentRect(m_contentView.cellFrame(i, j), true); }
-  HighlightCell * cellAtLocation(int i, int j) { return m_contentView.cellAtLocation(i, j); }
-  void reloadCellAtLocation(int i, int j, bool forceSetFrame = false) { m_contentView.reloadCellAtLocation(i, j, forceSetFrame); }
+  virtual void scrollToCell(int col, int row) { scrollToContentRect(m_contentView.cellFrame(col, row), true); }
+  HighlightCell * cellAtLocation(int col, int row) { return m_contentView.cellAtLocation(col, row); }
+  void reloadCellAtLocation(int col, int row, bool forceSetFrame = false) { m_contentView.reloadCellAtLocation(col, row, forceSetFrame); }
   void initSize(KDRect rect);
   void reloadVisibleCellsAtColumn(int column);
 protected:
@@ -40,8 +40,8 @@ protected:
     void setHorizontalCellOverlap(KDCoordinate o) { m_horizontalCellOverlap = o; }
     void setVerticalCellOverlap(KDCoordinate o) { m_verticalCellOverlap = o; }
 
-    void reloadCellAtLocation(int i, int j, bool forceSetFrame);
-    HighlightCell * cellAtLocation(int i, int j);
+    void reloadCellAtLocation(int col, int row, bool forceSetFrame);
+    HighlightCell * cellAtLocation(int row, int col);
     TableViewDataSource * dataSource() { return m_dataSource; }
     KDCoordinate invisibleHeight() const { return std::max(m_tableView->contentOffset().y() - m_tableView->topMargin(), 0); }
     KDCoordinate invisibleWidth() const { return std::max(m_tableView->contentOffset().x() - m_tableView->leftMargin(), 0); }
@@ -49,7 +49,7 @@ protected:
     int columnsScrollingOffset() const { return m_dataSource->indexAfterCumulatedWidth(invisibleWidth()); }
     int numberOfDisplayableRows() const;
     int numberOfDisplayableColumns() const;
-    KDRect cellFrame(int i, int j) const;
+    KDRect cellFrame(int col, int row) const;
     void layoutSubviews(bool force = false) override { layoutSubviews(force, false); }
     void layoutSubviews(bool force, bool updateCellContent);
   protected:

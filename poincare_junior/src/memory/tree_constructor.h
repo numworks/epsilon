@@ -135,9 +135,7 @@ template<> consteval auto Int<2>() { return CTree<BlockType::Two>(); }
 
 // Unary operator-
 
-template <int8_t V> using Inti = CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
-
-template <int8_t V> struct Immediate {
+template <int V> struct Immediate {
   // once a deduction guide as required a given CTree from the immediate, build it
   template <Block...B> consteval operator CTree<B...> () { return CTree<B...>(); }
 
@@ -147,16 +145,30 @@ template <int8_t V> struct Immediate {
   // Note : we could decide to implement constant propagation operators here
 };
 
+// template <int8_t V> using Inti = CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
 // template <int8_t V> CTree(Immediate<V>)->Inti<V>; // only GCC accepts this one
 
-template <int8_t V> CTree(Immediate<V>) -> CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
+// Deduction guides to create the smallest CTree that can represent the Immediate
 
 CTree(Immediate<-1>)->CTree<BlockType::MinusOne>;
 CTree(Immediate<0>)->CTree<BlockType::Zero>;
 CTree(Immediate<1>)->CTree<BlockType::One>;
 CTree(Immediate<2>)->CTree<BlockType::Two>;
 
-template <int V> CTree(Immediate<V>) -> CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
+template <int V> requires (V >= INT8_MIN && V <= INT8_MAX) CTree(Immediate<V>) -> CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
+
+template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 2) CTree(Immediate<V>) -> CTree<BlockType::IntegerPosBig, 2, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), 2, BlockType::IntegerPosBig>;
+
+template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 3) CTree(Immediate<V>) -> CTree<BlockType::IntegerPosBig, 3, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), 3, BlockType::IntegerPosBig>;
+
+template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 4) CTree(Immediate<V>) -> CTree<BlockType::IntegerPosBig, 4, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), Bit::getByteAtIndex(V, 3), 4, BlockType::IntegerPosBig>;
+
+
+template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 2) CTree(Immediate<V>) -> CTree<BlockType::IntegerNegBig, 2, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), 2, BlockType::IntegerNegBig>;
+
+template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 3) CTree(Immediate<V>) -> CTree<BlockType::IntegerNegBig, 3, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), 3, BlockType::IntegerNegBig>;
+
+template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 4) CTree(Immediate<V>) -> CTree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), Bit::getByteAtIndex(-V, 3), 4, BlockType::IntegerNegBig>;
 
 
 

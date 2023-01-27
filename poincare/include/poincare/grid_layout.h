@@ -2,7 +2,7 @@
 #define POINCARE_GRID_LAYOUT_NODE_H
 
 #include <poincare/array.h>
-#include <poincare/empty_layout.h>
+#include <poincare/empty_rectangle.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 
@@ -70,11 +70,11 @@ protected:
   bool onlyFirstChildIsNonEmpty() const;
   bool isColumnEmpty(int index) const { return isColumnOrRowEmpty(true, index); }
   bool isRowEmpty(int index) const { return isColumnOrRowEmpty(false, index); }
-  void addEmptyColumn(EmptyLayoutNode::Color color) {
+  void addEmptyColumn(EmptyRectangle::Color color) {
     assert(!numberOfColumnsIsFixed());
     return addEmptyRowOrColumn(true, color);
   }
-  void addEmptyRow(EmptyLayoutNode::Color color) {
+  void addEmptyRow(EmptyRectangle::Color color) {
     assert(!numberOfRowsIsFixed());
     return addEmptyRowOrColumn(false, color);
   }
@@ -106,7 +106,7 @@ private:
   // GridLayoutNode
 
   bool isColumnOrRowEmpty(bool column, int index) const;
-  void addEmptyRowOrColumn(bool column, EmptyLayoutNode::Color color);
+  void addEmptyRowOrColumn(bool column, EmptyRectangle::Color color);
   void colorGrayEmptyLayoutsInYellowInColumnOrRow(bool column, int lineIndex);
   void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
 };

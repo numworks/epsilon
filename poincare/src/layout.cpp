@@ -3,7 +3,6 @@
 #include <poincare/bracket_pair_layout.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/combined_code_points_layout.h>
-#include <poincare/empty_layout.h>
 #include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_cursor.h>
@@ -85,10 +84,6 @@ Layout Layout::XNTLayout() const {
   return Layout();
 }
 
-bool Layout::displayEmptyLayouts() const {
-  return AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(type());
-}
-
 // Cursor
 LayoutCursor Layout::cursor() const {
   assert(!isUninitialized());
@@ -111,9 +106,6 @@ Layout Layout::childAtIndex(int i) const {
 void Layout::replaceChild(Layout oldChild, Layout newChild, LayoutCursor * cursor, bool force) {
   int childIndex = indexOfChild(oldChild);
   assert(childIndex >= 0);
-  if (!node()->willReplaceChild(oldChild.node(), newChild.node(), cursor, force)) {
-    return;
-  }
   replaceChildInPlace(oldChild, newChild);
   if (cursor != nullptr && cursor->layout() != newChild) {
     // Do not alter cursor if it was already sticked to newChild
@@ -121,11 +113,6 @@ void Layout::replaceChild(Layout oldChild, Layout newChild, LayoutCursor * curso
     cursor->setPosition(LayoutCursor::Position::Right);
   }
   node()->didReplaceChildAtIndex(childIndex, cursor, force);
-}
-
-void Layout::replaceChildWithEmpty(Layout oldChild, LayoutCursor * cursor) {
-  EmptyLayoutNode::Visibility visibility = displayEmptyLayouts() ? EmptyLayoutNode::Visibility::Never : EmptyLayoutNode::Visibility::On;
-  replaceChild(oldChild, EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, visibility), cursor);
 }
 
 void Layout::replaceWith(Layout newChild, LayoutCursor * cursor) {
@@ -142,7 +129,7 @@ void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, Lay
      * replaceWith. */
     HorizontalLayout horizontalLayoutR = HorizontalLayout::Builder();
     p.replaceChild(*this, horizontalLayoutR, cursor);
-    horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0, false);
+    horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0);
     if (putCursorInTheMiddle) {
       if (!horizontalLayoutR.isEmpty()) {
         cursor->setLayout(horizontalLayoutR.childAtIndex(horizontalLayoutR.numberOfChildren()-1));
@@ -152,7 +139,7 @@ void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, Lay
         cursor->setPosition(LayoutCursor::Position::Left);
       }
     }
-    horizontalLayoutR.addOrMergeChildAtIndex(rightChild, horizontalLayoutR.numberOfChildren(), true);
+    horizontalLayoutR.addOrMergeChildAtIndex(rightChild, horizontalLayoutR.numberOfChildren());
     return;
   }
   /* The parent is an Horizontal layout, so directly add the two juxtaposition
@@ -168,17 +155,14 @@ void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, Lay
       cursor->setPosition(LayoutCursor::Position::Left);
     }
   }
-  idxInParent -= p.removeChild(*this, cursor->layout() == *this ? cursor : nullptr, true);
-  castedParent.addOrMergeChildAtIndex(rightChild, idxInParent, true);
-  castedParent.addOrMergeChildAtIndex(leftChild, idxInParent, true, putCursorInTheMiddle ? cursor : nullptr);
+  p.removeChild(*this, cursor->layout() == *this ? cursor : nullptr, true);
+  castedParent.addOrMergeChildAtIndex(rightChild, idxInParent);
+  castedParent.addOrMergeChildAtIndex(leftChild, idxInParent, putCursorInTheMiddle ? cursor : nullptr);
 }
 
 void Layout::addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
   int newIndex = index;
   int newCurrentNumberOfChildren = currentNumberOfChildren;
-  if (!node()->willAddChildAtIndex(l.node(), &newIndex, &newCurrentNumberOfChildren, cursor)) {
-    return;
-  }
   Layout nextPointedLayout;
   LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
   if (cursor != nullptr) {
@@ -240,7 +224,7 @@ void Layout::addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor
     }
 
     // Else, let the parent add the sibling.
-    HorizontalLayout(static_cast<HorizontalLayoutNode *>(p.node())).addOrMergeChildAtIndex(*sibling, siblingIndex, true, moveCursor ? cursor : nullptr);
+    HorizontalLayout(static_cast<HorizontalLayoutNode *>(p.node())).addOrMergeChildAtIndex(*sibling, siblingIndex, moveCursor ? cursor : nullptr);
     return;
   }
   if (cursor->position() == LayoutCursor::Position::Left) {
@@ -251,11 +235,7 @@ void Layout::addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor
   }
 }
 
-int Layout::removeChild(Layout l, LayoutCursor * cursor, bool force) {
-  int childrenRemovedLeftOfIndex = node()->willRemoveChild(l.node(), cursor, force);
-  if (childrenRemovedLeftOfIndex != -1) {
-    return childrenRemovedLeftOfIndex;
-  }
+void Layout::removeChild(Layout l, LayoutCursor * cursor, bool force) {
   assert(hasChild(l));
   int index = indexOfChild(l);
   removeChildInPlace(l, l.numberOfChildren());
@@ -275,10 +255,9 @@ int Layout::removeChild(Layout l, LayoutCursor * cursor, bool force) {
       }
     }
   }
-  return node()->didRemoveChildAtIndex(index, cursor, force);
 }
 
-int Layout::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
+void Layout::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
   return removeChild(childAtIndex(index), cursor, force);
 }
 
@@ -302,11 +281,6 @@ bool Layout::collapseOnDirection(OMG::NewHorizontalDirection direction, int abso
     absorbingChild = horizontal;
   }
   HorizontalLayout horizontalAbsorbingChild = HorizontalLayout(static_cast<HorizontalLayoutNode *>(absorbingChild.node()));
-  if (direction.isRight() && idxInParent < numberOfSiblings - 1) {
-    canCollapse = !(p.childAtIndex(idxInParent+1).mustHaveLeftSibling());
-  } else if (direction.isLeft() && idxInParent > 0) {
-    canCollapse = !(p.childAtIndex(idxInParent - 1).mustHaveRightSibling());
-  }
   Layout sibling;
   bool forceCollapse = false;
   while (canCollapse) {
@@ -322,15 +296,9 @@ bool Layout::collapseOnDirection(OMG::NewHorizontalDirection direction, int abso
      * the number of open parentheses. */
     bool shouldCollapse = sibling.isCollapsable(&numberOfOpenParenthesis, direction.isLeft());
     if (shouldCollapse || forceCollapse) {
-      /* If the collapse direction is Left and the next sibling to be collapsed
-       * must have a left sibling, force the collapsing of this needed left
-       * sibling. */
-      forceCollapse = (direction.isLeft() && sibling.mustHaveLeftSibling()) ||(direction.isRight() && sibling.mustHaveRightSibling());
-      siblingIndex -= p.removeChild(sibling, nullptr);
-      // siblingIndex is decremented in case it is used later.
-      (void)siblingIndex;
-      int newIndex = direction.isRight() ? absorbingChild.numberOfChildren() : 0;
-      horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex, true);
+      p.removeChild(sibling, nullptr);
+      int newIndex = direction == OMG::HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
+      horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex);
       // removeChildAtIndex may have removed more than one child.
       numberOfSiblings = p.numberOfChildren();
       idxInParent = p.indexOfChild(*this);

@@ -4,7 +4,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/grid_layout.h>
+//#include <poincare/grid_layout.h>
 
 namespace Poincare {
 
@@ -40,7 +40,7 @@ protected:
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
 private:
-  KDCoordinate knHeight(KDFont::Size font) { return nLayout()->layoutSize(font).height() + GridLayoutNode::k_gridEntryMargin + kLayout()->layoutSize(font).height(); }
+  KDCoordinate knHeight(KDFont::Size font) { return nLayout()->layoutSize(font).height() + /*TODO: GridLayoutNode::k_gridEntryMargin*/6 + kLayout()->layoutSize(font).height(); }
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   LayoutNode * nLayout() { return childAtIndex(0); }
   LayoutNode * kLayout() { return childAtIndex(1); }

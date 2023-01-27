@@ -3,7 +3,6 @@
 
 #include <poincare/autocompleted_bracket_pair_layout.h>
 #include <poincare/layout_helper.h>
-#include <poincare/empty_layout.h>
 
 namespace Poincare {
 
@@ -49,7 +48,7 @@ private:
 class ParenthesisLayout final : public LayoutOneChild<ParenthesisLayout, ParenthesisLayoutNode> {
 public:
   ParenthesisLayout() = delete;
-  static ParenthesisLayout Builder() { return Builder(EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never)); }
+  static ParenthesisLayout Builder() { return Builder(HorizontalLayout::Builder()); }
   static ParenthesisLayout Builder(Layout l) { return LayoutOneChild<ParenthesisLayout, ParenthesisLayoutNode>::Builder(l); }
 };
 

@@ -230,7 +230,7 @@ Complex<T> PowerNode::computeOnComplex(const std::complex<T> c, const std::compl
 Layout PowerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   ExpressionNode * indiceOperand = childAtIndex(1);
   HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, false);
+  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0);
   result.addChildAtIndex(VerticalOffsetLayout::Builder(
         indiceOperand->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
         VerticalOffsetLayoutNode::VerticalPosition::Superscript),

@@ -91,17 +91,4 @@ void ConjugateLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, 
       expressionColor);
 }
 
-bool ConjugateLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) {
-  if (oldChild == newChild) {
-    return false;
-  }
-  assert(oldChild == childLayout());
-  if (!force && newChild->isEmpty()) {
-    Layout(this).replaceWith(Layout(newChild), cursor);
-    // WARNING: do not call "this" afterwards
-    return false;
-  }
-  return true;
-}
-
 }

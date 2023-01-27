@@ -16,7 +16,6 @@ class LayoutCursor final {
   friend class BracketPairLayoutNode;
   friend class ConjugateLayoutNode;
   friend class DerivativeLayoutNode;
-  friend class EmptyLayoutNode;
   friend class FirstOrderDerivativeLayoutNode;
   friend class FractionLayoutNode;
   friend class GridLayoutNode;

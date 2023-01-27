@@ -37,7 +37,7 @@ bool PercentSimpleNode::childNeedsSystemParenthesesAtSerialization(const TreeNod
 Layout PercentSimpleNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
   HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, false);
+  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0);
   int childrenCount = result.numberOfChildren();
   childrenCount = createSecondChildLayout(&result, childrenCount, floatDisplayMode, numberOfSignificantDigits, context);
   result.addChildAtIndex(CodePointLayout::Builder('%'), childrenCount, childrenCount, nullptr);
@@ -106,7 +106,7 @@ int PercentAdditionNode::createSecondChildLayout(Poincare::HorizontalLayout * re
     result->addChildAtIndex(CodePointLayout::Builder(UCodePointNorthEastArrow), childrenCount, childrenCount, nullptr);
   }
   childrenCount++;
-  result->addOrMergeChildAtIndex(percentChild->createLayout(floatDisplayMode, numberOfSignificantDigits, context), childrenCount, false);
+  result->addOrMergeChildAtIndex(percentChild->createLayout(floatDisplayMode, numberOfSignificantDigits, context), childrenCount);
   return result->numberOfChildren();
 }
 

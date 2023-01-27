@@ -10,9 +10,8 @@ poincare_src += $(addprefix poincare/src/,\
   conjugate_layout.cpp \
   curly_brace_layout.cpp \
   derivative_layout.cpp \
-  empty_layout.cpp \
+  empty_rectangle.cpp \
   fraction_layout.cpp \
-  grid_layout.cpp \
   horizontal_layout.cpp \
   integral_layout.cpp \
   layout.cpp \
@@ -22,10 +21,8 @@ poincare_src += $(addprefix poincare/src/,\
   letter_c_with_sub_and_superscript_layout.cpp \
   letter_with_sub_and_superscript_layout.cpp \
   list_sequence_layout.cpp \
-  matrix_layout.cpp \
   nth_root_layout.cpp \
   parenthesis_layout.cpp \
-  piecewise_operator_layout.cpp \
   product_layout.cpp \
   sequence_layout.cpp \
   square_bracket_pair_layout.cpp \
@@ -55,7 +52,6 @@ poincare_src += $(addprefix poincare/src/,\
   helpers.cpp \
   hypergeometric_distribution.cpp \
   init.cpp \
-  input_beautification.cpp \
   inv_method.cpp \
   normal_distribution.cpp \
   pdf_method.cpp \

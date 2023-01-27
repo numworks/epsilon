@@ -92,10 +92,10 @@ void BannerView::layoutSubviews(bool force) {
     m_legendView.setLayout(LayoutHelper::String(I18n::translate(legendMessage)));
   } else {
     HorizontalLayout h = HorizontalLayout::Builder();
-    h.addOrMergeChildAtIndex(LayoutHelper::String(I18n::translate(dataSource->field()->fieldLegend())), 0, true);
+    h.addOrMergeChildAtIndex(LayoutHelper::String(I18n::translate(dataSource->field()->fieldLegend())), 0);
     if (dataSource->field()->hasDouble(z)) {
-      h.addOrMergeChildAtIndex(CodePointLayout::Builder(' '), h.numberOfChildren(), false);
-      h.addOrMergeChildAtIndex(dataSource->field()->getLayout(z), h.numberOfChildren(), false);
+      h.addOrMergeChildAtIndex(CodePointLayout::Builder(' '), h.numberOfChildren());
+      h.addOrMergeChildAtIndex(dataSource->field()->getLayout(z), h.numberOfChildren());
     }
     m_legendView.setLayout(h);
   }

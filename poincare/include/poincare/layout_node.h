@@ -29,7 +29,6 @@ public:
     CondensedSumLayout,
     ConjugateLayout,
     CurlyBraceLayout,
-    EmptyLayout,
     FirstOrderDerivativeLayout,
     FloorLayout,
     FractionLayout,
@@ -132,12 +131,11 @@ public:
   bool removeGraySquaresFromAllGridAncestors();
   bool removeGraySquaresFromAllGridChildren();
   bool addGraySquaresToAllGridAncestors();
-  bool mustHaveLeftSibling() const;
-  bool mustHaveRightSibling() const;
   /* A layout has text if it is not empty and it is not an horizontal layout
    * with no child or with one child with no text. */
   virtual bool hasText() const { return true; }
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
+  bool isEmpty() const { return type() == Type::HorizontalLayout && numberOfChildren() == 0;}
   /* isCollapsable is used when adding a sibling fraction: should the layout be
    * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should
    * become 1+ 2/3 - 4 when pressing "Divide": a CodePointLayout is collapsable if
@@ -149,19 +147,11 @@ public:
    * with an omitted multiplication sign. For instance, an absolute value layout
    * returns true, because |3|2 means |3|*2. A '+' CodePointLayout returns false,
    * because +'something' nevers means +*'something'. */
-  virtual bool isEmpty() const { return false; }
   virtual bool hasUpperLeftIndex() const { return false; }
   virtual Layout XNTLayout(int childIndex = -1) const;
 
-  virtual bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) { return true; }
   virtual bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) { return true; }
-  virtual bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) { return true; }
   virtual void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
-  /* Return the number of additional children deleted left of the layout if
-   * something has been deleted, -1 otherwise. */
-  virtual int willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force);
-  // Return the number of additional children deleted left of the index
-  virtual int didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) { return 0; }
 
   virtual Layout makeEditable();
 

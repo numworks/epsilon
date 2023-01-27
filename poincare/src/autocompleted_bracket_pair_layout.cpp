@@ -1,5 +1,4 @@
 #include <poincare/autocompleted_bracket_pair_layout.h>
-#include <poincare/empty_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout.h>
 
@@ -148,7 +147,7 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
     HorizontalLayout newChild = HorizontalLayout::Builder();
     Layout oldChild = Layout(childLayout());
     thisRef.replaceChild(oldChild, newChild, cursor);
-    newChild.addOrMergeChildAtIndex(oldChild, 0, false, cursor);
+    newChild.addOrMergeChildAtIndex(oldChild, 0, cursor);
   }
   assert(childLayout()->type() == Type::HorizontalLayout);
   HorizontalLayout child = HorizontalLayout(static_cast<HorizontalLayoutNode *>(childLayout()));
@@ -165,23 +164,15 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
   }
   while (removalIndex >= removalEnd) {
     Layout l = h.childAtIndex(removalIndex);
-    removalIndex -= 1 + h.removeChild(l, cursor);
-    child.addOrMergeChildAtIndex(l, injectionIndex, true, cursor);
-    /* InjectionIndex usually stays the same. Sometimes, an empty layout may
-     * have been removed while inserting l. For example :
-     * (1§▯|) absorbing 234| -> (1§|4) absorbing 23|4 -> (1§|34) absorbing 2|34
-     * with § being the prefix superscript and ▯ an empty layout
-     * TODO : addOrMergeChildAtIndex should take &injectionIndex and update it
-     *        itself. */
+    h.removeChild(l, cursor);
+    removalIndex--;
+    child.addOrMergeChildAtIndex(l, injectionIndex, cursor);
     int injectedIndex = child.indexOfChild(l);
     if (injectedIndex >= 0) {
       injectionIndex = injectedIndex;
     }
   }
   assert(removalIndex == removalEnd - 1);
-  if (child.numberOfChildren() == 0) {
-    thisRef.replaceChild(child, EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never));
-  }
 }
 
 LayoutNode * AutocompletedBracketPairLayoutNode::childOnSide(Side side) const {

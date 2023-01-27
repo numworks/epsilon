@@ -1,7 +1,6 @@
 #include "sum_graph_controller.h"
 #include "function_app.h"
 #include <escher/clipboard.h>
-#include <poincare/empty_layout.h>
 #include <poincare/condensed_sum_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/print.h>
@@ -228,7 +227,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
     char buffer[k_editableZoneBufferSize];
     Layout endLayout;
     if (step == Step::SecondParameter) {
-      endLayout = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Off, false);
+      endLayout = HorizontalLayout::Builder();
     } else {
       PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(end, buffer, k_valuesBufferSize, k_valuesPrecision, Preferences::PrintFloatMode::Decimal);
       endLayout = LayoutHelper::String(buffer, strlen(buffer));

@@ -3,7 +3,6 @@
 #include <escher/text_field.h>
 #include <ion/keyboard/layout_events.h>
 #include <poincare/expression.h>
-#include <poincare/empty_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/code_point_layout.h>
 #include <ion/events.h>
@@ -239,12 +238,13 @@ void LayoutField::ContentView::deleteSelection() {
       int firstIndex = selectionParent.indexOfChild(m_selectionStart);
       int i = m_selectionStart == m_selectionEnd ? firstIndex : selectionParent.indexOfChild(m_selectionEnd);
       while (i >= firstIndex) {
-        i -= 1 + static_cast<HorizontalLayout&>(selectionParent).removeChildAtIndex(i, &m_cursor, false);
+        static_cast<HorizontalLayout&>(selectionParent).removeChildAtIndex(i, &m_cursor);
+        i--;
       }
     } else {
       // Only one child can be selected
       assert(m_selectionStart == m_selectionEnd);
-      selectionParent.replaceChildWithEmpty(m_selectionStart, &m_cursor);
+      selectionParent.replaceChild(m_selectionStart, HorizontalLayout::Builder(), &m_cursor);
     }
   }
   resetSelection();
@@ -253,10 +253,6 @@ void LayoutField::ContentView::deleteSelection() {
 void LayoutField::ContentView::updateInsertionCursor() {
   if (!m_insertionCursor.isDefined()) {
     Layout l = m_cursor.layout();
-    if (l.type() == LayoutNode::Type::EmptyLayout && static_cast<EmptyLayout &>(l).color() == EmptyLayoutNode::Color::Gray) {
-      // Don't set m_insertionCursor pointing to a layout which might disappear
-      return;
-    }
     m_insertionCursor = m_cursor;
   }
 }

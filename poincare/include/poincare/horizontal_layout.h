@@ -34,7 +34,6 @@ public:
 
   int serializeChildrenBetweenIndexes(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool forceIndexes, int firstIndex = -1, int lastIndex = -1) const;
 
-  bool isEmpty() const override { return m_numberOfChildren == 1 && const_cast<HorizontalLayoutNode *>(this)->childAtIndex(0)->isEmpty(); }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override { return m_numberOfChildren != 0; }
   bool hasText() const override;
 
@@ -56,11 +55,7 @@ protected:
   KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const;
 
 private:
-  bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) override;
   bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
-  int willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) override;
-  int didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
-  bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   // See comment on NAryExpressionNode
   uint16_t m_numberOfChildren;
@@ -80,24 +75,17 @@ public:
   static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3) { return Builder({l1, l2, l3}); }
   static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4) { return Builder({l1, l2, l3, l4}); }
 
-  void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren = false);
-  // Remove puts a child at the end of the pool
-  int removeChild(Layout l, LayoutCursor * cursor, bool force = false) {
-    return Layout::removeChild(l, cursor, force);
-  }
-  int removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) {
-    return Layout::removeChildAtIndex(index, cursor, force);
-  }
-  void addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
-  void mergeChildrenAtIndex(HorizontalLayout h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
+  void addOrMergeChildAtIndex(Layout l, int index, LayoutCursor * cursor = nullptr);
+  void mergeChildrenAtIndex(HorizontalLayout h, int index, LayoutCursor * cursor = nullptr);
+  using Layout::removeChild;
+  using Layout::removeChildAtIndex;
+  using Layout::addChildAtIndex;
 
   Layout squashUnaryHierarchyInPlace();
 
   void serializeChildren(int firstIndex, int lastIndex, char * buffer, int bufferSize);
 
   KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const { return static_cast<HorizontalLayoutNode *>(node())->relativeSelectionRect(selectionStart, selectionEnd, font); }
-private:
-  void removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, bool shouldRemoveOnRight, LayoutCursor * cursor = nullptr);
 };
 
 }

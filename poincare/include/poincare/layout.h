@@ -58,15 +58,12 @@ public:
    * could succeed, and False if the recursion should stop. */
   typedef TrinaryBoolean (*LayoutTest)(const Layout l);
   Layout recursivelyMatches(LayoutTest test) const;
-  bool mustHaveLeftSibling() const { return const_cast<Layout *>(this)->node()->mustHaveLeftSibling(); }
-  bool mustHaveRightSibling() const { return const_cast<Layout *>(this)->node()->mustHaveRightSibling(); }
-  bool isEmpty() const { return const_cast<Layout *>(this)->node()->isEmpty(); }
+  bool isEmpty() const { return node()->isEmpty(); }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return const_cast<Layout *>(this)->node()->isCollapsable(numberOfOpenParenthesis, goingLeft); }
   int leftCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->leftCollapsingAbsorbingChildIndex(); }
   int rightCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->rightCollapsingAbsorbingChildIndex(); }
   bool hasText() { return node()->hasText(); }
   Layout XNTLayout() const;
-  bool displayEmptyLayouts() const;
 
   // Layout modification
   void deleteBeforeCursor(LayoutCursor * cursor) { return node()->deleteBeforeCursor(cursor); }
@@ -108,7 +105,6 @@ public:
   void addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor);
   // Replace
   void replaceChild(Layout oldChild, Layout newChild, LayoutCursor * cursor = nullptr, bool force = false);
-  void replaceChildWithEmpty(Layout oldChild, LayoutCursor * cursor = nullptr);
   void replaceWith(Layout newChild, LayoutCursor * cursor);
   void replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle = false);
   // Collapse
@@ -118,9 +114,8 @@ public:
 protected:
   // Add
   void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor);
-  // Remove, return the number of additional children deleted left of the layout
-  int removeChild(Layout l, LayoutCursor * cursor, bool force = false);
-  int removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false);
+  void removeChild(Layout l, LayoutCursor * cursor, bool force = false);
+  void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false);
 private:
   // Tree modification
   bool collapseOnDirection(OMG::NewHorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor);

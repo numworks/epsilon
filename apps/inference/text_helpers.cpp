@@ -25,8 +25,8 @@ Poincare::Layout XOneMinusXTwoLayout() {
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
                                     VerticalOffsetLayoutNode::VerticalPosition::Subscript));
   HorizontalLayout res = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
-  res.addOrMergeChildAtIndex(x2, 1, true);
-  res.addOrMergeChildAtIndex(x1, 0, true);
+  res.addOrMergeChildAtIndex(x2, 1);
+  res.addOrMergeChildAtIndex(x1, 0);
   return std::move(res);
 }
 

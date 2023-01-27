@@ -5,6 +5,7 @@
 #include <apps/shared/sequence_store.h>
 #include <apps/shared/values_controller.h>
 #include <apps/sequence/values/sequence_column_parameter_controller.h>
+#include <apps/sequence/values/sum_column_parameter_controller.h>
 #include "interval_parameter_controller.h"
 
 namespace Sequence {
@@ -75,6 +76,7 @@ private:
 
   IntervalParameterController m_intervalParameterController;
   SequenceColumnParameterController m_sequenceColumnParameterController;
+  SumColumnParameterController m_sumColumnParameterController;
   Escher::AbstractButtonCell m_setIntervalButton;
   mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
 

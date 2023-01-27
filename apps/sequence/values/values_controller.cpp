@@ -17,6 +17,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   Shared::ValuesController(parentResponder, header),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_sequenceColumnParameterController(this),
+  m_sumColumnParameterController(this),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation::Builder<ValuesController>([](ValuesController * valuesController, void * sender) {
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     IntervalParameterController * controller = valuesController->intervalParameterController();
@@ -66,9 +67,13 @@ int ValuesController::fillColumnName(int columnIndex, char * buffer) {
   }
   bool isSumColumn = false;
   Ion::Storage::Record record = recordAtColumn(columnIndex, &isSumColumn);
-  assert(!isSumColumn);
   Shared::ExpiringPointer<Shared::Sequence> seq = functionStore()->modelForRecord(record);
-  return seq->nameWithArgument(buffer, k_maxSizeOfColumnName);
+  if (!isSumColumn) {
+    return seq->nameWithArgument(buffer, k_maxSizeOfColumnName);
+  }
+  int sigmaLength = UTF8Decoder::CodePointToChars(UCodePointNArySummation, buffer, k_maxSizeOfColumnName);
+  buffer += sigmaLength;
+  return sigmaLength + seq->name(buffer, k_maxSizeOfColumnName - sigmaLength);
 }
 
 // EditableCellTableViewController
@@ -181,7 +186,8 @@ Shared::ColumnParameterController * ValuesController::sequenceColumnParameterCon
   bool isSumColumn = false;
   Ion::Storage::Record currentRecord = recordAtColumn(col, &isSumColumn);
   if (isSumColumn) {
-    return nullptr;
+    m_sumColumnParameterController.setRecord(currentRecord);
+    return &m_sumColumnParameterController;
   }
   m_sequenceColumnParameterController.setRecord(currentRecord);
   return &m_sequenceColumnParameterController;

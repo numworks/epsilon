@@ -101,8 +101,8 @@ Layout StringLayout::makeEditable() {
    * parent if it is also an HorizontalLayout. */
   if (!myParent.isUninitialized() && myParent.type() == LayoutNode::Type::HorizontalLayout) {
     int index = myParent.indexOfChild(*this);
-    index -= static_cast<HorizontalLayout &>(myParent).removeChild(*this, nullptr, true);
-    static_cast<HorizontalLayout &>(myParent).addOrMergeChildAtIndex(editableLayout, index, true);
+    static_cast<HorizontalLayout &>(myParent).removeChild(*this, nullptr, true);
+    static_cast<HorizontalLayout &>(myParent).addOrMergeChildAtIndex(editableLayout, index);
     return myParent.childAtIndex(index);
   }
   replaceWithInPlace(editableLayout);

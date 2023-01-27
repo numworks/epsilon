@@ -34,9 +34,9 @@ Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
   HorizontalLayout result = HorizontalLayout::Builder();
   if (m_numberOfChildren > 1) {
     Layout elementsLayout = LayoutHelper::Infix(List(this), floatDisplayMode, numberOfSignificantDigits, ",", context);
-    result.addOrMergeChildAtIndex(elementsLayout, 0, true);
+    result.addOrMergeChildAtIndex(elementsLayout, 0);
   } else if (m_numberOfChildren == 1) {
-    result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, true);
+    result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0);
   } else if (m_numberOfChildren == 0) {
     return CurlyBraceLayout::Builder();
   }

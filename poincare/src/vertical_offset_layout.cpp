@@ -1,5 +1,4 @@
 #include <poincare/vertical_offset_layout.h>
-#include <poincare/empty_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/parenthesis_layout.h>
 #include <poincare/serialization_helper.h>
@@ -106,8 +105,6 @@ void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     Layout parentRef(parent());
     LayoutNode * base = baseLayout();
     if (indiceLayout()->isEmpty()) {
-      /* Case: Empty indice. Delete the layout. If the base was empty, it will
-       * be deleted too in the HorizontalLayout::didRemoveChildAtIndex callback. */
       cursor->setLayoutNode(base);
       cursor->setPosition(LayoutCursor::Position::Right);
       parentRef.removeChild(this, cursor);
@@ -230,7 +227,8 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
   int i = thisIndex;
   while (i > leftParenthesisIndex) {
     Layout child = parentRef.childAtIndex(i);
-    i -= 1 + parentRef.removeChild(child, nullptr, true);
+    parentRef.removeChild(child, nullptr, true);
+    i--;
     h.addChildAtIndex(child, 0, n++, nullptr);
   }
   assert(n > 0 && i == leftParenthesisIndex);

@@ -4,7 +4,7 @@
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/decimal.h>
 #include <poincare/layout_helper.h>
-#include <poincare/matrix_layout.h>
+//#include <poincare/matrix_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/square_bracket_pair_layout.h>
 #include <poincare/string_layout.h>
@@ -149,7 +149,7 @@ int ValuesController::columnToFreeze() {
 KDSize ValuesController::ApproximatedParametricCellSize() {
   KDSize layoutSize = SquareBracketPairLayoutNode::SizeGivenChildSize(KDSize(
     PrintFloat::glyphLengthForFloatWithPrecision(::Preferences::VeryLargeNumberOfSignificantDigits) * KDFont::GlyphWidth(k_cellFont),
-    2 * KDFont::GlyphHeight(k_cellFont) + GridLayoutNode::k_gridEntryMargin));
+    2 * KDFont::GlyphHeight(k_cellFont) + 6/*GridLayoutNode::k_gridEntryMargin*/));
   return layoutSize + KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
 }
 

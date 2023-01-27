@@ -1,13 +1,13 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/combined_code_points_layout.h>
 #include <poincare/curly_brace_layout.h>
-#include <poincare/empty_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
-#include <poincare/input_beautification.h>
+//#include <poincare/input_beautification.h>
 #include <poincare/layout.h>
 #include <poincare/parenthesis_layout.h>
-#include <poincare/matrix_layout.h>
+//#include <poincare/matrix_layout.h>
 #include <poincare/nth_root_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -123,40 +123,39 @@ LayoutCursor LayoutCursor::selectAtDirection(OMG::NewDirection direction, bool *
 /* Layout modification */
 
 void LayoutCursor::addEmptyExponentialLayout(Context * context) {
-  EmptyLayout emptyLayout = EmptyLayout::Builder();
+  HorizontalLayout emptyLayout = HorizontalLayout::Builder();
   VerticalOffsetLayout verticalLayout = VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::VerticalPosition::Superscript);
   HorizontalLayout sibling = HorizontalLayout::Builder(
       CodePointLayout::Builder('e'),
       verticalLayout);
   m_layout.addSibling(this, &sibling, false);
   m_layout = emptyLayout;
-  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(verticalLayout, this, context);
+  //InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(verticalLayout, this, context);
 }
 
 void LayoutCursor::addEmptyMatrixLayout(Context * context) {
-  MatrixLayout matrixLayout = MatrixLayout::EmptySquaredMatrixBuilder();
-  m_layout.addSibling(this, &matrixLayout, false);
-  m_layout = matrixLayout.childAtIndex(0);
-  m_position = Position::Right;
-  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(matrixLayout, this, context);
+  //MatrixLayout matrixLayout = MatrixLayout::EmptySquaredMatrixBuilder();
+  //m_layout.addSibling(this, &matrixLayout, false);
+  //m_layout = matrixLayout.childAtIndex(0);
+  //m_position = Position::Right;
+  //InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(matrixLayout, this, context);
 }
 
 void LayoutCursor::addEmptySquareRootLayout(Context * context) {
-  // TODO: add a horizontal layout only if several children
-  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  HorizontalLayout child1 = HorizontalLayout::Builder();
   NthRootLayout newChild = NthRootLayout::Builder(child1);
   m_layout.addSibling(this, &newChild, false);
   m_layout = newChild.childAtIndex(0);
   m_position = Position::Left;
-  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(newChild, this, context);
+  //InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(newChild, this, context);
   ((Layout *)&newChild)->collapseSiblings(this);
 }
 
 void LayoutCursor::addEmptyPowerLayout(Context * context) {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(HorizontalLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
   m_layout = offsetLayout.childAtIndex(0);
-  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(offsetLayout, this, context);
+  //InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(offsetLayout, this, context);
 }
 
 void LayoutCursor::addEmptySquarePowerLayout(Context * context) {
@@ -164,11 +163,11 @@ void LayoutCursor::addEmptySquarePowerLayout(Context * context) {
   privateAddEmptyPowerLayout(offsetLayout);
   m_layout = offsetLayout;
   m_position = Position::Right;
-  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(offsetLayout, this, context);
+  //InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(offsetLayout, this, context);
 }
 
 void LayoutCursor::addEmptyTenPowerLayout(Context * context) {
-  EmptyLayout emptyLayout = EmptyLayout::Builder();
+  HorizontalLayout emptyLayout = HorizontalLayout::Builder();
   CodePointLayout multiplicationSign = CodePointLayout::Builder(UCodePointMultiplicationSign);
   HorizontalLayout sibling = HorizontalLayout::Builder(
       multiplicationSign,
@@ -179,15 +178,15 @@ void LayoutCursor::addEmptyTenPowerLayout(Context * context) {
         VerticalOffsetLayoutNode::VerticalPosition::Superscript));
   m_layout.addSibling(this, &sibling, false);
   m_layout = emptyLayout;
-  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(multiplicationSign, this, context);
+  //InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(multiplicationSign, this, context);
 }
 
 void LayoutCursor::addFractionLayoutAndCollapseSiblings(Context * context) {
-  HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
-  HorizontalLayout child2 = HorizontalLayout::Builder(EmptyLayout::Builder());
+  HorizontalLayout child1 = HorizontalLayout::Builder();
+  HorizontalLayout child2 = HorizontalLayout::Builder();
   FractionLayout newChild = FractionLayout::Builder(child1, child2);
   m_layout.addSibling(this, &newChild, true);
-  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(newChild, this, context);
+  //InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(newChild, this, context);
   Layout(newChild.node()).collapseSiblings(this);
 }
 
@@ -220,7 +219,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     if (codePoint == UCodePointSystem) {
       /* System braces are converted to subscript */
       if (nextCodePoint == '{') {
-        newChild = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
+        newChild = VerticalOffsetLayout::Builder(HorizontalLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
         currentSubscriptDepth++;
         nextCodePoint = decoder.nextCodePoint();
       } else {
@@ -280,7 +279,6 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
 
     if (newChild.type() == LayoutNode::Type::VerticalOffsetLayout) {
       // Place cursor inside subscript
-      assert(newChild.numberOfChildren() == 1 && newChild.childAtIndex(0).type() == LayoutNode::Type::EmptyLayout);
       m_layout = newChild.childAtIndex(0);
     }
 
@@ -316,7 +314,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     int firstInsertedIndex = mainParentLayout.indexOfChild(firstInsertedChild);
     int indexAfterLastInstertedChild = mainParentLayout.indexOfChild(newChild) + 1;
     assert(mainParentLayout.type() == LayoutNode::Type::HorizontalLayout);
-    InputBeautification::ApplyBeautificationBetweenIndexes(static_cast<HorizontalLayout&>(mainParentLayout), firstInsertedIndex, indexAfterLastInstertedChild, this, context, forceCursorRightOfText);
+    //InputBeautification::ApplyBeautificationBetweenIndexes(static_cast<HorizontalLayout&>(mainParentLayout), firstInsertedIndex, indexAfterLastInstertedChild, this, context, forceCursorRightOfText);
   }
 }
 
@@ -340,7 +338,7 @@ void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool forc
   if (!layoutToBeautify.isUninitialized()) {
     int beautifyStartIndex = std::max(beautifyEndIndex - insertedNumberOfChildren, 0);
     assert(layoutToBeautify.type() == LayoutNode::Type::HorizontalLayout);
-    InputBeautification::ApplyBeautificationBetweenIndexes(static_cast<HorizontalLayout&>(layoutToBeautify), beautifyStartIndex, beautifyEndIndex, this, context, forceCursorRightOfLayout);
+    //InputBeautification::ApplyBeautificationBetweenIndexes(static_cast<HorizontalLayout&>(layoutToBeautify), beautifyStartIndex, beautifyEndIndex, this, context, forceCursorRightOfLayout);
   }
   if (!insertedLayoutWillBeMerged) {
     assert(!l.isUninitialized());
@@ -400,58 +398,11 @@ KDCoordinate LayoutCursor::layoutHeight(KDFont::Size font) {
 }
 
 void LayoutCursor::privateAddEmptyPowerLayout(VerticalOffsetLayout v) {
-  // If there is already a base
-  if (baseForNewPowerLayout()) {
-    if (m_layout.type() == LayoutNode::Type::EmptyLayout) {
-      static_cast<EmptyLayoutNode *>(m_layout.node())->enableToBeVisible();
-    }
-    m_layout.addSibling(this, &v, true);
-    return;
-  }
-  // Else, add an empty base
-  EmptyLayout e = EmptyLayout::Builder();
-  HorizontalLayout newChild = HorizontalLayout::Builder(e, v);
-  m_layout.addSibling(this, &newChild, true);
+  m_layout.addSibling(this, &v, true);
 }
 
 bool LayoutCursor::baseForNewPowerLayout() {
-  /* Returns true if the layout on the left of the pointed layout is suitable to
-   * be the base of a new power layout: the base layout should be anything but
-   * an horizontal layout with no child, that does not need a right sibling.
-   * Indeed, as a Power VerticalOffsetLayout relies on its left sibling to
-   * compute its height and position, the base cannot rely on its right sibling
-   * (i.e. the vertical offset) for the same info. */
-  if (m_layout.isEmpty()) {
-    /* If the cursor is on the left of an empty layout, move it to the right of
-     * the EmptyLayout. It will take care of changing its color and adding a new
-     * row/column to its parent matrix if needed. */
-    if (m_layout.type() == LayoutNode::Type::HorizontalLayout) {
-      assert(m_layout.numberOfChildren() == 1);
-      m_layout = m_layout.childAtIndex(0);
-    }
-    assert(m_layout.type() == LayoutNode::Type::EmptyLayout);
-    m_position = Position::Right;
-    return true;
-  }
-  if (m_position == Position::Right) {
-    return !((m_layout.type() == LayoutNode::Type::HorizontalLayout && m_layout.numberOfChildren() == 0)
-          || m_layout.mustHaveRightSibling()
-          || (m_layout.numberOfChildren() > 0 && m_layout.childAtIndex(m_layout.numberOfChildren() - 1).mustHaveRightSibling()));
-  } else {
-    assert(m_position == Position::Left);
-    if (m_layout.type() == LayoutNode::Type::HorizontalLayout) {
-      return false;
-    }
-    LayoutCursor equivalentLayoutCursor = m_layout.equivalentCursor(this);
-    if (equivalentLayoutCursor.layout().isUninitialized()
-        || (equivalentLayoutCursor.layout().type() == LayoutNode::Type::HorizontalLayout
-          && equivalentLayoutCursor.position() == Position::Left)
-        || (equivalentLayoutCursor.position() == Position::Right && !equivalentLayoutCursor.baseForNewPowerLayout()))
-    {
-      return false;
-    }
-    return true;
-  }
+  return true;
 }
 
 bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
@@ -477,9 +428,9 @@ bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
    * an EmptyLayout or an HorizontalLayout with one child only, and this child
    * is an EmptyLayout. */
   if (adjacentEmptyLayout.type() == LayoutNode::Type::HorizontalLayout) {
-    static_cast<EmptyLayoutNode *>(adjacentEmptyLayout.childAtIndex(0).node())->setVisible(show);
+    //static_cast<EmptyLayoutNode *>(adjacentEmptyLayout.childAtIndex(0).node())->setVisible(show);
   } else {
-    static_cast<EmptyLayoutNode *>(adjacentEmptyLayout.node())->setVisible(show);
+    //static_cast<EmptyLayoutNode *>(adjacentEmptyLayout.node())->setVisible(show);
   }
   return true;
 }
@@ -492,10 +443,10 @@ void LayoutCursor::selectLeftRight(OMG::NewHorizontalDirection direction, bool *
   Position outgoingPosition = direction.isRight() ? Position::Right : Position::Left;
 
   // Handle empty layouts
-  bool currentLayoutIsEmpty = m_layout.type() == LayoutNode::Type::EmptyLayout;
-  if (currentLayoutIsEmpty) {
-    m_position = outgoingPosition;
-  }
+  //bool currentLayoutIsEmpty = m_layout.type() == LayoutNode::Type::EmptyLayout;
+  //if (currentLayoutIsEmpty) {
+  //  m_position = outgoingPosition;
+  //}
 
   // Find the layout to select
   LayoutCursor equivalentCursor = m_layout.equivalentCursor(this);

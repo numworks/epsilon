@@ -1,6 +1,5 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/autocompleted_bracket_pair_layout.h>
-#include <poincare/empty_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/nth_root_layout.h>
 #include <poincare/serialization_helper.h>
@@ -220,13 +219,7 @@ int HorizontalLayoutNode::serializeChildrenBetweenIndexes(char * buffer, int buf
 }
 
 bool HorizontalLayoutNode::hasText() const {
-  if (numberOfChildren() == 0) {
-    return false;
-  }
-  if (numberOfChildren() == 1 && !(const_cast<HorizontalLayoutNode *>(this)->childAtIndex(0)->hasText())) {
-    return false;
-  }
-  return true;
+  return numberOfChildren() > 1 || (numberOfChildren() == 1 && childAtIndex(0)->hasText());
 }
 
 // Protected
@@ -299,15 +292,6 @@ KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart
 
 // Private
 
-bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) {
-  if (m_numberOfChildren > 0) {
-    HorizontalLayout thisRef(this);
-    thisRef.removeEmptyChildBeforeInsertionAtIndex(index, currentNumberOfChildren, !l->mustHaveLeftSibling(), !l->mustHaveRightSibling(), cursor);
-    *currentNumberOfChildren = thisRef.numberOfChildren();
-  }
-  return true;
-}
-
 bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) {
   HorizontalLayout thisRef(this);
   int nChildren = numberOfChildren();
@@ -320,64 +304,12 @@ bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * siblin
   }
   if (nChildren == 0 || childAtIndex(siblingIndex)->willAddSibling(cursor, sibling, moveCursor)) {
     bool layoutWillBeMerged = sibling->type() == LayoutNode::Type::HorizontalLayout;
-    thisRef.addOrMergeChildAtIndex(*sibling, newChildIndex, true, cursor);
+    thisRef.addOrMergeChildAtIndex(*sibling, newChildIndex, cursor);
     if (layoutWillBeMerged) {
       *sibling = thisRef;
     }
   }
   return false;
-}
-
-int HorizontalLayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
-  if (!force && numberOfChildren() == 1) {
-    assert(childAtIndex(0) == l);
-    LayoutNode * p = parent();
-    if (p != nullptr) {
-      return Layout(p).removeChild(HorizontalLayout(this), cursor);
-      // WARNING: Do not call "this" afterwards
-    }
-  }
-  return -1;
-}
-
-int HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {
-  int currentNumberOfChildren = numberOfChildren();
-  if (force || currentNumberOfChildren == 0) {
-    return 0;
-  }
-
-  /* If the removed child was the last valid sibling of a layout that requires
-   * a left or right sibling, add an empty layout. */
-  if ((index == 0 && childAtIndex(index)->mustHaveLeftSibling())
-   || (index == currentNumberOfChildren && childAtIndex(index - 1)->mustHaveRightSibling())
-   /* Both children relying on each other for sizes and baselines causes inifinite loops. */
-   || (index < currentNumberOfChildren && index > 0 && childAtIndex(index - 1)->mustHaveRightSibling() && childAtIndex(index)->mustHaveLeftSibling()))
-  {
-    Layout(this).addChildAtIndex(EmptyLayout::Builder(), index, currentNumberOfChildren, cursor);
-    return 0;
-  }
-
-  /* If an empty layout was required by a now deleted sibling, remove it. */
-  int emptyChildIndex;
-  if (index < currentNumberOfChildren && childAtIndex(index)->type() == Type::EmptyLayout) {
-    emptyChildIndex = index;
-  } else if (index > 0 && childAtIndex(index - 1)->type() == Type::EmptyLayout) {
-    emptyChildIndex = index - 1;
-  } else {
-    return 0;
-  }
-
-  if (!((currentNumberOfChildren == 1) // If the empty layout is the only child, we don't want to delete it
-     || (emptyChildIndex > 0 && childAtIndex(emptyChildIndex - 1)->mustHaveRightSibling())
-     || (emptyChildIndex + 1 < currentNumberOfChildren && childAtIndex(emptyChildIndex + 1)->mustHaveLeftSibling())))
-  {
-    bool deletedSiblingIsLeftOfLayout = emptyChildIndex < index;
-    /* This assert ensure we do not have to account for anything deleted right
-     * of emptyChildIndex. */
-    assert(!deletedSiblingIsLeftOfLayout || emptyChildIndex == index - 1);
-    return deletedSiblingIsLeftOfLayout + Layout(this).removeChild(Layout(childAtIndex(emptyChildIndex)), cursor);
-  }
-  return 0;
 }
 
 static void makePermanentIfBracket(LayoutNode * l, bool hasLeftSibling, bool hasRightSibling) {
@@ -392,101 +324,9 @@ static void makePermanentIfBracket(LayoutNode * l, bool hasLeftSibling, bool has
   }
 }
 
-bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) {
-  if (oldChild == newChild) {
-    return false;
-  }
-  if (force) {
-    return true;
-  }
-  HorizontalLayout thisRef(this);
-  int oldChildIndex = indexOfChild(oldChild);
-  if (newChild->isEmpty()) {
-    if (numberOfChildren() > 1) {
-      /* If the new layout is empty and the horizontal layout has other
-       * children, just remove the old child. */
-      thisRef.removeChild(oldChild, nullptr);
-      assert(numberOfChildren() > 0);
-      if (cursor != nullptr) {
-        if (oldChildIndex == 0) {
-          cursor->setLayout(thisRef);
-          cursor->setPosition(LayoutCursor::Position::Left);
-        } else {
-          cursor->setLayout(thisRef.childAtIndex(oldChildIndex -1));
-          cursor->setPosition(LayoutCursor::Position::Right);
-        }
-      }
-      return false;
-    }
-    /* The old layout was the only horizontal layout child, so if this has a
-     * a parent, replace this with the new empty layout. */
-    LayoutNode * p = parent();
-    if (p != nullptr) {
-      thisRef.replaceWith(newChild, cursor);
-      // WARNING: do not call "this" afterwards
-      return false;
-    }
-    /* This is the main horizontal layout, the old child is its only child and
-     * the new child is Empty: remove the old child and delete the new child. */
-    assert(p == nullptr);
-    thisRef.removeChild(oldChild, nullptr);
-    // WARNING: do not call "this" afterwards
-    if (cursor != nullptr) {
-      cursor->setLayout(thisRef);
-      cursor->setPosition(LayoutCursor::Position::Left);
-    }
-    return false;
-  }
-  /* If the new child is also an horizontal layout, steal the children of the
-   * new layout then destroy it. */
-  bool oldWasAncestorOfNewLayout = newChild->hasAncestor(oldChild, false);
-  if (newChild->type() == LayoutNode::Type::HorizontalLayout) {
-    int indexForInsertion = indexOfChild(oldChild);
-    if (cursor != nullptr) {
-      /* If the old layout is not an ancestor of the new layout, or if the
-       * cursor was on the right of the new layout, place the cursor on the
-       * right of the new layout, which is left of the next sibling or right of
-       * the parent. */
-      if (!oldWasAncestorOfNewLayout || cursor->position() == LayoutCursor::Position::Right) {
-        if (oldChildIndex == numberOfChildren() - 1) {
-          cursor->setLayoutNode(this);
-          cursor->setPosition(LayoutCursor::Position::Right);
-        } else {
-          cursor->setLayoutNode(childAtIndex(oldChildIndex + 1));
-          cursor->setPosition(LayoutCursor::Position::Left);
-        }
-      } else {
-        /* Else place the cursor on the left of the new layout, which is right
-         * of the previous sibling or left of the parent. */
-        if (oldChildIndex == 0) {
-          cursor->setLayoutNode(this);
-          cursor->setPosition(LayoutCursor::Position::Left);
-        } else {
-          cursor->setLayoutNode(childAtIndex(oldChildIndex - 1));
-          cursor->setPosition(LayoutCursor::Position::Right);
-        }
-      }
-    }
-    bool oldChildRemovedAtMerge = oldChild->isEmpty();
-    Layout oldChildRef(oldChild);
-    HorizontalLayout newChildRef(static_cast<HorizontalLayoutNode *>(newChild));
-    if (!oldChildRemovedAtMerge) {
-      assert(!cursor || cursor->layout().node() != oldChild);
-      // Do not alter the cursor. It should already be well-placed
-      indexForInsertion -= thisRef.removeChild(oldChildRef, nullptr, true);
-    }
-    thisRef.mergeChildrenAtIndex(newChildRef, indexForInsertion, true);
-    // WARNING: do not call "this" afterwards
-    return false;
-  }
-  // Else, just replace the child.
-  makePermanentIfBracket(newChild, oldChildIndex > 0, oldChildIndex < numberOfChildren() - 1);
-  return true;
-}
-
 void HorizontalLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  // Fill the selection background
   HorizontalLayout thisLayout = HorizontalLayout(this);
+  // Fill the selection background
   bool childrenAreSelected = selectionStart != nullptr && selectionEnd != nullptr
     && !selectionStart->isUninitialized() && !selectionEnd->isUninitialized()
     && thisLayout.hasChild(*selectionStart);
@@ -499,49 +339,15 @@ void HorizontalLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font,
 
 // HorizontalLayout
 
-void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
+void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, LayoutCursor * cursor) {
   if (l.type() == LayoutNode::Type::HorizontalLayout) {
-    mergeChildrenAtIndex(HorizontalLayout(static_cast<HorizontalLayoutNode *>(l.node())), index, removeEmptyChildren, cursor);
+    mergeChildrenAtIndex(HorizontalLayout(static_cast<HorizontalLayoutNode *>(l.node())), index, cursor);
   } else {
-    addChildAtIndex(l, index, numberOfChildren(), cursor, removeEmptyChildren);
+    addChildAtIndex(l, index, numberOfChildren(), cursor);
   }
 }
 
-void HorizontalLayout::addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren) {
-  if (l.isEmpty()
-      && removeEmptyChildren
-      && numberOfChildren() > 0
-      && (index == numberOfChildren() || !childAtIndex(index).mustHaveLeftSibling())
-      && (index == 0 || !childAtIndex(index - 1).mustHaveRightSibling()))
-  {
-    return;
-  }
-
-  if (index == numberOfChildren() && l.mustHaveRightSibling()) {
-    if (childAtIndex(index-1).isEmpty()) {
-      // Use the previous empty
-      index--;
-    } else {
-      // Else add one
-      addChildAtIndex(EmptyLayout::Builder(), index, numberOfChildren(), cursor, false);
-      assert(childAtIndex(index).type() == LayoutNode::Type::EmptyLayout);
-    }
-  } else if ((index == 0 || childAtIndex(index-1).mustHaveRightSibling()) && l.mustHaveLeftSibling()) {
-    // If a layout must have left and right siblings, this if should be split
-    assert(l.mustHaveLeftSibling() != l.mustHaveRightSibling());
-    addChildAtIndex(EmptyLayout::Builder(), index, numberOfChildren(), cursor, false);
-    // the empty layout may be at index-1 if it was already there
-    assert((index > 0 && childAtIndex(index - 1).type() == LayoutNode::Type::EmptyLayout) || childAtIndex(index).type() == LayoutNode::Type::EmptyLayout);
-    index += l.mustHaveLeftSibling();
-  }
-
-  currentNumberOfChildren = numberOfChildren();
-
-  makePermanentIfBracket(l.node(), index > 0, index < currentNumberOfChildren - 1);
-  Layout::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
-}
-
-void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
+void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, LayoutCursor * cursor) {
   int newIndex = index;
   bool margin = h.node()->leftMargin() > 0;
   bool marginIsLocked = h.node()->marginIsLocked();
@@ -565,19 +371,8 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
     makePermanentIfBracket(childAtIndex(index).node(), true, index < numberOfChildren() - 1);
   }
 
-  /* Remove any empty child that would be next to the inserted layout.
-   * If the layout to insert starts with a vertical offset layout, any empty
-   * layout child directly on the left of the inserted layout (if there is one)
-   * should not be removed: it will be the base for the VerticalOffsetLayout,
-   * and conversely for a VerticalOffsetLayout that needs a base on its right. */
-  int childrenNumber = h.numberOfChildren();
-  bool shouldRemoveOnLeft = childrenNumber == 0 ? true : !(h.childAtIndex(0).mustHaveLeftSibling());
-  bool shouldRemoveOnRight = childrenNumber == 0 ? true : !(h.childAtIndex(childrenNumber - 1).mustHaveRightSibling());
-  removeEmptyChildBeforeInsertionAtIndex(&newIndex, nullptr, shouldRemoveOnLeft, shouldRemoveOnRight);
-  assert(newIndex >= 0 && newIndex <= numberOfChildren());
-
   // Merge the horizontal layout
-  childrenNumber = h.numberOfChildren();
+  int childrenNumber = h.numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
     int n = numberOfChildren();
     Layout c = h.childAtIndex(i);
@@ -585,24 +380,6 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
     bool lastAddedChild = (i == childrenNumber - 1);
     bool hasPreviousLayout = newIndex > 0;
     bool hasFollowingLayout = newIndex < n;
-    if (c.isEmpty()) {
-      bool nextInsertedLayoutMustHaveLeftSibling = (!lastAddedChild && h.childAtIndex(i + 1).mustHaveLeftSibling());
-      bool followingLayoutMustHaveLeftSibling = (hasFollowingLayout && childAtIndex(newIndex).mustHaveLeftSibling());
-      bool previousLayoutMustHaveRightSibling = (hasPreviousLayout && childAtIndex(newIndex - 1).mustHaveRightSibling());
-      /* Remove empty layout if :
-       * - The first added child is Empty because its right sibling needs a left
-       *   sibling, and the previous layout could be such a left sibling. */
-      if ((firstAddedChild && !lastAddedChild && nextInsertedLayoutMustHaveLeftSibling && hasPreviousLayout && !previousLayoutMustHaveRightSibling)
-      /* - The last added child is Empty because its left sibling needs a right
-       *   sibling, and the following layout could be such a right sibling. */
-       || (lastAddedChild && !firstAddedChild && previousLayoutMustHaveRightSibling && hasFollowingLayout && !followingLayoutMustHaveLeftSibling)
-      /* - The following needs a left sibling but is already satisfied. */
-       || (lastAddedChild && followingLayoutMustHaveLeftSibling && hasPreviousLayout && !previousLayoutMustHaveRightSibling)
-      /* - No sibling layout needs an empty layout. */
-       || (removeEmptyChildren && !previousLayoutMustHaveRightSibling && !nextInsertedLayoutMustHaveLeftSibling && !followingLayoutMustHaveLeftSibling)) {
-        continue;
-      }
-    }
     makePermanentIfBracket(c.node(), hasPreviousLayout, hasFollowingLayout || !lastAddedChild);
     addChildAtIndexInPlace(c, newIndex, n);
     if (firstAddedChild) {
@@ -637,35 +414,6 @@ Layout HorizontalLayout::squashUnaryHierarchyInPlace() {
 
 void HorizontalLayout::serializeChildren(int firstIndex, int lastIndex, char * buffer, int bufferSize) {
   static_cast<HorizontalLayoutNode *>(node())->serializeChildrenBetweenIndexes(buffer, bufferSize, Poincare::Preferences::sharedPreferences->displayMode(), Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(), true, firstIndex, lastIndex);
-}
-
-void HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, bool shouldRemoveOnRight, LayoutCursor * cursor) {
-  int childrenCount = currentNumberOfChildren == nullptr ? numberOfChildren() : *currentNumberOfChildren;
-  assert(*index >= 0 && *index <= childrenCount);
-  /* If empty, remove the child that would be on the right of the inserted
-   * layout. */
-  if (shouldRemoveOnRight && *index < childrenCount) {
-    Layout c = childAtIndex(*index);
-    if (c.isEmpty()) {
-      removeChild(c, cursor, true);
-      childrenCount = numberOfChildren();
-      if (currentNumberOfChildren != nullptr) {
-        *currentNumberOfChildren = childrenCount;
-      }
-    }
-  }
-  /* If empty, remove the child that would be on the left of the inserted
-   * layout. */
-  if (shouldRemoveOnLeft && *index - 1 >= 0 && *index - 1 < childrenCount) {
-    Layout c = childAtIndex(*index - 1);
-    if (c.isEmpty()) {
-      *index -= 1 + removeChild(c, cursor, true);
-      if (currentNumberOfChildren != nullptr) {
-        *currentNumberOfChildren = numberOfChildren();
-      }
-      assert(*index >= 0 && *index <= numberOfChildren());
-    }
-  }
 }
 
 }

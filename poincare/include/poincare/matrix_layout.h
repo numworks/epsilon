@@ -52,10 +52,10 @@ public:
   static MatrixLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4);
   static MatrixLayout EmptySquaredMatrixBuilder() {
     return Builder(
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray));
+      HorizontalLayout::Builder(),
+      HorizontalLayout::Builder(),
+      HorizontalLayout::Builder(),
+      HorizontalLayout::Builder());
   }
 private:
   MatrixLayoutNode * node() const { return static_cast<MatrixLayoutNode *>(Layout::node()); }

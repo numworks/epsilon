@@ -1,7 +1,6 @@
 #include "values_controller.h"
 #include "function_app.h"
 #include "separable.h"
-#include <poincare/empty_layout.h>
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <limits.h>
@@ -139,9 +138,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   if (typeAtLoc == k_notEditableValueCellType) {
     // Special case: last row
     if (j == numberOfElementsInColumn(i) + k_numberOfTitleRows) {
-      EmptyLayout emptyLayout = EmptyLayout::Builder();
-      emptyLayout.setVisible(false);
-      static_cast<EvenOddExpressionCell *>(cell)->setLayout(emptyLayout);
+      static_cast<EvenOddExpressionCell *>(cell)->setLayout(HorizontalLayout::Builder());
     } else {
       static_cast<EvenOddExpressionCell *>(cell)->setLayout(memoizedLayoutForCell(i, j));
     }

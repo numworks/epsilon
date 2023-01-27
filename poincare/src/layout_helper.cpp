@@ -41,11 +41,11 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
       assert(!leftChild.isUninitialized() && !rightChild.isUninitialized());
       Layout operatorLayout = operatorLayoutBuilder(operatorName, leftChild, rightChild, childLayout);
       if (!operatorLayout.isUninitialized()) {
-        result.addOrMergeChildAtIndex(operatorLayout, result.numberOfChildren(), true);
+        result.addOrMergeChildAtIndex(operatorLayout, result.numberOfChildren());
       }
     }
 
-    result.addOrMergeChildAtIndex(childLayout, result.numberOfChildren(), true);
+    result.addOrMergeChildAtIndex(childLayout, result.numberOfChildren());
     leftChild = rightChild;
   }
   return std::move(result);
@@ -54,7 +54,7 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
 Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, bool addParenthesese) {
   HorizontalLayout result = HorizontalLayout::Builder();
   // Add the operator name.
-  result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), 0, true);
+  result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), 0);
 
   // Create the layout of arguments separated by commas.
   HorizontalLayout args = HorizontalLayout::Builder();
@@ -63,14 +63,14 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
     if (i > 0) {
       args.addChildAtIndex(CodePointLayout::Builder(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
     }
-    args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, context, false, true), args.numberOfChildren(), true);
+    args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, context, false, true), args.numberOfChildren());
   }
   Layout argsResult = args;
   if (addParenthesese) {
     // Add the parenthesed arguments.
     argsResult = Parentheses(args, false);
   }
-  result.addOrMergeChildAtIndex(argsResult, result.numberOfChildren(), true);
+  result.addOrMergeChildAtIndex(argsResult, result.numberOfChildren());
   return std::move(result);
 }
 
@@ -163,7 +163,7 @@ Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
   }
 
   resultLayout.addChildAtIndex(offsetLayout, baseIndex, resultLayout.numberOfChildren(), nullptr);
-  resultLayout.addOrMergeChildAtIndex(Parentheses(argument, false), resultLayout.numberOfChildren(), true);
+  resultLayout.addOrMergeChildAtIndex(Parentheses(argument, false), resultLayout.numberOfChildren());
   return std::move(resultLayout);
 }
 

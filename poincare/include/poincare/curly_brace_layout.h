@@ -3,7 +3,6 @@
 
 #include <poincare/autocompleted_bracket_pair_layout.h>
 #include <poincare/layout_helper.h>
-#include <poincare/empty_layout.h>
 
 namespace Poincare {
 
@@ -51,7 +50,7 @@ private:
 class CurlyBraceLayout final : public LayoutOneChild<CurlyBraceLayout, CurlyBraceLayoutNode> {
 public:
   CurlyBraceLayout() = delete;
-  static CurlyBraceLayout Builder() { return Builder(EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never)); }
+  static CurlyBraceLayout Builder() { return Builder(HorizontalLayout::Builder()); }
   static CurlyBraceLayout Builder(Layout l) { return LayoutOneChild<CurlyBraceLayout, CurlyBraceLayoutNode>::Builder(l); }
 };
 

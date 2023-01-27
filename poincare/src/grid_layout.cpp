@@ -1,5 +1,4 @@
 #include <poincare/grid_layout.h>
-#include <poincare/empty_layout.h>
 #include <poincare/layout_helper.h>
 #include <algorithm>
 

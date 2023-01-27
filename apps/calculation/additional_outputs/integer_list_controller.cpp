@@ -1,7 +1,6 @@
 #include "integer_list_controller.h"
 #include <poincare/based_integer.h>
 #include <poincare/integer.h>
-#include <poincare/empty_layout.h>
 #include <poincare/factor.h>
 #include "../app.h"
 #include "../../shared/poincare_helpers.h"

@@ -1,7 +1,6 @@
 #include <poincare/piecewise_operator_layout.h>
 #include <poincare/bracket_pair_layout.h>
 #include <poincare/curly_brace_layout.h>
-#include <poincare/empty_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/piecewise_operator.h>
 #include <poincare/serialization_helper.h>

@@ -8,7 +8,6 @@
 #include <poincare/exception_checkpoint.h>
 #include <poincare/expression.h>
 #include <poincare/layout_helper.h>
-#include <poincare/matrix_layout.h>
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <algorithm>

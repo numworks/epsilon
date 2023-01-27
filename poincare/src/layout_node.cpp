@@ -3,7 +3,7 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
-#include <poincare/matrix_layout.h>
+//#include <poincare/matrix_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion/display.h>
 
@@ -136,7 +136,7 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
-  // Case: Right. Delete the layout (or replace it with an EmptyLayout).
+  // Case: Right. Delete the layout
   Layout(p).removeChild(Layout(this), cursor);
   // WARNING: Do no use "this" afterwards
 }
@@ -180,22 +180,6 @@ bool LayoutNode::addGraySquaresToAllGridAncestors() {
   bool result = false;
   changeGraySquaresOfAllGridRelatives(true, true, &result);
   return result;
-}
-
-bool LayoutNode::mustHaveLeftSibling() const {
-  return type() == Type::VerticalOffsetLayout && static_cast<const VerticalOffsetLayoutNode *>(this)->horizontalPosition() == VerticalOffsetLayoutNode::HorizontalPosition::Suffix;
-}
-
-bool LayoutNode::mustHaveRightSibling() const {
-  return type() == Type::VerticalOffsetLayout && static_cast<const VerticalOffsetLayoutNode *>(this)->horizontalPosition() == VerticalOffsetLayoutNode::HorizontalPosition::Prefix;
-}
-
-int LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
-  if (!force) {
-    Layout(this).replaceChildWithEmpty(Layout(l), cursor);
-    return 0;
-  }
-  return -1;
 }
 
 Layout LayoutNode::makeEditable() {
@@ -330,7 +314,7 @@ void LayoutNode::scoreCursorInDescendantsVertically (
 }
 
 bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
-  if (!GridLayoutNode::IsGridLayoutType(l->type())) {
+  /*if (!GridLayoutNode::IsGridLayoutType(l->type())) {
     return false;
   }
   if (add) {
@@ -338,7 +322,8 @@ bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
   } else {
     static_cast<GridLayoutNode *>(l->node())->stopEditing();
   }
-  return true;
+  return true;*/
+  return false;
 }
 
 void LayoutNode::changeGraySquaresOfAllGridRelatives(bool add, bool ancestors, bool * changedSquares) {

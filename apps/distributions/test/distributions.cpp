@@ -257,4 +257,3 @@ QUIZ_CASE(probability_fisher_distribution) {
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 1.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 1.0, 2.0, 0.19555555555555555);
 }
-

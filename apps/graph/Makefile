@@ -29,7 +29,6 @@ app_graph_src = $(addprefix apps/graph/,\
   shared/domain_parameter_controller.cpp \
   shared/function_parameter_controller.cpp \
   values/abscissa_title_cell.cpp \
-  values/derivative_parameter_controller.cpp \
   values/interval_parameter_selector_controller.cpp \
   values/values_controller.cpp \
 )

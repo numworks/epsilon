@@ -29,8 +29,16 @@ template <Block Tag, Block... B1> consteval auto Unary(CTree<B1...>) {
   return CTree<Tag, B1...>();
 }
 
+template <Block Tag, class A> consteval auto Unary(A a) {
+  return Unary<Tag>(CTree(a));
+}
+
 template <Block Tag, Block... B1, Block... B2> consteval auto Binary(CTree<B1...>, CTree<B2...>) {
   return CTree<Tag, B1..., B2...>();
+}
+
+template <Block Tag, class A, class B> consteval auto Binary(A a, B b) {
+  return Binary<Tag>(CTree(a), CTree(b));
 }
 
 template <Block Tag, Block... B1, Block... B2> consteval auto NAry(CTree<B1...>, CTree<B2...>) {
@@ -88,7 +96,11 @@ template <class...Args> consteval auto operator*(Args...args) { return NAryOpera
 
 template <Block... B1, Block... B2> consteval auto operator-(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Subtraction, B1..., B2...>(); }
 
+template <class A, class B> consteval auto operator-(A a, B b) { return CTree(a) - CTree(b); }
+
 template <Block... B1, Block... B2> consteval auto operator/(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Division, B1..., B2...>(); }
+
+template <class A, class B> consteval auto operator/(A a, B b) { return CTree(a) / CTree(b); }
 
 template <Block... B1, Block... B2> consteval auto operator+(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Addition, 2, BlockType::Addition, B1..., B2...>(); }
 

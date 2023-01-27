@@ -11,7 +11,7 @@
 
 namespace OMG {
 
-template <typename T> class GlobalBox {
+template <typename T> class alignas(T) GlobalBox {
 public:
 #if ASSERTIONS
   GlobalBox() : m_isInitialized(false) {}

@@ -45,7 +45,14 @@ template <Block Tag, Block... B1, Block... B2, Block... B3, Block... B4> constev
   return CTree<Tag, 4, Tag, B1..., B2..., B3..., B4...>();
 }
 
-constexpr Block FactBlock = TypeBlock(BlockType::Factorial);
+template <Block Tag, Block... B1, Block... B2> consteval auto NAryOperator(CTree<B1...>, CTree<B2...>) {
+  return CTree<Tag, 2, Tag, B1..., B2...>();
+}
+
+template <Block Tag, Block N1, Block... B1, Block... B2> consteval auto NAryOperator(CTree<Tag, N1, Tag, B1...>, CTree<B2...>) {
+  return CTree<Tag, static_cast<uint8_t>(N1) + 1, Tag, B1..., B2...>();
+}
+
 
 // Constructors
 
@@ -62,6 +69,37 @@ template <class...Args> consteval auto Addi(Args...args) { return NAry<BlockType
 template <class...Args> consteval auto Multi(Args...args) { return NAry<BlockType::Multiplication>(args...); }
 
 template <class...Args> consteval auto Seti(Args...args) { return NAry<BlockType::Set>(args...); }
+
+#if 0
+
+template <class...Args> consteval auto operator-(Args...args) { return Binary<BlockType::Subtraction>(args...); }
+
+template <class...Args> consteval auto operator/(Args...args) { return Binary<BlockType::Subtraction>(args...); }
+
+template <class...Args> consteval auto operator+(Args...args) { return NAryOperator<BlockType::Addition>(args...); }
+
+template <class...Args> consteval auto operator*(Args...args) { return NAryOperator<BlockType::Multiplication>(args...); }
+
+#else
+// The nice syntax above doesn't work with GCC yet and has to be expanded
+
+template <Block... B1, Block... B2> consteval auto operator-(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Subtraction, B1..., B2...>(); }
+
+template <Block... B1, Block... B2> consteval auto operator/(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Division, B1..., B2...>(); }
+
+template <Block... B1, Block... B2> consteval auto operator+(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Addition, 2, BlockType::Addition, B1..., B2...>(); }
+
+template <Block N1, Block... B1, Block... B2> consteval auto operator+(CTree<BlockType::Addition, N1, BlockType::Addition, B1...>, CTree<B2...>) {
+  return CTree<BlockType::Addition, static_cast<uint8_t>(N1) + 1, BlockType::Addition, B1..., B2...>();
+}
+
+template <Block... B1, Block... B2> consteval auto operator*(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Multiplication, 2, BlockType::Multiplication, B1..., B2...>(); }
+
+template <Block N1, Block... B1, Block... B2> consteval auto operator*(CTree<BlockType::Multiplication, N1, BlockType::Multiplication, B1...>, CTree<B2...>) {
+  return CTree<BlockType::Multiplication, static_cast<uint8_t>(N1) + 1, BlockType::Multiplication, B1..., B2...>();
+}
+
+#endif
 
 
 // Integers
@@ -86,6 +124,16 @@ template<> consteval auto Int<-1>() { return CTree<BlockType::MinusOne>(); }
 template<> consteval auto Int<0>() { return CTree<BlockType::Zero>(); }
 template<> consteval auto Int<1>() { return CTree<BlockType::One>(); }
 template<> consteval auto Int<2>() { return CTree<BlockType::Two>(); }
+
+constexpr static uint64_t Value(const char * str, size_t size);
+
+template <char...C>
+consteval auto operator"" _n () {
+  constexpr const char value[] = { C... , '\0' };
+  constexpr int V = Value(value, sizeof...(C) + 1);
+  return Int<V>();
+}
+
 
 
 template <unsigned N>

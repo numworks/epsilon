@@ -4,15 +4,18 @@
 using namespace PoincareJ;
 
 void testTreeConstructor() {
-  constexpr CTree tree = Int<3>();
-  const Node node = Addi(tree, Fact(Int<8>()));
+  constexpr CTree tree = 3_n;
+  const Node node = Addi(tree, Fact(8_n));
   node.log();
 
-  Node(Multi(Int<5>(), Int<8>(), tree)).log();
+  Node((5_n + 8_n + 4_n) * 3_n * tree).log();
+  Node(5_n - 8_n - 4_n).log();
+  Node(4_n * 3_n + 2_n * 1_n).log();
+  Node(4_n * 3_n / 2_n * 1_n).log();
 }
 QUIZ_CASE(pcj_tree_constructor) { testTreeConstructor(); }
 
-void testTreeConstructorInt() {
+void testTreeIntegerConstructor() {
   assert(Node(Int<1>()).nodeSize() == 1);
   assert(Node(Int<12>()).nodeSize() == 3);
   assert(Node(Int<1234>()).nodeSize() == 6);
@@ -32,4 +35,4 @@ void testTreeConstructorInt() {
   assert(Integer::Handler(Int< 123456789>()).to<double>() == 123456789.0);
   assert(Integer::Handler(Int<-123456789>()).to<double>() == -123456789.0);
 }
-QUIZ_CASE(pcj_tree_constructor_int) { testTreeConstructorInt(); }
+QUIZ_CASE(pcj_tree_integer_constructor) { testTreeIntegerConstructor(); }

@@ -15,35 +15,37 @@ namespace PoincareJ {
 // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
 // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
 
-template <BlockType... Blocks>
+template <Block... Blocks>
 class CTree {
 public:
-  static constexpr TypeBlock blocks[] = { Blocks... };
+  static constexpr Block blocks[] = { Blocks... };
   constexpr operator const Node () { return blocks; }
 };
 
+
 // Helpers
 
-template <BlockType Tag, BlockType... B1> consteval auto Unary(CTree<B1...>) {
+template <Block Tag, Block... B1> consteval auto Unary(CTree<B1...>) {
   return CTree<Tag, B1...>();
 }
 
-template <BlockType Tag, BlockType... B1, BlockType... B2> consteval auto Binary(CTree<B1...>, CTree<B2...>) {
+template <Block Tag, Block... B1, Block... B2> consteval auto Binary(CTree<B1...>, CTree<B2...>) {
   return CTree<Tag, B1..., B2...>();
 }
 
-template <BlockType Tag, BlockType... B1, BlockType... B2> consteval auto NAry(CTree<B1...>, CTree<B2...>) {
-  return CTree<Tag, static_cast<BlockType>(2), Tag, B1..., B2...>();
+template <Block Tag, Block... B1, Block... B2> consteval auto NAry(CTree<B1...>, CTree<B2...>) {
+  return CTree<Tag, 2, Tag, B1..., B2...>();
 }
 
-template <BlockType Tag, BlockType... B1, BlockType... B2, BlockType... B3> consteval auto NAry(CTree<B1...>, CTree<B2...>, CTree<B3...>) {
-  return CTree<Tag, static_cast<BlockType>(3), Tag, B1..., B2..., B3...>();
+template <Block Tag, Block... B1, Block... B2, Block... B3> consteval auto NAry(CTree<B1...>, CTree<B2...>, CTree<B3...>) {
+  return CTree<Tag, 3, Tag, B1..., B2..., B3...>();
 }
 
-template <BlockType Tag, BlockType... B1, BlockType... B2, BlockType... B3, BlockType... B4> consteval auto NAry(CTree<B1...>, CTree<B2...>, CTree<B3...>, CTree<B4...>) {
-  return CTree<Tag, static_cast<BlockType>(4), Tag, B1..., B2..., B3..., B4...>();
+template <Block Tag, Block... B1, Block... B2, Block... B3, Block... B4> consteval auto NAry(CTree<B1...>, CTree<B2...>, CTree<B3...>, CTree<B4...>) {
+  return CTree<Tag, 4, Tag, B1..., B2..., B3..., B4...>();
 }
 
+constexpr Block FactBlock = TypeBlock(BlockType::Factorial);
 
 // Constructors
 
@@ -55,11 +57,12 @@ template <class...Args> consteval auto Sub(Args...args) { return Binary<BlockTyp
 
 template <class...Args> consteval auto Pow(Args...args) { return Binary<BlockType::Power>(args...); }
 
-template <class...Args> consteval auto Add(Args...args) { return NAry<BlockType::Addition>(args...); }
+template <class...Args> consteval auto Addi(Args...args) { return NAry<BlockType::Addition>(args...); }
 
-template <class...Args> consteval auto Mult(Args...args) { return NAry<BlockType::Multiplication>(args...); }
+template <class...Args> consteval auto Multi(Args...args) { return NAry<BlockType::Multiplication>(args...); }
 
-template <class...Args> consteval auto Set(Args...args) { return NAry<BlockType::Set>(args...); }
+template <class...Args> consteval auto Seti(Args...args) { return NAry<BlockType::Set>(args...); }
+
 
 // Integers
 
@@ -70,17 +73,17 @@ static constexpr int k_maxIntegerPosBigThreeBytes = (1 << 24) - 1;
 static constexpr int k_minIntegerNegBigTwoBytes = - (1 << 16) - 1;
 
 template <int V> requires (V >= k_minIntegerShort && V <= k_maxIntegerShort) consteval auto Int() {
-  return CTree<BlockType::IntegerShort, static_cast<BlockType>(V), BlockType::IntegerShort>();
+  return CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>();
 }
 
 // TODO produce the following with a template
 
 template <int V> requires (V > k_maxIntegerShort && V <= k_maxIntegerPosBigTwoBytes) consteval auto Int() {
-  return CTree<BlockType::IntegerPosBig, static_cast<BlockType>(2), static_cast<BlockType>(V%256), static_cast<BlockType>(V/256), static_cast<BlockType>(2), BlockType::IntegerPosBig>();
+  return CTree<BlockType::IntegerPosBig, 2, V%256, V/256, 2, BlockType::IntegerPosBig>();
 }
 
 template <int V> requires (V < k_minIntegerShort && V >= k_minIntegerNegBigTwoBytes) consteval auto Int() {
-  return CTree<BlockType::IntegerNegBig, static_cast<BlockType>(2), static_cast<BlockType>((-V)%256), static_cast<BlockType>((-V)/256), static_cast<BlockType>(2), BlockType::IntegerNegBig>();
+  return CTree<BlockType::IntegerNegBig, 2, (-V)%256, (-V)/256, 2, BlockType::IntegerNegBig>();
 }
 
 template<> consteval auto Int<-1>() { return CTree<BlockType::MinusOne>(); }

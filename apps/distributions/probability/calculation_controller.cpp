@@ -192,9 +192,19 @@ bool CalculationController::textFieldDidFinishEditing(AbstractTextField * textFi
     if (floatBody > 1.0) {
       floatBody = 1.0;
     }
-  } else if (!m_distribution->isContinuous()) {
+  } else if (!m_distribution->isContinuous() && floatBody != std::round(floatBody)) {
     assert(selectedColumn() == 1 || (selectedColumn() == 2 && m_calculation->type() == Calculation::Type::FiniteIntegral));
-    floatBody = std::round(floatBody);
+    Calculation::Type calculationType = m_calculation->type();
+    if (calculationType == Calculation::Type::Discrete) {
+      floatBody = std::round(floatBody);
+    } else if (calculationType == Calculation::Type::LeftIntegral || (m_calculation->type() == Calculation::Type::FiniteIntegral && selectedColumn() == 2)) {
+      // X <= floatBody is equivalent to X <= floor(floatBody) when discrete
+      floatBody = std::floor(floatBody);
+    } else {
+      assert(calculationType == Calculation::Type::RightIntegral || (m_calculation->type() == Calculation::Type::FiniteIntegral && selectedColumn() == 1));
+      // X >= floatBody is equivalent to X >= ceil(floatBody) when discrete
+      floatBody = std::ceil(floatBody);
+    }
   }
   m_calculation->setParameterAtIndex(floatBody, selectedColumn() - 1);
   if (event == Ion::Events::Right || event == Ion::Events::Left) {

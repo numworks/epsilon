@@ -8,8 +8,7 @@ namespace Sequence {
 class SumColumnParameterController : public Shared::CalculusColumnParameterController {
 public:
   SumColumnParameterController(Shared::ValuesController * valuesController) :
-    // TODO: Change message
-    Shared::CalculusColumnParameterController(I18n::Message::HideDerivativeColumn, valuesController)
+    Shared::CalculusColumnParameterController(I18n::Message::HideSumOfTerms, valuesController)
   {}
 private:
   void hideCalculusColumn() override {

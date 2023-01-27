@@ -10,8 +10,7 @@ namespace Sequence {
 
 SequenceColumnParameterController::SequenceColumnParameterController(ValuesController * valuesController) :
   ColumnParameterController(valuesController),
-  // TODO: Change messages
-  m_showSumCell(I18n::Message::GraphDerivative, I18n::Message::GraphDerivative),
+  m_showSumCell(I18n::Message::ShowSumOfTerms, I18n::Message::ShowSumOfTermsSublabel),
   m_valuesController(valuesController)
 {
   m_showSumCell.setState(false);

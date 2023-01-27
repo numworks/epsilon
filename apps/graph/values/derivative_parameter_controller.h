@@ -1,29 +1,19 @@
 #ifndef GRAPH_DERIVATIVE_PARAM_CONTROLLER_H
 #define GRAPH_DERIVATIVE_PARAM_CONTROLLER_H
 
-#include <escher/message_table_cell.h>
-#include <apps/shared/continuous_function_store.h>
-#include "../../shared/column_parameter_controller.h"
+#include <apps/shared/calculus_column_parameter_controller.h>
 
 namespace Graph {
 
-class ValuesController;
-
-class DerivativeParameterController : public Shared::ColumnParameterController {
+class DerivativeParameterController : public Shared::CalculusColumnParameterController {
 public:
-  DerivativeParameterController(ValuesController * valuesController);
-
-  bool handleEvent(Ion::Events::Event event) override;
-  int numberOfRows() const override;
-  Escher::HighlightCell * reusableCell(int index, int type) override;
-  void setRecord(Ion::Storage::Record record) { m_record = record; }
+  DerivativeParameterController(Shared::ValuesController * valuesController) :
+    Shared::CalculusColumnParameterController(I18n::Message::HideDerivativeColumn, valuesController)
+  {}
 private:
-  Shared::ContinuousFunctionStore * functionStore();
-  constexpr static int k_totalNumberOfCell = 1;
-  Shared::ColumnNameHelper * columnNameHelper() override;
-  Escher::MessageTableCell m_hideColumn;
-  Ion::Storage::Record m_record;
-  ValuesController * m_valuesController;
+  void hideCalculusColumn() override {
+    Shared::GlobalContext::continuousFunctionStore->modelForRecord(m_record)->setDisplayDerivative(false);
+  }
 };
 
 }

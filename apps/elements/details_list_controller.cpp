@@ -37,9 +37,10 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     const DataField * dataField = DataFieldForRow(index);
     Layout l = DataFieldForRow(index)->getLayout(App::app()->elementsViewDataSource()->selectedElement(), PrintFloat::k_numberOfStoredSignificantDigits);
     int length;
-    if (l.isIdenticalTo(DataField::UnknownValueLayout()) // N/A value
-     || dataField == &ElementsDataBase::GroupField       // Group field
-     || dataField == &ElementsDataBase::StateField) {    // State field
+    if (l.isIdenticalTo(DataField::UnknownValueLayout())   // N/A value
+     || dataField == &ElementsDataBase::ConfigurationField // Configuration field
+     || dataField == &ElementsDataBase::GroupField         // Group field
+     || dataField == &ElementsDataBase::StateField) {      // State field
       length = strlcpy(buffer, "", size);
     } else {
       length = l.serializeForParsing(buffer, size);

@@ -71,6 +71,7 @@ static constexpr int k_maxIntegerShort = (1 << 7) - 1; // INT8MAX
 static constexpr int k_maxIntegerPosBigTwoBytes = (1 << 16) - 1;
 static constexpr int k_maxIntegerPosBigThreeBytes = (1 << 24) - 1;
 static constexpr int k_minIntegerNegBigTwoBytes = - (1 << 16) - 1;
+static constexpr int k_minIntegerNegBigThreeBytes = - (1 << 24) - 1;
 
 template <int V> requires (V >= k_minIntegerShort && V <= k_maxIntegerShort) consteval auto Int() {
   return CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>();
@@ -79,11 +80,27 @@ template <int V> requires (V >= k_minIntegerShort && V <= k_maxIntegerShort) con
 // TODO produce the following with a template
 
 template <int V> requires (V > k_maxIntegerShort && V <= k_maxIntegerPosBigTwoBytes) consteval auto Int() {
-  return CTree<BlockType::IntegerPosBig, 2, V%256, V/256, 2, BlockType::IntegerPosBig>();
+  return CTree<BlockType::IntegerPosBig, 2, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), 2, BlockType::IntegerPosBig>();
+}
+
+template <int V> requires (V > k_maxIntegerPosBigTwoBytes && V <= k_maxIntegerPosBigThreeBytes) consteval auto Int() {
+  return CTree<BlockType::IntegerPosBig, 3, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), 3, BlockType::IntegerPosBig>();
+}
+
+template <int V> requires (V > k_maxIntegerPosBigThreeBytes ) consteval auto Int() {
+  return CTree<BlockType::IntegerPosBig, 4, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), Bit::getByteAtIndex(V, 3), 4, BlockType::IntegerPosBig>();
 }
 
 template <int V> requires (V < k_minIntegerShort && V >= k_minIntegerNegBigTwoBytes) consteval auto Int() {
-  return CTree<BlockType::IntegerNegBig, 2, (-V)%256, (-V)/256, 2, BlockType::IntegerNegBig>();
+  return CTree<BlockType::IntegerNegBig, 2, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), 2, BlockType::IntegerNegBig>();
+}
+
+template <int V> requires (V < k_minIntegerNegBigTwoBytes && V >= k_minIntegerNegBigThreeBytes) consteval auto Int() {
+  return CTree<BlockType::IntegerNegBig, 3, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), 3, BlockType::IntegerNegBig>();
+}
+
+template <int V> requires (V < k_minIntegerNegBigThreeBytes) consteval auto Int() {
+  return CTree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), Bit::getByteAtIndex(-V, 3), 4, BlockType::IntegerNegBig>();
 }
 
 template<> consteval auto Int<-1>() { return CTree<BlockType::MinusOne>(); }

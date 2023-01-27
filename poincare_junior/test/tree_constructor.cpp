@@ -14,5 +14,9 @@ void testTreeConstructor() {
   assert(Node(Int<42>()).nodeSize() == 3);
   assert(Node(Int<424>()).nodeSize() == 6);
   assert(Node(Int<-12345>()).nodeSize() == 6);
+  assert(Node(Int<123456>()).nodeSize() == 7);
+  assert(Node(Int<-123456>()).nodeSize() == 7);
+  assert(Node(Int<123456789>()).nodeSize() == 8);
+  assert(Node(Int<-123456789>()).nodeSize() == 8);
 }
 QUIZ_CASE(pcj_tree_constructor) { testTreeConstructor(); }

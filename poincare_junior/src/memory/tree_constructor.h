@@ -78,7 +78,7 @@ template <Block T, int V> struct IntHelper<4,T,V> : CTree<T, 4, Bit::getByteAtIn
 template <int V> requires (V < INT8_MIN || V > INT8_MAX) consteval auto Int() {
   constexpr Block tag = V < 0 ? BlockType::IntegerNegBig : BlockType::IntegerPosBig;
   constexpr int value = V < 0 ? -V : V;
-  constexpr Block size = 2 + (value > UINT16_MAX) + (value > UINT16_MAX * UINT8_MAX);
+  constexpr Block size = Integer::NumberOfDigits(value);
   return IntHelper<size, tag, value>();
 }
 

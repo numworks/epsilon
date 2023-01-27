@@ -38,15 +38,6 @@ void Store::invalidateSortedIndexes() {
   }
 }
 
-int Store::activeSeriesIndex(int series, ActiveSeriesTest activeSeriesTest) const {
-  assert(activeSeriesTest(this, series));
-  int index = 0;
-  for (int i = 0; i < series; i++) {
-    index += activeSeriesTest(this, i);
-  }
-  return index;
-}
-
 /* Data */
 
 int Store::relativeColumnIndex(int i) const {

@@ -104,41 +104,39 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
       inputController->edit(event, this,
-        [](void * context, void * sender){
-        ListController * myController = static_cast<ListController *>(context);
-        InputViewController * myInputViewController = (InputViewController *)sender;
-        const char * textBody = myInputViewController->textBody();
-        bool res = myController->editSelectedRecordWithText(textBody);
-        App::app()->snapshot()->updateInterval();
-        return res;
+        [](void * context, void * sender) {
+          ListController * myController = static_cast<ListController *>(context);
+          InputViewController * myInputViewController = (InputViewController *)sender;
+          const char * textBody = myInputViewController->textBody();
+          return myController->editSelectedRecordWithText(textBody);
         },
-        [](void * context, void * sender){
-        return true;
+        [](void * context, void * sender) {
+          return true;
       });
       break;
   case k_firstInitialCondition:
     inputController->edit(event, this,
-      [](void * context, void * sender){
-      ListController * myController = static_cast<ListController *>(context);
-      InputViewController * myInputViewController = (InputViewController *)sender;
-      const char * textBody = myInputViewController->textBody();
-      return myController->editInitialConditionOfSelectedRecordWithText(textBody, true);
+      [](void * context, void * sender) {
+        ListController * myController = static_cast<ListController *>(context);
+        InputViewController * myInputViewController = (InputViewController *)sender;
+        const char * textBody = myInputViewController->textBody();
+        return myController->editInitialConditionOfSelectedRecordWithText(textBody, true);
       },
-      [](void * context, void * sender){
-      return true;
+      [](void * context, void * sender) {
+        return true;
     });
     break;
   default:
     assert(sequenceDefinition == k_secondInitialCondition);
     inputController->edit(event, this,
-      [](void * context, void * sender){
-      ListController * myController = static_cast<ListController *>(context);
-      InputViewController * myInputViewController = (InputViewController *)sender;
-      const char * textBody = myInputViewController->textBody();
-      return myController->editInitialConditionOfSelectedRecordWithText(textBody, false);
+      [](void * context, void * sender) {
+        ListController * myController = static_cast<ListController *>(context);
+        InputViewController * myInputViewController = (InputViewController *)sender;
+        const char * textBody = myInputViewController->textBody();
+        return myController->editInitialConditionOfSelectedRecordWithText(textBody, false);
       },
-      [](void * context, void * sender){
-      return true;
+      [](void * context, void * sender) {
+        return true;
     });
   }
 }
@@ -229,11 +227,6 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       selectCellAtLocation(selectedColumn(), newSelectedRow);
       selectableTableView()->reloadData();
     }
-    if (modelStore()->numberOfModels() == 0) {
-      App::app()->snapshot()->resetInterval();
-    } else {
-      App::app()->snapshot()->updateInterval();
-    }
     return true;
   }
   if (selectedColumn() == 1) {
@@ -294,6 +287,7 @@ bool ListController::editInitialConditionOfSelectedRecordWithText(const char * t
   Shared::Sequence * sequence = modelStore()->modelForRecord(record);
   Context * context = App::app()->localContext();
   Ion::Storage::Record::ErrorStatus error = firstInitialCondition? sequence->setFirstInitialConditionContent(text, context) : sequence->setSecondInitialConditionContent(text, context);
+  didChangeModelsList();
   return (error == Ion::Storage::Record::ErrorStatus::None);
 }
 
@@ -406,6 +400,11 @@ KDCoordinate ListController::maxFunctionNameWidth() {
 void ListController::didChangeModelsList() {
   ExpressionModelListController::didChangeModelsList();
   computeTitlesColumnWidth();
+  if (modelStore()->numberOfModels() == 0) {
+    App::app()->snapshot()->resetInterval();
+  } else {
+    App::app()->snapshot()->updateInterval();
+  }
 }
 
 KDCoordinate ListController::baseline(int j) {

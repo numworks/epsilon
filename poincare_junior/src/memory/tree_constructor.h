@@ -53,6 +53,9 @@ template <Block Tag, Block N1, Block... B1, Block... B2> consteval auto NAryOper
   return CTree<Tag, static_cast<uint8_t>(N1) + 1, Tag, B1..., B2...>();
 }
 
+// Enable operators for structs that have deduction guides into CTrees
+template <Block Tag, class A, class B> consteval auto NAryOperator(A a, B b) { return NAryOperator<Tag>(CTree(a), CTree(b)); }
+
 
 // Constructors
 
@@ -89,6 +92,8 @@ template <Block... B1, Block... B2> consteval auto operator/(CTree<B1...>, CTree
 
 template <Block... B1, Block... B2> consteval auto operator+(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Addition, 2, BlockType::Addition, B1..., B2...>(); }
 
+template <class A, class B> consteval auto operator+(A a, B b) { return CTree(a) + CTree(b); }
+
 template <Block N1, Block... B1, Block... B2> consteval auto operator+(CTree<BlockType::Addition, N1, BlockType::Addition, B1...>, CTree<B2...>) {
   return CTree<BlockType::Addition, static_cast<uint8_t>(N1) + 1, BlockType::Addition, B1..., B2...>();
 }
@@ -98,6 +103,8 @@ template <Block... B1, Block... B2> consteval auto operator*(CTree<B1...>, CTree
 template <Block N1, Block... B1, Block... B2> consteval auto operator*(CTree<BlockType::Multiplication, N1, BlockType::Multiplication, B1...>, CTree<B2...>) {
   return CTree<BlockType::Multiplication, static_cast<uint8_t>(N1) + 1, BlockType::Multiplication, B1..., B2...>();
 }
+
+template <class A, class B> consteval auto operator*(A a, B b) { return CTree(a) * CTree(b); }
 
 #endif
 
@@ -125,13 +132,41 @@ template<> consteval auto Int<0>() { return CTree<BlockType::Zero>(); }
 template<> consteval auto Int<1>() { return CTree<BlockType::One>(); }
 template<> consteval auto Int<2>() { return CTree<BlockType::Two>(); }
 
-constexpr static uint64_t Value(const char * str, size_t size);
 
+// Unary operator-
+
+template <int8_t V> using Inti = CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
+
+template <int8_t V> struct Immediate {
+  // once a deduction guide as required a given CTree from the immediate, build it
+  template <Block...B> consteval operator CTree<B...> () { return CTree<B...>(); }
+
+  constexpr operator const Node () { return CTree(Immediate<V>()); }
+
+  consteval Immediate<-V> operator-() { return Immediate<-V>(); }
+  // Note : we could decide to implement constant propagation operators here
+};
+
+// template <int8_t V> CTree(Immediate<V>)->Inti<V>; // only GCC accepts this one
+
+template <int8_t V> CTree(Immediate<V>) -> CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
+
+CTree(Immediate<-1>)->CTree<BlockType::MinusOne>;
+CTree(Immediate<0>)->CTree<BlockType::Zero>;
+CTree(Immediate<1>)->CTree<BlockType::One>;
+CTree(Immediate<2>)->CTree<BlockType::Two>;
+
+template <int V> CTree(Immediate<V>) -> CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
+
+
+
+
+constexpr static uint64_t Value(const char * str, size_t size);
 template <char...C>
 consteval auto operator"" _n () {
   constexpr const char value[] = { C... , '\0' };
   constexpr int V = Value(value, sizeof...(C) + 1);
-  return Int<V>();
+  return Immediate<V>();
 }
 
 

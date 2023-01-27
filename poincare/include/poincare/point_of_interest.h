@@ -16,7 +16,14 @@ public:
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "PointOfInterest"; }
-  void logAttributes(std::ostream & stream) const override { stream << " abscissa=\"" << m_abscissa << "\" ordinate=\"" << m_ordinate << "\""; }
+  void logAttributes(std::ostream & stream) const override { stream
+      << " abscissa=\"" << m_abscissa
+      << "\" ordinate=\"" << m_ordinate
+      << "\" data=\"" << m_data
+      << "\" interest=\"" << static_cast<int>(m_interest)
+      << "\" inverted=\"" << m_inverted
+      << "\" subCurveIndex=\"" << static_cast<int>(m_subCurveIndex)
+      << "\""; }
 #endif
 
 private:

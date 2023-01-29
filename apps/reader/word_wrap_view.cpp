@@ -17,6 +17,7 @@ WordWrapTextView::WordWrapTextView(ReadBookController * readBookController) :
   m_length(0),
   m_isRichTextFile(false), // Value isn't important, it will change when the file is loaded
   m_lastPagesOffsetsIndex(0),
+  m_textColor(Palette::PrimaryText),
   m_readBookController(readBookController)
 {
   for (int i = 0; i < k_lastOffsetsBufferSize; i++) {
@@ -618,7 +619,8 @@ BookSave WordWrapTextView::getBookSave() const {
 
 void WordWrapTextView::setBookSave(BookSave save) {
   m_pageOffset = save.offset;
-  m_textColor = save.color;
+  // TODO: Understand why the color save crash the calculator and fix it
+  // m_textColor = save.color;
   m_lastPagesOffsetsIndex = 0;
 
   for (int i = 0; i < k_lastOffsetsBufferSize; i++) {

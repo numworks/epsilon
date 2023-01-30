@@ -31,6 +31,8 @@ void PrefacedTwiceTableView::setBackgroundColor(KDColor color) {
 void PrefacedTwiceTableView::setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical) {
   m_columnPrefaceView.setHorizontalCellOverlap(horizontal);
   m_columnPrefaceView.setVerticalCellOverlap(vertical);
+  m_prefaceIntersectionView.setHorizontalCellOverlap(horizontal);
+  m_prefaceIntersectionView.setVerticalCellOverlap(vertical);
   PrefacedTableView::setCellOverlap(horizontal, vertical);
 }
 

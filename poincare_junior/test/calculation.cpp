@@ -55,3 +55,8 @@ void testRunTimeCrashIllFormedExpression() {
   e.log();
 #endif
 }
+
+// This test is expected to fail
+// QUIZ__CASE(pcj_mustfail) {
+//   testRunTimeCrashIllFormedExpression();
+// }

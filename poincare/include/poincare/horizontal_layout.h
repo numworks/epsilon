@@ -1,6 +1,7 @@
 #ifndef POINCARE_HORIZONTAL_LAYOUT_NODE_H
 #define POINCARE_HORIZONTAL_LAYOUT_NODE_H
 
+#include <poincare/empty_rectangle.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 
@@ -17,7 +18,9 @@ public:
 
   HorizontalLayoutNode() :
     LayoutNode(),
-    m_numberOfChildren(0)
+    m_numberOfChildren(0),
+    m_emptyColor(EmptyRectangle::Color::Yellow),
+    m_emptyVisibility(EmptyRectangle::State::Visible)
   {}
 
   // Layout
@@ -47,18 +50,26 @@ public:
   }
 #endif
 
-protected:
+  void setEmptyColor(EmptyRectangle::Color color) { m_emptyColor = color; }
+  void setEmptyVisibility(EmptyRectangle::State state) { m_emptyVisibility = state; }
+
+private:
   // LayoutNode
   KDSize computeSize(KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode * l, KDFont::Size font) override;
   KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const;
 
-private:
   bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+
+  bool shouldDrawEmptyRectangle() const;
+
   // See comment on NAryExpressionNode
   uint16_t m_numberOfChildren;
+
+  EmptyRectangle::Color m_emptyColor;
+  EmptyRectangle::State m_emptyVisibility;
 };
 
 class HorizontalLayout final : public Layout {
@@ -85,7 +96,13 @@ public:
 
   void serializeChildren(int firstIndex, int lastIndex, char * buffer, int bufferSize);
 
-  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const { return static_cast<HorizontalLayoutNode *>(node())->relativeSelectionRect(selectionStart, selectionEnd, font); }
+  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const { return node()->relativeSelectionRect(selectionStart, selectionEnd, font); }
+
+  void setEmptyColor(EmptyRectangle::Color color) { node()->setEmptyColor(color); }
+  void setEmptyVisibility(EmptyRectangle::State state) { node()->setEmptyVisibility(state); }
+
+private:
+  HorizontalLayoutNode * node() const { return static_cast<HorizontalLayoutNode *>(Layout::node()); }
 };
 
 }

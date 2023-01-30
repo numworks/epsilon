@@ -222,9 +222,14 @@ bool HorizontalLayoutNode::hasText() const {
   return numberOfChildren() > 1 || (numberOfChildren() == 1 && childAtIndex(0)->hasText());
 }
 
-// Protected
+// Private
 
 KDSize HorizontalLayoutNode::computeSize(KDFont::Size font) {
+  if (numberOfChildren() == 0) {
+    KDSize emptyRectangleSize = EmptyRectangle::RectangleSize(font);
+    KDCoordinate width = shouldDrawEmptyRectangle() ? emptyRectangleSize.width() : 0;
+    return KDSize(width, emptyRectangleSize.height());
+  }
   KDCoordinate totalWidth = 0;
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
@@ -238,6 +243,9 @@ KDSize HorizontalLayoutNode::computeSize(KDFont::Size font) {
 }
 
 KDCoordinate HorizontalLayoutNode::computeBaseline(KDFont::Size font) {
+  if (numberOfChildren() == 0) {
+    return EmptyRectangle::RectangleSize(font).height() / 2;
+  }
   KDCoordinate result = 0;
   for (LayoutNode * l : children()) {
     result = std::max(result, l->baseline(font));
@@ -289,9 +297,6 @@ KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart
   return KDRect(KDPoint(selectionXStart, const_cast<HorizontalLayoutNode *>(this)->baseline(font) - maxAboveBaseline), KDSize(drawWidth, maxUnderBaseline + maxAboveBaseline));
 }
 
-
-// Private
-
 bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) {
   HorizontalLayout thisRef(this);
   int nChildren = numberOfChildren();
@@ -325,6 +330,11 @@ static void makePermanentIfBracket(LayoutNode * l, bool hasLeftSibling, bool has
 }
 
 void HorizontalLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  if (shouldDrawEmptyRectangle()) {
+    // If the layout is empty, draw an empty rectangle
+    EmptyRectangle::DrawEmptyRectangle(ctx, p, font, m_emptyColor);
+    return;
+  }
   HorizontalLayout thisLayout = HorizontalLayout(this);
   // Fill the selection background
   bool childrenAreSelected = selectionStart != nullptr && selectionEnd != nullptr
@@ -335,6 +345,18 @@ void HorizontalLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font,
     KDRect selectionRectangle = HorizontalLayout(this).relativeSelectionRect(selectionStart, selectionEnd, font);
     ctx->fillRect(selectionRectangle.translatedBy(p), selectionColor);
   }
+}
+
+bool HorizontalLayoutNode::shouldDrawEmptyRectangle() const {
+  if (numberOfChildren() > 0) {
+    return false;
+  }
+  LayoutNode * p = parent();
+  if (!p || (p && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(p->type()))) {
+    // Never show the empty child of a parenthesis of if has no parent
+    return false;
+  }
+  return m_emptyVisibility == EmptyRectangle::State::Visible;
 }
 
 // HorizontalLayout

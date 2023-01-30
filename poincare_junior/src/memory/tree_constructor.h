@@ -2,6 +2,7 @@
 #define POINCARE_MEMORY_TREE_CONSTRUCTOR_H
 
 #include <array>
+#include <concepts>
 #include "node_constructor.h"
 #include "node.h"
 #include "pattern_matching.h"
@@ -15,8 +16,12 @@ namespace PoincareJ {
 // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
 // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
 
+class AbstractCTreeCompatible {};
+
+template <class C> concept CTreeCompatible = std::derived_from<C, AbstractCTreeCompatible>;
+
 template <Block... Blocks>
-class CTree {
+class CTree : public AbstractCTreeCompatible {
 public:
   static constexpr Block blocks[] = { Blocks... };
   constexpr operator const Node () { return blocks; }
@@ -29,7 +34,7 @@ template <Block Tag, Block... B1> consteval auto Unary(CTree<B1...>) {
   return CTree<Tag, B1...>();
 }
 
-template <Block Tag, class A> consteval auto Unary(A a) {
+template <Block Tag, CTreeCompatible A> consteval auto Unary(A a) {
   return Unary<Tag>(CTree(a));
 }
 
@@ -37,7 +42,7 @@ template <Block Tag, Block... B1, Block... B2> consteval auto Binary(CTree<B1...
   return CTree<Tag, B1..., B2...>();
 }
 
-template <Block Tag, class A, class B> consteval auto Binary(A a, B b) {
+template <Block Tag, CTreeCompatible A, CTreeCompatible B> consteval auto Binary(A a, B b) {
   return Binary<Tag>(CTree(a), CTree(b));
 }
 
@@ -62,7 +67,7 @@ template <Block Tag, Block N1, Block... B1, Block... B2> consteval auto NAryOper
 }
 
 // Enable operators for structs that have deduction guides into CTrees
-template <Block Tag, class A, class B> consteval auto NAryOperator(A a, B b) { return NAryOperator<Tag>(CTree(a), CTree(b)); }
+template <Block Tag, CTreeCompatible A, CTreeCompatible B> consteval auto NAryOperator(A a, B b) { return NAryOperator<Tag>(CTree(a), CTree(b)); }
 
 
 // Constructors
@@ -96,15 +101,15 @@ template <class...Args> consteval auto operator*(Args...args) { return NAryOpera
 
 template <Block... B1, Block... B2> consteval auto operator-(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Subtraction, B1..., B2...>(); }
 
-template <class A, class B> consteval auto operator-(A a, B b) { return CTree(a) - CTree(b); }
+template <CTreeCompatible A, CTreeCompatible B> consteval auto operator-(A a, B b) { return CTree(a) - CTree(b); }
 
 template <Block... B1, Block... B2> consteval auto operator/(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Division, B1..., B2...>(); }
 
-template <class A, class B> consteval auto operator/(A a, B b) { return CTree(a) / CTree(b); }
+template <CTreeCompatible A, CTreeCompatible B> consteval auto operator/(A a, B b) { return CTree(a) / CTree(b); }
 
 template <Block... B1, Block... B2> consteval auto operator+(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Addition, 2, BlockType::Addition, B1..., B2...>(); }
 
-template <class A, class B> consteval auto operator+(A a, B b) { return CTree(a) + CTree(b); }
+template <CTreeCompatible A, CTreeCompatible B> consteval auto operator+(A a, B b) { return CTree(a) + CTree(b); }
 
 template <Block N1, Block... B1, Block... B2> consteval auto operator+(CTree<BlockType::Addition, N1, BlockType::Addition, B1...>, CTree<B2...>) {
   return CTree<BlockType::Addition, static_cast<uint8_t>(N1) + 1, BlockType::Addition, B1..., B2...>();
@@ -116,7 +121,7 @@ template <Block N1, Block... B1, Block... B2> consteval auto operator*(CTree<Blo
   return CTree<BlockType::Multiplication, static_cast<uint8_t>(N1) + 1, BlockType::Multiplication, B1..., B2...>();
 }
 
-template <class A, class B> consteval auto operator*(A a, B b) { return CTree(a) * CTree(b); }
+template <CTreeCompatible A, CTreeCompatible B> consteval auto operator*(A a, B b) { return CTree(a) * CTree(b); }
 
 #endif
 
@@ -147,7 +152,8 @@ template<> consteval auto Int<2>() { return CTree<BlockType::Two>(); }
 
 // Unary operator-
 
-template <int V> struct Immediate {
+template <int V> class Immediate : public AbstractCTreeCompatible {
+public:
   // once a deduction guide as required a given CTree from the immediate, build it
   template <Block...B> consteval operator CTree<B...> () { return CTree<B...>(); }
 

@@ -247,11 +247,14 @@ bool ExamModeConfiguration::unitsAreForbidden() {
 }
 
 I18n::Message ExamModeConfiguration::examModeTitleBarMessage(Poincare::Preferences::ExamMode mode) {
-  if (mode == Preferences::ExamMode::English) {
+  switch (mode) {
+  case Preferences::ExamMode::English:
     return I18n::Message::ExamModeTitleBarUK;
-  }
-  if (mode == Preferences::ExamMode::Dutch) {
+  case Preferences::ExamMode::Dutch:
     return I18n::Message::ExamModeTitleBarNL;
+  case Preferences::ExamMode::Portuguese:
+    return I18n::Message::ExamModeTitleBarPT;
+  default:
+    return I18n::Message::Default;
   }
-  return I18n::Message::Default;
 }

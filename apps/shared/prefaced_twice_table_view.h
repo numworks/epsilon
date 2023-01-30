@@ -35,13 +35,13 @@ private:
     int m_prefaceColumn;
   };
 
-  class IntersectionPrefaceDataSource : public RowPrefaceDataSource {
+  class IntersectionPrefaceDataSource : public ColumnPrefaceDataSource {
   public:
     /* The implementation of this class (1 row and 1 column) is a hack to avoid the diamond problem.
      * Indeed, IntersectionPrefaceDataSource should inherit from RowPrefaceDataSource (1 row) and
-     * ColumnPrefaceDataSource (1 column). The hack we chose is to inherit from RowPrefaceDataSource
-     * and take a ColumnPrefaceDataSource as m_mainDataSource. */
-    IntersectionPrefaceDataSource(int prefaceRow, ColumnPrefaceDataSource * columnDataSource) : RowPrefaceDataSource(prefaceRow, columnDataSource) {}
+     * ColumnPrefaceDataSource (1 column). The hack we chose is to inherit from ColumnPrefaceDataSource
+     * and take a RowPrefaceDataSource as m_mainDataSource. */
+    IntersectionPrefaceDataSource(int prefaceColumn, RowPrefaceDataSource * rowDataSource) : ColumnPrefaceDataSource(prefaceColumn, rowDataSource) {}
   };
 
   // View

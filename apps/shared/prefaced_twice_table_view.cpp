@@ -8,7 +8,7 @@ PrefacedTwiceTableView::PrefacedTwiceTableView(int prefaceRow, int prefaceColumn
   PrefacedTableView(prefaceRow, parentResponder, mainTableView, cellsDataSource, delegate, prefacedTableViewDelegate),
   m_columnPrefaceDataSource(prefaceColumn, cellsDataSource),
   m_columnPrefaceView(&m_columnPrefaceDataSource, &m_columnPrefaceDataSource),
-  m_prefaceIntersectionDataSource(prefaceRow, &m_columnPrefaceDataSource),
+  m_prefaceIntersectionDataSource(prefaceColumn, &m_rowPrefaceDataSource),
   m_prefaceIntersectionView(&m_prefaceIntersectionDataSource, &m_prefaceIntersectionDataSource),
   m_mainTableViewLeftMargin(0)
 {

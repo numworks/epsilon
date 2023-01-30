@@ -34,6 +34,12 @@ void PrefacedTwiceTableView::setCellOverlap(KDCoordinate horizontal, KDCoordinat
   PrefacedTableView::setCellOverlap(horizontal, vertical);
 }
 
+void PrefacedTwiceTableView::resetDataSourceSizeMemoization() {
+  PrefacedTableView::resetDataSourceSizeMemoization();
+  m_columnPrefaceDataSource.resetMemoization();
+  m_prefaceIntersectionDataSource.resetMemoization();
+}
+
 View * PrefacedTwiceTableView::subviewAtIndex(int index) {
   switch (index) {
   case 0:

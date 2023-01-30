@@ -2,6 +2,7 @@
 #define POINCARE_MEMORY_TYPE_BLOCK_H
 
 #include "block.h"
+#include <ion/unicode/code_point.h>
 
 namespace PoincareJ {
 
@@ -27,7 +28,7 @@ namespace PoincareJ {
  * - Rational(Pos/Neg)Big RB
  * | RB TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | NUMBER DIGITS | RB |
  *
- * - Float F
+ * - Float F (same for CodePointLayout)
  * | F TAG | VALUE (4 bytes) | F TAG |
  *
  * - Constant C
@@ -87,7 +88,8 @@ enum class BlockType : uint8_t {
 
   FirstLayout = NumberOfExpressions,
   HorizontalLayout = FirstLayout,
-  LastLayout = HorizontalLayout,
+  CodePointLayout,
+  LastLayout = CodePointLayout,
 
   Placeholder,
   NumberOfTypes
@@ -125,6 +127,7 @@ BLOCK_TYPE_IS_EXPRESSION(BlockType::List);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Polynomial);
 
 BLOCK_TYPE_IS_LAYOUT(BlockType::HorizontalLayout);
+BLOCK_TYPE_IS_LAYOUT(BlockType::CodePointLayout);
 
 // TODO:
 // - if the number of BlockType > 256, add a special tag that prefixes the least
@@ -175,6 +178,8 @@ public:
         return 5;
       case BlockType::Float:
         return 2 + sizeof(float)/sizeof(uint8_t);
+      case BlockType::CodePointLayout:
+        return 2 + sizeof(CodePoint)/sizeof(uint8_t);
       case BlockType::Addition:
       case BlockType::Multiplication:
       case BlockType::Constant:

@@ -68,7 +68,9 @@ void testTypeBlock() {
     std::make_pair(BlockType::Power, TypeBlockProperties{.nAry = false, .expression = true, .layout = false, .integer = false, .rational = false, .number = false, .userNamed = false }),
     std::make_pair(BlockType::Factorial, TypeBlockProperties{.nAry = false, .expression = true, .layout = false, .integer = false, .rational = false, .number = false, .userNamed = false }),
     std::make_pair(BlockType::Subtraction, TypeBlockProperties{.nAry = false, .expression = true, .layout = false, .integer = false, .rational = false, .number = false, .userNamed = false }),
-    std::make_pair(BlockType::Division, TypeBlockProperties{.nAry = false, .expression = true, .layout = false, .integer = false, .rational = false, .number = false, .userNamed = false })
+    std::make_pair(BlockType::Division, TypeBlockProperties{.nAry = false, .expression = true, .layout = false, .integer = false, .rational = false, .number = false, .userNamed = false }),
+    std::make_pair(BlockType::HorizontalLayout, TypeBlockProperties{.nAry = true, .expression = false, .layout = true, .integer = false, .rational = false, .number = false, .userNamed = false }),
+    std::make_pair(BlockType::CodePointLayout, TypeBlockProperties{.nAry = false, .expression = false, .layout = true, .integer = false, .rational = false, .number = false, .userNamed = false })
   };
 
   for (std::pair<BlockType, TypeBlockProperties> test : blockTypeTests) {

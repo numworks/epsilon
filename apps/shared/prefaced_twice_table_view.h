@@ -14,6 +14,7 @@ public:
   void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical) override;
 
   Escher::TableView * columnPrefaceView() { return &m_columnPrefaceView; }
+  void resetDataSourceSizeMemoization() override;
 
 private:
   class ColumnPrefaceDataSource : public IntermediaryDataSource {

@@ -43,7 +43,7 @@ public:
   };
 
   void setMarginDelegate(MarginDelegate * delegate) { m_marginDelegate = delegate; }
-  void resetDataSourceSizeMemoization() { m_rowPrefaceDataSource.resetMemoization(); }
+  virtual void resetDataSourceSizeMemoization() { m_rowPrefaceDataSource.resetMemoization(); }
 protected:
   class IntermediaryDataSource : public Escher::TableViewDataSource, public Escher::ScrollViewDataSource {
   public:

@@ -7,7 +7,7 @@
 namespace PoincareJ {
 
 // TODO dummy parse
-Expression Expression::Parse(const char * textInput) {
+Expression Expression::CreateExpressionFromText(const char * textInput) {
   // textInput == (1-2)/3/4
   return Expression([](const char * text){
       EditionReference::Push<BlockType::Division>();

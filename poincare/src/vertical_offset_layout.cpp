@@ -176,25 +176,29 @@ KDSize VerticalOffsetLayoutNode::computeSize(KDFont::Size font) {
       width += k_separationMargin;
     }
   }
-  KDCoordinate height = baseLayout()->layoutSize(font).height() - k_indiceHeight + indiceLayout()->layoutSize(font).height();
+  if (m_emptyBaseVisibility == EmptyRectangle::State::Visible && baseLayout() == nullptr) {
+    width += EmptyRectangle::RectangleSize(font).width();
+  }
+  KDCoordinate height = baseSize(font).height() - k_indiceHeight + indiceLayout()->layoutSize(font).height();
   return KDSize(width, height);
 }
 
 KDCoordinate VerticalOffsetLayoutNode::computeBaseline(KDFont::Size font) {
   if (verticalPosition() == VerticalPosition::Subscript) {
-    return baseLayout()->baseline(font);
-  } else {
-    return indiceLayout()->layoutSize(font).height() - k_indiceHeight + baseLayout()->baseline(font);
+    return baseBaseline(font);
   }
+  assert(verticalPosition() == VerticalPosition::Superscript);
+  return indiceLayout()->layoutSize(font).height() - k_indiceHeight + baseBaseline(font);
 }
 
 KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
   assert(child == indiceLayout());
+  KDCoordinate shiftForEmpty = baseLayout() == nullptr && horizontalPosition() == HorizontalPosition::Suffix ? baseSize(font).width() : 0;
   if (verticalPosition() == VerticalPosition::Superscript) {
-    return KDPointZero;
+    return KDPoint(shiftForEmpty, 0);
   }
   assert(verticalPosition() == VerticalPosition::Subscript);
-  return KDPoint(0, baseLayout()->layoutSize(font).height() - k_indiceHeight);
+  return KDPoint(shiftForEmpty, baseSize(font).height() - k_indiceHeight);
 }
 
 bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) {
@@ -253,15 +257,46 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
 LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   LayoutNode * parentNode = parent();
   assert(parentNode != nullptr);
-  assert(parentNode->type() == Type::HorizontalLayout);
+  if (!parentNode) {
+    return nullptr;
+  }
   int idxInParent = parentNode->indexOfChild(this);
-  return parentNode->childAtIndex(idxInParent + baseOffsetInParent());
+  assert(idxInParent >= 0);
+  int baseIndex = idxInParent + baseOffsetInParent();
+  if (baseIndex < 0 || baseIndex >= parent()->numberOfChildren()) {
+    return nullptr;
+  }
+  return parentNode->childAtIndex(baseIndex);
+}
+
+KDSize VerticalOffsetLayoutNode::baseSize(KDFont::Size font) {
+  return baseLayout() ? baseLayout()->layoutSize(font) : (m_emptyBaseVisibility == EmptyRectangle::State::Visible ? EmptyRectangle::RectangleSize(font) : KDSize(0, EmptyRectangle::RectangleSize(font).height()));
+}
+
+KDCoordinate VerticalOffsetLayoutNode::baseBaseline(KDFont::Size font) {
+  return baseLayout() ? baseLayout()->baseline(font) : EmptyRectangle::RectangleSize(font).height() / 2;
 }
 
 bool VerticalOffsetLayoutNode::protectedIsIdenticalTo(Layout l) {
   assert(l.type() == Type::VerticalOffsetLayout);
   VerticalOffsetLayoutNode * n = static_cast<VerticalOffsetLayoutNode *>(l.node());
   return verticalPosition() == n->verticalPosition() && horizontalPosition() == n->horizontalPosition() && LayoutNode::protectedIsIdenticalTo(l);
+}
+
+void VerticalOffsetLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  if (baseLayout() || m_emptyBaseVisibility == EmptyRectangle::State::Hidden) {
+    return;
+  }
+  KDCoordinate emptyRectangleHorizontalOrigin;
+  if (horizontalPosition() == HorizontalPosition::Suffix) {
+    emptyRectangleHorizontalOrigin = 0;
+  } else {
+    assert(horizontalPosition() == HorizontalPosition::Prefix);
+    KDCoordinate totalWidth = layoutSize(font).width();
+    emptyRectangleHorizontalOrigin = totalWidth - EmptyRectangle::RectangleSize(font).width();
+  }
+  KDPoint emptyRectangleOrigin = p.translatedBy(KDPoint(emptyRectangleHorizontalOrigin, baseline(font) - baseBaseline(font)));
+  EmptyRectangle::DrawEmptyRectangle(ctx, emptyRectangleOrigin, font, EmptyRectangle::Color::Yellow);
 }
 
 VerticalOffsetLayout VerticalOffsetLayout::Builder(Layout l, VerticalOffsetLayoutNode::VerticalPosition verticalPosition, VerticalOffsetLayoutNode::HorizontalPosition horizontalPosition) {

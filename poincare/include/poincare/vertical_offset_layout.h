@@ -1,6 +1,7 @@
 #ifndef POINCARE_VERTICAL_OFFSET_LAYOUT_NODE_H
 #define POINCARE_VERTICAL_OFFSET_LAYOUT_NODE_H
 
+#include <poincare/empty_rectangle.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
 
@@ -20,6 +21,7 @@ public:
 
   VerticalOffsetLayoutNode(VerticalPosition verticalPosition = VerticalPosition::Superscript, HorizontalPosition horizontalPosition = HorizontalPosition::Suffix) :
     LayoutNode(),
+    m_emptyBaseVisibility(EmptyRectangle::State::Visible),
     m_verticalPosition(verticalPosition),
     m_horizontalPosition(horizontalPosition)
   {}
@@ -54,6 +56,8 @@ public:
   }
 #endif
 
+  void setEmptyVisibility(EmptyRectangle::State state) { m_emptyBaseVisibility = state; }
+
 private:
   // LayoutNode
   constexpr static KDCoordinate k_indiceHeight = 10;
@@ -63,13 +67,17 @@ private:
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
   bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   bool protectedIsIdenticalTo(Layout l) override;
 
   LayoutNode * indiceLayout() { return childAtIndex(0); }
   int baseOffsetInParent() const { return m_horizontalPosition == HorizontalPosition::Prefix ? +1 : -1; }
   LayoutNode * baseLayout();
 
+  KDSize baseSize(KDFont::Size font);
+  KDCoordinate baseBaseline(KDFont::Size font);
+
+  EmptyRectangle::State m_emptyBaseVisibility;
   /* Since both enums can be represented on one bit each, use the bitfield
    * syntax to let the compiler cram them into one byte instead of two. */
   VerticalPosition m_verticalPosition : 1;
@@ -80,7 +88,11 @@ class VerticalOffsetLayout final : public Layout {
 public:
   static VerticalOffsetLayout Builder(Layout l, VerticalOffsetLayoutNode::VerticalPosition verticalPosition, VerticalOffsetLayoutNode::HorizontalPosition horizontalPosition = VerticalOffsetLayoutNode::HorizontalPosition::Suffix);
   VerticalOffsetLayout() = delete;
-  VerticalOffsetLayoutNode::VerticalPosition verticalPosition() const { return static_cast<VerticalOffsetLayoutNode *>(node())->verticalPosition(); }
+  VerticalOffsetLayoutNode::VerticalPosition verticalPosition() const { return node()->verticalPosition(); }
+  void setEmptyVisibility(EmptyRectangle::State state) { node()->setEmptyVisibility(state); }
+
+private:
+  VerticalOffsetLayoutNode * node() const { return static_cast<VerticalOffsetLayoutNode *>(Layout::node()); }
 };
 
 }

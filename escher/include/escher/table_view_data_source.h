@@ -29,16 +29,13 @@ public:
 
   KDCoordinate columnWidth(int i);
   KDCoordinate rowHeight(int j);
-  /* return the number of pixels to include in offset to display the column i
-   * at the top. */
+
   KDCoordinate cumulatedWidthBeforeIndex(int i);
   KDCoordinate cumulatedHeightBeforeIndex(int j);
-  /* return the number of columns (starting with first ones) that can be fully
-   * displayed in offsetX pixels.
-   * Caution: if the offset is exactly the size of n columns, the function
-   * returns n-1. */
+
   int indexAfterCumulatedWidth(KDCoordinate offsetX);
   int indexAfterCumulatedHeight(KDCoordinate offsetY);
+
   virtual HighlightCell * reusableCell(int index, int type) = 0;
   virtual int reusableCellCount(int type) = 0;
   virtual int typeAtLocation(int i, int j) = 0;

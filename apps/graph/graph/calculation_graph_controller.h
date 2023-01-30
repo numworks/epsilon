@@ -6,6 +6,7 @@
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/simple_interactive_curve_view_controller.h>
 #include <apps/shared/function_banner_delegate.h>
+#include <poincare/point_of_interest.h>
 
 namespace Graph {
 
@@ -34,7 +35,8 @@ protected:
   Shared::ContinuousFunctionStore * functionStore() const;
   Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, int direction);
   virtual Poincare::Solver<double>::Interest specialInterest() const { return Poincare::Solver<double>::Interest::None; }
-  virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context);
+  virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context) { return computeAtLeastOnePointOfInterest(start, max, context).xy(); }
+  Poincare::PointOfInterest computeAtLeastOnePointOfInterest(double start, double max, Poincare::Context * context);
 
   GraphView * m_graphView;
   BannerView * m_bannerView;

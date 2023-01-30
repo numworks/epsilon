@@ -85,7 +85,7 @@ Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAb
   return computeNewPointOfInterest(start, max, textFieldDelegateApp()->localContext());
 }
 
-Poincare::Coordinate2D<double> CalculationGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context) {
+PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(double start, double max, Poincare::Context * context) {
   // Compute at least 1 point of interest before displaying the view
   PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterestForSelectedRecord();
   while (pointsOfInterest->numberOfPoints(specialInterest()) == 0 && !pointsOfInterest->isFullyComputed()) {
@@ -96,7 +96,7 @@ Poincare::Coordinate2D<double> CalculationGraphController::computeNewPointOfInte
       break;
     }
   }
-  return pointsOfInterest->firstPointInDirection(start, max, specialInterest()).xy();
+  return pointsOfInterest->firstPointInDirection(start, max, specialInterest());
 }
 
 ContinuousFunctionStore * CalculationGraphController::functionStore() const {

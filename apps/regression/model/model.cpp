@@ -1,8 +1,10 @@
 #include "model.h"
 #include "../store.h"
+#include <apps/apps_container.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/decimal.h>
 #include <poincare/float.h>
+#include <poincare/function.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
 #include <cmath>
@@ -26,9 +28,12 @@ double Model::levelSet(double * modelCoefficients, double xMin, double xMax, dou
 
 void Model::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
   if (!dataSuitableForFit(store, series)) {
-    return initCoefficientsForFit(modelCoefficients, NAN, true);
+    initCoefficientsForFit(modelCoefficients, NAN, true);
+    deleteRegressionFunction(series);
+    return;
   }
-  return privateFit(store, series, modelCoefficients, context);
+  privateFit(store, series, modelCoefficients, context);
+  storeRegressionFunction(series, expression(modelCoefficients));
 }
 
 void Model::privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
@@ -42,6 +47,18 @@ bool Model::dataSuitableForFit(Store * store, int series) const {
     return false;
   }
   return store->seriesIsActive(series);
+}
+
+void Model::storeRegressionFunction(int series, Expression expression) const {
+  if (expression.isUninitialized()) {
+    return deleteRegressionFunction(series);
+  }
+  // TODO: Properly set name
+  char name[3];
+  name[0] = 'R';
+  name[1] = '1' + series;
+  name[2] = 0;
+  AppsContainer::sharedAppsContainer()->globalContext()->setExpressionForSymbolAbstract(expression, Poincare::Function::Builder(name, strlen(name), Poincare::Symbol::Builder('x')));
 }
 
 void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Context * context) {

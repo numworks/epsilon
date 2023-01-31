@@ -52,6 +52,9 @@ private:
   virtual Poincare::Expression expression(double * modelCoefficients) { return Poincare::Expression(); } // expression is overridden only by Models that do not override levelSet
   virtual double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const = 0;
 
+  void storeRegressionFunction(int series, Poincare::Expression expression) const;
+  void deleteRegressionFunction(int series) const { /* TODO */}
+
   // Levenberg-Marquardt
   constexpr static double k_maxIterations = 300;
   constexpr static double k_maxMatrixInversionFixIterations = 10;

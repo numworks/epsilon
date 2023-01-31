@@ -51,10 +51,8 @@ bool FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), textFieldDelegateApp()->localContext(), m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
-  Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  curveParameterControllerWithRecord()->setRecord(record);
-  StackViewController * stack = stackController();
-  stack->push(curveParameterController());
+  curveParameterControllerWithRecord()->setRecord(recordAtSelectedCurveIndex());
+  stackController()->push(curveParameterController());
   return true;
 }
 
@@ -200,8 +198,7 @@ bool FunctionGraphController::selectedModelIsValid() const {
 
 Poincare::Coordinate2D<double> FunctionGraphController::selectedModelXyValues(double t) const {
   assert(selectedModelIsValid());
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
-  return xyValues(*m_selectedCurveIndex, t, context, m_selectedSubCurveIndex);
+  return xyValues(*m_selectedCurveIndex, t, textFieldDelegateApp()->localContext(), m_selectedSubCurveIndex);
 }
 
 AbstractPlotView * FunctionGraphController::curveView() {

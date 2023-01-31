@@ -104,8 +104,7 @@ Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) co
 }
 
 bool GraphController::openMenuForCurveAtIndex(int curveIndex) {
-  Ion::Storage::Record record = recordAtCurveIndex(curveIndex);
-  m_termSumController.setRecord(record);
+  m_termSumController.setRecord(recordAtCurveIndex(curveIndex));
   return FunctionGraphController::openMenuForCurveAtIndex(curveIndex);
 }
 

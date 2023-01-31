@@ -80,7 +80,7 @@ private:
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() const;
   void setAbscissaInputAsFirstResponder();
   bool buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
-  bool selectedSeriesIsScatterPlot() const { return m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::None; }
+  bool selectedCurveIsScatterPlot() const { return m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::None; }
   void setRoundCrossCursorView();
   int seriesIndexFromCurveIndex(int curveIndex) const { return m_store->seriesIndexFromActiveSeriesIndex(curveIndex); }
   int curveIndexFromSeriesIndex(int seriesIndex) const { return m_store->activeSeriesIndexFromSeriesIndex(seriesIndex); }

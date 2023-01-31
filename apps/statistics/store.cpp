@@ -38,11 +38,11 @@ void Store::invalidateSortedIndexes() {
   }
 }
 
-int Store::activeSeriesIndex(int series, ActiveSeriesTest isActiveSeries) const {
-  assert(isActiveSeries(this, series));
+int Store::activeSeriesIndex(int series, ActiveSeriesTest activeSeriesTest) const {
+  assert(activeSeriesTest(this, series));
   int index = 0;
   for (int i = 0; i < series; i++) {
-    index += isActiveSeries(this, i);
+    index += activeSeriesTest(this, i);
   }
   return index;
 }
@@ -180,11 +180,11 @@ double Store::sumOfOccurrences(int series) const {
   return m_datasets[series].totalWeight();
 }
 
-double Store::maxValueForAllSeries(bool handleNullFrequencies, ActiveSeriesTest isActiveSeries) const {
+double Store::maxValueForAllSeries(bool handleNullFrequencies, ActiveSeriesTest activeSeriesTest) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
   double result = -DBL_MAX;
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    if (isActiveSeries(this, i)) {
+    if (activeSeriesTest(this, i)) {
       double maxCurrentSeries = maxValue(i, handleNullFrequencies);
       if (result < maxCurrentSeries) {
         result = maxCurrentSeries;
@@ -194,11 +194,11 @@ double Store::maxValueForAllSeries(bool handleNullFrequencies, ActiveSeriesTest 
   return result;
 }
 
-double Store::minValueForAllSeries(bool handleNullFrequencies, ActiveSeriesTest isActiveSeries) const {
+double Store::minValueForAllSeries(bool handleNullFrequencies, ActiveSeriesTest activeSeriesTest) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
   double result = DBL_MAX;
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    if (isActiveSeries(this, i)) {
+    if (activeSeriesTest(this, i)) {
       double minCurrentSeries = minValue(i, handleNullFrequencies);
       if (result > minCurrentSeries) {
         result = minCurrentSeries;

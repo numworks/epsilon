@@ -22,6 +22,10 @@ void PrefacedTwiceTableView::setMargins(KDCoordinate top, KDCoordinate right, KD
   // Column preface
   m_columnPrefaceView.setTopMargin(top);
   m_columnPrefaceView.setBottomMargin(bottom);
+  m_columnPrefaceView.setLeftMargin(0);
+  // Intersection preface
+  m_columnPrefaceView.setTopMargin(0);
+  m_columnPrefaceView.setLeftMargin(0);
 }
 
 void PrefacedTwiceTableView::setBackgroundColor(KDColor color) {
@@ -106,9 +110,18 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     m_columnPrefaceView.setTopMargin(m_mainTableView->topMargin());
     m_columnPrefaceView.setContentOffset(KDPoint(0, m_mainTableView->contentOffset().y()));
     m_columnPrefaceView.setFrame(KDRect(0, rowPrefaceHeight, columnPrefaceWidth, bounds().height() - rowPrefaceHeight), force);
+    assert(m_columnPrefaceView.leftMargin() == 0);
+    assert(m_columnPrefaceView.topMargin() == m_mainTableView->topMargin());
+    assert(m_columnPrefaceView.bottomMargin() == m_mainTableView->bottomMargin());
 
     // Intersection preface
+    m_prefaceIntersectionView.setRightMargin(m_columnPrefaceView.rightMargin());
+    m_prefaceIntersectionView.setBottomMargin(m_rowPrefaceView.bottomMargin());
     m_prefaceIntersectionView.setFrame(KDRect(0, 0, rowPrefaceHeight ? columnPrefaceWidth : 0, rowPrefaceHeight), force);
+    assert(m_prefaceIntersectionView.leftMargin() == m_columnPrefaceView.leftMargin());
+    assert(m_prefaceIntersectionView.rightMargin() == m_columnPrefaceView.rightMargin());
+    assert(m_prefaceIntersectionView.topMargin() == m_rowPrefaceView.topMargin());
+    assert(m_prefaceIntersectionView.bottomMargin() == m_rowPrefaceView.bottomMargin());
   }
 }
 

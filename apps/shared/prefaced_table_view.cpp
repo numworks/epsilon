@@ -20,24 +20,29 @@ namespace Shared {
 }
 
 void PrefacedTableView::setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left) {
+  // Main table
   m_mainTableView->setTopMargin(top);
   m_mainTableView->setRightMargin(right);
   m_mainTableView->setBottomMargin(bottom);
   m_mainTableView->setLeftMargin(left);
   m_mainTableViewTopMargin = top;
-
+  // Row preface
   m_rowPrefaceView.setLeftMargin(left);
   m_rowPrefaceView.setRightMargin(right);
 }
 
 void PrefacedTableView::setBackgroundColor(KDColor color) {
+  // Main table
   m_mainTableView->setBackgroundColor(color);
+  // Row preface
   m_rowPrefaceView.setBackgroundColor(color);
 }
 
 void PrefacedTableView::setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical) {
+  // Main table
   m_mainTableView->setHorizontalCellOverlap(horizontal);
   m_mainTableView->setVerticalCellOverlap(vertical);
+  // Row preface
   m_rowPrefaceView.setHorizontalCellOverlap(horizontal);
   m_rowPrefaceView.setVerticalCellOverlap(vertical);
 }
@@ -53,7 +58,9 @@ void PrefacedTableView::tableViewDidChangeSelection(Escher::SelectableTableView 
 }
 
 void PrefacedTableView::resetContentOffset() {
+  // Main table
   m_mainTableView->setContentOffset(KDPointZero);
+  // Row preface
   m_rowPrefaceView.setContentOffset(KDPointZero);
 }
 

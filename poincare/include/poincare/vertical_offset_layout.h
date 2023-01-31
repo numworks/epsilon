@@ -67,7 +67,7 @@ private:
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
   bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
   bool protectedIsIdenticalTo(Layout l) override;
 
   LayoutNode * indiceLayout() { return childAtIndex(0); }

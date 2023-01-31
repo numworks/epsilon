@@ -53,7 +53,7 @@ private:
   constexpr static KDCoordinate k_widthMargin = 2;
   constexpr static KDCoordinate k_radixLineThickness = 1;
   KDSize adjustedIndexSize(KDFont::Size font);
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
   bool protectedIsIdenticalTo(Layout l) override;
   LayoutNode * radicandLayout() { return childAtIndex(0); }
   LayoutNode * indexLayout() { return m_hasIndex ? childAtIndex(1) : nullptr; }

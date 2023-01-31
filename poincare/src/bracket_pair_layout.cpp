@@ -59,7 +59,7 @@ KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size 
   return ChildOffset(verticalMargin(), bracketWidth());
 }
 
-void BracketPairLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void BracketPairLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   renderOneBracket(true, ctx, p, font, expressionColor, backgroundColor);
   KDCoordinate rightBracketOffset = bracketWidth() + childLayout()->layoutSize(font).width();
   renderOneBracket(false, ctx, p.translatedBy(KDPoint(rightBracketOffset, 0)), font, expressionColor, backgroundColor);

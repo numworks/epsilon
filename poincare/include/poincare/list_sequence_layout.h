@@ -41,7 +41,7 @@ private:
   KDPoint positionOfVariable(KDFont::Size font);
   KDCoordinate variableSlotBaseline(KDFont::Size font);
   KDCoordinate bracesWidth(KDFont::Size font);
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
 class ListSequenceLayout final : public LayoutThreeChildren<ListSequenceLayout, ListSequenceLayoutNode> {

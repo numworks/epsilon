@@ -38,7 +38,7 @@ public:
 
   bool isNotEqualOperator() const { return m_codePoint == '=' && m_CombinedCodePoints == UCodePointCombiningLongSolidusOverlay;}
 private:
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
   bool protectedIsIdenticalTo(Layout l) override;
 
   CodePoint m_CombinedCodePoints;

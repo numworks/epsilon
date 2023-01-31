@@ -193,7 +193,7 @@ KDSize NthRootLayoutNode::adjustedIndexSize(KDFont::Size font) {
     KDSize(std::max(k_leftRadixWidth, indexLayout()->layoutSize(font).width()), indexLayout()->layoutSize(font).height());
 }
 
-void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void NthRootLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   KDSize radicandSize = radicandLayout()->layoutSize(font);
   KDSize indexSize = adjustedIndexSize(font);
   KDColor workingBuffer[k_leftRadixWidth*k_leftRadixHeight];

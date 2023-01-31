@@ -283,7 +283,7 @@ bool VerticalOffsetLayoutNode::protectedIsIdenticalTo(Layout l) {
   return verticalPosition() == n->verticalPosition() && horizontalPosition() == n->horizontalPosition() && LayoutNode::protectedIsIdenticalTo(l);
 }
 
-void VerticalOffsetLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void VerticalOffsetLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   if (baseLayout() || m_emptyBaseVisibility == EmptyRectangle::State::Hidden) {
     return;
   }

@@ -38,11 +38,10 @@ public:
   bool hasTopLevelComparisonSymbol() const { return privateHasTopLevelComparisonSymbol(true); }
 
   // Rendering
-  void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = Escher::Palette::Select) {
-    return node()->draw(ctx, p, font, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
-  }
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) {
-    return node()->render(ctx, p, font, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
+  void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, LayoutSelection selection, KDColor selectionColor = Escher::Palette::Select);
+  void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor);
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
+    return node()->render(ctx, p, font, expressionColor, backgroundColor);
   }
   KDSize layoutSize(KDFont::Size font) const { return node()->layoutSize(font); }
   KDPoint absoluteOrigin(KDFont::Size font) const { return node()->absoluteOrigin(font); }

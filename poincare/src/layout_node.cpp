@@ -1,8 +1,9 @@
 #include <escher/metric.h>
 #include <poincare/layout.h>
 #include <poincare/horizontal_layout.h>
-#include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
+#include <poincare/layout_cursor.h>
+#include <poincare/layout_selection.h>
 //#include <poincare/matrix_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion/display.h>
@@ -24,14 +25,16 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
 
 // Rendering
 
-void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  bool isSelected = selectionStart != nullptr && selectionEnd != nullptr
-    && !selectionStart->isUninitialized() && !selectionEnd->isUninitialized()
-    && reinterpret_cast<char *>(this) >= reinterpret_cast<char *>(selectionStart->node())
-    && reinterpret_cast<char *>(this) <= reinterpret_cast<char *>(selectionEnd->node());
-  selectionStart = isSelected ? nullptr : selectionStart;
-  selectionEnd = isSelected ? nullptr : selectionEnd;
-  KDColor backColor = isSelected ? selectionColor : backgroundColor;
+void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, LayoutSelection selection, KDColor selectionColor) {
+  if (!selection.isEmpty() && selection.layout().node() == this && type() == Type::HorizontalLayout) {
+    KDRect selectionRectangle = static_cast<HorizontalLayoutNode *>(this)->relativeSelectionRect(selection.leftPosition(), selection.rightPosition(), font);
+    ctx->fillRect(selectionRectangle.translatedBy(p), selectionColor);
+  }
+  if (!selection.isEmpty() && selection.containsNode(this)) {
+    selection = LayoutSelection();
+    backgroundColor = selectionColor;
+  }
+
   KDPoint renderingAbsoluteOrigin = absoluteOrigin(font).translatedBy(p);
   KDPoint renderingOrginWithMargin = absoluteOriginWithMargin(font).translatedBy(p);
   KDSize size = layoutSize(font);
@@ -43,10 +46,10 @@ void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor exp
     return;
   }
 
-  ctx->fillRect(KDRect(renderingOrginWithMargin, size), backColor);
-  render(ctx, renderingAbsoluteOrigin, font, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
+  ctx->fillRect(KDRect(renderingOrginWithMargin, size), backgroundColor);
+  render(ctx, renderingAbsoluteOrigin, font, expressionColor, backgroundColor);
   for (LayoutNode * l : children()) {
-    l->draw(ctx, p, font, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
+    l->draw(ctx, p, font, expressionColor, backgroundColor, selection, selectionColor);
   }
 }
 

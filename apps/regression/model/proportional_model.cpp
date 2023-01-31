@@ -1,15 +1,17 @@
 #include "proportional_model.h"
 #include "../store.h"
 #include <poincare/print.h>
+#include <poincare/multiplication.h>
 #include <assert.h>
 
 using namespace Poincare;
 
 namespace Regression {
 
-int ProportionalModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed·x",
-      modelCoefficients[0], displayMode, significantDigits);
+Expression ProportionalModel::expression(double * modelCoefficients) const {
+  return Multiplication::Builder(
+    Number::DecimalNumber(modelCoefficients[0]),
+    Symbol::Builder(k_xSymbol));
 }
 
 double ProportionalModel::evaluate(double * modelCoefficients, double x) const {

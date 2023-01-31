@@ -3,6 +3,10 @@
 #include "../../shared/linear_regression_store.h"
 #include <cmath>
 #include <assert.h>
+#include <poincare/addition.h>
+#include <poincare/constant.h>
+#include <poincare/multiplication.h>
+#include <poincare/power.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
@@ -41,14 +45,23 @@ Layout ExponentialModel::layout() {
   return m_layout;
 }
 
-int ExponentialModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, m_isAbxForm ? "%*.*ed·%*.*ed^x" : "%*.*ed·e^%*.*ed·x",
-      modelCoefficients[0], displayMode, significantDigits,
-      modelCoefficients[1], displayMode, significantDigits);
-}
-
-double ExponentialModel::aebxFormatBValue(double * modelCoefficients) const {
-  return m_isAbxForm ? std::log(modelCoefficients[1]) : modelCoefficients[1];
+Poincare::Expression ExponentialModel::expression(double * modelCoefficients) const {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  // if m_isAbxForm -> a*b^x, else a*e^bx
+  return m_isAbxForm ?
+    Multiplication::Builder(
+      Number::DecimalNumber(a),
+      Power::Builder(
+        Number::DecimalNumber(b),
+        Symbol::Builder(k_xSymbol))) :
+    Multiplication::Builder(
+      Number::DecimalNumber(a),
+      Power::Builder(
+        Constant::ExponentialEBuilder(),
+        Multiplication::Builder(
+          Number::DecimalNumber(b),
+          Symbol::Builder(k_xSymbol))));
 }
 
 double ExponentialModel::evaluate(double * modelCoefficients, double x) const {
@@ -56,6 +69,10 @@ double ExponentialModel::evaluate(double * modelCoefficients, double x) const {
   double b = aebxFormatBValue(modelCoefficients);
   // a*e^(bx)
   return a*std::exp(b*x);
+}
+
+double ExponentialModel::aebxFormatBValue(double * modelCoefficients) const {
+  return m_isAbxForm ? std::log(modelCoefficients[1]) : modelCoefficients[1];
 }
 
 double ExponentialModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {

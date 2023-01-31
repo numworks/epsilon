@@ -5,7 +5,6 @@
 #include <apps/i18n.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
-#include <poincare/layout.h>
 #include <poincare/matrix.h>
 
 namespace Regression {
@@ -33,23 +32,31 @@ public:
   constexpr static int k_numberOfModels = 14;
   constexpr static int k_maxNumberOfCoefficients = 5; // Quartic model
   static_assert(k_maxNumberOfCoefficients*k_maxNumberOfCoefficients <= Poincare::Matrix::k_maxNumberOfChildren, "Model needs bigger than allowed matrices");
-  virtual Poincare::Layout layout();
+
+  constexpr static char k_xSymbol = 'x';
 
   virtual I18n::Message formulaMessage() const = 0;
   virtual I18n::Message name() const = 0;
-  virtual int buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const = 0;
+  virtual int numberOfCoefficients() const = 0;
+
+  virtual Poincare::Layout layout();
+  virtual Poincare::Expression expression(double * modelCoefficients) const = 0;
+  Poincare::Layout buildEquationLayout(double * modelCoefficients, const char * ySymbol, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
+
+  /* Evalute cannot use the expression and approximate it since it would be
+   * too time consuming. */
   virtual double evaluate(double * modelCoefficients, double x) const = 0;
   virtual double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context);
   void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
-  virtual int numberOfCoefficients() const = 0;
+
 protected:
   // Fit
   virtual void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
   virtual bool dataSuitableForFit(Store * store, int series) const;
   Poincare::Layout m_layout;
+
 private:
   // Model attributes
-  virtual Poincare::Expression expression(double * modelCoefficients) { return Poincare::Expression(); } // expression is overridden only by Models that do not override levelSet
   virtual double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const = 0;
 
   void storeRegressionFunction(int series, Poincare::Expression expression) const;

@@ -21,12 +21,23 @@ static double toRadians() {
   return M_PI / Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences->angleUnit());
 }
 
-int TrigonometricModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed·sin(%*.*ed·x%+*.*ed)%+*.*ed",
-      modelCoefficients[0], displayMode, significantDigits,
-      modelCoefficients[1], displayMode, significantDigits,
-      modelCoefficients[2], displayMode, significantDigits,
-      modelCoefficients[3], displayMode, significantDigits);
+Expression TrigonometricModel::expression(double * modelCoefficients) const {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  double d = modelCoefficients[3];
+  // a*sin(bx+c)+d
+  return
+    Addition::Builder(
+      Multiplication::Builder(
+        Number::DecimalNumber(a),
+        Sine::Builder(
+          Addition::Builder(
+            Multiplication::Builder(
+              Number::DecimalNumber(b),
+              Symbol::Builder(k_xSymbol)),
+            Number::DecimalNumber(c)))),
+      Number::DecimalNumber(d));
 }
 
 double TrigonometricModel::evaluate(double * modelCoefficients, double x) const {
@@ -208,26 +219,6 @@ void TrigonometricModel::uniformizeCoefficientsFromFit(double * modelCoefficient
       modelCoefficients[2] = piInAngleUnit;
     }
   }
-}
-
-Expression TrigonometricModel::expression(double * modelCoefficients) {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  double c = modelCoefficients[2];
-  double d = modelCoefficients[3];
-  // a*sin(bx+c)+d
-  Expression result =
-    Addition::Builder(
-      Multiplication::Builder(
-        Number::DecimalNumber(a),
-        Sine::Builder(
-          Addition::Builder(
-            Multiplication::Builder(
-              Number::DecimalNumber(b),
-              Symbol::Builder('x')),
-            Number::DecimalNumber(c)))),
-      Number::DecimalNumber(d));
-  return result;
 }
 
 }

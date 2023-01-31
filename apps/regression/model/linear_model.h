@@ -11,12 +11,13 @@ public:
   I18n::Message formulaMessage() const override { return m_isApbxForm ? I18n::Message::LinearApbxRegressionFormula : AffineModel::formulaMessage(); }
   I18n::Message name() const override { return I18n::Message::Linear; }
 
+  Poincare::Expression expression(double * modelCoefficients) const override;
+
 private:
   void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override;
   /* In a+bx form, Coefficients are swapped */
   int slopeCoefficientIndex() const override { return m_isApbxForm; }
   int yInterceptCoefficientIndex() const override { return !m_isApbxForm; }
-  const char * equationTemplate() const override { return m_isApbxForm ? "%*.*ed%+*.*ed·x" : AffineModel::equationTemplate(); }
 
   bool m_isApbxForm;
 };

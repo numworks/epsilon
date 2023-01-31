@@ -2,9 +2,15 @@
 #include "../store.h"
 #include <cmath>
 #include <assert.h>
+#include <poincare/addition.h>
+#include <poincare/based_integer.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/constant.h>
+#include <poincare/division.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/multiplication.h>
+#include <poincare/power.h>
 #include <poincare/print.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -37,11 +43,23 @@ Layout LogisticModel::layout() {
   return m_layout;
 }
 
-int LogisticModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed/(1%+*.*ed·e^(%*.*ed·x))",
-      modelCoefficients[2], displayMode, significantDigits,
-      modelCoefficients[0], displayMode, significantDigits,
-      -modelCoefficients[1], displayMode, significantDigits);
+Poincare::Expression LogisticModel::expression(double * modelCoefficients) const {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  // c/(1+a*e^(-b*x))
+  return
+    Division::Builder(
+      Number::DecimalNumber(c),
+      Addition::Builder(
+        BasedInteger::Builder(1),
+        Multiplication::Builder(
+          Number::DecimalNumber(a),
+          Power::Builder(
+            Constant::ExponentialEBuilder(),
+            Multiplication::Builder(
+              Number::DecimalNumber(-b),
+              Symbol::Builder(k_xSymbol))))));
 }
 
 double LogisticModel::evaluate(double * modelCoefficients, double x) const {

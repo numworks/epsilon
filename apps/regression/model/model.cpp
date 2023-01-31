@@ -2,6 +2,7 @@
 #include "../store.h"
 #include <apps/apps_container.h>
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/comparison.h>
 #include <poincare/decimal.h>
 #include <poincare/float.h>
 #include <poincare/function.h>
@@ -20,6 +21,12 @@ Layout Model::layout() {
     m_layout = LayoutHelper::StringToCodePointsLayout(layoutString, strlen(layoutString));
   }
   return m_layout;
+}
+
+Layout Model::buildEquationLayout(double * modelCoefficients, const char * ySymbol, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
+  Expression formula = expression(modelCoefficients);
+  Expression equation = Comparison::Builder(Symbol::Builder(ySymbol, strlen(ySymbol)), ComparisonNode::OperatorType::Equal, formula);
+  return equation.createLayout(displayMode, significantDigits, AppsContainer::sharedAppsContainer()->globalContext());
 }
 
 double Model::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
@@ -58,7 +65,7 @@ void Model::storeRegressionFunction(int series, Expression expression) const {
   name[0] = 'R';
   name[1] = '1' + series;
   name[2] = 0;
-  AppsContainer::sharedAppsContainer()->globalContext()->setExpressionForSymbolAbstract(expression, Poincare::Function::Builder(name, strlen(name), Poincare::Symbol::Builder('x')));
+  AppsContainer::sharedAppsContainer()->globalContext()->setExpressionForSymbolAbstract(expression, Poincare::Function::Builder(name, strlen(name), Poincare::Symbol::Builder(k_xSymbol)));
 }
 
 void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Context * context) {

@@ -1,5 +1,8 @@
 #include "logarithmic_model.h"
 #include "../store.h"
+#include <poincare/addition.h>
+#include <poincare/multiplication.h>
+#include <poincare/naperian_logarithm.h>
 #include <poincare/print.h>
 #include <cmath>
 #include <assert.h>
@@ -8,10 +11,18 @@ using namespace Poincare;
 
 namespace Regression {
 
-int LogarithmicModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed%+*.*ed·ln(x)",
-      modelCoefficients[0], displayMode, significantDigits,
-      modelCoefficients[1], displayMode, significantDigits);
+Poincare::Expression LogarithmicModel::expression(double * modelCoefficients) const {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  // a+b*ln(x)
+  return
+    Addition::Builder(
+      Number::DecimalNumber(a),
+      Multiplication::Builder(
+        Number::DecimalNumber(b),
+        NaperianLogarithm::Builder(Symbol::Builder(k_xSymbol))
+      )
+    );
 }
 
 double LogarithmicModel::evaluate(double * modelCoefficients, double x) const {

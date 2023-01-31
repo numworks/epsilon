@@ -21,7 +21,7 @@ namespace SerializationHelper {
     None,
   };
 
-  void ReplaceSystemParenthesesAndBracesByUserParentheses(char * buffer, int length = -1);
+  int ReplaceSystemParenthesesAndBracesByUserParentheses(char * buffer, int length = -1);
 
   // SerializableReference to text
   int Infix(

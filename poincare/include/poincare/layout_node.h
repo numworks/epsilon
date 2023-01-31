@@ -70,6 +70,7 @@ public:
 
   /* Poor man's RTTI */
   virtual Type type() const = 0;
+  bool isHorizontal() const { return type() == Type::HorizontalLayout; }
 
   // Comparison
   bool isIdenticalTo(Layout l, bool makeEditable = false);
@@ -136,7 +137,7 @@ public:
    * with no child or with one child with no text. */
   virtual bool hasText() const { return true; }
   virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
-  bool isEmpty() const { return type() == Type::HorizontalLayout && numberOfChildren() == 0;}
+  bool isEmpty() const { return isHorizontal() && numberOfChildren() == 0;}
   /* isCollapsable is used when adding a sibling fraction: should the layout be
    * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should
    * become 1+ 2/3 - 4 when pressing "Divide": a CodePointLayout is collapsable if

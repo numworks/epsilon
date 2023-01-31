@@ -164,7 +164,7 @@ bool FractionLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool going
    * absorbed. This way, the user can write a product of fractions without
    * typing the × sign. */
   Layout p = Layout(parent());
-  assert(!p.isUninitialized() && p.type() == LayoutNode::Type::HorizontalLayout && p.numberOfChildren() > 1);
+  assert(!p.isUninitialized() && p.isHorizontal() && p.numberOfChildren() > 1);
   int indexInParent = p.indexOfChild(Layout(this));
   int indexOfAbsorbingSibling = indexInParent + (goingLeft ? 1 : -1);
   assert(indexOfAbsorbingSibling >= 0 && indexOfAbsorbingSibling < p.numberOfChildren());
@@ -172,7 +172,7 @@ bool FractionLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool going
   if (absorbingSibling.numberOfChildren() > 0) {
     absorbingSibling = absorbingSibling.childAtIndex((goingLeft) ? absorbingSibling.leftCollapsingAbsorbingChildIndex() : absorbingSibling.rightCollapsingAbsorbingChildIndex());
   }
-  return absorbingSibling.type() == LayoutNode::Type::HorizontalLayout && absorbingSibling.isEmpty();
+  return absorbingSibling.isHorizontal() && absorbingSibling.isEmpty();
 }
 
 void FractionLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {

@@ -10,7 +10,7 @@ void InputBeautification::ApplyBeautificationBetweenIndexes(HorizontalLayout par
   assert(i < parent.numberOfChildren());
   while (i >= firstIndex) {
     Layout child = parent.childAtIndex(i);
-    if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(child.type()) && child.childAtIndex(0).type() == LayoutNode::Type::HorizontalLayout) {
+    if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(child.type()) && child.childAtIndex(0).isHorizontal()) {
       Layout childrenOfParenthesisContainer = child.childAtIndex(0);
       ApplyBeautificationBetweenIndexes(static_cast<HorizontalLayout&>(childrenOfParenthesisContainer), 0, childrenOfParenthesisContainer.numberOfChildren(), layoutCursor, context, forceCursorRightOfText, true);
     }
@@ -349,7 +349,7 @@ Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(Layout layoutToMod
   bool rightParenthesisIsTemporary = static_cast<AutocompletedBracketPairLayoutNode *>(parenthesis.node())->isTemporary(AutocompletedBracketPairLayoutNode::Side::Right);
   // Left parenthesis was just input so it should not be temporary
   assert(!static_cast<AutocompletedBracketPairLayoutNode *>(parenthesis.node())->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left));
-  Layout parametersContainer = parenthesis.childAtIndex(0).type() == LayoutNode::Type::HorizontalLayout ? parenthesis.childAtIndex(0): parenthesis;
+  Layout parametersContainer = parenthesis.childAtIndex(0).isHorizontal() ? parenthesis.childAtIndex(0): parenthesis;
   // Replace the empty layouts with the parameters between parentheses
   int currentParameterIndex = 0;
   int numberOfParameters = 0;

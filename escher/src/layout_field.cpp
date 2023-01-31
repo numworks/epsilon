@@ -92,7 +92,7 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
       /* The previous selected layout is an horizontal layout and we remove one
        * of its children. */
       assert(m_selectionStart == m_selectionEnd
-          && m_selectionStart.type() == LayoutNode::Type::HorizontalLayout);
+          && m_selectionStart.isHorizontal());
       m_selectionStart = m_selectionStart.childAtIndex(0);
       m_selectionEnd = m_selectionEnd.childAtIndex(m_selectionEnd.numberOfChildren() - 1);
       addSelection(addedLayout);
@@ -102,7 +102,7 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
      * children of a same horizontal layout. */
     assert(m_selectionStart.parent() == m_selectionEnd.parent()
         && m_selectionStart.parent() == addedLayout.parent()
-        && m_selectionStart.parent().type() == LayoutNode::Type::HorizontalLayout);
+        && m_selectionStart.parent().isHorizontal());
     m_selectionEnd = addedLayout;
   } else if (IsBefore(addedLayout, m_selectionStart, true)) {
     /*
@@ -110,7 +110,7 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
      *  (   )       -> added selection
      *  ++++++++++  -> next selection
      * */
-    if (addedLayout.type() == LayoutNode::Type::HorizontalLayout
+    if (addedLayout.isHorizontal()
         && m_selectionStart.parent() == addedLayout)
     {
       /* The selection was from the first to the last child of an horizontal
@@ -151,7 +151,7 @@ void LayoutField::ContentView::addSelection(Layout addedLayout) {
       assert(!horizontalParent.isUninitialized()
           && horizontalParent == m_selectionEnd.parent()
           && horizontalParent == addedLayout.parent()
-          && horizontalParent.type() == LayoutNode::Type::HorizontalLayout
+          && horizontalParent.isHorizontal()
           && ((sameEnd && horizontalParent.indexOfChild(m_selectionEnd) > 0)
             || (sameStart && horizontalParent.indexOfChild(m_selectionStart) < horizontalParent.numberOfChildren())));
       if (sameStart) {
@@ -199,7 +199,7 @@ void LayoutField::ContentView::copySelection(Context * context, bool intoStoreMe
   } else {
     Layout selectionParent = m_selectionStart.parent();
     assert(!selectionParent.isUninitialized());
-    assert(selectionParent.type() == LayoutNode::Type::HorizontalLayout);
+    assert(selectionParent.isHorizontal());
     int firstIndex = selectionParent.indexOfChild(m_selectionStart);
     int lastIndex = selectionParent.indexOfChild(m_selectionEnd);
     static_cast<HorizontalLayout&>(selectionParent).serializeChildren(firstIndex, lastIndex, buffer, bufferSize);
@@ -229,12 +229,12 @@ void LayoutField::ContentView::deleteSelection() {
    * layout. Empty it. */
   if (selectionParent.isUninitialized()) {
     assert(m_selectionStart == m_selectionEnd);
-    assert(m_selectionStart.type() == LayoutNode::Type::HorizontalLayout);
+    assert(m_selectionStart.isHorizontal());
     clearLayout();
   } else {
     assert(selectionParent == m_selectionEnd.parent());
     // Remove the selected children or replace it with an empty layout.
-    if (selectionParent.type() == LayoutNode::Type::HorizontalLayout) {
+    if (selectionParent.isHorizontal()) {
       int firstIndex = selectionParent.indexOfChild(m_selectionStart);
       int i = m_selectionStart == m_selectionEnd ? firstIndex : selectionParent.indexOfChild(m_selectionEnd);
       while (i >= firstIndex) {
@@ -309,7 +309,7 @@ KDRect LayoutField::ContentView::selectionRect() const {
   }
   Layout selectionParent = m_selectionStart.parent();
   assert(m_selectionEnd.parent() == selectionParent);
-  assert(selectionParent.type() == LayoutNode::Type::HorizontalLayout);
+  assert(selectionParent.isHorizontal());
   KDRect selectionRectInParent = static_cast<HorizontalLayout &>(selectionParent).relativeSelectionRect(&m_selectionStart, &m_selectionEnd, font());
   return selectionRectInParent.translatedBy(selectionParent.absoluteOrigin(font()));
 }
@@ -505,7 +505,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       if (*selectStart != *selectEnd) {
         Layout p = selectStart->parent();
         assert(p == selectEnd->parent());
-        assert(p.type() == LayoutNode::Type::HorizontalLayout);
+        assert(p.isHorizontal());
         removedSquares = p.removeGraySquaresFromAllGridChildren();
       } else {
         removedSquares = selectStart->removeGraySquaresFromAllGridChildren();
@@ -685,7 +685,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   // Handle empty layouts
   cursor->showEmptyLayoutIfNeeded();
 
-  bool layoutWillBeMerged = layoutR.type() == LayoutNode::Type::HorizontalLayout;
+  bool layoutWillBeMerged = layoutR.isHorizontal();
   Layout lastMergedLayoutChild = (layoutWillBeMerged && layoutR.numberOfChildren() > 0) ? layoutR.childAtIndex(layoutR.numberOfChildren()-1) : Layout();
 
   // If the layout will be merged, find now where the cursor will point

@@ -75,7 +75,7 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
 }
 
 Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
-  if (layout.isUninitialized() || layout.isEmpty() || (layout.type() == LayoutNode::Type::HorizontalLayout && layout.numberOfChildren() == 0)) {
+  if (layout.isUninitialized() || layout.isEmpty() || (layout.isHorizontal() && layout.numberOfChildren() == 0)) {
     return ParenthesisLayout::Builder();
   }
   return ParenthesisLayout::Builder(cloneLayout ? layout.clone() : layout);
@@ -149,7 +149,7 @@ Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
   constexpr const char * k_logName = LogarithmNode::k_functionName;
   constexpr int k_logNameLength = Helpers::StringLength(k_logName);
   Layout logLayout = String(k_logName, k_logNameLength);
-  assert(logLayout.type() != LayoutNode::Type::HorizontalLayout);
+  assert(!logLayout.isHorizontal());
   HorizontalLayout resultLayout = HorizontalLayout::Builder(logLayout);
 
   int baseIndex;

@@ -26,7 +26,7 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
 // Rendering
 
 void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, LayoutSelection selection, KDColor selectionColor) {
-  if (!selection.isEmpty() && selection.layout().node() == this && type() == Type::HorizontalLayout) {
+  if (!selection.isEmpty() && selection.layout().node() == this && isHorizontal()) {
     KDRect selectionRectangle = static_cast<HorizontalLayoutNode *>(this)->relativeSelectionRect(selection.leftPosition(), selection.rightPosition(), font);
     ctx->fillRect(selectionRectangle.translatedBy(p), selectionColor);
   }

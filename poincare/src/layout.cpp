@@ -79,7 +79,7 @@ Layout Layout::XNTLayout() const {
   if (!xntLayout.isUninitialized() && static_cast<size_t>(xntLayout.numberOfDescendants(true)) <= SymbolAbstract::k_maxNameSize && xntLayout.recursivelyMatches(
       [](const Layout l) {
         if (l.type() != LayoutNode::Type::CodePointLayout) {
-          return l.type() == LayoutNode::Type::HorizontalLayout ? TrinaryBoolean::Unknown :  TrinaryBoolean::True;
+          return l.isHorizontal() ? TrinaryBoolean::Unknown :  TrinaryBoolean::True;
         }
         CodePoint c = static_cast<const CodePointLayout&>(l).codePoint();
         return (c.isDecimalDigit() || c.isLatinLetter() || c == '_') ? TrinaryBoolean::Unknown : TrinaryBoolean::True;
@@ -133,7 +133,7 @@ void Layout::replaceWith(Layout newChild, LayoutCursor * cursor) {
 void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle) {
   Layout p = parent();
   assert(!p.isUninitialized());
-  if (p.type() != LayoutNode::Type::HorizontalLayout) {
+  if (!p.isHorizontal()) {
     /* One of the children to juxtapose might be "this", so we cannot just call
      * replaceWith. */
     HorizontalLayout horizontalLayoutR = HorizontalLayout::Builder();
@@ -202,7 +202,7 @@ void Layout::addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor
   Layout rootLayout = root();
   Layout p = parent();
   assert(!p.isUninitialized());
-  if (p.type() == LayoutNode::Type::HorizontalLayout) {
+  if (p.isHorizontal()) {
     int indexInParent = p.indexOfChild(*this);
     int indexOfCursor = p.indexOfChild(cursor->layout());
     /* indexOfCursor == -1 if cursor->layout() is not a child of p. This should
@@ -272,7 +272,7 @@ void Layout::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
 
 bool Layout::collapseOnDirection(OMG::NewHorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor) {
   Layout p = parent();
-  if (p.isUninitialized() || p.type() != LayoutNode::Type::HorizontalLayout) {
+  if (p.isUninitialized() || !p.isHorizontal()) {
     return false;
   }
   int idxInParent = p.indexOfChild(*this);
@@ -283,7 +283,7 @@ bool Layout::collapseOnDirection(OMG::NewHorizontalDirection direction, int abso
   if (absorbingChild.isUninitialized() || !absorbingChild.isEmpty()) {
     return false;
   }
-  if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
+  if (!absorbingChild.isHorizontal()) {
     Layout horizontal = HorizontalLayout::Builder();
     replaceChild(absorbingChild, horizontal, cursor, true);
     horizontal.addChildAtIndexInPlace(absorbingChild, 0, 0);

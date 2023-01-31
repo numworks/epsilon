@@ -24,7 +24,7 @@ public:
     m_layout(l), m_startPosition(startPosition), m_endPosition(endPosition)
   {
     assert(l.isUninitialized() ||
-           (l.type() == LayoutNode::Type::HorizontalLayout && 0 <= startPosition && startPosition <= l.numberOfChildren() && 0 <= endPosition && endPosition <= l.numberOfChildren()) ||
+           (l.isHorizontal() && 0 <= startPosition && startPosition <= l.numberOfChildren() && 0 <= endPosition && endPosition <= l.numberOfChildren()) ||
            (startPosition >= 0 && startPosition <= 1 && endPosition >= 0 && endPosition <= 1));
   }
 
@@ -44,7 +44,7 @@ public:
     char * c = reinterpret_cast<char *>(n);
     return
       !isEmpty() &&
-      ((m_layout.type() == LayoutNode::Type::HorizontalLayout &&
+      ((m_layout.isHorizontal() &&
         c >= reinterpret_cast<char *>(m_layout.childAtIndex(leftPosition()).node()) &&
         c <= reinterpret_cast<char *>(m_layout.childAtIndex(rightPosition() - 1).node())) ||
        (c >= reinterpret_cast<char *>(m_layout.node()) &&

@@ -3,6 +3,7 @@
 
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/float.h>
+#include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
@@ -85,7 +86,14 @@ private:
 
   template <>
   constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Float>(Block * block, size_t blockIndex, float value) {
+    static_assert(sizeof(float)/sizeof(uint8_t) == 4);
     return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Float, Float::SubFloatAtIndex(value, 0), Float::SubFloatAtIndex(value, 1), Float::SubFloatAtIndex(value, 2), Float::SubFloatAtIndex(value, 3));
+  }
+
+  template <>
+  constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::CodePointLayout>(Block * block, size_t blockIndex, CodePoint value) {
+    static_assert(sizeof(CodePoint)/sizeof(uint8_t) == 4);
+    return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::CodePointLayout, CodePointLayout::SubCodePointLayoutAtIndex(value, 0), CodePointLayout::SubCodePointLayoutAtIndex(value, 1), CodePointLayout::SubCodePointLayoutAtIndex(value, 2), CodePointLayout::SubCodePointLayoutAtIndex(value, 3));
   }
 
   template <>

@@ -3,6 +3,7 @@
 #include "node_constructor.h"
 #include "node_iterator.h"
 #include "pattern_matching.h"
+#include <ion/unicode/code_point.h>
 #include <string.h>
 
 namespace PoincareJ {
@@ -133,3 +134,5 @@ template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Two>();
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::RationalShort>(int8_t, uint8_t);
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Polynomial, int, int>(int, int);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::HorizontalLayout, int>(int);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::CodePointLayout, CodePoint>(CodePoint);

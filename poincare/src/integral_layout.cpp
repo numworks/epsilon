@@ -173,7 +173,7 @@ IntegralLayoutNode * IntegralLayoutNode::nextNestedIntegral() {
   if (integrand->type() == Type::IntegralLayout) {
     // Integral can be directly in the integrand
     return static_cast<IntegralLayoutNode *>(integrand);
-  } else if (integrand->type() == Type::HorizontalLayout && integrand->numberOfChildren() == 1 && integrand->childAtIndex(0)->type() == Type::IntegralLayout) {
+  } else if (integrand->isHorizontal() && integrand->numberOfChildren() == 1 && integrand->childAtIndex(0)->type() == Type::IntegralLayout) {
     // Or can be in a Horizontal layout that only contains an integral
     integrand = integrand->childAtIndex(0);
     return static_cast<IntegralLayoutNode *>(integrand);
@@ -196,7 +196,7 @@ IntegralLayoutNode * IntegralLayoutNode::previousNestedIntegral() {
       // If this is not parent's integrand, it means that it is either a bound or differential
       return nullptr;
     }
-  } else if (p->type() == Type::HorizontalLayout) {
+  } else if (p->isHorizontal()) {
     // Or can be a Horizontal layout himself contained in an integral
     LayoutNode * prev = p->parent();
     if (prev == nullptr) {

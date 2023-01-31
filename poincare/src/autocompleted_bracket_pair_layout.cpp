@@ -105,7 +105,7 @@ AutocompletedBracketPairLayoutNode * AutocompletedBracketPairLayoutNode::autocom
     if (type() == p->type()) {
       return static_cast<AutocompletedBracketPairLayoutNode *>(p);
     }
-    if (p->type() != LayoutNode::Type::HorizontalLayout) {
+    if (!p->isHorizontal()) {
       break;
     }
     p = p->parent();
@@ -137,19 +137,19 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
   Layout thisRef = Layout(this);
   Layout p = parent();
   assert(!p.isUninitialized());
-  if (p.type() != LayoutNode::Type::HorizontalLayout) {
+  if (!p.isHorizontal()) {
     return;
   }
   HorizontalLayout h = static_cast<HorizontalLayout &>(p);
   int thisIndex = h.indexOfChild(thisRef);
 
-  if (childLayout()->type() != Type::HorizontalLayout) {
+  if (!childLayout()->isHorizontal()) {
     HorizontalLayout newChild = HorizontalLayout::Builder();
     Layout oldChild = Layout(childLayout());
     thisRef.replaceChild(oldChild, newChild, cursor);
     newChild.addOrMergeChildAtIndex(oldChild, 0, cursor);
   }
-  assert(childLayout()->type() == Type::HorizontalLayout);
+  assert(childLayout()->isHorizontal());
   HorizontalLayout child = HorizontalLayout(static_cast<HorizontalLayoutNode *>(childLayout()));
 
   int injectionIndex, removalIndex, removalEnd;
@@ -177,7 +177,7 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
 
 LayoutNode * AutocompletedBracketPairLayoutNode::childOnSide(Side side) const {
   LayoutNode * child = childLayout();
-  if (child->type() == LayoutNode::Type::HorizontalLayout) {
+  if (child->isHorizontal()) {
     assert(child->numberOfChildren() > 0);
     return child->childAtIndex(side == Side::Left ? 0 : child->numberOfChildren() - 1);
   }
@@ -196,7 +196,7 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
   Layout thisRef(this);
   Layout childRef(childLayout());
   Layout parentRef = thisRef.parent();
-  bool parentIsHorizontalLayout = parentRef.type() == Type::HorizontalLayout;
+  bool parentIsHorizontalLayout = parentRef.isHorizontal();
   assert(!parentRef.isUninitialized());
   int thisIndex = parentRef.indexOfChild(thisRef);
   bool willDisappear = isTemporary(OtherSide(side));

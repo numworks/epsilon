@@ -55,7 +55,7 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
     return (inputBuffer[0] == '-' && inputBuffer[1] == 0);
   } else {
     Layout layout = m_layoutField.layout();
-    if (layout.type() == LayoutNode::Type::HorizontalLayout
+    if (layout.isHorizontal()
         && layout.numberOfChildren() == 1) {
       Layout child = layout.childAtIndex(0);
       if (child.type() == LayoutNode::Type::CodePointLayout) {

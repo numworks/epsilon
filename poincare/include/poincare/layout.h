@@ -33,6 +33,7 @@ public:
 
   // Properties
   LayoutNode::Type type() const { return node()->type(); }
+  bool isHorizontal() const { return node()->isHorizontal(); }
   bool isIdenticalTo(Layout l, bool makeEditable = false) { return isUninitialized() ? l.isUninitialized() : node()->isIdenticalTo(l, makeEditable); }
   bool hasTopLevelEquationSymbol() const { return privateHasTopLevelComparisonSymbol(false); }
   bool hasTopLevelComparisonSymbol() const { return privateHasTopLevelComparisonSymbol(true); }

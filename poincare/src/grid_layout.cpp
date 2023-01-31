@@ -433,7 +433,7 @@ void GridLayoutNode::colorGrayEmptyLayoutsInYellowInColumnOrRow(bool column, int
       break;
     }
     if ((!column || childIndex % m_numberOfColumns == lineIndex) && lastLayoutOfLine->isEmpty()) {
-      if (lastLayoutOfLine->type() != Type::HorizontalLayout) {
+      if (!lastLayoutOfLine->isHorizontal()) {
         static_cast<EmptyLayoutNode *>(lastLayoutOfLine)->setColor(EmptyLayoutNode::Color::Yellow);
       } else {
         assert(lastLayoutOfLine->numberOfChildren() == 1);

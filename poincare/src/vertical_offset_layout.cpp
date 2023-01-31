@@ -170,7 +170,7 @@ KDSize VerticalOffsetLayoutNode::computeSize(KDFont::Size font) {
   if (verticalPosition() == VerticalPosition::Superscript) {
     LayoutNode * parentNode = parent();
     assert(parentNode != nullptr);
-    assert(parentNode->type() == Type::HorizontalLayout);
+    assert(parentNode->isHorizontal());
     int idxInParent = parentNode->indexOfChild(this);
     if (idxInParent < parentNode->numberOfChildren() - 1 && parentNode->childAtIndex(idxInParent + 1)->hasUpperLeftIndex()) {
       width += k_separationMargin;
@@ -213,7 +213,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
    * a^(b^c) and (a^b)^c when representing a^b^c, add parentheses to make (a^b)^c. */
   Layout thisRef = Layout(this);
   Layout parentRef = Layout(parent());
-  assert(parentRef.type() == Type::HorizontalLayout);
+  assert(parentRef.isHorizontal());
   int thisIndex = parentRef.indexOfChild(thisRef);
   int leftParenthesisIndex = thisIndex - 1;
   int numberOfOpenParenthesis = 0;

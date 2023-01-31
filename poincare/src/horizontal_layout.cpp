@@ -311,7 +311,7 @@ bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * siblin
     siblingIndex = nChildren - 1;
   }
   if (nChildren == 0 || childAtIndex(siblingIndex)->willAddSibling(cursor, sibling, moveCursor)) {
-    bool layoutWillBeMerged = sibling->type() == LayoutNode::Type::HorizontalLayout;
+    bool layoutWillBeMerged = sibling->isHorizontal();
     thisRef.addOrMergeChildAtIndex(*sibling, newChildIndex, cursor);
     if (layoutWillBeMerged) {
       *sibling = thisRef;
@@ -354,7 +354,7 @@ bool HorizontalLayoutNode::shouldDrawEmptyRectangle() const {
 // HorizontalLayout
 
 void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, LayoutCursor * cursor) {
-  if (l.type() == LayoutNode::Type::HorizontalLayout) {
+  if (l.isHorizontal()) {
     mergeChildrenAtIndex(HorizontalLayout(static_cast<HorizontalLayoutNode *>(l.node())), index, cursor);
   } else {
     addChildAtIndex(l, index, numberOfChildren(), cursor);

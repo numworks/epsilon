@@ -99,7 +99,7 @@ Layout StringLayout::makeEditable() {
   Layout myParent = this->parent();
   /* editableLayout can be an HorizontalLayout, so it needs to be merged with
    * parent if it is also an HorizontalLayout. */
-  if (!myParent.isUninitialized() && myParent.type() == LayoutNode::Type::HorizontalLayout) {
+  if (!myParent.isUninitialized() && myParent.isHorizontal()) {
     int index = myParent.indexOfChild(*this);
     static_cast<HorizontalLayout &>(myParent).removeChild(*this, nullptr, true);
     static_cast<HorizontalLayout &>(myParent).addOrMergeChildAtIndex(editableLayout, index);

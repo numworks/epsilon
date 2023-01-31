@@ -23,7 +23,7 @@ GraphController::GraphController(Responder * parentResponder, Escher::InputEvent
   m_view(interactiveRange, store, m_cursor, &m_bannerView, &m_cursorView),
   m_store(store),
   m_graphOptionsController(this, inputEventHandlerDelegate, interactiveRange, m_store, m_cursor, this),
-  m_seriesSelectionController(this),
+  m_curveSelectionController(this),
   m_selectedDotIndex(selectedDotIndex),
   m_selectedSeriesIndex(selectedSeriesIndex),
   m_selectedModelType((Model::Type)-1)
@@ -85,14 +85,14 @@ Poincare::Context * GraphController::globalContext() const {
 
 // Private
 
-KDCoordinate GraphController::SeriesSelectionController::nonMemoizedRowHeight(int j) {
+KDCoordinate GraphController::CurveSelectionController::nonMemoizedRowHeight(int j) {
   if (j < 0 || j >= numberOfRows()) {
     return 0;
   }
   return KDFont::GlyphHeight(KDFont::Size::Large) + Metric::CellTopMargin + Metric::CellBottomMargin;
 }
 
-void GraphController::SeriesSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void GraphController::CurveSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   int series = graphController()->seriesIndexFromCurveIndex(index);
   const char * name = Store::SeriesTitle(series);
   static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(DoublePairStore::colorOfSeriesAtIndex(series));

@@ -42,9 +42,9 @@ public:
 private:
   constexpr static size_t k_bannerViewTextBufferSize = Shared::BannerView::k_maxLengthDisplayed + sizeof("ŷ");
 
-  class SeriesSelectionController : public Shared::CurveSelectionController {
+  class CurveSelectionController : public Shared::CurveSelectionController {
   public:
-    SeriesSelectionController(GraphController * graphController) : Shared::CurveSelectionController(graphController) {}
+    CurveSelectionController(GraphController * graphController) : Shared::CurveSelectionController(graphController) {}
     const char * title() override { return I18n::translate(I18n::Message::Regression); }
     int numberOfRows() const override { return graphController()->numberOfCurves(); }
     CurveSelectionCellWithChevron * reusableCell(int index, int type) override { assert(index >= 0 && index < Store::k_numberOfSeries); return m_cells + index; }
@@ -69,7 +69,7 @@ private:
   void initCursorParameters(bool ignoreMargins = false) override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
-  SeriesSelectionController * curveSelectionController() const override { return const_cast<SeriesSelectionController *>(&m_seriesSelectionController); }
+  CurveSelectionController * curveSelectionController() const override { return const_cast<CurveSelectionController *>(&m_curveSelectionController); }
   int selectedCurveIndex() const override { return curveIndexFromSeriesIndex(*m_selectedSeriesIndex); }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   bool suitableYValue(double y) const override;
@@ -90,7 +90,7 @@ private:
   GraphView m_view;
   Store * m_store;
   GraphOptionsController m_graphOptionsController;
-  SeriesSelectionController m_seriesSelectionController;
+  CurveSelectionController m_curveSelectionController;
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */
   int * m_selectedDotIndex;

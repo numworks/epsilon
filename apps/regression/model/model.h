@@ -35,7 +35,6 @@ public:
   static_assert(k_maxNumberOfCoefficients*k_maxNumberOfCoefficients <= Poincare::Matrix::k_maxNumberOfChildren, "Model needs bigger than allowed matrices");
   virtual Poincare::Layout layout();
 
-  Poincare::Expression simplifiedExpression(double * modelCoefficients, Poincare::Context * context);
   virtual I18n::Message formulaMessage() const = 0;
   virtual I18n::Message name() const = 0;
   virtual int buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const = 0;

@@ -301,7 +301,22 @@ struct String {
   template <std::size_t... Is>
   constexpr String(const char (&arr)[N], std::integer_sequence<std::size_t, Is...>) : m_data{arr[Is]...} {}
   constexpr String(char const(&arr)[N]) : String(arr, std::make_integer_sequence<std::size_t, N>()) {}
+  constexpr const char & operator[](std::size_t i) const { return m_data[i]; }
 };
+
+// specialized from https://stackoverflow.com/questions/60434033/how-do-i-expand-a-compile-time-stdarray-into-a-parameter-pack/60440611#60440611
+
+template <String S, typename IS = decltype(std::make_index_sequence<S.size() - 1>())> struct Variable;
+
+template <String S, std::size_t... I>
+struct Variable<S, std::index_sequence<I...>> {
+  using ctree = CTree<BlockType::UserSymbol, sizeof...(I), S[I]..., sizeof...(I), BlockType::UserSymbol>;
+};
+
+template <String S>
+consteval auto operator"" _v () {
+  return typename Variable<S>::ctree();
+}
 
 template <String S>
 constexpr unsigned IntegerTreeSize(std::initializer_list<char> specialChars, uint64_t maxValueInShortInteger, BlockType genericBlockType) {

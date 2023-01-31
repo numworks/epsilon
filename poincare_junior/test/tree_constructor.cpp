@@ -12,6 +12,8 @@ void testTreeConstructor() {
   Node(5_n - 8_n - 4_n).log();
   Node(4_n * 3_n + 2_n * 1_n).log();
   Node(4_n * 3_n / 2_n * 1_n).log();
+  assert(Node("x"_v).nodeSize() == 5);
+  assert(Node("var"_v).nodeSize() == 7);
 }
 QUIZ_CASE(pcj_tree_constructor) { testTreeConstructor(); }
 

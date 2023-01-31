@@ -2,6 +2,7 @@
 #include "../../shared/poincare_helpers.h"
 #include <assert.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/based_integer.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/decimal.h>
@@ -38,17 +39,31 @@ Layout QuadraticModel::layout() {
   return m_layout;
 }
 
-int QuadraticModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed·x^2%+*.*ed·x%+*.*ed",
-      modelCoefficients[0], displayMode, significantDigits,
-      modelCoefficients[1], displayMode, significantDigits,
-      modelCoefficients[2], displayMode, significantDigits);
-}
-
-double QuadraticModel::evaluate(double * modelCoefficients, double x) const {
+Expression QuadraticModel::expression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
+  // a*x^2+b*x+c
+  return Addition::Builder({
+    Multiplication::Builder({
+      Number::DecimalNumber(a),
+      Power::Builder(
+        Symbol::Builder(k_xSymbol),
+        BasedInteger::Builder(2)
+      )
+    }),
+    Multiplication::Builder({
+      Number::DecimalNumber(b),
+      Symbol::Builder(k_xSymbol)
+    }),
+    Number::DecimalNumber(c)
+  });
+}
+
+double QuadraticModel::evaluate(double * modelCoefficients, double x) const {
+   double a = modelCoefficients[0];
+   double b = modelCoefficients[1];
+   double c = modelCoefficients[2];
   return a*x*x+b*x+c;
 }
 
@@ -64,27 +79,6 @@ double QuadraticModel::partialDerivate(double * modelCoefficients, int derivateC
   assert(derivateCoefficientIndex == 2);
   // Derivate with respect to c: 1
   return 1.0;
-}
-
-Expression QuadraticModel::expression(double * modelCoefficients) {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  double c = modelCoefficients[2];
-  // a*x^2+b*x+c
-  return Addition::Builder({
-    Multiplication::Builder({
-      Number::DecimalNumber(a),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(2.0)
-      )
-    }),
-    Multiplication::Builder({
-      Number::DecimalNumber(b),
-      Symbol::Builder('x')
-    }),
-    Number::DecimalNumber(c)
-  });
 }
 
 }

@@ -7,6 +7,7 @@
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <poincare/helpers.h>
 #include <cmath>
 #include <algorithm>
@@ -99,16 +100,14 @@ void GraphController::CurveSelectionController::willDisplayCellForIndex(Highligh
 }
 
 bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  int length = Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%s=", GlobalPreferences::sharedGlobalPreferences->yPredictedSymbol());
-  if (length >= static_cast<int>(bufferSize)) {
+  double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
+  Layout l = m_store->regressionModel(modelType)->buildEquationLayout(coefficients, GlobalPreferences::sharedGlobalPreferences->yPredictedSymbol(), significantDigits, displayMode);
+  int length = l.serializeForParsing(buffer, bufferSize);
+  if (length >= static_cast<int>(bufferSize - 1) || length == 0) {
     return false;
   }
-  buffer += length;
-  bufferSize -= length;
-
-  double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
-  length = m_store->regressionModel(modelType)->buildEquationTemplate(buffer, bufferSize, coefficients, significantDigits, displayMode);
-  return length < static_cast<int>(bufferSize);
+  length = SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer, length);
+  return true;
 }
 
 // SimpleInteractiveCurveViewController

@@ -1,15 +1,16 @@
 #include "cubic_model.h"
 #include "../../shared/poincare_helpers.h"
 #include <assert.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/vertical_offset_layout.h>
-#include <poincare/decimal.h>
-#include <poincare/number.h>
-#include <poincare/symbol.h>
 #include <poincare/addition.h>
+#include <poincare/based_integer.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/decimal.h>
+#include <poincare/horizontal_layout.h>
 #include <poincare/multiplication.h>
+#include <poincare/number.h>
 #include <poincare/print.h>
+#include <poincare/symbol.h>
+#include <poincare/vertical_offset_layout.h>
 #include <poincare/power.h>
 
 using namespace Poincare;
@@ -46,19 +47,40 @@ Layout CubicModel::layout() {
   return m_layout;
 }
 
-int CubicModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed·x^3%+*.*ed·x^2%+*.*ed·x%+*.*ed",
-      modelCoefficients[0], displayMode, significantDigits,
-      modelCoefficients[1], displayMode, significantDigits,
-      modelCoefficients[2], displayMode, significantDigits,
-      modelCoefficients[3], displayMode, significantDigits);
-}
-
-double CubicModel::evaluate(double * modelCoefficients, double x) const {
+Expression CubicModel::expression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
+  // a*x^3+b*x^2+c*x+d
+  return Addition::Builder({
+    Multiplication::Builder({
+      Number::DecimalNumber(a),
+      Power::Builder(
+        Symbol::Builder(k_xSymbol),
+        BasedInteger::Builder(3)
+      )
+    }),
+    Multiplication::Builder({
+      Number::DecimalNumber(b),
+      Power::Builder(
+        Symbol::Builder(k_xSymbol),
+        BasedInteger::Builder(2)
+      )
+    }),
+    Multiplication::Builder({
+      Number::DecimalNumber(c),
+      Symbol::Builder(k_xSymbol)
+    }),
+    Number::DecimalNumber(d)
+  });
+}
+
+double CubicModel::evaluate(double * modelCoefficients, double x) const {
+   double a = modelCoefficients[0];
+   double b = modelCoefficients[1];
+   double c = modelCoefficients[2];
+   double d = modelCoefficients[3];
   return a*x*x*x+b*x*x+c*x+d;
 }
 
@@ -78,35 +100,6 @@ double CubicModel::partialDerivate(double * modelCoefficients, int derivateCoeff
       assert(derivateCoefficientIndex == 3);
       return 1.0;
   };
-}
-
-Expression CubicModel::expression(double * modelCoefficients) {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  double c = modelCoefficients[2];
-  double d = modelCoefficients[3];
-  // a*x^3+b*x^2+c*x+d
-  return Addition::Builder({
-    Multiplication::Builder({
-      Number::DecimalNumber(a),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(3.0)
-      )
-    }),
-    Multiplication::Builder({
-      Number::DecimalNumber(b),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(2.0)
-      )
-    }),
-    Multiplication::Builder({
-      Number::DecimalNumber(c),
-      Symbol::Builder('x')
-    }),
-    Number::DecimalNumber(d)
-  });
 }
 
 }

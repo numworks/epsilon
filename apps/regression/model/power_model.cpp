@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/multiplication.h>
+#include <poincare/power.h>
 #include <poincare/print.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -26,15 +28,21 @@ Layout PowerModel::layout() {
   return m_layout;
 }
 
-int PowerModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed·x^%*.*ed",
-      modelCoefficients[0], displayMode, significantDigits,
-      modelCoefficients[1], displayMode, significantDigits);
+Expression PowerModel::expression(double * modelCoefficients) const {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  // a*x^b
+  return
+    Multiplication::Builder(
+      Number::DecimalNumber(a),
+      Power::Builder(
+        Symbol::Builder(k_xSymbol),
+        Number::DecimalNumber(b)));
 }
 
 double PowerModel::evaluate(double * modelCoefficients, double x) const {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
+   double a = modelCoefficients[0];
+   double b = modelCoefficients[1];
   return a*std::pow(x,b);
 }
 

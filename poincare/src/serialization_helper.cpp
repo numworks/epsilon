@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-void SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(char * buffer, int length) {
+int SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(char * buffer, int length) {
   assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointLeftSystemParenthesis == 1));
   assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointRightSystemParenthesis == 1));
   assert(UTF8Decoder::CharSizeOfCodePoint('(' == 1));
@@ -17,7 +17,9 @@ void SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(cha
   assert(UTF8Decoder::CharSizeOfCodePoint('{' == 1));
   assert(UTF8Decoder::CharSizeOfCodePoint('}' == 1));
 
-  assert(length == -1 || length > 0);
+  if (length < 0) {
+    length = strlen(buffer);
+  }
 
   int offset = 0;
   char c = *(buffer + offset);
@@ -40,6 +42,7 @@ void SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(cha
     pendingSystemCodePoint = c == UCodePointSystem;
     c = *(buffer + offset);
   }
+  return length;
 }
 
 static bool checkBufferSize(char * buffer, int bufferSize, int * result) {

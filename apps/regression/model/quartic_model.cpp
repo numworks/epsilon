@@ -1,16 +1,17 @@
 #include "quartic_model.h"
 #include "../../shared/poincare_helpers.h"
 #include <assert.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/vertical_offset_layout.h>
-#include <poincare/decimal.h>
-#include <poincare/number.h>
-#include <poincare/symbol.h>
 #include <poincare/addition.h>
+#include <poincare/based_integer.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/decimal.h>
+#include <poincare/horizontal_layout.h>
 #include <poincare/multiplication.h>
+#include <poincare/number.h>
 #include <poincare/power.h>
 #include <poincare/print.h>
+#include <poincare/symbol.h>
+#include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -54,13 +55,41 @@ Layout QuarticModel::layout() {
   return m_layout;
 }
 
-int QuarticModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed·x^4%+*.*ed·x^3%+*.*ed·x^2%+*.*ed·x%+*.*ed",
-      modelCoefficients[0], displayMode, significantDigits,
-      modelCoefficients[1], displayMode, significantDigits,
-      modelCoefficients[2], displayMode, significantDigits,
-      modelCoefficients[3], displayMode, significantDigits,
-      modelCoefficients[4], displayMode, significantDigits);
+Expression QuarticModel::expression(double * modelCoefficients) const {
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  double d = modelCoefficients[3];
+  double e = modelCoefficients[4];
+  // a*x^4+b*x^3+c*x^2+d*x+e
+  return Addition::Builder({
+    Multiplication::Builder({
+      Number::DecimalNumber(a),
+      Power::Builder(
+        Symbol::Builder(k_xSymbol),
+        BasedInteger::Builder(4)
+      )
+    }),
+    Multiplication::Builder({
+      Number::DecimalNumber(b),
+      Power::Builder(
+        Symbol::Builder(k_xSymbol),
+        BasedInteger::Builder(3)
+      )
+    }),
+    Multiplication::Builder({
+      Number::DecimalNumber(c),
+      Power::Builder(
+        Symbol::Builder(k_xSymbol),
+        BasedInteger::Builder(3)
+      )
+    }),
+    Multiplication::Builder({
+      Number::DecimalNumber(d),
+      Symbol::Builder(k_xSymbol)
+    }),
+    Number::DecimalNumber(e)
+  });
 }
 
 double QuarticModel::evaluate(double * modelCoefficients, double x) const {
@@ -91,43 +120,6 @@ double QuarticModel::partialDerivate(double * modelCoefficients, int derivateCoe
       // Derivate with respect to e: 1
       return 1.0;
   };
-}
-
-Expression QuarticModel::expression(double * modelCoefficients) {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  double c = modelCoefficients[2];
-  double d = modelCoefficients[3];
-  double e = modelCoefficients[4];
-  // a*x^4+b*x^3+c*x^2+d*x+e
-  return Addition::Builder({
-    Multiplication::Builder({
-      Number::DecimalNumber(a),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(4.0)
-      )
-    }),
-    Multiplication::Builder({
-      Number::DecimalNumber(b),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(3.0)
-      )
-    }),
-    Multiplication::Builder({
-      Number::DecimalNumber(c),
-      Power::Builder(
-        Symbol::Builder('x'),
-        Decimal::Builder(2.0)
-      )
-    }),
-    Multiplication::Builder({
-      Number::DecimalNumber(d),
-      Symbol::Builder('x')
-    }),
-    Number::DecimalNumber(e)
-  });
 }
 
 }

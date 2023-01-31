@@ -97,7 +97,7 @@ KDCoordinate MatrixLayoutNode::computeBaseline(KDFont::Size font) {
   return GridLayoutNode::computeBaseline(font) + BracketPairLayoutNode::k_lineThickness;
 }
 
-void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   KDSize s = gridSize(font);
   SquareBracketPairLayoutNode::RenderWithChildSize(true, s.height(), ctx, p, expressionColor, backgroundColor);
   KDCoordinate rightOffset = SquareBracketPairLayoutNode::ChildOffset().x() + s.width();

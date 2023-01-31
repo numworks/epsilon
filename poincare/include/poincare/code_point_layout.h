@@ -59,7 +59,7 @@ protected:
 
 private:
   constexpr static const int k_middleDotWidth = 5;
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
   bool isMultiplicationCodePoint() const;
 };
 

@@ -41,7 +41,7 @@ protected:
   KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
 private:
   KDCoordinate knHeight(KDFont::Size font) { return nLayout()->layoutSize(font).height() + /*TODO: GridLayoutNode::k_gridEntryMargin*/6 + kLayout()->layoutSize(font).height(); }
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
   LayoutNode * nLayout() { return childAtIndex(0); }
   LayoutNode * kLayout() { return childAtIndex(1); }
 };

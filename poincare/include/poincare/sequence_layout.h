@@ -66,7 +66,7 @@ protected:
   LayoutNode * variableLayout() { return childAtIndex(k_variableLayoutIndex); }
   LayoutNode * lowerBoundLayout() { return childAtIndex(2); }
   LayoutNode * upperBoundLayout() { return childAtIndex(3); }
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
 private:
   constexpr static int k_argumentLayoutIndex = 0;
   constexpr static int k_variableLayoutIndex = 1;

@@ -9,7 +9,7 @@ int ProductLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   return SequenceLayoutNode::writeDerivedClassInBuffer("product", buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
-void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void ProductLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   // Compute sizes.
   KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
   KDSize lowerBoundNEqualsSize = lowerBoundSizeWithVariableEquals(font);

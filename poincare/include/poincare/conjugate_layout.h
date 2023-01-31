@@ -39,7 +39,7 @@ protected:
   LayoutNode * childLayout() { return childAtIndex(0); }
 
 private:
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
 };
 
 class ConjugateLayout final : public LayoutOneChild<ConjugateLayout, ConjugateLayoutNode> {

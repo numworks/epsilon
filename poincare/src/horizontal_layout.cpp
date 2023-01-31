@@ -267,28 +267,31 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font)
   return KDPoint(x, y);
 }
 
-KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const {
-  assert(selectionStart != nullptr && !selectionStart->isUninitialized());
-  assert(selectionEnd != nullptr && !selectionEnd->isUninitialized());
+KDRect HorizontalLayoutNode::relativeSelectionRect(int leftIndex, int rightIndex, KDFont::Size font) const {
   HorizontalLayout thisLayout = HorizontalLayout(const_cast<HorizontalLayoutNode *>(this));
-  assert(thisLayout.hasChild(*selectionStart));
-  assert(thisLayout.hasChild(*selectionEnd));
-  assert(thisLayout.indexOfChild(*selectionStart) <= thisLayout.indexOfChild(*selectionEnd));
+  if (numberOfChildren() == 0) {
+    assert(leftIndex == 0 && rightIndex == 1);
+    return KDRectZero;
+  }
+
+  assert(leftIndex >= 0 && rightIndex <= numberOfChildren() && leftIndex < rightIndex);
+  int firstSelectedChildIndex = leftIndex;
+  int lastSelectedChildIndex = rightIndex - 1;
+  LayoutNode * firstSelectedChild = childAtIndex(leftIndex);
+  LayoutNode * lastSelectedChild = childAtIndex(rightIndex);
 
   // Compute the positions
-  KDCoordinate selectionXStart = const_cast<HorizontalLayoutNode *>(this)->positionOfChild(selectionStart->node(), font).x();
-  KDCoordinate selectionXEnd = const_cast<HorizontalLayoutNode *>(this)->positionOfChild(selectionEnd->node(), font).x() + selectionEnd->layoutSize(font).width();
+  KDCoordinate selectionXStart = const_cast<HorizontalLayoutNode *>(this)->positionOfChild(firstSelectedChild, font).x();
+  KDCoordinate selectionXEnd = const_cast<HorizontalLayoutNode *>(this)->positionOfChild(lastSelectedChild, font).x() + lastSelectedChild->layoutSize(font).width();
   KDCoordinate drawWidth = selectionXEnd - selectionXStart;
 
   // Compute the height
-  int firstSelectedNodeIndex = thisLayout.indexOfChild(*selectionStart);
-  int secondSelectedNodeIndex = thisLayout.indexOfChild(*selectionEnd);
-  if (firstSelectedNodeIndex == 0 && secondSelectedNodeIndex == numberOfChildren() - 1) {
+  if (firstSelectedChildIndex == 0 && lastSelectedChildIndex == numberOfChildren() - 1) {
     return KDRect(KDPointZero, const_cast<HorizontalLayoutNode *>(this)->layoutSize(font));
   }
   KDCoordinate maxUnderBaseline = 0;
   KDCoordinate maxAboveBaseline = 0;
-  for (int i = firstSelectedNodeIndex; i <= secondSelectedNodeIndex; i++) {
+  for (int i = firstSelectedChildIndex; i <= lastSelectedChildIndex; i++) {
     Layout childi = thisLayout.childAtIndex(i);
     KDSize childSize = childi.layoutSize(font);
     maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, childSize.height() - childi.baseline(font));
@@ -329,21 +332,10 @@ static void makePermanentIfBracket(LayoutNode * l, bool hasLeftSibling, bool has
   }
 }
 
-void HorizontalLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void HorizontalLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   if (shouldDrawEmptyRectangle()) {
     // If the layout is empty, draw an empty rectangle
     EmptyRectangle::DrawEmptyRectangle(ctx, p, font, m_emptyColor);
-    return;
-  }
-  HorizontalLayout thisLayout = HorizontalLayout(this);
-  // Fill the selection background
-  bool childrenAreSelected = selectionStart != nullptr && selectionEnd != nullptr
-    && !selectionStart->isUninitialized() && !selectionEnd->isUninitialized()
-    && thisLayout.hasChild(*selectionStart);
-  if (childrenAreSelected) {
-    assert(thisLayout.hasChild(*selectionEnd));
-    KDRect selectionRectangle = HorizontalLayout(this).relativeSelectionRect(selectionStart, selectionEnd, font);
-    ctx->fillRect(selectionRectangle.translatedBy(p), selectionColor);
   }
 }
 

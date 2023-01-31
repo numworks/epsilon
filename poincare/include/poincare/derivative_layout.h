@@ -60,7 +60,7 @@ protected:
   constexpr static KDCoordinate k_dxHorizontalMargin = 2;
   constexpr static KDCoordinate k_barHorizontalMargin = 2;
   constexpr static KDCoordinate k_barWidth = 1;
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
 
  /* There are two slots for the variable name: the Fraction and the Assignment slots.
   * This member is used to make the two copies of the variable name interactive while storing the variable name only once. */
@@ -131,7 +131,7 @@ private:
   KDCoordinate orderHeightOffset(KDFont::Size font) override { return orderLayout()->layoutSize(font).height() - VerticalOffsetLayoutNode::k_indiceHeight; }
   KDCoordinate orderWidth(KDFont::Size font) override { return orderLayout()->layoutSize(font).width(); }
 
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
 
   void setOrderSlot(OrderSlot orderSlot, bool * shouldRecomputeLayout);
 

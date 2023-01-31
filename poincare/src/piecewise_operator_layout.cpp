@@ -66,7 +66,7 @@ KDCoordinate PiecewiseOperatorLayoutNode::computeBaseline(KDFont::Size font) {
   return GridLayoutNode::computeBaseline(font) + CurlyBraceLayoutNode::k_lineThickness;
 }
 
-void PiecewiseOperatorLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void PiecewiseOperatorLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   assert(numberOfColumns() == 2);
   bool cursorIsInsideOperator = isEditing();
 

@@ -369,7 +369,7 @@ KDCoordinate IntegralLayoutNode::centralArgumentHeight(KDFont::Size font) {
   }
 }
 
-void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   KDSize integrandSize = integrandLayout()->layoutSize(font);
   KDCoordinate centralArgHeight = centralArgumentHeight(font);
   KDColor workingBuffer[k_symbolWidth*k_symbolHeight];

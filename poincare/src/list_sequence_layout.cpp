@@ -127,7 +127,7 @@ KDCoordinate ListSequenceLayoutNode::bracesWidth(KDFont::Size font) {
   return 2 * CurlyBraceLayoutNode::k_curlyBraceWidth + functionLayout()->layoutSize(font).width();
 }
 
-void ListSequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void ListSequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   // Draw {  }
   KDSize functionSize = functionLayout()->layoutSize(font);
   KDPoint functionPosition = positionOfChild(functionLayout(), font);

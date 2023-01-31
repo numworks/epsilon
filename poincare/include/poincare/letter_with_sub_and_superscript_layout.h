@@ -32,7 +32,7 @@ protected:
   KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
   virtual void renderLetter(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) = 0;
 private:
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
   KDCoordinate aboveSymbol(KDFont::Size font);
   KDCoordinate totalHeight(KDFont::Size font);
   LayoutNode * nLayout() { return childAtIndex(0); }

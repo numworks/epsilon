@@ -40,7 +40,7 @@ KDCoordinate StringLayoutNode::computeBaseline(KDFont::Size font) {
   return KDFont::GlyphHeight(font) / 2;
 }
 
-void StringLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void StringLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   int nThousandsSeparators = numberOfThousandsSeparators();
   if (nThousandsSeparators == 0) {
     ctx->drawString(m_string, p, font, expressionColor, backgroundColor);

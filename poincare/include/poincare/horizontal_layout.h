@@ -53,15 +53,16 @@ public:
   void setEmptyColor(EmptyRectangle::Color color) { m_emptyColor = color; }
   void setEmptyVisibility(EmptyRectangle::State state) { m_emptyVisibility = state; }
 
+  KDRect relativeSelectionRect(int leftIndex, int rightIndex, KDFont::Size font) const;
+
 private:
   // LayoutNode
   KDSize computeSize(KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode * l, KDFont::Size font) override;
-  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const;
 
   bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
 
   bool shouldDrawEmptyRectangle() const;
 
@@ -96,7 +97,7 @@ public:
 
   void serializeChildren(int firstIndex, int lastIndex, char * buffer, int bufferSize);
 
-  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const { return node()->relativeSelectionRect(selectionStart, selectionEnd, font); }
+  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const {/* TODO */ return KDRectZero; /* node()->relativeSelectionRect(selectionStart, selectionEnd, font);*/ }
 
   void setEmptyColor(EmptyRectangle::Color color) { node()->setEmptyColor(color); }
   void setEmptyVisibility(EmptyRectangle::State state) { node()->setEmptyVisibility(state); }

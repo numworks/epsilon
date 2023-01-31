@@ -306,7 +306,7 @@ void HigherOrderDerivativeLayoutNode::setOrderSlot(OrderSlot orderSlot, bool * s
   }
 }
 
-void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   // d/dx...
   ctx->drawString(k_d, positionOfDInNumerator(font).translatedBy(p), font, expressionColor, backgroundColor);
   ctx->drawString(k_d, positionOfDInDenominator(font).translatedBy(p), font, expressionColor, backgroundColor);
@@ -361,7 +361,7 @@ KDPoint HigherOrderDerivativeLayoutNode::positionOfOrderInDenominator(KDFont::Si
       positionOfX.y() - orderHeightOffset(font));
 }
 
-void HigherOrderDerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void HigherOrderDerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   // Draw the copy of the order
   Layout orderCopy = HorizontalLayout::Builder(Layout(orderLayout()).clone());
   KDPoint copyPosition = m_orderSlot == OrderSlot::Denominator ? positionOfOrderInNumerator(font) : positionOfOrderInDenominator(font);

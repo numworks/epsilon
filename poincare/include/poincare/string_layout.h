@@ -54,7 +54,7 @@ private:
     return KDPointZero;
   }
   int firstNonDigitIndex();
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
+  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
 
   char m_string[0];
 };
@@ -78,4 +78,3 @@ private:
 
 }
 #endif
-

@@ -6,6 +6,7 @@
 #include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/layout_selection.h>
 #include <poincare/symbol_abstract.h>
 
 namespace Poincare {
@@ -25,6 +26,14 @@ Layout Layout::LayoutFromAddress(const void * address, size_t size) {
     return Layout();
   }
   return Layout(static_cast<LayoutNode *>(TreePool::sharedPool->copyTreeFromAddress(address, size)));
+}
+
+void Layout::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, LayoutSelection selection, KDColor selectionColor) {
+  node()->draw(ctx, p, font, expressionColor, backgroundColor, selection, selectionColor);
+}
+
+void Layout::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
+  draw(ctx, p, font, expressionColor, backgroundColor, LayoutSelection());
 }
 
 int Layout::serializeParsedExpression(char * buffer, int bufferSize, Context * context) const {

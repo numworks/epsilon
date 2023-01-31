@@ -15,6 +15,7 @@ namespace Poincare {
 class Expression;
 class LayoutCursor;
 class Layout;
+class LayoutSelection;
 
 class LayoutNode : public TreeNode {
   friend class Layout;
@@ -74,7 +75,7 @@ public:
   bool isIdenticalTo(Layout l, bool makeEditable = false);
 
   // Rendering
-  void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed);
+  void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, LayoutSelection selection, KDColor selectionColor = KDColorRed);
   KDPoint absoluteOrigin(KDFont::Size font) { return absoluteOriginWithMargin(font).translatedBy(KDPoint(leftMargin(), 0)); }
   KDSize layoutSize(KDFont::Size font);
   KDCoordinate baseline(KDFont::Size font);
@@ -181,7 +182,7 @@ private:
     void * resultPosition,
     int * resultScore,
     bool forSelection);
-  virtual void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) = 0;
+  virtual void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) = 0;
   void changeGraySquaresOfAllGridRelatives(bool add, bool ancestors, bool * changedSquares);
 
   KDRect m_frame;

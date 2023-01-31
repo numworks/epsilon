@@ -103,7 +103,7 @@ KDPoint LetterWithSubAndSuperscriptLayoutNode::positionOfChild(LayoutNode * chil
                  aboveSymbol(font) + k_symbolHeight - kLayout()->baseline(font));
 }
 
-void LetterWithSubAndSuperscriptLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+void LetterWithSubAndSuperscriptLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   KDCoordinate combinationSymbolX = nLayout()->layoutSize(font).width();
   KDCoordinate combinationSymbolY = aboveSymbol(font);
   KDPoint base = p.translatedBy(KDPoint(combinationSymbolX, combinationSymbolY));

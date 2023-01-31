@@ -122,6 +122,7 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     assert(m_prefaceIntersectionView.rightMargin() == m_columnPrefaceView.rightMargin());
     assert(m_prefaceIntersectionView.topMargin() == m_rowPrefaceView.topMargin());
     assert(m_prefaceIntersectionView.bottomMargin() == m_rowPrefaceView.bottomMargin());
+    assert(rowPrefaceHeight == 0 || m_prefaceIntersectionView.minimalSizeForOptimalDisplay() == KDSize(columnPrefaceWidth, rowPrefaceHeight));
   }
 }
 

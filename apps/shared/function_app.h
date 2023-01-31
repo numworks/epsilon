@@ -23,9 +23,8 @@ public:
     virtual FunctionStore * functionStore() = 0;
     int * selectedCurveIndex() { return &m_selectedCurveIndex; }
     void reset() override;
-  protected:
-    CurveViewCursor m_cursor;
   private:
+    CurveViewCursor m_cursor;
     int m_selectedCurveIndex;
   };
   static FunctionApp * app() {

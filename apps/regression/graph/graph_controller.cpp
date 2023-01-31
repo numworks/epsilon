@@ -120,7 +120,7 @@ void GraphController::reloadBannerView() {
 
   // If any coefficient is NAN, display that data is not suitable
   bool coefficientsAreDefined = m_store->coefficientsAreDefined(*m_selectedSeriesIndex, globalContext());
-  if (coefficientsAreDefined && *m_selectedDotIndex < 0 && selectedSeriesIsScatterPlot()) {
+  if (coefficientsAreDefined && *m_selectedDotIndex < 0 && selectedCurveIsScatterPlot()) {
     // Regression model has been removed, reinitialize cursor
     initCursorParameters();
   }
@@ -168,12 +168,12 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   double x;
   double y;
   if (*m_selectedDotIndex >= 0) {
-    int dotSelected = m_store->nextDot(*m_selectedSeriesIndex, direction, *m_selectedDotIndex, !selectedSeriesIsScatterPlot());
+    int dotSelected = m_store->nextDot(*m_selectedSeriesIndex, direction, *m_selectedDotIndex, !selectedCurveIsScatterPlot());
     if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
       x = m_store->get(*m_selectedSeriesIndex, 0, dotSelected);
       y = m_store->get(*m_selectedSeriesIndex, 1, dotSelected);
     } else if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-      assert(!selectedSeriesIsScatterPlot());
+      assert(!selectedCurveIsScatterPlot());
       x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
       y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);
     } else {
@@ -200,7 +200,7 @@ bool GraphController::openMenuForCurveAtIndex(int curveIndex) {
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), textFieldDelegateApp()->localContext());
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
-  if (selectedSeriesIsScatterPlot()) {
+  if (selectedCurveIsScatterPlot()) {
     // Push regression controller directly
     RegressionController * controller = App::app()->regressionController();
     controller->setSeries(*m_selectedSeriesIndex);
@@ -217,7 +217,7 @@ bool GraphController::openMenuForCurveAtIndex(int curveIndex) {
 // InteractiveCurveViewController
 void GraphController::initCursorParameters(bool ignoreMargins) {
   double x, y;
-  if (selectedSeriesIsScatterPlot()) {
+  if (selectedCurveIsScatterPlot()) {
     x = m_store->get(*m_selectedSeriesIndex, 0, 0);
     y = m_store->get(*m_selectedSeriesIndex, 1, 0);
     *m_selectedDotIndex = 0;
@@ -234,14 +234,14 @@ bool GraphController::selectedModelIsValid() const {
     return false;
   }
   uint8_t numberOfPairs = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
-  return *m_selectedDotIndex < numberOfPairs || (*m_selectedDotIndex == numberOfPairs && !selectedSeriesIsScatterPlot());
+  return *m_selectedDotIndex < numberOfPairs || (*m_selectedDotIndex == numberOfPairs && !selectedCurveIsScatterPlot());
 }
 
 Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(double t) const {
   assert(selectedModelIsValid());
   if (*m_selectedDotIndex == -1) {
     return xyValues(curveIndexFromSeriesIndex(*m_selectedSeriesIndex), t, globalContext());
-  } else if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex) && !selectedSeriesIsScatterPlot()) {
+  } else if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex) && !selectedCurveIsScatterPlot()) {
     return Coordinate2D<double>(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
   }
   return Coordinate2D<double>(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
@@ -318,7 +318,7 @@ bool GraphController::moveCursorVertically(int direction) {
     *m_selectedDotIndex = dotSelected;
     setRoundCrossCursorView();
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-      assert(!selectedSeriesIsScatterPlot());
+      assert(!selectedCurveIsScatterPlot());
       // Select the mean dot
       double x = m_store->meanOfColumn(*m_selectedSeriesIndex, 0);
       double y = m_store->meanOfColumn(*m_selectedSeriesIndex, 1);

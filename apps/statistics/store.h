@@ -117,7 +117,7 @@ public:
   bool valueValidInColumn(double value, int relativeColumn) const override { return DoublePairStore::valueValidInColumn(value, relativeColumn) && (relativeColumn != 1 || value >= 0.0); }
 
   typedef double (Store::*CalculPointer)(int) const;
-  static bool ActiveSeriesAndActiveTotalNormalProbabilities(const DoublePairStore * store, int series) {
+  static bool ActiveSeriesAndValidTotalNormalProbabilities(const DoublePairStore * store, int series) {
     // SumOfOccurrencesUnderMax checks for validity
     return SumOfOccurrencesUnderMax(store, series) && static_cast<const Store *>(store)->columnIsIntegersOnly(series, 1);
   }

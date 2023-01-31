@@ -56,20 +56,20 @@ void Store::setSeriesRegressionType(int series, Model::Type type) {
 int Store::closestVerticalDot(int direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {
   double nextX = INFINITY;
   double nextY = INFINITY;
-  int selectedDot = -1;
+  int nextDot = -1;
   for (int series = 0; series < k_numberOfSeries; series++) {
     if (!seriesIsActive(series) || (currentDot >= 0 && currentSeries == series)) {
       /* If the currentDot is valid, the next series should not be the current
        * series */
       continue;
     }
-    int numberOfPoints = numberOfPairsOfSeries(series);
+    int numberOfDots = numberOfPairsOfSeries(series);
     float xMin = App::app()->graphRange()->xMin();
     float xMax = App::app()->graphRange()->xMax();
     bool displayMean = seriesRegressionType(series) != Model::Type::None;
-    for (int i = 0; i < numberOfPoints + displayMean; i++) {
-      double currentX = i < numberOfPoints ? get(series, 0, i) : meanOfColumn(series, 0);
-      double currentY = i < numberOfPoints ? get(series, 1, i) : meanOfColumn(series, 1);
+    for (int i = 0; i < numberOfDots + displayMean; i++) {
+      double currentX = i < numberOfDots ? get(series, 0, i) : meanOfColumn(series, 0);
+      double currentY = i < numberOfDots ? get(series, 1, i) : meanOfColumn(series, 1);
       if (xMin <= currentX && currentX <= xMax // The next dot is within the window abscissa bounds
           && (std::fabs(currentX - x) <= std::fabs(nextX - x)) // The next dot is the closest to x in abscissa
           && ((currentY > y && direction > 0) // The next dot is above/under y
@@ -81,17 +81,17 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
       {
         nextX = currentX;
         nextY = currentY;
-        selectedDot = i;
+        nextDot = i;
         *nextSeries = series;
       }
     }
   }
-  return selectedDot;
+  return nextDot;
 }
 
 int Store::nextDot(int series, int direction, int dot, bool displayMean) {
   double nextX = INFINITY;
-  int selectedDot = -1;
+  int nextDot = -1;
   double meanX = meanOfColumn(series, 0);
   double x = meanX;
   if (dot >= 0 && dot < numberOfPairsOfSeries(series)) {
@@ -112,7 +112,7 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
         // Handle edge case: 2 dots have same abscissa
         if (data != x || (index > dot)) {
           nextX = data;
-          selectedDot = index;
+          nextDot = index;
         }
       }
     }
@@ -121,7 +121,7 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
         (numberOfPairsOfSeries(series) != dot) &&
         (meanX >= x)) {
       if (meanX != x || (numberOfPairsOfSeries(series) > dot)) {
-        selectedDot = numberOfPairsOfSeries(series);
+        nextDot = numberOfPairsOfSeries(series);
       }
     }
   } else {
@@ -131,7 +131,7 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
         (meanX <= x)) {
       if ((meanX != x) || (numberOfPairsOfSeries(series) < dot)) {
         nextX = meanX;
-        selectedDot = numberOfPairsOfSeries(series);
+        nextDot = numberOfPairsOfSeries(series);
       }
     }
     for (int index = numberOfPairsOfSeries(series)-1; index >= 0; index--) {
@@ -142,12 +142,12 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
         // Handle edge case: 2 dots have same abscissa
         if (data != x || (index < dot)) {
           nextX = data;
-          selectedDot = index;
+          nextDot = index;
         }
       }
     }
   }
-  return selectedDot;
+  return nextDot;
 }
 
 /* Series */

@@ -252,15 +252,15 @@ bool GraphController::moveCursorVertically(int direction) {
   double y = m_cursor->y();
 
   // Find the closest regression
-  int selectedRegressionIndex = *m_selectedDotIndex == -1 ? *m_selectedCurveIndex : -1;
-  int closestRegressionSeries = closestCurveIndexVertically(direction > 0, selectedRegressionIndex, context);
+  int selectedRegressionCurve = *m_selectedDotIndex == -1 ? *m_selectedCurveIndex : -1;
+  int closestRegressionCurve = closestCurveIndexVertically(direction > 0, selectedRegressionCurve, context);
 
   // Find the closest dot
   int closestDotSeries = -1;
   int dotSelected = m_store->closestVerticalDot(direction, x, y, selectedSeries, *m_selectedDotIndex, &closestDotSeries, context);
 
   // Choose between selecting the regression or the dot
-  bool validRegression = closestRegressionSeries > -1;
+  bool validRegression = closestRegressionCurve > -1;
   bool validDot = dotSelected >= 0 && dotSelected <= m_store->numberOfPairsOfSeries(closestDotSeries);
   if (validRegression && validDot) {
     /* Compare the abscissa distances to select either the dot or the
@@ -277,7 +277,7 @@ bool GraphController::moveCursorVertically(int direction) {
       validDot = false;
     } else {
       // Compare the y distances
-      double regressionDistanceY = std::fabs(m_store->yValueForXValue(closestRegressionSeries, x, context) - y);
+      double regressionDistanceY = std::fabs(m_store->yValueForXValue(closestRegressionCurve, x, context) - y);
       double dotDistanceY = (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) ?
         std::fabs(m_store->meanOfColumn(closestDotSeries, 1) - y) :
         std::fabs(m_store->get(closestDotSeries, 1, dotSelected) - y);
@@ -295,8 +295,8 @@ bool GraphController::moveCursorVertically(int direction) {
 
   if (validRegression) {
     // Select the regression
-    if (selectedSeries != closestRegressionSeries) {
-      *m_selectedCurveIndex = curveIndexFromSeriesIndex(closestRegressionSeries);
+    if (selectedSeries != closestRegressionCurve) {
+      *m_selectedCurveIndex = curveIndexFromSeriesIndex(closestRegressionCurve);
       selectedSeries = selectedSeriesIndex();
       // Reload so that the selected series is on top
       m_view.reload(false, true);

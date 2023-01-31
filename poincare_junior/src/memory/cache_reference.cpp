@@ -16,6 +16,7 @@ SharedPointer::SharedPointer(const void * data, size_t dataSize) :
 }
 
 uint32_t SharedPointer::checksum(const void * data, size_t dataSize) const {
+  // TODO : Ignore data's mutable objects, such as CacheReference's m_id
   return Ion::crc32Byte(static_cast<const uint8_t *>(data), dataSize);
 }
 

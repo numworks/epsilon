@@ -1,4 +1,5 @@
 #include <poincare_junior/include/expression.h>
+#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/memory/cache_pool.h>
@@ -6,18 +7,30 @@
 
 namespace PoincareJ {
 
-// TODO dummy parse
+EditionReference Expression::ParseFromLayoutInEditionPool(Node node) {
+  // node == (1-2)/3/4
+  EditionReference ref = EditionReference::Push<BlockType::Division>();
+  EditionReference::Push<BlockType::Division>();
+  EditionReference::Push<BlockType::Subtraction>();
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  return ref;
+}
+
 Expression Expression::CreateExpressionFromText(const char * textInput) {
-  // textInput == (1-2)/3/4
   return Expression([](const char * text){
-      EditionReference::Push<BlockType::Division>();
-      EditionReference::Push<BlockType::Division>();
-      EditionReference::Push<BlockType::Subtraction>();
-      EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-      EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-      EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-      EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+      EditionReference ref = Layout::ParseFromTextInEditionPool(text);
+      ParseFromLayoutInEditionPool(ref);
+      ref.removeTree();
     }, textInput);
+}
+
+Expression Expression::CreateExpressionFromLayout(const Layout * layoutInput) {
+  return Expression([](Node node){
+      ParseFromLayoutInEditionPool(node);
+    }, layoutInput);
 }
 
 Expression Expression::CreateBasicReduction(void * expressionAddress) {

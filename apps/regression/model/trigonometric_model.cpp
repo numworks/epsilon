@@ -1,7 +1,6 @@
 #include "trigonometric_model.h"
 #include <apps/regression/store.h>
 #include "../../shared/poincare_helpers.h"
-#include <poincare/addition.h>
 #include <poincare/multiplication.h>
 #include <poincare/number.h>
 #include <poincare/power.h>
@@ -28,16 +27,18 @@ Expression TrigonometricModel::expression(double * modelCoefficients) const {
   double d = modelCoefficients[3];
   // a*sin(bx+c)+d
   return
-    Addition::Builder(
+    AdditionOrSubtractionBuilder(
       Multiplication::Builder(
         Number::DecimalNumber(a),
         Sine::Builder(
-          Addition::Builder(
+          AdditionOrSubtractionBuilder(
             Multiplication::Builder(
               Number::DecimalNumber(b),
               Symbol::Builder(k_xSymbol)),
-            Number::DecimalNumber(c)))),
-      Number::DecimalNumber(d));
+            Number::DecimalNumber(std::fabs(c)),
+            c >= 0.0))),
+      Number::DecimalNumber(std::fabs(d)),
+      d >= 0.0);
 }
 
 double TrigonometricModel::evaluate(double * modelCoefficients, double x) const {

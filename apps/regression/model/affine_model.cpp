@@ -1,6 +1,5 @@
 #include "affine_model.h"
 #include "../store.h"
-#include <poincare/addition.h>
 #include <poincare/multiplication.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/print.h>
@@ -14,13 +13,13 @@ Poincare::Expression AffineModel::expression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   // a*x+b
-  return Addition::Builder({
+  return AdditionOrSubtractionBuilder(
     Multiplication::Builder({
       Number::DecimalNumber(a),
       Symbol::Builder(k_xSymbol),
     }),
-    Number::DecimalNumber(b)
-  });
+    Number::DecimalNumber(std::fabs(b)),
+    b >= 0.0);
 }
 
 double AffineModel::evaluate(double * modelCoefficients, double x) const {

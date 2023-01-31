@@ -3,7 +3,6 @@
 #include "../../shared/linear_regression_store.h"
 #include <cmath>
 #include <assert.h>
-#include <poincare/addition.h>
 #include <poincare/constant.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>

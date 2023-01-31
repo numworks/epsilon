@@ -1,6 +1,5 @@
 #include "logarithmic_model.h"
 #include "../store.h"
-#include <poincare/addition.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/print.h>
@@ -16,13 +15,12 @@ Poincare::Expression LogarithmicModel::expression(double * modelCoefficients) co
   double b = modelCoefficients[1];
   // a+b*ln(x)
   return
-    Addition::Builder(
+    AdditionOrSubtractionBuilder(
       Number::DecimalNumber(a),
       Multiplication::Builder(
-        Number::DecimalNumber(b),
-        NaperianLogarithm::Builder(Symbol::Builder(k_xSymbol))
-      )
-    );
+        Number::DecimalNumber(std::fabs(b)),
+        NaperianLogarithm::Builder(Symbol::Builder(k_xSymbol))),
+      b >= 0.0);
 }
 
 double LogarithmicModel::evaluate(double * modelCoefficients, double x) const {

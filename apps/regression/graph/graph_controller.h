@@ -14,7 +14,7 @@ namespace Regression {
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
-  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * interactiveRange, Shared::CurveViewCursor * cursor, int * selectedDotIndex, int * selectedSeriesIndex, Store * store);
+  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * interactiveRange, Shared::CurveViewCursor * cursor, int * selectedDotIndex, int * selectedCurveIndex, Store * store);
 
   // Responder
   void didBecomeFirstResponder() override;
@@ -36,7 +36,7 @@ public:
   void tidyModels() override {}
 
   void selectRegressionCurve() { *m_selectedDotIndex = -1; }
-  int selectedSeriesIndex() const { return *m_selectedSeriesIndex; }
+  int selectedSeriesIndex() const { return seriesIndexFromCurveIndex(*m_selectedCurveIndex); }
   Poincare::Context * globalContext() const;
 
 private:
@@ -70,7 +70,7 @@ private:
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   CurveSelectionController * curveSelectionController() const override { return const_cast<CurveSelectionController *>(&m_curveSelectionController); }
-  int selectedCurveIndex() const override { return curveIndexFromSeriesIndex(*m_selectedSeriesIndex); }
+  int selectedCurveIndex() const override { return *m_selectedCurveIndex; }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override { return m_store->numberOfActiveSeries(); }
@@ -80,7 +80,7 @@ private:
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() const;
   void setAbscissaInputAsFirstResponder();
   bool buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
-  bool selectedCurveIsScatterPlot() const { return m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::None; }
+  bool selectedCurveIsScatterPlot() const { return m_store->seriesRegressionType(selectedSeriesIndex()) == Model::Type::None; }
   void setRoundCrossCursorView();
   int seriesIndexFromCurveIndex(int curveIndex) const { return m_store->seriesIndexFromActiveSeriesIndex(curveIndex); }
   int curveIndexFromSeriesIndex(int seriesIndex) const { return m_store->activeSeriesIndexFromSeriesIndex(seriesIndex); }
@@ -94,7 +94,7 @@ private:
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */
   int * m_selectedDotIndex;
-  int * m_selectedSeriesIndex;
+  int * m_selectedCurveIndex;
   Model::Type m_selectedModelType;
 };
 

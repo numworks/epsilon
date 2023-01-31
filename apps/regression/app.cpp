@@ -23,7 +23,7 @@ const Image * App::Descriptor::icon() const {
 
 App::Snapshot::Snapshot() :
   m_graphSelectedDotIndex(-1),
-  m_selectedSeriesIndex(-1),
+  m_selectedCurveIndex(-1),
   m_regressionTypes{Model::Type::None, Model::Type::None, Model::Type::None}
 {
   // Register X1, X2, X3, Y1, Y2, Y3 as reserved names to the sharedStorage.
@@ -56,7 +56,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),
-  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, snapshot->graphRange(), snapshot->cursor(), snapshot->graphSelectedDotIndex(), snapshot->selectedSeriesIndex(), &m_store),
+  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, snapshot->graphRange(), snapshot->cursor(), snapshot->graphSelectedDotIndex(), snapshot->selectedCurveIndex(), &m_store),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader, Escher::StackViewController::Style::WhiteUniform),

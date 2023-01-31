@@ -32,7 +32,7 @@ public:
     Shared::InteractiveCurveViewRange * graphRange() { return &m_graphRange; }
     Shared::CurveViewCursor * cursor() { return &m_cursor; }
     int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }
-    int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
+    int * selectedCurveIndex() { return &m_selectedCurveIndex; }
     Model::Type * regressionTypes() { return m_regressionTypes; }
     Shared::DoublePairStorePreferences * storePreferences() { return &m_storePreferences; }
 
@@ -40,7 +40,7 @@ public:
     Shared::InteractiveCurveViewRange m_graphRange;
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;
-    int m_selectedSeriesIndex;
+    int m_selectedCurveIndex;
     Model::Type m_regressionTypes[Store::k_numberOfSeries];
     Shared::DoublePairStorePreferences m_storePreferences;
   };

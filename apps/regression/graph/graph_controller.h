@@ -65,7 +65,7 @@ private:
   void reloadBannerView() override;
 
   // InteractiveCurveViewController
-  bool openMenuForCurveAtIndex(int curveIndex) override;
+  void openMenuForCurveAtIndex(int curveIndex) override;
   void initCursorParameters(bool ignoreMargins = false) override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;

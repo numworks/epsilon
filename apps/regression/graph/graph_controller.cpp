@@ -195,7 +195,7 @@ InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() const {
   return App::app()->graphRange();
 }
 
-bool GraphController::openMenuForCurveAtIndex(int curveIndex) {
+void GraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (*m_selectedCurveIndex != curveIndex) {
     *m_selectedCurveIndex = curveIndex;
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), textFieldDelegateApp()->localContext());
@@ -212,7 +212,6 @@ bool GraphController::openMenuForCurveAtIndex(int curveIndex) {
     m_graphOptionsController.selectRow(0);
     stackController()->push(&m_graphOptionsController);
   }
-  return true;
 }
 
 // InteractiveCurveViewController

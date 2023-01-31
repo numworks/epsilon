@@ -46,7 +46,7 @@ public:
   bool isEmpty() const override { return numberOfCurves() == 0; }
   Escher::Responder * responderWhenEmpty() override;
 
-  virtual bool openMenuForCurveAtIndex(int curveIndex) = 0;
+  virtual void openMenuForCurveAtIndex(int curveIndex) = 0;
   virtual void moveCursorAndCenterIfNeeded(double t);
   RangeParameterController * rangeParameterController();
   ViewController * zoomParameterController();
@@ -55,7 +55,7 @@ protected:
   constexpr static float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
 
   // ZoomCurveViewController
-  bool handleEnter() override { return openMenu(); }
+  bool handleEnter() override { openMenu(); return true; }
   bool handleZoom(Ion::Events::Event event) override;
 
   Escher::TabViewController * tabController() const;
@@ -91,7 +91,7 @@ private:
   void refreshCursorAfterComputingRange() override { refreshCursor(true, true); }
 
   void setCurveViewAsMainView(bool resetInterrupted, bool forceReload);
-  bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };
+  void openMenu() { openMenuForCurveAtIndex(selectedCurveIndex()); };
   void refreshCursor(bool ignoreMargins = false, bool forceFiniteY = false);
 
   // Button invocations

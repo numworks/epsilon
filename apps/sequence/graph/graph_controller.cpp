@@ -103,9 +103,9 @@ Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) co
   return sequence->definitionName().clone();
 }
 
-bool GraphController::openMenuForCurveAtIndex(int curveIndex) {
+void GraphController::openMenuForCurveAtIndex(int curveIndex) {
   m_termSumController.setRecord(recordAtCurveIndex(curveIndex));
-  return FunctionGraphController::openMenuForCurveAtIndex(curveIndex);
+  FunctionGraphController::openMenuForCurveAtIndex(curveIndex);
 }
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {

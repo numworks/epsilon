@@ -53,7 +53,7 @@ private:
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
 
   // InteractiveCurveViewController
-  bool openMenuForCurveAtIndex(int curveIndex) override;
+  void openMenuForCurveAtIndex(int curveIndex) override;
   SequenceSelectionController * curveSelectionController() const override { return const_cast<SequenceSelectionController *>(&m_sequenceSelectionController); }
 
   // FunctionBannerDelegate

@@ -56,7 +56,6 @@ protected:
   bool moveCursorVertically(int direction) override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
-  int selectedCurveIndex() const override { return *m_selectedCurveIndex; }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;
@@ -80,8 +79,6 @@ private:
   virtual WithRecord * curveParameterControllerWithRecord() = 0;
 
   void computeDefaultPositionForFunctionAtIndex(int index, double * t, Poincare::Coordinate2D<double> * xy, bool ignoreMargins);
-
-  int * m_selectedCurveIndex;
 };
 
 }

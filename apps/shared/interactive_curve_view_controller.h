@@ -21,7 +21,7 @@ class InteractiveCurveViewController : public SimpleInteractiveCurveViewControll
 public:
   constexpr static int k_graphControllerStackDepth = 1;
 
-  InteractiveCurveViewController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, I18n::Message calculusButtonMessage);
+  InteractiveCurveViewController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, I18n::Message calculusButtonMessage, int * selectedCurveIndex);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -74,13 +74,14 @@ protected:
 
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex = 0, int * newSubCurveIndex = nullptr) const;
-  virtual int selectedCurveIndex() const = 0;
+  int selectedCurveIndex() const { return *m_selectedCurveIndex; }
   virtual Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const = 0;
   virtual bool suitableYValue(double y) const { return true; }
   virtual int numberOfCurves() const = 0;
   virtual int numberOfSubCurves(int curveIndex) const = 0;
   virtual bool isAlongY(int curveIndex) const = 0;
 
+  int * m_selectedCurveIndex;
   int m_selectedSubCurveIndex;
 private:
   constexpr static KDFont::Size k_buttonFont = KDFont::Size::Small;

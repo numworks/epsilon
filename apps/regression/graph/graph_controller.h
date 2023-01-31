@@ -70,7 +70,6 @@ private:
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   CurveSelectionController * curveSelectionController() const override { return const_cast<CurveSelectionController *>(&m_curveSelectionController); }
-  int selectedCurveIndex() const override { return *m_selectedCurveIndex; }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override { return m_store->numberOfActiveSeries(); }
@@ -94,7 +93,6 @@ private:
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */
   int * m_selectedDotIndex;
-  int * m_selectedCurveIndex;
   Model::Type m_selectedModelType;
 };
 

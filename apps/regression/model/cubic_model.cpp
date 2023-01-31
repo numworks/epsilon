@@ -1,7 +1,6 @@
 #include "cubic_model.h"
 #include "../../shared/poincare_helpers.h"
 #include <assert.h>
-#include <poincare/addition.h>
 #include <poincare/based_integer.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/decimal.h>
@@ -53,27 +52,27 @@ Expression CubicModel::expression(double * modelCoefficients) const {
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
   // a*x^3+b*x^2+c*x+d
-  return Addition::Builder({
-    Multiplication::Builder({
-      Number::DecimalNumber(a),
-      Power::Builder(
-        Symbol::Builder(k_xSymbol),
-        BasedInteger::Builder(3)
-      )
-    }),
-    Multiplication::Builder({
-      Number::DecimalNumber(b),
-      Power::Builder(
-        Symbol::Builder(k_xSymbol),
-        BasedInteger::Builder(2)
-      )
-    }),
-    Multiplication::Builder({
-      Number::DecimalNumber(c),
-      Symbol::Builder(k_xSymbol)
-    }),
-    Number::DecimalNumber(d)
-  });
+  return
+    AdditionOrSubtractionBuilder(
+      AdditionOrSubtractionBuilder(
+        AdditionOrSubtractionBuilder(
+          Multiplication::Builder(
+            Number::DecimalNumber(a),
+            Power::Builder(
+              Symbol::Builder(k_xSymbol),
+              BasedInteger::Builder(3))),
+          Multiplication::Builder(
+            Number::DecimalNumber(std::fabs(b)),
+            Power::Builder(
+              Symbol::Builder(k_xSymbol),
+              BasedInteger::Builder(2))),
+          b >= 0.0),
+        Multiplication::Builder(
+          Number::DecimalNumber(std::fabs(c)),
+          Symbol::Builder(k_xSymbol)),
+        c >= 0.0),
+      Number::DecimalNumber(std::fabs(d)),
+      d >= 0.0);
 }
 
 double CubicModel::evaluate(double * modelCoefficients, double x) const {

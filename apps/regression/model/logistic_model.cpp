@@ -2,7 +2,6 @@
 #include "../store.h"
 #include <cmath>
 #include <assert.h>
-#include <poincare/addition.h>
 #include <poincare/based_integer.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/constant.h>
@@ -51,15 +50,16 @@ Poincare::Expression LogisticModel::expression(double * modelCoefficients) const
   return
     Division::Builder(
       Number::DecimalNumber(c),
-      Addition::Builder(
+      AdditionOrSubtractionBuilder(
         BasedInteger::Builder(1),
         Multiplication::Builder(
-          Number::DecimalNumber(a),
+          Number::DecimalNumber(std::fabs(a)),
           Power::Builder(
             Constant::ExponentialEBuilder(),
             Multiplication::Builder(
               Number::DecimalNumber(-b),
-              Symbol::Builder(k_xSymbol))))));
+              Symbol::Builder(k_xSymbol)))),
+        a >= 0.0));
 }
 
 double LogisticModel::evaluate(double * modelCoefficients, double x) const {

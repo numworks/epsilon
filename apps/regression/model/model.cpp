@@ -2,12 +2,14 @@
 #include "../store.h"
 #include <apps/apps_container.h>
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/addition.h>
 #include <poincare/comparison.h>
 #include <poincare/decimal.h>
 #include <poincare/float.h>
 #include <poincare/function.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
+#include <poincare/subtraction.h>
 #include <cmath>
 
 using namespace Poincare;
@@ -54,6 +56,13 @@ bool Model::dataSuitableForFit(Store * store, int series) const {
     return false;
   }
   return store->seriesIsActive(series);
+}
+
+Expression Model::AdditionOrSubtractionBuilder(Expression e1, Expression e2, bool addition) {
+  if (addition) {
+    return Addition::Builder(e1, e2);
+  }
+  return Subtraction::Builder(e1, e2);
 }
 
 void Model::storeRegressionFunction(int series, Expression expression) const {

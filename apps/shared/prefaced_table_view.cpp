@@ -29,6 +29,8 @@ void PrefacedTableView::setMargins(KDCoordinate top, KDCoordinate right, KDCoord
   // Row preface
   m_rowPrefaceView.setLeftMargin(left);
   m_rowPrefaceView.setRightMargin(right);
+  m_rowPrefaceView.setTopMargin(0);
+  m_rowPrefaceView.setBottomMargin(0);
 }
 
 void PrefacedTableView::setBackgroundColor(KDColor color) {
@@ -84,6 +86,7 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   bool hideRowPreface = rowPrefaceIsTooLarge || m_rowPrefaceDataSource.prefaceIsAfterOffset(m_mainTableView->contentOffset().y(), m_mainTableView->topMargin()) || m_mainTableView->selectedRow() == -1;
   ScrollViewVerticalBar * verticalBar = static_cast<TableView::BarDecorator*>(m_mainTableView->decorator())->verticalBar();
 
+  // Main table
   if (hideRowPreface) {
     m_mainTableView->setTopMargin(m_mainTableViewTopMargin); // WARNING: If preface row can change, top margin is dependant on row frozen (follow the implementation used for column preface)
     m_mainTableView->setFrame(rect, force);
@@ -100,11 +103,16 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     m_mainTableView->scrollToCell(m_mainTableView->selectedColumn(), m_mainTableView->selectedRow());
   }
 
+  // Row preface
   if (hideRowPreface) {
     m_rowPrefaceView.setFrame(KDRectZero, force);
   } else {
+    m_rowPrefaceView.setLeftMargin(m_mainTableView->leftMargin());
     m_rowPrefaceView.setContentOffset(KDPoint(m_mainTableView->contentOffset().x(), 0));
     m_rowPrefaceView.setFrame(KDRect(rect.x(), rect.y(), rect.width(), rowPrefaceHeight), force);
+    assert(m_rowPrefaceView.leftMargin() == m_mainTableView->leftMargin());
+    assert(m_rowPrefaceView.rightMargin() == m_mainTableView->rightMargin());
+    assert(m_rowPrefaceView.topMargin() == 0);
   }
 }
 

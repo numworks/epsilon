@@ -7,7 +7,7 @@ namespace PoincareJ {
 
 EditionReference Layout::ParseFromTextInEditionPool(const char * text) {
   // textInput == -1+2*3
-  EditionReference ref = EditionReference::Push<BlockType::HorizontalLayout>(6);
+  EditionReference ref = EditionReference::Push<BlockType::RackLayout>(6);
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('-');
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1');
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('+');
@@ -19,7 +19,7 @@ EditionReference Layout::ParseFromTextInEditionPool(const char * text) {
 
 EditionReference Layout::ParseFromExpressionInEditionPool(Node node) {
   // node == -1+2*3
-  EditionReference ref = EditionReference::Push<BlockType::HorizontalLayout>(6);
+  EditionReference ref = EditionReference::Push<BlockType::RackLayout>(6);
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('-');
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1');
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('+');

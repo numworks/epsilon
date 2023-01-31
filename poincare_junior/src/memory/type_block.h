@@ -34,7 +34,7 @@ namespace PoincareJ {
  * - Constant C
  * | C TAG | TYPE | C TAG |
  *
- * - Addition A (same for Multiplication, Set, List, HorizontalLayout)
+ * - Addition A (same for Multiplication, Set, List, RackLayout)
  * | A TAG | NUMBER OF CHILDREN | A TAG |
  *
  * - Power P (same for Factorial, Subtraction, Division)
@@ -87,7 +87,7 @@ enum class BlockType : uint8_t {
   NumberOfExpressions,
 
   FirstLayout = NumberOfExpressions,
-  HorizontalLayout = FirstLayout,
+  RackLayout = FirstLayout,
   CodePointLayout,
   LastLayout = CodePointLayout,
 
@@ -126,7 +126,7 @@ BLOCK_TYPE_IS_EXPRESSION(BlockType::Set);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::List);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Polynomial);
 
-BLOCK_TYPE_IS_LAYOUT(BlockType::HorizontalLayout);
+BLOCK_TYPE_IS_LAYOUT(BlockType::RackLayout);
 BLOCK_TYPE_IS_LAYOUT(BlockType::CodePointLayout);
 
 // TODO:
@@ -157,7 +157,7 @@ public:
     return false;
   }
 
-  constexpr bool isNAry() const { return isOfType({BlockType::Addition, BlockType::Multiplication, BlockType::HorizontalLayout, BlockType::Set, BlockType::List, BlockType::Polynomial}); }
+  constexpr bool isNAry() const { return isOfType({BlockType::Addition, BlockType::Multiplication, BlockType::RackLayout, BlockType::Set, BlockType::List, BlockType::Polynomial}); }
   constexpr bool isInteger() const { return isOfType({BlockType::Zero, BlockType::One, BlockType::Two, BlockType::MinusOne, BlockType::IntegerShort, BlockType::IntegerPosBig, BlockType::IntegerNegBig}); }
   constexpr bool isRational() const { return isOfType({BlockType::Half, BlockType::RationalShort, BlockType::RationalPosBig, BlockType::RationalNegBig}) || isInteger(); }
   constexpr bool isNumber() const { return isOfType({BlockType::Float}) || isRational(); }
@@ -185,7 +185,7 @@ public:
       case BlockType::Constant:
       case BlockType::Set:
       case BlockType::List:
-      case BlockType::HorizontalLayout:
+      case BlockType::RackLayout:
         return 3;
       case BlockType::Polynomial:
       case BlockType::UserSymbol:

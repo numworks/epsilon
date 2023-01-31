@@ -71,7 +71,7 @@ void Node::logName(std::ostream & stream) const {
     "Set",
     "List",
     "Polynomial",
-    "HorizontalLayout",
+    "RackLayout",
     "CodePointLayout",
     "Placeholder",
   };

@@ -57,7 +57,8 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   } else if (event == Ion::Events::Toolbox) {
-    return openMenu();
+    openMenu();
+    return true;
   }
   return SimpleInteractiveCurveViewController::handleEvent(event);
 }

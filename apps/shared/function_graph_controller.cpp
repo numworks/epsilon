@@ -45,7 +45,7 @@ void FunctionGraphController::viewWillAppear() {
   selectCurveAtIndex(*m_selectedCurveIndex, true);
 }
 
-bool FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
+void FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (curveIndex != *m_selectedCurveIndex) {
     selectCurveAtIndex(curveIndex, false);
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), textFieldDelegateApp()->localContext(), m_selectedSubCurveIndex);
@@ -53,7 +53,6 @@ bool FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
   }
   curveParameterControllerWithRecord()->setRecord(recordAtSelectedCurveIndex());
   stackController()->push(curveParameterController());
-  return true;
 }
 
 void FunctionGraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible) {

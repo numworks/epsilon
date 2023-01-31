@@ -6,47 +6,43 @@
 using namespace PoincareJ;
 
 void testPlaceholders() {
-  using enum PatternMatching::Placeholder;
-  constexpr Tree a = A;
-  (void) Add("2"_n, a);
-  (void) Add("2"_n, Tree(A));
+  using namespace PatternMatching::Placeholders;
+  constexpr CTree a = A;
+  (void) (2_n + a + A);
 }
 QUIZ_CASE(pcj_placeholders) { testPlaceholders(); }
 
 void testContext() {
-  using enum PatternMatching::Placeholder;
+  using namespace PatternMatching::Placeholders;
   PatternMatching::Context ctx;
-  constexpr Tree t = Add("2"_n, "1"_n);
-  ctx[A] = t;
-  constexpr Tree structure = Mult("5"_n, Add(Tree(A), Tree(A)));
+  ctx[A] = 2_n + 1_n;
+  Node structure = 5_n * (A + A);
   EditionReference exp = PatternMatching::Create(structure, ctx);
-  assert_trees_are_equal(exp, Mult("5"_n, Add(Add("2"_n, "1"_n), Add("2"_n, "1"_n))));
+  // TODO an addition was collapsed by the constructor
+  assert_trees_are_equal(exp, 5_n * ((2_n + 1_n) + (2_n + 1_n)));
 }
 QUIZ_CASE(pcj_context) { testContext(); }
 
 void testMatch() {
-  using enum PatternMatching::Placeholder;
-  constexpr Tree t = Add("2"_n, "1"_n);
-  constexpr Tree p = A;
-  PatternMatching::Context ctx = PatternMatching::Match(p, t);
+  using namespace PatternMatching::Placeholders;
+  Node t = 2_n + 1_n;
+  PatternMatching::Context ctx = PatternMatching::Match(A, t);
   assert_trees_are_equal(ctx[A], t);
-  constexpr Tree p2 = Add(p, "1"_n);
-  PatternMatching::Context ctx2 = PatternMatching::Match(p2, t);
-  assert_trees_are_equal(ctx2[A], "2"_n);
-  constexpr Tree p3 = Add(p, "2"_n);
-  PatternMatching::Context ctx3 = PatternMatching::Match(p3, t);
+  PatternMatching::Context ctx2 = PatternMatching::Match(A + 1_n, t);
+  assert_trees_are_equal(ctx2[A], 2_n);
+  PatternMatching::Context ctx3 = PatternMatching::Match(A + 2_n, t);
   quiz_assert(ctx3.isUninitialized());
 }
 QUIZ_CASE(pcj_match) { testMatch(); }
 
 void testRewrite() {
-  using enum PatternMatching::Placeholder;
-  constexpr Tree p = Add(Tree(A), Tree(A));
-  constexpr Tree s = Mult("2"_n, Tree(A));
+  using namespace PatternMatching::Placeholders;
+  Node p = A + A;
+  Node s = 2_n * A;
   EditionReference ref = EditionReference::Push<BlockType::Addition>(2);
   EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   EditionReference result = ref.matchAndRewrite(p, s);
-  assert_trees_are_equal(result, Mult("2"_n, "5"_n));
+  assert_trees_are_equal(result, 2_n * 5_n);
 }
 QUIZ_CASE(pcj_rewrite) { testRewrite(); }

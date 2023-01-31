@@ -5,7 +5,6 @@
 #include <concepts>
 #include "node_constructor.h"
 #include "node.h"
-#include "pattern_matching.h"
 #include <poincare_junior/src/expression/integer.h>
 #include <omgpj/assert.h>
 #include <omg/print.h>
@@ -24,7 +23,7 @@ template <Block... Blocks>
 class CTree : public AbstractCTreeCompatible {
 public:
   static constexpr Block blocks[] = { Blocks... };
-  constexpr operator const Node () { return blocks; }
+  constexpr operator Node () const { return blocks; }
 };
 
 
@@ -206,7 +205,6 @@ class Tree {
 public:
   // TODO: make all constructor consteval
   constexpr Tree() {}
-  constexpr Tree(PatternMatching::Placeholder &&placeholder);
   constexpr Block & operator[] (size_t n) { return m_blocks[n]; }
   constexpr operator Node() const { return Node(const_cast<TypeBlock *>(m_blocks)); }
 private:
@@ -416,14 +414,6 @@ constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> operator "" _n(l
   Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> tree;
   CreateNode<BlockType::Float>(&tree, static_cast<float>(value));
   return tree;
-}
-
-// Deduction guide
-Tree(PatternMatching::Placeholder placeholder) -> Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Placeholder)>;
-
-template <>
-constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Placeholder)>::Tree(PatternMatching::Placeholder &&placeholder) {
-  CreateNode<BlockType::Placeholder>(this, placeholder);
 }
 
 }

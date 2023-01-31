@@ -4,28 +4,47 @@
 #include <array>
 #include "node.h"
 #include "node_iterator.h"
+#include "tree_constructor.h"
 #include "edition_reference.h"
 #include "pool.h"
 
 namespace PoincareJ {
 
-class PatternMatching {
-public:
-  enum class Placeholder : uint8_t {
+namespace PatternMatching {
+  enum class PlaceholderTag : uint8_t {
     A,
     B,
     C,
   };
   static constexpr int k_numberOfPlaceholders = 3;
 
+  template <PlaceholderTag P> struct Placeholder : public AbstractCTreeCompatible {
+    template <Block...B> consteval operator CTree<B...> () const { return CTree<B...>(); }
+    constexpr operator const Node () const { return CTree(Placeholder<P>()); }
+  };
+
+  namespace Placeholders {
+  static constexpr Placeholder<PlaceholderTag::A> A;
+  static constexpr Placeholder<PlaceholderTag::B> B;
+  static constexpr Placeholder<PlaceholderTag::C> C;
+  }
 
   class Context {
   public:
-    Node& operator[](Placeholder placeholder) {
+    Node& operator[](PlaceholderTag placeholder) {
       return m_array[static_cast<uint8_t>(placeholder)];
     }
-    const Node& operator[](Placeholder placeholder) const {
+
+    template <PlaceholderTag P> Node& operator[](Placeholder<P> placeholder) {
+      return m_array[static_cast<uint8_t>(P)];
+    }
+
+    const Node& operator[](PlaceholderTag placeholder) const {
       return m_array[static_cast<uint8_t>(placeholder)];
+    }
+
+    template <PlaceholderTag P> const Node& operator[](Placeholder<P> placeholder) const {
+      return m_array[static_cast<uint8_t>(P)];
     }
 
     bool isUninitialized() const;
@@ -33,9 +52,11 @@ public:
     Node m_array[k_numberOfPlaceholders];
   };
 
-  static Context Match(const Node pattern, Node source, Context context = Context());
-  static EditionReference Create(const Node structure, const Context context);
+  Context Match(const Node pattern, Node source, Context context = Context());
+  EditionReference Create(const Node structure, const Context context);
 };
+
+template <PatternMatching::PlaceholderTag P> CTree(PatternMatching::Placeholder<P>) -> CTree<BlockType::Placeholder, static_cast<uint8_t>(P), BlockType::Placeholder>;
 
 }
 

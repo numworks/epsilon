@@ -15,7 +15,7 @@ PatternMatching::Context PatternMatching::Match(const Node pattern, Node source,
   Pool::Nodes patternNodes = Pool::Nodes(pattern.block(), pattern.nextTree().block() - pattern.block());
   for (const Node node : patternNodes) {
     if (node.type() == BlockType::Placeholder) {
-      Placeholder placeholder = static_cast<Placeholder>(static_cast<uint8_t>(*node.block()->next()));
+      PlaceholderTag placeholder = static_cast<PlaceholderTag>(static_cast<uint8_t>(*node.block()->next()));
       if (result[placeholder].isUninitialized()) {
         result[placeholder] = source;
         source = source.nextTree();
@@ -38,7 +38,7 @@ EditionReference PatternMatching::Create(const Node structure, const Context con
   Pool::Nodes nodes = Pool::Nodes(structure.block(), structure.nextTree().block() - structure.block());
   for (const Node node : nodes) {
     if (node.type() == BlockType::Placeholder) {
-      EditionPool::sharedEditionPool()->initFromTree(context[static_cast<Placeholder>(static_cast<uint8_t>(*node.block()->next()))]);
+      EditionPool::sharedEditionPool()->initFromTree(context[static_cast<PlaceholderTag>(static_cast<uint8_t>(*node.block()->next()))]);
     } else {
       for (const Block block : node.blocks()) {
         EditionPool::sharedEditionPool()->pushBlock(block);

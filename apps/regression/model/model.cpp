@@ -20,14 +20,6 @@ Layout Model::layout() {
   return m_layout;
 }
 
-Poincare::Expression Model::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
-  Expression e = expression(modelCoefficients);
-  if (!e.isUninitialized()) {
-    PoincareHelpers::CloneAndSimplify(&e, context, ReductionTarget::SystemForApproximation);
-  }
-  return e;
-}
-
 double Model::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
   return PoincareHelpers::Solver(xMin, xMax, "x", context).nextIntersection(Number::DecimalNumber(y), expression(modelCoefficients)).x1();
 }

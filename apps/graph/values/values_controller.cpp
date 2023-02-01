@@ -121,19 +121,28 @@ int ValuesController::columnToFreeze() {
     assert(nbColumns == numberOfColumnsForSymbolType(symbolType));
     indexOfLastColumn += nbColumns;
     int indexOfAbscissaColumn = indexOfLastColumn - nbOfValuesColumns;
+    KDCoordinate subTableWidth = cumulatedWidthBeforeIndex(indexOfLastColumn + 1) - cumulatedWidthBeforeIndex(indexOfAbscissaColumn);
+    /*
+     *     -----------------------------------------------------------
+     *    |  x  | f(x) | g(x) | h(x) |  θ  | i(θ) |  t  | j(t) | k(t) |
+     *     -----------------------------------------------------------
+     *     <------------------------> <----------> <----------------->
+     *         width of subtable x        // θ             // t
+     */
+    if (subTableWidth <= m_prefacedTwiceTableView.minVisibleContentWidth()) {
+      /* Subtable can be fully displayed in frame so there is
+       * no need to freeze its abscissa column. */
+      continue;
+    }
+    // From here, we have an abscissa column candidate for freezing.
     if (cumulatedWidthBeforeIndex(indexOfLastColumn) >= offset().x()) {
-      // First abscissa for which last values column is not yet hidden
-      KDCoordinate subTableWidth = cumulatedWidthBeforeIndex(indexOfLastColumn + 1) - cumulatedWidthBeforeIndex(indexOfAbscissaColumn);
-      if (subTableWidth <= m_prefacedTwiceTableView.minVisibleContentWidth()) {
-        /* Abscissa column and its last values column can be displayed
-         * at the same time in table view frame, thus there is no need
-         * to freeze this abscissa column. */
-        return -1;
-      }
+      /* We take the first candidate for which last column is not hidden by scroll.
+       * Indeed, if last column is hidden (even partly) by scroll, it means focus
+       * is not on this subtable so we don't want to freeze this abscissa. */
       return indexOfAbscissaColumn;
     }
   }
-  assert(false);
+  // No abscissa column candidate for freezing
   return -1;
 }
 

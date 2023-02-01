@@ -108,16 +108,6 @@ void LayoutNode::askParentToMoveCursorHorizontally(OMG::HorizontalDirection dire
   }
 }
 
-void LayoutNode::askParentToMoveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Left, cursor, shouldRecomputeLayout);
-}
-
-void LayoutNode::askParentToMoveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right, cursor, shouldRecomputeLayout);
-}
-
 // Tree modification
 
 void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {

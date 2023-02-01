@@ -26,7 +26,7 @@ void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shou
   }
   // Case: Left. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Left, cursor, shouldRecomputeLayout);
 }
 
 void VerticalOffsetLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -45,7 +45,7 @@ void VerticalOffsetLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * sho
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right, cursor, shouldRecomputeLayout);
 }
 
 void VerticalOffsetLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {

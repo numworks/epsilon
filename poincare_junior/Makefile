@@ -35,6 +35,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   calculation.cpp \
   elementary_tree_manipulations.cpp \
   expression_comparison.cpp \
+  layout.cpp \
   graph.cpp \
   match.cpp \
   memory_elements.cpp \

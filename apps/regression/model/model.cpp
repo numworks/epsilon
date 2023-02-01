@@ -24,8 +24,20 @@ Layout Model::templateLayout() const {
 
 Layout Model::equationLayout(double * modelCoefficients, const char * ySymbol, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
   Expression formula = expression(modelCoefficients);
+  if (formula.isUninitialized()) {
+    return Layout();
+  }
   Expression equation = Comparison::Builder(Symbol::Builder(ySymbol, strlen(ySymbol)), ComparisonNode::OperatorType::Equal, formula);
   return equation.createLayout(displayMode, significantDigits, AppsContainer::sharedAppsContainer()->globalContext());
+}
+
+Poincare::Expression Model::expression(double * modelCoefficients) const {
+  for (int i = 0; i < numberOfCoefficients(); i++) {
+    if (std::isnan(modelCoefficients[i])) {
+      return Expression();
+    }
+  }
+  return privateExpression(modelCoefficients);
 }
 
 double Model::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {

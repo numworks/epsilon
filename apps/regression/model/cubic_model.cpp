@@ -43,7 +43,7 @@ Layout CubicModel::templateLayout() const {
   });
 }
 
-Expression CubicModel::expression(double * modelCoefficients) const {
+Expression CubicModel::privateExpression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];

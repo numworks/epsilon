@@ -20,7 +20,7 @@ static double toRadians() {
   return M_PI / Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences->angleUnit());
 }
 
-Expression TrigonometricModel::expression(double * modelCoefficients) const {
+Expression TrigonometricModel::privateExpression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];

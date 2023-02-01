@@ -36,7 +36,7 @@ Layout LogisticModel::templateLayout() const {
         VerticalOffsetLayoutNode::VerticalPosition::Superscript)}));
 }
 
-Poincare::Expression LogisticModel::expression(double * modelCoefficients) const {
+Poincare::Expression LogisticModel::privateExpression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];

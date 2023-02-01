@@ -41,7 +41,7 @@ Layout ExponentialModel::templateLayout() const {
   });
 }
 
-Poincare::Expression ExponentialModel::expression(double * modelCoefficients) const {
+Poincare::Expression ExponentialModel::privateExpression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   // if m_isAbxForm -> a*b^x, else a*e^bx

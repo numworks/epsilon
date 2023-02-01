@@ -13,12 +13,12 @@ public:
   int numberOfCoefficients() const override { return 2; }
 
   Poincare::Layout templateLayout() const override;
-  Poincare::Expression expression(double * modelCoefficients) const override;
 
   double evaluate(double * modelCoefficients, double x) const override;
   double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) override;
 
 private:
+  Poincare::Expression privateExpression(double * modelCoefficients) const override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override;
   bool dataSuitableForFit(Store * store, int series) const override;

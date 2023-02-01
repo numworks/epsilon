@@ -50,7 +50,7 @@ Layout QuarticModel::templateLayout() const {
     CodePointLayout::Builder('e')});
 }
 
-Expression QuarticModel::expression(double * modelCoefficients) const {
+Expression QuarticModel::privateExpression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];

@@ -40,8 +40,8 @@ public:
   virtual int numberOfCoefficients() const = 0;
 
   virtual Poincare::Layout templateLayout() const;
-  virtual Poincare::Expression expression(double * modelCoefficients) const = 0;
   Poincare::Layout equationLayout(double * modelCoefficients, const char * ySymbol, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
+  Poincare::Expression expression(double * modelCoefficients) const;
 
   /* Evalute cannot use the expression and approximate it since it would be
    * too time consuming. */
@@ -50,6 +50,8 @@ public:
   void fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
 
 protected:
+  virtual Poincare::Expression privateExpression(double * modelCoefficients) const = 0;
+
   // Fit
   virtual void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
   virtual bool dataSuitableForFit(Store * store, int series) const;

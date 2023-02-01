@@ -6,9 +6,9 @@ using namespace Poincare;
 
 namespace Regression {
 
-Poincare::Expression LinearModel::expression(double * modelCoefficients) const {
+Poincare::Expression LinearModel::privateExpression(double * modelCoefficients) const {
   if (!m_isApbxForm) {
-    return AffineModel::expression(modelCoefficients);
+    return AffineModel::privateExpression(modelCoefficients);
   }
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];

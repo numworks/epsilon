@@ -13,12 +13,11 @@ public:
   I18n::Message formulaMessage() const override { return UseMxpbForm() ?  I18n::Message::LinearMxpbRegressionFormula : I18n::Message::LinearRegressionFormula; }
   int numberOfCoefficients() const override { return 2; }
 
-  Poincare::Expression expression(double * modelCoefficients) const override;
-
   double evaluate(double * modelCoefficients, double x) const override;
   double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) override;
 
 protected:
+  Poincare::Expression privateExpression(double * modelCoefficients) const override;
   virtual int slopeCoefficientIndex() const { return 0; }
   virtual int yInterceptCoefficientIndex() const { return 1; }
 

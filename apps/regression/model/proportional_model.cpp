@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Regression {
 
-Expression ProportionalModel::expression(double * modelCoefficients) const {
+Expression ProportionalModel::privateExpression(double * modelCoefficients) const {
   return Multiplication::Builder(
     Number::DecimalNumber(modelCoefficients[0]),
     Symbol::Builder(k_xSymbol));

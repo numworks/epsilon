@@ -14,7 +14,6 @@ public:
   I18n::Message name() const override { return I18n::Message::Default; }
 
   Poincare::Layout templateLayout() const override { assert(false); return Poincare::Layout(); }
-  Poincare::Expression expression(double * modelCoefficients) const override { return Poincare::Expression(); }
 
   double evaluate(double * modelCoefficients, double x) const override { return NAN; }
 
@@ -22,6 +21,7 @@ public:
   int numberOfCoefficients() const override { return 0; }
 
 private:
+  Poincare::Expression privateExpression(double * modelCoefficients) const override { return Poincare::Expression(); }
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override { assert(false); return NAN; }
   void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override {}
 };

@@ -163,7 +163,7 @@ void HigherOrderDerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool
     orderLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
-  if (m_orderSlot == OrderSlot::Denominator && cursor->layoutNode() == orderLayout() && cursor->position() == LayoutCursor::Position::Left) {
+  if (m_orderSlot == OrderSlot::Denominator && cursor->isEquivalentTo(LayoutCursor(orderLayout(), LayoutCursor::Position::Left))) {
     setVariableSlot(VariableSlot::Fraction, shouldRecomputeLayout);
     variableLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
@@ -172,9 +172,9 @@ void HigherOrderDerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool
 }
 
 void DerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  assert(!(cursor->layoutNode() == variableLayout() && m_variableSlot == VariableSlot::Fraction)); // Handle by child classes
+  assert(!(m_variableSlot == VariableSlot::Fraction && cursor->layoutNode()->hasAncestor(variableLayout(), true))); // Handle by child classes
   if (cursor->layoutNode() == abscissaLayout()
-      || (cursor->layoutNode() == variableLayout() && m_variableSlot == VariableSlot::Assignment)) {
+      || (m_variableSlot == VariableSlot::Assignment && cursor->layoutNode()->hasAncestor(variableLayout(), true))) {
     derivandLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
@@ -182,7 +182,7 @@ void DerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldReco
 }
 
 void FirstOrderDerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode() == variableLayout() && m_variableSlot == VariableSlot::Fraction) {
+  if (m_variableSlot == VariableSlot::Fraction && cursor->layoutNode()->hasAncestor(variableLayout(), true)) {
     derivandLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
     return;
   }

@@ -13,7 +13,7 @@ public:
   I18n::Message name() const override { return I18n::Message::Logistic; }
   int numberOfCoefficients() const override { return 3; }
 
-  Poincare::Layout layout() override;
+  Poincare::Layout templateLayout() const override;
   Poincare::Expression expression(double * modelCoefficients) const override;
 
   double evaluate(double * modelCoefficients, double x) const override;

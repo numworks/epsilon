@@ -12,7 +12,7 @@ public:
   I18n::Message formulaMessage() const override { return I18n::Message::CubicRegressionFormula; }
   int numberOfCoefficients() const override { return 4; }
 
-  Poincare::Layout layout() override;
+  Poincare::Layout templateLayout() const override;
   Poincare::Expression expression(double * modelCoefficients) const override;
 
   double evaluate(double * modelCoefficients, double x) const override;

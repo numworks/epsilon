@@ -17,29 +17,23 @@ using namespace Poincare;
 
 namespace Regression {
 
-Layout LogisticModel::layout() {
-  if (m_layout.isUninitialized()) {
-    m_layout = FractionLayout::Builder(
-      CodePointLayout::Builder('c'),
-      HorizontalLayout::Builder({
-        CodePointLayout::Builder('1'),
-        CodePointLayout::Builder('+'),
-        CodePointLayout::Builder('a'),
-        CodePointLayout::Builder(UCodePointMiddleDot),
-        CodePointLayout::Builder('e'),
-        VerticalOffsetLayout::Builder(
-          HorizontalLayout::Builder({
-            CodePointLayout::Builder('-'),
-            CodePointLayout::Builder('b'),
-            CodePointLayout::Builder(UCodePointMiddleDot),
-            CodePointLayout::Builder('x')
-          }),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript
-        )
-      })
-    );
-  }
-  return m_layout;
+Layout LogisticModel::templateLayout() const {
+  return FractionLayout::Builder(
+    CodePointLayout::Builder('c'),
+    HorizontalLayout::Builder({
+      CodePointLayout::Builder('1'),
+      CodePointLayout::Builder('+'),
+      CodePointLayout::Builder('a'),
+      CodePointLayout::Builder(UCodePointMiddleDot),
+      CodePointLayout::Builder('e'),
+      VerticalOffsetLayout::Builder(
+        HorizontalLayout::Builder({
+          CodePointLayout::Builder('-'),
+          CodePointLayout::Builder('b'),
+          CodePointLayout::Builder(UCodePointMiddleDot),
+          CodePointLayout::Builder('x')
+        }),
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript)}));
 }
 
 Poincare::Expression LogisticModel::expression(double * modelCoefficients) const {

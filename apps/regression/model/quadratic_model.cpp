@@ -17,25 +17,21 @@ using namespace Shared;
 
 namespace Regression {
 
-Layout QuadraticModel::layout() {
-  if (m_layout.isUninitialized()) {
-    m_layout = HorizontalLayout::Builder({
-      CodePointLayout::Builder('a'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('2'),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript
-      ),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('b'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('c'),
-    });
-  }
-  return m_layout;
+Layout QuadraticModel::templateLayout() const {
+  return HorizontalLayout::Builder({
+    CodePointLayout::Builder('a'),
+    CodePointLayout::Builder(UCodePointMiddleDot),
+    CodePointLayout::Builder('x'),
+    VerticalOffsetLayout::Builder(
+      CodePointLayout::Builder('2'),
+      VerticalOffsetLayoutNode::VerticalPosition::Superscript
+    ),
+    CodePointLayout::Builder('+'),
+    CodePointLayout::Builder('b'),
+    CodePointLayout::Builder(UCodePointMiddleDot),
+    CodePointLayout::Builder('x'),
+    CodePointLayout::Builder('+'),
+    CodePointLayout::Builder('c'),});
 }
 
 Expression QuadraticModel::expression(double * modelCoefficients) const {

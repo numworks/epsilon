@@ -14,7 +14,7 @@ public:
   // Used in regression model menus when no regression is selected
   I18n::Message name() const override { return I18n::Message::Default; }
 
-  Poincare::Layout layout() override { assert(false); return Poincare::Layout(); }
+  Poincare::Layout templateLayout() const override { assert(false); return Poincare::Layout(); }
   Poincare::Expression expression(double * modelCoefficients) const override { return Poincare::Undefined::Builder(); }
 
   double evaluate(double * modelCoefficients, double x) const override { return NAN; }

@@ -17,33 +17,30 @@ using namespace Shared;
 
 namespace Regression {
 
-Layout CubicModel::layout() {
-  if (m_layout.isUninitialized()) {
-    m_layout = HorizontalLayout::Builder({
-      CodePointLayout::Builder('a'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('3'),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript
-      ),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('b'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('2'),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript
-      ),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('c'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('d'),
-    });
-  }
-  return m_layout;
+Layout CubicModel::templateLayout() const {
+  return HorizontalLayout::Builder({
+    CodePointLayout::Builder('a'),
+    CodePointLayout::Builder(UCodePointMiddleDot),
+    CodePointLayout::Builder('x'),
+    VerticalOffsetLayout::Builder(
+      CodePointLayout::Builder('3'),
+      VerticalOffsetLayoutNode::VerticalPosition::Superscript
+    ),
+    CodePointLayout::Builder('+'),
+    CodePointLayout::Builder('b'),
+    CodePointLayout::Builder(UCodePointMiddleDot),
+    CodePointLayout::Builder('x'),
+    VerticalOffsetLayout::Builder(
+      CodePointLayout::Builder('2'),
+      VerticalOffsetLayoutNode::VerticalPosition::Superscript
+    ),
+    CodePointLayout::Builder('+'),
+    CodePointLayout::Builder('c'),
+    CodePointLayout::Builder(UCodePointMiddleDot),
+    CodePointLayout::Builder('x'),
+    CodePointLayout::Builder('+'),
+    CodePointLayout::Builder('d'),
+  });
 }
 
 Expression CubicModel::expression(double * modelCoefficients) const {

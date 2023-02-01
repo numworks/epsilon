@@ -17,41 +17,37 @@ using namespace Shared;
 
 namespace Regression {
 
-Layout QuarticModel::layout() {
-  if (m_layout.isUninitialized()) {
-    m_layout = HorizontalLayout::Builder({
-      CodePointLayout::Builder('a'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('4'),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript
-      ),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('b'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('3'),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript
-      ),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('c'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('2'),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript
-      ),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('d'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('e'),
-    });
-  }
-  return m_layout;
+Layout QuarticModel::templateLayout() const {
+  return HorizontalLayout::Builder({
+    CodePointLayout::Builder('a'),
+    CodePointLayout::Builder(UCodePointMiddleDot),
+    CodePointLayout::Builder('x'),
+    VerticalOffsetLayout::Builder(
+      CodePointLayout::Builder('4'),
+      VerticalOffsetLayoutNode::VerticalPosition::Superscript
+    ),
+    CodePointLayout::Builder('+'),
+    CodePointLayout::Builder('b'),
+    CodePointLayout::Builder(UCodePointMiddleDot),
+    CodePointLayout::Builder('x'),
+    VerticalOffsetLayout::Builder(
+      CodePointLayout::Builder('3'),
+      VerticalOffsetLayoutNode::VerticalPosition::Superscript
+    ),
+    CodePointLayout::Builder('+'),
+    CodePointLayout::Builder('c'),
+    CodePointLayout::Builder(UCodePointMiddleDot),
+    CodePointLayout::Builder('x'),
+    VerticalOffsetLayout::Builder(
+      CodePointLayout::Builder('2'),
+      VerticalOffsetLayoutNode::VerticalPosition::Superscript
+    ),
+    CodePointLayout::Builder('+'),
+    CodePointLayout::Builder('d'),
+    CodePointLayout::Builder(UCodePointMiddleDot),
+    CodePointLayout::Builder('x'),
+    CodePointLayout::Builder('+'),
+    CodePointLayout::Builder('e')});
 }
 
 Expression QuarticModel::expression(double * modelCoefficients) const {

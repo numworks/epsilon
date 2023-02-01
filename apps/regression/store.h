@@ -26,6 +26,7 @@ class Store : public Shared::LinearRegressionStore {
 public:
   constexpr static const char * const * k_columnNames = DoublePairStore::k_regressionColumNames;
   static const char * SeriesTitle(int series);
+  constexpr static const char * k_functionName = "R";
 
   Store(Shared::GlobalContext * context, Shared::DoublePairStorePreferences * preferences, Model::Type * regressionTypes);
 
@@ -75,8 +76,15 @@ private:
   void resetMemoization();
   Model * regressionModel(int index);
 
+  constexpr static int k_functionNameSize = 3;
+  static int BuildFunctionName(int series, char * buffer, int bufferSize);
+  Ion::Storage::Record functionRecord(int series) const;
+  void storeRegressionFunction(int series, Poincare::Expression expression) const;
+  void deleteRegressionFunction(int series) const;
+
   // This is a table of size k_numberOfSeries.
   Model::Type * m_regressionTypes;
+
   NoneModel m_noneModel;
   LinearModel m_linearAxpbModel;
   ProportionalModel m_proportionalModel;

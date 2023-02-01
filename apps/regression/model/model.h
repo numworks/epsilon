@@ -34,7 +34,6 @@ public:
   static_assert(k_maxNumberOfCoefficients*k_maxNumberOfCoefficients <= Poincare::Matrix::k_maxNumberOfChildren, "Model needs bigger than allowed matrices");
 
   constexpr static char k_xSymbol = 'x';
-  constexpr static const char * k_functionName = "R";
 
   virtual I18n::Message formulaMessage() const = 0;
   virtual I18n::Message name() const = 0;
@@ -64,12 +63,6 @@ protected:
 private:
   // Model attributes
   virtual double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const = 0;
-
-  constexpr static int k_functionNameSize = 3;
-  static int BuildFunctionName(int series, char * buffer, int bufferSize);
-  Ion::Storage::Record functionRecord(int series) const;
-  void storeRegressionFunction(int series, Poincare::Expression expression) const;
-  void deleteRegressionFunction(int series) const;
 
   // Levenberg-Marquardt
   constexpr static double k_maxIterations = 300;

@@ -22,6 +22,7 @@ void EmptyLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 
 void EmptyLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   assert(cursor->layoutNode() == this);
+  assert(parent() != nullptr);
   // Ask the parent.
   cursor->setPosition(LayoutCursor::Position::Left);
   askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
@@ -29,6 +30,7 @@ void EmptyLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecompu
 
 void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   assert(cursor->layoutNode() == this);
+  assert(parent() != nullptr);
   // Ask the parent.
   cursor->setPosition(LayoutCursor::Position::Right);
   askParentToMoveCursorRight(cursor, shouldRecomputeLayout);

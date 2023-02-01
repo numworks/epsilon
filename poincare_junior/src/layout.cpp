@@ -26,6 +26,9 @@ EditionReference Layout::ParseFromExpressionInEditionPool(Node node) {
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('2');
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('*');
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('3');
+  // Remove node from EditionReference
+  EditionReference nodeRef(node);
+  nodeRef.removeTree();
   return ref;
 }
 

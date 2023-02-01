@@ -16,14 +16,15 @@ EditionReference Expression::ParseFromLayoutInEditionPool(Node node) {
   EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
   EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
   EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  // Remove node from EditionReference
+  EditionReference nodeRef(node);
+  nodeRef.removeTree();
   return ref;
 }
 
 Expression Expression::CreateExpressionFromText(const char * textInput) {
   return Expression([](const char * text){
-      EditionReference ref = Layout::ParseFromTextInEditionPool(text);
-      ParseFromLayoutInEditionPool(ref);
-      ref.removeTree();
+      ParseFromLayoutInEditionPool(Layout::ParseFromTextInEditionPool(text));
     }, textInput);
 }
 

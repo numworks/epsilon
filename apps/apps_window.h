@@ -15,6 +15,7 @@ public:
   void reloadTitleBarView();
   bool updateAlphaLock();
   void hideTitleBarView(bool hide);
+  void restartLowBatteryAnimationIfNecessary();
 private:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;

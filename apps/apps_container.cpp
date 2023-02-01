@@ -95,6 +95,7 @@ void AppsContainer::didSuspend(bool checkIfOnOffKeyReleased) {
    * upon wakeup, otherwise the screen is filled with noise. */
   Ion::Backlight::setBrightness(globalPreferences->brightnessLevel());
   m_backlightDimmingTimer.reset();
+  m_window.restartLowBatteryAnimationIfNecessary();
   window()->redraw(true);
 }
 

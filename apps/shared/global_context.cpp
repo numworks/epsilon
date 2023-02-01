@@ -41,6 +41,8 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
     return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record), AppsContainer::activeApp()->localContext());
   } else if (record.hasExtension(Ion::Storage::funcExtension)) {
     return PoincareHelpers::CreateLayout(ExpressionForFunction(Symbol::Builder(ContinuousFunction(record).symbol()), record), AppsContainer::activeApp()->localContext());
+  } else if (record.hasExtension(Ion::Storage::regExtension)) {
+    return PoincareHelpers::CreateLayout(ExpressionForFunction(Symbol::Builder('x'), record), AppsContainer::activeApp()->localContext());
   } else {
     assert(record.hasExtension(Ion::Storage::seqExtension));
     return Sequence(record).layout();
@@ -61,7 +63,7 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const cha
     return Context::SymbolAbstractType::None;
   } else if (strcmp(extension, Ion::Storage::expExtension) == 0 || strcmp(extension, Ion::Storage::matExtension) == 0) {
     return Context::SymbolAbstractType::Symbol;
-  } else if (strcmp(extension, Ion::Storage::funcExtension) == 0) {
+  } else if (strcmp(extension, Ion::Storage::funcExtension) == 0 || strcmp(extension, Ion::Storage::regExtension) == 0) {
     return Context::SymbolAbstractType::Function;
   } else if (strcmp(extension, Ion::Storage::lisExtension) == 0) {
     return Context::SymbolAbstractType::List;
@@ -125,12 +127,16 @@ const Expression GlobalContext::ExpressionForActualSymbol(Ion::Storage::Record r
 }
 
 const Expression GlobalContext::ExpressionForFunction(const Expression & parameter, Ion::Storage::Record r) {
-  if (!r.hasExtension(Ion::Storage::funcExtension)) {
-    return Expression();
+  Expression e;
+  if (r.hasExtension(Ion::Storage::regExtension)) {
+    // A regression record value is the expression itself
+    Ion::Storage::Record::Data d = r.value();
+    e = Expression::ExpressionFromAddress(d.buffer, d.size);
+  } else if (r.hasExtension(Ion::Storage::funcExtension)) {
+    /* A function record value has metadata before the expression. To get the
+     * expression, use the function record handle. */
+    e = ContinuousFunction(r).expressionClone();
   }
-  /* An function record value has metadata before the expression. To get the
-   * expression, use the function record handle. */
-  Expression e = ContinuousFunction(r).expressionClone();
   if (!e.isUninitialized()) {
     e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), parameter);
   }

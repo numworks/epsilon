@@ -94,7 +94,7 @@ private:
   } ReservedNamesArray;
 
   // This can be changed if you need more restrictive extensions
-  constexpr static int k_maxNumberOfRestrictiveExtensions = 5;
+  constexpr static int k_maxNumberOfRestrictiveExtensions = 6;
   // This can be changed if you need more reserved names arrays
   constexpr static int k_maxNumberOfReservedNamesArrays = 4;
 

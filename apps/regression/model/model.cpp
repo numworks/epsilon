@@ -71,20 +71,27 @@ int Model::BuildFunctionName(int series, char * buffer, int bufferSize) {
   return k_functionNameSize - 1;
 }
 
+Ion::Storage::Record Model::functionRecord(int series) const {
+  char name[k_functionNameSize];
+  BuildFunctionName(series, name, k_functionNameSize);
+  return Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(name, Ion::Storage::regExtension);
+}
+
 void Model::storeRegressionFunction(int series, Expression expression) const {
   if (expression.isUninitialized()) {
     return deleteRegressionFunction(series);
   }
   char name[k_functionNameSize];
   BuildFunctionName(series, name, k_functionNameSize);
-  AppsContainer::sharedAppsContainer()->globalContext()->setExpressionForSymbolAbstract(expression, Poincare::Function::Builder(name, strlen(name), Poincare::Symbol::Builder(k_xSymbol)));
+  expression = expression.replaceSymbolWithExpression(Symbol::Builder(k_xSymbol), Symbol::Builder(UCodePointUnknown));
+  Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(name, Ion::Storage::regExtension, expression.addressInPool(), expression.size(), true);
 }
 
 void Model::deleteRegressionFunction(int series) const {
-  char name[k_functionNameSize];
-  BuildFunctionName(series, name, k_functionNameSize);
-  Ion::Storage::Record r = Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(name, Ion::Storage::funcExtension);
-  r.destroy();
+  Ion::Storage::Record r = functionRecord(series);
+  if (!r.isNull()) {
+    r.destroy();
+  }
 }
 
 void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Context * context) {

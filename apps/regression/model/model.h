@@ -67,6 +67,7 @@ private:
 
   constexpr static int k_functionNameSize = 3;
   static int BuildFunctionName(int series, char * buffer, int bufferSize);
+  Ion::Storage::Record functionRecord(int series) const;
   void storeRegressionFunction(int series, Poincare::Expression expression) const;
   void deleteRegressionFunction(int series) const;
 

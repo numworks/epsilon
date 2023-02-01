@@ -31,7 +31,7 @@ App::Snapshot::Snapshot() :
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()->registerArrayOfReservedNames(DoublePairStore::k_regressionColumNames, Ion::Storage::lisExtension, Shared::DoublePairStore::k_numberOfSeries, sizeof(DoublePairStore::k_regressionColumNames) / sizeof(char *));
 
   // Register R1, R2, and R3 as reserved functions to the sharedStorage.
-  Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()->registerArrayOfReservedNames(&Model::k_functionName, Ion::Storage::funcExtension, Shared::DoublePairStore::k_numberOfSeries, 1);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()->registerArrayOfReservedNames(&Model::k_functionName, Ion::Storage::regExtension, Shared::DoublePairStore::k_numberOfSeries, 1);
 }
 
 App * App::Snapshot::unpack(Container * container) {

@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Regression {
 
-Poincare::Expression AffineModel::expression(double * modelCoefficients) const {
+Poincare::Expression AffineModel::privateExpression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   // a*x+b

@@ -23,7 +23,7 @@ Layout PowerModel::templateLayout() const {
       VerticalOffsetLayoutNode::VerticalPosition::Superscript)});
 }
 
-Expression PowerModel::expression(double * modelCoefficients) const {
+Expression PowerModel::privateExpression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   // a*x^b

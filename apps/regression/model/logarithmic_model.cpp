@@ -10,7 +10,7 @@ using namespace Poincare;
 
 namespace Regression {
 
-Poincare::Expression LogarithmicModel::expression(double * modelCoefficients) const {
+Poincare::Expression LogarithmicModel::privateExpression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   // a+b*ln(x)

@@ -34,7 +34,7 @@ Layout QuadraticModel::templateLayout() const {
     CodePointLayout::Builder('c'),});
 }
 
-Expression QuadraticModel::expression(double * modelCoefficients) const {
+Expression QuadraticModel::privateExpression(double * modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];

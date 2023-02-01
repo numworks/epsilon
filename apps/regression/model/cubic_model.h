@@ -13,11 +13,11 @@ public:
   int numberOfCoefficients() const override { return 4; }
 
   Poincare::Layout templateLayout() const override;
-  Poincare::Expression expression(double * modelCoefficients) const override;
 
   double evaluate(double * modelCoefficients, double x) const override;
 
 private:
+  Poincare::Expression privateExpression(double * modelCoefficients) const override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
 };
 

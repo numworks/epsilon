@@ -115,8 +115,9 @@ template <class...Args> consteval auto Multi(Args...args) { return NAry<BlockTyp
 template <class...Args> consteval auto Seti(Args...args) { return NAry<BlockType::Set>(args...); }
 
 
-template<CTreeish Exp, CTreeish ...CTS> requires (Exp::size == sizeof...(CTS) - 1) static consteval auto Poly(Exp exponents, CTS...) {
+template<CTreeish Exp, CTreeish ...CTS> static consteval auto Poly(Exp exponents, CTS...) {
   constexpr uint8_t Size = sizeof...(CTS);
+  static_assert(Exp::size == Size - 1, "Number of children and exponents do not match in constant polynomial");
   return Concat<CTree<BlockType::Polynomial, Size>, Exp, CTree<Size, BlockType::Polynomial>, CTS...>();
 }
 

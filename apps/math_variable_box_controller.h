@@ -30,9 +30,10 @@ public:
     RootMenu = 0,
     Expression = 1,
     Function = 2,
-    List = 3,
-    Matrix = 4,
-    Sequence = 5,
+    Regression = 3,
+    List = 4,
+    Matrix = 5,
+    Sequence = 6,
     sizeOfEnum = 6 // use this value only to know the number of pages
   };
 
@@ -55,7 +56,7 @@ private:
   bool selectLeaf(int selectedRow) override;
   I18n::Message nodeLabel(Page page);
   Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record, int index);
-  const char * extension() const;
+  static const char * Extension(Page page);
   Ion::Storage::Record recordAtIndex(int rowIndex);
   void resetVarBoxMemoization();
   // Return false if destruction is prevented by the app

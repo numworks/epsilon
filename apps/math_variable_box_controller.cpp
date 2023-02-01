@@ -58,7 +58,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
    *   The deletion on the current page is locked
    * - The empty controller is displayed
    */
-  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
+  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && m_currentPage != Page::Regression) {
     int rowIndex = selectedRow();
     if (destroyRecordAtRowIndex(rowIndex)) {
       if (Container::activeApp()->modalViewController()->currentModalViewController() != static_cast<const ViewController *>(this)) {
@@ -90,22 +90,18 @@ int MathVariableBoxController::numberOfRows() const {
 }
 
 int MathVariableBoxController::numberOfElements(Page page) const {
-  switch (page) {
-    case Page::RootMenu:
-      return (numberOfElements(Page::Expression) > 0) + (numberOfElements(Page::Function) > 0) + (numberOfElements(Page::Sequence) > 0) + (numberOfElements(Page::List) > 0) + (numberOfElements(Page::Matrix) > 0) + 1;
-    case Page::Expression:
-      return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Ion::Storage::expExtension);
-    case Page::Function:
-      return Storage::FileSystem::sharedFileSystem->numberOfRecordsStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Ion::Storage::funcExtension);
-    case Page::Sequence:
-      return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Ion::Storage::seqExtension);
-    case Page::List:
-      return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Ion::Storage::lisExtension);
-    case Page::Matrix:
-      return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Ion::Storage::matExtension);
-    default:
-      return 0;
+  if (page == Page::RootMenu) {
+    int numberOfRows = 1; // Define a variable
+    for (int i = 0; i < static_cast<int>(Page::sizeOfEnum); i++) {
+      Page p = static_cast<Page>(i);
+      numberOfRows += (p != Page::RootMenu && (numberOfElements(static_cast<Page>(p)) > 0));
+    }
+    return numberOfRows;
   }
+  if (page == Page::Function) {
+    return Storage::FileSystem::sharedFileSystem->numberOfRecordsStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Ion::Storage::funcExtension);
+  }
+  return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Extension(page));
 }
 
 int MathVariableBoxController::reusableCellCount(int type) {
@@ -144,6 +140,15 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
         symbolName,
         Shared::Function::k_maxNameWithArgumentSize
     );
+  } else if (m_currentPage == Page::Regression) {
+    strlcpy(symbolName, record.name().baseName, record.name().baseNameLength + 1);
+    symbolLength = strlen(symbolName);
+    symbolName[symbolLength] = '(';
+    symbolName[symbolLength + 1] = 'x';
+    symbolName[symbolLength + 2] = ')';
+    symbolName[symbolLength + 3] = 0;
+    symbolLength += 3;
+    assert(symbolLength < Shared::Function::k_maxNameWithArgumentSize);
   } else {
     assert(m_currentPage == Page::Sequence);
     Shared::Sequence u(record);
@@ -284,6 +289,8 @@ I18n::Message MathVariableBoxController::nodeLabel(Page page) {
       return I18n::Message::Expressions;
     case Page::Function:
       return I18n::Message::Functions;
+    case Page::Regression:
+      return I18n::Message::Regressions;
     case Page::Sequence:
       return I18n::Message::Sequences;
     case Page::List:
@@ -326,18 +333,21 @@ Layout MathVariableBoxController::expressionLayoutForRecord(Storage::Record reco
   return m_layouts[index-m_firstMemoizedLayoutIndex];
 }
 
-const char * MathVariableBoxController::extension() const {
-  assert(m_currentPage != Page::RootMenu);
-  if (m_currentPage == Page::Function) {
+const char * MathVariableBoxController::Extension(Page page) {
+  assert(page != Page::RootMenu);
+  switch (page) {
+  case Page::Function:
     return Ion::Storage::funcExtension;
-  } else if (m_currentPage == Page::Expression) {
+  case Page::Regression:
+    return Ion::Storage::regExtension;
+  case Page::Expression:
     return Ion::Storage::expExtension;
-  } else if (m_currentPage == Page::List) {
+  case Page::List:
     return Ion::Storage::lisExtension;
-  } else if (m_currentPage == Page::Matrix) {
+  case Page::Matrix:
     return Ion::Storage::matExtension;
-  } else {
-    assert(m_currentPage == Page::Sequence);
+  default:
+    assert(page == Page::Sequence);
     return Ion::Storage::seqExtension;
   }
 }
@@ -346,9 +356,9 @@ Storage::Record MathVariableBoxController::recordAtIndex(int rowIndex) {
   assert(m_currentPage != Page::RootMenu);
   Storage::Record record;
   if (m_currentPage == Page::Function) {
-    record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndexStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, extension(), rowIndex);
+    record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndexStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Extension(m_currentPage), rowIndex);
   } else {
-    record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(extension(), rowIndex);
+    record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(Extension(m_currentPage), rowIndex);
   }
   assert(!record.isNull());
   return record;

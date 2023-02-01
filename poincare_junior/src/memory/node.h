@@ -125,8 +125,11 @@ public:
       case BlockType::Power:
       case BlockType::Subtraction:
       case BlockType::Division:
+      case BlockType::FractionLayout:
+      case BlockType::VerticalOffsetLayout:
         return 2;
       case BlockType::Factorial:
+      case BlockType::ParenthesisLayout:
         return 1;
       default:
         return 0;

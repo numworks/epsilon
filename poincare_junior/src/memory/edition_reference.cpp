@@ -135,4 +135,7 @@ template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::RationalShort>(int8_t, uint8_t);
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Polynomial, int, int>(int, int);
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::RackLayout, int>(int);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::FractionLayout>();
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::ParenthesisLayout>();
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::VerticalOffsetLayout>();
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::CodePointLayout, CodePoint>(CodePoint);

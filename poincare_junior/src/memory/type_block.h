@@ -37,7 +37,7 @@ namespace PoincareJ {
  * - Addition A (same for Multiplication, Set, List, RackLayout)
  * | A TAG | NUMBER OF CHILDREN | A TAG |
  *
- * - Power P (same for Factorial, Subtraction, Division)
+ * - Power P (same for Factorial, Subtraction, Division, FractionLayout, ParenthesisLayout, VerticalOffsetLayout)
  * | P TAG |
  *
  * - UserSymbol US (same for UserFunction, UserSequence)
@@ -88,6 +88,9 @@ enum class BlockType : uint8_t {
 
   FirstLayout = NumberOfExpressions,
   RackLayout = FirstLayout,
+  FractionLayout,
+  ParenthesisLayout,
+  VerticalOffsetLayout,
   CodePointLayout,
   LastLayout = CodePointLayout,
 
@@ -127,6 +130,9 @@ BLOCK_TYPE_IS_EXPRESSION(BlockType::List);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Polynomial);
 
 BLOCK_TYPE_IS_LAYOUT(BlockType::RackLayout);
+BLOCK_TYPE_IS_LAYOUT(BlockType::FractionLayout);
+BLOCK_TYPE_IS_LAYOUT(BlockType::ParenthesisLayout);
+BLOCK_TYPE_IS_LAYOUT(BlockType::VerticalOffsetLayout);
 BLOCK_TYPE_IS_LAYOUT(BlockType::CodePointLayout);
 
 // TODO:

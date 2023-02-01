@@ -9,7 +9,7 @@ namespace Shared {
 FunctionListController::FunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   ExpressionModelListController(parentResponder, text),
   ButtonRowDelegate(header, footer),
-  Shared::InputEventHandlerDelegate(),
+  InputEventHandlerDelegate(),
   m_plotButton(this, I18n::Message::Plot, Invocation::Builder<FunctionListController>([](FunctionListController * list, void * sender) {
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(1);
@@ -65,7 +65,7 @@ void FunctionListController::didBecomeFirstResponder() {
   footer()->setSelectedButton(-1);
   Container::activeApp()->setFirstResponder(selectableTableView());
 
-  InputViewController * inputViewController = Shared::FunctionApp::app()->inputViewController();
+  InputViewController * inputViewController = FunctionApp::app()->inputViewController();
   if (inputViewController->isDisplayingModal()) {
     Container::activeApp()->setFirstResponder(inputViewController);
   }

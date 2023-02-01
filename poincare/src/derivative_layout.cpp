@@ -173,8 +173,7 @@ void HigherOrderDerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool
 
 void DerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   assert(!(m_variableSlot == VariableSlot::Fraction && cursor->layoutNode()->hasAncestor(variableLayout(), true))); // Handle by child classes
-  if (cursor->layoutNode() == abscissaLayout()
-      || (m_variableSlot == VariableSlot::Assignment && cursor->layoutNode()->hasAncestor(variableLayout(), true))) {
+  if (m_variableSlot == VariableSlot::Assignment && cursor->layoutNode()->hasAncestor(variableLayout(), true)) {
     derivandLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
     return;
   }

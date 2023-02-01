@@ -104,7 +104,11 @@ void LayoutNode::askParentToMoveCursorHorizontally(OMG::HorizontalDirection dire
       || (direction == OMG::HorizontalDirection::Right && cursor->position() == LayoutCursor::Position::Right));
   LayoutNode * parentNode = parent();
   if (parentNode != nullptr) {
-    return direction == OMG::HorizontalDirection::Left ? parentNode->moveCursorLeft(cursor, shouldRecomputeLayout) : parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
+    if (direction == OMG::HorizontalDirection::Left) {
+      return parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
+    }
+    assert(direction == OMG::HorizontalDirection::Right);
+    return parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }
 

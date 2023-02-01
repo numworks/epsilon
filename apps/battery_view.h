@@ -15,6 +15,7 @@ public:
   bool setChargeState(Ion::Battery::Charge chargeState);
   bool setIsCharging(bool isCharging);
   bool setIsPlugged(bool isPlugged);
+  void restartLowBatteryAnimationIfNecessary();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   constexpr static int k_flashHeight = 8;
@@ -30,7 +31,9 @@ private:
   constexpr static KDCoordinate k_separatorThickness = Escher::Metric::CellSeparatorThickness;
   constexpr static KDCoordinate k_batteryInsideX = k_elementWidth + k_separatorThickness;
   constexpr static KDCoordinate k_batteryInsideWidth = k_batteryWidth - 3 * k_elementWidth - 2 * k_separatorThickness;
+  constexpr static uint8_t k_lowBatteryAnimationBlinks = 12;
   Ion::Battery::Charge m_chargeState;
+  uint8_t m_lowBatteryAnimationState;
   bool m_isCharging;
   bool m_isPlugged;
 };

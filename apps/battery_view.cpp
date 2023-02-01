@@ -52,7 +52,16 @@ bool BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
    * trigerring a redrawing by not marking anything as dirty when switching
    * from 'low' to 'empty' battery. */
   chargeState = chargeState == Ion::Battery::Charge::EMPTY ? Ion::Battery::Charge::LOW : chargeState;
-  if (chargeState != m_chargeState) {
+  if (chargeState != m_chargeState || m_lowBatteryAnimationState) {
+    if (chargeState == Ion::Battery::Charge::LOW) {
+      if (m_chargeState != Ion::Battery::Charge::LOW) {
+        m_lowBatteryAnimationState = k_lowBatteryAnimationBlinks;
+      } else if (m_lowBatteryAnimationState) {
+        m_lowBatteryAnimationState--;
+      }
+    } else {
+      m_lowBatteryAnimationState = 0;
+    }
     m_chargeState = chargeState;
     markRectAsDirty(bounds());
     return true;
@@ -78,6 +87,12 @@ bool BatteryView::setIsPlugged(bool isPlugged) {
   return false;
 }
 
+void BatteryView::restartLowBatteryAnimationIfNecessary() {
+  if (m_chargeState == Ion::Battery::Charge::LOW) {
+    m_lowBatteryAnimationState = k_lowBatteryAnimationBlinks;
+  }
+}
+
 void BatteryView::drawInsideBatteryLevel(KDContext * ctx, KDCoordinate width, KDColor color) const {
   ctx->fillRect(KDRect(k_batteryInsideX, 0, width, k_batteryHeight), color);
   ctx->fillRect(KDRect(k_batteryInsideX + width, 0, k_batteryInsideWidth - width, k_batteryHeight), Palette::YellowLight);
@@ -101,7 +116,7 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
   } else if (m_chargeState == Ion::Battery::Charge::LOW) {
     assert(!m_isPlugged);
     // LOW: Quite empty battery
-    drawInsideBatteryLevel(ctx, 2 * k_elementWidth, Palette::LowBattery);
+    drawInsideBatteryLevel(ctx, m_lowBatteryAnimationState % 2 ? 0 : 2 * k_elementWidth, Palette::LowBattery);
   } else if (m_chargeState == Ion::Battery::Charge::MID) {
     assert(!m_isPlugged);
     // MID: Half full battery

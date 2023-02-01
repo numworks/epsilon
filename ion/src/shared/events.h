@@ -28,8 +28,6 @@ private:
   Keyboard::State m_lastKeyboardState;
   Keyboard::State m_currentKeyboardState;
   uint64_t m_keysSeenUp;
-  /* WARNING: It seems that if there are not exactly 3 bools here, the input
-   * repetition breaks on n0120, but we do not know why. */
   bool m_lastEventShift;
   bool m_lastEventAlpha;
   bool m_idleWasSent;

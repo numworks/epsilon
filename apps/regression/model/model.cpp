@@ -62,16 +62,29 @@ Expression Model::AdditionOrSubtractionBuilder(Expression e1, Expression e2, boo
   return Subtraction::Builder(e1, e2);
 }
 
+int Model::BuildFunctionName(int series, char * buffer, int bufferSize) {
+  assert(bufferSize >= k_functionNameSize);
+  assert(strlen(k_functionName) == 1);
+  buffer[0] = k_functionName[0];
+  buffer[1] = '1' + series;
+  buffer[2] = 0;
+  return k_functionNameSize - 1;
+}
+
 void Model::storeRegressionFunction(int series, Expression expression) const {
   if (expression.isUninitialized()) {
     return deleteRegressionFunction(series);
   }
-  // TODO: Properly set name
-  char name[3];
-  name[0] = 'R';
-  name[1] = '1' + series;
-  name[2] = 0;
+  char name[k_functionNameSize];
+  BuildFunctionName(series, name, k_functionNameSize);
   AppsContainer::sharedAppsContainer()->globalContext()->setExpressionForSymbolAbstract(expression, Poincare::Function::Builder(name, strlen(name), Poincare::Symbol::Builder(k_xSymbol)));
+}
+
+void Model::deleteRegressionFunction(int series) const {
+  char name[k_functionNameSize];
+  BuildFunctionName(series, name, k_functionNameSize);
+  Ion::Storage::Record r = Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(name, Ion::Storage::funcExtension);
+  r.destroy();
 }
 
 void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Context * context) {

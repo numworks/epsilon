@@ -7,6 +7,8 @@ void testTreeConstructor() {
   constexpr CTree tree = 3_n;
   const Node node = Addi(tree, Fact(8_n));
   node.log();
+  Node(Poly(CTree<1>(), "x"_v, CTree(2_n))).log();
+  Node(Poly(CTree<2, 3>(), "x"_v, CTree(2_n), "a"_v)).log();
 
   Node((5_n + 8_n + 4_n) * 3_n * tree).log();
   Node(5_n - 8_n - 4_n).log();

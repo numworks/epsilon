@@ -114,6 +114,13 @@ template <class...Args> consteval auto Multi(Args...args) { return NAry<BlockTyp
 
 template <class...Args> consteval auto Seti(Args...args) { return NAry<BlockType::Set>(args...); }
 
+
+template<CTreeish Exp, CTreeish ...CTS> requires (Exp::size == sizeof...(CTS) - 1) static consteval auto Poly(Exp exponents, CTS...) {
+  constexpr uint8_t Size = sizeof...(CTS);
+  return Concat<CTree<BlockType::Polynomial, Size>, Exp, CTree<Size, BlockType::Polynomial>, CTS...>();
+}
+
+
 #if 0
 
 template <class...Args> consteval auto operator-(Args...args) { return Binary<BlockType::Subtraction>(args...); }

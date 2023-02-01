@@ -35,11 +35,9 @@ double Model::levelSet(double * modelCoefficients, double xMin, double xMax, dou
 void Model::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
   if (!dataSuitableForFit(store, series)) {
     initCoefficientsForFit(modelCoefficients, NAN, true);
-    deleteRegressionFunction(series);
     return;
   }
   privateFit(store, series, modelCoefficients, context);
-  storeRegressionFunction(series, expression(modelCoefficients));
 }
 
 void Model::privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
@@ -60,38 +58,6 @@ Expression Model::AdditionOrSubtractionBuilder(Expression e1, Expression e2, boo
     return Addition::Builder(e1, e2);
   }
   return Subtraction::Builder(e1, e2);
-}
-
-int Model::BuildFunctionName(int series, char * buffer, int bufferSize) {
-  assert(bufferSize >= k_functionNameSize);
-  assert(strlen(k_functionName) == 1);
-  buffer[0] = k_functionName[0];
-  buffer[1] = '1' + series;
-  buffer[2] = 0;
-  return k_functionNameSize - 1;
-}
-
-Ion::Storage::Record Model::functionRecord(int series) const {
-  char name[k_functionNameSize];
-  BuildFunctionName(series, name, k_functionNameSize);
-  return Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(name, Ion::Storage::regExtension);
-}
-
-void Model::storeRegressionFunction(int series, Expression expression) const {
-  if (expression.isUninitialized()) {
-    return deleteRegressionFunction(series);
-  }
-  char name[k_functionNameSize];
-  BuildFunctionName(series, name, k_functionNameSize);
-  expression = expression.replaceSymbolWithExpression(Symbol::Builder(k_xSymbol), Symbol::Builder(UCodePointUnknown));
-  Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(name, Ion::Storage::regExtension, expression.addressInPool(), expression.size(), true);
-}
-
-void Model::deleteRegressionFunction(int series) const {
-  Ion::Storage::Record r = functionRecord(series);
-  if (!r.isNull()) {
-    r.destroy();
-  }
 }
 
 void Model::fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Context * context) {

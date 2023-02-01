@@ -1,6 +1,7 @@
 #include "store.h"
 #include "app.h"
 #include <poincare/preferences.h>
+#include <poincare/symbol.h>
 #include <assert.h>
 #include <float.h>
 #include <cmath>
@@ -157,6 +158,7 @@ void Store::updateSeriesValidity(int series, bool updateDisplayAdditionalColumn)
   if (!seriesIsValid(series)) {
     // Reset series regression type to None
     m_regressionTypes[series] = Model::Type::None;
+    deleteRegressionFunction(series);
   }
 }
 
@@ -174,6 +176,7 @@ void Store::updateCoefficients(int series, Poincare::Context * globalContext) {
     Model * seriesModel = modelForSeries(series);
     seriesModel->fit(this, series, m_regressionCoefficients[series], globalContext);
     m_recomputeCoefficients[series] = false;
+    storeRegressionFunction(series, seriesModel->expression(m_regressionCoefficients[series]));
     /* m_determinationCoefficient must be updated after m_recomputeCoefficients
      * updates to avoid infinite recursive calls as computeDeterminationCoefficient calls
      * yValueForXValue which calls coefficientsForSeries which calls updateCoefficients */
@@ -338,6 +341,38 @@ Model * Store::regressionModel(int index) {
   Model * models[Model::k_numberOfModels] = {&m_noneModel, &m_linearAxpbModel, &m_proportionalModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialAebxModel, &m_exponentialAbxModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel, &m_medianModel, &m_linearApbxModel};
   static_assert(sizeof(models) / sizeof(Model *) == Model::k_numberOfModels, "Inconsistency between the number of models in the store and the real number.");
   return models[index];
+}
+
+int Store::BuildFunctionName(int series, char * buffer, int bufferSize) {
+  assert(bufferSize >= k_functionNameSize);
+  assert(strlen(k_functionName) == 1);
+  buffer[0] = k_functionName[0];
+  buffer[1] = '1' + series;
+  buffer[2] = 0;
+  return k_functionNameSize - 1;
+}
+
+Ion::Storage::Record Store::functionRecord(int series) const {
+  char name[k_functionNameSize];
+  BuildFunctionName(series, name, k_functionNameSize);
+  return Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(name, Ion::Storage::regExtension);
+}
+
+void Store::storeRegressionFunction(int series, Poincare::Expression expression) const {
+  if (expression.isUninitialized()) {
+    return deleteRegressionFunction(series);
+  }
+  char name[k_functionNameSize];
+  BuildFunctionName(series, name, k_functionNameSize);
+  expression = expression.replaceSymbolWithExpression(Poincare::Symbol::Builder(Model::k_xSymbol), Poincare::Symbol::Builder(UCodePointUnknown));
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(name, Ion::Storage::regExtension, expression.addressInPool(), expression.size(), true);
+}
+
+void Store::deleteRegressionFunction(int series) const {
+  Ion::Storage::Record r = functionRecord(series);
+  if (!r.isNull()) {
+    r.destroy();
+  }
 }
 
 }

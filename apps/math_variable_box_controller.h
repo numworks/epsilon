@@ -34,7 +34,7 @@ public:
     List = 4,
     Matrix = 5,
     Sequence = 6,
-    sizeOfEnum = 6 // use this value only to know the number of pages
+    sizeOfEnum = 7 // use this value only to know the number of pages
   };
 
 private:

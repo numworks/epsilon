@@ -84,18 +84,6 @@ public:
   void moveHorizontally(OMG::HorizontalDirection direction, bool * shouldRecomputeLayout, bool forSelection = false) {
     move(direction == OMG::HorizontalDirection::Left ? OMG::Direction::Left : OMG::Direction::Right, shouldRecomputeLayout, forSelection);
   }
-  void moveLeft(bool * shouldRecomputeLayout, bool forSelection = false) {
-    layoutNode()->moveCursorLeft(this, shouldRecomputeLayout, forSelection);
-  }
-  void moveRight(bool * shouldRecomputeLayout, bool forSelection = false) {
-    layoutNode()->moveCursorRight(this, shouldRecomputeLayout, forSelection);
-  }
-  void moveAbove(bool * shouldRecomputeLayout, bool forSelection = false) {
-    layoutNode()->moveCursorUp(this, shouldRecomputeLayout, false, forSelection);
-  }
-  void moveUnder(bool * shouldRecomputeLayout, bool forSelection = false) {
-    layoutNode()->moveCursorDown(this, shouldRecomputeLayout, false, forSelection);
-  }
   LayoutCursor cursorAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, bool forSelection = false, int step = 1);
 
   /* Select */

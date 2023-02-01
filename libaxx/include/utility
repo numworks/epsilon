@@ -24,6 +24,12 @@ struct integer_sequence {
 template <class T, T End>
 using make_integer_sequence = integer_sequence<T, __integer_pack(End)...>;
 
+template <size_t... Ints>
+using index_sequence = integer_sequence<size_t, Ints...>;
+
+template <size_t N>
+using make_index_sequence = make_integer_sequence<size_t, N>;
+
 }  // namespace std
 
 #endif

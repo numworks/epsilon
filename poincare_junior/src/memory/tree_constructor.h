@@ -2,7 +2,6 @@
 #define POINCARE_MEMORY_TREE_CONSTRUCTOR_H
 
 #include <array>
-#include <concepts>
 #include "node_constructor.h"
 #include "node.h"
 #include <poincare_junior/src/expression/integer.h>
@@ -17,11 +16,15 @@ namespace PoincareJ {
 
 class AbstractCTreeCompatible {};
 
-template <class C> concept CTreeCompatible = std::derived_from<C, AbstractCTreeCompatible>;
+// less strict than derived_from from <concepts> that imposes is_convertible too
+template<typename Derived, typename Base>
+concept is_derived_from = __is_base_of(Base, Derived);
+
+template <class C> concept CTreeCompatible = is_derived_from<C, AbstractCTreeCompatible>;
 
 class AbstractCTree {};
 
-template <class C> concept CTreeish = std::derived_from<C, AbstractCTree>;
+template <class C> concept CTreeish = is_derived_from<C, AbstractCTree>;
 
 template <Block... Blocks>
 class CTree : public AbstractCTree {

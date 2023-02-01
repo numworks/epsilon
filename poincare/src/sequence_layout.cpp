@@ -50,7 +50,7 @@ void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
   // Case: Left. Ask the parent.
-  askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Left, cursor, shouldRecomputeLayout);
 }
 
 void SequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -86,7 +86,7 @@ void SequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
   // Case: Right. Ask the parent
-  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right, cursor, shouldRecomputeLayout);
 }
 
 void SequenceLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {

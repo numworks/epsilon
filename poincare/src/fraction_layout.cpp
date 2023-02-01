@@ -27,7 +27,7 @@ void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   }
   // Case: Left. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Left, cursor, shouldRecomputeLayout);
 }
 
 void FractionLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -47,7 +47,7 @@ void FractionLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right, cursor, shouldRecomputeLayout);
 }
 
 /* Select up/down

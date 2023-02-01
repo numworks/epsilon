@@ -39,7 +39,7 @@ void DerivativeLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Left, cursor, shouldRecomputeLayout);
 }
 
 void FirstOrderDerivativeLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -109,7 +109,7 @@ void DerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right, cursor, shouldRecomputeLayout);
 }
 
 void FirstOrderDerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {

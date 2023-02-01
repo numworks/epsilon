@@ -12,7 +12,9 @@
 #include <apps/i18n.h>
 #include "pop_up_controller.h"
 
-class StoreMenuController : public Escher::ModalViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate, public Escher::PervasiveBox {
+namespace Shared {
+
+class StoreMenuController : public Escher::ModalViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource, public TextFieldDelegate, public LayoutFieldDelegate, public Escher::PervasiveBox {
 public:
   StoreMenuController();
   void setText(const char * text);
@@ -65,5 +67,7 @@ private:
   Escher::MessagePopUpControllerWithCustomCancel m_abortController;
   bool m_preventReload;
 };
+
+}
 
 #endif

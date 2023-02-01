@@ -10,6 +10,8 @@
 using namespace Poincare;
 using namespace Escher;
 
+namespace Shared {
+
 StoreMenuController::InnerListController::InnerListController(StoreMenuController * dataSource, SelectableTableViewDelegate * delegate) :
   ViewController(dataSource),
   m_selectableTableView(this, dataSource, dataSource, delegate)
@@ -102,7 +104,7 @@ void StoreMenuController::openAbortWarning() {
 }
 
 bool StoreMenuController::parseAndStore(const char * text) {
-  Shared::ExpressionFieldDelegateApp * app = static_cast<Shared::ExpressionFieldDelegateApp*>(Container::activeApp());
+  ExpressionFieldDelegateApp * app = static_cast<ExpressionFieldDelegateApp*>(Container::activeApp());
   Poincare::Context * context = app->localContext();
   Expression input = Expression::Parse(text, context);
   if (input.isUninitialized()) {
@@ -110,14 +112,14 @@ bool StoreMenuController::parseAndStore(const char * text) {
     return false;
   }
   Expression reducedExp = input;
-  Shared::PoincareHelpers::CloneAndSimplify(&reducedExp, context, Poincare::ReductionTarget::User);
+  PoincareHelpers::CloneAndSimplify(&reducedExp, context, Poincare::ReductionTarget::User);
   if (reducedExp.type() != ExpressionNode::Type::Store) {
     openAbortWarning();
     return false;
   }
   bool isVariable = reducedExp.childAtIndex(1).type() == Poincare::ExpressionNode::Type::Symbol;
-  if (isVariable && Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(input, reducedExp, context)) {
-    reducedExp.replaceChildAtIndexInPlace(0, Shared::PoincareHelpers::ApproximateKeepingUnits<double>(reducedExp.childAtIndex(0), context));
+  if (isVariable && ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(input, reducedExp, context)) {
+    reducedExp.replaceChildAtIndexInPlace(0, PoincareHelpers::ApproximateKeepingUnits<double>(reducedExp.childAtIndex(0), context));
   }
   Store store = static_cast<Store&>(reducedExp);
   close();
@@ -172,4 +174,6 @@ bool StoreMenuController::textFieldDidReceiveEvent(AbstractTextField * textField
     return true;
   }
   return textFieldDelegateApp()->fieldDidReceiveEvent(textField, textField, event);
+}
+
 }

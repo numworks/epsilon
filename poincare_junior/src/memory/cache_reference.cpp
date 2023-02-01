@@ -90,7 +90,7 @@ void CacheReference::send(FunctionOnConstTree function, void * context) const {
   return function(tree, context);
 }
 
-void CacheReference::dumpAt(void * address) {
+void CacheReference::dumpAt(void * address) const {
   send(
     [](const Node tree, void * buffer) {
       memcpy(buffer, tree.block(), tree.treeSize());

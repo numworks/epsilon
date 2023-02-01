@@ -50,7 +50,7 @@ public:
   typedef void (*FunctionOnConstTree)(const Node tree, void * context);
   void send(FunctionOnConstTree functionOnTree, void * context) const;
 
-  void dumpAt(void * address);
+  void dumpAt(void * address) const;
   size_t treeSize() const;
 #if POINCARE_MEMORY_TREE_LOG
   void log();

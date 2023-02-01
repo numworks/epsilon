@@ -16,32 +16,29 @@ using namespace Shared;
 
 namespace Regression {
 
-Layout ExponentialModel::layout() {
-  if (m_layout.isUninitialized()) {
-    Layout base;
-    Layout exponent;
-    if (m_isAbxForm) {
-      base = CodePointLayout::Builder('b'),
-      exponent = CodePointLayout::Builder('x');
-    } else {
-      base = CodePointLayout::Builder('e'),
-      exponent = HorizontalLayout::Builder({
-        CodePointLayout::Builder('b'),
-        CodePointLayout::Builder(UCodePointMiddleDot),
-        CodePointLayout::Builder('x')
-        });
-    }
-    m_layout = HorizontalLayout::Builder({
-      CodePointLayout::Builder('a'),
+Layout ExponentialModel::templateLayout() const {
+  Layout base;
+  Layout exponent;
+  if (m_isAbxForm) {
+    base = CodePointLayout::Builder('b'),
+    exponent = CodePointLayout::Builder('x');
+  } else {
+    base = CodePointLayout::Builder('e'),
+    exponent = HorizontalLayout::Builder({
+      CodePointLayout::Builder('b'),
       CodePointLayout::Builder(UCodePointMiddleDot),
-      base,
-      VerticalOffsetLayout::Builder(
-        exponent,
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript
-      )
-    });
+      CodePointLayout::Builder('x')
+      });
   }
-  return m_layout;
+  return HorizontalLayout::Builder({
+    CodePointLayout::Builder('a'),
+    CodePointLayout::Builder(UCodePointMiddleDot),
+    base,
+    VerticalOffsetLayout::Builder(
+      exponent,
+      VerticalOffsetLayoutNode::VerticalPosition::Superscript
+    )
+  });
 }
 
 Poincare::Expression ExponentialModel::expression(double * modelCoefficients) const {

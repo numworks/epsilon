@@ -101,7 +101,7 @@ void GraphController::CurveSelectionController::willDisplayCellForIndex(Highligh
 
 bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
   double * coefficients = m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
-  Layout l = m_store->regressionModel(modelType)->buildEquationLayout(coefficients, GlobalPreferences::sharedGlobalPreferences->yPredictedSymbol(), significantDigits, displayMode);
+  Layout l = m_store->regressionModel(modelType)->equationLayout(coefficients, GlobalPreferences::sharedGlobalPreferences->yPredictedSymbol(), significantDigits, displayMode);
   int length = l.serializeForParsing(buffer, bufferSize);
   if (length >= static_cast<int>(bufferSize - 1) || length == 0) {
     return false;

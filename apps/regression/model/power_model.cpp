@@ -13,19 +13,14 @@ using namespace Poincare;
 
 namespace Regression {
 
-Layout PowerModel::layout() {
-  if (m_layout.isUninitialized()) {
-    m_layout = HorizontalLayout::Builder({
-      CodePointLayout::Builder('a'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x'),
-      VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('b'),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript
-      ),
-    });
-  }
-  return m_layout;
+Layout PowerModel::templateLayout() const {
+  return HorizontalLayout::Builder({
+    CodePointLayout::Builder('a'),
+    CodePointLayout::Builder(UCodePointMiddleDot),
+    CodePointLayout::Builder('x'),
+    VerticalOffsetLayout::Builder(
+      CodePointLayout::Builder('b'),
+      VerticalOffsetLayoutNode::VerticalPosition::Superscript)});
 }
 
 Expression PowerModel::expression(double * modelCoefficients) const {

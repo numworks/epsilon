@@ -17,15 +17,12 @@ using namespace Shared;
 
 namespace Regression {
 
-Layout Model::layout() {
-  if (m_layout.isUninitialized()) {
-    const char * layoutString = I18n::translate(formulaMessage()) + sizeof("y=") - 1;
-    m_layout = LayoutHelper::StringToCodePointsLayout(layoutString, strlen(layoutString));
-  }
-  return m_layout;
+Layout Model::templateLayout() const {
+  const char * layoutString = I18n::translate(formulaMessage()) + sizeof("y=") - 1;
+  return LayoutHelper::StringToCodePointsLayout(layoutString, strlen(layoutString));
 }
 
-Layout Model::buildEquationLayout(double * modelCoefficients, const char * ySymbol, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
+Layout Model::equationLayout(double * modelCoefficients, const char * ySymbol, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
   Expression formula = expression(modelCoefficients);
   Expression equation = Comparison::Builder(Symbol::Builder(ySymbol, strlen(ySymbol)), ComparisonNode::OperatorType::Equal, formula);
   return equation.createLayout(displayMode, significantDigits, AppsContainer::sharedAppsContainer()->globalContext());

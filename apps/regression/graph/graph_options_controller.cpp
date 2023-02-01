@@ -150,7 +150,7 @@ void GraphOptionsController::fillCell(HighlightCell * cell) {
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences->displayMode();
   if (cell == &m_regressionEquationCell) {
     double * coefficients = m_store->coefficientsForSeries(series, m_graphController->globalContext());
-    m_regressionEquationCell.setLayout(model->buildEquationLayout(coefficients, "y", significantDigits, displayMode));
+    m_regressionEquationCell.setLayout(model->equationLayout(coefficients, "y", significantDigits, displayMode));
   } else if (cell == &m_rCell || cell == &m_r2Cell) {
     ExpressionTableCellWithMessageWithBuffer * rCell = static_cast<ExpressionTableCellWithMessageWithBuffer*>(cell);
     if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {

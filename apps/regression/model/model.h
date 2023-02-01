@@ -39,9 +39,9 @@ public:
   virtual I18n::Message name() const = 0;
   virtual int numberOfCoefficients() const = 0;
 
-  virtual Poincare::Layout layout();
+  virtual Poincare::Layout templateLayout() const;
   virtual Poincare::Expression expression(double * modelCoefficients) const = 0;
-  Poincare::Layout buildEquationLayout(double * modelCoefficients, const char * ySymbol, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
+  Poincare::Layout equationLayout(double * modelCoefficients, const char * ySymbol, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
 
   /* Evalute cannot use the expression and approximate it since it would be
    * too time consuming. */
@@ -59,8 +59,6 @@ protected:
    * not displayed as 2x+-3 but 2x-3 (a subtraction is build instead of an
    * addition). */
   static Poincare::Expression AdditionOrSubtractionBuilder(Poincare::Expression e1, Poincare::Expression e2, bool addition);
-
-  Poincare::Layout m_layout;
 
 private:
   // Model attributes

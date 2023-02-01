@@ -93,7 +93,7 @@ void RegressionController::willDisplayCellForIndex(HighlightCell * cell, int ind
   MessageTableCellWithExpression * castedCell = static_cast<MessageTableCellWithExpression *>(cell);
   Model * model = m_store->regressionModel(ModelTypeAtIndex(index));
   castedCell->setMessage(model->name());
-  castedCell->setLayout(model->layout());
+  castedCell->setLayout(model->templateLayout());
 }
 
 }

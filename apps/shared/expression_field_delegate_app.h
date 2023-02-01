@@ -8,7 +8,7 @@
 namespace Shared {
 
 class ExpressionFieldDelegateApp : public TextFieldDelegateApp, public Escher::LayoutFieldDelegate {
-  friend class ::StoreMenuController;
+  friend class StoreMenuController;
   friend class MathVariableBoxController;
 public:
   virtual ~ExpressionFieldDelegateApp() = default;

@@ -19,13 +19,42 @@ class AbstractCTreeCompatible {};
 
 template <class C> concept CTreeCompatible = std::derived_from<C, AbstractCTreeCompatible>;
 
+class AbstractCTree {};
+
+template <class C> concept CTreeish = std::derived_from<C, AbstractCTree>;
+
 template <Block... Blocks>
-class CTree : public AbstractCTreeCompatible {
+class CTree : public AbstractCTree {
 public:
   static constexpr Block blocks[] = { Blocks... };
+  static constexpr size_t size = sizeof...(Blocks);
   constexpr operator Node () const { return blocks; }
 };
 
+template <size_t N, const uint8_t B[N], typename IS = decltype(std::make_index_sequence<N>())> struct CTreeFromArray;
+
+template <size_t N, const uint8_t B[N], std::size_t... I>
+struct CTreeFromArray<N, B, std::index_sequence<I...>> : CTree<B[I]...> {};
+
+template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2], typename IS = decltype(std::make_index_sequence<N1 + N2>())> struct BlockConcat;
+
+template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2], std::size_t... I>
+struct BlockConcat<N1, B1, N2, B2, std::index_sequence<I...>> {
+  using ctree = CTree<((I < N1) ? B1[I] : B2[I - N1])...>;
+};
+
+template <CTreeish CT1, CTreeish CT2> using ConcatTwo = typename BlockConcat<CT1::size, CT1::blocks, CT2::size, CT2::blocks>::ctree;
+
+template <CTreeish CT1, CTreeish... CT> struct Concat;
+template <CTreeish CT1> struct Concat<CT1> : CT1 {};
+template <CTreeish CT1, CTreeish... CT> struct Concat : ConcatTwo<CT1, Concat<CT...>> {};
+
+// Usage:
+// template <Block Tag, CTreeish CT1, CTreeish CT2> consteval auto Binary(CT1, CT2) {
+//   return ConcatTwo<ConcatTwo<CTree<Tag>, CT1>, CT2>();
+//      or
+//   return Concat<CTree<Tag>, CT1, CT2>();
+// }
 
 // Helpers
 

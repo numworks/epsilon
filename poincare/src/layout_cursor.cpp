@@ -69,14 +69,14 @@ KDPoint LayoutCursor::middleLeftPoint() {
 /* Move */
 void LayoutCursor::move(OMG::Direction direction, bool * shouldRecomputeLayout, bool forSelection) {
   if (direction == OMG::Direction::Left) {
-    moveLeft(shouldRecomputeLayout, forSelection);
+    layoutNode()->moveCursorLeft(this, shouldRecomputeLayout, forSelection);
   } else if (direction == OMG::Direction::Right) {
-    moveRight(shouldRecomputeLayout, forSelection);
+    layoutNode()->moveCursorRight(this, shouldRecomputeLayout, forSelection);
   } else if (direction == OMG::Direction::Up) {
-    moveAbove(shouldRecomputeLayout, forSelection);
+    layoutNode()->moveCursorUp(this, shouldRecomputeLayout, false, forSelection);
   } else {
     assert(direction == OMG::Direction::Down);
-    moveUnder(shouldRecomputeLayout, forSelection);
+    layoutNode()->moveCursorDown(this, shouldRecomputeLayout, false, forSelection);
   }
 }
 

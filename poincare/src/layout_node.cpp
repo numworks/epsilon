@@ -120,7 +120,7 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     // Case: The pointed layout is a child. Move Left.
     assert(cursor->position() == LayoutCursor::Position::Left);
     bool shouldRecomputeLayout = false;
-    cursor->moveLeft(&shouldRecomputeLayout);
+    cursor->move(OMG::Direction::Left, &shouldRecomputeLayout);
     return;
   }
   assert(cursor->layoutNode() == this);

@@ -57,7 +57,11 @@ bool App::isAcceptableExpression(const Poincare::Expression exp) {
    * the Equal OperatorType. */
   return ExpressionFieldDelegateApp::isAcceptableExpression(exp)
          && (Poincare::ComparisonNode::IsBinaryEquality(exp)
-            || exp.type() != Poincare::ExpressionNode::Type::Comparison);
+            || (exp.type() != Poincare::ExpressionNode::Type::Comparison && exp.type() != Poincare::ExpressionNode::Type::BinaryLogicalOperator));
+  /* TODO: equation view and interval view should have 2 different expression field delegates,
+   * each one implementing his own version of isAcceptableExpression:
+   * - for equation view: ExpressionFieldDelegateApp::isAcceptableExpression(exp) && Poincare::ComparisonNode::IsBinaryEquality(exp)
+   * - for interval view: ExpressionFieldDelegateApp::isAcceptableExpression(exp) */
 }
 
 }

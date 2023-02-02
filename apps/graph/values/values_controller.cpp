@@ -117,10 +117,8 @@ int ValuesController::columnToFreeze() {
     if (nbOfValuesColumns == 0) {
       continue;
     }
-    int nbColumns = nbOfValuesColumns + 1;
-    assert(nbColumns == numberOfColumnsForSymbolType(symbolType));
-    indexOfLastColumn += nbColumns;
-    int indexOfAbscissaColumn = indexOfLastColumn - nbOfValuesColumns;
+    int indexOfAbscissaColumn = indexOfLastColumn + 1;
+    indexOfLastColumn = indexOfAbscissaColumn  + nbOfValuesColumns;
     KDCoordinate subTableWidth = cumulatedWidthBeforeIndex(indexOfLastColumn + 1) - cumulatedWidthBeforeIndex(indexOfAbscissaColumn);
     /*
      *     -----------------------------------------------------------

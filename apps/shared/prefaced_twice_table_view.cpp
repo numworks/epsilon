@@ -87,8 +87,9 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
   bool hideColumnPreface = m_mainTableView->selectedRow() == -1 || m_columnPrefaceDataSource.prefaceColumn() == -1 || m_columnPrefaceDataSource.prefaceIsAfterOffset(m_mainTableView->contentOffset().x(), m_mainTableView->leftMargin());
   if (hideColumnPreface) {
     // Main table and row preface
-    m_mainTableView->setLeftMargin(m_prefacedDelegate && m_columnPrefaceDataSource.prefaceColumn() > m_prefacedDelegate->firstFeezableColumn() ? 0 : m_mainTableViewLeftMargin);
-    m_rowPrefaceView.setLeftMargin(m_mainTableView->leftMargin());
+    const KDCoordinate leftMargin = m_prefacedDelegate && m_columnPrefaceDataSource.prefaceColumn() > m_prefacedDelegate->firstFeezableColumn() ? 0 : m_mainTableViewLeftMargin;
+    m_mainTableView->setLeftMargin(leftMargin);
+    m_rowPrefaceView.setLeftMargin(leftMargin);
     layoutSubviewsInRect(bounds(), force);
 
     // Column preface
@@ -101,8 +102,9 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     KDCoordinate columnPrefaceWidth = m_columnPrefaceView.minimalSizeForOptimalDisplay().width();
 
     // Main table and row preface
-    m_mainTableView->setLeftMargin(0);
-    m_rowPrefaceView.setLeftMargin(m_mainTableView->leftMargin());
+    const KDCoordinate leftMargin = 0;
+    m_mainTableView->setLeftMargin(leftMargin);
+    m_rowPrefaceView.setLeftMargin(leftMargin);
     layoutSubviewsInRect(KDRect(columnPrefaceWidth, 0, bounds().width() - columnPrefaceWidth, bounds().height()), force);
 
     // Column preface

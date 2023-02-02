@@ -4,6 +4,7 @@
 #include <escher/view.h>
 #include <kandinsky/color.h>
 #include <poincare/layout.h>
+#include <poincare/layout_cursor.h>
 
 namespace Escher {
 
@@ -20,8 +21,7 @@ public:
                  KDColor textColor = KDColorBlack,
                  KDColor backgroundColor = KDColorWhite,
                  KDFont::Size font = KDFont::Size::Large,
-                 Poincare::Layout * selectionStart = nullptr,
-                 Poincare::Layout * selectionEnd = nullptr);
+                 Poincare::LayoutCursor * cursor = nullptr);
   Poincare::Layout layout() const { return m_layout; }
   bool setLayout(Poincare::Layout layout);
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -44,10 +44,9 @@ protected:
    * responsible for freeing the expression layout when required. */
   // TODO find better way to have minimalSizeForOptimalDisplay const
   mutable Poincare::Layout m_layout;
+  Poincare::LayoutCursor * m_cursor;
   KDColor m_textColor;
   KDColor m_backgroundColor;
-  Poincare::Layout * m_selectionStart;
-  Poincare::Layout * m_selectionEnd;
 private:
   float m_horizontalAlignment;
   float m_verticalAlignment;

@@ -6,14 +6,11 @@
 namespace PoincareJ {
 
 EditionReference Layout::ParseFromTextInEditionPool(const char * text) {
-  // textInput == -1+2*3
-  EditionReference ref = EditionReference::Push<BlockType::RackLayout>(6);
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('-');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('+');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('2');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('*');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('3');
+  int n = std::strlen(text);
+  EditionReference ref = EditionReference::Push<BlockType::RackLayout>(n);
+  for (int i = 0; i < n; i++) {
+    EditionReference::Push<BlockType::CodePointLayout, CodePoint>(text[i]);
+  }
   return ref;
 }
 

@@ -13,7 +13,6 @@
 #include "continuous_function_properties.h"
 #include "function.h"
 #include "packed_range_1D.h"
-#include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 #include <poincare/conic.h>
 #include <poincare/comparison.h>

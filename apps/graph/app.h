@@ -3,6 +3,7 @@
 
 #include <escher/alternate_empty_view_controller.h>
 #include <apps/shared/continuous_function_store.h>
+#include <apps/apps_container_helper.h>
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"

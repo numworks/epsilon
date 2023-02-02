@@ -10,11 +10,11 @@
 #include <omg/global_box.h>
 #include <assert.h>
 #include "sequence_store.h"
+#include "continuous_function_store.h"
 #include "sequence_context.h"
 
 namespace Shared {
 
-class ContinuousFunctionStore;
 class GlobalContext final : public Poincare::Context {
 public:
   constexpr static const char * k_extensions[] = {Ion::Storage::expExtension, Ion::Storage::matExtension, Ion::Storage::funcExtension, Ion::Storage::lisExtension, Ion::Storage::seqExtension};

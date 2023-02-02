@@ -68,14 +68,14 @@ KDPoint LayoutCursor::middleLeftPoint() {
 
 /* Move */
 void LayoutCursor::move(OMG::Direction direction, bool * shouldRecomputeLayout, bool forSelection) {
-  if (direction == OMG::Direction::Left) {
+  if (direction.isLeft()) {
     layoutNode()->moveCursorLeft(this, shouldRecomputeLayout, forSelection);
-  } else if (direction == OMG::Direction::Right) {
+  } else if (direction.isRight()) {
     layoutNode()->moveCursorRight(this, shouldRecomputeLayout, forSelection);
-  } else if (direction == OMG::Direction::Up) {
+  } else if (direction.isUp()) {
     layoutNode()->moveCursorUp(this, shouldRecomputeLayout, false, forSelection);
   } else {
-    assert(direction == OMG::Direction::Down);
+    assert(direction.isDown());
     layoutNode()->moveCursorDown(this, shouldRecomputeLayout, false, forSelection);
   }
 }
@@ -111,11 +111,11 @@ LayoutCursor LayoutCursor::cursorAtDirection(OMG::Direction direction, bool * sh
 
 LayoutCursor LayoutCursor::selectAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, Layout * selection) {
   LayoutCursor result = *this;
-  if (direction == OMG::Direction::Right || direction == OMG::Direction::Left) {
-    result.selectLeftRight(direction == OMG::Direction::Right, shouldRecomputeLayout, selection);
+  if (direction.isHorizontal()) {
+    result.selectLeftRight(direction.isRight(), shouldRecomputeLayout, selection);
   } else {
-    assert(direction == OMG::Direction::Up || direction == OMG::Direction::Down);
-    result.selectUpDown(direction == OMG::Direction::Up, shouldRecomputeLayout, selection);
+    assert(direction.isVertical());
+    result.selectUpDown(direction.isUp(), shouldRecomputeLayout, selection);
   }
   return result;
 }
@@ -547,7 +547,7 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
 void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * selection) {
   // Move the cursor in the selection direction
   Layout p = m_layout.parent();
-  LayoutCursor c = cursorAtDirection(up ? OMG::Direction::Up : OMG::Direction::Down, shouldRecomputeLayout, true);
+  LayoutCursor c = cursorAtDirection(up ? OMG::Direction::Up() : OMG::Direction::Down(), shouldRecomputeLayout, true);
   if (!c.isDefined()) {
     return;
   }

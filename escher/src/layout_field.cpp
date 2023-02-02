@@ -643,20 +643,20 @@ bool LayoutField::handleStoreEvent() {
   return true;
 }
 
-static_assert_sequential(
-  OMG::Direction::Left,
-  OMG::Direction::Up,
-  OMG::Direction::Down,
-  OMG::Direction::Right
-);
-
-
 static inline OMG::Direction DirectionForMoveEvent(Ion::Events::Event event) {
   assert(IsMoveEvent(event));
-  return static_cast<OMG::Direction>(
-    static_cast<uint8_t>(OMG::Direction::Left) +
-    static_cast<uint8_t>(event) - static_cast<uint8_t>(Ion::Events::Left)
-  );
+  if (event == Ion::Events::Left) {
+    return OMG::Direction::Left();
+  }
+  if (event == Ion::Events::Up) {
+    return OMG::Direction::Up();
+  }
+  if (event == Ion::Events::Down) {
+    return OMG::Direction::Down();
+  } else {
+    assert(event == Ion::Events::Right);
+    return OMG::Direction::Right();
+  }
 }
 
 bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
@@ -695,10 +695,18 @@ static inline bool IsSelectionEvent(Ion::Events::Event event) {
 
 static inline OMG::Direction DirectionForSelectionEvent(Ion::Events::Event event) {
   assert(IsSelectionEvent(event));
-  return static_cast<OMG::Direction>(
-    static_cast<uint8_t>(OMG::Direction::Left) +
-    static_cast<uint8_t>(event) - static_cast<uint8_t>(Ion::Events::ShiftLeft)
-  );
+  if (event == Ion::Events::ShiftLeft) {
+    return OMG::Direction::Left();
+  }
+  if (event == Ion::Events::ShiftUp) {
+    return OMG::Direction::Up();
+  }
+  if (event == Ion::Events::ShiftDown) {
+    return OMG::Direction::Down();
+  } else {
+    assert(event == Ion::Events::ShiftRight);
+    return OMG::Direction::Right();
+  }
 }
 
 bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {

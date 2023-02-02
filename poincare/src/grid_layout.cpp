@@ -7,8 +7,8 @@ namespace Poincare {
 
 // LayoutNode
 void GridLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  LayoutCursor::Position dir = direction == OMG::HorizontalDirection::Left ? LayoutCursor::Position::Left : LayoutCursor::Position::Right;
-  LayoutCursor::Position oppositeDir = direction == OMG::HorizontalDirection::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left;
+  LayoutCursor::Position dir = direction.isLeft() ? LayoutCursor::Position::Left : LayoutCursor::Position::Right;
+  LayoutCursor::Position oppositeDir = direction.isLeft() ? LayoutCursor::Position::Right : LayoutCursor::Position::Left;
 
   LayoutNode * cursorNode = cursor->layoutNode();
   if (cursor->position() == oppositeDir) {
@@ -18,7 +18,7 @@ void GridLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, 
     startEditing();
     *shouldRecomputeLayout = true;
     assert(m_numberOfColumns * m_numberOfRows >= 1);
-    int entryIndex = direction == OMG::HorizontalDirection::Left ? indexOfLastNonGrayChildWhenIsEditing() : 0;
+    int entryIndex = direction.isLeft() ? indexOfLastNonGrayChildWhenIsEditing() : 0;
     cursor->setLayoutNode(childAtIndex(entryIndex));
     return;
   }
@@ -27,8 +27,8 @@ void GridLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, 
   int childIndex = indexOfChild(cursorNode);
   if (childIndex >= 0) {
     // Case 2.1: Cursor is at a child.
-    if ((direction == OMG::HorizontalDirection::Left && childIsLeftOfGrid(childIndex))
-     || (direction == OMG::HorizontalDirection::Right && childIsRightOfGrid(childIndex))) {
+    if ((direction.isLeft() && childIsLeftOfGrid(childIndex))
+     || (direction.isRight() && childIsRightOfGrid(childIndex))) {
       /* Case 2.1: The child is the last in direction.
        * Remove the gray squares of the grid, then move out of the grid. */
       stopEditing();
@@ -38,7 +38,7 @@ void GridLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, 
     }
     /* Case 2.2: The child is not the last in direction.
      * Go to its next sibling in direction and move in that direction. */
-    int step = direction == OMG::HorizontalDirection::Left ? -1 : 1;
+    int step = direction.isLeft() ? -1 : 1;
     cursor->setLayoutNode(childAtIndex(childIndex + step));
     cursor->setPosition(oppositeDir);
     return;
@@ -50,11 +50,11 @@ void GridLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, 
 
 
 void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::HorizontalDirection::Left, cursor, shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::HorizontalDirection::Left(), cursor, shouldRecomputeLayout);
 }
 
 void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::HorizontalDirection::Right, cursor, shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::HorizontalDirection::Right(), cursor, shouldRecomputeLayout);
 }
 
 void GridLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
@@ -90,8 +90,8 @@ void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomput
 void GridLayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   GridLayout thisRef = GridLayout(this);
   bool shouldRemoveGraySquares = false;
-  int firstIndex = direction == OMG::VerticalDirection::Up ? 0 : numberOfChildren() - m_numberOfColumns;
-  int lastIndex = direction == OMG::VerticalDirection::Up ? m_numberOfColumns : numberOfChildren();
+  int firstIndex = direction.isUp() ? 0 : numberOfChildren() - m_numberOfColumns;
+  int lastIndex = direction.isUp() ? m_numberOfColumns : numberOfChildren();
   int i = firstIndex;
   for (LayoutNode * l : childrenFromIndex(firstIndex)) {
     if (i >= lastIndex) {

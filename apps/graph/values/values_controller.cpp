@@ -118,7 +118,7 @@ int ValuesController::columnToFreeze() {
       continue;
     }
     int indexOfAbscissaColumn = indexOfLastColumn + 1;
-    indexOfLastColumn = indexOfAbscissaColumn  + nbOfValuesColumns;
+    indexOfLastColumn = indexOfAbscissaColumn + nbOfValuesColumns;
     KDCoordinate subTableWidth = cumulatedWidthBeforeIndex(indexOfLastColumn + 1) - cumulatedWidthBeforeIndex(indexOfAbscissaColumn);
     /*
      *     -----------------------------------------------------------

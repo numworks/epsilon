@@ -28,7 +28,7 @@ public:
     Escher::ViewController * typeViewController,
     Store * store
   );
-  bool seriesIsActive(int series) const { return validSerieMethod()(m_store, series); }
+  bool seriesIsActive(int series) const { return activeSeriesMethod()(m_store, series); }
   virtual int totalValues(int series) const = 0;
   virtual double valueAtIndex(int series, int i) const = 0;
   virtual double resultAtIndex(int series, int i) const = 0;

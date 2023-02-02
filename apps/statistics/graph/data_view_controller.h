@@ -37,7 +37,7 @@ protected:
    * implementation directly use Shared::DoublePairStore::DefaultActiveSeriesTest.
    * They should be updated accordingly if their controllers override this
    * method. */
-  virtual Shared::DoublePairStore::ActiveSeriesTest validSerieMethod() const { return Shared::DoublePairStore::DefaultActiveSeriesTest; };
+  virtual Shared::DoublePairStore::ActiveSeriesTest activeSeriesMethod() const { return Shared::DoublePairStore::DefaultActiveSeriesTest; };
   void sanitizeSeriesIndex();
   virtual void viewWillAppearBeforeReload() {}
   virtual bool reloadBannerView() = 0;
@@ -47,7 +47,7 @@ protected:
   virtual void highlightSelection() {}
 
   virtual int nextSubviewWhenMovingVertically(int direction) const {
-    return m_store->activeSeriesIndexFromSeriesIndex(m_selectedSeries, validSerieMethod()) + direction;
+    return m_store->activeSeriesIndexFromSeriesIndex(m_selectedSeries, activeSeriesMethod()) + direction;
   }
   virtual void updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) = 0;
 

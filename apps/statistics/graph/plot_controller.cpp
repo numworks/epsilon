@@ -96,8 +96,8 @@ void PlotController::computeRanges(KDCoordinate bannerHeight) {
 }
 
 void PlotController::computeXBounds(float * xMin, float *xMax) const {
-  *xMin = m_store->minValueForAllSeries(handleNullFrequencies(), validSerieMethod());
-  *xMax = m_store->maxValueForAllSeries(handleNullFrequencies(), validSerieMethod());
+  *xMin = m_store->minValueForAllSeries(handleNullFrequencies(), activeSeriesMethod());
+  *xMax = m_store->maxValueForAllSeries(handleNullFrequencies(), activeSeriesMethod());
 }
 
 }

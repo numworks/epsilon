@@ -20,7 +20,7 @@ public:
   );
 
   // AlternateEmptyViewDelegate
-  bool isEmpty() const override { return !m_store->hasActiveSeries(validSerieMethod()); }
+  bool isEmpty() const override { return !m_store->hasActiveSeries(activeSeriesMethod()); }
   Escher::Responder * responderWhenEmpty() override { return this; }
   // Only two causes : either too many or non-integer frequencies
   I18n::Message emptyMessage() override { return m_store->hasActiveSeries(Store::SumOfOccurrencesUnderMax) ? I18n::Message::NonIntegerFrequencies : I18n::Message::TooManyDataPoints; }
@@ -36,7 +36,7 @@ public:
 private:
   // PlotController
   // Hide series having invalid total values.
-  Shared::DoublePairStore::ActiveSeriesTest validSerieMethod() const override { return Store::ActiveSeriesAndValidTotalNormalProbabilities; };
+  Shared::DoublePairStore::ActiveSeriesTest activeSeriesMethod() const override { return Store::ActiveSeriesAndValidTotalNormalProbabilities; };
   bool moveSelectionHorizontally(int deltaIndex) override;
   void computeYBounds(float * yMin, float *yMax) const override;
   bool handleNullFrequencies() const override { return false; }

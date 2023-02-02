@@ -157,7 +157,7 @@ void HistogramController::preinitXRangeParameters(double * xMin, double * xMax) 
   double minValue = DBL_MAX;
   double maxValue = -DBL_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
-    if (validSerieMethod()(m_store, i)) {
+    if (activeSeriesMethod()(m_store, i)) {
       minValue = std::min<double>(minValue, m_store->minValue(i));
       maxValue = std::max<double>(maxValue, m_store->maxValue(i));
     }
@@ -172,7 +172,7 @@ void HistogramController::preinitXRangeParameters(double * xMin, double * xMax) 
 }
 
 void HistogramController::initRangeParameters() {
-  assert(validSerieMethod()(m_store, m_selectedSeries));
+  assert(activeSeriesMethod()(m_store, m_selectedSeries));
   double barWidth = m_store->barWidth();
   double xMin;
   preinitXRangeParameters(&xMin);
@@ -188,7 +188,7 @@ void HistogramController::initRangeParameters() {
 }
 
 void HistogramController::initYRangeParameters(int series) {
-  assert(validSerieMethod()(m_store, series));
+  assert(activeSeriesMethod()(m_store, series));
   /* Height of drawn bar are relative to the maximal bar of the series, so all
    * displayed series need the same range of [0,1]. */
   m_histogramRange.setYMax(1.0f+HistogramRange::k_displayTopMarginRatio);
@@ -209,7 +209,7 @@ void HistogramController::initYRangeParameters(int series) {
 }
 
 void HistogramController::initBarParameters() {
-  assert(validSerieMethod()(m_store, m_selectedSeries));
+  assert(activeSeriesMethod()(m_store, m_selectedSeries));
   double xMin;
   double xMax;
   preinitXRangeParameters(&xMin, &xMax);
@@ -230,7 +230,7 @@ void HistogramController::initBarParameters() {
   }
   bool allValuesAreIntegers = true;
   for (int i = 0; i < Store::k_numberOfSeries; i ++) {
-    if (allValuesAreIntegers && validSerieMethod()(m_store, i)) {
+    if (allValuesAreIntegers && activeSeriesMethod()(m_store, i)) {
       allValuesAreIntegers = m_store->columnIsIntegersOnly(i, 0);
     }
   }
@@ -249,7 +249,7 @@ void HistogramController::initBarParameters() {
 }
 
 void HistogramController::sanitizeSelectedIndex() {
-  assert(validSerieMethod()(m_store, m_selectedSeries));
+  assert(activeSeriesMethod()(m_store, m_selectedSeries));
   if (m_store->heightOfBarAtIndex(m_selectedSeries, m_selectedIndex) != 0) {
     return;
   }

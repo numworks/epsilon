@@ -27,10 +27,10 @@ public:
     void reset() override;
     const Descriptor * descriptor() const override;
     CalculationStore * calculationStore() { return &m_calculationStore; }
-    char * cacheBuffer() { return m_cacheBuffer; }
+    /*char * cacheBuffer() { return m_cacheBuffer; }
     size_t * cacheBufferInformationAddress() { return &m_cacheBufferInformation; }
     int * cacheCursorOffset() { return &m_cacheCursorOffset; }
-    Poincare::LayoutCursor::Position * cacheCursorPosition() { return &m_cacheCursorPosition; }
+    OMG::HorizontalDirection * cacheCursorPosition() { return &m_cacheCursorPosition; }*/
 
   private:
     // Set the size of the buffer needed to store the calculations
@@ -38,10 +38,10 @@ public:
 
     CalculationStore m_calculationStore;
     char m_calculationBuffer[k_calculationBufferSize];
-    char m_cacheBuffer[EditExpressionController::k_cacheBufferSize];
+    /*char m_cacheBuffer[EditExpressionController::k_cacheBufferSize];
     size_t m_cacheBufferInformation;
     int m_cacheCursorOffset;
-    Poincare::LayoutCursor::Position m_cacheCursorPosition;
+    OMG::HorizontalDirection m_cacheCursorPosition;*/
   };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }

@@ -24,7 +24,7 @@ void ExpressionWithEqualSignView::drawRect(KDContext * ctx, KDRect rect) const {
   // Do not color the whole background to avoid coloring behind the equal symbol
   KDSize expressionSize = ExpressionView::minimalSizeForOptimalDisplay();
   ctx->fillRect(KDRect(0, 0, expressionSize), m_backgroundColor);
-  m_layout.draw(ctx, drawingOrigin(), k_font, m_textColor, m_backgroundColor, m_selectionStart, m_selectionEnd, Palette::Select);
+  m_layout.draw(ctx, drawingOrigin(), k_font, m_textColor, m_backgroundColor, m_cursor ? m_cursor->selection() : Poincare::LayoutSelection());
 }
 
 View * ExpressionWithEqualSignView::subviewAtIndex(int index) {

@@ -61,12 +61,12 @@ void EditExpressionController::didBecomeFirstResponder() {
 
 void EditExpressionController::restoreInput() {
   App::Snapshot * snap = App::app()->snapshot();
-  m_contentView.expressionField()->restoreContent(snap->cacheBuffer(), *snap->cacheBufferInformationAddress(), snap->cacheCursorOffset(), snap->cacheCursorPosition());
+  //m_contentView.expressionField()->restoreContent(snap->cacheBuffer(), *snap->cacheBufferInformationAddress(), snap->cacheCursorOffset(), snap->cacheCursorPosition());
 }
 
 void EditExpressionController::memoizeInput() {
   App::Snapshot * snap = App::app()->snapshot();
-  *snap->cacheBufferInformationAddress() = m_contentView.expressionField()->dumpContent(snap->cacheBuffer(), k_cacheBufferSize, snap->cacheCursorOffset(), snap->cacheCursorPosition());
+  //*snap->cacheBufferInformationAddress() = m_contentView.expressionField()->dumpContent(snap->cacheBuffer(), k_cacheBufferSize, snap->cacheCursorOffset(), snap->cacheCursorPosition());
 }
 
 void EditExpressionController::viewWillAppear() {

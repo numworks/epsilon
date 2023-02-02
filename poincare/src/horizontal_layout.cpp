@@ -1,5 +1,4 @@
 #include <poincare/horizontal_layout.h>
-#include <poincare/autocompleted_bracket_pair_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/nth_root_layout.h>
 #include <poincare/serialization_helper.h>
@@ -8,8 +7,8 @@
 namespace Poincare {
 
 // LayoutNode
-
-void HorizontalLayoutNode::moveCursorHorizontally(OMG::NewHorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+/*
+void HorizontalLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   LayoutCursor::Position dir = direction.isLeft() ? LayoutCursor::Position::Left : LayoutCursor::Position::Right;
   LayoutCursor::Position oppositeDir = direction.isLeft() ? LayoutCursor::Position::Right : LayoutCursor::Position::Left;
 
@@ -102,7 +101,7 @@ void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
         || numberOfChildren() == 0))
   {
     /* Case: Left and this is the main layout or Right and this is the main
-     * layout with no children. Return. */
+     * layout with no children. Return. *
     return;
   }
   if (cursor->position() == LayoutCursor::Position::Left) {
@@ -110,7 +109,7 @@ void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     if (indexOfPointedLayout >= 0) {
       /* Case: Left of a child.
        * Point Right of the previous child. If there is no previous child, point
-       * Left of this. Perform another backspace. */
+       * Left of this. Perform another backspace. *
       if (indexOfPointedLayout == 0) {
         cursor->setLayoutNode(this);
       } else {
@@ -131,14 +130,15 @@ void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   }
   LayoutNode::deleteBeforeCursor(cursor);
 }
-
+*/
 LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText) {
   assert(correspondingExpression != nullptr);
   if (correspondingExpression->isUninitialized() || correspondingExpression->numberOfChildren() > 0) {
     Layout layoutToPointTo = Layout(this).recursivelyMatches(
       [](Poincare::Layout layout) {
-        return AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(layout.type())
-            || layout.isEmpty() ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+        return TrinaryBoolean::Unknown;
+        /*return AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(layout.type())
+            || layout.isEmpty() ? TrinaryBoolean::True : TrinaryBoolean::Unknown;*/
       }
     );
     if (!layoutToPointTo.isUninitialized()) {
@@ -270,15 +270,14 @@ KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font)
 KDRect HorizontalLayoutNode::relativeSelectionRect(int leftIndex, int rightIndex, KDFont::Size font) const {
   HorizontalLayout thisLayout = HorizontalLayout(const_cast<HorizontalLayoutNode *>(this));
   if (numberOfChildren() == 0) {
-    assert(leftIndex == 0 && rightIndex == 1);
     return KDRectZero;
   }
 
   assert(leftIndex >= 0 && rightIndex <= numberOfChildren() && leftIndex < rightIndex);
   int firstSelectedChildIndex = leftIndex;
   int lastSelectedChildIndex = rightIndex - 1;
-  LayoutNode * firstSelectedChild = childAtIndex(leftIndex);
-  LayoutNode * lastSelectedChild = childAtIndex(rightIndex);
+  LayoutNode * firstSelectedChild = childAtIndex(firstSelectedChildIndex);
+  LayoutNode * lastSelectedChild = childAtIndex(lastSelectedChildIndex);
 
   // Compute the positions
   KDCoordinate selectionXStart = const_cast<HorizontalLayoutNode *>(this)->positionOfChild(firstSelectedChild, font).x();
@@ -300,6 +299,7 @@ KDRect HorizontalLayoutNode::relativeSelectionRect(int leftIndex, int rightIndex
   return KDRect(KDPoint(selectionXStart, const_cast<HorizontalLayoutNode *>(this)->baseline(font) - maxAboveBaseline), KDSize(drawWidth, maxUnderBaseline + maxAboveBaseline));
 }
 
+/*
 bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) {
   HorizontalLayout thisRef(this);
   int nChildren = numberOfChildren();
@@ -331,7 +331,7 @@ static void makePermanentIfBracket(LayoutNode * l, bool hasLeftSibling, bool has
     }
   }
 }
-
+*/
 void HorizontalLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   if (shouldDrawEmptyRectangle()) {
     // If the layout is empty, draw an empty rectangle
@@ -344,8 +344,8 @@ bool HorizontalLayoutNode::shouldDrawEmptyRectangle() const {
     return false;
   }
   LayoutNode * p = parent();
-  if (!p || (p && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(p->type()))) {
-    // Never show the empty child of a parenthesis of if has no parent
+  if (!p || (p && false/*AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(p->type())*/)) {
+    // Never show the empty child of a parenthesis or if has no parent
     return false;
   }
   return m_emptyVisibility == EmptyRectangle::State::Visible;
@@ -353,15 +353,15 @@ bool HorizontalLayoutNode::shouldDrawEmptyRectangle() const {
 
 // HorizontalLayout
 
-void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, LayoutCursor * cursor) {
+void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index) {
   if (l.isHorizontal()) {
-    mergeChildrenAtIndex(HorizontalLayout(static_cast<HorizontalLayoutNode *>(l.node())), index, cursor);
+    mergeChildrenAtIndex(HorizontalLayout(static_cast<HorizontalLayoutNode *>(l.node())), index);
   } else {
-    addChildAtIndex(l, index, numberOfChildren(), cursor);
+    addChildAtIndexInPlace(l, index, numberOfChildren());
   }
 }
 
-void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, LayoutCursor * cursor) {
+void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index) {
   int newIndex = index;
   bool margin = h.node()->leftMargin() > 0;
   bool marginIsLocked = h.node()->marginIsLocked();
@@ -379,10 +379,10 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, Layou
   }
 
   if (index > 1) {
-    makePermanentIfBracket(childAtIndex(index - 1).node(), index > 2, true);
+   // makePermanentIfBracket(childAtIndex(index - 1).node(), index > 2, true);
   }
   if (index < numberOfChildren()) {
-    makePermanentIfBracket(childAtIndex(index).node(), true, index < numberOfChildren() - 1);
+   // makePermanentIfBracket(childAtIndex(index).node(), true, index < numberOfChildren() - 1);
   }
 
   // Merge the horizontal layout
@@ -394,7 +394,7 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, Layou
     bool lastAddedChild = (i == childrenNumber - 1);
     bool hasPreviousLayout = newIndex > 0;
     bool hasFollowingLayout = newIndex < n;
-    makePermanentIfBracket(c.node(), hasPreviousLayout, hasFollowingLayout || !lastAddedChild);
+    //makePermanentIfBracket(c.node(), hasPreviousLayout, hasFollowingLayout || !lastAddedChild);
     addChildAtIndexInPlace(c, newIndex, n);
     if (firstAddedChild) {
       LayoutNode * l = childAtIndex(newIndex).node();
@@ -402,18 +402,6 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, Layou
       l->lockMargin(marginIsLocked);
     }
     newIndex++;
-  }
-
-  // Set the cursor
-  if (cursor != nullptr) {
-    if (newIndex > 0) {
-      assert(newIndex <= numberOfChildren());
-      cursor->setLayout(childAtIndex(newIndex - 1));
-      cursor->setPosition(LayoutCursor::Position::Right);
-    } else {
-      cursor->setLayout(*this);
-      cursor->setPosition(LayoutCursor::Position::Left);
-    }
   }
 }
 

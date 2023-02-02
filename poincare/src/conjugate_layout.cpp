@@ -6,7 +6,7 @@
 #include <assert.h>
 
 namespace Poincare {
-
+/*
 void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == childLayout()
       && cursor->position() == LayoutCursor::Position::Left)
@@ -49,7 +49,7 @@ void ConjugateLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(childLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);
   }
-}
+}*/
 
 int ConjugateLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);

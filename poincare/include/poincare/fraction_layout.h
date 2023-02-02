@@ -15,13 +15,6 @@ public:
   // Layout
   Type type() const override { return Type::FractionLayout; }
 
-  // LayoutNode
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-  void deleteBeforeCursor(LayoutCursor * cursor) override;
-
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
@@ -29,7 +22,6 @@ public:
   bool shouldCollapseSiblingsOnRight() const override { return true; }
   int leftCollapsingAbsorbingChildIndex() const override { return 0; }
   int rightCollapsingAbsorbingChildIndex() const override { return 1; }
-  void didCollapseSiblings(LayoutCursor * cursor) override;
   LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) override;
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
   /* WARNING: We need to override this function, else 1/2 3/4 would be

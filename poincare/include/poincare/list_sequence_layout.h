@@ -19,11 +19,8 @@ public:
     stream << "ListSequenceLayoutNode";
   }
 #endif
-   // Tree navigation
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
-  void deleteBeforeCursor(LayoutCursor * cursor) override;
   Layout XNTLayout(int childIndex = -1) const override;
+
 private:
   constexpr static int k_functionLayoutIndex = 0;
   constexpr static int k_variableLayoutIndex = 1;

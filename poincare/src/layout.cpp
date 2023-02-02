@@ -93,17 +93,6 @@ Layout Layout::XNTLayout() const {
   return Layout();
 }
 
-// Cursor
-LayoutCursor Layout::cursor() const {
-  assert(!isUninitialized());
-  return LayoutCursor(const_cast<Layout *>(this)->node());
-}
-
-LayoutCursor Layout::equivalentCursor(LayoutCursor * cursor) {
-  assert(!isUninitialized());
-  return node()->equivalentCursor(cursor);
-}
-
 Layout Layout::childAtIndex(int i) const {
   assert(i >= 0 && i < numberOfChildren());
   TreeHandle c = TreeHandle::childAtIndex(i);
@@ -111,65 +100,29 @@ Layout Layout::childAtIndex(int i) const {
 }
 
 // Tree modification
-
-void Layout::replaceChild(Layout oldChild, Layout newChild, LayoutCursor * cursor, bool force) {
-  int childIndex = indexOfChild(oldChild);
-  assert(childIndex >= 0);
-  replaceChildInPlace(oldChild, newChild);
-  if (cursor != nullptr && cursor->layout() != newChild) {
-    // Do not alter cursor if it was already sticked to newChild
-    cursor->setLayout(newChild);
-    cursor->setPosition(LayoutCursor::Position::Right);
-  }
-  node()->didReplaceChildAtIndex(childIndex, cursor, force);
-}
-
-void Layout::replaceWith(Layout newChild, LayoutCursor * cursor) {
-  Layout p = parent();
-  assert(!p.isUninitialized());
-  p.replaceChild(*this, newChild, cursor);
-}
-
-void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle) {
+/*
+void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild) {
   Layout p = parent();
   assert(!p.isUninitialized());
   if (!p.isHorizontal()) {
     /* One of the children to juxtapose might be "this", so we cannot just call
-     * replaceWith. */
+     * replaceWith. *
     HorizontalLayout horizontalLayoutR = HorizontalLayout::Builder();
-    p.replaceChild(*this, horizontalLayoutR, cursor);
+    p.replaceChild(*this, horizontalLayoutR);
     horizontalLayoutR.addOrMergeChildAtIndex(leftChild, 0);
-    if (putCursorInTheMiddle) {
-      if (!horizontalLayoutR.isEmpty()) {
-        cursor->setLayout(horizontalLayoutR.childAtIndex(horizontalLayoutR.numberOfChildren()-1));
-        cursor->setPosition(LayoutCursor::Position::Right);
-      } else {
-        cursor->setLayout(horizontalLayoutR);
-        cursor->setPosition(LayoutCursor::Position::Left);
-      }
-    }
     horizontalLayoutR.addOrMergeChildAtIndex(rightChild, horizontalLayoutR.numberOfChildren());
     return;
   }
   /* The parent is an Horizontal layout, so directly add the two juxtaposition
-   * children to the parent. */
+   * children to the parent. *
   int idxInParent = p.indexOfChild(*this);
   HorizontalLayout castedParent = HorizontalLayout(static_cast<HorizontalLayoutNode *>(p.node()));
-  if (putCursorInTheMiddle) {
-    if (idxInParent > 0) {
-      cursor->setLayout(castedParent.childAtIndex(idxInParent-1));
-      cursor->setPosition(LayoutCursor::Position::Right);
-    } else {
-      cursor->setLayout(castedParent);
-      cursor->setPosition(LayoutCursor::Position::Left);
-    }
-  }
-  p.removeChild(*this, cursor->layout() == *this ? cursor : nullptr, true);
+  p.removeChild(*this, true);
   castedParent.addOrMergeChildAtIndex(rightChild, idxInParent);
-  castedParent.addOrMergeChildAtIndex(leftChild, idxInParent, putCursorInTheMiddle ? cursor : nullptr);
+  castedParent.addOrMergeChildAtIndex(leftChild, idxInParent);
 }
 
-void Layout::addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor) {
+void Layout::addChildAtIndex(Layout l, int index, int currentNumberOfChildren) {
   int newIndex = index;
   int newCurrentNumberOfChildren = currentNumberOfChildren;
   Layout nextPointedLayout;
@@ -198,7 +151,7 @@ void Layout::addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor
   }
   /* The layout must have a parent, because HorizontalLayout's
    * preprocessAddSibling returns false only an HorizontalLayout can be the
-   * root layout. */
+   * root layout. *
   Layout rootLayout = root();
   Layout p = parent();
   assert(!p.isUninitialized());
@@ -208,13 +161,13 @@ void Layout::addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor
     /* indexOfCursor == -1 if cursor->layout() is not a child of p. This should
      * never happen, as addSibling is only called from inside
      * LayoutField::handleEventWithText, and LayoutField is supposed to keep
-     * its cursor up to date.*/
+     * its cursor up to date.*
     assert(indexOfCursor >= 0);
     int siblingIndex = cursor->position() == LayoutCursor::Position::Left ? indexOfCursor : indexOfCursor + 1;
 
     /* Special case: If the neighbour sibling is a VerticalOffsetLayout, let it
      * handle the insertion of the new sibling. Do not enter the special case if
-     * "this" is a VerticalOffsetLayout, to avoid an infinite loop. */
+     * "this" is a VerticalOffsetLayout, to avoid an infinite loop. *
     if (type() != LayoutNode::Type::VerticalOffsetLayout) {
       Layout neighbour;
       if (cursor->position() == LayoutCursor::Position::Left && indexInParent > 0) {
@@ -242,7 +195,7 @@ void Layout::addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor
     assert(cursor->position() == LayoutCursor::Position::Right);
     replaceWithJuxtapositionOf(*this, *sibling, cursor);
   }
-}
+}*
 
 void Layout::removeChild(Layout l, LayoutCursor * cursor, bool force) {
   assert(hasChild(l));
@@ -269,8 +222,8 @@ void Layout::removeChild(Layout l, LayoutCursor * cursor, bool force) {
 void Layout::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
   return removeChild(childAtIndex(index), cursor, force);
 }
-
-bool Layout::collapseOnDirection(OMG::NewHorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor) {
+*
+bool Layout::collapseOnDirection(OMG::HorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor) {
   Layout p = parent();
   if (p.isUninitialized() || !p.isHorizontal()) {
     return false;
@@ -302,8 +255,8 @@ bool Layout::collapseOnDirection(OMG::NewHorizontalDirection direction, int abso
     int siblingIndex = direction.isRight() ? idxInParent+1 : idxInParent-1;
     sibling = p.childAtIndex(siblingIndex);
     /* Even if forceCollapse is true, isCollapsable should be called to update
-     * the number of open parentheses. */
-    bool shouldCollapse = sibling.isCollapsable(&numberOfOpenParenthesis, direction.isLeft());
+     * the number of open parentheses. *
+    bool shouldCollapse = sibling.isCollapsable(&numberOfOpenParenthesis, direction == OMG::HorizontalDirection::Left);
     if (shouldCollapse || forceCollapse) {
       p.removeChild(sibling, nullptr);
       int newIndex = direction == OMG::HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
@@ -330,7 +283,7 @@ void Layout::collapseSiblings(LayoutCursor * cursor) {
     node()->didCollapseSiblings(cursor);
   }
 }
-
+*/
 bool Layout::privateHasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const {
   if (type() != Poincare::LayoutNode::Type::HorizontalLayout) {
     return false;

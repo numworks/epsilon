@@ -95,14 +95,22 @@ void LayoutNode::invalidAllSizesPositionsAndBaselines() {
   }
 }
 
-// Tree navigation
-LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
-  // Only HorizontalLayout may have no parent, and it overloads this method
-  assert(parent() != nullptr);
-  return (cursor->layout().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
+int LayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
+  int nChildren = numberOfChildren();
+  if (nChildren == 0) {
+    assert(currentIndex == k_outsideIndex);
+    return k_outsideIndex;
+  }
+  if (nChildren == 1) {
+    assert(currentIndex == k_outsideIndex || currentIndex == 0);
+    return currentIndex == k_outsideIndex ? 0 : k_outsideIndex;
+  }
+  //assert(false);
+  return -1;
 }
 
-void LayoutNode::askParentToMoveCursorHorizontally(OMG::NewHorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+/*
+void LayoutNode::askParentToMoveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert((direction.isLeft()  && cursor->position() == LayoutCursor::Position::Left)
       || (direction.isRight() && cursor->position() == LayoutCursor::Position::Right));
   LayoutNode * parentNode = parent();
@@ -161,6 +169,7 @@ bool LayoutNode::deleteBeforeCursorForLayoutContainingArgument(LayoutNode * argu
   }
   return false;
 }
+ */
 
 LayoutNode * LayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText) {
   assert(correspondingExpression != nullptr);
@@ -231,8 +240,8 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
   }
   return true;
 }
-
-void LayoutNode::moveCursorVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+/*
+void LayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (!equivalentPositionVisited) {
     LayoutCursor cursorEquivalent = equivalentCursor(cursor);
     if (cursorEquivalent.isDefined()) {
@@ -263,7 +272,7 @@ void LayoutNode::moveCursorInDescendantsVertically(OMG::NewVerticalDirection dir
   LayoutNode ** childResultPtr = &childResult;
   LayoutCursor::Position resultPosition = LayoutCursor::Position::Left;
   /* The distance between the cursor and its next position cannot be greater
-   * than this initial value of score. */
+   * than this initial value of score. *
   int resultScore = Ion::Display::Width*Ion::Display::Width + Ion::Display::Height*Ion::Display::Height;
 
   scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore, forSelection);
@@ -315,7 +324,7 @@ void LayoutNode::scoreCursorInDescendantsVertically (
     }
   }
 }
-
+*/
 bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
   /*if (!GridLayoutNode::IsGridLayoutType(l->type())) {
     return false;

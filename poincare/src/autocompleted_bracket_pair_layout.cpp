@@ -3,12 +3,12 @@
 #include <poincare/layout.h>
 
 namespace Poincare {
-
+/*
 bool AutocompletedBracketPairLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) {
   /* Make a temporary bracket permanent if something would be inserted beyond
    * its bounds.
    * ([ and ] denote temporary parentheses)
-   * e.g. (1+2]| -> "+" -> (1+2)+| */
+   * e.g. (1+2]| -> "+" -> (1+2)+| *
   Side insertionSide;
   if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
     insertionSide = Side::Right;
@@ -23,7 +23,7 @@ bool AutocompletedBracketPairLayoutNode::willAddSibling(LayoutCursor * cursor, L
   makePermanent(insertionSide);
   /* If the inserted layout is a bracket of the same type as the temporary
    * bracket, do not inserted it, as though the user had closed it manually.
-   * e.g. (1+2]| -> ")" -> (1+2)| instead of [(1+2))|*/
+   * e.g. (1+2]| -> ")" -> (1+2)| instead of [(1+2))|*
   AutocompletedBracketPairLayoutNode * bracketSibling = sibling->type() == type() ? static_cast<AutocompletedBracketPairLayoutNode *>(sibling->node()) : nullptr;
   bool ignoreSibling = bracketSibling && bracketSibling->isTemporary(OtherSide(insertionSide));
   if (ignoreSibling) {
@@ -36,7 +36,7 @@ bool AutocompletedBracketPairLayoutNode::willAddSibling(LayoutCursor * cursor, L
   }
   return true;
 }
-
+/*
 void AutocompletedBracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   Side deletionSide;
   if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
@@ -48,7 +48,7 @@ void AutocompletedBracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * curso
   }
   if (childLayout()->isEmpty() && isTemporary(OtherSide(deletionSide))) {
     /* Use LayoutNode::deleteBeforeCursor instead of BracketPairLayoutNode::,
-     * as that one will attempt to enter the bracket from the right. */
+     * as that one will attempt to enter the bracket from the right. *
     cursor->setLayout(Layout(this));
     cursor->setPosition(LayoutCursor::Position::Right);
     return LayoutNode::deleteBeforeCursor(cursor);
@@ -59,7 +59,7 @@ void AutocompletedBracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * curso
   assert(!nextCursor.layout().parent().isUninitialized());
   cursor->setTo(&nextCursor);
 }
-
+*/
 void AutocompletedBracketPairLayoutNode::setTemporary(Side side, bool temporary) {
   if (side == Side::Left) {
     m_leftIsTemporary = temporary;
@@ -83,19 +83,11 @@ void AutocompletedBracketPairLayoutNode::makePermanent(Side side) {
   setTemporary(side, false);
 }
 
-Layout AutocompletedBracketPairLayoutNode::balanceAfterInsertion(Side insertedSide, LayoutCursor * cursor) {
-  assert(cursor);
+Layout AutocompletedBracketPairLayoutNode::balanceAfterInsertion(Side insertedSide) {
   Layout thisRef(this);
   // Try to move the inserted temporary bracket up into parents
   setTemporary(OtherSide(insertedSide), false);
-  makeTemporary(OtherSide(insertedSide), cursor);
-  if (insertedSide == Side::Left) {
-    cursor->setPosition(LayoutCursor::Position::Left);
-    cursor->setLayout(thisRef.childAtIndex(0));
-  } else {
-    cursor->setPosition(LayoutCursor::Position::Right);
-    cursor->setLayout(thisRef);
-  }
+  makeTemporary(OtherSide(insertedSide));
   return thisRef;
 }
 
@@ -113,27 +105,27 @@ AutocompletedBracketPairLayoutNode * AutocompletedBracketPairLayoutNode::autocom
   return nullptr;
 }
 
-bool AutocompletedBracketPairLayoutNode::makeTemporary(Side side, LayoutCursor * cursor) {
+bool AutocompletedBracketPairLayoutNode::makeTemporary(Side side) {
   if (isTemporary(side)) {
     return false;
   }
   Layout thisRef(this);
-  absorbSiblings(side, cursor);
+  absorbSiblings(side);
   /* 'this' may be invalid after the call to absorbSiblings. */
   AutocompletedBracketPairLayoutNode * newThis = static_cast<AutocompletedBracketPairLayoutNode *>(thisRef.node());
   AutocompletedBracketPairLayoutNode * p = newThis->autocompletedParent();
-  if (!(p && p->makeTemporary(side, cursor))) {
+  if (!(p && p->makeTemporary(side))) {
     /* 'this' was the topmost pair without a temporary bracket on this side. */
     newThis->setTemporary(side, true);
     if (newThis->isTemporary(Side::Left) && newThis->isTemporary(Side::Right)) {
       assert(newThis->parent());
-      thisRef.parent().replaceChild(thisRef, thisRef.childAtIndex(0), cursor);
+      thisRef.parent().replaceChildInPlace(thisRef, thisRef.childAtIndex(0));
     }
   }
   return true;
 }
 
-void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor * cursor) {
+void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side) {
   Layout thisRef = Layout(this);
   Layout p = parent();
   assert(!p.isUninitialized());
@@ -146,8 +138,8 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
   if (!childLayout()->isHorizontal()) {
     HorizontalLayout newChild = HorizontalLayout::Builder();
     Layout oldChild = Layout(childLayout());
-    thisRef.replaceChild(oldChild, newChild, cursor);
-    newChild.addOrMergeChildAtIndex(oldChild, 0, cursor);
+    thisRef.replaceChildInPlace(oldChild, newChild);
+    newChild.addOrMergeChildAtIndex(oldChild, 0);
   }
   assert(childLayout()->isHorizontal());
   HorizontalLayout child = HorizontalLayout(static_cast<HorizontalLayoutNode *>(childLayout()));
@@ -164,9 +156,9 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
   }
   while (removalIndex >= removalEnd) {
     Layout l = h.childAtIndex(removalIndex);
-    h.removeChild(l, cursor);
+    h.removeChildInPlace(l, h.numberOfChildren());
     removalIndex--;
-    child.addOrMergeChildAtIndex(l, injectionIndex, cursor);
+    child.addOrMergeChildAtIndex(l, injectionIndex);
     int injectedIndex = child.indexOfChild(l);
     if (injectedIndex >= 0) {
       injectionIndex = injectedIndex;
@@ -183,7 +175,7 @@ LayoutNode * AutocompletedBracketPairLayoutNode::childOnSide(Side side) const {
   }
   return child;
 }
-
+/*
 LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) const {
   /* Attempting to delete a bracket can cause the children and sibling to be
    * shuffled around and this to disappear. Before the deletion occurs, anchor
@@ -192,7 +184,7 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
    * layout might not be safe.
    * In the following comments, the text before the arrow depicts the layout
    * as it currently stands, and the text after the arrow the future state of
-   * the Layout after deletion. */
+   * the Layout after deletion. *
   Layout thisRef(this);
   Layout childRef(childLayout());
   Layout parentRef = thisRef.parent();
@@ -211,15 +203,15 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
 
   if (side == Side::Left) {
     if (parentIsHorizontalLayout && thisIndex > 0) {
-      /* e.g. 12(|34) -> [12|34) or 12(|▯^3) -> [12|^3) */
+      /* e.g. 12(|34) -> [12|34) or 12(|▯^3) -> [12|^3) *
       return LayoutCursor(parentRef.childAtIndex(thisIndex - 1), LayoutCursor::Position::Right);
     }
     if (willDisappear || parentWillDisappear) {
-      /* e.g. (|12] -> |12 or ((|12)] -> (|12) or ((|)] -> (|) */
+      /* e.g. (|12] -> |12 or ((|12)] -> (|12) or ((|)] -> (|) *
       return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
     }
     assert(!willDisappear);
-    /* e.g. (|12) -> |[12) */
+    /* e.g. (|12) -> |[12) *
     return LayoutCursor(thisRef, LayoutCursor::Position::Left);
   }
 
@@ -230,19 +222,19 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
       /* TODO : This edge-case and maybe most of this method should disappear
        *        once layouts are refactored and no more empty layout can be left
        *        in this situation. */
-      /* e.g. (1)|▯^2 -> (1|^2] */
+      /* e.g. (1)|▯^2 -> (1|^2] *
       thisIndex ++;
     }
-    /* e.g. ()|34 -> (|34] or (12)|3 -> (12|3] or (1§▯)|23 -> (1§|23] */
+    /* e.g. ()|34 -> (|34] or (12)|3 -> (12|3] or (1§▯)|23 -> (1§|23] *
     return LayoutCursor(parentRef.childAtIndex(thisIndex + 1), LayoutCursor::Position::Left);
   }
   if (!(parentIsHorizontalLayout && childRef.isEmpty())) {
-    /* e.g. (12)| -> (12|] */
+    /* e.g. (12)| -> (12|] *
     return LayoutCursor(childOnSide(Side::Right), LayoutCursor::Position::Right);
   }
   assert(!willDisappear);
-  /* e.g. ()| -> (|] */
+  /* e.g. ()| -> (|] *
   return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
-}
+}*/
 
 }

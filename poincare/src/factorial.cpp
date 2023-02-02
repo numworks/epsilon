@@ -61,7 +61,7 @@ Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0);
   int childrenCount = result.numberOfChildren();
-  result.addChildAtIndex(CodePointLayout::Builder('!'), childrenCount, childrenCount, nullptr);
+  result.addChildAtIndexInPlace(CodePointLayout::Builder('!'), childrenCount, childrenCount);
   return std::move(result);
 }
 

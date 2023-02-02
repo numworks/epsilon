@@ -40,7 +40,7 @@ Layout PercentSimpleNode::createLayout(Preferences::PrintFloatMode floatDisplayM
   result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0);
   int childrenCount = result.numberOfChildren();
   childrenCount = createSecondChildLayout(&result, childrenCount, floatDisplayMode, numberOfSignificantDigits, context);
-  result.addChildAtIndex(CodePointLayout::Builder('%'), childrenCount, childrenCount, nullptr);
+  result.addChildAtIndexInPlace(CodePointLayout::Builder('%'), childrenCount, childrenCount);
   return std::move(result);
 }
 
@@ -100,10 +100,10 @@ TrinaryBoolean PercentAdditionNode::isNull(Context * context) const {
 int PercentAdditionNode::createSecondChildLayout(Poincare::HorizontalLayout * result, int childrenCount, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   ExpressionNode * percentChild = childAtIndex(1);
   if (percentChild->type() == ExpressionNode::Type::Opposite) {
-    result->addChildAtIndex(CodePointLayout::Builder(UCodePointSouthEastArrow), childrenCount, childrenCount, nullptr);
+    result->addChildAtIndexInPlace(CodePointLayout::Builder(UCodePointSouthEastArrow), childrenCount, childrenCount);
     percentChild = percentChild->childAtIndex(0);
   } else {
-    result->addChildAtIndex(CodePointLayout::Builder(UCodePointNorthEastArrow), childrenCount, childrenCount, nullptr);
+    result->addChildAtIndexInPlace(CodePointLayout::Builder(UCodePointNorthEastArrow), childrenCount, childrenCount);
   }
   childrenCount++;
   result->addOrMergeChildAtIndex(percentChild->createLayout(floatDisplayMode, numberOfSignificantDigits, context), childrenCount);

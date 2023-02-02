@@ -17,7 +17,6 @@ public:
 
   // LayoutNode
   bool shouldCollapseSiblingsOnRight() const override{ return true; }
-  void didCollapseSiblings(LayoutCursor * cursor) override;
 
 protected:
   constexpr static KDCoordinate k_internalWidthMargin = 5;

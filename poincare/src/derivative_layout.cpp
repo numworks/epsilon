@@ -13,6 +13,7 @@ int DerivativeLayoutNode::serialize(char * buffer, int bufferSize, Preferences::
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);
 }
 
+/*
 void DerivativeLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   assert(cursor->layoutNode() != derivandLayout()); // This is handled by child classes
   if (cursor->layoutNode() == variableLayout() && m_variableSlot == VariableSlot::Fraction) {
@@ -209,7 +210,7 @@ void DerivativeLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(derivandLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);
   }
-}
+}*/
 
 Layout DerivativeLayoutNode::XNTLayout(int childIndex) const {
   if (childIndex == k_derivandLayoutIndex) {
@@ -337,7 +338,7 @@ void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font,
   // Draw the copy of x
   Layout variableCopy = HorizontalLayout::Builder(Layout(variableLayout()).clone());
   KDPoint copyPosition = m_variableSlot == VariableSlot::Fraction ? variableAssignmentPosition : positionOfVariableInFractionSlot(font);
-  variableCopy.draw(ctx, copyPosition.translatedBy(p), font, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
+  variableCopy.draw(ctx, copyPosition.translatedBy(p), font, expressionColor, backgroundColor, LayoutSelection());
 }
 
 KDPoint HigherOrderDerivativeLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
@@ -365,9 +366,9 @@ void HigherOrderDerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDFont:
   // Draw the copy of the order
   Layout orderCopy = HorizontalLayout::Builder(Layout(orderLayout()).clone());
   KDPoint copyPosition = m_orderSlot == OrderSlot::Denominator ? positionOfOrderInNumerator(font) : positionOfOrderInDenominator(font);
-  orderCopy.draw(ctx, copyPosition.translatedBy(p), font, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
+  orderCopy.draw(ctx, copyPosition.translatedBy(p), font, expressionColor, backgroundColor, LayoutSelection());
 
-  DerivativeLayoutNode::render(ctx, p, font, expressionColor, backgroundColor, selectionStart, selectionEnd, selectionColor);
+  DerivativeLayoutNode::render(ctx, p, font, expressionColor, backgroundColor);
 }
 
 }

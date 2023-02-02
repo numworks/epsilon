@@ -31,13 +31,7 @@ public:
   virtual void stopEditing() = 0;
 
   // LayoutNode
-  void moveCursorHorizontally(OMG::NewHorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-  void moveCursorVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) override;
-  void deleteBeforeCursor(LayoutCursor * cursor) override;
+  void moveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
 
   // SerializableNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
@@ -108,7 +102,6 @@ private:
   bool isColumnOrRowEmpty(bool column, int index) const;
   void addEmptyRowOrColumn(bool column, EmptyRectangle::Color color);
   void colorGrayEmptyLayoutsInYellowInColumnOrRow(bool column, int lineIndex);
-  void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
 };
 
 class GridLayout : public Layout {
@@ -116,7 +109,7 @@ public:
   GridLayout(const GridLayoutNode * n) : Layout(n) {}
 
   void setDimensions(int rows, int columns);
-  using Layout::addChildAtIndex;
+  using Layout::addChildAtIndexInPlace;
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
   bool isEditing() const { return node()->isEditing(); }

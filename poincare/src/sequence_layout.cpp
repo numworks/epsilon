@@ -8,6 +8,7 @@
 
 namespace Poincare {
 
+/*
 void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == upperBoundLayout())
   {
@@ -131,7 +132,7 @@ void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(argumentLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);
   }
-}
+}*/
 
 Layout SequenceLayoutNode::XNTLayout(int childIndex) const {
   if (childIndex == k_argumentLayoutIndex) {

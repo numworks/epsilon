@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/expression/symbol.h>
+#include <poincare_junior/src/layout/code_point_layout.h>
 
 namespace PoincareJ {
 
@@ -96,9 +97,9 @@ void Node::logAttributes(std::ostream & stream) const {
     stream << " value=\"" << Approximation::To<float>(*this) << "\"";
     return;
   }
-  if (block()->isUserNamed()) {
+  if (block()->isUserNamed() || type() == BlockType::CodePointLayout) {
     char buffer[64];
-    Symbol::GetName(*this, buffer, sizeof(buffer));
+    (block()->isUserNamed() ? Symbol::GetName : CodePointLayout::GetName)(*this, buffer, sizeof(buffer));
     stream << " value=\"" << buffer << "\"";
   }
 }

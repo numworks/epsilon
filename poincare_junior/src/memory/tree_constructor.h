@@ -460,6 +460,31 @@ constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> operator "" _n(l
   return tree;
 }
 
+// TODO : A RackLayout shouldn't have RackLayout children.
+template<unsigned ...Len> static consteval auto RacL(const Tree<Len> (&...children)) { return MakeTree<BlockType::RackLayout>(children...); }
+template<unsigned L1, unsigned L2> static consteval Tree<L1+L2+1> FraL(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::FractionLayout>(child1, child2); }
+template<unsigned L1> static consteval Tree<L1+1> VerL(const Tree<L1> child1) { return MakeTree<BlockType::VerticalOffsetLayout>(child1); }
+template<unsigned L1> static consteval Tree<L1+1> ParL(const Tree<L1> child1) { return MakeTree<BlockType::ParenthesisLayout>(child1); }
+
+template <String S>
+consteval auto operator"" _l () {
+  constexpr int size = S.size()-1;
+  constexpr int codePointLayoutMetaSize = TypeBlock::NumberOfMetaBlocks(BlockType::CodePointLayout);
+  constexpr int rackLayoutMetaSize = TypeBlock::NumberOfMetaBlocks(BlockType::RackLayout);
+  constexpr int metaSize = rackLayoutMetaSize + size * codePointLayoutMetaSize;
+  Tree<metaSize> tree;
+  CreateNode<BlockType::RackLayout>(&tree, size);
+  for (int i = 0; i < size; i++) {
+    int metaIndex = rackLayoutMetaSize + i * codePointLayoutMetaSize;
+    Tree<codePointLayoutMetaSize> tree2;
+    CreateNode<BlockType::CodePointLayout>(&tree2, CodePoint(S[i]));
+    for (int j = 0; j < codePointLayoutMetaSize; j++) {
+      tree[metaIndex + j] = tree2[j];
+    }
+  }
+  return tree;
+}
+
 }
 
 #endif

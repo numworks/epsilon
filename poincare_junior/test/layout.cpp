@@ -1,6 +1,7 @@
 #include "print.h"
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/memory/tree_constructor.h>
 
 using namespace PoincareJ;
 
@@ -20,4 +21,9 @@ void testLayoutCreation() {
   assert_equal(l1, l2);
 }
 
+void testLayoutConstructors() {
+  Node(RacL("1+"_l,ParL(RacL("2*"_l,ParL(RacL("1+"_l,FraL("1"_l, "2"_l))))),VerL("2"_l),"-2"_l)).log();
+}
+
 QUIZ_CASE(pcj_layout_creation) { testLayoutCreation(); }
+QUIZ_CASE(pcj_layout_constructor) { testLayoutConstructors(); }

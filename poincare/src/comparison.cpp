@@ -154,7 +154,7 @@ Layout ComparisonNode::createLayout(Preferences::PrintFloatMode floatDisplayMode
     result.addOrMergeChildAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), result.numberOfChildren());
     Layout operatorLayout = ComparisonOperatorLayout(m_operatorsList[i]);
     operatorLayout.setMargin(true);
-    result.addChildAtIndex(operatorLayout, result.numberOfChildren(), result.numberOfChildren(), nullptr);
+    result.addChildAtIndexInPlace(operatorLayout, result.numberOfChildren(), result.numberOfChildren());
   }
   Layout lastChildLayout = childAtIndex(m_numberOfOperands - 1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
   lastChildLayout.setMargin(true);

@@ -33,7 +33,7 @@ bool NthRootLayoutNode::isSquareRoot() const {
   }
   return false;
 }
-
+/*
 void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == radicandLayout()
     && cursor->position() == LayoutCursor::Position::Left)
@@ -143,7 +143,7 @@ void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(radicandLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);
   }
-}
+}*/
 
 int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (isSquareRoot()) {

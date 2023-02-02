@@ -7,7 +7,7 @@
 #include <algorithm>
 
 namespace Poincare {
-
+/*
 void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
    if (cursor->position() == LayoutCursor::Position::Left
        && (cursor->layoutNode() == numeratorLayout()
@@ -55,7 +55,7 @@ void FractionLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
  *                    123    up should put it left of the 1. If 123/456 is
  *                   |---    selected, moving the cursor up to select up should
  *                    456    put the cursor left of the 9.
- * */
+ * *
 
 void FractionLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (cursor->layoutNode()->hasAncestor(denominatorLayout(), true)) {
@@ -88,24 +88,24 @@ void FractionLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldReco
 void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (cursor->layoutNode() == denominatorLayout()) {
     /* Case: Left of the denominator. Replace the fraction with a horizontal
-     * juxtaposition of the numerator and the denominator. */
+     * juxtaposition of the numerator and the denominator. *
     Layout thisRef = Layout(this);
     assert(cursor->position() == LayoutCursor::Position::Left);
     if (numeratorLayout()->isEmpty() && denominatorLayout()->isEmpty()) {
       /* Case: Numerator and denominator are empty. Move the cursor and replace
-       * the fraction with an empty layout. */
+       * the fraction with an empty layout. *
       thisRef.replaceWith(HorizontalLayout::Builder(), cursor);
       return;
     }
     /* Else, replace the fraction with a juxtaposition of the numerator and
      * denominator. Place the cursor in the middle of the juxtaposition, which
-     * is right of the numerator. */
+     * is right of the numerator. *
     Layout numeratorRef = Layout(numeratorLayout());
     Layout denominatorRef = Layout(denominatorLayout());
     thisRef.replaceChildWithGhostInPlace(numeratorRef);
     // WARNING: Do no use "this" afterwards
     thisRef.replaceChildWithGhostInPlace(denominatorRef);
-    thisRef.replaceWithJuxtapositionOf(numeratorRef, denominatorRef, cursor, true);
+    thisRef.replaceWithJuxtapositionOf(numeratorRef, denominatorRef);
     return;
   }
 
@@ -115,7 +115,7 @@ void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     return;
   }
   LayoutNode::deleteBeforeCursor(cursor);
-}
+}*/
 
 int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {
@@ -173,13 +173,6 @@ bool FractionLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool going
     absorbingSibling = absorbingSibling.childAtIndex((goingLeft) ? absorbingSibling.leftCollapsingAbsorbingChildIndex() : absorbingSibling.rightCollapsingAbsorbingChildIndex());
   }
   return absorbingSibling.isHorizontal() && absorbingSibling.isEmpty();
-}
-
-void FractionLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
-  if (cursor != nullptr) {
-    cursor->setLayoutNode(numeratorLayout()->isEmpty() ? numeratorLayout() : denominatorLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-  }
 }
 
 KDSize FractionLayoutNode::computeSize(KDFont::Size font) {

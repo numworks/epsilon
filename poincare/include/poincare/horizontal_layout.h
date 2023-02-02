@@ -27,11 +27,6 @@ public:
   Type type() const override { return Type::HorizontalLayout; }
 
   // LayoutNode
-  void moveCursorHorizontally(OMG::NewHorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  LayoutCursor equivalentCursor(LayoutCursor * cursor) override;
-  void deleteBeforeCursor(LayoutCursor * cursor) override;
   LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
@@ -51,7 +46,13 @@ public:
 #endif
 
   void setEmptyColor(EmptyRectangle::Color color) { m_emptyColor = color; }
-  void setEmptyVisibility(EmptyRectangle::State state) { m_emptyVisibility = state; }
+  bool setEmptyVisibility(EmptyRectangle::State state) {
+    if (m_emptyVisibility == state) {
+      return false;
+    }
+    m_emptyVisibility = state;
+    return numberOfChildren() == 0; // Return true if empty rectangle is displayed
+  }
 
   KDRect relativeSelectionRect(int leftIndex, int rightIndex, KDFont::Size font) const;
 
@@ -61,7 +62,6 @@ private:
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode * l, KDFont::Size font) override;
 
-  bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
 
   bool shouldDrawEmptyRectangle() const;
@@ -87,20 +87,22 @@ public:
   static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3) { return Builder({l1, l2, l3}); }
   static HorizontalLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4) { return Builder({l1, l2, l3, l4}); }
 
-  void addOrMergeChildAtIndex(Layout l, int index, LayoutCursor * cursor = nullptr);
-  void mergeChildrenAtIndex(HorizontalLayout h, int index, LayoutCursor * cursor = nullptr);
-  using Layout::removeChild;
-  using Layout::removeChildAtIndex;
-  using Layout::addChildAtIndex;
+  void addOrMergeChildAtIndex(Layout l, int index);
+  void mergeChildrenAtIndex(HorizontalLayout h, int indexπ);
+  using Layout::removeChildAtIndexInPlace;
+  using Layout::removeChildInPlace;
+  using Layout::addChildAtIndexInPlace;
 
   Layout squashUnaryHierarchyInPlace();
 
   void serializeChildren(int firstIndex, int lastIndex, char * buffer, int bufferSize);
 
-  KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const {/* TODO */ return KDRectZero; /* node()->relativeSelectionRect(selectionStart, selectionEnd, font);*/ }
+  KDRect relativeSelectionRect(int selectionStart, int selectionEnd, KDFont::Size font) const {
+    return node()->relativeSelectionRect(selectionStart, selectionEnd, font);
+  }
 
   void setEmptyColor(EmptyRectangle::Color color) { node()->setEmptyColor(color); }
-  void setEmptyVisibility(EmptyRectangle::State state) { node()->setEmptyVisibility(state); }
+  bool setEmptyVisibility(EmptyRectangle::State state) { return node()->setEmptyVisibility(state); }
 
 private:
   HorizontalLayoutNode * node() const { return static_cast<HorizontalLayoutNode *>(Layout::node()); }

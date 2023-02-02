@@ -24,11 +24,6 @@ public:
 
   // LayoutNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
-  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-  void deleteBeforeCursor(LayoutCursor * cursor) override;
   Layout XNTLayout(int childIndex = -1) const override;
 
   VariableSlot variableSlot() const { return m_variableSlot; }
@@ -72,10 +67,6 @@ class FirstOrderDerivativeLayoutNode final : public DerivativeLayoutNode {
 public:
   // LayoutNode
   Type type() const override { return Type::FirstOrderDerivativeLayout; }
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
-  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
 
   // TreeNode
   size_t size() const override { return sizeof(FirstOrderDerivativeLayoutNode); }
@@ -105,10 +96,6 @@ public:
   HigherOrderDerivativeLayoutNode() : DerivativeLayoutNode(), m_orderSlot(OrderSlot::Denominator) {}
   // LayoutNode
   Type type() const override { return Type::HigherOrderDerivativeLayout; }
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
-  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
 
     // TreeNode
   size_t size() const override { return sizeof(HigherOrderDerivativeLayoutNode); }

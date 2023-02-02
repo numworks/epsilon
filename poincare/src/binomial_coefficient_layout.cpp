@@ -8,6 +8,7 @@
 
 namespace Poincare {
 
+/*
 void BinomialCoefficientLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->position() == LayoutCursor::Position::Left
       && (cursor->layoutNode() == nLayout()
@@ -78,7 +79,7 @@ void BinomialCoefficientLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
       /* If the k is not empty and user is deleting left of n, just move left.
        * This case is handled now because otherwise
        * deleteBeforeCursorForLayoutContainingArgument would delete the whole layout.
-       */
+       *
       bool temp;
       moveCursorLeft(cursor, &temp, false);
       return;
@@ -87,7 +88,7 @@ void BinomialCoefficientLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(nLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);
   }
-}
+}*/
 
 int BinomialCoefficientLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);

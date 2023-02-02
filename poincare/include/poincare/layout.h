@@ -10,7 +10,6 @@
 
 namespace Poincare {
 
-class LayoutCursor;
 class Expression;
 
 class Layout : public TreeHandle {
@@ -19,7 +18,6 @@ class Layout : public TreeHandle {
   friend class HorizontalLayoutNode;
   friend class InputBeautification;
   friend class LayoutNode;
-  friend class LayoutCursor;
   friend class VerticalOffsetLayoutNode;
 public:
   Layout() : TreeHandle() {}
@@ -66,7 +64,6 @@ public:
   Layout XNTLayout() const;
 
   // Layout modification
-  void deleteBeforeCursor(LayoutCursor * cursor) { return node()->deleteBeforeCursor(cursor); }
   bool removeGraySquaresFromAllGridAncestors() { return node()->removeGraySquaresFromAllGridAncestors(); }
   bool removeGraySquaresFromAllGridChildren() { return node()->removeGraySquaresFromAllGridChildren(); }
   bool addGraySquaresToAllGridAncestors() { return node()->addGraySquaresToAllGridAncestors(); }
@@ -77,10 +74,6 @@ public:
   }
   void setMargin(bool hasMargin) { node()->setMargin(hasMargin); }
   void lockMargin(bool lock) { node()->lockMargin(lock); }
-
-  // Cursor
-  LayoutCursor cursor() const;
-  LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
   // Tree
   Layout childAtIndex(int i) const;
@@ -93,32 +86,13 @@ public:
     return Layout(node()->parent());
   }
 
-  // Tree modification
-  /* Add.
-   * If addSibling merges the sibling instead of adding it, the sibling pointer
-   * is replaced with the layout it was merged into.
-   * Example:
-   * '(' is a permanent parenthesis and ']' a temporary one.
-   * '(4+5]' + ')' -> '(4+5)'
-   * The new ')' sibling is merged with the parenthesis node, so sibling
-   * now contains the whole parenthesis. */
-  void addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor);
-  // Replace
-  void replaceChild(Layout oldChild, Layout newChild, LayoutCursor * cursor = nullptr, bool force = false);
-  void replaceWith(Layout newChild, LayoutCursor * cursor);
-  void replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, LayoutCursor * cursor, bool putCursorInTheMiddle = false);
-  // Collapse
-  void collapseSiblings(LayoutCursor * cursor);
   // Replace strings with codepoints
   Layout makeEditable() { return node()->makeEditable(); }
-protected:
-  // Add
-  void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor);
-  void removeChild(Layout l, LayoutCursor * cursor, bool force = false);
-  void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false);
+
+  // Cursor move
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const { return node()->indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex); }
+
 private:
-  // Tree modification
-  bool collapseOnDirection(OMG::NewHorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor);
   bool privateHasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;
 };
 

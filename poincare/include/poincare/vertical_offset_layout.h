@@ -34,11 +34,6 @@ public:
   HorizontalPosition horizontalPosition() const { return m_horizontalPosition; }
 
   // LayoutNode
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-  void deleteBeforeCursor(LayoutCursor * cursor) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
 
@@ -56,7 +51,13 @@ public:
   }
 #endif
 
-  void setEmptyVisibility(EmptyRectangle::State state) { m_emptyBaseVisibility = state; }
+  bool setEmptyVisibility(EmptyRectangle::State state) {
+    if (m_emptyBaseVisibility == state) {
+      return false;
+    }
+    m_emptyBaseVisibility = state;
+    return baseLayout() == nullptr; // Return true if empty is displayed
+  }
 
 private:
   // LayoutNode
@@ -66,7 +67,6 @@ private:
   KDSize computeSize(KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
-  bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
   bool protectedIsIdenticalTo(Layout l) override;
 
@@ -89,7 +89,8 @@ public:
   static VerticalOffsetLayout Builder(Layout l, VerticalOffsetLayoutNode::VerticalPosition verticalPosition, VerticalOffsetLayoutNode::HorizontalPosition horizontalPosition = VerticalOffsetLayoutNode::HorizontalPosition::Suffix);
   VerticalOffsetLayout() = delete;
   VerticalOffsetLayoutNode::VerticalPosition verticalPosition() const { return node()->verticalPosition(); }
-  void setEmptyVisibility(EmptyRectangle::State state) { node()->setEmptyVisibility(state); }
+  VerticalOffsetLayoutNode::HorizontalPosition horizontalPosition() const { return node()->horizontalPosition(); }
+  bool setEmptyVisibility(EmptyRectangle::State state) { return node()->setEmptyVisibility(state); }
 
 private:
   VerticalOffsetLayoutNode * node() const { return static_cast<VerticalOffsetLayoutNode *>(Layout::node()); }

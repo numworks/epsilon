@@ -10,12 +10,6 @@ class LetterWithSubAndSuperscriptLayoutNode : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
-  // LayoutNode
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-  void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
-
   // TreeNode
   size_t size() const override { return sizeof(LetterWithSubAndSuperscriptLayoutNode); }
   int numberOfChildren() const override { return 2; }

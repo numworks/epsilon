@@ -13,7 +13,6 @@
 namespace Poincare {
 
 class Expression;
-class LayoutCursor;
 class Layout;
 class LayoutSelection;
 
@@ -98,23 +97,8 @@ public:
   LayoutNode * root() { return static_cast<LayoutNode *>(TreeNode::root()); }
 
   // Tree navigation
-  virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) = 0;
-  virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) = 0;
-  virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) {
-    moveCursorVertically(OMG::NewDirection::Up(), cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
-  }
-  virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) {
-    moveCursorVertically(OMG::NewDirection::Down(), cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
-  }
-  void moveCursorUpInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) {
-    return moveCursorInDescendantsVertically(OMG::NewDirection::Up(), cursor, shouldRecomputeLayout, forSelection);
-  }
-  void moveCursorDownInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) {
-    return moveCursorInDescendantsVertically(OMG::NewDirection::Down(), cursor, shouldRecomputeLayout, forSelection);
-  }
-  virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
-
-  void askParentToMoveCursorHorizontally(OMG::NewHorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
+  constexpr static int k_outsideIndex = -1;
+  virtual int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const;
 
   // Tree modification
   // Collapse
@@ -122,11 +106,6 @@ public:
   virtual bool shouldCollapseSiblingsOnRight() const { return false; }
   virtual int leftCollapsingAbsorbingChildIndex() const { return 0; }
   virtual int rightCollapsingAbsorbingChildIndex() const { return 0; }
-  virtual void didCollapseSiblings(LayoutCursor * cursor) {}
-
-  // User input
-  virtual void deleteBeforeCursor(LayoutCursor * cursor);
-  bool deleteBeforeCursorForLayoutContainingArgument(LayoutNode * argumentNode, LayoutCursor * cursor);
 
   // Other
   virtual LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr);
@@ -152,16 +131,10 @@ public:
   virtual bool hasUpperLeftIndex() const { return false; }
   virtual Layout XNTLayout(int childIndex = -1) const;
 
-  virtual bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) { return true; }
-  virtual void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
-
   virtual Layout makeEditable();
 
 protected:
   virtual bool protectedIsIdenticalTo(Layout l);
-
-  // Tree navigation
-  virtual void moveCursorVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection);
 
   // Tree
   Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
@@ -174,15 +147,6 @@ protected:
 
 private:
   KDPoint absoluteOriginWithMargin(KDFont::Size font);
-  void moveCursorInDescendantsVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection);
-  void scoreCursorInDescendantsVertically (
-    OMG::NewVerticalDirection direction,
-    LayoutCursor * cursor,
-    bool * shouldRecomputeLayout,
-    LayoutNode ** childResult,
-    void * resultPosition,
-    int * resultScore,
-    bool forSelection);
   virtual void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) = 0;
   void changeGraySquaresOfAllGridRelatives(bool add, bool ancestors, bool * changedSquares);
 

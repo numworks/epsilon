@@ -7,7 +7,7 @@
 #include <algorithm>
 
 namespace Poincare {
-
+/*
 void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == indiceLayout()
       && cursor->position() == LayoutCursor::Position::Left)
@@ -65,7 +65,7 @@ void VerticalOffsetLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * should
   } else {
     if (cursor->isEquivalentTo(LayoutCursor(Layout(indiceLayout()), cursor->position()))) {
       /* Case: Subscript, Left or Right of the indice. Put the cursor at the
-       * same position, pointing this. */
+       * same position, pointing this. *
       cursor->setLayoutNode(this);
       return;
     }
@@ -91,7 +91,7 @@ void VerticalOffsetLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shou
   } else {
     if (cursor->isEquivalentTo(LayoutCursor(Layout(indiceLayout()), cursor->position()))){
       /* Case: Superscript, Left or Right of the indice. Put the cursor at the
-       * same position, pointing this. */
+       * same position, pointing this. *
       cursor->setLayoutNode(this);
       return;
     }
@@ -125,7 +125,7 @@ void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   }
   LayoutNode::deleteBeforeCursor(cursor);
 }
-
+*/
 int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (verticalPosition() == VerticalPosition::Subscript || horizontalPosition() == HorizontalPosition::Prefix) {
     if (bufferSize == 0) {
@@ -200,7 +200,7 @@ KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child, KDFont::Si
   assert(verticalPosition() == VerticalPosition::Subscript);
   return KDPoint(shiftForEmpty, baseSize(font).height() - k_indiceHeight);
 }
-
+/*
 bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) {
   if (sibling->type() != Type::VerticalOffsetLayout) {
     return true;
@@ -210,7 +210,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
     return true;
   }
   /* A power will be inserted next to another power. To avoid ambiguity between
-   * a^(b^c) and (a^b)^c when representing a^b^c, add parentheses to make (a^b)^c. */
+   * a^(b^c) and (a^b)^c when representing a^b^c, add parentheses to make (a^b)^c. *
   Layout thisRef = Layout(this);
   Layout parentRef = Layout(parent());
   assert(parentRef.isHorizontal());
@@ -222,7 +222,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
   }
 
   if (cursor->position() == LayoutCursor::Position::Left) {
-    /* If b is insterted on the left of c in a^c, output (a^b)^c. */
+    /* If b is insterted on the left of c in a^c, output (a^b)^c. *
     parentRef.addChildAtIndex(*sibling, thisIndex, parentRef.numberOfChildren(), nullptr);
   }
 
@@ -240,7 +240,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
   parentRef.addChildAtIndex(parentheses, leftParenthesisIndex + 1, parentRef.numberOfChildren(), nullptr);
 
   if (cursor->position() == LayoutCursor::Position::Right) {
-    /* If b is insterted on the right of c in a^c, output (a^c)^b. */
+    /* If b is insterted on the right of c in a^c, output (a^c)^b. *
     parentRef.addChildAtIndex(*sibling, leftParenthesisIndex + 2, parentRef.numberOfChildren(), nullptr);
   }
 
@@ -252,7 +252,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
     cursor->setLayout(parentheses);
   }
   return false;
-}
+}*/
 
 LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   LayoutNode * parentNode = parent();

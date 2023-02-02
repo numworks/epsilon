@@ -3,7 +3,7 @@
 #include <algorithm>
 
 namespace Poincare {
-
+/*
 void LetterWithSubAndSuperscriptLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->position() == LayoutCursor::Position::Left
       && cursor->layoutNode() == kLayout())
@@ -75,7 +75,7 @@ void LetterWithSubAndSuperscriptLayoutNode::moveCursorDown(LayoutCursor * cursor
   }
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
-
+*/
 KDCoordinate LetterWithSubAndSuperscriptLayoutNode::aboveSymbol(KDFont::Size font) {
   return std::max<KDCoordinate>(nLayout()->baseline(font), kLayout()->baseline(font) - k_symbolHeight);
 }

@@ -11,7 +11,7 @@ namespace Poincare {
 int ListSequenceLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListSequence::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);
 }
-
+/*
 void ListSequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == variableLayout()) {
     assert(cursor->position() == LayoutCursor::Position::Left);
@@ -74,7 +74,7 @@ void ListSequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(functionLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);
   }
-}
+}*/
 
 Layout ListSequenceLayoutNode::XNTLayout(int childIndex) const {
   if (childIndex == k_functionLayoutIndex) {

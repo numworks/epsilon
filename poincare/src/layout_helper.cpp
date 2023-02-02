@@ -61,7 +61,7 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
   const int numberOfChildren = expression.numberOfChildren();
   for (int i = 0; i < numberOfChildren; i++) {
     if (i > 0) {
-      args.addChildAtIndex(CodePointLayout::Builder(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
+      args.addChildAtIndexInPlace(CodePointLayout::Builder(','), args.numberOfChildren(), args.numberOfChildren());
     }
     args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, context, false, true), args.numberOfChildren());
   }
@@ -114,7 +114,7 @@ Layout LayoutHelper::StringToCodePointsLayout(const char * buffer, int bufferLen
     } else {
       nextChild = CodePointLayout::Builder(codePoint);
     }
-    resultLayout.addChildAtIndex(nextChild, layoutIndex, layoutIndex, nullptr);
+    resultLayout.addChildAtIndexInPlace(nextChild, layoutIndex, layoutIndex);
     layoutIndex++;
     bufferIndex += nextPointer - currentPointer;
     currentPointer = nextPointer;
@@ -140,7 +140,7 @@ Layout LayoutHelper::CodePointsToLayout(const CodePoint * buffer, int bufferLen)
   for (int i = 0; i < bufferLen; i++) {
     assert(!buffer[i].isCombining());
     // TODO support combining code point?
-    resultLayout.addChildAtIndex(CodePointLayout::Builder(buffer[i]), i, i, nullptr);
+    resultLayout.addChildAtIndexInPlace(CodePointLayout::Builder(buffer[i]), i, i);
   }
   return resultLayout.squashUnaryHierarchyInPlace();
 }
@@ -162,7 +162,7 @@ Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
     offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::VerticalPosition::Subscript, VerticalOffsetLayoutNode::HorizontalPosition::Suffix);
   }
 
-  resultLayout.addChildAtIndex(offsetLayout, baseIndex, resultLayout.numberOfChildren(), nullptr);
+  resultLayout.addChildAtIndexInPlace(offsetLayout, baseIndex, resultLayout.numberOfChildren());
   resultLayout.addOrMergeChildAtIndex(Parentheses(argument, false), resultLayout.numberOfChildren());
   return std::move(resultLayout);
 }

@@ -2,7 +2,7 @@
 #include <poincare/layout_cursor.h>
 
 namespace Poincare {
-
+/*
 void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == childLayout() && cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left of the operand. Go Left of the brackets.
@@ -41,7 +41,7 @@ void BracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(childLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);
   }
-}
+}*/
 
 KDSize BracketPairLayoutNode::computeSize(KDFont::Size font) {
   KDSize childSize = childLayout()->layoutSize(font);

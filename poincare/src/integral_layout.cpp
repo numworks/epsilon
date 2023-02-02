@@ -32,7 +32,7 @@ const uint8_t bottomSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayo
   {0xF2, 0x95, 0x1A, 0xF1},
   {0x09, 0x46, 0xD5, 0xFF},
 };
-
+/*
 void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == upperBoundLayout()
       || cursor->layoutNode() == lowerBoundLayout())
@@ -141,7 +141,7 @@ void IntegralLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     LayoutNode::deleteBeforeCursor(cursor);
   }
 }
-
+*/
 int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);
 }

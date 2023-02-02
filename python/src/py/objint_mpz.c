@@ -297,6 +297,11 @@ mp_obj_t mp_obj_int_binary_op(mp_binary_op_t op, mp_obj_t lhs_in, mp_obj_t rhs_i
                 mpz_pow_inpl(&res->mpz, zlhs, zrhs);
                 break;
 
+            /* Warning: this is a NumWorks change to MicroPython 1.17 */
+            case MP_BINARY_OP_GCD:
+                mpz_set(&res->mpz, mpz_gcd(zlhs, zrhs));
+                break;
+
             default: {
                 assert(op == MP_BINARY_OP_DIVMOD);
                 if (mpz_is_zero(zrhs)) {

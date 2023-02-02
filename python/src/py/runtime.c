@@ -524,6 +524,19 @@ mp_obj_t mp_binary_op(mp_binary_op_t op, mp_obj_t lhs, mp_obj_t rhs) {
                     return MP_OBJ_FROM_PTR(tuple);
                 }
 
+                /* Warning: this is a NumWorks change to MicroPython 1.17 */
+                case MP_BINARY_OP_GCD: {
+                    mp_int_t a = lhs_val > rhs_val ? lhs_val : rhs_val;
+                    mp_int_t b = lhs_val > rhs_val ? rhs_val : lhs_val;
+                    while (b) {
+                        mp_int_t m = mp_small_int_modulo(a, b);
+                        a = b;
+                        b = m;
+                    }
+                    lhs_val = a;
+                    break;
+                }
+
                 case MP_BINARY_OP_LESS:
                     return mp_obj_new_bool(lhs_val < rhs_val);
                 case MP_BINARY_OP_MORE:

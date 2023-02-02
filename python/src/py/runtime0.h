@@ -130,6 +130,8 @@ typedef enum {
     // This is not emitted by the compiler but is supported by the runtime.
     // It must follow immediately after MP_BINARY_OP_POWER.
     MP_BINARY_OP_DIVMOD,
+    /* Warning: this is a NumWorks change to MicroPython 1.17 */
+    MP_BINARY_OP_GCD,
 
     // The runtime will convert MP_BINARY_OP_IN to this operator with swapped args.
     // A type should implement this containment operator instead of MP_BINARY_OP_IN.

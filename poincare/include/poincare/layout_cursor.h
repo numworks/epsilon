@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_CURSOR_H
 #define POINCARE_LAYOUT_CURSOR_H
 
-#include <omg/enums.h>
+#include <omg/directions.h>
 #include <poincare/layout.h>
 
 namespace Poincare {

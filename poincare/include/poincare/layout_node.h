@@ -6,7 +6,7 @@
 #include <kandinsky/point.h>
 #include <kandinsky/size.h>
 #include <escher/metric.h>
-#include <omg/enums.h>
+#include <omg/directions.h>
 #include <poincare/tree_node.h>
 
 namespace Poincare {

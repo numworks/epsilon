@@ -259,6 +259,29 @@ STATIC mp_obj_t mp_math_log(size_t n_args, const mp_obj_t *args) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_math_log_obj, 1, 2, mp_math_log);
 
+/* Warning: this is a NumWorks change to MicroPython 1.17 */
+/* This patch adds a function math.gcd complying to CPython 3.9 */
+STATIC mp_obj_t mp_math_gcd(size_t n_args, const mp_obj_t *args) {
+    /* It uses a new binary operator tag MP_BINARY_OP_GCD, (similary to divmod)
+     * in order to let mp_binary_op deal with small integers (in runtime.c) and
+     * fall back on mpz_gcd (that was in the code base behind an #if 0) through
+     * mp_obj_int_binary_op.
+     */
+    if (n_args == 0) {
+        return mp_obj_new_int(0);
+    }
+    /* Since mpz_gcd deals with negative values, we could treat small negative
+     * ints in mp_binary_op but it still requires to call unary_op(ABS) to deal
+     * with MP_SMALL_INT_MIN (cf MP_UNARY_OP_ABS implementation). It is
+     * therefore simpler to do it there. */
+    mp_obj_t * res = mp_unary_op(MP_UNARY_OP_ABS, args[0]);
+    while (n_args > 1) {
+        res = mp_binary_op(MP_BINARY_OP_GCD, res, mp_unary_op(MP_UNARY_OP_ABS, args[--n_args]));
+    }
+    return res;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR(mp_math_gcd_obj, 0, mp_math_gcd);
+
 // Functions that return a tuple
 
 // frexp(x): converts a floating-point number to fractional and integral components
@@ -401,6 +424,8 @@ STATIC const mp_rom_map_elem_t mp_module_math_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_floor), MP_ROM_PTR(&mp_math_floor_obj) },
     { MP_ROM_QSTR(MP_QSTR_fmod), MP_ROM_PTR(&mp_math_fmod_obj) },
     { MP_ROM_QSTR(MP_QSTR_frexp), MP_ROM_PTR(&mp_math_frexp_obj) },
+    /* Warning: this is a NumWorks change to MicroPython 1.17 */
+    { MP_ROM_QSTR(MP_QSTR_gcd), MP_ROM_PTR(&mp_math_gcd_obj) },
     { MP_ROM_QSTR(MP_QSTR_ldexp), MP_ROM_PTR(&mp_math_ldexp_obj) },
     { MP_ROM_QSTR(MP_QSTR_modf), MP_ROM_PTR(&mp_math_modf_obj) },
     { MP_ROM_QSTR(MP_QSTR_isfinite), MP_ROM_PTR(&mp_math_isfinite_obj) },

@@ -1389,9 +1389,6 @@ void mpz_pow3_inpl(mpz_t *dest, const mpz_t *lhs, const mpz_t *rhs, const mpz_t 
     mpz_free(n);
 }
 
-#if 0
-these functions are unused
-
 /* computes gcd(z1, z2)
    based on Knuth's modified gcd algorithm (I think?)
    gcd(z1, z2) >= 0
@@ -1449,6 +1446,11 @@ mpz_t *mpz_gcd(const mpz_t *z1, const mpz_t *z2) {
         return a;
     }
 }
+
+/* Warning: this is a NumWorks change to MicroPython 1.17 */
+/* mpz_gcd was inside the if */
+#if 0
+this function is unused
 
 /* computes lcm(z1, z2)
      = abs(z1) / gcd(z1, z2) * abs(z2)

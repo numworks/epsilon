@@ -100,14 +100,14 @@ LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
 }
 
 void LayoutNode::askParentToMoveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert((direction == OMG::HorizontalDirection::Left  && cursor->position() == LayoutCursor::Position::Left)
-      || (direction == OMG::HorizontalDirection::Right && cursor->position() == LayoutCursor::Position::Right));
+  assert((direction.isLeft()  && cursor->position() == LayoutCursor::Position::Left)
+      || (direction.isRight() && cursor->position() == LayoutCursor::Position::Right));
   LayoutNode * parentNode = parent();
   if (parentNode != nullptr) {
-    if (direction == OMG::HorizontalDirection::Left) {
+    if (direction.isLeft()) {
       return parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
     }
-    assert(direction == OMG::HorizontalDirection::Right);
+    assert(direction.isRight());
     return parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
 }
@@ -120,7 +120,7 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     // Case: The pointed layout is a child. Move Left.
     assert(cursor->position() == LayoutCursor::Position::Left);
     bool shouldRecomputeLayout = false;
-    cursor->move(OMG::Direction::Left, &shouldRecomputeLayout);
+    cursor->move(OMG::Direction::Left(), &shouldRecomputeLayout);
     return;
   }
   assert(cursor->layoutNode() == this);
@@ -251,7 +251,7 @@ void LayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCu
     if (cursorEquivalent.isDefined()) {
       cursor->setLayout(cursorEquivalent.layout());
       cursor->setPosition(cursorEquivalent.position());
-      if (direction == OMG::VerticalDirection::Up) {
+      if (direction.isUp()) {
         cursor->layoutNode()->moveCursorUp(cursor, shouldRecomputeLayout, true, forSelection);
       } else {
         cursor->layoutNode()->moveCursorDown(cursor, shouldRecomputeLayout, true, forSelection);
@@ -264,7 +264,7 @@ void LayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCu
     cursor->setLayout(Layout());
     return;
   }
-  if (direction == OMG::VerticalDirection::Up) {
+  if (direction.isUp()) {
     p->moveCursorUp(cursor, shouldRecomputeLayout, true, forSelection);
   } else {
     p->moveCursorDown(cursor, shouldRecomputeLayout, true, forSelection);
@@ -302,7 +302,7 @@ void LayoutNode::scoreCursorInDescendantsVertically (
 {
   LayoutCursor::Position * castedResultPosition = static_cast<LayoutCursor::Position *>(resultPosition);
   KDPoint cursorMiddleLeft = cursor->middleLeftPoint();
-  bool layoutIsUnderOrAbove = direction == OMG::VerticalDirection::Up ? m_frame.isAbove(cursorMiddleLeft) : m_frame.isUnder(cursorMiddleLeft);
+  bool layoutIsUnderOrAbove = direction.isUp() ? m_frame.isAbove(cursorMiddleLeft) : m_frame.isUnder(cursorMiddleLeft);
   bool layoutContains = m_frame.contains(cursorMiddleLeft);
 
   if (layoutIsUnderOrAbove) {

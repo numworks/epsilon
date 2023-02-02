@@ -91,15 +91,11 @@ void assert_navigation_is(
 
   for (int i = 0; i < numberOfEvents; i++) {
     NavigationEvent event = events[i];
-    if (event.direction == OMG::Direction::Up) {
-      graphController.moveCursorVertically(1);
-    } else if (event.direction == OMG::Direction::Right) {
-      graphController.moveCursorHorizontally(1);
-    } else if (event.direction == OMG::Direction::Down) {
-      graphController.moveCursorVertically(-1);
+    if (event.direction.isVertical()) {
+      graphController.moveCursorVertically(event.direction.isUp() ? 1 : -1);
     } else {
-      assert(event.direction == OMG::Direction::Left);
-      graphController.moveCursorHorizontally(-1);
+      assert(event.direction.isHorizontal());
+      graphController.moveCursorHorizontally(event.direction.isRight() ? 1 : -1);
     }
     quiz_assert(event.expectedSelectedDot == selectedDotIndex);
     quiz_assert(event.expectedSelectedSeries == selectedSeriesIndex);
@@ -117,13 +113,13 @@ QUIZ_CASE(regression_navigation_1) {
 
   constexpr int numberOfEvents = 7;
   NavigationEvent events[numberOfEvents] = {
-    NavigationEvent(OMG::Direction::Down, 0, -1),
-    NavigationEvent(OMG::Direction::Down, 0, 2),
-    NavigationEvent(OMG::Direction::Down, 1, 2),
-    NavigationEvent(OMG::Direction::Down, 0, 0),
-    NavigationEvent(OMG::Direction::Down, 1, 0),
-    NavigationEvent(OMG::Direction::Down, 1, -1),
-    NavigationEvent(OMG::Direction::Down, 1, -1)
+    NavigationEvent(OMG::Direction::Down(), 0, -1),
+    NavigationEvent(OMG::Direction::Down(), 0, 2),
+    NavigationEvent(OMG::Direction::Down(), 1, 2),
+    NavigationEvent(OMG::Direction::Down(), 0, 0),
+    NavigationEvent(OMG::Direction::Down(), 1, 0),
+    NavigationEvent(OMG::Direction::Down(), 1, -1),
+    NavigationEvent(OMG::Direction::Down(), 1, -1)
   };
   assert_navigation_is(numberOfEvents, events, numberOfPoints0, 0, x0, y0, numberOfPoints0, x1, y1, numberOfPoints1);
 }
@@ -144,12 +140,12 @@ QUIZ_CASE(regression_navigation_2) {
      * is above its mean point.
     NavigationEvent(OMG::Direction::Down, 1, -1),
      * */
-    NavigationEvent(OMG::Direction::Down, 0, -1),
-    NavigationEvent(OMG::Direction::Down, 0, numberOfPoints0),
-    NavigationEvent(OMG::Direction::Down, 0, -1),
-    NavigationEvent(OMG::Direction::Down, 0, 3),
-    NavigationEvent(OMG::Direction::Down, 1, 0),
-    NavigationEvent(OMG::Direction::Down, 0, 2)
+    NavigationEvent(OMG::Direction::Down(), 0, -1),
+    NavigationEvent(OMG::Direction::Down(), 0, numberOfPoints0),
+    NavigationEvent(OMG::Direction::Down(), 0, -1),
+    NavigationEvent(OMG::Direction::Down(), 0, 3),
+    NavigationEvent(OMG::Direction::Down(), 1, 0),
+    NavigationEvent(OMG::Direction::Down(), 0, 2)
   };
   assert_navigation_is(numberOfEvents, events, numberOfPoints1, 1, x0, y0, numberOfPoints0, x1, y1, numberOfPoints1);
 }
@@ -161,9 +157,9 @@ QUIZ_CASE(regression_navigation_3) {
 
   constexpr int numberOfEvents = 3;
   NavigationEvent events[numberOfEvents] = {
-    NavigationEvent(OMG::Direction::Down, 0, -1),
-    NavigationEvent(OMG::Direction::Down, 1, -1),
-    NavigationEvent(OMG::Direction::Down, 2, -1),
+    NavigationEvent(OMG::Direction::Down(), 0, -1),
+    NavigationEvent(OMG::Direction::Down(), 1, -1),
+    NavigationEvent(OMG::Direction::Down(), 2, -1),
   };
   assert_navigation_is(numberOfEvents, events, 2, 0, x, y, numberOfPoints, x, y, numberOfPoints, x, y, numberOfPoints);
 }

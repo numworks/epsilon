@@ -245,10 +245,10 @@ bool GraphController::displayDerivativeInBanner() const {
   reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record);
 }
 
-bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
+bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed) {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
   assert(m_selectedSubCurveIndex < App::app()->functionStore()->modelForRecord(record)->numberOfSubCurves());
-  return privateMoveCursorHorizontally(m_cursor, direction > 0 ? OMG::HorizontalDirection::Right() : OMG::HorizontalDirection::Left(), m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
 }
 
 int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const {

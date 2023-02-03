@@ -46,7 +46,7 @@ protected:
   bool m_isActive;
 
 private:
-  bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
+  bool moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed = 1) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::AbstractPlotView * curveView() override { return m_graphView; }
   // Prevent horizontal panning to preserve search interval

@@ -95,7 +95,7 @@ void assert_navigation_is(
       graphController.moveCursorVertically(event.direction);
     } else {
       assert(event.direction.isHorizontal());
-      graphController.moveCursorHorizontally(event.direction.isRight() ? 1 : -1);
+      graphController.moveCursorHorizontally(event.direction);
     }
     quiz_assert(event.expectedSelectedDot == selectedDotIndex);
     quiz_assert(event.expectedSelectedSeries == selectedSeriesIndex);

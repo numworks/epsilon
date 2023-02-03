@@ -163,11 +163,11 @@ void GraphController::reloadBannerView() {
   m_bannerView.reload();
 }
 
-bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
+bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed) {
   double x;
   double y;
   if (*m_selectedDotIndex >= 0) {
-    int dotSelected = m_store->nextDot(selectedSeriesIndex(), direction > 0 ? OMG::HorizontalDirection::Right() : OMG::HorizontalDirection::Left(), *m_selectedDotIndex, !curveIsScatterPlot(*m_selectedCurveIndex));
+    int dotSelected = m_store->nextDot(selectedSeriesIndex(), direction, *m_selectedDotIndex, !curveIsScatterPlot(*m_selectedCurveIndex));
     if (dotSelected >= 0) {
       x = dotAbscissa(*m_selectedCurveIndex, dotSelected);
       y = dotOrdinate(*m_selectedCurveIndex, dotSelected);
@@ -176,7 +176,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
     }
     *m_selectedDotIndex = dotSelected;
   } else {
-    double step = direction * scrollSpeed * static_cast<double>(interactiveCurveViewRange()->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
+    double step = (direction.isRight() ? 1 : -1) * scrollSpeed * static_cast<double>(interactiveCurveViewRange()->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
     x = m_cursor->x() + step;
     y = yValue(*m_selectedCurveIndex, x, globalContext());
   }

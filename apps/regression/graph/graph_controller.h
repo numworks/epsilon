@@ -30,7 +30,7 @@ public:
   I18n::Message emptyMessage() override;
 
   // SimpleInteractiveCurveViewController
-  bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
+  bool moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed = 1) override;
 
   // InteractiveCurveViewController
   bool moveCursorVertically(OMG::VerticalDirection direction) override;

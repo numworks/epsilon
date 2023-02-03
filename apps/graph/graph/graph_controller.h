@@ -63,7 +63,7 @@ private:
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
 
   // FunctionGraphController
-  int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const override;
+  int nextCurveIndexVertically(OMG::VerticalDirection direction, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const override;
   double defaultCursorT(Ion::Storage::Record record, bool ignoreMargins) override;
   Shared::ContinuousFunctionStore * functionStore() const override { return static_cast<Shared::ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }

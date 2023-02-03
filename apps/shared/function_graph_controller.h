@@ -63,8 +63,8 @@ protected:
   void selectCurveAtIndex(int curveIndex, bool willBeVisible);
   virtual double defaultCursorT(Ion::Storage::Record record, bool ignoreMargins);
   virtual FunctionStore * functionStore() const;
-  virtual int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {
-    return closestCurveIndexVertically(goingUp ? OMG::VerticalDirection::Up() : OMG::VerticalDirection::Down(), currentSelectedCurve, context, currentSubCurveIndex, subCurveIndex);
+  virtual int nextCurveIndexVertically(OMG::VerticalDirection direction, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {
+    return closestCurveIndexVertically(direction, currentSelectedCurve, context, currentSubCurveIndex, subCurveIndex);
   }
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
   Ion::Storage::Record recordAtCurveIndex(int curveIndex) const { return functionStore()->activeRecordAtIndex(curveIndex); }

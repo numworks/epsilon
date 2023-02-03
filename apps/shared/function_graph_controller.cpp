@@ -166,7 +166,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   int nextSubCurve = 0;
-  int nextActiveFunctionIndex = nextCurveIndexVertically(direction > 0, currentActiveFunctionIndex, context, m_selectedSubCurveIndex, &nextSubCurve);
+  int nextActiveFunctionIndex = nextCurveIndexVertically(direction > 0 ? OMG::VerticalDirection::Up() : OMG::VerticalDirection::Down(), currentActiveFunctionIndex, context, m_selectedSubCurveIndex, &nextSubCurve);
   if (nextActiveFunctionIndex < 0) {
     return false;
   }

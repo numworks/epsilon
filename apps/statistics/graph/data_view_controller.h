@@ -46,8 +46,8 @@ protected:
   // Overriden with histograms only to highlight and scroll to the selected bar
   virtual void highlightSelection() {}
 
-  virtual int nextSubviewWhenMovingVertically(int direction) const {
-    return m_store->activeSeriesIndexFromSeriesIndex(m_selectedSeries, activeSeriesMethod()) + direction;
+  virtual int nextSubviewWhenMovingVertically(OMG::VerticalDirection direction) const {
+    return m_store->activeSeriesIndexFromSeriesIndex(m_selectedSeries, activeSeriesMethod()) + (direction.isUp() ? 1 : -1);
   }
   virtual void updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) = 0;
 

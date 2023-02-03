@@ -101,7 +101,7 @@ void DataViewController::sanitizeSeriesIndex() {
 }
 
 bool DataViewController::moveSelectionVertically(OMG::VerticalDirection direction) {
-  int nextSelectedSubview = nextSubviewWhenMovingVertically(direction.isUp() ? 1 : -1);
+  int nextSelectedSubview = nextSubviewWhenMovingVertically(direction);
   if (nextSelectedSubview >= m_store->numberOfActiveSeries(activeSeriesMethod())) {
     return false;
   }

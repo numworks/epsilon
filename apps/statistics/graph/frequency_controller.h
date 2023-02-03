@@ -41,7 +41,7 @@ private:
   bool moveSelectionHorizontally(int deltaIndex) override;
   void computeYBounds(float * yMin, float *yMax) const override;
   bool handleNullFrequencies() const override { return true; }
-  int nextSubviewWhenMovingVertically(int direction) const override;
+  int nextSubviewWhenMovingVertically(OMG::VerticalDirection direction) const override;
   void updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) override;
 
   // Horizontal labels will always be in bottom, vertical labels are wider

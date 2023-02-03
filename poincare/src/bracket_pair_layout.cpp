@@ -2,41 +2,8 @@
 #include <poincare/layout_cursor.h>
 
 namespace Poincare {
+
 /*
-void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == childLayout() && cursor->position() == LayoutCursor::Position::Left) {
-    // Case: Left of the operand. Go Left of the brackets.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    // Case: Right of the brackets. Go Right of the operand.
-    cursor->setLayoutNode(childLayout());
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  // Case: Left of the brackets. Ask the parent.
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
-}
-
-void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == childLayout() && cursor->position() == LayoutCursor::Position::Right) {
-    // Case: Right of the operand. Go Right of the brackets.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    // Case: Left of the brackets. Go Left of the operand.
-    cursor->setLayoutNode(childLayout());
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  // Case: Right of the brackets. Ask the parent.
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
-}
-
 void BracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(childLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);

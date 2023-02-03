@@ -10,6 +10,8 @@ class LetterWithSubAndSuperscriptLayoutNode : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
+
   // TreeNode
   size_t size() const override { return sizeof(LetterWithSubAndSuperscriptLayoutNode); }
   int numberOfChildren() const override { return 2; }
@@ -29,8 +31,11 @@ private:
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
   KDCoordinate aboveSymbol(KDFont::Size font);
   KDCoordinate totalHeight(KDFont::Size font);
-  LayoutNode * nLayout() { return childAtIndex(0); }
-  LayoutNode * kLayout() { return childAtIndex(1); }
+
+  constexpr static int k_nLayoutIndex = 0;
+  constexpr static int k_kLayoutIndex = 1;
+  LayoutNode * nLayout() { return childAtIndex(k_nLayoutIndex); }
+  LayoutNode * kLayout() { return childAtIndex(k_kLayoutIndex); }
 };
 
 }

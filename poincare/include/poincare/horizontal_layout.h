@@ -27,6 +27,8 @@ public:
   Type type() const override { return Type::HorizontalLayout; }
 
   // LayoutNode
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override { /* This case is handled directly by the cursor */ assert(false); return -2; }
+
   LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 

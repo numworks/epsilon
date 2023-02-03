@@ -19,6 +19,9 @@ public:
     stream << "ListSequenceLayoutNode";
   }
 #endif
+
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
+
   Layout XNTLayout(int childIndex = -1) const override;
 
 private:

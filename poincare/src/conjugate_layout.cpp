@@ -7,44 +7,6 @@
 
 namespace Poincare {
 /*
-void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == childLayout()
-      && cursor->position() == LayoutCursor::Position::Left)
-  {
-    // Case: Left of the operand. Move Left.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    // Case: Right. Go to the operand.
-    cursor->setLayoutNode(childLayout());
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  // Case: Left. Ask the parent.
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
-}
-
-void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  // Case: Right of the operand. Move Right.
-  if (cursor->layoutNode() == childLayout()
-      && cursor->position() == LayoutCursor::Position::Right)
-  {
-    cursor->setLayoutNode(this);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  // Case: Left. Go to the operand.
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    cursor->setLayoutNode(childLayout());
-    return;
-  }
-  // Case: Right. Ask the parent.
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
-}
-
 void ConjugateLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(childLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);

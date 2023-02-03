@@ -8,63 +8,6 @@ namespace Poincare {
 
 // LayoutNode
 /*
-void HorizontalLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  LayoutCursor::Position dir = direction.isLeft() ? LayoutCursor::Position::Left : LayoutCursor::Position::Right;
-  LayoutCursor::Position oppositeDir = direction.isLeft() ? LayoutCursor::Position::Right : LayoutCursor::Position::Left;
-
-  if (this == cursor->layoutNode()) {
-    // Case 1: cursor it at this
-    if (cursor->position() == dir) {
-      // Case 1.1: position = direction. Ask the parent.
-      askParentToMoveCursorHorizontally(direction, cursor, shouldRecomputeLayout);
-      return;
-    }
-    assert(cursor->position() == oppositeDir);
-    // Case 1.2: position = opposite direction.
-    int childrenCount = numberOfChildren();
-    if (childrenCount == 0) {
-      // Case 1.2.1: If there are no children, set position to direction and ask the parent
-      cursor->setPosition(dir);
-      askParentToMoveCursorHorizontally(direction, cursor, shouldRecomputeLayout);
-      return;
-    }
-    // Case 1.2.2: If there is at least one child, set the cursor to the closest child and move in direction
-    int closestChildToCursor = direction.isLeft() ? childrenCount - 1 : 0;
-    cursor->setLayoutNode(childAtIndex(closestChildToCursor));
-    cursor->move(direction, shouldRecomputeLayout);
-    return;
-  }
-
-  // Case 2: cursor is at a child
-  assert(cursor->position() == dir);
-  int childIndex = indexOfChild(cursor->layoutNode());
-  assert(childIndex >= 0);
-  int furthestChildInDirection = direction.isLeft() ? 0 : numberOfChildren() - 1;
-
-  if (childIndex == furthestChildInDirection) {
-    // Case 2.1: the child is the last in direction. Ask the parent.
-    if (parent() != nullptr) {
-      cursor->setLayoutNode(this);
-      askParentToMoveCursorHorizontally(direction, cursor, shouldRecomputeLayout);
-    }
-    return;
-  }
-
-  // Case 2.2: the child is not the last in direction. Go to its next sibling in direction and move in direction.
-  int step = direction.isLeft() ? -1 : 1;
-  cursor->setLayoutNode(childAtIndex(childIndex + step));
-  cursor->setPosition(oppositeDir);
-  cursor->move(direction, shouldRecomputeLayout);
-}
-
-void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
-}
-
-void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
-}
-
 LayoutCursor HorizontalLayoutNode::equivalentCursor(LayoutCursor * cursor) {
   if (cursor->layoutNode() == this) {
     // First or last child, if any

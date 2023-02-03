@@ -11,65 +11,22 @@ namespace Poincare {
 int ListSequenceLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListSequence::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);
 }
+
+int ListSequenceLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
+  switch (currentIndex) {
+  case k_outsideIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_functionLayoutIndex : k_upperBoundLayoutIndex;
+  case k_functionLayoutIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_variableLayoutIndex : k_outsideIndex;
+  case k_variableLayoutIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_upperBoundLayoutIndex : k_functionLayoutIndex;
+  default:
+    assert(currentIndex == k_upperBoundLayoutIndex);
+    return direction == OMG::HorizontalDirection::Right ? k_outsideIndex : k_variableLayoutIndex;
+  }
+}
+
 /*
-void ListSequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == variableLayout()) {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    cursor->setLayoutNode(functionLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  if (cursor->layoutNode() == functionLayout()) {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    cursor->setLayoutNode(this);
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  if (cursor->layoutNode() == upperBoundLayout()) {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    cursor->setLayoutNode(variableLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    cursor->setLayoutNode(upperBoundLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
-}
-
-void ListSequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == variableLayout()) {
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    cursor->setLayoutNode(upperBoundLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  if (cursor->layoutNode() == functionLayout()) {
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    cursor->setLayoutNode(variableLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  if (cursor->layoutNode() == upperBoundLayout()) {
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    cursor->setLayoutNode(this);
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    cursor->setLayoutNode(functionLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
-}
-
 void ListSequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(functionLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);

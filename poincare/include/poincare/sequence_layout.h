@@ -23,6 +23,7 @@ public:
   using LayoutNode::LayoutNode;
 
   // LayoutNode
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
   LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) override { return lowerBoundLayout(); }
   Layout XNTLayout(int childIndex = -1) const override;
 
@@ -59,12 +60,14 @@ protected:
   int writeDerivedClassInBuffer(const char * operatorName, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
   LayoutNode * argumentLayout() { return childAtIndex(k_argumentLayoutIndex); }
   LayoutNode * variableLayout() { return childAtIndex(k_variableLayoutIndex); }
-  LayoutNode * lowerBoundLayout() { return childAtIndex(2); }
-  LayoutNode * upperBoundLayout() { return childAtIndex(3); }
+  LayoutNode * lowerBoundLayout() { return childAtIndex(k_lowerBoundLayoutIndex); }
+  LayoutNode * upperBoundLayout() { return childAtIndex(k_upperBoundLayoutIndex); }
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
 private:
   constexpr static int k_argumentLayoutIndex = 0;
   constexpr static int k_variableLayoutIndex = 1;
+  constexpr static int k_lowerBoundLayoutIndex = 2;
+  constexpr static int k_upperBoundLayoutIndex = 3;
   KDCoordinate completeLowerBoundX(KDFont::Size font);
   KDCoordinate subscriptBaseline(KDFont::Size font);
 };

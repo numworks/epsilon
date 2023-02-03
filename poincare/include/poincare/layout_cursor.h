@@ -124,7 +124,7 @@ private:
   void privateAddEmptyPowerLayout(VerticalOffsetLayout v);
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
-  void selectLeftRight(bool right, bool * shouldRecomputeLayout, Layout * selection);
+  void selectLeftRight(OMG::HorizontalDirection direction, bool * shouldRecomputeLayout, Layout * selection);
   void selectUpDown(OMG::VerticalDirection direction, bool * shouldRecomputeLayout, Layout * selection);
   /* Return an uninitialized layout if the cursor is not inside a bracket pair,
    * touching one of the brackets. */

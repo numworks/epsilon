@@ -26,7 +26,7 @@ void BinomialCoefficientLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool *
   }
   // Case: Left. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Left(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::Direction::Left(), cursor, shouldRecomputeLayout);
 }
 
 void BinomialCoefficientLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -47,7 +47,7 @@ void BinomialCoefficientLayoutNode::moveCursorRight(LayoutCursor * cursor, bool 
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::Direction::Right(), cursor, shouldRecomputeLayout);
 }
 
 void BinomialCoefficientLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {

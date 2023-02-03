@@ -26,7 +26,7 @@ public:
   bool operator ==(const Direction &other) const { return m_tag == other.m_tag; }
   bool operator !=(const Direction &other) const { return m_tag != other.m_tag; }
 
-protected:
+private:
   enum class Tag {
     Left,
     Right,
@@ -36,24 +36,13 @@ protected:
 
   constexpr Direction(Tag tag) : m_tag(tag) {}
 
-private:
   Tag m_tag;
 };
 
 class HorizontalDirection : public Direction {
-public:
-  constexpr static HorizontalDirection Left() { return HorizontalDirection(Tag::Left); }
-  constexpr static HorizontalDirection Right() { return HorizontalDirection(Tag::Right); }
-private:
-  constexpr HorizontalDirection(Tag tag) : Direction(tag) { assert(tag == Tag::Left || tag == Tag::Right); }
 };
 
 class VerticalDirection : public Direction {
-public:
-  constexpr static VerticalDirection Up() { return VerticalDirection(Tag::Up); }
-  constexpr static VerticalDirection Down() { return VerticalDirection(Tag::Down); }
-private:
-  constexpr VerticalDirection(Tag tag) : Direction(tag) { assert(tag == Tag::Up || tag == Tag::Down); }
 };
 
 }

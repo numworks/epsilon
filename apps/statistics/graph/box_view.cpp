@@ -84,8 +84,8 @@ void BoxPlotPolicy::drawOutlier(const AbstractPlotView * plotView, KDContext * c
 }
 
 void BoxPlotPolicy::drawChevronSelection(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound) const {
-  drawChevron(plotView, ctx, rect, calculation, lowBound, k_selectedColor, OMG::VerticalDirection::Up());
-  drawChevron(plotView, ctx, rect, calculation, upBound, k_selectedColor, OMG::VerticalDirection::Down());
+  drawChevron(plotView, ctx, rect, calculation, lowBound, k_selectedColor, OMG::Direction::Up());
+  drawChevron(plotView, ctx, rect, calculation, upBound, k_selectedColor, OMG::Direction::Down());
 }
 
 void BoxPlotPolicy::drawChevron(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, float y, KDColor color, OMG::VerticalDirection direction) const {

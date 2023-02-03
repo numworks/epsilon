@@ -65,7 +65,7 @@ bool ResidualPlotController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Right || event == Ion::Events::Left) {
-    return moveHorizontally(event == Ion::Events::Right ? OMG::HorizontalDirection::Right() : OMG::HorizontalDirection::Left());
+    return moveHorizontally(event == Ion::Events::Right ? OMG::Direction::Right() : OMG::Direction::Left());
   }
   return false;
 }

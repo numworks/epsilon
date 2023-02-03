@@ -663,7 +663,7 @@ bool AbstractTextField::privateHandleSelectEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight || event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
-    selectLeftRight((event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftUp) ? OMG::HorizontalDirection::Left() : OMG::HorizontalDirection::Right(), event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown);
+    selectLeftRight((event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftUp) ? OMG::Direction::Left() : OMG::Direction::Right(), event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown);
     return true;
   }
   return false;

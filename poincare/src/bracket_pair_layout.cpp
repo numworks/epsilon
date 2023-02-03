@@ -17,7 +17,7 @@ void BracketPairLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldR
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
   // Case: Left of the brackets. Ask the parent.
-  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Left(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::Direction::Left(), cursor, shouldRecomputeLayout);
 }
 
 void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -34,7 +34,7 @@ void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * should
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
   // Case: Right of the brackets. Ask the parent.
-  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::Direction::Right(), cursor, shouldRecomputeLayout);
 }
 
 void BracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {

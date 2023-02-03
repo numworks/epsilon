@@ -38,7 +38,7 @@ void ListSequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * should
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Left(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::Direction::Left(), cursor, shouldRecomputeLayout);
 }
 
 void ListSequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -67,7 +67,7 @@ void ListSequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shoul
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::Direction::Right(), cursor, shouldRecomputeLayout);
 }
 
 void ListSequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {

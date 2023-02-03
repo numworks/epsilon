@@ -30,7 +30,7 @@ void FrequencyController::moveCursorToSelectedIndex() {
   PlotController::moveCursorToSelectedIndex();
 }
 
-bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
+bool FrequencyController::moveSelectionHorizontally(OMG::HorizontalDirection direction) {
   assert(m_selectedSeries >= 0);
   int totValues = totalValues(m_selectedSeries);
   if (totValues <= 1) {
@@ -38,7 +38,7 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
   }
 
   // Compute cursor step
-  double step = deltaIndex * static_cast<double>(m_graphRange.xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
+  double step = (direction.isRight() ? 1 : -1) * static_cast<double>(m_graphRange.xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
   assert(step != 0.0);
 
   double x = m_cursor.x();

@@ -31,8 +31,8 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
   return MultipleDataViewController::handleEvent(event);
 }
 
-bool BoxController::moveSelectionHorizontally(int deltaIndex) {
-  return m_view.moveSelectionHorizontally(m_selectedSeries, deltaIndex);
+bool BoxController::moveSelectionHorizontally(OMG::HorizontalDirection direction) {
+  return m_view.moveSelectionHorizontally(m_selectedSeries, direction.isRight() ? 1 : -1);
 }
 
 bool BoxController::reloadBannerView() {

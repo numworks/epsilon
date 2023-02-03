@@ -12,11 +12,13 @@ class LayoutCursor final {
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 
-  LayoutCursor(Layout layoutR, int position = 0) :
-    m_layout(layoutR),
-    m_position(position),
+  LayoutCursor(Layout layout, bool leftOfLayout = true) :
     m_startOfSelection(-1)
-  {}
+  {
+    if (!layout.isUninitialized()) {
+      setLayout(layout, leftOfLayout);
+    }
+  }
 
   LayoutCursor() : LayoutCursor(Layout()) {}
 
@@ -39,6 +41,7 @@ public:
   /* Position and size */
   KDCoordinate cursorHeight(KDFont::Size font);
   KDPoint cursorAbsoluteOrigin(KDFont::Size font);
+  KDPoint middleLeftPoint(KDFont::Size font) { return KDPoint(cursorAbsoluteOrigin(font).x(), cursorAbsoluteOrigin(font).y() + cursorHeight(font) / 2); }
 
   /* Move */
   // Return false if could not move

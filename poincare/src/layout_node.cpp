@@ -116,18 +116,6 @@ int LayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDi
 }
 
 /*
-void LayoutNode::askParentToMoveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert((direction.isLeft()  && cursor->position() == LayoutCursor::Position::Left)
-      || (direction.isRight() && cursor->position() == LayoutCursor::Position::Right));
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    if (direction.isLeft()) {
-      return parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
-    }
-    assert(direction.isRight());
-    return parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
-  }
-}
 
 // Tree modification
 
@@ -246,91 +234,7 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
   }
   return true;
 }
-/*
-void LayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (!equivalentPositionVisited) {
-    LayoutCursor cursorEquivalent = equivalentCursor(cursor);
-    if (cursorEquivalent.isDefined()) {
-      cursor->setLayout(cursorEquivalent.layout());
-      cursor->setPosition(cursorEquivalent.position());
-      if (direction.isUp()) {
-        cursor->layoutNode()->moveCursorUp(cursor, shouldRecomputeLayout, true, forSelection);
-      } else {
-        cursor->layoutNode()->moveCursorDown(cursor, shouldRecomputeLayout, true, forSelection);
-      }
-      return;
-    }
-  }
-  LayoutNode * p = parent();
-  if (p == nullptr) {
-    cursor->setLayout(Layout());
-    return;
-  }
-  if (direction.isUp()) {
-    p->moveCursorUp(cursor, shouldRecomputeLayout, true, forSelection);
-  } else {
-    p->moveCursorDown(cursor, shouldRecomputeLayout, true, forSelection);
-  }
-}
 
-void LayoutNode::moveCursorInDescendantsVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  LayoutNode * childResult = nullptr;
-  LayoutNode ** childResultPtr = &childResult;
-  LayoutCursor::Position resultPosition = LayoutCursor::Position::Left;
-  /* The distance between the cursor and its next position cannot be greater
-   * than this initial value of score. *
-  int resultScore = Ion::Display::Width*Ion::Display::Width + Ion::Display::Height*Ion::Display::Height;
-
-  scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResultPtr, &resultPosition, &resultScore, forSelection);
-
-  // If there is a valid result
-  Layout resultRef(childResult);
-  if ((*childResultPtr) != nullptr) {
-    *shouldRecomputeLayout |= childResult->addGraySquaresToAllGridAncestors();
-    // WARNING: Do not use "this" afterwards
-  }
-  cursor->setLayout(resultRef);
-  cursor->setPosition(resultPosition);
-}
-
-void LayoutNode::scoreCursorInDescendantsVertically (
-    OMG::NewVerticalDirection direction,
-    LayoutCursor * cursor,
-    bool * shouldRecomputeLayout,
-    LayoutNode ** childResult,
-    void * resultPosition,
-    int * resultScore,
-    bool forSelection)
-{
-  LayoutCursor::Position * castedResultPosition = static_cast<LayoutCursor::Position *>(resultPosition);
-  KDPoint cursorMiddleLeft = cursor->middleLeftPoint();
-  bool layoutIsUnderOrAbove = direction.isUp() ? m_frame.isAbove(cursorMiddleLeft) : m_frame.isUnder(cursorMiddleLeft);
-  bool layoutContains = m_frame.contains(cursorMiddleLeft);
-
-  if (layoutIsUnderOrAbove) {
-    // Check the distance to a Left cursor.
-    int currentDistance = LayoutCursor(this, LayoutCursor::Position::Left).middleLeftPoint().squareDistanceTo(cursorMiddleLeft);
-    if (currentDistance <= *resultScore ){
-      *childResult = this;
-      *castedResultPosition = LayoutCursor::Position::Left;
-      *resultScore = currentDistance;
-    }
-
-    // Check the distance to a Right cursor.
-    currentDistance = LayoutCursor(this, LayoutCursor::Position::Right).middleLeftPoint().squareDistanceTo(cursorMiddleLeft);
-    if (currentDistance < *resultScore) {
-      *childResult = this;
-      *castedResultPosition = LayoutCursor::Position::Right;
-      *resultScore = currentDistance;
-    }
-  }
-  if (layoutIsUnderOrAbove || layoutContains) {
-    for (LayoutNode * c : children()) {
-      c->scoreCursorInDescendantsVertically(direction, cursor, shouldRecomputeLayout, childResult, castedResultPosition, resultScore, forSelection);
-    }
-  }
-}
-*/
 bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
   /*if (!GridLayoutNode::IsGridLayoutType(l->type())) {
     return false;

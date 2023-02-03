@@ -54,7 +54,7 @@ void Store::setSeriesRegressionType(int series, Model::Type type) {
 
 /* Dots */
 
-int Store::closestVerticalDot(int direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {
+int Store::closestVerticalDot(OMG::VerticalDirection direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {
   double nextX = INFINITY;
   double nextY = INFINITY;
   int nextDot = -1;
@@ -73,12 +73,12 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
       double currentY = i < numberOfDots ? get(series, 1, i) : meanOfColumn(series, 1);
       if (xMin <= currentX && currentX <= xMax // The next dot is within the window abscissa bounds
           && (std::fabs(currentX - x) <= std::fabs(nextX - x)) // The next dot is the closest to x in abscissa
-          && ((currentY > y && direction > 0) // The next dot is above/under y
-            || (currentY < y && direction < 0)
+          && ((currentY > y && direction.isUp()) // The next dot is above/under y
+            || (currentY < y && direction.isDown())
             || (currentY == y
-              && ((currentDot < 0 && direction > 0)|| ((direction < 0) == (series > currentSeries)))))
+              && ((currentDot < 0 && direction.isUp())|| ((direction.isDown()) == (series > currentSeries)))))
           && (nextX != currentX // Edge case: if 2 dots have the same abscissa but different ordinates
-            || ((currentY <= nextY) == (direction > 0))))
+            || ((currentY <= nextY) == (direction.isUp()))))
       {
         nextX = currentX;
         nextY = currentY;

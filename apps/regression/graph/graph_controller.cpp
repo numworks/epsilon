@@ -243,7 +243,7 @@ bool GraphController::moveCursorVertically(int direction) {
 
   // Find the closest dot
   int closesDotSeries = -1;
-  int dotSelected = m_store->closestVerticalDot(direction, x, y, selectedSeriesIndex(), *m_selectedDotIndex, &closesDotSeries, context);
+  int dotSelected = m_store->closestVerticalDot(direction > 0 ? OMG::VerticalDirection::Up() : OMG::VerticalDirection::Down(), x, y, selectedSeriesIndex(), *m_selectedDotIndex, &closesDotSeries, context);
   int closesDotCurve = closesDotSeries == -1 ? -1 : curveIndexFromSeriesIndex(closesDotSeries);
 
   // Choose between selecting the regression or the dot

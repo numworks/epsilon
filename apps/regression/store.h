@@ -42,9 +42,7 @@ public:
   }
 
   // Dots
-  /* Return the closest dot to abscissa x above the regression curve if
-   * direction > 0, below otherwise */
-  int closestVerticalDot(int direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext);
+  int closestVerticalDot(OMG::VerticalDirection direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext);
   int nextDot(int series, OMG::HorizontalDirection direction, int dot, bool displayMean);
   Model * regressionModel(Model::Type type) { return regressionModel(static_cast<int>(type)); }
 

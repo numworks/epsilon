@@ -174,7 +174,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   if (m_contentView.expressionView()->numberOfLayouts() + xnt.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
     return true;
   }
-  // TODO: Insert text if m_linearMode
+  // TODO: Insert text if linearMode
   insertLayoutAtCursor(xnt, true);
   return true;
 }
@@ -222,7 +222,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   AddLayoutPointer handleSpecialEvents[] = {&Poincare::LayoutCursor::addFractionLayoutAndCollapseSiblings, &Poincare::LayoutCursor::addEmptyExponentialLayout,  &Poincare::LayoutCursor::addEmptyPowerLayout,  &Poincare::LayoutCursor::addEmptySquareRootLayout, &Poincare::LayoutCursor::addEmptySquarePowerLayout, &Poincare::LayoutCursor::addEmptyTenPowerLayout};
   int numberOfSpecialEvents = sizeof(specialEvents)/sizeof(Ion::Events::Event);
   assert(numberOfSpecialEvents == sizeof(handleSpecialEvents)/sizeof(AddLayoutPointer));
-  if (!m_linearMode) {
+  if (!linearMode()) {
     char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
     for (int i = 0; i < numberOfSpecialEvents; i++) {
       Ion::Events::copyText(static_cast<uint8_t>(specialEvents[i]), buffer, Ion::Events::EventData::k_maxDataSize);
@@ -240,10 +240,10 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   Expression resultExpression = UTF8Helper::StringGlyphLength(text) > 1 ? Expression::Parse(text, nullptr) : Expression();
   // If first inserted character was empty, cursor must be left of layout
   bool forceCursorLeftOfText = !forceCursorRightOfText && text[0] == UCodePointEmpty;
-  if (m_linearMode || resultExpression.isUninitialized()) {
+  if (linearMode() || resultExpression.isUninitialized()) {
     // The text is not parsable (for instance, ",") and is added char by char.
     KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-    cursor->insertText(text, delegateContext(), forceCursorRightOfText, forceCursorLeftOfText, m_linearMode);
+    cursor->insertText(text, delegateContext(), forceCursorRightOfText, forceCursorLeftOfText, linearMode());
     reload(previousLayoutSize);
     return true;
   }
@@ -384,7 +384,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
 }
 
 void LayoutField::insertLayoutAtCursor(Layout layout, bool forceCursorRightOfLayout, bool forceCursorLeftOfLayout) {
-  assert(!m_linearMode);
+  assert(!linearMode());
   if (layout.isUninitialized()) {
     return;
   }

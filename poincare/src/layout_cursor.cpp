@@ -354,8 +354,6 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       continue;
     }
 
-    Layout newChild;
-
     /* TODO: The insertion of subscripts should be replaced with a parser
      * that creates layout. This is a draft of this. */
 
@@ -367,7 +365,6 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
      * parent. */
     if (codePoint == UCodePointSystem) {
       if (linearMode) {
-        newChild = CodePointLayout::Builder(nextCodePoint);
         codePoint = nextCodePoint;
         nextCodePoint = decoder.nextCodePoint();
       } else {
@@ -399,6 +396,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     }
 
     // - Step 1.2 - Handle code points and brackets
+    Layout newChild;
     LayoutNode::Type bracketType;
     AutocompletedBracketPairLayoutNode::Side bracketSide;
     if (!linearMode && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairCodePoint(codePoint, &bracketType, &bracketSide)) {

@@ -115,7 +115,7 @@ LayoutCursor LayoutCursor::selectAtDirection(OMG::Direction direction, bool * sh
     result.selectLeftRight(direction.isRight(), shouldRecomputeLayout, selection);
   } else {
     assert(direction.isVertical());
-    result.selectUpDown(direction.isUp(), shouldRecomputeLayout, selection);
+    result.selectUpDown(direction, shouldRecomputeLayout, selection);
   }
   return result;
 }
@@ -544,10 +544,10 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
   m_position = outgoingPosition;
 }
 
-void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * selection) {
+void LayoutCursor::selectUpDown(OMG::VerticalDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
   // Move the cursor in the selection direction
   Layout p = m_layout.parent();
-  LayoutCursor c = cursorAtDirection(up ? OMG::Direction::Up() : OMG::Direction::Down(), shouldRecomputeLayout, true);
+  LayoutCursor c = cursorAtDirection(direction, shouldRecomputeLayout, true);
   if (!c.isDefined()) {
     return;
   }
@@ -596,7 +596,7 @@ void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * 
      * 415
      * --- -> If the 2 is selected and we select up, we select the whole
      * |2     fraction towards the left.  */
-    m_position = up ? Position::Left : Position::Right;
+    m_position = direction.isUp() ? Position::Left : Position::Right;
   }
   m_layout = *selection;
 }

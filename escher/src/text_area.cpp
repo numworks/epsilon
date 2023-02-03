@@ -393,32 +393,32 @@ size_t TextArea::Text::removeText(const char * start, const char * end) {
   return 0;
 }
 
-size_t TextArea::Text::removeRemainingLine(const char * location, int direction) {
+size_t TextArea::Text::removeRemainingLine(const char * location, OMG::HorizontalDirection direction) {
   assert(m_buffer != nullptr);
   assert(location >= m_buffer && location <= m_buffer + m_bufferSize);
-  assert(direction > 0 || location > m_buffer);
-  assert(direction < 0 || location < m_buffer + m_bufferSize);
+  assert(direction.isRight() || location > m_buffer);
+  assert(direction.isLeft() || location < m_buffer + m_bufferSize);
 
   UTF8Decoder decoder(m_buffer, location);
   const char * codePointPosition = decoder.stringPosition();
-  CodePoint nextCodePoint = direction > 0 ? decoder.nextCodePoint() : decoder.previousCodePoint();
-  if (direction < 0) {
+  CodePoint nextCodePoint = direction.isRight() ? decoder.nextCodePoint() : decoder.previousCodePoint();
+  if (direction.isLeft()) {
     codePointPosition = decoder.stringPosition();
   }
   while (nextCodePoint != '\n'
-      && ((direction > 0 && nextCodePoint != 0)
-        || (direction < 0 && codePointPosition > m_buffer)))
+      && ((direction.isRight() && nextCodePoint != 0)
+        || (direction.isLeft() && codePointPosition > m_buffer)))
   {
-    if (direction > 0) {
+    if (direction.isRight()) {
       codePointPosition = decoder.stringPosition();
     }
-    nextCodePoint = direction > 0 ? decoder.nextCodePoint() : decoder.previousCodePoint();
-    if (direction < 0) {
+    nextCodePoint = direction.isRight() ? decoder.nextCodePoint() : decoder.previousCodePoint();
+    if (direction.isLeft()) {
       codePointPosition = decoder.stringPosition();
     }
   }
 
-  return removeText(direction > 0 ? location : codePointPosition, direction > 0 ? codePointPosition : location);
+  return removeText(direction.isRight() ? location : codePointPosition, direction.isRight() ? codePointPosition : location);
 }
 
 /* TextArea::Text::Line */
@@ -586,7 +586,7 @@ bool TextArea::ContentView::removePreviousGlyph() {
 }
 
 bool TextArea::ContentView::removeEndOfLine() {
-  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), 1);
+  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), OMG::HorizontalDirection::Right());
   if (removedLine > 0) {
     layoutSubviews();
     reloadRectFromPosition(cursorLocation(), false);
@@ -600,7 +600,7 @@ bool TextArea::ContentView::removeStartOfLine() {
     assert(cursorLocation() == text());
     return false;
   }
-  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), -1);
+  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), OMG::HorizontalDirection::Left());
   if (removedLine > 0) {
     assert(cursorLocation() >= text() + removedLine);
     setCursorLocation(cursorLocation() - removedLine);

@@ -62,7 +62,7 @@ protected:
   Escher::StackViewController * stackController() const;
 
   virtual void initCursorParameters(bool ignoreMargins) = 0;
-  virtual bool moveCursorVertically(int direction) = 0;
+  virtual bool moveCursorVertically(OMG::VerticalDirection direction) = 0;
   bool isCursorVisibleAtPosition(Poincare::Coordinate2D<float> position, bool ignoreMargins = false, bool acceptNanOrInfiniteY = false);
   bool isCursorCurrentlyVisible(bool ignoreMargins = false, bool acceptNanOrInfiniteY = false) {
     return isCursorVisibleAtPosition(Poincare::Coordinate2D<float>(m_cursor->x(), m_cursor->y()), ignoreMargins, acceptNanOrInfiniteY);

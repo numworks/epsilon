@@ -33,7 +33,7 @@ public:
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
 
   // InteractiveCurveViewController
-  bool moveCursorVertically(int direction) override;
+  bool moveCursorVertically(OMG::VerticalDirection direction) override;
 
   // InteractiveCurveViewRangeDelegate
   Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange) const override;

@@ -232,18 +232,18 @@ Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(double t) 
   return Coordinate2D<double>(dotAbscissa(*m_selectedCurveIndex, *m_selectedDotIndex), dotOrdinate(*m_selectedCurveIndex, *m_selectedDotIndex));
 }
 
-bool GraphController::moveCursorVertically(int direction) {
+bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   Poincare::Context * context = globalContext();
   double x = m_cursor->x();
   double y = m_cursor->y();
 
   // Find the closest regression
   int selectedRegressionCurve = *m_selectedDotIndex == -1 ? *m_selectedCurveIndex : -1;
-  int closestRegressionCurve = closestCurveIndexVertically(direction > 0 ? OMG::VerticalDirection::Up() : OMG::VerticalDirection::Down(), selectedRegressionCurve, context);
+  int closestRegressionCurve = closestCurveIndexVertically(direction, selectedRegressionCurve, context);
 
   // Find the closest dot
   int closesDotSeries = -1;
-  int dotSelected = m_store->closestVerticalDot(direction > 0 ? OMG::VerticalDirection::Up() : OMG::VerticalDirection::Down(), x, y, selectedSeriesIndex(), *m_selectedDotIndex, &closesDotSeries, context);
+  int dotSelected = m_store->closestVerticalDot(direction, x, y, selectedSeriesIndex(), *m_selectedDotIndex, &closesDotSeries, context);
   int closesDotCurve = closesDotSeries == -1 ? -1 : curveIndexFromSeriesIndex(closesDotSeries);
 
   // Choose between selecting the regression or the dot

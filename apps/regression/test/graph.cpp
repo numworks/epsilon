@@ -92,7 +92,7 @@ void assert_navigation_is(
   for (int i = 0; i < numberOfEvents; i++) {
     NavigationEvent event = events[i];
     if (event.direction.isVertical()) {
-      graphController.moveCursorVertically(event.direction.isUp() ? 1 : -1);
+      graphController.moveCursorVertically(event.direction);
     } else {
       assert(event.direction.isHorizontal());
       graphController.moveCursorHorizontally(event.direction.isRight() ? 1 : -1);

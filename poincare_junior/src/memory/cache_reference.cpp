@@ -53,7 +53,7 @@ CacheReference::CacheReference(InitializerFromTree initializer, const void * tre
   // Do something
 }
 
-CacheReference::CacheReference(InitializerFromTree initializer, const CacheReference * tree) :
+CacheReference::CacheReference(InitializerFromTree initializer, const CacheReference * treeReference) :
   CacheReference(
     [](void * initializer, const void * data) {
       const CacheReference * treeReference = static_cast<const CacheReference *>(data);
@@ -65,9 +65,9 @@ CacheReference::CacheReference(InitializerFromTree initializer, const CacheRefer
           initializer);
     },
     reinterpret_cast<void *>(initializer),
-    tree
+    treeReference
 #if ASSERTIONS
- , tree->treeSize()
+ , sizeof(CacheReference)
 #endif
   )
 {}

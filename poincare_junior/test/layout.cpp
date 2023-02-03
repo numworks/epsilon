@@ -14,6 +14,14 @@ void assert_equal(const Layout l1, const Layout l2) {
   assert(Node(t1).isIdenticalTo(Node(t2)));
 }
 
+void testLayoutCacheSharedPointer() {
+  Expression e = Expression::CreateExpressionFromText("-1+2*3");
+  Layout l = Layout::CreateLayoutFromExpression(&e);
+  // This test should fail if this line is uncommented
+  // e = Expression::CreateExpressionFromText("2*3");
+  l.id();
+}
+
 void testLayoutCreation() {
   Layout l1 = Layout::CreateLayoutFromText("-1+2*3");
   Expression e1 = Expression::CreateExpressionFromText("-1+2*3");
@@ -27,3 +35,4 @@ void testLayoutConstructors() {
 
 QUIZ_CASE(pcj_layout_creation) { testLayoutCreation(); }
 QUIZ_CASE(pcj_layout_constructor) { testLayoutConstructors(); }
+QUIZ_CASE(pcj_layout_shared_pointer) { testLayoutCacheSharedPointer(); }

@@ -24,7 +24,7 @@ int BinomialCoefficientLayoutNode::indexOfNextChildToPointToAfterVerticalCursorM
   if (currentIndex == k_nLayoutIndex && direction == OMG::VerticalDirection::Down) {
     return k_kLayoutIndex;
   }
-  return k_outsideIndex;
+  return k_cantMoveIndex;
 }
 
 /*

@@ -98,6 +98,7 @@ public:
 
   // Tree navigation
   constexpr static int k_outsideIndex = -1;
+  constexpr static int k_cantMoveIndex = -2;
   // Default implementation only handles cases of 0 or 1 child
   virtual int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const;
   enum class PositionInLayout : uint8_t {

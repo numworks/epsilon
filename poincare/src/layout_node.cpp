@@ -106,13 +106,13 @@ int LayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::Horizont
     return currentIndex == k_outsideIndex ? 0 : k_outsideIndex;
   }
   assert(false);
-  return -2;
+  return k_cantMoveIndex;
 }
 
 int LayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
   assert(currentIndex < numberOfChildren());
   assert(currentIndex != k_outsideIndex || positionAtCurrentIndex != PositionInLayout::Middle);
-  return k_outsideIndex;
+  return k_cantMoveIndex;
 }
 
 /*

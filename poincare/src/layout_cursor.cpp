@@ -338,6 +338,27 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction, bool * shouldR
   return moved;
 }
 
+static void ScoreCursorInDescendants(KDPoint p, Layout l, KDFont::Size font, LayoutCursor * result) {
+  KDCoordinate currentDistance = p.squareDistanceTo(result->middleLeftPoint(font));
+  // Put a cursor left and right of l
+  for (int i = 0; i < 2; i++) {
+    LayoutCursor tempCursor = LayoutCursor(l, i == 0);
+    if (currentDistance > p.squareDistanceTo(tempCursor.middleLeftPoint(font))) {
+      *result = tempCursor;
+    }
+  }
+  int nChildren = l.numberOfChildren();
+  for (int i = 0; i < nChildren; i++) {
+    ScoreCursorInDescendants(p, l.childAtIndex(i), font, result);
+  }
+}
+
+static LayoutCursor ClosestCursorInDescendantsOfLayout(LayoutCursor currentCursor, Layout l, KDFont::Size font) {
+  LayoutCursor result = LayoutCursor(l, true);
+  ScoreCursorInDescendants(currentCursor.middleLeftPoint(font), l, font, &result);
+  return result;
+}
+
 bool LayoutCursor::verticalMoveWithoutSelection(OMG::VerticalDirection direction, bool * shouldRedrawLayout) {
   /* Step 1:
    * Try to enter right or left layout if it can be entered through up/down
@@ -376,9 +397,10 @@ bool LayoutCursor::verticalMoveWithoutSelection(OMG::VerticalDirection direction
         setLayout(p, currentPosition == LayoutNode::PositionInLayout::Left);
       } else {
         assert(!p.isHorizontal());
-        m_layout = p.childAtIndex(nextIndex);
-        // TODO: Replace with score in descendant
-        m_position = leftMostPosition();
+        // We assume the new cursor is the same whatever the font
+        LayoutCursor newCursor = ClosestCursorInDescendantsOfLayout(*this, p.childAtIndex(nextIndex), KDFont::Size::Large);
+        m_layout = newCursor.layout();
+        m_position = newCursor.position();
       }
       return true;
     }

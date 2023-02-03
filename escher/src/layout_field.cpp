@@ -539,30 +539,6 @@ void LayoutField::deleteSelection() {
   m_contentView.deleteSelection();
 }
 
-#define static_assert_immediately_follows(a, b) static_assert( \
-  static_cast<uint8_t>(a) + 1 == static_cast<uint8_t>(b), \
-  "Ordering error" \
-)
-
-#define static_assert_sequential(a, b, c, d) \
-  static_assert_immediately_follows(a, b); \
-  static_assert_immediately_follows(b, c); \
-  static_assert_immediately_follows(c, d);
-
-
-static_assert_sequential(
-  Ion::Events::Left,
-  Ion::Events::Up,
-  Ion::Events::Down,
-  Ion::Events::Right
-);
-
-static inline bool IsMoveEvent(Ion::Events::Event event) {
-  return
-    static_cast<uint8_t>(event) >= static_cast<uint8_t>(Ion::Events::Left) &&
-    static_cast<uint8_t>(event) <= static_cast<uint8_t>(Ion::Events::Right);
-}
-
 bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
@@ -587,7 +563,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   /* if move event was not caught neither by privateHandleMoveEvent nor by
    * layoutFieldShouldFinishEditing, we handle it here to avoid bubbling the
    * event up. */
-  if (IsMoveEvent(event) && isEditing()) {
+  if (event.isMoveEvent() && isEditing()) {
     return true;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
@@ -644,7 +620,7 @@ bool LayoutField::handleStoreEvent() {
 }
 
 static inline OMG::Direction DirectionForMoveEvent(Ion::Events::Event event) {
-  assert(IsMoveEvent(event));
+  assert(event.isMoveEvent());
   if (event == Ion::Events::Left) {
     return OMG::Direction::Left();
   }
@@ -660,7 +636,7 @@ static inline OMG::Direction DirectionForMoveEvent(Ion::Events::Event event) {
 }
 
 bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
-  if (!IsMoveEvent(event)) {
+  if (!event.isMoveEvent()) {
     return false;
   }
   if (resetSelection()) {
@@ -680,21 +656,8 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
   return false;
 }
 
-static_assert_sequential(
-  Ion::Events::ShiftLeft,
-  Ion::Events::ShiftUp,
-  Ion::Events::ShiftDown,
-  Ion::Events::ShiftRight
-);
-
-static inline bool IsSelectionEvent(Ion::Events::Event event) {
-  return
-    static_cast<uint8_t>(event) >= static_cast<uint8_t>(Ion::Events::ShiftLeft) &&
-    static_cast<uint8_t>(event) <= static_cast<uint8_t>(Ion::Events::ShiftRight);
-}
-
 static inline OMG::Direction DirectionForSelectionEvent(Ion::Events::Event event) {
-  assert(IsSelectionEvent(event));
+  assert(event.isSelectionEvent());
   if (event == Ion::Events::ShiftLeft) {
     return OMG::Direction::Left();
   }
@@ -710,7 +673,7 @@ static inline OMG::Direction DirectionForSelectionEvent(Ion::Events::Event event
 }
 
 bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
-  if (!IsSelectionEvent(event)) {
+  if (!event.isSelectionEvent()) {
     return false;
   }
   int step = Ion::Events::longPressFactor();

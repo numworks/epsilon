@@ -138,7 +138,7 @@ Event State::privateSharedGetEvent(int * timeout) {
 
     int maximumDelay = *timeout;
     int delayForRepeat = INT_MAX;
-    bool isRepeatableEvent = canRepeatEvent(m_lastEvent)
+    bool isRepeatableEvent = m_lastEvent.isRepeatable()
                           && m_lastKeyboardState == m_currentKeyboardState
                           && m_lastEventShift == (m_currentKeyboardState.keyDown(Keyboard::Key::Shift) || (m_lastEventShift && lock))
                           && m_lastEventAlpha == (m_currentKeyboardState.keyDown(Keyboard::Key::Alpha) || lock);

@@ -329,7 +329,7 @@ void LayoutCursor::addFractionLayoutAndCollapseSiblings(Context * context) {
     context);
 }
 
-void LayoutCursor::insertText(const char * text, Context * context, bool forceCursorRightOfText, bool forceCursorLeftOfText) {
+void LayoutCursor::insertText(const char * text, Context * context, bool forceCursorRightOfText, bool forceCursorLeftOfText, bool linearMode) {
   UTF8Decoder decoder(text);
 
   CodePoint codePoint = decoder.nextCodePoint();
@@ -354,6 +354,8 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       continue;
     }
 
+    Layout newChild;
+
     /* TODO: The insertion of subscripts should be replaced with a parser
      * that creates layout. This is a draft of this. */
 
@@ -364,38 +366,42 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
      * encountered, leave the subscript and continue the insertion in its
      * parent. */
     if (codePoint == UCodePointSystem) {
-      if (nextCodePoint == '{') {
-        // Enter a subscript
-        Layout newChild = VerticalOffsetLayout::Builder(HorizontalLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
-        currentSubscriptDepth++;
-        nextCodePoint = decoder.nextCodePoint();
-        Layout horizontalChildOfSubscript = newChild.childAtIndex(0);
-        assert(horizontalChildOfSubscript.isEmpty());
-        currentLayout = static_cast<HorizontalLayout&>(horizontalChildOfSubscript);
+      if (linearMode) {
+        newChild = CodePointLayout::Builder(nextCodePoint);
         codePoint = nextCodePoint;
+        nextCodePoint = decoder.nextCodePoint();
+      } else {
+        if (nextCodePoint == '{') {
+          // Enter a subscript
+          Layout newChild = VerticalOffsetLayout::Builder(HorizontalLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
+          currentSubscriptDepth++;
+          Layout horizontalChildOfSubscript = newChild.childAtIndex(0);
+          assert(horizontalChildOfSubscript.isEmpty());
+          currentLayout = static_cast<HorizontalLayout&>(horizontalChildOfSubscript);
+          codePoint = decoder.nextCodePoint();;
+          continue;
+        }
+        // UCodePointSystem should be inserted only for system braces
+        assert(nextCodePoint == '}' && currentSubscriptDepth > 0);
+        // Leave the subscript
+        currentSubscriptDepth--;
+        Layout subscript = currentLayout;
+        while (subscript.type() != LayoutNode::Type::VerticalOffsetLayout) {
+          subscript = subscript.parent();
+          assert(!subscript.isUninitialized());
+        }
+        Layout parentOfSubscript = subscript.parent();
+        assert(!parentOfSubscript.isUninitialized() && parentOfSubscript.isHorizontal());
+        currentLayout = static_cast<HorizontalLayout&>(parentOfSubscript);
+        codePoint = decoder.nextCodePoint();
         continue;
       }
-      // UCodePointSystem should be inserted only for system braces
-      assert(nextCodePoint == '}' && currentSubscriptDepth > 0);
-      // Leave the subscript
-      currentSubscriptDepth--;
-      Layout subscript = currentLayout;
-      while (subscript.type() != LayoutNode::Type::VerticalOffsetLayout) {
-        subscript = subscript.parent();
-        assert(!subscript.isUninitialized());
-      }
-      Layout parentOfSubscript = subscript.parent();
-      assert(!parentOfSubscript.isUninitialized() && parentOfSubscript.isHorizontal());
-      currentLayout = static_cast<HorizontalLayout&>(parentOfSubscript);
-      codePoint = decoder.nextCodePoint();
-      continue;
     }
 
     // - Step 1.2 - Handle code points and brackets
-    Layout newChild;
     LayoutNode::Type bracketType;
     AutocompletedBracketPairLayoutNode::Side bracketSide;
-    if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairCodePoint(codePoint, &bracketType, &bracketSide)) {
+    if (!linearMode && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairCodePoint(codePoint, &bracketType, &bracketSide)) {
       // Brackets will be balanced later in insertLayoutAtCursor
       newChild = AutocompletedBracketPairLayoutNode::BuildFromBracketType(bracketType);
       static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->setTemporary(AutocompletedBracketPairLayoutNode::OtherSide(bracketSide), true);

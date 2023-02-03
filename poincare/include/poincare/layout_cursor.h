@@ -87,7 +87,7 @@ public:
   void addEmptySquarePowerLayout(Context * context);
   void addEmptyTenPowerLayout(Context * context);
   void addFractionLayoutAndCollapseSiblings(Context * context);
-  void insertText(const char * text, Context * context, bool forceCursorRightOfText = false, bool forceCursorLeftOfText = false);
+  void insertText(const char * text, Context * context, bool forceCursorRightOfText = false, bool forceCursorLeftOfText = false, bool linearMode = false);
 
   /* Layout deletion */
   void performBackspace();

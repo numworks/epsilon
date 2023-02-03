@@ -5,8 +5,8 @@
 
 namespace Escher {
 
-ExpressionInputBar::ExpressionInputBar(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
-  ExpressionField(parentResponder, inputEventHandler, textFieldDelegate, layoutFieldDelegate, KDContext::k_alignLeft, KDContext::k_alignCenter)
+ExpressionInputBar::ExpressionInputBar(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, LayoutFieldDelegate * layoutFieldDelegate) :
+  ExpressionField(parentResponder, inputEventHandler, layoutFieldDelegate, KDContext::k_alignLeft, KDContext::k_alignCenter)
 {
   setMargins(k_verticalMargin, k_horizontalMargin, k_verticalMargin, k_horizontalMargin);
 }

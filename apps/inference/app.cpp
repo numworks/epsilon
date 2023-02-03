@@ -80,7 +80,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
         this
       ),
     m_stackViewController(&m_modalViewController, &m_menuController, StackViewController::Style::GrayGradation),
-    m_inputViewController(&m_modalViewController, &m_stackViewController, &m_inputSlopeController, &m_inputSlopeController, &m_inputSlopeController),
+    m_inputViewController(&m_modalViewController, &m_stackViewController, &m_inputSlopeController, &m_inputSlopeController),
     m_bufferDestructor(nullptr)
 {
 }

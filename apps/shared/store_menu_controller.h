@@ -40,11 +40,6 @@ public:
   bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
 
-  // TextFieldDelegate
-  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
-
 private:
   class InnerListController : public ViewController {
   public:

@@ -48,7 +48,7 @@ public:
 private:
   class ContentView : public Escher::View {
   public:
-    ContentView(Escher::Responder * parentResponder, CalculationSelectableTableView * subview, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+    ContentView(Escher::Responder * parentResponder, CalculationSelectableTableView * subview, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * layoutFieldDelegate);
     void reload();
     CalculationSelectableTableView * mainView() { return m_mainView; }
     Escher::ExpressionInputBar * expressionField() { return &m_expressionInputBar; }

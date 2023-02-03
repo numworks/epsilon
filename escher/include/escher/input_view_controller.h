@@ -12,9 +12,9 @@
 
 namespace Escher {
 
-class InputViewController : public ModalViewController, public InputEventHandlerDelegate, TextFieldDelegate, LayoutFieldDelegate {
+class InputViewController : public ModalViewController, public InputEventHandlerDelegate, LayoutFieldDelegate {
 public:
-  InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+  InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * layoutFieldDelegate);
   const char * textBody() {
     return m_expressionInputBarController.expressionField()->text();
   }
@@ -24,12 +24,6 @@ public:
   void edit(Ion::Events::Event event, void * context, Invocation::Action successAction, Invocation::Action failureAction);
   bool isEditing();
   void abortEditionAndDismiss();
-
-  /* TextFieldDelegate */
-  bool textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) override;
-  bool textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(AbstractTextField * textField) override;
 
   /* LayoutFieldDelegate */
   bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;
@@ -44,7 +38,7 @@ public:
 private:
   class ExpressionInputBarController : public ViewController {
   public:
-    ExpressionInputBarController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+    ExpressionInputBarController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * layoutFieldDelegate);
     ExpressionInputBarController(const ExpressionInputBarController& other) = delete;
     ExpressionInputBarController(ExpressionInputBarController&& other) = delete;
     ExpressionInputBarController& operator=(const ExpressionInputBarController& other) = delete;
@@ -61,7 +55,6 @@ private:
   Invocation m_successAction;
   Invocation m_failureAction;
   InputEventHandlerDelegate * m_inputEventHandlerDelegate;
-  TextFieldDelegate * m_textFieldDelegate;
   LayoutFieldDelegate * m_layoutFieldDelegate;
 };
 

@@ -5,9 +5,9 @@
 
 namespace Escher {
 
-InputViewController::ExpressionInputBarController::ExpressionInputBarController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
+InputViewController::ExpressionInputBarController::ExpressionInputBarController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ViewController(parentResponder),
-  m_expressionInputBar(this, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
+  m_expressionInputBar(this, inputEventHandlerDelegate, layoutFieldDelegate)
 {
 }
 
@@ -15,13 +15,12 @@ void InputViewController::ExpressionInputBarController::didBecomeFirstResponder(
   Container::activeApp()->setFirstResponder(&m_expressionInputBar);
 }
 
-InputViewController::InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
+InputViewController::InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ModalViewController(parentResponder, child),
-  m_expressionInputBarController(this, this, this, this),
+  m_expressionInputBarController(this, this, this),
   m_successAction(Invocation(nullptr, nullptr)),
   m_failureAction(Invocation(nullptr, nullptr)),
   m_inputEventHandlerDelegate(inputEventHandlerDelegate),
-  m_textFieldDelegate(textFieldDelegate),
   m_layoutFieldDelegate(layoutFieldDelegate)
 {
 }
@@ -40,28 +39,6 @@ bool InputViewController::isEditing() {
 void InputViewController::abortEditionAndDismiss() {
   m_expressionInputBarController.expressionField()->setEditing(false);
   dismissModal();
-}
-
-bool InputViewController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
-}
-
-bool InputViewController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  if (inputViewDidFinishEditing()) {
-    m_textFieldDelegate->textFieldDidFinishEditing(textField, text, event);
-    return true;
-  }
-  return false;
-}
-
-bool InputViewController::textFieldDidAbortEditing(AbstractTextField * textField) {
-  inputViewDidAbortEditing();
-  m_textFieldDelegate->textFieldDidAbortEditing(textField);
-  return true;
-}
-
-bool InputViewController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
-  return m_textFieldDelegate->textFieldDidReceiveEvent(textField, event);
 }
 
 bool InputViewController::layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) {

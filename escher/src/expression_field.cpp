@@ -9,7 +9,6 @@ namespace Escher {
 
 ExpressionField::ExpressionField(Responder * parentResponder,
                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                 TextFieldDelegate * textFieldDelegate,
                                  LayoutFieldDelegate * layoutFieldDelegate,
                                  float horizontalAlignment,
                                  float verticalAlignment) :
@@ -19,16 +18,13 @@ ExpressionField::ExpressionField(Responder * parentResponder,
                 k_textFieldBufferSize,
                 k_textFieldBufferSize,
                 inputEventHandlerDelegate,
-                textFieldDelegate,
+                nullptr,
                 KDFont::Size::Large,
                 horizontalAlignment,
                 verticalAlignment,
                 KDColorBlack,
                 KDColorWhite),
     m_inputViewMemoizedHeight(0) {
-  // Initialize text field
-  m_textField.setBackgroundColor(KDColorWhite);
-  // Initialize layout field
   setBackgroundColor(KDColorWhite);
 }
 

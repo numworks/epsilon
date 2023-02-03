@@ -10,10 +10,10 @@ using namespace Escher;
 
 namespace Calculation {
 
-EditExpressionController::ContentView::ContentView(Responder * parentResponder, CalculationSelectableTableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
+EditExpressionController::ContentView::ContentView(Responder * parentResponder, CalculationSelectableTableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_expressionInputBar(parentResponder, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
+  m_expressionInputBar(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate)
 {}
 
 View * EditExpressionController::ContentView::subviewAtIndex(int index) {
@@ -42,7 +42,7 @@ EditExpressionController::EditExpressionController(Responder * parentResponder, 
   ViewController(parentResponder),
   m_historyController(historyController),
   m_calculationStore(calculationStore),
-  m_contentView(this, static_cast<CalculationSelectableTableView *>(m_historyController->view()), inputEventHandlerDelegate, this, this)
+  m_contentView(this, static_cast<CalculationSelectableTableView *>(m_historyController->view()), inputEventHandlerDelegate, this)
 {
   clearWorkingBuffer();
 }

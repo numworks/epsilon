@@ -112,7 +112,7 @@ LayoutCursor LayoutCursor::cursorAtDirection(OMG::Direction direction, bool * sh
 LayoutCursor LayoutCursor::selectAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, Layout * selection) {
   LayoutCursor result = *this;
   if (direction.isHorizontal()) {
-    result.selectLeftRight(direction.isRight(), shouldRecomputeLayout, selection);
+    result.selectLeftRight(direction, shouldRecomputeLayout, selection);
   } else {
     assert(direction.isVertical());
     result.selectUpDown(direction, shouldRecomputeLayout, selection);
@@ -484,12 +484,12 @@ bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
   return true;
 }
 
-void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Layout * selection) {
+void LayoutCursor::selectLeftRight(OMG::HorizontalDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
   assert(!m_layout.isUninitialized());
 
   // Compute ingoing / outgoing positions
-  Position ingoingPosition = right ? Position::Left : Position::Right;
-  Position outgoingPosition = right ? Position::Right : Position::Left;
+  Position ingoingPosition = direction.isRight() ? Position::Left : Position::Right;
+  Position outgoingPosition = direction.isRight() ? Position::Right : Position::Left;
 
   // Handle empty layouts
   bool currentLayoutIsEmpty = m_layout.type() == LayoutNode::Type::EmptyLayout;
@@ -524,7 +524,7 @@ void LayoutCursor::selectLeftRight(bool right, bool * shouldRecomputeLayout, Lay
       assert(equivalentLayout.type() != LayoutNode::Type::HorizontalLayout);
       m_layout = equivalentLayout;
       m_position = ingoingPosition;
-      selectLeftRight(right, shouldRecomputeLayout, selection);
+      selectLeftRight(direction, shouldRecomputeLayout, selection);
       return;
     } else {
       // Else, find the first non horizontal ancestor and select it.

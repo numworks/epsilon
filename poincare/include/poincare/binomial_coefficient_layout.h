@@ -15,6 +15,8 @@ public:
   // Layout
   Type type() const override { return Type::BinomialCoefficientLayout; }
 
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
+
   // SerializableNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
@@ -35,8 +37,11 @@ protected:
 private:
   KDCoordinate knHeight(KDFont::Size font) { return nLayout()->layoutSize(font).height() + /*TODO: GridLayoutNode::k_gridEntryMargin*/6 + kLayout()->layoutSize(font).height(); }
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
-  LayoutNode * nLayout() { return childAtIndex(0); }
-  LayoutNode * kLayout() { return childAtIndex(1); }
+
+  constexpr static int k_nLayoutIndex = 0;
+  constexpr static int k_kLayoutIndex = 1;
+  LayoutNode * nLayout() { return childAtIndex(k_nLayoutIndex); }
+  LayoutNode * kLayout() { return childAtIndex(k_kLayoutIndex); }
 };
 
 class BinomialCoefficientLayout final : public LayoutTwoChildren<BinomialCoefficientLayout, BinomialCoefficientLayoutNode> {

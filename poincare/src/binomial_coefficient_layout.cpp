@@ -8,49 +8,16 @@
 
 namespace Poincare {
 
+int BinomialCoefficientLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
+  if (currentIndex == k_outsideIndex) {
+    /* When coming from the left, go to the n layout.
+     * When coming from the right, go to the k layout. */
+    return direction == OMG::HorizontalDirection::Right ? k_nLayoutIndex : k_kLayoutIndex;
+  }
+  return k_outsideIndex;
+}
+
 /*
-void BinomialCoefficientLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->position() == LayoutCursor::Position::Left
-      && (cursor->layoutNode() == nLayout()
-        || cursor->layoutNode() == kLayout()))
-  {
-    // Case: Left of the children. Go Left.
-    cursor->setLayoutNode(this);
-    return;
-  }
-
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    // Case: Right. Go to the kLayout.
-    cursor->setLayoutNode(kLayout());
-    return;
-  }
-  // Case: Left. Ask the parent.
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
-}
-
-void BinomialCoefficientLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->position() == LayoutCursor::Position::Right
-      && (cursor->layoutNode() == nLayout()
-        || cursor->layoutNode() == kLayout()))
-  {
-    // Case: Right of the children. Go Right.
-    cursor->setLayoutNode(this);
-    return;
-  }
-
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    // Case: Left. Go Left of the nLayout.
-    cursor->setLayoutNode(nLayout());
-    return;
-  }
-  // Case: Right. Ask the parent.
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
-}
-
 void BinomialCoefficientLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (cursor->layoutNode()->hasAncestor(kLayout(), true)) {
     // Case: kLayout. Move to nLayout.

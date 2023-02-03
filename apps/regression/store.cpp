@@ -90,7 +90,7 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
   return nextDot;
 }
 
-int Store::nextDot(int series, int direction, int dot, bool displayMean) {
+int Store::nextDot(int series, OMG::HorizontalDirection direction, int dot, bool displayMean) {
   double nextX = INFINITY;
   int nextDot = -1;
   double meanX = meanOfColumn(series, 0);
@@ -100,7 +100,7 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
   }
   /* We have to scan the Store in opposite ways for the 2 directions to ensure to
    * select all dots (even with equal abscissa) */
-  if (direction > 0) {
+  if (direction.isRight()) {
     for (int index = 0; index < numberOfPairsOfSeries(series); index++) {
       double data = get(series, 0, index);
       /* The conditions to test are in this order:
@@ -126,6 +126,7 @@ int Store::nextDot(int series, int direction, int dot, bool displayMean) {
       }
     }
   } else {
+    assert(direction.isLeft());
     // Compare with the mean dot
     if (displayMean && std::fabs(meanX - x) < std::fabs(nextX - x) &&
         (numberOfPairsOfSeries(series) != dot) &&

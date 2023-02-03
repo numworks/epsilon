@@ -3,6 +3,7 @@
 
 #include <utility>
 #include "type_block.h"
+#include <string.h>
 
 #if POINCARE_MEMORY_TREE_LOG
 #include <iostream>

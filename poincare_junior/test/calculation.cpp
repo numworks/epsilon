@@ -51,5 +51,7 @@ Expression expressionViolatingLifetimeOfData() {
 
 void testRunTimeCrashIllFormedExpression() {
   Expression e = expressionViolatingLifetimeOfData();
+#if POINCARE_MEMORY_TREE_LOG
   e.log();
+#endif
 }

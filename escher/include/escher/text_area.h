@@ -85,7 +85,7 @@ protected:
 
     CodePoint removePreviousGlyph(char * * position);
     size_t removeText(const char * start, const char * end);
-    size_t removeRemainingLine(const char * position, int direction);
+    size_t removeRemainingLine(const char * position, OMG::HorizontalDirection direction);
     char operator[](size_t index) {
       assert(index < m_bufferSize);
       return m_buffer[index];

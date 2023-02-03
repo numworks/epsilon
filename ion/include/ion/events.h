@@ -267,15 +267,15 @@ constexpr Event Idle = Event::Special(7);
 
 inline bool canRepeatEvent(Event e) {
   return e == Events::Left
-    || e == Events::Up
-    || e == Events::Down
-    || e == Events::Right
-    || e == Events::Back
-    || e == Events::Backspace
-    || e == Events::ShiftLeft
-    || e == Events::ShiftRight
-    || e == Events::ShiftUp
-    || e == Events::ShiftDown;
+      || e == Events::Up
+      || e == Events::Down
+      || e == Events::Right
+      || e == Events::Back
+      || e == Events::Backspace
+      || e == Events::ShiftLeft
+      || e == Events::ShiftRight
+      || e == Events::ShiftUp
+      || e == Events::ShiftDown;
 }
 
 inline bool Event::isKeyPress() const {

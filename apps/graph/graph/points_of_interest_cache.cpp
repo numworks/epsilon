@@ -154,11 +154,13 @@ bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
           cacheClone.computeBetween(std::clamp(m_computedStart - step(), m_start, m_end), m_computedStart);
         }
       } else {
+        tidy();
         return false;
       }
     } else {
       // TODO : Notify the user that the pool is full
       m_interestingPointsOverflowPool = true;
+      tidy();
       return false;
     }
   }
@@ -265,6 +267,15 @@ void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest 
 #endif
   ExpiringPointer<ContinuousFunction> f = App::app()->functionStore()->modelForRecord(m_record);
   m_list.append(x, y, data, interest, f->isAlongY(), subCurveIndex);
+}
+
+void PointsOfInterestCache::tidy() const {
+  ContinuousFunctionStore * store = App::app()->functionStore();
+  int n = store->numberOfActiveFunctions();
+  for (int i = 0; i < n; i++) {
+    store->modelForRecord(store->activeRecordAtIndex(i))->tidyDownstreamPoolFrom();
+  }
+  App::app()->localContext()->tidyDownstreamPoolFrom();
 }
 
 }

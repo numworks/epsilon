@@ -34,7 +34,10 @@ public:
   bool operator!=(const Event & other) const { return (m_id != other.m_id); }
   bool isKeyboardEvent() const { return m_id < k_specialEventsOffset; }
   bool isSpecialEvent() const { return m_id >= k_specialEventsOffset; }
+  bool isMoveEvent() const;
+  bool isSelectionEvent() const;
   bool isKeyPress() const;
+  bool isRepeatable() const;
 
   // Return the length of the copied text (and not the size)
   const char * text() const;
@@ -265,21 +268,30 @@ constexpr Event ExternalText = Event::Special(6);
 /* This event is fired one time after the getEvent did not find any event. */
 constexpr Event Idle = Event::Special(7);
 
-inline bool canRepeatEvent(Event e) {
-  return e == Events::Left
-      || e == Events::Up
-      || e == Events::Down
-      || e == Events::Right
-      || e == Events::Back
-      || e == Events::Backspace
-      || e == Events::ShiftLeft
-      || e == Events::ShiftRight
-      || e == Events::ShiftUp
-      || e == Events::ShiftDown;
+inline bool Event::isMoveEvent() const {
+  return *this == Left
+      || *this == Right
+      || *this == Up
+      || *this == Down;
+}
+
+inline bool Event::isSelectionEvent() const {
+  return *this == ShiftLeft
+      || *this == ShiftRight
+      || *this == ShiftUp
+      || *this == ShiftDown;
 }
 
 inline bool Event::isKeyPress() const {
-  return isKeyboardEvent() || *this == ExternalText;
+  return isKeyboardEvent()
+      || *this == ExternalText;
+}
+
+inline bool Event::isRepeatable() const {
+  return isMoveEvent()
+      || isSelectionEvent()
+      || *this == Events::Back
+      || *this == Events::Backspace;
 }
 
 }

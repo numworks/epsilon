@@ -84,7 +84,7 @@ SECTIONS {
     . = ALIGN(4);
     _bss_section_start_ram = .;
     *(.bss)
-    /* The # char is used on symbols that need to be to be linked at the end of
+    /* The $ char is used on symbols that need to be to be linked at the end of
      * the bss section */
     *(.bss.[^$]*)
     /* The compiler may choose to allocate uninitialized global variables as
@@ -96,7 +96,7 @@ SECTIONS {
     _bss_section_end_ram = .;
     *(.bss.*)
     _bss_section_assert_end_ram = .;
-    ASSERT (( _bss_section_end_ram == _bss_section_assert_end_ram), ".bss.$app_buffer section should be the last symbol of bss to be included in the external apps RAM range.");
+    ASSERT (( _bss_section_end_ram == _bss_section_assert_end_ram), ".bss.$poincare_pool section should be the last symbol of bss to be included in the external apps RAM range.");
   } >SRAM
 
   .heap : {

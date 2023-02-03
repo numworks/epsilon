@@ -54,6 +54,13 @@ help:
 	@echo "  make PLATFORM=simulator TARGET=macos"
 	@echo "  make PLATFORM=simulator TARGET=web"
 	@echo "  make PLATFORM=simulator TARGET=windows"
+	@echo ""
+	@echo "Format modified and untracked .h and .cpp files with clang-format"
+	@echo "  make format"
+	@echo "Format files modified since <ref>"
+	@echo "  make format BASE=<ref>"
+	@echo "Format fiven files"
+	@echo "  make format FILES='file1 file2'"
 
 # Since we're building out-of-tree, we need to make sure the output directories
 # are created, otherwise the receipes will fail (e.g. gcc will fail to create
@@ -122,6 +129,9 @@ default: $(firstword $(HANDY_TARGETS)).$(firstword $(HANDY_TARGETS_EXTENSIONS))
 
 # Load standard build rules
 include build/rules.mk
+
+# Load clang-format targets
+include build/format.mak
 
 .PHONY: clean
 clean:

@@ -6,10 +6,10 @@
 
 namespace Escher {
 
-EditableExpressionCell::EditableExpressionCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textDelegate, LayoutFieldDelegate * layoutDelegate) :
+EditableExpressionCell::EditableExpressionCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * layoutDelegate) :
   HighlightCell(),
   Responder(parentResponder),
-  m_expressionField(this, inputEventHandlerDelegate, textDelegate, layoutDelegate)
+  m_expressionField(this, inputEventHandlerDelegate, layoutDelegate)
 {
   m_expressionBody[0] = 0;
 }

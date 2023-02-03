@@ -37,7 +37,7 @@ StoreMenuController::StoreMenuController() :
   ModalViewController(this, &m_stackViewController),
   m_stackViewController(nullptr, &m_listController, StackViewController::Style::PurpleWhite, false),
   m_listController(this),
-  m_cell(this, nullptr, this, this),
+  m_cell(this, nullptr, this),
   m_abortController(
     Invocation::Builder<StoreMenuController>([](StoreMenuController * storeMenu, void * sender) {
       // Close the warning and then the store menu which are both modals
@@ -141,20 +141,11 @@ bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layo
   return parseAndStore(buffer);
 }
 
-bool StoreMenuController::textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  return parseAndStore(text);
-}
-
 bool StoreMenuController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {
   /* Since dismissing the controller will call layoutFieldDidChangeSize, we need
    * to set the flag to avoid reloadData from happening which would otherwise
    * setFirstResponder on the store menu while it is hidden. */
   m_preventReload = true;
-  close();
-  return true;
-}
-
-bool StoreMenuController::textFieldDidAbortEditing(Escher::AbstractTextField * textField) {
   close();
   return true;
 }
@@ -166,14 +157,6 @@ bool StoreMenuController::layoutFieldDidReceiveEvent(Escher::LayoutField * layou
   }
   // We short circuit the LayoutFieldDelegate to avoid calls to displayWarning
   return textFieldDelegateApp()->fieldDidReceiveEvent(layoutField, layoutField, event);
-}
-
-bool StoreMenuController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
-  if (event == Ion::Events::Sto) {
-    textField->handleEventWithText("→");
-    return true;
-  }
-  return textFieldDelegateApp()->fieldDidReceiveEvent(textField, textField, event);
 }
 
 }

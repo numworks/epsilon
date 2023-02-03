@@ -68,7 +68,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_storeStackViewController(&m_tabViewController, &m_storeHeader, Escher::StackViewController::Style::WhiteUniform),
   m_tabViewController(&m_inputViewController, snapshot, &m_storeStackViewController, &m_graphStackViewController, &m_calculationHeader),
   m_regressionController(nullptr, &m_store),
-  m_inputViewController(&m_modalViewController, &m_tabViewController, this, this, this)
+  m_inputViewController(&m_modalViewController, &m_tabViewController, this, this)
 {
 }
 

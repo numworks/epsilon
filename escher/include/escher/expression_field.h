@@ -12,7 +12,7 @@ namespace Escher {
 
 class ExpressionField : public LayoutField {
 public:
-  ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate, float horizontalAlignment = KDContext::k_alignLeft, float verticalAlignment = KDContext::k_alignCenter);
+  ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, LayoutFieldDelegate * layoutFieldDelegate, float horizontalAlignment = KDContext::k_alignLeft, float verticalAlignment = KDContext::k_alignCenter);
 
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   /* Warning: this function is VERY dangerous! Indeed: sometimes the

@@ -95,7 +95,7 @@ FunctionApp::FunctionApp(Snapshot * snapshot, Shared::FunctionListController * l
   m_valuesHeader(&m_valuesStackViewController, &m_valuesAlternateEmptyViewController, valuesController),
   m_valuesStackViewController(&m_tabViewController, &m_valuesHeader, Escher::StackViewController::Style::WhiteUniform),
   m_tabViewController(&m_inputViewController, snapshot, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
-  m_inputViewController(&m_modalViewController, &m_tabViewController, listController, listController, listController),
+  m_inputViewController(&m_modalViewController, &m_tabViewController, listController, listController),
   m_activeControllerBeforeStore(nullptr)
 {}
 

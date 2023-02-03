@@ -16,7 +16,6 @@ class EditableExpressionCell : public Bordered, public HighlightCell, public Res
 public:
   EditableExpressionCell(Responder * parentResponder = nullptr,
                          InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,
-                         TextFieldDelegate * textDelegate = nullptr,
                          LayoutFieldDelegate * layoutDelegate = nullptr);
   ExpressionField * expressionField() { return &m_expressionField; }
   void setHighlighted(bool highlight) override;

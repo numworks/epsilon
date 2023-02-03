@@ -8,7 +8,7 @@ namespace Escher {
 
 class ExpressionInputBar : public ExpressionField {
 public:
-  ExpressionInputBar(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+  ExpressionInputBar(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, LayoutFieldDelegate * layoutFieldDelegate);
 
   using ExpressionField::layoutSubviews;
   void drawRect(KDContext * ctx, KDRect rect) const override;

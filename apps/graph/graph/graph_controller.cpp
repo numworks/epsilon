@@ -251,31 +251,31 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
 }
 
-int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const {
+int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const {
   assert(nextSubCurveIndex != nullptr);
   int nbOfActiveFunctions = 0;
   if (!functionStore()->displaysNonCartesianFunctions(&nbOfActiveFunctions)) {
-    return FunctionGraphController::nextCurveIndexVertically(goingUp, currentSelectedCurve, context, currentSubCurveIndex, nextSubCurveIndex);
+    return FunctionGraphController::nextCurveIndexVertically(direction, currentSelectedCurve, context, currentSubCurveIndex, nextSubCurveIndex);
   }
   // Handle for sub curve in current function
-  if (!goingUp) {
+  if (!direction.isUp()) {
     ExpiringPointer<ContinuousFunction> currentF = functionStore()->modelForRecord(recordAtCurveIndex(currentSelectedCurve));
     if (currentF->numberOfSubCurves() > currentSubCurveIndex + 1) {
       // Switch to next sub curve
       *nextSubCurveIndex = currentSubCurveIndex + 1;
       return currentSelectedCurve;
     }
-  } else if (goingUp && currentSubCurveIndex > 0) {
+  } else if (direction.isUp() && currentSubCurveIndex > 0) {
     // Switch to previous sub curve
     *nextSubCurveIndex = currentSubCurveIndex - 1;
     return currentSelectedCurve;
   }
   // Go to the next function
-  int nextActiveFunctionIndex = currentSelectedCurve + (goingUp ? -1 : 1);
+  int nextActiveFunctionIndex = currentSelectedCurve + (direction.isUp() ? -1 : 1);
   if (nextActiveFunctionIndex >= nbOfActiveFunctions || nextActiveFunctionIndex < 0) {
     return -1;
   }
-  if (goingUp) {
+  if (direction.isUp()) {
     // Select last sub curve in next function when going up
     ExpiringPointer<ContinuousFunction> nextF = functionStore()->modelForRecord(recordAtCurveIndex(nextActiveFunctionIndex));
     *nextSubCurveIndex = nextF->numberOfSubCurves() - 1;

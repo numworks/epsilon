@@ -21,35 +21,32 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) {
   LayoutSelection currentSelection = selection();
   if (currentSelection.isEmpty()) {
     Layout baseLayout = layoutToFit(font);
-    return baseLayout.isUninitialized() ? m_layout.layoutSize(font).height() : baseLayout.layoutSize(font).height();
+    return layoutToFit(font).layoutSize(font).height();
   }
 
   if (m_layout.isHorizontal()) {
-    return static_cast<HorizontalLayoutNode *>(m_layout.node())->relativeSelectionRect(currentSelection.leftPosition(), currentSelection.rightPosition(), font).height();
+    return static_cast<HorizontalLayoutNode *>(m_layout.node())->layoutSizeBetweenIndexes(currentSelection.leftPosition(), currentSelection.rightPosition(), font).height();
   }
 
   return m_layout.layoutSize(font).height();
 }
 
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) {
-  KDCoordinate cursorYOriginInLayout = 0;
+  KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
-  if (!currentSelection.isEmpty()) {
-    //TODO
+  if (!currentSelection.isEmpty() && m_layout.isHorizontal()) {
+    cursorBaseline = static_cast<HorizontalLayout&>(m_layout).baselineBetweenIndexes(currentSelection.leftPosition(), currentSelection.rightPosition(), font);
   } else {
-    Layout baseLayout = layoutToFit(font);
-    cursorYOriginInLayout = baseLayout.isUninitialized() ? 0 : m_layout.baseline(font) - baseLayout.baseline(font);
+    cursorBaseline = layoutToFit(font).baseline(font);
   }
-  KDCoordinate cursorOffset = 0;
+  KDCoordinate cursorYOriginInLayout = m_layout.baseline(font) - cursorBaseline;
+  KDCoordinate cursorXOffset = 0;
   if (m_layout.isHorizontal()) {
-    cursorOffset = m_position > 0 ? static_cast<HorizontalLayout&>(m_layout).relativeSelectionRect(0, m_position, font).width() : 0;
+    cursorXOffset = static_cast<HorizontalLayout&>(m_layout).layoutSizeBetweenIndexes(0, m_position, font).width();
   } else {
-    cursorOffset = m_position == 1 ? m_layout.layoutSize(font).width() : 0;
+    cursorXOffset = m_position == 1 ? m_layout.layoutSize(font).width() : 0;
   }
-  return m_layout.absoluteOrigin(font).translatedBy(
-    KDPoint(
-      cursorOffset,
-      cursorYOriginInLayout));
+  return m_layout.absoluteOrigin(font).translatedBy(KDPoint(cursorXOffset, cursorYOriginInLayout));
 }
 
 /* Move */
@@ -242,6 +239,9 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
 
 Layout LayoutCursor::leftLayout() {
   assert(!isUninitialized());
+  if (!m_layout.isHorizontal()) {
+    return m_position == 1 ? m_layout : Layout();
+  }
   if (m_layout.numberOfChildren() == 0 || m_position == 0) {
     return Layout();
   }
@@ -250,6 +250,9 @@ Layout LayoutCursor::leftLayout() {
 
 Layout LayoutCursor::rightLayout() {
   assert(!isUninitialized());
+  if (!m_layout.isHorizontal()) {
+    return m_position == 0 ? m_layout : Layout();
+  }
   if (m_layout.numberOfChildren() == 0 || m_position == m_layout.numberOfChildren()) {
     return Layout();
   }
@@ -260,11 +263,10 @@ Layout LayoutCursor::layoutToFit(KDFont::Size font) {
   assert(!isUninitialized());
   Layout leftL = leftLayout();
   Layout rightL = rightLayout();
-  return leftL.isUninitialized() ||
-         (!rightL.isUninitialized() &&
-          leftL.layoutSize(font).height() < rightL.layoutSize(font).height())
-         ? rightL
-         : leftL;
+  if (leftL.isUninitialized() && rightL.isUninitialized()) {
+    return m_layout;
+  }
+  return leftL.isUninitialized() || (!rightL.isUninitialized() && leftL.layoutSize(font).height() < rightL.layoutSize(font).height()) ? rightL : leftL;
 }
 
 bool LayoutCursor::privateHorizontalMove(OMG::HorizontalDirection direction, bool * shouldRedrawLayout) {

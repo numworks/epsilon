@@ -44,11 +44,11 @@ public:
     char * c = reinterpret_cast<char *>(n);
     return
       !isEmpty() &&
-      ((m_layout.isHorizontal() &&
-        c >= reinterpret_cast<char *>(m_layout.childAtIndex(leftPosition()).node()) &&
-        c <= reinterpret_cast<char *>(m_layout.childAtIndex(rightPosition() - 1).node())) ||
-       (c >= reinterpret_cast<char *>(m_layout.node()) &&
-        c < reinterpret_cast<char *>(m_layout.node()->nextSibling())));
+      (m_layout.isHorizontal() ?
+        (c >= reinterpret_cast<char *>(m_layout.childAtIndex(leftPosition()).node()) &&
+         c <= reinterpret_cast<char *>(m_layout.childAtIndex(rightPosition() - 1).node())) :
+        (c >= reinterpret_cast<char *>(m_layout.node()) &&
+         c < reinterpret_cast<char *>(m_layout.node()->nextSibling())));
   }
 
 private:

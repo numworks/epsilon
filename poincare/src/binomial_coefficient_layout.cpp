@@ -17,23 +17,17 @@ int BinomialCoefficientLayoutNode::indexOfNextChildToPointToAfterHorizontalCurso
   return k_outsideIndex;
 }
 
+int BinomialCoefficientLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+  if (currentIndex == k_kLayoutIndex && direction == OMG::VerticalDirection::Up) {
+    return k_nLayoutIndex;
+  }
+  if (currentIndex == k_nLayoutIndex && direction == OMG::VerticalDirection::Down) {
+    return k_kLayoutIndex;
+  }
+  return k_outsideIndex;
+}
+
 /*
-void BinomialCoefficientLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode()->hasAncestor(kLayout(), true)) {
-    // Case: kLayout. Move to nLayout.
-    return nLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
-  }
-  LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void BinomialCoefficientLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode()->hasAncestor(nLayout(), true)) {
-    // Case: nLayout. Move to kLayout.
-    return kLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
-  }
-  LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
 void BinomialCoefficientLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (cursor->position() == LayoutCursor::Position::Left) {
     if (cursor->layoutNode() == kLayout()) {

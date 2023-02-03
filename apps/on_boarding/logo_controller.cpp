@@ -16,8 +16,7 @@ LogoController::LogoController() :
 }
 
 bool LogoController::fire() {
-  Container::activeApp()->dismissModalViewController();
-  AppsContainer::sharedAppsContainer()->removeTimer(this);
+    Container::activeApp()->dismissModalViewController();
   return true;
 }
 
@@ -53,6 +52,7 @@ void LogoController::viewDidDisappear() {
       AppsContainer::sharedAppsContainer()->activateExamMode(GlobalPreferences::sharedGlobalPreferences()->examMode());
     }
   }
+  AppsContainer::sharedAppsContainer()->removeTimer(this);
   ViewController::viewDidDisappear();
 }
 

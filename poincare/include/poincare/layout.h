@@ -91,6 +91,7 @@ public:
 
   // Cursor move
   int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const { return node()->indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex); }
+  int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, LayoutNode::PositionInLayout positionAtCurrentIndex) const { return node()->indexOfNextChildToPointToAfterVerticalCursorMove(direction, currentIndex, positionAtCurrentIndex); }
 
 private:
   bool privateHasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;

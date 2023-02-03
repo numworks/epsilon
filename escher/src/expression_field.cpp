@@ -114,7 +114,7 @@ KDSize ExpressionField::minimalSizeForOptimalDisplay() const {
 }
 
 bool ExpressionField::editionIsInTextField() const {
-  return Preferences::sharedPreferences->editionMode() == Preferences::EditionMode::Edition1D;
+  return false;
 }
 
 bool ExpressionField::isEmpty() const {

@@ -9,6 +9,7 @@
 #include <escher/text_field.h>
 #include <kandinsky/point.h>
 #include <poincare/layout_cursor.h>
+#include <poincare/preferences.h>
 
 // See TODO in EditableField
 
@@ -21,8 +22,7 @@ public:
     WithBlinkingTextCursor<ScrollableView>(parentResponder, &m_contentView, this),
     EditableField(inputEventHandlerDelegate),
     m_contentView(font),
-    m_delegate(delegate),
-    m_linearMode(false)
+    m_delegate(delegate)
   {}
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   Poincare::Context * context() const;
@@ -68,6 +68,7 @@ private:
   void insertLayoutAtCursor(Poincare::Layout layoutR, bool forceCursorRightOfLayout = false, bool forceCursorLeftOfLayout = false);
   Poincare::Context * delegateContext() { return m_delegate ? m_delegate->context() : nullptr; }
   TextCursorView * textCursorView() override { return m_contentView.textCursorView(); }
+  bool linearMode() const { return Poincare::Preferences::sharedPreferences->editionMode() == Poincare::Preferences::EditionMode::Edition1D; }
 
   class ContentView : public View {
   public:
@@ -102,7 +103,6 @@ private:
   };
   ContentView m_contentView;
   LayoutFieldDelegate * m_delegate;
-  bool m_linearMode;
 };
 
 }

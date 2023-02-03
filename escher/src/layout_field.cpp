@@ -619,22 +619,6 @@ bool LayoutField::handleStoreEvent() {
   return true;
 }
 
-static inline OMG::Direction DirectionForMoveEvent(Ion::Events::Event event) {
-  assert(event.isMoveEvent());
-  if (event == Ion::Events::Left) {
-    return OMG::Direction::Left();
-  }
-  if (event == Ion::Events::Up) {
-    return OMG::Direction::Up();
-  }
-  if (event == Ion::Events::Down) {
-    return OMG::Direction::Down();
-  } else {
-    assert(event == Ion::Events::Right);
-    return OMG::Direction::Right();
-  }
-}
-
 bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
   if (!event.isMoveEvent()) {
     return false;
@@ -645,7 +629,7 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
   }
   LayoutCursor result;
   int step = Ion::Events::longPressFactor();
-  result = m_contentView.cursor()->cursorAtDirection(DirectionForMoveEvent(event), shouldRecomputeLayout, false, step);
+  result = m_contentView.cursor()->cursorAtDirection(OMG::Direction(event), shouldRecomputeLayout, false, step);
   if (result.isDefined()) {
     if (eventShouldUpdateInsertionCursor(event)) {
       m_contentView.updateInsertionCursor();
@@ -656,22 +640,6 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
   return false;
 }
 
-static inline OMG::Direction DirectionForSelectionEvent(Ion::Events::Event event) {
-  assert(event.isSelectionEvent());
-  if (event == Ion::Events::ShiftLeft) {
-    return OMG::Direction::Left();
-  }
-  if (event == Ion::Events::ShiftUp) {
-    return OMG::Direction::Up();
-  }
-  if (event == Ion::Events::ShiftDown) {
-    return OMG::Direction::Down();
-  } else {
-    assert(event == Ion::Events::ShiftRight);
-    return OMG::Direction::Right();
-  }
-}
-
 bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * shouldRecomputeLayout) {
   if (!event.isSelectionEvent()) {
     return false;
@@ -680,11 +648,7 @@ bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * s
   // Selection is handled one step at a time. Repeat selection for each step.
   for (int i = 0; i < step; ++i) {
     Layout addedSelection;
-    LayoutCursor result = m_contentView.cursor()->selectAtDirection(
-      DirectionForSelectionEvent(event),
-      shouldRecomputeLayout,
-      &addedSelection
-    );
+    LayoutCursor result = m_contentView.cursor()->selectAtDirection(OMG::Direction(event), shouldRecomputeLayout, &addedSelection);
     if (addedSelection.isUninitialized()) {
       // Successful event if at least one step succeeded.
       return i > 0;

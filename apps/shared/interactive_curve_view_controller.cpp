@@ -40,7 +40,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
       return true;
     }
   } else if (event == Ion::Events::Down || event == Ion::Events::Up) {
-    if (moveCursorVertically(event == Ion::Events::Up ? OMG::Direction::Up() : OMG::Direction::Down())) {
+    if (moveCursorVertically(OMG::Direction(event))) {
       reloadBannerView();
       interactiveCurveViewRange()->panToMakePointVisible(
         m_cursor->x(), m_cursor->y(),

@@ -179,11 +179,11 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   }
   int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
-    selectLeftRight(event == Ion::Events::ShiftLeft ? OMG::Direction::Left() : OMG::Direction::Right(), false, step);
+    selectLeftRight(OMG::Direction(event), false, step);
     return true;
   }
   if (event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
-    selectUpDown(event == Ion::Events::ShiftUp ? OMG::Direction::Up() : OMG::Direction::Down(), step);
+    selectUpDown(OMG::Direction(event), step);
     return true;
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {

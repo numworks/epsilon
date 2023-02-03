@@ -7,6 +7,7 @@
 #include <apps/constant.h>
 #include <apps/shared/plot_view_policies.h>
 #include <algorithm>
+#include <omg/directions.h>
 
 namespace Statistics {
 
@@ -40,7 +41,7 @@ protected:
   void drawBar(const Shared::AbstractPlotView * plotview, KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound, KDColor color, bool isSelected) const;
   void drawOutlier(const Shared::AbstractPlotView * plotview, KDContext * ctx, KDRect rect, float calculation, float segmentOrd, KDColor color, bool isSelected) const;
   void drawChevronSelection(const Shared::AbstractPlotView * plotview, KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound) const;
-  void drawChevron(const Shared::AbstractPlotView * plotview, KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool up) const;
+  void drawChevron(const Shared::AbstractPlotView * plotview, KDContext * ctx, KDRect rect, float x, float y, KDColor color, OMG::VerticalDirection direction) const;
 
   Store * m_store;
   int * m_selectedBoxCalculation;

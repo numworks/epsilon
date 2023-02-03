@@ -4,8 +4,6 @@
 #include <escher/layout_field.h>
 #include <escher/layout_field_delegate.h>
 #include <escher/metric.h>
-#include <escher/text_field.h>
-#include <escher/text_field_delegate.h>
 #include <poincare/layout.h>
 
 namespace Escher {
@@ -25,7 +23,7 @@ public:
   bool inputViewHeightDidChange();
   void reload();
   void restoreContent(const char * buffer, size_t size, int * cursorOffset, int * position);
-  void setTextEditionBuffer(char * buffer, size_t bufferSize) { m_textField.setEditionBuffer(buffer, bufferSize); }
+  void setTextEditionBuffer(char * buffer, size_t bufferSize) { m_draftBuffer = buffer; m_draftBufferSize = bufferSize; }
 
   /* View */
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -33,13 +31,11 @@ public:
   /* Responder */
   void didBecomeFirstResponder() override;
 
-protected:
-  TextField m_textField;
-
 private:
-  constexpr static int k_textFieldBufferSize = TextField::MaxBufferSize();
   virtual KDCoordinate inputViewHeight() const;
   KDCoordinate m_inputViewMemoizedHeight;
+  char * m_draftBuffer;
+  size_t m_draftBufferSize;
 };
 
 }

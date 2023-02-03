@@ -13,18 +13,10 @@ ExpressionField::ExpressionField(Responder * parentResponder,
                                  float horizontalAlignment,
                                  float verticalAlignment) :
     LayoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate, KDFont::Size::Large, horizontalAlignment, verticalAlignment),
-    m_textField(parentResponder,
-                nullptr,
-                k_textFieldBufferSize,
-                k_textFieldBufferSize,
-                inputEventHandlerDelegate,
-                nullptr,
-                KDFont::Size::Large,
-                horizontalAlignment,
-                verticalAlignment,
-                KDColorBlack,
-                KDColorWhite),
-    m_inputViewMemoizedHeight(0) {
+    m_inputViewMemoizedHeight(0),
+    m_draftBuffer(nullptr),
+    m_draftBufferSize(0)
+{
   setBackgroundColor(KDColorWhite);
 }
 
@@ -34,8 +26,8 @@ void ExpressionField::clearAndSetEditing(bool isEditing) {
 }
 
 const char * ExpressionField::text() {
-  layout().serializeForParsing(m_textField.draftTextBuffer(), k_textFieldBufferSize);
-  return m_textField.draftTextBuffer();
+  layout().serializeForParsing(m_draftBuffer, m_draftBufferSize);
+  return m_draftBuffer;
 }
 
 void ExpressionField::setText(const char * text) {

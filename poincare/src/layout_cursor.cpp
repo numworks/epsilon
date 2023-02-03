@@ -62,11 +62,10 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting, bool * shouldR
   }
   LayoutCursor cloneCursor = *this;
   bool moved = false;
-  // TODO: Factorize these check and set of direction
   if (direction == OMG::Direction::Up || direction == OMG::Direction::Down) {
-    moved = privateVerticalMove(direction == OMG::Direction::Up ? OMG::VerticalDirection::Up : OMG::VerticalDirection::Down, shouldRedrawLayout);
+    moved = verticalMove(direction == OMG::Direction::Up ? OMG::VerticalDirection::Up : OMG::VerticalDirection::Down, shouldRedrawLayout);
   } else {
-    moved = privateHorizontalMove(direction == OMG::Direction::Left ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right, shouldRedrawLayout);
+    moved = horizontalMove(direction == OMG::Direction::Left ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right, shouldRedrawLayout);
   }
   if (moved) {
     *shouldRedrawLayout = selecting || *shouldRedrawLayout;
@@ -269,16 +268,9 @@ Layout LayoutCursor::layoutToFit(KDFont::Size font) {
   return leftL.isUninitialized() || (!rightL.isUninitialized() && leftL.layoutSize(font).height() < rightL.layoutSize(font).height()) ? rightL : leftL;
 }
 
-void LayoutCursor::setPositionAtEndpointAfterHorizontalMove(OMG::HorizontalDirection direction) {
-  m_position = direction == OMG::HorizontalDirection::Right ? 0 : (m_layout.isHorizontal() ? m_layout.numberOfChildren() : 1);
-}
-
-
-bool LayoutCursor::privateHorizontalMove(OMG::HorizontalDirection direction, bool * shouldRedrawLayout) {
+bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction, bool * shouldRedrawLayout) {
   Layout nextLayout = Layout();
   int currentIndexInNextLayout = LayoutNode::k_outsideIndex;
-  bool selecting = isSelecting();
-
   if (direction == OMG::HorizontalDirection::Right) {
     nextLayout = rightLayout();
   } else {
@@ -297,7 +289,7 @@ bool LayoutCursor::privateHorizontalMove(OMG::HorizontalDirection direction, boo
   assert(!nextLayout.isUninitialized());
   assert(!nextLayout.isHorizontal());
 
-  int newIndex = selecting ? LayoutNode::k_outsideIndex : nextLayout.indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndexInNextLayout);
+  int newIndex = isSelecting() ? LayoutNode::k_outsideIndex : nextLayout.indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndexInNextLayout);
   if (newIndex == LayoutNode::k_outsideIndex) {
     Layout parent = nextLayout.parent();
     Layout previousLayout = m_layout;
@@ -308,43 +300,62 @@ bool LayoutCursor::privateHorizontalMove(OMG::HorizontalDirection direction, boo
       m_layout = nextLayout;
       m_position = direction == OMG::HorizontalDirection::Right;
     }
-    if (selecting && m_layout != previousLayout) {
+    if (isSelecting() && m_layout != previousLayout) {
       m_startOfSelection = m_position + (direction == OMG::HorizontalDirection::Right ? -1 : 1);
     }
     return true;
   }
   // Enter the next layout child
   m_layout = nextLayout.childAtIndex(newIndex);
-  setPositionAtEndpointAfterHorizontalMove(direction);
+  m_position = direction == OMG::HorizontalDirection::Right ? leftMostPosition() : rightMostPosition();
   return true;
 }
 
-bool LayoutCursor::privateVerticalMove(OMG::VerticalDirection direction, bool * shouldRedrawLayout) {
-  int currentIndexInNextLayout = LayoutNode::k_outsideIndex;
-  // TODO: Handle selection
-  bool selecting = isSelecting();
+bool LayoutCursor::verticalMove(OMG::VerticalDirection direction, bool * shouldRedrawLayout) {
+  Layout previousLayout = m_layout;
+  bool moved = verticalMoveWithoutSelection(direction, shouldRedrawLayout);
 
-  int nextIndex = LayoutNode::k_outsideIndex;
-
-  /* Step 1:
-   * Try to enter right or left layout if it can be entered through up/down */
-  Layout rightL = rightLayout();
-  if (!rightL.isUninitialized()) {
-    nextIndex = rightL.indexOfNextChildToPointToAfterVerticalCursorMove(direction, LayoutNode::k_outsideIndex, LayoutNode::PositionInLayout::Left);
-    if (nextIndex != LayoutNode::k_outsideIndex) {
-      m_layout = rightL.childAtIndex(nextIndex);
-      setPositionAtEndpointAfterHorizontalMove(OMG::HorizontalDirection::Right);
-      return true;
+  // Handle selection (find a common ancestor to previous and current layout)
+  if (moved && isSelecting() && previousLayout != m_layout) {
+    TreeHandle commonAncestor = m_layout.commonAncestorWith(previousLayout);
+    assert(!commonAncestor.isUninitialized());
+    Layout layoutAncestor = static_cast<Layout&>(commonAncestor);
+    if (!layoutAncestor.parent().isUninitialized() && layoutAncestor.parent().isHorizontal()) {
+      assert(!layoutAncestor.isHorizontal());
+      m_layout = layoutAncestor.parent();
+      int ancestorIndex = m_layout.indexOfChild(layoutAncestor);
+      // Down goes left to right and up goes right to left
+      m_startOfSelection = ancestorIndex + (direction == OMG::VerticalDirection::Up);
+      m_position = ancestorIndex + (direction == OMG::VerticalDirection::Down);
+    } else {
+      m_layout = layoutAncestor;
+      // Down goes left to right and up goes right to left
+      m_startOfSelection = direction == OMG::VerticalDirection::Down ? leftMostPosition() : rightMostPosition();
+      m_position = m_startOfSelection == leftMostPosition() ? rightMostPosition() : leftMostPosition();
     }
   }
+  return moved;
+}
 
-  Layout leftL = leftLayout();
-  if (!leftL.isUninitialized()) {
-    nextIndex = leftL.indexOfNextChildToPointToAfterVerticalCursorMove(direction, LayoutNode::k_outsideIndex, LayoutNode::PositionInLayout::Right);
-    if (nextIndex != LayoutNode::k_outsideIndex) {
-      m_layout = leftL.childAtIndex(nextIndex);
-      setPositionAtEndpointAfterHorizontalMove(OMG::HorizontalDirection::Left);
-      return true;
+bool LayoutCursor::verticalMoveWithoutSelection(OMG::VerticalDirection direction, bool * shouldRedrawLayout) {
+  /* Step 1:
+   * Try to enter right or left layout if it can be entered through up/down
+   * */
+  if (!isSelecting()) {
+    Layout nextLayout = rightLayout();
+    LayoutNode::PositionInLayout positionRelativeToNextLayout = LayoutNode::PositionInLayout::Left;
+    // Repeat for right and left
+    for (int i = 0; i < 2; i++) {
+      if (!nextLayout.isUninitialized()) {
+        int nextIndex = nextLayout.indexOfNextChildToPointToAfterVerticalCursorMove(direction, LayoutNode::k_outsideIndex,positionRelativeToNextLayout);
+        if (nextIndex != LayoutNode::k_outsideIndex) {
+          m_layout = nextLayout.childAtIndex(nextIndex);
+          m_position = positionRelativeToNextLayout == LayoutNode::PositionInLayout::Left ? leftMostPosition() : rightMostPosition();
+          return true;
+        }
+      }
+      nextLayout = leftLayout();
+      positionRelativeToNextLayout = LayoutNode::PositionInLayout::Right;
     }
   }
 
@@ -352,14 +363,14 @@ bool LayoutCursor::privateVerticalMove(OMG::VerticalDirection direction, bool * 
    * Ask ancestor if cursor can move vertically. */
   Layout p = m_layout.parent();
   Layout currentChild = m_layout;
-  LayoutNode::PositionInLayout currentPosition = m_position == 0 ? LayoutNode::PositionInLayout::Left : ((m_layout.isHorizontal() && m_position == m_layout.numberOfChildren()) || (!m_layout.isHorizontal() && m_position == 1) ? LayoutNode::PositionInLayout::Right : LayoutNode::PositionInLayout::Middle);
+  LayoutNode::PositionInLayout currentPosition = m_position == leftMostPosition() ? LayoutNode::PositionInLayout::Left : (m_position == rightMostPosition() ? LayoutNode::PositionInLayout::Right : LayoutNode::PositionInLayout::Middle);
   while (!p.isUninitialized()) {
     int childIndex = p.indexOfChild(currentChild);
     int nextIndex = p.indexOfNextChildToPointToAfterVerticalCursorMove(direction, childIndex, currentPosition);
     if (nextIndex != LayoutNode::k_outsideIndex) {
       m_layout = p.childAtIndex(nextIndex);
-      // TODO: Replace wit score in descendant
-      setPositionAtEndpointAfterHorizontalMove(OMG::HorizontalDirection::Right);
+      // TODO: Replace with score in descendant
+      m_position = leftMostPosition();
       return true;
     }
     currentChild = p;

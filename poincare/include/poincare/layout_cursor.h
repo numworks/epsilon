@@ -73,9 +73,11 @@ private:
   Layout rightLayout();
   Layout layoutToFit(KDFont::Size font);
 
-  void setPositionAtEndpointAfterHorizontalMove(OMG::HorizontalDirection direction);
-  bool privateHorizontalMove(OMG::HorizontalDirection direction, bool * shouldRedrawLayout);
-  bool privateVerticalMove(OMG::VerticalDirection direction, bool * shouldRedrawLayout);
+  int leftMostPosition() { return 0;}
+  int rightMostPosition() { return m_layout.isHorizontal() ? m_layout.numberOfChildren() : 1;}
+  bool horizontalMove(OMG::HorizontalDirection direction, bool * shouldRedrawLayout);
+  bool verticalMove(OMG::VerticalDirection direction, bool * shouldRedrawLayout);
+  bool verticalMoveWithoutSelection(OMG::VerticalDirection direction, bool * shouldRedrawLayout);
 
   void privateStartSelecting();
 

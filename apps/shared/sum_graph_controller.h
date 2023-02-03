@@ -53,7 +53,7 @@ private:
   AbstractPlotView * curveView() override { return m_graphView; }
 
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
-  virtual double cursorNextStep(double position, int direction) = 0;
+  virtual double cursorNextStep(double position, OMG::HorizontalDirection direction) = 0;
   virtual Poincare::Layout createFunctionLayout() = 0;
   virtual Poincare::Expression createSumExpression(double startSum, double endSum, Poincare::Context * context);
 

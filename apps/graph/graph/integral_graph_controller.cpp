@@ -33,8 +33,8 @@ I18n::Message IntegralGraphController::legendMessageAtStep(Step step) {
   }
 }
 
-double IntegralGraphController::cursorNextStep(double x, int direction) {
-  return x + (direction > 0 ? 1.0 : -1.0)*static_cast<double>(m_graphRange->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
+double IntegralGraphController::cursorNextStep(double x, OMG::HorizontalDirection direction) {
+  return x + (direction.isRight() ? 1.0 : -1.0)*static_cast<double>(m_graphRange->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
 }
 
 Layout IntegralGraphController::createFunctionLayout() {

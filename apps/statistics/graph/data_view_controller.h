@@ -42,7 +42,7 @@ protected:
   virtual void viewWillAppearBeforeReload() {}
   virtual bool reloadBannerView() = 0;
   virtual bool moveSelectionHorizontally(int deltaIndex) = 0;
-  virtual bool moveSelectionVertically(int deltaIndex);
+  virtual bool moveSelectionVertically(OMG::VerticalDirection direction);
   // Overriden with histograms only to highlight and scroll to the selected bar
   virtual void highlightSelection() {}
 

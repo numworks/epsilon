@@ -29,14 +29,14 @@ const uint8_t arrowDownMask[10][9] = {
 };
 
 ArrowView::ArrowView() :
-  m_directionIsUp(true),
+  m_direction(OMG::VerticalDirection::Up()),
   m_color(KDColorBlack)
 {
 }
 
-void ArrowView::setDirection(bool isUp) {
-  if (m_directionIsUp!= isUp) {
-    m_directionIsUp = isUp;
+void ArrowView::setDirection(OMG::VerticalDirection direction) {
+  if (m_direction != direction) {
+    m_direction = direction;
     markRectAsDirty(bounds());
   }
 }
@@ -51,11 +51,11 @@ void ArrowView::setColor(KDColor color) {
 void ArrowView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor arrowWorkingBuffer[10*9];
   ctx->fillRect(bounds(), KDColorWhite);
-  KDCoordinate startLine = m_directionIsUp ? k_arrowHeight : 0;
-  KDCoordinate startArrow = m_directionIsUp ? 0 : bounds().height()-k_arrowHeight;
+  KDCoordinate startLine = m_direction.isUp() ? k_arrowHeight : 0;
+  KDCoordinate startArrow = m_direction.isUp() ? 0 : bounds().height()-k_arrowHeight;
   ctx->fillRect(KDRect((Ion::Display::Width-k_arrowThickness)/2, startLine, k_arrowThickness, bounds().height()-k_arrowHeight), m_color);
   KDRect frame((Ion::Display::Width-k_arrowWidth)/2, startArrow, k_arrowWidth, k_arrowHeight);
-  const uint8_t * mask = m_directionIsUp ? (const uint8_t *)arrowUpMask : (const uint8_t *)arrowDownMask;
+  const uint8_t * mask = m_direction.isUp() ? (const uint8_t *)arrowUpMask : (const uint8_t *)arrowDownMask;
   ctx->blendRectWithMask(frame, m_color, mask, arrowWorkingBuffer);
 }
 

@@ -272,7 +272,6 @@ Layout LayoutCursor::layoutToFit(KDFont::Size font) {
 bool LayoutCursor::privateHorizontalMove(OMG::HorizontalDirection direction, bool * shouldRedrawLayout) {
   Layout nextLayout = Layout();
   int currentIndexInNextLayout = LayoutNode::k_outsideIndex;
-  // TODO: Handle selection
   bool selecting = isSelecting();
 
   if (direction == OMG::HorizontalDirection::Right) {
@@ -293,16 +292,19 @@ bool LayoutCursor::privateHorizontalMove(OMG::HorizontalDirection direction, boo
   assert(!nextLayout.isUninitialized());
   assert(!nextLayout.isHorizontal());
 
-  int newIndex = nextLayout.indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndexInNextLayout);
+  int newIndex = selecting ? LayoutNode::k_outsideIndex : nextLayout.indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndexInNextLayout);
   if (newIndex == LayoutNode::k_outsideIndex) {
     Layout parent = nextLayout.parent();
+    Layout previousLayout = m_layout;
     if (!parent.isUninitialized() && parent.isHorizontal()) {
       m_layout = nextLayout.parent();
       m_position = m_layout.indexOfChild(nextLayout) + (direction == OMG::HorizontalDirection::Right);
-      return true;
     } else {
       m_layout = nextLayout;
       m_position = direction == OMG::HorizontalDirection::Right;
+    }
+    if (selecting && m_layout != previousLayout) {
+      m_startOfSelection = m_position + (direction == OMG::HorizontalDirection::Right ? -1 : 1);
     }
     return true;
   }

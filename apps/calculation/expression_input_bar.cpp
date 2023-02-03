@@ -83,7 +83,6 @@ bool ExpressionInputBar::handleDivision() {
         if (mixedFractionsEnabled) {
           if (editionIn1D) {
             setText(" /");
-            m_textField.setCursorLocation(m_textField.draftTextBuffer());
           } else {
             setText("");
             handleEventWithText(I18n::translate(I18n::Message::MixedFractionCommand));

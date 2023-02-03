@@ -47,7 +47,7 @@ protected:
   virtual void highlightSelection() {}
 
   virtual int nextSubviewWhenMovingVertically(OMG::VerticalDirection direction) const {
-    return m_store->activeSeriesIndexFromSeriesIndex(m_selectedSeries, activeSeriesMethod()) + (direction.isUp() ? 1 : -1);
+    return m_store->activeSeriesIndexFromSeriesIndex(m_selectedSeries, activeSeriesMethod()) + (direction.isUp() ? -1 : 1);
   }
   virtual void updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) = 0;
 

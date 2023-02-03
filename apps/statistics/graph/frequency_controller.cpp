@@ -120,7 +120,7 @@ double FrequencyController::yValueAtAbscissa(int series, double x) const {
 
 int FrequencyController::nextSubviewWhenMovingVertically(OMG::VerticalDirection direction) const {
   // Search first curve in direction
-  int step = direction.isUp() ? 1 : -1;
+  int step = direction.isUp() ? -1 : 1;
   double closestYUpOrDown = NAN;
   int nextSubview = direction.isUp() ? Store::k_numberOfSeries : -1;
   double cursorY = m_cursor.y();

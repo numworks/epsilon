@@ -228,25 +228,30 @@ bool TextInput::moveCursorRight(int step) {
   return (i > 1 || canMove);
 }
 
-bool TextInput::selectLeftRight(bool left, bool all, int step) {
+bool TextInput::selectLeftRight(OMG::HorizontalDirection direction, bool all, int step) {
   const char * cursorLoc = cursorLocation();
   const char * nextCursorLoc = nullptr;
   if (!all) {
-    bool moved = left ? moveCursorLeft(step) : moveCursorRight(step);
+    bool moved = direction.isLeft() ? moveCursorLeft(step) : moveCursorRight(step);
     if (!moved) {
       return false;
     }
     nextCursorLoc = cursorLocation();
   } else {
     const char * t = text();
-    nextCursorLoc = left ? t : t + strlen(t);
+    nextCursorLoc = direction.isLeft() ? t : t + strlen(t);
     willSetCursorLocation(&nextCursorLoc);
     if (cursorLoc == nextCursorLoc) {
       return false;
     }
     setCursorLocation(nextCursorLoc);
   }
-  contentView()->addSelection(left ? nextCursorLoc : cursorLoc, left ? cursorLoc : nextCursorLoc);
+  if (direction.isLeft()) {
+    contentView()->addSelection(nextCursorLoc, cursorLoc);
+    return true;
+  }
+  assert(direction.isRight());
+  contentView()->addSelection(cursorLoc, nextCursorLoc);
   return true;
 }
 

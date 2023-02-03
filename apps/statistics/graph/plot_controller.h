@@ -66,7 +66,7 @@ protected:
 private:
   // DataViewController
   void viewWillAppearBeforeReload() override;
-  bool moveSelectionVertically(int deltaIndex) override;
+  bool moveSelectionVertically(OMG::VerticalDirection direction) override;
 
   void computeRanges(KDCoordinate bannerHeight);
   void computeXBounds(float * xMin, float *xMax) const;

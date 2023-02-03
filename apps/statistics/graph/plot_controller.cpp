@@ -32,7 +32,7 @@ void PlotController::viewWillAppearBeforeReload() {
   moveCursorToSelectedIndex();
 }
 
-bool PlotController::moveSelectionVertically(int direction) {
+bool PlotController::moveSelectionVertically(OMG::VerticalDirection direction) {
   int previousSeries = m_selectedSeries;
   bool result = DataViewController::moveSelectionVertically(direction);
   if (result && previousSeries != m_selectedSeries) {

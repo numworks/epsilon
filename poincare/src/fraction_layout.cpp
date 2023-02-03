@@ -17,6 +17,13 @@ int FractionLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::
   return k_outsideIndex;
 }
 
+/*
+ *                    9876
+ * Take for instance ------. If there is no selection ongoing, moving the cursor
+ *                    123    up should put it left of the 1. If 123/456 is
+ *                   |---    selected, moving the cursor up to select up should
+ *                    456    put the cursor left of the 9.
+ * */
 int FractionLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
   switch (currentIndex) {
   case k_outsideIndex:
@@ -30,42 +37,7 @@ int FractionLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::Ve
 }
 
 
-/* Select up/down
- *                    9876
- * Take for instance ------. If there is no selection ongoing, moving the cursor
- *                    123    up should put it left of the 1. If 123/456 is
- *                   |---    selected, moving the cursor up to select up should
- *                    456    put the cursor left of the 9.
- * *
-
-void FractionLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode()->hasAncestor(denominatorLayout(), true)) {
-    // If the cursor is inside denominator, move it to the numerator.
-    numeratorLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  if (cursor->layoutNode() == this && !forSelection) {
-    // If the cursor is Left or Right, move it to the numerator.
-    cursor->setLayoutNode(numeratorLayout());
-    return;
-  }
-  LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void FractionLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode()->hasAncestor(numeratorLayout(), true)) {
-    // If the cursor is inside numerator, move it to the denominator.
-    denominatorLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  if (cursor->layoutNode() == this && !forSelection) {
-    // If the cursor is Left or Right, move it to the denominator.
-    cursor->setLayoutNode(denominatorLayout());
-    return;
-  }
-  LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
+/*
 void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (cursor->layoutNode() == denominatorLayout()) {
     /* Case: Left of the denominator. Replace the fraction with a horizontal

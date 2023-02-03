@@ -103,11 +103,11 @@ ContinuousFunctionStore * CalculationGraphController::functionStore() const {
   return App::app()->functionStore();
 }
 
-bool CalculationGraphController::moveCursorHorizontally(int direction, int scrollspeed) {
+bool CalculationGraphController::moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollspeed) {
   if (!m_isActive) {
     return false;
   }
-  Coordinate2D<double> newPointOfInterest = computeNewPointOfInterestFromAbscissa(m_cursor->x(), direction > 0 ? OMG::HorizontalDirection::Right() : OMG::HorizontalDirection::Left());
+  Coordinate2D<double> newPointOfInterest = computeNewPointOfInterestFromAbscissa(m_cursor->x(), direction);
   if (std::isnan(newPointOfInterest.x1())) {
     return false;
   }

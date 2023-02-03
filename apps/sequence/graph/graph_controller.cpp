@@ -108,14 +108,14 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
   FunctionGraphController::openMenuForCurveAtIndex(curveIndex);
 }
 
-bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
+bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed) {
   double xCursorPosition = std::round(m_cursor->x());
-  if (direction < 0 && xCursorPosition <= m_smallestRank) {
+  if (direction.isLeft() && xCursorPosition <= m_smallestRank) {
     return false;
   }
   // The cursor moves by step that is larger than 1 and than a pixel's width.
   const int step = std::ceil(m_view.pixelWidth()) * scrollSpeed;
-  double x = direction > 0 ? xCursorPosition + step:
+  double x = direction.isRight() ? xCursorPosition + step:
     xCursorPosition -  step;
   if (x < 0.0) {
     return false;

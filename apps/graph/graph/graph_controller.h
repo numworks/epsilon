@@ -60,7 +60,7 @@ private:
 
   // SimpleInteractiveCurveViewController
   void reloadBannerView() override;
-  bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
+  bool moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed = 1) override;
 
   // FunctionGraphController
   int nextCurveIndexVertically(OMG::VerticalDirection direction, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const override;

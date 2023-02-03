@@ -17,6 +17,8 @@ public:
 
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
+
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
   bool shouldCollapseSiblingsOnLeft() const override { return true; }
   bool shouldCollapseSiblingsOnRight() const override { return true; }
@@ -50,9 +52,12 @@ private:
   constexpr static KDCoordinate k_fractionLineMargin = 2;
   constexpr static KDCoordinate k_fractionLineHeight = 1;
 
+  constexpr static int k_numeratorIndex = 0;
+  constexpr static int k_denominatorIndex = 1;
+
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
-  LayoutNode * numeratorLayout() { return childAtIndex(0); }
-  LayoutNode * denominatorLayout() { return childAtIndex(1); }
+  LayoutNode * numeratorLayout() { return childAtIndex(k_numeratorIndex); }
+  LayoutNode * denominatorLayout() { return childAtIndex(k_denominatorIndex); }
 };
 
 class FractionLayout final : public LayoutTwoChildren<FractionLayout, FractionLayoutNode> {

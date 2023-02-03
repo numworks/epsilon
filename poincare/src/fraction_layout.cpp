@@ -7,46 +7,14 @@
 #include <algorithm>
 
 namespace Poincare {
-/*
-void FractionLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-   if (cursor->position() == LayoutCursor::Position::Left
-       && (cursor->layoutNode() == numeratorLayout()
-         || cursor->layoutNode() == denominatorLayout()))
-  {
-    // Case: Left of the numerator or the denominator. Go Left of the fraction.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  // Case: Right. Go to the denominator.
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    cursor->setLayoutNode(denominatorLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  // Case: Left. Ask the parent.
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
-}
 
-void FractionLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-   if (cursor->position() == LayoutCursor::Position::Right
-       && (cursor->layoutNode() == numeratorLayout()
-         || cursor->layoutNode() == denominatorLayout()))
-  {
-    // Case: Right of the numerator or the denominator. Go Right of the fraction.
-    cursor->setLayoutNode(this);
-    return;
+int FractionLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
+  if (currentIndex == k_outsideIndex) {
+    /* When coming from the left, go to the numerator.
+     * When coming from the right, go to the denominator. */
+    return direction == OMG::HorizontalDirection::Right ? k_numeratorIndex : k_denominatorIndex;
   }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    // Case: Left. Go to the numerator.
-    cursor->setLayoutNode(numeratorLayout());
-    return;
-  }
-  // Case: Right. Ask the parent.
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
+  return k_outsideIndex;
 }
 
 /* Select up/down

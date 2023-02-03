@@ -26,17 +26,13 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
 // Rendering
 
 void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, LayoutSelection selection, KDColor selectionColor) {
-  if (!selection.isEmpty() && selection.layout().node() == this && isHorizontal()) {
-    KDRect selectionRectangle = static_cast<HorizontalLayoutNode *>(this)->relativeSelectionRect(selection.leftPosition(), selection.rightPosition(), font);
-    ctx->fillRect(selectionRectangle.translatedBy(p), selectionColor);
-  }
   if (!selection.isEmpty() && selection.containsNode(this)) {
     selection = LayoutSelection();
     backgroundColor = selectionColor;
   }
 
   KDPoint renderingAbsoluteOrigin = absoluteOrigin(font).translatedBy(p);
-  KDPoint renderingOrginWithMargin = absoluteOriginWithMargin(font).translatedBy(p);
+  KDPoint renderingOriginWithMargin = absoluteOriginWithMargin(font).translatedBy(p);
   KDSize size = layoutSize(font);
 
   if (size.height() <= 0 || size.width() <= 0
@@ -46,7 +42,11 @@ void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor exp
     return;
   }
 
-  ctx->fillRect(KDRect(renderingOrginWithMargin, size), backgroundColor);
+  ctx->fillRect(KDRect(renderingOriginWithMargin, size), backgroundColor);
+  if (!selection.isEmpty() && selection.layout().node() == this && isHorizontal()) {
+    KDRect selectionRectangle = static_cast<HorizontalLayoutNode *>(this)->relativeSelectionRect(selection.leftPosition(), selection.rightPosition(), font);
+    ctx->fillRect(selectionRectangle.translatedBy(renderingOriginWithMargin), selectionColor);
+  }
   render(ctx, renderingAbsoluteOrigin, font, expressionColor, backgroundColor);
   for (LayoutNode * l : children()) {
     l->draw(ctx, p, font, expressionColor, backgroundColor, selection, selectionColor);

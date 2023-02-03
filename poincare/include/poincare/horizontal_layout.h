@@ -54,6 +54,8 @@ public:
     return numberOfChildren() == 0; // Return true if empty rectangle is displayed
   }
 
+  KDCoordinate baselineBetweenIndexes(int leftIndex, int rightIndex, KDFont::Size font) const;
+  KDSize layoutSizeBetweenIndexes(int leftIndex, int rightIndex, KDFont::Size font) const;
   KDRect relativeSelectionRect(int leftIndex, int rightIndex, KDFont::Size font) const;
 
 private:
@@ -97,8 +99,14 @@ public:
 
   void serializeChildren(int firstIndex, int lastIndex, char * buffer, int bufferSize);
 
-  KDRect relativeSelectionRect(int selectionStart, int selectionEnd, KDFont::Size font) const {
-    return node()->relativeSelectionRect(selectionStart, selectionEnd, font);
+  KDSize layoutSizeBetweenIndexes(int leftIndex, int rightIndex, KDFont::Size font) const {
+    return node()->layoutSizeBetweenIndexes(leftIndex, rightIndex, font);
+  }
+  KDCoordinate baselineBetweenIndexes(int leftIndex, int rightIndex, KDFont::Size font) const {
+    return node()->baselineBetweenIndexes(leftIndex, rightIndex, font);
+  }
+  KDRect relativeSelectionRect(int leftIndex, int rightIndex, KDFont::Size font) const {
+    return node()->relativeSelectionRect(leftIndex, rightIndex, font);
   }
 
   void setEmptyColor(EmptyRectangle::Color color) { node()->setEmptyColor(color); }

@@ -71,7 +71,7 @@ void StoreMenuController::setText(const char * text) {
   m_cell.expressionField()->handleEventWithText(text, false, true);
   m_cell.expressionField()->handleEventWithText("→");
   if (text[0] == 0) {
-    m_cell.expressionField()->putCursorLeftOfField();
+    m_cell.expressionField()->putCursorOnOneSide(OMG::Direction::Left());
   }
   m_stackViewController.setupActiveView();
   m_preventReload = false;

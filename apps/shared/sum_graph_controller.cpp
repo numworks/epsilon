@@ -137,8 +137,7 @@ bool SumGraphController::handleLeftRightEvent(Ion::Events::Event event) {
     return false;
   }
   const double oldPosition = m_cursor->x();
-  int direction = event == Ion::Events::Left ? -1 : 1;
-  double newPosition = cursorNextStep(oldPosition, direction);
+  double newPosition = cursorNextStep(oldPosition, event == Ion::Events::Left ? OMG::HorizontalDirection::Left() : OMG::HorizontalDirection::Right());
   if (m_step == Step::SecondParameter && newPosition < m_startSum) {
     newPosition = m_startSum;
   }

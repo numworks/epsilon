@@ -32,7 +32,7 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
 }
 
 bool BoxController::moveSelectionHorizontally(OMG::HorizontalDirection direction) {
-  return m_view.moveSelectionHorizontally(m_selectedSeries, direction.isRight() ? 1 : -1);
+  return m_view.moveSelectionHorizontally(m_selectedSeries, direction);
 }
 
 bool BoxController::reloadBannerView() {

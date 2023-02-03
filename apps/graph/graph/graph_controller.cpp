@@ -164,7 +164,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
         ContinuousFunction * mainF = f.operator->();
         for (int j = i + 1; j < nbFunctions; j++) {
           ExpiringPointer<ContinuousFunction> g = store->modelForRecord(store->activeRecordAtIndex(j));
-          if (!g->properties().canComputeIntersectionsWithFunctionsAlongSameVariable() || g->isAlongY() != alongY) {
+          if (!g->properties().canComputeIntersectionsWithFunctionsAlongSameVariable() || g->basedOnCostlyAlgorithms(context) || g->isAlongY() != alongY) {
             continue;
           }
           zoom.fitIntersections(evaluator<float>, mainF, evaluator<float>, g.operator->());

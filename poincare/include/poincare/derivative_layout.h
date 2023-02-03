@@ -24,6 +24,7 @@ public:
 
   // LayoutNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
   Layout XNTLayout(int childIndex = -1) const override;
 
   VariableSlot variableSlot() const { return m_variableSlot; }
@@ -67,6 +68,7 @@ class FirstOrderDerivativeLayoutNode final : public DerivativeLayoutNode {
 public:
   // LayoutNode
   Type type() const override { return Type::FirstOrderDerivativeLayout; }
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(FirstOrderDerivativeLayoutNode); }
@@ -96,6 +98,7 @@ public:
   HigherOrderDerivativeLayoutNode() : DerivativeLayoutNode(), m_orderSlot(OrderSlot::Denominator) {}
   // LayoutNode
   Type type() const override { return Type::HigherOrderDerivativeLayout; }
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
 
     // TreeNode
   size_t size() const override { return sizeof(HigherOrderDerivativeLayoutNode); }

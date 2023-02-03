@@ -105,8 +105,8 @@ int LayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::Horizont
     assert(currentIndex == k_outsideIndex || currentIndex == 0);
     return currentIndex == k_outsideIndex ? 0 : k_outsideIndex;
   }
-  //assert(false);
-  return -1;
+  assert(false);
+  return -2;
 }
 
 /*

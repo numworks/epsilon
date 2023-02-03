@@ -32,82 +32,23 @@ const uint8_t bottomSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayo
   {0xF2, 0x95, 0x1A, 0xF1},
   {0x09, 0x46, 0xD5, 0xFF},
 };
+
+int IntegralLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
+  switch (currentIndex) {
+  case k_outsideIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_upperBoundLayoutIndex : k_differentialLayoutIndex;
+  case k_upperBoundLayoutIndex:
+  case k_lowerBoundLayoutIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_integrandLayoutIndex : k_outsideIndex;
+  case k_integrandLayoutIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_differentialLayoutIndex : k_lowerBoundLayoutIndex;
+  default:
+    assert(currentIndex == k_differentialLayoutIndex);
+    return direction == OMG::HorizontalDirection::Right ? k_outsideIndex : k_integrandLayoutIndex;
+  }
+}
+
 /*
-void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == upperBoundLayout()
-      || cursor->layoutNode() == lowerBoundLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    // Case: Left the upper or lower bound. Go Left of the integral.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  if (cursor->layoutNode() == differentialLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    // Case: Left of the variable differential. Go Right of the integrand
-    cursor->setLayoutNode(integrandLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  if (cursor->layoutNode() == integrandLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    // Case: Left the integrand. Go Right of the lower bound.
-    cursor->setLayoutNode(lowerBoundLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    // Case: Right of the integral. Go to the differential.
-    cursor->setLayoutNode(differentialLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  // Case: Left of the integral. Ask the parent.
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
-}
-
-void IntegralLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == upperBoundLayout()
-      || cursor->layoutNode() == lowerBoundLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    // Case: Right the upper or lower bound. Go Left of the integrand.
-    cursor->setLayoutNode(integrandLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  if (cursor->layoutNode() == integrandLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    // Case: Right the differential. Go Right.
-    cursor->setLayoutNode(this);
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  if (cursor->layoutNode() == differentialLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    // Case: Right the differential. Go Right.
-    cursor->setLayoutNode(this);
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    // Case: Left of the integral. Go to the upper bound.
-    cursor->setLayoutNode(upperBoundLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  // Case: Right. Ask the parent.
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
-}
-
 void IntegralLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (cursor->layoutNode()->hasAncestor(lowerBoundLayout(), true)) {
     // If the cursor is inside the lower bound, move it to the upper bound.

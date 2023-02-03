@@ -8,86 +8,23 @@
 
 namespace Poincare {
 
+int SequenceLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
+  switch (currentIndex) {
+  case k_outsideIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_upperBoundLayoutIndex : k_argumentLayoutIndex;
+  case k_upperBoundLayoutIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_argumentLayoutIndex : k_outsideIndex;
+  case k_variableLayoutIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_lowerBoundLayoutIndex : k_outsideIndex;
+  case k_lowerBoundLayoutIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_argumentLayoutIndex : k_variableLayoutIndex;
+  default:
+    assert(currentIndex == k_argumentLayoutIndex);
+    return direction == OMG::HorizontalDirection::Right ? k_outsideIndex : k_lowerBoundLayoutIndex;
+  }
+}
+
 /*
-void SequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == upperBoundLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    // Case: Left of the upper bound. Go Left of the sequence.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  if (cursor->layoutNode() == lowerBoundLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    // Case: Left of the lower bound. Go Right of the variable name.
-    cursor->setLayoutNode(variableLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  if (cursor->layoutNode() == variableLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    // Case: Left of the variable name. Go Left of the sequence.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  if (cursor->layoutNode() == argumentLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    // Case: Left of the argument. Go Right of the lower bound.
-    cursor->setLayoutNode(lowerBoundLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    // Case: Right. Go to the argument and move Left.
-    cursor->setLayoutNode(argumentLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  // Case: Left. Ask the parent.
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
-}
-
-void SequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == lowerBoundLayout()
-        || cursor->layoutNode() == upperBoundLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    // Case: Right of the bounds. Go Left of the argument.
-    cursor->setLayoutNode(argumentLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  if (cursor->layoutNode() == variableLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    // Case: Right of the variable name. Go Left of the lower bound.
-    cursor->setLayoutNode(lowerBoundLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  if (cursor->layoutNode() == argumentLayout())
-  {
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    // Case: Right of the argument. Go Right.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    // Case: Left. Go to the upper bound
-    cursor->setLayoutNode(upperBoundLayout());
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  // Case: Right. Ask the parent
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
-}
-
 void SequenceLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (cursor->layoutNode()->hasAncestor(lowerBoundLayout(), true) || cursor->layoutNode()->hasAncestor(variableLayout(), true)) {
   // If the cursor is inside the lower bound or inside the variable name, move it to the upper bound

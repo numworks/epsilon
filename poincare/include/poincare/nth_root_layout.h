@@ -26,6 +26,7 @@ public:
 
   // LayoutNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
   bool shouldCollapseSiblingsOnRight() const override { return true; }
   bool hasUpperLeftIndex() const override { return m_hasIndex; }
 
@@ -50,8 +51,11 @@ private:
   KDSize adjustedIndexSize(KDFont::Size font);
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
   bool protectedIsIdenticalTo(Layout l) override;
-  LayoutNode * radicandLayout() { return childAtIndex(0); }
-  LayoutNode * indexLayout() { return m_hasIndex ? childAtIndex(1) : nullptr; }
+
+  constexpr static int k_radicandLayoutIndex = 0;
+  constexpr static int k_indexLayoutIndex = 1;
+  LayoutNode * radicandLayout() { return childAtIndex(k_radicandLayoutIndex); }
+  LayoutNode * indexLayout() { return m_hasIndex ? childAtIndex(k_indexLayoutIndex) : nullptr; }
   bool m_hasIndex;
 };
 

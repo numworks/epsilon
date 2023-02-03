@@ -8,45 +8,6 @@
 
 namespace Poincare {
 /*
-void VerticalOffsetLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == indiceLayout()
-      && cursor->position() == LayoutCursor::Position::Left)
-  {
-    // Case: Left of the indice. Go Left.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    // Case: Right. Go to the indice.
-    assert(indiceLayout() != nullptr);
-    cursor->setLayoutNode(indiceLayout());
-    return;
-  }
-  // Case: Left. Ask the parent.
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
-}
-
-void VerticalOffsetLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == indiceLayout()
-      && cursor->position() == LayoutCursor::Position::Right)
-  {
-    // Case: Right of the indice. Go Right.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    // Case: Left. Go to the indice.
-    cursor->setLayoutNode(indiceLayout());
-    return;
-  }
-  // Case: Right. Ask the parent.
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
-}
-
 void VerticalOffsetLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (verticalPosition() == VerticalPosition::Superscript) {
     // Case: Superscript.

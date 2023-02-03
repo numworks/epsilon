@@ -3,25 +3,6 @@
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
-/*
-// LayoutNode
-void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
-}
-
-void CodePointLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right, cursor, shouldRecomputeLayout);
-}*/
 
 int CodePointLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);

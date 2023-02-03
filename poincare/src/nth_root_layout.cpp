@@ -33,71 +33,23 @@ bool NthRootLayoutNode::isSquareRoot() const {
   }
   return false;
 }
+
+int NthRootLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
+  if (!m_hasIndex) {
+    return LayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex);
+  }
+  switch (currentIndex) {
+  case k_outsideIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_indexLayoutIndex : k_radicandLayoutIndex;
+  case k_indexLayoutIndex:
+    return direction == OMG::HorizontalDirection::Right ? k_radicandLayoutIndex : k_outsideIndex;
+  default:
+    assert(currentIndex == k_radicandLayoutIndex);
+    return direction == OMG::HorizontalDirection::Right ? k_outsideIndex : k_indexLayoutIndex;
+  }
+}
+
 /*
-void NthRootLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == radicandLayout()
-    && cursor->position() == LayoutCursor::Position::Left)
-  {
-    // Case: Left of the radicand. Go the index if any, ir go Left of the root.
-    if (indexLayout() != nullptr) {
-      cursor->setLayoutNode(indexLayout());
-      cursor->setPosition(LayoutCursor::Position::Right);
-    } else {
-      cursor->setLayoutNode(this);
-    }
-    return;
-  }
-  if (indexLayout() != nullptr
-    && cursor->layoutNode() == indexLayout()
-    && cursor->position() == LayoutCursor::Position::Left)
-  {
-    // Case: Left of the index. Go Left of the root.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    // Case: Right. Go Right of the radicand.
-    cursor->setLayoutNode(radicandLayout());
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  // Case: Left. Ask the parent.
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
-}
-
-void NthRootLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == radicandLayout()
-      && cursor->position() == LayoutCursor::Position::Right)
-  {
-    // Case: Right of the radicand. Go the Right of the root.
-    cursor->setLayoutNode(this);
-    return;
-  }
-  if (indexLayout() != nullptr
-    && cursor->layoutNode() == indexLayout()
-    && cursor->position() == LayoutCursor::Position::Right)
-  {
-    assert(radicandLayout() != nullptr);
-    cursor->setLayoutNode(radicandLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    // Case: Left. Go to the index if there is one, else go to the radicand.
-    if (indexLayout() != nullptr) {
-      cursor->setLayoutNode(indexLayout());
-    } else {
-      cursor->setLayoutNode(radicandLayout());
-    }
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  // Case: Right. Ask the parent.
-  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
-}
-
 void NthRootLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (indexLayout() != nullptr
       && cursor->isEquivalentTo(LayoutCursor(radicandLayout(), LayoutCursor::Position::Left)))

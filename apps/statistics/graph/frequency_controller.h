@@ -38,7 +38,7 @@ private:
 
   // PlotController
   void moveCursorToSelectedIndex() override;
-  bool moveSelectionHorizontally(int deltaIndex) override;
+  bool moveSelectionHorizontally(OMG::HorizontalDirection direction) override;
   void computeYBounds(float * yMin, float *yMax) const override;
   bool handleNullFrequencies() const override { return true; }
   int nextSubviewWhenMovingVertically(OMG::VerticalDirection direction) const override;

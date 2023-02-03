@@ -6,6 +6,7 @@
 #include <escher/text_area_delegate.h>
 #include <assert.h>
 #include <string.h>
+#include <omg/directions.h>
 
 namespace Escher {
 // See TODO in EditableField
@@ -135,7 +136,7 @@ protected:
 
   ContentView * contentView() { return static_cast<ContentView *>(TextInput::contentView()); }
 private:
-  void selectUpDown(bool up, int step);
+  void selectUpDown(OMG::VerticalDirection direction, int step);
   TextAreaDelegate * m_delegate;
   // Due to rect size limitation, the editor cannot display more than 1800 lines
   constexpr static int k_maxLines = 999;

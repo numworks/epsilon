@@ -183,7 +183,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
-    selectUpDown(event == Ion::Events::ShiftUp, step);
+    selectUpDown(event == Ion::Events::ShiftUp ? OMG::VerticalDirection::Up() : OMG::VerticalDirection::Down(), step);
     return true;
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
@@ -659,11 +659,15 @@ void TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
   setCursorLocation(m_text.pointerAtPosition(Text::Position(p.column() + deltaX, p.line() + deltaY)));
 }
 
-void TextArea::selectUpDown(bool up, int step) {
+void TextArea::selectUpDown(OMG::VerticalDirection direction, int step) {
   const char * previousCursorLocation = contentView()->cursorLocation();
-  contentView()->moveCursorGeo(0, up ? -step : step);
+  contentView()->moveCursorGeo(0, direction.isUp() ? -step : step);
   const char * newCursorLocation = contentView()->cursorLocation();
-  contentView()->addSelection(up ? newCursorLocation : previousCursorLocation, up ? previousCursorLocation : newCursorLocation);
+  if (direction.isUp()) {
+    contentView()->addSelection(newCursorLocation, previousCursorLocation);
+  } else {
+    contentView()->addSelection(previousCursorLocation, newCursorLocation);
+  }
   scrollToCursor();
 }
 

@@ -321,7 +321,7 @@ double GraphController::defaultCursorT(Ion::Storage::Record record, bool ignoreM
   return currentT;
 }
 
-void GraphController::jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) {
+void GraphController::jumpToLeftRightCurve(double t, OMG::HorizontalDirection direction, int functionsCount, Ion::Storage::Record record) {
   if (functionsCount == 1) {
     return;
   }
@@ -343,10 +343,10 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
     double currentTMax = f->tMax();
     assert(!std::isnan(currentTMin));
     assert(!std::isnan(currentTMax));
-    if ((direction > 0 && currentTMax > t)
-        ||(direction < 0 && currentTMin < t))
+    if ((direction.isRight() && currentTMax > t)
+        ||(direction.isLeft() && currentTMin < t))
     {
-      double currentXDelta = direction > 0 ?
+      double currentXDelta = direction.isRight() ?
         (t >= currentTMin ? 0.0 : currentTMin - t) :
         (t <= currentTMax ? 0.0 : t - currentTMax);
       assert(currentXDelta >= 0.0);

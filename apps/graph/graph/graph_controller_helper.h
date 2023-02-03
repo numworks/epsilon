@@ -23,7 +23,7 @@ private:
   constexpr static float k_snapFactor = 1.5f;
   constexpr static double k_definitionDomainDivisor = 96.0;
 
-  virtual void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) {}
+  virtual void jumpToLeftRightCurve(double t, OMG::HorizontalDirection direction, int functionsCount, Ion::Storage::Record record) {}
 };
 
 }

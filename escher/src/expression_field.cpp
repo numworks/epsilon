@@ -28,10 +28,8 @@ ExpressionField::ExpressionField(Responder * parentResponder,
   setBackgroundColor(KDColorWhite);
 }
 
-void ExpressionField::setEditing(bool isEditing, bool reinitDraftBuffer) {
-  if (reinitDraftBuffer) {
-    clearLayout();
-  }
+void ExpressionField::clearAndSetEditing(bool isEditing) {
+  clearLayout();
   LayoutField::setEditing(isEditing);
 }
 

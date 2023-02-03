@@ -55,7 +55,7 @@ void EditExpressionController::insertTextBody(const char * text) {
 
 void EditExpressionController::didBecomeFirstResponder() {
   m_contentView.mainView()->scrollToBottom();
-  m_contentView.expressionField()->setEditing(true, false);
+  m_contentView.expressionField()->setEditing(true);
   Container::activeApp()->setFirstResponder(m_contentView.expressionField());
 }
 
@@ -149,7 +149,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
       clearWorkingBuffer();
-      m_contentView.expressionField()->setEditing(false, false);
+      m_contentView.expressionField()->setEditing(false);
       Container::activeApp()->setFirstResponder(m_historyController);
     }
     return true;
@@ -181,7 +181,7 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
   }
   if (m_calculationStore->push(m_workingBuffer, context, HistoryViewCell::Height).pointer()) {
     m_historyController->reload();
-    m_contentView.expressionField()->setEditing(true, true);
+    m_contentView.expressionField()->clearAndSetEditing(true);
     telemetryReportEvent("Input", m_workingBuffer);
     return true;
   }
@@ -190,7 +190,7 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
 
 bool EditExpressionController::inputViewDidAbortEditing(const char * text) {
   if (text != nullptr) {
-    m_contentView.expressionField()->setEditing(true, true);
+    m_contentView.expressionField()->clearAndSetEditing(true);
     m_contentView.expressionField()->setText(text);
   }
   return false;

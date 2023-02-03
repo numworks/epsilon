@@ -118,29 +118,29 @@ double FrequencyController::yValueAtAbscissa(int series, double x) const {
   return resultAtIndex(series, n - 1);
 }
 
-int FrequencyController::nextSubviewWhenMovingVertically(int direction) const {
+int FrequencyController::nextSubviewWhenMovingVertically(OMG::VerticalDirection direction) const {
   // Search first curve in direction
-  assert(direction == 1 || direction == -1);
+  int step = direction.isUp() ? 1 : -1;
   double closestYUpOrDown = NAN;
-  int nextSubview = direction > 0 ? Store::k_numberOfSeries : -1;
+  int nextSubview = direction.isUp() ? Store::k_numberOfSeries : -1;
   double cursorY = m_cursor.y();
   double cursorX = m_cursor.x();
   for (int s = 1; s < Store::k_numberOfSeries; s++) {
     /* Browse series in order starting with m_selectingSeries +/- 1
      * This is useful when series are all on the same spot to properly
      * loop. */
-    int seriesIndex = (m_selectedSeries + direction * s + Store::k_numberOfSeries) % Store::k_numberOfSeries;
+    int seriesIndex = (m_selectedSeries + step * s + Store::k_numberOfSeries) % Store::k_numberOfSeries;
     assert(seriesIndex != m_selectedSeries);
     if (!seriesIsActive(seriesIndex)) {
       continue;
     }
     double y = yValueAtAbscissa(seriesIndex, cursorX);
-    if (y == cursorY && seriesIndex * direction > m_selectedSeries * direction) {
+    if (y == cursorY && seriesIndex * step > m_selectedSeries * step) {
       // series is on the same spot and in the right direction in series list
       return seriesIndex;
     }
-    if (y * direction < cursorY * direction
-        && (std::isnan(closestYUpOrDown) || closestYUpOrDown * direction < y * direction)) {
+    if (y * step < cursorY * step
+        && (std::isnan(closestYUpOrDown) || closestYUpOrDown * step < y * step)) {
       // series is in the right direction and closer than others
       nextSubview = m_store->activeSeriesIndexFromSeriesIndex(seriesIndex, activeSeriesMethod());
       closestYUpOrDown = y;

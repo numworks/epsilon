@@ -21,7 +21,8 @@ public:
     WithBlinkingTextCursor<ScrollableView>(parentResponder, &m_contentView, this),
     EditableField(inputEventHandlerDelegate),
     m_contentView(font),
-    m_delegate(delegate)
+    m_delegate(delegate),
+    m_linearMode(false)
   {}
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   Poincare::Context * context() const;
@@ -101,6 +102,7 @@ private:
   };
   ContentView m_contentView;
   LayoutFieldDelegate * m_delegate;
+  bool m_linearMode;
 };
 
 }

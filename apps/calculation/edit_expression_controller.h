@@ -51,7 +51,7 @@ private:
     ContentView(Escher::Responder * parentResponder, CalculationSelectableTableView * subview, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
     void reload();
     CalculationSelectableTableView * mainView() { return m_mainView; }
-    Escher::ExpressionField * expressionField() { return &m_expressionInputBar; }
+    Escher::ExpressionInputBar * expressionField() { return &m_expressionInputBar; }
 
   private:
     int numberOfSubviews() const override { return 2; }

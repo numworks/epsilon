@@ -51,7 +51,7 @@ private:
     ExpressionInputBarController& operator=(ExpressionInputBarController&& other) = delete;
     void didBecomeFirstResponder() override;
     View * view() override { return &m_expressionInputBar; }
-    ExpressionField * expressionField() { return &m_expressionInputBar; }
+    ExpressionInputBar * expressionField() { return &m_expressionInputBar; }
   private:
     ExpressionInputBar m_expressionInputBar;
   };

@@ -10,7 +10,7 @@ class ExpressionInputBar : public ExpressionField {
 public:
   ExpressionInputBar(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
 
-  void layoutSubviews(bool force = false) override;
+  using ExpressionField::layoutSubviews;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
@@ -20,7 +20,7 @@ private:
   constexpr static KDCoordinate k_horizontalMargin = 5;
   constexpr static KDCoordinate k_verticalMargin = 5;
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
-  virtual KDCoordinate inputViewHeight() const override;
+  KDCoordinate inputViewHeight() const override;
 };
 
 }

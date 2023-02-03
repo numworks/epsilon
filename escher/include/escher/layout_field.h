@@ -58,6 +58,9 @@ public:
 
   Poincare::LayoutCursor * cursor() { return m_contentView.cursor(); }
 
+protected:
+  bool linearMode() const { return Poincare::Preferences::sharedPreferences->editionMode() == Poincare::Preferences::EditionMode::Edition1D; }
+
 private:
   constexpr static int k_maxNumberOfLayouts = 220;
   static_assert(k_maxNumberOfLayouts == TextField::MaxBufferSize(), "Maximal number of layouts in a layout field should be equal to max number of char in text field");
@@ -68,7 +71,6 @@ private:
   void insertLayoutAtCursor(Poincare::Layout layoutR, bool forceCursorRightOfLayout = false, bool forceCursorLeftOfLayout = false);
   Poincare::Context * delegateContext() { return m_delegate ? m_delegate->context() : nullptr; }
   TextCursorView * textCursorView() override { return m_contentView.textCursorView(); }
-  bool linearMode() const { return Poincare::Preferences::sharedPreferences->editionMode() == Poincare::Preferences::EditionMode::Edition1D; }
 
   class ContentView : public View {
   public:

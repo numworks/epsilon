@@ -8,13 +8,7 @@ namespace Escher {
 ExpressionInputBar::ExpressionInputBar(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ExpressionField(parentResponder, inputEventHandler, textFieldDelegate, layoutFieldDelegate, KDContext::k_alignLeft, KDContext::k_alignCenter)
 {
-  m_textField.setMargins(0, k_horizontalMargin, 0, k_horizontalMargin);
-  m_layoutField.setMargins(k_verticalMargin, k_horizontalMargin, k_verticalMargin, k_horizontalMargin);
-}
-
-void ExpressionInputBar::layoutSubviews(bool force) {
-  KDRect inputViewFrame(0, k_separatorThickness, bounds().width(), bounds().height() - k_separatorThickness);
-  layoutSubviewsInRect(inputViewFrame, force);
+  setMargins(k_verticalMargin, k_horizontalMargin, k_verticalMargin, k_horizontalMargin);
 }
 
 void ExpressionInputBar::drawRect(KDContext * ctx, KDRect rect) const {
@@ -27,9 +21,7 @@ KDSize ExpressionInputBar::minimalSizeForOptimalDisplay() const {
 }
 
 KDCoordinate ExpressionInputBar::inputViewHeight() const {
-  return (editionIsInTextField() ? k_minimalHeight :
-           std::min(k_maximalHeight,
-             std::max(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
+  return std::clamp(LayoutField::minimalSizeForOptimalDisplay().height(), k_minimalHeight, k_maximalHeight);
 }
 
 }

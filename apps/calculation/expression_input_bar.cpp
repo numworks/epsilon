@@ -50,26 +50,20 @@ bool ExpressionInputBar::handleEvent(Ion::Events::Event event) {
 }
 
 bool ExpressionInputBar::fieldContainsSingleMinusSymbol() const {
-  if (editionIsInTextField()) {
-    const char * inputBuffer = m_textField.draftTextBuffer();
-    return (inputBuffer[0] == '-' && inputBuffer[1] == 0);
-  } else {
-    Layout layout = m_layoutField.layout();
-    if (layout.isHorizontal()
-        && layout.numberOfChildren() == 1) {
-      Layout child = layout.childAtIndex(0);
-      if (child.type() == LayoutNode::Type::CodePointLayout) {
-        return static_cast<CodePointLayout &>(child).codePoint() == '-';
-      }
+  if (layout().isHorizontal()
+      && layout().numberOfChildren() == 1) {
+    Layout child = layout().childAtIndex(0);
+    if (child.type() == LayoutNode::Type::CodePointLayout) {
+      return static_cast<CodePointLayout &>(child).codePoint() == '-';
     }
-    return false;
   }
+  return false;
 }
 
 bool ExpressionInputBar::handleDivision() {
   assert(m_divisionCycleWithAns != Poincare::TrinaryBoolean::Unknown);
   bool mixedFractionsEnabled = Poincare::Preferences::sharedPreferences->mixedFractionsAreEnabled();
-  bool editionIn1D = editionIsInTextField();
+  bool editionIn1D = linearMode();
   Ion::Events::Event event = Ion::Events::Division;
   bool handled = true;
 
@@ -121,7 +115,7 @@ bool ExpressionInputBar::handleDivision() {
         if (editionIn1D) {
           // 1D: Start -> DenominatorOfEmptyFraction
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
-        } else if (m_layoutField.cursor()->isAtNumeratorOfEmptyFraction()) {
+        } else if (cursor()->isAtNumeratorOfEmptyFraction()) {
           // 2D: Start -> NumeratorOfEmptyFraction
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         }

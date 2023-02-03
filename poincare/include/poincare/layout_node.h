@@ -96,7 +96,7 @@ public:
   }
   LayoutNode * root() { return static_cast<LayoutNode *>(TreeNode::root()); }
 
-  // Tree navigation
+  // Cursor navigation
   constexpr static int k_outsideIndex = -1;
   constexpr static int k_cantMoveIndex = -2;
   // Default implementation only handles cases of 0 or 1 child
@@ -107,6 +107,16 @@ public:
     Right
   };
   virtual int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const;
+
+  // Cursor deletion
+  enum class DeletionMethod {
+    DeleteLayout,
+    MoveLeft
+    //TODO
+  };
+  virtual DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const {
+    return childIndex == k_outsideIndex ? DeletionMethod::DeleteLayout : DeletionMethod::MoveLeft;
+  }
 
   // Tree modification
   // Collapse

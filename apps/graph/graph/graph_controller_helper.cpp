@@ -12,7 +12,7 @@ using namespace Poincare;
 
 namespace Graph {
 
-bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, float pixelWidth, int scrollSpeed, int * subCurveIndex) {
+bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, OMG::HorizontalDirection direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, float pixelWidth, int scrollSpeed, int * subCurveIndex) {
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   assert(!subCurveIndex || *subCurveIndex < function->numberOfSubCurves());
   const double tCursor = cursor->t();
@@ -21,17 +21,17 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   int functionsCount = -1;
   bannerView()->emptyInterestMessages(graphView()->cursorView());
 
-  if (((direction > 0 && std::abs(tCursor-tMax) < DBL_EPSILON)
-        || (direction < 0 && std::abs(tCursor-tMin) < DBL_EPSILON))
+  if (((direction.isRight() && std::abs(tCursor-tMax) < DBL_EPSILON)
+        || (direction.isLeft() && std::abs(tCursor-tMin) < DBL_EPSILON))
       && !App::app()->functionStore()->displaysNonCartesianFunctions(&functionsCount))
   {
-    jumpToLeftRightCurve(tCursor, direction > 0 ? OMG::HorizontalDirection::Right() : OMG::HorizontalDirection::Left(), functionsCount, record);
+    jumpToLeftRightCurve(tCursor, direction, functionsCount, record);
     return true;
   }
   Poincare::Context * context = App::app()->localContext();
   // Reload the expiring pointer
   function = App::app()->functionStore()->modelForRecord(record);
-  double dir = (direction > 0 ? 1.0 : -1.0);
+  double dir = (direction.isRight() ? 1.0 : -1.0);
 
   bool specialConicCursorMove = false;
   if (function->properties().isConic() && function->numberOfSubCurves() == 2) {

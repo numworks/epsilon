@@ -14,7 +14,7 @@ class ExpressionField : public LayoutField {
 public:
   ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, LayoutFieldDelegate * layoutFieldDelegate, float horizontalAlignment = KDContext::k_alignLeft, float verticalAlignment = KDContext::k_alignCenter);
 
-  void setEditing(bool isEditing, bool reinitDraftBuffer = true);
+  void clearAndSetEditing(bool isEditing);
   /* Warning: this function is VERY dangerous! Indeed: sometimes the
    * m_layoutField might overflow the m_textBuffer once serialized
    * and still have been accepted before because the model can hold a longer

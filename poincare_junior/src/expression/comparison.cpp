@@ -157,4 +157,11 @@ int Comparison::CompareFirstChild(const Node node0, Node node1, ScanDirection di
   return 1;
 }
 
+bool Comparison::AreEqual(const Node node0, const Node node1) {
+  // treeIsidenticalTo is faster since it uses memcmp
+  bool areEqual = node0.treeIsIdenticalTo(node1);
+  assert((Compare(node0, node1) == 0) == areEqual);
+  return areEqual;
+}
+
 }

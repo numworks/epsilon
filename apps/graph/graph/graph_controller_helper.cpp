@@ -25,7 +25,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
         || (direction < 0 && std::abs(tCursor-tMin) < DBL_EPSILON))
       && !App::app()->functionStore()->displaysNonCartesianFunctions(&functionsCount))
   {
-    jumpToLeftRightCurve(tCursor, direction, functionsCount, record);
+    jumpToLeftRightCurve(tCursor, direction > 0 ? OMG::HorizontalDirection::Right() : OMG::HorizontalDirection::Left(), functionsCount, record);
     return true;
   }
   Poincare::Context * context = App::app()->localContext();

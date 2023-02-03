@@ -56,7 +56,7 @@ private:
   BannerView * bannerView() override { return &m_bannerView; }
   GraphView * graphView() override { return &m_view; }
   Shared::FunctionBannerDelegate * functionBannerDelegate() override { return this; }
-  void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) override;
+  void jumpToLeftRightCurve(double t, OMG::HorizontalDirection direction, int functionsCount, Ion::Storage::Record record) override;
 
   // SimpleInteractiveCurveViewController
   void reloadBannerView() override;

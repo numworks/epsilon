@@ -60,11 +60,11 @@ void HorizontalLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direc
 }
 
 void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::HorizontalDirection::Left(), cursor, shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::Direction::Left(), cursor, shouldRecomputeLayout);
 }
 
 void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::HorizontalDirection::Right(), cursor, shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::Direction::Right(), cursor, shouldRecomputeLayout);
 }
 
 LayoutCursor HorizontalLayoutNode::equivalentCursor(LayoutCursor * cursor) {

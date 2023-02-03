@@ -179,11 +179,11 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   }
   int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
-    selectLeftRight(event == Ion::Events::ShiftLeft ? OMG::HorizontalDirection::Left() : OMG::HorizontalDirection::Right(), false, step);
+    selectLeftRight(event == Ion::Events::ShiftLeft ? OMG::Direction::Left() : OMG::Direction::Right(), false, step);
     return true;
   }
   if (event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
-    selectUpDown(event == Ion::Events::ShiftUp ? OMG::VerticalDirection::Up() : OMG::VerticalDirection::Down(), step);
+    selectUpDown(event == Ion::Events::ShiftUp ? OMG::Direction::Up() : OMG::Direction::Down(), step);
     return true;
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
@@ -586,7 +586,7 @@ bool TextArea::ContentView::removePreviousGlyph() {
 }
 
 bool TextArea::ContentView::removeEndOfLine() {
-  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), OMG::HorizontalDirection::Right());
+  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), OMG::Direction::Right());
   if (removedLine > 0) {
     layoutSubviews();
     reloadRectFromPosition(cursorLocation(), false);
@@ -600,7 +600,7 @@ bool TextArea::ContentView::removeStartOfLine() {
     assert(cursorLocation() == text());
     return false;
   }
-  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), OMG::HorizontalDirection::Left());
+  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), OMG::Direction::Left());
   if (removedLine > 0) {
     assert(cursorLocation() >= text() + removedLine);
     setCursorLocation(cursorLocation() - removedLine);

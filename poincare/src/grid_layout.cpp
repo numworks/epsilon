@@ -50,11 +50,11 @@ void GridLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, 
 
 
 void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::HorizontalDirection::Left(), cursor, shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::Direction::Left(), cursor, shouldRecomputeLayout);
 }
 
 void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::HorizontalDirection::Right(), cursor, shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::Direction::Right(), cursor, shouldRecomputeLayout);
 }
 
 void GridLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {

@@ -344,10 +344,10 @@ bool Layout::collapseOnDirection(OMG::HorizontalDirection direction, int absorbi
 void Layout::collapseSiblings(LayoutCursor * cursor) {
   bool collapsed = false;
   if (node()->shouldCollapseSiblingsOnRight()) {
-    collapsed |= collapseOnDirection(OMG::HorizontalDirection::Right(), rightCollapsingAbsorbingChildIndex(), cursor);
+    collapsed |= collapseOnDirection(OMG::Direction::Right(), rightCollapsingAbsorbingChildIndex(), cursor);
   }
   if (node()->shouldCollapseSiblingsOnLeft()) {
-    collapsed |= collapseOnDirection(OMG::HorizontalDirection::Left(), leftCollapsingAbsorbingChildIndex(), cursor);
+    collapsed |= collapseOnDirection(OMG::Direction::Left(), leftCollapsingAbsorbingChildIndex(), cursor);
   }
   if (collapsed) {
     node()->didCollapseSiblings(cursor);

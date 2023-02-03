@@ -52,7 +52,7 @@ void CalculationGraphController::viewWillAppear() {
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();
   curveView()->setFocus(true);
   assert(!m_record.isNull());
-  Coordinate2D<double> pointOfInterest = computeNewPointOfInterestFromAbscissa(m_graphRange->xMin(), OMG::HorizontalDirection::Right());
+  Coordinate2D<double> pointOfInterest = computeNewPointOfInterestFromAbscissa(m_graphRange->xMin(), OMG::Direction::Right());
   if (std::isnan(pointOfInterest.x1())) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);

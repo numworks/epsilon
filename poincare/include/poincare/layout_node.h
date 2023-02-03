@@ -99,16 +99,16 @@ public:
   virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) = 0;
   virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) = 0;
   virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) {
-    moveCursorVertically(OMG::VerticalDirection::Up(), cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
+    moveCursorVertically(OMG::Direction::Up(), cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
   }
   virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) {
-    moveCursorVertically(OMG::VerticalDirection::Down(), cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
+    moveCursorVertically(OMG::Direction::Down(), cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
   }
   void moveCursorUpInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) {
-    return moveCursorInDescendantsVertically(OMG::VerticalDirection::Up(), cursor, shouldRecomputeLayout, forSelection);
+    return moveCursorInDescendantsVertically(OMG::Direction::Up(), cursor, shouldRecomputeLayout, forSelection);
   }
   void moveCursorDownInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) {
-    return moveCursorInDescendantsVertically(OMG::VerticalDirection::Down(), cursor, shouldRecomputeLayout, forSelection);
+    return moveCursorInDescendantsVertically(OMG::Direction::Down(), cursor, shouldRecomputeLayout, forSelection);
   }
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
 

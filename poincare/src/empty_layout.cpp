@@ -25,7 +25,7 @@ void EmptyLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecompu
   assert(parent() != nullptr);
   // Ask the parent.
   cursor->setPosition(LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Left(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::Direction::Left(), cursor, shouldRecomputeLayout);
 }
 
 void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -33,7 +33,7 @@ void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomp
   assert(parent() != nullptr);
   // Ask the parent.
   cursor->setPosition(LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::Direction::Right(), cursor, shouldRecomputeLayout);
 }
 
 int EmptyLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -201,7 +201,7 @@ bool InteractiveCurveViewController::isCursorVisibleAtPosition(Coordinate2D<floa
            y <= range->yMax() - (ignoreMargins ? 0.f : cursorTopMarginRatio() * yRange)));
 }
 
-int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex, int * newSubCurveIndex) const {
+int InteractiveCurveViewController::closestCurveIndexVertically(OMG::VerticalDirection direction, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex, int * newSubCurveIndex) const {
   /* Vertical curves are quite hard to handle when moving the cursor.
    * To simplify things here, we consider vertical curves as if it they were
    * rotated by 90 degrees by swapping x and y when dealing with them. */
@@ -213,9 +213,9 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
     y = temp;
   }
   if (std::isnan(y)) {
-    y = goingUp ? -INFINITY : INFINITY;
+    y = direction.isUp() ? -INFINITY : INFINITY;
   }
-  double nextY = goingUp ? DBL_MAX : -DBL_MAX;
+  double nextY = direction.isUp() ? DBL_MAX : -DBL_MAX;
   int nextCurveIndex = -1;
   int nextSubCurveIndex = 0;
   int curvesCount = numberOfCurves();
@@ -250,7 +250,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
        * a lesser weight) indexes are taken into account. */
       int currentIndexScore = 2 * currentCurveIndex + currentSubCurveIndex;
       int newIndexScore = 2 * curveIndex + subCurveIndex;
-      if (goingUp) {
+      if (direction.isUp()) {
         if (newY > y && newY < nextY) {
           isNextCurve = true;
         } else if (newY == nextY) {

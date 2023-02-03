@@ -239,7 +239,7 @@ bool GraphController::moveCursorVertically(int direction) {
 
   // Find the closest regression
   int selectedRegressionCurve = *m_selectedDotIndex == -1 ? *m_selectedCurveIndex : -1;
-  int closestRegressionCurve = closestCurveIndexVertically(direction > 0, selectedRegressionCurve, context);
+  int closestRegressionCurve = closestCurveIndexVertically(direction > 0 ? OMG::VerticalDirection::Up() : OMG::VerticalDirection::Down(), selectedRegressionCurve, context);
 
   // Find the closest dot
   int closesDotSeries = -1;

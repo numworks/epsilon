@@ -80,6 +80,7 @@ EditionReference Polynomial::Addition(EditionReference polA, EditionReference po
 }
 
 EditionReference Polynomial::Multiplication(EditionReference polA, EditionReference polB) {
+  // TODO: implement Kronecker-Shönhage trick?
   return Operation(
       polA,
       polB,

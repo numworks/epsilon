@@ -20,6 +20,8 @@ public:
 
   EditionPool * editionPool() { return &m_editionPool; }
   bool needFreeBlocks(int numberOfBlocks);
+  /* reset should be used when all CacheReference have been destroyed to ensure
+   * that they won't point to reallocated nodes */
   void reset();
 
   int execute(ActionWithContext action, void * subAction, const void * data);

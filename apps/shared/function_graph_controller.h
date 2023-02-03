@@ -53,7 +53,7 @@ protected:
   // InteractiveCurveViewController
   void openMenuForCurveAtIndex(int curveIndex) override;
   void initCursorParameters(bool ignorMargins) override;
-  bool moveCursorVertically(int direction) override;
+  bool moveCursorVertically(OMG::VerticalDirection direction) override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;

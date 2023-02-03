@@ -69,6 +69,8 @@ public:
   bool isAtNumeratorOfEmptyFraction() const;
 
 private:
+  void setLayout(Layout layout, bool leftOfLayout);
+
   Layout leftLayout();
   Layout rightLayout();
   Layout layoutToFit(KDFont::Size font);

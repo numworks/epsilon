@@ -125,6 +125,16 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
   return std::min(numberOfChar, bufferSize-1);
 }
 
+int VerticalOffsetLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+  if (currentIndex == k_outsideIndex && ((direction == OMG::VerticalDirection::Up && m_verticalPosition == VerticalPosition::Superscript) || (direction == OMG::VerticalDirection::Down && m_verticalPosition == VerticalPosition::Subscript))) {
+    return 0;
+  }
+  if (currentIndex == 0 && ((direction == OMG::VerticalDirection::Down && m_verticalPosition == VerticalPosition::Superscript) || (direction == OMG::VerticalDirection::Up && m_verticalPosition == VerticalPosition::Subscript)) && positionAtCurrentIndex != PositionInLayout::Middle) {
+    return k_outsideIndex;
+  }
+  return k_cantMoveIndex;
+}
+
 KDSize VerticalOffsetLayoutNode::computeSize(KDFont::Size font) {
   KDSize indiceSize = indiceLayout()->layoutSize(font);
   KDCoordinate width = indiceSize.width();

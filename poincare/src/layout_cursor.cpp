@@ -236,6 +236,16 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
 
 /* Private */
 
+void LayoutCursor::setLayout(Layout l, bool leftOfLayout) {
+  if (!l.isHorizontal() && !l.parent().isUninitialized() && l.parent().isHorizontal()) {
+    m_layout = l.parent();
+    m_position = m_layout.indexOfChild(l) + !leftOfLayout;
+    return;
+  }
+  m_layout = l;
+  m_position = leftOfLayout ? leftMostPosition() : rightMostPosition();
+}
+
 Layout LayoutCursor::leftLayout() {
   assert(!isUninitialized());
   if (!m_layout.isHorizontal()) {
@@ -290,6 +300,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction, bool * sho
   assert(!nextLayout.isHorizontal());
 
   int newIndex = isSelecting() ? LayoutNode::k_outsideIndex : nextLayout.indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndexInNextLayout);
+  assert(newIndex != LayoutNode::k_cantMoveIndex);
   if (newIndex == LayoutNode::k_outsideIndex) {
     Layout parent = nextLayout.parent();
     Layout previousLayout = m_layout;
@@ -320,19 +331,9 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction, bool * shouldR
     TreeHandle commonAncestor = m_layout.commonAncestorWith(previousLayout);
     assert(!commonAncestor.isUninitialized());
     Layout layoutAncestor = static_cast<Layout&>(commonAncestor);
-    if (!layoutAncestor.parent().isUninitialized() && layoutAncestor.parent().isHorizontal()) {
-      assert(!layoutAncestor.isHorizontal());
-      m_layout = layoutAncestor.parent();
-      int ancestorIndex = m_layout.indexOfChild(layoutAncestor);
-      // Down goes left to right and up goes right to left
-      m_startOfSelection = ancestorIndex + (direction == OMG::VerticalDirection::Up);
-      m_position = ancestorIndex + (direction == OMG::VerticalDirection::Down);
-    } else {
-      m_layout = layoutAncestor;
-      // Down goes left to right and up goes right to left
-      m_startOfSelection = direction == OMG::VerticalDirection::Down ? leftMostPosition() : rightMostPosition();
-      m_position = m_startOfSelection == leftMostPosition() ? rightMostPosition() : leftMostPosition();
-    }
+    // Down goes left to right and up goes right to left
+    setLayout(layoutAncestor, direction == OMG::VerticalDirection::Up);
+    m_startOfSelection = m_position + (direction == OMG::VerticalDirection::Up ? 1 : -1);
   }
   return moved;
 }
@@ -348,7 +349,9 @@ bool LayoutCursor::verticalMoveWithoutSelection(OMG::VerticalDirection direction
     for (int i = 0; i < 2; i++) {
       if (!nextLayout.isUninitialized()) {
         int nextIndex = nextLayout.indexOfNextChildToPointToAfterVerticalCursorMove(direction, LayoutNode::k_outsideIndex,positionRelativeToNextLayout);
-        if (nextIndex != LayoutNode::k_outsideIndex) {
+        if (nextIndex != LayoutNode::k_cantMoveIndex) {
+          assert(nextIndex != LayoutNode::k_outsideIndex);
+          assert(!nextLayout.isHorizontal());
           m_layout = nextLayout.childAtIndex(nextIndex);
           m_position = positionRelativeToNextLayout == LayoutNode::PositionInLayout::Left ? leftMostPosition() : rightMostPosition();
           return true;
@@ -367,10 +370,16 @@ bool LayoutCursor::verticalMoveWithoutSelection(OMG::VerticalDirection direction
   while (!p.isUninitialized()) {
     int childIndex = p.indexOfChild(currentChild);
     int nextIndex = p.indexOfNextChildToPointToAfterVerticalCursorMove(direction, childIndex, currentPosition);
-    if (nextIndex != LayoutNode::k_outsideIndex) {
-      m_layout = p.childAtIndex(nextIndex);
-      // TODO: Replace with score in descendant
-      m_position = leftMostPosition();
+    if (nextIndex != LayoutNode::k_cantMoveIndex) {
+      if (nextIndex == LayoutNode::k_outsideIndex) {
+        assert(currentPosition != LayoutNode::PositionInLayout::Middle);
+        setLayout(p, currentPosition == LayoutNode::PositionInLayout::Left);
+      } else {
+        assert(!p.isHorizontal());
+        m_layout = p.childAtIndex(nextIndex);
+        // TODO: Replace with score in descendant
+        m_position = leftMostPosition();
+      }
       return true;
     }
     currentChild = p;

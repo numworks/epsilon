@@ -58,7 +58,7 @@ int IntegralLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::Ve
   if (currentIndex == k_lowerBoundLayoutIndex && direction == OMG::VerticalDirection::Up) {
     return k_upperBoundLayoutIndex;
   }
-  return k_outsideIndex;
+  return k_cantMoveIndex;
 }
 
 /*

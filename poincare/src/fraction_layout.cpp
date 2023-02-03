@@ -29,10 +29,10 @@ int FractionLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::Ve
   case k_outsideIndex:
     return direction == OMG::VerticalDirection::Up ? k_numeratorIndex : k_denominatorIndex;
   case k_numeratorIndex:
-    return direction == OMG::VerticalDirection::Up ? k_outsideIndex : k_denominatorIndex;
+    return direction == OMG::VerticalDirection::Up ? k_cantMoveIndex : k_denominatorIndex;
   default:
     assert(currentIndex == k_denominatorIndex);
-    return direction == OMG::VerticalDirection::Up ? k_numeratorIndex : k_outsideIndex;
+    return direction == OMG::VerticalDirection::Up ? k_numeratorIndex : k_cantMoveIndex;
   }
 }
 

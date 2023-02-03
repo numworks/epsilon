@@ -93,6 +93,11 @@ public:
   int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const { return node()->indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex); }
   int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, LayoutNode::PositionInLayout positionAtCurrentIndex) const { return node()->indexOfNextChildToPointToAfterVerticalCursorMove(direction, currentIndex, positionAtCurrentIndex); }
 
+  // Cursor deletion
+  LayoutNode::DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const {
+    return node()->deletionMethodForCursorLeftOfChild(childIndex);
+  }
+
 private:
   bool privateHasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;
 };

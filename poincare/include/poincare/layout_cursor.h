@@ -61,7 +61,6 @@ public:
 
   /* Layout deletion */
   void performBackspace();
-  void deleteAndResetSelection();
 
   void stopSelecting();
 
@@ -85,6 +84,9 @@ private:
   bool verticalMoveWithoutSelection(OMG::VerticalDirection direction, bool * shouldRedrawLayout);
 
   void privateStartSelecting();
+
+  void deleteAndResetSelection();
+  void privateDelete(LayoutNode::DeletionMethod deletionMethod);
 
   bool setEmptyRectangleVisibility(EmptyRectangle::State state);
   void invalidateSizesAndPositions();

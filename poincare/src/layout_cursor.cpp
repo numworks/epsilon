@@ -175,12 +175,25 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
 }
 
 void LayoutCursor::performBackspace() {
-  invalidateSizesAndPositions();
   if (isSelecting()) {
     deleteAndResetSelection();
     return;
   }
-  // TODO: Restore deletion behaviour
+
+  Layout leftL = leftLayout();
+  if (!leftL.isUninitialized()) {
+    LayoutNode::DeletionMethod deletionMethod = leftL.deletionMethodForCursorLeftOfChild(LayoutNode::k_outsideIndex);
+    privateDelete(deletionMethod);
+    return;
+  }
+
+  assert(m_position == leftMostPosition());
+  Layout p = m_layout.parent();
+  if (p.isUninitialized()) {
+    return;
+  }
+  LayoutNode::DeletionMethod deletionMethod = p.deletionMethodForCursorLeftOfChild(p.indexOfChild(m_layout));
+  privateDelete(deletionMethod);
 }
 
 void LayoutCursor::deleteAndResetSelection() {
@@ -199,6 +212,7 @@ void LayoutCursor::deleteAndResetSelection() {
     m_layout.replaceWithInPlace(HorizontalLayout::Builder());
   }
   m_position = selectionLeftBound;
+  invalidateSizesAndPositions();
   stopSelecting();
   didEnterCurrentPosition();
 }
@@ -445,6 +459,27 @@ void LayoutCursor::invalidateSizesAndPositions() {
     layoutToInvalidate = layoutToInvalidate.parent();
   }
   layoutToInvalidate.invalidAllSizesPositionsAndBaselines();
+}
+
+void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod) {
+  if (deletionMethod == LayoutNode::DeletionMethod::MoveLeft) {
+    bool dummy = false;
+    move(OMG::Direction::Left, false, &dummy);
+    return;
+  }
+  assert(deletionMethod == LayoutNode::DeletionMethod::DeleteLayout);
+  if (!m_layout.isHorizontal()) {
+    assert(m_layout.parent().isUninitialized() || !m_layout.parent().isHorizontal());
+    HorizontalLayout hLayout = HorizontalLayout::Builder();
+    m_layout.replaceWithInPlace(hLayout);
+    hLayout.addOrMergeChildAtIndex(m_layout, 0);
+    m_layout = hLayout;
+  }
+  assert(m_position != 0);
+  assert(m_layout.isHorizontal());
+  static_cast<HorizontalLayout&>(m_layout).removeChildAtIndexInPlace(m_position - 1);
+  m_position--;
+  invalidateSizesAndPositions();
 }
 
 }

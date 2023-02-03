@@ -167,7 +167,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   double x;
   double y;
   if (*m_selectedDotIndex >= 0) {
-    int dotSelected = m_store->nextDot(selectedSeriesIndex(), direction, *m_selectedDotIndex, !curveIsScatterPlot(*m_selectedCurveIndex));
+    int dotSelected = m_store->nextDot(selectedSeriesIndex(), direction > 0 ? OMG::HorizontalDirection::Right() : OMG::HorizontalDirection::Left(), *m_selectedDotIndex, !curveIsScatterPlot(*m_selectedCurveIndex));
     if (dotSelected >= 0) {
       x = dotAbscissa(*m_selectedCurveIndex, dotSelected);
       y = dotOrdinate(*m_selectedCurveIndex, dotSelected);

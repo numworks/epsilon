@@ -48,7 +48,7 @@ void ResidualPlotController::updateCursor() {
 }
 
 bool ResidualPlotController::moveHorizontally(int direction) {
-  int nextIndex = m_store->nextDot(m_selectedSeriesIndex, direction, m_selectedDotIndex, false);
+  int nextIndex = m_store->nextDot(m_selectedSeriesIndex, direction > 0 ? OMG::HorizontalDirection::Right() : OMG::HorizontalDirection::Left(), m_selectedDotIndex, false);
   if (nextIndex == m_selectedDotIndex || nextIndex < 0) {
     return false;
   }

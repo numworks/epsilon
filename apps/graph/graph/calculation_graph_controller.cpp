@@ -52,7 +52,7 @@ void CalculationGraphController::viewWillAppear() {
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();
   curveView()->setFocus(true);
   assert(!m_record.isNull());
-  Coordinate2D<double> pointOfInterest = computeNewPointOfInterestFromAbscissa(m_graphRange->xMin(), 1);
+  Coordinate2D<double> pointOfInterest = computeNewPointOfInterestFromAbscissa(m_graphRange->xMin(), OMG::HorizontalDirection::Right());
   if (std::isnan(pointOfInterest.x1())) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);
@@ -79,8 +79,8 @@ void CalculationGraphController::reloadBannerView() {
   reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 
-Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAbscissa(double start, int direction) {
-  double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
+Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAbscissa(double start, OMG::HorizontalDirection direction) {
+  double max = direction.isRight() ? m_graphRange->xMax() : m_graphRange->xMin();
   functionStore()->modelForRecord(m_record)->trimResolutionInterval(&start, &max);
   return computeNewPointOfInterest(start, max, textFieldDelegateApp()->localContext());
 }
@@ -107,7 +107,7 @@ bool CalculationGraphController::moveCursorHorizontally(int direction, int scrol
   if (!m_isActive) {
     return false;
   }
-  Coordinate2D<double> newPointOfInterest = computeNewPointOfInterestFromAbscissa(m_cursor->x(), direction);
+  Coordinate2D<double> newPointOfInterest = computeNewPointOfInterestFromAbscissa(m_cursor->x(), direction > 0 ? OMG::HorizontalDirection::Right() : OMG::HorizontalDirection::Left());
   if (std::isnan(newPointOfInterest.x1())) {
     return false;
   }

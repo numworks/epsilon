@@ -35,7 +35,7 @@ public:
 private:
   // Move cursor to selected and updates the banner
   void updateCursor();
-  bool moveHorizontally(int direction);
+  bool moveHorizontally(OMG::HorizontalDirection direction);
 
   Store * m_store;
   Shared::CurveViewCursor m_cursor;

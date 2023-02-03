@@ -17,6 +17,19 @@ int FractionLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::
   return k_outsideIndex;
 }
 
+int FractionLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+  switch (currentIndex) {
+  case k_outsideIndex:
+    return direction == OMG::VerticalDirection::Up ? k_numeratorIndex : k_denominatorIndex;
+  case k_numeratorIndex:
+    return direction == OMG::VerticalDirection::Up ? k_outsideIndex : k_denominatorIndex;
+  default:
+    assert(currentIndex == k_denominatorIndex);
+    return direction == OMG::VerticalDirection::Up ? k_numeratorIndex : k_outsideIndex;
+  }
+}
+
+
 /* Select up/down
  *                    9876
  * Take for instance ------. If there is no selection ongoing, moving the cursor

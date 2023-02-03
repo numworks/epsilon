@@ -109,6 +109,12 @@ int LayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::Horizont
   return -2;
 }
 
+int LayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+  assert(currentIndex < numberOfChildren());
+  assert(currentIndex != k_outsideIndex || positionAtCurrentIndex != PositionInLayout::Middle);
+  return k_outsideIndex;
+}
+
 /*
 void LayoutNode::askParentToMoveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert((direction.isLeft()  && cursor->position() == LayoutCursor::Position::Left)

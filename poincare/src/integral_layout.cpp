@@ -48,6 +48,19 @@ int IntegralLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::
   }
 }
 
+int IntegralLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+  if (currentIndex == k_integrandLayoutIndex && positionAtCurrentIndex == PositionInLayout::Left) {
+    return direction == OMG::VerticalDirection::Up ? k_upperBoundLayoutIndex : k_lowerBoundLayoutIndex;
+  }
+  if (currentIndex == k_upperBoundLayoutIndex && direction == OMG::VerticalDirection::Down) {
+    return k_lowerBoundLayoutIndex;
+  }
+  if (currentIndex == k_lowerBoundLayoutIndex && direction == OMG::VerticalDirection::Up) {
+    return k_upperBoundLayoutIndex;
+  }
+  return k_outsideIndex;
+}
+
 /*
 void IntegralLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (cursor->layoutNode()->hasAncestor(lowerBoundLayout(), true)) {

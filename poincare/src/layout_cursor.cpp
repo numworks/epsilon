@@ -269,6 +269,11 @@ Layout LayoutCursor::layoutToFit(KDFont::Size font) {
   return leftL.isUninitialized() || (!rightL.isUninitialized() && leftL.layoutSize(font).height() < rightL.layoutSize(font).height()) ? rightL : leftL;
 }
 
+void LayoutCursor::setPositionAtEndpointAfterHorizontalMove(OMG::HorizontalDirection direction) {
+  m_position = direction == OMG::HorizontalDirection::Right ? 0 : (m_layout.isHorizontal() ? m_layout.numberOfChildren() : 1);
+}
+
+
 bool LayoutCursor::privateHorizontalMove(OMG::HorizontalDirection direction, bool * shouldRedrawLayout) {
   Layout nextLayout = Layout();
   int currentIndexInNextLayout = LayoutNode::k_outsideIndex;
@@ -310,12 +315,57 @@ bool LayoutCursor::privateHorizontalMove(OMG::HorizontalDirection direction, boo
   }
   // Enter the next layout child
   m_layout = nextLayout.childAtIndex(newIndex);
-  m_position = direction == OMG::HorizontalDirection::Right ? 0 : (m_layout.isHorizontal() ? m_layout.numberOfChildren() : 1);
+  setPositionAtEndpointAfterHorizontalMove(direction);
   return true;
 }
 
 bool LayoutCursor::privateVerticalMove(OMG::VerticalDirection direction, bool * shouldRedrawLayout) {
-  // TODO: Restore moveCursorInDescendantsVertically
+  int currentIndexInNextLayout = LayoutNode::k_outsideIndex;
+  // TODO: Handle selection
+  bool selecting = isSelecting();
+
+  int nextIndex = LayoutNode::k_outsideIndex;
+
+  /* Step 1:
+   * Try to enter right or left layout if it can be entered through up/down */
+  Layout rightL = rightLayout();
+  if (!rightL.isUninitialized()) {
+    nextIndex = rightL.indexOfNextChildToPointToAfterVerticalCursorMove(direction, LayoutNode::k_outsideIndex, LayoutNode::PositionInLayout::Left);
+    if (nextIndex != LayoutNode::k_outsideIndex) {
+      m_layout = rightL.childAtIndex(nextIndex);
+      setPositionAtEndpointAfterHorizontalMove(OMG::HorizontalDirection::Right);
+      return true;
+    }
+  }
+
+  Layout leftL = leftLayout();
+  if (!leftL.isUninitialized()) {
+    nextIndex = leftL.indexOfNextChildToPointToAfterVerticalCursorMove(direction, LayoutNode::k_outsideIndex, LayoutNode::PositionInLayout::Right);
+    if (nextIndex != LayoutNode::k_outsideIndex) {
+      m_layout = leftL.childAtIndex(nextIndex);
+      setPositionAtEndpointAfterHorizontalMove(OMG::HorizontalDirection::Left);
+      return true;
+    }
+  }
+
+  /* Step 2:
+   * Ask ancestor if cursor can move vertically. */
+  Layout p = m_layout.parent();
+  Layout currentChild = m_layout;
+  LayoutNode::PositionInLayout currentPosition = m_position == 0 ? LayoutNode::PositionInLayout::Left : ((m_layout.isHorizontal() && m_position == m_layout.numberOfChildren()) || (!m_layout.isHorizontal() && m_position == 1) ? LayoutNode::PositionInLayout::Right : LayoutNode::PositionInLayout::Middle);
+  while (!p.isUninitialized()) {
+    int childIndex = p.indexOfChild(currentChild);
+    int nextIndex = p.indexOfNextChildToPointToAfterVerticalCursorMove(direction, childIndex, currentPosition);
+    if (nextIndex != LayoutNode::k_outsideIndex) {
+      m_layout = p.childAtIndex(nextIndex);
+      // TODO: Replace wit score in descendant
+      setPositionAtEndpointAfterHorizontalMove(OMG::HorizontalDirection::Right);
+      return true;
+    }
+    currentChild = p;
+    p = p.parent();
+    currentPosition = LayoutNode::PositionInLayout::Middle;
+  }
   return false;
 }
 

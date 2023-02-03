@@ -73,6 +73,7 @@ private:
   Layout rightLayout();
   Layout layoutToFit(KDFont::Size font);
 
+  void setPositionAtEndpointAfterHorizontalMove(OMG::HorizontalDirection direction);
   bool privateHorizontalMove(OMG::HorizontalDirection direction, bool * shouldRedrawLayout);
   bool privateVerticalMove(OMG::VerticalDirection direction, bool * shouldRedrawLayout);
 

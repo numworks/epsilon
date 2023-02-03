@@ -73,7 +73,7 @@ protected:
   virtual CurveSelectionController * curveSelectionController() const = 0;
 
   // Closest vertical curve helper
-  int closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex = 0, int * newSubCurveIndex = nullptr) const;
+  int closestCurveIndexVertically(OMG::VerticalDirection direction, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex = 0, int * newSubCurveIndex = nullptr) const;
   int selectedCurveIndex() const { return *m_selectedCurveIndex; }
   virtual Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const = 0;
   virtual bool suitableYValue(double y) const { return true; }

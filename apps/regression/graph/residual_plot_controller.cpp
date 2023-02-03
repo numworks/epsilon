@@ -47,8 +47,8 @@ void ResidualPlotController::updateCursor() {
   m_bannerView.reload();
 }
 
-bool ResidualPlotController::moveHorizontally(int direction) {
-  int nextIndex = m_store->nextDot(m_selectedSeriesIndex, direction > 0 ? OMG::HorizontalDirection::Right() : OMG::HorizontalDirection::Left(), m_selectedDotIndex, false);
+bool ResidualPlotController::moveHorizontally(OMG::HorizontalDirection direction) {
+  int nextIndex = m_store->nextDot(m_selectedSeriesIndex, direction, m_selectedDotIndex, false);
   if (nextIndex == m_selectedDotIndex || nextIndex < 0) {
     return false;
   }
@@ -65,7 +65,7 @@ bool ResidualPlotController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Right || event == Ion::Events::Left) {
-    return moveHorizontally(event == Ion::Events::Right ? 1 : -1);
+    return moveHorizontally(event == Ion::Events::Right ? OMG::HorizontalDirection::Right() : OMG::HorizontalDirection::Left());
   }
   return false;
 }

@@ -84,22 +84,22 @@ void BoxPlotPolicy::drawOutlier(const AbstractPlotView * plotView, KDContext * c
 }
 
 void BoxPlotPolicy::drawChevronSelection(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound) const {
-  drawChevron(plotView, ctx, rect, calculation, lowBound, k_selectedColor, true);
-  drawChevron(plotView, ctx, rect, calculation, upBound, k_selectedColor, false);
+  drawChevron(plotView, ctx, rect, calculation, lowBound, k_selectedColor, OMG::VerticalDirection::Up());
+  drawChevron(plotView, ctx, rect, calculation, upBound, k_selectedColor, OMG::VerticalDirection::Down());
 }
 
-void BoxPlotPolicy::drawChevron(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool up) const {
+void BoxPlotPolicy::drawChevron(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, float y, KDColor color, OMG::VerticalDirection direction) const {
   // Place the chevron so that it points two pixels, the left one being (x, y).
   KDCoordinate px = plotView->floatToKDCoordinatePixel(Axis::Horizontal, x);
   KDCoordinate py = plotView->floatToKDCoordinatePixel(Axis::Vertical, y);
   px += 1 - Chevrons::k_chevronWidth/2;
-  py += (up ? 1 : -Chevrons::k_chevronHeight);
+  py += (direction.isUp() ? 1 : -Chevrons::k_chevronHeight);
   KDRect dotRect(px, py, Chevrons::k_chevronWidth, Chevrons::k_chevronHeight);
   if (!rect.intersects(dotRect)) {
     return;
   }
   KDColor workingBuffer[Chevrons::k_chevronHeight*Chevrons::k_chevronWidth];
-  const uint8_t * mask = (const uint8_t *)(up ? Chevrons::UpChevronMask : Chevrons::DownChevronMask);
+  const uint8_t * mask = (const uint8_t *)(direction.isUp() ? Chevrons::UpChevronMask : Chevrons::DownChevronMask);
   ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
 }
 

@@ -47,9 +47,9 @@ void MultipleBoxesView::reload() {
   m_axisView.reload();
 }
 
-bool MultipleBoxesView::moveSelectionHorizontally(int series, int deltaIndex) {
-  assert(deltaIndex != 0);
+bool MultipleBoxesView::moveSelectionHorizontally(int series, OMG::HorizontalDirection direction) {
   BoxView * view = plotViewForSeries(series);
+  int deltaIndex = direction.isRight() ? 1 : -1;
   if (view->canIncrementSelectedCalculation(deltaIndex)) {
     // Mark rect as dirty in parent's view to also redraw the background
     markRectAsDirty(view->selectedCalculationRect());

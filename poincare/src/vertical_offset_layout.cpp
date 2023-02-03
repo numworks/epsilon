@@ -8,58 +8,6 @@
 
 namespace Poincare {
 /*
-void VerticalOffsetLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (verticalPosition() == VerticalPosition::Superscript) {
-    // Case: Superscript.
-    if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
-      // Case: Right. Move to the indice.
-      cursor->setLayoutNode(indiceLayout());
-      cursor->setPosition(LayoutCursor::Position::Right);
-      return;
-    }
-    if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Left))) {
-      // Case: Left. Move to the indice.
-      cursor->setLayoutNode(indiceLayout());
-      cursor->setPosition(LayoutCursor::Position::Left);
-      return;
-    }
-  } else {
-    if (cursor->isEquivalentTo(LayoutCursor(Layout(indiceLayout()), cursor->position()))) {
-      /* Case: Subscript, Left or Right of the indice. Put the cursor at the
-       * same position, pointing this. *
-      cursor->setLayoutNode(this);
-      return;
-    }
-  }
-  LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void VerticalOffsetLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (verticalPosition() == VerticalPosition::Subscript) {
-    // Case: Subscript.
-    if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
-      // Case: Right. Move to the indice.
-      cursor->setLayoutNode(indiceLayout());
-      cursor->setPosition(LayoutCursor::Position::Right);
-      return;
-   }
-    // Case: Left. Move to the indice.
-    if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Left))) {
-      cursor->setLayoutNode(indiceLayout());
-      cursor->setPosition(LayoutCursor::Position::Left);
-      return;
-    }
-  } else {
-    if (cursor->isEquivalentTo(LayoutCursor(Layout(indiceLayout()), cursor->position()))){
-      /* Case: Superscript, Left or Right of the indice. Put the cursor at the
-       * same position, pointing this. *
-      cursor->setLayoutNode(this);
-      return;
-    }
-  }
-  LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
 void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (cursor->layoutNode() == indiceLayout()) {
     assert(cursor->position() == LayoutCursor::Position::Left);

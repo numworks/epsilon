@@ -49,48 +49,25 @@ int NthRootLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::H
   }
 }
 
+int NthRootLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+  if (direction == OMG::VerticalDirection::Up &&
+      m_hasIndex &&
+      (positionAtCurrentIndex == PositionInLayout::Left && (currentIndex == k_outsideIndex || currentIndex == k_radicandLayoutIndex)))
+  {
+    return k_indexLayoutIndex;
+  }
+
+  if (direction == OMG::VerticalDirection::Down &&
+      m_hasIndex &&
+      currentIndex == k_indexLayoutIndex &&
+      positionAtCurrentIndex != PositionInLayout::Middle)
+  {
+    return positionAtCurrentIndex == PositionInLayout::Right ? k_radicandLayoutIndex : k_outsideIndex;
+  }
+  return k_cantMoveIndex;
+}
+
 /*
-void NthRootLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (indexLayout() != nullptr
-      && cursor->isEquivalentTo(LayoutCursor(radicandLayout(), LayoutCursor::Position::Left)))
-  {
-    // If the cursor is Left of the radicand, move it to the index.
-    cursor->setLayoutNode(indexLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  if (indexLayout() != nullptr
-      && cursor->layoutNode() == this
-      && cursor->position() == LayoutCursor::Position::Left)
-  {
-    // If the cursor is Left, move it to the index.
-    cursor->setLayoutNode(indexLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void NthRootLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (indexLayout() != nullptr
-      && cursor->layoutNode()->hasAncestor(indexLayout(), true))
-  {
-    if (cursor->isEquivalentTo(LayoutCursor(indexLayout(), LayoutCursor::Position::Right))) {
-      // If the cursor is Right of the index, move it to the radicand.
-      cursor->setLayoutNode(radicandLayout());
-      cursor->setPosition(LayoutCursor::Position::Left);
-      return;
-    }
-    // If the cursor is Left of the index, move it Left .
-    if (cursor->isEquivalentTo(LayoutCursor(indexLayout(), LayoutCursor::Position::Left))) {
-      cursor->setLayoutNode(this);
-      cursor->setPosition(LayoutCursor::Position::Left);
-      return;
-    }
-  }
-  LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
 void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(radicandLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);

@@ -24,47 +24,25 @@ int SequenceLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::
   }
 }
 
+int SequenceLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+  if (direction == OMG::VerticalDirection::Up &&
+      ((currentIndex == k_variableLayoutIndex && currentIndex == k_lowerBoundLayoutIndex) ||
+       (positionAtCurrentIndex == PositionInLayout::Left && (currentIndex == k_outsideIndex || currentIndex == k_argumentLayoutIndex))))
+  {
+    return k_upperBoundLayoutIndex;
+  }
+
+  if (direction == OMG::VerticalDirection::Down &&
+      ((currentIndex == k_upperBoundLayoutIndex) ||
+       (positionAtCurrentIndex == PositionInLayout::Left && (currentIndex == k_outsideIndex || currentIndex == k_argumentLayoutIndex))))
+  {
+    return k_lowerBoundLayoutIndex;
+  }
+  return k_cantMoveIndex;
+}
+
+
 /*
-void SequenceLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode()->hasAncestor(lowerBoundLayout(), true) || cursor->layoutNode()->hasAncestor(variableLayout(), true)) {
-  // If the cursor is inside the lower bound or inside the variable name, move it to the upper bound
-    upperBoundLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  if (cursor->isEquivalentTo(LayoutCursor(argumentLayout(), LayoutCursor::Position::Left))) {
-    // If the cursor is Left of the argument, move it to the upper bound
-    cursor->setLayoutNode(upperBoundLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-    // If the cursor is Left of this, move it to the upper bound
-  if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Left) {
-    cursor->setLayoutNode(upperBoundLayout());
-    return;
-  }
-  LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void SequenceLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode()->hasAncestor(upperBoundLayout(), true)) {
-    // If the cursor is inside the upper bound, move it to the lower bound
-    lowerBoundLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  // If the cursor is Left of the argument, move it to the lower bound
-  if (cursor->isEquivalentTo(LayoutCursor(argumentLayout(), LayoutCursor::Position::Left))) {
-    cursor->setLayoutNode(lowerBoundLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  // If the cursor is Left of this, move it to the variable bound
-  if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Left) {
-    cursor->setLayoutNode(variableLayout());
-    return;
-  }
-  LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
 void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(argumentLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);

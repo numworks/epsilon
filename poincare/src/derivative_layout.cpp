@@ -56,73 +56,65 @@ int HigherOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCur
   }
   return DerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex);
 }
+
+int DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+  if (direction == OMG::VerticalDirection::Up && currentIndex == k_variableLayoutIndex && m_variableSlot == VariableSlot::Assignment)
+  {
+    return k_derivandLayoutIndex;
+  }
+
+  if (direction == OMG::VerticalDirection::Down && (currentIndex == k_derivandLayoutIndex || currentIndex == k_outsideIndex) && positionAtCurrentIndex == PositionInLayout::Right) {
+    return k_abscissaLayoutIndex;
+  }
+
+  return k_cantMoveIndex;
+}
+
+int FirstOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+  if (direction == OMG::VerticalDirection::Down && currentIndex == k_derivandLayoutIndex && positionAtCurrentIndex == PositionInLayout::Left) {
+    // TODO: Set variable slot
+    return k_variableLayoutIndex;
+  }
+
+  if (direction == OMG::VerticalDirection::Up && currentIndex == k_variableLayoutIndex && m_variableSlot == VariableSlot::Fraction) {
+    return k_derivandLayoutIndex;
+  }
+
+  return DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(direction, currentIndex, positionAtCurrentIndex);
+}
+
+int HigherOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+  if (direction == OMG::VerticalDirection::Up && currentIndex == k_variableLayoutIndex && m_variableSlot == VariableSlot::Fraction) {
+    // TODO: Set order slot
+    return positionAtCurrentIndex == PositionInLayout::Right ? k_orderLayoutIndex /* denominator */: /* Numerator */k_orderLayoutIndex;
+  }
+
+  if (direction == OMG::VerticalDirection::Up &&
+      ((currentIndex == k_derivandLayoutIndex && positionAtCurrentIndex == PositionInLayout::Left) ||
+       (currentIndex == k_orderLayoutIndex && m_orderSlot == OrderSlot::Denominator)))
+  {
+    // TODO: Set order slot
+    return k_orderLayoutIndex;
+  }
+
+  if (direction == OMG::VerticalDirection::Down &&
+      ((currentIndex == k_derivandLayoutIndex && positionAtCurrentIndex == PositionInLayout::Left) ||
+       (currentIndex == k_orderLayoutIndex && m_orderSlot == OrderSlot::Numerator)))
+  {
+    // TODO: Set order slot
+    return k_orderLayoutIndex;
+  }
+
+  if (direction == OMG::VerticalDirection::Down && currentIndex == k_orderLayoutIndex && m_orderSlot == OrderSlot::Denominator && positionAtCurrentIndex == PositionInLayout::Left)
+  {
+    // TODO: Set variable slot
+    return k_variableLayoutIndex;
+  }
+
+  return DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(direction, currentIndex, positionAtCurrentIndex);
+}
+
 /*
-void DerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  assert(!cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))); // Handle by child classes
-  if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Right))) {
-    abscissaLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void FirstOrderDerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))) {
-    setVariableSlot(VariableSlot::Fraction, shouldRecomputeLayout);
-    variableLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  DerivativeLayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void HigherOrderDerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))
-      || (m_orderSlot == OrderSlot::Numerator &&  cursor->layoutNode()->hasAncestor(orderLayout(), true))) {
-    setOrderSlot(OrderSlot::Denominator, shouldRecomputeLayout);
-    orderLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  if (m_orderSlot == OrderSlot::Denominator && cursor->isEquivalentTo(LayoutCursor(orderLayout(), LayoutCursor::Position::Left))) {
-    setVariableSlot(VariableSlot::Fraction, shouldRecomputeLayout);
-    variableLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  DerivativeLayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void DerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  assert(!(m_variableSlot == VariableSlot::Fraction && cursor->layoutNode()->hasAncestor(variableLayout(), true))); // Handle by child classes
-  if (m_variableSlot == VariableSlot::Assignment && cursor->layoutNode()->hasAncestor(variableLayout(), true)) {
-    derivandLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void FirstOrderDerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (m_variableSlot == VariableSlot::Fraction && cursor->layoutNode()->hasAncestor(variableLayout(), true)) {
-    derivandLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  DerivativeLayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void HigherOrderDerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (m_variableSlot == VariableSlot::Fraction && cursor->isEquivalentTo(LayoutCursor(variableLayout(), LayoutCursor::Position::Right))) {
-    setOrderSlot(OrderSlot::Denominator, shouldRecomputeLayout);
-    orderLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))
-      || (m_orderSlot == OrderSlot::Denominator && cursor->layoutNode()->hasAncestor(orderLayout(), true))
-      || (m_variableSlot == VariableSlot::Fraction && cursor->layoutNode()->hasAncestor(variableLayout(), true))) {
-    setOrderSlot(OrderSlot::Numerator, shouldRecomputeLayout);
-    orderLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  DerivativeLayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
 void DerivativeLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(derivandLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);

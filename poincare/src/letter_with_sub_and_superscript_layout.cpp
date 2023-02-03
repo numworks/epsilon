@@ -16,23 +16,23 @@ int LetterWithSubAndSuperscriptLayoutNode::indexOfNextChildToPointToAfterHorizon
   }
 }
 
-/*
-void LetterWithSubAndSuperscriptLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode()->hasAncestor(kLayout(), true)) {
-    // Case: kLayout. Move to nLayout.
-    return nLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
+int LetterWithSubAndSuperscriptLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+  if (direction == OMG::VerticalDirection::Up &&
+      (currentIndex == k_kLayoutIndex ||
+       (currentIndex == k_outsideIndex && positionAtCurrentIndex == PositionInLayout::Left)))
+  {
+    return k_nLayoutIndex;
   }
-  LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
+
+  if (direction == OMG::VerticalDirection::Down &&
+      (currentIndex == k_nLayoutIndex ||
+       (currentIndex == k_outsideIndex && positionAtCurrentIndex == PositionInLayout::Right)))
+  {
+    return k_kLayoutIndex;
+  }
+  return k_cantMoveIndex;
 }
 
-void LetterWithSubAndSuperscriptLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode()->hasAncestor(nLayout(), true)) {
-    // Case: nLayout. Move to kLayout.
-    return kLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
-  }
-  LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-*/
 KDCoordinate LetterWithSubAndSuperscriptLayoutNode::aboveSymbol(KDFont::Size font) {
   return std::max<KDCoordinate>(nLayout()->baseline(font), kLayout()->baseline(font) - k_symbolHeight);
 }

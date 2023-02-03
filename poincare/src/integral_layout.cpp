@@ -60,36 +60,7 @@ int IntegralLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::Ve
   }
   return k_cantMoveIndex;
 }
-
 /*
-void IntegralLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode()->hasAncestor(lowerBoundLayout(), true)) {
-    // If the cursor is inside the lower bound, move it to the upper bound.
-    upperBoundLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  if (cursor->isEquivalentTo(LayoutCursor(integrandLayout(), LayoutCursor::Position::Left))) {
-    // If the cursor is Left of the integrand, move it to the upper bound.
-    upperBoundLayout()->moveCursorUpInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  LayoutNode::moveCursorUp(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
-void IntegralLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (cursor->layoutNode()->hasAncestor(upperBoundLayout(), true)) {
-    // If the cursor is inside the upper bound, move it to the lower bound.
-    lowerBoundLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  // If the cursor is Left of the integrand, move it to the lower bound.
-  if (cursor->isEquivalentTo(LayoutCursor(integrandLayout(), LayoutCursor::Position::Left))) {
-    lowerBoundLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
-    return;
-  }
-  LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
-}
-
 void IntegralLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   if (!deleteBeforeCursorForLayoutContainingArgument(integrandLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);

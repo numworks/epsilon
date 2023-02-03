@@ -11,6 +11,7 @@ public:
   using LayoutNode::LayoutNode;
 
   int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
+  int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(LetterWithSubAndSuperscriptLayoutNode); }

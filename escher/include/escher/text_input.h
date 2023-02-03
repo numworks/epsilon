@@ -4,6 +4,7 @@
 #include <escher/scrollable_view.h>
 #include <escher/text_cursor_view.h>
 #include <assert.h>
+#include <omg/directions.h>
 #include <string.h>
 
 // See TODO in EditableField
@@ -106,7 +107,7 @@ protected:
   bool moveCursorLeft(int step = 1);
   bool moveCursorRight(int step = 1);
   // all indicates if all the text on the left/right should be selected
-  bool selectLeftRight(bool left, bool all, int step = 1);
+  bool selectLeftRight(OMG::HorizontalDirection direction, bool all, int step = 1);
 
 private:
   virtual void willSetCursorLocation(const char * * location) {}

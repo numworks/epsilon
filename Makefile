@@ -59,7 +59,7 @@ help:
 	@echo "  make format"
 	@echo "Format files modified since <ref>"
 	@echo "  make format BASE=<ref>"
-	@echo "Format fiven files"
+	@echo "Format given files"
 	@echo "  make format FILES='file1 file2'"
 
 # Since we're building out-of-tree, we need to make sure the output directories

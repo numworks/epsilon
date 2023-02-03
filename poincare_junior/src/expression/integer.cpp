@@ -95,6 +95,8 @@ void IntegerHandler::pushDigitsOnEditionPool() {
 
 template <typename T>
 T IntegerHandler::to() {
+  /* TODO: use the previous Integer::approximate implementation which stops when
+   * the mantissa is complete */
   T approximation = 0.0f;
   if (numberOfDigits() == 0) {
     return approximation;

@@ -65,21 +65,21 @@ private:
 #endif
       ) :
     // TODO: maybe add a checksum if the m_id has potentially been reallocated to another tree
-    m_id(-1),
     m_initializer(initializer),
     m_subInitializer(subInitializer),
 #if ASSERTIONS
-    m_data(data, dataSize)
+    m_data(data, dataSize),
 #else
-      m_data(data)
+    m_data(data),
 #endif
-    {}
+    m_id(-1)
+  {}
 
-
-  mutable int m_id;
   ActionWithContext m_initializer;
   void * m_subInitializer;
   SharedPointer m_data;
+  // m_id must be the last member so that we can checksum non-mutable members
+  mutable int m_id;
 };
 
 }

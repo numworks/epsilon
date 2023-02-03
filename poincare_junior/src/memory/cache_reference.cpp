@@ -1,6 +1,7 @@
 #include "cache_reference.h"
 #include "cache_pool.h"
 #include <ion.h>
+#include "stddef.h"
 
 namespace PoincareJ {
 
@@ -67,10 +68,13 @@ CacheReference::CacheReference(InitializerFromTree initializer, const CacheRefer
     reinterpret_cast<void *>(initializer),
     treeReference
 #if ASSERTIONS
- , sizeof(CacheReference)
+  // Only checksum the non-mutable members of CacheReference
+ , offsetof(CacheReference, m_id)
 #endif
   )
-{}
+{
+  static_assert(offsetof(CacheReference, m_id) == sizeof(CacheReference) - alignof(CacheReference), "CacheReference::m_id must be the last member.");
+}
 
 CacheReference::CacheReference(InitializerFromString initializer, const char * string) :
   CacheReference(

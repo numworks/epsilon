@@ -15,10 +15,23 @@ void assert_equal(const Layout l1, const Layout l2) {
 }
 
 void testLayoutCacheSharedPointer() {
+  CachePool * cachePool = CachePool::sharedCachePool();
+  cachePool->reset();
+
   Expression e = Expression::CreateExpressionFromText("-1+2*3");
+
+  // l is created with e.m_id different from 1
+  assert(e.id() != 1);
   Layout l = Layout::CreateLayoutFromExpression(&e);
+
+  // Forcing e.m_id change
+  cachePool->needFreeBlocks(1);
+  assert(e.id() == 1);
+
   // This test should fail if this line is uncommented
   // e = Expression::CreateExpressionFromText("2*3");
+
+  // l should handle new e.m_id
   l.id();
 }
 

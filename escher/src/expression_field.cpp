@@ -7,6 +7,8 @@ using namespace Poincare;
 
 namespace Escher {
 
+static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
+
 ExpressionField::ExpressionField(Responder * parentResponder,
                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
                                  LayoutFieldDelegate * layoutFieldDelegate,
@@ -14,8 +16,8 @@ ExpressionField::ExpressionField(Responder * parentResponder,
                                  float verticalAlignment) :
     LayoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate, KDFont::Size::Large, horizontalAlignment, verticalAlignment),
     m_inputViewMemoizedHeight(0),
-    m_draftBuffer(nullptr),
-    m_draftBufferSize(0)
+    m_draftBuffer(s_draftBuffer),
+    m_draftBufferSize(AbstractTextField::MaxBufferSize())
 {
   setBackgroundColor(KDColorWhite);
 }
@@ -52,9 +54,10 @@ bool ExpressionField::inputViewHeightDidChange() {
 }
 
 void ExpressionField::reload() {
-  // TODO reload only in non linearMode
-  LayoutField::reload(KDSizeZero);
-  // Currently used only for its baseline effect, useless on textField
+  if (!linearMode()) {
+    // Currently used only for its baseline effect, useless in linearMode
+    LayoutField::reload(KDSizeZero);
+  }
 }
 
 KDCoordinate ExpressionField::inputViewHeight() const {

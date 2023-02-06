@@ -1,0 +1,29 @@
+name: Lint Code Base
+on: [pull_request]
+
+jobs:
+  build:
+    name: Lint Code Base
+    runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+
+    steps:
+      - name: Fetch target branch and PR branch
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Find most recent ancestor of PR and target branch
+        id: common_ancestor
+        run: echo "commit_sha=$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})" >> $GITHUB_OUTPUT
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          submodules: false
+
+      # TODO Only install clang-format
+      - name: Install dependencies
+        run: build/setup.sh
+
+      - name: Lint files changed by PR
+        run: make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS="--dry-run --Werror --verbose"

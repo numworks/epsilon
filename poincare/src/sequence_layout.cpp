@@ -41,13 +41,9 @@ int SequenceLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::Ve
   return k_cantMoveIndex;
 }
 
-
-/*
-void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (!deleteBeforeCursorForLayoutContainingArgument(argumentLayout(), cursor)) {
-    LayoutNode::deleteBeforeCursor(cursor);
-  }
-}*/
+LayoutNode::DeletionMethod SequenceLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
+  return StandardDeletionMethodForLayoutContainingArgument(childIndex, k_argumentLayoutIndex);
+}
 
 Layout SequenceLayoutNode::XNTLayout(int childIndex) const {
   if (childIndex == k_argumentLayoutIndex) {

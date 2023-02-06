@@ -115,55 +115,14 @@ int LayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDi
   return k_cantMoveIndex;
 }
 
-/*
-
-// Tree modification
-
-void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  int indexOfPointedLayout = indexOfChild(cursor->layoutNode());
-  if (indexOfPointedLayout >= 0) {
-    // Case: The pointed layout is a child. Move Left.
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    bool shouldRecomputeLayout = false;
-    cursor->move(OMG::NewDirection::Left(), &shouldRecomputeLayout);
-    return;
-  }
-  assert(cursor->layoutNode() == this);
-  LayoutNode * p = parent();
-  // Case: this is the pointed layout.
-  if (p == nullptr) {
-    // Case: No parent. Return.
-    return;
-  }
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    // Case: Left. Ask the parent.
-    p->deleteBeforeCursor(cursor);
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  // Case: Right. Delete the layout
-  Layout(p).removeChild(Layout(this), cursor);
-  // WARNING: Do no use "this" afterwards
+LayoutNode::DeletionMethod LayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
+  assert((childIndex >= 0 || childIndex == k_outsideIndex) && childIndex < numberOfChildren());
+  return childIndex == k_outsideIndex ? DeletionMethod::DeleteLayout : DeletionMethod::MoveLeft;
 }
 
-bool LayoutNode::deleteBeforeCursorForLayoutContainingArgument(LayoutNode * argumentNode, LayoutCursor * cursor) {
-  if (argumentNode && cursor->isEquivalentTo(LayoutCursor(argumentNode, LayoutCursor::Position::Left))) {
-    // Case: Left of the argument. Delete the layout, keep the argument.
-    Layout thisRef = Layout(this);
-    Layout argument = Layout(argumentNode);
-    // WARNING: Do not use "this" afterwards
-    thisRef.replaceWith(argument, cursor);
-    return true;
-  }
-  if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
-    // Case: Right of layout, enter inside layout
-    bool temp;
-    moveCursorLeft(cursor, &temp);
-    return true;
-  }
-  return false;
+LayoutNode::DeletionMethod LayoutNode::StandardDeletionMethodForLayoutContainingArgument(int childIndex, int argumentIndex) {
+  return childIndex == argumentIndex ? DeletionMethod::DeleteAndKeepChild : DeletionMethod::MoveLeft;
 }
- */
 
 LayoutNode * LayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText) {
   assert(correspondingExpression != nullptr);

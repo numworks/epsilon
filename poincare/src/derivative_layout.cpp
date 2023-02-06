@@ -114,12 +114,9 @@ int HigherOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCurso
   return DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(direction, currentIndex, positionAtCurrentIndex);
 }
 
-/*
-void DerivativeLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (!deleteBeforeCursorForLayoutContainingArgument(derivandLayout(), cursor)) {
-    LayoutNode::deleteBeforeCursor(cursor);
-  }
-}*/
+LayoutNode::DeletionMethod DerivativeLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
+  return StandardDeletionMethodForLayoutContainingArgument(childIndex, k_derivandLayoutIndex);
+}
 
 Layout DerivativeLayoutNode::XNTLayout(int childIndex) const {
   if (childIndex == k_derivandLayoutIndex) {

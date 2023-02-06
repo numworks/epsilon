@@ -67,12 +67,9 @@ int NthRootLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::Ver
   return k_cantMoveIndex;
 }
 
-/*
-void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (!deleteBeforeCursorForLayoutContainingArgument(radicandLayout(), cursor)) {
-    LayoutNode::deleteBeforeCursor(cursor);
-  }
-}*/
+LayoutNode::DeletionMethod NthRootLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
+  return StandardDeletionMethodForLayoutContainingArgument(childIndex, k_radicandLayoutIndex);
+}
 
 int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (isSquareRoot()) {

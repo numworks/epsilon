@@ -111,12 +111,11 @@ public:
   // Cursor deletion
   enum class DeletionMethod {
     DeleteLayout,
-    MoveLeft
-    //TODO
+    DeleteAndKeepChild,
+    MoveLeft,
   };
-  virtual DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const {
-    return childIndex == k_outsideIndex ? DeletionMethod::DeleteLayout : DeletionMethod::MoveLeft;
-  }
+  virtual DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const;
+  static DeletionMethod StandardDeletionMethodForLayoutContainingArgument(int childIndex, int argumentIndex);
 
   // Tree modification
   // Collapse

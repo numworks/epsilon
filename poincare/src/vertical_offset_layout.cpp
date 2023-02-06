@@ -7,34 +7,12 @@
 #include <algorithm>
 
 namespace Poincare {
-/*
-void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (cursor->layoutNode() == indiceLayout()) {
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    Layout parentRef(parent());
-    LayoutNode * base = baseLayout();
-    if (indiceLayout()->isEmpty()) {
-      cursor->setLayoutNode(base);
-      cursor->setPosition(LayoutCursor::Position::Right);
-      parentRef.removeChild(this, cursor);
-      // WARNING: do not call "this" afterwards
-      return;
-    }
-    // Case: Non-empty indice. Move Left of the VerticalOffsetLayoutNode.
-    cursor->setLayoutNode(this);
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  if (cursor->layoutNode() == this
-      && cursor->position() == LayoutCursor::Position::Right)
-  {
-    // Case: Right. Move to the indice.
-    cursor->setLayoutNode(indiceLayout());
-    return;
-  }
-  LayoutNode::deleteBeforeCursor(cursor);
+
+LayoutNode::DeletionMethod VerticalOffsetLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
+  assert(childIndex == 0 || childIndex == k_outsideIndex);
+  return childIndex == 0 && childAtIndex(0)->isEmpty() ? DeletionMethod::DeleteLayout : DeletionMethod::MoveLeft;
 }
-*/
+
 int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (verticalPosition() == VerticalPosition::Subscript || horizontalPosition() == HorizontalPosition::Prefix) {
     if (bufferSize == 0) {

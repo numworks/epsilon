@@ -13,6 +13,9 @@ public:
   size_t size() const override { return sizeof(BracketPairLayoutNode); }
   int numberOfChildren() const override { return 1; }
 
+  // LayoutNode
+  DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
+
 protected:
   // Minimal height at which the children dictates bracket height
   constexpr static KDCoordinate k_minimalChildHeight = Escher::Metric::MinimalBracketAndParenthesisChildHeight;

@@ -26,12 +26,9 @@ int ListSequenceLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(O
   }
 }
 
-/*
-void ListSequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (!deleteBeforeCursorForLayoutContainingArgument(functionLayout(), cursor)) {
-    LayoutNode::deleteBeforeCursor(cursor);
-  }
-}*/
+LayoutNode::DeletionMethod ListSequenceLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
+  return StandardDeletionMethodForLayoutContainingArgument(childIndex, k_functionLayoutIndex);
+}
 
 Layout ListSequenceLayoutNode::XNTLayout(int childIndex) const {
   if (childIndex == k_functionLayoutIndex) {

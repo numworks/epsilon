@@ -16,6 +16,7 @@ public:
   // LayoutNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool shouldCollapseSiblingsOnRight() const override { return true; }
+  DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
 
   // TreeNode
   size_t size() const override { return sizeof(ConjugateLayoutNode); }

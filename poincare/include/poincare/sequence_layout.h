@@ -25,6 +25,7 @@ public:
   // LayoutNode
   int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
   int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const override;
+  DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
   LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) override { return lowerBoundLayout(); }
   Layout XNTLayout(int childIndex = -1) const override;
 

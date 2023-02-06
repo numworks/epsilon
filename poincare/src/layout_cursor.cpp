@@ -485,6 +485,36 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod) {
     return;
   }
 
+  if (deletionMethod == LayoutNode::DeletionMethod::FractionDenominatorDeletion) {
+    // Merge the numerator and denominator and replace the fraction with it
+    assert(!m_layout.parent().isUninitialized() && m_layout.parent().type() == LayoutNode::Type::FractionLayout);
+    Layout fraction = m_layout.parent();
+    Layout numerator = fraction.childAtIndex(0);
+    if (!numerator.isHorizontal()) {
+      HorizontalLayout hLayout = HorizontalLayout::Builder();
+      numerator.replaceWithInPlace(hLayout);
+      hLayout.addOrMergeChildAtIndex(numerator, 0);
+      numerator = hLayout;
+    }
+    assert(numerator.isHorizontal());
+    m_position = numerator.numberOfChildren();
+    static_cast<HorizontalLayout&>(numerator).addOrMergeChildAtIndex(m_layout, numerator.numberOfChildren());
+    Layout parentOfFraction = fraction.parent();
+    if (parentOfFraction.isUninitialized() || !parentOfFraction.isHorizontal()) {
+      assert(m_position == 0);
+      fraction.replaceWithInPlace(numerator);
+      m_layout = numerator;
+    } else {
+      int indexOfFraction = parentOfFraction.indexOfChild(fraction);
+      m_position += indexOfFraction;
+      static_cast<HorizontalLayout&>(parentOfFraction).removeChildAtIndexInPlace(indexOfFraction);
+      static_cast<HorizontalLayout&>(parentOfFraction).addOrMergeChildAtIndex(numerator, indexOfFraction);
+      m_layout = parentOfFraction;
+    }
+    didEnterCurrentPosition();
+    return;
+  }
+
   assert(deletionMethod == LayoutNode::DeletionMethod::DeleteLayout);
   if (!m_layout.isHorizontal()) {
     assert(m_layout.parent().isUninitialized() || !m_layout.parent().isHorizontal());

@@ -50,13 +50,13 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
 void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(const char * baseName, const char * extension) {
   for (int i = 0; i < k_numberOfExtensions; i++) {
     if (strcmp(k_extensions[i], extension) != 0) {
-      Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseName, k_extensions[i]).destroy();
+      Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseName, k_extensions[i]).destroy();
     }
   }
 }
 
 Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(const char * identifier, int length) {
-  const char * extension = Ion::Storage::FileSystem::sharedFileSystem()->extensionOfRecordBaseNamedWithExtensions(identifier, length, k_extensions, k_numberOfExtensions);
+  const char * extension = Ion::Storage::FileSystem::sharedFileSystem->extensionOfRecordBaseNamedWithExtensions(identifier, length, k_extensions, k_numberOfExtensions);
   if (extension == nullptr) {
     return Context::SymbolAbstractType::None;
   } else if (strcmp(extension, Ion::Storage::expExtension) == 0 || strcmp(extension, Ion::Storage::matExtension) == 0) {
@@ -186,7 +186,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(co
   }
   /* If there is another record competing with this one for its name,
   * it is destroyed directly in Storage, through the record_name_verifier. */
-  return Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(symbol.name(), extension, expressionToStore.addressInPool(), expressionToStore.size(), true);
+  return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(symbol.name(), extension, expressionToStore.addressInPool(), expressionToStore.size(), true);
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
@@ -211,7 +211,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const 
 }
 
 Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(const char * name) {
-  return Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
+  return Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
 }
 
 void GlobalContext::tidyDownstreamPoolFrom(char * treePoolCursor) {

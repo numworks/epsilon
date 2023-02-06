@@ -28,7 +28,7 @@ App::Snapshot::Snapshot() :
 {
   // Register X1, X2, X3, Y1, Y2, Y3 as reserved names to the sharedStorage.
   static_assert(sizeof(DoublePairStore::k_regressionColumNames) / sizeof(char *) == 2, "Number of reserved lists in regression changed.");
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNameVerifier()->registerArrayOfReservedNames(DoublePairStore::k_regressionColumNames, Ion::Storage::lisExtension, Shared::DoublePairStore::k_numberOfSeries, sizeof(DoublePairStore::k_regressionColumNames) / sizeof(char *));
+  Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()->registerArrayOfReservedNames(DoublePairStore::k_regressionColumNames, Ion::Storage::lisExtension, Shared::DoublePairStore::k_numberOfSeries, sizeof(DoublePairStore::k_regressionColumNames) / sizeof(char *));
 }
 
 App * App::Snapshot::unpack(Container * container) {

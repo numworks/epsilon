@@ -164,6 +164,6 @@ void set(const char * variable, const char * value) {
 
 void unset(const char * variable) {
   // The variable is either an expression or a function
-  Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(variable, "exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(variable, "func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(variable, "exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(variable, "func").destroy();
 }

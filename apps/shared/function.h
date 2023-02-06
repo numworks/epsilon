@@ -61,7 +61,7 @@ protected:
    *   creating dependency on uninitialized values.
    * - complicate getters, setters and record handling
    * In addition, Record::value() is a pointer to an address inside
-   * Ion::Storage::FileSystem::sharedFileSystem(), and it might be unaligned. We use the packed
+   * Ion::Storage::FileSystem::sharedFileSystem, and it might be unaligned. We use the packed
    * keyword to warn the compiler that it members are potentially unaligned
    * (otherwise, the compiler can emit instructions that work only on aligned
    * objects). It also solves the padding issue mentioned above.

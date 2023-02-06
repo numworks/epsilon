@@ -22,7 +22,7 @@ constexpr static RestrictiveExtension k_restrictiveExtensions[] = {
 constexpr static int k_numberOfRestrictiveExtensions = sizeof(k_restrictiveExtensions) / sizeof(RestrictiveExtension);
 
 void registerRestrictiveExtensionsToSharedStorage() {
-  Ion::Storage::RecordNameVerifier * recordNameVerifier = Ion::Storage::FileSystem::sharedFileSystem()->recordNameVerifier();
+  Ion::Storage::RecordNameVerifier * recordNameVerifier = Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier();
   for (int i = 0; i < k_numberOfRestrictiveExtensions; i++) {
     recordNameVerifier->registerRestrictiveExtensionWithPrecedence(k_restrictiveExtensions[i].extension, k_restrictiveExtensions[i].precedenceScore);
   }

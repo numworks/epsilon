@@ -41,7 +41,7 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
    * calling the method "createRecordWithExtension". */
   Ion::Storage::Record record = Ion::Storage::Record(baseName, Ion::Storage::funcExtension);
   RecordDataBuffer data(Escher::Palette::nextDataColor(&s_colorIndex));
-  *error = Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(baseName, Ion::Storage::funcExtension, &data, sizeof(data));
+  *error = Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(baseName, Ion::Storage::funcExtension, &data, sizeof(data));
   // Return the ContinuousFunction with the new record
   return ContinuousFunction(*error == Ion::Storage::Record::ErrorStatus::None ? record : Record());
 }
@@ -648,7 +648,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
     char name[k_maxDefaultNameSize];
     const char * const extensions[1] = { Ion::Storage::funcExtension };
     name[0] = k_unnamedRecordFirstChar;
-    Ion::Storage::FileSystem::sharedFileSystem()->firstAvailableNameFromPrefix(name, 1, k_maxDefaultNameSize, extensions, 1, 99);
+    Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(name, 1, k_maxDefaultNameSize, extensions, 1, 99);
     error = Ion::Storage::Record::SetBaseNameWithExtension(record, name, Ion::Storage::funcExtension);
   }
   return error;

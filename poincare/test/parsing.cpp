@@ -588,11 +588,11 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_text_not_parsable("ln^\u00122\u0013(2)");
 
   // Custom identifiers with storage
-  Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension("ab", "exp", "", 0);
-  Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension("bacos", "func", "", 0);
-  Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension("azfoo", "exp", "", 0);
-  Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension("foobar", "func", "", 0);
-  Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension("a3b", "exp", "", 0);
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension("ab", "exp", "", 0);
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension("bacos", "func", "", 0);
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension("azfoo", "exp", "", 0);
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension("foobar", "func", "", 0);
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension("a3b", "exp", "", 0);
   assert_parsed_expression_is("xyz", Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1), Symbol::Builder("z", 1)));
   assert_parsed_expression_is("xy123z", Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y123", 4), Symbol::Builder("z", 1)));
   assert_parsed_expression_is("3→xyz", Store::Builder(BasedInteger::Builder(3), Symbol::Builder("xyz", 3)));
@@ -602,7 +602,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("aacos(x)", Multiplication::Builder(Symbol::Builder("a", 1), ArcCosine::Builder(Symbol::Builder("x", 1))));
   assert_parsed_expression_is("bacos(x)", Function::Builder("bacos", 5, Symbol::Builder("x", 1)));
   assert_parsed_expression_is("azfoobar(x)", Multiplication::Builder(Symbol::Builder("a", 1), Symbol::Builder("z", 1), Function::Builder("foobar", 6, Symbol::Builder("x", 1))));
-  Ion::Storage::FileSystem::sharedFileSystem()->destroyAllRecords();
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 QUIZ_CASE(poincare_parsing_parse_store) {
@@ -663,9 +663,9 @@ QUIZ_CASE(poincare_parsing_parse_unit_convert) {
   assert_reduce_and_store("2→f(x)");
   assert_text_not_parsable("3_m→f(2)×_km");
   // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("b.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_parsing_implicit_multiplication) {

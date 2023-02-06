@@ -94,15 +94,15 @@ int MathVariableBoxController::numberOfElements(Page page) const {
     case Page::RootMenu:
       return (numberOfElements(Page::Expression) > 0) + (numberOfElements(Page::Function) > 0) + (numberOfElements(Page::Sequence) > 0) + (numberOfElements(Page::List) > 0) + (numberOfElements(Page::Matrix) > 0) + 1;
     case Page::Expression:
-      return Storage::FileSystem::sharedFileSystem()->numberOfRecordsWithExtension(Ion::Storage::expExtension);
+      return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Ion::Storage::expExtension);
     case Page::Function:
-      return Storage::FileSystem::sharedFileSystem()->numberOfRecordsStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Ion::Storage::funcExtension);
+      return Storage::FileSystem::sharedFileSystem->numberOfRecordsStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Ion::Storage::funcExtension);
     case Page::Sequence:
-      return Storage::FileSystem::sharedFileSystem()->numberOfRecordsWithExtension(Ion::Storage::seqExtension);
+      return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Ion::Storage::seqExtension);
     case Page::List:
-      return Storage::FileSystem::sharedFileSystem()->numberOfRecordsWithExtension(Ion::Storage::lisExtension);
+      return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Ion::Storage::lisExtension);
     case Page::Matrix:
-      return Storage::FileSystem::sharedFileSystem()->numberOfRecordsWithExtension(Ion::Storage::matExtension);
+      return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Ion::Storage::matExtension);
     default:
       return 0;
   }
@@ -346,9 +346,9 @@ Storage::Record MathVariableBoxController::recordAtIndex(int rowIndex) {
   assert(m_currentPage != Page::RootMenu);
   Storage::Record record;
   if (m_currentPage == Page::Function) {
-    record = Storage::FileSystem::sharedFileSystem()->recordWithExtensionAtIndexStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, extension(), rowIndex);
+    record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndexStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, extension(), rowIndex);
   } else {
-    record = Storage::FileSystem::sharedFileSystem()->recordWithExtensionAtIndex(extension(), rowIndex);
+    record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(extension(), rowIndex);
   }
   assert(!record.isNull());
   return record;

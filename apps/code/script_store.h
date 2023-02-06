@@ -21,16 +21,16 @@ public:
 
   ScriptStore();
   Script scriptAtIndex(int index) {
-    return Script(Ion::Storage::FileSystem::sharedFileSystem()->recordWithExtensionAtIndex(k_scriptExtension, index));
+    return Script(Ion::Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(k_scriptExtension, index));
   }
   static Script ScriptNamed(const char * fullName) {
-    return Script(Ion::Storage::FileSystem::sharedFileSystem()->recordNamed(fullName));
+    return Script(Ion::Storage::FileSystem::sharedFileSystem->recordNamed(fullName));
   }
   static Script ScriptBaseNamed(const char * baseName) {
-    return Script(Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseName, k_scriptExtension));
+    return Script(Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseName, k_scriptExtension));
   }
   int numberOfScripts() {
-    return Ion::Storage::FileSystem::sharedFileSystem()->numberOfRecordsWithExtension(k_scriptExtension);
+    return Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(k_scriptExtension);
   }
   Ion::Storage::Record::ErrorStatus addNewScript() {
     return addScriptFromTemplate(ScriptTemplate::Empty());

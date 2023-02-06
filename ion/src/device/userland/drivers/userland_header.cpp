@@ -15,20 +15,12 @@ extern char _external_apps_RAM_end;
 
 namespace Ion {
 
-namespace Storage {
-
-extern char staticStorageArea[];
-
-}
-
 namespace Device {
-
-constexpr void * storageAddress = &(Ion::Storage::staticStorageArea);
 
 constexpr UserlandHeader::UserlandHeader() :
   m_header(Magic),
   m_expectedEpsilonVersion{EPSILON_VERSION},
-  m_storageAddressRAM(storageAddress),
+  m_storageAddressRAM(&Ion::Storage::FileSystem::sharedFileSystem),
   m_storageSizeRAM(Ion::Storage::FileSystem::k_storageSize),
   m_externalAppsFlashStart(&_external_apps_flash_start),
   m_externalAppsFlashEnd(&_external_apps_flash_end),

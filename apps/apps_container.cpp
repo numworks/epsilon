@@ -31,7 +31,7 @@ AppsContainer::AppsContainer() :
 #endif
 {
   m_emptyBatteryWindow.setFrame(KDRectScreen, false);
-  Ion::Storage::FileSystem::sharedFileSystem()->setDelegate(this);
+  Ion::Storage::FileSystem::sharedFileSystem->setDelegate(this);
   Shared::RecordRestrictiveExtensions::registerRestrictiveExtensionsToSharedStorage();
 }
 
@@ -60,7 +60,7 @@ App::Snapshot * AppsContainer::usbConnectedAppSnapshot() {
 
 void AppsContainer::reset() {
   // Empty storage (delete functions, variables, python scripts)
-  Ion::Storage::FileSystem::sharedFileSystem()->destroyAllRecords();
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
   // Empty clipboard
   Clipboard::SharedClipboard()->reset();
   for (int i = 0; i < numberOfBuiltinApps(); i++) {

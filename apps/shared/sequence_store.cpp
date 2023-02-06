@@ -15,7 +15,7 @@ const char * SequenceStore::firstAvailableName(size_t * nameIndex) {
   size_t currentNameIndex = 0;
   while (currentNameIndex < k_maxNumberOfSequences) {
     const char * name = k_sequenceNames[currentNameIndex];
-    if (Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(name, Ion::Storage::seqExtension).isNull()) {
+    if (Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(name, Ion::Storage::seqExtension).isNull()) {
       if (nameIndex) {
         *nameIndex = currentNameIndex;
       }
@@ -36,7 +36,7 @@ Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
   KDColor color = Palette::DataColor[nameIndex];
   Sequence::RecordDataBuffer data(color);
   // m_sequences
-  return Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(name, modelExtension(), &data, sizeof(data));
+  return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(name, modelExtension(), &data, sizeof(data));
 }
 
 int SequenceStore::sequenceIndexForName(char name) {

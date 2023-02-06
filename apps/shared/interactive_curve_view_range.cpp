@@ -304,7 +304,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     {
       CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
       if (CircuitBreakerRun(checkpoint)) {
-        uint32_t storeChecksum = Ion::Storage::FileSystem::sharedFileSystem()->checksum();
+        uint32_t storeChecksum = Ion::Storage::FileSystem::sharedFileSystem->checksum();
         if (computeX && computeY && m_storeChecksumOfLastComputedAutoRange == storeChecksum) {
           newRange = m_autoRange;
         } else {

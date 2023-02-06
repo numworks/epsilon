@@ -6,14 +6,22 @@
 namespace Escher {
 
 ExpressionInputBar::ExpressionInputBar(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, LayoutFieldDelegate * layoutFieldDelegate) :
-  ExpressionField(parentResponder, inputEventHandler, layoutFieldDelegate, KDContext::k_alignLeft, KDContext::k_alignCenter)
+  ExpressionField(parentResponder, inputEventHandler, layoutFieldDelegate, KDContext::k_alignLeft, KDContext::k_alignCenter),
+  m_line(Palette::GrayMiddle)
 {
   setMargins(k_verticalMargin, k_horizontalMargin, k_verticalMargin, k_horizontalMargin);
 }
 
-void ExpressionInputBar::drawRect(KDContext * ctx, KDRect rect) const {
-  // Draw the separator
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GrayMiddle);
+void ExpressionInputBar::layoutSubviews(bool force) {
+  ExpressionField::layoutSubviews(force);
+  m_line.setFrame(KDRect(0, 0, bounds().width(), k_separatorThickness), force);
+}
+
+View * ExpressionInputBar::subviewAtIndex(int index) {
+  if (index == ExpressionField::numberOfSubviews()) {
+    return &m_line;
+  }
+  return ExpressionField::subviewAtIndex(index);
 }
 
 KDSize ExpressionInputBar::minimalSizeForOptimalDisplay() const {

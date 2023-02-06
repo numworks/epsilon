@@ -3,6 +3,7 @@
 
 #include <escher/expression_field.h>
 #include <escher/metric.h>
+#include <escher/solid_color_view.h>
 
 namespace Escher {
 
@@ -10,8 +11,9 @@ class ExpressionInputBar : public ExpressionField {
 public:
   ExpressionInputBar(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, LayoutFieldDelegate * layoutFieldDelegate);
 
-  using ExpressionField::layoutSubviews;
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void layoutSubviews(bool force) override;
+  int numberOfSubviews() const override { return 1 + ExpressionField::numberOfSubviews(); }
+  View * subviewAtIndex(int index) override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
 private:
@@ -21,6 +23,7 @@ private:
   constexpr static KDCoordinate k_verticalMargin = 5;
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   KDCoordinate inputViewHeight() const override;
+  SolidColorView m_line;
 };
 
 }

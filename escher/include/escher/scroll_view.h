@@ -121,11 +121,11 @@ protected:
   const char * className() const override;
   void logAttributes(std::ostream &os) const override;
 #endif
+  int numberOfSubviews() const override { return 1 + const_cast<ScrollView *>(this)->decorator()->numberOfIndicators(); }
+  View * subviewAtIndex(int index) override { return (index == 0) ? &m_innerView : decorator()->indicatorAtIndex(index); }
   View * m_contentView;
 private:
   ScrollViewDataSource * m_dataSource;
-  int numberOfSubviews() const override { return 1 + const_cast<ScrollView *>(this)->decorator()->numberOfIndicators(); }
-  View * subviewAtIndex(int index) override { return (index == 0) ? &m_innerView : decorator()->indicatorAtIndex(index); }
 
   class InnerView : public View {
   public:

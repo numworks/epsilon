@@ -37,7 +37,7 @@ public:
   bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
   void putCursorOnOneSide(OMG::HorizontalDirection side);
   void setLayout(Poincare::Layout newLayout);
- // size_t dumpContent(char * buffer, size_t bufferSize, int * cursorOffset, OMG::HorizontalDirection * side * position);
+  size_t dumpContent(char * buffer, size_t bufferSize, int * cursorOffset, int * position);
 
   // ScrollableView
   void setBackgroundColor(KDColor c) override  {

@@ -27,8 +27,8 @@ App * App::Snapshot::unpack(Container * container) {
 
 void App::Snapshot::reset() {
   m_calculationStore.deleteAll();
-  //m_cacheBuffer[0] = 0;
-  //m_cacheBufferInformation = 0;
+  m_cacheBuffer[0] = 0;
+  m_cacheBufferInformation = 0;
 }
 
 constexpr static App::Descriptor sDescriptor;

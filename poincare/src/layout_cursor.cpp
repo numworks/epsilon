@@ -16,7 +16,14 @@
 
 namespace Poincare {
 
-/* Getters and setters */
+void LayoutCursor::setPosition(int position) {
+  assert(position >= 0);
+  assert((m_layout.isHorizontal() && position <= m_layout.numberOfChildren()) || (!m_layout.isHorizontal() && position <= 1));
+  assert(!isSelecting());
+  willExitCurrentPosition();
+  m_position = position;
+  didEnterCurrentPosition();
+}
 
 KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) {
   LayoutSelection currentSelection = selection();
@@ -119,7 +126,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
   }
   if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
     assert(newCursor.isValid() && !newCursor.isUninitialized());
-    setTo(&newCursor);
+    setTo(newCursor);
     didEnterCurrentPosition();
   }
   invalidateSizesAndPositions();

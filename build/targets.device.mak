@@ -65,7 +65,7 @@ openocd:
 
 SFLAGS += -DEMBED_EXTRA_DATA=$(EMBED_EXTRA_DATA)
 
-$(BUILD_DIR)/%.$(EXE): LDFLAGS += -L$(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)
+$(BUILD_DIR)/%.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/shared/flash -L$(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)
 $(BUILD_DIR)/%.$(EXE): LDDEPS += $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)/board.ld
 
 $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)/board.ld: ion/src/$(PLATFORM)/include/$(MODEL)/config/board.h | $$(@D)/.

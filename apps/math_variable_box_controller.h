@@ -30,11 +30,10 @@ public:
     RootMenu = 0,
     Expression = 1,
     Function = 2,
-    Regression = 3,
-    List = 4,
-    Matrix = 5,
-    Sequence = 6,
-    NumberOfPages = 7 // use this value only to know the number of pages
+    List = 3,
+    Matrix = 4,
+    Sequence = 5,
+    NumberOfPages = 6 // use this value only to know the number of pages
   };
 
 private:

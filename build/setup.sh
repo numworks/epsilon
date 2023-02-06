@@ -51,6 +51,7 @@ install_macos_binary_deps() {
   fi
 
   brew install \
+    clang-format \
     freetype \
     imagemagick \
     libpng \
@@ -66,6 +67,7 @@ install_macos_binary_deps() {
 install_linux_binary_deps() {
   sudo apt-get install \
     build-essential \
+    clang-format \
     git \
     imagemagick \
     libfreetype6-dev \

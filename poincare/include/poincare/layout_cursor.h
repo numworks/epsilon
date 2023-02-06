@@ -88,7 +88,7 @@ private:
   void privateStartSelecting();
 
   void deleteAndResetSelection();
-  void privateDelete(LayoutNode::DeletionMethod deletionMethod);
+  void privateDelete(LayoutNode::DeletionMethod deletionMethod, bool deletionAppliedToParent);
 
   bool setEmptyRectangleVisibility(EmptyRectangle::State state);
   void invalidateSizesAndPositions();

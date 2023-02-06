@@ -254,7 +254,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
     return false;
   }
-  insertLayoutAtCursor(resultLayout, resultExpression, forceCursorRightOfText, forceCursorLeftOfText);
+  insertLayoutAtCursor(resultLayout, forceCursorRightOfText, forceCursorLeftOfText);
   return true;
 }
 
@@ -435,14 +435,13 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect, true);
 }
 
-void LayoutField::insertLayoutAtCursor(Layout layout, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout, bool forceCursorLeftOfText) {
+void LayoutField::insertLayoutAtCursor(Layout layout, bool forceCursorRightOfLayout, bool forceCursorLeftOfText) {
   if (layout.isUninitialized()) {
     return;
   }
   layout = layout.makeEditable();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-
-  m_contentView.cursor()->insertLayoutAtCursor(layout, delegateContext(), forceCursorRightOfLayout);
+  m_contentView.cursor()->insertLayoutAtCursor(layout, delegateContext(), forceCursorRightOfLayout, forceCursorLeftOfText);
 
   // Reload
   reload(previousSize);

@@ -49,7 +49,7 @@ public:
   bool moveMultipleSteps(OMG::Direction direction, int step, bool selecting, bool * shouldRedrawLayout);
 
   /* Layout insertion */
-  void insertLayoutAtCursor(Layout layout, Context * context, bool forceRight = false);
+  void insertLayoutAtCursor(Layout layout, Context * context, bool forceRight = false, bool forceLeft = false);
   void addEmptyExponentialLayout(Context * context);
   void addEmptyMatrixLayout(Context * context);
   void addEmptyPowerLayout(Context * context);

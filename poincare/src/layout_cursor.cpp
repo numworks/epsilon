@@ -1,4 +1,5 @@
 #include <poincare/layout_cursor.h>
+#include <poincare/binomial_coefficient_layout.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/combined_code_points_layout.h>
 #include <poincare/curly_brace_layout.h>
@@ -511,6 +512,15 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod) {
       static_cast<HorizontalLayout&>(parentOfFraction).addOrMergeChildAtIndex(numerator, indexOfFraction);
       m_layout = parentOfFraction;
     }
+    didEnterCurrentPosition();
+    return;
+  }
+
+  if (deletionMethod == LayoutNode::DeletionMethod::BinomialCoefficientMoveFromKtoN) {
+    assert(!m_layout.parent().isUninitialized() && m_layout.parent().type() == LayoutNode::Type::BinomialCoefficientLayout);
+    willExitCurrentPosition();
+    m_layout = m_layout.parent().childAtIndex(BinomialCoefficientLayoutNode::k_nLayoutIndex);
+    m_position = rightMostPosition();
     didEnterCurrentPosition();
     return;
   }

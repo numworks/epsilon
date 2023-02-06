@@ -17,6 +17,7 @@ public:
 
   int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
   int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const override;
+  DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
 
   // SerializableNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -30,6 +31,9 @@ public:
   }
 #endif
 
+  constexpr static int k_nLayoutIndex = 0;
+  constexpr static int k_kLayoutIndex = 1;
+
 protected:
   // LayoutNode
   KDSize computeSize(KDFont::Size font) override;
@@ -39,10 +43,8 @@ private:
   KDCoordinate knHeight(KDFont::Size font) { return nLayout()->layoutSize(font).height() + /*TODO: GridLayoutNode::k_gridEntryMargin*/6 + kLayout()->layoutSize(font).height(); }
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
 
-  constexpr static int k_nLayoutIndex = 0;
-  constexpr static int k_kLayoutIndex = 1;
-  LayoutNode * nLayout() { return childAtIndex(k_nLayoutIndex); }
-  LayoutNode * kLayout() { return childAtIndex(k_kLayoutIndex); }
+  LayoutNode * nLayout() const { return childAtIndex(k_nLayoutIndex); }
+  LayoutNode * kLayout() const { return childAtIndex(k_kLayoutIndex); }
 };
 
 class BinomialCoefficientLayout final : public LayoutTwoChildren<BinomialCoefficientLayout, BinomialCoefficientLayoutNode> {

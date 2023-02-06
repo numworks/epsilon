@@ -114,6 +114,12 @@ size_t CacheReference::treeSize() const {
   return result;
 }
 
+bool CacheReference::treeIsIdenticalTo(const CacheReference &other) const {
+  const Node tree = CachePool::sharedCachePool()->nodeForIdentifier(id());
+  const Node otherTree = CachePool::sharedCachePool()->nodeForIdentifier(other.id());
+  return tree.treeIsIdenticalTo(otherTree);
+}
+
 #if POINCARE_MEMORY_TREE_LOG
 void CacheReference::log() {
   std::cout << "id: " << m_id;

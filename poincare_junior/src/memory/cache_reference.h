@@ -52,6 +52,7 @@ public:
 
   void dumpAt(void * address) const;
   size_t treeSize() const;
+  bool treeIsIdenticalTo(const CacheReference &other) const;
 #if POINCARE_MEMORY_TREE_LOG
   void log();
 #endif

@@ -10,8 +10,6 @@
 
 namespace Poincare {
 
-class Expression;
-
 class Layout : public TreeHandle {
   friend class AdditionNode;
   friend class GridLayoutNode;
@@ -67,11 +65,8 @@ public:
   bool removeGraySquaresFromAllGridAncestors() { return node()->removeGraySquaresFromAllGridAncestors(); }
   bool removeGraySquaresFromAllGridChildren() { return node()->removeGraySquaresFromAllGridChildren(); }
   bool addGraySquaresToAllGridAncestors() { return node()->addGraySquaresToAllGridAncestors(); }
-  Layout layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) {
-    // Pointer to correspondingExpr because expression.h includes layout.h
-    assert(correspondingExpression != nullptr);
-    return Layout(node()->layoutToPointWhenInserting(correspondingExpression, forceCursorLeftOfText));
-  }
+  int indexOfChildToPointToWhenInserting() { return node()->indexOfChildToPointToWhenInserting(); }
+
   void setMargin(bool hasMargin) { node()->setMargin(hasMargin); }
   void lockMargin(bool lock) { node()->lockMargin(lock); }
 

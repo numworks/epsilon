@@ -24,9 +24,9 @@ public:
     return 0;
   }
 
-  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) override {
+  int indexOfChildToPointToWhenInserting() override {
     assert(false);
-    return this;
+    return k_outsideIndex;
   }
 
   // TreeNode

@@ -12,7 +12,6 @@
 
 namespace Poincare {
 
-class Expression;
 class Layout;
 class LayoutSelection;
 
@@ -127,7 +126,7 @@ public:
   virtual int rightCollapsingAbsorbingChildIndex() const { return 0; }
 
   // Other
-  virtual LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr);
+  virtual int indexOfChildToPointToWhenInserting();
   bool removeGraySquaresFromAllGridAncestors();
   bool removeGraySquaresFromAllGridChildren();
   bool addGraySquaresToAllGridAncestors();

@@ -91,6 +91,17 @@ bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step, bool se
 void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool forceRight) {
   assert(!isUninitialized() && isValid());
   deleteAndResetSelection();
+  int indexOfChildToPointTo = forceRight ? LayoutNode::k_outsideIndex : layout.indexOfChildToPointToWhenInserting();
+  LayoutCursor newCursor;
+  if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
+    Layout childToPoint = layout.childAtIndex(indexOfChildToPointTo);
+    if (layout.isHorizontal()) {
+      newCursor = LayoutCursor(childToPoint.childAtIndex(childToPoint.indexOfChildToPointToWhenInserting()));
+    } else {
+      newCursor = LayoutCursor(childToPoint);
+    }
+    willExitCurrentPosition();
+  }
   if (m_layout.isHorizontal()) {
     int positionShift = layout.isHorizontal() ? layout.numberOfChildren() : 1;
     static_cast<HorizontalLayout&>(m_layout).addOrMergeChildAtIndex(layout, m_position);
@@ -103,8 +114,13 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     Layout rightLayout = m_position == 1 ? m_layout : layout;
     newParent.addOrMergeChildAtIndex(leftLayout, 0);
     newParent.addOrMergeChildAtIndex(rightLayout, newParent.numberOfChildren());
-    m_layout =  newParent;
+    m_layout = newParent;
     m_position = m_layout.numberOfChildren() - (m_position == 0);
+  }
+  if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
+    assert(newCursor.isValid() && !newCursor.isUninitialized());
+    setTo(&newCursor);
+    didEnterCurrentPosition();
   }
   invalidateSizesAndPositions();
 }

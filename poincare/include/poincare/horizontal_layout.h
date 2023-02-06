@@ -30,7 +30,7 @@ public:
   int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override { /* This case is handled directly by the cursor */ assert(false); return -2; }
   DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override { /* This case is handled directly by the cursor */ assert(false); return DeletionMethod::MoveLeft; }
 
-  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) override;
+  int indexOfChildToPointToWhenInserting() override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   int serializeChildrenBetweenIndexes(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool forceIndexes, int firstIndex = -1, int lastIndex = -1) const;

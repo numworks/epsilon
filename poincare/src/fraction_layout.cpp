@@ -68,14 +68,14 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   return numberOfChar;
 }
 
-LayoutNode * FractionLayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText) {
+int FractionLayoutNode::indexOfChildToPointToWhenInserting() {
   if (numeratorLayout()->isEmpty()){
-    return numeratorLayout();
+    return k_numeratorIndex;
   }
   if (denominatorLayout()->isEmpty()){
-    return denominatorLayout();
+    return k_denominatorIndex;
   }
-  return this;
+  return k_outsideIndex;
 }
 
 bool FractionLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {

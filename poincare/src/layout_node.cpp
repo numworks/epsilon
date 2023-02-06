@@ -1,5 +1,6 @@
 #include <escher/metric.h>
 #include <poincare/layout.h>
+#include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
@@ -124,9 +125,8 @@ LayoutNode::DeletionMethod LayoutNode::StandardDeletionMethodForLayoutContaining
   return childIndex == argumentIndex ? DeletionMethod::DeleteAndKeepChild : DeletionMethod::MoveLeft;
 }
 
-LayoutNode * LayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText) {
-  assert(correspondingExpression != nullptr);
-  return numberOfChildren() > 0 ? childAtIndex(0) : this;
+int LayoutNode::indexOfChildToPointToWhenInserting() {
+  return numberOfChildren() > 0 ? 0 : k_outsideIndex;
 }
 
 bool LayoutNode::removeGraySquaresFromAllGridAncestors() {

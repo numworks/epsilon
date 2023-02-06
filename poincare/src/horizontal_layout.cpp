@@ -1,4 +1,5 @@
 #include <poincare/horizontal_layout.h>
+#include <poincare/autocompleted_bracket_pair_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/nth_root_layout.h>
 #include <poincare/serialization_helper.h>
@@ -6,27 +7,15 @@
 
 namespace Poincare {
 
-LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText) {
-  assert(correspondingExpression != nullptr);
-  if (correspondingExpression->isUninitialized() || correspondingExpression->numberOfChildren() > 0) {
-    Layout layoutToPointTo = Layout(this).recursivelyMatches(
-      [](Poincare::Layout layout) {
-        return TrinaryBoolean::Unknown;
-        /*return AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(layout.type())
-            || layout.isEmpty() ? TrinaryBoolean::True : TrinaryBoolean::Unknown;*/
-      }
-    );
-    if (!layoutToPointTo.isUninitialized()) {
-      if (!layoutToPointTo.isEmpty()) {
-        layoutToPointTo = layoutToPointTo.childAtIndex(0);
-        if (forceCursorLeftOfText) {
-          *forceCursorLeftOfText = true;
-        }
-      }
-      return layoutToPointTo.node();
+int HorizontalLayoutNode::indexOfChildToPointToWhenInserting() {
+  int currentIndex = 0;
+  for (LayoutNode * child : children()) {
+    if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(child->type())) {
+      break;
     }
+    currentIndex++;
   }
-  return this;
+  return currentIndex < numberOfChildren() ? currentIndex : k_outsideIndex;
 }
 
 int HorizontalLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

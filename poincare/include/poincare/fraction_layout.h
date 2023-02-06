@@ -26,7 +26,7 @@ public:
   bool shouldCollapseSiblingsOnRight() const override { return true; }
   int leftCollapsingAbsorbingChildIndex() const override { return 0; }
   int rightCollapsingAbsorbingChildIndex() const override { return 1; }
-  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) override;
+  int indexOfChildToPointToWhenInserting() override;
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
   /* WARNING: We need to override this function, else 1/2 3/4 would be
    * serialized as 1/2**3/4, as the two Fraction layouts think their sibling is

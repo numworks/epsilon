@@ -113,6 +113,7 @@ public:
     DeleteLayout,
     DeleteAndKeepChild,
     MoveLeft,
+    FractionDenominatorDeletion
   };
   virtual DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const;
   static DeletionMethod StandardDeletionMethodForLayoutContainingArgument(int childIndex, int argumentIndex);

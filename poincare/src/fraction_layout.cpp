@@ -36,39 +36,9 @@ int FractionLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::Ve
   }
 }
 
-
-/*
-void FractionLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (cursor->layoutNode() == denominatorLayout()) {
-    /* Case: Left of the denominator. Replace the fraction with a horizontal
-     * juxtaposition of the numerator and the denominator. *
-    Layout thisRef = Layout(this);
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    if (numeratorLayout()->isEmpty() && denominatorLayout()->isEmpty()) {
-      /* Case: Numerator and denominator are empty. Move the cursor and replace
-       * the fraction with an empty layout. *
-      thisRef.replaceWith(HorizontalLayout::Builder(), cursor);
-      return;
-    }
-    /* Else, replace the fraction with a juxtaposition of the numerator and
-     * denominator. Place the cursor in the middle of the juxtaposition, which
-     * is right of the numerator. *
-    Layout numeratorRef = Layout(numeratorLayout());
-    Layout denominatorRef = Layout(denominatorLayout());
-    thisRef.replaceChildWithGhostInPlace(numeratorRef);
-    // WARNING: Do no use "this" afterwards
-    thisRef.replaceChildWithGhostInPlace(denominatorRef);
-    thisRef.replaceWithJuxtapositionOf(numeratorRef, denominatorRef);
-    return;
-  }
-
-  if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Right) {
-    // Case: Right. Move Right of the denominator.
-    cursor->setLayoutNode(denominatorLayout());
-    return;
-  }
-  LayoutNode::deleteBeforeCursor(cursor);
-}*/
+LayoutNode::DeletionMethod FractionLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
+  return childIndex == k_denominatorIndex ? DeletionMethod::FractionDenominatorDeletion : DeletionMethod::MoveLeft;
+}
 
 int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (bufferSize == 0) {

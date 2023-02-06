@@ -19,6 +19,7 @@ public:
 
   int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
   int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const override;
+  DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
 
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
   bool shouldCollapseSiblingsOnLeft() const override { return true; }

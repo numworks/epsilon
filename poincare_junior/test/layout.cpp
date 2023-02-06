@@ -43,7 +43,7 @@ void testLayoutCreation() {
 }
 
 void testLayoutConstructors() {
-  Node(RacL("1+"_l,ParL(RacL("2*"_l,ParL(RacL("1+"_l,FraL("1"_l, "2"_l))))),VerL("2"_l),"-2"_l)).log();
+  Node(RackL("1+"_l,ParenthesisL(RackL("2*"_l,ParenthesisL(RackL("1+"_l,FracL("1"_l, "2"_l))))),VertOffL("2"_l),"-2"_l)).log();
 }
 
 QUIZ_CASE(pcj_layout_creation) { testLayoutCreation(); }

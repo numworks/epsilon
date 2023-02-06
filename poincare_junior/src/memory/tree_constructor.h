@@ -461,10 +461,10 @@ constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> operator "" _n(l
 }
 
 // TODO : A RackLayout shouldn't have RackLayout children.
-template<unsigned ...Len> static consteval auto RacL(const Tree<Len> (&...children)) { return MakeTree<BlockType::RackLayout>(children...); }
-template<unsigned L1, unsigned L2> static consteval Tree<L1+L2+1> FraL(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::FractionLayout>(child1, child2); }
-template<unsigned L1> static consteval Tree<L1+1> VerL(const Tree<L1> child1) { return MakeTree<BlockType::VerticalOffsetLayout>(child1); }
-template<unsigned L1> static consteval Tree<L1+1> ParL(const Tree<L1> child1) { return MakeTree<BlockType::ParenthesisLayout>(child1); }
+template<unsigned ...Len> static consteval auto RackL(const Tree<Len> (&...children)) { return MakeTree<BlockType::RackLayout>(children...); }
+template<unsigned L1, unsigned L2> static consteval Tree<L1+L2+1> FracL(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::FractionLayout>(child1, child2); }
+template<unsigned L1> static consteval Tree<L1+1> VertOffL(const Tree<L1> child1) { return MakeTree<BlockType::VerticalOffsetLayout>(child1); }
+template<unsigned L1> static consteval Tree<L1+1> ParenthesisL(const Tree<L1> child1) { return MakeTree<BlockType::ParenthesisLayout>(child1); }
 
 template <String S>
 consteval auto operator"" _l () {

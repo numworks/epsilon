@@ -4,8 +4,8 @@
 
 using namespace PoincareJ;
 
-static constexpr Tree tree = Add("3"_n, "4"_n);
-static constexpr Tree smallTree = "4"_n;
+static constexpr Tree tree = Add("3"_e, "4"_e);
+static constexpr Tree smallTree = "4"_e;
 
 void execute_push_tree_and_modify() {
   PoincareJ::CacheReference::InitializerFromTree treeModifier = [](Node tree) { EditionReference(tree).replaceNodeByNode(EditionReference::Push<BlockType::Multiplication>(2)); };
@@ -55,7 +55,7 @@ void testCachePool() {
 
   // execute
   execute_push_tree_and_modify();
-  assert_pool_contains(cachePool, {Mult("3"_n, "4"_n)});
+  assert_pool_contains(cachePool, {Mult("3"_e, "4"_e)});
   assert_pools_tree_sizes_are(1, 0);
 }
 QUIZ_CASE(pcj_cache_pool) { testCachePool(); }
@@ -80,7 +80,7 @@ void testCachePoolLimits() {
   execute_push_tree_and_modify();
   assert(cachePool->numberOfTrees() < maxNumberOfTreesInCache);
   Node lastTree = Node(cachePool->lastBlock()).previousTree();
-  assert_trees_are_equal(lastTree, Mult("3"_n, "4"_n));
+  assert_trees_are_equal(lastTree, Mult("3"_e, "4"_e));
 
   /* test overflowing the cache identifier */
   cachePool->reset();
@@ -110,18 +110,18 @@ void assert_check_cache_reference(CacheReference reference, std::initializer_lis
 void testCacheReference() {
   // Constructors
   CacheReference reference0([] (){ EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4)); });
-  assert_check_cache_reference(reference0, {"4"_n});
+  assert_check_cache_reference(reference0, {"4"_e});
 
-  CacheReference reference1([] (Node node){ EditionReference(node).replaceNodeByNode("5"_n); }, static_cast<Node>(smallTree).block());
-  assert_check_cache_reference(reference1, {"5"_n});
+  CacheReference reference1([] (Node node){ EditionReference(node).replaceNodeByNode("5"_e); }, static_cast<Node>(smallTree).block());
+  assert_check_cache_reference(reference1, {"5"_e});
 
   CacheReference reference2(
       [] (Node node){
         EditionReference ref(node);
         ref.insertNodeBeforeNode(EditionReference::Push<BlockType::Addition>(2));
-        ref.insertNodeAfterNode("6"_n);
+        ref.insertNodeAfterNode("6"_e);
       }, &reference1);
-  assert_check_cache_reference(reference2, {"5"_n, Add("5"_n, "6"_n)});
+  assert_check_cache_reference(reference2, {"5"_e, Add("5"_e, "6"_e)});
 
   CacheReference reference3([] (const char * string){ EditionReference::Push<BlockType::Addition>(string[0] - '0'); }, "0");
   assert_check_cache_reference(reference3, {Add()});
@@ -154,7 +154,7 @@ void testCacheReferenceInvalidation() {
   }
   // TODO: factorize
   assert_pools_tree_sizes_are(maxNumberOfTreesInCache, 0);
-  check_reference_invalidation_and_reconstruction(reference, identifier, "28"_n);
+  check_reference_invalidation_and_reconstruction(reference, identifier, "28"_e);
 
   /* Invalidation when cache identifiers overflow */
   // Fill the cache identifiers
@@ -167,6 +167,6 @@ void testCacheReferenceInvalidation() {
     reference1.send([](const Node tree, void * result) {}, nullptr);
   }
   assert_pools_tree_sizes_are(CachePool::k_maxNumberOfReferences, 0);
-  check_reference_invalidation_and_reconstruction(reference, identifier, "28"_n);
+  check_reference_invalidation_and_reconstruction(reference, identifier, "28"_e);
 }
 QUIZ_CASE(pcj_cache_reference_invalidation) { testCacheReferenceInvalidation(); }

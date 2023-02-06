@@ -221,7 +221,7 @@ template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 4) CTree(Inte
 
 constexpr static uint64_t Value(const char * str, size_t size);
 template <char...C>
-consteval auto operator"" _n () {
+consteval auto operator"" _e () {
   constexpr const char value[] = { C... , '\0' };
   constexpr int V = Value(value, sizeof...(C) + 1);
   return IntegerLitteral<V>();
@@ -390,7 +390,7 @@ constexpr unsigned TreeSize() {
 }
 
 template <String S>
-constexpr Tree<TreeSize<S>()> operator"" _n() {
+constexpr Tree<TreeSize<S>()> operator"" _e() {
   constexpr unsigned treeSize = TreeSize<S>();
   Tree<treeSize> tree;
   const char * chars = S.m_data;
@@ -447,14 +447,14 @@ constexpr Tree<TreeSize<S>()> operator"" _n() {
   return tree;
 }
 
-constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _n(char16_t name) {
+constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _e(char16_t name) {
   Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> tree;
   CreateNode<BlockType::Constant>(&tree, name);
   return tree;
 }
 
-constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> operator "" _n(long double value) {
-  // TODO: integrate to template <String S> operator"" _n() to be able to parse "-1.2"_n
+constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> operator "" _e(long double value) {
+  // TODO: integrate to template <String S> operator"" _e() to be able to parse "-1.2"_e
   Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> tree;
   CreateNode<BlockType::Float>(&tree, static_cast<float>(value));
   return tree;

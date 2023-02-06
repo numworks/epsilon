@@ -207,7 +207,7 @@ void LayoutCursor::performBackspace() {
   Layout leftL = leftLayout();
   if (!leftL.isUninitialized()) {
     LayoutNode::DeletionMethod deletionMethod = leftL.deletionMethodForCursorLeftOfChild(LayoutNode::k_outsideIndex);
-    privateDelete(deletionMethod);
+    privateDelete(deletionMethod, false);
     return;
   }
 
@@ -217,7 +217,7 @@ void LayoutCursor::performBackspace() {
     return;
   }
   LayoutNode::DeletionMethod deletionMethod = p.deletionMethodForCursorLeftOfChild(p.indexOfChild(m_layout));
-  privateDelete(deletionMethod);
+  privateDelete(deletionMethod, true);
 }
 
 void LayoutCursor::deleteAndResetSelection() {
@@ -485,7 +485,7 @@ void LayoutCursor::invalidateSizesAndPositions() {
   layoutToInvalidate.invalidAllSizesPositionsAndBaselines();
 }
 
-void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod) {
+void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool deletionAppliedToParent) {
   if (deletionMethod == LayoutNode::DeletionMethod::MoveLeft) {
     bool dummy = false;
     move(OMG::Direction::Left, false, &dummy);
@@ -493,6 +493,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod) {
   }
 
   if (deletionMethod == LayoutNode::DeletionMethod::DeleteAndKeepChild) {
+    assert(deletionAppliedToParent);
     assert(!m_layout.parent().isUninitialized() && !m_layout.parent().isHorizontal());
     Layout p = m_layout.parent();
     Layout parentOfP = p.parent();
@@ -511,6 +512,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod) {
 
   if (deletionMethod == LayoutNode::DeletionMethod::FractionDenominatorDeletion) {
     // Merge the numerator and denominator and replace the fraction with it
+    assert(deletionAppliedToParent);
     assert(!m_layout.parent().isUninitialized() && m_layout.parent().type() == LayoutNode::Type::FractionLayout);
     Layout fraction = m_layout.parent();
     Layout numerator = fraction.childAtIndex(0);
@@ -540,6 +542,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod) {
   }
 
   if (deletionMethod == LayoutNode::DeletionMethod::BinomialCoefficientMoveFromKtoN) {
+    assert(deletionAppliedToParent);
     assert(!m_layout.parent().isUninitialized() && m_layout.parent().type() == LayoutNode::Type::BinomialCoefficientLayout);
     willExitCurrentPosition();
     m_layout = m_layout.parent().childAtIndex(BinomialCoefficientLayoutNode::k_nLayoutIndex);
@@ -549,6 +552,10 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod) {
   }
 
   assert(deletionMethod == LayoutNode::DeletionMethod::DeleteLayout);
+  if (deletionAppliedToParent) {
+    assert(!m_layout.parent().isUninitialized());
+    setLayout(m_layout.parent(), false);
+  }
   if (!m_layout.isHorizontal()) {
     assert(m_layout.parent().isUninitialized() || !m_layout.parent().isHorizontal());
     HorizontalLayout hLayout = HorizontalLayout::Builder();

@@ -23,6 +23,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   events.cpp \
   events_platform.cpp \
   framebuffer.cpp \
+  init.cpp \
   keyboard.cpp \
   layout.py \
   main.cpp \

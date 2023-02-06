@@ -36,6 +36,7 @@ public:
   // LayoutNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const override;
+  DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
 
   // TreeNode

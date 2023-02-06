@@ -467,6 +467,24 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod) {
     move(OMG::Direction::Left, false, &dummy);
     return;
   }
+
+  if (deletionMethod == LayoutNode::DeletionMethod::DeleteAndKeepChild) {
+    assert(!m_layout.parent().isUninitialized() && !m_layout.parent().isHorizontal());
+    Layout p = m_layout.parent();
+    Layout parentOfP = p.parent();
+    if (parentOfP.isUninitialized() || !parentOfP.isHorizontal()) {
+      assert(m_position == 0);
+      p.replaceWithInPlace(m_layout);
+    } else {
+      m_position = parentOfP.indexOfChild(p);
+      static_cast<HorizontalLayout&>(parentOfP).removeChildAtIndexInPlace(m_position);
+      static_cast<HorizontalLayout&>(parentOfP).addOrMergeChildAtIndex(m_layout, m_position);
+      m_layout = parentOfP;
+    }
+    didEnterCurrentPosition();
+    return;
+  }
+
   assert(deletionMethod == LayoutNode::DeletionMethod::DeleteLayout);
   if (!m_layout.isHorizontal()) {
     assert(m_layout.parent().isUninitialized() || !m_layout.parent().isHorizontal());

@@ -3,12 +3,9 @@
 
 namespace Poincare {
 
-/*
-void BracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (!deleteBeforeCursorForLayoutContainingArgument(childLayout(), cursor)) {
-    LayoutNode::deleteBeforeCursor(cursor);
-  }
-}*/
+LayoutNode::DeletionMethod BracketPairLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
+  return StandardDeletionMethodForLayoutContainingArgument(childIndex, 0);
+}
 
 KDSize BracketPairLayoutNode::computeSize(KDFont::Size font) {
   KDSize childSize = childLayout()->layoutSize(font);

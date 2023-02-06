@@ -60,13 +60,11 @@ int IntegralLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::Ve
   }
   return k_cantMoveIndex;
 }
-/*
-void IntegralLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (!deleteBeforeCursorForLayoutContainingArgument(integrandLayout(), cursor)) {
-    LayoutNode::deleteBeforeCursor(cursor);
-  }
+
+LayoutNode::DeletionMethod IntegralLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
+  return StandardDeletionMethodForLayoutContainingArgument(childIndex, k_integrandLayoutIndex);
 }
-*/
+
 int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);
 }

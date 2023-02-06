@@ -26,6 +26,7 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
   int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
   int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const override;
+  DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
   Layout XNTLayout(int childIndex = -1) const override;
 
   VariableSlot variableSlot() const { return m_variableSlot; }

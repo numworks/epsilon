@@ -58,7 +58,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
    *   The deletion on the current page is locked
    * - The empty controller is displayed
    */
-  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && m_currentPage != Page::Regression) {
+  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
     int rowIndex = selectedRow();
     if (destroyRecordAtRowIndex(rowIndex)) {
       if (Container::activeApp()->modalViewController()->currentModalViewController() != static_cast<const ViewController *>(this)) {
@@ -89,6 +89,10 @@ int MathVariableBoxController::numberOfRows() const {
   return numberOfElements(m_currentPage);
 }
 
+static int NumberOfFunctions() {
+  return Storage::FileSystem::sharedFileSystem->numberOfRecordsStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Ion::Storage::funcExtension);
+}
+
 int MathVariableBoxController::numberOfElements(Page page) const {
   if (page == Page::RootMenu) {
     int numberOfRows = 1; // Define a variable
@@ -100,7 +104,7 @@ int MathVariableBoxController::numberOfElements(Page page) const {
     return numberOfRows;
   }
   if (page == Page::Function) {
-    return Storage::FileSystem::sharedFileSystem->numberOfRecordsStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Ion::Storage::funcExtension);
+    return NumberOfFunctions() + Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Storage::regExtension);
   }
   return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Extension(page));
 }
@@ -136,20 +140,23 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
     static_assert(Shared::Function::k_maxNameWithArgumentSize > Poincare::SymbolAbstract::k_maxNameSize, "Forgot argument's size?");
     symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
   } else if (m_currentPage == Page::Function) {
-    ContinuousFunction f(record);
-    symbolLength = f.nameWithArgument(
-        symbolName,
-        Shared::Function::k_maxNameWithArgumentSize
-    );
-  } else if (m_currentPage == Page::Regression) {
-    strlcpy(symbolName, record.name().baseName, record.name().baseNameLength + 1);
-    symbolLength = strlen(symbolName);
-    symbolName[symbolLength] = '(';
-    symbolName[symbolLength + 1] = 'x';
-    symbolName[symbolLength + 2] = ')';
-    symbolName[symbolLength + 3] = 0;
-    symbolLength += 3;
-    assert(symbolLength < Shared::Function::k_maxNameWithArgumentSize);
+    if (record.hasExtension(Storage::funcExtension)) {
+      ContinuousFunction f(record);
+      symbolLength = f.nameWithArgument(
+          symbolName,
+          Shared::Function::k_maxNameWithArgumentSize
+      );
+    } else {
+      assert(record.hasExtension(Storage::regExtension));
+      strlcpy(symbolName, record.name().baseName, record.name().baseNameLength + 1);
+      symbolLength = strlen(symbolName);
+      symbolName[symbolLength] = '(';
+      symbolName[symbolLength + 1] = 'x';
+      symbolName[symbolLength + 2] = ')';
+      symbolName[symbolLength + 3] = 0;
+      symbolLength += 3;
+      assert(symbolLength < Shared::Function::k_maxNameWithArgumentSize);
+    }
   } else {
     assert(m_currentPage == Page::Sequence);
     Shared::Sequence u(record);
@@ -290,8 +297,6 @@ I18n::Message MathVariableBoxController::nodeLabel(Page page) {
       return I18n::Message::Expressions;
     case Page::Function:
       return I18n::Message::Functions;
-    case Page::Regression:
-      return I18n::Message::Regressions;
     case Page::Sequence:
       return I18n::Message::Sequences;
     case Page::List:
@@ -335,12 +340,9 @@ Layout MathVariableBoxController::expressionLayoutForRecord(Storage::Record reco
 }
 
 const char * MathVariableBoxController::Extension(Page page) {
-  assert(page != Page::RootMenu);
+  // Function contains two extensions (func and reg)
+  assert(page != Page::RootMenu && page != Page::Function);
   switch (page) {
-  case Page::Function:
-    return Ion::Storage::funcExtension;
-  case Page::Regression:
-    return Ion::Storage::regExtension;
   case Page::Expression:
     return Ion::Storage::expExtension;
   case Page::List:
@@ -357,7 +359,11 @@ Storage::Record MathVariableBoxController::recordAtIndex(int rowIndex) {
   assert(m_currentPage != Page::RootMenu);
   Storage::Record record;
   if (m_currentPage == Page::Function) {
-    record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndexStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Extension(m_currentPage), rowIndex);
+    if (rowIndex < NumberOfFunctions()) {
+      record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndexStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Storage::funcExtension, rowIndex);
+    } else {
+      record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(Storage::regExtension, rowIndex - NumberOfFunctions());
+    }
   } else {
     record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(Extension(m_currentPage), rowIndex);
   }
@@ -375,6 +381,9 @@ void MathVariableBoxController::resetVarBoxMemoization() {
 bool MathVariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
   {
     Storage::Record record = recordAtIndex(rowIndex);
+    if (record.hasExtension(Ion::Storage::regExtension)) {
+      return false;
+    }
     Shared::InputEventHandlerDelegateApp * app = static_cast<Shared::InputEventHandlerDelegateApp*>(Container::activeApp());
     app->prepareForIntrusiveStorageChange();
     bool canDestroy = record.tryToDestroy();

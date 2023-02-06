@@ -35,7 +35,7 @@ constexpr KDCoordinate Metric::FractionAndConjugateHorizontalMargin;
 constexpr KDCoordinate Metric::MinimalBracketAndParenthesisChildHeight;
 constexpr KDCoordinate Metric::CellSeparatorThickness;
 constexpr KDCoordinate Metric::TableSeparatorThickness;
-constexpr KDCoordinate Metric::ExpressionViewHorizontalMargin;
+constexpr KDCoordinate Metric::ExpressionViewMargin;
 constexpr KDCoordinate Metric::EllipsisCellWidth;
 
 }

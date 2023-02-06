@@ -40,7 +40,7 @@ public:
   // Misc margins
   constexpr static KDCoordinate BannerTextMargin = 2;
   constexpr static KDCoordinate EllipsisCellWidth = 37;
-  constexpr static KDCoordinate ExpressionViewHorizontalMargin = 5;
+  constexpr static KDCoordinate ExpressionViewMargin = 5;
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
   constexpr static KDCoordinate MinimalBracketAndParenthesisChildHeight = 16;

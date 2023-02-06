@@ -75,8 +75,9 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
 
     const double minimalAbsoluteStep = pixelWidth;
-    // Prevent tStep from being too small before any snapping or rounding.
-    double tStep = dir * std::max(step * slopeMultiplicator * static_cast<double>(scrollSpeed), minimalAbsoluteStep);
+    /* Prevent tStep from being too small before any snapping or rounding.
+     * A bigger minimal step is enforced so that t can be rounded down. */
+    double tStep = dir * std::max(step * slopeMultiplicator * static_cast<double>(scrollSpeed), minimalAbsoluteStep * 2);
     if (snapToInterestAndUpdateCursor(cursor, tCursor, tCursor + tStep * k_snapFactor, subCurveIndex ? *subCurveIndex : 0)) {
         // Cursor should have been updated by snapToInterest
         assert(tCursor != cursor->t());

@@ -51,10 +51,8 @@ void configureGlobalVariables() {
 #else
   /* In practice, static initialized objects are a terrible idea. Since the init
    * order is not specified, most often than not this yields the dreaded static
-   * init order fiasco. How about bypassing the issue altogether? */
-  if (&_init_array_start != &_init_array_end) {
-    abort();
-  }
+   * init order fiasco. The linker asserts that the .init_array section is
+   * empty. */
 #endif
 }
 

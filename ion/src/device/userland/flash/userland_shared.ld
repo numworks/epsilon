@@ -28,10 +28,7 @@ SECTIONS {
   } >FLASH_USERLAND
 
   .init_array : {
-    . = ALIGN(4);
-    _init_array_start = .;
-    KEEP (*(.init_array*))
-    _init_array_end = .;
+    INCLUDE init_array.ld
   } >FLASH_USERLAND
 
   .data : {

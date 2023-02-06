@@ -44,7 +44,6 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
   }
 
-  const double minimalAbsoluteStep = pixelWidth;
   double step;
   double t = tCursor;
   if (function->properties().isCartesian()) {
@@ -75,6 +74,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
       slopeMultiplicator *= std::sqrt(2.0);
     }
 
+    const double minimalAbsoluteStep = pixelWidth;
     // Prevent tStep from being too small before any snapping or rounding.
     double tStep = dir * std::max(step * slopeMultiplicator * static_cast<double>(scrollSpeed), minimalAbsoluteStep);
     if (snapToInterestAndUpdateCursor(cursor, tCursor, tCursor + tStep * k_snapFactor, subCurveIndex ? *subCurveIndex : 0)) {
@@ -98,6 +98,11 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
     // Snap to interest could have corrupted ExpiringPointer
     function = App::app()->functionStore()->modelForRecord(record);
+
+    // Ensure a minimal tStep again, allowing the crossing of asymptotes.
+    if (std::abs(t - tCursor) < minimalAbsoluteStep) {
+      t = tCursor + dir * minimalAbsoluteStep;
+    }
   } else {
     /* If function is not along X or Y, the cursor speed along t should not
      * depend on pixelWidth since the t interval can be very small even if the
@@ -106,10 +111,6 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     t += dir * step * scrollSpeed;
     // If possible, round t so that f(x) matches f evaluated at displayed x
     t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences->numberOfSignificantDigits(), 0.05 * step, true);
-  }
-  // Ensure a minimal tStep again, allowing the crossing of asymptotes.
-  if (std::abs(t - tCursor) < minimalAbsoluteStep) {
-    t = tCursor + dir * minimalAbsoluteStep;
   }
   // t must have changed
   assert(tCursor != t);

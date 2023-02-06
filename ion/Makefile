@@ -17,7 +17,6 @@ ion_src += $(addprefix ion/src/shared/, \
   decompress.cpp \
   events.cpp \
   events_modifier.cpp \
-  init.cpp \
   keyboard.cpp \
   keyboard_queue.cpp \
   layout_events.cpp \

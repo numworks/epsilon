@@ -1,6 +1,5 @@
-#include "init.h"
-#include "events.h"
-#include "events_modifier.h"
+#include <ion/src/shared/events.h>
+#include <ion/src/shared/events_modifier.h>
 #include <ion/storage/file_system.h>
 
 namespace Ion {

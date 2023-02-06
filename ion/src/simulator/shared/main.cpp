@@ -5,6 +5,7 @@
 #include "state_file.h"
 #include "telemetry.h"
 #include "window.h"
+#include <ion/src/shared/init.h>
 #include <algorithm>
 #include <assert.h>
 #include <vector>
@@ -24,7 +25,6 @@ extern "C" {
 }
 #include <dlfcn.h>
 #endif
-#include <ion/src/shared/init.h>
 
 /* The Args class allows parsing and editing command-line arguments
  * The editing part allows us to add/remove arguments before forwarding them to

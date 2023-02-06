@@ -1,6 +1,6 @@
 #include "model.h"
 #include "../store.h"
-#include <apps/apps_container.h>
+#include <apps/apps_container_helper.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/addition.h>
 #include <poincare/comparison.h>
@@ -28,7 +28,7 @@ Layout Model::equationLayout(double * modelCoefficients, const char * ySymbol, i
     return Layout();
   }
   Expression equation = Comparison::Builder(Symbol::Builder(ySymbol, strlen(ySymbol)), ComparisonNode::OperatorType::Equal, formula);
-  return equation.createLayout(displayMode, significantDigits, AppsContainer::sharedAppsContainer()->globalContext());
+  return equation.createLayout(displayMode, significantDigits, AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 
 Poincare::Expression Model::expression(double * modelCoefficients) const {

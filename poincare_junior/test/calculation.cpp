@@ -26,7 +26,7 @@ private:
 };
 
 Calculation::Calculation(const char * textInput) {
-  Expression::CreateExpressionFromText(textInput).dumpAt(m_input);
+  Expression::ParseFromText(textInput).dumpAt(m_input);
   m_output = Expression::CreateBasicReduction(m_input);
 }
 
@@ -43,7 +43,7 @@ QUIZ_CASE(pcj_calculation) { testCalculation(); }
 
 Expression expressionViolatingLifetimeOfData() {
   char input[20] = "1+2";
-  Expression e = Expression::CreateExpressionFromText(input);
+  Expression e = Expression::ParseFromText(input);
   // Corrupt the data source
   input[0] = 'a';
   return e;

@@ -29,19 +29,19 @@ EditionReference Layout::ParseFromExpressionInEditionPool(Node node) {
   return ref;
 }
 
-Layout Layout::CreateLayoutFromText(const char * textInput) {
+Layout Layout::Parse(const char * textInput) {
   return Layout([](const char * text){
       ParseFromTextInEditionPool(text);
     }, textInput);
 }
 
-Layout Layout::CreateLayoutFromExpression(const Expression * expressionInput) {
+Layout Layout::ToLayout(const Expression * expressionInput) {
   return Layout([](Node node){
       ParseFromExpressionInEditionPool(node);
     }, expressionInput);
 }
 
-void Layout::layoutToBuffer(char * buffer, size_t bufferSize) const {
+void Layout::toText(char * buffer, size_t bufferSize) const {
   memcpy(buffer, "-1+2*3", bufferSize);
 }
 

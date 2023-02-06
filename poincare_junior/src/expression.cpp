@@ -22,13 +22,13 @@ EditionReference Expression::ParseFromLayoutInEditionPool(Node node) {
   return ref;
 }
 
-Expression Expression::CreateExpressionFromText(const char * textInput) {
+Expression Expression::ParseFromText(const char * textInput) {
   return Expression([](const char * text){
       ParseFromLayoutInEditionPool(Layout::ParseFromTextInEditionPool(text));
     }, textInput);
 }
 
-Expression Expression::CreateExpressionFromLayout(const Layout * layoutInput) {
+Expression Expression::Parse(const Layout * layoutInput) {
   return Expression([](Node node){
       ParseFromLayoutInEditionPool(node);
     }, layoutInput);

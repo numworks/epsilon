@@ -18,27 +18,27 @@ void testLayoutCacheSharedPointer() {
   CachePool * cachePool = CachePool::sharedCachePool();
   cachePool->reset();
 
-  Expression e = Expression::CreateExpressionFromText("-1+2*3");
+  Expression e = Expression::ParseFromText("-1+2*3");
 
   // l is created with e.m_id different from 1
   assert(e.id() != 1);
-  Layout l = Layout::CreateLayoutFromExpression(&e);
+  Layout l = Layout::ToLayout(&e);
 
   // Forcing e.m_id change
   cachePool->needFreeBlocks(1);
   assert(e.id() == 1);
 
   // This test should fail if this line is uncommented
-  // e = Expression::CreateExpressionFromText("2*3");
+  // e = Expression::ParseFromText("2*3");
 
   // l should handle new e.m_id
   l.id();
 }
 
 void testLayoutCreation() {
-  Layout l1 = Layout::CreateLayoutFromText("-1+2*3");
-  Expression e1 = Expression::CreateExpressionFromText("-1+2*3");
-  Layout l2 = Layout::CreateLayoutFromExpression(&e1);
+  Layout l1 = Layout::Parse("-1+2*3");
+  Expression e1 = Expression::ParseFromText("-1+2*3");
+  Layout l2 = Layout::ToLayout(&e1);
   assert_equal(l1, l2);
 }
 

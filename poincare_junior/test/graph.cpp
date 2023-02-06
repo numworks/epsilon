@@ -17,7 +17,7 @@ private:
 
 Graph::Graph(const char * text) {
   strlcpy(m_functionText, text, k_bufferSize);
-  m_function = PoincareJ::Expression::CreateExpressionFromText(m_functionText);
+  m_function = PoincareJ::Expression::ParseFromText(m_functionText);
 }
 
 float Graph::approximateAtAbscissa(float x) const {

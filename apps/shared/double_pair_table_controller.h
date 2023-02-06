@@ -34,6 +34,9 @@ public:
   // PrefacedTableView::MarginDelegate
   KDCoordinate columnPrefaceRightMargin() override;
 
+  // SelectableTableViewDelegate
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return row > 0 && col > 1; }
+
 protected:
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   constexpr static KDCoordinate k_cellHeight = Escher::Metric::SmallEditableCellHeight;

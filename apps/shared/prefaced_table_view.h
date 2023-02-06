@@ -28,7 +28,7 @@ public:
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return row > 0; }
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return m_mainTableDelegate ? m_mainTableDelegate->canStoreContentOfCellAtLocation(t, col, row) : true; }
 
   Escher::SelectableTableView * selectableTableView() { return m_mainTableView; }
   virtual void setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left);

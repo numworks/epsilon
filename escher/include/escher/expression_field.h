@@ -28,8 +28,8 @@ public:
   bool inputViewHeightDidChange();
   void reload();
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false);
- // size_t dumpContent(char * buffer, size_t bufferSize, int * cursorOffset, Poincare::LayoutCursor::Position * position);
- // void restoreContent(const char * buffer, size_t size, int * cursorOffset, Poincare::LayoutCursor::Position * position);
+ size_t dumpContent(char * buffer, size_t bufferSize, int * cursorOffset, int * position);
+ void restoreContent(const char * buffer, size_t size, int * cursorOffset, int * position);
   void setBackgroundColor(KDColor backgroundColor);
   void putCursorLeftOfField();
   void setTextEditionBuffer(char * buffer, size_t bufferSize) { m_textField.setEditionBuffer(buffer, bufferSize); }

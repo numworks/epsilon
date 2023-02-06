@@ -150,10 +150,10 @@ KDCoordinate ExpressionField::inputViewHeight() const {
           std::max(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }
 
-/*size_t ExpressionField::dumpContent(char * buffer, size_t bufferSize, int * cursorOffset, LayoutCursor::Position * position) {
+size_t ExpressionField::dumpContent(char * buffer, size_t bufferSize, int * cursorOffset, int * position) {
   return editionIsInTextField() ? m_textField.dumpContent(buffer, bufferSize, cursorOffset) : m_layoutField.dumpContent(buffer, bufferSize, cursorOffset, position);
 }
-*/
+
 void ExpressionField::putCursorLeftOfField() {
   if (editionIsInTextField()) {
     m_textField.setCursorLocation(m_textField.text());
@@ -161,13 +161,13 @@ void ExpressionField::putCursorLeftOfField() {
     m_layoutField.putCursorOnOneSide(OMG::HorizontalDirection::Left);
   }
 }
-/*
-void ExpressionField::restoreContent(const char * buffer, size_t size, int * cursorOffset, Poincare::LayoutCursor::Position * position) {
+
+void ExpressionField::restoreContent(const char * buffer, size_t size, int * cursorOffset, int * position) {
   if (editionIsInTextField()) {
     if (size != 0 || buffer[0] == 0) {
       /* A size other than 0 means the buffer contains Layout information
        * (instead of raw text) that we don't want to restore. This is most
-       * likely because the edition mode has been changed between use. *
+       * likely because the edition mode has been changed between use. */
       return;
     }
     setText(buffer);
@@ -182,9 +182,10 @@ void ExpressionField::restoreContent(const char * buffer, size_t size, int * cur
   m_layoutField.setLayout(Layout::LayoutFromAddress(buffer, size));
   if (*cursorOffset != -1) {
     const LayoutNode * cursorNode = reinterpret_cast<const LayoutNode *>(reinterpret_cast<char *>(m_layoutField.layout().node()) + *cursorOffset);
-    m_layoutField.cursor()->setLayout(Layout(cursorNode));
-    m_layoutField.cursor()->setPosition(*position);
+    LayoutCursor restoredCursor = LayoutCursor(Layout(cursorNode));
+    restoredCursor.setPosition(*position);
+    m_layoutField.cursor()->setTo(restoredCursor);
   }
-}*/
+}
 
 }

@@ -32,10 +32,12 @@ public:
   bool isSelecting() const { return m_startOfSelection >= 0; }
   LayoutSelection selection() const { return isSelecting() ? LayoutSelection(m_layout, m_startOfSelection, m_position) : LayoutSelection(); }
 
-  void setTo(LayoutCursor * other) {
-     m_layout = other->m_layout;
-     m_position = other->m_position;
-     m_startOfSelection = other->m_startOfSelection;
+  void setPosition(int position);
+
+  void setTo(LayoutCursor other) {
+     m_layout = other.m_layout;
+     m_position = other.m_position;
+     m_startOfSelection = other.m_startOfSelection;
   }
 
   /* Position and size */

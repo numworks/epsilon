@@ -86,6 +86,23 @@ void CalculationController::tableViewDidChangeSelectionAndDidScroll(SelectableTa
   }
 }
 
+bool CalculationController::canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const {
+  if (!Shared::DoublePairTableController::canStoreContentOfCellAtLocation(t, col, row)) {
+    return false;
+  }
+  assert(row > 0 && col > 1);
+  const int calculationIndex = getCalculationIndex(row);
+  if (calculationIndex == k_numberOfBufferCalculations) {
+    // Regression formula
+    return false;
+  }
+  if (calculationIndex > k_numberOfBufferCalculations) {
+    SeparatorEvenOddBufferTextCell * bufferCell = static_cast<SeparatorEvenOddBufferTextCell *>(t->cellAtLocation(col, row));
+    return strcmp(bufferCell->text(), I18n::translate(I18n::Message::Dash)) && strcmp(bufferCell->text(), I18n::translate(I18n::Message::Disabled));
+  }
+  return true;
+}
+
 int CalculationController::numberOfRows() const {
   /* Rows for : title + Mean ... Variance + Number of points + Covariance + ∑xy
    * + r + (Regression) + Coefficients + (R2) */

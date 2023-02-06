@@ -26,6 +26,7 @@ public:
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override;
 
   // TableViewDataSource
   int numberOfRows() const override;

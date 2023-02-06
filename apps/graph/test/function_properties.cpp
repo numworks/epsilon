@@ -744,8 +744,8 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
     assert_reduce_and_store("1→y", Preferences::AngleUnit::Radian, Poincare::Preferences::UnitFormat::Metric, Poincare::Preferences::ComplexFormat::Real);
     assert_check_function_properties("y=x", k_lineProperties, &store, &context);
 
-    Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
-    Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("y.exp").destroy();
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("y.exp").destroy();
     store.removeAll();
 }
 

@@ -4,33 +4,14 @@
 #include <poincare/integer.h>
 #include <new>
 #if ION_STORAGE_LOG
-#include<iostream>
+#include <iostream>
 #endif
 
 namespace Ion {
 
 namespace Storage {
 
-/* We want to implement a simple singleton pattern, to make sure the storage is
- * initialized on first use, therefore preventing the static init order fiasco.
- * That being said, we rely on knowing where the storage resides in the device's
- * memory at compile time. Indeed, we want to advertise the static storage's
- * memory address in the PlatformInfo structure (so that we can read and write
- * it in DFU).
- * Using a "static Storage storage;" variable makes it a local symbol at best,
- * preventing the PlatformInfo from retrieving its address. And making the
- * Storage variable global yields the static init fiasco issue. We're working
- * around both issues by creating a global staticStorageArea buffer, and by
- * placement-newing the Storage into that area on first use.
- * We use 'uintptr_t' to ensure the Storage to be correctly aligned accordingly
- * to the platform. */
-
-uintptr_t staticStorageArea[sizeof(Storage::FileSystem)/sizeof(uintptr_t)] = {0};
-
-FileSystem * FileSystem::sharedFileSystem() {
-  static FileSystem * fileSystem = new (staticStorageArea) FileSystem();
-  return fileSystem;
-}
+OMG::GlobalBox<FileSystem> FileSystem::sharedFileSystem;
 
 // STORAGE
 

@@ -41,7 +41,7 @@ Ion::Storage::Record createRecord(T * store) {
 template<class T>
 void testAlignmentHandlingFor() {
   T store;
-  Ion::Storage::FileSystem * sharedFileSystem = Ion::Storage::FileSystem::sharedFileSystem();
+  Ion::Storage::FileSystem * sharedFileSystem = Ion::Storage::FileSystem::sharedFileSystem;
 
   sharedFileSystem->destroyAllRecords();
   Ion::Storage::Record rec1 = createRecord<T>(&store);

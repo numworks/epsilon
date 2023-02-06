@@ -22,7 +22,7 @@ PointsOfInterestCache PointsOfInterestCache::clone() const {
 void PointsOfInterestCache::setBounds(float start, float end) {
   assert(start <= end);
 
-  uint32_t checksum = Ion::Storage::FileSystem::sharedFileSystem()->checksum();
+  uint32_t checksum = Ion::Storage::FileSystem::sharedFileSystem->checksum();
   if (m_checksum != checksum) {
     /* Discard the old results if anything in the storage has changed. */
     m_computedStart = m_computedEnd = start;
@@ -170,7 +170,7 @@ bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
 
 void PointsOfInterestCache::computeBetween(float start, float end) {
   assert(!m_record.isNull());
-  assert(m_checksum == Ion::Storage::FileSystem::sharedFileSystem()->checksum());
+  assert(m_checksum == Ion::Storage::FileSystem::sharedFileSystem->checksum());
   assert(!m_list.isUninitialized());
   assert((end == m_computedStart && start < m_computedStart) || (start == m_computedEnd && end > m_computedEnd));
   assert(start >= m_start && end <= m_end);

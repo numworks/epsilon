@@ -7,7 +7,7 @@ using namespace Ion;
 
 Storage::Record::ErrorStatus putRecordInSharedStorage(const char * baseName, const char * extension, const char * data) {
   size_t dataSize = strlen(data);
-  return Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(baseName, extension, data, dataSize);
+  return Storage::FileSystem::sharedFileSystem->createRecordWithExtension(baseName, extension, data, dataSize);
 }
 
 QUIZ_CASE(ion_storage_records_crc32) {
@@ -24,7 +24,7 @@ QUIZ_CASE(ion_storage_records_crc32) {
 }
 
 QUIZ_CASE(ion_storage_store_and_destroy_record) {
-  size_t initialStorageAvailableStage = Storage::FileSystem::sharedFileSystem()->availableSize();
+  size_t initialStorageAvailableStage = Storage::FileSystem::sharedFileSystem->availableSize();
 
   const char * baseNameRecord = "ionTestStorage";
   const char * extensionRecord = "record1";
@@ -35,21 +35,21 @@ QUIZ_CASE(ion_storage_store_and_destroy_record) {
   quiz_assert(error == Storage::Record::ErrorStatus::None);
 
   // Retrieve the record
-  Storage::Record retrievedRecord = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
+  Storage::Record retrievedRecord = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
   size_t dataRecordSize = strlen(dataRecord);
   quiz_assert(retrievedRecord.value().size == dataRecordSize);
   quiz_assert(strcmp(dataRecord, static_cast<const char *>(retrievedRecord.value().buffer)) == 0);
 
   // Destroy it
   retrievedRecord.destroy();
-  retrievedRecord = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
+  retrievedRecord = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
   quiz_assert(retrievedRecord == Storage::Record());
-  quiz_assert(Storage::FileSystem::sharedFileSystem()->availableSize() == initialStorageAvailableStage);
+  quiz_assert(Storage::FileSystem::sharedFileSystem->availableSize() == initialStorageAvailableStage);
 }
 
 
 QUIZ_CASE(ion_storage_put_record_twice) {
-  size_t initialStorageAvailableStage = Storage::FileSystem::sharedFileSystem()->availableSize();
+  size_t initialStorageAvailableStage = Storage::FileSystem::sharedFileSystem->availableSize();
 
   const char * baseNameRecord = "ionTestStorage";
   const char * extensionRecord = "record";
@@ -64,20 +64,20 @@ QUIZ_CASE(ion_storage_put_record_twice) {
   quiz_assert(error == Storage::Record::ErrorStatus::NameTaken);
 
   // Retrieve the record
-  Storage::Record retrievedRecord = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
+  Storage::Record retrievedRecord = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
   size_t dataRecordSize = strlen(dataRecord);
   quiz_assert(retrievedRecord.value().size == dataRecordSize);
   quiz_assert(strcmp(dataRecord, static_cast<const char *>(retrievedRecord.value().buffer)) == 0);
 
   // Destroy it
   retrievedRecord.destroy();
-  retrievedRecord = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
+  retrievedRecord = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
   quiz_assert(retrievedRecord == Storage::Record());
-  quiz_assert(Storage::FileSystem::sharedFileSystem()->availableSize() == initialStorageAvailableStage);
+  quiz_assert(Storage::FileSystem::sharedFileSystem->availableSize() == initialStorageAvailableStage);
 }
 
 QUIZ_CASE(ion_storage_invalid_renaming) {
-  size_t initialStorageAvailableStage = Storage::FileSystem::sharedFileSystem()->availableSize();
+  size_t initialStorageAvailableStage = Storage::FileSystem::sharedFileSystem->availableSize();
 
   const char * baseNameRecord = "ionTestStorage";
   const char * extensionRecord = "record1";
@@ -88,7 +88,7 @@ QUIZ_CASE(ion_storage_invalid_renaming) {
   quiz_assert(error == Storage::Record::ErrorStatus::None);
 
   // Retrieve the record
-  Storage::Record retrievedRecord = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
+  Storage::Record retrievedRecord = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
   size_t dataRecordSize = strlen(dataRecord);
   quiz_assert(retrievedRecord.value().size == dataRecordSize);
   quiz_assert(strcmp(dataRecord, static_cast<const char *>(retrievedRecord.value().buffer)) == 0);
@@ -100,13 +100,13 @@ QUIZ_CASE(ion_storage_invalid_renaming) {
 
   // Destroy it
   retrievedRecord.destroy();
-  retrievedRecord = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
+  retrievedRecord = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
   quiz_assert(retrievedRecord == Storage::Record());
-  quiz_assert(Storage::FileSystem::sharedFileSystem()->availableSize() == initialStorageAvailableStage);
+  quiz_assert(Storage::FileSystem::sharedFileSystem->availableSize() == initialStorageAvailableStage);
 }
 
 QUIZ_CASE(ion_storage_valid_renaming) {
-  size_t initialStorageAvailableStage = Storage::FileSystem::sharedFileSystem()->availableSize();
+  size_t initialStorageAvailableStage = Storage::FileSystem::sharedFileSystem->availableSize();
 
   const char * baseNameRecord = "ionTestStorage";
   const char * extensionRecord = "record1";
@@ -117,7 +117,7 @@ QUIZ_CASE(ion_storage_valid_renaming) {
   quiz_assert(error == Storage::Record::ErrorStatus::None);
 
   // Retrieve the record
-  Storage::Record retrievedRecord = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
+  Storage::Record retrievedRecord = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
   size_t dataRecordSize = strlen(dataRecord);
   quiz_assert(retrievedRecord.value().size == dataRecordSize);
   quiz_assert(strcmp(dataRecord, static_cast<const char *>(retrievedRecord.value().buffer)) == 0);
@@ -128,18 +128,18 @@ QUIZ_CASE(ion_storage_valid_renaming) {
   quiz_assert(error == Storage::Record::ErrorStatus::None);
 
   // Retrieve the previous record
-  Storage::Record oldRetrievedRecord = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
+  Storage::Record oldRetrievedRecord = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
   quiz_assert(oldRetrievedRecord == Storage::Record());
 
   // Retrieve the new record
-  Storage::Record newRetrievedRecord = Storage::FileSystem::sharedFileSystem()->recordNamed(newFullNameRecord);
+  Storage::Record newRetrievedRecord = Storage::FileSystem::sharedFileSystem->recordNamed(newFullNameRecord);
   quiz_assert(strcmp(dataRecord, static_cast<const char *>(newRetrievedRecord.value().buffer)) == 0);
 
   // Destroy it
   newRetrievedRecord.destroy();
-  newRetrievedRecord = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
+  newRetrievedRecord = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord, extensionRecord);
   quiz_assert(newRetrievedRecord == Storage::Record());
-  quiz_assert(Storage::FileSystem::sharedFileSystem()->availableSize() == initialStorageAvailableStage);
+  quiz_assert(Storage::FileSystem::sharedFileSystem->availableSize() == initialStorageAvailableStage);
 }
 
 QUIZ_CASE(ion_storage_available_space_moving) {
@@ -481,18 +481,18 @@ aaaaaa)";
   quiz_assert(error == Storage::Record::ErrorStatus::None);
 
   // Retrieve the record
-  Storage::Record retrievedRecord1 = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord1, extensionRecord);
-  Storage::Record retrievedRecord2 = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord2, extensionRecord);
-  Storage::Record retrievedRecord3 = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord3, extensionRecord);
-  Storage::Record retrievedRecord4 = Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseNameRecord4, extensionRecord);
+  Storage::Record retrievedRecord1 = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord1, extensionRecord);
+  Storage::Record retrievedRecord2 = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord2, extensionRecord);
+  Storage::Record retrievedRecord3 = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord3, extensionRecord);
+  Storage::Record retrievedRecord4 = Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseNameRecord4, extensionRecord);
 
   // Put the the available space at the end of the first record and remove it
-  size_t availableSpace = Storage::FileSystem::sharedFileSystem()->availableSize();
-  uint32_t checksumBeforeChanges = Storage::FileSystem::sharedFileSystem()->checksum();
-  Storage::FileSystem::sharedFileSystem()->putAvailableSpaceAtEndOfRecord(retrievedRecord1);
-  Storage::FileSystem::sharedFileSystem()->getAvailableSpaceFromEndOfRecord(retrievedRecord1, availableSpace);
-  quiz_assert(Storage::FileSystem::sharedFileSystem()->availableSize() == availableSpace);
-  quiz_assert(Storage::FileSystem::sharedFileSystem()->checksum() == checksumBeforeChanges);
+  size_t availableSpace = Storage::FileSystem::sharedFileSystem->availableSize();
+  uint32_t checksumBeforeChanges = Storage::FileSystem::sharedFileSystem->checksum();
+  Storage::FileSystem::sharedFileSystem->putAvailableSpaceAtEndOfRecord(retrievedRecord1);
+  Storage::FileSystem::sharedFileSystem->getAvailableSpaceFromEndOfRecord(retrievedRecord1, availableSpace);
+  quiz_assert(Storage::FileSystem::sharedFileSystem->availableSize() == availableSpace);
+  quiz_assert(Storage::FileSystem::sharedFileSystem->checksum() == checksumBeforeChanges);
 
   // Destroy it
   retrievedRecord1.destroy();
@@ -506,12 +506,12 @@ void createTestRecordWithErrorStatus(const char * baseName, const char * extensi
       data = "test";
   }
   size_t dataSize = strlen(data) + 1;
-  Storage::Record::ErrorStatus error = Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(baseName, extension, data, dataSize);
+  Storage::Record::ErrorStatus error = Storage::FileSystem::sharedFileSystem->createRecordWithExtension(baseName, extension, data, dataSize);
   quiz_assert(error == testError);
 }
 
 Storage::Record getRecord(const char * baseName, const char * extension) {
-  return Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseName, extension);
+  return Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(baseName, extension);
 }
 
 bool isDataOfRecord(const char * baseName, const char * extension, const char * data) {
@@ -521,7 +521,7 @@ bool isDataOfRecord(const char * baseName, const char * extension, const char * 
 
 QUIZ_CASE(ion_storage_record_name_verifier) {
 
-  Ion::Storage::RecordNameVerifier * recordNameVerifier = Storage::FileSystem::sharedFileSystem()->recordNameVerifier();
+  Ion::Storage::RecordNameVerifier * recordNameVerifier = Storage::FileSystem::sharedFileSystem->recordNameVerifier();
   recordNameVerifier->registerRestrictiveExtensionWithPrecedence(Storage::funcExtension, 1);
   recordNameVerifier->registerRestrictiveExtensionWithPrecedence(Storage::seqExtension, 1);
   recordNameVerifier->registerRestrictiveExtensionWithPrecedence(Storage::expExtension, 2);
@@ -546,7 +546,7 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   createTestRecordWithErrorStatus(varName2, Storage::expExtension);
   quiz_assert(isDataOfRecord(varName1, Storage::expExtension, data1));
 
-  Storage::FileSystem::sharedFileSystem()->destroyAllRecords();
+  Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Test if record overrides itself if same name and more important extension
   createTestRecordWithErrorStatus(varName0, Storage::expExtension);
@@ -571,7 +571,7 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   createTestRecordWithErrorStatus(varName1, Storage::matExtension, data0, Storage::Record::ErrorStatus::NameTaken);
   createTestRecordWithErrorStatus(varName2, Storage::lisExtension, data0, Storage::Record::ErrorStatus::NameTaken);
 
-  Storage::FileSystem::sharedFileSystem()->destroyAllRecords();
+  Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Test if record with same precedence extension can be overriden
   createTestRecordWithErrorStatus(varName0, Storage::expExtension);
@@ -584,14 +584,14 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   quiz_assert(!getRecord(varName0, Storage::lisExtension).isNull());
   quiz_assert(!getRecord(varName0, testExtension).isNull());
 
-  Storage::FileSystem::sharedFileSystem()->destroyAllRecords();
+  Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   createTestRecordWithErrorStatus(varName0, testExtension);
   createTestRecordWithErrorStatus(varName0, Storage::expExtension);
   quiz_assert(!getRecord(varName0, Storage::expExtension).isNull());
   quiz_assert(!getRecord(varName0, testExtension).isNull());
 
-  Storage::FileSystem::sharedFileSystem()->destroyAllRecords();
+  Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Test if reserved names are correctly handled
   const char * regressionReservedNames[] = {"X", "Y"};
@@ -645,7 +645,7 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   createTestRecordWithErrorStatus("w", Storage::funcExtension, data0, Storage::Record::ErrorStatus::NameTaken);
   createTestRecordWithErrorStatus("u", testExtension);
 
-  Storage::FileSystem::sharedFileSystem()->destroyAllRecords();
+  Storage::FileSystem::sharedFileSystem->destroyAllRecords();
   recordNameVerifier->unregisterAllRestrictiveExtensions();
   recordNameVerifier->unregisterAllReservedNames();
 }

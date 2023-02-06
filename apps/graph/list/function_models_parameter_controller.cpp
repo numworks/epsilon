@@ -94,7 +94,7 @@ int FunctionModelsParameterController::DefaultName(char buffer[], size_t bufferS
   buffer[0] = k_defaultLetterNames[0];
   buffer[1] = 0;
   assert(bufferSize >= Shared::ContinuousFunction::k_maxDefaultNameSize);
-  return Ion::Storage::FileSystem::sharedFileSystem()->firstAvailableNameFromPrefix(buffer, 1, bufferSize, Shared::GlobalContext::k_extensions, Shared::GlobalContext::k_numberOfExtensions, 99);
+  return Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(buffer, 1, bufferSize, Shared::GlobalContext::k_extensions, Shared::GlobalContext::k_numberOfExtensions, 99);
 }
 
 const char * FunctionModelsParameterController::ModelWithDefaultName(Model model, char buffer[], size_t bufferSize) {

@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <ion/unicode/utf8_helper.h>
+#include <omg/global_box.h>
 #include "record.h"
 #include "record_name_verifier.h"
 #include "storage_delegate.h"
@@ -21,13 +22,14 @@ namespace Storage {
 
 class FileSystem {
 friend class Record;
+friend OMG::GlobalBox<FileSystem>;
 public:
   typedef uint16_t record_size_t;
 
   constexpr static size_t k_storageSize = 42 * 1024;
   static_assert(UINT16_MAX >= k_storageSize - 1, "record_size_t not big enough");
 
-  static FileSystem * sharedFileSystem();
+  static OMG::GlobalBox<FileSystem> sharedFileSystem;
 
 #if ION_STORAGE_LOG
   void log();

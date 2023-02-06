@@ -149,7 +149,7 @@ QUIZ_CASE(calculation_ans) {
   quiz_assert(strcmp(lastCalculation->approximateOutputText(NumberOfSignificantDigits::Maximal),"2.6366666666667") == 0);
 
   assertAnsIs("1+1→a", "2", &globalContext, &store);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   assertAnsIs("1+1", "2", &globalContext, &store);
   assertAnsIs("13.3", "13.3", &globalContext, &store);
@@ -215,15 +215,15 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("{1/0,2/0}", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "{undef,undef}", "{undef,undef}", &globalContext, &store);
   assertCalculationIs("28^7", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, "13492928512", "1.349292851ᴇ10", "13492928512", &globalContext, &store);
   assertCalculationIs("3+√(2)→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "3+√(2)", "4.414213562", "4.4142135623731", &globalContext, &store);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3+2→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "5", "5", "5", &globalContext, &store);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "3", "3", "3", &globalContext, &store);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3/2→a", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, "3/2", "1.5", "1.5", &globalContext, &store);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3+x→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "3+x", nullptr, nullptr, &globalContext, &store);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   assertCalculationIs("1+1+random()", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("1+1+round(1.343,2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "3.34", "3.34", &globalContext, &store);
   assertCalculationIs("randint(2,2)+3", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "5", "5", &globalContext, &store);
@@ -237,8 +237,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "2", "2", "2", &globalContext, &store);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   assertCalculationIs("(1/6)_g", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1.666666667×_dg", "1.6666666666667×_dg", &globalContext, &store);
   assertCalculationIs("(1/6)_L_kg", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1.666666667×_dg×_m^3", "1.6666666666667×_dg×_m^3", &globalContext, &store);
@@ -254,7 +254,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("(1/6)_rad→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1/6×_rad", "0.1666666667×_rad", "0.16666666666667×_rad", &globalContext, &store);
   assertCalculationIs("diff(x^2,x,3)_rad→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "6×_rad", "6×_rad", &globalContext, &store);
   Preferences::sharedPreferences->setAngleUnit(Preferences::AngleUnit::Degree);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   Poincare::Preferences::ExamMode previousExamMode = Poincare::Preferences::sharedPreferences->examMode();
   Poincare::Preferences::sharedPreferences->setExamMode(Poincare::Preferences::ExamMode::Dutch);
@@ -301,15 +301,15 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("f(x)",                "3",     &globalContext, &store);
   assertMainCalculationOutputIs("x+x+1+3+√(π)",        "8+√(π)",&globalContext, &store);
   // Destroy records
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 
   // 1 - Predefined variable in fraction in integral
   assertMainCalculationOutputIs("int(x+1/x,x,1,2)", "2.193147181", &globalContext, &store);
   assertMainCalculationOutputIs("1→x",                 "1"    , &globalContext, &store);
   assertMainCalculationOutputIs("int(x+1/x,x,1,2)", "2.193147181", &globalContext, &store);
   // Destroy records
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 
   // 2 - Circularly defined functions
   //   A - f(x) = g(x) = f(x)
@@ -324,7 +324,7 @@ QUIZ_CASE(calculation_symbolic_computation) {
 
   assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
   assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
   //   B - f(x) = g(x) = a = f(x)
   assertMainCalculationOutputIs("f(x)→a",              "undef", &globalContext, &store);
   assertMainCalculationOutputIs("a→g(x)",              "a",     &globalContext, &store);
@@ -337,10 +337,10 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("f(x)",                "undef", &globalContext, &store);
   assertMainCalculationOutputIs("diff(f(x),x,1)",      "undef", &globalContext, &store);
   // Destroy records
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("g.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
 
   // 3 - Differences between functions and variables
   assertMainCalculationOutputIs("x+1→f(x)",            "x+1",   &globalContext, &store);
@@ -385,9 +385,9 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("diff(f(x)×y,x,1)",    "2",     &globalContext, &store);
   assertMainCalculationOutputIs("diff(f(x×y),x,1)",    "2",     &globalContext, &store);
   // Destroy records
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("y.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("y.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   // 4 - Nested local variables within variables
   assertMainCalculationOutputIs("int(x+1,x,1,3)→a",    "6",     &globalContext, &store);
@@ -396,15 +396,15 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("diff(y×a,y,1)",       "7",     &globalContext, &store);
 
   // Destroy records
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("y.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("y.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   assertMainCalculationOutputIs("2→x",                 "2",     &globalContext, &store);
   assertMainCalculationOutputIs("diff(x,x,x)→a",       "1",     &globalContext, &store);
   assertMainCalculationOutputIs("diff(a,x,3)",         "0",     &globalContext, &store);
   // Destroy records
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 
   // 5 - Double nested local variables within variables
   assertMainCalculationOutputIs("1→x",                 "1",     &globalContext, &store);
@@ -412,22 +412,22 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("diff(a,x,x)→b",       "0",     &globalContext, &store);
   assertMainCalculationOutputIs("b",                   "0",     &globalContext, &store);
   // Destroy records
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("b.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 
   // 6 - Define function from their own expression
   assertMainCalculationOutputIs("x+1→f(x)",            "x+1",   &globalContext, &store);
   assertMainCalculationOutputIs("f(x^2)→f(x)",         "x^2+1", &globalContext, &store);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   // 7 - Circularly defined functions with exponential expression size growth
   assertMainCalculationOutputIs("x→f(x)",         "x", &globalContext, &store);
   assertMainCalculationOutputIs("f(xx)→g(x)", "f(x×x)", &globalContext, &store);
   assertMainCalculationOutputIs("g(xx)→f(x)", "g(x×x)", &globalContext, &store);
   assertMainCalculationOutputIs("g(2)",       "undef", &globalContext, &store);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("g.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
@@ -446,7 +446,7 @@ QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
   assertCalculationIs("product(x,x,1,2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "2", "2", &globalContext, &store);
   assertCalculationIs("diff(x^2,x,3)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "6", "6", &globalContext, &store);
 
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 }
 
 
@@ -559,7 +559,7 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("cos(i%)", {}, &globalContext, &store);
   assertMainCalculationOutputIs("i→z", "i", &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("z+1", {.complex = true}, &globalContext, &store);
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("z.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("z.exp").destroy();
 
   Poincare::Preferences::sharedPreferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   assertCalculationAdditionalResultTypeHas("√(-1)", {.complex = true}, &globalContext, &store);

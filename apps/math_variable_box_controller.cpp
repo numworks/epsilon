@@ -92,9 +92,10 @@ int MathVariableBoxController::numberOfRows() const {
 int MathVariableBoxController::numberOfElements(Page page) const {
   if (page == Page::RootMenu) {
     int numberOfRows = 1; // Define a variable
-    for (int i = 0; i < static_cast<int>(Page::sizeOfEnum); i++) {
+    for (int i = 1; i < static_cast<int>(Page::NumberOfPages); i++) {
       Page p = static_cast<Page>(i);
-      numberOfRows += (p != Page::RootMenu && (numberOfElements(static_cast<Page>(p)) > 0));
+      assert(p != Page::RootMenu);
+      numberOfRows += (numberOfElements(static_cast<Page>(p)) > 0);
     }
     return numberOfRows;
   }
@@ -217,7 +218,7 @@ I18n::Message MathVariableBoxController::subTitle() {
 
 MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index) {
   assert(index >= 0 && index < numberOfElements(Page::RootMenu));
-  for (int pageId = static_cast<int>(Page::Expression); pageId < static_cast<int>(Page::sizeOfEnum); pageId++) {
+  for (int pageId = static_cast<int>(Page::Expression); pageId < static_cast<int>(Page::NumberOfPages); pageId++) {
     if (numberOfElements(static_cast<Page>(pageId)) > 0) {
       if (index == 0) {
         return static_cast<Page>(pageId);

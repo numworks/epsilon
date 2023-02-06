@@ -34,12 +34,12 @@ public:
     List = 4,
     Matrix = 5,
     Sequence = 6,
-    sizeOfEnum = 7 // use this value only to know the number of pages
+    NumberOfPages = 7 // use this value only to know the number of pages
   };
 
 private:
   constexpr static int k_maxNumberOfDisplayedRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight);
-  constexpr static int k_numberOfMenuRows = static_cast<int>(Page::sizeOfEnum) - 1 /* RootMenu */ + 1 /* DefineVariable */;
+  constexpr static int k_numberOfMenuRows = static_cast<int>(Page::NumberOfPages) - 1 /* RootMenu */ + 1 /* DefineVariable */;
   constexpr static KDCoordinate k_leafMargin = 20;
   constexpr static KDFont::Size k_subLabelFont = KDFont::Size::Small;
   constexpr static int k_defineVariableCellType = 2;

@@ -278,3 +278,51 @@ void testNodeSize() {
 }
 QUIZ_CASE(pcj_node_size) { testNodeSize(); }
 
+void testLayoutConstructors() {
+  assert_tree_equals_blocks(
+    RackL(
+      "1+"_l,
+      ParenthesisL(
+        RackL(
+          "2*"_l,
+          ParenthesisL(
+            RackL(
+              "1+"_l,
+              FracL("1"_l, "2"_l)
+            )
+          )
+        )
+      ),
+      VertOffL("2"_l),
+      "-2"_l
+    ),
+    {
+      TypeBlock(BlockType::RackLayout), ValueBlock(4), TypeBlock(BlockType::RackLayout),
+      TypeBlock(BlockType::RackLayout), ValueBlock(2), TypeBlock(BlockType::RackLayout),
+      TypeBlock(BlockType::CodePointLayout), ValueBlock('1'), ValueBlock(0), ValueBlock(0), ValueBlock(0), TypeBlock(BlockType::CodePointLayout),
+      TypeBlock(BlockType::CodePointLayout), ValueBlock('+'), ValueBlock(0), ValueBlock(0), ValueBlock(0), TypeBlock(BlockType::CodePointLayout),
+      TypeBlock(BlockType::ParenthesisLayout),
+      TypeBlock(BlockType::RackLayout), ValueBlock(2), TypeBlock(BlockType::RackLayout),
+      TypeBlock(BlockType::RackLayout), ValueBlock(2), TypeBlock(BlockType::RackLayout),
+      TypeBlock(BlockType::CodePointLayout), ValueBlock('2'), ValueBlock(0), ValueBlock(0), ValueBlock(0), TypeBlock(BlockType::CodePointLayout),
+      TypeBlock(BlockType::CodePointLayout), ValueBlock('*'), ValueBlock(0), ValueBlock(0), ValueBlock(0), TypeBlock(BlockType::CodePointLayout),
+      TypeBlock(BlockType::ParenthesisLayout),
+      TypeBlock(BlockType::RackLayout), ValueBlock(2), TypeBlock(BlockType::RackLayout),
+      TypeBlock(BlockType::RackLayout), ValueBlock(2), TypeBlock(BlockType::RackLayout),
+      TypeBlock(BlockType::CodePointLayout), ValueBlock('1'), ValueBlock(0), ValueBlock(0), ValueBlock(0), TypeBlock(BlockType::CodePointLayout),
+      TypeBlock(BlockType::CodePointLayout), ValueBlock('+'), ValueBlock(0), ValueBlock(0), ValueBlock(0), TypeBlock(BlockType::CodePointLayout),
+      TypeBlock(BlockType::FractionLayout),
+      TypeBlock(BlockType::RackLayout), ValueBlock(1), TypeBlock(BlockType::RackLayout),
+      TypeBlock(BlockType::CodePointLayout), ValueBlock('1'), ValueBlock(0), ValueBlock(0), ValueBlock(0), TypeBlock(BlockType::CodePointLayout),
+      TypeBlock(BlockType::RackLayout), ValueBlock(1), TypeBlock(BlockType::RackLayout),
+      TypeBlock(BlockType::CodePointLayout), ValueBlock('2'), ValueBlock(0), ValueBlock(0), ValueBlock(0), TypeBlock(BlockType::CodePointLayout),
+      TypeBlock(BlockType::VerticalOffsetLayout),
+      TypeBlock(BlockType::RackLayout), ValueBlock(1), TypeBlock(BlockType::RackLayout),
+      TypeBlock(BlockType::CodePointLayout), ValueBlock('2'), ValueBlock(0), ValueBlock(0), ValueBlock(0), TypeBlock(BlockType::CodePointLayout),
+      TypeBlock(BlockType::RackLayout), ValueBlock(2), TypeBlock(BlockType::RackLayout),
+      TypeBlock(BlockType::CodePointLayout), ValueBlock('-'), ValueBlock(0), ValueBlock(0), ValueBlock(0), TypeBlock(BlockType::CodePointLayout),
+      TypeBlock(BlockType::CodePointLayout), ValueBlock('2'), ValueBlock(0), ValueBlock(0), ValueBlock(0), TypeBlock(BlockType::CodePointLayout),
+    }
+  );
+}
+QUIZ_CASE(pcj_layout_constructor) { testLayoutConstructors(); }

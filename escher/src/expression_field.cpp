@@ -61,7 +61,7 @@ void ExpressionField::reload() {
 }
 
 KDCoordinate ExpressionField::inputViewHeight() const {
-  return LayoutField::minimalSizeForOptimalDisplay().height();
+  return std::max(k_minimalHeight, LayoutField::minimalSizeForOptimalDisplay().height());
 }
 
 void ExpressionField::restoreContent(const char * buffer, size_t size, int * cursorOffset, int * position) {

@@ -9,7 +9,7 @@ ExpressionInputBar::ExpressionInputBar(Responder * parentResponder, InputEventHa
   ExpressionField(parentResponder, inputEventHandler, layoutFieldDelegate, KDContext::k_alignLeft, KDContext::k_alignCenter),
   m_line(Palette::GrayMiddle)
 {
-  setMargins(k_verticalMargin, k_horizontalMargin, k_verticalMargin, k_horizontalMargin);
+  setMargins(k_margin);
 }
 
 void ExpressionInputBar::layoutSubviews(bool force) {
@@ -29,7 +29,7 @@ KDSize ExpressionInputBar::minimalSizeForOptimalDisplay() const {
 }
 
 KDCoordinate ExpressionInputBar::inputViewHeight() const {
-  return std::clamp(LayoutField::minimalSizeForOptimalDisplay().height(), k_minimalHeight, k_maximalHeight);
+  return std::min(ExpressionField::inputViewHeight(), k_maximalHeight);
 }
 
 }

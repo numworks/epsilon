@@ -31,8 +31,11 @@ public:
   /* Responder */
   void didBecomeFirstResponder() override;
 
-private:
+protected:
   virtual KDCoordinate inputViewHeight() const;
+
+private:
+  constexpr static KDCoordinate k_minimalHeight = 37;
   KDCoordinate m_inputViewMemoizedHeight;
   char * m_draftBuffer;
   size_t m_draftBufferSize;

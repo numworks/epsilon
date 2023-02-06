@@ -29,6 +29,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override { return m_expressionField.minimalSizeForOptimalDisplay(); }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
+  constexpr static KDCoordinate k_margin = Metric::ExpressionViewMargin;
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   ExpressionField m_expressionField;
   char m_expressionBody[Poincare::PrintFloat::k_maxFloatCharSize];

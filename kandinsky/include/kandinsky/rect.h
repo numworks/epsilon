@@ -66,6 +66,7 @@ public:
 
   KDRect translatedBy(KDPoint p) const;
   KDRect paddedWith(KDCoordinate value) const;
+  KDRect trimmedBy(KDCoordinate value) const { return paddedWith(-value); }
   KDRect movedTo(KDPoint p) const;
   bool intersects(const KDRect & other) const;
   KDRect intersectedWith(const KDRect & other) const;

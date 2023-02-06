@@ -11,6 +11,7 @@ EditableExpressionCell::EditableExpressionCell(Responder * parentResponder, Inpu
   Responder(parentResponder),
   m_expressionField(this, inputEventHandlerDelegate, layoutDelegate)
 {
+  m_expressionField.setMargins(k_margin);
   m_expressionBody[0] = 0;
 }
 
@@ -24,12 +25,7 @@ void EditableExpressionCell::setHighlighted(bool highlight) {
 }
 
 void EditableExpressionCell::layoutSubviews(bool force) {
-  KDRect cellBounds = bounds();
-  m_expressionField.setFrame(KDRect(cellBounds.x() + k_separatorThickness,
-                                    cellBounds.y(),
-                                    cellBounds.width() - 2 * k_separatorThickness,
-                                    cellBounds.height() - k_separatorThickness),
-                             force);
+  m_expressionField.setFrame(bounds().trimmedBy(k_separatorThickness), force);
 }
 
 void EditableExpressionCell::didBecomeFirstResponder() {

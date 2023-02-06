@@ -16,7 +16,7 @@
 
 namespace Shared {
 
-class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate, public StoreColumnHelper {
+class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate, public StoreColumnHelper, public Escher::SelectableTableViewDelegate {
 public:
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
   TELEMETRY_ID("Store");
@@ -44,6 +44,9 @@ public:
 
   // EditableCellTableViewController
   int numberOfRowsAtColumn(int i) const override;
+
+  // SelectableTableViewDelegate
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return row > 0; }
 
 protected:
   constexpr static int k_maxNumberOfDisplayableRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(k_cellHeight, Escher::Metric::TabHeight);

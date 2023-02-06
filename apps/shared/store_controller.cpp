@@ -15,7 +15,7 @@ StoreController::StoreController(Responder * parentResponder, Escher::InputEvent
   EditableCellTableViewController(parentResponder, &m_prefacedTableView),
   ButtonRowDelegate(header, nullptr),
   StoreColumnHelper(this, parentContext, this),
-  m_prefacedTableView(0, this, &m_selectableTableView, this),
+  m_prefacedTableView(0, this, &m_selectableTableView, this, this),
   m_store(store)
   {
   m_prefacedTableView.setBackgroundColor(Palette::WallScreenDark);

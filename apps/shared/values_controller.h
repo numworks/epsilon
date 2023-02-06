@@ -18,7 +18,7 @@
 
 namespace Shared {
 
-class ValuesController : public EditableCellTableViewController, public Escher::ButtonRowDelegate,  public Escher::AlternateEmptyViewDefaultDelegate {
+class ValuesController : public EditableCellTableViewController, public Escher::ButtonRowDelegate,  public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableTableViewDelegate {
 public:
   ValuesController(Escher::Responder * parentResponder, Escher::ButtonRowController * header);
 
@@ -49,6 +49,9 @@ public:
 
   // EditableCellTableViewController
   int numberOfRowsAtColumn(int i) const override;
+
+  // SelectableTableViewDelegate
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return row > 0; }
 
   virtual IntervalParameterController * intervalParameterController() = 0;
   void initializeInterval();

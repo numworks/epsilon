@@ -20,7 +20,7 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   ButtonRowDelegate(header, nullptr),
   m_numberOfColumns(0),
   m_numberOfColumnsNeedUpdate(true),
-  m_prefacedTwiceTableView(0, 0, this, &m_selectableTableView, this),
+  m_prefacedTwiceTableView(0, 0, this, &m_selectableTableView, this, this),
   m_firstMemoizedColumn(INT_MAX),
   m_firstMemoizedRow(INT_MAX),
   m_abscissaParameterController(this, this)

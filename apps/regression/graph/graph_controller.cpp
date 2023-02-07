@@ -169,13 +169,9 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   double y;
   if (*m_selectedDotIndex >= 0) {
     int dotSelected = m_store->nextDot(selectedSeries, direction, *m_selectedDotIndex, !selectedCurveIsScatterPlot());
-    if (dotSelected >= 0 && dotSelected < numberOfDotsOfCurve(*m_selectedCurveIndex)) {
-      x = m_store->get(selectedSeries, 0, dotSelected);
-      y = m_store->get(selectedSeries, 1, dotSelected);
-    } else if (dotSelected == numberOfDotsOfCurve(*m_selectedCurveIndex)) {
-      assert(!selectedCurveIsScatterPlot());
-      x = m_store->meanOfColumn(selectedSeries, 0);
-      y = m_store->meanOfColumn(selectedSeries, 1);
+    if (dotSelected >= 0) {
+      x = dotAbscissa(*m_selectedCurveIndex, dotSelected);
+      y = dotOrdinate(*m_selectedCurveIndex, dotSelected);
     } else {
       return false;
     }
@@ -214,17 +210,13 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
 
 // InteractiveCurveViewController
 void GraphController::initCursorParameters(bool ignoreMargins) {
-  const int selectedSeries = selectedSeriesIndex();
-  double x, y;
   if (selectedCurveIsScatterPlot()) {
-    x = m_store->get(selectedSeries, 0, 0);
-    y = m_store->get(selectedSeries, 1, 0);
     *m_selectedDotIndex = 0;
   } else {
-    x = m_store->meanOfColumn(selectedSeries, 0);
-    y = m_store->meanOfColumn(selectedSeries, 1);
     *m_selectedDotIndex = numberOfDotsOfCurve(*m_selectedCurveIndex);
   }
+  double x = dotAbscissa(*m_selectedCurveIndex, *m_selectedDotIndex);
+  double y = dotOrdinate(*m_selectedCurveIndex, *m_selectedDotIndex);
   m_cursor->moveTo(x, x, y);
 }
 
@@ -235,13 +227,10 @@ bool GraphController::selectedModelIsValid() const {
 
 Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(double t) const {
   assert(selectedModelIsValid());
-  const int selectedSeries = selectedSeriesIndex();
   if (*m_selectedDotIndex == -1) {
     return xyValues(*m_selectedCurveIndex, t, globalContext());
-  } else if (*m_selectedDotIndex == numberOfDotsOfCurve(*m_selectedCurveIndex) && !selectedCurveIsScatterPlot()) {
-    return Coordinate2D<double>(m_store->meanOfColumn(selectedSeries, 0), m_store->meanOfColumn(selectedSeries, 1));
   }
-  return Coordinate2D<double>(m_store->get(selectedSeries, 0, *m_selectedDotIndex), m_store->get(selectedSeries, 1, *m_selectedDotIndex));
+  return Coordinate2D<double>(dotAbscissa(*m_selectedCurveIndex, *m_selectedDotIndex), dotOrdinate(*m_selectedCurveIndex, *m_selectedDotIndex));
 }
 
 bool GraphController::moveCursorVertically(int direction) {
@@ -257,6 +246,7 @@ bool GraphController::moveCursorVertically(int direction) {
   // Find the closest dot
   int closestDotSeries = -1;
   int dotSelected = closestVerticalDot(direction, x, y, selectedSeries, *m_selectedDotIndex, &closestDotSeries, context);
+  int closesDotCurve = curveIndexFromSeriesIndex(closestDotSeries);
 
   // Choose between selecting the regression or the dot
   bool validRegression = closestRegressionCurve > -1;
@@ -264,22 +254,14 @@ bool GraphController::moveCursorVertically(int direction) {
   if (validRegression && validDot) {
     /* Compare the abscissa distances to select either the dot or the
      * regression. If they are equal, compare the ordinate distances. */
-    double dotDistanceX = -1;
-    if (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) {
-      dotDistanceX = std::fabs(m_store->meanOfColumn(closestDotSeries, 0) - x);
-    } else {
-      dotDistanceX = std::fabs(m_store->get(closestDotSeries, 0, dotSelected) - x);
-    }
+    double dotDistanceX = std::fabs(dotAbscissa(closesDotCurve, dotSelected) - x);
     if (dotDistanceX != 0) {
-      /* The regression X distance to the point is 0, so it is closer than the
-       * dot. */
+      // The regression X distance to the point is 0, so it is closer than the dot.
       validDot = false;
     } else {
       // Compare the y distances
       double regressionDistanceY = std::fabs(m_store->yValueForXValue(closestRegressionCurve, x, context) - y);
-      double dotDistanceY = (dotSelected == m_store->numberOfPairsOfSeries(closestDotSeries)) ?
-        std::fabs(m_store->meanOfColumn(closestDotSeries, 1) - y) :
-        std::fabs(m_store->get(closestDotSeries, 1, dotSelected) - y);
+      double dotDistanceY = std::fabs(dotOrdinate(closesDotCurve, dotSelected) - y);
       if (regressionDistanceY <= dotDistanceY) {
         validDot = false;
       } else {
@@ -317,18 +299,9 @@ bool GraphController::moveCursorVertically(int direction) {
     }
     *m_selectedDotIndex = dotSelected;
     setRoundCrossCursorView();
-    if (dotSelected == numberOfDotsOfCurve(*m_selectedCurveIndex)) {
-      assert(!selectedCurveIsScatterPlot());
-      // Select the mean dot
-      double x = m_store->meanOfColumn(selectedSeries, 0);
-      double y = m_store->meanOfColumn(selectedSeries, 1);
-      m_cursor->moveTo(x, x, y);
-    } else {
-      // Select a data point dot
-      double x = m_store->get(selectedSeries, 0, *m_selectedDotIndex);
-      double y = m_store->get(selectedSeries, 1, *m_selectedDotIndex);
-      m_cursor->moveTo(x, x, y);
-    }
+    double x = dotAbscissa(*m_selectedCurveIndex, dotSelected);
+    double y = dotOrdinate(*m_selectedCurveIndex, dotSelected);
+    m_cursor->moveTo(x, x, y);
     // abscissa input must resolve first responder
     Container::activeApp()->setFirstResponder(this);
     return true;
@@ -360,13 +333,12 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   Range1D xRange, yRange;
   const int nbOfCurves = numberOfCurves();
   for (int curve = 0; curve < nbOfCurves; curve++) {
-    int series = seriesIndexFromCurveIndex(curve);
     int numberOfDots = numberOfDotsOfCurve(curve);
     for (int dot = 0; dot < numberOfDots; dot++) {
-      float x = m_store->get(series, 0, dot);
+      float x = dotAbscissa(curve, dot);
       xRange.extend(x, k_maxFloat);
       if (computeX || (originalRange.xMin() <= x && x <= originalRange.xMax())) {
-        float y = m_store->get(series, 1, dot);
+        float y = dotOrdinate(curve, dot);
         yRange.extend(y, k_maxFloat);
       }
     }
@@ -392,8 +364,8 @@ int GraphController::closestVerticalDot(int direction, double x, double y, int c
     float xMax = App::app()->graphRange()->xMax();
     bool displayMean = regressionTypeOfCurve(curve) != Model::Type::None;
     for (int i = 0; i < numberOfDots + displayMean; i++) {
-      double currentX = i < numberOfDots ? m_store->get(series, 0, i) : m_store->meanOfColumn(series, 0);
-      double currentY = i < numberOfDots ? m_store->get(series, 1, i) : m_store->meanOfColumn(series, 1);
+      double currentX = dotAbscissa(curve, i);
+      double currentY = dotOrdinate(curve, i);
       if (xMin <= currentX && currentX <= xMax // The next dot is within the window abscissa bounds
           && (std::fabs(currentX - x) <= std::fabs(nextX - x)) // The next dot is the closest to x in abscissa
           && ((currentY > y && direction > 0) // The next dot is above/under y
@@ -411,6 +383,13 @@ int GraphController::closestVerticalDot(int direction, double x, double y, int c
     }
   }
   return nextDot;
+}
+
+double GraphController::dotCoordinate(int curveIndex, int dotIndex, int coordinate) const {
+  assert(dotIndex != numberOfDotsOfCurve(curveIndex) || regressionTypeOfCurve(curveIndex) != Model::Type::None);
+  assert(0 <= dotIndex && dotIndex <= numberOfDotsOfCurve(curveIndex));
+  const int seriesIndex = seriesIndexFromCurveIndex(curveIndex);
+  return dotIndex < m_store->numberOfPairsOfSeries(seriesIndex) ? m_store->get(seriesIndex, coordinate, dotIndex) : m_store->meanOfColumn(seriesIndex, coordinate);
 }
 
 }

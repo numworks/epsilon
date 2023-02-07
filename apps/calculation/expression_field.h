@@ -6,10 +6,10 @@
 
 namespace Calculation {
 
-class ExpressionInputBar : public Escher::ExpressionInputBar {
+class ExpressionField : public Escher::ExpressionField {
 public:
-  ExpressionInputBar(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandler, Escher::LayoutFieldDelegate * layoutFieldDelegate) :
-  Escher::ExpressionInputBar(parentResponder, inputEventHandler, layoutFieldDelegate),
+  ExpressionField(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandler, Escher::LayoutFieldDelegate * layoutFieldDelegate) :
+  Escher::ExpressionField(parentResponder, inputEventHandler, layoutFieldDelegate),
   m_currentStep(DivisionCycleStep::Start),
   m_divisionCycleWithAns(Poincare::TrinaryBoolean::Unknown) {}
 protected:
@@ -29,6 +29,8 @@ private:
   DivisionCycleStep m_currentStep;
   Poincare::TrinaryBoolean m_divisionCycleWithAns;
 };
+
+using ExpressionInputBar = Escher::TemplatedExpressionInputBar<ExpressionField>;
 
 }
 

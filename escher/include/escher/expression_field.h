@@ -31,8 +31,8 @@ public:
   /* Responder */
   void didBecomeFirstResponder() override;
 
-protected:
   virtual KDCoordinate inputViewHeight() const;
+  using LayoutField::layoutSubviews;
 
 private:
   constexpr static KDCoordinate k_minimalHeight = 37;

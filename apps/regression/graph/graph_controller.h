@@ -79,12 +79,12 @@ private:
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() const;
   void setAbscissaInputAsFirstResponder();
   bool buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const;
-  bool selectedCurveIsScatterPlot() const { return m_store->seriesRegressionType(selectedSeriesIndex()) == Model::Type::None; }
   void setRoundCrossCursorView();
   int seriesIndexFromCurveIndex(int curveIndex) const { return m_store->seriesIndexFromActiveSeriesIndex(curveIndex); }
   int curveIndexFromSeriesIndex(int seriesIndex) const { return m_store->activeSeriesIndexFromSeriesIndex(seriesIndex); }
   int closestVerticalDot(int direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext);
   Model::Type regressionTypeOfCurve(int curveIndex) const { return m_store->seriesRegressionType(seriesIndexFromCurveIndex(curveIndex)); }
+  bool curveIsScatterPlot(int curveIndex) const { return regressionTypeOfCurve(curveIndex) == Model::Type::None; }
   int numberOfDotsOfCurve(int curveIndex) const { return m_store->numberOfPairsOfSeries(seriesIndexFromCurveIndex(curveIndex)); }
   double dotAbscissa(int curveIndex, int dotIndex) const { return dotCoordinate(curveIndex, dotIndex, 0); }
   double dotOrdinate(int curveIndex, int dotIndex) const { return dotCoordinate(curveIndex, dotIndex, 1); }

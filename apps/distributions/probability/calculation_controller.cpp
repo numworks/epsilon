@@ -180,8 +180,8 @@ bool CalculationController::textFieldDidFinishEditing(AbstractTextField * textFi
                                                       const char * text,
                                                       Ion::Events::Event event) {
   assert(selectedColumn() != 0);
-  double floatBody;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
+  double floatBody = textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
+  if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
     return false;
   }
   int resultColumn = m_calculation->type() == Calculation::Type::FiniteIntegral ? 3 : 2;

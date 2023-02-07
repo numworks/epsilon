@@ -33,6 +33,8 @@ private:
   void setTextInCell(Escher::HighlightCell * cell, const char * text, int index) override;
 
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
+  bool hasUndefinedValue(const char * text, double floatValue) const override;
+
   constexpr static int k_maxNumberOfCells = 3;
   Escher::TableViewWithFrozenHeader m_contentView;
   Escher::ExpressionCellWithEditableTextWithMessage m_menuListCell[k_maxNumberOfCells];

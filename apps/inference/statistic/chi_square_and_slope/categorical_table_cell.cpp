@@ -97,8 +97,8 @@ bool EditableCategoricalTableCell::textFieldShouldFinishEditing(AbstractTextFiel
 }
 
 bool EditableCategoricalTableCell::textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  double p;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, &p, false, false)) {
+  double p = textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
+  if (textFieldDelegateApp()->hasUndefinedValue(p, false, false)) {
     return false;
   }
   int row = m_selectableTableView.selectedRow(), column = m_selectableTableView.selectedColumn();

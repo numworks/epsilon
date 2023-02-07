@@ -137,8 +137,8 @@ bool InputCategoricalController::textFieldShouldFinishEditing(AbstractTextField 
 
 bool InputCategoricalController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   // Parse and check significance level
-  double p;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, &p, false, false)) {
+  double p = textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
+  if (textFieldDelegateApp()->hasUndefinedValue(p, false, false)) {
     return false;
   }
   return handleEditedValue(indexOfEditedParameterAtIndex(m_selectableTableView.selectedRow()), p, textField, event);

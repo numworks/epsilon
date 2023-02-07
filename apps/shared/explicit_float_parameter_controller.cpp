@@ -75,9 +75,9 @@ bool ExplicitFloatParameterController::textFieldShouldFinishEditing(AbstractText
 }
 
 bool ExplicitFloatParameterController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  float floatBody;
+  float floatBody = textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
   int row = selectedRow();
-  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
+  if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
     return false;
   }
   if (!setParameterAtIndex(row, floatBody)) {

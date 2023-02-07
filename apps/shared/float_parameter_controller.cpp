@@ -118,13 +118,9 @@ bool FloatParameterController<T>::textFieldShouldFinishEditing(AbstractTextField
 
 template<typename T>
 bool FloatParameterController<T>::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  T floatBody;
+  T floatBody = textFieldDelegateApp()->template parseInputtedFloatValue<T>(text);
   int row = selectedRow();
-  InfinityTolerance infTolerance = infinityAllowanceForRow(row);
-  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody, infTolerance == InfinityTolerance::PlusInfinity, infTolerance == InfinityTolerance::MinusInfinity)) {
-    return false;
-  }
-  if (!setParameterAtIndex(row, floatBody)) {
+  if (hasUndefinedValue(text, floatBody) || !setParameterAtIndex(row, floatBody)) {
     return false;
   }
   resetMemoization();
@@ -137,7 +133,6 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(AbstractTextField * 
   }
   return true;
 }
-
 
 template<typename T>
 bool FloatParameterController<T>::isCellEditing(Escher::HighlightCell * cell, int index) {
@@ -153,6 +148,12 @@ template<typename T>
 void FloatParameterController<T>::buttonAction() {
   StackViewController * stack = FloatParameterController<T>::stackController();
   stack->pop();
+}
+
+template<typename T>
+bool FloatParameterController<T>::hasUndefinedValue(const char * text, T floatValue) const {
+  InfinityTolerance infTolerance = infinityAllowanceForRow(selectedRow());
+  return textFieldDelegateApp()->hasUndefinedValue(floatValue, infTolerance == InfinityTolerance::PlusInfinity, infTolerance == InfinityTolerance::MinusInfinity);
 }
 
 template class FloatParameterController<float>;

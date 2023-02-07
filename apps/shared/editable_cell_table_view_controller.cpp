@@ -30,8 +30,8 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(AbstractTextF
 }
 
 bool EditableCellTableViewController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  double floatBody;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
+  double floatBody = textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
+  if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
     return false;
   }
   // Save attributes for later use

@@ -150,8 +150,8 @@ void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirs
 }
 
 bool InteractiveCurveViewController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  double floatBody;
-  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
+  double floatBody = textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
+  if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
     return false;
   }
   /* If possible, round floatBody so that we go to the evaluation of the

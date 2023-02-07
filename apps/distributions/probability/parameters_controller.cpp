@@ -117,4 +117,12 @@ void ParametersController::buttonAction() {
   stackOpenPage(m_calculationController);
 }
 
+bool ParametersController::hasUndefinedValue(const char * text, double floatValue) const {
+  if (text[0] == 0) {
+    // Accept empty inputs
+    return false;
+  }
+  return Shared::FloatParameterController<double>::hasUndefinedValue(text, floatValue);
+}
+
 }

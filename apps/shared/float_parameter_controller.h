@@ -43,6 +43,7 @@ protected:
   virtual bool isCellEditing(Escher::HighlightCell * cell, int index);
   virtual void setTextInCell(Escher::HighlightCell * cell, const char * text, int index);
   virtual void buttonAction();
+  virtual bool hasUndefinedValue(const char * text, T floatValue) const;
 
   ButtonWithSeparator m_okButton;
 

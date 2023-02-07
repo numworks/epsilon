@@ -97,59 +97,6 @@ KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child, KDFont::Si
   assert(verticalPosition() == VerticalPosition::Subscript);
   return KDPoint(shiftForEmpty, baseSize(font).height() - k_indiceHeight);
 }
-/*
-bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) {
-  if (sibling->type() != Type::VerticalOffsetLayout) {
-    return true;
-  }
-  VerticalOffsetLayoutNode * verticalOffsetSibling = static_cast<VerticalOffsetLayoutNode *>(sibling->node());
-  if (verticalOffsetSibling->verticalPosition() != VerticalPosition::Superscript) {
-    return true;
-  }
-  /* A power will be inserted next to another power. To avoid ambiguity between
-   * a^(b^c) and (a^b)^c when representing a^b^c, add parentheses to make (a^b)^c. *
-  Layout thisRef = Layout(this);
-  Layout parentRef = Layout(parent());
-  assert(parentRef.isHorizontal());
-  int thisIndex = parentRef.indexOfChild(thisRef);
-  int leftParenthesisIndex = thisIndex - 1;
-  int numberOfOpenParenthesis = 0;
-  while (leftParenthesisIndex >= 0 && parentRef.childAtIndex(leftParenthesisIndex).isCollapsable(&numberOfOpenParenthesis, true)) {
-    leftParenthesisIndex--;
-  }
-
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    /* If b is insterted on the left of c in a^c, output (a^b)^c. *
-    parentRef.addChildAtIndex(*sibling, thisIndex, parentRef.numberOfChildren(), nullptr);
-  }
-
-  HorizontalLayout h = HorizontalLayout::Builder();
-  int n = 0;
-  int i = thisIndex;
-  while (i > leftParenthesisIndex) {
-    Layout child = parentRef.childAtIndex(i);
-    parentRef.removeChild(child, nullptr, true);
-    i--;
-    h.addChildAtIndex(child, 0, n++, nullptr);
-  }
-  assert(n > 0 && i == leftParenthesisIndex);
-  ParenthesisLayout parentheses = ParenthesisLayout::Builder(h);
-  parentRef.addChildAtIndex(parentheses, leftParenthesisIndex + 1, parentRef.numberOfChildren(), nullptr);
-
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    /* If b is insterted on the right of c in a^c, output (a^c)^b. *
-    parentRef.addChildAtIndex(*sibling, leftParenthesisIndex + 2, parentRef.numberOfChildren(), nullptr);
-  }
-
-  assert(!parentheses.parent().isUninitialized());
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    cursor->setLayout(h);
-    cursor->setPosition(LayoutCursor::Position::Right);
-  } else {
-    cursor->setLayout(parentheses);
-  }
-  return false;
-}*/
 
 LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   LayoutNode * parentNode = parent();

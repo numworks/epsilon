@@ -154,6 +154,15 @@ bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poin
   return true;
 }
 
+bool ListController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {
+  m_editedCellIndex = -1;
+  resetMemoization();
+  selectableTableView()->reloadData(true);
+  reloadBrace();
+  reloadButtonMessage();
+  return true;
+}
+
 void ListController::editExpression(Ion::Events::Event event) {
   m_editedCellIndex = selectedRow();
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
@@ -169,6 +178,9 @@ void ListController::editExpression(Ion::Events::Event event) {
   Container::activeApp()->setFirstResponder(m_editableCell.expressionField());
   // We set the highlighted state for the background color
   m_editableCell.setHighlighted(true);
+  if (!(event == Ion::Events::OK || event == Ion::Events::EXE)) {
+    m_editableCell.expressionField()->handleEvent(event);
+  }
 }
 
 void ListController::resolveEquations() {

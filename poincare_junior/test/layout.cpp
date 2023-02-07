@@ -8,7 +8,7 @@ void testLayoutCacheSharedPointer() {
   CachePool * cachePool = CachePool::sharedCachePool();
   cachePool->reset();
 
-  Expression e = Expression::ParseFromText("-1+2*3");
+  Expression e = Expression::Parse("-1+2*3");
 
   // l is created with e.m_id different from 1
   assert(e.id() != 1);
@@ -19,7 +19,7 @@ void testLayoutCacheSharedPointer() {
   assert(e.id() == 1);
 
   // This test should fail if this line is uncommented
-  // e = Expression::ParseFromText("2*3");
+  // e = Expression::Parse("2*3");
 
   // l should handle new e.m_id
   l.id();
@@ -27,7 +27,7 @@ void testLayoutCacheSharedPointer() {
 
 void testLayoutCreation() {
   Layout l1 = Layout::Parse("-1+2*3");
-  Expression e1 = Expression::ParseFromText("-1+2*3");
+  Expression e1 = Expression::Parse("-1+2*3");
   Layout l2 = Layout::ToLayout(&e1);
   assert(l1.treeIsIdenticalTo(l2));
 }

@@ -22,7 +22,7 @@ EditionReference Expression::ParseFromLayoutInEditionPool(Node node) {
   return ref;
 }
 
-Expression Expression::ParseFromText(const char * textInput) {
+Expression Expression::Parse(const char * textInput) {
   return Expression([](const char * text){
       ParseFromLayoutInEditionPool(Layout::ParseFromTextInEditionPool(text));
     }, textInput);

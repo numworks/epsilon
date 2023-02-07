@@ -12,7 +12,7 @@ class Expression final : public CacheReference {
 public:
   using CacheReference::CacheReference;
   // TODO : Delete this method and adapt tests ?
-  static Expression ParseFromText(const char * text);
+  static Expression Parse(const char * text);
   static Expression Parse(const Layout * layout);
   static Expression CreateBasicReduction(void * treeAddress);
   float approximate(float x) const;

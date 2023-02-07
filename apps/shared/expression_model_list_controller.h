@@ -23,6 +23,7 @@ protected:
   // TableViewDataSource
   virtual int numberOfExpressionRows() const;
   bool isAddEmptyRow(int j) const;
+  static KDCoordinate ExpressionRowHeightFromLayoutHeight(KDCoordinate height);
   virtual KDCoordinate expressionRowHeight(int j);
   virtual void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j);
   // Responder

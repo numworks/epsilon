@@ -62,7 +62,11 @@ float Distribution::evaluateAtAbscissa(float x) const {
 }
 
 bool Distribution::authorizedParameterAtIndex(double x, int index) const {
-  return std::isnan(x) || std::isfinite(x);
+  if ((m_indexOfUninitializedParameter == index || m_indexOfUninitializedParameter == k_allParametersAreInitialized) && std::isnan(x)) {
+    // Accept only one uninitialized parameter
+    return true;
+  }
+  return Inference::authorizedParameterAtIndex(x, index);
 }
 
 void Distribution::setParameterAtIndex(double f, int index) {
@@ -72,7 +76,11 @@ void Distribution::setParameterAtIndex(double f, int index) {
 
 void Distribution::setParameterAtIndexWithoutComputingCurveViewRange(double x, int index) {
   if (std::isnan(x)) {
+    assert(m_indexOfUninitializedParameter == index || m_indexOfUninitializedParameter == k_allParametersAreInitialized);
     x = defaultParameterAtIndex(index);
+    m_indexOfUninitializedParameter = index;
+  } else if (m_indexOfUninitializedParameter == index) {
+    m_indexOfUninitializedParameter = k_allParametersAreInitialized;
   }
   Inference::setParameterAtIndex(x, index);
 }

@@ -17,10 +17,6 @@ void EvenOddEditableExpressionCell::setLayout(Layout layoutR) {
   m_expressionField.setLayout(layoutR);
 }
 
-void EvenOddEditableExpressionCell::setBackgroundColor(KDColor backgroundColor) {
-  m_expressionField.setBackgroundColor(backgroundColor);
-}
-
 void EvenOddEditableExpressionCell::setTextColor(KDColor textColor) {
   m_expressionField.expressionView()->setTextColor(textColor);
 }
@@ -44,10 +40,6 @@ void EvenOddEditableExpressionCell::drawRect(KDContext * ctx, KDRect rect) const
   // Color the margins
   ctx->fillRect(KDRect(0, 0, m_leftMargin, bounds().height()), backgroundColor());
   ctx->fillRect(KDRect(bounds().width() - m_rightMargin, 0, m_rightMargin, bounds().height()), backgroundColor());
-}
-
-void EvenOddEditableExpressionCell::updateSubviewsBackgroundAfterChangingState() {
-  m_expressionField.setBackgroundColor(backgroundColor());
 }
 
 int EvenOddEditableExpressionCell::numberOfSubviews() const {

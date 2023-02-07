@@ -50,7 +50,7 @@ void GraphController::viewWillAppear() {
    *  2) when the user selects another Model::Type for a series.
    *  3) selected series has been removed
    * where we decide to place the cursor at a default position. */
-  Model::Type newSelectedModelType = m_store->seriesRegressionType(selectedSeriesIndex());
+  Model::Type newSelectedModelType = regressionTypeOfCurve(*m_selectedCurveIndex);
   if (m_selectedModelType != newSelectedModelType) {
     m_selectedModelType = newSelectedModelType;
     initCursorParameters();
@@ -126,7 +126,7 @@ void GraphController::reloadBannerView() {
   bool displayMean = (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(selectedSeries));
   bool displayEquation = (*m_selectedDotIndex < 0);
   char buffer[k_bannerViewTextBufferSize];
-  Model::Type modelType = m_store->seriesRegressionType(selectedSeries);
+  Model::Type modelType = regressionTypeOfCurve(*m_selectedCurveIndex);
   if (displayEquation && coefficientsAreDefined && buildRegressionExpression(buffer, k_bannerViewTextBufferSize, modelType, significantDigits, displayMode)) {
     // Regression equation fits in the banner, display it
     m_bannerView.setDisplayParameters(true, false, false);
@@ -391,7 +391,7 @@ int GraphController::closestVerticalDot(int direction, double x, double y, int c
     int numberOfDots = m_store->numberOfPairsOfSeries(series);
     float xMin = App::app()->graphRange()->xMin();
     float xMax = App::app()->graphRange()->xMax();
-    bool displayMean = m_store->seriesRegressionType(series) != Model::Type::None;
+    bool displayMean = regressionTypeOfCurve(curve) != Model::Type::None;
     for (int i = 0; i < numberOfDots + displayMean; i++) {
       double currentX = i < numberOfDots ? m_store->get(series, 0, i) : m_store->meanOfColumn(series, 0);
       double currentY = i < numberOfDots ? m_store->get(series, 1, i) : m_store->meanOfColumn(series, 1);

@@ -37,6 +37,7 @@ public:
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
   void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
+  bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
   /* ExpressionModelListController */
   void editExpression(Ion::Events::Event event) override;
   /* Specific to Solver */

@@ -256,7 +256,7 @@ bool GraphController::moveCursorVertically(int direction) {
 
   // Find the closest dot
   int closestDotSeries = -1;
-  int dotSelected = m_store->closestVerticalDot(direction, x, y, selectedSeries, *m_selectedDotIndex, &closestDotSeries, context);
+  int dotSelected = closestVerticalDot(direction, x, y, selectedSeries, *m_selectedDotIndex, &closestDotSeries, context);
 
   // Choose between selecting the regression or the dot
   bool validRegression = closestRegressionCurve > -1;
@@ -374,6 +374,42 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
 
   Range2D result(computeX ? xRange : *originalRange.x(), computeY ? yRange : *originalRange.y());
   return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
+}
+
+int GraphController::closestVerticalDot(int direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {
+  double nextX = INFINITY;
+  double nextY = INFINITY;
+  int nextDot = -1;
+  for (int series = 0; series < Store::k_numberOfSeries; series++) {
+    if (!m_store->seriesIsActive(series) || (currentDot >= 0 && currentSeries == series)) {
+      /* If the currentDot is valid, the next series should not be the current
+       * series */
+      continue;
+    }
+    int numberOfDots = m_store->numberOfPairsOfSeries(series);
+    float xMin = App::app()->graphRange()->xMin();
+    float xMax = App::app()->graphRange()->xMax();
+    bool displayMean = m_store->seriesRegressionType(series) != Model::Type::None;
+    for (int i = 0; i < numberOfDots + displayMean; i++) {
+      double currentX = i < numberOfDots ? m_store->get(series, 0, i) : m_store->meanOfColumn(series, 0);
+      double currentY = i < numberOfDots ? m_store->get(series, 1, i) : m_store->meanOfColumn(series, 1);
+      if (xMin <= currentX && currentX <= xMax // The next dot is within the window abscissa bounds
+          && (std::fabs(currentX - x) <= std::fabs(nextX - x)) // The next dot is the closest to x in abscissa
+          && ((currentY > y && direction > 0) // The next dot is above/under y
+            || (currentY < y && direction < 0)
+            || (currentY == y
+              && ((currentDot < 0 && direction > 0)|| ((direction < 0) == (series > currentSeries)))))
+          && (nextX != currentX // Edge case: if 2 dots have the same abscissa but different ordinates
+            || ((currentY <= nextY) == (direction > 0))))
+      {
+        nextX = currentX;
+        nextY = currentY;
+        nextDot = i;
+        *nextSeries = series;
+      }
+    }
+  }
+  return nextDot;
 }
 
 }

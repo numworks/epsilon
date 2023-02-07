@@ -83,6 +83,7 @@ private:
   void setRoundCrossCursorView();
   int seriesIndexFromCurveIndex(int curveIndex) const { return m_store->seriesIndexFromActiveSeriesIndex(curveIndex); }
   int curveIndexFromSeriesIndex(int seriesIndex) const { return m_store->activeSeriesIndexFromSeriesIndex(seriesIndex); }
+  int closestVerticalDot(int direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext);
 
   Shared::ToggleableRingRoundCursorView m_cursorView;
   BannerView m_bannerView;

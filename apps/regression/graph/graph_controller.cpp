@@ -384,8 +384,8 @@ int GraphController::closestVerticalDot(int direction, double x, double y, int c
   for (int curve = 0; curve < nbOfCurves; curve++) {
     int series = seriesIndexFromCurveIndex(curve);
     if (currentDot >= 0 && currentSeries == series) {
-      /* If the currentDot is valid, the next series should not be the current
-       * series */
+      /* If the currentDot is valid, the next series
+       * should not be the current series */
       continue;
     }
     int numberOfDots = m_store->numberOfPairsOfSeries(series);

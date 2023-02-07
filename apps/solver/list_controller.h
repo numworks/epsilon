@@ -3,6 +3,7 @@
 
 #include <escher/button_row_controller.h>
 #include <escher/even_odd_expression_cell.h>
+#include <escher/editable_expression_cell.h>
 #include <apps/shared/expression_model_list_controller.h>
 #include <apps/shared/layout_field_delegate.h>
 #include <apps/shared/text_field_delegate.h>
@@ -21,7 +22,7 @@ public:
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
   /* ListViewDataSource */
   int numberOfRows() const override { return numberOfExpressionRows(); }
-  int typeAtIndex(int index) const override { return isAddEmptyRow(index); }
+  int typeAtIndex(int index) const override { return index==m_editedCellIndex ? k_editedCellType : isAddEmptyRow(index); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
@@ -35,9 +36,12 @@ public:
   /* Layout Field Delegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
+  /* ExpressionModelListController */
+  void editExpression(Ion::Events::Event event) override;
   /* Specific to Solver */
   void resolveEquations();
 private:
+  constexpr static int k_editedCellType = 2;
   constexpr static int k_maxNumberOfRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::Metric::StoreRowHeight, Escher::Metric::ButtonRowEmbossedStyleHeightLarge);
   Escher::SelectableTableView * selectableTableView() override;
   void reloadButtonMessage();
@@ -55,6 +59,8 @@ private:
 
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
+  Escher::EditableExpressionCell m_editableCell;
+  int m_editedCellIndex;
   Escher::AbstractButtonCell m_resolveButton;
   EquationModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;

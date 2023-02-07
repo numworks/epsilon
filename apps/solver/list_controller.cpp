@@ -14,6 +14,8 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
   ExpressionModelListController(parentResponder, I18n::Message::AddEquation),
   ButtonRowDelegate(nullptr, footer),
   m_equationListView(this),
+  m_editableCell(this, nullptr, this),
+  m_editedCellIndex(-1),
   m_resolveButton(this, equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, Invocation::Builder<ListController>([](ListController * list, void * sender) {
     list->resolveEquations();
     return true;
@@ -51,6 +53,8 @@ HighlightCell * ListController::reusableCell(int index, int type) {
       return &m_expressionCells[index];
     case 1:
       return &m_addNewModel;
+    case k_editedCellType:
+      return &m_editableCell;
     default:
       assert(false);
       return nullptr;
@@ -58,14 +62,14 @@ HighlightCell * ListController::reusableCell(int index, int type) {
 }
 
 int ListController::reusableCellCount(int type) {
-  if (type == 1) {
-    return 1;
+  if (type == 0) {
+    return k_maxNumberOfRows;
   }
-  return k_maxNumberOfRows;
+  return 1;
 }
 
 void ListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (!isAddEmptyRow(index)) {
+  if (!isAddEmptyRow(index) && index != m_editedCellIndex) {
     willDisplayExpressionCellAtIndex(cell, index);
   }
 }
@@ -125,8 +129,28 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
 }
 
 bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
+  ExpressionField * field = static_cast<ExpressionField*>(layoutField);
+  editSelectedRecordWithText(field->text());
+  m_editedCellIndex = -1;
+  resetMemoization();
+  selectableTableView()->reloadData(true);
   reloadButtonMessage();
   return true;
+}
+
+void ListController::editExpression(Ion::Events::Event event) {
+  m_editedCellIndex = selectedRow();
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+    ExpiringPointer<Equation> model = modelStore()->modelForRecord(record);
+    constexpr size_t initialTextContentMaxSize = 2*Escher::TextField::MaxBufferSize();
+    char initialTextContent[initialTextContentMaxSize];
+    model->text(initialTextContent, initialTextContentMaxSize);
+    m_editableCell.expressionField()->setText(initialTextContent);
+  }
+  selectableTableView()->reloadData(false);
+  m_editableCell.expressionField()->setEditing(true);
+  Container::activeApp()->setFirstResponder(&m_editableCell);
 }
 
 void ListController::resolveEquations() {

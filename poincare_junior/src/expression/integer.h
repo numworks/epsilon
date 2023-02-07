@@ -56,7 +56,7 @@ public:
   const uint8_t * digits() const;
   StrictSign strictSign() const { return isZero() ? StrictSign::Null : static_cast<StrictSign>(m_sign); }
   NonStrictSign sign() const { return m_sign; }
-  void setSign(NonStrictSign sign) { m_sign = sign; }
+  void setSign(NonStrictSign sign) { m_sign = m_numberOfDigits > 0 ? sign : NonStrictSign::Positive; } // -O is not represented
 
   bool isOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && m_sign == NonStrictSign::Positive); };
   bool isMinusOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && m_sign == NonStrictSign::Negative); };

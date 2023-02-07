@@ -61,9 +61,20 @@ float Distribution::evaluateAtAbscissa(float x) const {
   return m_distribution->evaluateAtAbscissa(x, constParametersArray());
 }
 
+bool Distribution::authorizedParameterAtIndex(double x, int index) const {
+  return std::isnan(x) || std::isfinite(x);
+}
+
 void Distribution::setParameterAtIndex(double f, int index) {
-  Inference::setParameterAtIndex(f, index);
+  setParameterAtIndexWithoutComputingCurveViewRange(f, index);
   computeCurveViewRange();
+}
+
+void Distribution::setParameterAtIndexWithoutComputingCurveViewRange(double x, int index) {
+  if (std::isnan(x)) {
+    x = defaultParameterAtIndex(index);
+  }
+  Inference::setParameterAtIndex(x, index);
 }
 
 double Distribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {

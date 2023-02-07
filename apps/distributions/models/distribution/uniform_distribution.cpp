@@ -37,7 +37,7 @@ bool UniformDistribution::authorizedParameterAtIndex(double x, int index) const 
 }
 
 void UniformDistribution::setParameterAtIndex(double f, int index) {
-  Inference::setParameterAtIndex(f, index);
+  setParameterAtIndexWithoutComputingCurveViewRange(f, index);
   if (index == 0 && m_parameters[1] < m_parameters[0]) {
     // Add more than 1.0 if first parameter is greater than 100.
     m_parameters[1] = m_parameters[0] + std::max(1.0, std::round(std::fabs(m_parameters[0]) * 0.01));

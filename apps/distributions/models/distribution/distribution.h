@@ -23,8 +23,10 @@ public:
   bool isSymmetrical() const { return m_distribution->isSymmetrical(); }
 
   // Parameters
+  bool authorizedParameterAtIndex(double x, int index) const override;
   void setParameterAtIndex(double f, int index) override;
   virtual const char * parameterNameAtIndex(int index) const = 0;
+  virtual double defaultParameterAtIndex(int index) const = 0;
 
   // Evaluation
   float evaluateAtAbscissa(float x) const override;
@@ -43,6 +45,7 @@ protected:
   static_assert(Poincare::Preferences::VeryLargeNumberOfSignificantDigits == 7, "k_maxProbability is ill-defined compared to LargeNumberOfSignificantDigits");
   constexpr static double k_maxProbability = 0.9999995;
   float computeXMin() const override { return -k_displayLeftMarginRatio * computeXMax(); }
+  void setParameterAtIndexWithoutComputingCurveViewRange(double x, int index);
 
   union CalculationBuffer {
   public:

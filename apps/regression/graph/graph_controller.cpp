@@ -123,7 +123,7 @@ void GraphController::reloadBannerView() {
     // Regression model has been removed, reinitialize cursor
     initCursorParameters();
   }
-  bool displayMean = (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(selectedSeries));
+  bool displayMean = (*m_selectedDotIndex == numberOfDotsOfCurve(*m_selectedCurveIndex));
   bool displayEquation = (*m_selectedDotIndex < 0);
   char buffer[k_bannerViewTextBufferSize];
   Model::Type modelType = regressionTypeOfCurve(*m_selectedCurveIndex);
@@ -169,10 +169,10 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   double y;
   if (*m_selectedDotIndex >= 0) {
     int dotSelected = m_store->nextDot(selectedSeries, direction, *m_selectedDotIndex, !selectedCurveIsScatterPlot());
-    if (dotSelected >= 0 && dotSelected < m_store->numberOfPairsOfSeries(selectedSeries)) {
+    if (dotSelected >= 0 && dotSelected < numberOfDotsOfCurve(*m_selectedCurveIndex)) {
       x = m_store->get(selectedSeries, 0, dotSelected);
       y = m_store->get(selectedSeries, 1, dotSelected);
-    } else if (dotSelected == m_store->numberOfPairsOfSeries(selectedSeries)) {
+    } else if (dotSelected == numberOfDotsOfCurve(*m_selectedCurveIndex)) {
       assert(!selectedCurveIsScatterPlot());
       x = m_store->meanOfColumn(selectedSeries, 0);
       y = m_store->meanOfColumn(selectedSeries, 1);
@@ -223,14 +223,14 @@ void GraphController::initCursorParameters(bool ignoreMargins) {
   } else {
     x = m_store->meanOfColumn(selectedSeries, 0);
     y = m_store->meanOfColumn(selectedSeries, 1);
-    *m_selectedDotIndex = m_store->numberOfPairsOfSeries(selectedSeries);
+    *m_selectedDotIndex = numberOfDotsOfCurve(*m_selectedCurveIndex);
   }
   m_cursor->moveTo(x, x, y);
 }
 
 bool GraphController::selectedModelIsValid() const {
-  uint8_t numberOfPairs = m_store->numberOfPairsOfSeries(selectedSeriesIndex());
-  return *m_selectedDotIndex < numberOfPairs || (*m_selectedDotIndex == numberOfPairs && !selectedCurveIsScatterPlot());
+  uint8_t numberOfDots = numberOfDotsOfCurve(*m_selectedCurveIndex);
+  return *m_selectedDotIndex < numberOfDots || (*m_selectedDotIndex == numberOfDots && !selectedCurveIsScatterPlot());
 }
 
 Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(double t) const {
@@ -238,7 +238,7 @@ Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(double t) 
   const int selectedSeries = selectedSeriesIndex();
   if (*m_selectedDotIndex == -1) {
     return xyValues(*m_selectedCurveIndex, t, globalContext());
-  } else if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(selectedSeries) && !selectedCurveIsScatterPlot()) {
+  } else if (*m_selectedDotIndex == numberOfDotsOfCurve(*m_selectedCurveIndex) && !selectedCurveIsScatterPlot()) {
     return Coordinate2D<double>(m_store->meanOfColumn(selectedSeries, 0), m_store->meanOfColumn(selectedSeries, 1));
   }
   return Coordinate2D<double>(m_store->get(selectedSeries, 0, *m_selectedDotIndex), m_store->get(selectedSeries, 1, *m_selectedDotIndex));
@@ -317,7 +317,7 @@ bool GraphController::moveCursorVertically(int direction) {
     }
     *m_selectedDotIndex = dotSelected;
     setRoundCrossCursorView();
-    if (dotSelected == m_store->numberOfPairsOfSeries(selectedSeries)) {
+    if (dotSelected == numberOfDotsOfCurve(*m_selectedCurveIndex)) {
       assert(!selectedCurveIsScatterPlot());
       // Select the mean dot
       double x = m_store->meanOfColumn(selectedSeries, 0);
@@ -361,7 +361,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   const int nbOfCurves = numberOfCurves();
   for (int curve = 0; curve < nbOfCurves; curve++) {
     int series = seriesIndexFromCurveIndex(curve);
-    int numberOfPairs = m_store->numberOfPairsOfSeries(series);
+    int numberOfPairs = numberOfDotsOfCurve(curve);
     for (int pair = 0; pair < numberOfPairs; pair++) {
       float x = m_store->get(series, 0, pair);
       xRange.extend(x, k_maxFloat);
@@ -388,7 +388,7 @@ int GraphController::closestVerticalDot(int direction, double x, double y, int c
        * should not be the current series */
       continue;
     }
-    int numberOfDots = m_store->numberOfPairsOfSeries(series);
+    int numberOfDots = numberOfDotsOfCurve(curve);
     float xMin = App::app()->graphRange()->xMin();
     float xMax = App::app()->graphRange()->xMax();
     bool displayMean = regressionTypeOfCurve(curve) != Model::Type::None;

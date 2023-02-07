@@ -57,6 +57,8 @@ public:
   bool shouldFinishEditing(Ion::Events::Event event) override;
 
   Poincare::LayoutCursor * cursor() { return m_contentView.cursor(); }
+  const ExpressionView * expressionView() const { return m_contentView.expressionView(); }
+  ExpressionView * expressionView() { return m_contentView.expressionView(); }
 
 protected:
   bool linearMode() const { return Poincare::Preferences::sharedPreferences->editionMode() == Poincare::Preferences::EditionMode::Edition1D; }

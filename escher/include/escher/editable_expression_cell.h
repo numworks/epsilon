@@ -30,6 +30,8 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_margin = Metric::ExpressionViewMargin;
+  // topMargin has + 1 to look the same as when the separator was included in it
+  constexpr static KDCoordinate k_topMargin = k_margin + 1;
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   ExpressionField m_expressionField;
   char m_expressionBody[Poincare::PrintFloat::k_maxFloatCharSize];

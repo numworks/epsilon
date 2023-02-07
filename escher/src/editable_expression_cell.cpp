@@ -11,7 +11,7 @@ EditableExpressionCell::EditableExpressionCell(Responder * parentResponder, Inpu
   Responder(parentResponder),
   m_expressionField(this, inputEventHandlerDelegate, layoutDelegate)
 {
-  m_expressionField.setMargins(k_margin);
+  m_expressionField.setMargins(k_topMargin, k_margin, k_margin, k_margin);
   m_expressionBody[0] = 0;
 }
 

@@ -13,7 +13,7 @@
 
 namespace Solver {
 
-class ListController : public Shared::ExpressionModelListController, public Escher::ButtonRowDelegate, public Escher::MemoizedListViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
+class ListController : public Shared::ExpressionModelListController, public Escher::ButtonRowDelegate, public Escher::MemoizedListViewDataSource, public Shared::LayoutFieldDelegate {
 public:
   ListController(Escher::Responder * parentResponder, EquationStore * equationStore, Escher::ButtonRowController * footer);
   /* ButtonRowDelegate */
@@ -32,10 +32,8 @@ public:
   /* ViewController */
   Escher::View * view() override { return &m_equationListView; }
   TELEMETRY_ID("List");
-  /* Text/Layout Field Delegate */
-  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  /* Layout Field Delegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
   /* Specific to Solver */
   void resolveEquations();

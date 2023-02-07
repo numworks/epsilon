@@ -12,7 +12,7 @@ InputViewController::ExpressionInputBarController::ExpressionInputBarController(
 }
 
 void InputViewController::ExpressionInputBarController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_expressionInputBar);
+  Container::activeApp()->setFirstResponder(m_expressionInputBar.expressionField());
 }
 
 InputViewController::InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * layoutFieldDelegate) :

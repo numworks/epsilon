@@ -22,7 +22,20 @@ CalculationPopupDataSource::CalculationPopupDataSource(Distribution * distributi
 }
 
 int CalculationPopupDataSource::numberOfRows() const {
+  if (!m_distribution->allParametersAreInitialized()) {
+    // Only display left and right integral
+    return 2;
+  }
   return k_numberOfImages - m_distribution->isContinuous();
 }
+
+int CalculationPopupDataSource::absoluteRowIndex(int currentRowIndex) const {
+  if (!m_distribution->allParametersAreInitialized() && currentRowIndex == 1) {
+    // Only display left and right integral
+    return 2;
+  }
+  return currentRowIndex;
+}
+
 
 }

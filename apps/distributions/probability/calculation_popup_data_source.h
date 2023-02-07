@@ -14,7 +14,8 @@ public:
   CalculationPopupDataSource(Distribution * distribution);
   int numberOfRows() const override;
   int reusableCellCount(int type) override { return numberOfRows(); }
-  Escher::HighlightImageCell * reusableCell(int i, int type) override { return &m_imageCells[i]; }
+  Escher::HighlightImageCell * reusableCell(int i, int type) override { return m_imageCells + absoluteRowIndex(i); }
+  int absoluteRowIndex(int currentRowIndex) const;
 
   constexpr static int k_numberOfImages = 4;
 

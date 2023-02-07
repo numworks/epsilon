@@ -119,7 +119,7 @@ void GraphController::reloadBannerView() {
 
   // If any coefficient is NAN, display that data is not suitable
   bool coefficientsAreDefined = m_store->coefficientsAreDefined(selectedSeries, globalContext());
-  if (coefficientsAreDefined && *m_selectedDotIndex < 0 && selectedCurveIsScatterPlot()) {
+  if (coefficientsAreDefined && *m_selectedDotIndex < 0 && curveIsScatterPlot(*m_selectedCurveIndex)) {
     // Regression model has been removed, reinitialize cursor
     initCursorParameters();
   }
@@ -168,7 +168,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   double x;
   double y;
   if (*m_selectedDotIndex >= 0) {
-    int dotSelected = m_store->nextDot(selectedSeries, direction, *m_selectedDotIndex, !selectedCurveIsScatterPlot());
+    int dotSelected = m_store->nextDot(selectedSeries, direction, *m_selectedDotIndex, !curveIsScatterPlot(*m_selectedCurveIndex));
     if (dotSelected >= 0) {
       x = dotAbscissa(*m_selectedCurveIndex, dotSelected);
       y = dotOrdinate(*m_selectedCurveIndex, dotSelected);
@@ -195,7 +195,7 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), textFieldDelegateApp()->localContext());
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
-  if (selectedCurveIsScatterPlot()) {
+  if (curveIsScatterPlot(*m_selectedCurveIndex)) {
     // Push regression controller directly
     RegressionController * controller = App::app()->regressionController();
     controller->setSeries(selectedSeriesIndex());
@@ -210,7 +210,7 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
 
 // InteractiveCurveViewController
 void GraphController::initCursorParameters(bool ignoreMargins) {
-  if (selectedCurveIsScatterPlot()) {
+  if (curveIsScatterPlot(*m_selectedCurveIndex)) {
     *m_selectedDotIndex = 0;
   } else {
     *m_selectedDotIndex = numberOfDotsOfCurve(*m_selectedCurveIndex);
@@ -222,7 +222,7 @@ void GraphController::initCursorParameters(bool ignoreMargins) {
 
 bool GraphController::selectedModelIsValid() const {
   uint8_t numberOfDots = numberOfDotsOfCurve(*m_selectedCurveIndex);
-  return *m_selectedDotIndex < numberOfDots || (*m_selectedDotIndex == numberOfDots && !selectedCurveIsScatterPlot());
+  return *m_selectedDotIndex < numberOfDots || (*m_selectedDotIndex == numberOfDots && !curveIsScatterPlot(*m_selectedCurveIndex));
 }
 
 Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(double t) const {
@@ -362,7 +362,7 @@ int GraphController::closestVerticalDot(int direction, double x, double y, int c
     int numberOfDots = numberOfDotsOfCurve(curve);
     float xMin = App::app()->graphRange()->xMin();
     float xMax = App::app()->graphRange()->xMax();
-    bool displayMean = regressionTypeOfCurve(curve) != Model::Type::None;
+    bool displayMean = !curveIsScatterPlot(curve);
     for (int i = 0; i < numberOfDots + displayMean; i++) {
       double currentX = dotAbscissa(curve, i);
       double currentY = dotOrdinate(curve, i);
@@ -386,7 +386,7 @@ int GraphController::closestVerticalDot(int direction, double x, double y, int c
 }
 
 double GraphController::dotCoordinate(int curveIndex, int dotIndex, int coordinate) const {
-  assert(dotIndex != numberOfDotsOfCurve(curveIndex) || regressionTypeOfCurve(curveIndex) != Model::Type::None);
+  assert(dotIndex != numberOfDotsOfCurve(curveIndex) || !curveIsScatterPlot(curveIndex));
   assert(0 <= dotIndex && dotIndex <= numberOfDotsOfCurve(curveIndex));
   const int seriesIndex = seriesIndexFromCurveIndex(curveIndex);
   return dotIndex < m_store->numberOfPairsOfSeries(seriesIndex) ? m_store->get(seriesIndex, coordinate, dotIndex) : m_store->meanOfColumn(seriesIndex, coordinate);

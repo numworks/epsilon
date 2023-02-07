@@ -39,7 +39,7 @@ void GraphController::viewWillAppear() {
   /* At this point, some series might have been removed from the model. We need
    * to reinitialize the selected series index if the current selection is
    * either null (right after construction) or refering a removed series. */
-  if (*m_selectedCurveIndex < 0) {
+  if (*m_selectedCurveIndex < 0 || *m_selectedCurveIndex >= numberOfCurves()) {
     *m_selectedCurveIndex = 0;
     m_selectedModelType = (Model::Type)-1;
   }

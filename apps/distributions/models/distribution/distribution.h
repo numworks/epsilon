@@ -13,7 +13,7 @@ namespace Distributions {
 
 class Distribution : public Shared::Inference {
 public:
-  Distribution(Poincare::Distribution::Type type) : m_calculationBuffer(this), m_distribution(Poincare::Distribution::Get(type)) {}
+  Distribution(Poincare::Distribution::Type type) : m_calculationBuffer(this), m_distribution(Poincare::Distribution::Get(type)), m_indexOfUninitializedParameter(-1) {}
 
   static bool Initialize(Distribution * distribution, Poincare::Distribution::Type type);
   Poincare::Distribution::Type type() const { return m_distribution->type(); };
@@ -27,6 +27,7 @@ public:
   void setParameterAtIndex(double f, int index) override;
   virtual const char * parameterNameAtIndex(int index) const = 0;
   virtual double defaultParameterAtIndex(int index) const = 0;
+  bool parameterAtIndexIsUnitialized(int index) const { return index == m_indexOfUninitializedParameter; }
 
   // Evaluation
   float evaluateAtAbscissa(float x) const override;
@@ -44,6 +45,8 @@ public:
 protected:
   static_assert(Poincare::Preferences::VeryLargeNumberOfSignificantDigits == 7, "k_maxProbability is ill-defined compared to LargeNumberOfSignificantDigits");
   constexpr static double k_maxProbability = 0.9999995;
+  constexpr static int k_allParametersAreInitialized = -1;
+
   float computeXMin() const override { return -k_displayLeftMarginRatio * computeXMax(); }
   void setParameterAtIndexWithoutComputingCurveViewRange(double x, int index);
 
@@ -71,6 +74,8 @@ protected:
 
   CalculationBuffer m_calculationBuffer;
   const Poincare::Distribution * m_distribution;
+  // Used if one of the parameters is not inputted by the user
+  int m_indexOfUninitializedParameter;
 };
 
 }

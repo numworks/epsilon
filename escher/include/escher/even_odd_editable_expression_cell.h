@@ -20,7 +20,6 @@ public:
     KDColor backgroundColor = KDColorWhite,
     KDFont::Size font = KDFont::Size::Large);
   void setLayout(Poincare::Layout layout);
-  void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setFont(KDFont::Size font) { m_expressionField.expressionView()->setFont(font); }
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -34,7 +33,6 @@ public:
   ExpressionField * expressionField() { return &m_expressionField; }
 
 protected:
-  void updateSubviewsBackgroundAfterChangingState() override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

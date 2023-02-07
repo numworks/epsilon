@@ -30,6 +30,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
     m_expressionCells[i].setEven(true);
   }
   m_editableCell.setLeftMargin(EquationListView::k_braceTotalWidth+k_expressionMargin);
+  m_editableCell.setRightMargin(k_expressionMargin);
 }
 
 int ListController::numberOfButtons(ButtonRowController::Position position) const {
@@ -139,6 +140,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
 void ListController::layoutFieldDidChangeSize(LayoutField * layoutField) {
   resetSizesMemoization();
   selectableTableView()->reloadData(false);
+  reloadBrace();
 }
 
 bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
@@ -147,6 +149,7 @@ bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poin
   m_editedCellIndex = -1;
   resetMemoization();
   selectableTableView()->reloadData(true);
+  reloadBrace();
   reloadButtonMessage();
   return true;
 }
@@ -164,6 +167,8 @@ void ListController::editExpression(Ion::Events::Event event) {
   selectableTableView()->reloadData(false);
   m_editableCell.expressionField()->setEditing(true);
   Container::activeApp()->setFirstResponder(m_editableCell.expressionField());
+  // We set the highlighted state for the background color
+  m_editableCell.setHighlighted(true);
 }
 
 void ListController::resolveEquations() {

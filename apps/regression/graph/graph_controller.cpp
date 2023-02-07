@@ -361,17 +361,16 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   const int nbOfCurves = numberOfCurves();
   for (int curve = 0; curve < nbOfCurves; curve++) {
     int series = seriesIndexFromCurveIndex(curve);
-    int numberOfPairs = numberOfDotsOfCurve(curve);
-    for (int pair = 0; pair < numberOfPairs; pair++) {
-      float x = m_store->get(series, 0, pair);
+    int numberOfDots = numberOfDotsOfCurve(curve);
+    for (int dot = 0; dot < numberOfDots; dot++) {
+      float x = m_store->get(series, 0, dot);
       xRange.extend(x, k_maxFloat);
       if (computeX || (originalRange.xMin() <= x && x <= originalRange.xMax())) {
-        float y = m_store->get(series, 1, pair);
+        float y = m_store->get(series, 1, dot);
         yRange.extend(y, k_maxFloat);
       }
     }
   }
-
   Range2D result(computeX ? xRange : *originalRange.x(), computeY ? yRange : *originalRange.y());
   return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
 }

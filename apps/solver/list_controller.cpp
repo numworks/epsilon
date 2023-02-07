@@ -108,22 +108,6 @@ void ListController::didEnterResponderChain(Responder * previousFirstResponder) 
 }
 
 // TODO factorize with Graph?
-bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
-  if (textField->isEditing() && textField->shouldFinishEditing(event)) {
-    const char * text = textField->text();
-    Poincare::Expression e = Poincare::Expression::Parse(text, App::app()->localContext());
-    if (!e.isUninitialized() && e.type() != Poincare::ExpressionNode::Type::Comparison) {
-      textField->setCursorLocation(text + strlen(text));
-      if (!textField->handleEventWithText("=0")) {
-        Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
-        return true;
-      }
-    }
-  }
-  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
-}
-
-// TODO factorize with Graph?
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutField->layout().hasTopLevelComparisonSymbol()) { // TODO: do like for textField: parse and and check is type is comparison
@@ -138,11 +122,6 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
     return true;
   }
   return false;
-}
-
-bool ListController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  reloadButtonMessage();
-  return true;
 }
 
 bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
@@ -160,7 +139,7 @@ void ListController::resolveEquations() {
   Poincare::CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
     bool resultWithoutUserDefinedSymbols = false;
-    EquationStore::Error e = modelStore()->exactSolve(textFieldDelegateApp()->localContext(), &resultWithoutUserDefinedSymbols);
+    EquationStore::Error e = modelStore()->exactSolve(App::app()->localContext(), &resultWithoutUserDefinedSymbols);
     switch (e) {
       case EquationStore::Error::EquationUndefined:
         Container::activeApp()->displayWarning(I18n::Message::UndefinedEquation);

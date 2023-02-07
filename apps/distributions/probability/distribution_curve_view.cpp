@@ -52,9 +52,4 @@ DistributionCurveView::DistributionCurveView(Distribution * distribution, Calcul
   m_calculation = calculation;
 }
 
-void DistributionCurveView::reload(bool resetInterruption, bool force) {
-  AbstractPlotView::reload(resetInterruption, force);
-  markRectAsDirty(bounds());
-}
-
 }

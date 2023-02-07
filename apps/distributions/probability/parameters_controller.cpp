@@ -67,7 +67,7 @@ void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int ind
       static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
   myCell->setLayout(m_distribution->parameterSymbolAtIndex(index));
   myCell->setSubLabelMessage(m_distribution->parameterDefinitionAtIndex(index));
-  if (m_distribution->parameterAtIndexIsUnitialized(index)) {
+  if (m_distribution->uninitializedParameterIndex() == index) {
     setTextInCell(cell, "", index);
     return;
   }

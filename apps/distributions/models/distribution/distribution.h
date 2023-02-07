@@ -27,7 +27,8 @@ public:
   void setParameterAtIndex(double f, int index) override;
   virtual const char * parameterNameAtIndex(int index) const = 0;
   virtual double defaultParameterAtIndex(int index) const = 0;
-  bool parameterAtIndexIsUnitialized(int index) const { return index == m_indexOfUninitializedParameter; }
+  int uninitializedParameterIndex() const { return m_indexOfUninitializedParameter; }
+  bool allParametersAreInitialized() const { return m_indexOfUninitializedParameter == k_allParametersAreInitialized; }
 
   // Evaluation
   float evaluateAtAbscissa(float x) const override;

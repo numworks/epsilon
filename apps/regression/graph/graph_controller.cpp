@@ -380,8 +380,10 @@ int GraphController::closestVerticalDot(int direction, double x, double y, int c
   double nextX = INFINITY;
   double nextY = INFINITY;
   int nextDot = -1;
-  for (int series = 0; series < Store::k_numberOfSeries; series++) {
-    if (!m_store->seriesIsActive(series) || (currentDot >= 0 && currentSeries == series)) {
+  const int nbOfCurves = numberOfCurves();
+  for (int curve = 0; curve < nbOfCurves; curve++) {
+    int series = seriesIndexFromCurveIndex(curve);
+    if (currentDot >= 0 && currentSeries == series) {
       /* If the currentDot is valid, the next series should not be the current
        * series */
       continue;

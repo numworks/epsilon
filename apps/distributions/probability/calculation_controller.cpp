@@ -24,23 +24,32 @@ CalculationController::ContentView::ContentView(SelectableTableView * selectable
                                                 Distribution * distribution,
                                                 Calculation * calculation) :
       m_selectableTableView(selectableTableView),
-      m_distributionCurveView(distribution, calculation) {
+      m_distributionCurveView(distribution, calculation),
+      m_unknownParameterBanner(KDFont::Size::Large, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, Escher::Palette::WallScreen) {
 }
 
 View * CalculationController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 2);
+  assert(index >= 0 && index < numberOfSubviews());
   if (index == 0) {
     return m_selectableTableView;
   }
-  return &m_distributionCurveView;
+  if (index == 1) {
+    return &m_distributionCurveView;
+  }
+  return &m_unknownParameterBanner;
 }
 
 void CalculationController::ContentView::layoutSubviews(bool force) {
   KDSize tableSize = m_selectableTableView->minimalSizeForOptimalDisplay();
   m_selectableTableView->setFrame(KDRect(0, 0, bounds().width(), tableSize.height()), force);
-  m_distributionCurveView.setFrame(
-      KDRect(0, tableSize.height(), bounds().width(), bounds().height() - tableSize.height()),
-      force);
+  KDCoordinate bannerHeight = 0;
+  if (m_unknownParameterBanner.text()[0] == 0) {
+    m_unknownParameterBanner.setFrame(KDRect(0, 0, 0, 0), force);
+  } else {
+    bannerHeight = k_bannerHeight;
+    m_unknownParameterBanner.setFrame(KDRect(0, bounds().height() - bannerHeight, bounds().width(), bannerHeight), force);
+  }
+  m_distributionCurveView.setFrame(KDRect(0, tableSize.height(), bounds().width(), bounds().height() - tableSize.height() - bannerHeight), force);
 }
 
 CalculationController::CalculationController(Escher::StackViewController * parentResponder,
@@ -75,9 +84,8 @@ void CalculationController::reinitCalculation() {
 
 void CalculationController::didBecomeFirstResponder() {
   updateTitle();
-  reloadDistributionCurveView();
   m_dropdown.init();
-  m_selectableTableView.reloadData();
+  reload();
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {
@@ -214,13 +222,19 @@ bool CalculationController::textFieldDidFinishEditing(AbstractTextField * textFi
   return true;
 }
 
-void CalculationController::reloadDistributionCurveView() {
-  m_contentView.distributionCurveView()->reload();
-}
-
 void CalculationController::reload() {
   m_selectableTableView.reloadData();
-  reloadDistributionCurveView();
+  m_contentView.distributionCurveView()->reload();
+  if (m_distribution->allParametersAreInitialized()) {
+    m_contentView.unknownParameterValue()->setText("");
+  } else {
+    char buffer[k_titleBufferSize];
+    Poincare::Print::CustomPrintf(buffer, k_titleBufferSize, "%s = %*.*ed",
+        m_distribution->parameterNameAtIndex(m_distribution->uninitializedParameterIndex()),
+        m_distribution->parameterAtIndex(m_distribution->uninitializedParameterIndex()), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+    m_contentView.unknownParameterValue()->setText(buffer);
+  }
+  m_contentView.reload();
 }
 
 void CalculationController::setCalculationAccordingToIndex(int index, bool forceReinitialisation) {
@@ -241,7 +255,11 @@ bool CalculationController::popupDidReceiveEvent(Ion::Events::Event event, Respo
 
 void CalculationController::updateTitle() {
   int currentChar = 0;
+  m_titleBuffer[0] = 0;
   for (int index = 0; index < m_distribution->numberOfParameters(); index++) {
+    if (m_distribution->uninitializedParameterIndex() == index) {
+      continue;
+    }
     currentChar += Poincare::Print::CustomPrintf(m_titleBuffer + currentChar, k_titleBufferSize - currentChar, "%s = %*.*ed ",
         m_distribution->parameterNameAtIndex(index),
         m_distribution->parameterAtIndex(index), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);

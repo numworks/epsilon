@@ -7,6 +7,7 @@
 #include "distributions/probability/calculation_cell.h"
 #include "distributions/probability/calculation_popup_data_source.h"
 #include "distributions/probability/distribution_curve_view.h"
+#include <escher/buffer_text_view.h>
 #include <escher/dropdown_view.h>
 #include <escher/view_controller.h>
 #include <escher/regular_table_view_data_source.h>
@@ -61,7 +62,6 @@ public:
                                  const char * text,
                                  Ion::Events::Event event) override;
 
-  void reloadDistributionCurveView();
   void reload();
 
   // Escher::Dropdown
@@ -84,13 +84,17 @@ private:
                 Distribution * distribution,
                 Calculation * calculation);
     DistributionCurveView * distributionCurveView() { return &m_distributionCurveView; }
+    Escher::BufferTextView * unknownParameterValue() { return &m_unknownParameterBanner; }
+    void reload() { layoutSubviews(true); }
 
   private:
-    int numberOfSubviews() const override { return 2; };
-    Escher::View * subviewAtIndex(int index) override;
+    constexpr static KDCoordinate k_bannerHeight = Escher::Metric::DisplayHeightWithoutTitleBar / 6;
     void layoutSubviews(bool force = false) override;
+    int numberOfSubviews() const override { return 3; };
+    Escher::View * subviewAtIndex(int index) override;
     Escher::SelectableTableView * m_selectableTableView;
     DistributionCurveView m_distributionCurveView;
+    Escher::BufferTextView m_unknownParameterBanner;
   };
   Calculation * m_calculation;
   Distribution * m_distribution;

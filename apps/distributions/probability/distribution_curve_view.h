@@ -20,9 +20,6 @@ class DistributionCurveView : public Shared::PlotView<Shared::PlotPolicy::Labele
 public:
   DistributionCurveView(Distribution * distribution, Calculation * calculation);
 
-  // AbstractPlotView
-  void reload(bool resetInterruption = false, bool force = false) override;
-
 private:
   KDColor backgroundColor() const override { return Escher::Palette::WallScreen; }
 };

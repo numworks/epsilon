@@ -31,6 +31,11 @@ bool ExpressionModelListController::isAddEmptyRow(int j) const {
   return j == numberOfExpressionRows() - 1 && modelStore()->numberOfModels() != modelStore()->maxNumberOfModels();
 }
 
+KDCoordinate ExpressionModelListController::ExpressionRowHeightFromLayoutHeight(KDCoordinate modelHeight) {
+  KDCoordinate modelHeightWithMargins = modelHeight + Metric::StoreRowHeight - KDFont::GlyphHeight(k_font);
+  return Metric::StoreRowHeight > modelHeightWithMargins ? Metric::StoreRowHeight : modelHeightWithMargins;
+}
+
 KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
   if (isAddEmptyRow(j)) {
     return Metric::StoreRowHeight;
@@ -39,9 +44,7 @@ KDCoordinate ExpressionModelListController::expressionRowHeight(int j) {
   if (m->layout().isUninitialized()) {
     return Metric::StoreRowHeight;
   }
-  KDCoordinate modelHeight = m->layout().layoutSize(k_font).height();
-  KDCoordinate modelHeightWithMargins = modelHeight + Metric::StoreRowHeight - KDFont::GlyphHeight(k_font);
-  return Metric::StoreRowHeight > modelHeightWithMargins ? Metric::StoreRowHeight : modelHeightWithMargins;
+  return ExpressionRowHeightFromLayoutHeight(m->layout().layoutSize(k_font).height());
 }
 
 void ExpressionModelListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {

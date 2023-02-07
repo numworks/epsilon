@@ -29,6 +29,7 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
     m_expressionCells[i].setLeftMargin(EquationListView::k_braceTotalWidth+k_expressionMargin);
     m_expressionCells[i].setEven(true);
   }
+  m_editableCell.setLeftMargin(EquationListView::k_braceTotalWidth+k_expressionMargin);
 }
 
 int ListController::numberOfButtons(ButtonRowController::Position position) const {
@@ -72,6 +73,13 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (!isAddEmptyRow(index) && index != m_editedCellIndex) {
     willDisplayExpressionCellAtIndex(cell, index);
   }
+}
+
+KDCoordinate ListController::nonMemoizedRowHeight(int index) {
+  if (index == m_editedCellIndex) {
+    return ExpressionRowHeightFromLayoutHeight(m_editableCell.minimalSizeForOptimalDisplay().height());
+  }
+  return expressionRowHeight(index);
 }
 
 bool ListController::handleEvent(Ion::Events::Event event) {
@@ -128,6 +136,11 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
   return false;
 }
 
+void ListController::layoutFieldDidChangeSize(LayoutField * layoutField) {
+  resetSizesMemoization();
+  selectableTableView()->reloadData(false);
+}
+
 bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
   ExpressionField * field = static_cast<ExpressionField*>(layoutField);
   editSelectedRecordWithText(field->text());
@@ -150,7 +163,7 @@ void ListController::editExpression(Ion::Events::Event event) {
   }
   selectableTableView()->reloadData(false);
   m_editableCell.expressionField()->setEditing(true);
-  Container::activeApp()->setFirstResponder(&m_editableCell);
+  Container::activeApp()->setFirstResponder(m_editableCell.expressionField());
 }
 
 void ListController::resolveEquations() {

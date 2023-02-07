@@ -242,7 +242,7 @@ void CalculationController::setCalculationAccordingToIndex(int index, bool force
 }
 
 void CalculationController::onDropdownSelected(int selectedRow) {
-  setCalculationAccordingToIndex(selectedRow);
+  setCalculationAccordingToIndex(m_imagesDataSource.absoluteRowIndex(selectedRow));
   reload();
 }
 

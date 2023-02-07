@@ -358,11 +358,9 @@ void GraphController::setRoundCrossCursorView() {
 
 Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
   Range1D xRange, yRange;
-  for (int series = 0; series < Store::k_numberOfSeries; series++) {
-    if (!m_store->seriesIsActive(series)) {
-      continue;
-    }
-
+  const int nbOfCurves = numberOfCurves();
+  for (int curve = 0; curve < nbOfCurves; curve++) {
+    int series = seriesIndexFromCurveIndex(curve);
     int numberOfPairs = m_store->numberOfPairsOfSeries(series);
     for (int pair = 0; pair < numberOfPairs; pair++) {
       float x = m_store->get(series, 0, pair);

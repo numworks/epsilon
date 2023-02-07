@@ -6,7 +6,7 @@
 
 using namespace PoincareJ;
 
-static inline IntegerHandler CreateIntegerHandler(const char * digits) {
+static inline EditionReference CreateInteger(const char * digits) {
   size_t length = strlen(digits);
   OMG::Base base = OMG::Base::Decimal;
   size_t prefixLength = strlen("0b");
@@ -16,7 +16,11 @@ static inline IntegerHandler CreateIntegerHandler(const char * digits) {
     digits = digits + prefixLength;
     length -= prefixLength;
   }
-  return Integer::Handler(Integer::Push(digits, length, base));
+  return Integer::Push(digits, length, base);
+}
+
+static inline IntegerHandler CreateIntegerHandler(const char * digits) {
+  return Integer::Handler(CreateInteger(digits));
 }
 
 QUIZ_CASE(pcj_integer_constructor) {
@@ -92,46 +96,31 @@ QUIZ_CASE(pcj_integer_compare) {
   assert_equal("0b1011", "11");
 }
 
-QUIZ_CASE(pcj_integer_addition) {}
-#if 0
-static inline void assert_equal(const IntegerHandler i, const IntegerHandler j) {
-  quiz_assert(Integer::Compare(i, j) == 0);
-}
-static inline void assert_not_equal(const IntegerHandler i, const IntegerHandler j) {
-  quiz_assert(Integer::Compare(i, j) != 0);
+static inline void assert_add_to(const char * a, const char * b, const char * c) {
+  // TODO: remove static_cast<Node> when Hugo's PR is merged
+  quiz_assert(static_cast<Node>(IntegerHandler::Addition(CreateIntegerHandler(a), CreateIntegerHandler(b))).treeIsIdenticalTo(CreateInteger(c)));
 }
 
-static inline void assert_lower(const Integer i, const Integer j) {
-  quiz_assert(Integer::Compare(i, j) < 0);
+QUIZ_CASE(pcj_integer_addition) {
+  assert_add_to("0", "0", "0");
+  assert_add_to("123", "456", "579");
+  assert_add_to("123", "456", "579");
+  assert_add_to("123456789123456789", "1", "123456789123456790");
+  assert_add_to("-123456789123456789", "123456789123456789", "0");
+  assert_add_to("234", "-234", "0");
+  assert_add_to("18446744073709551616", "18446744073709551368", "36893488147419102984");
+  //2^64+2^64
+  assert_add_to("18446744073709551616", "18446744073709551616", "36893488147419103232");
+  //2^64+2^32
+  assert_add_to("18446744073709551616", "4294967296", "18446744078004518912");
+  //2^64+1
+  assert_add_to("18446744073709551616", "1", "18446744073709551617");
+  //2^32+2^32
+  assert_add_to("4294967296", "4294967296", "8589934592");
+  //2^32+1
+  assert_add_to("4294967296", "1", "4294967297");
+  //2^16+1
+  assert_add_to("65537", "1", "65538");
+  //2^16+2^16
+  assert_add_to("65537", "65537", "131074");
 }
-
-static inline void assert_greater(const IntegerHandler i, const IntegerHandler j) {
-  quiz_assert(IntegerHandler::Compare(i, j) > 0);
-}
-
-void testIntegerCompare() {
-  assert_equal(Rational::Denominator(EditionReference::Push<RationalShort>(1, 2), two);
-  assert_equal(Integer(123), Integer(123));
-  assert_equal(Integer(-123), Integer(-123));
-  assert_equal(Integer("123"), Integer(123));
-  assert_not_equal(Integer("-123"), Integer(123));
-  assert_equal(Integer("-123"), Integer(-123));
-  assert_equal(Integer((int64_t)1234567891011121314), Integer((int64_t)1234567891011121314));
-  assert_equal(Integer("1234567891011121314"), Integer((int64_t)1234567891011121314));
-  assert_not_equal(Integer("-1234567891011121314"), Integer((int64_t)1234567891011121314));
-  assert_lower(Integer(123), Integer(456));
-  assert_greater(Integer(456), Integer(123));
-  assert_lower(Integer(-100), Integer(2));
-  assert_lower(Integer(-200), Integer(-100));
-  assert_lower(Integer(123), Integer("123456789123456789"));
-  assert_lower(Integer(-123), Integer("123456789123456789"));
-  assert_lower(Integer("123456789123456788"), Integer("123456789123456789"));
-  assert_lower(Integer("-1234567891234567892109209109"), Integer("123456789123456789"));
-  assert_greater(Integer("123456789123456789"), Integer("123456789123456788"));
-  assert_greater(Integer::Overflow(false), Integer("123456789123456788"));
-
-}
-
-void testIntegerAddition() {
-}
-#endif

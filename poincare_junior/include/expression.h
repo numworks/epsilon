@@ -9,6 +9,7 @@ namespace PoincareJ {
 
 class Expression final : public CacheReference {
 public:
+  Expression(const Node node) : CacheReference(node) { assert(node.block()->isExpression()); }
   using CacheReference::CacheReference;
   // TODO : Delete this method and adapt tests ?
   static Expression Parse(const char * text);

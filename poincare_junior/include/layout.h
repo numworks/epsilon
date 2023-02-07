@@ -9,6 +9,7 @@ namespace PoincareJ {
 class Layout final : public CacheReference {
 friend class Expression;
 public:
+  Layout(const Node node) : CacheReference(node) { assert(node.block()->isLayout()); }
   using CacheReference::CacheReference;
   static Layout Parse(const char * text);
   void toText(char * buffer, size_t bufferSize) const;

@@ -59,6 +59,9 @@ public:
 
   int id() const; // TODO: make private (public for tests)
 
+protected:
+  CacheReference(const Node node);
+
 private:
   CacheReference(ActionWithContext initializer, void * subInitializer, const void * data
 #if ASSERTIONS

@@ -140,4 +140,8 @@ int CacheReference::id() const {
   return m_id;
 }
 
+CacheReference::CacheReference(const Node node) :
+  CacheReference([](Node node) {}, node.block())
+{}
+
 }

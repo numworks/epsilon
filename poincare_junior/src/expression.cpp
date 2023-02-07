@@ -7,6 +7,7 @@
 namespace PoincareJ {
 
 EditionReference Expression::EditionPoolExpressionToLayout(Node node) {
+  assert(node.block()->isExpression());
   // node == -1+2*3
   EditionReference ref = EditionReference::Push<BlockType::RackLayout>(6);
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('-');
@@ -22,6 +23,7 @@ EditionReference Expression::EditionPoolExpressionToLayout(Node node) {
 }
 
 EditionReference Expression::EditionPoolLayoutToExpression(Node node) {
+  assert(node.block()->isLayout());
   // node == (1-2)/3/4
   EditionReference ref = EditionReference::Push<BlockType::Division>();
   EditionReference::Push<BlockType::Division>();

@@ -10,6 +10,7 @@ namespace PoincareJ {
 
 template<typename T>
 T Approximation::To(const Node node) {
+  assert(node.block()->isExpression());
   if (node.block()->isRational()) {
     return Rational::Numerator(node).to<T>() / Rational::Denominator(node).to<T>();
   }

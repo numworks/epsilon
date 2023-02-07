@@ -36,8 +36,8 @@ Expression PowerModel::privateExpression(double * modelCoefficients) const {
 }
 
 double PowerModel::evaluate(double * modelCoefficients, double x) const {
-   double a = modelCoefficients[0];
-   double b = modelCoefficients[1];
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
   return a*std::pow(x,b);
 }
 

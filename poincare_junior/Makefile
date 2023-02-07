@@ -19,6 +19,12 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/set.cpp \
   expression/symbol.cpp \
   expression.cpp \
+  layout/code_point_layout.cpp \
+  layout/fraction_layout.cpp \
+  layout/parenthesis_layout.cpp \
+  layout/rack_layout.cpp \
+  layout/render.cpp \
+  layout/vertical_offset_layout.cpp \
   layout.cpp \
   memory/cache_pool.cpp \
   memory/cache_reference.cpp \

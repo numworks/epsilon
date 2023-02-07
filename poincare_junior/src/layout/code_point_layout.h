@@ -3,8 +3,7 @@
 
 #include <omgpj/bit.h>
 #include <ion/unicode/code_point.h>
-#include <ion/unicode/utf8_decoder.h>
-#include <poincare_junior/src/memory/node.h>
+#include "render.h"
 
 namespace PoincareJ {
 
@@ -13,10 +12,13 @@ public:
   constexpr static uint8_t SubCodePointLayoutAtIndex(CodePoint value, int index) {
     return Bit::getByteAtIndex(value, index);
   }
-  static void GetName(const Node node, char * buffer, size_t bufferSize) {
-    CodePoint c = CodePoint(*reinterpret_cast<uint32_t *>(node.block()->nextNth(1)));
-    UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
-  }
+  static CodePoint GetCodePoint(const Node node);
+  static void GetName(const Node node, char * buffer, size_t bufferSize);
+  static KDSize Size(const Node node, KDFont::Size font);
+  static KDCoordinate Baseline(const Node node, KDFont::Size font);
+  static void RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+private:
+  constexpr static const int k_middleDotWidth = 5;
 };
 
 }

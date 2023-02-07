@@ -1,0 +1,35 @@
+#include "parenthesis_layout.h"
+
+namespace PoincareJ {
+
+KDSize ParenthesisLayout::Size(const Node node, KDFont::Size font) {
+  KDSize childSize = Render::Size(node.childAtIndex(0), font);
+  return childSize + KDSize(2 * HorizontalPadding(font), 2 * k_verticalPadding);
+}
+
+KDCoordinate ParenthesisLayout::Baseline(const Node node, KDFont::Size font) {
+  return Render::Baseline(node.childAtIndex(0), font) + k_verticalPadding;
+}
+
+KDPoint ParenthesisLayout::PositionOfChild(const Node node, int childIndex, KDFont::Size font) {
+  return KDPoint(HorizontalPadding(font), k_verticalPadding);
+}
+
+void ParenthesisLayout::RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
+  KDSize size = Render::Size(node, font);
+  KDCoordinate y = p.y() + (size.height() - KDFont::GlyphSize(font).height()) / 2;
+  KDCoordinate x = p.x();
+  ctx->drawString("(", KDPoint(x, y), KDGlyph::Style{
+    .glyphColor = expressionColor,
+    .backgroundColor = backgroundColor,
+    .font = font}
+  );
+  x += size.width() - HorizontalPadding(font);
+  ctx->drawString(")", KDPoint(x, y), KDGlyph::Style{
+    .glyphColor = expressionColor,
+    .backgroundColor = backgroundColor,
+    .font = font}
+  );
+}
+
+}

@@ -2,6 +2,8 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/src/layout/render.h>
+#include <kandinsky/ion_context.h>
 
 using namespace PoincareJ;
 
@@ -19,4 +21,27 @@ QUIZ_CASE(pcj_layout_creation) {
   assert(l2.treeIsIdenticalTo(l1));
   assert(l3.treeIsIdenticalTo(l1));
   assert(l4.treeIsIdenticalTo(l1));
+}
+
+QUIZ_CASE(pcj_layout_render) {
+  KDContext * ctx = KDIonContext::SharedContext;
+  Layout l = Layout(
+    RackL(
+      "1+"_l,
+      ParenthesisL(
+        RackL(
+          "2*"_l,
+          ParenthesisL(
+            RackL(
+              "1+"_l,
+              FracL("1"_l, "2"_l)
+            )
+          )
+        )
+      ),
+      VertOffL("2"_l),
+      "-2"_l
+    )
+  );
+  l.draw(ctx, KDPoint(10,100), KDFont::Size::Large);
 }

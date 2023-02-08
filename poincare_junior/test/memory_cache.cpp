@@ -1,6 +1,8 @@
 #include "print.h"
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/include/expression.h>
+#include <poincare_junior/include/layout.h>
 
 using namespace PoincareJ;
 
@@ -165,4 +167,20 @@ QUIZ_CASE(pcj_cache_reference_invalidation) {
   }
   assert_pools_tree_sizes_are(CachePool::k_maxNumberOfReferences, 0);
   check_reference_invalidation_and_reconstruction(reference, identifier, "28"_e);
+}
+
+QUIZ_CASE(pcj_cache_reference_shared_data) {
+  CachePool * cachePool = CachePool::sharedCachePool();
+  cachePool->reset();
+  Expression e = Expression::Parse("-1+2*3");
+  assert(e.id() != 1);
+  // l is created with e.m_id different from 1
+  Layout l = e.toLayout();
+  // Forcing e.m_id change
+  cachePool->needFreeBlocks(1);
+  assert(e.id() == 1);
+  // This test should fail if this line is uncommented
+  // e = Expression::Parse("2*3");
+  // l should handle new e.m_id
+  l.id();
 }

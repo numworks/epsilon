@@ -14,6 +14,8 @@ public:
   bool authorizedParameterAtIndex(double x, int index) const override;
   double defaultParameterAtIndex(int index) const override { return index == 0 ? k_defaultMu : k_defaultSigma; }
   void setParameterAtIndex(double f, int index) override;
+  bool canHaveUninitializedParameter() const override { return true; }
+
 private:
   constexpr static double k_defaultMu = 0.0;
   constexpr static double k_defaultSigma = 1.0;

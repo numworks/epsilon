@@ -228,6 +228,7 @@ void CalculationController::reload() {
   if (m_distribution->allParametersAreInitialized()) {
     m_contentView.unknownParameterValue()->setText("");
   } else {
+    assert(m_distribution->canHaveUninitializedParameter());
     char buffer[k_titleBufferSize];
     Poincare::Print::CustomPrintf(buffer, k_titleBufferSize, "%s = %*.*ed",
         m_distribution->parameterNameAtIndex(m_distribution->uninitializedParameterIndex()),

@@ -62,7 +62,7 @@ float Distribution::evaluateAtAbscissa(float x) const {
 }
 
 bool Distribution::authorizedParameterAtIndex(double x, int index) const {
-  if ((m_indexOfUninitializedParameter == index || m_indexOfUninitializedParameter == k_allParametersAreInitialized) && std::isnan(x)) {
+  if (canHaveUninitializedParameter() && (m_indexOfUninitializedParameter == index || m_indexOfUninitializedParameter == k_allParametersAreInitialized) && std::isnan(x)) {
     // Accept only one uninitialized parameter
     return true;
   }
@@ -75,13 +75,14 @@ void Distribution::setParameterAtIndex(double f, int index) {
 }
 
 void Distribution::setParameterAtIndexWithoutComputingCurveViewRange(double x, int index) {
-  if (std::isnan(x)) {
+  if (canHaveUninitializedParameter() && std::isnan(x)) {
     assert(m_indexOfUninitializedParameter == index || m_indexOfUninitializedParameter == k_allParametersAreInitialized);
     x = defaultParameterAtIndex(index);
     m_indexOfUninitializedParameter = index;
   } else if (m_indexOfUninitializedParameter == index) {
     m_indexOfUninitializedParameter = k_allParametersAreInitialized;
   }
+  assert(canHaveUninitializedParameter() || m_indexOfUninitializedParameter == k_allParametersAreInitialized);
   Inference::setParameterAtIndex(x, index);
 }
 
@@ -165,7 +166,7 @@ double Distribution::evaluateAtDiscreteAbscissa(int k) const {
 }
 
 void Distribution::computeUnknownParameterForProbabilityAndBound(double probability, double bound, bool isUpperBound) {
-  assert(m_indexOfUninitializedParameter != k_allParametersAreInitialized);
+  assert(m_indexOfUninitializedParameter != k_allParametersAreInitialized && canHaveUninitializedParameter());
   double paramValue = m_distribution->evaluateParameterForProbabilityAndBound(m_indexOfUninitializedParameter, parametersArray(), probability, bound, isUpperBound);
   Inference::setParameterAtIndex(paramValue, m_indexOfUninitializedParameter);
 }

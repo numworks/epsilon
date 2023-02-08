@@ -16,9 +16,11 @@ namespace Graph {
 ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, GraphController * graphController, FunctionParameterController * functionParameterController) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
   m_selectableTableView(this, this, this, this),
+  m_editableCell(this, nullptr, this),
   m_parameterController(functionParameterController),
   m_modelsParameterController(this, nullptr, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, StackViewController::Style::PurpleWhite),
+  m_editedCellIndex(-1),
   m_parameterColumnSelected(false)
 {
   m_selectableTableView.setMargins(0);
@@ -28,6 +30,9 @@ ListController::ListController(Responder * parentResponder, ButtonRowController 
 /* TableViewDataSource */
 
 int ListController::typeAtIndex(int index) const {
+  if (index == m_editedCellIndex) {
+    return k_editableCellType;
+  }
   if (isAddEmptyRow(index)) {
     return k_addNewModelType;
   }
@@ -37,19 +42,21 @@ int ListController::typeAtIndex(int index) const {
 
 HighlightCell * ListController::reusableCell(int index, int type) {
   assert(index >= 0 && index < reusableCellCount(type));
+  if (type == k_editableCellType) {
+    return &m_editableCell;
+  }
   if (type == k_addNewModelType) {
-    return &(m_addNewModel);
+    return &m_addNewModel;
   }
   assert(type == k_functionCellType);
   return functionCells(index);
 }
 
 int ListController::reusableCellCount(int type) {
-  if (type == k_addNewModelType) {
-    return 1;
+  if (type == k_functionCellType) {
+    return maxNumberOfDisplayableRows();
   }
-  assert(type == k_functionCellType);
-  return maxNumberOfDisplayableRows();
+  return 1;
 }
 
 /* ViewController */
@@ -157,48 +164,52 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
   return Shared::LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-/* TextFieldDelegate */
-
-bool ListController::textRepresentsPolarFunction(const char * text) const {
-  /* WARNING: This is not true anymore since cos(theta) is parsed as cos(θ) so
-   * "theta" should also be detected.
-   * So currently if the user types "cos(theta)" and presses EXE, the equation
-   * won't be completed automatically as "r=cos(theta)". */
-  return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, ContinuousFunction::k_polarSymbol), ContinuousFunction::k_polarSymbol);
+void ListController::layoutFieldDidChangeSize(LayoutField * layoutField) {
+  resetSizesMemoization();
+  selectableTableView()->reloadData(false);
 }
 
-// See ListController::layoutRepresentsParametricFunction comment.
-bool ListController::textRepresentsParametricFunction(const char * text) const {
-  // Only catch very basic parametric expressions, even if dimension is invalid.
-  return text[0] == '[';
+bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
+  ExpressionField * field = static_cast<ExpressionField*>(layoutField);
+  editSelectedRecordWithText(field->text());
+  m_editedCellIndex = -1;
+  resetMemoization();
+  selectableTableView()->reloadData(true);
+  return true;
 }
 
-// TODO: factorize with solver
-bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
-  if (textField->isEditing() && textField->shouldFinishEditing(event)) {
-    const char * text = textField->text();
-    Poincare::Expression e = Poincare::Expression::Parse(text, App::app()->localContext());
-    if (!e.isUninitialized() && !Poincare::ComparisonNode::IsComparisonWithoutNotEqualOperator(e)) {
-      // Inserted text must be an equation
-      textField->setCursorLocation(text);
-      CodePoint symbol = textRepresentsPolarFunction(text)
-                             ? ContinuousFunction::k_polarSymbol
-                             : (textRepresentsParametricFunction(text)
-                                    ? ContinuousFunction::k_parametricSymbol
-                                    : ContinuousFunction::k_cartesianSymbol);
-      if (!completeEquation(textField, symbol)) {
-        textField->setCursorLocation(text + strlen(text));
-        Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
-        return true;
-      }
-    }
+bool ListController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {
+  m_editedCellIndex = -1;
+  resetMemoization();
+  selectableTableView()->reloadData(true);
+  return true;
+}
+
+void ListController::editExpression(Ion::Events::Event event) {
+  m_editedCellIndex = selectedRow();
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+    ExpiringPointer<ContinuousFunction> model = modelStore()->modelForRecord(record);
+    constexpr size_t initialTextContentMaxSize = 2*Escher::TextField::MaxBufferSize();
+    char initialTextContent[initialTextContentMaxSize];
+    model->text(initialTextContent, initialTextContentMaxSize);
+    m_editableCell.expressionField()->setText(initialTextContent);
   }
-  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+  selectableTableView()->reloadData(false);
+  m_editableCell.expressionField()->setEditing(true);
+  Container::activeApp()->setFirstResponder(m_editableCell.expressionField());
+  m_editableCell.setHighlighted(true);
+  if (!(event == Ion::Events::OK || event == Ion::Events::EXE)) {
+    m_editableCell.expressionField()->handleEvent(event);
+  }
 }
 
 /* Responder */
 
 KDCoordinate ListController::expressionRowHeight(int j) {
+  if (j == m_editedCellIndex) {
+    return ExpressionRowHeightFromLayoutHeight(m_editableCell.minimalSizeForOptimalDisplay().height());
+  }
   if (typeAtIndex(j) == k_addNewModelType) {
     return Shared::FunctionListController::expressionRowHeight(j);
   }
@@ -277,7 +288,8 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
     evenOddCell->reloadCell();
     return;
   }
-  assert(type == k_functionCellType);
+  assert(type == k_functionCellType || type == k_editableCellType);
+  // assert(std::is_base_of_v<FunctionCell, EditableFunctionCell>);
   FunctionCell * functionCell = static_cast<FunctionCell *>(cell);
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   functionCell->setLayout(f->layout());

@@ -289,16 +289,17 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
     return;
   }
   assert(type == k_functionCellType || type == k_editableCellType);
-  // assert(std::is_base_of_v<FunctionCell, EditableFunctionCell>);
-  FunctionCell * functionCell = static_cast<FunctionCell *>(cell);
+  AbstractFunctionCell * functionCell = static_cast<AbstractFunctionCell *>(cell);
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
-  functionCell->setLayout(f->layout());
-  functionCell->setMessage(ExamModeConfiguration::implicitPlotsAreForbidden() ? I18n::Message::Default : f->properties().caption());
+  if (type == k_functionCellType) {
+    functionCell->setLayout(f->layout());
+    functionCell->setMessage(ExamModeConfiguration::implicitPlotsAreForbidden() ? I18n::Message::Default : f->properties().caption());
+    KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
+    functionCell->setTextColor(textColor);
+    functionCell->setParameterSelected(m_parameterColumnSelected);
+  }
   KDColor functionColor = f->isActive() ? f->color() : Palette::GrayDark;
   functionCell->setColor(functionColor);
-  KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
-  functionCell->setTextColor(textColor);
-  functionCell->setParameterSelected(m_parameterColumnSelected);
   functionCell->reloadCell();
 }
 

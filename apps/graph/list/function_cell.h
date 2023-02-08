@@ -11,13 +11,13 @@
 
 namespace Graph {
 
-class FunctionCell : public Escher::EvenOddCell {
+class AbstractFunctionCell : public Escher::EvenOddCell {
 public:
-  FunctionCell();
+  AbstractFunctionCell();
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
-  Poincare::Layout layout() const override { return m_expressionView.layout(); }
+  Poincare::Layout layout() const override { return expressionView()->layout(); }
 
   // EvenOddCell
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -25,10 +25,10 @@ public:
 
   // - Expression View
   void setTextColor(KDColor textColor) {
-    m_expressionView.setTextColor(textColor);
+    expressionView()->setTextColor(textColor);
   }
   void setLayout(Poincare::Layout layout) {
-    m_expressionView.setLayout(layout);
+    expressionView()->setLayout(layout);
   }
 
   // - Ellipsis View
@@ -49,19 +49,30 @@ protected:
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
+  virtual const Escher::ExpressionView * expressionView() const = 0;
+  virtual Escher::ExpressionView * expressionView() = 0;
+  virtual Escher::View * mainView() = 0;
+
   constexpr static KDCoordinate k_colorIndicatorThickness = 3;
   constexpr static KDCoordinate k_margin = Escher::Metric::BigCellMargin;
   constexpr static KDCoordinate k_messageMargin =
       Escher::Metric::CellVerticalElementMargin;
   constexpr static KDCoordinate k_parametersColumnWidth =
       Escher::Metric::EllipsisCellWidth;
-  Escher::ExpressionView m_expressionView;
   Escher::MessageTextView m_messageTextView;
   Escher::EllipsisView m_ellipsisView;
   KDColor m_functionColor;
   KDColor m_expressionBackground;
   KDColor m_ellipsisBackground;
   bool m_parameterSelected;
+};
+
+class FunctionCell : public AbstractFunctionCell {
+private:
+  const Escher::ExpressionView * expressionView() const override { return &m_expressionView; }
+  Escher::ExpressionView * expressionView() override { return &m_expressionView; }
+  Escher::ExpressionView * mainView() override { return &m_expressionView; }
+  Escher::ExpressionView m_expressionView;
 };
 
 }

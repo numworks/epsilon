@@ -6,11 +6,12 @@
 #include <escher/input_view_controller.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
+#include "layout_field_delegate.h"
 #include "expression_model_store.h"
 
 namespace Shared {
 
-class ExpressionModelListController : public Escher::ViewController, public Escher::SelectableTableViewDataSource, public Escher::SelectableTableViewDelegate {
+class ExpressionModelListController : public Escher::ViewController, public Escher::SelectableTableViewDataSource, public Escher::SelectableTableViewDelegate, public LayoutFieldDelegate {
 public:
   ExpressionModelListController(Escher::Responder * parentResponder, I18n::Message text);
   virtual void editExpression(Ion::Events::Event event);
@@ -36,6 +37,10 @@ protected:
   virtual Escher::SelectableTableView * selectableTableView() = 0;
   virtual ExpressionModelStore * modelStore() const = 0;
   Escher::EvenOddMessageTextCell m_addNewModel;
+  // LayoutDelegate
+  bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
+  void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
+  bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
   // Memoization
   virtual void resetSizesMemoization() {}
   int16_t m_editedCellIndex;

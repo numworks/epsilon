@@ -206,27 +206,6 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
   return LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-bool ListController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {
-  m_editedCellIndex = -1;
-  resetMemoization();
-  selectableTableView()->reloadData(true);
-  return true;
-}
-
-void ListController::layoutFieldDidChangeSize(LayoutField * layoutField) {
-  resetSizesMemoization();
-  selectableTableView()->reloadData(false);
-}
-
-bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
-  ExpressionField * field = static_cast<ExpressionField*>(layoutField);
-  editSelectedRecordWithText(field->text());
-  m_editedCellIndex = -1;
-  resetMemoization();
-  selectableTableView()->reloadData(true);
-  return true;
-}
-
 void ListController::computeTitlesColumnWidth(bool forceMax) {
   if (forceMax) {
     m_titlesColumnWidth = nameWidth(Poincare::SymbolAbstract::k_maxNameSize + Shared::Function::k_parenthesedArgumentCodePointLength - 1)+k_functionTitleSumOfMargins;

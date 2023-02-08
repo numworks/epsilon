@@ -137,26 +137,19 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
 }
 
 void ListController::layoutFieldDidChangeSize(LayoutField * layoutField) {
-  resetSizesMemoization();
-  selectableTableView()->reloadData(false);
+  ExpressionModelListController::layoutFieldDidChangeSize(layoutField);
   reloadBrace();
 }
 
 bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
-  ExpressionField * field = static_cast<ExpressionField*>(layoutField);
-  editSelectedRecordWithText(field->text());
-  m_editedCellIndex = -1;
-  resetMemoization();
-  selectableTableView()->reloadData(true);
+  ExpressionModelListController::layoutFieldDidFinishEditing(layoutField, layout, event);
   reloadBrace();
   reloadButtonMessage();
   return true;
 }
 
 bool ListController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {
-  m_editedCellIndex = -1;
-  resetMemoization();
-  selectableTableView()->reloadData(true);
+  ExpressionModelListController::layoutFieldDidAbortEditing(layoutField);
   reloadBrace();
   reloadButtonMessage();
   return true;

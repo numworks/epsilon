@@ -43,9 +43,6 @@ public:
   void showLastSequence();
   /* LayoutFieldDelegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
-  bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
-  void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
-  bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
 private:
   /* Cell types */
   constexpr static int k_titleCellType = 0;

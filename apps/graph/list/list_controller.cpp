@@ -163,27 +163,6 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
   return Shared::LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-void ListController::layoutFieldDidChangeSize(LayoutField * layoutField) {
-  resetSizesMemoization();
-  selectableTableView()->reloadData(false);
-}
-
-bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
-  ExpressionField * field = static_cast<ExpressionField*>(layoutField);
-  editSelectedRecordWithText(field->text());
-  m_editedCellIndex = -1;
-  resetMemoization();
-  selectableTableView()->reloadData(true);
-  return true;
-}
-
-bool ListController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {
-  m_editedCellIndex = -1;
-  resetMemoization();
-  selectableTableView()->reloadData(true);
-  return true;
-}
-
 void ListController::editExpression(Ion::Events::Event event) {
   m_editedCellIndex = selectedRow();
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {

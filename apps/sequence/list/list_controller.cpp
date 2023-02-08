@@ -15,12 +15,16 @@ constexpr KDCoordinate ListController::k_minTitleColumnWidth;
 ListController::ListController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, ButtonRowController * footer) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddSequence),
   m_selectableTableView(this, this, this, this),
+  m_editableCell(this, nullptr, this),
   m_parameterController(inputEventHandlerDelegate, this),
   m_typeParameterController(this, this),
   m_typeStackController(nullptr, &m_typeParameterController, StackViewController::Style::PurpleWhite),
   m_titlesColumnWidth(k_minTitleColumnWidth),
-  m_heightManager(this)
+  m_heightManager(this),
+  m_editedCellIndex(-1)
 {
+  m_editableCell.setLeftMargin(k_expressionMargin);
+  m_editableCell.setRightMargin(k_expressionMargin);
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i].setLeftMargin(k_expressionMargin);
     m_expressionCells[i].setRightMargin(0);
@@ -99,6 +103,9 @@ KDCoordinate ListController::nonMemoizedColumnWidth(int i) {
 
 int ListController::typeAtLocation(int i, int j) {
   assert(i == 0 || i == 1);
+  if (i == 1 && j == m_editedCellIndex) {
+    return k_editableCellType;
+  }
   return isAddEmptyRow(j) ? k_emptyRowCellType + i : i;
 }
 
@@ -109,6 +116,8 @@ HighlightCell * ListController::reusableCell(int index, int type) {
       return titleCells(index);
     case k_expressionCellType:
       return functionCells(index);
+    case k_editableCellType:
+      return &m_editableCell;
     case k_emptyRowCellType:
       return &m_emptyCell;
     default:
@@ -198,14 +207,25 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
   return LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
 }
 
-/* TextFieldDelegate */
-bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
-  // Do not accept empty inputs
-  if (textField->isEditing() && textField->shouldFinishEditing(event) && textField->text()[0] == 0) {
-    App::app()->displayWarning(I18n::Message::SyntaxError);
-    return true;
-  }
-  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+bool ListController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {
+  m_editedCellIndex = -1;
+  resetMemoization();
+  selectableTableView()->reloadData(true);
+  return true;
+}
+
+void ListController::layoutFieldDidChangeSize(LayoutField * layoutField) {
+  resetSizesMemoization();
+  selectableTableView()->reloadData(false);
+}
+
+bool ListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
+  ExpressionField * field = static_cast<ExpressionField*>(layoutField);
+  editSelectedRecordWithText(field->text());
+  m_editedCellIndex = -1;
+  resetMemoization();
+  selectableTableView()->reloadData(true);
+  return true;
 }
 
 void ListController::computeTitlesColumnWidth(bool forceMax) {
@@ -218,7 +238,20 @@ void ListController::computeTitlesColumnWidth(bool forceMax) {
 }
 
 void ListController::editExpression(Ion::Events::Event event) {
-  ExpressionModelListController::editExpression(event);
+  m_editedCellIndex = selectedRow();
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    constexpr size_t initialTextContentMaxSize = 2*Escher::TextField::MaxBufferSize();
+    char initialTextContent[initialTextContentMaxSize];
+    getTextForSelectedRecord(initialTextContent, initialTextContentMaxSize);
+    m_editableCell.expressionField()->setText(initialTextContent);
+  }
+  selectableTableView()->reloadData(false);
+  m_editableCell.expressionField()->setEditing(true);
+  Container::activeApp()->setFirstResponder(m_editableCell.expressionField());
+  m_editableCell.setHighlighted(true);
+  if (!(event == Ion::Events::OK || event == Ion::Events::EXE)) {
+    m_editableCell.expressionField()->handleEvent(event);
+  }
   // Invalidate the sequences context cache
   App::app()->localContext()->resetCache();
   resetSizesMemoization();
@@ -296,6 +329,9 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 }
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
+  if (j == m_editedCellIndex) {
+    return;
+  }
   Escher::EvenOddExpressionCell * myCell = static_cast<Escher::EvenOddExpressionCell *>(cell);
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(j));
   Shared::Sequence * sequence = modelStore()->modelForRecord(record);

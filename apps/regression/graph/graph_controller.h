@@ -11,6 +11,10 @@
 
 namespace Regression {
 
+/* Warning: we tried to use only curve indexes instead of series indexes for code clarity.
+   However, if number of series/curves should be inscreased, it might lead to performance
+   decrease because we convert often curve index into series index. */
+
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:

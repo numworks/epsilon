@@ -8,6 +8,7 @@
 #include "function_models_parameter_controller.h"
 #include "../graph/graph_controller.h"
 #include "function_cell.h"
+#include "editable_function_cell.h"
 
 namespace Graph {
 
@@ -25,11 +26,13 @@ public:
   void viewWillAppear() override;
   // LayoutFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
-  // TextFieldDelegate
-  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
+  void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
+  bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   // ExpressionModelListController
+  void editExpression(Ion::Events::Event event) override;
   KDCoordinate expressionRowHeight(int j) override;
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   FunctionToolbox * toolbox() override;
@@ -39,6 +42,7 @@ public:
 private:
   constexpr static int k_functionCellType = 0;
   constexpr static int k_addNewModelType = 1;
+  constexpr static int k_editableCellType = 2;
   // 6 rows of undefined empty functions
   constexpr static int k_maxNumberOfDisplayableRows = 6;
 
@@ -53,8 +57,6 @@ private:
   void fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint Symbol) const;
   bool layoutRepresentsPolarFunction(Poincare::Layout l) const;
   bool layoutRepresentsParametricFunction(Poincare::Layout l) const;
-  bool textRepresentsPolarFunction(const char * text) const;
-  bool textRepresentsParametricFunction(const char * text) const;
   // Complete the equationField with a valid left equation side
   bool completeEquation(Escher::InputEventHandler * equationField, CodePoint symbol);
   void addModel() override;
@@ -64,10 +66,12 @@ private:
   Shared::ContinuousFunctionStore * modelStore() const override;
   Escher::SelectableTableView m_selectableTableView;
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
+  EditableFunctionCell m_editableCell;
   FunctionParameterController * m_parameterController;
   FunctionModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;
   FunctionToolbox m_functionToolbox;
+  int m_editedCellIndex;
   bool m_parameterColumnSelected;
 };
 

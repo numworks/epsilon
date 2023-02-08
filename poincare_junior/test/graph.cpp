@@ -24,7 +24,7 @@ float Graph::approximateAtAbscissa(float x) const {
   return m_function.approximate(x);
 }
 
-void testGraph() {
+QUIZ_CASE(pcj_graph) {
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n---------------- Push Graph (1-2)/3/4 ----------------" << std::endl;
 #endif
@@ -34,4 +34,3 @@ void testGraph() {
   std::cout << "Approximation = " << valueAt0 << std::endl;
 #endif
 }
-QUIZ_CASE(pcj_graph) { testGraph(); }

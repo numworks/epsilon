@@ -4,7 +4,7 @@
 
 using namespace PoincareJ;
 
-void testLayoutCacheSharedPointer() {
+QUIZ_CASE(pcj_layout_shared_pointer) {
   CachePool * cachePool = CachePool::sharedCachePool();
   cachePool->reset();
 
@@ -25,12 +25,9 @@ void testLayoutCacheSharedPointer() {
   l.id();
 }
 
-void testLayoutCreation() {
+QUIZ_CASE(pcj_layout_creation) {
   Layout l1 = Layout::Parse("-1+2*3");
   Expression e1 = Expression::Parse("-1+2*3");
   Layout l2 = Layout::ToLayout(&e1);
   assert(l1.treeIsIdenticalTo(l2));
 }
-
-QUIZ_CASE(pcj_layout_creation) { testLayoutCreation(); }
-QUIZ_CASE(pcj_layout_shared_pointer) { testLayoutCacheSharedPointer(); }

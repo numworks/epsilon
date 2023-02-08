@@ -19,7 +19,7 @@ void execute_push_tree_and_modify() {
     );
 }
 
-void testCachePool() {
+QUIZ_CASE(pcj_cache_pool) {
   CachePool * cachePool = CachePool::sharedCachePool();
   EditionPool * editionPool = cachePool->editionPool();
   size_t treeSize = static_cast<Node>(tree).treeSize();
@@ -58,9 +58,8 @@ void testCachePool() {
   assert_pool_contains(cachePool, {Mult("3"_e, "4"_e)});
   assert_pools_tree_sizes_are(1, 0);
 }
-QUIZ_CASE(pcj_cache_pool) { testCachePool(); }
 
-void testCachePoolLimits() {
+QUIZ_CASE(pcj_cache_pool_limits) {
   CachePool * cachePool = CachePool::sharedCachePool();
   EditionPool * editionPool = cachePool->editionPool();
   cachePool->reset();
@@ -94,7 +93,6 @@ void testCachePoolLimits() {
   execute_push_tree_and_modify();
   assert_pools_tree_sizes_are(CachePool::k_maxNumberOfReferences, 0);
 }
-QUIZ_CASE(pcj_cache_pool_limits) { testCachePoolLimits(); }
 
 
 void assert_check_cache_reference(CacheReference reference, std::initializer_list<const Node> cacheTrees) {
@@ -107,7 +105,7 @@ void assert_check_cache_reference(CacheReference reference, std::initializer_lis
   cachePool->reset();
 }
 
-void testCacheReference() {
+QUIZ_CASE(pcj_cache_references) {
   // Constructors
   CacheReference reference0([] (){ EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4)); });
   assert_check_cache_reference(reference0, {"4"_e});
@@ -126,7 +124,6 @@ void testCacheReference() {
   CacheReference reference3([] (const char * string){ EditionReference::Push<BlockType::Addition>(string[0] - '0'); }, "0");
   assert_check_cache_reference(reference3, {Add()});
 }
-QUIZ_CASE(pcj_cache_references) { testCacheReference(); }
 
 void check_reference_invalidation_and_reconstruction(CacheReference reference, uint16_t identifier, Node node) {
   CachePool * cachePool = CachePool::sharedCachePool();
@@ -137,7 +134,7 @@ void check_reference_invalidation_and_reconstruction(CacheReference reference, u
   assert_trees_are_equal(Node(cachePool->lastBlock()).previousTree(), node);
 }
 
-void testCacheReferenceInvalidation() {
+QUIZ_CASE(pcj_cache_reference_invalidation) {
   CachePool * cachePool = CachePool::sharedCachePool();
   size_t treeSize = static_cast<Node>(tree).treeSize();
   CacheReference reference([] (){ EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(28)); });
@@ -169,4 +166,3 @@ void testCacheReferenceInvalidation() {
   assert_pools_tree_sizes_are(CachePool::k_maxNumberOfReferences, 0);
   check_reference_invalidation_and_reconstruction(reference, identifier, "28"_e);
 }
-QUIZ_CASE(pcj_cache_reference_invalidation) { testCacheReferenceInvalidation(); }

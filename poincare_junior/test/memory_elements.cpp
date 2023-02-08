@@ -4,7 +4,7 @@
 
 using namespace PoincareJ;
 
-void testBlock() {
+QUIZ_CASE(pcj_block) {
   CachePool * cachePool = CachePool::sharedCachePool();
   cachePool->reset();
   EditionPool * editionPool = cachePool->editionPool();
@@ -27,9 +27,8 @@ void testBlock() {
   assert(*lastBlock->previous() == ValueBlock(-4));
   assert(*lastBlock->previousNth(2) == ValueBlock(4));
 }
-QUIZ_CASE(pcj_block) { testBlock(); }
 
-void testTypeBlock() {
+QUIZ_CASE(pcj_type_block) {
   typedef union {
     uint8_t m_value;
     struct {
@@ -88,7 +87,6 @@ void testTypeBlock() {
     assert(block.isUserNamed() == properties.userNamed);
   }
 }
-QUIZ_CASE(pcj_type_block) { testTypeBlock(); }
 
 template <unsigned N>
 void assert_tree_equals_blocks(Tree<N> tree, std::initializer_list<Block> blocks) {
@@ -96,7 +94,7 @@ void assert_tree_equals_blocks(Tree<N> tree, std::initializer_list<Block> blocks
   assert(blocks.size() == N);
 }
 
-void testConstexprTreeConstructor() {
+QUIZ_CASE(pcj_constexpr_tree_constructor) {
   Node n = "12"_e;
   assert_tree_equals_blocks("0"_e, {TypeBlock(BlockType::Zero)});
   assert_tree_equals_blocks("1"_e, {TypeBlock(BlockType::One)});
@@ -122,16 +120,14 @@ void testConstexprTreeConstructor() {
   assert_tree_equals_blocks(Sub("1"_e, "2"_e), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
   assert_tree_equals_blocks("var"_e, {TypeBlock(BlockType::UserSymbol), ValueBlock(3), ValueBlock('v'), ValueBlock('a'), ValueBlock('r'), ValueBlock(3), TypeBlock(BlockType::UserSymbol)});
 }
-QUIZ_CASE(pcj_constexpr_tree_constructor) { testConstexprTreeConstructor(); }
 
-void testEditionNodeConstructor() {
+QUIZ_CASE(pcj_edition_node_constructor) {
   assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerPosBig>(static_cast<uint64_t>(1232424242)), {TypeBlock(BlockType::IntegerPosBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerPosBig)});
   assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(static_cast<uint64_t>(1232424242)), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
   assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(static_cast<uint64_t>(1232424242)), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
 }
-QUIZ_CASE(pcj_edition_node_constructor) { testEditionNodeConstructor(); }
 
-void testNodeIterator() {
+QUIZ_CASE(pcj_node_iterator) {
   constexpr Tree k_simpleExpression = Mult(Add("1"_e, "2"_e), "3"_e, "4"_e);
   EditionReference mult(k_simpleExpression);
   size_t numberOfChildren = mult.numberOfChildren();
@@ -231,9 +227,8 @@ void testNodeIterator() {
     assert_trees_are_equal(std::get<Node>(indexedNode), newChildren2[numberOfChildren2 - 1 - std::get<int>(indexedNode)]);
   }
 }
-QUIZ_CASE(pcj_node_iterator) { testNodeIterator(); }
 
-void testNode() {
+QUIZ_CASE(pcj_node) {
   CachePool * cachePool = CachePool::sharedCachePool();
   cachePool->reset();
   EditionPool * editionPool = cachePool->editionPool();
@@ -268,17 +263,15 @@ void testNode() {
   assert(!n1.hasSibling(n1.childAtIndex(2)));
   assert(n1.nextNode().hasSibling(n1.childAtIndex(2)));
 }
-QUIZ_CASE(pcj_node) { testNode(); }
 
-void testNodeSize() {
+QUIZ_CASE(pcj_node_size) {
   Node node = EditionReference::Push<BlockType::IntegerPosBig>(static_cast<uint64_t>(0x00FF0000));
   assert(node.nodeSize() == 7);
   node = static_cast<Node>(EditionReference::Push<BlockType::IntegerNegBig>(static_cast<uint64_t>(0x0000FF00)));
   assert(node.nodeSize() == 6);
 }
-QUIZ_CASE(pcj_node_size) { testNodeSize(); }
 
-void testLayoutConstructors() {
+QUIZ_CASE(pcj_layout_constructor) {
   assert_tree_equals_blocks(
     RackL(
       "1+"_l,
@@ -325,4 +318,3 @@ void testLayoutConstructors() {
     }
   );
 }
-QUIZ_CASE(pcj_layout_constructor) { testLayoutConstructors(); }

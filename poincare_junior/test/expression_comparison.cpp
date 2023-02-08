@@ -9,14 +9,13 @@ void assert_comparison_equals(const Node node0, const Node node1, int result) {
   assert(comparison == result);
 }
 
-void testExpressionComparison() {
+QUIZ_CASE(pcj_expression_comparison) {
   assert_comparison_equals(10.0_e, 2.0_e, 1);
   assert_comparison_equals(1.0_e, 2.0_e, -1);
   assert_comparison_equals(Add("2"_e,u'π'_e), u'π'_e, 1);
   // TODO: complete
   CachePool::sharedCachePool()->editionPool()->flush();
 }
-QUIZ_CASE(pcj_expression_comparison) { testExpressionComparison(); }
 
 void assert_contain_subtree(const Node tree, const Node subtree) {
   assert(Comparison::ContainsSubtree(tree, subtree));
@@ -26,7 +25,7 @@ void assert_not_contain_subtree(const Node tree, const Node subtree) {
   assert(!Comparison::ContainsSubtree(tree, subtree));
 }
 
-void testSubtree() {
+QUIZ_CASE(pcj_subtree) {
   assert_contain_subtree(Add("2"_e, Mult("1"_e, "3"_e)), Add("2"_e, Mult("1"_e, "3"_e)));
   assert_contain_subtree(Add("2"_e, Mult("1"_e, "3"_e)), Mult("1"_e, "3"_e));
   assert_contain_subtree(Add("2"_e, Mult("1"_e, "3"_e)), "3"_e);
@@ -36,4 +35,3 @@ void testSubtree() {
   assert_not_contain_subtree(Add("2"_e, Mult("1"_e, "3"_e)), Add("2"_e, Mult("1"_e, "4"_e)));
   CachePool::sharedCachePool()->editionPool()->flush();
 }
-QUIZ_CASE(pcj_subtree) { testSubtree(); }

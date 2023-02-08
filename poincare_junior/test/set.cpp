@@ -4,7 +4,7 @@
 
 using namespace PoincareJ;
 
-void testSet() {
+QUIZ_CASE(pcj_set) {
   // Set::Add
   Node set0 = EditionReference::Push<BlockType::Set>(0);
   Set::Add(set0, "1"_e);
@@ -36,4 +36,3 @@ void testSet() {
   EditionReference differenceSet = Set::Difference(set0, set1);
   assert_trees_are_equal(differenceSet, Set("3"_e));
 }
-QUIZ_CASE(pcj_set) { testSet(); }

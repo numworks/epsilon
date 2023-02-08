@@ -4,7 +4,7 @@
 
 using namespace PoincareJ;
 
-void testEditionPool() {
+QUIZ_CASE(pcj_edition_pool) {
   CachePool * cachePool = CachePool::sharedCachePool();
   cachePool->reset();
   EditionPool * pool = cachePool->editionPool();
@@ -43,9 +43,8 @@ void testEditionPool() {
   assert(pool->contains(pool->blockAtIndex(2)));
   assert(!pool->contains(pool->blockAtIndex(5)));
 }
-QUIZ_CASE(pcj_edition_pool) { testEditionPool(); }
 
-void testEditionReference() {
+QUIZ_CASE(pcj_edition_reference) {
   CachePool * cachePool = CachePool::sharedCachePool();
   cachePool->reset();
   EditionPool * editionPool = cachePool->editionPool();
@@ -109,9 +108,8 @@ void testEditionReference() {
   reference3.insertTreeAfterNode("14"_e);
   assert_pool_contains(editionPool, {k_expression0, "10"_e, Pow("14"_e, "13"_e), "10"_e, "9"_e, Sub("5"_e, "6"_e), "7"_e});
 }
-QUIZ_CASE(pcj_edition_reference) { testEditionReference(); }
 
-void testEditionReferenceReallocation() {
+QUIZ_CASE(pcj_edition_reference_reallocation) {
   CachePool::sharedCachePool()->reset();
   constexpr Tree k_expression = "1"_e;
 
@@ -124,4 +122,3 @@ void testEditionReferenceReallocation() {
   reference0.removeTree();
   EditionReference reference2("2"_e);
 }
-QUIZ_CASE(pcj_edition_reference_reallocation) { testEditionReferenceReallocation(); }

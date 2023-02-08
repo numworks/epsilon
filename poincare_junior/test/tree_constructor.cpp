@@ -3,7 +3,7 @@
 
 using namespace PoincareJ;
 
-void testTreeConstructor() {
+QUIZ_CASE(pcj_tree_constructor) {
   constexpr CTree tree = 3_e;
 
   Node node = Multi(Addi(5_e, 8_e, 4_e), 3_e, tree);
@@ -20,9 +20,8 @@ void testTreeConstructor() {
 
   (void) Poly(Exponents<1>(), "x"_v, 2_e);
 }
-QUIZ_CASE(pcj_tree_constructor) { testTreeConstructor(); }
 
-void testTreeIntegerConstructor() {
+QUIZ_CASE(pcj_tree_integer_constructor) {
   assert(Node(1_e).nodeSize() == 1);
   assert(Node(12_e).nodeSize() == 3);
   assert(Node(1234_e).nodeSize() == 6);
@@ -42,4 +41,3 @@ void testTreeIntegerConstructor() {
   assert(Integer::Handler( 123456789_e).to<double>() == 123456789.0);
   assert(Integer::Handler(-123456789_e).to<double>() == -123456789.0);
 }
-QUIZ_CASE(pcj_tree_integer_constructor) { testTreeIntegerConstructor(); }

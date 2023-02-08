@@ -5,14 +5,13 @@
 
 using namespace PoincareJ;
 
-void testPlaceholders() {
+QUIZ_CASE(pcj_placeholders) {
   using namespace PatternMatching::Placeholders;
   constexpr CTree a = A;
   (void) Addi(2_e, a, A);
 }
-QUIZ_CASE(pcj_placeholders) { testPlaceholders(); }
 
-void testContext() {
+QUIZ_CASE(pcj_context) {
   using namespace PatternMatching::Placeholders;
   PatternMatching::Context ctx;
   ctx[A] = Addi(2_e, 1_e);
@@ -20,9 +19,8 @@ void testContext() {
   EditionReference exp = PatternMatching::Create(structure, ctx);
   assert_trees_are_equal(exp, Multi(5_e, Addi(Addi(2_e, 1_e), Addi(2_e, 1_e))));
 }
-QUIZ_CASE(pcj_context) { testContext(); }
 
-void testMatch() {
+QUIZ_CASE(pcj_match) {
   using namespace PatternMatching::Placeholders;
   Node t = Addi(2_e, 1_e);
   PatternMatching::Context ctx = PatternMatching::Match(A, t);
@@ -32,9 +30,8 @@ void testMatch() {
   PatternMatching::Context ctx3 = PatternMatching::Match(Addi(A, 2_e), t);
   quiz_assert(ctx3.isUninitialized());
 }
-QUIZ_CASE(pcj_match) { testMatch(); }
 
-void testRewrite() {
+QUIZ_CASE(pcj_rewrite) {
   using namespace PatternMatching::Placeholders;
   Node p = Addi(A, A);
   Node s = Multi(2_e, A);
@@ -44,4 +41,3 @@ void testRewrite() {
   EditionReference result = ref.matchAndRewrite(p, s);
   assert_trees_are_equal(result, Multi(2_e, 5_e));
 }
-QUIZ_CASE(pcj_rewrite) { testRewrite(); }

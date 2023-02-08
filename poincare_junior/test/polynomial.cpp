@@ -13,7 +13,7 @@ void assert_polynomial_is_parsed(const Node node, const Node expectedVariables, 
   assert_trees_are_equal(polynomial, expectedPolynomial);
 }
 
-void testPolynomialParsing() {
+QUIZ_CASE(pcj_polynomial_parsing) {
   assert_polynomial_is_parsed(
       /* π^3 + 3*π^2*e + 3*π*e^2 + e^3 */ Add(Pow(u'π'_e, "3"_e), Mult("3"_e, Pow(u'π'_e, "2"_e), u'e'_e), Mult("3"_e, Pow(u'e'_e, "2"_e), u'π'_e), Pow(u'e'_e, "3"_e)),
       /* variables = {π, e} */ Set(u'π'_e, u'e'_e),
@@ -35,9 +35,8 @@ void testPolynomialParsing() {
 
   // TODO: parse polynomial with float coefficients?
 }
-QUIZ_CASE(pcj_polynomial_parsing) { testPolynomialParsing(); }
 
-void testPolynomialOperations() {
+QUIZ_CASE(pcj_polynomial_operations) {
   /* A = x^2 + 3*x*y + y + 1 */
   Node polA = Pol({2, 1, 0}, "x"_e, "1"_e, Pol({1},  "y"_e, "3"_e), Pol({1, 0}, "y"_e, "1"_e, "1"_e));
   /* B = x^3 + 2*x*y^2 + 7*x*y + 23 */
@@ -67,4 +66,3 @@ void testPolynomialOperations() {
   //assert_trees_are_equal(quotient, Pol({1, 0}, "x"_e, Pol({1}, "y"_e, "1"_e), Sub("0"_e, "1"_e)));
   //assert_trees_are_equal(remainder, Pol({1, 0}, "x"_e, "1"_e, "1"_e));
 }
-QUIZ_CASE(pcj_polynomial_operations) { testPolynomialOperations(); }

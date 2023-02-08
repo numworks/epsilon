@@ -30,14 +30,13 @@ Calculation::Calculation(const char * textInput) {
   m_output = Expression::CreateBasicReduction(m_input);
 }
 
-void testCalculation() {
+QUIZ_CASE(pcj_calculation) {
   Calculation calculation("(1-2)/3/4");
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n---------------- Push Calculation (1-2)/3/4 ----------------" << std::endl;
   calculation.output().log();
 #endif
 }
-QUIZ_CASE(pcj_calculation) { testCalculation(); }
 
 // Check SharedPointer
 
@@ -49,14 +48,10 @@ Expression expressionViolatingLifetimeOfData() {
   return e;
 }
 
-void testRunTimeCrashIllFormedExpression() {
-  Expression e = expressionViolatingLifetimeOfData();
-#if POINCARE_MEMORY_TREE_LOG
-  e.log();
-#endif
-}
-
 // This test is expected to fail
 // QUIZ__CASE(pcj_mustfail) {
-//   testRunTimeCrashIllFormedExpression();
+//   Expression e = expressionViolatingLifetimeOfData();
+// #if POINCARE_MEMORY_TREE_LOG
+//   e.log();
+// #endif
 // }

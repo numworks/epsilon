@@ -7,7 +7,7 @@
 
 using namespace PoincareJ;
 
-void testElementaryTreeManipulations() {
+QUIZ_CASE(pcj_elementary_tree_manipulation) {
   CachePool * cache = CachePool::sharedCachePool();
   EditionPool * editionPool = cache->editionPool();
 
@@ -84,4 +84,3 @@ void testElementaryTreeManipulations() {
   NAry::Flatten(addition);
   log_edition_pool();
 }
-QUIZ_CASE(pcj_elementary_tree_manipulation) { testElementaryTreeManipulations(); }

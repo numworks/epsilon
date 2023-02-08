@@ -84,7 +84,7 @@ bool FunctionApp::storageCanChangeForRecordName(const Ion::Storage::Record::Name
 }
 
 FunctionApp::FunctionApp(Snapshot * snapshot, Shared::FunctionListController * listController, Shared::FunctionGraphController * graphController, Shared::ValuesController * valuesController) :
-  ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
+  ExpressionFieldDelegateApp(snapshot, &m_tabViewController),
   m_listFooter(&m_listHeader, listController, listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGray),
   m_listHeader(&m_listStackViewController, &m_listFooter, listController),
   m_listStackViewController(&m_tabViewController, &m_listHeader, Escher::StackViewController::Style::WhiteUniform),
@@ -94,8 +94,7 @@ FunctionApp::FunctionApp(Snapshot * snapshot, Shared::FunctionListController * l
   m_valuesAlternateEmptyViewController(&m_valuesHeader, valuesController, valuesController),
   m_valuesHeader(&m_valuesStackViewController, &m_valuesAlternateEmptyViewController, valuesController),
   m_valuesStackViewController(&m_tabViewController, &m_valuesHeader, Escher::StackViewController::Style::WhiteUniform),
-  m_tabViewController(&m_inputViewController, snapshot, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
-  m_inputViewController(&m_modalViewController, &m_tabViewController, listController, listController),
+  m_tabViewController(&m_modalViewController, snapshot, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
   m_activeControllerBeforeStore(nullptr)
 {}
 

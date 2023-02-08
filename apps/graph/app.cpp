@@ -48,7 +48,7 @@ App::App(Snapshot * snapshot) :
   m_listController(&m_listFooter, &m_listHeader, &m_listFooter, &m_graphController, &m_functionParameterController),
   m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, snapshot->graphRange(), snapshot->cursor(), snapshot->selectedCurveIndex()),
   m_valuesController(&m_valuesAlternateEmptyViewController, this, &m_valuesHeader, &m_functionParameterController),
-  m_functionParameterController(this, I18n::Message::FunctionColor, I18n::Message::DeleteExpression, &m_inputViewController, &m_graphController, &m_valuesController)
+  m_functionParameterController(this, I18n::Message::FunctionColor, I18n::Message::DeleteExpression, this, &m_graphController, &m_valuesController)
 {
 }
 

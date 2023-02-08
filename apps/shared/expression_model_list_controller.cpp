@@ -117,19 +117,19 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
     constexpr size_t initialTextContentMaxSize = Constant::MaxSerializedExpressionSize;
     char initialTextContent[initialTextContentMaxSize];
     getTextForSelectedRecord(initialTextContent, initialTextContentMaxSize);
-    inputController()->setTextBody(initialTextContent);
+    // inputController()->setTextBody(initialTextContent);
   }
-  inputController()->edit(event, this,
-    [](void * context, void * sender){
-      ExpressionModelListController * myController = static_cast<ExpressionModelListController *>(context);
-      InputViewController * myInputViewController = (InputViewController *)sender;
-      const char * textBody = myInputViewController->textBody();
-      return myController->editSelectedRecordWithText(textBody);
-    },
-    [](void * context, void * sender){
-      return true;
-    }
-  );
+//   inputController()->edit(event, this,
+//     [](void * context, void * sender){
+//       ExpressionModelListController * myController = static_cast<ExpressionModelListController *>(context);
+//       InputViewController * myInputViewController = (InputViewController *)sender;
+//       const char * textBody = myInputViewController->textBody();
+//       return myController->editSelectedRecordWithText(textBody);
+//     },
+//     [](void * context, void * sender){
+//       return true;
+//     }
+//   );
 }
 
 bool ExpressionModelListController::editSelectedRecordWithText(const char * text) {

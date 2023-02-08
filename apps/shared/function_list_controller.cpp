@@ -64,11 +64,6 @@ void FunctionListController::didBecomeFirstResponder() {
   }
   footer()->setSelectedButton(-1);
   Container::activeApp()->setFirstResponder(selectableTableView());
-
-  InputViewController * inputViewController = FunctionApp::app()->inputViewController();
-  if (inputViewController->isDisplayingModal()) {
-    Container::activeApp()->setFirstResponder(inputViewController);
-  }
 }
 
 /* ExpressionModelListController */
@@ -85,10 +80,6 @@ void FunctionListController::configureFunction(Ion::Storage::Record record) {
 
 TabViewController * FunctionListController::tabController() const {
   return static_cast<TabViewController *>(parentResponder()->parentResponder()->parentResponder()->parentResponder());
-}
-
-InputViewController * FunctionListController::inputController() {
-  return FunctionApp::app()->inputViewController();
 }
 
 }

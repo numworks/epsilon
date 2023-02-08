@@ -258,8 +258,4 @@ StackViewController * ListController::stackController() const {
   return static_cast<StackViewController *>(parentResponder()->parentResponder());
 }
 
-InputViewController * ListController::inputController() {
-  return App::app()->inputViewController();
-}
-
 }

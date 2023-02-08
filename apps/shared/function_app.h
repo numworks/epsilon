@@ -37,7 +37,6 @@ public:
 
   virtual FunctionStore * functionStore() const { return snapshot()->functionStore(); }
   virtual ValuesController * valuesController() = 0;
-  virtual Escher::InputViewController * inputViewController() = 0;
 
   bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
   void prepareForIntrusiveStorageChange() override;
@@ -57,7 +56,6 @@ protected:
   Escher::ButtonRowController m_valuesHeader;
   Escher::StackViewController m_valuesStackViewController;
   Escher::TabViewController m_tabViewController;
-  Escher::InputViewController m_inputViewController;
   Escher::ViewController * m_activeControllerBeforeStore;
 };
 

@@ -35,7 +35,6 @@ protected:
   void configureFunction(Ion::Storage::Record record);
   Escher::TabViewController * tabController() const;
 private:
-  Escher::InputViewController * inputController() override;
   virtual int initialColumnToSelect() const = 0;
   virtual ListParameterController * parameterController() = 0;
   virtual int maxNumberOfDisplayableRows() = 0;

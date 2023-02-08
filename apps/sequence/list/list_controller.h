@@ -20,7 +20,7 @@ public:
   KDCoordinate expressionRowHeight(int j) override;
   Escher::Toolbox * toolbox() override;
   void selectPreviousNewSequenceCell();
-  void editExpression(int sequenceDefinitionIndex, Ion::Events::Event event);
+  void editExpression(Ion::Events::Event event) override;
   /* ViewController */
   void viewWillAppear() override;
   /* TableViewDataSource */
@@ -74,7 +74,6 @@ private:
   void resetSizesMemoization() override { resetMemoization(); }
 
   void computeTitlesColumnWidth(bool forceMax = false);
-  bool editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition);
   ListParameterController * parameterController() override { return &m_parameterController; }
   int maxNumberOfDisplayableRows() override { return k_maxNumberOfRows; }
   Escher::HighlightCell * titleCells(int index);
@@ -87,7 +86,8 @@ private:
   void didChangeModelsList() override;
   KDCoordinate baseline(int j);
   void addModel() override;
-  void editExpression(Ion::Events::Event event) override;
+  bool editSelectedRecordWithText(const char * text) override;
+  void getTextForSelectedRecord(char* text, size_t size) override;
   bool removeModelRow(Ion::Storage::Record record) override;
   Shared::SequenceStore * modelStore() const override;
   KDCoordinate nameWidth(int nameLength) const;

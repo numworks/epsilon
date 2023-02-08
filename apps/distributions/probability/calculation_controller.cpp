@@ -230,7 +230,7 @@ void CalculationController::reload() {
   } else {
     assert(m_distribution->canHaveUninitializedParameter());
     char buffer[k_titleBufferSize];
-    Poincare::Print::CustomPrintf(buffer, k_titleBufferSize, "%s = %*.*ed",
+    Poincare::Print::CustomPrintf(buffer, k_titleBufferSize, k_unknownParameterBannerText,
         m_distribution->parameterNameAtIndex(m_distribution->uninitializedParameterIndex()),
         m_distribution->parameterAtIndex(m_distribution->uninitializedParameterIndex()), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     m_contentView.unknownParameterValue()->setText(buffer);
@@ -261,7 +261,7 @@ void CalculationController::updateTitle() {
     if (m_distribution->uninitializedParameterIndex() == index) {
       continue;
     }
-    currentChar += Poincare::Print::CustomPrintf(m_titleBuffer + currentChar, k_titleBufferSize - currentChar, "%s = %*.*ed ",
+    currentChar += Poincare::Print::CustomPrintf(m_titleBuffer + currentChar, k_titleBufferSize - currentChar, k_parameterTitle,
         m_distribution->parameterNameAtIndex(index),
         m_distribution->parameterAtIndex(index), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   }

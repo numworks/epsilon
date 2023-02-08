@@ -16,6 +16,7 @@ public:
   double lowerBound() const override { return m_lowerBound; }
 private:
   void compute(int indexKnownElement) override;
+  void computeUnknownDistributionParameter() override;
   double m_lowerBound;
   double m_result;
 };

@@ -30,6 +30,8 @@ public:
   static bool ExpressionMuAndSigmaAreOK(bool * result, const Expression &mu, const Expression &sigma, Context * context);
   bool expressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const override { return ExpressionMuAndSigmaAreOK(result, parameters[0], parameters[1], context); }
 
+  double evaluateParameterForProbabilityAndBound(int parameterIndex, const double * parameters, double probability, double bound, bool isUpperBound) const override;
+
 private:
   template<typename T> static T parameterMu(T* parameters) { return parameters[0]; }
   template<typename T> static T parameterSigma(T* parameters) { return parameters[1]; }

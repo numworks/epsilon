@@ -164,4 +164,11 @@ double Distribution::evaluateAtDiscreteAbscissa(int k) const {
   return m_distribution->evaluateAtAbscissa(static_cast<double>(k), constParametersArray());
 }
 
+void Distribution::computeUnknownParameterForProbabilityAndBound(double probability, double bound, bool isUpperBound) {
+  assert(m_indexOfUninitializedParameter != k_allParametersAreInitialized);
+  double paramValue = m_distribution->evaluateParameterForProbabilityAndBound(m_indexOfUninitializedParameter, parametersArray(), probability, bound, isUpperBound);
+  Inference::setParameterAtIndex(paramValue, m_indexOfUninitializedParameter);
+}
+
+
 }

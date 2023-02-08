@@ -27,6 +27,10 @@ void RightIntegralCalculation::setParameterAtIndex(double f, int index) {
   if (index == 1) {
     m_result = f;
   }
+  if (!m_distribution->allParametersAreInitialized()) {
+    computeUnknownDistributionParameter();
+    return;
+  }
   compute(index);
 }
 
@@ -58,6 +62,10 @@ void RightIntegralCalculation::compute(int indexKnownElement) {
       m_result = NAN;
     }
   }
+}
+
+void RightIntegralCalculation::computeUnknownDistributionParameter() {
+  m_distribution->computeUnknownParameterForProbabilityAndBound(m_result, m_lowerBound, false);
 }
 
 }

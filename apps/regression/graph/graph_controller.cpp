@@ -220,7 +220,7 @@ void GraphController::initCursorParameters(bool ignoreMargins) {
 }
 
 bool GraphController::selectedModelIsValid() const {
-  uint8_t numberOfDots = numberOfDotsOfCurve(*m_selectedCurveIndex);
+  const uint8_t numberOfDots = numberOfDotsOfCurve(*m_selectedCurveIndex);
   return *m_selectedDotIndex < numberOfDots || (*m_selectedDotIndex == numberOfDots && !curveIsScatterPlot(*m_selectedCurveIndex));
 }
 
@@ -328,7 +328,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   Range1D xRange, yRange;
   const int nbOfCurves = numberOfCurves();
   for (int curve = 0; curve < nbOfCurves; curve++) {
-    int numberOfDots = numberOfDotsOfCurve(curve);
+    const int numberOfDots = numberOfDotsOfCurve(curve);
     for (int dot = 0; dot < numberOfDots; dot++) {
       float x = dotAbscissa(curve, dot);
       xRange.extend(x, k_maxFloat);
@@ -353,7 +353,7 @@ int GraphController::closestVerticalDot(int direction, double x, double y, int c
        * should not be the current curve */
       continue;
     }
-    int numberOfDots = numberOfDotsOfCurve(curve);
+    const int numberOfDots = numberOfDotsOfCurve(curve);
     float xMin = App::app()->graphRange()->xMin();
     float xMax = App::app()->graphRange()->xMax();
     bool displayMean = !curveIsScatterPlot(curve);

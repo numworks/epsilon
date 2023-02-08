@@ -16,6 +16,8 @@ namespace Device {
 namespace Board {
 namespace Config {
 
+// clang-format off
+
 /* The bootloader, kernel and userland starts should be aligned to the begining of a sector (to flash them easily).
  * The bootloader should occupty the whole internal flash
  * The memory layouts are the following:
@@ -142,6 +144,8 @@ constexpr uint32_t SignatureLength = SingleSignatureLength * NumberOfSignatures;
 
 /* Other */
 constexpr int NumberOfMPUSectors = 8;
+
+// clang-format on
 
 }
 }

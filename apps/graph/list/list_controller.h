@@ -71,7 +71,6 @@ private:
   FunctionModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;
   FunctionToolbox m_functionToolbox;
-  int m_editedCellIndex;
   bool m_parameterColumnSelected;
 };
 

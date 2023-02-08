@@ -20,8 +20,7 @@ ListController::ListController(Responder * parentResponder, Escher::InputEventHa
   m_typeParameterController(this, this),
   m_typeStackController(nullptr, &m_typeParameterController, StackViewController::Style::PurpleWhite),
   m_titlesColumnWidth(k_minTitleColumnWidth),
-  m_heightManager(this),
-  m_editedCellIndex(-1)
+  m_heightManager(this)
 {
   m_editableCell.setLeftMargin(k_expressionMargin);
   m_editableCell.setRightMargin(k_expressionMargin);

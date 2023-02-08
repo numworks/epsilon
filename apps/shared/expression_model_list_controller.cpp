@@ -16,7 +16,8 @@ namespace Shared {
 
 ExpressionModelListController::ExpressionModelListController(Responder * parentResponder, I18n::Message text) :
   ViewController(parentResponder),
-  m_addNewModel(k_font, KDContext::k_alignLeft)
+  m_addNewModel(k_font, KDContext::k_alignLeft),
+  m_editedCellIndex(-1)
 {
   m_addNewModel.setMessage(text);
 }

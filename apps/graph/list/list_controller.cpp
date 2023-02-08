@@ -20,7 +20,6 @@ ListController::ListController(Responder * parentResponder, ButtonRowController 
   m_parameterController(functionParameterController),
   m_modelsParameterController(this, nullptr, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, StackViewController::Style::PurpleWhite),
-  m_editedCellIndex(-1),
   m_parameterColumnSelected(false)
 {
   m_selectableTableView.setMargins(0);

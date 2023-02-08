@@ -8,12 +8,10 @@
 #include "list_parameter_controller.h"
 #include "expression_model_list_controller.h"
 #include "input_event_handler_delegate.h"
-#include "layout_field_delegate.h"
-#include "text_field_delegate.h"
 
 namespace Shared {
 
-class FunctionListController : public ExpressionModelListController, public Escher::ButtonRowDelegate, public InputEventHandlerDelegate, public TextFieldDelegate, public LayoutFieldDelegate {
+class FunctionListController : public ExpressionModelListController, public Escher::ButtonRowDelegate, public InputEventHandlerDelegate, public TextFieldDelegate {
 public:
   FunctionListController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::ButtonRowController * footer, I18n::Message text);
 

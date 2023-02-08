@@ -5,7 +5,6 @@
 #include <escher/even_odd_expression_cell.h>
 #include <escher/even_odd_editable_expression_cell.h>
 #include <apps/shared/expression_model_list_controller.h>
-#include <apps/shared/layout_field_delegate.h>
 #include <apps/shared/text_field_delegate.h>
 #include "equation_store.h"
 #include "equation_list_view.h"
@@ -14,7 +13,7 @@
 
 namespace Solver {
 
-class ListController : public Shared::ExpressionModelListController, public Escher::ButtonRowDelegate, public Escher::MemoizedListViewDataSource, public Shared::LayoutFieldDelegate {
+class ListController : public Shared::ExpressionModelListController, public Escher::ButtonRowDelegate, public Escher::MemoizedListViewDataSource {
 public:
   ListController(Escher::Responder * parentResponder, EquationStore * equationStore, Escher::ButtonRowController * footer);
   /* ButtonRowDelegate */

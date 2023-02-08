@@ -244,13 +244,12 @@ bool GraphController::moveCursorVertically(int direction) {
   int closestRegressionCurve = closestCurveIndexVertically(direction > 0, selectedRegressionCurve, context);
 
   // Find the closest dot
-  int closestDotSeries = -1;
-  int dotSelected = closestVerticalDot(direction, x, y, selectedSeries, *m_selectedDotIndex, &closestDotSeries, context);
-  int closesDotCurve = curveIndexFromSeriesIndex(closestDotSeries);
+  int closesDotCurve = -1;
+  int dotSelected = closestVerticalDot(direction, x, y, *m_selectedCurveIndex, *m_selectedDotIndex, &closesDotCurve, context);
 
   // Choose between selecting the regression or the dot
   bool validRegression = closestRegressionCurve > -1;
-  bool validDot = dotSelected >= 0 && dotSelected <= m_store->numberOfPairsOfSeries(closestDotSeries);
+  bool validDot = dotSelected >= 0 && dotSelected <= numberOfDotsOfCurve(closesDotCurve);
   if (validRegression && validDot) {
     /* Compare the abscissa distances to select either the dot or the
      * regression. If they are equal, compare the ordinate distances. */
@@ -291,10 +290,9 @@ bool GraphController::moveCursorVertically(int direction) {
 
   if (validDot) {
     // Select the dot
-    if (selectedSeries != closestDotSeries) {
-      *m_selectedCurveIndex = curveIndexFromSeriesIndex(closestDotSeries);
-      selectedSeries = selectedSeriesIndex();
-      // Reload so that the selected series is on top
+    if (*m_selectedCurveIndex != closesDotCurve) {
+      *m_selectedCurveIndex = closesDotCurve;
+      // Reload so that the selected curve is on top
       m_view.reload(false, true);
     }
     *m_selectedDotIndex = dotSelected;
@@ -347,16 +345,15 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
 }
 
-int GraphController::closestVerticalDot(int direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {
+int GraphController::closestVerticalDot(int direction, double x, double y, int currentCurve, int currentDot, int * nextCurve, Poincare::Context * globalContext) {
   double nextX = INFINITY;
   double nextY = INFINITY;
   int nextDot = -1;
   const int nbOfCurves = numberOfCurves();
   for (int curve = 0; curve < nbOfCurves; curve++) {
-    int series = seriesIndexFromCurveIndex(curve);
-    if (currentDot >= 0 && currentSeries == series) {
-      /* If the currentDot is valid, the next series
-       * should not be the current series */
+    if (currentDot >= 0 && currentCurve == curve) {
+      /* If the currentDot is valid, the next curve
+       * should not be the current curve */
       continue;
     }
     int numberOfDots = numberOfDotsOfCurve(curve);
@@ -371,14 +368,14 @@ int GraphController::closestVerticalDot(int direction, double x, double y, int c
           && ((currentY > y && direction > 0) // The next dot is above/under y
             || (currentY < y && direction < 0)
             || (currentY == y
-              && ((currentDot < 0 && direction > 0)|| ((direction < 0) == (series > currentSeries)))))
+              && ((currentDot < 0 && direction > 0)|| ((direction < 0) == (curve > currentCurve)))))
           && (nextX != currentX // Edge case: if 2 dots have the same abscissa but different ordinates
             || ((currentY <= nextY) == (direction > 0))))
       {
         nextX = currentX;
         nextY = currentY;
         nextDot = i;
-        *nextSeries = series;
+        *nextCurve = curve;
       }
     }
   }

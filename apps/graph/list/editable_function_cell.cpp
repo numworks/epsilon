@@ -19,8 +19,8 @@ void EditableFunctionCell::layoutSubviews(bool force) {
   m_ellipsisView.setFrame(KDRect(bounds().width() - k_parametersColumnWidth, 0,
                                  k_parametersColumnWidth, bounds().height()),
                           force);
-  KDCoordinate leftMargin = k_colorIndicatorThickness + k_margin;
-  KDCoordinate rightMargin = k_margin + k_parametersColumnWidth;
+  KDCoordinate leftMargin = k_colorIndicatorThickness + k_expressionMargin;
+  KDCoordinate rightMargin = k_expressionMargin + k_parametersColumnWidth;
   KDCoordinate availableWidth = bounds().width() - leftMargin - rightMargin;
   m_expressionField.setFrame(
     KDRect(leftMargin, 0, availableWidth, bounds().height()), force);
@@ -28,10 +28,14 @@ void EditableFunctionCell::layoutSubviews(bool force) {
 }
 
 KDSize EditableFunctionCell::minimalSizeForOptimalDisplay() const {
-  KDCoordinate minimalHeight =
+  KDCoordinate expressionHeight =
       m_expressionField.minimalSizeForOptimalDisplay().height();
+  KDCoordinate minimalHeight = k_margin + expressionHeight + k_margin;
+    m_expressionField.minimalSizeForOptimalDisplay().height();
+  KDCoordinate messageHeight = m_messageTextView.minimalSizeForOptimalDisplay().height();
+  minimalHeight += k_messageMargin + messageHeight;
   KDCoordinate parameterHeight =
-      m_ellipsisView.minimalSizeForOptimalDisplay().height();
+    m_ellipsisView.minimalSizeForOptimalDisplay().height();
   if (parameterHeight > minimalHeight) {
     // Leave enough height for parameter's menu elipsis.
     minimalHeight = parameterHeight;

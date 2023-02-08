@@ -208,7 +208,7 @@ void ListController::editExpression(Ion::Events::Event event) {
 
 KDCoordinate ListController::expressionRowHeight(int j) {
   if (j == m_editedCellIndex) {
-    return ExpressionRowHeightFromLayoutHeight(m_editableCell.minimalSizeForOptimalDisplay().height());
+    return m_editableCell.minimalSizeForOptimalDisplay().height();
   }
   if (typeAtIndex(j) == k_addNewModelType) {
     return Shared::FunctionListController::expressionRowHeight(j);

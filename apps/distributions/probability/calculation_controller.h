@@ -71,6 +71,8 @@ public:
 private:
   constexpr static int k_numberOfCalculationCells = 3;
   constexpr static KDCoordinate k_tableMargin = 3;
+  constexpr static const char * k_unknownParameterBannerText =  "%s=%*.*ed";
+  constexpr static const char * k_parameterTitle =  "%s = %*.*ed ";
 
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int i) override;

@@ -4,6 +4,7 @@
 #include <apps/i18n.h>
 #include <apps/shared/sequence_store.h>
 #include <apps/shared/function_list_controller.h>
+#include <escher/even_odd_editable_expression_cell.h>
 #include <escher/table_view_data_source.h>
 #include "list_parameter_controller.h"
 #include "sequence_toolbox.h"
@@ -42,13 +43,15 @@ public:
   void showLastSequence();
   /* LayoutFieldDelegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
-  /* TextFieldDelegate */
-  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) override;
+  void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
+  bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
 private:
   /* Cell types */
   constexpr static int k_titleCellType = 0;
   constexpr static int k_expressionCellType = k_titleCellType + 1;
-  constexpr static int k_emptyRowCellType = k_expressionCellType + 1;
+  constexpr static int k_editableCellType = k_expressionCellType + 1;
+  constexpr static int k_emptyRowCellType = k_editableCellType + 1;
   constexpr static int k_addModelCellType = k_emptyRowCellType + 1;
   /* Model definitions */
   constexpr static int k_otherDefinition = -1;
@@ -96,12 +99,14 @@ private:
   Escher::EvenOddCell m_emptyCell;
   VerticalSequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
+  Escher::EvenOddEditableExpressionCell m_editableCell;
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
   Escher::StackViewController m_typeStackController;
   SequenceToolbox m_sequenceToolbox;
   KDCoordinate m_titlesColumnWidth;
   Escher::ShortMemoizedRowHeightManager m_heightManager;
+  int m_editedCellIndex;
 };
 
 }

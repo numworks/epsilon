@@ -65,6 +65,7 @@ void RightIntegralCalculation::compute(int indexKnownElement) {
 }
 
 void RightIntegralCalculation::computeUnknownDistributionParameter() {
+  assert(m_distribution->canHaveUninitializedParameter());
   m_distribution->computeUnknownParameterForProbabilityAndBound(m_result, m_lowerBound, false);
 }
 

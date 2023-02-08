@@ -89,6 +89,7 @@ private:
   double dotAbscissa(int curveIndex, int dotIndex) const { return dotCoordinate(curveIndex, dotIndex, 0); }
   double dotOrdinate(int curveIndex, int dotIndex) const { return dotCoordinate(curveIndex, dotIndex, 1); }
   double dotCoordinate(int curveIndex, int dotIndex, int coordinate) const;
+  double yValue(int curveIndex, double t, Poincare::Context * context) const { return m_store->yValueForXValue(seriesIndexFromCurveIndex(curveIndex), t, context); }
 
   Shared::ToggleableRingRoundCursorView m_cursorView;
   BannerView m_bannerView;

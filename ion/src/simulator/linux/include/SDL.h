@@ -5,5 +5,9 @@
  * To work around this, and since SDL.h itself is always included using angle
  * brackets, we hook directly into SDL.h inclusion. */
 
+// clang-format off
+
 #include "SDL_config.h"
 #include_next <SDL.h>
+
+// clang-format on

@@ -106,7 +106,6 @@ private:
   SequenceToolbox m_sequenceToolbox;
   KDCoordinate m_titlesColumnWidth;
   Escher::ShortMemoizedRowHeightManager m_heightManager;
-  int m_editedCellIndex;
 };
 
 }

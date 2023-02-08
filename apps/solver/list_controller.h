@@ -61,7 +61,6 @@ private:
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
   Escher::EvenOddEditableExpressionCell m_editableCell;
-  int m_editedCellIndex;
   Escher::AbstractButtonCell m_resolveButton;
   EquationModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;

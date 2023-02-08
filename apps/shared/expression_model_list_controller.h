@@ -38,6 +38,7 @@ protected:
   Escher::EvenOddMessageTextCell m_addNewModel;
   // Memoization
   virtual void resetSizesMemoization() {}
+  int16_t m_editedCellIndex;
 private:
   bool addEmptyModel();
 

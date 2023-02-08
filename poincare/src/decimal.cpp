@@ -169,12 +169,9 @@ int DecimalNode::convertToText(char *buffer, int bufferSize,
         m, Integer((int64_t)std::pow(
                10.0, numberOfDigitsInMantissa - numberOfSignificantDigits)));
     m = d.quotient;
-    if (Integer::NaturalOrder(
-            d.remainder,
-            Integer(
-                (int64_t)(5.0 * std::pow(10.0, numberOfDigitsInMantissa -
-                                                   numberOfSignificantDigits -
-                                                   1)))) >= 0) {
+    int64_t boundary = 5. * std::pow(10., numberOfDigitsInMantissa -
+                                              numberOfSignificantDigits - 1);
+    if (Integer::NaturalOrder(d.remainder, Integer(boundary)) >= 0) {
       m = Integer::Addition(m, Integer(1));
       // if 9999 was rounded to 10000, we need to update exponent and mantissa
       if (Integer::NumberOfBase10DigitsWithoutSign(m) >

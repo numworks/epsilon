@@ -248,8 +248,8 @@ bool GraphController::moveCursorVertically(int direction) {
   int dotSelected = closestVerticalDot(direction, x, y, *m_selectedCurveIndex, *m_selectedDotIndex, &closesDotCurve, context);
 
   // Choose between selecting the regression or the dot
-  bool validRegression = closestRegressionCurve > -1;
-  bool validDot = dotSelected >= 0 && dotSelected <= numberOfDotsOfCurve(closesDotCurve);
+  bool validRegression = closestRegressionCurve >= 0;
+  bool validDot = 0 <= dotSelected && dotSelected <= numberOfDotsOfCurve(closesDotCurve);
   if (validRegression && validDot) {
     /* Compare the abscissa distances to select either the dot or the
      * regression. If they are equal, compare the ordinate distances. */
@@ -283,7 +283,8 @@ bool GraphController::moveCursorVertically(int direction) {
     }
     *m_selectedDotIndex = -1;
     setRoundCrossCursorView();
-    m_cursor->moveTo(x, x, m_store->yValueForXValue(selectedSeries, x, context));
+    double newY = m_store->yValueForXValue(selectedSeries, x, context);
+    m_cursor->moveTo(x, x, newY);
     setAbscissaInputAsFirstResponder();
     return true;
   }
@@ -297,9 +298,9 @@ bool GraphController::moveCursorVertically(int direction) {
     }
     *m_selectedDotIndex = dotSelected;
     setRoundCrossCursorView();
-    double x = dotAbscissa(*m_selectedCurveIndex, dotSelected);
-    double y = dotOrdinate(*m_selectedCurveIndex, dotSelected);
-    m_cursor->moveTo(x, x, y);
+    double newX = dotAbscissa(*m_selectedCurveIndex, dotSelected);
+    double newY = dotOrdinate(*m_selectedCurveIndex, dotSelected);
+    m_cursor->moveTo(newX, newX, newY);
     // abscissa input must resolve first responder
     Container::activeApp()->setFirstResponder(this);
     return true;

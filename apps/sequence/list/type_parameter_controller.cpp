@@ -84,7 +84,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     // Make all the lines of the added sequence visible
     m_listController->showLastSequence();
     Container::activeApp()->modalViewController()->dismissModal();
-    m_listController->editExpression(0, Ion::Events::OK);
+    m_listController->editExpression(Ion::Events::OK);
     return true;
   }
   if (event == Ion::Events::Left && !m_record.isNull()) {

@@ -79,68 +79,6 @@ void ListController::selectPreviousNewSequenceCell() {
   }
 }
 
-void ListController::editExpression(int sequenceDefinition, Ion::Events::Event event) {
-  Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-  Shared::Sequence * sequence = modelStore()->modelForRecord(record);
-  InputViewController * inputController = Shared::FunctionApp::app()->inputViewController();
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    char initialTextContent[Constant::MaxSerializedExpressionSize];
-    switch (sequenceDefinition) {
-      case k_sequenceDefinition:
-        sequence->text(initialTextContent, sizeof(initialTextContent));
-        break;
-      case k_firstInitialCondition:
-        sequence->firstInitialConditionText(initialTextContent, sizeof(initialTextContent));
-        break;
-      default:
-        assert(sequenceDefinition == k_secondInitialCondition);
-        sequence->secondInitialConditionText(initialTextContent, sizeof(initialTextContent));
-        break;
-    }
-    inputController->setTextBody(initialTextContent);
-  }
-  // Invalidate the sequences context cache
-  App::app()->localContext()->resetCache();
-  switch (sequenceDefinition) {
-    case k_sequenceDefinition:
-      inputController->edit(event, this,
-        [](void * context, void * sender) {
-          ListController * myController = static_cast<ListController *>(context);
-          InputViewController * myInputViewController = (InputViewController *)sender;
-          const char * textBody = myInputViewController->textBody();
-          return myController->editSelectedRecordWithText(textBody);
-        },
-        [](void * context, void * sender) {
-          return true;
-      });
-      break;
-  case k_firstInitialCondition:
-    inputController->edit(event, this,
-      [](void * context, void * sender) {
-        ListController * myController = static_cast<ListController *>(context);
-        InputViewController * myInputViewController = (InputViewController *)sender;
-        const char * textBody = myInputViewController->textBody();
-        return myController->editInitialConditionOfSelectedRecordWithText(textBody, true);
-      },
-      [](void * context, void * sender) {
-        return true;
-    });
-    break;
-  default:
-    assert(sequenceDefinition == k_secondInitialCondition);
-    inputController->edit(event, this,
-      [](void * context, void * sender) {
-        ListController * myController = static_cast<ListController *>(context);
-        InputViewController * myInputViewController = (InputViewController *)sender;
-        const char * textBody = myInputViewController->textBody();
-        return myController->editInitialConditionOfSelectedRecordWithText(textBody, false);
-      },
-      [](void * context, void * sender) {
-        return true;
-    });
-  }
-}
-
 /* ViewController */
 
 void ListController::viewWillAppear() {
@@ -279,15 +217,47 @@ void ListController::computeTitlesColumnWidth(bool forceMax) {
   m_titlesColumnWidth = std::max(maxTitleWidth, k_minTitleColumnWidth);
 }
 
-bool ListController::editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition) {
-  // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
+void ListController::editExpression(Ion::Events::Event event) {
+  ExpressionModelListController::editExpression(event);
+  // Invalidate the sequences context cache
+  App::app()->localContext()->resetCache();
   resetSizesMemoization();
+}
+
+bool ListController::editSelectedRecordWithText(const char * text) {
+  sequenceDefinitionForRow(selectedRow());
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   Shared::Sequence * sequence = modelStore()->modelForRecord(record);
   Context * context = App::app()->localContext();
-  Ion::Storage::Record::ErrorStatus error = firstInitialCondition? sequence->setFirstInitialConditionContent(text, context) : sequence->setSecondInitialConditionContent(text, context);
+  Ion::Storage::Record::ErrorStatus error;
+  switch (sequenceDefinitionForRow(selectedRow())) {
+    case k_sequenceDefinition:
+      error = sequence->setContent(text, context);
+      break;
+    case k_firstInitialCondition:
+      error = sequence->setFirstInitialConditionContent(text, context);
+      break;
+    default:
+      error = sequence->setSecondInitialConditionContent(text, context);
+  }
   didChangeModelsList();
-  return (error == Ion::Storage::Record::ErrorStatus::None);
+  return error == Ion::Storage::Record::ErrorStatus::None;
+}
+
+void ListController::getTextForSelectedRecord(char * text, size_t size) {
+  Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+  Shared::Sequence * sequence = modelStore()->modelForRecord(record);
+  switch (sequenceDefinitionForRow(selectedRow())) {
+    case k_sequenceDefinition:
+      sequence->text(text, size);
+      break;
+    case k_firstInitialCondition:
+      sequence->firstInitialConditionText(text, size);
+      break;
+    default:
+      sequence->secondInitialConditionText(text, size);
+      break;
+  }
 }
 
 HighlightCell * ListController::titleCells(int index) {
@@ -418,10 +388,6 @@ KDCoordinate ListController::baseline(int j) {
 
 void ListController::addModel() {
   Container::activeApp()->displayModalViewController(&m_typeStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
-}
-
-void ListController::editExpression(Ion::Events::Event event) {
-  editExpression(sequenceDefinitionForRow(selectedRow()), event);
 }
 
 bool ListController::removeModelRow(Ion::Storage::Record record) {

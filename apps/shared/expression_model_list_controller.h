@@ -15,6 +15,7 @@ public:
   ExpressionModelListController(Escher::Responder * parentResponder, I18n::Message text);
   virtual void editExpression(Ion::Events::Event event);
   virtual bool editSelectedRecordWithText(const char * text);
+  virtual void getTextForSelectedRecord(char * text, size_t size);
   bool handleEventOnExpression(Ion::Events::Event event, bool inTemplateMenu = false);
   bool handleEventOnExpressionInTemplateMenu(Ion::Events::Event event) { return handleEventOnExpression(event, true); }
 protected:

@@ -114,11 +114,9 @@ bool ExpressionModelListController::addEmptyModel() {
 
 void ExpressionModelListController::editExpression(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-    ExpiringPointer<ExpressionModelHandle> model = modelStore()->modelForRecord(record);
     constexpr size_t initialTextContentMaxSize = Constant::MaxSerializedExpressionSize;
     char initialTextContent[initialTextContentMaxSize];
-    model->text(initialTextContent, initialTextContentMaxSize);
+    getTextForSelectedRecord(initialTextContent, initialTextContentMaxSize);
     inputController()->setTextBody(initialTextContent);
   }
   inputController()->edit(event, this,
@@ -141,6 +139,11 @@ bool ExpressionModelListController::editSelectedRecordWithText(const char * text
   bool result = (model->setContent(text, Container::activeApp()->localContext()) == Ion::Storage::Record::ErrorStatus::None);
   didChangeModelsList();
   return result;
+}
+
+void ExpressionModelListController::getTextForSelectedRecord(char * text, size_t size) {
+  Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
+  modelStore()->modelForRecord(record)->text(text, size);
 }
 
 bool ExpressionModelListController::removeModelRow(Ion::Storage::Record record) {

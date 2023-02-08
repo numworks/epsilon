@@ -164,11 +164,10 @@ void GraphController::reloadBannerView() {
 }
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
-  const int selectedSeries = selectedSeriesIndex();
   double x;
   double y;
   if (*m_selectedDotIndex >= 0) {
-    int dotSelected = m_store->nextDot(selectedSeries, direction, *m_selectedDotIndex, !curveIsScatterPlot(*m_selectedCurveIndex));
+    int dotSelected = m_store->nextDot(selectedSeriesIndex(), direction, *m_selectedDotIndex, !curveIsScatterPlot(*m_selectedCurveIndex));
     if (dotSelected >= 0) {
       x = dotAbscissa(*m_selectedCurveIndex, dotSelected);
       y = dotOrdinate(*m_selectedCurveIndex, dotSelected);
@@ -179,7 +178,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   } else {
     double step = direction * scrollSpeed * static_cast<double>(interactiveCurveViewRange()->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
     x = m_cursor->x() + step;
-    y = m_store->yValueForXValue(selectedSeries, x, globalContext());
+    y = yValue(*m_selectedCurveIndex, x, globalContext());
   }
   m_cursor->moveTo(x, x, y);
   return true;
@@ -234,7 +233,6 @@ Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(double t) 
 }
 
 bool GraphController::moveCursorVertically(int direction) {
-  int selectedSeries = selectedSeriesIndex();
   Poincare::Context * context = globalContext();
   double x = m_cursor->x();
   double y = m_cursor->y();
@@ -277,13 +275,12 @@ bool GraphController::moveCursorVertically(int direction) {
     // Select the regression
     if (*m_selectedCurveIndex != closestRegressionCurve) {
       *m_selectedCurveIndex = closestRegressionCurve;
-      selectedSeries = selectedSeriesIndex();
       // Reload so that the selected series is on top
       m_view.reload(false, true);
     }
     *m_selectedDotIndex = -1;
     setRoundCrossCursorView();
-    double newY = m_store->yValueForXValue(selectedSeries, x, context);
+    double newY = yValue(*m_selectedCurveIndex, x, context);
     m_cursor->moveTo(x, x, newY);
     setAbscissaInputAsFirstResponder();
     return true;

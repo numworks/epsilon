@@ -42,7 +42,7 @@ public:
   // - Color indicator
   void setColor(KDColor color) { m_functionColor = color; }
 
-private:
+protected:
   // View
   bool displayFunctionType() const { return m_messageTextView.text() != nullptr && m_messageTextView.text()[0] != 0; }
   int numberOfSubviews() const override { return 2 + displayFunctionType(); }

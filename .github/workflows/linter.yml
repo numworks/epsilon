@@ -26,4 +26,4 @@ jobs:
         run: build/setup.sh
 
       - name: Lint files changed by PR
-        run: make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS="--dry-run --Werror --verbose"
+        run: make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS="--dry-run --Werror"

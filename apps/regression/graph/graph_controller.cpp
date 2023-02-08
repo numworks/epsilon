@@ -259,7 +259,7 @@ bool GraphController::moveCursorVertically(int direction) {
       validDot = false;
     } else {
       // Compare the y distances
-      double regressionDistanceY = std::fabs(m_store->yValueForXValue(closestRegressionCurve, x, context) - y);
+      double regressionDistanceY = std::fabs(yValue(closestRegressionCurve, x, context) - y);
       double dotDistanceY = std::fabs(dotOrdinate(closesDotCurve, dotSelected) - y);
       if (regressionDistanceY <= dotDistanceY) {
         validDot = false;
@@ -275,8 +275,8 @@ bool GraphController::moveCursorVertically(int direction) {
 
   if (validRegression) {
     // Select the regression
-    if (selectedSeries != closestRegressionCurve) {
-      *m_selectedCurveIndex = curveIndexFromSeriesIndex(closestRegressionCurve);
+    if (*m_selectedCurveIndex != closestRegressionCurve) {
+      *m_selectedCurveIndex = closestRegressionCurve;
       selectedSeries = selectedSeriesIndex();
       // Reload so that the selected series is on top
       m_view.reload(false, true);
@@ -310,8 +310,7 @@ bool GraphController::moveCursorVertically(int direction) {
 }
 
 Coordinate2D<double> GraphController::xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex) const {
-  int seriesIndex = seriesIndexFromCurveIndex(curveIndex);
-  return Coordinate2D<double>(t, m_store->yValueForXValue(seriesIndex, t, context));
+  return Coordinate2D<double>(t, yValue(curveIndex, t, context));
 }
 
 bool GraphController::suitableYValue(double y) const {

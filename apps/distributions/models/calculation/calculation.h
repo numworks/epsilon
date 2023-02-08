@@ -34,6 +34,7 @@ public:
   virtual double upperBound() const;
 protected:
   virtual void compute(int indexKnownElement) = 0;
+  virtual void computeUnknownDistributionParameter() { assert(false); }
   Distribution * m_distribution;
 };
 

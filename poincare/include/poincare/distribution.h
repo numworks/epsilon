@@ -70,6 +70,8 @@ public:
    * The result of the verification is *result. */
   virtual bool expressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const = 0;
 
+  virtual double evaluateParameterForProbabilityAndBound(int parameterIndex, const double * parameters, double probability, double bound, bool isUpperBound) const { assert(false); return 0.0; }
+
 protected:
   constexpr Distribution() {}
   /* This method looks for bounds such that:

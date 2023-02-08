@@ -79,6 +79,21 @@ T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(
   return static_cast<T>(M_SQRT2) * erfInv((static_cast<T>(2.0)) * probability - static_cast<T>(1.0));
 }
 
+double NormalDistribution::evaluateParameterForProbabilityAndBound(int parameterIndex, const double * parameters, double probability, double bound, bool isUpperBound) const {
+  assert(probability >= 0.0 && probability <= 1.0);
+  if (!isUpperBound) {
+    probability = 1.0 - probability;
+  }
+  /* If X following (mu, sigma) is inferior to bound, then Z following (0, 1)
+   * is inferior to (bound - mu)/sigma. */
+  double abscissaForStandardDistribution = StandardNormalCumulativeDistributiveInverseForProbability(probability);
+  if (parameterIndex == 0) { // mu
+    return bound - parameters[1] * abscissaForStandardDistribution;
+  } else { // sigma
+    return (bound - parameters[0]) / abscissaForStandardDistribution;
+  }
+}
+
 template float NormalDistribution::EvaluateAtAbscissa<float>(float, float, float);
 template double NormalDistribution::EvaluateAtAbscissa<double>(double, double, double);
 template float NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, float, float);

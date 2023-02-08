@@ -27,6 +27,10 @@ void LeftIntegralCalculation::setParameterAtIndex(double f, int index) {
   if (index == 1) {
     m_result = f;
   }
+  if (!m_distribution->allParametersAreInitialized()) {
+    computeUnknownDistributionParameter();
+    return;
+  }
   compute(index);
 }
 
@@ -58,6 +62,10 @@ void LeftIntegralCalculation::compute(int indexKnownElement) {
       m_result = NAN;
     }
   }
+}
+
+void LeftIntegralCalculation::computeUnknownDistributionParameter() {
+  m_distribution->computeUnknownParameterForProbabilityAndBound(m_result, m_upperBound, true);
 }
 
 }

@@ -40,6 +40,7 @@ public:
   virtual double evaluateAtDiscreteAbscissa(int k) const;
   constexpr static int k_maxNumberOfOperations = 1000000;
   virtual double defaultComputedValue() const { return 0.0f; }
+  void computeUnknownParameterForProbabilityAndBound(double probability, double bound, bool isUpperBound);
 
   Calculation * calculation() { return m_calculationBuffer.calculation(); }
 

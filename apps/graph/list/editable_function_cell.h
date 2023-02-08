@@ -7,20 +7,18 @@
 
 namespace Graph {
 
-class EditableFunctionCell : public FunctionCell {
+class EditableFunctionCell : public AbstractFunctionCell {
 public:
-  EditableFunctionCell(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandler, Escher::LayoutFieldDelegate * layoutFieldDelegate) : m_expressionField(parentResponder, inputEventHandler, layoutFieldDelegate) {
-    // We set a dummy message for the height computation
-    m_messageTextView.setMessage(I18n::Message::FunctionApp);
-  }
+  EditableFunctionCell(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandler, Escher::LayoutFieldDelegate * layoutFieldDelegate);
   Escher::ExpressionField * expressionField() { return &m_expressionField; }
-  KDSize minimalSizeForOptimalDisplay() const override;
 
 private:
   constexpr static KDCoordinate k_expressionMargin = 5;
   int numberOfSubviews() const override { return 2; }
-  Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
+  const Escher::ExpressionView * expressionView() const override { return m_expressionField.expressionView(); }
+  Escher::ExpressionView * expressionView() override { return m_expressionField.expressionView(); }
+  Escher::View * mainView() override { return &m_expressionField; }
   Escher::ExpressionField m_expressionField;
 };
 

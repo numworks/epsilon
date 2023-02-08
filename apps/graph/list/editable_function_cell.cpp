@@ -5,14 +5,11 @@ using namespace Escher;
 
 namespace Graph {
 
-View * EditableFunctionCell::subviewAtIndex(int index) {
-  switch (index) {
-    case 0:
-      return &m_expressionField;
-    default:
-      assert(index == 1);
-      return &m_ellipsisView;
-  }
+EditableFunctionCell::EditableFunctionCell(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandler, Escher::LayoutFieldDelegate * layoutFieldDelegate) :
+  AbstractFunctionCell(),
+  m_expressionField(parentResponder, inputEventHandler, layoutFieldDelegate) {
+  // We set a dummy message for the height computation
+  m_messageTextView.setMessage(I18n::Message::FunctionApp);
 }
 
 void EditableFunctionCell::layoutSubviews(bool force) {
@@ -25,22 +22,6 @@ void EditableFunctionCell::layoutSubviews(bool force) {
   m_expressionField.setFrame(
     KDRect(leftMargin, 0, availableWidth, bounds().height()), force);
   m_messageTextView.setFrame(KDRectZero, force);
-}
-
-KDSize EditableFunctionCell::minimalSizeForOptimalDisplay() const {
-  KDCoordinate expressionHeight =
-      m_expressionField.minimalSizeForOptimalDisplay().height();
-  KDCoordinate minimalHeight = k_margin + expressionHeight + k_margin;
-    m_expressionField.minimalSizeForOptimalDisplay().height();
-  KDCoordinate messageHeight = m_messageTextView.minimalSizeForOptimalDisplay().height();
-  minimalHeight += k_messageMargin + messageHeight;
-  KDCoordinate parameterHeight =
-    m_ellipsisView.minimalSizeForOptimalDisplay().height();
-  if (parameterHeight > minimalHeight) {
-    // Leave enough height for parameter's menu elipsis.
-    minimalHeight = parameterHeight;
-  }
-  return KDSize(bounds().width(), minimalHeight);
 }
 
 }

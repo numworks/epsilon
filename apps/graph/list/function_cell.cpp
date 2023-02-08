@@ -24,7 +24,7 @@ namespace Graph {
   * - If inactive, both color indicator and all texts are set to gray
 */
 
-FunctionCell::FunctionCell() :
+AbstractFunctionCell::AbstractFunctionCell() :
     EvenOddCell(),
     m_messageTextView(KDFont::Size::Small,
                       (I18n::Message)0,
@@ -37,7 +37,7 @@ FunctionCell::FunctionCell() :
     m_parameterSelected(false) {
 }
 
-void FunctionCell::drawRect(KDContext * ctx, KDRect rect) const {
+void AbstractFunctionCell::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the color indicator
   ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, bounds().height()),
                 m_functionColor);
@@ -54,9 +54,9 @@ void FunctionCell::drawRect(KDContext * ctx, KDRect rect) const {
 
 }
 
-KDSize FunctionCell::minimalSizeForOptimalDisplay() const {
+KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
   KDCoordinate expressionHeight =
-      m_expressionView.minimalSizeForOptimalDisplay().height();
+      expressionView()->minimalSizeForOptimalDisplay().height();
   KDCoordinate minimalHeight = k_margin + expressionHeight + k_margin;
   if (displayFunctionType()) {
     KDCoordinate messageHeight = m_messageTextView.minimalSizeForOptimalDisplay().height();
@@ -71,30 +71,30 @@ KDSize FunctionCell::minimalSizeForOptimalDisplay() const {
   return KDSize(bounds().width(), minimalHeight);
 }
 
-void FunctionCell::updateSubviewsBackgroundAfterChangingState() {
+void AbstractFunctionCell::updateSubviewsBackgroundAfterChangingState() {
   KDColor defaultColor = m_even ? KDColorWhite : Palette::WallScreen;
   // If not highlighted, selectedColor is defaultColor
   KDColor selectedColor = backgroundColor();
   m_ellipsisBackground = m_parameterSelected ? selectedColor : defaultColor;
   m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
   // Expression View and Message Text View share the same background
-  m_expressionView.setBackgroundColor(m_expressionBackground);
+  expressionView()->setBackgroundColor(m_expressionBackground);
   if (displayFunctionType()) {
     m_messageTextView.setBackgroundColor(m_expressionBackground);
   }
 }
 
-void FunctionCell::setParameterSelected(bool selected) {
+void AbstractFunctionCell::setParameterSelected(bool selected) {
   if (selected != m_parameterSelected) {
     m_parameterSelected = selected;
     updateSubviewsBackgroundAfterChangingState();
   }
 }
 
-View * FunctionCell::subviewAtIndex(int index) {
+View * AbstractFunctionCell::subviewAtIndex(int index) {
   switch (index) {
     case 0:
-      return &m_expressionView;
+      return mainView();
     case 1:
       return &m_ellipsisView;
     default:
@@ -103,16 +103,16 @@ View * FunctionCell::subviewAtIndex(int index) {
   }
 }
 
-void FunctionCell::layoutSubviews(bool force) {
+void AbstractFunctionCell::layoutSubviews(bool force) {
   m_ellipsisView.setFrame(KDRect(bounds().width() - k_parametersColumnWidth, 0,
                                  k_parametersColumnWidth, bounds().height()),
                           force);
   KDCoordinate leftMargin = k_colorIndicatorThickness + k_margin;
   KDCoordinate rightMargin = k_margin + k_parametersColumnWidth;
   KDCoordinate expressionHeight =
-      m_expressionView.minimalSizeForOptimalDisplay().height();
+      mainView()->minimalSizeForOptimalDisplay().height();
   KDCoordinate availableWidth = bounds().width() - leftMargin - rightMargin;
-  m_expressionView.setFrame(
+  mainView()->setFrame(
       KDRect(leftMargin, k_margin, availableWidth, expressionHeight), force);
   if (displayFunctionType()) {
     KDCoordinate messageHeight = m_messageTextView.minimalSizeForOptimalDisplay().height();

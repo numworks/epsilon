@@ -78,7 +78,6 @@ void AbstractFunctionCell::updateSubviewsBackgroundAfterChangingState() {
   m_ellipsisBackground = m_parameterSelected ? selectedColor : defaultColor;
   m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
   // Expression View and Message Text View share the same background
-  expressionView()->setBackgroundColor(m_expressionBackground);
   if (displayFunctionType()) {
     m_messageTextView.setBackgroundColor(m_expressionBackground);
   }
@@ -121,6 +120,11 @@ void AbstractFunctionCell::layoutSubviews(bool force) {
                availableWidth, messageHeight),
         force);
   }
+}
+
+void FunctionCell::updateSubviewsBackgroundAfterChangingState() {
+  AbstractFunctionCell::updateSubviewsBackgroundAfterChangingState();
+  expressionView()->setBackgroundColor(m_expressionBackground);
 }
 
 }

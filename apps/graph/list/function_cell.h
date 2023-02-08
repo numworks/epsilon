@@ -69,6 +69,7 @@ protected:
 
 class FunctionCell : public AbstractFunctionCell {
 private:
+  void updateSubviewsBackgroundAfterChangingState() override;
   const Escher::ExpressionView * expressionView() const override { return &m_expressionView; }
   Escher::ExpressionView * expressionView() override { return &m_expressionView; }
   Escher::ExpressionView * mainView() override { return &m_expressionView; }

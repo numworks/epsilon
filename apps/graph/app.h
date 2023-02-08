@@ -50,7 +50,6 @@ public:
   Shared::ContinuousFunctionStore * functionStore() const override { return snapshot()->functionStore(); }
   Shared::Interval * intervalForSymbolType(Shared::ContinuousFunctionProperties::SymbolType symbolType) { return snapshot()->intervalForSymbolType(symbolType); }
   ValuesController * valuesController() override { return &m_valuesController; }
-  Escher::InputViewController * inputViewController() override { return &m_inputViewController; }
   ListController * listController() { return &m_listController; }
   GraphController * graphController() { return &m_graphController; }
 

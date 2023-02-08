@@ -41,7 +41,6 @@ public:
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 
   EquationStore * equationStore() { return snapshot()->equationStore(); }
-  Escher::InputViewController * inputViewController() { return &m_inputViewController; }
   Escher::ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }
   Escher::ViewController * intervalController() { return &m_intervalController; }
   SolutionsController * solutionsController() { return &m_solutionsController; }
@@ -63,7 +62,6 @@ private:
   ListController m_listController;
   Escher::ButtonRowController m_listFooter;
   Escher::StackViewController m_stackViewController;
-  Escher::InputViewController m_inputViewController;
   SolverContext m_context;
 };
 

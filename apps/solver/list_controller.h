@@ -52,7 +52,6 @@ private:
   void reloadBrace();
   EquationStore * modelStore() const override;
   Escher::StackViewController * stackController() const;
-  Escher::InputViewController * inputController() override;
 
   // ListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;

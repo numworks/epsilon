@@ -35,7 +35,6 @@ protected:
   // ViewController
   virtual Escher::SelectableTableView * selectableTableView() = 0;
   virtual ExpressionModelStore * modelStore() const = 0;
-  virtual Escher::InputViewController * inputController() = 0;
   Escher::EvenOddMessageTextCell m_addNewModel;
   // Memoization
   virtual void resetSizesMemoization() {}

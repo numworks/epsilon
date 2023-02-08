@@ -242,8 +242,9 @@ bool GraphController::moveCursorVertically(int direction) {
   int closestRegressionCurve = closestCurveIndexVertically(direction > 0, selectedRegressionCurve, context);
 
   // Find the closest dot
-  int closesDotCurve = -1;
-  int dotSelected = closestVerticalDot(direction, x, y, *m_selectedCurveIndex, *m_selectedDotIndex, &closesDotCurve, context);
+  int closesDotSeries = -1;
+  int dotSelected = m_store->closestVerticalDot(direction, x, y, selectedSeriesIndex(), *m_selectedDotIndex, &closesDotSeries, context);
+  int closesDotCurve = closesDotSeries == -1 ? -1 : curveIndexFromSeriesIndex(closesDotSeries);
 
   // Choose between selecting the regression or the dot
   bool validRegression = closestRegressionCurve >= 0;
@@ -340,43 +341,6 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   }
   Range2D result(computeX ? xRange : *originalRange.x(), computeY ? yRange : *originalRange.y());
   return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
-}
-
-int GraphController::closestVerticalDot(int direction, double x, double y, int currentCurve, int currentDot, int * nextCurve, Poincare::Context * globalContext) {
-  double nextX = INFINITY;
-  double nextY = INFINITY;
-  int nextDot = -1;
-  const int nbOfCurves = numberOfCurves();
-  for (int curve = 0; curve < nbOfCurves; curve++) {
-    if (currentDot >= 0 && currentCurve == curve) {
-      /* If the currentDot is valid, the next curve
-       * should not be the current curve */
-      continue;
-    }
-    const int numberOfDots = numberOfDotsOfCurve(curve);
-    float xMin = App::app()->graphRange()->xMin();
-    float xMax = App::app()->graphRange()->xMax();
-    bool displayMean = !curveIsScatterPlot(curve);
-    for (int i = 0; i < numberOfDots + displayMean; i++) {
-      double currentX = dotAbscissa(curve, i);
-      double currentY = dotOrdinate(curve, i);
-      if (xMin <= currentX && currentX <= xMax // The next dot is within the window abscissa bounds
-          && (std::fabs(currentX - x) <= std::fabs(nextX - x)) // The next dot is the closest to x in abscissa
-          && ((currentY > y && direction > 0) // The next dot is above/under y
-            || (currentY < y && direction < 0)
-            || (currentY == y
-              && ((currentDot < 0 && direction > 0)|| ((direction < 0) == (curve > currentCurve)))))
-          && (nextX != currentX // Edge case: if 2 dots have the same abscissa but different ordinates
-            || ((currentY <= nextY) == (direction > 0))))
-      {
-        nextX = currentX;
-        nextY = currentY;
-        nextDot = i;
-        *nextCurve = curve;
-      }
-    }
-  }
-  return nextDot;
 }
 
 double GraphController::dotCoordinate(int curveIndex, int dotIndex, int coordinate) const {

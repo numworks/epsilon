@@ -13,11 +13,11 @@ public:
   using CacheReference::CacheReference;
   // TODO : Delete this method and adapt tests ?
   static Expression Parse(const char * text);
-  static Expression Parse(const Layout * layout);
   static Expression CreateBasicReduction(void * treeAddress);
+  Layout toLayout() const;
   float approximate(float x) const;
 private:
-  static EditionReference ParseFromLayoutInEditionPool(Node node);
+  static EditionReference EditionPoolExpressionToLayout(Node node);
 };
 
 static_assert(sizeof(Expression) == sizeof(CacheReference));

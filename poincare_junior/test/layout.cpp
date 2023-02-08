@@ -12,7 +12,7 @@ QUIZ_CASE(pcj_layout_shared_pointer) {
 
   // l is created with e.m_id different from 1
   assert(e.id() != 1);
-  Layout l = Layout::ToLayout(&e);
+  Layout l = e.toLayout();
 
   // Forcing e.m_id change
   cachePool->needFreeBlocks(1);
@@ -28,6 +28,6 @@ QUIZ_CASE(pcj_layout_shared_pointer) {
 QUIZ_CASE(pcj_layout_creation) {
   Layout l1 = Layout::Parse("-1+2*3");
   Expression e1 = Expression::Parse("-1+2*3");
-  Layout l2 = Layout::ToLayout(&e1);
+  Layout l2 = e1.toLayout();
   assert(l1.treeIsIdenticalTo(l2));
 }

@@ -5,7 +5,7 @@
 
 namespace PoincareJ {
 
-EditionReference Layout::ParseFromTextInEditionPool(const char * text) {
+EditionReference Layout::EditionPoolTextToLayout(const char * text) {
   int n = std::strlen(text);
   EditionReference ref = EditionReference::Push<BlockType::RackLayout>(n);
   for (int i = 0; i < n; i++) {
@@ -14,15 +14,15 @@ EditionReference Layout::ParseFromTextInEditionPool(const char * text) {
   return ref;
 }
 
-EditionReference Layout::ParseFromExpressionInEditionPool(Node node) {
-  // node == -1+2*3
-  EditionReference ref = EditionReference::Push<BlockType::RackLayout>(6);
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('-');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('+');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('2');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('*');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('3');
+EditionReference Layout::EditionPoolLayoutToExpression(Node node) {
+  // node == (1-2)/3/4
+  EditionReference ref = EditionReference::Push<BlockType::Division>();
+  EditionReference::Push<BlockType::Division>();
+  EditionReference::Push<BlockType::Subtraction>();
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
   // Remove node from EditionReference
   EditionReference nodeRef(node);
   nodeRef.removeTree();
@@ -30,15 +30,15 @@ EditionReference Layout::ParseFromExpressionInEditionPool(Node node) {
 }
 
 Layout Layout::Parse(const char * textInput) {
-  return Layout([](const char * text){
-      ParseFromTextInEditionPool(text);
+  return Layout([](const char * text) {
+      EditionPoolTextToLayout(text);
     }, textInput);
 }
 
-Layout Layout::ToLayout(const Expression * expressionInput) {
-  return Layout([](Node node){
-      ParseFromExpressionInEditionPool(node);
-    }, expressionInput);
+Expression Layout::toExpression() const {
+  return Expression([](Node node) {
+      EditionPoolLayoutToExpression(node);
+    }, this);
 }
 
 void Layout::toText(char * buffer, size_t bufferSize) const {

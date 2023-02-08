@@ -13,11 +13,11 @@ friend class Expression;
 public:
   using CacheReference::CacheReference;
   static Layout Parse(const char * text);
-  static Layout ToLayout(const Expression * expression);
+  Expression toExpression() const;
   void toText(char * buffer, size_t bufferSize) const;
 private:
-  static EditionReference ParseFromTextInEditionPool(const char * text);
-  static EditionReference ParseFromExpressionInEditionPool(Node node);
+  static EditionReference EditionPoolTextToLayout(const char * text);
+  static EditionReference EditionPoolLayoutToExpression(Node node);
 };
 
 static_assert(sizeof(Layout) == sizeof(CacheReference));

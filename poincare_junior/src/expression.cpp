@@ -7,15 +7,15 @@
 
 namespace PoincareJ {
 
-EditionReference Expression::ParseFromLayoutInEditionPool(Node node) {
-  // node == (1-2)/3/4
-  EditionReference ref = EditionReference::Push<BlockType::Division>();
-  EditionReference::Push<BlockType::Division>();
-  EditionReference::Push<BlockType::Subtraction>();
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+EditionReference Expression::EditionPoolExpressionToLayout(Node node) {
+  // node == -1+2*3
+  EditionReference ref = EditionReference::Push<BlockType::RackLayout>(6);
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('-');
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1');
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('+');
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('2');
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('*');
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('3');
   // Remove node from EditionReference
   EditionReference nodeRef(node);
   nodeRef.removeTree();
@@ -23,15 +23,9 @@ EditionReference Expression::ParseFromLayoutInEditionPool(Node node) {
 }
 
 Expression Expression::Parse(const char * textInput) {
-  return Expression([](const char * text){
-      ParseFromLayoutInEditionPool(Layout::ParseFromTextInEditionPool(text));
+  return Expression([](const char * text) {
+      Layout::EditionPoolLayoutToExpression(Layout::EditionPoolTextToLayout(text));
     }, textInput);
-}
-
-Expression Expression::Parse(const Layout * layoutInput) {
-  return Expression([](Node node){
-      ParseFromLayoutInEditionPool(node);
-    }, layoutInput);
 }
 
 Expression Expression::CreateBasicReduction(void * expressionAddress) {
@@ -42,6 +36,12 @@ Expression Expression::CreateBasicReduction(void * expressionAddress) {
         });
     },
     expressionAddress);
+}
+
+Layout Expression::toLayout() const {
+  return Layout([](Node node) {
+      EditionPoolExpressionToLayout(node);
+    }, this);
 }
 
 float Expression::approximate(float x) const {

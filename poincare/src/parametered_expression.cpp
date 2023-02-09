@@ -67,11 +67,10 @@ Evaluation<T> ParameteredExpressionNode::approximateFirstChildWithArgument(T x, 
   return approximateExpressionWithArgument(childAtIndex(0), x, approximationContext);
 }
 
-bool ParameteredExpression::ParameterText(const char * text, const char * * parameterText, size_t * parameterLength) {
+bool ParameteredExpression::ParameterText(UnicodeDecoder & varDecoder, size_t * parameterStart, size_t * parameterLength) {
   /* Find the beginning of the parameter. Count parentheses to handle the
    * presence of functions with several parameters in the parametered
    * expression. */
-  UTF8Decoder varDecoder(text);
   CodePoint c = UCodePointUnknown;
   bool variableFound = false;
   int cursorLevel = 0;
@@ -104,12 +103,12 @@ bool ParameteredExpression::ParameterText(const char * text, const char * * para
   while (c != UCodePointNull && (c == ' ' || c == UCodePointLeftSystemParenthesis)) {
     c = varDecoder.nextCodePoint();
   }
-  const char * variableTextStart = varDecoder.previousGlyphPosition();
+  size_t variableTextStart = varDecoder.previousGlyphPosition();
   c = varDecoder.nextCodePoint();
   while (c != UCodePointNull && (c.isDecimalDigit() || c.isLatinLetter() || c == '_')) {
     c = varDecoder.nextCodePoint();
   }
-  const char * variableTextEnd = varDecoder.previousGlyphPosition();
+  size_t variableTextEnd = varDecoder.previousGlyphPosition();
   c = varDecoder.nextCodePoint();
   /* Skip whitespace at the end of the parameter name. */
   while (c != UCodePointNull && (c == ' ' || c == UCodePointRightSystemParenthesis)) {
@@ -120,11 +119,16 @@ bool ParameteredExpression::ParameterText(const char * text, const char * * para
     size_t length = variableTextEnd - variableTextStart;
     if (length > 0) {
       *parameterLength = length;
-      *parameterText = variableTextStart;
+      *parameterStart = variableTextStart;
       return true;
     }
   }
   return false;
+}
+
+bool ParameteredExpression::ParameterText(const char * text, const char * * parameterText, size_t * parameterLength) {
+  UTF8Decoder decoder(text);
+  return ParameterText(decoder, reinterpret_cast<size_t *>(parameterText), parameterLength);
 }
 
 Expression ParameteredExpression::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {

@@ -2,6 +2,7 @@
 #define POINCARE_PARAMETERED_EXPRESSION_H
 
 #include <poincare/expression.h>
+#include <ion/unicode/utf8_decoder.h>
 
 namespace Poincare {
 
@@ -36,6 +37,7 @@ public:
   constexpr static int ParameteredChildIndex() { return 0; }
   constexpr static int ParameterChildIndex() { return 1; }
 
+  static bool ParameterText(UnicodeDecoder & varDecoder, size_t * parameterStart, size_t * parameterLength);
   static bool ParameterText(const char * text, const char * * parameterText, size_t * parameterLength);
 
   // Expression

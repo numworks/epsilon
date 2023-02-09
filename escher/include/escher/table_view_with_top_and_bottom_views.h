@@ -34,7 +34,7 @@ public:
 private:
   constexpr static KDCoordinate k_verticalMargin = Metric::TableSeparatorThickness;
 
-  KDRect tableFrame(KDCoordinate * yOffset) const;
+  KDRect setTableFrame(KDCoordinate * yOffset, bool force);
 
   ScrollViewVerticalBar m_scrollBar;
   TableViewDataSource * m_tableDataSource;

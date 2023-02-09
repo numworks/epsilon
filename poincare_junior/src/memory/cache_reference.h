@@ -35,7 +35,7 @@ typedef void (*ActionWithContext)(void * subAction, const void * data);
 
 class CacheReference {
 public:
-  CacheReference() : m_id(-1) {}
+  CacheReference() : m_initializer(nullptr), m_subInitializer(nullptr), m_id(-1) {}
   typedef void (*Initializer)();
   CacheReference(Initializer initializer);
 
@@ -52,6 +52,7 @@ public:
 
   void dumpAt(void * address) const;
   size_t treeSize() const;
+  bool isUninitialized() const { return m_initializer == nullptr; }
   bool treeIsIdenticalTo(const CacheReference &other) const;
 #if POINCARE_MEMORY_TREE_LOG
   void log();

@@ -113,7 +113,8 @@ public:
     DeleteAndKeepChild,
     MoveLeft,
     FractionDenominatorDeletion,
-    BinomialCoefficientMoveFromKtoN
+    BinomialCoefficientMoveFromKtoN,
+    GridLayoutMoveToUpperRow
   };
   virtual DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const;
   static DeletionMethod StandardDeletionMethodForLayoutContainingArgument(int childIndex, int argumentIndex);

@@ -28,12 +28,17 @@ int GridLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::Vertic
 }
 
 LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
-  // TODO
-  if (childIndex == k_outsideIndex) {
+  if (childIndex == k_outsideIndex || !childIsLeftOfGrid(childIndex)) {
     return DeletionMethod::MoveLeft;
   }
-  // TODO
-  return DeletionMethod::DeleteLayout;
+  assert(childIsLeftOfGrid(childIndex));
+  assert(isEditing());
+  if (rowAtChildIndex(childIndex) == 0) {
+    /* If only one child is filled, delete the grid and keep the child.
+     * Else just leave the grid. */
+    return minimalNumberOfChildrenWhileEditing() == numberOfChildren() ? DeletionMethod::DeleteAndKeepChild : DeletionMethod::MoveLeft;
+  }
+  return DeletionMethod::GridLayoutMoveToUpperRow;
 }
 
 void GridLayoutNode::willFillEmptyChildAtIndex(int childIndex) {

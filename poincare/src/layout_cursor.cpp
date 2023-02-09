@@ -560,11 +560,23 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
     return;
   }
 
-  if (deletionMethod == LayoutNode::DeletionMethod::BinomialCoefficientMoveFromKtoN) {
+  if (deletionMethod == LayoutNode::DeletionMethod::BinomialCoefficientMoveFromKtoN || deletionMethod == LayoutNode::DeletionMethod::GridLayoutMoveToUpperRow) {
     assert(deletionAppliedToParent);
-    assert(!m_layout.parent().isUninitialized() && m_layout.parent().type() == LayoutNode::Type::BinomialCoefficientLayout);
     LayoutCursor previousCursor = *this;
-    m_layout = m_layout.parent().childAtIndex(BinomialCoefficientLayoutNode::k_nLayoutIndex);
+    int newIndex = -1;
+    if (deletionMethod == LayoutNode::DeletionMethod::BinomialCoefficientMoveFromKtoN) {
+      assert(!m_layout.parent().isUninitialized() && m_layout.parent().type() == LayoutNode::Type::BinomialCoefficientLayout);
+      newIndex = BinomialCoefficientLayoutNode::k_nLayoutIndex;
+    } else {
+      assert(deletionMethod == LayoutNode::DeletionMethod::GridLayoutMoveToUpperRow);
+      assert(!m_layout.parent().isUninitialized() && GridLayoutNode::IsGridLayoutType(m_layout.parent().type()));
+      GridLayoutNode * gridNode = static_cast<GridLayoutNode *>(m_layout.parent().node());
+      int currentIndex = m_layout.parent().indexOfChild(m_layout);
+      int currentRow = gridNode->rowAtChildIndex(currentIndex);
+      assert(currentRow > 0);
+      newIndex = gridNode->indexAtRowColumn(currentRow - 1, gridNode->numberOfColumns() - 1);
+    }
+    m_layout = m_layout.parent().childAtIndex(newIndex);
     m_position = rightMostPosition();
     didEnterCurrentPosition(previousCursor);
     return;

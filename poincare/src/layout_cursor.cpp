@@ -93,11 +93,22 @@ bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step, bool se
   return true;
 }
 
+static bool IsEmptyChildOfGridLayout(Layout l) {
+  Layout parent = l.parent();
+  return l.isEmpty() && !parent.isUninitialized() && GridLayoutNode::IsGridLayoutType(parent.type());
+}
+
 /* Layout modification */
 void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool forceRight, bool forceLeft) {
   assert(!isUninitialized() && isValid());
   deleteAndResetSelection();
+
+  if (IsEmptyChildOfGridLayout(m_layout)) {
+    static_cast<GridLayoutNode *>(m_layout.parent().node())->willFillEmptyChildAtIndex(m_layout.parent().indexOfChild(m_layout));
+  }
+
   int indexOfChildToPointTo = (forceRight || forceLeft) ? LayoutNode::k_outsideIndex : layout.indexOfChildToPointToWhenInserting();
+
   LayoutCursor previousCursor = *this;
   LayoutCursor newCursor;
   if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
@@ -235,9 +246,10 @@ void LayoutCursor::deleteAndResetSelection() {
     m_layout.replaceWithInPlace(HorizontalLayout::Builder());
   }
   m_position = selectionLeftBound;
-  invalidateSizesAndPositions();
   stopSelecting();
   didEnterCurrentPosition();
+  removeEmptyColumnAndRowOfGridParentIfNeeded();
+  invalidateSizesAndPositions();
 }
 
 bool LayoutCursor::didEnterCurrentPosition(LayoutCursor previousPosition) {
@@ -569,7 +581,26 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
   assert(m_layout.isHorizontal());
   static_cast<HorizontalLayout&>(m_layout).removeChildAtIndexInPlace(m_position - 1);
   m_position--;
+  removeEmptyColumnAndRowOfGridParentIfNeeded();
   invalidateSizesAndPositions();
+}
+
+void LayoutCursor::removeEmptyColumnAndRowOfGridParentIfNeeded() {
+  if (!IsEmptyChildOfGridLayout(m_layout)) {
+    return;
+  }
+  Layout parentGrid = m_layout.parent();
+  GridLayoutNode * gridNode = static_cast<GridLayoutNode *>(parentGrid.node());
+  int currentChildIndex = parentGrid.indexOfChild(m_layout);
+  int currentRow = gridNode->rowAtChildIndex(currentChildIndex);
+  int currentColumn = gridNode->columnAtChildIndex(currentChildIndex);
+  bool changed = gridNode->removeEmptyRowOrColumnAtChildIndexIfNeeded(currentChildIndex);
+  if (changed) {
+    int newChildIndex = gridNode->indexAtRowColumn(currentRow, currentColumn);
+    assert(parentGrid.numberOfChildren() > newChildIndex);
+    *this = LayoutCursor(parentGrid.childAtIndex(newChildIndex), false);
+    didEnterCurrentPosition();
+  }
 }
 
 }

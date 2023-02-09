@@ -26,7 +26,8 @@ public:
 
   // Grid layout
   KDSize gridSize(KDFont::Size font) const { return KDSize(width(font), height(font)); }
-  void willAddSiblingToEmptyChildAtIndex(int childIndex);
+  void willFillEmptyChildAtIndex(int childIndex);
+  bool removeEmptyRowOrColumnAtChildIndexIfNeeded(int childIndex);
   virtual void startEditing() = 0;
   virtual void stopEditing() = 0;
 
@@ -57,12 +58,16 @@ public:
   }
 #endif
 
+  int rowAtChildIndex(int index) const;
+  int columnAtChildIndex(int index) const;
+  int indexAtRowColumn(int rowIndex, int columnIndex) const;
+
 protected:
   // Row and columns
   virtual bool numberOfRowsIsFixed() const { return false; }
   virtual bool numberOfColumnsIsFixed() const { return false; }
   virtual bool isEditing() const = 0;
-  bool onlyFirstChildIsNonEmpty() const;
+  int minimalNumberOfChildrenWhileEditing() const { return 4; }
   bool isColumnEmpty(int index) const { return isColumnOrRowEmpty(true, index); }
   bool isRowEmpty(int index) const { return isColumnOrRowEmpty(false, index); }
   void addEmptyColumn(EmptyRectangle::Color color) {
@@ -79,9 +84,6 @@ protected:
   bool childIsLeftOfGrid(int index) const;
   bool childIsTopOfGrid(int index) const;
   bool childIsBottomOfGrid(int index) const;
-  int rowAtChildIndex(int index) const;
-  int columnAtChildIndex(int index) const;
-  int indexAtRowColumn(int rowIndex, int columnIndex) const;
 
   // Sizes
   virtual KDCoordinate horizontalGridEntryMargin(KDFont::Size font) const { return k_gridEntryMargin; }

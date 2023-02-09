@@ -41,8 +41,7 @@ void TableViewWithTopAndBottomViews::layoutSubviews(bool force) {
 
   KDPoint offset = m_table->contentOffset();
   KDCoordinate yOffset = offset.y();
-  KDRect tableRect = tableFrame(&yOffset);
-  m_table->setFrame(tableRect, force);
+  KDRect tableRect = setTableFrame(&yOffset, force);
   m_table->setContentOffset(KDPoint(offset.x(), yOffset));
 
   KDCoordinate topHeight = 0;
@@ -77,7 +76,7 @@ void TableViewWithTopAndBottomViews::tableViewDidChangeSelectionAndDidScroll(Sel
     m_table->setContentOffset(KDPointZero);
   } else if (row == m_tableDataSource->numberOfRows() - 1 && m_bottomView) {
     m_table->setFrame(KDRectZero, false);
-    m_table->setContentOffset(KDPoint(0, m_table->minimalSizeForOptimalDisplay().height()));
+    m_table->setContentOffset(KDPoint(0, m_table->minimalSizeForOptimalDisplay().height() - m_bottomView->minimalSizeForOptimalDisplay().height() + k_verticalMargin - (m_topView ? m_topView->minimalSizeForOptimalDisplay().height() - k_verticalMargin: 0)));
   }
   layoutSubviews(false);
 }
@@ -88,11 +87,13 @@ void TableViewWithTopAndBottomViews::reload() {
   layoutSubviews();
 }
 
-KDRect TableViewWithTopAndBottomViews::tableFrame(KDCoordinate * yOffset) const {
+KDRect TableViewWithTopAndBottomViews::setTableFrame(KDCoordinate * yOffset, bool force) {
   assert(yOffset);
   /* This function is called after the inner table view has scrolled. We update
    * its size and offset to maintain the illusion the three view are part of a
    * seamless scroll. */
+
+  KDRect currentResult = bounds();
 
   if (*yOffset + m_table->bounds().height() <= bounds().height()) {
     /* Top of the table can fit on screen. Increase the size and set the offset
@@ -124,14 +125,13 @@ KDRect TableViewWithTopAndBottomViews::tableFrame(KDCoordinate * yOffset) const 
       m_table->setTopMargin(k_verticalMargin);
       h = std::max<KDCoordinate>(h, bounds().height() - m_topView->minimalSizeForOptimalDisplay().height() - k_verticalMargin);
     }
-    return KDRect(0, bounds().height() - h, bounds().width(), h);
+    currentResult = KDRect(0, bounds().height() - h, bounds().width(), h);
   }
-
+  /* Set frame a first time now so that minimalSizeForOptimalDisplay can
+   * be computed */
+  m_table->setFrame(currentResult, force);
   KDCoordinate fullTableHeight = m_table->minimalSizeForOptimalDisplay().height();
-  /* It is assumed that both top and bottom view cannot appear at the same
-   * time. It is the case in all current use cases. */
-  assert(fullTableHeight > bounds().height() || m_bottomView == nullptr);
-  KDCoordinate bottom = fullTableHeight - *yOffset;
+  KDCoordinate bottom = currentResult.top() + fullTableHeight - *yOffset;
 
   if (bottom <= bounds().height()) {
     /* Bottom of the table can fit on screen. Increase the size to push down
@@ -162,20 +162,22 @@ KDRect TableViewWithTopAndBottomViews::tableFrame(KDCoordinate * yOffset) const 
     if (m_bottomView) {
       m_table->setBottomMargin(k_verticalMargin);
       /* Margin has changed, recompute bottom */
-      bottom = m_table->minimalSizeForOptimalDisplay().height() - *yOffset;
-      KDCoordinate bottomViewTop = bounds().height() - m_bottomView->minimalSizeForOptimalDisplay().height() - k_verticalMargin;
+      bottom = currentResult.top() + m_table->minimalSizeForOptimalDisplay().height() - *yOffset;
+      KDCoordinate bottomViewTop = std::min(static_cast<KDCoordinate>(bounds().height() - m_bottomView->minimalSizeForOptimalDisplay().height() - k_verticalMargin), bottom);
       if (bottom < bottomViewTop) {
         *yOffset -= bottomViewTop - bottom;
         bottom = bottomViewTop;
       }
+      currentResult.setSize(KDSize(currentResult.width(), currentResult.height() - bounds().height() + bottom));
     }
-    return KDRect(0, 0, bounds().width(), bottom);
   }
-
-  /* Neither top nor bottom view is visible. */
-  m_table->setTopMargin(Metric::CommonTopMargin);
-  m_table->setBottomMargin(Metric::CommonBottomMargin);
-  return bounds();
+  if (currentResult.size() == bounds().size()) {
+    /* Neither top nor bottom view is visible. */
+    m_table->setTopMargin(Metric::CommonTopMargin);
+    m_table->setBottomMargin(Metric::CommonBottomMargin);
+  }
+  m_table->setFrame(currentResult, force);
+  return currentResult;
 }
 
 }

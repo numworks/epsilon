@@ -164,22 +164,8 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
 }
 
 void ListController::editExpression(Ion::Events::Event event) {
-  m_editedCellIndex = selectedRow();
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
-    ExpiringPointer<ContinuousFunction> model = modelStore()->modelForRecord(record);
-    constexpr size_t initialTextContentMaxSize = 2*Escher::TextField::MaxBufferSize();
-    char initialTextContent[initialTextContentMaxSize];
-    model->text(initialTextContent, initialTextContentMaxSize);
-    m_editableCell.expressionField()->setText(initialTextContent);
-  }
-  selectableTableView()->reloadData(false);
-  m_editableCell.expressionField()->setEditing(true);
-  Container::activeApp()->setFirstResponder(m_editableCell.expressionField());
+  ExpressionModelListController::editExpression(event);
   m_editableCell.setHighlighted(true);
-  if (!(event == Ion::Events::OK || event == Ion::Events::EXE)) {
-    m_editableCell.expressionField()->handleEvent(event);
-  }
 }
 
 /* Responder */

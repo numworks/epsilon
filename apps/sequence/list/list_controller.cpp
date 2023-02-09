@@ -216,20 +216,8 @@ void ListController::computeTitlesColumnWidth(bool forceMax) {
 }
 
 void ListController::editExpression(Ion::Events::Event event) {
-  m_editedCellIndex = selectedRow();
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    constexpr size_t initialTextContentMaxSize = 2*Escher::TextField::MaxBufferSize();
-    char initialTextContent[initialTextContentMaxSize];
-    getTextForSelectedRecord(initialTextContent, initialTextContentMaxSize);
-    m_editableCell.expressionField()->setText(initialTextContent);
-  }
-  selectableTableView()->reloadData(false);
-  m_editableCell.expressionField()->setEditing(true);
-  Container::activeApp()->setFirstResponder(m_editableCell.expressionField());
+  ExpressionModelListController::editExpression(event);
   m_editableCell.setHighlighted(true);
-  if (!(event == Ion::Events::OK || event == Ion::Events::EXE)) {
-    m_editableCell.expressionField()->handleEvent(event);
-  }
   // Invalidate the sequences context cache
   App::app()->localContext()->resetCache();
   resetSizesMemoization();

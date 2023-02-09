@@ -16,7 +16,7 @@ public:
   using CacheReference::CacheReference;
   static Layout Parse(const char * text);
   void toText(char * buffer, size_t bufferSize) const;
-  void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) const;
 private:
   static EditionReference EditionPoolTextToLayout(const char * text);
 };

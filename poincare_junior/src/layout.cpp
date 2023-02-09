@@ -25,7 +25,7 @@ void Layout::toText(char * buffer, size_t bufferSize) const {
   memcpy(buffer, "-1+2*3", bufferSize);
 }
 
-void Layout::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
+void Layout::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) const {
   void * context[5] = {ctx, &p, &font, &expressionColor, &backgroundColor};
   send(
     [](const Node tree, void * context) {

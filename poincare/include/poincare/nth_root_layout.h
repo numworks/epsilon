@@ -29,7 +29,6 @@ public:
   int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
   int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const override;
   DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
-  bool shouldCollapseSiblingsOnRight() const override { return true; }
   bool hasUpperLeftIndex() const override { return m_hasIndex; }
 
   // TreeNode

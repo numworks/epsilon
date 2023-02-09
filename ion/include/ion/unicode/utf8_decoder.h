@@ -6,6 +6,28 @@
 #include <string.h>
 #include <assert.h>
 
+class UnicodeDecoder {
+public:
+  UnicodeDecoder(const char * string, const char * initialPosition = nullptr, const char * stringEnd = nullptr) :
+    m_string(string),
+    m_stringEnd(stringEnd),
+    m_stringPosition(initialPosition == nullptr ? string : initialPosition)
+  {
+    assert(m_string != nullptr);
+  }
+  virtual CodePoint nextCodePoint() = 0;
+  virtual CodePoint previousCodePoint() = 0;
+  const char * nextGlyphPosition();
+  const char * previousGlyphPosition();
+  const char * stringPosition() const { return m_stringPosition; }
+  const char * stringEnd() const { return m_stringEnd ? m_stringEnd : m_string + strlen(m_string); }
+
+protected:
+  const char * const m_string;
+  const char * const m_stringEnd;
+  const char * m_stringPosition;
+};
+
 /* UTF-8 encodes all valid code points using at most 4 bytes (= 28 bits), the
  * lowest codes being equal to ASCII codes. There are less than 2^21 different
  * UTF-8 valid code points.
@@ -29,21 +51,11 @@
  *     glyphs such as accentuated letters.
  */
 
-class UTF8Decoder {
+class UTF8Decoder : public UnicodeDecoder {
 public:
-  UTF8Decoder(const char * string, const char * initialPosition = nullptr, const char * stringEnd = nullptr) :
-    m_string(string),
-    m_stringEnd(stringEnd),
-    m_stringPosition(initialPosition == nullptr ? string : initialPosition)
-  {
-    assert(m_string != nullptr);
-  }
-  CodePoint nextCodePoint();
-  CodePoint previousCodePoint();
-  const char * nextGlyphPosition();
-  const char * previousGlyphPosition();
-  const char * stringPosition() const { return m_stringPosition; }
-  const char * stringEnd() const { return m_stringEnd ? m_stringEnd : m_string + strlen(m_string); }
+  using UnicodeDecoder::UnicodeDecoder;
+  CodePoint nextCodePoint() override;
+  CodePoint previousCodePoint() override;
   void setPosition(const char * position);
   constexpr static size_t CharSizeOfCodePoint(CodePoint c) {
     return c <= 0x7F ? 1 : (c <= 0x7FF ? 2 : (c <= 0xFFFF ? 3 : 4));
@@ -52,10 +64,6 @@ public:
   static size_t CodePointToChars(CodePoint c, char * buffer, size_t bufferLength);
   static size_t CodePointToCharsWithNullTermination(CodePoint c, char * buffer, size_t bufferSize);
   static bool IsInTheMiddleOfACodePoint(uint8_t value);
-private:
-  const char * const m_string;
-  const char * const m_stringEnd;
-  const char * m_stringPosition;
 };
 
 #endif

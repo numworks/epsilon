@@ -36,28 +36,45 @@ LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(in
   return DeletionMethod::DeleteLayout;
 }
 
-void GridLayoutNode::willAddSiblingToEmptyChildAtIndex(int childIndex) {
-  bool bottomOfGrid = childIsBottomOfGrid(childIndex);
+void GridLayoutNode::willFillEmptyChildAtIndex(int childIndex) {
+  assert(childAtIndex(childIndex)->isEmpty());
+  assert(isEditing());
+  bool isBottomOfGrid = childIsBottomOfGrid(childIndex);
   if (childIsRightOfGrid(childIndex) && !numberOfColumnsIsFixed()) {
+    assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))->emptyColor() == EmptyRectangle::Color::Gray);
     colorGrayEmptyLayoutsInYellowInColumnOrRow(true, m_numberOfColumns - 1);
     addEmptyColumn(EmptyRectangle::Color::Gray);
   }
-  if (bottomOfGrid && !numberOfRowsIsFixed()) {
+  if (isBottomOfGrid && !numberOfRowsIsFixed()) {
+    assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))->emptyColor() == EmptyRectangle::Color::Gray);
     colorGrayEmptyLayoutsInYellowInColumnOrRow(false, m_numberOfRows - 1);
     addEmptyRow(EmptyRectangle::Color::Gray);
   }
 }
 
-// Protected
-bool GridLayoutNode::onlyFirstChildIsNonEmpty() const {
-  for (int i = 1; i < numberOfChildren(); i++) {
-    if (!childAtIndex(i)->isEmpty()) {
-      return false;
-    }
+bool GridLayoutNode::removeEmptyRowOrColumnAtChildIndexIfNeeded(int childIndex) {
+  assert(childAtIndex(childIndex)->isEmpty());
+  assert(isEditing());
+  if (minimalNumberOfChildrenWhileEditing() == numberOfChildren()) {
+    return false;
   }
-  return true;
+  int rowIndex = rowAtChildIndex(childIndex);
+  int columnIndex = columnAtChildIndex(childIndex);
+  bool isRightOfGrid = childIsRightOfGrid(childIndex);
+  bool isBottomOfGrid = childIsBottomOfGrid(childIndex);
+  bool changed = false;
+  if (!isRightOfGrid && !numberOfColumnsIsFixed() && isColumnEmpty(columnIndex)) {
+    deleteColumnAtIndex(columnIndex);
+    changed = true;
+  }
+  if (!isBottomOfGrid && !numberOfRowsIsFixed() && isRowEmpty(rowIndex)) {
+    deleteRowAtIndex(rowIndex);
+    changed = true;
+  }
+  return changed;
 }
 
+// Protected
 void GridLayoutNode::deleteRowAtIndex(int index) {
   assert(!numberOfRowsIsFixed());
   assert(index >= 0 && index < m_numberOfRows);

@@ -332,7 +332,7 @@ template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNo
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(const Tuple &);
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
 template PiecewiseOperator TreeHandle::NAryBuilder<PiecewiseOperator, PiecewiseOperatorNode>(const Tuple &);
-//template PiecewiseOperatorLayout TreeHandle::NAryBuilder<PiecewiseOperatorLayout, PiecewiseOperatorLayoutNode>(const Tuple &);
+template PiecewiseOperatorLayout TreeHandle::NAryBuilder<PiecewiseOperatorLayout, PiecewiseOperatorLayoutNode>(const Tuple &);
 template Product TreeHandle::FixedArityBuilder<Product, ProductNode>(const Tuple &);
 template ProductLayout TreeHandle::FixedArityBuilder<ProductLayout, ProductLayoutNode>(const Tuple &);
 template Subtraction TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);

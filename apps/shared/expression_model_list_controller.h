@@ -6,6 +6,7 @@
 #include <escher/input_view_controller.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
+#include <escher/expression_field.h>
 #include "layout_field_delegate.h"
 #include "expression_model_store.h"
 
@@ -43,6 +44,8 @@ protected:
   bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
   // Memoization
   virtual void resetSizesMemoization() {}
+  // EditableCell
+  virtual Escher::ExpressionField * expressionField() = 0;
   int16_t m_editedCellIndex;
 private:
   bool addEmptyModel();

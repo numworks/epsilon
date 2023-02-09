@@ -91,6 +91,7 @@ private:
   bool removeModelRow(Ion::Storage::Record record) override;
   Shared::SequenceStore * modelStore() const override;
   KDCoordinate nameWidth(int nameLength) const;
+  Escher::ExpressionField * expressionField() override { return m_editableCell.expressionField(); }
 
   Escher::SelectableTableView m_selectableTableView;
   Escher::EvenOddCell m_emptyCell;

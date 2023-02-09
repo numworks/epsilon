@@ -61,6 +61,8 @@ private:
   Escher::HighlightCell * functionCells(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int j) override;
   Shared::ContinuousFunctionStore * modelStore() const override;
+  Escher::ExpressionField * expressionField() override { return m_editableCell.expressionField(); }
+
   Escher::SelectableTableView m_selectableTableView;
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   EditableFunctionCell m_editableCell;

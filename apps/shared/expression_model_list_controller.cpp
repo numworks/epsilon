@@ -114,23 +114,19 @@ bool ExpressionModelListController::addEmptyModel() {
 }
 
 void ExpressionModelListController::editExpression(Ion::Events::Event event) {
+  m_editedCellIndex = selectedRow();
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     constexpr size_t initialTextContentMaxSize = Constant::MaxSerializedExpressionSize;
     char initialTextContent[initialTextContentMaxSize];
     getTextForSelectedRecord(initialTextContent, initialTextContentMaxSize);
-    // inputController()->setTextBody(initialTextContent);
+    expressionField()->setText(initialTextContent);
   }
-//   inputController()->edit(event, this,
-//     [](void * context, void * sender){
-//       ExpressionModelListController * myController = static_cast<ExpressionModelListController *>(context);
-//       InputViewController * myInputViewController = (InputViewController *)sender;
-//       const char * textBody = myInputViewController->textBody();
-//       return myController->editSelectedRecordWithText(textBody);
-//     },
-//     [](void * context, void * sender){
-//       return true;
-//     }
-//   );
+  selectableTableView()->reloadData(false);
+  expressionField()->setEditing(true);
+  Container::activeApp()->setFirstResponder(expressionField());
+  if (!(event == Ion::Events::OK || event == Ion::Events::EXE)) {
+    expressionField()->handleEvent(event);
+  }
 }
 
 bool ExpressionModelListController::editSelectedRecordWithText(const char * text) {

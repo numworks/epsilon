@@ -29,6 +29,8 @@ T Approximation::To(const Node node) {
       return Approximation::MapAndReduce(node, FloatDivision<T>);
     case BlockType::Subtraction:
       return Approximation::MapAndReduce(node, FloatSubtraction<T>);
+    case BlockType::Power:
+      return Approximation::MapAndReduce(node, FloatPower<T>);
     default:
       assert(false);
   };

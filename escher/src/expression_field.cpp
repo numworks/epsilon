@@ -184,7 +184,7 @@ void ExpressionField::restoreContent(const char * buffer, size_t size, int * cur
     const LayoutNode * cursorNode = reinterpret_cast<const LayoutNode *>(reinterpret_cast<char *>(m_layoutField.layout().node()) + *cursorOffset);
     LayoutCursor restoredCursor = LayoutCursor(Layout(cursorNode));
     restoredCursor.setPosition(*position);
-    m_layoutField.cursor()->setTo(restoredCursor);
+    *m_layoutField.cursor() = restoredCursor;
   }
 }
 

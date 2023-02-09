@@ -33,7 +33,7 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
     layoutChanged = m_cursor.didEnterCurrentPosition();
   } else {
     // We're leaving the edition of the current layout
-    layoutChanged = m_cursor.willExitCurrentPosition();
+    layoutChanged = m_cursor.didExitPosition();
   }
   layoutSubviews();
   markRectAsDirty(bounds());
@@ -178,10 +178,9 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
 }
 
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
-  m_contentView.cursor()->willExitCurrentPosition();
-  Layout currentLayout = m_contentView.expressionView()->layout();
-  m_contentView.setCursor(LayoutCursor(currentLayout, side == OMG::HorizontalDirection::Left ? 0 : (currentLayout.isHorizontal() ? currentLayout.numberOfChildren() : 1)));
-  m_contentView.cursor()->didEnterCurrentPosition();
+  LayoutCursor previousCursor = *m_contentView.cursor();
+  m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), side == OMG::HorizontalDirection::Left));
+  m_contentView.cursor()->didEnterCurrentPosition(previousCursor);
 }
 
 void LayoutField::reload(KDSize previousSize) {

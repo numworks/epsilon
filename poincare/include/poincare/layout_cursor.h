@@ -22,6 +22,12 @@ public:
 
   LayoutCursor() : LayoutCursor(Layout()) {}
 
+  LayoutCursor(LayoutCursor& other) {
+     m_layout = other.m_layout;
+     m_position = other.m_position;
+     m_startOfSelection = other.m_startOfSelection;
+  }
+
   // Definition
   bool isUninitialized() const { return m_layout.isUninitialized(); }
   bool isValid() const { return m_layout.isUninitialized() || (m_position >= 0 && m_position <= m_layout.numberOfChildren()); }
@@ -33,12 +39,6 @@ public:
   LayoutSelection selection() const { return isSelecting() ? LayoutSelection(m_layout, m_startOfSelection, m_position) : LayoutSelection(); }
 
   void setPosition(int position);
-
-  void setTo(LayoutCursor other) {
-     m_layout = other.m_layout;
-     m_position = other.m_position;
-     m_startOfSelection = other.m_startOfSelection;
-  }
 
   /* Position and size */
   KDCoordinate cursorHeight(KDFont::Size font);
@@ -66,9 +66,10 @@ public:
 
   void stopSelecting();
 
-  /* Set empty rectangle visibility and gray rectangle in grids */
-  bool willExitCurrentPosition();
-  bool didEnterCurrentPosition();
+  /* Set empty rectangle visibility and gray rectangle in grids. */
+  bool didEnterCurrentPosition(LayoutCursor previousPosition = LayoutCursor());
+  // Call this if the cursor is disappearing from the field
+  bool didExitPosition();
 
   bool isAtNumeratorOfEmptyFraction() const;
 

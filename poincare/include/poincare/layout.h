@@ -63,8 +63,8 @@ public:
 
   // Layout modification
   int indexOfChildToPointToWhenInserting() { return node()->indexOfChildToPointToWhenInserting(); }
-  bool createGraySquaresAfterEnteringGrid() { return node()->createGraySquaresAfterEnteringGrid(); }
-  bool deleteGraySquaresBeforeLeavingGrid() { return node()->deleteGraySquaresBeforeLeavingGrid(); }
+  bool createGraySquaresAfterEnteringGrid(Layout layoutToExclude = Layout()) { return node()->createGraySquaresAfterEnteringGrid(layoutToExclude); }
+  bool deleteGraySquaresBeforeLeavingGrid(Layout layoutToExclude = Layout()) { return node()->deleteGraySquaresBeforeLeavingGrid(layoutToExclude); }
 
   void setMargin(bool hasMargin) { node()->setMargin(hasMargin); }
   void lockMargin(bool lock) { node()->lockMargin(lock); }

@@ -2,10 +2,10 @@
 #include <string.h>
 #include <assert.h>
 
-const char * UnicodeDecoder::nextGlyphPosition() {
-  assert(*m_stringPosition != 0 && (m_stringPosition == m_string || *(m_stringPosition - 1) != 0));
+size_t UnicodeDecoder::nextGlyphPosition() {
+  //assert(*m_stringPosition != 0 && (m_stringPosition == m_string || *(m_stringPosition - 1) != 0));
   CodePoint followingCodePoint = nextCodePoint();
-  const char * resultGlyphPosition = m_stringPosition;
+  size_t resultGlyphPosition = m_stringPosition;
   followingCodePoint = nextCodePoint();
   while (followingCodePoint != UCodePointNull && followingCodePoint.isCombining()) {
     resultGlyphPosition = m_stringPosition;
@@ -15,10 +15,10 @@ const char * UnicodeDecoder::nextGlyphPosition() {
   return resultGlyphPosition;
 }
 
-const char * UnicodeDecoder::previousGlyphPosition() {
+size_t UnicodeDecoder::previousGlyphPosition() {
   assert(m_stringPosition > m_string);
   CodePoint previousCP = previousCodePoint();
-  const char * resultGlyphPosition = m_stringPosition;
+  size_t resultGlyphPosition = m_stringPosition;
   while (m_stringPosition > m_string && previousCP.isCombining()) {
     previousCP = previousCodePoint();
     resultGlyphPosition = m_stringPosition;
@@ -43,16 +43,16 @@ static inline uint8_t last_k_bits(uint8_t value, uint8_t bits) {
 }
 
 CodePoint UTF8Decoder::nextCodePoint() {
-  assert((m_stringPosition == m_string || *(m_stringPosition - 1) != 0) && (m_stringEnd == nullptr || m_stringPosition <= m_stringEnd));
+  assert((m_stringPosition == m_string || *(stringPosition() - 1) != 0) && (stringEnd() == nullptr || m_stringPosition <= m_stringEnd));
   bool returnCodePointNull = false;
-  if (m_stringEnd != nullptr && m_stringPosition == m_stringEnd) {
+  if (stringEnd() != nullptr && stringPosition() == stringEnd()) {
     returnCodePointNull = true;
   }
-  int leadingOnes = leading_ones(*m_stringPosition);
-  uint32_t result = last_k_bits(*m_stringPosition++, 8-leadingOnes-1);
+  int leadingOnes = leading_ones(*stringPosition());
+  uint32_t result = last_k_bits(*stringPosition()++, 8-leadingOnes-1);
   for (int i = 0; i < leadingOnes - 1; i++) {
     result <<= 6;
-    char nextChunk = *m_stringPosition++;
+    char nextChunk = *stringPosition()++;
     if (!nextChunk && 0x80) {
       /* The code point is not properly written. This might be due to a code
        * point being translated into chars in a too small buffer. */
@@ -66,10 +66,10 @@ CodePoint UTF8Decoder::nextCodePoint() {
 CodePoint UTF8Decoder::previousCodePoint() {
   assert(m_stringPosition > m_string);
   m_stringPosition--;
-  int leadingOnes = leading_ones(*m_stringPosition);
+  int leadingOnes = leading_ones(*stringPosition());
   if (leadingOnes == 0) {
     // The current code point is one char long
-    return *m_stringPosition;
+    return *stringPosition();
   }
   // The current code point spans over multiple chars
   assert(leadingOnes == 1);
@@ -77,24 +77,24 @@ CodePoint UTF8Decoder::previousCodePoint() {
   int i = 0;
   while (leadingOnes == 1) {
     assert(m_stringPosition > m_string);
-    result += (*m_stringPosition & 0x3F) << (6 * i);
+    result += (*stringPosition() & 0x3F) << (6 * i);
     i++;
     m_stringPosition--;
-    leadingOnes = leading_ones(*m_stringPosition);
+    leadingOnes = leading_ones(*stringPosition());
   }
 
   assert(i <= 3);
   assert(leadingOnes > 1 && leadingOnes <= 4);
   assert(m_stringPosition >= m_string);
 
-  result+= last_k_bits(*m_stringPosition, 8 - leadingOnes - 1) << (6 * i);
+  result+= last_k_bits(*stringPosition(), 8 - leadingOnes - 1) << (6 * i);
   return CodePoint(result);
 }
 
 void UTF8Decoder::setPosition(const char * position) {
-  assert(position >= m_string && position <= m_string + strlen(m_string));
+  assert(position >= string() && position <= string() + strlen(string()));
   assert(!IsInTheMiddleOfACodePoint(*position));
-  m_stringPosition = position;
+  stringPosition() = position;
 }
 
 size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, size_t bufferLength) {

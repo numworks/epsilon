@@ -8,24 +8,22 @@
 
 class UnicodeDecoder {
 public:
-  UnicodeDecoder(const char * string, const char * initialPosition = nullptr, const char * stringEnd = nullptr) :
+  UnicodeDecoder(size_t string, size_t initialPosition, size_t stringEnd) :
     m_string(string),
     m_stringEnd(stringEnd),
-    m_stringPosition(initialPosition == nullptr ? string : initialPosition)
-  {
-    assert(m_string != nullptr);
-  }
+    m_stringPosition(initialPosition)
+  {}
   virtual CodePoint nextCodePoint() = 0;
   virtual CodePoint previousCodePoint() = 0;
-  const char * nextGlyphPosition();
-  const char * previousGlyphPosition();
-  const char * stringPosition() const { return m_stringPosition; }
-  const char * stringEnd() const { return m_stringEnd ? m_stringEnd : m_string + strlen(m_string); }
+  size_t nextGlyphPosition();
+  size_t previousGlyphPosition();
+  size_t stringPosition() const { return m_stringPosition; }
+  size_t stringEnd() const { return m_stringEnd; }
 
 protected:
-  const char * const m_string;
-  const char * const m_stringEnd;
-  const char * m_stringPosition;
+  size_t const m_string;
+  size_t const m_stringEnd;
+  size_t m_stringPosition;
 };
 
 /* UTF-8 encodes all valid code points using at most 4 bytes (= 28 bits), the
@@ -51,11 +49,23 @@ protected:
  *     glyphs such as accentuated letters.
  */
 
+static_assert(sizeof(size_t) == sizeof(const char *));
+
 class UTF8Decoder : public UnicodeDecoder {
 public:
-  using UnicodeDecoder::UnicodeDecoder;
+  UTF8Decoder(const char * string, const char * initialPosition = nullptr, const char * stringEnd = nullptr) :
+    UnicodeDecoder(reinterpret_cast<size_t>(string), reinterpret_cast<size_t>(initialPosition == nullptr ? string : initialPosition), reinterpret_cast<size_t>(stringEnd ? stringEnd : string + strlen(string)))
+    {
+      assert(string != nullptr);
+    }
+
   CodePoint nextCodePoint() override;
   CodePoint previousCodePoint() override;
+  const char * nextGlyphPosition() { return reinterpret_cast<const char*>(UnicodeDecoder::nextGlyphPosition()); }
+  const char * previousGlyphPosition() { return reinterpret_cast<const char*>(UnicodeDecoder::previousGlyphPosition()); }
+  const char * string() const { return reinterpret_cast<const char*>(m_string); }
+  const char *& stringPosition() { return reinterpret_cast<const char*&>(m_stringPosition); }
+  const char * stringEnd() const { return reinterpret_cast<const char*>(m_stringEnd); }
   void setPosition(const char * position);
   constexpr static size_t CharSizeOfCodePoint(CodePoint c) {
     return c <= 0x7F ? 1 : (c <= 0x7FF ? 2 : (c <= 0xFFFF ? 3 : 4));

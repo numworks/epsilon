@@ -22,10 +22,6 @@ public:
   DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
 
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
-  bool shouldCollapseSiblingsOnLeft() const override { return true; }
-  bool shouldCollapseSiblingsOnRight() const override { return true; }
-  int leftCollapsingAbsorbingChildIndex() const override { return 0; }
-  int rightCollapsingAbsorbingChildIndex() const override { return 1; }
   int indexOfChildToPointToWhenInserting() override;
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
   /* WARNING: We need to override this function, else 1/2 3/4 would be

@@ -119,25 +119,18 @@ public:
   virtual DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const;
   static DeletionMethod StandardDeletionMethodForLayoutContainingArgument(int childIndex, int argumentIndex);
 
-  // Tree modification
-  // Collapse
-  virtual bool shouldCollapseSiblingsOnLeft() const { return false; }
-  virtual bool shouldCollapseSiblingsOnRight() const { return false; }
-  virtual int leftCollapsingAbsorbingChildIndex() const { return 0; }
-  virtual int rightCollapsingAbsorbingChildIndex() const { return 0; }
-
-  // Other
+  // Cursor insertion
   virtual int indexOfChildToPointToWhenInserting();
 
   /* A layout has text if it is not empty and it is not an horizontal layout
    * with no child or with one child with no text. */
   virtual bool hasText() const { return true; }
-  virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   bool isEmpty() const { return isHorizontal() && numberOfChildren() == 0;}
   /* isCollapsable is used when adding a sibling fraction: should the layout be
    * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should
    * become 1+ 2/3 - 4 when pressing "Divide": a CodePointLayout is collapsable if
    * its char is not +, -, or *. */
+  virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
   virtual bool canBeOmittedMultiplicationLeftFactor() const;
   virtual bool canBeOmittedMultiplicationRightFactor() const;
   /* canBeOmittedMultiplicationLeftFactor and RightFactor return true if the

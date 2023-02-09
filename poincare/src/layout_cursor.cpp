@@ -107,18 +107,21 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     static_cast<GridLayoutNode *>(m_layout.parent().node())->willFillEmptyChildAtIndex(m_layout.parent().indexOfChild(m_layout));
   }
 
-  int indexOfChildToPointTo = (forceRight || forceLeft) ? LayoutNode::k_outsideIndex : layout.indexOfChildToPointToWhenInserting();
-
   LayoutCursor previousCursor = *this;
-  LayoutCursor newCursor;
-  if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
-    Layout childToPoint = layout.childAtIndex(indexOfChildToPointTo);
-    if (layout.isHorizontal()) {
-      newCursor = LayoutCursor(childToPoint.childAtIndex(childToPoint.indexOfChildToPointToWhenInserting()));
-    } else {
-      newCursor = LayoutCursor(childToPoint);
+  Layout childToPoint;
+
+  bool layoutToInsertIsHorizontal = layout.isHorizontal();
+
+  if (layoutToInsertIsHorizontal) {
+    // Do this now because the layout might be merged later
+    int indexOfChildToPointTo = (forceRight || forceLeft) ? LayoutNode::k_outsideIndex : layout.indexOfChildToPointToWhenInserting();
+    if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
+      childToPoint = layout.childAtIndex(indexOfChildToPointTo);
+      assert(childToPoint.indexOfChildToPointToWhenInserting() != LayoutNode::k_outsideIndex);
+      childToPoint = childToPoint.childAtIndex(childToPoint.indexOfChildToPointToWhenInserting());
     }
   }
+
   if (m_layout.isHorizontal()) {
     int positionShift = layout.isHorizontal() ? layout.numberOfChildren() : 1;
     static_cast<HorizontalLayout&>(m_layout).addOrMergeChildAtIndex(layout, m_position);
@@ -134,11 +137,20 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     m_layout = newParent;
     m_position = (forceLeft ? 1 : m_layout.numberOfChildren()) - (m_position == 0);
   }
-  if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
-    assert(newCursor.isValid() && !newCursor.isUninitialized());
-    *this = newCursor;
+
+  if (!layoutToInsertIsHorizontal) {
+    collapseSiblingsOfLayout(layout);
+    int indexOfChildToPointTo = (forceRight || forceLeft) ? LayoutNode::k_outsideIndex : layout.indexOfChildToPointToWhenInserting();
+    if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
+      childToPoint = layout.childAtIndex(indexOfChildToPointTo);
+    }
+  }
+
+  if (!childToPoint.isUninitialized()) {
+    *this = LayoutCursor(childToPoint);
     didEnterCurrentPosition(previousCursor);
   }
+
   invalidateSizesAndPositions();
 }
 
@@ -190,7 +202,6 @@ void LayoutCursor::addEmptyTenPowerLayout(Context * context) {
 }
 
 void LayoutCursor::addFractionLayoutAndCollapseSiblings(Context * context) {
-  // TODO: Restore collapse sibling behaviour
   insertLayoutAtCursor(
     FractionLayout::Builder(
       HorizontalLayout::Builder(),
@@ -254,7 +265,7 @@ void LayoutCursor::deleteAndResetSelection() {
 
 bool LayoutCursor::didEnterCurrentPosition(LayoutCursor previousPosition) {
   bool changed = false;
-  if (!previousPosition.isUninitialized()) {
+  if (!previousPosition.isUninitialized() && previousPosition.isValid()) {
     /* Order matters: First show the empty rectangle at position, because when
      * leaving a piecewise operator layout, empty rectangles can be set back
      * to Hidden. */
@@ -267,6 +278,7 @@ bool LayoutCursor::didEnterCurrentPosition(LayoutCursor previousPosition) {
   if (isUninitialized()) {
     return changed;
   }
+  assert(isValid());
   /* Order matters: First enter the grid, because when entering a piecewise
    * operator layout, empty rectangles can be set back to Visible. */
   changed = m_layout.createGraySquaresAfterEnteringGrid(previousPosition.layout()) || changed;
@@ -617,6 +629,59 @@ void LayoutCursor::removeEmptyColumnAndRowOfGridParentIfNeeded() {
     assert(parentGrid.numberOfChildren() > newChildIndex);
     *this = LayoutCursor(parentGrid.childAtIndex(newChildIndex), false);
     didEnterCurrentPosition();
+  }
+}
+
+void LayoutCursor::collapseSiblingsOfLayout(Layout l) {
+  if (l.shouldCollapseSiblingsOnRight()) {
+    collapseSiblingsOfLayoutOnDirection(l, OMG::HorizontalDirection::Right, l.rightCollapsingAbsorbingChildIndex());
+  }
+  if (l.shouldCollapseSiblingsOnLeft()) {
+    collapseSiblingsOfLayoutOnDirection(l, OMG::HorizontalDirection::Left, l.leftCollapsingAbsorbingChildIndex());
+  }
+}
+
+void LayoutCursor::collapseSiblingsOfLayoutOnDirection(Layout l, OMG::HorizontalDirection direction, int absorbingChildIndex) {
+  Layout absorbingChild = l.childAtIndex(absorbingChildIndex);
+  if (absorbingChild.isUninitialized() || !absorbingChild.isEmpty()) {
+    return;
+  }
+  Layout p = l.parent();
+  if (p.isUninitialized() || !p.isHorizontal()) {
+    return;
+  }
+  int idxInParent = p.indexOfChild(l);
+  int numberOfSiblings = p.numberOfChildren();
+  int numberOfOpenParenthesis = 0;
+  bool canCollapse = true;
+
+  assert(absorbingChild.isHorizontal()); // Empty is always horizontal
+  HorizontalLayout horizontalAbsorbingChild = static_cast<HorizontalLayout&>(absorbingChild);
+  HorizontalLayout horizontalParent = static_cast<HorizontalLayout&>(p);
+  Layout sibling;
+  int step = direction == OMG::HorizontalDirection::Right ? 1 : - 1;
+  while (canCollapse) {
+    if (direction == OMG::HorizontalDirection::Right && idxInParent == numberOfSiblings - 1) {
+      break;
+    }
+    if (direction == OMG::HorizontalDirection::Left && idxInParent == 0) {
+      break;
+    }
+    int siblingIndex = idxInParent + step;
+    sibling = horizontalParent.childAtIndex(siblingIndex);
+    bool shouldCollapse = sibling.isCollapsable(&numberOfOpenParenthesis, direction == OMG::HorizontalDirection::Left);
+    if (shouldCollapse) {
+      horizontalParent.removeChildAtIndexInPlace(siblingIndex);
+      int newIndex = direction == OMG::HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
+      assert(!sibling.isHorizontal());
+      horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex);
+      numberOfSiblings--;
+      if (direction == OMG::HorizontalDirection::Left) {
+        idxInParent--;
+      }
+    } else {
+      break;
+    }
   }
 }
 

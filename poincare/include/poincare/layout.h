@@ -55,9 +55,13 @@ public:
   typedef TrinaryBoolean (*LayoutTest)(const Layout l);
   Layout recursivelyMatches(LayoutTest test) const;
   bool isEmpty() const { return node()->isEmpty(); }
+
+  bool shouldCollapseSiblingsOnLeft() const { return type() == LayoutNode::Type::FractionLayout; }
+  bool shouldCollapseSiblingsOnRight() const;
+  int leftCollapsingAbsorbingChildIndex() const { assert(shouldCollapseSiblingsOnLeft()); return 0; }
+  int rightCollapsingAbsorbingChildIndex() const { assert(shouldCollapseSiblingsOnRight()); return type() == LayoutNode::Type::FractionLayout ? 1 : 0; }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return const_cast<Layout *>(this)->node()->isCollapsable(numberOfOpenParenthesis, goingLeft); }
-  int leftCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->leftCollapsingAbsorbingChildIndex(); }
-  int rightCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->rightCollapsingAbsorbingChildIndex(); }
+
   bool hasText() { return node()->hasText(); }
   Layout XNTLayout() const;
 

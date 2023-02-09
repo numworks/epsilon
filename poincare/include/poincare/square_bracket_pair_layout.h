@@ -9,14 +9,12 @@ namespace Poincare {
 
 class SquareBracketPairLayoutNode : public BracketPairLayoutNode {
 public:
+  static bool IsSquareBracketPairType(Type type) { return type == Type::AbsoluteValueLayout || type == Type::CeilingLayout || type == Type::FloorLayout || type == Type::VectorNormLayout;}
   static void RenderWithChildSize(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
     RenderWithParameters(left, childHeight, ctx, p, expressionColor, backgroundColor, k_verticalMargin, k_bracketWidth, k_renderTopBar, k_renderBottomBar, k_renderDoubleBar);
   }
   static KDSize SizeGivenChildSize(KDSize childSize) { return KDSize(2 * k_bracketWidth + childSize.width(), HeightGivenChildHeight(childSize.height(), k_verticalMargin)); }
   static KDPoint ChildOffset() { return BracketPairLayoutNode::ChildOffset(k_verticalMargin, k_bracketWidth); }
-
-  // LayoutNode
-  bool shouldCollapseSiblingsOnRight() const override{ return true; }
 
 protected:
   constexpr static KDCoordinate k_internalWidthMargin = 5;

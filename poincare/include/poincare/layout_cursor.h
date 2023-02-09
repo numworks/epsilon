@@ -95,6 +95,9 @@ private:
   void removeEmptyColumnAndRowOfGridParentIfNeeded();
   void invalidateSizesAndPositions();
 
+  void collapseSiblingsOfLayout(Layout l);
+  void collapseSiblingsOfLayoutOnDirection(Layout l, OMG::HorizontalDirection direction, int absorbingChildIndex);
+
   Layout m_layout;
   /* If the layout is horizontal, the cursor is left of the child at index
    * m_position. If m_position == layout.numberOfChildren(), the cursor is

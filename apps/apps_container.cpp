@@ -158,8 +158,8 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences->brightnessLevel());
     } else {
       m_firstUSBEnumeration = true;
-      Ion::USB::clearEnumerationInterrupt();
       Ion::USB::disable();
+      Ion::USB::clearEnumerationInterrupt();
     }
     return true;
   }

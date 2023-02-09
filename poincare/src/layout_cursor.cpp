@@ -8,7 +8,7 @@
 //#include <poincare/input_beautification.h>
 #include <poincare/layout.h>
 #include <poincare/parenthesis_layout.h>
-//#include <poincare/matrix_layout.h>
+#include <poincare/matrix_layout.h>
 #include <poincare/nth_root_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -144,7 +144,7 @@ void LayoutCursor::addEmptyExponentialLayout(Context * context) {
 }
 
 void LayoutCursor::addEmptyMatrixLayout(Context * context) {
-  //insertLayoutAtCursor(MatrixLayout::EmptySquaredMatrixBuilder(), context);
+  insertLayoutAtCursor(MatrixLayout::EmptySquaredMatrixBuilder(), context);
 }
 
 void LayoutCursor::addEmptySquareRootLayout(Context * context) {
@@ -245,7 +245,8 @@ bool LayoutCursor::willExitCurrentPosition() {
   if (isUninitialized()) {
     return false;
   }
-  bool changed = setEmptyRectangleVisibility(EmptyRectangle::State::Visible);
+  bool changed = setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State::Visible);
+  changed = m_layout.deleteGraySquaresBeforeLeavingGrid();
   if (changed) {
     invalidateSizesAndPositions();
   }
@@ -256,7 +257,8 @@ bool LayoutCursor::didEnterCurrentPosition() {
   if (isUninitialized()) {
     return false;
   }
-  bool changed = setEmptyRectangleVisibility(EmptyRectangle::State::Hidden);
+  bool changed = setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State::Hidden);
+  changed = m_layout.createGraySquaresAfterEnteringGrid();
   if (changed) {
     invalidateSizesAndPositions();
   }
@@ -457,7 +459,7 @@ void LayoutCursor::stopSelecting() {
   m_startOfSelection = -1;
 }
 
-bool LayoutCursor::setEmptyRectangleVisibility(EmptyRectangle::State state) {
+bool LayoutCursor::setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State state) {
   bool result = false;
   if (m_layout.isHorizontal()) {
     result = static_cast<HorizontalLayout&>(m_layout).setEmptyVisibility(state);

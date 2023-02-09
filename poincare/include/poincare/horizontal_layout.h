@@ -48,6 +48,7 @@ public:
   }
 #endif
 
+  EmptyRectangle::Color emptyColor() const { return m_emptyColor; }
   void setEmptyColor(EmptyRectangle::Color color) { m_emptyColor = color; }
   bool setEmptyVisibility(EmptyRectangle::State state) {
     if (m_emptyVisibility == state) {

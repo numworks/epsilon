@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <poincare/code_point_layout.h>
-//#include <poincare/matrix_layout.h>
+#include <poincare/matrix_layout.h>
 #include <poincare/symbol_abstract.h>
 
 using namespace Shared;
@@ -109,9 +109,8 @@ bool ListController::layoutRepresentsParametricFunction(Poincare::Layout l) cons
   if (l.type() != Poincare::LayoutNode::Type::MatrixLayout) {
     return false;
   }
-  return false;
-  //Poincare::MatrixLayout m = static_cast<Poincare::MatrixLayout &>(l);
-  //return m.numberOfColumns() == 1 && m.numberOfRows() == 2;
+  Poincare::MatrixLayout m = static_cast<Poincare::MatrixLayout &>(l);
+  return m.numberOfColumns() == 1 && m.numberOfRows() == 2;
 }
 
 bool ListController::completeEquation(InputEventHandler * equationField, CodePoint symbol) {

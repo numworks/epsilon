@@ -10,7 +10,7 @@
 #include <poincare/exception_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/float.h>
-//#include <poincare/matrix_layout.h>
+#include <poincare/matrix_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
@@ -36,13 +36,12 @@ Expression MatrixNode::shallowReduce(const ReductionContext& reductionContext) {
 
 Layout MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   assert(numberOfChildren() > 0);
-  /*MatrixLayout layout = MatrixLayout::Builder();
+  MatrixLayout layout = MatrixLayout::Builder();
   for (ExpressionNode * c : children()) {
-    layout.addChildAtIndex(c->createLayout(floatDisplayMode, numberOfSignificantDigits, context), layout.numberOfChildren(), layout.numberOfChildren(), nullptr);
+    layout.addChildAtIndexInPlace(c->createLayout(floatDisplayMode, numberOfSignificantDigits, context), layout.numberOfChildren(), layout.numberOfChildren());
   }
   layout.setDimensions(m_numberOfRows, m_numberOfColumns);
-  return std::move(layout);*/
-  return HorizontalLayout::Builder();
+  return std::move(layout);
 }
 
 int MatrixNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

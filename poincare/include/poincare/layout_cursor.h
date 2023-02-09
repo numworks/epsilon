@@ -90,7 +90,7 @@ private:
   void deleteAndResetSelection();
   void privateDelete(LayoutNode::DeletionMethod deletionMethod, bool deletionAppliedToParent);
 
-  bool setEmptyRectangleVisibility(EmptyRectangle::State state);
+  bool setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State state);
   void invalidateSizesAndPositions();
 
   Layout m_layout;

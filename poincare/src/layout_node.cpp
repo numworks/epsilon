@@ -5,7 +5,7 @@
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_selection.h>
-//#include <poincare/matrix_layout.h>
+#include <poincare/matrix_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <ion/display.h>
 
@@ -129,24 +129,6 @@ int LayoutNode::indexOfChildToPointToWhenInserting() {
   return numberOfChildren() > 0 ? 0 : k_outsideIndex;
 }
 
-bool LayoutNode::removeGraySquaresFromAllGridAncestors() {
-  bool result = false;
-  changeGraySquaresOfAllGridRelatives(false, true, &result);
-  return result;
-}
-
-bool LayoutNode::removeGraySquaresFromAllGridChildren() {
-  bool result = false;
-  changeGraySquaresOfAllGridRelatives(false, false, &result);
-  return result;
-}
-
-bool LayoutNode::addGraySquaresToAllGridAncestors() {
-  bool result = false;
-  changeGraySquaresOfAllGridRelatives(true, true, &result);
-  return result;
-}
-
 Layout LayoutNode::makeEditable() {
   /* We visit children if reverse order to avoid visiting the codepoints they
    * might have inserted after them. */
@@ -195,7 +177,7 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
 }
 
 bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
-  /*if (!GridLayoutNode::IsGridLayoutType(l->type())) {
+  if (!GridLayoutNode::IsGridLayoutType(l->type())) {
     return false;
   }
   if (add) {
@@ -203,34 +185,35 @@ bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
   } else {
     static_cast<GridLayoutNode *>(l->node())->stopEditing();
   }
-  return true;*/
-  return false;
+  return true;
 }
 
-void LayoutNode::changeGraySquaresOfAllGridRelatives(bool add, bool ancestors, bool * changedSquares) {
+ bool LayoutNode::changeGraySquaresOfAllGridRelatives(bool add, bool ancestors) {
+  bool changedSquares = false;
   if (!ancestors) {
     // If in children, we also change the squares for this
     {
       Layout thisLayout = Layout(this);
       if (addRemoveGraySquaresInLayoutIfNeeded(add, &thisLayout)) {
-        *changedSquares = true;
+        changedSquares = true;
       }
     }
     int childrenNumber = numberOfChildren();
     for (int i = 0; i < childrenNumber; i++) {
       /* We cannot use "for l : children()", as the node addresses might change,
        * especially the iterator stopping address. */
-      childAtIndex(i)->changeGraySquaresOfAllGridRelatives(add, false, changedSquares);
+      changedSquares = changedSquares || childAtIndex(i)->changeGraySquaresOfAllGridRelatives(add, false);
     }
   } else {
     Layout currentAncestor = Layout(parent());
     while (!currentAncestor.isUninitialized()) {
       if (addRemoveGraySquaresInLayoutIfNeeded(add, &currentAncestor)) {
-        *changedSquares = true;
+        changedSquares = true;
       }
       currentAncestor = currentAncestor.parent();
     }
   }
+  return changedSquares;
 }
 
 }

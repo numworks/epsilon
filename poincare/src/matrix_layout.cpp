@@ -62,8 +62,8 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 
 void MatrixLayoutNode::startEditing() {
   if (!isEditing()) {
-    addEmptyRow(EmptyLayoutNode::Color::Gray);
-    addEmptyColumn(EmptyLayoutNode::Color::Gray);
+    addEmptyRow(EmptyRectangle::Color::Gray);
+    addEmptyColumn(EmptyRectangle::Color::Gray);
   }
 }
 
@@ -81,7 +81,7 @@ bool MatrixLayoutNode::isEditing() const {
     return false;
   }
   LayoutNode * lastChild = childAtIndex(m_numberOfRows * m_numberOfColumns - 1);
-  return lastChild->type() == Type::EmptyLayout && static_cast<EmptyLayoutNode *>(lastChild)->color() == EmptyLayoutNode::Color::Gray;
+  return lastChild->isEmpty() && static_cast<HorizontalLayoutNode *>(lastChild)->emptyColor() == EmptyRectangle::Color::Gray;
 }
 
 KDSize MatrixLayoutNode::computeSize(KDFont::Size font) {
@@ -107,6 +107,12 @@ void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDC
 MatrixLayout MatrixLayout::Builder(Layout l1, Layout l2, Layout l3, Layout l4) {
   MatrixLayout m = TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>({l1, l2, l3, l4});
   m.setDimensions(2, 2);
+  return m;
+}
+
+MatrixLayout MatrixLayout::EmptySquaredMatrixBuilder() {
+  MatrixLayout m = TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>({HorizontalLayout::Builder()});
+  m.setDimensions(1, 1);
   return m;
 }
 

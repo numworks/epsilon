@@ -127,9 +127,7 @@ public:
 
   // Other
   virtual int indexOfChildToPointToWhenInserting();
-  bool removeGraySquaresFromAllGridAncestors();
-  bool removeGraySquaresFromAllGridChildren();
-  bool addGraySquaresToAllGridAncestors();
+
   /* A layout has text if it is not empty and it is not an horizontal layout
    * with no child or with one child with no text. */
   virtual bool hasText() const { return true; }
@@ -151,6 +149,14 @@ public:
 
   virtual Layout makeEditable();
 
+  bool createGraySquaresAfterEnteringGrid() {
+    return changeGraySquaresOfAllGridRelatives(true, true);
+  }
+
+  bool deleteGraySquaresBeforeLeavingGrid() {
+    return changeGraySquaresOfAllGridRelatives(false, true);
+  }
+
 protected:
   virtual bool protectedIsIdenticalTo(Layout l);
 
@@ -166,7 +172,7 @@ protected:
 private:
   KDPoint absoluteOriginWithMargin(KDFont::Size font);
   virtual void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) = 0;
-  void changeGraySquaresOfAllGridRelatives(bool add, bool ancestors, bool * changedSquares);
+  bool changeGraySquaresOfAllGridRelatives(bool add, bool ancestors);
 
   KDRect m_frame;
   /* m_baseline is the signed vertical distance from the top of the layout to

@@ -12,6 +12,7 @@ poincare_src += $(addprefix poincare/src/,\
   derivative_layout.cpp \
   empty_rectangle.cpp \
   fraction_layout.cpp \
+  grid_layout.cpp \
   horizontal_layout.cpp \
   integral_layout.cpp \
   layout.cpp \
@@ -21,6 +22,7 @@ poincare_src += $(addprefix poincare/src/,\
   letter_c_with_sub_and_superscript_layout.cpp \
   letter_with_sub_and_superscript_layout.cpp \
   list_sequence_layout.cpp \
+  matrix_layout.cpp \
   nth_root_layout.cpp \
   parenthesis_layout.cpp \
   product_layout.cpp \

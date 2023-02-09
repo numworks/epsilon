@@ -62,10 +62,9 @@ public:
   Layout XNTLayout() const;
 
   // Layout modification
-  bool removeGraySquaresFromAllGridAncestors() { return node()->removeGraySquaresFromAllGridAncestors(); }
-  bool removeGraySquaresFromAllGridChildren() { return node()->removeGraySquaresFromAllGridChildren(); }
-  bool addGraySquaresToAllGridAncestors() { return node()->addGraySquaresToAllGridAncestors(); }
   int indexOfChildToPointToWhenInserting() { return node()->indexOfChildToPointToWhenInserting(); }
+  bool createGraySquaresAfterEnteringGrid() { return node()->createGraySquaresAfterEnteringGrid(); }
+  bool deleteGraySquaresBeforeLeavingGrid() { return node()->deleteGraySquaresBeforeLeavingGrid(); }
 
   void setMargin(bool hasMargin) { node()->setMargin(hasMargin); }
   void lockMargin(bool lock) { node()->lockMargin(lock); }

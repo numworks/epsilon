@@ -66,7 +66,7 @@ Layout Expression::toLayout() const {
     }, this);
 }
 
-float Expression::approximate(float x) const {
+float Expression::approximate() const {
   float res;
   send(
     [](const Node tree, void * res) {

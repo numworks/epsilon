@@ -16,7 +16,7 @@ public:
   static Expression Parse(const Layout * layout);
   static Expression CreateBasicReduction(void * treeAddress);
   Layout toLayout() const;
-  float approximate(float x) const;
+  float approximate() const;
 private:
   static EditionReference EditionPoolExpressionToLayout(Node node);
   static EditionReference EditionPoolLayoutToExpression(Node node);

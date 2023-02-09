@@ -8,7 +8,7 @@ using namespace PoincareJ;
 class Graph {
 public:
   Graph(const char * text);
-  float approximateAtAbscissa(float x) const;
+  float approximateAtAbscissa() const;
 private:
   constexpr static int k_bufferSize = 128;
   char m_functionText[k_bufferSize];
@@ -20,8 +20,8 @@ Graph::Graph(const char * text) {
   m_function = PoincareJ::Expression::Parse(m_functionText);
 }
 
-float Graph::approximateAtAbscissa(float x) const {
-  return m_function.approximate(x);
+float Graph::approximateAtAbscissa() const {
+  return m_function.approximate();
 }
 
 QUIZ_CASE(pcj_graph) {
@@ -29,7 +29,7 @@ QUIZ_CASE(pcj_graph) {
   std::cout << "\n---------------- Push Graph (1-2)/3/4 ----------------" << std::endl;
 #endif
   Graph graph("cos(x)");
-  float valueAt0 = graph.approximateAtAbscissa(0);
+  float valueAt0 = graph.approximateAtAbscissa();
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "Approximation = " << valueAt0 << std::endl;
 #endif

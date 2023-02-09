@@ -15,7 +15,9 @@ ParametersController::ParametersController(Escher::StackViewController * parentR
                                            Distribution * distribution,
                                            CalculationController * calculationController) :
       FloatParameterController<double>(parentResponder),
-      m_contentView(&m_selectableTableView, I18n::Message::DefineParameters),
+      m_headerView(KDFont::Size::Small, I18n::Message::DefineParameters, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
+      m_bottomView(KDFont::Size::Small, I18n::Message::LeaveAFieldEmpty, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
+      m_contentView(&m_selectableTableView, this, &m_headerView, &m_bottomView),
       m_distribution(distribution),
       m_calculationController(calculationController) {
   assert(m_distribution != nullptr);
@@ -43,16 +45,14 @@ void ParametersController::reinitCalculation() {
 }
 
 void ParametersController::viewWillAppear() {
+  if (m_distribution->canHaveUninitializedParameter()) {
+    m_contentView.setBottomView(&m_bottomView);
+  } else {
+    m_contentView.setBottomView(nullptr);
+  }
   resetMemoization();
-  m_contentView.layoutSubviews();
+  m_contentView.reload();
   FloatParameterController::viewWillAppear();
-}
-
-void ParametersController::viewDidDisappear() {
-  /* Prevent initSize to be bypassed when reopening the ParametersController.
-   * Indeed, number of cells might increase so their width need to be computed
-   * */
-  m_contentView.resetSize();
 }
 
 int ParametersController::numberOfRows() const {

@@ -2,7 +2,7 @@
 #define DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H
 
 #include <escher/expression_cell_with_editable_text_with_message.h>
-#include <escher/table_view_with_frozen_header.h>
+#include <escher/table_view_with_top_and_bottom_views.h>
 #include "distributions/models/distribution/distribution.h"
 #include <apps/shared/float_parameter_controller.h>
 #include "calculation_controller.h"
@@ -18,7 +18,6 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void reinitCalculation();
   void viewWillAppear() override;
-  void viewDidDisappear() override;
   TELEMETRY_ID("Parameters");
   int numberOfRows() const override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
@@ -36,7 +35,9 @@ private:
   bool hasUndefinedValue(const char * text, double floatValue) const override;
 
   constexpr static int k_maxNumberOfCells = 3;
-  Escher::TableViewWithFrozenHeader m_contentView;
+  Escher::MessageTextView m_headerView;
+  Escher::MessageTextView m_bottomView;
+  Escher::TableViewWithTopAndBottomViews m_contentView;
   Escher::ExpressionCellWithEditableTextWithMessage m_menuListCell[k_maxNumberOfCells];
   Distribution * m_distribution;
   CalculationController * m_calculationController;

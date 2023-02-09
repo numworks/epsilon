@@ -1,7 +1,6 @@
 #include <poincare/piecewise_operator.h>
 #include <poincare/boolean.h>
-// TODO
-//#include <poincare/piecewise_operator_layout.h>
+#include <poincare/piecewise_operator_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
@@ -10,7 +9,7 @@
 namespace Poincare {
 
 Layout PiecewiseOperatorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  /*PiecewiseOperatorLayout l = PiecewiseOperatorLayout::Builder();
+  PiecewiseOperatorLayout l = PiecewiseOperatorLayout::Builder();
   int n = numberOfChildren();
   int i = 0;
   while (i + 1 < n) {
@@ -25,8 +24,7 @@ Layout PiecewiseOperatorNode::createLayout(Preferences::PrintFloatMode floatDisp
     Layout leftChildLayout = childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
     l.addRow(leftChildLayout);
   }
-  return std::move(l);*/
-  return HorizontalLayout::Builder();
+  return std::move(l);
 }
 
 int PiecewiseOperatorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

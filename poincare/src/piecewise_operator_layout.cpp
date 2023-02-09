@@ -24,7 +24,7 @@ void PiecewiseOperatorLayoutNode::startEditing() {
   if (!isEditing()) {
     // Show last condition if empty
     makeLastConditionVisibleIfEmpty(true);
-    addEmptyRow(EmptyLayoutNode::Color::Gray);
+    addEmptyRow(EmptyRectangle::Color::Gray);
   }
 }
 
@@ -41,13 +41,13 @@ void PiecewiseOperatorLayoutNode::stopEditing() {
 bool PiecewiseOperatorLayoutNode::isEditing() const {
   assert(numberOfColumns() == 2);
   LayoutNode * firstElementOfLastRow = childAtIndex(numberOfChildren() - 2);
-  return firstElementOfLastRow->type() == Type::EmptyLayout && (static_cast<EmptyLayoutNode *>(firstElementOfLastRow))->color() == EmptyLayoutNode::Color::Gray;
+  return firstElementOfLastRow->isEmpty() && (static_cast<HorizontalLayoutNode *>(firstElementOfLastRow))->emptyColor() == EmptyRectangle::Color::Gray;
 }
 
 KDSize PiecewiseOperatorLayoutNode::computeSize(KDFont::Size font) {
   assert(numberOfColumns() == 2);
   KDSize sizeWithoutBrace = gridSize(font);
-  if (numberOfChildren() == 2 && !isEditing() && childAtIndex(1)->type() == Type::EmptyLayout) {
+  if (numberOfChildren() == 2 && !isEditing() && childAtIndex(1)->isEmpty()) {
     // If there is only 1 row and the condition is empty, shrink the size
     sizeWithoutBrace = KDSize(columnWidth(0, font), sizeWithoutBrace.height());
   }
@@ -79,13 +79,13 @@ void PiecewiseOperatorLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Siz
    * be set to yellow. */
   int lastRealRowIndex = m_numberOfRows - 1 - static_cast<int>(cursorIsInsideOperator);
   LayoutNode * lastRealCondition = childAtIndex(lastRealRowIndex * 2 + 1);
-  if (lastRealCondition->type() == Type::EmptyLayout) {
-    static_cast<EmptyLayoutNode *>(lastRealCondition)->setColor(EmptyLayoutNode::Color::Gray);
+  if (lastRealCondition->isEmpty()) {
+    static_cast<HorizontalLayoutNode *>(lastRealCondition)->setEmptyColor(EmptyRectangle::Color::Gray);
   }
   if (numberOfChildren() > 2 + 2 * static_cast<int>(cursorIsInsideOperator)) {
     LayoutNode * conditionAboveLast = childAtIndex(lastRealRowIndex * 2 - 1);
-    if (conditionAboveLast->type() == Type::EmptyLayout) {
-      static_cast<EmptyLayoutNode *>(conditionAboveLast)->setColor(EmptyLayoutNode::Color::Yellow);
+    if (conditionAboveLast->isEmpty()) {
+      static_cast<HorizontalLayoutNode *>(conditionAboveLast)->setEmptyColor(EmptyRectangle::Color::Gray);
     }
   }
 
@@ -97,14 +97,14 @@ void PiecewiseOperatorLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Siz
   for (int i = 0; i < numberOfRows(); i++) {
     LayoutNode * leftChild = childAtIndex(i * 2);
     LayoutNode * rightChild = childAtIndex(1 + i * 2);
-    if (!cursorIsInsideOperator && i == numberOfRows() - 1 && rightChild->type() == Type::EmptyLayout) {
+    if (!cursorIsInsideOperator && i == numberOfRows() - 1 && rightChild->isEmpty()) {
       // Last empty condition should be invisible when out of the layout
-      assert(static_cast<EmptyLayoutNode *>(rightChild)->isVisible() == false);
+      assert(static_cast<HorizontalLayoutNode *>(rightChild)->emptyVisibility() == EmptyRectangle::State::Hidden);
       continue; // Do not draw the comma
     }
     KDPoint leftChildPosition = positionOfChild(leftChild, font);
     KDPoint commaPosition = KDPoint(commaAbscissa, leftChildPosition.y() + leftChild->baseline(font) - KDFont::GlyphHeight(font) / 2);
-    bool drawInGray =  rightChild->type() == Type::EmptyLayout && static_cast<EmptyLayoutNode *>(rightChild)->color() == EmptyLayoutNode::Color::Gray;
+    bool drawInGray =  rightChild->isEmpty() && static_cast<HorizontalLayoutNode *>(rightChild)->emptyColor() == EmptyRectangle::Color::Gray;
     ctx->drawString(",", commaPosition.translatedBy(p), font, drawInGray ? Escher::Palette::GrayDark : expressionColor, backgroundColor);
   }
 }
@@ -112,8 +112,8 @@ void PiecewiseOperatorLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Siz
 void PiecewiseOperatorLayoutNode::makeLastConditionVisibleIfEmpty(bool visible) {
   assert(numberOfColumns() == 2);
   LayoutNode * lastCondition = childAtIndex(numberOfChildren() - 1);
-  if (lastCondition->type() == Type::EmptyLayout) {
-    static_cast<EmptyLayoutNode *>(lastCondition)->setVisible(visible);
+  if (lastCondition->isHorizontal()) {
+    static_cast<HorizontalLayoutNode *>(lastCondition)->setEmptyVisibility(visible ? EmptyRectangle::State::Visible : EmptyRectangle::State::Hidden);
   }
 }
 
@@ -129,8 +129,9 @@ PiecewiseOperatorLayout PiecewiseOperatorLayout::Builder() {
 void PiecewiseOperatorLayout::addRow(Layout leftLayout, Layout rightLayout) {
   assert(numberOfColumns() == 2);
   if (rightLayout.isUninitialized()) {
-    rightLayout = EmptyLayout::Builder(EmptyLayoutNode::Color::Gray);
-    static_cast<EmptyLayout&>(rightLayout).setVisible(false);
+    rightLayout = HorizontalLayout::Builder();
+    static_cast<HorizontalLayout&>(rightLayout).setEmptyColor(EmptyRectangle::Color::Gray);
+    static_cast<HorizontalLayout&>(rightLayout).setEmptyVisibility(EmptyRectangle::State::Hidden);
   }
   int nRows = numberOfRows();
   assert(!leftLayout.isUninitialized());

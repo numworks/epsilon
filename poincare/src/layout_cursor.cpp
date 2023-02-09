@@ -255,6 +255,9 @@ void LayoutCursor::deleteAndResetSelection() {
 bool LayoutCursor::didEnterCurrentPosition(LayoutCursor previousPosition) {
   bool changed = false;
   if (!previousPosition.isUninitialized()) {
+    /* Order matters: First show the empty rectangle at position, because when
+     * leaving a piecewise operator layout, empty rectangles can be set back
+     * to Hidden. */
     changed = previousPosition.setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State::Visible) || changed;
     changed = previousPosition.layout().deleteGraySquaresBeforeLeavingGrid(m_layout) || changed;
     if (changed) {
@@ -264,8 +267,10 @@ bool LayoutCursor::didEnterCurrentPosition(LayoutCursor previousPosition) {
   if (isUninitialized()) {
     return changed;
   }
-  changed = setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State::Hidden) || changed;
+  /* Order matters: First enter the grid, because when entering a piecewise
+   * operator layout, empty rectangles can be set back to Visible. */
   changed = m_layout.createGraySquaresAfterEnteringGrid(previousPosition.layout()) || changed;
+  changed = setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State::Hidden) || changed;
   if (changed) {
     invalidateSizesAndPositions();
   }

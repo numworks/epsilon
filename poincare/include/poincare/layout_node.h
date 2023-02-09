@@ -149,13 +149,8 @@ public:
 
   virtual Layout makeEditable();
 
-  bool createGraySquaresAfterEnteringGrid() {
-    return changeGraySquaresOfAllGridRelatives(true, true);
-  }
-
-  bool deleteGraySquaresBeforeLeavingGrid() {
-    return changeGraySquaresOfAllGridRelatives(false, true);
-  }
+  bool createGraySquaresAfterEnteringGrid(Layout layoutToExclude);
+  bool deleteGraySquaresBeforeLeavingGrid(Layout layoutToExclude);
 
 protected:
   virtual bool protectedIsIdenticalTo(Layout l);
@@ -172,7 +167,7 @@ protected:
 private:
   KDPoint absoluteOriginWithMargin(KDFont::Size font);
   virtual void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) = 0;
-  bool changeGraySquaresOfAllGridRelatives(bool add, bool ancestors);
+  bool changeGraySquaresOfAllGridRelatives(bool add, bool ancestors, Layout layoutToExclude);
 
   KDRect m_frame;
   /* m_baseline is the signed vertical distance from the top of the layout to

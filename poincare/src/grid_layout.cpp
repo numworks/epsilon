@@ -7,7 +7,7 @@ namespace Poincare {
 // LayoutNode
 int GridLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
   if (currentIndex == k_outsideIndex) {
-    return direction == OMG::HorizontalDirection::Left ? indexOfLastNonGrayChildWhenIsEditing() : 0;
+    return direction == OMG::HorizontalDirection::Left ? numberOfChildren() - 1 : 0;
   }
   if ((direction == OMG::HorizontalDirection::Left && childIsLeftOfGrid(currentIndex)) ||
       (direction == OMG::HorizontalDirection::Right && childIsRightOfGrid(currentIndex))) {
@@ -49,32 +49,6 @@ void GridLayoutNode::willAddSiblingToEmptyChildAtIndex(int childIndex) {
 }
 
 // Protected
-
-
-int GridLayoutNode::indexOfLastNonGrayChildWhenIsEditing() const {
-  assert(isEditing() || (numberOfColumnsIsFixed() && numberOfRowsIsFixed()));
- /* If a grid has one row and one column of gray children,
-  * the index m_numberOfColumns * (m_numberOfRows - 1) - 2 is the index of
-  * the last non-gray child.
-  *
-  * Example: m_numberOfColumns = 5, m_numberOfRows = 6
-  *     v-this child has index 0
-  *   [ O O O O X ]
-  *   [ O O O O X ]
-  *   [ O O O O X ]
-  *   [ O O O O X ]
-  *   [ O O O O X ]<<-the last O of this line has index 5 * (6 - 1) - 2
-  *   [ X X X X X ]
-  *     ^-this child has index 5 * (6 - 1)
-  *
-  * This formula becomes m_numberOfColumns * m_numberOfRows - 2 if there is
-  * not a last row with gray children, and it becomes
-  * m_numberOfColumns * (m_numberOfRows - 1) - 1 if there is not a last column
-  * with gray children.
-  * */
-  return numberOfColumns() * (numberOfRows() - static_cast<int>(!numberOfRowsIsFixed())) - 1 - static_cast<int>(!numberOfColumnsIsFixed());
-}
-
 bool GridLayoutNode::onlyFirstChildIsNonEmpty() const {
   for (int i = 1; i < numberOfChildren(); i++) {
     if (!childAtIndex(i)->isEmpty()) {

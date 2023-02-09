@@ -20,9 +20,9 @@ void LayoutCursor::setPosition(int position) {
   assert(position >= 0);
   assert((m_layout.isHorizontal() && position <= m_layout.numberOfChildren()) || (!m_layout.isHorizontal() && position <= 1));
   assert(!isSelecting());
-  willExitCurrentPosition();
+  LayoutCursor previousCursor = *this;
   m_position = position;
-  didEnterCurrentPosition();
+  didEnterCurrentPosition(previousCursor);
 }
 
 KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) {
@@ -77,9 +77,8 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting, bool * shouldR
   }
   if (moved) {
     *shouldRedrawLayout = selecting || *shouldRedrawLayout;
-    // Ensure that willExit and didEnter are always called by being left of ||
-    *shouldRedrawLayout = cloneCursor.willExitCurrentPosition() || *shouldRedrawLayout;
-    *shouldRedrawLayout = didEnterCurrentPosition() || *shouldRedrawLayout;
+    // Ensure that didEnterCurrentPosition is always called by being left of ||
+    *shouldRedrawLayout = didEnterCurrentPosition(cloneCursor) || *shouldRedrawLayout;
   }
   return moved;
 }
@@ -99,6 +98,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
   assert(!isUninitialized() && isValid());
   deleteAndResetSelection();
   int indexOfChildToPointTo = (forceRight || forceLeft) ? LayoutNode::k_outsideIndex : layout.indexOfChildToPointToWhenInserting();
+  LayoutCursor previousCursor = *this;
   LayoutCursor newCursor;
   if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
     Layout childToPoint = layout.childAtIndex(indexOfChildToPointTo);
@@ -107,7 +107,6 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     } else {
       newCursor = LayoutCursor(childToPoint);
     }
-    willExitCurrentPosition();
   }
   if (m_layout.isHorizontal()) {
     int positionShift = layout.isHorizontal() ? layout.numberOfChildren() : 1;
@@ -126,8 +125,8 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
   }
   if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
     assert(newCursor.isValid() && !newCursor.isUninitialized());
-    setTo(newCursor);
-    didEnterCurrentPosition();
+    *this = newCursor;
+    didEnterCurrentPosition(previousCursor);
   }
   invalidateSizesAndPositions();
 }
@@ -241,28 +240,29 @@ void LayoutCursor::deleteAndResetSelection() {
   didEnterCurrentPosition();
 }
 
-bool LayoutCursor::willExitCurrentPosition() {
-  if (isUninitialized()) {
-    return false;
+bool LayoutCursor::didEnterCurrentPosition(LayoutCursor previousPosition) {
+  bool changed = false;
+  if (!previousPosition.isUninitialized()) {
+    changed = previousPosition.setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State::Visible) || changed;
+    changed = previousPosition.layout().deleteGraySquaresBeforeLeavingGrid(m_layout) || changed;
+    if (changed) {
+      previousPosition.invalidateSizesAndPositions();
+    }
   }
-  bool changed = setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State::Visible);
-  changed = m_layout.deleteGraySquaresBeforeLeavingGrid();
+  if (isUninitialized()) {
+    return changed;
+  }
+  changed = setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State::Hidden) || changed;
+  changed = m_layout.createGraySquaresAfterEnteringGrid(previousPosition.layout()) || changed;
   if (changed) {
     invalidateSizesAndPositions();
   }
   return changed;
 }
 
-bool LayoutCursor::didEnterCurrentPosition() {
-  if (isUninitialized()) {
-    return false;
-  }
-  bool changed = setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State::Hidden);
-  changed = m_layout.createGraySquaresAfterEnteringGrid();
-  if (changed) {
-    invalidateSizesAndPositions();
-  }
-  return changed;
+bool LayoutCursor::didExitPosition() {
+  LayoutCursor lc;
+  return lc.didEnterCurrentPosition(*this);
 }
 
 bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
@@ -546,10 +546,10 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
   if (deletionMethod == LayoutNode::DeletionMethod::BinomialCoefficientMoveFromKtoN) {
     assert(deletionAppliedToParent);
     assert(!m_layout.parent().isUninitialized() && m_layout.parent().type() == LayoutNode::Type::BinomialCoefficientLayout);
-    willExitCurrentPosition();
+    LayoutCursor previousCursor = *this;
     m_layout = m_layout.parent().childAtIndex(BinomialCoefficientLayoutNode::k_nLayoutIndex);
     m_position = rightMostPosition();
-    didEnterCurrentPosition();
+    didEnterCurrentPosition(previousCursor);
     return;
   }
 

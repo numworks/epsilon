@@ -161,6 +161,14 @@ Layout LayoutNode::XNTLayout(int childIndex) const {
   return p == nullptr ? Layout() : p->XNTLayout(p->indexOfChild(this));
 }
 
+  bool LayoutNode::createGraySquaresAfterEnteringGrid(Layout layoutToExclude) {
+    return changeGraySquaresOfAllGridRelatives(true, true, layoutToExclude);
+  }
+
+  bool LayoutNode::deleteGraySquaresBeforeLeavingGrid(Layout layoutToExclude) {
+    return changeGraySquaresOfAllGridRelatives(false, true, layoutToExclude);
+  }
+
 // Protected and private
 
 bool LayoutNode::protectedIsIdenticalTo(Layout l) {
@@ -188,13 +196,13 @@ bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
   return true;
 }
 
- bool LayoutNode::changeGraySquaresOfAllGridRelatives(bool add, bool ancestors) {
+ bool LayoutNode::changeGraySquaresOfAllGridRelatives(bool add, bool ancestors, Layout layoutToExclude) {
   bool changedSquares = false;
   if (!ancestors) {
     // If in children, we also change the squares for this
     {
       Layout thisLayout = Layout(this);
-      if (addRemoveGraySquaresInLayoutIfNeeded(add, &thisLayout)) {
+      if ((layoutToExclude.isUninitialized() || !layoutToExclude.hasAncestor(thisLayout, true)) && addRemoveGraySquaresInLayoutIfNeeded(add, &thisLayout)) {
         changedSquares = true;
       }
     }
@@ -202,11 +210,14 @@ bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
     for (int i = 0; i < childrenNumber; i++) {
       /* We cannot use "for l : children()", as the node addresses might change,
        * especially the iterator stopping address. */
-      changedSquares = changedSquares || childAtIndex(i)->changeGraySquaresOfAllGridRelatives(add, false);
+      changedSquares = changedSquares || childAtIndex(i)->changeGraySquaresOfAllGridRelatives(add, false, layoutToExclude);
     }
   } else {
     Layout currentAncestor = Layout(parent());
     while (!currentAncestor.isUninitialized()) {
+      if (!layoutToExclude.isUninitialized() && layoutToExclude.hasAncestor(currentAncestor, true)) {
+        break;
+      }
       if (addRemoveGraySquaresInLayoutIfNeeded(add, &currentAncestor)) {
         changedSquares = true;
       }

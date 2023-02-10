@@ -98,23 +98,47 @@ static bool IsEmptyChildOfGridLayout(Layout l) {
   return l.isEmpty() && !parent.isUninitialized() && GridLayoutNode::IsGridLayoutType(parent.type());
 }
 
-/* Layout modification */
+static Layout LeftMostOrRightMostChildLayout(Layout l, OMG::HorizontalDirection direction) {
+  return l.isHorizontal() ? (l.childAtIndex(direction == OMG::HorizontalDirection::Left ? 0 : l.numberOfChildren() - 1) ) : l;
+}
+
+static bool IsTemporaryAutocompletedBracketPair(Layout l, AutocompletedBracketPairLayoutNode::Side tempSide) {
+  return AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(l.type()) && static_cast<AutocompletedBracketPairLayoutNode *>(l.node())->isTemporary(tempSide);
+}
+
+/* Layout insertion */
 void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool forceRight, bool forceLeft) {
   assert(!isUninitialized() && isValid());
+  if (layout.isEmpty()) {
+    return;
+  }
+  // - Step 1 - Delete selection
   deleteAndResetSelection();
 
+  // - Step 2 - Add empty row to grid layout if needed
   if (IsEmptyChildOfGridLayout(m_layout)) {
     static_cast<GridLayoutNode *>(m_layout.parent().node())->willFillEmptyChildAtIndex(m_layout.parent().indexOfChild(m_layout));
   }
 
+  /* - Step 3 - Close brackets on the left/right
+   * Do not close parentheses if an open parenthesis is inserted */
+  bool leftMostChildIsOpenBracket = IsTemporaryAutocompletedBracketPair(LeftMostOrRightMostChildLayout(layout, OMG::HorizontalDirection::Left), AutocompletedBracketPairLayoutNode::Side::Left);
+  bool rightMostChildIsOpenBracket = IsTemporaryAutocompletedBracketPair(LeftMostOrRightMostChildLayout(layout, OMG::HorizontalDirection::Right), AutocompletedBracketPairLayoutNode::Side::Right);
+
+  Layout leftL = leftLayout();
+  if (!leftMostChildIsOpenBracket && !leftL.isUninitialized() && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(leftL.type())) {
+    static_cast<AutocompletedBracketPairLayoutNode *>(leftL.node())->makeThisAndChildrenPermanent(AutocompletedBracketPairLayoutNode::Side::Right);
+  }
+  Layout rightL = rightLayout();
+  if (!rightMostChildIsOpenBracket && !rightL.isUninitialized() && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(rightL.type())) {
+    static_cast<AutocompletedBracketPairLayoutNode *>(rightL.node())->makeThisAndChildrenPermanent(AutocompletedBracketPairLayoutNode::Side::Left);
+  }
+
+  // - Step 4 - Find position to point to if layout will me merged
   LayoutCursor previousCursor = *this;
   Layout childToPoint;
-
   bool layoutToInsertIsHorizontal = layout.isHorizontal();
-
   if (layoutToInsertIsHorizontal) {
-    // Do this now because the layout might be merged later
-    // FIXME: Fix indexOfChildToPointToWhenInserting for Horizontal Layout
     int indexOfChildToPointTo = (forceRight || forceLeft) ? LayoutNode::k_outsideIndex : layout.indexOfChildToPointToWhenInserting();
     if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
       childToPoint = layout.childAtIndex(indexOfChildToPointTo);
@@ -123,6 +147,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     }
   }
 
+  // - Step 5 - Insert layout
   if (m_layout.isHorizontal()) {
     int positionShift = layout.isHorizontal() ? layout.numberOfChildren() : 1;
     static_cast<HorizontalLayout&>(m_layout).addOrMergeChildAtIndex(layout, m_position);
@@ -139,6 +164,8 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     m_position = (forceLeft ? 1 : m_layout.numberOfChildren()) - (m_position == 0);
   }
 
+  /* - Step 6 - Collapse siblings and find position to point to if layout was
+   * not merged */
   if (!layoutToInsertIsHorizontal) {
     collapseSiblingsOfLayout(layout);
     int indexOfChildToPointTo = (forceRight || forceLeft) ? LayoutNode::k_outsideIndex : layout.indexOfChildToPointToWhenInserting();
@@ -147,11 +174,18 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     }
   }
 
+  // - Step 7 - Point to required position
   if (!childToPoint.isUninitialized()) {
-    *this = LayoutCursor(childToPoint);
+    /* FIXME: layoutToInsertIsHorizontal is used because if the child to point
+     * is inside a parenthesis, the cursor must be left of the layout. */
+    *this = LayoutCursor(childToPoint, layoutToInsertIsHorizontal ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right);
     didEnterCurrentPosition(previousCursor);
   }
 
+  // - Step 8 - Balance brackets
+  balanceAutocompletedBracketsAndKeepAValidCursor();
+
+  // - Step 9 - Invalidate layout sizes and positions
   invalidateSizesAndPositions();
 }
 
@@ -218,8 +252,8 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     return;
   }
 
-  HorizontalLayout layoutToInsert = HorizontalLayout::Builder();
-  HorizontalLayout currentLayout = layoutToInsert;
+  HorizontalLayout currentLayout = HorizontalLayout::Builder();
+  Layout layoutToInsert = currentLayout;
   int currentSubscriptDepth = 0;
 
   while (codePoint != UCodePointNull) {
@@ -231,61 +265,56 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       continue;
     }
 
-    Layout newChild;
-    AutocompletedBracketPairLayoutNode::Side bracketSide = AutocompletedBracketPairLayoutNode::Side::Left;
-    /* TODO: This insertion of subscripts should be replaced with a parser
+    /* TODO: The insertion of subscripts should be replaced with a parser
      * that creates layout. This is a draft of this. */
+
+    // Handle subscripts
     if (codePoint == UCodePointSystem) {
       /* System braces are converted to subscript */
       if (nextCodePoint == '{') {
-        newChild = VerticalOffsetLayout::Builder(HorizontalLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
+        Layout newChild = VerticalOffsetLayout::Builder(HorizontalLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
         currentSubscriptDepth++;
         nextCodePoint = decoder.nextCodePoint();
-      } else {
-        // UCodePointSystem should be inserted only for system braces
-        assert(nextCodePoint == '}' && currentSubscriptDepth > 0);
-        // Leave the subscript
-        currentSubscriptDepth--;
-        Layout subscript = currentLayout;
-        while (subscript.type() != LayoutNode::Type::VerticalOffsetLayout) {
-          subscript = subscript.parent();
-          assert(!subscript.isUninitialized());
-        }
-        Layout parentOfSubscript = subscript.parent();
-        assert(!parentOfSubscript.isUninitialized() && parentOfSubscript.isHorizontal());
-        currentLayout = static_cast<HorizontalLayout&>(parentOfSubscript);
-        codePoint = decoder.nextCodePoint();
+        Layout horizontalChildOfSubscript = newChild.childAtIndex(0);
+        assert(horizontalChildOfSubscript.isEmpty());
+        currentLayout = static_cast<HorizontalLayout&>(horizontalChildOfSubscript);
+        codePoint = nextCodePoint;
         continue;
       }
-    } else if (codePoint == '(' || codePoint == UCodePointLeftSystemParenthesis) {
-      newChild = ParenthesisLayout::Builder();
-    } else if (codePoint == ')' || codePoint == UCodePointRightSystemParenthesis) {
-      newChild = ParenthesisLayout::Builder();
-      bracketSide = AutocompletedBracketPairLayoutNode::Side::Right;
-    } else if (codePoint == '{') {
-      newChild = CurlyBraceLayout::Builder();
-    } else if (codePoint == '}') {
-      newChild = CurlyBraceLayout::Builder();
-      bracketSide = AutocompletedBracketPairLayoutNode::Side::Right;
+      // UCodePointSystem should be inserted only for system braces
+      assert(nextCodePoint == '}' && currentSubscriptDepth > 0);
+      // Leave the subscript
+      currentSubscriptDepth--;
+      Layout subscript = currentLayout;
+      while (subscript.type() != LayoutNode::Type::VerticalOffsetLayout) {
+        subscript = subscript.parent();
+        assert(!subscript.isUninitialized());
+      }
+      Layout parentOfSubscript = subscript.parent();
+      assert(!parentOfSubscript.isUninitialized() && parentOfSubscript.isHorizontal());
+      currentLayout = static_cast<HorizontalLayout&>(parentOfSubscript);
+      codePoint = decoder.nextCodePoint();
+      continue;
+    }
+
+    // Handle code points and brackets
+    Layout newChild;
+    LayoutNode::Type bracketType;
+    AutocompletedBracketPairLayoutNode::Side bracketSide;
+    if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairCodePoint(codePoint, &bracketType, &bracketSide)) {
+      // Brackets will be balanced later in insertLayoutAtCursor
+      newChild = AutocompletedBracketPairLayoutNode::BuildFromBracketType(bracketType);
+      static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->setTemporary(AutocompletedBracketPairLayoutNode::OtherSide(bracketSide), true);
     } else if (nextCodePoint.isCombining()) {
       newChild = CombinedCodePointsLayout::Builder(codePoint, nextCodePoint);
       nextCodePoint = decoder.nextCodePoint();
     } else {
       newChild = CodePointLayout::Builder(codePoint);
     }
-
     currentLayout.addOrMergeChildAtIndex(newChild, currentLayout.numberOfChildren());
-
-    if (newChild.type() == LayoutNode::Type::VerticalOffsetLayout) {
-      // Continue insertion inside subscript
-      assert(newChild.numberOfChildren() == 1);
-      Layout horizontalChildOfSubscript = newChild.childAtIndex(0);
-      assert(horizontalChildOfSubscript.isEmpty());
-      currentLayout = static_cast<HorizontalLayout&>(horizontalChildOfSubscript);
-    }
-
     codePoint = nextCodePoint;
   }
+
   assert(currentSubscriptDepth == 0);
   insertLayoutAtCursor(layoutToInsert, context, forceCursorRightOfText, forceCursorLeftOfText);
 
@@ -616,6 +645,21 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
     return;
   }
 
+  if (deletionMethod == LayoutNode::DeletionMethod::AutocompletedBracketPairMakeTemporary) {
+    if (deletionAppliedToParent) { // Inside bracket
+      Layout parent = m_layout.parent();
+      assert(!parent.isUninitialized() && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(parent.type()));
+      static_cast<AutocompletedBracketPairLayoutNode *>(parent.node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
+    } else { // Right of bracket
+      assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(leftLayout().type()));
+      static_cast<AutocompletedBracketPairLayoutNode *>(leftLayout().node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
+    }
+    bool dummy = false;
+    move(OMG::Direction::Left, false, &dummy);
+    balanceAutocompletedBracketsAndKeepAValidCursor();
+    return;
+  }
+
   if (deletionMethod == LayoutNode::DeletionMethod::FractionDenominatorDeletion) {
     // Merge the numerator and denominator and replace the fraction with it
     assert(deletionAppliedToParent);
@@ -753,6 +797,22 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(Layout l, OMG::Horizontal
       break;
     }
   }
+}
+
+void LayoutCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
+  if (!m_layout.isHorizontal()) {
+    return;
+  }
+  Layout currentLayout = m_layout;
+  Layout currentParent = currentLayout.parent();
+  while (!currentParent.isUninitialized() && (currentParent.isHorizontal() || AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(currentParent.type()))) {
+    currentLayout = currentParent;
+    currentParent = currentLayout.parent();
+  }
+  // A bracket should always have an horizontal parent
+  assert(currentLayout.isHorizontal());
+  HorizontalLayout topHorizontalLayout = static_cast<HorizontalLayout&>(currentLayout);
+  AutocompletedBracketPairLayoutNode::BalanceBracketsInsideHorizontalLayout(topHorizontalLayout, static_cast<HorizontalLayout *>(&m_layout), &m_position);
 }
 
 }

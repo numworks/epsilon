@@ -84,6 +84,7 @@ class HorizontalLayout final : public Layout {
   friend class HorizontalLayoutNode;
 public:
   // Constructors
+  HorizontalLayout() : Layout() {}
   HorizontalLayout(HorizontalLayoutNode * n) : Layout(n) {}
 
   // FIXME: use Layout instead of TreeHandle
@@ -117,7 +118,6 @@ public:
   void setEmptyColor(EmptyRectangle::Color color) { node()->setEmptyColor(color); }
   bool setEmptyVisibility(EmptyRectangle::State state) { return node()->setEmptyVisibility(state); }
 
-private:
   HorizontalLayoutNode * node() const { return static_cast<HorizontalLayoutNode *>(Layout::node()); }
 };
 

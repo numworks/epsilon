@@ -106,6 +106,7 @@ poincare_src += $(addprefix poincare/src/,\
   division_remainder.cpp \
   empty_expression.cpp \
   evaluation.cpp \
+  exam_mode.cpp \
   expression.cpp \
   expression_node.cpp \
   expression_node_properties.cpp \

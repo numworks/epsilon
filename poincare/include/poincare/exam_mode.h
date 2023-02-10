@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXAM_MODE_H
 #define POINCARE_EXAM_MODE_H
 
+#include <assert.h>
 #include <ion/persisting_bytes.h>
 
 namespace Poincare {
@@ -42,7 +43,8 @@ class ExamMode {
 
   ExamMode() : m_mode(Mode::Uninitialized), m_flags(0) {}
   ExamMode(Mode mode, PressToTestFlags flags = {.value = 0})
-      : m_mode(mode), m_flags(flags.value) { /* TODO assertions */
+      : m_mode(mode), m_flags(flags.value) {
+    assert(isValid());
   }
 
   bool operator==(const ExamMode& other) const {
@@ -73,9 +75,13 @@ class ExamMode {
   bool forbidElementsApp() const { return flags().forbidElementsApp; }
 
  private:
-  static ExamMode GetFromPersistingBytes() { return ExamMode(); }  // TODO
+  static ExamMode GetFromPersistingBytes();
 
-  void setInPersistingBytes() const {}  // TODO
+  bool isValid() const {
+    return (m_flags == 0 || m_mode == Mode::PressToTest) &&
+           (m_mode < Mode::NumberOfModes);
+  }
+  void setInPersistingBytes() const;
 
   Mode m_mode : 4;
   uint16_t m_flags : 12;

@@ -45,21 +45,26 @@ int ListController::numberOfExpressionRows() const {
 
 KDCoordinate ListController::expressionRowHeight(int j) {
   KDCoordinate defaultHeight = Metric::StoreRowHeight;
-  if (isAddEmptyRow(j)) {
-    return defaultHeight;
+  KDCoordinate sequenceHeight;
+  if (j == m_editedCellIndex) {
+    sequenceHeight = m_editableCell.minimalSizeForOptimalDisplay().height();
+  } else {
+    if (isAddEmptyRow(j)) {
+      return defaultHeight;
+    }
+    Shared::Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(j)));
+    Layout layout = sequence->layout();
+    int sequenceDefinition = sequenceDefinitionForRow(j);
+    if (sequenceDefinition == k_firstInitialCondition) {
+      layout = sequence->firstInitialConditionLayout();
+    } else if (sequenceDefinition == k_secondInitialCondition) {
+      layout = sequence->secondInitialConditionLayout();
+    }
+    if (layout.isUninitialized()) {
+      return defaultHeight;
+    }
+    sequenceHeight = layout.layoutSize(k_font).height();
   }
-  Shared::Sequence * sequence = modelStore()->modelForRecord(modelStore()->recordAtIndex(modelIndexForRow(j)));
-  Layout layout = sequence->layout();
-  int sequenceDefinition = sequenceDefinitionForRow(j);
-  if (sequenceDefinition == k_firstInitialCondition) {
-    layout = sequence->firstInitialConditionLayout();
-  } else if (sequenceDefinition == k_secondInitialCondition) {
-    layout = sequence->secondInitialConditionLayout();
-  }
-  if (layout.isUninitialized()) {
-    return defaultHeight;
-  }
-  KDCoordinate sequenceHeight = layout.layoutSize(k_font).height();
   return std::max<KDCoordinate>(defaultHeight, sequenceHeight + 2*k_expressionCellVerticalMargin);
 }
 

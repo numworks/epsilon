@@ -17,9 +17,7 @@ public:
 #endif
 
   // Ghost
-#if ASSERTIONS
   bool isGhost() const override { return true; }
-#endif
 };
 
 }

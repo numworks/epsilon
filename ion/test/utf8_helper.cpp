@@ -325,6 +325,16 @@ QUIZ_CASE(ion_utf8_glyph_offset_at_code_point) {
   quiz_assert(UTF8Helper::GlyphOffsetAtCodePoint(s, s + strlen(s) - 2) == 4);
 }
 
+void assert_string_codepoint_length_is(const char * string, size_t result) {
+  quiz_assert(UTF8Helper::StringGlyphLength(string) == result);
+}
+
+QUIZ_CASE(ion_utf8_helper_string_codepoint_length) {
+  assert_string_codepoint_length_is("", 0);
+  assert_string_codepoint_length_is("123", 3);
+  assert_string_codepoint_length_is("1ᴇ3", 3);
+}
+
 void assert_string_glyph_length_is(const char * string, int maxSize, size_t result) {
   quiz_assert(UTF8Helper::StringGlyphLength(string, maxSize) == result);
 }

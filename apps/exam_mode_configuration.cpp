@@ -208,16 +208,3 @@ bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
       appName == I18n::Message::SolverApp && examMode.forbidSolverApp();
   return pythonDutchExam || elementsForbidden || solverForbidden;
 }
-
-I18n::Message ExamModeConfiguration::examModeTitleBarMessage(ExamMode mode) {
-  switch (mode.mode()) {
-    case ExamMode::Mode::English:
-      return I18n::Message::ExamModeTitleBarUK;
-    case ExamMode::Mode::Dutch:
-      return I18n::Message::ExamModeTitleBarNL;
-    case ExamMode::Mode::Portuguese:
-      return I18n::Message::ExamModeTitleBarPT;
-    default:
-      return I18n::Message::Default;
-  }
-}

@@ -98,9 +98,21 @@ void TitleBarView::layoutSubviews(bool force) {
         KDRect(k_examIconMargin - k_examTextWidth, k_verticalShift,
                k_examTextWidth, bounds().height() - k_verticalShift),
         force);
-    m_examModeTextView.setMessage(
-        ExamModeConfiguration::examModeTitleBarMessage(
-            Preferences::sharedPreferences->examMode()));
+    I18n::Message examModeMessage;
+    switch (Preferences::sharedPreferences->examMode().mode()) {
+      case ExamMode::Mode::English:
+        examModeMessage = I18n::Message::ExamModeTitleBarUK;
+        break;
+      case ExamMode::Mode::Dutch:
+        examModeMessage = I18n::Message::ExamModeTitleBarNL;
+        break;
+      case ExamMode::Mode::Portuguese:
+        examModeMessage = I18n::Message::ExamModeTitleBarPT;
+        break;
+      default:
+        examModeMessage = I18n::Message::Default;
+    }
+    m_examModeTextView.setMessage(examModeMessage);
   } else {
     m_examModeIconView.setFrame(KDRectZero, force);
     m_examModeTextView.setMessage(I18n::Message::Default);

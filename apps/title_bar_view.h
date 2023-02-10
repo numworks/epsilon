@@ -11,7 +11,9 @@
 class TitleBarView : public Escher::View {
  public:
   TitleBarView();
+
   void drawRect(KDContext* ctx, KDRect rect) const override;
+
   void setTitle(I18n::Message title);
   bool setChargeState(Ion::Battery::Charge chargeState);
   void updateBatteryAnimation();
@@ -27,9 +29,11 @@ class TitleBarView : public Escher::View {
   constexpr static KDCoordinate k_examIconHeight = 9;
   constexpr static KDCoordinate k_examIconMargin = 93;
   constexpr static KDCoordinate k_examTextWidth = 20;
+
   int numberOfSubviews() const override;
   void layoutSubviews(bool force = false) override;
   Escher::View* subviewAtIndex(int index) override;
+
   Escher::MessageTextView m_titleView;
   BatteryView m_batteryView;
   ShiftAlphaLockView m_shiftAlphaLockView;

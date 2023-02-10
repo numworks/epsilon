@@ -308,14 +308,14 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
 
 /* Private */
 
-void LayoutCursor::setLayout(Layout l, bool leftOfLayout) {
+void LayoutCursor::setLayout(Layout l, OMG::HorizontalDirection sideOfLayout) {
   if (!l.isHorizontal() && !l.parent().isUninitialized() && l.parent().isHorizontal()) {
     m_layout = l.parent();
-    m_position = m_layout.indexOfChild(l) + !leftOfLayout;
+    m_position = m_layout.indexOfChild(l) + (sideOfLayout == OMG::HorizontalDirection::Right);
     return;
   }
   m_layout = l;
-  m_position = leftOfLayout ? leftMostPosition() : rightMostPosition();
+  m_position = sideOfLayout == OMG::HorizontalDirection::Left ? leftMostPosition() : rightMostPosition();
 }
 
 Layout LayoutCursor::leftLayout() {
@@ -404,7 +404,7 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction, bool * shouldR
     assert(!commonAncestor.isUninitialized());
     Layout layoutAncestor = static_cast<Layout&>(commonAncestor);
     // Down goes left to right and up goes right to left
-    setLayout(layoutAncestor, direction == OMG::VerticalDirection::Up);
+    setLayout(layoutAncestor, direction == OMG::VerticalDirection::Up ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right);
     m_startOfSelection = m_position + (direction == OMG::VerticalDirection::Up ? 1 : -1);
   }
   return moved;
@@ -414,7 +414,7 @@ static void ScoreCursorInDescendants(KDPoint p, Layout l, KDFont::Size font, Lay
   KDCoordinate currentDistance = p.squareDistanceTo(result->middleLeftPoint(font));
   // Put a cursor left and right of l
   for (int i = 0; i < 2; i++) {
-    LayoutCursor tempCursor = LayoutCursor(l, i == 0);
+    LayoutCursor tempCursor = LayoutCursor(l, i == 0 ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right);
     if (currentDistance > p.squareDistanceTo(tempCursor.middleLeftPoint(font))) {
       *result = tempCursor;
     }
@@ -426,7 +426,7 @@ static void ScoreCursorInDescendants(KDPoint p, Layout l, KDFont::Size font, Lay
 }
 
 static LayoutCursor ClosestCursorInDescendantsOfLayout(LayoutCursor currentCursor, Layout l, KDFont::Size font) {
-  LayoutCursor result = LayoutCursor(l, true);
+  LayoutCursor result = LayoutCursor(l, OMG::HorizontalDirection::Left);
   ScoreCursorInDescendants(currentCursor.middleLeftPoint(font), l, font, &result);
   return result;
 }
@@ -466,7 +466,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(OMG::VerticalDirection direction
     if (nextIndex != LayoutNode::k_cantMoveIndex) {
       if (nextIndex == LayoutNode::k_outsideIndex) {
         assert(currentPosition != LayoutNode::PositionInLayout::Middle);
-        setLayout(p, currentPosition == LayoutNode::PositionInLayout::Left);
+        setLayout(p, currentPosition == LayoutNode::PositionInLayout::Left ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right);
       } else {
         assert(!p.isHorizontal());
         // We assume the new cursor is the same whatever the font
@@ -596,7 +596,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
   assert(deletionMethod == LayoutNode::DeletionMethod::DeleteLayout);
   if (deletionAppliedToParent) {
     assert(!m_layout.parent().isUninitialized());
-    setLayout(m_layout.parent(), false);
+    setLayout(m_layout.parent(), OMG::HorizontalDirection::Right);
   }
   if (!m_layout.isHorizontal()) {
     assert(m_layout.parent().isUninitialized() || !m_layout.parent().isHorizontal());
@@ -624,7 +624,7 @@ void LayoutCursor::removeEmptyColumnAndRowOfGridParentIfNeeded() {
   if (changed) {
     int newChildIndex = gridNode->indexAtRowColumn(currentRow, currentColumn);
     assert(parentGrid.numberOfChildren() > newChildIndex);
-    *this = LayoutCursor(parentGrid.childAtIndex(newChildIndex), false);
+    *this = LayoutCursor(parentGrid.childAtIndex(newChildIndex));
     didEnterCurrentPosition();
   }
 }

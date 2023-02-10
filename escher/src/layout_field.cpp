@@ -179,7 +179,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
 
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
   LayoutCursor previousCursor = *m_contentView.cursor();
-  m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), side == OMG::HorizontalDirection::Left));
+  m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), side));
   m_contentView.cursor()->didEnterCurrentPosition(previousCursor);
 }
 

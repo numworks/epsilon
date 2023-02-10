@@ -12,11 +12,11 @@ class LayoutCursor final {
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 
-  LayoutCursor(Layout layout, bool leftOfLayout = true) :
+  LayoutCursor(Layout layout, OMG::HorizontalDirection sideOfLayout = OMG::HorizontalDirection::Right) :
     m_startOfSelection(-1)
   {
     if (!layout.isUninitialized()) {
-      setLayout(layout, leftOfLayout);
+      setLayout(layout, sideOfLayout);
     }
   }
 
@@ -74,7 +74,7 @@ public:
   bool isAtNumeratorOfEmptyFraction() const;
 
 private:
-  void setLayout(Layout layout, bool leftOfLayout);
+  void setLayout(Layout layout, OMG::HorizontalDirection sideOfLayout);
 
   Layout leftLayout();
   Layout rightLayout();

@@ -114,6 +114,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
 
   if (layoutToInsertIsHorizontal) {
     // Do this now because the layout might be merged later
+    // FIXME: Fix indexOfChildToPointToWhenInserting for Horizontal Layout
     int indexOfChildToPointTo = (forceRight || forceLeft) ? LayoutNode::k_outsideIndex : layout.indexOfChildToPointToWhenInserting();
     if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
       childToPoint = layout.childAtIndex(indexOfChildToPointTo);
@@ -210,12 +211,84 @@ void LayoutCursor::addFractionLayoutAndCollapseSiblings(Context * context) {
 }
 
 void LayoutCursor::insertText(const char * text, Context * context, bool forceCursorRightOfText, bool forceCursorLeftOfText) {
-  // TODO: Restore parenthesis and subscript behaviour
-  int currentPosition = m_position;
-  insertLayoutAtCursor(LayoutHelper::StringToCodePointsLayout(text, strlen(text)), context, forceCursorRightOfText);
-  if (forceCursorLeftOfText) {
-    m_position = currentPosition;
+  UTF8Decoder decoder(text);
+
+  CodePoint codePoint = decoder.nextCodePoint();
+  if (codePoint == UCodePointNull) {
+    return;
   }
+
+  HorizontalLayout layoutToInsert = HorizontalLayout::Builder();
+  HorizontalLayout currentLayout = layoutToInsert;
+  int currentSubscriptDepth = 0;
+
+  while (codePoint != UCodePointNull) {
+    assert(!codePoint.isCombining());
+    CodePoint nextCodePoint = decoder.nextCodePoint();
+    if (codePoint == UCodePointEmpty) {
+      codePoint = nextCodePoint;
+      assert(!codePoint.isCombining());
+      continue;
+    }
+
+    Layout newChild;
+    AutocompletedBracketPairLayoutNode::Side bracketSide = AutocompletedBracketPairLayoutNode::Side::Left;
+    /* TODO: This insertion of subscripts should be replaced with a parser
+     * that creates layout. This is a draft of this. */
+    if (codePoint == UCodePointSystem) {
+      /* System braces are converted to subscript */
+      if (nextCodePoint == '{') {
+        newChild = VerticalOffsetLayout::Builder(HorizontalLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
+        currentSubscriptDepth++;
+        nextCodePoint = decoder.nextCodePoint();
+      } else {
+        // UCodePointSystem should be inserted only for system braces
+        assert(nextCodePoint == '}' && currentSubscriptDepth > 0);
+        // Leave the subscript
+        currentSubscriptDepth--;
+        Layout subscript = currentLayout;
+        while (subscript.type() != LayoutNode::Type::VerticalOffsetLayout) {
+          subscript = subscript.parent();
+          assert(!subscript.isUninitialized());
+        }
+        Layout parentOfSubscript = subscript.parent();
+        assert(!parentOfSubscript.isUninitialized() && parentOfSubscript.isHorizontal());
+        currentLayout = static_cast<HorizontalLayout&>(parentOfSubscript);
+        codePoint = decoder.nextCodePoint();
+        continue;
+      }
+    } else if (codePoint == '(' || codePoint == UCodePointLeftSystemParenthesis) {
+      newChild = ParenthesisLayout::Builder();
+    } else if (codePoint == ')' || codePoint == UCodePointRightSystemParenthesis) {
+      newChild = ParenthesisLayout::Builder();
+      bracketSide = AutocompletedBracketPairLayoutNode::Side::Right;
+    } else if (codePoint == '{') {
+      newChild = CurlyBraceLayout::Builder();
+    } else if (codePoint == '}') {
+      newChild = CurlyBraceLayout::Builder();
+      bracketSide = AutocompletedBracketPairLayoutNode::Side::Right;
+    } else if (nextCodePoint.isCombining()) {
+      newChild = CombinedCodePointsLayout::Builder(codePoint, nextCodePoint);
+      nextCodePoint = decoder.nextCodePoint();
+    } else {
+      newChild = CodePointLayout::Builder(codePoint);
+    }
+
+    currentLayout.addOrMergeChildAtIndex(newChild, currentLayout.numberOfChildren());
+
+    if (newChild.type() == LayoutNode::Type::VerticalOffsetLayout) {
+      // Continue insertion inside subscript
+      assert(newChild.numberOfChildren() == 1);
+      Layout horizontalChildOfSubscript = newChild.childAtIndex(0);
+      assert(horizontalChildOfSubscript.isEmpty());
+      currentLayout = static_cast<HorizontalLayout&>(horizontalChildOfSubscript);
+    }
+
+    codePoint = nextCodePoint;
+  }
+  assert(currentSubscriptDepth == 0);
+  insertLayoutAtCursor(layoutToInsert, context, forceCursorRightOfText, forceCursorLeftOfText);
+
   // TODO: Restore beautification
 }
 

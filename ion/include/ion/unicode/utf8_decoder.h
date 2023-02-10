@@ -18,7 +18,9 @@ public:
   size_t nextGlyphPosition();
   size_t previousGlyphPosition();
   size_t stringPosition() const { return m_stringPosition; }
+  size_t stringStart() const { return m_string; }
   size_t stringEnd() const { return m_stringEnd; }
+  void unsafeSetPosition(size_t position) { m_stringPosition = position; }
 
 protected:
   size_t const m_string;

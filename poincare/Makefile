@@ -65,6 +65,7 @@ poincare_src += $(addprefix poincare/src/,\
   statistics_dataset.cpp\
   student_distribution.cpp \
   uniform_distribution.cpp \
+  xnt_helpers.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/,\

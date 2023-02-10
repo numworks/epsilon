@@ -7,12 +7,10 @@
 #include <ion/unicode/utf8_helper.h>
 #include <ion/keyboard/layout_events.h>
 #include <poincare/aliases_list.h>
+#include <poincare/parametered_expression.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/derivative.h>
-#include <poincare/integral.h>
-#include <poincare/sum.h>
-#include <poincare/product.h>
 #include <poincare/symbol_abstract.h>
+#include <poincare/xnt_helpers.h>
 #include <ion/events.h>
 #include <assert.h>
 #include <algorithm>
@@ -440,98 +438,19 @@ void AbstractTextField::removePreviousGlyphIfRepetition(bool defaultXNTHasChange
 
 // TODO : Handle cycling with non-default layouts.
 size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, size_t bufferLength) {
-  /* If cursor is in one of the following functions, and everything before the
-   * cursor is correctly nested, the default XNTCodePoint will be improved.
-   * These functions all have the following structure :
-   * functionName(argument, variable, additonalOutOfContextFields ...)
-   * If the cursor is in an argument field, and the variable is well nested and
-   * defined, the variable will be inserted into the given buffer. Otherwise,
-   * the (improved or not) defaultXNTCodePoint is inserted. */
-  constexpr static struct { Poincare::AliasesList aliasesList; char xnt; } sFunctions[] = {
-    { Poincare::Derivative::s_functionHelper.aliasesList(), Poincare::Derivative::k_defaultXNTChar },
-    { Poincare::Integral::s_functionHelper.aliasesList(), Poincare::Integral::k_defaultXNTChar },
-    { Poincare::Product::s_functionHelper.aliasesList(), Poincare::Product::k_defaultXNTChar },
-    { Poincare::Sum::s_functionHelper.aliasesList(), Poincare::Sum::k_defaultXNTChar }
-  };
   if (!isEditing()) {
     reinitDraftTextBuffer();
     setEditing(true);
     m_delegate->textFieldDidStartEditing(this);
   }
+  assert(text() == contentView()->editedText());
+  UTF8Decoder decoder(text(), cursorLocation());
   bool defaultXNTHasChanged = false;
-  const char * text = this->text();
-  assert(text == contentView()->editedText());
-  const char * locationOfCursor = cursorLocation();
-  // Step 1 : Identify the function the cursor is in
-  UTF8Decoder functionDecoder(text, locationOfCursor);
-  const char * location = functionDecoder.stringPosition();
-  CodePoint c = UCodePointUnknown;
-  // Analyze glyphs on the left of the cursor
-  if (location > text) {
-    c = functionDecoder.previousCodePoint();
-    location = functionDecoder.stringPosition();
-  }
-  int functionLevel = 0;
-  int cursorLevel = 0;
-  bool cursorInVariableField = false;
-  bool functionFound = false;
-  while (location > text && !functionFound) {
-    switch (c) {
-      case '(':
-        // Check if we are skipping to the next matching '('.
-        if (functionLevel > 0) {
-          functionLevel--;
-          break;
-        }
-        // Skip over whitespace.
-        while (location > text && functionDecoder.previousCodePoint() == ' ') {
-          location = functionDecoder.stringPosition();
-        }
-        // Move back right before the last non whitespace code-point
-        functionDecoder.nextCodePoint();
-        location = functionDecoder.stringPosition();
-        // Identify one of the functions
-        for (size_t i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
-          const char * name = sFunctions[i].aliasesList.mainAlias();
-          size_t length = strlen(name);
-          if ((location >= text + length) && memcmp(&text[(location - text) - length], name, length) == 0) {
-            functionFound = true;
-            // Update default code point
-            defaultXNTCodePoint = CodePoint(sFunctions[i].xnt);
-            defaultXNTHasChanged = true;
-          }
-        }
-        if (!functionFound) {
-          // No function found, reset search parameters
-          cursorInVariableField = false;
-          cursorLevel += 1;
-        }
-        break;
-      case ',':
-        if (functionLevel == 0) {
-          if (cursorInVariableField) {
-            // Cursor is out of context, skip to the next matching '('
-            functionLevel ++;
-            cursorLevel ++;
-          }
-          // Update cursor's position status
-          cursorInVariableField = !cursorInVariableField;
-        }
-        break;
-      case ')':
-        // Skip to the next matching '('.
-        functionLevel ++;
-        break;
-    }
-    c = functionDecoder.previousCodePoint();
-    location = functionDecoder.stringPosition();
-  }
-
-  /* Step 2 : Locate variable text */
-  if (functionFound && !cursorInVariableField) {
+  if (Poincare::FindXNTSymbol(decoder, &defaultXNTHasChanged, &defaultXNTCodePoint)) {
     const char * parameterText;
     size_t parameterLength = bufferLength + 1;
-    if (Poincare::ParameteredExpression::ParameterText(locationOfCursor, &parameterText, &parameterLength) && bufferLength >= parameterLength) {
+    decoder.unsafeSetPosition(reinterpret_cast<size_t>(cursorLocation()));
+    if (Poincare::ParameteredExpression::ParameterText(decoder.stringPosition(), &parameterText, &parameterLength) && bufferLength >= parameterLength) {
       memcpy(buffer, parameterText, parameterLength);
       return parameterLength;
     }

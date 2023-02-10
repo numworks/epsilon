@@ -184,7 +184,6 @@ void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
 }
 
 void LayoutField::reload(KDSize previousSize) {
-  layout().invalidAllSizesPositionsAndBaselines();
   KDSize newSize = minimalSizeForOptimalDisplay();
   if (m_delegate && previousSize.height() != newSize.height()) {
     m_delegate->layoutFieldDidChangeSize(this);

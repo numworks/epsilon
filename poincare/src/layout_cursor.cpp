@@ -225,20 +225,23 @@ void LayoutCursor::performBackspace() {
     return;
   }
 
+  LayoutCursor previousCursor = *this;
   Layout leftL = leftLayout();
   if (!leftL.isUninitialized()) {
     LayoutNode::DeletionMethod deletionMethod = leftL.deletionMethodForCursorLeftOfChild(LayoutNode::k_outsideIndex);
     privateDelete(deletionMethod, false);
-    return;
+  } else {
+    assert(m_position == leftMostPosition());
+    Layout p = m_layout.parent();
+    if (p.isUninitialized()) {
+      return;
+    }
+    LayoutNode::DeletionMethod deletionMethod = p.deletionMethodForCursorLeftOfChild(p.indexOfChild(m_layout));
+    privateDelete(deletionMethod, true);
   }
-
-  assert(m_position == leftMostPosition());
-  Layout p = m_layout.parent();
-  if (p.isUninitialized()) {
-    return;
-  }
-  LayoutNode::DeletionMethod deletionMethod = p.deletionMethodForCursorLeftOfChild(p.indexOfChild(m_layout));
-  privateDelete(deletionMethod, true);
+  removeEmptyColumnAndRowOfGridParentIfNeeded();
+  didEnterCurrentPosition(previousCursor),
+  invalidateSizesAndPositions();
 }
 
 void LayoutCursor::deleteAndResetSelection() {
@@ -258,8 +261,8 @@ void LayoutCursor::deleteAndResetSelection() {
   }
   m_position = selectionLeftBound;
   stopSelecting();
-  didEnterCurrentPosition();
   removeEmptyColumnAndRowOfGridParentIfNeeded();
+  didEnterCurrentPosition();
   invalidateSizesAndPositions();
 }
 
@@ -537,7 +540,6 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
       static_cast<HorizontalLayout&>(parentOfP).addOrMergeChildAtIndex(m_layout, m_position);
       m_layout = parentOfP;
     }
-    didEnterCurrentPosition();
     return;
   }
 
@@ -568,13 +570,11 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
       static_cast<HorizontalLayout&>(parentOfFraction).addOrMergeChildAtIndex(numerator, indexOfFraction);
       m_layout = parentOfFraction;
     }
-    didEnterCurrentPosition();
     return;
   }
 
   if (deletionMethod == LayoutNode::DeletionMethod::BinomialCoefficientMoveFromKtoN || deletionMethod == LayoutNode::DeletionMethod::GridLayoutMoveToUpperRow) {
     assert(deletionAppliedToParent);
-    LayoutCursor previousCursor = *this;
     int newIndex = -1;
     if (deletionMethod == LayoutNode::DeletionMethod::BinomialCoefficientMoveFromKtoN) {
       assert(!m_layout.parent().isUninitialized() && m_layout.parent().type() == LayoutNode::Type::BinomialCoefficientLayout);
@@ -590,7 +590,6 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
     }
     m_layout = m_layout.parent().childAtIndex(newIndex);
     m_position = rightMostPosition();
-    didEnterCurrentPosition(previousCursor);
     return;
   }
 
@@ -610,8 +609,6 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
   assert(m_layout.isHorizontal());
   static_cast<HorizontalLayout&>(m_layout).removeChildAtIndexInPlace(m_position - 1);
   m_position--;
-  removeEmptyColumnAndRowOfGridParentIfNeeded();
-  invalidateSizesAndPositions();
 }
 
 void LayoutCursor::removeEmptyColumnAndRowOfGridParentIfNeeded() {

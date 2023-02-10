@@ -32,7 +32,12 @@ KDColor ExamMode::color() const {
 
 bool ExamMode::forbidSolverApp() const { return flags().forbidEquationSolver; }
 
-bool ExamMode::forbidElementsApp() const { return flags().forbidElementsApp; }
+bool ExamMode::forbidElementsApp() const {
+  return flags().forbidElementsApp || mode() == Mode::Dutch ||
+         mode() == Mode::Portuguese || mode() == Mode::English;
+}
+
+bool ExamMode::forbidCodeApp() const { return mode() == Mode::Dutch; }
 
 bool ExamMode::forbidLineDetails() const { return mode() == Mode::IBTest; }
 

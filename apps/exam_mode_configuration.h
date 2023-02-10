@@ -17,10 +17,6 @@ I18n::Message examModeActivationMessage(size_t index);
 // Settings pop-up
 I18n::Message examModeActivationWarningMessage(Poincare::ExamMode mode);
 
-// Exam mode behaviour
-I18n::Message forbiddenAppMessage(Poincare::ExamMode::Mode mode, int line);
-bool appIsForbidden(I18n::Message appName);
-
 }  // namespace ExamModeConfiguration
 
 #endif

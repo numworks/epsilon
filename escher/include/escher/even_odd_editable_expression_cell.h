@@ -11,9 +11,9 @@ namespace Escher {
 class EvenOddEditableExpressionCell : public EvenOddCell {
 public:
   EvenOddEditableExpressionCell(
-    Responder * parentResponder = nullptr,
-    InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,
-    LayoutFieldDelegate * layoutDelegate = nullptr,
+    Responder * parentResponder,
+    InputEventHandlerDelegate * inputEventHandlerDelegate,
+    LayoutFieldDelegate * layoutDelegate,
     float horizontalAlignment = KDContext::k_alignLeft,
     float verticalAlignment = KDContext::k_alignCenter,
     KDColor textColor = KDColorBlack,

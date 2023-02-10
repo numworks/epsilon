@@ -15,7 +15,7 @@ constexpr KDCoordinate ListController::k_minTitleColumnWidth;
 ListController::ListController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, ButtonRowController * footer) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddSequence),
   m_selectableTableView(this, this, this, this),
-  m_editableCell(this, nullptr, this),
+  m_editableCell(this, this, this),
   m_parameterController(inputEventHandlerDelegate, this),
   m_typeParameterController(this, this),
   m_typeStackController(nullptr, &m_typeParameterController, StackViewController::Style::PurpleWhite),

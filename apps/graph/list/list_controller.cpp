@@ -16,7 +16,7 @@ namespace Graph {
 ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, GraphController * graphController, FunctionParameterController * functionParameterController) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
   m_selectableTableView(this, this, this, this),
-  m_editableCell(this, nullptr, this),
+  m_editableCell(this, this, this),
   m_parameterController(functionParameterController),
   m_modelsParameterController(this, nullptr, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, StackViewController::Style::PurpleWhite),

@@ -22,7 +22,7 @@ concept is_derived_from = __is_base_of(Base, Derived);
 
 template <class C> concept CTreeCompatible = is_derived_from<C, AbstractCTreeCompatible>;
 
-class AbstractCTree {};
+class AbstractCTree : AbstractCTreeCompatible {};
 
 template <class C> concept CTreeish = is_derived_from<C, AbstractCTree>;
 
@@ -118,10 +118,15 @@ template <class...Args> consteval auto Multi(Args...args) { return NAry<BlockTyp
 template <class...Args> consteval auto Seti(Args...args) { return NAry<BlockType::Set>(args...); }
 
 
-template<CTreeish Exp, CTreeish ...CTS> static consteval auto Poly(Exp exponents, CTS...) {
+template<CTreeish Exp, CTreeish ...CTS> static consteval auto __Poly(Exp exponents, CTS...) {
+  constexpr uint8_t Size = sizeof...(CTS);
+  return Concat<CTree<BlockType::Polynomial, Size>, Exp, CTree<Size, BlockType::Polynomial>, CTS...>();
+}
+
+template<CTreeish Exp, CTreeCompatible ...CTS> static consteval auto Poly(Exp exponents, CTS... args) {
   constexpr uint8_t Size = sizeof...(CTS);
   static_assert(Exp::size == Size - 1, "Number of children and exponents do not match in constant polynomial");
-  return Concat<CTree<BlockType::Polynomial, Size>, Exp, CTree<Size, BlockType::Polynomial>, CTS...>();
+  return __Poly(exponents, CTree(args)...);
 }
 
 

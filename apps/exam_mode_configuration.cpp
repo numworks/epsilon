@@ -12,12 +12,11 @@ using namespace Poincare;
 int ExamModeConfiguration::numberOfAvailableExamMode() {
   /* Available exam mode depends on the selected country and the active mode.
    * A user could first activate an exam mode and then change the country. */
-  Preferences::ExamMode examMode = Preferences::sharedPreferences->examMode();
-  if (examMode == Preferences::ExamMode::Standard ||
-      examMode == Preferences::ExamMode::Dutch ||
-      examMode == Preferences::ExamMode::IBTest ||
-      examMode == Preferences::ExamMode::Portuguese ||
-      examMode == Preferences::ExamMode::English) {
+  ExamMode examMode = Preferences::sharedPreferences->examMode();
+  if (examMode == ExamMode::Mode::Standard ||
+      examMode == ExamMode::Mode::Dutch || examMode == ExamMode::Mode::IBTest ||
+      examMode == ExamMode::Mode::Portuguese ||
+      examMode == ExamMode::Mode::English) {
     // Reactivation button
     return 1;
   }
@@ -26,14 +25,14 @@ int ExamModeConfiguration::numberOfAvailableExamMode() {
 
   if (availableExamModes ==
           CountryPreferences::AvailableExamModes::PressToTestOnly ||
-      examMode == Preferences::ExamMode::PressToTest) {
-    assert(examMode == Preferences::ExamMode::Off ||
-           examMode == Preferences::ExamMode::PressToTest);
+      examMode == ExamMode::Mode::PressToTest) {
+    assert(examMode == ExamMode::Mode::Off ||
+           examMode == ExamMode::Mode::PressToTest);
     // Menu shouldn't be visible
     return 0;
   }
   // Activation button(s)
-  assert(examMode == Preferences::ExamMode::Off);
+  assert(examMode == ExamMode::Mode::Off);
   if (availableExamModes ==
           CountryPreferences::AvailableExamModes::StandardOnly ||
       availableExamModes ==
@@ -51,77 +50,76 @@ int ExamModeConfiguration::numberOfAvailableExamMode() {
 }
 
 bool ExamModeConfiguration::pressToTestExamModeAvailable() {
-  Preferences::ExamMode examMode = Preferences::sharedPreferences->examMode();
+  ExamMode examMode = Preferences::sharedPreferences->examMode();
   CountryPreferences::AvailableExamModes availableExamModes =
       GlobalPreferences::sharedGlobalPreferences->availableExamModes();
-  return examMode == Preferences::ExamMode::PressToTest ||
+  return examMode == ExamMode::Mode::PressToTest ||
          ((availableExamModes ==
                CountryPreferences::AvailableExamModes::PressToTestOnly ||
            availableExamModes == CountryPreferences::AvailableExamModes::All) &&
-          examMode == Preferences::ExamMode::Off);
+          examMode == ExamMode::Mode::Off);
 }
 
 bool ExamModeConfiguration::testModeAvailable() {
-  return Preferences::sharedPreferences->examMode() ==
-             Preferences::ExamMode::Off &&
+  return Preferences::sharedPreferences->examMode() == ExamMode::Mode::Off &&
          GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
              CountryPreferences::AvailableExamModes::All;
 }
 
-Preferences::ExamMode ExamModeConfiguration::examModeAtIndex(size_t index) {
+ExamMode::Mode ExamModeConfiguration::examModeAtIndex(size_t index) {
   if (GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
       CountryPreferences::AvailableExamModes::PortugueseOnly) {
     assert(index == 0);
-    return Preferences::ExamMode::Portuguese;
+    return ExamMode::Mode::Portuguese;
   }
   if (GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
       CountryPreferences::AvailableExamModes::EnglishOnly) {
     assert(index == 0);
-    return Preferences::ExamMode::English;
+    return ExamMode::Mode::English;
   }
-  Preferences::ExamMode examModes[] = {
-      Preferences::ExamMode::Standard, Preferences::ExamMode::Dutch,
-      Preferences::ExamMode::Portuguese, Preferences::ExamMode::English,
-      Preferences::ExamMode::IBTest};
-  assert(index < sizeof(examModes) / sizeof(Preferences::ExamMode));
+  ExamMode::Mode examModes[] = {ExamMode::Mode::Standard, ExamMode::Mode::Dutch,
+                                ExamMode::Mode::Portuguese,
+                                ExamMode::Mode::English,
+                                ExamMode::Mode::IBTest};
+  assert(index < sizeof(examModes) / sizeof(ExamMode::Mode));
   return examModes[index];
 }
 
 I18n::Message ExamModeConfiguration::examModeActivationMessage(size_t index) {
-  Preferences::ExamMode examMode = Preferences::sharedPreferences->examMode();
+  ExamMode::Mode examMode = Preferences::sharedPreferences->examMode().mode();
   /* If the country has all exam mode, we specify which one will be reactivated.
    * The country might still have been updated by the user after activation. */
   bool specifyFrenchExamModeType =
       GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
       CountryPreferences::AvailableExamModes::All;
-  assert(examMode == Preferences::ExamMode::Off || index == 0);
+  assert(examMode == ExamMode::Mode::Off || index == 0);
   switch (examMode) {
-    case Preferences::ExamMode::Standard:
+    case ExamMode::Mode::Standard:
       return (specifyFrenchExamModeType
                   ? I18n::Message::ReactivateFrenchExamMode
                   : I18n::Message::ReactivateExamMode);
-    case Preferences::ExamMode::Dutch:
+    case ExamMode::Mode::Dutch:
       return I18n::Message::ReactivateDutchExamMode;
-    case Preferences::ExamMode::IBTest:
+    case ExamMode::Mode::IBTest:
       return I18n::Message::ReactivateIBExamMode;
-    case Preferences::ExamMode::Portuguese:
+    case ExamMode::Mode::Portuguese:
       return I18n::Message::ReactivatePortugueseExamMode;
-    case Preferences::ExamMode::English:
+    case ExamMode::Mode::English:
       return I18n::Message::ReactivateEnglishExamMode;
     default:
-      assert(examMode == Preferences::ExamMode::Off);
+      assert(examMode == ExamMode::Mode::Off);
       switch (examModeAtIndex(index)) {
-        case Preferences::ExamMode::Standard:
+        case ExamMode::Mode::Standard:
           return (specifyFrenchExamModeType
                       ? I18n::Message::ActivateFrenchExamMode
                       : I18n::Message::ActivateExamMode);
-        case Preferences::ExamMode::Dutch:
+        case ExamMode::Mode::Dutch:
           return I18n::Message::ActivateDutchExamMode;
-        case Preferences::ExamMode::Portuguese:
+        case ExamMode::Mode::Portuguese:
           return I18n::Message::ActivatePortugueseExamMode;
-        case Preferences::ExamMode::English:
+        case ExamMode::Mode::English:
           return I18n::Message::ActivateEnglishExamMode;
-        case Preferences::ExamMode::IBTest:
+        case ExamMode::Mode::IBTest:
           return I18n::Message::ActivateIBExamMode;
         default:
           assert(false);
@@ -131,42 +129,42 @@ I18n::Message ExamModeConfiguration::examModeActivationMessage(size_t index) {
 }
 
 I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(
-    Preferences::ExamMode mode) {
-  if (mode == Preferences::ExamMode::Off) {
+    ExamMode mode) {
+  if (mode == ExamMode::Mode::Off) {
     if (Preferences::sharedPreferences->examMode() ==
-        Preferences::ExamMode::PressToTest) {
+        ExamMode::Mode::PressToTest) {
       return I18n::Message::ExitPressToTestExamMode;
     }
     return I18n::Message::ExitExamMode;
-  } else if (mode == Preferences::ExamMode::Standard) {
+  } else if (mode == ExamMode::Mode::Standard) {
     if (Ion::Authentication::clearanceLevel() ==
         Ion::Authentication::ClearanceLevel::NumWorks) {
       return I18n::Message::ActiveExamModeMessage;
     } else {
       return I18n::Message::ActiveExamModeWithResetMessage;
     }
-  } else if (mode == Preferences::ExamMode::IBTest) {
+  } else if (mode == ExamMode::Mode::IBTest) {
     if (Ion::Authentication::clearanceLevel() ==
         Ion::Authentication::ClearanceLevel::NumWorks) {
       return I18n::Message::ActiveIBExamModeMessage;
     } else {
       return I18n::Message::ActiveIBExamModeWithResetMessage;
     }
-  } else if (mode == Preferences::ExamMode::PressToTest) {
+  } else if (mode == ExamMode::Mode::PressToTest) {
     if (Ion::Authentication::clearanceLevel() ==
         Ion::Authentication::ClearanceLevel::NumWorks) {
       return I18n::Message::ActivePressToTestModeMessage;
     } else {
       return I18n::Message::ActivePressToTestWithResetMessage;
     }
-  } else if (mode == Preferences::ExamMode::Dutch) {
+  } else if (mode == ExamMode::Mode::Dutch) {
     if (Ion::Authentication::clearanceLevel() ==
         Ion::Authentication::ClearanceLevel::NumWorks) {
       return I18n::Message::ActiveDutchExamModeMessage;
     } else {
       return I18n::Message::ActiveDutchExamModeWithResetMessage;
     }
-  } else if (mode == Preferences::ExamMode::English) {
+  } else if (mode == ExamMode::Mode::English) {
     if (Ion::Authentication::clearanceLevel() ==
         Ion::Authentication::ClearanceLevel::NumWorks) {
       return I18n::Message::ActiveEnglishExamModeMessage;
@@ -174,7 +172,7 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(
       return I18n::Message::ActiveEnglishExamModeWithResetMessage;
     }
   } else {
-    assert(mode == Preferences::ExamMode::Portuguese);
+    assert(mode == ExamMode::Mode::Portuguese);
     if (Ion::Authentication::clearanceLevel() ==
         Ion::Authentication::ClearanceLevel::NumWorks) {
       return I18n::Message::ActivePortugueseExamModeMessage;
@@ -184,26 +182,26 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(
   }
 }
 
-I18n::Message ExamModeConfiguration::forbiddenAppMessage(
-    Preferences::ExamMode mode, int line) {
-  if (mode == Preferences::ExamMode::PressToTest) {
+I18n::Message ExamModeConfiguration::forbiddenAppMessage(ExamMode::Mode mode,
+                                                         int line) {
+  if (mode == ExamMode::Mode::PressToTest) {
     I18n::Message messages[] = {I18n::Message::ForbiddenAppInPressToTestMode1,
                                 I18n::Message::ForbiddenAppInPressToTestMode2};
     return messages[line];
   }
-  assert(mode != Preferences::ExamMode::Off);
+  assert(mode != ExamMode::Mode::Off);
   I18n::Message messages[] = {I18n::Message::ForbiddenAppInExamMode1,
                               I18n::Message::ForbiddenAppInExamMode2};
   return messages[line];
 }
 
-KDColor ExamModeConfiguration::examModeColor(Preferences::ExamMode mode) {
-  switch (mode) {
-    case Preferences::ExamMode::Standard:
+KDColor ExamModeConfiguration::examModeColor(ExamMode mode) {
+  switch (mode.mode()) {
+    case ExamMode::Mode::Standard:
       return k_standardLEDColor;
-    case Preferences::ExamMode::Dutch:
+    case ExamMode::Mode::Dutch:
       return k_dutchLEDColor;
-    case Preferences::ExamMode::Portuguese:
+    case ExamMode::Mode::Portuguese:
       return k_portugueseLEDColor;
     default:
       return KDColorBlack;
@@ -211,18 +209,16 @@ KDColor ExamModeConfiguration::examModeColor(Preferences::ExamMode mode) {
 }
 
 bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
-  Preferences::ExamMode mode = Preferences::sharedPreferences->examMode();
+  ExamMode examMode = Preferences::sharedPreferences->examMode();
+  ExamMode mode = examMode.mode();
   bool pythonDutchExam =
-      appName == I18n::Message::CodeApp && mode == Preferences::ExamMode::Dutch;
+      appName == I18n::Message::CodeApp && mode == ExamMode::Mode::Dutch;
   bool elementsForbidden =
       appName == I18n::Message::ElementsApp &&
-      (mode == Preferences::ExamMode::Portuguese ||
-       mode == Preferences::ExamMode::Dutch ||
-       mode == Preferences::ExamMode::English ||
-       Preferences::sharedPreferences->elementsAppIsForbidden());
+      (mode == ExamMode::Mode::Portuguese || mode == ExamMode::Mode::Dutch ||
+       mode == ExamMode::Mode::English || examMode.forbidElementsApp());
   bool solverForbidden =
-      appName == I18n::Message::SolverApp &&
-      Preferences::sharedPreferences->equationSolverIsForbidden();
+      appName == I18n::Message::SolverApp && examMode.forbidEquationSolver();
   return pythonDutchExam || elementsForbidden || solverForbidden;
 }
 
@@ -241,7 +237,7 @@ static bool isPrimeFactorization(Expression expression) {
 }
 
 bool ExamModeConfiguration::exactExpressionIsForbidden(Expression e) {
-  if (!Preferences::sharedPreferences->exactResultsAreForbidden()) {
+  if (!Preferences::sharedPreferences->examMode().forbidExactResults()) {
     return false;
   }
   bool isFraction = e.type() == ExpressionNode::Type::Division &&
@@ -251,58 +247,55 @@ bool ExamModeConfiguration::exactExpressionIsForbidden(Expression e) {
 }
 
 bool ExamModeConfiguration::additionalResultsAreForbidden() {
-  Preferences::ExamMode mode = Preferences::sharedPreferences->examMode();
-  return mode == Preferences::ExamMode::Dutch ||
-         mode == Preferences::ExamMode::IBTest;
+  ExamMode mode = Preferences::sharedPreferences->examMode().mode();
+  return mode == ExamMode::Mode::Dutch || mode == ExamMode::Mode::IBTest;
 }
 
 bool ExamModeConfiguration::lineDetailsAreForbidden() {
-  return Preferences::sharedPreferences->examMode() ==
-         Preferences::ExamMode::IBTest;
+  return Preferences::sharedPreferences->examMode().mode() ==
+         ExamMode::Mode::IBTest;
 }
 
 bool ExamModeConfiguration::inequalityGraphingIsForbidden() {
-  return Preferences::sharedPreferences->inequalityGraphingIsForbidden();
+  return Preferences::sharedPreferences->examMode().forbidInequalityGraphing();
 }
 
 bool ExamModeConfiguration::implicitPlotsAreForbidden() {
-  return Preferences::sharedPreferences->implicitPlotsAreForbidden();
+  return Preferences::sharedPreferences->examMode().forbidImplicitPlots();
 }
 
 bool ExamModeConfiguration::statsDiagnosticsAreForbidden() {
-  return Preferences::sharedPreferences->statsDiagnosticsAreForbidden();
+  return Preferences::sharedPreferences->examMode().forbidStatsDiagnostics();
 }
 
 bool ExamModeConfiguration::vectorNormIsForbidden() {
-  return Preferences::sharedPreferences->vectorNormIsForbidden();
+  return Preferences::sharedPreferences->examMode().forbidVectorNorm();
 }
 
 bool ExamModeConfiguration::vectorProductsAreForbidden() {
-  return Preferences::sharedPreferences->vectorProductsAreForbidden();
+  return Preferences::sharedPreferences->examMode().forbidVectorProduct();
 }
 
 bool ExamModeConfiguration::basedLogarithmIsForbidden() {
-  return Preferences::sharedPreferences->basedLogarithmIsForbidden();
+  return Preferences::sharedPreferences->examMode().forbidBasedLogarithm();
 }
 
 bool ExamModeConfiguration::sumIsForbidden() {
-  return Preferences::sharedPreferences->sumIsForbidden();
+  return Preferences::sharedPreferences->examMode().forbidSum();
 }
 
 bool ExamModeConfiguration::unitsAreForbidden() {
-  Preferences::ExamMode mode = Preferences::sharedPreferences->examMode();
-  return mode == Preferences::ExamMode::Dutch ||
-         mode == Preferences::ExamMode::IBTest;
+  ExamMode mode = Preferences::sharedPreferences->examMode().mode();
+  return mode == ExamMode::Mode::Dutch || mode == ExamMode::Mode::IBTest;
 }
 
-I18n::Message ExamModeConfiguration::examModeTitleBarMessage(
-    Poincare::Preferences::ExamMode mode) {
-  switch (mode) {
-    case Preferences::ExamMode::English:
+I18n::Message ExamModeConfiguration::examModeTitleBarMessage(ExamMode mode) {
+  switch (mode.mode()) {
+    case ExamMode::Mode::English:
       return I18n::Message::ExamModeTitleBarUK;
-    case Preferences::ExamMode::Dutch:
+    case ExamMode::Mode::Dutch:
       return I18n::Message::ExamModeTitleBarNL;
-    case Preferences::ExamMode::Portuguese:
+    case ExamMode::Mode::Portuguese:
       return I18n::Message::ExamModeTitleBarPT;
     default:
       return I18n::Message::Default;

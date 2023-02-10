@@ -171,8 +171,8 @@ void Controller::switchToSelectedApp() {
   AppsContainer *container = AppsContainer::sharedAppsContainer();
   int appIdx = indexOfAppAtColumnAndRow(selectionDataSource()->selectedColumn(),
                                         selectionDataSource()->selectedRow());
-  Poincare::Preferences::ExamMode examMode =
-      Poincare::Preferences::sharedPreferences->examMode();
+  Poincare::ExamMode::Mode examMode =
+      Poincare::Preferences::sharedPreferences->examMode().mode();
   if (appIdx < container->numberOfBuiltinApps()) {
     ::App::Snapshot *selectedSnapshot =
         container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx));
@@ -185,7 +185,7 @@ void Controller::switchToSelectedApp() {
       container->switchToBuiltinApp(selectedSnapshot);
     }
   } else {
-    assert(examMode != Poincare::Preferences::ExamMode::Off);
+    assert(examMode != Poincare::ExamMode::Mode::Off);
     m_view.reload();
     Ion::ExternalApps::App a = container->externalAppAtIndex(
         appIdx - container->numberOfBuiltinApps());

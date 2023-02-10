@@ -35,7 +35,7 @@ Evaluation<T> SumAndProductNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
   // TODO : Reduction distributes on list but not approx
   if (type() == ExpressionNode::Type::Sum &&
-      Poincare::Preferences::sharedPreferences->sumIsForbidden()) {
+      Poincare::Preferences::sharedPreferences->examMode().forbidSum()) {
     return Complex<T>::Undefined();
   }
   Evaluation<T> aInput =
@@ -75,7 +75,7 @@ Expression SumAndProduct::shallowReduce(ReductionContext reductionContext) {
     }
   }
   if (type() == ExpressionNode::Type::Sum &&
-      Poincare::Preferences::sharedPreferences->sumIsForbidden()) {
+      Poincare::Preferences::sharedPreferences->examMode().forbidSum()) {
     return replaceWithUndefinedInPlace();
   }
   return *this;

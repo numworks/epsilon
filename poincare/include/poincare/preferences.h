@@ -2,10 +2,10 @@
 #define POINCARE_PREFERENCES_H
 
 #include <assert.h>
-#include <ion/include/ion/persisting_bytes.h>
 #include <omg/bit_helper.h>
 #include <omg/global_box.h>
 #include <poincare/context.h>
+#include <poincare/exam_mode.h>
 #include <stdint.h>
 
 namespace Poincare {
@@ -44,18 +44,6 @@ class Preferences final {
     LetterWithSubAndSuperscript = 1
   };
   enum class MixedFractions : bool { Disabled = false, Enabled = true };
-  enum class ExamMode : uint8_t {
-    // ExamMode is encoded on 4 bits in the Persisting Bytes
-    Off = 0,
-    Standard = 1,
-    Dutch = 2,
-    IBTest = 3,
-    PressToTest = 4,
-    Portuguese = 5,
-    English = 6,
-    Undefined = 7,  // Undefined must be the last ExamMode.
-    Unknown = 0b1111,
-  };
   enum class LogarithmBasePosition : uint8_t {
     BottomRight = 0,
     TopLeft,
@@ -67,72 +55,6 @@ class Preferences final {
     WithEmptyBase
   };
   enum class ParabolaParameter : uint8_t { Default, FocalLength };
-
-  constexpr static int k_numberOfExamModes = 7;
-  static_assert(static_cast<int>(ExamMode::IBTest) == 3,
-                "Preferences::ExamMode::IBTest != 3 but this value is used in "
-                "ion/src/device/kernel/drivers/led_update.cpp");
-  static_assert(static_cast<int>(ExamMode::PressToTest) == 4,
-                "Preferences::ExamMode::PressToTest != 4 but this value is "
-                "used in ion/src/device/kernel/drivers/led_update.cpp");
-  static_assert(k_numberOfExamModes == static_cast<int>(ExamMode::Undefined),
-                "Preferences::ExamMode::Undefined should be last but the "
-                "number of exam modes does not match.");
-  static_assert(k_numberOfExamModes < 8,
-                "Exam modes should be encoded with one more bit than the "
-                "number of required bit so that the last bit is one if and "
-                "only if the exam mode is Unknown");
-  static_assert(OMG::BitHelper::numberOfBitsToCountUpTo(
-                    static_cast<int>(ExamMode::Undefined)) <
-                    OMG::BitHelper::numberOfBitsToCountUpTo(
-                        static_cast<int>(ExamMode::Unknown)),
-                "There should be one bit that is up only for Unknown");
-  /* Params are false if the feature is activated (allowed) and true if
-   * forbidden. */
-  union PressToTestParams {
-    bool operator==(PressToTestParams other) {
-      return m_value == other.m_value;
-    }
-    bool isInactive() { return *this == k_inactivePressToTest; }
-    uint16_t m_value;
-    /* Warning: The order of allocation of bit-fields within a unit (high-order
-     * to low-order or low-order to high-order) is implementation-defined. The
-     * alignment of the addressable storage unit is unspecified. */
-    struct {
-      bool m_equationSolverIsForbidden : 1;
-      bool m_inequalityGraphingIsForbidden : 1;
-      bool m_implicitPlotsAreForbidden : 1;
-      bool m_statsDiagnosticsAreForbidden : 1;
-      bool m_vectorsAreForbidden : 1;
-      bool m_basedLogarithmIsForbidden : 1;
-      bool m_sumIsForbidden : 1;
-      bool m_exactResultsAreForbidden : 1;
-      bool m_elementsAppIsForbidden : 1;
-    };
-  };
-  /* By default, a PressToTestParams has all parameters set to false. */
-  static constexpr PressToTestParams k_inactivePressToTest =
-      PressToTestParams({0});
-  union ExamPersistingBytes {
-    ExamPersistingBytes(Ion::PersistingBytes::PersistingBytesInt pb)
-        : m_value(pb) {}
-    ExamPersistingBytes(ExamMode mode, PressToTestParams params)
-        : m_examMode(mode), m_params(params.m_value) {}
-
-    ExamMode mode() const { return m_examMode; }
-    PressToTestParams params() const { return PressToTestParams({m_params}); }
-    uint16_t m_value;
-
-   private:
-    struct {
-      ExamMode m_examMode : 4;
-      uint16_t m_params : 12;
-    };
-  };
-#if PLATFORM_DEVICE
-  static_assert(sizeof(ExamPersistingBytes) == sizeof(uint16_t),
-                "ExamPersistingBytes should fit in two bytes");
-#endif
 
   Preferences();
   static OMG::GlobalBox<Preferences> sharedPreferences;
@@ -185,27 +107,10 @@ class Preferences final {
     m_parabolaParameter = parameter;
   }
 
-  static_assert((int8_t)Preferences::ExamMode::Off == 0,
-                "Preferences::isInExamMode() relies on exam modes order");
-  bool isInExamMode() const { return (int8_t)examMode() > 0; }
   ExamMode examMode() const;
-  PressToTestParams pressToTestParams() const;
-  void setExamMode(ExamMode examMode,
-                   PressToTestParams pressToTestParams = k_inactivePressToTest);
-  bool elementsAppIsForbidden() const;
-  bool equationSolverIsForbidden() const;
-  bool inequalityGraphingIsForbidden() const;
-  bool implicitPlotsAreForbidden() const;
-  bool statsDiagnosticsAreForbidden() const;
-  bool vectorProductsAreForbidden() const;
-  bool vectorNormIsForbidden() const;
-  bool basedLogarithmIsForbidden() const;
-  bool sumIsForbidden() const;
-  bool exactResultsAreForbidden() const;
+  void setExamMode(ExamMode examMode);
 
  private:
-  void updateExamModeFromPersistingBytesIfNeeded() const;
-
   AngleUnit m_angleUnit;
   PrintFloatMode m_displayMode;
   EditionMode m_editionMode;
@@ -213,7 +118,6 @@ class Preferences final {
   uint8_t m_numberOfSignificantDigits;
   mutable CombinatoricSymbols m_combinatoricSymbols;
   mutable ExamMode m_examMode;
-  mutable PressToTestParams m_pressToTestParams;
   mutable bool m_mixedFractionsAreEnabled;
   mutable LogarithmBasePosition m_logarithmBasePosition;
   mutable LogarithmKeyEvent m_logarithmKeyEvent;

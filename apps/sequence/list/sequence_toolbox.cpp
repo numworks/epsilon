@@ -101,9 +101,10 @@ void SequenceToolbox::buildExtraCellsLayouts(const char *sequenceName,
 }
 
 int SequenceToolbox::controlChecksum() const {
-  return MathToolbox::controlChecksum() + m_numberOfAddedCells *
-                                              Preferences::k_numberOfExamModes *
-                                              I18n::NumberOfCountries;
+  return MathToolbox::controlChecksum() +
+         m_numberOfAddedCells *
+             static_cast<int>(ExamMode::Mode::NumberOfModes) *
+             I18n::NumberOfCountries;
 }
 
 bool SequenceToolbox::selectAddedCell(int selectedRow) {

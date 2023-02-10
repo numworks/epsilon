@@ -15,6 +15,7 @@
 
 using namespace Shared;
 using namespace Escher;
+using namespace Poincare;
 
 namespace Regression {
 
@@ -47,13 +48,12 @@ GraphOptionsController::GraphOptionsController(
       m_residualPlotCellController(parentResponder, store),
       m_store(store),
       m_graphController(graphController) {
-  m_rCell.setLayout(Poincare::CodePointLayout::Builder('r'));
-  m_r2Cell.setLayout(Poincare::HorizontalLayout::Builder(
-      {Poincare::CodePointLayout::Builder('R'),
-       Poincare::VerticalOffsetLayout::Builder(
-           Poincare::CodePointLayout::Builder('2'),
-           Poincare::VerticalOffsetLayoutNode::VerticalPosition::
-               Superscript)}));
+  m_rCell.setLayout(CodePointLayout::Builder('r'));
+  m_r2Cell.setLayout(HorizontalLayout::Builder(
+      {CodePointLayout::Builder('R'),
+       VerticalOffsetLayout::Builder(
+           CodePointLayout::Builder('2'),
+           VerticalOffsetLayoutNode::VerticalPosition::Superscript)}));
 }
 
 void GraphOptionsController::removeRegression() {
@@ -126,7 +126,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
       }
       return true;
     } else if (cell == &m_regressionEquationCell) {
-      Poincare::Layout l = m_regressionEquationCell.layout();
+      Layout l = m_regressionEquationCell.layout();
       if (!l.isUninitialized()) {
         constexpr int bufferSize = TextField::MaxBufferSize();
         char buffer[bufferSize];
@@ -168,9 +168,9 @@ void GraphOptionsController::fillCell(HighlightCell *cell) {
     return;
   }
   const int significantDigits =
-      Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
-  Poincare::Preferences::PrintFloatMode displayMode =
-      Poincare::Preferences::sharedPreferences->displayMode();
+      Preferences::sharedPreferences->numberOfSignificantDigits();
+  Preferences::PrintFloatMode displayMode =
+      Preferences::sharedPreferences->displayMode();
   if (cell == &m_regressionEquationCell) {
     double *coefficients = m_store->coefficientsForSeries(
         series, m_graphController->globalContext());
@@ -179,15 +179,14 @@ void GraphOptionsController::fillCell(HighlightCell *cell) {
   } else if (cell == &m_rCell || cell == &m_r2Cell) {
     ExpressionTableCellWithMessageWithBuffer *rCell =
         static_cast<ExpressionTableCellWithMessageWithBuffer *>(cell);
-    if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
+    if (Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
       rCell->setTextColor(Palette::GrayDark);
       rCell->setSubLabelMessage(I18n::Message::Disabled);
       rCell->setAccessoryText("");
       return;
     }
-    constexpr int bufferSize =
-        Poincare::PrintFloat::charSizeForFloatsWithPrecision(
-            Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
+        Preferences::VeryLargeNumberOfSignificantDigits);
     char buffer[bufferSize];
     double value = cell == &m_rCell
                        ? m_store->correlationCoefficient(series)

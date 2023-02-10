@@ -42,7 +42,8 @@ class FunctionParameterController : public Shared::ListParameterController,
   static constexpr int k_numberOfRows =
       Shared::ListParameterController::k_numberOfSharedCells + 3;
   bool displayDetails() const {
-    return !ExamModeConfiguration::implicitPlotsAreForbidden() &&
+    return !Poincare::Preferences::sharedPreferences->examMode()
+                .forbidImplicitPlots() &&
            m_detailsParameterController.detailsNumberOfSections() > 0;
   }
   bool displayDomain() const {

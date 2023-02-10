@@ -38,7 +38,7 @@ FunctionModelsParameterController::FunctionModelsParameterController(
      * rebuilding the cells when re-entering. */
     m_modelCells[i].setParentResponder(&m_selectableTableView);
     m_modelCells[i].setSubLabelMessage(
-        ExamModeConfiguration::implicitPlotsAreForbidden()
+        Preferences::sharedPreferences->examMode().forbidImplicitPlots()
             ? I18n::Message::Default
             : k_modelDescriptions[static_cast<int>(models[i]) - 1]);
   }
@@ -176,11 +176,11 @@ FunctionModelsParameterController::Models() {
 }
 
 bool FunctionModelsParameterController::ModelIsAllowed(Model model) {
-  if (ExamModeConfiguration::inequalityGraphingIsForbidden() &&
-      model == Model::Inequality) {
+  ExamMode examMode = Preferences::sharedPreferences->examMode();
+  if (examMode.forbidInequalityGraphing() && model == Model::Inequality) {
     return false;
   }
-  if (ExamModeConfiguration::implicitPlotsAreForbidden() &&
+  if (examMode.forbidImplicitPlots() &&
       (model == Model::Inverse || model == Model::Conic)) {
     return false;
   }
@@ -188,7 +188,7 @@ bool FunctionModelsParameterController::ModelIsAllowed(Model model) {
 }
 
 const char* FunctionModelsParameterController::ModelString(Model model) {
-  if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
+  if (Preferences::sharedPreferences->examMode().forbidImplicitPlots()) {
     if (model == Model::Line || model == Model::LineVariant) {
       return k_lineModelWhenForbidden;
     }

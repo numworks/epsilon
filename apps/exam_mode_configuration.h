@@ -20,17 +20,6 @@ I18n::Message examModeActivationWarningMessage(Poincare::ExamMode mode);
 // Exam mode behaviour
 I18n::Message forbiddenAppMessage(Poincare::ExamMode::Mode mode, int line);
 bool appIsForbidden(I18n::Message appName);
-bool exactExpressionIsForbidden(Poincare::Expression e);
-bool additionalResultsAreForbidden();
-bool lineDetailsAreForbidden();
-bool inequalityGraphingIsForbidden();
-bool implicitPlotsAreForbidden();
-bool statsDiagnosticsAreForbidden();
-bool vectorProductsAreForbidden();
-bool vectorNormIsForbidden();
-bool basedLogarithmIsForbidden();
-bool sumIsForbidden();
-bool unitsAreForbidden();
 
 // Title bar
 I18n::Message examModeTitleBarMessage(Poincare::ExamMode mode);

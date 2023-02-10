@@ -205,75 +205,8 @@ bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
       (mode == ExamMode::Mode::Portuguese || mode == ExamMode::Mode::Dutch ||
        mode == ExamMode::Mode::English || examMode.forbidElementsApp());
   bool solverForbidden =
-      appName == I18n::Message::SolverApp && examMode.forbidEquationSolver();
+      appName == I18n::Message::SolverApp && examMode.forbidSolverApp();
   return pythonDutchExam || elementsForbidden || solverForbidden;
-}
-
-static bool isPrimeFactorization(Expression expression) {
-  /* A prime factorization can only be built with integers, powers of integers,
-   * and a multiplication. */
-  return !expression.recursivelyMatches([](const Expression e,
-                                           Context* context) {
-    return e.isUninitialized() ||
-           !(e.type() == ExpressionNode::Type::BasedInteger ||
-             e.type() == ExpressionNode::Type::Multiplication ||
-             (e.type() == ExpressionNode::Type::Power &&
-              e.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger &&
-              e.childAtIndex(1).type() == ExpressionNode::Type::BasedInteger));
-  });
-}
-
-bool ExamModeConfiguration::exactExpressionIsForbidden(Expression e) {
-  if (!Preferences::sharedPreferences->examMode().forbidExactResults()) {
-    return false;
-  }
-  bool isFraction = e.type() == ExpressionNode::Type::Division &&
-                    e.childAtIndex(0).isNumber() &&
-                    e.childAtIndex(1).isNumber();
-  return !(e.isNumber() || isFraction || isPrimeFactorization(e));
-}
-
-bool ExamModeConfiguration::additionalResultsAreForbidden() {
-  ExamMode mode = Preferences::sharedPreferences->examMode().mode();
-  return mode == ExamMode::Mode::Dutch || mode == ExamMode::Mode::IBTest;
-}
-
-bool ExamModeConfiguration::lineDetailsAreForbidden() {
-  return Preferences::sharedPreferences->examMode().mode() ==
-         ExamMode::Mode::IBTest;
-}
-
-bool ExamModeConfiguration::inequalityGraphingIsForbidden() {
-  return Preferences::sharedPreferences->examMode().forbidInequalityGraphing();
-}
-
-bool ExamModeConfiguration::implicitPlotsAreForbidden() {
-  return Preferences::sharedPreferences->examMode().forbidImplicitPlots();
-}
-
-bool ExamModeConfiguration::statsDiagnosticsAreForbidden() {
-  return Preferences::sharedPreferences->examMode().forbidStatsDiagnostics();
-}
-
-bool ExamModeConfiguration::vectorNormIsForbidden() {
-  return Preferences::sharedPreferences->examMode().forbidVectorNorm();
-}
-
-bool ExamModeConfiguration::vectorProductsAreForbidden() {
-  return Preferences::sharedPreferences->examMode().forbidVectorProduct();
-}
-
-bool ExamModeConfiguration::basedLogarithmIsForbidden() {
-  return Preferences::sharedPreferences->examMode().forbidBasedLogarithm();
-}
-
-bool ExamModeConfiguration::sumIsForbidden() {
-  return Preferences::sharedPreferences->examMode().forbidSum();
-}
-
-bool ExamModeConfiguration::unitsAreForbidden() {
-  ExamMode mode = Preferences::sharedPreferences->examMode().mode();
-  return mode == ExamMode::Mode::Dutch || mode == ExamMode::Mode::IBTest;
 }
 
 I18n::Message ExamModeConfiguration::examModeTitleBarMessage(ExamMode mode) {

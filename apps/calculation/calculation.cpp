@@ -263,7 +263,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
 }
 
 Calculation::AdditionalInformations Calculation::additionalInformations() {
-  if (ExamModeConfiguration::additionalResultsAreForbidden() ||
+  if (Preferences::sharedPreferences->examMode().forbidAdditionalResults() ||
       strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal),
              "undef") == 0) {
     return AdditionalInformations();

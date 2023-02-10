@@ -195,19 +195,6 @@ I18n::Message ExamModeConfiguration::forbiddenAppMessage(ExamMode::Mode mode,
   return messages[line];
 }
 
-KDColor ExamModeConfiguration::examModeColor(ExamMode mode) {
-  switch (mode.mode()) {
-    case ExamMode::Mode::Standard:
-      return k_standardLEDColor;
-    case ExamMode::Mode::Dutch:
-      return k_dutchLEDColor;
-    case ExamMode::Mode::Portuguese:
-      return k_portugueseLEDColor;
-    default:
-      return KDColorBlack;
-  }
-}
-
 bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
   ExamMode examMode = Preferences::sharedPreferences->examMode();
   ExamMode mode = examMode.mode();

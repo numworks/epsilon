@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <ion/persisting_bytes.h>
+#include <kandinsky/color.h>
 
 namespace Poincare {
 
@@ -73,6 +74,7 @@ class ExamMode {
     return flags().forbidExactResults || mode() == Mode::Dutch;
   }
   bool forbidElementsApp() const { return flags().forbidElementsApp; }
+  KDColor color() const;
 
  private:
   static ExamMode GetFromPersistingBytes();

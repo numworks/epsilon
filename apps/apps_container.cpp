@@ -373,9 +373,9 @@ void AppsContainer::redrawWindow() { m_window.redraw(); }
 void AppsContainer::activateExamMode(Poincare::ExamMode examMode) {
   assert(examMode.isActive());
   reset();
-  KDColor color = ExamModeConfiguration::examModeColor(examMode);
+  KDColor color = examMode.color();
   if (color != KDColorBlack) {
-    Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
+    Ion::LED::setColor(color);
     Ion::LED::setBlinking(1000, 0.1f);
   }
 }

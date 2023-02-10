@@ -1021,7 +1021,7 @@ int MathToolbox::maxNumberOfDisplayedRows() {
 }
 
 int MathToolbox::controlChecksum() const {
-  return static_cast<int>(Preferences::sharedPreferences->examMode()) *
+  return static_cast<int>(Preferences::sharedPreferences->examMode().mode()) *
              I18n::NumberOfCountries +
          static_cast<int>(
              GlobalPreferences::sharedGlobalPreferences->country());

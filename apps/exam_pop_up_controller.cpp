@@ -13,23 +13,18 @@ ExamPopUpController::ExamPopUpController()
     : Shared::MessagePopUpController(
           Invocation::Builder<ExamPopUpController>(
               [](ExamPopUpController* controller, void* sender) {
-                Poincare::Preferences::ExamMode mode =
-                    controller->targetExamMode();
-                Poincare::Preferences::ExamMode previousMode =
+                Poincare::ExamMode mode = controller->targetExamMode();
+                Poincare::ExamMode previousMode =
                     Poincare::Preferences::sharedPreferences->examMode();
-                assert(mode != Poincare::Preferences::ExamMode::Unknown);
-                assert(mode == Poincare::Preferences::ExamMode::PressToTest ||
-                       controller->targetPressToTestParams().isInactive());
                 if (Ion::Authentication::clearanceLevel() !=
                     Ion::Authentication::ClearanceLevel::NumWorks) {
                   Ion::Reset::core();
                 }
-                Poincare::Preferences::sharedPreferences->setExamMode(
-                    mode, controller->targetPressToTestParams());
+                Poincare::Preferences::sharedPreferences->setExamMode(mode);
                 AppsContainer* container = AppsContainer::sharedAppsContainer();
-                if (mode == Poincare::Preferences::ExamMode::Off) {
-                  if (previousMode ==
-                      Poincare::Preferences::ExamMode::PressToTest) {
+                if (!mode.isActive()) {
+                  if (previousMode.mode() ==
+                      Poincare::ExamMode::Mode::PressToTest) {
                     Ion::Reset::core();
                     return true;
                   }
@@ -51,18 +46,16 @@ ExamPopUpController::ExamPopUpController()
                 return true;
               },
               this),
-          I18n::Message::Default),
-      m_targetExamMode(Poincare::Preferences::ExamMode::Unknown) {}
+          I18n::Message::Default) {}
 
-void ExamPopUpController::setTargetExamMode(
-    Poincare::Preferences::ExamMode mode) {
+void ExamPopUpController::setTargetExamMode(Poincare::ExamMode mode) {
   m_targetExamMode = mode;
   setContentMessage(
       ExamModeConfiguration::examModeActivationWarningMessage(mode));
 }
 
 void ExamPopUpController::viewDidDisappear() {
-  if (m_targetExamMode == Poincare::Preferences::ExamMode::Off) {
+  if (!m_targetExamMode.isActive()) {
     Ion::USB::clearEnumerationInterrupt();
   }
 }

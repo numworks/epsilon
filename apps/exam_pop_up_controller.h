@@ -8,24 +8,14 @@
 class ExamPopUpController : public Shared::MessagePopUpController {
  public:
   ExamPopUpController();
-  void setTargetExamMode(Poincare::Preferences::ExamMode mode);
-  void setTargetPressToTestParams(
-      Poincare::Preferences::PressToTestParams params) {
-    m_targetPressToTestParams = params;
-  }
-  Poincare::Preferences::ExamMode targetExamMode() const {
-    return m_targetExamMode;
-  }
-  Poincare::Preferences::PressToTestParams targetPressToTestParams() const {
-    return m_targetPressToTestParams;
-  }
+  void setTargetExamMode(Poincare::ExamMode mode);
+  Poincare::ExamMode targetExamMode() const { return m_targetExamMode; }
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
 
  private:
   constexpr static int k_numberOfLines = 4;
-  Poincare::Preferences::ExamMode m_targetExamMode;
-  Poincare::Preferences::PressToTestParams m_targetPressToTestParams;
+  Poincare::ExamMode m_targetExamMode;
 };
 
 #endif

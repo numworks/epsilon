@@ -35,7 +35,7 @@ void App::didBecomeActive(Window* window) {
   // Disable spinner
   Ion::Events::setSpinner(false);
   // Force a core reset to exit
-  if (!(Poincare::Preferences::sharedPreferences->isInExamMode() &&
+  if (!(Poincare::Preferences::sharedPreferences->examMode().isActive() &&
         ExamModeConfiguration::examModeColor(
             Poincare::Preferences::sharedPreferences->examMode()) !=
             KDColorBlack)) {

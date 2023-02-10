@@ -21,17 +21,15 @@ constexpr KDColor k_dutchLEDColor = KDColor::RGB24(0xA1FF00);
 int numberOfAvailableExamMode();
 bool pressToTestExamModeAvailable();
 bool testModeAvailable();
-Poincare::Preferences::ExamMode examModeAtIndex(size_t index);
+Poincare::ExamMode::Mode examModeAtIndex(size_t index);
 I18n::Message examModeActivationMessage(size_t index);
 
 // Settings pop-up
-I18n::Message examModeActivationWarningMessage(
-    Poincare::Preferences::ExamMode mode);
+I18n::Message examModeActivationWarningMessage(Poincare::ExamMode mode);
 
 // Exam mode behaviour
-I18n::Message forbiddenAppMessage(Poincare::Preferences::ExamMode mode,
-                                  int line);
-KDColor examModeColor(Poincare::Preferences::ExamMode mode);
+I18n::Message forbiddenAppMessage(Poincare::ExamMode::Mode mode, int line);
+KDColor examModeColor(Poincare::ExamMode mode);
 bool appIsForbidden(I18n::Message appName);
 bool exactExpressionIsForbidden(Poincare::Expression e);
 bool additionalResultsAreForbidden();
@@ -46,7 +44,7 @@ bool sumIsForbidden();
 bool unitsAreForbidden();
 
 // Title bar
-I18n::Message examModeTitleBarMessage(Poincare::Preferences::ExamMode mode);
+I18n::Message examModeTitleBarMessage(Poincare::ExamMode mode);
 
 }  // namespace ExamModeConfiguration
 

@@ -117,9 +117,10 @@ int FunctionToolbox::typeAtIndex(int index) const {
 /* TODO: This mimics SequenceToolbox::controlChecksum.
  * FunctionToolbox and SequenceToolbox should be factorized. */
 int FunctionToolbox::controlChecksum() const {
-  return MathToolbox::controlChecksum() + numberOfAddedCells() *
-                                              Preferences::k_numberOfExamModes *
-                                              I18n::NumberOfCountries;
+  return MathToolbox::controlChecksum() +
+         numberOfAddedCells() *
+             static_cast<int>(ExamMode::Mode::NumberOfModes) *
+             I18n::NumberOfCountries;
 }
 
 bool FunctionToolbox::selectAddedCell(int selectedRow) {

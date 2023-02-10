@@ -140,7 +140,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       Ion::USB::clearEnumerationInterrupt();
       return false;
     }
-    if (!Poincare::Preferences::sharedPreferences->isInExamMode()) {
+    if (!Poincare::Preferences::sharedPreferences->examMode().isActive()) {
       App::Snapshot* activeSnapshot =
           (s_activeApp == nullptr ? appSnapshotAtIndex(0)
                                   : s_activeApp->snapshot());
@@ -156,7 +156,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       Ion::LED::updateColorWithPlugAndCharge();
       switchToBuiltinApp(activeSnapshot);
     } else if (m_firstUSBEnumeration) {
-      displayExamModePopUp(Poincare::Preferences::ExamMode::Off);
+      displayExamModePopUp(Poincare::ExamMode::Mode::Off);
       // Warning: if the window is dirtied, you need to call window()->redraw()
       window()->redraw();
     }
@@ -256,7 +256,7 @@ void AppsContainer::run() {
   Ion::Display::pushRectUniform(KDRectScreen, KDColorWhite);
   Poincare::Preferences* poincarePreferences =
       Poincare::Preferences::sharedPreferences;
-  if (poincarePreferences->isInExamMode()) {
+  if (poincarePreferences->examMode().isActive()) {
     activateExamMode(poincarePreferences->examMode());
   }
   refreshPreferences();
@@ -324,13 +324,8 @@ void AppsContainer::refreshPreferences() { m_window.refreshPreferences(); }
 
 void AppsContainer::reloadTitleBarView() { m_window.reloadTitleBarView(); }
 
-void AppsContainer::displayExamModePopUp(
-    Poincare::Preferences::ExamMode mode,
-    Poincare::Preferences::PressToTestParams pressToTestParams) {
-  assert(pressToTestParams.isInactive() ||
-         mode == Poincare::Preferences::ExamMode::PressToTest);
+void AppsContainer::displayExamModePopUp(Poincare::ExamMode mode) {
   m_examPopUpController.setTargetExamMode(mode);
-  m_examPopUpController.setTargetPressToTestParams(pressToTestParams);
   m_examPopUpController.presentModally();
 }
 
@@ -346,7 +341,7 @@ void AppsContainer::shutdownDueToLowBattery() {
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY &&
          !Ion::USB::isPlugged()) {
     Ion::Backlight::setBrightness(0);
-    if (!Poincare::Preferences::sharedPreferences->isInExamMode()) {
+    if (!Poincare::Preferences::sharedPreferences->examMode().isActive()) {
       /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
        * low battery event happened during the Power-On Self-Test, a LED might
        * have stayed lit up. */
@@ -375,9 +370,8 @@ OnBoarding::PromptController* AppsContainer::promptController() {
 
 void AppsContainer::redrawWindow() { m_window.redraw(); }
 
-void AppsContainer::activateExamMode(Poincare::Preferences::ExamMode examMode) {
-  assert(examMode != Poincare::Preferences::ExamMode::Off &&
-         examMode != Poincare::Preferences::ExamMode::Unknown);
+void AppsContainer::activateExamMode(Poincare::ExamMode examMode) {
+  assert(examMode.isActive());
   reset();
   KDColor color = ExamModeConfiguration::examModeColor(examMode);
   if (color != KDColorBlack) {

@@ -46,15 +46,12 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   bool updateBatteryState();
   void refreshPreferences();
   void reloadTitleBarView();
-  void displayExamModePopUp(
-      Poincare::Preferences::ExamMode mode,
-      Poincare::Preferences::PressToTestParams pressToTestParams =
-          Poincare::Preferences::k_inactivePressToTest);
+  void displayExamModePopUp(Poincare::ExamMode mode);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PromptController* promptController();
   void redrawWindow();
-  void activateExamMode(Poincare::Preferences::ExamMode examMode);
+  void activateExamMode(Poincare::ExamMode examMode);
 
   // Ion::Storage::StorageDelegate
   bool storageCanChangeForRecordName(

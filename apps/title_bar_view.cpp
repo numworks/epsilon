@@ -89,7 +89,7 @@ void TitleBarView::layoutSubviews(bool force) {
                  Metric::TitleBarExternHorizontalMargin,
              (bounds().height() - batterySize.height()) / 2, batterySize),
       force);
-  if (Preferences::sharedPreferences->isInExamMode()) {
+  if (Preferences::sharedPreferences->examMode().isActive()) {
     m_examModeIconView.setFrame(
         KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight) / 2,
                k_examIconWidth, k_examIconHeight),

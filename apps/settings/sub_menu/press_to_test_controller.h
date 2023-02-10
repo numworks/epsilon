@@ -33,7 +33,7 @@ class PressToTestController : public Escher::ViewController,
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  Poincare::Preferences::PressToTestParams getPressToTestParams();
+  Poincare::ExamMode::PressToTestFlags getPressToTestParams();
   Escher::View* view() override { return &m_view; }
   void resetController();
 
@@ -55,7 +55,7 @@ class PressToTestController : public Escher::ViewController,
   Escher::MessageTextView m_bottomMessageView;
   Escher::TableViewWithTopAndBottomViews m_view;
   PressToTestSwitch m_switchCells[k_numberOfReusableSwitchCells];
-  Poincare::Preferences::PressToTestParams m_tempPressToTestParams;
+  Poincare::ExamMode::PressToTestFlags m_tempPressToTestParams;
   Shared::ButtonWithSeparator m_activateButton;
   Shared::MessagePopUpController m_confirmPopUpController;
 

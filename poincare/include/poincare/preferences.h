@@ -60,6 +60,12 @@ class Preferences final {
     BottomRight = 0,
     TopLeft,
   };
+  // This is in Poincare and not in Apps because it's used in Escher
+  enum class LogarithmKeyEvent : uint8_t {
+    Default,
+    WithBaseTen,
+    WithEmptyBase
+  };
   enum class ParabolaParameter : uint8_t { Default, FocalLength };
 
   constexpr static int k_numberOfExamModes = 7;
@@ -170,6 +176,10 @@ class Preferences final {
   void setLogarithmBasePosition(LogarithmBasePosition position) {
     m_logarithmBasePosition = position;
   }
+  LogarithmKeyEvent logarithmKeyEvent() const { return m_logarithmKeyEvent; }
+  void setLogarithmKeyEvent(LogarithmKeyEvent logarithmKeyEvent) {
+    m_logarithmKeyEvent = logarithmKeyEvent;
+  }
   ParabolaParameter parabolaParameter() { return m_parabolaParameter; }
   void setParabolaParameter(ParabolaParameter parameter) {
     m_parabolaParameter = parameter;
@@ -206,6 +216,7 @@ class Preferences final {
   mutable PressToTestParams m_pressToTestParams;
   mutable bool m_mixedFractionsAreEnabled;
   mutable LogarithmBasePosition m_logarithmBasePosition;
+  mutable LogarithmKeyEvent m_logarithmKeyEvent;
   mutable ParabolaParameter m_parabolaParameter;
   /* Settings that alter layouts should be tracked by
    * CalculationStore::preferencesMightHaveChanged */

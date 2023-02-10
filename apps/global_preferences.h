@@ -63,6 +63,9 @@ class GlobalPreferences {
   Poincare::Preferences::LogarithmBasePosition logarithmBasePosition() const {
     return preferences().logarithmBasePosition();
   }
+  Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent() const {
+    return preferences().logarithmKeyEvent();
+  }
   Poincare::Preferences::ParabolaParameter parabolaParameter() const {
     return preferences().parabolaParameter();
   }

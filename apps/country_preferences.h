@@ -70,6 +70,7 @@ class CountryPreferences {
       RegressionModelOrder regressionModelOrder,
       GraphTemplatesLayout graphTemplatesLayout,
       Poincare::Preferences::LogarithmBasePosition logarithmBasePosition,
+      Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent,
       Poincare::Preferences::ParabolaParameter parabolaParameter)
       : m_availableExamModes(availableExamModes),
         m_homeAppsLayout(homeAppsLayout),
@@ -87,6 +88,7 @@ class CountryPreferences {
         m_regressionModelOrder(regressionModelOrder),
         m_graphTemplatesLayout(graphTemplatesLayout),
         m_logarithmBasePosition(logarithmBasePosition),
+        m_logarithmKeyEvent(logarithmKeyEvent),
         m_parabolaParameter(parabolaParameter) {}
 
   constexpr AvailableExamModes availableExamModes() const {
@@ -137,6 +139,9 @@ class CountryPreferences {
       const {
     return m_logarithmBasePosition;
   }
+  constexpr Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent() const {
+    return m_logarithmKeyEvent;
+  }
   constexpr Poincare::Preferences::ParabolaParameter parabolaParameter() const {
     return m_parabolaParameter;
   }
@@ -158,6 +163,7 @@ class CountryPreferences {
   const RegressionModelOrder m_regressionModelOrder;
   const GraphTemplatesLayout m_graphTemplatesLayout;
   const Poincare::Preferences::LogarithmBasePosition m_logarithmBasePosition;
+  const Poincare::Preferences::LogarithmKeyEvent m_logarithmKeyEvent;
   const Poincare::Preferences::ParabolaParameter m_parabolaParameter;
 };
 

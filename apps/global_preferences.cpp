@@ -10,6 +10,8 @@ void GlobalPreferences::setCountry(I18n::Country country) {
       mixedFractions());
   Poincare::Preferences::sharedPreferences->setLogarithmBasePosition(
       logarithmBasePosition());
+  Poincare::Preferences::sharedPreferences->setLogarithmKeyEvent(
+      logarithmKeyEvent());
   Poincare::Preferences::sharedPreferences->setParabolaParameter(
       parabolaParameter());
 }

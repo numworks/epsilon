@@ -30,7 +30,7 @@ public:
 
   // Definition
   bool isUninitialized() const { return m_layout.isUninitialized(); }
-  bool isValid() const { return m_layout.isUninitialized() || (m_position >= 0 && m_position <= m_layout.numberOfChildren()); }
+  bool isValid() const { return !m_layout.deepIsGhost() && (isUninitialized() || (m_position >= leftMostPosition() && m_position <= rightMostPosition())); }
 
   // Getters and setters
   Layout layout() { return m_layout; }
@@ -80,8 +80,8 @@ private:
   Layout rightLayout();
   Layout layoutToFit(KDFont::Size font);
 
-  int leftMostPosition() { return 0;}
-  int rightMostPosition() { return m_layout.isHorizontal() ? m_layout.numberOfChildren() : 1;}
+  int leftMostPosition() const { return 0;}
+  int rightMostPosition() const { return m_layout.isHorizontal() ? m_layout.numberOfChildren() : 1;}
   bool horizontalMove(OMG::HorizontalDirection direction, bool * shouldRedrawLayout);
   bool verticalMove(OMG::VerticalDirection direction, bool * shouldRedrawLayout);
   bool verticalMoveWithoutSelection(OMG::VerticalDirection direction, bool * shouldRedrawLayout);

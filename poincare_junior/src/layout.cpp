@@ -41,4 +41,19 @@ void Layout::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor express
   );
 }
 
+KDSize Layout::size(KDFont::Size font) const {
+  KDSize result = KDSizeZero;
+  void * context[2] = {&font, &result};
+  send(
+    [](const Node tree, void * context) {
+      void ** contextArray = static_cast<void **>(context);
+      KDFont::Size font = *static_cast<KDFont::Size *>(contextArray[0]);
+      KDSize * result = static_cast<KDSize *>(contextArray[1]);
+      *result = Render::Size(tree, font);
+    },
+    &context
+  );
+  return result;
+}
+
 }

@@ -56,25 +56,22 @@ class ExamMode {
   PressToTestFlags flags() const { return {.value = m_flags}; }
   bool isUninitialized() const { return m_mode == Mode::Uninitialized; }
   bool isActive() const { return !isUninitialized() && m_mode != Mode::Off; }
-  bool forbidEquationSolver() const { return flags().forbidEquationSolver; }
-  bool forbidInequalityGraphing() const {
-    return flags().forbidInequalityGraphing;
-  }
-  bool forbidImplicitPlots() const {
-    return flags().forbidImplicitPlots || mode() == Mode::IBTest;
-  }
-  bool forbidStatsDiagnostics() const { return flags().forbidStatsDiagnostics; }
-  bool forbidVectorProduct() const {
-    return flags().forbidVectors || mode() == Mode::IBTest;
-  }
-  bool forbidVectorNorm() const { return flags().forbidVectors; }
-  bool forbidBasedLogarithm() const { return flags().forbidBasedLogarithm; }
-  bool forbidSum() const { return flags().forbidSum; }
-  bool forbidExactResults() const {
-    return flags().forbidExactResults || mode() == Mode::Dutch;
-  }
-  bool forbidElementsApp() const { return flags().forbidElementsApp; }
   KDColor color() const;
+
+  // Exam mode permissions
+  bool forbidSolverApp() const;
+  bool forbidElementsApp() const;
+  bool forbidLineDetails() const;
+  bool forbidInequalityGraphing() const;
+  bool forbidImplicitPlots() const;
+  bool forbidStatsDiagnostics() const;
+  bool forbidVectorProduct() const;
+  bool forbidVectorNorm() const;
+  bool forbidBasedLogarithm() const;
+  bool forbidSum() const;
+  bool forbidUnits() const;
+  bool forbidAdditionalResults() const;
+  bool forbidExactResults() const;
 
  private:
   static ExamMode GetFromPersistingBytes();

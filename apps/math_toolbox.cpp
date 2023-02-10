@@ -886,17 +886,16 @@ KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
 bool MathToolbox::isMessageTreeDisabled(
     const ToolboxMessageTree *messageTree) const {
   I18n::Message label = messageTree->label();
-  return (label == I18n::Message::SumCommandWithArg &&
-          ExamModeConfiguration::sumIsForbidden()) ||
+  ExamMode examMode = Preferences::sharedPreferences->examMode();
+  return (label == I18n::Message::SumCommandWithArg && examMode.forbidSum()) ||
          (label == I18n::Message::LogCommandWithArg &&
-          ExamModeConfiguration::basedLogarithmIsForbidden()) ||
+          examMode.forbidBasedLogarithm()) ||
          (label == I18n::Message::NormVectorCommandWithArg &&
-          ExamModeConfiguration::vectorNormIsForbidden()) ||
+          examMode.forbidVectorNorm()) ||
          ((label == I18n::Message::DotCommandWithArg ||
            label == I18n::Message::CrossCommandWithArg) &&
-          ExamModeConfiguration::vectorProductsAreForbidden()) ||
-         (label == I18n::Message::UnitAndConstant &&
-          ExamModeConfiguration::unitsAreForbidden());
+          examMode.forbidVectorProduct()) ||
+         (label == I18n::Message::UnitAndConstant && examMode.forbidUnits());
 }
 
 bool MathToolbox::displayMessageTreeDisabledPopUp(

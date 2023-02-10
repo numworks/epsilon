@@ -9,6 +9,29 @@ namespace Shared {
 
 namespace ExpressionDisplayPermissions {
 
+static bool isPrimeFactorization(Expression expression) {
+  /* A prime factorization can only be built with integers, powers of integers,
+   * and a multiplication. */
+  return !expression.recursivelyMatches([](const Expression e, Context*) {
+    return e.isUninitialized() ||
+           !(e.type() == ExpressionNode::Type::BasedInteger ||
+             e.type() == ExpressionNode::Type::Multiplication ||
+             (e.type() == ExpressionNode::Type::Power &&
+              e.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger &&
+              e.childAtIndex(1).type() == ExpressionNode::Type::BasedInteger));
+  });
+}
+
+bool ExactExpressionIsForbidden(Expression e) {
+  if (!Preferences::sharedPreferences->examMode().forbidExactResults()) {
+    return false;
+  }
+  bool isFraction = e.type() == ExpressionNode::Type::Division &&
+                    e.childAtIndex(0).isNumber() &&
+                    e.childAtIndex(1).isNumber();
+  return !(e.isNumber() || isFraction || isPrimeFactorization(e));
+}
+
 bool ShouldNeverDisplayReduction(Poincare::Expression input,
                                  Poincare::Context* context) {
   return input.recursivelyMatches(
@@ -36,7 +59,7 @@ bool ShouldNeverDisplayExactOutput(Poincare::Expression exactOutput,
   return
       // Force all outputs to be ApproximateOnly if required by the exam mode
       // configuration
-      ExamModeConfiguration::exactExpressionIsForbidden(exactOutput) ||
+      ExactExpressionIsForbidden(exactOutput) ||
       // Lists or Matrices with only nonreal/undefined children
       (exactOutput.isOfType(
            {ExpressionNode::Type::List, ExpressionNode::Type::Matrix}) &&

@@ -12,6 +12,7 @@
 
 using namespace Shared;
 using namespace Escher;
+using namespace Poincare;
 
 namespace Graph {
 
@@ -106,13 +107,13 @@ void ListController::fillWithDefaultFunctionEquation(
 }
 
 // Return true if given layout contains θ
-bool ListController::layoutRepresentsPolarFunction(Poincare::Layout l) const {
-  Poincare::Layout match = l.recursivelyMatches([](Poincare::Layout layout) {
-    return layout.type() == Poincare::LayoutNode::Type::CodePointLayout &&
-                   static_cast<Poincare::CodePointLayout &>(layout)
-                           .codePoint() == ContinuousFunction::k_polarSymbol
-               ? Poincare::TrinaryBoolean::True
-               : Poincare::TrinaryBoolean::Unknown;
+bool ListController::layoutRepresentsPolarFunction(Layout l) const {
+  Layout match = l.recursivelyMatches([](Layout layout) {
+    return layout.type() == LayoutNode::Type::CodePointLayout &&
+                   static_cast<CodePointLayout &>(layout).codePoint() ==
+                       ContinuousFunction::k_polarSymbol
+               ? TrinaryBoolean::True
+               : TrinaryBoolean::Unknown;
   });
   return !match.isUninitialized();
 }
@@ -123,16 +124,15 @@ bool ListController::layoutRepresentsPolarFunction(Poincare::Layout l) const {
  * - sum(1,t,0,100) : Cartesian
  * - norm([[4][5]]) : Cartesian
  * - 31*[[4][5]]*10 : Parametric */
-bool ListController::layoutRepresentsParametricFunction(
-    Poincare::Layout l) const {
-  if (l.type() == Poincare::LayoutNode::Type::HorizontalLayout &&
+bool ListController::layoutRepresentsParametricFunction(Layout l) const {
+  if (l.type() == LayoutNode::Type::HorizontalLayout &&
       l.numberOfChildren() > 0) {
     l = l.childAtIndex(0);
   }
-  if (l.type() != Poincare::LayoutNode::Type::MatrixLayout) {
+  if (l.type() != LayoutNode::Type::MatrixLayout) {
     return false;
   }
-  Poincare::MatrixLayout m = static_cast<Poincare::MatrixLayout &>(l);
+  MatrixLayout m = static_cast<MatrixLayout &>(l);
   return m.numberOfColumns() == 1 && m.numberOfRows() == 2;
 }
 
@@ -154,7 +154,7 @@ bool ListController::completeEquation(InputEventHandler *equationField,
   }
   // Insert the name, symbol and equation symbol of the existing function
   constexpr size_t k_bufferSize =
-      Poincare::SymbolAbstract::k_maxNameSize + sizeof("(x)≥") - 1;
+      SymbolAbstract::k_maxNameSize + sizeof("(x)≥") - 1;
   static_assert(k_bufferSize >= sizeof("r="),
                 "k_bufferSize should fit both situations.");
   char buffer[k_bufferSize];
@@ -288,9 +288,10 @@ void ListController::willDisplayCellForIndex(HighlightCell *cell, int j) {
       modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   if (type == k_functionCellType) {
     functionCell->setLayout(f->layout());
-    functionCell->setMessage(ExamModeConfiguration::implicitPlotsAreForbidden()
-                                 ? I18n::Message::Default
-                                 : f->properties().caption());
+    functionCell->setMessage(
+        Preferences::sharedPreferences->examMode().forbidImplicitPlots()
+            ? I18n::Message::Default
+            : f->properties().caption());
     KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
     functionCell->setTextColor(textColor);
     static_cast<FunctionCell *>(functionCell)

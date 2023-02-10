@@ -139,7 +139,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       }
       approximateOutputExpression = approximateStoredExpression;
     }
-    if (ExamModeConfiguration::unitsAreForbidden() &&
+    if (m_inUsePreferences.examMode().forbidUnits() &&
         approximateOutputExpression.hasUnit()) {
       approximateOutputExpression = Undefined::Builder();
     }

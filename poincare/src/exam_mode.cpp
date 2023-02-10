@@ -28,6 +28,50 @@ KDColor ExamMode::color() const {
   }
 }
 
+// Exam mode permissions
+
+bool ExamMode::forbidSolverApp() const { return flags().forbidEquationSolver; }
+
+bool ExamMode::forbidElementsApp() const { return flags().forbidElementsApp; }
+
+bool ExamMode::forbidLineDetails() const { return mode() == Mode::IBTest; }
+
+bool ExamMode::forbidInequalityGraphing() const {
+  return flags().forbidInequalityGraphing;
+}
+
+bool ExamMode::forbidImplicitPlots() const {
+  return flags().forbidImplicitPlots || mode() == Mode::IBTest;
+}
+
+bool ExamMode::forbidStatsDiagnostics() const {
+  return flags().forbidStatsDiagnostics;
+}
+
+bool ExamMode::forbidVectorProduct() const {
+  return flags().forbidVectors || mode() == Mode::IBTest;
+}
+
+bool ExamMode::forbidVectorNorm() const { return flags().forbidVectors; }
+
+bool ExamMode::forbidBasedLogarithm() const {
+  return flags().forbidBasedLogarithm;
+}
+
+bool ExamMode::forbidSum() const { return flags().forbidSum; }
+
+bool ExamMode::forbidUnits() const {
+  return mode() == Mode::Dutch || mode() == Mode::IBTest;
+}
+
+bool ExamMode::forbidAdditionalResults() const {
+  return mode() == Mode::Dutch || mode() == Mode::IBTest;
+}
+
+bool ExamMode::forbidExactResults() const {
+  return flags().forbidExactResults || mode() == Mode::Dutch;
+}
+
 // PersistingBytes interface
 
 using ExamModeInt = Ion::PersistingBytes::PersistingBytesInt;

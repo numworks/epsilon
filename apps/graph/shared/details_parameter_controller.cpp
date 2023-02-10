@@ -112,7 +112,7 @@ int DetailsParameterController::detailsNumberOfSections() const {
     return 0;
   }
   if (functionIsNonVerticalLine()) {
-    return ExamModeConfiguration::lineDetailsAreForbidden()
+    return Preferences::sharedPreferences->examMode().forbidLineDetails()
                ? 0
                : k_lineDetailsSections;
   }

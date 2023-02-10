@@ -173,7 +173,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     myCell->setMessage(message);
     if (calculationIndex >= k_numberOfBufferCalculations + 1 +
                                 k_maxNumberOfDistinctCoefficients &&
-        ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
+        Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
       // R and R2 messages should be grayed out.
       myCell->setTextColor(Palette::GrayDark);
     }
@@ -309,7 +309,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   // Calculation is either R or R2
   assert(calculationIndex >=
          k_numberOfBufferCalculations + 1 + k_maxNumberOfDistinctCoefficients);
-  if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
+  if (Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
     bufferCell->setTextColor(Palette::GrayDark);
     bufferCell->setText(I18n::translate(I18n::Message::Disabled));
     return;

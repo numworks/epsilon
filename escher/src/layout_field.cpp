@@ -5,6 +5,9 @@
 #include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/linear_layout_decoder.h>
+#include <poincare/xnt_helpers.h>
+#include <poincare/parametered_expression.h>
 #include <ion/events.h>
 #include <assert.h>
 #include <string.h>
@@ -157,10 +160,32 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   if (!isEditing()) {
     setEditing(true);
   }
+  Layout xnt;
+  if (linearMode()) {
+    Layout layout = m_contentView.cursor()->layout();
+    assert(layout.isHorizontal());
+    HorizontalLayout horizontalLayout = static_cast<HorizontalLayout&>(layout);
+    int position = m_contentView.cursor()->position();
+    LayoutDecoder decoder(horizontalLayout, position);
+    bool defaultXNTHasChanged = false;
+    if (FindXNTSymbol(decoder, &defaultXNTHasChanged, &defaultXNTCodePoint)) {
+      size_t parameterStart;
+      size_t parameterLength;
+      decoder.unsafeSetPosition(position);
+      if (ParameteredExpression::ParameterText(decoder, &parameterStart, &parameterLength)) {
+        HorizontalLayout parameter = HorizontalLayout::Builder();
+        for (int childIndex = 0; childIndex < parameterLength; childIndex++) {
+          parameter.addChildAtIndexInPlace(horizontalLayout.childAtIndex(childIndex + parameterStart).clone(), childIndex, childIndex);
+        }
+        xnt = parameter;
+      }
+    }
+  } else {
+    // Query bottom-most layout
+    xnt = m_contentView.cursor()->layout().XNTLayout();
+  }
   /* TODO : Cycle default XNT and local XNT layouts in parametered expressions
    * such as derivative, sum, integral or layouts. */
-  // Query bottom-most layout
-  Layout xnt = m_contentView.cursor()->layout().XNTLayout();
   if (xnt.isUninitialized()) {
     xnt = CodePointLayout::Builder(defaultXNTCodePoint);
     if (Ion::Events::repetitionFactor() > 0 && isEditing()) {

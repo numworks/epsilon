@@ -5,17 +5,25 @@ using namespace PoincareJ;
 
 void testTreeConstructor() {
   constexpr CTree tree = 3_n;
-  const Node node = Addi(tree, Fact(8_n));
-  node.log();
-  Node(Poly(CTree<1>(), "x"_v, 2_n)).log();
-  Node(Poly(CTree<2, 3>(), "x"_v, 2_n, "a"_v)).log();
 
-  Node((5_n + 8_n + 4_n) * 3_n * tree).log();
-  Node(5_n - 8_n - 4_n).log();
-  Node(4_n * 3_n + 2_n * 1_n).log();
-  Node(4_n * 3_n / 2_n * 1_n).log();
+  Node node = (5_n + 8_n + 4_n) * 3_n * tree;
+  assert(node.numberOfChildren() == 3);
+  assert(node.numberOfDescendants(true) == 7);
+
   assert(Node("x"_v).nodeSize() == 5);
   assert(Node("var"_v).nodeSize() == 7);
+
+  Node poly = Poly(CTree<2, 3>(), "x"_v, 2_n, "a"_v);
+  assert(poly.numberOfChildren() == 3);
+  assert(poly.nodeSize() == 6);
+  assert(poly.treeSize() == 17);
+
+  // These tests are at least useful at compile time
+  (void) (5_n - 8_n - 4_n);
+  (void) (4_n * 3_n + 2_n * 1_n);
+  (void) (4_n * 3_n / 2_n * 1_n);
+
+  (void) Poly(CTree<1>(), "x"_v, 2_n);
 }
 QUIZ_CASE(pcj_tree_constructor) { testTreeConstructor(); }
 

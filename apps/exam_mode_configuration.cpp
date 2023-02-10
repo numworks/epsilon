@@ -181,30 +181,3 @@ I18n::Message ExamModeConfiguration::examModeActivationWarningMessage(
     }
   }
 }
-
-I18n::Message ExamModeConfiguration::forbiddenAppMessage(ExamMode::Mode mode,
-                                                         int line) {
-  if (mode == ExamMode::Mode::PressToTest) {
-    I18n::Message messages[] = {I18n::Message::ForbiddenAppInPressToTestMode1,
-                                I18n::Message::ForbiddenAppInPressToTestMode2};
-    return messages[line];
-  }
-  assert(mode != ExamMode::Mode::Off);
-  I18n::Message messages[] = {I18n::Message::ForbiddenAppInExamMode1,
-                              I18n::Message::ForbiddenAppInExamMode2};
-  return messages[line];
-}
-
-bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
-  ExamMode examMode = Preferences::sharedPreferences->examMode();
-  ExamMode mode = examMode.mode();
-  bool pythonDutchExam =
-      appName == I18n::Message::CodeApp && mode == ExamMode::Mode::Dutch;
-  bool elementsForbidden =
-      appName == I18n::Message::ElementsApp &&
-      (mode == ExamMode::Mode::Portuguese || mode == ExamMode::Mode::Dutch ||
-       mode == ExamMode::Mode::English || examMode.forbidElementsApp());
-  bool solverForbidden =
-      appName == I18n::Message::SolverApp && examMode.forbidSolverApp();
-  return pythonDutchExam || elementsForbidden || solverForbidden;
-}

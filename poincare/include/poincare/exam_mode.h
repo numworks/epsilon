@@ -61,6 +61,7 @@ class ExamMode {
   // Exam mode permissions
   bool forbidSolverApp() const;
   bool forbidElementsApp() const;
+  bool forbidCodeApp() const;
   bool forbidLineDetails() const;
   bool forbidInequalityGraphing() const;
   bool forbidImplicitPlots() const;

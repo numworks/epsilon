@@ -13,6 +13,7 @@ extern "C" {
 }
 
 using namespace Escher;
+using namespace Poincare;
 
 namespace Home {
 
@@ -171,26 +172,45 @@ void Controller::switchToSelectedApp() {
   AppsContainer *container = AppsContainer::sharedAppsContainer();
   int appIdx = indexOfAppAtColumnAndRow(selectionDataSource()->selectedColumn(),
                                         selectionDataSource()->selectedRow());
-  Poincare::ExamMode::Mode examMode =
-      Poincare::Preferences::sharedPreferences->examMode().mode();
+  ExamMode::Mode examMode = Preferences::sharedPreferences->examMode().mode();
   if (appIdx < container->numberOfBuiltinApps()) {
     ::App::Snapshot *selectedSnapshot =
         container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx));
-    if (ExamModeConfiguration::appIsForbidden(
-            selectedSnapshot->descriptor()->name())) {
-      App::app()->displayWarning(
-          ExamModeConfiguration::forbiddenAppMessage(examMode, 0),
-          ExamModeConfiguration::forbiddenAppMessage(examMode, 1));
+    if (appIsForbidden(selectedSnapshot->descriptor()->name())) {
+      App::app()->displayWarning(forbiddenAppMessage(0),
+                                 forbiddenAppMessage(1));
     } else {
       container->switchToBuiltinApp(selectedSnapshot);
     }
   } else {
-    assert(examMode != Poincare::ExamMode::Mode::Off);
+    assert(examMode != ExamMode::Mode::Off);
     m_view.reload();
     Ion::ExternalApps::App a = container->externalAppAtIndex(
         appIdx - container->numberOfBuiltinApps());
     container->switchToExternalApp(a);
   }
+}
+
+bool Controller::appIsForbidden(I18n::Message appName) const {
+  ExamMode examMode = Preferences::sharedPreferences->examMode();
+  return (appName == I18n::Message::CodeApp && examMode.forbidCodeApp()) ||
+         (appName == I18n::Message::ElementsApp &&
+          examMode.forbidElementsApp()) ||
+         (appName == I18n::Message::SolverApp && examMode.forbidSolverApp());
+}
+
+I18n::Message Controller::forbiddenAppMessage(int line) const {
+  ExamMode mode = Preferences::sharedPreferences->examMode();
+  if (mode.mode() == ExamMode::Mode::PressToTest) {
+    constexpr I18n::Message messages[] = {
+        I18n::Message::ForbiddenAppInPressToTestMode1,
+        I18n::Message::ForbiddenAppInPressToTestMode2};
+    return messages[line];
+  }
+  assert(mode.isActive());
+  constexpr I18n::Message messages[] = {I18n::Message::ForbiddenAppInExamMode1,
+                                        I18n::Message::ForbiddenAppInExamMode2};
+  return messages[line];
 }
 
 }  // namespace Home

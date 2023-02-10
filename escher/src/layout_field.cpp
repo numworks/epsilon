@@ -150,30 +150,27 @@ size_t LayoutField::dumpContent(char * buffer, size_t bufferSize, int * cursorOf
 }
 
 bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
-  // TODO
-  /*if (!isEditing()) {
+  if (!isEditing()) {
     setEditing(true);
   }
   /* TODO : Cycle default XNT and local XNT layouts in parametered expressions
-   * such as derivative, sum, integral or layouts. *
+   * such as derivative, sum, integral or layouts. */
   // Query bottom-most layout
   Layout xnt = m_contentView.cursor()->layout().XNTLayout();
   if (xnt.isUninitialized()) {
     xnt = CodePointLayout::Builder(defaultXNTCodePoint);
-    if (Ion::Events::repetitionFactor() > 0 && isEditing() && m_contentView.selectionIsEmpty()) {
+    if (Ion::Events::repetitionFactor() > 0 && isEditing()) {
+      assert(m_contentView.cursor()->selection().isEmpty());
       // XNT is Cycling, remove the last inserted character
       m_contentView.cursor()->performBackspace();
     }
   }
 
-  // Delete the selected layouts if needed
-  deleteSelection();
   // Do not insert layout if it has too many descendants
   if (m_contentView.expressionView()->numberOfLayouts() + xnt.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
     return true;
   }
-  // No need to provide an expression because cursor is forced right of text.
-  insertLayoutAtCursor(xnt, Poincare::Expression(), true);*/
+  insertLayoutAtCursor(xnt, true);
   return true;
 }
 

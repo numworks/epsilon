@@ -14,9 +14,6 @@ bool testModeAvailable();
 Poincare::ExamMode::Mode examModeAtIndex(size_t index);
 I18n::Message examModeActivationMessage(size_t index);
 
-// Settings pop-up
-I18n::Message examModeActivationWarningMessage(Poincare::ExamMode mode);
-
 }  // namespace ExamModeConfiguration
 
 #endif

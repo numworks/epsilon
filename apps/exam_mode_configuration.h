@@ -21,9 +21,6 @@ I18n::Message examModeActivationWarningMessage(Poincare::ExamMode mode);
 I18n::Message forbiddenAppMessage(Poincare::ExamMode::Mode mode, int line);
 bool appIsForbidden(I18n::Message appName);
 
-// Title bar
-I18n::Message examModeTitleBarMessage(Poincare::ExamMode mode);
-
 }  // namespace ExamModeConfiguration
 
 #endif

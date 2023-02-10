@@ -15,7 +15,7 @@ namespace Solver {
 
 class ListController : public Shared::ExpressionModelListController, public Escher::ButtonRowDelegate, public Escher::MemoizedListViewDataSource {
 public:
-  ListController(Escher::Responder * parentResponder, EquationStore * equationStore, Escher::ButtonRowController * footer);
+  ListController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore, Escher::ButtonRowController * footer);
   /* ButtonRowDelegate */
   int numberOfButtons(Escher::ButtonRowController::Position position) const override;
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;

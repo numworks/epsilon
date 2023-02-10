@@ -10,11 +10,11 @@ using namespace Escher;
 
 namespace Solver {
 
-ListController::ListController(Responder * parentResponder, EquationStore * equationStore, ButtonRowController * footer) :
+ListController::ListController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore, ButtonRowController * footer) :
   ExpressionModelListController(parentResponder, I18n::Message::AddEquation),
   ButtonRowDelegate(nullptr, footer),
   m_equationListView(this),
-  m_editableCell(this, nullptr, this),
+  m_editableCell(this, inputEventHandlerDelegate, this),
   m_resolveButton(this, equationStore->numberOfDefinedModels() > 1 ? I18n::Message::ResolveSystem : I18n::Message::ResolveEquation, Invocation::Builder<ListController>([](ListController * list, void * sender) {
     list->resolveEquations();
     return true;

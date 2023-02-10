@@ -57,9 +57,8 @@ public:
   size_t deepSize(int realNumberOfChildren) const;
 
   // Ghost
-#if ASSERTIONS
   virtual bool isGhost() const { return false; }
-#endif
+  bool deepIsGhost() const;
 
   // Node operations
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }

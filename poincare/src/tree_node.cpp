@@ -205,6 +205,18 @@ size_t TreeNode::deepSize(int realNumberOfChildren) const {
     reinterpret_cast<const char *>(this);
 }
 
+bool TreeNode::deepIsGhost() const {
+  if (isGhost()) {
+    return true;
+  }
+  for (TreeNode * c : directChildren()) {
+    if (c->deepIsGhost()) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void TreeNode::changeParentIdentifierInChildren(uint16_t id) const {
   for (TreeNode * c : directChildren()) {
     c->setParentIdentifier(id);

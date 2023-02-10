@@ -446,9 +446,7 @@ protected:
 
   /* Reference */
   ExpressionNode * node() const {
-    #if ASSERTIONS
-      assert(identifier() != TreeNode::NoNodeIdentifier && !TreeHandle::node()->isGhost());
-    #endif
+    assert(identifier() != TreeNode::NoNodeIdentifier && !TreeHandle::node()->isGhost());
     return static_cast<ExpressionNode *>(TreeHandle::node());
   }
 

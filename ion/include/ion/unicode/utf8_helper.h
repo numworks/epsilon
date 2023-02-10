@@ -120,6 +120,10 @@ int RemovePreviousGlyph(const char * text, char * location, CodePoint * c = null
 const char * CodePointAtGlyphOffset(const char * buffer, int position);
 size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position);
 
+
+/* Return the number of codepoints in a string. */
+size_t StringCodePointLength(const char * s);
+
 /* Return the number of glyphs in a string.
  * For instance, strlen("∑") = 3 but StringGlyphLength("∑") = 1 */
 size_t StringGlyphLength(const char * s, int maxSize = -1);

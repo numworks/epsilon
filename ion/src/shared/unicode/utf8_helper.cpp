@@ -443,6 +443,17 @@ size_t GlyphOffsetAtCodePoint(const char * buffer, const char * position) {
   return glyphIndex;
 }
 
+size_t StringCodePointLength(const char * s) {
+  // could be speed up by counting bytes starting with 0
+  UTF8Decoder decoder(s);
+  CodePoint codePoint = 0;
+  size_t count = 0;
+  while ((codePoint = decoder.nextCodePoint())) {
+    count++;
+  }
+  return count;
+}
+
 size_t StringGlyphLength(const char * s, int maxSize) {
   if (maxSize == 0) {
     return 0;

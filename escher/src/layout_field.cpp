@@ -9,6 +9,7 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/linear_layout_decoder.h>
 #include <poincare/parametered_expression.h>
+#include <poincare/parenthesis_layout.h>
 #include <poincare/xnt_helpers.h>
 #include <string.h>
 
@@ -320,6 +321,43 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
   // Do not enter parentheses of expression that take no argument like random()
   forceCursorRightOfText =
       forceCursorRightOfText || resultExpression.numberOfChildren() == 0;
+
+  /* If the inserted layout is of the form "function()", we want to make
+   * the right parenthesis temporary to insert "function(".
+   * This is to make the "(" key consistent with the functions keys like cos
+   * and the functions inserted from the toolbox and the varbox.
+   *
+   * This is not done if forceCursorRightOfText, namely because the copy-pasted
+   * layouts should not be altered, and more generally because it means that
+   * the cursor won't go inside the parenthesis but rather right of it, so
+   * the parenthesis should be kept pemanent on the right.
+   *
+   * This is done here and not before calling "handleEventWithText" for
+   * multiple reasons:
+   *   - In layout_events.cpp, we do not want to change the text of the Cos
+   *     event since it should still output "cos()" in 1D fields.
+   *   - Modifying the text inserted by the toolbox (by removing the right
+   *     parenthesis) before calling this function could make the text
+   *     unparsable.
+   *   - It ensures that this behaviour is consistent across every ways of
+   *     inserting functions.
+   * If this is too generic though (for example if the inserted layout is
+   * "3+cos(4)", we probably do not want to make the parenthesis temporary,
+   * but this case never occurs for now), the resultExpression could
+   * be analyzed to know if the parenthesis should be made temporary or not.
+   * */
+  if (!forceCursorRightOfText && resultLayout.isHorizontal() &&
+      resultLayout.numberOfChildren() > 0) {
+    Layout lastChild =
+        resultLayout.childAtIndex(resultLayout.numberOfChildren() - 1);
+    if (lastChild.type() == LayoutNode::Type::ParenthesisLayout &&
+        !static_cast<ParenthesisLayoutNode *>(lastChild.node())
+             ->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left)) {
+      static_cast<ParenthesisLayoutNode *>(lastChild.node())
+          ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
+    }
+  }
+
   insertLayoutAtCursor(resultLayout, forceCursorRightOfText,
                        forceCursorLeftOfText);
   return true;

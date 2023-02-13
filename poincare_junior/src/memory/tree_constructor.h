@@ -203,30 +203,6 @@ template <CTreeCompatible A, CTreeCompatible B> consteval auto operator*(A a, B 
 #endif
 
 
-// Integers
-
-template <int V> requires (V >= INT8_MIN && V <= INT8_MAX) consteval auto Int() {
-  return CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>();
-}
-
-template <Block S, Block T, int U> struct IntHelper;
-template <Block T, int V> struct IntHelper<2,T,V> : CTree<T, 2, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), 2, T> {};
-template <Block T, int V> struct IntHelper<3,T,V> : CTree<T, 3, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), 3, T> {};
-template <Block T, int V> struct IntHelper<4,T,V> : CTree<T, 4, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), Bit::getByteAtIndex(V, 3), 4, T> {};
-
-template <int V> requires (V < INT8_MIN || V > INT8_MAX) consteval auto Int() {
-  constexpr Block tag = V < 0 ? BlockType::IntegerNegBig : BlockType::IntegerPosBig;
-  constexpr int value = V < 0 ? -V : V;
-  constexpr Block size = Integer::NumberOfDigits(value);
-  return IntHelper<size, tag, value>();
-}
-
-template<> consteval auto Int<-1>() { return CTree<BlockType::MinusOne>(); }
-template<> consteval auto Int<0>() { return CTree<BlockType::Zero>(); }
-template<> consteval auto Int<1>() { return CTree<BlockType::One>(); }
-template<> consteval auto Int<2>() { return CTree<BlockType::Two>(); }
-
-
 /* Immediates are used to represent numerical constants of the code (like 2_e)
  * temporarily before they are cast to CTrees, this allows writing -2_e. */
 

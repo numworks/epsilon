@@ -7,7 +7,6 @@
 #include <poincare/init.h>
 
 #include "apps_container_storage.h"
-#include "exam_mode_configuration.h"
 #include "global_preferences.h"
 #include "shared/record_restrictive_extensions_helper.h"
 

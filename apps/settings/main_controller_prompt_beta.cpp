@@ -1,6 +1,5 @@
 #include <apps/i18n.h>
 
-#include "../exam_mode_configuration.h"
 #include "main_controller.h"
 
 namespace Settings {

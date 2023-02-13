@@ -1,7 +1,6 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
-#include <apps/exam_mode_configuration.h>
 #include <apps/shared/text_field_delegate_app.h>
 
 #include "images/confidence_interval.h"

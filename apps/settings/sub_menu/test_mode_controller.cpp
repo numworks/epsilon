@@ -2,7 +2,6 @@
 
 #include <assert.h>
 
-#include "../../exam_mode_configuration.h"
 #include "../main_controller.h"
 
 using namespace Escher;

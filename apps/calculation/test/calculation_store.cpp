@@ -8,8 +8,6 @@
 #include <quiz.h>
 #include <string.h>
 
-#include "../../exam_mode_configuration.h"
-
 typedef ::Calculation::Calculation::AdditionalInformations
     AdditionalInformations;
 typedef ::Calculation::Calculation::DisplayOutput DisplayOutput;

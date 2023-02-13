@@ -1,7 +1,6 @@
 #include "calculation.h"
 
 #include <apps/apps_container_helper.h>
-#include <apps/exam_mode_configuration.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>

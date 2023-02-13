@@ -1,6 +1,5 @@
 #include "continuous_function_properties.h"
 
-#include <apps/exam_mode_configuration.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <poincare/addition.h>
 #include <poincare/constant.h>

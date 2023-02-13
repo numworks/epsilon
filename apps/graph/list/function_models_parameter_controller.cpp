@@ -1,7 +1,6 @@
 #include "function_models_parameter_controller.h"
 
 #include <apps/apps_container.h>
-#include <apps/exam_mode_configuration.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>

@@ -8,7 +8,6 @@
 
 #include "./shared/toolbox_helpers.h"
 #include "apps/i18n.h"
-#include "exam_mode_configuration.h"
 #include "global_preferences.h"
 #include "shared/global_context.h"
 

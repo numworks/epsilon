@@ -5,7 +5,6 @@
 #include <ion/usb.h>
 
 #include "apps_container.h"
-#include "exam_mode_configuration.h"
 
 using namespace Escher;
 using namespace Poincare;

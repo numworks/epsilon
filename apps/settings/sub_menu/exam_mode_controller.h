@@ -26,9 +26,13 @@ class ExamModeController : public GenericSubController {
 
  private:
   constexpr static int k_numberOfDeactivationMessageLines = 3;
+  constexpr static int k_maxNumberOfCells = 5;
+
   int initialSelectedRow() const override;
   Poincare::ExamMode examMode();
-  constexpr static int k_maxNumberOfCells = 5;
+  Poincare::ExamMode::Mode examModeAtIndex(size_t index) const;
+  I18n::Message examModeActivationMessage(size_t index) const;
+
   SelectableViewWithMessages m_contentView;
   Escher::MessageTableCell m_cell[k_maxNumberOfCells];
 };

@@ -14,17 +14,33 @@ namespace PoincareJ {
 // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
 // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
 
-class AbstractCTreeCompatible {};
+// Helper
 
 // less strict than derived_from from <concepts> that imposes is_convertible too
 template<typename Derived, typename Base>
 concept is_derived_from = __is_base_of(Base, Derived);
+
+
+
+/* These two abstract classes and their associated concepts are here to allow
+ * templated functions using CTree to be called with any CTreeCompatible which
+ * then casted to CTree and its template arguments deduced. */
+
+class AbstractCTreeCompatible {};
 
 template <class C> concept CTreeCompatible = is_derived_from<C, AbstractCTreeCompatible>;
 
 class AbstractCTree : AbstractCTreeCompatible {};
 
 template <class C> concept CTreeish = is_derived_from<C, AbstractCTree>;
+
+
+/* The CTree template class is the compile time representation of a constexpr
+ * tree. It's complete block representation is specified as template parameters
+ * in order to be able to use the address of the static singleton (in flash) as
+ * a Node. It also eliminated identical trees since their are all using the same
+ * specialized function.
+ */
 
 template <Block... Blocks>
 class CTree : public AbstractCTree {
@@ -34,10 +50,25 @@ public:
   constexpr operator Node () const { return blocks; }
 };
 
+
+/* Helper to create a CTree with its template parameters from an array template
+ * parameter. */
+
 template <size_t N, const uint8_t B[N], typename IS = decltype(std::make_index_sequence<N>())> struct CTreeFromArray;
 
 template <size_t N, const uint8_t B[N], std::size_t... I>
 struct CTreeFromArray<N, B, std::index_sequence<I...>> : CTree<B[I]...> {};
+
+
+/* Helper to concatenate CTrees */
+
+/* Usage:
+ * template <Block Tag, CTreeish CT1, CTreeish CT2> consteval auto Binary(CT1, CT2) {
+ *   return ConcatTwo<ConcatTwo<CTree<Tag>, CT1>, CT2>();
+ *      or
+ *   return Concat<CTree<Tag>, CT1, CT2>();
+ * }
+ */
 
 template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2], typename IS = decltype(std::make_index_sequence<N1 + N2>())> struct BlockConcat;
 
@@ -52,12 +83,6 @@ template <CTreeish CT1, CTreeish... CT> struct Concat;
 template <CTreeish CT1> struct Concat<CT1> : CT1 {};
 template <CTreeish CT1, CTreeish... CT> struct Concat : ConcatTwo<CT1, Concat<CT...>> {};
 
-// Usage:
-// template <Block Tag, CTreeish CT1, CTreeish CT2> consteval auto Binary(CT1, CT2) {
-//   return ConcatTwo<ConcatTwo<CTree<Tag>, CT1>, CT2>();
-//      or
-//   return Concat<CTree<Tag>, CT1, CT2>();
-// }
 
 // Helpers
 
@@ -121,6 +146,11 @@ template <class...Args> consteval auto Seti(Args...args) { return NAry<BlockType
 
 
 template <uint8_t ... Values> using Exponents = CTree<Values...>;
+
+
+/* The first function is responsible of building the actual representation from
+ * CTrees while the other one is just here to allow the function to take
+ * CTreeCompatible arguments like numerical values. */
 
 template<CTreeish Exp, CTreeish ...CTS> static consteval auto __Poly(Exp exponents, CTS...) {
   constexpr uint8_t Size = sizeof...(CTS);
@@ -197,7 +227,8 @@ template<> consteval auto Int<1>() { return CTree<BlockType::One>(); }
 template<> consteval auto Int<2>() { return CTree<BlockType::Two>(); }
 
 
-// Unary operator-
+/* Immediates are used to represent numerical constants of the code (like 2_e)
+ * temporarily before they are cast to CTrees, this allows writing -2_e. */
 
 template <int V> class Immediate : public AbstractCTreeCompatible {
 public:

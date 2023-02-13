@@ -6,7 +6,7 @@ using namespace PoincareJ;
 void testTreeConstructor() {
   constexpr CTree tree = 3_n;
 
-  Node node = (5_n + 8_n + 4_n) * 3_n * tree;
+  Node node = Multi(Addi(5_n, 8_n, 4_n), 3_n, tree);
   assert(node.numberOfChildren() == 3);
   assert(node.numberOfDescendants(true) == 7);
 
@@ -17,11 +17,6 @@ void testTreeConstructor() {
   assert(poly.numberOfChildren() == 3);
   assert(poly.nodeSize() == 6);
   assert(poly.treeSize() == 17);
-
-  // These tests are at least useful at compile time
-  (void) (5_n - 8_n - 4_n);
-  (void) (4_n * 3_n + 2_n * 1_n);
-  (void) (4_n * 3_n / 2_n * 1_n);
 
   (void) Poly(Exponents<1>(), "x"_v, 2_n);
 }

@@ -33,11 +33,11 @@ allprojects {
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 30
+  compileSdkVersion 31
   defaultConfig {
     applicationId "com.numworks.calculator"
     minSdkVersion 16
-    targetSdkVersion 30
+    targetSdkVersion 31
     def (major, minor, patch) = System.getenv('EPSILON_VERSION').toLowerCase().tokenize('.').collect{it.toInteger()}
     versionCode major*1000000 + minor*10000 + patch * 100
     versionName System.getenv('EPSILON_VERSION')

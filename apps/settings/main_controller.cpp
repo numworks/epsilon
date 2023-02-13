@@ -3,7 +3,6 @@
 #include <apps/i18n.h>
 #include <assert.h>
 
-#include "../exam_mode_configuration.h"
 #include "../global_preferences.h"
 
 using namespace Poincare;
@@ -330,17 +329,27 @@ ViewController *MainController::subControllerForCell(
 }
 
 bool MainController::hasExamModeCell() const {
-  return !hasTestModeCell() &&
-         ExamModeConfiguration::numberOfAvailableExamMode() > 0;
+  return !hasTestModeCell() && m_examModeController.numberOfRows() > 0;
 }
 
 bool MainController::hasPressToTestCell() const {
-  return !hasTestModeCell() &&
-         ExamModeConfiguration::pressToTestExamModeAvailable();
+  if (hasTestModeCell()) {
+    return false;
+  }
+  ExamMode examMode = Preferences::sharedPreferences->examMode();
+  CountryPreferences::AvailableExamModes availableExamModes =
+      GlobalPreferences::sharedGlobalPreferences->availableExamModes();
+  return examMode == ExamMode::Mode::PressToTest ||
+         ((availableExamModes ==
+               CountryPreferences::AvailableExamModes::PressToTestOnly ||
+           availableExamModes == CountryPreferences::AvailableExamModes::All) &&
+          examMode == ExamMode::Mode::Off);
 }
 
 bool MainController::hasTestModeCell() const {
-  return ExamModeConfiguration::testModeAvailable();
+  return Preferences::sharedPreferences->examMode() == ExamMode::Mode::Off &&
+         GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
+             CountryPreferences::AvailableExamModes::All;
 }
 
 int MainController::getModelIndex(int index) const {

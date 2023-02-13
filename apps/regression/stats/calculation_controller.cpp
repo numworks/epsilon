@@ -1,7 +1,6 @@
 #include "calculation_controller.h"
 
 #include <apps/apps_container_helper.h>
-#include <apps/exam_mode_configuration.h>
 #include <apps/shared/editable_cell_table_view_controller.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>

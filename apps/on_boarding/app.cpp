@@ -3,7 +3,6 @@
 #include <assert.h>
 
 #include "../apps_container.h"
-#include "apps/exam_mode_configuration.h"
 
 using namespace Escher;
 

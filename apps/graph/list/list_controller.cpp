@@ -1,6 +1,5 @@
 #include "list_controller.h"
 
-#include <apps/exam_mode_configuration.h>
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/metric.h>

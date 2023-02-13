@@ -1,6 +1,5 @@
 #include "calculation_store.h"
 
-#include <apps/exam_mode_configuration.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/rational.h>

@@ -5,7 +5,6 @@
 #include <poincare/print.h>
 
 #include "exam_icon.h"
-#include "exam_mode_configuration.h"
 extern "C" {
 #include <assert.h>
 }

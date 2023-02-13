@@ -1,7 +1,6 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
-#include <apps/exam_mode_configuration.h>
 #include <apps/i18n.h>
 #include <poincare/comparison.h>
 #include <poincare/preferences.h>

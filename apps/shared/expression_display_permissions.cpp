@@ -1,6 +1,5 @@
 #include "expression_display_permissions.h"
 
-#include <apps/exam_mode_configuration.h>
 #include <poincare/unit.h>
 
 using namespace Poincare;

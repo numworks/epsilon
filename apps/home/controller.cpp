@@ -5,7 +5,6 @@
 #include <poincare/preferences.h>
 
 #include "../apps_container.h"
-#include "../exam_mode_configuration.h"
 #include "app.h"
 
 extern "C" {

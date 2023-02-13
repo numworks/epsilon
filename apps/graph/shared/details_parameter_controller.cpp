@@ -1,6 +1,5 @@
 #include "details_parameter_controller.h"
 
-#include <apps/exam_mode_configuration.h>
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>

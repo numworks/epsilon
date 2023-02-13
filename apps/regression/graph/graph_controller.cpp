@@ -1,7 +1,6 @@
 #include "graph_controller.h"
 
 #include <apps/apps_container_helper.h>
-#include <apps/exam_mode_configuration.h>
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/helpers.h>

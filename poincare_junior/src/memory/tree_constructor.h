@@ -102,30 +102,11 @@ template <Block Tag, CTreeCompatible A, CTreeCompatible B> consteval auto Binary
   return Binary<Tag>(CTree(a), CTree(b));
 }
 
-template <Block Tag, Block... B1, Block... B2> consteval auto __NAry(CTree<B1...>, CTree<B2...>) {
-  return CTree<Tag, 2, Tag, B1..., B2...>();
+template<Block Tag, CTreeish ...CTS> requires (sizeof...(CTS)>=2) static consteval auto __NAry(CTS...) {
+  return Concat<CTree<Tag, sizeof...(CTS), Tag>, CTS...>();
 }
 
-template <Block Tag, Block... B1, Block... B2, Block... B3> consteval auto __NAry(CTree<B1...>, CTree<B2...>, CTree<B3...>) {
-  return CTree<Tag, 3, Tag, B1..., B2..., B3...>();
-}
-
-template <Block Tag, Block... B1, Block... B2, Block... B3, Block... B4> consteval auto __NAry(CTree<B1...>, CTree<B2...>, CTree<B3...>, CTree<B4...>) {
-  return CTree<Tag, 4, Tag, B1..., B2..., B3..., B4...>();
-}
-
-template <Block Tag, Block... B1, Block... B2> consteval auto NAryOperator(CTree<B1...>, CTree<B2...>) {
-  return CTree<Tag, 2, Tag, B1..., B2...>();
-}
-
-template <Block Tag, Block N1, Block... B1, Block... B2> consteval auto NAryOperator(CTree<Tag, N1, Tag, B1...>, CTree<B2...>) {
-  return CTree<Tag, static_cast<uint8_t>(N1) + 1, Tag, B1..., B2...>();
-}
-
-// Enable operators for structs that have deduction guides into CTrees
 template <Block Tag, CTreeCompatible ...CTS> consteval auto NAry(CTS... args) { return __NAry<Tag>(CTree(args)...); }
-
-template <Block Tag, CTreeCompatible A, CTreeCompatible B> consteval auto NAryOperator(A a, B b) { return NAryOperator<Tag>(CTree(a), CTree(b)); }
 
 
 // Constructors
@@ -165,6 +146,16 @@ template<CTreeish Exp, CTreeCompatible ...CTS> static consteval auto Poly(Exp ex
 
 
 #if 0
+
+template <Block Tag, CTreeCompatible A, CTreeCompatible B> consteval auto NAryOperator(A a, B b) { return NAryOperator<Tag>(CTree(a), CTree(b)); }
+
+template <Block Tag, Block... B1, Block... B2> consteval auto NAryOperator(CTree<B1...>, CTree<B2...>) {
+  return CTree<Tag, 2, Tag, B1..., B2...>();
+}
+
+template <Block Tag, Block N1, Block... B1, Block... B2> consteval auto NAryOperator(CTree<Tag, N1, Tag, B1...>, CTree<B2...>) {
+  return CTree<Tag, static_cast<uint8_t>(N1) + 1, Tag, B1..., B2...>();
+}
 
 template <class...Args> consteval auto operator-(Args...args) { return Binary<BlockType::Subtraction>(args...); }
 

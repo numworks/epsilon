@@ -118,6 +118,8 @@ template <class...Args> consteval auto Multi(Args...args) { return NAry<BlockTyp
 template <class...Args> consteval auto Seti(Args...args) { return NAry<BlockType::Set>(args...); }
 
 
+template <uint8_t ... Values> using Exponents = CTree<Values...>;
+
 template<CTreeish Exp, CTreeish ...CTS> static consteval auto __Poly(Exp exponents, CTS...) {
   constexpr uint8_t Size = sizeof...(CTS);
   return Concat<CTree<BlockType::Polynomial, Size>, Exp, CTree<Size, BlockType::Polynomial>, CTS...>();

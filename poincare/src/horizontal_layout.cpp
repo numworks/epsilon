@@ -7,17 +7,18 @@
 
 namespace Poincare {
 
-int HorizontalLayoutNode::indexOfChildToPointToWhenInserting() {
-  int currentIndex = 0;
-  for (LayoutNode * child : children()) {
-    /* If the inserted bracket is empty on the left, put cursor on its
-     * right, not inside it. */
-    if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(child->type()) && !static_cast<AutocompletedBracketPairLayoutNode *>(child)->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left)) {
-      break;
+Layout HorizontalLayoutNode::deepChildToPointToWhenInserting() const {
+  Layout layoutToPointTo = Layout(this).recursivelyMatches(
+    [](Poincare::Layout layout) {
+      if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(layout.type())) {
+        /* If the inserted bracket is temp on the left, do not put cursor
+         * inside it so that the cursor is put right when inserting ")". */
+        return static_cast<AutocompletedBracketPairLayoutNode *>(layout.node())->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left) ? TrinaryBoolean::False : TrinaryBoolean::True;
+      }
+      return layout.isEmpty() ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
     }
-    currentIndex++;
-  }
-  return currentIndex < numberOfChildren() ? currentIndex : k_outsideIndex;
+  );
+  return layoutToPointTo;
 }
 
 int HorizontalLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -62,6 +62,9 @@ public:
   int columnAtChildIndex(int index) const;
   int indexAtRowColumn(int rowIndex, int columnIndex) const;
 
+  void deleteColumnAtIndex(int index);
+  void deleteRowAtIndex(int index);
+
 protected:
   // Row and columns
   virtual bool numberOfRowsIsFixed() const { return false; }
@@ -78,12 +81,12 @@ protected:
     assert(!numberOfRowsIsFixed());
     return addEmptyRowOrColumn(false, color);
   }
-  void deleteColumnAtIndex(int index);
-  void deleteRowAtIndex(int index);
   bool childIsRightOfGrid(int index) const;
   bool childIsLeftOfGrid(int index) const;
   bool childIsTopOfGrid(int index) const;
   bool childIsBottomOfGrid(int index) const;
+  bool childIsInLastNonGrayColumn(int index) const;
+  bool childIsInLastNonGrayRow(int index) const;
 
   // Sizes
   virtual KDCoordinate horizontalGridEntryMargin(KDFont::Size font) const { return k_gridEntryMargin; }

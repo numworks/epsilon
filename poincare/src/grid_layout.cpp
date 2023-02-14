@@ -28,12 +28,24 @@ int GridLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::Vertic
 }
 
 LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
-  if (childIndex == k_outsideIndex || !childIsLeftOfGrid(childIndex)) {
+  if (childIndex == k_outsideIndex){
+    return DeletionMethod::MoveLeft;
+  }
+  int rowIndex = rowAtChildIndex(childIndex);
+  int columnIndex = columnAtChildIndex(childIndex);
+  bool deleteWholeRow = !numberOfRowsIsFixed() && childIsLeftOfGrid(childIndex) && !childIsBottomOfGrid(childIndex) && isRowEmpty(rowIndex);
+  bool deleteWholeColumn = !numberOfColumnsIsFixed() && childIsTopOfGrid(childIndex) && !childIsRightOfGrid(childIndex) && isColumnEmpty(columnIndex);
+  if (deleteWholeRow || deleteWholeColumn) {
+    /* Pressing backspace at the top of an empty column or a the left of an
+     * empty row deletes the whole column/row. */
+    return deleteWholeRow && deleteWholeColumn ? DeletionMethod::GridLayoutDeleteColumnAndRow : (deleteWholeRow ? DeletionMethod::GridLayoutDeleteRow : DeletionMethod::GridLayoutDeleteColumn);
+  }
+  if (!childIsLeftOfGrid(childIndex)) {
     return DeletionMethod::MoveLeft;
   }
   assert(childIsLeftOfGrid(childIndex));
   assert(isEditing());
-  if (rowAtChildIndex(childIndex) == 0) {
+  if (rowIndex == 0) {
     /* If only one child is filled, delete the grid and keep the child.
      * Else just leave the grid. */
     return minimalNumberOfChildrenWhileEditing() == numberOfChildren() ? DeletionMethod::DeleteAndKeepChild : DeletionMethod::MoveLeft;
@@ -65,14 +77,14 @@ bool GridLayoutNode::removeEmptyRowOrColumnAtChildIndexIfNeeded(int childIndex) 
   }
   int rowIndex = rowAtChildIndex(childIndex);
   int columnIndex = columnAtChildIndex(childIndex);
-  bool isRightOfGrid = childIsRightOfGrid(childIndex);
-  bool isBottomOfGrid = childIsBottomOfGrid(childIndex);
+  bool isRightOfGrid = childIsInLastNonGrayColumn(childIndex);
+  bool isBottomOfGrid = childIsInLastNonGrayRow(childIndex);
   bool changed = false;
-  if (!isRightOfGrid && !numberOfColumnsIsFixed() && isColumnEmpty(columnIndex)) {
+  if (isRightOfGrid && !numberOfColumnsIsFixed() && isColumnEmpty(columnIndex)) {
     deleteColumnAtIndex(columnIndex);
     changed = true;
   }
-  if (!isBottomOfGrid && !numberOfRowsIsFixed() && isRowEmpty(rowIndex)) {
+  if (isBottomOfGrid && !numberOfRowsIsFixed() && isRowEmpty(rowIndex)) {
     deleteRowAtIndex(rowIndex);
     changed = true;
   }
@@ -126,6 +138,16 @@ bool GridLayoutNode::childIsTopOfGrid(int index) const {
 bool GridLayoutNode::childIsBottomOfGrid(int index) const {
   assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
   return rowAtChildIndex(index) == m_numberOfRows - 1;
+}
+
+bool GridLayoutNode::childIsInLastNonGrayColumn(int index) const {
+  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  return columnAtChildIndex(index) == m_numberOfColumns - 1 - isEditing();
+}
+
+bool GridLayoutNode::childIsInLastNonGrayRow(int index) const {
+  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  return rowAtChildIndex(index) == m_numberOfRows - 1 - isEditing();
 }
 
 int GridLayoutNode::rowAtChildIndex(int index) const {

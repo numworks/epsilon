@@ -115,6 +115,9 @@ public:
     FractionDenominatorDeletion,
     BinomialCoefficientMoveFromKtoN,
     GridLayoutMoveToUpperRow,
+    GridLayoutDeleteColumnAndRow,
+    GridLayoutDeleteColumn,
+    GridLayoutDeleteRow,
     AutocompletedBracketPairMakeTemporary
   };
   virtual DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const;

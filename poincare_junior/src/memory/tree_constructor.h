@@ -28,11 +28,11 @@ concept is_derived_from = __is_base_of(Base, Derived);
 
 class AbstractCTreeCompatible {};
 
-template <class C> concept CTreeCompatible = is_derived_from<C, AbstractCTreeCompatible>;
+template <class C> concept CTreeCompatibleConcept = is_derived_from<C, AbstractCTreeCompatible>;
 
 class AbstractCTree : AbstractCTreeCompatible {};
 
-template <class C> concept CTreeish = is_derived_from<C, AbstractCTree>;
+template <class C> concept CTreeConcept = is_derived_from<C, AbstractCTree>;
 
 
 /* The CTree template class is the compile time representation of a constexpr
@@ -54,7 +54,7 @@ public:
 /* Helper to concatenate CTrees */
 
 /* Usage:
- * template <Block Tag, CTreeish CT1, CTreeish CT2> consteval auto Binary(CT1, CT2) {
+ * template <Block Tag, CTreeConcept CT1, CTreeConcept CT2> consteval auto Binary(CT1, CT2) {
  *   return Concat<CTree<Tag>, CT1, CT2>();
  * }
  */
@@ -66,11 +66,11 @@ struct __BlockConcat<N1, B1, N2, B2, std::index_sequence<I...>> {
   using ctree = CTree<((I < N1) ? B1[I] : B2[I - N1])...>;
 };
 
-template <CTreeish CT1, CTreeish CT2> using __ConcatTwo = typename __BlockConcat<CT1::k_size, CT1::k_blocks, CT2::k_size, CT2::k_blocks>::ctree;
+template <CTreeConcept CT1, CTreeConcept CT2> using __ConcatTwo = typename __BlockConcat<CT1::k_size, CT1::k_blocks, CT2::k_size, CT2::k_blocks>::ctree;
 
-template <CTreeish CT1, CTreeish... CT> struct Concat;
-template <CTreeish CT1> struct Concat<CT1> : CT1 {};
-template <CTreeish CT1, CTreeish... CT> struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
+template <CTreeConcept CT1, CTreeConcept... CT> struct Concat;
+template <CTreeConcept CT1> struct Concat<CT1> : CT1 {};
+template <CTreeConcept CT1, CTreeConcept... CT> struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
 
 
 // Helpers
@@ -79,7 +79,7 @@ template <Block Tag, Block... B1> consteval auto Unary(CTree<B1...>) {
   return CTree<Tag, B1...>();
 }
 
-template <Block Tag, CTreeCompatible A> consteval auto Unary(A a) {
+template <Block Tag, CTreeCompatibleConcept A> consteval auto Unary(A a) {
   return Unary<Tag>(CTree(a));
 }
 
@@ -87,15 +87,15 @@ template <Block Tag, Block... B1, Block... B2> consteval auto Binary(CTree<B1...
   return CTree<Tag, B1..., B2...>();
 }
 
-template <Block Tag, CTreeCompatible A, CTreeCompatible B> consteval auto Binary(A a, B b) {
+template <Block Tag, CTreeCompatibleConcept A, CTreeCompatibleConcept B> consteval auto Binary(A a, B b) {
   return Binary<Tag>(CTree(a), CTree(b));
 }
 
-template<Block Tag, CTreeish ...CTS> requires (sizeof...(CTS)>=2) static consteval auto __NAry(CTS...) {
+template<Block Tag, CTreeConcept ...CTS> requires (sizeof...(CTS)>=2) static consteval auto __NAry(CTS...) {
   return Concat<CTree<Tag, sizeof...(CTS), Tag>, CTS...>();
 }
 
-template <Block Tag, CTreeCompatible ...CTS> consteval auto NAry(CTS... args) { return __NAry<Tag>(CTree(args)...); }
+template <Block Tag, CTreeCompatibleConcept ...CTS> consteval auto NAry(CTS... args) { return __NAry<Tag>(CTree(args)...); }
 
 
 // Constructors
@@ -123,12 +123,12 @@ template <uint8_t ... Values> using Exponents = CTree<Values...>;
  * CTrees while the other one is just here to allow the function to take
  * CTreeCompatible arguments like integer litterals. */
 
-template<CTreeish Exp, CTreeish ...CTS> static consteval auto __Poly(Exp exponents, CTS...) {
+template<CTreeConcept Exp, CTreeConcept ...CTS> static consteval auto __Poly(Exp exponents, CTS...) {
   constexpr uint8_t Size = sizeof...(CTS);
   return Concat<CTree<BlockType::Polynomial, Size>, Exp, CTree<Size, BlockType::Polynomial>, CTS...>();
 }
 
-template<CTreeish Exp, CTreeCompatible ...CTS> static consteval auto Poly(Exp exponents, CTS... args) {
+template<CTreeConcept Exp, CTreeCompatibleConcept ...CTS> static consteval auto Poly(Exp exponents, CTS... args) {
   constexpr uint8_t Size = sizeof...(CTS);
   static_assert(Exp::k_size == Size - 1, "Number of children and exponents do not match in constant polynomial");
   return __Poly(exponents, CTree(args)...);

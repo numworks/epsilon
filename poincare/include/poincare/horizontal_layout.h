@@ -27,7 +27,7 @@ public:
   Type type() const override { return Type::HorizontalLayout; }
 
   // LayoutNode
-  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override { /* This case is handled directly by the cursor */ assert(false); return -2; }
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) override { /* This case is handled directly by the cursor */ assert(false); return -2; }
   DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override { /* This case is handled directly by the cursor */ assert(false); return DeletionMethod::MoveLeft; }
 
   int indexOfChildToPointToWhenInserting() override { /* This is handled by deepChildToPointToWhenInserting */ assert(false); return -2; }

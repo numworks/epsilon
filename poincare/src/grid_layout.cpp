@@ -5,7 +5,7 @@
 namespace Poincare {
 
 // LayoutNode
-int GridLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
+int GridLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   if (currentIndex == k_outsideIndex) {
     return direction == OMG::HorizontalDirection::Left ? numberOfChildren() - 1 : 0;
   }
@@ -17,7 +17,7 @@ int GridLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::Hori
   return currentIndex + step;
 }
 
-int GridLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+int GridLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (direction == OMG::VerticalDirection::Up && currentIndex >= m_numberOfColumns) {
     return currentIndex - m_numberOfColumns;
   }

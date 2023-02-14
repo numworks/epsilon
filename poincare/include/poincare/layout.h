@@ -88,8 +88,8 @@ public:
   Layout makeEditable() { return node()->makeEditable(); }
 
   // Cursor move
-  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const { return node()->indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex); }
-  int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, LayoutNode::PositionInLayout positionAtCurrentIndex) const { return node()->indexOfNextChildToPointToAfterVerticalCursorMove(direction, currentIndex, positionAtCurrentIndex); }
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) { return node()->indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex, shouldRedrawLayout); }
+  int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, LayoutNode::PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) { return node()->indexOfNextChildToPointToAfterVerticalCursorMove(direction, currentIndex, positionAtCurrentIndex, shouldRedrawLayout); }
 
   // Cursor deletion
   LayoutNode::DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const {

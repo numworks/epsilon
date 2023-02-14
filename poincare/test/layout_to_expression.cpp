@@ -187,11 +187,11 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
 
   // log_3(2)
   HorizontalLayout l1 = HorizontalLayout::Builder();
-  l1.addChildAtIndex(CodePointLayout::Builder('l'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
-  l1.addChildAtIndex(CodePointLayout::Builder('o'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
-  l1.addChildAtIndex(CodePointLayout::Builder('g'), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
-  l1.addChildAtIndex(VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::VerticalPosition::Subscript), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
-  l1.addChildAtIndex(ParenthesisLayout::Builder(CodePointLayout::Builder('2')), l1.numberOfChildren(),  l1.numberOfChildren(), nullptr);
+  l1.addChildAtIndexInPlace(CodePointLayout::Builder('l'), l1.numberOfChildren(),  l1.numberOfChildren());
+  l1.addChildAtIndexInPlace(CodePointLayout::Builder('o'), l1.numberOfChildren(),  l1.numberOfChildren());
+  l1.addChildAtIndexInPlace(CodePointLayout::Builder('g'), l1.numberOfChildren(),  l1.numberOfChildren());
+  l1.addChildAtIndexInPlace(VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::VerticalPosition::Subscript), l1.numberOfChildren(),  l1.numberOfChildren());
+  l1.addChildAtIndexInPlace(ParenthesisLayout::Builder(CodePointLayout::Builder('2')), l1.numberOfChildren(),  l1.numberOfChildren());
   l = l1;
   e = Logarithm::Builder(
       BasedInteger::Builder(2),

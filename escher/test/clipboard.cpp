@@ -1,7 +1,6 @@
 #include <quiz.h>
 #include <string.h>
 #include <poincare/code_point_layout.h>
-#include <poincare/empty_layout.h>
 #include <poincare/expression.h>
 #include <poincare/integral_layout.h>
 #include <poincare/matrix_layout.h>
@@ -24,14 +23,14 @@ void assert_stored_text_is_parseable(Layout layout) {
 }
 
 QUIZ_CASE(escher_clipboard_stored_text_is_parseable) {
-  Layout l = IntegralLayout::Builder(EmptyLayout::Builder(), CodePointLayout::Builder('x'), EmptyLayout::Builder(), EmptyLayout::Builder());
+  Layout l = IntegralLayout::Builder(HorizontalLayout::Builder(), CodePointLayout::Builder('x'), HorizontalLayout::Builder(), HorizontalLayout::Builder());
   assert_stored_text_is_parseable(l);
-  l = NthRootLayout::Builder(EmptyLayout::Builder());
+  l = NthRootLayout::Builder(HorizontalLayout::Builder());
   assert_stored_text_is_parseable(l);
-  l = MatrixLayout::Builder(CodePointLayout::Builder('1'), EmptyLayout::Builder(), EmptyLayout::Builder(), CodePointLayout::Builder('2'));
+  l = MatrixLayout::Builder(CodePointLayout::Builder('1'), HorizontalLayout::Builder(), HorizontalLayout::Builder(), CodePointLayout::Builder('2'));
   assert_stored_text_is_parseable(l);
-  l = SumLayout::Builder(EmptyLayout::Builder(), CodePointLayout::Builder('n'), EmptyLayout::Builder(), EmptyLayout::Builder());
+  l = SumLayout::Builder(HorizontalLayout::Builder(), CodePointLayout::Builder('n'), HorizontalLayout::Builder(), HorizontalLayout::Builder());
   assert_stored_text_is_parseable(l);
-  l = SumLayout::Builder(EmptyLayout::Builder(), CodePointLayout::Builder('n'), EmptyLayout::Builder(), EmptyLayout::Builder());
+  l = SumLayout::Builder(HorizontalLayout::Builder(), CodePointLayout::Builder('n'), HorizontalLayout::Builder(), HorizontalLayout::Builder());
   assert_stored_text_is_parseable(l);;
 }

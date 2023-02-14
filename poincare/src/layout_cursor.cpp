@@ -177,11 +177,9 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
   Layout childToPoint;
   bool layoutToInsertIsHorizontal = layout.isHorizontal();
   if (layoutToInsertIsHorizontal) {
-    int indexOfChildToPointTo = (forceRight || forceLeft) ? LayoutNode::k_outsideIndex : layout.indexOfChildToPointToWhenInserting();
-    if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
-      childToPoint = layout.childAtIndex(indexOfChildToPointTo);
-      assert(childToPoint.indexOfChildToPointToWhenInserting() != LayoutNode::k_outsideIndex);
-      childToPoint = childToPoint.childAtIndex(childToPoint.indexOfChildToPointToWhenInserting());
+    childToPoint = (forceRight || forceLeft) ? Layout() : static_cast<HorizontalLayout &>(layout).deepChildToPointToWhenInserting();
+    if (!childToPoint.isUninitialized() && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(childToPoint.type())) {
+      childToPoint = childToPoint.childAtIndex(0);
     }
   }
 
@@ -255,10 +253,13 @@ void LayoutCursor::addEmptyPowerLayout(Context * context) {
 }
 
 void LayoutCursor::addEmptySquarePowerLayout(Context * context) {
+  /* By inserting an horizontal layout, the cursor naturally points to the
+   * right of the layout, and not in the power. */
   insertLayoutAtCursor(
-    VerticalOffsetLayout::Builder(
-      CodePointLayout::Builder('2'),
-      VerticalOffsetLayoutNode::VerticalPosition::Superscript),
+    HorizontalLayout::Builder(
+      VerticalOffsetLayout::Builder(
+        CodePointLayout::Builder('2'),
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript)),
     context);
 }
 

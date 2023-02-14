@@ -15,7 +15,7 @@ QUIZ_CASE(pcj_layout_creation) {
   Layout l2 = e1.toLayout();
   assert(l2.treeIsIdenticalTo(l1));
   // expression node -> Expression -> Layout
-  Expression e2 = Expression(Addi(-1_e, Multi(2_e, 3_e)));
+  Expression e2 = Expression(Add(-1_e, Mult(2_e, 3_e)));
   Layout l3 = e2.toLayout();
   // layout Node -> Layout
   assert(l3.treeIsIdenticalTo(l1));

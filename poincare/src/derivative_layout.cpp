@@ -13,13 +13,22 @@ int DerivativeLayoutNode::serialize(char * buffer, int bufferSize, Preferences::
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);
 }
 
-int DerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
-  // TODO: Implement setVariableSlot behaviour
+int DerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
+  if (currentIndex == k_outsideIndex && direction == OMG::HorizontalDirection::Right) {
+    setVariableSlot(VariableSlot::Fraction, shouldRedrawLayout);
+    return k_variableLayoutIndex;
+  }
+  if (currentIndex == k_abscissaLayoutIndex && direction == OMG::HorizontalDirection::Left) {
+    setVariableSlot(VariableSlot::Assignment, shouldRedrawLayout);
+    return k_variableLayoutIndex;
+  }
   switch (currentIndex) {
   case k_outsideIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_variableLayoutIndex : k_abscissaLayoutIndex;
+    assert(direction == OMG::HorizontalDirection::Left);
+    return k_abscissaLayoutIndex;
   case k_abscissaLayoutIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_outsideIndex : k_variableLayoutIndex;
+    assert(direction == OMG::HorizontalDirection::Right);
+    return k_outsideIndex;
   default: {
     // Other cases are handled by children classes
     assert(currentIndex == k_variableLayoutIndex && m_variableSlot == VariableSlot::Assignment);
@@ -28,36 +37,49 @@ int DerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG
   }
 }
 
-int FirstOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
-  // TODO: Implement setVariableSlot behaviour
+int FirstOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   if (currentIndex == k_derivandLayoutIndex) {
+    setVariableSlot(direction == OMG::HorizontalDirection::Right ? VariableSlot::Assignment : VariableSlot::Fraction, shouldRedrawLayout);
     return k_variableLayoutIndex;
   }
   if (currentIndex == k_variableLayoutIndex && m_variableSlot == VariableSlot::Fraction) {
     return direction == OMG::HorizontalDirection::Right ? k_derivandLayoutIndex : k_outsideIndex;
   }
-  return DerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex);
+  return DerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex, shouldRedrawLayout);
 }
 
-int HigherOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
+int HigherOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   // TODO: Implement setVariableSlot behaviour
   if (currentIndex == k_derivandLayoutIndex) {
-    return direction == OMG::HorizontalDirection::Right ? k_variableLayoutIndex : k_orderLayoutIndex;
+    if (direction == OMG::HorizontalDirection::Right) {
+      setVariableSlot(VariableSlot::Assignment, shouldRedrawLayout);
+      return k_variableLayoutIndex;
+    }
+    setOrderSlot(OrderSlot::Denominator, shouldRedrawLayout);
+    return k_orderLayoutIndex;
   }
   if (currentIndex == k_variableLayoutIndex && m_variableSlot == VariableSlot::Fraction) {
-    return direction == OMG::HorizontalDirection::Right ? k_orderLayoutIndex : k_outsideIndex;
+    if (direction == OMG::HorizontalDirection::Right) {
+      setOrderSlot(OrderSlot::Denominator, shouldRedrawLayout);
+      return k_orderLayoutIndex;
+    }
+    return k_outsideIndex;
   }
   if (currentIndex == k_orderLayoutIndex) {
     if (m_orderSlot == OrderSlot::Denominator) {
-      return direction == OMG::HorizontalDirection::Right ? k_derivandLayoutIndex : k_variableLayoutIndex;
+      if (direction == OMG::HorizontalDirection::Left) {
+        setVariableSlot(VariableSlot::Fraction, shouldRedrawLayout);
+        return k_variableLayoutIndex;
+      }
+      return k_derivandLayoutIndex;
     }
     assert(m_orderSlot == OrderSlot::Numerator);
     return direction == OMG::HorizontalDirection::Right ? k_derivandLayoutIndex : k_outsideIndex;
   }
-  return DerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex);
+  return DerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex, shouldRedrawLayout);
 }
 
-int DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+int DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (direction == OMG::VerticalDirection::Up && currentIndex == k_variableLayoutIndex && m_variableSlot == VariableSlot::Assignment)
   {
     return k_derivandLayoutIndex;
@@ -70,9 +92,9 @@ int DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::
   return k_cantMoveIndex;
 }
 
-int FirstOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+int FirstOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (direction == OMG::VerticalDirection::Down && currentIndex == k_derivandLayoutIndex && positionAtCurrentIndex == PositionInLayout::Left) {
-    // TODO: Set variable slot
+    setVariableSlot(VariableSlot::Fraction, shouldRedrawLayout);
     return k_variableLayoutIndex;
   }
 
@@ -80,20 +102,20 @@ int FirstOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursor
     return k_derivandLayoutIndex;
   }
 
-  return DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(direction, currentIndex, positionAtCurrentIndex);
+  return DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(direction, currentIndex, positionAtCurrentIndex, shouldRedrawLayout);
 }
 
-int HigherOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const {
+int HigherOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (direction == OMG::VerticalDirection::Up && currentIndex == k_variableLayoutIndex && m_variableSlot == VariableSlot::Fraction) {
-    // TODO: Set order slot
-    return positionAtCurrentIndex == PositionInLayout::Right ? k_orderLayoutIndex /* denominator */: /* Numerator */k_orderLayoutIndex;
+    setOrderSlot(positionAtCurrentIndex == PositionInLayout::Right ? OrderSlot::Denominator : OrderSlot::Numerator, shouldRedrawLayout);
+    return k_orderLayoutIndex;
   }
 
   if (direction == OMG::VerticalDirection::Up &&
       ((currentIndex == k_derivandLayoutIndex && positionAtCurrentIndex == PositionInLayout::Left) ||
        (currentIndex == k_orderLayoutIndex && m_orderSlot == OrderSlot::Denominator)))
   {
-    // TODO: Set order slot
+    setOrderSlot(OrderSlot::Numerator, shouldRedrawLayout);
     return k_orderLayoutIndex;
   }
 
@@ -101,17 +123,17 @@ int HigherOrderDerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCurso
       ((currentIndex == k_derivandLayoutIndex && positionAtCurrentIndex == PositionInLayout::Left) ||
        (currentIndex == k_orderLayoutIndex && m_orderSlot == OrderSlot::Numerator)))
   {
-    // TODO: Set order slot
+    setOrderSlot(OrderSlot::Denominator, shouldRedrawLayout);
     return k_orderLayoutIndex;
   }
 
   if (direction == OMG::VerticalDirection::Down && currentIndex == k_orderLayoutIndex && m_orderSlot == OrderSlot::Denominator && positionAtCurrentIndex == PositionInLayout::Left)
   {
-    // TODO: Set variable slot
+    setVariableSlot(VariableSlot::Fraction, shouldRedrawLayout);
     return k_variableLayoutIndex;
   }
 
-  return DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(direction, currentIndex, positionAtCurrentIndex);
+  return DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(direction, currentIndex, positionAtCurrentIndex, shouldRedrawLayout);
 }
 
 LayoutNode::DeletionMethod DerivativeLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {

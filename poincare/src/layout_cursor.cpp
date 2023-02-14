@@ -80,6 +80,9 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting, bool * shouldR
     // Ensure that didEnterCurrentPosition is always called by being left of ||
     *shouldRedrawLayout = didEnterCurrentPosition(cloneCursor) || *shouldRedrawLayout;
   }
+  if (*shouldRedrawLayout) {
+    invalidateSizesAndPositions();
+  }
   return moved;
 }
 
@@ -512,7 +515,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction, bool * sho
   assert(!nextLayout.isUninitialized());
   assert(!nextLayout.isHorizontal());
 
-  int newIndex = isSelecting() ? LayoutNode::k_outsideIndex : nextLayout.indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndexInNextLayout);
+  int newIndex = isSelecting() ? LayoutNode::k_outsideIndex : nextLayout.indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndexInNextLayout, shouldRedrawLayout);
   assert(newIndex != LayoutNode::k_cantMoveIndex);
   if (newIndex == LayoutNode::k_outsideIndex) {
     Layout parent = nextLayout.parent();
@@ -582,7 +585,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(OMG::VerticalDirection direction
     // Repeat for right and left
     for (int i = 0; i < 2; i++) {
       if (!nextLayout.isUninitialized()) {
-        int nextIndex = nextLayout.indexOfNextChildToPointToAfterVerticalCursorMove(direction, LayoutNode::k_outsideIndex,positionRelativeToNextLayout);
+        int nextIndex = nextLayout.indexOfNextChildToPointToAfterVerticalCursorMove(direction, LayoutNode::k_outsideIndex,positionRelativeToNextLayout, shouldRedrawLayout);
         if (nextIndex != LayoutNode::k_cantMoveIndex) {
           assert(nextIndex != LayoutNode::k_outsideIndex);
           assert(!nextLayout.isHorizontal());
@@ -603,7 +606,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(OMG::VerticalDirection direction
   LayoutNode::PositionInLayout currentPosition = m_position == leftMostPosition() ? LayoutNode::PositionInLayout::Left : (m_position == rightMostPosition() ? LayoutNode::PositionInLayout::Right : LayoutNode::PositionInLayout::Middle);
   while (!p.isUninitialized()) {
     int childIndex = p.indexOfChild(currentChild);
-    int nextIndex = p.indexOfNextChildToPointToAfterVerticalCursorMove(direction, childIndex, currentPosition);
+    int nextIndex = p.indexOfNextChildToPointToAfterVerticalCursorMove(direction, childIndex, currentPosition, shouldRedrawLayout);
     if (nextIndex != LayoutNode::k_cantMoveIndex) {
       if (nextIndex == LayoutNode::k_outsideIndex) {
         assert(currentPosition != LayoutNode::PositionInLayout::Middle);

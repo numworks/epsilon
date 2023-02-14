@@ -10,8 +10,8 @@ class LetterWithSubAndSuperscriptLayoutNode : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 
-  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
-  int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex) const override;
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) override;
+  int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) override;
 
   // TreeNode
   size_t size() const override { return sizeof(LetterWithSubAndSuperscriptLayoutNode); }

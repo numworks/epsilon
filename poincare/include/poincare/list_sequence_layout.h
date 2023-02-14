@@ -20,7 +20,7 @@ public:
   }
 #endif
 
-  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const override;
+  int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) override;
   DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
   Layout XNTLayout(int childIndex = -1) const override;
 

@@ -12,7 +12,7 @@ int ListSequenceLayoutNode::serialize(char * buffer, int bufferSize, Preferences
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListSequence::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);
 }
 
-int ListSequenceLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex) const {
+int ListSequenceLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   switch (currentIndex) {
   case k_outsideIndex:
     return direction == OMG::HorizontalDirection::Right ? k_functionLayoutIndex : k_upperBoundLayoutIndex;

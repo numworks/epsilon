@@ -14,31 +14,10 @@ EditionReference Layout::EditionPoolTextToLayout(const char * text) {
   return ref;
 }
 
-EditionReference Layout::EditionPoolLayoutToExpression(Node node) {
-  // node == (1-2)/3/4
-  EditionReference ref = EditionReference::Push<BlockType::Division>();
-  EditionReference::Push<BlockType::Division>();
-  EditionReference::Push<BlockType::Subtraction>();
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
-  // Remove node from EditionReference
-  EditionReference nodeRef(node);
-  nodeRef.removeTree();
-  return ref;
-}
-
 Layout Layout::Parse(const char * textInput) {
   return Layout([](const char * text) {
       EditionPoolTextToLayout(text);
     }, textInput);
-}
-
-Expression Layout::toExpression() const {
-  return Expression([](Node node) {
-      EditionPoolLayoutToExpression(node);
-    }, this);
 }
 
 void Layout::toText(char * buffer, size_t bufferSize) const {

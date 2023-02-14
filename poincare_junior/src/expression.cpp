@@ -1,5 +1,4 @@
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/memory/cache_pool.h>
@@ -22,10 +21,31 @@ EditionReference Expression::EditionPoolExpressionToLayout(Node node) {
   return ref;
 }
 
+EditionReference Expression::EditionPoolLayoutToExpression(Node node) {
+  // node == (1-2)/3/4
+  EditionReference ref = EditionReference::Push<BlockType::Division>();
+  EditionReference::Push<BlockType::Division>();
+  EditionReference::Push<BlockType::Subtraction>();
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  // Remove node from EditionReference
+  EditionReference nodeRef(node);
+  nodeRef.removeTree();
+  return ref;
+}
+
 Expression Expression::Parse(const char * textInput) {
   return Expression([](const char * text) {
-      Layout::EditionPoolLayoutToExpression(Layout::EditionPoolTextToLayout(text));
+      EditionPoolLayoutToExpression(Layout::EditionPoolTextToLayout(text));
     }, textInput);
+}
+
+Expression Expression::Parse(const Layout * layout) {
+  return Expression([](Node node) {
+      EditionPoolLayoutToExpression(node);
+    }, layout);
 }
 
 Expression Expression::CreateBasicReduction(void * expressionAddress) {

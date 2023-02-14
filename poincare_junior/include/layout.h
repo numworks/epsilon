@@ -6,18 +6,14 @@
 
 namespace PoincareJ {
 
-class Expression;
-
 class Layout final : public CacheReference {
 friend class Expression;
 public:
   using CacheReference::CacheReference;
   static Layout Parse(const char * text);
-  Expression toExpression() const;
   void toText(char * buffer, size_t bufferSize) const;
 private:
   static EditionReference EditionPoolTextToLayout(const char * text);
-  static EditionReference EditionPoolLayoutToExpression(Node node);
 };
 
 static_assert(sizeof(Layout) == sizeof(CacheReference));

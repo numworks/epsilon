@@ -66,8 +66,7 @@ public:
   __attribute__((__used__)) void logReferences() { logReferences(std::cout, LogFormat::Tree, false); }
 #endif
 
-public:
-
+protected:
   class AbstractIterator {
   public:
     AbstractIterator(const TypeBlock * block) : m_node(const_cast<TypeBlock *>(block)) {}
@@ -77,6 +76,7 @@ public:
     Node m_node;
   };
 
+public:
   class Nodes final {
   public:
     Nodes(TypeBlock * block, int numberOfBlocks) : m_node(block), m_numberOfBlocks(numberOfBlocks) {}

@@ -45,43 +45,32 @@ template <class C> concept CTreeish = is_derived_from<C, AbstractCTree>;
 template <Block... Blocks>
 class CTree : public AbstractCTree {
 public:
-  static constexpr Block blocks[] = { Blocks... };
-  static constexpr size_t size = sizeof...(Blocks);
-  constexpr operator Node () const { return blocks; }
+  static constexpr Block k_blocks[] = { Blocks... };
+  static constexpr size_t k_size = sizeof...(Blocks);
+  constexpr operator Node () const { return k_blocks; }
 };
-
-
-/* Helper to create a CTree with its template parameters from an array template
- * parameter. */
-
-template <size_t N, const uint8_t B[N], typename IS = decltype(std::make_index_sequence<N>())> struct CTreeFromArray;
-
-template <size_t N, const uint8_t B[N], std::size_t... I>
-struct CTreeFromArray<N, B, std::index_sequence<I...>> : CTree<B[I]...> {};
 
 
 /* Helper to concatenate CTrees */
 
 /* Usage:
  * template <Block Tag, CTreeish CT1, CTreeish CT2> consteval auto Binary(CT1, CT2) {
- *   return ConcatTwo<ConcatTwo<CTree<Tag>, CT1>, CT2>();
- *      or
  *   return Concat<CTree<Tag>, CT1, CT2>();
  * }
  */
 
-template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2], typename IS = decltype(std::make_index_sequence<N1 + N2>())> struct BlockConcat;
+template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2], typename IS = decltype(std::make_index_sequence<N1 + N2>())> struct __BlockConcat;
 
 template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2], std::size_t... I>
-struct BlockConcat<N1, B1, N2, B2, std::index_sequence<I...>> {
+struct __BlockConcat<N1, B1, N2, B2, std::index_sequence<I...>> {
   using ctree = CTree<((I < N1) ? B1[I] : B2[I - N1])...>;
 };
 
-template <CTreeish CT1, CTreeish CT2> using ConcatTwo = typename BlockConcat<CT1::size, CT1::blocks, CT2::size, CT2::blocks>::ctree;
+template <CTreeish CT1, CTreeish CT2> using __ConcatTwo = typename __BlockConcat<CT1::k_size, CT1::k_blocks, CT2::k_size, CT2::k_blocks>::ctree;
 
 template <CTreeish CT1, CTreeish... CT> struct Concat;
 template <CTreeish CT1> struct Concat<CT1> : CT1 {};
-template <CTreeish CT1, CTreeish... CT> struct Concat : ConcatTwo<CT1, Concat<CT...>> {};
+template <CTreeish CT1, CTreeish... CT> struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
 
 
 // Helpers
@@ -126,12 +115,13 @@ template <class...Args> consteval auto Multi(Args...args) { return NAry<BlockTyp
 template <class...Args> consteval auto Seti(Args...args) { return NAry<BlockType::Set>(args...); }
 
 
+// Alias only for readability
 template <uint8_t ... Values> using Exponents = CTree<Values...>;
 
 
 /* The first function is responsible of building the actual representation from
  * CTrees while the other one is just here to allow the function to take
- * CTreeCompatible arguments like numerical values. */
+ * CTreeCompatible arguments like integer litterals. */
 
 template<CTreeish Exp, CTreeish ...CTS> static consteval auto __Poly(Exp exponents, CTS...) {
   constexpr uint8_t Size = sizeof...(CTS);
@@ -140,7 +130,7 @@ template<CTreeish Exp, CTreeish ...CTS> static consteval auto __Poly(Exp exponen
 
 template<CTreeish Exp, CTreeCompatible ...CTS> static consteval auto Poly(Exp exponents, CTS... args) {
   constexpr uint8_t Size = sizeof...(CTS);
-  static_assert(Exp::size == Size - 1, "Number of children and exponents do not match in constant polynomial");
+  static_assert(Exp::k_size == Size - 1, "Number of children and exponents do not match in constant polynomial");
   return __Poly(exponents, CTree(args)...);
 }
 
@@ -197,14 +187,14 @@ template <CTreeCompatible A, CTreeCompatible B> consteval auto operator*(A a, B 
 /* Immediates are used to represent numerical constants of the code (like 2_e)
  * temporarily before they are cast to CTrees, this allows writing -2_e. */
 
-template <int V> class Immediate : public AbstractCTreeCompatible {
+template <int V> class IntegerLitteral : public AbstractCTreeCompatible {
 public:
   // once a deduction guide as required a given CTree from the immediate, build it
   template <Block...B> consteval operator CTree<B...> () { return CTree<B...>(); }
 
-  constexpr operator const Node () { return CTree(Immediate<V>()); }
+  constexpr operator const Node () { return CTree(IntegerLitteral<V>()); }
 
-  consteval Immediate<-V> operator-() { return Immediate<-V>(); }
+  consteval IntegerLitteral<-V> operator-() { return IntegerLitteral<-V>(); }
   // Note : we could decide to implement constant propagation operators here
 };
 
@@ -213,25 +203,25 @@ public:
 
 // Deduction guides to create the smallest CTree that can represent the Immediate
 
-CTree(Immediate<-1>)->CTree<BlockType::MinusOne>;
-CTree(Immediate<0>)->CTree<BlockType::Zero>;
-CTree(Immediate<1>)->CTree<BlockType::One>;
-CTree(Immediate<2>)->CTree<BlockType::Two>;
+CTree(IntegerLitteral<-1>)->CTree<BlockType::MinusOne>;
+CTree(IntegerLitteral<0>)->CTree<BlockType::Zero>;
+CTree(IntegerLitteral<1>)->CTree<BlockType::One>;
+CTree(IntegerLitteral<2>)->CTree<BlockType::Two>;
 
-template <int V> requires (V >= INT8_MIN && V <= INT8_MAX) CTree(Immediate<V>) -> CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
+template <int V> requires (V >= INT8_MIN && V <= INT8_MAX) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
 
-template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 2) CTree(Immediate<V>) -> CTree<BlockType::IntegerPosBig, 2, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), 2, BlockType::IntegerPosBig>;
+template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 2) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerPosBig, 2, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), 2, BlockType::IntegerPosBig>;
 
-template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 3) CTree(Immediate<V>) -> CTree<BlockType::IntegerPosBig, 3, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), 3, BlockType::IntegerPosBig>;
+template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 3) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerPosBig, 3, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), 3, BlockType::IntegerPosBig>;
 
-template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 4) CTree(Immediate<V>) -> CTree<BlockType::IntegerPosBig, 4, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), Bit::getByteAtIndex(V, 3), 4, BlockType::IntegerPosBig>;
+template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 4) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerPosBig, 4, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), Bit::getByteAtIndex(V, 3), 4, BlockType::IntegerPosBig>;
 
 
-template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 2) CTree(Immediate<V>) -> CTree<BlockType::IntegerNegBig, 2, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), 2, BlockType::IntegerNegBig>;
+template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 2) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerNegBig, 2, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), 2, BlockType::IntegerNegBig>;
 
-template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 3) CTree(Immediate<V>) -> CTree<BlockType::IntegerNegBig, 3, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), 3, BlockType::IntegerNegBig>;
+template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 3) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerNegBig, 3, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), 3, BlockType::IntegerNegBig>;
 
-template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 4) CTree(Immediate<V>) -> CTree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), Bit::getByteAtIndex(-V, 3), 4, BlockType::IntegerNegBig>;
+template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 4) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), Bit::getByteAtIndex(-V, 3), 4, BlockType::IntegerNegBig>;
 
 
 
@@ -241,7 +231,7 @@ template <char...C>
 consteval auto operator"" _n () {
   constexpr const char value[] = { C... , '\0' };
   constexpr int V = Value(value, sizeof...(C) + 1);
-  return Immediate<V>();
+  return IntegerLitteral<V>();
 }
 
 

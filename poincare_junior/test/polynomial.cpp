@@ -15,10 +15,10 @@ void assert_polynomial_is_parsed(const Node node, const Node expectedVariables, 
 
 QUIZ_CASE(pcj_polynomial_parsing) {
   assert_polynomial_is_parsed(
-      /* π^3 + 3*π^2*e + 3*π*e^2 + e^3 */ Add(Pow(u'π'_e, 3_e), Mult(3_e, Pow(u'π'_e, 2_e), u'e'_e), Mult(3_e, Pow(u'e'_e, 2_e), u'π'_e), Pow(u'e'_e, 3_e)),
-      /* variables = {π, e} */ Set(u'π'_e, u'e'_e),
-      /* polynomial */ // TODO Pol(exponentsPi, u'π'_e, 1_e, Pol(exponentsE0, u'e'_e, 3_e), Pol(exponentsE1, u'e'_e, 3_e), Pol(exponentsE2, u'e'_e, 1_e))
-      /* polynomial */ Pol({3, 2, 1, 0}, u'π'_e, 1_e, Pol({1}, u'e'_e, Mult(3_e, 1_e, 1_e)), Pol({2}, u'e'_e, Mult(3_e, 1_e, 1_e)), Pol({3}, u'e'_e, 1_e))
+      /* π^3 + 3*π^2*e + 3*π*e^2 + e^3 */ Add(Pow(π_e, 3_e), Mult(3_e, Pow(π_e, 2_e), u'e'_e), Mult(3_e, Pow(u'e'_e, 2_e), π_e), Pow(u'e'_e, 3_e)),
+      /* variables = {π, e} */ Set(π_e, u'e'_e),
+      /* polynomial */ // TODO Pol(exponentsPi, π_e, 1_e, Pol(exponentsE0, u'e'_e, 3_e), Pol(exponentsE1, u'e'_e, 3_e), Pol(exponentsE2, u'e'_e, 1_e))
+      /* polynomial */ Pol({3, 2, 1, 0}, π_e, 1_e, Pol({1}, u'e'_e, Mult(3_e, 1_e, 1_e)), Pol({2}, u'e'_e, Mult(3_e, 1_e, 1_e)), Pol({3}, u'e'_e, 1_e))
     );
 
   assert_polynomial_is_parsed(
@@ -28,9 +28,9 @@ QUIZ_CASE(pcj_polynomial_parsing) {
     );
 
   assert_polynomial_is_parsed(
-      /* π^1.2 */ Pow(u'π'_e, 1.2_e),
-      /* variables = {π^1.2} */ Set(Pow(u'π'_e, 1.2_e)),
-      /* polynomial */ Pol({1}, Pow(u'π'_e, 1.2_e), 1_e)
+      /* π^1.2 */ Pow(π_e, 1.2_e),
+      /* variables = {π^1.2} */ Set(Pow(π_e, 1.2_e)),
+      /* polynomial */ Pol({1}, Pow(π_e, 1.2_e), 1_e)
     );
 
   // TODO: parse polynomial with float coefficients?

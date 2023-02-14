@@ -216,6 +216,8 @@ template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 3) Tree(Integ
 
 template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 4) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), Bit::getByteAtIndex(-V, 3), 4, BlockType::IntegerNegBig>;
 
+// TODO new node_constructor
+constexpr Tree π_e = Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi), BlockType::Constant>();
 
 // TODO: move in OMG?
 constexpr static uint64_t Value(const char * str, size_t size) {

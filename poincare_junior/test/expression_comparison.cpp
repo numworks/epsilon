@@ -12,7 +12,7 @@ void assert_comparison_equals(const Node node0, const Node node1, int result) {
 QUIZ_CASE(pcj_expression_comparison) {
   assert_comparison_equals(10.0_e, 2.0_e, 1);
   assert_comparison_equals(1.0_e, 2.0_e, -1);
-  assert_comparison_equals(Add(2_e,u'π'_e), u'π'_e, 1);
+  assert_comparison_equals(Add(2_e,π_e), π_e, 1);
   // TODO: complete
   CachePool::sharedCachePool()->editionPool()->flush();
 }

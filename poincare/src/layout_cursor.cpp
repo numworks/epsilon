@@ -195,7 +195,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     HorizontalLayout newParent = HorizontalLayout::Builder();
     m_layout.replaceWithInPlace(newParent);
     Layout leftLayout = m_position == 0 ? layout : m_layout;
-    Layout rightLayout = m_position == 1 ? m_layout : layout;
+    Layout rightLayout = m_position == 0 ? m_layout : layout;
     newParent.addOrMergeChildAtIndex(leftLayout, 0);
     newParent.addOrMergeChildAtIndex(rightLayout, newParent.numberOfChildren());
     m_layout = newParent;

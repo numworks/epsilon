@@ -18,9 +18,9 @@ namespace PatternMatching {
   };
   static constexpr int k_numberOfPlaceholders = 3;
 
-  template <PlaceholderTag P> struct Placeholder : public AbstractCTreeCompatible {
-    template <Block...B> consteval operator CTree<B...> () const { return CTree<B...>(); }
-    constexpr operator const Node () const { return CTree(Placeholder<P>()); }
+  template <PlaceholderTag P> struct Placeholder : public AbstractTreeCompatible {
+    template <Block...B> consteval operator Tree<B...> () const { return Tree<B...>(); }
+    constexpr operator const Node () const { return Tree(Placeholder<P>()); }
   };
 
   namespace Placeholders {
@@ -56,7 +56,7 @@ namespace PatternMatching {
   EditionReference Create(const Node structure, const Context context);
 };
 
-template <PatternMatching::PlaceholderTag P> CTree(PatternMatching::Placeholder<P>) -> CTree<BlockType::Placeholder, static_cast<uint8_t>(P), BlockType::Placeholder>;
+template <PatternMatching::PlaceholderTag P> Tree(PatternMatching::Placeholder<P>) -> Tree<BlockType::Placeholder, static_cast<uint8_t>(P), BlockType::Placeholder>;
 
 }
 

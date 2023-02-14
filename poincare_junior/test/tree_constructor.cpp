@@ -4,21 +4,21 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_tree_constructor) {
-  constexpr CTree tree = 3_e;
+  constexpr Tree tree = 3_e;
 
-  Node node = Multi(Addi(5_e, 8_e, 4_e), 3_e, tree);
+  Node node = Mult(Add(5_e, 8_e, 4_e), 3_e, tree);
   assert(node.numberOfChildren() == 3);
   assert(node.numberOfDescendants(true) == 7);
 
-  assert(Node("x"_v).nodeSize() == 5);
-  assert(Node("var"_v).nodeSize() == 7);
+  assert(Node("x"_e).nodeSize() == 5);
+  assert(Node("var"_e).nodeSize() == 7);
 
-  Node poly = Poly(Exponents<2, 3>(), "x"_v, 2_e, "a"_v);
+  Node poly = Pol(Exponents<2, 3>(), "x"_e, 2_e, "a"_e);
   assert(poly.numberOfChildren() == 3);
   assert(poly.nodeSize() == 6);
   assert(poly.treeSize() == 17);
 
-  (void) Poly(Exponents<1>(), "x"_v, 2_e);
+  (void) Pol(Exponents<1>(), "x"_e, 2_e);
 }
 
 QUIZ_CASE(pcj_tree_integer_constructor) {

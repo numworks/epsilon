@@ -16,19 +16,19 @@ namespace PoincareJ {
 // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
 
 /* These two abstract classes and their associated concepts are here to allow
- * templated functions using CTree to be called with any CTreeCompatible which
- * then casted to CTree and its template arguments deduced. */
+ * templated functions using Tree to be called with any TreeCompatible which
+ * then casted to Tree and its template arguments deduced. */
 
-class AbstractCTreeCompatible {};
+class AbstractTreeCompatible {};
 
-template <class C> concept CTreeCompatibleConcept = Concept::is_derived_from<C, AbstractCTreeCompatible>;
+template <class C> concept TreeCompatibleConcept = Concept::is_derived_from<C, AbstractTreeCompatible>;
 
-class AbstractCTree : AbstractCTreeCompatible {};
+class AbstractTree : AbstractTreeCompatible {};
 
-template <class C> concept CTreeConcept = Concept::is_derived_from<C, AbstractCTree>;
+template <class C> concept TreeConcept = Concept::is_derived_from<C, AbstractTree>;
 
 
-/* The CTree template class is the compile time representation of a constexpr
+/* The Tree template class is the compile time representation of a constexpr
  * tree. It's complete block representation is specified as template parameters
  * in order to be able to use the address of the static singleton (in flash) as
  * a Node. It also eliminated identical trees since their are all using the same
@@ -36,7 +36,7 @@ template <class C> concept CTreeConcept = Concept::is_derived_from<C, AbstractCT
  */
 
 template <Block... Blocks>
-class CTree : public AbstractCTree {
+class Tree : public AbstractTree {
 public:
   static constexpr Block k_blocks[] = { Blocks... };
   static constexpr size_t k_size = sizeof...(Blocks);
@@ -44,11 +44,11 @@ public:
 };
 
 
-/* Helper to concatenate CTrees */
+/* Helper to concatenate Trees */
 
 /* Usage:
- * template <Block Tag, CTreeConcept CT1, CTreeConcept CT2> consteval auto Binary(CT1, CT2) {
- *   return Concat<CTree<Tag>, CT1, CT2>();
+ * template <Block Tag, TreeConcept CT1, TreeConcept CT2> consteval auto Binary(CT1, CT2) {
+ *   return Concat<Tree<Tag>, CT1, CT2>();
  * }
  */
 
@@ -56,39 +56,39 @@ template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2], typename
 
 template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2], std::size_t... I>
 struct __BlockConcat<N1, B1, N2, B2, std::index_sequence<I...>> {
-  using ctree = CTree<((I < N1) ? B1[I] : B2[I - N1])...>;
+  using tree = Tree<((I < N1) ? B1[I] : B2[I - N1])...>;
 };
 
-template <CTreeConcept CT1, CTreeConcept CT2> using __ConcatTwo = typename __BlockConcat<CT1::k_size, CT1::k_blocks, CT2::k_size, CT2::k_blocks>::ctree;
+template <TreeConcept CT1, TreeConcept CT2> using __ConcatTwo = typename __BlockConcat<CT1::k_size, CT1::k_blocks, CT2::k_size, CT2::k_blocks>::tree;
 
-template <CTreeConcept CT1, CTreeConcept... CT> struct Concat;
-template <CTreeConcept CT1> struct Concat<CT1> : CT1 {};
-template <CTreeConcept CT1, CTreeConcept... CT> struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
+template <TreeConcept CT1, TreeConcept... CT> struct Concat;
+template <TreeConcept CT1> struct Concat<CT1> : CT1 {};
+template <TreeConcept CT1, TreeConcept... CT> struct Concat : __ConcatTwo<CT1, Concat<CT...>> {};
 
 
 // Helpers
 
-template <Block Tag, Block... B1> consteval auto Unary(CTree<B1...>) {
-  return CTree<Tag, B1...>();
+template <Block Tag, Block... B1> consteval auto Unary(Tree<B1...>) {
+  return Tree<Tag, B1...>();
 }
 
-template <Block Tag, CTreeCompatibleConcept A> consteval auto Unary(A a) {
-  return Unary<Tag>(CTree(a));
+template <Block Tag, TreeCompatibleConcept A> consteval auto Unary(A a) {
+  return Unary<Tag>(Tree(a));
 }
 
-template <Block Tag, Block... B1, Block... B2> consteval auto Binary(CTree<B1...>, CTree<B2...>) {
-  return CTree<Tag, B1..., B2...>();
+template <Block Tag, Block... B1, Block... B2> consteval auto Binary(Tree<B1...>, Tree<B2...>) {
+  return Tree<Tag, B1..., B2...>();
 }
 
-template <Block Tag, CTreeCompatibleConcept A, CTreeCompatibleConcept B> consteval auto Binary(A a, B b) {
-  return Binary<Tag>(CTree(a), CTree(b));
+template <Block Tag, TreeCompatibleConcept A, TreeCompatibleConcept B> consteval auto Binary(A a, B b) {
+  return Binary<Tag>(Tree(a), Tree(b));
 }
 
-template<Block Tag, CTreeConcept ...CTS> requires (sizeof...(CTS)>=2) static consteval auto __NAry(CTS...) {
-  return Concat<CTree<Tag, sizeof...(CTS), Tag>, CTS...>();
+template<Block Tag, TreeConcept ...CTS> requires (sizeof...(CTS)>=2) static consteval auto __NAry(CTS...) {
+  return Concat<Tree<Tag, sizeof...(CTS), Tag>, CTS...>();
 }
 
-template <Block Tag, CTreeCompatibleConcept ...CTS> consteval auto NAry(CTS... args) { return __NAry<Tag>(CTree(args)...); }
+template <Block Tag, TreeCompatibleConcept ...CTS> consteval auto NAry(CTS... args) { return __NAry<Tag>(Tree(args)...); }
 
 
 // Constructors
@@ -109,35 +109,35 @@ template <class...Args> consteval auto Set(Args...args) { return NAry<BlockType:
 
 
 // Alias only for readability
-template <uint8_t ... Values> using Exponents = CTree<Values...>;
+template <uint8_t ... Values> using Exponents = Tree<Values...>;
 
 
 /* The first function is responsible of building the actual representation from
- * CTrees while the other one is just here to allow the function to take
- * CTreeCompatible arguments like integer litterals. */
+ * Trees while the other one is just here to allow the function to take
+ * TreeCompatible arguments like integer litterals. */
 
-template<CTreeConcept Exp, CTreeConcept ...CTS> static consteval auto __Pol(Exp exponents, CTS...) {
+template<TreeConcept Exp, TreeConcept ...CTS> static consteval auto __Pol(Exp exponents, CTS...) {
   constexpr uint8_t Size = sizeof...(CTS);
-  return Concat<CTree<BlockType::Polynomial, Size>, Exp, CTree<Size, BlockType::Polynomial>, CTS...>();
+  return Concat<Tree<BlockType::Polynomial, Size>, Exp, Tree<Size, BlockType::Polynomial>, CTS...>();
 }
 
-template<CTreeConcept Exp, CTreeCompatibleConcept ...CTS> static consteval auto Pol(Exp exponents, CTS... args) {
+template<TreeConcept Exp, TreeCompatibleConcept ...CTS> static consteval auto Pol(Exp exponents, CTS... args) {
   constexpr uint8_t Size = sizeof...(CTS);
   static_assert(Exp::k_size == Size - 1, "Number of children and exponents do not match in constant polynomial");
-  return __Pol(exponents, CTree(args)...);
+  return __Pol(exponents, Tree(args)...);
 }
 
 
 #if 0
 
-template <Block Tag, CTreeCompatible A, CTreeCompatible B> consteval auto NAryOperator(A a, B b) { return NAryOperator<Tag>(CTree(a), CTree(b)); }
+template <Block Tag, TreeCompatible A, TreeCompatible B> consteval auto NAryOperator(A a, B b) { return NAryOperator<Tag>(Tree(a), Tree(b)); }
 
-template <Block Tag, Block... B1, Block... B2> consteval auto NAryOperator(CTree<B1...>, CTree<B2...>) {
-  return CTree<Tag, 2, Tag, B1..., B2...>();
+template <Block Tag, Block... B1, Block... B2> consteval auto NAryOperator(Tree<B1...>, Tree<B2...>) {
+  return Tree<Tag, 2, Tag, B1..., B2...>();
 }
 
-template <Block Tag, Block N1, Block... B1, Block... B2> consteval auto NAryOperator(CTree<Tag, N1, Tag, B1...>, CTree<B2...>) {
-  return CTree<Tag, static_cast<uint8_t>(N1) + 1, Tag, B1..., B2...>();
+template <Block Tag, Block N1, Block... B1, Block... B2> consteval auto NAryOperator(Tree<Tag, N1, Tag, B1...>, Tree<B2...>) {
+  return Tree<Tag, static_cast<uint8_t>(N1) + 1, Tag, B1..., B2...>();
 }
 
 template <class...Args> consteval auto operator-(Args...args) { return Binary<BlockType::Subtraction>(args...); }
@@ -150,71 +150,71 @@ template <class...Args> consteval auto operator*(Args...args) { return NAryOpera
 
 // The nice syntax above doesn't work with GCC yet and has to be expanded
 
-template <Block... B1, Block... B2> consteval auto operator-(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Subtraction, B1..., B2...>(); }
+template <Block... B1, Block... B2> consteval auto operator-(Tree<B1...>, Tree<B2...>) { return Tree<BlockType::Subtraction, B1..., B2...>(); }
 
-template <CTreeCompatible A, CTreeCompatible B> consteval auto operator-(A a, B b) { return CTree(a) - CTree(b); }
+template <TreeCompatible A, TreeCompatible B> consteval auto operator-(A a, B b) { return Tree(a) - Tree(b); }
 
-template <Block... B1, Block... B2> consteval auto operator/(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Division, B1..., B2...>(); }
+template <Block... B1, Block... B2> consteval auto operator/(Tree<B1...>, Tree<B2...>) { return Tree<BlockType::Division, B1..., B2...>(); }
 
-template <CTreeCompatible A, CTreeCompatible B> consteval auto operator/(A a, B b) { return CTree(a) / CTree(b); }
+template <TreeCompatible A, TreeCompatible B> consteval auto operator/(A a, B b) { return Tree(a) / Tree(b); }
 
-template <Block... B1, Block... B2> consteval auto operator+(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Addition, 2, BlockType::Addition, B1..., B2...>(); }
+template <Block... B1, Block... B2> consteval auto operator+(Tree<B1...>, Tree<B2...>) { return Tree<BlockType::Addition, 2, BlockType::Addition, B1..., B2...>(); }
 
-template <CTreeCompatible A, CTreeCompatible B> consteval auto operator+(A a, B b) { return CTree(a) + CTree(b); }
+template <TreeCompatible A, TreeCompatible B> consteval auto operator+(A a, B b) { return Tree(a) + Tree(b); }
 
-template <Block N1, Block... B1, Block... B2> consteval auto operator+(CTree<BlockType::Addition, N1, BlockType::Addition, B1...>, CTree<B2...>) {
-  return CTree<BlockType::Addition, static_cast<uint8_t>(N1) + 1, BlockType::Addition, B1..., B2...>();
+template <Block N1, Block... B1, Block... B2> consteval auto operator+(Tree<BlockType::Addition, N1, BlockType::Addition, B1...>, Tree<B2...>) {
+  return Tree<BlockType::Addition, static_cast<uint8_t>(N1) + 1, BlockType::Addition, B1..., B2...>();
 }
 
-template <Block... B1, Block... B2> consteval auto operator*(CTree<B1...>, CTree<B2...>) { return CTree<BlockType::Multiplication, 2, BlockType::Multiplication, B1..., B2...>(); }
+template <Block... B1, Block... B2> consteval auto operator*(Tree<B1...>, Tree<B2...>) { return Tree<BlockType::Multiplication, 2, BlockType::Multiplication, B1..., B2...>(); }
 
-template <Block N1, Block... B1, Block... B2> consteval auto operator*(CTree<BlockType::Multiplication, N1, BlockType::Multiplication, B1...>, CTree<B2...>) {
-  return CTree<BlockType::Multiplication, static_cast<uint8_t>(N1) + 1, BlockType::Multiplication, B1..., B2...>();
+template <Block N1, Block... B1, Block... B2> consteval auto operator*(Tree<BlockType::Multiplication, N1, BlockType::Multiplication, B1...>, Tree<B2...>) {
+  return Tree<BlockType::Multiplication, static_cast<uint8_t>(N1) + 1, BlockType::Multiplication, B1..., B2...>();
 }
 
-template <CTreeCompatible A, CTreeCompatible B> consteval auto operator*(A a, B b) { return CTree(a) * CTree(b); }
+template <TreeCompatible A, TreeCompatible B> consteval auto operator*(A a, B b) { return Tree(a) * Tree(b); }
 
 #endif
 
 
 /* Immediates are used to represent numerical constants of the code (like 2_e)
- * temporarily before they are cast to CTrees, this allows writing -2_e. */
+ * temporarily before they are cast to Trees, this allows writing -2_e. */
 
-template <int V> class IntegerLitteral : public AbstractCTreeCompatible {
+template <int V> class IntegerLitteral : public AbstractTreeCompatible {
 public:
-  // once a deduction guide as required a given CTree from the immediate, build it
-  template <Block...B> consteval operator CTree<B...> () { return CTree<B...>(); }
+  // once a deduction guide as required a given Tree from the immediate, build it
+  template <Block...B> consteval operator Tree<B...> () { return Tree<B...>(); }
 
-  constexpr operator const Node () { return CTree(IntegerLitteral<V>()); }
+  constexpr operator const Node () { return Tree(IntegerLitteral<V>()); }
 
   consteval IntegerLitteral<-V> operator-() { return IntegerLitteral<-V>(); }
   // Note : we could decide to implement constant propagation operators here
 };
 
-// template <int8_t V> using Inti = CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
-// template <int8_t V> CTree(Immediate<V>)->Inti<V>; // only GCC accepts this one
+// template <int8_t V> using Inti = Tree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
+// template <int8_t V> Tree(Immediate<V>)->Inti<V>; // only GCC accepts this one
 
-// Deduction guides to create the smallest CTree that can represent the Immediate
+// Deduction guides to create the smallest Tree that can represent the Immediate
 
-CTree(IntegerLitteral<-1>)->CTree<BlockType::MinusOne>;
-CTree(IntegerLitteral<0>)->CTree<BlockType::Zero>;
-CTree(IntegerLitteral<1>)->CTree<BlockType::One>;
-CTree(IntegerLitteral<2>)->CTree<BlockType::Two>;
+Tree(IntegerLitteral<-1>)->Tree<BlockType::MinusOne>;
+Tree(IntegerLitteral<0>)->Tree<BlockType::Zero>;
+Tree(IntegerLitteral<1>)->Tree<BlockType::One>;
+Tree(IntegerLitteral<2>)->Tree<BlockType::Two>;
 
-template <int V> requires (V >= INT8_MIN && V <= INT8_MAX) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
+template <int V> requires (V >= INT8_MIN && V <= INT8_MAX) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
 
-template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 2) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerPosBig, 2, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), 2, BlockType::IntegerPosBig>;
+template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 2) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerPosBig, 2, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), 2, BlockType::IntegerPosBig>;
 
-template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 3) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerPosBig, 3, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), 3, BlockType::IntegerPosBig>;
+template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 3) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerPosBig, 3, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), 3, BlockType::IntegerPosBig>;
 
-template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 4) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerPosBig, 4, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), Bit::getByteAtIndex(V, 3), 4, BlockType::IntegerPosBig>;
+template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 4) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerPosBig, 4, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), Bit::getByteAtIndex(V, 3), 4, BlockType::IntegerPosBig>;
 
 
-template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 2) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerNegBig, 2, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), 2, BlockType::IntegerNegBig>;
+template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 2) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerNegBig, 2, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), 2, BlockType::IntegerNegBig>;
 
-template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 3) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerNegBig, 3, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), 3, BlockType::IntegerNegBig>;
+template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 3) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerNegBig, 3, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), 3, BlockType::IntegerNegBig>;
 
-template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 4) CTree(IntegerLitteral<V>) -> CTree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), Bit::getByteAtIndex(-V, 3), 4, BlockType::IntegerNegBig>;
+template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 4) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerNegBig, 4, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), Bit::getByteAtIndex(-V, 2), Bit::getByteAtIndex(-V, 3), 4, BlockType::IntegerNegBig>;
 
 
 // TODO: move in OMG?
@@ -255,12 +255,12 @@ template <String S, typename IS = decltype(std::make_index_sequence<S.size() - 1
 
 template <String S, std::size_t... I>
 struct Variable<S, std::index_sequence<I...>> {
-  using ctree = CTree<BlockType::UserSymbol, sizeof...(I), S[I]..., sizeof...(I), BlockType::UserSymbol>;
+  using tree = Tree<BlockType::UserSymbol, sizeof...(I), S[I]..., sizeof...(I), BlockType::UserSymbol>;
 };
 
 template <String S>
 consteval auto operator"" _e () {
-  return typename Variable<S>::ctree();
+  return typename Variable<S>::tree();
 }
 
 // TODO : A RackLayout shouldn't have RackLayout children.

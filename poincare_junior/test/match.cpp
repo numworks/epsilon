@@ -7,7 +7,7 @@ using namespace PoincareJ;
 
 QUIZ_CASE(pcj_placeholders) {
   using namespace PatternMatching::Placeholders;
-  constexpr CTree a = A;
+  constexpr Tree a = A;
   (void) Add(2_e, a, A);
 }
 

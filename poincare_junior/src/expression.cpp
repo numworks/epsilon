@@ -3,6 +3,7 @@
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/layout/parser.h>
 
 namespace PoincareJ {
 
@@ -40,13 +41,15 @@ EditionReference Expression::EditionPoolLayoutToExpression(Node node) {
 
 Expression Expression::Parse(const char * textInput) {
   return Expression([](const char * text) {
-      EditionPoolLayoutToExpression(Layout::EditionPoolTextToLayout(text));
+      Parser::EditionPoolLayoutToExpression(Layout::EditionPoolTextToLayout(text));
     }, textInput);
 }
 
 Expression Expression::Parse(const Layout * layout) {
   return Expression([](Node node) {
-      EditionPoolLayoutToExpression(node);
+      Parser::EditionPoolLayoutToExpression(node);
+      EditionReference nodeRef(node);
+      nodeRef.removeTree();
     }, layout);
 }
 

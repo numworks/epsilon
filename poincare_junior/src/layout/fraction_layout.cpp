@@ -1,4 +1,5 @@
 #include "fraction_layout.h"
+#include "parser.h"
 
 namespace PoincareJ {
 
@@ -23,6 +24,13 @@ KDPoint FractionLayout::PositionOfChild(const Node node, int childIndex, KDFont:
 void FractionLayout::RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   KDCoordinate fractionLineY = p.y() + Render::Size(node.childAtIndex(k_numeratorIndex), font).height() + k_fractionLineMargin;
   ctx->fillRect(KDRect(p.x() + k_horizontalMargin, fractionLineY, Render::Size(node, font).width() - 2 * k_horizontalMargin, k_fractionLineHeight), expressionColor);
+}
+
+EditionReference FractionLayout::Parse(const Node node) {
+  EditionReference ref = EditionReference::Push<BlockType::Division>();
+  Parser::EditionPoolLayoutToExpression(node.childAtIndex(k_numeratorIndex));
+  Parser::EditionPoolLayoutToExpression(node.childAtIndex(k_denominatorIndex));
+  return ref;
 }
 
 }

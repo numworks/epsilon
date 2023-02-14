@@ -3,6 +3,7 @@
 
 #include "render.h"
 #include <escher/metric.h>
+#include "../memory/edition_reference.h"
 
 namespace PoincareJ {
 
@@ -12,6 +13,7 @@ public:
   static KDCoordinate Baseline(const Node node, KDFont::Size font);
   static KDPoint PositionOfChild(const Node node, int childIndex, KDFont::Size font);
   static void RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  static EditionReference Parse(const Node node);
 private:
   constexpr static int k_numeratorIndex = 0;
   constexpr static int k_denominatorIndex = 1;

@@ -40,4 +40,8 @@ KDPoint RackLayout::PositionOfChild(const Node node, int childIndex, KDFont::Siz
   return KDPoint(x, y);
 }
 
+EditionReference RackLayout::Parse(const Node node) {
+  return EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+}
+
 }

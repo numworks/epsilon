@@ -68,7 +68,7 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
   // Create Pow(commonDenominator, -1)
   EditionReference power = EditionReference::Push<BlockType::Power>();
   power.insertTreeAfterNode(commonDenominator);
-  commonDenominator.nextTree().insertTreeBeforeNode("-1"_e);
+  commonDenominator.nextTree().insertTreeBeforeNode(-1_e);
   // TODO basicReduction of power
   // TODO basicReduction of fraction
   return fraction;
@@ -87,7 +87,7 @@ EditionReference Algebraic::NormalFormator(EditionReference expression, bool num
     if (!numerator && negativeRationalExponent) {
       Rational::SetSign(exponent, NonStrictSign::Positive);
     }
-    EditionReference result = numerator == negativeRationalExponent ? EditionReference("1"_e) : expression; // TODO: BasicReduction(expression)
+    EditionReference result = numerator == negativeRationalExponent ? EditionReference(1_e) : expression; // TODO: BasicReduction(expression)
     expression.replaceTreeByTree(result);
     return result;
   }

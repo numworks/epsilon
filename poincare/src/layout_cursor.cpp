@@ -106,6 +106,26 @@ static bool IsTemporaryAutocompletedBracketPair(Layout l, AutocompletedBracketPa
   return AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(l.type()) && static_cast<AutocompletedBracketPairLayoutNode *>(l.node())->isTemporary(tempSide);
 }
 
+// Return leftParenthesisIndex
+static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(HorizontalLayout l, int index) {
+  int leftParenthesisIndex = index;
+  int dummy = 0;
+  while (leftParenthesisIndex > 0 && l.childAtIndex(leftParenthesisIndex).isCollapsable(&dummy, true)) {
+    leftParenthesisIndex--;
+  }
+  HorizontalLayout h = HorizontalLayout::Builder();
+  int i = index;
+  while (i >= leftParenthesisIndex) {
+    Layout child = l.childAtIndex(i);
+    l.removeChildAtIndexInPlace(i);
+    h.addOrMergeChildAtIndex(child, 0);
+    i--;
+  }
+  ParenthesisLayout p = ParenthesisLayout::Builder(h);
+  l.addOrMergeChildAtIndex(p, leftParenthesisIndex);
+  return leftParenthesisIndex;
+}
+
 /* Layout insertion */
 void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool forceRight, bool forceLeft) {
   assert(!isUninitialized() && isValid());
@@ -126,15 +146,33 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
   bool rightMostChildIsOpenBracket = IsTemporaryAutocompletedBracketPair(LeftMostOrRightMostChildLayout(layout, OMG::HorizontalDirection::Right), AutocompletedBracketPairLayoutNode::Side::Right);
 
   Layout leftL = leftLayout();
+  Layout rightL = rightLayout();
   if (!leftMostChildIsOpenBracket && !leftL.isUninitialized() && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(leftL.type())) {
     static_cast<AutocompletedBracketPairLayoutNode *>(leftL.node())->makeThisAndChildrenPermanent(AutocompletedBracketPairLayoutNode::Side::Right);
   }
-  Layout rightL = rightLayout();
   if (!rightMostChildIsOpenBracket && !rightL.isUninitialized() && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(rightL.type())) {
     static_cast<AutocompletedBracketPairLayoutNode *>(rightL.node())->makeThisAndChildrenPermanent(AutocompletedBracketPairLayoutNode::Side::Left);
   }
 
-  // - Step 4 - Find position to point to if layout will me merged
+  /* - Step 4 - Add parenthesis around vertical offset
+   * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
+   * add parentheses to make (a^b)^c. */
+  if (m_layout.isHorizontal() && layout.type() == LayoutNode::Type::VerticalOffsetLayout) {
+    if (!leftL.isUninitialized() && leftL.type() == LayoutNode::Type::VerticalOffsetLayout) {
+      // Insert ^c left of a^b -> turn a^b into (a^b)
+      int leftParenthesisIndex = ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(static_cast<HorizontalLayout&>(m_layout), m_layout.indexOfChild(leftL));
+      m_position = leftParenthesisIndex + 1;
+    }
+
+    if (!rightL.isUninitialized() && rightL.type() == LayoutNode::Type::VerticalOffsetLayout && m_layout.indexOfChild(rightL) > 0) {
+      // Insert ^b right of a in a^c -> turn a^c into (a)^c
+      int leftParenthesisIndex = ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(static_cast<HorizontalLayout&>(m_layout), m_layout.indexOfChild(rightL) - 1);
+      m_layout = m_layout.childAtIndex(leftParenthesisIndex).childAtIndex(0);
+      m_position = m_layout.numberOfChildren();
+    }
+  }
+
+  // - Step 5 - Find position to point to if layout will me merged
   LayoutCursor previousCursor = *this;
   Layout childToPoint;
   bool layoutToInsertIsHorizontal = layout.isHorizontal();
@@ -147,7 +185,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     }
   }
 
-  // - Step 5 - Insert layout
+  // - Step 6 - Insert layout
   if (m_layout.isHorizontal()) {
     int positionShift = layout.isHorizontal() ? layout.numberOfChildren() : 1;
     static_cast<HorizontalLayout&>(m_layout).addOrMergeChildAtIndex(layout, m_position);
@@ -164,7 +202,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     m_position = (forceLeft ? 1 : m_layout.numberOfChildren()) - (m_position == 0);
   }
 
-  /* - Step 6 - Collapse siblings and find position to point to if layout was
+  /* - Step 7 - Collapse siblings and find position to point to if layout was
    * not merged */
   if (!layoutToInsertIsHorizontal) {
     collapseSiblingsOfLayout(layout);
@@ -174,7 +212,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     }
   }
 
-  // - Step 7 - Point to required position
+  // - Step 8 - Point to required position
   if (!childToPoint.isUninitialized()) {
     /* FIXME: layoutToInsertIsHorizontal is used because if the child to point
      * is inside a parenthesis, the cursor must be left of the layout. */
@@ -182,10 +220,10 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     didEnterCurrentPosition(previousCursor);
   }
 
-  // - Step 8 - Balance brackets
+  // - Step 9 - Balance brackets
   balanceAutocompletedBracketsAndKeepAValidCursor();
 
-  // - Step 9 - Invalidate layout sizes and positions
+  // - Step 10 - Invalidate layout sizes and positions
   invalidateSizesAndPositions();
 }
 

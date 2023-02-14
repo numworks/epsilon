@@ -104,6 +104,12 @@ void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDC
   SquareBracketPairLayoutNode::RenderWithChildSize(false, s.height(), ctx, p.translatedBy(KDPoint(rightOffset, 0)), expressionColor, backgroundColor);
 }
 
+MatrixLayout MatrixLayout::Builder(Layout l1) {
+  MatrixLayout m = TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>({l1});
+  m.setDimensions(1, 1);
+  return m;
+}
+
 MatrixLayout MatrixLayout::Builder(Layout l1, Layout l2, Layout l3, Layout l4) {
   MatrixLayout m = TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>({l1, l2, l3, l4});
   m.setDimensions(2, 2);

@@ -48,7 +48,7 @@ QUIZ_CASE(poincare_layout_serialization) {
 
   // EmptyLayout
   assert_layout_serialize_to(
-      EmptyLayout::Builder(),
+      HorizontalLayout::Builder(),
       "");
 
   // FloorLayout

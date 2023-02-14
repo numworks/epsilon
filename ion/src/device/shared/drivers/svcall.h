@@ -101,8 +101,9 @@ namespace SVCall {
 #define SVC_EVENTS_LONG_PRESS_COUNTER 55
 #define SVC_COMPILATION_FLAGS 56
 #define SVC_BOOTLOADER_CRC32 57
+#define SVC_LED_SET_LOCK 58
 
-#define SVC_NUMBER_OF_CALLS 58
+#define SVC_NUMBER_OF_CALLS 59
 
 }  // namespace SVCall
 }  // namespace Device

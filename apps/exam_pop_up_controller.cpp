@@ -27,6 +27,7 @@ ExamPopUpController::ExamPopUpController()
                     Ion::Reset::core();
                     return true;
                   }
+                  Ion::LED::setLock(false);
                   Ion::LED::setColor(KDColorBlack);
                   Ion::LED::updateColorWithPlugAndCharge();
                 } else {

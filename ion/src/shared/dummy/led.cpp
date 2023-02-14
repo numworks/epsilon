@@ -9,6 +9,8 @@ void setColor(KDColor c) {}
 
 void setBlinking(uint16_t period, float dutyCycle) {}
 
+void setLock(bool) {}
+
 KDColor updateColorWithPlugAndCharge() { return KDColorBlack; }
 
 }  // namespace LED

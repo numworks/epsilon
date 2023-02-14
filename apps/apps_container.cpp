@@ -376,6 +376,7 @@ void AppsContainer::activateExamMode(Poincare::ExamMode examMode) {
   if (color != KDColorBlack) {
     Ion::LED::setColor(color);
     Ion::LED::setBlinking(1000, 0.1f);
+    Ion::LED::setLock(true);
   }
 }
 

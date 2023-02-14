@@ -249,6 +249,8 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
     return false;
   }
+  // Do not enter parentheses of expression that take no argument like random()
+  forceCursorRightOfText = forceCursorRightOfText || resultExpression.numberOfChildren() == 0;
   insertLayoutAtCursor(resultLayout, forceCursorRightOfText, forceCursorLeftOfText);
   return true;
 }

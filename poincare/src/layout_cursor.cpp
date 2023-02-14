@@ -256,14 +256,12 @@ void LayoutCursor::addEmptyPowerLayout(Context * context) {
 }
 
 void LayoutCursor::addEmptySquarePowerLayout(Context * context) {
-  /* By inserting an horizontal layout, the cursor naturally points to the
-   * right of the layout, and not in the power. */
+  /* Force the cursor right of the layout. */
   insertLayoutAtCursor(
-    HorizontalLayout::Builder(
-      VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('2'),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript)),
-    context);
+    VerticalOffsetLayout::Builder(
+      CodePointLayout::Builder('2'),
+      VerticalOffsetLayoutNode::VerticalPosition::Superscript),
+    context, true);
 }
 
 void LayoutCursor::addEmptyTenPowerLayout(Context * context) {

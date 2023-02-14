@@ -6,6 +6,7 @@
 #include "node.h"
 #include <poincare_junior/src/expression/integer.h>
 #include <omgpj/assert.h>
+#include <omgpj/concept.h>
 #include <omg/print.h>
 #include <omgpj/print.h>
 
@@ -14,25 +15,17 @@ namespace PoincareJ {
 // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
 // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
 
-// Helper
-
-// less strict than derived_from from <concepts> that imposes is_convertible too
-template<typename Derived, typename Base>
-concept is_derived_from = __is_base_of(Base, Derived);
-
-
-
 /* These two abstract classes and their associated concepts are here to allow
  * templated functions using CTree to be called with any CTreeCompatible which
  * then casted to CTree and its template arguments deduced. */
 
 class AbstractCTreeCompatible {};
 
-template <class C> concept CTreeCompatibleConcept = is_derived_from<C, AbstractCTreeCompatible>;
+template <class C> concept CTreeCompatibleConcept = Concept::is_derived_from<C, AbstractCTreeCompatible>;
 
 class AbstractCTree : AbstractCTreeCompatible {};
 
-template <class C> concept CTreeConcept = is_derived_from<C, AbstractCTree>;
+template <class C> concept CTreeConcept = Concept::is_derived_from<C, AbstractCTree>;
 
 
 /* The CTree template class is the compile time representation of a constexpr

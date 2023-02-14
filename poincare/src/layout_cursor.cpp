@@ -5,7 +5,6 @@
 #include <poincare/curly_brace_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
-//#include <poincare/input_beautification.h>
 #include <poincare/layout.h>
 #include <poincare/parenthesis_layout.h>
 #include <poincare/matrix_layout.h>

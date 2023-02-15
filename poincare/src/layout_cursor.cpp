@@ -195,10 +195,8 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     assert(m_layout.parent().isUninitialized() || !m_layout.parent().isHorizontal());
     HorizontalLayout newParent = HorizontalLayout::Builder();
     m_layout.replaceWithInPlace(newParent);
-    Layout leftLayout = m_position == 0 ? layout : m_layout;
-    Layout rightLayout = m_position == 0 ? m_layout : layout;
-    newParent.addOrMergeChildAtIndex(leftLayout, 0);
-    newParent.addOrMergeChildAtIndex(rightLayout, newParent.numberOfChildren());
+    newParent.addOrMergeChildAtIndex(m_layout, 0);
+    newParent.addOrMergeChildAtIndex(layout, m_position == 0 ? 0 : newParent.numberOfChildren());
     m_layout = newParent;
     m_position = (forceLeft ? 1 : m_layout.numberOfChildren()) - (m_position == 0);
   }
@@ -517,7 +515,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction, bool * sho
     Layout parent = nextLayout.parent();
     Layout previousLayout = m_layout;
     if (!parent.isUninitialized() && parent.isHorizontal()) {
-      m_layout = nextLayout.parent();
+      m_layout = parent;
       m_position = m_layout.indexOfChild(nextLayout) + (direction == OMG::HorizontalDirection::Right);
     } else {
       m_layout = nextLayout;

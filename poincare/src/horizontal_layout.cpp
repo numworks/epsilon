@@ -185,8 +185,8 @@ bool HorizontalLayoutNode::shouldDrawEmptyRectangle() const {
     return false;
   }
   LayoutNode * p = parent();
-  if (!p || (p && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(p->type()))) {
-    // Never show the empty child of a parenthesis or if has no parent
+  if (!p || AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(p->type())) {
+    // Never show the empty rectangle if in a parenthesis or if has no parent
     return false;
   }
   return m_emptyVisibility == EmptyRectangle::State::Visible;

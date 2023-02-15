@@ -30,6 +30,8 @@ public:
 
   LayoutSelection() : LayoutSelection(Layout(), 0, 0) {}
 
+  LayoutSelection clone() { return LayoutSelection(m_layout.clone(), m_startPosition, m_endPosition); }
+
   bool isEmpty() const { return m_layout.isUninitialized() || m_startPosition == m_endPosition; }
 
   Layout layout() const { return m_layout; }

@@ -52,7 +52,7 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
 }
 
 void LayoutField::ContentView::copySelection(Context * context, bool intoStoreMenu) {
-  LayoutSelection selection = m_cursor.selection();
+  LayoutSelection selection = m_cursor.selection().clone();
   if (selection.isEmpty()) {
     if (intoStoreMenu) {
       Container::activeApp()->storeValue();
@@ -71,16 +71,18 @@ void LayoutField::ContentView::copySelection(Context * context, bool intoStoreMe
   } else {
     layoutToParse = selection.layout();
   }
+
   layoutToParse.serializeParsedExpression(buffer, bufferSize, context);
   if (buffer[0] == 0) {
     layoutToParse.serializeForParsing(buffer, bufferSize);
-    if (buffer[0] != 0) {
-      if (intoStoreMenu) {
-        Container::activeApp()->storeValue(buffer);
-      } else {
-        Clipboard::SharedClipboard()->store(buffer);
-      }
-    }
+  }
+  if (buffer[0] == 0) {
+    return;
+  }
+  if (intoStoreMenu) {
+    Container::activeApp()->storeValue(buffer);
+  } else {
+    Clipboard::SharedClipboard()->store(buffer);
   }
 }
 

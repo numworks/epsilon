@@ -114,7 +114,7 @@ KDSize HorizontalLayoutNode::layoutSizeBetweenIndexes(int leftIndex, int rightIn
   for (int i = leftIndex; i < rightIndex; i++) {
     LayoutNode * childi = childAtIndex(i);
     KDSize childSize = childi->layoutSize(font);
-    totalWidth += childSize.width() + childi->leftMargin();
+    totalWidth += childSize.width();
     KDCoordinate childBaseline = childi->baseline(font);
     maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, childSize.height() - childBaseline);
     maxAboveBaseline = std::max(maxAboveBaseline, childBaseline);

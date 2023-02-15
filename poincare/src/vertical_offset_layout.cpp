@@ -101,7 +101,7 @@ KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child, KDFont::Si
 LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   LayoutNode * parentNode = parent();
   assert(parentNode != nullptr);
-  if (!parentNode) {
+  if (parentNode->type() != Type::HorizontalLayout) {
     return nullptr;
   }
   int idxInParent = parentNode->indexOfChild(this);

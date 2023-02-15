@@ -13,44 +13,14 @@ ExamPopUpController::ExamPopUpController()
     : Shared::MessagePopUpController(
           Invocation::Builder<ExamPopUpController>(
               [](ExamPopUpController* controller, void* sender) {
-                ExamMode mode = controller->targetExamMode();
-                ExamMode previousMode =
-                    Preferences::sharedPreferences->examMode();
-                if (Ion::Authentication::clearanceLevel() !=
-                    Ion::Authentication::ClearanceLevel::NumWorks) {
-                  Ion::Reset::core();
-                }
-                Preferences::sharedPreferences->setExamMode(mode);
-                AppsContainer* container = AppsContainer::sharedAppsContainer();
-                if (!mode.isActive()) {
-                  if (previousMode.mode() == ExamMode::Mode::PressToTest) {
-                    Ion::Reset::core();
-                    return true;
-                  }
-                  Ion::LED::setLock(false);
-                  Ion::LED::setColor(KDColorBlack);
-                  Ion::LED::updateColorWithPlugAndCharge();
-                } else {
-                  container->activateExamMode(mode);
-                }
-                container->refreshPreferences();
-                Container::activeApp()->modalViewController()->dismissModal();
-                if (container->activeApp()->snapshot() !=
-                    container->onBoardingAppSnapshot()) {
-                  container->switchToBuiltinApp(container->homeAppSnapshot());
-                }
-                /* Warning : By unplugging before confirmation, the examMode may
-                 * be deactivated within menus that depend on the examMode
-                 * status (such as PressToTest settings menu after having
-                 * changed the country). */
-                return true;
+                return controller->handleButton();
               },
               this),
           I18n::Message::Default) {}
 
 void ExamPopUpController::setTargetExamMode(ExamMode mode) {
   m_targetExamMode = mode;
-  setContentMessage(activationWarningMessage(mode.mode()));
+  setContentMessage(activationWarningMessage());
 }
 
 void ExamPopUpController::viewDidDisappear() {
@@ -67,8 +37,7 @@ bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
   return MessagePopUpController::handleEvent(event);
 }
 
-I18n::Message ExamPopUpController::activationWarningMessage(
-    ExamMode::Mode mode) const {
+I18n::Message ExamPopUpController::activationWarningMessage() const {
   constexpr size_t numberOfModes =
       static_cast<size_t>(ExamMode::Mode::NumberOfModes);
   constexpr size_t messagesPerMode = 2;
@@ -88,6 +57,7 @@ I18n::Message ExamPopUpController::activationWarningMessage(
       I18n::Message::ActiveEnglishExamModeMessage,
       I18n::Message::ActiveEnglishExamModeWithResetMessage,  // English
   };
+  ExamMode::Mode mode = m_targetExamMode.mode();
   size_t index = static_cast<size_t>(mode) * messagesPerMode;
   index += (mode == ExamMode::Mode::Off &&
             Preferences::sharedPreferences->examMode().mode() ==
@@ -96,4 +66,23 @@ I18n::Message ExamPopUpController::activationWarningMessage(
                Ion::Authentication::ClearanceLevel::NumWorks;
   assert(index < numberOfModes * messagesPerMode);
   return messages[index];
+}
+
+bool ExamPopUpController::handleButton() const {
+  if (Ion::Authentication::clearanceLevel() !=
+      Ion::Authentication::ClearanceLevel::NumWorks) {
+    Ion::Reset::core();
+  }
+  AppsContainer* container = AppsContainer::sharedAppsContainer();
+  App* activeApp = container->activeApp();
+  container->activateExamMode(m_targetExamMode);
+  activeApp->modalViewController()->dismissModal();
+  if (activeApp->snapshot() != container->onBoardingAppSnapshot()) {
+    container->switchToBuiltinApp(container->homeAppSnapshot());
+  }
+  /* Warning : By unplugging before confirmation, the examMode may
+   * be deactivated within menus that depend on the examMode
+   * status (such as PressToTest settings menu after having
+   * changed the country). */
+  return true;
 }

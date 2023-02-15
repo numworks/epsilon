@@ -16,6 +16,7 @@ extern "C" {
 
 using namespace Shared;
 using namespace Escher;
+using namespace Poincare;
 
 AppsContainer* AppsContainer::sharedAppsContainer() {
   return AppsContainerStorage::sharedAppsContainerStorage;
@@ -139,7 +140,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       Ion::USB::clearEnumerationInterrupt();
       return false;
     }
-    if (!Poincare::Preferences::sharedPreferences->examMode().isActive()) {
+    if (!Preferences::sharedPreferences->examMode().isActive()) {
       App::Snapshot* activeSnapshot =
           (s_activeApp == nullptr ? appSnapshotAtIndex(0)
                                   : s_activeApp->snapshot());
@@ -155,7 +156,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       Ion::LED::updateColorWithPlugAndCharge();
       switchToBuiltinApp(activeSnapshot);
     } else if (m_firstUSBEnumeration) {
-      displayExamModePopUp(Poincare::ExamMode::Mode::Off);
+      displayExamModePopUp(ExamMode::Mode::Off);
       // Warning: if the window is dirtied, you need to call window()->redraw()
       window()->redraw();
     }
@@ -253,12 +254,12 @@ void AppsContainer::run() {
    * and it is visible when reflashing a N0100 (there is some noise on the
    * screen before the logo appears). */
   Ion::Display::pushRectUniform(KDRectScreen, KDColorWhite);
-  Poincare::Preferences* poincarePreferences =
-      Poincare::Preferences::sharedPreferences;
+  Preferences* poincarePreferences = Preferences::sharedPreferences;
   if (poincarePreferences->examMode().isActive()) {
     activateExamMode(poincarePreferences->examMode());
+  } else {
+    refreshPreferences();
   }
-  refreshPreferences();
   Ion::Power::selectStandbyMode(false);
   Ion::Events::setSpinner(true);
   Ion::Display::setScreenshotCallback(ShowCursor);
@@ -267,7 +268,7 @@ void AppsContainer::run() {
    * reactivated on a home interrupt. This way, the main exception checkpoint
    * will keep the home checkpoint as parent. */
   bool homeInterruptOcurred;
-  Poincare::CircuitBreakerCheckpoint homeCheckpoint(
+  CircuitBreakerCheckpoint homeCheckpoint(
       Ion::CircuitBreaker::CheckpointType::Home);
   if (CircuitBreakerRun(homeCheckpoint)) {
     homeInterruptOcurred = false;
@@ -275,7 +276,7 @@ void AppsContainer::run() {
     homeInterruptOcurred = true;
   }
 
-  Poincare::ExceptionCheckpoint exceptionCheckpoint;
+  ExceptionCheckpoint exceptionCheckpoint;
   if (ExceptionRun(exceptionCheckpoint)) {
     if (homeInterruptOcurred) {
       /* Reset backlight and suspend timers here, because a keyboard event has
@@ -298,9 +299,9 @@ void AppsContainer::run() {
      * is then asserted empty). This prevents from allocating new handles
      * with the same identifiers as potential dangling handles (that have
      * lost their nodes in the exception). */
-    Poincare::TreePool::Lock();
+    TreePool::Lock();
     handleRunException(true);
-    Poincare::TreePool::Unlock();
+    TreePool::Unlock();
     s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1,
                                 I18n::Message::PoolMemoryFull2, true);
   }
@@ -323,7 +324,7 @@ void AppsContainer::refreshPreferences() { m_window.refreshPreferences(); }
 
 void AppsContainer::reloadTitleBarView() { m_window.reloadTitleBarView(); }
 
-void AppsContainer::displayExamModePopUp(Poincare::ExamMode mode) {
+void AppsContainer::displayExamModePopUp(ExamMode mode) {
   m_examPopUpController.setTargetExamMode(mode);
   m_examPopUpController.presentModally();
 }
@@ -340,7 +341,7 @@ void AppsContainer::shutdownDueToLowBattery() {
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY &&
          !Ion::USB::isPlugged()) {
     Ion::Backlight::setBrightness(0);
-    if (!Poincare::Preferences::sharedPreferences->examMode().isActive()) {
+    if (!Preferences::sharedPreferences->examMode().isActive()) {
       /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
        * low battery event happened during the Power-On Self-Test, a LED might
        * have stayed lit up. */
@@ -369,15 +370,27 @@ OnBoarding::PromptController* AppsContainer::promptController() {
 
 void AppsContainer::redrawWindow() { m_window.redraw(); }
 
-void AppsContainer::activateExamMode(Poincare::ExamMode examMode) {
-  assert(examMode.isActive());
-  reset();
-  KDColor color = examMode.color();
-  if (color != KDColorBlack) {
-    Ion::LED::setColor(color);
-    Ion::LED::setBlinking(1000, 0.1f);
-    Ion::LED::setLock(true);
+void AppsContainer::activateExamMode(ExamMode examMode) {
+  ExamMode previousMode = Preferences::sharedPreferences->examMode();
+  Preferences::sharedPreferences->setExamMode(examMode);
+  if (examMode.isActive()) {
+    reset();
+    KDColor color = examMode.color();
+    if (color != KDColorBlack) {
+      Ion::LED::setColor(color);
+      Ion::LED::setBlinking(1000, 0.1f);
+      Ion::LED::setLock(true);
+    }
+  } else {
+    if (previousMode.mode() == ExamMode::Mode::PressToTest) {
+      Ion::Reset::core();
+    } else {
+      Ion::LED::setLock(false);
+      Ion::LED::setColor(KDColorBlack);
+      Ion::LED::updateColorWithPlugAndCharge();
+    }
   }
+  refreshPreferences();
 }
 
 bool AppsContainer::storageCanChangeForRecordName(

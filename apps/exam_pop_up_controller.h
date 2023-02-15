@@ -16,8 +16,8 @@ class ExamPopUpController : public Shared::MessagePopUpController {
  private:
   constexpr static int k_numberOfLines = 4;
 
-  I18n::Message activationWarningMessage(
-      Poincare::ExamMode::Mode examMode) const;
+  I18n::Message activationWarningMessage() const;
+  bool handleButton() const;
 
   Poincare::ExamMode m_targetExamMode;
 };

@@ -842,18 +842,16 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(Layout l, OMG::Horizontal
     }
     int siblingIndex = idxInParent + step;
     sibling = horizontalParent.childAtIndex(siblingIndex);
-    bool shouldCollapse = sibling.isCollapsable(&numberOfOpenParenthesis, direction == OMG::HorizontalDirection::Left);
-    if (shouldCollapse) {
-      horizontalParent.removeChildAtIndexInPlace(siblingIndex);
-      int newIndex = direction == OMG::HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
-      assert(!sibling.isHorizontal());
-      horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex);
-      numberOfSiblings--;
-      if (direction == OMG::HorizontalDirection::Left) {
-        idxInParent--;
-      }
-    } else {
+    if (!sibling.isCollapsable(&numberOfOpenParenthesis, direction == OMG::HorizontalDirection::Left)) {
       break;
+    }
+    horizontalParent.removeChildAtIndexInPlace(siblingIndex);
+    int newIndex = direction == OMG::HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
+    assert(!sibling.isHorizontal());
+    horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex);
+    numberOfSiblings--;
+    if (direction == OMG::HorizontalDirection::Left) {
+      idxInParent--;
     }
   }
 }

@@ -53,8 +53,8 @@ class GraphView : public Shared::FunctionGraphView,
   }
   void drawCartesian(KDContext *ctx, KDRect rect, Shared::ContinuousFunction *f,
                      Ion::Storage::Record record, float tMin, float tMax,
-                     float tStep, DiscontinuityTest discontinuity, Axis axis,
-                     KDCoordinate rectMin, KDCoordinate rectMax) const;
+                     float tStep, DiscontinuityTest discontinuity,
+                     Axis axis) const;
   void drawPolar(KDContext *ctx, KDRect rect, Shared::ContinuousFunction *f,
                  float tMin, float tMax, float tStep,
                  DiscontinuityTest discontinuity) const;

@@ -130,7 +130,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   }
   assert(f->properties().isCartesian());
   drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax, tCacheStep,
-                discontinuityEvaluation, axis, rectMin, rectMax);
+                discontinuityEvaluation, axis);
 }
 
 void GraphView::tidyModel(int i) const {
@@ -176,9 +176,8 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
                               ContinuousFunction *f,
                               Ion::Storage::Record record, float tStart,
                               float tEnd, float tStep,
-                              DiscontinuityTest discontinuity, Axis axis,
-                              KDCoordinate rectMin,
-                              KDCoordinate rectMax) const {
+                              DiscontinuityTest discontinuity,
+                              Axis axis) const {
   ContinuousFunctionProperties::AreaType area = f->properties().areaType();
   bool hasTwoCurves = (f->numberOfSubCurves() == 2);
 
@@ -270,15 +269,68 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
     float tangentParameterB =
         -tangentParameterA * m_cursor->x() +
         f->evaluateXYAtParameter(m_cursor->x(), context(), 0).x2();
-    /* To represent the tangent, we draw segment from and to abscissas at the
-     * extremities of the drawn rect. */
-    float minAbscissa = pixelToFloat(axis, rectMin);
-    Coordinate2D<float> p1(minAbscissa,
-                           tangentParameterA * minAbscissa + tangentParameterB);
-    float maxAbscissa = pixelToFloat(axis, rectMax);
-    Coordinate2D<float> p2(maxAbscissa,
-                           tangentParameterA * maxAbscissa + tangentParameterB);
-    drawSegment(ctx, rect, p1, p2, Palette::GrayVeryDark, false);
+
+    /* To represent the tangent, we draw segment between the intersections
+     * of the tangent and the drawnRect.
+     *
+     *        here
+     *  _______x_____           _____________                    _____________
+     * |      /      |         |             |             here x             |
+     * |     /       | or here x-------------x and here or      |\            |
+     * |____/________|         |_____________|                  |_\___________|
+     *      x                                                     x
+     * and here                                             and here
+     *
+     * These dots are taken instead of just taking the dots with the max and
+     * min abscissa, in case the tangent is too vertical. Indeed, if the dots
+     * are too far away outside of the current window, the tangent would be
+     * drawn shifted away from the curve of the function because of
+     * approximations errors.
+     * */
+    float minAbscissa =
+        pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+    float maxAbscissa =
+        pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+    float minOrdinate =
+        pixelToFloat(Axis::Vertical, rect.bottom() + k_externRectMargin);
+    float maxOrdinate =
+        pixelToFloat(Axis::Vertical, rect.top() - k_externRectMargin);
+
+    Coordinate2D<float> leftIntersection(
+        minAbscissa, tangentParameterA * minAbscissa + tangentParameterB);
+    Coordinate2D<float> rightIntersection(
+        maxAbscissa, tangentParameterA * maxAbscissa + tangentParameterB);
+    Coordinate2D<float> bottomIntersection(NAN, NAN);
+    Coordinate2D<float> topIntersection(NAN, NAN);
+    if (tangentParameterA != 0.) {
+      bottomIntersection = Coordinate2D<float>(
+          (minOrdinate - tangentParameterB) / tangentParameterA, minOrdinate);
+      topIntersection = Coordinate2D<float>(
+          (maxOrdinate - tangentParameterB) / tangentParameterA, maxOrdinate);
+    }
+
+    /* After computing the 4 intersections, choose the two that are visible
+     * in the window to ensure their coordinates are not too far appart. */
+    int numberOfCandidateDots = tangentParameterA == 0 ? 2 : 4;
+    Coordinate2D<float> candidateDots[] = {leftIntersection, rightIntersection,
+                                           bottomIntersection, topIntersection};
+    Coordinate2D<float> visibleDots[2];
+    int foundVisibleDots = 0;
+    for (int i = 0; i < numberOfCandidateDots; i++) {
+      Coordinate2D<float> currentDot = candidateDots[i];
+      if (currentDot.x1IsIn(minAbscissa, maxAbscissa, true, true) &&
+          currentDot.x2IsIn(minOrdinate, maxOrdinate, true, true)) {
+        visibleDots[foundVisibleDots] = currentDot;
+        foundVisibleDots++;
+        if (foundVisibleDots == 2) {
+          break;
+        }
+      }
+    }
+    if (foundVisibleDots == 2) {
+      drawSegment(ctx, rect, visibleDots[0], visibleDots[1],
+                  Palette::GrayVeryDark, false);
+    }
   }
 }
 

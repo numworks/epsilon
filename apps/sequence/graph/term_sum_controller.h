@@ -19,6 +19,7 @@ class TermSumController : public Shared::SumGraphController {
   const char* title() override;
 
  private:
+  bool allowEndLowerThanStart() const override { return false; }
   bool moveCursorHorizontallyToPosition(double position) override;
   I18n::Message legendMessageAtStep(Step step) override;
   double cursorNextStep(double position,

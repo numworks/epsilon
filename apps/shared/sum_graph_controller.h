@@ -59,6 +59,7 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
   }
   AbstractPlotView* curveView() override { return m_graphView; }
 
+  virtual bool allowEndLowerThanStart() const { return true; }
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
   virtual double cursorNextStep(double position,
                                 OMG::HorizontalDirection direction) = 0;

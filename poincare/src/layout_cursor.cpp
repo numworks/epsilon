@@ -810,8 +810,8 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
   if (deletionMethod == LayoutNode::DeletionMethod::FractionDenominatorDeletion) {
     // Merge the numerator and denominator and replace the fraction with it
     assert(deletionAppliedToParent);
-    assert(m_layout.parent().type() == LayoutNode::Type::FractionLayout);
     Layout fraction = m_layout.parent();
+    assert(fraction.type() == LayoutNode::Type::FractionLayout && fraction.childAtIndex(1) == m_layout);
     Layout numerator = fraction.childAtIndex(0);
     if (!numerator.isHorizontal()) {
       HorizontalLayout hLayout = HorizontalLayout::Builder();

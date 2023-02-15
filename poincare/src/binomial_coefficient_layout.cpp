@@ -30,7 +30,7 @@ int BinomialCoefficientLayoutNode::indexOfNextChildToPointToAfterVerticalCursorM
 
 LayoutNode::DeletionMethod BinomialCoefficientLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
   if (childIndex == k_nLayoutIndex && kLayout()->isEmpty()) {
-   return DeletionMethod::DeleteAndKeepChild;
+   return DeletionMethod::DeleteParent;
   }
   if (childIndex == k_kLayoutIndex) {
     return DeletionMethod::BinomialCoefficientMoveFromKtoN;

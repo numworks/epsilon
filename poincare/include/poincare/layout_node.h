@@ -110,7 +110,7 @@ public:
   // Cursor deletion
   enum class DeletionMethod {
     DeleteLayout,
-    DeleteAndKeepChild,
+    DeleteParent,
     MoveLeft,
     FractionDenominatorDeletion,
     BinomialCoefficientMoveFromKtoN,

@@ -48,7 +48,7 @@ LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(in
   if (rowIndex == 0) {
     /* If only one child is filled, delete the grid and keep the child.
      * Else just leave the grid. */
-    return minimalNumberOfChildrenWhileEditing() == numberOfChildren() ? DeletionMethod::DeleteAndKeepChild : DeletionMethod::MoveLeft;
+    return minimalNumberOfChildrenWhileEditing() == numberOfChildren() ? DeletionMethod::DeleteParent : DeletionMethod::MoveLeft;
   }
   return DeletionMethod::GridLayoutMoveToUpperRow;
 }

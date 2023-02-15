@@ -2,26 +2,13 @@
 #define POINCARE_EXAM_MODE_H
 
 #include <assert.h>
-#include <ion/persisting_bytes.h>
-#include <kandinsky/color.h>
+#include <ion/exam_mode.h>
 
 namespace Poincare {
 
-class ExamMode {
-  friend class Preferences;
-
+class ExamMode : public Ion::ExamMode::Configuration {
  public:
-  enum class Mode : uint8_t {
-    Off = 0,
-    Standard,
-    Dutch,
-    IBTest,
-    PressToTest,
-    Portuguese,
-    English,
-    NumberOfModes,
-    Uninitialized = 0b1111,
-  };
+  using Mode = Ion::ExamMode::Mode;
 
   union PressToTestFlags {
     bool operator==(const PressToTestFlags& other) const {
@@ -42,21 +29,12 @@ class ExamMode {
     };
   };
 
-  ExamMode() : m_mode(Mode::Uninitialized), m_flags(0) {}
+  ExamMode() : Configuration() {}
   ExamMode(Mode mode, PressToTestFlags flags = {.value = 0})
-      : m_mode(mode), m_flags(flags.value) {
-    assert(isValid());
-  }
+      : Configuration(mode, flags.value) {}
+  ExamMode(Configuration config) : Configuration(config) {}
 
-  bool operator==(const ExamMode& other) const {
-    return m_mode == other.m_mode && m_flags == other.m_flags;
-  }
-
-  Mode mode() const { return m_mode; }
-  PressToTestFlags flags() const { return {.value = m_flags}; }
-  bool isUninitialized() const { return m_mode == Mode::Uninitialized; }
-  bool isActive() const { return !isUninitialized() && m_mode != Mode::Off; }
-  KDColor color() const;
+  PressToTestFlags flags() const { return {.value = Configuration::flags()}; }
 
   // Exam mode permissions
   bool forbidSolverApp() const;
@@ -73,23 +51,10 @@ class ExamMode {
   bool forbidUnits() const;
   bool forbidAdditionalResults() const;
   bool forbidExactResults() const;
-
- private:
-  static ExamMode GetFromPersistingBytes();
-
-  bool isValid() const {
-    return (m_flags == 0 || m_mode == Mode::PressToTest) &&
-           (m_mode < Mode::NumberOfModes);
-  }
-  void setInPersistingBytes() const;
-
-  Mode m_mode : 4;
-  uint16_t m_flags : 12;
 };
 
-static_assert(sizeof(ExamMode) ==
-                  sizeof(Ion::PersistingBytes::PersistingBytesInt),
-              "ExamMode should have the same size");
+static_assert(sizeof(ExamMode) == sizeof(Ion::ExamMode::Configuration),
+              "ExamMode size is not compatible with PersistingBytes");
 
 }  // namespace Poincare
 

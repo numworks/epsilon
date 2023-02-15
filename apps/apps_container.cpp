@@ -256,10 +256,9 @@ void AppsContainer::run() {
   Ion::Display::pushRectUniform(KDRectScreen, KDColorWhite);
   Preferences* poincarePreferences = Preferences::sharedPreferences;
   if (poincarePreferences->examMode().isActive()) {
-    activateExamMode(poincarePreferences->examMode());
-  } else {
-    refreshPreferences();
+    poincarePreferences->setExamMode(poincarePreferences->examMode());
   }
+  refreshPreferences();
   Ion::Power::selectStandbyMode(false);
   Ion::Events::setSpinner(true);
   Ion::Display::setScreenshotCallback(ShowCursor);
@@ -369,29 +368,6 @@ OnBoarding::PromptController* AppsContainer::promptController() {
 }
 
 void AppsContainer::redrawWindow() { m_window.redraw(); }
-
-void AppsContainer::activateExamMode(ExamMode examMode) {
-  ExamMode previousMode = Preferences::sharedPreferences->examMode();
-  Preferences::sharedPreferences->setExamMode(examMode);
-  if (examMode.isActive()) {
-    reset();
-    KDColor color = examMode.color();
-    if (color != KDColorBlack) {
-      Ion::LED::setColor(color);
-      Ion::LED::setBlinking(1000, 0.1f);
-      Ion::LED::setLock(true);
-    }
-  } else {
-    if (previousMode.mode() == ExamMode::Mode::PressToTest) {
-      Ion::Reset::core();
-    } else {
-      Ion::LED::setLock(false);
-      Ion::LED::setColor(KDColorBlack);
-      Ion::LED::updateColorWithPlugAndCharge();
-    }
-  }
-  refreshPreferences();
-}
 
 bool AppsContainer::storageCanChangeForRecordName(
     const Ion::Storage::Record::Name recordName) const {

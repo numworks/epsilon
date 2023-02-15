@@ -75,7 +75,8 @@ bool ExamPopUpController::handleButton() const {
   }
   AppsContainer* container = AppsContainer::sharedAppsContainer();
   App* activeApp = container->activeApp();
-  container->activateExamMode(m_targetExamMode);
+  Preferences::sharedPreferences->setExamMode(m_targetExamMode);
+  container->refreshPreferences();
   activeApp->modalViewController()->dismissModal();
   if (activeApp->snapshot() != container->onBoardingAppSnapshot()) {
     container->switchToBuiltinApp(container->homeAppSnapshot());

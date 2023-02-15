@@ -51,7 +51,6 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PromptController* promptController();
   void redrawWindow();
-  void activateExamMode(Poincare::ExamMode examMode);
 
   // Ion::Storage::StorageDelegate
   bool storageCanChangeForRecordName(

@@ -17,13 +17,6 @@ int FractionLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::
   return k_outsideIndex;
 }
 
-/*
- *                    9876
- * Take for instance ------. If there is no selection ongoing, moving the cursor
- *                    123    up should put it left of the 1. If 123/456 is
- *                   |---    selected, moving the cursor up to select up should
- *                    456    put the cursor left of the 9.
- * */
 int FractionLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   switch (currentIndex) {
   case k_outsideIndex:

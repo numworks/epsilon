@@ -43,14 +43,14 @@ public:
   int rightPosition() const { return std::max(m_startPosition, m_endPosition); }
 
   bool containsNode(TreeNode * n) const {
-    char * c = reinterpret_cast<char *>(n);
+    LayoutNode * l = reinterpret_cast<LayoutNode *>(n);
     return
       !isEmpty() &&
       (m_layout.isHorizontal() ?
-        (c >= reinterpret_cast<char *>(m_layout.childAtIndex(leftPosition()).node()) &&
-         c <= reinterpret_cast<char *>(m_layout.childAtIndex(rightPosition() - 1).node())) :
-        (c >= reinterpret_cast<char *>(m_layout.node()) &&
-         c < reinterpret_cast<char *>(m_layout.node()->nextSibling())));
+        (l >= m_layout.childAtIndex(leftPosition()).node() &&
+         l <= m_layout.childAtIndex(rightPosition() - 1).node()) :
+        (l >= m_layout.node() &&
+         l < m_layout.node()->nextSibling()));
   }
 
 private:

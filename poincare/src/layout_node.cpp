@@ -161,13 +161,13 @@ Layout LayoutNode::XNTLayout(int childIndex) const {
   return p == nullptr ? Layout() : p->XNTLayout(p->indexOfChild(this));
 }
 
-  bool LayoutNode::createGraySquaresAfterEnteringGrid(Layout layoutToExclude) {
-    return changeGraySquaresOfAllGridRelatives(true, true, layoutToExclude);
-  }
+bool LayoutNode::createGraySquaresAfterEnteringGrid(Layout layoutToExclude) {
+  return changeGraySquaresOfAllGridRelatives(true, true, layoutToExclude);
+}
 
-  bool LayoutNode::deleteGraySquaresBeforeLeavingGrid(Layout layoutToExclude) {
-    return changeGraySquaresOfAllGridRelatives(false, true, layoutToExclude);
-  }
+bool LayoutNode::deleteGraySquaresBeforeLeavingGrid(Layout layoutToExclude) {
+  return changeGraySquaresOfAllGridRelatives(false, true, layoutToExclude);
+}
 
 // Protected and private
 

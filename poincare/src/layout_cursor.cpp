@@ -377,7 +377,7 @@ void LayoutCursor::performBackspace() {
     LayoutNode::DeletionMethod deletionMethod = p.deletionMethodForCursorLeftOfChild(p.indexOfChild(m_layout));
     privateDelete(deletionMethod, true);
   }
-  removeEmptyColumnAndRowOfGridParentIfNeeded();
+  removeEmptyRowOrColumnOfGridParentIfNeeded();
   didEnterCurrentPosition(previousCursor),
   invalidateSizesAndPositions();
 }
@@ -399,7 +399,7 @@ void LayoutCursor::deleteAndResetSelection() {
   }
   m_position = selectionLeftBound;
   stopSelecting();
-  removeEmptyColumnAndRowOfGridParentIfNeeded();
+  removeEmptyRowOrColumnOfGridParentIfNeeded();
   didEnterCurrentPosition();
   invalidateSizesAndPositions();
 }
@@ -786,7 +786,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
   m_position--;
 }
 
-void LayoutCursor::removeEmptyColumnAndRowOfGridParentIfNeeded() {
+void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
   if (!IsEmptyChildOfGridLayout(m_layout)) {
     return;
   }

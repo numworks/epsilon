@@ -658,6 +658,8 @@ void LayoutCursor::invalidateSizesAndPositions() {
 }
 
 void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool deletionAppliedToParent) {
+  assert(!deletionAppliedToParent || !m_layout.parent().isUninitialized());
+
   if (deletionMethod == LayoutNode::DeletionMethod::MoveLeft) {
     bool dummy = false;
     move(OMG::Direction::Left, false, &dummy);
@@ -684,7 +686,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
   if (deletionMethod == LayoutNode::DeletionMethod::AutocompletedBracketPairMakeTemporary) {
     if (deletionAppliedToParent) { // Inside bracket
       Layout parent = m_layout.parent();
-      assert(!parent.isUninitialized() && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(parent.type()));
+      assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(parent.type()));
       static_cast<AutocompletedBracketPairLayoutNode *>(parent.node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
     } else { // Right of bracket
       assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(leftLayout().type()));
@@ -699,7 +701,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
   if (deletionMethod == LayoutNode::DeletionMethod::FractionDenominatorDeletion) {
     // Merge the numerator and denominator and replace the fraction with it
     assert(deletionAppliedToParent);
-    assert(!m_layout.parent().isUninitialized() && m_layout.parent().type() == LayoutNode::Type::FractionLayout);
+    assert(m_layout.parent().type() == LayoutNode::Type::FractionLayout);
     Layout fraction = m_layout.parent();
     Layout numerator = fraction.childAtIndex(0);
     if (!numerator.isHorizontal()) {
@@ -730,11 +732,11 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
     assert(deletionAppliedToParent);
     int newIndex = -1;
     if (deletionMethod == LayoutNode::DeletionMethod::BinomialCoefficientMoveFromKtoN) {
-      assert(!m_layout.parent().isUninitialized() && m_layout.parent().type() == LayoutNode::Type::BinomialCoefficientLayout);
+      assert(m_layout.parent().type() == LayoutNode::Type::BinomialCoefficientLayout);
       newIndex = BinomialCoefficientLayoutNode::k_nLayoutIndex;
     } else {
       assert(deletionMethod == LayoutNode::DeletionMethod::GridLayoutMoveToUpperRow);
-      assert(!m_layout.parent().isUninitialized() && GridLayoutNode::IsGridLayoutType(m_layout.parent().type()));
+      assert(GridLayoutNode::IsGridLayoutType(m_layout.parent().type()));
       GridLayoutNode * gridNode = static_cast<GridLayoutNode *>(m_layout.parent().node());
       int currentIndex = m_layout.parent().indexOfChild(m_layout);
       int currentRow = gridNode->rowAtChildIndex(currentIndex);
@@ -751,7 +753,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
       deletionMethod == LayoutNode::DeletionMethod::GridLayoutDeleteColumnAndRow)
   {
     assert(deletionAppliedToParent);
-    assert(!m_layout.parent().isUninitialized() && GridLayoutNode::IsGridLayoutType(m_layout.parent().type()));
+    assert(GridLayoutNode::IsGridLayoutType(m_layout.parent().type()));
     GridLayoutNode * gridNode = static_cast<GridLayoutNode *>(m_layout.parent().node());
     int currentIndex = m_layout.parent().indexOfChild(m_layout);
     int currentRow = gridNode->rowAtChildIndex(currentIndex);
@@ -770,7 +772,6 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
 
   assert(deletionMethod == LayoutNode::DeletionMethod::DeleteLayout);
   if (deletionAppliedToParent) {
-    assert(!m_layout.parent().isUninitialized());
     setLayout(m_layout.parent(), OMG::HorizontalDirection::Right);
   }
   if (!m_layout.isHorizontal()) {

@@ -74,6 +74,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting, bool * shouldR
   } else {
     moved = horizontalMove(direction == OMG::Direction::Left ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right, shouldRedrawLayout);
   }
+  assert(!*shouldRedrawLayout || moved);
   if (moved) {
     *shouldRedrawLayout = selecting || *shouldRedrawLayout;
     // Ensure that didEnterCurrentPosition is always called by being left of ||

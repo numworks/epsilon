@@ -433,13 +433,13 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect, true);
 }
 
-void LayoutField::insertLayoutAtCursor(Layout layout, bool forceCursorRightOfLayout, bool forceCursorLeftOfText) {
+void LayoutField::insertLayoutAtCursor(Layout layout, bool forceCursorRightOfLayout, bool forceCursorLeftOfLayout) {
   if (layout.isUninitialized()) {
     return;
   }
   layout = layout.makeEditable();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  m_contentView.cursor()->insertLayoutAtCursor(layout, delegateContext(), forceCursorRightOfLayout, forceCursorLeftOfText);
+  m_contentView.cursor()->insertLayoutAtCursor(layout, delegateContext(), forceCursorRightOfLayout, forceCursorLeftOfLayout);
 
   // Reload
   reload(previousSize);

@@ -110,7 +110,14 @@ LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   if (baseIndex < 0 || baseIndex >= parent()->numberOfChildren()) {
     return nullptr;
   }
-  return parentNode->childAtIndex(baseIndex);
+  LayoutNode * result = parentNode->childAtIndex(baseIndex);
+  if (result->type() == Type::VerticalOffsetLayout && static_cast<VerticalOffsetLayoutNode *>(result)->horizontalPosition() != horizontalPosition()) {
+    /* If two vertical offset layouts, one prefix and one suffix, are next to
+     * each other, the size of each one depends on the other one so thay can't
+     * rely on their base to draw themselves. */
+    return nullptr;
+  }
+  return result;
 }
 
 KDSize VerticalOffsetLayoutNode::baseSize(KDFont::Size font) {
@@ -131,6 +138,9 @@ void VerticalOffsetLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size f
   if (baseLayout() || m_emptyBaseVisibility == EmptyRectangle::State::Hidden) {
     return;
   }
+  /* FIXME: If a prefix and a suffix vertical offset are consecutive, they
+   * will both draw an empty rectangle, when only one should be displayed.
+   * This is a fringe case though. */
   KDCoordinate emptyRectangleHorizontalOrigin;
   if (horizontalPosition() == HorizontalPosition::Suffix) {
     emptyRectangleHorizontalOrigin = 0;

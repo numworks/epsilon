@@ -21,6 +21,7 @@ public:
     Visible
   };
   static KDSize RectangleSize(KDFont::Size font, bool withMargins = true);
+  static KDCoordinate RectangleBaseLine(KDFont::Size font) { return RectangleSize(font).height() / 2; }
   static void DrawEmptyRectangle(KDContext * ctx, KDPoint p, KDFont::Size font, Color rectangleColor);
 
 private:

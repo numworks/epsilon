@@ -125,7 +125,7 @@ KDSize VerticalOffsetLayoutNode::baseSize(KDFont::Size font) {
 }
 
 KDCoordinate VerticalOffsetLayoutNode::baseBaseline(KDFont::Size font) {
-  return baseLayout() ? baseLayout()->baseline(font) : EmptyRectangle::RectangleSize(font).height() / 2;
+  return baseLayout() ? baseLayout()->baseline(font) : EmptyRectangle::RectangleBaseLine(font);
 }
 
 bool VerticalOffsetLayoutNode::protectedIsIdenticalTo(Layout l) {

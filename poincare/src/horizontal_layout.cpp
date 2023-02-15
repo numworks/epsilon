@@ -107,7 +107,7 @@ KDSize HorizontalLayoutNode::computeSize(KDFont::Size font) {
 
 KDCoordinate HorizontalLayoutNode::computeBaseline(KDFont::Size font) {
   if (numberOfChildren() == 0) {
-    return EmptyRectangle::RectangleSize(font).height() / 2;
+    return EmptyRectangle::RectangleBaseLine(font);
   }
   KDCoordinate result = 0;
   for (LayoutNode * l : children()) {
@@ -154,7 +154,7 @@ KDSize HorizontalLayoutNode::layoutSizeBetweenIndexes(int leftIndex, int rightIn
 KDCoordinate HorizontalLayoutNode::baselineBetweenIndexes(int leftIndex, int rightIndex, KDFont::Size font) const {
   assert(0 <= leftIndex && leftIndex <= rightIndex && rightIndex <= numberOfChildren());
   if (numberOfChildren() == 0) {
-    return EmptyRectangle::RectangleSize(font).height() / 2;
+    return EmptyRectangle::RectangleBaseLine(font);
   }
   KDCoordinate result = 0;
   for (int i = leftIndex; i < rightIndex; i++) {

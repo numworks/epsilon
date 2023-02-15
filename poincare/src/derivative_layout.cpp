@@ -30,7 +30,7 @@ int DerivativeLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG
     assert(direction == OMG::HorizontalDirection::Right);
     return k_outsideIndex;
   default: {
-    // Other cases are handled by children classes
+    // Other cases are handled by derivated classes
     assert(currentIndex == k_variableLayoutIndex && m_variableSlot == VariableSlot::Assignment);
     return direction == OMG::HorizontalDirection::Right ? k_abscissaLayoutIndex : k_derivandLayoutIndex;
   }

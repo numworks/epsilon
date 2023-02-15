@@ -92,7 +92,7 @@ private:
   void privateDelete(LayoutNode::DeletionMethod deletionMethod, bool deletionAppliedToParent);
 
   bool setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State state);
-  void removeEmptyColumnAndRowOfGridParentIfNeeded();
+  void removeEmptyRowOrColumnOfGridParentIfNeeded();
   void invalidateSizesAndPositions();
 
   void collapseSiblingsOfLayout(Layout l);

@@ -69,13 +69,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 }
 
 int FractionLayoutNode::indexOfChildToPointToWhenInserting() {
-  if (numeratorLayout()->isEmpty()){
-    return k_numeratorIndex;
-  }
-  if (denominatorLayout()->isEmpty()){
-    return k_denominatorIndex;
-  }
-  return k_outsideIndex;
+  return numeratorLayout()->isEmpty() ? k_numeratorIndex : k_denominatorIndex;
 }
 
 bool FractionLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {

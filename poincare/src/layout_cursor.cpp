@@ -215,9 +215,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
 
   // - Step 8 - Point to required position
   if (!childToPoint.isUninitialized()) {
-    /* FIXME: layoutToInsertIsHorizontal is used because if the child to point
-     * is inside a parenthesis, the cursor must be left of the layout. */
-    *this = LayoutCursor(childToPoint, layoutToInsertIsHorizontal ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right);
+    *this = LayoutCursor(childToPoint, OMG::HorizontalDirection::Left);
     didEnterCurrentPosition(previousCursor);
   }
 

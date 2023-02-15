@@ -122,7 +122,7 @@ LayoutNode::DeletionMethod LayoutNode::deletionMethodForCursorLeftOfChild(int ch
 }
 
 LayoutNode::DeletionMethod LayoutNode::StandardDeletionMethodForLayoutContainingArgument(int childIndex, int argumentIndex) {
-  return childIndex == argumentIndex ? DeletionMethod::DeleteAndKeepChild : DeletionMethod::MoveLeft;
+  return childIndex == argumentIndex ? DeletionMethod::DeleteParent : DeletionMethod::MoveLeft;
 }
 
 int LayoutNode::indexOfChildToPointToWhenInserting() {

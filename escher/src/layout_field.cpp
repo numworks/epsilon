@@ -63,11 +63,10 @@ void LayoutField::ContentView::copySelection(Context * context, bool intoStoreMe
   char buffer[bufferSize];
   Layout layoutToParse;
   if (selection.layout().isHorizontal()) {
-    HorizontalLayout selectionHorizontalLayout = HorizontalLayout::Builder();
+    layoutToParse = HorizontalLayout::Builder();
     for (int i = selection.leftPosition(); i < selection.rightPosition(); i++) {
-      selectionHorizontalLayout.addChildAtIndexInPlace(selection.layout().childAtIndex(i), i - selection.leftPosition(), i - selection.leftPosition());
+      static_cast<HorizontalLayout&>(layoutToParse).addChildAtIndexInPlace(selection.layout().childAtIndex(i), i - selection.leftPosition(), i - selection.leftPosition());
     }
-    layoutToParse = selectionHorizontalLayout;
   } else {
     layoutToParse = selection.layout();
   }

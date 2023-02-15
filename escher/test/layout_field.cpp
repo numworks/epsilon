@@ -86,7 +86,7 @@ QUIZ_CASE(escher_layout_field_select_left_right) {
       Ion::Events::Right,  Ion::Events::Plus,  Ion::Events::Seven,
       Ion::Events::Eight, Ion::Events::ShiftLeft, Ion::Events::ShiftLeft,
       Ion::Events::ShiftLeft, Ion::Events::ShiftLeft};
-    assert_events_lead_to_selection(events, eventsCount, "\x12\x12g34\x13/\x12h56\x13\x13+78");
+    assert_events_lead_to_selection(events, eventsCount, "g34/h56+78");
   }
   {
     /* Select in a horizontal layout with a fraction, starting inside the

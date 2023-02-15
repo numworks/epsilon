@@ -87,35 +87,6 @@ int HorizontalLayoutNode::serializeChildrenBetweenIndexes(char * buffer, int buf
 
 // Private
 
-KDSize HorizontalLayoutNode::computeSize(KDFont::Size font) {
-  if (numberOfChildren() == 0) {
-    KDSize emptyRectangleSize = EmptyRectangle::RectangleSize(font);
-    KDCoordinate width = shouldDrawEmptyRectangle() ? emptyRectangleSize.width() : 0;
-    return KDSize(width, emptyRectangleSize.height());
-  }
-  KDCoordinate totalWidth = 0;
-  KDCoordinate maxUnderBaseline = 0;
-  KDCoordinate maxAboveBaseline = 0;
-  for (LayoutNode * l : children()) {
-    KDSize childSize = l->layoutSize(font);
-    totalWidth += childSize.width();
-    maxUnderBaseline = std::max<KDCoordinate>(maxUnderBaseline, childSize.height() - l->baseline(font));
-    maxAboveBaseline = std::max(maxAboveBaseline, l->baseline(font));
-  }
-  return KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline);
-}
-
-KDCoordinate HorizontalLayoutNode::computeBaseline(KDFont::Size font) {
-  if (numberOfChildren() == 0) {
-    return EmptyRectangle::RectangleBaseLine(font);
-  }
-  KDCoordinate result = 0;
-  for (LayoutNode * l : children()) {
-    result = std::max(result, l->baseline(font));
-  }
-  return result;
-}
-
 KDPoint HorizontalLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
   assert(hasChild(l));
   KDCoordinate x = 0;

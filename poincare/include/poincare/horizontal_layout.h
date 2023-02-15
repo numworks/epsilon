@@ -66,8 +66,8 @@ public:
 
 private:
   // LayoutNode
-  KDSize computeSize(KDFont::Size font) override;
-  KDCoordinate computeBaseline(KDFont::Size font) override;
+  KDSize computeSize(KDFont::Size font) override { return layoutSizeBetweenIndexes(0, numberOfChildren(), font); }
+  KDCoordinate computeBaseline(KDFont::Size font) override { return baselineBetweenIndexes(0, numberOfChildren(), font); }
   KDPoint positionOfChild(LayoutNode * l, KDFont::Size font) override;
 
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;

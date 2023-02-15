@@ -160,14 +160,14 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
   /* - Step 4 - Add parenthesis around vertical offset
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
-  if (m_layout.isHorizontal() && layout.type() == LayoutNode::Type::VerticalOffsetLayout) {
-    if (!leftL.isUninitialized() && leftL.type() == LayoutNode::Type::VerticalOffsetLayout) {
+  if (m_layout.isHorizontal() && layout.type() == LayoutNode::Type::VerticalOffsetLayout && static_cast<VerticalOffsetLayout&>(layout).isSuffixSuperscript()) {
+    if (!leftL.isUninitialized() && leftL.type() == LayoutNode::Type::VerticalOffsetLayout && static_cast<VerticalOffsetLayout&>(leftL).isSuffixSuperscript()) {
       // Insert ^c left of a^b -> turn a^b into (a^b)
       int leftParenthesisIndex = ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(static_cast<HorizontalLayout&>(m_layout), m_layout.indexOfChild(leftL));
       m_position = leftParenthesisIndex + 1;
     }
 
-    if (!rightL.isUninitialized() && rightL.type() == LayoutNode::Type::VerticalOffsetLayout && m_layout.indexOfChild(rightL) > 0) {
+    if (!rightL.isUninitialized() && rightL.type() == LayoutNode::Type::VerticalOffsetLayout && static_cast<VerticalOffsetLayout&>(rightL).isSuffixSuperscript() && m_layout.indexOfChild(rightL) > 0) {
       // Insert ^b right of a in a^c -> turn a^c into (a)^c
       int leftParenthesisIndex = ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(static_cast<HorizontalLayout&>(m_layout), m_layout.indexOfChild(rightL) - 1);
       m_layout = m_layout.childAtIndex(leftParenthesisIndex).childAtIndex(0);

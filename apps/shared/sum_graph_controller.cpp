@@ -98,7 +98,9 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
   double y = function->evaluateXYAtParameter(x, myApp->localContext()).x2();
   m_cursor->moveTo(x, x, y);
   if (m_step == Step::SecondParameter) {
-    m_graphView->setAreaHighlight(m_startSum, m_cursor->x());
+    assert(allowEndLowerThanStart() || m_cursor->x() >= m_startSum);
+    m_graphView->setAreaHighlight(std::min(m_startSum, m_cursor->x()),
+                                  std::max(m_startSum, m_cursor->x()));
   }
   m_legendView.setEditableZone(m_cursor->x());
   makeCursorVisibleAndReload();
@@ -149,7 +151,8 @@ bool SumGraphController::textFieldDidFinishEditing(AbstractTextField *textField,
   if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
     return false;
   }
-  if ((m_step == Step::SecondParameter && floatBody < m_startSum) ||
+  if ((!allowEndLowerThanStart() && m_step == Step::SecondParameter &&
+       floatBody < m_startSum) ||
       !moveCursorHorizontallyToPosition(floatBody)) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
@@ -163,7 +166,8 @@ bool SumGraphController::handleLeftRightEvent(Ion::Events::Event event) {
   }
   const double oldPosition = m_cursor->x();
   double newPosition = cursorNextStep(oldPosition, OMG::Direction(event));
-  if (m_step == Step::SecondParameter && newPosition < m_startSum) {
+  if (!allowEndLowerThanStart() && m_step == Step::SecondParameter &&
+      newPosition < m_startSum) {
     newPosition = m_startSum;
   }
   return moveCursorHorizontallyToPosition(newPosition);

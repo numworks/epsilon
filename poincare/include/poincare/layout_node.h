@@ -126,9 +126,6 @@ public:
   // Cursor insertion
   virtual int indexOfChildToPointToWhenInserting();
 
-  /* A layout has text if it is not empty and it is not an horizontal layout
-   * with no child or with one child with no text. */
-  virtual bool hasText() const { return true; }
   bool isEmpty() const { return isHorizontal() && numberOfChildren() == 0;}
   /* isCollapsable is used when adding a sibling fraction: should the layout be
    * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should

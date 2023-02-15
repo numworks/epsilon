@@ -94,7 +94,7 @@ bool EditExpressionController::textFieldDidAbortEditing(AbstractTextField * text
 }
 
 bool EditExpressionController::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) {
-  bool shouldDuplicateLastCalculation = layoutField->isEditing() && layoutField->shouldFinishEditing(event) && !layoutField->hasText();
+  bool shouldDuplicateLastCalculation = layoutField->isEditing() && layoutField->shouldFinishEditing(event) && layoutField->isEmpty();
   if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
     return true;
   }

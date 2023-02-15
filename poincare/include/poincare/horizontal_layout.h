@@ -38,7 +38,6 @@ public:
   int serializeChildrenBetweenIndexes(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool forceIndexes, int firstIndex = -1, int lastIndex = -1) const;
 
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override { return m_numberOfChildren != 0; }
-  bool hasText() const override;
 
   // TreeNode
   size_t size() const override { return sizeof(HorizontalLayoutNode); }

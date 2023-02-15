@@ -85,10 +85,6 @@ int HorizontalLayoutNode::serializeChildrenBetweenIndexes(char * buffer, int buf
   return numberOfChar;
 }
 
-bool HorizontalLayoutNode::hasText() const {
-  return numberOfChildren() > 1 || (numberOfChildren() == 1 && childAtIndex(0)->hasText());
-}
-
 // Private
 
 KDSize HorizontalLayoutNode::computeSize(KDFont::Size font) {

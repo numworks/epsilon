@@ -20,7 +20,7 @@ bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(LayoutField * la
 
 bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    if (!layoutField->hasText()) {
+    if (layoutField->isEmpty()) {
       // Accept empty fields
       return false;
     }

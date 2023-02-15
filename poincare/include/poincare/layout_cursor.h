@@ -8,10 +8,38 @@
 
 namespace Poincare {
 
+/* The LayoutCursor has two main attributes: m_layout and m_position
+ *
+ * If m_layout is an HorizontalLayout, the cursor is left of the child at
+ * index m_position. If m_position == layout.numberOfChildren(), the cursor
+ * is on the right of the HorizontalLayout.
+ * Ex: l = HorizontalLayout("01234")
+ *     -> m_position == 0 -> "|01234"
+ *     -> m_position == 2 -> "01|234"
+ *     -> m_position == 5 -> "01234|"
+ *
+ * If the layout is not an HorizontalLayout, and its parent is not horizontal
+ * either, the cursor is either left or right of the layout.
+ * m_position should only be 0 or 1.
+ * Ex: l = CodePoint("A")
+ *     -> m_position == 0 -> "|A"
+ *     -> m_position == 1 -> "A|"
+ *
+ * WARNING: If a layout has an HorizontalLayout as parent, the cursor must have
+ * m_layout = ParentHorizontalLayout.
+ *
+ * Ex: l = HorizontalLayout("01234") and the cursor is at "012|34"
+ * It CAN'T be m_layout = "3" and m_position = 0.
+ * It MUST be m_layout = Horizontal("01234") and m_position = 3
+ *
+ * */
+
 class LayoutCursor final {
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 
+  /* This constructor either set the cursor at the leftMost or rightMost
+   * position in the layout. */
   LayoutCursor(Layout layout, OMG::HorizontalDirection sideOfLayout = OMG::HorizontalDirection::Right) :
     m_startOfSelection(-1)
   {
@@ -101,21 +129,6 @@ private:
   void balanceAutocompletedBracketsAndKeepAValidCursor();
 
   Layout m_layout;
-  /* If the layout is horizontal, the cursor is left of the child at index
-   * m_position. If m_position == layout.numberOfChildren(), the cursor is
-   * on the right of the horizontal layout.
-   * Ex: l = HorizontalLayout("01234")
-   *     -> m_position == 0 -> "|01234"
-   *     -> m_position == 2 -> "01|234"
-   *     -> m_position == 5 -> "01234|"
-   *
-   * If the layout is not horizontal, and its parent is not horizontal either,
-   * the cursor is either left or right of the layout.
-   * m_position should only be 0 or 1.
-   * Ex: l = CodePoint("A")
-   *     -> m_position == 0 -> "|A"
-   *     -> m_position == 1 -> "A|"
-   * */
   int m_position;
   /* -1 if no current selection. If m_startOfSelection >= 0, the selection is
    * between m_startOfSelection and m_position */

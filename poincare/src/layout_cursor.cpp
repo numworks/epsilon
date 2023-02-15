@@ -666,8 +666,8 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
 
   if (deletionMethod == LayoutNode::DeletionMethod::DeleteParent) {
     assert(deletionAppliedToParent);
-    assert(!m_layout.parent().isUninitialized() && !m_layout.parent().isHorizontal());
     Layout p = m_layout.parent();
+    assert(!p.isUninitialized() && !p.isHorizontal());
     Layout parentOfP = p.parent();
     if (parentOfP.isUninitialized() || !parentOfP.isHorizontal()) {
       assert(m_position == 0);

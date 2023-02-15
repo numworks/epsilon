@@ -85,7 +85,7 @@ int DerivativeLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::
     return k_derivandLayoutIndex;
   }
 
-  if (direction == OMG::VerticalDirection::Down && (currentIndex == k_derivandLayoutIndex || currentIndex == k_outsideIndex) && positionAtCurrentIndex == PositionInLayout::Right) {
+  if (direction == OMG::VerticalDirection::Down && currentIndex == k_derivandLayoutIndex && positionAtCurrentIndex == PositionInLayout::Right) {
     return k_abscissaLayoutIndex;
   }
 

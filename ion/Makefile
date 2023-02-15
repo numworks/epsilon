@@ -17,6 +17,7 @@ ion_src += $(addprefix ion/src/shared/, \
   decompress.cpp \
   events.cpp \
   events_modifier.cpp \
+  exam_mode.cpp \
   keyboard.cpp \
   keyboard_queue.cpp \
   layout_events.cpp \
@@ -67,6 +68,7 @@ ion_device_bootloader_src += ion/src/external/lz4/lz4.c
 ion_device_userland_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   decompress.cpp:+consoledisplay \
+  exam_mode.cpp \
   stack_position.cpp \
   storage/file_system.cpp \
   storage/record_name_verifier.cpp \

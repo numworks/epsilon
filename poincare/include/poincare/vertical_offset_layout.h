@@ -93,6 +93,7 @@ public:
   VerticalOffsetLayoutNode::VerticalPosition verticalPosition() const { return node()->verticalPosition(); }
   VerticalOffsetLayoutNode::HorizontalPosition horizontalPosition() const { return node()->horizontalPosition(); }
   bool setEmptyVisibility(EmptyRectangle::State state) { return node()->setEmptyVisibility(state); }
+  bool isSuffixSuperscript() const { return verticalPosition() == VerticalOffsetLayoutNode::VerticalPosition::Superscript && horizontalPosition() == VerticalOffsetLayoutNode::HorizontalPosition::Suffix; }
 
 private:
   VerticalOffsetLayoutNode * node() const { return static_cast<VerticalOffsetLayoutNode *>(Layout::node()); }

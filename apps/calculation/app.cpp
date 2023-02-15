@@ -56,7 +56,7 @@ bool App::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::E
 }
 
 bool App::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) {
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) && !layoutField->hasText()) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) && layoutField->isEmpty()) {
     return true;
   }
   return Shared::ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(layoutField, event);

@@ -118,7 +118,7 @@ bool ExpressionField::editionIsInTextField() const {
 }
 
 bool ExpressionField::isEmpty() const {
-  return editionIsInTextField() ? (m_textField.draftTextLength() == 0) : !m_layoutField.hasText();
+  return editionIsInTextField() ? (m_textField.draftTextLength() == 0) : m_layoutField.isEmpty();
 }
 
 bool ExpressionField::inputViewHeightDidChange() {

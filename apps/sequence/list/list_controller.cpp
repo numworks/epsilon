@@ -253,7 +253,7 @@ void ListController::tableViewDidChangeSelection(SelectableTableView * t, int pr
 /* LayoutFieldDelegate */
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   // Do not accept empty input
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) && !layoutField->hasText()) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) && layoutField->isEmpty()) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return true;
   }

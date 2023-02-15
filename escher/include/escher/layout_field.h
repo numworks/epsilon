@@ -31,7 +31,7 @@ public:
   void scrollToCursor() {
     scrollToBaselinedRect(m_contentView.cursorRect(), m_contentView.cursor()->layout().baseline(m_contentView.font()));
   }
-  bool hasText() const { return layout().hasText(); }
+  bool isEmpty() const { return layout().isEmpty(); }
   Poincare::Layout layout() const { return m_contentView.expressionView()->layout(); }
   bool layoutHasNode() const { return m_contentView.expressionView()->layoutHasNode(); }
   bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;

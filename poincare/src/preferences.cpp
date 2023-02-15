@@ -39,7 +39,7 @@ Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
 
 ExamMode Preferences::examMode() const {
   if (m_examMode.isUninitialized()) {
-    m_examMode = ExamMode::GetFromPersistingBytes();
+    m_examMode = Ion::ExamMode::get();
   }
   return m_examMode;
 }
@@ -49,7 +49,7 @@ void Preferences::setExamMode(ExamMode mode) {
     return;
   }
   m_examMode = mode;
-  mode.setInPersistingBytes();
+  Ion::ExamMode::set(mode);
 }
 
 }  // namespace Poincare

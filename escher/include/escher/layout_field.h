@@ -64,7 +64,7 @@ private:
   virtual bool privateHandleEvent(Ion::Events::Event event, bool * shouldRedrawLayout);
   bool privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRedrawLayout);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
-  void insertLayoutAtCursor(Poincare::Layout layoutR, bool forceCursorRightOfLayout = false, bool forceCursorLeftOfText = false);
+  void insertLayoutAtCursor(Poincare::Layout layoutR, bool forceCursorRightOfLayout = false, bool forceCursorLeftOfLayout = false);
   Poincare::Context * delegateContext() { return m_delegate ? m_delegate->context() : nullptr; }
   TextCursorView * textCursorView() override { return m_contentView.textCursorView(); }
 

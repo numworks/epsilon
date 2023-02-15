@@ -192,13 +192,30 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     static_cast<HorizontalLayout&>(m_layout).addOrMergeChildAtIndex(layout, m_position);
     m_position += forceLeft ? 0 : positionShift;
   } else {
+    /* Replace the current layout with an HorizontalLayout so that a sibling
+     * can be added to it. */
     assert(m_layout.parent().isUninitialized() || !m_layout.parent().isHorizontal());
     HorizontalLayout newParent = HorizontalLayout::Builder();
     m_layout.replaceWithInPlace(newParent);
+    bool insertLeftOfCurrentLayout = m_position == 0;
     newParent.addOrMergeChildAtIndex(m_layout, 0);
-    newParent.addOrMergeChildAtIndex(layout, m_position == 0 ? 0 : newParent.numberOfChildren());
+    newParent.addOrMergeChildAtIndex(layout, insertLeftOfCurrentLayout ? 0 : newParent.numberOfChildren());
     m_layout = newParent;
-    m_position = (forceLeft ? 1 : m_layout.numberOfChildren()) - (m_position == 0);
+    /* How to compute new position:
+     * C is the current layout, that was there before insertion.
+     * N is the new layout(s), that were inserted.
+     *
+     * If it's inserted left of the current layout:
+     * |C -> NNNNN|C    the new position is numberOfChildren - 1
+     * if forceLeft:
+     * |C -> |NNNNNC    the new position is 0
+     *
+     * If it's inserted right of the current layout:
+     * C| -> CNNNNN|    the new position is numberOfChildren
+     * if forceLeft:
+     * C| -> C|NNNNN    the new position is 1
+     * */
+    m_position = (forceLeft ? 1 : m_layout.numberOfChildren()) - insertLeftOfCurrentLayout;
   }
 
   /* - Step 7 - Collapse siblings and find position to point to if layout was
@@ -490,6 +507,29 @@ Layout LayoutCursor::layoutToFit(KDFont::Size font) {
 
 bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction, bool * shouldRedrawLayout) {
   Layout nextLayout = Layout();
+  /* Search the nextLayout on the left/right to ask it where
+   * the cursor should go when entering from outside.
+   *
+   * Example in the layout of 3+4/5 :
+   * § is the cursor and -> the direction
+   *
+   *       4
+   * 3+§->---
+   *       5
+   *
+   * Here the cursor must move right but should not "jump" over the fraction,
+   * so will ask its rightLayout (the fraction), where it should enter
+   * (numerator or denominator).
+   *
+   * Example in the layout of 12+34:
+   * § is the cursor and -> the direction
+   *
+   * 12+§->34
+   *
+   * Here the cursor will ask its rightLayout (the "3"), where it should go.
+   * This will result in the "3" answering "outside", so that the cursor
+   * jumps over it.
+   * */
   int currentIndexInNextLayout = LayoutNode::k_outsideIndex;
   if (direction == OMG::HorizontalDirection::Right) {
     nextLayout = rightLayout();
@@ -499,7 +539,32 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction, bool * sho
 
   if (nextLayout.isUninitialized()) {
     /* If nextLayout is uninitialized, the cursor is at the left-most or
-     * right-most position. It should move to the parent. */
+     * right-most position. It should move to the parent.
+     *
+     * Example in an integral layout:
+     * § is the cursor and -> the direction
+     *
+     *   / 10§->
+     *  /
+     *  |
+     *  |     1+ln(x) dx
+     *  |
+     *  /
+     * / -10
+     *
+     * Here the cursor must move right but has no rightLayout. So it will
+     * ask its parent what it should do when leaving its upper bound child
+     * from the right (go to integrand).
+     *
+     * Example in a square root layout:
+     * § is the cursor and -> the direction
+     *  _______
+     * √1234§->
+     *
+     * Here the cursor must move right but has no rightLayout. So it will
+     * ask its parent what it should do when leaving its only child from
+     * from the right (leave the square root).
+     * */
     if (m_layout.parent().isUninitialized()) {
       return false;
     }
@@ -509,27 +574,71 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction, bool * sho
   assert(!nextLayout.isUninitialized());
   assert(!nextLayout.isHorizontal());
 
+  /* If the cursor is selecting, it should not enter a new layout
+   * but select all of it. */
   int newIndex = isSelecting() ? LayoutNode::k_outsideIndex : nextLayout.indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndexInNextLayout, shouldRedrawLayout);
   assert(newIndex != LayoutNode::k_cantMoveIndex);
-  if (newIndex == LayoutNode::k_outsideIndex) {
-    Layout parent = nextLayout.parent();
-    Layout previousLayout = m_layout;
-    if (!parent.isUninitialized() && parent.isHorizontal()) {
-      m_layout = parent;
-      m_position = m_layout.indexOfChild(nextLayout) + (direction == OMG::HorizontalDirection::Right);
-    } else {
-      m_layout = nextLayout;
-      m_position = direction == OMG::HorizontalDirection::Right;
-    }
-    if (isSelecting() && m_layout != previousLayout) {
-      m_startOfSelection = m_position + (direction == OMG::HorizontalDirection::Right ? -1 : 1);
-    }
+
+  if (newIndex != LayoutNode::k_outsideIndex) {
+    /* Enter the next layout child
+     *
+     *       4                                        §4
+     * 3+§->---          : newIndex = numerator ==> 3+---
+     *       5                                         5
+     *
+     *
+     *   / 10§->                                     / 10
+     *  /                                           /
+     *  |                                           |
+     *  |     1+ln(x) dx : newIndex = integrand ==> |     §1+ln(x) dx
+     *  |                                           |
+     *  /                                           /
+     * / -10                                       / -10
+     *
+     * */
+    m_layout = nextLayout.childAtIndex(newIndex);
+    m_position = direction == OMG::HorizontalDirection::Right ? leftMostPosition() : rightMostPosition();
     return true;
   }
-  // Enter the next layout child
-  m_layout = nextLayout.childAtIndex(newIndex);
-  m_position = direction == OMG::HorizontalDirection::Right ? leftMostPosition() : rightMostPosition();
+
+  /* The new index is outside.
+   * If it's not selecting, it can be because there is no child to go into:
+   *
+   * 12+§->34  : newIndex = outside of the 3    ==> 12+3§4
+   *
+   *  _______                                        ____ §
+   * √1234§->  : newIndex = outside of the sqrt ==> √1234 §
+   *
+   * If it's selecting, the cursor should always leave the layout and all of
+   * it will be selected.
+   *
+   *   / 10§->                                   / 10          §
+   *  /                                         /              §
+   *  |                                         |              §
+   *  |     1+ln(x) dx : newIndex = outside ==> |   1+ln(x) dx §
+   *  |                                         |              §
+   *  /                                         /              §
+   * / -10                                     / -10           §
+   *
+   * */
+  Layout parent = nextLayout.parent();
+  Layout previousLayout = m_layout;
+  if (!parent.isUninitialized() && parent.isHorizontal()) {
+    m_layout = parent;
+    m_position = m_layout.indexOfChild(nextLayout) + (direction == OMG::HorizontalDirection::Right);
+  } else {
+    m_layout = nextLayout;
+    m_position = direction == OMG::HorizontalDirection::Right;
+  }
+
+  if (isSelecting() && m_layout != previousLayout) {
+    /* If the cursor went into the parent, start the selection before
+     * the layout that was just left (or after depending on the direction
+     * of the selection). */
+    m_startOfSelection = m_position + (direction == OMG::HorizontalDirection::Right ? -1 : 1);
+  }
   return true;
+
 }
 
 bool LayoutCursor::verticalMove(OMG::VerticalDirection direction, bool * shouldRedrawLayout) {
@@ -815,6 +924,15 @@ void LayoutCursor::collapseSiblingsOfLayout(Layout l) {
 }
 
 void LayoutCursor::collapseSiblingsOfLayoutOnDirection(Layout l, OMG::HorizontalDirection direction, int absorbingChildIndex) {
+  /* This method absorbs the siblings of a layout when it's inserted.
+   *
+   * Example:
+   * When inserting √() was just inserted in "1 + √()45 + 3 ",
+   * the square root should absorb the 45 and this will output
+   * "1 + √(45) + 3"
+   *
+   * Here l = √(), and absorbingChildIndex = 0 (the inside of the sqrt)
+   * */
   Layout absorbingChild = l.childAtIndex(absorbingChildIndex);
   if (absorbingChild.isUninitialized() || !absorbingChild.isEmpty()) {
     return;
@@ -833,6 +951,8 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(Layout l, OMG::Horizontal
   HorizontalLayout horizontalParent = static_cast<HorizontalLayout&>(p);
   Layout sibling;
   int step = direction == OMG::HorizontalDirection::Right ? 1 : - 1;
+  /* Loop through the siblings and add them into l until an uncollapsable
+   * layout is encountered. */
   while (canCollapse) {
     if (direction == OMG::HorizontalDirection::Right && idxInParent == numberOfSiblings - 1) {
       break;

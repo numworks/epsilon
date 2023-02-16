@@ -61,6 +61,14 @@ int VerticalOffsetLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(O
   return k_cantMoveIndex;
 }
 
+bool VerticalOffsetLayoutNode::setEmptyVisibility(EmptyRectangle::State state) {
+  if (m_emptyBaseVisibility == state) {
+    return false;
+  }
+  m_emptyBaseVisibility = state;
+  return baseLayout() == nullptr; // Return true if empty is displayed
+}
+
 KDSize VerticalOffsetLayoutNode::computeSize(KDFont::Size font) {
   KDSize indiceSize = indiceLayout()->layoutSize(font);
   KDCoordinate width = indiceSize.width();

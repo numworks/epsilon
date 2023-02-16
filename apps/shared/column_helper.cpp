@@ -83,6 +83,11 @@ void StoreColumnHelper::sortSelectedColumn() {
 }
 
 void StoreColumnHelper::displayFormulaInput() {
+  if (!m_memoizedFormulaForColumn[referencedColumn()].isUninitialized()) {
+    fillFormulaInputWithTemplate(
+        m_memoizedFormulaForColumn[referencedColumn()]);
+    return;
+  }
   Container::activeApp()->displayModalViewController(
       &m_templateStackController, 0.f, 0.f, Metric::PopUpTopMargin,
       Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
@@ -133,6 +138,14 @@ bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(
   return false;
 }
 
+void StoreColumnHelper::resetMemoizedFormulasForSeries(int series) {
+  assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
+  for (int i = 0; i < DoublePairStore::k_numberOfColumnsPerSeries; i++) {
+    m_memoizedFormulaForColumn[series * DoublePairStore::k_numberOfSeries + i] =
+        Layout();
+  }
+}
+
 bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
   int columnToFill = store()->relativeColumnIndex(referencedColumn());
   int seriesToFill = store()->seriesAtColumn(referencedColumn());
@@ -153,6 +166,11 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     }
   }
   StoreContext storeContext(store(), m_parentContext);
+  // Create the layout before simplifying
+  Layout formulaLayout = formula.createLayout(
+      Preferences::sharedPreferences->displayMode(),
+      Preferences::sharedPreferences->numberOfSignificantDigits(),
+      &storeContext);
   PoincareHelpers::CloneAndSimplify(
       &formula, &storeContext, ReductionTarget::SystemForApproximation,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
@@ -176,6 +194,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
       return false;
     }
     reload();
+    m_memoizedFormulaForColumn[referencedColumn()] = formulaLayout;
     return true;
   }
   // If formula contains a random formula, evaluate it for each pairs.
@@ -188,7 +207,11 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
   if (std::isnan(evaluation)) {
     return displayNotSuitableWarning();
   }
-  for (int j = 0; j < store()->numberOfPairsOfSeries(seriesToFill); j++) {
+  int numberOfPairs = store()->numberOfPairsOfSeries(seriesToFill);
+  if (numberOfPairs == 0) {
+    return true;
+  }
+  for (int j = 0; j < numberOfPairs; j++) {
     store()->set(evaluation, seriesToFill, columnToFill, j, true, true);
     if (evaluateForEachPairs) {
       evaluation =
@@ -199,6 +222,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     return false;
   }
   reloadSeriesVisibleCells(seriesToFill);
+  m_memoizedFormulaForColumn[referencedColumn()] = formulaLayout;
   return true;
 }
 

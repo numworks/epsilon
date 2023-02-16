@@ -175,6 +175,9 @@ void StoreController::handleDeleteEvent(bool authorizeNonEmptyRowDeletion,
     }
     reloadSeriesVisibleCells(series);
   }
+  if (m_store->lengthOfColumn(series, m_store->relativeColumnIndex(i)) == 0) {
+    resetMemoizedFormulasForSeries(series);
+  }
 }
 
 void StoreController::didBecomeFirstResponder() {

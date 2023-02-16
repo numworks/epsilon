@@ -17,6 +17,7 @@
 #include <poincare/float.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
+#include <poincare/parenthesis.h>
 #include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/rational.h>
@@ -765,6 +766,85 @@ bool Trigonometry::DetectLinearPatternOfCosOrSin(
         reductionContext.angleUnit());
   }
   return true;
+}
+
+static Expression AddAngleUnitToDirectFunctionIfNeeded(
+    Expression& e, Preferences::AngleUnit angleUnit) {
+  assert(e.type() == ExpressionNode::Type::Cosine ||
+         e.type() == ExpressionNode::Type::Sine ||
+         e.type() == ExpressionNode::Type::Tangent ||
+         e.type() == ExpressionNode::Type::Cosecant ||
+         e.type() == ExpressionNode::Type::Secant ||
+         e.type() == ExpressionNode::Type::Cotangent);
+
+  assert(e.numberOfChildren() == 1 && !e.childAtIndex(0).isUninitialized());
+
+  Expression child = e.childAtIndex(0);
+  bool containsPi = false;
+  bool containsOtherChildrenThanCombinationOfNumberAndPi =
+      child.recursivelyMatches(
+          [](const Expression e, Context* context, void* auxiliary) {
+            if (e.type() == ExpressionNode::Type::ConstantMaths &&
+                static_cast<const Constant&>(e).isPi()) {
+              bool* containsPi = static_cast<bool*>(auxiliary);
+              *containsPi = true;
+              return TrinaryBoolean::False;
+            }
+            if (e.isNumber()) {
+              return TrinaryBoolean::False;
+            }
+            if (e.type() == ExpressionNode::Type::Addition ||
+                e.type() == ExpressionNode::Type::Subtraction ||
+                e.type() == ExpressionNode::Type::Multiplication ||
+                e.type() == ExpressionNode::Type::Division ||
+                e.type() == ExpressionNode::Type::Power) {
+              return TrinaryBoolean::Unknown;
+            }
+            // Stop search if the expression is not one of the above
+            return TrinaryBoolean::True;
+          },
+          nullptr, SymbolicComputation::DoNotReplaceAnySymbol,
+          static_cast<void*>(&containsPi));
+
+  if (containsOtherChildrenThanCombinationOfNumberAndPi) {
+    return e;
+  }
+
+  if (containsPi == (angleUnit == Preferences::AngleUnit::Radian)) {
+    /* Do not add angle units if the child contains Pi and the angle is in Rad
+     * or if the child does not contain Pi and the angle unit is other. */
+    return e;
+  }
+
+  Unit unit = Unit::Builder(
+      UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(
+          angleUnit));
+  if (child.type() == ExpressionNode::Type::Addition ||
+      child.type() == ExpressionNode::Type::Subtraction) {
+    child = Parenthesis::Builder(child);
+  }
+  Expression newChild = Multiplication::Builder(child, unit);
+  e.replaceChildAtIndexInPlace(0, newChild);
+  return e;
+}
+
+Expression Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+    Expression& e, Preferences::AngleUnit angleUnit) {
+  if (e.type() == ExpressionNode::Type::Cosine ||
+      e.type() == ExpressionNode::Type::Sine ||
+      e.type() == ExpressionNode::Type::Tangent ||
+      e.type() == ExpressionNode::Type::Cosecant ||
+      e.type() == ExpressionNode::Type::Secant ||
+      e.type() == ExpressionNode::Type::Cotangent) {
+    e = AddAngleUnitToDirectFunctionIfNeeded(e, angleUnit);
+    return e;
+  }
+  int nChildren = e.numberOfChildren();
+  for (int i = 0; i < nChildren; i++) {
+    Expression child = e.childAtIndex(i);
+    DeepAddAngleUnitToAmbiguousDirectFunctions(child, angleUnit);
+  }
+  return e;
 }
 
 template std::complex<float> Trigonometry::ConvertToRadian<float>(

@@ -101,6 +101,9 @@ class CalculationStore {
                                  int numberOfSignificantDigits);
   char *pushUndefined(char *location);
 
+  static Poincare::Expression EnhanceUserInput(
+      Poincare::Expression inputExpression, Poincare::Expression ansExpression);
+
   char *const m_buffer;
   const size_t m_bufferSize;
   int m_numberOfCalculations;

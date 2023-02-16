@@ -62,6 +62,12 @@ class Trigonometry final {
       double* coefficientBeforeCos = nullptr,
       double* coefficientBeforeSymbol = nullptr, double* angle = nullptr);
 
+  /* Turn cos(4) into cos(4rad) if the angle unit is rad and cos(π) into
+   * cos(π°) if the angle unit is deg, to notify the user of the current
+   * angle unit she is using if she's forgetting to switch the angle unit */
+  static Expression DeepAddAngleUnitToAmbiguousDirectFunctions(
+      Expression& e, Preferences::AngleUnit angleUnit);
+
  private:
   static bool ExpressionIsTangentOrInverseOfTangent(const Expression& e,
                                                     bool inverse);

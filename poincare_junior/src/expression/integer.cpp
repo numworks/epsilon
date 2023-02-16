@@ -17,31 +17,39 @@ WorkingBuffer::WorkingBuffer() :
 {
 }
 
-native_uint_t * WorkingBuffer::allocate(size_t size) {
-  assert(size < IntegerHandler::k_maxNumberOfNativeDigits + 1);
+uint8_t * WorkingBuffer::allocate(size_t size) {
+  assert(size <= IntegerHandler::k_maxNumberOfDigits + sizeof(native_uint_t));
   if (size > m_remainingSize) {
     // TODO: set the error type to be "Integer computation requires to much space"/"edition pool overflowed"
     ExceptionCheckpoint::Raise();
     return nullptr;
   }
-  native_uint_t * allocatedMemory = m_start;
+  uint8_t * allocatedMemory = m_start;
   m_start += size;
   m_remainingSize -= size;
   return allocatedMemory;
 }
 
+uint8_t * WorkingBuffer::allocateForImmediateDigit() {
+  assert(TypeBlock::NumberOfMetaBlocks(BlockType::IntegerNegBig) == TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig));
+  assert(TypeBlock::NumberOfMetaBlocks(BlockType::IntegerShort) <= TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig));
+  return allocate(TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) + sizeof(native_int_t));
+}
+
 void WorkingBuffer::garbageCollect(std::initializer_list<IntegerHandler *> keptIntegers) {
-  uint8_t * previousStart = reinterpret_cast<uint8_t *>(m_start);
-  uint8_t * previousEnd = reinterpret_cast<uint8_t *>(m_start + m_remainingSize);
+  uint8_t * previousStart = initialStartOfBuffer();
+  uint8_t * previousEnd = m_start;
   m_start = initialStartOfBuffer();
   m_remainingSize = initialSizeOfBuffer();
   for (IntegerHandler * integer : keptIntegers) {
-    // TODO: assert that the Integer are sorted by digits() pointer
-    if (previousStart <= integer->digits() && integer->digits() < previousEnd) {
-      uint8_t nbOfNativeDigits = integer->numberOfDigits<native_uint_t>();
-      native_uint_t * newDigitsPointer = allocate(nbOfNativeDigits);
-      memmove(newDigitsPointer, integer->digits(), nbOfNativeDigits * sizeof(native_uint_t));
-      *integer = IntegerHandler(newDigitsPointer, nbOfNativeDigits, integer->sign());
+    if (integer->usesImmediateDigit()) {
+      allocateForImmediateDigit();
+    } else if (previousStart <= integer->digits() && integer->digits() < previousEnd) {
+      // TODO: assert that the Integer are sorted by digits() pointer
+      uint8_t nbOfDigits = integer->numberOfDigits();
+      uint8_t * newDigitsPointer = allocate(nbOfDigits);
+      memmove(newDigitsPointer, integer->digits(), nbOfDigits * sizeof(uint8_t));
+      *integer = IntegerHandler(newDigitsPointer, nbOfDigits, integer->sign());
     }
   }
 }
@@ -49,22 +57,27 @@ void WorkingBuffer::garbageCollect(std::initializer_list<IntegerHandler *> keptI
 /* IntegerHandler */
 
 IntegerHandler::Digits::Digits(const uint8_t * digits, uint8_t numberOfDigits) {
-  if (numberOfDigits == 1) {
-    m_digit = digits[0];
+  if (numberOfDigits <= sizeof(native_uint_t)) {
+    m_digit = 0;
+    memcpy(&m_digit, digits, numberOfDigits);
   } else {
-    m_digits = numberOfDigits == 0 ? nullptr : digits;
+    m_digits = digits;
   }
 }
 
 template <typename T>
-IntegerHandler::IntegerHandler(const T * digits, uint8_t numberOfDigits, NonStrictSign sign) {
-  assert(numberOfDigits <= k_maxNumberOfDigits / sizeof(T));
-  uint8_t sizeInByte = numberOfDigits * sizeof(T);
-  const uint8_t * byteDigits = reinterpret_cast<const uint8_t *>(digits);
-  while (sizeInByte > 0 && byteDigits[sizeInByte - 1] == 0) {
-    sizeInByte--;
+IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer * buffer) {
+  size_t sizeInByte = size * sizeof(T);
+  if (sizeInByte <= sizeof(native_uint_t)) {
+    buffer->allocateForImmediateDigit();
+    /* Force the maximal m_numberOfDigits to be able to get any digit without
+     * requiring sanitizing the IntegerHandler first. */
+    native_uint_t initialValue = 0;
+    return IntegerHandler(reinterpret_cast<const uint8_t *>(&initialValue), sizeof(native_uint_t), NonStrictSign::Positive);
+  } else {
+    size_t sizeInBytes = size * sizeof(T);
+    return IntegerHandler(buffer->allocate(sizeInBytes), sizeInBytes, NonStrictSign::Positive);
   }
-  new (this) IntegerHandler(byteDigits, sizeInByte, sign);
 }
 
 EditionReference IntegerHandler::pushOnEditionPool() {
@@ -95,7 +108,7 @@ EditionReference IntegerHandler::pushOnEditionPool() {
 
 void IntegerHandler::pushDigitsOnEditionPool() {
   EditionPool * pool = EditionPool::sharedEditionPool();
-  assert(m_numberOfDigits < k_maxNumberOfDigits);
+  assert(m_numberOfDigits <= k_maxNumberOfDigits);
   for (size_t i = 0; i < m_numberOfDigits; i++) {
     pool->pushBlock(ValueBlock(digit(i)));
   }
@@ -119,16 +132,16 @@ T IntegerHandler::to() {
 
 /* Getters */
 
-const uint8_t * IntegerHandler::digits() const {
+uint8_t * IntegerHandler::digits() {
   if (usesImmediateDigit()) {
-    return &m_digitAccessor.m_digit;
+    return reinterpret_cast<uint8_t *>(&m_digitAccessor.m_digit);
   }
-  return m_digitAccessor.m_digits;
+  return const_cast<uint8_t *>(m_digitAccessor.m_digits);
 }
 
 uint8_t IntegerHandler::digit(int i) const {
   assert(m_numberOfDigits > i);
-  return digits()[i];
+  return const_cast< IntegerHandler *>(this)->digits()[i];
 }
 
 template <typename T>
@@ -160,14 +173,20 @@ T IntegerHandler::digit(int i) const {
       return newDigit;
     }
   }
-  return (reinterpret_cast<const T *>(digits()))[i];
+  return (reinterpret_cast<T *>(const_cast<IntegerHandler *>(this)->digits()))[i];
+}
+
+template <typename T>
+void IntegerHandler::setDigit(T digit, int i) {
+  assert(usesImmediateDigit() || i < numberOfDigits<T>());
+  reinterpret_cast<T *>(digits())[i] = digit;
 }
 
 /* Properties */
 
 bool IntegerHandler::isZero() const {
-  assert(m_numberOfDigits != 0 || m_sign == NonStrictSign::Positive); // TODO: should we represent -0?
-  return m_numberOfDigits == 0;
+  assert(!usesImmediateDigit() || immediateDigit() != 0 || m_sign == NonStrictSign::Positive); // TODO: should we represent -0?
+  return usesImmediateDigit() && immediateDigit() == 0;
 }
 
 template <typename T>
@@ -260,14 +279,15 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler & a, const IntegerHandl
     // Addition can overflow
     size++;
   }
-  native_uint_t * sumBuffer = workingBuffer->allocate(std::min<uint8_t>(size, k_maxNumberOfNativeDigits + oneDigitOverflow));
+  size = std::min<uint8_t>(size, k_maxNumberOfNativeDigits + oneDigitOverflow);
+  IntegerHandler sum = Allocate<native_uint_t>(size, workingBuffer);
   bool carry = false;
   for (uint8_t i = 0; i < size; i++) {
     native_uint_t aDigit = a.digit<native_uint_t>(i);
     native_uint_t bDigit = b.digit<native_uint_t>(i);
     native_uint_t result = (subtract ? aDigit - bDigit - carry : aDigit + bDigit + carry);
     if (i < k_maxNumberOfNativeDigits + oneDigitOverflow) {
-      sumBuffer[i] = result;
+      sum.setDigit<native_uint_t>(result, i);
     } else {
       if (result != 0) {
         // TODO: set the error type to be "Integer computation overflowed"
@@ -282,7 +302,8 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler & a, const IntegerHandl
     }
   }
   size = std::min<uint8_t>(size, k_maxNumberOfNativeDigits + oneDigitOverflow);
-  return IntegerHandler(sumBuffer, size);
+  sum.sanitize();
+  return sum;
 }
 
 EditionReference IntegerHandler::Multiplication(const IntegerHandler & a, const IntegerHandler & b) {
@@ -295,10 +316,10 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler & a, const IntegerHandl
   // TODO: optimize for squaring?
   uint8_t size = std::min(a.numberOfDigits<native_uint_t>() + b.numberOfDigits<native_uint_t>(), k_maxNumberOfNativeDigits + oneDigitOverflow); // Enable overflowing of 1 digit
 
-  native_uint_t * multBuffer = workingBuffer->allocate(size);
-  memset(multBuffer, 0, size * sizeof(native_uint_t));
+  IntegerHandler mult = Allocate<native_uint_t>(size, workingBuffer);
+  memset(mult.digits(), 0, size * sizeof(native_uint_t));
 
-  uint16_t carry = 0;
+  native_uint_t carry = 0;
   for (uint8_t i = 0; i < a.numberOfDigits<native_uint_t>(); i++) {
     double_native_uint_t aDigit = a.digit<native_uint_t>(i);
     carry = 0;
@@ -310,8 +331,8 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler & a, const IntegerHandl
       double_native_uint_t p = aDigit * bDigit + carry; // TODO: Prove it cannot overflow double_native type
       native_uint_t * l = (native_uint_t *)&p;
       if (i + j < k_maxNumberOfNativeDigits + oneDigitOverflow) {
-        p += multBuffer[i + j];
-        multBuffer[i + j] = l[0];
+        p += mult.digit<native_uint_t>(i + j);
+        mult.setDigit<native_uint_t>(l[0], i + j);
       } else {
         if (l[0] != 0) {
           // TODO: set the error type to be "Integer computation overflowed"
@@ -322,7 +343,8 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler & a, const IntegerHandl
       carry = l[1];
     }
     if (i + b.numberOfDigits<native_uint_t>() < k_maxNumberOfNativeDigits + oneDigitOverflow) {
-      multBuffer[i + b.numberOfDigits<native_uint_t>()] += carry;
+      native_uint_t digitWithCarry = mult.digit<native_uint_t>(i + b.numberOfDigits<native_uint_t>()) + carry;
+      mult.setDigit<native_uint_t>(digitWithCarry, i + b.numberOfDigits<native_uint_t>());
     } else {
       if (carry != 0) {
         // TODO: set the error type to be "Integer computation overflowed"
@@ -331,7 +353,9 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler & a, const IntegerHandl
       }
     }
   }
-  return IntegerHandler(multBuffer, size, a.sign() == b.sign() ? NonStrictSign::Positive : NonStrictSign::Negative);
+  mult.sanitize();
+  mult.setSign(a.sign() == b.sign() ? NonStrictSign::Positive : NonStrictSign::Negative);
+  return mult;
 }
 
 std::pair<EditionReference, EditionReference> IntegerHandler::Division(const IntegerHandler & numerator, const IntegerHandler & denominator) {
@@ -360,7 +384,7 @@ std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(const IntegerHand
    * Find A = 2^k*numerator & B = 2^k*denominator such as B > beta/2
    * if A = B*Q+R (R < B) then numerator = denominator*Q + R/2^k. */
   half_native_uint_t b = denominator.digit<half_native_uint_t>(denominator.numberOfDigits<half_native_uint_t>()-1);
-  half_native_uint_t halfBase = 1 << (16-1);
+  half_native_uint_t halfBase = 1 << (sizeof(half_native_uint_t) * Bit::k_numberOfBitsInByte - 1);
   int pow = 0;
   assert(b != 0);
   while (!(b & halfBase)) {
@@ -374,36 +398,32 @@ std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(const IntegerHand
    * B = b[0] + b[1]*beta + ... + b[n-1]*beta^(n-1) */
   int n = B.numberOfDigits<half_native_uint_t>();
   int m = A.numberOfDigits<half_native_uint_t>() - n;
-  // qDigits is (m+1)-lengthed array of half_native_uint_t
-  size_t qSizeInNative = Arithmetic::CeilDivision((m + 1) * sizeof(half_native_uint_t), sizeof(native_uint_t));
-  half_native_uint_t * qDigits = reinterpret_cast<half_native_uint_t *>(workingBuffer->allocate(qSizeInNative));
-  // Create a IntegerHandler to easily garbage collect
-  IntegerHandler Q(reinterpret_cast<uint8_t *>(qDigits), qSizeInNative * sizeof(native_uint_t));
-  // The quotient q has at maximum m+1 half digits but we set an extra half digit to 0 to enable to easily convert it from half native digits to native digits
-  memset(qDigits, 0, (m + 1 + 1) * sizeof(half_native_uint_t));
+  // Q is a integer composed of (m+1) half_native_uint_t
+  IntegerHandler Q = Allocate<half_native_uint_t>(m + 1, workingBuffer);
+  memset(Q.digits(), 0, (m + 1) * sizeof(half_native_uint_t));
   // betaMB = B*beta^m
   IntegerHandler betaMB = B.multiplyByPowerOfBase(m, workingBuffer);
   if (IntegerHandler::Compare(A, betaMB) >= 0) { // A >= B*beta^m
-    qDigits[m] = 1; // q[m] = 1
+    Q.setDigit<half_native_uint_t>(1, m); // q[m] = 1
     IntegerHandler newA = Usum(A, betaMB, true, workingBuffer, true); // A-B*beta^m
     workingBuffer->garbageCollect({&B, &Q, &betaMB, &newA});
     A = newA;
   }
-  native_uint_t base = 1 << 16;
+  native_uint_t base = 1 << (sizeof(half_native_uint_t) * Bit::k_numberOfBitsInByte);
+  half_native_uint_t baseMinus1 = base - 1; // beta-1
   for (int j = m - 1; j >= 0; j--) {
     half_native_uint_t bnMinus1 = B.digit<half_native_uint_t>(n-1);
     assert(bnMinus1 != 0);
     native_uint_t qj2 = ((native_uint_t)A.digit<half_native_uint_t>(n+j) * base + (native_uint_t)A.digit<half_native_uint_t>(n+j-1)) / bnMinus1; // (a[n+j]*beta+a[n+j-1])/b[n-1]
-    half_native_uint_t baseMinus1 = (1 << 16) - 1; // beta-1
-    qDigits[j] = qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1; // std::min(qj2, beta -1)
+    Q.setDigit<half_native_uint_t>(qj2 < (native_uint_t)baseMinus1 ? (half_native_uint_t)qj2 : baseMinus1, j); // Q[j] = std::min(qj2, beta -1)
     IntegerHandler betaJM = B.multiplyByPowerOfBase(j, workingBuffer); // betaJM = B*beta^j
-    IntegerHandler qBj = Mult(qDigits[j], betaJM, workingBuffer, true);
+    IntegerHandler qBj = Mult(IntegerHandler(Q.digit<half_native_uint_t>(j)), betaJM, workingBuffer, true);
     IntegerHandler newA = IntegerHandler::Sum(A, qBj, true, workingBuffer, true); // A-q[j]*beta^j*B
     workingBuffer->garbageCollect({&B, &Q, &betaMB, &betaJM, &newA});
     A = newA;
     if (A.sign() == NonStrictSign::Negative) {
       while (A.sign() == NonStrictSign::Negative) {
-        qDigits[j] = qDigits[j]-1; // q[j] = q[j]-1
+        Q.setDigit<half_native_uint_t>(Q.digit<half_native_uint_t>(j) - 1, j); // q[j] = q[j]-1
         newA = Sum(A, betaJM, false, workingBuffer, true); // A = B*beta^j+A
         workingBuffer->garbageCollect({&B, &Q, &betaMB, &betaJM, &newA});
         A = newA;
@@ -417,53 +437,48 @@ std::pair<IntegerHandler, IntegerHandler> IntegerHandler::Udiv(const IntegerHand
     workingBuffer->garbageCollect({&Q, &newRemainder});
     remainder = newRemainder;
   }
-  int qNumberOfDigitsInByte = (m + 1) * sizeof(half_native_uint_t);
-  uint8_t * qDigitsInByte = reinterpret_cast<uint8_t *>(qDigits);
-  while (qDigitsInByte[qNumberOfDigitsInByte - 1] == 0 && qNumberOfDigitsInByte > 1) {
-    qNumberOfDigitsInByte--;
-  }
-  return std::pair<IntegerHandler, IntegerHandler>(IntegerHandler(qDigitsInByte, qNumberOfDigitsInByte), remainder);
+  Q.sanitize();
+  return std::pair<IntegerHandler, IntegerHandler>(Q, remainder);
 }
 
 IntegerHandler IntegerHandler::multiplyByPowerOf2(uint8_t pow, WorkingBuffer * workingBuffer) const {
   assert(pow < 32);
   uint8_t nbOfNativeDigits = numberOfDigits<native_uint_t>();
-  native_uint_t * buffer = workingBuffer->allocate(nbOfNativeDigits + 1);
+  IntegerHandler mult = Allocate<native_uint_t>(nbOfNativeDigits + 1, workingBuffer);
   native_uint_t carry = 0;
   for (uint8_t i = 0; i < nbOfNativeDigits; i++) {
-    buffer[i] = digit<native_uint_t>(i) << pow | carry;
+    mult.setDigit<native_uint_t>(digit<native_uint_t>(i) << pow | carry, i);
     carry = pow == 0 ? 0 : digit<native_uint_t>(i) >> (32 - pow);
   }
-  buffer[numberOfDigits()] = carry;
-  return IntegerHandler(buffer, carry ? nbOfNativeDigits + 1 : nbOfNativeDigits);
+  mult.setDigit<native_uint_t>(carry, nbOfNativeDigits);
+  mult.sanitize();
+  return mult;
 }
 
 IntegerHandler IntegerHandler::divideByPowerOf2(uint8_t pow, WorkingBuffer * workingBuffer) const {
   assert(pow < 32);
   uint8_t nbOfNativeDigits = numberOfDigits<native_uint_t>();
-  native_uint_t * buffer = workingBuffer->allocate(nbOfNativeDigits);
+  IntegerHandler division = Allocate<native_uint_t>(nbOfNativeDigits, workingBuffer);
   native_uint_t carry = 0;
   for (int i = nbOfNativeDigits - 1; i >= 0; i--) {
-    buffer[i] = digit<native_uint_t>(i) >> pow | carry;
+    division.setDigit<native_uint_t>(digit<native_uint_t>(i) >> pow | carry, i);
     carry = pow == 0 ? 0 : digit<native_uint_t>(i) << (32 - pow);
   }
-  return IntegerHandler(buffer, buffer[nbOfNativeDigits - 1] > 0 ? nbOfNativeDigits : nbOfNativeDigits - 1);
+  division.sanitize();
+  return division;
 }
 
-// return this*(2^16)^pow
 IntegerHandler IntegerHandler::multiplyByPowerOfBase(uint8_t pow, WorkingBuffer * workingBuffer) const {
+  // return this*(2^16)^pow
   uint8_t nbOfHalfNativeDigits = numberOfDigits<half_native_uint_t>();
   uint8_t resultNbOfHalfNativeDigit = nbOfHalfNativeDigits + pow;
-  uint8_t resultNbOfNativeDigit = Arithmetic::CeilDivision<uint8_t>(resultNbOfHalfNativeDigit, 2);
-  half_native_uint_t * buffer = reinterpret_cast<half_native_uint_t *>(workingBuffer->allocate(resultNbOfNativeDigit));
-  /* The number of half digits of the built integer is nbOfHalfDigits+pow.
-   * Still, we set an extra half digit to 0 to easily convert half digits to
-   * digits. */
-  memset(buffer, 0, sizeof(native_uint_t) * resultNbOfNativeDigit);
+  IntegerHandler mult = Allocate<half_native_uint_t>(resultNbOfHalfNativeDigit, workingBuffer);
+  memset(mult.digits(), 0, sizeof(half_native_uint_t) * resultNbOfHalfNativeDigit);
   for (uint8_t i = 0; i < nbOfHalfNativeDigits; i++) {
-    buffer[i + pow] = digit<half_native_uint_t>(i);
+    mult.setDigit<half_native_uint_t>(digit<half_native_uint_t>(i), i + pow);
   }
-  return IntegerHandler(buffer, resultNbOfHalfNativeDigit);
+  mult.sanitize();
+  return mult;
 }
 
 EditionReference IntegerHandler::Power(const IntegerHandler & i, const IntegerHandler & j) {
@@ -509,6 +524,21 @@ EditionReference IntegerHandler::Factorial(const IntegerHandler & i) {
     workingBuffer.garbageCollect({&result, &j});
   }
   return result.pushOnEditionPool();
+}
+
+void IntegerHandler::sanitize() {
+  if (usesImmediateDigit()) {
+    m_numberOfDigits = NumberOfDigits(m_digitAccessor.m_digit);
+    return;
+  }
+  while (m_numberOfDigits > sizeof(native_uint_t) && digit(m_numberOfDigits - 1) == 0) {
+    m_numberOfDigits--;
+  }
+  if (m_numberOfDigits == sizeof(native_uint_t)) {
+    // Convert to immediate digit
+    m_digitAccessor.m_digit = *(reinterpret_cast<const native_uint_t *>(m_digitAccessor.m_digits));
+    m_numberOfDigits = NumberOfDigits(m_digitAccessor.m_digit);
+  }
 }
 
 /* Integer */

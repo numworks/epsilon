@@ -169,6 +169,9 @@ void Distribution::computeUnknownParameterForProbabilityAndBound(double probabil
   assert(m_indexOfUninitializedParameter != k_allParametersAreInitialized && canHaveUninitializedParameter());
   double paramValue = m_distribution->evaluateParameterForProbabilityAndBound(m_indexOfUninitializedParameter, parametersArray(), probability, bound, isUpperBound);
   Inference::setParameterAtIndex(paramValue, m_indexOfUninitializedParameter);
+  if (std::isfinite(paramValue)) {
+    computeCurveViewRange();
+  }
 }
 
 

@@ -5,6 +5,7 @@
 #include <poincare/rational.h>
 #include <poincare/store.h>
 #include <poincare/symbol.h>
+#include <poincare/trigonometry.h>
 #include <poincare/undefined.h>
 
 using namespace Poincare;
@@ -91,10 +92,9 @@ ExpiringPointer<Calculation> CalculationStore::push(
     cursor = pushEmptyCalculation(cursor);
     assert(cursor != k_pushError);
 
-    // Push the input, with Ans replaced
-    Expression inputExpression =
-        Expression::Parse(text, context)
-            .replaceSymbolWithExpression(Symbol::Ans(), ans);
+    // Push the input
+    Expression inputExpression = Expression::Parse(text, context);
+    inputExpression = EnhanceUserInput(inputExpression, ans);
     cursor =
         pushSerializedExpression(cursor, inputExpression, maxNumberOfDigits);
     if (cursor == k_pushError) {
@@ -287,6 +287,21 @@ char *CalculationStore::pushUndefined(char *location) {
   return pushSerializedExpression(
       location, Undefined::Builder(),
       m_inUsePreferences.numberOfSignificantDigits());
+}
+
+Expression CalculationStore::EnhanceUserInput(Expression inputExpression,
+                                              Expression ansExpression) {
+  // Replace Ans
+  inputExpression =
+      inputExpression.replaceSymbolWithExpression(Symbol::Ans(), ansExpression);
+  /* Add an angle unit in trigonometric functions if the user could have
+   * forgotten to change the angle unit in the preferences.
+   * Ex: If angleUnit = rad, cos(4)->cos(4rad)
+   *     If angleUnit = deg, cos(π)->cos(π°)
+   * */
+  inputExpression = Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+      inputExpression, Preferences::sharedPreferences->angleUnit());
+  return inputExpression;
 }
 
 }  // namespace Calculation

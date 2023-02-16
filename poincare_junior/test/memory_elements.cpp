@@ -1,4 +1,4 @@
-#include "print.h"
+#include "helper.h"
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/value_block.h>
 #include <poincare_junior/src/expression/constructor.h>

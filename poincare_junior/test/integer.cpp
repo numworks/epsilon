@@ -1,4 +1,4 @@
-#include "print.h"
+#include "helper.h"
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/memory/tree_constructor.h>

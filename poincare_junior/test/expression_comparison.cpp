@@ -1,4 +1,4 @@
-#include "print.h"
+#include "helper.h"
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/expression/constructor.h>
 

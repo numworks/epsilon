@@ -1,5 +1,5 @@
-#ifndef POINCAREJ_TEST_PRINT_H
-#define POINCAREJ_TEST_PRINT_H
+#ifndef POINCAREJ_TEST_HELPER_H
+#define POINCAREJ_TEST_HELPER_H
 
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/memory/cache_pool.h>
@@ -13,6 +13,7 @@
 
 using namespace PoincareJ;
 
+// TODO: remove
 inline EditionReference createSimpleExpression() {
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n--- Create (1 + 2) * 3 * (4 + 5) ---" << std::endl;

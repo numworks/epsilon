@@ -1,4 +1,4 @@
-#include "print.h"
+#include "helper.h"
 #include <poincare_junior/include/expression.h>
 
 using namespace PoincareJ;

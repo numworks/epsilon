@@ -1,4 +1,4 @@
-#include "print.h"
+#include "helper.h"
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/n_ary.h>
 #include <poincare_junior/src/memory/edition_reference.h>

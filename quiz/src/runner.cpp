@@ -5,7 +5,7 @@
 #include <poincare/init.h>
 #include <poincare/print.h>
 #include <poincare/tree_pool.h>
-#include <poincare_junior/test/print.h>
+#include <poincare_junior/test/helper.h>
 
 #include "quiz.h"
 #include "symbols.h"

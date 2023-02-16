@@ -89,9 +89,13 @@ double NormalDistribution::evaluateParameterForProbabilityAndBound(int parameter
   double abscissaForStandardDistribution = StandardNormalCumulativeDistributiveInverseForProbability(probability);
   if (parameterIndex == 0) { // mu
     return bound - parameters[1] * abscissaForStandardDistribution;
-  } else { // sigma
-    return (bound - parameters[0]) / abscissaForStandardDistribution;
   }
+  assert(parameterIndex == 1); // sigma
+  if (abscissaForStandardDistribution == 0) {
+    return NAN;
+  }
+  double result = (bound - parameters[0]) / abscissaForStandardDistribution;
+  return result > 0.0 ? result : NAN; // Sigma can't be negative or null
 }
 
 template float NormalDistribution::EvaluateAtAbscissa<float>(float, float, float);

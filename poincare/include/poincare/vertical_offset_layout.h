@@ -53,13 +53,7 @@ public:
   }
 #endif
 
-  bool setEmptyVisibility(EmptyRectangle::State state) {
-    if (m_emptyBaseVisibility == state) {
-      return false;
-    }
-    m_emptyBaseVisibility = state;
-    return baseLayout() == nullptr; // Return true if empty is displayed
-  }
+  bool setEmptyVisibility(EmptyRectangle::State state);
 
 private:
   // LayoutNode

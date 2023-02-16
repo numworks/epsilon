@@ -15,7 +15,7 @@ public:
   bool setChargeState(Ion::Battery::Charge chargeState);
   bool setIsCharging(bool isCharging);
   bool setIsPlugged(bool isPlugged);
-  void restartLowBatteryAnimationIfNecessary();
+  void updateBatteryAnimation();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   constexpr static int k_flashHeight = 8;

@@ -21,8 +21,8 @@ bool AppsWindow::updateBatteryLevel() {
   return m_titleBarView.setChargeState(Ion::Battery::level());
 }
 
-void AppsWindow::restartLowBatteryAnimationIfNecessary() {
-  return m_titleBarView.restartLowBatteryAnimationIfNecessary();
+void AppsWindow::updateBatteryAnimation() {
+  return m_titleBarView.updateBatteryAnimation();
 }
 
 bool AppsWindow::updateIsChargingState() {

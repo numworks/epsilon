@@ -48,8 +48,8 @@ bool TitleBarView::setShiftAlphaLockStatus(Ion::Events::ShiftAlphaStatus status)
   return m_shiftAlphaLockView.setStatus(status);
 }
 
-void TitleBarView::restartLowBatteryAnimationIfNecessary() {
-  m_batteryView.restartLowBatteryAnimationIfNecessary();
+void TitleBarView::updateBatteryAnimation() {
+  m_batteryView.updateBatteryAnimation();
 }
 
 int TitleBarView::numberOfSubviews() const {

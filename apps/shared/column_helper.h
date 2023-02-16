@@ -67,6 +67,7 @@ class StoreColumnHelper {
   void fillFormulaInputWithTemplate(Poincare::Layout layout);
   bool fillColumnWithFormula(Poincare::Expression formula);
   bool createExpressionForFillingColumnWithFormula(const char* text);
+  void resetMemoizedFormulasForSeries(int series);
 
   /* Clear series */
   int fillColumnNameFromStore(int columnIndex, char* buffer) {
@@ -88,6 +89,9 @@ class StoreColumnHelper {
   /* Fill with formula */
   FormulaTemplateMenuController m_templateController;
   Escher::StackViewController m_templateStackController;
+  Poincare::Layout
+      m_memoizedFormulaForColumn[DoublePairStore::k_numberOfSeries *
+                                 DoublePairStore::k_numberOfColumnsPerSeries];
   Poincare::Context* m_parentContext;
 };
 

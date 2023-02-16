@@ -19,9 +19,10 @@ StoreController::StoreController(
       m_storeParameterController(this, this) {}
 
 void StoreController::clearSelectedColumn() {
-  m_store->deleteColumn(m_store->seriesAtColumn(selectedColumn()),
-                        m_store->relativeColumnIndex(selectedColumn()));
+  int series = m_store->seriesAtColumn(selectedColumn());
+  m_store->deleteColumn(series, m_store->relativeColumnIndex(selectedColumn()));
   selectCellAtLocation(selectedColumn(), 1);
+  resetMemoizedFormulasForSeries(series);
 }
 
 InputViewController* StoreController::inputViewController() {

@@ -52,21 +52,18 @@ bool BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
    * trigerring a redrawing by not marking anything as dirty when switching
    * from 'low' to 'empty' battery. */
   chargeState = chargeState == Ion::Battery::Charge::EMPTY ? Ion::Battery::Charge::LOW : chargeState;
-  if (chargeState != m_chargeState || m_lowBatteryAnimationState) {
-    if (chargeState == Ion::Battery::Charge::LOW) {
-      if (m_chargeState != Ion::Battery::Charge::LOW) {
-        m_lowBatteryAnimationState = k_lowBatteryAnimationBlinks;
-      } else if (m_lowBatteryAnimationState) {
-        m_lowBatteryAnimationState--;
-      }
-    } else {
-      m_lowBatteryAnimationState = 0;
-    }
-    m_chargeState = chargeState;
+  if (m_lowBatteryAnimationState) {
+    m_lowBatteryAnimationState--;
     markRectAsDirty(bounds());
     return true;
   }
-  return false;
+  if (m_chargeState == chargeState) {
+    return false;
+  }
+  m_chargeState = chargeState;
+  updateBatteryAnimation();
+  markRectAsDirty(bounds());
+  return true;
 }
 
 bool BatteryView::setIsCharging(bool isCharging) {
@@ -87,10 +84,8 @@ bool BatteryView::setIsPlugged(bool isPlugged) {
   return false;
 }
 
-void BatteryView::restartLowBatteryAnimationIfNecessary() {
-  if (m_chargeState == Ion::Battery::Charge::LOW) {
-    m_lowBatteryAnimationState = k_lowBatteryAnimationBlinks;
-  }
+void BatteryView::updateBatteryAnimation() {
+  m_lowBatteryAnimationState = m_chargeState == Ion::Battery::Charge::LOW ? k_lowBatteryAnimationBlinks : 0;
 }
 
 void BatteryView::drawInsideBatteryLevel(KDContext * ctx, KDCoordinate width, KDColor color) const {

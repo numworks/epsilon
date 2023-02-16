@@ -101,7 +101,7 @@ static bool IsEmptyChildOfGridLayout(Layout l) {
   return l.isEmpty() && !parent.isUninitialized() && GridLayoutNode::IsGridLayoutType(parent.type());
 }
 
-static Layout LeftMostOrRightMostChildLayout(Layout l, OMG::HorizontalDirection direction) {
+static Layout PointedLayoutWhenCursorIsLeftOrRightOfThis(Layout l, OMG::HorizontalDirection direction) {
   return l.isHorizontal() ? (l.childAtIndex(direction == OMG::HorizontalDirection::Left ? 0 : l.numberOfChildren() - 1) ) : l;
 }
 
@@ -145,8 +145,8 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
 
   /* - Step 3 - Close brackets on the left/right
    * Do not close parentheses if an open parenthesis is inserted */
-  bool leftMostChildIsOpenBracket = IsTemporaryAutocompletedBracketPair(LeftMostOrRightMostChildLayout(layout, OMG::HorizontalDirection::Left), AutocompletedBracketPairLayoutNode::Side::Left);
-  bool rightMostChildIsOpenBracket = IsTemporaryAutocompletedBracketPair(LeftMostOrRightMostChildLayout(layout, OMG::HorizontalDirection::Right), AutocompletedBracketPairLayoutNode::Side::Right);
+  bool leftMostChildIsOpenBracket = IsTemporaryAutocompletedBracketPair(PointedLayoutWhenCursorIsLeftOrRightOfThis(layout, OMG::HorizontalDirection::Left), AutocompletedBracketPairLayoutNode::Side::Left);
+  bool rightMostChildIsOpenBracket = IsTemporaryAutocompletedBracketPair(PointedLayoutWhenCursorIsLeftOrRightOfThis(layout, OMG::HorizontalDirection::Right), AutocompletedBracketPairLayoutNode::Side::Right);
 
   Layout leftL = leftLayout();
   Layout rightL = rightLayout();

@@ -85,7 +85,9 @@ void TableViewWithTopAndBottomViews::tableViewDidChangeSelectionAndDidScroll(Sel
     m_table->setContentOffset(KDPointZero);
   } else if (row == m_tableDataSource->numberOfRows() - 1 && m_bottomView) {
     m_table->setFrame(KDRectZero, false);
-    m_table->setContentOffset(KDPoint(0, m_table->minimalSizeForOptimalDisplay().height() - m_bottomView->minimalSizeForOptimalDisplay().height() + k_verticalMargin - (m_topView ? m_topView->minimalSizeForOptimalDisplay().height() - k_verticalMargin: 0)));
+    KDCoordinate topViewHeight = m_topView ? m_topView->minimalSizeForOptimalDisplay().height() - k_verticalMargin : 0;
+    KDCoordinate bottomViewHeight = m_bottomView->minimalSizeForOptimalDisplay().height() - k_verticalMargin;
+    m_table->setContentOffset(KDPoint(0, m_table->minimalSizeForOptimalDisplay().height() - bottomViewHeight + topViewHeight));
   }
   layoutSubviews(false);
 }

@@ -5,6 +5,7 @@
 #include <poincare/init.h>
 #include <poincare/print.h>
 #include <poincare/tree_pool.h>
+#include <poincare_junior/test/print.h>
 
 #include "quiz.h"
 #include "symbols.h"
@@ -53,8 +54,10 @@ static inline void ion_main_inner(const char *testFilter) {
       quiz_print(buffer);
     }
     quiz_print(quiz_case_names[i]);
+    // TODO: clean when removing TreePool
     int initialPoolSize = Poincare::TreePool::sharedPool->numberOfNodes();
     quiz_assert(initialPoolSize == 0);
+    reset_pools();
     c();
     int currentPoolSize = Poincare::TreePool::sharedPool->numberOfNodes();
     quiz_assert(initialPoolSize == currentPoolSize);

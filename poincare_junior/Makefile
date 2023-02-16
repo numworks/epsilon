@@ -49,6 +49,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   memory_edition.cpp \
   memory_cache.cpp \
   polynomial.cpp \
+  print.cpp \
   set.cpp \
   tree_constructor.cpp \
 )

@@ -99,6 +99,7 @@ QUIZ_CASE(pcj_integer_compare) {
 static inline void assert_add_to(const char * a, const char * b, const char * c) {
   // TODO: remove static_cast<Node> when Hugo's PR is merged
   quiz_assert(static_cast<Node>(IntegerHandler::Addition(CreateIntegerHandler(a), CreateIntegerHandler(b))).treeIsIdenticalTo(CreateInteger(c)));
+  reset_pools();
 }
 
 QUIZ_CASE(pcj_integer_addition) {
@@ -124,3 +125,119 @@ QUIZ_CASE(pcj_integer_addition) {
   //2^16+2^16
   assert_add_to("65537", "65537", "131074");
 }
+
+static inline void assert_sub_to(const char * a, const char * b, const char * c) {
+  // TODO: remove static_cast<Node> when Hugo's PR is merged
+  quiz_assert(static_cast<Node>(IntegerHandler::Subtraction(CreateIntegerHandler(a), CreateIntegerHandler(b))).treeIsIdenticalTo(CreateInteger(c)));
+  reset_pools();
+}
+
+QUIZ_CASE(pcj_integer_subtraction) {
+  assert_sub_to("123", "23", "100");
+  assert_sub_to("123456789123456789", "9999999999", "123456779123456790");
+  assert_sub_to("23", "100", "-77");
+  assert_sub_to("23", "23", "0");
+  assert_sub_to("-23", "-23", "0");
+  assert_sub_to("-123456789123456789", "-123456789123456789", "0");
+  assert_sub_to("123456789123456789", "123456789123456789", "0");
+  assert_sub_to("18446744073709551616", "18446744073709551368", "248");
+
+  //2^64-2^64
+  assert_sub_to("18446744073709551616", "18446744073709551616", "0");
+  //2^64-2^32
+  assert_sub_to("18446744073709551616", "4294967296", "18446744069414584320");
+  //2^32-2^64
+  assert_sub_to("4294967296", "18446744073709551616", "-18446744069414584320");
+  //2^64-1
+  assert_sub_to("18446744073709551616", "1", "18446744073709551615");
+  //1-2^64
+  assert_sub_to("1", "18446744073709551616", "-18446744073709551615");
+  //2^32-2^32
+  assert_sub_to("4294967296", "4294967296", "0");
+  //2^32-1
+  assert_sub_to("4294967296", "1", "4294967295");
+  //2^16-1
+  assert_sub_to("65537", "1", "65536");
+  //2^16-2^16
+  assert_sub_to("65537", "65537", "0");
+}
+
+static inline void assert_mult_to(const char * a, const char * b, const char * c) {
+  // TODO: remove static_cast<Node> when Hugo's PR is merged
+  quiz_assert(static_cast<Node>(IntegerHandler::Multiplication(CreateIntegerHandler(a), CreateIntegerHandler(b))).treeIsIdenticalTo(CreateInteger(c)));
+  reset_pools();
+}
+
+QUIZ_CASE(pcj_integer_multiplication) {
+  assert_mult_to("12", "34", "408");
+  assert_mult_to("56", "0", "0");
+  assert_mult_to("-12", "34", "-408");
+  assert_mult_to("-12", "-34", "408");
+  assert_mult_to("123456", "654321", "80779853376");
+  assert_mult_to("9999999999", "9999999999", "99999999980000000001");
+  assert_mult_to("-23", "0", "0");
+  assert_mult_to("-23456787654567765456", "0", "0");
+  assert_mult_to("3293920983030066", "720", "2371623107781647520");
+  assert_mult_to("389282362616", "720", "280283301083520");
+  assert_mult_to("16013", "773094113280", "12379556035952640");
+}
+
+static inline void assert_div_to(const char * a, const char * b, const char * q, const char * r) {
+  // TODO: remove static_cast<Node> when Hugo's PR is merged
+  auto [quotient, remainder] = IntegerHandler::Division(CreateIntegerHandler(a), CreateIntegerHandler(b));
+  quiz_assert(static_cast<Node>(quotient).treeIsIdenticalTo(CreateInteger(q)) && static_cast<Node>(remainder).treeIsIdenticalTo(CreateInteger(r)));
+  reset_pools();
+}
+
+QUIZ_CASE(pcj_integer_divide) {
+  assert_div_to("8", "4", "2", "0");
+  assert_div_to("146097313984800", "720", "202912936090", "0");
+  assert_div_to("3293920983030066", "38928", "84615726033", "17442");
+  assert_div_to("3293920983030066", "389282362616", "8461", "202912936090");
+  assert_div_to("-18940566", "499030", "-38", "22574");
+  assert_div_to("234567909876", "-234567898", "-1000", "11876");
+  assert_div_to("-567", "-12", "48", "9");
+  assert_div_to("-576", "-12", "48", "0");
+  assert_div_to("576", "-12", "-48", "0");
+  assert_div_to("-576", "12", "-48", "0");
+  assert_div_to("12345678910111213141516171819202122232425", "10", "1234567891011121314151617181920212223242", "5");
+  assert_div_to("1234567891011121314151617181920212223242", "10", "123456789101112131415161718192021222324", "2");
+  assert_div_to("123456789101112131415161718192021222324", "10", "12345678910111213141516171819202122232", "4");
+  assert_div_to("12345678910111213141516171819202122232", "10", "1234567891011121314151617181920212223", "2");
+  assert_div_to("1234567891011121314151617181920212223", "10", "123456789101112131415161718192021222", "3");
+  assert_div_to("123456789101112131415161718192021222", "10", "12345678910111213141516171819202122", "2");
+  assert_div_to("12345678910111213141516171819202122", "10", "1234567891011121314151617181920212", "2");
+  assert_div_to("0", "-10", "0", "0");
+  assert_div_to("0", "-123456789098760", "0", "0");
+  assert_div_to("2305843009213693952", "2305843009213693921", "1", "31");
+  assert_div_to(MaxIntegerString(), MaxIntegerString(), "1", "0");
+  assert_div_to("18446744073709551615", "10", "1844674407370955161", "5");
+  assert_div_to(MaxIntegerString(), "10", "17976931348623159077293051907890247336179769789423065727343008115773267580550096313270847732240753602112011387987139335765878976881441662249284743063947412437776789342486548527630221960124609411945308295208500576883815068234246288147391311054082723716335051068458629823994724593847971630483535632962422413721", "5");
+}
+
+static inline void assert_pow_to(const char * a, const char * b, const char * c) {
+  // TODO: remove static_cast<Node> when Hugo's PR is merged
+  quiz_assert(static_cast<Node>(IntegerHandler::Power(CreateIntegerHandler(a), CreateIntegerHandler(b))).treeIsIdenticalTo(CreateInteger(c)));
+  reset_pools();
+}
+
+QUIZ_CASE(pcj_integer_pow) {
+  assert_pow_to("0", "14", "0");
+  assert_pow_to("14", "0", "1");
+  assert_pow_to("2", "2", "4");
+  assert_pow_to("12345678910111213141516171819202122232425", "2", "152415787751564791571474464067365843004067618915106260955633159458990465721380625");
+  assert_pow_to("14", "14", "11112006825558016");
+}
+
+static inline void assert_factorial_to(const char * a, const char * b) {
+  // TODO: remove static_cast<Node> when Hugo's PR is merged
+  quiz_assert(static_cast<Node>(IntegerHandler::Factorial(CreateIntegerHandler(a))).treeIsIdenticalTo(CreateInteger(b)));
+  reset_pools();
+}
+
+QUIZ_CASE(pcj_integer_factorial) {
+  assert_factorial_to("5", "120");
+  assert_factorial_to("123", "12146304367025329675766243241881295855454217088483382315328918161829235892362167668831156960612640202170735835221294047782591091570411651472186029519906261646730733907419814952960000000000000000000000000000");
+}
+
+// TODO test overflow!

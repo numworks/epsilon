@@ -109,4 +109,12 @@ inline void assert_pool_contains(Pool * pool, std::initializer_list<const Node> 
   assert(tree.block() == pool->lastBlock());
 }
 
+// Integer
+
+const char * MaxIntegerString(); // (2^32)^k_maxNumberOfDigits-1
+const char * OverflowedIntegerString(); // (2^32)^k_maxNumberOfDigits
+const char * BigOverflowedIntegerString(); // OverflowedIntegerString with a 2 on first digit
+const char * MaxParsedIntegerString();
+const char * ApproximatedParsedIntegerString();
+
 #endif

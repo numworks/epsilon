@@ -250,10 +250,6 @@ void AppsContainer::handleRunException(bool resetSnapshot) {
 
 void AppsContainer::run() {
   window()->setFrame(KDRectScreen, false);
-  /* We push a white screen here, because fetching the exam mode takes some time
-   * and it is visible when reflashing a N0100 (there is some noise on the
-   * screen before the logo appears). */
-  Ion::Display::pushRectUniform(KDRectScreen, KDColorWhite);
   Preferences* poincarePreferences = Preferences::sharedPreferences;
   if (poincarePreferences->examMode().isActive()) {
     poincarePreferences->setExamMode(poincarePreferences->examMode());
@@ -340,12 +336,6 @@ void AppsContainer::shutdownDueToLowBattery() {
   while (Ion::Battery::level() == Ion::Battery::Charge::EMPTY &&
          !Ion::USB::isPlugged()) {
     Ion::Backlight::setBrightness(0);
-    if (!Preferences::sharedPreferences->examMode().isActive()) {
-      /* Unless the LED is lit up for the exam mode, switch off the LED. IF the
-       * low battery event happened during the Power-On Self-Test, a LED might
-       * have stayed lit up. */
-      Ion::LED::setColor(KDColorBlack);
-    }
     m_emptyBatteryWindow.redraw(true);
     Ion::Timing::msleep(3000);
     Ion::Power::suspend();

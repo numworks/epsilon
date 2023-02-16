@@ -15,6 +15,9 @@ ExamPopUpController::ExamPopUpController() :
         Poincare::Preferences::ExamMode previousMode = Poincare::Preferences::sharedPreferences->examMode();
         assert(mode != Poincare::Preferences::ExamMode::Unknown);
         assert(mode == Poincare::Preferences::ExamMode::PressToTest || controller->targetPressToTestParams().isInactive());
+        if (Ion::Authentication::clearanceLevel() != Ion::Authentication::ClearanceLevel::NumWorks) {
+          Ion::Reset::core();
+        }
         Poincare::Preferences::sharedPreferences->setExamMode(mode, controller->targetPressToTestParams());
         AppsContainer * container = AppsContainer::sharedAppsContainer();
         if (mode == Poincare::Preferences::ExamMode::Off) {

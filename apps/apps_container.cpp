@@ -361,15 +361,11 @@ void AppsContainer::redrawWindow() {
 
 void AppsContainer::activateExamMode(Poincare::Preferences::ExamMode examMode) {
   assert(examMode != Poincare::Preferences::ExamMode::Off && examMode != Poincare::Preferences::ExamMode::Unknown);
-  if (Ion::Authentication::clearanceLevel() == Ion::Authentication::ClearanceLevel::NumWorks) {
-    reset();
-    KDColor color = ExamModeConfiguration::examModeColor(examMode);
-    if (color != KDColorBlack) {
-      Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
-      Ion::LED::setBlinking(1000, 0.1f);
-    }
-  } else {
-    Ion::Reset::core();
+  reset();
+  KDColor color = ExamModeConfiguration::examModeColor(examMode);
+  if (color != KDColorBlack) {
+    Ion::LED::setColor(ExamModeConfiguration::examModeColor(examMode));
+    Ion::LED::setBlinking(1000, 0.1f);
   }
 }
 

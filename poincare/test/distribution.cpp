@@ -1,5 +1,6 @@
 #include "helper.h"
 #include <poincare/chi2_distribution.h>
+#include <poincare/normal_distribution.h>
 #include <poincare/student_distribution.h>
 #include <algorithm>
 #include <cmath>
@@ -259,4 +260,20 @@ QUIZ_CASE(probability_chi2_law) {
                      0.f);
   assert_roughly_equal<float>(Chi2Distribution::CumulativeDistributiveInverseForProbability<float>(1, 5.f),
                      INFINITY);
+}
+
+QUIZ_CASE(poincare_normal_distribution_find_parameters) {
+  NormalDistribution normalDistribution;
+  // Compute mu
+  double parameters1[2] = {NAN, 3.};
+  assert_roughly_equal<double>(normalDistribution.evaluateParameterForProbabilityAndBound(0, parameters1, 0.75, 2., true), -0.02347, 1.e-3);
+  assert_roughly_equal<double>(normalDistribution.evaluateParameterForProbabilityAndBound(0, parameters1, 0.75, 2., false), 4.023, 1.e-3);
+
+  // Compute sigma
+  double parameters2[2] = {1., NAN};
+  assert_roughly_equal<double>(normalDistribution.evaluateParameterForProbabilityAndBound(1, parameters2, 0.8, -3., false), 4.753, 1.e-3);
+  // Impossible value for mu
+  assert_roughly_equal<double>(normalDistribution.evaluateParameterForProbabilityAndBound(1, parameters2, 0.8, -3., true), NAN, 1.e-3, true);
+  // Infinite values for mu
+  assert_roughly_equal<double>(normalDistribution.evaluateParameterForProbabilityAndBound(1, parameters2, 0.5, 1., true), NAN, 1.e-3, true);
 }

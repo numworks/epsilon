@@ -44,7 +44,11 @@ void SumGraphController::viewWillAppear() {
 }
 
 void SumGraphController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(m_legendView.textField());
+  /* Do not set the textField as first responder when displaying the result
+   * so that Copy and Sto apply on the result. */
+  if (m_step != Step::Result) {
+    Container::activeApp()->setFirstResponder(m_legendView.textField());
+  }
 }
 
 bool SumGraphController::handleEvent(Ion::Events::Event event) {
@@ -178,7 +182,11 @@ bool SumGraphController::handleEnter() {
     StackViewController *stack = (StackViewController *)parentResponder();
     stack->pop();
   } else {
-    if (m_step == Step::FirstParameter) {
+    Step currentStep = m_step;
+    /* Set the step now so that setFirstResponder know it does not need to set
+     * the textField as first responder. */
+    m_step = (Step)((int)m_step + 1);
+    if (currentStep == Step::FirstParameter) {
       m_startSum = m_cursor->x();
       m_graphView->setAreaHighlight(m_startSum, m_startSum);
     } else {
@@ -186,7 +194,6 @@ bool SumGraphController::handleEnter() {
       m_graphView->setCursorView(nullptr);
       Container::activeApp()->setFirstResponder(this);
     }
-    m_step = (Step)((int)m_step + 1);
     reloadBannerView();
   }
   return true;

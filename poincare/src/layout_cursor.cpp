@@ -101,7 +101,7 @@ static bool IsEmptyChildOfGridLayout(Layout l) {
   return l.isEmpty() && !parent.isUninitialized() && GridLayoutNode::IsGridLayoutType(parent.type());
 }
 
-static Layout PointedLayoutWhenCursorIsLeftOrRightOfThis(Layout l, OMG::HorizontalDirection direction) {
+static Layout LeftOrRightMostLayout(Layout l, OMG::HorizontalDirection direction) {
   return l.isHorizontal() ? (l.childAtIndex(direction == OMG::HorizontalDirection::Left ? 0 : l.numberOfChildren() - 1) ) : l;
 }
 
@@ -138,22 +138,43 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
   // - Step 1 - Delete selection
   deleteAndResetSelection();
 
-  // - Step 2 - Add empty row to grid layout if needed
+  /* - Step 2 - Add empty row to grid layout if needed
+   * When an empty child at the bottom or right of the grid is filled,
+   * an empty row/column is added below/on the right.
+   */
   if (IsEmptyChildOfGridLayout(m_layout)) {
     static_cast<GridLayoutNode *>(m_layout.parent().node())->willFillEmptyChildAtIndex(m_layout.parent().indexOfChild(m_layout));
   }
 
   /* - Step 3 - Close brackets on the left/right
-   * Do not close parentheses if an open parenthesis is inserted */
-  bool leftMostChildIsOpenBracket = IsTemporaryAutocompletedBracketPair(PointedLayoutWhenCursorIsLeftOrRightOfThis(layout, OMG::HorizontalDirection::Left), AutocompletedBracketPairLayoutNode::Side::Left);
-  bool rightMostChildIsOpenBracket = IsTemporaryAutocompletedBracketPair(PointedLayoutWhenCursorIsLeftOrRightOfThis(layout, OMG::HorizontalDirection::Right), AutocompletedBracketPairLayoutNode::Side::Right);
-
+   *
+   * For example, if the current layout is "(3+4]|" (where "|"" is the cursor
+   * and "]" is a temporary parenthesis), inserting something on the right
+   * should make the parenthesis permanent.
+   * "(3+4]|" -> insert "x" -> "(3+4)x|"
+   *
+   * But if a new parenthesis is inserted, you might not want to make the
+   * previous one permanent.
+   * "(3+4]|" -> insert "[)" -> "(3+4][)|" -> balance brackets -> "(3+4)|"
+   * The parenthesis should not be made permanent if the newly inserted one is
+   * temporary on its other side.
+   * */
   Layout leftL = leftLayout();
   Layout rightL = rightLayout();
-  if (!leftMostChildIsOpenBracket && !leftL.isUninitialized() && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(leftL.type())) {
+  /* Check if the left layout of the inserted layout is a bracket opened on the
+   * left.
+   * Ex: If layout = "[)+4" -> left layout is a bracket opened on its left
+   *     If layout = "(]+4" -> left layout is NOT a bracket opened on is left
+   */
+  if (!IsTemporaryAutocompletedBracketPair(LeftOrRightMostLayout(layout, OMG::HorizontalDirection::Left), AutocompletedBracketPairLayoutNode::Side::Left) &&
+      !leftL.isUninitialized() &&
+      AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(leftL.type())) {
     static_cast<AutocompletedBracketPairLayoutNode *>(leftL.node())->makeThisAndChildrenPermanent(AutocompletedBracketPairLayoutNode::Side::Right);
   }
-  if (!rightMostChildIsOpenBracket && !rightL.isUninitialized() && AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(rightL.type())) {
+  /* Same than above with right side. */
+  if (!IsTemporaryAutocompletedBracketPair(LeftOrRightMostLayout(layout, OMG::HorizontalDirection::Right), AutocompletedBracketPairLayoutNode::Side::Right) &&
+      !rightL.isUninitialized() &&
+      AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(rightL.type())) {
     static_cast<AutocompletedBracketPairLayoutNode *>(rightL.node())->makeThisAndChildrenPermanent(AutocompletedBracketPairLayoutNode::Side::Left);
   }
 
@@ -850,6 +871,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
       int currentIndex = m_layout.parent().indexOfChild(m_layout);
       int currentRow = gridNode->rowAtChildIndex(currentIndex);
       assert(currentRow > 0 && gridNode->numberOfColumns() >= 2);
+      // - 2 because we want to go the the rightmost column that is not gray
       newIndex = gridNode->indexAtRowColumn(currentRow - 1, gridNode->numberOfColumns() - 2);
     }
     m_layout = m_layout.parent().childAtIndex(newIndex);
@@ -944,7 +966,6 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(Layout l, OMG::Horizontal
   int idxInParent = p.indexOfChild(l);
   int numberOfSiblings = p.numberOfChildren();
   int numberOfOpenParenthesis = 0;
-  bool canCollapse = true;
 
   assert(absorbingChild.isHorizontal()); // Empty is always horizontal
   HorizontalLayout horizontalAbsorbingChild = static_cast<HorizontalLayout&>(absorbingChild);
@@ -953,11 +974,8 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(Layout l, OMG::Horizontal
   int step = direction == OMG::HorizontalDirection::Right ? 1 : - 1;
   /* Loop through the siblings and add them into l until an uncollapsable
    * layout is encountered. */
-  while (canCollapse) {
-    if (direction == OMG::HorizontalDirection::Right && idxInParent == numberOfSiblings - 1) {
-      break;
-    }
-    if (direction == OMG::HorizontalDirection::Left && idxInParent == 0) {
+  while (true) {
+    if (idxInParent == (direction == OMG::HorizontalDirection::Right ? numberOfSiblings - 1 : 0)) {
       break;
     }
     int siblingIndex = idxInParent + step;
@@ -980,6 +998,18 @@ void LayoutCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
   if (!m_layout.isHorizontal()) {
     return;
   }
+  /* Find the top horizontal layout for balancing brackets.
+   *
+   * This might go again through already balanced brackets but it's safer
+   * in order to ensure that all brackets are always balanced after an
+   * insertion or a deletion.
+   *
+   * Stop if the parent of the currentLayout is not horizontal neither
+   * a bracket.
+   * Ex: When balancing the brackets inside the numerator of a fraction,
+   * it's useless to take the parent horizontal layout of the fraction, since
+   * brackets outside of the fraction won't impact the ones inside the fraction
+   * */
   Layout currentLayout = m_layout;
   Layout currentParent = currentLayout.parent();
   while (!currentParent.isUninitialized() && (currentParent.isHorizontal() || AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(currentParent.type()))) {

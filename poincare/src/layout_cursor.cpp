@@ -153,32 +153,40 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
    * should make the parenthesis permanent.
    * "(3+4]|" -> insert "x" -> "(3+4)x|"
    *
-   * But if a new parenthesis is inserted, you might not want to make the
-   * previous one permanent.
-   * "(3+4]|" -> insert "[)+2" -> "(3+4][)+2|"
-   * So if the newly inserted one is temporary on its other side, the current
-   * bracket is not made permanent here.
+   * There is an exception to this: If a new parenthesis, temporary on the
+   * other side, is inserted, you only want to make the inner brackets
+   * permanent.
    *
+   * Examples:
+   * "(3+4]|" -> insert "[)+2" -> "(3+4][)+2|"
+   * The newly inserted one is temporary on its other side, so the current
+   * bracket is not made permanent.
    * Later at Step 9, balanceAutocompletedBrackets will make it so:
-   * "(3+4][)+2|" -> balance brackets -> "(3+4)+2|"
+   * "(3+4][)+2|" -> "(3+4)+2|"
+   *
+   * "(1+(3+4]]|" -> insert "[)+2" -> "(1+(3+4)][)+2|"
+   * The newly inserted one is temporary on its other side, so the current
+   * bracket is not made permanent, but its inner bracket is made permanent.
+   * Later at Step 9, balanceAutocompletedBrackets will make it so:
+   * "(1+(3+4)][)+2|" -> "(1+3(3+4))+2|"
    * */
   Layout leftL = leftLayout();
   Layout rightL = rightLayout();
-  /* Check if the left layout of the inserted layout is a bracket opened on the
-   * left.
-   * Ex: If layout = "[)+4" -> left layout is a bracket opened on its left
-   *     If layout = "(]+4" -> left layout is NOT a bracket opened on is left
-   */
-  if (!IsTemporaryAutocompletedBracketPair(LeftOrRightMostLayout(layout, OMG::HorizontalDirection::Left), AutocompletedBracketPairLayoutNode::Side::Left) &&
-      !leftL.isUninitialized() &&
+  if (!leftL.isUninitialized() &&
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(leftL.type())) {
-    static_cast<AutocompletedBracketPairLayoutNode *>(leftL.node())->makeThisAndChildrenPermanent(AutocompletedBracketPairLayoutNode::Side::Right);
+    static_cast<AutocompletedBracketPairLayoutNode *>(leftL.node())->makeChildrenPermanent(
+      AutocompletedBracketPairLayoutNode::Side::Right,
+      !IsTemporaryAutocompletedBracketPair(
+        LeftOrRightMostLayout(layout, OMG::HorizontalDirection::Left),
+        AutocompletedBracketPairLayoutNode::Side::Left));
   }
-  /* Same than above with right side. */
-  if (!IsTemporaryAutocompletedBracketPair(LeftOrRightMostLayout(layout, OMG::HorizontalDirection::Right), AutocompletedBracketPairLayoutNode::Side::Right) &&
-      !rightL.isUninitialized() &&
+  if (!rightL.isUninitialized() &&
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(rightL.type())) {
-    static_cast<AutocompletedBracketPairLayoutNode *>(rightL.node())->makeThisAndChildrenPermanent(AutocompletedBracketPairLayoutNode::Side::Left);
+    static_cast<AutocompletedBracketPairLayoutNode *>(rightL.node())->makeChildrenPermanent(
+      AutocompletedBracketPairLayoutNode::Side::Left,
+      !IsTemporaryAutocompletedBracketPair(
+        LeftOrRightMostLayout(layout, OMG::HorizontalDirection::Right),
+        AutocompletedBracketPairLayoutNode::Side::Right));
   }
 
   /* - Step 4 - Add parenthesis around vertical offset

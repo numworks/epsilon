@@ -81,5 +81,5 @@ android {
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   implementation "androidx.appcompat:appcompat:1.0.2"
-  implementation "com.google.android.gms:play-services-analytics:17.0.0"
+  implementation "com.google.android.gms:play-services-analytics:18.0.1"
 }

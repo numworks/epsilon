@@ -155,9 +155,12 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
    *
    * But if a new parenthesis is inserted, you might not want to make the
    * previous one permanent.
-   * "(3+4]|" -> insert "[)" -> "(3+4][)|" -> balance brackets -> "(3+4)|"
-   * The parenthesis should not be made permanent if the newly inserted one is
-   * temporary on its other side.
+   * "(3+4]|" -> insert "[)+2" -> "(3+4][)+2|"
+   * So if the newly inserted one is temporary on its other side, the current
+   * bracket is not made permanent here.
+   *
+   * Later at Step 9, balanceAutocompletedBrackets will make it so:
+   * "(3+4][)+2|" -> balance brackets -> "(3+4)+2|"
    * */
   Layout leftL = leftLayout();
   Layout rightL = rightLayout();
@@ -326,8 +329,12 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     return;
   }
 
-  HorizontalLayout currentLayout = HorizontalLayout::Builder();
-  Layout layoutToInsert = currentLayout;
+  /* - Step 1 -
+   * Read the text from left to right and create an Horizontal layout
+   * containing the layouts corresponding to each code point. */
+  HorizontalLayout layoutToInsert = HorizontalLayout::Builder();
+  HorizontalLayout currentLayout = layoutToInsert;
+  // This is only used to check if we properly left the last subscript
   int currentSubscriptDepth = 0;
 
   while (codePoint != UCodePointNull) {
@@ -342,10 +349,15 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     /* TODO: The insertion of subscripts should be replaced with a parser
      * that creates layout. This is a draft of this. */
 
-    // Handle subscripts
+    /* - Step 1.1 - Handle subscripts
+     * Subscripts are serialized as "\x14{...\x14}". When the code points
+     * "\x14{" are encountered by the decoder, create a subscript layout
+     * and continue insertion in it. When the code points "\x14}" are
+     * encountered, leave the subscript and continue the insertion in its
+     * parent. */
     if (codePoint == UCodePointSystem) {
-      /* System braces are converted to subscript */
       if (nextCodePoint == '{') {
+        // Enter a subscript
         Layout newChild = VerticalOffsetLayout::Builder(HorizontalLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
         currentSubscriptDepth++;
         nextCodePoint = decoder.nextCodePoint();
@@ -371,7 +383,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       continue;
     }
 
-    // Handle code points and brackets
+    // - Step 1.2 - Handle code points and brackets
     Layout newChild;
     LayoutNode::Type bracketType;
     AutocompletedBracketPairLayoutNode::Side bracketSide;
@@ -388,8 +400,9 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     currentLayout.addOrMergeChildAtIndex(newChild, currentLayout.numberOfChildren());
     codePoint = nextCodePoint;
   }
-
   assert(currentSubscriptDepth == 0);
+
+  // - Step 2 - Inserted the created layout
   insertLayoutAtCursor(layoutToInsert, context, forceCursorRightOfText, forceCursorLeftOfText);
 
   // TODO: Restore beautification

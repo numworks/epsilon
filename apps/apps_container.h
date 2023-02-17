@@ -59,6 +59,9 @@ public:
   // Ion::StorageDelegate
   void storageDidChangeForRecord(const Ion::Storage::Record record) override;
   void storageIsFull() override;
+  #ifdef EPSILON_GETOPT
+  void setStartApp(App::Snapshot * snapshot) { m_startAppSnapshot = snapshot; }
+  #endif
 protected:
   Home::App::Snapshot * homeAppSnapshot() { return &m_homeSnapshot; }
 private:
@@ -89,6 +92,9 @@ private:
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;
   USB::App::Snapshot m_usbConnectedSnapshot;
   XNTLoop m_XNTLoop;
+  #ifdef EPSILON_GETOPT
+  App::Snapshot * m_startAppSnapshot;
+  #endif
 };
 
 #endif

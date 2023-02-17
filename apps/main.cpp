@@ -1,6 +1,7 @@
 #include "apps_container.h"
 #include "global_preferences.h"
 #include <poincare/init.h>
+#include <string.h>
 
 #define DUMMY_MAIN 0
 #if DUMMY_MAIN
@@ -50,13 +51,29 @@ void ion_main(int argc, const char * const argv[]) {
       }
       continue;
     }
+
+    /* Option should be given at run-time:
+     * $ ./epsilon.elf --open-app code
+     */
+    const char * appNames[] = {"home", EPSILON_APPS_NAMES};
+    if (strcmp(argv[i], "--open-app") == 0 && argc > i+1) {
+      const char * requestedAppName = argv[i+1];
+      for (int j = 0; j < AppsContainer::sharedAppsContainer()->numberOfApps(); j++) {
+        App::Snapshot * snapshot = AppsContainer::sharedAppsContainer()->appSnapshotAtIndex(j);
+        if (strcmp(requestedAppName, appNames[j]) == 0) {
+          AppsContainer::sharedAppsContainer()->setStartApp(snapshot);
+          break;
+        }
+      }
+      continue;
+    }
+
     /* Option should be given at run-time:
      * $ ./epsilon.elf --[app_name]-[option] [arguments]
      * For example:
      * $ make -j8 PLATFORM=emscripten EPSILON_APPS=code
      * $ ./epsilon.elf --code-script hello_world.py:print("hello") --code-lock-on-console
      */
-    const char * appNames[] = {"home", EPSILON_APPS_NAMES};
     for (int j = 0; j < AppsContainer::sharedAppsContainer()->numberOfApps(); j++) {
       App::Snapshot * snapshot = AppsContainer::sharedAppsContainer()->appSnapshotAtIndex(j);
       // Compare name in order to find if the firsts chars which are different are NULL and '-'

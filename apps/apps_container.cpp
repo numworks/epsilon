@@ -37,7 +37,8 @@ AppsContainer::AppsContainer() :
   m_homeSnapshot(),
   m_onBoardingSnapshot(),
   m_hardwareTestSnapshot(),
-  m_usbConnectedSnapshot()
+  m_usbConnectedSnapshot(),
+  m_startAppSnapshot()
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), false);
 // #if __EMSCRIPTEN__
@@ -346,7 +347,13 @@ void AppsContainer::run() {
     /* Normal execution. The exception checkpoint must be created before
      * switching to the first app, because the first app might create nodes on
      * the pool. */
-    bool switched = switchTo(initialAppSnapshot());
+    bool switched;
+    if (m_startAppSnapshot != nullptr) {
+      switched = switchTo(m_startAppSnapshot);
+    } else {
+      switched = switchTo(initialAppSnapshot());
+    }
+
     assert(switched);
     (void) switched; // Silence compilation warning about unused variable.
   } else {

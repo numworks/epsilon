@@ -31,8 +31,15 @@ LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(in
   if (childIndex == k_outsideIndex){
     return DeletionMethod::MoveLeft;
   }
+
+  assert(isEditing());
   int rowIndex = rowAtChildIndex(childIndex);
   int columnIndex = columnAtChildIndex(childIndex);
+  if (rowIndex == 0 && minimalNumberOfChildrenWhileEditing() == numberOfChildren()) {
+    // If only one child is filled, delete the grid and keep the child.
+    return DeletionMethod::DeleteParent;
+  }
+
   bool deleteWholeRow = !numberOfRowsIsFixed() && childIsLeftOfGrid(childIndex) && !childIsBottomOfGrid(childIndex) && isRowEmpty(rowIndex);
   bool deleteWholeColumn = !numberOfColumnsIsFixed() && childIsTopOfGrid(childIndex) && !childIsRightOfGrid(childIndex) && isColumnEmpty(columnIndex);
   if (deleteWholeRow || deleteWholeColumn) {
@@ -40,17 +47,11 @@ LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(in
      * empty row deletes the whole column/row. */
     return deleteWholeRow && deleteWholeColumn ? DeletionMethod::GridLayoutDeleteColumnAndRow : (deleteWholeRow ? DeletionMethod::GridLayoutDeleteRow : DeletionMethod::GridLayoutDeleteColumn);
   }
-  if (!childIsLeftOfGrid(childIndex)) {
-    return DeletionMethod::MoveLeft;
+
+  if (childIsLeftOfGrid(childIndex) && rowIndex != 0) {
+    return DeletionMethod::GridLayoutMoveToUpperRow;
   }
-  assert(childIsLeftOfGrid(childIndex));
-  assert(isEditing());
-  if (rowIndex == 0) {
-    /* If only one child is filled, delete the grid and keep the child.
-     * Else just leave the grid. */
-    return minimalNumberOfChildrenWhileEditing() == numberOfChildren() ? DeletionMethod::DeleteParent : DeletionMethod::MoveLeft;
-  }
-  return DeletionMethod::GridLayoutMoveToUpperRow;
+  return DeletionMethod::MoveLeft;
 }
 
 void GridLayoutNode::willFillEmptyChildAtIndex(int childIndex) {

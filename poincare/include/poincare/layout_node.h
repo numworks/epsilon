@@ -99,13 +99,13 @@ public:
   constexpr static int k_outsideIndex = -1;
   constexpr static int k_cantMoveIndex = -2;
   // Default implementation only handles cases of 0 or 1 child
-  virtual int indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout);
+  virtual int indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout);
   enum class PositionInLayout : uint8_t {
     Left,
     Middle,
     Right
   };
-  virtual int indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout);
+  virtual int indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout);
 
   // Cursor deletion
   enum class DeletionMethod {

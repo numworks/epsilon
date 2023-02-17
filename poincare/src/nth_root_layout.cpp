@@ -34,9 +34,9 @@ bool NthRootLayoutNode::isSquareRoot() const {
   return false;
 }
 
-int NthRootLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
+int NthRootLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   if (!m_hasIndex) {
-    return LayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndex, shouldRedrawLayout);
+    return LayoutNode::indexAfterHorizontalCursorMove(direction, currentIndex, shouldRedrawLayout);
   }
   switch (currentIndex) {
   case k_outsideIndex:
@@ -49,7 +49,7 @@ int NthRootLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::H
   }
 }
 
-int NthRootLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+int NthRootLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (!m_hasIndex) {
     return k_cantMoveIndex;
   }

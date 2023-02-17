@@ -33,7 +33,7 @@ const uint8_t bottomSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayo
   {0x09, 0x46, 0xD5, 0xFF},
 };
 
-int IntegralLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
+int IntegralLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   switch (currentIndex) {
   case k_outsideIndex:
     return direction == OMG::HorizontalDirection::Right ? k_upperBoundLayoutIndex : k_differentialLayoutIndex;
@@ -48,7 +48,7 @@ int IntegralLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::
   }
 }
 
-int IntegralLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+int IntegralLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (currentIndex == k_integrandLayoutIndex && positionAtCurrentIndex == PositionInLayout::Left) {
     return direction == OMG::VerticalDirection::Up ? k_upperBoundLayoutIndex : k_lowerBoundLayoutIndex;
   }

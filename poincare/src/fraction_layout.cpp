@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-int FractionLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
+int FractionLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   if (currentIndex == k_outsideIndex) {
     /* When coming from the left, go to the numerator.
      * When coming from the right, go to the denominator. */
@@ -17,7 +17,7 @@ int FractionLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::
   return k_outsideIndex;
 }
 
-int FractionLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+int FractionLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   switch (currentIndex) {
   case k_outsideIndex:
     return direction == OMG::VerticalDirection::Up ? k_numeratorIndex : k_denominatorIndex;

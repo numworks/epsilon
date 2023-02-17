@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-int BinomialCoefficientLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
+int BinomialCoefficientLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   if (currentIndex == k_outsideIndex) {
     /* When coming from the left, go to the n layout.
      * When coming from the right, go to the k layout. */
@@ -17,7 +17,7 @@ int BinomialCoefficientLayoutNode::indexOfNextChildToPointToAfterHorizontalCurso
   return k_outsideIndex;
 }
 
-int BinomialCoefficientLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+int BinomialCoefficientLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (currentIndex == k_kLayoutIndex && direction == OMG::VerticalDirection::Up) {
     return k_nLayoutIndex;
   }

@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-int SequenceLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
+int SequenceLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   switch (currentIndex) {
   case k_outsideIndex:
     return direction == OMG::HorizontalDirection::Right ? k_upperBoundLayoutIndex : k_argumentLayoutIndex;
@@ -24,7 +24,7 @@ int SequenceLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::
   }
 }
 
-int SequenceLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+int SequenceLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (direction == OMG::VerticalDirection::Up &&
       ((currentIndex == k_variableLayoutIndex || currentIndex == k_lowerBoundLayoutIndex) ||
        (positionAtCurrentIndex == PositionInLayout::Left && (currentIndex == k_outsideIndex || currentIndex == k_argumentLayoutIndex))))

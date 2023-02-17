@@ -240,4 +240,68 @@ QUIZ_CASE(pcj_integer_factorial) {
   assert_factorial_to("123", "12146304367025329675766243241881295855454217088483382315328918161829235892362167668831156960612640202170735835221294047782591091570411651472186029519906261646730733907419814952960000000000000000000000000000");
 }
 
-// TODO test overflow!
+static inline void assert_might_overflow(ActionWithContext action, bool overflow) {
+  CachePool * cachePool = CachePool::sharedCachePool();
+  const Node tree = cachePool->nodeForIdentifier(cachePool->execute(action, nullptr, nullptr));
+  quiz_assert(tree.isUninitialized() == overflow);
+}
+
+static inline void assert_did_overflow(ActionWithContext action) {
+  assert_might_overflow(action, true);
+}
+
+static inline void assert_did_not_overflow(ActionWithContext action) {
+  assert_might_overflow(action, false);
+}
+
+QUIZ_CASE(pcj_integer_overflows) {
+  // Contrsutction
+  assert_did_overflow(
+      [] (void * subAction, const void * data) {
+        CreateIntegerHandler(OverflowedIntegerString());
+      }
+    );
+  assert_did_not_overflow(
+      [] (void * subAction, const void * data) {
+        CreateIntegerHandler(MaxIntegerString());
+      }
+    );
+
+  // Operations
+  assert_did_overflow(
+    [] (void * subAction, const void * data) {
+      EditionReference a = CreateInteger(MaxIntegerString());
+      EditionReference b = CreateInteger("1");
+      IntegerHandler::Addition(Integer::Handler(a), Integer::Handler(b));
+      a.removeTree();
+      b.removeTree();
+    }
+  );
+  assert_did_not_overflow(
+    [] (void * subAction, const void * data) {
+      EditionReference a = CreateInteger(MaxIntegerString());
+      EditionReference b = CreateInteger("1");
+      IntegerHandler::Subtraction(Integer::Handler(a), Integer::Handler(b));
+      a.removeTree();
+      b.removeTree();
+    }
+  );
+  assert_did_overflow(
+    [] (void * subAction, const void * data) {
+      EditionReference a = CreateInteger(MaxIntegerString());
+      EditionReference b = CreateInteger("2");
+      IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
+      a.removeTree();
+      b.removeTree();
+    }
+  );
+  assert_did_not_overflow(
+    [] (void * subAction, const void * data) {
+      EditionReference a = CreateInteger(MaxIntegerString());
+      EditionReference b = CreateInteger("1");
+      IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
+      a.removeTree();
+      b.removeTree();
+    }
+  );
+}

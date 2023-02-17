@@ -27,13 +27,13 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/vertical_offset_layout.cpp \
   layout.cpp \
   memory/cache_pool.cpp \
-  memory/cache_reference.cpp \
   memory/edition_pool.cpp \
   memory/edition_reference.cpp \
   memory/exception_checkpoint.cpp \
   memory/node.cpp \
   memory/pattern_matching.cpp \
   memory/pool.cpp \
+  memory/reference.cpp \
   n_ary.cpp \
 )
 

@@ -1,7 +1,7 @@
 #ifndef POINCARE_MEMORY_CACHE_POOL_H
 #define POINCARE_MEMORY_CACHE_POOL_H
 
-#include "cache_reference.h"
+#include "reference.h"
 #include "edition_pool.h"
 
 namespace PoincareJ {

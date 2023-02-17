@@ -1,16 +1,16 @@
 #ifndef POINCARE_EXPRESSION_H
 #define POINCARE_EXPRESSION_H
 
-#include <poincare_junior/src/memory/cache_reference.h>
+#include <poincare_junior/src/memory/reference.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/include/layout.h>
 
 namespace PoincareJ {
 
-class Expression final : public CacheReference {
+class Expression final : public Reference {
 public:
-  Expression(const Node tree) : CacheReference(tree) { assert(tree.block()->isExpression()); }
-  using CacheReference::CacheReference;
+  Expression(const Node tree) : Reference(tree) { assert(tree.block()->isExpression()); }
+  using Reference::Reference;
   // TODO : Delete this method and adapt tests ?
   static Expression Parse(const char * text);
   static Expression Parse(const Layout * layout);
@@ -22,7 +22,7 @@ private:
   static EditionReference EditionPoolLayoutToExpression(Node node);
 };
 
-static_assert(sizeof(Expression) == sizeof(CacheReference));
+static_assert(sizeof(Expression) == sizeof(Reference));
 
 }
 

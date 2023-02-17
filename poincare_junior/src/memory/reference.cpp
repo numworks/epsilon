@@ -1,4 +1,4 @@
-#include "cache_reference.h"
+#include "reference.h"
 #include "cache_pool.h"
 #include <ion.h>
 #include "stddef.h"
@@ -19,7 +19,7 @@ SharedPointer::SharedPointer(const void * data
 #if ASSERTIONS
   m_checksum = checksum(data, dataSize);
 #endif
-  // CacheReference data cannot live in the CachePool
+  // Reference data cannot live in the CachePool
   assert(!CachePool::sharedCachePool()->mayContain(static_cast<const Block *>(m_data)));
 }
 
@@ -31,10 +31,10 @@ uint32_t SharedPointer::checksum(const void * data, size_t dataSize) const {
 
 #endif
 
-// CacheReference
+// Reference
 
-CacheReference::CacheReference() :
-  CacheReference(
+Reference::Reference() :
+  Reference(
     nullptr,
     nullptr,
     nullptr
@@ -44,8 +44,8 @@ CacheReference::CacheReference() :
   )
 {}
 
-CacheReference::CacheReference(const Node tree) :
-  CacheReference(
+Reference::Reference(const Node tree) :
+  Reference(
     nullptr,
     nullptr,
     tree.block()
@@ -55,8 +55,8 @@ CacheReference::CacheReference(const Node tree) :
   )
 {}
 
-CacheReference::CacheReference(Initializer initializer) :
-  CacheReference(
+Reference::Reference(Initializer initializer) :
+  Reference(
     [](void * initializer, const void * data) {
       return reinterpret_cast<Initializer>(initializer)();
     },
@@ -68,8 +68,8 @@ CacheReference::CacheReference(Initializer initializer) :
   )
 {}
 
-CacheReference::CacheReference(InitializerFromString initializer, const char * string) :
-  CacheReference(
+Reference::Reference(InitializerFromString initializer, const char * string) :
+  Reference(
     [](void * initializer, const void * data) {
       return (reinterpret_cast<InitializerFromString>(initializer))(static_cast<const char *>(data));
     },
@@ -81,8 +81,8 @@ CacheReference::CacheReference(InitializerFromString initializer, const char * s
   )
 {}
 
-CacheReference::CacheReference(InitializerFromTreeInplace initializer, const Node tree) :
-  CacheReference(
+Reference::Reference(InitializerFromTreeInplace initializer, const Node tree) :
+  Reference(
     [](void * initializer, const void * data) {
       Node editedTree = EditionPool::sharedEditionPool()->initFromAddress(data);
       return (reinterpret_cast<InitializerFromTreeInplace>(initializer))(editedTree);
@@ -95,10 +95,10 @@ CacheReference::CacheReference(InitializerFromTreeInplace initializer, const Nod
   )
 {}
 
-CacheReference::CacheReference(InitializerFromTreeInplace initializer, const CacheReference * treeReference) :
-  CacheReference(
+Reference::Reference(InitializerFromTreeInplace initializer, const Reference * treeReference) :
+  Reference(
     [](void * initializer, const void * data) {
-      const CacheReference * treeReference = static_cast<const CacheReference *>(data);
+      const Reference * treeReference = static_cast<const Reference *>(data);
       return treeReference->send(
           [](const Node tree, void * context) {
             /* Copy the cache Node into the EditionPool for inplace editing.
@@ -112,15 +112,15 @@ CacheReference::CacheReference(InitializerFromTreeInplace initializer, const Cac
     reinterpret_cast<void *>(initializer),
     treeReference
 #if ASSERTIONS
-    // Only checksum the non-mutable members of CacheReference
-    , offsetof(CacheReference, m_id)
+    // Only checksum the non-mutable members of Reference
+    , offsetof(Reference, m_id)
 #endif
   )
 {
-  static_assert(offsetof(CacheReference, m_id) == sizeof(CacheReference) - alignof(CacheReference), "CacheReference::m_id must be the last member.");
+  static_assert(offsetof(Reference, m_id) == sizeof(Reference) - alignof(Reference), "Reference::m_id must be the last member.");
 }
 
-void CacheReference::send(FunctionOnConstTree function, void * context) const {
+void Reference::send(FunctionOnConstTree function, void * context) const {
   assert(isInitialized());
   const Node tree = isCacheReference()
                     ? CachePool::sharedCachePool()->nodeForIdentifier(id())
@@ -128,7 +128,7 @@ void CacheReference::send(FunctionOnConstTree function, void * context) const {
   return function(tree, context);
 }
 
-void CacheReference::dumpAt(void * address) const {
+void Reference::dumpAt(void * address) const {
   send(
     [](const Node tree, void * buffer) {
       memcpy(buffer, tree.block(), tree.treeSize());
@@ -137,7 +137,7 @@ void CacheReference::dumpAt(void * address) const {
   );
 }
 
-size_t CacheReference::treeSize() const {
+size_t Reference::treeSize() const {
   size_t result;
   send(
     [](const Node tree, void * result) {
@@ -148,14 +148,14 @@ size_t CacheReference::treeSize() const {
   return result;
 }
 
-bool CacheReference::treeIsIdenticalTo(const CacheReference &other) const {
+bool Reference::treeIsIdenticalTo(const Reference &other) const {
   const Node tree = CachePool::sharedCachePool()->nodeForIdentifier(id());
   const Node otherTree = CachePool::sharedCachePool()->nodeForIdentifier(other.id());
   return tree.treeIsIdenticalTo(otherTree);
 }
 
 #if POINCARE_MEMORY_TREE_LOG
-void CacheReference::log() {
+void Reference::log() {
   std::cout << "id: " << m_id;
   send(
      [](const Node tree, void * result) {
@@ -166,7 +166,7 @@ void CacheReference::log() {
 }
 #endif
 
-int CacheReference::id() const {
+int Reference::id() const {
   assert(isCacheReference());
   CachePool * cache = CachePool::sharedCachePool();
   const Node tree = cache->nodeForIdentifier(m_id);

@@ -13,11 +13,14 @@ Expressions there are just a memory 'dump' of the sequential trees. There are ne
 
 ### CachePool
 
-Expressions have a temporary lifetime. They're referred to by a id and they're deleted when the cache is full (no new identifiers to attribute) or when the Edition Pool needs more space.
+Most Expressions have a temporary lifetime. They're referred to by a id and are deleted when the cache is full (no new identifiers to attribute) or when the Edition Pool needs more space.
 We still have to decide which cache algorithm we choose: LRU, ref-counter, FIFO, LFU.
 Marc idea: the invalidating function should take into account: last used, time-to-compute, space-taken
 
-Because they're lifetime is unknown, we use CacheReference to interact with them. CacheReference is the combination of a potentially cached tree identifier and a function to rebuild the tree from some data if the tree has been removed from cache.
+Because their lifetime is unknown, we use Reference to interact with them. Reference is the combination of a potentially cached tree identifier and a function to rebuild the tree from some data if the tree has been removed from cache.
+
+Not all References are CacheReference, some can directly reference data (Node) living outside of Cache or Edition pool.
+They have no initializers and special care should be given ensuring the data cannot be corrupted.
 
 #### Cache invalidation
 
@@ -134,7 +137,7 @@ Is this easy enough to implement methods transforming trees?
 
 Implement a profiler mecanism to identify Poincare hot paths.
 
-Divide Poincare folder to hide the internal tools (node, EditionReference, Interfaces...) and expose the useful API (solver, dataset, CacheReference etc).
+Divide Poincare folder to hide the internal tools (node, EditionReference, Interfaces...) and expose the useful API (solver, dataset, Reference etc).
 
 Optional optimization: editing a subtree which is at the beginning of the edited tree is very memcpy expensive. We could move the subtree at the end of the edition pool before doing multiple modification and reinsert it in the tree afterwards.
 

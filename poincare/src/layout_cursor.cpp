@@ -680,8 +680,14 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction, bool * shouldR
 
 static void ScoreCursorInDescendants(KDPoint p, Layout l, KDFont::Size font, LayoutCursor * result) {
   KDCoordinate currentDistance = p.squareDistanceTo(result->middleLeftPoint(font));
-  // Put a cursor left and right of l
-  for (int i = 0; i < 2; i++) {
+  /* Put a cursor left and right of l.
+   * If l.parent is an HorizontalLayout, just put it left since the right
+   * of one child is the left of another one, except if l is the last child.
+   * */
+  Layout parent = l.parent();
+  bool checkOnlyLeft = !parent.isUninitialized() && parent.isHorizontal() && parent.indexOfChild(l) < parent.numberOfChildren() - 1;
+  int numberOfDirectionsToCheck = 1 + !checkOnlyLeft;
+  for (int i = 0; i < numberOfDirectionsToCheck; i++) {
     LayoutCursor tempCursor = LayoutCursor(l, i == 0 ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right);
     if (currentDistance > p.squareDistanceTo(tempCursor.middleLeftPoint(font))) {
       *result = tempCursor;

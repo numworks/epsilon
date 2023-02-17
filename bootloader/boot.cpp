@@ -82,7 +82,7 @@ void Boot::patchKernel(const Slot & s) {
   data[origin_isr + sizeof(uint32_t) * 6 + 1] = ptr[1];
   data[origin_isr + sizeof(uint32_t) * 6 + 2] = ptr[2];
   data[origin_isr + sizeof(uint32_t) * 6 + 3] = ptr[3];
-  
+
   // data[origin_isr + sizeof(uint32_t) * 5] = ptr[0]; // MemManage
   // data[origin_isr + sizeof(uint32_t) * 5 + 1] = ptr[1];
   // data[origin_isr + sizeof(uint32_t) * 5 + 2] = ptr[2];
@@ -107,7 +107,7 @@ void Boot::bootSlot(Bootloader::Slot s) {
   if (!s.userlandHeader()->isOmega() && !s.userlandHeader()->isUpsilon()) {
     // We are trying to boot epsilon, so we check the version and show an advertisement if needed
     const char * version = s.userlandHeader()->version();
-    const char * min = "20.0.0";
+    const char * min = "20.3.1";
     int versionSum = Utility::versionSum(version, strlen(version));
     int minimalVersionTrigger = Utility::versionSum(min, strlen(min));
     if (versionSum >= minimalVersionTrigger) {

@@ -272,7 +272,7 @@ void initClocks() {
   ahb1enr.setGPIOCEN(true);
   ahb1enr.setGPIODEN(true);
   ahb1enr.setGPIOEEN(true);
-  ahb1enr.setDMA2EN(true);
+  ahb1enr.setDMA2EN(false);
   RCC.AHB1ENR()->set(ahb1enr);
 
   // AHB2 bus
@@ -282,8 +282,8 @@ void initClocks() {
   RCC.AHB3ENR()->setFSMCEN(true);
 
   // APB1 bus
-  // We're using TIM3 for the LEDs
-  RCC.APB1ENR()->setTIM3EN(true);
+  // We're using TIM3 for the LEDs (disabled to stick with E16+ Bootloader)
+  /*RCC.APB1ENR()->setTIM3EN(true); */
   RCC.APB1ENR()->setPWREN(true);
   RCC.APB1ENR()->setRTCAPB(true);
 
@@ -291,7 +291,7 @@ void initClocks() {
   class RCC::APB2ENR apb2enr(0); // Reset value
   apb2enr.setADC1EN(true);
   apb2enr.setSYSCFGEN(true);
-  apb2enr.setUSART6EN(true); // TODO required if building bench target only?
+  apb2enr.setUSART6EN(false); // TODO required if building bench target only? (disabled to stick with E16+ Bootloader)
   RCC.APB2ENR()->set(apb2enr);
 
   // Configure clocks in sleep mode
@@ -300,86 +300,86 @@ void initClocks() {
   ahb1lpenr.setGPIOALPEN(true); // Enable IO port A for Charging/USB plug/Keyboard pins
   ahb1lpenr.setGPIOBLPEN(true); // Enable IO port B for LED pins
   ahb1lpenr.setGPIOCLPEN(true); // Enable IO port C for LED/Keyboard pins
-  ahb1lpenr.setGPIODLPEN(false); // Disable IO port D (LCD...)
+  ahb1lpenr.setGPIODLPEN(true); // Enable IO port D (LCD...)
   ahb1lpenr.setGPIOELPEN(true); // Enable IO port E for Keyboard/Battery pins
-  ahb1lpenr.setGPIOFLPEN(false); // Disable IO port F
-  ahb1lpenr.setGPIOGLPEN(false); // Disable IO port G
-  ahb1lpenr.setGPIOHLPEN(false); // Disable IO port H
-  ahb1lpenr.setGPIOILPEN(false); // Disable IO port I
-  ahb1lpenr.setCRCLPEN(false);
-  ahb1lpenr.setFLITFLPEN(false);
-  ahb1lpenr.setSRAM1LPEN(false);
-  ahb1lpenr.setDMA1LPEN(false);
-  ahb1lpenr.setDMA2LPEN(false);
-  ahb1lpenr.setAXILPEN(false);
-  ahb1lpenr.setSRAM2LPEN(false);
-  ahb1lpenr.setBKPSRAMLPEN(false);
-  ahb1lpenr.setDTCMLPEN(false);
-  ahb1lpenr.setOTGHSLPEN(false);
-  ahb1lpenr.setOTGHSULPILPEN(false);
+  ahb1lpenr.setGPIOFLPEN(true); // Enable IO port F
+  ahb1lpenr.setGPIOGLPEN(true); // Enable IO port G
+  ahb1lpenr.setGPIOHLPEN(true); // Enable IO port H
+  ahb1lpenr.setGPIOILPEN(true); // Enable IO port I
+  ahb1lpenr.setCRCLPEN(true); 
+  ahb1lpenr.setFLITFLPEN(true);
+  ahb1lpenr.setSRAM1LPEN(true);
+  ahb1lpenr.setDMA1LPEN(true);
+  ahb1lpenr.setDMA2LPEN(true);
+  ahb1lpenr.setAXILPEN(true);
+  ahb1lpenr.setSRAM2LPEN(true);
+  ahb1lpenr.setBKPSRAMLPEN(true);
+  ahb1lpenr.setDTCMLPEN(true);
+  ahb1lpenr.setOTGHSLPEN(true);
+  ahb1lpenr.setOTGHSULPILPEN(true);
   RCC.AHB1LPENR()->set(ahb1lpenr);
 
   // AHB2 peripheral clock enable in low-power mode register
   class RCC::AHB2LPENR ahb2lpenr(0x000000F1); // Reset value
-  ahb2lpenr.setOTGFSLPEN(false);
-  ahb2lpenr.setRNGLPEN(false);
-  ahb2lpenr.setAESLPEN(false);
+  ahb2lpenr.setOTGFSLPEN(true);
+  ahb2lpenr.setRNGLPEN(true);
+  ahb2lpenr.setAESLPEN(true);
   RCC.AHB2LPENR()->set(ahb2lpenr);
 
   // AHB3 peripheral clock enable in low-power mode register
   class RCC::AHB3LPENR ahb3lpenr(0x00000003); // Reset value
-  ahb3lpenr.setFMCLPEN(false);
-  ahb3lpenr.setQSPILPEN(false);
+  ahb3lpenr.setFMCLPEN(true);
+  ahb3lpenr.setQSPILPEN(true);
   RCC.AHB3LPENR()->set(ahb3lpenr);
 
   // APB1 peripheral clock enable in low-power mode register
   class RCC::APB1LPENR apb1lpenr(0xFFFFCBFF); // Reset value
-  apb1lpenr.setTIM2LPEN(false);
+  apb1lpenr.setTIM2LPEN(true);
   apb1lpenr.setTIM3LPEN(true); // Enable TIM3 in sleep mode for LEDs
-  apb1lpenr.setTIM4LPEN(false);
-  apb1lpenr.setTIM5LPEN(false);
-  apb1lpenr.setTIM6LPEN(false);
-  apb1lpenr.setTIM7LPEN(false);
-  apb1lpenr.setTIM12LPEN(false);
-  apb1lpenr.setTIM13LPEN(false);
-  apb1lpenr.setTIM14LPEN(false);
-  apb1lpenr.setRTCAPBLPEN(false);
-  apb1lpenr.setWWDGLPEN(false);
-  apb1lpenr.setSPI2LPEN(false);
-  apb1lpenr.setSPI3LPEN(false);
-  apb1lpenr.setUSART2LPEN(false);
-  apb1lpenr.setUSART3LPEN(false);
-  apb1lpenr.setI2C1LPEN(false);
-  apb1lpenr.setI2C2LPEN(false);
-  apb1lpenr.setI2C3LPEN(false);
-  apb1lpenr.setCAN1LPEN(false);
-  apb1lpenr.setPWRLPEN(false);
-  apb1lpenr.setLPTIM1LPEN(false);
-  apb1lpenr.setUSART4LPEN(false);
-  apb1lpenr.setUSART5LPEN(false);
-  apb1lpenr.setOTGHSLPEN(false);
-  apb1lpenr.setOTGHSULPILPEN(false);
+  apb1lpenr.setTIM4LPEN(true);
+  apb1lpenr.setTIM5LPEN(true);
+  apb1lpenr.setTIM6LPEN(true);
+  apb1lpenr.setTIM7LPEN(true);
+  apb1lpenr.setTIM12LPEN(true);
+  apb1lpenr.setTIM13LPEN(true);
+  apb1lpenr.setTIM14LPEN(true);
+  apb1lpenr.setRTCAPBLPEN(true);
+  apb1lpenr.setWWDGLPEN(true);
+  apb1lpenr.setSPI2LPEN(true);
+  apb1lpenr.setSPI3LPEN(true);
+  apb1lpenr.setUSART2LPEN(true);
+  apb1lpenr.setUSART3LPEN(true);
+  apb1lpenr.setI2C1LPEN(true);
+  apb1lpenr.setI2C2LPEN(true);
+  apb1lpenr.setI2C3LPEN(true);
+  apb1lpenr.setCAN1LPEN(true);
+  apb1lpenr.setPWRLPEN(true);
+  apb1lpenr.setLPTIM1LPEN(true);
+  apb1lpenr.setUSART4LPEN(true);
+  apb1lpenr.setUSART5LPEN(true);
+  apb1lpenr.setOTGHSLPEN(true);
+  apb1lpenr.setOTGHSULPILPEN(true);
   RCC.APB1LPENR()->set(apb1lpenr);
 
   // APB2 peripheral clock enable in low-power mode register
   class RCC::APB2LPENR apb2lpenr(0x04F77F33); // Reset value
-  apb2lpenr.setTIM1LPEN(false);
-  apb2lpenr.setTIM8LPEN(false);
-  apb2lpenr.setUSART1LPEN(false);
-  apb2lpenr.setUSART6LPEN(false);
-  apb2lpenr.setADC1LPEN(false);
-  apb2lpenr.setSPI1LPEN(false);
-  apb2lpenr.setSPI4LPEN(false);
-  apb2lpenr.setSYSCFGLPEN(false);
-  apb2lpenr.setTIM9LPEN(false);
-  apb2lpenr.setTIM10LPEN(false);
-  apb2lpenr.setTIM11LPEN(false);
-  apb2lpenr.setSPI5LPEN(false);
-  apb2lpenr.setSDMMC2LPEN(false);
-  apb2lpenr.setADC2LPEN(false);
-  apb2lpenr.setADC3LPEN(false);
-  apb2lpenr.setSAI1LPEN(false);
-  apb2lpenr.setSAI2LPEN(false);
+  apb2lpenr.setTIM1LPEN(true);
+  apb2lpenr.setTIM8LPEN(true);
+  apb2lpenr.setUSART1LPEN(true);
+  apb2lpenr.setUSART6LPEN(true);
+  apb2lpenr.setADC1LPEN(true);
+  apb2lpenr.setSPI1LPEN(true);
+  apb2lpenr.setSPI4LPEN(true);
+  apb2lpenr.setSYSCFGLPEN(true);
+  apb2lpenr.setTIM9LPEN(true);
+  apb2lpenr.setTIM10LPEN(true);
+  apb2lpenr.setTIM11LPEN(true);
+  apb2lpenr.setSPI5LPEN(true);
+  apb2lpenr.setSDMMC2LPEN(true);
+  apb2lpenr.setADC2LPEN(true);
+  apb2lpenr.setADC3LPEN(true);
+  apb2lpenr.setSAI1LPEN(true);
+  apb2lpenr.setSAI2LPEN(true);
   RCC.APB2LPENR()->set(apb2lpenr);
 }
 
@@ -399,6 +399,7 @@ void shutdownClocks(bool keepLEDAwake) {
   class RCC::AHB1ENR ahb1enr(0x00100000); // Reset value
   if (keepLEDAwake) {
     apb1enr.setTIM3EN(true);
+    apb1enr.setTIM5EN(true);
     ahb1enr.setGPIOBEN(true);
   }
   RCC.APB1ENR()->set(apb1enr);

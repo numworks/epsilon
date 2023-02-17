@@ -6,7 +6,7 @@ namespace Bootloader {
 class Messages {
 public:
   constexpr static const char * mainTitle = "Upsilon Calculator";
-  
+
   // Home menu
   constexpr static const char * homeTitle = "Select a slot";
 
@@ -72,7 +72,7 @@ public:
   constexpr static const char * aboutMessage4 = "and select the OS";
   constexpr static const char * aboutMessage5 = "to boot.";
 
-  constexpr static const char * bootloaderVersion = "Version 1.0.2 - FREED0M.20";
+  constexpr static const char * bootloaderVersion = "Version 1.0.3 - FREED0M.20.3";
 
   //USB NAMES
   constexpr static const char * usbUpsilonBootloader = "Upsilon Bootloader";

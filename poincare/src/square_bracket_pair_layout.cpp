@@ -8,13 +8,6 @@ extern "C" {
 }
 
 namespace Poincare {
-/*
-void SquareBracketPairLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
-  if (cursor != nullptr) {
-    cursor->setLayoutNode(childLayout());
-    cursor->setPosition(LayoutCursor::Position::Left);
-  }
-}*/
 
 void SquareBracketPairLayoutNode::RenderWithParameters(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, KDCoordinate verticalMargin, KDCoordinate bracketWidth, bool renderTopBar, bool renderBottomBar, bool renderDoubleBar) {
   KDCoordinate horizontalBarX = p.x() + (left ? k_externalWidthMargin : k_lineThickness);

@@ -42,6 +42,8 @@ public:
   /* Specific to Solver */
   void resolveEquations();
 private:
+  constexpr static int k_equationCellType = 0;
+  constexpr static int k_addNewModelType = 1;
   constexpr static int k_editedCellType = 2;
   constexpr static int k_maxNumberOfRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::Metric::StoreRowHeight, Escher::Metric::ButtonRowEmbossedStyleHeightLarge);
   Escher::SelectableTableView * selectableTableView() override;

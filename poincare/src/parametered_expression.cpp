@@ -128,7 +128,10 @@ bool ParameteredExpression::ParameterText(UnicodeDecoder & varDecoder, size_t * 
 
 bool ParameteredExpression::ParameterText(const char * text, const char * * parameterText, size_t * parameterLength) {
   UTF8Decoder decoder(text);
-  return ParameterText(decoder, reinterpret_cast<size_t *>(parameterText), parameterLength);
+  size_t parameterStart = *parameterText - text;
+  bool result = ParameterText(decoder, &parameterStart, parameterLength);
+  *parameterText = parameterStart + text;
+  return result;
 }
 
 Expression ParameteredExpression::replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) {

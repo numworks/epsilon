@@ -1045,8 +1045,13 @@ void LayoutCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
     currentLayout = currentParent;
     currentParent = currentLayout.parent();
   }
-  // A bracket should always have an horizontal parent
-  assert(currentLayout.isHorizontal());
+  // If the top bracket does not have an horizontal parent, create one
+  if (!currentLayout.isHorizontal()) {
+    assert(!currentParent.isUninitialized());
+    int indexOfLayout = currentParent.indexOfChild(currentLayout);
+    currentLayout = HorizontalLayout::Builder(currentLayout);
+    currentParent.replaceChildAtIndexInPlace(indexOfLayout,currentLayout);
+  }
   HorizontalLayout topHorizontalLayout = static_cast<HorizontalLayout&>(currentLayout);
   AutocompletedBracketPairLayoutNode::BalanceBrackets(topHorizontalLayout, static_cast<HorizontalLayout *>(&m_layout), &m_position);
 }

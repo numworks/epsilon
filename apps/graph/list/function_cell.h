@@ -21,7 +21,6 @@ public:
 
   // EvenOddCell
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void updateSubviewsBackgroundAfterChangingState() override;
 
   // - Expression View
   void setTextColor(KDColor textColor) {
@@ -30,9 +29,6 @@ public:
   void setLayout(Poincare::Layout layout) {
     expressionView()->setLayout(layout);
   }
-
-  // - Ellipsis View
-  void setParameterSelected(bool selected);
 
   // - Message Text View
   void setMessage(I18n::Message message) {
@@ -64,16 +60,21 @@ protected:
   KDColor m_functionColor;
   KDColor m_expressionBackground;
   KDColor m_ellipsisBackground;
-  bool m_parameterSelected;
 };
 
 class FunctionCell : public AbstractFunctionCell {
+public:
+  FunctionCell() : m_parameterSelected(false) {}
+  // - Ellipsis View
+  void setParameterSelected(bool selected);
+
 private:
   void updateSubviewsBackgroundAfterChangingState() override;
   const Escher::ExpressionView * expressionView() const override { return &m_expressionView; }
   Escher::ExpressionView * expressionView() override { return &m_expressionView; }
   Escher::ExpressionView * mainView() override { return &m_expressionView; }
   Escher::ExpressionView m_expressionView;
+  bool m_parameterSelected;
 };
 
 }

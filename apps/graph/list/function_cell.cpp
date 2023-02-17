@@ -33,8 +33,7 @@ AbstractFunctionCell::AbstractFunctionCell() :
                       Palette::GrayDark),
     m_functionColor(KDColorBlack),
     m_expressionBackground(KDColorWhite),
-    m_ellipsisBackground(KDColorWhite),
-    m_parameterSelected(false) {
+    m_ellipsisBackground(KDColorWhite) {
 }
 
 void AbstractFunctionCell::drawRect(KDContext * ctx, KDRect rect) const {
@@ -71,25 +70,6 @@ KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
   return KDSize(bounds().width(), minimalHeight);
 }
 
-void AbstractFunctionCell::updateSubviewsBackgroundAfterChangingState() {
-  KDColor defaultColor = m_even ? KDColorWhite : Palette::WallScreen;
-  // If not highlighted, selectedColor is defaultColor
-  KDColor selectedColor = backgroundColor();
-  m_ellipsisBackground = m_parameterSelected ? selectedColor : defaultColor;
-  m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
-  // Expression View and Message Text View share the same background
-  if (displayFunctionType()) {
-    m_messageTextView.setBackgroundColor(m_expressionBackground);
-  }
-}
-
-void AbstractFunctionCell::setParameterSelected(bool selected) {
-  if (selected != m_parameterSelected) {
-    m_parameterSelected = selected;
-    updateSubviewsBackgroundAfterChangingState();
-  }
-}
-
 View * AbstractFunctionCell::subviewAtIndex(int index) {
   switch (index) {
     case 0:
@@ -123,8 +103,23 @@ void AbstractFunctionCell::layoutSubviews(bool force) {
 }
 
 void FunctionCell::updateSubviewsBackgroundAfterChangingState() {
-  AbstractFunctionCell::updateSubviewsBackgroundAfterChangingState();
+  KDColor defaultColor = m_even ? KDColorWhite : Palette::WallScreen;
+  // If not highlighted, selectedColor is defaultColor
+  KDColor selectedColor = backgroundColor();
+  m_ellipsisBackground = m_parameterSelected ? selectedColor : defaultColor;
+  m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
+  // Expression View and Message Text View share the same background
+  if (displayFunctionType()) {
+    m_messageTextView.setBackgroundColor(m_expressionBackground);
+  }
   expressionView()->setBackgroundColor(m_expressionBackground);
+}
+
+void FunctionCell::setParameterSelected(bool selected) {
+  if (selected != m_parameterSelected) {
+    m_parameterSelected = selected;
+    updateSubviewsBackgroundAfterChangingState();
+  }
 }
 
 }

@@ -16,6 +16,7 @@ private:
   constexpr static KDCoordinate k_expressionMargin = 5;
   int numberOfSubviews() const override { return 2; }
   void layoutSubviews(bool force = false) override;
+  void updateSubviewsBackgroundAfterChangingState() override;
   const Escher::ExpressionView * expressionView() const override { return m_expressionField.expressionView(); }
   Escher::ExpressionView * expressionView() override { return m_expressionField.expressionView(); }
   Escher::View * mainView() override { return &m_expressionField; }

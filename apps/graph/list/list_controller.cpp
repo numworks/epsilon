@@ -260,7 +260,7 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
     functionCell->setMessage(ExamModeConfiguration::implicitPlotsAreForbidden() ? I18n::Message::Default : f->properties().caption());
     KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;
     functionCell->setTextColor(textColor);
-    functionCell->setParameterSelected(m_parameterColumnSelected);
+    static_cast<FunctionCell*>(functionCell)->setParameterSelected(m_parameterColumnSelected);
   }
   KDColor functionColor = f->isActive() ? f->color() : Palette::GrayDark;
   functionCell->setColor(functionColor);

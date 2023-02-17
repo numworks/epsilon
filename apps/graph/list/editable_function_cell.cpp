@@ -24,4 +24,8 @@ void EditableFunctionCell::layoutSubviews(bool force) {
   m_messageTextView.setFrame(KDRectZero, force);
 }
 
+void EditableFunctionCell::updateSubviewsBackgroundAfterChangingState() {
+  m_expressionBackground = backgroundColor();
+}
+
 }

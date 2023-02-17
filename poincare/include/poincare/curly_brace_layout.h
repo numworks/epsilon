@@ -51,7 +51,10 @@ class CurlyBraceLayout final : public LayoutOneChild<CurlyBraceLayout, CurlyBrac
 public:
   CurlyBraceLayout() = delete;
   static CurlyBraceLayout Builder() { return Builder(HorizontalLayout::Builder()); }
-  static CurlyBraceLayout Builder(Layout l) { return LayoutOneChild<CurlyBraceLayout, CurlyBraceLayoutNode>::Builder(l); }
+  static CurlyBraceLayout Builder(Layout l) {
+    // Ensure curly brace layout has always an horizontal child
+    return LayoutOneChild<CurlyBraceLayout, CurlyBraceLayoutNode>::Builder(l.isHorizontal() ? l : HorizontalLayout::Builder(l));
+  }
 };
 
 }

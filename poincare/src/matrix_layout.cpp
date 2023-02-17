@@ -116,10 +116,4 @@ MatrixLayout MatrixLayout::Builder(Layout l1, Layout l2, Layout l3, Layout l4) {
   return m;
 }
 
-MatrixLayout MatrixLayout::EmptySquaredMatrixBuilder() {
-  MatrixLayout m = TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>({HorizontalLayout::Builder()});
-  m.setDimensions(1, 1);
-  return m;
-}
-
 }

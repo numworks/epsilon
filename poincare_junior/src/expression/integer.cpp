@@ -279,8 +279,7 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler & a, const IntegerHandl
     // Addition can overflow
     size++;
   }
-  size = std::min<uint8_t>(size, k_maxNumberOfNativeDigits + oneDigitOverflow);
-  IntegerHandler sum = Allocate<native_uint_t>(size, workingBuffer);
+  IntegerHandler sum = Allocate<native_uint_t>(std::min<uint8_t>(size, k_maxNumberOfNativeDigits + oneDigitOverflow), workingBuffer);
   bool carry = false;
   for (uint8_t i = 0; i < size; i++) {
     native_uint_t aDigit = a.digit<native_uint_t>(i);
@@ -301,7 +300,6 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler & a, const IntegerHandl
       carry = (aDigit > result) || (bDigit > result); // There's been an overflow
     }
   }
-  size = std::min<uint8_t>(size, k_maxNumberOfNativeDigits + oneDigitOverflow);
   sum.sanitize();
   return sum;
 }

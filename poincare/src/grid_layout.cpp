@@ -167,6 +167,21 @@ int GridLayoutNode::indexAtRowColumn(int rowIndex, int columnIndex) const {
   return rowIndex * m_numberOfColumns + columnIndex;
 }
 
+int GridLayoutNode::closestNonGrayIndex(int index) const {
+  if (!isEditing()) {
+    return index;
+  }
+  int row = rowAtChildIndex(index);
+  int column = columnAtChildIndex(index);
+  if (!numberOfColumnsIsFixed() && childIsRightOfGrid(index)) {
+    column--;
+  }
+  if (!numberOfRowsIsFixed() && childIsBottomOfGrid(index)) {
+    row--;
+  }
+  return indexAtRowColumn(row, column);
+}
+
 KDSize GridLayoutNode::computeSize(KDFont::Size font) {
   return gridSize(font);
 }

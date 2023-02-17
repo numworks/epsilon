@@ -202,7 +202,7 @@ bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
     // If in children, we also change the squares for this
     {
       Layout thisLayout = Layout(this);
-      if ((layoutToExclude.isUninitialized() || !layoutToExclude.hasAncestor(thisLayout, true)) && addRemoveGraySquaresInLayoutIfNeeded(add, &thisLayout)) {
+      if ((layoutToExclude.isUninitialized() || !layoutToExclude.hasAncestor(thisLayout, false)) && addRemoveGraySquaresInLayoutIfNeeded(add, &thisLayout)) {
         changedSquares = true;
       }
     }
@@ -215,7 +215,7 @@ bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
   } else {
     Layout currentAncestor = Layout(parent());
     while (!currentAncestor.isUninitialized()) {
-      if (!layoutToExclude.isUninitialized() && layoutToExclude.hasAncestor(currentAncestor, true)) {
+      if (!layoutToExclude.isUninitialized() && layoutToExclude.hasAncestor(currentAncestor, false)) {
         break;
       }
       if (addRemoveGraySquaresInLayoutIfNeeded(add, &currentAncestor)) {

@@ -20,11 +20,11 @@ bool FindXNTSymbol(UnicodeDecoder & functionDecoder, bool * defaultXNTHasChanged
    * If the cursor is in an argument field, and the variable is well nested and
    * defined, the variable will be inserted into the given buffer. Otherwise,
    * the (improved or not) defaultXNTCodePoint is inserted. */
-  constexpr static struct { Poincare::AliasesList aliasesList; char xnt; } sFunctions[] = {
-    { Poincare::Derivative::s_functionHelper.aliasesList(), Poincare::Derivative::k_defaultXNTChar },
-    { Poincare::Integral::s_functionHelper.aliasesList(), Poincare::Integral::k_defaultXNTChar },
-    { Poincare::Product::s_functionHelper.aliasesList(), Poincare::Product::k_defaultXNTChar },
-    { Poincare::Sum::s_functionHelper.aliasesList(), Poincare::Sum::k_defaultXNTChar }
+  constexpr static struct { AliasesList aliasesList; char xnt; } sFunctions[] = {
+    { Derivative::s_functionHelper.aliasesList(), Derivative::k_defaultXNTChar },
+    { Integral::s_functionHelper.aliasesList(), Integral::k_defaultXNTChar },
+    { Product::s_functionHelper.aliasesList(), Product::k_defaultXNTChar },
+    { Sum::s_functionHelper.aliasesList(), Sum::k_defaultXNTChar }
   };
   // Step 1 : Identify the function the cursor is in
   size_t textStart = functionDecoder.start();

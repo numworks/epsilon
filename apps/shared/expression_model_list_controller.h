@@ -48,6 +48,7 @@ protected:
   virtual Escher::ExpressionField * expressionField() = 0;
   int16_t m_editedCellIndex;
 private:
+  void finishEdition();
   bool addEmptyModel();
 
 };

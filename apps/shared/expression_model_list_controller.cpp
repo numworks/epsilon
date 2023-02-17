@@ -154,22 +154,21 @@ void ExpressionModelListController::layoutFieldDidChangeSize(LayoutField * layou
   selectableTableView()->reloadData(false);
 }
 
-bool ExpressionModelListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
-  ExpressionField * field = static_cast<ExpressionField*>(layoutField);
-  editSelectedRecordWithText(field->text());
+void ExpressionModelListController::finishEdition() {
   m_editedCellIndex = -1;
   resetSizesMemoization();
   selectableTableView()->reloadData(true);
+}
+
+bool ExpressionModelListController::layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layout, Ion::Events::Event event) {
+  editSelectedRecordWithText(static_cast<ExpressionField*>(layoutField)->text());
+  finishEdition();
   return true;
 }
 
 bool ExpressionModelListController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {
-  m_editedCellIndex = -1;
-  resetSizesMemoization();
-  selectableTableView()->reloadData(true);
+  finishEdition();
   return true;
 }
-
-
 
 }

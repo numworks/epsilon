@@ -15,12 +15,12 @@ using namespace Poincare;
 namespace Escher {
 
 LayoutField::ContentView::ContentView(KDFont::Size font) :
-    m_expressionView(KDContext::k_alignLeft,
+    m_expressionView(&m_cursor,
+                     KDContext::k_alignLeft,
                      KDContext::k_alignCenter,
                      KDColorBlack,
                      KDColorWhite,
-                     font,
-                     &m_cursor),
+                     font),
     m_isEditing(false) {
   clearLayout();
 }

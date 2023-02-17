@@ -25,13 +25,9 @@ KDSize EditableExpressionModelCell::minimalSizeForOptimalDisplay() const {
   return KDSize(m_leftMargin + expressionSize.width() + m_rightMargin, expressionSize.height());
 }
 
-void EditableExpressionModelCell::setLeftMargin(KDCoordinate margin) {
-  m_leftMargin = margin;
-  layoutSubviews();
-}
-
-void EditableExpressionModelCell::setRightMargin(KDCoordinate margin) {
-  m_rightMargin = margin;
+void EditableExpressionModelCell::setMargins(KDCoordinate leftMargin, KDCoordinate rightMargin) {
+  m_leftMargin = leftMargin;
+  m_rightMargin = rightMargin;
   layoutSubviews();
 }
 

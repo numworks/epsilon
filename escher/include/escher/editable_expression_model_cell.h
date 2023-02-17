@@ -29,8 +29,7 @@ public:
   void setFont(KDFont::Size font) { m_expressionField.expressionView()->setFont(font); }
   KDSize minimalSizeForOptimalDisplay() const override;
   void setAlignment(float horizontalAlignment, float verticalAlignment) { m_expressionField.expressionView()->setAlignment(horizontalAlignment, verticalAlignment); }
-  void setLeftMargin(KDCoordinate margin);
-  void setRightMargin(KDCoordinate margin);
+  void setMargins(KDCoordinate leftMargin, KDCoordinate rightMargin);
   KDPoint drawingOrigin() const { return m_expressionField.expressionView()->drawingOrigin(); }
   Poincare::Layout layout() const override { return m_expressionField.layout(); }
   KDFont::Size font() const { return m_expressionField.expressionView()->font(); }

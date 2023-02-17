@@ -28,8 +28,7 @@ ListController::ListController(Responder * parentResponder, InputEventHandlerDel
     m_expressionCells[i].setLeftMargin(EquationListView::k_braceTotalWidth+k_expressionMargin);
     m_expressionCells[i].setEven(true);
   }
-  m_editableCell.setLeftMargin(EquationListView::k_braceTotalWidth+k_expressionMargin);
-  m_editableCell.setRightMargin(k_expressionMargin);
+  m_editableCell.setMargins(EquationListView::k_braceTotalWidth+k_expressionMargin, k_expressionMargin);
 }
 
 int ListController::numberOfButtons(ButtonRowController::Position position) const {

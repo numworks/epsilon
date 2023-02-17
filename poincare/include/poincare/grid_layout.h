@@ -61,6 +61,8 @@ public:
   int rowAtChildIndex(int index) const;
   int columnAtChildIndex(int index) const;
   int indexAtRowColumn(int rowIndex, int columnIndex) const;
+  int rightMostNonGrayColumnIndex() const { return numberOfColumns() - 1 - (isEditing() && !numberOfColumnsIsFixed()); }
+  int closestNonGrayIndex(int index) const;
 
   void deleteColumnAtIndex(int index);
   void deleteRowAtIndex(int index);

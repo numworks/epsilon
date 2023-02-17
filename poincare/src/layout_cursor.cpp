@@ -482,6 +482,17 @@ bool LayoutCursor::didEnterCurrentPosition(LayoutCursor previousPosition) {
 }
 
 bool LayoutCursor::didExitPosition() {
+  if (IsEmptyChildOfGridLayout(m_layout)) {
+    /* When exiting a grid, the gray columns and rows will disappear, so
+     * before leaving the grid, set the cursor position to a layout that will
+     * stay valid when the grid will be re-entered. */
+    GridLayoutNode * parentGrid = static_cast<GridLayoutNode *>(m_layout.parent().node());
+    setLayout(
+      Layout(parentGrid->childAtIndex(
+              parentGrid->closestNonGrayIndex(parentGrid->indexOfChild(m_layout.node())))),
+      OMG::HorizontalDirection::Right
+    );
+  }
   LayoutCursor lc;
   return lc.didEnterCurrentPosition(*this);
 }
@@ -890,8 +901,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
       int currentIndex = m_layout.parent().indexOfChild(m_layout);
       int currentRow = gridNode->rowAtChildIndex(currentIndex);
       assert(currentRow > 0 && gridNode->numberOfColumns() >= 2);
-      // - 2 because we want to go the the rightmost column that is not gray
-      newIndex = gridNode->indexAtRowColumn(currentRow - 1, gridNode->numberOfColumns() - 2);
+      newIndex = gridNode->indexAtRowColumn(currentRow - 1, gridNode->rightMostNonGrayColumnIndex());
     }
     m_layout = m_layout.parent().childAtIndex(newIndex);
     m_position = rightMostPosition();

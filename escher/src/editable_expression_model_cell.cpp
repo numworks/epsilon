@@ -12,14 +12,6 @@ EditableExpressionModelCell::EditableExpressionModelCell(Responder * parentRespo
 {
 }
 
-void EditableExpressionModelCell::setLayout(Poincare::Layout layoutR) {
-  m_expressionField.setLayout(layoutR);
-}
-
-void EditableExpressionModelCell::setTextColor(KDColor textColor) {
-  m_expressionField.expressionView()->setTextColor(textColor);
-}
-
 KDSize EditableExpressionModelCell::minimalSizeForOptimalDisplay() const {
   KDSize expressionSize = m_expressionField.minimalSizeForOptimalDisplay();
   return KDSize(m_leftMargin + expressionSize.width() + m_rightMargin, expressionSize.height());
@@ -36,15 +28,6 @@ void EditableExpressionModelCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
   ctx->fillRect(KDRect(0, 0, m_leftMargin, bounds().height()), backgroundColor);
   ctx->fillRect(KDRect(bounds().width() - m_rightMargin, 0, m_rightMargin, bounds().height()), backgroundColor);
-}
-
-int EditableExpressionModelCell::numberOfSubviews() const {
-  return 1;
-}
-
-View * EditableExpressionModelCell::subviewAtIndex(int index) {
-  assert(index == 0);
-  return &m_expressionField;
 }
 
 void EditableExpressionModelCell::layoutSubviews(bool force) {

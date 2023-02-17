@@ -249,7 +249,7 @@ bool ListController::editSelectedRecordWithText(const char * text) {
   return error == Ion::Storage::Record::ErrorStatus::None;
 }
 
-void ListController::getTextForSelectedRecord(char * text, size_t size) {
+void ListController::getTextForSelectedRecord(char * text, size_t size) const {
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   Shared::Sequence * sequence = modelStore()->modelForRecord(record);
   switch (sequenceDefinitionForRow(selectedRow())) {
@@ -323,7 +323,7 @@ void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int 
   }
 }
 
-int ListController::modelIndexForRow(int j) {
+int ListController::modelIndexForRow(int j) const {
   if (j < 0) {
     return j;
   }

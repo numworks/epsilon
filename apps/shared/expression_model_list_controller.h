@@ -17,7 +17,7 @@ public:
   ExpressionModelListController(Escher::Responder * parentResponder, I18n::Message text);
   virtual void editExpression(Ion::Events::Event event);
   virtual bool editSelectedRecordWithText(const char * text);
-  virtual void getTextForSelectedRecord(char * text, size_t size);
+  virtual void getTextForSelectedRecord(char * text, size_t size) const;
   bool handleEventOnExpression(Ion::Events::Event event, bool inTemplateMenu = false);
   bool handleEventOnExpressionInTemplateMenu(Ion::Events::Event event) { return handleEventOnExpression(event, true); }
 protected:
@@ -33,7 +33,7 @@ protected:
   virtual void addModel();
   virtual void didChangeModelsList() { resetSizesMemoization(); }
   virtual bool removeModelRow(Ion::Storage::Record record);
-  virtual int modelIndexForRow(int j) { return j; }
+  virtual int modelIndexForRow(int j) const { return j; }
   // ViewController
   virtual Escher::SelectableTableView * selectableTableView() = 0;
   virtual ExpressionModelStore * modelStore() const = 0;

@@ -94,7 +94,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
     // Push the input
     Expression inputExpression = Expression::Parse(text, context);
-    inputExpression = EnhanceUserInput(inputExpression, ans);
+    inputExpression = EnhancePushedExpression(inputExpression, ans);
     cursor =
         pushSerializedExpression(cursor, inputExpression, maxNumberOfDigits);
     if (cursor == k_pushError) {
@@ -111,6 +111,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
         &approximateOutputExpression, context);
 
     // Post-processing of some corner case expressions
+    exactOutputExpression = EnhancePushedExpression(exactOutputExpression);
     if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
       /* When a input contains a store it is kept by the reduction in the
        * exact output and the actual store is performed here. The global
@@ -289,19 +290,21 @@ char *CalculationStore::pushUndefined(char *location) {
       m_inUsePreferences.numberOfSignificantDigits());
 }
 
-Expression CalculationStore::EnhanceUserInput(Expression inputExpression,
-                                              Expression ansExpression) {
+Expression CalculationStore::EnhancePushedExpression(Expression expression,
+                                                     Expression ansExpression) {
   // Replace Ans
-  inputExpression =
-      inputExpression.replaceSymbolWithExpression(Symbol::Ans(), ansExpression);
+  if (!ansExpression.isUninitialized()) {
+    expression =
+        expression.replaceSymbolWithExpression(Symbol::Ans(), ansExpression);
+  }
   /* Add an angle unit in trigonometric functions if the user could have
    * forgotten to change the angle unit in the preferences.
    * Ex: If angleUnit = rad, cos(4)->cos(4rad)
    *     If angleUnit = deg, cos(π)->cos(π°)
    * */
-  inputExpression = Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
-      inputExpression, Preferences::sharedPreferences->angleUnit());
-  return inputExpression;
+  expression = Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+      expression, Preferences::sharedPreferences->angleUnit());
+  return expression;
 }
 
 }  // namespace Calculation

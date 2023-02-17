@@ -49,7 +49,10 @@ class ParenthesisLayout final : public LayoutOneChild<ParenthesisLayout, Parenth
 public:
   ParenthesisLayout() = delete;
   static ParenthesisLayout Builder() { return Builder(HorizontalLayout::Builder()); }
-  static ParenthesisLayout Builder(Layout l) { return LayoutOneChild<ParenthesisLayout, ParenthesisLayoutNode>::Builder(l); }
+  static ParenthesisLayout Builder(Layout l) {
+    // Ensure parenthesis layout has always an horizontal child
+    return LayoutOneChild<ParenthesisLayout, ParenthesisLayoutNode>::Builder(l.isHorizontal() ? l : HorizontalLayout::Builder(l));
+  }
 };
 
 }

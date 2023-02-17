@@ -24,131 +24,208 @@ Layout AutocompletedBracketPairLayoutNode::BuildFromBracketType(LayoutNode::Type
   return CurlyBraceLayout::Builder();
 }
 
-void AutocompletedBracketPairLayoutNode::BalanceBracketsInsideHorizontalLayout(HorizontalLayout hLayout, HorizontalLayout * cursorLayout, int * cursorPosition) {
+static HorizontalLayout HorizontalParent(Layout l) {
+  Layout p = l.parent();
+  assert(!p.isUninitialized() && p.isHorizontal());
+  return static_cast<HorizontalLayout&>(p);
+}
+
+static HorizontalLayout HorizontalChild(Layout l) {
+  Layout c = l.childAtIndex(0);
+  assert(!c.isUninitialized() && c.isHorizontal());
+  return static_cast<HorizontalLayout&>(c);
+}
+
+void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayout, HorizontalLayout * cursorLayout, int * cursorPosition) {
   /* Read hLayout from left to right, and create a copy of it with balanced
-   * brackets. */
+   * brackets.
+   *
+   * Example: ("(" is permanent, "[" is temporary)
+   *  hLayout = "(A]+((B)+[C))" should be balanced into
+   *   result = "(A+((B)+C))"
+   *
+   * To do so:
+   *  - Each time a permanent opening bracket is encountered, a bracket is
+   *    opened in the copy.
+   *  - Each time a permanent closing bracket is encountered, a bracket is
+   *    closed in the copy.
+   *  - Each time a temporary bracket is encountered, nothing changes int the
+   *    copy.
+   *  - Each time any other layout is encountered, just copy it.
+   *
+   * */
+  HorizontalLayout readLayout = hLayout;
+  int readIndex = 0;
   HorizontalLayout result = HorizontalLayout::Builder();
-  HorizontalLayout currentHorizontalLayoutRead = hLayout;
-  HorizontalLayout currentHorizontalLayoutWrite = result;
-  TreeNode * lastNode = hLayout.node()->nextSibling();
-  int currentIndexInLayoutRead = 0;
+  HorizontalLayout writtenLayout = result;
 
-  while (!currentHorizontalLayoutRead.isUninitialized() && currentHorizontalLayoutRead.node() < lastNode) {
-    // Step 0 - Set the new cursor position in the written result
-    if (currentHorizontalLayoutRead == *cursorLayout && currentIndexInLayoutRead == *cursorPosition) {
-      *cursorLayout = currentHorizontalLayoutWrite;
-      *cursorPosition = currentHorizontalLayoutWrite.numberOfChildren();
+  while (true) {
+    /* -- Step 0 -- Set the new cursor position
+     * Since everything is cloned into the result, the cursor position will be
+     * lost, so when the corresponding layout is being read, set the cursor
+     * position in the written layout. */
+    if (readLayout == *cursorLayout && readIndex == *cursorPosition) {
+      *cursorLayout = writtenLayout;
+      *cursorPosition = writtenLayout.numberOfChildren();
     }
 
-    /* Step 1 - If the reading arrived at the end of an horizontal layout,
-     * it means it arrived at the end of what's inside a bracket.
-     * Close the current written bracket if needed and continue reading
-     * in the horizontal parent of the bracket.
+
+    if (readIndex < readLayout.numberOfChildren()) {
+      /* -- Step 1 -- The reading arrived at a layout that is not a bracket:
+       * juste add it to the written layout and continue reading. */
+      Layout readChild = readLayout.childAtIndex(readIndex);
+      if (!IsAutoCompletedBracketPairType(readChild.type())) {
+        assert(!readChild.isHorizontal());
+        writtenLayout.addOrMergeChildAtIndex(readChild.clone(), writtenLayout.numberOfChildren());
+        readIndex++;
+        continue;
+      }
+
+      // -- Step 2 -- The reading arrived left of a bracket:
+      AutocompletedBracketPairLayoutNode * bracketNode = static_cast<AutocompletedBracketPairLayoutNode *>(readChild.node());
+
+      /* - Step 2.1 - Read
+       * The reading enters the brackets and continues inside it.
+       */
+      readLayout = HorizontalChild(readChild);
+      readIndex = 0;
+
+      /* - Step 2.2 - Write
+       * To know if a bracket should be added to the written layout, the
+       * temporary status of the LEFT side of the bracket is checked.
+       *
+       *  - If the left side is TEMPORARY, do not add a bracket in the written
+       *    layout.
+       *    Ex: hLayout = "A+[B+C)"
+       *      if the current reading is at '|' : "A+|[B+C)"
+       *      so the current result is         : "A+|"
+       *      The encountered bracket is TEMP so the writing does not add a
+       *      bracket.
+       *      the current reading becomes      : "A+[|B+C)"
+       *      and the current result is still  : "A+|"
+       *
+       *  - If the left side is PERMANENT, add a bracket in the written layout
+       *    and makes it temporary on the right for now.
+       *    Ex: hLayout = "A+(B+C]"
+       *      if the current reading is at '|' : "A+|(B+C]"
+       *      so the current result is         : "A+|"
+       *      The encountered bracket is PERMA so the writing adds a bracket.
+       *      the current reading becomes      : "A+(|B+C]"
+       *      and the current result is        : "A+(|]"
+       * */
+      if (!bracketNode->isTemporary(Side::Left)) {
+        assert(!bracketNode->isTemporary(Side::Left));
+        Layout newBracket = BuildFromBracketType(readChild.type());
+        static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())->setTemporary(Side::Right, true);
+        writtenLayout.addOrMergeChildAtIndex(newBracket, writtenLayout.numberOfChildren());
+        writtenLayout = HorizontalChild(newBracket);
+      }
+      continue;
+    }
+
+    // The index is at the end of the current readLayout
+    assert(readIndex == readLayout.numberOfChildren());
+
+    /* -- Step 3 -- The reading arrived at the end of the original hLayout:
+     * The balancing is complete. */
+    if (readLayout == hLayout) {
+      break;
+    }
+
+    /* -- Step 4 -- The reading arrived at the end of an horizontal layout.
+     *
+     * The case of the horizontal layout being the top layout (hLayout) has
+     * already been escaped, so here, readLayout is always the child of a
+     * bracket.
      * */
-    if (currentIndexInLayoutRead >= currentHorizontalLayoutRead.numberOfChildren()) {
-      Layout parentBracketRead = currentHorizontalLayoutRead.parent();
-      if (currentHorizontalLayoutRead == hLayout || parentBracketRead.isUninitialized()) {
-        // Arrived at the end of the layout to balance, escape
-        break;
-      }
+    Layout readBracket = readLayout.parent();
+    assert(IsAutoCompletedBracketPairType(readBracket.type()));
+    AutocompletedBracketPairLayoutNode * readBracketNode = static_cast<AutocompletedBracketPairLayoutNode *>(readBracket.node());
 
-      // Continue reading in the parent of the parent bracket
-      assert(IsAutoCompletedBracketPairType(parentBracketRead.type()));
-      AutocompletedBracketPairLayoutNode * parentBracketReadNode = static_cast<AutocompletedBracketPairLayoutNode *>(parentBracketRead.node());
-      Layout parentOfBracketRead = parentBracketRead.parent();
-      assert(!parentOfBracketRead.isUninitialized() && parentOfBracketRead.isHorizontal());
-      int indexOfBracketInParent = parentOfBracketRead.indexOfChild(parentBracketRead);
-      currentHorizontalLayoutRead = static_cast<HorizontalLayout&>(parentOfBracketRead);
-      currentIndexInLayoutRead = indexOfBracketInParent + 1;
+    /* - Step 4.1. - Read
+     * The reading goes out of the bracket and continues in its parent.
+     * */
+    readLayout = HorizontalParent(readBracket);
+    readIndex = readLayout.indexOfChild(readBracket) + 1;
 
-      if (parentBracketReadNode->isTemporary(Side::Right)) {
-        /* The parent bracket is TEMPORARY on the RIGHT: ignore the bracket and
-         * continue reading in the parent. */
-        continue;
-      }
-
-      /* The parent bracket is PERMANENT on the RIGHT. */
-      assert(!parentBracketReadNode->isTemporary(Side::Right));
-      Layout parentBracketWrite = currentHorizontalLayoutWrite.parent();
-
-      if (!parentBracketWrite.isUninitialized() && parentBracketWrite.type() == parentBracketRead.type()) {
-        /* The current written layout is in a bracket of the same type:
-         * Close the bracket and continue writing in its parent. */
-        assert(IsAutoCompletedBracketPairType(parentBracketWrite.type()));
-        AutocompletedBracketPairLayoutNode * parentBracketWriteNode = static_cast<AutocompletedBracketPairLayoutNode *>(parentBracketWrite.node());
-        assert(parentBracketWriteNode->isTemporary(Side::Right));
-        parentBracketWriteNode->setTemporary(Side::Right, false);
-        Layout parentOfBracketWrite = parentBracketWrite.parent();
-        assert(!parentOfBracketWrite.isUninitialized() && parentOfBracketWrite.isHorizontal());
-        currentHorizontalLayoutWrite = static_cast<HorizontalLayout&>(parentOfBracketWrite);
-        continue;
-      }
-
-      /* Right side is permanent but no matching bracket was opened: create a
-       * new one opened on the left. */
-      Layout newBracket = BuildFromBracketType(parentBracketRead.type());
-      static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())->setTemporary(Side::Left, true);
-      HorizontalLayout newLayoutWrite = HorizontalLayout::Builder(newBracket);
-      if (*cursorPosition == 0 && *cursorLayout == currentHorizontalLayoutWrite) {
-        /* FIXME: This is currently a quick-fix for the following problem:
-         * If the hLayout is "12[34)", it should be balanced into "[1234)".
-         * The problem occurs if the cursor is before the 1: "|12[34)"
-         * It's unclear if the result should be "[|1234)" or "|[1234)"
-         * This ensures that the result will be the second one: "|[1234)"
-         * so that when deleting a left parenthesis, the cursor stays out of
-         * it: "(|1234)" -> Backspace -> "|[1234)"
-         * But it means that the behaviour is not really what you expect in
-         * the following case: "[(|123))" -> Backspaces -> "|[[1234))" while it
-         * would be better to have "[(|123))" -> Backspaces -> "[|[1234))".
-         * This might be solved by remembering if the cursor was in or out of
-         * the bracket when it was encountered from the left. */
-        *cursorLayout = newLayoutWrite;
-      }
-      if (currentHorizontalLayoutWrite == result) {
-        result = newLayoutWrite;
-      } else {
-        currentHorizontalLayoutWrite.replaceWithInPlace(newLayoutWrite);
-      }
-      newBracket.replaceChildAtIndexInPlace(0, currentHorizontalLayoutWrite);
-      currentHorizontalLayoutWrite = newLayoutWrite;
+    /* - Step 4.2 - Write
+     * Check the temporary status of the RIGHT side of the bracket to now
+     * if a bracket should be closed in the written layout.
+     *
+     *  - If the right side is TEMPORARY, do not add close a bracket in the
+     *    written layout.
+     *    Ex: hLayout = "(A+B]+C"
+     *      if the current reading is at '|' : "(A+B|]+C"
+     *      so the current result is         : "(A+B|]"
+     *      The encountered bracket is TEMP so the writing does not close the
+     *      bracket.
+     *      the current reading becomes      : "(A+B]|+C"
+     *      and the current result is still  : "(A+B|]"
+     *
+     *  - If the right side is PERMANENT, either:
+     *    - The writting is in a bracket of the same type: close the bracket
+     *      and continue writting outside of it.
+     *      Ex: hLayout = "(A+B)+C"
+     *        if the current reading is at '|' : "(A+B|)+C"
+     *        so the current result is         : "(A+B|]"
+     *        The encountered bracket is PERMA so the writing closes the
+     *        bracket.
+     *        the current reading becomes      : "(A+B)|+C"
+     *        and the current result is        : "(A+B)|"
+     *    - The writting is NOT in a bracket of the same type: a new bracket
+     *      that is TEMP on the left and absorbs everything on its left should
+     *      be inserted.
+     *      Ex: hLayout = "A+[B)+C"
+     *        if the current reading is at '|' : "A+[B|)+C"
+     *        so the current result is         : "A+B|"
+     *        The encountered bracket is PERMA but there is no bracket to
+     *        close so the writting creates a bracket and absorbs everything.
+     *        the current reading becomes      : "A+[B)|+C"
+     *        and the current result is        : "[A+B)|"
+     * */
+    if (readBracketNode->isTemporary(Side::Right)) {
       continue;
     }
 
-    /* Step 2 - If the reading arrived at a layout that is not a bracket,
-     * juste add it to the written layout and continue reading. */
-    Layout currentChild = currentHorizontalLayoutRead.childAtIndex(currentIndexInLayoutRead);
-    if (!IsAutoCompletedBracketPairType(currentChild.type())) {
-      assert(!currentChild.isHorizontal());
-      currentHorizontalLayoutWrite.addOrMergeChildAtIndex(currentChild.clone(), currentHorizontalLayoutWrite.numberOfChildren());
-      currentIndexInLayoutRead++;
+    Layout writtenBracket = writtenLayout.parent();
+    if (!writtenBracket.isUninitialized() && writtenBracket.type() == writtenBracket.type()) {
+      /* The current written layout is in a bracket of the same type:
+       * Close the bracket and continue writing in its parent. */
+      assert(IsAutoCompletedBracketPairType(writtenBracket.type()));
+      AutocompletedBracketPairLayoutNode * writtenBracketNode = static_cast<AutocompletedBracketPairLayoutNode *>(writtenBracket.node());
+      assert(writtenBracketNode->isTemporary(Side::Right));
+      writtenBracketNode->setTemporary(Side::Right, false);
+      writtenLayout = HorizontalParent(writtenBracket);
       continue;
     }
 
-    // Step 3 - The reading arrived at a bracket
-    AutocompletedBracketPairLayoutNode * bracketNode = static_cast<AutocompletedBracketPairLayoutNode *>(currentChild.node());
-
-    /* The bracket is TEMPORARY on the LEFT: ignore the bracket in the writing
-     * and continue reading inside it. */
-    if (bracketNode->isTemporary(Side::Left)) {
-      Layout childOfBracket = currentChild.childAtIndex(0);
-      assert(childOfBracket.isHorizontal());
-      currentHorizontalLayoutRead = static_cast<HorizontalLayout&>(childOfBracket);
-      currentIndexInLayoutRead = 0;
-      continue;
+    /* Right side is permanent but no matching bracket was opened: create a
+     * new one opened on the left. */
+    Layout newBracket = BuildFromBracketType(readBracket.type());
+    static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())->setTemporary(Side::Left, true);
+    HorizontalLayout newWrittenLayout = HorizontalLayout::Builder(newBracket);
+    if (*cursorPosition == 0 && *cursorLayout == writtenLayout) {
+      /* FIXME: This is currently a quick-fix for the following problem:
+       * If the hLayout is "12[34)", it should be balanced into "[1234)".
+       * The problem occurs if the cursor is before the 1: "|12[34)"
+       * It's unclear if the result should be "[|1234)" or "|[1234)"
+       * This ensures that the result will be the second one: "|[1234)"
+       * so that when deleting a left parenthesis, the cursor stays out of
+       * it: "(|1234)" -> Backspace -> "|[1234)"
+       * But it means that the behaviour is not really what you expect in
+       * the following case: "[(|123))" -> Backspace -> "|[[1234))" while it
+       * would be better to have "[(|123))" -> Backspace -> "[|[1234))".
+       * This might be solved by remembering if the cursor was in or out of
+       * the bracket when it was encountered from the left. */
+      *cursorLayout = newWrittenLayout;
     }
-
-    /* The bracket is PERMANENT on the LEFT : open a new bracket and continue
-     * the writing in it. */
-    assert(!bracketNode->isTemporary(Side::Left));
-    Layout newBracket = BuildFromBracketType(currentChild.type());
-    static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())->setTemporary(Side::Right, true);
-    currentHorizontalLayoutWrite.addOrMergeChildAtIndex(newBracket, currentHorizontalLayoutWrite.numberOfChildren());
-    Layout childOfBracketRead = currentChild.childAtIndex(0);
-    Layout childOfBracketWrite = newBracket.childAtIndex(0);
-    assert(childOfBracketRead.isHorizontal() && childOfBracketWrite.isHorizontal());
-    currentHorizontalLayoutRead = static_cast<HorizontalLayout&>(childOfBracketRead);
-    currentIndexInLayoutRead = 0;
-    currentHorizontalLayoutWrite = static_cast<HorizontalLayout&>(childOfBracketWrite);
+    if (writtenLayout == result) {
+      result = newWrittenLayout;
+    } else {
+      writtenLayout.replaceWithInPlace(newWrittenLayout);
+    }
+    newBracket.replaceChildAtIndexInPlace(0, writtenLayout);
+    writtenLayout = newWrittenLayout;
   }
 
   /* Now that the result is ready to replace hLayout, replaceWithInPlace

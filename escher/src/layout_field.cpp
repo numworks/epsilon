@@ -166,7 +166,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
     assert(layout.isHorizontal());
     HorizontalLayout horizontalLayout = static_cast<HorizontalLayout&>(layout);
     int position = m_contentView.cursor()->position();
-    LayoutDecoder decoder(horizontalLayout, position);
+    LinearLayoutDecoder decoder(horizontalLayout, position);
     bool defaultXNTHasChanged = false;
     if (FindXNTSymbol(decoder, &defaultXNTHasChanged, &defaultXNTCodePoint)) {
       size_t parameterStart;

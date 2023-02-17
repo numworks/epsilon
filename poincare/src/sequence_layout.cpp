@@ -26,7 +26,7 @@ int SequenceLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::
 
 int SequenceLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (direction == OMG::VerticalDirection::Up &&
-      ((currentIndex == k_variableLayoutIndex && currentIndex == k_lowerBoundLayoutIndex) ||
+      ((currentIndex == k_variableLayoutIndex || currentIndex == k_lowerBoundLayoutIndex) ||
        (positionAtCurrentIndex == PositionInLayout::Left && (currentIndex == k_outsideIndex || currentIndex == k_argumentLayoutIndex))))
   {
     return k_upperBoundLayoutIndex;

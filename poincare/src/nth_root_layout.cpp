@@ -50,15 +50,18 @@ int NthRootLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::H
 }
 
 int NthRootLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+  if (!m_hasIndex) {
+    return k_cantMoveIndex;
+  }
+
   if (direction == OMG::VerticalDirection::Up &&
-      m_hasIndex &&
-      (positionAtCurrentIndex == PositionInLayout::Left && (currentIndex == k_outsideIndex || currentIndex == k_radicandLayoutIndex)))
+      positionAtCurrentIndex == PositionInLayout::Left &&
+      (currentIndex == k_outsideIndex || currentIndex == k_radicandLayoutIndex))
   {
     return k_indexLayoutIndex;
   }
 
   if (direction == OMG::VerticalDirection::Down &&
-      m_hasIndex &&
       currentIndex == k_indexLayoutIndex &&
       positionAtCurrentIndex != PositionInLayout::Middle)
   {

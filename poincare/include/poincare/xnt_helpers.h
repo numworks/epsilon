@@ -1,5 +1,5 @@
-#ifndef XNT_HELPERS_H
-#define XNT_HELPERS_H
+#ifndef POINCARE_XNT_HELPERS_H
+#define POINCARE_XNT_HELPERS_H
 
 #include <ion/unicode/utf8_decoder.h>
 

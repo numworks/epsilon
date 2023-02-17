@@ -10,6 +10,7 @@ From future versions :
 - `c877dd93c5154b26859beec7487d23c5411e774c` (release-2.0.18)
 - `99af3281ee11ff947a82c561c2a275627ccea90c` (release-2.0.22)
 - `7935cfacc52a33a164880e3e8d3df4021e737fc7` (release-2.0.22)
+- `97c71371f21187f146872d41f94a5593c0a374ba` (release-2.0.22)
 
 ## Updating SDL
 

@@ -22,8 +22,7 @@ ListController::ListController(Responder * parentResponder, Escher::InputEventHa
   m_titlesColumnWidth(k_minTitleColumnWidth),
   m_heightManager(this)
 {
-  m_editableCell.setLeftMargin(k_expressionMargin);
-  m_editableCell.setRightMargin(k_expressionMargin);
+  m_editableCell.setMargins(k_expressionMargin, k_expressionMargin);
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i].setLeftMargin(k_expressionMargin);
     m_expressionCells[i].setRightMargin(0);

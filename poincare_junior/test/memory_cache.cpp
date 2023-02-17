@@ -10,11 +10,11 @@ static constexpr Tree tree = Add("3"_e, "4"_e);
 static constexpr Tree smallTree = "4"_e;
 
 void execute_push_tree_and_modify() {
-  PoincareJ::CacheReference::InitializerFromTree treeModifier = [](Node tree) { EditionReference(tree).replaceNodeByNode(EditionReference::Push<BlockType::Multiplication>(2)); };
+  PoincareJ::CacheReference::InitializerFromTreeInplace treeModifier = [](Node tree) { EditionReference(tree).replaceNodeByNode(EditionReference::Push<BlockType::Multiplication>(2)); };
   CachePool::sharedCachePool()->execute(
       [](void * subAction, const void * data) {
         Node editedTree = EditionPool::sharedEditionPool()->initFromAddress(data);
-        return (reinterpret_cast<PoincareJ::CacheReference::InitializerFromTree>(subAction))(editedTree);
+        return (reinterpret_cast<PoincareJ::CacheReference::InitializerFromTreeInplace>(subAction))(editedTree);
       },
       reinterpret_cast<void *>(treeModifier),
       &tree

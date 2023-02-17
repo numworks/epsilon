@@ -9,8 +9,7 @@ namespace PoincareJ {
 
 class Expression final : public CacheReference {
 public:
-  template <Block... B>
-  Expression(CTree<B...> tree) : CacheReference(tree) { assert(static_cast<Node>(tree).block()->isExpression()); }
+  Expression(const Node tree) : CacheReference(tree) { assert(tree.block()->isExpression()); }
   using CacheReference::CacheReference;
   // TODO : Delete this method and adapt tests ?
   static Expression Parse(const char * text);

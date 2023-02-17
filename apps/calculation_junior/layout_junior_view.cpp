@@ -6,7 +6,7 @@ void LayoutJuniorView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  if (!m_layout.isUninitialized()) {
+  if (m_layout.isInitialized()) {
     // Center the layout
     KDSize LayoutSize = m_layout.size(m_font);
     KDCoordinate x = width / 2 - LayoutSize.width() / 2;

@@ -27,8 +27,12 @@ public:
   TypeBlock * firstBlock() override { return m_referenceTable.isEmpty() ? nullptr : static_cast<TypeBlock *>(&m_blocks[0]); }
   TypeBlock * lastBlock() override { return  static_cast<TypeBlock *>(m_referenceTable.isEmpty() ? &m_blocks[0] : Node(&m_blocks[0] + m_referenceTable.lastOffset()).nextTree().block()); }
 
+  // Less permissive and const implementation of Pool::contains
+  bool mayContain(const Block * block) const { return block >= m_blocks && block < m_blocks + k_maxNumberOfBlocks; }
+
   constexpr static int k_maxNumberOfBlocks = 1024;
   constexpr static int k_maxNumberOfReferences = 128;
+
 private:
   CachePool();
   void translate(uint16_t offset, size_t cachePoolSize);

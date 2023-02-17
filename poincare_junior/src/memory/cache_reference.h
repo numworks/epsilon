@@ -2,7 +2,6 @@
 #define POINCARE_MEMORY_CACHE_REFERENCE_H
 
 #include "node.h"
-#include <poincare_junior/src/memory/tree_constructor.h>
 
 namespace PoincareJ {
 
@@ -11,7 +10,7 @@ public:
 #if ASSERTIONS
   SharedPointer(const void * data = nullptr, size_t dataSize = 0);
 #else
-  SharedPointer(const void * data = nullptr) : m_data(data) {}
+  SharedPointer(const void * data = nullptr);
 #endif
 
   const void * data() const {
@@ -36,34 +35,35 @@ typedef void (*ActionWithContext)(void * subAction, const void * data);
 
 class CacheReference {
 public:
-  CacheReference() : m_initializer(nullptr), m_subInitializer(nullptr), m_id(-1) {}
+  // Uninitialized CacheReference constructor
+  CacheReference();
+  // Reference from a const tree.
+  CacheReference(const Node tree);
+
+  // These Initializers must push one tree on the EditionPool
   typedef void (*Initializer)();
-  CacheReference(Initializer initializer);
-
-  typedef void (*InitializerFromTree)(Node);
-  CacheReference(InitializerFromTree initializer, const void * treeAddress);
-  CacheReference(InitializerFromTree initializer, const CacheReference * treeReference);
-
   typedef void (*InitializerFromString)(const char *);
+  CacheReference(Initializer initializer);
   CacheReference(InitializerFromString initializer, const char * string);
 
-  // TODO: find a way not to build the tree in cache if it's just a copy from another tree pointed by data
+  // This initializer can edit the given EditionPool node inplace
+  typedef void (*InitializerFromTreeInplace)(Node);
+  CacheReference(InitializerFromTreeInplace initializer, const Node tree);
+  CacheReference(InitializerFromTreeInplace initializer, const CacheReference * treeReference);
+
   typedef void (*FunctionOnConstTree)(const Node tree, void * context);
   void send(FunctionOnConstTree functionOnTree, void * context) const;
 
   void dumpAt(void * address) const;
   size_t treeSize() const;
-  bool isUninitialized() const { return m_initializer == nullptr; }
   bool treeIsIdenticalTo(const CacheReference &other) const;
 #if POINCARE_MEMORY_TREE_LOG
   void log();
 #endif
 
+  bool isCacheReference() const { return m_initializer != nullptr; }
+  bool isInitialized() const { return isCacheReference() || m_data.data() != nullptr; }
   int id() const; // TODO: make private (public for tests)
-
-protected:
-  template <Block... B>
-  CacheReference(CTree<B...> tree) : CacheReference([](Node node) {}, static_cast<Node>(tree).block()) {}
 
 private:
   CacheReference(ActionWithContext initializer, void * subInitializer, const void * data

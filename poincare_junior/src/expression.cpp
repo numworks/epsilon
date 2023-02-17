@@ -57,7 +57,7 @@ Expression Expression::CreateBasicReduction(void * expressionAddress) {
           Simplification::BasicReduction(reference);
         });
     },
-    expressionAddress);
+    Node(static_cast<const TypeBlock *>(expressionAddress)));
 }
 
 Layout Expression::toLayout() const {

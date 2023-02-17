@@ -19,7 +19,8 @@ public:
   static bool IsAutoCompletedBracketPairCodePoint(CodePoint c, Type * type, Side * side);
   static Layout BuildFromBracketType(Type type);
 
-  static void BalanceBracketsInsideHorizontalLayout(HorizontalLayout hLayout, HorizontalLayout * cursorLayout, int * cursorPosition);
+  // Deep balance the autocompleted brackets in hLayout
+  static void BalanceBrackets(HorizontalLayout hLayout, HorizontalLayout * cursorLayout, int * cursorPosition);
 
   AutocompletedBracketPairLayoutNode() : m_leftIsTemporary(false), m_rightIsTemporary(false) {}
 

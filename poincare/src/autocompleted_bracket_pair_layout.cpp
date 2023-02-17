@@ -249,7 +249,7 @@ void AutocompletedBracketPairLayoutNode::setTemporary(Side side, bool temporary)
   m_rightIsTemporary = temporary;
 }
 
-void AutocompletedBracketPairLayoutNode::makeThisAndChildrenPermanent(Side side) {
+void AutocompletedBracketPairLayoutNode::makeChildrenPermanent(Side side, bool includeThis) {
   /* Recursively make all bracket children permanent on that side.
    * e.g. (((1]]|] -> "+" -> (((1))+|] */
   if (!isTemporary(side)) {
@@ -258,9 +258,11 @@ void AutocompletedBracketPairLayoutNode::makeThisAndChildrenPermanent(Side side)
   Layout child = childOnSide(side);
   if (type() == child.type()) {
     AutocompletedBracketPairLayoutNode * bracket = static_cast<AutocompletedBracketPairLayoutNode *>(child.node());
-    bracket->makeThisAndChildrenPermanent(side);
+    bracket->makeChildrenPermanent(side, true);
   }
-  setTemporary(side, false);
+  if (includeThis) {
+    setTemporary(side, false);
+  }
 }
 
 LayoutNode * AutocompletedBracketPairLayoutNode::childOnSide(Side side) const {

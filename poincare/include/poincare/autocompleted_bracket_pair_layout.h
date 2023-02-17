@@ -32,7 +32,7 @@ public:
 
   bool isTemporary(Side side) const { return side == Side::Left ? m_leftIsTemporary : m_rightIsTemporary; }
   void setTemporary(Side side, bool temporary);
-  void makeThisAndChildrenPermanent(Side side);
+  void makeChildrenPermanent(Side side, bool includeThis);
 
 protected:
   KDColor bracketColor(Side side, KDColor fg, KDColor bg) const { return isTemporary(side) ? KDColor::Blend(fg, bg, k_temporaryBlendAlpha) : fg; }

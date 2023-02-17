@@ -12,14 +12,25 @@ using namespace Poincare;
 void assert_inserted_layout_points_to(Layout layoutToInsert, Expression correspondingExpression, Layout layoutOfCursorAfterInsertion, int cursorPositionInLayout = 0) {
   HorizontalLayout h = HorizontalLayout::Builder();
   LayoutCursor c = LayoutCursor(h);
+  bool insertingHorizontalLayout = layoutToInsert.isHorizontal();
+
+  /* layoutOfCursorAfterInsertion might be lost during insertion, so compute
+   * the address offset of its node to compare it with the address offset of
+   * the cursor layout after insertion.
+   * */
+  int addressOffsetBeforeInsertion = layoutOfCursorAfterInsertion.node() - layoutToInsert.node();
+  layoutOfCursorAfterInsertion = layoutOfCursorAfterInsertion.clone();
+
   /* LayoutField forces right of layout when expression has 0 children.
    * We mimic this behaviour here. */
-  c.insertLayoutAtCursor(layoutToInsert, nullptr, !correspondingExpression.isUninitialized() && correspondingExpression.numberOfChildren() > 0);
-  //quiz_assert(c.layout() == layoutOfCursorAfterInsertion);
-  //quiz_assert(c.position() == cursorPositionInLayout);
+  c.insertLayoutAtCursor(layoutToInsert, nullptr, !correspondingExpression.isUninitialized() && correspondingExpression.numberOfChildren() == 0);
+
+  int addressOffsetAfterInsertion = c.layout().node() - (insertingHorizontalLayout ? static_cast<LayoutNode *>(h.node()) : h.childAtIndex(0).node());
+  quiz_assert(addressOffsetAfterInsertion == addressOffsetBeforeInsertion && layoutOfCursorAfterInsertion.isIdenticalTo(c.layout()));
+  quiz_assert(c.position() == cursorPositionInLayout);
 }
 
-QUIZ_CASE(poincare_layout_cursor_computation) {
+QUIZ_CASE(poincare_layout_cursor_layout_to_point) {
   Layout l;
   Expression e;
 

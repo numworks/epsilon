@@ -9,7 +9,7 @@ EditableFunctionCell::EditableFunctionCell(Escher::Responder * parentResponder, 
   AbstractFunctionCell(),
   m_expressionField(parentResponder, inputEventHandler, layoutFieldDelegate) {
   // We set a dummy message for the height computation
-  m_messageTextView.setMessage(I18n::Message::FunctionApp);
+  m_messageTextView.setMessage(I18n::Message::UnhandledType);
 }
 
 void EditableFunctionCell::layoutSubviews(bool force) {

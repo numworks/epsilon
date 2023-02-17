@@ -275,8 +275,8 @@ bool GridLayoutNode::isColumnOrRowEmpty(bool column, int index) const {
 
 void GridLayoutNode::addEmptyRowOrColumn(bool column, EmptyRectangle::Color color) {
   GridLayout thisRef = GridLayout(this);
-  /* addChildAtIndex messes with the number of rows to keep it consistent with
-   * the number of children */
+  /* addChildAtIndexInPlace messes with the number of rows to keep it consistent
+   * with the number of children */
   int previousNumberOfChildren = numberOfChildren();
   int previousNumberOfLines = column ? m_numberOfColumns : m_numberOfRows;
   int otherNumberOfLines = column ? m_numberOfRows : m_numberOfColumns;

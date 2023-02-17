@@ -10,9 +10,12 @@ namespace Poincare {
 template<typename T>
 class FloatList : public List, public DatasetColumn<T> {
 
-/* WARNING: Do not add children to FloatList with addChildAtIndex,
- * and do not replace children with replaceChildAtIndex.
- * The method floatExpressionAtIndex assumes that every child is a FloatNode.
+/* WARNING: Do not add children to FloatList with addChildAtIndexInPlace,
+ * and do not replace children with replaceChildAtIndexInPlace.
+ * The method floatExpressionAtIndex assumes that every child is a FloatNode,
+ * to optimize computation time.
+ * addChildAtIndexInPlace could add a child which is not a FloatNode and
+ * lead to bad access when using floatExpressionAtIndex.
  * Use addValueAtIndex and replaceValueAtIndex instead.
  */
 public:

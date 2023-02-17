@@ -96,7 +96,7 @@ void LayoutNode::invalidAllSizesPositionsAndBaselines() {
   }
 }
 
-int LayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
+int LayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   int nChildren = numberOfChildren();
   if (nChildren == 0) {
     assert(currentIndex == k_outsideIndex);
@@ -110,7 +110,7 @@ int LayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::Horizont
   return k_cantMoveIndex;
 }
 
-int LayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+int LayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   assert(currentIndex < numberOfChildren());
   assert(currentIndex != k_outsideIndex || positionAtCurrentIndex != PositionInLayout::Middle);
   return k_cantMoveIndex;

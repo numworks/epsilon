@@ -51,7 +51,7 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
   return std::min(numberOfChar, bufferSize-1);
 }
 
-int VerticalOffsetLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+int VerticalOffsetLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (currentIndex == k_outsideIndex && ((direction == OMG::VerticalDirection::Up && m_verticalPosition == VerticalPosition::Superscript) || (direction == OMG::VerticalDirection::Down && m_verticalPosition == VerticalPosition::Subscript))) {
     return 0;
   }

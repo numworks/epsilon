@@ -597,7 +597,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction, bool * sho
 
   /* If the cursor is selecting, it should not enter a new layout
    * but select all of it. */
-  int newIndex = isSelecting() ? LayoutNode::k_outsideIndex : nextLayout.indexOfNextChildToPointToAfterHorizontalCursorMove(direction, currentIndexInNextLayout, shouldRedrawLayout);
+  int newIndex = isSelecting() ? LayoutNode::k_outsideIndex : nextLayout.indexAfterHorizontalCursorMove(direction, currentIndexInNextLayout, shouldRedrawLayout);
   assert(newIndex != LayoutNode::k_cantMoveIndex);
 
   if (newIndex != LayoutNode::k_outsideIndex) {
@@ -709,7 +709,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(OMG::VerticalDirection direction
     // Repeat for right and left
     for (int i = 0; i < 2; i++) {
       if (!nextLayout.isUninitialized()) {
-        int nextIndex = nextLayout.indexOfNextChildToPointToAfterVerticalCursorMove(direction, LayoutNode::k_outsideIndex,positionRelativeToNextLayout, shouldRedrawLayout);
+        int nextIndex = nextLayout.indexAfterVerticalCursorMove(direction, LayoutNode::k_outsideIndex,positionRelativeToNextLayout, shouldRedrawLayout);
         if (nextIndex != LayoutNode::k_cantMoveIndex) {
           assert(nextIndex != LayoutNode::k_outsideIndex);
           assert(!nextLayout.isHorizontal());
@@ -730,7 +730,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(OMG::VerticalDirection direction
   LayoutNode::PositionInLayout currentPosition = m_position == leftMostPosition() ? LayoutNode::PositionInLayout::Left : (m_position == rightMostPosition() ? LayoutNode::PositionInLayout::Right : LayoutNode::PositionInLayout::Middle);
   while (!p.isUninitialized()) {
     int childIndex = p.indexOfChild(currentChild);
-    int nextIndex = p.indexOfNextChildToPointToAfterVerticalCursorMove(direction, childIndex, currentPosition, shouldRedrawLayout);
+    int nextIndex = p.indexAfterVerticalCursorMove(direction, childIndex, currentPosition, shouldRedrawLayout);
     if (nextIndex != LayoutNode::k_cantMoveIndex) {
       if (nextIndex == LayoutNode::k_outsideIndex) {
         assert(currentPosition != LayoutNode::PositionInLayout::Middle);

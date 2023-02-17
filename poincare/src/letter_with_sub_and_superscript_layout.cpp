@@ -4,7 +4,7 @@
 
 namespace Poincare {
 
-int LetterWithSubAndSuperscriptLayoutNode::indexOfNextChildToPointToAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
+int LetterWithSubAndSuperscriptLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   switch (currentIndex) {
   case k_outsideIndex:
     return direction == OMG::HorizontalDirection::Right ? k_nLayoutIndex : k_kLayoutIndex;
@@ -16,7 +16,7 @@ int LetterWithSubAndSuperscriptLayoutNode::indexOfNextChildToPointToAfterHorizon
   }
 }
 
-int LetterWithSubAndSuperscriptLayoutNode::indexOfNextChildToPointToAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+int LetterWithSubAndSuperscriptLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (direction == OMG::VerticalDirection::Up &&
       (currentIndex == k_kLayoutIndex ||
        (currentIndex == k_outsideIndex && positionAtCurrentIndex == PositionInLayout::Left)))

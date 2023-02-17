@@ -7,9 +7,12 @@
 
 namespace Poincare {
 
-class LayoutDecoder : public UnicodeDecoder {
+/* This helper provides a codepoint string api to HorizontalLayout containing
+ * only CodePointLayouts (used in layout fields in linear mode) */
+
+class LinearLayoutDecoder : public UnicodeDecoder {
 public:
-  LayoutDecoder(const HorizontalLayout layout, size_t initialPosition = 0, size_t layoutEnd = 0) :
+  LinearLayoutDecoder(const HorizontalLayout layout, size_t initialPosition = 0, size_t layoutEnd = 0) :
     UnicodeDecoder(initialPosition, layoutEnd ? layoutEnd : layout.numberOfChildren()),
     m_layout(layout)
   {

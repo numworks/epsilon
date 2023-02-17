@@ -35,6 +35,7 @@ public:
   bool layoutHasNode() const { return Poincare::TreeNode::IsValidIdentifier(m_layout.identifier()) && !m_layout.wasErasedByException(); }
   KDFont::Size font() const { return m_font; }
   void setFont(KDFont::Size font) { m_font = font; }
+
 protected:
   /* Warning: we do not need to delete the previous expression layout when
    * deleting object or setting a new expression layout. Indeed, the expression
@@ -46,7 +47,9 @@ protected:
   KDColor m_textColor;
   KDColor m_backgroundColor;
   KDFont::Size m_font;
+
 private:
+  virtual Poincare::LayoutSelection selection() const { return Poincare::LayoutSelection(); }
   float m_horizontalAlignment;
   float m_verticalAlignment;
   KDCoordinate m_horizontalMargin;
@@ -55,19 +58,21 @@ private:
 class ExpressionViewWithCursor : public ExpressionView {
 public:
   ExpressionViewWithCursor(
+    Poincare::LayoutCursor * cursor,
     float horizontalAlignment = KDContext::k_alignLeft,
     float verticalAlignment = KDContext::k_alignCenter,
     KDColor textColor = KDColorBlack,
     KDColor backgroundColor = KDColorWhite,
-    KDFont::Size font = KDFont::Size::Large,
-    Poincare::LayoutCursor * cursor = nullptr
+    KDFont::Size font = KDFont::Size::Large
   ) :
   ExpressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor, font),
-  m_cursor(cursor) {}
+  m_cursor(cursor) {
+    assert(cursor);
+  }
 
-  void drawRect(KDContext * ctx, KDRect rect) const override;
 
 private:
+  Poincare::LayoutSelection selection() const override { return m_cursor->selection(); }
   Poincare::LayoutCursor * m_cursor;
 };
 

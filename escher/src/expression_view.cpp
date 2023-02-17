@@ -75,14 +75,7 @@ KDPoint ExpressionView::absoluteDrawingOrigin() const {
 void ExpressionView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
   if (!m_layout.isUninitialized()) {
-    m_layout.draw(ctx, drawingOrigin(), m_font, m_textColor, m_backgroundColor, LayoutSelection());
-  }
-}
-
-void ExpressionViewWithCursor::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, m_backgroundColor);
-  if (!m_layout.isUninitialized()) {
-    m_layout.draw(ctx, drawingOrigin(), m_font, m_textColor, m_backgroundColor, m_cursor ? m_cursor->selection() : LayoutSelection());
+    m_layout.draw(ctx, drawingOrigin(), m_font, m_textColor, m_backgroundColor, selection());
   }
 }
 

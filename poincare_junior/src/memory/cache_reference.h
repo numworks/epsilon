@@ -2,6 +2,7 @@
 #define POINCARE_MEMORY_CACHE_REFERENCE_H
 
 #include "node.h"
+#include <poincare_junior/src/memory/tree_constructor.h>
 
 namespace PoincareJ {
 
@@ -61,7 +62,8 @@ public:
   int id() const; // TODO: make private (public for tests)
 
 protected:
-  CacheReference(const Node node);
+  template <Block... B>
+  CacheReference(CTree<B...> tree) : CacheReference([](Node node) {}, static_cast<Node>(tree).block()) {}
 
 private:
   CacheReference(ActionWithContext initializer, void * subInitializer, const void * data

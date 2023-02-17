@@ -95,7 +95,7 @@ private:
     void layoutSubviews(bool force = false) override;
     void layoutCursorSubview(bool force);
     Poincare::LayoutCursor m_cursor;
-    ExpressionView m_expressionView;
+    ExpressionViewWithCursor m_expressionView;
     TextCursorView m_cursorView;
     bool m_isEditing;
   };

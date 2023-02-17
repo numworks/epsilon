@@ -20,8 +20,7 @@ public:
                  float verticalAlignment = KDContext::k_alignCenter,
                  KDColor textColor = KDColorBlack,
                  KDColor backgroundColor = KDColorWhite,
-                 KDFont::Size font = KDFont::Size::Large,
-                 Poincare::LayoutCursor * cursor = nullptr);
+                 KDFont::Size font = KDFont::Size::Large);
   Poincare::Layout layout() const { return m_layout; }
   bool setLayout(Poincare::Layout layout);
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -44,14 +43,32 @@ protected:
    * responsible for freeing the expression layout when required. */
   // TODO find better way to have minimalSizeForOptimalDisplay const
   mutable Poincare::Layout m_layout;
-  Poincare::LayoutCursor * m_cursor;
   KDColor m_textColor;
   KDColor m_backgroundColor;
+  KDFont::Size m_font;
 private:
   float m_horizontalAlignment;
   float m_verticalAlignment;
   KDCoordinate m_horizontalMargin;
-  KDFont::Size m_font;
+};
+
+class ExpressionViewWithCursor : public ExpressionView {
+public:
+  ExpressionViewWithCursor(
+    float horizontalAlignment = KDContext::k_alignLeft,
+    float verticalAlignment = KDContext::k_alignCenter,
+    KDColor textColor = KDColorBlack,
+    KDColor backgroundColor = KDColorWhite,
+    KDFont::Size font = KDFont::Size::Large,
+    Poincare::LayoutCursor * cursor = nullptr
+  ) :
+  ExpressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor, font),
+  m_cursor(cursor) {}
+
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+
+private:
+  Poincare::LayoutCursor * m_cursor;
 };
 
 }

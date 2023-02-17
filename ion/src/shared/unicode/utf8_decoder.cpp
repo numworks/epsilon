@@ -3,25 +3,24 @@
 #include <assert.h>
 
 size_t UnicodeDecoder::nextGlyphPosition() {
-  //assert(*m_stringPosition != 0 && (m_stringPosition == m_string || *(m_stringPosition - 1) != 0));
   CodePoint followingCodePoint = nextCodePoint();
-  size_t resultGlyphPosition = m_stringPosition;
+  size_t resultGlyphPosition = m_position;
   followingCodePoint = nextCodePoint();
   while (followingCodePoint != UCodePointNull && followingCodePoint.isCombining()) {
-    resultGlyphPosition = m_stringPosition;
+    resultGlyphPosition = m_position;
     followingCodePoint = nextCodePoint();
   }
-  m_stringPosition = resultGlyphPosition;
+  m_position = resultGlyphPosition;
   return resultGlyphPosition;
 }
 
 size_t UnicodeDecoder::previousGlyphPosition() {
-  assert(m_stringPosition > 0);
+  assert(m_position > 0);
   CodePoint previousCP = previousCodePoint();
-  size_t resultGlyphPosition = m_stringPosition;
-  while (m_stringPosition > 0 && previousCP.isCombining()) {
+  size_t resultGlyphPosition = m_position;
+  while (m_position > 0 && previousCP.isCombining()) {
     previousCP = previousCodePoint();
-    resultGlyphPosition = m_stringPosition;
+    resultGlyphPosition = m_position;
   }
   return resultGlyphPosition;
 }
@@ -43,7 +42,7 @@ static inline uint8_t last_k_bits(uint8_t value, uint8_t bits) {
 }
 
 CodePoint UTF8Decoder::nextCodePoint() {
-  assert((stringPosition() == m_string || *(stringPosition() - 1) != 0) && (stringEnd() == nullptr || m_stringPosition <= m_stringEnd));
+  assert((stringPosition() == m_string || *(stringPosition() - 1) != 0) && (stringEnd() == nullptr || m_position <= m_end));
   bool returnCodePointNull = false;
   if (stringEnd() != nullptr && stringPosition() == stringEnd()) {
     returnCodePointNull = true;
@@ -94,7 +93,7 @@ CodePoint UTF8Decoder::previousCodePoint() {
 void UTF8Decoder::setPosition(const char * position) {
   assert(position >= string() && position <= string() + strlen(string()));
   assert(!IsInTheMiddleOfACodePoint(*position));
-  m_stringPosition = position - m_string;
+  m_position = position - m_string;
 }
 
 size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, size_t bufferLength) {

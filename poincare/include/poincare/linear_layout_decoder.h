@@ -15,14 +15,14 @@ public:
   {
     assert(!m_layout.isUninitialized());
   }
-  CodePoint nextCodePoint() { return codePointAt(m_stringPosition++); }
-  CodePoint previousCodePoint() { return codePointAt(--m_stringPosition); }
+  CodePoint nextCodePoint() { return codePointAt(m_position++); }
+  CodePoint previousCodePoint() { return codePointAt(--m_position); }
 private:
   CodePoint codePointAt(size_t index) {
-    if (index == reinterpret_cast<size_t>(m_stringEnd)) {
+    if (index == m_end) {
       return UCodePointNull;
     }
-    assert(0 <= index && index < reinterpret_cast<size_t>(m_stringEnd));
+    assert(0 <= index && index < m_end);
     Layout child = m_layout.childAtIndex(index);
     assert(child.type() == LayoutNode::Type::CodePointLayout);
     return static_cast<CodePointLayout&>(child).codePoint();

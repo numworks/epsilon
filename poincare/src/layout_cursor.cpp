@@ -274,7 +274,7 @@ void LayoutCursor::addEmptyExponentialLayout(Context * context) {
 }
 
 void LayoutCursor::addEmptyMatrixLayout(Context * context) {
-  insertLayoutAtCursor(MatrixLayout::EmptySquaredMatrixBuilder(), context);
+  insertLayoutAtCursor(MatrixLayout::EmptyMatrixBuilder(), context);
 }
 
 void LayoutCursor::addEmptySquareRootLayout(Context * context) {

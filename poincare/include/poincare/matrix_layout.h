@@ -2,6 +2,7 @@
 #define POINCARE_MATRIX_LAYOUT_NODE_H
 
 #include <poincare/grid_layout.h>
+#include <poincare/horizontal_layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
 
@@ -51,7 +52,7 @@ public:
   static MatrixLayout Builder() { return TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(); }
   static MatrixLayout Builder(Layout l1);
   static MatrixLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4);
-  static MatrixLayout EmptySquaredMatrixBuilder();
+  static MatrixLayout EmptyMatrixBuilder() { return Builder(HorizontalLayout::Builder()); }
 
 private:
   MatrixLayoutNode * node() const { return static_cast<MatrixLayoutNode *>(Layout::node()); }

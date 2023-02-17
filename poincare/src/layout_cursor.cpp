@@ -364,8 +364,11 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
      * encountered, leave the subscript and continue the insertion in its
      * parent. */
     if (codePoint == UCodePointSystem) {
+      // UCodePointSystem should be inserted only for system braces
+      assert(nextCodePoint == '{' || nextCodePoint == '}');
       if (linearMode) {
-        codePoint = nextCodePoint;
+        // Convert u\x14{n\x14} into u(n)
+        codePoint = nextCodePoint == '{' ? '(' : ')';
         nextCodePoint = decoder.nextCodePoint();
       } else {
         if (nextCodePoint == '{') {

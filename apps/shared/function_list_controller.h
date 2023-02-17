@@ -11,7 +11,7 @@
 
 namespace Shared {
 
-class FunctionListController : public ExpressionModelListController, public Escher::ButtonRowDelegate, public InputEventHandlerDelegate, public TextFieldDelegate {
+class FunctionListController : public ExpressionModelListController, public Escher::ButtonRowDelegate, public InputEventHandlerDelegate {
 public:
   FunctionListController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::ButtonRowController * footer, I18n::Message text);
 

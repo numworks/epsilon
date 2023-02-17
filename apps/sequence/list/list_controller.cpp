@@ -229,7 +229,6 @@ void ListController::editExpression(Ion::Events::Event event) {
 }
 
 bool ListController::editSelectedRecordWithText(const char * text) {
-  sequenceDefinitionForRow(selectedRow());
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   Shared::Sequence * sequence = modelStore()->modelForRecord(record);
   Context * context = App::app()->localContext();
@@ -339,7 +338,7 @@ int ListController::modelIndexForRow(int j) {
   return sequenceIndex;
 }
 
-int ListController::sequenceDefinitionForRow(int j) {
+int ListController::sequenceDefinitionForRow(int j) const {
   if (j < 0) {
     return k_otherDefinition;
   }

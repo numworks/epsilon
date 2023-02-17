@@ -81,7 +81,7 @@ private:
   void willDisplayTitleCellAtIndex(Escher::HighlightCell * cell, int j);
   void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j) override;
   int modelIndexForRow(int j) override;
-  int sequenceDefinitionForRow(int j);
+  int sequenceDefinitionForRow(int j) const;
   KDCoordinate maxFunctionNameWidth();
   void didChangeModelsList() override;
   KDCoordinate baseline(int j);

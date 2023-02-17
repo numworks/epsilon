@@ -138,6 +138,9 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
       willDisplayExpressionCellAtIndex(cell, j);
     }
   }
+  if (cell == &m_editableCell) {
+    return;
+  }
   EvenOddCell * myCell = static_cast<EvenOddCell *>(cell);
   myCell->setEven(modelIndexForRow(j)%2 == 0);
   myCell->reloadCell();
@@ -384,7 +387,7 @@ void ListController::didChangeModelsList() {
 
 KDCoordinate ListController::baseline(int j) {
   assert(j >= 0 && j < const_cast<ListController *>(this)->numberOfExpressionRows());
-  Escher::EvenOddExpressionCell * cell = static_cast<Escher::EvenOddExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
+  Escher::HighlightCell * cell = static_cast<Escher::HighlightCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
   Poincare::Layout layout = cell->layout();
   if (layout.isUninitialized()) {
     return -1; // Baseline < 0 triggers default behaviour (centered alignment)

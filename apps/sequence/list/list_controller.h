@@ -4,7 +4,7 @@
 #include <apps/i18n.h>
 #include <apps/shared/sequence_store.h>
 #include <apps/shared/function_list_controller.h>
-#include <escher/even_odd_editable_expression_cell.h>
+#include <escher/editable_expression_model_cell.h>
 #include <escher/table_view_data_source.h>
 #include "list_parameter_controller.h"
 #include "sequence_toolbox.h"
@@ -97,7 +97,7 @@ private:
   Escher::EvenOddCell m_emptyCell;
   VerticalSequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
-  Escher::EvenOddEditableExpressionCell m_editableCell;
+  Escher::EditableExpressionModelCell m_editableCell;
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
   Escher::StackViewController m_typeStackController;

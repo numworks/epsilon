@@ -3,7 +3,7 @@
 
 #include <escher/button_row_controller.h>
 #include <escher/even_odd_expression_cell.h>
-#include <escher/even_odd_editable_expression_cell.h>
+#include <escher/editable_expression_model_cell.h>
 #include <apps/shared/expression_model_list_controller.h>
 #include <apps/shared/text_field_delegate.h>
 #include "equation_store.h"
@@ -62,7 +62,7 @@ private:
 
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
-  Escher::EvenOddEditableExpressionCell m_editableCell;
+  Escher::EditableExpressionModelCell m_editableCell;
   Escher::AbstractButtonCell m_resolveButton;
   EquationModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;

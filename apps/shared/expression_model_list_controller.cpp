@@ -138,7 +138,7 @@ bool ExpressionModelListController::editSelectedRecordWithText(const char * text
   return result;
 }
 
-void ExpressionModelListController::getTextForSelectedRecord(char * text, size_t size) {
+void ExpressionModelListController::getTextForSelectedRecord(char * text, size_t size) const {
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   modelStore()->modelForRecord(record)->text(text, size);
 }

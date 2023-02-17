@@ -24,8 +24,8 @@ public:
     KDColor textColor = KDColorBlack,
     KDColor backgroundColor = KDColorWhite,
     KDFont::Size font = KDFont::Size::Large);
-  void setLayout(Poincare::Layout layout);
-  void setTextColor(KDColor textColor);
+  void setLayout(Poincare::Layout layout) { m_expressionField.setLayout(layout); }
+  void setTextColor(KDColor textColor) { m_expressionField.expressionView()->setTextColor(textColor); }
   void setFont(KDFont::Size font) { m_expressionField.expressionView()->setFont(font); }
   KDSize minimalSizeForOptimalDisplay() const override;
   void setAlignment(float horizontalAlignment, float verticalAlignment) { m_expressionField.expressionView()->setAlignment(horizontalAlignment, verticalAlignment); }
@@ -37,8 +37,8 @@ public:
   ExpressionField * expressionField() { return &m_expressionField; }
 
 protected:
-  int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  int numberOfSubviews() const override { return 1; }
+  View * subviewAtIndex(int index) override { return &m_expressionField; }
   void layoutSubviews(bool force = false) override;
   ExpressionField m_expressionField;
   KDCoordinate m_leftMargin;

@@ -150,6 +150,8 @@ const ToolboxMessageTree MathModuleChildren[] = {
                              I18n::Message::PythonFmod),
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandFrExp,
                              I18n::Message::PythonFrExp),
+    ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGcd,
+                             I18n::Message::PythonGcd),
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandLdexp,
                              I18n::Message::PythonLdexp),
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandModf,

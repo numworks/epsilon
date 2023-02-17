@@ -27,13 +27,13 @@ bool FindXNTSymbol(UnicodeDecoder & functionDecoder, bool * defaultXNTHasChanged
     { Poincare::Sum::s_functionHelper.aliasesList(), Poincare::Sum::k_defaultXNTChar }
   };
   // Step 1 : Identify the function the cursor is in
-  size_t textStart = functionDecoder.stringStart();
-  size_t location = functionDecoder.stringPosition();
+  size_t textStart = functionDecoder.start();
+  size_t location = functionDecoder.position();
   CodePoint c = UCodePointUnknown;
   // Analyze glyphs on the left of the cursor
   if (location > textStart) {
     c = functionDecoder.previousCodePoint();
-    location = functionDecoder.stringPosition();
+    location = functionDecoder.position();
   }
   int functionLevel = 0;
   int cursorLevel = 0;
@@ -49,18 +49,18 @@ bool FindXNTSymbol(UnicodeDecoder & functionDecoder, bool * defaultXNTHasChanged
         }
         // Skip over whitespace.
         while (location > textStart && functionDecoder.previousCodePoint() == ' ') {
-          location = functionDecoder.stringPosition();
+          location = functionDecoder.position();
         }
         // Move back right before the last non whitespace code-point
         functionDecoder.nextCodePoint();
-        location = functionDecoder.stringPosition();
+        location = functionDecoder.position();
         // Identify one of the functions
         for (size_t i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
           const char * name = sFunctions[i].aliasesList.mainAlias();
           size_t length = UTF8Helper::StringCodePointLength(name);
           if (location >= textStart + length) {
             UTF8Decoder nameDecoder(name);
-            size_t savePosition = functionDecoder.stringPosition();
+            size_t savePosition = functionDecoder.position();
             // Move the decoder where the function name could start
             functionDecoder.unsafeSetPosition(savePosition - length);
             if (Contains(functionDecoder, nameDecoder)) {
@@ -95,7 +95,7 @@ bool FindXNTSymbol(UnicodeDecoder & functionDecoder, bool * defaultXNTHasChanged
         break;
     }
     c = functionDecoder.previousCodePoint();
-    location = functionDecoder.stringPosition();
+    location = functionDecoder.position();
   }
 
   return functionFound && !cursorInVariableField;

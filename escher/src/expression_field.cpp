@@ -7,6 +7,9 @@ using namespace Poincare;
 
 namespace Escher {
 
+/* TODO: This buffer could probably be shared with some other temporary
+ * space. It can't be shared with the one from TextField if we want to remove
+ * double buffering in TextField and still open the store menu within texts. */
 static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
 
 ExpressionField::ExpressionField(Responder * parentResponder,

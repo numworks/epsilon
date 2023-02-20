@@ -268,21 +268,29 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
     } else {
       EvenOddBufferTextCell *symbolCell =
           static_cast<EvenOddBufferTextCell *>(cell);
-      // Holds at maximum the variable name + 2 digits (for 10)
-      char bufferSymbol[Poincare::SymbolAbstract::k_maxNameSize + 2];
+      /* Holds at maximum the variable name + 2 digits (for 10)
+       * Quotation marks are removed to make the cell thinner.
+       * (A variable name is either always inferior to 7 chars, except
+       * if it has quotation marks, in which case it can have up to 9
+       * chars, including the quotation marks). */
+      constexpr size_t k_maxSize =
+          Poincare::SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks +
+          1;
+      char bufferSymbol[k_maxSize + 2];
       if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
         // It's a solution row, get symbol name
         if (m_equationStore->type() == EquationStore::Type::LinearSystem) {
           /* The system has more than one variable: the cell text is the
            * variable name */
-          strlcpy(bufferSymbol, m_equationStore->variableAtIndex(j),
-                  Poincare::SymbolAbstract::k_maxNameSize);
+          const char *varName = m_equationStore->variableAtIndex(j);
+          SymbolAbstractNode::NameWithoutQuotationMarks(
+              bufferSymbol, k_maxSize, varName, strlen(varName));
         } else {
           /* The system has one variable but might have many solutions: the cell
            * text is variableX, with X the row index + 1 (e.g. x1, x2,...) */
-          int length =
-              strlcpy(bufferSymbol, m_equationStore->variableAtIndex(0),
-                      Poincare::SymbolAbstract::k_maxNameSize);
+          const char *varName = m_equationStore->variableAtIndex(0);
+          int length = SymbolAbstractNode::NameWithoutQuotationMarks(
+              bufferSymbol, k_maxSize, varName, strlen(varName));
           if (j < 9) {
             bufferSymbol[length++] = j + '1';
           } else {
@@ -295,10 +303,10 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
       } else {
         // It's a user variable row, get variable name
         assert(rowOfUserVariablesMessage >= 0);
-        strlcpy(bufferSymbol,
-                m_equationStore->userVariableAtIndex(
-                    j - rowOfUserVariablesMessage - 1),
-                Poincare::SymbolAbstract::k_maxNameSize);
+        const char *varName = m_equationStore->userVariableAtIndex(
+            j - rowOfUserVariablesMessage - 1);
+        SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, k_maxSize,
+                                                      varName, strlen(varName));
       }
       symbolCell->setText(bufferSymbol);
     }

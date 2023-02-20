@@ -153,7 +153,7 @@ bool ListController::completeEquation(InputEventHandler *equationField,
   }
   // Insert the name, symbol and equation symbol of the existing function
   constexpr size_t k_bufferSize =
-      SymbolAbstract::k_maxNameSize + sizeof("(x)≥") - 1;
+      SymbolAbstractNode::k_maxNameSize + sizeof("(x)≥") - 1;
   static_assert(k_bufferSize >= sizeof("r="),
                 "k_bufferSize should fit both situations.");
   char buffer[k_bufferSize];

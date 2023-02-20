@@ -25,7 +25,27 @@ namespace Poincare {
 
 class SymbolAbstractNode : public ExpressionNode {
  public:
+  /* A symbol abstract can have a max length of 7 chars, or 9 if it's
+   * surrounded by quotation marks.
+   * This makes it so a 9 chars name (with quotation marks), can be
+   * turned into a 7 char name in the result cells of the solver (by
+   * removing the quotation marks). */
+  constexpr static size_t k_maxNameLengthWithoutQuotationMarks = 7;
+  constexpr static size_t k_maxNameLength =
+      k_maxNameLengthWithoutQuotationMarks + 2;
+  constexpr static size_t k_maxNameSize = k_maxNameLength + 1;
+  static bool NameHasQuotationMarks(const char *name, size_t length) {
+    return length > 2 && name[0] == '"' && name[length - 1] == '"';
+  }
+  static bool NameLengthIsValid(const char *name, size_t length) {
+    return length <= k_maxNameLengthWithoutQuotationMarks ||
+           (NameHasQuotationMarks(name, length) && length <= k_maxNameLength);
+  }
+  static size_t NameWithoutQuotationMarks(char *buffer, size_t bufferSize,
+                                          const char *name, size_t nameLength);
+
   virtual const char *name() const = 0;
+
   size_t size() const override;
 
   // ExpressionNode
@@ -50,6 +70,13 @@ class SymbolAbstractNode : public ExpressionNode {
   int serialize(char *buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
                 int numberOfSignificantDigits) const override;
+
+  // editableName is used in setName
+  virtual char *editableName() {
+    assert(false);
+    return nullptr;
+  }
+  void setName(const char *name, size_t length);
 
  private:
   virtual size_t nodeSize() const = 0;

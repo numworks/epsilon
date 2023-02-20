@@ -16,6 +16,20 @@
 
 namespace Poincare {
 
+size_t SymbolAbstractNode::NameWithoutQuotationMarks(char *buffer,
+                                                     size_t bufferSize,
+                                                     const char *name,
+                                                     size_t nameLength) {
+  if (NameHasQuotationMarks(name, nameLength)) {
+    assert(bufferSize > nameLength - 2);
+    size_t result = strlcpy(buffer, name + 1, bufferSize) - 1;
+    buffer[nameLength - 2] = 0;  // Remove the last '""
+    return result;
+  }
+  assert(bufferSize > nameLength);
+  return strlcpy(buffer, name, bufferSize);
+}
+
 size_t SymbolAbstractNode::size() const {
   return nodeSize() + strlen(name()) + 1;
 }
@@ -42,6 +56,12 @@ int SymbolAbstractNode::serialize(char *buffer, int bufferSize,
                                   Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits) const {
   return std::min<int>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
+}
+
+void SymbolAbstractNode::setName(const char *name, size_t length) {
+  assert(length <= k_maxNameLengthWithoutQuotationMarks ||
+         (NameHasQuotationMarks(name, length) && length <= k_maxNameLength));
+  strlcpy(editableName(), name, length + 1);
 }
 
 template <typename T, typename U>

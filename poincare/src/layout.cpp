@@ -86,8 +86,8 @@ Layout Layout::XNTLayout() const {
   assert(xntLayout.isUninitialized() ||
          xntLayout.numberOfDescendants(true) >= 0);
   if (!xntLayout.isUninitialized() &&
-      static_cast<size_t>(xntLayout.numberOfDescendants(true)) <=
-          SymbolAbstract::k_maxNameSize &&
+      static_cast<size_t>(xntLayout.numberOfDescendants(false)) <=
+          SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks &&
       xntLayout
           .recursivelyMatches([](const Layout l) {
             if (l.type() != LayoutNode::Type::CodePointLayout) {
@@ -103,7 +103,7 @@ Layout Layout::XNTLayout() const {
     /* Return xnt if :
      * - it is initialized and only contains horizontal layouts and code points
      * - all code points are letters, numbers or _
-     * - There are less than k_maxNameSize descendants */
+     * - There are less than k_maxNameLengthWithoutQuotationMarks descendants */
     return xntLayout;
   }
   return Layout();

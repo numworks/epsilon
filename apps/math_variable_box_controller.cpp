@@ -155,10 +155,10 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
   if (m_currentPage == Page::Expression || m_currentPage == Page::List ||
       m_currentPage == Page::Matrix) {
     static_assert(Shared::Function::k_maxNameWithArgumentSize >
-                      Poincare::SymbolAbstract::k_maxNameSize,
+                      SymbolAbstractNode::k_maxNameSize,
                   "Forgot argument's size?");
     symbolLength = SymbolAbstract::TruncateExtension(
-        symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
+        symbolName, record.fullName(), SymbolAbstractNode::k_maxNameSize);
   } else if (m_currentPage == Page::Function) {
     if (record.hasExtension(Storage::funcExtension)) {
       ContinuousFunction f(record);

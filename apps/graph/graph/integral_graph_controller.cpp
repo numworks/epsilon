@@ -48,7 +48,8 @@ double IntegralGraphController::cursorNextStep(
 Layout IntegralGraphController::createFunctionLayout() {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(selectedRecord());
-  constexpr size_t bufferSize = SymbolAbstract::k_maxNameSize + 5;  // f(x)dx
+  constexpr size_t bufferSize =
+      Poincare::SymbolAbstractNode::k_maxNameSize + 5;  // f(x)dx
   char buffer[bufferSize];
   const char* dx = "dx";
   size_t numberOfChars =

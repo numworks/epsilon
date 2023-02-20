@@ -18,7 +18,7 @@
 namespace Poincare {
 
 SymbolNode::SymbolNode(const char* newName, int length) : SymbolAbstractNode() {
-  strlcpy(const_cast<char*>(name()), newName, length + 1);
+  setName(newName, length);
 }
 
 Expression SymbolNode::replaceSymbolWithExpression(

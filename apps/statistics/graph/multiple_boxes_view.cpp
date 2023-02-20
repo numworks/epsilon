@@ -47,7 +47,7 @@ void MultipleBoxesView::reload() {
   m_axisView.reload();
 }
 
-bool MultipleBoxesView::moveSelectionHorizontally(int series, OMG::NewHorizontalDirection direction) {
+bool MultipleBoxesView::moveSelectionHorizontally(int series, OMG::HorizontalDirection direction) {
   BoxView * view = plotViewForSeries(series);
   int deltaIndex = direction.isRight() ? 1 : -1;
   if (view->canIncrementSelectedCalculation(deltaIndex)) {

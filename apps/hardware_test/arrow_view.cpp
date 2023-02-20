@@ -29,12 +29,12 @@ const uint8_t arrowDownMask[10][9] = {
 };
 
 ArrowView::ArrowView() :
-  m_direction(OMG::NewDirection::Up()),
+  m_direction(OMG::Direction::Up()),
   m_color(KDColorBlack)
 {
 }
 
-void ArrowView::setDirection(OMG::NewVerticalDirection direction) {
+void ArrowView::setDirection(OMG::VerticalDirection direction) {
   if (m_direction != direction) {
     m_direction = direction;
     markRectAsDirty(bounds());

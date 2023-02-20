@@ -36,26 +36,26 @@ const uint8_t bottomSymbolPixel[IntegralLayoutNode::k_symbolHeight][IntegralLayo
 int IntegralLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   switch (currentIndex) {
   case k_outsideIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_upperBoundLayoutIndex : k_differentialLayoutIndex;
+    return direction.isRight() ? k_upperBoundLayoutIndex : k_differentialLayoutIndex;
   case k_upperBoundLayoutIndex:
   case k_lowerBoundLayoutIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_integrandLayoutIndex : k_outsideIndex;
+    return direction.isRight() ? k_integrandLayoutIndex : k_outsideIndex;
   case k_integrandLayoutIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_differentialLayoutIndex : k_lowerBoundLayoutIndex;
+    return direction.isRight() ? k_differentialLayoutIndex : k_lowerBoundLayoutIndex;
   default:
     assert(currentIndex == k_differentialLayoutIndex);
-    return direction == OMG::HorizontalDirection::Right ? k_outsideIndex : k_integrandLayoutIndex;
+    return direction.isRight() ? k_outsideIndex : k_integrandLayoutIndex;
   }
 }
 
 int IntegralLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   if (currentIndex == k_integrandLayoutIndex && positionAtCurrentIndex == PositionInLayout::Left) {
-    return direction == OMG::VerticalDirection::Up ? k_upperBoundLayoutIndex : k_lowerBoundLayoutIndex;
+    return direction.isUp() ? k_upperBoundLayoutIndex : k_lowerBoundLayoutIndex;
   }
-  if (currentIndex == k_upperBoundLayoutIndex && direction == OMG::VerticalDirection::Down) {
+  if (currentIndex == k_upperBoundLayoutIndex && direction.isDown()) {
     return k_lowerBoundLayoutIndex;
   }
-  if (currentIndex == k_lowerBoundLayoutIndex && direction == OMG::VerticalDirection::Up) {
+  if (currentIndex == k_lowerBoundLayoutIndex && direction.isUp()) {
     return k_upperBoundLayoutIndex;
   }
   return k_cantMoveIndex;

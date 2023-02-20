@@ -1,7 +1,7 @@
 #ifndef POINCARE_LAYOUT_CURSOR_H
 #define POINCARE_LAYOUT_CURSOR_H
 
-#include <omg/enums.h>
+#include <omg/directions.h>
 #include <poincare/empty_rectangle.h>
 #include <poincare/layout.h>
 #include <poincare/layout_selection.h>
@@ -40,7 +40,7 @@ public:
 
   /* This constructor either set the cursor at the leftMost or rightMost
    * position in the layout. */
-  LayoutCursor(Layout layout, OMG::HorizontalDirection sideOfLayout = OMG::HorizontalDirection::Right) :
+  LayoutCursor(Layout layout, OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right()) :
     m_startOfSelection(-1)
   {
     if (!layout.isUninitialized()) {

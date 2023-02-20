@@ -26,7 +26,7 @@ private:
   GraphView * graphView() override { return m_graphView; };
   Shared::FunctionBannerDelegate * functionBannerDelegate() override { return this; }
   void reloadBannerView() override;
-  bool moveCursorHorizontally(OMG::NewHorizontalDirection direction, int scrollSpeed = 1) override;
+  bool moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed = 1) override;
   bool handleEnter() override;
   GraphView * m_graphView;
   BannerView * m_bannerView;

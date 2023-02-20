@@ -52,10 +52,10 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
 }
 
 int VerticalOffsetLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
-  if (currentIndex == k_outsideIndex && ((direction == OMG::VerticalDirection::Up && m_verticalPosition == VerticalPosition::Superscript) || (direction == OMG::VerticalDirection::Down && m_verticalPosition == VerticalPosition::Subscript))) {
+  if (currentIndex == k_outsideIndex && ((direction.isUp() && m_verticalPosition == VerticalPosition::Superscript) || (direction.isDown() && m_verticalPosition == VerticalPosition::Subscript))) {
     return 0;
   }
-  if (currentIndex == 0 && ((direction == OMG::VerticalDirection::Down && m_verticalPosition == VerticalPosition::Superscript) || (direction == OMG::VerticalDirection::Up && m_verticalPosition == VerticalPosition::Subscript)) && positionAtCurrentIndex != PositionInLayout::Middle) {
+  if (currentIndex == 0 && ((direction.isDown() && m_verticalPosition == VerticalPosition::Superscript) || (direction.isUp() && m_verticalPosition == VerticalPosition::Subscript)) && positionAtCurrentIndex != PositionInLayout::Middle) {
     return k_outsideIndex;
   }
   return k_cantMoveIndex;

@@ -2,7 +2,7 @@
 
 namespace OMG {
 
-NewDirection::NewDirection(Ion::Events::Event event) {
+Direction::Direction(Ion::Events::Event event) {
   assert(event.isMoveEvent() || event.isSelectionEvent());
   if (event == Ion::Events::Left || event == Ion::Events::ShiftLeft) {
     m_tag = Tag::Left;
@@ -16,12 +16,12 @@ NewDirection::NewDirection(Ion::Events::Event event) {
   }
 }
 
-NewDirection::operator class NewHorizontalDirection() const {
-  assert(isHorizontal()); return * static_cast<const NewHorizontalDirection *>(this);
+Direction::operator class HorizontalDirection() const {
+  assert(isHorizontal()); return * static_cast<const HorizontalDirection *>(this);
 }
 
-NewDirection::operator class NewVerticalDirection() const {
-  assert(isVertical()); return * static_cast<const NewVerticalDirection *>(this);
+Direction::operator class VerticalDirection() const {
+  assert(isVertical()); return * static_cast<const VerticalDirection *>(this);
 }
 
 }

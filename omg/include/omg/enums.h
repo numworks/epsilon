@@ -11,23 +11,6 @@ enum class Base : uint8_t {
   Hexadecimal = 16
 };
 
-enum class Direction {
-  Left,
-  Up,
-  Down,
-  Right
-};
-
-enum class HorizontalDirection {
-  Left,
-  Right
-};
-
-enum class VerticalDirection {
-  Up,
-  Down
-};
-
 }
 
 #endif

@@ -108,7 +108,7 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
   FunctionGraphController::openMenuForCurveAtIndex(curveIndex);
 }
 
-bool GraphController::moveCursorHorizontally(OMG::NewHorizontalDirection direction, int scrollSpeed) {
+bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed) {
   double xCursorPosition = std::round(m_cursor->x());
   if (direction.isLeft() && xCursorPosition <= m_smallestRank) {
     return false;

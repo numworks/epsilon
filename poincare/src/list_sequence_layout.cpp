@@ -15,14 +15,14 @@ int ListSequenceLayoutNode::serialize(char * buffer, int bufferSize, Preferences
 int ListSequenceLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   switch (currentIndex) {
   case k_outsideIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_functionLayoutIndex : k_upperBoundLayoutIndex;
+    return direction.isRight() ? k_functionLayoutIndex : k_upperBoundLayoutIndex;
   case k_functionLayoutIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_variableLayoutIndex : k_outsideIndex;
+    return direction.isRight() ? k_variableLayoutIndex : k_outsideIndex;
   case k_variableLayoutIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_upperBoundLayoutIndex : k_functionLayoutIndex;
+    return direction.isRight() ? k_upperBoundLayoutIndex : k_functionLayoutIndex;
   default:
     assert(currentIndex == k_upperBoundLayoutIndex);
-    return direction == OMG::HorizontalDirection::Right ? k_outsideIndex : k_variableLayoutIndex;
+    return direction.isRight() ? k_outsideIndex : k_variableLayoutIndex;
   }
 }
 

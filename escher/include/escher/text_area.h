@@ -85,7 +85,7 @@ protected:
 
     CodePoint removePreviousGlyph(char * * position);
     size_t removeText(const char * start, const char * end);
-    size_t removeRemainingLine(const char * position, OMG::NewHorizontalDirection direction);
+    size_t removeRemainingLine(const char * position, OMG::HorizontalDirection direction);
     char operator[](size_t index) {
       assert(index < m_bufferSize);
       return m_buffer[index];
@@ -136,7 +136,7 @@ protected:
 
   ContentView * contentView() { return static_cast<ContentView *>(TextInput::contentView()); }
 private:
-  void selectUpDown(OMG::NewVerticalDirection direction, int step);
+  void selectUpDown(OMG::VerticalDirection direction, int step);
   TextAreaDelegate * m_delegate;
   // Due to rect size limitation, the editor cannot display more than 1800 lines
   constexpr static int k_maxLines = 999;

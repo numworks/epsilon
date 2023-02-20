@@ -14,7 +14,7 @@ public:
   void setSecondRecord(Ion::Storage::Record record);
 private:
   void makeCursorVisible() override;
-  double cursorNextStep(double position, OMG::NewHorizontalDirection direction) override;
+  double cursorNextStep(double position, OMG::HorizontalDirection direction) override;
   Poincare::Layout createFunctionLayout() override;
   Poincare::Expression createSumExpression(double startSum, double endSum, Poincare::Context * context) override;
   Ion::Storage::Record secondSelectedRecord() const { return m_graphView->secondSelectedRecord(); }

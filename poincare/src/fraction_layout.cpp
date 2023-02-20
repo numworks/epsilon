@@ -12,7 +12,7 @@ int FractionLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection 
   if (currentIndex == k_outsideIndex) {
     /* When coming from the left, go to the numerator.
      * When coming from the right, go to the denominator. */
-    return direction == OMG::HorizontalDirection::Right ? k_numeratorIndex : k_denominatorIndex;
+    return direction.isRight() ? k_numeratorIndex : k_denominatorIndex;
   }
   return k_outsideIndex;
 }
@@ -20,12 +20,12 @@ int FractionLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection 
 int FractionLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
   switch (currentIndex) {
   case k_outsideIndex:
-    return direction == OMG::VerticalDirection::Up ? k_numeratorIndex : k_denominatorIndex;
+    return direction.isUp() ? k_numeratorIndex : k_denominatorIndex;
   case k_numeratorIndex:
-    return direction == OMG::VerticalDirection::Up ? k_cantMoveIndex : k_denominatorIndex;
+    return direction.isUp() ? k_cantMoveIndex : k_denominatorIndex;
   default:
     assert(currentIndex == k_denominatorIndex);
-    return direction == OMG::VerticalDirection::Up ? k_numeratorIndex : k_cantMoveIndex;
+    return direction.isUp() ? k_numeratorIndex : k_cantMoveIndex;
   }
 }
 
@@ -65,7 +65,7 @@ int FractionLayoutNode::indexOfChildToPointToWhenInserting() {
   return numeratorLayout()->isEmpty() ? k_numeratorIndex : k_denominatorIndex;
 }
 
-bool FractionLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
+bool FractionLayoutNode::isCollapsable(int * numberOfOpenParenthesis, OMG::HorizontalDirection direction) const {
   if (*numberOfOpenParenthesis > 0) {
     return true;
   }
@@ -76,11 +76,11 @@ bool FractionLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool going
   Layout p = Layout(parent());
   assert(!p.isUninitialized() && p.isHorizontal() && p.numberOfChildren() > 1);
   int indexInParent = p.indexOfChild(Layout(this));
-  int indexOfAbsorbingSibling = indexInParent + (goingLeft ? 1 : -1);
+  int indexOfAbsorbingSibling = indexInParent + (direction.isLeft() ? 1 : -1);
   assert(indexOfAbsorbingSibling >= 0 && indexOfAbsorbingSibling < p.numberOfChildren());
   Layout absorbingSibling = p.childAtIndex(indexOfAbsorbingSibling);
   if (absorbingSibling.numberOfChildren() > 0) {
-    absorbingSibling = absorbingSibling.childAtIndex((goingLeft) ? absorbingSibling.leftCollapsingAbsorbingChildIndex() : absorbingSibling.rightCollapsingAbsorbingChildIndex());
+    absorbingSibling = absorbingSibling.childAtIndex(direction.isLeft() ? absorbingSibling.leftCollapsingAbsorbingChildIndex() : absorbingSibling.rightCollapsingAbsorbingChildIndex());
   }
   return absorbingSibling.isHorizontal() && absorbingSibling.isEmpty();
 }

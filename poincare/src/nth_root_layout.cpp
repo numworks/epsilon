@@ -40,12 +40,12 @@ int NthRootLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection d
   }
   switch (currentIndex) {
   case k_outsideIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_indexLayoutIndex : k_radicandLayoutIndex;
+    return direction.isRight() ? k_indexLayoutIndex : k_radicandLayoutIndex;
   case k_indexLayoutIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_radicandLayoutIndex : k_outsideIndex;
+    return direction.isRight() ? k_radicandLayoutIndex : k_outsideIndex;
   default:
     assert(currentIndex == k_radicandLayoutIndex);
-    return direction == OMG::HorizontalDirection::Right ? k_outsideIndex : k_indexLayoutIndex;
+    return direction.isRight() ? k_outsideIndex : k_indexLayoutIndex;
   }
 }
 
@@ -54,14 +54,14 @@ int NthRootLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direc
     return k_cantMoveIndex;
   }
 
-  if (direction == OMG::VerticalDirection::Up &&
+  if (direction.isUp() &&
       positionAtCurrentIndex == PositionInLayout::Left &&
       (currentIndex == k_outsideIndex || currentIndex == k_radicandLayoutIndex))
   {
     return k_indexLayoutIndex;
   }
 
-  if (direction == OMG::VerticalDirection::Down &&
+  if (direction.isDown() &&
       currentIndex == k_indexLayoutIndex &&
       positionAtCurrentIndex != PositionInLayout::Middle)
   {

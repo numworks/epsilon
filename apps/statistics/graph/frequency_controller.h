@@ -38,10 +38,10 @@ private:
 
   // PlotController
   void moveCursorToSelectedIndex() override;
-  bool moveSelectionHorizontally(OMG::NewHorizontalDirection direction) override;
+  bool moveSelectionHorizontally(OMG::HorizontalDirection direction) override;
   void computeYBounds(float * yMin, float *yMax) const override;
   bool handleNullFrequencies() const override { return true; }
-  int nextSubviewWhenMovingVertically(OMG::NewVerticalDirection direction) const override;
+  int nextSubviewWhenMovingVertically(OMG::VerticalDirection direction) const override;
   void updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) override;
 
   // Horizontal labels will always be in bottom, vertical labels are wider

@@ -26,7 +26,7 @@ public:
 
   // MultipleDataViewController
   MultipleDataView * multipleDataView() override { return &m_view; }
-  bool moveSelectionHorizontally(OMG::NewHorizontalDirection direction) override;
+  bool moveSelectionHorizontally(OMG::HorizontalDirection direction) override;
   /* Reset the selected calculation index in case modifying the series made
    * this calculation disappear. */
   void viewWillAppearBeforeReload() override { m_selectedIndex = 0; }

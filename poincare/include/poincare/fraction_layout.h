@@ -21,7 +21,7 @@ public:
   int indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) override;
   DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
 
-  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
+  bool isCollapsable(int * numberOfOpenParenthesis, OMG::HorizontalDirection direction) const override;
   int indexOfChildToPointToWhenInserting() override;
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
   /* WARNING: We need to override this function, else 1/2 3/4 would be

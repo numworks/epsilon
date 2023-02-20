@@ -127,7 +127,7 @@ void LayoutField::setLayout(Poincare::Layout newLayout) {
   m_contentView.clearLayout();
   KDSize previousSize = minimalSizeForOptimalDisplay();
   const_cast<ExpressionView *>(m_contentView.expressionView())->setLayout(newLayout.makeEditable());
-  putCursorOnOneSide(OMG::HorizontalDirection::Right);
+  putCursorOnOneSide(OMG::Direction::Right());
   reload(previousSize);
 }
 
@@ -285,29 +285,6 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   return m_delegate ? m_delegate->layoutFieldDidHandleEvent(this, didHandleEvent, shouldRedrawLayout) : didHandleEvent;
 }
 
-#define static_assert_immediately_follows(a, b) static_assert( \
-  static_cast<uint8_t>(a) + 1 == static_cast<uint8_t>(b), \
-  "Ordering error" \
-)
-
-#define static_assert_sequential(a, b, c, d) \
-  static_assert_immediately_follows(a, b); \
-  static_assert_immediately_follows(b, c); \
-  static_assert_immediately_follows(c, d);
-
-static_assert_sequential(
-  Ion::Events::Left,
-  Ion::Events::Up,
-  Ion::Events::Down,
-  Ion::Events::Right
-);
-
-static inline bool IsMoveEvent(Ion::Events::Event event) {
-  return
-    static_cast<uint8_t>(event) >= static_cast<uint8_t>(Ion::Events::Left) &&
-    static_cast<uint8_t>(event) <= static_cast<uint8_t>(Ion::Events::Right);
-}
-
 bool LayoutField::privateHandleEvent(Ion::Events::Event event, bool * shouldRedrawLayout) {
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
@@ -381,46 +358,13 @@ bool LayoutField::handleStoreEvent() {
   return true;
 }
 
-static_assert_sequential(
-  OMG::Direction::Left,
-  OMG::Direction::Up,
-  OMG::Direction::Down,
-  OMG::Direction::Right
-);
-
-static_assert_sequential(
-  Ion::Events::ShiftLeft,
-  Ion::Events::ShiftUp,
-  Ion::Events::ShiftDown,
-  Ion::Events::ShiftRight
-);
-
-static inline bool IsSelectionEvent(Ion::Events::Event event) {
-  return
-    static_cast<uint8_t>(event) >= static_cast<uint8_t>(Ion::Events::ShiftLeft) &&
-    static_cast<uint8_t>(event) <= static_cast<uint8_t>(Ion::Events::ShiftRight);
-}
-
-static inline OMG::Direction DirectionForMoveOrSelectionEvent(Ion::Events::Event event) {
-  if (IsMoveEvent(event)) {
-    return static_cast<OMG::Direction>(
-      static_cast<uint8_t>(OMG::Direction::Left) +
-      static_cast<uint8_t>(event) - static_cast<uint8_t>(Ion::Events::Left)
-    );
-  }
-  assert(IsSelectionEvent(event));
-  return static_cast<OMG::Direction>(
-    static_cast<uint8_t>(OMG::Direction::Left) +
-    static_cast<uint8_t>(event) - static_cast<uint8_t>(Ion::Events::ShiftLeft)
-  );
-}
 bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRedrawLayout) {
-  bool isMoveEvent = IsMoveEvent(event);
-  bool isSelectionEvent = IsSelectionEvent(event);
+  bool isMoveEvent = event.isMoveEvent();
+  bool isSelectionEvent = event.isSelectionEvent();
   if (!isMoveEvent && !isSelectionEvent) {
     return false;
   }
-  return m_contentView.cursor()->moveMultipleSteps(DirectionForMoveOrSelectionEvent(event), Ion::Events::longPressFactor(), isSelectionEvent, shouldRedrawLayout);
+  return m_contentView.cursor()->moveMultipleSteps(OMG::Direction(event), Ion::Events::longPressFactor(), isSelectionEvent, shouldRedrawLayout);
 }
 
 void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {

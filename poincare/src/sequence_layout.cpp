@@ -11,28 +11,28 @@ namespace Poincare {
 int SequenceLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   switch (currentIndex) {
   case k_outsideIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_upperBoundLayoutIndex : k_argumentLayoutIndex;
+    return direction.isRight() ? k_upperBoundLayoutIndex : k_argumentLayoutIndex;
   case k_upperBoundLayoutIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_argumentLayoutIndex : k_outsideIndex;
+    return direction.isRight() ? k_argumentLayoutIndex : k_outsideIndex;
   case k_variableLayoutIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_lowerBoundLayoutIndex : k_outsideIndex;
+    return direction.isRight() ? k_lowerBoundLayoutIndex : k_outsideIndex;
   case k_lowerBoundLayoutIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_argumentLayoutIndex : k_variableLayoutIndex;
+    return direction.isRight() ? k_argumentLayoutIndex : k_variableLayoutIndex;
   default:
     assert(currentIndex == k_argumentLayoutIndex);
-    return direction == OMG::HorizontalDirection::Right ? k_outsideIndex : k_lowerBoundLayoutIndex;
+    return direction.isRight() ? k_outsideIndex : k_lowerBoundLayoutIndex;
   }
 }
 
 int SequenceLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
-  if (direction == OMG::VerticalDirection::Up &&
+  if (direction.isUp() &&
       ((currentIndex == k_variableLayoutIndex || currentIndex == k_lowerBoundLayoutIndex) ||
        (positionAtCurrentIndex == PositionInLayout::Left && (currentIndex == k_outsideIndex || currentIndex == k_argumentLayoutIndex))))
   {
     return k_upperBoundLayoutIndex;
   }
 
-  if (direction == OMG::VerticalDirection::Down &&
+  if (direction.isDown() &&
       ((currentIndex == k_upperBoundLayoutIndex) ||
        (positionAtCurrentIndex == PositionInLayout::Left && (currentIndex == k_outsideIndex || currentIndex == k_argumentLayoutIndex))))
   {

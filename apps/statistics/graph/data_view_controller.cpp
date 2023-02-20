@@ -53,7 +53,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
   assert(m_selectedSeries >= 0 && m_store->hasActiveSeries(activeSeriesMethod()));
   bool isVerticalEvent = (event == Ion::Events::Down || event == Ion::Events::Up);
   if ((isVerticalEvent || event == Ion::Events::Left || event == Ion::Events::Right)) {
-    if (isVerticalEvent ? moveSelectionVertically(OMG::NewDirection(event)) : moveSelectionHorizontally(OMG::NewDirection(event))) {
+    if (isVerticalEvent ? moveSelectionVertically(OMG::Direction(event)) : moveSelectionHorizontally(OMG::Direction(event))) {
       if (reloadBannerView()) {
         dataView()->reload();
       }
@@ -100,7 +100,7 @@ void DataViewController::sanitizeSeriesIndex() {
   }
 }
 
-bool DataViewController::moveSelectionVertically(OMG::NewVerticalDirection direction) {
+bool DataViewController::moveSelectionVertically(OMG::VerticalDirection direction) {
   int nextSelectedSubview = nextSubviewWhenMovingVertically(direction);
   if (nextSelectedSubview >= m_store->numberOfActiveSeries(activeSeriesMethod())) {
     return false;

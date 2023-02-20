@@ -37,7 +37,7 @@ private:
   // PlotController
   // Hide series having invalid total values.
   Shared::DoublePairStore::ActiveSeriesTest activeSeriesMethod() const override { return Store::ActiveSeriesAndValidTotalNormalProbabilities; };
-  bool moveSelectionHorizontally(OMG::NewHorizontalDirection direction) override;
+  bool moveSelectionHorizontally(OMG::HorizontalDirection direction) override;
   void computeYBounds(float * yMin, float *yMax) const override;
   bool handleNullFrequencies() const override { return false; }
   // Horizontal labels will always be in the middle

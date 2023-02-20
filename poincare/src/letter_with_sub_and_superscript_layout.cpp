@@ -7,24 +7,24 @@ namespace Poincare {
 int LetterWithSubAndSuperscriptLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   switch (currentIndex) {
   case k_outsideIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_nLayoutIndex : k_kLayoutIndex;
+    return direction.isRight() ? k_nLayoutIndex : k_kLayoutIndex;
   case k_nLayoutIndex:
-    return direction == OMG::HorizontalDirection::Right ? k_kLayoutIndex : k_outsideIndex;
+    return direction.isRight() ? k_kLayoutIndex : k_outsideIndex;
   default:
     assert(currentIndex == k_kLayoutIndex);
-    return direction == OMG::HorizontalDirection::Right ? k_outsideIndex : k_nLayoutIndex;
+    return direction.isRight() ? k_outsideIndex : k_nLayoutIndex;
   }
 }
 
 int LetterWithSubAndSuperscriptLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
-  if (direction == OMG::VerticalDirection::Up &&
+  if (direction.isUp() &&
       (currentIndex == k_kLayoutIndex ||
        (currentIndex == k_outsideIndex && positionAtCurrentIndex == PositionInLayout::Left)))
   {
     return k_nLayoutIndex;
   }
 
-  if (direction == OMG::VerticalDirection::Down &&
+  if (direction.isDown() &&
       (currentIndex == k_nLayoutIndex ||
        (currentIndex == k_outsideIndex && positionAtCurrentIndex == PositionInLayout::Right)))
   {

@@ -12,16 +12,16 @@ int BinomialCoefficientLayoutNode::indexAfterHorizontalCursorMove(OMG::Horizonta
   if (currentIndex == k_outsideIndex) {
     /* When coming from the left, go to the n layout.
      * When coming from the right, go to the k layout. */
-    return direction == OMG::HorizontalDirection::Right ? k_nLayoutIndex : k_kLayoutIndex;
+    return direction.isRight() ? k_nLayoutIndex : k_kLayoutIndex;
   }
   return k_outsideIndex;
 }
 
 int BinomialCoefficientLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
-  if (currentIndex == k_kLayoutIndex && direction == OMG::VerticalDirection::Up) {
+  if (currentIndex == k_kLayoutIndex && direction.isUp()) {
     return k_nLayoutIndex;
   }
-  if (currentIndex == k_nLayoutIndex && direction == OMG::VerticalDirection::Down) {
+  if (currentIndex == k_nLayoutIndex && direction.isDown()) {
     return k_kLayoutIndex;
   }
   return k_cantMoveIndex;

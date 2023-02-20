@@ -8,7 +8,7 @@ int CodePointLayoutNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
 }
 
-bool CodePointLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const {
+bool CodePointLayoutNode::isCollapsable(int * numberOfOpenParenthesis, OMG::HorizontalDirection direction) const {
   if (*numberOfOpenParenthesis <= 0) {
     if (m_codePoint == '+'
         || m_codePoint == UCodePointRightwardsArrow
@@ -43,9 +43,9 @@ bool CodePointLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goin
       if (!parent.isUninitialized()) {
         int indexOfThis = parent.indexOfChild(thisRef);
         Layout brother;
-        if (indexOfThis > 0 && goingLeft) {
+        if (indexOfThis > 0 && direction.isLeft()) {
           brother = parent.childAtIndex(indexOfThis-1);
-        } else if (indexOfThis < parent.numberOfChildren() - 1 && !goingLeft) {
+        } else if (indexOfThis < parent.numberOfChildren() - 1 && direction.isRight()) {
           brother = parent.childAtIndex(indexOfThis+1);
         }
         if (!brother.isUninitialized() && brother.type() == LayoutNode::Type::FractionLayout) {

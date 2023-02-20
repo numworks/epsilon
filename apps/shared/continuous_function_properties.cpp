@@ -36,7 +36,10 @@ ContinuousFunctionProperties::getCurveParameter(int index) const {
               index == 0};
     case CurveParameterType::Polar:
       return {index == 0 ? Message::Theta : Message::R, index == 0};
+    case CurveParameterType::InversePolar:
+      return {index == 0 ? Message::R : Message::Theta, index == 0};
     default:
+      assert(getCurveParameterType() == CurveParameterType::Default);
       // Conics
       return {index == 0 ? Message::X : Message::Y, false};
   }
@@ -64,6 +67,8 @@ CodePoint ContinuousFunctionProperties::symbol() const {
       return k_parametricSymbol;
     case SymbolType::Theta:
       return k_polarSymbol;
+    case SymbolType::Radius:
+      return k_radiusSymbol;
     default:
       assert(symbolType() == SymbolType::X);
       return k_cartesianSymbol;
@@ -77,6 +82,8 @@ I18n::Message ContinuousFunctionProperties::MessageForSymbolType(
       return I18n::Message::T;
     case SymbolType::Theta:
       return I18n::Message::Theta;
+    case SymbolType::Radius:
+      return I18n::Message::R;
     default:
       assert(symbolType == SymbolType::X);
       return I18n::Message::X;
@@ -194,6 +201,13 @@ void ContinuousFunctionProperties::update(
       if (genericCaptionOnly) {
         setCaption(I18n::Message::ParametricEquationType);
       }
+      return;
+    }
+
+    if (precomputedFunctionSymbol == SymbolType::Radius) {
+      // TODO: Inverse polar could also be analyzed
+      setCaption(I18n::Message::PolarEquationType);
+      setCurveParameterType(CurveParameterType::InversePolar);
       return;
     }
 

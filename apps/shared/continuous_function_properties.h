@@ -41,7 +41,13 @@ class ContinuousFunctionProperties {
 
   constexpr static size_t k_numberOfSymbolTypes = 3;
   // Order impact order of columns in Graph/Values
-  enum class SymbolType : uint8_t { X = 0, Theta, T, NumberOfSymbolTypes };
+  enum class SymbolType : uint8_t {
+    X = 0,
+    Theta,
+    Radius,  // theta=f(r)
+    T,
+    NumberOfSymbolTypes
+  };
 
   enum class CurveParameterType : uint8_t {
     Default,
@@ -51,6 +57,7 @@ class ContinuousFunctionProperties {
     VerticalLine,
     Parametric,
     Polar,
+    InversePolar,
     NumberOfCurveParameterTypes
   };
 
@@ -126,6 +133,7 @@ class ContinuousFunctionProperties {
   bool isCartesian() const { return symbolType() == SymbolType::X; }
   bool isParametric() const { return symbolType() == SymbolType::T; }
   bool isPolar() const { return symbolType() == SymbolType::Theta; }
+  bool isInversePolar() const { return symbolType() == SymbolType::Radius; }
   bool isEquality() const {
     return equationType() == Poincare::ComparisonNode::OperatorType::Equal;
   }
@@ -155,7 +163,7 @@ class ContinuousFunctionProperties {
   /* Normalization isn't enforced on Parabola and Hyperbola for a better zooms.
    * It is on Circle and Ellipses so that they don't look like each other. */
   bool enforcePlotNormalization() const {
-    return isPolar() || isParametric() ||
+    return isPolar() || isInversePolar() || isParametric() ||
            conicShape() == Poincare::Conic::Shape::Circle ||
            conicShape() == Poincare::Conic::Shape::Ellipse;
   }

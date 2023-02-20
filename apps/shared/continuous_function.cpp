@@ -95,8 +95,10 @@ int ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize) {
     return Function::nameWithArgument(buffer, bufferSize);
   }
   return UTF8Decoder::CodePointToCharsWithNullTermination(
-      properties().isPolar() ? k_radiusSymbol : k_ordinateSymbol, buffer,
-      bufferSize);
+      properties().isPolar()
+          ? k_radiusSymbol
+          : (properties().isInversePolar() ? k_polarSymbol : k_ordinateSymbol),
+      buffer, bufferSize);
 }
 
 int ContinuousFunction::printValue(double cursorT, double cursorX,
@@ -120,7 +122,7 @@ int ContinuousFunction::printValue(double cursorT, double cursorX,
                                          cursorX, mode, precision, cursorY,
                                          mode, precision);
   }
-  if (thisProperties.isPolar()) {
+  if (thisProperties.isPolar() || thisProperties.isInversePolar()) {
     return PoincareHelpers::ConvertFloatToText<double>(
         evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize,
         precision);
@@ -228,6 +230,7 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT,
              : index == 1 ? evaluateXYAtParameter(cursorT, context).x1()
                           : evaluateXYAtParameter(cursorT, context).x2();
     case ContinuousFunctionProperties::SymbolType::Theta:
+    case ContinuousFunctionProperties::SymbolType::Radius:
       return index == 0 ? cursorT
                         : evaluate2DAtParameter(cursorT, context).x2();
     default:
@@ -378,14 +381,15 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
     T t, Context *context, int subCurveIndex) const {
   Coordinate2D<T> x1x2 =
       templatedApproximateAtParameter(t, context, subCurveIndex);
-  if (!properties().isPolar()) {
+  if (properties().isParametric() || properties().isCartesian()) {
     return x1x2;
   }
-  const T angle = x1x2.x1() * M_PI /
+  assert(properties().isPolar() || properties().isInversePolar());
+  const T r = properties().isPolar() ? x1x2.x2() : x1x2.x1();
+  const T angle = (properties().isPolar() ? x1x2.x1() : x1x2.x2()) * M_PI /
                   Trigonometry::PiInAngleUnit(
                       Poincare::Preferences::sharedPreferences->angleUnit());
-  return Coordinate2D<T>(x1x2.x2() * std::cos(angle),
-                         x1x2.x2() * std::sin(angle));
+  return Coordinate2D<T>(r * std::cos(angle), r * std::sin(angle));
 }
 
 template <typename T>
@@ -447,7 +451,7 @@ Expression ContinuousFunction::Model::expressionReduced(
     }
     Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(
         complexFormat(record, context));
-    if (!properties().isPolar() &&
+    if (!properties().isPolar() && !properties().isInversePolar() &&
         (record->fullName() == nullptr ||
          record->fullName()[0] == k_unnamedRecordFirstChar)) {
       /* Function isn't named, m_expression currently is an expression in y or x
@@ -662,9 +666,13 @@ Expression ContinuousFunction::Model::expressionEquation(
       leftExpression.replaceChildAtIndexInPlace(
           0, Symbol::Builder(UCodePointUnknown));
     }
-  } else if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol))) {
+  } else if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol)) ||
+             leftExpression.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
     result = result.childAtIndex(1);
-    tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::Theta;
+    tempFunctionSymbol =
+        leftExpression.isIdenticalTo(Symbol::Builder(k_polarSymbol))
+            ? ContinuousFunctionProperties::SymbolType::Radius
+            : ContinuousFunctionProperties::SymbolType::Theta;
     isUnnamedFunction = false;
   }
   if (computedFunctionSymbol) {
@@ -825,7 +833,10 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
                      AliasesLists::k_thetaAliases.contains(
                          static_cast<const Symbol &>(e).name());
             })) {
-      symbol = k_polarSymbol;
+      symbol = expressionToStore.childAtIndex(0).isIdenticalTo(
+                   Symbol::Builder(k_polarSymbol))
+                   ? k_radiusSymbol
+                   : k_polarSymbol;
     }
     // Fallback on normal parsing
     expressionToStore =

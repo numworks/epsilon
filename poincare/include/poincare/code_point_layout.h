@@ -26,7 +26,7 @@ public:
 
   // LayoutNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const override;
+  bool isCollapsable(int * numberOfOpenParenthesis, OMG::HorizontalDirection direction) const override;
   bool canBeOmittedMultiplicationLeftFactor() const override;
   bool canBeOmittedMultiplicationRightFactor() const override;
 

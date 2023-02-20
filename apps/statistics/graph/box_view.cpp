@@ -84,11 +84,11 @@ void BoxPlotPolicy::drawOutlier(const AbstractPlotView * plotView, KDContext * c
 }
 
 void BoxPlotPolicy::drawChevronSelection(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float calculation, float lowBound, float upBound) const {
-  drawChevron(plotView, ctx, rect, calculation, lowBound, k_selectedColor, OMG::NewDirection::Up());
-  drawChevron(plotView, ctx, rect, calculation, upBound, k_selectedColor, OMG::NewDirection::Down());
+  drawChevron(plotView, ctx, rect, calculation, lowBound, k_selectedColor, OMG::Direction::Up());
+  drawChevron(plotView, ctx, rect, calculation, upBound, k_selectedColor, OMG::Direction::Down());
 }
 
-void BoxPlotPolicy::drawChevron(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, float y, KDColor color, OMG::NewVerticalDirection direction) const {
+void BoxPlotPolicy::drawChevron(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, float y, KDColor color, OMG::VerticalDirection direction) const {
   // Place the chevron so that it points two pixels, the left one being (x, y).
   KDCoordinate px = plotView->floatToKDCoordinatePixel(Axis::Horizontal, x);
   KDCoordinate py = plotView->floatToKDCoordinatePixel(Axis::Vertical, y);

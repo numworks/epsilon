@@ -37,12 +37,12 @@ void load_in_store(
 
 class NavigationEvent {
 public:
-  NavigationEvent(OMG::NewDirection d, int series, int dot) :
+  NavigationEvent(OMG::Direction d, int series, int dot) :
     direction(d),
     expectedSelectedSeries(series),
     expectedSelectedDot(dot)
   {}
-  OMG::NewDirection direction;
+  OMG::Direction direction;
   int expectedSelectedSeries;
   int expectedSelectedDot;
 };
@@ -113,13 +113,13 @@ QUIZ_CASE(regression_navigation_1) {
 
   constexpr int numberOfEvents = 7;
   NavigationEvent events[numberOfEvents] = {
-    NavigationEvent(OMG::NewDirection::Down(), 0, -1),
-    NavigationEvent(OMG::NewDirection::Down(), 0, 2),
-    NavigationEvent(OMG::NewDirection::Down(), 1, 2),
-    NavigationEvent(OMG::NewDirection::Down(), 0, 0),
-    NavigationEvent(OMG::NewDirection::Down(), 1, 0),
-    NavigationEvent(OMG::NewDirection::Down(), 1, -1),
-    NavigationEvent(OMG::NewDirection::Down(), 1, -1)
+    NavigationEvent(OMG::Direction::Down(), 0, -1),
+    NavigationEvent(OMG::Direction::Down(), 0, 2),
+    NavigationEvent(OMG::Direction::Down(), 1, 2),
+    NavigationEvent(OMG::Direction::Down(), 0, 0),
+    NavigationEvent(OMG::Direction::Down(), 1, 0),
+    NavigationEvent(OMG::Direction::Down(), 1, -1),
+    NavigationEvent(OMG::Direction::Down(), 1, -1)
   };
   assert_navigation_is(numberOfEvents, events, numberOfPoints0, 0, x0, y0, numberOfPoints0, x1, y1, numberOfPoints1);
 }
@@ -138,14 +138,14 @@ QUIZ_CASE(regression_navigation_2) {
     /* FIXME
      * Because of double computation error, the regression curve of the series 0
      * is above its mean point.
-    NavigationEvent(OMG::NewDirection::Down, 1, -1),
+    NavigationEvent(OMG::Direction::Down, 1, -1),
      * */
-    NavigationEvent(OMG::NewDirection::Down(), 0, -1),
-    NavigationEvent(OMG::NewDirection::Down(), 0, numberOfPoints0),
-    NavigationEvent(OMG::NewDirection::Down(), 0, -1),
-    NavigationEvent(OMG::NewDirection::Down(), 0, 3),
-    NavigationEvent(OMG::NewDirection::Down(), 1, 0),
-    NavigationEvent(OMG::NewDirection::Down(), 0, 2)
+    NavigationEvent(OMG::Direction::Down(), 0, -1),
+    NavigationEvent(OMG::Direction::Down(), 0, numberOfPoints0),
+    NavigationEvent(OMG::Direction::Down(), 0, -1),
+    NavigationEvent(OMG::Direction::Down(), 0, 3),
+    NavigationEvent(OMG::Direction::Down(), 1, 0),
+    NavigationEvent(OMG::Direction::Down(), 0, 2)
   };
   assert_navigation_is(numberOfEvents, events, numberOfPoints1, 1, x0, y0, numberOfPoints0, x1, y1, numberOfPoints1);
 }
@@ -157,9 +157,9 @@ QUIZ_CASE(regression_navigation_3) {
 
   constexpr int numberOfEvents = 3;
   NavigationEvent events[numberOfEvents] = {
-    NavigationEvent(OMG::NewDirection::Down(), 0, -1),
-    NavigationEvent(OMG::NewDirection::Down(), 1, -1),
-    NavigationEvent(OMG::NewDirection::Down(), 2, -1),
+    NavigationEvent(OMG::Direction::Down(), 0, -1),
+    NavigationEvent(OMG::Direction::Down(), 1, -1),
+    NavigationEvent(OMG::Direction::Down(), 2, -1),
   };
   assert_navigation_is(numberOfEvents, events, 2, 0, x, y, numberOfPoints, x, y, numberOfPoints, x, y, numberOfPoints);
 }

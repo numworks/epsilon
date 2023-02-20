@@ -46,7 +46,7 @@ private:
   void initBarParameters();
   void sanitizeSelectedIndex();
   // return true if the window has scrolled
-  bool moveSelectionHorizontally(OMG::NewHorizontalDirection direction) override;
+  bool moveSelectionHorizontally(OMG::HorizontalDirection direction) override;
 
   // DataViewController
   void updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) override;

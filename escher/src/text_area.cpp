@@ -179,11 +179,11 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   }
   int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftRight) {
-    selectLeftRight(OMG::NewDirection(event), false, step);
+    selectLeftRight(OMG::Direction(event), false, step);
     return true;
   }
   if (event == Ion::Events::ShiftUp || event == Ion::Events::ShiftDown) {
-    selectUpDown(OMG::NewDirection(event), step);
+    selectUpDown(OMG::Direction(event), step);
     return true;
   }
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
@@ -393,7 +393,7 @@ size_t TextArea::Text::removeText(const char * start, const char * end) {
   return 0;
 }
 
-size_t TextArea::Text::removeRemainingLine(const char * location, OMG::NewHorizontalDirection direction) {
+size_t TextArea::Text::removeRemainingLine(const char * location, OMG::HorizontalDirection direction) {
   assert(m_buffer != nullptr);
   assert(location >= m_buffer && location <= m_buffer + m_bufferSize);
   assert(direction.isRight() || location > m_buffer);
@@ -586,7 +586,7 @@ bool TextArea::ContentView::removePreviousGlyph() {
 }
 
 bool TextArea::ContentView::removeEndOfLine() {
-  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), OMG::NewDirection::Right());
+  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), OMG::Direction::Right());
   if (removedLine > 0) {
     layoutSubviews();
     reloadRectFromPosition(cursorLocation(), false);
@@ -600,7 +600,7 @@ bool TextArea::ContentView::removeStartOfLine() {
     assert(cursorLocation() == text());
     return false;
   }
-  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), OMG::NewDirection::Left());
+  size_t removedLine = m_text.removeRemainingLine(cursorLocation(), OMG::Direction::Left());
   if (removedLine > 0) {
     assert(cursorLocation() >= text() + removedLine);
     setCursorLocation(cursorLocation() - removedLine);
@@ -659,7 +659,7 @@ void TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
   setCursorLocation(m_text.pointerAtPosition(Text::Position(p.column() + deltaX, p.line() + deltaY)));
 }
 
-void TextArea::selectUpDown(OMG::NewVerticalDirection direction, int step) {
+void TextArea::selectUpDown(OMG::VerticalDirection direction, int step) {
   const char * previousCursorLocation = contentView()->cursorLocation();
   contentView()->moveCursorGeo(0, direction.isUp() ? -step : step);
   const char * newCursorLocation = contentView()->cursorLocation();

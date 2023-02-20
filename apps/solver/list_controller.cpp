@@ -127,7 +127,7 @@ bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutField->layout().hasTopLevelComparisonSymbol()) { // TODO: do like for textField: parse and and check is type is comparison
-      layoutField->putCursorOnOneSide(OMG::HorizontalDirection::Right);
+      layoutField->putCursorOnOneSide(OMG::Direction::Right());
       if (!layoutField->handleEventWithText("=0")) {
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
         return true;

@@ -86,7 +86,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
    *                      34
    * */
   Layout lHalfEmptyFraction = LayoutHelper::StringToCodePointsLayout("34+5", 6);
-  LayoutCursor fractionCursor(lHalfEmptyFraction, OMG::HorizontalDirection::Left);
+  LayoutCursor fractionCursor(lHalfEmptyFraction, OMG::Direction::Left());
   fractionCursor.addFractionLayoutAndCollapseSiblings(nullptr);
   assert_layout_serialize_to(lHalfEmptyFraction, "\u0012\u0012\u0013/\u001234\u0013\u0013+5");
   quiz_assert(fractionCursor.layout() == lHalfEmptyFraction.childAtIndex(0).childAtIndex(0) && fractionCursor.position() == 0);
@@ -128,7 +128,7 @@ QUIZ_CASE(poincare_layout_power) {
    *
    * */
   Layout l1 = LayoutHelper::StringToCodePointsLayout("12", 2);
-  LayoutCursor c1(l1, OMG::HorizontalDirection::Right);
+  LayoutCursor c1(l1, OMG::Direction::Right());
   c1.addEmptySquarePowerLayout(nullptr);
   assert_layout_serialize_to(l1, "12^\u00122\u0013");
   quiz_assert(c1.layout() == l1 && c1.position() == l1.numberOfChildren());
@@ -141,7 +141,7 @@ QUIZ_CASE(poincare_layout_power) {
   Layout l2 = HorizontalLayout::Builder(
       CodePointLayout::Builder('1'),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript));
-  LayoutCursor c2(l2.childAtIndex(1), OMG::HorizontalDirection::Right);
+  LayoutCursor c2(l2.childAtIndex(1), OMG::Direction::Right());
   c2.addEmptySquarePowerLayout(nullptr);
   assert_layout_serialize_to(l2, "(1^\u00122\u0013)^\u00122\u0013");
   quiz_assert(c2.layout() == l2 && c2.position() == l2.numberOfChildren());
@@ -153,9 +153,9 @@ QUIZ_CASE(poincare_layout_power) {
   Layout l3 = HorizontalLayout::Builder(ParenthesisLayout::Builder(HorizontalLayout::Builder(
     CodePointLayout::Builder('1'),
     VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript))));
-  LayoutCursor c3(l3, OMG::HorizontalDirection::Right);
+  LayoutCursor c3(l3, OMG::Direction::Right());
   bool dummy;
-  c3.move(OMG::Direction::Left, false, &dummy);
+  c3.move(OMG::Direction::Left(), false, &dummy);
   c3.addEmptySquarePowerLayout(nullptr);
   assert_layout_serialize_to(l3, "((1^\u00122\u0013)^\u00122\u0013)");
   quiz_assert(c3.layout() == l3.childAtIndex(0).childAtIndex(0) && c3.position() == c3.layout().numberOfChildren());

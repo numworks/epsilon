@@ -69,10 +69,10 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting, bool * shouldR
   }
   LayoutCursor cloneCursor = *this;
   bool moved = false;
-  if (direction == OMG::Direction::Up || direction == OMG::Direction::Down) {
-    moved = verticalMove(direction == OMG::Direction::Up ? OMG::VerticalDirection::Up : OMG::VerticalDirection::Down, shouldRedrawLayout);
+  if (direction.isVertical()) {
+    moved = verticalMove(direction, shouldRedrawLayout);
   } else {
-    moved = horizontalMove(direction == OMG::Direction::Left ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right, shouldRedrawLayout);
+    moved = horizontalMove(direction, shouldRedrawLayout);
   }
   assert(!*shouldRedrawLayout || moved);
   if (moved) {
@@ -102,7 +102,7 @@ static bool IsEmptyChildOfGridLayout(Layout l) {
 }
 
 static Layout LeftOrRightMostLayout(Layout l, OMG::HorizontalDirection direction) {
-  return l.isHorizontal() ? (l.childAtIndex(direction == OMG::HorizontalDirection::Left ? 0 : l.numberOfChildren() - 1) ) : l;
+  return l.isHorizontal() ? (l.childAtIndex(direction.isLeft() ? 0 : l.numberOfChildren() - 1) ) : l;
 }
 
 static bool IsTemporaryAutocompletedBracketPair(Layout l, AutocompletedBracketPairLayoutNode::Side tempSide) {
@@ -113,7 +113,7 @@ static bool IsTemporaryAutocompletedBracketPair(Layout l, AutocompletedBracketPa
 static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(HorizontalLayout l, int index) {
   int leftParenthesisIndex = index;
   int dummy = 0;
-  while (leftParenthesisIndex > 0 && l.childAtIndex(leftParenthesisIndex).isCollapsable(&dummy, true)) {
+  while (leftParenthesisIndex > 0 && l.childAtIndex(leftParenthesisIndex).isCollapsable(&dummy, OMG::Direction::Left())) {
     leftParenthesisIndex--;
   }
   HorizontalLayout h = HorizontalLayout::Builder();
@@ -177,7 +177,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     static_cast<AutocompletedBracketPairLayoutNode *>(leftL.node())->makeChildrenPermanent(
       AutocompletedBracketPairLayoutNode::Side::Right,
       !IsTemporaryAutocompletedBracketPair(
-        LeftOrRightMostLayout(layout, OMG::HorizontalDirection::Left),
+        LeftOrRightMostLayout(layout, OMG::Direction::Left()),
         AutocompletedBracketPairLayoutNode::Side::Left));
   }
   if (!rightL.isUninitialized() &&
@@ -185,7 +185,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
     static_cast<AutocompletedBracketPairLayoutNode *>(rightL.node())->makeChildrenPermanent(
       AutocompletedBracketPairLayoutNode::Side::Left,
       !IsTemporaryAutocompletedBracketPair(
-        LeftOrRightMostLayout(layout, OMG::HorizontalDirection::Right),
+        LeftOrRightMostLayout(layout, OMG::Direction::Right()),
         AutocompletedBracketPairLayoutNode::Side::Right));
   }
 
@@ -262,7 +262,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
 
   // - Step 8 - Point to required position
   if (!childToPoint.isUninitialized()) {
-    *this = LayoutCursor(childToPoint, OMG::HorizontalDirection::Left);
+    *this = LayoutCursor(childToPoint, OMG::Direction::Left());
     didEnterCurrentPosition(previousCursor);
   }
 
@@ -498,7 +498,7 @@ bool LayoutCursor::didExitPosition() {
     setLayout(
       Layout(parentGrid->childAtIndex(
               parentGrid->closestNonGrayIndex(parentGrid->indexOfChild(m_layout.node())))),
-      OMG::HorizontalDirection::Right
+      OMG::Direction::Right()
     );
   }
   LayoutCursor lc;
@@ -519,11 +519,11 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
 void LayoutCursor::setLayout(Layout l, OMG::HorizontalDirection sideOfLayout) {
   if (!l.isHorizontal() && !l.parent().isUninitialized() && l.parent().isHorizontal()) {
     m_layout = l.parent();
-    m_position = m_layout.indexOfChild(l) + (sideOfLayout == OMG::HorizontalDirection::Right);
+    m_position = m_layout.indexOfChild(l) + (sideOfLayout.isRight());
     return;
   }
   m_layout = l;
-  m_position = sideOfLayout == OMG::HorizontalDirection::Left ? leftMostPosition() : rightMostPosition();
+  m_position = sideOfLayout.isLeft() ? leftMostPosition() : rightMostPosition();
 }
 
 Layout LayoutCursor::leftLayout() {
@@ -584,7 +584,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction, bool * sho
    * jumps over it.
    * */
   int currentIndexInNextLayout = LayoutNode::k_outsideIndex;
-  if (direction == OMG::HorizontalDirection::Right) {
+  if (direction.isRight()) {
     nextLayout = rightLayout();
   } else {
     nextLayout = leftLayout();
@@ -650,7 +650,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction, bool * sho
      *
      * */
     m_layout = nextLayout.childAtIndex(newIndex);
-    m_position = direction == OMG::HorizontalDirection::Right ? leftMostPosition() : rightMostPosition();
+    m_position = direction.isRight() ? leftMostPosition() : rightMostPosition();
     return true;
   }
 
@@ -678,17 +678,17 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction, bool * sho
   Layout previousLayout = m_layout;
   if (!parent.isUninitialized() && parent.isHorizontal()) {
     m_layout = parent;
-    m_position = m_layout.indexOfChild(nextLayout) + (direction == OMG::HorizontalDirection::Right);
+    m_position = m_layout.indexOfChild(nextLayout) + (direction.isRight());
   } else {
     m_layout = nextLayout;
-    m_position = direction == OMG::HorizontalDirection::Right;
+    m_position = direction.isRight();
   }
 
   if (isSelecting() && m_layout != previousLayout) {
     /* If the cursor went into the parent, start the selection before
      * the layout that was just left (or after depending on the direction
      * of the selection). */
-    m_startOfSelection = m_position + (direction == OMG::HorizontalDirection::Right ? -1 : 1);
+    m_startOfSelection = m_position + (direction.isRight() ? -1 : 1);
   }
   return true;
 
@@ -704,8 +704,8 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction, bool * shouldR
     assert(!commonAncestor.isUninitialized());
     Layout layoutAncestor = static_cast<Layout&>(commonAncestor);
     // Down goes left to right and up goes right to left
-    setLayout(layoutAncestor, direction == OMG::VerticalDirection::Up ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right);
-    m_startOfSelection = m_position + (direction == OMG::VerticalDirection::Up ? 1 : -1);
+    setLayout(layoutAncestor, direction.isUp() ? OMG::Direction::Left() : OMG::Direction::Right());
+    m_startOfSelection = m_position + (direction.isUp() ? 1 : -1);
   }
   return moved;
 }
@@ -720,7 +720,7 @@ static void ScoreCursorInDescendants(KDPoint p, Layout l, KDFont::Size font, Lay
   bool checkOnlyLeft = !parent.isUninitialized() && parent.isHorizontal() && parent.indexOfChild(l) < parent.numberOfChildren() - 1;
   int numberOfDirectionsToCheck = 1 + !checkOnlyLeft;
   for (int i = 0; i < numberOfDirectionsToCheck; i++) {
-    LayoutCursor tempCursor = LayoutCursor(l, i == 0 ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right);
+    LayoutCursor tempCursor = LayoutCursor(l, i == 0 ? OMG::Direction::Left() : OMG::Direction::Right());
     if (currentDistance > p.squareDistanceTo(tempCursor.middleLeftPoint(font))) {
       *result = tempCursor;
     }
@@ -732,7 +732,7 @@ static void ScoreCursorInDescendants(KDPoint p, Layout l, KDFont::Size font, Lay
 }
 
 static LayoutCursor ClosestCursorInDescendantsOfLayout(LayoutCursor currentCursor, Layout l, KDFont::Size font) {
-  LayoutCursor result = LayoutCursor(l, OMG::HorizontalDirection::Left);
+  LayoutCursor result = LayoutCursor(l, OMG::Direction::Left());
   ScoreCursorInDescendants(currentCursor.middleLeftPoint(font), l, font, &result);
   return result;
 }
@@ -772,7 +772,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(OMG::VerticalDirection direction
     if (nextIndex != LayoutNode::k_cantMoveIndex) {
       if (nextIndex == LayoutNode::k_outsideIndex) {
         assert(currentPosition != LayoutNode::PositionInLayout::Middle);
-        setLayout(p, currentPosition == LayoutNode::PositionInLayout::Left ? OMG::HorizontalDirection::Left : OMG::HorizontalDirection::Right);
+        setLayout(p, currentPosition == LayoutNode::PositionInLayout::Left ? OMG::Direction::Left() : OMG::Direction::Right());
       } else {
         assert(!p.isHorizontal());
         // We assume the new cursor is the same whatever the font
@@ -830,7 +830,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
 
   if (deletionMethod == LayoutNode::DeletionMethod::MoveLeft) {
     bool dummy = false;
-    move(OMG::Direction::Left, false, &dummy);
+    move(OMG::Direction::Left(), false, &dummy);
     return;
   }
 
@@ -861,7 +861,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
       static_cast<AutocompletedBracketPairLayoutNode *>(leftLayout().node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
     }
     bool dummy = false;
-    move(OMG::Direction::Left, false, &dummy);
+    move(OMG::Direction::Left(), false, &dummy);
     balanceAutocompletedBracketsAndKeepAValidCursor();
     return;
   }
@@ -940,7 +940,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod, bool
 
   assert(deletionMethod == LayoutNode::DeletionMethod::DeleteLayout);
   if (deletionAppliedToParent) {
-    setLayout(m_layout.parent(), OMG::HorizontalDirection::Right);
+    setLayout(m_layout.parent(), OMG::Direction::Right());
   }
   if (!m_layout.isHorizontal()) {
     assert(m_layout.parent().isUninitialized() || !m_layout.parent().isHorizontal());
@@ -975,10 +975,10 @@ void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
 
 void LayoutCursor::collapseSiblingsOfLayout(Layout l) {
   if (l.shouldCollapseSiblingsOnRight()) {
-    collapseSiblingsOfLayoutOnDirection(l, OMG::HorizontalDirection::Right, l.rightCollapsingAbsorbingChildIndex());
+    collapseSiblingsOfLayoutOnDirection(l, OMG::Direction::Right(), l.rightCollapsingAbsorbingChildIndex());
   }
   if (l.shouldCollapseSiblingsOnLeft()) {
-    collapseSiblingsOfLayoutOnDirection(l, OMG::HorizontalDirection::Left, l.leftCollapsingAbsorbingChildIndex());
+    collapseSiblingsOfLayoutOnDirection(l, OMG::Direction::Left(), l.leftCollapsingAbsorbingChildIndex());
   }
 }
 
@@ -1008,24 +1008,24 @@ void LayoutCursor::collapseSiblingsOfLayoutOnDirection(Layout l, OMG::Horizontal
   HorizontalLayout horizontalAbsorbingChild = static_cast<HorizontalLayout&>(absorbingChild);
   HorizontalLayout horizontalParent = static_cast<HorizontalLayout&>(p);
   Layout sibling;
-  int step = direction == OMG::HorizontalDirection::Right ? 1 : - 1;
+  int step = direction.isRight() ? 1 : - 1;
   /* Loop through the siblings and add them into l until an uncollapsable
    * layout is encountered. */
   while (true) {
-    if (idxInParent == (direction == OMG::HorizontalDirection::Right ? numberOfSiblings - 1 : 0)) {
+    if (idxInParent == (direction.isRight() ? numberOfSiblings - 1 : 0)) {
       break;
     }
     int siblingIndex = idxInParent + step;
     sibling = horizontalParent.childAtIndex(siblingIndex);
-    if (!sibling.isCollapsable(&numberOfOpenParenthesis, direction == OMG::HorizontalDirection::Left)) {
+    if (!sibling.isCollapsable(&numberOfOpenParenthesis, direction)) {
       break;
     }
     horizontalParent.removeChildAtIndexInPlace(siblingIndex);
-    int newIndex = direction == OMG::HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
+    int newIndex = direction.isRight() ? absorbingChild.numberOfChildren() : 0;
     assert(!sibling.isHorizontal());
     horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex);
     numberOfSiblings--;
-    if (direction == OMG::HorizontalDirection::Left) {
+    if (direction.isLeft()) {
       idxInParent--;
     }
   }

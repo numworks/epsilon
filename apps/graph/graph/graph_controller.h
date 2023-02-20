@@ -56,14 +56,14 @@ private:
   BannerView * bannerView() override { return &m_bannerView; }
   GraphView * graphView() override { return &m_view; }
   Shared::FunctionBannerDelegate * functionBannerDelegate() override { return this; }
-  void jumpToLeftRightCurve(double t, OMG::NewHorizontalDirection direction, int functionsCount, Ion::Storage::Record record) override;
+  void jumpToLeftRightCurve(double t, OMG::HorizontalDirection direction, int functionsCount, Ion::Storage::Record record) override;
 
   // SimpleInteractiveCurveViewController
   void reloadBannerView() override;
-  bool moveCursorHorizontally(OMG::NewHorizontalDirection direction, int scrollSpeed = 1) override;
+  bool moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed = 1) override;
 
   // FunctionGraphController
-  int nextCurveIndexVertically(OMG::NewVerticalDirection direction, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const override;
+  int nextCurveIndexVertically(OMG::VerticalDirection direction, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const override;
   double defaultCursorT(Ion::Storage::Record record, bool ignoreMargins) override;
   Shared::ContinuousFunctionStore * functionStore() const override { return static_cast<Shared::ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }

@@ -144,7 +144,7 @@ bool LayoutNode::canBeOmittedMultiplicationLeftFactor() const {
    * isCollapsable is true too. If isCollapsable changes, it might not be the
    * case anymore so make sure to modify this function if needed. */
   int numberOfOpenParentheses = 0;
-  return isCollapsable(&numberOfOpenParentheses, true);
+  return isCollapsable(&numberOfOpenParentheses, OMG::Direction::Left());
 }
 
 bool LayoutNode::canBeOmittedMultiplicationRightFactor() const {
@@ -153,7 +153,7 @@ bool LayoutNode::canBeOmittedMultiplicationRightFactor() const {
    * functions changes, it might not be the case anymore so make sure to modify
    * canBeOmittedMultiplicationRightFactor if needed. */
   int numberOfOpenParentheses = 0;
-  return isCollapsable(&numberOfOpenParentheses, false);
+  return isCollapsable(&numberOfOpenParentheses, OMG::Direction::Right());
 }
 
 Layout LayoutNode::XNTLayout(int childIndex) const {

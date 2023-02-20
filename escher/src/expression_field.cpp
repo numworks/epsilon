@@ -158,7 +158,7 @@ void ExpressionField::putCursorLeftOfField() {
   if (editionIsInTextField()) {
     m_textField.setCursorLocation(m_textField.text());
   } else {
-    m_layoutField.putCursorOnOneSide(OMG::HorizontalDirection::Left);
+    m_layoutField.putCursorOnOneSide(OMG::Direction::Left());
   }
 }
 

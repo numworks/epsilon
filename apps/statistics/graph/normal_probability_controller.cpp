@@ -27,7 +27,7 @@ void NormalProbabilityController::moveCursorToSelectedIndex() {
   PlotController::moveCursorToSelectedIndex();
 }
 
-bool NormalProbabilityController::moveSelectionHorizontally(OMG::NewHorizontalDirection direction) {
+bool NormalProbabilityController::moveSelectionHorizontally(OMG::HorizontalDirection direction) {
   assert(m_selectedSeries >= 0);
   int nextIndex = SanitizeIndex(m_selectedIndex + (direction.isRight() ? 1 : -1), totalValues(m_selectedSeries));
   if (nextIndex != m_selectedIndex) {

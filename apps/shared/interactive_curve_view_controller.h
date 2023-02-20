@@ -62,7 +62,7 @@ protected:
   Escher::StackViewController * stackController() const;
 
   virtual void initCursorParameters(bool ignoreMargins) = 0;
-  virtual bool moveCursorVertically(OMG::NewVerticalDirection direction) = 0;
+  virtual bool moveCursorVertically(OMG::VerticalDirection direction) = 0;
   bool isCursorVisibleAtPosition(Poincare::Coordinate2D<float> position, bool ignoreMargins = false, bool acceptNanOrInfiniteY = false);
   bool isCursorCurrentlyVisible(bool ignoreMargins = false, bool acceptNanOrInfiniteY = false) {
     return isCursorVisibleAtPosition(Poincare::Coordinate2D<float>(m_cursor->x(), m_cursor->y()), ignoreMargins, acceptNanOrInfiniteY);
@@ -73,7 +73,7 @@ protected:
   virtual CurveSelectionController * curveSelectionController() const = 0;
 
   // Closest vertical curve helper
-  int closestCurveIndexVertically(OMG::NewVerticalDirection direction, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex = 0, int * newSubCurveIndex = nullptr) const;
+  int closestCurveIndexVertically(OMG::VerticalDirection direction, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex = 0, int * newSubCurveIndex = nullptr) const;
   int selectedCurveIndex() const { return *m_selectedCurveIndex; }
   virtual Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const = 0;
   virtual bool suitableYValue(double y) const { return true; }

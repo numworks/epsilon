@@ -50,7 +50,7 @@ private:
   CurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
 
   // SimpleInteractiveCurveViewController
-  bool moveCursorHorizontally(OMG::NewHorizontalDirection direction, int scrollSpeed = 1) override;
+  bool moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed = 1) override;
 
   // InteractiveCurveViewController
   void openMenuForCurveAtIndex(int curveIndex) override;

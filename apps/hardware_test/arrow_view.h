@@ -11,13 +11,13 @@ class ArrowView : public Escher::TransparentView {
 public:
   ArrowView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setDirection(OMG::NewVerticalDirection direction);
+  void setDirection(OMG::VerticalDirection direction);
   void setColor(KDColor color);
 private:
   constexpr static KDCoordinate k_arrowHeight = 10;
   constexpr static KDCoordinate k_arrowWidth = 9;
   constexpr static KDCoordinate k_arrowThickness = 3;
-  OMG::NewVerticalDirection m_direction;
+  OMG::VerticalDirection m_direction;
   KDColor m_color;
 };
 

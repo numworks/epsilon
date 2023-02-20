@@ -54,7 +54,7 @@ void Store::setSeriesRegressionType(int series, Model::Type type) {
 
 /* Dots */
 
-int Store::closestVerticalDot(OMG::NewVerticalDirection direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {
+int Store::closestVerticalDot(OMG::VerticalDirection direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext) {
   double nextX = INFINITY;
   double nextY = INFINITY;
   int nextDot = -1;
@@ -90,7 +90,7 @@ int Store::closestVerticalDot(OMG::NewVerticalDirection direction, double x, dou
   return nextDot;
 }
 
-int Store::nextDot(int series, OMG::NewHorizontalDirection direction, int dot, bool displayMean) {
+int Store::nextDot(int series, OMG::HorizontalDirection direction, int dot, bool displayMean) {
   double nextX = INFINITY;
   int nextDot = -1;
   double meanX = meanOfColumn(series, 0);

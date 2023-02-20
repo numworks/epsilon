@@ -6,7 +6,6 @@
 #include <kandinsky/point.h>
 #include <kandinsky/size.h>
 #include <escher/metric.h>
-#include <omg/enums.h>
 #include <omg/directions.h>
 #include <poincare/tree_node.h>
 
@@ -131,7 +130,7 @@ public:
    * inserted in the numerator (or denominator)? For instance, 1+2|3-4 should
    * become 1+ 2/3 - 4 when pressing "Divide": a CodePointLayout is collapsable if
    * its char is not +, -, or *. */
-  virtual bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return true; }
+  virtual bool isCollapsable(int * numberOfOpenParenthesis, OMG::HorizontalDirection direction) const { return true; }
   virtual bool canBeOmittedMultiplicationLeftFactor() const;
   virtual bool canBeOmittedMultiplicationRightFactor() const;
   /* canBeOmittedMultiplicationLeftFactor and RightFactor return true if the

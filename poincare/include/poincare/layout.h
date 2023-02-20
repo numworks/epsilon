@@ -60,7 +60,7 @@ public:
   bool shouldCollapseSiblingsOnRight() const;
   int leftCollapsingAbsorbingChildIndex() const { assert(shouldCollapseSiblingsOnLeft()); return 0; }
   int rightCollapsingAbsorbingChildIndex() const { assert(shouldCollapseSiblingsOnRight()); return type() == LayoutNode::Type::FractionLayout ? 1 : 0; }
-  bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return const_cast<Layout *>(this)->node()->isCollapsable(numberOfOpenParenthesis, goingLeft); }
+  bool isCollapsable(int * numberOfOpenParenthesis, OMG::HorizontalDirection direction) const { return const_cast<Layout *>(this)->node()->isCollapsable(numberOfOpenParenthesis, direction); }
 
   Layout XNTLayout() const;
 

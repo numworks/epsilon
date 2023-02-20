@@ -7,21 +7,21 @@ namespace Poincare {
 // LayoutNode
 int GridLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
   if (currentIndex == k_outsideIndex) {
-    return direction == OMG::HorizontalDirection::Left ? numberOfChildren() - 1 : 0;
+    return direction.isLeft() ? numberOfChildren() - 1 : 0;
   }
-  if ((direction == OMG::HorizontalDirection::Left && childIsLeftOfGrid(currentIndex)) ||
-      (direction == OMG::HorizontalDirection::Right && childIsRightOfGrid(currentIndex))) {
+  if ((direction.isLeft() && childIsLeftOfGrid(currentIndex)) ||
+      (direction.isRight() && childIsRightOfGrid(currentIndex))) {
     return k_outsideIndex;
   }
-  int step = direction == OMG::HorizontalDirection::Left ? -1 : 1;
+  int step = direction.isLeft() ? -1 : 1;
   return currentIndex + step;
 }
 
 int GridLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
-  if (direction == OMG::VerticalDirection::Up && currentIndex >= m_numberOfColumns) {
+  if (direction.isUp() && currentIndex >= m_numberOfColumns) {
     return currentIndex - m_numberOfColumns;
   }
-  if (direction == OMG::VerticalDirection::Down && currentIndex < numberOfChildren() - m_numberOfColumns) {
+  if (direction.isDown() && currentIndex < numberOfChildren() - m_numberOfColumns) {
     return currentIndex + m_numberOfColumns;
   }
   return k_cantMoveIndex;

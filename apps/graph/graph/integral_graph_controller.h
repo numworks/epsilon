@@ -12,7 +12,7 @@ public:
   const char * title() override;
 
 protected:
-  double cursorNextStep(double position, OMG::NewHorizontalDirection direction) override;
+  double cursorNextStep(double position, OMG::HorizontalDirection direction) override;
 
 private:
   I18n::Message legendMessageAtStep(Step step) override;

@@ -31,7 +31,7 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
   return MultipleDataViewController::handleEvent(event);
 }
 
-bool BoxController::moveSelectionHorizontally(OMG::NewHorizontalDirection direction) {
+bool BoxController::moveSelectionHorizontally(OMG::HorizontalDirection direction) {
   return m_view.moveSelectionHorizontally(m_selectedSeries, direction);
 }
 

@@ -209,7 +209,7 @@ EquationStore::Error EquationStore::privateExactSolve(
                                                         strlen(symbol)) ==
                    Poincare::Context::SymbolAbstractType::Symbol;
           },
-          (char *)m_userVariables, Poincare::SymbolAbstract::k_maxNameSize,
+          (char *)m_userVariables, Poincare::SymbolAbstractNode::k_maxNameSize,
           m_numberOfUserVariables);
       m_numberOfUserVariables =
           varCount < 0 ? Expression::k_maxNumberOfVariables : varCount;
@@ -232,7 +232,7 @@ EquationStore::Error EquationStore::privateExactSolve(
     numberOfVariables = e.getVariables(
         context,
         [](const char *symbol, Poincare::Context *context) { return true; },
-        (char *)m_variables, Poincare::SymbolAbstract::k_maxNameSize,
+        (char *)m_variables, Poincare::SymbolAbstractNode::k_maxNameSize,
         numberOfVariables);
     if (numberOfVariables == -1) {
       return Error::TooManyVariables;
@@ -264,12 +264,12 @@ EquationStore::Error EquationStore::privateExactSolve(
                            [Expression::k_maxNumberOfVariables];
     Expression constants[k_maxNumberOfEquations];
     for (int i = 0; i < nbOfDefinedModels; i++) {
-      isLinear = isLinear &&
-                 simplifiedExpressions[i].getLinearCoefficients(
-                     (char *)m_variables,
-                     Poincare::SymbolAbstract::k_maxNameSize, coefficients[i],
-                     &constants[i], context, updatedComplexFormat(context),
-                     angleUnit, unitFormat, symbolicComputation);
+      isLinear = isLinear && simplifiedExpressions[i].getLinearCoefficients(
+                                 (char *)m_variables,
+                                 Poincare::SymbolAbstractNode::k_maxNameSize,
+                                 coefficients[i], &constants[i], context,
+                                 updatedComplexFormat(context), angleUnit,
+                                 unitFormat, symbolicComputation);
       if (!isLinear) {
         if (nbOfDefinedModels > 1 || numberOfVariables > 1) {
           return Error::NonLinearSystem;

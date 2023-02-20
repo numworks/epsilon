@@ -984,7 +984,7 @@ void Parser::parseCustomIdentifier(Expression &leftHandSide,
 void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
                                           const char *name, size_t length,
                                           Token::Type stoppingType) {
-  if (length >= SymbolAbstract::k_maxNameSize) {
+  if (!SymbolAbstractNode::NameLengthIsValid(name, length)) {
     m_status = Status::Error;  // Identifier name too long.
     return;
   }

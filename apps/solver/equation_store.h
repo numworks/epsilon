@@ -153,9 +153,9 @@ class EquationStore : public Shared::ExpressionModelStore {
   Poincare::Layout
       m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];
   char m_variables[Poincare::Expression::k_maxNumberOfVariables]
-                  [Poincare::SymbolAbstract::k_maxNameSize];
+                  [Poincare::SymbolAbstractNode::k_maxNameSize];
   char m_userVariables[Poincare::Expression::k_maxNumberOfVariables]
-                      [Poincare::SymbolAbstract::k_maxNameSize];
+                      [Poincare::SymbolAbstractNode::k_maxNameSize];
   double m_intervalApproximateSolutions[2];
   double m_approximateSolutions[k_maxNumberOfApproximateSolutions];
   int m_degree;

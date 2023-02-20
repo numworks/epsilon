@@ -21,7 +21,7 @@ class Function : public ExpressionModelHandle {
   constexpr static int k_parenthesedThetaArgumentByteLength = 4;
   constexpr static int k_parenthesedXNTArgumentByteLength = 3;
   constexpr static int k_maxNameWithArgumentSize =
-      Poincare::SymbolAbstract::k_maxNameSize +
+      Poincare::SymbolAbstractNode::k_maxNameSize +
       k_parenthesedThetaArgumentByteLength; /* Function name and
                                                null-terminating char + "(θ)" */
   ;

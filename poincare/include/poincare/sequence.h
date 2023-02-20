@@ -34,6 +34,10 @@ class SequenceNode : public SymbolAbstractNode {
   int serialize(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
                 int numberOfSignificantDigits) const override;
+
+  // Name
+  char* editableName() override { return m_name; }
+
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override {

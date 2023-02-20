@@ -237,8 +237,8 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
 void ListController::computeTitlesColumnWidth(bool forceMax) {
   if (forceMax) {
     m_titlesColumnWidth =
-        nameWidth(Poincare::SymbolAbstract::k_maxNameSize +
-                  Shared::Function::k_parenthesedArgumentCodePointLength - 1) +
+        nameWidth(Poincare::SymbolAbstractNode::k_maxNameLength +
+                  Shared::Function::k_parenthesedArgumentCodePointLength) +
         k_functionTitleSumOfMargins;
     return;
   }

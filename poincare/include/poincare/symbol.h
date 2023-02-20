@@ -74,6 +74,9 @@ class SymbolNode final : public SymbolAbstractNode {
   template <typename T>
   Evaluation<T> templatedApproximate(
       const ApproximationContext& approximationContext) const;
+
+  // Name
+  char* editableName() override { return m_name; }
 };
 
 class Symbol final : public SymbolAbstract {

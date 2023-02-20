@@ -591,7 +591,7 @@ void assert_expression_has_variables(const char* expression,
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   constexpr static int k_maxVariableSize =
-      Poincare::SymbolAbstract::k_maxNameSize;
+      Poincare::SymbolAbstractNode::k_maxNameSize;
   char variableBuffer[Expression::k_maxNumberOfVariables][k_maxVariableSize] = {
       {0}};
   int numberOfVariables = e.getVariables(

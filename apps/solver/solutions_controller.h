@@ -159,10 +159,13 @@ class SolutionsController : public Escher::ViewController,
 
   // Heights and widths
   constexpr static KDCoordinate k_defaultCellHeight = 20;
-  // We concatenate symbol name with a number of at most 2 digits
+  /* We concatenate symbol name with a number of at most 2 digits.
+   * The quotation marks are removed if the name has some, so that the
+   * cell is not too wide. */
   constexpr static int k_symbolCellWidth =
       KDFont::GlyphWidth(k_solutionsFont) *
-          (Poincare::SymbolAbstract::k_maxNameSize - 1 + 2) +
+          (Poincare::SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks +
+           2) +
       2 * Escher::EvenOddBufferTextCell::k_horizontalMargin;
   constexpr static int k_valueCellWidth = 190;
 

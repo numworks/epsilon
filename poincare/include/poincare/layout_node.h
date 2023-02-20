@@ -131,13 +131,12 @@ public:
    * become 1+ 2/3 - 4 when pressing "Divide": a CodePointLayout is collapsable if
    * its char is not +, -, or *. */
   virtual bool isCollapsable(int * numberOfOpenParenthesis, OMG::HorizontalDirection direction) const { return true; }
+  /* canBeOmittedMultiplicationLeftFactor returns true if the layout,
+   * next to another layout, might be the factor of a multiplication
+   * with an omitted multiplication sign. For instance, an absolute value
+   * layout returns true, because |3|2 means |3|*2. A '+' CodePointLayout
+   * returns false, because +'something' nevers means +*'something'. */
   virtual bool canBeOmittedMultiplicationLeftFactor() const;
-  virtual bool canBeOmittedMultiplicationRightFactor() const;
-  /* canBeOmittedMultiplicationLeftFactor and RightFactor return true if the
-   * layout, next to another layout, might be the factor of a multiplication
-   * with an omitted multiplication sign. For instance, an absolute value layout
-   * returns true, because |3|2 means |3|*2. A '+' CodePointLayout returns false,
-   * because +'something' nevers means +*'something'. */
   virtual bool hasUpperLeftIndex() const { return false; }
   virtual Layout XNTLayout(int childIndex = -1) const;
 

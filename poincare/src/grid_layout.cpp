@@ -18,6 +18,9 @@ int GridLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection dire
 }
 
 int GridLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+  if (currentIndex == k_outsideIndex) {
+    return k_cantMoveIndex;
+  }
   if (direction.isUp() && currentIndex >= m_numberOfColumns) {
     return currentIndex - m_numberOfColumns;
   }

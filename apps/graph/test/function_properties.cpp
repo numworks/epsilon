@@ -4,6 +4,7 @@
 #include "helper.h"
 
 using namespace Shared;
+using namespace Poincare;
 
 namespace Graph {
 
@@ -65,21 +66,17 @@ void assert_check_function_properties(
 
 QUIZ_CASE(graph_function_properties) {
   // Test the plot type under different Press-to-test parameters :
-  Preferences::PressToTestParams pressToTestParams =
-      Preferences::k_inactivePressToTest;
-  Poincare::Preferences::sharedPreferences->setComplexFormat(
-      Preferences::ComplexFormat::Cartesian);
-  for (size_t config = 0; config < 4; config++) {
-    bool noInequations = (config == 1 || config == 3);
-    bool noImplicitPlot = (config == 2 || config == 3);
-    // Set the Press-to-test mode
-    pressToTestParams.m_inequalityGraphingIsForbidden = noInequations;
-    pressToTestParams.m_implicitPlotsAreForbidden = noImplicitPlot;
-    Poincare::Preferences::sharedPreferences->setExamMode(
-        (noInequations || noImplicitPlot)
-            ? Poincare::Preferences::ExamMode::PressToTest
-            : Poincare::Preferences::ExamMode::Off,
-        pressToTestParams);
+  const ExamMode examModes[] = {
+      ExamMode(ExamMode::Mode::Off),
+      ExamMode(ExamMode::Mode::PressToTest, {.forbidInequalityGraphing = true}),
+      ExamMode(ExamMode::Mode::PressToTest, {.forbidImplicitPlots = true}),
+      ExamMode(ExamMode::Mode::PressToTest,
+               {.forbidInequalityGraphing = true, .forbidImplicitPlots = true}),
+  };
+  for (const ExamMode examMode : examModes) {
+    Preferences::sharedPreferences->setExamMode(examMode);
+    bool noInequations = examMode.forbidInequalityGraphing();
+    bool noImplicitPlot = examMode.forbidImplicitPlots();
 
     // === Cartesian functions ====
 
@@ -708,10 +705,10 @@ QUIZ_CASE(graph_function_properties) {
     // Restore preferences
     Poincare::Preferences::sharedPreferences->setComplexFormat(
         Preferences::ComplexFormat::Cartesian);
+
+    // Restore an Off exam mode.
+    Poincare::Preferences::sharedPreferences->setExamMode(ExamMode::Mode::Off);
   }
-  // Restore an Off exam mode.
-  Poincare::Preferences::sharedPreferences->setExamMode(
-      Poincare::Preferences::ExamMode::Off);
 }
 
 QUIZ_CASE(graph_function_properties_with_predefined_variables) {

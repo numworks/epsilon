@@ -8,7 +8,7 @@ namespace PoincareJ {
 
 class CachePool final : public Pool {
 /* The CachePool respects the following assertions:
- * - the referenced addresses are physicaly linear on the pool,
+ * - the referenced addresses are physically linear on the pool,
  * - the pool can be fragmented.
  **/
 public:
@@ -27,7 +27,7 @@ public:
   TypeBlock * firstBlock() override { return m_referenceTable.isEmpty() ? nullptr : static_cast<TypeBlock *>(&m_blocks[0]); }
   TypeBlock * lastBlock() override { return  static_cast<TypeBlock *>(m_referenceTable.isEmpty() ? &m_blocks[0] : Node(&m_blocks[0] + m_referenceTable.lastOffset()).nextTree().block()); }
 
-  // Less permissive and const implementation of Pool::contains
+  // Less permissive, and const, implementation of Pool::contains
   bool mayContain(const Block * block) const { return block >= m_blocks && block < m_blocks + k_maxNumberOfBlocks; }
 
   constexpr static int k_maxNumberOfBlocks = 1024;

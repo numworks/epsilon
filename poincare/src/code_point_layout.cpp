@@ -64,13 +64,6 @@ bool CodePointLayoutNode::canBeOmittedMultiplicationLeftFactor() const {
   return LayoutNode::canBeOmittedMultiplicationLeftFactor();
 }
 
-bool CodePointLayoutNode::canBeOmittedMultiplicationRightFactor() const {
-  if (m_codePoint == '!' || isMultiplicationCodePoint()) {
-    return false;
-  }
-  return LayoutNode::canBeOmittedMultiplicationRightFactor();
-}
-
 // Sizing and positioning
 KDSize CodePointLayoutNode::computeSize(KDFont::Size font) {
   KDSize glyph = KDFont::GlyphSize(font);

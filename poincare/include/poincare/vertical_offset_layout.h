@@ -37,7 +37,6 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) override;
   DeletionMethod deletionMethodForCursorLeftOfChild(int childIndex) const override;
-  bool canBeOmittedMultiplicationRightFactor() const override { return false; }
 
   // TreeNode
   size_t size() const override { return sizeof(VerticalOffsetLayoutNode); }

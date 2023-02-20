@@ -28,7 +28,6 @@ public:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool isCollapsable(int * numberOfOpenParenthesis, OMG::HorizontalDirection direction) const override;
   bool canBeOmittedMultiplicationLeftFactor() const override;
-  bool canBeOmittedMultiplicationRightFactor() const override;
 
   // TreeNode
   size_t size() const override { return sizeof(CodePointLayoutNode); }

@@ -59,14 +59,18 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
   HorizontalLayout result = HorizontalLayout::Builder();
   HorizontalLayout writtenLayout = result;
 
+  assert((cursorLayout == nullptr) == (cursorPosition == nullptr));
+  bool placedCursor = (cursorLayout == nullptr);
+
   while (true) {
     /* -- Step 0 -- Set the new cursor position
      * Since everything is cloned into the result, the cursor position will be
      * lost, so when the corresponding layout is being read, set the cursor
      * position in the written layout. */
-    if (readLayout == *cursorLayout && readIndex == *cursorPosition) {
+    if (cursorLayout && readLayout == *cursorLayout && readIndex == *cursorPosition) {
       *cursorLayout = writtenLayout;
       *cursorPosition = writtenLayout.numberOfChildren();
+      placedCursor = true;
     }
 
 
@@ -227,13 +231,17 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
     writtenLayout = newWrittenLayout;
   }
 
+  /* This assert can be removed if at some point a cursorLayout is passed
+   * to this method but could be unaffected by the balancing of brackets. */
+  assert(placedCursor);
+
   /* Now that the result is ready to replace hLayout, replaceWithInPlace
    * cannot be used since hLayout might not have a parent.
    * So hLayout is first emptied and then merged with result.  */
   while (hLayout.numberOfChildren() > 0) {
     hLayout.removeChildAtIndexInPlace(0);
   }
-  if (*cursorLayout == result) {
+  if (cursorLayout && *cursorLayout == result) {
     *cursorLayout = hLayout;
   }
   hLayout.addOrMergeChildAtIndex(result, 0);

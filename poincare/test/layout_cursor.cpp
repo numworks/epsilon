@@ -9,24 +9,29 @@
 
 using namespace Poincare;
 
-void assert_inserted_layout_points_to(Layout layoutToInsert, Expression correspondingExpression, Layout layoutOfCursorAfterInsertion, int cursorPositionInLayout = 0) {
+void assert_inserted_layout_points_to(Layout layoutToInsert, Expression correspondingExpression, Layout expectedLayoutAfterInsertion, int cursorPositionInLayout = 0) {
   HorizontalLayout h = HorizontalLayout::Builder();
   LayoutCursor c = LayoutCursor(h);
   bool insertingHorizontalLayout = layoutToInsert.isHorizontal();
 
-  /* layoutOfCursorAfterInsertion might be lost during insertion, so compute
-   * the address offset of its node to compare it with the address offset of
-   * the cursor layout after insertion.
+  /* expectedLayoutAfterInsertion might be lost during insertion because it
+   * could be a child of layoutToInsert.
+   * So the address offset of its node is kept, and will be used after insertion
+   * to check if the cursor is at the right layout.
+   * It is also cloned so that it can be compared after insertion with an
+   * isIdenticalTo.
    * */
-  int addressOffsetBeforeInsertion = layoutOfCursorAfterInsertion.node() - layoutToInsert.node();
-  layoutOfCursorAfterInsertion = layoutOfCursorAfterInsertion.clone();
+  int addressOffsetBeforeInsertion = expectedLayoutAfterInsertion.node() - layoutToInsert.node();
+  expectedLayoutAfterInsertion = expectedLayoutAfterInsertion.clone();
 
   /* LayoutField forces right of layout when expression has 0 children.
    * We mimic this behaviour here. */
   c.insertLayoutAtCursor(layoutToInsert, nullptr, !correspondingExpression.isUninitialized() && correspondingExpression.numberOfChildren() == 0);
 
   int addressOffsetAfterInsertion = c.layout().node() - (insertingHorizontalLayout ? static_cast<LayoutNode *>(h.node()) : h.childAtIndex(0).node());
-  quiz_assert(addressOffsetAfterInsertion == addressOffsetBeforeInsertion && layoutOfCursorAfterInsertion.isIdenticalTo(c.layout()));
+  /* Check if the cursor layout is at the same adress offset and is identical
+   * to the expected layout. */
+  quiz_assert(addressOffsetAfterInsertion == addressOffsetBeforeInsertion && expectedLayoutAfterInsertion.isIdenticalTo(c.layout()));
   quiz_assert(c.position() == cursorPositionInLayout);
 }
 

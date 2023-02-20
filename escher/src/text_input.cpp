@@ -228,7 +228,7 @@ bool TextInput::moveCursorRight(int step) {
   return (i > 1 || canMove);
 }
 
-bool TextInput::selectLeftRight(OMG::HorizontalDirection direction, bool all, int step) {
+bool TextInput::selectLeftRight(OMG::NewHorizontalDirection direction, bool all, int step) {
   const char * cursorLoc = cursorLocation();
   const char * nextCursorLoc = nullptr;
   if (!all) {

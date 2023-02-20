@@ -629,7 +629,7 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * should
   }
   LayoutCursor result;
   int step = Ion::Events::longPressFactor();
-  result = m_contentView.cursor()->cursorAtDirection(OMG::Direction(event), shouldRecomputeLayout, false, step);
+  result = m_contentView.cursor()->cursorAtDirection(OMG::NewDirection(event), shouldRecomputeLayout, false, step);
   if (result.isDefined()) {
     if (eventShouldUpdateInsertionCursor(event)) {
       m_contentView.updateInsertionCursor();
@@ -648,7 +648,7 @@ bool LayoutField::privateHandleSelectionEvent(Ion::Events::Event event, bool * s
   // Selection is handled one step at a time. Repeat selection for each step.
   for (int i = 0; i < step; ++i) {
     Layout addedSelection;
-    LayoutCursor result = m_contentView.cursor()->selectAtDirection(OMG::Direction(event), shouldRecomputeLayout, &addedSelection);
+    LayoutCursor result = m_contentView.cursor()->selectAtDirection(OMG::NewDirection(event), shouldRecomputeLayout, &addedSelection);
     if (addedSelection.isUninitialized()) {
       // Successful event if at least one step succeeded.
       return i > 0;

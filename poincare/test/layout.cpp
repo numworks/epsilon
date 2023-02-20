@@ -150,7 +150,7 @@ QUIZ_CASE(poincare_layout_power) {
     VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript)
   )));
   LayoutCursor c3(l3, LayoutCursor::Position::Right);
-  c3.move(OMG::Direction::Left(), nullptr);
+  c3.move(OMG::NewDirection::Left(), nullptr);
   c3.addEmptySquarePowerLayout(nullptr);
   assert_layout_serialize_to(l3, "((1^\u00122\u0013)^\u00122\u0013)");
 }

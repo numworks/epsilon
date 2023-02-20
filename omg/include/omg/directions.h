@@ -6,9 +6,9 @@
 
 namespace OMG {
 
-class Direction {
+class NewDirection {
  public:
-  Direction(Ion::Events::Event event);
+  NewDirection(Ion::Events::Event event);
 
   bool isLeft() const { return m_tag == Tag::Left; }
   bool isRight() const { return m_tag == Tag::Right; }
@@ -20,35 +20,35 @@ class Direction {
   }
   bool isVertical() const { return m_tag == Tag::Up || m_tag == Tag::Down; }
 
-  operator class HorizontalDirection() const;
-  operator class VerticalDirection() const;
+  operator class NewHorizontalDirection() const;
+  operator class NewVerticalDirection() const;
 
-  constexpr static Direction Left() { return Direction(Tag::Left); }
-  constexpr static Direction Right() { return Direction(Tag::Right); }
-  constexpr static Direction Up() { return Direction(Tag::Up); }
-  constexpr static Direction Down() { return Direction(Tag::Down); }
+  constexpr static NewDirection Left() { return NewDirection(Tag::Left); }
+  constexpr static NewDirection Right() { return NewDirection(Tag::Right); }
+  constexpr static NewDirection Up() { return NewDirection(Tag::Up); }
+  constexpr static NewDirection Down() { return NewDirection(Tag::Down); }
 
-  bool operator==(const Direction &other) const { return m_tag == other.m_tag; }
-  bool operator!=(const Direction &other) const { return m_tag != other.m_tag; }
+  bool operator==(const NewDirection &other) const { return m_tag == other.m_tag; }
+  bool operator!=(const NewDirection &other) const { return m_tag != other.m_tag; }
 
  private:
   enum class Tag { Left, Right, Up, Down };
 
-  constexpr Direction(Tag tag) : m_tag(tag) {}
+  constexpr NewDirection(Tag tag) : m_tag(tag) {}
 
   Tag m_tag;
 };
 
-class HorizontalDirection : public Direction {
+class NewHorizontalDirection : public NewDirection {
  private:
-  using Direction::Down;
-  using Direction::Up;
+  using NewDirection::Down;
+  using NewDirection::Up;
 };
 
-class VerticalDirection : public Direction {
+class NewVerticalDirection : public NewDirection {
  private:
-  using Direction::Left;
-  using Direction::Right;
+  using NewDirection::Left;
+  using NewDirection::Right;
 };
 
 }  // namespace OMG

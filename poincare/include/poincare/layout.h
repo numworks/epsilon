@@ -123,7 +123,7 @@ protected:
   int removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false);
 private:
   // Tree modification
-  bool collapseOnDirection(OMG::HorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor);
+  bool collapseOnDirection(OMG::NewHorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor);
   bool privateHasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;
 };
 

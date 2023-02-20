@@ -53,7 +53,7 @@ protected:
   // InteractiveCurveViewController
   void openMenuForCurveAtIndex(int curveIndex) override;
   void initCursorParameters(bool ignorMargins) override;
-  bool moveCursorVertically(OMG::VerticalDirection direction) override;
+  bool moveCursorVertically(OMG::NewVerticalDirection direction) override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
@@ -63,7 +63,7 @@ protected:
   void selectCurveAtIndex(int curveIndex, bool willBeVisible);
   virtual double defaultCursorT(Ion::Storage::Record record, bool ignoreMargins);
   virtual FunctionStore * functionStore() const;
-  virtual int nextCurveIndexVertically(OMG::VerticalDirection direction, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {
+  virtual int nextCurveIndexVertically(OMG::NewVerticalDirection direction, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {
     return closestCurveIndexVertically(direction, currentSelectedCurve, context, currentSubCurveIndex, subCurveIndex);
   }
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;

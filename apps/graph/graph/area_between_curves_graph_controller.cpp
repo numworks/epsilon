@@ -48,7 +48,7 @@ void AreaBetweenCurvesGraphController::makeCursorVisible() {
   makeDotVisible(position, yG, true);
 }
 
-double AreaBetweenCurvesGraphController::cursorNextStep(double position, OMG::HorizontalDirection direction) {
+double AreaBetweenCurvesGraphController::cursorNextStep(double position, OMG::NewHorizontalDirection direction) {
   double nextX = IntegralGraphController::cursorNextStep(position, direction);
   constexpr double snapFactor = 1.5;
   double nextSnap = position + snapFactor * (nextX - position);

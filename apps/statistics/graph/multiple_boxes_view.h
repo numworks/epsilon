@@ -17,7 +17,7 @@ public:
   BoxView * plotViewForSeries(int series) override;
   void layoutDataSubviews(bool force) override;
   void reload() override;
-  bool moveSelectionHorizontally(int series, OMG::HorizontalDirection direction);
+  bool moveSelectionHorizontally(int series, OMG::NewHorizontalDirection direction);
 
   // View
   int numberOfSubviews() const override;

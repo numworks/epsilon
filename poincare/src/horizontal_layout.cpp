@@ -10,7 +10,7 @@ namespace Poincare {
 
 // LayoutNode
 
-void HorizontalLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void HorizontalLayoutNode::moveCursorHorizontally(OMG::NewHorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   LayoutCursor::Position dir = direction.isLeft() ? LayoutCursor::Position::Left : LayoutCursor::Position::Right;
   LayoutCursor::Position oppositeDir = direction.isLeft() ? LayoutCursor::Position::Right : LayoutCursor::Position::Left;
 
@@ -60,11 +60,11 @@ void HorizontalLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direc
 }
 
 void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::Direction::Left(), cursor, shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
 }
 
 void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::Direction::Right(), cursor, shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
 }
 
 LayoutCursor HorizontalLayoutNode::equivalentCursor(LayoutCursor * cursor) {

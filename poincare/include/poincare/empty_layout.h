@@ -73,7 +73,7 @@ private:
   KDCoordinate width(KDFont::Size font) const { return KDFont::GlyphWidth(font) - 2 * k_marginWidth; }
 
   // LayoutNode
-  void moveCursorVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) override;
+  void moveCursorVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) override;
   bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   bool protectedIsIdenticalTo(Layout l) override;

@@ -25,7 +25,7 @@ void EmptyLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecompu
   assert(parent() != nullptr);
   // Ask the parent.
   cursor->setPosition(LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::Direction::Left(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
 }
 
 void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -33,7 +33,7 @@ void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomp
   assert(parent() != nullptr);
   // Ask the parent.
   cursor->setPosition(LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::Direction::Right(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
 }
 
 int EmptyLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -53,7 +53,7 @@ KDCoordinate EmptyLayoutNode::computeBaseline(KDFont::Size font) {
   return (m_margins ? k_marginHeight : 0) + height(font)/2;
 }
 
-void EmptyLayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+void EmptyLayoutNode::moveCursorVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   /* The two cursor positions around an EmptyLayoutNode are equivalent, so both
    * should be checked. */
   assert(cursor->layoutNode() == this);

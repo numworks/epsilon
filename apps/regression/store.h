@@ -42,8 +42,8 @@ public:
   }
 
   // Dots
-  int closestVerticalDot(OMG::VerticalDirection direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext);
-  int nextDot(int series, OMG::HorizontalDirection direction, int dot, bool displayMean);
+  int closestVerticalDot(OMG::NewVerticalDirection direction, double x, double y, int currentSeries, int currentDot, int * nextSeries, Poincare::Context * globalContext);
+  int nextDot(int series, OMG::NewHorizontalDirection direction, int dot, bool displayMean);
   Model * regressionModel(Model::Type type) { return regressionModel(static_cast<int>(type)); }
 
   // Series

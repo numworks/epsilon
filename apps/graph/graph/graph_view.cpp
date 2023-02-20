@@ -118,7 +118,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
           ? FunctionIsDiscontinuousBetweenFloatValues
           : NoDiscontinuity;
 
-  if (f->properties().isParametric()) {
+  if (f->properties().isParametric() || f->properties().isInversePolar()) {
     drawParametric(ctx, rect, f.operator->(), tCacheMin, tmax,
                    tStepNonCartesian, discontinuityEvaluation);
     return;

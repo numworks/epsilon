@@ -108,20 +108,32 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
     if (f->basedOnCostlyAlgorithms(context)) {
       continue;
     }
-    if (f->properties().isPolar() || f->properties().isParametric()) {
+    if (f->properties().isPolar() || f->properties().isInversePolar() ||
+        f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
       Expression e = f->expressionReduced(context);
-      if (f->properties().isPolar()) {
-        // Turn r(theta) into f(theta) = [x(theta), y(theta)]
-        Expression theta =
+      if (f->properties().isPolar() || f->properties().isInversePolar()) {
+        Expression firstRow, secondRow;
+        Expression unknown =
             Symbol::Builder(ContinuousFunction::k_unknownName,
                             strlen(ContinuousFunction::k_unknownName));
-        // x(theta) = cos(theta)*r(theta)
-        Expression firstRow =
-            Multiplication::Builder(Cosine::Builder(theta.clone()), e.clone());
-        // y(theta) = sin(theta)*r(theta)
-        Expression secondRow =
-            Multiplication::Builder(Sine::Builder(theta.clone()), e.clone());
+        if (f->properties().isPolar()) {
+          // Turn r(theta) into f(theta) = [x(theta), y(theta)]
+          // x(theta) = cos(theta)*r(theta)
+          firstRow = Multiplication::Builder(Cosine::Builder(unknown.clone()),
+                                             e.clone());
+          // y(theta) = sin(theta)*r(theta)
+          secondRow = Multiplication::Builder(Sine::Builder(unknown.clone()),
+                                              e.clone());
+        } else {
+          // Turn theta(r) into f(r) = [x(r), y(r)]
+          // x(r) = r*cos(theta(r))
+          firstRow = Multiplication::Builder(unknown.clone(),
+                                             Cosine::Builder(e.clone()));
+          // y(theta) = r*sin(theta(r))
+          secondRow = Multiplication::Builder(unknown.clone(),
+                                              Sine::Builder(e.clone()));
+        }
         Matrix parametricExpression = Matrix::Builder();
         parametricExpression.addChildAtIndexInPlace(firstRow, 0, 0);
         parametricExpression.addChildAtIndexInPlace(secondRow, 1, 1);
@@ -373,7 +385,8 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
   }
 
   assert(function->properties().isParametric() ||
-         function->properties().isPolar());
+         function->properties().isPolar() ||
+         function->properties().isInversePolar());
   Poincare::Context *context = textFieldDelegateApp()->localContext();
   float tMin = function->tMin(), tMax = function->tMax();
   float tRange = tMax - tMin;

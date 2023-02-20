@@ -106,6 +106,8 @@ I18n::Message IntervalParameterSelectorController::messageForType(
       return I18n::Message::IntervalX;
     case Shared::ContinuousFunctionProperties::SymbolType::T:
       return I18n::Message::IntervalT;
+    case Shared::ContinuousFunctionProperties::SymbolType::Radius:
+      return I18n::Message::IntervalR;
     default:
       assert(symbolType ==
              Shared::ContinuousFunctionProperties::SymbolType::Theta);
@@ -125,6 +127,9 @@ void IntervalParameterSelectorController::setStartEndMessages(
       controller->setStartEndMessages(I18n::Message::TStart,
                                       I18n::Message::TEnd);
       return;
+    case Shared::ContinuousFunctionProperties::SymbolType::Radius:
+      controller->setStartEndMessages(I18n::Message::RStart,
+                                      I18n::Message::REnd);
     default:
       assert(symbolType ==
              Shared::ContinuousFunctionProperties::SymbolType::Theta);

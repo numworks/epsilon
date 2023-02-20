@@ -68,6 +68,8 @@ I18n::Message DomainParameterController::parameterMessage(int index) const {
     return index == 0 ? I18n::Message::TMin : I18n::Message::TMax;
   } else if (plotProperties.isPolar()) {
     return index == 0 ? I18n::Message::ThetaMin : I18n::Message::ThetaMax;
+  } else if (plotProperties.isInversePolar()) {
+    return index == 0 ? I18n::Message::RMin : I18n::Message::RMax;
   } else {
     return index == 0 ? I18n::Message::XMin : I18n::Message::XMax;
   }

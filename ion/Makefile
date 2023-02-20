@@ -90,6 +90,7 @@ ion_src += ion/src/external/lz4/lz4.c
 tests_src += $(addprefix ion/test/,\
   crc32.cpp\
   events.cpp\
+  exam_mode.cpp\
   keyboard.cpp\
   persisting_bytes.cpp\
   ring_buffer.cpp \

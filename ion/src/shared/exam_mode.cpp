@@ -1,8 +1,9 @@
 #include <assert.h>
 #include <ion/authentication.h>
 #include <ion/exam_mode.h>
-#include <ion/led.h>
 #include <ion/reset.h>
+
+#include "led.h"
 
 namespace Ion {
 namespace ExamMode {

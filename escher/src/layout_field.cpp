@@ -26,6 +26,9 @@ LayoutField::ContentView::ContentView(KDFont::Size font) :
 }
 
 bool LayoutField::ContentView::setEditing(bool isEditing) {
+  if (m_isEditing == isEditing) {
+    return false;
+  }
   m_isEditing = isEditing;
   markRectAsDirty(bounds());
   bool layoutChanged = false;

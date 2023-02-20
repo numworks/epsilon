@@ -24,7 +24,7 @@ public:
   Type type() const override { return Type::HorizontalLayout; }
 
   // LayoutNode
-  void moveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
+  void moveCursorHorizontally(OMG::NewHorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override;

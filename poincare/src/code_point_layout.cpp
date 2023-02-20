@@ -11,7 +11,7 @@ void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRec
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
-  askParentToMoveCursorHorizontally(OMG::Direction::Left(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
 }
 
 void CodePointLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -20,7 +20,7 @@ void CodePointLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRe
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::Direction::Right(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
 }
 
 int CodePointLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -132,7 +132,7 @@ bool HistogramController::reloadBannerView() {
   return previousHeight != m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 }
 
-bool HistogramController::moveSelectionHorizontally(OMG::HorizontalDirection direction) {
+bool HistogramController::moveSelectionHorizontally(OMG::NewHorizontalDirection direction) {
   int numberOfBars = m_store->numberOfBars(m_selectedSeries);
   int newSelectedBarIndex = m_selectedIndex;
   do {

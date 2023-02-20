@@ -99,7 +99,7 @@ LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
   return (cursor->layout().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
 }
 
-void LayoutNode::askParentToMoveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void LayoutNode::askParentToMoveCursorHorizontally(OMG::NewHorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert((direction.isLeft()  && cursor->position() == LayoutCursor::Position::Left)
       || (direction.isRight() && cursor->position() == LayoutCursor::Position::Right));
   LayoutNode * parentNode = parent();
@@ -120,7 +120,7 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     // Case: The pointed layout is a child. Move Left.
     assert(cursor->position() == LayoutCursor::Position::Left);
     bool shouldRecomputeLayout = false;
-    cursor->move(OMG::Direction::Left(), &shouldRecomputeLayout);
+    cursor->move(OMG::NewDirection::Left(), &shouldRecomputeLayout);
     return;
   }
   assert(cursor->layoutNode() == this);
@@ -245,7 +245,7 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
   return true;
 }
 
-void LayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+void LayoutNode::moveCursorVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (!equivalentPositionVisited) {
     LayoutCursor cursorEquivalent = equivalentCursor(cursor);
     if (cursorEquivalent.isDefined()) {
@@ -271,7 +271,7 @@ void LayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCu
   }
 }
 
-void LayoutNode::moveCursorInDescendantsVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+void LayoutNode::moveCursorInDescendantsVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   LayoutNode * childResult = nullptr;
   LayoutNode ** childResultPtr = &childResult;
   LayoutCursor::Position resultPosition = LayoutCursor::Position::Left;
@@ -292,7 +292,7 @@ void LayoutNode::moveCursorInDescendantsVertically(OMG::VerticalDirection direct
 }
 
 void LayoutNode::scoreCursorInDescendantsVertically (
-    OMG::VerticalDirection direction,
+    OMG::NewVerticalDirection direction,
     LayoutCursor * cursor,
     bool * shouldRecomputeLayout,
     LayoutNode ** childResult,

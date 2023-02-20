@@ -33,7 +33,7 @@ protected:
   }
 
   Shared::ContinuousFunctionStore * functionStore() const;
-  Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, OMG::HorizontalDirection direction);
+  Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, OMG::NewHorizontalDirection direction);
   virtual Poincare::Solver<double>::Interest specialInterest() const { return Poincare::Solver<double>::Interest::None; }
   virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context) { return computeAtLeastOnePointOfInterest(start, max, context).xy(); }
   Poincare::PointOfInterest computeAtLeastOnePointOfInterest(double start, double max, Poincare::Context * context);
@@ -46,7 +46,7 @@ protected:
   bool m_isActive;
 
 private:
-  bool moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed = 1) override;
+  bool moveCursorHorizontally(OMG::NewHorizontalDirection direction, int scrollSpeed = 1) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::AbstractPlotView * curveView() override { return m_graphView; }
   // Prevent horizontal panning to preserve search interval

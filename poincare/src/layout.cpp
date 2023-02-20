@@ -282,7 +282,7 @@ int Layout::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
   return removeChild(childAtIndex(index), cursor, force);
 }
 
-bool Layout::collapseOnDirection(OMG::HorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor) {
+bool Layout::collapseOnDirection(OMG::NewHorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor) {
   Layout p = parent();
   if (p.isUninitialized() || p.type() != LayoutNode::Type::HorizontalLayout) {
     return false;
@@ -344,10 +344,10 @@ bool Layout::collapseOnDirection(OMG::HorizontalDirection direction, int absorbi
 void Layout::collapseSiblings(LayoutCursor * cursor) {
   bool collapsed = false;
   if (node()->shouldCollapseSiblingsOnRight()) {
-    collapsed |= collapseOnDirection(OMG::Direction::Right(), rightCollapsingAbsorbingChildIndex(), cursor);
+    collapsed |= collapseOnDirection(OMG::NewDirection::Right(), rightCollapsingAbsorbingChildIndex(), cursor);
   }
   if (node()->shouldCollapseSiblingsOnLeft()) {
-    collapsed |= collapseOnDirection(OMG::Direction::Left(), leftCollapsingAbsorbingChildIndex(), cursor);
+    collapsed |= collapseOnDirection(OMG::NewDirection::Left(), leftCollapsingAbsorbingChildIndex(), cursor);
   }
   if (collapsed) {
     node()->didCollapseSiblings(cursor);

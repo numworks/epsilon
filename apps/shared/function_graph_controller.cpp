@@ -162,7 +162,7 @@ void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
   selectCurveAtIndex(functionIndex, false);
 }
 
-bool FunctionGraphController::moveCursorVertically(OMG::VerticalDirection direction) {
+bool FunctionGraphController::moveCursorVertically(OMG::NewVerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   int nextSubCurve = 0;

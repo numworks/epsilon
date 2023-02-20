@@ -245,13 +245,13 @@ bool GraphController::displayDerivativeInBanner() const {
   reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, record);
 }
 
-bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed) {
+bool GraphController::moveCursorHorizontally(OMG::NewHorizontalDirection direction, int scrollSpeed) {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
   assert(m_selectedSubCurveIndex < App::app()->functionStore()->modelForRecord(record)->numberOfSubCurves());
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
 }
 
-int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const {
+int GraphController::nextCurveIndexVertically(OMG::NewVerticalDirection direction, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const {
   assert(nextSubCurveIndex != nullptr);
   int nbOfActiveFunctions = 0;
   if (!functionStore()->displaysNonCartesianFunctions(&nbOfActiveFunctions)) {
@@ -321,7 +321,7 @@ double GraphController::defaultCursorT(Ion::Storage::Record record, bool ignoreM
   return currentT;
 }
 
-void GraphController::jumpToLeftRightCurve(double t, OMG::HorizontalDirection direction, int functionsCount, Ion::Storage::Record record) {
+void GraphController::jumpToLeftRightCurve(double t, OMG::NewHorizontalDirection direction, int functionsCount, Ion::Storage::Record record) {
   if (functionsCount == 1) {
     return;
   }

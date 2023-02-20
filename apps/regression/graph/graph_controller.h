@@ -30,10 +30,10 @@ public:
   I18n::Message emptyMessage() override;
 
   // SimpleInteractiveCurveViewController
-  bool moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed = 1) override;
+  bool moveCursorHorizontally(OMG::NewHorizontalDirection direction, int scrollSpeed = 1) override;
 
   // InteractiveCurveViewController
-  bool moveCursorVertically(OMG::VerticalDirection direction) override;
+  bool moveCursorVertically(OMG::NewVerticalDirection direction) override;
 
   // InteractiveCurveViewRangeDelegate
   Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange) const override;

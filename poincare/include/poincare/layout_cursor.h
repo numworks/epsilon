@@ -80,11 +80,11 @@ public:
   KDPoint middleLeftPoint();
 
   /* Move */
-  void move(OMG::Direction direction, bool * shouldRecomputeLayout, bool forSelection = false);
-  LayoutCursor cursorAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, bool forSelection = false, int step = 1);
+  void move(OMG::NewDirection direction, bool * shouldRecomputeLayout, bool forSelection = false);
+  LayoutCursor cursorAtDirection(OMG::NewDirection direction, bool * shouldRecomputeLayout, bool forSelection = false, int step = 1);
 
   /* Select */
-  LayoutCursor selectAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, Layout * selection);
+  LayoutCursor selectAtDirection(OMG::NewDirection direction, bool * shouldRecomputeLayout, Layout * selection);
 
   /* Layout modification */
   void addEmptyExponentialLayout(Context * context);
@@ -124,8 +124,8 @@ private:
   void privateAddEmptyPowerLayout(VerticalOffsetLayout v);
   bool baseForNewPowerLayout();
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
-  void selectLeftRight(OMG::HorizontalDirection direction, bool * shouldRecomputeLayout, Layout * selection);
-  void selectUpDown(OMG::VerticalDirection direction, bool * shouldRecomputeLayout, Layout * selection);
+  void selectLeftRight(OMG::NewHorizontalDirection direction, bool * shouldRecomputeLayout, Layout * selection);
+  void selectUpDown(OMG::NewVerticalDirection direction, bool * shouldRecomputeLayout, Layout * selection);
   /* Return an uninitialized layout if the cursor is not inside a bracket pair,
    * touching one of the brackets. */
   Layout bracketsEncompassingCursor(Layout equivalentLayout) const;

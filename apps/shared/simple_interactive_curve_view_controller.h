@@ -32,7 +32,7 @@ protected:
   /* the result of moveCursorVertically/Horizontally means:
    * false -> the cursor cannot move in this direction
    * true -> the cursor moved */
-  virtual bool moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed = 1) { return false; }
+  virtual bool moveCursorHorizontally(OMG::NewHorizontalDirection direction, int scrollSpeed = 1) { return false; }
 
   const AbstractPlotView * constCurveView() const { return const_cast<SimpleInteractiveCurveViewController *>(this)->curveView(); }
   float cursorBottomMarginRatioForBannerHeight(float bannerHeight) const { return (constCurveView()->cursorView()->minimalSizeForOptimalDisplay().height()/2.f + bannerHeight) / (constCurveView()->bounds().height() - 1); }

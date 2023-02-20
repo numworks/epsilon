@@ -67,7 +67,7 @@ KDPoint LayoutCursor::middleLeftPoint() {
 }
 
 /* Move */
-void LayoutCursor::move(OMG::Direction direction, bool * shouldRecomputeLayout, bool forSelection) {
+void LayoutCursor::move(OMG::NewDirection direction, bool * shouldRecomputeLayout, bool forSelection) {
   if (direction.isLeft()) {
     layoutNode()->moveCursorLeft(this, shouldRecomputeLayout, forSelection);
   } else if (direction.isRight()) {
@@ -80,7 +80,7 @@ void LayoutCursor::move(OMG::Direction direction, bool * shouldRecomputeLayout, 
   }
 }
 
-LayoutCursor LayoutCursor::cursorAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, bool forSelection, int step) {
+LayoutCursor LayoutCursor::cursorAtDirection(OMG::NewDirection direction, bool * shouldRecomputeLayout, bool forSelection, int step) {
   LayoutCursor result = *this;
   if (step <= 0) {
     return result;
@@ -109,7 +109,7 @@ LayoutCursor LayoutCursor::cursorAtDirection(OMG::Direction direction, bool * sh
 
 /* Select */
 
-LayoutCursor LayoutCursor::selectAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, Layout * selection) {
+LayoutCursor LayoutCursor::selectAtDirection(OMG::NewDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
   LayoutCursor result = *this;
   if (direction.isHorizontal()) {
     result.selectLeftRight(direction, shouldRecomputeLayout, selection);
@@ -484,7 +484,7 @@ bool LayoutCursor::privateShowHideEmptyLayoutIfNeeded(bool show) {
   return true;
 }
 
-void LayoutCursor::selectLeftRight(OMG::HorizontalDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
+void LayoutCursor::selectLeftRight(OMG::NewHorizontalDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
   assert(!m_layout.isUninitialized());
 
   // Compute ingoing / outgoing positions
@@ -544,7 +544,7 @@ void LayoutCursor::selectLeftRight(OMG::HorizontalDirection direction, bool * sh
   m_position = outgoingPosition;
 }
 
-void LayoutCursor::selectUpDown(OMG::VerticalDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
+void LayoutCursor::selectUpDown(OMG::NewVerticalDirection direction, bool * shouldRecomputeLayout, Layout * selection) {
   // Move the cursor in the selection direction
   Layout p = m_layout.parent();
   LayoutCursor c = cursorAtDirection(direction, shouldRecomputeLayout, true);

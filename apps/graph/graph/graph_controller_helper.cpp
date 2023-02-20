@@ -12,7 +12,7 @@ using namespace Poincare;
 
 namespace Graph {
 
-bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, OMG::HorizontalDirection direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, float pixelWidth, int scrollSpeed, int * subCurveIndex) {
+bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, OMG::NewHorizontalDirection direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, float pixelWidth, int scrollSpeed, int * subCurveIndex) {
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   assert(!subCurveIndex || *subCurveIndex < function->numberOfSubCurves());
   const double tCursor = cursor->t();

@@ -82,7 +82,7 @@ void TangentGraphController::reloadBannerView() {
   m_bannerView->reload();
 }
 
-bool TangentGraphController::moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed) {
+bool TangentGraphController::moveCursorHorizontally(OMG::NewHorizontalDirection direction, int scrollSpeed) {
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, m_record, curveView()->pixelWidth());
 }
 

@@ -45,7 +45,7 @@ I18n::Message TermSumController::legendMessageAtStep(Step step) {
   }
 }
 
-double TermSumController::cursorNextStep(double x, OMG::HorizontalDirection direction) {
+double TermSumController::cursorNextStep(double x, OMG::NewHorizontalDirection direction) {
   double delta = direction.isRight() ? 1.0 : -1.0;
   return std::round(m_cursor->x()+delta);
 }

@@ -6,7 +6,7 @@
 namespace Poincare {
 
 // LayoutNode
-void GridLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+void GridLayoutNode::moveCursorHorizontally(OMG::NewHorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   LayoutCursor::Position dir = direction.isLeft() ? LayoutCursor::Position::Left : LayoutCursor::Position::Right;
   LayoutCursor::Position oppositeDir = direction.isLeft() ? LayoutCursor::Position::Right : LayoutCursor::Position::Left;
 
@@ -50,11 +50,11 @@ void GridLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, 
 
 
 void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::Direction::Left(), cursor, shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
 }
 
 void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  moveCursorHorizontally(OMG::Direction::Right(), cursor, shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
 }
 
 void GridLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
@@ -87,7 +87,7 @@ void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomput
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-void GridLayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+void GridLayoutNode::moveCursorVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   GridLayout thisRef = GridLayout(this);
   bool shouldRemoveGraySquares = false;
   int firstIndex = direction.isUp() ? 0 : numberOfChildren() - m_numberOfColumns;

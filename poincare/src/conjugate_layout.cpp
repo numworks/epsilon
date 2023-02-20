@@ -23,7 +23,7 @@ void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRec
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
   // Case: Left. Ask the parent.
-  askParentToMoveCursorHorizontally(OMG::Direction::Left(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::NewDirection::Left(), cursor, shouldRecomputeLayout);
 }
 
 void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
@@ -42,7 +42,7 @@ void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRe
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
-  askParentToMoveCursorHorizontally(OMG::Direction::Right(), cursor, shouldRecomputeLayout);
+  askParentToMoveCursorHorizontally(OMG::NewDirection::Right(), cursor, shouldRecomputeLayout);
 }
 
 void ConjugateLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {

@@ -6,6 +6,7 @@
 #include <kandinsky/point.h>
 #include <kandinsky/size.h>
 #include <escher/metric.h>
+#include <omg/enums.h>
 #include <omg/directions.h>
 #include <poincare/tree_node.h>
 
@@ -99,20 +100,20 @@ public:
   virtual void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) = 0;
   virtual void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) = 0;
   virtual void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) {
-    moveCursorVertically(OMG::Direction::Up(), cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
+    moveCursorVertically(OMG::NewDirection::Up(), cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
   }
   virtual void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) {
-    moveCursorVertically(OMG::Direction::Down(), cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
+    moveCursorVertically(OMG::NewDirection::Down(), cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
   }
   void moveCursorUpInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) {
-    return moveCursorInDescendantsVertically(OMG::Direction::Up(), cursor, shouldRecomputeLayout, forSelection);
+    return moveCursorInDescendantsVertically(OMG::NewDirection::Up(), cursor, shouldRecomputeLayout, forSelection);
   }
   void moveCursorDownInDescendants(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) {
-    return moveCursorInDescendantsVertically(OMG::Direction::Down(), cursor, shouldRecomputeLayout, forSelection);
+    return moveCursorInDescendantsVertically(OMG::NewDirection::Down(), cursor, shouldRecomputeLayout, forSelection);
   }
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
-  void askParentToMoveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
+  void askParentToMoveCursorHorizontally(OMG::NewHorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
 
   // Tree modification
   // Collapse
@@ -168,7 +169,7 @@ protected:
   virtual bool protectedIsIdenticalTo(Layout l);
 
   // Tree navigation
-  virtual void moveCursorVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection);
+  virtual void moveCursorVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection);
 
   // Tree
   Direct<LayoutNode> children() { return Direct<LayoutNode>(this); }
@@ -181,9 +182,9 @@ protected:
 
 private:
   KDPoint absoluteOriginWithMargin(KDFont::Size font);
-  void moveCursorInDescendantsVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection);
+  void moveCursorInDescendantsVertically(OMG::NewVerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection);
   void scoreCursorInDescendantsVertically (
-    OMG::VerticalDirection direction,
+    OMG::NewVerticalDirection direction,
     LayoutCursor * cursor,
     bool * shouldRecomputeLayout,
     LayoutNode ** childResult,

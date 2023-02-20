@@ -41,12 +41,12 @@ protected:
   void sanitizeSeriesIndex();
   virtual void viewWillAppearBeforeReload() {}
   virtual bool reloadBannerView() = 0;
-  virtual bool moveSelectionHorizontally(OMG::HorizontalDirection direction) = 0;
-  virtual bool moveSelectionVertically(OMG::VerticalDirection direction);
+  virtual bool moveSelectionHorizontally(OMG::NewHorizontalDirection direction) = 0;
+  virtual bool moveSelectionVertically(OMG::NewVerticalDirection direction);
   // Overriden with histograms only to highlight and scroll to the selected bar
   virtual void highlightSelection() {}
 
-  virtual int nextSubviewWhenMovingVertically(OMG::VerticalDirection direction) const {
+  virtual int nextSubviewWhenMovingVertically(OMG::NewVerticalDirection direction) const {
     return m_store->activeSeriesIndexFromSeriesIndex(m_selectedSeries, activeSeriesMethod()) + (direction.isUp() ? -1 : 1);
   }
   virtual void updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) = 0;

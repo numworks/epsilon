@@ -30,7 +30,7 @@ void FrequencyController::moveCursorToSelectedIndex() {
   PlotController::moveCursorToSelectedIndex();
 }
 
-bool FrequencyController::moveSelectionHorizontally(OMG::HorizontalDirection direction) {
+bool FrequencyController::moveSelectionHorizontally(OMG::NewHorizontalDirection direction) {
   assert(m_selectedSeries >= 0);
   int totValues = totalValues(m_selectedSeries);
   if (totValues <= 1) {
@@ -118,7 +118,7 @@ double FrequencyController::yValueAtAbscissa(int series, double x) const {
   return resultAtIndex(series, n - 1);
 }
 
-int FrequencyController::nextSubviewWhenMovingVertically(OMG::VerticalDirection direction) const {
+int FrequencyController::nextSubviewWhenMovingVertically(OMG::NewVerticalDirection direction) const {
   // Search first curve in direction
   int step = direction.isUp() ? -1 : 1;
   double closestYUpOrDown = NAN;

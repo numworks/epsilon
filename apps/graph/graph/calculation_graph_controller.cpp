@@ -52,7 +52,7 @@ void CalculationGraphController::viewWillAppear() {
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();
   curveView()->setFocus(true);
   assert(!m_record.isNull());
-  Coordinate2D<double> pointOfInterest = computeNewPointOfInterestFromAbscissa(m_graphRange->xMin(), OMG::Direction::Right());
+  Coordinate2D<double> pointOfInterest = computeNewPointOfInterestFromAbscissa(m_graphRange->xMin(), OMG::NewDirection::Right());
   if (std::isnan(pointOfInterest.x1())) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);
@@ -79,7 +79,7 @@ void CalculationGraphController::reloadBannerView() {
   reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 
-Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAbscissa(double start, OMG::HorizontalDirection direction) {
+Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAbscissa(double start, OMG::NewHorizontalDirection direction) {
   double max = direction.isRight() ? m_graphRange->xMax() : m_graphRange->xMin();
   functionStore()->modelForRecord(m_record)->trimResolutionInterval(&start, &max);
   return computeNewPointOfInterest(start, max, textFieldDelegateApp()->localContext());
@@ -103,7 +103,7 @@ ContinuousFunctionStore * CalculationGraphController::functionStore() const {
   return App::app()->functionStore();
 }
 
-bool CalculationGraphController::moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollspeed) {
+bool CalculationGraphController::moveCursorHorizontally(OMG::NewHorizontalDirection direction, int scrollspeed) {
   if (!m_isActive) {
     return false;
   }

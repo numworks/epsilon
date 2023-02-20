@@ -107,7 +107,7 @@ protected:
   bool moveCursorLeft(int step = 1);
   bool moveCursorRight(int step = 1);
   // all indicates if all the text on the left/right should be selected
-  bool selectLeftRight(OMG::HorizontalDirection direction, bool all, int step = 1);
+  bool selectLeftRight(OMG::NewHorizontalDirection direction, bool all, int step = 1);
 
 private:
   virtual void willSetCursorLocation(const char * * location) {}

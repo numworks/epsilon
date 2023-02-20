@@ -40,7 +40,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
       return true;
     }
   } else if (event == Ion::Events::Down || event == Ion::Events::Up) {
-    if (moveCursorVertically(OMG::Direction(event))) {
+    if (moveCursorVertically(OMG::NewDirection(event))) {
       reloadBannerView();
       interactiveCurveViewRange()->panToMakePointVisible(
         m_cursor->x(), m_cursor->y(),
@@ -200,7 +200,7 @@ bool InteractiveCurveViewController::isCursorVisibleAtPosition(Coordinate2D<floa
            y <= range->yMax() - (ignoreMargins ? 0.f : cursorTopMarginRatio() * yRange)));
 }
 
-int InteractiveCurveViewController::closestCurveIndexVertically(OMG::VerticalDirection direction, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex, int * newSubCurveIndex) const {
+int InteractiveCurveViewController::closestCurveIndexVertically(OMG::NewVerticalDirection direction, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex, int * newSubCurveIndex) const {
   /* Vertical curves are quite hard to handle when moving the cursor.
    * To simplify things here, we consider vertical curves as if it they were
    * rotated by 90 degrees by swapping x and y when dealing with them. */

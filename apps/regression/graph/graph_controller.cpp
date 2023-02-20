@@ -163,7 +163,7 @@ void GraphController::reloadBannerView() {
   m_bannerView.reload();
 }
 
-bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction, int scrollSpeed) {
+bool GraphController::moveCursorHorizontally(OMG::NewHorizontalDirection direction, int scrollSpeed) {
   double x;
   double y;
   if (*m_selectedDotIndex >= 0) {
@@ -232,7 +232,7 @@ Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(double t) 
   return Coordinate2D<double>(dotAbscissa(*m_selectedCurveIndex, *m_selectedDotIndex), dotOrdinate(*m_selectedCurveIndex, *m_selectedDotIndex));
 }
 
-bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
+bool GraphController::moveCursorVertically(OMG::NewVerticalDirection direction) {
   Poincare::Context * context = globalContext();
   double x = m_cursor->x();
   double y = m_cursor->y();

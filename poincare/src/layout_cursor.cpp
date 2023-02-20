@@ -158,17 +158,17 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context * context, bool f
    * permanent.
    *
    * Examples:
-   * "(3+4]|" -> insert "[)+2" -> "(3+4][)+2|"
+   * "(3+4]|" -> insert "[)" -> "(3+4][)|"
    * The newly inserted one is temporary on its other side, so the current
    * bracket is not made permanent.
    * Later at Step 9, balanceAutocompletedBrackets will make it so:
-   * "(3+4][)+2|" -> "(3+4)+2|"
+   * "(3+4][)|" -> "(3+4)|"
    *
-   * "(1+(3+4]]|" -> insert "[)+2" -> "(1+(3+4)][)+2|"
+   * "(1+(3+4]]|" -> insert "[)" -> "(1+(3+4)][)|"
    * The newly inserted one is temporary on its other side, so the current
    * bracket is not made permanent, but its inner bracket is made permanent.
    * Later at Step 9, balanceAutocompletedBrackets will make it so:
-   * "(1+(3+4)][)+2|" -> "(1+3(3+4))+2|"
+   * "(1+(3+4)][)|" -> "(1+3(3+4))|"
    * */
   Layout leftL = leftLayout();
   Layout rightL = rightLayout();

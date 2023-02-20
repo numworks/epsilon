@@ -267,20 +267,20 @@ class Expression : public TreeHandle {
    * variables. For instance, getVariables of 'x+y+2*w/cos(4)' would result in
    * variables = {"x", "y", "w"} and would return 3. If the final number of
    * variables would overflow the maxNumberOfVariables, getVariables return -1.
-   * If one of the variable lengths overflows maxVariableLength, getVariables
+   * If one of the variable lengths overflows maxVariableSize, getVariables
    * returns -2. */
   constexpr static int k_maxNumberOfVariables = 6;
   int getVariables(Context* context, ExpressionNode::isVariableTest isVariable,
-                   char* variables, int maxVariableLength,
+                   char* variables, int maxVariableSize,
                    int nextVariableIndex = 0) const {
-    return node()->getVariables(context, isVariable, variables,
-                                maxVariableLength, nextVariableIndex);
+    return node()->getVariables(context, isVariable, variables, maxVariableSize,
+                                nextVariableIndex);
   }
   /* getLinearCoefficients return false if the expression is not linear with
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
    * the coefficients of the variables hold in 'variables' (following the same
    * order) and 'constant' with the constant of the expression. */
-  bool getLinearCoefficients(char* variables, int maxVariableLength,
+  bool getLinearCoefficients(char* variables, int maxVariableSize,
                              Expression coefficients[], Expression* constant,
                              Context* context,
                              Preferences::ComplexFormat complexFormat,

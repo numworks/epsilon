@@ -49,7 +49,7 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
    *    opened in the copy.
    *  - Each time a permanent closing bracket is encountered, a bracket is
    *    closed in the copy.
-   *  - Each time a temporary bracket is encountered, nothing changes int the
+   *  - Each time a temporary bracket is encountered, nothing changes in the
    *    copy.
    *  - Each time any other layout is encountered, just copy it.
    *
@@ -114,7 +114,6 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
        *      and the current result is        : "A+(|]"
        * */
       if (!bracketNode->isTemporary(Side::Left)) {
-        assert(!bracketNode->isTemporary(Side::Left));
         Layout newBracket = BuildFromBracketType(readChild.type());
         static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())->setTemporary(Side::Right, true);
         writtenLayout.addOrMergeChildAtIndex(newBracket, writtenLayout.numberOfChildren());
@@ -149,7 +148,7 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
     readIndex = readLayout.indexOfChild(readBracket) + 1;
 
     /* - Step 4.2 - Write
-     * Check the temporary status of the RIGHT side of the bracket to now
+     * Check the temporary status of the RIGHT side of the bracket to know
      * if a bracket should be closed in the written layout.
      *
      *  - If the right side is TEMPORARY, do not add close a bracket in the
@@ -188,7 +187,7 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
     }
 
     Layout writtenBracket = writtenLayout.parent();
-    if (!writtenBracket.isUninitialized() && writtenBracket.type() == writtenBracket.type()) {
+    if (!writtenBracket.isUninitialized() && writtenBracket.type() == readBracket.type()) {
       /* The current written layout is in a bracket of the same type:
        * Close the bracket and continue writing in its parent. */
       assert(IsAutoCompletedBracketPairType(writtenBracket.type()));

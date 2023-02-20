@@ -329,12 +329,16 @@ void ContinuousFunction::setTAuto(bool tAuto) {
 float ContinuousFunction::autoTMax() const {
   return properties().isCartesian()
              ? INFINITY
-             : 2.0 * Trigonometry::PiInAngleUnit(
-                         Preferences::sharedPreferences->angleUnit());
+             : (properties().isInversePolar()
+                    ? 10.f
+                    : 2.f * Trigonometry::PiInAngleUnit(
+                                Preferences::sharedPreferences->angleUnit()));
 }
 
 float ContinuousFunction::autoTMin() const {
-  return properties().isCartesian() ? -INFINITY : 0.0;
+  return properties().isCartesian()
+             ? -INFINITY
+             : (properties().isInversePolar() ? -10.f : 0.f);
 }
 
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context *context) const {

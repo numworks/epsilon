@@ -57,13 +57,6 @@ bool CodePointLayoutNode::isCollapsable(int * numberOfOpenParenthesis, OMG::Hori
   return true;
 }
 
-bool CodePointLayoutNode::canBeOmittedMultiplicationLeftFactor() const {
-  if (isMultiplicationCodePoint()) {
-    return false;
-  }
-  return LayoutNode::canBeOmittedMultiplicationLeftFactor();
-}
-
 // Sizing and positioning
 KDSize CodePointLayoutNode::computeSize(KDFont::Size font) {
   KDSize glyph = KDFont::GlyphSize(font);

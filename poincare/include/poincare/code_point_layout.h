@@ -27,7 +27,6 @@ public:
   // LayoutNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   bool isCollapsable(int * numberOfOpenParenthesis, OMG::HorizontalDirection direction) const override;
-  bool canBeOmittedMultiplicationLeftFactor() const override;
 
   // TreeNode
   size_t size() const override { return sizeof(CodePointLayoutNode); }
@@ -43,6 +42,9 @@ public:
     stream << " CodePoint=\"" << buffer << "\"";
   }
 #endif
+
+  bool isMultiplicationCodePoint() const;
+
 protected:
   // LayoutNode
   KDSize computeSize(KDFont::Size font) override;
@@ -57,7 +59,6 @@ protected:
 private:
   constexpr static const int k_middleDotWidth = 5;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
-  bool isMultiplicationCodePoint() const;
 };
 
 class CodePointLayout : public Layout {

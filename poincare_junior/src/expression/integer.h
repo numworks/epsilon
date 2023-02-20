@@ -51,6 +51,12 @@ private:
 
 
 class IntegerHandler final {
+
+/* IntegerHandler don't own their digits but a pointer to the EditionPool where
+ * the digits are stored.
+ * For optimization purpose, if the whole number can be stored in a native_int_t,
+ * the IntegerHandler owns it instead of a pointer. */
+
 friend class WorkingBuffer;
 public:
   IntegerHandler(const uint8_t * digits = nullptr, uint8_t numberOfDigits = 0, NonStrictSign sign = NonStrictSign::Positive) : m_sign(sign), m_digitAccessor(digits, numberOfDigits), m_numberOfDigits(numberOfDigits) {}

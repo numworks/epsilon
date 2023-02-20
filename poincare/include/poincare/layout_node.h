@@ -136,7 +136,7 @@ public:
    * with an omitted multiplication sign. For instance, an absolute value
    * layout returns true, because |3|2 means |3|*2. A '+' CodePointLayout
    * returns false, because +'something' nevers means +*'something'. */
-  virtual bool canBeOmittedMultiplicationLeftFactor() const;
+  bool canBeOmittedMultiplicationLeftFactor() const;
   virtual bool hasUpperLeftIndex() const { return false; }
   virtual Layout XNTLayout(int childIndex = -1) const;
 

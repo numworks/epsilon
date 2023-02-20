@@ -445,7 +445,7 @@ uint8_t Polynomial::Degree(const Node expression, const Node variable) {
       }
     }
   }
-  // TODO assert(!Number::IsZero(expression));
+  assert(!Number::IsZero(expression));
   return degree;
 }
 

@@ -3,6 +3,8 @@
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/value_block.h>
 
+#include "number.h"
+
 namespace PoincareJ {
 
 // TODO: tests
@@ -87,8 +89,8 @@ IntegerHandler Rational::Denominator(const Node node) {
   }
 }
 
-EditionReference Rational::PushNode(IntegerHandler numerator,
-                                    IntegerHandler denominator) {
+EditionReference Rational::Push(IntegerHandler numerator,
+                                IntegerHandler denominator) {
   assert(!denominator.isZero());
   if (denominator.isOne()) {
     return numerator.pushOnEditionPool();
@@ -128,7 +130,50 @@ void Rational::SetSign(EditionReference reference, NonStrictSign sign) {
   IntegerHandler numerator = Numerator(reference);
   IntegerHandler denominator = Denominator(reference);
   numerator.setSign(sign);
-  reference.replaceNodeByNode(PushNode(numerator, denominator));
+  reference.replaceNodeByNode(Push(numerator, denominator));
+}
+
+EditionReference Rational::Addition(const Node i, const Node j) {
+  // a/b + c/d
+  EditionReference ad =
+      IntegerHandler::Multiplication(Numerator(i), Denominator(j));
+  EditionReference cb =
+      IntegerHandler::Multiplication(Numerator(j), Denominator(i));
+  EditionReference newNumerator =
+      IntegerHandler::Addition(Integer::Handler(ad), Integer::Handler(cb));
+  ad.removeTree();
+  cb.removeTree();
+  EditionReference newDenominator =
+      IntegerHandler::Multiplication(Denominator(i), Denominator(j));
+  EditionReference result = Rational::Push(newNumerator, newDenominator);
+  newNumerator.removeTree();
+  newDenominator.removeTree();
+  return result;
+}
+
+EditionReference Rational::Multiplication(const Node i, const Node j) {
+  EditionReference newNumerator =
+      IntegerHandler::Multiplication(Numerator(i), Numerator(j));
+  EditionReference newDenominator =
+      IntegerHandler::Multiplication(Denominator(i), Denominator(j));
+  EditionReference result = Rational::Push(newNumerator, newDenominator);
+  newNumerator.removeTree();
+  newDenominator.removeTree();
+  return result;
+}
+
+EditionReference Rational::IntegerPower(const Node i, const Node j) {
+  assert(!(Number::IsZero(i) && Sign(j) == NonStrictSign::Negative));
+  IntegerHandler absJ = Integer::Handler(j);
+  absJ.setSign(NonStrictSign::Positive);
+  EditionReference newNumerator = IntegerHandler::Power(Numerator(i), absJ);
+  EditionReference newDenominator = IntegerHandler::Power(Denominator(i), absJ);
+  EditionReference result = Sign(j) == NonStrictSign::Negative
+                                ? Rational::Push(newDenominator, newNumerator)
+                                : Rational::Push(newNumerator, newDenominator);
+  newNumerator.removeTree();
+  newDenominator.removeTree();
+  return result;
 }
 
 }  // namespace PoincareJ

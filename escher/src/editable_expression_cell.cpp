@@ -32,4 +32,9 @@ void EditableExpressionCell::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_expressionField);
 }
 
+KDSize EditableExpressionCell::minimalSizeForOptimalDisplay() const {
+  KDSize size = m_expressionField.minimalSizeForOptimalDisplay();
+  return KDSize(size.width(), std::max(size.height(), k_minimalHeigh));
+}
+
 }

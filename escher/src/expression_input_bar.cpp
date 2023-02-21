@@ -28,7 +28,7 @@ KDSize AbstractExpressionInputBar::minimalSizeForOptimalDisplay() const {
 }
 
 KDCoordinate AbstractExpressionInputBar::inputViewHeight() const {
-  return std::min(expressionField()->inputViewHeight(), k_maximalHeight);
+  return std::clamp(expressionField()->inputViewHeight(), k_minimalHeight, k_maximalHeight);
 }
 
 }

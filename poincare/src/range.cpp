@@ -54,7 +54,7 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
     m_max = t;
     return;
   }
-  float * bound = isMin ? &m_min : &m_max;
+  float* bound = isMin ? &m_min : &m_max;
   assert(limit > 0.0);
   *bound = std::clamp(t, -limit, limit);
   if (!(m_min <= m_max)) {
@@ -74,7 +74,8 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
 
 // Range2D
 
-static int normalizationSignificantBits(float xMin, float xMax, float yMin, float yMax) {
+static int normalizationSignificantBits(float xMin, float xMax, float yMin,
+                                        float yMax) {
   float xr = std::fabs(xMin) > std::fabs(xMax) ? xMax / xMin : xMin / xMax;
   float yr = std::fabs(yMin) > std::fabs(yMax) ? yMax / yMin : yMin / yMax;
   /* The subtraction x - y induces a loss of significance of -log2(1-x/y)
@@ -86,11 +87,12 @@ static int normalizationSignificantBits(float xMin, float xMax, float yMin, floa
   if (loss > 0.f) {
     loss = 0.f;
   }
-  return  std::floor(loss + 23.f - 2.f);
+  return std::floor(loss + 23.f - 2.f);
 }
 
 bool Range2D::ratioIs(float r) const {
-  int significantBits = normalizationSignificantBits(xMin(), xMax(), yMin(), yMax());
+  int significantBits =
+      normalizationSignificantBits(xMin(), xMax(), yMin(), yMax());
   if (significantBits <= 0) {
     return false;
   }
@@ -100,13 +102,14 @@ bool Range2D::ratioIs(float r) const {
    * bits set to 1, and ratio with those N bits set to 0 ; i.e. a measure of
    * the interval in which numbers are indistinguishable from ratio with this
    * level of precision. */
-  float tolerance = std::pow(2.f, IEEE754<float>::exponent(thisRatio) - significantBits);
+  float tolerance =
+      std::pow(2.f, IEEE754<float>::exponent(thisRatio) - significantBits);
   return std::fabs(thisRatio - r) <= tolerance;
 }
 
 void Range2D::setRatio(float r, bool shrink) {
   float currentR = ratio();
-  Range1D * toEdit;
+  Range1D* toEdit;
   float newLength;
   if ((currentR < r) == shrink) {
     toEdit = &m_x;
@@ -120,4 +123,4 @@ void Range2D::setRatio(float r, bool shrink) {
   *toEdit = Range1D(c - newLength, c + newLength);
 }
 
-}
+}  // namespace Poincare

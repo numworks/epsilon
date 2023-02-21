@@ -8,11 +8,11 @@ KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
   int requiredSecondaryDirectionLength = 0, requiredMainDirectionLength = 0;
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
-    View * subview = const_cast<OrientedLayout *>(this)->subviewAtIndex(i);
+    View *subview = const_cast<OrientedLayout *>(this)->subviewAtIndex(i);
     KDSize subviewSize = adaptSize(subview->minimalSizeForOptimalDisplay());
     requiredMainDirectionLength += subviewSize.height();
-    requiredSecondaryDirectionLength = std::max<int>(
-        requiredSecondaryDirectionLength, subviewSize.width());
+    requiredSecondaryDirectionLength =
+        std::max<int>(requiredSecondaryDirectionLength, subviewSize.width());
   }
   // Add margins
   requiredMainDirectionLength += 2 * m_mainDirectionMargin;
@@ -23,25 +23,29 @@ KDSize OrientedLayout::minimalSizeForOptimalDisplay() const {
 
 void OrientedLayout::layoutSubviews(bool force) {
   const KDSize boundsSize = adaptSize(bounds().size());
-  const KDCoordinate availableSecondaryDirection = boundsSize.width() - 2 * m_secondaryDirectionMargin;
-  const KDCoordinate availableMainDirection = boundsSize.height() - 2 * m_mainDirectionMargin;
+  const KDCoordinate availableSecondaryDirection =
+      boundsSize.width() - 2 * m_secondaryDirectionMargin;
+  const KDCoordinate availableMainDirection =
+      boundsSize.height() - 2 * m_mainDirectionMargin;
   KDCoordinate offsetMainDirection = m_mainDirectionMargin;
   int n = numberOfSubviews();
   for (int i = 0; i < n; i++) {
-    View * subview = subviewAtIndex(i);
-    const KDCoordinate requiredMainDirectionLength = adaptSize(subview->minimalSizeForOptimalDisplay()).height();
-    assert(availableMainDirection >= offsetMainDirection + requiredMainDirectionLength);
+    View *subview = subviewAtIndex(i);
+    const KDCoordinate requiredMainDirectionLength =
+        adaptSize(subview->minimalSizeForOptimalDisplay()).height();
+    assert(availableMainDirection >=
+           offsetMainDirection + requiredMainDirectionLength);
     // Silent unused variable warning
     (void)availableMainDirection;
-    const KDRect suggestedFrame = KDRect(
-        KDPoint(m_secondaryDirectionMargin, offsetMainDirection),
-        availableSecondaryDirection, requiredMainDirectionLength);
+    const KDRect suggestedFrame =
+        KDRect(KDPoint(m_secondaryDirectionMargin, offsetMainDirection),
+               availableSecondaryDirection, requiredMainDirectionLength);
     subview->setFrame(adaptRect(suggestedFrame), false);
     offsetMainDirection += requiredMainDirectionLength;
   }
 }
 
-void OrientedLayout::drawRect(KDContext * ctx, KDRect rect) const {
+void OrientedLayout::drawRect(KDContext *ctx, KDRect rect) const {
   // Draw in margins
   const KDSize boundsSize = adaptSize(bounds().size());
   // Left margin

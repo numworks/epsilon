@@ -1,21 +1,23 @@
-#include <escher/editable_expression_cell.h>
+#include <assert.h>
 #include <escher/container.h>
+#include <escher/editable_expression_cell.h>
 #include <escher/palette.h>
 #include <poincare/print_float.h>
-#include <assert.h>
 
 namespace Escher {
 
-EditableExpressionCell::EditableExpressionCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * layoutDelegate) :
-  HighlightCell(),
-  Responder(parentResponder),
-  m_expressionField(this, inputEventHandlerDelegate, layoutDelegate)
-{
+EditableExpressionCell::EditableExpressionCell(
+    Responder* parentResponder,
+    InputEventHandlerDelegate* inputEventHandlerDelegate,
+    LayoutFieldDelegate* layoutDelegate)
+    : HighlightCell(),
+      Responder(parentResponder),
+      m_expressionField(this, inputEventHandlerDelegate, layoutDelegate) {
   m_expressionField.setMargins(k_topMargin, k_margin, k_margin, k_margin);
   m_expressionBody[0] = 0;
 }
 
-void EditableExpressionCell::drawRect(KDContext * ctx, KDRect rect) const {
+void EditableExpressionCell::drawRect(KDContext* ctx, KDRect rect) const {
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }
 
@@ -37,4 +39,4 @@ KDSize EditableExpressionCell::minimalSizeForOptimalDisplay() const {
   return KDSize(size.width(), std::max(size.height(), k_minimalHeigh));
 }
 
-}
+}  // namespace Escher

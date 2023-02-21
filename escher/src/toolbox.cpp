@@ -1,14 +1,13 @@
-#include <escher/toolbox.h>
-#include <escher/metric.h>
 #include <assert.h>
+#include <escher/metric.h>
+#include <escher/toolbox.h>
 #include <string.h>
 
 namespace Escher {
 
-Toolbox::Toolbox(Responder * parentResponder, I18n::Message title) :
-  NestedMenuController(parentResponder, title),
-  m_messageTreeModel(nullptr)
-{}
+Toolbox::Toolbox(Responder *parentResponder, I18n::Message title)
+    : NestedMenuController(parentResponder, title),
+      m_messageTreeModel(nullptr) {}
 
 int Toolbox::numberOfRows() const {
   if (m_messageTreeModel == nullptr) {
@@ -17,15 +16,13 @@ int Toolbox::numberOfRows() const {
   return m_messageTreeModel->numberOfChildren();
 }
 
-int Toolbox::reusableCellCount(int type) {
-  return maxNumberOfDisplayedRows();
-}
+int Toolbox::reusableCellCount(int type) { return maxNumberOfDisplayedRows(); }
 
-void Toolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void Toolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
   assert(typeAtIndex(index) == k_nodeCellType);
-  const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(index);
+  const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(index);
   assert(messageTree->numberOfChildren() != 0);
-  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
+  MessageTableCell *myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(messageTree->label());
   myCell->reloadCell();
 }
@@ -55,7 +52,7 @@ bool Toolbox::returnToPreviousMenu() {
   int stateDepth = 0;
   m_messageTreeModel = rootModel();
   while (stateDepth < currentDepth - 1) {
-    const StackState * previousState = stack()->elementAtIndex(stateDepth++);
+    const StackState *previousState = stack()->elementAtIndex(stateDepth++);
     m_messageTreeModel = messageTreeModelAtIndex(previousState->selectedRow());
   }
   return NestedMenuController::returnToPreviousMenu();
@@ -66,13 +63,16 @@ bool Toolbox::returnToRootMenu() {
   return NestedMenuController::returnToRootMenu();
 }
 
-const ToolboxMessageTree * Toolbox::messageTreeModelAtIndex(int index) const {
+const ToolboxMessageTree *Toolbox::messageTreeModelAtIndex(int index) const {
   assert(index >= 0 && index < m_messageTreeModel->numberOfChildren());
-  const ToolboxMessageTree * messageTree = static_cast<const ToolboxMessageTree *>(m_messageTreeModel->childAtIndex(index));
+  const ToolboxMessageTree *messageTree =
+      static_cast<const ToolboxMessageTree *>(
+          m_messageTreeModel->childAtIndex(index));
   if (messageTree->isFork()) {
-    messageTree = static_cast<const ToolboxMessageTree *>(messageTree->childAtIndex(indexAfterFork(messageTree)));
+    messageTree = static_cast<const ToolboxMessageTree *>(
+        messageTree->childAtIndex(indexAfterFork(messageTree)));
   }
   return messageTree;
 }
 
-}
+}  // namespace Escher

@@ -7,14 +7,15 @@
 namespace Shared {
 
 class StoreTitleCell : public BufferFunctionTitleCell, public Separable {
-public:
+ public:
   StoreTitleCell();
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
-private:
+
+ private:
   void didSetSeparator() override;
 };
 
-}
+}  // namespace Shared
 
 #endif

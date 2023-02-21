@@ -4,11 +4,11 @@
 #include <escher/timer.h>
 
 class BatteryTimer : public Escher::Timer {
-public:
+ public:
   BatteryTimer();
-private:
+
+ private:
   bool fire() override;
 };
 
 #endif
-

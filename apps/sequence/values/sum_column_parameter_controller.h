@@ -5,17 +5,20 @@
 
 namespace Sequence {
 
-class SumColumnParameterController : public Shared::CalculusColumnParameterController {
-public:
-  SumColumnParameterController(Shared::ValuesController * valuesController) :
-    Shared::CalculusColumnParameterController(I18n::Message::HideSumOfTerms, valuesController)
-  {}
-private:
+class SumColumnParameterController
+    : public Shared::CalculusColumnParameterController {
+ public:
+  SumColumnParameterController(Shared::ValuesController* valuesController)
+      : Shared::CalculusColumnParameterController(I18n::Message::HideSumOfTerms,
+                                                  valuesController) {}
+
+ private:
   void hideCalculusColumn() override {
-    Shared::GlobalContext::sequenceStore->modelForRecord(m_record)->setDisplaySum(false);
+    Shared::GlobalContext::sequenceStore->modelForRecord(m_record)
+        ->setDisplaySum(false);
   }
 };
 
-}
+}  // namespace Sequence
 
 #endif

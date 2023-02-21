@@ -10,8 +10,8 @@ namespace Keyboard {
 constexpr static size_t k_maximalNumberOfStates = 5;
 
 class Queue {
-public:
-  static Queue * sharedQueue();
+ public:
+  static Queue* sharedQueue();
 
   void flush(bool resetPreemptiveState = true);
   void push(State s);
@@ -19,7 +19,7 @@ public:
   size_t length() const { return m_buffer.length(); }
   bool isEmpty() const { return m_buffer.isEmpty(); }
 
-private:
+ private:
   Queue() : m_pushedWhileBusy(-1), m_busy(false) {}
 
   void reset();
@@ -44,7 +44,7 @@ private:
   bool m_busy;
 };
 
-}
-}
+}  // namespace Keyboard
+}  // namespace Ion
 
 #endif

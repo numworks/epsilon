@@ -9,5 +9,5 @@ void standby() {}
 
 void selectStandbyMode(bool standbyMode) {}
 
-}
-}
+}  // namespace Power
+}  // namespace Ion

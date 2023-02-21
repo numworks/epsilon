@@ -1,11 +1,12 @@
 #include "haptics.h"
+
 #include <SDL.h>
 
 namespace Ion {
 namespace Simulator {
 namespace Haptics {
 
-static SDL_Haptic * sSDLHaptic = nullptr;
+static SDL_Haptic* sSDLHaptic = nullptr;
 
 void init() {
   if (SDL_Init(SDL_INIT_HAPTIC) == 0) {
@@ -30,6 +31,6 @@ void rumble() {
   }
 }
 
-}
-}
-}
+}  // namespace Haptics
+}  // namespace Simulator
+}  // namespace Ion

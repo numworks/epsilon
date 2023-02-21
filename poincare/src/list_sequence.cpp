@@ -1,7 +1,7 @@
-#include <poincare/list_sequence.h>
 #include <poincare/based_integer.h>
 #include <poincare/integer.h>
 #include <poincare/list.h>
+#include <poincare/list_sequence.h>
 #include <poincare/list_sequence_layout.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -16,30 +16,45 @@ int ListSequenceNode::numberOfChildren() const {
   return ListSequence::s_functionHelper.numberOfChildren();
 }
 
-Expression ListSequenceNode::shallowReduce(const ReductionContext& reductionContext) {
+Expression ListSequenceNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return ListSequence(this).shallowReduce(reductionContext);
 }
 
-Layout ListSequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
+Layout ListSequenceNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
   return ListSequenceLayout::Builder(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
-      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits, context));
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,
+                                    context),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits,
+                                    context),
+      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits,
+                                    context));
 }
 
-int ListSequenceNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListSequence::s_functionHelper.aliasesList().mainAlias());
+int ListSequenceNode::serialize(char* buffer, int bufferSize,
+                                Preferences::PrintFloatMode floatDisplayMode,
+                                int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(
+      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+      ListSequence::s_functionHelper.aliasesList().mainAlias());
 }
 
-template<typename T>
-Evaluation<T> ListSequenceNode::templatedApproximate(const ApproximationContext& approximationContext) const {
+template <typename T>
+Evaluation<T> ListSequenceNode::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
   ListComplex<T> list = ListComplex<T>::Builder();
-  T upperBound = childAtIndex(2)->approximate(T(), approximationContext).toScalar();
-    if (std::isnan(upperBound) || upperBound < 1) {
+  T upperBound =
+      childAtIndex(2)->approximate(T(), approximationContext).toScalar();
+  if (std::isnan(upperBound) || upperBound < 1) {
     return Complex<T>::Undefined();
   }
   for (int i = 1; i <= static_cast<int>(upperBound); i++) {
-     list.addChildAtIndexInPlace(approximateFirstChildWithArgument(static_cast<T>(i), approximationContext), list.numberOfChildren(), list.numberOfChildren());
+    list.addChildAtIndexInPlace(approximateFirstChildWithArgument(
+                                    static_cast<T>(i), approximationContext),
+                                list.numberOfChildren(),
+                                list.numberOfChildren());
   }
   return std::move(list);
 }
@@ -50,17 +65,17 @@ Expression ListSequence::UntypedBuilder(Expression children) {
     // Second parameter must be a Symbol.
     return Expression();
   }
-  return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2));
+  return Builder(children.childAtIndex(0),
+                 children.childAtIndex(1).convert<Symbol>(),
+                 children.childAtIndex(2));
 }
 
 Expression ListSequence::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits
-    );
+        SimplificationHelper::UnitReduction::BanUnits);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -68,12 +83,13 @@ Expression ListSequence::shallowReduce(ReductionContext reductionContext) {
   assert(childAtIndex(1).type() == ExpressionNode::Type::Symbol);
   Expression function = childAtIndex(0);
   Expression variableExpression = childAtIndex(1);
-  Symbol variable = static_cast<Symbol &>(variableExpression);
+  Symbol variable = static_cast<Symbol&>(variableExpression);
 
   int upperBound;
   int upperBoundIndex = 2;
   bool indexIsSymbol;
-  bool indexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, upperBoundIndex, &upperBound, &indexIsSymbol);
+  bool indexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(
+      *this, upperBoundIndex, &upperBound, &indexIsSymbol);
   if (!indexIsInteger) {
     return replaceWithUndefinedInPlace();
   }
@@ -83,7 +99,8 @@ Expression ListSequence::shallowReduce(ReductionContext reductionContext) {
 
   List finalList = List::Builder();
   for (int i = 1; i <= upperBound; i++) {
-    Expression newListElement = function.clone().replaceSymbolWithExpression(variable, BasedInteger::Builder(Integer(i)));
+    Expression newListElement = function.clone().replaceSymbolWithExpression(
+        variable, BasedInteger::Builder(Integer(i)));
     finalList.addChildAtIndexInPlace(newListElement, i - 1, i - 1);
     newListElement.deepReduce(reductionContext);
   }
@@ -92,4 +109,4 @@ Expression ListSequence::shallowReduce(ReductionContext reductionContext) {
   return finalList.shallowReduce(reductionContext);
 }
 
-}
+}  // namespace Poincare

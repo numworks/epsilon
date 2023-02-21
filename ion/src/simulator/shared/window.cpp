@@ -13,17 +13,14 @@ namespace Ion {
 namespace Simulator {
 namespace Window {
 
-static SDL_Window * sWindow = nullptr;
-static SDL_Renderer * sRenderer = nullptr;
+static SDL_Window* sWindow = nullptr;
+static SDL_Renderer* sRenderer = nullptr;
 static bool sNeedsRefresh = false;
 #if EPSILON_SDL_SCREEN_ONLY
 static SDL_Rect sScreenRect;
 #endif
 
-bool isHeadless() {
-  return sWindow == nullptr;
-}
-
+bool isHeadless() { return sWindow == nullptr; }
 
 void init() {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -44,7 +41,8 @@ void init() {
       Ion::Display::Width, Ion::Display::Height,
       0  // Default flags: no high-dpi, not resizeable.
 #else
-      458, 888,  // Otherwise use a default size that makes the screen pixel-perfect
+      458,
+      888,  // Otherwise use a default size that makes the screen pixel-perfect
       SDL_WINDOW_ALLOW_HIGHDPI
 #if EPSILON_SDL_FULLSCREEN
           | SDL_WINDOW_FULLSCREEN
@@ -57,7 +55,8 @@ void init() {
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
   // Try creating a hardware-accelerated renderer.
-  sRenderer = SDL_CreateRenderer(sWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+  sRenderer = SDL_CreateRenderer(
+      sWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (!sRenderer) {
     // Try creating a software renderer.
     sRenderer = SDL_CreateRenderer(sWindow, -1, 0);
@@ -95,9 +94,7 @@ void relayout() {
   setNeedsRefresh();
 }
 
-void setNeedsRefresh() {
-  sNeedsRefresh = true;
-}
+void setNeedsRefresh() { sNeedsRefresh = true; }
 
 void refresh() {
   if (!sNeedsRefresh || isHeadless()) {
@@ -113,7 +110,8 @@ void refresh() {
 
   SDL_SetRenderDrawColor(sRenderer, 194, 194, 194, 255);
   SDL_RenderClear(sRenderer);
-  // Can change sNeedsRefresh state if a key is highlighted and needs to be reset
+  // Can change sNeedsRefresh state if a key is highlighted and needs to be
+  // reset
   Layout::draw(sRenderer);
   Display::draw(sRenderer, &screenRect);
 #endif
@@ -136,6 +134,6 @@ void shutdown() {
   SDL_Quit();
 }
 
-}
-}
-}
+}  // namespace Window
+}  // namespace Simulator
+}  // namespace Ion

@@ -9,20 +9,21 @@
 #include <escher/view_controller.h>
 
 #include "chi_square_and_slope/categorical_type_controller.h"
-#include "test/hypothesis_controller.h"
 #include "inference/app.h"
+#include "test/hypothesis_controller.h"
 #include "type_controller.h"
 
 using namespace Inference;
 
-TestController::TestController(Escher::StackViewController * parentResponder,
-                               HypothesisController * hypothesisController,
-                               TypeController * typeController,
-                               CategoricalTypeController * categoricalController,
-                               InputSlopeController * inputSlopeController,
-                               InputController * inputController,
-                               Statistic * statistic) :
-      Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(parentResponder),
+TestController::TestController(Escher::StackViewController *parentResponder,
+                               HypothesisController *hypothesisController,
+                               TypeController *typeController,
+                               CategoricalTypeController *categoricalController,
+                               InputSlopeController *inputSlopeController,
+                               InputController *inputController,
+                               Statistic *statistic)
+    : Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(
+          parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),
       m_inputController(inputController),
@@ -33,13 +34,14 @@ TestController::TestController(Escher::StackViewController * parentResponder,
   selectRow(0);
 }
 
-const char * TestController::title() {
+const char *TestController::title() {
   return I18n::translate(m_statistic->statisticTitle());
 }
 
-void TestController::stackOpenPage(Escher::ViewController * nextPage) {
+void TestController::stackOpenPage(Escher::ViewController *nextPage) {
   SignificanceTestType type = m_statistic->significanceTestType();
-  selectRow(type == SignificanceTestType::Slope ? virtualIndexOfSlope() : static_cast<int>(type));
+  selectRow(type == SignificanceTestType::Slope ? virtualIndexOfSlope()
+                                                : static_cast<int>(type));
   ViewController::stackOpenPage(nextPage);
 }
 
@@ -50,8 +52,9 @@ void TestController::didBecomeFirstResponder() {
 }
 
 bool TestController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    Escher::SelectableViewController * controller = nullptr;
+  if (event == Ion::Events::OK || event == Ion::Events::EXE ||
+      event == Ion::Events::Right) {
+    Escher::SelectableViewController *controller = nullptr;
     SignificanceTestType testType;
     int row = selectedRow();
     if (row == k_indexOfOneProp) {
@@ -84,7 +87,9 @@ bool TestController::handleEvent(Ion::Events::Event event) {
       controller = m_categoricalController;
     }
     assert(controller != nullptr);
-    if (m_statistic->initializeSignificanceTest(testType, AppsContainerHelper::sharedAppsContainerGlobalContext())) {
+    if (m_statistic->initializeSignificanceTest(
+            testType,
+            AppsContainerHelper::sharedAppsContainerGlobalContext())) {
       controller->selectRow(0);
     }
     stackOpenPage(controller);
@@ -97,8 +102,10 @@ int TestController::numberOfRows() const {
   return m_statistic->numberOfSignificancesTestTypes();
 }
 
-void TestController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  Escher::MessageTableCellWithChevronAndMessage * c = static_cast<Escher::MessageTableCellWithChevronAndMessage *>(cell);
+void TestController::willDisplayCellForIndex(Escher::HighlightCell *cell,
+                                             int index) {
+  Escher::MessageTableCellWithChevronAndMessage *c =
+      static_cast<Escher::MessageTableCellWithChevronAndMessage *>(cell);
   if (index == virtualIndexOfSlope()) {
     c->setMessage(I18n::Message::Slope);
     c->setSubtitle(m_statistic->tStatisticMessage());

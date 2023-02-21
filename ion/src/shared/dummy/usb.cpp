@@ -5,20 +5,16 @@ namespace USB {
 
 bool s_plugged = false;
 
-bool isPlugged() {
-  return s_plugged;
-}
+bool isPlugged() { return s_plugged; }
 
 bool isEnumerated() {
   // Unused on simulator
   return false;
 }
 
-void clearEnumerationInterrupt() {
-}
+void clearEnumerationInterrupt() {}
 
-void DFU() {
-}
+void DFU() {}
 
 /* To be able to fully emulate plugged states and events on simulator, we take
  * advantage of enable and disable methods, which are conveniently called
@@ -36,5 +32,5 @@ void disable() {
   s_plugged = true;
 }
 
-}
-}
+}  // namespace USB
+}  // namespace Ion

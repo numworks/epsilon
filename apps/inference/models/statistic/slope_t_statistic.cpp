@@ -1,5 +1,6 @@
-#include "slope_t_interval.h"
 #include <omg/round.h>
+
+#include "slope_t_interval.h"
 
 namespace Inference {
 
@@ -29,8 +30,9 @@ bool SlopeTStatistic::authorizedParameterAtIndex(double p, int i) const {
 double SlopeTStatistic::computeStandardError() const {
   double n = doubleCastedNumberOfPairsOfSeries(0);
   double xMean = meanOfColumn(0, 0);
-  double SE = std::sqrt((1.0/(n - 2.0)) * leastSquaredSum(0) / squaredOffsettedValueSumOfColumn(0, 0, false, xMean));
+  double SE = std::sqrt((1.0 / (n - 2.0)) * leastSquaredSum(0) /
+                        squaredOffsettedValueSumOfColumn(0, 0, false, xMean));
   return OMG::LaxToZero(SE);
 }
 
-}
+}  // namespace Inference

@@ -7,31 +7,36 @@
 namespace Poincare {
 
 class ProductLayoutNode final : public SequenceLayoutNode {
-public:
+ public:
   using SequenceLayoutNode::SequenceLayoutNode;
 
   // Layout
   Type type() const override { return Type::ProductLayout; }
 
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char* buffer, int bufferSize,
+                Preferences::PrintFloatMode floatDisplayMode,
+                int numberOfSignificantDigits) const override;
   size_t size() const override { return sizeof(ProductLayoutNode); }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream& stream) const override {
     stream << "ProductLayout";
   }
 #endif
 
-protected:
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
-private:
+ protected:
+  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
+              KDColor expressionColor, KDColor backgroundColor) override;
+
+ private:
   constexpr static KDCoordinate k_lineThickness = 1;
 };
 
-class ProductLayout final : public LayoutFourChildren<ProductLayout, ProductLayoutNode> {
-public:
+class ProductLayout final
+    : public LayoutFourChildren<ProductLayout, ProductLayoutNode> {
+ public:
   ProductLayout() = delete;
 };
 
-}
+}  // namespace Poincare
 
 #endif

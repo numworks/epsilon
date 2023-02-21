@@ -23,38 +23,40 @@ void interruptableCode() {
 
 */
 
-#define CheckpointRun(checkpoint, activation) ( checkpoint.setActive(activation) )
+#define CheckpointRun(checkpoint, activation) (checkpoint.setActive(activation))
 
 namespace Poincare {
 
 class Checkpoint {
   friend class ExceptionCheckpoint;
-public:
-  static TreeNode * TopmostEndOfPool();
 
-  Checkpoint() : m_parent(s_topmost), m_endOfPool(TreePool::sharedPool->last()) {
+ public:
+  static TreeNode *TopmostEndOfPool();
+
+  Checkpoint()
+      : m_parent(s_topmost), m_endOfPool(TreePool::sharedPool->last()) {
     assert(!m_parent || m_endOfPool >= m_parent->m_endOfPool);
   }
   Checkpoint(const Checkpoint &) = delete;
   virtual ~Checkpoint() { protectedDiscard(); }
-  Checkpoint & operator=(const Checkpoint &) = delete;
+  Checkpoint &operator=(const Checkpoint &) = delete;
 
   virtual void discard() const { protectedDiscard(); }
 
-protected:
-  static Checkpoint * s_topmost;
+ protected:
+  static Checkpoint *s_topmost;
 
   void rollback() const { TreePool::sharedPool->freePoolFromNode(m_endOfPool); }
   void protectedDiscard() const;
 
-  Checkpoint * const m_parent;
+  Checkpoint *const m_parent;
 
-private:
+ private:
   virtual void rollbackException();
 
-  TreeNode * const m_endOfPool;
+  TreeNode *const m_endOfPool;
 };
 
-}
+}  // namespace Poincare
 
 #endif

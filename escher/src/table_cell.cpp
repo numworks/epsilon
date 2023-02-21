@@ -1,16 +1,13 @@
-#include <escher/table_cell.h>
-#include <escher/palette.h>
 #include <escher/metric.h>
+#include <escher/palette.h>
+#include <escher/table_cell.h>
 #include <ion/display.h>
 
 namespace Escher {
 
-TableCell::TableCell() :
-  Bordered(),
-  HighlightCell()
-{}
+TableCell::TableCell() : Bordered(), HighlightCell() {}
 
-void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
+void TableCell::drawRect(KDContext *ctx, KDRect rect) const {
   KDColor backColor = isHighlighted() ? Palette::Select : backgroundColor();
   drawInnerRect(ctx, bounds(), backColor);
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
@@ -28,29 +25,37 @@ KDCoordinate TableCell::minimalHeightForOptimalDisplay() const {
 
   KDCoordinate contentHeight;
   if (singleRowMode()) {
-    contentHeight = std::max(thisLabelSize.height(), std::max(thisSubLabelSize.height(), thisAccessorySize.height()));
+    contentHeight = std::max(
+        thisLabelSize.height(),
+        std::max(thisSubLabelSize.height(), thisAccessorySize.height()));
   } else if (shouldAlignLabelAndAccessory()) {
-    contentHeight = thisSubLabelSize.height() + k_innerVerticalMargin + std::max(thisLabelSize.height(), thisAccessorySize.height());
+    contentHeight =
+        thisSubLabelSize.height() + k_innerVerticalMargin +
+        std::max(thisLabelSize.height(), thisAccessorySize.height());
   } else {
-    contentHeight = std::max<KDCoordinate>(thisLabelSize.height() + thisSubLabelSize.height() + k_innerVerticalMargin, thisAccessorySize.height());
+    contentHeight = std::max<KDCoordinate>(thisLabelSize.height() +
+                                               thisSubLabelSize.height() +
+                                               k_innerVerticalMargin,
+                                           thisAccessorySize.height());
   }
 
   return k_topOffset + contentHeight + k_bottomOffset;
 }
 
 int TableCell::numberOfSubviews() const {
-  return (labelView() != nullptr) + (subLabelView()!= nullptr) + (accessoryView()!= nullptr);
+  return (labelView() != nullptr) + (subLabelView() != nullptr) +
+         (accessoryView() != nullptr);
 }
 
-View * TableCell::subviewAtIndex(int index) {
+View *TableCell::subviewAtIndex(int index) {
   if (index == 0) {
     return const_cast<View *>(labelView());
   }
   if (index == 1 && subLabelView() != nullptr) {
-    return  const_cast<View *>(subLabelView());
+    return const_cast<View *>(subLabelView());
   }
   assert(index == 2 || (index == 1 && subLabelView() == nullptr));
-  return  const_cast<View *>(accessoryView());
+  return const_cast<View *>(accessoryView());
 }
 
 void TableCell::layoutSubviews(bool force) {
@@ -74,15 +79,18 @@ void TableCell::layoutSubviews(bool force) {
   KDCoordinate labelHeight = std::min(thisLabelSize.height(), height);
   KDCoordinate labelWidth = std::min(thisLabelSize.width(), width);
   KDCoordinate subLabelHeight = std::min(thisSubLabelSize.height(), height);
-  KDCoordinate subLabelWidth = shouldHideSublabel() ? 0 : std::min(thisSubLabelSize.width(), width);
+  KDCoordinate subLabelWidth =
+      shouldHideSublabel() ? 0 : std::min(thisSubLabelSize.width(), width);
   KDCoordinate accessoryHeight = std::min(thisAccessorySize.height(), height);
   KDCoordinate accessoryWidth = std::min(accessoryMinimalWidth(), width);
 
-  KDRect labelRect = KDRectZero, subLabelRect = KDRectZero, accessoryRect = KDRectZero;
+  KDRect labelRect = KDRectZero, subLabelRect = KDRectZero,
+         accessoryRect = KDRectZero;
 
   if (singleRowMode()) {  // Single row -> align vertically each view
     // Label on the left, aligned vertically
-    labelRect = KDRect(x, y + (height - labelHeight) / 2, labelWidth, labelHeight);
+    labelRect =
+        KDRect(x, y + (height - labelHeight) / 2, labelWidth, labelHeight);
     x += labelWidth + k_innerHorizontalMargin;
 
     if (shouldAlignSublabelRight() && !giveAccessoryAllWidth()) {
@@ -95,7 +103,8 @@ void TableCell::layoutSubviews(bool force) {
     }
 
     if (!shouldHideSublabel()) {
-      subLabelRect = KDRect(x, y + (height - subLabelHeight) / 2, subLabelWidth, subLabelHeight);
+      subLabelRect = KDRect(x, y + (height - subLabelHeight) / 2, subLabelWidth,
+                            subLabelHeight);
       x += subLabelWidth + k_innerHorizontalMargin;
     }
 
@@ -103,7 +112,8 @@ void TableCell::layoutSubviews(bool force) {
     if (giveAccessoryAllWidth()) {
       accessoryRect = KDRect(x, accessoryY, xEnd - x, accessoryHeight);
     } else {
-      accessoryRect = KDRect(xEnd - accessoryWidth, accessoryY, accessoryWidth, accessoryHeight);
+      accessoryRect = KDRect(xEnd - accessoryWidth, accessoryY, accessoryWidth,
+                             accessoryHeight);
     }
   } else {  // Two rows
     KDCoordinate firstRowHeight, firstColumnWidth, accessoryRowHeight;
@@ -116,19 +126,31 @@ void TableCell::layoutSubviews(bool force) {
       firstColumnWidth = std::max(labelWidth, subLabelWidth);
       accessoryRowHeight = height;
     }
-    KDCoordinate accessoryX = giveAccessoryAllWidth() ? k_leftOffset + k_innerHorizontalMargin + firstColumnWidth : xEnd - accessoryWidth;
-    labelRect = KDRect(x, y + (firstRowHeight - labelHeight) / 2, labelWidth, labelHeight);
-    subLabelRect = KDRect(x, y + firstRowHeight + k_innerVerticalMargin, subLabelWidth, subLabelHeight);
-    accessoryRect = KDRect(accessoryX, y + (accessoryRowHeight - accessoryHeight) / 2, xEnd - accessoryX, accessoryHeight);
+    KDCoordinate accessoryX =
+        giveAccessoryAllWidth()
+            ? k_leftOffset + k_innerHorizontalMargin + firstColumnWidth
+            : xEnd - accessoryWidth;
+    labelRect = KDRect(x, y + (firstRowHeight - labelHeight) / 2, labelWidth,
+                       labelHeight);
+    subLabelRect = KDRect(x, y + firstRowHeight + k_innerVerticalMargin,
+                          subLabelWidth, subLabelHeight);
+    accessoryRect =
+        KDRect(accessoryX, y + (accessoryRowHeight - accessoryHeight) / 2,
+               xEnd - accessoryX, accessoryHeight);
   }
 
   // Set frames
-  labelRect = setFrameIfViewExists(const_cast<View *>(labelView()), labelRect, force);
-  subLabelRect = setFrameIfViewExists(const_cast<View *>(subLabelView()), subLabelRect, force);
-  accessoryRect = setFrameIfViewExists(const_cast<View *>(accessoryView()), accessoryRect, force);
+  labelRect =
+      setFrameIfViewExists(const_cast<View *>(labelView()), labelRect, force);
+  subLabelRect = setFrameIfViewExists(const_cast<View *>(subLabelView()),
+                                      subLabelRect, force);
+  accessoryRect = setFrameIfViewExists(const_cast<View *>(accessoryView()),
+                                       accessoryRect, force);
 
   // Assert no subview intersects
-  assert(subviewsCanOverlap() || (!labelRect.intersects(subLabelRect) && !subLabelRect.intersects(accessoryRect) && !accessoryRect.intersects(labelRect)));
+  assert(subviewsCanOverlap() || (!labelRect.intersects(subLabelRect) &&
+                                  !subLabelRect.intersects(accessoryRect) &&
+                                  !accessoryRect.intersects(labelRect)));
 }
 
 bool TableCell::shouldAlignLabelAndAccessory() const {
@@ -138,8 +160,10 @@ bool TableCell::shouldAlignLabelAndAccessory() const {
   if (!subLabelView() || !accessoryView()) {
     return false;
   }
-  KDCoordinate subLabelMinimalWidth = subLabelView()->minimalSizeForOptimalDisplay().width();
-  KDCoordinate minimalCumulatedWidthOfAccessoryAndSubLabel = subLabelMinimalWidth + k_innerHorizontalMargin + accessoryMinimalWidth();
+  KDCoordinate subLabelMinimalWidth =
+      subLabelView()->minimalSizeForOptimalDisplay().width();
+  KDCoordinate minimalCumulatedWidthOfAccessoryAndSubLabel =
+      subLabelMinimalWidth + k_innerHorizontalMargin + accessoryMinimalWidth();
   return minimalCumulatedWidthOfAccessoryAndSubLabel > innerWidth();
 }
 
@@ -149,15 +173,17 @@ bool TableCell::singleRowMode() const {
   KDCoordinate thisInnerWidth = innerWidth();
   KDCoordinate accessoryWidth = accessoryMinimalWidth();
 
-  KDCoordinate minimalWidth = thisLabelSize.width() + k_innerHorizontalMargin + thisSubLabelSize.width();
+  KDCoordinate minimalWidth = thisLabelSize.width() + k_innerHorizontalMargin +
+                              thisSubLabelSize.width();
   if (accessoryWidth > 0) {
     minimalWidth += k_innerHorizontalMargin + accessoryWidth;
   }
 
-  return (minimalWidth < thisInnerWidth) || thisLabelSize.width() == 0 || thisSubLabelSize.width() == 0;
+  return (minimalWidth < thisInnerWidth) || thisLabelSize.width() == 0 ||
+         thisSubLabelSize.width() == 0;
 }
 
-KDRect TableCell::setFrameIfViewExists(View * v, KDRect rect, bool force) {
+KDRect TableCell::setFrameIfViewExists(View *v, KDRect rect, bool force) {
   if (v) {
     v->setFrame(rect, force);
     return rect;
@@ -165,4 +191,4 @@ KDRect TableCell::setFrameIfViewExists(View * v, KDRect rect, bool force) {
   return KDRectZero;
 }
 
-}
+}  // namespace Escher

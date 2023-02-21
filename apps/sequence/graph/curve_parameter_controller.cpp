@@ -1,25 +1,29 @@
 #include "curve_parameter_controller.h"
-#include "graph_controller.h"
-#include <assert.h>
+
 #include <apps/i18n.h>
+#include <assert.h>
+
+#include "graph_controller.h"
 
 using namespace Shared;
 using namespace Escher;
 
 namespace Sequence {
 
-CurveParameterController::CurveParameterController(InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController, CobwebController * cobwebController, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor) :
-  ExplicitSelectableListViewController(nullptr, nullptr),
-  m_goToParameterController(this, inputEventHandlerDelegate, graphController, graphRange, cursor),
-  m_goToCell(I18n::Message::Goto),
-  m_sumCell(I18n::Message::TermSum),
-  m_cobwebCell(I18n::Message::CobwebPlot),
-  m_cobwebController(cobwebController),
-  m_graphController(graphController)
-{
-}
+CurveParameterController::CurveParameterController(
+    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    GraphController *graphController, CobwebController *cobwebController,
+    InteractiveCurveViewRange *graphRange, CurveViewCursor *cursor)
+    : ExplicitSelectableListViewController(nullptr, nullptr),
+      m_goToParameterController(this, inputEventHandlerDelegate,
+                                graphController, graphRange, cursor),
+      m_goToCell(I18n::Message::Goto),
+      m_sumCell(I18n::Message::TermSum),
+      m_cobwebCell(I18n::Message::CobwebPlot),
+      m_cobwebController(cobwebController),
+      m_graphController(graphController) {}
 
-const char * CurveParameterController::title() {
+const char *CurveParameterController::title() {
   return I18n::translate(I18n::Message::SequenceOptions);
 }
 
@@ -44,10 +48,13 @@ void CurveParameterController::viewWillAppear() {
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
-  HighlightCell * cell = selectedCell();
-  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  HighlightCell *cell = selectedCell();
+  StackViewController *stack =
+      static_cast<StackViewController *>(parentResponder());
   if (cell == &m_sumCell && m_sumCell.ShouldEnterOnEvent(event)) {
-    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, false);
+    stack->popUntilDepth(
+        Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
+        false);
     stack->push(m_graphController->termSumController());
     return true;
   }
@@ -64,10 +71,11 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   return ExplicitSelectableListViewController::handleEvent(event);
 }
 
-HighlightCell * CurveParameterController::cell(int index) {
+HighlightCell *CurveParameterController::cell(int index) {
   assert(0 <= index && index < k_numberOfRows);
-  HighlightCell * cells[k_numberOfRows] = {&m_sumCell, &m_cobwebCell, &m_goToCell};
+  HighlightCell *cells[k_numberOfRows] = {&m_sumCell, &m_cobwebCell,
+                                          &m_goToCell};
   return cells[index];
 }
 
-}
+}  // namespace Sequence

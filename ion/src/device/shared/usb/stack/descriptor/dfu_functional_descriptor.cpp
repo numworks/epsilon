@@ -4,7 +4,7 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-void DFUFunctionalDescriptor::push(Channel * c) const {
+void DFUFunctionalDescriptor::push(Channel* c) const {
   Descriptor::push(c);
   c->push(m_bmAttributes);
   c->push(m_wDetachTimeOut);
@@ -12,6 +12,6 @@ void DFUFunctionalDescriptor::push(Channel * c) const {
   c->push(m_bcdDFUVersion);
 }
 
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion

@@ -147,9 +147,9 @@ constexpr int NumberOfMPUSectors = 8;
 
 // clang-format on
 
-} // namespace Config
-} // namespace Board
-} // namespace Device
-} // namespace Ion
+}  // namespace Config
+}  // namespace Board
+}  // namespace Device
+}  // namespace Ion
 
 #endif

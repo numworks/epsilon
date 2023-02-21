@@ -6,15 +6,19 @@
 namespace Inference {
 
 class HomogeneityTest final : public Chi2Test {
-public:
+ public:
   // Used in HomogeneityTableDataSource
   constexpr static int k_maxNumberOfColumns = 9;
   constexpr static int k_maxNumberOfRows = 9;
 
   HomogeneityTest();
-  CategoricalType categoricalType() const override { return CategoricalType::Homogeneity; }
-  I18n::Message title() const override { return I18n::Message::InputHomogeneityControllerTitle; }
-  void setGraphTitle(char * buffer, size_t bufferSize) const override;
+  CategoricalType categoricalType() const override {
+    return CategoricalType::Homogeneity;
+  }
+  I18n::Message title() const override {
+    return I18n::Message::InputHomogeneityControllerTitle;
+  }
+  void setGraphTitle(char* buffer, size_t bufferSize) const override;
 
   // Statistic
   bool validateInputs() override;
@@ -36,11 +40,11 @@ public:
   double expectedValueAtLocation(int row, int column);
   double contributionAtLocation(int row, int column);
 
-  double total() { return m_total;}
+  double total() { return m_total; }
   double rowTotal(int row) { return m_rowTotals[row]; }
   double columnTotal(int column) { return m_columnTotals[column]; }
 
-private:
+ private:
   bool authorizedParameterAtIndex(double p, int i) const override;
   Index2D resultsIndexToIndex2D(int resultsIndex) const;
   int resultsIndexToArrayIndex(int resultsIndex) const;
@@ -51,9 +55,11 @@ private:
   int numberOfValuePairs() const override;
 
   int computeDegreesOfFreedom(Index2D max);
-  double * parametersArray() override { return m_input; }
+  double* parametersArray() override { return m_input; }
   void computeExpectedValues(Index2D max);
-  Index2D initialDimensions() const override { return Index2D{.row = 2, .col = 2}; }
+  Index2D initialDimensions() const override {
+    return Index2D{.row = 2, .col = 2};
+  }
 
   double m_input[k_maxNumberOfColumns * k_maxNumberOfRows];
   double m_expectedValues[k_maxNumberOfColumns * k_maxNumberOfRows];
@@ -64,6 +70,6 @@ private:
   int m_numberOfResultColumns;
 };
 
-}
+}  // namespace Inference
 
 #endif

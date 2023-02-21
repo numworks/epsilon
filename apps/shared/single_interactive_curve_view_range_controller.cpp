@@ -7,10 +7,15 @@ namespace Shared {
 
 // SingleRangeController
 
-SingleInteractiveCurveViewRangeController::SingleInteractiveCurveViewRangeController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange, Shared::MessagePopUpController * confirmPopUpController) :
-  SingleRangeController(parentResponder, inputEventHandlerDelegate, confirmPopUpController),
-  m_range(interactiveRange)
-{}
+SingleInteractiveCurveViewRangeController::
+    SingleInteractiveCurveViewRangeController(
+        Responder* parentResponder,
+        InputEventHandlerDelegate* inputEventHandlerDelegate,
+        InteractiveCurveViewRange* interactiveRange,
+        Shared::MessagePopUpController* confirmPopUpController)
+    : SingleRangeController(parentResponder, inputEventHandlerDelegate,
+                            confirmPopUpController),
+      m_range(interactiveRange) {}
 
 void SingleInteractiveCurveViewRangeController::setEditXRange(bool editXRange) {
   m_editXRange = editXRange;
@@ -21,13 +26,13 @@ bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
   /* m_secondaryRangeParam is ignored here because it is only relevant when main
    * parameters (xAuto) are different. */
   if (m_editXRange) {
-    return m_autoParam != (m_range->xAuto())
-           || m_rangeParam.min() != (m_range->xMin())
-           || m_rangeParam.max() != (m_range->xMax());
+    return m_autoParam != (m_range->xAuto()) ||
+           m_rangeParam.min() != (m_range->xMin()) ||
+           m_rangeParam.max() != (m_range->xMax());
   }
-  return m_autoParam != (m_range->yAuto())
-         || m_rangeParam.min() != (m_range->yMin())
-         || m_rangeParam.max() != (m_range->yMax());
+  return m_autoParam != (m_range->yAuto()) ||
+         m_rangeParam.min() != (m_range->yMin()) ||
+         m_rangeParam.max() != (m_range->yMax());
 }
 
 void SingleInteractiveCurveViewRangeController::extractParameters() {
@@ -78,7 +83,8 @@ void SingleInteractiveCurveViewRangeController::setAutoStatus(bool autoParam) {
   m_selectableTableView.reloadData();
 }
 
-bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(int parameterIndex, float f) {
+bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(
+    int parameterIndex, float f) {
   assert(parameterIndex >= 1 && parameterIndex < k_numberOfTextCells + 1);
   // Apply InteractiveCurveViewRange float bounds
   if (parameterIndex == 1) {
@@ -101,7 +107,8 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
         /* yMin and yMax must also be updated. We could avoid having to store
          * these values if we called m_range->computeRanges() instead, but it
          * would cost a significant computation time. */
-        assert(!std::isnan(m_secondaryRangeParam.min()) && !std::isnan(m_secondaryRangeParam.max()));
+        assert(!std::isnan(m_secondaryRangeParam.min()) &&
+               !std::isnan(m_secondaryRangeParam.max()));
         m_range->setYAuto(false);
         m_range->setYMin(m_secondaryRangeParam.min());
         m_range->setYMax(m_secondaryRangeParam.max());
@@ -117,4 +124,4 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
   }
 }
 
-}
+}  // namespace Shared

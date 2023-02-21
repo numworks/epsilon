@@ -6,31 +6,38 @@
 #include <apps/shared/pop_up_controller.h>
 #include <escher/list_view_data_source.h>
 #include <escher/selectable_table_view.h>
-#include <escher/view_controller.h>
 #include <escher/table_view_with_top_and_bottom_views.h>
+#include <escher/view_controller.h>
 #include <poincare/preferences.h>
+
 #include "press_to_test_switch.h"
 
 namespace Settings {
 
-class PressToTestController : public Escher::ViewController, public Escher::MemoizedListViewDataSource, public Escher::SelectableTableViewDataSource {
-public:
-  PressToTestController(Escher::Responder * parentResponder);
-  const char * title() override { return I18n::translate(I18n::Message::PressToTest); }
+class PressToTestController : public Escher::ViewController,
+                              public Escher::MemoizedListViewDataSource,
+                              public Escher::SelectableTableViewDataSource {
+ public:
+  PressToTestController(Escher::Responder* parentResponder);
+  const char* title() override {
+    return I18n::translate(I18n::Message::PressToTest);
+  }
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("PressToTest");
   void didBecomeFirstResponder() override;
-  void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
+  void didEnterResponderChain(
+      Escher::Responder* previousFirstResponder) override;
   int numberOfRows() const override;
   int typeAtIndex(int index) const override;
-  Escher::HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Poincare::Preferences::PressToTestParams getPressToTestParams();
-  Escher::View * view() override { return &m_view; }
+  Escher::View* view() override { return &m_view; }
   void resetController();
-private:
+
+ private:
   /* Cell type */
   constexpr static int k_switchCellType = 0;
   constexpr static int k_buttonCellType = 1;
@@ -56,6 +63,6 @@ private:
   static I18n::Message SubLabelAtIndex(int index);
 };
 
-}
+}  // namespace Settings
 
 #endif

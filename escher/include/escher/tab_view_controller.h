@@ -9,9 +9,11 @@
 namespace Escher {
 
 class TabViewController : public ViewController {
-public:
-  TabViewController(Responder * parentResponder, TabViewDataSource * dataSource, ViewController * one, ViewController * two, ViewController * three, ViewController * four = nullptr);
-  View * view() override;
+ public:
+  TabViewController(Responder* parentResponder, TabViewDataSource* dataSource,
+                    ViewController* one, ViewController* two,
+                    ViewController* three, ViewController* four = nullptr);
+  View* view() override;
   int activeTab() const;
   void selectTab();
   void setSelectedTab(int8_t index);
@@ -20,7 +22,7 @@ public:
   void enterActiveTab() { setActiveTab(activeTab()); }
   uint8_t numberOfTabs();
 
-  const char * tabName(uint8_t index);
+  const char* tabName(uint8_t index);
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void willResignFirstResponder() override;
@@ -30,36 +32,37 @@ public:
 
   virtual KDColor tabBackgroundColor() const { return Palette::PurpleBright; }
 
-private:
-  ViewController * activeViewController();
+ private:
+  ViewController* activeViewController();
   class ContentView : public View {
-  public:
+   public:
     ContentView();
 
-    void setActiveView(View * view);
+    void setActiveView(View* view);
     void setDisplayTabs(bool display);
     TabView m_tabView;
-  protected:
+
+   protected:
 #if ESCHER_VIEW_LOGGING
-  const char * className() const override;
+    const char* className() const override;
 #endif
-  private:
+   private:
     int numberOfSubviews() const override;
-    View * subviewAtIndex(int index) override;
+    View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
 
-    View * m_activeView;
+    View* m_activeView;
     bool m_displayTabs;
   };
 
   ContentView m_view;
 
   constexpr static uint8_t k_maxNumberOfChildren = 4;
-  ViewController * m_children[k_maxNumberOfChildren];
+  ViewController* m_children[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
-  TabViewDataSource * m_dataSource;
+  TabViewDataSource* m_dataSource;
   bool m_isSelected;
 };
 
-}
+}  // namespace Escher
 #endif

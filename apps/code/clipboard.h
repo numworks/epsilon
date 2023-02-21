@@ -7,19 +7,21 @@
 namespace Code {
 
 class Clipboard : public Escher::Clipboard {
-public:
+ public:
   constexpr static int k_numberOfPythonTextPairs = 11;
 
-  static Clipboard * sharedClipboard();
-  static const UTF8Helper::TextPair * PythonTextPairs();
-  static bool ShouldReplaceLetterE(const char * text, size_t length, size_t position);
+  static Clipboard* sharedClipboard();
+  static const UTF8Helper::TextPair* PythonTextPairs();
+  static bool ShouldReplaceLetterE(const char* text, size_t length,
+                                   size_t position);
   void enterPython() { replaceCharForPython(true); }
   void exitPython() { replaceCharForPython(false); }
-private:
+
+ private:
   static int s_replacementRuleStartingPoint;
   void replaceCharForPython(bool entersPythonApp);
 };
 
-}
+}  // namespace Code
 
 #endif

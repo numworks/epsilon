@@ -1,7 +1,9 @@
 #include "keyboard.h"
+
+#include <ion/keyboard.h>
+
 #include "events.h"
 #include "keyboard_queue.h"
-#include <ion/keyboard.h>
 
 namespace Ion {
 namespace Keyboard {
@@ -15,9 +17,7 @@ State popState() {
 
 State sState(0);
 
-void resetMemoizedState() {
-  sState = 0;
-}
+void resetMemoizedState() { sState = 0; }
 
 void pushState(State state) {
   Queue::sharedQueue()->push(state);
@@ -32,5 +32,5 @@ void keyboardWasScanned(State state) {
   }
 }
 
-}
-}
+}  // namespace Keyboard
+}  // namespace Ion

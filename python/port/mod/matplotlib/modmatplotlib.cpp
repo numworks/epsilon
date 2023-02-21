@@ -1,9 +1,9 @@
 extern "C" {
 #include "modmatplotlib.h"
+
 #include "pyplot/modpyplot.h"
 }
 #include <assert.h>
-
 
 // Internal functions
 

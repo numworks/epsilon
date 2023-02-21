@@ -1,7 +1,8 @@
-#include <ion.h>
-#include <string.h>
 #include <assert.h>
+#include <ion.h>
 #include <poincare/integer.h>
+#include <string.h>
+
 #include <new>
 #if ION_STORAGE_LOG
 #include <iostream>
@@ -17,7 +18,7 @@ OMG::GlobalBox<FileSystem> FileSystem::sharedFileSystem;
 
 #if ION_STORAGE_LOG
 void FileSystem::log() {
-  for (char * p : *this) {
+  for (char *p : *this) {
     Record::Name currentName = nameOfRecordStarting(p);
     Record(currentName).log();
   }
@@ -28,34 +29,34 @@ size_t FileSystem::availableSize() {
   /* TODO maybe do: availableSize(char ** endBuffer) to get the endBuffer if it
    * is needed after calling availableSize */
   assert(k_storageSize >= (endBuffer() - m_buffer) + sizeof(record_size_t));
-  return k_storageSize-(endBuffer()-m_buffer)-sizeof(record_size_t);
+  return k_storageSize - (endBuffer() - m_buffer) - sizeof(record_size_t);
 }
 
 size_t FileSystem::putAvailableSpaceAtEndOfRecord(Record r) {
-  char * p = pointerOfRecord(r);
+  char *p = pointerOfRecord(r);
   size_t previousRecordSize = sizeOfRecordStarting(p);
   size_t availableStorageSize = availableSize();
-  char * nextRecord = p + previousRecordSize;
-  memmove(nextRecord + availableStorageSize,
-      nextRecord,
-      (m_buffer + k_storageSize - availableStorageSize) - nextRecord);
+  char *nextRecord = p + previousRecordSize;
+  memmove(nextRecord + availableStorageSize, nextRecord,
+          (m_buffer + k_storageSize - availableStorageSize) - nextRecord);
   size_t newRecordSize = previousRecordSize + availableStorageSize;
   overrideSizeAtPosition(p, (record_size_t)newRecordSize);
   return newRecordSize;
 }
 
-void FileSystem::getAvailableSpaceFromEndOfRecord(Record r, size_t recordAvailableSpace) {
-  char * p = pointerOfRecord(r);
+void FileSystem::getAvailableSpaceFromEndOfRecord(Record r,
+                                                  size_t recordAvailableSpace) {
+  char *p = pointerOfRecord(r);
   size_t previousRecordSize = sizeOfRecordStarting(p);
-  char * nextRecord = p + previousRecordSize;
-  memmove(nextRecord - recordAvailableSpace,
-      nextRecord,
-      m_buffer + k_storageSize - nextRecord);
-  overrideSizeAtPosition(p, (record_size_t)(previousRecordSize - recordAvailableSpace));
+  char *nextRecord = p + previousRecordSize;
+  memmove(nextRecord - recordAvailableSpace, nextRecord,
+          m_buffer + k_storageSize - nextRecord);
+  overrideSizeAtPosition(
+      p, (record_size_t)(previousRecordSize - recordAvailableSpace));
 }
 
 uint32_t FileSystem::checksum() {
-  return Ion::crc32Byte((const uint8_t *) m_buffer, endBuffer()-m_buffer);
+  return Ion::crc32Byte((const uint8_t *)m_buffer, endBuffer() - m_buffer);
 }
 
 void FileSystem::notifyChangeToDelegate(const Record record) const {
@@ -73,15 +74,21 @@ Record::ErrorStatus FileSystem::notifyFullnessToDelegate() const {
   return Record::ErrorStatus::NotEnoughSpaceAvailable;
 }
 
-int FileSystem::firstAvailableNameFromPrefix(char * buffer, size_t prefixLength, size_t bufferSize, const char * const extensions[], size_t numberOfExtensions, int maxId) {
+int FileSystem::firstAvailableNameFromPrefix(char *buffer, size_t prefixLength,
+                                             size_t bufferSize,
+                                             const char *const extensions[],
+                                             size_t numberOfExtensions,
+                                             int maxId) {
   /* With '?' being the prefix, fill buffer with the first available name for
    * the extension following this pattern : ?1, ?2, ?3, .. ?10, ?11, .. ?99 */
   int id = 1;
   while (id <= maxId) {
-    int length = Poincare::Integer(id).serialize(buffer + prefixLength, bufferSize - prefixLength);
-    assert(buffer[prefixLength+length] == 0);
-    if (recordBaseNamedWithExtensions(buffer, extensions, numberOfExtensions).isNull()) {
-      return prefixLength+length;
+    int length = Poincare::Integer(id).serialize(buffer + prefixLength,
+                                                 bufferSize - prefixLength);
+    assert(buffer[prefixLength + length] == 0);
+    if (recordBaseNamedWithExtensions(buffer, extensions, numberOfExtensions)
+            .isNull()) {
+      return prefixLength + length;
     }
     id++;
   }
@@ -89,19 +96,28 @@ int FileSystem::firstAvailableNameFromPrefix(char * buffer, size_t prefixLength,
   return prefixLength;
 }
 
-Record::ErrorStatus FileSystem::createRecordWithFullNameAndDataChunks(const char * fullName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks, bool extensionCanOverrideItself) {
+Record::ErrorStatus FileSystem::createRecordWithFullNameAndDataChunks(
+    const char *fullName, const void *dataChunks[], size_t sizeChunks[],
+    size_t numberOfChunks, bool extensionCanOverrideItself) {
   Record::Name recordName = Record::CreateRecordNameFromFullName(fullName);
-  return createRecordWithDataChunks(recordName, dataChunks, sizeChunks, numberOfChunks, extensionCanOverrideItself);
+  return createRecordWithDataChunks(recordName, dataChunks, sizeChunks,
+                                    numberOfChunks, extensionCanOverrideItself);
 }
 
-Record::ErrorStatus FileSystem::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size, bool extensionCanOverrideItself) {
-  Record::Name recordName = Record::CreateRecordNameFromBaseNameAndExtension(baseName, extension);
-  const void * dataChunks[] = {data};
+Record::ErrorStatus FileSystem::createRecordWithExtension(
+    const char *baseName, const char *extension, const void *data, size_t size,
+    bool extensionCanOverrideItself) {
+  Record::Name recordName =
+      Record::CreateRecordNameFromBaseNameAndExtension(baseName, extension);
+  const void *dataChunks[] = {data};
   size_t sizeChunks[] = {size};
-  return createRecordWithDataChunks(recordName, dataChunks, sizeChunks, 1, extensionCanOverrideItself);
+  return createRecordWithDataChunks(recordName, dataChunks, sizeChunks, 1,
+                                    extensionCanOverrideItself);
 }
 
-Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordName, const void * dataChunks[], size_t sizeChunks[], size_t numberOfChunks, bool extensionCanOverrideItself) {
+Record::ErrorStatus FileSystem::createRecordWithDataChunks(
+    Record::Name recordName, const void *dataChunks[], size_t sizeChunks[],
+    size_t numberOfChunks, bool extensionCanOverrideItself) {
   if (Record::NameIsEmpty(recordName)) {
     return Record::ErrorStatus::NonCompliantName;
   }
@@ -109,7 +125,7 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
     return Record::ErrorStatus::CanceledByDelegate;
   }
   size_t totalSize = 0;
-  for (size_t i=0; i<numberOfChunks; i++) {
+  for (size_t i = 0; i < numberOfChunks; i++) {
     totalSize += sizeChunks[i];
   }
   size_t recordSize = sizeOfRecordWithName(recordName, totalSize);
@@ -117,16 +133,21 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
   /* pointerOfRecord will find the record with same name in the FileSystem.
    * If the record does not already exist, pointerOfRecord == nullptr and
    * sameNameRecordSize == 0 */
-  size_t sameNameRecordSize = sizeOfRecordStarting(pointerOfRecord(recordWithSameName));
-  if (recordSize >= k_maxRecordSize || (recordSize > sameNameRecordSize && recordSize - sameNameRecordSize > availableSize())) {
+  size_t sameNameRecordSize =
+      sizeOfRecordStarting(pointerOfRecord(recordWithSameName));
+  if (recordSize >= k_maxRecordSize ||
+      (recordSize > sameNameRecordSize &&
+       recordSize - sameNameRecordSize > availableSize())) {
     /* If there is an other record with the same name, it will be either
      * destroyed or this new record won't be created. So we only need the
      * difference of size between the two of available space. */
-   return notifyFullnessToDelegate();
+    return notifyFullnessToDelegate();
   }
   /* No need to call storageCanChangeForRecordName as long as
    * recordWithSameName is identical to recordName */
-  assert(sameNameRecordSize == 0 || !m_delegate || strcmp(recordWithSameName.name().extension, recordName.extension) == 0);
+  assert(sameNameRecordSize == 0 || !m_delegate ||
+         strcmp(recordWithSameName.name().extension, recordName.extension) ==
+             0);
   /* WARNING : This relies on the fact that when you create a python script or
    * a function, you first create it with a placeholder name and then let the
    * user set its name through setNameOfRecord. */
@@ -140,15 +161,16 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
   assert(recordSize <= availableSize());
 
   // Find the end of data
-  char * newRecordAddress = endBuffer();
-  char * newRecord = newRecordAddress;
+  char *newRecordAddress = endBuffer();
+  char *newRecord = newRecordAddress;
   // Fill totalSize
   newRecord += overrideSizeAtPosition(newRecord, (record_size_t)recordSize);
   // Fill name
   newRecord += overrideNameAtPosition(newRecord, recordName);
   // Fill data
-  for (size_t i=0; i<numberOfChunks; i++) {
-    newRecord += overrideValueAtPosition(newRecord, dataChunks[i], sizeChunks[i]);
+  for (size_t i = 0; i < numberOfChunks; i++) {
+    newRecord +=
+        overrideValueAtPosition(newRecord, dataChunks[i], sizeChunks[i]);
   }
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
@@ -159,27 +181,32 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
   return Record::ErrorStatus::None;
 }
 
-
-int FileSystem::numberOfRecordsWithFilter(const char * extension, RecordFilter filter, const void * auxiliary) {
+int FileSystem::numberOfRecordsWithFilter(const char *extension,
+                                          RecordFilter filter,
+                                          const void *auxiliary) {
   int count = 0;
-  for (char * p : *this) {
+  for (char *p : *this) {
     Record::Name currentName = nameOfRecordStarting(p);
     assert(currentName.extension);
-    if (!Record::NameIsEmpty(currentName) && filter(currentName, auxiliary) && strcmp(currentName.extension, extension) == 0) {
+    if (!Record::NameIsEmpty(currentName) && filter(currentName, auxiliary) &&
+        strcmp(currentName.extension, extension) == 0) {
       count++;
     }
   }
   return count;
 }
 
-Record FileSystem::recordWithFilterAtIndex(const char * extension, int index, RecordFilter filter, const void * auxiliary) {
+Record FileSystem::recordWithFilterAtIndex(const char *extension, int index,
+                                           RecordFilter filter,
+                                           const void *auxiliary) {
   int currentIndex = -1;
   Record::Name name = Record::EmptyName();
-  char * recordAddress = nullptr;
-  for (char * p : *this) {
+  char *recordAddress = nullptr;
+  for (char *p : *this) {
     Record::Name currentName = nameOfRecordStarting(p);
     assert(currentName.extension);
-    if (!Record::NameIsEmpty(currentName) && filter(currentName, auxiliary) &&  strcmp(currentName.extension, extension) == 0) {
+    if (!Record::NameIsEmpty(currentName) && filter(currentName, auxiliary) &&
+        strcmp(currentName.extension, extension) == 0) {
       currentIndex++;
     }
     if (currentIndex == index) {
@@ -205,13 +232,19 @@ Record FileSystem::recordNamed(Record::Name name) {
   return pointerOfRecord(r) ? r : Record();
 }
 
-Record FileSystem::recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions) {
-  return privateRecordBasedNamedWithExtensions(baseName, strlen(baseName), extensions, numberOfExtensions);
+Record FileSystem::recordBaseNamedWithExtensions(const char *baseName,
+                                                 const char *const extensions[],
+                                                 size_t numberOfExtensions) {
+  return privateRecordBasedNamedWithExtensions(baseName, strlen(baseName),
+                                               extensions, numberOfExtensions);
 }
 
-const char * FileSystem::extensionOfRecordBaseNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions) {
-  const char * result = nullptr;
-  privateRecordBasedNamedWithExtensions(baseName, baseNameLength, extensions, numberOfExtensions, &result);
+const char *FileSystem::extensionOfRecordBaseNamedWithExtensions(
+    const char *baseName, int baseNameLength, const char *const extensions[],
+    size_t numberOfExtensions) {
+  const char *result = nullptr;
+  privateRecordBasedNamedWithExtensions(baseName, baseNameLength, extensions,
+                                        numberOfExtensions, &result);
   return result;
 }
 
@@ -220,12 +253,13 @@ void FileSystem::destroyAllRecords() {
   notifyChangeToDelegate();
 }
 
-void FileSystem::destroyRecordsWithExtension(const char * extension) {
-  char * currentRecordStart = (char *)m_buffer;
+void FileSystem::destroyRecordsWithExtension(const char *extension) {
+  char *currentRecordStart = (char *)m_buffer;
   bool didChange = false;
   while (currentRecordStart && sizeOfRecordStarting(currentRecordStart) != 0) {
     Record::Name currentName = nameOfRecordStarting(currentRecordStart);
-    if (!Record::NameIsEmpty(currentName) && strcmp(currentName.extension, extension) == 0) {
+    if (!Record::NameIsEmpty(currentName) &&
+        strcmp(currentName.extension, extension) == 0) {
       Record currentRecord(currentName);
       currentRecord.destroy();
       didChange = true;
@@ -238,7 +272,9 @@ void FileSystem::destroyRecordsWithExtension(const char * extension) {
   }
 }
 
-bool FileSystem::handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName, bool notifyDelegate) {
+bool FileSystem::handleCompetingRecord(Record::Name recordName,
+                                       bool destroyRecordWithSameFullName,
+                                       bool notifyDelegate) {
   assert(!m_delegate || m_delegate->storageCanChangeForRecordName(recordName));
   Record sameNameRecord = Record(recordName);
   if (isNameOfRecordTaken(sameNameRecord)) {
@@ -250,12 +286,19 @@ bool FileSystem::handleCompetingRecord(Record::Name recordName, bool destroyReco
     }
     return false;
   }
-  Record competingRecord = privateRecordBasedNamedWithExtensions(recordName.baseName, recordName.baseNameLength, m_recordNameVerifier.restrictiveExtensions(), m_recordNameVerifier.numberOfRestrictiveExtensions());
+  Record competingRecord = privateRecordBasedNamedWithExtensions(
+      recordName.baseName, recordName.baseNameLength,
+      m_recordNameVerifier.restrictiveExtensions(),
+      m_recordNameVerifier.numberOfRestrictiveExtensions());
   if (competingRecord.isNull()) {
     return true;
   }
-  RecordNameVerifier::OverrideStatus result = m_recordNameVerifier.canOverrideRecordWithNewExtension(competingRecord, recordName.extension);
-  if (result == RecordNameVerifier::OverrideStatus::Forbidden || (m_delegate && !m_delegate->storageCanChangeForRecordName(competingRecord.name()))) {
+  RecordNameVerifier::OverrideStatus result =
+      m_recordNameVerifier.canOverrideRecordWithNewExtension(
+          competingRecord, recordName.extension);
+  if (result == RecordNameVerifier::OverrideStatus::Forbidden ||
+      (m_delegate &&
+       !m_delegate->storageCanChangeForRecordName(competingRecord.name()))) {
     return false;
   }
   if (result == RecordNameVerifier::OverrideStatus::Allowed) {
@@ -268,14 +311,13 @@ bool FileSystem::handleCompetingRecord(Record::Name recordName, bool destroyReco
 
 // PRIVATE
 
-FileSystem::FileSystem() :
-  m_magicHeader(Magic),
-  m_buffer(),
-  m_magicFooter(Magic),
-  m_delegate(nullptr),
-  m_lastRecordRetrieved(nullptr),
-  m_lastRecordRetrievedPointer(nullptr)
-{
+FileSystem::FileSystem()
+    : m_magicHeader(Magic),
+      m_buffer(),
+      m_magicFooter(Magic),
+      m_delegate(nullptr),
+      m_lastRecordRetrieved(nullptr),
+      m_lastRecordRetrievedPointer(nullptr) {
   assert(m_magicHeader == Magic);
   assert(m_magicFooter == Magic);
   // Set the size of the first record to 0
@@ -283,11 +325,12 @@ FileSystem::FileSystem() :
 }
 
 Record::Name FileSystem::nameOfRecord(const Record record) const {
-  char * p = pointerOfRecord(record);
+  char *p = pointerOfRecord(record);
   return p ? nameOfRecordStarting(p) : Record::EmptyName();
 }
 
-Record::ErrorStatus FileSystem::setNameOfRecord(Record * record, Record::Name name) {
+Record::ErrorStatus FileSystem::setNameOfRecord(Record *record,
+                                                Record::Name name) {
   if (Record::NameIsEmpty(name)) {
     return Record::ErrorStatus::NonCompliantName;
   }
@@ -297,7 +340,8 @@ Record::ErrorStatus FileSystem::setNameOfRecord(Record * record, Record::Name na
     // Name has not changed
     return Record::ErrorStatus::None;
   }
-  if (m_delegate && !m_delegate->storageCanChangeForRecordName(record->name())) {
+  if (m_delegate &&
+      !m_delegate->storageCanChangeForRecordName(record->name())) {
     return Record::ErrorStatus::CanceledByDelegate;
   }
   /* If you do not verify that the name has not changed if the previous 'if'
@@ -306,16 +350,18 @@ Record::ErrorStatus FileSystem::setNameOfRecord(Record * record, Record::Name na
     return Record::ErrorStatus::NameTaken;
   }
   size_t nameSize = Record::SizeOfName(name);
-  char * p = pointerOfRecord(oldRecord);
+  char *p = pointerOfRecord(oldRecord);
   if (p) {
     size_t previousNameSize = Record::SizeOfName(nameOfRecordStarting(p));
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
-    size_t newRecordSize = previousRecordSize-previousNameSize+nameSize;
-    if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+sizeof(record_size_t)+previousNameSize, nameSize-previousNameSize)) {
+    size_t newRecordSize = previousRecordSize - previousNameSize + nameSize;
+    if (newRecordSize >= k_maxRecordSize ||
+        !slideBuffer(p + sizeof(record_size_t) + previousNameSize,
+                     nameSize - previousNameSize)) {
       return notifyFullnessToDelegate();
     }
     overrideSizeAtPosition(p, newRecordSize);
-    char * namePosition = p + sizeof(record_size_t);
+    char *namePosition = p + sizeof(record_size_t);
     overrideNameAtPosition(namePosition, name);
     // Recompute the CRC32
     *record = newRecord;
@@ -328,34 +374,40 @@ Record::ErrorStatus FileSystem::setNameOfRecord(Record * record, Record::Name na
 }
 
 Record::Data FileSystem::valueOfRecord(const Record record) {
-  char * p = pointerOfRecord(record);
+  char *p = pointerOfRecord(record);
   if (p) {
     Record::Name name = nameOfRecordStarting(p);
     record_size_t size = sizeOfRecordStarting(p);
-    const void * value = valueOfRecordStarting(p);
-    return {.buffer = value, .size = size - Record::SizeOfName(name) - sizeof(record_size_t)};
+    const void *value = valueOfRecordStarting(p);
+    return {.buffer = value,
+            .size = size - Record::SizeOfName(name) - sizeof(record_size_t)};
   }
-  return {.buffer= nullptr, .size= 0};
+  return {.buffer = nullptr, .size = 0};
 }
 
-Record::ErrorStatus FileSystem::setValueOfRecord(Record record, Record::Data data) {
-  char * p = pointerOfRecord(record);
+Record::ErrorStatus FileSystem::setValueOfRecord(Record record,
+                                                 Record::Data data) {
+  char *p = pointerOfRecord(record);
   /* TODO: if data.buffer == p, assert that size hasn't change and do not do any
    * memcopy, but still notify the delegate. Beware of scripts and the accordion
    * routine.*/
   if (p) {
-    if (m_delegate && !m_delegate->storageCanChangeForRecordName(record.name())) {
+    if (m_delegate &&
+        !m_delegate->storageCanChangeForRecordName(record.name())) {
       return Record::ErrorStatus::CanceledByDelegate;
     }
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     Record::Name name = nameOfRecordStarting(p);
     size_t newRecordSize = sizeOfRecordWithName(name, data.size);
-    if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+previousRecordSize, newRecordSize-previousRecordSize)) {
+    if (newRecordSize >= k_maxRecordSize ||
+        !slideBuffer(p + previousRecordSize,
+                     newRecordSize - previousRecordSize)) {
       return notifyFullnessToDelegate();
     }
     record_size_t nameSize = Record::SizeOfName(name);
     overrideSizeAtPosition(p, newRecordSize);
-    overrideValueAtPosition(p + sizeof(record_size_t) + nameSize, data.buffer, data.size);
+    overrideValueAtPosition(p + sizeof(record_size_t) + nameSize, data.buffer,
+                            data.size);
     notifyChangeToDelegate(record);
     m_lastRecordRetrieved = record;
     m_lastRecordRetrievedPointer = p;
@@ -371,10 +423,10 @@ bool FileSystem::destroyRecord(Record record, bool notifyDelegate) {
   if (m_delegate && !m_delegate->storageCanChangeForRecordName(record.name())) {
     return false;
   }
-  char * p = pointerOfRecord(record);
+  char *p = pointerOfRecord(record);
   if (p) {
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
-    slideBuffer(p+previousRecordSize, -previousRecordSize);
+    slideBuffer(p + previousRecordSize, -previousRecordSize);
     if (notifyDelegate) {
       notifyChangeToDelegate();
     }
@@ -382,7 +434,7 @@ bool FileSystem::destroyRecord(Record record, bool notifyDelegate) {
   return true;
 }
 
-char * FileSystem::pointerOfRecord(const Record record) const {
+char *FileSystem::pointerOfRecord(const Record record) const {
   if (record.isNull()) {
     return nullptr;
   }
@@ -390,7 +442,7 @@ char * FileSystem::pointerOfRecord(const Record record) const {
     assert(m_lastRecordRetrievedPointer);
     return m_lastRecordRetrievedPointer;
   }
-  for (char * p : *this) {
+  for (char *p : *this) {
     Record currentRecord(nameOfRecordStarting(p));
     if (record == currentRecord) {
       m_lastRecordRetrieved = record;
@@ -401,30 +453,31 @@ char * FileSystem::pointerOfRecord(const Record record) const {
   return nullptr;
 }
 
-FileSystem::record_size_t FileSystem::sizeOfRecordStarting(char * start) const {
+FileSystem::record_size_t FileSystem::sizeOfRecordStarting(char *start) const {
   return start ? StorageHelper::unalignedShort(start) : 0;
 }
 
-const void * FileSystem::valueOfRecordStarting(char * start) const {
+const void *FileSystem::valueOfRecordStarting(char *start) const {
   if (!start) {
     return nullptr;
   }
-  char * currentChar = start + sizeof(record_size_t);
+  char *currentChar = start + sizeof(record_size_t);
   size_t fullNameLength = strlen(currentChar);
   return currentChar + fullNameLength + 1;
 }
 
-Record::Name FileSystem::nameOfRecordStarting(char * start) const {
-  return start ? Record::CreateRecordNameFromFullName(start + sizeof(record_size_t)) : Record::EmptyName();
+Record::Name FileSystem::nameOfRecordStarting(char *start) const {
+  return start ? Record::CreateRecordNameFromFullName(start +
+                                                      sizeof(record_size_t))
+               : Record::EmptyName();
 }
 
-
-size_t FileSystem::overrideSizeAtPosition(char * position, record_size_t size) {
+size_t FileSystem::overrideSizeAtPosition(char *position, record_size_t size) {
   StorageHelper::writeUnalignedShort(size, position);
   return sizeof(record_size_t);
 }
 
-size_t FileSystem::overrideNameAtPosition(char * position, Record::Name name) {
+size_t FileSystem::overrideNameAtPosition(char *position, Record::Name name) {
   memcpy(position, name.baseName, name.baseNameLength);
   position += name.baseNameLength;
   assert(UTF8Decoder::CharSizeOfCodePoint(Record::k_dotChar) == 1);
@@ -437,19 +490,20 @@ size_t FileSystem::overrideNameAtPosition(char * position, Record::Name name) {
   return name.baseNameLength + 1 + extensionLength + 1;
 }
 
-size_t FileSystem::overrideValueAtPosition(char * position, const void * data, record_size_t size) {
+size_t FileSystem::overrideValueAtPosition(char *position, const void *data,
+                                           record_size_t size) {
   memcpy(position, data, size);
   return size;
 }
 
-bool FileSystem::isNameOfRecordTaken(Record r, const Record * recordToExclude) {
+bool FileSystem::isNameOfRecordTaken(Record r, const Record *recordToExclude) {
   if (r == Record()) {
     /* If the CRC32 of fullName is 0, we want to refuse the name as it would
      * interfere with our escape case in the Record constructor, when the given
      * name is nullptr. */
     return true;
   }
-  for (char * p : *this) {
+  for (char *p : *this) {
     Record s(nameOfRecordStarting(p));
     if (recordToExclude && s == *recordToExclude) {
       continue;
@@ -461,9 +515,9 @@ bool FileSystem::isNameOfRecordTaken(Record r, const Record * recordToExclude) {
   return false;
 }
 
-char * FileSystem::endBuffer() {
-  char * currentBuffer = m_buffer;
-  for (char * p : *this) {
+char *FileSystem::endBuffer() {
+  char *currentBuffer = m_buffer;
+  for (char *p : *this) {
     currentBuffer += sizeOfRecordStarting(p);
   }
   return currentBuffer;
@@ -473,22 +527,31 @@ size_t FileSystem::sizeOfRecordWithName(Record::Name name, size_t dataSize) {
   return Record::SizeOfName(name) + dataSize + sizeof(record_size_t);
 }
 
-bool FileSystem::slideBuffer(char * position, int delta) {
+bool FileSystem::slideBuffer(char *position, int delta) {
   if (delta > (int)availableSize()) {
     return false;
   }
-  memmove(position+delta, position, endBuffer()+sizeof(record_size_t)-position);
+  memmove(position + delta, position,
+          endBuffer() + sizeof(record_size_t) - position);
   return true;
 }
 
-Record FileSystem::privateRecordBasedNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
-  Record::Name lastRetrievedRecordName = nameOfRecordStarting(m_lastRecordRetrievedPointer);
-  if (m_lastRecordRetrievedPointer && recordNameHasBaseNameAndOneOfTheseExtensions(lastRetrievedRecordName, baseName, baseNameLength, extensions, numberOfExtensions, extensionResult)) {
+Record FileSystem::privateRecordBasedNamedWithExtensions(
+    const char *baseName, int baseNameLength, const char *const extensions[],
+    size_t numberOfExtensions, const char **extensionResult) {
+  Record::Name lastRetrievedRecordName =
+      nameOfRecordStarting(m_lastRecordRetrievedPointer);
+  if (m_lastRecordRetrievedPointer &&
+      recordNameHasBaseNameAndOneOfTheseExtensions(
+          lastRetrievedRecordName, baseName, baseNameLength, extensions,
+          numberOfExtensions, extensionResult)) {
     return m_lastRecordRetrieved;
   }
-  for (char * p : *this) {
+  for (char *p : *this) {
     Record::Name currentName = nameOfRecordStarting(p);
-    if (recordNameHasBaseNameAndOneOfTheseExtensions(currentName, baseName, baseNameLength, extensions, numberOfExtensions, extensionResult)) {
+    if (recordNameHasBaseNameAndOneOfTheseExtensions(
+            currentName, baseName, baseNameLength, extensions,
+            numberOfExtensions, extensionResult)) {
       return Record(currentName);
     }
   }
@@ -498,9 +561,14 @@ Record FileSystem::privateRecordBasedNamedWithExtensions(const char * baseName, 
   return Record();
 }
 
-bool FileSystem::recordNameHasBaseNameAndOneOfTheseExtensions(Record::Name name, const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
+bool FileSystem::recordNameHasBaseNameAndOneOfTheseExtensions(
+    Record::Name name, const char *baseName, int baseNameLength,
+    const char *const extensions[], size_t numberOfExtensions,
+    const char **extensionResult) {
   assert(name.baseName);
-  if (!Record::NameIsEmpty(name) && strncmp(baseName, name.baseName, baseNameLength) == 0 && static_cast<size_t>(baseNameLength) == name.baseNameLength) {
+  if (!Record::NameIsEmpty(name) &&
+      strncmp(baseName, name.baseName, baseNameLength) == 0 &&
+      static_cast<size_t>(baseNameLength) == name.baseNameLength) {
     for (size_t i = 0; i < numberOfExtensions; i++) {
       if (strcmp(name.extension, extensions[i]) == 0) {
         if (extensionResult) {
@@ -513,15 +581,15 @@ bool FileSystem::recordNameHasBaseNameAndOneOfTheseExtensions(Record::Name name,
   return false;
 }
 
-FileSystem::RecordIterator & FileSystem::RecordIterator::operator++() {
+FileSystem::RecordIterator &FileSystem::RecordIterator::operator++() {
   assert(m_recordStart);
   record_size_t size = StorageHelper::unalignedShort(m_recordStart);
-  char * nextRecord = m_recordStart+size;
+  char *nextRecord = m_recordStart + size;
   record_size_t newRecordSize = StorageHelper::unalignedShort(nextRecord);
   m_recordStart = (newRecordSize == 0 ? nullptr : nextRecord);
   return *this;
 }
 
-}
+}  // namespace Storage
 
-}
+}  // namespace Ion

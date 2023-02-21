@@ -12,4 +12,4 @@ void Array::didChangeNumberOfChildren(int newNumberOfChildren) {
   m_numberOfColumns = newNumberOfChildren;
 }
 
-}
+}  // namespace Poincare

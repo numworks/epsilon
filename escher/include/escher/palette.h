@@ -7,7 +7,7 @@
 namespace Escher {
 
 class Palette {
-public:
+ public:
   constexpr static KDColor YellowDark = KDColor::RGB24(0xffb734);
   constexpr static KDColor YellowLight = KDColor::RGB24(0xffcc7b);
   constexpr static KDColor PurpleBright = KDColor::RGB24(0x656975);
@@ -39,13 +39,19 @@ public:
   constexpr static KDColor Purple = KDColor::RGB24(0x6e2d79);
   constexpr static KDColor BlueishGray = KDColor::RGB24(0x919ea4);
   constexpr static KDColor Cyan = KDColor::RGB24(0x00ffff);
-  constexpr static KDColor DataColor[] = {Red, Blue, Green, YellowDark, Magenta, Turquoise, Pink, Orange};
-  constexpr static KDColor DataColorLight[] = {RedLight, BlueLight, GreenLight, YellowLight};
+  constexpr static KDColor DataColor[] = {Red,     Blue,      Green, YellowDark,
+                                          Magenta, Turquoise, Pink,  Orange};
+  constexpr static KDColor DataColorLight[] = {RedLight, BlueLight, GreenLight,
+                                               YellowLight};
 
-  constexpr static size_t numberOfDataColors() { return sizeof(DataColor)/sizeof(KDColor); }
-  constexpr static size_t numberOfLightDataColors() { return sizeof(DataColorLight)/sizeof(KDColor); }
-  static KDColor nextDataColor(int * colorIndex);
+  constexpr static size_t numberOfDataColors() {
+    return sizeof(DataColor) / sizeof(KDColor);
+  }
+  constexpr static size_t numberOfLightDataColors() {
+    return sizeof(DataColorLight) / sizeof(KDColor);
+  }
+  static KDColor nextDataColor(int* colorIndex);
 };
 
-}
+}  // namespace Escher
 #endif

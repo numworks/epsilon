@@ -9,35 +9,51 @@
 #include <poincare/simplification_helper.h>
 #include <poincare/square_root.h>
 #include <poincare/subtraction.h>
+
 #include <cmath>
 
 namespace Poincare {
 
-int ArcSineNode::numberOfChildren() const { return ArcSine::s_functionHelper.numberOfChildren(); }
-
-Layout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.aliasesList().mainAlias(), context);
+int ArcSineNode::numberOfChildren() const {
+  return ArcSine::s_functionHelper.numberOfChildren();
 }
 
-int ArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.aliasesList().mainAlias());
+Layout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits,
+                                 Context* context) const {
+  return LayoutHelper::Prefix(
+      ArcSine(this), floatDisplayMode, numberOfSignificantDigits,
+      ArcSine::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-Expression ArcSineNode::shallowReduce(const ReductionContext& reductionContext) {
+int ArcSineNode::serialize(char* buffer, int bufferSize,
+                           Preferences::PrintFloatMode floatDisplayMode,
+                           int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(
+      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+      ArcSine::s_functionHelper.aliasesList().mainAlias());
+}
+
+Expression ArcSineNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   ArcSine e = ArcSine(this);
   return Trigonometry::shallowReduceInverseFunction(e, reductionContext);
 }
 
-bool ArcSineNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool ArcSineNode::derivate(const ReductionContext& reductionContext,
+                           Symbol symbol, Expression symbolValue) {
   return ArcSine(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression ArcSineNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
+Expression ArcSineNode::unaryFunctionDifferential(
+    const ReductionContext& reductionContext) {
   return ArcSine(this).unaryFunctionDifferential(reductionContext);
 }
 
-template<typename T>
-Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+template <typename T>
+Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c,
+                                         Preferences::ComplexFormat,
+                                         Preferences::AngleUnit angleUnit) {
   std::complex<T> result;
   if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
     /* asin: [-1;1] -> R
@@ -54,39 +70,32 @@ Complex<T> ArcSineNode::computeOnComplex(const std::complex<T> c, Preferences::C
      * ]-inf-0i, -1-0i[) and choose the values on ]1+0i, +inf+0i[ to comply with
      * asin(-x) = -asin(x) and tan(asin(x)) = x/sqrt(1-x^2). */
     if (c.imag() == 0 && c.real() > 1) {
-      result.imag(-result.imag()); // other side of the cut
+      result.imag(-result.imag());  // other side of the cut
     }
   }
-  result = ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c);
-  return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
+  result =
+      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c);
+  return Complex<T>::Builder(
+      Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
 }
 
-bool ArcSine::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
-  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue, reductionContext);
+bool ArcSine::derivate(const ReductionContext& reductionContext, Symbol symbol,
+                       Expression symbolValue) {
+  Derivative::DerivateUnaryFunction(*this, symbol, symbolValue,
+                                    reductionContext);
   return true;
 }
 
-Expression ArcSine::unaryFunctionDifferential(const ReductionContext& reductionContext) {
+Expression ArcSine::unaryFunctionDifferential(
+    const ReductionContext& reductionContext) {
   return Power::Builder(
       Multiplication::Builder(
-        Trigonometry::UnitConversionFactor(
-          reductionContext.angleUnit(),
-          Preferences::AngleUnit::Radian
-          ),
-        SquareRoot::Builder(
-          Subtraction::Builder(
-            Rational::Builder(1),
-            Power::Builder(
-              childAtIndex(0).clone(),
-              Rational::Builder(2)
-              )
-            )
-          )
-        ),
-      Rational::Builder(-1)
-      );
-
+          Trigonometry::UnitConversionFactor(reductionContext.angleUnit(),
+                                             Preferences::AngleUnit::Radian),
+          SquareRoot::Builder(Subtraction::Builder(
+              Rational::Builder(1),
+              Power::Builder(childAtIndex(0).clone(), Rational::Builder(2))))),
+      Rational::Builder(-1));
 }
 
-
-}
+}  // namespace Poincare

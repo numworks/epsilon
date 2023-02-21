@@ -1,4 +1,5 @@
 #include <quiz.h>
+
 #include "execution_environment.h"
 
 QUIZ_CASE(python_kandinsky_import) {

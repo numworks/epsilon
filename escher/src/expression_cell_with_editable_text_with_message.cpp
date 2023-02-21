@@ -1,22 +1,18 @@
-#include <escher/expression_cell_with_editable_text_with_message.h>
 #include <escher/container.h>
+#include <escher/expression_cell_with_editable_text_with_message.h>
 
 namespace Escher {
 
-ExpressionCellWithEditableTextWithMessage::ExpressionCellWithEditableTextWithMessage(
-    Escher::Responder * parent,
-    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-    Escher::TextFieldDelegate * textFieldDelegate) :
-      Escher::ExpressionTableCellWithMessage(parent),
+ExpressionCellWithEditableTextWithMessage::
+    ExpressionCellWithEditableTextWithMessage(
+        Escher::Responder* parent,
+        Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+        Escher::TextFieldDelegate* textFieldDelegate)
+    : Escher::ExpressionTableCellWithMessage(parent),
       ChainedTextFieldDelegate(textFieldDelegate),
-      m_textField(this,
-                  m_textBody,
-                  sizeof(m_textBody),
-                  Escher::TextField::MaxBufferSize(),
-                  inputEventHandlerDelegate,
-                  this,
-                  KDFont::Size::Large,
-                  1.) {
+      m_textField(this, m_textBody, sizeof(m_textBody),
+                  Escher::TextField::MaxBufferSize(), inputEventHandlerDelegate,
+                  this, KDFont::Size::Large, 1.) {
   m_textBody[0] = '\0';
 }
 
@@ -24,7 +20,8 @@ void ExpressionCellWithEditableTextWithMessage::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_textField);
 }
 
-void ExpressionCellWithEditableTextWithMessage::setAccessoryText(const char * text) {
+void ExpressionCellWithEditableTextWithMessage::setAccessoryText(
+    const char* text) {
   m_textField.setText(text);
   layoutSubviews();
 }
@@ -36,17 +33,17 @@ void ExpressionCellWithEditableTextWithMessage::setHighlighted(bool highlight) {
 }
 
 void ExpressionCellWithEditableTextWithMessage::textFieldDidStartEditing(
-    Escher::AbstractTextField * textField) {
+    Escher::AbstractTextField* textField) {
   // Relayout to hide sublabel
   layoutSubviews();
   ChainedTextFieldDelegate::textFieldDidStartEditing(textField);
 }
 
 bool ExpressionCellWithEditableTextWithMessage::textFieldDidFinishEditing(
-    Escher::AbstractTextField * textField,
-    const char * text,
+    Escher::AbstractTextField* textField, const char* text,
     Ion::Events::Event event) {
-  bool success = ChainedTextFieldDelegate::textFieldDidFinishEditing(textField, text, event);
+  bool success = ChainedTextFieldDelegate::textFieldDidFinishEditing(
+      textField, text, event);
   if (success) {
     // Relayout to show sublabel
     layoutSubviews();
@@ -55,17 +52,17 @@ bool ExpressionCellWithEditableTextWithMessage::textFieldDidFinishEditing(
 }
 
 bool ExpressionCellWithEditableTextWithMessage::textFieldDidAbortEditing(
-    Escher::AbstractTextField * textField) {
+    Escher::AbstractTextField* textField) {
   // Relayout to show sublabel
   layoutSubviews();
   return ChainedTextFieldDelegate::textFieldDidAbortEditing(textField);
 }
 
 void ExpressionCellWithEditableTextWithMessage::setDelegates(
-    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-    Escher::TextFieldDelegate * textFieldDelegate) {
+    Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+    Escher::TextFieldDelegate* textFieldDelegate) {
   m_textField.setInputEventHandlerDelegate(inputEventHandlerDelegate);
   ChainedTextFieldDelegate::setTextFieldDelegate(textFieldDelegate);
 }
 
-}
+}  // namespace Escher

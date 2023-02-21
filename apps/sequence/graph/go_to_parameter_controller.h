@@ -6,13 +6,14 @@
 namespace Sequence {
 
 class GoToParameterController : public Shared::FunctionGoToParameterController {
-public:
-  using Shared::FunctionGoToParameterController::FunctionGoToParameterController;
-private:
+ public:
+  using Shared::FunctionGoToParameterController::
+      FunctionGoToParameterController;
+
+ private:
   bool setParameterAtIndex(int parameterIndex, double f) override;
 };
 
-}
+}  // namespace Sequence
 
 #endif
-

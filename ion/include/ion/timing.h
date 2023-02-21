@@ -13,7 +13,7 @@ void msleep(uint32_t ms);
  * On the device, epoch is the boot time. */
 uint64_t millis();
 
-}
-}
+}  // namespace Timing
+}  // namespace Ion
 
 #endif

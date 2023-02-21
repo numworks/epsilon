@@ -4,7 +4,7 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-void BOSDescriptor::push(Channel * c) const {
+void BOSDescriptor::push(Channel* c) const {
   Descriptor::push(c);
   c->push(m_wTotalLength);
   c->push(m_bNumDeviceCaps);
@@ -13,6 +13,6 @@ void BOSDescriptor::push(Channel * c) const {
   }
 }
 
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion

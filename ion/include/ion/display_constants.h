@@ -9,7 +9,7 @@ constexpr int Height = 240;
 constexpr int WidthInTenthOfMillimeter = 576;
 constexpr int HeightInTenthOfMillimeter = 432;
 
-}
-}
+}  // namespace Display
+}  // namespace Ion
 
 #endif

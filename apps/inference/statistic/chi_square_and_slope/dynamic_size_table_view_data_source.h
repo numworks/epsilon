@@ -6,7 +6,7 @@
 namespace Inference {
 
 class DynamicSizeTableViewDataSourceDelegate {
-public:
+ public:
   virtual void tableViewDataSourceDidChangeSize() = 0;
 };
 
@@ -15,16 +15,17 @@ public:
  * DynamicSizeTableViewDataSourceDelegate can then be notified when the size
  * changes to potentially relay out. */
 class DynamicSizeTableViewDataSource {
-public:
-  DynamicSizeTableViewDataSource(DynamicSizeTableViewDataSourceDelegate * delegate) :
-    m_numberOfRows(0),
-    m_numberOfColumns(0),
-    m_dynamicDatSourceDelegate(delegate)
-  {}
+ public:
+  DynamicSizeTableViewDataSource(
+      DynamicSizeTableViewDataSourceDelegate* delegate)
+      : m_numberOfRows(0),
+        m_numberOfColumns(0),
+        m_dynamicDatSourceDelegate(delegate) {}
 
-protected:
+ protected:
   bool didChangeSize(int numberOfRows, int numberOfColumns) {
-    if (m_numberOfRows == numberOfRows && m_numberOfColumns == numberOfColumns) {
+    if (m_numberOfRows == numberOfRows &&
+        m_numberOfColumns == numberOfColumns) {
       return false;
     }
     m_numberOfRows = numberOfRows;
@@ -37,10 +38,10 @@ protected:
   int m_numberOfRows;
   int m_numberOfColumns;
 
-private:
-  DynamicSizeTableViewDataSourceDelegate * m_dynamicDatSourceDelegate;
+ private:
+  DynamicSizeTableViewDataSourceDelegate* m_dynamicDatSourceDelegate;
 };
 
-}
+}  // namespace Inference
 
 #endif

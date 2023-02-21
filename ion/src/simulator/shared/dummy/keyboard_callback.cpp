@@ -4,9 +4,8 @@ namespace Ion {
 namespace Simulator {
 namespace Keyboard {
 
-void didScan() {
-}
+void didScan() {}
 
-}
-}
-}
+}  // namespace Keyboard
+}  // namespace Simulator
+}  // namespace Ion

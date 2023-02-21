@@ -3,17 +3,22 @@
 
 #include <apps/i18n.h>
 #include <escher/explicit_selectable_list_view_controller.h>
-#include <escher/message_table_cell_with_message_with_switch.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/message_table_cell_with_message_with_switch.h>
 #include <escher/selectable_table_view_delegate.h>
+
 #include "color_parameter_controller.h"
 #include "function_store.h"
 
 namespace Shared {
 
-class ListParameterController : public Escher::ExplicitSelectableListViewController {
-public:
-  ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::SelectableTableViewDelegate * tableDelegate = nullptr);
+class ListParameterController
+    : public Escher::ExplicitSelectableListViewController {
+ public:
+  ListParameterController(
+      Responder* parentResponder, I18n::Message functionColorMessage,
+      I18n::Message deleteFunctionMessage,
+      Escher::SelectableTableViewDelegate* tableDelegate = nullptr);
 
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("ListParameter");
@@ -23,20 +28,22 @@ public:
 
   // MemoizedListViewDataSource
   int numberOfRows() const override { return k_numberOfSharedCells; }
-  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-protected:
+  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+
+ protected:
   // Type order defines cell order
   constexpr static int k_numberOfSharedCells = 3;
-  FunctionStore * functionStore();
+  FunctionStore* functionStore();
   ExpiringPointer<Function> function();
   Escher::MessageTableCellWithMessageWithSwitch m_enableCell;
   Escher::MessageTableCellWithChevronAndMessage m_colorCell;
   Escher::MessageTableCell m_deleteCell;
   Ion::Storage::Record m_record;
-private:
+
+ private:
   ColorParameterController m_colorParameterController;
 };
 
-}
+}  // namespace Shared
 
 #endif

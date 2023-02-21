@@ -1,26 +1,27 @@
 #ifndef ESCHER_FUNCTION_CELL_H
 #define ESCHER_FUNCTION_CELL_H
 
+#include <apps/i18n.h>
 #include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>
 #include <escher/expression_view.h>
 #include <escher/message_text_view.h>
 #include <escher/metric.h>
 
-#include <apps/i18n.h>
-
 namespace Graph {
 
 class AbstractFunctionCell : public Escher::EvenOddCell {
-public:
+ public:
   AbstractFunctionCell();
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
-  Poincare::Layout layout() const override { return expressionView()->layout(); }
+  Poincare::Layout layout() const override {
+    return expressionView()->layout();
+  }
 
   // EvenOddCell
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
 
   // - Expression View
   void setTextColor(KDColor textColor) {
@@ -38,16 +39,19 @@ public:
   // - Color indicator
   void setColor(KDColor color) { m_functionColor = color; }
 
-protected:
+ protected:
   // View
-  bool displayFunctionType() const { return m_messageTextView.text() != nullptr && m_messageTextView.text()[0] != 0; }
+  bool displayFunctionType() const {
+    return m_messageTextView.text() != nullptr &&
+           m_messageTextView.text()[0] != 0;
+  }
   int numberOfSubviews() const override { return 2 + displayFunctionType(); }
-  Escher::View * subviewAtIndex(int index) override;
+  Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
-  virtual const Escher::ExpressionView * expressionView() const = 0;
-  virtual Escher::ExpressionView * expressionView() = 0;
-  virtual Escher::View * mainView() = 0;
+  virtual const Escher::ExpressionView* expressionView() const = 0;
+  virtual Escher::ExpressionView* expressionView() = 0;
+  virtual Escher::View* mainView() = 0;
 
   constexpr static KDCoordinate k_colorIndicatorThickness = 3;
   constexpr static KDCoordinate k_margin = Escher::Metric::BigCellMargin;
@@ -63,20 +67,24 @@ protected:
 };
 
 class FunctionCell : public AbstractFunctionCell {
-public:
+ public:
   FunctionCell() : m_parameterSelected(false) {}
   // - Ellipsis View
   void setParameterSelected(bool selected);
 
-private:
+ private:
   void updateSubviewsBackgroundAfterChangingState() override;
-  const Escher::ExpressionView * expressionView() const override { return &m_expressionView; }
-  Escher::ExpressionView * expressionView() override { return &m_expressionView; }
-  Escher::ExpressionView * mainView() override { return &m_expressionView; }
+  const Escher::ExpressionView* expressionView() const override {
+    return &m_expressionView;
+  }
+  Escher::ExpressionView* expressionView() override {
+    return &m_expressionView;
+  }
+  Escher::ExpressionView* mainView() override { return &m_expressionView; }
   Escher::ExpressionView m_expressionView;
   bool m_parameterSelected;
 };
 
-}
+}  // namespace Graph
 
 #endif

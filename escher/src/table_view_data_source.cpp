@@ -2,8 +2,8 @@
 
 namespace Escher {
 
-void TableViewDataSource::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-}
+void TableViewDataSource::willDisplayCellAtLocation(HighlightCell* cell, int i,
+                                                    int j) {}
 
 KDCoordinate TableViewDataSource::columnWidth(int i) {
   if (columnWidthManager()) {
@@ -33,7 +33,8 @@ KDCoordinate TableViewDataSource::rowHeight(int j) {
 
 KDCoordinate TableViewDataSource::cumulatedWidthBeforeIndex(int i) {
   if (columnWidthManager()) {
-    KDCoordinate result = columnWidthManager()->computeCumulatedSizeBeforeIndex(i, defaultColumnWidth());
+    KDCoordinate result = columnWidthManager()->computeCumulatedSizeBeforeIndex(
+        i, defaultColumnWidth());
     if (result != TableSize1DManager::k_undefinedSize) {
       assert(result >= 0);
       return result;
@@ -46,7 +47,8 @@ KDCoordinate TableViewDataSource::cumulatedWidthBeforeIndex(int i) {
 
 KDCoordinate TableViewDataSource::cumulatedHeightBeforeIndex(int j) {
   if (rowHeightManager()) {
-    KDCoordinate result = rowHeightManager()->computeCumulatedSizeBeforeIndex(j, defaultRowHeight());
+    KDCoordinate result = rowHeightManager()->computeCumulatedSizeBeforeIndex(
+        j, defaultRowHeight());
     if (result != TableSize1DManager::k_undefinedSize) {
       assert(result >= 0);
       return result;
@@ -77,7 +79,8 @@ KDCoordinate TableViewDataSource::nonMemoizedCumulatedHeightBeforeIndex(int j) {
 
 int TableViewDataSource::indexAfterCumulatedWidth(KDCoordinate offsetX) {
   if (columnWidthManager()) {
-    int result = columnWidthManager()->computeIndexAfterCumulatedSize(offsetX, defaultColumnWidth());
+    int result = columnWidthManager()->computeIndexAfterCumulatedSize(
+        offsetX, defaultColumnWidth());
     if (result != TableSize1DManager::k_undefinedSize) {
       return result;
     }
@@ -87,7 +90,8 @@ int TableViewDataSource::indexAfterCumulatedWidth(KDCoordinate offsetX) {
 
 int TableViewDataSource::indexAfterCumulatedHeight(KDCoordinate offsetY) {
   if (rowHeightManager()) {
-    int result = rowHeightManager()->computeIndexAfterCumulatedSize(offsetY, defaultRowHeight());
+    int result = rowHeightManager()->computeIndexAfterCumulatedSize(
+        offsetY, defaultRowHeight());
     if (result != TableSize1DManager::k_undefinedSize) {
       return result;
     }
@@ -95,7 +99,8 @@ int TableViewDataSource::indexAfterCumulatedHeight(KDCoordinate offsetY) {
   return nonMemoizedIndexAfterCumulatedHeight(offsetY);
 }
 
-int TableViewDataSource::nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) {
+int TableViewDataSource::nonMemoizedIndexAfterCumulatedWidth(
+    KDCoordinate offsetX) {
   int nColumns = numberOfColumns();
   KDCoordinate cumulatedWidth = 0;
   for (int i = 0; i < nColumns; i++) {
@@ -107,7 +112,8 @@ int TableViewDataSource::nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offset
   return nColumns;
 }
 
-int TableViewDataSource::nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) {
+int TableViewDataSource::nonMemoizedIndexAfterCumulatedHeight(
+    KDCoordinate offsetY) {
   int nRows = numberOfRows();
   KDCoordinate cumulatedHeight = 0;
   for (int i = 0; i < nRows; i++) {
@@ -137,4 +143,4 @@ void TableViewDataSource::lockMemoization(bool state) {
   }
 }
 
-}
+}  // namespace Escher

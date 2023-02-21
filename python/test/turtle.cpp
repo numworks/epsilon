@@ -1,4 +1,5 @@
 #include <quiz.h>
+
 #include "execution_environment.h"
 
 // TODO: to be completed
@@ -33,6 +34,6 @@ QUIZ_CASE(python_turtle_circle) {
   assert_command_execution_succeeds(env, "goto(0,0)");
   assert_command_execution_succeeds(env, "circle(28)");
   // FIXME: this is actually not true
-  //assert_command_execution_succeeds(env, "position()", "(0.0, 0.0)\n");
+  // assert_command_execution_succeeds(env, "position()", "(0.0, 0.0)\n");
   deinit_environment();
 }

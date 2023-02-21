@@ -8,36 +8,38 @@
 namespace HardwareTest {
 
 class BatteryTestController : public Escher::ViewController {
-public:
+ public:
   using Escher::ViewController::ViewController;
-  Escher::View * view() override;
+  Escher::View* view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-private:
+
+ private:
   class ContentView : public Escher::SolidColorView {
-  public:
+   public:
     ContentView();
-    Escher::BufferTextView * batteryStateTextView();
-    Escher::BufferTextView * batteryLevelTextView();
-    Escher::BufferTextView * batteryChargingTextView();
+    Escher::BufferTextView* batteryStateTextView();
+    Escher::BufferTextView* batteryLevelTextView();
+    Escher::BufferTextView* batteryChargingTextView();
     constexpr static int k_maxNumberOfCharacters = 20;
     void setColor(KDColor color) override;
-  private:
+
+   private:
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
-    Escher::View * subviewAtIndex(int index) override;
+    Escher::View* subviewAtIndex(int index) override;
     constexpr static int k_margin = 4;
     Escher::BufferTextView m_batteryStateView;
     Escher::BufferTextView m_batteryLevelView;
     Escher::BufferTextView m_batteryChargingView;
   };
-  constexpr static const char * k_batteryOKText = "BATTERY: OK";
-  constexpr static const char * k_batteryNeedChargingText = "BATTERY: NEED RECHARGE";
+  constexpr static const char* k_batteryOKText = "BATTERY: OK";
+  constexpr static const char* k_batteryNeedChargingText =
+      "BATTERY: NEED RECHARGE";
   void updateBatteryState(float batteryLevel, bool batteryCharging);
   ContentView m_view;
 };
 
-}
+}  // namespace HardwareTest
 
 #endif
-

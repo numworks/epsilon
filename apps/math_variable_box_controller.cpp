@@ -1,31 +1,33 @@
 #include "math_variable_box_controller.h"
-#include "shared/continuous_function.h"
-#include "shared/input_event_handler_delegate_app.h"
-#include "shared/global_context.h"
-#include <escher/metric.h>
+
+#include <apps/apps_container.h>
+#include <apps/shared/sequence.h>
+#include <assert.h>
 #include <escher/message_table_cell_with_message.h>
+#include <escher/metric.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/expression.h>
 #include <poincare/layout_helper.h>
 #include <poincare/preferences.h>
-#include <assert.h>
+
 #include <algorithm>
-#include <apps/shared/sequence.h>
-#include <apps/apps_container.h>
+
 #include "global_preferences.h"
+#include "shared/continuous_function.h"
+#include "shared/global_context.h"
+#include "shared/input_event_handler_delegate_app.h"
 
 using namespace Poincare;
 using namespace Shared;
 using namespace Ion;
 using namespace Escher;
 
-MathVariableBoxController::MathVariableBoxController() :
-  NestedMenuController(nullptr, I18n::Message::Variables),
-  m_currentPage(Page::RootMenu),
-  m_defineVariableCell(I18n::Message::DefineVariable),
-  m_firstMemoizedLayoutIndex(0)
-{
+MathVariableBoxController::MathVariableBoxController()
+    : NestedMenuController(nullptr, I18n::Message::Variables),
+      m_currentPage(Page::RootMenu),
+      m_defineVariableCell(I18n::Message::DefineVariable),
+      m_firstMemoizedLayoutIndex(0) {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setParentResponder(&m_selectableTableView);
     m_leafCells[i].setSubLabelFont(k_subLabelFont);
@@ -36,11 +38,12 @@ void MathVariableBoxController::viewDidDisappear() {
   NestedMenuController::viewDidDisappear();
 
   /* NestedMenuController::viewDidDisappear might need cell heights, which would
-   * use the MathVariableBoxController cell heights memoization. We thus reset the
-   * MathVariableBoxController layouts only after calling the parent's
+   * use the MathVariableBoxController cell heights memoization. We thus reset
+   * the MathVariableBoxController layouts only after calling the parent's
    * viewDidDisappear. */
 
-  // Tidy the layouts displayed in the MathVariableBoxController to clean TreePool
+  // Tidy the layouts displayed in the MathVariableBoxController to clean
+  // TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setLayout(Layout());
     m_leafCells[i].setSubLabelLayout(Layout());
@@ -60,11 +63,15 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
     int rowIndex = selectedRow();
     if (destroyRecordAtRowIndex(rowIndex)) {
-      if (Container::activeApp()->modalViewController()->currentModalViewController() != static_cast<const ViewController *>(this)) {
+      if (Container::activeApp()
+              ->modalViewController()
+              ->currentModalViewController() !=
+          static_cast<const ViewController *>(this)) {
         // The varbox was dismissed by prepareForIntrusiveStorageChange
         return true;
       }
-      int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
+      int newSelectedRow =
+          rowIndex >= numberOfRows() ? numberOfRows() - 1 : rowIndex;
       selectCellAtLocation(selectedColumn(), newSelectedRow);
       resetMemoization();
       m_selectableTableView.reloadData();
@@ -76,7 +83,9 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
       // TODO : The record deletion has been denied. Add a warning.
     }
   }
-  if (m_currentPage == Page::RootMenu && m_defineVariableCell.ShouldEnterOnEvent(event) && selectedRow() == defineVariableCellIndex()) {
+  if (m_currentPage == Page::RootMenu &&
+      m_defineVariableCell.ShouldEnterOnEvent(event) &&
+      selectedRow() == defineVariableCellIndex()) {
     Container::activeApp()->modalViewController()->dismissModal();
     sender()->handleStoreEvent();
     return true;
@@ -89,12 +98,14 @@ int MathVariableBoxController::numberOfRows() const {
 }
 
 static int NumberOfFunctions() {
-  return Storage::FileSystem::sharedFileSystem->numberOfRecordsStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Ion::Storage::funcExtension);
+  return Storage::FileSystem::sharedFileSystem->numberOfRecordsStartingWithout(
+      ContinuousFunction::k_unnamedRecordFirstChar,
+      Ion::Storage::funcExtension);
 }
 
 int MathVariableBoxController::numberOfElements(Page page) const {
   if (page == Page::RootMenu) {
-    int numberOfRows = 1; // Define a variable
+    int numberOfRows = 1;  // Define a variable
     for (int i = 1; i < static_cast<int>(Page::NumberOfPages); i++) {
       Page p = static_cast<Page>(i);
       assert(p != Page::RootMenu);
@@ -103,9 +114,12 @@ int MathVariableBoxController::numberOfElements(Page page) const {
     return numberOfRows;
   }
   if (page == Page::Function) {
-    return NumberOfFunctions() + Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Storage::regExtension);
+    return NumberOfFunctions() +
+           Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+               Storage::regExtension);
   }
-  return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(Extension(page));
+  return Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+      Extension(page));
 }
 
 int MathVariableBoxController::reusableCellCount(int type) {
@@ -120,34 +134,40 @@ int MathVariableBoxController::reusableCellCount(int type) {
   return k_numberOfMenuRows;
 }
 
-void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void MathVariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
+                                                        int index) {
   if (m_currentPage == Page::RootMenu) {
     if (index == defineVariableCellIndex()) {
       return;
     }
-    MessageTableCellWithChevron * myCell = static_cast<MessageTableCellWithChevron *>(cell);
+    MessageTableCellWithChevron *myCell =
+        static_cast<MessageTableCellWithChevron *>(cell);
     myCell->setMessage(nodeLabel(pageAtIndex(index)));
     myCell->reloadCell();
     return;
   }
-  ExpressionTableCellWithExpression * myCell = static_cast<ExpressionTableCellWithExpression *>(cell);
+  ExpressionTableCellWithExpression *myCell =
+      static_cast<ExpressionTableCellWithExpression *>(cell);
   Storage::Record record = recordAtIndex(index);
   char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
   Layout symbolLayout;
-  if (m_currentPage == Page::Expression || m_currentPage == Page::List || m_currentPage == Page::Matrix) {
-    static_assert(Shared::Function::k_maxNameWithArgumentSize > Poincare::SymbolAbstract::k_maxNameSize, "Forgot argument's size?");
-    symbolLength = SymbolAbstract::TruncateExtension(symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
+  if (m_currentPage == Page::Expression || m_currentPage == Page::List ||
+      m_currentPage == Page::Matrix) {
+    static_assert(Shared::Function::k_maxNameWithArgumentSize >
+                      Poincare::SymbolAbstract::k_maxNameSize,
+                  "Forgot argument's size?");
+    symbolLength = SymbolAbstract::TruncateExtension(
+        symbolName, record.fullName(), SymbolAbstract::k_maxNameSize);
   } else if (m_currentPage == Page::Function) {
     if (record.hasExtension(Storage::funcExtension)) {
       ContinuousFunction f(record);
       symbolLength = f.nameWithArgument(
-          symbolName,
-          Shared::Function::k_maxNameWithArgumentSize
-      );
+          symbolName, Shared::Function::k_maxNameWithArgumentSize);
     } else {
       assert(record.hasExtension(Storage::regExtension));
-      strlcpy(symbolName, record.name().baseName, record.name().baseNameLength + 1);
+      strlcpy(symbolName, record.name().baseName,
+              record.name().baseNameLength + 1);
       symbolLength = strlen(symbolName);
       symbolName[symbolLength] = '(';
       symbolName[symbolLength + 1] = 'x';
@@ -160,9 +180,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
     assert(m_currentPage == Page::Sequence);
     Shared::Sequence u(record);
     symbolLength = u.nameWithArgumentAndType(
-        symbolName,
-        Shared::Sequence::k_maxNameWithArgumentSize
-    );
+        symbolName, Shared::Sequence::k_maxNameWithArgumentSize);
     symbolLayout = u.definitionName();
   }
   if (symbolLayout.isUninitialized()) {
@@ -197,7 +215,7 @@ int MathVariableBoxController::typeAtIndex(int index) const {
   return k_leafCellType;
 }
 
-HighlightCell * MathVariableBoxController::reusableCell(int index, int type) {
+HighlightCell *MathVariableBoxController::reusableCell(int index, int type) {
   assert(index >= 0);
   if (type == k_defineVariableCellType) {
     return &m_defineVariableCell;
@@ -208,12 +226,14 @@ HighlightCell * MathVariableBoxController::reusableCell(int index, int type) {
   return nodeCellAtIndex(index);
 }
 
-ExpressionTableCellWithExpression * MathVariableBoxController::leafCellAtIndex(int index) {
+ExpressionTableCellWithExpression *MathVariableBoxController::leafCellAtIndex(
+    int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron * MathVariableBoxController::nodeCellAtIndex(int index) {
+MessageTableCellWithChevron *MathVariableBoxController::nodeCellAtIndex(
+    int index) {
   assert(index >= 0 && index < k_numberOfMenuRows);
   return &m_nodeCells[index];
 }
@@ -222,9 +242,11 @@ I18n::Message MathVariableBoxController::subTitle() {
   return nodeLabel(m_currentPage);
 }
 
-MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index) {
+MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(
+    int index) {
   assert(index >= 0 && index < numberOfElements(Page::RootMenu));
-  for (int pageId = static_cast<int>(Page::Expression); pageId < static_cast<int>(Page::NumberOfPages); pageId++) {
+  for (int pageId = static_cast<int>(Page::Expression);
+       pageId < static_cast<int>(Page::NumberOfPages); pageId++) {
     if (numberOfElements(static_cast<Page>(pageId)) > 0) {
       if (index == 0) {
         return static_cast<Page>(pageId);
@@ -262,9 +284,11 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
 
   // Get the name text to insert
   Storage::Record record = recordAtIndex(selectedRow);
-  constexpr size_t nameToHandleMaxSize = Shared::Function::k_maxNameWithArgumentSize;
+  constexpr size_t nameToHandleMaxSize =
+      Shared::Function::k_maxNameWithArgumentSize;
   char nameToHandle[nameToHandleMaxSize];
-  size_t nameLength = SymbolAbstract::TruncateExtension(nameToHandle, record.fullName(), nameToHandleMaxSize);
+  size_t nameLength = SymbolAbstract::TruncateExtension(
+      nameToHandle, record.fullName(), nameToHandleMaxSize);
 
   if (m_currentPage == Page::Function || m_currentPage == Page::Sequence) {
     // Add parentheses to a function name, and braces to a sequence
@@ -272,14 +296,24 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
     char closingChar = m_currentPage == Page::Function ? ')' : '}';
     assert(nameLength < nameToHandleMaxSize);
     if (m_currentPage == Page::Sequence) {
-      nameLength += UTF8Decoder::CodePointToChars(UCodePointSystem, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+      nameLength += UTF8Decoder::CodePointToChars(
+          UCodePointSystem, nameToHandle + nameLength,
+          nameToHandleMaxSize - nameLength - 1);
     }
-    nameLength += UTF8Decoder::CodePointToChars(openingChar, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
-    nameLength += UTF8Decoder::CodePointToChars(UCodePointEmpty, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+    nameLength +=
+        UTF8Decoder::CodePointToChars(openingChar, nameToHandle + nameLength,
+                                      nameToHandleMaxSize - nameLength - 1);
+    nameLength += UTF8Decoder::CodePointToChars(
+        UCodePointEmpty, nameToHandle + nameLength,
+        nameToHandleMaxSize - nameLength - 1);
     if (m_currentPage == Page::Sequence) {
-      nameLength += UTF8Decoder::CodePointToChars(UCodePointSystem, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+      nameLength += UTF8Decoder::CodePointToChars(
+          UCodePointSystem, nameToHandle + nameLength,
+          nameToHandleMaxSize - nameLength - 1);
     }
-    nameLength += UTF8Decoder::CodePointToChars(closingChar, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+    nameLength +=
+        UTF8Decoder::CodePointToChars(closingChar, nameToHandle + nameLength,
+                                      nameToHandleMaxSize - nameLength - 1);
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength] = 0;
   }
@@ -308,21 +342,31 @@ I18n::Message MathVariableBoxController::nodeLabel(Page page) {
   }
 }
 
-Layout MathVariableBoxController::expressionLayoutForRecord(Storage::Record record, int index) {
+Layout MathVariableBoxController::expressionLayoutForRecord(
+    Storage::Record record, int index) {
   assert(m_currentPage != Page::RootMenu);
   assert(index >= 0);
-  if (index >= m_firstMemoizedLayoutIndex+k_maxNumberOfDisplayedRows || index < m_firstMemoizedLayoutIndex) {
+  if (index >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows ||
+      index < m_firstMemoizedLayoutIndex) {
     // Change range of layout memoization
-    int deltaIndex = index >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows ? index - k_maxNumberOfDisplayedRows + 1 - m_firstMemoizedLayoutIndex : index - m_firstMemoizedLayoutIndex;
+    int deltaIndex =
+        index >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows
+            ? index - k_maxNumberOfDisplayedRows + 1 -
+                  m_firstMemoizedLayoutIndex
+            : index - m_firstMemoizedLayoutIndex;
     for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
       int j = deltaIndex + i;
-      m_layouts[i] = (j >= m_firstMemoizedLayoutIndex && j < k_maxNumberOfDisplayedRows) ? m_layouts[j] : Layout();
+      m_layouts[i] =
+          (j >= m_firstMemoizedLayoutIndex && j < k_maxNumberOfDisplayedRows)
+              ? m_layouts[j]
+              : Layout();
     }
     m_firstMemoizedLayoutIndex += deltaIndex;
     assert(m_firstMemoizedLayoutIndex >= 0);
   }
-  assert(index >= m_firstMemoizedLayoutIndex && index < m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows);
-  if (m_layouts[index-m_firstMemoizedLayoutIndex].isUninitialized()) {
+  assert(index >= m_firstMemoizedLayoutIndex &&
+         index < m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows);
+  if (m_layouts[index - m_firstMemoizedLayoutIndex].isUninitialized()) {
     /* Creating the layout of a very long variable might throw a pool exception.
      * We want to catch it and return a dummy layout instead, otherwise the user
      * won't be able to open the variable box again, until she deletes the
@@ -333,24 +377,24 @@ Layout MathVariableBoxController::expressionLayoutForRecord(Storage::Record reco
     if (ExceptionRun(ecp)) {
       result = GlobalContext::LayoutForRecord(record);
     }
-    m_layouts[index-m_firstMemoizedLayoutIndex] = result;
+    m_layouts[index - m_firstMemoizedLayoutIndex] = result;
   }
-  return m_layouts[index-m_firstMemoizedLayoutIndex];
+  return m_layouts[index - m_firstMemoizedLayoutIndex];
 }
 
-const char * MathVariableBoxController::Extension(Page page) {
+const char *MathVariableBoxController::Extension(Page page) {
   // Function contains two extensions (func and reg)
   assert(page != Page::RootMenu && page != Page::Function);
   switch (page) {
-  case Page::Expression:
-    return Ion::Storage::expExtension;
-  case Page::List:
-    return Ion::Storage::lisExtension;
-  case Page::Matrix:
-    return Ion::Storage::matExtension;
-  default:
-    assert(page == Page::Sequence);
-    return Ion::Storage::seqExtension;
+    case Page::Expression:
+      return Ion::Storage::expExtension;
+    case Page::List:
+      return Ion::Storage::lisExtension;
+    case Page::Matrix:
+      return Ion::Storage::matExtension;
+    default:
+      assert(page == Page::Sequence);
+      return Ion::Storage::seqExtension;
   }
 }
 
@@ -359,12 +403,18 @@ Storage::Record MathVariableBoxController::recordAtIndex(int rowIndex) {
   Storage::Record record;
   if (m_currentPage == Page::Function) {
     if (rowIndex < NumberOfFunctions()) {
-      record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndexStartingWithout(ContinuousFunction::k_unnamedRecordFirstChar, Storage::funcExtension, rowIndex);
+      record = Storage::FileSystem::sharedFileSystem
+                   ->recordWithExtensionAtIndexStartingWithout(
+                       ContinuousFunction::k_unnamedRecordFirstChar,
+                       Storage::funcExtension, rowIndex);
     } else {
-      record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(Storage::regExtension, rowIndex - NumberOfFunctions());
+      record =
+          Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
+              Storage::regExtension, rowIndex - NumberOfFunctions());
     }
   } else {
-    record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(Extension(m_currentPage), rowIndex);
+    record = Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
+        Extension(m_currentPage), rowIndex);
   }
   assert(!record.isNull());
   return record;
@@ -383,7 +433,9 @@ bool MathVariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
     if (record.hasExtension(Ion::Storage::regExtension)) {
       return false;
     }
-    Shared::InputEventHandlerDelegateApp * app = static_cast<Shared::InputEventHandlerDelegateApp*>(Container::activeApp());
+    Shared::InputEventHandlerDelegateApp *app =
+        static_cast<Shared::InputEventHandlerDelegateApp *>(
+            Container::activeApp());
     app->prepareForIntrusiveStorageChange();
     bool canDestroy = record.tryToDestroy();
     app->concludeIntrusiveStorageChange();
@@ -396,8 +448,9 @@ bool MathVariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
     // The deleted row is after the memoization
     return true;
   }
-  for (int i = std::max(0, rowIndex - m_firstMemoizedLayoutIndex); i < k_maxNumberOfDisplayedRows - 1; i++) {
-    m_layouts[i] = m_layouts[i+1];
+  for (int i = std::max(0, rowIndex - m_firstMemoizedLayoutIndex);
+       i < k_maxNumberOfDisplayedRows - 1; i++) {
+    m_layouts[i] = m_layouts[i + 1];
   }
   m_layouts[k_maxNumberOfDisplayedRows - 1] = Layout();
   return true;

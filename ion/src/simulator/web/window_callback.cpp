@@ -1,5 +1,6 @@
-#include "../shared/window.h"
 #include <emscripten.h>
+
+#include "../shared/window.h"
 
 namespace Ion {
 namespace Simulator {
@@ -13,6 +14,6 @@ void didRefresh() {
   // clang-format on
 }
 
-}
-}
-}
+}  // namespace Window
+}  // namespace Simulator
+}  // namespace Ion

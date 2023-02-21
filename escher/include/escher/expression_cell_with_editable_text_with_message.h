@@ -9,19 +9,20 @@
 
 namespace Escher {
 
-class ExpressionCellWithEditableTextWithMessage : public Escher::ExpressionTableCellWithMessage,
-                                                  public Escher::ChainedTextFieldDelegate {
-public:
+class ExpressionCellWithEditableTextWithMessage
+    : public Escher::ExpressionTableCellWithMessage,
+      public Escher::ChainedTextFieldDelegate {
+ public:
   ExpressionCellWithEditableTextWithMessage(
-      Escher::Responder * parent = nullptr,
-      Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,
-      Escher::TextFieldDelegate * textFieldDelegate = nullptr);
+      Escher::Responder* parent = nullptr,
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
+      Escher::TextFieldDelegate* textFieldDelegate = nullptr);
 
   void didBecomeFirstResponder() override;
-  Responder * responder() override { return this; }
+  Responder* responder() override { return this; }
 
-  const View * accessoryView() const override { return &m_textField; }
-  Escher::TextField * textField() { return &m_textField; }
+  const View* accessoryView() const override { return &m_textField; }
+  Escher::TextField* textField() { return &m_textField; }
 
   bool giveAccessoryAllWidth() const override { return true; }
   bool forceAlignLabelAndAccessory() const override { return true; }
@@ -33,24 +34,27 @@ public:
                KDFont::GlyphWidth(m_textField.font()) +
            Escher::TextCursorView::k_width;
   }
-  void setAccessoryText(const char * text);
+  void setAccessoryText(const char* text);
   void setHighlighted(bool highlight) override;
-  bool shouldHideSublabel() override { return singleRowMode() && m_textField.isEditing(); }
+  bool shouldHideSublabel() override {
+    return singleRowMode() && m_textField.isEditing();
+  }
 
-  void textFieldDidStartEditing(Escher::AbstractTextField * textField) override;
-  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField,
-                                 const char * text,
+  void textFieldDidStartEditing(Escher::AbstractTextField* textField) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
+                                 const char* text,
                                  Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
+  bool textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
-  void setDelegates(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-                    Escher::TextFieldDelegate * textFieldDelegate);
+  void setDelegates(
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+      Escher::TextFieldDelegate* textFieldDelegate);
 
-private:
+ private:
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
   Escher::TextField m_textField;
 };
 
-}
+}  // namespace Escher
 
 #endif

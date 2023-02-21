@@ -15,44 +15,50 @@ namespace Statistics {
  * - Stack controller
  */
 class GraphButtonRowDelegate : public Escher::ButtonRowDelegate {
-public:
-  GraphButtonRowDelegate(Escher::ButtonRowController * header,
-                         Escher::StackViewController * stackViewController,
-                         Escher::Responder * typeButtonParentResponder,
-                         Escher::ViewController * typeViewController) :
-      Escher::ButtonRowDelegate(header, nullptr),
-      m_stackViewController(stackViewController),
-      m_typeViewController(typeViewController),
-      m_typeButton(typeButtonParentResponder, I18n::Message::StatisticsGraphType,
-                   Escher::Invocation::Builder<GraphButtonRowDelegate>(
-                     [](GraphButtonRowDelegate * delegate, void * sender) {
-                         delegate->pushTypeController();
-                         return true;
-                       }, this), KDFont::Size::Small)
-  {}
+ public:
+  GraphButtonRowDelegate(Escher::ButtonRowController *header,
+                         Escher::StackViewController *stackViewController,
+                         Escher::Responder *typeButtonParentResponder,
+                         Escher::ViewController *typeViewController)
+      : Escher::ButtonRowDelegate(header, nullptr),
+        m_stackViewController(stackViewController),
+        m_typeViewController(typeViewController),
+        m_typeButton(typeButtonParentResponder,
+                     I18n::Message::StatisticsGraphType,
+                     Escher::Invocation::Builder<GraphButtonRowDelegate>(
+                         [](GraphButtonRowDelegate *delegate, void *sender) {
+                           delegate->pushTypeController();
+                           return true;
+                         },
+                         this),
+                     KDFont::Size::Small) {}
 
-  Escher::StackViewController * stackController() {
+  Escher::StackViewController *stackController() {
     return m_stackViewController;
   }
 
   // ButtonRowDelegate
-  int numberOfButtons(Escher::ButtonRowController::Position position) const override {
+  int numberOfButtons(
+      Escher::ButtonRowController::Position position) const override {
     assert(position == Escher::ButtonRowController::Position::Top);
     return 1;
   }
-  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
-    assert(index == 0 && position == Escher::ButtonRowController::Position::Top);
+  Escher::AbstractButtonCell *buttonAtIndex(
+      int index,
+      Escher::ButtonRowController::Position position) const override {
+    assert(index == 0 &&
+           position == Escher::ButtonRowController::Position::Top);
     return const_cast<Escher::AbstractButtonCell *>(&m_typeButton);
   }
 
-private:
+ private:
   void pushTypeController() { stackController()->push(m_typeViewController); }
 
-  Escher::StackViewController * m_stackViewController;
-  Escher::ViewController * m_typeViewController;
+  Escher::StackViewController *m_stackViewController;
+  Escher::ViewController *m_typeViewController;
   Escher::AbstractButtonCell m_typeButton;
 };
 
-}
+}  // namespace Statistics
 
 #endif

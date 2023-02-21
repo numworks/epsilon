@@ -10,7 +10,7 @@ namespace Ion {
 namespace Events {
 
 class Event {
-public:
+ public:
   constexpr static int k_pageSize = Keyboard::NumberOfKeys;
   constexpr static int k_plainEventsOffset = 0;
   constexpr static int k_shiftEventsOffset = 1 * k_pageSize;
@@ -18,10 +18,18 @@ public:
   constexpr static int k_shiftAlphaEventsOffset = 3 * k_pageSize;
   constexpr static int k_specialEventsOffset = 4 * k_pageSize;
   constexpr static Event PlainKey(Keyboard::Key k) { return Event((int)k); }
-  constexpr static Event ShiftKey(Keyboard::Key k) { return Event(k_shiftEventsOffset+(int)k); }
-  constexpr static Event AlphaKey(Keyboard::Key k) { return Event(k_alphaEventsOffset+(int)k); }
-  constexpr static Event ShiftAlphaKey(Keyboard::Key k) { return Event(k_shiftAlphaEventsOffset+(int)k); }
-  constexpr static Event Special(int i) { return Event(k_specialEventsOffset+i); }
+  constexpr static Event ShiftKey(Keyboard::Key k) {
+    return Event(k_shiftEventsOffset + (int)k);
+  }
+  constexpr static Event AlphaKey(Keyboard::Key k) {
+    return Event(k_alphaEventsOffset + (int)k);
+  }
+  constexpr static Event ShiftAlphaKey(Keyboard::Key k) {
+    return Event(k_shiftAlphaEventsOffset + (int)k);
+  }
+  constexpr static Event Special(int i) {
+    return Event(k_specialEventsOffset + i);
+  }
 
   // Return Ion::Event::None by default
   constexpr Event() : m_id(k_specialEventsOffset) {}
@@ -30,8 +38,8 @@ public:
 
   Event(Keyboard::Key key, bool shift, bool alpha, bool lock);
 
-  bool operator==(const Event & other) const { return (m_id == other.m_id); }
-  bool operator!=(const Event & other) const { return (m_id != other.m_id); }
+  bool operator==(const Event& other) const { return (m_id == other.m_id); }
+  bool operator!=(const Event& other) const { return (m_id != other.m_id); }
   bool isKeyboardEvent() const { return m_id < k_specialEventsOffset; }
   bool isSpecialEvent() const { return m_id >= k_specialEventsOffset; }
   bool isMoveEvent() const;
@@ -40,31 +48,34 @@ public:
   bool isRepeatable() const;
 
   // Return the length of the copied text (and not the size)
-  const char * text() const;
+  const char* text() const;
 #if DEBUG
-  const char * name() const;
+  const char* name() const;
 #endif
 
-private:
-  const char * defaultText() const;
+ private:
+  const char* defaultText() const;
   uint8_t m_id;
 };
 
 #if ION_EVENTS_JOURNAL
 class Journal {
-public:
+ public:
   virtual void pushEvent(Event e) = 0;
   virtual Event popEvent() = 0;
   virtual bool isEmpty() = 0;
-  const char * startingLanguage() const { return m_startingLanguage; }
-  void setStartingLanguage(const char * language) { strlcpy(m_startingLanguage, language, k_languageSize); }
+  const char* startingLanguage() const { return m_startingLanguage; }
+  void setStartingLanguage(const char* language) {
+    strlcpy(m_startingLanguage, language, k_languageSize);
+  }
   constexpr static int k_languageSize = 3;
-private:
+
+ private:
   char m_startingLanguage[k_languageSize] = {0};
 };
 
-void replayFrom(Journal * l);
-void logTo(Journal * l);
+void replayFrom(Journal* l);
+void logTo(Journal* l);
 #endif
 
 enum class ShiftAlphaStatus : uint8_t {
@@ -77,17 +88,15 @@ enum class ShiftAlphaStatus : uint8_t {
   NumberOfStatus
 };
 
-Event getEvent(int * timeout);
-size_t copyText(uint8_t eventId, char * buffer, size_t bufferSize);
+Event getEvent(int* timeout);
+size_t copyText(uint8_t eventId, char* buffer, size_t bufferSize);
 bool isDefined(uint8_t eventId);
 ShiftAlphaStatus shiftAlphaStatus();
 void setShiftAlphaStatus(ShiftAlphaStatus s);
 void setSpinner(bool spinner);
 int repetitionFactor();
 int longPressCounter();
-inline bool isRepeating() {
-  return longPressCounter() > 0;
-}
+inline bool isRepeating() { return longPressCounter() > 0; }
 inline int longPressFactor() {
   // The long press factor is increased by 4 every 20 loops in getEvent(2 sec)
   return (longPressCounter() / 20) * 4 + 1;
@@ -95,22 +104,22 @@ inline int longPressFactor() {
 
 // Plain
 
-constexpr Event Left  = Event::PlainKey(Keyboard::Key::Left);
-constexpr Event Up    = Event::PlainKey(Keyboard::Key::Up);
-constexpr Event Down  = Event::PlainKey(Keyboard::Key::Down);
+constexpr Event Left = Event::PlainKey(Keyboard::Key::Left);
+constexpr Event Up = Event::PlainKey(Keyboard::Key::Up);
+constexpr Event Down = Event::PlainKey(Keyboard::Key::Down);
 constexpr Event Right = Event::PlainKey(Keyboard::Key::Right);
-constexpr Event OK    = Event::PlainKey(Keyboard::Key::OK);
-constexpr Event Back  = Event::PlainKey(Keyboard::Key::Back);
+constexpr Event OK = Event::PlainKey(Keyboard::Key::OK);
+constexpr Event Back = Event::PlainKey(Keyboard::Key::Back);
 
 /* The Home event is only used on simulators, as they cannot handle preemption.
  */
-constexpr Event Home  = Event::PlainKey(Keyboard::Key::Home);
+constexpr Event Home = Event::PlainKey(Keyboard::Key::Home);
 constexpr Event OnOff = Event::PlainKey(Keyboard::Key::OnOff);
 
 constexpr Event Shift = Event::PlainKey(Keyboard::Key::Shift);
 constexpr Event Alpha = Event::PlainKey(Keyboard::Key::Alpha);
-constexpr Event XNT   = Event::PlainKey(Keyboard::Key::XNT);
-constexpr Event Var   = Event::PlainKey(Keyboard::Key::Var);
+constexpr Event XNT = Event::PlainKey(Keyboard::Key::XNT);
+constexpr Event Var = Event::PlainKey(Keyboard::Key::Var);
 constexpr Event Toolbox = Event::PlainKey(Keyboard::Key::Toolbox);
 constexpr Event Backspace = Event::PlainKey(Keyboard::Key::Backspace);
 
@@ -131,8 +140,10 @@ constexpr Event Square = Event::PlainKey(Keyboard::Key::Square);
 constexpr Event Seven = Event::PlainKey(Keyboard::Key::Seven);
 constexpr Event Eight = Event::PlainKey(Keyboard::Key::Eight);
 constexpr Event Nine = Event::PlainKey(Keyboard::Key::Nine);
-constexpr Event LeftParenthesis = Event::PlainKey(Keyboard::Key::LeftParenthesis);
-constexpr Event RightParenthesis = Event::PlainKey(Keyboard::Key::RightParenthesis);
+constexpr Event LeftParenthesis =
+    Event::PlainKey(Keyboard::Key::LeftParenthesis);
+constexpr Event RightParenthesis =
+    Event::PlainKey(Keyboard::Key::RightParenthesis);
 
 constexpr Event Four = Event::PlainKey(Keyboard::Key::Four);
 constexpr Event Five = Event::PlainKey(Keyboard::Key::Five);
@@ -140,7 +151,7 @@ constexpr Event Six = Event::PlainKey(Keyboard::Key::Six);
 constexpr Event Multiplication = Event::PlainKey(Keyboard::Key::Multiplication);
 constexpr Event Division = Event::PlainKey(Keyboard::Key::Division);
 
-constexpr Event One  = Event::PlainKey(Keyboard::Key::One);
+constexpr Event One = Event::PlainKey(Keyboard::Key::One);
 constexpr Event Two = Event::PlainKey(Keyboard::Key::Two);
 constexpr Event Three = Event::PlainKey(Keyboard::Key::Three);
 constexpr Event Plus = Event::PlainKey(Keyboard::Key::Plus);
@@ -154,10 +165,10 @@ constexpr Event EXE = Event::PlainKey(Keyboard::Key::EXE);
 
 // Shift
 
-constexpr Event ShiftLeft  = Event::ShiftKey(Keyboard::Key::Left);
+constexpr Event ShiftLeft = Event::ShiftKey(Keyboard::Key::Left);
 constexpr Event ShiftRight = Event::ShiftKey(Keyboard::Key::Right);
-constexpr Event ShiftUp    = Event::ShiftKey(Keyboard::Key::Up);
-constexpr Event ShiftDown  = Event::ShiftKey(Keyboard::Key::Down);
+constexpr Event ShiftUp = Event::ShiftKey(Keyboard::Key::Up);
+constexpr Event ShiftDown = Event::ShiftKey(Keyboard::Key::Down);
 
 constexpr Event AlphaLock = Event::ShiftKey(Keyboard::Key::Alpha);
 constexpr Event Cut = Event::ShiftKey(Keyboard::Key::XNT);
@@ -269,32 +280,24 @@ constexpr Event ExternalText = Event::Special(6);
 constexpr Event Idle = Event::Special(7);
 
 inline bool Event::isMoveEvent() const {
-  return *this == Left
-      || *this == Right
-      || *this == Up
-      || *this == Down;
+  return *this == Left || *this == Right || *this == Up || *this == Down;
 }
 
 inline bool Event::isSelectionEvent() const {
-  return *this == ShiftLeft
-      || *this == ShiftRight
-      || *this == ShiftUp
-      || *this == ShiftDown;
+  return *this == ShiftLeft || *this == ShiftRight || *this == ShiftUp ||
+         *this == ShiftDown;
 }
 
 inline bool Event::isKeyPress() const {
-  return isKeyboardEvent()
-      || *this == ExternalText;
+  return isKeyboardEvent() || *this == ExternalText;
 }
 
 inline bool Event::isRepeatable() const {
-  return isMoveEvent()
-      || isSelectionEvent()
-      || *this == Events::Back
-      || *this == Events::Backspace;
+  return isMoveEvent() || isSelectionEvent() || *this == Events::Back ||
+         *this == Events::Backspace;
 }
 
-}
-}
+}  // namespace Events
+}  // namespace Ion
 
 #endif

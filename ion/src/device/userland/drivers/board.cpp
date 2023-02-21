@@ -1,4 +1,5 @@
 #include "board.h"
+
 #include <drivers/svcall.h>
 
 namespace Ion {
@@ -13,6 +14,6 @@ void SVC_ATTRIBUTES enableExternalApps() {
   SVC_RETURNING_VOID(SVC_BOARD_ENABLE_EXTERNAL_APPS);
 }
 
-}
-}
-}
+}  // namespace Board
+}  // namespace Device
+}  // namespace Ion

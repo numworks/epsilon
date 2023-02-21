@@ -4,18 +4,19 @@
 
 namespace Escher {
 
-MessageTableCellWithMessage::MessageTableCellWithMessage(I18n::Message message, I18n::Message subLabelMessage) :
-  MessageTableCell(message),
-  m_subLabelView(KDFont::Size::Small, subLabelMessage, KDContext::k_alignLeft, KDContext::k_alignCenter, Palette::GrayDark)
-{
-}
+MessageTableCellWithMessage::MessageTableCellWithMessage(
+    I18n::Message message, I18n::Message subLabelMessage)
+    : MessageTableCell(message),
+      m_subLabelView(KDFont::Size::Small, subLabelMessage,
+                     KDContext::k_alignLeft, KDContext::k_alignCenter,
+                     Palette::GrayDark) {}
 
 void MessageTableCellWithMessage::setSubLabelMessage(I18n::Message textBody) {
   m_subLabelView.setMessage(textBody);
   reloadCell();
 }
 
-const View * MessageTableCellWithMessage::subLabelView() const {
+const View* MessageTableCellWithMessage::subLabelView() const {
   if (m_subLabelView.text()[0] == 0) {
     return nullptr;
   }
@@ -27,4 +28,4 @@ void MessageTableCellWithMessage::setHighlighted(bool highlight) {
   m_subLabelView.setBackgroundColor(defaultBackgroundColor());
 }
 
-}
+}  // namespace Escher

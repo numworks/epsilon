@@ -1,46 +1,53 @@
 #ifndef SHARED_ROUND_CURSOR_VIEW_H
 #define SHARED_ROUND_CURSOR_VIEW_H
 
-#include "memoized_cursor_view.h"
 #include "dots.h"
+#include "memoized_cursor_view.h"
 
 namespace Shared {
 
 class AbstractRoundCursorView : public MemoizedCursorView {
-public:
+ public:
   AbstractRoundCursorView() : MemoizedCursorView() {}
-protected:
+
+ protected:
   bool m_isRing;
   void setIsRing(bool isRing);
-  constexpr static size_t k_maxSize = std::max(Dots::LargeDotDiameter, Dots::LargeRingDiameter);
-private:
-  void drawCursor(KDContext * ctx, KDRect rect) const override;
-  KDColor * underneathPixelBuffer() const override { return m_underneathPixelBuffer; }
+  constexpr static size_t k_maxSize =
+      std::max(Dots::LargeDotDiameter, Dots::LargeRingDiameter);
+
+ private:
+  void drawCursor(KDContext* ctx, KDRect rect) const override;
+  KDColor* underneathPixelBuffer() const override {
+    return m_underneathPixelBuffer;
+  }
   mutable KDColor m_underneathPixelBuffer[k_maxSize * k_maxSize];
 };
 
 class RoundCursorView : public AbstractRoundCursorView {
-public:
+ public:
   RoundCursorView() : AbstractRoundCursorView() { setIsRing(false); }
-private:
+
+ private:
   KDCoordinate size() const override { return Dots::LargeDotDiameter; }
 };
 
 class RingCursorView : public AbstractRoundCursorView {
-public:
+ public:
   RingCursorView() : AbstractRoundCursorView() { setIsRing(true); }
-private:
+
+ private:
   KDCoordinate size() const override { return Dots::LargeRingDiameter; }
 };
 
 class ToggleableRingRoundCursorView : public AbstractRoundCursorView {
-public:
+ public:
   using AbstractRoundCursorView::setIsRing;
-private:
+
+ private:
   KDCoordinate size() const override { return k_maxSize; }
 };
 
-
-}
+}  // namespace Shared
 
 #endif

@@ -1,6 +1,9 @@
 #ifndef HARDWARE_TEST_APP_H
 #define HARDWARE_TEST_APP_H
 
+#include <escher/bank_view_controller.h>
+
+#include "../shared/shared_app.h"
 #include "battery_test_controller.h"
 #include "colors_lcd_test_controller.h"
 #include "dead_pixels_test_controller.h"
@@ -10,26 +13,26 @@
 #include "led_test_controller.h"
 #include "serial_number_controller.h"
 #include "vblank_test_controller.h"
-#include "../shared/shared_app.h"
-#include <escher/bank_view_controller.h>
 
 namespace HardwareTest {
 
 class App : public Escher::App {
-public:
+ public:
   class Snapshot : public Shared::SharedApp::Snapshot {
-  public:
-    App * unpack(Escher::Container * container) override;
-    const Descriptor * descriptor() const override;
+   public:
+    App* unpack(Escher::Container* container) override;
+    const Descriptor* descriptor() const override;
   };
-private:
+
+ private:
   class WizardViewController : public Escher::BankViewController {
-  public:
-    WizardViewController(Escher::Responder * parentResponder);
+   public:
+    WizardViewController(Escher::Responder* parentResponder);
     int numberOfChildren() override;
-    Escher::ViewController * childAtIndex(int i) override;
+    Escher::ViewController* childAtIndex(int i) override;
     bool handleEvent(Ion::Events::Event event) override;
-  private:
+
+   private:
     BatteryTestController m_batteryTestController;
     LCDTimingTestController m_lcdTimingTestController;
     ColorsLCDTestController m_colorsLCDTestController;
@@ -41,11 +44,10 @@ private:
     VBlankTestController m_vBlankTestController;
   };
 
-  App(Snapshot * snapshot);
+  App(Snapshot* snapshot);
   WizardViewController m_wizardViewController;
 };
 
-}
+}  // namespace HardwareTest
 
 #endif
-

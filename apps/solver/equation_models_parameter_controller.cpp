@@ -1,34 +1,41 @@
 #include "equation_models_parameter_controller.h"
-#include "list_controller.h"
-#include <poincare/layout_helper.h>
-#include <poincare/preferences.h>
+
 #include <apps/i18n.h>
 #include <assert.h>
+#include <poincare/layout_helper.h>
+#include <poincare/preferences.h>
+
+#include "list_controller.h"
 
 using namespace Poincare;
 using namespace Escher;
 
 namespace Solver {
 
-constexpr const char * EquationModelsParameterController::k_models[k_numberOfModels];
+constexpr const char*
+    EquationModelsParameterController::k_models[k_numberOfModels];
 
-EquationModelsParameterController::EquationModelsParameterController(Responder * parentResponder, EquationStore * equationStore, ListController * listController) :
-  SelectableListViewController(parentResponder),
-  m_emptyModelCell(I18n::Message::Empty),
-  m_equationStore(equationStore),
-  m_listController(listController)
-{
+EquationModelsParameterController::EquationModelsParameterController(
+    Responder* parentResponder, EquationStore* equationStore,
+    ListController* listController)
+    : SelectableListViewController(parentResponder),
+      m_emptyModelCell(I18n::Message::Empty),
+      m_equationStore(equationStore),
+      m_listController(listController) {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
-    Poincare::Expression e = Expression::Parse(k_models[i+1], nullptr); // No context needed
-    m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits, nullptr);
+    Poincare::Expression e =
+        Expression::Parse(k_models[i + 1], nullptr);  // No context needed
+    m_layouts[i] =
+        e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
+                       Preferences::ShortNumberOfSignificantDigits, nullptr);
     m_modelCells[i].setLayout(m_layouts[i]);
     m_modelCells[i].setParentResponder(&m_selectableTableView);
   }
 }
 
-const char * EquationModelsParameterController::title() {
+const char* EquationModelsParameterController::title() {
   return I18n::translate(I18n::Message::UseEquationModel);
 }
 
@@ -72,7 +79,8 @@ KDCoordinate EquationModelsParameterController::nonMemoizedRowHeight(int j) {
   return heightForCellAtIndex(reusableCell(reusableCellIndex, type), j);
 }
 
-HighlightCell * EquationModelsParameterController::reusableCell(int index, int type) {
+HighlightCell* EquationModelsParameterController::reusableCell(int index,
+                                                               int type) {
   assert(index < reusableCellCount(type));
   if (type == k_emptyModelCellType) {
     return &m_emptyModelCell;
@@ -88,4 +96,4 @@ int EquationModelsParameterController::reusableCellCount(int type) {
   return k_numberOfExpressionCells;
 }
 
-}
+}  // namespace Solver

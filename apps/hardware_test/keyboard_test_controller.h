@@ -2,21 +2,22 @@
 #define HARDWARE_TEST_KEYBOARD_CONTROLLER_H
 
 #include <escher/view_controller.h>
+
 #include "keyboard_view.h"
 
 namespace HardwareTest {
 
 class KeyboardTestController : public Escher::ViewController {
-public:
+ public:
   using Escher::ViewController::ViewController;
-  Escher::View * view() override;
+  Escher::View* view() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-private:
+
+ private:
   KeyboardView m_keyboardView;
 };
 
-}
+}  // namespace HardwareTest
 
 #endif
-

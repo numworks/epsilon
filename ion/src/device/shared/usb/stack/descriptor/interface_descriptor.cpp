@@ -4,7 +4,7 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-void InterfaceDescriptor::push(Channel * c) const {
+void InterfaceDescriptor::push(Channel* c) const {
   Descriptor::push(c);
   c->push(m_bInterfaceNumber);
   c->push(m_bAlternateSetting);
@@ -18,6 +18,6 @@ void InterfaceDescriptor::push(Channel * c) const {
   }
 }
 
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion

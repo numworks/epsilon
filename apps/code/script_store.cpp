@@ -4,7 +4,7 @@ namespace Code {
 
 constexpr char ScriptStore::k_scriptExtension[];
 
-bool ScriptStore::ScriptNameIsFree(const char * baseName) {
+bool ScriptStore::ScriptNameIsFree(const char* baseName) {
   return ScriptBaseNamed(baseName).isNull();
 }
 
@@ -22,10 +22,11 @@ void ScriptStore::deleteAllScripts() {
 }
 
 bool ScriptStore::isFull() {
-  return Ion::Storage::FileSystem::sharedFileSystem->availableSize() < k_fullFreeSpaceSizeLimit;
+  return Ion::Storage::FileSystem::sharedFileSystem->availableSize() <
+         k_fullFreeSpaceSizeLimit;
 }
 
-const char * ScriptStore::contentOfScript(const char * name, bool markAsFetched) {
+const char* ScriptStore::contentOfScript(const char* name, bool markAsFetched) {
   Script script = ScriptNamed(name);
   if (script.isNull()) {
     return nullptr;
@@ -52,4 +53,4 @@ void ScriptStore::clearConsoleFetchInformation() {
   }
 }
 
-}
+}  // namespace Code

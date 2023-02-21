@@ -1,4 +1,5 @@
 #include <poincare_layouts.h>
+
 #include "helper.h"
 
 using namespace Poincare;
@@ -14,7 +15,8 @@ QUIZ_CASE(poincare_layout_serialization) {
 
   // BinomialCoefficientLayout
   assert_layout_serialize_to(
-      BinomialCoefficientLayout::Builder(CodePointLayout::Builder('7'), CodePointLayout::Builder('6')),
+      BinomialCoefficientLayout::Builder(CodePointLayout::Builder('7'),
+                                         CodePointLayout::Builder('6')),
       "binomial\u0012\u00127\u0013,\u00126\u0013\u0013");
 
   // Bracket and BracketPairLayout -> Tested by other layouts
@@ -34,22 +36,23 @@ QUIZ_CASE(poincare_layout_serialization) {
       "conj\u00121\u0013");
 
   // CurlyBraceLayout
-  assert_layout_serialize_to(
-      CurlyBraceLayout::Builder(),
-      "{}");
+  assert_layout_serialize_to(CurlyBraceLayout::Builder(), "{}");
 
   // DerivativeLayout
   assert_layout_serialize_to(
-      FirstOrderDerivativeLayout::Builder(CodePointLayout::Builder('f'), CodePointLayout::Builder('x'), CodePointLayout::Builder('a')),
+      FirstOrderDerivativeLayout::Builder(CodePointLayout::Builder('f'),
+                                          CodePointLayout::Builder('x'),
+                                          CodePointLayout::Builder('a')),
       "diff\u0012\u0012f\u0013,\u0012x\u0013,\u0012a\u0013\u0013");
   assert_layout_serialize_to(
-      HigherOrderDerivativeLayout::Builder(CodePointLayout::Builder('f'), CodePointLayout::Builder('x'), CodePointLayout::Builder('a'), CodePointLayout::Builder('n')),
-      "diff\u0012\u0012f\u0013,\u0012x\u0013,\u0012a\u0013,\u0012n\u0013\u0013");
+      HigherOrderDerivativeLayout::Builder(
+          CodePointLayout::Builder('f'), CodePointLayout::Builder('x'),
+          CodePointLayout::Builder('a'), CodePointLayout::Builder('n')),
+      "diff\u0012\u0012f\u0013,\u0012x\u0013,\u0012a\u0013,"
+      "\u0012n\u0013\u0013");
 
   // EmptyLayout
-  assert_layout_serialize_to(
-      HorizontalLayout::Builder(),
-      "");
+  assert_layout_serialize_to(HorizontalLayout::Builder(), "");
 
   // FloorLayout
   assert_layout_serialize_to(
@@ -58,9 +61,8 @@ QUIZ_CASE(poincare_layout_serialization) {
 
   // Fraction layout: 1/(2+3)
   assert_layout_serialize_to(
-      FractionLayout::Builder(
-        CodePointLayout::Builder('1'),
-        LayoutHelper::StringToCodePointsLayout("2+3", 3)),
+      FractionLayout::Builder(CodePointLayout::Builder('1'),
+                              LayoutHelper::StringToCodePointsLayout("2+3", 3)),
       "\u0012\u00121\u0013/\u00122+3\u0013\u0013");
 
   // GridPairLayout -> Tested by MatrixLayout
@@ -68,78 +70,71 @@ QUIZ_CASE(poincare_layout_serialization) {
   // HorizontalLayout
   assert_layout_serialize_to(
       HorizontalLayout::Builder(
-        CodePointLayout::Builder('a'),
-        CodePointLayout::Builder('b'),
-        CodePointLayout::Builder('c'),
-        CodePointLayout::Builder('d')),
+          CodePointLayout::Builder('a'), CodePointLayout::Builder('b'),
+          CodePointLayout::Builder('c'), CodePointLayout::Builder('d')),
       "abcd");
 
   // IntegralLayout
   assert_layout_serialize_to(
       IntegralLayout::Builder(
-        CodePointLayout::Builder('1'),
-        CodePointLayout::Builder('x'),
-        CodePointLayout::Builder('2'),
-        CodePointLayout::Builder('3')),
+          CodePointLayout::Builder('1'), CodePointLayout::Builder('x'),
+          CodePointLayout::Builder('2'), CodePointLayout::Builder('3')),
       "int\u0012\u00121\u0013,\u0012x\u0013,\u00122\u0013,\u00123\u0013\u0013");
 
   // MatrixLayout
   assert_layout_serialize_to(
       MatrixLayout::Builder(
-        CodePointLayout::Builder('a'),
-        CodePointLayout::Builder('b'),
-        CodePointLayout::Builder('c'),
-        CodePointLayout::Builder('d')),
+          CodePointLayout::Builder('a'), CodePointLayout::Builder('b'),
+          CodePointLayout::Builder('c'), CodePointLayout::Builder('d')),
       "[[a,b][c,d]]");
-
 
   // Nth root layout
   assert_layout_serialize_to(
-      NthRootLayout::Builder(
-        CodePointLayout::Builder('7'),
-        CodePointLayout::Builder('6')),
+      NthRootLayout::Builder(CodePointLayout::Builder('7'),
+                             CodePointLayout::Builder('6')),
       "root\u0012\u00127\u0013,\u00126\u0013\u0013");
 
   // ParenthesisLayout
-  assert_layout_serialize_to(
-      ParenthesisLayout::Builder(),
-      "()");
+  assert_layout_serialize_to(ParenthesisLayout::Builder(), "()");
 
   // ProductLayout
   assert_layout_serialize_to(
       ProductLayout::Builder(
-        CodePointLayout::Builder('1'),
-        CodePointLayout::Builder('x'),
-        CodePointLayout::Builder('2'),
-        CodePointLayout::Builder('3')),
-      "product\u0012\u00121\u0013,\u0012x\u0013,\u00122\u0013,\u00123\u0013\u0013");
+          CodePointLayout::Builder('1'), CodePointLayout::Builder('x'),
+          CodePointLayout::Builder('2'), CodePointLayout::Builder('3')),
+      "product\u0012\u00121\u0013,\u0012x\u0013,\u00122\u0013,"
+      "\u00123\u0013\u0013");
 
   // SequenceLayout -> Tested by SumLayout and ProductLayout
 
   // SumLayout
   assert_layout_serialize_to(
-      SumLayout::Builder(
-        LayoutHelper::StringToCodePointsLayout("1+1", 3),
-        CodePointLayout::Builder('x'),
-        CodePointLayout::Builder('2'),
-        CodePointLayout::Builder('3')),
-      "sum\u0012\u00121+1\u0013,\u0012x\u0013,\u00122\u0013,\u00123\u0013\u0013");
-
+      SumLayout::Builder(LayoutHelper::StringToCodePointsLayout("1+1", 3),
+                         CodePointLayout::Builder('x'),
+                         CodePointLayout::Builder('2'),
+                         CodePointLayout::Builder('3')),
+      "sum\u0012\u00121+1\u0013,\u0012x\u0013,\u00122\u0013,"
+      "\u00123\u0013\u0013");
 
   // Vertical offset layout
   assert_layout_serialize_to(
       HorizontalLayout::Builder(
-        CodePointLayout::Builder('2'),
-        VerticalOffsetLayout::Builder(
-          LayoutHelper::StringToCodePointsLayout("x+5", 3),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript)),
+          CodePointLayout::Builder('2'),
+          VerticalOffsetLayout::Builder(
+              LayoutHelper::StringToCodePointsLayout("x+5", 3),
+              VerticalOffsetLayoutNode::VerticalPosition::Superscript)),
       "2^\x12x+5\x13");
 
   // Piecewise layout
   PiecewiseOperatorLayout p = PiecewiseOperatorLayout::Builder();
-  p.addRow(CodePointLayout::Builder('3'),HorizontalLayout::Builder(CodePointLayout::Builder('2'), CodePointLayout::Builder('>'), CodePointLayout::Builder('3')));
-  p.addRow(CodePointLayout::Builder('2'),HorizontalLayout::Builder(CodePointLayout::Builder('2'), CodePointLayout::Builder('<'), CodePointLayout::Builder('3')));
+  p.addRow(CodePointLayout::Builder('3'),
+           HorizontalLayout::Builder(CodePointLayout::Builder('2'),
+                                     CodePointLayout::Builder('>'),
+                                     CodePointLayout::Builder('3')));
+  p.addRow(CodePointLayout::Builder('2'),
+           HorizontalLayout::Builder(CodePointLayout::Builder('2'),
+                                     CodePointLayout::Builder('<'),
+                                     CodePointLayout::Builder('3')));
   p.addRow(CodePointLayout::Builder('1'));
   assert_layout_serialize_to(p, "piecewise(3,2>3,2,2<3,1)");
-
 }

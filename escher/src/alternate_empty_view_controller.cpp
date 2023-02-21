@@ -1,22 +1,20 @@
+#include <assert.h>
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/container.h>
-#include <assert.h>
 
 namespace Escher {
 
 /* ContentView */
 
-AlternateEmptyViewController::ContentView::ContentView(ViewController * mainViewController, AlternateEmptyViewDelegate * delegate) :
-  m_mainViewController(mainViewController),
-  m_delegate(delegate)
-{
-}
+AlternateEmptyViewController::ContentView::ContentView(
+    ViewController* mainViewController, AlternateEmptyViewDelegate* delegate)
+    : m_mainViewController(mainViewController), m_delegate(delegate) {}
 
 int AlternateEmptyViewController::ContentView::numberOfSubviews() const {
   return 1;
 }
 
-View * AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
+View* AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
   assert(index == 0);
   if (m_delegate->isEmpty()) {
     return m_delegate->emptyView();
@@ -32,27 +30,27 @@ void AlternateEmptyViewController::ContentView::layoutSubviews(bool force) {
   }
 }
 
-ViewController * AlternateEmptyViewController::ContentView::mainViewController() const {
+ViewController* AlternateEmptyViewController::ContentView::mainViewController()
+    const {
   return m_mainViewController;
 }
 
-AlternateEmptyViewDelegate * AlternateEmptyViewController::ContentView::alternateEmptyViewDelegate() const {
+AlternateEmptyViewDelegate*
+AlternateEmptyViewController::ContentView::alternateEmptyViewDelegate() const {
   return m_delegate;
 }
 
 /* AlternateEmptyViewController */
 
-AlternateEmptyViewController::AlternateEmptyViewController(Responder * parentResponder, ViewController * mainViewController, AlternateEmptyViewDelegate * delegate) :
-  ViewController(parentResponder),
-  m_contentView(mainViewController, delegate)
-{
-}
+AlternateEmptyViewController::AlternateEmptyViewController(
+    Responder* parentResponder, ViewController* mainViewController,
+    AlternateEmptyViewDelegate* delegate)
+    : ViewController(parentResponder),
+      m_contentView(mainViewController, delegate) {}
 
-View * AlternateEmptyViewController::view() {
-  return &m_contentView;
-}
+View* AlternateEmptyViewController::view() { return &m_contentView; }
 
-const char * AlternateEmptyViewController::title() {
+const char* AlternateEmptyViewController::title() {
   return m_contentView.mainViewController()->title();
 }
 
@@ -62,9 +60,11 @@ ViewController::TitlesDisplay AlternateEmptyViewController::titlesDisplay() {
 
 void AlternateEmptyViewController::didBecomeFirstResponder() {
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
-    Container::activeApp()->setFirstResponder(m_contentView.mainViewController());
+    Container::activeApp()->setFirstResponder(
+        m_contentView.mainViewController());
   } else {
-    Container::activeApp()->setFirstResponder(m_contentView.alternateEmptyViewDelegate()->responderWhenEmpty());
+    Container::activeApp()->setFirstResponder(
+        m_contentView.alternateEmptyViewDelegate()->responderWhenEmpty());
   }
 }
 
@@ -85,4 +85,4 @@ void AlternateEmptyViewController::viewDidDisappear() {
   }
 }
 
-}
+}  // namespace Escher

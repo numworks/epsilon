@@ -1,11 +1,14 @@
 #include "poisson_distribution.h"
-#include <poincare/poisson_distribution.h>
+
 #include <assert.h>
+#include <poincare/poisson_distribution.h>
+
 #include <cmath>
 
 namespace Distributions {
 
-bool PoissonDistribution::authorizedParameterAtIndex(double x, int index) const {
+bool PoissonDistribution::authorizedParameterAtIndex(double x,
+                                                     int index) const {
   if (!OneParameterDistribution::authorizedParameterAtIndex(x, index)) {
     return false;
   }
@@ -17,7 +20,8 @@ bool PoissonDistribution::authorizedParameterAtIndex(double x, int index) const 
 
 float PoissonDistribution::computeXMax() const {
   assert(m_parameter != 0);
-  return (m_parameter + 5.0f * std::sqrt(m_parameter)) * (1.0f + k_displayRightMarginRatio);
+  return (m_parameter + 5.0f * std::sqrt(m_parameter)) *
+         (1.0f + k_displayRightMarginRatio);
 }
 
 float PoissonDistribution::computeYMax() const {
@@ -30,4 +34,4 @@ float PoissonDistribution::computeYMax() const {
   return result * (1.0f + k_displayTopMarginRatio);
 }
 
-}
+}  // namespace Distributions

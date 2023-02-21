@@ -9,23 +9,24 @@
 namespace Calculation {
 
 class ExpressionWithEqualSignView : public Escher::ExpressionView {
-public:
-  ExpressionWithEqualSignView() :
-    m_equalSign(k_font, I18n::Message::Equal, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack),
-    m_showEqual(true)
-  {}
+ public:
+  ExpressionWithEqualSignView()
+      : m_equalSign(k_font, I18n::Message::Equal, KDContext::k_alignCenter,
+                    KDContext::k_alignCenter, KDColorBlack),
+        m_showEqual(true) {}
   KDSize minimalSizeForOptimalDisplay() const override;
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
   void setShowEqual(bool showEqual) { m_showEqual = showEqual; }
-private:
+
+ private:
   constexpr static KDFont::Size k_font = KDFont::Size::Large;
-  View * subviewAtIndex(int index) override;
+  View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   int numberOfSubviews() const override { return m_showEqual; }
   Escher::MessageTextView m_equalSign;
   bool m_showEqual;
 };
 
-}
+}  // namespace Calculation
 
 #endif

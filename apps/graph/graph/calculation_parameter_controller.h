@@ -1,62 +1,75 @@
 #ifndef GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
 #define GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
 
+#include <apps/i18n.h>
 #include <escher/buffer_table_cell.h>
-#include <escher/message_table_cell_with_chevron.h>
 #include <escher/explicit_selectable_list_view_controller.h>
+#include <escher/message_table_cell_with_chevron.h>
 #include <escher/message_table_cell_with_switch.h>
+
 #include "area_between_curves_graph_controller.h"
 #include "area_between_curves_parameter_controller.h"
-#include "preimage_parameter_controller.h"
-#include "tangent_graph_controller.h"
+#include "banner_view.h"
 #include "extremum_graph_controller.h"
+#include "graph_view.h"
 #include "integral_graph_controller.h"
 #include "intersection_graph_controller.h"
+#include "preimage_parameter_controller.h"
 #include "root_graph_controller.h"
-#include "graph_view.h"
-#include "banner_view.h"
-#include <apps/i18n.h>
+#include "tangent_graph_controller.h"
 
 namespace Graph {
 
 class GraphController;
 
-class CalculationParameterController : public Escher::ExplicitSelectableListViewController {
-public:
-  CalculationParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor);
-  const char * title() override;
+class CalculationParameterController
+    : public Escher::ExplicitSelectableListViewController {
+ public:
+  CalculationParameterController(
+      Escher::Responder* parentResponder,
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+      GraphView* graphView, BannerView* bannerView,
+      Shared::InteractiveCurveViewRange* range,
+      Shared::CurveViewCursor* cursor);
+  const char* title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   TELEMETRY_ID("CalculationParameter");
   int numberOfRows() const override { return k_numberOfRows; }
-  TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastTwoTitles; }
+  TitlesDisplay titlesDisplay() override {
+    return TitlesDisplay::DisplayLastTwoTitles;
+  }
 
-  Escher::HighlightCell * cell(int index) override;
+  Escher::HighlightCell* cell(int index) override;
   void setRecord(Ion::Storage::Record record);
-private:
+
+ private:
   static constexpr int k_numberOfRows = 8;
-  template<class T> void push(T * controller, bool pop);
+  template <class T>
+  void push(T* controller, bool pop);
   static bool ShouldDisplayIntersection();
   static bool ShouldDisplayAreaBetweenCurves();
   static bool ShouldDisplayChevronInAreaCell();
   // This class is used for the AreaBetweenCurves cell
   class BufferTableCellWithHideableChevron : public Escher::BufferTableCell {
-  public:
-    BufferTableCellWithHideableChevron() :
-      Escher::BufferTableCell(),
-      m_displayChevron(true)
-    {}
-    const Escher::View * accessoryView() const override {
+   public:
+    BufferTableCellWithHideableChevron()
+        : Escher::BufferTableCell(), m_displayChevron(true) {}
+    const Escher::View* accessoryView() const override {
       return m_displayChevron ? &m_accessoryView : nullptr;
     }
     void displayChevron(bool display) { m_displayChevron = display; }
     bool subviewsCanOverlap() const override { return true; }
     bool shouldEnterOnEvent(Ion::Events::Event event) {
-      return m_displayChevron ? Escher::MessageTableCellWithChevron::ShouldEnterOnEvent(event) : Escher::MessageTableCell::ShouldEnterOnEvent(event);
+      return m_displayChevron
+                 ? Escher::MessageTableCellWithChevron::ShouldEnterOnEvent(
+                       event)
+                 : Escher::MessageTableCell::ShouldEnterOnEvent(event);
     }
-  private:
+
+   private:
     Escher::ChevronView m_accessoryView;
     bool m_displayChevron;
   };
@@ -81,6 +94,6 @@ private:
   IntersectionGraphController m_intersectionGraphController;
 };
 
-}
+}  // namespace Graph
 
 #endif

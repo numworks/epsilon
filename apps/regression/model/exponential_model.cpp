@@ -1,15 +1,18 @@
 #include "exponential_model.h"
-#include "../store.h"
-#include "../../shared/linear_regression_store.h"
-#include <cmath>
+
 #include <assert.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/constant.h>
+#include <poincare/horizontal_layout.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/vertical_offset_layout.h>
 #include <poincare/print.h>
+#include <poincare/vertical_offset_layout.h>
+
+#include <cmath>
+
+#include "../../shared/linear_regression_store.h"
+#include "../store.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -24,64 +27,62 @@ Layout ExponentialModel::templateLayout() const {
     exponent = CodePointLayout::Builder('x');
   } else {
     base = CodePointLayout::Builder('e'),
-    exponent = HorizontalLayout::Builder({
-      CodePointLayout::Builder('b'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('x')
-      });
+    exponent = HorizontalLayout::Builder(
+        {CodePointLayout::Builder('b'),
+         CodePointLayout::Builder(UCodePointMiddleDot),
+         CodePointLayout::Builder('x')});
   }
-  return HorizontalLayout::Builder({
-    CodePointLayout::Builder('a'),
-    CodePointLayout::Builder(UCodePointMiddleDot),
-    base,
-    VerticalOffsetLayout::Builder(
-      exponent,
-      VerticalOffsetLayoutNode::VerticalPosition::Superscript
-    )
-  });
+  return HorizontalLayout::Builder(
+      {CodePointLayout::Builder('a'),
+       CodePointLayout::Builder(UCodePointMiddleDot), base,
+       VerticalOffsetLayout::Builder(
+           exponent, VerticalOffsetLayoutNode::VerticalPosition::Superscript)});
 }
 
-Poincare::Expression ExponentialModel::privateExpression(double * modelCoefficients) const {
+Poincare::Expression ExponentialModel::privateExpression(
+    double* modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   // if m_isAbxForm -> a*b^x, else a*e^bx
-  return m_isAbxForm ?
-    Multiplication::Builder(
-      Number::DecimalNumber(a),
-      Power::Builder(
-        Number::DecimalNumber(b),
-        Symbol::Builder(k_xSymbol))) :
-    Multiplication::Builder(
-      Number::DecimalNumber(a),
-      Power::Builder(
-        Constant::ExponentialEBuilder(),
-        Multiplication::Builder(
-          Number::DecimalNumber(b),
-          Symbol::Builder(k_xSymbol))));
+  return m_isAbxForm ? Multiplication::Builder(
+                           Number::DecimalNumber(a),
+                           Power::Builder(Number::DecimalNumber(b),
+                                          Symbol::Builder(k_xSymbol)))
+                     : Multiplication::Builder(
+                           Number::DecimalNumber(a),
+                           Power::Builder(Constant::ExponentialEBuilder(),
+                                          Multiplication::Builder(
+                                              Number::DecimalNumber(b),
+                                              Symbol::Builder(k_xSymbol))));
 }
 
-double ExponentialModel::evaluate(double * modelCoefficients, double x) const {
+double ExponentialModel::evaluate(double* modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = aebxFormatBValue(modelCoefficients);
   // a*e^(bx)
-  return a*std::exp(b*x);
+  return a * std::exp(b * x);
 }
 
-double ExponentialModel::aebxFormatBValue(double * modelCoefficients) const {
+double ExponentialModel::aebxFormatBValue(double* modelCoefficients) const {
   return m_isAbxForm ? std::log(modelCoefficients[1]) : modelCoefficients[1];
 }
 
-double ExponentialModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
+double ExponentialModel::levelSet(double* modelCoefficients, double xMin,
+                                  double xMax, double y,
+                                  Poincare::Context* context) {
   double a = modelCoefficients[0];
   double b = aebxFormatBValue(modelCoefficients);
-  if (a == 0 || b == 0 || y/a <= 0) {
+  if (a == 0 || b == 0 || y / a <= 0) {
     return NAN;
   }
-  return std::log(y/a)/b;
+  return std::log(y / a) / b;
 }
 
-void ExponentialModel::privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
-  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsActive(series));
+void ExponentialModel::privateFit(Store* store, int series,
+                                  double* modelCoefficients,
+                                  Poincare::Context* context) {
+  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries &&
+         store->seriesIsActive(series));
   /* By the change of variable z=ln(y), the equation y=a*exp(b*x) becomes
    * z=c*x+d with c=b and d=ln(a). That change of variable does not preserve the
    * default regression error function, so default R2 isn't optimal.
@@ -103,8 +104,8 @@ void ExponentialModel::privateFit(Store * store, int series, double * modelCoeff
     const double y = std::log(z);
     sumOfX += x;
     sumOfY += y;
-    sumOfXX += x*x;
-    sumOfXY += x*y;
+    sumOfXX += x * x;
+    sumOfXY += x * y;
   }
   const double meanOfX = sumOfX / numberOfPoints;
   const double meanOfY = sumOfY / numberOfPoints;
@@ -115,22 +116,24 @@ void ExponentialModel::privateFit(Store * store, int series, double * modelCoeff
   const double slope = LinearModelHelper::Slope(covariance, variance);
   modelCoefficients[1] = m_isAbxForm ? std::exp(slope) : slope;
   modelCoefficients[0] =
-    sign * std::exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, slope));
+      sign * std::exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, slope));
 }
 
-double ExponentialModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
+double ExponentialModel::partialDerivate(double* modelCoefficients,
+                                         int derivateCoefficientIndex,
+                                         double x) const {
   const double b = aebxFormatBValue(modelCoefficients);
   if (derivateCoefficientIndex == 0) {
     // Derivate with respect to a: exp(b*x)
-    return std::exp(b*x);
+    return std::exp(b * x);
   }
   assert(derivateCoefficientIndex == 1);
   // Derivate with respect to b: a*x*exp(b*x)
   double a = modelCoefficients[0];
-  return a*x*std::exp(b*x);
+  return a * x * std::exp(b * x);
 }
 
-bool ExponentialModel::dataSuitableForFit(Store * store, int series) const {
+bool ExponentialModel::dataSuitableForFit(Store* store, int series) const {
   if (!Model::dataSuitableForFit(store, series)) {
     return false;
   }
@@ -147,4 +150,4 @@ bool ExponentialModel::dataSuitableForFit(Store * store, int series) const {
   return true;
 }
 
-}
+}  // namespace Regression

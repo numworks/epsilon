@@ -7,23 +7,29 @@
 
 namespace Poincare {
 
-Expression ListStandardDeviationNode::shallowReduce(const ReductionContext& reductionContext) {
+Expression ListStandardDeviationNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return ListStandardDeviation(this).shallowReduce(reductionContext);
 }
 
-template<typename T> Evaluation<T> ListStandardDeviationNode::templatedApproximate(const ApproximationContext& approximationContext) const {
+template <typename T>
+Evaluation<T> ListStandardDeviationNode::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
   ListComplex<T> evaluationArray[2];
-  StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(this, approximationContext, evaluationArray);
+  StatisticsDataset<T> dataset = StatisticsDataset<T>::BuildFromChildren(
+      this, approximationContext, evaluationArray);
   if (dataset.isUndefined()) {
     return Complex<T>::Undefined();
   }
   return Complex<T>::Builder(dataset.standardDeviation());
 }
 
-Expression ListStandardDeviation::shallowReduce(ReductionContext reductionContext) {
+Expression ListStandardDeviation::shallowReduce(
+    ReductionContext reductionContext) {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
   Expression children[2];
-  if (!static_cast<ListFunctionWithOneOrTwoParametersNode *>(node())->getChildrenIfNonEmptyList(children)) {
+  if (!static_cast<ListFunctionWithOneOrTwoParametersNode*>(node())
+           ->getChildrenIfNonEmptyList(children)) {
     return replaceWithUndefinedInPlace();
   }
   ListVariance var = ListVariance::Builder(children[0], children[1]);
@@ -33,7 +39,9 @@ Expression ListStandardDeviation::shallowReduce(ReductionContext reductionContex
   return sqrt.shallowReduce(reductionContext);
 }
 
-template Evaluation<float> ListStandardDeviationNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListStandardDeviationNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
+template Evaluation<float> ListStandardDeviationNode::templatedApproximate<
+    float>(const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListStandardDeviationNode::templatedApproximate<
+    double>(const ApproximationContext& approximationContext) const;
 
-}
+}  // namespace Poincare

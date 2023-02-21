@@ -4,10 +4,16 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-bool RequestRecipient::processSetupRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  if (request->followingTransaction() == SetupPacket::TransactionType::InTransaction) {
-  // There is no data stage in this transaction, or the data stage will be in IN direction.
-    if (!processSetupInRequest(request, transferBuffer, transferBufferLength, transferBufferMaxLength)) {
+bool RequestRecipient::processSetupRequest(SetupPacket* request,
+                                           uint8_t* transferBuffer,
+                                           uint16_t* transferBufferLength,
+                                           uint16_t transferBufferMaxLength) {
+  if (request->followingTransaction() ==
+      SetupPacket::TransactionType::InTransaction) {
+    // There is no data stage in this transaction, or the data stage will be in
+    // IN direction.
+    if (!processSetupInRequest(request, transferBuffer, transferBufferLength,
+                               transferBufferMaxLength)) {
       m_ep0->stallTransaction();
       return false;
     }
@@ -27,6 +33,6 @@ bool RequestRecipient::processSetupRequest(SetupPacket * request, uint8_t * tran
   return true;
 }
 
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion

@@ -9,33 +9,38 @@
 namespace Escher {
 
 class ModalViewEmptyController : public ViewController {
-public:
+ public:
   ModalViewEmptyController() : ViewController(nullptr) {}
-  void setMessages(I18n::Message * messages);
+  void setMessages(I18n::Message *messages);
   // View Controller
-  TitlesDisplay titlesDisplay() override { return TitlesDisplay::NeverDisplayOwnTitle; }
-protected:
+  TitlesDisplay titlesDisplay() override {
+    return TitlesDisplay::NeverDisplayOwnTitle;
+  }
+
+ protected:
   class ModalViewEmptyView : public View, public Bordered {
-  public:
+   public:
     constexpr static KDFont::Size k_font = KDFont::Size::Small;
     void initMessageViews();
-    void setMessages(I18n::Message * message);
-    void drawRect(KDContext * ctx, KDRect rect) const override;
+    void setMessages(I18n::Message *message);
+    void drawRect(KDContext *ctx, KDRect rect) const override;
     void reload();
-  private:
+
+   private:
     constexpr static int k_expressionViewRowIndex = 2;
     constexpr static KDColor k_backgroundColor = Palette::WallScreen;
     int numberOfSubviews() const override;
-    View * subviewAtIndex(int index) override;
+    View *subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     virtual int numberOfMessageTextViews() const = 0;
-    virtual MessageTextView * messageTextViewAtIndex(int index) = 0;
+    virtual MessageTextView *messageTextViewAtIndex(int index) = 0;
     bool hasExpressionView() const {
-      return const_cast<ModalViewEmptyView *>(this)->expressionView() != nullptr;
+      return const_cast<ModalViewEmptyView *>(this)->expressionView() !=
+             nullptr;
     }
-    virtual ExpressionView * expressionView() { return nullptr; }
+    virtual ExpressionView *expressionView() { return nullptr; }
   };
 };
 
-}
+}  // namespace Escher
 #endif

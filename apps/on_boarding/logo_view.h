@@ -8,17 +8,17 @@
 namespace OnBoarding {
 
 class LogoView : public Escher::View {
-public:
+ public:
   LogoView();
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-private:
+  void drawRect(KDContext* ctx, KDRect rect) const override;
+
+ private:
   int numberOfSubviews() const override;
-  Escher::View * subviewAtIndex(int index) override;
+  Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   Escher::ImageView m_logoView;
 };
 
-}
+}  // namespace OnBoarding
 
 #endif
-

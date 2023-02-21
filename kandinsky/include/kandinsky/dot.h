@@ -2,6 +2,7 @@
 #define KANDINSKY_DOT_H
 
 #include <kandinsky/coordinate.h>
+
 #include <algorithm>
 
 template <KDCoordinate Size>
@@ -45,7 +46,7 @@ constexpr KDMask<Size> KDMakeRing(float minRadius, float maxRadius) {
         float px = x + (0.5 + pi) / static_cast<float>(k_nbSubdivisions);
         for (int pj = 0; pj < k_nbSubdivisions; pj++) {
           float py = y + (0.5 + pj) / static_cast<float>(k_nbSubdivisions);
-          float r = px*px + py*py;
+          float r = px * px + py * py;
           if (minRadius2 <= r && r <= maxRadius2) {
             n++;
           }

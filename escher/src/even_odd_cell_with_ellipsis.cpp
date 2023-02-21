@@ -2,13 +2,10 @@
 
 namespace Escher {
 
-EvenOddCellWithEllipsis::EvenOddCellWithEllipsis() :
-  EvenOddCell()
-{
-}
+EvenOddCellWithEllipsis::EvenOddCellWithEllipsis() : EvenOddCell() {}
 
 void EvenOddCellWithEllipsis::layoutSubviews(bool force) {
   m_ellipsisView.setFrame(bounds(), force);
 }
 
-}
+}  // namespace Escher

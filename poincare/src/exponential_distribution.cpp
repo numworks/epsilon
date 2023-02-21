@@ -1,52 +1,69 @@
-#include <poincare/exponential_distribution.h>
-#include <poincare/domain.h>
-#include <poincare/regularized_incomplete_beta_function.h>
-#include <cmath>
 #include <float.h>
+#include <poincare/domain.h>
+#include <poincare/exponential_distribution.h>
+#include <poincare/regularized_incomplete_beta_function.h>
+
+#include <cmath>
 
 namespace Poincare {
 
-template <typename T> T ExponentialDistribution::EvaluateAtAbscissa(T x, T lambda) {
+template <typename T>
+T ExponentialDistribution::EvaluateAtAbscissa(T x, T lambda) {
   if (x < static_cast<T>(0.0)) {
     return NAN;
   }
   return lambda * std::exp(-lambda * x);
 }
 
-template <typename T> T ExponentialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T lambda) {
+template <typename T>
+T ExponentialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x,
+                                                                    T lambda) {
   if (x < 0.0) {
     return static_cast<T>(0.0);
   }
   return static_cast<T>(1.0) - std::exp((-lambda * x));
 }
 
-template <typename T> T ExponentialDistribution::CumulativeDistributiveInverseForProbability(T probability, T lambda) {
+template <typename T>
+T ExponentialDistribution::CumulativeDistributiveInverseForProbability(
+    T probability, T lambda) {
   if (probability >= static_cast<T>(1.0)) {
     return INFINITY;
   }
   if (probability <= static_cast<T>(0.0)) {
     return static_cast<T>(0.0);
   }
-  return -std::log(1.0 - probability)/lambda;
+  return -std::log(1.0 - probability) / lambda;
 }
 
-template<typename T>
+template <typename T>
 bool ExponentialDistribution::LambdaIsOK(T lambda) {
   return Domain::Contains(lambda, Domain::Type::RPlus);
 }
 
-bool ExponentialDistribution::ExpressionLambdaIsOK(bool * result, const Expression & lambda, Context * context) {
+bool ExponentialDistribution::ExpressionLambdaIsOK(bool* result,
+                                                   const Expression& lambda,
+                                                   Context* context) {
   return Domain::ExpressionIsIn(result, lambda, Domain::Type::RPlus, context);
 }
 
 // Specialisations
 template float ExponentialDistribution::EvaluateAtAbscissa<float>(float, float);
-template double ExponentialDistribution::EvaluateAtAbscissa<double>(double, double);
-template float ExponentialDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, float);
-template double ExponentialDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double);
-template float ExponentialDistribution::CumulativeDistributiveInverseForProbability<float>(float, float);
-template double ExponentialDistribution::CumulativeDistributiveInverseForProbability<double>(double, double);
+template double ExponentialDistribution::EvaluateAtAbscissa<double>(double,
+                                                                    double);
+template float
+ExponentialDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float,
+                                                                         float);
+template double
+ExponentialDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(
+    double, double);
+template float
+ExponentialDistribution::CumulativeDistributiveInverseForProbability<float>(
+    float, float);
+template double
+ExponentialDistribution::CumulativeDistributiveInverseForProbability<double>(
+    double, double);
 template bool ExponentialDistribution::LambdaIsOK(float);
 template bool ExponentialDistribution::LambdaIsOK(double);
 
-}
+}  // namespace Poincare

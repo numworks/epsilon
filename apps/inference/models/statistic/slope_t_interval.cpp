@@ -11,4 +11,4 @@ void SlopeTInterval::compute() {
   m_estimate = slope(0);
 }
 
-}
+}  // namespace Inference

@@ -8,18 +8,30 @@
 namespace Inference {
 
 class OneProportionZTest : public Test {
-friend class OneProportion;
-public:
-  SignificanceTestType significanceTestType() const override { return SignificanceTestType::OneProportion; }
-  DistributionType distributionType() const override { return DistributionType::Z; }
+  friend class OneProportion;
+
+ public:
+  SignificanceTestType significanceTestType() const override {
+    return SignificanceTestType::OneProportion;
+  }
+  DistributionType distributionType() const override {
+    return DistributionType::Z;
+  }
   I18n::Message title() const override { return OneProportion::Title(); }
-  I18n::Message graphTitleFormat() const override { return DistributionZ::GraphTitleFormat(); }
+  I18n::Message graphTitleFormat() const override {
+    return DistributionZ::GraphTitleFormat();
+  }
   void tidy() override { m_estimateLayout = Poincare::Layout(); }
 
   // Significance Test: OneProportion
-  const char * hypothesisSymbol() override { return OneProportion::HypothesisSymbol(); }
+  const char* hypothesisSymbol() override {
+    return OneProportion::HypothesisSymbol();
+  }
   void initParameters() override { OneProportion::InitTestParameters(this); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && OneProportion::AuthorizedParameterAtIndex(i, p); }
+  bool authorizedParameterAtIndex(double p, int i) const override {
+    return Inference::authorizedParameterAtIndex(p, i) &&
+           OneProportion::AuthorizedParameterAtIndex(i, p);
+  }
   void setParameterAtIndex(double p, int index) override {
     p = OneProportion::ProcessParamaterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
@@ -30,29 +42,55 @@ public:
 
   // Estimates
   int numberOfEstimates() const override { return 1; }
-  double estimateValue(int index) override { return OneProportion::X(parametersArray()) / OneProportion::N(parametersArray()); }
-  Poincare::Layout estimateLayout(int index) const override { return OneProportion::EstimateLayout(&m_estimateLayout); }
-  I18n::Message estimateDescription(int index) override { return OneProportion::EstimateDescription(); }
+  double estimateValue(int index) override {
+    return OneProportion::X(parametersArray()) /
+           OneProportion::N(parametersArray());
+  }
+  Poincare::Layout estimateLayout(int index) const override {
+    return OneProportion::EstimateLayout(&m_estimateLayout);
+  }
+  I18n::Message estimateDescription(int index) override {
+    return OneProportion::EstimateDescription();
+  }
 
   // Distribution: z
-  Poincare::Layout testCriticalValueSymbol() override { return DistributionZ::TestCriticalValueSymbol(); }
-  float canonicalDensityFunction(float x) const override { return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom); }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override { return DistributionZ::CumulativeNormalizedDistributionFunction(x, m_degreesOfFreedom); }
-  double cumulativeDistributiveInverseForProbability(double p) const override { return DistributionZ::CumulativeNormalizedInverseDistributionFunction(p, m_degreesOfFreedom); }
+  Poincare::Layout testCriticalValueSymbol() override {
+    return DistributionZ::TestCriticalValueSymbol();
+  }
+  float canonicalDensityFunction(float x) const override {
+    return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom);
+  }
+  double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
+    return DistributionZ::CumulativeNormalizedDistributionFunction(
+        x, m_degreesOfFreedom);
+  }
+  double cumulativeDistributiveInverseForProbability(double p) const override {
+    return DistributionZ::CumulativeNormalizedInverseDistributionFunction(
+        p, m_degreesOfFreedom);
+  }
 
-private:
+ private:
   // Significance Test: OneProportion
-  bool validateInputs() override { return OneProportion::ValidateInputs(m_params); }
-  int numberOfStatisticParameters() const override { return OneProportion::NumberOfParameters(); }
-  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override { return OneProportion::ParameterRepresentationAtIndex(i); }
-  double * parametersArray() override { return m_params; }
+  bool validateInputs() override {
+    return OneProportion::ValidateInputs(m_params);
+  }
+  int numberOfStatisticParameters() const override {
+    return OneProportion::NumberOfParameters();
+  }
+  Shared::ParameterRepresentation paramRepresentationAtIndex(
+      int i) const override {
+    return OneProportion::ParameterRepresentationAtIndex(i);
+  }
+  double* parametersArray() override { return m_params; }
   // Distribution: z
-  float computeYMax() const override { return DistributionZ::YMax(m_degreesOfFreedom); }
+  float computeYMax() const override {
+    return DistributionZ::YMax(m_degreesOfFreedom);
+  }
 
   double m_params[OneProportion::k_numberOfParams];
   mutable Poincare::Layout m_estimateLayout;
 };
 
-}
+}  // namespace Inference
 
 #endif

@@ -5,11 +5,7 @@
 
 namespace Poincare {
 
-enum class TrinaryBoolean : int8_t {
-  False = -1,
-  Unknown = 0,
-  True = 1
-};
+enum class TrinaryBoolean : int8_t { False = -1, Unknown = 0, True = 1 };
 
 /* These three-valued booleans are based on Kleene and Priest logics
  * See wikipedia: https://en.wikipedia.org/wiki/Three-valued_logic
@@ -74,6 +70,6 @@ inline TrinaryBoolean BinaryToTrinaryBool(bool b) {
   return b ? TrinaryBoolean::True : TrinaryBoolean::False;
 }
 
-}
+}  // namespace Poincare
 
 #endif

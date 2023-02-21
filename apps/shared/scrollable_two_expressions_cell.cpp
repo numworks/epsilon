@@ -1,4 +1,5 @@
 #include "scrollable_two_expressions_cell.h"
+
 #include <assert.h>
 #include <escher/container.h>
 
@@ -7,13 +8,12 @@ using namespace Poincare;
 
 namespace Shared {
 
-ScrollableTwoExpressionsCell::ScrollableTwoExpressionsCell(Responder * parentResponder, float horizontalAlignment, KDFont::Size font) :
-  Responder(parentResponder),
-  m_view(this, horizontalAlignment, font)
-{
-}
+ScrollableTwoExpressionsCell::ScrollableTwoExpressionsCell(
+    Responder* parentResponder, float horizontalAlignment, KDFont::Size font)
+    : Responder(parentResponder), m_view(this, horizontalAlignment, font) {}
 
-void ScrollableTwoExpressionsCell::setLayouts(Poincare::Layout exactLayout, Poincare::Layout approximateLayout) {
+void ScrollableTwoExpressionsCell::setLayouts(
+    Poincare::Layout exactLayout, Poincare::Layout approximateLayout) {
   m_view.setLayouts(Layout(), exactLayout, approximateLayout);
 }
 
@@ -27,9 +27,7 @@ void ScrollableTwoExpressionsCell::setEven(bool even) {
   m_view.evenOddCell()->setEven(even);
 }
 
-void ScrollableTwoExpressionsCell::reloadScroll() {
-  m_view.reloadScroll();
-}
+void ScrollableTwoExpressionsCell::reloadScroll() { m_view.reloadScroll(); }
 
 void ScrollableTwoExpressionsCell::didBecomeFirstResponder() {
   reinitSelection();
@@ -37,16 +35,17 @@ void ScrollableTwoExpressionsCell::didBecomeFirstResponder() {
 }
 
 void ScrollableTwoExpressionsCell::reinitSelection() {
-  ScrollableTwoExpressionsView::SubviewPosition selectedSubview = m_view.displayCenter() ? ScrollableTwoExpressionsView::SubviewPosition::Center : ScrollableTwoExpressionsView::SubviewPosition::Right;
+  ScrollableTwoExpressionsView::SubviewPosition selectedSubview =
+      m_view.displayCenter()
+          ? ScrollableTwoExpressionsView::SubviewPosition::Center
+          : ScrollableTwoExpressionsView::SubviewPosition::Right;
   m_view.setSelectedSubviewPosition(selectedSubview);
   reloadScroll();
 }
 
-int ScrollableTwoExpressionsCell::numberOfSubviews() const {
-  return 1;
-}
+int ScrollableTwoExpressionsCell::numberOfSubviews() const { return 1; }
 
-View * ScrollableTwoExpressionsCell::subviewAtIndex(int index) {
+View* ScrollableTwoExpressionsCell::subviewAtIndex(int index) {
   return &m_view;
 }
 
@@ -54,4 +53,4 @@ void ScrollableTwoExpressionsCell::layoutSubviews(bool force) {
   m_view.setFrame(bounds(), force);
 }
 
-}
+}  // namespace Shared

@@ -7,18 +7,25 @@
 namespace Inference {
 
 class BorderedTableViewDataSource : public Escher::TableViewDataSource {
-public:
+ public:
   virtual KDCoordinate verticalBorderWidth() { return 0; }
   virtual KDCoordinate horizontalBorderHeight() { return 0; }
-private:
+
+ private:
   KDCoordinate nonMemoizedCumulatedWidthBeforeIndex(int i) override {
-    return Escher::TableViewDataSource::nonMemoizedCumulatedWidthBeforeIndex(i) + (i == numberOfColumns() && i > 0 ? i - 1 : i) * verticalBorderWidth();
+    return Escher::TableViewDataSource::nonMemoizedCumulatedWidthBeforeIndex(
+               i) +
+           (i == numberOfColumns() && i > 0 ? i - 1 : i) *
+               verticalBorderWidth();
   }
   KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j) override {
-    return Escher::TableViewDataSource::nonMemoizedCumulatedHeightBeforeIndex(j) + (j == numberOfRows() && j > 0 ? j - 1 : j) * horizontalBorderHeight();
+    return Escher::TableViewDataSource::nonMemoizedCumulatedHeightBeforeIndex(
+               j) +
+           (j == numberOfRows() && j > 0 ? j - 1 : j) *
+               horizontalBorderHeight();
   }
 };
 
-}
+}  // namespace Inference
 
 #endif

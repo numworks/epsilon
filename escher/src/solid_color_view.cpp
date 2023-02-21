@@ -2,15 +2,9 @@
 
 namespace Escher {
 
-SolidColorView::SolidColorView(KDColor color) :
-  View(),
-  m_color(color)
-{
-}
+SolidColorView::SolidColorView(KDColor color) : View(), m_color(color) {}
 
-void SolidColorView::reload() {
-  markRectAsDirty(bounds());
-}
+void SolidColorView::reload() { markRectAsDirty(bounds()); }
 
 void SolidColorView::setColor(KDColor color) {
   if (m_color != color) {
@@ -19,14 +13,12 @@ void SolidColorView::setColor(KDColor color) {
   }
 }
 
-void SolidColorView::drawRect(KDContext * ctx, KDRect rect) const {
+void SolidColorView::drawRect(KDContext *ctx, KDRect rect) const {
   ctx->fillRect(rect, m_color);
 }
 
 #if ESCHER_VIEW_LOGGING
-const char * SolidColorView::className() const {
-  return "SolidColorView";
-}
+const char *SolidColorView::className() const { return "SolidColorView"; }
 
 void SolidColorView::logAttributes(std::ostream &os) const {
   View::logAttributes(os);
@@ -34,4 +26,4 @@ void SolidColorView::logAttributes(std::ostream &os) const {
 }
 #endif
 
-}
+}  // namespace Escher

@@ -9,4 +9,4 @@ void Init() {
   TreePool::sharedPool.init();
 }
 
-}
+}  // namespace Poincare

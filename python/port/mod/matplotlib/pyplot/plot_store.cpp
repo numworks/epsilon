@@ -1,11 +1,10 @@
 #include "plot_store.h"
+
 #include <algorithm>
 
 namespace Matplotlib {
 
-PlotStore::PlotStore() : Shared::InteractiveCurveViewRange(),
-  m_show(false)
-{
+PlotStore::PlotStore() : Shared::InteractiveCurveViewRange(), m_show(false) {
   flush();
 }
 
@@ -39,7 +38,7 @@ PlotStore::ListIterator<T> PlotStore::ListIterator<T>::End(mp_obj_t list) {
 }
 
 template <class T>
-PlotStore::ListIterator<T> & PlotStore::ListIterator<T>::operator++() {
+PlotStore::ListIterator<T>& PlotStore::ListIterator<T>::operator++() {
   if (m_tupleIndex < m_numberOfTuples) {
     m_tupleIndex++;
   }
@@ -47,7 +46,8 @@ PlotStore::ListIterator<T> & PlotStore::ListIterator<T>::operator++() {
 }
 
 template <class T>
-bool PlotStore::ListIterator<T>::operator!=(const PlotStore::ListIterator<T> & it) const {
+bool PlotStore::ListIterator<T>::operator!=(
+    const PlotStore::ListIterator<T>& it) const {
   return m_tupleIndex != it.m_tupleIndex;
 };
 
@@ -56,13 +56,12 @@ T PlotStore::ListIterator<T>::operator*() {
   return T(m_tuples[m_tupleIndex]);
 };
 
-
 // Dot
 
 template class PlotStore::ListIterator<PlotStore::Dot>;
 
 PlotStore::Dot::Dot(mp_obj_t tuple) {
-  mp_obj_t * elements;
+  mp_obj_t* elements;
   mp_obj_get_array_fixed_n(tuple, 3, &elements);
   m_x = mp_obj_get_float(elements[0]);
   m_y = mp_obj_get_float(elements[1]);
@@ -81,8 +80,8 @@ void PlotStore::addDot(mp_obj_t x, mp_obj_t y, KDColor c) {
 template class PlotStore::ListIterator<PlotStore::Segment>;
 
 PlotStore::Segment::Segment(mp_obj_t tuple) {
-  mp_obj_t * elements;
-  mp_obj_get_array_fixed_n(tuple, 6 , &elements);
+  mp_obj_t* elements;
+  mp_obj_get_array_fixed_n(tuple, 6, &elements);
   m_xStart = mp_obj_get_float(elements[0]);
   m_yStart = mp_obj_get_float(elements[1]);
   m_xEnd = mp_obj_get_float(elements[2]);
@@ -91,7 +90,8 @@ PlotStore::Segment::Segment(mp_obj_t tuple) {
   m_color = KDColor::RGB16(mp_obj_get_int(elements[5]));
 }
 
-void PlotStore::addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_obj_t yEnd, KDColor c, mp_obj_t arrowWidth) {
+void PlotStore::addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd,
+                           mp_obj_t yEnd, KDColor c, mp_obj_t arrowWidth) {
   mp_obj_t color = mp_obj_new_int(c);
   mp_obj_t items[6] = {xStart, yStart, xEnd, yEnd, arrowWidth, color};
   mp_obj_t tuple = mp_obj_new_tuple(6, items);
@@ -103,7 +103,7 @@ void PlotStore::addSegment(mp_obj_t xStart, mp_obj_t yStart, mp_obj_t xEnd, mp_o
 template class PlotStore::ListIterator<PlotStore::Rect>;
 
 PlotStore::Rect::Rect(mp_obj_t tuple) {
-  mp_obj_t * elements;
+  mp_obj_t* elements;
   mp_obj_get_array_fixed_n(tuple, 5, &elements);
   m_left = mp_obj_get_float(elements[0]);
   m_right = mp_obj_get_float(elements[1]);
@@ -112,7 +112,8 @@ PlotStore::Rect::Rect(mp_obj_t tuple) {
   m_color = KDColor::RGB16(mp_obj_get_int(elements[4]));
 }
 
-void PlotStore::addRect(mp_obj_t left, mp_obj_t right, mp_obj_t top, mp_obj_t bottom, KDColor c) {
+void PlotStore::addRect(mp_obj_t left, mp_obj_t right, mp_obj_t top,
+                        mp_obj_t bottom, KDColor c) {
   mp_obj_t color = mp_obj_new_int(c);
   mp_obj_t items[5] = {left, right, top, bottom, color};
   mp_obj_t tuple = mp_obj_new_tuple(5, items);
@@ -124,7 +125,7 @@ void PlotStore::addRect(mp_obj_t left, mp_obj_t right, mp_obj_t top, mp_obj_t bo
 template class PlotStore::ListIterator<PlotStore::Label>;
 
 PlotStore::Label::Label(mp_obj_t tuple) {
-  mp_obj_t * elements;
+  mp_obj_t* elements;
   mp_obj_get_array_fixed_n(tuple, 3, &elements);
   m_x = mp_obj_get_float(elements[0]);
   m_y = mp_obj_get_float(elements[1]);
@@ -142,7 +143,8 @@ void PlotStore::addLabel(mp_obj_t x, mp_obj_t y, mp_obj_t string) {
 
 // Axes
 
-void updateRange(float * xMin, float * xMax, float * yMin, float * yMax, float x, float y) {
+void updateRange(float* xMin, float* xMax, float* yMin, float* yMax, float x,
+                 float y) {
   if (!std::isnan(x) && !std::isinf(x) && !std::isnan(y) && !std::isinf(y)) {
     *xMin = std::min(*xMin, x);
     *xMax = std::max(*xMax, x);
@@ -151,14 +153,14 @@ void updateRange(float * xMin, float * xMax, float * yMin, float * yMax, float x
   }
 }
 
-void checkPositiveRangeAndAddMargin(float * min, float * max) {
+void checkPositiveRangeAndAddMargin(float* min, float* max) {
   if (*min > *max) {
-    *min = - Poincare::Range1D::k_defaultHalfLength;
+    *min = -Poincare::Range1D::k_defaultHalfLength;
     *max = Poincare::Range1D::k_defaultHalfLength;
     return;
   }
   // Add margins
-  float margin = (*max - *min)/10.0f;
+  float margin = (*max - *min) / 10.0f;
   if (margin < FLT_EPSILON) {
     margin = 1.0f;
   }
@@ -179,12 +181,15 @@ void PlotStore::initRange() {
       updateRange(&xMin, &xMax, &yMin, &yMax, label.x(), label.y());
     }
     for (PlotStore::Segment segment : segments()) {
-      updateRange(&xMin, &xMax, &yMin, &yMax, segment.xStart(), segment.yStart());
+      updateRange(&xMin, &xMax, &yMin, &yMax, segment.xStart(),
+                  segment.yStart());
       updateRange(&xMin, &xMax, &yMin, &yMax, segment.xEnd(), segment.yEnd());
     }
     for (PlotStore::Rect rectangle : rects()) {
-      updateRange(&xMin, &xMax, &yMin, &yMax, rectangle.left(), rectangle.top());
-      updateRange(&xMin, &xMax, &yMin, &yMax, rectangle.right(), rectangle.bottom());
+      updateRange(&xMin, &xMax, &yMin, &yMax, rectangle.left(),
+                  rectangle.top());
+      updateRange(&xMin, &xMax, &yMin, &yMax, rectangle.right(),
+                  rectangle.bottom());
     }
     checkPositiveRangeAndAddMargin(&xMin, &xMax);
     checkPositiveRangeAndAddMargin(&yMin, &yMax);
@@ -195,4 +200,4 @@ void PlotStore::initRange() {
   }
 }
 
-}
+}  // namespace Matplotlib

@@ -6,7 +6,7 @@
 namespace Poincare {
 
 class LayoutSelection {
-public:
+ public:
   /* If the layout is horizontal, the selection is between the children at
    * startPosition and endPosition - 1.
    * Ex: l = HorizontalLayout("0123456789")
@@ -20,19 +20,27 @@ public:
    *     -> LayoutSelection(l, 0, 1) = "A"
    *     -> LayoutSelection(l, 0, 0) = ""
    * */
-  LayoutSelection(Layout l, int startPosition, int endPosition) :
-    m_layout(l), m_startPosition(startPosition), m_endPosition(endPosition)
-  {
+  LayoutSelection(Layout l, int startPosition, int endPosition)
+      : m_layout(l),
+        m_startPosition(startPosition),
+        m_endPosition(endPosition) {
     assert(l.isUninitialized() ||
-           (l.isHorizontal() && 0 <= startPosition && startPosition <= l.numberOfChildren() && 0 <= endPosition && endPosition <= l.numberOfChildren()) ||
-           (startPosition >= 0 && startPosition <= 1 && endPosition >= 0 && endPosition <= 1));
+           (l.isHorizontal() && 0 <= startPosition &&
+            startPosition <= l.numberOfChildren() && 0 <= endPosition &&
+            endPosition <= l.numberOfChildren()) ||
+           (startPosition >= 0 && startPosition <= 1 && endPosition >= 0 &&
+            endPosition <= 1));
   }
 
   LayoutSelection() : LayoutSelection(Layout(), 0, 0) {}
 
-  LayoutSelection clone() { return LayoutSelection(m_layout.clone(), m_startPosition, m_endPosition); }
+  LayoutSelection clone() {
+    return LayoutSelection(m_layout.clone(), m_startPosition, m_endPosition);
+  }
 
-  bool isEmpty() const { return m_layout.isUninitialized() || m_startPosition == m_endPosition; }
+  bool isEmpty() const {
+    return m_layout.isUninitialized() || m_startPosition == m_endPosition;
+  }
 
   Layout layout() const { return m_layout; }
   /* startPosition can be higher than endPosition if the selection is from
@@ -42,23 +50,21 @@ public:
   int leftPosition() const { return std::min(m_startPosition, m_endPosition); }
   int rightPosition() const { return std::max(m_startPosition, m_endPosition); }
 
-  bool containsNode(TreeNode * n) const {
-    LayoutNode * l = reinterpret_cast<LayoutNode *>(n);
-    return
-      !isEmpty() &&
-      (m_layout.isHorizontal() ?
-        (l >= m_layout.childAtIndex(leftPosition()).node() &&
-         l <= m_layout.childAtIndex(rightPosition() - 1).node()) :
-        (l >= m_layout.node() &&
-         l < m_layout.node()->nextSibling()));
+  bool containsNode(TreeNode *n) const {
+    LayoutNode *l = reinterpret_cast<LayoutNode *>(n);
+    return !isEmpty() &&
+           (m_layout.isHorizontal()
+                ? (l >= m_layout.childAtIndex(leftPosition()).node() &&
+                   l <= m_layout.childAtIndex(rightPosition() - 1).node())
+                : (l >= m_layout.node() && l < m_layout.node()->nextSibling()));
   }
 
-private:
+ private:
   Layout m_layout;
   int m_startPosition;
   int m_endPosition;
 };
 
-}
+}  // namespace Poincare
 
 #endif

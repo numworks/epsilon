@@ -6,10 +6,11 @@
 namespace Solver {
 
 class SolverContext : public Poincare::ContextWithParent {
-public:
-  SolverContext(Context * parentContext) : Poincare::ContextWithParent(parentContext) {}
+ public:
+  SolverContext(Context* parentContext)
+      : Poincare::ContextWithParent(parentContext) {}
   bool canRemoveUnderscoreToUnits() const override { return false; }
 };
 
-}
+}  // namespace Solver
 #endif

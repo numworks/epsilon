@@ -8,18 +8,30 @@
 namespace Inference {
 
 class TwoProportionsZTest : public Test {
-friend class TwoProportions;
-public:
-  SignificanceTestType significanceTestType() const override { return SignificanceTestType::TwoProportions; }
-  DistributionType distributionType() const override { return DistributionType::Z; }
+  friend class TwoProportions;
+
+ public:
+  SignificanceTestType significanceTestType() const override {
+    return SignificanceTestType::TwoProportions;
+  }
+  DistributionType distributionType() const override {
+    return DistributionType::Z;
+  }
   I18n::Message title() const override { return TwoProportions::Title(); }
-  I18n::Message graphTitleFormat() const override { return DistributionZ::GraphTitleFormat(); }
+  I18n::Message graphTitleFormat() const override {
+    return DistributionZ::GraphTitleFormat();
+  }
   void tidy() override { m_p1p2Layout = m_p2Layout = Poincare::Layout(); }
 
   // Significance Test: TwoProportions
-  const char * hypothesisSymbol() override { return TwoProportions::HypothesisSymbol(); }
+  const char* hypothesisSymbol() override {
+    return TwoProportions::HypothesisSymbol();
+  }
   void initParameters() override { TwoProportions::InitTestParameters(this); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && TwoProportions::AuthorizedParameterAtIndex(i, p); }
+  bool authorizedParameterAtIndex(double p, int i) const override {
+    return Inference::authorizedParameterAtIndex(p, i) &&
+           TwoProportions::AuthorizedParameterAtIndex(i, p);
+  }
   void setParameterAtIndex(double p, int index) override {
     p = TwoProportions::ProcessParamaterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
@@ -35,19 +47,38 @@ public:
   I18n::Message estimateDescription(int index) override;
 
   // Distribution: z
-  Poincare::Layout testCriticalValueSymbol() override { return DistributionZ::TestCriticalValueSymbol(); }
-  float canonicalDensityFunction(float x) const override { return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom); }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override { return DistributionZ::CumulativeNormalizedDistributionFunction(x, m_degreesOfFreedom); }
-  double cumulativeDistributiveInverseForProbability(double p) const override { return DistributionZ::CumulativeNormalizedInverseDistributionFunction(p, m_degreesOfFreedom); }
+  Poincare::Layout testCriticalValueSymbol() override {
+    return DistributionZ::TestCriticalValueSymbol();
+  }
+  float canonicalDensityFunction(float x) const override {
+    return DistributionZ::CanonicalDensityFunction(x, m_degreesOfFreedom);
+  }
+  double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
+    return DistributionZ::CumulativeNormalizedDistributionFunction(
+        x, m_degreesOfFreedom);
+  }
+  double cumulativeDistributiveInverseForProbability(double p) const override {
+    return DistributionZ::CumulativeNormalizedInverseDistributionFunction(
+        p, m_degreesOfFreedom);
+  }
 
-private:
+ private:
   // Significance Test: TwoProportions
-  bool validateInputs() override { return TwoProportions::ValidateInputs(m_params); }
-  int numberOfStatisticParameters() const override { return TwoProportions::NumberOfParameters(); }
-  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override { return TwoProportions::ParameterRepresentationAtIndex(i); }
-  double * parametersArray() override { return m_params; }
+  bool validateInputs() override {
+    return TwoProportions::ValidateInputs(m_params);
+  }
+  int numberOfStatisticParameters() const override {
+    return TwoProportions::NumberOfParameters();
+  }
+  Shared::ParameterRepresentation paramRepresentationAtIndex(
+      int i) const override {
+    return TwoProportions::ParameterRepresentationAtIndex(i);
+  }
+  double* parametersArray() override { return m_params; }
   // Distribution: z
-  float computeYMax() const override { return DistributionZ::YMax(m_degreesOfFreedom); }
+  float computeYMax() const override {
+    return DistributionZ::YMax(m_degreesOfFreedom);
+  }
 
   double m_params[TwoProportions::k_numberOfParams];
   enum class EstimatesOrder { P1, P2, Pooled };
@@ -55,6 +86,6 @@ private:
   mutable Poincare::Layout m_p2Layout;
 };
 
-}
+}  // namespace Inference
 
 #endif

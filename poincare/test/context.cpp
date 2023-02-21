@@ -4,15 +4,21 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
+
 #include "helper.h"
 
 using namespace Poincare;
 
-template<typename T>
-void assert_parsed_expression_approximates_with_value_for_symbol(Expression expression, const char * symbol, T value, T approximation, Poincare::Preferences::ComplexFormat complexFormat = Cartesian, Poincare::Preferences::AngleUnit angleUnit = Radian) {
+template <typename T>
+void assert_parsed_expression_approximates_with_value_for_symbol(
+    Expression expression, const char *symbol, T value, T approximation,
+    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
+    Poincare::Preferences::AngleUnit angleUnit = Radian) {
   Shared::GlobalContext globalContext;
-  T result = expression.approximateWithValueForSymbol(symbol, value, &globalContext, complexFormat, angleUnit);
-  assert_roughly_equal(result, approximation, Poincare::Float<T>::Epsilon(), true);
+  T result = expression.approximateWithValueForSymbol(
+      symbol, value, &globalContext, complexFormat, angleUnit);
+  assert_roughly_equal(result, approximation, Poincare::Float<T>::Epsilon(),
+                       true);
 }
 
 QUIZ_CASE(poincare_context_user_variable_simple) {
@@ -45,14 +51,15 @@ QUIZ_CASE(poincare_context_user_variable_simple) {
   assert_parsed_expression_simplify_to("fBoth(Adadas)", "7");
 
   // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("Adadas.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("Adadas.exp")
+      .destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f1.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f2.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("fBoth.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("fBoth.func")
+      .destroy();
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_variables) {
-
   assert_reduce_and_store("a→b");
   assert_reduce_and_store("b→a");
   assert_expression_approximates_to<double>("a", Undefined::Name());
@@ -153,7 +160,8 @@ QUIZ_CASE(poincare_context_user_variable_composed_functions) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
 }
 
-QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value_for_symbol) {
+QUIZ_CASE(
+    poincare_context_user_variable_functions_approximation_with_value_for_symbol) {
   // f : x→ x^2
   assert_reduce_and_store("x^2→f(x)");
   // Approximate f(?-2) with ? = 5
@@ -162,9 +170,23 @@ QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value_for_
   char x[bufferSize];
   Poincare::SerializationHelper::CodePoint(x, bufferSize, UCodePointUnknown);
 
-  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(2))), x, 5.0, 9.0);
+  assert_parsed_expression_approximates_with_value_for_symbol(
+      Function::Builder("f", 1,
+                        Subtraction::Builder(Symbol::Builder(UCodePointUnknown),
+                                             Rational::Builder(2))),
+      x, 5.0, 9.0);
   // Approximate f(?-1)+f(?+1) with ? = 3
-  assert_parsed_expression_approximates_with_value_for_symbol(Addition::Builder(Function::Builder("f", 1, Subtraction::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1))), Function::Builder("f", 1, Addition::Builder(Symbol::Builder(UCodePointUnknown), Rational::Builder(1)))), x, 3.0, 20.0);
+  assert_parsed_expression_approximates_with_value_for_symbol(
+      Addition::Builder(
+          Function::Builder(
+              "f", 1,
+              Subtraction::Builder(Symbol::Builder(UCodePointUnknown),
+                                   Rational::Builder(1))),
+          Function::Builder(
+              "f", 1,
+              Addition::Builder(Symbol::Builder(UCodePointUnknown),
+                                Rational::Builder(1)))),
+      x, 3.0, 20.0);
 
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
@@ -173,9 +195,13 @@ QUIZ_CASE(poincare_context_user_variable_functions_approximation_with_value_for_
   assert_reduce_and_store("√(-1)×√(-1)→f(x)");
   // Approximate f(?) with ? = 5
   // Cartesian
-  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(UCodePointUnknown)), x, 1.0, -1.0);
+  assert_parsed_expression_approximates_with_value_for_symbol(
+      Function::Builder("f", 1, Symbol::Builder(UCodePointUnknown)), x, 1.0,
+      -1.0);
   // Real
-  assert_parsed_expression_approximates_with_value_for_symbol(Function::Builder("f", 1, Symbol::Builder(UCodePointUnknown)), x, 1.0, (double)NAN, Real);
+  assert_parsed_expression_approximates_with_value_for_symbol(
+      Function::Builder("f", 1, Symbol::Builder(UCodePointUnknown)), x, 1.0,
+      (double)NAN, Real);
 
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
@@ -185,16 +211,20 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
   Shared::GlobalContext context;
 
   assert_reduce_and_store("[[1]]→a");
-  quiz_assert(Symbol::Builder('a').recursivelyMatches(Expression::IsMatrix, &context));
+  quiz_assert(
+      Symbol::Builder('a').recursivelyMatches(Expression::IsMatrix, &context));
 
   /* [[x]]→f(x) expression contains a matrix, so its simplification is going
    * to be interrupted. We thus rather approximate it instead of simplifying it.
    * TODO: use parse_and_simplify when matrix are simplified. */
 
   assert_reduce_and_store("[[x]]→f(x)");
-  quiz_assert(Function::Builder("f", 1, Symbol::Builder('x')).recursivelyMatches(Poincare::Expression::IsMatrix, &context));
+  quiz_assert(
+      Function::Builder("f", 1, Symbol::Builder('x'))
+          .recursivelyMatches(Poincare::Expression::IsMatrix, &context));
   assert_reduce_and_store("0.2*x→g(x)");
-  quiz_assert(Function::Builder("g", 1, Rational::Builder(2)).recursivelyMatches(Expression::IsApproximate, &context));
+  quiz_assert(Function::Builder("g", 1, Rational::Builder(2))
+                  .recursivelyMatches(Expression::IsApproximate, &context));
 
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.mat").destroy();
@@ -218,5 +248,9 @@ QUIZ_CASE(poincare_context_function_evaluate_at_undef) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
 }
 
-template void assert_parsed_expression_approximates_with_value_for_symbol(Poincare::Expression, const char *, float, float, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
-template void assert_parsed_expression_approximates_with_value_for_symbol(Poincare::Expression, const char *, double, double, Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
+template void assert_parsed_expression_approximates_with_value_for_symbol(
+    Poincare::Expression, const char *, float, float,
+    Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);
+template void assert_parsed_expression_approximates_with_value_for_symbol(
+    Poincare::Expression, const char *, double, double,
+    Poincare::Preferences::ComplexFormat, Poincare::Preferences::AngleUnit);

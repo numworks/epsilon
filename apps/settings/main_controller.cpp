@@ -1,8 +1,10 @@
 #include "main_controller.h"
-#include "../exam_mode_configuration.h"
-#include "../global_preferences.h"
+
 #include <apps/i18n.h>
 #include <assert.h>
+
+#include "../exam_mode_configuration.h"
+#include "../global_preferences.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -10,44 +12,67 @@ using namespace Escher;
 
 namespace Settings {
 
-constexpr MessageTree s_modelAngleChildren[3] = {MessageTree(I18n::Message::Radian), MessageTree(I18n::Message::Degrees), MessageTree(I18n::Message::Gradians)};
-constexpr MessageTree s_modelEditionModeChildren[2] = {MessageTree(I18n::Message::Edition2D), MessageTree(I18n::Message::EditionLinear)};
-constexpr MessageTree s_modelFloatDisplayModeChildren[4] = {MessageTree(I18n::Message::Decimal), MessageTree(I18n::Message::Scientific), MessageTree(I18n::Message::Engineering), MessageTree(I18n::Message::SignificantFigures)};
-constexpr MessageTree s_modelComplexFormatChildren[3] = {MessageTree(I18n::Message::Real), MessageTree(I18n::Message::Cartesian), MessageTree(I18n::Message::Polar)};
-constexpr MessageTree s_modelFontChildren[2] = {MessageTree(I18n::Message::LargeFont), MessageTree(I18n::Message::SmallFont)};
-constexpr MessageTree s_modelTestModeMenu[2] = {MessageTree(I18n::Message::ExamMode), MessageTree(I18n::Message::PressToTest)};
-constexpr MessageTree s_modelAboutChildren[AboutController::k_totalNumberOfCell] = {MessageTree(I18n::Message::SoftwareVersion), MessageTree(I18n::Message::SerialNumber), MessageTree(I18n::Message::FccId),
+constexpr MessageTree s_modelAngleChildren[3] = {
+    MessageTree(I18n::Message::Radian), MessageTree(I18n::Message::Degrees),
+    MessageTree(I18n::Message::Gradians)};
+constexpr MessageTree s_modelEditionModeChildren[2] = {
+    MessageTree(I18n::Message::Edition2D),
+    MessageTree(I18n::Message::EditionLinear)};
+constexpr MessageTree s_modelFloatDisplayModeChildren[4] = {
+    MessageTree(I18n::Message::Decimal), MessageTree(I18n::Message::Scientific),
+    MessageTree(I18n::Message::Engineering),
+    MessageTree(I18n::Message::SignificantFigures)};
+constexpr MessageTree s_modelComplexFormatChildren[3] = {
+    MessageTree(I18n::Message::Real), MessageTree(I18n::Message::Cartesian),
+    MessageTree(I18n::Message::Polar)};
+constexpr MessageTree s_modelFontChildren[2] = {
+    MessageTree(I18n::Message::LargeFont),
+    MessageTree(I18n::Message::SmallFont)};
+constexpr MessageTree s_modelTestModeMenu[2] = {
+    MessageTree(I18n::Message::ExamMode),
+    MessageTree(I18n::Message::PressToTest)};
+constexpr MessageTree
+    s_modelAboutChildren[AboutController::k_totalNumberOfCell] = {
+        MessageTree(I18n::Message::SoftwareVersion),
+        MessageTree(I18n::Message::SerialNumber),
+        MessageTree(I18n::Message::FccId),
 #if TERMS_OF_USE
-  MessageTree(I18n::Message::TermsOfUse),
+        MessageTree(I18n::Message::TermsOfUse),
 #endif
 };
 
-MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
-  SelectableListViewController(parentResponder),
-  m_brightnessCell(I18n::Message::Default),
-  m_popUpCell(I18n::Message::Default),
-  m_resetButton(&m_selectableTableView, I18n::Message::ResetCalculator, Invocation::Builder<MainController>([](MainController * controller, void * sender) {
-    controller->m_resetController.presentModally();
-    return true;
-  }, this)),
-  m_preferencesController(this),
-  m_displayModeController(this, inputEventHandlerDelegate),
-  m_localizationController(this, LocalizationController::Mode::Language),
-  m_examModeController(this),
-  m_pressToTestController(this),
-  m_testModeController(this, this),
-  m_aboutController(this),
-  m_resetController(
-    Invocation::Builder<MainController>([](MainController * controller, void * sender) {
-      Ion::Reset::core();
-      return true;
-      }, this),
-      I18n::Message::ResetCalculatorWarning
-  )
-{
+MainController::MainController(
+    Responder *parentResponder,
+    InputEventHandlerDelegate *inputEventHandlerDelegate)
+    : SelectableListViewController(parentResponder),
+      m_brightnessCell(I18n::Message::Default),
+      m_popUpCell(I18n::Message::Default),
+      m_resetButton(&m_selectableTableView, I18n::Message::ResetCalculator,
+                    Invocation::Builder<MainController>(
+                        [](MainController *controller, void *sender) {
+                          controller->m_resetController.presentModally();
+                          return true;
+                        },
+                        this)),
+      m_preferencesController(this),
+      m_displayModeController(this, inputEventHandlerDelegate),
+      m_localizationController(this, LocalizationController::Mode::Language),
+      m_examModeController(this),
+      m_pressToTestController(this),
+      m_testModeController(this, this),
+      m_aboutController(this),
+      m_resetController(Invocation::Builder<MainController>(
+                            [](MainController *controller, void *sender) {
+                              Ion::Reset::core();
+                              return true;
+                            },
+                            this),
+                        I18n::Message::ResetCalculatorWarning) {
   // Assert the ExamMode and Press-to-test cells are correctly placed.
-  assert(subControllerForCell(messageAtModelIndex(k_indexOfExamModeCell)) == &m_examModeController);
-  assert(subControllerForCell(messageAtModelIndex(k_indexOfExamModeCell + 1)) == &m_pressToTestController);
+  assert(subControllerForCell(messageAtModelIndex(k_indexOfExamModeCell)) ==
+         &m_examModeController);
+  assert(subControllerForCell(messageAtModelIndex(k_indexOfExamModeCell + 1)) ==
+         &m_pressToTestController);
 }
 
 void MainController::didBecomeFirstResponder() {
@@ -58,7 +83,8 @@ void MainController::didBecomeFirstResponder() {
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
-  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences;
+  GlobalPreferences *globalPreferences =
+      GlobalPreferences::sharedGlobalPreferences;
   int type = typeAtIndex(selectedRow());
 
   if (type == k_resetCellType) {
@@ -69,22 +95,32 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   if (type == k_popUpCellType) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
       globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
-      m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+      m_selectableTableView.reloadCellAtLocation(
+          m_selectableTableView.selectedColumn(),
+          m_selectableTableView.selectedRow());
       return true;
     }
     return false;
   }
 
-  if (type == k_brightnessCellType
-   && (event == Ion::Events::Left || event == Ion::Events::Right || event == Ion::Events::Minus || event == Ion::Events::Plus)) {
-    int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
-    int direction = (event == Ion::Events::Right || event == Ion::Events::Plus) ? delta : -delta;
-    globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel()+direction);
-    m_selectableTableView.reloadCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+  if (type == k_brightnessCellType &&
+      (event == Ion::Events::Left || event == Ion::Events::Right ||
+       event == Ion::Events::Minus || event == Ion::Events::Plus)) {
+    int delta = Ion::Backlight::MaxBrightness /
+                GlobalPreferences::NumberOfBrightnessStates;
+    int direction = (event == Ion::Events::Right || event == Ion::Events::Plus)
+                        ? delta
+                        : -delta;
+    globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel() +
+                                          direction);
+    m_selectableTableView.reloadCellAtLocation(
+        m_selectableTableView.selectedColumn(),
+        m_selectableTableView.selectedRow());
     return true;
   }
 
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE ||
+      event == Ion::Events::Right) {
     if (type == k_brightnessCellType) {
       /* Nothing is supposed to happen when OK or EXE are pressed on the
        * brightness cell. The case of pressing Right has been handled above. */
@@ -106,19 +142,23 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void MainController::pushModel(const Escher::MessageTree * messageTreeModel) {
-  ViewController * selectedSubController = subControllerForCell(messageTreeModel->label());
+void MainController::pushModel(const Escher::MessageTree *messageTreeModel) {
+  ViewController *selectedSubController =
+      subControllerForCell(messageTreeModel->label());
   assert(selectedSubController);
   if (messageTreeModel->numberOfChildren() != 0) {
-    static_cast<GenericSubController *>(selectedSubController)->setMessageTreeModel(messageTreeModel);
-    static_cast<GenericSubController *>(selectedSubController)->resetMemoization();
+    static_cast<GenericSubController *>(selectedSubController)
+        ->setMessageTreeModel(messageTreeModel);
+    static_cast<GenericSubController *>(selectedSubController)
+        ->resetMemoization();
   }
   stackController()->push(selectedSubController);
 }
 
 int MainController::numberOfRows() const {
   assert(hasExamModeCell() + hasPressToTestCell() + hasTestModeCell() == 1);
-  return model()->numberOfChildren() + hasExamModeCell() + hasPressToTestCell() + hasTestModeCell() - 3;
+  return model()->numberOfChildren() + hasExamModeCell() +
+         hasPressToTestCell() + hasTestModeCell() - 3;
 };
 
 KDCoordinate MainController::nonMemoizedRowHeight(int index) {
@@ -135,7 +175,7 @@ KDCoordinate MainController::nonMemoizedRowHeight(int index) {
   }
 }
 
-HighlightCell * MainController::reusableCell(int index, int type) {
+HighlightCell *MainController::reusableCell(int index, int type) {
   assert(index >= 0);
   if (type == k_defaultCellType) {
     assert(index < k_numberOfSimpleChevronCells);
@@ -173,26 +213,30 @@ int MainController::typeAtIndex(int index) const {
   };
 }
 
-void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences;
-  Preferences * preferences = Preferences::sharedPreferences;
+void MainController::willDisplayCellForIndex(HighlightCell *cell, int index) {
+  GlobalPreferences *globalPreferences =
+      GlobalPreferences::sharedGlobalPreferences;
+  Preferences *preferences = Preferences::sharedPreferences;
   int modelIndex = getModelIndex(index);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
   int type = typeAtIndex(index);
   if (type == k_brightnessCellType) {
-    MessageTableCellWithGaugeWithSeparator * myGaugeCell = static_cast<MessageTableCellWithGaugeWithSeparator *>(cell);
+    MessageTableCellWithGaugeWithSeparator *myGaugeCell =
+        static_cast<MessageTableCellWithGaugeWithSeparator *>(cell);
     myGaugeCell->setMessage(title);
-    GaugeView * myGauge = (GaugeView *)myGaugeCell->accessoryView();
-    myGauge->setLevel((float)globalPreferences->brightnessLevel()/(float)Ion::Backlight::MaxBrightness);
+    GaugeView *myGauge = (GaugeView *)myGaugeCell->accessoryView();
+    myGauge->setLevel((float)globalPreferences->brightnessLevel() /
+                      (float)Ion::Backlight::MaxBrightness);
     return;
   }
   if (type == k_resetCellType) {
     return;
   }
-  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
+  MessageTableCell *myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(title);
   if (type == k_popUpCellType) {
-    MessageTableCellWithSwitch * mySwitchCell = static_cast<MessageTableCellWithSwitch *>(cell);
+    MessageTableCellWithSwitch *mySwitchCell =
+        static_cast<MessageTableCellWithSwitch *>(cell);
     mySwitchCell->setState(globalPreferences->showPopUp());
     return;
   }
@@ -200,15 +244,18 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   I18n::Message message = messageAtModelIndex(modelIndex);
   if (message == I18n::Message::Language) {
     int languageIndex = (int)(globalPreferences->language());
-    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::LanguageNames[languageIndex]);
+    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(
+        I18n::LanguageNames[languageIndex]);
     return;
   }
   if (message == I18n::Message::Country) {
     int countryIndex = (int)(globalPreferences->country());
-    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(I18n::CountryNames[countryIndex]);
+    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(
+        I18n::CountryNames[countryIndex]);
     return;
   }
-  MessageTableCellWithChevronAndMessage * myTextCell = static_cast<MessageTableCellWithChevronAndMessage *>(cell);
+  MessageTableCellWithChevronAndMessage *myTextCell =
+      static_cast<MessageTableCellWithChevronAndMessage *>(cell);
   int childIndex = -1;
   switch (message) {
     case I18n::Message::AngleUnit:
@@ -224,13 +271,19 @@ void MainController::willDisplayCellForIndex(HighlightCell * cell, int index) {
       childIndex = (int)preferences->complexFormat();
       break;
     case I18n::Message::FontSizes:
-      childIndex = GlobalPreferences::sharedGlobalPreferences->font() == KDFont::Size::Large ? 0 : 1;
+      childIndex = GlobalPreferences::sharedGlobalPreferences->font() ==
+                           KDFont::Size::Large
+                       ? 0
+                       : 1;
       break;
     default:
       childIndex = -1;
       break;
   }
-  I18n::Message subtitle = childIndex >= 0 ? model()->childAtIndex(modelIndex)->childAtIndex(childIndex)->label() : I18n::Message::Default;
+  I18n::Message subtitle =
+      childIndex >= 0
+          ? model()->childAtIndex(modelIndex)->childAtIndex(childIndex)->label()
+          : I18n::Message::Default;
   myTextCell->setSubtitle(subtitle);
 }
 
@@ -244,15 +297,14 @@ I18n::Message MainController::messageAtModelIndex(int i) const {
   return model()->childAtIndex(i)->label();
 }
 
-const MessageTree * MainController::model() {
-  return &s_model;
-}
+const MessageTree *MainController::model() { return &s_model; }
 
-StackViewController * MainController::stackController() const {
+StackViewController *MainController::stackController() const {
   return (StackViewController *)parentResponder();
 }
 
-ViewController * MainController::subControllerForCell(I18n::Message cellMessage) {
+ViewController *MainController::subControllerForCell(
+    I18n::Message cellMessage) {
   switch (cellMessage) {
     case I18n::Message::AngleUnit:
     case I18n::Message::EditionMode:
@@ -278,11 +330,13 @@ ViewController * MainController::subControllerForCell(I18n::Message cellMessage)
 }
 
 bool MainController::hasExamModeCell() const {
-  return !hasTestModeCell() && ExamModeConfiguration::numberOfAvailableExamMode() > 0;
+  return !hasTestModeCell() &&
+         ExamModeConfiguration::numberOfAvailableExamMode() > 0;
 }
 
 bool MainController::hasPressToTestCell() const {
-  return !hasTestModeCell() && ExamModeConfiguration::pressToTestExamModeAvailable();
+  return !hasTestModeCell() &&
+         ExamModeConfiguration::pressToTestExamModeAvailable();
 }
 
 bool MainController::hasTestModeCell() const {
@@ -312,4 +366,4 @@ int MainController::getModelIndex(int index) const {
   return index;
 }
 
-}
+}  // namespace Settings

@@ -16,10 +16,7 @@ namespace OMG {
 
 namespace Print {
 
-enum class LeadingZeros : bool {
-  Trim = false,
-  Keep = true
-};
+enum class LeadingZeros : bool { Trim = false, Keep = true };
 
 inline char CharacterForDigit(Base base, uint8_t d) {
   assert(d >= 0 && d < static_cast<uint8_t>(base));
@@ -42,14 +39,24 @@ inline uint8_t DigitForCharacter(char c) {
   return c - 'a' + 10;
 }
 
-constexpr size_t MaxLengthOfUInt32(Base base) { return OMG::BitHelper::numberOfBitsInType<uint32_t>() / OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<uint8_t>(base)); }
-
-constexpr size_t LengthOfUInt32(Base base, uint32_t integer) { return integer == 0 ? 1 : OMG::BitHelper::indexOfMostSignificantBit(integer) / OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<uint8_t>(base)) + 1; }
-
-int UInt32(Base base, uint32_t integer, LeadingZeros printLeadingZeros, char * buffer, int bufferSize);
-
+constexpr size_t MaxLengthOfUInt32(Base base) {
+  return OMG::BitHelper::numberOfBitsInType<uint32_t>() /
+         OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<uint8_t>(base));
 }
 
+constexpr size_t LengthOfUInt32(Base base, uint32_t integer) {
+  return integer == 0 ? 1
+                      : OMG::BitHelper::indexOfMostSignificantBit(integer) /
+                                OMG::BitHelper::numberOfBitsToCountUpTo(
+                                    static_cast<uint8_t>(base)) +
+                            1;
 }
+
+int UInt32(Base base, uint32_t integer, LeadingZeros printLeadingZeros,
+           char* buffer, int bufferSize);
+
+}  // namespace Print
+
+}  // namespace OMG
 
 #endif

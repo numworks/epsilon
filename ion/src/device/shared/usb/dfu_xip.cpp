@@ -1,6 +1,6 @@
+#include <ion.h>
 #include <shared/drivers/board_shared.h>
 #include <shared/drivers/serial_number.h>
-#include <ion.h>
 #include <shared/drivers/usb.h>
 #include <shared/usb/calculator.h>
 
@@ -14,5 +14,5 @@ void DFU() {
   Device::USB::didExecuteDFU();
 }
 
-}
-}
+}  // namespace USB
+}  // namespace Ion

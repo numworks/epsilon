@@ -1,27 +1,27 @@
 #ifndef REGS_OTG_H
 #define REGS_OTG_H
 
-#include <shared/regs/register.h>
 #include <config/otg.h>
+#include <shared/regs/register.h>
 
 namespace Ion {
 namespace Device {
 namespace Regs {
 
 class OTG {
-public:
+ public:
   class GOTGINT : public Register32 {
-  public:
+   public:
     REGS_BOOL_FIELD(SEDET, 2);
   };
 
   class GAHBCFG : public Register32 {
-  public:
+   public:
     REGS_BOOL_FIELD(GINTMSK, 0);
   };
 
   class GUSBCFG : public Register32 {
-  public:
+   public:
     using Register32::Register32;
     REGS_BOOL_FIELD(PHYSEL, 6);
     REGS_FIELD(TRDT, uint8_t, 13, 10);
@@ -29,7 +29,7 @@ public:
   };
 
   class GRSTCTL : public Register32 {
-  public:
+   public:
     REGS_BOOL_FIELD(CSRST, 0);
     REGS_BOOL_FIELD(RXFFLSH, 4);
     REGS_BOOL_FIELD(TXFFLSH, 5);
@@ -38,7 +38,7 @@ public:
   };
 
   class GINTSTS : public Register32 {
-  public:
+   public:
     using Register32::Register32;
     REGS_BOOL_FIELD(MMIS, 1);
     REGS_BOOL_FIELD(SOF, 3);
@@ -51,7 +51,7 @@ public:
   };
 
   class GINTMSK : public Register32 {
-  public:
+   public:
     using Register32::Register32;
     REGS_BOOL_FIELD(RXFLVLM, 4);
     REGS_BOOL_FIELD(USBSUSPM, 11);
@@ -62,13 +62,14 @@ public:
   };
 
   class GRXSTSP : public Register32 {
-  public:
+   public:
     using Register32::Register32;
     enum class PKTSTS : uint8_t {
       GlobalOutNAK = 1,
       OutReceived = 2,
-      OutTransferCompleted = 3, // After each Out Transaction
-      SetupTransactionCompleted = 4, // Supposed to be after each SETUP transaction
+      OutTransferCompleted = 3,  // After each Out Transaction
+      SetupTransactionCompleted =
+          4,  // Supposed to be after each SETUP transaction
       SetupReceived = 6
     };
     REGS_FIELD(EPNUM, uint8_t, 3, 0);
@@ -77,24 +78,24 @@ public:
   };
 
   class GRXFSIZ : public Register32 {
-  public:
+   public:
     REGS_FIELD(RXFD, uint16_t, 15, 0);
   };
 
   class DIEPTXF0 : public Register32 {
-  public:
+   public:
     REGS_FIELD(TX0FSA, uint16_t, 15, 0);
     REGS_FIELD(TX0FD, uint16_t, 31, 16);
   };
 
   class GCCFG : public Register32 {
-  public:
+   public:
     REGS_BOOL_FIELD(PWRDWN, 16);
     REGS_BOOL_FIELD(VBDEN, 21);
   };
 
   class DCFG : public Register32 {
-  public:
+   public:
     enum class DSPD : uint8_t {
       FullSpeed = 3,
     };
@@ -103,27 +104,27 @@ public:
   };
 
   class DCTL : public Register32 {
-  public:
+   public:
     REGS_BOOL_FIELD(SDIS, 1);
   };
 
   class DIEPMSK : public Register32 {
-  public:
+   public:
     REGS_BOOL_FIELD(XFRCM, 0);
   };
 
   class DAINTMSK : public Register32 {
-  public:
+   public:
     REGS_FIELD(IEPM, uint16_t, 15, 0);
     REGS_FIELD(OEPM, uint16_t, 31, 16);
   };
 
   class DIEPCTL0 : public Register32 {
-  public:
+   public:
     using Register32::Register32;
 #if REGS_CONFIG_OTG_LARGE_MPSIZ
-    enum class MPSIZ : uint16_t {
-      Size64 = 64,
+    enum class MPSIZ : uint16_t{
+        Size64 = 64,
     };
     REGS_TYPE_FIELD(MPSIZ, 10, 0);
 #else
@@ -143,27 +144,27 @@ public:
   };
 
   class DOEPCTL0 : public Register32 {
-  public:
+   public:
     REGS_BOOL_FIELD(CNAK, 26);
     REGS_BOOL_FIELD(SNAK, 27);
     REGS_BOOL_FIELD(EPENA, 31);
   };
 
   class DIEPINT : public Register32 {
-  public:
+   public:
     REGS_BOOL_FIELD(XFRC, 0);
     REGS_BOOL_FIELD(INEPNE, 6);
   };
 
   class DIEPTSIZ0 : public Register32 {
-  public:
+   public:
     using Register32::Register32;
     REGS_FIELD(XFRSIZ, uint8_t, 6, 0);
     REGS_FIELD(PKTCNT, uint8_t, 20, 19);
   };
 
   class DOEPTSIZ0 : public Register32 {
-  public:
+   public:
     using Register32::Register32;
     REGS_FIELD(XFRSIZ, uint8_t, 6, 0);
     REGS_BOOL_FIELD(PKTCNT, 19);
@@ -171,15 +172,14 @@ public:
   };
 
   class PCGCCTL : public Register32 {
-  public:
+   public:
     REGS_BOOL_FIELD(STPPCLK, 0);
     REGS_BOOL_FIELD(GATEHCLK, 1);
   };
 
-  class DFIFO0 : public Register32 {
-  };
+  class DFIFO0 : public Register32 {};
 
-  constexpr OTG() {};
+  constexpr OTG(){};
   REGS_REGISTER_AT(GOTGINT, 0x004);
   REGS_REGISTER_AT(GAHBCFG, 0x008);
   REGS_REGISTER_AT(GUSBCFG, 0x00C);
@@ -200,18 +200,16 @@ public:
   REGS_REGISTER_AT(DOEPTSIZ0, 0xB10);
   REGS_REGISTER_AT(PCGCCTL, 0xE00);
   REGS_REGISTER_AT(DFIFO0, 0x1000);
-  constexpr volatile DIEPINT * DIEPINT(int i) const {
-    return (class DIEPINT *)(Base() + 0x908 + i*0x20);
+  constexpr volatile DIEPINT *DIEPINT(int i) const {
+    return (class DIEPINT *)(Base() + 0x908 + i * 0x20);
   }
-  constexpr uint32_t Base() const {
-    return REGS_CONFIG_OTG_BASE_ADDRESS;
-  }
+  constexpr uint32_t Base() const { return REGS_CONFIG_OTG_BASE_ADDRESS; }
 };
 
 constexpr OTG OTG;
 
-}
-}
-}
+}  // namespace Regs
+}  // namespace Device
+}  // namespace Ion
 
 #endif

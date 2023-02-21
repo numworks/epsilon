@@ -1,5 +1,7 @@
 #include "console_store.h"
+
 #include <string.h>
+
 #include <algorithm>
 
 namespace Code {
@@ -13,10 +15,10 @@ void ConsoleStore::startNewSession() {
 
   for (size_t i = 0; i < k_historySize - 1; i++) {
     if (m_history[i] == 0) {
-      if (m_history[i+1] == 0) {
-        return ;
+      if (m_history[i + 1] == 0) {
+        return;
       }
-      m_history[i+1] = makePrevious(m_history[i+1]);
+      m_history[i + 1] = makePrevious(m_history[i + 1]);
     }
   }
 }
@@ -24,13 +26,13 @@ void ConsoleStore::startNewSession() {
 ConsoleLine ConsoleStore::lineAtIndex(int i) const {
   assert(i >= 0 && i < numberOfLines());
   int currentLineIndex = 0;
-  for (size_t j=0; j<k_historySize; j++) {
+  for (size_t j = 0; j < k_historySize; j++) {
     if (m_history[j] == 0) {
       currentLineIndex++;
       j++;
     }
     if (currentLineIndex == i) {
-      return ConsoleLine(lineTypeForMarker(m_history[j]), m_history+j+1);
+      return ConsoleLine(lineTypeForMarker(m_history[j]), m_history + j + 1);
     }
   }
   assert(false);
@@ -45,7 +47,7 @@ int ConsoleStore::numberOfLines() const {
   for (size_t i = 0; i < k_historySize - 1; i++) {
     if (m_history[i] == 0) {
       result++;
-      if (m_history[i+1] == 0) {
+      if (m_history[i + 1] == 0) {
         return result;
       }
     }
@@ -54,16 +56,16 @@ int ConsoleStore::numberOfLines() const {
   return 0;
 }
 
-const char * ConsoleStore::pushCommand(const char * text) {
+const char* ConsoleStore::pushCommand(const char* text) {
   return push(CurrentSessionCommandMarker, text);
 }
 
-void ConsoleStore::pushResult(const char * text) {
+void ConsoleStore::pushResult(const char* text) {
   push(CurrentSessionResultMarker, text);
 }
 
 void ConsoleStore::deleteLastLineIfEmpty() {
-  ConsoleLine lastLine = lineAtIndex(numberOfLines()-1);
+  ConsoleLine lastLine = lineAtIndex(numberOfLines() - 1);
   char lastLineFirstChar = lastLine.text()[0];
   if (lastLineFirstChar == 0 || lastLineFirstChar == '\n') {
     deleteLastLine();
@@ -75,13 +77,14 @@ int ConsoleStore::deleteCommandAndResultsAtIndex(int index) {
   assert(index >= 0 && index < numberOfLinesAtStart);
   int indexOfLineToDelete = index;
   while (indexOfLineToDelete < numberOfLinesAtStart - 1) {
-   if (lineAtIndex(indexOfLineToDelete + 1).isCommand()) {
-     break;
-   }
-   indexOfLineToDelete++;
+    if (lineAtIndex(indexOfLineToDelete + 1).isCommand()) {
+      break;
+    }
+    indexOfLineToDelete++;
   }
   ConsoleLine lineToDelete = lineAtIndex(indexOfLineToDelete);
-  while (indexOfLineToDelete > 0 && !lineAtIndex(indexOfLineToDelete).isCommand()) {
+  while (indexOfLineToDelete > 0 &&
+         !lineAtIndex(indexOfLineToDelete).isCommand()) {
     deleteLineAtIndex(indexOfLineToDelete);
     indexOfLineToDelete--;
     lineToDelete = lineAtIndex(indexOfLineToDelete);
@@ -90,7 +93,7 @@ int ConsoleStore::deleteCommandAndResultsAtIndex(int index) {
   return indexOfLineToDelete;
 }
 
-const char * ConsoleStore::push(const char marker, const char * text) {
+const char* ConsoleStore::push(const char marker, const char* text) {
   size_t textLength = strlen(text);
   if (ConsoleLine::sizeOfConsoleLine(textLength) > k_historySize - 1) {
     // Marker, null termination and null marker.
@@ -103,23 +106,27 @@ const char * ConsoleStore::push(const char marker, const char * text) {
     i = indexOfNullMarker();
   }
   m_history[i] = marker;
-  strlcpy(&m_history[i+1], text, std::min(k_historySize-(i+1),textLength+1));
-  m_history[i+1+textLength+1] = 0;
-  return &m_history[i+1];
+  strlcpy(&m_history[i + 1], text,
+          std::min(k_historySize - (i + 1), textLength + 1));
+  m_history[i + 1 + textLength + 1] = 0;
+  return &m_history[i + 1];
 }
 
 ConsoleLine::Type ConsoleStore::lineTypeForMarker(char marker) const {
-  assert(marker == CurrentSessionCommandMarker || marker == CurrentSessionResultMarker || marker == PreviousSessionCommandMarker || marker == PreviousSessionResultMarker);
-  return static_cast<ConsoleLine::Type>(marker-1);
+  assert(marker == CurrentSessionCommandMarker ||
+         marker == CurrentSessionResultMarker ||
+         marker == PreviousSessionCommandMarker ||
+         marker == PreviousSessionResultMarker);
+  return static_cast<ConsoleLine::Type>(marker - 1);
 }
 
 size_t ConsoleStore::indexOfNullMarker() const {
   if (m_history[0] == 0) {
     return 0;
   }
-  for (size_t i=0; i<k_historySize; i++) {
-    if (m_history[i] == 0 && m_history[i+1] == 0) {
-      return (i+1);
+  for (size_t i = 0; i < k_historySize; i++) {
+    if (m_history[i] == 0 && m_history[i + 1] == 0) {
+      return (i + 1);
     }
   }
   assert(false);
@@ -127,7 +134,7 @@ size_t ConsoleStore::indexOfNullMarker() const {
 }
 
 void ConsoleStore::deleteLineAtIndex(int index) {
-  assert(index >=0 && index < numberOfLines());
+  assert(index >= 0 && index < numberOfLines());
   int currentLineIndex = 0;
   for (size_t i = 0; i < k_historySize - 1; i++) {
     if (m_history[i] == 0) {
@@ -136,14 +143,16 @@ void ConsoleStore::deleteLineAtIndex(int index) {
     }
     if (currentLineIndex == index) {
       size_t nextLineStart = i;
-      while (m_history[nextLineStart] != 0 && nextLineStart < k_historySize - 2) {
+      while (m_history[nextLineStart] != 0 &&
+             nextLineStart < k_historySize - 2) {
         nextLineStart++;
       }
       nextLineStart++;
       if (nextLineStart > k_historySize - 1) {
         return;
       }
-      memmove(&m_history[i], &m_history[nextLineStart], (k_historySize - 1) - nextLineStart + 1);
+      memmove(&m_history[i], &m_history[nextLineStart],
+              (k_historySize - 1) - nextLineStart + 1);
       return;
     }
   }
@@ -158,8 +167,8 @@ void ConsoleStore::deleteFirstLine() {
     secondLineMarkerIndex++;
   }
   secondLineMarkerIndex++;
-  for (size_t i=0; i<k_historySize - secondLineMarkerIndex; i++) {
-    m_history[i] = m_history[secondLineMarkerIndex+i];
+  for (size_t i = 0; i < k_historySize - secondLineMarkerIndex; i++) {
+    m_history[i] = m_history[secondLineMarkerIndex + i];
   }
 }
 
@@ -174,11 +183,11 @@ void ConsoleStore::deleteLastLine() {
   }
   int currentLineIndex = 1;
   int lastLineMarkerIndex = 0;
-  for (size_t i=0; i<k_historySize; i++) {
+  for (size_t i = 0; i < k_historySize; i++) {
     if (m_history[i] == 0) {
       currentLineIndex++;
       if (currentLineIndex == lineCount) {
-        lastLineMarkerIndex = i+1;
+        lastLineMarkerIndex = i + 1;
         break;
       }
     }
@@ -186,4 +195,4 @@ void ConsoleStore::deleteLastLine() {
   m_history[lastLineMarkerIndex] = 0;
 }
 
-}
+}  // namespace Code

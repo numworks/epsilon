@@ -9,7 +9,8 @@ namespace OMG {
 namespace BitHelper {
 
 constexpr static size_t k_numberOfBitsInByte = 8;
-constexpr static size_t k_numberOfBitsInInt = sizeof(int) * k_numberOfBitsInByte;
+constexpr static size_t k_numberOfBitsInInt =
+    sizeof(int) * k_numberOfBitsInByte;
 
 template <typename T>
 constexpr size_t numberOfBitsInType() {
@@ -23,7 +24,7 @@ constexpr bool bitAtIndex(T mask, size_t i) {
 }
 
 template <typename T>
-constexpr void setBitAtIndex(T & mask, size_t i, bool b) {
+constexpr void setBitAtIndex(T& mask, size_t i, bool b) {
   assert(i < numberOfBitsInType<T>());
   T one = 1;
   if (b) {
@@ -56,8 +57,10 @@ constexpr inline size_t numberOfBitsToCountUpTo(uint32_t i) {
 
 template <typename T>
 uint8_t log2(T v) {
-  constexpr int nativeUnsignedIntegerBitCount = k_numberOfBitsInByte * sizeof(T);
-  static_assert(nativeUnsignedIntegerBitCount < 256, "uint8_t cannot contain the log2 of a templated class T");
+  constexpr int nativeUnsignedIntegerBitCount =
+      k_numberOfBitsInByte * sizeof(T);
+  static_assert(nativeUnsignedIntegerBitCount < 256,
+                "uint8_t cannot contain the log2 of a templated class T");
   for (uint8_t i = 0; i < nativeUnsignedIntegerBitCount; i++) {
     if (v < (static_cast<T>(1) << i)) {
       return i;
@@ -66,7 +69,7 @@ uint8_t log2(T v) {
   return numberOfBitsInType<T>();
 }
 
-}
-}
+}  // namespace BitHelper
+}  // namespace OMG
 
 #endif

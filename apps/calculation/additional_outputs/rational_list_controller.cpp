@@ -1,9 +1,11 @@
 #include "rational_list_controller.h"
-#include "../app.h"
-#include "../../shared/poincare_helpers.h"
+
 #include <poincare/based_integer.h>
 #include <poincare/integer.h>
 #include <string.h>
+
+#include "../../shared/poincare_helpers.h"
+#include "../app.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -23,7 +25,8 @@ Integer extractInteger(const Expression e) {
 void RationalListController::setExpression(Poincare::Expression e) {
   ExpressionsListController::setExpression(e);
   assert(!m_expression.isUninitialized());
-  static_assert(k_maxNumberOfRows >= 2, "k_maxNumberOfRows must be greater than 2");
+  static_assert(k_maxNumberOfRows >= 2,
+                "k_maxNumberOfRows must be greater than 2");
 
   bool negative = false;
   Expression div = m_expression;
@@ -38,8 +41,12 @@ void RationalListController::setExpression(Poincare::Expression e) {
   Integer denominator = extractInteger(div.childAtIndex(1));
 
   int index = 0;
-  m_layouts[index++] = PoincareHelpers::CreateLayout(Integer::CreateMixedFraction(numerator, denominator), App::app()->localContext());
-  m_layouts[index++] = PoincareHelpers::CreateLayout(Integer::CreateEuclideanDivision(numerator, denominator), App::app()->localContext());
+  m_layouts[index++] = PoincareHelpers::CreateLayout(
+      Integer::CreateMixedFraction(numerator, denominator),
+      App::app()->localContext());
+  m_layouts[index++] = PoincareHelpers::CreateLayout(
+      Integer::CreateEuclideanDivision(numerator, denominator),
+      App::app()->localContext());
 }
 
 I18n::Message RationalListController::messageAtIndex(int index) {
@@ -51,11 +58,14 @@ I18n::Message RationalListController::messageAtIndex(int index) {
   }
 }
 
-int RationalListController::textAtIndex(char * buffer, size_t bufferSize, Escher::HighlightCell * cell, int index) {
-  int length = ExpressionsListController::textAtIndex(buffer, bufferSize, cell, index);
+int RationalListController::textAtIndex(char *buffer, size_t bufferSize,
+                                        Escher::HighlightCell *cell,
+                                        int index) {
+  int length =
+      ExpressionsListController::textAtIndex(buffer, bufferSize, cell, index);
   if (index == 1) {
     // Get rid of the left part of the equality
-    char * equalPosition = strchr(buffer, '=');
+    char *equalPosition = strchr(buffer, '=');
     assert(equalPosition != nullptr);
     strlcpy(buffer, equalPosition + 1, bufferSize);
     return buffer + length - 1 - equalPosition;
@@ -63,4 +73,4 @@ int RationalListController::textAtIndex(char * buffer, size_t bufferSize, Escher
   return length;
 }
 
-}
+}  // namespace Calculation

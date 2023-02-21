@@ -3,13 +3,14 @@
 
 namespace Poincare {
 
-bool NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
+bool NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(
+    const Expression &child, int childIndex) const {
   /* Expressions like "-2" require parentheses in Addition/Multiplication except
    * when they are the first operand. (same for -2%) */
-  if (childIndex != 0
-    && ((child.isNumber() && static_cast<const Number &>(child).isPositive() == TrinaryBoolean::False)
-      || child.type() == Type::Opposite))
-  {
+  if (childIndex != 0 &&
+      ((child.isNumber() && static_cast<const Number &>(child).isPositive() ==
+                                TrinaryBoolean::False) ||
+       child.type() == Type::Opposite)) {
     return true;
   }
   if (child.type() == Type::Conjugate || child.type() == Type::PercentSimple) {
@@ -18,7 +19,8 @@ bool NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(const Expression 
   return false;
 }
 
-int NAryInfixExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
+int NAryInfixExpressionNode::simplificationOrderSameType(
+    const ExpressionNode *e, bool ascending, bool ignoreParentheses) const {
   int m = numberOfChildren();
   int n = e->numberOfChildren();
   for (int i = 1; i <= m; i++) {
@@ -26,7 +28,8 @@ int NAryInfixExpressionNode::simplificationOrderSameType(const ExpressionNode * 
     if (n < i) {
       return 1;
     }
-    int order = SimplificationOrder(childAtIndex(m-i), e->childAtIndex(n-i), ascending, ignoreParentheses);
+    int order = SimplificationOrder(childAtIndex(m - i), e->childAtIndex(n - i),
+                                    ascending, ignoreParentheses);
     if (order != 0) {
       return order;
     }
@@ -38,13 +41,15 @@ int NAryInfixExpressionNode::simplificationOrderSameType(const ExpressionNode * 
   return 0;
 }
 
-int NAryInfixExpressionNode::simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
+int NAryInfixExpressionNode::simplificationOrderGreaterType(
+    const ExpressionNode *e, bool ascending, bool ignoreParentheses) const {
   int m = numberOfChildren();
   if (m == 0) {
     return -1;
   }
   /* Compare e to last term of hierarchy. */
-  int order = SimplificationOrder(childAtIndex(m-1), e, ascending, ignoreParentheses);
+  int order =
+      SimplificationOrder(childAtIndex(m - 1), e, ascending, ignoreParentheses);
   if (order != 0) {
     return order;
   }
@@ -54,4 +59,4 @@ int NAryInfixExpressionNode::simplificationOrderGreaterType(const ExpressionNode
   return 0;
 }
 
-}
+}  // namespace Poincare

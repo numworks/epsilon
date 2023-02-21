@@ -1,15 +1,14 @@
+#include "flash_information.h"
+
 #include <assert.h>
 #include <config/board.h>
 #include <config/external_flash.h>
-#include "flash_information.h"
 
 namespace Ion {
 namespace Device {
 namespace Flash {
 
-int TotalNumberOfSectors() {
-  return ExternalFlash::Config::NumberOfSectors;
-}
+int TotalNumberOfSectors() { return ExternalFlash::Config::NumberOfSectors; }
 
 int SectorAtAddress(uint32_t address) {
   /* WARNING: this code assumes that the flash sectors are of increasing size:
@@ -20,7 +19,8 @@ int SectorAtAddress(uint32_t address) {
     return -1;
   }
   if (i >= 1) {
-    return ExternalFlash::Config::NumberOf4KSectors + ExternalFlash::Config::NumberOf32KSectors + i - 1;
+    return ExternalFlash::Config::NumberOf4KSectors +
+           ExternalFlash::Config::NumberOf32KSectors + i - 1;
   }
   i = address >> ExternalFlash::Config::NumberOfAddressBitsIn32KbyteBlock;
   if (i >= 1) {
@@ -34,10 +34,11 @@ int SectorAtAddress(uint32_t address) {
 }
 
 bool IncludesAddress(uint32_t address) {
-  return address >= Board::Config::ExternalFlashOrigin
-    && address <= Board::Config::ExternalFlashOrigin + Board::Config::ExternalFlashLength;
+  return address >= Board::Config::ExternalFlashOrigin &&
+         address <= Board::Config::ExternalFlashOrigin +
+                        Board::Config::ExternalFlashLength;
 }
 
-}
-}
-}
+}  // namespace Flash
+}  // namespace Device
+}  // namespace Ion

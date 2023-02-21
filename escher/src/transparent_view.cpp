@@ -9,4 +9,4 @@ void TransparentView::markRectAsDirty(KDRect rect) {
   View::markRectAsDirty(rect);
 }
 
-}
+}  // namespace Escher

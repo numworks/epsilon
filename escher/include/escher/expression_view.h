@@ -15,7 +15,7 @@ namespace Escher {
  * size. */
 
 class ExpressionView : public View {
-public:
+ public:
   ExpressionView(float horizontalAlignment = KDContext::k_alignLeft,
                  float verticalAlignment = KDContext::k_alignCenter,
                  KDColor textColor = KDColorBlack,
@@ -23,20 +23,25 @@ public:
                  KDFont::Size font = KDFont::Size::Large);
   Poincare::Layout layout() const { return m_layout; }
   bool setLayout(Poincare::Layout layout);
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-  void setHorizontalMargin(KDCoordinate horizontalMargin) { m_horizontalMargin = horizontalMargin; }
+  void setHorizontalMargin(KDCoordinate horizontalMargin) {
+    m_horizontalMargin = horizontalMargin;
+  }
   int numberOfLayouts() const;
   KDSize minimalSizeForOptimalDisplay() const override;
   KDPoint drawingOrigin() const;
   KDPoint absoluteDrawingOrigin() const;
-  bool layoutHasNode() const { return Poincare::TreeNode::IsValidIdentifier(m_layout.identifier()) && !m_layout.wasErasedByException(); }
+  bool layoutHasNode() const {
+    return Poincare::TreeNode::IsValidIdentifier(m_layout.identifier()) &&
+           !m_layout.wasErasedByException();
+  }
   KDFont::Size font() const { return m_font; }
   void setFont(KDFont::Size font) { m_font = font; }
 
-protected:
+ protected:
   /* Warning: we do not need to delete the previous expression layout when
    * deleting object or setting a new expression layout. Indeed, the expression
    * layout is always possessed by a controller which only gives a pointer to
@@ -48,34 +53,36 @@ protected:
   KDColor m_backgroundColor;
   KDFont::Size m_font;
 
-private:
-  virtual Poincare::LayoutSelection selection() const { return Poincare::LayoutSelection(); }
+ private:
+  virtual Poincare::LayoutSelection selection() const {
+    return Poincare::LayoutSelection();
+  }
   float m_horizontalAlignment;
   float m_verticalAlignment;
   KDCoordinate m_horizontalMargin;
 };
 
 class ExpressionViewWithCursor : public ExpressionView {
-public:
-  ExpressionViewWithCursor(
-    Poincare::LayoutCursor * cursor,
-    float horizontalAlignment = KDContext::k_alignLeft,
-    float verticalAlignment = KDContext::k_alignCenter,
-    KDColor textColor = KDColorBlack,
-    KDColor backgroundColor = KDColorWhite,
-    KDFont::Size font = KDFont::Size::Large
-  ) :
-  ExpressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor, font),
-  m_cursor(cursor) {
+ public:
+  ExpressionViewWithCursor(Poincare::LayoutCursor* cursor,
+                           float horizontalAlignment = KDContext::k_alignLeft,
+                           float verticalAlignment = KDContext::k_alignCenter,
+                           KDColor textColor = KDColorBlack,
+                           KDColor backgroundColor = KDColorWhite,
+                           KDFont::Size font = KDFont::Size::Large)
+      : ExpressionView(horizontalAlignment, verticalAlignment, textColor,
+                       backgroundColor, font),
+        m_cursor(cursor) {
     assert(cursor);
   }
 
-
-private:
-  Poincare::LayoutSelection selection() const override { return m_cursor->selection(); }
-  Poincare::LayoutCursor * m_cursor;
+ private:
+  Poincare::LayoutSelection selection() const override {
+    return m_cursor->selection();
+  }
+  Poincare::LayoutCursor* m_cursor;
 };
 
-}
+}  // namespace Escher
 
 #endif

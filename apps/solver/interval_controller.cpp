@@ -1,31 +1,36 @@
 #include "interval_controller.h"
-#include "app.h"
+
 #include <apps/i18n.h>
 #include <assert.h>
 #include <string.h>
+
+#include "app.h"
 
 using namespace Escher;
 
 namespace Solver {
 
-IntervalController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-  m_instructions0(KDFont::Size::Small, I18n::Message::ApproximateSolutionIntervalInstruction0, KDContext::k_alignCenter,
-                  KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen),
-  m_instructions1(KDFont::Size::Small, I18n::Message::ApproximateSolutionIntervalInstruction1, KDContext::k_alignCenter,
-                  KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen),
-  m_selectableTableView(selectableTableView)
-{
+IntervalController::ContentView::ContentView(
+    SelectableTableView *selectableTableView)
+    : m_instructions0(KDFont::Size::Small,
+                      I18n::Message::ApproximateSolutionIntervalInstruction0,
+                      KDContext::k_alignCenter, KDContext::k_alignCenter,
+                      KDColorBlack, Palette::WallScreen),
+      m_instructions1(KDFont::Size::Small,
+                      I18n::Message::ApproximateSolutionIntervalInstruction1,
+                      KDContext::k_alignCenter, KDContext::k_alignCenter,
+                      KDColorBlack, Palette::WallScreen),
+      m_selectableTableView(selectableTableView) {}
+
+void IntervalController::ContentView::drawRect(KDContext *ctx,
+                                               KDRect rect) const {
+  ctx->fillRect(KDRect(0, 0, bounds().width(), k_topMargin),
+                Palette::WallScreen);
 }
 
-void IntervalController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_topMargin), Palette::WallScreen);
-}
+int IntervalController::ContentView::numberOfSubviews() const { return 3; }
 
-int IntervalController::ContentView::numberOfSubviews() const {
-  return 3;
-}
-
-View * IntervalController::ContentView::subviewAtIndex(int index) {
+View *IntervalController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < 5);
   if (index == 0) {
     return &m_instructions0;
@@ -38,19 +43,26 @@ View * IntervalController::ContentView::subviewAtIndex(int index) {
 
 void IntervalController::ContentView::layoutSubviews(bool force) {
   KDCoordinate textHeight = KDFont::GlyphHeight(KDFont::Size::Small);
-  m_instructions0.setFrame(KDRect(0, k_topMargin/2-textHeight, bounds().width(), textHeight), force);
-  m_instructions1.setFrame(KDRect(0, k_topMargin/2, bounds().width(), textHeight), force);
-  m_selectableTableView->setFrame(KDRect(0, k_topMargin, bounds().width(),  bounds().height()-k_topMargin), force);
+  m_instructions0.setFrame(
+      KDRect(0, k_topMargin / 2 - textHeight, bounds().width(), textHeight),
+      force);
+  m_instructions1.setFrame(
+      KDRect(0, k_topMargin / 2, bounds().width(), textHeight), force);
+  m_selectableTableView->setFrame(
+      KDRect(0, k_topMargin, bounds().width(), bounds().height() - k_topMargin),
+      force);
 }
 
 /* IntervalController Controller */
 
-IntervalController::IntervalController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, EquationStore * equationStore) :
-  FloatParameterController<double>(parentResponder),
-  m_contentView(&m_selectableTableView),
-  m_equationStore(equationStore),
-  m_shouldReplaceFunctionsButNotSymbols(false)
-{
+IntervalController::IntervalController(
+    Responder *parentResponder,
+    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    EquationStore *equationStore)
+    : FloatParameterController<double>(parentResponder),
+      m_contentView(&m_selectableTableView),
+      m_equationStore(equationStore),
+      m_shouldReplaceFunctionsButNotSymbols(false) {
   m_selectableTableView.setTopMargin(0);
   m_okButton.setMessage(I18n::Message::ResolveEquation);
   for (int i = 0; i < k_maxNumberOfCells; i++) {
@@ -59,25 +71,26 @@ IntervalController::IntervalController(Responder * parentResponder, InputEventHa
   }
 }
 
-const char * IntervalController::title() {
+const char *IntervalController::title() {
   return I18n::translate(I18n::Message::SearchInverval);
 }
 
-int IntervalController::numberOfRows() const {
-  return k_maxNumberOfCells+1;
-}
+int IntervalController::numberOfRows() const { return k_maxNumberOfCells + 1; }
 
-void IntervalController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index == numberOfRows()-1) {
+void IntervalController::willDisplayCellForIndex(HighlightCell *cell,
+                                                 int index) {
+  if (index == numberOfRows() - 1) {
     return;
   }
-  I18n::Message labels[k_maxNumberOfCells] = {I18n::Message::XMin, I18n::Message::XMax};
-  MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
+  I18n::Message labels[k_maxNumberOfCells] = {I18n::Message::XMin,
+                                              I18n::Message::XMax};
+  MessageTableCellWithEditableText *myCell =
+      (MessageTableCellWithEditableText *)cell;
   myCell->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-HighlightCell * IntervalController::reusableParameterCell(int index, int type) {
+HighlightCell *IntervalController::reusableParameterCell(int index, int type) {
   assert(index >= 0);
   assert(index < 2);
   return &m_intervalCell[index];
@@ -96,8 +109,11 @@ bool IntervalController::setParameterAtIndex(int parameterIndex, double f) {
   return true;
 }
 
-bool IntervalController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
+bool IntervalController::textFieldDidFinishEditing(AbstractTextField *textField,
+                                                   const char *text,
+                                                   Ion::Events::Event event) {
+  if (FloatParameterController::textFieldDidFinishEditing(textField, text,
+                                                          event)) {
     resetMemoization();
     m_selectableTableView.reloadData();
     return true;
@@ -106,9 +122,10 @@ bool IntervalController::textFieldDidFinishEditing(AbstractTextField * textField
 }
 
 void IntervalController::buttonAction() {
-  StackViewController * stack = stackController();
-  m_equationStore->approximateSolve(textFieldDelegateApp()->localContext(),   m_shouldReplaceFunctionsButNotSymbols);
+  StackViewController *stack = stackController();
+  m_equationStore->approximateSolve(textFieldDelegateApp()->localContext(),
+                                    m_shouldReplaceFunctionsButNotSymbols);
   stack->push(App::app()->solutionsControllerStack());
 }
 
-}
+}  // namespace Solver

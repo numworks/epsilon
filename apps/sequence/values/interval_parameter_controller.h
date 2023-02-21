@@ -6,12 +6,11 @@
 namespace Sequence {
 
 class IntervalParameterController : public Shared::IntervalParameterController {
-public:
+ public:
   using Shared::IntervalParameterController::IntervalParameterController;
   bool setParameterAtIndex(int parameterIndex, double f) override;
 };
 
-}
+}  // namespace Sequence
 
 #endif
-

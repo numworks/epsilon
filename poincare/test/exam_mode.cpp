@@ -1,17 +1,20 @@
-#include <quiz.h>
-#include <poincare/preferences.h>
 #include <ion/include/ion/persisting_bytes.h>
+#include <poincare/preferences.h>
+#include <quiz.h>
 
 using namespace Poincare;
 
-void assert_exam_mode_is(Ion::PersistingBytes::PersistingBytesInt bytes, Preferences::ExamMode mode) {
+void assert_exam_mode_is(Ion::PersistingBytes::PersistingBytesInt bytes,
+                         Preferences::ExamMode mode) {
   Preferences::ExamPersistingBytes exam(bytes);
   quiz_assert(exam.mode() == mode);
 }
 
-void assert_exam_params_are(Ion::PersistingBytes::PersistingBytesInt bytes, Preferences::PressToTestParams params) {
+void assert_exam_params_are(Ion::PersistingBytes::PersistingBytesInt bytes,
+                            Preferences::PressToTestParams params) {
   Preferences::ExamPersistingBytes exam(bytes);
-  quiz_assert(params == Preferences::k_inactivePressToTest || exam.mode() == Preferences::ExamMode::PressToTest);
+  quiz_assert(params == Preferences::k_inactivePressToTest ||
+              exam.mode() == Preferences::ExamMode::PressToTest);
   quiz_assert(exam.params() == params);
 }
 

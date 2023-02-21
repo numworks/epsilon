@@ -7,7 +7,7 @@ char readChar();
 void writeChar(char c);
 bool transmissionDone();
 
-void writeLine(const char * line, bool appendCRLF) {
+void writeLine(const char* line, bool appendCRLF) {
   while (*line != 0) {
     writeChar(*line++);
   }
@@ -19,12 +19,12 @@ void writeLine(const char * line, bool appendCRLF) {
   }
 }
 
-void readLine(char * line, int maxLineLength) {
+void readLine(char* line, int maxLineLength) {
   if (maxLineLength <= 0) {
     return;
   }
-  char * cursor = line;
-  char * last = line+maxLineLength-1;
+  char* cursor = line;
+  char* last = line + maxLineLength - 1;
   while (true) {
     *cursor = readChar();
     if (*cursor == '\r' || cursor == last) {
@@ -35,5 +35,5 @@ void readLine(char * line, int maxLineLength) {
   }
 }
 
-}
-}
+}  // namespace Console
+}  // namespace Ion

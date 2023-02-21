@@ -4,9 +4,8 @@ namespace Ion {
 namespace Simulator {
 namespace Window {
 
-void didRefresh() {
-}
+void didRefresh() {}
 
-}
-}
-}
+}  // namespace Window
+}  // namespace Simulator
+}  // namespace Ion

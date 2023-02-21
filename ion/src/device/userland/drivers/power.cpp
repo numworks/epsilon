@@ -12,9 +12,7 @@ void SVC_ATTRIBUTES suspend(bool checkIfOnOffKeyReleased) {
   SVC_RETURNING_VOID(SVC_POWER_SUSPEND)
 }
 
-void SVC_ATTRIBUTES standby() {
-  SVC_RETURNING_VOID(SVC_POWER_STANDBY)
-}
+void SVC_ATTRIBUTES standby() { SVC_RETURNING_VOID(SVC_POWER_STANDBY) }
 
-}
-}
+}  // namespace Power
+}  // namespace Ion

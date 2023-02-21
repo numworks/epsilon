@@ -1,22 +1,23 @@
 #include "function_toolbox.h"
+
 #include <apps/shared/continuous_function_store.h>
+#include <assert.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/infinity.h>
 #include <poincare/preferences.h>
 #include <poincare/vertical_offset_layout.h>
-#include <assert.h>
 
 using namespace Poincare;
 using namespace Escher;
 
 namespace Graph {
 
-FunctionToolbox::FunctionToolbox() :
-  MathToolbox(),
-  /* We initialize m_addedCellsContent with a different value than the one we
-   * want to make sure we actually update the cells in setAddedCellsContent. */
-  m_addedCellsContent(AddedCellsContent::None)
-{
+FunctionToolbox::FunctionToolbox()
+    : MathToolbox(),
+      /* We initialize m_addedCellsContent with a different value than the one
+       * we want to make sure we actually update the cells in
+       * setAddedCellsContent. */
+      m_addedCellsContent(AddedCellsContent::None) {
   for (int i = 0; i < k_maxNumberOfAddedCells; i++) {
     m_addedCells[i].setParentResponder(&m_selectableTableView);
   }
@@ -27,34 +28,40 @@ void FunctionToolbox::setAddedCellsContent(AddedCellsContent content) {
   if (content == m_addedCellsContent) {
     return;
   }
-  constexpr CodePoint codepoints[k_maxNumberOfAddedCells] = {UCodePointInferiorEqual, UCodePointSuperiorEqual};
+  constexpr CodePoint codepoints[k_maxNumberOfAddedCells] = {
+      UCodePointInferiorEqual, UCodePointSuperiorEqual};
   m_addedCellsContent = content;
-  Preferences * pref = Preferences::sharedPreferences;
+  Preferences *pref = Preferences::sharedPreferences;
   switch (content) {
-  case AddedCellsContent::None:
-    m_addedCellLayout[0] = Layout();
-    m_addedCellLayout[1] = Layout();
-    break;
-  case AddedCellsContent::ComparisonOperators:
-    for (int i = 0; i < k_maxNumberOfAddedCells; i++) {
-      m_addedCellLayout[i] = CodePointLayout::Builder(codepoints[i]);
-    }
-    break;
-  case AddedCellsContent::NegativeInfinity:
-    m_addedCellLayout[0] = Infinity::Builder(true).createLayout(pref->displayMode(), pref->numberOfSignificantDigits(), Container::activeApp()->localContext());
-    m_addedCellLayout[1] = Layout();
-    break;
-  default:
-    assert(content == AddedCellsContent::PositiveInfinity);
-    m_addedCellLayout[0] = Infinity::Builder(false).createLayout(pref->displayMode(), pref->numberOfSignificantDigits(), Container::activeApp()->localContext());
-    m_addedCellLayout[1] = Layout();
-    break;
+    case AddedCellsContent::None:
+      m_addedCellLayout[0] = Layout();
+      m_addedCellLayout[1] = Layout();
+      break;
+    case AddedCellsContent::ComparisonOperators:
+      for (int i = 0; i < k_maxNumberOfAddedCells; i++) {
+        m_addedCellLayout[i] = CodePointLayout::Builder(codepoints[i]);
+      }
+      break;
+    case AddedCellsContent::NegativeInfinity:
+      m_addedCellLayout[0] = Infinity::Builder(true).createLayout(
+          pref->displayMode(), pref->numberOfSignificantDigits(),
+          Container::activeApp()->localContext());
+      m_addedCellLayout[1] = Layout();
+      break;
+    default:
+      assert(content == AddedCellsContent::PositiveInfinity);
+      m_addedCellLayout[0] = Infinity::Builder(false).createLayout(
+          pref->displayMode(), pref->numberOfSignificantDigits(),
+          Container::activeApp()->localContext());
+      m_addedCellLayout[1] = Layout();
+      break;
   }
 }
 
 bool FunctionToolbox::handleEvent(Ion::Events::Event event) {
   const int rowIndex = selectedRow();
-  if (typeAtIndex(rowIndex) == k_addedCellType && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
+  if (typeAtIndex(rowIndex) == k_addedCellType &&
+      (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     return selectAddedCell(rowIndex);
   }
   return MathToolbox::handleEvent(event);
@@ -71,7 +78,7 @@ int FunctionToolbox::reusableCellCount(int type) {
   return MathToolbox::reusableCellCount(type);
 }
 
-HighlightCell * FunctionToolbox::reusableCell(int index, int type) {
+HighlightCell *FunctionToolbox::reusableCell(int index, int type) {
   assert(type <= k_addedCellType);
   assert(index >= 0);
   if (type == k_addedCellType) {
@@ -81,10 +88,11 @@ HighlightCell * FunctionToolbox::reusableCell(int index, int type) {
   return MathToolbox::reusableCell(index, type);
 }
 
-void FunctionToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void FunctionToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
   if (typeAtIndex(index) == k_addedCellType) {
     assert(index < addedCellsAtRoot());
-    static_cast<ExpressionTableCell *>(cell)->setLayout(m_addedCellLayout[index]);
+    static_cast<ExpressionTableCell *>(cell)->setLayout(
+        m_addedCellLayout[index]);
     cell->reloadCell();
     return;
   }
@@ -109,7 +117,9 @@ int FunctionToolbox::typeAtIndex(int index) const {
 /* TODO: This mimics SequenceToolbox::controlChecksum.
  * FunctionToolbox and SequenceToolbox should be factorized. */
 int FunctionToolbox::controlChecksum() const {
-  return MathToolbox::controlChecksum() + numberOfAddedCells() * Preferences::k_numberOfExamModes * I18n::NumberOfCountries;
+  return MathToolbox::controlChecksum() + numberOfAddedCells() *
+                                              Preferences::k_numberOfExamModes *
+                                              I18n::NumberOfCountries;
 }
 
 bool FunctionToolbox::selectAddedCell(int selectedRow) {
@@ -124,13 +134,13 @@ bool FunctionToolbox::selectAddedCell(int selectedRow) {
 
 int FunctionToolbox::numberOfAddedCells() const {
   switch (m_addedCellsContent) {
-  case AddedCellsContent::None:
-    return 0;
-  case AddedCellsContent::ComparisonOperators:
-    return 2;
-  default:
-    return 1;
+    case AddedCellsContent::None:
+      return 0;
+    case AddedCellsContent::ComparisonOperators:
+      return 2;
+    default:
+      return 1;
   }
 }
 
-}
+}  // namespace Graph

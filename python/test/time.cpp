@@ -1,4 +1,5 @@
 #include <quiz.h>
+
 #include "execution_environment.h"
 
 QUIZ_CASE(python_time) {
@@ -9,4 +10,3 @@ QUIZ_CASE(python_time) {
   assert_command_execution_succeeds(env, "sleep(23)");
   deinit_environment();
 }
-

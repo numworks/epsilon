@@ -1,11 +1,14 @@
-#include <poincare/hypergeometric_function.h>
 #include <assert.h>
-#include <cmath>
 #include <math.h>
+#include <poincare/hypergeometric_function.h>
+
+#include <cmath>
 
 namespace Poincare {
 
-bool HypergeometricFunction(double a, double b, double c, double z, double epsilon, int maxNumberOfIterations, double * result) {
+bool HypergeometricFunction(double a, double b, double c, double z,
+                            double epsilon, int maxNumberOfIterations,
+                            double* result) {
   // TODO Put interruption instead of maxNumberOfIterations
   assert(!std::isnan(a) && !std::isnan(b) && !std::isnan(c) && !std::isnan(z));
   if (z == 0.0) {
@@ -19,16 +22,14 @@ bool HypergeometricFunction(double a, double b, double c, double z, double epsil
     assert(c > 0.0);
     return InfiniteSeriesEvaluation(
         1.0,
-        [](double previousTerm, double index, double a, double b, double c, double z) { return previousTerm * (a + index - 1) * (b + index - 1) * z / ((c + index - 1) * index); },
-        epsilon,
-        maxNumberOfIterations,
-        result,
-        a,
-        b,
-        c,
-        z);
+        [](double previousTerm, double index, double a, double b, double c,
+           double z) {
+          return previousTerm * (a + index - 1) * (b + index - 1) * z /
+                 ((c + index - 1) * index);
+        },
+        epsilon, maxNumberOfIterations, result, a, b, c, z);
   }
-  return NAN; //TODO
+  return NAN;  // TODO
 }
 
-}
+}  // namespace Poincare

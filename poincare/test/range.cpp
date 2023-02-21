@@ -1,6 +1,7 @@
-#include "helper.h"
 #include <poincare/helpers.h>
 #include <poincare/range.h>
+
+#include "helper.h"
 
 using namespace Poincare;
 
@@ -12,7 +13,8 @@ QUIZ_CASE(poincare_range_1d_validity) {
   quiz_assert(!Range1D(123, 456).isEmpty());
 }
 
-void assert_length_and_center_are(Range1D r, float expextedLength, float expextedCenter) {
+void assert_length_and_center_are(Range1D r, float expextedLength,
+                                  float expextedCenter) {
   float l = r.length();
   float c = r.center();
   quiz_assert(Helpers::EqualOrBothNan(l, expextedLength));
@@ -42,7 +44,8 @@ QUIZ_CASE(poincare_range_1d_extend) {
   assert_range_extends_to(Range1D(-12, -11.5), -11.7, Range1D(-12, -11.5));
   assert_range_extends_to(Range1D(-100, 100), 200, Range1D(-100, 200));
   assert_range_extends_to(Range1D(-100, 200), -200, Range1D(-200, 200));
-  assert_range_extends_to(Range1D(-1, 3), 1e36, Range1D(-1, Range1D::k_maxFloat));
+  assert_range_extends_to(Range1D(-1, 3), 1e36,
+                          Range1D(-1, Range1D::k_maxFloat));
 }
 
 void assert_range_zooms_to(Range1D r1, float r, float c, Range1D r2) {

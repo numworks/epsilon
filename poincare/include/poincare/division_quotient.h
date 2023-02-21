@@ -7,50 +7,71 @@
 namespace Poincare {
 
 class DivisionQuotientNode final : public ExpressionNode {
-public:
+ public:
   constexpr static AliasesList k_functionName = "quo";
 
   // TreeNode
   size_t size() const override { return sizeof(DivisionQuotientNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream& stream) const override {
     stream << "DivisionQuotient";
   }
 #endif
 
   // ExpressionNode
-  TrinaryBoolean isPositive(Context * context) const override;
+  TrinaryBoolean isPositive(Context* context) const override;
   Type type() const override { return Type::DivisionQuotient; }
 
   // Simplification
-  LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
-  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+  LayoutShape leftLayoutShape() const override {
+    return LayoutShape::MoreLetters;
+  };
+  LayoutShape rightLayoutShape() const override {
+    return LayoutShape::BoundaryPunctuation;
+  }
 
-private:
+ private:
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                      int numberOfSignificantDigits,
+                      Context* context) const override;
+  int serialize(char* buffer, int bufferSize,
+                Preferences::PrintFloatMode floatDisplayMode,
+                int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
-  template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
+  Evaluation<float> approximate(
+      SinglePrecision p,
+      const ApproximationContext& approximationContext) const override {
+    return templatedApproximate<float>(approximationContext);
+  }
+  Evaluation<double> approximate(
+      DoublePrecision p,
+      const ApproximationContext& approximationContext) const override {
+    return templatedApproximate<double>(approximationContext);
+  }
+  template <typename T>
+  Evaluation<T> templatedApproximate(
+      const ApproximationContext& approximationContext) const;
 };
 
-class DivisionQuotient final : public ExpressionTwoChildren<DivisionQuotient, DivisionQuotientNode> {
-public:
+class DivisionQuotient final
+    : public ExpressionTwoChildren<DivisionQuotient, DivisionQuotientNode> {
+ public:
   using ExpressionBuilder::ExpressionBuilder;
 
   template <typename T>
-  static T TemplatedQuotient(T a, T b) { return b >= 0 ? std::floor(a/b) : -std::floor(a/(-b)); }
+  static T TemplatedQuotient(T a, T b) {
+    return b >= 0 ? std::floor(a / b) : -std::floor(a / (-b));
+  }
 
   // Expression
   Expression shallowReduce(ReductionContext reductionContext);
-  static Expression Reduce(const Integer & a, const Integer & b);
+  static Expression Reduce(const Integer& a, const Integer& b);
 };
 
-}
+}  // namespace Poincare
 
 #endif

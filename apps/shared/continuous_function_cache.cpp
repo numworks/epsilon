@@ -1,6 +1,8 @@
 #include "continuous_function_cache.h"
-#include "continuous_function.h"
+
 #include <limits.h>
+
+#include "continuous_function.h"
 
 namespace Shared {
 
@@ -9,13 +11,16 @@ constexpr float ContinuousFunctionCache::k_cacheHitTolerance;
 constexpr int ContinuousFunctionCache::k_numberOfAvailableCaches;
 
 // public
-void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep) {
-  ContinuousFunction * function = static_cast<ContinuousFunction *>(fun);
+void ContinuousFunctionCache::PrepareForCaching(void *fun,
+                                                ContinuousFunctionCache *cache,
+                                                float tMin, float tStep) {
+  ContinuousFunction *function = static_cast<ContinuousFunction *>(fun);
 
   if (!cache) {
     /* ContinuousFunctionStore::cacheAtIndex has returned a nullptr : the index
      * of the function we are trying to draw is greater than the number of
-     * available caches, so we just tell the function to not lookup any cache. */
+     * available caches, so we just tell the function to not lookup any cache.
+     */
     function->setCache(nullptr);
     return;
   }
@@ -54,7 +59,9 @@ void ContinuousFunctionCache::clear() {
   invalidateBetween(0, k_sizeOfCache);
 }
 
-Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const ContinuousFunction * function, Poincare::Context * context, float t, int curveIndex) {
+Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(
+    const ContinuousFunction *function, Poincare::Context *context, float t,
+    int curveIndex) {
   int resIndex = indexForParameter(function, t, curveIndex);
   if (resIndex < 0) {
     return function->privateEvaluateXYAtParameter(t, context, curveIndex);
@@ -62,7 +69,9 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const C
   return valuesAtIndex(function, context, t, resIndex, curveIndex);
 }
 
-void ContinuousFunctionCache::ComputeNonCartesianSteps(float * tStep, float * tCacheStep, float tMax, float tMin) {
+void ContinuousFunctionCache::ComputeNonCartesianSteps(float *tStep,
+                                                       float *tCacheStep,
+                                                       float tMax, float tMin) {
   // Expected step length
   *tStep = (tMax - tMin) / k_graphStepDenominator;
   /* Parametric and polar functions require caching both x and y values,
@@ -70,9 +79,12 @@ void ContinuousFunctionCache::ComputeNonCartesianSteps(float * tStep, float * tC
    * number of cacheable points is half the cache size. */
   const int numberOfCacheablePoints = k_sizeOfCache / 2;
   const int numberOfWholeSteps = static_cast<int>(k_graphStepDenominator);
-  static_assert(numberOfCacheablePoints % numberOfWholeSteps == 0, "numberOfCacheablePoints should be a multiple of numberOfWholeSteps for optimal caching");
+  static_assert(numberOfCacheablePoints % numberOfWholeSteps == 0,
+                "numberOfCacheablePoints should be a multiple of "
+                "numberOfWholeSteps for optimal caching");
   const int multiple = numberOfCacheablePoints / numberOfWholeSteps;
-  static_assert(multiple && !(multiple & (multiple - 1)), "multiple should be a power of 2 for optimal caching");
+  static_assert(multiple && !(multiple & (multiple - 1)),
+                "multiple should be a power of 2 for optimal caching");
   /* Define cacheStep such that every whole graph steps are equally divided
    * For instance, with :
    *    graphStepDenominator = 10.1
@@ -96,7 +108,8 @@ void ContinuousFunctionCache::setRange(float tMin, float tStep) {
   m_tStep = tStep;
 }
 
-int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * function, float t, int curveIndex) const {
+int ContinuousFunctionCache::indexForParameter(
+    const ContinuousFunction *function, float t, int curveIndex) const {
   if (curveIndex != 0) {
     /* TODO: For now, second curves are not cached. It may (or not) be slightly
      * better to cache both, but it should also be handled in pan. */
@@ -108,32 +121,36 @@ int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * functi
   }
   int res = std::round(delta);
   assert(res >= 0);
-  if ((res >= k_sizeOfCache)
-   || (res >= k_sizeOfCache / 2 && !function->properties().isCartesian())
-   || std::fabs(res - delta) > k_cacheHitTolerance) {
+  if ((res >= k_sizeOfCache) ||
+      (res >= k_sizeOfCache / 2 && !function->properties().isCartesian()) ||
+      std::fabs(res - delta) > k_cacheHitTolerance) {
     return -1;
   }
   assert(function->properties().isCartesian() || m_startOfCache == 0);
   return (res + m_startOfCache) % k_sizeOfCache;
 }
 
-Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i, int curveIndex) {
+Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(
+    const ContinuousFunction *function, Poincare::Context *context, float t,
+    int i, int curveIndex) {
   assert(curveIndex == 0);
   if (function->properties().isCartesian()) {
     if (IsSignalingNan(m_cache[i])) {
-      m_cache[i] = function->privateEvaluateXYAtParameter(t, context, curveIndex).x2();
+      m_cache[i] =
+          function->privateEvaluateXYAtParameter(t, context, curveIndex).x2();
     }
     return Poincare::Coordinate2D<float>(t, m_cache[i]);
   }
   if (IsSignalingNan(m_cache[2 * i]) || IsSignalingNan(m_cache[2 * i + 1])) {
-    Poincare::Coordinate2D<float> res = function->privateEvaluateXYAtParameter(t, context, curveIndex);
+    Poincare::Coordinate2D<float> res =
+        function->privateEvaluateXYAtParameter(t, context, curveIndex);
     m_cache[2 * i] = res.x1();
     m_cache[2 * i + 1] = res.x2();
   }
   return Poincare::Coordinate2D<float>(m_cache[2 * i], m_cache[2 * i + 1]);
 }
 
-void ContinuousFunctionCache::pan(ContinuousFunction * function, float newTMin) {
+void ContinuousFunctionCache::pan(ContinuousFunction *function, float newTMin) {
   assert(function->properties().isCartesian());
   if (newTMin == m_tMin) {
     return;
@@ -151,7 +168,8 @@ void ContinuousFunctionCache::pan(ContinuousFunction * function, float newTMin) 
    * and increase performances as we could still have many cache hits.
    * m_tMin = newTMin should still be applied at each of the escape cases. */
   int dI = std::round(dT);
-  if (dI >= k_sizeOfCache || dI <= -k_sizeOfCache || std::fabs(dT - dI) > k_cacheHitTolerance) {
+  if (dI >= k_sizeOfCache || dI <= -k_sizeOfCache ||
+      std::fabs(dT - dI) > k_cacheHitTolerance) {
     clear();
     return;
   }
@@ -178,4 +196,4 @@ void ContinuousFunctionCache::pan(ContinuousFunction * function, float newTMin) 
   }
 }
 
-}
+}  // namespace Shared

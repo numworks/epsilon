@@ -3,18 +3,15 @@
 
 namespace Escher {
 
-BankViewController::BankViewController(Responder * parentViewController) :
-  ViewController(parentViewController),
-  m_activeIndex(0)
-{
-}
+BankViewController::BankViewController(Responder* parentViewController)
+    : ViewController(parentViewController), m_activeIndex(0) {}
 
 void BankViewController::setActiveIndex(int i) {
   assert(i >= 0 && i < numberOfChildren());
   if (i == m_activeIndex) {
     return;
   }
-  ViewController * upcomingVC = childAtIndex(i);
+  ViewController* upcomingVC = childAtIndex(i);
   upcomingVC->viewWillAppear();
   Container::activeApp()->setFirstResponder(upcomingVC);
   childAtIndex(m_activeIndex)->viewDidDisappear();
@@ -42,10 +39,10 @@ void BankViewController::viewDidDisappear() {
   activeViewController()->viewDidDisappear();
 }
 
-void BankViewController::ContentView::setSubview(View * view) {
+void BankViewController::ContentView::setSubview(View* view) {
   m_subview = view;
   layoutSubviews();
   markRectAsDirty(bounds());
 }
 
-}
+}  // namespace Escher

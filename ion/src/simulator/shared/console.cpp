@@ -1,7 +1,8 @@
 #include <ion/console.h>
-#include "window.h"
 #include <kandinsky/ion_context.h>
 #include <stdio.h>
+
+#include "window.h"
 
 namespace Ion {
 namespace Console {
@@ -24,9 +25,7 @@ bool clear() {
   return false;
 }
 
-bool transmissionDone() {
-  return true;
-}
+bool transmissionDone() { return true; }
 
-}
-}
+}  // namespace Console
+}  // namespace Ion

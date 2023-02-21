@@ -1,8 +1,8 @@
-#include <quiz.h>
-#include <ion/persisting_bytes.h>
 #include <assert.h>
+#include <ion/persisting_bytes.h>
 #include <poincare/print.h>
 #include <poincare/test/helper.h>
+#include <quiz.h>
 
 using namespace Ion;
 
@@ -11,7 +11,8 @@ void testPersistingByte(PersistingBytes::PersistingBytesInt expectedValue) {
   if (observedValue != expectedValue) {
     constexpr size_t bufferSize = sizeof("255 instead of 255.");
     char buffer[bufferSize];
-    Poincare::Print::CustomPrintf(buffer, bufferSize, "%i instead of %i.", observedValue, expectedValue);
+    Poincare::Print::CustomPrintf(buffer, bufferSize, "%i instead of %i.",
+                                  observedValue, expectedValue);
     quiz_assert_print_if_failure(false, buffer);
   }
 }
@@ -32,11 +33,12 @@ QUIZ_CASE(ion_persisting_bytes) {
   // Reset the persisting bytes
   PersistingBytes::write(0);
   constexpr uint8_t k_numberOfTests = 10;
-  uint8_t pressToTest[k_numberOfTests] = {0,0,0,0,255,1,2,0,0,0};
-  uint8_t examModes[k_numberOfTests] = {0,1,2,3,4,4,4,4,5,0};
+  uint8_t pressToTest[k_numberOfTests] = {0, 0, 0, 0, 255, 1, 2, 0, 0, 0};
+  uint8_t examModes[k_numberOfTests] = {0, 1, 2, 3, 4, 4, 4, 4, 5, 0};
   // TODO : Test a sector erase by writting a lot more (very slow on device)
   for (uint8_t i = 1; i < k_numberOfTests; i++) {
-    PersistingBytes::PersistingBytesInt value = pressToTest[i - 1] | (examModes[i - 1] << 8);
+    PersistingBytes::PersistingBytesInt value =
+        pressToTest[i - 1] | (examModes[i - 1] << 8);
     testPersistingByte(value);
     value = pressToTest[i] | (examModes[i] << 8);
     PersistingBytes::write(value);

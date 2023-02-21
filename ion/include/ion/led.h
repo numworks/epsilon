@@ -12,7 +12,7 @@ void setBlinking(uint16_t periodInMilliseconds, float dutyCycle);
 
 KDColor updateColorWithPlugAndCharge();
 
-}
-}
+}  // namespace LED
+}  // namespace Ion
 
 #endif

@@ -1,16 +1,15 @@
-#include <assert.h>
-#include <cmath>
-#include <poincare/print_float.h>
 #include "interval.h"
+
+#include <assert.h>
+#include <poincare/print_float.h>
+
+#include <cmath>
+
 #include "poincare_helpers.h"
 
 namespace Shared {
 
-Interval::Interval() :
-  m_numberOfElements(0)
-{
-  reset();
-}
+Interval::Interval() : m_numberOfElements(0) { reset(); }
 
 int Interval::numberOfElements() {
   computeElements();
@@ -20,14 +19,16 @@ int Interval::numberOfElements() {
 void Interval::deleteElementAtIndex(int index) {
   assert(!m_needCompute);
   assert(m_numberOfElements > 0);
-  for (int k = index; k < m_numberOfElements-1; k++) {
-    m_intervalBuffer[k] = m_intervalBuffer[k+1];
+  for (int k = index; k < m_numberOfElements - 1; k++) {
+    m_intervalBuffer[k] = m_intervalBuffer[k + 1];
   }
   m_numberOfElements--;
 }
 
 bool Interval::hasSameParameters(IntervalParameters parameters) {
-  return (m_parameters.start() == parameters.start() && m_parameters.end() == parameters.end() && m_parameters.step() == parameters.step());
+  return (m_parameters.start() == parameters.start() &&
+          m_parameters.end() == parameters.end() &&
+          m_parameters.step() == parameters.step());
 }
 
 double Interval::element(int i) {
@@ -74,30 +75,40 @@ void Interval::computeElements() {
   if (isEmpty()) {
     m_numberOfElements = 0;
   } else {
-    m_numberOfElements = m_parameters.step() > 0 ? 1 + (m_parameters.end() - m_parameters.start())/m_parameters.step() : k_maxNumberOfElements;
-    m_numberOfElements = m_numberOfElements > k_maxNumberOfElements || m_numberOfElements < 0 ? k_maxNumberOfElements : m_numberOfElements;
+    m_numberOfElements = m_parameters.step() > 0
+                             ? 1 + (m_parameters.end() - m_parameters.start()) /
+                                       m_parameters.step()
+                             : k_maxNumberOfElements;
+    m_numberOfElements =
+        m_numberOfElements > k_maxNumberOfElements || m_numberOfElements < 0
+            ? k_maxNumberOfElements
+            : m_numberOfElements;
   }
   /* Even though elements are displayed with 7 significant digits, we round the
    * element to 14 significant digits to prevent unexpected imprecisions due to
    * doubles. For example, with start=-0.2 and step=0.2, 6th element is
    * 1.0000000000000002 although 1.0 was expected. */
-  constexpr int precision = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
+  constexpr int precision =
+      Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
   static_assert(precision == 14, "ratioThreshold value should be updated");
   // Save some calls to std::pow(10.0, -precision)
   constexpr double ratioThreshold = 10e-14;
   bool checkForElementZero = (m_parameters.start() < 0.0);
   for (int i = 0; i < m_numberOfElements; i += 1) {
-    if (checkForElementZero && i > 0 && std::abs(1.0 + m_parameters.start() / (i * m_parameters.step())) < ratioThreshold) {
+    if (checkForElementZero && i > 0 &&
+        std::abs(1.0 + m_parameters.start() / (i * m_parameters.step())) <
+            ratioThreshold) {
       /* We also round to 0 if start/(i*step) would have been rounded to -1.
        * For example, with start=-1.2, and step=0.2, 6th element should be 0
        * instead of 2.22e-16. */
       m_intervalBuffer[i] = 0.0;
     } else {
-      m_intervalBuffer[i] = PoincareHelpers::ValueOfFloatAsDisplayed<double>(m_parameters.start() + i * m_parameters.step(), precision, nullptr);
+      m_intervalBuffer[i] = PoincareHelpers::ValueOfFloatAsDisplayed<double>(
+          m_parameters.start() + i * m_parameters.step(), precision, nullptr);
       checkForElementZero = checkForElementZero && m_intervalBuffer[i] < 0.0;
     }
   }
   m_needCompute = false;
 }
 
-}
+}  // namespace Shared

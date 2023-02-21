@@ -6,21 +6,22 @@
 namespace Distributions {
 
 class LeftIntegralCalculation final : public Calculation {
-public:
-  LeftIntegralCalculation(Distribution * distribution);
+ public:
+  LeftIntegralCalculation(Distribution* distribution);
   Type type() override { return Type::LeftIntegral; }
   int numberOfParameters() override { return 2; }
   I18n::Message legendForParameterAtIndex(int index) override;
   void setParameterAtIndex(double f, int index) override;
   double parameterAtIndex(int index) override;
   double upperBound() const override { return m_upperBound; }
-private:
+
+ private:
   void compute(int indexKnownElement) override;
   void computeUnknownDistributionParameter() override;
   double m_upperBound;
   double m_result;
 };
 
-}
+}  // namespace Distributions
 
 #endif

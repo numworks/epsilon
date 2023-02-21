@@ -8,4 +8,3 @@ double erfInv(double y);
 }
 
 #endif
-

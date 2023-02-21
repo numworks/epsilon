@@ -1,9 +1,9 @@
+#include <assert.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/distribution_dispatcher.h>
-#include <poincare/simplification_helper.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
-#include <poincare/approximation_helper.h>
-#include <assert.h>
+#include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
@@ -34,19 +34,27 @@ constexpr Expression::FunctionHelper HypergeomCDFRange::s_functionHelper;
 constexpr Expression::FunctionHelper HypergeomPDF::s_functionHelper;
 constexpr Expression::FunctionHelper InvHypergeom::s_functionHelper;
 
-Layout DistributionDispatcherNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(DistributionDispatcher(this), floatDisplayMode, numberOfSignificantDigits, name(), context);
+Layout DistributionDispatcherNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context *context) const {
+  return LayoutHelper::Prefix(DistributionDispatcher(this), floatDisplayMode,
+                              numberOfSignificantDigits, name(), context);
 }
 
-int DistributionDispatcherNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name());
+int DistributionDispatcherNode::serialize(
+    char *buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode,
+                                     numberOfSignificantDigits, name());
 }
 
-int DistributionDispatcherNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
+int DistributionDispatcherNode::simplificationOrderSameType(
+    const ExpressionNode *e, bool ascending, bool ignoreParentheses) const {
   if (!ascending) {
     return e->simplificationOrderSameType(this, true, ignoreParentheses);
   }
-  const DistributionDispatcherNode * other = static_cast<const DistributionDispatcherNode *>(e);
+  const DistributionDispatcherNode *other =
+      static_cast<const DistributionDispatcherNode *>(e);
   if (m_distributionType < other->m_distributionType) {
     return -1;
   } else if (m_distributionType > other->m_distributionType) {
@@ -57,26 +65,27 @@ int DistributionDispatcherNode::simplificationOrderSameType(const ExpressionNode
   } else if (m_methodType > other->m_methodType) {
     return 1;
   }
-  return ExpressionNode::simplificationOrderSameType(e, ascending, ignoreParentheses);
+  return ExpressionNode::simplificationOrderSameType(e, ascending,
+                                                     ignoreParentheses);
 }
 
-Expression DistributionDispatcherNode::shallowReduce(const ReductionContext& reductionContext) {
+Expression DistributionDispatcherNode::shallowReduce(
+    const ReductionContext &reductionContext) {
   return DistributionDispatcher(this).shallowReduce(reductionContext);
 }
 
-Expression DistributionDispatcher::shallowReduce(ReductionContext reductionContext, bool * stopReduction) {
+Expression DistributionDispatcher::shallowReduce(
+    ReductionContext reductionContext, bool *stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
   }
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-        SimplificationHelper::ListReduction::DistributeOverLists
-    );
+        SimplificationHelper::ListReduction::DistributeOverLists);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -84,18 +93,21 @@ Expression DistributionDispatcher::shallowReduce(ReductionContext reductionConte
 
   int childIndex = 0;
   Expression abscissae[DistributionMethod::k_maxNumberOfParameters];
-  for (int i=0; i < DistributionMethod::numberOfParameters(methodType()); i++) {
+  for (int i = 0; i < DistributionMethod::numberOfParameters(methodType());
+       i++) {
     abscissae[i] = childAtIndex(childIndex++);
   }
   Expression parameters[Distribution::k_maxNumberOfParameters];
-  for (int i=0; i < Distribution::numberOfParameters(distributionType()); i++) {
+  for (int i = 0; i < Distribution::numberOfParameters(distributionType());
+       i++) {
     parameters[i] = childAtIndex(childIndex++);
   }
-  const DistributionMethod * function = DistributionMethod::Get(methodType());
-  const Distribution * distribution = Distribution::Get(distributionType());
+  const DistributionMethod *function = DistributionMethod::Get(methodType());
+  const Distribution *distribution = Distribution::Get(distributionType());
 
   bool parametersAreOk;
-  bool couldCheckParameters = distribution->expressionParametersAreOK(&parametersAreOk, parameters, reductionContext.context());
+  bool couldCheckParameters = distribution->expressionParametersAreOK(
+      &parametersAreOk, parameters, reductionContext.context());
 
   if (!couldCheckParameters) {
     return *this;
@@ -104,7 +116,8 @@ Expression DistributionDispatcher::shallowReduce(ReductionContext reductionConte
     return replaceWithUndefinedInPlace();
   }
 
-  Expression e = function->shallowReduce(abscissae, distribution, parameters, reductionContext, this);
+  Expression e = function->shallowReduce(abscissae, distribution, parameters,
+                                         reductionContext, this);
   if (!e.isUninitialized()) {
     return e;
   }
@@ -115,30 +128,38 @@ Expression DistributionDispatcher::shallowReduce(ReductionContext reductionConte
   return *this;
 }
 
-template<typename T>
-Evaluation<T> DistributionDispatcherNode::templatedApproximate(const ApproximationContext& approximationContext) const {
+template <typename T>
+Evaluation<T> DistributionDispatcherNode::templatedApproximate(
+    const ApproximationContext &approximationContext) const {
   return ApproximationHelper::Map<T>(
-    this,
-    approximationContext,
-    [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
-      const DistributionDispatcherNode * self = static_cast<DistributionDispatcherNode *>(ctx);
-      int childIndex = 0;
-      T abscissa[DistributionMethod::k_maxNumberOfParameters];
-      for (int i=0; i < DistributionMethod::numberOfParameters(self->m_methodType); i++) {
-        abscissa[i] = ComplexNode<T>::ToScalar(c[childIndex++]);
-      }
-      T parameters[Distribution::k_maxNumberOfParameters];
-      for (int i=0; i < Distribution::numberOfParameters(self->m_distributionType); i++) {
-        parameters[i] = ComplexNode<T>::ToScalar(c[childIndex++]);
-      }
-      const DistributionMethod * function = DistributionMethod::Get(self->m_methodType);
-      const Distribution * distribution = Distribution::Get(self->m_distributionType);
-      return Complex<T>::Builder(function->EvaluateAtAbscissa(abscissa, distribution, parameters));
-    },
-    ApproximationHelper::UndefinedOnBooleans,
-    true,
-    static_cast<void*>(const_cast<DistributionDispatcherNode *>(this))
-    );
+      this, approximationContext,
+      [](const std::complex<T> *c, int numberOfComplexes,
+         Preferences::ComplexFormat complexFormat,
+         Preferences::AngleUnit angleUnit, void *ctx) {
+        const DistributionDispatcherNode *self =
+            static_cast<DistributionDispatcherNode *>(ctx);
+        int childIndex = 0;
+        T abscissa[DistributionMethod::k_maxNumberOfParameters];
+        for (int i = 0;
+             i < DistributionMethod::numberOfParameters(self->m_methodType);
+             i++) {
+          abscissa[i] = ComplexNode<T>::ToScalar(c[childIndex++]);
+        }
+        T parameters[Distribution::k_maxNumberOfParameters];
+        for (int i = 0;
+             i < Distribution::numberOfParameters(self->m_distributionType);
+             i++) {
+          parameters[i] = ComplexNode<T>::ToScalar(c[childIndex++]);
+        }
+        const DistributionMethod *function =
+            DistributionMethod::Get(self->m_methodType);
+        const Distribution *distribution =
+            Distribution::Get(self->m_distributionType);
+        return Complex<T>::Builder(
+            function->EvaluateAtAbscissa(abscissa, distribution, parameters));
+      },
+      ApproximationHelper::UndefinedOnBooleans, true,
+      static_cast<void *>(const_cast<DistributionDispatcherNode *>(this)));
 }
 
-}
+}  // namespace Poincare

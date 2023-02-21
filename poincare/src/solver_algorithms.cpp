@@ -2,7 +2,10 @@
 
 namespace Poincare {
 
-Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(double ax, double bx, double resultPrecision, Solver<double>::FunctionEvaluation f, const void * aux, double * resultEvaluation) {
+Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(
+    double ax, double bx, double resultPrecision,
+    Solver<double>::FunctionEvaluation f, const void* aux,
+    double* resultEvaluation) {
   assert(ax < bx);
   double min = ax;
   double max = bx;
@@ -23,12 +26,14 @@ Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(double ax, double 
      * it instead, otherwise, we reached the most precise result possible. */
     if (currentAbscissa == min) {
       if (currentAbscissa != -INFINITY) {
-        currentAbscissa = std::nextafter(currentAbscissa, static_cast<double>(INFINITY));
+        currentAbscissa =
+            std::nextafter(currentAbscissa, static_cast<double>(INFINITY));
       }
     }
     if (currentAbscissa == max) {
       if (currentAbscissa != INFINITY) {
-        currentAbscissa = std::nextafter(currentAbscissa, -static_cast<double>(INFINITY));
+        currentAbscissa =
+            std::nextafter(currentAbscissa, -static_cast<double>(INFINITY));
       }
     }
     if (currentAbscissa == min || currentAbscissa == max) {
@@ -49,16 +54,19 @@ Coordinate2D<double> SolverAlgorithms::IncreasingFunctionRoot(double ax, double 
   return Coordinate2D<double>(currentAbscissa, eval);
 }
 
-template<typename T>
-T SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(T * probability, typename Solver<T>::FunctionEvaluation f, const void * aux) {
+template <typename T>
+T SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
+    T* probability, typename Solver<T>::FunctionEvaluation f, const void* aux) {
   constexpr T precision = Float<T>::Epsilon();
-  assert(*probability <= (static_cast<T>(1.f) - precision) && *probability >= precision);
-  (void) precision;
+  assert(*probability <= (static_cast<T>(1.f) - precision) &&
+         *probability >= precision);
+  (void)precision;
 
   T cumulative = static_cast<T>(0.f);
   int result = -1;
   T delta;
-  while (cumulative < *probability && cumulative < k_maxProbability && result < k_numberOfIterationsProbability) {
+  while (cumulative < *probability && cumulative < k_maxProbability &&
+         result < k_numberOfIterationsProbability) {
     cumulative += f(++result, aux);
     delta = cumulative - *probability;
     if (delta * delta <= precision) {
@@ -83,11 +91,12 @@ T SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(T * probabi
   return result;
 }
 
-template<typename T>
-T SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(T x, typename Solver<T>::FunctionEvaluation f, const void * aux) {
+template <typename T>
+T SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
+    T x, typename Solver<T>::FunctionEvaluation f, const void* aux) {
   int end = std::floor(x);
   T result = 0.0;
-  for (int k = 0; k <=end; k++) {
+  for (int k = 0; k <= end; k++) {
     result += f(k, aux);
     /* Avoid too long loop */
     if (k > k_numberOfIterationsProbability) {
@@ -101,13 +110,16 @@ T SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(T x, typen
   return result;
 }
 
-Coordinate2D<double> SolverAlgorithms::BrentRoot(Solver<double>::FunctionEvaluation f, const void * aux, double xMin, double xMax, Solver<double>::Interest interest, double precision) {
+Coordinate2D<double> SolverAlgorithms::BrentRoot(
+    Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
+    double xMax, Solver<double>::Interest interest, double precision) {
   if (xMax < xMin) {
     return BrentRoot(f, aux, xMax, xMin, interest, precision);
   }
   assert(interest == Solver<double>::Interest::Root);
   assert(xMin < xMax);
-  assert((f(xMin, aux) <= 0. && 0. <= f(xMax, aux)) || (f(xMax, aux) <= 0. && 0. <= f(xMin, aux)));
+  assert((f(xMin, aux) <= 0. && 0. <= f(xMax, aux)) ||
+         (f(xMax, aux) <= 0. && 0. <= f(xMin, aux)));
 
   double a = xMin;
   double b = xMax;
@@ -140,7 +152,8 @@ Coordinate2D<double> SolverAlgorithms::BrentRoot(Solver<double>::FunctionEvaluat
     double xm = 0.5 * (c - b);
     if (std::fabs(xm) <= tol1 || fb == 0.0) {
       double fbcMiddle = f(0.5 * (b + c), aux);
-      if ((fb <= fbcMiddle && fbcMiddle <= fc) || (fc <= fbcMiddle && fbcMiddle <= fb)) {
+      if ((fb <= fbcMiddle && fbcMiddle <= fc) ||
+          (fc <= fbcMiddle && fbcMiddle <= fb)) {
         return Coordinate2D<double>(b, fb);
       }
     }
@@ -182,7 +195,9 @@ Coordinate2D<double> SolverAlgorithms::BrentRoot(Solver<double>::FunctionEvaluat
   return Coordinate2D<double>(NAN, NAN);
 }
 
-Coordinate2D<double> SolverAlgorithms::BrentMinimum(Solver<double>::FunctionEvaluation f, const void * aux, double xMin, double xMax, Solver<double>::Interest interest, double precision) {
+Coordinate2D<double> SolverAlgorithms::BrentMinimum(
+    Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
+    double xMax, Solver<double>::Interest interest, double precision) {
   assert(xMin < xMax);
   double a = xMin;
   double b = xMax;
@@ -208,11 +223,8 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(Solver<double>::FunctionEval
       double fa = f(a, aux);
       double fb = f(b, aux);
 
-      if (faxMiddle - fa <= k_sqrtEps
-       && fx - faxMiddle <= k_sqrtEps
-       && fx - fbxMiddle <= k_sqrtEps
-       && fbxMiddle - fb <= k_sqrtEps)
-      {
+      if (faxMiddle - fa <= k_sqrtEps && fx - faxMiddle <= k_sqrtEps &&
+          fx - fbxMiddle <= k_sqrtEps && fbxMiddle - fb <= k_sqrtEps) {
         return Coordinate2D<double>(x, fx);
       }
     }
@@ -237,7 +249,8 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(Solver<double>::FunctionEval
       e = d;
     }
 
-    if (std::fabs(p) < std::fabs(0.5 * q * r) && p < q * (a - x) && p < q * (b - x)) {
+    if (std::fabs(p) < std::fabs(0.5 * q * r) && p < q * (a - x) &&
+        p < q * (b - x)) {
       d = p / q;
       u = x + d;
 
@@ -289,8 +302,16 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(Solver<double>::FunctionEval
 
 // Explicit template instantiations
 
-template float SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(float * probability, Solver<float>::FunctionEvaluation f, const void * aux);
-template double SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(double * probability, Solver<double>::FunctionEvaluation f, const void * aux);
-template float SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(float x, Solver<float>::FunctionEvaluation f, const void * aux);
-template double SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(double x, Solver<double>::FunctionEvaluation f, const void * aux);
-}
+template float
+SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
+    float* probability, Solver<float>::FunctionEvaluation f, const void* aux);
+template double
+SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(
+    double* probability, Solver<double>::FunctionEvaluation f, const void* aux);
+template float
+SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
+    float x, Solver<float>::FunctionEvaluation f, const void* aux);
+template double
+SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction(
+    double x, Solver<double>::FunctionEvaluation f, const void* aux);
+}  // namespace Poincare

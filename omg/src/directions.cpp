@@ -17,11 +17,13 @@ Direction::Direction(Ion::Events::Event event) {
 }
 
 Direction::operator class HorizontalDirection() const {
-  assert(isHorizontal()); return * static_cast<const HorizontalDirection *>(this);
+  assert(isHorizontal());
+  return *static_cast<const HorizontalDirection *>(this);
 }
 
 Direction::operator class VerticalDirection() const {
-  assert(isVertical()); return * static_cast<const VerticalDirection *>(this);
+  assert(isVertical());
+  return *static_cast<const VerticalDirection *>(this);
 }
 
-}
+}  // namespace OMG

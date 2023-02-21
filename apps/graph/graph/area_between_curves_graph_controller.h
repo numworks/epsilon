@@ -6,20 +6,31 @@
 namespace Graph {
 
 class AreaBetweenCurvesGraphController : public IntegralGraphController {
-public:
-  AreaBetweenCurvesGraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor) : IntegralGraphController(parentResponder, inputEventHandlerDelegate, graphView, graphRange, cursor) {}
-  const char * title() override;
+ public:
+  AreaBetweenCurvesGraphController(
+      Escher::Responder* parentResponder,
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+      GraphView* graphView, Shared::InteractiveCurveViewRange* graphRange,
+      Shared::CurveViewCursor* cursor)
+      : IntegralGraphController(parentResponder, inputEventHandlerDelegate,
+                                graphView, graphRange, cursor) {}
+  const char* title() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void setSecondRecord(Ion::Storage::Record record);
-private:
+
+ private:
   void makeCursorVisible() override;
-  double cursorNextStep(double position, OMG::HorizontalDirection direction) override;
+  double cursorNextStep(double position,
+                        OMG::HorizontalDirection direction) override;
   Poincare::Layout createFunctionLayout() override;
-  Poincare::Expression createSumExpression(double startSum, double endSum, Poincare::Context * context) override;
-  Ion::Storage::Record secondSelectedRecord() const { return m_graphView->secondSelectedRecord(); }
+  Poincare::Expression createSumExpression(double startSum, double endSum,
+                                           Poincare::Context* context) override;
+  Ion::Storage::Record secondSelectedRecord() const {
+    return m_graphView->secondSelectedRecord();
+  }
 };
 
-}
+}  // namespace Graph
 
 #endif

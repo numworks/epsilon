@@ -1,4 +1,5 @@
 #include "interest_controller.h"
+
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
@@ -6,37 +7,50 @@
 #include <escher/invocation.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/print.h>
+
 #include "app.h"
 
 using namespace Finance;
 
-InterestController::InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController) :
-    Shared::FloatParameterController<double>(parent),
-    m_dropdownCell(&m_selectableTableView, &m_dropdownDataSource, this),
-    m_resultController(resultController) {
+InterestController::InterestController(
+    Escher::StackViewController *parent,
+    Escher::InputEventHandlerDelegate *handler,
+    ResultController *resultController)
+    : Shared::FloatParameterController<double>(parent),
+      m_dropdownCell(&m_selectableTableView, &m_dropdownDataSource, this),
+      m_resultController(resultController) {
   for (size_t i = 0; i < k_numberOfReusableInputs; i++) {
     m_cells[i].setParentResponder(&m_selectableTableView);
     m_cells[i].setDelegates(handler, this);
   }
 }
 
-const char * InterestController::title() {
+const char *InterestController::title() {
   uint8_t unknownParam = App::GetInterestData()->getUnknown();
-  const char * label = I18n::translate(App::GetInterestData()->labelForParameter(unknownParam));
-  int length = Poincare::Print::SafeCustomPrintf(m_titleBuffer, k_titleBufferSize, I18n::translate(I18n::Message::FinanceSolving), label, I18n::translate(App::GetInterestData()->sublabelForParameter(unknownParam)));
+  const char *label =
+      I18n::translate(App::GetInterestData()->labelForParameter(unknownParam));
+  int length = Poincare::Print::SafeCustomPrintf(
+      m_titleBuffer, k_titleBufferSize,
+      I18n::translate(I18n::Message::FinanceSolving), label,
+      I18n::translate(
+          App::GetInterestData()->sublabelForParameter(unknownParam)));
   if (length >= k_titleBufferSize) {
     // Title did not fit, use a reduced pattern
-    Poincare::Print::CustomPrintf(m_titleBuffer, k_titleBufferSize, I18n::translate(I18n::Message::FinanceSolvingReduced), label);
+    Poincare::Print::CustomPrintf(
+        m_titleBuffer, k_titleBufferSize,
+        I18n::translate(I18n::Message::FinanceSolvingReduced), label);
   }
   return m_titleBuffer;
 }
 
 void InterestController::didBecomeFirstResponder() {
   // Init from data
-  m_dropdownDataSource.setMessages(App::GetInterestData()->dropdownMessageAtIndex(0),
-                                   App::GetInterestData()->dropdownMessageAtIndex(1));
+  m_dropdownDataSource.setMessages(
+      App::GetInterestData()->dropdownMessageAtIndex(0),
+      App::GetInterestData()->dropdownMessageAtIndex(1));
   selectCellAtLocation(0, 0);
-  m_dropdownCell.dropdown()->selectRow(App::GetInterestData()->m_booleanParam ? 0 : 1);
+  m_dropdownCell.dropdown()->selectRow(
+      App::GetInterestData()->m_booleanParam ? 0 : 1);
   m_dropdownCell.dropdown()->init();
   m_dropdownCell.reload();
   resetMemoization();
@@ -47,7 +61,8 @@ bool InterestController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-void InterestController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
+void InterestController::willDisplayCellForIndex(Escher::HighlightCell *cell,
+                                                 int index) {
   int type = typeAtIndex(index);
   if (type == k_buttonCellType) {
     return;
@@ -56,13 +71,17 @@ void InterestController::willDisplayCellForIndex(Escher::HighlightCell * cell, i
   if (type == k_dropdownCellType) {
     assert(&m_dropdownCell == cell);
     m_dropdownCell.setMessage(App::GetInterestData()->labelForParameter(param));
-    m_dropdownCell.setSubLabelMessage(App::GetInterestData()->sublabelForParameter(param));
+    m_dropdownCell.setSubLabelMessage(
+        App::GetInterestData()->sublabelForParameter(param));
     return;
   }
-  Escher::MessageTableCellWithEditableTextWithMessage * myCell = static_cast<Escher::MessageTableCellWithEditableTextWithMessage *>(cell);
+  Escher::MessageTableCellWithEditableTextWithMessage *myCell =
+      static_cast<Escher::MessageTableCellWithEditableTextWithMessage *>(cell);
   myCell->setMessage(App::GetInterestData()->labelForParameter(param));
-  myCell->setSubLabelMessage(App::GetInterestData()->sublabelForParameter(param));
-  return Shared::FloatParameterController<double>::willDisplayCellForIndex(cell, index);
+  myCell->setSubLabelMessage(
+      App::GetInterestData()->sublabelForParameter(param));
+  return Shared::FloatParameterController<double>::willDisplayCellForIndex(
+      cell, index);
 }
 
 int InterestController::typeAtIndex(int index) const {
@@ -109,7 +128,8 @@ int InterestController::reusableParameterCellCount(int type) {
   return 1;
 }
 
-Escher::HighlightCell * InterestController::reusableParameterCell(int i, int type) {
+Escher::HighlightCell *InterestController::reusableParameterCell(int i,
+                                                                 int type) {
   switch (type) {
     case k_inputCellType:
       assert(i < k_numberOfReusableInputs);

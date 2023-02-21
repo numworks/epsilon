@@ -3,18 +3,12 @@
 
 namespace Poincare {
 
-TreeNode * Checkpoint::TopmostEndOfPool() {
-  return nullptr;
-}
+TreeNode* Checkpoint::TopmostEndOfPool() { return nullptr; }
 
-bool ExceptionCheckpoint::setActive(bool interruption) {
-  return false;
-}
+bool ExceptionCheckpoint::setActive(bool interruption) { return false; }
 
-void ExceptionCheckpoint::rollbackException() {
-}
+void ExceptionCheckpoint::rollbackException() {}
 
-void ExceptionCheckpoint::Raise() {
-}
+void ExceptionCheckpoint::Raise() {}
 
-}
+}  // namespace Poincare

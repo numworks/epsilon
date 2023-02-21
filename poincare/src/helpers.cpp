@@ -1,6 +1,7 @@
+#include <assert.h>
 #include <poincare/helpers.h>
 #include <poincare/list.h>
-#include <assert.h>
+
 #include <cmath>
 
 namespace Poincare {
@@ -23,15 +24,14 @@ size_t Helpers::Gcd(size_t a, size_t b) {
       return i;
     }
     if (i > j) {
-      i = i - j*(i/j);
+      i = i - j * (i / j);
     } else {
-      j = j - i*(j/i);
+      j = j - i * (j / i);
     }
-  } while(true);
+  } while (true);
 }
 
-
-bool Helpers::Rotate(uint32_t * dst, uint32_t * src, size_t len) {
+bool Helpers::Rotate(uint32_t *dst, uint32_t *src, size_t len) {
   /* This method "rotates" an array to insert data at src with length len at
    * address dst.
    *
@@ -63,12 +63,12 @@ bool Helpers::Rotate(uint32_t * dst, uint32_t * src, size_t len) {
   size_t dstAddressOffset = dst < src ? len : dst - len - src;
 
   // We need the limit addresses of the data that will change
-  uint32_t * insertionZoneStart = dst < src ? dst : src;
-  uint32_t * insertionZoneEnd = dst < src ? src + len - 1 : dst - 1;
+  uint32_t *insertionZoneStart = dst < src ? dst : src;
+  uint32_t *insertionZoneEnd = dst < src ? src + len - 1 : dst - 1;
 
-  uint32_t * cycleStartAddress;
-  uint32_t * moveSrcAddress;
-  uint32_t * moveDstAddress;
+  uint32_t *cycleStartAddress;
+  uint32_t *moveSrcAddress;
+  uint32_t *moveDstAddress;
   uint32_t tmpData;
   uint32_t nextTmpData;
 
@@ -80,7 +80,8 @@ bool Helpers::Rotate(uint32_t * dst, uint32_t * src, size_t len) {
     // Set the cycle starting destination, dstAddressOffset after the source
     moveDstAddress = moveSrcAddress + dstAddressOffset;
     if (moveDstAddress > insertionZoneEnd) {
-      moveDstAddress = insertionZoneStart + (moveDstAddress - insertionZoneEnd - 1);
+      moveDstAddress =
+          insertionZoneStart + (moveDstAddress - insertionZoneEnd - 1);
     }
     tmpData = *moveSrcAddress;
     do {
@@ -90,23 +91,25 @@ bool Helpers::Rotate(uint32_t * dst, uint32_t * src, size_t len) {
       moveSrcAddress = moveDstAddress;
       moveDstAddress = moveSrcAddress + dstAddressOffset;
       if (moveDstAddress > insertionZoneEnd) {
-        moveDstAddress = insertionZoneStart + (moveDstAddress - insertionZoneEnd - 1);
+        moveDstAddress =
+            insertionZoneStart + (moveDstAddress - insertionZoneEnd - 1);
       }
     } while (moveSrcAddress != cycleStartAddress);
   }
   return true;
 }
 
-void Helpers::Sort(Swap swap, Compare compare, void * context, int numberOfElements) {
+void Helpers::Sort(Swap swap, Compare compare, void *context,
+                   int numberOfElements) {
   /* Using an insertion-sort algorithm, which has the advantage of being
    * in-place and efficient when already sorted. It is optimal if Compare is
    * more lenient with equalities ( >= instead of > ) */
   for (int i = 1; i < numberOfElements; i++) {
     for (int j = i - 1; j >= 0; j--) {
-      if (compare(j+1, j, context, numberOfElements)) {
+      if (compare(j + 1, j, context, numberOfElements)) {
         break;
       }
-      swap(j, j+1, context, numberOfElements);
+      swap(j, j + 1, context, numberOfElements);
     }
   }
 }
@@ -121,13 +124,19 @@ bool Helpers::FloatIsGreater(float xI, float xJ, bool nanIsGreatest) {
   return xI > xJ;
 }
 
-bool Helpers::ListEvaluationComparisonAtIndex(int i, int j, void * context, int numberOfElements) {
-  void ** c = reinterpret_cast<void **>(context);
-  ListNode * list = reinterpret_cast<ListNode *>(c[0]);
-  ApproximationContext * approximationContext = reinterpret_cast<ApproximationContext *>(c[1]);
-  bool * nanIsGreatest = reinterpret_cast<bool *>(c[2]);
-  float xI = list->childAtIndex(i)->approximate(static_cast<float>(0), *approximationContext).toScalar();
-  float xJ =  list->childAtIndex(j)->approximate(static_cast<float>(0), *approximationContext).toScalar();
+bool Helpers::ListEvaluationComparisonAtIndex(int i, int j, void *context,
+                                              int numberOfElements) {
+  void **c = reinterpret_cast<void **>(context);
+  ListNode *list = reinterpret_cast<ListNode *>(c[0]);
+  ApproximationContext *approximationContext =
+      reinterpret_cast<ApproximationContext *>(c[1]);
+  bool *nanIsGreatest = reinterpret_cast<bool *>(c[2]);
+  float xI = list->childAtIndex(i)
+                 ->approximate(static_cast<float>(0), *approximationContext)
+                 .toScalar();
+  float xJ = list->childAtIndex(j)
+                 ->approximate(static_cast<float>(0), *approximationContext)
+                 .toScalar();
   return FloatIsGreater(xI, xJ, *nanIsGreatest);
 }
 
@@ -143,4 +152,4 @@ bool Helpers::RelativelyEqual(T observed, T expected, T relativeThreshold) {
 template bool Helpers::RelativelyEqual<float>(float, float, float);
 template bool Helpers::RelativelyEqual<double>(double, double, double);
 
-}
+}  // namespace Poincare

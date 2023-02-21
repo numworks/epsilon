@@ -8,16 +8,20 @@
 namespace Poincare {
 
 class NAryInfixExpressionNode : public NAryExpressionNode {
-public:
+ public:
   using NAryExpressionNode::NAryExpressionNode;
   // Properties
-  bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
-protected:
+  bool childAtIndexNeedsUserParentheses(const Expression& child,
+                                        int childIndex) const override;
+
+ protected:
   // Order
-  int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
-  int simplificationOrderGreaterType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
+  int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
+                                  bool ignoreParentheses) const override;
+  int simplificationOrderGreaterType(const ExpressionNode* e, bool ascending,
+                                     bool ignoreParentheses) const override;
 };
 
-}
+}  // namespace Poincare
 
 #endif

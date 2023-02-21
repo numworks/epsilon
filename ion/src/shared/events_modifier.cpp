@@ -1,4 +1,5 @@
 #include "events_modifier.h"
+
 #include <assert.h>
 
 namespace Ion {
@@ -15,20 +16,16 @@ void setShiftAlphaStatus(ShiftAlphaStatus s) {
   SharedModifierState->setShiftAlphaStatus(s);
 }
 
-int repetitionFactor() {
-  return SharedModifierState->repetitionFactor();
-}
+int repetitionFactor() { return SharedModifierState->repetitionFactor(); }
 
-int longPressCounter() {
-  return SharedModifierState->longPressCounter();
-}
+int longPressCounter() { return SharedModifierState->longPressCounter(); }
 
 // Internal functions
 
 void ModifierState::removeShift() {
   if (m_shiftAlphaStatus == ShiftAlphaStatus::Shift) {
     m_shiftAlphaStatus = ShiftAlphaStatus::Default;
-  } else if (m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha ) {
+  } else if (m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha) {
     m_shiftAlphaStatus = ShiftAlphaStatus::Alpha;
   } else if (m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock) {
     m_shiftAlphaStatus = ShiftAlphaStatus::AlphaLock;
@@ -36,27 +33,36 @@ void ModifierState::removeShift() {
 }
 
 void ModifierState::removeAlpha() {
-  if (m_shiftAlphaStatus == ShiftAlphaStatus::Alpha || m_shiftAlphaStatus == ShiftAlphaStatus::AlphaLock) {
+  if (m_shiftAlphaStatus == ShiftAlphaStatus::Alpha ||
+      m_shiftAlphaStatus == ShiftAlphaStatus::AlphaLock) {
     m_shiftAlphaStatus = ShiftAlphaStatus::Default;
-  } else if (m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock) {
+  } else if (m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha ||
+             m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock) {
     m_shiftAlphaStatus = ShiftAlphaStatus::Shift;
   }
 }
 
 bool ModifierState::isShiftActive() {
-  return m_shiftAlphaStatus == ShiftAlphaStatus::Shift || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+  return m_shiftAlphaStatus == ShiftAlphaStatus::Shift ||
+         m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha ||
+         m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
 }
 
 bool ModifierState::isAlphaActive() {
-  return m_shiftAlphaStatus == ShiftAlphaStatus::Alpha || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha || m_shiftAlphaStatus == ShiftAlphaStatus::AlphaLock || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+  return m_shiftAlphaStatus == ShiftAlphaStatus::Alpha ||
+         m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlpha ||
+         m_shiftAlphaStatus == ShiftAlphaStatus::AlphaLock ||
+         m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
 }
 
 bool ModifierState::isLockActive() {
-  return m_shiftAlphaStatus == ShiftAlphaStatus::AlphaLock || m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
+  return m_shiftAlphaStatus == ShiftAlphaStatus::AlphaLock ||
+         m_shiftAlphaStatus == ShiftAlphaStatus::ShiftAlphaLock;
 }
 
 void ModifierState::setShiftAlphaStatus(ShiftAlphaStatus s) {
-  if (static_cast<uint8_t>(s) >= static_cast<uint8_t>(ShiftAlphaStatus::NumberOfStatus)) {
+  if (static_cast<uint8_t>(s) >=
+      static_cast<uint8_t>(ShiftAlphaStatus::NumberOfStatus)) {
     return;
   }
   m_shiftAlphaStatus = s;
@@ -164,5 +170,5 @@ void ModifierState::incrementOrResetRepetition(bool increment) {
   }
 }
 
-}
-}
+}  // namespace Events
+}  // namespace Ion

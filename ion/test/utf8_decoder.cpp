@@ -1,33 +1,39 @@
-#include <quiz.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/serialization_helper.h>
+#include <quiz.h>
 #include <string.h>
 
-void assert_decodes_to(const char * string, CodePoint c) {
+void assert_decodes_to(const char* string, CodePoint c) {
   UTF8Decoder d(string);
   quiz_assert(d.nextCodePoint() == c);
   quiz_assert(d.nextCodePoint() == 0);
 }
 
-void assert_previous_code_point_is_to(const char * string, const char * stringPosition, CodePoint c) {
+void assert_previous_code_point_is_to(const char* string,
+                                      const char* stringPosition, CodePoint c) {
   UTF8Decoder d(string, stringPosition);
   quiz_assert(d.previousCodePoint() == c);
 }
 
-void assert_code_point_at_next_glyph_position_is(const char * string, CodePoint c) {
+void assert_code_point_at_next_glyph_position_is(const char* string,
+                                                 CodePoint c) {
   UTF8Decoder d(string);
   d.nextGlyphPosition();
   quiz_assert(d.nextCodePoint() == c);
 }
 
-void assert_code_point_at_previous_glyph_position_is(const char * string, const char * stringPosition, CodePoint c) {
+void assert_code_point_at_previous_glyph_position_is(const char* string,
+                                                     const char* stringPosition,
+                                                     CodePoint c) {
   UTF8Decoder d(string, stringPosition);
   d.previousGlyphPosition();
   quiz_assert(d.nextCodePoint() == c);
 }
 
-void assert_code_point_decode_to_chars(CodePoint c, const char * expectedSerialization, size_t bufferSize, const char * expectedDecodedChars = nullptr) {
+void assert_code_point_decode_to_chars(
+    CodePoint c, const char* expectedSerialization, size_t bufferSize,
+    const char* expectedDecodedChars = nullptr) {
   // Create an empty temporary buffer (must be larger than tested buffer sizes)
   constexpr size_t maxBufferSize = 5;
   assert(bufferSize <= maxBufferSize);
@@ -41,7 +47,9 @@ void assert_code_point_decode_to_chars(CodePoint c, const char * expectedSeriali
     // UTF8Decoder::CodePointToChars must be called on big enough buffers only.
     memset(buffer, 0, sizeof(buffer));
     UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
-    quiz_assert(strcmp(expectedDecodedChars ? expectedDecodedChars : expectedSerialization, buffer) == 0);
+    quiz_assert(strcmp(expectedDecodedChars ? expectedDecodedChars
+                                            : expectedSerialization,
+                       buffer) == 0);
   }
 }
 
@@ -58,23 +66,23 @@ QUIZ_CASE(ion_utf8_decode_forward) {
 }
 
 QUIZ_CASE(ion_utf8_decode_backwards) {
-  const char * a = "abcde";
-  assert_previous_code_point_is_to(a, a+1, *a);
-  assert_previous_code_point_is_to(a, a+4, *(a+3));
-  assert_previous_code_point_is_to(a, a+6, *(a+5));
+  const char* a = "abcde";
+  assert_previous_code_point_is_to(a, a + 1, *a);
+  assert_previous_code_point_is_to(a, a + 4, *(a + 3));
+  assert_previous_code_point_is_to(a, a + 6, *(a + 5));
 }
 
 QUIZ_CASE(ion_utf8_decoder_next_glyph) {
-  const char * string = u8"a\u0065\u0301i";
+  const char* string = u8"a\u0065\u0301i";
   assert_code_point_at_next_glyph_position_is(string, 'e');
-  assert_code_point_at_next_glyph_position_is(string+1, 'i');
+  assert_code_point_at_next_glyph_position_is(string + 1, 'i');
 }
 
 QUIZ_CASE(ion_utf8_decoder_previous_glyph) {
-  const char * string = u8"a\u0065\u0301i";
-  const char * iPosition = UTF8Helper::CodePointSearch(string, 'i');
+  const char* string = u8"a\u0065\u0301i";
+  const char* iPosition = UTF8Helper::CodePointSearch(string, 'i');
   assert_code_point_at_previous_glyph_position_is(string, iPosition, 'e');
-  assert_code_point_at_previous_glyph_position_is(string,string+1, 'a');
+  assert_code_point_at_previous_glyph_position_is(string, string + 1, 'a');
 }
 
 QUIZ_CASE(ion_utf8_decoder_code_point) {

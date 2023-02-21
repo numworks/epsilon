@@ -4,8 +4,8 @@
 extern "C" {
 #include <py/mpconfig.h>
 }
-#include <ion.h>
 #include <escher/metric.h>
+#include <ion.h>
 #include <math.h>
 #include <python/port/port.h>
 
@@ -18,27 +18,24 @@ extern "C" {
  * To fix this, all methods that might be long to return should return
  * immediately if they find an interruption. */
 
-
 class Turtle {
-public:
-  constexpr Turtle() :
-    m_underneathPixelBuffer(nullptr),
-    m_dotMask(nullptr),
-    m_dotWorkingPixelBuffer(nullptr),
-    m_x(0),
-    m_y(0),
-    m_heading(0),
-    m_color(k_defaultColor),
-    m_colorMode(MicroPython::Color::Mode::MaxIntensity255),
-    m_penDown(true),
-    m_visible(true),
-    m_speed(k_defaultSpeed),
-    m_penSize(k_defaultPenSize),
-    m_mileage(0),
-    m_drawn(false),
-    m_animationStep(0)
-  {
-  }
+ public:
+  constexpr Turtle()
+      : m_underneathPixelBuffer(nullptr),
+        m_dotMask(nullptr),
+        m_dotWorkingPixelBuffer(nullptr),
+        m_x(0),
+        m_y(0),
+        m_heading(0),
+        m_color(k_defaultColor),
+        m_colorMode(MicroPython::Color::Mode::MaxIntensity255),
+        m_penDown(true),
+        m_visible(true),
+        m_speed(k_defaultSpeed),
+        m_penSize(k_defaultPenSize),
+        m_mileage(0),
+        m_drawn(false),
+        m_animationStep(0) {}
 
   void reset();
 
@@ -67,18 +64,16 @@ public:
   void setVisible(bool visible);
 
   KDColor color() const { return m_color; }
-  void setColor(KDColor c) {
-    m_color = c;
-  }
+  void setColor(KDColor c) { m_color = c; }
   void setColor(uint8_t r, uint8_t g, uint8_t b) {
     m_color = KDColor::RGB888(r, g, b);
   }
-  MicroPython::Color::Mode colorMode() const {return m_colorMode; }
-  void setColorMode(MicroPython::Color::Mode colorMode){
+  MicroPython::Color::Mode colorMode() const { return m_colorMode; }
+  void setColorMode(MicroPython::Color::Mode colorMode) {
     m_colorMode = colorMode;
   }
 
-  void write(const char * string);
+  void write(const char* string);
 
   void viewDidDisappear();
 
@@ -89,13 +84,14 @@ public:
    * drawn. We use very large bounds to temper these effects. */
   bool isOutOfBounds() const;
 
-private:
+ private:
   constexpr static mp_float_t k_headingScale = M_PI / 180;
   /* The Y axis is oriented upwards in Turtle and downwards in Kandinsky, so we
    * need to invert some values, hence k_invertedYAxisCoefficient. */
   constexpr static int k_invertedYAxisCoefficient = -1;
   constexpr static KDCoordinate k_xOffset = Ion::Display::Width / 2;
-  constexpr static KDCoordinate k_yOffset = Escher::Metric::DisplayHeightWithoutTitleBar / 2;
+  constexpr static KDCoordinate k_yOffset =
+      Escher::Metric::DisplayHeightWithoutTitleBar / 2;
   constexpr static uint8_t k_defaultSpeed = 8;
   constexpr static uint8_t k_maxSpeed = 10;
   constexpr static KDColor k_defaultColor = KDColorBlack;
@@ -139,9 +135,9 @@ private:
    * data is scanned for pointers that point to the Python heap. We put the 3
    * pointers that should be marked at the beginning of the object to maximize
    * the chances they will be correctly aligned and interpreted as pointers. */
-  KDColor * m_underneathPixelBuffer;
-  uint8_t * m_dotMask;
-  KDColor * m_dotWorkingPixelBuffer;
+  KDColor* m_underneathPixelBuffer;
+  uint8_t* m_dotMask;
+  KDColor* m_dotWorkingPixelBuffer;
 
   /* The frame's center is the center of the screen, the x axis goes to the
    * right and the y axis goes upwards. */
@@ -156,7 +152,7 @@ private:
   bool m_penDown;
   bool m_visible;
 
-  uint8_t m_speed; // Speed is between 0 and 10
+  uint8_t m_speed;  // Speed is between 0 and 10
   KDCoordinate m_penSize;
 
   /* We sleep every time the turtle walks a mileageLimit amount, to allow user

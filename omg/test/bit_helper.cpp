@@ -17,4 +17,3 @@ QUIZ_CASE(omg_bit_helper) {
   quiz_assert(BitHelper::indexOfMostSignificantBit(0x00F00000) == 23);
   quiz_assert(BitHelper::numberOfBitsToCountUpTo(16) == 4);
 }
-

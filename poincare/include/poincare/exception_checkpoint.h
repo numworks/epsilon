@@ -4,12 +4,13 @@
 #include <poincare/checkpoint.h>
 #include <setjmp.h>
 
-#define ExceptionRun(checkpoint) ( CheckpointRun(checkpoint, setjmp(*checkpoint.jumpBuffer())) != 0 )
+#define ExceptionRun(checkpoint) \
+  (CheckpointRun(checkpoint, setjmp(*checkpoint.jumpBuffer())) != 0)
 
 namespace Poincare {
 
 class ExceptionCheckpoint final : public Checkpoint {
-public:
+ public:
   static void Raise();
 #if __EMSCRIPTEN__
   static bool HasBeenInterrupted();
@@ -18,15 +19,15 @@ public:
 
   using Checkpoint::Checkpoint;
 
-  jmp_buf * jumpBuffer() { return &m_jumpBuffer; }
+  jmp_buf* jumpBuffer() { return &m_jumpBuffer; }
   bool setActive(bool interruption);
 
-private:
+ private:
   void rollbackException() override;
 
   jmp_buf m_jumpBuffer;
 };
 
-}
+}  // namespace Poincare
 
 #endif

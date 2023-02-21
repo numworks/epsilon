@@ -1,19 +1,19 @@
+#include <assert.h>
 #include <quiz.h>
 #include <string.h>
-#include <assert.h>
-#include "../model/model.h"
+
 #include "../graph_controller.h"
+#include "../model/model.h"
 #include "../store.h"
 
 using namespace Poincare;
 using namespace Regression;
 
-void load_in_store(
-    Regression::Store * store,
-    double * x0, double * y0, int numberOfPoints0,
-    double * x1 = nullptr, double * y1 = nullptr, int numberOfPoints1 = 0,
-    double * x2 = nullptr, double * y2 = nullptr, int numberOfPoints2 = 0)
-{
+void load_in_store(Regression::Store* store, double* x0, double* y0,
+                   int numberOfPoints0, double* x1 = nullptr,
+                   double* y1 = nullptr, int numberOfPoints1 = 0,
+                   double* x2 = nullptr, double* y2 = nullptr,
+                   int numberOfPoints2 = 0) {
   // Set the points and the regression type
   if (numberOfPoints0 != 0 && x0 != nullptr && y0 != nullptr) {
     for (int i = 0; i < numberOfPoints0; i++) {
@@ -36,26 +36,22 @@ void load_in_store(
 }
 
 class NavigationEvent {
-public:
-  NavigationEvent(OMG::Direction d, int series, int dot) :
-    direction(d),
-    expectedSelectedSeries(series),
-    expectedSelectedDot(dot)
-  {}
+ public:
+  NavigationEvent(OMG::Direction d, int series, int dot)
+      : direction(d),
+        expectedSelectedSeries(series),
+        expectedSelectedDot(dot) {}
   OMG::Direction direction;
   int expectedSelectedSeries;
   int expectedSelectedDot;
 };
 
-void assert_navigation_is(
-    int numberOfEvents,
-    NavigationEvent * events,
-    int startingDotSelection,
-    int startingSeriesSelection,
-    double * x0, double * y0, int numberOfPoints0,
-    double * x1 = nullptr, double * y1 = nullptr, int numberOfPoints1 = 0,
-    double * x2 = nullptr, double * y2 = nullptr, int numberOfPoints2 = 0)
-{
+void assert_navigation_is(int numberOfEvents, NavigationEvent* events,
+                          int startingDotSelection, int startingSeriesSelection,
+                          double* x0, double* y0, int numberOfPoints0,
+                          double* x1 = nullptr, double* y1 = nullptr,
+                          int numberOfPoints1 = 0, double* x2 = nullptr,
+                          double* y2 = nullptr, int numberOfPoints2 = 0) {
   assert(startingDotSelection >= 0);
   Store store;
   Shared::CurveViewCursor cursor;
@@ -64,30 +60,24 @@ void assert_navigation_is(
   int selectedDotIndex = startingDotSelection;
   int selectedSeriesIndex = startingSeriesSelection;
 
-  load_in_store(&store, x0, y0, numberOfPoints0, x1, y1, numberOfPoints1, x2, y2, numberOfPoints2);
+  load_in_store(&store, x0, y0, numberOfPoints0, x1, y1, numberOfPoints1, x2,
+                y2, numberOfPoints2);
 
   if (selectedDotIndex < store.numberOfPairsOfSeries(selectedSeriesIndex)) {
-    cursor.moveTo(
-        store.get(selectedSeriesIndex, 0, selectedDotIndex),
-        store.get(selectedSeriesIndex, 1, selectedDotIndex));
+    cursor.moveTo(store.get(selectedSeriesIndex, 0, selectedDotIndex),
+                  store.get(selectedSeriesIndex, 1, selectedDotIndex));
   } else {
-    cursor.moveTo(
-        store.meanOfColumn(selectedSeriesIndex, 0),
-        store.meanOfColumn(selectedSeriesIndex, 1));
+    cursor.moveTo(store.meanOfColumn(selectedSeriesIndex, 0),
+                  store.meanOfColumn(selectedSeriesIndex, 1));
   }
 
   AppsContainerStorage container;
   // We do not really care about the snapshot
   App app(&container, container.appSnapshotAtIndex(0));
 
-  GraphController graphController(
-      &app, &app, nullptr,
-      &store,
-      &cursor,
-      &dummy, &dummy,
-      &selectedDotIndex,
-      &selectedSeriesIndex);
-
+  GraphController graphController(&app, &app, nullptr, &store, &cursor, &dummy,
+                                  &dummy, &selectedDotIndex,
+                                  &selectedSeriesIndex);
 
   for (int i = 0; i < numberOfEvents; i++) {
     NavigationEvent event = events[i];
@@ -113,15 +103,15 @@ QUIZ_CASE(regression_navigation_1) {
 
   constexpr int numberOfEvents = 7;
   NavigationEvent events[numberOfEvents] = {
-    NavigationEvent(OMG::Direction::Down(), 0, -1),
-    NavigationEvent(OMG::Direction::Down(), 0, 2),
-    NavigationEvent(OMG::Direction::Down(), 1, 2),
-    NavigationEvent(OMG::Direction::Down(), 0, 0),
-    NavigationEvent(OMG::Direction::Down(), 1, 0),
-    NavigationEvent(OMG::Direction::Down(), 1, -1),
-    NavigationEvent(OMG::Direction::Down(), 1, -1)
-  };
-  assert_navigation_is(numberOfEvents, events, numberOfPoints0, 0, x0, y0, numberOfPoints0, x1, y1, numberOfPoints1);
+      NavigationEvent(OMG::Direction::Down(), 0, -1),
+      NavigationEvent(OMG::Direction::Down(), 0, 2),
+      NavigationEvent(OMG::Direction::Down(), 1, 2),
+      NavigationEvent(OMG::Direction::Down(), 0, 0),
+      NavigationEvent(OMG::Direction::Down(), 1, 0),
+      NavigationEvent(OMG::Direction::Down(), 1, -1),
+      NavigationEvent(OMG::Direction::Down(), 1, -1)};
+  assert_navigation_is(numberOfEvents, events, numberOfPoints0, 0, x0, y0,
+                       numberOfPoints0, x1, y1, numberOfPoints1);
 }
 
 QUIZ_CASE(regression_navigation_2) {
@@ -135,19 +125,20 @@ QUIZ_CASE(regression_navigation_2) {
 
   constexpr int numberOfEvents = 6;
   NavigationEvent events[numberOfEvents] = {
-    /* FIXME
-     * Because of double computation error, the regression curve of the series 0
-     * is above its mean point.
-    NavigationEvent(OMG::Direction::Down, 1, -1),
-     * */
-    NavigationEvent(OMG::Direction::Down(), 0, -1),
-    NavigationEvent(OMG::Direction::Down(), 0, numberOfPoints0),
-    NavigationEvent(OMG::Direction::Down(), 0, -1),
-    NavigationEvent(OMG::Direction::Down(), 0, 3),
-    NavigationEvent(OMG::Direction::Down(), 1, 0),
-    NavigationEvent(OMG::Direction::Down(), 0, 2)
-  };
-  assert_navigation_is(numberOfEvents, events, numberOfPoints1, 1, x0, y0, numberOfPoints0, x1, y1, numberOfPoints1);
+      /* FIXME
+       * Because of double computation error, the regression curve of the series
+      0
+       * is above its mean point.
+      NavigationEvent(OMG::Direction::Down, 1, -1),
+       * */
+      NavigationEvent(OMG::Direction::Down(), 0, -1),
+      NavigationEvent(OMG::Direction::Down(), 0, numberOfPoints0),
+      NavigationEvent(OMG::Direction::Down(), 0, -1),
+      NavigationEvent(OMG::Direction::Down(), 0, 3),
+      NavigationEvent(OMG::Direction::Down(), 1, 0),
+      NavigationEvent(OMG::Direction::Down(), 0, 2)};
+  assert_navigation_is(numberOfEvents, events, numberOfPoints1, 1, x0, y0,
+                       numberOfPoints0, x1, y1, numberOfPoints1);
 }
 
 QUIZ_CASE(regression_navigation_3) {
@@ -157,9 +148,10 @@ QUIZ_CASE(regression_navigation_3) {
 
   constexpr int numberOfEvents = 3;
   NavigationEvent events[numberOfEvents] = {
-    NavigationEvent(OMG::Direction::Down(), 0, -1),
-    NavigationEvent(OMG::Direction::Down(), 1, -1),
-    NavigationEvent(OMG::Direction::Down(), 2, -1),
+      NavigationEvent(OMG::Direction::Down(), 0, -1),
+      NavigationEvent(OMG::Direction::Down(), 1, -1),
+      NavigationEvent(OMG::Direction::Down(), 2, -1),
   };
-  assert_navigation_is(numberOfEvents, events, 2, 0, x, y, numberOfPoints, x, y, numberOfPoints, x, y, numberOfPoints);
+  assert_navigation_is(numberOfEvents, events, 2, 0, x, y, numberOfPoints, x, y,
+                       numberOfPoints, x, y, numberOfPoints);
 }

@@ -1,5 +1,5 @@
-#include <shared/usb/calculator.h>
 #include <ion/reset.h>
+#include <shared/usb/calculator.h>
 
 namespace Ion {
 namespace Device {
@@ -12,6 +12,6 @@ void Calculator::leave(uint32_t) {
   Ion::Reset::core();
 }
 
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion

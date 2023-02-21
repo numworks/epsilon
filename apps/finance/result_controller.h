@@ -13,24 +13,30 @@ namespace Finance {
 
 constexpr int k_numberOfResultCells = 1;
 
-class ResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource> {
-public:
-  ResultController(Escher::StackViewController * parentResponder);
+class ResultController
+    : public Escher::SelectableCellListPage<
+          Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells,
+          Escher::MemoizedListViewDataSource> {
+ public:
+  ResultController(Escher::StackViewController* parentResponder);
 
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
-  const char * title() override;
-  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastAndThirdToLast; }
-  Escher::View * view() override { return &m_contentView; }
+  const char* title() override;
+  ViewController::TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastAndThirdToLast;
+  }
+  Escher::View* view() override { return &m_contentView; }
 
-private:
-  constexpr static int k_titleBufferSize = 1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
+ private:
+  constexpr static int k_titleBufferSize =
+      1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
   char m_titleBuffer[k_titleBufferSize];
 
   Escher::MessageTextView m_messageView;
   Escher::TableViewWithTopAndBottomViews m_contentView;
 };
 
-}
+}  // namespace Finance
 
 #endif

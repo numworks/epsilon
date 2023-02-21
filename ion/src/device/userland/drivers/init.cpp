@@ -2,8 +2,6 @@
 
 namespace Ion {
 
-void Init() {
-  Storage::FileSystem::sharedFileSystem.init();
-}
+void Init() { Storage::FileSystem::sharedFileSystem.init(); }
 
-}
+}  // namespace Ion

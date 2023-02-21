@@ -7,7 +7,7 @@ extern "C" {
 
 namespace Escher {
 
-const Window * View::window() const {
+const Window *View::window() const {
   if (m_superview == nullptr) {
     return nullptr;
   } else {
@@ -28,7 +28,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
    * rectangles that are redrawn. This process handles the case when several
    * sister views are overlapping (provided that the sister views are indexed in
    * the right order).
-  */
+   */
   if (window() == nullptr) {
     /* That view (and all of its subviews) is offscreen. That means so are all
      * of its subviews. So there's no point in drawing them. */
@@ -39,17 +39,16 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
    * dirty rectangle and the rectangle forced to be redrawn. The rectangle to
    * redraw must also be included in the current view bounds and in the
    * rectangle rect. */
-  KDRect rectNeedingRedraw = rect
-    .intersectedWith(m_dirtyRect)
-    .unionedWith(forceRedrawRect
-      .intersectedWith(bounds()));
+  KDRect rectNeedingRedraw =
+      rect.intersectedWith(m_dirtyRect)
+          .unionedWith(forceRedrawRect.intersectedWith(bounds()));
 
   // This redraws the rectNeedingRedraw calling drawRect.
   if (!rectNeedingRedraw.isEmpty()) {
     KDPoint absOrigin = absoluteOrigin();
     KDRect absRect = rectNeedingRedraw.translatedBy(absOrigin);
     KDRect absClippingRect = absoluteVisibleFrame().intersectedWith(absRect);
-    KDContext * ctx = KDIonContext::SharedContext;
+    KDContext *ctx = KDIonContext::SharedContext;
     ctx->setOrigin(absOrigin);
     ctx->setClippingRect(absClippingRect);
     this->drawRect(ctx, rectNeedingRedraw);
@@ -59,27 +58,28 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
 
   // Then, let's recursively draw our children over ourself
   uint8_t subviewsNumber = numberOfSubviews();
-  for (uint8_t i=0; i < subviewsNumber; i++) {
-    View * subview = this->subview(i);
+  for (uint8_t i = 0; i < subviewsNumber; i++) {
+    View *subview = this->subview(i);
     if (subview == nullptr) {
       continue;
     }
     assert(subview->m_superview == this);
 
     // We transpose rect and forcedRedrawArea in the subview coordinates.
-    KDRect intersectionInSubview = rect
-      .intersectedWith(subview->m_frame)
-      .translatedBy(subview->m_frame.origin().opposite());
-    KDRect forcedRedrawAreaInSubview = redrawnArea
-      .translatedBy(subview->m_frame.origin().opposite());
+    KDRect intersectionInSubview =
+        rect.intersectedWith(subview->m_frame)
+            .translatedBy(subview->m_frame.origin().opposite());
+    KDRect forcedRedrawAreaInSubview =
+        redrawnArea.translatedBy(subview->m_frame.origin().opposite());
 
     // We redraw the current subview by passing the rectangle previously redrawn
     // (by the parent view or previous sister views) as forced to be redraw.
     KDRect subviewRedrawnArea =
-      subview->redraw(intersectionInSubview, forcedRedrawAreaInSubview);
+        subview->redraw(intersectionInSubview, forcedRedrawAreaInSubview);
 
     // We expand the redrawn area to include the area just drawn.
-    redrawnArea = redrawnArea.unionedWith(subviewRedrawnArea.translatedBy(subview->m_frame.origin()));
+    redrawnArea = redrawnArea.unionedWith(
+        subviewRedrawnArea.translatedBy(subview->m_frame.origin()));
   }
   // Eventually, mark that we don't need to be redrawn
   m_dirtyRect = KDRectZero;
@@ -88,9 +88,9 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
   return redrawnArea;
 }
 
-View * View::subview(int index) {
+View *View::subview(int index) {
   assert(index >= 0 && index < numberOfSubviews());
-  View * subview = subviewAtIndex(index);
+  View *subview = subviewAtIndex(index);
   if (subview != nullptr) {
     subview->m_superview = this;
   }
@@ -123,20 +123,20 @@ void View::setFrame(KDRect frame, bool force) {
    * can either mark an area of our superview as dirty, or mark our whole frame
    * as dirty. We pick the second option because it is more efficient. */
   markRectAsDirty(bounds());
-  // FIXME: m_dirtyRect = bounds(); would be more correct (in case the view is being shrinked)
+  // FIXME: m_dirtyRect = bounds(); would be more correct (in case the view is
+  // being shrinked)
 
   if (!m_frame.isEmpty()) {
     layoutSubviews(force);
   }
 }
 
-KDPoint View::pointFromPointInView(View * view, KDPoint point) {
-  return point.translatedBy(view->absoluteOrigin().translatedBy(absoluteOrigin().opposite()));
+KDPoint View::pointFromPointInView(View *view, KDPoint point) {
+  return point.translatedBy(
+      view->absoluteOrigin().translatedBy(absoluteOrigin().opposite()));
 }
 
-KDRect View::bounds() const {
-  return m_frame.movedTo(KDPointZero);
-}
+KDRect View::bounds() const { return m_frame.movedTo(KDPointZero); }
 
 KDPoint View::absoluteOrigin() const {
   if (m_superview == nullptr) {
@@ -161,19 +161,19 @@ KDRect View::absoluteVisibleFrame() const {
 }
 
 #if ESCHER_VIEW_LOGGING
-const char * View::className() const {
-  return "View";
-}
+const char *View::className() const { return "View"; }
 
 void View::logAttributes(std::ostream &os) const {
   os << " address=\"" << this << "\"";
-  os << " frame=\"" << m_frame.x() << "," << m_frame.y() << "," << m_frame.width() << "," << m_frame.height() << "\"";
+  os << " frame=\"" << m_frame.x() << "," << m_frame.y() << ","
+     << m_frame.width() << "," << m_frame.height() << "\"";
 }
 
 std::ostream &operator<<(std::ostream &os, View &view) {
   // TODO find something better than this static variable, like a custom stream
   static int indentColumn = 0;
-  constexpr static int bufferSize = 200;;
+  constexpr static int bufferSize = 200;
+  ;
   char indent[bufferSize];
   for (int i = 0; i < indentColumn; i++) {
     indent[i] = ' ';
@@ -183,7 +183,7 @@ std::ostream &operator<<(std::ostream &os, View &view) {
   view.logAttributes(os);
   if (view.numberOfSubviews()) {
     os << ">\n";
-    for (int i=0; i<view.numberOfSubviews(); i++) {
+    for (int i = 0; i < view.numberOfSubviews(); i++) {
       indentColumn += 2;
       assert(view.subview(i)->m_superview == &view);
       os << *view.subview(i) << '\n';
@@ -198,8 +198,8 @@ std::ostream &operator<<(std::ostream &os, View &view) {
 
 void View::log() const {
   // TODO << should use a const View but it requires a const subview
-  std::cout << *const_cast<View*>(this);
+  std::cout << *const_cast<View *>(this);
 }
 #endif
 
-}
+}  // namespace Escher

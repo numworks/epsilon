@@ -1,7 +1,8 @@
-#include <kandinsky/color.h>
-#include <cmath>
-#include <algorithm>
 #include <assert.h>
+#include <kandinsky/color.h>
+
+#include <algorithm>
+#include <cmath>
 
 KDColor KDColor::Blend(KDColor first, KDColor second, uint8_t alpha) {
   /* This function is a hot path since it's being called for every single pixel
@@ -23,11 +24,11 @@ KDColor KDColor::Blend(KDColor first, KDColor second, uint8_t alpha) {
   // First is RRRRR GGGGGG BBBBB
   // Second is same
 
-  uint16_t oneMinusAlpha = 0x100-alpha;
-  uint16_t red = first.red()*alpha + second.red()*oneMinusAlpha;
-  uint16_t green = first.green()*alpha + second.green()*oneMinusAlpha;
-  uint16_t blue = first.blue()*alpha + second.blue()*oneMinusAlpha;
-  return RGB888(red>>8, green>>8, blue>>8);
+  uint16_t oneMinusAlpha = 0x100 - alpha;
+  uint16_t red = first.red() * alpha + second.red() * oneMinusAlpha;
+  uint16_t green = first.green() * alpha + second.green() * oneMinusAlpha;
+  uint16_t blue = first.blue() * alpha + second.blue() * oneMinusAlpha;
+  return RGB888(red >> 8, green >> 8, blue >> 8);
 }
 
 KDColor KDColor::HSVBlend(KDColor color1, KDColor color2) {
@@ -60,10 +61,10 @@ KDColor KDColor::HSVBlend(KDColor color1, KDColor color2) {
 
 KDColor::HSVColor
 #if PLATFORM_DEVICE
-// Needed because compiler does not respect procedure call standards
-  __attribute__((pcs("aapcs-vfp")))
+    // Needed because compiler does not respect procedure call standards
+    __attribute__((pcs("aapcs-vfp")))
 #endif
-                  KDColor::convertToHSV() const {
+    KDColor::convertToHSV() const {
   double R = static_cast<double>(red());
   double G = static_cast<double>(green());
   double B = static_cast<double>(blue());

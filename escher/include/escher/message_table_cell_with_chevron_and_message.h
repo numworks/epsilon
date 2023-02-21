@@ -5,16 +5,20 @@
 
 namespace Escher {
 
-class MessageTableCellWithChevronAndMessage : public MessageTableCellWithChevron {
-public:
-  MessageTableCellWithChevronAndMessage(I18n::Message label = (I18n::Message)0, I18n::Message subtitle = (I18n::Message)0);
-  const View * subLabelView() const override { return &m_subtitleView; }
+class MessageTableCellWithChevronAndMessage
+    : public MessageTableCellWithChevron {
+ public:
+  MessageTableCellWithChevronAndMessage(
+      I18n::Message label = (I18n::Message)0,
+      I18n::Message subtitle = (I18n::Message)0);
+  const View* subLabelView() const override { return &m_subtitleView; }
   void setHighlighted(bool highlight) override;
   void setSubtitle(I18n::Message text);
-private:
+
+ private:
   MessageTextView m_subtitleView;
 };
 
-}
+}  // namespace Escher
 
 #endif

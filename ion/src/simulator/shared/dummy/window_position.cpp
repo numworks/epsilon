@@ -1,6 +1,6 @@
-#include "../window.h"
-
 #include <SDL.h>
+
+#include "../window.h"
 
 namespace Ion {
 namespace Simulator {
@@ -10,7 +10,6 @@ void didInit(SDL_Window *) {}
 
 void willShutdown(SDL_Window *) {}
 
-
-}
-}
-}
+}  // namespace Window
+}  // namespace Simulator
+}  // namespace Ion

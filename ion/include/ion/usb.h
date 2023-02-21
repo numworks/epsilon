@@ -5,14 +5,14 @@ namespace Ion {
 namespace USB {
 
 bool isPlugged();
-bool isEnumerated(); // Speed-enumerated, to be accurate
+bool isEnumerated();  // Speed-enumerated, to be accurate
 void clearEnumerationInterrupt();
 
 void DFU();
 void enable();
 void disable();
 
-}
-}
+}  // namespace USB
+}  // namespace Ion
 
 #endif

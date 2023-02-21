@@ -1,30 +1,29 @@
-#include <escher/layout_field.h>
+#include <assert.h>
 #include <escher/clipboard.h>
+#include <escher/layout_field.h>
 #include <escher/text_field.h>
+#include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
-#include <poincare/code_point_layout.h>
 #include <poincare/linear_layout_decoder.h>
-#include <poincare/xnt_helpers.h>
 #include <poincare/parametered_expression.h>
-#include <ion/events.h>
-#include <assert.h>
+#include <poincare/xnt_helpers.h>
 #include <string.h>
+
 #include <algorithm>
 
 using namespace Poincare;
 
 namespace Escher {
 
-LayoutField::ContentView::ContentView(KDFont::Size font, float horizontalAlignment, float verticalAlignment) :
-    m_expressionView(&m_cursor,
-                     horizontalAlignment,
-                     verticalAlignment,
-                     KDColorBlack,
-                     KDColorWhite,
-                     font),
-    m_isEditing(false) {
+LayoutField::ContentView::ContentView(KDFont::Size font,
+                                      float horizontalAlignment,
+                                      float verticalAlignment)
+    : m_expressionView(&m_cursor, horizontalAlignment, verticalAlignment,
+                       KDColorBlack, KDColorWhite, font),
+      m_isEditing(false) {
   clearLayout();
 }
 
@@ -54,10 +53,12 @@ void LayoutField::ContentView::clearLayout() {
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize evSize = m_expressionView.minimalSizeForOptimalDisplay();
-  return KDSize(evSize.width() + Poincare::LayoutCursor::k_cursorWidth, evSize.height());
+  return KDSize(evSize.width() + Poincare::LayoutCursor::k_cursorWidth,
+                evSize.height());
 }
 
-void LayoutField::ContentView::copySelection(Context * context, bool intoStoreMenu) {
+void LayoutField::ContentView::copySelection(Context *context,
+                                             bool intoStoreMenu) {
   LayoutSelection selection = m_cursor.selection().clone();
   if (selection.isEmpty()) {
     if (intoStoreMenu) {
@@ -71,7 +72,10 @@ void LayoutField::ContentView::copySelection(Context * context, bool intoStoreMe
   if (selection.layout().isHorizontal()) {
     layoutToParse = HorizontalLayout::Builder();
     for (int i = selection.leftPosition(); i < selection.rightPosition(); i++) {
-      static_cast<HorizontalLayout&>(layoutToParse).addChildAtIndexInPlace(selection.layout().childAtIndex(i), i - selection.leftPosition(), i - selection.leftPosition());
+      static_cast<HorizontalLayout &>(layoutToParse)
+          .addChildAtIndexInPlace(selection.layout().childAtIndex(i),
+                                  i - selection.leftPosition(),
+                                  i - selection.leftPosition());
     }
   } else {
     layoutToParse = selection.layout();
@@ -91,9 +95,9 @@ void LayoutField::ContentView::copySelection(Context * context, bool intoStoreMe
   }
 }
 
-View * LayoutField::ContentView::subviewAtIndex(int index) {
+View *LayoutField::ContentView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());
-  View * m_views[] = {&m_expressionView, &m_cursorView};
+  View *m_views[] = {&m_expressionView, &m_cursorView};
   return m_views[index];
 }
 
@@ -108,13 +112,17 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
      * scrolling to the beginning when switching to the history. This way,
      * when calling scrollToCursor after layoutCursorSubview, we don't lose
      * sight of the cursor. */
-    m_cursorView.setFrame(KDRect(cursorRect().x(), cursorRect().y(), 0, 0), force);
+    m_cursorView.setFrame(KDRect(cursorRect().x(), cursorRect().y(), 0, 0),
+                          force);
     return;
   }
   KDPoint cursorTopLeftPosition =
-    m_expressionView.absoluteDrawingOrigin()
-      .translatedBy(m_cursor.cursorAbsoluteOrigin(font()));
-  m_cursorView.setFrame(KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth, m_cursor.cursorHeight(font())), force);
+      m_expressionView.absoluteDrawingOrigin().translatedBy(
+          m_cursor.cursorAbsoluteOrigin(font()));
+  m_cursorView.setFrame(
+      KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth,
+             m_cursor.cursorHeight(font())),
+      force);
 }
 
 void LayoutField::setEditing(bool isEditing) {
@@ -125,23 +133,26 @@ void LayoutField::setEditing(bool isEditing) {
 }
 
 void LayoutField::clearLayout() {
-  m_contentView.clearLayout(); // Replace the layout with an empty horizontal layout
-  reloadScroll(); // Put the scroll to offset 0
+  m_contentView
+      .clearLayout();  // Replace the layout with an empty horizontal layout
+  reloadScroll();      // Put the scroll to offset 0
 }
 
 void LayoutField::setLayout(Poincare::Layout newLayout) {
   m_contentView.clearLayout();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  const_cast<ExpressionView *>(m_contentView.expressionView())->setLayout(newLayout.makeEditable());
+  const_cast<ExpressionView *>(m_contentView.expressionView())
+      ->setLayout(newLayout.makeEditable());
   putCursorOnOneSide(OMG::Direction::Right());
   reload(previousSize);
 }
 
-Context * LayoutField::context() const {
+Context *LayoutField::context() const {
   return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
 }
 
-size_t LayoutField::dumpContent(char * buffer, size_t bufferSize, int * cursorOffset, int * position) {
+size_t LayoutField::dumpContent(char *buffer, size_t bufferSize,
+                                int *cursorOffset, int *position) {
   assert(layoutHasNode());
   size_t size = layout().size();
   if (size > bufferSize) {
@@ -150,7 +161,8 @@ size_t LayoutField::dumpContent(char * buffer, size_t bufferSize, int * cursorOf
     *cursorOffset = -1;
   } else {
     memcpy(buffer, reinterpret_cast<char *>(layout().node()), size);
-    *cursorOffset = reinterpret_cast<char *>(cursor()->layout().node()) - reinterpret_cast<char *>(layout().node());
+    *cursorOffset = reinterpret_cast<char *>(cursor()->layout().node()) -
+                    reinterpret_cast<char *>(layout().node());
     *position = cursor()->position();
   }
   return size;
@@ -164,7 +176,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   if (linearMode()) {
     Layout layout = m_contentView.cursor()->layout();
     assert(layout.isHorizontal());
-    HorizontalLayout horizontalLayout = static_cast<HorizontalLayout&>(layout);
+    HorizontalLayout horizontalLayout = static_cast<HorizontalLayout &>(layout);
     int position = m_contentView.cursor()->position();
     LinearLayoutDecoder decoder(horizontalLayout, position);
     bool defaultXNTHasChanged = false;
@@ -172,10 +184,14 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
       size_t parameterStart;
       size_t parameterLength;
       decoder.unsafeSetPosition(position);
-      if (ParameteredExpression::ParameterText(decoder, &parameterStart, &parameterLength)) {
+      if (ParameteredExpression::ParameterText(decoder, &parameterStart,
+                                               &parameterLength)) {
         HorizontalLayout parameter = HorizontalLayout::Builder();
         for (int childIndex = 0; childIndex < parameterLength; childIndex++) {
-          parameter.addChildAtIndexInPlace(horizontalLayout.childAtIndex(childIndex + parameterStart).clone(), childIndex, childIndex);
+          parameter.addChildAtIndexInPlace(
+              horizontalLayout.childAtIndex(childIndex + parameterStart)
+                  .clone(),
+              childIndex, childIndex);
         }
         xnt = parameter;
       }
@@ -196,7 +212,9 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   }
 
   // Do not insert layout if it has too many descendants
-  if (m_contentView.expressionView()->numberOfLayouts() + xnt.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
+  if (m_contentView.expressionView()->numberOfLayouts() +
+          xnt.numberOfDescendants(true) >=
+      k_maxNumberOfLayouts) {
     return true;
   }
   insertLayoutAtCursor(xnt, true);
@@ -205,7 +223,8 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
 
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
   LayoutCursor previousCursor = *m_contentView.cursor();
-  m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), side));
+  m_contentView.setCursor(
+      LayoutCursor(m_contentView.expressionView()->layout(), side));
   m_contentView.cursor()->didEnterCurrentPosition(previousCursor);
 }
 
@@ -219,9 +238,10 @@ void LayoutField::reload(KDSize previousSize) {
   markRectAsDirty(bounds());
 }
 
-typedef void (Poincare::LayoutCursor::*AddLayoutPointer)(Context * context);
+typedef void (Poincare::LayoutCursor::*AddLayoutPointer)(Context *context);
 
-bool LayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
+bool LayoutField::handleEventWithText(const char *text, bool indentation,
+                                      bool forceCursorRightOfText) {
   /* The text here can be:
    * - the result of a key pressed, such as "," or "cos(•)"
    * - the text added after a toolbox selection
@@ -232,7 +252,8 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     return true;
   }
 
-  int currentNumberOfLayouts = m_contentView.expressionView()->numberOfLayouts();
+  int currentNumberOfLayouts =
+      m_contentView.expressionView()->numberOfLayouts();
   if (currentNumberOfLayouts >= k_maxNumberOfLayouts - 6) {
     /* We add -6 because in some cases (Ion::Events::Division,
      * Ion::Events::Exp...) we let the layout cursor handle the layout insertion
@@ -240,16 +261,27 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     return false;
   }
 
-  Poincare::LayoutCursor * cursor = m_contentView.cursor();
+  Poincare::LayoutCursor *cursor = m_contentView.cursor();
   // Handle special cases
-  Ion::Events::Event specialEvents[] = {Ion::Events::Division, Ion::Events::Exp, Ion::Events::Power, Ion::Events::Sqrt, Ion::Events::Square, Ion::Events::EE};
-  AddLayoutPointer handleSpecialEvents[] = {&Poincare::LayoutCursor::addFractionLayoutAndCollapseSiblings, &Poincare::LayoutCursor::addEmptyExponentialLayout,  &Poincare::LayoutCursor::addEmptyPowerLayout,  &Poincare::LayoutCursor::addEmptySquareRootLayout, &Poincare::LayoutCursor::addEmptySquarePowerLayout, &Poincare::LayoutCursor::addEmptyTenPowerLayout};
-  int numberOfSpecialEvents = sizeof(specialEvents)/sizeof(Ion::Events::Event);
-  assert(numberOfSpecialEvents == sizeof(handleSpecialEvents)/sizeof(AddLayoutPointer));
+  Ion::Events::Event specialEvents[] = {
+      Ion::Events::Division, Ion::Events::Exp,    Ion::Events::Power,
+      Ion::Events::Sqrt,     Ion::Events::Square, Ion::Events::EE};
+  AddLayoutPointer handleSpecialEvents[] = {
+      &Poincare::LayoutCursor::addFractionLayoutAndCollapseSiblings,
+      &Poincare::LayoutCursor::addEmptyExponentialLayout,
+      &Poincare::LayoutCursor::addEmptyPowerLayout,
+      &Poincare::LayoutCursor::addEmptySquareRootLayout,
+      &Poincare::LayoutCursor::addEmptySquarePowerLayout,
+      &Poincare::LayoutCursor::addEmptyTenPowerLayout};
+  int numberOfSpecialEvents =
+      sizeof(specialEvents) / sizeof(Ion::Events::Event);
+  assert(numberOfSpecialEvents ==
+         sizeof(handleSpecialEvents) / sizeof(AddLayoutPointer));
   if (!linearMode()) {
     char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
     for (int i = 0; i < numberOfSpecialEvents; i++) {
-      Ion::Events::copyText(static_cast<uint8_t>(specialEvents[i]), buffer, Ion::Events::EventData::k_maxDataSize);
+      Ion::Events::copyText(static_cast<uint8_t>(specialEvents[i]), buffer,
+                            Ion::Events::EventData::k_maxDataSize);
       if (strcmp(text, buffer) == 0) {
         (cursor->*handleSpecialEvents[i])(delegateContext());
         return true;
@@ -261,28 +293,35 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     return true;
   }
   // Single keys are not parsed to avoid changing " or g to _" or _g
-  Expression resultExpression = UTF8Helper::StringGlyphLength(text) > 1 ? Expression::Parse(text, nullptr) : Expression();
+  Expression resultExpression = UTF8Helper::StringGlyphLength(text) > 1
+                                    ? Expression::Parse(text, nullptr)
+                                    : Expression();
   // If first inserted character was empty, cursor must be left of layout
-  bool forceCursorLeftOfText = !forceCursorRightOfText && text[0] == UCodePointEmpty;
+  bool forceCursorLeftOfText =
+      !forceCursorRightOfText && text[0] == UCodePointEmpty;
   if (linearMode() || resultExpression.isUninitialized()) {
     // The text is not parsable (for instance, ",") and is added char by char.
     KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-    cursor->insertText(text, delegateContext(), forceCursorRightOfText, forceCursorLeftOfText, linearMode());
+    cursor->insertText(text, delegateContext(), forceCursorRightOfText,
+                       forceCursorLeftOfText, linearMode());
     reload(previousLayoutSize);
     return true;
   }
   // The text is parsable, we create its layout an insert it.
   Layout resultLayout = resultExpression.createLayout(
-    Poincare::Preferences::sharedPreferences->displayMode(),
-    Poincare::PrintFloat::k_numberOfStoredSignificantDigits,
-    Container::activeApp() ? Container::activeApp()->localContext() : nullptr,
-    true);
-  if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
+      Poincare::Preferences::sharedPreferences->displayMode(),
+      Poincare::PrintFloat::k_numberOfStoredSignificantDigits,
+      Container::activeApp() ? Container::activeApp()->localContext() : nullptr,
+      true);
+  if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >=
+      k_maxNumberOfLayouts) {
     return false;
   }
   // Do not enter parentheses of expression that take no argument like random()
-  forceCursorRightOfText = forceCursorRightOfText || resultExpression.numberOfChildren() == 0;
-  insertLayoutAtCursor(resultLayout, forceCursorRightOfText, forceCursorLeftOfText);
+  forceCursorRightOfText =
+      forceCursorRightOfText || resultExpression.numberOfChildren() == 0;
+  insertLayoutAtCursor(resultLayout, forceCursorRightOfText,
+                       forceCursorLeftOfText);
   return true;
 }
 
@@ -312,10 +351,13 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   } else {
     reload(previousSize);
   }
-  return m_delegate ? m_delegate->layoutFieldDidHandleEvent(this, didHandleEvent, shouldRedrawLayout) : didHandleEvent;
+  return m_delegate ? m_delegate->layoutFieldDidHandleEvent(
+                          this, didHandleEvent, shouldRedrawLayout)
+                    : didHandleEvent;
 }
 
-bool LayoutField::privateHandleEvent(Ion::Events::Event event, bool * shouldRedrawLayout) {
+bool LayoutField::privateHandleEvent(Ion::Events::Event event,
+                                     bool *shouldRedrawLayout) {
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
   }
@@ -325,7 +367,9 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event, bool * shouldRedr
     }
     return true;
   }
-  if (isEditing() && m_delegate && m_delegate->layoutFieldShouldFinishEditing(this, event)) { //TODO use class method?
+  if (isEditing() && m_delegate &&
+      m_delegate->layoutFieldShouldFinishEditing(
+          this, event)) {  // TODO use class method?
     setEditing(false);
     if (m_delegate->layoutFieldDidFinishEditing(this, layout(), event)) {
       // Reinit layout for next use
@@ -352,15 +396,19 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event, bool * shouldRedr
     return true;
   }
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
-  size_t eventTextLength = Ion::Events::copyText(static_cast<uint8_t>(event), buffer, Ion::Events::EventData::k_maxDataSize);
-  if (eventTextLength > 0 || event == Ion::Events::Paste || event == Ion::Events::Backspace) {
+  size_t eventTextLength =
+      Ion::Events::copyText(static_cast<uint8_t>(event), buffer,
+                            Ion::Events::EventData::k_maxDataSize);
+  if (eventTextLength > 0 || event == Ion::Events::Paste ||
+      event == Ion::Events::Backspace) {
     if (!isEditing()) {
       setEditing(true);
     }
     if (eventTextLength > 0) {
       handleEventWithText(buffer);
     } else if (event == Ion::Events::Paste) {
-      handleEventWithText(Clipboard::SharedClipboard()->storedText(), false, true);
+      handleEventWithText(Clipboard::SharedClipboard()->storedText(), false,
+                          true);
     } else {
       assert(event == Ion::Events::Backspace);
       m_contentView.cursor()->performBackspace();
@@ -368,9 +416,12 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event, bool * shouldRedr
     *shouldRedrawLayout = true;
     return true;
   }
-  if ((event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) && isEditing()) {
+  if ((event == Ion::Events::Copy || event == Ion::Events::Cut ||
+       event == Ion::Events::Sto) &&
+      isEditing()) {
     m_contentView.copySelection(context(), event == Ion::Events::Sto);
-    if (event == Ion::Events::Cut && !m_contentView.cursor()->selection().isEmpty()) {
+    if (event == Ion::Events::Cut &&
+        !m_contentView.cursor()->selection().isEmpty()) {
       m_contentView.cursor()->performBackspace();
       *shouldRedrawLayout = true;
     }
@@ -388,13 +439,16 @@ bool LayoutField::handleStoreEvent() {
   return true;
 }
 
-bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event, bool * shouldRedrawLayout) {
+bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event,
+                                         bool *shouldRedrawLayout) {
   bool isMoveEvent = event.isMoveEvent();
   bool isSelectionEvent = event.isSelectionEvent();
   if (!isMoveEvent && !isSelectionEvent) {
     return false;
   }
-  return m_contentView.cursor()->moveMultipleSteps(OMG::Direction(event), Ion::Events::longPressFactor(), isSelectionEvent, shouldRedrawLayout);
+  return m_contentView.cursor()->moveMultipleSteps(
+      OMG::Direction(event), Ion::Events::longPressFactor(), isSelectionEvent,
+      shouldRedrawLayout);
 }
 
 void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
@@ -402,22 +456,28 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   // Show the rect area around its baseline
   KDCoordinate underBaseline = rect.height() - baseline;
   KDCoordinate minAroundBaseline = std::min(baseline, underBaseline);
-  minAroundBaseline = std::min<KDCoordinate>(minAroundBaseline, bounds().height() / 2);
-  KDRect balancedRect(rect.x(), rect.y() + baseline - minAroundBaseline, rect.width(), 2 * minAroundBaseline);
+  minAroundBaseline =
+      std::min<KDCoordinate>(minAroundBaseline, bounds().height() / 2);
+  KDRect balancedRect(rect.x(), rect.y() + baseline - minAroundBaseline,
+                      rect.width(), 2 * minAroundBaseline);
   scrollToContentRect(balancedRect, true);
 }
 
-void LayoutField::insertLayoutAtCursor(Layout layout, bool forceCursorRightOfLayout, bool forceCursorLeftOfLayout) {
+void LayoutField::insertLayoutAtCursor(Layout layout,
+                                       bool forceCursorRightOfLayout,
+                                       bool forceCursorLeftOfLayout) {
   if (layout.isUninitialized()) {
     return;
   }
   layout = layout.makeEditable();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  m_contentView.cursor()->insertLayoutAtCursor(layout, delegateContext(), forceCursorRightOfLayout, forceCursorLeftOfLayout);
+  m_contentView.cursor()->insertLayoutAtCursor(layout, delegateContext(),
+                                               forceCursorRightOfLayout,
+                                               forceCursorLeftOfLayout);
 
   // Reload
   reload(previousSize);
   scrollToCursor();
 }
 
-}
+}  // namespace Escher

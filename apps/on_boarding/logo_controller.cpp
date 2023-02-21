@@ -1,20 +1,20 @@
 #include "logo_controller.h"
-#include "power_on_self_test.h"
+
 #include <apps/apps_container.h>
-#include <poincare/preferences.h>
 #include <ion/led.h>
+#include <poincare/preferences.h>
+
+#include "power_on_self_test.h"
 
 using namespace Escher;
 
 namespace OnBoarding {
 
-LogoController::LogoController() :
-  ViewController(nullptr),
-  Timer(10),
-  m_previousLEDColor(KDColorBlack),
-  m_didPerformTests(false)
-{
-}
+LogoController::LogoController()
+    : ViewController(nullptr),
+      Timer(10),
+      m_previousLEDColor(KDColorBlack),
+      m_didPerformTests(false) {}
 
 bool LogoController::fire() {
   Container::activeApp()->modalViewController()->dismissModal();
@@ -51,10 +51,11 @@ void LogoController::viewDidDisappear() {
     /* TODO: instead of setting again the exam mode, put the previous led color
      * AND BLINKING.*/
     if (Poincare::Preferences::sharedPreferences->isInExamMode()) {
-      AppsContainer::sharedAppsContainer()->activateExamMode(Poincare::Preferences::sharedPreferences->examMode());
+      AppsContainer::sharedAppsContainer()->activateExamMode(
+          Poincare::Preferences::sharedPreferences->examMode());
     }
   }
   ViewController::viewDidDisappear();
 }
 
-}
+}  // namespace OnBoarding

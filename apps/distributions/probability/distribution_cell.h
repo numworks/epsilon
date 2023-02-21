@@ -10,18 +10,18 @@
 namespace Distributions {
 
 class DistributionCell : public Escher::TableCell {
-public:
+ public:
   DistributionCell();
-  const View * labelView() const override { return &m_iconView; }
-  const View * accessoryView() const override { return &m_chevronView; }
-  const View * subLabelView() const override { return &m_messageView; }
+  const View* labelView() const override { return &m_iconView; }
+  const View* accessoryView() const override { return &m_chevronView; }
+  const View* subLabelView() const override { return &m_messageView; }
   bool shouldAlignSublabelRight() const override { return false; }
 
   void reloadCell() override;
   void setLabel(I18n::Message message);
-  void setImage(const Escher::Image * image);
+  void setImage(const Escher::Image* image);
 
-private:
+ private:
   constexpr static KDCoordinate k_iconWidth = 35;
   constexpr static KDCoordinate k_iconHeight = 19;
   constexpr static KDCoordinate k_iconMargin = 10;
@@ -32,6 +32,6 @@ private:
   Escher::ChevronView m_chevronView;
 };
 
-}
+}  // namespace Distributions
 
 #endif

@@ -4,6 +4,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <stdint.h>
+
 #include <new>
 
 namespace Distributions {
@@ -11,17 +12,20 @@ namespace Distributions {
 class Distribution;
 
 class Calculation {
-friend union DistributionBuffer;
-public:
-  enum class Type : uint8_t{
+  friend union DistributionBuffer;
+
+ public:
+  enum class Type : uint8_t {
     LeftIntegral,
     FiniteIntegral,
     RightIntegral,
     Discrete,
   };
-  static bool Initialize(Calculation * calculation, Type type, Distribution * distribution, bool forceReinitialization);
+  static bool Initialize(Calculation* calculation, Type type,
+                         Distribution* distribution,
+                         bool forceReinitialization);
 
-  Calculation(Distribution * distribution) : m_distribution(distribution) {
+  Calculation(Distribution* distribution) : m_distribution(distribution) {
     assert(distribution != nullptr);
   }
   virtual ~Calculation() = default;
@@ -32,12 +36,13 @@ public:
   virtual double parameterAtIndex(int index) = 0;
   virtual double lowerBound() const;
   virtual double upperBound() const;
-protected:
+
+ protected:
   virtual void compute(int indexKnownElement) = 0;
   virtual void computeUnknownDistributionParameter() { assert(false); }
-  Distribution * m_distribution;
+  Distribution* m_distribution;
 };
 
-}
+}  // namespace Distributions
 
 #endif

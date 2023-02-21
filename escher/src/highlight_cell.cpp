@@ -2,11 +2,7 @@
 
 namespace Escher {
 
-HighlightCell::HighlightCell() :
-  View(),
-  m_state(State::Visible)
-{
-}
+HighlightCell::HighlightCell() : View(), m_state(State::Visible) {}
 
 void HighlightCell::setVisible(bool visible) {
   if (m_state == State::Hidden && visible) {
@@ -26,4 +22,4 @@ void HighlightCell::setHighlighted(bool highlight) {
   }
 }
 
-}
+}  // namespace Escher

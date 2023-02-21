@@ -1,33 +1,37 @@
 #include "about_controller.h"
-#include "../../apps_container.h"
-#include <ion/src/shared/events.h>
+
 #include <assert.h>
+#include <ion/src/shared/events.h>
+
 #include <cmath>
+
+#include "../../apps_container.h"
 
 using namespace Escher;
 
 namespace Settings {
 
-AboutController::AboutController(Responder * parentResponder) :
-  GenericSubController(parentResponder),
-  m_hardwareTestPopUpController(
-    Escher::Invocation(
-      [](void * context, void * sender) {
-        AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
-        appsContainer->switchToBuiltinApp(appsContainer->hardwareTestAppSnapshot());
-        return true;
-      },
-      this
-    ),
-    I18n::Message::HardwareTestLaunch
-  )
-{
-}
+AboutController::AboutController(Responder *parentResponder)
+    : GenericSubController(parentResponder),
+      m_hardwareTestPopUpController(
+          Escher::Invocation(
+              [](void *context, void *sender) {
+                AppsContainer *appsContainer =
+                    AppsContainer::sharedAppsContainer();
+                appsContainer->switchToBuiltinApp(
+                    appsContainer->hardwareTestAppSnapshot());
+                return true;
+              },
+              this),
+          I18n::Message::HardwareTestLaunch) {}
 
 bool AboutController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the last row. */
-  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_messageTreeModel->label() == I18n::Message::About && selectedRow() == k_hardwareTestCellIndex) {
+  if ((event == Ion::Events::Six || event == Ion::Events::LowerT ||
+       event == Ion::Events::UpperT) &&
+      m_messageTreeModel->label() == I18n::Message::About &&
+      selectedRow() == k_hardwareTestCellIndex) {
     m_hardwareTestPopUpController.presentModally();
     return true;
   }
@@ -37,8 +41,9 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
        * Epsilon version number, the commit hash for this build of Epsilon, the
        * PCB revision number, the flags used at compilation and the bootloader
        * running on the device. */
-      MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
-      const char * currentText = myCell->subLabelText();
+      MessageTableCellWithBuffer *myCell =
+          (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
+      const char *currentText = myCell->subLabelText();
       if (strcmp(currentText, Ion::patchLevel()) == 0) {
         myCell->setSubLabelText(Ion::pcbVersion());
       } else if (strcmp(currentText, Ion::pcbVersion()) == 0) {
@@ -53,27 +58,28 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       }
       return true;
     }
-    #if TERMS_OF_USE
+#if TERMS_OF_USE
     if (selectedRow() == k_termsOfUseCellIndex) {
       Ion::Events::openURL(I18n::translate(I18n::Message::TermsOfUseLink));
       return true;
     }
-    #endif
+#endif
     return false;
   }
   return GenericSubController::handleEvent(event);
 }
 
-HighlightCell * AboutController::reusableCell(int index, int type) {
+HighlightCell *AboutController::reusableCell(int index, int type) {
   assert(type == 0);
   assert(index >= 0 && index < k_totalNumberOfCell);
   return &m_cells[index];
 }
 
-void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void AboutController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
-  MessageTableCellWithBuffer * myCell = static_cast<MessageTableCellWithBuffer *>(cell);
-  const char * messages[k_totalNumberOfCell] = {
+  MessageTableCellWithBuffer *myCell =
+      static_cast<MessageTableCellWithBuffer *>(cell);
+  const char *messages[k_totalNumberOfCell] = {
     Ion::epsilonVersion(),
     Ion::serialNumber(),
     Ion::fccId(),
@@ -89,4 +95,4 @@ KDCoordinate AboutController::nonMemoizedRowHeight(int index) {
   return MemoizedListViewDataSource::nonMemoizedRowHeight(index);
 }
 
-}
+}  // namespace Settings

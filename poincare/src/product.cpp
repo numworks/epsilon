@@ -1,7 +1,7 @@
-#include <poincare/product.h>
-#include <poincare/multiplication.h>
-#include <poincare/product_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/multiplication.h>
+#include <poincare/product.h>
+#include <poincare/product_layout.h>
 #include <poincare/serialization_helper.h>
 extern "C" {
 #include <assert.h>
@@ -13,12 +13,20 @@ namespace Poincare {
 
 constexpr Expression::FunctionHelper Product::s_functionHelper;
 
-Layout ProductNode::createSumAndProductLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const {
-  return ProductLayout::Builder(argumentLayout, symbolLayout, subscriptLayout, superscriptLayout);
+Layout ProductNode::createSumAndProductLayout(Layout argumentLayout,
+                                              Layout symbolLayout,
+                                              Layout subscriptLayout,
+                                              Layout superscriptLayout) const {
+  return ProductLayout::Builder(argumentLayout, symbolLayout, subscriptLayout,
+                                superscriptLayout);
 }
 
-int ProductNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Product::s_functionHelper.aliasesList().mainAlias());
+int ProductNode::serialize(char* buffer, int bufferSize,
+                           Preferences::PrintFloatMode floatDisplayMode,
+                           int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(
+      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+      Product::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression Product::UntypedBuilder(Expression children) {
@@ -27,7 +35,9 @@ Expression Product::UntypedBuilder(Expression children) {
     // Second parameter must be a Symbol.
     return Expression();
   }
-  return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
+  return Builder(children.childAtIndex(0),
+                 children.childAtIndex(1).convert<Symbol>(),
+                 children.childAtIndex(2), children.childAtIndex(3));
 }
 
-}
+}  // namespace Poincare

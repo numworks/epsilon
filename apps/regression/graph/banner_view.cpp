@@ -1,4 +1,5 @@
 #include "banner_view.h"
+
 #include <apps/i18n.h>
 #include <assert.h>
 #include <kandinsky/font.h>
@@ -7,26 +8,30 @@ using namespace Escher;
 
 namespace Regression {
 
-BannerView::BannerView(
-    Responder * parentResponder,
-    InputEventHandlerDelegate * inputEventHandlerDelegate,
-    TextFieldDelegate * textFieldDelegate) :
-  Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-  m_otherView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_dataNotSuitableView(k_font, I18n::Message::DataNotSuitableForRegression, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_displayOtherView(false),
-  m_otherViewIsFirst(false),
-  m_displayDataNotSuitable(false)
-{}
+BannerView::BannerView(Responder* parentResponder,
+                       InputEventHandlerDelegate* inputEventHandlerDelegate,
+                       TextFieldDelegate* textFieldDelegate)
+    : Shared::XYBannerView(parentResponder, inputEventHandlerDelegate,
+                           textFieldDelegate),
+      m_otherView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter,
+                  TextColor(), BackgroundColor()),
+      m_dataNotSuitableView(k_font, I18n::Message::DataNotSuitableForRegression,
+                            KDContext::k_alignCenter, KDContext::k_alignCenter,
+                            TextColor(), BackgroundColor()),
+      m_displayOtherView(false),
+      m_otherViewIsFirst(false),
+      m_displayDataNotSuitable(false) {}
 
-void BannerView::setDisplayParameters(bool displayOtherView, bool otherViewIsFirst, bool displayDataNotSuitable) {
+void BannerView::setDisplayParameters(bool displayOtherView,
+                                      bool otherViewIsFirst,
+                                      bool displayDataNotSuitable) {
   assert(displayOtherView || !otherViewIsFirst);
   m_displayOtherView = displayOtherView;
   m_otherViewIsFirst = otherViewIsFirst;
   m_displayDataNotSuitable = displayDataNotSuitable;
 }
 
-View * BannerView::subviewAtIndex(int index) {
+View* BannerView::subviewAtIndex(int index) {
   // In the subviews order :
   assert(0 <= index && index < numberOfSubviews());
   assert(m_displayOtherView || !m_otherViewIsFirst);
@@ -40,12 +45,14 @@ View * BannerView::subviewAtIndex(int index) {
     return XYBannerView::subviewAtIndex(index);
   }
   // - OtherView if not first and displayed
-  if (m_displayOtherView && !m_otherViewIsFirst && index == XYBannerView::k_numberOfSubviews) {
+  if (m_displayOtherView && !m_otherViewIsFirst &&
+      index == XYBannerView::k_numberOfSubviews) {
     return &m_otherView;
   }
   // - DataNotSuitable if displayed
-  assert(m_displayDataNotSuitable && index + m_otherViewIsFirst == numberOfSubviews() - 1);
+  assert(m_displayDataNotSuitable &&
+         index + m_otherViewIsFirst == numberOfSubviews() - 1);
   return &m_dataNotSuitableView;
 }
 
-}
+}  // namespace Regression

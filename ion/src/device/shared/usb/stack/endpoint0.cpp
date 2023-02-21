@@ -1,10 +1,13 @@
-#include <algorithm>
 #include "endpoint0.h"
+
+#include <shared/regs/otg.h>
+#include <string.h>
+
+#include <algorithm>
+
 #include "device.h"
 #include "interface.h"
 #include "request_recipient.h"
-#include <shared/regs/otg.h>
-#include <string.h>
 
 namespace Ion {
 namespace Device {
@@ -27,7 +30,7 @@ void Endpoint0::setup() {
   OTG.DIEPTSIZ0()->set(dieptsiz0);
 
   // Reset the device IN endpoint 0 control register
-  class OTG::DIEPCTL0 diepctl0(0); // Reset value
+  class OTG::DIEPCTL0 diepctl0(0);  // Reset value
   // Set the maximum packet size
   diepctl0.setMPSIZ(OTG::DIEPCTL0::MPSIZ::Size64);
   // Set the NAK bit: all IN transactions on endpoint 0 receive a NAK answer
@@ -50,7 +53,7 @@ void Endpoint0::setup() {
    * We process each packet as soon as it arrives, so we only need
    * k_maxPacketSize bytes. TX0FD being in terms of 32-bit words, we divide
    * k_maxPacketSize by 4. */
-  OTG.DIEPTXF0()->setTX0FD(k_maxPacketSize/4);
+  OTG.DIEPTXF0()->setTX0FD(k_maxPacketSize / 4);
   /* Tx FIFO RAM start address. It starts just after the Rx FIFOso the value is
    * Rx FIFO start address (0) + Rx FIFO depth. the Rx FIFO depth is set in
    * usb.cpp, but because the code is linked separately, we cannot get it. */
@@ -81,9 +84,7 @@ void Endpoint0::setOutNAK(bool nak) {
   }
 }
 
-void Endpoint0::enableOut() {
-  OTG.DOEPCTL0()->setEPENA(true);
-}
+void Endpoint0::enableOut() { OTG.DOEPCTL0()->setEPENA(true); }
 
 void Endpoint0::reset() {
   flushTxFifo();
@@ -106,10 +107,12 @@ void Endpoint0::readAndDispatchSetupPacket() {
   uint8_t type = static_cast<uint8_t>(m_request.recipientType());
   if (type == 0) {
     // Device recipient
-    m_requestRecipients[0]->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
+    m_requestRecipients[0]->processSetupRequest(
+        &m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
   } else {
     // Interface recipient
-    m_requestRecipients[1]->processSetupRequest(&m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
+    m_requestRecipients[1]->processSetupRequest(
+        &m_request, m_largeBuffer, &m_transferBufferLength, maxBufferLength);
   }
 }
 
@@ -123,20 +126,20 @@ void Endpoint0::processINpacket() {
       // Prepare to receive the OUT Data[] transaction.
       setOutNAK(false);
       break;
-    case State::StatusIn:
-      {
-        m_state = State::Idle;
-        // All the data has been received. Callback the request recipient.
-        uint8_t type = static_cast<uint8_t>(m_request.recipientType());
-        if (type == 0) {
-          // Device recipient
-          m_requestRecipients[0]->wholeDataReceivedCallback(&m_request, m_largeBuffer, &m_transferBufferLength);
-        } else {
-          // Interface recipient
-          m_requestRecipients[1]->wholeDataReceivedCallback(&m_request, m_largeBuffer, &m_transferBufferLength);
-        }
+    case State::StatusIn: {
+      m_state = State::Idle;
+      // All the data has been received. Callback the request recipient.
+      uint8_t type = static_cast<uint8_t>(m_request.recipientType());
+      if (type == 0) {
+        // Device recipient
+        m_requestRecipients[0]->wholeDataReceivedCallback(
+            &m_request, m_largeBuffer, &m_transferBufferLength);
+      } else {
+        // Interface recipient
+        m_requestRecipients[1]->wholeDataReceivedCallback(
+            &m_request, m_largeBuffer, &m_transferBufferLength);
       }
-      break;
+    } break;
     default:
       stallTransaction();
   }
@@ -160,22 +163,22 @@ void Endpoint0::processOUTpacket() {
       writePacket(NULL, 0);
       m_state = State::StatusIn;
       break;
-    case State::StatusOut:
-      {
-        // Read the DATA1[] sent by the host.
-        readPacket(NULL, 0);
-        m_state = State::Idle;
-        // All the data has been sent. Callback the request recipient.
-        uint8_t type = static_cast<uint8_t>(m_request.recipientType());
-        if (type == 0) {
-          // Device recipient
-          m_requestRecipients[0]->wholeDataSentCallback(&m_request, m_largeBuffer, &m_transferBufferLength);
-        } else {
-          // Interface recipient
-          m_requestRecipients[1]->wholeDataSentCallback(&m_request, m_largeBuffer, &m_transferBufferLength);
-        }
+    case State::StatusOut: {
+      // Read the DATA1[] sent by the host.
+      readPacket(NULL, 0);
+      m_state = State::Idle;
+      // All the data has been sent. Callback the request recipient.
+      uint8_t type = static_cast<uint8_t>(m_request.recipientType());
+      if (type == 0) {
+        // Device recipient
+        m_requestRecipients[0]->wholeDataSentCallback(&m_request, m_largeBuffer,
+                                                      &m_transferBufferLength);
+      } else {
+        // Interface recipient
+        m_requestRecipients[1]->wholeDataSentCallback(&m_request, m_largeBuffer,
+                                                      &m_transferBufferLength);
       }
-      break;
+    } break;
     default:
       stallTransaction();
   }
@@ -247,9 +250,9 @@ void Endpoint0::sendSomeData() {
   // Last data packet sent
   writePacket(m_largeBuffer + m_bufferOffset, m_transferBufferLength);
   if (m_zeroLengthPacketNeeded) {
-     m_state = State::DataIn;
+    m_state = State::DataIn;
   } else {
-     m_state = State::LastDataIn;
+    m_state = State::LastDataIn;
   }
   m_bufferOffset = 0;
   m_zeroLengthPacketNeeded = false;
@@ -263,9 +266,12 @@ void Endpoint0::clearForOutTransactions(uint16_t wLength) {
 }
 
 int Endpoint0::receiveSomeData() {
-  // If it is the first chunk of data to be received, m_transferBufferLength is 0.
-  uint16_t packetSize = std::min(k_maxPacketSize, m_request.wLength() - m_transferBufferLength);
-  uint16_t sizeOfPacketRead = readPacket(m_largeBuffer + m_transferBufferLength, packetSize);
+  // If it is the first chunk of data to be received, m_transferBufferLength is
+  // 0.
+  uint16_t packetSize =
+      std::min(k_maxPacketSize, m_request.wLength() - m_transferBufferLength);
+  uint16_t sizeOfPacketRead =
+      readPacket(m_largeBuffer + m_transferBufferLength, packetSize);
   if (sizeOfPacketRead != packetSize) {
     stallTransaction();
     return -1;
@@ -274,8 +280,8 @@ int Endpoint0::receiveSomeData() {
   return packetSize;
 }
 
-uint16_t Endpoint0::readPacket(void * buffer, uint16_t length) {
-  uint32_t * buffer32 = (uint32_t *) buffer;
+uint16_t Endpoint0::readPacket(void *buffer, uint16_t length) {
+  uint32_t *buffer32 = (uint32_t *)buffer;
   uint16_t buffer32Length = std::min(length, m_receivedPacketSize);
 
   int i;
@@ -299,10 +305,10 @@ uint16_t Endpoint0::readPacket(void * buffer, uint16_t length) {
   return buffer32Length;
 }
 
-uint16_t Endpoint0::writePacket(const void * buffer, uint16_t length) {
-  const uint32_t * buffer32 = (uint32_t *) buffer;
+uint16_t Endpoint0::writePacket(const void *buffer, uint16_t length) {
+  const uint32_t *buffer32 = (uint32_t *)buffer;
 
-  //  Return if there is already a packet waiting to be read in the TX FIFO 
+  //  Return if there is already a packet waiting to be read in the TX FIFO
   if (OTG.DIEPTSIZ0()->getPKTCNT()) {
     return 0;
   }
@@ -334,16 +340,14 @@ void Endpoint0::stallTransaction() {
 }
 
 void Endpoint0::computeZeroLengthPacketNeeded() {
-  if (m_transferBufferLength
-    && m_transferBufferLength < m_request.wLength()
-    && m_transferBufferLength % k_maxPacketSize == 0)
-  {
+  if (m_transferBufferLength && m_transferBufferLength < m_request.wLength() &&
+      m_transferBufferLength % k_maxPacketSize == 0) {
     m_zeroLengthPacketNeeded = true;
     return;
   }
   m_zeroLengthPacketNeeded = false;
 }
 
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion

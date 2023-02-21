@@ -1,5 +1,6 @@
-#include "../shared/keyboard.h"
 #include <emscripten.h>
+
+#include "../shared/keyboard.h"
 
 namespace Ion {
 namespace Simulator {
@@ -16,6 +17,6 @@ void didScan() {
   emscripten_sleep(0);
 }
 
-}
-}
-}
+}  // namespace Keyboard
+}  // namespace Simulator
+}  // namespace Ion

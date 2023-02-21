@@ -1,14 +1,17 @@
 #include "area_between_curves_parameter_controller.h"
-#include "graph_controller.h"
+
 #include "../app.h"
+#include "graph_controller.h"
 
 using namespace Escher;
 using namespace Shared;
 
 namespace Graph {
 
-Ion::Storage::Record AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(int index, Ion::Storage::Record excludedRecord) {
-  ContinuousFunctionStore * store = App::app()->functionStore();
+Ion::Storage::Record
+AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(
+    int index, Ion::Storage::Record excludedRecord) {
+  ContinuousFunctionStore *store = App::app()->functionStore();
   assert(index < store->numberOfActiveDerivableFunctions());
   int maxNumberOfFonctions = store->numberOfActiveFunctions();
   int numberOfDerivableActiveFunctionsFound = 0;
@@ -17,8 +20,10 @@ Ion::Storage::Record AreaBetweenCurvesParameterController::DerivableActiveFuncti
     if (currentRecord == excludedRecord) {
       continue;
     }
-    ExpiringPointer<ContinuousFunction> function = store->modelForRecord(currentRecord);
-    if (ContinuousFunctionStore::IsFunctionActiveAndDerivable(function.operator->(), nullptr)) {
+    ExpiringPointer<ContinuousFunction> function =
+        store->modelForRecord(currentRecord);
+    if (ContinuousFunctionStore::IsFunctionActiveAndDerivable(
+            function.operator->(), nullptr)) {
       if (index == numberOfDerivableActiveFunctionsFound) {
         return currentRecord;
       }
@@ -29,15 +34,18 @@ Ion::Storage::Record AreaBetweenCurvesParameterController::DerivableActiveFuncti
   return nullptr;
 }
 
-AreaBetweenCurvesParameterController::AreaBetweenCurvesParameterController(Responder * parentResponder, AreaBetweenCurvesGraphController * areaGraphController) :
-  SelectableListViewController(parentResponder, &m_contentView),
-  m_mainRecord(nullptr),
-  m_areaGraphController(areaGraphController),
-  m_contentView(&m_selectableTableView, this, &m_topView),
-  m_topView(KDFont::Size::Small, I18n::Message::SelectSecondCurve, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen)
-{}
+AreaBetweenCurvesParameterController::AreaBetweenCurvesParameterController(
+    Responder *parentResponder,
+    AreaBetweenCurvesGraphController *areaGraphController)
+    : SelectableListViewController(parentResponder, &m_contentView),
+      m_mainRecord(nullptr),
+      m_areaGraphController(areaGraphController),
+      m_contentView(&m_selectableTableView, this, &m_topView),
+      m_topView(KDFont::Size::Small, I18n::Message::SelectSecondCurve,
+                KDContext::k_alignCenter, KDContext::k_alignCenter,
+                Palette::GrayDark, Palette::WallScreen) {}
 
-const char * AreaBetweenCurvesParameterController::title() {
+const char *AreaBetweenCurvesParameterController::title() {
   return I18n::translate(I18n::Message::AreaBetweenCurves);
 }
 
@@ -46,10 +54,14 @@ int AreaBetweenCurvesParameterController::numberOfRows() const {
 }
 
 KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(int j) {
-  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(DerivableActiveFunctionAtIndex(j, m_mainRecord));
+  ExpiringPointer<ContinuousFunction> function =
+      App::app()->functionStore()->modelForRecord(
+          DerivableActiveFunctionAtIndex(j, m_mainRecord));
   CurveSelectionCell tempCell;
   tempCell.setLayout(function->layout());
-  return tempCell.labelView()->minimalSizeForOptimalDisplay().height() + Metric::CellTopMargin + Metric::CellBottomMargin + Metric::CellSeparatorThickness;
+  return tempCell.labelView()->minimalSizeForOptimalDisplay().height() +
+         Metric::CellTopMargin + Metric::CellBottomMargin +
+         Metric::CellSeparatorThickness;
 }
 
 void AreaBetweenCurvesParameterController::viewWillAppear() {
@@ -65,26 +77,35 @@ void AreaBetweenCurvesParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-void AreaBetweenCurvesParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(DerivableActiveFunctionAtIndex(index, m_mainRecord));
+void AreaBetweenCurvesParameterController::willDisplayCellForIndex(
+    Escher::HighlightCell *cell, int index) {
+  ExpiringPointer<ContinuousFunction> function =
+      App::app()->functionStore()->modelForRecord(
+          DerivableActiveFunctionAtIndex(index, m_mainRecord));
   static_cast<CurveSelectionCell *>(cell)->setColor(function->color());
-  static_cast<CurveSelectionCell *>(cell)->setLayout(function->layout().clone());
+  static_cast<CurveSelectionCell *>(cell)->setLayout(
+      function->layout().clone());
 }
 
-bool AreaBetweenCurvesParameterController::handleEvent(Ion::Events::Event event) {
-  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+bool AreaBetweenCurvesParameterController::handleEvent(
+    Ion::Events::Event event) {
+  StackViewController *stack =
+      static_cast<StackViewController *>(parentResponder());
   if (event == Ion::Events::Left) {
     stack->pop();
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_areaGraphController->setRecord(m_mainRecord);
-    m_areaGraphController->setSecondRecord(DerivableActiveFunctionAtIndex(selectedRow(), m_mainRecord));
-    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
+    m_areaGraphController->setSecondRecord(
+        DerivableActiveFunctionAtIndex(selectedRow(), m_mainRecord));
+    stack->popUntilDepth(
+        Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
+        true);
     stack->push(m_areaGraphController);
     return true;
   }
   return false;
 }
 
-}
+}  // namespace Graph

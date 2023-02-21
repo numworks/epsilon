@@ -1,9 +1,11 @@
 #include "column_helper.h"
-#include "column_parameter_controller.h"
-#include "poincare_helpers.h"
+
 #include <escher/container.h>
 #include <poincare/comparison.h>
 #include <poincare/print.h>
+
+#include "column_parameter_controller.h"
+#include "poincare_helpers.h"
 
 using namespace Escher;
 using namespace Poincare;
@@ -12,33 +14,37 @@ namespace Shared {
 
 /* ColumnNameHelper */
 
-int ColumnNameHelper::FillColumnNameWithMessage(char * buffer, I18n::Message message) {
-  return Poincare::Print::CustomPrintf(buffer, k_maxSizeOfColumnName, I18n::translate(message));
+int ColumnNameHelper::FillColumnNameWithMessage(char *buffer,
+                                                I18n::Message message) {
+  return Poincare::Print::CustomPrintf(buffer, k_maxSizeOfColumnName,
+                                       I18n::translate(message));
 }
 
 /* ClearColumnHelper */
 
-ClearColumnHelper::ClearColumnHelper() :
-  m_confirmPopUpController(Invocation::Builder<ClearColumnHelper>([](ClearColumnHelper * param, void * parent){
-    param->clearSelectedColumn();
-    Container::activeApp()->modalViewController()->dismissModal();
-    param->table()->reloadData();
-    return true;
-  }, this))
-{}
+ClearColumnHelper::ClearColumnHelper()
+    : m_confirmPopUpController(Invocation::Builder<ClearColumnHelper>(
+          [](ClearColumnHelper *param, void *parent) {
+            param->clearSelectedColumn();
+            Container::activeApp()->modalViewController()->dismissModal();
+            param->table()->reloadData();
+            return true;
+          },
+          this)) {}
 
 void ClearColumnHelper::presentClearSelectedColumnPopupIfClearable() {
   int column = table()->selectedColumn();
   if (numberOfElementsInColumn(column) > 0 && isColumnClearable(column)) {
     setClearPopUpContent();
     m_confirmPopUpController.presentModally();
-   }
+  }
 }
 
 void ClearColumnHelper::setClearPopUpContent() {
   char columnNameBuffer[ColumnParameterController::k_titleBufferSize];
   fillColumnName(table()->selectedColumn(), columnNameBuffer);
-  m_confirmPopUpController.setMessageWithPlaceholders(I18n::Message::ClearColumnConfirmation, columnNameBuffer);
+  m_confirmPopUpController.setMessageWithPlaceholders(
+      I18n::Message::ClearColumnConfirmation, columnNameBuffer);
 }
 
 /* StoreColumnHelper */
@@ -48,13 +54,14 @@ bool displayNotSuitableWarning() {
   return false;
 }
 
-StoreColumnHelper::StoreColumnHelper(Escher::Responder * responder, Context * parentContext, ClearColumnHelper * clearColumnHelper) :
-  m_clearColumnHelper(clearColumnHelper),
-  m_templateController(responder, this),
-  m_templateStackController(nullptr, &m_templateController, StackViewController::Style::PurpleWhite),
-  m_parentContext(parentContext)
-{
-}
+StoreColumnHelper::StoreColumnHelper(Escher::Responder *responder,
+                                     Context *parentContext,
+                                     ClearColumnHelper *clearColumnHelper)
+    : m_clearColumnHelper(clearColumnHelper),
+      m_templateController(responder, this),
+      m_templateStackController(nullptr, &m_templateController,
+                                StackViewController::Style::PurpleWhite),
+      m_parentContext(parentContext) {}
 
 bool StoreColumnHelper::switchSelectedColumnHideStatus() {
   int series = selectedSeries();
@@ -71,38 +78,48 @@ bool StoreColumnHelper::switchSelectedColumnHideStatus() {
 }
 
 void StoreColumnHelper::sortSelectedColumn() {
-  store()->sortColumn(selectedSeries(), store()->relativeColumnIndex(referencedColumn()));
+  store()->sortColumn(selectedSeries(),
+                      store()->relativeColumnIndex(referencedColumn()));
 }
 
 void StoreColumnHelper::displayFormulaInput() {
-  Container::activeApp()->displayModalViewController(&m_templateStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
+  Container::activeApp()->displayModalViewController(
+      &m_templateStackController, 0.f, 0.f, Metric::PopUpTopMargin,
+      Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }
 
 void StoreColumnHelper::fillFormulaInputWithTemplate(Layout templateLayout) {
-  constexpr int k_sizeOfBuffer = DoublePairStore::k_columnNamesLength + 1 + FormulaTemplateMenuController::k_maxSizeOfTemplateText;
+  constexpr int k_sizeOfBuffer =
+      DoublePairStore::k_columnNamesLength + 1 +
+      FormulaTemplateMenuController::k_maxSizeOfTemplateText;
   char templateString[k_sizeOfBuffer];
-  int filledLength = fillColumnNameFromStore(referencedColumn(), templateString);
+  int filledLength =
+      fillColumnNameFromStore(referencedColumn(), templateString);
   if (filledLength < ClearColumnHelper::k_maxSizeOfColumnName - 1) {
     templateString[filledLength] = '=';
     templateString[filledLength + 1] = 0;
   }
   if (!templateLayout.isUninitialized()) {
-    templateLayout.serializeParsedExpression(templateString + filledLength + 1, k_sizeOfBuffer - filledLength - 1, nullptr);
+    templateLayout.serializeParsedExpression(templateString + filledLength + 1,
+                                             k_sizeOfBuffer - filledLength - 1,
+                                             nullptr);
   }
   inputViewController()->setTextBody(templateString);
   inputViewController()->edit(
-      Ion::Events::OK,
-      this,
-      [](void * context, void * sender) {
-        StoreColumnHelper * storeColumnHelper = static_cast<StoreColumnHelper *>(context);
-        InputViewController * thisInputViewController = static_cast<InputViewController *>(sender);
-        return storeColumnHelper->createExpressionForFillingColumnWithFormula(thisInputViewController->textBody());
-      }, [](void * context, void * sender) {
-        return true;
-      });
+      Ion::Events::OK, this,
+      [](void *context, void *sender) {
+        StoreColumnHelper *storeColumnHelper =
+            static_cast<StoreColumnHelper *>(context);
+        InputViewController *thisInputViewController =
+            static_cast<InputViewController *>(sender);
+        return storeColumnHelper->createExpressionForFillingColumnWithFormula(
+            thisInputViewController->textBody());
+      },
+      [](void *context, void *sender) { return true; });
 }
 
-bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(const char * text) {
+bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(
+    const char *text) {
   StoreContext storeContext(store(), m_parentContext);
   Expression expression = Expression::Parse(text, &storeContext);
   if (expression.isUninitialized()) {
@@ -124,7 +141,9 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     Expression leftOfEqual = formula.childAtIndex(0);
     if (leftOfEqual.type() == ExpressionNode::Type::Symbol) {
       Symbol symbolLeftOfEqual = static_cast<Symbol &>(leftOfEqual);
-      if (store()->isColumnName(symbolLeftOfEqual.name(), strlen(symbolLeftOfEqual.name()), &seriesToFill, &columnToFill)) {
+      if (store()->isColumnName(symbolLeftOfEqual.name(),
+                                strlen(symbolLeftOfEqual.name()), &seriesToFill,
+                                &columnToFill)) {
         formula = formula.childAtIndex(1);
         isValidEquality = true;
       }
@@ -134,9 +153,11 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     }
   }
   StoreContext storeContext(store(), m_parentContext);
-  PoincareHelpers::CloneAndSimplify(&formula, &storeContext, ReductionTarget::SystemForApproximation, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  PoincareHelpers::CloneAndSimplify(
+      &formula, &storeContext, ReductionTarget::SystemForApproximation,
+      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (formula.isUndefined()) {
-      return displayNotSuitableWarning();
+    return displayNotSuitableWarning();
   }
   if (formula.type() == ExpressionNode::Type::List) {
     bool allChildrenAreUndefined = true;
@@ -150,22 +171,28 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     if (allChildrenAreUndefined) {
       return displayNotSuitableWarning();
     }
-    if (!store()->setList(static_cast<List &>(formula), seriesToFill, columnToFill, false, true)) {
+    if (!store()->setList(static_cast<List &>(formula), seriesToFill,
+                          columnToFill, false, true)) {
       return false;
     }
     reload();
     return true;
   }
   // If formula contains a random formula, evaluate it for each pairs.
-  bool evaluateForEachPairs = formula.recursivelyMatches([](const Expression e, Context * context) { return !e.isUninitialized() && e.isRandom(); });
-  double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
+  bool evaluateForEachPairs =
+      formula.recursivelyMatches([](const Expression e, Context *context) {
+        return !e.isUninitialized() && e.isRandom();
+      });
+  double evaluation =
+      PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
   if (std::isnan(evaluation)) {
     return displayNotSuitableWarning();
   }
   for (int j = 0; j < store()->numberOfPairsOfSeries(seriesToFill); j++) {
     store()->set(evaluation, seriesToFill, columnToFill, j, true, true);
     if (evaluateForEachPairs) {
-      evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
+      evaluation =
+          PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
     }
   }
   if (!store()->updateSeries(seriesToFill, false, false)) {
@@ -175,14 +202,18 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
   return true;
 }
 
-void StoreColumnHelper::reloadSeriesVisibleCells(int series, int relativeColumn) {
+void StoreColumnHelper::reloadSeriesVisibleCells(int series,
+                                                 int relativeColumn) {
   // Reload visible cells of the series and, if not -1, relative column
-  int nbOfColumns = DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_numberOfSeries;
+  int nbOfColumns = DoublePairStore::k_numberOfColumnsPerSeries *
+                    DoublePairStore::k_numberOfSeries;
   for (int i = 0; i < nbOfColumns; i++) {
-    if (store()->seriesAtColumn(i) == series && (relativeColumn == -1 || relativeColumn == store()->relativeColumnIndex(i))) {
+    if (store()->seriesAtColumn(i) == series &&
+        (relativeColumn == -1 ||
+         relativeColumn == store()->relativeColumnIndex(i))) {
       table()->reloadVisibleCellsAtColumn(i);
     }
   }
 }
 
-}
+}  // namespace Shared

@@ -7,23 +7,39 @@
 namespace Inference {
 
 class InputHomogeneityController : public InputCategoricalController {
-public:
-  InputHomogeneityController(Escher::StackViewController * parent, Escher::ViewController * homogeneityResultsController, HomogeneityTest * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
+ public:
+  InputHomogeneityController(
+      Escher::StackViewController* parent,
+      Escher::ViewController* homogeneityResultsController,
+      HomogeneityTest* statistic,
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
 
   // ViewController
-  const char * title() override { return I18n::translate(I18n::Message::InputHomogeneityControllerTitle); }
+  const char* title() override {
+    return I18n::translate(I18n::Message::InputHomogeneityControllerTitle);
+  }
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return col > 0 && row > 0; }
+  void tableViewDidChangeSelection(
+      Escher::SelectableTableView* t, int previousSelectedCellX,
+      int previousSelectedCellY,
+      bool withinTemporarySelection = false) override;
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
+                                       int row) const override {
+    return col > 0 && row > 0;
+  }
 
-private:
-  int indexOfSignificanceCell() const override { return k_indexOfTableCell + 1; }
-  EditableCategoricalTableCell * categoricalTableCell() override { return &m_inputHomogeneityTable; }
+ private:
+  int indexOfSignificanceCell() const override {
+    return k_indexOfTableCell + 1;
+  }
+  EditableCategoricalTableCell* categoricalTableCell() override {
+    return &m_inputHomogeneityTable;
+  }
 
   InputHomogeneityTableCell m_inputHomogeneityTable;
 };
 
-}
+}  // namespace Inference
 
 #endif

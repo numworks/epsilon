@@ -1,44 +1,51 @@
 #include "logarithmic_model.h"
-#include "../store.h"
+
+#include <assert.h>
 #include <poincare/multiplication.h>
 #include <poincare/naperian_logarithm.h>
 #include <poincare/print.h>
+
 #include <cmath>
-#include <assert.h>
+
+#include "../store.h"
 
 using namespace Poincare;
 
 namespace Regression {
 
-Poincare::Expression LogarithmicModel::privateExpression(double * modelCoefficients) const {
+Poincare::Expression LogarithmicModel::privateExpression(
+    double* modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   // a+b*ln(x)
-  return
-    AdditionOrSubtractionBuilder(
+  return AdditionOrSubtractionBuilder(
       Number::DecimalNumber(a),
       Multiplication::Builder(
-        Number::DecimalNumber(std::fabs(b)),
-        NaperianLogarithm::Builder(Symbol::Builder(k_xSymbol))),
+          Number::DecimalNumber(std::fabs(b)),
+          NaperianLogarithm::Builder(Symbol::Builder(k_xSymbol))),
       b >= 0.0);
 }
 
-double LogarithmicModel::evaluate(double * modelCoefficients, double x) const {
+double LogarithmicModel::evaluate(double* modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
-  return a+b*std::log(x);
+  return a + b * std::log(x);
 }
 
-double LogarithmicModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
+double LogarithmicModel::levelSet(double* modelCoefficients, double xMin,
+                                  double xMax, double y,
+                                  Poincare::Context* context) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   if (b == 0) {
     return NAN;
   }
-  return std::exp((y-a)/b);
+  return std::exp((y - a) / b);
 }
 
-double LogarithmicModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
+double LogarithmicModel::partialDerivate(double* modelCoefficients,
+                                         int derivateCoefficientIndex,
+                                         double x) const {
   if (derivateCoefficientIndex == 1) {
     // Derivate with respect to b: ln(x)
     assert(x > 0);
@@ -49,7 +56,7 @@ double LogarithmicModel::partialDerivate(double * modelCoefficients, int derivat
   return 1.0;
 }
 
-bool LogarithmicModel::dataSuitableForFit(Store * store, int series) const {
+bool LogarithmicModel::dataSuitableForFit(Store* store, int series) const {
   if (!Model::dataSuitableForFit(store, series)) {
     return false;
   }
@@ -62,4 +69,4 @@ bool LogarithmicModel::dataSuitableForFit(Store * store, int series) const {
   return true;
 }
 
-}
+}  // namespace Regression

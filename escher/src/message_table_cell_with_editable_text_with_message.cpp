@@ -3,41 +3,41 @@
 
 namespace Escher {
 
-MessageTableCellWithEditableTextWithMessage::MessageTableCellWithEditableTextWithMessage(
-    Responder * parentResponder,
-    InputEventHandlerDelegate * inputEventHandlerDelegate,
-    TextFieldDelegate * textFieldDelegate,
-    I18n::Message message) :
-      MessageTableCellWithEditableText(parentResponder, inputEventHandlerDelegate, this, message),
+MessageTableCellWithEditableTextWithMessage::
+    MessageTableCellWithEditableTextWithMessage(
+        Responder* parentResponder,
+        InputEventHandlerDelegate* inputEventHandlerDelegate,
+        TextFieldDelegate* textFieldDelegate, I18n::Message message)
+    : MessageTableCellWithEditableText(
+          parentResponder, inputEventHandlerDelegate, this, message),
       ChainedTextFieldDelegate(textFieldDelegate),
-      m_subLabelView(KDFont::Size::Small,
-                     (I18n::Message)0,
-                     KDContext::k_alignLeft,
-                     KDContext::k_alignCenter,
-                     Palette::GrayDark) {
-}
+      m_subLabelView(KDFont::Size::Small, (I18n::Message)0,
+                     KDContext::k_alignLeft, KDContext::k_alignCenter,
+                     Palette::GrayDark) {}
 
-void MessageTableCellWithEditableTextWithMessage::setSubLabelMessage(I18n::Message textBody) {
+void MessageTableCellWithEditableTextWithMessage::setSubLabelMessage(
+    I18n::Message textBody) {
   m_subLabelView.setMessage(textBody);
   reloadCell();
 }
 
-void MessageTableCellWithEditableTextWithMessage::setHighlighted(bool highlight) {
+void MessageTableCellWithEditableTextWithMessage::setHighlighted(
+    bool highlight) {
   MessageTableCellWithEditableText::setHighlighted(highlight);
   m_subLabelView.setBackgroundColor(defaultBackgroundColor());
 }
 
-void MessageTableCellWithEditableTextWithMessage::textFieldDidStartEditing(AbstractTextField * textField) {
+void MessageTableCellWithEditableTextWithMessage::textFieldDidStartEditing(
+    AbstractTextField* textField) {
   // Relayout to hide sublabel
   layoutSubviews();
   ChainedTextFieldDelegate::textFieldDidStartEditing(textField);
 }
 
 bool MessageTableCellWithEditableTextWithMessage::textFieldDidFinishEditing(
-    AbstractTextField * textField,
-    const char * text,
-    Ion::Events::Event event) {
-  bool success = ChainedTextFieldDelegate::textFieldDidFinishEditing(textField, text, event);
+    AbstractTextField* textField, const char* text, Ion::Events::Event event) {
+  bool success = ChainedTextFieldDelegate::textFieldDidFinishEditing(
+      textField, text, event);
   if (success) {
     // Relayout to show sublabel
     layoutSubviews();
@@ -45,17 +45,18 @@ bool MessageTableCellWithEditableTextWithMessage::textFieldDidFinishEditing(
   return success;
 }
 
-bool MessageTableCellWithEditableTextWithMessage::textFieldDidAbortEditing(AbstractTextField * textField) {
+bool MessageTableCellWithEditableTextWithMessage::textFieldDidAbortEditing(
+    AbstractTextField* textField) {
   // Relayout to show sublabel
   layoutSubviews();
   return ChainedTextFieldDelegate::textFieldDidAbortEditing(textField);
 }
 
 void MessageTableCellWithEditableTextWithMessage::setDelegates(
-    InputEventHandlerDelegate * inputEventHandlerDelegate,
-    TextFieldDelegate * textFieldDelegate) {
+    InputEventHandlerDelegate* inputEventHandlerDelegate,
+    TextFieldDelegate* textFieldDelegate) {
   textField()->setInputEventHandlerDelegate(inputEventHandlerDelegate);
   ChainedTextFieldDelegate::setTextFieldDelegate(textFieldDelegate);
 }
 
-}
+}  // namespace Escher

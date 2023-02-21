@@ -8,54 +8,70 @@
 
 namespace Poincare {
 
-class RandintNode final : public ExpressionNodeWithOneOrTwoChildren  {
+class RandintNode final : public ExpressionNodeWithOneOrTwoChildren {
   friend class Randint;
-public:
+
+ public:
   constexpr static AliasesList k_functionName = "randint";
 
   // TreeNode
   size_t size() const override { return sizeof(RandintNode); }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
-    stream << "Randint";
-  }
+  void logNodeName(std::ostream& stream) const override { stream << "Randint"; }
 #endif
 
   // Properties
   Type type() const override { return Type::Randint; }
 
-private:
+ private:
   constexpr static int k_defaultMinBound = 1;
   Expression createExpressionWithTwoChildren() const;
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                      int numberOfSignificantDigits,
+                      Context* context) const override;
+  int serialize(char* buffer, int bufferSize,
+                Preferences::PrintFloatMode floatDisplayMode,
+                int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   // Evaluation
-  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override {
+  Evaluation<float> approximate(
+      SinglePrecision p,
+      const ApproximationContext& approximationContext) const override {
     return templateApproximate<float>(approximationContext);
   }
-  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override {
+  Evaluation<double> approximate(
+      DoublePrecision p,
+      const ApproximationContext& approximationContext) const override {
     return templateApproximate<double>(approximationContext);
   }
-  template <typename T> Evaluation<T> templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined = nullptr) const;
+  template <typename T>
+  Evaluation<T> templateApproximate(
+      const ApproximationContext& approximationContext,
+      bool* inputIsUndefined = nullptr) const;
 
-  LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
-  LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+  LayoutShape leftLayoutShape() const override {
+    return LayoutShape::MoreLetters;
+  };
+  LayoutShape rightLayoutShape() const override {
+    return LayoutShape::BoundaryPunctuation;
+  }
 };
 
-class Randint final : public ExpressionUpToTwoChildren<Randint,RandintNode> {
-friend class RandintNode;
-public:
+class Randint final : public ExpressionUpToTwoChildren<Randint, RandintNode> {
+  friend class RandintNode;
+
+ public:
   // Return a random integer in [a,b]
-  static int RandomInt(int a, int b) { return std::floor(Random::random<float>() * (b + 1 - a) + a); }
+  static int RandomInt(int a, int b) {
+    return std::floor(Random::random<float>() * (b + 1 - a) + a);
+  }
   using ExpressionBuilder::ExpressionBuilder;
 
   Expression shallowReduce(ReductionContext reductionContext);
 };
 
-
-}
+}  // namespace Poincare
 
 #endif

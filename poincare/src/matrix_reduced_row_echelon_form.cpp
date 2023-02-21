@@ -2,6 +2,9 @@
 
 namespace Poincare {
 
-const char * MatrixReducedRowEchelonFormNode::functionHelperName() const { return MatrixReducedRowEchelonForm::s_functionHelper.aliasesList().mainAlias(); }
-
+const char* MatrixReducedRowEchelonFormNode::functionHelperName() const {
+  return MatrixReducedRowEchelonForm::s_functionHelper.aliasesList()
+      .mainAlias();
 }
+
+}  // namespace Poincare

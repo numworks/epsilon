@@ -1,22 +1,25 @@
 #include "prompt_controller.h"
-#include "../apps_container.h"
+
 #include <assert.h>
+
+#include "../apps_container.h"
 
 using namespace Escher;
 
 namespace OnBoarding {
 
-PromptController::MessageViewWithSkip::MessageViewWithSkip(const I18n::Message * messages, const KDColor * colors, uint8_t numberOfMessages) :
-  MessageView(messages, colors, numberOfMessages),
-  m_skipView(KDFont::Size::Small, I18n::Message::Skip, KDContext::k_alignRight, KDContext::k_alignCenter)
-{
-}
+PromptController::MessageViewWithSkip::MessageViewWithSkip(
+    const I18n::Message* messages, const KDColor* colors,
+    uint8_t numberOfMessages)
+    : MessageView(messages, colors, numberOfMessages),
+      m_skipView(KDFont::Size::Small, I18n::Message::Skip,
+                 KDContext::k_alignRight, KDContext::k_alignCenter) {}
 
 int PromptController::MessageViewWithSkip::numberOfSubviews() const {
- return MessageView::numberOfSubviews() + 2;
+  return MessageView::numberOfSubviews() + 2;
 }
 
-View * PromptController::MessageViewWithSkip::subviewAtIndex(int index) {
+View* PromptController::MessageViewWithSkip::subviewAtIndex(int index) {
   uint8_t numberOfMainMessages = MessageView::numberOfSubviews();
   if (index < numberOfMainMessages) {
     return MessageView::subviewAtIndex(index);
@@ -39,21 +42,28 @@ void PromptController::MessageViewWithSkip::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width();
   KDCoordinate textHeight = KDFont::GlyphHeight(KDFont::Size::Small);
   KDSize okSize = m_okView.minimalSizeForOptimalDisplay();
-  m_skipView.setFrame(KDRect(0, height-k_bottomMargin-textHeight, width-okSize.width()-k_okMargin-k_skipMargin, textHeight), force);
-  m_okView.setFrame(KDRect(width - okSize.width()-k_okMargin, height-okSize.height()-k_okMargin, okSize), force);
+  m_skipView.setFrame(
+      KDRect(0, height - k_bottomMargin - textHeight,
+             width - okSize.width() - k_okMargin - k_skipMargin, textHeight),
+      force);
+  m_okView.setFrame(KDRect(width - okSize.width() - k_okMargin,
+                           height - okSize.height() - k_okMargin, okSize),
+                    force);
 }
 
-PromptController::PromptController(const I18n::Message * messages, const KDColor * colors, uint8_t numberOfMessages) :
-  ViewController(nullptr),
-  m_messageViewWithSkip(messages, colors, numberOfMessages)
-{
-}
+PromptController::PromptController(const I18n::Message* messages,
+                                   const KDColor* colors,
+                                   uint8_t numberOfMessages)
+    : ViewController(nullptr),
+      m_messageViewWithSkip(messages, colors, numberOfMessages) {}
 
 bool PromptController::handleEvent(Ion::Events::Event event) {
-  if (event.isKeyPress() && event != Ion::Events::Back && event != Ion::Events::OnOff) {
+  if (event.isKeyPress() && event != Ion::Events::Back &&
+      event != Ion::Events::OnOff) {
     Container::activeApp()->modalViewController()->dismissModal();
-    AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
-    if (appsContainer->activeApp()->snapshot() == appsContainer->onBoardingAppSnapshot()) {
+    AppsContainer* appsContainer = AppsContainer::sharedAppsContainer();
+    if (appsContainer->activeApp()->snapshot() ==
+        appsContainer->onBoardingAppSnapshot()) {
       appsContainer->switchToBuiltinApp(appsContainer->appSnapshotAtIndex(0));
     }
     return true;
@@ -61,4 +71,4 @@ bool PromptController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-}
+}  // namespace OnBoarding

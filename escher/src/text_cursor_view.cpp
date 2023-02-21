@@ -3,11 +3,9 @@
 
 namespace Escher {
 
-TextCursorView::~TextCursorView() {
-  BlinkTimer::RegisterCursor(nullptr);
-}
+TextCursorView::~TextCursorView() { BlinkTimer::RegisterCursor(nullptr); }
 
-void TextCursorView::drawRect(KDContext * ctx, KDRect rect) const {
+void TextCursorView::drawRect(KDContext *ctx, KDRect rect) const {
   if (m_visible) {
     KDCoordinate height = bounds().height();
     ctx->fillRect(KDRect(0, 0, k_width, height), KDColorBlack);
@@ -42,7 +40,8 @@ void TextCursorView::setVisible(bool visible) {
   } else if (window()) {
     /* 'pointFromPointInView' can only be called from a view attached to the
      * window. */
-    m_superview->markRectAsDirty(bounds().translatedBy(m_superview->pointFromPointInView(this, KDPointZero)));
+    m_superview->markRectAsDirty(bounds().translatedBy(
+        m_superview->pointFromPointInView(this, KDPointZero)));
   } else {
     /* 'setVisible' may only be called by the blink timer, meaning the timer is
      * currently trying to blink an offscreen cursor. */
@@ -50,4 +49,4 @@ void TextCursorView::setVisible(bool visible) {
   }
 }
 
-}
+}  // namespace Escher

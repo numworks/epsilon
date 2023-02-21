@@ -4,12 +4,10 @@ namespace Ion {
 namespace Simulator {
 namespace Telemetry {
 
-void init() {
-}
+void init() {}
 
-void shutdown() {
-}
+void shutdown() {}
 
-}
-}
-}
+}  // namespace Telemetry
+}  // namespace Simulator
+}  // namespace Ion

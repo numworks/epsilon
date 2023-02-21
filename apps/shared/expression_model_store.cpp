@@ -2,33 +2,36 @@
 
 namespace Shared {
 
-ExpressionModelStore::ExpressionModelStore() :
-  m_oldestMemoizedIndex(0)
-{
-}
+ExpressionModelStore::ExpressionModelStore() : m_oldestMemoizedIndex(0) {}
 
 int ExpressionModelStore::numberOfModels() const {
-  return Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(modelExtension());
+  return Ion::Storage::FileSystem::sharedFileSystem
+      ->numberOfRecordsWithExtension(modelExtension());
 }
 
 Ion::Storage::Record ExpressionModelStore::recordAtIndex(int i) const {
-  return Ion::Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(modelExtension(), i);
+  return Ion::Storage::FileSystem::sharedFileSystem->recordWithExtensionAtIndex(
+      modelExtension(), i);
 }
 
-ExpressionModelHandle * ExpressionModelStore::privateModelForRecord(Ion::Storage::Record record) const {
+ExpressionModelHandle* ExpressionModelStore::privateModelForRecord(
+    Ion::Storage::Record record) const {
   for (int i = 0; i < maxNumberOfMemoizedModels(); i++) {
-    if (!memoizedModelAtIndex(i)->isNull() && *memoizedModelAtIndex(i) == record) {
+    if (!memoizedModelAtIndex(i)->isNull() &&
+        *memoizedModelAtIndex(i) == record) {
       return memoizedModelAtIndex(i);
     }
   }
-  ExpressionModelHandle * result = setMemoizedModelAtIndex(m_oldestMemoizedIndex, record);
-  m_oldestMemoizedIndex = (m_oldestMemoizedIndex+1) % maxNumberOfMemoizedModels();
+  ExpressionModelHandle* result =
+      setMemoizedModelAtIndex(m_oldestMemoizedIndex, record);
+  m_oldestMemoizedIndex =
+      (m_oldestMemoizedIndex + 1) % maxNumberOfMemoizedModels();
   return result;
 }
 
-
 void ExpressionModelStore::removeAll() {
-  Ion::Storage::FileSystem::sharedFileSystem->destroyRecordsWithExtension(modelExtension());
+  Ion::Storage::FileSystem::sharedFileSystem->destroyRecordsWithExtension(
+      modelExtension());
 }
 
 void ExpressionModelStore::removeModel(Ion::Storage::Record record) {
@@ -36,13 +39,14 @@ void ExpressionModelStore::removeModel(Ion::Storage::Record record) {
   record.destroy();
 }
 
-void ExpressionModelStore::tidyDownstreamPoolFrom(char * treePoolCursor) {
+void ExpressionModelStore::tidyDownstreamPoolFrom(char* treePoolCursor) {
   for (int i = 0; i < maxNumberOfMemoizedModels(); i++) {
     memoizedModelAtIndex(i)->tidyDownstreamPoolFrom(treePoolCursor);
   }
 }
 
-int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test, void * context) const {
+int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test,
+                                                       void* context) const {
   int count = 0;
   int index = 0;
   Ion::Storage::Record record = recordAtIndex(0);
@@ -55,7 +59,8 @@ int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test, void * co
   return count;
 }
 
-Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, ModelTest test, void * context) const {
+Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(
+    int i, ModelTest test, void* context) const {
   assert(i >= 0);
   int count = 0;
   int index = 0;
@@ -77,7 +82,8 @@ Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, Mo
   return record;
 }
 
-void ExpressionModelStore::resetMemoizedModelsExceptRecord(const Ion::Storage::Record record) const {
+void ExpressionModelStore::resetMemoizedModelsExceptRecord(
+    const Ion::Storage::Record record) const {
   Ion::Storage::Record emptyRecord;
   for (int i = 0; i < maxNumberOfMemoizedModels(); i++) {
     if (*memoizedModelAtIndex(i) != record) {
@@ -86,4 +92,4 @@ void ExpressionModelStore::resetMemoizedModelsExceptRecord(const Ion::Storage::R
   }
 }
 
-}
+}  // namespace Shared

@@ -1,8 +1,10 @@
 #include "function_graph_view.h"
-#include <poincare/circuit_breaker_checkpoint.h>
+
 #include <assert.h>
-#include <cmath>
 #include <float.h>
+#include <poincare/circuit_breaker_checkpoint.h>
+
+#include <cmath>
 
 using namespace Poincare;
 
@@ -10,7 +12,8 @@ namespace Shared {
 
 // FunctionGraphPolicy
 
-void FunctionGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+void FunctionGraphPolicy::drawPlot(const AbstractPlotView* plotView,
+                                   KDContext* ctx, KDRect rect) const {
   int n = numberOfDrawnRecords();
   int selectedIndex = selectedRecordIndex();
   bool firstDrawnRecord = true;
@@ -33,7 +36,8 @@ void FunctionGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext 
     // Get the record before the checkpoint because it can change the pool
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(index);
 
-    CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
+    CircuitBreakerCheckpoint checkpoint(
+        Ion::CircuitBreaker::CheckpointType::Back);
     if (CircuitBreakerRun(checkpoint)) {
       drawRecord(record, index, ctx, rect, firstDrawnRecord);
     } else {
@@ -49,33 +53,39 @@ bool FunctionGraphPolicy::allFunctionsInterrupted() const {
   /* The number of functions displayed at the same time is theoretically
    * unbounded, but we only store the status of 32 functions. */
   int numberOfFunctions = numberOfDrawnRecords();
-  if (numberOfFunctions <= 0 || static_cast<size_t>(numberOfFunctions) > 8 * sizeof(m_functionsInterrupted)) {
+  if (numberOfFunctions <= 0 || static_cast<size_t>(numberOfFunctions) >
+                                    8 * sizeof(m_functionsInterrupted)) {
     return false;
   }
-  return m_functionsInterrupted == static_cast<uint32_t>((1 << numberOfFunctions) - 1);
+  return m_functionsInterrupted ==
+         static_cast<uint32_t>((1 << numberOfFunctions) - 1);
 }
 
 bool FunctionGraphPolicy::functionWasInterrupted(int index) const {
-  if (index < 0 || static_cast<size_t>(index) >= 8 * sizeof(m_functionsInterrupted)) {
+  if (index < 0 ||
+      static_cast<size_t>(index) >= 8 * sizeof(m_functionsInterrupted)) {
     return false;
   }
   return (1 << index) & m_functionsInterrupted;
 }
 
 void FunctionGraphPolicy::setFunctionInterrupted(int index) const {
-  if (index >= 0 && static_cast<size_t>(index) < 8 * sizeof(m_functionsInterrupted)) {
+  if (index >= 0 &&
+      static_cast<size_t>(index) < 8 * sizeof(m_functionsInterrupted)) {
     m_functionsInterrupted |= 1 << index;
   }
 }
 
 // FunctionGraphView
 
-FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * range, CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView) :
-  PlotView(range),
-  m_highlightedStart(NAN),
-  m_highlightedEnd(NAN),
-  m_shouldColorHighlighted(false)
-{
+FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange* range,
+                                     CurveViewCursor* cursor,
+                                     BannerView* bannerView,
+                                     CursorView* cursorView)
+    : PlotView(range),
+      m_highlightedStart(NAN),
+      m_highlightedEnd(NAN),
+      m_shouldColorHighlighted(false) {
   // FunctionGraphPolicy
   m_functionsInterrupted = 0;
   m_context = nullptr;
@@ -86,7 +96,7 @@ FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * range, CurveVie
   m_cursorView = cursorView;
 }
 
-void FunctionGraphView::drawRect(KDContext * ctx, KDRect rect) const {
+void FunctionGraphView::drawRect(KDContext* ctx, KDRect rect) const {
   if (!allFunctionsInterrupted()) {
     PlotView::drawRect(ctx, rect);
   }
@@ -143,12 +153,15 @@ void FunctionGraphView::reloadBetweenBounds(float start, float end) {
   if (start == end) {
     return;
   }
-  KDCoordinate pixelLowerBound = floatToKDCoordinatePixel(Axis::Horizontal, start) - 2;
-  KDCoordinate pixelUpperBound = floatToKDCoordinatePixel(Axis::Horizontal, end) + 4;
+  KDCoordinate pixelLowerBound =
+      floatToKDCoordinatePixel(Axis::Horizontal, start) - 2;
+  KDCoordinate pixelUpperBound =
+      floatToKDCoordinatePixel(Axis::Horizontal, end) + 4;
   /* We exclude the banner frame from the dirty zone to avoid unnecessary
    * redrawing */
-  KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound - pixelLowerBound, bounds().height() - m_banner->bounds().height()));
+  KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound - pixelLowerBound,
+                          bounds().height() - m_banner->bounds().height()));
   markRectAsDirty(dirtyZone);
 }
 
-}
+}  // namespace Shared

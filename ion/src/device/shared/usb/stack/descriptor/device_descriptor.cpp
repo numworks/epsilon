@@ -4,7 +4,7 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-void DeviceDescriptor::push(Channel * c) const {
+void DeviceDescriptor::push(Channel* c) const {
   Descriptor::push(c);
   c->push(m_bcdUSB);
   c->push(m_bDeviceClass);
@@ -21,9 +21,10 @@ void DeviceDescriptor::push(Channel * c) const {
 }
 
 uint8_t DeviceDescriptor::bLength() const {
-  return Descriptor::bLength() + sizeof(uint16_t) + 4*sizeof(uint8_t) + 3*sizeof(uint16_t) + 4*sizeof(uint8_t);
+  return Descriptor::bLength() + sizeof(uint16_t) + 4 * sizeof(uint8_t) +
+         3 * sizeof(uint16_t) + 4 * sizeof(uint8_t);
 }
 
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion

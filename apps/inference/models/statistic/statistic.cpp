@@ -1,16 +1,21 @@
 #include "statistic.h"
-#include "one_mean_t_test.h"
+
 #include "one_mean_t_interval.h"
+#include "one_mean_t_test.h"
 
 namespace Inference {
 
 double Statistic::parameterAtIndex(int i) const {
-  assert(i <= indexOfThreshold() && indexOfThreshold() == numberOfStatisticParameters());
-  return i == indexOfThreshold() ? m_threshold : const_cast<Statistic *>(this)->parametersArray()[i];
+  assert(i <= indexOfThreshold() &&
+         indexOfThreshold() == numberOfStatisticParameters());
+  return i == indexOfThreshold()
+             ? m_threshold
+             : const_cast<Statistic *>(this)->parametersArray()[i];
 }
 
 void Statistic::setParameterAtIndex(double f, int i) {
-  assert(i <= indexOfThreshold() && indexOfThreshold() == numberOfStatisticParameters());
+  assert(i <= indexOfThreshold() &&
+         indexOfThreshold() == numberOfStatisticParameters());
   if (i == indexOfThreshold()) {
     m_threshold = f;
   } else {
@@ -19,12 +24,12 @@ void Statistic::setParameterAtIndex(double f, int i) {
   }
 }
 
-bool Statistic::Initialize(Statistic * statistic, SubApp subApp) {
+bool Statistic::Initialize(Statistic *statistic, SubApp subApp) {
   if (statistic->subApp() == subApp) {
     return false;
   }
   statistic->~Statistic();
-  Statistic * s = nullptr;
+  Statistic *s = nullptr;
   switch (subApp) {
     case SubApp::Test:
       s = new (statistic) OneMeanTTest();
@@ -41,4 +46,4 @@ bool Statistic::Initialize(Statistic * statistic, SubApp subApp) {
   return true;
 }
 
-}
+}  // namespace Inference

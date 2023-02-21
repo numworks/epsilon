@@ -1,23 +1,27 @@
 #ifndef ESCHER_EXPRESSION_CELL_WITH_SUBLABEL_AND_DROPDOWN_H
 #define ESCHER_EXPRESSION_CELL_WITH_SUBLABEL_AND_DROPDOWN_H
 
-#include <escher/i18n.h>
 #include <escher/container.h>
 #include <escher/dropdown_view.h>
+#include <escher/i18n.h>
 #include <escher/message_table_cell_with_message.h>
 #include <escher/responder.h>
 
 namespace Escher {
 
-class MessageTableCellWithSublabelAndDropdown : public MessageTableCellWithMessage, public Responder {
-public:
-  MessageTableCellWithSublabelAndDropdown(Responder * parentResponder, ListViewDataSource * listDataSource, DropdownCallback * callback = nullptr) :
-        MessageTableCellWithMessage(),
+class MessageTableCellWithSublabelAndDropdown
+    : public MessageTableCellWithMessage,
+      public Responder {
+ public:
+  MessageTableCellWithSublabelAndDropdown(Responder* parentResponder,
+                                          ListViewDataSource* listDataSource,
+                                          DropdownCallback* callback = nullptr)
+      : MessageTableCellWithMessage(),
         Responder(parentResponder),
         m_dropdown(this, listDataSource, callback) {}
-  const View * accessoryView() const override { return &m_dropdown; }
-  Dropdown * dropdown() { return &m_dropdown; }
-  Responder * responder() override { return this; }
+  const View* accessoryView() const override { return &m_dropdown; }
+  Dropdown* dropdown() { return &m_dropdown; }
+  Responder* responder() override { return this; }
   void didBecomeFirstResponder() override {
     Container::activeApp()->setFirstResponder(&m_dropdown);
   }
@@ -33,10 +37,10 @@ public:
   }
   bool forceAlignLabelAndAccessory() const override { return true; }
 
-private:
+ private:
   Dropdown m_dropdown;
 };
 
-}
+}  // namespace Escher
 
 #endif

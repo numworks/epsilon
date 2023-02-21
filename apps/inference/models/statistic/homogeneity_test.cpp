@@ -1,8 +1,9 @@
 #include "homogeneity_test.h"
+
 #include <assert.h>
 #include <float.h>
-#include <poincare/print.h>
 #include <inference/models/statistic/interfaces/significance_tests.h>
+#include <poincare/print.h>
 
 namespace Inference {
 
@@ -13,11 +14,15 @@ HomogeneityTest::HomogeneityTest() {
   }
 }
 
-void HomogeneityTest::setGraphTitle(char * buffer, size_t bufferSize) const {
-  const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormatHomogeneityTest);
-  Poincare::Print::CustomPrintf(buffer, bufferSize, format,
-          testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-          pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+void HomogeneityTest::setGraphTitle(char* buffer, size_t bufferSize) const {
+  const char* format = I18n::translate(
+      I18n::Message::StatisticGraphControllerTestTitleFormatHomogeneityTest);
+  Poincare::Print::CustomPrintf(
+      buffer, bufferSize, format, testCriticalValue(),
+      Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits, pValue(),
+      Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
 bool HomogeneityTest::authorizedParameterAtIndex(double p, int i) const {
@@ -78,10 +83,12 @@ int HomogeneityTest::numberOfValuePairs() const {
   return max.row * max.col;
 }
 
-HomogeneityTest::Index2D HomogeneityTest::resultsIndexToIndex2D(int resultsIndex) const {
+HomogeneityTest::Index2D HomogeneityTest::resultsIndexToIndex2D(
+    int resultsIndex) const {
   assert(m_numberOfResultColumns > 0);
-  return HomogeneityTest::Index2D{.row = resultsIndex / m_numberOfResultColumns,
-                                       .col = resultsIndex % m_numberOfResultColumns};
+  return HomogeneityTest::Index2D{
+      .row = resultsIndex / m_numberOfResultColumns,
+      .col = resultsIndex % m_numberOfResultColumns};
 }
 
 int HomogeneityTest::resultsIndexToArrayIndex(int resultsIndex) const {
@@ -111,7 +118,8 @@ void HomogeneityTest::computeExpectedValues(Index2D max) {
     for (int col = 0; col < max.col; col++) {
       int index = index2DToIndex(row, col);
       // Note : Divide before multiplying to avoid some cases of double overflow
-      m_expectedValues[index] = (m_rowTotals[row] / m_total) * m_columnTotals[col];
+      m_expectedValues[index] =
+          (m_rowTotals[row] / m_total) * m_columnTotals[col];
     }
   }
 }
@@ -191,7 +199,7 @@ bool HomogeneityTest::validateInputs() {
       if (std::isnan(value)) {
         return false;
       }
-      if (row == max.row - 1 ) {
+      if (row == max.row - 1) {
         // Check column nullity
         if (nullColumn[col]) {
           return false;
@@ -202,9 +210,8 @@ bool HomogeneityTest::validateInputs() {
     if (nullRow[row]) {
       return false;
     }
-
   }
   return std::fabs(total) >= DBL_MIN;
 }
 
-}
+}  // namespace Inference

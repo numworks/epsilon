@@ -7,8 +7,11 @@
 namespace Inference {
 
 class InputGoodnessController : public InputCategoricalController {
-public:
-  InputGoodnessController(Escher::StackViewController * parent, Escher::ViewController * resultsController, GoodnessTest * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
+ public:
+  InputGoodnessController(
+      Escher::StackViewController* parent,
+      Escher::ViewController* resultsController, GoodnessTest* statistic,
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
 
   void updateDegreeOfFreedomCell();
 
@@ -16,23 +19,30 @@ public:
   void didBecomeFirstResponder() override;
 
   // ViewController
-  const char * title() override { return I18n::translate(I18n::Message::InputGoodnessControllerTitle); }
+  const char* title() override {
+    return I18n::translate(I18n::Message::InputGoodnessControllerTitle);
+  }
 
   // ListViewDataSource
-  Escher::HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell* reusableCell(int index, int type) override;
 
-private:
+ private:
   constexpr static int k_indexOfDegreeOfFreedom = 1;
 
-  EditableCategoricalTableCell * categoricalTableCell() override { return &m_goodnessTableCell; }
-  int indexOfSignificanceCell() const override { return k_indexOfDegreeOfFreedom + 1; }
+  EditableCategoricalTableCell* categoricalTableCell() override {
+    return &m_goodnessTableCell;
+  }
+  int indexOfSignificanceCell() const override {
+    return k_indexOfDegreeOfFreedom + 1;
+  }
   int indexOfEditedParameterAtIndex(int index) const override;
 
-  Escher::MessageTableCellWithEditableTextWithMessage m_innerDegreeOfFreedomCell;
+  Escher::MessageTableCellWithEditableTextWithMessage
+      m_innerDegreeOfFreedomCell;
   Escher::CellWithMargins m_degreeOfFreedomCell;
   GoodnessTableCell m_goodnessTableCell;
 };
 
-}
+}  // namespace Inference
 
 #endif

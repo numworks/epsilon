@@ -9,27 +9,32 @@
 namespace Escher {
 
 class WarningController : public ViewController {
-public:
-  WarningController(Responder * parentResponder, I18n::Message warningMessage1, I18n::Message warningMessage2 = (I18n::Message)0);
-  void setLabel(I18n::Message message1, I18n::Message message2, bool specialExitKeys);
-  const char * title() override;
-  View * view() override;
+ public:
+  WarningController(Responder* parentResponder, I18n::Message warningMessage1,
+                    I18n::Message warningMessage2 = (I18n::Message)0);
+  void setLabel(I18n::Message message1, I18n::Message message2,
+                bool specialExitKeys);
+  const char* title() override;
+  View* view() override;
   bool handleEvent(Ion::Events::Event event) override;
-private:
+
+ private:
   class ContentView : public SolidColorView {
-  public:
+   public:
     ContentView();
     void setLabels(I18n::Message message1, I18n::Message message2);
     int numberOfSubviews() const override;
-    View * subviewAtIndex(int index) override;
+    View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     KDSize minimalSizeForOptimalDisplay() const override;
-  private:
+
+   private:
     constexpr static KDCoordinate k_topAndBottomMargin = 20;
     constexpr static KDCoordinate k_middleMargin = 10;
     constexpr static KDCoordinate k_horizontalMargin = 20;
     constexpr static float k_middleAlignment = KDContext::k_alignCenter;
-    // = (k_topAndBottomMargin + textHeight/2)/(k_topAndBottomMargin + textHeight + 0.5*k_middleMargin)
+    // = (k_topAndBottomMargin + textHeight/2)/(k_topAndBottomMargin +
+    // textHeight + 0.5*k_middleMargin)
     constexpr static float k_shiftedAlignment = 0.7f;
     MessageTextView m_textView1;
     MessageTextView m_textView2;
@@ -40,5 +45,5 @@ private:
   bool m_exitOnOKBackEXEOnly;
 };
 
-}
+}  // namespace Escher
 #endif

@@ -1,13 +1,16 @@
 #include "zoom_and_pan_curve_view_controller.h"
-#include <cmath>
+
 #include <assert.h>
+
+#include <cmath>
 
 using namespace Poincare;
 
 namespace Shared {
 
 bool ZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Left || event == Ion::Events::Right || event == Ion::Events::Up || event == Ion::Events::Down) {
+  if (event == Ion::Events::Left || event == Ion::Events::Right ||
+      event == Ion::Events::Up || event == Ion::Events::Down) {
     return handlePan(event);
   }
   return ZoomCurveViewController::handleEvent(event);
@@ -32,5 +35,4 @@ bool ZoomAndPanCurveViewController::handlePan(Ion::Events::Event event) {
   return true;
 }
 
-}
-
+}  // namespace Shared

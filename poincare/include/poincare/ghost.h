@@ -11,10 +11,12 @@ namespace Poincare {
  * tree_pool.h and this created header inclusion problems. */
 
 class Ghost final : public TreeHandle {
-public:
-  static Ghost Builder() { return TreeHandle::FixedArityBuilder<Ghost, GhostNode>(); }
+ public:
+  static Ghost Builder() {
+    return TreeHandle::FixedArityBuilder<Ghost, GhostNode>();
+  }
 };
 
-}
+}  // namespace Poincare
 
 #endif

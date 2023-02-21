@@ -4,7 +4,7 @@ using namespace Escher;
 
 namespace Shared {
 
-void StoreCell::drawRect(KDContext * ctx, KDRect rect) const {
+void StoreCell::drawRect(KDContext* ctx, KDRect rect) const {
   EvenOddEditableTextCell::drawRect(ctx, rect);
   // Draw the separator
   if (m_separatorLeft) {
@@ -14,11 +14,13 @@ void StoreCell::drawRect(KDContext * ctx, KDRect rect) const {
 
 void StoreCell::layoutSubviews(bool force) {
   KDRect boundsThis = bounds();
-  editableTextCell()->setFrame(rectWithoutSeparator(KDRect(boundsThis.left(), boundsThis.top(), boundsThis.width() - k_rightMargin, boundsThis.height())), force);
+  editableTextCell()->setFrame(
+      rectWithoutSeparator(KDRect(boundsThis.left(), boundsThis.top(),
+                                  boundsThis.width() - k_rightMargin,
+                                  boundsThis.height())),
+      force);
 }
 
-void StoreCell::didSetSeparator() {
-  reloadCell();
-}
+void StoreCell::didSetSeparator() { reloadCell(); }
 
-}
+}  // namespace Shared

@@ -5,22 +5,22 @@
 
 namespace Escher {
 
-
 class GaugeView : public TransparentView {
-public:
+ public:
   GaugeView();
   float level();
   void setLevel(float level);
   void setBackgroundColor(KDColor color);
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   constexpr static KDCoordinate k_indicatorDiameter = 10;
-private:
+
+ private:
   constexpr static KDCoordinate k_thickness = 2;
   float m_level;
   KDColor m_backgroundColor;
 };
 
-}
+}  // namespace Escher
 
 #endif

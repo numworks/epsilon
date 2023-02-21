@@ -5,10 +5,10 @@ namespace Ion {
 namespace Device {
 namespace SerialNumber {
 
-void copy(char * buffer);
+void copy(char* buffer);
 
 }
-}
-}
+}  // namespace Device
+}  // namespace Ion
 
 #endif

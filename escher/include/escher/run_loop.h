@@ -1,21 +1,23 @@
 #ifndef ESCHER_RUN_LOOP_H
 #define ESCHER_RUN_LOOP_H
 
-#include <ion.h>
 #include <escher/timer.h>
+#include <ion.h>
 
 namespace Escher {
 
 class RunLoop {
-public:
+ public:
   RunLoop();
   void run();
-  void runWhile(bool (*callback)(void * ctx), void * ctx);
-protected:
+  void runWhile(bool (*callback)(void* ctx), void* ctx);
+
+ protected:
   virtual bool dispatchEvent(Ion::Events::Event e) = 0;
   virtual int numberOfTimers();
-  virtual Timer * timerAtIndex(int i);
-private:
+  virtual Timer* timerAtIndex(int i);
+
+ private:
   // Returns true while the Termination event is not fired.
   bool step();
   int m_time;
@@ -24,5 +26,5 @@ private:
   bool m_breakAllLoops;
 };
 
-}
+}  // namespace Escher
 #endif

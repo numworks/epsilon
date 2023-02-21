@@ -11,9 +11,9 @@ namespace Config {
 constexpr static int LoopsPerMillisecondLowFrequency = 4811;
 constexpr static int LoopsPerMicrosecond = 38;
 
-}
-}
-}
-}
+}  // namespace Config
+}  // namespace Timing
+}  // namespace Device
+}  // namespace Ion
 
 #endif

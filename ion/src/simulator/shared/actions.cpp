@@ -1,24 +1,23 @@
 #include "actions.h"
 
 #include <ion/display.h>
+#include <signal.h>
 
 #include "display.h"
 #include "framebuffer.h"
 #include "platform.h"
-#include "state_file.h"
 #include "screenshot.h"
+#include "state_file.h"
 #include "window.h"
-
-#include <signal.h>
 
 namespace Ion {
 namespace Simulator {
 namespace Actions {
 
-constexpr const char * kStateFileExtension = "nws";
+constexpr const char* kStateFileExtension = "nws";
 
 void saveState() {
-  const char * path = Platform::filePathForWriting(kStateFileExtension);
+  const char* path = Platform::filePathForWriting(kStateFileExtension);
   if (path != nullptr) {
     StateFile::save(path);
   }
@@ -48,7 +47,8 @@ void saveScreenshot() {
 }
 
 void saveStateForReload() {
-  const char * state_filename = Platform::filePathInTempDir("numworks.reload.nws");
+  const char* state_filename =
+      Platform::filePathInTempDir("numworks.reload.nws");
   StateFile::save(state_filename);
 }
 
@@ -63,6 +63,6 @@ void handleUSR1Sig(int s) {
 #endif
 }
 
-}
-}
-}
+}  // namespace Actions
+}  // namespace Simulator
+}  // namespace Ion

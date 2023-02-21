@@ -8,21 +8,24 @@
 namespace Escher {
 
 class EvenOddMessageTextCell : public EvenOddCell {
-public:
-  EvenOddMessageTextCell(KDFont::Size font = KDFont::Size::Large, float horizontalAlignment = KDContext::k_alignCenter);
-  void setMessage(I18n::Message textContent) { m_messageTextView.setMessage(textContent); }
+ public:
+  EvenOddMessageTextCell(KDFont::Size font = KDFont::Size::Large,
+                         float horizontalAlignment = KDContext::k_alignCenter);
+  void setMessage(I18n::Message textContent) {
+    m_messageTextView.setMessage(textContent);
+  }
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   void setMessageFont(KDFont::Size font) { m_messageTextView.setFont(font); }
   void setTextColor(KDColor color) { m_messageTextView.setTextColor(color); }
 
-protected:
+ protected:
   void updateSubviewsBackgroundAfterChangingState() override;
   int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   MessageTextView m_messageTextView;
 };
 
-}
+}  // namespace Escher
 
 #endif

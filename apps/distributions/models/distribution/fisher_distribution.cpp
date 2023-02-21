@@ -1,10 +1,12 @@
 #include "fisher_distribution.h"
+
+#include <float.h>
 #include <poincare/beta_function.h>
 #include <poincare/layout_helper.h>
 #include <poincare/regularized_incomplete_beta_function.h>
-#include <cmath>
-#include <float.h>
+
 #include <algorithm>
+#include <cmath>
 
 using namespace Shared;
 
@@ -22,21 +24,22 @@ float FisherDistribution::mode() const {
   const float d1 = m_parameters[0];
   if (d1 > 2.0f) {
     const float d2 = m_parameters[1];
-    return (d1 - 2.0f)/d1 * d2/(d2 + 2.0f);
+    return (d1 - 2.0f) / d1 * d2 / (d2 + 2.0f);
   }
   return NAN;
 }
 
-ParameterRepresentation FisherDistribution::paramRepresentationAtIndex(int i) const {
+ParameterRepresentation FisherDistribution::paramRepresentationAtIndex(
+    int i) const {
   switch (i) {
-    case ParamsOrder::D1:
-    {
-      Poincare::Layout d1 = Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::D1));
+    case ParamsOrder::D1: {
+      Poincare::Layout d1 =
+          Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::D1));
       return ParameterRepresentation{d1, I18n::Message::D1FisherDefinition};
     }
-    case ParamsOrder::D2:
-    {
-      Poincare::Layout d2 = Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::D2));
+    case ParamsOrder::D2: {
+      Poincare::Layout d2 =
+          Poincare::LayoutHelper::String(parameterNameAtIndex(ParamsOrder::D2));
       return ParameterRepresentation{d2, I18n::Message::D2FisherDefinition};
     }
     default:
@@ -46,7 +49,7 @@ ParameterRepresentation FisherDistribution::paramRepresentationAtIndex(int i) co
 }
 
 float FisherDistribution::computeXMax() const {
-  return 5.0f; // The mode is always < 1
+  return 5.0f;  // The mode is always < 1
 }
 
 float FisherDistribution::computeYMax() const {
@@ -56,4 +59,4 @@ float FisherDistribution::computeYMax() const {
   return max * (1.0f + k_displayTopMarginRatio);
 }
 
-}
+}  // namespace Distributions

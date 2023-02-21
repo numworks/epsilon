@@ -4,7 +4,7 @@ using namespace Escher;
 
 namespace Graph {
 
-void AbscissaTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
+void AbscissaTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
   EvenOddMessageTextCell::drawRect(ctx, rect);
   // Draw the separator
   if (m_separatorLeft) {
@@ -17,8 +17,6 @@ void AbscissaTitleCell::layoutSubviews(bool force) {
   m_messageTextView.setFrame(rectWithoutSeparator(bounds()), force);
 }
 
-void AbscissaTitleCell::didSetSeparator() {
-  reloadCell();
-}
+void AbscissaTitleCell::didSetSeparator() { reloadCell(); }
 
-}
+}  // namespace Graph

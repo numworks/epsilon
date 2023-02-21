@@ -3,24 +3,26 @@
 
 namespace Poincare {
 
-template<typename T>
+template <typename T>
 class DatasetColumn {
-public:
+ public:
   virtual T valueAtIndex(int index) const = 0;
   virtual int length() const = 0;
 };
 
-template<typename T>
+template <typename T>
 class ConstantDatasetColumn : public DatasetColumn<T> {
-public:
-  ConstantDatasetColumn(T value, int length) : m_value(value), m_length(length) {}
+ public:
+  ConstantDatasetColumn(T value, int length)
+      : m_value(value), m_length(length) {}
   T valueAtIndex(int index) const override { return m_value; }
   int length() const override { return m_length; }
-private:
+
+ private:
   T m_value;
   int m_length;
 };
 
-}
+}  // namespace Poincare
 
 #endif

@@ -3,19 +3,13 @@
 namespace Ion {
 namespace LED {
 
-KDColor getColor() {
-  return KDColorBlack;
-}
+KDColor getColor() { return KDColorBlack; }
 
-void setColor(KDColor c) {
-}
+void setColor(KDColor c) {}
 
-void setBlinking(uint16_t period, float dutyCycle) {
-}
+void setBlinking(uint16_t period, float dutyCycle) {}
 
-KDColor updateColorWithPlugAndCharge() {
-  return KDColorBlack;
-}
+KDColor updateColorWithPlugAndCharge() { return KDColorBlack; }
 
-}
-}
+}  // namespace LED
+}  // namespace Ion

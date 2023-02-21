@@ -1,9 +1,9 @@
-#include <quiz.h>
-#include <kandinsky/rect.h>
 #include <assert.h>
+#include <kandinsky/rect.h>
+#include <quiz.h>
 
 QUIZ_CASE(kandinsky_rect_intersect) {
-  KDRect a(-5,-5, 10, 10);
+  KDRect a(-5, -5, 10, 10);
   KDRect b(0, 0, 10, 10);
   quiz_assert(a.intersects(b));
   quiz_assert(b.intersects(a));

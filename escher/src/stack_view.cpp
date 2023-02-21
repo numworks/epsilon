@@ -1,43 +1,41 @@
-#include <escher/stack_view.h>
-#include <escher/palette.h>
 #include <escher/metric.h>
+#include <escher/palette.h>
+#include <escher/stack_view.h>
 
 namespace Escher {
 
-StackView::StackView(Style style, bool extendVertically) :
-    View(),
-    m_borderView(Palette::GrayBright),
-    m_contentView(nullptr),
-    m_style(style),
-    m_headersOverlapHeaders(true),
-    m_headersOverlapContent(false),
-    m_extendVertically(extendVertically)
-{
-}
+StackView::StackView(Style style, bool extendVertically)
+    : View(),
+      m_borderView(Palette::GrayBright),
+      m_contentView(nullptr),
+      m_style(style),
+      m_headersOverlapHeaders(true),
+      m_headersOverlapContent(false),
+      m_extendVertically(extendVertically) {}
 
-void StackView::setContentView(View * view) {
+void StackView::setContentView(View* view) {
   m_contentView = view;
   layoutSubviews();
   markRectAsDirty(bounds());
 }
 
 void StackView::setupHeadersBorderOverlaping(
-    bool headersOverlapHeaders,
-    bool headersOverlapContent,
+    bool headersOverlapHeaders, bool headersOverlapContent,
     KDColor headersContentBorderColor) {
   m_headersOverlapHeaders = headersOverlapHeaders;
   m_headersOverlapContent = headersOverlapContent;
   m_borderView.setColor(headersContentBorderColor);
 }
 
-void StackView::pushStack(ViewController * vc) {
+void StackView::pushStack(ViewController* vc) {
   KDColor textColor = Palette::GrayDarkMiddle;
   KDColor backgroundColor = KDColorWhite;
   KDColor separatorColor = Palette::GrayBright;
   int numberOfStacks = m_stackHeaderViews.length();
   if (m_style == Style::GrayGradation) {
     textColor = KDColorWhite;
-    constexpr KDColor k_grayGradationColors[] = { Palette::PurpleBright, Palette::GrayDark, Palette::GrayDarkMiddle};
+    constexpr KDColor k_grayGradationColors[] = {
+        Palette::PurpleBright, Palette::GrayDark, Palette::GrayDarkMiddle};
     backgroundColor = k_grayGradationColors[numberOfStacks];
     separatorColor = k_grayGradationColors[numberOfStacks];
   } else if (m_style == Style::PurpleWhite) {
@@ -49,7 +47,8 @@ void StackView::pushStack(ViewController * vc) {
   } else {
     assert(m_style == Style::WhiteUniform);
   }
-  m_stackHeaderViews.push(StackHeaderView(vc, textColor, backgroundColor, separatorColor));
+  m_stackHeaderViews.push(
+      StackHeaderView(vc, textColor, backgroundColor, separatorColor));
 }
 
 KDSize StackView::minimalSizeForOptimalDisplay() const {
@@ -57,10 +56,16 @@ KDSize StackView::minimalSizeForOptimalDisplay() const {
     return KDSizeZero;
   }
   KDSize size = m_contentView->minimalSizeForOptimalDisplay();
-  int heightDiff = Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
+  int heightDiff =
+      Metric::StackTitleHeight +
+      (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
   int numberOfStacks = m_stackHeaderViews.length();
   assert(m_extendVertically || numberOfStacks > 0);
-  return KDSize(size.width(), m_extendVertically ? 0 : (size.height() + heightDiff * numberOfStacks + Metric::CellSeparatorThickness));
+  return KDSize(size.width(),
+                m_extendVertically
+                    ? 0
+                    : (size.height() + heightDiff * numberOfStacks +
+                       Metric::CellSeparatorThickness));
 }
 
 void StackView::layoutSubviews(bool force) {
@@ -75,28 +80,35 @@ void StackView::layoutSubviews(bool force) {
   // Compute view frames
   KDCoordinate width = m_frame.width();
   int heightOffset = 0;
-  int heightDiff = Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
+  int heightDiff =
+      Metric::StackTitleHeight +
+      (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
   int numberOfStacks = m_stackHeaderViews.length();
   for (int i = 0; i < numberOfStacks; i++) {
     m_stackHeaderViews.elementAtIndex(i)->setFrame(
-        KDRect(0, heightOffset, width, Metric::StackTitleHeight + Metric::CellSeparatorThickness),
+        KDRect(0, heightOffset, width,
+               Metric::StackTitleHeight + Metric::CellSeparatorThickness),
         force);
     heightOffset += heightDiff;
   }
   // Border frame
   if (m_contentView) {
     if (m_headersOverlapHeaders && numberOfStacks > 0) {
-      // Last separator is drawn by last header, so content needs to be offset a bit
+      // Last separator is drawn by last header, so content needs to be offset a
+      // bit
       heightOffset += Metric::CellSeparatorThickness;
     }
     if (borderShouldOverlapContent()) {
       // Shift content position up by the separator thickness
       heightOffset -= Metric::CellSeparatorThickness;
       // Layout the common border (which will override content)
-      m_borderView.setFrame(KDRect(0, heightOffset, width, Metric::CellSeparatorThickness), force);
+      m_borderView.setFrame(
+          KDRect(0, heightOffset, width, Metric::CellSeparatorThickness),
+          force);
     }
     // Content view frame
-    KDRect contentViewFrame = KDRect(0, heightOffset, width, m_frame.height() - heightOffset);
+    KDRect contentViewFrame =
+        KDRect(0, heightOffset, width, m_frame.height() - heightOffset);
     m_contentView->setFrame(contentViewFrame, force);
   }
 }
@@ -128,7 +140,7 @@ int StackView::numberOfSubviews() const {
          (borderShouldOverlapContent() ? 1 : 0);
 }
 
-View * StackView::subviewAtIndex(int index) {
+View* StackView::subviewAtIndex(int index) {
   int numberOfStacks = m_stackHeaderViews.length();
   if (index < numberOfStacks) {
     assert(index >= 0);
@@ -143,9 +155,7 @@ View * StackView::subviewAtIndex(int index) {
 }
 
 #if ESCHER_VIEW_LOGGING
-const char * StackView::className() const {
-  return "StackView";
-}
+const char* StackView::className() const { return "StackView"; }
 #endif
 
 }  // namespace Escher

@@ -6,7 +6,7 @@
 namespace OnBoarding {
 
 class LocalizationController : public Shared::LocalizationController {
-public:
+ public:
   using Shared::LocalizationController::LocalizationController;
 
   int indexOfCellToSelectOnReset() const override;
@@ -15,6 +15,6 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 };
 
-}
+}  // namespace OnBoarding
 
 #endif

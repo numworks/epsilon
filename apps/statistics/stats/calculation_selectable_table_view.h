@@ -6,11 +6,11 @@
 namespace Statistics {
 
 class CalculationSelectableTableView : public Escher::SelectableTableView {
-public:
+ public:
   using Escher::SelectableTableView::SelectableTableView;
   bool handleEvent(Ion::Events::Event event) override;
 };
 
-}
+}  // namespace Statistics
 
 #endif

@@ -2,8 +2,9 @@
 #define POINCARE_IEEE754_H
 
 #include <assert.h>
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
+
 #include <cmath>
 
 namespace Poincare {
@@ -15,9 +16,9 @@ namespace Poincare {
  * mantissa: 23 bits (52 bits)
  */
 
-template<typename T>
+template <typename T>
 class IEEE754 final {
-public:
+ public:
   constexpr static uint16_t exponentOffset() {
     return (1 << (k_exponentNbBits - 1)) - 1;
   }
@@ -25,20 +26,22 @@ public:
     return (1 << k_exponentNbBits) - 1;
   }
   static int size() {
-    assert(k_totalNumberOfBits == 8*sizeof(T));
+    assert(k_totalNumberOfBits == 8 * sizeof(T));
     return k_totalNumberOfBits;
   }
   static T buildFloat(bool sign, uint16_t exponent, uint64_t mantissa) {
-    constexpr uint64_t oneOnMantissaBits = (static_cast<uint64_t>(1) << k_mantissaNbBits)-1;
+    constexpr uint64_t oneOnMantissaBits =
+        (static_cast<uint64_t>(1) << k_mantissaNbBits) - 1;
     uint_float u;
     u.ui = 0;
-    u.ui |= ((uint64_t)sign << (size()-k_signNbBits));
+    u.ui |= ((uint64_t)sign << (size() - k_signNbBits));
     u.ui |= ((uint64_t)exponent << k_mantissaNbBits);
-    u.ui |= ((uint64_t)mantissa >> (size()-k_mantissaNbBits-1) & oneOnMantissaBits);
+    u.ui |= ((uint64_t)mantissa >> (size() - k_mantissaNbBits - 1) &
+             oneOnMantissaBits);
     /* So far, we just cast the Integer in float. To round it to the closest
      * float, we increment the mantissa (and sometimes the exponent if the
      * mantissa was full of 1) if the next mantissa bit is 1. */
-    if (((uint64_t)mantissa >> (size()-k_mantissaNbBits-2)) & 1) {
+    if (((uint64_t)mantissa >> (size() - k_mantissaNbBits - 2)) & 1) {
       u.ui += 1;
     }
     return u.f;
@@ -52,7 +55,8 @@ public:
     return exp;
   }
   static int exponentBase10(T f) {
-    constexpr T k_log10base2 = 3.321928094887362347870319429489390175864831393024580612054;
+    constexpr T k_log10base2 =
+        3.321928094887362347870319429489390175864831393024580612054;
     if (f == static_cast<T>(0.0)) {
       return 0;
     }
@@ -67,25 +71,28 @@ public:
      * Knowing that the equation 1 <= m1*10^x < 10 with 1<=m1<2 has its solution
      * in -0.31 < x < 1, we get:
      * e2 = [e1/log(10,2)]  or e2 = [e1/log(10,2)]-1 depending on m1. */
-    int exponentBase10 = std::round(exponentBase2/k_log10base2);
+    int exponentBase10 = std::round(exponentBase2 / k_log10base2);
     if (std::pow(static_cast<T>(10.0), exponentBase10) > std::fabs(f)) {
       exponentBase10--;
     }
     return exponentBase10;
   }
 
-private:
+ private:
   union uint_float {
     uint64_t ui;
     T f;
   };
 
   constexpr static size_t k_signNbBits = 1;
-  constexpr static size_t k_exponentNbBits = sizeof(T) == sizeof(float) ? 8 : 11;
-  constexpr static size_t k_mantissaNbBits = sizeof(T) == sizeof(float) ? 23 : 52;
-  constexpr static size_t k_totalNumberOfBits = k_signNbBits+k_exponentNbBits+k_mantissaNbBits;
+  constexpr static size_t k_exponentNbBits =
+      sizeof(T) == sizeof(float) ? 8 : 11;
+  constexpr static size_t k_mantissaNbBits =
+      sizeof(T) == sizeof(float) ? 23 : 52;
+  constexpr static size_t k_totalNumberOfBits =
+      k_signNbBits + k_exponentNbBits + k_mantissaNbBits;
 };
 
-}
+}  // namespace Poincare
 
 #endif

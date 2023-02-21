@@ -11,7 +11,6 @@
  * k = number of sampling periods
  */
 
-
 namespace Ion {
 namespace Battery {
 
@@ -28,7 +27,7 @@ Charge level();
 
 float voltage();
 
-}
-}
+}  // namespace Battery
+}  // namespace Ion
 
 #endif

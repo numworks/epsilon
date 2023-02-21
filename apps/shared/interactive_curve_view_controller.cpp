@@ -1,29 +1,41 @@
-#include "function_banner_delegate.h"
 #include "interactive_curve_view_controller.h"
-#include "text_field_delegate_app.h"
-#include <escher/tab_view_controller.h>
-#include <cmath>
-#include <float.h>
+
 #include <assert.h>
+#include <escher/tab_view_controller.h>
+#include <float.h>
+
+#include <cmath>
+
+#include "function_banner_delegate.h"
+#include "text_field_delegate_app.h"
 
 using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {
 
-InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, I18n::Message calculusButtonMessage, int * selectedCurveIndex) :
-  SimpleInteractiveCurveViewController(parentResponder, cursor),
-  ButtonRowDelegate(header, nullptr),
-  m_selectedCurveIndex(selectedCurveIndex),
-  m_selectedSubCurveIndex(0),
-  m_rangeParameterController(this, inputEventHandlerDelegate, interactiveRange),
-  m_zoomParameterController(this, interactiveRange, curveView),
-  m_interactiveRange(interactiveRange),
-  m_autoButton(this, I18n::Message::DefaultSetting, autoButtonInvocation(), &m_autoDotView, k_buttonFont),
-  m_rangeButton(this, I18n::Message::Axis, rangeButtonInvocation(), &m_rangeUnequalView, k_buttonFont),
-  m_navigationButton(this, I18n::Message::Navigate, navigationButtonInvocation(), k_buttonFont),
-  m_calculusButton(this, calculusButtonMessage, calculusButtonInvocation(), k_buttonFont)
-{
+InteractiveCurveViewController::InteractiveCurveViewController(
+    Responder *parentResponder,
+    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    ButtonRowController *header, InteractiveCurveViewRange *interactiveRange,
+    AbstractPlotView *curveView, CurveViewCursor *cursor,
+    I18n::Message calculusButtonMessage, int *selectedCurveIndex)
+    : SimpleInteractiveCurveViewController(parentResponder, cursor),
+      ButtonRowDelegate(header, nullptr),
+      m_selectedCurveIndex(selectedCurveIndex),
+      m_selectedSubCurveIndex(0),
+      m_rangeParameterController(this, inputEventHandlerDelegate,
+                                 interactiveRange),
+      m_zoomParameterController(this, interactiveRange, curveView),
+      m_interactiveRange(interactiveRange),
+      m_autoButton(this, I18n::Message::DefaultSetting, autoButtonInvocation(),
+                   &m_autoDotView, k_buttonFont),
+      m_rangeButton(this, I18n::Message::Axis, rangeButtonInvocation(),
+                    &m_rangeUnequalView, k_buttonFont),
+      m_navigationButton(this, I18n::Message::Navigate,
+                         navigationButtonInvocation(), k_buttonFont),
+      m_calculusButton(this, calculusButtonMessage, calculusButtonInvocation(),
+                       k_buttonFont) {
   m_autoButton.setState(m_interactiveRange->zoomAuto());
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
 }
@@ -43,10 +55,9 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     if (moveCursorVertically(OMG::Direction(event))) {
       reloadBannerView();
       interactiveCurveViewRange()->panToMakePointVisible(
-        m_cursor->x(), m_cursor->y(),
-        cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(),
-        curveView()->pixelWidth()
-      );
+          m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(),
+          cursorRightMarginRatio(), cursorBottomMarginRatio(),
+          cursorLeftMarginRatio(), curveView()->pixelWidth());
       curveView()->reload();
       return true;
     }
@@ -69,27 +80,31 @@ void InteractiveCurveViewController::didBecomeFirstResponder() {
   }
 }
 
-RangeParameterController * InteractiveCurveViewController::rangeParameterController() {
+RangeParameterController *
+InteractiveCurveViewController::rangeParameterController() {
   return &m_rangeParameterController;
 }
 
-ViewController * InteractiveCurveViewController::zoomParameterController() {
+ViewController *InteractiveCurveViewController::zoomParameterController() {
   return &m_zoomParameterController;
 }
 
-int InteractiveCurveViewController::numberOfButtons(ButtonRowController::Position) const {
+int InteractiveCurveViewController::numberOfButtons(
+    ButtonRowController::Position) const {
   if (isEmpty()) {
     return 0;
   }
   return 4;
 }
 
-AbstractButtonCell * InteractiveCurveViewController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  const AbstractButtonCell * buttons[] = {&m_autoButton, &m_rangeButton, &m_navigationButton, &m_calculusButton};
+AbstractButtonCell *InteractiveCurveViewController::buttonAtIndex(
+    int index, ButtonRowController::Position position) const {
+  const AbstractButtonCell *buttons[] = {
+      &m_autoButton, &m_rangeButton, &m_navigationButton, &m_calculusButton};
   return (AbstractButtonCell *)buttons[index];
 }
 
-Responder * InteractiveCurveViewController::responderWhenEmpty() {
+Responder *InteractiveCurveViewController::responderWhenEmpty() {
   tabController()->selectTab();
   return tabController();
 }
@@ -116,7 +131,8 @@ void InteractiveCurveViewController::viewWillAppear() {
   curveView()->reload(true);
 }
 
-void InteractiveCurveViewController::refreshCursor(bool ignoreMargins, bool forceFiniteY) {
+void InteractiveCurveViewController::refreshCursor(bool ignoreMargins,
+                                                   bool forceFiniteY) {
   /* Warning: init cursor parameter before reloading banner view. Indeed,
    * reloading banner view needs an updated cursor to load the right data. */
   double t = m_cursor->t();
@@ -137,7 +153,8 @@ void InteractiveCurveViewController::refreshCursor(bool ignoreMargins, bool forc
   reloadBannerView();
 }
 
-void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirstResponder) {
+void InteractiveCurveViewController::willExitResponderChain(
+    Responder *nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
     m_selectedSubCurveIndex = 0;
@@ -149,58 +166,83 @@ void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirs
   }
 }
 
-bool InteractiveCurveViewController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  double floatBody = textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
+bool InteractiveCurveViewController::textFieldDidFinishEditing(
+    AbstractTextField *textField, const char *text, Ion::Events::Event event) {
+  double floatBody =
+      textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
   if (textFieldDelegateApp()->hasUndefinedValue(floatBody)) {
     return false;
   }
   /* If possible, round floatBody so that we go to the evaluation of the
    * displayed floatBody */
-  floatBody = FunctionBannerDelegate::GetValueDisplayedOnBanner(floatBody, textFieldDelegateApp()->localContext(), Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(), curveView()->pixelWidth(), false);
+  floatBody = FunctionBannerDelegate::GetValueDisplayedOnBanner(
+      floatBody, textFieldDelegateApp()->localContext(),
+      Poincare::Preferences::sharedPreferences->numberOfSignificantDigits(),
+      curveView()->pixelWidth(), false);
   moveCursorAndCenterIfNeeded(floatBody);
   return true;
 }
 
-bool InteractiveCurveViewController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
-  if ((event == Ion::Events::Plus || event == Ion::Events::Minus || event == Ion::Events::Toolbox) && !textField->isEditing()) {
+bool InteractiveCurveViewController::textFieldDidReceiveEvent(
+    AbstractTextField *textField, Ion::Events::Event event) {
+  if ((event == Ion::Events::Plus || event == Ion::Events::Minus ||
+       event == Ion::Events::Toolbox) &&
+      !textField->isEditing()) {
     return handleEvent(event);
   }
-  return SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(textField, event);
+  return SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(
+      textField, event);
 }
 
 void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
-  Coordinate2D<double> xy = xyValues(selectedCurveIndex(), t, textFieldDelegateApp()->localContext(), 0);
+  Coordinate2D<double> xy = xyValues(selectedCurveIndex(), t,
+                                     textFieldDelegateApp()->localContext(), 0);
   m_cursor->moveTo(t, xy.x1(), xy.x2());
   reloadBannerView();
   if (!isCursorCurrentlyVisible(false, true)) {
-    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
-    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
+    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::X,
+                                                  m_cursor->x());
+    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y,
+                                                  m_cursor->y());
   }
   curveView()->reload();
 }
 
-Escher::TabViewController * InteractiveCurveViewController::tabController() const{
-  return static_cast<Escher::TabViewController *>(stackController()->parentResponder());
+Escher::TabViewController *InteractiveCurveViewController::tabController()
+    const {
+  return static_cast<Escher::TabViewController *>(
+      stackController()->parentResponder());
 }
 
-StackViewController * InteractiveCurveViewController::stackController() const{
-  return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
+StackViewController *InteractiveCurveViewController::stackController() const {
+  return (StackViewController
+              *)(parentResponder()->parentResponder()->parentResponder());
 }
 
-bool InteractiveCurveViewController::isCursorVisibleAtPosition(Coordinate2D<float> position, bool ignoreMargins, bool acceptNanOrInfiniteY) {
-  InteractiveCurveViewRange * range = interactiveCurveViewRange();
+bool InteractiveCurveViewController::isCursorVisibleAtPosition(
+    Coordinate2D<float> position, bool ignoreMargins,
+    bool acceptNanOrInfiniteY) {
+  InteractiveCurveViewRange *range = interactiveCurveViewRange();
   float xRange = range->xMax() - range->xMin();
   float yRange = range->yMax() - range->yMin();
   float x = position.x1(), y = position.x2();
-  return x >= range->xMin() + (ignoreMargins ? 0.f : cursorLeftMarginRatio() * xRange) &&
-         x <= range->xMax() - (ignoreMargins ? 0.f : cursorRightMarginRatio() * xRange) &&
+  return x >= range->xMin() +
+                  (ignoreMargins ? 0.f : cursorLeftMarginRatio() * xRange) &&
+         x <= range->xMax() -
+                  (ignoreMargins ? 0.f : cursorRightMarginRatio() * xRange) &&
          ((!std::isfinite(y) && acceptNanOrInfiniteY) ||
           (std::isfinite(y) &&
-           y >= range->yMin() + (ignoreMargins ? 0.f : cursorBottomMarginRatio() * yRange) &&
-           y <= range->yMax() - (ignoreMargins ? 0.f : cursorTopMarginRatio() * yRange)));
+           y >=
+               range->yMin() +
+                   (ignoreMargins ? 0.f : cursorBottomMarginRatio() * yRange) &&
+           y <= range->yMax() -
+                    (ignoreMargins ? 0.f : cursorTopMarginRatio() * yRange)));
 }
 
-int InteractiveCurveViewController::closestCurveIndexVertically(OMG::VerticalDirection direction, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex, int * newSubCurveIndex) const {
+int InteractiveCurveViewController::closestCurveIndexVertically(
+    OMG::VerticalDirection direction, int currentCurveIndex,
+    Poincare::Context *context, int currentSubCurveIndex,
+    int *newSubCurveIndex) const {
   /* Vertical curves are quite hard to handle when moving the cursor.
    * To simplify things here, we consider vertical curves as if it they were
    * rotated by 90 degrees by swapping x and y when dealing with them. */
@@ -219,12 +261,15 @@ int InteractiveCurveViewController::closestCurveIndexVertically(OMG::VerticalDir
   int nextSubCurveIndex = 0;
   int curvesCount = numberOfCurves();
   for (int curveIndex = 0; curveIndex < curvesCount; curveIndex++) {
-    for (int subCurveIndex = 0; subCurveIndex < numberOfSubCurves(curveIndex); subCurveIndex++) {
-      if (curveIndex == currentCurveIndex && subCurveIndex == currentSubCurveIndex) {
+    for (int subCurveIndex = 0; subCurveIndex < numberOfSubCurves(curveIndex);
+         subCurveIndex++) {
+      if (curveIndex == currentCurveIndex &&
+          subCurveIndex == currentSubCurveIndex) {
         // Nothing to check for
         continue;
       }
-      Poincare::Coordinate2D<double> newXY = xyValues(curveIndex, x, context, subCurveIndex);
+      Poincare::Coordinate2D<double> newXY =
+          xyValues(curveIndex, x, context, subCurveIndex);
       double newY = newXY.x2();
       if (isAlongY(curveIndex)) {
         newY = newXY.x1();
@@ -254,7 +299,8 @@ int InteractiveCurveViewController::closestCurveIndexVertically(OMG::VerticalDir
           isNextCurve = true;
         } else if (newY == nextY) {
           assert(newIndexScore > 2 * nextCurveIndex + nextSubCurveIndex);
-          if (newY != y || currentIndexScore < 0 || newIndexScore < currentIndexScore) {
+          if (newY != y || currentIndexScore < 0 ||
+              newIndexScore < currentIndexScore) {
             isNextCurve = true;
           }
         } else if (newY == y && newIndexScore < currentIndexScore) {
@@ -289,9 +335,12 @@ bool InteractiveCurveViewController::handleZoom(Ion::Events::Event event) {
   return SimpleInteractiveCurveViewController::handleZoom(event);
 }
 
-
-float InteractiveCurveViewController::addMargin(float y, float range, bool isVertical, bool isMin) const {
-  return DefaultAddMargin(y, range, isVertical, isMin, cursorTopMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), cursorRightMarginRatio());
+float InteractiveCurveViewController::addMargin(float y, float range,
+                                                bool isVertical,
+                                                bool isMin) const {
+  return DefaultAddMargin(y, range, isVertical, isMin, cursorTopMarginRatio(),
+                          cursorBottomMarginRatio(), cursorLeftMarginRatio(),
+                          cursorRightMarginRatio());
 }
 
 void InteractiveCurveViewController::updateZoomButtons() {
@@ -300,7 +349,8 @@ void InteractiveCurveViewController::updateZoomButtons() {
   header()->reloadButtons();
 }
 
-void InteractiveCurveViewController::setCurveViewAsMainView(bool resetInterrupted, bool forceReload) {
+void InteractiveCurveViewController::setCurveViewAsMainView(
+    bool resetInterrupted, bool forceReload) {
   header()->setSelectedButton(-1);
   curveView()->setFocus(true);
   Container::activeApp()->setFirstResponder(this);
@@ -309,42 +359,55 @@ void InteractiveCurveViewController::setCurveViewAsMainView(bool resetInterrupte
 }
 
 Invocation InteractiveCurveViewController::autoButtonInvocation() {
-  return Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
-    graphController->m_interactiveRange->setZoomAuto(!graphController->m_interactiveRange->zoomAuto());
-    graphController->m_interactiveRange->computeRanges();
-    if (graphController->m_interactiveRange->zoomAuto()) {
-      graphController->setCurveViewAsMainView(true, true);
-    }
-    return true;
-  }, this);
+  return Invocation::Builder<InteractiveCurveViewController>(
+      [](InteractiveCurveViewController *graphController, void *sender) {
+        graphController->m_interactiveRange->setZoomAuto(
+            !graphController->m_interactiveRange->zoomAuto());
+        graphController->m_interactiveRange->computeRanges();
+        if (graphController->m_interactiveRange->zoomAuto()) {
+          graphController->setCurveViewAsMainView(true, true);
+        }
+        return true;
+      },
+      this);
 }
 
 Invocation InteractiveCurveViewController::rangeButtonInvocation() {
-  return Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
-    graphController->rangeParameterController()->setRange(graphController->interactiveCurveViewRange());
-    StackViewController * stack = graphController->stackController();
-    stack->push(graphController->rangeParameterController());
-    return true;
-  }, this);
+  return Invocation::Builder<InteractiveCurveViewController>(
+      [](InteractiveCurveViewController *graphController, void *sender) {
+        graphController->rangeParameterController()->setRange(
+            graphController->interactiveCurveViewRange());
+        StackViewController *stack = graphController->stackController();
+        stack->push(graphController->rangeParameterController());
+        return true;
+      },
+      this);
 }
 
 Invocation InteractiveCurveViewController::navigationButtonInvocation() {
-  return Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
-    static_cast<TabViewController *>(graphController->tabController())->setDisplayTabs(false);
-    graphController->stackController()->push(graphController->zoomParameterController());
-    return true;
-  }, this);
+  return Invocation::Builder<InteractiveCurveViewController>(
+      [](InteractiveCurveViewController *graphController, void *sender) {
+        static_cast<TabViewController *>(graphController->tabController())
+            ->setDisplayTabs(false);
+        graphController->stackController()->push(
+            graphController->zoomParameterController());
+        return true;
+      },
+      this);
 }
 
 Invocation InteractiveCurveViewController::calculusButtonInvocation() {
-  return Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
-    if (graphController->curveSelectionController()->numberOfRows() > 1) {
-      graphController->stackController()->push(graphController->curveSelectionController());
-    } else {
-      graphController->openMenuForCurveAtIndex(0);
-    }
-    return true;
-  }, this);
+  return Invocation::Builder<InteractiveCurveViewController>(
+      [](InteractiveCurveViewController *graphController, void *sender) {
+        if (graphController->curveSelectionController()->numberOfRows() > 1) {
+          graphController->stackController()->push(
+              graphController->curveSelectionController());
+        } else {
+          graphController->openMenuForCurveAtIndex(0);
+        }
+        return true;
+      },
+      this);
 }
 
-}
+}  // namespace Shared

@@ -5,11 +5,7 @@
 
 namespace OMG {
 
-enum class Base : uint8_t {
-  Binary = 2,
-  Decimal = 10,
-  Hexadecimal = 16
-};
+enum class Base : uint8_t { Binary = 2, Decimal = 10, Hexadecimal = 16 };
 
 }
 

@@ -1,10 +1,12 @@
-#include "plot_controller.h"
 #include "plot_view.h"
+
 #include <assert.h>
+
+#include "plot_controller.h"
 
 namespace Statistics {
 
-Escher::View * PlotView::subviewAtIndex(int index) {
+Escher::View* PlotView::subviewAtIndex(int index) {
   if (index == 0) {
     return m_plotCurveView;
   }
@@ -21,4 +23,4 @@ void PlotView::layoutDataSubviews(bool force) {
   m_plotCurveView->setFrame(bounds(), force);
 }
 
-}
+}  // namespace Statistics

@@ -10,40 +10,38 @@
  * When writing an Escher program, you typically subclass Container, and your
  * subclass owns one or more App. You then call "run()" on your container. */
 
-#include <escher/run_loop.h>
 #include <escher/app.h>
+#include <escher/run_loop.h>
 #include <escher/window.h>
 #include <ion/events.h>
 
 namespace Escher {
 
 class Container : public RunLoop {
-public:
-  static App * activeApp() {
-    return s_activeApp;
-  }
+ public:
+  static App* activeApp() { return s_activeApp; }
   Container();
   virtual ~Container();
   Container(const Container& other) = delete;
   Container(Container&& other) = delete;
   Container& operator=(const Container& other) = delete;
   Container& operator=(Container&& other) = delete;
-  virtual void * currentAppBuffer() = 0;
+  virtual void* currentAppBuffer() = 0;
   virtual void run();
   bool dispatchEvent(Ion::Events::Event event) override;
-  virtual void switchToBuiltinApp(App::Snapshot * snapshot);
+  virtual void switchToBuiltinApp(App::Snapshot* snapshot);
 
-protected:
-  virtual Window * window() = 0;
-  static App * s_activeApp;
+ protected:
+  virtual Window* window() = 0;
+  static App* s_activeApp;
 
-private:
+ private:
   int numberOfTimers() override;
-  Timer * timerAtIndex(int i) override;
+  Timer* timerAtIndex(int i) override;
   virtual int numberOfContainerTimers();
-  virtual Timer * containerTimerAtIndex(int i);
+  virtual Timer* containerTimerAtIndex(int i);
 };
 
-}
+}  // namespace Escher
 
 #endif

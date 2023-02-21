@@ -19,11 +19,11 @@ namespace Escher {
  * be transposed. */
 
 class OrientedLayout : public View {
-public:
-  OrientedLayout(KDColor color = Palette::WallScreen) :
-      m_backgroundColor(color),
-      m_secondaryDirectionMargin(0),
-      m_mainDirectionMargin(0) {}
+ public:
+  OrientedLayout(KDColor color = Palette::WallScreen)
+      : m_backgroundColor(color),
+        m_secondaryDirectionMargin(0),
+        m_mainDirectionMargin(0) {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void layoutSubviews(bool force = false) override;
   void setSecondaryDirectionMargin(KDCoordinate margin) {
@@ -32,9 +32,9 @@ public:
   void setMainDirectionMargin(KDCoordinate margin) {
     m_mainDirectionMargin = margin;
   }
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
 
-private:
+ private:
   virtual KDRect adaptRect(KDRect rect) const = 0;
   virtual KDSize adaptSize(KDSize size) const = 0;
   virtual KDPoint adaptPoint(KDPoint point) const = 0;
@@ -46,10 +46,10 @@ private:
 
 /* View that lays out its subviews vertically.*/
 class VerticalLayout : public OrientedLayout {
-public:
+ public:
   VerticalLayout(KDColor color = Palette::WallScreen) : OrientedLayout(color) {}
 
-private:
+ private:
   // Main direction is along y, there is no need to adapt anything.
   KDRect adaptRect(KDRect rect) const override { return rect; }
   KDSize adaptSize(KDSize size) const override { return size; }
@@ -58,11 +58,11 @@ private:
 
 /* View that lays out its subviews horizontally.*/
 class HorizontalLayout : public OrientedLayout {
-public:
-  HorizontalLayout(KDColor color = Palette::WallScreen) :
-      OrientedLayout(color) {}
+ public:
+  HorizontalLayout(KDColor color = Palette::WallScreen)
+      : OrientedLayout(color) {}
 
-private:
+ private:
   // Main direction is along x, coordinates must be transposed.
   KDRect adaptRect(KDRect rect) const override {
     return KDRect(adaptPoint(rect.origin()), adaptSize(rect.size()));
@@ -75,6 +75,6 @@ private:
   }
 };
 
-}
+}  // namespace Escher
 
 #endif

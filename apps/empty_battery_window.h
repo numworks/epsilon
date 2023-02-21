@@ -4,9 +4,9 @@
 #include <escher/window.h>
 
 class EmptyBatteryWindow : public Escher::Window {
-public:
+ public:
   EmptyBatteryWindow();
-  void drawRect(KDContext * ctx, KDRect rect) const;
+  void drawRect(KDContext* ctx, KDRect rect) const;
 };
 
 #endif

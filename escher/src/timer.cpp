@@ -2,11 +2,8 @@
 
 namespace Escher {
 
-Timer::Timer(uint32_t period) :
-  m_period(period),
-  m_numberOfTicksBeforeFire(period)
-{
-}
+Timer::Timer(uint32_t period)
+    : m_period(period), m_numberOfTicksBeforeFire(period) {}
 
 bool Timer::tick() {
   m_numberOfTicksBeforeFire--;
@@ -18,8 +15,6 @@ bool Timer::tick() {
   return false;
 }
 
-void Timer::reset() {
-  m_numberOfTicksBeforeFire = m_period;
-}
+void Timer::reset() { m_numberOfTicksBeforeFire = m_period; }
 
-}
+}  // namespace Escher

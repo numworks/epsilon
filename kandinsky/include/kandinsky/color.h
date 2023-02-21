@@ -4,30 +4,29 @@
 #include <stdint.h>
 
 class KDColor {
-public:
+ public:
   constexpr KDColor() : m_value(0) {}
   // FIXME: This should not be needed, and is probably wasting CPU cycles
-  constexpr static KDColor RGB16(uint16_t rgb) {
-    return KDColor(rgb);
-  }
+  constexpr static KDColor RGB16(uint16_t rgb) { return KDColor(rgb); }
   constexpr static KDColor RGB24(uint32_t rgb) {
-    return KDColor(((rgb&0xF80000)>>8)|((rgb&0x00FC00)>>5)|((rgb&0x0000F8)>>3));
+    return KDColor(((rgb & 0xF80000) >> 8) | ((rgb & 0x00FC00) >> 5) |
+                   ((rgb & 0x0000F8) >> 3));
   }
   constexpr static KDColor RGB888(uint8_t r, uint8_t g, uint8_t b) {
-    return KDColor((r>>3)<<11 | (g>>2) << 5 | (b>>3));
+    return KDColor((r >> 3) << 11 | (g >> 2) << 5 | (b >> 3));
   }
   uint8_t red() const {
-    uint8_t r5 = (m_value>>11)&0x1F;
+    uint8_t r5 = (m_value >> 11) & 0x1F;
     return Expand(r5, 5);
   }
 
   uint8_t green() const {
-    uint8_t g6 = (m_value>>5)&0x3F;
+    uint8_t g6 = (m_value >> 5) & 0x3F;
     return Expand(g6, 6);
   }
 
   uint8_t blue() const {
-    uint8_t b5 = m_value&0x1F;
+    uint8_t b5 = m_value & 0x1F;
     return Expand(b5, 5);
   }
 
@@ -35,15 +34,15 @@ public:
   operator uint16_t() const { return m_value; }
 
   struct HSVColor {
-    double H; // Between 0.0 and 360.0 (360.0 excluded)
-    double S; // Between 0.0 and 1.0
-    double V; // Between 0.0 and 255.0
+    double H;  // Between 0.0 and 360.0 (360.0 excluded)
+    double S;  // Between 0.0 and 1.0
+    double V;  // Between 0.0 and 255.0
   };
   HSVColor convertToHSV() const;
   static KDColor ConvertHSVToRGB(HSVColor color);
   static KDColor HSVBlend(KDColor color1, KDColor color2);
 
-private:
+ private:
   /* When converting from RGB565 to RGB888 we need to artificially expand the
    * bit precision of each color channel. For example, we need to convert a 5
    * bit red color into an 8 bit one.
@@ -60,10 +59,9 @@ private:
    * would append the first two bits (0b10), resulting in 0b10101010. This way,
    * full blacks remain black, and full whites remain whites. Yay, contrast! */
   constexpr static uint8_t Expand(uint8_t s, uint8_t nBits) {
-    return
-    (s << (8-nBits)) // Normal, zero-padded shifted value
-    |
-    (s >> (nBits-(8-nBits))); // Trick: let's try and fill the padding
+    return (s << (8 - nBits))  // Normal, zero-padded shifted value
+           | (s >>
+              (nBits - (8 - nBits)));  // Trick: let's try and fill the padding
   }
   constexpr KDColor(uint16_t value) : m_value(value) {}
 

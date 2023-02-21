@@ -1,4 +1,5 @@
 #include "expression_field_delegate_app.h"
+
 #include <apps/i18n.h>
 #include <escher/layout_field.h>
 #include <poincare/expression.h>
@@ -8,17 +9,18 @@ using namespace Poincare;
 
 namespace Shared {
 
-ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController) :
-  TextFieldDelegateApp(snapshot, rootViewController),
-  LayoutFieldDelegate()
-{
-}
+ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(
+    Snapshot* snapshot, ViewController* rootViewController)
+    : TextFieldDelegateApp(snapshot, rootViewController),
+      LayoutFieldDelegate() {}
 
-bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) {
+bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(
+    LayoutField* layoutField, Ion::Events::Event event) {
   return isFinishingEvent(event);
 }
 
-bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
+bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(
+    LayoutField* layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (layoutField->isEmpty()) {
       // Accept empty fields
@@ -33,7 +35,7 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
     constexpr int bufferSize = TextField::MaxBufferSize();
     char buffer[bufferSize];
     int length = layoutField->layout().serializeForParsing(buffer, bufferSize);
-    if (length >= bufferSize-1) {
+    if (length >= bufferSize - 1) {
       /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
        * escaped before printing utterly the expression. */
       displayWarning(I18n::Message::SyntaxError);
@@ -45,7 +47,8 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
      * Sometimes the field needs to be parsed for assignment but this is
      * done later, namely by ContinuousFunction::buildExpressionFromText.
      */
-    Poincare::Expression e = Poincare::Expression::Parse(buffer, layoutField->context(), true, false);
+    Poincare::Expression e = Poincare::Expression::Parse(
+        buffer, layoutField->context(), true, false);
     if (e.isUninitialized()) {
       // Unparsable expression
       displayWarning(I18n::Message::SyntaxError);
@@ -55,8 +58,10 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
      * displayable, like:
      * - 2*a
      * - log(x,2) */
-    length = e.serialize(buffer, bufferSize, Poincare::Preferences::sharedPreferences->displayMode());
-    if (length >= bufferSize-1) {
+    length =
+        e.serialize(buffer, bufferSize,
+                    Poincare::Preferences::sharedPreferences->displayMode());
+    if (length >= bufferSize - 1) {
       // Same comment as before
       displayWarning(I18n::Message::SyntaxError);
       return true;
@@ -75,7 +80,9 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
 bool ExpressionFieldDelegateApp::isAcceptableExpression(const Expression exp) {
   /* Override TextFieldDelegateApp because most ExpressionFieldDelegateApp
    * accept comparison operatoras. They should also be serializeable. */
-  return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store && TextFieldDelegateApp::ExpressionCanBeSerialized(exp, false, Poincare::Expression(), localContext());
+  return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store &&
+         TextFieldDelegateApp::ExpressionCanBeSerialized(
+             exp, false, Poincare::Expression(), localContext());
 }
 
 bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event event) {
@@ -86,7 +93,7 @@ bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event event) {
   return TextFieldDelegateApp::handleEvent(event);
 }
 
-void ExpressionFieldDelegateApp::storeValue(const char * text) {
+void ExpressionFieldDelegateApp::storeValue(const char* text) {
   if (m_modalViewController.isDisplayingModal()) {
     return;
   }
@@ -95,7 +102,8 @@ void ExpressionFieldDelegateApp::storeValue(const char * text) {
 }
 
 bool ExpressionFieldDelegateApp::isStoreMenuOpen() const {
-  return m_modalViewController.currentModalViewController() == &m_storeMenuController;
+  return m_modalViewController.currentModalViewController() ==
+         &m_storeMenuController;
 }
 
-}
+}  // namespace Shared

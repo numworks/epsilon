@@ -1,5 +1,5 @@
-#include <escher/palette.h>
 #include <assert.h>
+#include <escher/palette.h>
 
 namespace Escher {
 
@@ -36,7 +36,7 @@ constexpr KDColor Palette::BlueishGray;
 constexpr KDColor Palette::DataColor[];
 constexpr KDColor Palette::DataColorLight[];
 
-KDColor Palette::nextDataColor(int * colorIndex) {
+KDColor Palette::nextDataColor(int* colorIndex) {
   int nbOfColors = numberOfDataColors();
   assert(*colorIndex < nbOfColors);
   KDColor c = DataColor[*colorIndex];
@@ -44,4 +44,4 @@ KDColor Palette::nextDataColor(int * colorIndex) {
   return c;
 }
 
-}
+}  // namespace Escher

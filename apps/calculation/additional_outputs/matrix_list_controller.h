@@ -6,21 +6,19 @@
 namespace Calculation {
 
 class MatrixListController : public ExpressionsListController {
-public:
-  MatrixListController(EditExpressionController * editExpressionController) :
-    ExpressionsListController(editExpressionController, true) {}
+ public:
+  MatrixListController(EditExpressionController* editExpressionController)
+      : ExpressionsListController(editExpressionController, true) {}
 
   void setExpression(Poincare::Expression e) override;
 
-private:
+ private:
   I18n::Message messageAtIndex(int index) override;
   // Map from cell index to message index
   constexpr static int k_maxNumberOfOutputRows = 5;
   int m_indexMessageMap[k_maxNumberOfOutputRows];
 };
 
-}
+}  // namespace Calculation
 
 #endif
-
-

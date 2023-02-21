@@ -7,8 +7,6 @@ void PlotController::viewWillAppear() {
   curveView()->reload();
 }
 
-void PlotController::viewDidDisappear() {
-  m_store->flush();
-}
+void PlotController::viewDidDisappear() { m_store->flush(); }
 
-}
+}  // namespace Matplotlib

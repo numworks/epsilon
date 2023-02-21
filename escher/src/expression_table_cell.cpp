@@ -1,20 +1,21 @@
-#include <escher/expression_table_cell.h>
-#include <escher/container.h>
-#include <escher/palette.h>
 #include <assert.h>
+#include <escher/container.h>
+#include <escher/expression_table_cell.h>
+#include <escher/palette.h>
 
 namespace Escher {
 
-ExpressionTableCell::ExpressionTableCell(Responder * parentResponder, KDFont::Size font) :
-  Responder(parentResponder),
-  TableCell(),
-  m_labelExpressionView(this, 0, 0, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, font)
-{
-}
+ExpressionTableCell::ExpressionTableCell(Responder* parentResponder,
+                                         KDFont::Size font)
+    : Responder(parentResponder),
+      TableCell(),
+      m_labelExpressionView(this, 0, 0, KDContext::k_alignLeft,
+                            KDContext::k_alignCenter, KDColorBlack,
+                            KDColorWhite, font) {}
 
 void ExpressionTableCell::setHighlighted(bool highlight) {
   TableCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = highlight ? Palette::Select : KDColorWhite;
   m_labelExpressionView.setBackgroundColor(backgroundColor);
 }
 
@@ -29,4 +30,4 @@ void ExpressionTableCell::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_labelExpressionView);
 }
 
-}
+}  // namespace Escher

@@ -6,17 +6,21 @@
 namespace Shared {
 
 class CursorView : public Escher::TransparentView {
-public:
+ public:
   CursorView() : m_highlighted(false) {}
-  virtual void setCursorFrame(KDRect frame, bool force) { Escher::View::setFrame(frame, force); }
+  virtual void setCursorFrame(KDRect frame, bool force) {
+    Escher::View::setFrame(frame, force);
+  }
   void setHighlighted(bool highlighted) { m_highlighted = highlighted; }
   virtual void setColor(KDColor color) {}
-protected:
+
+ protected:
   bool isHighlighted() const { return m_highlighted; }
-private:
+
+ private:
   bool m_highlighted;
 };
 
-}
+}  // namespace Shared
 
 #endif

@@ -10,4 +10,4 @@ void Init() {
   Storage::FileSystem::sharedFileSystem.init();
 }
 
-}
+}  // namespace Ion

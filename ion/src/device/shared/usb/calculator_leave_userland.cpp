@@ -15,7 +15,8 @@ namespace Device {
 namespace USB {
 
 void Calculator::leave(uint32_t leaveAddress) {
-  if (leaveAddress >= reinterpret_cast<uint32_t>(&_external_apps_flash_start) && leaveAddress < reinterpret_cast<uint32_t>(&_external_apps_flash_end)) {
+  if (leaveAddress >= reinterpret_cast<uint32_t>(&_external_apps_flash_start) &&
+      leaveAddress < reinterpret_cast<uint32_t>(&_external_apps_flash_end)) {
     return;
   }
   Board::switchExecutableSlot(leaveAddress);
@@ -25,6 +26,6 @@ void Calculator::leave(uint32_t leaveAddress) {
   Reset::jump(leaveAddress + sizeof(UserlandHeader));
 }
 
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion

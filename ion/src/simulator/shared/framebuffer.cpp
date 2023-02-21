@@ -23,9 +23,10 @@ static bool sFrameBufferActive = false;
 namespace Ion {
 namespace Display {
 
-static KDFrameBuffer sFrameBuffer = KDFrameBuffer(sPixels, KDSize(Width, Height));
+static KDFrameBuffer sFrameBuffer =
+    KDFrameBuffer(sPixels, KDSize(Width, Height));
 
-void pushRect(KDRect r, const KDColor * pixels) {
+void pushRect(KDRect r, const KDColor* pixels) {
   if (sFrameBufferActive) {
     Simulator::Window::setNeedsRefresh();
     sFrameBuffer.pushRect(r, pixels);
@@ -39,27 +40,23 @@ void pushRectUniform(KDRect r, KDColor c) {
   }
 }
 
-void pullRect(KDRect r, KDColor * pixels) {
+void pullRect(KDRect r, KDColor* pixels) {
   if (sFrameBufferActive) {
     sFrameBuffer.pullRect(r, pixels);
   }
 }
 
-}
-}
+}  // namespace Display
+}  // namespace Ion
 
 namespace Ion {
 namespace Simulator {
 namespace Framebuffer {
 
-const KDColor * address() {
-  return sPixels;
-}
+const KDColor* address() { return sPixels; }
 
-void setActive(bool enabled) {
-  sFrameBufferActive = enabled;
-}
+void setActive(bool enabled) { sFrameBufferActive = enabled; }
 
-}
-}
-}
+}  // namespace Framebuffer
+}  // namespace Simulator
+}  // namespace Ion

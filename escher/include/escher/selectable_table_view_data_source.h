@@ -6,12 +6,8 @@
 namespace Escher {
 
 class SelectableTableViewDataSource : public ScrollViewDataSource {
-public:
-  SelectableTableViewDataSource() :
-    m_selectedColumn(0),
-    m_selectedRow(-1)
-  {
-  }
+ public:
+  SelectableTableViewDataSource() : m_selectedColumn(0), m_selectedRow(-1) {}
   int selectedColumn() const { return m_selectedColumn; }
   int selectedRow() const { return m_selectedRow; }
   void selectColumn(int i) { m_selectedColumn = i; }
@@ -20,10 +16,11 @@ public:
     m_selectedColumn = i;
     m_selectedRow = j;
   }
-private:
+
+ private:
   int m_selectedColumn;
   int m_selectedRow;
 };
 
-}
+}  // namespace Escher
 #endif

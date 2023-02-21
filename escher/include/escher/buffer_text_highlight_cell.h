@@ -7,22 +7,24 @@
 namespace Escher {
 
 class BufferTextHighlightCell : public HighlightCell {
-public:
-  void setText(const char * text) { m_textView.setText(text); }
-  View * subviewAtIndex(int i) override { return &m_textView; }
+ public:
+  void setText(const char* text) { m_textView.setText(text); }
+  View* subviewAtIndex(int i) override { return &m_textView; }
   int numberOfSubviews() const override { return 1; }
   KDSize minimalSizeForOptimalDisplay() const override {
     return m_textView.minimalSizeForOptimalDisplay();
   }
-  void layoutSubviews(bool force) override { m_textView.setFrame(bounds(), force); }
+  void layoutSubviews(bool force) override {
+    m_textView.setFrame(bounds(), force);
+  }
   void setHighlighted(bool highlight) override {
     m_textView.setBackgroundColor(highlight ? Palette::Select : KDColorWhite);
   }
 
-private:
+ private:
   BufferTextView m_textView;
 };
 
-}
+}  // namespace Escher
 
 #endif

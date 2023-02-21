@@ -2,6 +2,7 @@
 #define ION_RECORD_NAME_VERIFIER_H
 
 #include <assert.h>
+
 #include "record.h"
 
 /* This is used by the storage to know if it can store a record with
@@ -44,31 +45,37 @@
  * (Sequence registers u, v and w, Regression registers X1, Y1, etc.)
  * */
 
-
 namespace Ion {
 
 namespace Storage {
 
 class RecordNameVerifier {
-public:
-  RecordNameVerifier() : m_numberOfRestrictiveExtensions(0), m_numberOfReservedNamesArrays(0) {}
+ public:
+  RecordNameVerifier()
+      : m_numberOfRestrictiveExtensions(0), m_numberOfReservedNamesArrays(0) {}
   // Register a new restrictive extension
-  void registerRestrictiveExtensionWithPrecedence(const char * extension, int precedenceScore);
-  void unregisterAllRestrictiveExtensions() { m_numberOfRestrictiveExtensions = 0; }
+  void registerRestrictiveExtensionWithPrecedence(const char* extension,
+                                                  int precedenceScore);
+  void unregisterAllRestrictiveExtensions() {
+    m_numberOfRestrictiveExtensions = 0;
+  }
 
   // Getters
-  const char * const * restrictiveExtensions() const { return m_restrictiveExtensions; }
-  int numberOfRestrictiveExtensions() const { return m_numberOfRestrictiveExtensions; }
+  const char* const* restrictiveExtensions() const {
+    return m_restrictiveExtensions;
+  }
+  int numberOfRestrictiveExtensions() const {
+    return m_numberOfRestrictiveExtensions;
+  }
 
   // Register a new array of reserved names
-  void registerArrayOfReservedNames(const char * const * namePrefixes, const char* extension, int prefixRepetitions, int numberOfElements);
+  void registerArrayOfReservedNames(const char* const* namePrefixes,
+                                    const char* extension,
+                                    int prefixRepetitions,
+                                    int numberOfElements);
   void unregisterAllReservedNames() { m_numberOfReservedNamesArrays = 0; }
 
-  enum class OverrideStatus {
-    Forbidden = 0,
-    Allowed,
-    CanCoexist
-  };
+  enum class OverrideStatus { Forbidden = 0, Allowed, CanCoexist };
 
   /* This method indicates if a record can be overwritten with another which
    * has the same base name but a new extension.
@@ -83,12 +90,13 @@ public:
    *
    * - OverrideStatus::CanCoexist : if at least one of the two extensions is
    *   not a restrictive extension. */
-  OverrideStatus canOverrideRecordWithNewExtension(Record previousRecord, const char * newExtension) const;
+  OverrideStatus canOverrideRecordWithNewExtension(
+      Record previousRecord, const char* newExtension) const;
 
-private:
+ private:
   typedef struct {
-    const char * const * namePrefixes;
-    const char * extension;
+    const char* const* namePrefixes;
+    const char* extension;
     int prefixRepetitions;
     int numberOfElements;
   } ReservedNamesArray;
@@ -98,18 +106,20 @@ private:
   // This can be changed if you need more reserved names arrays
   constexpr static int k_maxNumberOfReservedNamesArrays = 4;
 
-  int precedenceScoreOfExtension(const char * extension) const;
-  bool isNameReservedForExtension(const char * name, int nameLength, const char * extension) const;
+  int precedenceScoreOfExtension(const char* extension) const;
+  bool isNameReservedForExtension(const char* name, int nameLength,
+                                  const char* extension) const;
 
-  const char * m_restrictiveExtensions[k_maxNumberOfRestrictiveExtensions];
-  int m_restrictiveExtensionsPrecedenceScore[k_maxNumberOfRestrictiveExtensions];
+  const char* m_restrictiveExtensions[k_maxNumberOfRestrictiveExtensions];
+  int m_restrictiveExtensionsPrecedenceScore
+      [k_maxNumberOfRestrictiveExtensions];
   int m_numberOfRestrictiveExtensions;
   ReservedNamesArray m_reservedNamesArrays[k_maxNumberOfReservedNamesArrays];
   int m_numberOfReservedNamesArrays;
 };
 
-}
+}  // namespace Storage
 
-}
+}  // namespace Ion
 
 #endif

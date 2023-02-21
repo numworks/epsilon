@@ -6,15 +6,16 @@ namespace Escher {
 class InputEventHandler;
 
 class PervasiveBox {
-public:
+ public:
   PervasiveBox() : m_sender(nullptr) {}
-  InputEventHandler * sender() { return m_sender; }
-  void setSender(InputEventHandler * sender) { m_sender = sender; }
+  InputEventHandler* sender() { return m_sender; }
+  void setSender(InputEventHandler* sender) { m_sender = sender; }
   virtual void open() = 0;
-private:
-  InputEventHandler * m_sender;
+
+ private:
+  InputEventHandler* m_sender;
 };
 
-}
+}  // namespace Escher
 
 #endif

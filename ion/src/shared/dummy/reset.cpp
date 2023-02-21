@@ -5,5 +5,5 @@ namespace Reset {
 
 void core() {}
 
-}
-}
+}  // namespace Reset
+}  // namespace Ion

@@ -6,32 +6,43 @@
 namespace Poincare {
 
 class ListVarianceNode : public ListFunctionWithOneOrTwoParametersNode {
-public:
+ public:
   constexpr static const char k_functionName[] = "var";
-  const char * functionName() const override { return k_functionName; }
+  const char* functionName() const override { return k_functionName; }
 
   size_t size() const override { return sizeof(ListVarianceNode); }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream& stream) const override {
     stream << "ListVariance";
   }
 #endif
   Type type() const override { return Type::ListVariance; }
 
-private:
+ private:
   Expression shallowReduce(const ReductionContext& reductionContext) override;
 
-  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
-  template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
+  Evaluation<float> approximate(
+      SinglePrecision p,
+      const ApproximationContext& approximationContext) const override {
+    return templatedApproximate<float>(approximationContext);
+  }
+  Evaluation<double> approximate(
+      DoublePrecision p,
+      const ApproximationContext& approximationContext) const override {
+    return templatedApproximate<double>(approximationContext);
+  }
+  template <typename T>
+  Evaluation<T> templatedApproximate(
+      const ApproximationContext& approximationContext) const;
 };
 
-class ListVariance : public ExpressionUpToTwoChildren<ListVariance, ListVarianceNode> {
-public:
+class ListVariance
+    : public ExpressionUpToTwoChildren<ListVariance, ListVarianceNode> {
+ public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ReductionContext reductionContext);
 };
 
-}
+}  // namespace Poincare
 
 #endif

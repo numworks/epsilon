@@ -6,11 +6,11 @@
 namespace Escher {
 
 class CellWithTextField {
-public:
-  virtual TextField * textField() = 0;
+ public:
+  virtual TextField* textField() = 0;
   virtual void reloadCell() = 0;
 };
 
-}
+}  // namespace Escher
 
 #endif

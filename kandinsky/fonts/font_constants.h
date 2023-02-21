@@ -4,6 +4,6 @@
 #ifdef __cplusplus
 constexpr
 #endif
-int k_grayscaleBitsPerPixel = 4;
+    int k_grayscaleBitsPerPixel = 4;
 
 #endif

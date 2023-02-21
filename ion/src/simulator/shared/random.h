@@ -10,7 +10,7 @@ namespace Random {
 void init();
 
 }
-}
-}
+}  // namespace Simulator
+}  // namespace Ion
 
 #endif

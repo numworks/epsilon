@@ -8,12 +8,13 @@ namespace Device {
 namespace USB {
 
 void Calculator::leave(uint32_t leaveAddress) {
-  if (leaveAddress == 0 || leaveAddress == Board::Config::InternalFlashOrigin || leaveAddress == Board::Config::BootloaderOrigin) {
+  if (leaveAddress == 0 || leaveAddress == Board::Config::InternalFlashOrigin ||
+      leaveAddress == Board::Config::BootloaderOrigin) {
     Reset::core();
   }
   Board::executeIfAuthenticated(leaveAddress);
 }
 
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion

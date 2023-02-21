@@ -9,15 +9,17 @@ namespace Shared {
  * handles zoom in/out and directional pan events. */
 
 class ZoomAndPanCurveViewController : public ZoomCurveViewController {
-public:
-  ZoomAndPanCurveViewController(Responder * parentResponder) : ZoomCurveViewController(parentResponder) {}
+ public:
+  ZoomAndPanCurveViewController(Responder* parentResponder)
+      : ZoomCurveViewController(parentResponder) {}
   bool handleEvent(Ion::Events::Event event) override;
-protected:
+
+ protected:
   virtual bool handlePan(Ion::Events::Event event);
   float xFocus() override { return interactiveCurveViewRange()->xCenter(); }
   float yFocus() override { return interactiveCurveViewRange()->yCenter(); }
 };
 
-}
+}  // namespace Shared
 
 #endif

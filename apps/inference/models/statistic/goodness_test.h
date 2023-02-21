@@ -6,13 +6,20 @@
 namespace Inference {
 
 class GoodnessTest final : public Chi2Test {
-public:
+ public:
   GoodnessTest();
-  CategoricalType categoricalType() const override { return CategoricalType::GoodnessOfFit; }
-  I18n::Message title() const override { return I18n::Message::InputGoodnessControllerTitle; }
-  int numberOfStatisticParameters() const override { return k_maxNumberOfRows * k_maxNumberOfColumns; }
-  void setGraphTitle(char * buffer, size_t bufferSize) const override;
-  void setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const override;
+  CategoricalType categoricalType() const override {
+    return CategoricalType::GoodnessOfFit;
+  }
+  I18n::Message title() const override {
+    return I18n::Message::InputGoodnessControllerTitle;
+  }
+  int numberOfStatisticParameters() const override {
+    return k_maxNumberOfRows * k_maxNumberOfColumns;
+  }
+  void setGraphTitle(char* buffer, size_t bufferSize) const override;
+  void setResultTitle(char* buffer, size_t bufferSize,
+                      bool resultIsTopPage) const override;
 
   // Inference
   bool validateInputs() override;
@@ -27,14 +34,17 @@ public:
 
   // GoodnessTest
   int indexOfDegreeOfFreedom() const { return indexOfThreshold() + 1; }
-  void setDegreeOfFreedom(double degreeOfFreedom) { m_degreesOfFreedom = degreeOfFreedom; }
+  void setDegreeOfFreedom(double degreeOfFreedom) {
+    m_degreesOfFreedom = degreeOfFreedom;
+  }
   /* Return the DegreesOfFreedom computed from the numberOfValuesPairs. Actual
    * statistic's degree of freedom may differ because it can be overridden by
    * the user. */
   int computeDegreesOfFreedom() { return numberOfValuePairs() - 1; }
 
   constexpr static int k_maxNumberOfColumns = 2;
-private:
+
+ private:
   // Largest number of rows such that HomogeneityTest still takes more space.
   constexpr static int k_maxNumberOfRows = 90;
   /* It is not usefull to be able to set a degree of freedom much bigger than
@@ -50,14 +60,16 @@ private:
   double observedValue(int index) const override;
   int numberOfValuePairs() const override;
 
-  double * parametersArray() override { return m_input; }
+  double* parametersArray() override { return m_input; }
   void setExpectedValue(int index, double value);
   void setObservedValue(int index, double value);
-  Index2D initialDimensions() const override { return Index2D{.row = 1, .col = 2}; }
+  Index2D initialDimensions() const override {
+    return Index2D{.row = 1, .col = 2};
+  }
 
   double m_input[k_maxNumberOfRows * k_maxNumberOfColumns];
 };
 
-}
+}  // namespace Inference
 
 #endif

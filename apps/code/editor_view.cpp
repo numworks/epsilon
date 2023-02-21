@@ -1,8 +1,9 @@
 #include "editor_view.h"
+
 #include <apps/global_preferences.h>
-#include <poincare/integer.h>
 #include <escher/app.h>
 #include <escher/palette.h>
+#include <poincare/integer.h>
 
 using namespace Escher;
 
@@ -10,12 +11,12 @@ namespace Code {
 
 /* EditorView */
 
-EditorView::EditorView(Responder * parentResponder, App * pythonDelegate) :
-  Responder(parentResponder),
-  View(),
-  m_textArea(parentResponder, pythonDelegate, GlobalPreferences::sharedGlobalPreferences->font()),
-  m_gutterView(GlobalPreferences::sharedGlobalPreferences->font())
-{
+EditorView::EditorView(Responder* parentResponder, App* pythonDelegate)
+    : Responder(parentResponder),
+      View(),
+      m_textArea(parentResponder, pythonDelegate,
+                 GlobalPreferences::sharedGlobalPreferences->font()),
+      m_gutterView(GlobalPreferences::sharedGlobalPreferences->font()) {
   m_textArea.setScrollViewDelegate(this);
 }
 
@@ -23,15 +24,14 @@ bool EditorView::isAutocompleting() const {
   return m_textArea.isAutocompleting();
 }
 
-void EditorView::resetSelection() {
-  m_textArea.resetSelection();
-}
+void EditorView::resetSelection() { m_textArea.resetSelection(); }
 
-void EditorView::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {
+void EditorView::scrollViewDidChangeOffset(
+    ScrollViewDataSource* scrollViewDataSource) {
   m_gutterView.setOffset(scrollViewDataSource->offset().y());
 }
 
-View * EditorView::subviewAtIndex(int index) {
+View* EditorView::subviewAtIndex(int index) {
   if (index == 0) {
     return &m_textArea;
   }
@@ -45,20 +45,18 @@ void EditorView::didBecomeFirstResponder() {
 
 void EditorView::layoutSubviews(bool force) {
   m_gutterView.setOffset(0);
-  KDCoordinate gutterWidth = m_gutterView.minimalSizeForOptimalDisplay().width();
+  KDCoordinate gutterWidth =
+      m_gutterView.minimalSizeForOptimalDisplay().width();
   m_gutterView.setFrame(KDRect(0, 0, gutterWidth, bounds().height()), force);
 
-  m_textArea.setFrame(KDRect(
-        gutterWidth,
-        0,
-        bounds().width()-gutterWidth,
-        bounds().height()),
+  m_textArea.setFrame(
+      KDRect(gutterWidth, 0, bounds().width() - gutterWidth, bounds().height()),
       force);
 }
 
 /* EditorView::GutterView */
 
-void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
+void EditorView::GutterView::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor textColor = Palette::BlueishGray;
   KDColor backgroundColor = KDColor::RGB24(0xE4E6E7);
 
@@ -71,7 +69,7 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
 
   char lineNumber[k_lineNumberCharLength];
   int numberOfLines = bounds().height() / glyphSize.height() + 1;
-  for (int i=0; i<numberOfLines; i++) {
+  for (int i = 0; i < numberOfLines; i++) {
     // Only the first two digits are displayed
     int lineNumberValue = (i + firstLine + 1) % 100;
     Poincare::Integer line(lineNumberValue);
@@ -83,13 +81,10 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
       line.serialize(lineNumber + 1, k_lineNumberCharLength - 1);
     }
     KDCoordinate leftPadding = (2 - strlen(lineNumber)) * glyphSize.width();
-    ctx->drawString(
-      lineNumber,
-      KDPoint(k_margin + leftPadding, i*glyphSize.height() - firstLinePixelOffset),
-      m_font,
-      textColor,
-      backgroundColor
-    );
+    ctx->drawString(lineNumber,
+                    KDPoint(k_margin + leftPadding,
+                            i * glyphSize.height() - firstLinePixelOffset),
+                    m_font, textColor, backgroundColor);
   }
 }
 
@@ -101,10 +96,9 @@ void EditorView::GutterView::setOffset(KDCoordinate offset) {
   markRectAsDirty(bounds());
 }
 
-
 KDSize EditorView::GutterView::minimalSizeForOptimalDisplay() const {
-  int numberOfChars = 2; // TODO: Could be computed
+  int numberOfChars = 2;  // TODO: Could be computed
   return KDSize(2 * k_margin + numberOfChars * KDFont::GlyphWidth(m_font), 0);
 }
 
-}
+}  // namespace Code

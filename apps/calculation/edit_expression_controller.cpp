@@ -1,8 +1,10 @@
 #include "edit_expression_controller.h"
-#include "app.h"
+
+#include <assert.h>
 #include <ion/display.h>
 #include <poincare/preferences.h>
-#include <assert.h>
+
+#include "app.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -10,13 +12,16 @@ using namespace Escher;
 
 namespace Calculation {
 
-EditExpressionController::ContentView::ContentView(Responder * parentResponder, CalculationSelectableTableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
-  View(),
-  m_mainView(subview),
-  m_expressionInputBar(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate)
-{}
+EditExpressionController::ContentView::ContentView(
+    Responder *parentResponder, CalculationSelectableTableView *subview,
+    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    LayoutFieldDelegate *layoutFieldDelegate)
+    : View(),
+      m_mainView(subview),
+      m_expressionInputBar(parentResponder, inputEventHandlerDelegate,
+                           layoutFieldDelegate) {}
 
-View * EditExpressionController::ContentView::subviewAtIndex(int index) {
+View *EditExpressionController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
   if (index == 0) {
     return m_mainView;
@@ -26,10 +31,13 @@ View * EditExpressionController::ContentView::subviewAtIndex(int index) {
 }
 
 void EditExpressionController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate inputViewFrameHeight = m_expressionInputBar.minimalSizeForOptimalDisplay().height();
-  KDRect mainViewFrame(0, 0, bounds().width(), bounds().height() - inputViewFrameHeight);
+  KDCoordinate inputViewFrameHeight =
+      m_expressionInputBar.minimalSizeForOptimalDisplay().height();
+  KDRect mainViewFrame(0, 0, bounds().width(),
+                       bounds().height() - inputViewFrameHeight);
   m_mainView->setFrame(mainViewFrame, force);
-  KDRect inputViewFrame(0, bounds().height() - inputViewFrameHeight, bounds().width(), inputViewFrameHeight);
+  KDRect inputViewFrame(0, bounds().height() - inputViewFrameHeight,
+                        bounds().width(), inputViewFrameHeight);
   m_expressionInputBar.setFrame(inputViewFrame, force);
 }
 
@@ -38,16 +46,21 @@ void EditExpressionController::ContentView::reload() {
   markRectAsDirty(bounds());
 }
 
-EditExpressionController::EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, HistoryController * historyController, CalculationStore * calculationStore) :
-  ViewController(parentResponder),
-  m_historyController(historyController),
-  m_calculationStore(calculationStore),
-  m_contentView(this, static_cast<CalculationSelectableTableView *>(m_historyController->view()), inputEventHandlerDelegate, this)
-{
+EditExpressionController::EditExpressionController(
+    Responder *parentResponder,
+    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    HistoryController *historyController, CalculationStore *calculationStore)
+    : ViewController(parentResponder),
+      m_historyController(historyController),
+      m_calculationStore(calculationStore),
+      m_contentView(this,
+                    static_cast<CalculationSelectableTableView *>(
+                        m_historyController->view()),
+                    inputEventHandlerDelegate, this) {
   clearWorkingBuffer();
 }
 
-void EditExpressionController::insertTextBody(const char * text) {
+void EditExpressionController::insertTextBody(const char *text) {
   Container::activeApp()->setFirstResponder(this);
   m_contentView.expressionField()->handleEventWithText(text, false, true);
   memoizeInput();
@@ -60,60 +73,80 @@ void EditExpressionController::didBecomeFirstResponder() {
 }
 
 void EditExpressionController::restoreInput() {
-  App::Snapshot * snap = App::app()->snapshot();
-  m_contentView.expressionField()->restoreContent(snap->cacheBuffer(), *snap->cacheBufferInformationAddress(), snap->cacheCursorOffset(), snap->cacheCursorPosition());
+  App::Snapshot *snap = App::app()->snapshot();
+  m_contentView.expressionField()->restoreContent(
+      snap->cacheBuffer(), *snap->cacheBufferInformationAddress(),
+      snap->cacheCursorOffset(), snap->cacheCursorPosition());
 }
 
 void EditExpressionController::memoizeInput() {
-  App::Snapshot * snap = App::app()->snapshot();
-  *snap->cacheBufferInformationAddress() = m_contentView.expressionField()->dumpContent(snap->cacheBuffer(), k_cacheBufferSize, snap->cacheCursorOffset(), snap->cacheCursorPosition());
+  App::Snapshot *snap = App::app()->snapshot();
+  *snap->cacheBufferInformationAddress() =
+      m_contentView.expressionField()->dumpContent(
+          snap->cacheBuffer(), k_cacheBufferSize, snap->cacheCursorOffset(),
+          snap->cacheCursorPosition());
 }
 
 void EditExpressionController::viewWillAppear() {
   m_historyController->viewWillAppear();
 }
 
-bool EditExpressionController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
-  bool shouldDuplicateLastCalculation = textField->isEditing() && textField->shouldFinishEditing(event) && textField->draftTextLength() == 0;
+bool EditExpressionController::textFieldDidReceiveEvent(
+    AbstractTextField *textField, Ion::Events::Event event) {
+  bool shouldDuplicateLastCalculation = textField->isEditing() &&
+                                        textField->shouldFinishEditing(event) &&
+                                        textField->draftTextLength() == 0;
   if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
     return true;
   }
   return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
 }
 
-bool EditExpressionController::textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textDidChange) {
+bool EditExpressionController::textFieldDidHandleEvent(
+    Escher::AbstractTextField *textField, bool returnValue,
+    bool textDidChange) {
   return inputViewDidHandleEvent(returnValue);
 }
 
-bool EditExpressionController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
+bool EditExpressionController::textFieldDidFinishEditing(
+    AbstractTextField *textField, const char *text, Ion::Events::Event event) {
   return inputViewDidFinishEditing(text, nullptr);
 }
 
-bool EditExpressionController::textFieldDidAbortEditing(AbstractTextField * textField) {
+bool EditExpressionController::textFieldDidAbortEditing(
+    AbstractTextField *textField) {
   return inputViewDidAbortEditing(textField->text());
 }
 
-bool EditExpressionController::layoutFieldDidReceiveEvent(::LayoutField * layoutField, Ion::Events::Event event) {
-  bool shouldDuplicateLastCalculation = layoutField->isEditing() && layoutField->shouldFinishEditing(event) && layoutField->isEmpty();
+bool EditExpressionController::layoutFieldDidReceiveEvent(
+    ::LayoutField *layoutField, Ion::Events::Event event) {
+  bool shouldDuplicateLastCalculation =
+      layoutField->isEditing() && layoutField->shouldFinishEditing(event) &&
+      layoutField->isEmpty();
   if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
     return true;
   }
-  return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField, event);
+  return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField,
+                                                                  event);
 }
 
-bool EditExpressionController::layoutFieldDidHandleEvent(Escher::LayoutField * layoutField, bool returnValue, bool layoutDidChange) {
+bool EditExpressionController::layoutFieldDidHandleEvent(
+    Escher::LayoutField *layoutField, bool returnValue, bool layoutDidChange) {
   return inputViewDidHandleEvent(returnValue);
 }
 
-bool EditExpressionController::layoutFieldDidFinishEditing(::LayoutField * layoutField, Layout layoutR, Ion::Events::Event event) {
+bool EditExpressionController::layoutFieldDidFinishEditing(
+    ::LayoutField *layoutField, Layout layoutR, Ion::Events::Event event) {
   return inputViewDidFinishEditing(nullptr, layoutR);
 }
 
-bool EditExpressionController::layoutFieldDidAbortEditing(::LayoutField * layoutField) {
+bool EditExpressionController::layoutFieldDidAbortEditing(
+    ::LayoutField *layoutField) {
   return inputViewDidAbortEditing(nullptr);
 }
 
-void EditExpressionController::layoutFieldDidChangeSize(::LayoutField * layoutField) {
+void EditExpressionController::layoutFieldDidChangeSize(
+    ::LayoutField *layoutField) {
   if (m_contentView.expressionField()->inputViewHeightDidChange()) {
     /* Reload the whole view only if the ExpressionField's height did actually
      * change. */
@@ -133,15 +166,19 @@ void EditExpressionController::reloadView() {
   m_historyController->reload();
 }
 
-bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation) {
+bool EditExpressionController::inputViewDidReceiveEvent(
+    Ion::Events::Event event, bool shouldDuplicateLastCalculation) {
   if (shouldDuplicateLastCalculation && m_workingBuffer[0] != 0) {
     /* The input text store in m_workingBuffer might have been correct the first
      * time but then be too long when replacing ans in another context */
-    Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
+    Shared::TextFieldDelegateApp *myApp = textFieldDelegateApp();
     if (!myApp->isAcceptableText(m_workingBuffer)) {
       return true;
     }
-    if (m_calculationStore->push(m_workingBuffer, myApp->localContext(), HistoryViewCell::Height).pointer()) {
+    if (m_calculationStore
+            ->push(m_workingBuffer, myApp->localContext(),
+                   HistoryViewCell::Height)
+            .pointer()) {
       m_historyController->reload();
       return true;
     }
@@ -154,7 +191,8 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
     }
     return true;
   }
-  if (event == Ion::Events::Clear && m_contentView.expressionField()->isEmpty()) {
+  if (event == Ion::Events::Clear &&
+      m_contentView.expressionField()->isEmpty()) {
     m_calculationStore->deleteAll();
     m_historyController->reload();
     return true;
@@ -171,15 +209,19 @@ bool EditExpressionController::inputViewDidHandleEvent(bool returnValue) {
   return returnValue;
 }
 
-bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layout layoutR) {
-  Context * context = textFieldDelegateApp()->localContext();
+bool EditExpressionController::inputViewDidFinishEditing(const char *text,
+                                                         Layout layoutR) {
+  Context *context = textFieldDelegateApp()->localContext();
   if (layoutR.isUninitialized()) {
     assert(text);
     strlcpy(m_workingBuffer, text, k_cacheBufferSize);
   } else {
-    layoutR.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize, context);
+    layoutR.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize,
+                                      context);
   }
-  if (m_calculationStore->push(m_workingBuffer, context, HistoryViewCell::Height).pointer()) {
+  if (m_calculationStore
+          ->push(m_workingBuffer, context, HistoryViewCell::Height)
+          .pointer()) {
     m_historyController->reload();
     m_contentView.expressionField()->clearAndSetEditing(true);
     telemetryReportEvent("Input", m_workingBuffer);
@@ -188,7 +230,7 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
   return false;
 }
 
-bool EditExpressionController::inputViewDidAbortEditing(const char * text) {
+bool EditExpressionController::inputViewDidAbortEditing(const char *text) {
   if (text != nullptr) {
     m_contentView.expressionField()->clearAndSetEditing(true);
     m_contentView.expressionField()->setText(text);
@@ -196,4 +238,4 @@ bool EditExpressionController::inputViewDidAbortEditing(const char * text) {
   return false;
 }
 
-}
+}  // namespace Calculation

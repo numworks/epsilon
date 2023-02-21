@@ -1,28 +1,40 @@
-#include <poincare/matrix_echelon_form.h>
-#include <poincare/matrix_complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
+#include <poincare/matrix_complex.h>
+#include <poincare/matrix_echelon_form.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
-int MatrixEchelonFormNode::numberOfChildren() const { return sNumberOfChildren; }
+int MatrixEchelonFormNode::numberOfChildren() const {
+  return sNumberOfChildren;
+}
 
-Expression MatrixEchelonFormNode::shallowReduce(const ReductionContext& reductionContext) {
+Expression MatrixEchelonFormNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return MatrixEchelonForm(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixEchelonFormNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(MatrixEchelonForm(this), floatDisplayMode, numberOfSignificantDigits, functionHelperName(), context);
+Layout MatrixEchelonFormNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
+  return LayoutHelper::Prefix(MatrixEchelonForm(this), floatDisplayMode,
+                              numberOfSignificantDigits, functionHelperName(),
+                              context);
 }
 
-int MatrixEchelonFormNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, functionHelperName());
+int MatrixEchelonFormNode::serialize(
+    char* buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode,
+                                     numberOfSignificantDigits,
+                                     functionHelperName());
 }
 
-template<typename T>
-Evaluation<T> MatrixEchelonFormNode::templatedApproximate(const ApproximationContext& approximationContext) const {
+template <typename T>
+Evaluation<T> MatrixEchelonFormNode::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> ref;
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
@@ -34,15 +46,12 @@ Evaluation<T> MatrixEchelonFormNode::templatedApproximate(const ApproximationCon
   return ref;
 }
 
-
 Expression MatrixEchelonForm::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits
-    );
+        SimplificationHelper::UnitReduction::BanUnits);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -50,7 +59,8 @@ Expression MatrixEchelonForm::shallowReduce(ReductionContext reductionContext) {
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Matrix) {
     bool couldComputeRef = false;
-    Expression result = static_cast<Matrix&>(c).createRef(reductionContext, &couldComputeRef, isFormReduced());
+    Expression result = static_cast<Matrix&>(c).createRef(
+        reductionContext, &couldComputeRef, isFormReduced());
     if (couldComputeRef) {
       replaceWithInPlace(result);
       return result;
@@ -61,4 +71,4 @@ Expression MatrixEchelonForm::shallowReduce(ReductionContext reductionContext) {
   return replaceWithUndefinedInPlace();
 }
 
-}
+}  // namespace Poincare

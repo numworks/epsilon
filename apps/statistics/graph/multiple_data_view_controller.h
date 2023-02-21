@@ -7,16 +7,14 @@
 namespace Statistics {
 
 class MultipleDataViewController : public DataViewController {
-
-public:
+ public:
   using DataViewController::DataViewController;
-  virtual MultipleDataView * multipleDataView() = 0;
+  virtual MultipleDataView* multipleDataView() = 0;
 
   // DataViewController
-  DataView * dataView() override { return multipleDataView(); }
+  DataView* dataView() override { return multipleDataView(); }
 };
 
-}
-
+}  // namespace Statistics
 
 #endif

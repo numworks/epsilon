@@ -31,7 +31,9 @@ Table::Index2D Table::computeDimensions() const {
   bool displayLastEmptyRow = dim.row < maxNumberOfRows();
   bool displayLastEmptyColumn = dim.col < maxNumberOfColumns();
   Table::Index2D initialDim = initialDimensions();
-  return Index2D{.row = std::max(initialDim.row, dim.row + displayLastEmptyRow), .col = std::max(initialDim.col, dim.col + displayLastEmptyColumn)};
+  return Index2D{
+      .row = std::max(initialDim.row, dim.row + displayLastEmptyRow),
+      .col = std::max(initialDim.col, dim.col + displayLastEmptyColumn)};
 }
 
 Table::Index2D Table::computeInnerDimensions() const {
@@ -53,10 +55,8 @@ Table::Index2D Table::computeInnerDimensions() const {
 }
 
 Table::Index2D Table::indexToIndex2D(int index) const {
-  return Index2D{
-      .row = index / maxNumberOfColumns(),
-      .col = index % maxNumberOfColumns()
-    };
+  return Index2D{.row = index / maxNumberOfColumns(),
+                 .col = index % maxNumberOfColumns()};
 }
 
 int Table::index2DToIndex(Index2D indexes) const {
@@ -67,4 +67,4 @@ int Table::index2DToIndex(int row, int column) const {
   return column + row * maxNumberOfColumns();
 }
 
-}
+}  // namespace Inference

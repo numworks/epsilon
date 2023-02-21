@@ -9,9 +9,8 @@ bool SVC_ATTRIBUTES hasCheckpoint(CheckpointType type) {
   SVC_RETURNING_R0(SVC_CIRCUIT_BREAKER_HAS_CHECKPOINT, bool)
 }
 
-void SVC_ATTRIBUTES loadCheckpoint(CheckpointType type) {
-  SVC_RETURNING_VOID(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT)
-}
+void SVC_ATTRIBUTES loadCheckpoint(CheckpointType type){
+    SVC_RETURNING_VOID(SVC_CIRCUIT_BREAKER_LOAD_CHECKPOINT)}
 
 Status stallUntilReady() {
   Status s = status();
@@ -22,9 +21,8 @@ Status stallUntilReady() {
   return s;
 }
 
-bool SVC_ATTRIBUTES kernelSetCheckpoint(CheckpointType type) {
-  SVC_RETURNING_R0(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT, bool)
-}
+bool SVC_ATTRIBUTES kernelSetCheckpoint(CheckpointType type){
+    SVC_RETURNING_R0(SVC_CIRCUIT_BREAKER_SET_CHECKPOINT, bool)}
 
 Status setCheckpoint(CheckpointType type) {
   bool checkpointHasBeenSet = kernelSetCheckpoint(type);
@@ -42,13 +40,9 @@ void SVC_ATTRIBUTES unsetCheckpoint(CheckpointType type) {
   SVC_RETURNING_VOID(SVC_CIRCUIT_BREAKER_UNSET_CHECKPOINT)
 }
 
-void SVC_ATTRIBUTES lock() {
-  SVC_RETURNING_VOID(SVC_CIRCUIT_BREAKER_LOCK)
-}
+void SVC_ATTRIBUTES lock() { SVC_RETURNING_VOID(SVC_CIRCUIT_BREAKER_LOCK) }
 
-void SVC_ATTRIBUTES unlock() {
-  SVC_RETURNING_VOID(SVC_CIRCUIT_BREAKER_UNLOCK)
-}
+void SVC_ATTRIBUTES unlock() { SVC_RETURNING_VOID(SVC_CIRCUIT_BREAKER_UNLOCK) }
 
-}
-}
+}  // namespace CircuitBreaker
+}  // namespace Ion

@@ -7,30 +7,33 @@
 namespace Poincare {
 
 class SumLayoutNode final : public SequenceLayoutNode {
-public:
+ public:
   using SequenceLayoutNode::SequenceLayoutNode;
 
   // Layout
   Type type() const override { return Type::SumLayout; }
 
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char* buffer, int bufferSize,
+                Preferences::PrintFloatMode floatDisplayMode,
+                int numberOfSignificantDigits) const override;
   size_t size() const override { return sizeof(SumLayoutNode); }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream& stream) const override {
     stream << "SumLayout";
   }
 #endif
 
-private:
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
+ private:
+  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
+              KDColor expressionColor, KDColor backgroundColor) override;
 };
 
 class SumLayout final : public LayoutFourChildren<SumLayout, SumLayoutNode> {
-public:
+ public:
   using LayoutBuilder::Builder;
   SumLayout() = delete;
 };
 
-}
+}  // namespace Poincare
 
 #endif

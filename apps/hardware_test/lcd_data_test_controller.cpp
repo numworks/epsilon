@@ -1,4 +1,5 @@
 #include "lcd_data_test_controller.h"
+
 #include <ion/backlight.h>
 #include <ion/display.h>
 #include <ion/post_and_hardware_tests.h>
@@ -32,14 +33,16 @@ void LCDDataTestController::viewWillAppear() {
   Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
 }
 
-LCDDataTestController::ContentView::ContentView() :
-  SolidColorView(KDColorWhite),
-  m_lcdDataStateView(KDFont::Size::Large, KDContext::k_alignCenter, KDContext::k_alignCenter),
-  m_lcdNumberPixelFailuresView(KDFont::Size::Small, KDContext::k_alignCenter, KDContext::k_alignCenter)
-{
-}
+LCDDataTestController::ContentView::ContentView()
+    : SolidColorView(KDColorWhite),
+      m_lcdDataStateView(KDFont::Size::Large, KDContext::k_alignCenter,
+                         KDContext::k_alignCenter),
+      m_lcdNumberPixelFailuresView(KDFont::Size::Small,
+                                   KDContext::k_alignCenter,
+                                   KDContext::k_alignCenter) {}
 
-void LCDDataTestController::ContentView::setStatus(bool success, int numberOfErrors) {
+void LCDDataTestController::ContentView::setStatus(bool success,
+                                                   int numberOfErrors) {
   KDColor backgroundColor = (success ? KDColorGreen : KDColorRed);
   m_lcdDataStateView.setBackgroundColor(backgroundColor);
   m_lcdNumberPixelFailuresView.setBackgroundColor(backgroundColor);
@@ -52,7 +55,8 @@ void LCDDataTestController::ContentView::setStatus(bool success, int numberOfErr
 
 void LCDDataTestController::ContentView::layoutSubviews(bool force) {
   m_lcdDataStateView.setFrame(KDRectScreen, force);
-  m_lcdNumberPixelFailuresView.setFrame(KDRect(10, 10, Ion::Display::Width, 20), force);
+  m_lcdNumberPixelFailuresView.setFrame(KDRect(10, 10, Ion::Display::Width, 20),
+                                        force);
 }
 
-}
+}  // namespace HardwareTest

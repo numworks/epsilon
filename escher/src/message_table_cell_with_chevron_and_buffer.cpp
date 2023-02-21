@@ -3,20 +3,20 @@
 
 namespace Escher {
 
-MessageTableCellWithChevronAndBuffer::MessageTableCellWithChevronAndBuffer() :
-  MessageTableCellWithChevron((I18n::Message)0),
-  m_subLabelView(KDFont::Size::Small, KDContext::k_alignRight, KDContext::k_alignCenter, Palette::GrayDark)
-{
-}
+MessageTableCellWithChevronAndBuffer::MessageTableCellWithChevronAndBuffer()
+    : MessageTableCellWithChevron((I18n::Message)0),
+      m_subLabelView(KDFont::Size::Small, KDContext::k_alignRight,
+                     KDContext::k_alignCenter, Palette::GrayDark) {}
 
 void MessageTableCellWithChevronAndBuffer::setHighlighted(bool highlight) {
   MessageTableCellWithChevron::setHighlighted(highlight);
   m_subLabelView.setBackgroundColor(defaultBackgroundColor());
 }
 
-void MessageTableCellWithChevronAndBuffer::setSubLabelText(const char * textBody) {
+void MessageTableCellWithChevronAndBuffer::setSubLabelText(
+    const char* textBody) {
   m_subLabelView.setText(textBody);
   layoutSubviews();
 }
 
-}
+}  // namespace Escher

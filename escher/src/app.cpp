@@ -7,14 +7,14 @@ extern "C" {
 
 namespace Escher {
 
-void App::Snapshot::pack(App * app) {
+void App::Snapshot::pack(App* app) {
   tidy();
   app->~App();
   assert(Poincare::TreePool::sharedPool->numberOfNodes() == 0);
 }
 
 bool App::processEvent(Ion::Events::Event event) {
-  Responder * responder = m_firstResponder;
+  Responder* responder = m_firstResponder;
   bool didHandleEvent = false;
   while (responder) {
     didHandleEvent = responder->handleEvent(event);
@@ -26,12 +26,12 @@ bool App::processEvent(Ion::Events::Event event) {
   return false;
 }
 
-void App::setFirstResponder(Responder * responder) {
+void App::setFirstResponder(Responder* responder) {
   /* This flag is used only in DEBUG to ensure that didEnterResponderChain do
    * not call setFirstResponder. */
 #if ASSERTIONS
   static bool preventRecursion = false;
-  //assert(!preventRecursion);
+  // assert(!preventRecursion);
 #endif
   /* TODO: Calculation::HistoryController relies on the fact that we reselect
    * the cell to highlight the correct subcell when the cell height is larger
@@ -41,11 +41,12 @@ void App::setFirstResponder(Responder * responder) {
   /*if (m_firstResponder == responder) {
     return;
   }*/
-  Responder * previousResponder = m_firstResponder;
+  Responder* previousResponder = m_firstResponder;
   m_firstResponder = responder;
   if (previousResponder) {
-    Responder * commonAncestor = previousResponder->commonAncestorWith(m_firstResponder);
-    Responder * leafResponder = previousResponder;
+    Responder* commonAncestor =
+        previousResponder->commonAncestorWith(m_firstResponder);
+    Responder* leafResponder = previousResponder;
 #if ASSERTIONS
     preventRecursion = true;
 #endif
@@ -60,10 +61,11 @@ void App::setFirstResponder(Responder * responder) {
   }
   if (m_firstResponder) {
     constexpr int k_maxNumberOfResponders = 32;
-    Responder * responderStack[k_maxNumberOfResponders];
+    Responder* responderStack[k_maxNumberOfResponders];
     int index = 0;
-    Responder * commonAncestor = m_firstResponder->commonAncestorWith(previousResponder);
-    Responder * leafResponder = m_firstResponder;
+    Responder* commonAncestor =
+        m_firstResponder->commonAncestorWith(previousResponder);
+    Responder* leafResponder = m_firstResponder;
 #if ASSERTIONS
     preventRecursion = true;
 #endif
@@ -72,30 +74,37 @@ void App::setFirstResponder(Responder * responder) {
       responderStack[index++] = leafResponder;
       leafResponder = leafResponder->parentResponder();
     }
-    for(index--; index >= 0; index--) {
+    for (index--; index >= 0; index--) {
       responderStack[index]->didEnterResponderChain(previousResponder);
     }
 #if ASSERTIONS
     preventRecursion = false;
-    (void) preventRecursion;
+    (void)preventRecursion;
 #endif
     m_firstResponder->didBecomeFirstResponder();
   }
 }
 
-void App::displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
-    KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin, bool growingOnly) {
+void App::displayModalViewController(
+    ViewController* vc, float verticalAlignment, float horizontalAlignment,
+    KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin,
+    KDCoordinate rightMargin, bool growingOnly) {
   m_modalViewController.dismissPotentialModal();
-  m_modalViewController.displayModalViewController(vc, verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin, growingOnly);
+  m_modalViewController.displayModalViewController(
+      vc, verticalAlignment, horizontalAlignment, topMargin, leftMargin,
+      bottomMargin, rightMargin, growingOnly);
 }
 
-void App::displayWarning(I18n::Message warningMessage1, I18n::Message warningMessage2, bool specialExitKeys) {
-  m_warningController.setLabel(warningMessage1, warningMessage2, specialExitKeys);
-  displayModalViewController(&m_warningController, KDContext::k_alignCenter, KDContext::k_alignCenter);
+void App::displayWarning(I18n::Message warningMessage1,
+                         I18n::Message warningMessage2, bool specialExitKeys) {
+  m_warningController.setLabel(warningMessage1, warningMessage2,
+                               specialExitKeys);
+  displayModalViewController(&m_warningController, KDContext::k_alignCenter,
+                             KDContext::k_alignCenter);
 }
 
-void App::didBecomeActive(Window * window) {
-  View * view = m_modalViewController.view();
+void App::didBecomeActive(Window* window) {
+  View* view = m_modalViewController.view();
   m_modalViewController.initView();
   window->setContentView(view);
   m_modalViewController.viewWillAppear();
@@ -107,4 +116,4 @@ void App::willBecomeInactive() {
   m_modalViewController.viewDidDisappear();
 }
 
-}
+}  // namespace Escher

@@ -4,13 +4,13 @@
 #include <escher/timer.h>
 
 class SuspendTimer : public Escher::Timer {
-public:
+ public:
   SuspendTimer();
-private:
+
+ private:
   // In miliseconds
-  constexpr static int k_idleBeforeSuspendDuration = 5*60*1000;
+  constexpr static int k_idleBeforeSuspendDuration = 5 * 60 * 1000;
   bool fire() override;
 };
 
 #endif
-

@@ -1,19 +1,20 @@
+#include <ion/ring_buffer.h>
 #include <quiz.h>
 #include <string.h>
-#include <ion/ring_buffer.h>
 
 using namespace Ion;
 
 constexpr int k_ringSize = 6;
 
-void assert_ring_buffer_is(RingBuffer<int, k_ringSize> & ringBuffer, int * state, size_t stateLength) {
+void assert_ring_buffer_is(RingBuffer<int, k_ringSize>& ringBuffer, int* state,
+                           size_t stateLength) {
   quiz_assert(ringBuffer.length() == stateLength);
   for (size_t i = 0; i < stateLength; i++) {
     quiz_assert(*ringBuffer.elementAtIndex(i) == state[i]);
   }
 }
 
-void fill_ring(RingBuffer<int, k_ringSize> * ringBuffer) {
+void fill_ring(RingBuffer<int, k_ringSize>* ringBuffer) {
   for (int i = 0; i < k_ringSize; i++) {
     ringBuffer->push(i);
   }
@@ -42,4 +43,3 @@ QUIZ_CASE(escher_ring_buffer) {
   ringBuffer.reset();
   quiz_assert(ringBuffer.length() == 0);
 }
-

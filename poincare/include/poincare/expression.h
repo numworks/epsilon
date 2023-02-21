@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_REFERENCE_H
 #define POINCARE_EXPRESSION_REFERENCE_H
 
+#include <ion/storage/file_system.h>
 #include <poincare/aliases_list.h>
 #include <poincare/complex.h>
 #include <poincare/coordinate_2D.h>
@@ -8,7 +9,7 @@
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/tree_handle.h>
-#include <ion/storage/file_system.h>
+
 #include <utility>
 
 namespace Poincare {
@@ -33,7 +34,7 @@ class Expression : public TreeHandle {
   friend class ComplexArgument;
   friend class ComplexCartesian;
   friend class ComplexHelper;
-  template<typename T>
+  template <typename T>
   friend class ComplexNode;
   friend class Conjugate;
   friend class Constant;
@@ -52,12 +53,12 @@ class Expression : public TreeHandle {
   friend class DivisionQuotient;
   friend class DivisionRemainder;
   friend class EqualNode;
-  template<typename T>
+  template <typename T>
   friend class ExceptionExpressionNode;
   friend class ExpressionNode;
   friend class Factor;
   friend class Factorial;
-  template<typename T>
+  template <typename T>
   friend class FloatList;
   friend class Floor;
   friend class FracPart;
@@ -145,24 +146,34 @@ class Expression : public TreeHandle {
   friend class VectorDot;
   friend class VectorNorm;
 
-public:
+ public:
   static bool IsExpression() { return true; }
 
   /* Constructor & Destructor */
   Expression() : TreeHandle() {}
   Expression clone() const;
-  static Expression Parse(char const * string, Context * context, bool addMissingParenthesis = true, bool parseForAssignment = false);
-  static Expression ExpressionFromAddress(const void * address, size_t size);
+  static Expression Parse(char const* string, Context* context,
+                          bool addMissingParenthesis = true,
+                          bool parseForAssignment = false);
+  static Expression ExpressionFromAddress(const void* address, size_t size);
 
   /* Hierarchy */
   Expression childAtIndex(int i) const;
-  void setChildrenInPlace(Expression other) { node()->setChildrenInPlace(other); }
+  void setChildrenInPlace(Expression other) {
+    node()->setChildrenInPlace(other);
+  }
 
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
-  bool isOfType(std::initializer_list<ExpressionNode::Type> types) const { return node()->isOfType(types); }
-  TrinaryBoolean isPositive(Context * context) const { return node()->isPositive(context); }
-  TrinaryBoolean isNull(Context * context) const { return node()->isNull(context); }
+  bool isOfType(std::initializer_list<ExpressionNode::Type> types) const {
+    return node()->isOfType(types);
+  }
+  TrinaryBoolean isPositive(Context* context) const {
+    return node()->isPositive(context);
+  }
+  TrinaryBoolean isNull(Context* context) const {
+    return node()->isNull(context);
+  }
   bool isUndefined() const { return node()->isUndefined(); }
   bool allChildrenAreUndefined();
   bool isNumber() const { return node()->isNumber(); }
@@ -171,54 +182,86 @@ public:
   bool isMinusOne() const;
   bool isInteger() const;
   bool isRandom() const { return node()->isRandom(); }
-  bool isParameteredExpression() const { return node()->isParameteredExpression(); }
-  bool isBasedIntegerCappedBy(const char * integerString) const;
+  bool isParameteredExpression() const {
+    return node()->isParameteredExpression();
+  }
+  bool isBasedIntegerCappedBy(const char* integerString) const;
   bool isDivisionOfIntegers() const;
   bool isAlternativeFormOfRationalNumber() const;
-  bool hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, float * returnRealPart = nullptr, float * returnImagPart = nullptr) const;
+  bool hasDefinedComplexApproximation(Context* context,
+                                      Preferences::ComplexFormat complexFormat,
+                                      Preferences::AngleUnit angleUnit,
+                                      float* returnRealPart = nullptr,
+                                      float* returnImagPart = nullptr) const;
   bool isCombinationOfUnits() const { return node()->isCombinationOfUnits(); }
   /* This two functions only return true if the discontinuity is not asymptotic
    * (i.e. for the functions random, randint, round, floor and ceil).
    * Functions like 1/x are not handled here since it "obvious" that they are
    * discontinuous. */
-  bool involvesDiscontinuousFunction(Context * context) const;
-  bool isDiscontinuousBetweenValuesForSymbol(const char * symbol, float x1, float x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  bool involvesDiscontinuousFunction(Context* context) const;
+  bool isDiscontinuousBetweenValuesForSymbol(
+      const char* symbol, float x1, float x2, Context* context,
+      Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit) const;
   bool hasBooleanValue() const;
-  bool hasMatrixOrListChild(Context * context, bool isReduced = true) const { return node()->hasMatrixOrListChild(context, isReduced); }
+  bool hasMatrixOrListChild(Context* context, bool isReduced = true) const {
+    return node()->hasMatrixOrListChild(context, isReduced);
+  }
 
   /* recursivelyMatches will test each node recursively with the function
    * provided as argument. If the result is True, it will stop searching and
-   * return true. If the result is Unknown, it will continue searching for a True
-   * in the children. If an expression is tested as False, its children will not
-   * be tested and the result will be false. */
-  typedef TrinaryBoolean (*ExpressionTrinaryTest)(const Expression e, Context * context, void * auxiliary);
-  bool recursivelyMatches(ExpressionTrinaryTest test, Context * context = nullptr, SymbolicComputation replaceSymbols = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const;
-  typedef bool (*ExpressionTest)(const Expression e, Context * context);
-  bool recursivelyMatches(ExpressionTest test, Context * context = nullptr, SymbolicComputation replaceSymbols = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
-  typedef bool (*ExpressionTestAuxiliary)(const Expression e, Context * context, void * auxiliary);
-  bool recursivelyMatches(ExpressionTestAuxiliary test, Context * context = nullptr, SymbolicComputation replaceSymbols = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const;
+   * return true. If the result is Unknown, it will continue searching for a
+   * True in the children. If an expression is tested as False, its children
+   * will not be tested and the result will be false. */
+  typedef TrinaryBoolean (*ExpressionTrinaryTest)(const Expression e,
+                                                  Context* context,
+                                                  void* auxiliary);
+  bool recursivelyMatches(
+      ExpressionTrinaryTest test, Context* context = nullptr,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      void* auxiliary = nullptr) const;
+  typedef bool (*ExpressionTest)(const Expression e, Context* context);
+  bool recursivelyMatches(
+      ExpressionTest test, Context* context = nullptr,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  typedef bool (*ExpressionTestAuxiliary)(const Expression e, Context* context,
+                                          void* auxiliary);
+  bool recursivelyMatches(
+      ExpressionTestAuxiliary test, Context* context = nullptr,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      void* auxiliary = nullptr) const;
 
-  bool deepIsMatrix(Context * context, bool canContainMatrices = true, bool isReduced = true) const;
-  bool deepIsList(Context * context) const;
+  bool deepIsMatrix(Context* context, bool canContainMatrices = true,
+                    bool isReduced = true) const;
+  bool deepIsList(Context* context) const;
   // Set of ExpressionTest that can be used with recursivelyMatches
-  static bool IsNAry(const Expression e, Context * context);
-  static bool IsApproximate(const Expression e, Context * context);
-  static bool IsRandom(const Expression e, Context * context);
-  static bool IsMatrix(const Expression e, Context * context);
-  static bool IsInfinity(const Expression e, Context * context);
-  static bool IsPercent(const Expression e, Context * context);
-  static bool IsDiscontinuous(const Expression e, Context * context);
-  static bool IsSymbolic(const Expression e, Context * context);
-  static bool DeepIsSymbolic(const Expression e, Context * context, SymbolicComputation replaceSymbols);
+  static bool IsNAry(const Expression e, Context* context);
+  static bool IsApproximate(const Expression e, Context* context);
+  static bool IsRandom(const Expression e, Context* context);
+  static bool IsMatrix(const Expression e, Context* context);
+  static bool IsInfinity(const Expression e, Context* context);
+  static bool IsPercent(const Expression e, Context* context);
+  static bool IsDiscontinuous(const Expression e, Context* context);
+  static bool IsSymbolic(const Expression e, Context* context);
+  static bool DeepIsSymbolic(const Expression e, Context* context,
+                             SymbolicComputation replaceSymbols);
 
-  typedef bool (*PatternTest)(const Expression& e, Context * context, const char * symbol);
-  static bool IsRationalFraction(const Expression& e, Context * context, const char * symbol);
-  bool isLinearCombinationOfFunction(Context * context, PatternTest testFunction, const char * symbol) const;
+  typedef bool (*PatternTest)(const Expression& e, Context* context,
+                              const char* symbol);
+  static bool IsRationalFraction(const Expression& e, Context* context,
+                                 const char* symbol);
+  bool isLinearCombinationOfFunction(Context* context, PatternTest testFunction,
+                                     const char* symbol) const;
 
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynomial
    * - the degree of the polynomial otherwise */
-  int polynomialDegree(Context * context, const char * symbolName) const { return this->node()->polynomialDegree(context, symbolName); }
+  int polynomialDegree(Context* context, const char* symbolName) const {
+    return this->node()->polynomialDegree(context, symbolName);
+  }
   /* getVariables fills the matrix variables with the symbols in the expression
    * that pass the test isVariable. It returns the number of entries filled in
    * variables. For instance, getVariables of 'x+y+2*w/cos(4)' would result in
@@ -227,23 +270,47 @@ public:
    * If one of the variable lengths overflows maxVariableLength, getVariables
    * returns -2. */
   constexpr static int k_maxNumberOfVariables = 6;
-  int getVariables(Context * context, ExpressionNode::isVariableTest isVariable, char * variables, int maxVariableLength, int nextVariableIndex = 0) const { return node()->getVariables(context, isVariable, variables, maxVariableLength, nextVariableIndex); }
+  int getVariables(Context* context, ExpressionNode::isVariableTest isVariable,
+                   char* variables, int maxVariableLength,
+                   int nextVariableIndex = 0) const {
+    return node()->getVariables(context, isVariable, variables,
+                                maxVariableLength, nextVariableIndex);
+  }
   /* getLinearCoefficients return false if the expression is not linear with
    * the variables hold in 'variables'. Otherwise, it fills 'coefficients' with
    * the coefficients of the variables hold in 'variables' (following the same
    * order) and 'constant' with the constant of the expression. */
-  bool getLinearCoefficients(char * variables, int maxVariableLength, Expression coefficients[], Expression * constant, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation) const;
+  bool getLinearCoefficients(char* variables, int maxVariableLength,
+                             Expression coefficients[], Expression* constant,
+                             Context* context,
+                             Preferences::ComplexFormat complexFormat,
+                             Preferences::AngleUnit angleUnit,
+                             Preferences::UnitFormat unitFormat,
+                             SymbolicComputation symbolicComputation) const;
   /* getPolynomialCoefficients fills the table coefficients with the expressions
    * of the first 3 polynomial coefficients and returns the  polynomial degree.
    * It is supposed to be called on a reduced expression.
    * coefficients has up to 3 entries.  */
   constexpr static int k_maxPolynomialDegree = 3;
-  constexpr static int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
-  int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation, bool keepDependencies = false) const;
-  Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
+  constexpr static int k_maxNumberOfPolynomialCoefficients =
+      k_maxPolynomialDegree + 1;
+  int getPolynomialReducedCoefficients(const char* symbolName,
+                                       Expression coefficients[],
+                                       Context* context,
+                                       Preferences::ComplexFormat complexFormat,
+                                       Preferences::AngleUnit angleUnit,
+                                       Preferences::UnitFormat unitFormat,
+                                       SymbolicComputation symbolicComputation,
+                                       bool keepDependencies = false) const;
+  Expression replaceSymbolWithExpression(const SymbolAbstract& symbol,
+                                         const Expression& expression) {
+    return node()->replaceSymbolWithExpression(symbol, expression);
+  }
 
   // These three functions are helpers for the function additional results
-  int numberOfNumericalValues() const { return node()->numberOfNumericalValues(); }
+  int numberOfNumericalValues() const {
+    return node()->numberOfNumericalValues();
+  }
   /* Generalizes an expression to a function, by replacing numerical values with
    * a symbol. Beware that 2^3 is generalized as x^3, not x^x. */
   void replaceNumericalValuesWithSymbol(Symbol x);
@@ -251,18 +318,21 @@ public:
   float getNumericalValue();
 
   /* Units */
-  Expression removeUnit(Expression * unit) { return node()->removeUnit(unit); }
+  Expression removeUnit(Expression* unit) { return node()->removeUnit(unit); }
   bool hasUnit() const;
   // True if has only rad or ° as unit.
-  bool isInRadians(Context * context) const;
+  bool isInRadians(Context* context) const;
   bool isPureAngleUnit() const;
 
   /* Complex */
   static bool EncounteredComplex();
   static void SetEncounteredComplex(bool encounterComplex);
-  bool hasComplexI(Context * context, SymbolicComputation replaceSymbols = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  bool hasComplexI(
+      Context* context,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
   // WARNING: this methods must be called on reduced expressions
-  bool isReal(Context * context, bool canContainMatrices = true) const;
+  bool isReal(Context* context, bool canContainMatrices = true) const;
 
   static void SetReductionEncounteredUndistributedList(bool encounter);
 
@@ -274,20 +344,33 @@ public:
   /* isIdenticalToWithoutParentheses behaves as isIdenticalTo, but without
    * taking into account parentheses: e^(0) is identical to e^0. */
   bool isIdenticalToWithoutParentheses(const Expression e) const;
-  bool containsSameDependency(const Expression e, const ReductionContext& reductionContext) const;
+  bool containsSameDependency(const Expression e,
+                              const ReductionContext& reductionContext) const;
 
-  static bool ExactAndApproximateExpressionsAreEqual(Expression exactExpression, Expression approximateExpression);
+  static bool ExactAndApproximateExpressionsAreEqual(
+      Expression exactExpression, Expression approximateExpression);
 
   /* Layout Helper */
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context, bool forceStripMargin = false, bool nested = false) const;
-  ExpressionNode::LayoutShape leftLayoutShape() const { return node()->leftLayoutShape(); }
-  ExpressionNode::LayoutShape rightLayoutShape() const { return node()->rightLayoutShape(); }
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                      int numberOfSignificantDigits, Context* context,
+                      bool forceStripMargin = false, bool nested = false) const;
+  ExpressionNode::LayoutShape leftLayoutShape() const {
+    return node()->leftLayoutShape();
+  }
+  ExpressionNode::LayoutShape rightLayoutShape() const {
+    return node()->rightLayoutShape();
+  }
 
   /* TODO:
    * - change signature to
    *   size_t serialize(char * buffer, size_t bufferSize...)
-   * - Use same convention as strlcpy: return size of the source even if the bufferSize was too small.*/
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = PrintFloat::k_numberOfStoredSignificantDigits) const;
+   * - Use same convention as strlcpy: return size of the source even if the
+   * bufferSize was too small.*/
+  int serialize(char* buffer, int bufferSize,
+                Preferences::PrintFloatMode floatDisplayMode =
+                    Preferences::PrintFloatMode::Decimal,
+                int numberOfSignificantDigits =
+                    PrintFloat::k_numberOfStoredSignificantDigits) const;
 
   /* Simplification */
   /* Simplification routines are divided in 2 groups:
@@ -300,29 +383,62 @@ public:
    *   account the complex format required in the expression they return.
    *   (For instance, in Polar mode, they return an expression of the form
    *   r*e^(i*th) reduced and approximated.) */
-  static Expression ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default, bool * reductionFailure = nullptr);
-  Expression cloneAndSimplify(ReductionContext reductionContext, bool * reductionFailure = nullptr);
+  static Expression ParseAndSimplify(
+      const char* text, Context* context,
+      Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+      SymbolicComputation symbolicComputation =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      UnitConversion unitConversion = UnitConversion::Default,
+      bool* reductionFailure = nullptr);
+  Expression cloneAndSimplify(ReductionContext reductionContext,
+                              bool* reductionFailure = nullptr);
 
-  static void ParseAndSimplifyAndApproximate(const char * text, Expression * parsedExpression, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default);
-  void cloneAndSimplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default) const;
+  static void ParseAndSimplifyAndApproximate(
+      const char* text, Expression* parsedExpression,
+      Expression* simplifiedExpression, Expression* approximateExpression,
+      Context* context, Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+      SymbolicComputation symbolicComputation =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      UnitConversion unitConversion = UnitConversion::Default);
+  void cloneAndSimplifyAndApproximate(
+      Expression* simplifiedExpression, Expression* approximateExpression,
+      Context* context, Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+      SymbolicComputation symbolicComputation =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      UnitConversion unitConversion = UnitConversion::Default) const;
   Expression cloneAndReduce(ReductionContext reductionContext) const;
-  // TODO: deepReduceWithSystemCheckpoint should be private but we need to make poincare/text/helper.h a class to be able to friend it
-  Expression cloneAndDeepReduceWithSystemCheckpoint(ReductionContext * reductionContext, bool * reduceFailure) const;
-  // TODO: reduceAndRemoveUnit should be private but we need to make poincare/text/helper.h a class to be able to friend it
-  Expression reduceAndRemoveUnit(const ReductionContext& reductionContext, Expression * Unit);
-  Expression cloneAndReduceOrSimplify(ReductionContext reductionContext, bool beautify) { return beautify ? cloneAndSimplify(reductionContext) : cloneAndReduce(reductionContext); }
+  // TODO: deepReduceWithSystemCheckpoint should be private but we need to make
+  // poincare/text/helper.h a class to be able to friend it
+  Expression cloneAndDeepReduceWithSystemCheckpoint(
+      ReductionContext* reductionContext, bool* reduceFailure) const;
+  // TODO: reduceAndRemoveUnit should be private but we need to make
+  // poincare/text/helper.h a class to be able to friend it
+  Expression reduceAndRemoveUnit(const ReductionContext& reductionContext,
+                                 Expression* Unit);
+  Expression cloneAndReduceOrSimplify(ReductionContext reductionContext,
+                                      bool beautify) {
+    return beautify ? cloneAndSimplify(reductionContext)
+                    : cloneAndReduce(reductionContext);
+  }
   /* WARNING: this must be called only on expressions that:
    *  - are reduced.
    *  - have a known sign. (isPositive() != Unknown) */
   Expression setSign(bool positive, const ReductionContext& reductionContext);
 
-  Expression deepRemoveUselessDependencies(const ReductionContext& reductionContext);
+  Expression deepRemoveUselessDependencies(
+      const ReductionContext& reductionContext);
 
   /* 'ExpressionWithoutSymbols' replaces symbols in place and returns an
    * uninitialized expression if it is circularly defined.
    * SymbolicComputation defines how to handle functions
    * and undefined symbols. */
-  static Expression ExpressionWithoutSymbols(Expression expressionWithSymbols, Context * context, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  static Expression ExpressionWithoutSymbols(
+      Expression expressionWithSymbols, Context* context,
+      SymbolicComputation symbolicComputation =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
 
   Expression radianToAngleUnit(Preferences::AngleUnit angleUnit);
   Expression angleUnitToRadian(Preferences::AngleUnit angleUnit);
@@ -339,45 +455,84 @@ public:
   int lengthOfListChildren() const;
 
   /* Approximation Helper */
-  // These methods reset the sApproximationEncounteredComplex flag. They should not be use to implement node approximation
-  template<typename U> static U ParseAndSimplifyAndApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
-  template<typename U> Expression approximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
+  // These methods reset the sApproximationEncounteredComplex flag. They should
+  // not be use to implement node approximation
+  template <typename U>
+  static U ParseAndSimplifyAndApproximateToScalar(
+      const char* text, Context* context,
+      Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+      SymbolicComputation symbolicComputation =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
+  template <typename U>
+  Expression approximate(Context* context,
+                         Preferences::ComplexFormat complexFormat,
+                         Preferences::AngleUnit angleUnit,
+                         bool withinReduce = false) const;
   // WARNING: this will reduce the expression before removing units
-  template<typename U> Expression approximateKeepingUnits(const ReductionContext& reductionContext) const;
-  template<typename U> U approximateToScalar(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
-  template<typename U> U approximateWithValueForSymbol(const char * symbol, U x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  template <typename U>
+  Expression approximateKeepingUnits(
+      const ReductionContext& reductionContext) const;
+  template <typename U>
+  U approximateToScalar(Context* context,
+                        Preferences::ComplexFormat complexFormat,
+                        Preferences::AngleUnit angleUnit,
+                        bool withinReduce = false) const;
+  template <typename U>
+  U approximateWithValueForSymbol(const char* symbol, U x, Context* context,
+                                  Preferences::ComplexFormat complexFormat,
+                                  Preferences::AngleUnit angleUnit) const;
 
-  /* This class is meant to contain data about named functions (e.g. sin, tan...)
-   * in one place: their name, their number of children and a pointer to a builder.
-   * It is used in particular by the parser. */
+  /* This class is meant to contain data about named functions (e.g. sin,
+   * tan...) in one place: their name, their number of children and a pointer to
+   * a builder. It is used in particular by the parser. */
   class FunctionHelper {
-  public:
-    constexpr FunctionHelper(AliasesList aliasesList, const int minNumberOfChildren, const int maxNumberOfChildren, Expression (* const builder)(Expression)) :
-      FunctionHelper(aliasesList, minNumberOfChildren, maxNumberOfChildren, builder, nullptr, 0) {}
-    constexpr FunctionHelper(AliasesList aliasesList, const int numberOfChildren, Expression (* const builder)(Expression)) :
-      FunctionHelper(aliasesList, numberOfChildren, numberOfChildren, builder) {}
-    constexpr FunctionHelper(AliasesList aliasesList, const int minNumberOfChildren, const int maxNumberOfChildren, TreeNode::Initializer initializer, size_t size) :
-      FunctionHelper(aliasesList, minNumberOfChildren, maxNumberOfChildren, nullptr, initializer, size) {}
+   public:
+    constexpr FunctionHelper(AliasesList aliasesList,
+                             const int minNumberOfChildren,
+                             const int maxNumberOfChildren,
+                             Expression (*const builder)(Expression))
+        : FunctionHelper(aliasesList, minNumberOfChildren, maxNumberOfChildren,
+                         builder, nullptr, 0) {}
+    constexpr FunctionHelper(AliasesList aliasesList,
+                             const int numberOfChildren,
+                             Expression (*const builder)(Expression))
+        : FunctionHelper(aliasesList, numberOfChildren, numberOfChildren,
+                         builder) {}
+    constexpr FunctionHelper(AliasesList aliasesList,
+                             const int minNumberOfChildren,
+                             const int maxNumberOfChildren,
+                             TreeNode::Initializer initializer, size_t size)
+        : FunctionHelper(aliasesList, minNumberOfChildren, maxNumberOfChildren,
+                         nullptr, initializer, size) {}
     constexpr AliasesList aliasesList() const { return m_aliasesList; }
     int minNumberOfChildren() const { return m_minNumberOfChildren; }
     int maxNumberOfChildren() const { return m_maxNumberOfChildren; }
-    int numberOfChildren() const { assert(m_minNumberOfChildren == m_maxNumberOfChildren); return m_minNumberOfChildren; }
+    int numberOfChildren() const {
+      assert(m_minNumberOfChildren == m_maxNumberOfChildren);
+      return m_minNumberOfChildren;
+    }
     Expression build(Expression children) const;
-  private:
-    constexpr FunctionHelper(AliasesList aliasesList, const int minNumberOfChildren, const int maxNumberOfChildren, Expression (* const builder)(Expression), TreeNode::Initializer initializer, size_t size) :
-      m_aliasesList(aliasesList),
-      m_minNumberOfChildren(minNumberOfChildren),
-      m_maxNumberOfChildren(maxNumberOfChildren),
-      m_untypedBuilder(builder),
-      m_initializer(initializer),
-      m_size(size)
-    {
-      assert(minNumberOfChildren >= 0 && minNumberOfChildren <= maxNumberOfChildren);
+
+   private:
+    constexpr FunctionHelper(AliasesList aliasesList,
+                             const int minNumberOfChildren,
+                             const int maxNumberOfChildren,
+                             Expression (*const builder)(Expression),
+                             TreeNode::Initializer initializer, size_t size)
+        : m_aliasesList(aliasesList),
+          m_minNumberOfChildren(minNumberOfChildren),
+          m_maxNumberOfChildren(maxNumberOfChildren),
+          m_untypedBuilder(builder),
+          m_initializer(initializer),
+          m_size(size) {
+      assert(minNumberOfChildren >= 0 &&
+             minNumberOfChildren <= maxNumberOfChildren);
     }
     AliasesList m_aliasesList;
     const int m_minNumberOfChildren;
     const int m_maxNumberOfChildren;
-    Expression (* const m_untypedBuilder)(Expression children);
+    Expression (*const m_untypedBuilder)(Expression children);
     TreeNode::Initializer m_initializer;
     const size_t m_size;
   };
@@ -385,30 +540,32 @@ public:
   /* Tuple */
   typedef std::initializer_list<Expression> Tuple;
 
-protected:
-  Expression(const ExpressionNode * n) : TreeHandle(n) {}
+ protected:
+  Expression(const ExpressionNode* n) : TreeHandle(n) {}
 
-  template<typename U>
+  template <typename U>
   static Expression UntypedBuilderOneChild(Expression children) {
     assert(children.type() == ExpressionNode::Type::List);
     return U::Builder(children.childAtIndex(0));
   }
-  template<typename U>
+  template <typename U>
   static Expression UntypedBuilderTwoChildren(Expression children) {
     assert(children.type() == ExpressionNode::Type::List);
     return U::Builder(children.childAtIndex(0), children.childAtIndex(1));
   }
-  template<typename U>
+  template <typename U>
   static Expression UntypedBuilderThreeChildren(Expression children) {
     assert(children.type() == ExpressionNode::Type::List);
-    return U::Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2));
+    return U::Builder(children.childAtIndex(0), children.childAtIndex(1),
+                      children.childAtIndex(2));
   }
-  template<typename U>
+  template <typename U>
   static Expression UntypedBuilderFourChildren(Expression children) {
     assert(children.type() == ExpressionNode::Type::List);
-    return U::Builder(children.childAtIndex(0), children.childAtIndex(1), children.childAtIndex(2), children.childAtIndex(3));
+    return U::Builder(children.childAtIndex(0), children.childAtIndex(1),
+                      children.childAtIndex(2), children.childAtIndex(3));
   }
-  template<typename U>
+  template <typename U>
   static Expression UntypedBuilderMultipleChildren(Expression children) {
     // Only with Expression classes implementing addChildAtIndexInPlace
     assert(children.type() == ExpressionNode::Type::List);
@@ -421,7 +578,8 @@ protected:
     return std::move(expression);
   }
 
-  template<class T> T convert() const {
+  template <class T>
+  T convert() const {
     /* This function allows to convert Expression to derived Expressions.
      * The asserts ensure that the Expression can only be casted to another
      * Expression, but this does not prevent Expression types mismatches (cast
@@ -435,44 +593,66 @@ protected:
 
     assert(T::IsExpression());
     static_assert(sizeof(T) == sizeof(Expression), "Size mismatch");
-    return *reinterpret_cast<T *>(const_cast<Expression *>(this));
+    return *reinterpret_cast<T*>(const_cast<Expression*>(this));
   }
 
   static_assert(sizeof(TreeHandle::Tuple) == sizeof(Tuple), "Size mismatch");
-  static const TreeHandle::Tuple & convert(const Tuple & l) {
+  static const TreeHandle::Tuple& convert(const Tuple& l) {
     assert(sizeof(TreeHandle) == sizeof(Expression));
-    return reinterpret_cast<const TreeHandle::Tuple &>(l);
+    return reinterpret_cast<const TreeHandle::Tuple&>(l);
   }
 
   /* Reference */
-  ExpressionNode * node() const {
-    assert(identifier() != TreeNode::NoNodeIdentifier && !TreeHandle::node()->isGhost());
-    return static_cast<ExpressionNode *>(TreeHandle::node());
+  ExpressionNode* node() const {
+    assert(identifier() != TreeNode::NoNodeIdentifier &&
+           !TreeHandle::node()->isGhost());
+    return static_cast<ExpressionNode*>(TreeHandle::node());
   }
 
   /* Hierarchy */
-  Expression parent() const; // TODO try to inline
+  Expression parent() const;  // TODO try to inline
   Expression replaceWithUndefinedInPlace();
   void defaultSetChildrenInPlace(Expression other);
-  void addChildAtIndexInPlace(TreeHandle t, int index, int currentNumberOfChildren) = delete;
+  void addChildAtIndexInPlace(TreeHandle t, int index,
+                              int currentNumberOfChildren) = delete;
   void removeChildAtIndexInPlace(int i) = delete;
   void removeChildInPlace(TreeHandle t, int childNumberOfChildren) = delete;
   void removeChildrenInPlace(int currentNumberOfChildren) = delete;
 
   /* Properties */
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const { return node()->getPolynomialCoefficients(context, symbolName, coefficients); }
-  Expression defaultReplaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression expression);
+  int getPolynomialCoefficients(Context* context, const char* symbolName,
+                                Expression coefficients[]) const {
+    return node()->getPolynomialCoefficients(context, symbolName, coefficients);
+  }
+  Expression defaultReplaceSymbolWithExpression(const SymbolAbstract& symbol,
+                                                const Expression expression);
   /* 'deepReplaceReplaceableSymbols' replaces symbols in place. isCircular
    * indicates if it is circularly defined and has been interrupted.
    * SymbolicComputation defines how to handle functions and undefined symbols.
    */
-  bool involvesCircularity(Context * context, int maxDepth, const char * * visitedFunctions, int numberOfVisitedFunctions) { return node()->involvesCircularity(context, maxDepth, visitedFunctions, numberOfVisitedFunctions); }
-  Expression deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) { return node()->deepReplaceReplaceableSymbols(context, isCircular, parameteredAncestorsCount, symbolicComputation); }
-  Expression defaultReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
+  bool involvesCircularity(Context* context, int maxDepth,
+                           const char** visitedFunctions,
+                           int numberOfVisitedFunctions) {
+    return node()->involvesCircularity(context, maxDepth, visitedFunctions,
+                                       numberOfVisitedFunctions);
+  }
+  Expression deepReplaceReplaceableSymbols(
+      Context* context, TrinaryBoolean* isCircular,
+      int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
+    return node()->deepReplaceReplaceableSymbols(
+        context, isCircular, parameteredAncestorsCount, symbolicComputation);
+  }
+  Expression defaultReplaceReplaceableSymbols(
+      Context* context, TrinaryBoolean* isCircular,
+      int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
 
   /* Simplification */
-  static void SimplifyAndApproximateChildren(Expression input, Expression * simplifiedOutput, Expression * approximateOutput, const ReductionContext& reductionContext);
-  void beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ReductionContext userReductionContext);
+  static void SimplifyAndApproximateChildren(
+      Expression input, Expression* simplifiedOutput,
+      Expression* approximateOutput, const ReductionContext& reductionContext);
+  void beautifyAndApproximateScalar(Expression* simplifiedExpression,
+                                    Expression* approximateExpression,
+                                    ReductionContext userReductionContext);
   /* makePositiveAnyNegativeNumeralFactor looks for:
    * - a negative numeral
    * - a multiplication who has one numeral child whose is negative
@@ -482,24 +662,39 @@ protected:
    *  was -1, it was removed from the multiplication).
    * Warning: this must be called on reduced expressions
    */
-  Expression shallowBeautify(const ReductionContext& reductionContext) { return node()->shallowBeautify(reductionContext); }
-  Expression makePositiveAnyNegativeNumeralFactor(const ReductionContext& reductionContext);
-  Expression denominator(const ReductionContext& reductionContext) const { return node()->denominator(reductionContext); }
+  Expression shallowBeautify(const ReductionContext& reductionContext) {
+    return node()->shallowBeautify(reductionContext);
+  }
+  Expression makePositiveAnyNegativeNumeralFactor(
+      const ReductionContext& reductionContext);
+  Expression denominator(const ReductionContext& reductionContext) const {
+    return node()->denominator(reductionContext);
+  }
   /* shallowReduce takes a copy of reductionContext and not a reference
    * because it might need to modify it during reduction, namely in
    * SimplificationHelper::undefinedOnMatrix */
-  Expression shallowReduce(ReductionContext reductionContext) { return node()->shallowReduce(reductionContext); }
-  Expression deepBeautify(const ReductionContext& reductionContext) { return node()->deepBeautify(reductionContext); }
+  Expression shallowReduce(ReductionContext reductionContext) {
+    return node()->shallowReduce(reductionContext);
+  }
+  Expression deepBeautify(const ReductionContext& reductionContext) {
+    return node()->deepBeautify(reductionContext);
+  }
 
   /* Derivation */
   /* This method is used for the reduction of Derivative expressions.
    * It returns whether the instance is differentiable, and differentiates it if
    * able. */
-  bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
-  void derivateChildAtIndexInPlace(int index, const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
-  Expression unaryFunctionDifferential(const ReductionContext& reductionContext) { return node()->unaryFunctionDifferential(reductionContext); }
+  bool derivate(const ReductionContext& reductionContext, Symbol symbol,
+                Expression symbolValue);
+  void derivateChildAtIndexInPlace(int index,
+                                   const ReductionContext& reductionContext,
+                                   Symbol symbol, Expression symbolValue);
+  Expression unaryFunctionDifferential(
+      const ReductionContext& reductionContext) {
+    return node()->unaryFunctionDifferential(reductionContext);
+  }
 
-private:
+ private:
   constexpr static int k_maxSymbolReplacementsCount = 10;
 
   /* Add missing parenthesis will add parentheses that easen the reading of the
@@ -521,71 +716,94 @@ private:
     node()->deepReduceChildren(reductionContext);
   }
 
-  Expression shallowReduceUsingApproximation(const ReductionContext& reductionContext);
+  Expression shallowReduceUsingApproximation(
+      const ReductionContext& reductionContext);
   Expression defaultShallowBeautify() { return *this; }
 
   Expression defaultUnaryFunctionDifferential() { return *this; }
 
   /* Approximation */
-  template<typename U> Evaluation<U> approximateToEvaluation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
+  template <typename U>
+  Evaluation<U> approximateToEvaluation(
+      Context* context, Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
 
   /* Properties */
-  int defaultGetPolynomialCoefficients(Context * context, const char * symbol, Expression expression[]) const;
+  int defaultGetPolynomialCoefficients(Context* context, const char* symbol,
+                                       Expression expression[]) const;
 
   /* Builder */
   static bool IsZero(const Expression e);
   static bool IsOne(const Expression e);
   static bool IsMinusOne(const Expression e);
-  static Expression CreateComplexExpression(Expression ra, Expression tb, Preferences::ComplexFormat complexFormat, bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb, bool isNegativeRa, bool isNegativeTb);
+  static Expression CreateComplexExpression(
+      Expression ra, Expression tb, Preferences::ComplexFormat complexFormat,
+      bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb,
+      bool isNegativeRa, bool isNegativeTb);
 };
 
 // Helper to create the expression associated to a node
-template<typename T, typename U, int Nmin, int Nmax, typename Parent = Expression>
+template <typename T, typename U, int Nmin, int Nmax,
+          typename Parent = Expression>
 class ExpressionBuilder : public Parent {
-public:
+ public:
 #ifndef PLATFORM_DEVICE
   static_assert(std::is_base_of<Expression, Parent>::value);
 #endif
-  ExpressionBuilder(const U * n) : Parent(n) {}
+  ExpressionBuilder(const U* n) : Parent(n) {}
   static T Builder() {
     static_assert(Nmin <= 0 && Nmax >= 0);
-    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {});
+    TreeHandle h =
+        TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {});
     T expression = static_cast<T&>(h);
     return expression;
   }
   static T Builder(Expression child) {
     static_assert(Nmin <= 1 && Nmax >= 1);
-    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child});
+    TreeHandle h =
+        TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child});
     T expression = static_cast<T&>(h);
     return expression;
   }
   static T Builder(Expression child1, Expression child2) {
     static_assert(Nmin <= 2 && Nmax >= 2);
-    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U),
+                                                   {child1, child2});
     T expression = static_cast<T&>(h);
     return expression;
   }
   static T Builder(Expression child1, Expression child2, Expression child3) {
     static_assert(Nmin <= 3 && Nmax >= 3);
-    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2, child3});
+    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U),
+                                                   {child1, child2, child3});
     T expression = static_cast<T&>(h);
     return expression;
   }
-  static T Builder(Expression child1, Expression child2, Expression child3, Expression child4) {
+  static T Builder(Expression child1, Expression child2, Expression child3,
+                   Expression child4) {
     static_assert(Nmin <= 4 && Nmax >= 4);
-    TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2, child3, child4});
+    TreeHandle h = TreeHandle::BuilderWithChildren(
+        Initializer<U>, sizeof(U), {child1, child2, child3, child4});
     T expression = static_cast<T&>(h);
     return expression;
   }
-  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper(U::k_functionName, Nmin, Nmax, Initializer<U>, sizeof(U));
+  constexpr static Expression::FunctionHelper s_functionHelper =
+      Expression::FunctionHelper(U::k_functionName, Nmin, Nmax, Initializer<U>,
+                                 sizeof(U));
 };
 
-template<typename T, typename U, typename P = Expression> using ExpressionNoChildren = ExpressionBuilder<T,U,0,0,P>;
-template<typename T, typename U, typename P = Expression> using ExpressionOneChild = ExpressionBuilder<T,U,1,1,P>;
-template<typename T, typename U, typename P = Expression> using ExpressionTwoChildren = ExpressionBuilder<T,U,2,2,P>;
-template<typename T, typename U, typename P = Expression> using ExpressionUpToTwoChildren = ExpressionBuilder<T,U,1,2,P>;
-template<typename T, typename U, typename P = Expression> using ExpressionThreeChildren = ExpressionBuilder<T,U,3,3,P>;
-template<typename T, typename U, typename P = Expression> using ExpressionFourChildren = ExpressionBuilder<T,U,4,4,P>;
-}
+template <typename T, typename U, typename P = Expression>
+using ExpressionNoChildren = ExpressionBuilder<T, U, 0, 0, P>;
+template <typename T, typename U, typename P = Expression>
+using ExpressionOneChild = ExpressionBuilder<T, U, 1, 1, P>;
+template <typename T, typename U, typename P = Expression>
+using ExpressionTwoChildren = ExpressionBuilder<T, U, 2, 2, P>;
+template <typename T, typename U, typename P = Expression>
+using ExpressionUpToTwoChildren = ExpressionBuilder<T, U, 1, 2, P>;
+template <typename T, typename U, typename P = Expression>
+using ExpressionThreeChildren = ExpressionBuilder<T, U, 3, 3, P>;
+template <typename T, typename U, typename P = Expression>
+using ExpressionFourChildren = ExpressionBuilder<T, U, 4, 4, P>;
+}  // namespace Poincare
 
 #endif

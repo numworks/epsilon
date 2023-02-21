@@ -4,18 +4,23 @@ using namespace Escher;
 
 namespace Inference {
 
-InputGoodnessController::InputGoodnessController(StackViewController * parent, ViewController * resultsController, GoodnessTest * statistic, InputEventHandlerDelegate * inputEventHandlerDelegate) :
-  InputCategoricalController(parent, resultsController, statistic, inputEventHandlerDelegate),
-  m_innerDegreeOfFreedomCell(&m_selectableTableView, inputEventHandlerDelegate, this),
-  m_degreeOfFreedomCell(&m_innerDegreeOfFreedomCell),
-  m_goodnessTableCell(&m_selectableTableView, this, this, statistic, this)
-{
+InputGoodnessController::InputGoodnessController(
+    StackViewController *parent, ViewController *resultsController,
+    GoodnessTest *statistic,
+    InputEventHandlerDelegate *inputEventHandlerDelegate)
+    : InputCategoricalController(parent, resultsController, statistic,
+                                 inputEventHandlerDelegate),
+      m_innerDegreeOfFreedomCell(&m_selectableTableView,
+                                 inputEventHandlerDelegate, this),
+      m_degreeOfFreedomCell(&m_innerDegreeOfFreedomCell),
+      m_goodnessTableCell(&m_selectableTableView, this, this, statistic, this) {
   m_innerDegreeOfFreedomCell.setMessage(I18n::Message::DegreesOfFreedom);
   m_innerDegreeOfFreedomCell.setSubLabelMessage(I18n::Message::Default);
 }
 
 void InputGoodnessController::updateDegreeOfFreedomCell() {
-  PrintValueInTextHolder(m_statistic->degreeOfFreedom(), m_innerDegreeOfFreedomCell.textField(), true, true);
+  PrintValueInTextHolder(m_statistic->degreeOfFreedom(),
+                         m_innerDegreeOfFreedomCell.textField(), true, true);
 }
 
 void InputGoodnessController::didBecomeFirstResponder() {
@@ -23,7 +28,7 @@ void InputGoodnessController::didBecomeFirstResponder() {
   InputCategoricalController::didBecomeFirstResponder();
 }
 
-HighlightCell * InputGoodnessController::reusableCell(int index, int type) {
+HighlightCell *InputGoodnessController::reusableCell(int index, int type) {
   if (type == k_indexOfDegreeOfFreedom) {
     return &m_degreeOfFreedomCell;
   } else {
@@ -38,4 +43,4 @@ int InputGoodnessController::indexOfEditedParameterAtIndex(int index) const {
   return InputCategoricalController::indexOfEditedParameterAtIndex(index);
 }
 
-}
+}  // namespace Inference

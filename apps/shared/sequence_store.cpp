@@ -1,5 +1,7 @@
 #include "sequence_store.h"
+
 #include <ion/storage/file_system.h>
+
 #include <algorithm>
 extern "C" {
 #include <assert.h>
@@ -10,12 +12,14 @@ using namespace Escher;
 
 namespace Shared {
 
-const char * SequenceStore::firstAvailableName(size_t * nameIndex) {
+const char* SequenceStore::firstAvailableName(size_t* nameIndex) {
   // Choose available name
   size_t currentNameIndex = 0;
   while (currentNameIndex < k_maxNumberOfSequences) {
-    const char * name = k_sequenceNames[currentNameIndex];
-    if (Ion::Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(name, Ion::Storage::seqExtension).isNull()) {
+    const char* name = k_sequenceNames[currentNameIndex];
+    if (Ion::Storage::FileSystem::sharedFileSystem
+            ->recordBaseNamedWithExtension(name, Ion::Storage::seqExtension)
+            .isNull()) {
       if (nameIndex) {
         *nameIndex = currentNameIndex;
       }
@@ -29,14 +33,15 @@ const char * SequenceStore::firstAvailableName(size_t * nameIndex) {
 Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
   // Choose available name
   size_t nameIndex;
-  const char * name = firstAvailableName(&nameIndex);
+  const char* name = firstAvailableName(&nameIndex);
   assert(name);
   // Choose the corresponding color
   assert(nameIndex < Palette::numberOfDataColors());
   KDColor color = Palette::DataColor[nameIndex];
   Sequence::RecordDataBuffer data(color);
   // m_sequences
-  return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(name, modelExtension(), &data, sizeof(data));
+  return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+      name, modelExtension(), &data, sizeof(data));
 }
 
 int SequenceStore::sequenceIndexForName(char name) {
@@ -49,7 +54,8 @@ int SequenceStore::sequenceIndexForName(char name) {
   return 0;
 }
 
-Shared::ExpressionModelHandle * SequenceStore::setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const {
+Shared::ExpressionModelHandle* SequenceStore::setMemoizedModelAtIndex(
+    int cacheIndex, Ion::Storage::Record record) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   int index = cacheIndex;
   if (!record.isNull()) {
@@ -59,7 +65,8 @@ Shared::ExpressionModelHandle * SequenceStore::setMemoizedModelAtIndex(int cache
   return &m_sequences[index];
 }
 
-Shared::ExpressionModelHandle * SequenceStore::memoizedModelAtIndex(int cacheIndex) const {
+Shared::ExpressionModelHandle* SequenceStore::memoizedModelAtIndex(
+    int cacheIndex) const {
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   return &m_sequences[cacheIndex];
 }
@@ -68,10 +75,10 @@ float SequenceStore::smallestInitialRank() const {
   int smallestRank = Shared::Sequence::k_maxInitialRank;
   for (int i = 0, end = numberOfActiveFunctions(); i < end; i++) {
     Ion::Storage::Record record = activeRecordAtIndex(i);
-    Shared::Sequence * s = modelForRecord(record);
+    Shared::Sequence* s = modelForRecord(record);
     smallestRank = std::min(s->initialRank(), smallestRank);
   }
   return smallestRank;
 }
 
-}
+}  // namespace Shared

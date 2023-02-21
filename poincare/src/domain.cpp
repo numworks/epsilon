@@ -2,7 +2,8 @@
 
 namespace Poincare {
 
-TrinaryBoolean Domain::ExpressionIsIn(const Expression &expression, Type type, Context * context) {
+TrinaryBoolean Domain::ExpressionIsIn(const Expression &expression, Type type,
+                                      Context *context) {
   if (expression.deepIsMatrix(context)) {
     return TrinaryBoolean::False;
   }
@@ -21,7 +22,8 @@ TrinaryBoolean Domain::ExpressionIsIn(const Expression &expression, Type type, C
   if (type & k_onlyNegative) {
     TrinaryBoolean isPositive = expression.isPositive(context);
     if (isPositive != TrinaryBoolean::False) {
-      return isPositive == TrinaryBoolean::True ? TrinaryBoolean::False : TrinaryBoolean::Unknown;
+      return isPositive == TrinaryBoolean::True ? TrinaryBoolean::False
+                                                : TrinaryBoolean::Unknown;
     }
   }
 
@@ -43,11 +45,12 @@ TrinaryBoolean Domain::ExpressionIsIn(const Expression &expression, Type type, C
     return TrinaryBoolean::False;
   }
 
-  if (type & (UnitSegment | LeftOpenUnitSegment | OpenUnitSegment) && rational.isGreaterThanOne()) {
+  if (type & (UnitSegment | LeftOpenUnitSegment | OpenUnitSegment) &&
+      rational.isGreaterThanOne()) {
     return TrinaryBoolean::False;
   }
 
   return TrinaryBoolean::True;
 }
 
-}
+}  // namespace Poincare

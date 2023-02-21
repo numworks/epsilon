@@ -1,6 +1,6 @@
+#include <assert.h>
 #include <escher/run_loop.h>
 #include <kandinsky/font.h>
-#include <assert.h>
 #if ESCHER_LOG_EVENTS_NAME
 #include <ion/console.h>
 #include <ion/keyboard/layout_events.h>
@@ -8,32 +8,23 @@
 
 namespace Escher {
 
-RunLoop::RunLoop() :
-  m_time(0),
-  m_breakAllLoops(false) {
-}
+RunLoop::RunLoop() : m_time(0), m_breakAllLoops(false) {}
 
-int RunLoop::numberOfTimers() {
-  return 0;
-}
+int RunLoop::numberOfTimers() { return 0; }
 
-Timer * RunLoop::timerAtIndex(int i) {
+Timer* RunLoop::timerAtIndex(int i) {
   assert(false);
   return nullptr;
 }
 
-void RunLoop::run() {
-  runWhile(nullptr, nullptr);
-}
+void RunLoop::run() { runWhile(nullptr, nullptr); }
 
-void RunLoop::runWhile(bool (*callback)(void * ctx), void * ctx) {
+void RunLoop::runWhile(bool (*callback)(void* ctx), void* ctx) {
   bool continueCurrentRunLoop = true;
 
-  while (
-    !m_breakAllLoops &&
-    (callback == nullptr || callback(ctx)) &&
-    (continueCurrentRunLoop = step()))
-  {}
+  while (!m_breakAllLoops && (callback == nullptr || callback(ctx)) &&
+         (continueCurrentRunLoop = step())) {
+  }
 
   // Events::Termination was fired. Break all parent loops.
   m_breakAllLoops = m_breakAllLoops || !continueCurrentRunLoop;
@@ -60,8 +51,8 @@ bool RunLoop::step() {
 
   if (m_time >= Timer::TickDuration) {
     m_time -= Timer::TickDuration;
-    for (int i=0; i<numberOfTimers(); i++) {
-      Timer * timer = timerAtIndex(i);
+    for (int i = 0; i < numberOfTimers(); i++) {
+      Timer* timer = timerAtIndex(i);
       if (timer->tick()) {
         dispatchEvent(Ion::Events::TimerFire);
       }
@@ -73,7 +64,7 @@ bool RunLoop::step() {
 #endif
 
 #if ESCHER_LOG_EVENTS_NAME
-    const char * name = event.name();
+    const char* name = event.name();
     if (name != nullptr) {
       Ion::Console::writeLine("Event: ", false);
       if (event == Ion::Events::ExternalText && event.text() != nullptr) {
@@ -87,7 +78,8 @@ bool RunLoop::step() {
 #endif
 
 #if !PLATFORM_DEVICE
-    if (event == Ion::Events::ExternalText && !KDFont::CanBeWrittenWithGlyphs(event.text())) {
+    if (event == Ion::Events::ExternalText &&
+        !KDFont::CanBeWrittenWithGlyphs(event.text())) {
       return true;
     }
 #endif
@@ -97,4 +89,4 @@ bool RunLoop::step() {
   return event != Ion::Events::Termination;
 }
 
-}
+}  // namespace Escher

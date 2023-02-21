@@ -3,38 +3,41 @@
 
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
+
 #include "column_helper.h"
 
 namespace Shared {
 
 class ColumnParameters {
-public:
+ public:
   ColumnParameters() : m_columnIndex(-1) {}
   // Max translated name of Message::ColumnOptions + max column name
-  constexpr static int k_titleBufferSize = ColumnNameHelper::k_maxSizeOfColumnName + 23;
+  constexpr static int k_titleBufferSize =
+      ColumnNameHelper::k_maxSizeOfColumnName + 23;
   // Always initialize parent class before initiliazing child.
   virtual void initializeColumnParameters();
-protected:
-  virtual ColumnNameHelper * columnNameHelper() = 0;
+
+ protected:
+  virtual ColumnNameHelper* columnNameHelper() = 0;
   int m_columnIndex;
   char m_columnNameBuffer[ClearColumnHelper::k_maxSizeOfColumnName];
   char m_titleBuffer[k_titleBufferSize];
 };
 
-class ColumnParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>, public ColumnParameters {
-public:
-  ColumnParameterController(Escher::Responder * parentResponder) :
-    SelectableListViewController(parentResponder),
-    ColumnParameters()
-  {}
+class ColumnParameterController : public Escher::SelectableListViewController<
+                                      Escher::MemoizedListViewDataSource>,
+                                  public ColumnParameters {
+ public:
+  ColumnParameterController(Escher::Responder* parentResponder)
+      : SelectableListViewController(parentResponder), ColumnParameters() {}
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  const char * title() override { return m_titleBuffer; }
-protected:
-  Escher::StackViewController * stackView();
+  const char* title() override { return m_titleBuffer; }
 
+ protected:
+  Escher::StackViewController* stackView();
 };
 
-}
+}  // namespace Shared
 
 #endif

@@ -1,31 +1,37 @@
-#include <poincare/student_distribution.h>
+#include <float.h>
 #include <poincare/domain.h>
 #include <poincare/regularized_incomplete_beta_function.h>
+#include <poincare/student_distribution.h>
+
 #include <cmath>
-#include <float.h>
 
 namespace Poincare {
 
-template <typename T> T StudentDistribution::EvaluateAtAbscissa(T x, T k) {
-  return std::exp(lnCoefficient(k) - (k + 1.0) / 2.0 * std::log(1.0 + x * x / k));
+template <typename T>
+T StudentDistribution::EvaluateAtAbscissa(T x, T k) {
+  return std::exp(lnCoefficient(k) -
+                  (k + 1.0) / 2.0 * std::log(1.0 + x * x / k));
 }
 
-template <typename T> T StudentDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
+template <typename T>
+T StudentDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
   if (x == 0.0) {
     return static_cast<T>(0.5);
   }
   if (std::isinf(x)) {
     return x > 0 ? static_cast<T>(1.0) : static_cast<T>(0.0);
   }
-  /* TODO There are some computation errors, where the probability falsly jumps to 1.
-   * k = 0.001 and P(x < 42000000) (for 41000000 it is around 0.5)
-   * k = 0.01 and P(x < 8400000) (for 41000000 it is around 0.6) */
+  /* TODO There are some computation errors, where the probability falsly jumps
+   * to 1. k = 0.001 and P(x < 42000000) (for 41000000 it is around 0.5) k =
+   * 0.01 and P(x < 8400000) (for 41000000 it is around 0.6) */
   const double sqrtXSquaredPlusK = std::sqrt(x * x + k);
   double t = (x + sqrtXSquaredPlusK) / (2.0 * sqrtXSquaredPlusK);
   return RegularizedIncompleteBetaFunction(k / 2.0, k / 2.0, t);
 }
 
-template <typename T> T StudentDistribution::CumulativeDistributiveInverseForProbability(T probability, T k) {
+template <typename T>
+T StudentDistribution::CumulativeDistributiveInverseForProbability(
+    T probability, T k) {
   if (probability == 0.5) {
     return static_cast<T>(0.0);
   } else if (probability > 1.0 - DBL_EPSILON) {
@@ -39,9 +45,11 @@ template <typename T> T StudentDistribution::CumulativeDistributiveInverseForPro
     T k;
   };
   Args args{probability, k};
-  Solver<double>::FunctionEvaluation evaluation = [](double x, const void * auxiliary) {
-    const Args * args = static_cast<const Args *>(auxiliary);
-    return static_cast<double>(CumulativeDistributiveFunctionAtAbscissa<T>(x, args->k) - args->proba);
+  Solver<double>::FunctionEvaluation evaluation = [](double x,
+                                                     const void *auxiliary) {
+    const Args *args = static_cast<const Args *>(auxiliary);
+    return static_cast<double>(
+        CumulativeDistributiveFunctionAtAbscissa<T>(x, args->k) - args->proba);
   };
 
   double xmin, xmax;
@@ -49,24 +57,27 @@ template <typename T> T StudentDistribution::CumulativeDistributiveInverseForPro
   assert((xmin < xmax) && std::isfinite(xmin) && std::isfinite(xmax));
 
   // Compute inverse using SolverAlgorithms::IncreasingFunctionRoot
-  Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(xmin, xmax, DBL_EPSILON, evaluation, &args);
+  Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
+      xmin, xmax, DBL_EPSILON, evaluation, &args);
   return result.x1();
 }
 
-template<typename T>
+template <typename T>
 bool StudentDistribution::KIsOK(T k) {
-  return Domain::Contains(k, Domain::Type::RPlusStar) && k <= static_cast<T>(200.0);
+  return Domain::Contains(k, Domain::Type::RPlusStar) &&
+         k <= static_cast<T>(200.0);
   // We cannot draw the curve for k > 200 (coefficient() is too small)
 }
 
-bool StudentDistribution::ExpressionKIsOK(bool * result, const Expression & k, Context * context) {
+bool StudentDistribution::ExpressionKIsOK(bool *result, const Expression &k,
+                                          Context *context) {
   return Domain::ExpressionIsIn(result, k, Domain::Type::RPlusStar, context);
 }
 
-
 template <typename T>
 T StudentDistribution::lnCoefficient(T k) {
-  return std::lgamma((k + 1.f) / 2.f) - std::lgamma(k / 2.f) - std::log(std::sqrt(k * M_PI));
+  return std::lgamma((k + 1.f) / 2.f) - std::lgamma(k / 2.f) -
+         std::log(std::sqrt(k * M_PI));
 }
 
 // Specialisations
@@ -74,11 +85,19 @@ template float StudentDistribution::EvaluateAtAbscissa<float>(float, float);
 template double StudentDistribution::EvaluateAtAbscissa<double>(double, double);
 template float StudentDistribution::lnCoefficient<float>(float);
 template double StudentDistribution::lnCoefficient<double>(double);
-template float StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, float);
-template double StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double, double);
-template float StudentDistribution::CumulativeDistributiveInverseForProbability<float>(float, float);
-template double StudentDistribution::CumulativeDistributiveInverseForProbability<double>(double, double);
+template float
+StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float,
+                                                                     float);
+template double
+StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double,
+                                                                      double);
+template float
+StudentDistribution::CumulativeDistributiveInverseForProbability<float>(float,
+                                                                        float);
+template double
+StudentDistribution::CumulativeDistributiveInverseForProbability<double>(
+    double, double);
 template bool StudentDistribution::KIsOK(float k);
 template bool StudentDistribution::KIsOK(double k);
 
-}
+}  // namespace Poincare

@@ -13,12 +13,14 @@ namespace Escher {
 class SolidColorCell : public HighlightCell {
  public:
   SolidColorCell(KDColor color) : HighlightCell(), m_color(color){};
-  void drawRect(KDContext * ctx, KDRect rect) const override { ctx->fillRect(rect, m_color); }
+  void drawRect(KDContext* ctx, KDRect rect) const override {
+    ctx->fillRect(rect, m_color);
+  }
 
  private:
   KDColor m_color;
 };
 
-}
+}  // namespace Escher
 
 #endif

@@ -13,4 +13,4 @@ bool ScrollViewDataSource::setOffset(KDPoint offset) {
   return false;
 }
 
-}
+}  // namespace Escher

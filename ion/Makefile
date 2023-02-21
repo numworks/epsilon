@@ -18,7 +18,6 @@ ion_src += $(addprefix ion/src/shared/, \
   events.cpp \
   events_modifier.cpp \
   exam_mode.cpp \
-  exam_mode_configuration.cpp \
   keyboard.cpp \
   keyboard_queue.cpp \
   layout_events.cpp \
@@ -70,7 +69,6 @@ ion_device_userland_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   decompress.cpp:+consoledisplay \
   exam_mode.cpp \
-  exam_mode_configuration.cpp \
   stack_position.cpp \
   storage/file_system.cpp \
   storage/record_name_verifier.cpp \

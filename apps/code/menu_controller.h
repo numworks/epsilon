@@ -61,10 +61,9 @@ class MenuController : public Escher::ViewController,
   }
 
   /* SelectableTableViewDelegate */
-  void tableViewDidChangeSelection(Escher::SelectableTableView *t,
-                                   int previousSelectedCellX,
-                                   int previousSelectedCellY,
-                                   bool withinTemporarySelection) override;
+  void tableViewDidChangeSelectionAndDidScroll(
+      Escher::SelectableTableView *t, int previousSelectedCellX,
+      int previousSelectedCellY, bool withinTemporarySelection) override;
 
   /* TextFieldDelegate */
   bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,

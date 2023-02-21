@@ -319,9 +319,7 @@ class Expression : public TreeHandle {
 
   /* Units */
   Expression removeUnit(Expression* unit) { return node()->removeUnit(unit); }
-  bool hasUnit() const;
-  // True if has only rad or ° as unit.
-  bool isInRadians(Context* context) const;
+  bool hasUnit(bool ignoreAngleUnits = false) const;
   bool isPureAngleUnit() const;
 
   /* Complex */

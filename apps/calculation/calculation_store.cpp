@@ -142,6 +142,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
     if (m_inUsePreferences.examMode().forbidUnits() &&
         approximateOutputExpression.hasUnit()) {
       approximateOutputExpression = Undefined::Builder();
+      exactOutputExpression = Undefined::Builder();
     }
 
     /* Push the outputs: exact output, and approximate output with maximum

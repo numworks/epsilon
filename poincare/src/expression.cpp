@@ -840,25 +840,19 @@ int Expression::getPolynomialReducedCoefficients(
 
 /* Units */
 
-bool Expression::hasUnit() const {
+bool Expression::hasUnit(bool ignoreAngleUnits) const {
+  if (ignoreAngleUnits) {
+    return recursivelyMatches(
+        [](const Expression e, Context *context) {
+          return e.type() == ExpressionNode::Type::Unit && !e.isPureAngleUnit();
+        },
+        nullptr, SymbolicComputation::DoNotReplaceAnySymbol);
+  }
   return recursivelyMatches(
       [](const Expression e, Context *context) {
         return e.type() == ExpressionNode::Type::Unit;
       },
       nullptr, SymbolicComputation::DoNotReplaceAnySymbol);
-}
-
-bool Expression::isInRadians(Context *context) const {
-  Expression thisClone = clone();
-  Expression units;
-  ReductionContext reductionContext;
-  reductionContext.setContext(context);
-  reductionContext.setUnitConversion(UnitConversion::None);
-  thisClone.reduceAndRemoveUnit(reductionContext, &units);
-  return !units.isUninitialized() &&
-         units.type() == ExpressionNode::Type::Unit &&
-         units.convert<Unit>().representative() ==
-             &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
 }
 
 bool Expression::isPureAngleUnit() const {

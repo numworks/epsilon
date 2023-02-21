@@ -76,7 +76,7 @@ bool ShouldNeverDisplayExactOutput(Poincare::Expression exactOutput,
                                ExpressionNode::Type::Dependency});
           },
           context) ||
-      (exactOutput.hasUnit() && !exactOutput.isInRadians(context));
+      exactOutput.hasUnit(true);  // Angle units can display exact output
 }
 
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input,

@@ -20,6 +20,13 @@ enum class Ruleset : Int {
   NumberOfRulesets,
 };
 
+/* Encode exam mode permissions on a 16 bits integer.
+ * The first bit "configurable" is set to 1 if "data" encodes press-to-test
+ * flags. If it set to 0, "data" contains the index of the preset rules (Off,
+ * Standard, Dutch...)
+ * The bit "clearBit" is always 0 for valid configurations, to ensure
+ * compatibility with the PersistingBytes API.
+ */
 class Configuration {
  public:
   explicit Configuration(Ruleset rules, Int flags = 0);

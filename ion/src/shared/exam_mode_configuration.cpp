@@ -5,30 +5,33 @@ namespace Ion {
 namespace ExamMode {
 
 Configuration::Configuration(Mode mode, Int flags)
-    : m_internals{
-          .configurable = mode == Mode::PressToTest,
-          .data = mode == Mode::PressToTest ? flags : static_cast<Int>(mode),
-          .clearBit = 0,
-      } {
+    : m_internals{.fields = {
+                      .configurable = mode == Mode::PressToTest,
+                      .data = mode == Mode::PressToTest
+                                  ? flags
+                                  : static_cast<Int>(mode),
+                      .clearBit = 0,
+                  }} {
   assert(mode < Mode::NumberOfModes &&
          (mode == Mode::PressToTest || flags == 0));
 }
 
 Mode Configuration::mode() const {
   assert(!isUninitialized());
-  return m_internals.configurable ? Mode::PressToTest
-                                  : static_cast<Mode>(m_internals.data);
+  return m_internals.fields.configurable
+             ? Mode::PressToTest
+             : static_cast<Mode>(m_internals.fields.data);
 }
 
 Int Configuration::flags() const {
   assert(!isUninitialized());
-  return m_internals.configurable ? m_internals.data : 0;
+  return m_internals.fields.configurable ? m_internals.fields.data : 0;
 }
 
 bool Configuration::isUninitialized() const {
-  return m_internals.clearBit ||
-         (!m_internals.configurable &&
-          m_internals.data >= static_cast<Int>(Mode::NumberOfModes));
+  return m_internals.fields.clearBit ||
+         (!m_internals.fields.configurable &&
+          m_internals.fields.data >= static_cast<Int>(Mode::NumberOfModes));
 }
 
 bool Configuration::isActive() const {

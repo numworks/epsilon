@@ -22,7 +22,7 @@ enum class Ruleset : Int {
 
 class Configuration {
  public:
-  Configuration(Ruleset rules, Int flags = 0);
+  explicit Configuration(Ruleset rules, Int flags = 0);
   Configuration() : Configuration(-1) {}
   Configuration(Int raw) : m_internals{.raw = raw} {}
 

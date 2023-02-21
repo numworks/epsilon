@@ -134,7 +134,7 @@ bool PressToTestController::getParamAtIndex(int index) {
 
 void PressToTestController::setMessages() {
   if (Preferences::sharedPreferences->examMode().isActive()) {
-    assert(Preferences::sharedPreferences->examMode() ==
+    assert(Preferences::sharedPreferences->examMode().ruleset() ==
            ExamMode::Ruleset::PressToTest);
     m_topMessageView.setMessage(I18n::Message::PressToTestActiveIntro);
     m_view.setBottomView(&m_bottomMessageView);

@@ -30,7 +30,7 @@ class ExamMode : public Ion::ExamMode::Configuration {
   };
 
   ExamMode() : Configuration() {}
-  ExamMode(Ruleset rules, PressToTestFlags flags = {.value = 0})
+  explicit ExamMode(Ruleset rules, PressToTestFlags flags = {.value = 0})
       : Configuration(rules, flags.value) {}
   ExamMode(Configuration config) : Configuration(config) {}
 

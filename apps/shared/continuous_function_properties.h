@@ -39,7 +39,6 @@ class ContinuousFunctionProperties {
     NumberOfStatus
   };
 
-  constexpr static size_t k_numberOfSymbolTypes = 3;
   // Order impact order of columns in Graph/Values
   enum class SymbolType : uint8_t {
     X = 0,
@@ -48,6 +47,8 @@ class ContinuousFunctionProperties {
     T,
     NumberOfSymbolTypes
   };
+  constexpr static size_t k_numberOfSymbolTypes =
+      static_cast<size_t>(SymbolType::NumberOfSymbolTypes);
 
   enum class CurveParameterType : uint8_t {
     Default,

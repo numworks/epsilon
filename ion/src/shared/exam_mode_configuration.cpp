@@ -4,23 +4,23 @@
 namespace Ion {
 namespace ExamMode {
 
-Configuration::Configuration(Mode mode, Int flags)
+Configuration::Configuration(Ruleset rules, Int flags)
     : m_internals{.fields = {
-                      .configurable = mode == Mode::PressToTest,
-                      .data = mode == Mode::PressToTest
+                      .configurable = rules == Ruleset::PressToTest,
+                      .data = rules == Ruleset::PressToTest
                                   ? flags
-                                  : static_cast<Int>(mode),
+                                  : static_cast<Int>(rules),
                       .clearBit = 0,
                   }} {
-  assert(mode < Mode::NumberOfModes &&
-         (mode == Mode::PressToTest || flags == 0));
+  assert(rules < Ruleset::NumberOfRulesets &&
+         (rules == Ruleset::PressToTest || flags == 0));
 }
 
-Mode Configuration::mode() const {
+Ruleset Configuration::ruleset() const {
   assert(!isUninitialized());
   return m_internals.fields.configurable
-             ? Mode::PressToTest
-             : static_cast<Mode>(m_internals.fields.data);
+             ? Ruleset::PressToTest
+             : static_cast<Ruleset>(m_internals.fields.data);
 }
 
 Int Configuration::flags() const {
@@ -31,12 +31,13 @@ Int Configuration::flags() const {
 bool Configuration::isUninitialized() const {
   return m_internals.fields.clearBit ||
          (!m_internals.fields.configurable &&
-          m_internals.fields.data >= static_cast<Int>(Mode::NumberOfModes));
+          m_internals.fields.data >=
+              static_cast<Int>(Ruleset::NumberOfRulesets));
 }
 
 bool Configuration::isActive() const {
   assert(!isUninitialized());
-  return mode() != Mode::Off;
+  return ruleset() != Ruleset::Off;
 }
 
 KDColor Configuration::color() const {
@@ -52,12 +53,12 @@ KDColor Configuration::color() const {
    * charging. */
   constexpr KDColor k_dutchLEDColor = KDColor::RGB24(0xA1FF00);
 
-  switch (mode()) {
-    case Mode::Standard:
+  switch (ruleset()) {
+    case Ruleset::Standard:
       return k_standardLEDColor;
-    case Mode::Dutch:
+    case Ruleset::Dutch:
       return k_dutchLEDColor;
-    case Mode::Portuguese:
+    case Ruleset::Portuguese:
       return k_portugueseLEDColor;
     default:
       return KDColorBlack;

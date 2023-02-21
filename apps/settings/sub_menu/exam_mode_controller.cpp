@@ -49,10 +49,11 @@ int ExamModeController::numberOfRows() const {
   /* Available exam mode depends on the selected country and the active mode.
    * A user could first activate an exam mode and then change the country. */
   ExamMode examMode = Preferences::sharedPreferences->examMode();
-  if (examMode == ExamMode::Mode::Standard ||
-      examMode == ExamMode::Mode::Dutch || examMode == ExamMode::Mode::IBTest ||
-      examMode == ExamMode::Mode::Portuguese ||
-      examMode == ExamMode::Mode::English) {
+  if (examMode == ExamMode::Ruleset::Standard ||
+      examMode == ExamMode::Ruleset::Dutch ||
+      examMode == ExamMode::Ruleset::IBTest ||
+      examMode == ExamMode::Ruleset::Portuguese ||
+      examMode == ExamMode::Ruleset::English) {
     // Reactivation button
     return 1;
   }
@@ -61,14 +62,14 @@ int ExamModeController::numberOfRows() const {
 
   if (availableExamModes ==
           CountryPreferences::AvailableExamModes::PressToTestOnly ||
-      examMode == ExamMode::Mode::PressToTest) {
-    assert(examMode == ExamMode::Mode::Off ||
-           examMode == ExamMode::Mode::PressToTest);
+      examMode.ruleset() == ExamMode::Ruleset::PressToTest) {
+    assert(examMode == ExamMode::Ruleset::Off ||
+           examMode == ExamMode::Ruleset::PressToTest);
     // Menu shouldn't be visible
     return 0;
   }
   // Activation button(s)
-  assert(examMode == ExamMode::Mode::Off);
+  assert(examMode == ExamMode::Ruleset::Off);
   if (availableExamModes ==
           CountryPreferences::AvailableExamModes::StandardOnly ||
       availableExamModes ==
@@ -112,7 +113,7 @@ int ExamModeController::initialSelectedRow() const {
 }
 
 ExamMode ExamModeController::examMode() {
-  ExamMode mode = examModeAtIndex(selectedRow());
+  ExamMode mode = examModeRulesetAtIndex(selectedRow());
   if (Preferences::sharedPreferences->examMode().isActive()) {
     // If the exam mode is already on, this re-activate the same exam mode
     mode = Preferences::sharedPreferences->examMode();
@@ -120,19 +121,20 @@ ExamMode ExamModeController::examMode() {
   return mode;
 }
 
-ExamMode::Mode ExamModeController::examModeAtIndex(size_t index) const {
+ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
+    size_t index) const {
   switch (GlobalPreferences::sharedGlobalPreferences->availableExamModes()) {
     case CountryPreferences::AvailableExamModes::PortugueseOnly:
       assert(index == 0);
-      return ExamMode::Mode::Portuguese;
+      return ExamMode::Ruleset::Portuguese;
     case CountryPreferences::AvailableExamModes::EnglishOnly:
       assert(index == 0);
-      return ExamMode::Mode::English;
+      return ExamMode::Ruleset::English;
     default:
-      ExamMode::Mode modes[] = {ExamMode::Mode::Standard, ExamMode::Mode::Dutch,
-                                ExamMode::Mode::Portuguese,
-                                ExamMode::Mode::English,
-                                ExamMode::Mode::IBTest};
+      ExamMode::Ruleset modes[] = {
+          ExamMode::Ruleset::Standard, ExamMode::Ruleset::Dutch,
+          ExamMode::Ruleset::Portuguese, ExamMode::Ruleset::English,
+          ExamMode::Ruleset::IBTest};
       assert(index < sizeof(modes) / sizeof(modes[0]));
       return modes[index];
   }
@@ -140,40 +142,41 @@ ExamMode::Mode ExamModeController::examModeAtIndex(size_t index) const {
 
 I18n::Message ExamModeController::examModeActivationMessage(
     size_t index) const {
-  ExamMode::Mode examMode = Preferences::sharedPreferences->examMode().mode();
+  ExamMode::Ruleset examMode =
+      Preferences::sharedPreferences->examMode().ruleset();
   /* If the country has all exam mode, we specify which one will be reactivated.
    * The country might still have been updated by the user after activation. */
   bool specifyFrenchExamModeType =
       GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
       CountryPreferences::AvailableExamModes::All;
-  assert(examMode == ExamMode::Mode::Off || index == 0);
+  assert(examMode == ExamMode::Ruleset::Off || index == 0);
   switch (examMode) {
-    case ExamMode::Mode::Standard:
+    case ExamMode::Ruleset::Standard:
       return (specifyFrenchExamModeType
                   ? I18n::Message::ReactivateFrenchExamMode
                   : I18n::Message::ReactivateExamMode);
-    case ExamMode::Mode::Dutch:
+    case ExamMode::Ruleset::Dutch:
       return I18n::Message::ReactivateDutchExamMode;
-    case ExamMode::Mode::IBTest:
+    case ExamMode::Ruleset::IBTest:
       return I18n::Message::ReactivateIBExamMode;
-    case ExamMode::Mode::Portuguese:
+    case ExamMode::Ruleset::Portuguese:
       return I18n::Message::ReactivatePortugueseExamMode;
-    case ExamMode::Mode::English:
+    case ExamMode::Ruleset::English:
       return I18n::Message::ReactivateEnglishExamMode;
     default:
-      assert(examMode == ExamMode::Mode::Off);
-      switch (examModeAtIndex(index)) {
-        case ExamMode::Mode::Standard:
+      assert(examMode == ExamMode::Ruleset::Off);
+      switch (examModeRulesetAtIndex(index)) {
+        case ExamMode::Ruleset::Standard:
           return (specifyFrenchExamModeType
                       ? I18n::Message::ActivateFrenchExamMode
                       : I18n::Message::ActivateExamMode);
-        case ExamMode::Mode::Dutch:
+        case ExamMode::Ruleset::Dutch:
           return I18n::Message::ActivateDutchExamMode;
-        case ExamMode::Mode::Portuguese:
+        case ExamMode::Ruleset::Portuguese:
           return I18n::Message::ActivatePortugueseExamMode;
-        case ExamMode::Mode::English:
+        case ExamMode::Ruleset::English:
           return I18n::Message::ActivateEnglishExamMode;
-        case ExamMode::Mode::IBTest:
+        case ExamMode::Ruleset::IBTest:
           return I18n::Message::ActivateIBExamMode;
         default:
           assert(false);

@@ -31,7 +31,7 @@ PressToTestController::PressToTestController(Responder *parentResponder)
           Invocation::Builder<PressToTestController>(
               [](PressToTestController *controller, void *sender) {
                 AppsContainer::sharedAppsContainer()->displayExamModePopUp(
-                    ExamMode(ExamMode::Mode::PressToTest,
+                    ExamMode(ExamMode::Ruleset::PressToTest,
                              controller->getPressToTestParams()));
                 return true;
               },
@@ -135,7 +135,7 @@ bool PressToTestController::getParamAtIndex(int index) {
 void PressToTestController::setMessages() {
   if (Preferences::sharedPreferences->examMode().isActive()) {
     assert(Preferences::sharedPreferences->examMode() ==
-           ExamMode::Mode::PressToTest);
+           ExamMode::Ruleset::PressToTest);
     m_topMessageView.setMessage(I18n::Message::PressToTestActiveIntro);
     m_view.setBottomView(&m_bottomMessageView);
   } else {

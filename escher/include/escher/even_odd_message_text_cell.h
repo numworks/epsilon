@@ -17,6 +17,7 @@ class EvenOddMessageTextCell : public EvenOddCell {
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   void setMessageFont(KDFont::Size font) { m_messageTextView.setFont(font); }
   void setTextColor(KDColor color) { m_messageTextView.setTextColor(color); }
+  void setLeftMargin(KDCoordinate margin);
 
  protected:
   void updateSubviewsBackgroundAfterChangingState() override;
@@ -24,6 +25,7 @@ class EvenOddMessageTextCell : public EvenOddCell {
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   MessageTextView m_messageTextView;
+  KDCoordinate m_leftMargin;
 };
 
 }  // namespace Escher

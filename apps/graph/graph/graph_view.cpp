@@ -118,9 +118,9 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
           ? FunctionIsDiscontinuousBetweenFloatValues
           : NoDiscontinuity;
 
-  if (f->properties().isParametric() || f->properties().isInversePolar()) {
-    drawParametric(ctx, rect, f.operator->(), tCacheMin, tmax,
-                   tStepNonCartesian, discontinuityEvaluation);
+  if (f->properties().isCartesian()) {
+    drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax,
+                  tCacheStep, discontinuityEvaluation, axis);
     return;
   }
   if (f->properties().isPolar()) {
@@ -128,9 +128,9 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
               discontinuityEvaluation);
     return;
   }
-  assert(f->properties().isCartesian());
-  drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax, tCacheStep,
-                discontinuityEvaluation, axis);
+  assert(f->properties().isParametric() || f->properties().isInversePolar());
+  drawFunction(ctx, rect, f.operator->(), tCacheMin, tmax, tStepNonCartesian,
+               discontinuityEvaluation);
 }
 
 void GraphView::tidyModel(int i) const {
@@ -374,7 +374,7 @@ void GraphView::drawPolar(KDContext *ctx, KDRect rect, ContinuousFunction *f,
       (rectUp > 0.0f && rectDown < 0.0f && rectLeft < 0.0f)) {
     if (cancelOptimization || rectRight > 0.0f) {
       // Origin is inside rect, tStart and tEnd cannot be optimized
-      return drawParametric(ctx, rect, f, tStart, tEnd, tStep, discontinuity);
+      return drawFunction(ctx, rect, f, tStart, tEnd, tStep, discontinuity);
     }
     // Rect view overlaps the abscissa, on the left of the origin.
     rectOverlapsNegativeAbscissaAxis = true;
@@ -431,7 +431,7 @@ void GraphView::drawPolar(KDContext *ctx, KDRect rect, ContinuousFunction *f,
    * overlap (at tStart+5*tStep). Optimization is useless.
    * If tStep < piInAngleUnit - (tMax - tMin), situation B cannot happen. */
   if (tStep >= piInAngleUnit - tMax + tMin) {
-    return drawParametric(ctx, rect, f, tStart, tEnd, tStep, discontinuity);
+    return drawFunction(ctx, rect, f, tStart, tEnd, tStep, discontinuity);
   }
 
   /* The number of segments to draw can be reduced by drawing curve on intervals
@@ -462,16 +462,15 @@ void GraphView::drawPolar(KDContext *ctx, KDRect rect, ContinuousFunction *f,
       tCache2 = std::min(tStart + tStep * j, tEnd);
 
       assert(tCache1 <= tCache2);
-      drawParametric(ctx, rect, f, tCache1, tCache2, tStep, discontinuity);
+      drawFunction(ctx, rect, f, tCache1, tCache2, tStep, discontinuity);
     }
     thetaOffset += piInAngleUnit;
   }
 }
 
-void GraphView::drawParametric(KDContext *ctx, KDRect rect,
-                               ContinuousFunction *f, float tStart, float tEnd,
-                               float tStep,
-                               DiscontinuityTest discontinuity) const {
+void GraphView::drawFunction(KDContext *ctx, KDRect rect, ContinuousFunction *f,
+                             float tStart, float tEnd, float tStep,
+                             DiscontinuityTest discontinuity) const {
   CurveDrawing plot(Curve2D(evaluateXY<float>, f), context(), tStart, tEnd,
                     tStep, f->color());
   plot.setPrecisionOptions(false, nullptr, discontinuity);

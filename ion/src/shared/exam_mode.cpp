@@ -42,10 +42,6 @@ void set(Configuration config) {
       LED::setLock(true);
     }
   } else {
-    if (previous.mode() == Mode::PressToTest) {
-      Reset::core();
-    }
-
     LED::setLock(false);
     LED::setColor(KDColorBlack);
   }

@@ -75,7 +75,15 @@ bool ExamPopUpController::handleButton() const {
   }
   AppsContainer* container = AppsContainer::sharedAppsContainer();
   App* activeApp = container->activeApp();
+
+  ExamMode::Mode previousMode =
+      Preferences::sharedPreferences->examMode().mode();
   Preferences::sharedPreferences->setExamMode(m_targetExamMode);
+  if (previousMode == ExamMode::Mode::PressToTest &&
+      m_targetExamMode.mode() == ExamMode::Mode::Off) {
+    Ion::Reset::core();
+  }
+
   container->refreshPreferences();
   activeApp->modalViewController()->dismissModal();
   if (activeApp->snapshot() != container->onBoardingAppSnapshot()) {

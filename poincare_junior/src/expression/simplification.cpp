@@ -7,7 +7,8 @@
 
 namespace PoincareJ {
 
-EditionReference Simplification::BasicReduction(EditionReference reference) {
+EditionReference Simplification::SystematicReduction(
+    EditionReference reference) {
   // TODO: Macro to automatically generate switch
   switch (reference.type()) {
     case BlockType::Division:

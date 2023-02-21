@@ -28,7 +28,7 @@ class Calculation {
 
 Calculation::Calculation(const char* textInput) {
   Expression::Parse(textInput).dumpAt(m_buffer.blocks());
-  m_output = Expression::CreateBasicReduction(m_buffer.blocks());
+  m_output = Expression::CreateSystematicReduction(m_buffer.blocks());
 }
 
 QUIZ_CASE(pcj_calculation) {

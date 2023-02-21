@@ -103,7 +103,7 @@ EditionReference Algebraic::NormalFormator(EditionReference expression,
     EditionReference result =
         numerator == negativeRationalExponent
             ? EditionReference(1_e)
-            : expression;  // TODO: BasicReduction(expression)
+            : expression;  // TODO: SystematicReduction(expression)
     expression.replaceTreeByTree(result);
     return result;
   }

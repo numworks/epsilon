@@ -8,7 +8,7 @@ namespace PoincareJ {
 
 class Simplification {
  public:
-  static EditionReference BasicReduction(EditionReference reference);
+  static EditionReference SystematicReduction(EditionReference reference);
   static EditionReference ShallowBeautify(EditionReference reference) {
     return reference;
   }

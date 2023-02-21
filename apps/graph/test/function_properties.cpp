@@ -67,10 +67,11 @@ void assert_check_function_properties(
 QUIZ_CASE(graph_function_properties) {
   // Test the plot type under different Press-to-test parameters :
   const ExamMode examModes[] = {
-      ExamMode(ExamMode::Mode::Off),
-      ExamMode(ExamMode::Mode::PressToTest, {.forbidInequalityGraphing = true}),
-      ExamMode(ExamMode::Mode::PressToTest, {.forbidImplicitPlots = true}),
-      ExamMode(ExamMode::Mode::PressToTest,
+      ExamMode(ExamMode::Ruleset::Off),
+      ExamMode(ExamMode::Ruleset::PressToTest,
+               {.forbidInequalityGraphing = true}),
+      ExamMode(ExamMode::Ruleset::PressToTest, {.forbidImplicitPlots = true}),
+      ExamMode(ExamMode::Ruleset::PressToTest,
                {.forbidInequalityGraphing = true, .forbidImplicitPlots = true}),
   };
   for (const ExamMode examMode : examModes) {
@@ -707,7 +708,8 @@ QUIZ_CASE(graph_function_properties) {
         Preferences::ComplexFormat::Cartesian);
 
     // Restore an Off exam mode.
-    Poincare::Preferences::sharedPreferences->setExamMode(ExamMode::Mode::Off);
+    Poincare::Preferences::sharedPreferences->setExamMode(
+        ExamMode(ExamMode::Ruleset::Off));
   }
 }
 

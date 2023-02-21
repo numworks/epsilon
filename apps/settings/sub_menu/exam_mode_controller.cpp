@@ -48,12 +48,12 @@ void ExamModeController::didEnterResponderChain(
 int ExamModeController::numberOfRows() const {
   /* Available exam mode depends on the selected country and the active mode.
    * A user could first activate an exam mode and then change the country. */
-  ExamMode examMode = Preferences::sharedPreferences->examMode();
-  if (examMode == ExamMode::Ruleset::Standard ||
-      examMode == ExamMode::Ruleset::Dutch ||
-      examMode == ExamMode::Ruleset::IBTest ||
-      examMode == ExamMode::Ruleset::Portuguese ||
-      examMode == ExamMode::Ruleset::English) {
+  ExamMode::Ruleset rules =
+      Preferences::sharedPreferences->examMode().ruleset();
+  if (rules == ExamMode::Ruleset::Standard ||
+      rules == ExamMode::Ruleset::Dutch || rules == ExamMode::Ruleset::IBTest ||
+      rules == ExamMode::Ruleset::Portuguese ||
+      rules == ExamMode::Ruleset::English) {
     // Reactivation button
     return 1;
   }
@@ -62,14 +62,14 @@ int ExamModeController::numberOfRows() const {
 
   if (availableExamModes ==
           CountryPreferences::AvailableExamModes::PressToTestOnly ||
-      examMode.ruleset() == ExamMode::Ruleset::PressToTest) {
-    assert(examMode == ExamMode::Ruleset::Off ||
-           examMode == ExamMode::Ruleset::PressToTest);
+      rules == ExamMode::Ruleset::PressToTest) {
+    assert(rules == ExamMode::Ruleset::Off ||
+           rules == ExamMode::Ruleset::PressToTest);
     // Menu shouldn't be visible
     return 0;
   }
   // Activation button(s)
-  assert(examMode == ExamMode::Ruleset::Off);
+  assert(rules == ExamMode::Ruleset::Off);
   if (availableExamModes ==
           CountryPreferences::AvailableExamModes::StandardOnly ||
       availableExamModes ==
@@ -113,7 +113,7 @@ int ExamModeController::initialSelectedRow() const {
 }
 
 ExamMode ExamModeController::examMode() {
-  ExamMode mode = examModeRulesetAtIndex(selectedRow());
+  ExamMode mode(examModeRulesetAtIndex(selectedRow()));
   if (Preferences::sharedPreferences->examMode().isActive()) {
     // If the exam mode is already on, this re-activate the same exam mode
     mode = Preferences::sharedPreferences->examMode();

@@ -339,15 +339,16 @@ bool MainController::hasPressToTestCell() const {
   ExamMode examMode = Preferences::sharedPreferences->examMode();
   CountryPreferences::AvailableExamModes availableExamModes =
       GlobalPreferences::sharedGlobalPreferences->availableExamModes();
-  return examMode == ExamMode::Ruleset::PressToTest ||
+  return examMode.ruleset() == ExamMode::Ruleset::PressToTest ||
          ((availableExamModes ==
                CountryPreferences::AvailableExamModes::PressToTestOnly ||
            availableExamModes == CountryPreferences::AvailableExamModes::All) &&
-          examMode == ExamMode::Ruleset::Off);
+          examMode.ruleset() == ExamMode::Ruleset::Off);
 }
 
 bool MainController::hasTestModeCell() const {
-  return Preferences::sharedPreferences->examMode() == ExamMode::Ruleset::Off &&
+  return Preferences::sharedPreferences->examMode().ruleset() ==
+             ExamMode::Ruleset::Off &&
          GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
              CountryPreferences::AvailableExamModes::All;
 }

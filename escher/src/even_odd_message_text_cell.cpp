@@ -7,11 +7,17 @@ EvenOddMessageTextCell::EvenOddMessageTextCell(KDFont::Size font,
                                                float horizontalAlignment)
     : EvenOddCell(),
       m_messageTextView(font, (I18n::Message)0, horizontalAlignment,
-                        KDContext::k_alignCenter) {}
+                        KDContext::k_alignCenter),
+      m_leftMargin(k_horizontalMargin) {}
 
 void EvenOddMessageTextCell::setAlignment(float horizontalAlignment,
                                           float verticalAlignment) {
   m_messageTextView.setAlignment(horizontalAlignment, verticalAlignment);
+}
+
+void EvenOddMessageTextCell::setLeftMargin(KDCoordinate margin) {
+  m_leftMargin = margin;
+  layoutSubviews();
 }
 
 void EvenOddMessageTextCell::updateSubviewsBackgroundAfterChangingState() {
@@ -28,7 +34,8 @@ View* EvenOddMessageTextCell::subviewAtIndex(int index) {
 void EvenOddMessageTextCell::layoutSubviews(bool force) {
   KDRect boundsThis = bounds();
   m_messageTextView.setFrame(
-      KDRect(k_horizontalMargin, 0, boundsThis.width() - 2 * k_horizontalMargin,
+      KDRect(m_leftMargin, 0,
+             boundsThis.width() - k_horizontalMargin - m_leftMargin,
              boundsThis.height()),
       force);
 }

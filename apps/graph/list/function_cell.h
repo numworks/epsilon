@@ -14,6 +14,8 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
  public:
   AbstractFunctionCell();
 
+  constexpr static KDCoordinate k_colorIndicatorThickness = 3;
+
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
   Poincare::Layout layout() const override {
@@ -53,7 +55,6 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   virtual Escher::ExpressionView* expressionView() = 0;
   virtual Escher::View* mainView() = 0;
 
-  constexpr static KDCoordinate k_colorIndicatorThickness = 3;
   constexpr static KDCoordinate k_margin = Escher::Metric::BigCellMargin;
   constexpr static KDCoordinate k_messageMargin =
       Escher::Metric::CellVerticalElementMargin;

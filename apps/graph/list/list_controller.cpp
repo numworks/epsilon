@@ -30,6 +30,8 @@ ListController::ListController(
       m_parameterColumnSelected(false) {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setVerticalCellOverlap(0);
+  m_addNewModel.setLeftMargin(Metric::BigCellMargin +
+                              FunctionCell::k_colorIndicatorThickness);
 }
 
 /* TableViewDataSource */

@@ -28,7 +28,7 @@ namespace Inference {
 // Buffers for dynamic allocation
 
 union StatisticBuffer {
-public:
+ public:
   StatisticBuffer() {
     new (&m_oneMeanTInterval) OneMeanTInterval();
     statistic()->initParameters();
@@ -40,8 +40,9 @@ public:
   StatisticBuffer& operator=(const StatisticBuffer& other) = delete;
   StatisticBuffer& operator=(StatisticBuffer&& other) = delete;
 
-  Statistic * statistic() { return reinterpret_cast<Statistic *>(this); }
-private:
+  Statistic* statistic() { return reinterpret_cast<Statistic*>(this); }
+
+ private:
   // Tests
   OneMeanTTest m_oneMeanTTest;
   OneMeanZTest m_oneMeanZTest;
@@ -65,6 +66,6 @@ private:
   SlopeTInterval m_slopeTInterval;
 };
 
-}
+}  // namespace Inference
 
 #endif

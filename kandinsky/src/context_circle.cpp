@@ -25,7 +25,8 @@ static int posToIndex(int i, int j, int r) {
  *      ,     x  |  x      ,'
  *        ' - , _ _ _ ,  '
  */
-static void setToAllSymetries(float buffer[], float alpha, int i, int j, int r) {
+static void setToAllSymetries(float buffer[], float alpha, int i, int j,
+                              int r) {
   buffer[posToIndex(i, j, r)] = alpha;
   buffer[posToIndex(i, -j - 1, r)] = alpha;
   buffer[posToIndex(-i - 1, j, r)] = alpha;
@@ -36,11 +37,14 @@ static void setToAllSymetries(float buffer[], float alpha, int i, int j, int r) 
   buffer[posToIndex(-j - 1, -i - 1, r)] = alpha;
 }
 
-static float alphaGivenSpacingAndPosition(int i, int j, KDCoordinate spacing, bool ascending) {
-    return (i + (ascending ? -j : j)) % (spacing + 1) == 0 ? 1.f : 0.f;
+static float alphaGivenSpacingAndPosition(int i, int j, KDCoordinate spacing,
+                                          bool ascending) {
+  return (i + (ascending ? -j : j)) % (spacing + 1) == 0 ? 1.f : 0.f;
 }
 
-void KDContext::fillCircleWithStripes(KDPoint topLeft, KDCoordinate radius, KDColor color, KDColor background, KDCoordinate spacing, bool ascending) {
+void KDContext::fillCircleWithStripes(KDPoint topLeft, KDCoordinate radius,
+                                      KDColor color, KDColor background,
+                                      KDCoordinate spacing, bool ascending) {
   // This algorithm can be greatly optimized
   constexpr static int maxDiameter = 30;
   assert(radius <= maxDiameter / 2);
@@ -58,12 +62,12 @@ void KDContext::fillCircleWithStripes(KDPoint topLeft, KDCoordinate radius, KDCo
     yi = std::floor(hi - 1e-5);
 
     if (spacing == 0) {
-      if (yi > hip1) {      // Circle crosses two pixels
+      if (yi > hip1) {  // Circle crosses two pixels
         alphaAbove = (hi - yi) / 2;
         alphaBelow = (2 + hip1 - yi) / 2;
         setToAllSymetries(buffer, alphaBelow, i, yi - 1, radius);
         setToAllSymetries(buffer, alphaAbove, i, yi, radius);
-      } else {              // Circle crosses one pixel
+      } else {  // Circle crosses one pixel
         alphaBelow = (hi + hip1 - 2 * yi) / 2;
         setToAllSymetries(buffer, alphaBelow, i, yi, radius);
       }
@@ -73,23 +77,30 @@ void KDContext::fillCircleWithStripes(KDPoint topLeft, KDCoordinate radius, KDCo
 
     // Filled lines
     for (int j = yi - 1; j > -yi - 1; j--) {
-      buffer[posToIndex(i, j, radius)] = alphaGivenSpacingAndPosition(i, j, spacing, ascending);
-      buffer[posToIndex(-i - 1, j, radius)] = alphaGivenSpacingAndPosition(-i-1, j, spacing, ascending);
+      buffer[posToIndex(i, j, radius)] =
+          alphaGivenSpacingAndPosition(i, j, spacing, ascending);
+      buffer[posToIndex(-i - 1, j, radius)] =
+          alphaGivenSpacingAndPosition(-i - 1, j, spacing, ascending);
     }
     for (int j = i; j > -i - 2; j--) {
-      buffer[posToIndex(yi - 1, j, radius)] = alphaGivenSpacingAndPosition(yi -1, j, spacing, ascending);
-      buffer[posToIndex(-yi, j, radius)] = alphaGivenSpacingAndPosition(-yi, j, spacing, ascending);
+      buffer[posToIndex(yi - 1, j, radius)] =
+          alphaGivenSpacingAndPosition(yi - 1, j, spacing, ascending);
+      buffer[posToIndex(-yi, j, radius)] =
+          alphaGivenSpacingAndPosition(-yi, j, spacing, ascending);
     }
   }
 
   // Convert to KDColor array
   uint8_t r = color.red(), g = color.green(), b = color.blue();
-  uint8_t br = background.red(), bg = background.green(), bb = background.blue();
+  uint8_t br = background.red(), bg = background.green(),
+          bb = background.blue();
   for (int index = 0; index < (2 * radius) * (2 * radius); index++) {
     float alpha = buffer[index];
-    colorBuffer[index] = KDColor::RGB888(
-        r * alpha + br * (1 - alpha), g * alpha + bg * (1 - alpha), b * alpha + bb * (1 - alpha));
+    colorBuffer[index] = KDColor::RGB888(r * alpha + br * (1 - alpha),
+                                         g * alpha + bg * (1 - alpha),
+                                         b * alpha + bb * (1 - alpha));
   }
-  KDRect circleRect = KDRect(0, 0, 2 * radius, 2 * radius).translatedBy(topLeft);
+  KDRect circleRect =
+      KDRect(0, 0, 2 * radius, 2 * radius).translatedBy(topLeft);
   fillRectWithPixels(circleRect, colorBuffer, colorBuffer);
 }

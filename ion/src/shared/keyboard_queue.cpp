@@ -1,11 +1,12 @@
 #include "keyboard_queue.h"
-#include "keyboard.h"
+
 #include "events.h"
+#include "keyboard.h"
 
 namespace Ion {
 namespace Keyboard {
 
-Queue * Queue::sharedQueue() {
+Queue* Queue::sharedQueue() {
   static Queue sQueue;
   return &sQueue;
 }
@@ -55,5 +56,5 @@ void Queue::handleBusyState() {
   }
 }
 
-}
-}
+}  // namespace Keyboard
+}  // namespace Ion

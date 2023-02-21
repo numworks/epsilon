@@ -19,11 +19,11 @@ void relayout();
 // Callbacks
 void didRefresh();
 
-void didInit(SDL_Window * window);
-void willShutdown(SDL_Window * window);
+void didInit(SDL_Window* window);
+void willShutdown(SDL_Window* window);
 
-}
-}
-}
+}  // namespace Window
+}  // namespace Simulator
+}  // namespace Ion
 
 #endif

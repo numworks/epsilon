@@ -1,16 +1,19 @@
 #include "variable_box_controller.h"
-#include "python_toolbox.h"
-#include "script.h"
-#include "subtitle_cell.h"
-#include "app.h"
-#include "../shared/toolbox_helpers.h"
+
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/palette.h>
 #include <ion/unicode/utf8_helper.h>
-#include <string.h>
-#include <algorithm>
 #include <python/port/port.h>
+#include <string.h>
+
+#include <algorithm>
+
+#include "../shared/toolbox_helpers.h"
+#include "app.h"
+#include "python_toolbox.h"
+#include "script.h"
+#include "subtitle_cell.h"
 
 extern "C" {
 #include "py/lexer.h"
@@ -32,14 +35,14 @@ typedef enum {
 // define rules with a compile function
 #define DEF_RULE(rule, comp, kind, ...) PN_##rule,
 #define DEF_RULE_NC(rule, kind, ...)
-    #include "py/grammar.h"
+#include "py/grammar.h"
 #undef DEF_RULE
 #undef DEF_RULE_NC
-    PN_const_object, // special node for a constant, generic Python object
+  PN_const_object,  // special node for a constant, generic Python object
 // define rules without a compile function
 #define DEF_RULE(rule, comp, kind, ...)
 #define DEF_RULE_NC(rule, kind, ...) PN_##rule,
-    #include "py/grammar.h"
+#include "py/grammar.h"
 #undef DEF_RULE
 #undef DEF_RULE_NC
 } pn_kind_t;
@@ -48,8 +51,11 @@ typedef enum {
  * - PN_file_input_2;
  * - PN_funcdef;
  * - PN_expr_stmt;
- * - PN_import_name; // import math // import math as m // import math, cmath // import math as m, cmath as cm
- * - PN_import_from; // from math import * // from math import sin // from math import sin as stew // from math import sin, cos // from math import sin as stew, cos as cabbage // from a.b import *
+ * - PN_import_name; // import math // import math as m // import math, cmath //
+ * import math as m, cmath as cm
+ * - PN_import_from; // from math import * // from math import sin // from math
+ * import sin as stew // from math import sin, cos // from math import sin as
+ * stew, cos as cabbage // from a.b import *
  * - PN_import_as_name; // sin as stew
  * - PN_import_as_names; // ... import sin as stew, cos as cabbage
  * - PN_dotted_name; // import a.b
@@ -62,10 +68,9 @@ typedef enum {
  * - PN_import_as_names_paren;
  * */
 
-VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
-  AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
-  m_scriptStore(scriptStore)
-{
+VariableBoxController::VariableBoxController(ScriptStore *scriptStore)
+    : AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
+      m_scriptStore(scriptStore) {
   // ScriptInProgress and BuiltinsAndKeywords subtitle cells
   m_originsName[0] = I18n::translate(I18n::Message::ScriptInProgress);
   m_originsName[1] = I18n::translate(I18n::Message::BuiltinsAndKeywords);
@@ -80,13 +85,15 @@ bool VariableBoxController::handleEvent(Ion::Events::Event event) {
   return NestedMenuController::handleEvent(event);
 }
 
-void VariableBoxController::didEnterResponderChain(Responder * previousFirstResponder) {
+void VariableBoxController::didEnterResponderChain(
+    Responder *previousFirstResponder) {
   /* Code::VariableBoxController should always be called from an environment
    * where Python has already been inited. This way, we do not deinit Python
    * when leaving the VariableBoxController, so we do not lose the environment
    * that was loaded when entering the VariableBoxController. */
   assert(App::app()->pythonIsInited());
-  AlternateEmptyNestedMenuController::didEnterResponderChain(previousFirstResponder);
+  AlternateEmptyNestedMenuController::didEnterResponderChain(
+      previousFirstResponder);
 }
 
 void VariableBoxController::didBecomeFirstResponder() {
@@ -120,7 +127,7 @@ int VariableBoxController::numberOfRows() const {
   return result;
 }
 
-HighlightCell * VariableBoxController::reusableCell(int index, int type) {
+HighlightCell *VariableBoxController::reusableCell(int index, int type) {
   assert(index >= 0 && index < reusableCellCount(type));
   if (type == k_itemCellType) {
     return m_itemCells + index;
@@ -139,27 +146,33 @@ int VariableBoxController::reusableCellCount(int type) {
   return k_maxNumberOfDisplayedItems;
 }
 
-void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void VariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
+                                                    int index) {
   assert(index >= 0 && index < numberOfRows());
   uint8_t cellOrigin = k_currentScriptOrigin;
   int cumulatedOriginsCount = 0;
-  int cellType = typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
+  int cellType =
+      typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    static_cast<ScriptNodeCell *>(cell)->setScriptNode(scriptNodeAtIndex(index - (m_displaySubtitles ? cumulatedOriginsCount : 0)));
+    static_cast<ScriptNodeCell *>(cell)->setScriptNode(scriptNodeAtIndex(
+        index - (m_displaySubtitles ? cumulatedOriginsCount : 0)));
     return;
   }
   assert(m_displaySubtitles);
   assert(cellType == k_subtitleCellType);
   assert(cellOrigin < m_originsCount);
   assert(m_rowsPerOrigins[cellOrigin] > 0);
-  SubtitleCell * myCell = static_cast<SubtitleCell *>(cell);
-  const char * moduleName = m_originsName[cellOrigin];
+  SubtitleCell *myCell = static_cast<SubtitleCell *>(cell);
+  const char *moduleName = m_originsName[cellOrigin];
   I18n::Message prefix = I18n::Message::Default;
   I18n::Message suffix = I18n::Message::Default;
-  if (cellOrigin >= k_importedOrigin && strcmp(moduleName, I18n::translate(I18n::Message::ImportedModulesAndScripts)) != 0) {
+  if (cellOrigin >= k_importedOrigin &&
+      strcmp(moduleName,
+             I18n::translate(I18n::Message::ImportedModulesAndScripts)) != 0) {
     // Source is either a module or a script
     size_t moduleNameLenght = strlen(moduleName);
-    if (moduleNameLenght > 3 && strcmp(moduleName + moduleNameLenght - 3, ".py") == 0) {
+    if (moduleNameLenght > 3 &&
+        strcmp(moduleName + moduleNameLenght - 3, ".py") == 0) {
       // Source is a script
       prefix = I18n::Message::PythonScriptPrefix;
       suffix = I18n::Message::PythonScriptSuffix;
@@ -173,19 +186,24 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int in
   myCell->appendText(I18n::translate(suffix));
 }
 
-void VariableBoxController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+void VariableBoxController::tableViewDidChangeSelection(
+    SelectableTableView *t, int previousSelectedCellX,
+    int previousSelectedCellY, bool withinTemporarySelection) {
   if (withinTemporarySelection || !m_displaySubtitles) {
     return;
   }
   // Make sure subtitle cells cannot be selected
   const int currentSelectedRow = selectedRow();
-  if (currentSelectedRow >= 0 && typeAtIndex(currentSelectedRow) == k_subtitleCellType) {
+  if (currentSelectedRow >= 0 &&
+      typeAtIndex(currentSelectedRow) == k_subtitleCellType) {
     if (currentSelectedRow == 0) {
       // We scroll to the first cell, otherwise it will never appear again
       t->scrollToCell(0, 0);
       t->selectCellAtLocation(0, 1);
     } else {
-      t->selectCellAtLocation(0, selectedRow() + (previousSelectedCellY < currentSelectedRow ? 1 : -1));
+      t->selectCellAtLocation(
+          0, selectedRow() +
+                 (previousSelectedCellY < currentSelectedRow ? 1 : -1));
     }
   }
 }
@@ -194,7 +212,9 @@ int VariableBoxController::typeAtIndex(int index) const {
   return typeAndOriginAtLocation(index);
 }
 
-void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const char * textToAutocomplete, int textToAutocompleteLength) {
+void VariableBoxController::loadFunctionsAndVariables(
+    int scriptIndex, const char *textToAutocomplete,
+    int textToAutocompleteLength) {
   assert(scriptIndex >= 0);
 
   // Reset the node counts
@@ -211,7 +231,8 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
    * While loading the functions and variables, we thus set
    * m_shortenResultCharCount, the number of chars to cut from the text
    * returned. */
-  m_shortenResultCharCount = textToAutocomplete == nullptr ? 0 : textToAutocompleteLength;
+  m_shortenResultCharCount =
+      textToAutocomplete == nullptr ? 0 : textToAutocompleteLength;
 
   // Always load the builtin functions and variables
   loadBuiltinNodes(textToAutocomplete, textToAutocompleteLength);
@@ -226,13 +247,17 @@ void VariableBoxController::loadFunctionsAndVariables(int scriptIndex, const cha
   script.setFetchedForVariableBox(true);
 
   // Load the imported and current variables
-  const char * scriptContent = script.content();
+  const char *scriptContent = script.content();
   assert(scriptContent != nullptr);
-  loadImportedVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
-  loadCurrentVariablesInScript(scriptContent, textToAutocomplete, textToAutocompleteLength);
+  loadImportedVariablesInScript(scriptContent, textToAutocomplete,
+                                textToAutocompleteLength);
+  loadCurrentVariablesInScript(scriptContent, textToAutocomplete,
+                               textToAutocompleteLength);
 }
 
-const char * VariableBoxController::autocompletionAlternativeAtIndex(int textToAutocompleteLength, int * textToInsertLength, bool * addParentheses, int index, int * indexToUpdate) {
+const char *VariableBoxController::autocompletionAlternativeAtIndex(
+    int textToAutocompleteLength, int *textToInsertLength, bool *addParentheses,
+    int index, int *indexToUpdate) {
   if (numberOfRows() == 0) {
     return nullptr;
   }
@@ -253,8 +278,8 @@ const char * VariableBoxController::autocompletionAlternativeAtIndex(int textToA
     *indexToUpdate = index;
   }
 
-  ScriptNode * node = scriptNodeAtIndex(index);
-  const char * currentName = node->name();
+  ScriptNode *node = scriptNodeAtIndex(index);
+  const char *currentName = node->name();
   int currentNameLength = node->nameLength();
   if (currentNameLength < 0) {
     currentNameLength = strlen(currentName);
@@ -271,7 +296,8 @@ void VariableBoxController::loadVariablesImportedFromScripts() {
   for (int i = 0; i < scriptsCount; i++) {
     Script script = m_scriptStore->scriptAtIndex(i);
     if (script.fetchedFromConsole()) {
-      loadGlobalAndImportedVariablesInScriptAsImported(script, nullptr, -1, false);
+      loadGlobalAndImportedVariablesInScriptAsImported(script, nullptr, -1,
+                                                       false);
     }
   }
 }
@@ -292,7 +318,7 @@ void VariableBoxController::empty() {
 }
 
 void VariableBoxController::insertAutocompletionResultAtIndex(int index) {
-  ScriptNode * selectedScriptNode = scriptNodeAtIndex(index);
+  ScriptNode *selectedScriptNode = scriptNodeAtIndex(index);
   if (selectedScriptNode == nullptr) {
     /* Autocompletion has not been found. It can happen if the index is no
      * longer valid, when the VariableBoxController has been emptied and
@@ -304,8 +330,11 @@ void VariableBoxController::insertAutocompletionResultAtIndex(int index) {
    * calls handleEventWithText, which will reload the autocompletion for the
    * added text, which will probably change the script nodes and
    * selectedScriptNode will become invalid. */
-  const bool shouldAddParentheses = selectedScriptNode->type() == ScriptNode::Type::WithParentheses;
-  insertTextInCaller(selectedScriptNode->name() + m_shortenResultCharCount, selectedScriptNode->nameLength() - m_shortenResultCharCount);
+  const bool shouldAddParentheses =
+      selectedScriptNode->type() == ScriptNode::Type::WithParentheses;
+  insertTextInCaller(
+      selectedScriptNode->name() + m_shortenResultCharCount,
+      selectedScriptNode->nameLength() - m_shortenResultCharCount);
   // WARNING: selectedScriptNode is now invalid
 
   if (shouldAddParentheses) {
@@ -315,11 +344,14 @@ void VariableBoxController::insertAutocompletionResultAtIndex(int index) {
 
 // PRIVATE METHODS
 
-int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name, int nameLength, bool * strictlyStartsWith) {
+int VariableBoxController::NodeNameCompare(ScriptNode *node, const char *name,
+                                           int nameLength,
+                                           bool *strictlyStartsWith) {
   assert(strictlyStartsWith == nullptr || *strictlyStartsWith == false);
   assert(nameLength > 0);
-  const char * nodeName = node->name();
-  const int nodeNameLength = node->nameLength() < 0 ? strlen(nodeName) : node->nameLength();
+  const char *nodeName = node->name();
+  const int nodeNameLength =
+      node->nameLength() < 0 ? strlen(nodeName) : node->nameLength();
   const int comparisonLength = std::min(nameLength, nodeNameLength);
   int result = strncmp(nodeName, name, comparisonLength);
   if (result != 0) {
@@ -332,24 +364,28 @@ int VariableBoxController::NodeNameCompare(ScriptNode * node, const char * name,
   if (strictlyStartsWith != nullptr && nodeNameLengthStartsWithName) {
     *strictlyStartsWith = true;
   }
-  return nodeNameLengthStartsWithName ? *(nodeName + nameLength)  : - *(name + nodeNameLength) ;
+  return nodeNameLengthStartsWithName ? *(nodeName + nameLength)
+                                      : -*(name + nodeNameLength);
 }
 
 bool VariableBoxController::maxNodesReachedForOrigin(uint8_t origin) const {
   if (origin == k_currentScriptOrigin) {
-    return nodesCountForOrigin(k_currentScriptOrigin) >= k_maxOtherScriptNodesCount;
+    return nodesCountForOrigin(k_currentScriptOrigin) >=
+           k_maxOtherScriptNodesCount;
   } else if (origin == k_builtinsOrigin) {
     return nodesCountForOrigin(k_builtinsOrigin) >= k_totalBuiltinNodesCount;
   }
   assert(origin >= k_importedOrigin);
-  return m_nodesCount >= nodesCountForOrigin(k_builtinsOrigin) + nodesCountForOrigin(k_currentScriptOrigin) + k_maxOtherScriptNodesCount;
+  return m_nodesCount >= nodesCountForOrigin(k_builtinsOrigin) +
+                             nodesCountForOrigin(k_currentScriptOrigin) +
+                             k_maxOtherScriptNodesCount;
 }
 
 size_t VariableBoxController::nodesCountForOrigin(uint8_t origin) const {
   return m_rowsPerOrigins[origin];
 }
 
-ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
+ScriptNode *VariableBoxController::scriptNodeAtIndex(int index) {
   assert(index >= 0 && index < numberOfRows());
   assert(index < static_cast<int>(m_nodesCount));
   assert(m_nodesCount <= k_maxScriptNodesCount);
@@ -357,8 +393,10 @@ ScriptNode * VariableBoxController::scriptNodeAtIndex(int index) {
   return m_scriptNodes + index;
 }
 
-int VariableBoxController::typeAndOriginAtLocation(int i, uint8_t * resultOrigin, int * cumulatedOriginsCount) const {
-  assert(i < static_cast<int>(m_nodesCount + (m_displaySubtitles ? m_originsCount : 0)));
+int VariableBoxController::typeAndOriginAtLocation(
+    int i, uint8_t *resultOrigin, int *cumulatedOriginsCount) const {
+  assert(i < static_cast<int>(m_nodesCount +
+                              (m_displaySubtitles ? m_originsCount : 0)));
   int cellIndex = 0;
   int originsCount = 0;
   for (uint8_t origin = 0; origin < m_originsCount; ++origin) {
@@ -388,158 +426,169 @@ int VariableBoxController::typeAndOriginAtLocation(int i, uint8_t * resultOrigin
   }
   assert(false);
   return k_itemCellType;
-
 }
 
 bool VariableBoxController::selectLeaf(int rowIndex) {
   assert(rowIndex >= 0 && rowIndex < numberOfRows());
   int cumulatedOriginsCount = 0;
-  int cellType = typeAndOriginAtLocation(rowIndex, nullptr, &cumulatedOriginsCount);
+  int cellType =
+      typeAndOriginAtLocation(rowIndex, nullptr, &cumulatedOriginsCount);
   assert(cellType == k_itemCellType);
-  (void)cellType; // Silence warnings
+  (void)cellType;  // Silence warnings
 
-  insertAutocompletionResultAtIndex(rowIndex - (m_displaySubtitles ? cumulatedOriginsCount : 0));
+  insertAutocompletionResultAtIndex(
+      rowIndex - (m_displaySubtitles ? cumulatedOriginsCount : 0));
 
   Container::activeApp()->modalViewController()->dismissModal();
   return true;
 }
 
-void VariableBoxController::insertTextInCaller(const char * text, int textLength) {
+void VariableBoxController::insertTextInCaller(const char *text,
+                                               int textLength) {
   int textLen = textLength < 0 ? strlen(text) : textLength;
-  constexpr int k_maxScriptObjectNameSize = 100; // Ad hoc value
+  constexpr int k_maxScriptObjectNameSize = 100;  // Ad hoc value
   int commandBufferMaxSize = std::min(k_maxScriptObjectNameSize, textLen + 1);
   char commandBuffer[k_maxScriptObjectNameSize];
-  Shared::ToolboxHelpers::TextToInsertForCommandText(text, textLen, commandBuffer, commandBufferMaxSize, true);
+  Shared::ToolboxHelpers::TextToInsertForCommandText(
+      text, textLen, commandBuffer, commandBufferMaxSize, true);
   sender()->handleEventWithText(commandBuffer);
 }
 
-void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, int textToAutocompleteLength) {
-  //TODO Could be great to use strings defined in STATIC const char *const tok_kw[] in python/lexer.c
+void VariableBoxController::loadBuiltinNodes(const char *textToAutocomplete,
+                                             int textToAutocompleteLength) {
+  // TODO Could be great to use strings defined in STATIC const char *const
+  // tok_kw[] in python/lexer.c
   /* The commented values do not work with our current MicroPython but might
    * work later, which is why we keep them. */
-  const struct { const char * name; ScriptNode::Type type; } builtinNames[] = {
-    {"False", ScriptNode::Type::WithoutParentheses},
-    {"None", ScriptNode::Type::WithoutParentheses},
-    {"True", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_abs), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_all), ScriptNode::Type::WithParentheses},
-    {"and", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_any), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_append), ScriptNode::Type::WithParentheses},
-    {"as", ScriptNode::Type::WithoutParentheses},
-    //{qstr_str(MP_QSTR_ascii), ScriptNode::Type::WithParentheses},
-    {"assert", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_bin), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_bool), ScriptNode::Type::WithParentheses},
-    {"break", ScriptNode::Type::WithoutParentheses},
-    //{qstr_str(MP_QSTR_breakpoint), ScriptNode::Type::WithParentheses},
-    //{qstr_str(MP_QSTR_bytearray), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_bytes), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_callable), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_chr), ScriptNode::Type::WithParentheses},
-    {"class", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_classmethod), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_clear), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_cmath), ScriptNode::Type::WithoutParentheses},
-    //{qstr_str(MP_QSTR_compile), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_complex), ScriptNode::Type::WithParentheses},
-    {"continue", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_count), ScriptNode::Type::WithParentheses},
-    {"def", ScriptNode::Type::WithoutParentheses},
-    {"del", ScriptNode::Type::WithoutParentheses},
-    //{qstr_str(MP_QSTR_delattr), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_dict), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_dir), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_divmod), ScriptNode::Type::WithParentheses},
-    {"elif", ScriptNode::Type::WithoutParentheses},
-    {"else", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_enumerate), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_eval), ScriptNode::Type::WithParentheses},
-    {"except", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_exec), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_filter), ScriptNode::Type::WithParentheses},
-    {"finally", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_float), ScriptNode::Type::WithParentheses},
-    {"for", ScriptNode::Type::WithoutParentheses},
-    //{qstr_str(MP_QSTR_format), ScriptNode::Type::WithParentheses},
-    {"from", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_frozenset), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_getattr), ScriptNode::Type::WithParentheses},
-    {"global", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_globals), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_hasattr), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_hash), ScriptNode::Type::WithParentheses},
-    //{qstr_str(MP_QSTR_help), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_hex), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_id), ScriptNode::Type::WithParentheses},
-    {"if", ScriptNode::Type::WithoutParentheses},
-    {"import", ScriptNode::Type::WithoutParentheses},
-    {"in", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_index), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_input), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_insert), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_int), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_ion), ScriptNode::Type::WithoutParentheses},
-    {"is", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_isinstance), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_issubclass), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_iter), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_kandinsky), ScriptNode::Type::WithoutParentheses},
-    {"lambda", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_len), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_list), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_locals), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_map), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_math), ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_matplotlib_dot_pyplot), ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_max), ScriptNode::Type::WithParentheses},
-    //{qstr_str(MP_QSTR_memoryview), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_min), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_next), ScriptNode::Type::WithParentheses},
-    {"nonlocal", ScriptNode::Type::WithoutParentheses},
-    {"not", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_object), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_oct), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_open), ScriptNode::Type::WithParentheses},
-    {"or", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_ord), ScriptNode::Type::WithParentheses},
-    {"pass", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_pow), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_pop), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_print), ScriptNode::Type::WithParentheses},
-    //{qstr_str(MP_QSTR_property), ScriptNode::Type::WithParentheses},
-    {"raise", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_random), ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_range), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_remove), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_repr), ScriptNode::Type::WithParentheses},
-    {"return", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_reverse), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_reversed), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_round), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_set), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_setattr), ScriptNode::Type::WithParentheses},
-    //{qstr_str(MP_QSTR_slice), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_sort), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_sorted), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_staticmethod), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_str), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_sum), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_super), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_time), ScriptNode::Type::WithoutParentheses},
-    {"try", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_tuple), ScriptNode::Type::WithParentheses},
-    {qstr_str(MP_QSTR_turtle), ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_type), ScriptNode::Type::WithParentheses},
-    //{qstr_str(MP_QSTR_vars), ScriptNode::Type::WithParentheses},
-    {"while", ScriptNode::Type::WithoutParentheses},
-    {"with", ScriptNode::Type::WithoutParentheses},
-    {"yield", ScriptNode::Type::WithoutParentheses},
-    {qstr_str(MP_QSTR_zip), ScriptNode::Type::WithParentheses}
-  };
-  assert(sizeof(builtinNames) / sizeof(builtinNames[0]) == k_totalBuiltinNodesCount);
+  const struct {
+    const char *name;
+    ScriptNode::Type type;
+  } builtinNames[] = {
+      {"False", ScriptNode::Type::WithoutParentheses},
+      {"None", ScriptNode::Type::WithoutParentheses},
+      {"True", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_abs), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_all), ScriptNode::Type::WithParentheses},
+      {"and", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_any), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_append), ScriptNode::Type::WithParentheses},
+      {"as", ScriptNode::Type::WithoutParentheses},
+      //{qstr_str(MP_QSTR_ascii), ScriptNode::Type::WithParentheses},
+      {"assert", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_bin), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_bool), ScriptNode::Type::WithParentheses},
+      {"break", ScriptNode::Type::WithoutParentheses},
+      //{qstr_str(MP_QSTR_breakpoint), ScriptNode::Type::WithParentheses},
+      //{qstr_str(MP_QSTR_bytearray), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_bytes), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_callable), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_chr), ScriptNode::Type::WithParentheses},
+      {"class", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_classmethod), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_clear), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_cmath), ScriptNode::Type::WithoutParentheses},
+      //{qstr_str(MP_QSTR_compile), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_complex), ScriptNode::Type::WithParentheses},
+      {"continue", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_count), ScriptNode::Type::WithParentheses},
+      {"def", ScriptNode::Type::WithoutParentheses},
+      {"del", ScriptNode::Type::WithoutParentheses},
+      //{qstr_str(MP_QSTR_delattr), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_dict), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_dir), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_divmod), ScriptNode::Type::WithParentheses},
+      {"elif", ScriptNode::Type::WithoutParentheses},
+      {"else", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_enumerate), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_eval), ScriptNode::Type::WithParentheses},
+      {"except", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_exec), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_filter), ScriptNode::Type::WithParentheses},
+      {"finally", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_float), ScriptNode::Type::WithParentheses},
+      {"for", ScriptNode::Type::WithoutParentheses},
+      //{qstr_str(MP_QSTR_format), ScriptNode::Type::WithParentheses},
+      {"from", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_frozenset), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_getattr), ScriptNode::Type::WithParentheses},
+      {"global", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_globals), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_hasattr), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_hash), ScriptNode::Type::WithParentheses},
+      //{qstr_str(MP_QSTR_help), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_hex), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_id), ScriptNode::Type::WithParentheses},
+      {"if", ScriptNode::Type::WithoutParentheses},
+      {"import", ScriptNode::Type::WithoutParentheses},
+      {"in", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_index), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_input), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_insert), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_int), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_ion), ScriptNode::Type::WithoutParentheses},
+      {"is", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_isinstance), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_issubclass), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_iter), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_kandinsky), ScriptNode::Type::WithoutParentheses},
+      {"lambda", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_len), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_list), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_locals), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_map), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_math), ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_matplotlib_dot_pyplot),
+       ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_max), ScriptNode::Type::WithParentheses},
+      //{qstr_str(MP_QSTR_memoryview), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_min), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_next), ScriptNode::Type::WithParentheses},
+      {"nonlocal", ScriptNode::Type::WithoutParentheses},
+      {"not", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_object), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_oct), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_open), ScriptNode::Type::WithParentheses},
+      {"or", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_ord), ScriptNode::Type::WithParentheses},
+      {"pass", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_pow), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_pop), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_print), ScriptNode::Type::WithParentheses},
+      //{qstr_str(MP_QSTR_property), ScriptNode::Type::WithParentheses},
+      {"raise", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_random), ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_range), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_remove), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_repr), ScriptNode::Type::WithParentheses},
+      {"return", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_reverse), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_reversed), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_round), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_set), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_setattr), ScriptNode::Type::WithParentheses},
+      //{qstr_str(MP_QSTR_slice), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_sort), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_sorted), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_staticmethod), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_str), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_sum), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_super), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_time), ScriptNode::Type::WithoutParentheses},
+      {"try", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_tuple), ScriptNode::Type::WithParentheses},
+      {qstr_str(MP_QSTR_turtle), ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_type), ScriptNode::Type::WithParentheses},
+      //{qstr_str(MP_QSTR_vars), ScriptNode::Type::WithParentheses},
+      {"while", ScriptNode::Type::WithoutParentheses},
+      {"with", ScriptNode::Type::WithoutParentheses},
+      {"yield", ScriptNode::Type::WithoutParentheses},
+      {qstr_str(MP_QSTR_zip), ScriptNode::Type::WithParentheses}};
+  assert(sizeof(builtinNames) / sizeof(builtinNames[0]) ==
+         k_totalBuiltinNodesCount);
   for (size_t i = 0; i < k_totalBuiltinNodesCount; i++) {
-    if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, builtinNames[i].type, k_builtinsOrigin, builtinNames[i].name)) {
+    if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength,
+                         builtinNames[i].type, k_builtinsOrigin,
+                         builtinNames[i].name)) {
       /* We can leverage on the fact that builtin nodes are stored in
        * alphabetical order. */
       return;
@@ -552,31 +601,35 @@ void VariableBoxController::loadBuiltinNodes(const char * textToAutocomplete, in
  * struct is private and declared in python/src/py/reader.c, we copy-paste it
  * here to be able to use it. */
 typedef struct _mp_reader_mem_t {
-    size_t free_len; // if >0 mem is freed on close by: m_free(beg, free_len)
-    const byte *beg;
-    const byte *cur;
-    const byte *end;
+  size_t free_len;  // if >0 mem is freed on close by: m_free(beg, free_len)
+  const byte *beg;
+  const byte *cur;
+  const byte *end;
 } mp_reader_mem_t;
 
-void VariableBoxController::loadImportedVariablesInScript(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength) {
+void VariableBoxController::loadImportedVariablesInScript(
+    const char *scriptContent, const char *textToAutocomplete,
+    int textToAutocompleteLength) {
   /* Load the imported variables and functions: lex and the parse on a line per
    * line basis until parsing fails, while detecting import structures. */
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-    const char * parseStart = scriptContent;
+    const char *parseStart = scriptContent;
     // Skip new lines at the beginning of the script
     while (*parseStart == '\n' && *parseStart != 0) {
       parseStart++;
     }
-    const char * parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
+    const char *parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
 
     while (parseStart != parseEnd) {
-      mp_lexer_t *lex = mp_lexer_new_from_str_len(0, parseStart, parseEnd - parseStart, 0);
+      mp_lexer_t *lex =
+          mp_lexer_new_from_str_len(0, parseStart, parseEnd - parseStart, 0);
       mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
       mp_parse_node_t pn = parseTree.root;
 
       if (MP_PARSE_NODE_IS_STRUCT(pn)) {
-        addNodesFromImportMaybe((mp_parse_node_struct_t *) pn, textToAutocomplete, textToAutocompleteLength);
+        addNodesFromImportMaybe((mp_parse_node_struct_t *)pn,
+                                textToAutocomplete, textToAutocompleteLength);
       }
 
       mp_parse_tree_clear(&parseTree);
@@ -595,7 +648,10 @@ void VariableBoxController::loadImportedVariablesInScript(const char * scriptCon
       parseEnd = UTF8Helper::CodePointSearch(parseStart, '\n');
     }
     nlr_pop();
-  } else if (textToAutocomplete != nullptr && textToAutocomplete >= scriptContent && textToAutocomplete  <= strlen(scriptContent) + scriptContent && nlr_push(&nlr) == 0) {
+  } else if (textToAutocomplete != nullptr &&
+             textToAutocomplete >= scriptContent &&
+             textToAutocomplete <= strlen(scriptContent) + scriptContent &&
+             nlr_push(&nlr) == 0) {
     /* When VariableBoxController has been emptied, and the text to autocomplete
      * is within scriptContent, an unfinished Autocompletion might remain as
      * ImportedVariables are being reloaded. Parsing this unfinished line may
@@ -603,16 +659,19 @@ void VariableBoxController::loadImportedVariablesInScript(const char * scriptCon
      * In that case we try again parsing this line from the start to the end of
      * the text to autocomplete only, to make sure ongoing autocompletion will
      * still be available. */
-    const char * parseStart = textToAutocomplete;
+    const char *parseStart = textToAutocomplete;
     // Search for the beginning of the line
-    while (parseStart != scriptContent && *(parseStart-1) != '\n') {
+    while (parseStart != scriptContent && *(parseStart - 1) != '\n') {
       parseStart--;
     }
-    mp_lexer_t *lex = mp_lexer_new_from_str_len(0, parseStart, textToAutocomplete + textToAutocompleteLength - parseStart, 0);
+    mp_lexer_t *lex = mp_lexer_new_from_str_len(
+        0, parseStart,
+        textToAutocomplete + textToAutocompleteLength - parseStart, 0);
     mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
     mp_parse_node_t pn = parseTree.root;
     if (MP_PARSE_NODE_IS_STRUCT(pn)) {
-        addNodesFromImportMaybe((mp_parse_node_struct_t *) pn, textToAutocomplete, textToAutocompleteLength);
+      addNodesFromImportMaybe((mp_parse_node_struct_t *)pn, textToAutocomplete,
+                              textToAutocompleteLength);
     }
     nlr_pop();
   } else {
@@ -620,26 +679,27 @@ void VariableBoxController::loadImportedVariablesInScript(const char * scriptCon
   }
 }
 
-void VariableBoxController::loadCurrentVariablesInScript(const char * scriptContent, const char * textToAutocomplete, int textToAutocompleteLength) {
+void VariableBoxController::loadCurrentVariablesInScript(
+    const char *scriptContent, const char *textToAutocomplete,
+    int textToAutocompleteLength) {
   /* To find variable and function names: we lex the script and keep all
    * MP_TOKEN_NAME that complete the text to autocomplete and are not already in
    * the builtins or imported scripts. */
 
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-
     // Lex the script
-    _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
+    _mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent,
+                                                 strlen(scriptContent), false);
 
     // Keep track of DEF tokens to differentiate between variables and functions
     bool defToken = false;
-    const char * beginningLine = scriptContent;
+    const char *beginningLine = scriptContent;
     size_t beginningLineIndex = 0;
 
     while (lex->tok_kind != MP_TOKEN_END) {
       // Keep only MP_TOKEN_NAME tokens
       if (lex->tok_kind == MP_TOKEN_NAME) {
-
         int nameLength = lex->vstr.len;
 
         /* If the token autocompletes the text and it is not already in the
@@ -647,21 +707,27 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
         const uint8_t origin = k_currentScriptOrigin;
 
         // Find the token position in the text
-        size_t line = lex->tok_line - 1; // tok_line starts at 1, not 0
+        size_t line = lex->tok_line - 1;  // tok_line starts at 1, not 0
         if (beginningLineIndex < line) {
           while (beginningLineIndex < line) {
-            beginningLine = UTF8Helper::CodePointSearch(beginningLine, '\n') + 1;
+            beginningLine =
+                UTF8Helper::CodePointSearch(beginningLine, '\n') + 1;
             beginningLineIndex++;
-            assert(*beginningLine != 0); // We should not get to the end of the text
+            assert(*beginningLine !=
+                   0);  // We should not get to the end of the text
           }
         }
         assert(beginningLineIndex == line);
         // tok_column starts at 1, not 0
-        const char * tokenInText = beginningLine + lex->tok_column - 1;
+        const char *tokenInText = beginningLine + lex->tok_column - 1;
         assert(strncmp(tokenInText, lex->vstr.buf, nameLength) == 0);
 
-        ScriptNode::Type nodeType = (defToken || *(tokenInText + nameLength) == '(')? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses;
-        if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, nodeType, origin, tokenInText, nameLength)) {
+        ScriptNode::Type nodeType =
+            (defToken || *(tokenInText + nameLength) == '(')
+                ? ScriptNode::Type::WithParentheses
+                : ScriptNode::Type::WithoutParentheses;
+        if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength,
+                             nodeType, origin, tokenInText, nameLength)) {
           break;
         }
       }
@@ -675,26 +741,32 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
   }
 }
 
-void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(Script script, const char * textToAutocomplete, int textToAutocompleteLength, bool importFromModules) {
+void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(
+    Script script, const char *textToAutocomplete, int textToAutocompleteLength,
+    bool importFromModules) {
   if (script.fetchedForVariableBox()) {
     // We already fetched these script variables
     return;
   }
   nlr_buf_t nlr;
   if (nlr_push(&nlr) == 0) {
-    const char * scriptName = script.fullName();
-    const char * scriptContent = script.content();
-    mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent, strlen(scriptContent), false);
+    const char *scriptName = script.fullName();
+    const char *scriptContent = script.content();
+    mp_lexer_t *lex = mp_lexer_new_from_str_len(0, scriptContent,
+                                                strlen(scriptContent), false);
     mp_parse_tree_t parseTree = mp_parse(lex, MP_PARSE_FILE_INPUT);
     mp_parse_node_t pn = parseTree.root;
 
     if (MP_PARSE_NODE_IS_STRUCT(pn)) {
-      mp_parse_node_struct_t * pns = (mp_parse_node_struct_t *)pn;
+      mp_parse_node_struct_t *pns = (mp_parse_node_struct_t *)pn;
       uint structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(pns);
       if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
         // The script is only a single function or variable definition
-        addImportStructFromScript(pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength);
-      } else if (addNodesFromImportMaybe(pns, textToAutocomplete, textToAutocompleteLength, importFromModules)) {
+        addImportStructFromScript(pns, structKind, scriptName,
+                                  textToAutocomplete, textToAutocompleteLength);
+      } else if (addNodesFromImportMaybe(pns, textToAutocomplete,
+                                         textToAutocompleteLength,
+                                         importFromModules)) {
         // The script is is only an import, handled in addNodesFromImportMaybe
       } else if (structKind == PN_file_input_2) {
         /* At this point, if the script node is not of type "file_input_2", it
@@ -705,14 +777,19 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(Scr
         for (size_t i = 0; i < n; i++) {
           mp_parse_node_t child = pns->nodes[i];
           if (MP_PARSE_NODE_IS_STRUCT(child)) {
-            mp_parse_node_struct_t *child_pns = (mp_parse_node_struct_t*)(child);
+            mp_parse_node_struct_t *child_pns =
+                (mp_parse_node_struct_t *)(child);
             structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(child_pns);
             if (structKind == PN_funcdef || structKind == PN_expr_stmt) {
-              if (addImportStructFromScript(child_pns, structKind, scriptName, textToAutocomplete, textToAutocompleteLength)) {
+              if (addImportStructFromScript(child_pns, structKind, scriptName,
+                                            textToAutocomplete,
+                                            textToAutocompleteLength)) {
                 break;
               }
             } else {
-              addNodesFromImportMaybe(child_pns, textToAutocomplete, textToAutocompleteLength, importFromModules);
+              addNodesFromImportMaybe(child_pns, textToAutocomplete,
+                                      textToAutocompleteLength,
+                                      importFromModules);
             }
           }
         }
@@ -725,15 +802,14 @@ void VariableBoxController::loadGlobalAndImportedVariablesInScriptAsImported(Scr
   script.setFetchedForVariableBox(true);
 }
 
-bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * parseNode, const char * textToAutocomplete, int textToAutocompleteLength, bool importFromModules) {
+bool VariableBoxController::addNodesFromImportMaybe(
+    mp_parse_node_struct_t *parseNode, const char *textToAutocomplete,
+    int textToAutocompleteLength, bool importFromModules) {
   // Determine if the node is an import structure
-  uint structKind = (uint) MP_PARSE_NODE_STRUCT_KIND(parseNode);
+  uint structKind = (uint)MP_PARSE_NODE_STRUCT_KIND(parseNode);
   bool structKindIsImportWithoutFrom = structKind == PN_import_name;
-  if (!structKindIsImportWithoutFrom
-      && structKind != PN_import_from
-      && structKind != PN_import_as_names
-      && structKind != PN_import_as_name)
-  {
+  if (!structKindIsImportWithoutFrom && structKind != PN_import_from &&
+      structKind != PN_import_as_names && structKind != PN_import_as_name) {
     // This was not an import structure
     return false;
   }
@@ -746,16 +822,17 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
   size_t childNodesCount = MP_PARSE_NODE_STRUCT_NUM_NODES(parseNode);
   for (size_t i = 0; i < childNodesCount; i++) {
     mp_parse_node_t child = parseNode->nodes[i];
-    if (MP_PARSE_NODE_IS_LEAF(child) && MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
+    if (MP_PARSE_NODE_IS_LEAF(child) &&
+        MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
       // Parsing something like "import xyz"
-      const char * id = qstr_str(MP_PARSE_NODE_LEAF_ARG(child));
+      const char *id = qstr_str(MP_PARSE_NODE_LEAF_ARG(child));
 
       /* xyz might be:
        *  - a module name -> in which case we want no importation source on the
        *    node. The node will not be added if it is already in the builtins.
        *  - a script name -> we want to have xyz.py as the importation source
        *  - a non-existing identifier -> we want no source */
-      const char * sourceId = nullptr;
+      const char *sourceId = nullptr;
       if (importationSourceIsModule(id)) {
         if (!importFromModules) {
           return true;
@@ -765,7 +842,8 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
          *  importation algorithm first looks for a module then for a script. We
          *  should thus check that the id is not a module name before retrieving
          *  a script name to put it as source. */
-        if (!importationSourceIsScript(id, &sourceId) && !importFromModules) { // Warning : must be done in this order
+        if (!importationSourceIsScript(id, &sourceId) &&
+            !importFromModules) {  // Warning : must be done in this order
           /* We call importationSourceIsScript to load the script name in
            * sourceId. We also use it to make sure, if importFromModules is
            * false, that we are not importing variables from something else than
@@ -777,15 +855,22 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
        * added without description, nor sources although it could have been
        * fetched with a "from math import *". We try here to at least find a
        * source name for a suited subtitle */
-      const char * source = (sourceId != nullptr) ?
-        sourceId : I18n::translate(I18n::Message::ImportedModulesAndScripts);
-      if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, k_importedOrigin, id, -1, source)) {
+      const char *source =
+          (sourceId != nullptr)
+              ? sourceId
+              : I18n::translate(I18n::Message::ImportedModulesAndScripts);
+      if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength,
+                           ScriptNode::Type::WithoutParentheses,
+                           k_importedOrigin, id, -1, source)) {
         break;
       }
     } else if (MP_PARSE_NODE_IS_STRUCT(child)) {
       // Parsing something like "from math import sin"
-      addNodesFromImportMaybe((mp_parse_node_struct_t *)child, textToAutocomplete, textToAutocompleteLength, importFromModules);
-    } else if (MP_PARSE_NODE_IS_TOKEN(child) && MP_PARSE_NODE_IS_TOKEN_KIND(child, MP_TOKEN_OP_STAR)) {
+      addNodesFromImportMaybe((mp_parse_node_struct_t *)child,
+                              textToAutocomplete, textToAutocompleteLength,
+                              importFromModules);
+    } else if (MP_PARSE_NODE_IS_TOKEN(child) &&
+               MP_PARSE_NODE_IS_TOKEN_KIND(child, MP_TOKEN_OP_STAR)) {
       /* Parsing something like "from math import *"
        * -> Load all the module content */
       loadAllSourceContent = true;
@@ -795,52 +880,62 @@ bool VariableBoxController::addNodesFromImportMaybe(mp_parse_node_struct_t * par
   // Fetch a script / module content if needed
   if (loadAllSourceContent) {
     assert(childNodesCount > 0);
-    const char * importationSourceName = importationSourceNameFromNode(parseNode->nodes[0]);
+    const char *importationSourceName =
+        importationSourceNameFromNode(parseNode->nodes[0]);
     if (importationSourceName == nullptr) {
       // For instance, the name is a "dotted name" but not matplotlib.pyplot
       return true;
     }
     int numberOfModuleChildren = 0;
-    const ToolboxMessageTree * moduleChildren = nullptr;
-    if (importationSourceIsModule(importationSourceName, &moduleChildren, &numberOfModuleChildren)) {
+    const ToolboxMessageTree *moduleChildren = nullptr;
+    if (importationSourceIsModule(importationSourceName, &moduleChildren,
+                                  &numberOfModuleChildren)) {
       if (!importFromModules) {
         return true;
       }
       if (moduleChildren != nullptr) {
         /* The importation source is a module that we display in the toolbox:
          * get the nodes from the toolbox
-         * We skip the 3 first nodes, which are "import ...", "from ... import *"
-         * and "....function". */
+         * We skip the 3 first nodes, which are "import ...", "from ... import
+         * *" and "....function". */
         constexpr int numberOfNodesToSkip = 3;
         assert(numberOfModuleChildren > numberOfNodesToSkip);
         for (int i = numberOfNodesToSkip; i < numberOfModuleChildren; i++) {
-          const char * name = I18n::translate((moduleChildren + i)->label());
-          if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, ScriptNode::Type::WithoutParentheses, k_importedOrigin, name, -1, importationSourceName, I18n::translate((moduleChildren + i)->text()))) {
+          const char *name = I18n::translate((moduleChildren + i)->label());
+          if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength,
+                               ScriptNode::Type::WithoutParentheses,
+                               k_importedOrigin, name, -1,
+                               importationSourceName,
+                               I18n::translate((moduleChildren + i)->text()))) {
             break;
           }
         }
       } else {
-        //TODO get module variables that are not in the toolbox
+        // TODO get module variables that are not in the toolbox
       }
     } else {
       // Try fetching the nodes from a script
       Script importedScript;
-      const char * scriptFullName;
-      if (importationSourceIsScript(importationSourceName, &scriptFullName, &importedScript)) {
-        loadGlobalAndImportedVariablesInScriptAsImported(importedScript, textToAutocomplete, textToAutocompleteLength);
+      const char *scriptFullName;
+      if (importationSourceIsScript(importationSourceName, &scriptFullName,
+                                    &importedScript)) {
+        loadGlobalAndImportedVariablesInScriptAsImported(
+            importedScript, textToAutocomplete, textToAutocompleteLength);
       }
     }
   }
   return true;
 }
 
-const char * VariableBoxController::importationSourceNameFromNode(mp_parse_node_t & node) {
-  if (MP_PARSE_NODE_IS_LEAF(node) && MP_PARSE_NODE_LEAF_KIND(node) == MP_PARSE_NODE_ID) {
+const char *VariableBoxController::importationSourceNameFromNode(
+    mp_parse_node_t &node) {
+  if (MP_PARSE_NODE_IS_LEAF(node) &&
+      MP_PARSE_NODE_LEAF_KIND(node) == MP_PARSE_NODE_ID) {
     // The importation source is "simple", for instance: from math import *
     return qstr_str(MP_PARSE_NODE_LEAF_ARG(node));
   }
-  if (MP_PARSE_NODE_IS_STRUCT(node)) { //TODO replace this with an assert?
-    mp_parse_node_struct_t * nodePNS = (mp_parse_node_struct_t *)node;
+  if (MP_PARSE_NODE_IS_STRUCT(node)) {  // TODO replace this with an assert?
+    mp_parse_node_struct_t *nodePNS = (mp_parse_node_struct_t *)node;
     uint nodeStructKind = MP_PARSE_NODE_STRUCT_KIND(nodePNS);
     if (nodeStructKind != PN_dotted_name) {
       return nullptr;
@@ -856,7 +951,8 @@ const char * VariableBoxController::importationSourceNameFromNode(mp_parse_node_
     if (numberOfSplitNames != 2) {
       return nullptr;
     }
-    const char * nodeSubName = qstr_str(MP_PARSE_NODE_LEAF_ARG(nodePNS->nodes[0]));
+    const char *nodeSubName =
+        qstr_str(MP_PARSE_NODE_LEAF_ARG(nodePNS->nodes[0]));
     if (strcmp(nodeSubName, qstr_str(MP_QSTR_matplotlib)) == 0) {
       nodeSubName = qstr_str(MP_PARSE_NODE_LEAF_ARG(nodePNS->nodes[1]));
       if (strcmp(nodeSubName, qstr_str(MP_QSTR_pyplot)) == 0) {
@@ -867,8 +963,11 @@ const char * VariableBoxController::importationSourceNameFromNode(mp_parse_node_
   return nullptr;
 }
 
-bool VariableBoxController::importationSourceIsModule(const char * sourceName, const ToolboxMessageTree * * moduleChildren, int * numberOfModuleChildren) {
-  const ToolboxMessageTree * children = App::app()->toolbox()->moduleChildren(sourceName, numberOfModuleChildren);
+bool VariableBoxController::importationSourceIsModule(
+    const char *sourceName, const ToolboxMessageTree **moduleChildren,
+    int *numberOfModuleChildren) {
+  const ToolboxMessageTree *children =
+      App::app()->toolbox()->moduleChildren(sourceName, numberOfModuleChildren);
   if (moduleChildren != nullptr) {
     *moduleChildren = children;
   }
@@ -879,47 +978,58 @@ bool VariableBoxController::importationSourceIsModule(const char * sourceName, c
   return mp_module_get(qstr_from_str(sourceName)) != MP_OBJ_NULL;
 }
 
-bool VariableBoxController::importationSourceIsScript(const char * sourceName, const char * * scriptFullName, Script * retreivedScript) {
-   // Try fetching the nodes from a script
-   Script importedScript = ScriptStore::ScriptBaseNamed(sourceName);
-   if (importedScript.isNull()) {
-     return false;
-   }
-   *scriptFullName = importedScript.fullName();
-   if (retreivedScript != nullptr) {
-      *retreivedScript = importedScript;
-   }
-   return true;
+bool VariableBoxController::importationSourceIsScript(
+    const char *sourceName, const char **scriptFullName,
+    Script *retreivedScript) {
+  // Try fetching the nodes from a script
+  Script importedScript = ScriptStore::ScriptBaseNamed(sourceName);
+  if (importedScript.isNull()) {
+    return false;
+  }
+  *scriptFullName = importedScript.fullName();
+  if (retreivedScript != nullptr) {
+    *retreivedScript = importedScript;
+  }
+  return true;
 }
 
-const char * structName(mp_parse_node_struct_t * structNode) {
+const char *structName(mp_parse_node_struct_t *structNode) {
   // Find the id child node, which stores the struct's name
   size_t childNodesCount = MP_PARSE_NODE_STRUCT_NUM_NODES(structNode);
   if (childNodesCount < 1) {
     return nullptr;
   }
   mp_parse_node_t child = structNode->nodes[0];
-  if (MP_PARSE_NODE_IS_LEAF(child)
-      && MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID)
-  {
+  if (MP_PARSE_NODE_IS_LEAF(child) &&
+      MP_PARSE_NODE_LEAF_KIND(child) == MP_PARSE_NODE_ID) {
     uintptr_t arg = MP_PARSE_NODE_LEAF_ARG(child);
     return qstr_str(arg);
   }
   return nullptr;
 }
 
-bool VariableBoxController::addImportStructFromScript(mp_parse_node_struct_t * pns, uint structKind, const char * scriptName, const char * textToAutocomplete, int textToAutocompleteLength) {
+bool VariableBoxController::addImportStructFromScript(
+    mp_parse_node_struct_t *pns, uint structKind, const char *scriptName,
+    const char *textToAutocomplete, int textToAutocompleteLength) {
   assert(structKind == PN_funcdef || structKind == PN_expr_stmt);
   // Find the id child node, which stores the struct's name
-  const char * name = structName(pns);
+  const char *name = structName(pns);
   if (name == nullptr) {
     return false;
   }
-  return addNodeIfMatches(textToAutocomplete, textToAutocompleteLength, structKind == PN_funcdef ? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses, k_importedOrigin, name, -1, scriptName);
+  return addNodeIfMatches(textToAutocomplete, textToAutocompleteLength,
+                          structKind == PN_funcdef
+                              ? ScriptNode::Type::WithParentheses
+                              : ScriptNode::Type::WithoutParentheses,
+                          k_importedOrigin, name, -1, scriptName);
 }
 
 // The returned boolean means we should escape the process
-bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, int textToAutocompleteLength, ScriptNode::Type nodeType, uint8_t nodeOrigin, const char * nodeName, int nodeNameLength, const char * nodeSourceName, const char * nodeDescription) {
+bool VariableBoxController::addNodeIfMatches(
+    const char *textToAutocomplete, int textToAutocompleteLength,
+    ScriptNode::Type nodeType, uint8_t nodeOrigin, const char *nodeName,
+    int nodeNameLength, const char *nodeSourceName,
+    const char *nodeDescription) {
   if (m_nodesCount >= k_maxScriptNodesCount) {
     // There is no room to add any another node
     return true;
@@ -933,7 +1043,8 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   // Step 1.1: Few escape cases
   /* If the node will go to imported, do not add it if it starts with an
    * underscore : such identifiers are meant to be private. */
-  if (nodeOrigin >= k_importedOrigin && UTF8Helper::CodePointIs(nodeName, '_')) {
+  if (nodeOrigin >= k_importedOrigin &&
+      UTF8Helper::CodePointIs(nodeName, '_')) {
     return false;
   }
   /* If the node is extracted from the current script, escape the current
@@ -943,14 +1054,16 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   }
   bool nodeInLexicographicalOrder = nodeOrigin == k_builtinsOrigin;
 
-  ScriptNode node(nodeType, nodeName, nodeNameLength, nodeSourceName, nodeDescription);
+  ScriptNode node(nodeType, nodeName, nodeNameLength, nodeSourceName,
+                  nodeDescription);
 
   // Step 1.2: check if textToAutocomplete matches the node
   if (textToAutocomplete != nullptr) {
     /* Check that nodeName autocompletes the text to autocomplete
      *  - The start of nodeName must be equal to the text to autocomplete */
     bool strictlyStartsWith = false;
-    int cmp = NodeNameCompare(&node, textToAutocomplete, textToAutocompleteLength, &strictlyStartsWith);
+    int cmp = NodeNameCompare(&node, textToAutocomplete,
+                              textToAutocompleteLength, &strictlyStartsWith);
     if (cmp == 0) {
       // We don't accept the node if it has no parentheses
       if (node.type() != ScriptNode::Type::WithParentheses) {
@@ -972,9 +1085,10 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   // Step 1.3: Find node Origin from import
   if (nodeOrigin == k_importedOrigin && m_displaySubtitles) {
     nodeOrigin = m_originsCount;
-    if (nodeSourceName!= nullptr) {
+    if (nodeSourceName != nullptr) {
       // Nodes will often arrive ordered by source
-      for (uint8_t source = m_originsCount - 1; source >= k_importedOrigin; --source) {
+      for (uint8_t source = m_originsCount - 1; source >= k_importedOrigin;
+           --source) {
         if (strcmp(nodeSourceName, m_originsName[source]) == 0) {
           nodeOrigin = source;
           break;
@@ -998,12 +1112,15 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   if (nodeOrigin == k_builtinsOrigin) {
     /* For builtin nodes, we don't need to check whether the node was already
      * added because they're added first in lexicographical order. Plus, we
-     * want to add it at the end of list to respect the lexicographical order. */
+     * want to add it at the end of list to respect the lexicographical order.
+     */
     assert(nodeInLexicographicalOrder);
-    insertionIndex = nodesCountForOrigin(k_currentScriptOrigin) + nodesCountForOrigin(k_builtinsOrigin);
+    insertionIndex = nodesCountForOrigin(k_currentScriptOrigin) +
+                     nodesCountForOrigin(k_builtinsOrigin);
   } else {
     // Look where to add
-    // This could be faster with dichotomia, but there is no speed problem for now
+    // This could be faster with dichotomia, but there is no speed problem for
+    // now
     size_t cumulatedNodeCount = 0;
     for (uint8_t origin = 0; origin < m_originsCount; ++origin) {
       size_t originNodesCount = nodesCountForOrigin(origin);
@@ -1012,16 +1129,19 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
         insertionIndex = cumulatedNodeCount + originNodesCount;
       }
       for (size_t i = 0; i < originNodesCount; i++) {
-        ScriptNode * matchingNode = scriptNodeAtIndex(cumulatedNodeCount + i);
-        int comparisonResult = NodeNameCompare(matchingNode, nodeName, nodeNameLength);
-        if (comparisonResult == 0 || (comparisonResult == '(' && nodeType == ScriptNode::Type::WithParentheses)) {
-          return false; // Already in varBox
+        ScriptNode *matchingNode = scriptNodeAtIndex(cumulatedNodeCount + i);
+        int comparisonResult =
+            NodeNameCompare(matchingNode, nodeName, nodeNameLength);
+        if (comparisonResult == 0 ||
+            (comparisonResult == '(' &&
+             nodeType == ScriptNode::Type::WithParentheses)) {
+          return false;  // Already in varBox
         }
         if (comparisonResult > 0) {
           if (nodeOrigin == origin) {
             insertionIndex = cumulatedNodeCount + i;
           }
-          break; // Continue exploring other origins to handle duplicates
+          break;  // Continue exploring other origins to handle duplicates
         }
       }
       cumulatedNodeCount += originNodesCount;
@@ -1031,12 +1151,15 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   /* If node doesn't come from current script or an imported script, nodeName is
    * not a user input. We assert here its label doesn't overflow on display as
    * it will be cropped later (and take parentheses into account). */
-  assert(nodeOrigin == k_currentScriptOrigin
-    || (nodeSourceName != nullptr
-      && strlen(nodeSourceName) > 3
-      && (strcmp(nodeSourceName + strlen(nodeSourceName) - 3, ".py") == 0
-        || strcmp(nodeSourceName, I18n::translate(I18n::Message::ImportedModulesAndScripts)) == 0))
-    || strlen(nodeName) + (nodeType == ScriptNode::Type::WithParentheses ? 2 : 0) <= ScriptNodeCell::k_maxNumberOfCharsInLabel);
+  assert(nodeOrigin == k_currentScriptOrigin ||
+         (nodeSourceName != nullptr && strlen(nodeSourceName) > 3 &&
+          (strcmp(nodeSourceName + strlen(nodeSourceName) - 3, ".py") == 0 ||
+           strcmp(nodeSourceName,
+                  I18n::translate(I18n::Message::ImportedModulesAndScripts)) ==
+               0)) ||
+         strlen(nodeName) +
+                 (nodeType == ScriptNode::Type::WithParentheses ? 2 : 0) <=
+             ScriptNodeCell::k_maxNumberOfCharsInLabel);
 
   // Step 2.2: Add any new import source name
   if (nodeOrigin == m_originsCount && m_displaySubtitles) {
@@ -1052,7 +1175,9 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   }
 
   // Step 2.4: Add the node
-  m_scriptNodes[insertionIndex] = ScriptNode(nodeType, nodeName, nodeNameLength, nullptr, m_displaySubtitles ? nodeDescription : nodeSourceName);
+  m_scriptNodes[insertionIndex] =
+      ScriptNode(nodeType, nodeName, nodeNameLength, nullptr,
+                 m_displaySubtitles ? nodeDescription : nodeSourceName);
   if (nodeOrigin == m_originsCount) {
     // Add an origin
     m_originsCount += 1;
@@ -1063,4 +1188,4 @@ bool VariableBoxController::addNodeIfMatches(const char * textToAutocomplete, in
   return false;
 }
 
-}
+}  // namespace Code

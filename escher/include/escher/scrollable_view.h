@@ -8,13 +8,15 @@
 namespace Escher {
 
 class ScrollableView : public Responder, public ScrollView {
-public:
-  ScrollableView(Responder * parentResponder, View * view, ScrollViewDataSource * dataSource);
+ public:
+  ScrollableView(Responder* parentResponder, View* view,
+                 ScrollViewDataSource* dataSource);
   bool handleEvent(Ion::Events::Event event) override;
   void reloadScroll(bool forceRelayout = false);
-protected:
+
+ protected:
   KDSize contentSize() const override;
 };
 
-}
+}  // namespace Escher
 #endif

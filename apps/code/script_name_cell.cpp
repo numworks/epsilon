@@ -1,12 +1,14 @@
 #include "script_name_cell.h"
-#include "app.h"
+
 #include <assert.h>
+
+#include "app.h"
 
 using namespace Escher;
 
 namespace Code {
 
-const char * ScriptNameCell::text() const {
+const char* ScriptNameCell::text() const {
   if (!m_textField.isEditing()) {
     return m_textField.text();
   }
@@ -27,11 +29,10 @@ void ScriptNameCell::updateSubviewsBackgroundAfterChangingState() {
 
 void ScriptNameCell::layoutSubviews(bool force) {
   KDRect cellBounds = bounds();
-  m_textField.setFrame(KDRect(cellBounds.x() + k_leftMargin,
-        cellBounds.y(),
-        cellBounds.width() - k_leftMargin,
-        cellBounds.height()),
+  m_textField.setFrame(
+      KDRect(cellBounds.x() + k_leftMargin, cellBounds.y(),
+             cellBounds.width() - k_leftMargin, cellBounds.height()),
       force);
 }
 
-}
+}  // namespace Code

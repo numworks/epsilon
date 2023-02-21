@@ -1,3 +1,10 @@
+#include <SDL.h>
+#include <assert.h>
+#include <ion/events.h>
+#include <ion/unicode/utf8_helper.h>
+#include <string.h>
+
+#include "../../shared/events_modifier.h"
 #include "actions.h"
 #include "events.h"
 #include "journal.h"
@@ -5,13 +12,6 @@
 #include "layout.h"
 #include "state_file.h"
 #include "window.h"
-#include "../../shared/events_modifier.h"
-
-#include <assert.h>
-#include <ion/events.h>
-#include <ion/unicode/utf8_helper.h>
-#include <SDL.h>
-#include <string.h>
 
 namespace Ion {
 namespace Events {
@@ -40,25 +40,32 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
     /* We now need to figure out which dead key has been pressed. This, of
      * course, will be super hackish since SDL doesn't have any built-in support
      * for those keys and we don't have any text data to match against. */
-    if (scancode == SDL_SCANCODE_GRAVE && sym == SDLK_BACKQUOTE && mod == KMOD_NONE) {
-      // Caret key (^) on French Azerty keyboard running Firefox under macOS/Windows
+    if (scancode == SDL_SCANCODE_GRAVE && sym == SDLK_BACKQUOTE &&
+        mod == KMOD_NONE) {
+      // Caret key (^) on French Azerty keyboard running Firefox under
+      // macOS/Windows
       return Power;
     }
-    if (scancode == SDL_SCANCODE_LEFTBRACKET && sym == SDLK_LEFTBRACKET && mod == KMOD_NONE) {
-      // Caret key (^) key on French Azerty keyboard running Chrome or Safari under macOS
+    if (scancode == SDL_SCANCODE_LEFTBRACKET && sym == SDLK_LEFTBRACKET &&
+        mod == KMOD_NONE) {
+      // Caret key (^) key on French Azerty keyboard running Chrome or Safari
+      // under macOS
       return Power;
     }
-    if (scancode == SDL_SCANCODE_LEFTBRACKET && sym == SDLK_CARET && mod == KMOD_NONE) {
+    if (scancode == SDL_SCANCODE_LEFTBRACKET && sym == SDLK_CARET &&
+        mod == KMOD_NONE) {
       // Caret key (^) key on French Azerty keyboard running native macOS
       return Power;
     }
-    if (scancode == SDL_SCANCODE_RIGHTBRACKET && sym == SDLK_RIGHTBRACKET && mod == KMOD_NONE) {
-      // Caret key (^) key on French Azerty keyboard running Chrome or Edge under windows
+    if (scancode == SDL_SCANCODE_RIGHTBRACKET && sym == SDLK_RIGHTBRACKET &&
+        mod == KMOD_NONE) {
+      // Caret key (^) key on French Azerty keyboard running Chrome or Edge
+      // under windows
       return Power;
     }
   }
 
-  if (mod & (KMOD_CTRL|KMOD_GUI)) {
+  if (mod & (KMOD_CTRL | KMOD_GUI)) {
     if (mod & KMOD_SHIFT) {
       switch (sym) {
 #if ION_SIMULATOR_FILES
@@ -113,7 +120,7 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
         return EE;
     }
   }
-  switch(sym) {
+  switch (sym) {
     case SDLK_AC_BACK:
       return Termination;
     case SDLK_BACKSPACE:
@@ -122,26 +129,107 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
   return None;
 }
 
-constexpr static Event sEventForASCIICharAbove32[95] = {
-  Space, Exclamation, DoubleQuotes, None, None, Percent, None, None,
-  LeftParenthesis, RightParenthesis, Multiplication, Plus, Comma, Minus, Dot, Division,
-  Zero, One, Two, Three, Four, Five, Six, Seven,
-  Eight, Nine, Colon, SemiColon, Lower, Equal, Greater, Question,
-  None, UpperA, UpperB, UpperC, UpperD, UpperE, UpperF, UpperG,
-  UpperH, UpperI, UpperJ, UpperK, UpperL, UpperM, UpperN, UpperO,
-  UpperP, UpperQ, UpperR, UpperS, UpperT, UpperU, UpperV, UpperW,
-  UpperX, UpperY, UpperZ, LeftBracket, None, RightBracket, Power, Underscore,
-  None, LowerA, LowerB, LowerC, LowerD, LowerE, LowerF, LowerG,
-  LowerH, LowerI, LowerJ, LowerK, LowerL, LowerM, LowerN, LowerO,
-  LowerP, LowerQ, LowerR, LowerS, LowerT, LowerU, LowerV, LowerW,
-  LowerX, LowerY, LowerZ, LeftBrace, None, RightBrace, None
-};
+constexpr static Event sEventForASCIICharAbove32[95] = {Space,
+                                                        Exclamation,
+                                                        DoubleQuotes,
+                                                        None,
+                                                        None,
+                                                        Percent,
+                                                        None,
+                                                        None,
+                                                        LeftParenthesis,
+                                                        RightParenthesis,
+                                                        Multiplication,
+                                                        Plus,
+                                                        Comma,
+                                                        Minus,
+                                                        Dot,
+                                                        Division,
+                                                        Zero,
+                                                        One,
+                                                        Two,
+                                                        Three,
+                                                        Four,
+                                                        Five,
+                                                        Six,
+                                                        Seven,
+                                                        Eight,
+                                                        Nine,
+                                                        Colon,
+                                                        SemiColon,
+                                                        Lower,
+                                                        Equal,
+                                                        Greater,
+                                                        Question,
+                                                        None,
+                                                        UpperA,
+                                                        UpperB,
+                                                        UpperC,
+                                                        UpperD,
+                                                        UpperE,
+                                                        UpperF,
+                                                        UpperG,
+                                                        UpperH,
+                                                        UpperI,
+                                                        UpperJ,
+                                                        UpperK,
+                                                        UpperL,
+                                                        UpperM,
+                                                        UpperN,
+                                                        UpperO,
+                                                        UpperP,
+                                                        UpperQ,
+                                                        UpperR,
+                                                        UpperS,
+                                                        UpperT,
+                                                        UpperU,
+                                                        UpperV,
+                                                        UpperW,
+                                                        UpperX,
+                                                        UpperY,
+                                                        UpperZ,
+                                                        LeftBracket,
+                                                        None,
+                                                        RightBracket,
+                                                        Power,
+                                                        Underscore,
+                                                        None,
+                                                        LowerA,
+                                                        LowerB,
+                                                        LowerC,
+                                                        LowerD,
+                                                        LowerE,
+                                                        LowerF,
+                                                        LowerG,
+                                                        LowerH,
+                                                        LowerI,
+                                                        LowerJ,
+                                                        LowerK,
+                                                        LowerL,
+                                                        LowerM,
+                                                        LowerN,
+                                                        LowerO,
+                                                        LowerP,
+                                                        LowerQ,
+                                                        LowerR,
+                                                        LowerS,
+                                                        LowerT,
+                                                        LowerU,
+                                                        LowerV,
+                                                        LowerW,
+                                                        LowerX,
+                                                        LowerY,
+                                                        LowerZ,
+                                                        LeftBrace,
+                                                        None,
+                                                        RightBrace,
+                                                        None};
 
 static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
   if (strlen(event.text) == 1) {
     char character = event.text[0];
     if (character >= 32 && character < 127) {
-      Event res = sEventForASCIICharAbove32[character-32];
+      Event res = sEventForASCIICharAbove32[character - 32];
       if (res != None) {
         return res;
       }
@@ -154,7 +242,8 @@ static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
 Event getPlatformEvent() {
   SDL_Event event;
   Event result = None;
-  while (SDL_PollEvent(&event)) { // That "while" is important: it'll do a fast-pass over all useless SDL events
+  while (SDL_PollEvent(&event)) {  // That "while" is important: it'll do a
+                                   // fast-pass over all useless SDL events
     if (event.type == SDL_WINDOWEVENT) {
       Simulator::Window::relayout();
       break;
@@ -174,10 +263,10 @@ Event getPlatformEvent() {
       if (event.key.keysym.scancode == SDL_SCANCODE_RSHIFT ||
           event.key.keysym.scancode == SDL_SCANCODE_LSHIFT) {
         result = Shift;
-      /* Emitting a Shift event is unfortunately not enough to toggle the
-       * modifiers status. Indeed, on the device, this is done in the
-       * updateModifiersFromEvent function that's called from sharedGetEvent,
-       * but we're past this point. So we need to enforce it. */
+        /* Emitting a Shift event is unfortunately not enough to toggle the
+         * modifiers status. Indeed, on the device, this is done in the
+         * updateModifiersFromEvent function that's called from sharedGetEvent,
+         * but we're past this point. So we need to enforce it. */
         Events::SharedModifierState->removeShift();
         break;
       }
@@ -220,7 +309,8 @@ Event getPlatformEvent() {
     SDL_FlushEvents(0, UINT32_MAX);
   }
   if (Simulator::Window::isHeadless()) {
-    if (Simulator::Journal::replayJournal() == nullptr || Simulator::Journal::replayJournal()->isEmpty()) {
+    if (Simulator::Journal::replayJournal() == nullptr ||
+        Simulator::Journal::replayJournal()->isEmpty()) {
       /* We don't want to keep the simulator process alive if there's no chance
        * we're ever going to provide it with new events to process. */
       return Termination;
@@ -229,5 +319,5 @@ Event getPlatformEvent() {
   return result;
 }
 
-}
-}
+}  // namespace Events
+}  // namespace Ion

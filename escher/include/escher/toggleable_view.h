@@ -6,13 +6,14 @@
 namespace Escher {
 
 class ToggleableView : public TransparentView {
-public:
+ public:
   ToggleableView() : m_state(true) {}
   bool state() const { return m_state; }
   void setState(bool state);
-protected:
+
+ protected:
   bool m_state;
 };
 
-}
+}  // namespace Escher
 #endif

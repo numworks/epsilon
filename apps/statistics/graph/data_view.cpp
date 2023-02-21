@@ -21,8 +21,12 @@ void DataView::changeDataViewSeriesSelection(int series, bool select) {
 }
 
 KDRect DataView::bannerFrame() const {
-  KDCoordinate bannerHeight = const_cast<DataView *>(this)->bannerView()->minimalSizeForOptimalDisplay().height();
-  return KDRect(0, bounds().height() - bannerHeight, bounds().width(), bannerHeight);
+  KDCoordinate bannerHeight = const_cast<DataView *>(this)
+                                  ->bannerView()
+                                  ->minimalSizeForOptimalDisplay()
+                                  .height();
+  return KDRect(0, bounds().height() - bannerHeight, bounds().width(),
+                bannerHeight);
 }
 
 void DataView::layoutSubviews(bool force) {
@@ -36,4 +40,4 @@ void DataView::layoutBanner(bool force) {
   bannerView()->setFrame(m_displayBanner ? bannerFrame() : KDRectZero, force);
 }
 
-}
+}  // namespace Statistics

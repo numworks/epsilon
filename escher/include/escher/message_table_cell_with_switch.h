@@ -7,14 +7,15 @@
 namespace Escher {
 
 class MessageTableCellWithSwitch : public MessageTableCell {
-public:
+ public:
   using MessageTableCell::MessageTableCell;
-  const View * accessoryView() const override { return &m_accessoryView; }
+  const View* accessoryView() const override { return &m_accessoryView; }
   void setState(bool state) { m_accessoryView.setState(state); }
-private:
+
+ private:
   SwitchView m_accessoryView;
 };
 
-}
+}  // namespace Escher
 
 #endif

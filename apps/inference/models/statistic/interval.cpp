@@ -1,12 +1,13 @@
 #include "interval.h"
+
 #include <assert.h>
+#include <float.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/print.h>
 #include <poincare/vertical_offset_layout.h>
 
 #include <new>
-#include <float.h>
 
 #include "one_mean_t_interval.h"
 #include "one_proportion_z_interval.h"
@@ -16,31 +17,39 @@
 
 namespace Inference {
 
-Interval::~Interval() {
-  tidy();
+Interval::~Interval() { tidy(); }
+
+void Interval::setGraphTitleForValue(double marginOfError, char *buffer,
+                                     size_t bufferSize) const {
+  const char *format = I18n::translate(
+      I18n::Message::StatisticGraphControllerIntervalTitleFormat);
+  Poincare::Print::CustomPrintf(
+      buffer, bufferSize, format, marginOfError,
+      Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-void Interval::setGraphTitleForValue(double marginOfError, char * buffer, size_t bufferSize) const {
-  const char * format = I18n::translate(I18n::Message::StatisticGraphControllerIntervalTitleFormat);
-  Poincare::Print::CustomPrintf(buffer, bufferSize, format, marginOfError, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
-}
-
-void Interval::setResultTitleForValues(double estimate, double threshold, char * buffer, size_t bufferSize, bool resultIsTopPage) const {
-  const char * confidence = I18n::translate(I18n::Message::Confidence);
+void Interval::setResultTitleForValues(double estimate, double threshold,
+                                       char *buffer, size_t bufferSize,
+                                       bool resultIsTopPage) const {
+  const char *confidence = I18n::translate(I18n::Message::Confidence);
   if (resultIsTopPage) {
-    Poincare::Print::CustomPrintf(buffer, bufferSize, "%s=%*.*ed %s=%*.*ed",
-        estimateSymbol(),
-        estimate, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-        confidence,
-        threshold, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+    Poincare::Print::CustomPrintf(
+        buffer, bufferSize, "%s=%*.*ed %s=%*.*ed", estimateSymbol(), estimate,
+        Poincare::Preferences::PrintFloatMode::Decimal,
+        Poincare::Preferences::ShortNumberOfSignificantDigits, confidence,
+        threshold, Poincare::Preferences::PrintFloatMode::Decimal,
+        Poincare::Preferences::ShortNumberOfSignificantDigits);
   } else {
-    Poincare::Print::CustomPrintf(buffer, bufferSize, "%s=%*.*ed",
-        confidence,
-        threshold, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+    Poincare::Print::CustomPrintf(
+        buffer, bufferSize, "%s=%*.*ed", confidence, threshold,
+        Poincare::Preferences::PrintFloatMode::Decimal,
+        Poincare::Preferences::ShortNumberOfSignificantDigits);
   }
 }
 
-bool Interval::initializeSignificanceTest(SignificanceTestType testType, Shared::GlobalContext * context) {
+bool Interval::initializeSignificanceTest(SignificanceTestType testType,
+                                          Shared::GlobalContext *context) {
   if (!Statistic::initializeSignificanceTest(testType, context)) {
     return false;
   }
@@ -67,9 +76,7 @@ bool Interval::initializeSignificanceTest(SignificanceTestType testType, Shared:
   return true;
 }
 
-void Interval::tidy() {
-  m_estimateLayout = Poincare::Layout();
-}
+void Interval::tidy() { m_estimateLayout = Poincare::Layout(); }
 
 Poincare::Layout Interval::intervalCriticalValueSymbol() {
   return Poincare::HorizontalLayout::Builder(
@@ -79,7 +86,6 @@ Poincare::Layout Interval::intervalCriticalValueSymbol() {
           Poincare::VerticalOffsetLayoutNode::VerticalPosition::Superscript));
 }
 
-
 bool Interval::isGraphable() const {
   double SE = standardError();
   assert(std::isnan(SE) || SE >= 0);
@@ -87,11 +93,13 @@ bool Interval::isGraphable() const {
 }
 
 float Interval::computeXMin() const {
-  return estimate() - const_cast<Interval *>(this)->largestMarginOfError() * k_intervalMarginRatio;
+  return estimate() - const_cast<Interval *>(this)->largestMarginOfError() *
+                          k_intervalMarginRatio;
 }
 
 float Interval::computeXMax() const {
-  return estimate() + const_cast<Interval *>(this)->largestMarginOfError() * k_intervalMarginRatio;
+  return estimate() + const_cast<Interval *>(this)->largestMarginOfError() *
+                          k_intervalMarginRatio;
 }
 
 double Interval::computeIntervalCriticalValue() {
@@ -103,7 +111,8 @@ float Interval::largestMarginOfError() {
   /* Temporarily sets the statistic's threshold to the largest displayed
    * interval to compute the margin of error needed to display all intervals. */
   double previousThreshold = threshold();
-  float intervalTemp = DisplayedIntervalThresholdAtIndex(previousThreshold, k_numberOfDisplayedIntervals - 1);
+  float intervalTemp = DisplayedIntervalThresholdAtIndex(
+      previousThreshold, k_numberOfDisplayedIntervals - 1);
   m_threshold = intervalTemp;
   compute();
   double error = marginOfError();
@@ -113,7 +122,8 @@ float Interval::largestMarginOfError() {
   return error;
 }
 
-float Interval::DisplayedIntervalThresholdAtIndex(float mainThreshold, int index) {
+float Interval::DisplayedIntervalThresholdAtIndex(float mainThreshold,
+                                                  int index) {
   int direction = index - MainDisplayedIntervalThresholdIndex(mainThreshold);
   if (direction == 0) {
     return mainThreshold;
@@ -123,7 +133,8 @@ float Interval::DisplayedIntervalThresholdAtIndex(float mainThreshold, int index
   constexpr float k_significantThresholds[k_numberOfSignificantThresholds] = {
       0.1f, 0.2f,  0.3f, 0.4f,  0.5f,  0.6f,  0.7f,
       0.8f, 0.85f, 0.9f, 0.95f, 0.98f, 0.99f, 0.999f};
-  assert((direction > 0 && mainThreshold <= 0.99f) || (direction < 0 && mainThreshold > 0.1f));
+  assert((direction > 0 && mainThreshold <= 0.99f) ||
+         (direction < 0 && mainThreshold > 0.1f));
   // If threshold is in ]0.99, 1.0] display 0.99 with a direction of 1
   int significantThresholdIndex = k_numberOfSignificantThresholds - 1;
   // If threshold is in ]0.2, 0.3], display 0.4 with a direction of 1, 0.2 if -1
@@ -139,7 +150,8 @@ float Interval::DisplayedIntervalThresholdAtIndex(float mainThreshold, int index
 }
 
 int Interval::MainDisplayedIntervalThresholdIndex(float mainThreshold) {
-  constexpr float k_thresholdLimits[k_numberOfDisplayedIntervals - 1] = {0.1f, 0.2f, 0.99f};
+  constexpr float k_thresholdLimits[k_numberOfDisplayedIntervals - 1] = {
+      0.1f, 0.2f, 0.99f};
   // If mainThreshold is in ]0.2, 0.99], it is the third displayed interval
   for (int index = 0; index < k_numberOfDisplayedIntervals - 1; index++) {
     if (mainThreshold <= k_thresholdLimits[index]) {
@@ -149,7 +161,9 @@ int Interval::MainDisplayedIntervalThresholdIndex(float mainThreshold) {
   return k_numberOfDisplayedIntervals - 1;
 }
 
-void Interval::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage, int * precision) {
+void Interval::resultAtIndex(int index, double *value,
+                             Poincare::Layout *message,
+                             I18n::Message *subMessage, int *precision) {
   // Estimate cell is not displayed -> shift i
   index += estimateLayout().isUninitialized();
   switch (index) {
@@ -165,18 +179,21 @@ void Interval::resultAtIndex(int index, double * value, Poincare::Layout * messa
       break;
     case ResultOrder::SE:
       *value = standardError();
-      *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::SE));
+      *message =
+          Poincare::LayoutHelper::String(I18n::translate(I18n::Message::SE));
       *subMessage = I18n::Message::StandardError;
       break;
     case ResultOrder::ME:
       *value = marginOfError();
-      *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::ME));
+      *message =
+          Poincare::LayoutHelper::String(I18n::translate(I18n::Message::ME));
       *subMessage = I18n::Message::MarginOfError;
       break;
     default:
       assert(index == ResultOrder::IntervalDegree);
       *value = degreeOfFreedom();
-      *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::DegreesOfFreedom));
+      *message = Poincare::LayoutHelper::String(
+          I18n::translate(I18n::Message::DegreesOfFreedom));
       *subMessage = I18n::Message::Default;
       /* We reduce the precision since "Degrees of freedom" might not fit in
        * all languages with 7 significant digits. */
@@ -185,4 +202,4 @@ void Interval::resultAtIndex(int index, double * value, Poincare::Layout * messa
   }
 }
 
-}
+}  // namespace Inference

@@ -4,11 +4,15 @@ using namespace Escher;
 
 namespace Statistics {
 
-BoxParameterController::BoxParameterController(Responder * parentResponder, Store * store, int * selectedBoxCalculation) :
-  SelectableCellListPage<MessageTableCellWithSwitch, k_numberOfParameterCells, Escher::RegularListViewDataSource>(parentResponder),
-  m_store(store),
-  m_selectedBoxCalculation(selectedBoxCalculation)
-{
+BoxParameterController::BoxParameterController(Responder* parentResponder,
+                                               Store* store,
+                                               int* selectedBoxCalculation)
+    : SelectableCellListPage<MessageTableCellWithSwitch,
+                             k_numberOfParameterCells,
+                             Escher::RegularListViewDataSource>(
+          parentResponder),
+      m_store(store),
+      m_selectedBoxCalculation(selectedBoxCalculation) {
   cellAtIndex(0)->setMessage(I18n::Message::DisplayOutliers);
   // Being the only cell, it is always highlighted.
   cellAtIndex(0)->setHighlighted(true);
@@ -18,8 +22,8 @@ void BoxParameterController::viewWillAppear() {
   cellAtIndex(0)->setState(m_store->displayOutliers());
 }
 
-void BoxParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-}
+void BoxParameterController::willDisplayCellForIndex(HighlightCell* cell,
+                                                     int index) {}
 
 bool BoxParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
@@ -32,4 +36,4 @@ bool BoxParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-}
+}  // namespace Statistics

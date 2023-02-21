@@ -9,22 +9,33 @@
 
 namespace Poincare {
 
-int VectorNormNode::numberOfChildren() const { return VectorNorm::s_functionHelper.numberOfChildren(); }
+int VectorNormNode::numberOfChildren() const {
+  return VectorNorm::s_functionHelper.numberOfChildren();
+}
 
-Expression VectorNormNode::shallowReduce(const ReductionContext& reductionContext) {
+Expression VectorNormNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return VectorNorm(this).shallowReduce(reductionContext);
 }
 
-Layout VectorNormNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return VectorNormLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context));
+Layout VectorNormNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
+  return VectorNormLayout::Builder(childAtIndex(0)->createLayout(
+      floatDisplayMode, numberOfSignificantDigits, context));
 }
 
-int VectorNormNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, VectorNorm::s_functionHelper.aliasesList().mainAlias());
+int VectorNormNode::serialize(char* buffer, int bufferSize,
+                              Preferences::PrintFloatMode floatDisplayMode,
+                              int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(
+      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+      VectorNorm::s_functionHelper.aliasesList().mainAlias());
 }
 
-template<typename T>
-Evaluation<T> VectorNormNode::templatedApproximate(const ApproximationContext& approximationContext) const {
+template <typename T>
+Evaluation<T> VectorNormNode::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
   if (Poincare::Preferences::sharedPreferences->vectorNormIsForbidden()) {
     return Complex<T>::Undefined();
   }
@@ -38,11 +49,9 @@ Evaluation<T> VectorNormNode::templatedApproximate(const ApproximationContext& a
 Expression VectorNorm::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits
-    );
+        SimplificationHelper::UnitReduction::BanUnits);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -61,10 +70,11 @@ Expression VectorNorm::shallowReduce(ReductionContext reductionContext) {
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }
-  if (c.deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
+  if (c.deepIsMatrix(reductionContext.context(),
+                     reductionContext.shouldCheckMatrices())) {
     return *this;
   }
   return replaceWithUndefinedInPlace();
 }
 
-}
+}  // namespace Poincare

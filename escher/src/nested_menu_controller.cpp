@@ -1,5 +1,5 @@
-#include <escher/nested_menu_controller.h>
 #include <assert.h>
+#include <escher/nested_menu_controller.h>
 #include <string.h>
 
 namespace Escher {
@@ -12,7 +12,8 @@ void NestedMenuController::BreadcrumbController::popTitle() {
   updateTitle();
 }
 
-void NestedMenuController::BreadcrumbController::pushTitle(I18n::Message title) {
+void NestedMenuController::BreadcrumbController::pushTitle(
+    I18n::Message title) {
   assert(m_titleCount < k_maxModelTreeDepth);
   m_titles[m_titleCount] = title;
   m_titleCount++;
@@ -51,7 +52,7 @@ void NestedMenuController::BreadcrumbController::updateTitle() {
       charIndex += separatorLength;
     }
     // Subtitle
-    const char * subtitle = I18n::translate(m_titles[i]);
+    const char* subtitle = I18n::translate(m_titles[i]);
     const int subtitleLength = strlen(subtitle);
     memcpy(m_titleBuffer + charIndex, subtitle, subtitleLength);
     charIndex += subtitleLength;
@@ -72,13 +73,14 @@ void NestedMenuController::ListController::didBecomeFirstResponder() {
 
 /* NestedMenuController */
 
-NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Message title) :
-  StackViewController(parentResponder, &m_listController, StackViewController::Style::PurpleWhite),
-  m_selectableTableView(&m_listController, this, this, this),
-  m_breadcrumbController(this, &m_selectableTableView),
-  m_listController(this, &m_selectableTableView, title),
-  m_savedChecksum(0)
-{
+NestedMenuController::NestedMenuController(Responder* parentResponder,
+                                           I18n::Message title)
+    : StackViewController(parentResponder, &m_listController,
+                          StackViewController::Style::PurpleWhite),
+      m_selectableTableView(&m_listController, this, this, this),
+      m_breadcrumbController(this, &m_selectableTableView),
+      m_listController(this, &m_selectableTableView, title),
+      m_savedChecksum(0) {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   /* Title and breadcrumb headers should not overlap. Breadcrumb should.
@@ -99,7 +101,7 @@ void NestedMenuController::viewWillAppear() {
   }
 }
 
-HighlightCell * NestedMenuController::reusableCell(int index, int type) {
+HighlightCell* NestedMenuController::reusableCell(int index, int type) {
   assert(type < 2);
   assert(index >= 0);
   if (type == k_leafCellType) {
@@ -110,17 +112,20 @@ HighlightCell * NestedMenuController::reusableCell(int index, int type) {
 
 bool NestedMenuController::handleEvent(Ion::Events::Event event) {
   const int rowIndex = selectedRow();
-  if ((event == Ion::Events::Back || event == Ion::Events::Left) && stackDepth() > 0) {
+  if ((event == Ion::Events::Back || event == Ion::Events::Left) &&
+      stackDepth() > 0) {
     return returnToPreviousMenu();
   }
-  if ((event == Ion::Events::Toolbox && isToolbox()) || (event == Ion::Events::Var && !isToolbox())) {
+  if ((event == Ion::Events::Toolbox && isToolbox()) ||
+      (event == Ion::Events::Var && !isToolbox())) {
     if (stackDepth() == 0) {
       Container::activeApp()->modalViewController()->dismissModal();
       return true;
     }
     return returnToRootMenu();
   }
-  if ((event == Ion::Events::Var && isToolbox()) || (event == Ion::Events::Toolbox && !isToolbox())) {
+  if ((event == Ion::Events::Var && isToolbox()) ||
+      (event == Ion::Events::Toolbox && !isToolbox())) {
     Container::activeApp()->modalViewController()->dismissModal();
     assert(sender());
     return sender()->handleBoxEvent(event);
@@ -128,10 +133,13 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
   if (selectedRow() < 0) {
     return false;
   }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) && typeAtIndex(rowIndex) == k_nodeCellType) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE ||
+       event == Ion::Events::Right) &&
+      typeAtIndex(rowIndex) == k_nodeCellType) {
     return selectSubMenu(rowIndex);
   }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtIndex(rowIndex) == k_leafCellType) {
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
+      typeAtIndex(rowIndex) == k_leafCellType) {
     return selectLeaf(rowIndex);
   }
 
@@ -141,7 +149,8 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
 bool NestedMenuController::selectSubMenu(int selectedRow) {
   resetMemoization();
   int previousDepth = stackDepth();
-  m_stack.push(StackState(selectedRow, m_selectableTableView.contentOffset().y()));
+  m_stack.push(
+      StackState(selectedRow, m_selectableTableView.contentOffset().y()));
 
   /* Unless breadcrumb wasn't visible (depth 0), we need to pop it first to push
    * it again, in order to force title refresh. */
@@ -186,13 +195,17 @@ bool NestedMenuController::returnToRootMenu() {
 
 void NestedMenuController::loadState(NestedMenuController::StackState state) {
   bool isStateValid = state.selectedRow() < numberOfRows();
-  m_selectableTableView.selectCellAtLocation(0, isStateValid ? state.selectedRow() : 0);
+  m_selectableTableView.selectCellAtLocation(
+      0, isStateValid ? state.selectedRow() : 0);
   KDPoint scroll = m_selectableTableView.contentOffset();
-  m_selectableTableView.setContentOffset(KDPoint(scroll.x(), isStateValid ? state.verticalScroll() : 0));
+  m_selectableTableView.setContentOffset(
+      KDPoint(scroll.x(), isStateValid ? state.verticalScroll() : 0));
 }
 
 void NestedMenuController::open() {
-  Container::activeApp()->displayModalViewController(this, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+  Container::activeApp()->displayModalViewController(
+      this, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0,
+      Metric::PopUpRightMargin);
 }
 
-}
+}  // namespace Escher

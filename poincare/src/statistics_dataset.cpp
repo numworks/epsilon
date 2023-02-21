@@ -1,38 +1,46 @@
-#include <poincare/statistics_dataset.h>
-#include <poincare/based_integer.h>
+#include <float.h>
 #include <helpers.h>
+#include <poincare/based_integer.h>
+#include <poincare/statistics_dataset.h>
+
 #include <algorithm>
 #include <cmath>
-#include <float.h>
 
 namespace Poincare {
 
-template<typename T>
-StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(const ExpressionNode * e, const ApproximationContext& approximationContext, ListComplex<T> evaluationArray[]) {
+template <typename T>
+StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(
+    const ExpressionNode *e, const ApproximationContext &approximationContext,
+    ListComplex<T> evaluationArray[]) {
   int n = e->numberOfChildren();
   if (n == 0) {
     return StatisticsDataset<T>();
   }
   for (int i = 0; i < std::min(n, 2); i++) {
-    Evaluation<T> childEval = e->childAtIndex(i)->approximate(T(), approximationContext);
+    Evaluation<T> childEval =
+        e->childAtIndex(i)->approximate(T(), approximationContext);
     if (childEval.type() != EvaluationNode<T>::Type::ListComplex) {
       return StatisticsDataset<T>();
     }
     evaluationArray[i] = static_cast<ListComplex<T> &>(childEval);
   }
-  if (n > 1 && evaluationArray[0].numberOfChildren() != evaluationArray[1].numberOfChildren()) {
+  if (n > 1 && evaluationArray[0].numberOfChildren() !=
+                   evaluationArray[1].numberOfChildren()) {
     return StatisticsDataset<T>();
   }
-  return n == 1 ? StatisticsDataset<T>(&evaluationArray[0]) : StatisticsDataset<T>(&evaluationArray[0], &evaluationArray[1]);
+  return n == 1
+             ? StatisticsDataset<T>(&evaluationArray[0])
+             : StatisticsDataset<T>(&evaluationArray[0], &evaluationArray[1]);
 }
 
-template<typename T>
+template <typename T>
 T StatisticsDataset<T>::valueAtIndex(int index) const {
   assert(index >= 0 && index < m_values->length());
-  return m_lnOfValues ? log(m_values->valueAtIndex(index)) : m_values->valueAtIndex(index);
+  return m_lnOfValues ? log(m_values->valueAtIndex(index))
+                      : m_values->valueAtIndex(index);
 }
 
-template<typename T>
+template <typename T>
 T StatisticsDataset<T>::weightAtIndex(int index) const {
   assert(m_weights == nullptr || (index >= 0 && index < m_weights->length()));
   if (std::isnan(valueAtIndex(index))) {
@@ -42,10 +50,11 @@ T StatisticsDataset<T>::weightAtIndex(int index) const {
     return 1.0;
   }
   // All weights must be positive.
-  return m_weights->valueAtIndex(index) >= 0.0 ? m_weights->valueAtIndex(index) : NAN;
+  return m_weights->valueAtIndex(index) >= 0.0 ? m_weights->valueAtIndex(index)
+                                               : NAN;
 }
 
-template<typename T>
+template <typename T>
 T StatisticsDataset<T>::totalWeight() const {
   if (std::isnan(m_memoizedTotalWeight)) {
     m_memoizedTotalWeight = privateTotalWeight();
@@ -55,7 +64,7 @@ T StatisticsDataset<T>::totalWeight() const {
   return m_memoizedTotalWeight;
 }
 
-template<typename T>
+template <typename T>
 T StatisticsDataset<T>::privateTotalWeight() const {
   if (datasetLength() == 0) {
     return NAN;
@@ -67,7 +76,7 @@ T StatisticsDataset<T>::privateTotalWeight() const {
   return total;
 }
 
-template<typename T>
+template <typename T>
 T StatisticsDataset<T>::weightedSum() const {
   T total = 0.0;
   for (int i = 0; i < datasetLength(); i++) {
@@ -76,14 +85,16 @@ T StatisticsDataset<T>::weightedSum() const {
   return total;
 }
 
-template<typename T>
+template <typename T>
 T StatisticsDataset<T>::offsettedSquaredSum(T offset) const {
   ConstantDatasetColumn<T> offsetColumn(offset, datasetLength());
-  return squaredSumOffsettedByLinearTransformationOfDataset(StatisticsDataset(&offsetColumn), 0.0, 1.0);
+  return squaredSumOffsettedByLinearTransformationOfDataset(
+      StatisticsDataset(&offsetColumn), 0.0, 1.0);
 }
 
-template<typename T>
-T StatisticsDataset<T>::squaredSumOffsettedByLinearTransformationOfDataset(StatisticsDataset<T> dataset, double a, double b) const {
+template <typename T>
+T StatisticsDataset<T>::squaredSumOffsettedByLinearTransformationOfDataset(
+    StatisticsDataset<T> dataset, double a, double b) const {
   assert(dataset.datasetLength() == datasetLength());
   T total = 0.0;
   for (int i = 0; i < datasetLength(); i++) {
@@ -93,20 +104,23 @@ T StatisticsDataset<T>::squaredSumOffsettedByLinearTransformationOfDataset(Stati
   return total;
 }
 
-template<typename T>
+template <typename T>
 T StatisticsDataset<T>::sampleStandardDeviation() const {
   T weight = totalWeight();
   return std::sqrt(weight / (weight - 1.0)) * standardDeviation();
 }
 
-template<typename T>
-T StatisticsDataset<T>::sortedElementAtCumulatedFrequency(T freq, bool createMiddleElement) const {
+template <typename T>
+T StatisticsDataset<T>::sortedElementAtCumulatedFrequency(
+    T freq, bool createMiddleElement) const {
   assert(freq >= 0.0 && freq <= 1.0);
-  return sortedElementAtCumulatedWeight(freq * totalWeight(), createMiddleElement);
+  return sortedElementAtCumulatedWeight(freq * totalWeight(),
+                                        createMiddleElement);
 }
 
-template<typename T>
-T StatisticsDataset<T>::sortedElementAtCumulatedWeight(T weight, bool createMiddleElement) const {
+template <typename T>
+T StatisticsDataset<T>::sortedElementAtCumulatedWeight(
+    T weight, bool createMiddleElement) const {
   int upperIndex;
   int lowerIndex = indexAtCumulatedWeight(weight, &upperIndex);
   if (lowerIndex < 0) {
@@ -118,8 +132,9 @@ T StatisticsDataset<T>::sortedElementAtCumulatedWeight(T weight, bool createMidd
   return valueAtIndex(lowerIndex);
 }
 
-template<typename T>
-int StatisticsDataset<T>::indexAtCumulatedWeight(T weight, int * upperIndex) const {
+template <typename T>
+int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
+                                                 int *upperIndex) const {
   if (std::isnan(weight)) {
     if (upperIndex) {
       *upperIndex = -1;
@@ -161,13 +176,13 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight, int * upperIndex) con
   return indexAtSortedIndex(elementSortedIndex);
 }
 
-template<typename T>
+template <typename T>
 int StatisticsDataset<T>::indexAtSortedIndex(int i) const {
   buildSortedIndex();
   return static_cast<int>(m_sortedIndex.valueAtIndex(i));
 }
 
-template<typename T>
+template <typename T>
 void StatisticsDataset<T>::buildSortedIndex() const {
   if (!m_recomputeSortedIndex) {
     return;
@@ -176,25 +191,29 @@ void StatisticsDataset<T>::buildSortedIndex() const {
   for (int i = 0; i < datasetLength(); i++) {
     sortedIndexes.addValueAtIndex(static_cast<float>(i), i);
   }
-  void * pack[] = {&sortedIndexes, const_cast<DatasetColumn<T> *>(m_values)};
+  void *pack[] = {&sortedIndexes, const_cast<DatasetColumn<T> *>(m_values)};
   Helpers::Sort(
-      [](int i, int j, void * ctx, int n) { // swap
-        void ** pack = reinterpret_cast<void **>(ctx);
-        FloatList<float> * sortedIndex = reinterpret_cast<FloatList<float> *>(pack[0]);
+      [](int i, int j, void *ctx, int n) {  // swap
+        void **pack = reinterpret_cast<void **>(ctx);
+        FloatList<float> *sortedIndex =
+            reinterpret_cast<FloatList<float> *>(pack[0]);
         float temp = sortedIndex->valueAtIndex(i);
         sortedIndex->replaceValueAtIndex(sortedIndex->valueAtIndex(j), i);
         sortedIndex->replaceValueAtIndex(temp, j);
       },
-      [](int i, int j, void * ctx, int n) { // compare
-        void ** pack = reinterpret_cast<void **>(ctx);
-        FloatList<float> * sortedIndex = reinterpret_cast<FloatList<float> *>(pack[0]);
-        DatasetColumn<T> * values = reinterpret_cast<DatasetColumn<T> *>(pack[1]);
+      [](int i, int j, void *ctx, int n) {  // compare
+        void **pack = reinterpret_cast<void **>(ctx);
+        FloatList<float> *sortedIndex =
+            reinterpret_cast<FloatList<float> *>(pack[0]);
+        DatasetColumn<T> *values =
+            reinterpret_cast<DatasetColumn<T> *>(pack[1]);
         int sortedIndexI = static_cast<int>(sortedIndex->valueAtIndex(i));
         int sortedIndexJ = static_cast<int>(sortedIndex->valueAtIndex(j));
-        return std::isnan(values->valueAtIndex(sortedIndexI)) || values->valueAtIndex(sortedIndexI) >= values->valueAtIndex(sortedIndexJ);
+        return std::isnan(values->valueAtIndex(sortedIndexI)) ||
+               values->valueAtIndex(sortedIndexI) >=
+                   values->valueAtIndex(sortedIndexJ);
       },
-      pack,
-      datasetLength());
+      pack, datasetLength());
   m_sortedIndex = sortedIndexes;
   m_recomputeSortedIndex = false;
 }
@@ -202,4 +221,4 @@ void StatisticsDataset<T>::buildSortedIndex() const {
 template class StatisticsDataset<float>;
 template class StatisticsDataset<double>;
 
-}
+}  // namespace Poincare

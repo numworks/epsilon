@@ -11,30 +11,31 @@
 namespace Escher {
 
 class TextView : public View {
-public:
+ public:
   TextView(KDFont::Size font = KDFont::Size::Large,
            float horizontalAlignment = KDContext::k_alignLeft,
            float verticalAlignment = KDContext::k_alignTop,
            KDColor textColor = KDColorBlack,
-           KDColor backgroundColor = KDColorWhite) :
-      View(),
-      m_font(font),
-      m_horizontalAlignment(horizontalAlignment),
-      m_verticalAlignment(verticalAlignment),
-      m_textColor(textColor),
-      m_backgroundColor(backgroundColor) {}
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+           KDColor backgroundColor = KDColorWhite)
+      : View(),
+        m_font(font),
+        m_horizontalAlignment(horizontalAlignment),
+        m_verticalAlignment(verticalAlignment),
+        m_textColor(textColor),
+        m_backgroundColor(backgroundColor) {}
+  void drawRect(KDContext* ctx, KDRect rect) const override;
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
   KDSize minimalSizeForOptimalDisplay() const override;
-  virtual const char * text() const = 0;
-  virtual void setText(const char * text) = 0;
+  virtual const char* text() const = 0;
+  virtual void setText(const char* text) = 0;
   KDFont::Size font() const { return m_font; }
   void setFont(KDFont::Size font);
-protected:
+
+ protected:
 #if ESCHER_VIEW_LOGGING
-  const char * className() const override { return "TextView"; }
+  const char* className() const override { return "TextView"; }
 #endif
   KDFont::Size m_font;
   float m_horizontalAlignment;
@@ -43,5 +44,5 @@ protected:
   KDColor m_backgroundColor;
 };
 
-}
+}  // namespace Escher
 #endif

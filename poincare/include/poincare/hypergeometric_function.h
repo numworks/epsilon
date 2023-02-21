@@ -16,7 +16,9 @@
 
 namespace Poincare {
 
-bool HypergeometricFunction(double a, double b, double c, double z, double epsilon, int maxNumberOfIterations, double * result);
+bool HypergeometricFunction(double a, double b, double c, double z,
+                            double epsilon, int maxNumberOfIterations,
+                            double* result);
 
 }
 

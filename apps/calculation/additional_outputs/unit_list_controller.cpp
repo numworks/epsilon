@@ -1,8 +1,10 @@
 #include "unit_list_controller.h"
-#include "unit_comparison_helper.h"
-#include "../app.h"
-#include "../../shared/poincare_helpers.h"
+
 #include <poincare/unit_convert.h>
+
+#include "../../shared/poincare_helpers.h"
+#include "../app.h"
+#include "unit_comparison_helper.h"
 
 using namespace Poincare;
 using namespace Escher;
@@ -10,14 +12,13 @@ using namespace Shared;
 
 namespace Calculation {
 
-UnitListController::UnitListController(EditExpressionController * editExpressionController) :
-  ExpressionsListController(editExpressionController, true),
-  m_numberOfExpressionCells(0),
-  m_numberOfBufferCells(0),
-  m_referenceValues{nullptr, nullptr},
-  m_SIValue(0.0)
-{
-}
+UnitListController::UnitListController(
+    EditExpressionController *editExpressionController)
+    : ExpressionsListController(editExpressionController, true),
+      m_numberOfExpressionCells(0),
+      m_numberOfBufferCells(0),
+      m_referenceValues{nullptr, nullptr},
+      m_SIValue(0.0) {}
 
 int UnitListController::reusableCellCount(int type) {
   if (type == k_expressionCellType) {
@@ -36,7 +37,7 @@ void UnitListController::viewDidDisappear() {
   m_numberOfBufferCells = 0;
 }
 
-HighlightCell * UnitListController::reusableCell(int index, int type) {
+HighlightCell *UnitListController::reusableCell(int index, int type) {
   if (type == k_expressionCellType) {
     return ExpressionsListController::reusableCell(index, type);
   }
@@ -52,11 +53,13 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int index) {
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
-void UnitListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void UnitListController::willDisplayCellForIndex(HighlightCell *cell,
+                                                 int index) {
   if (typeAtIndex(index) == k_expressionCellType) {
     return ExpressionsListController::willDisplayCellForIndex(cell, index);
   }
-  BufferTableCellWithMessage * myCell = static_cast<BufferTableCellWithMessage *>(cell);
+  BufferTableCellWithMessage *myCell =
+      static_cast<BufferTableCellWithMessage *>(cell);
   fillBufferCellAtIndex(myCell, index - m_numberOfExpressionCells);
   myCell->setSubLabelMessage(messageAtIndex(index));
 }
@@ -82,28 +85,45 @@ void UnitListController::setExpression(Poincare::Expression e) {
   Expression copy = m_expression.clone();
   Expression units;
   // Reduce to be able to recognize units
-  PoincareHelpers::ReduceAndRemoveUnit(&copy, App::app()->localContext(), ReductionTarget::User, &units);
-  double value = Shared::PoincareHelpers::ApproximateToScalar<double>(copy, App::app()->localContext());
+  PoincareHelpers::ReduceAndRemoveUnit(&copy, App::app()->localContext(),
+                                       ReductionTarget::User, &units);
+  double value = Shared::PoincareHelpers::ApproximateToScalar<double>(
+      copy, App::app()->localContext());
   ReductionContext reductionContext(
       App::app()->localContext(),
-      Preferences::UpdatedComplexFormatWithExpressionInput(Preferences::sharedPreferences->complexFormat(), m_expression, App::app()->localContext()),
+      Preferences::UpdatedComplexFormatWithExpressionInput(
+          Preferences::sharedPreferences->complexFormat(), m_expression,
+          App::app()->localContext()),
       Preferences::sharedPreferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(),
       ReductionTarget::User,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  int numberOfExpressions = Unit::SetAdditionalExpressions(units, value, expressions, k_maxNumberOfExpressionCells, reductionContext, m_expression);
+  int numberOfExpressions = Unit::SetAdditionalExpressions(
+      units, value, expressions, k_maxNumberOfExpressionCells, reductionContext,
+      m_expression);
 
   Expression siExpression;
-  const Unit::Representative * representative = units.type() == ExpressionNode::Type::Unit ? static_cast<Unit &>(units).representative() : UnitNode::Representative::RepresentativeForDimension(UnitNode::Vector<int>::FromBaseUnits(units));
-  if (representative && representative->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector()) {
+  const Unit::Representative *representative =
+      units.type() == ExpressionNode::Type::Unit
+          ? static_cast<Unit &>(units).representative()
+          : UnitNode::Representative::RepresentativeForDimension(
+                UnitNode::Vector<int>::FromBaseUnits(units));
+  if (representative &&
+      representative->dimensionVector() ==
+          Unit::AngleRepresentative::Default().dimensionVector()) {
     // Needs to be defined for the unit comparison but is not used with angles
     siExpression = m_expression;
   } else {
     // 2. SI units only
     assert(numberOfExpressions < k_maxNumberOfExpressionCells - 1);
     expressions[numberOfExpressions] = m_expression;
-    Shared::PoincareHelpers::CloneAndSimplify(&expressions[numberOfExpressions], App::app()->localContext(), ReductionTarget::User, Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::UnitConversion::InternationalSystem);
-    siExpression = expressions[numberOfExpressions]; // Remember for later (part II)
+    Shared::PoincareHelpers::CloneAndSimplify(
+        &expressions[numberOfExpressions], App::app()->localContext(),
+        ReductionTarget::User,
+        Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+        Poincare::UnitConversion::InternationalSystem);
+    siExpression =
+        expressions[numberOfExpressions];  // Remember for later (part II)
     numberOfExpressions++;
   }
 
@@ -111,29 +131,38 @@ void UnitListController::setExpression(Poincare::Expression e) {
    * We find duplicates by comparing the serializations, to eliminate
    * expressions that only differ by the types of their number nodes. */
   Expression reduceExpression = m_expression;
-  // Make m_expression comparable to expressions (turn BasedInteger into Rational for instance)
-  Shared::PoincareHelpers::CloneAndSimplify(&reduceExpression, App::app()->localContext(), ReductionTarget::User, Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::UnitConversion::None);
+  // Make m_expression comparable to expressions (turn BasedInteger into
+  // Rational for instance)
+  Shared::PoincareHelpers::CloneAndSimplify(
+      &reduceExpression, App::app()->localContext(), ReductionTarget::User,
+      Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      Poincare::UnitConversion::None);
   int currentExpressionIndex = 0;
   while (currentExpressionIndex < numberOfExpressions) {
     bool duplicateFound = false;
     constexpr int buffersSize = Constant::MaxSerializedExpressionSize;
     char buffer1[buffersSize];
-    int size1 = PoincareHelpers::Serialize(expressions[currentExpressionIndex], buffer1, buffersSize);
+    int size1 = PoincareHelpers::Serialize(expressions[currentExpressionIndex],
+                                           buffer1, buffersSize);
     for (int i = 0; i < currentExpressionIndex + 1; i++) {
-      // Compare the currentExpression to all previous expressions and to m_expression
-      Expression comparedExpression = i == currentExpressionIndex ? reduceExpression : expressions[i];
+      // Compare the currentExpression to all previous expressions and to
+      // m_expression
+      Expression comparedExpression =
+          i == currentExpressionIndex ? reduceExpression : expressions[i];
       assert(!comparedExpression.isUninitialized());
       char buffer2[buffersSize];
-      int size2 = PoincareHelpers::Serialize(comparedExpression, buffer2, buffersSize);
+      int size2 =
+          PoincareHelpers::Serialize(comparedExpression, buffer2, buffersSize);
       if (size1 == size2 && strcmp(buffer1, buffer2) == 0) {
         numberOfExpressions--;
         // Shift next expressions
         for (int j = currentExpressionIndex; j < numberOfExpressions; j++) {
-          expressions[j] = expressions[j+1];
+          expressions[j] = expressions[j + 1];
         }
         // Remove last expression
         expressions[numberOfExpressions] = Expression();
-        // The current expression has been discarded, no need to increment the current index
+        // The current expression has been discarded, no need to increment the
+        // current index
         duplicateFound = true;
         break;
       }
@@ -150,10 +179,13 @@ void UnitListController::setExpression(Poincare::Expression e) {
   // Memoize layouts
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
     if (!expressions[i].isUninitialized()) {
-      m_layouts[i] = Shared::PoincareHelpers::CreateLayout(expressions[i], App::app()->localContext());
+      m_layouts[i] = Shared::PoincareHelpers::CreateLayout(
+          expressions[i], App::app()->localContext());
       // Radians may have two layouts to display
       if (expressions[i].isInRadians(App::app()->localContext())) {
-        Layout approximated = Shared::PoincareHelpers::CreateLayout(expressions[i].approximateKeepingUnits<double>(reductionContext), App::app()->localContext());
+        Layout approximated = Shared::PoincareHelpers::CreateLayout(
+            expressions[i].approximateKeepingUnits<double>(reductionContext),
+            App::app()->localContext());
         if (!approximated.isIdenticalTo(m_layouts[i], true)) {
           m_exactLayouts[i] = m_layouts[i];
           m_layouts[i] = Layout();
@@ -173,10 +205,15 @@ void UnitListController::setExpression(Poincare::Expression e) {
   assert(siExpression.hasUnit());
   Expression clone = siExpression.clone();
   Expression unit;
-  PoincareHelpers::ReduceAndRemoveUnit(&clone, App::app()->localContext(), ReductionTarget::User, &unit, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, UnitConversion::None);
-  m_SIValue = PoincareHelpers::ApproximateToScalar<double>(clone, App::app()->localContext());
+  PoincareHelpers::ReduceAndRemoveUnit(
+      &clone, App::app()->localContext(), ReductionTarget::User, &unit,
+      SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+      UnitConversion::None);
+  m_SIValue = PoincareHelpers::ApproximateToScalar<double>(
+      clone, App::app()->localContext());
   // 2. Set upper and lower reference values
-  m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(m_SIValue, unit, m_referenceValues, &m_tableIndexForComparison);
+  m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
+      m_SIValue, unit, m_referenceValues, &m_tableIndexForComparison);
 
   /* TODO:
    * If numberOfExpressions == 0, it might be because the SI reduction failed.
@@ -195,14 +232,17 @@ I18n::Message UnitListController::messageAtIndex(int index) {
   return (I18n::Message)0;
 }
 
-void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessage * bufferCell, int index) {
+void UnitListController::fillBufferCellAtIndex(
+    Escher::BufferTableCellWithMessage *bufferCell, int index) {
   assert(index < m_numberOfBufferCells);
-  const UnitComparison::ReferenceValue * referenceValue = m_referenceValues[index];
+  const UnitComparison::ReferenceValue *referenceValue =
+      m_referenceValues[index];
   assert(referenceValue != nullptr);
   I18n::Message messageInCell;
   char floatToTextBuffer[UnitComparison::k_sizeOfUnitComparisonBuffer];
   double ratio = m_SIValue / static_cast<double>(referenceValue->value);
-  UnitComparison::FillRatioBuffer(ratio, floatToTextBuffer, UnitComparison::k_sizeOfUnitComparisonBuffer);
+  UnitComparison::FillRatioBuffer(ratio, floatToTextBuffer,
+                                  UnitComparison::k_sizeOfUnitComparisonBuffer);
   if (ratio < UnitComparison::k_maxPercentageRatioDisplay) {
     messageInCell = referenceValue->title1;
   } else {
@@ -211,14 +251,20 @@ void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessag
   bufferCell->setMessageWithPlaceholders(messageInCell, floatToTextBuffer);
 }
 
-int UnitListController::textAtIndex(char * buffer, size_t bufferSize, HighlightCell * cell, int index) {
+int UnitListController::textAtIndex(char *buffer, size_t bufferSize,
+                                    HighlightCell *cell, int index) {
   assert(index >= 0);
   if (index < m_numberOfExpressionCells) {
-    return ExpressionsListController::textAtIndex(buffer, bufferSize, cell, index);
+    return ExpressionsListController::textAtIndex(buffer, bufferSize, cell,
+                                                  index);
   }
   index = index - m_numberOfExpressionCells;
   assert(index < m_numberOfBufferCells);
-  return UnitComparison::BuildComparisonExpression(m_SIValue, m_referenceValues[index], m_tableIndexForComparison).serialize(buffer, bufferSize, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::LargeNumberOfSignificantDigits);
+  return UnitComparison::BuildComparisonExpression(
+             m_SIValue, m_referenceValues[index], m_tableIndexForComparison)
+      .serialize(buffer, bufferSize,
+                 Poincare::Preferences::PrintFloatMode::Decimal,
+                 Poincare::Preferences::LargeNumberOfSignificantDigits);
 }
 
-}
+}  // namespace Calculation

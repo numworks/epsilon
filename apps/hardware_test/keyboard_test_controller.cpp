@@ -7,9 +7,7 @@ using namespace Escher;
 
 namespace HardwareTest {
 
-View * KeyboardTestController::view() {
-  return &m_keyboardView;
-}
+View* KeyboardTestController::view() { return &m_keyboardView; }
 
 bool KeyboardTestController::handleEvent(Ion::Events::Event event) {
   // Do not handle OnOff event to let the apps container redraw the screen
@@ -17,7 +15,8 @@ bool KeyboardTestController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   Ion::Keyboard::State state = Ion::Keyboard::scan();
-  Ion::Keyboard::State onlyKeyDown = Ion::Keyboard::State(KeyboardModel::TestedKeys[m_keyboardView.testedKeyIndex()]);
+  Ion::Keyboard::State onlyKeyDown = Ion::Keyboard::State(
+      KeyboardModel::TestedKeys[m_keyboardView.testedKeyIndex()]);
   if (state == onlyKeyDown) {
     m_keyboardView.setTestedKeyIndex(m_keyboardView.testedKeyIndex() + 1);
     if (m_keyboardView.testedKeyIndex() == KeyboardModel::NumberOfTestedKeys) {
@@ -32,5 +31,4 @@ void KeyboardTestController::viewWillAppear() {
   m_keyboardView.setTestedKeyIndex(0);
 }
 
-}
-
+}  // namespace HardwareTest

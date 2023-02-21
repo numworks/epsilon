@@ -6,9 +6,9 @@
 namespace Escher {
 
 class TransparentView : public View {
-protected:
+ protected:
   void markRectAsDirty(KDRect rect) override;
 };
 
-}
+}  // namespace Escher
 #endif

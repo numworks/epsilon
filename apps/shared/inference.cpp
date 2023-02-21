@@ -2,8 +2,7 @@
 
 namespace Shared {
 
-Inference::Inference() : MemoizedCurveViewRange() {
-}
+Inference::Inference() : MemoizedCurveViewRange() {}
 
 void Inference::computeCurveViewRange() {
   // x range
@@ -23,4 +22,4 @@ bool Inference::authorizedParameterAtIndex(double x, int index) const {
   return std::isfinite(static_cast<float>(x));
 }
 
-}
+}  // namespace Shared

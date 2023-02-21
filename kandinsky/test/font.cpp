@@ -5,7 +5,7 @@
 
 constexpr KDFont testFont(10, 10, nullptr, nullptr);
 
-bool valueNotInArray(const uint32_t * array, int length, uint32_t value) {
+bool valueNotInArray(const uint32_t* array, int length, uint32_t value) {
   for (int i = 0; i < length; i++) {
     if (array[i] == value) {
       return false;
@@ -15,7 +15,8 @@ bool valueNotInArray(const uint32_t * array, int length, uint32_t value) {
 }
 
 QUIZ_CASE(kandinsky_font_index_for_code_point) {
-  quiz_assert(CodePoints[KDFont::k_indexForReplacementCharacterCodePoint] == 0xFFFD);
+  quiz_assert(CodePoints[KDFont::k_indexForReplacementCharacterCodePoint] ==
+              0xFFFD);
 
   // Test all CodePoints
   for (uint32_t codePoint = 0; codePoint < 65536; codePoint++) {

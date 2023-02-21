@@ -3,22 +3,15 @@
 namespace Ion {
 namespace Backlight {
 
-uint8_t brightness() {
-  return 0;
-}
+uint8_t brightness() { return 0; }
 
-void setBrightness(uint8_t b) {
-}
+void setBrightness(uint8_t b) {}
 
-void init() {
-}
+void init() {}
 
-bool isInitialized() {
-  return true;
-}
+bool isInitialized() { return true; }
 
-void shutdown() {
-}
+void shutdown() {}
 
-}
-}
+}  // namespace Backlight
+}  // namespace Ion

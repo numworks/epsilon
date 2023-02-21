@@ -10,9 +10,8 @@ namespace Board {
 void switchExecutableSlot(uint32_t leaveAddress);
 void enableExternalApps();
 
-}
-}
-}
+}  // namespace Board
+}  // namespace Device
+}  // namespace Ion
 
 #endif
-

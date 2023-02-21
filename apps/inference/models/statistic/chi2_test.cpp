@@ -1,15 +1,17 @@
 #include "chi2_test.h"
-#include "goodness_test.h"
-#include "homogeneity_test.h"
-#include "interfaces/significance_tests.h"
 
 #include <algorithm>
 #include <cmath>
 
+#include "goodness_test.h"
+#include "homogeneity_test.h"
+#include "interfaces/significance_tests.h"
+
 namespace Inference {
 
 Chi2Test::Chi2Test() {
-  m_hypothesisParams.setComparisonOperator(Poincare::ComparisonNode::OperatorType::Superior);  // Always higher
+  m_hypothesisParams.setComparisonOperator(
+      Poincare::ComparisonNode::OperatorType::Superior);  // Always higher
 }
 
 bool Chi2Test::initializeCategoricalType(CategoricalType type) {
@@ -47,4 +49,4 @@ bool Chi2Test::authorizedParameterAtIndex(double p, int i) const {
   return Inference::authorizedParameterAtIndex(p, i);
 }
 
-}
+}  // namespace Inference

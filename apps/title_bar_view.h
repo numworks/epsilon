@@ -4,13 +4,14 @@
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
 #include <escher/image_view.h>
+
 #include "battery_view.h"
 #include "shift_alpha_lock_view.h"
 
 class TitleBarView : public Escher::View {
-public:
+ public:
   TitleBarView();
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void drawRect(KDContext* ctx, KDRect rect) const override;
   void setTitle(I18n::Message title);
   bool setChargeState(Ion::Battery::Charge chargeState);
   void updateBatteryAnimation();
@@ -19,7 +20,8 @@ public:
   bool setShiftAlphaLockStatus(Ion::Events::ShiftAlphaStatus status);
   void refreshPreferences();
   void reload();
-private:
+
+ private:
   constexpr static KDCoordinate k_alphaRightMargin = 5;
   constexpr static KDCoordinate k_examIconWidth = 18;
   constexpr static KDCoordinate k_examIconHeight = 9;
@@ -27,7 +29,7 @@ private:
   constexpr static KDCoordinate k_examTextWidth = 20;
   int numberOfSubviews() const override;
   void layoutSubviews(bool force = false) override;
-  Escher::View * subviewAtIndex(int index) override;
+  Escher::View* subviewAtIndex(int index) override;
   Escher::MessageTextView m_titleView;
   BatteryView m_batteryView;
   ShiftAlphaLockView m_shiftAlphaLockView;

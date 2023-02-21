@@ -1,4 +1,5 @@
 #include "serial_number_controller.h"
+
 #include <ion.h>
 
 using namespace Escher;
@@ -17,4 +18,4 @@ bool SerialNumberController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-}
+}  // namespace HardwareTest

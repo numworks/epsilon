@@ -2,6 +2,7 @@
 #define LIBA_AEABI_FLOAT_H
 
 #include <assert.h>
+
 #include "../external/softfloat/port/softfloat.h"
 
 /* To avoid any issue due to procedure call conventions, we convert softfloat
@@ -40,7 +41,6 @@ static inline float64_t f64(aeabi_double_t d) {
   assert(sizeof(res) == sizeof(float64_t));
   return res.out;
 }
-
 
 static inline aeabi_double_t d(float64_t d) {
   union {

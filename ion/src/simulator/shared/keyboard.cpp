@@ -1,23 +1,23 @@
 #include "keyboard.h"
-#include "layout.h"
-#include "window.h"
 
+#include <SDL.h>
 #include <ion/keyboard.h>
 #include <ion/src/shared/keyboard.h>
 #include <ion/src/shared/keyboard_queue.h>
-#include <SDL.h>
+
+#include "layout.h"
+#include "window.h"
 
 using namespace Ion::Keyboard;
 
 class KeySDLKeyPair {
-public:
-  constexpr KeySDLKeyPair(Key key, SDL_Scancode SDLKey) :
-    m_key(key),
-    m_SDLKey(SDLKey)
-  {}
+ public:
+  constexpr KeySDLKeyPair(Key key, SDL_Scancode SDLKey)
+      : m_key(key), m_SDLKey(SDLKey) {}
   Key key() const { return m_key; }
   SDL_Scancode SDLKey() const { return m_SDLKey; }
-private:
+
+ private:
   Key m_key;
   SDL_Scancode m_SDLKey;
 };
@@ -31,18 +31,18 @@ private:
  * a Shift-Backspace on the host. */
 
 constexpr static KeySDLKeyPair sKeyPairs[] = {
-  KeySDLKeyPair(Key::Down,      SDL_SCANCODE_DOWN),
-  KeySDLKeyPair(Key::Up,        SDL_SCANCODE_UP),
-  KeySDLKeyPair(Key::Left,      SDL_SCANCODE_LEFT),
-  KeySDLKeyPair(Key::Right,     SDL_SCANCODE_RIGHT),
-  KeySDLKeyPair(Key::Shift,     SDL_SCANCODE_LSHIFT),
-  KeySDLKeyPair(Key::Shift,     SDL_SCANCODE_RSHIFT),
-  KeySDLKeyPair(Key::EXE,       SDL_SCANCODE_RETURN),
-  KeySDLKeyPair(Key::Back,      SDL_SCANCODE_ESCAPE),
-  KeySDLKeyPair(Key::Toolbox,   SDL_SCANCODE_TAB),
+    KeySDLKeyPair(Key::Down, SDL_SCANCODE_DOWN),
+    KeySDLKeyPair(Key::Up, SDL_SCANCODE_UP),
+    KeySDLKeyPair(Key::Left, SDL_SCANCODE_LEFT),
+    KeySDLKeyPair(Key::Right, SDL_SCANCODE_RIGHT),
+    KeySDLKeyPair(Key::Shift, SDL_SCANCODE_LSHIFT),
+    KeySDLKeyPair(Key::Shift, SDL_SCANCODE_RSHIFT),
+    KeySDLKeyPair(Key::EXE, SDL_SCANCODE_RETURN),
+    KeySDLKeyPair(Key::Back, SDL_SCANCODE_ESCAPE),
+    KeySDLKeyPair(Key::Toolbox, SDL_SCANCODE_TAB),
 };
 
-constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs)/sizeof(KeySDLKeyPair);
+constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs) / sizeof(KeySDLKeyPair);
 
 namespace Ion {
 namespace Keyboard {
@@ -78,7 +78,7 @@ State scan() {
 #endif
 
   // Catch the physical keyboard events
-  const uint8_t * SDLstate = SDL_GetKeyboardState(NULL);
+  const uint8_t* SDLstate = SDL_GetKeyboardState(NULL);
   for (int i = 0; i < sNumberOfKeyPairs; i++) {
     KeySDLKeyPair pair = sKeyPairs[i];
     if (SDLstate[pair.SDLKey()]) {
@@ -90,20 +90,16 @@ State scan() {
   return state;
 }
 
-}
-}
+}  // namespace Keyboard
+}  // namespace Ion
 
 namespace Ion {
 namespace Simulator {
 namespace Keyboard {
 
-void keyDown(Ion::Keyboard::Key k) {
-  Queue::sharedQueue()->push(State(k));
-}
+void keyDown(Ion::Keyboard::Key k) { Queue::sharedQueue()->push(State(k)); }
 
-void keyUp(Ion::Keyboard::Key k) {
-  Queue::sharedQueue()->push(State(0));
-}
+void keyUp(Ion::Keyboard::Key k) { Queue::sharedQueue()->push(State(0)); }
 
 bool scanHandlesSDLKey(SDL_Scancode key) {
   for (int i = 0; i < sNumberOfKeyPairs; i++) {
@@ -114,6 +110,6 @@ bool scanHandlesSDLKey(SDL_Scancode key) {
   return false;
 }
 
-}
-}
-}
+}  // namespace Keyboard
+}  // namespace Simulator
+}  // namespace Ion

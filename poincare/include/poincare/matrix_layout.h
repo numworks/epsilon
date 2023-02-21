@@ -3,8 +3,8 @@
 
 #include <poincare/grid_layout.h>
 #include <poincare/horizontal_layout.h>
-#include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
+#include <poincare/layout_cursor.h>
 
 namespace Poincare {
 
@@ -12,14 +12,17 @@ class MatrixLayout;
 
 class MatrixLayoutNode final : public GridLayoutNode {
   friend class MatrixLayout;
-public:
+
+ public:
   using GridLayoutNode::GridLayoutNode;
 
   // Layout
   Type type() const override { return Type::MatrixLayout; }
 
   // SerializableNode
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  int serialize(char *buffer, int bufferSize,
+                Preferences::PrintFloatMode floatDisplayMode,
+                int numberOfSignificantDigits) const override;
 
   // Grid layout node
   void startEditing() override;
@@ -28,36 +31,43 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(MatrixLayoutNode); }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream &stream) const override {
     stream << "MatrixLayout";
   }
 #endif
 
-private:
+ private:
   // Grid layout node
   bool isEditing() const override;
 
   // LayoutNode
   KDSize computeSize(KDFont::Size font) override;
-  KDPoint positionOfChild(LayoutNode * l, KDFont::Size font) override;
+  KDPoint positionOfChild(LayoutNode *l, KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override;
-
+  void render(KDContext *ctx, KDPoint p, KDFont::Size font,
+              KDColor expressionColor, KDColor backgroundColor) override;
 };
 
 class MatrixLayout final : public GridLayout {
   friend class MatrixLayoutNode;
-public:
-  MatrixLayout(const MatrixLayoutNode * n) : GridLayout(n) {}
-  static MatrixLayout Builder() { return TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(); }
+
+ public:
+  MatrixLayout(const MatrixLayoutNode *n) : GridLayout(n) {}
+  static MatrixLayout Builder() {
+    return TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>();
+  }
   static MatrixLayout Builder(Layout l1);
   static MatrixLayout Builder(Layout l1, Layout l2, Layout l3, Layout l4);
-  static MatrixLayout EmptyMatrixBuilder() { return Builder(HorizontalLayout::Builder()); }
+  static MatrixLayout EmptyMatrixBuilder() {
+    return Builder(HorizontalLayout::Builder());
+  }
 
-private:
-  MatrixLayoutNode * node() const { return static_cast<MatrixLayoutNode *>(Layout::node()); }
+ private:
+  MatrixLayoutNode *node() const {
+    return static_cast<MatrixLayoutNode *>(Layout::node());
+  }
 };
 
-}
+}  // namespace Poincare
 
 #endif

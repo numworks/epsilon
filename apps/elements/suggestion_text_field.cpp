@@ -6,38 +6,58 @@ namespace Elements {
 
 // SuggestionTextField::ContentView
 
-SuggestionTextField::ContentView::ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
-  AbstractTextField::ContentView(textBuffer, textBufferSize, draftTextBufferSize, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
-  m_suggestion(nullptr)
-{}
+SuggestionTextField::ContentView::ContentView(
+    char* textBuffer, size_t textBufferSize, size_t draftTextBufferSize,
+    KDFont::Size font, float horizontalAlignment, float verticalAlignment,
+    KDColor textColor, KDColor backgroundColor)
+    : AbstractTextField::ContentView(
+          textBuffer, textBufferSize, draftTextBufferSize, font,
+          horizontalAlignment, verticalAlignment, textColor, backgroundColor),
+      m_suggestion(nullptr) {}
 
-void SuggestionTextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
+void SuggestionTextField::ContentView::drawRect(KDContext* ctx,
+                                                KDRect rect) const {
   AbstractTextField::ContentView::drawRect(ctx, rect);
   if (m_suggestion) {
     assert(strlen(m_suggestion) >= editedTextLength());
-    ctx->drawString(suggestionSuffix(), glyphFrameAtPosition(text(), text() + editedTextLength()).origin(), m_font, Palette::GrayDark, KDColorWhite);
+    ctx->drawString(
+        suggestionSuffix(),
+        glyphFrameAtPosition(text(), text() + editedTextLength()).origin(),
+        m_font, Palette::GrayDark, KDColorWhite);
   }
 }
 
 KDSize SuggestionTextField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize size = AbstractTextField::ContentView::minimalSizeForOptimalDisplay();
-  return m_suggestion ? KDSize(size.width() + KDFont::Font(m_font)->stringSize(suggestionSuffix()).width(), size.height()) : size;
+  return m_suggestion
+             ? KDSize(size.width() + KDFont::Font(m_font)
+                                         ->stringSize(suggestionSuffix())
+                                         .width(),
+                      size.height())
+             : size;
 }
 
-void SuggestionTextField::ContentView::setSuggestion(const char * suggestion) {
+void SuggestionTextField::ContentView::setSuggestion(const char* suggestion) {
   m_suggestion = suggestion;
   markRectAsDirty(bounds());
 }
 
 // SuggestionTextField
 
-SuggestionTextField::SuggestionTextField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) :
-  AbstractTextField(parentResponder, &m_contentView, inputEventHandlerDelegate, delegate),
-  m_contentView(nullptr, MaxBufferSize(), MaxBufferSize(), KDFont::Size::Large, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite)
-{}
+SuggestionTextField::SuggestionTextField(
+    Responder* parentResponder,
+    InputEventHandlerDelegate* inputEventHandlerDelegate,
+    TextFieldDelegate* delegate)
+    : AbstractTextField(parentResponder, &m_contentView,
+                        inputEventHandlerDelegate, delegate),
+      m_contentView(nullptr, MaxBufferSize(), MaxBufferSize(),
+                    KDFont::Size::Large, KDContext::k_alignLeft,
+                    KDContext::k_alignCenter, KDColorBlack, KDColorWhite) {}
 
 bool SuggestionTextField::handleEvent(Ion::Events::Event event) {
-  if (cursorAtEndOfText() && m_contentView.suggestion() && (event == Ion::Events::Left || event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftUp)) {
+  if (cursorAtEndOfText() && m_contentView.suggestion() &&
+      (event == Ion::Events::Left || event == Ion::Events::ShiftLeft ||
+       event == Ion::Events::ShiftUp)) {
     // Dismiss suggestion on Left press
     m_contentView.setSuggestion(nullptr);
     return true;
@@ -54,4 +74,4 @@ void SuggestionTextField::commitSuggestion() {
   }
 }
 
-}
+}  // namespace Elements

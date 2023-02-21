@@ -6,34 +6,43 @@
 #include <escher/explicit_selectable_list_view_controller.h>
 #include <escher/expression_table_cell_with_message.h>
 #include <escher/expression_table_cell_with_message_with_buffer.h>
-#include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
+#include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/spacer_cell.h>
+
+#include "../store.h"
 #include "go_to_parameter_controller.h"
 #include "residual_plot_controller.h"
-#include "../store.h"
 
 namespace Regression {
 
 class GraphController;
 
-class GraphOptionsController : public Escher::ExplicitSelectableListViewController {
-public:
-  GraphOptionsController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * range, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
+class GraphOptionsController
+    : public Escher::ExplicitSelectableListViewController {
+ public:
+  GraphOptionsController(
+      Escher::Responder* parentResponder,
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+      Shared::InteractiveCurveViewRange* range, Store* store,
+      Shared::CurveViewCursor* cursor, GraphController* graphController);
   void removeRegression();
 
-  const char * title() override;
-  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
+  const char* title() override;
+  ViewController::TitlesDisplay titlesDisplay() override {
+    return ViewController::TitlesDisplay::DisplayLastTitle;
+  }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  void fillCell(Escher::HighlightCell * cell) override;
+  void fillCell(Escher::HighlightCell* cell) override;
 
   // MemoizedListViewDataSource
   int numberOfRows() const override { return k_maxNumberOfRows; }
-  Escher::HighlightCell * cell(int index) override;
-private:
+  Escher::HighlightCell* cell(int index) override;
+
+ private:
   constexpr static int k_maxNumberOfRows = 10;
 
   bool displayRegressionEquationCell() const;
@@ -53,10 +62,10 @@ private:
   Escher::ButtonCell m_removeRegressionCell;
   GoToParameterController m_goToParameterController;
   ResidualPlotController m_residualPlotCellController;
-  Store * m_store;
-  GraphController * m_graphController;
+  Store* m_store;
+  GraphController* m_graphController;
 };
 
-}
+}  // namespace Regression
 
 #endif

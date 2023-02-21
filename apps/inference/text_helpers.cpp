@@ -18,16 +18,19 @@ namespace Inference {
 Poincare::Layout XOneMinusXTwoLayout() {
   HorizontalLayout x1 = HorizontalLayout::Builder(
       CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
-                                    VerticalOffsetLayoutNode::VerticalPosition::Subscript));
+      VerticalOffsetLayout::Builder(
+          CodePointLayout::Builder('1'),
+          VerticalOffsetLayoutNode::VerticalPosition::Subscript));
   HorizontalLayout x2 = HorizontalLayout::Builder(
       CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
-                                    VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-  HorizontalLayout res = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
+      VerticalOffsetLayout::Builder(
+          CodePointLayout::Builder('2'),
+          VerticalOffsetLayoutNode::VerticalPosition::Subscript));
+  HorizontalLayout res =
+      HorizontalLayout::Builder(CodePointLayout::Builder('-'));
   res.addOrMergeChildAtIndex(x2, 1);
   res.addOrMergeChildAtIndex(x1, 0);
   return std::move(res);
 }
 
-}
+}  // namespace Inference

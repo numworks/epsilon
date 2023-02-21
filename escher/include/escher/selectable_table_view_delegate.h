@@ -8,16 +8,23 @@ namespace Escher {
 class SelectableTableView;
 
 class SelectableTableViewDelegate : public ContextProvider {
-public:
+ public:
   /* withinTemporarySelection flag indicates when the selection change happens
    * in a temporary deselection: indeed, when reloading the data of the table,
    * we deselect the table before re-layouting the entire table and re-select
    * the previous selected cell. We might implement different course of action
    * when the selection change is 'real' or within temporary selection. */
-  virtual void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) {}
-  virtual void tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) {}
-  virtual bool canStoreContentOfCellAtLocation(SelectableTableView * t, int col, int row) const { return true; }
+  virtual void tableViewDidChangeSelection(
+      SelectableTableView* t, int previousSelectedCellX,
+      int previousSelectedCellY, bool withinTemporarySelection = false) {}
+  virtual void tableViewDidChangeSelectionAndDidScroll(
+      SelectableTableView* t, int previousSelectedCellX,
+      int previousSelectedCellY, bool withinTemporarySelection = false) {}
+  virtual bool canStoreContentOfCellAtLocation(SelectableTableView* t, int col,
+                                               int row) const {
+    return true;
+  }
 };
 
-}
+}  // namespace Escher
 #endif

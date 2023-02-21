@@ -1,35 +1,35 @@
-#include <escher/stack_header_view.h>
 #include <escher/metric.h>
+#include <escher/stack_header_view.h>
 extern "C" {
 #include <assert.h>
 }
 
 namespace Escher {
 
-StackHeaderView::StackHeaderView(ViewController * controller, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
-  View(),
-  m_textColor(textColor),
-  m_backgroundColor(backgroundColor),
-  m_separatorColor(separatorColor),
-  m_controller(controller)
-{
+StackHeaderView::StackHeaderView(ViewController *controller, KDColor textColor,
+                                 KDColor backgroundColor,
+                                 KDColor separatorColor)
+    : View(),
+      m_textColor(textColor),
+      m_backgroundColor(backgroundColor),
+      m_separatorColor(separatorColor),
+      m_controller(controller) {
   markRectAsDirty(bounds());
 }
 
-void StackHeaderView::drawRect(KDContext * ctx, KDRect rect) const {
+void StackHeaderView::drawRect(KDContext *ctx, KDRect rect) const {
   KDRect b = bounds();
   drawBorderOfRect(ctx, b, m_separatorColor);
   drawInnerRect(ctx, b, m_backgroundColor);
   // Write title
   KDFont::Size font = KDFont::Size::Small;
-  ctx->alignAndDrawString(m_controller->title(), KDPointZero, m_frame.size(), KDContext::k_alignCenter, KDContext::k_alignCenter,
+  ctx->alignAndDrawString(m_controller->title(), KDPointZero, m_frame.size(),
+                          KDContext::k_alignCenter, KDContext::k_alignCenter,
                           font, m_textColor, m_backgroundColor);
 }
 
 #if ESCHER_VIEW_LOGGING
-const char * StackHeaderView::className() const {
-  return "StackViewHeader";
-}
+const char *StackHeaderView::className() const { return "StackViewHeader"; }
 
 void StackHeaderView::logAttributes(std::ostream &os) const {
   View::logAttributes(os);
@@ -37,4 +37,4 @@ void StackHeaderView::logAttributes(std::ostream &os) const {
 }
 #endif
 
-}
+}  // namespace Escher

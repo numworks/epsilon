@@ -1,14 +1,14 @@
 #include "test.h"
 
 #include <assert.h>
+#include <float.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/print.h>
 #include <poincare/vertical_offset_layout.h>
 
-#include <new>
-#include <float.h>
 #include <algorithm>
+#include <new>
 
 #include "goodness_test.h"
 #include "one_mean_t_test.h"
@@ -19,12 +19,18 @@
 
 namespace Inference {
 
-void Test::setGraphTitle(char * buffer, size_t bufferSize) const {
-  const char * format = I18n::translate(graphTitleFormat());
-  Poincare::Print::CustomPrintf(buffer, bufferSize, format, testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits, pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+void Test::setGraphTitle(char* buffer, size_t bufferSize) const {
+  const char* format = I18n::translate(graphTitleFormat());
+  Poincare::Print::CustomPrintf(
+      buffer, bufferSize, format, testCriticalValue(),
+      Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits, pValue(),
+      Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-bool Test::initializeSignificanceTest(SignificanceTestType testType, Shared::GlobalContext * context) {
+bool Test::initializeSignificanceTest(SignificanceTestType testType,
+                                      Shared::GlobalContext* context) {
   if (!Statistic::initializeSignificanceTest(testType, context)) {
     return false;
   }
@@ -59,13 +65,16 @@ bool Test::canRejectNull() {
   return pValue() <= m_threshold;
 }
 
-double Test::thresholdAbscissa(Poincare::ComparisonNode::OperatorType  op, double factor) const {
+double Test::thresholdAbscissa(Poincare::ComparisonNode::OperatorType op,
+                               double factor) const {
   assert(op != Poincare::ComparisonNode::OperatorType::NotEqual);
   double t = factor * threshold();
-  return cumulativeDistributiveInverseForProbability(op == Poincare::ComparisonNode::OperatorType::Inferior ? t : 1.0 - t);
+  return cumulativeDistributiveInverseForProbability(
+      op == Poincare::ComparisonNode::OperatorType::Inferior ? t : 1.0 - t);
 }
 
-void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage, int * precision) {
+void Test::resultAtIndex(int index, double* value, Poincare::Layout* message,
+                         I18n::Message* subMessage, int* precision) {
   if (index < numberOfEstimates()) {
     *value = estimateValue(index);
     *message = estimateLayout(index);
@@ -81,13 +90,15 @@ void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, 
       break;
     case ResultOrder::PValue:
       *value = pValue();
-      *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::PValue));
+      *message = Poincare::LayoutHelper::String(
+          I18n::translate(I18n::Message::PValue));
       *subMessage = I18n::Message::Default;
       break;
     default:
       assert(index == ResultOrder::TestDegree);
       *value = degreeOfFreedom();
-      *message = Poincare::LayoutHelper::String(I18n::translate(I18n::Message::DegreesOfFreedom));
+      *message = Poincare::LayoutHelper::String(
+          I18n::translate(I18n::Message::DegreesOfFreedom));
       *subMessage = I18n::Message::Default;
       /* We reduce the precision since "Degrees of freedom" might not fit in
        * all languages with 7 significant digits. */
@@ -96,27 +107,32 @@ void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, 
 }
 
 static float interpolate(float a, float b, float alpha) {
-  return alpha * (b-a) + a;
+  return alpha * (b - a) + a;
 }
 
 bool Test::hasTwoSides() {
-  return hypothesisParams()->comparisonOperator() == Poincare::ComparisonNode::OperatorType::NotEqual;
+  return hypothesisParams()->comparisonOperator() ==
+         Poincare::ComparisonNode::OperatorType::NotEqual;
 }
 
 bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
   float alpha;
   float z = testCriticalValue();
-  if (hypothesisParams()->comparisonOperator() != Poincare::ComparisonNode::OperatorType::NotEqual) {
+  if (hypothesisParams()->comparisonOperator() !=
+      Poincare::ComparisonNode::OperatorType::NotEqual) {
     alpha = thresholdAbscissa(hypothesisParams()->comparisonOperator());
   } else if (zoomSide) {
-    alpha = thresholdAbscissa(Poincare::ComparisonNode::OperatorType::Superior, 0.5);
+    alpha = thresholdAbscissa(Poincare::ComparisonNode::OperatorType::Superior,
+                              0.5);
   } else {
-    alpha = thresholdAbscissa(Poincare::ComparisonNode::OperatorType::Inferior, 0.5);
+    alpha = thresholdAbscissa(Poincare::ComparisonNode::OperatorType::Inferior,
+                              0.5);
     z *= -1;
   }
   float margin = std::abs(alpha - z) * k_displayZoomedInHorizontalMarginRatio;
-  if (std::abs(alpha) > k_displayWidthToSTDRatio || std::abs(z) > k_displayWidthToSTDRatio) {
+  if (std::abs(alpha) > k_displayWidthToSTDRatio ||
+      std::abs(z) > k_displayWidthToSTDRatio) {
     // Alpha or z is out of the view, don't try to zoom
     protectedSetX(Poincare::Range1D(computeXMin(), computeXMax()));
     protectedSetY(Poincare::Range1D(computeYMin(), computeYMax()));
@@ -129,7 +145,9 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   float targetXMin = std::min(alpha, z) - margin;
   float targetXMax = std::max(alpha, z) + margin;
   float targetXCenter = (alpha + z) / 2;
-  float targetYMax = std::max(evaluateAtAbscissa(alpha), evaluateAtAbscissa(z)) * (1 + k_displayZoomedInTopMarginRatio);
+  float targetYMax =
+      std::max(evaluateAtAbscissa(alpha), evaluateAtAbscissa(z)) *
+      (1 + k_displayZoomedInTopMarginRatio);
   assert(targetYMax >= 0.f);
   if (targetYMax == 0.f) {
     // Arbitrary value to provide some zoom if targetYMax is null
@@ -138,21 +156,28 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   float cMin = computeXMin();
   float cMax = computeXMax();
   // We want each zoom step to scale the width by the same factor
-  float width = std::exp(interpolate(std::log(cMax-cMin), std::log(targetXMax-targetXMin), transition));
+  float width = std::exp(interpolate(
+      std::log(cMax - cMin), std::log(targetXMax - targetXMin), transition));
   // and the middle of target range to progress linearly to the screen center
-  float ratio = interpolate((targetXCenter-cMin)/(cMax-cMin), 0.5, transition);
-  float xMin = targetXCenter - ratio * width ;
+  float ratio =
+      interpolate((targetXCenter - cMin) / (cMax - cMin), 0.5, transition);
+  float xMin = targetXCenter - ratio * width;
   float xMax = xMin + width;
 
-  float height = std::exp(interpolate(std::log(computeYMax()), std::log(targetYMax), transition));
+  float height = std::exp(
+      interpolate(std::log(computeYMax()), std::log(targetYMax), transition));
   float yMax = height;
-  float yMin =  -k_displayBottomMarginRatio * height;
-  if (std::isnan(xMin)) { xMin = -FLT_MAX; }
-  if (std::isnan(xMax)) { xMax = FLT_MAX; }
+  float yMin = -k_displayBottomMarginRatio * height;
+  if (std::isnan(xMin)) {
+    xMin = -FLT_MAX;
+  }
+  if (std::isnan(xMax)) {
+    xMax = FLT_MAX;
+  }
   assert(std::isfinite(yMin) && std::isfinite(yMax));
   protectedSetX(Poincare::Range1D(xMin, xMax));
   protectedSetY(Poincare::Range1D(yMin, yMax));
   return true;
 }
 
-}
+}  // namespace Inference

@@ -8,18 +8,12 @@ const int loopLength = 12;
 
 using namespace Ion::Events;
 
-const Event sequence[] = {
-  Right,
-  Right,
-  Right,
-  OK,
-  Down, Down, Down, Down, Down, Down,
-  Up, Up, Up, Up, Up, Up
-};
+const Event sequence[] = {Right, Right, Right, OK, Down, Down, Down, Down,
+                          Down,  Down,  Up,    Up, Up,   Up,   Up,   Up};
 
-Event Ion::Events::getEvent(int * timeout) {
+Event Ion::Events::getEvent(int* timeout) {
   static int i = 0;
-  int sequenceLength = sizeof(sequence)/sizeof(sequence[0]);
+  int sequenceLength = sizeof(sequence) / sizeof(sequence[0]);
   if (i == sequenceLength) {
     i = sequenceLength - loopLength;
   }

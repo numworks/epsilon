@@ -1,15 +1,18 @@
-#include "helper.h"
-#include <poincare/matrix.h>
 #include <apps/shared/global_context.h>
+#include <poincare/matrix.h>
+
+#include "helper.h"
 
 using namespace Poincare;
 
-static inline void assert_has_rank(const char * exp, int rank) {
+static inline void assert_has_rank(const char *exp, int rank) {
   Shared::GlobalContext context;
   Expression e = parse_expression(exp, &context, false);
   quiz_assert(e.type() == ExpressionNode::Type::Matrix);
-  Matrix * m = reinterpret_cast<Matrix *>(&e);
-  quiz_assert(rank == m->rank(&context, Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, true));
+  Matrix *m = reinterpret_cast<Matrix *>(&e);
+  quiz_assert(rank == m->rank(&context, Preferences::ComplexFormat::Cartesian,
+                              Preferences::AngleUnit::Radian,
+                              Preferences::UnitFormat::Metric, true));
 }
 
 QUIZ_CASE(poincare_matrix_rank) {

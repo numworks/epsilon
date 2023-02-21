@@ -12,11 +12,15 @@
 namespace Inference {
 
 class Chi2Test : public Test, public Table {
-public:
+ public:
   Chi2Test();
 
-  SignificanceTestType significanceTestType() const override { return SignificanceTestType::Categorical; }
-  DistributionType distributionType() const override { return DistributionType::Chi2; }
+  SignificanceTestType significanceTestType() const override {
+    return SignificanceTestType::Categorical;
+  }
+  DistributionType distributionType() const override {
+    return DistributionType::Chi2;
+  }
   bool initializeCategoricalType(CategoricalType type);
 
   Poincare::Layout testCriticalValueSymbol() override {
@@ -27,10 +31,13 @@ public:
     return DistributionChi2::CanonicalDensityFunction(x, m_degreesOfFreedom);
   }
   double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
-    return DistributionChi2::CumulativeNormalizedDistributionFunction(x, m_degreesOfFreedom);
+    return DistributionChi2::CumulativeNormalizedDistributionFunction(
+        x, m_degreesOfFreedom);
   }
-  double cumulativeDistributiveInverseForProbability(double proba) const override {
-    return DistributionChi2::CumulativeNormalizedInverseDistributionFunction(proba, m_degreesOfFreedom);
+  double cumulativeDistributiveInverseForProbability(
+      double proba) const override {
+    return DistributionChi2::CumulativeNormalizedInverseDistributionFunction(
+        proba, m_degreesOfFreedom);
   }
 
   // Table
@@ -38,17 +45,24 @@ public:
     assert(index2DToIndex(row, column) < numberOfStatisticParameters());
     setParameterAtIndex(value, index2DToIndex(row, column));
   }
-  double parameterAtPosition(int row, int column) const override { return parameterAtIndex(index2DToIndex(row, column)); }
-  bool authorizedParameterAtPosition(double p, int row, int column) const override { return authorizedParameterAtIndex(p, index2DToIndex(row, column)); }
+  double parameterAtPosition(int row, int column) const override {
+    return parameterAtIndex(index2DToIndex(row, column));
+  }
+  bool authorizedParameterAtPosition(double p, int row,
+                                     int column) const override {
+    return authorizedParameterAtIndex(p, index2DToIndex(row, column));
+  }
 
   bool authorizedParameterAtIndex(double p, int i) const override;
 
-protected:
+ protected:
   using Test::parameterAtIndex;  // Hidden
 
   // Instanciate unused abstract classs
-  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override {
-    return Shared::ParameterRepresentation{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
+  Shared::ParameterRepresentation paramRepresentationAtIndex(
+      int i) const override {
+    return Shared::ParameterRepresentation{
+        Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
   }
 
   // Chi2 specific
@@ -57,15 +71,19 @@ protected:
   virtual int numberOfValuePairs() const = 0;
   double computeChi2();
 
-private:
+ private:
   // Inference
-  float computeXMin() const override { return DistributionChi2::XMin(m_degreesOfFreedom); }
-  float computeXMax() const override { return DistributionChi2::XMax(m_degreesOfFreedom); }
+  float computeXMin() const override {
+    return DistributionChi2::XMin(m_degreesOfFreedom);
+  }
+  float computeXMax() const override {
+    return DistributionChi2::XMax(m_degreesOfFreedom);
+  }
   float computeYMax() const override {
     return DistributionChi2::YMax(m_degreesOfFreedom);
   }
 };
 
-}
+}  // namespace Inference
 
 #endif

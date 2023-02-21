@@ -1,5 +1,5 @@
 #include <escher/metric.h>
-#include <poincare/layout.h>
+#include <ion/display.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/expression.h>
 #include <poincare/horizontal_layout.h>
@@ -8,13 +8,13 @@
 #include <poincare/layout_selection.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/vertical_offset_layout.h>
-#include <ion/display.h>
 
 namespace Poincare {
 
 bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
   if (makeEditable) {
-    return Layout(this).clone().makeEditable().isIdenticalTo(l.clone().makeEditable(), false);
+    return Layout(this).clone().makeEditable().isIdenticalTo(
+        l.clone().makeEditable(), false);
   }
   if (l.isUninitialized() || type() != l.type()) {
     return false;
@@ -27,39 +27,48 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
 
 // Rendering
 
-void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, LayoutSelection selection, KDColor selectionColor) {
+void LayoutNode::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
+                      KDColor expressionColor, KDColor backgroundColor,
+                      LayoutSelection selection, KDColor selectionColor) {
   if (!selection.isEmpty() && selection.containsNode(this)) {
     selection = LayoutSelection();
     backgroundColor = selectionColor;
   }
 
   KDPoint renderingAbsoluteOrigin = absoluteOrigin(font).translatedBy(p);
-  KDPoint renderingOriginWithMargin = absoluteOriginWithMargin(font).translatedBy(p);
+  KDPoint renderingOriginWithMargin =
+      absoluteOriginWithMargin(font).translatedBy(p);
   KDSize size = layoutSize(font);
 
-  if (size.height() <= 0 || size.width() <= 0
-      || size.height() > KDCOORDINATE_MAX - renderingAbsoluteOrigin.y()
-      || size.width() > KDCOORDINATE_MAX - renderingAbsoluteOrigin.x()) {
+  if (size.height() <= 0 || size.width() <= 0 ||
+      size.height() > KDCOORDINATE_MAX - renderingAbsoluteOrigin.y() ||
+      size.width() > KDCOORDINATE_MAX - renderingAbsoluteOrigin.x()) {
     // Layout size overflows KDCoordinate
     return;
   }
 
   ctx->fillRect(KDRect(renderingOriginWithMargin, size), backgroundColor);
-  if (!selection.isEmpty() && selection.layout().node() == this && isHorizontal()) {
-    KDRect selectionRectangle = static_cast<HorizontalLayoutNode *>(this)->relativeSelectionRect(selection.leftPosition(), selection.rightPosition(), font);
-    ctx->fillRect(selectionRectangle.translatedBy(renderingOriginWithMargin), selectionColor);
+  if (!selection.isEmpty() && selection.layout().node() == this &&
+      isHorizontal()) {
+    KDRect selectionRectangle =
+        static_cast<HorizontalLayoutNode *>(this)->relativeSelectionRect(
+            selection.leftPosition(), selection.rightPosition(), font);
+    ctx->fillRect(selectionRectangle.translatedBy(renderingOriginWithMargin),
+                  selectionColor);
   }
   render(ctx, renderingAbsoluteOrigin, font, expressionColor, backgroundColor);
-  for (LayoutNode * l : children()) {
-    l->draw(ctx, p, font, expressionColor, backgroundColor, selection, selectionColor);
+  for (LayoutNode *l : children()) {
+    l->draw(ctx, p, font, expressionColor, backgroundColor, selection,
+            selectionColor);
   }
 }
 
 KDPoint LayoutNode::absoluteOriginWithMargin(KDFont::Size font) {
-  LayoutNode * p = parent();
+  LayoutNode *p = parent();
   if (!m_flags.m_positioned || m_flags.m_positionFontSize != font) {
     if (p != nullptr) {
-      m_frame.setOrigin(p->absoluteOrigin(font).translatedBy(p->positionOfChild(this, font)));
+      m_frame.setOrigin(
+          p->absoluteOrigin(font).translatedBy(p->positionOfChild(this, font)));
     } else {
       m_frame.setOrigin(KDPointZero);
     }
@@ -92,12 +101,14 @@ void LayoutNode::invalidAllSizesPositionsAndBaselines() {
   m_flags.m_sized = false;
   m_flags.m_positioned = false;
   m_flags.m_baselined = false;
-  for (LayoutNode * l : children()) {
+  for (LayoutNode *l : children()) {
     l->invalidAllSizesPositionsAndBaselines();
   }
 }
 
-int LayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
+int LayoutNode::indexAfterHorizontalCursorMove(
+    OMG::HorizontalDirection direction, int currentIndex,
+    bool *shouldRedrawLayout) {
   int nChildren = numberOfChildren();
   if (nChildren == 0) {
     assert(currentIndex == k_outsideIndex);
@@ -111,19 +122,28 @@ int LayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection directio
   return k_cantMoveIndex;
 }
 
-int LayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+int LayoutNode::indexAfterVerticalCursorMove(
+    OMG::VerticalDirection direction, int currentIndex,
+    PositionInLayout positionAtCurrentIndex, bool *shouldRedrawLayout) {
   assert(currentIndex < numberOfChildren());
-  assert(currentIndex != k_outsideIndex || positionAtCurrentIndex != PositionInLayout::Middle);
+  assert(currentIndex != k_outsideIndex ||
+         positionAtCurrentIndex != PositionInLayout::Middle);
   return k_cantMoveIndex;
 }
 
-LayoutNode::DeletionMethod LayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
-  assert((childIndex >= 0 || childIndex == k_outsideIndex) && childIndex < numberOfChildren());
-  return childIndex == k_outsideIndex ? DeletionMethod::DeleteLayout : DeletionMethod::MoveLeft;
+LayoutNode::DeletionMethod LayoutNode::deletionMethodForCursorLeftOfChild(
+    int childIndex) const {
+  assert((childIndex >= 0 || childIndex == k_outsideIndex) &&
+         childIndex < numberOfChildren());
+  return childIndex == k_outsideIndex ? DeletionMethod::DeleteLayout
+                                      : DeletionMethod::MoveLeft;
 }
 
-LayoutNode::DeletionMethod LayoutNode::StandardDeletionMethodForLayoutContainingArgument(int childIndex, int argumentIndex) {
-  return childIndex == argumentIndex ? DeletionMethod::DeleteParent : DeletionMethod::MoveLeft;
+LayoutNode::DeletionMethod
+LayoutNode::StandardDeletionMethodForLayoutContainingArgument(
+    int childIndex, int argumentIndex) {
+  return childIndex == argumentIndex ? DeletionMethod::DeleteParent
+                                     : DeletionMethod::MoveLeft;
 }
 
 int LayoutNode::indexOfChildToPointToWhenInserting() {
@@ -141,7 +161,9 @@ Layout LayoutNode::makeEditable() {
 
 // Other
 bool LayoutNode::canBeOmittedMultiplicationLeftFactor() const {
-  if (type() == LayoutNode::Type::CodePointLayout && static_cast<const CodePointLayoutNode *>(this)->isMultiplicationCodePoint()) {
+  if (type() == LayoutNode::Type::CodePointLayout &&
+      static_cast<const CodePointLayoutNode *>(this)
+          ->isMultiplicationCodePoint()) {
     return false;
   }
   /* WARNING: canBeOmittedMultiplicationLeftFactor is true when and only when
@@ -152,7 +174,7 @@ bool LayoutNode::canBeOmittedMultiplicationLeftFactor() const {
 }
 
 Layout LayoutNode::XNTLayout(int childIndex) const {
-  LayoutNode * p = parent();
+  LayoutNode *p = parent();
   return p == nullptr ? Layout() : p->XNTLayout(p->indexOfChild(this));
 }
 
@@ -179,7 +201,7 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
   return true;
 }
 
-bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
+bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout *l) {
   if (!GridLayoutNode::IsGridLayoutType(l->type())) {
     return false;
   }
@@ -191,13 +213,16 @@ bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
   return true;
 }
 
- bool LayoutNode::changeGraySquaresOfAllGridRelatives(bool add, bool ancestors, Layout layoutToExclude) {
+bool LayoutNode::changeGraySquaresOfAllGridRelatives(bool add, bool ancestors,
+                                                     Layout layoutToExclude) {
   bool changedSquares = false;
   if (!ancestors) {
     // If in children, we also change the squares for this
     {
       Layout thisLayout = Layout(this);
-      if ((layoutToExclude.isUninitialized() || !layoutToExclude.hasAncestor(thisLayout, false)) && addRemoveGraySquaresInLayoutIfNeeded(add, &thisLayout)) {
+      if ((layoutToExclude.isUninitialized() ||
+           !layoutToExclude.hasAncestor(thisLayout, false)) &&
+          addRemoveGraySquaresInLayoutIfNeeded(add, &thisLayout)) {
         changedSquares = true;
       }
     }
@@ -205,12 +230,15 @@ bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
     for (int i = 0; i < childrenNumber; i++) {
       /* We cannot use "for l : children()", as the node addresses might change,
        * especially the iterator stopping address. */
-      changedSquares = changedSquares || childAtIndex(i)->changeGraySquaresOfAllGridRelatives(add, false, layoutToExclude);
+      changedSquares = changedSquares ||
+                       childAtIndex(i)->changeGraySquaresOfAllGridRelatives(
+                           add, false, layoutToExclude);
     }
   } else {
     Layout currentAncestor = Layout(parent());
     while (!currentAncestor.isUninitialized()) {
-      if (!layoutToExclude.isUninitialized() && layoutToExclude.hasAncestor(currentAncestor, false)) {
+      if (!layoutToExclude.isUninitialized() &&
+          layoutToExclude.hasAncestor(currentAncestor, false)) {
         break;
       }
       if (addRemoveGraySquaresInLayoutIfNeeded(add, &currentAncestor)) {
@@ -222,4 +250,4 @@ bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
   return changedSquares;
 }
 
-}
+}  // namespace Poincare

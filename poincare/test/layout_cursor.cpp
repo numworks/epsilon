@@ -1,15 +1,19 @@
-#include <poincare_layouts.h>
 #include <poincare/addition.h>
 #include <poincare/cosine.h>
 #include <poincare/empty_expression.h>
 #include <poincare/integral.h>
 #include <poincare/power.h>
 #include <poincare/random.h>
+#include <poincare_layouts.h>
+
 #include "helper.h"
 
 using namespace Poincare;
 
-void assert_inserted_layout_points_to(Layout layoutToInsert, Expression correspondingExpression, Layout expectedLayoutAfterInsertion, int cursorPositionInLayout = 0) {
+void assert_inserted_layout_points_to(Layout layoutToInsert,
+                                      Expression correspondingExpression,
+                                      Layout expectedLayoutAfterInsertion,
+                                      int cursorPositionInLayout = 0) {
   HorizontalLayout h = HorizontalLayout::Builder();
   LayoutCursor c = LayoutCursor(h);
   bool insertingHorizontalLayout = layoutToInsert.isHorizontal();
@@ -21,17 +25,24 @@ void assert_inserted_layout_points_to(Layout layoutToInsert, Expression correspo
    * It is also cloned so that it can be compared after insertion with an
    * isIdenticalTo.
    * */
-  int addressOffsetBeforeInsertion = expectedLayoutAfterInsertion.node() - layoutToInsert.node();
+  int addressOffsetBeforeInsertion =
+      expectedLayoutAfterInsertion.node() - layoutToInsert.node();
   expectedLayoutAfterInsertion = expectedLayoutAfterInsertion.clone();
 
   /* LayoutField forces right of layout when expression has 0 children.
    * We mimic this behaviour here. */
-  c.insertLayoutAtCursor(layoutToInsert, nullptr, !correspondingExpression.isUninitialized() && correspondingExpression.numberOfChildren() == 0);
+  c.insertLayoutAtCursor(layoutToInsert, nullptr,
+                         !correspondingExpression.isUninitialized() &&
+                             correspondingExpression.numberOfChildren() == 0);
 
-  int addressOffsetAfterInsertion = c.layout().node() - (insertingHorizontalLayout ? static_cast<LayoutNode *>(h.node()) : h.childAtIndex(0).node());
+  int addressOffsetAfterInsertion =
+      c.layout().node() - (insertingHorizontalLayout
+                               ? static_cast<LayoutNode *>(h.node())
+                               : h.childAtIndex(0).node());
   /* Check if the cursor layout is at the same adress offset and is identical
    * to the expected layout. */
-  quiz_assert(addressOffsetAfterInsertion == addressOffsetBeforeInsertion && expectedLayoutAfterInsertion.isIdenticalTo(c.layout()));
+  quiz_assert(addressOffsetAfterInsertion == addressOffsetBeforeInsertion &&
+              expectedLayoutAfterInsertion.isIdenticalTo(c.layout()));
   quiz_assert(c.position() == cursorPositionInLayout);
 }
 
@@ -40,41 +51,37 @@ QUIZ_CASE(poincare_layout_cursor_layout_to_point) {
   Expression e;
 
   // 1+2
-  l = HorizontalLayout::Builder(
-      CodePointLayout::Builder('1'),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('2'));
+  l = HorizontalLayout::Builder(CodePointLayout::Builder('1'),
+                                CodePointLayout::Builder('+'),
+                                CodePointLayout::Builder('2'));
   e = Addition::Builder(Rational::Builder(1), Rational::Builder(2));
   assert_inserted_layout_points_to(l, e, l, 3);
 
   // random()
-  l = HorizontalLayout::Builder(StringLayout::Builder("random"), ParenthesisLayout::Builder());
+  l = HorizontalLayout::Builder(StringLayout::Builder("random"),
+                                ParenthesisLayout::Builder());
   e = Random::Builder();
   assert_inserted_layout_points_to(l, e, l, 2);
 
   // cos(\x11)
-  l = HorizontalLayout::Builder(StringLayout::Builder("cos"), ParenthesisLayout::Builder());
+  l = HorizontalLayout::Builder(StringLayout::Builder("cos"),
+                                ParenthesisLayout::Builder());
   e = Cosine::Builder(EmptyExpression::Builder());
   assert_inserted_layout_points_to(l, e, l.childAtIndex(1).childAtIndex(0));
 
   // ▯^▯
   l = VerticalOffsetLayout::Builder(
-        HorizontalLayout::Builder(),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript);
+      HorizontalLayout::Builder(),
+      VerticalOffsetLayoutNode::VerticalPosition::Superscript);
   e = Power::Builder(EmptyExpression::Builder(), EmptyExpression::Builder());
   assert_inserted_layout_points_to(l, e, l.childAtIndex(0));
 
   // int(▯, x, ▯, ▯)
   l = IntegralLayout::Builder(
-      HorizontalLayout::Builder(),
-      CodePointLayout::Builder('x'),
-      HorizontalLayout::Builder(),
-      HorizontalLayout::Builder());
-  e = Integral::Builder(
-      EmptyExpression::Builder(),
-      Symbol::Builder('x'),
-      EmptyExpression::Builder(),
-      EmptyExpression::Builder());
+      HorizontalLayout::Builder(), CodePointLayout::Builder('x'),
+      HorizontalLayout::Builder(), HorizontalLayout::Builder());
+  e = Integral::Builder(EmptyExpression::Builder(), Symbol::Builder('x'),
+                        EmptyExpression::Builder(), EmptyExpression::Builder());
   assert_inserted_layout_points_to(l, e, l.childAtIndex(2));
 }
 
@@ -83,17 +90,16 @@ void assert_cursor_is_at(LayoutCursor cursor, Layout layout, int position) {
 }
 
 QUIZ_CASE(poincare_layout_cursor_delete) {
-
   /*  12
    * --- -> "BackSpace" -> 12|34
    * |34
    * */
   {
-    HorizontalLayout layout = HorizontalLayout::Builder(
-      FractionLayout::Builder(
+    HorizontalLayout layout = HorizontalLayout::Builder(FractionLayout::Builder(
         LayoutHelper::StringToCodePointsLayout("12", 2),
         LayoutHelper::StringToCodePointsLayout("34", 2)));
-    LayoutCursor cursor(layout.childAtIndex(0).childAtIndex(1), OMG::Direction::Left());
+    LayoutCursor cursor(layout.childAtIndex(0).childAtIndex(1),
+                        OMG::Direction::Left());
     cursor.performBackspace();
     assert_layout_serialize_to(layout, "1234");
     assert_cursor_is_at(cursor, layout, 2);
@@ -105,12 +111,11 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
    * */
   {
     HorizontalLayout layout = HorizontalLayout::Builder(
-        CodePointLayout::Builder('1'),
-        CodePointLayout::Builder('+'),
-        FractionLayout::Builder(
-          HorizontalLayout::Builder(),
-          CodePointLayout::Builder('3')));
-    LayoutCursor cursor(layout.childAtIndex(2).childAtIndex(1), OMG::Direction::Left());
+        CodePointLayout::Builder('1'), CodePointLayout::Builder('+'),
+        FractionLayout::Builder(HorizontalLayout::Builder(),
+                                CodePointLayout::Builder('3')));
+    LayoutCursor cursor(layout.childAtIndex(2).childAtIndex(1),
+                        OMG::Direction::Left());
     cursor.performBackspace();
     assert_layout_serialize_to(layout, "1+3");
     assert_cursor_is_at(cursor, layout, 2);
@@ -122,12 +127,14 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
    * */
   {
     HorizontalLayout layout = HorizontalLayout::Builder(
-        CodePointLayout::Builder('1'),
-        CodePointLayout::Builder('+'),
+        CodePointLayout::Builder('1'), CodePointLayout::Builder('+'),
         FractionLayout::Builder(
-          HorizontalLayout::Builder(),
-          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
-    LayoutCursor cursor(layout.childAtIndex(2).childAtIndex(1), OMG::Direction::Left());
+            HorizontalLayout::Builder(),
+            VerticalOffsetLayout::Builder(
+                CodePointLayout::Builder('2'),
+                VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
+    LayoutCursor cursor(layout.childAtIndex(2).childAtIndex(1),
+                        OMG::Direction::Left());
     cursor.performBackspace();
     assert_layout_serialize_to(layout, "1+^\u00122\u0013");
     assert_cursor_is_at(cursor, layout, 2);
@@ -137,7 +144,8 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
    * [[|1,▯][▯,▯]] -> "Backspace" -> |1
    * */
   {
-    HorizontalLayout layout = HorizontalLayout::Builder(MatrixLayout::Builder(CodePointLayout::Builder('1')));
+    HorizontalLayout layout = HorizontalLayout::Builder(
+        MatrixLayout::Builder(CodePointLayout::Builder('1')));
     LayoutCursor cursor(layout, OMG::Direction::Left());
     bool dummy;
     cursor.move(OMG::Direction::Right(), false, &dummy);
@@ -152,11 +160,10 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
   {
     HorizontalLayout layout = HorizontalLayout::Builder(
         CodePointLayout::Builder('2'),
-        AbsoluteValueLayout::Builder(
-          CodePointLayout::Builder('1')),
-        CodePointLayout::Builder('+'),
-        CodePointLayout::Builder('3'));
-    LayoutCursor cursor(layout.childAtIndex(1).childAtIndex(0), OMG::Direction::Left());
+        AbsoluteValueLayout::Builder(CodePointLayout::Builder('1')),
+        CodePointLayout::Builder('+'), CodePointLayout::Builder('3'));
+    LayoutCursor cursor(layout.childAtIndex(1).childAtIndex(0),
+                        OMG::Direction::Left());
     cursor.performBackspace();
     assert_layout_serialize_to(layout, "21+3");
     assert_cursor_is_at(cursor, layout, 1);
@@ -198,14 +205,19 @@ QUIZ_CASE(poincare_layout_parentheses) {
     c.insertText("(", nullptr);
     c.insertText("(", nullptr);
     assert_layout_serialize_to(l, "(())");
-    assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0), 0);
+    assert_cursor_is_at(
+        c, l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0),
+        0);
   }
 
   /*
    * 12|345 -> "(" -> 12(|345)
    */
   {
-    Layout l = HorizontalLayout::Builder({ CodePointLayout::Builder('1'), CodePointLayout::Builder('2'), CodePointLayout::Builder('3'), CodePointLayout::Builder('4'), CodePointLayout::Builder('5') });
+    Layout l = HorizontalLayout::Builder(
+        {CodePointLayout::Builder('1'), CodePointLayout::Builder('2'),
+         CodePointLayout::Builder('3'), CodePointLayout::Builder('4'),
+         CodePointLayout::Builder('5')});
     LayoutCursor c(l);
     c.setPosition(2);
     c.insertText("(", nullptr);
@@ -217,7 +229,11 @@ QUIZ_CASE(poincare_layout_parentheses) {
    * 2|^3 -> "(" -> 2(|▯^3)  ▯ == empty rectangle
    */
   {
-    Layout l = HorizontalLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::VerticalPosition::Superscript));
+    Layout l = HorizontalLayout::Builder(
+        CodePointLayout::Builder('2'),
+        VerticalOffsetLayout::Builder(
+            CodePointLayout::Builder('3'),
+            VerticalOffsetLayoutNode::VerticalPosition::Superscript));
     LayoutCursor c(l);
     c.setPosition(1);
     c.insertText("(", nullptr);
@@ -229,38 +245,50 @@ QUIZ_CASE(poincare_layout_parentheses) {
    * (123)| -> BACKSPACE -> (123|)
    * */
   {
-    Layout l = HorizontalLayout::Builder(ParenthesisLayout::Builder(HorizontalLayout::Builder({ CodePointLayout::Builder('1'), CodePointLayout::Builder('2'), CodePointLayout::Builder('3') })));
+    Layout l = HorizontalLayout::Builder(
+        ParenthesisLayout::Builder(HorizontalLayout::Builder(
+            {CodePointLayout::Builder('1'), CodePointLayout::Builder('2'),
+             CodePointLayout::Builder('3')})));
     LayoutCursor c(l, OMG::Direction::Right());
     c.performBackspace();
     assert_layout_serialize_to(l, "(123)");
-    assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0), c.layout().numberOfChildren());
+    assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0),
+                        c.layout().numberOfChildren());
   }
 
   /*
    * (12(|34)5) -> BACKSPACE -> ((12|34)5)
    */
   {
-    Layout l = HorizontalLayout::Builder(ParenthesisLayout::Builder(HorizontalLayout::Builder({
+    Layout l = HorizontalLayout::Builder(
+        ParenthesisLayout::Builder(HorizontalLayout::Builder({
             CodePointLayout::Builder('1'),
             CodePointLayout::Builder('2'),
-            ParenthesisLayout::Builder(HorizontalLayout::Builder(CodePointLayout::Builder('3'), CodePointLayout::Builder('4'))),
+            ParenthesisLayout::Builder(HorizontalLayout::Builder(
+                CodePointLayout::Builder('3'), CodePointLayout::Builder('4'))),
             CodePointLayout::Builder('5'),
-            })));
-    LayoutCursor c(l.childAtIndex(0).childAtIndex(0).childAtIndex(2).childAtIndex(0), OMG::Direction::Left());
+        })));
+    LayoutCursor c(
+        l.childAtIndex(0).childAtIndex(0).childAtIndex(2).childAtIndex(0),
+        OMG::Direction::Left());
     c.performBackspace();
     assert_layout_serialize_to(l, "((1234)5)");
-    assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0), 2);
+    assert_cursor_is_at(
+        c, l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0),
+        2);
   }
   /*
    * ((|3)] -> BACKSPACE -> (|3)
    */
   {
-    Layout l = HorizontalLayout::Builder(
-      ParenthesisLayout::Builder(HorizontalLayout::Builder(
-        ParenthesisLayout::Builder(HorizontalLayout::Builder(
-            CodePointLayout::Builder('3'))))));
-    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
-    LayoutCursor c(l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0), OMG::Direction::Left());
+    Layout l = HorizontalLayout::Builder(ParenthesisLayout::Builder(
+        HorizontalLayout::Builder(ParenthesisLayout::Builder(
+            HorizontalLayout::Builder(CodePointLayout::Builder('3'))))));
+    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())
+        ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
+    LayoutCursor c(
+        l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0),
+        OMG::Direction::Left());
     c.performBackspace();
     assert_layout_serialize_to(l, "(3)");
     assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0), 0);
@@ -269,11 +297,12 @@ QUIZ_CASE(poincare_layout_parentheses) {
    * sqrt((3]|) -> ")" -> sqrt((3)|)
    */
   {
-    Layout l = HorizontalLayout::Builder(
-      NthRootLayout::Builder(HorizontalLayout::Builder(
-        ParenthesisLayout::Builder(HorizontalLayout::Builder(
-            CodePointLayout::Builder('3'))))));
-    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).childAtIndex(0).childAtIndex(0).node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
+    Layout l = HorizontalLayout::Builder(NthRootLayout::Builder(
+        HorizontalLayout::Builder(ParenthesisLayout::Builder(
+            HorizontalLayout::Builder(CodePointLayout::Builder('3'))))));
+    static_cast<ParenthesisLayoutNode *>(
+        l.childAtIndex(0).childAtIndex(0).childAtIndex(0).node())
+        ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
     LayoutCursor c(l.childAtIndex(0).childAtIndex(0), OMG::Direction::Right());
     c.insertText(")", nullptr);
     assert_layout_serialize_to(l, "√\u0012(3)\u0013");
@@ -284,7 +313,8 @@ QUIZ_CASE(poincare_layout_parentheses) {
    */
   {
     Layout l = HorizontalLayout::Builder(CurlyBraceLayout::Builder());
-    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
+    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())
+        ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
     LayoutCursor c(l, OMG::Direction::Left());
     c.insertLayoutAtCursor(CurlyBraceLayout::Builder(), nullptr);
     assert_layout_serialize_to(l, "{}{}");
@@ -294,27 +324,30 @@ QUIZ_CASE(poincare_layout_parentheses) {
    * [▯§▯)| -> BACKSPACE -> ▯§▯|  ▯ == empty rectangle, § == prefix superscript
    */
   {
-    Layout l = HorizontalLayout::Builder(
-      ParenthesisLayout::Builder(HorizontalLayout::Builder(
-        VerticalOffsetLayout::Builder(HorizontalLayout::Builder(),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix))));
-    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
+    Layout l = HorizontalLayout::Builder(ParenthesisLayout::Builder(
+        HorizontalLayout::Builder(VerticalOffsetLayout::Builder(
+            HorizontalLayout::Builder(),
+            VerticalOffsetLayoutNode::VerticalPosition::Superscript,
+            VerticalOffsetLayoutNode::HorizontalPosition::Prefix))));
+    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())
+        ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
     LayoutCursor c(l, OMG::Direction::Right());
     c.performBackspace();
     assert_layout_serialize_to(l, "\u0014{\u0014}");
     assert_cursor_is_at(c, l, 1);
   }
   /*
-   * (1§▯)|23 -> BACKSPACE -> (1§|23]  ▯ == empty rectangle, § == prefix superscript
+   * (1§▯)|23 -> BACKSPACE -> (1§|23]  ▯ == empty rectangle, § == prefix
+   * superscript
    */
   {
     Layout l = HorizontalLayout::Builder(
-      ParenthesisLayout::Builder(HorizontalLayout::Builder(
-        VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('1'),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix))),
-      CodePointLayout::Builder('2'),
-      CodePointLayout::Builder('3'));
+        ParenthesisLayout::Builder(
+            HorizontalLayout::Builder(VerticalOffsetLayout::Builder(
+                CodePointLayout::Builder('1'),
+                VerticalOffsetLayoutNode::VerticalPosition::Superscript,
+                VerticalOffsetLayoutNode::HorizontalPosition::Prefix))),
+        CodePointLayout::Builder('2'), CodePointLayout::Builder('3'));
     LayoutCursor c(l);
     c.setPosition(1);
     c.performBackspace();
@@ -322,31 +355,34 @@ QUIZ_CASE(poincare_layout_parentheses) {
     assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0), 1);
   }
   /*
-   * [1§▯)|^23 -> BACKSPACE -> 1§|▯^23  ▯ == empty rectangle, § == prefix superscript
+   * [1§▯)|^23 -> BACKSPACE -> 1§|▯^23  ▯ == empty rectangle, § == prefix
+   * superscript
    */
   {
     Layout l = HorizontalLayout::Builder(
-      ParenthesisLayout::Builder(HorizontalLayout::Builder(
+        ParenthesisLayout::Builder(
+            HorizontalLayout::Builder(VerticalOffsetLayout::Builder(
+                CodePointLayout::Builder('1'),
+                VerticalOffsetLayoutNode::VerticalPosition::Superscript,
+                VerticalOffsetLayoutNode::HorizontalPosition::Prefix))),
         VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('1'),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix))),
-      VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('2'),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-      CodePointLayout::Builder('3'));
-    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
+            CodePointLayout::Builder('2'),
+            VerticalOffsetLayoutNode::VerticalPosition::Superscript),
+        CodePointLayout::Builder('3'));
+    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())
+        ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
     LayoutCursor c(l);
     c.setPosition(1);
     c.performBackspace();
     Layout l2 = HorizontalLayout::Builder(
-      VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('1'),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix),
-      VerticalOffsetLayout::Builder(
-        CodePointLayout::Builder('2'),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-      CodePointLayout::Builder('3')
-    );
+        VerticalOffsetLayout::Builder(
+            CodePointLayout::Builder('1'),
+            VerticalOffsetLayoutNode::VerticalPosition::Superscript,
+            VerticalOffsetLayoutNode::HorizontalPosition::Prefix),
+        VerticalOffsetLayout::Builder(
+            CodePointLayout::Builder('2'),
+            VerticalOffsetLayoutNode::VerticalPosition::Superscript),
+        CodePointLayout::Builder('3'));
     quiz_assert(l.isIdenticalTo(l2));
     assert_cursor_is_at(c, l, 1);
   }

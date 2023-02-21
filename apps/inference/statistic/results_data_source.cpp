@@ -10,28 +10,32 @@
 
 namespace Inference {
 
-ResultsDataSource::ResultsDataSource(Escher::Responder * parent,
-                                     Statistic * statistic,
-                                     Escher::Invocation invocation,
-                                     DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage> * dynamicCellsDataSourceDelegate) :
-      MemoizedListViewDataSource(),
-      DynamicCellsDataSource<ExpressionCellWithBufferWithMessage, k_maxNumberOfExpressionCellsWithBufferWithMessage>(dynamicCellsDataSourceDelegate),
+ResultsDataSource::ResultsDataSource(
+    Escher::Responder *parent, Statistic *statistic,
+    Escher::Invocation invocation,
+    DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage>
+        *dynamicCellsDataSourceDelegate)
+    : MemoizedListViewDataSource(),
+      DynamicCellsDataSource<ExpressionCellWithBufferWithMessage,
+                             k_maxNumberOfExpressionCellsWithBufferWithMessage>(
+          dynamicCellsDataSourceDelegate),
       m_statistic(statistic),
-      m_next(parent, I18n::Message::Next, invocation)
-{
-}
+      m_next(parent, I18n::Message::Next, invocation) {}
 
 int ResultsDataSource::numberOfRows() const {
   return m_statistic->numberOfResults() + 1 /* button */;
 }
 
 KDCoordinate ResultsDataSource::defaultColumnWidth() {
-  return Ion::Display::Width - Escher::Metric::CommonLeftMargin - Escher::Metric::CommonRightMargin;
+  return Ion::Display::Width - Escher::Metric::CommonLeftMargin -
+         Escher::Metric::CommonRightMargin;
 }
 
-void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, int i) {
+void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell *cell,
+                                                int i) {
   if (i < numberOfRows() - 1) {
-    ExpressionCellWithBufferWithMessage * messageCell = static_cast<ExpressionCellWithBufferWithMessage *>(cell);
+    ExpressionCellWithBufferWithMessage *messageCell =
+        static_cast<ExpressionCellWithBufferWithMessage *>(cell);
     double value;
     Poincare::Layout message;
     I18n::Message subMessage;
@@ -40,10 +44,7 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
     constexpr int bufferSize = Constants::k_largeBufferSize;
     char buffer[bufferSize];
     Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
-        value,
-        buffer,
-        bufferSize,
-        precision,
+        value, buffer, bufferSize, precision,
         Poincare::Preferences::PrintFloatMode::Decimal);
 
     messageCell->setLayout(message);
@@ -52,7 +53,7 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell * cell, in
   }
 }
 
-Escher::HighlightCell * ResultsDataSource::reusableCell(int index, int type) {
+Escher::HighlightCell *ResultsDataSource::reusableCell(int index, int type) {
   if (type == k_resultCellType) {
     return cell(index);
   }
@@ -73,4 +74,4 @@ int ResultsDataSource::typeAtIndex(int index) const {
   return k_resultCellType;
 }
 
-}
+}  // namespace Inference

@@ -9,13 +9,16 @@ void Separable::setSeparatorLeft(bool separator) {
   }
 }
 
-KDRect Separable::separatorRect(KDRect bounds, KDCoordinate verticalOffset) const {
+KDRect Separable::separatorRect(KDRect bounds,
+                                KDCoordinate verticalOffset) const {
   KDCoordinate visibleOffset = m_separatorLeft ? 0 : verticalOffset;
-  return KDRect(bounds.left(), bounds.top() + visibleOffset, k_thickness, bounds.height() - visibleOffset);
+  return KDRect(bounds.left(), bounds.top() + visibleOffset, k_thickness,
+                bounds.height() - visibleOffset);
 }
 
 KDRect Separable::rectWithoutSeparator(KDRect r) const {
-  return KDRect(r.left() + k_thickness, r.top(), r.width() - k_thickness, r.height());
+  return KDRect(r.left() + k_thickness, r.top(), r.width() - k_thickness,
+                r.height());
 }
 
-}
+}  // namespace Shared

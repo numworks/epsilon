@@ -9,31 +9,36 @@
 namespace Poincare {
 
 class FloorLayoutNode final : public SquareBracketPairLayoutNode {
-public:
+ public:
   // Layout
   Type type() const override { return Type::FloorLayout; }
 
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);
+  int serialize(char* buffer, int bufferSize,
+                Preferences::PrintFloatMode floatDisplayMode,
+                int numberOfSignificantDigits) const override {
+    return SerializationHelper::Prefix(
+        this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+        Floor::s_functionHelper.aliasesList().mainAlias(),
+        SerializationHelper::ParenthesisType::System);
   }
 
   // TreeNode
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream& stream) const override {
     stream << "FloorLayout";
   }
 #endif
 
-protected:
+ protected:
   // SquareBracketPairLayoutNode
   bool renderTopBar() const override { return false; }
 };
 
 class FloorLayout final : public LayoutOneChild<FloorLayout, FloorLayoutNode> {
-public:
+ public:
   FloorLayout() = delete;
 };
 
-}
+}  // namespace Poincare
 
 #endif

@@ -1,18 +1,23 @@
 #include "list_parameter_controller.h"
-#include "function_app.h"
-#include "color_names.h"
+
 #include <assert.h>
+
+#include "color_names.h"
+#include "function_app.h"
 
 using namespace Escher;
 
 namespace Shared {
 
-ListParameterController::ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate) :
-  ExplicitSelectableListViewController(parentResponder, tableDelegate),
-  m_enableCell(I18n::Message::ActivateDeactivateListParamTitle, I18n::Message::ActivateDeactivateListParamDescription, true),
-  m_deleteCell(deleteFunctionMessage),
-  m_colorParameterController(this)
-{}
+ListParameterController::ListParameterController(
+    Responder *parentResponder, I18n::Message functionColorMessage,
+    I18n::Message deleteFunctionMessage,
+    SelectableTableViewDelegate *tableDelegate)
+    : ExplicitSelectableListViewController(parentResponder, tableDelegate),
+      m_enableCell(I18n::Message::ActivateDeactivateListParamTitle,
+                   I18n::Message::ActivateDeactivateListParamDescription, true),
+      m_deleteCell(deleteFunctionMessage),
+      m_colorParameterController(this) {}
 
 void ListParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
@@ -29,7 +34,8 @@ void ListParameterController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void ListParameterController::willDisplayCellForIndex(HighlightCell *cell,
+                                                      int index) {
   if (cell == &m_enableCell && !m_record.isNull()) {
     m_enableCell.setState(function()->isActive());
   }
@@ -45,8 +51,9 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  HighlightCell * cell = selectedCell();
-  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  HighlightCell *cell = selectedCell();
+  StackViewController *stack =
+      static_cast<StackViewController *>(parentResponder());
 
   if (cell == &m_enableCell && m_enableCell.ShouldEnterOnEvent(event)) {
     function()->setActive(!function()->isActive());
@@ -63,8 +70,11 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
     assert(functionStore()->numberOfModels() > 0);
     m_selectableTableView.deselectTable();
     functionStore()->removeModel(m_record);
-    StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
+    StackViewController *stack =
+        static_cast<StackViewController *>(parentResponder());
+    stack->popUntilDepth(
+        Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
+        true);
     setRecord(Ion::Storage::Record());
     return true;
   }
@@ -75,8 +85,8 @@ ExpiringPointer<Function> ListParameterController::function() {
   return functionStore()->modelForRecord(m_record);
 }
 
-FunctionStore * ListParameterController::functionStore() {
+FunctionStore *ListParameterController::functionStore() {
   return FunctionApp::app()->functionStore();
 }
 
-}
+}  // namespace Shared

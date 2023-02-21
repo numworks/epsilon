@@ -1,38 +1,52 @@
-#include <poincare/matrix_inverse.h>
 #include <poincare/division.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix.h>
+#include <poincare/matrix_inverse.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
+
 #include <cmath>
 
 namespace Poincare {
 
-int MatrixInverseNode::numberOfChildren() const { return MatrixInverse::s_functionHelper.numberOfChildren(); }
+int MatrixInverseNode::numberOfChildren() const {
+  return MatrixInverse::s_functionHelper.numberOfChildren();
+}
 
-Expression MatrixInverseNode::shallowReduce(const ReductionContext& reductionContext) {
+Expression MatrixInverseNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return MatrixInverse(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixInverseNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(MatrixInverse(this), floatDisplayMode, numberOfSignificantDigits, MatrixInverse::s_functionHelper.aliasesList().mainAlias(), context);
+Layout MatrixInverseNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
+  return LayoutHelper::Prefix(
+      MatrixInverse(this), floatDisplayMode, numberOfSignificantDigits,
+      MatrixInverse::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int MatrixInverseNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, MatrixInverse::s_functionHelper.aliasesList().mainAlias());
+int MatrixInverseNode::serialize(char* buffer, int bufferSize,
+                                 Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(
+      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+      MatrixInverse::s_functionHelper.aliasesList().mainAlias());
 }
 
-template<typename T>
-Evaluation<T> MatrixInverseNode::templatedApproximate(const ApproximationContext& approximationContext) const {
+template <typename T>
+Evaluation<T> MatrixInverseNode::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> inverse;
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
     inverse = static_cast<MatrixComplex<T>&>(input).inverse();
   } else if (input.type() == EvaluationNode<T>::Type::Complex) {
-    inverse = Complex<T>::Builder(std::complex<T>(1)/(input.complexAtIndex(0)));
+    inverse =
+        Complex<T>::Builder(std::complex<T>(1) / (input.complexAtIndex(0)));
   }
   if (inverse.isUninitialized()) {
     inverse = Complex<T>::Undefined();
@@ -40,15 +54,12 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(const ApproximationContext
   return inverse;
 }
 
-
 Expression MatrixInverse::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits
-    );
+        SimplificationHelper::UnitReduction::BanUnits);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -58,7 +69,8 @@ Expression MatrixInverse::shallowReduce(ReductionContext reductionContext) {
     /* Power(matrix, -n) creates a matrixInverse, so the simplification must be
      * done here and not in power. */
     bool couldComputeInverse = false;
-    Expression result = static_cast<Matrix&>(c).createInverse(reductionContext, &couldComputeInverse);
+    Expression result = static_cast<Matrix&>(c).createInverse(
+        reductionContext, &couldComputeInverse);
     if (couldComputeInverse) {
       replaceWithInPlace(result);
       return result.shallowReduce(reductionContext);
@@ -72,4 +84,4 @@ Expression MatrixInverse::shallowReduce(ReductionContext reductionContext) {
   return result.shallowReduce(reductionContext);
 }
 
-}
+}  // namespace Poincare

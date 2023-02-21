@@ -2,9 +2,9 @@
 
 namespace Escher {
 
-TextCursorView * BlinkTimer::s_cursor = nullptr;
+TextCursorView* BlinkTimer::s_cursor = nullptr;
 
-void BlinkTimer::RegisterCursor(TextCursorView * cursor) {
+void BlinkTimer::RegisterCursor(TextCursorView* cursor) {
   if (s_cursor == cursor) {
     return;
   }
@@ -32,4 +32,4 @@ bool BlinkTimer::fire() {
   return false;
 }
 
-}
+}  // namespace Escher

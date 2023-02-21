@@ -2,7 +2,8 @@
 
 namespace HardwareTest {
 
-constexpr Ion::Keyboard::Key KeyboardModel::TestedKeys[KeyboardModel::NumberOfTestedKeys];
+constexpr Ion::Keyboard::Key
+    KeyboardModel::TestedKeys[KeyboardModel::NumberOfTestedKeys];
 
 bool KeyboardModel::belongsToTestedKeysSubset(Ion::Keyboard::Key key) const {
   for (int i = 0; i < NumberOfTestedKeys; i++) {
@@ -13,4 +14,4 @@ bool KeyboardModel::belongsToTestedKeysSubset(Ion::Keyboard::Key key) const {
   return false;
 }
 
-}
+}  // namespace HardwareTest

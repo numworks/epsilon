@@ -19,7 +19,7 @@ namespace Distributions {
 // Buffers for dynamic allocation
 
 union DistributionBuffer {
-public:
+ public:
   DistributionBuffer() {
     new (&m_binomialDistribution) BinomialDistribution();
     distribution()->calculation()->compute(0);
@@ -31,9 +31,9 @@ public:
   DistributionBuffer& operator=(const DistributionBuffer& other) = delete;
   DistributionBuffer& operator=(DistributionBuffer&& other) = delete;
 
-  Distribution * distribution() { return reinterpret_cast<Distribution *>(this); }
+  Distribution* distribution() { return reinterpret_cast<Distribution*>(this); }
 
-private:
+ private:
   BinomialDistribution m_binomialDistribution;
   UniformDistribution m_uniformDistribution;
   ExponentialDistribution m_exponentDistribution;

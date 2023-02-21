@@ -1,10 +1,9 @@
 #include <escher/bordering_view.h>
-
 #include <escher/palette.h>
 
 namespace Escher {
 
-void BorderingView::drawRect(KDContext * ctx, KDRect rect) const {
+void BorderingView::drawRect(KDContext* ctx, KDRect rect) const {
   drawBorderOfRect(ctx, bounds(), Palette::Select);
 }
 
@@ -17,7 +16,8 @@ KDSize BorderingView::minimalSizeForOptimalDisplay() const {
 void BorderingView::layoutSubviews(bool force) {
   KDSize contentSize = KDSize(bounds().width() - 2 * k_separatorThickness,
                               bounds().height() - 2 * k_separatorThickness);
-  m_contentView->setFrame(KDRect(k_separatorThickness, k_separatorThickness, contentSize), force);
+  m_contentView->setFrame(
+      KDRect(k_separatorThickness, k_separatorThickness, contentSize), force);
 }
 
-}
+}  // namespace Escher

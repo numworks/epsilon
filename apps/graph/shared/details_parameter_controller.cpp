@@ -1,20 +1,21 @@
 #include "details_parameter_controller.h"
-#include "../app.h"
+
 #include <apps/exam_mode_configuration.h>
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
+#include <assert.h>
 #include <poincare/expression.h>
 #include <poincare/layout_helper.h>
-#include <assert.h>
+
+#include "../app.h"
 
 using namespace Escher;
 using namespace Poincare;
 namespace Graph {
 
-DetailsParameterController::DetailsParameterController(Responder * parentResponder) :
-  SelectableListViewController(parentResponder, this)
-{
-}
+DetailsParameterController::DetailsParameterController(
+    Responder *parentResponder)
+    : SelectableListViewController(parentResponder, this) {}
 
 void DetailsParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
@@ -31,7 +32,7 @@ bool DetailsParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-const char * DetailsParameterController::title() {
+const char *DetailsParameterController::title() {
   return I18n::translate(I18n::Message::Details);
 }
 
@@ -48,13 +49,16 @@ KDCoordinate DetailsParameterController::nonMemoizedRowHeight(int j) {
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
-void DetailsParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void DetailsParameterController::willDisplayCellForIndex(HighlightCell *cell,
+                                                         int index) {
   assert(0 <= index && index < k_numberOfDataPoints);
-  MessageTableCellWithMessageWithBuffer * myCell = static_cast<MessageTableCellWithMessageWithBuffer *>(cell);
+  MessageTableCellWithMessageWithBuffer *myCell =
+      static_cast<MessageTableCellWithMessageWithBuffer *>(cell);
   if (index == k_indexOfCurveTypeRow) {
     myCell->setMessage(I18n::Message::CurveType);
     myCell->setSubLabelMessage(I18n::Message::Default);
-    myCell->setAccessoryText(I18n::translate(function()->properties().caption()));
+    myCell->setAccessoryText(
+        I18n::translate(function()->properties().caption()));
   } else {
     myCell->setMessage(detailsTitle(index - 1));
     double value = detailsValue(index - 1);
@@ -65,17 +69,22 @@ void DetailsParameterController::willDisplayCellForIndex(HighlightCell * cell, i
       myCell->setAccessoryText(I18n::translate(detailsDescription(index - 1)));
       myCell->setSubLabelMessage(I18n::Message::Default);
     } else {
-      constexpr int precision = Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
-      constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
+      constexpr int precision =
+          Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
+      constexpr int bufferSize =
+          Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
       char buffer[bufferSize];
-      Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, precision, Poincare::Preferences::PrintFloatMode::Decimal);
+      Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
+          value, buffer, bufferSize, precision,
+          Poincare::Preferences::PrintFloatMode::Decimal);
       myCell->setAccessoryText(buffer);
       myCell->setSubLabelMessage(detailsDescription(index - 1));
     }
   }
 }
 
-MessageTableCellWithMessageWithBuffer * DetailsParameterController::reusableCell(int index, int type) {
+MessageTableCellWithMessageWithBuffer *DetailsParameterController::reusableCell(
+    int index, int type) {
   assert(0 <= index && index < reusableCellCount(type));
   return &m_cells[index];
 }
@@ -84,7 +93,7 @@ void DetailsParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   if (!m_record.isNull()) {
     Shared::ExpiringPointer<Shared::ContinuousFunction> f = function();
-    Poincare::Context * context = App::app()->localContext();
+    Poincare::Context *context = App::app()->localContext();
     if (functionIsNonVerticalLine()) {
       double slope, intercept;
       f->getLineParameters(&slope, &intercept, context);
@@ -103,7 +112,9 @@ int DetailsParameterController::detailsNumberOfSections() const {
     return 0;
   }
   if (functionIsNonVerticalLine()) {
-    return ExamModeConfiguration::lineDetailsAreForbidden() ? 0 : k_lineDetailsSections;
+    return ExamModeConfiguration::lineDetailsAreForbidden()
+               ? 0
+               : k_lineDetailsSections;
   }
   Shared::ContinuousFunctionProperties properties = function()->properties();
   if (!properties.isConic() || !properties.isCartesian()) {
@@ -112,21 +123,22 @@ int DetailsParameterController::detailsNumberOfSections() const {
     return 0;
   }
   switch (properties.conicShape()) {
-  case Conic::Shape::Circle:
-    return k_circleDetailsSections;
-  case Conic::Shape::Ellipse:
-    return k_ellipseDetailsSections;
-  case Conic::Shape::Parabola:
-    return k_parabolaDetailsSections;
-  default:
-    assert(properties.conicShape() == Conic::Shape::Hyperbola);
-    return k_hyperbolaDetailsSections;
+    case Conic::Shape::Circle:
+      return k_circleDetailsSections;
+    case Conic::Shape::Ellipse:
+      return k_ellipseDetailsSections;
+    case Conic::Shape::Parabola:
+      return k_parabolaDetailsSections;
+    default:
+      assert(properties.conicShape() == Conic::Shape::Hyperbola);
+      return k_hyperbolaDetailsSections;
   }
 }
 
-Shared::ExpiringPointer<Shared::ContinuousFunction> DetailsParameterController::function() const {
+Shared::ExpiringPointer<Shared::ContinuousFunction>
+DetailsParameterController::function() const {
   assert(!m_record.isNull());
-  App * myApp = App::app();
+  App *myApp = App::app();
   return myApp->functionStore()->modelForRecord(m_record);
 }
 
@@ -135,9 +147,9 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
 
   if (functionIsNonVerticalLine()) {
     constexpr I18n::Message k_titles[k_lineDetailsSections] = {
-      I18n::Message::LineEquationTitle,
-      I18n::Message::LineSlopeTitle,
-      I18n::Message::LineYInterceptTitle,
+        I18n::Message::LineEquationTitle,
+        I18n::Message::LineSlopeTitle,
+        I18n::Message::LineYInterceptTitle,
     };
     return k_titles[i];
   }
@@ -217,7 +229,10 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
     }
     case Conic::Shape::Parabola: {
       I18n::Message k_descriptions[k_parabolaDetailsSections] = {
-          GlobalPreferences::sharedGlobalPreferences->parabolaParameter() == Poincare::Preferences::ParabolaParameter::FocalLength ? I18n::Message::ParabolaFocalLengthDescription : I18n::Message::ParabolaParameterDescription,
+          GlobalPreferences::sharedGlobalPreferences->parabolaParameter() ==
+                  Poincare::Preferences::ParabolaParameter::FocalLength
+              ? I18n::Message::ParabolaFocalLengthDescription
+              : I18n::Message::ParabolaParameterDescription,
           I18n::Message::ParabolaVertexAbscissaDescription,
           I18n::Message::ParabolaVertexOrdinateDescription,
       };
@@ -238,14 +253,15 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
   }
 }
 
-void DetailsParameterController::setLineDetailsValues(double slope, double intercept) {
+void DetailsParameterController::setLineDetailsValues(double slope,
+                                                      double intercept) {
   assert(functionIsNonVerticalLine());
   m_detailValues[0] = NAN;
   m_detailValues[1] = slope;
   m_detailValues[2] = intercept;
 }
 
-void DetailsParameterController::setConicDetailsValues(Poincare::Conic * conic) {
+void DetailsParameterController::setConicDetailsValues(Poincare::Conic *conic) {
   Conic::Shape type = function()->properties().conicShape();
   double cx, cy;
   if (type == Conic::Shape::Parabola) {
@@ -284,8 +300,8 @@ void DetailsParameterController::setConicDetailsValues(Poincare::Conic * conic) 
   return;
 }
 
-StackViewController * DetailsParameterController::stackController() const {
+StackViewController *DetailsParameterController::stackController() const {
   return static_cast<StackViewController *>(parentResponder());
 }
 
-}
+}  // namespace Graph

@@ -1,14 +1,17 @@
 #include "selectable_table_view.h"
+
 #include <algorithm>
 
 using namespace Escher;
 
 namespace Calculation {
 
-CalculationSelectableTableView::CalculationSelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
- SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
-  ::SelectableTableView(parentResponder, dataSource, selectionDataSource, delegate)
-{
+CalculationSelectableTableView::CalculationSelectableTableView(
+    Responder *parentResponder, TableViewDataSource *dataSource,
+    SelectableTableViewDataSource *selectionDataSource,
+    SelectableTableViewDelegate *delegate)
+    : ::SelectableTableView(parentResponder, dataSource, selectionDataSource,
+                            delegate) {
   setVerticalCellOverlap(0);
   setMargins(0);
   setDecoratorType(ScrollView::Decorator::Type::None);
@@ -16,31 +19,37 @@ CalculationSelectableTableView::CalculationSelectableTableView(Responder * paren
 
 void CalculationSelectableTableView::scrollToBottom() {
   KDCoordinate contentOffsetX = contentOffset().x();
-  KDCoordinate contentOffsetY = dataSource()->cumulatedHeightBeforeIndex(dataSource()->numberOfRows()) - maxContentHeightDisplayableWithoutScrolling();
+  KDCoordinate contentOffsetY =
+      dataSource()->cumulatedHeightBeforeIndex(dataSource()->numberOfRows()) -
+      maxContentHeightDisplayableWithoutScrolling();
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }
 
 void CalculationSelectableTableView::scrollToCell(int i, int j) {
   ::SelectableTableView::scrollToCell(i, j);
   ScrollView::layoutSubviews();
-  if (m_contentView.bounds().height() - contentOffset().y() < bounds().height()) {
+  if (m_contentView.bounds().height() - contentOffset().y() <
+      bounds().height()) {
     // Avoid empty space at the end of the table
     scrollToBottom();
   }
 }
 
-void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(HistoryViewCellDataSource::SubviewType subviewType, int i, int j) {
+void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(
+    HistoryViewCellDataSource::SubviewType subviewType, int i, int j) {
   if (dataSource()->rowHeight(j) <= bounds().height()) {
     return;
   }
 
   /* Main part of the scroll */
-  HistoryViewCell * cell = static_cast<HistoryViewCell *>(selectedCell());
+  HistoryViewCell *cell = static_cast<HistoryViewCell *>(selectedCell());
   assert(cell);
   KDCoordinate contentOffsetX = contentOffset().x();
 
   KDCoordinate contentOffsetY = dataSource()->cumulatedHeightBeforeIndex(j);
-  if (cell->displaysSingleLine() && dataSource()->rowHeight(j) > maxContentHeightDisplayableWithoutScrolling()) {
+  if (cell->displaysSingleLine() &&
+      dataSource()->rowHeight(j) >
+          maxContentHeightDisplayableWithoutScrolling()) {
     /* If we cannot display the full calculation, we display the selected
      * layout as close as possible to the top of the screen without drawing
      * empty space between the history and the input field.
@@ -79,12 +88,21 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
     /* Default value of 0 for the baseline is the same as the one given to the
      * output baseline in
      * AbstractScrollableMultipleExpressionsView::ContentCell::baseline. */
-    KDCoordinate inputBaseline = inputLayout.isUninitialized() ? 0 : inputLayout.baseline(cell->inputView()->font());
+    KDCoordinate inputBaseline =
+        inputLayout.isUninitialized()
+            ? 0
+            : inputLayout.baseline(cell->inputView()->font());
     contentOffsetY += std::min(
-        dataSource()->rowHeight(j) - maxContentHeightDisplayableWithoutScrolling(),
-        std::max(0, (inputBaseline - cell->outputView()->baseline()) * (subviewType == HistoryViewCellDataSource::SubviewType::Input ? -1 : 1)));
+        dataSource()->rowHeight(j) -
+            maxContentHeightDisplayableWithoutScrolling(),
+        std::max(
+            0, (inputBaseline - cell->outputView()->baseline()) *
+                   (subviewType == HistoryViewCellDataSource::SubviewType::Input
+                        ? -1
+                        : 1)));
   } else if (subviewType != HistoryViewCellDataSource::SubviewType::Input) {
-    contentOffsetY += dataSource()->rowHeight(j) - maxContentHeightDisplayableWithoutScrolling();
+    contentOffsetY += dataSource()->rowHeight(j) -
+                      maxContentHeightDisplayableWithoutScrolling();
   }
 
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
@@ -97,5 +115,4 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
   Container::activeApp()->setFirstResponder(cell);
 }
 
-
-}
+}  // namespace Calculation

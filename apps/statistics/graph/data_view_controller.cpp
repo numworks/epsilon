@@ -1,17 +1,23 @@
 #include "data_view_controller.h"
-#include <escher/container.h>
+
 #include <assert.h>
+#include <escher/container.h>
 
 namespace Statistics {
 
-DataViewController::DataViewController(Escher::Responder * parentResponder, Escher::TabViewController * tabController, Escher::ButtonRowController * header, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
-  ViewController(parentResponder),
-  GraphButtonRowDelegate(header, stackViewController, this, typeViewController),
-  m_store(store),
-  m_selectedSeries(-1),
-  m_selectedIndex(DataView::k_defaultSelectedIndex),
-  m_tabController(tabController)
-{
+DataViewController::DataViewController(
+    Escher::Responder* parentResponder,
+    Escher::TabViewController* tabController,
+    Escher::ButtonRowController* header,
+    Escher::StackViewController* stackViewController,
+    Escher::ViewController* typeViewController, Store* store)
+    : ViewController(parentResponder),
+      GraphButtonRowDelegate(header, stackViewController, this,
+                             typeViewController),
+      m_store(store),
+      m_selectedSeries(-1),
+      m_selectedIndex(DataView::k_defaultSelectedIndex),
+      m_tabController(tabController) {
   assert(numberOfButtons(Escher::ButtonRowController::Position::Top) > 0);
 }
 
@@ -39,7 +45,8 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
       m_tabController->selectTab();
       return true;
     }
-    if (event == Ion::Events::Down && m_store->hasActiveSeries(activeSeriesMethod())) {
+    if (event == Ion::Events::Down &&
+        m_store->hasActiveSeries(activeSeriesMethod())) {
       header()->setSelectedButton(-1);
       Escher::Container::activeApp()->setFirstResponder(this);
       dataView()->setDisplayBanner(true);
@@ -48,12 +55,18 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
       reloadBannerView();
       return true;
     }
-    return buttonAtIndex(selectedButton, Escher::ButtonRowController::Position::Top)->handleEvent(event);
+    return buttonAtIndex(selectedButton,
+                         Escher::ButtonRowController::Position::Top)
+        ->handleEvent(event);
   }
-  assert(m_selectedSeries >= 0 && m_store->hasActiveSeries(activeSeriesMethod()));
-  bool isVerticalEvent = (event == Ion::Events::Down || event == Ion::Events::Up);
-  if ((isVerticalEvent || event == Ion::Events::Left || event == Ion::Events::Right)) {
-    if (isVerticalEvent ? moveSelectionVertically(OMG::Direction(event)) : moveSelectionHorizontally(OMG::Direction(event))) {
+  assert(m_selectedSeries >= 0 &&
+         m_store->hasActiveSeries(activeSeriesMethod()));
+  bool isVerticalEvent =
+      (event == Ion::Events::Down || event == Ion::Events::Up);
+  if ((isVerticalEvent || event == Ion::Events::Left ||
+       event == Ion::Events::Right)) {
+    if (isVerticalEvent ? moveSelectionVertically(OMG::Direction(event))
+                        : moveSelectionHorizontally(OMG::Direction(event))) {
       if (reloadBannerView()) {
         dataView()->reload();
       }
@@ -63,8 +76,9 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void DataViewController::didEnterResponderChain(Responder * firstResponder) {
-  if (!m_store->hasActiveSeries(activeSeriesMethod()) || !dataView()->plotViewForSeries(m_selectedSeries)->hasFocus()) {
+void DataViewController::didEnterResponderChain(Responder* firstResponder) {
+  if (!m_store->hasActiveSeries(activeSeriesMethod()) ||
+      !dataView()->plotViewForSeries(m_selectedSeries)->hasFocus()) {
     header()->setSelectedButton(0);
   } else {
     assert(activeSeriesMethod()(m_store, m_selectedSeries));
@@ -74,7 +88,7 @@ void DataViewController::didEnterResponderChain(Responder * firstResponder) {
   }
 }
 
-void DataViewController::willExitResponderChain(Responder * nextFirstResponder) {
+void DataViewController::willExitResponderChain(Responder* nextFirstResponder) {
   if (nextFirstResponder == m_tabController) {
     assert(m_tabController != nullptr);
     if (header()->selectedButton() >= 0) {
@@ -89,7 +103,8 @@ void DataViewController::willExitResponderChain(Responder * nextFirstResponder) 
 
 void DataViewController::sanitizeSeriesIndex() {
   // Sanitize m_selectedSeries
-  if (m_selectedSeries < 0 || !activeSeriesMethod()(m_store, m_selectedSeries)) {
+  if (m_selectedSeries < 0 ||
+      !activeSeriesMethod()(m_store, m_selectedSeries)) {
     for (int series = 0; series < Store::k_numberOfSeries; series++) {
       if (activeSeriesMethod()(m_store, series)) {
         m_selectedSeries = series;
@@ -100,9 +115,11 @@ void DataViewController::sanitizeSeriesIndex() {
   }
 }
 
-bool DataViewController::moveSelectionVertically(OMG::VerticalDirection direction) {
+bool DataViewController::moveSelectionVertically(
+    OMG::VerticalDirection direction) {
   int nextSelectedSubview = nextSubviewWhenMovingVertically(direction);
-  if (nextSelectedSubview >= m_store->numberOfActiveSeries(activeSeriesMethod())) {
+  if (nextSelectedSubview >=
+      m_store->numberOfActiveSeries(activeSeriesMethod())) {
     return false;
   }
   dataView()->deselectViewForSeries(m_selectedSeries);
@@ -111,7 +128,8 @@ bool DataViewController::moveSelectionVertically(OMG::VerticalDirection directio
     header()->setSelectedButton(0);
   } else {
     int previousSelectedSeries = m_selectedSeries;
-    m_selectedSeries = m_store->seriesIndexFromActiveSeriesIndex(nextSelectedSubview, activeSeriesMethod());
+    m_selectedSeries = m_store->seriesIndexFromActiveSeriesIndex(
+        nextSelectedSubview, activeSeriesMethod());
     updateHorizontalIndexAfterSelectingNewSeries(previousSelectedSeries);
     dataView()->selectViewForSeries(m_selectedSeries);
     highlightSelection();
@@ -119,4 +137,4 @@ bool DataViewController::moveSelectionVertically(OMG::VerticalDirection directio
   return true;
 }
 
-}
+}  // namespace Statistics

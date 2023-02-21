@@ -1,11 +1,14 @@
 #include <poincare/grid_layout.h>
 #include <poincare/layout_helper.h>
+
 #include <algorithm>
 
 namespace Poincare {
 
 // LayoutNode
-int GridLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection direction, int currentIndex, bool * shouldRedrawLayout) {
+int GridLayoutNode::indexAfterHorizontalCursorMove(
+    OMG::HorizontalDirection direction, int currentIndex,
+    bool *shouldRedrawLayout) {
   if (currentIndex == k_outsideIndex) {
     return direction.isLeft() ? numberOfChildren() - 1 : 0;
   }
@@ -17,38 +20,50 @@ int GridLayoutNode::indexAfterHorizontalCursorMove(OMG::HorizontalDirection dire
   return currentIndex + step;
 }
 
-int GridLayoutNode::indexAfterVerticalCursorMove(OMG::VerticalDirection direction, int currentIndex, PositionInLayout positionAtCurrentIndex, bool * shouldRedrawLayout) {
+int GridLayoutNode::indexAfterVerticalCursorMove(
+    OMG::VerticalDirection direction, int currentIndex,
+    PositionInLayout positionAtCurrentIndex, bool *shouldRedrawLayout) {
   if (currentIndex == k_outsideIndex) {
     return k_cantMoveIndex;
   }
   if (direction.isUp() && currentIndex >= m_numberOfColumns) {
     return currentIndex - m_numberOfColumns;
   }
-  if (direction.isDown() && currentIndex < numberOfChildren() - m_numberOfColumns) {
+  if (direction.isDown() &&
+      currentIndex < numberOfChildren() - m_numberOfColumns) {
     return currentIndex + m_numberOfColumns;
   }
   return k_cantMoveIndex;
 }
 
-LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
-  if (childIndex == k_outsideIndex){
+LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(
+    int childIndex) const {
+  if (childIndex == k_outsideIndex) {
     return DeletionMethod::MoveLeft;
   }
 
   assert(isEditing());
   int rowIndex = rowAtChildIndex(childIndex);
   int columnIndex = columnAtChildIndex(childIndex);
-  if (rowIndex == 0 && minimalNumberOfChildrenWhileEditing() == numberOfChildren()) {
+  if (rowIndex == 0 &&
+      minimalNumberOfChildrenWhileEditing() == numberOfChildren()) {
     // If only one child is filled, delete the grid and keep the child.
     return DeletionMethod::DeleteParent;
   }
 
-  bool deleteWholeRow = !numberOfRowsIsFixed() && childIsLeftOfGrid(childIndex) && !childIsBottomOfGrid(childIndex) && isRowEmpty(rowIndex);
-  bool deleteWholeColumn = !numberOfColumnsIsFixed() && childIsTopOfGrid(childIndex) && !childIsRightOfGrid(childIndex) && isColumnEmpty(columnIndex);
+  bool deleteWholeRow =
+      !numberOfRowsIsFixed() && childIsLeftOfGrid(childIndex) &&
+      !childIsBottomOfGrid(childIndex) && isRowEmpty(rowIndex);
+  bool deleteWholeColumn =
+      !numberOfColumnsIsFixed() && childIsTopOfGrid(childIndex) &&
+      !childIsRightOfGrid(childIndex) && isColumnEmpty(columnIndex);
   if (deleteWholeRow || deleteWholeColumn) {
     /* Pressing backspace at the top of an empty column or a the left of an
      * empty row deletes the whole column/row. */
-    return deleteWholeRow && deleteWholeColumn ? DeletionMethod::GridLayoutDeleteColumnAndRow : (deleteWholeRow ? DeletionMethod::GridLayoutDeleteRow : DeletionMethod::GridLayoutDeleteColumn);
+    return deleteWholeRow && deleteWholeColumn
+               ? DeletionMethod::GridLayoutDeleteColumnAndRow
+               : (deleteWholeRow ? DeletionMethod::GridLayoutDeleteRow
+                                 : DeletionMethod::GridLayoutDeleteColumn);
   }
 
   if (childIsLeftOfGrid(childIndex) && rowIndex != 0) {
@@ -62,18 +77,21 @@ void GridLayoutNode::willFillEmptyChildAtIndex(int childIndex) {
   assert(isEditing());
   bool isBottomOfGrid = childIsBottomOfGrid(childIndex);
   if (childIsRightOfGrid(childIndex) && !numberOfColumnsIsFixed()) {
-    assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))->emptyColor() == EmptyRectangle::Color::Gray);
+    assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))
+               ->emptyColor() == EmptyRectangle::Color::Gray);
     colorGrayEmptyLayoutsInYellowInColumnOrRow(true, m_numberOfColumns - 1);
     addEmptyColumn(EmptyRectangle::Color::Gray);
   }
   if (isBottomOfGrid && !numberOfRowsIsFixed()) {
-    assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))->emptyColor() == EmptyRectangle::Color::Gray);
+    assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))
+               ->emptyColor() == EmptyRectangle::Color::Gray);
     colorGrayEmptyLayoutsInYellowInColumnOrRow(false, m_numberOfRows - 1);
     addEmptyRow(EmptyRectangle::Color::Gray);
   }
 }
 
-bool GridLayoutNode::removeEmptyRowOrColumnAtChildIndexIfNeeded(int childIndex) {
+bool GridLayoutNode::removeEmptyRowOrColumnAtChildIndexIfNeeded(
+    int childIndex) {
   assert(childAtIndex(childIndex)->isEmpty());
   assert(isEditing());
   if (minimalNumberOfChildrenWhileEditing() == numberOfChildren()) {
@@ -84,7 +102,8 @@ bool GridLayoutNode::removeEmptyRowOrColumnAtChildIndexIfNeeded(int childIndex) 
   bool isRightOfGrid = childIsInLastNonGrayColumn(childIndex);
   bool isBottomOfGrid = childIsInLastNonGrayRow(childIndex);
   bool changed = false;
-  if (isRightOfGrid && !numberOfColumnsIsFixed() && isColumnEmpty(columnIndex)) {
+  if (isRightOfGrid && !numberOfColumnsIsFixed() &&
+      isColumnEmpty(columnIndex)) {
     deleteColumnAtIndex(columnIndex);
     changed = true;
   }
@@ -118,49 +137,50 @@ void GridLayoutNode::deleteColumnAtIndex(int index) {
    * consistent with the number of children */
   int numberOfColumns = m_numberOfColumns;
   int numberOfRows = m_numberOfRows;
-    for (int i = (numberOfRows - 1) * numberOfColumns + index; i > -1; i-= numberOfColumns) {
+  for (int i = (numberOfRows - 1) * numberOfColumns + index; i > -1;
+       i -= numberOfColumns) {
     thisRef.removeChildAtIndexInPlace(i);
   }
   thisRef.setDimensions(numberOfRows, numberOfColumns - 1);
 }
 
 bool GridLayoutNode::childIsLeftOfGrid(int index) const {
-  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  assert(index >= 0 && index < m_numberOfRows * m_numberOfColumns);
   return columnAtChildIndex(index) == 0;
 }
 
 bool GridLayoutNode::childIsRightOfGrid(int index) const {
-  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  assert(index >= 0 && index < m_numberOfRows * m_numberOfColumns);
   return columnAtChildIndex(index) == m_numberOfColumns - 1;
 }
 
 bool GridLayoutNode::childIsTopOfGrid(int index) const {
-  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  assert(index >= 0 && index < m_numberOfRows * m_numberOfColumns);
   return rowAtChildIndex(index) == 0;
 }
 
 bool GridLayoutNode::childIsBottomOfGrid(int index) const {
-  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  assert(index >= 0 && index < m_numberOfRows * m_numberOfColumns);
   return rowAtChildIndex(index) == m_numberOfRows - 1;
 }
 
 bool GridLayoutNode::childIsInLastNonGrayColumn(int index) const {
-  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  assert(index >= 0 && index < m_numberOfRows * m_numberOfColumns);
   return columnAtChildIndex(index) == m_numberOfColumns - 1 - isEditing();
 }
 
 bool GridLayoutNode::childIsInLastNonGrayRow(int index) const {
-  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  assert(index >= 0 && index < m_numberOfRows * m_numberOfColumns);
   return rowAtChildIndex(index) == m_numberOfRows - 1 - isEditing();
 }
 
 int GridLayoutNode::rowAtChildIndex(int index) const {
-  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  assert(index >= 0 && index < m_numberOfRows * m_numberOfColumns);
   return (int)(index / m_numberOfColumns);
 }
 
 int GridLayoutNode::columnAtChildIndex(int index) const {
-  assert(index >= 0 && index < m_numberOfRows*m_numberOfColumns);
+  assert(index >= 0 && index < m_numberOfRows * m_numberOfColumns);
   return index - m_numberOfColumns * rowAtChildIndex(index);
 }
 
@@ -185,15 +205,13 @@ int GridLayoutNode::closestNonGrayIndex(int index) const {
   return indexAtRowColumn(row, column);
 }
 
-KDSize GridLayoutNode::computeSize(KDFont::Size font) {
-  return gridSize(font);
-}
+KDSize GridLayoutNode::computeSize(KDFont::Size font) { return gridSize(font); }
 
 KDCoordinate GridLayoutNode::computeBaseline(KDFont::Size font) {
-  return (height(font)+1)/2;
+  return (height(font) + 1) / 2;
 }
 
-KDPoint GridLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
+KDPoint GridLayoutNode::positionOfChild(LayoutNode *l, KDFont::Size font) {
   int childIndex = indexOfChild(l);
   int rowIndex = rowAtChildIndex(childIndex);
   int columnIndex = columnAtChildIndex(childIndex);
@@ -201,12 +219,14 @@ KDPoint GridLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
   for (int j = 0; j < columnIndex; j++) {
     x += columnWidth(j, font);
   }
-  x += (columnWidth(columnIndex, font) - l->layoutSize(font).width())/2+ columnIndex * horizontalGridEntryMargin(font);
+  x += (columnWidth(columnIndex, font) - l->layoutSize(font).width()) / 2 +
+       columnIndex * horizontalGridEntryMargin(font);
   KDCoordinate y = 0;
   for (int i = 0; i < rowIndex; i++) {
     y += rowHeight(i, font);
   }
-  y += rowBaseline(rowIndex, font) - l->baseline(font) + rowIndex * verticalGridEntryMargin(font);
+  y += rowBaseline(rowIndex, font) - l->baseline(font) +
+       rowIndex * verticalGridEntryMargin(font);
   return KDPoint(x, y);
 }
 
@@ -216,7 +236,7 @@ KDCoordinate GridLayoutNode::rowBaseline(int i, KDFont::Size font) {
   assert(m_numberOfColumns > 0);
   KDCoordinate rowBaseline = 0;
   int j = 0;
-  for (LayoutNode * l : childrenFromIndex(i*m_numberOfColumns)) {
+  for (LayoutNode *l : childrenFromIndex(i * m_numberOfColumns)) {
     rowBaseline = std::max(rowBaseline, l->baseline(font));
     j++;
     if (j >= m_numberOfColumns) {
@@ -230,16 +250,18 @@ KDCoordinate GridLayoutNode::rowHeight(int i, KDFont::Size font) const {
   KDCoordinate underBaseline = 0;
   KDCoordinate aboveBaseline = 0;
   int j = 0;
-  for (LayoutNode * l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(i*m_numberOfColumns)) {
+  for (LayoutNode *l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(
+           i * m_numberOfColumns)) {
     KDCoordinate b = l->baseline(font);
-    underBaseline = std::max<KDCoordinate>(underBaseline, l->layoutSize(font).height() - b);
+    underBaseline =
+        std::max<KDCoordinate>(underBaseline, l->layoutSize(font).height() - b);
     aboveBaseline = std::max(aboveBaseline, b);
     j++;
     if (j >= m_numberOfColumns) {
       break;
     }
   }
-  return aboveBaseline+underBaseline;
+  return aboveBaseline + underBaseline;
 }
 
 KDCoordinate GridLayoutNode::height(KDFont::Size font) const {
@@ -247,16 +269,19 @@ KDCoordinate GridLayoutNode::height(KDFont::Size font) const {
   for (int i = 0; i < m_numberOfRows; i++) {
     totalHeight += rowHeight(i, font);
   }
-  totalHeight += m_numberOfRows > 0 ? (m_numberOfRows-1) * verticalGridEntryMargin(font) : 0;
+  totalHeight += m_numberOfRows > 0
+                     ? (m_numberOfRows - 1) * verticalGridEntryMargin(font)
+                     : 0;
   return totalHeight;
 }
 
 KDCoordinate GridLayoutNode::columnWidth(int j, KDFont::Size font) const {
   KDCoordinate columnWidth = 0;
   int childIndex = j;
-  int lastIndex = (m_numberOfRows-1)*m_numberOfColumns + j;
-  for (LayoutNode * l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(j)) {
-    if (childIndex%m_numberOfColumns == j) {
+  int lastIndex = (m_numberOfRows - 1) * m_numberOfColumns + j;
+  for (LayoutNode *l :
+       const_cast<GridLayoutNode *>(this)->childrenFromIndex(j)) {
+    if (childIndex % m_numberOfColumns == j) {
       columnWidth = std::max(columnWidth, l->layoutSize(font).width());
       if (childIndex >= lastIndex) {
         break;
@@ -272,7 +297,9 @@ KDCoordinate GridLayoutNode::width(KDFont::Size font) const {
   for (int j = 0; j < m_numberOfColumns; j++) {
     totalWidth += columnWidth(j, font);
   }
-  totalWidth += m_numberOfColumns > 0 ? (m_numberOfColumns-1) * horizontalGridEntryMargin(font) : 0;
+  totalWidth += m_numberOfColumns > 0
+                    ? (m_numberOfColumns - 1) * horizontalGridEntryMargin(font)
+                    : 0;
   return totalWidth;
 }
 
@@ -280,8 +307,10 @@ bool GridLayoutNode::isColumnOrRowEmpty(bool column, int index) const {
   assert(index >= 0 && index < (column ? m_numberOfColumns : m_numberOfRows));
   int i = index * (column ? 1 : m_numberOfColumns);
   int startingIndex = i;
-  for (LayoutNode * l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(startingIndex)) {
-    if ((column && i > index + (m_numberOfRows - 1) * m_numberOfColumns) || (!column && i >= (index + 1) * m_numberOfColumns)) {
+  for (LayoutNode *l :
+       const_cast<GridLayoutNode *>(this)->childrenFromIndex(startingIndex)) {
+    if ((column && i > index + (m_numberOfRows - 1) * m_numberOfColumns) ||
+        (!column && i >= (index + 1) * m_numberOfColumns)) {
       break;
     }
     if ((!column || i % m_numberOfColumns == index) && !l->isEmpty()) {
@@ -292,7 +321,8 @@ bool GridLayoutNode::isColumnOrRowEmpty(bool column, int index) const {
   return true;
 }
 
-void GridLayoutNode::addEmptyRowOrColumn(bool column, EmptyRectangle::Color color) {
+void GridLayoutNode::addEmptyRowOrColumn(bool column,
+                                         EmptyRectangle::Color color) {
   GridLayout thisRef = GridLayout(this);
   /* addChildAtIndexInPlace messes with the number of rows to keep it consistent
    * with the number of children */
@@ -302,7 +332,11 @@ void GridLayoutNode::addEmptyRowOrColumn(bool column, EmptyRectangle::Color colo
   for (int i = 0; i < otherNumberOfLines; i++) {
     HorizontalLayout h = HorizontalLayout::Builder();
     h.setEmptyColor(color);
-    thisRef.addChildAtIndexInPlace(h, column ? (i + 1) * (previousNumberOfLines + 1) - 1 : previousNumberOfChildren, previousNumberOfChildren + i);
+    thisRef.addChildAtIndexInPlace(
+        h,
+        column ? (i + 1) * (previousNumberOfLines + 1) - 1
+               : previousNumberOfChildren,
+        previousNumberOfChildren + i);
     // WARNING: Do not access "this" afterwards
   }
   if (column) {
@@ -312,17 +346,25 @@ void GridLayoutNode::addEmptyRowOrColumn(bool column, EmptyRectangle::Color colo
   }
 }
 
-void GridLayoutNode::colorGrayEmptyLayoutsInYellowInColumnOrRow(bool column, int lineIndex) {
+void GridLayoutNode::colorGrayEmptyLayoutsInYellowInColumnOrRow(bool column,
+                                                                int lineIndex) {
   int childIndex = lineIndex * (column ? 1 : m_numberOfColumns);
   int startIndex = childIndex;
-  int maxIndex = column ? (m_numberOfRows - 1 - static_cast<int>(!numberOfRowsIsFixed())) * m_numberOfColumns + lineIndex : lineIndex * m_numberOfColumns + m_numberOfColumns - 1 - static_cast<int>(!numberOfColumnsIsFixed());
-  for (LayoutNode * lastLayoutOfLine : childrenFromIndex(startIndex)) {
+  int maxIndex =
+      column ? (m_numberOfRows - 1 - static_cast<int>(!numberOfRowsIsFixed())) *
+                       m_numberOfColumns +
+                   lineIndex
+             : lineIndex * m_numberOfColumns + m_numberOfColumns - 1 -
+                   static_cast<int>(!numberOfColumnsIsFixed());
+  for (LayoutNode *lastLayoutOfLine : childrenFromIndex(startIndex)) {
     if (childIndex > maxIndex) {
       break;
     }
-    if ((!column || childIndex % m_numberOfColumns == lineIndex) && lastLayoutOfLine->isEmpty()) {
+    if ((!column || childIndex % m_numberOfColumns == lineIndex) &&
+        lastLayoutOfLine->isEmpty()) {
       assert(lastLayoutOfLine->isHorizontal());
-      static_cast<HorizontalLayoutNode *>(lastLayoutOfLine)->setEmptyColor(EmptyRectangle::Color::Yellow);
+      static_cast<HorizontalLayoutNode *>(lastLayoutOfLine)
+          ->setEmptyColor(EmptyRectangle::Color::Yellow);
     }
     childIndex++;
   }
@@ -335,4 +377,4 @@ void GridLayout::setDimensions(int rows, int columns) {
   setNumberOfColumns(columns);
 }
 
-}
+}  // namespace Poincare

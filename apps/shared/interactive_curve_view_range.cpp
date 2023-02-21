@@ -1,14 +1,16 @@
 #include "interactive_curve_view_range.h"
-#include <ion.h>
-#include <cmath>
-#include <stddef.h>
+
 #include <assert.h>
+#include <ion.h>
+#include <math.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/ieee754.h>
 #include <poincare/preferences.h>
 #include <poincare/zoom.h>
+#include <stddef.h>
+
 #include <algorithm>
-#include <math.h>
+#include <cmath>
 
 using namespace Poincare;
 
@@ -16,11 +18,13 @@ namespace Shared {
 
 bool InteractiveCurveViewRange::isOrthonormal() const {
   Range2D range = memoizedRange();
-  range = Range2D(*range.x(), Range1D(range.yMin(), range.yMax() + offscreenYAxis()));
+  range = Range2D(*range.x(),
+                  Range1D(range.yMin(), range.yMax() + offscreenYAxis()));
   return range.ratioIs(NormalYXRatio());
 }
 
-void InteractiveCurveViewRange::setDelegate(InteractiveCurveViewRangeDelegate * delegate) {
+void InteractiveCurveViewRange::setDelegate(
+    InteractiveCurveViewRangeDelegate* delegate) {
   m_delegate = delegate;
 }
 
@@ -40,7 +44,8 @@ float InteractiveCurveViewRange::roundLimit(float y, float range, bool isMin) {
    *    [100,1000]    |     10                  | 0
    *    [10,100]      |     1                   | 3
    *    [1,10]        |     0.1                 | 3.1                       */
-  float magnitude = std::pow(10.0f, Poincare::IEEE754<float>::exponentBase10(range) - 1.0f);
+  float magnitude =
+      std::pow(10.0f, Poincare::IEEE754<float>::exponentBase10(range) - 1.0f);
   if (isMin) {
     return magnitude * std::floor(y / magnitude);
   }
@@ -86,7 +91,8 @@ float InteractiveCurveViewRange::yGridUnit() const {
      * unit would lead to too many graduations on the X axis, we force the
      * larger unit anyways. */
     float numberOfUnits = (yMax() - yMin() + offscreenYAxis()) / res;
-    if (numberOfUnits > k_maxNumberOfXGridUnits || numberOfUnits / 2.f > k_minNumberOfYGridUnits) {
+    if (numberOfUnits > k_maxNumberOfXGridUnits ||
+        numberOfUnits / 2.f > k_minNumberOfYGridUnits) {
       return 2 * res;
     }
   }
@@ -99,7 +105,8 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   if (ratio * std::min(thisRange.x()->length(), dy) < Range1D::k_minLength) {
     return;
   }
-  Coordinate2D<float> center(std::isfinite(x) ? x : thisRange.x()->center(), std::isfinite(y) ? y : thisRange.y()->center());
+  Coordinate2D<float> center(std::isfinite(x) ? x : thisRange.x()->center(),
+                             std::isfinite(y) ? y : thisRange.y()->center());
   thisRange.zoom(ratio, center);
   assert(thisRange.x()->isValid() && thisRange.y()->isValid());
   setZoomAuto(false);
@@ -149,30 +156,33 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   }
   if (axis == Axis::X) {
     float range = xMax() - xMin();
-    if (std::fabs(position/range) > k_maxRatioPositionRange) {
+    if (std::fabs(position / range) > k_maxRatioPositionRange) {
       range = Range1D::DefaultLengthAt(position);
     }
-    float newXMax = position + range/2.0f;
+    float newXMax = position + range / 2.0f;
     if (xMax() != newXMax) {
       setZoomAuto(false);
       protectedSetX(Range1D(newXMax - range, newXMax), k_maxFloat);
     }
   } else {
     float range = yMax() - yMin();
-    if (std::fabs(position/range) > k_maxRatioPositionRange) {
+    if (std::fabs(position / range) > k_maxRatioPositionRange) {
       range = Range1D::DefaultLengthAt(position);
     }
-    float newYMax = position + range/2.0f;
+    float newYMax = position + range / 2.0f;
     if (yMax() != newYMax) {
       setZoomAuto(false);
-      protectedSetY(Range1D(position - 0.5f * range, position + 0.5f * range), k_maxFloat);
+      protectedSetY(Range1D(position - 0.5f * range, position + 0.5f * range),
+                    k_maxFloat);
     }
   }
 
   setZoomNormalize(isOrthonormal());
 }
 
-bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio, float pixelWidth) {
+bool InteractiveCurveViewRange::panToMakePointVisible(
+    float x, float y, float topMarginRatio, float rightMarginRatio,
+    float bottomMarginRatio, float leftMarginRatio, float pixelWidth) {
   // Range setters may stretch if range was too small for the new magnitude
   bool moved = false;
   if (std::isfinite(x)) {
@@ -183,13 +193,19 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       /* The panning increment is a whole number of pixels so that the caching
        * for cartesian functions is not invalidated.
        * Cap to -k_maxFloat so that xRange is preserved. */
-      const float newXMin = std::max(-k_maxFloat, std::floor((x - leftMargin - xMin()) / pixelWidth) * pixelWidth + xMin());
+      const float newXMin = std::max(
+          -k_maxFloat,
+          std::floor((x - leftMargin - xMin()) / pixelWidth) * pixelWidth +
+              xMin());
       protectedSetX(Range1D(newXMin, newXMin + xRange), k_maxFloat);
     }
     const float rightMargin = rightMarginRatio * xRange;
     if (x > xMax() - rightMargin && xMax() < k_maxFloat) {
       moved = true;
-      const float newXMax = std::min(k_maxFloat, std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth + xMax());
+      const float newXMax = std::min(
+          k_maxFloat,
+          std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth +
+              xMax());
       protectedSetX(Range1D(newXMax - xRange, newXMax), k_maxFloat);
     }
   }
@@ -220,11 +236,14 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
   return moved;
 }
 
-bool InteractiveCurveViewRange::zoomOutToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio) {
+bool InteractiveCurveViewRange::zoomOutToMakePointVisible(
+    float x, float y, float topMarginRatio, float rightMarginRatio,
+    float bottomMarginRatio, float leftMarginRatio) {
   Zoom zoom(-k_maxFloat, k_maxFloat, NormalYXRatio(), nullptr, k_maxFloat);
   zoom.fitPoint(Coordinate2D<float>(xMin(), yMin()));
   zoom.fitPoint(Coordinate2D<float>(xMax(), yMax()));
-  zoom.fitPoint(Coordinate2D<float>(x, y), false, leftMarginRatio, rightMarginRatio, bottomMarginRatio, topMarginRatio);
+  zoom.fitPoint(Coordinate2D<float>(x, y), false, leftMarginRatio,
+                rightMarginRatio, bottomMarginRatio, topMarginRatio);
   Range2D newRange = zoom.range(false, false);
 
   bool move = newRange != memoizedRange();
@@ -233,15 +252,17 @@ bool InteractiveCurveViewRange::zoomOutToMakePointVisible(float x, float y, floa
 
   if (move) {
     setZoomAuto(false);
-    /* Zomming out to a point greater than the maximum range of 10^8 could make the
-     * graph not normalized.*/
+    /* Zomming out to a point greater than the maximum range of 10^8 could make
+     * the graph not normalized.*/
     setZoomNormalize(isOrthonormal());
   }
 
   return move;
 }
 
-void InteractiveCurveViewRange::protectedNormalize(bool canChangeX, bool canChangeY, bool canShrink) {
+void InteractiveCurveViewRange::protectedNormalize(bool canChangeX,
+                                                   bool canChangeY,
+                                                   bool canShrink) {
   /* We center the ranges on the current range center, and put each axis so that
    * 1cm = 2 current units. */
 
@@ -269,8 +290,8 @@ void InteractiveCurveViewRange::protectedNormalize(bool canChangeX, bool canChan
      *   - it has been clipped because the maximum bounds have been reached.
      *   - the the bounds are too close and of too large a magnitude, leading to
      *     a drastic loss of significance. */
-    assert(isOrthonormal()
-        || xMin() <= - k_maxFloat || xMax() >= k_maxFloat || yMin() <= - k_maxFloat || yMax() >= k_maxFloat);
+    assert(isOrthonormal() || xMin() <= -k_maxFloat || xMax() >= k_maxFloat ||
+           yMin() <= -k_maxFloat || yMax() >= k_maxFloat);
   }
   setZoomNormalize(isOrthonormal());
 }
@@ -284,7 +305,8 @@ void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
   }
 }
 
-void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool computeY) {
+void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
+                                                     bool computeY) {
   if (offscreenYAxis() != 0.f) {
     /* The Navigation window was exited without being cleaned up, probably
      * because the User pressed the Home button.
@@ -302,13 +324,17 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     Range2D newRange;
 
     {
-      CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
+      CircuitBreakerCheckpoint checkpoint(
+          Ion::CircuitBreaker::CheckpointType::Back);
       if (CircuitBreakerRun(checkpoint)) {
-        uint32_t storeChecksum = Ion::Storage::FileSystem::sharedFileSystem->checksum();
-        if (computeX && computeY && m_storeChecksumOfLastComputedAutoRange == storeChecksum) {
+        uint32_t storeChecksum =
+            Ion::Storage::FileSystem::sharedFileSystem->checksum();
+        if (computeX && computeY &&
+            m_storeChecksumOfLastComputedAutoRange == storeChecksum) {
           newRange = m_autoRange;
         } else {
-          newRange = m_delegate->optimalRange(computeX, computeY, memoizedRange());
+          newRange =
+              m_delegate->optimalRange(computeX, computeY, memoizedRange());
           if (computeX && computeY) {
             m_autoRange = newRange;
             m_storeChecksumOfLastComputedAutoRange = storeChecksum;
@@ -332,9 +358,9 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     m_delegate->refreshCursorAfterComputingRange();
 
     Range2D newRangeWithMargins = m_delegate->addMargins(newRange);
-    newRangeWithMargins = Range2D(
-        computeX ? *newRangeWithMargins.x() : Range1D(xMin(), xMax()),
-        computeY ? *newRangeWithMargins.y() : Range1D(yMin(), yMax()));
+    newRangeWithMargins =
+        Range2D(computeX ? *newRangeWithMargins.x() : Range1D(xMin(), xMax()),
+                computeY ? *newRangeWithMargins.y() : Range1D(yMin(), yMax()));
     if (newRange.ratioIs(NormalYXRatio())) {
       newRangeWithMargins.setRatio(NormalYXRatio(), false);
       assert(newRangeWithMargins.ratioIs(NormalYXRatio()));
@@ -351,4 +377,4 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
   setZoomNormalize(isOrthonormal());
 }
 
-}
+}  // namespace Shared

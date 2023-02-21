@@ -20,25 +20,27 @@ namespace Ion {
  * */
 
 uint16_t userlandCompilationFlags() {
-  assert(EXTERNAL_APPS_API_LEVEL < 0xFF); // Should the EXTERNAL_APPS_API_LEVEL exceed 0xFF, we'll find another way to represent it
+  assert(EXTERNAL_APPS_API_LEVEL <
+         0xFF);  // Should the EXTERNAL_APPS_API_LEVEL exceed 0xFF, we'll find
+                 // another way to represent it
   uint8_t externalAppsAPILevel = 0xFF & EXTERNAL_APPS_API_LEVEL;
 
-  return DEBUG |
-         (ASSERTIONS << 1) |
-         (ExternalApps::allowThirdParty() << 2) |
+  return DEBUG | (ASSERTIONS << 1) | (ExternalApps::allowThirdParty() << 2) |
          (externalAppsAPILevel << 4);
 }
 
-const char * compilationFlags() {
-  static char compilationFlagsBuffer[OMG::Print::MaxLengthOfUInt32(OMG::Base::Hexadecimal) + 1] = {0};
+const char* compilationFlags() {
+  static char compilationFlagsBuffer[OMG::Print::MaxLengthOfUInt32(
+                                         OMG::Base::Hexadecimal) +
+                                     1] = {0};
   uint32_t flags = userlandCompilationFlags();
-  size_t length = OMG::Print::UInt32(OMG::Base::Hexadecimal, flags, OMG::Print::LeadingZeros::Keep, compilationFlagsBuffer, sizeof(compilationFlagsBuffer));
+  size_t length = OMG::Print::UInt32(
+      OMG::Base::Hexadecimal, flags, OMG::Print::LeadingZeros::Keep,
+      compilationFlagsBuffer, sizeof(compilationFlagsBuffer));
   compilationFlagsBuffer[length] = 0;
   return compilationFlagsBuffer;
 }
 
-const char * runningBootloader() {
-  return "NA";
-}
+const char* runningBootloader() { return "NA"; }
 
-}
+}  // namespace Ion

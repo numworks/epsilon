@@ -1,43 +1,53 @@
+#include <drivers/external_flash.h>
+#include <ion.h>
 #include <quiz.h>
 #include <quiz/stopwatch.h>
-#include <ion.h>
-#include <drivers/external_flash.h>
+
 #include "external_flash_helper.h"
 
 template <typename T>
-static inline void check(volatile T * p, int repeat) {
+static inline void check(volatile T *p, int repeat) {
   for (int i = 0; i < repeat; i++) {
-    quiz_assert(*p == expected_value_at(const_cast<T*>(p)));
+    quiz_assert(*p == expected_value_at(const_cast<T *>(p)));
   }
 }
 
 template <typename T>
 void test(int accessType, int repeat) {
-  uint8_t * start = reinterpret_cast<uint8_t *>(Ion::Device::ExternalFlash::Config::StartAddress);
-  uint8_t * end = reinterpret_cast<uint8_t *>(Ion::Device::ExternalFlash::Config::StartAddress + Ion::Device::ExternalFlash::FlashAddressSpaceSize);
+  uint8_t *start = reinterpret_cast<uint8_t *>(
+      Ion::Device::ExternalFlash::Config::StartAddress);
+  uint8_t *end = reinterpret_cast<uint8_t *>(
+      Ion::Device::ExternalFlash::Config::StartAddress +
+      Ion::Device::ExternalFlash::FlashAddressSpaceSize);
 
   // Forward sequential access
   if (accessType == 0) {
-    for (uint8_t * p = start; p <= end-sizeof(T); p++) {
-      volatile T * q = reinterpret_cast<T *>(p);
+    for (uint8_t *p = start; p <= end - sizeof(T); p++) {
+      volatile T *q = reinterpret_cast<T *>(p);
       check(q, repeat);
     }
   }
 
   // Backward sequential access
   if (accessType == 1) {
-    for (uint8_t * p = end - sizeof(T); p >= start; p--) {
-      volatile T * q = reinterpret_cast<T *>(p);
+    for (uint8_t *p = end - sizeof(T); p >= start; p--) {
+      volatile T *q = reinterpret_cast<T *>(p);
       check(q, repeat);
     }
   }
 
   // Random access
   if (accessType == 2) {
-    T * endT = reinterpret_cast<T *>(Ion::Device::ExternalFlash::Config::StartAddress + Ion::Device::ExternalFlash::FlashAddressSpaceSize);
-    for (size_t i=0; i<Ion::Device::ExternalFlash::FlashAddressSpaceSize; i++) {
-      uint32_t randomAddr = Ion::random() >> (32 - Ion::Device::ExternalFlash::NumberOfAddressBitsInChip);
-      volatile T * q = reinterpret_cast<T *>(randomAddr + Ion::Device::ExternalFlash::Config::StartAddress);
+    T *endT = reinterpret_cast<T *>(
+        Ion::Device::ExternalFlash::Config::StartAddress +
+        Ion::Device::ExternalFlash::FlashAddressSpaceSize);
+    for (size_t i = 0; i < Ion::Device::ExternalFlash::FlashAddressSpaceSize;
+         i++) {
+      uint32_t randomAddr =
+          Ion::random() >>
+          (32 - Ion::Device::ExternalFlash::NumberOfAddressBitsInChip);
+      volatile T *q = reinterpret_cast<T *>(
+          randomAddr + Ion::Device::ExternalFlash::Config::StartAddress);
       if (q <= endT - 1) {
         check(q, repeat);
       }

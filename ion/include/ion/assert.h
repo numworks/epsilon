@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-void assertionAbort(const char * expression, const char * file, int line);
+void assertionAbort(const char* expression, const char* file, int line);
 
 #ifdef __cplusplus
 }

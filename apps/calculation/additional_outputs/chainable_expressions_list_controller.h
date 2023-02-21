@@ -9,18 +9,31 @@ namespace Calculation {
  * MemoizedListViewDataSource methods since it may break ChainedExpressions. */
 
 class ChainableExpressionsListController : public ExpressionsListController {
-public:
+ public:
   using ExpressionsListController::ExpressionsListController;
 
   // MemoizedListViewDataSource
-  int typeAtIndex(int index) const override final { return ExpressionsListController::typeAtIndex(index); }
-  int reusableCellCount(int type) override final { return ExpressionsListController::reusableCellCount(type); }
-  Escher::HighlightCell * reusableCell(int index, int type) override final { return ExpressionsListController::reusableCell(index, type); }
-  KDCoordinate nonMemoizedRowHeight(int j) override { return ExpressionsListController::nonMemoizedRowHeight(j); }
-  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override { return ExpressionsListController::willDisplayCellForIndex(cell, index); }
-  int numberOfRows() const override final { return ExpressionsListController::numberOfRows(); };
+  int typeAtIndex(int index) const override final {
+    return ExpressionsListController::typeAtIndex(index);
+  }
+  int reusableCellCount(int type) override final {
+    return ExpressionsListController::reusableCellCount(type);
+  }
+  Escher::HighlightCell* reusableCell(int index, int type) override final {
+    return ExpressionsListController::reusableCell(index, type);
+  }
+  KDCoordinate nonMemoizedRowHeight(int j) override {
+    return ExpressionsListController::nonMemoizedRowHeight(j);
+  }
+  void willDisplayCellForIndex(Escher::HighlightCell* cell,
+                               int index) override {
+    return ExpressionsListController::willDisplayCellForIndex(cell, index);
+  }
+  int numberOfRows() const override final {
+    return ExpressionsListController::numberOfRows();
+  };
 };
 
-}
+}  // namespace Calculation
 
 #endif

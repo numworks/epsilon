@@ -1,15 +1,18 @@
 #include <poincare/print_int.h>
+
 #include "helper.h"
 
 using namespace Poincare;
 
-void assert_int_prints_as(int integer, const char * result, bool left) {
+void assert_int_prints_as(int integer, const char* result, bool left) {
   constexpr int bufferSize = 5;
   char buffer[bufferSize];
   for (int i = 0; i < bufferSize; i++) {
     buffer[i] = 0;
   }
-  bool couldPrint = (left ? PrintInt::Left(integer, buffer, bufferSize) : PrintInt::Right(integer, buffer, bufferSize)) <= bufferSize;
+  bool couldPrint =
+      (left ? PrintInt::Left(integer, buffer, bufferSize)
+            : PrintInt::Right(integer, buffer, bufferSize)) <= bufferSize;
   quiz_assert_print_if_failure(couldPrint, result);
   int i = 0;
   while (result[i] != 0) {

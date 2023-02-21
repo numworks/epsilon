@@ -5,18 +5,25 @@
 
 namespace Poincare {
 
-bool AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairCodePoint(CodePoint c, Type * type, Side * side) {
-  if (c != '(' && c != UCodePointLeftSystemParenthesis && c != ')' && c != UCodePointRightSystemParenthesis && c != '}' && c != '{') {
+bool AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairCodePoint(
+    CodePoint c, Type *type, Side *side) {
+  if (c != '(' && c != UCodePointLeftSystemParenthesis && c != ')' &&
+      c != UCodePointRightSystemParenthesis && c != '}' && c != '{') {
     return false;
   }
   assert(type && side);
-  *type = (c == '{' || c == '}') ? Type::CurlyBraceLayout : Type::ParenthesisLayout;
-  *side = (c == '(' || c == UCodePointLeftSystemParenthesis || c == '{') ? Side::Left : Side::Right;
+  *type =
+      (c == '{' || c == '}') ? Type::CurlyBraceLayout : Type::ParenthesisLayout;
+  *side = (c == '(' || c == UCodePointLeftSystemParenthesis || c == '{')
+              ? Side::Left
+              : Side::Right;
   return true;
 }
 
-Layout AutocompletedBracketPairLayoutNode::BuildFromBracketType(LayoutNode::Type type) {
-  assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(type));
+Layout AutocompletedBracketPairLayoutNode::BuildFromBracketType(
+    LayoutNode::Type type) {
+  assert(
+      AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(type));
   if (type == LayoutNode::Type::ParenthesisLayout) {
     return ParenthesisLayout::Builder();
   }
@@ -27,16 +34,18 @@ Layout AutocompletedBracketPairLayoutNode::BuildFromBracketType(LayoutNode::Type
 static HorizontalLayout HorizontalParent(Layout l) {
   Layout p = l.parent();
   assert(!p.isUninitialized() && p.isHorizontal());
-  return static_cast<HorizontalLayout&>(p);
+  return static_cast<HorizontalLayout &>(p);
 }
 
 static HorizontalLayout HorizontalChild(Layout l) {
   Layout c = l.childAtIndex(0);
   assert(!c.isUninitialized() && c.isHorizontal());
-  return static_cast<HorizontalLayout&>(c);
+  return static_cast<HorizontalLayout &>(c);
 }
 
-void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayout, HorizontalLayout * cursorLayout, int * cursorPosition) {
+void AutocompletedBracketPairLayoutNode::BalanceBrackets(
+    HorizontalLayout hLayout, HorizontalLayout *cursorLayout,
+    int *cursorPosition) {
   /* Read hLayout from left to right, and create a copy of it with balanced
    * brackets.
    *
@@ -67,12 +76,12 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
      * Since everything is cloned into the result, the cursor position will be
      * lost, so when the corresponding layout is being read, set the cursor
      * position in the written layout. */
-    if (cursorLayout && readLayout == *cursorLayout && readIndex == *cursorPosition) {
+    if (cursorLayout && readLayout == *cursorLayout &&
+        readIndex == *cursorPosition) {
       *cursorLayout = writtenLayout;
       *cursorPosition = writtenLayout.numberOfChildren();
       placedCursor = true;
     }
-
 
     if (readIndex < readLayout.numberOfChildren()) {
       /* -- Step 1 -- The reading arrived at a layout that is not a bracket:
@@ -80,13 +89,15 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
       Layout readChild = readLayout.childAtIndex(readIndex);
       if (!IsAutoCompletedBracketPairType(readChild.type())) {
         assert(!readChild.isHorizontal());
-        writtenLayout.addOrMergeChildAtIndex(readChild.clone(), writtenLayout.numberOfChildren());
+        writtenLayout.addOrMergeChildAtIndex(readChild.clone(),
+                                             writtenLayout.numberOfChildren());
         readIndex++;
         continue;
       }
 
       // -- Step 2 -- The reading arrived left of a bracket:
-      AutocompletedBracketPairLayoutNode * bracketNode = static_cast<AutocompletedBracketPairLayoutNode *>(readChild.node());
+      AutocompletedBracketPairLayoutNode *bracketNode =
+          static_cast<AutocompletedBracketPairLayoutNode *>(readChild.node());
 
       /* - Step 2.1 - Read
        * The reading enters the brackets and continues inside it.
@@ -119,8 +130,10 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
        * */
       if (!bracketNode->isTemporary(Side::Left)) {
         Layout newBracket = BuildFromBracketType(readChild.type());
-        static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())->setTemporary(Side::Right, true);
-        writtenLayout.addOrMergeChildAtIndex(newBracket, writtenLayout.numberOfChildren());
+        static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())
+            ->setTemporary(Side::Right, true);
+        writtenLayout.addOrMergeChildAtIndex(newBracket,
+                                             writtenLayout.numberOfChildren());
         writtenLayout = HorizontalChild(newBracket);
       }
       continue;
@@ -143,7 +156,8 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
      * */
     Layout readBracket = readLayout.parent();
     assert(IsAutoCompletedBracketPairType(readBracket.type()));
-    AutocompletedBracketPairLayoutNode * readBracketNode = static_cast<AutocompletedBracketPairLayoutNode *>(readBracket.node());
+    AutocompletedBracketPairLayoutNode *readBracketNode =
+        static_cast<AutocompletedBracketPairLayoutNode *>(readBracket.node());
 
     /* - Step 4.1. - Read
      * The reading goes out of the bracket and continues in its parent.
@@ -191,11 +205,14 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
     }
 
     Layout writtenBracket = writtenLayout.parent();
-    if (!writtenBracket.isUninitialized() && writtenBracket.type() == readBracket.type()) {
+    if (!writtenBracket.isUninitialized() &&
+        writtenBracket.type() == readBracket.type()) {
       /* The current written layout is in a bracket of the same type:
        * Close the bracket and continue writing in its parent. */
       assert(IsAutoCompletedBracketPairType(writtenBracket.type()));
-      AutocompletedBracketPairLayoutNode * writtenBracketNode = static_cast<AutocompletedBracketPairLayoutNode *>(writtenBracket.node());
+      AutocompletedBracketPairLayoutNode *writtenBracketNode =
+          static_cast<AutocompletedBracketPairLayoutNode *>(
+              writtenBracket.node());
       assert(writtenBracketNode->isTemporary(Side::Right));
       writtenBracketNode->setTemporary(Side::Right, false);
       writtenLayout = HorizontalParent(writtenBracket);
@@ -205,7 +222,8 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
     /* Right side is permanent but no matching bracket was opened: create a
      * new one opened on the left. */
     Layout newBracket = BuildFromBracketType(readBracket.type());
-    static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())->setTemporary(Side::Left, true);
+    static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())
+        ->setTemporary(Side::Left, true);
     HorizontalLayout newWrittenLayout = HorizontalLayout::Builder(newBracket);
     if (*cursorPosition == 0 && *cursorLayout == writtenLayout) {
       /* FIXME: This is currently a quick-fix for the following problem:
@@ -247,7 +265,8 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(HorizontalLayout hLayou
   hLayout.addOrMergeChildAtIndex(result, 0);
 }
 
-void AutocompletedBracketPairLayoutNode::setTemporary(Side side, bool temporary) {
+void AutocompletedBracketPairLayoutNode::setTemporary(Side side,
+                                                      bool temporary) {
   if (side == Side::Left) {
     m_leftIsTemporary = temporary;
     return;
@@ -256,7 +275,8 @@ void AutocompletedBracketPairLayoutNode::setTemporary(Side side, bool temporary)
   m_rightIsTemporary = temporary;
 }
 
-void AutocompletedBracketPairLayoutNode::makeChildrenPermanent(Side side, bool includeThis) {
+void AutocompletedBracketPairLayoutNode::makeChildrenPermanent(
+    Side side, bool includeThis) {
   /* Recursively make all bracket children permanent on that side.
    * e.g. (((1]]|] -> "+" -> (((1))+|] */
   if (!isTemporary(side)) {
@@ -264,7 +284,8 @@ void AutocompletedBracketPairLayoutNode::makeChildrenPermanent(Side side, bool i
   }
   Layout child = childOnSide(side);
   if (type() == child.type()) {
-    AutocompletedBracketPairLayoutNode * bracket = static_cast<AutocompletedBracketPairLayoutNode *>(child.node());
+    AutocompletedBracketPairLayoutNode *bracket =
+        static_cast<AutocompletedBracketPairLayoutNode *>(child.node());
     bracket->makeChildrenPermanent(side, true);
   }
   if (includeThis) {
@@ -272,19 +293,23 @@ void AutocompletedBracketPairLayoutNode::makeChildrenPermanent(Side side, bool i
   }
 }
 
-LayoutNode * AutocompletedBracketPairLayoutNode::childOnSide(Side side) const {
-  LayoutNode * child = childLayout();
+LayoutNode *AutocompletedBracketPairLayoutNode::childOnSide(Side side) const {
+  LayoutNode *child = childLayout();
   if (child->isHorizontal() && child->numberOfChildren() > 0) {
-    return child->childAtIndex(side == Side::Left ? 0 : child->numberOfChildren() - 1);
+    return child->childAtIndex(
+        side == Side::Left ? 0 : child->numberOfChildren() - 1);
   }
   return child;
 }
 
-LayoutNode::DeletionMethod AutocompletedBracketPairLayoutNode::deletionMethodForCursorLeftOfChild(int childIndex) const {
-  if ((childIndex == k_outsideIndex && isTemporary(Side::Right)) || (childIndex == 0 && isTemporary(Side::Left))) {
+LayoutNode::DeletionMethod
+AutocompletedBracketPairLayoutNode::deletionMethodForCursorLeftOfChild(
+    int childIndex) const {
+  if ((childIndex == k_outsideIndex && isTemporary(Side::Right)) ||
+      (childIndex == 0 && isTemporary(Side::Left))) {
     return DeletionMethod::MoveLeft;
   }
   return DeletionMethod::AutocompletedBracketPairMakeTemporary;
 }
 
-}
+}  // namespace Poincare

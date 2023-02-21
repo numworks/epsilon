@@ -1,4 +1,5 @@
 #include "init.h"
+
 #include "apps_container_storage.h"
 #include "global_preferences.h"
 #include "shared/global_context.h"
@@ -12,4 +13,4 @@ void Init() {
   ::AppsContainerStorage::sharedAppsContainerStorage.init();
 }
 
-}
+}  // namespace Apps

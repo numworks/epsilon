@@ -7,7 +7,9 @@
 namespace Escher {
 namespace TextInputHelpers {
 
-size_t CursorIndexInCommand(const char * text, const char * stoppingPosition = nullptr, bool ignoreCodePointSytem = true);
+size_t CursorIndexInCommand(const char* text,
+                            const char* stoppingPosition = nullptr,
+                            bool ignoreCodePointSytem = true);
 /* Returns the position of the char that should be right of the cursor, which is
  * the first char between :
  *   - The first EmptyChar (which is the position of the first argument)
@@ -17,6 +19,6 @@ size_t CursorIndexInCommand(const char * text, const char * stoppingPosition = n
  * if ignoreCodePointSytem, UCodePointSystem is not taken into account for
  * the index computation. */
 
-}
-}
+}  // namespace TextInputHelpers
+}  // namespace Escher
 #endif

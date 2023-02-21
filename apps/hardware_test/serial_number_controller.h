@@ -2,21 +2,22 @@
 #define HARDWARE_TEST_SERIAL_NUMBER_CONTROLLER_H
 
 #include <escher/view_controller.h>
+
 #include "code_128b_view.h"
 
 namespace HardwareTest {
 
 class SerialNumberController : public Escher::ViewController {
-public:
+ public:
   using Escher::ViewController::ViewController;
-  Escher::View * view() override { return &m_barCodeView; }
+  Escher::View* view() override { return &m_barCodeView; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-private:
+
+ private:
   Code128BView m_barCodeView;
 };
 
-}
+}  // namespace HardwareTest
 
 #endif
-

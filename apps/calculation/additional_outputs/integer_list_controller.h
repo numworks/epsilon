@@ -6,19 +6,17 @@
 namespace Calculation {
 
 class IntegerListController : public ChainableExpressionsListController {
-public:
-  IntegerListController(EditExpressionController * editExpressionController) :
-    ChainableExpressionsListController(editExpressionController, true) {}
+ public:
+  IntegerListController(EditExpressionController* editExpressionController)
+      : ChainableExpressionsListController(editExpressionController, true) {}
 
   void setExpression(Poincare::Expression e) override;
 
-private:
+ private:
   constexpr static int k_indexOfFactorExpression = 3;
   I18n::Message messageAtIndex(int index) override;
 };
 
-}
+}  // namespace Calculation
 
 #endif
-
-

@@ -1,33 +1,37 @@
 #include "store.h"
+
 #include <apps/global_preferences.h>
+#include <assert.h>
+#include <float.h>
+#include <limits.h>
 #include <poincare/helpers.h>
 #include <poincare/normal_distribution.h>
-#include <assert.h>
-#include <algorithm>
-#include <float.h>
-#include <cmath>
 #include <string.h>
-#include <limits.h>
+
+#include <algorithm>
+#include <cmath>
 
 using namespace Shared;
 
 namespace Statistics {
 
-static_assert(Store::k_numberOfSeries == 3, "The constructor of Statistics::Store should be changed");
+static_assert(Store::k_numberOfSeries == 3,
+              "The constructor of Statistics::Store should be changed");
 
 constexpr I18n::Message Store::k_quantilesName[Store::k_numberOfQuantiles];
-constexpr Store::CalculPointer Store::k_quantileCalculation[Store::k_numberOfQuantiles];
+constexpr Store::CalculPointer
+    Store::k_quantileCalculation[Store::k_numberOfQuantiles];
 
-Store::Store(GlobalContext * context, UserPreferences * userPreferences) :
-  DoublePairStore(context, userPreferences),
-  m_memoizedMaxNumberOfModes(-1),
-  m_graphViewInvalidated(true)
-{
+Store::Store(GlobalContext* context, UserPreferences* userPreferences)
+    : DoublePairStore(context, userPreferences),
+      m_memoizedMaxNumberOfModes(-1),
+      m_graphViewInvalidated(true) {
   /* Update series after having set the datasets, which are needed in
    * updateSeries */
   initListsFromStorage(false);
   for (int s = 0; s < k_numberOfSeries; s++) {
-    m_datasets[s] = Poincare::StatisticsDataset<double>(&m_dataLists[s][0], &m_dataLists[s][1]);
+    m_datasets[s] = Poincare::StatisticsDataset<double>(&m_dataLists[s][0],
+                                                        &m_dataLists[s][1]);
     updateSeries(s);
   }
 }
@@ -53,7 +57,8 @@ void Store::setBarWidth(double barWidth) {
 }
 
 double Store::heightOfBarAtIndex(int series, int index) const {
-  return sumOfValuesBetween(series, startOfBarAtIndex(series, index), endOfBarAtIndex(series, index));
+  return sumOfValuesBetween(series, startOfBarAtIndex(series, index),
+                            endOfBarAtIndex(series, index));
 }
 
 double Store::maxHeightOfBar(int series) const {
@@ -65,7 +70,8 @@ double Store::maxHeightOfBar(int series) const {
     // Reuse previous endOfBarAtIndex result
     double startOfBar = endOfBar;
     endOfBar = endOfBarAtIndex(series, i);
-    maxHeight = std::max(maxHeight, sumOfValuesBetween(series, startOfBar, endOfBar));
+    maxHeight =
+        std::max(maxHeight, sumOfValuesBetween(series, startOfBar, endOfBar));
   }
   assert(maxHeight > 0.0);
   return maxHeight;
@@ -73,9 +79,11 @@ double Store::maxHeightOfBar(int series) const {
 
 double Store::heightOfBarAtValue(int series, double value) const {
   double width = barWidth();
-  int barNumber = std::floor((value - firstDrawnBarAbscissa())/width);
-  double lowerBound = firstDrawnBarAbscissa() + static_cast<double>(barNumber) * width;
-  double upperBound = firstDrawnBarAbscissa() + static_cast<double>(barNumber + 1) * width;
+  int barNumber = std::floor((value - firstDrawnBarAbscissa()) / width);
+  double lowerBound =
+      firstDrawnBarAbscissa() + static_cast<double>(barNumber) * width;
+  double upperBound =
+      firstDrawnBarAbscissa() + static_cast<double>(barNumber + 1) * width;
   return sumOfValuesBetween(series, lowerBound, upperBound);
 }
 
@@ -84,30 +92,38 @@ double Store::startOfBarAtIndex(int series, int index) const {
   /* Because of floating point approximation, firstBarAbscissa could be lesser
    * than the minimal value. As a result, we would compute a height of zero for
    * all bars. */
-  double firstBarAbscissa = std::min(minimalValue, firstDrawnBarAbscissa() + barWidth() * std::floor((minimalValue - firstDrawnBarAbscissa())/ barWidth()));
+  double firstBarAbscissa = std::min(
+      minimalValue,
+      firstDrawnBarAbscissa() +
+          barWidth() * std::floor((minimalValue - firstDrawnBarAbscissa()) /
+                                  barWidth()));
   return firstBarAbscissa + index * barWidth();
 }
 
 double Store::endOfBarAtIndex(int series, int index) const {
-  return startOfBarAtIndex(series, index+1);
+  return startOfBarAtIndex(series, index + 1);
 }
 
 int Store::numberOfBars(int series) const {
   double firstBarAbscissa = startOfBarAtIndex(series, 0);
-  return static_cast<int>(std::ceil((maxValue(series) - firstBarAbscissa) / barWidth())+1);
+  return static_cast<int>(
+      std::ceil((maxValue(series) - firstBarAbscissa) / barWidth()) + 1);
 }
 
-I18n::Message Store::boxPlotCalculationMessageAtIndex(int series, int index) const {
+I18n::Message Store::boxPlotCalculationMessageAtIndex(int series,
+                                                      int index) const {
   if (index == 0) {
     return I18n::Message::Minimum;
   }
   int nbOfLowerOutliers = numberOfLowerOutliers(series);
   int nbOfUpperOutliers = numberOfUpperOutliers(series);
-  if (index == nbOfLowerOutliers + k_numberOfQuantiles + nbOfUpperOutliers - 1) {
+  if (index ==
+      nbOfLowerOutliers + k_numberOfQuantiles + nbOfUpperOutliers - 1) {
     // Handle maximum here to override UpperWhisker and Outlier messages
     return I18n::Message::Maximum;
   }
-  if (index >= nbOfLowerOutliers && index < nbOfLowerOutliers + k_numberOfQuantiles) {
+  if (index >= nbOfLowerOutliers &&
+      index < nbOfLowerOutliers + k_numberOfQuantiles) {
     return k_quantilesName[index - nbOfLowerOutliers];
   }
   assert(index < nbOfLowerOutliers + k_numberOfQuantiles + nbOfUpperOutliers);
@@ -134,22 +150,28 @@ double Store::boxPlotCalculationAtIndex(int series, int index) const {
 
 bool Store::boxPlotCalculationIsOutlier(int series, int index) const {
   int nbOfLowerOutliers = numberOfLowerOutliers(series);
-  return index < nbOfLowerOutliers || index >= nbOfLowerOutliers + k_numberOfQuantiles;
+  return index < nbOfLowerOutliers ||
+         index >= nbOfLowerOutliers + k_numberOfQuantiles;
 }
 
 int Store::numberOfBoxPlotCalculations(int series) const {
   // Outliers + Lower/Upper Whisker + First/Third Quartile + Median
-  return numberOfLowerOutliers(series) + k_numberOfQuantiles + numberOfUpperOutliers(series);
+  return numberOfLowerOutliers(series) + k_numberOfQuantiles +
+         numberOfUpperOutliers(series);
 }
 
-void Store::updateSeriesValidity(int series, bool updateDisplayAdditionalColumn) {
+void Store::updateSeriesValidity(int series,
+                                 bool updateDisplayAdditionalColumn) {
   assert(series >= 0 && series < k_numberOfSeries);
   bool oldValidity = seriesIsValid(series);
   DoublePairStore::updateSeriesValidity(series, updateDisplayAdditionalColumn);
-  userPreferences()->setSeriesValid(series, seriesIsValid(series) && frequenciesAreValid(series));
+  userPreferences()->setSeriesValid(
+      series, seriesIsValid(series) && frequenciesAreValid(series));
   // Reset the graph view any time one of the series gets invalidated
-  m_graphViewInvalidated = m_graphViewInvalidated || (oldValidity && !seriesIsValid(series));
-  if (updateDisplayAdditionalColumn && m_graphViewInvalidated && numberOfPairsOfSeries(series) == 0) {
+  m_graphViewInvalidated =
+      m_graphViewInvalidated || (oldValidity && !seriesIsValid(series));
+  if (updateDisplayAdditionalColumn && m_graphViewInvalidated &&
+      numberOfPairsOfSeries(series) == 0) {
     // Hide the cumulated frequencies if series is invalidated and empty
     userPreferences()->setDisplayCumulatedFrequencies(series, false);
   }
@@ -171,7 +193,8 @@ double Store::sumOfOccurrences(int series) const {
   return m_datasets[series].totalWeight();
 }
 
-double Store::maxValueForAllSeries(bool handleNullFrequencies, ActiveSeriesTest activeSeriesTest) const {
+double Store::maxValueForAllSeries(bool handleNullFrequencies,
+                                   ActiveSeriesTest activeSeriesTest) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
   double result = -DBL_MAX;
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
@@ -185,7 +208,8 @@ double Store::maxValueForAllSeries(bool handleNullFrequencies, ActiveSeriesTest 
   return result;
 }
 
-double Store::minValueForAllSeries(bool handleNullFrequencies, ActiveSeriesTest activeSeriesTest) const {
+double Store::minValueForAllSeries(bool handleNullFrequencies,
+                                   ActiveSeriesTest activeSeriesTest) const {
   assert(DoublePairStore::k_numberOfSeries > 0);
   double result = DBL_MAX;
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
@@ -226,12 +250,10 @@ double Store::minValue(int series, bool handleNullFrequencies) const {
 }
 
 double Store::range(int series) const {
-  return maxValue(series)-minValue(series);
+  return maxValue(series) - minValue(series);
 }
 
-double Store::mean(int series) const {
-  return m_datasets[series].mean();
-}
+double Store::mean(int series) const { return m_datasets[series].mean(); }
 
 double Store::variance(int series) const {
   return m_datasets[series].variance();
@@ -269,35 +291,43 @@ double Store::sampleVariance(int series) const {
  * the more general definition if non-integral frequencies are found.
  * */
 double Store::firstQuartile(int series) const {
-  if (GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() == CountryPreferences::MethodForQuartiles::CumulatedFrequency || !columnIsIntegersOnly(series, 1)) {
-    return sortedElementAtCumulatedFrequency(series, 1.0/4.0);
+  if (GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() ==
+          CountryPreferences::MethodForQuartiles::CumulatedFrequency ||
+      !columnIsIntegersOnly(series, 1)) {
+    return sortedElementAtCumulatedFrequency(series, 1.0 / 4.0);
   }
-  assert(GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() == CountryPreferences::MethodForQuartiles::MedianOfSublist);
-  return sortedElementAtCumulatedPopulation(series, std::floor(sumOfOccurrences(series) / 2.) / 2., true);
+  assert(GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() ==
+         CountryPreferences::MethodForQuartiles::MedianOfSublist);
+  return sortedElementAtCumulatedPopulation(
+      series, std::floor(sumOfOccurrences(series) / 2.) / 2., true);
 }
 
 double Store::thirdQuartile(int series) const {
-  if (GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() == CountryPreferences::MethodForQuartiles::CumulatedFrequency || !columnIsIntegersOnly(series, 1)) {
-    return sortedElementAtCumulatedFrequency(series, 3.0/4.0);
+  if (GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() ==
+          CountryPreferences::MethodForQuartiles::CumulatedFrequency ||
+      !columnIsIntegersOnly(series, 1)) {
+    return sortedElementAtCumulatedFrequency(series, 3.0 / 4.0);
   }
-  assert(GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() == CountryPreferences::MethodForQuartiles::MedianOfSublist);
-  return sortedElementAtCumulatedPopulation(series, std::ceil(3./2. * sumOfOccurrences(series)) / 2., true);
+  assert(GlobalPreferences::sharedGlobalPreferences->methodForQuartiles() ==
+         CountryPreferences::MethodForQuartiles::MedianOfSublist);
+  return sortedElementAtCumulatedPopulation(
+      series, std::ceil(3. / 2. * sumOfOccurrences(series)) / 2., true);
 }
 
 double Store::quartileRange(int series) const {
-  return thirdQuartile(series)-firstQuartile(series);
+  return thirdQuartile(series) - firstQuartile(series);
 }
 
-double Store::median(int series) const {
-  return m_datasets[series].median();
-}
+double Store::median(int series) const { return m_datasets[series].median(); }
 
 double Store::lowerWhisker(int series) const {
-  return get(series, 0, valueIndexAtSortedIndex(series, lowerWhiskerSortedIndex(series)));
+  return get(series, 0,
+             valueIndexAtSortedIndex(series, lowerWhiskerSortedIndex(series)));
 }
 
 double Store::upperWhisker(int series) const {
-  return get(series, 0, valueIndexAtSortedIndex(series, upperWhiskerSortedIndex(series)));
+  return get(series, 0,
+             valueIndexAtSortedIndex(series, upperWhiskerSortedIndex(series)));
 }
 
 double Store::lowerFence(int series) const {
@@ -314,7 +344,8 @@ int Store::numberOfLowerOutliers(int series) const {
   }
   double value;
   int distinctValues;
-  countDistinctValues(series, 0, lowerWhiskerSortedIndex(series), -1, false, &value, &distinctValues);
+  countDistinctValues(series, 0, lowerWhiskerSortedIndex(series), -1, false,
+                      &value, &distinctValues);
   return distinctValues;
 }
 
@@ -324,7 +355,9 @@ int Store::numberOfUpperOutliers(int series) const {
   }
   double value;
   int distinctValues;
-  countDistinctValues(series, upperWhiskerSortedIndex(series) + 1, numberOfPairsOfSeries(series), -1, false, &value, &distinctValues);
+  countDistinctValues(series, upperWhiskerSortedIndex(series) + 1,
+                      numberOfPairsOfSeries(series), -1, false, &value,
+                      &distinctValues);
   return distinctValues;
 }
 
@@ -332,7 +365,8 @@ double Store::lowerOutlierAtIndex(int series, int index) const {
   assert(displayOutliers() && index < numberOfLowerOutliers(series));
   double value;
   int distinctValues;
-  countDistinctValues(series, 0, lowerWhiskerSortedIndex(series), index, false, &value, &distinctValues);
+  countDistinctValues(series, 0, lowerWhiskerSortedIndex(series), index, false,
+                      &value, &distinctValues);
   return value;
 }
 
@@ -340,13 +374,13 @@ double Store::upperOutlierAtIndex(int series, int index) const {
   assert(displayOutliers() && index < numberOfUpperOutliers(series));
   double value;
   int distinctValues;
-  countDistinctValues(series, upperWhiskerSortedIndex(series) + 1, numberOfPairsOfSeries(series), index, false, &value, &distinctValues);
+  countDistinctValues(series, upperWhiskerSortedIndex(series) + 1,
+                      numberOfPairsOfSeries(series), index, false, &value,
+                      &distinctValues);
   return value;
 }
 
-double Store::sum(int series) const {
-  return m_datasets[series].weightedSum();
-}
+double Store::sum(int series) const { return m_datasets[series].weightedSum(); }
 
 double Store::squaredValueSum(int series) const {
   return m_datasets[series].squaredSum();
@@ -390,7 +424,8 @@ double Store::modeFrequency(int series) const {
   return modeFreq;
 }
 
-double Store::computeModes(int series, int i, double * modeFreq, int * modesTotal) const {
+double Store::computeModes(int series, int i, double* modeFreq,
+                           int* modesTotal) const {
   *modesTotal = 0;
   *modeFreq = 0.0;
   double ithValue = NAN;
@@ -429,37 +464,46 @@ double Store::computeModes(int series, int i, double * modeFreq, int * modesTota
     currentValueFrequency += valueFrequency;
   }
   // A valid total, frequency and ithValue (if requested) have been calculated
-  assert(*modesTotal > 0 && *modeFreq > 0.0 && std::isnan(ithValue) == (i == -1));
+  assert(*modesTotal > 0 && *modeFreq > 0.0 &&
+         std::isnan(ithValue) == (i == -1));
   return ithValue;
 }
 
-bool Store::deleteValueAtIndex(int series, int i, int j, bool authorizeNonEmptyRowDeletion, bool delayUpdate) {
+bool Store::deleteValueAtIndex(int series, int i, int j,
+                               bool authorizeNonEmptyRowDeletion,
+                               bool delayUpdate) {
   if (authorizeNonEmptyRowDeletion) {
     deletePairOfSeriesAtIndex(series, j, delayUpdate);
     return true;
   }
-  return DoublePairStore::deleteValueAtIndex(series, i, j, authorizeNonEmptyRowDeletion, delayUpdate);
+  return DoublePairStore::deleteValueAtIndex(
+      series, i, j, authorizeNonEmptyRowDeletion, delayUpdate);
 }
 
 /* Private methods */
 
-int Store::computeRelativeColumnAndSeries(int * i) const {
+int Store::computeRelativeColumnAndSeries(int* i) const {
   int seriesIndex = 0;
-  while (*i >= DoublePairStore::k_numberOfColumnsPerSeries + displayCumulatedFrequenciesForSeries(seriesIndex)) {
-    *i -= DoublePairStore::k_numberOfColumnsPerSeries + displayCumulatedFrequenciesForSeries(seriesIndex);
+  while (*i >= DoublePairStore::k_numberOfColumnsPerSeries +
+                   displayCumulatedFrequenciesForSeries(seriesIndex)) {
+    *i -= DoublePairStore::k_numberOfColumnsPerSeries +
+          displayCumulatedFrequenciesForSeries(seriesIndex);
     seriesIndex++;
     assert(seriesIndex < k_numberOfSeries);
   }
   return seriesIndex;
 }
 
-bool Store::updateSeries(int series, bool delayUpdate, bool updateDisplayAdditionalColumn) {
+bool Store::updateSeries(int series, bool delayUpdate,
+                         bool updateDisplayAdditionalColumn) {
   m_datasets[series].setHasBeenModified();
   m_memoizedMaxNumberOfModes = -1;
-  return DoublePairStore::updateSeries(series, delayUpdate, updateDisplayAdditionalColumn);
+  return DoublePairStore::updateSeries(series, delayUpdate,
+                                       updateDisplayAdditionalColumn);
 }
 
-double Store::sumOfValuesBetween(int series, double x1, double x2, bool strictUpperBound) const {
+double Store::sumOfValuesBetween(int series, double x1, double x2,
+                                 bool strictUpperBound) const {
   if (!seriesIsValid(series)) {
     return NAN;
   }
@@ -473,22 +517,29 @@ double Store::sumOfValuesBetween(int series, double x1, double x2, bool strictUp
   for (int k = 0; k < numberOfPairs; k++) {
     int sortedIndex = valueIndexAtSortedIndex(series, k);
     double value = get(series, 0, sortedIndex);
-    if (value > x2 || (strictUpperBound && Poincare::Helpers::RelativelyEqual<double>(value, x2, k_precision))) {
+    if (value > x2 ||
+        (strictUpperBound &&
+         Poincare::Helpers::RelativelyEqual<double>(value, x2, k_precision))) {
       break;
     }
-    if (value >= x1 || Poincare::Helpers::RelativelyEqual<double>(value, x1, k_precision)) {
+    if (value >= x1 ||
+        Poincare::Helpers::RelativelyEqual<double>(value, x1, k_precision)) {
       result += get(series, 1, sortedIndex);
     }
   }
   return result;
 }
 
-double Store::sortedElementAtCumulatedFrequency(int series, double k, bool createMiddleElement) const {
-  return m_datasets[series].sortedElementAtCumulatedFrequency(k, createMiddleElement);
+double Store::sortedElementAtCumulatedFrequency(
+    int series, double k, bool createMiddleElement) const {
+  return m_datasets[series].sortedElementAtCumulatedFrequency(
+      k, createMiddleElement);
 }
 
-double Store::sortedElementAtCumulatedPopulation(int series, double population, bool createMiddleElement) const {
-  return m_datasets[series].sortedElementAtCumulatedWeight(population, createMiddleElement);
+double Store::sortedElementAtCumulatedPopulation(
+    int series, double population, bool createMiddleElement) const {
+  return m_datasets[series].sortedElementAtCumulatedWeight(population,
+                                                           createMiddleElement);
 }
 
 uint8_t Store::lowerWhiskerSortedIndex(int series) const {
@@ -496,7 +547,8 @@ uint8_t Store::lowerWhiskerSortedIndex(int series) const {
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
     int valueIndex = valueIndexAtSortedIndex(series, k);
-    if ((!displayOutliers() || get(series, 0, valueIndex) >= lowFence) && get(series, 1, valueIndex) > 0.0) {
+    if ((!displayOutliers() || get(series, 0, valueIndex) >= lowFence) &&
+        get(series, 1, valueIndex) > 0.0) {
       return k;
     }
   }
@@ -509,7 +561,8 @@ uint8_t Store::upperWhiskerSortedIndex(int series) const {
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = numberOfPairs - 1; k >= 0; k--) {
     int valueIndex = valueIndexAtSortedIndex(series, k);
-    if ((!displayOutliers() || get(series, 0, valueIndex) <= uppFence) && get(series, 1, valueIndex) > 0.0) {
+    if ((!displayOutliers() || get(series, 0, valueIndex) <= uppFence) &&
+        get(series, 1, valueIndex) > 0.0) {
       return k;
     }
   }
@@ -517,7 +570,9 @@ uint8_t Store::upperWhiskerSortedIndex(int series) const {
   return numberOfPairs;
 }
 
-void Store::countDistinctValues(int series, int start, int end, int i, bool handleNullFrequencies, double * value, int * distinctValues) const {
+void Store::countDistinctValues(int series, int start, int end, int i,
+                                bool handleNullFrequencies, double* value,
+                                int* distinctValues) const {
   assert(start >= 0 && end <= numberOfPairsOfSeries(series) && start <= end);
   *distinctValues = 0;
   *value = NAN;
@@ -542,14 +597,16 @@ void Store::countDistinctValues(int series, int start, int end, int i, bool hand
 int Store::totalCumulatedFrequencyValues(int series) const {
   double value;
   int distinctValues;
-  countDistinctValues(series, 0, numberOfPairsOfSeries(series), -1, true, &value, &distinctValues);
+  countDistinctValues(series, 0, numberOfPairsOfSeries(series), -1, true,
+                      &value, &distinctValues);
   return distinctValues;
 }
 
 double Store::cumulatedFrequencyValueAtIndex(int series, int i) const {
   double value;
   int distinctValues;
-  countDistinctValues(series, 0, numberOfPairsOfSeries(series), i, true, &value, &distinctValues);
+  countDistinctValues(series, 0, numberOfPairsOfSeries(series), i, true, &value,
+                      &distinctValues);
   return value;
 }
 
@@ -558,8 +615,10 @@ double Store::cumulatedFrequencyResultAtIndex(int series, int i) const {
   int index = 0;
   const double value = cumulatedFrequencyValueAtIndex(series, i);
   const int numberOfPairs = numberOfPairsOfSeries(series);
-  while (index < numberOfPairs && get(series, 0, valueIndexAtSortedIndex(series, index)) <= value) {
-    cumulatedOccurrences += get(series, 1, valueIndexAtSortedIndex(series, index));
+  while (index < numberOfPairs &&
+         get(series, 0, valueIndexAtSortedIndex(series, index)) <= value) {
+    cumulatedOccurrences +=
+        get(series, 1, valueIndexAtSortedIndex(series, index));
     index++;
   }
   // Taking advantage of sumOfOccurrences being memoized.
@@ -574,7 +633,8 @@ int Store::totalNormalProbabilityValues(int series) const {
   assert(result == std::round(result));
   /* Limiting the result to k_maxNumberOfPairs to prevent limitless Normal
    * Probability plots and int overflows */
-  static_assert(k_maxNumberOfPairs <= INT_MAX, "k_maxNumberOfPairs is too large.");
+  static_assert(k_maxNumberOfPairs <= INT_MAX,
+                "k_maxNumberOfPairs is too large.");
   if (result > k_maxNumberOfPairs) {
     return 0;
   }
@@ -591,7 +651,9 @@ double Store::normalProbabilityResultAtIndex(int series, int i) const {
   assert(i >= 0 && total > 0.0 && static_cast<double>(i) < total);
   // invnorm((i-0.5)/total,0,1)
   double plottingPosition = (static_cast<double>(i) + 0.5) / total;
-  return Poincare::NormalDistribution::CumulativeDistributiveInverseForProbability<double>(plottingPosition, 0.0, 1.0);
+  return Poincare::NormalDistribution::
+      CumulativeDistributiveInverseForProbability<double>(plottingPosition, 0.0,
+                                                          1.0);
 }
 
 uint8_t Store::valueIndexAtSortedIndex(int series, int i) const {
@@ -604,4 +666,4 @@ bool Store::frequenciesAreValid(int series) const {
   return sumOfOccurrences(series) > 0.0;
 }
 
-}
+}  // namespace Statistics

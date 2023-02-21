@@ -1,6 +1,6 @@
+#include <assert.h>
 #include <kandinsky/line.h>
 #include <kandinsky/pixel.h>
-#include <assert.h>
 
 void KDDrawLine(KDPoint p1, KDPoint p2, KDColor c) {
   // Find the largest gap
@@ -23,8 +23,8 @@ void KDDrawLine(KDPoint p1, KDPoint p2, KDColor c) {
   assert(right.x >= left.x);
   assert(bottom.y >= top.y);
 
-  KDCoordinate deltaX = 2*(right.x - left.x);
-  KDCoordinate deltaY = 2*(bottom.y - top.y);
+  KDCoordinate deltaX = 2 * (right.x - left.x);
+  KDCoordinate deltaY = 2 * (bottom.y - top.y);
 
   KDPoint p, alwaysTranslate, conditionalTranslate;
   KDCoordinate scanLength, error, minusError, plusError;
@@ -35,7 +35,7 @@ void KDDrawLine(KDPoint p1, KDPoint p2, KDColor c) {
     error = right.x - left.x;
     minusError = deltaY;
     plusError = deltaX;
-    alwaysTranslate = KDPointMake(1,0);
+    alwaysTranslate = KDPointMake(1, 0);
     conditionalTranslate = KDPointMake(0, (right.y >= left.y ? 1 : -1));
   } else {
     p = top;
@@ -43,7 +43,7 @@ void KDDrawLine(KDPoint p1, KDPoint p2, KDColor c) {
     error = bottom.y - top.y;
     minusError = deltaX;
     plusError = deltaY;
-    alwaysTranslate = KDPointMake(0,1);
+    alwaysTranslate = KDPointMake(0, 1);
     conditionalTranslate = KDPointMake((bottom.x >= top.x ? 1 : -1), 0);
   }
 
@@ -59,13 +59,12 @@ void KDDrawLine(KDPoint p1, KDPoint p2, KDColor c) {
   }
 }
 /*
-#include <cmath>
 #include <stdlib.h>
 
-void KDDrawAntiAliasedLine(KDPoint p1, KDPoint p2, KDCoordinate width, KDColor frontColor, KDColor backColor) {
-  int x0 = p1.x;
-  int y0 = p1.y;
-  int x1 = p2.x;
+#include <cmath>
+
+void KDDrawAntiAliasedLine(KDPoint p1, KDPoint p2, KDCoordinate width, KDColor
+frontColor, KDColor backColor) { int x0 = p1.x; int y0 = p1.y; int x1 = p2.x;
   int y1 = p2.y;
   float wd = width;
 
@@ -76,15 +75,12 @@ void KDDrawAntiAliasedLine(KDPoint p1, KDPoint p2, KDCoordinate width, KDColor f
 
   for (wd = (wd+1)/2; ; ) { // pixel loop
     KDPoint p = {.x = x0, .y = y0};
-    KDColor color = KDColorMix(KDColorRed, KDColorWhite, (abs(err-dx+dy)/ed-wd+1));
-    KDSetPixel(p, color);
-    e2 = err; x2 = x0;
-    if (2*e2 >= -dx) { // x step
-      for (e2 += dy, y2 = y0; e2 < ed*wd && (y1 != y2 || dx > dy); e2 += dx) {
-        y2 += sy;
-        p = {.x = x0, .y = y2};
-        color = KDColorMix(KDColorRed, KDColorWhite, (abs(err-dx+dy)/ed-wd+1));
-        setPixelColor(x0, y2 += sy, max(0,255*(abs(e2)/ed-wd+1)));
+    KDColor color = KDColorMix(KDColorRed, KDColorWhite,
+(abs(err-dx+dy)/ed-wd+1)); KDSetPixel(p, color); e2 = err; x2 = x0; if (2*e2 >=
+-dx) { // x step for (e2 += dy, y2 = y0; e2 < ed*wd && (y1 != y2 || dx > dy); e2
++= dx) { y2 += sy; p = {.x = x0, .y = y2}; color = KDColorMix(KDColorRed,
+KDColorWhite, (abs(err-dx+dy)/ed-wd+1)); setPixelColor(x0, y2 += sy,
+max(0,255*(abs(e2)/ed-wd+1)));
       }
       if (x0 == x1) break;
       e2 = err; err -= dy; x0 += sx;

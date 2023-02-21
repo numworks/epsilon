@@ -1,26 +1,26 @@
 #include "residual_plot_controller.h"
+
+#include <assert.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
-#include <assert.h>
 
 namespace Regression {
 
-ResidualPlotController::ResidualPlotController(Escher::Responder * parentResponder, Store * store) :
-  Escher::ViewController(parentResponder),
-  m_store(store),
-  m_cursor(FLT_MAX),
-  m_bannerView(this, nullptr, nullptr),
-  m_curveView(&m_range, &m_cursor, &m_bannerView, &m_cursorView, this),
-  m_selectedDotIndex(0),
-  m_selectedSeriesIndex(0)
-{}
+ResidualPlotController::ResidualPlotController(
+    Escher::Responder *parentResponder, Store *store)
+    : Escher::ViewController(parentResponder),
+      m_store(store),
+      m_cursor(FLT_MAX),
+      m_bannerView(this, nullptr, nullptr),
+      m_curveView(&m_range, &m_cursor, &m_bannerView, &m_cursorView, this),
+      m_selectedDotIndex(0),
+      m_selectedSeriesIndex(0) {}
 
 void ResidualPlotController::setSeries(int series) {
   m_selectedSeriesIndex = series;
   m_selectedDotIndex = 0;
 }
-
 
 void ResidualPlotController::updateCursor() {
   double x = xAtIndex(m_selectedDotIndex);
@@ -28,27 +28,33 @@ void ResidualPlotController::updateCursor() {
   m_cursor.moveTo(x, x, y);
   m_cursorView.setColor(Escher::Palette::DataColor[m_selectedSeriesIndex]);
 
-  const int significantDigits = Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
-  Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences->displayMode();
-  constexpr size_t bufferSize = Shared::BannerView::k_maxLengthDisplayed - 2; // -2 for "x="
+  const int significantDigits =
+      Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
+  Poincare::Preferences::PrintFloatMode displayMode =
+      Poincare::Preferences::sharedPreferences->displayMode();
+  constexpr size_t bufferSize =
+      Shared::BannerView::k_maxLengthDisplayed - 2;  // -2 for "x="
   char buffer[bufferSize];
 
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "%*.*ed", x, displayMode, significantDigits);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "%*.*ed", x, displayMode,
+                                significantDigits);
   m_bannerView.abscissaValue()->setText(buffer);
   m_bannerView.abscissaSymbol()->setText("x=");
 
   Poincare::Print::CustomPrintf(buffer, bufferSize, "%s%s%*.*ed",
-    I18n::translate(I18n::Message::Residual),
-    I18n::translate(I18n::Message::ColonConvention),
-    y, displayMode, significantDigits);
+                                I18n::translate(I18n::Message::Residual),
+                                I18n::translate(I18n::Message::ColonConvention),
+                                y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 
   m_curveView.reload();
   m_bannerView.reload();
 }
 
-bool ResidualPlotController::moveHorizontally(OMG::HorizontalDirection direction) {
-  int nextIndex = m_store->nextDot(m_selectedSeriesIndex, direction, m_selectedDotIndex, false);
+bool ResidualPlotController::moveHorizontally(
+    OMG::HorizontalDirection direction) {
+  int nextIndex = m_store->nextDot(m_selectedSeriesIndex, direction,
+                                   m_selectedDotIndex, false);
   if (nextIndex == m_selectedDotIndex || nextIndex < 0) {
     return false;
   }
@@ -88,11 +94,10 @@ void ResidualPlotController::viewWillAppear() {
     yMin = std::min(yMin, y);
     yMax = std::max(yMax, y);
   }
-  m_range.calibrate(xMin, xMax, yMin, yMax, view()->bounds().height(), m_bannerView.bounds().height());
+  m_range.calibrate(xMin, xMax, yMin, yMax, view()->bounds().height(),
+                    m_bannerView.bounds().height());
 
   updateCursor();
 }
 
-
-
-}
+}  // namespace Regression

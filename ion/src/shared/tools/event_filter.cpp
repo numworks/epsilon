@@ -1,9 +1,10 @@
-#include <iostream>
 #include <ion/events.h>
+
+#include <iostream>
 
 // TODO : Update this script to handle state file headers
 
-int main(int argc, char * argv[]) {
+int main(int argc, char* argv[]) {
   unsigned char c = 0;
   while (std::cin >> c) {
     Ion::Events::Event e(c);

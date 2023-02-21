@@ -1,14 +1,15 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_COMPLEX_MODEL_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_COMPLEX_MODEL_H
 
+#include <complex>
+
 #include "../../shared/curve_view_range.h"
 #include "illustrated_expressions_list_controller.h"
-#include <complex>
 
 namespace Calculation {
 
 class ComplexModel : public Shared::CurveViewRange, public std::complex<float> {
-public:
+ public:
   ComplexModel(std::complex<float> c = std::complex<float>(NAN, NAN));
   // CurveViewRange
   float xMin() const override;
@@ -42,9 +43,12 @@ public:
   constexpr static float k_minHorizontalMarginFactor = -1.0f;
   constexpr static float k_maxHorizontalMarginFactor = 2.0f;
   // Vertical range
-  constexpr static KDCoordinate k_width = Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin;
-  constexpr static KDCoordinate k_height = IllustratedExpressionsListController::k_illustrationHeight;
-  constexpr static KDCoordinate k_unit = k_width/3;
+  constexpr static KDCoordinate k_width = Ion::Display::Width -
+                                          Escher::Metric::PopUpRightMargin -
+                                          Escher::Metric::PopUpLeftMargin;
+  constexpr static KDCoordinate k_height =
+      IllustratedExpressionsListController::k_illustrationHeight;
+  constexpr static KDCoordinate k_unit = k_width / 3;
   /*
    *  VerticalMaring = k_height - k_unit
    *
@@ -63,13 +67,15 @@ public:
    *      = 1/3*(2 + k_height/k_unit)*imag
    *
    * */
-  constexpr static float k_minVerticalMarginFactor = 2.0f/3.0f*(1.0f - (float)k_height/(float)k_unit);
-  constexpr static float k_maxVerticalMarginFactor = 1.0f/3.0f*(2.0f + (float)k_height/(float)k_unit);
+  constexpr static float k_minVerticalMarginFactor =
+      2.0f / 3.0f * (1.0f - (float)k_height / (float)k_unit);
+  constexpr static float k_maxVerticalMarginFactor =
+      1.0f / 3.0f * (2.0f + (float)k_height / (float)k_unit);
 
-private:
+ private:
   float rangeBound(float direction, bool horizontal) const;
 };
 
-}
+}  // namespace Calculation
 
 #endif

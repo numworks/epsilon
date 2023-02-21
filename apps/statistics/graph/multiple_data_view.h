@@ -1,14 +1,14 @@
 #ifndef STATISTICS_MULTIPLE_DATA_VIEW_H
 #define STATISTICS_MULTIPLE_DATA_VIEW_H
 
-#include "data_view.h"
 #include "../store.h"
+#include "data_view.h"
 
 namespace Statistics {
 
 class MultipleDataView : public DataView {
-public:
-  MultipleDataView(Store * store) : DataView(), m_store(store) {}
+ public:
+  MultipleDataView(Store* store) : DataView(), m_store(store) {}
   KDCoordinate subviewHeight();
 
   // Display
@@ -16,14 +16,15 @@ public:
 
   // View
   int numberOfSubviews() const override;
-protected:
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-  void layoutDataSubviews(bool force) override;
-  Escher::View * subviewAtIndex(int index) override;
 
-  Store * m_store;
+ protected:
+  void drawRect(KDContext* ctx, KDRect rect) const override;
+  void layoutDataSubviews(bool force) override;
+  Escher::View* subviewAtIndex(int index) override;
+
+  Store* m_store;
 };
 
-}
+}  // namespace Statistics
 
 #endif

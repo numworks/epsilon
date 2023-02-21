@@ -11,8 +11,8 @@ int TotalNumberOfSectors();
 int SectorAtAddress(uint32_t address);
 bool IncludesAddress(uint32_t address);
 
-}
-}
-}
+}  // namespace Flash
+}  // namespace Device
+}  // namespace Ion
 
 #endif

@@ -1,6 +1,7 @@
 #include "subtitle_cell.h"
-#include <escher/palette.h>
+
 #include <assert.h>
+#include <escher/palette.h>
 
 using namespace Escher;
 
@@ -9,10 +10,12 @@ namespace Code {
 constexpr KDColor SubtitleCell::k_backgroundColor;
 constexpr KDColor SubtitleCell::k_textColor;
 
-SubtitleCell::SubtitleCell() : BufferTableCell(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, k_textColor, k_backgroundColor, k_maxNumberOfCharsInBuffer)
-{}
+SubtitleCell::SubtitleCell()
+    : BufferTableCell(KDFont::Size::Small, KDContext::k_alignLeft,
+                      KDContext::k_alignCenter, k_textColor, k_backgroundColor,
+                      k_maxNumberOfCharsInBuffer) {}
 
-void SubtitleCell::layoutSubviews(bool force)  {
+void SubtitleCell::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   if (width == 0 || height == 0) {
@@ -32,4 +35,4 @@ void SubtitleCell::layoutSubviews(bool force)  {
   m_labelView.setFrame(KDRect(x, y, width, height), force);
 }
 
-}
+}  // namespace Code

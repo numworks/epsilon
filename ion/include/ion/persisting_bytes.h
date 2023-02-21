@@ -13,7 +13,7 @@ typedef uint16_t PersistingBytesInt;
 void write(PersistingBytesInt value);
 PersistingBytesInt read();
 
-}
-}
+}  // namespace PersistingBytes
+}  // namespace Ion
 
 #endif

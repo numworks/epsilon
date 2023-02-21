@@ -12,12 +12,12 @@ extern "C" {
 namespace Poincare {
 
 class Expression;
-template<typename T>
+template <typename T>
 class Evaluation;
 
-template<typename T>
+template <typename T>
 class EvaluationNode : public TreeNode {
-public:
+ public:
   enum class Type : uint8_t {
     Exception,
     BooleanEvaluation,
@@ -25,19 +25,24 @@ public:
     MatrixComplex,
     ListComplex
   };
-  EvaluationNode<T> * childAtIndex(int index) const { return static_cast<EvaluationNode<T> *>(TreeNode::childAtIndex(index)); }
-  Direct<EvaluationNode<T> > children() const { return Direct<EvaluationNode<T> >(this); }
+  EvaluationNode<T> *childAtIndex(int index) const {
+    return static_cast<EvaluationNode<T> *>(TreeNode::childAtIndex(index));
+  }
+  Direct<EvaluationNode<T> > children() const {
+    return Direct<EvaluationNode<T> >(this);
+  }
   virtual Type type() const = 0;
   virtual ~EvaluationNode() = default;
   virtual bool isUndefined() const = 0;
   virtual std::complex<T> complexAtIndex(int index) const = 0;
   virtual T toScalar() const { return NAN; }
-  virtual Expression complexToExpression(Preferences::ComplexFormat complexFormat) const = 0;
+  virtual Expression complexToExpression(
+      Preferences::ComplexFormat complexFormat) const = 0;
 };
 
-template<typename T>
+template <typename T>
 class Evaluation : public TreeHandle {
-public:
+ public:
   Evaluation() : TreeHandle() {}
 #if 0
   template<class U> U convert() const {
@@ -52,23 +57,28 @@ public:
     return *reinterpret_cast<U *>(const_cast<Evaluation<T> *>(this));
   }
 #endif
-  EvaluationNode<T> * node() const {
+  EvaluationNode<T> *node() const {
     assert(!TreeHandle::node()->isGhost());
     return static_cast<EvaluationNode<T> *>(TreeHandle::node());
   }
 
   /* Hierarchy */
   Evaluation<T> childAtIndex(int i) const;
-  typename Poincare::EvaluationNode<T>::Type type() const { return node()->type(); }
+  typename Poincare::EvaluationNode<T>::Type type() const {
+    return node()->type();
+  }
   bool isUndefined() const { return node()->isUndefined(); }
-  std::complex<T> complexAtIndex(int index) const { return node()->complexAtIndex(index); }
+  std::complex<T> complexAtIndex(int index) const {
+    return node()->complexAtIndex(index);
+  }
   T toScalar() const { return node()->toScalar(); }
-  Expression complexToExpression(Preferences::ComplexFormat complexFormat) const;
+  Expression complexToExpression(
+      Preferences::ComplexFormat complexFormat) const;
 
-protected:
-  Evaluation(EvaluationNode<T> * n) : TreeHandle(n) {}
+ protected:
+  Evaluation(EvaluationNode<T> *n) : TreeHandle(n) {}
 };
 
-}
+}  // namespace Poincare
 
 #endif

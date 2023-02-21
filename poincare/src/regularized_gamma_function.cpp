@@ -1,11 +1,12 @@
-#include <poincare/regularized_gamma_function.h>
 #include <assert.h>
-#include <cmath>
 #include <math.h>
+#include <poincare/regularized_gamma_function.h>
+
+#include <cmath>
 
 namespace Poincare {
 
-void increaseIfTooSmall(double * d) {
+void increaseIfTooSmall(double* d) {
   assert(!std::isinf(*d) && !std::isnan(*d));
   const double small = 1e-50;
   if (std::fabs(*d) < small) {
@@ -15,7 +16,10 @@ void increaseIfTooSmall(double * d) {
 
 // TODO: use in regularized beta function
 typedef double (*ValueForIndex)(double index, double s, double x);
-static bool ContinuedFractionEvaluation(ValueForIndex a, ValueForIndex b, int maxNumberOfIterations, double * result, double context1, double context2) {
+static bool ContinuedFractionEvaluation(ValueForIndex a, ValueForIndex b,
+                                        int maxNumberOfIterations,
+                                        double* result, double context1,
+                                        double context2) {
   // Lentz's method with Thompson and Barnett's modification
   double hnminus1 = b(0, context1, context2);
   increaseIfTooSmall(&hnminus1);
@@ -62,18 +66,21 @@ static bool ContinuedFractionEvaluation(ValueForIndex a, ValueForIndex b, int ma
   return true;
 }
 
-typedef double (*TermUpdater)(double previousTerm, double index, double d1, double d2, double d3, double d4);
-bool InfiniteSeriesEvaluation(double firstTerm, TermUpdater termUpdater, double termLimit, int maxNumberOfIterations, double * result, double context1, double context2, double context3, double context4) {
+typedef double (*TermUpdater)(double previousTerm, double index, double d1,
+                              double d2, double d3, double d4);
+bool InfiniteSeriesEvaluation(double firstTerm, TermUpdater termUpdater,
+                              double termLimit, int maxNumberOfIterations,
+                              double* result, double context1, double context2,
+                              double context3, double context4) {
   double iterationCount = 0.0;
   double currentTerm = firstTerm;
   double sum = currentTerm;
-  while (iterationCount < maxNumberOfIterations
-      && !std::isinf(sum)
-      && std::fabs(currentTerm/sum) > termLimit)
-  {
-    iterationCount+= 1.0;
-    currentTerm = termUpdater(currentTerm, iterationCount, context1, context2, context3, context4);
-    sum+= currentTerm;
+  while (iterationCount < maxNumberOfIterations && !std::isinf(sum) &&
+         std::fabs(currentTerm / sum) > termLimit) {
+    iterationCount += 1.0;
+    currentTerm = termUpdater(currentTerm, iterationCount, context1, context2,
+                              context3, context4);
+    sum += currentTerm;
   }
   if (iterationCount >= maxNumberOfIterations) {
     return false;
@@ -82,7 +89,8 @@ bool InfiniteSeriesEvaluation(double firstTerm, TermUpdater termUpdater, double 
   return true;
 }
 
-double RegularizedGammaFunction(double s, double x, double epsilon, int maxNumberOfIterations, double * result) {
+double RegularizedGammaFunction(double s, double x, double epsilon,
+                                int maxNumberOfIterations, double* result) {
   // TODO Put interruption instead of maxNumberOfIterations
 
   assert(!std::isnan(s) && !std::isnan(x) && s > 0.0 && x >= 0.0);
@@ -126,35 +134,37 @@ double RegularizedGammaFunction(double s, double x, double epsilon, int maxNumbe
 
     double continuedFractionValue = 0.0;
     if (!ContinuedFractionEvaluation(
-          [](double index, double s, double x) { return index * (s - index); },
-          [](double index, double s, double x) { return (2.0 * index + 1.0) + x - s; },
-          maxNumberOfIterations,
-          &continuedFractionValue,
-          s,
-          x))
-    {
+            [](double index, double s, double x) {
+              return index * (s - index);
+            },
+            [](double index, double s, double x) {
+              return (2.0 * index + 1.0) + x - s;
+            },
+            maxNumberOfIterations, &continuedFractionValue, s, x)) {
       return false;
     }
-    *result = 1.0 - std::exp(-x + s*std::log(x) - std::lgamma(s)) * ( 1.0 / continuedFractionValue);
+    *result = 1.0 - std::exp(-x + s * std::log(x) - std::lgamma(s)) *
+                        (1.0 / continuedFractionValue);
     return true;
   }
 
   /* For x < s + 1: Compute using the infinite series representation
-   * incompleteGamma(s,x) = 1/gamma(a) * e^-x * x^s * sum(x^n/((s+n)(s+n-1)...) */
+   * incompleteGamma(s,x) = 1/gamma(a) * e^-x * x^s * sum(x^n/((s+n)(s+n-1)...)
+   */
   double infiniteSeriesValue = 0.0;
   if (!InfiniteSeriesEvaluation(
-        1.0/s,
-        [](double previousTerm, double index, double s, double x, double d1, double d2) { return previousTerm * x / (s + index); },
-        epsilon,
-        maxNumberOfIterations,
-        &infiniteSeriesValue,
-        s,
-        x, 0.0, 0.0))
-  {
+          1.0 / s,
+          [](double previousTerm, double index, double s, double x, double d1,
+             double d2) { return previousTerm * x / (s + index); },
+          epsilon, maxNumberOfIterations, &infiniteSeriesValue, s, x, 0.0,
+          0.0)) {
     return false;
   }
-  *result = std::isinf(infiniteSeriesValue) ? 1.0 : std::exp(-x + s*std::log(x) -  std::lgamma(s)) * infiniteSeriesValue;
+  *result = std::isinf(infiniteSeriesValue)
+                ? 1.0
+                : std::exp(-x + s * std::log(x) - std::lgamma(s)) *
+                      infiniteSeriesValue;
   return true;
 }
 
-}
+}  // namespace Poincare

@@ -1,6 +1,8 @@
 #include "../shared/journal.h"
-#include "../shared/journal/queue_journal.h"
+
 #include <emscripten.h>
+
+#include "../shared/journal/queue_journal.h"
 
 namespace Ion {
 namespace Simulator {
@@ -10,7 +12,7 @@ using Ion::Events::Event;
 using Ion::Events::None;
 
 class LogJournal : public Ion::Events::Journal {
-public:
+ public:
   void pushEvent(Event e) override {
     static bool lastEventWasNone = false;
     if (e != None) {
@@ -35,28 +37,22 @@ public:
       }
     }
   }
-  Event popEvent() override {
-    return None;
-  }
-  bool isEmpty() override {
-    return true;
-  }
+  Event popEvent() override { return None; }
+  bool isEmpty() override { return true; }
 };
 
-void init() {
-  Events::logTo(logJournal());
-}
+void init() { Events::logTo(logJournal()); }
 
-Events::Journal * replayJournal() {
+Events::Journal* replayJournal() {
   static QueueJournal journal;
   return &journal;
 }
 
-Ion::Events::Journal * logJournal() {
+Ion::Events::Journal* logJournal() {
   static LogJournal journal;
   return &journal;
 }
 
-}
-}
-}
+}  // namespace Journal
+}  // namespace Simulator
+}  // namespace Ion

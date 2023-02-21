@@ -6,8 +6,8 @@
 namespace Distributions {
 
 class DiscreteCalculation final : public Calculation {
-public:
-  DiscreteCalculation(Distribution * distribution);
+ public:
+  DiscreteCalculation(Distribution* distribution);
   Type type() override { return Type::Discrete; }
   int numberOfParameters() override { return 2; }
   I18n::Message legendForParameterAtIndex(int index) override;
@@ -15,12 +15,13 @@ public:
   double parameterAtIndex(int index) override;
   double lowerBound() const override { return m_abscissa; }
   double upperBound() const override { return m_abscissa; }
-private:
+
+ private:
   void compute(int indexKnownElement) override;
   double m_abscissa;
   double m_result;
 };
 
-}
+}  // namespace Distributions
 
 #endif

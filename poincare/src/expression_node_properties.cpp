@@ -14,18 +14,27 @@ namespace Poincare {
 /* Devirtualisation: methods here could be virtual but are overriden only a few
  * times so it's not worth introducing a vtable entry for them */
 
-bool ExpressionNode::isNumber() const { return isOfType({Type::BasedInteger, Type::Decimal, Type::Double, Type::Float, Type::Infinity, Type::Nonreal, Type::Rational, Type::Undefined}); }
+bool ExpressionNode::isNumber() const {
+  return isOfType({Type::BasedInteger, Type::Decimal, Type::Double, Type::Float,
+                   Type::Infinity, Type::Nonreal, Type::Rational,
+                   Type::Undefined});
+}
 
-bool ExpressionNode::isRandom() const { return isOfType({Type::Random, Type::Randint, Type::RandintNoRepeat}); }
+bool ExpressionNode::isRandom() const {
+  return isOfType({Type::Random, Type::Randint, Type::RandintNoRepeat});
+}
 
-bool ExpressionNode::isParameteredExpression() const { return isOfType({Type::Derivative, Type::Integral, Type::ListSequence, Type::Sum, Type::Product}); }
+bool ExpressionNode::isParameteredExpression() const {
+  return isOfType({Type::Derivative, Type::Integral, Type::ListSequence,
+                   Type::Sum, Type::Product});
+}
 
 bool ExpressionNode::isCombinationOfUnits() const {
   if (type() == Type::Unit) {
     return true;
   }
   if (isOfType({Type::Multiplication, Type::Division})) {
-    for (ExpressionNode * child : children()) {
+    for (ExpressionNode* child : children()) {
       if (!child->isCombinationOfUnits()) {
         return false;
       }
@@ -38,9 +47,11 @@ bool ExpressionNode::isCombinationOfUnits() const {
   return false;
 }
 
-Expression ExpressionNode::denominator(const ReductionContext& reductionContext) const {
+Expression ExpressionNode::denominator(
+    const ReductionContext& reductionContext) const {
   if (type() == Type::Multiplication) {
-    return Expression(this).convert<Multiplication>().denominator(reductionContext);
+    return Expression(this).convert<Multiplication>().denominator(
+        reductionContext);
   }
   if (type() == Type::Power) {
     return Expression(this).convert<Power>().denominator(reductionContext);
@@ -51,11 +62,14 @@ Expression ExpressionNode::denominator(const ReductionContext& reductionContext)
   return Expression();
 }
 
-Expression ExpressionNode::deepBeautify(const ReductionContext& reductionContext) {
+Expression ExpressionNode::deepBeautify(
+    const ReductionContext& reductionContext) {
   if (type() == Type::UnitConvert) {
-    return Expression(this).convert<UnitConvert>().deepBeautify(reductionContext);
+    return Expression(this).convert<UnitConvert>().deepBeautify(
+        reductionContext);
   } else if (type() == Type::PercentAddition) {
-    return Expression(this).convert<PercentAddition>().deepBeautify(reductionContext);
+    return Expression(this).convert<PercentAddition>().deepBeautify(
+        reductionContext);
   } else {
     Expression e = shallowBeautify(reductionContext);
     SimplificationHelper::deepBeautifyChildren(e, reductionContext);
@@ -63,12 +77,13 @@ Expression ExpressionNode::deepBeautify(const ReductionContext& reductionContext
   }
 }
 
-void ExpressionNode::deepReduceChildren(const ReductionContext& reductionContext) {
+void ExpressionNode::deepReduceChildren(
+    const ReductionContext& reductionContext) {
   if (type() == Type::Store) {
     Expression(this).convert<Store>().deepReduceChildren(reductionContext);
     return;
   }
-  if (type() == Type::Logarithm && numberOfChildren()==2) {
+  if (type() == Type::Logarithm && numberOfChildren() == 2) {
     Expression(this).convert<Logarithm>().deepReduceChildren(reductionContext);
     return;
   }
@@ -85,11 +100,12 @@ void ExpressionNode::deepReduceChildren(const ReductionContext& reductionContext
     return;
   }
   if (type() == Type::UnitConvert) {
-    Expression(this).convert<UnitConvert>().deepReduceChildren(reductionContext);
+    Expression(this).convert<UnitConvert>().deepReduceChildren(
+        reductionContext);
     return;
   }
-  SimplificationHelper::defaultDeepReduceChildren(Expression(this), reductionContext);
+  SimplificationHelper::defaultDeepReduceChildren(Expression(this),
+                                                  reductionContext);
 }
 
-
-}
+}  // namespace Poincare

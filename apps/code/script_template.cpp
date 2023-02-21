@@ -5,7 +5,8 @@ namespace Code {
 constexpr ScriptTemplate emptyScriptTemplate(".py", R"(from math import *
 )");
 
-constexpr ScriptTemplate squaresScriptTemplate("squares.py", R"(from math import *
+constexpr ScriptTemplate squaresScriptTemplate("squares.py",
+                                               R"(from math import *
 from turtle import *
 def squares(angle=0.5):
   reset()
@@ -20,7 +21,8 @@ def squares(angle=0.5):
     L=L-L*sin(angle*pi/180)
   hideturtle())");
 
-constexpr ScriptTemplate mandelbrotScriptTemplate("mandelbrot.py", R"(# This script draws a Mandelbrot fractal set
+constexpr ScriptTemplate mandelbrotScriptTemplate(
+    "mandelbrot.py", R"(# This script draws a Mandelbrot fractal set
 # N_iteration: degree of precision
 import kandinsky
 def mandelbrot(N_iteration):
@@ -40,7 +42,8 @@ def mandelbrot(N_iteration):
 # Draw a pixel colored in 'col' at position (x,y)
       kandinsky.set_pixel(x,y,col))");
 
-constexpr ScriptTemplate polynomialScriptTemplate("polynomial.py", R"(from math import *
+constexpr ScriptTemplate polynomialScriptTemplate("polynomial.py",
+                                                  R"(from math import *
 # roots(a,b,c) computes the solutions of the equation a*x**2+b*x+c=0
 def roots(a,b,c):
   delta = b*b-4*a*c
@@ -53,7 +56,8 @@ def roots(a,b,c):
   else:
     return None)");
 
-constexpr ScriptTemplate parabolaScriptTemplate("parabola.py", R"(from matplotlib.pyplot import *
+constexpr ScriptTemplate parabolaScriptTemplate(
+    "parabola.py", R"(from matplotlib.pyplot import *
 from math import *
 
 g=9.81
@@ -84,24 +88,22 @@ def simulation(v_0=15,alpha=pi/4,h_0=2):
   grid()
   show())");
 
-const ScriptTemplate * ScriptTemplate::Empty() {
-  return &emptyScriptTemplate;
-}
+const ScriptTemplate* ScriptTemplate::Empty() { return &emptyScriptTemplate; }
 
-const ScriptTemplate * ScriptTemplate::Squares() {
+const ScriptTemplate* ScriptTemplate::Squares() {
   return &squaresScriptTemplate;
 }
 
-const ScriptTemplate * ScriptTemplate::Mandelbrot() {
+const ScriptTemplate* ScriptTemplate::Mandelbrot() {
   return &mandelbrotScriptTemplate;
 }
 
-const ScriptTemplate * ScriptTemplate::Polynomial() {
+const ScriptTemplate* ScriptTemplate::Polynomial() {
   return &polynomialScriptTemplate;
 }
 
-const ScriptTemplate * ScriptTemplate::Parabola() {
+const ScriptTemplate* ScriptTemplate::Parabola() {
   return &parabolaScriptTemplate;
 }
 
-}
+}  // namespace Code

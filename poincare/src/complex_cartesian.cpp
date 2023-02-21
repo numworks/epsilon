@@ -1,49 +1,56 @@
-#include <poincare/complex_cartesian.h>
 #include <assert.h>
-#include <cmath>
 #include <poincare/addition.h>
 #include <poincare/arc_tangent.h>
 #include <poincare/binomial_coefficient.h>
-#include <poincare/cosine.h>
+#include <poincare/complex_cartesian.h>
 #include <poincare/constant.h>
+#include <poincare/cosine.h>
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/naperian_logarithm.h>
+#include <poincare/power.h>
 #include <poincare/rational.h>
-#include <poincare/square_root.h>
+#include <poincare/sign_function.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/sine.h>
-#include <poincare/sign_function.h>
+#include <poincare/square_root.h>
 #include <poincare/subtraction.h>
-#include <poincare/power.h>
 #include <poincare/undefined.h>
+
+#include <cmath>
 #include <utility>
 
 namespace Poincare {
 
-TrinaryBoolean ComplexCartesianNode::isNull(Context * context) const {
+TrinaryBoolean ComplexCartesianNode::isNull(Context* context) const {
   TrinaryBoolean realIsNull = childAtIndex(0)->isNull(context);
   TrinaryBoolean imagIsNull = childAtIndex(1)->isNull(context);
   return TrinaryAnd(realIsNull, imagIsNull);
 }
 
-Expression ComplexCartesianNode::shallowReduce(const ReductionContext& reductionContext) {
+Expression ComplexCartesianNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return ComplexCartesian(this).shallowReduce(reductionContext);
 }
 
-Expression ComplexCartesianNode::shallowBeautify(const ReductionContext& reductionContext) {
+Expression ComplexCartesianNode::shallowBeautify(
+    const ReductionContext& reductionContext) {
   return ComplexCartesian(this).shallowBeautify(reductionContext);
 }
 
-template<typename T>
-Complex<T> ComplexCartesianNode::templatedApproximate(const ApproximationContext& approximationContext) const {
-  Evaluation<T> realEvaluation = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> imagEvalution = childAtIndex(1)->approximate(T(), approximationContext);
+template <typename T>
+Complex<T> ComplexCartesianNode::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
+  Evaluation<T> realEvaluation =
+      childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> imagEvalution =
+      childAtIndex(1)->approximate(T(), approximationContext);
   assert(realEvaluation.type() == EvaluationNode<T>::Type::Complex);
   assert(imagEvalution.type() == EvaluationNode<T>::Type::Complex);
   std::complex<T> a = realEvaluation.complexAtIndex(0);
   std::complex<T> b = imagEvalution.complexAtIndex(0);
-  if ((a.imag() != static_cast<T>(0.0) && !std::isnan(a.imag())) || (b.imag() != static_cast<T>(0.0) && !std::isnan(b.imag()))) {
+  if ((a.imag() != static_cast<T>(0.0) && !std::isnan(a.imag())) ||
+      (b.imag() != static_cast<T>(0.0) && !std::isnan(b.imag()))) {
     /* a and b are supposed to be real (if they are not undefined). However,
      * due to double precision limit, the approximation of the real part or the
      * imaginary part can lead to complex values.
@@ -63,11 +70,9 @@ Complex<T> ComplexCartesianNode::templatedApproximate(const ApproximationContext
 Expression ComplexCartesian::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits
-    );
+        SimplificationHelper::UnitReduction::BanUnits);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -80,24 +85,28 @@ Expression ComplexCartesian::shallowReduce(ReductionContext reductionContext) {
   return *this;
 }
 
-Expression ComplexCartesian::shallowBeautify(const ReductionContext& reductionContext) {
+Expression ComplexCartesian::shallowBeautify(
+    const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
-  Expression oppositeA = a.makePositiveAnyNegativeNumeralFactor(reductionContext);
-  Expression oppositeB = b.makePositiveAnyNegativeNumeralFactor(reductionContext);
+  Expression oppositeA =
+      a.makePositiveAnyNegativeNumeralFactor(reductionContext);
+  Expression oppositeB =
+      b.makePositiveAnyNegativeNumeralFactor(reductionContext);
   a = oppositeA.isUninitialized() ? a : oppositeA;
   b = oppositeB.isUninitialized() ? b : oppositeB;
-  Expression e = Expression::CreateComplexExpression(a, b, Preferences::ComplexFormat::Cartesian,
-      a.isUndefined() || b.isUndefined(),
-      Expression::IsZero(a), Expression::IsOne(a), Expression::IsZero(b), Expression::IsOne(b),
-      !oppositeA.isUninitialized(),
-      !oppositeB.isUninitialized()
-    );
+  Expression e = Expression::CreateComplexExpression(
+      a, b, Preferences::ComplexFormat::Cartesian,
+      a.isUndefined() || b.isUndefined(), Expression::IsZero(a),
+      Expression::IsOne(a), Expression::IsZero(b), Expression::IsOne(b),
+      !oppositeA.isUninitialized(), !oppositeB.isUninitialized());
   replaceWithInPlace(e);
   return e;
 }
 
-void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode::Type searchedType, Expression * factor, Expression * argument, const ReductionContext& reductionContext) {
+void ComplexCartesian::factorAndArgumentOfFunction(
+    Expression e, ExpressionNode::Type searchedType, Expression* factor,
+    Expression* argument, const ReductionContext& reductionContext) {
   if (e.type() == searchedType) {
     *factor = Rational::Builder(1);
     *argument = e.childAtIndex(0);
@@ -109,9 +118,10 @@ void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode:
       if (e.childAtIndex(i).type() == searchedType) {
         *argument = e.childAtIndex(i).childAtIndex(0);
         *factor = e.clone();
-        static_cast<Multiplication *>(factor)->removeChildAtIndexInPlace(i);
+        static_cast<Multiplication*>(factor)->removeChildAtIndexInPlace(i);
         *factor = factor->shallowReduce(reductionContext);
-        Expression positiveFactor = factor->makePositiveAnyNegativeNumeralFactor(reductionContext);
+        Expression positiveFactor =
+            factor->makePositiveAnyNegativeNumeralFactor(reductionContext);
         *factor = positiveFactor.isUninitialized() ? *factor : positiveFactor;
         return;
       }
@@ -119,13 +129,18 @@ void ComplexCartesian::factorAndArgumentOfFunction(Expression e, ExpressionNode:
   }
 }
 
-Expression ComplexCartesian::squareNorm(const ReductionContext& reductionContext) {
+Expression ComplexCartesian::squareNorm(
+    const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   Expression aFactor, bFactor, aArgument, bArgument;
-  factorAndArgumentOfFunction(a, ExpressionNode::Type::Cosine, &aFactor, &aArgument, reductionContext);
-  factorAndArgumentOfFunction(b, ExpressionNode::Type::Sine, &bFactor, &bArgument, reductionContext);
-  if (!aFactor.isUninitialized() && !aArgument.isUninitialized() && !bFactor.isUninitialized() && !bArgument.isUninitialized() && aFactor.isIdenticalTo(bFactor) && aArgument.isIdenticalTo(bArgument)) {
+  factorAndArgumentOfFunction(a, ExpressionNode::Type::Cosine, &aFactor,
+                              &aArgument, reductionContext);
+  factorAndArgumentOfFunction(b, ExpressionNode::Type::Sine, &bFactor,
+                              &bArgument, reductionContext);
+  if (!aFactor.isUninitialized() && !aArgument.isUninitialized() &&
+      !bFactor.isUninitialized() && !bArgument.isUninitialized() &&
+      aFactor.isIdenticalTo(bFactor) && aArgument.isIdenticalTo(bArgument)) {
     Power result = Power::Builder(aFactor, Rational::Builder(2));
     aFactor.shallowReduce(reductionContext);
     return std::move(result);
@@ -143,7 +158,8 @@ Expression ComplexCartesian::norm(const ReductionContext& reductionContext) {
   // Special case for pure real or pure imaginary cartesian
   if (imag().isNull(reductionContext.context()) == TrinaryBoolean::True) {
     a = real();
-  } else if (real().isNull(reductionContext.context()) == TrinaryBoolean::True) {
+  } else if (real().isNull(reductionContext.context()) ==
+             TrinaryBoolean::True) {
     a = imag();
   }
   if (!a.isUninitialized()) {
@@ -154,12 +170,13 @@ Expression ComplexCartesian::norm(const ReductionContext& reductionContext) {
     return norm;
   }
   Expression n2 = squareNorm(reductionContext);
-  Expression n =  SquareRoot::Builder(n2);
+  Expression n = SquareRoot::Builder(n2);
   n2.shallowReduce(reductionContext);
   return n;
 }
 
-Expression ComplexCartesian::argument(const ReductionContext& reductionContext) {
+Expression ComplexCartesian::argument(
+    const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   if (b.isNull(reductionContext.context()) != TrinaryBoolean::True) {
@@ -170,13 +187,15 @@ Expression ComplexCartesian::argument(const ReductionContext& reductionContext) 
     Expression arcTangent = ArcTangent::Builder(divab);
     divab.shallowReduce(reductionContext);
     if (reductionContext.angleUnit() != Preferences::AngleUnit::Radian) {
-      Expression temp = arcTangent.angleUnitToRadian(reductionContext.angleUnit());
+      Expression temp =
+          arcTangent.angleUnitToRadian(reductionContext.angleUnit());
       arcTangent.shallowReduce(reductionContext);
       arcTangent = temp;
     }
     // Then, compute sign(b) * π/2 - atan(a/b)
     Expression signb = SignFunction::Builder(b);
-    Expression signbPi2 = Multiplication::Builder(Rational::Builder(1,2), signb, Constant::PiBuilder());
+    Expression signbPi2 = Multiplication::Builder(Rational::Builder(1, 2),
+                                                  signb, Constant::PiBuilder());
     signb.shallowReduce(reductionContext);
     Expression sub = Subtraction::Builder(signbPi2, arcTangent);
     signbPi2.shallowReduce(reductionContext);
@@ -187,21 +206,26 @@ Expression ComplexCartesian::argument(const ReductionContext& reductionContext) 
     Expression signa = SignFunction::Builder(a).shallowReduce(reductionContext);
     Subtraction sub = Subtraction::Builder(Rational::Builder(1), signa);
     signa.shallowReduce(reductionContext);
-    Multiplication mul = Multiplication::Builder(Rational::Builder(1,2), Constant::PiBuilder(), sub);
+    Multiplication mul = Multiplication::Builder(Rational::Builder(1, 2),
+                                                 Constant::PiBuilder(), sub);
     sub.shallowReduce(reductionContext);
     return std::move(mul);
   }
 }
 
-ComplexCartesian ComplexCartesian::inverse(const ReductionContext& reductionContext) {
+ComplexCartesian ComplexCartesian::inverse(
+    const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   // 1/(a+ib) = a/(a^2+b^2)+i*(-b/(a^2+b^2))
-  Expression denominatorReal = clone().convert<ComplexCartesian>().squareNorm(reductionContext);
+  Expression denominatorReal =
+      clone().convert<ComplexCartesian>().squareNorm(reductionContext);
   Expression denominatorImag = denominatorReal.clone();
-  Expression denominatorRealInv = Power::Builder(denominatorReal, Rational::Builder(-1));
+  Expression denominatorRealInv =
+      Power::Builder(denominatorReal, Rational::Builder(-1));
   denominatorReal.shallowReduce(reductionContext);
-  Expression denominatorImagInv = Power::Builder(denominatorImag, Rational::Builder(-1));
+  Expression denominatorImagInv =
+      Power::Builder(denominatorImag, Rational::Builder(-1));
   denominatorImag.shallowReduce(reductionContext);
   Multiplication A = Multiplication::Builder(a, denominatorRealInv);
   denominatorRealInv.shallowReduce(reductionContext);
@@ -209,24 +233,27 @@ ComplexCartesian ComplexCartesian::inverse(const ReductionContext& reductionCont
   Multiplication B = Multiplication::Builder(numeratorImag, denominatorImagInv);
   numeratorImag.shallowReduce(reductionContext);
   denominatorImagInv.shallowReduce(reductionContext);
-  ComplexCartesian result = ComplexCartesian::Builder(A,B);
+  ComplexCartesian result = ComplexCartesian::Builder(A, B);
   A.shallowReduce(reductionContext);
   B.shallowReduce(reductionContext);
   return result.interruptComputationIfManyNodes();
 }
 
-Multiplication ComplexCartesian::squareRootHelper(Expression e, const ReductionContext& reductionContext) {
+Multiplication ComplexCartesian::squareRootHelper(
+    Expression e, const ReductionContext& reductionContext) {
   //(1/2)*sqrt(2*e)
   Multiplication doubleE = Multiplication::Builder(Rational::Builder(2), e);
   e.shallowReduce(reductionContext);
   Expression sqrt = SquareRoot::Builder(doubleE);
   doubleE.shallowReduce(reductionContext);
-  Multiplication result = Multiplication::Builder(Rational::Builder(1,2), sqrt);
+  Multiplication result =
+      Multiplication::Builder(Rational::Builder(1, 2), sqrt);
   sqrt.shallowReduce(reductionContext);
   return result;
 }
 
-ComplexCartesian ComplexCartesian::squareRoot(const ReductionContext& reductionContext) {
+ComplexCartesian ComplexCartesian::squareRoot(
+    const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   // A: (1/2)*sqrt(2*(sqrt(a^2+b^2)+a))
@@ -251,24 +278,24 @@ ComplexCartesian ComplexCartesian::squareRoot(const ReductionContext& reductionC
   return result.interruptComputationIfManyNodes();
 }
 
-
-ComplexCartesian ComplexCartesian::powerInteger(int n, const ReductionContext& reductionContext) {
+ComplexCartesian ComplexCartesian::powerInteger(
+    int n, const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   assert(n > 0);
   assert(b.isNull(reductionContext.context()) != TrinaryBoolean::True);
 
-  // Special case: a == 0 (otherwise, we are going to introduce undefined expressions - a^0 = NAN)
-  // (b*i)^n = b^n*i^n with i^n == i, -i, 1 or -1
+  // Special case: a == 0 (otherwise, we are going to introduce undefined
+  // expressions - a^0 = NAN) (b*i)^n = b^n*i^n with i^n == i, -i, 1 or -1
   if (a.isNull(reductionContext.context()) == TrinaryBoolean::True) {
     ComplexCartesian result;
     Expression bpow = Power::Builder(b, Rational::Builder(n));
-    if (n/2%2 == 1) {
+    if (n / 2 % 2 == 1) {
       Expression temp = Multiplication::Builder(Rational::Builder(-1), bpow);
       bpow.shallowReduce(reductionContext);
       bpow = temp;
     }
-    if (n%2 == 0) {
+    if (n % 2 == 0) {
       result = ComplexCartesian::Builder(bpow, Rational::Builder(0));
     } else {
       result = ComplexCartesian::Builder(Rational::Builder(0), bpow);
@@ -283,19 +310,20 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, const ReductionContext& r
   Addition B = Addition::Builder();
   ComplexCartesian result = ComplexCartesian::Builder(A, B);
   for (int i = 0; i <= n; i++) {
-    BinomialCoefficient binom = BinomialCoefficient::Builder(Rational::Builder(n), Rational::Builder(i));
+    BinomialCoefficient binom = BinomialCoefficient::Builder(
+        Rational::Builder(n), Rational::Builder(i));
     Expression aclone = i == n ? a : a.clone();
     Expression bclone = i == n ? b : b.clone();
-    Power apow = Power::Builder(aclone, Rational::Builder(n-i));
+    Power apow = Power::Builder(aclone, Rational::Builder(n - i));
     Power bpow = Power::Builder(bclone, Rational::Builder(i));
     Multiplication m = Multiplication::Builder(binom, apow, bpow);
     binom.shallowReduce(reductionContext);
     apow.shallowReduce(reductionContext);
     bpow.shallowReduce(reductionContext);
-    if (i/2%2 == 1) {
+    if (i / 2 % 2 == 1) {
       m.addChildAtIndexInPlace(Rational::Builder(-1), 0, m.numberOfChildren());
     }
-    if (i%2 == 0) {
+    if (i % 2 == 0) {
       A.addChildAtIndexInPlace(m, A.numberOfChildren(), A.numberOfChildren());
     } else {
       B.addChildAtIndexInPlace(m, B.numberOfChildren(), B.numberOfChildren());
@@ -311,21 +339,22 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, const ReductionContext& r
   return result;
 }
 
-ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, const ReductionContext& reductionContext) {
+ComplexCartesian ComplexCartesian::multiply(
+    ComplexCartesian& other, const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
   Expression c = other.real();
   Expression d = other.imag();
   // (a+ib) * (c+id) = (ac-bd)+i*(ad+bc)
   // Compute ac-bd
-  Expression ac =  Multiplication::Builder(a.clone(), c.clone());
-  Expression bd =  Multiplication::Builder(b.clone(), d.clone());
+  Expression ac = Multiplication::Builder(a.clone(), c.clone());
+  Expression bd = Multiplication::Builder(b.clone(), d.clone());
   Subtraction A = Subtraction::Builder(ac, bd);
   ac.shallowReduce(reductionContext);
   bd.shallowReduce(reductionContext);
   // Compute ad+bc
-  Expression ad =  Multiplication::Builder(a, d);
-  Expression bc =  Multiplication::Builder(b, c);
+  Expression ad = Multiplication::Builder(a, d);
+  Expression bc = Multiplication::Builder(b, c);
   Addition B = Addition::Builder(ad, bc);
   ad.shallowReduce(reductionContext);
   bc.shallowReduce(reductionContext);
@@ -335,14 +364,17 @@ ComplexCartesian ComplexCartesian::multiply(ComplexCartesian & other, const Redu
   return result.interruptComputationIfManyNodes();
 }
 
-Expression ComplexCartesian::powerHelper(Expression norm, Expression trigo, const ReductionContext& reductionContext) {
+Expression ComplexCartesian::powerHelper(
+    Expression norm, Expression trigo,
+    const ReductionContext& reductionContext) {
   Multiplication m = Multiplication::Builder(norm, trigo);
   norm.shallowReduce(reductionContext);
   trigo.shallowReduce(reductionContext);
   return std::move(m);
 }
 
-ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, const ReductionContext& reductionContext) {
+ComplexCartesian ComplexCartesian::power(
+    ComplexCartesian& other, const ReductionContext& reductionContext) {
   Expression r = clone().convert<ComplexCartesian>().norm(reductionContext);
   Expression rclone = r.clone();
   Expression th = argument(reductionContext);
@@ -352,7 +384,8 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, const Reducti
   // R = r^c*e^(-th*d)
   Expression rpowc = Power::Builder(rclone, c.clone());
   rclone.shallowReduce(reductionContext);
-  Expression thmuld = Multiplication::Builder(Rational::Builder(-1), thclone, d.clone());
+  Expression thmuld =
+      Multiplication::Builder(Rational::Builder(-1), thclone, d.clone());
   thclone.shallowReduce(reductionContext);
   Expression exp = Power::Builder(Constant::ExponentialEBuilder(), thmuld);
   thmuld.shallowReduce(reductionContext);
@@ -394,9 +427,10 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, const Reducti
 ComplexCartesian ComplexCartesian::interruptComputationIfManyNodes() {
   if (numberOfDescendants(true) > k_maxNumberOfNodesBeforeInterrupting) {
     ExceptionCheckpoint::Raise();
-    return ComplexCartesian::Builder(Undefined::Builder(), Undefined::Builder());
+    return ComplexCartesian::Builder(Undefined::Builder(),
+                                     Undefined::Builder());
   }
   return *this;
 }
 
-}
+}  // namespace Poincare

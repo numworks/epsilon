@@ -1,16 +1,19 @@
-#include <poincare/serialization_helper.h>
-#include <poincare/expression_node.h>
-#include <poincare/rational.h>
+#include <assert.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
+#include <poincare/expression_node.h>
+#include <poincare/rational.h>
+#include <poincare/serialization_helper.h>
 #include <string.h>
-#include <assert.h>
 
 namespace Poincare {
 
-int SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(char * buffer, int length) {
-  assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointLeftSystemParenthesis == 1));
-  assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointRightSystemParenthesis == 1));
+int SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
+    char *buffer, int length) {
+  assert(
+      UTF8Decoder::CharSizeOfCodePoint(UCodePointLeftSystemParenthesis == 1));
+  assert(
+      UTF8Decoder::CharSizeOfCodePoint(UCodePointRightSystemParenthesis == 1));
   assert(UTF8Decoder::CharSizeOfCodePoint('(' == 1));
   assert(UTF8Decoder::CharSizeOfCodePoint(')' == 1));
   assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointSystem == 1));
@@ -27,7 +30,8 @@ int SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(char
   while (c != 0) {
     if (pendingSystemCodePoint && (c == '{' || c == '}')) {
       *(buffer + offset) = c == '{' ? '(' : ')';
-      strlcpy(buffer + offset - 1, buffer + offset, strlen(buffer + offset) + 1);
+      strlcpy(buffer + offset - 1, buffer + offset,
+              strlen(buffer + offset) + 1);
       length--;
       offset--;
     } else if (c == UCodePointLeftSystemParenthesis) {
@@ -45,14 +49,14 @@ int SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(char
   return length;
 }
 
-static bool checkBufferSize(char * buffer, int bufferSize, int * result) {
+static bool checkBufferSize(char *buffer, int bufferSize, int *result) {
   // If buffer has size 0 or 1, put a zero if it fits and return
   if (bufferSize == 0) {
     *result = -1;
     return true;
   }
 
-  buffer[bufferSize-1] = 0; // Null-terminate the buffer
+  buffer[bufferSize - 1] = 0;  // Null-terminate the buffer
   if (bufferSize == 1) {
     *result = 0;
     return true;
@@ -61,13 +65,9 @@ static bool checkBufferSize(char * buffer, int bufferSize, int * result) {
 }
 
 int SerializationHelper::SerializeChild(
-    const TreeNode * childNode,
-    const TreeNode * parentNode,
-    char * buffer,
-    int bufferSize,
-    Preferences::PrintFloatMode floatDisplayMode,
-    int numberOfDigits)
-{
+    const TreeNode *childNode, const TreeNode *parentNode, char *buffer,
+    int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfDigits) {
   {
     int result = 0;
     if (checkBufferSize(buffer, bufferSize, &result)) {
@@ -77,41 +77,41 @@ int SerializationHelper::SerializeChild(
 
   int numberOfChar = 0;
   // Write the child with parentheses if needed
-  bool addParentheses = parentNode->childNeedsSystemParenthesesAtSerialization(childNode);
+  bool addParentheses =
+      parentNode->childNeedsSystemParenthesesAtSerialization(childNode);
   if (addParentheses) {
-    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
-    if (numberOfChar >= bufferSize-1) {
-      return bufferSize-1;
+    numberOfChar += SerializationHelper::CodePoint(
+        buffer + numberOfChar, bufferSize - numberOfChar,
+        UCodePointLeftSystemParenthesis);
+    if (numberOfChar >= bufferSize - 1) {
+      return bufferSize - 1;
     }
   }
-  numberOfChar+= childNode->serialize(buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
-  if (numberOfChar >= bufferSize-1) {
+  numberOfChar +=
+      childNode->serialize(buffer + numberOfChar, bufferSize - numberOfChar,
+                           floatDisplayMode, numberOfDigits);
+  if (numberOfChar >= bufferSize - 1) {
     assert(buffer[bufferSize - 1] == 0);
-    return bufferSize-1;
+    return bufferSize - 1;
   }
   if (addParentheses) {
-    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
-    if (numberOfChar >= bufferSize-1) {
+    numberOfChar += SerializationHelper::CodePoint(
+        buffer + numberOfChar, bufferSize - numberOfChar,
+        UCodePointRightSystemParenthesis);
+    if (numberOfChar >= bufferSize - 1) {
       assert(buffer[bufferSize - 1] == 0);
-      return bufferSize-1;
+      return bufferSize - 1;
     }
   }
   assert(buffer[numberOfChar] == 0);
   return numberOfChar;
 }
 
-int InfixPrefix(
-    bool prefix,
-    const TreeNode * node,
-    char * buffer,
-    int bufferSize,
-    Preferences::PrintFloatMode floatDisplayMode,
-    int numberOfDigits,
-    const char * operatorName,
-    SerializationHelper::ParenthesisType typeOfParenthesis,
-    int firstChildIndex,
-    int lastChildIndex)
-{
+int InfixPrefix(bool prefix, const TreeNode *node, char *buffer, int bufferSize,
+                Preferences::PrintFloatMode floatDisplayMode,
+                int numberOfDigits, const char *operatorName,
+                SerializationHelper::ParenthesisType typeOfParenthesis,
+                int firstChildIndex, int lastChildIndex) {
   {
     int result = 0;
     if (checkBufferSize(buffer, bufferSize, &result)) {
@@ -126,10 +126,10 @@ int InfixPrefix(
   if (prefix) {
     // Prefix: Copy the operator name
     numberOfChar = strlcpy(buffer, operatorName, bufferSize);
-    if (numberOfChar >= bufferSize-1) {
+    if (numberOfChar >= bufferSize - 1) {
       // Erase the inserted chars to prevent truncated operator names.
       memset(buffer, 0, bufferSize);
-      return bufferSize-1;
+      return bufferSize - 1;
     }
     // Add the opening (system or user) parenthesis
     switch (typeOfParenthesis) {
@@ -150,11 +150,13 @@ int InfixPrefix(
     }
     if (typeOfParenthesis != SerializationHelper::ParenthesisType::None) {
       if (typeOfParenthesis == SerializationHelper::ParenthesisType::Braces) {
-        numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSystem);
+        numberOfChar += SerializationHelper::CodePoint(
+            buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSystem);
       }
-      numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, openingCodePoint);
+      numberOfChar += SerializationHelper::CodePoint(
+          buffer + numberOfChar, bufferSize - numberOfChar, openingCodePoint);
     }
-    if (numberOfChar >= bufferSize-1) {
+    if (numberOfChar >= bufferSize - 1) {
       assert(buffer[bufferSize - 1] == 0);
       return bufferSize - 1;
     }
@@ -171,38 +173,50 @@ int InfixPrefix(
     for (int i = firstChildIndex; i <= lastIndex; i++) {
       if (i != firstChildIndex) {
         // Write the operator or the comma
-        numberOfChar += prefix ?
-          SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, ',') :
-          strlcpy(buffer+numberOfChar, operatorName, bufferSize-numberOfChar);
-        if (numberOfChar >= bufferSize-1) {
+        numberOfChar +=
+            prefix ? SerializationHelper::CodePoint(
+                         buffer + numberOfChar, bufferSize - numberOfChar, ',')
+                   : strlcpy(buffer + numberOfChar, operatorName,
+                             bufferSize - numberOfChar);
+        if (numberOfChar >= bufferSize - 1) {
           assert(buffer[bufferSize - 1] == 0);
           return bufferSize - 1;
         }
       }
       // Write the child, with or without parentheses if needed
       if (prefix) {
-        if (typeOfParenthesis == SerializationHelper::ParenthesisType::System && (childrenCount > 1)) {
-          numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
-          if (numberOfChar >= bufferSize-1) {
+        if (typeOfParenthesis == SerializationHelper::ParenthesisType::System &&
+            (childrenCount > 1)) {
+          numberOfChar += SerializationHelper::CodePoint(
+              buffer + numberOfChar, bufferSize - numberOfChar,
+              UCodePointLeftSystemParenthesis);
+          if (numberOfChar >= bufferSize - 1) {
             assert(buffer[bufferSize - 1] == 0);
             return bufferSize - 1;
           }
         }
-        numberOfChar += node->childAtIndex(i)->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfDigits);
-        if (numberOfChar >= bufferSize-1) {
+        numberOfChar += node->childAtIndex(i)->serialize(
+            buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode,
+            numberOfDigits);
+        if (numberOfChar >= bufferSize - 1) {
           assert(buffer[bufferSize - 1] == 0);
           return bufferSize - 1;
         }
-        if (typeOfParenthesis == SerializationHelper::ParenthesisType::System && (childrenCount > 1)) {
-          numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
-          if (numberOfChar >= bufferSize-1) {
+        if (typeOfParenthesis == SerializationHelper::ParenthesisType::System &&
+            (childrenCount > 1)) {
+          numberOfChar += SerializationHelper::CodePoint(
+              buffer + numberOfChar, bufferSize - numberOfChar,
+              UCodePointRightSystemParenthesis);
+          if (numberOfChar >= bufferSize - 1) {
             assert(buffer[bufferSize - 1] == 0);
             return bufferSize - 1;
           }
         }
       } else {
-        numberOfChar += SerializationHelper::SerializeChild(node->childAtIndex(i), node, buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
-        if (numberOfChar >= bufferSize-1) {
+        numberOfChar += SerializationHelper::SerializeChild(
+            node->childAtIndex(i), node, buffer + numberOfChar,
+            bufferSize - numberOfChar, floatDisplayMode, numberOfDigits);
+        if (numberOfChar >= bufferSize - 1) {
           assert(buffer[bufferSize - 1] == 0);
           return bufferSize - 1;
         }
@@ -210,15 +224,18 @@ int InfixPrefix(
     }
   }
 
-  if (prefix && typeOfParenthesis != SerializationHelper::ParenthesisType::None) {
+  if (prefix &&
+      typeOfParenthesis != SerializationHelper::ParenthesisType::None) {
     // Add the closing parenthesis
     if (typeOfParenthesis == SerializationHelper::ParenthesisType::Braces) {
-      numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSystem);
+      numberOfChar += SerializationHelper::CodePoint(
+          buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSystem);
     }
-    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, closingCodePoint);
-    if (numberOfChar >= bufferSize-1) {
-       assert(buffer[bufferSize - 1] == 0);
-       return bufferSize - 1;
+    numberOfChar += SerializationHelper::CodePoint(
+        buffer + numberOfChar, bufferSize - numberOfChar, closingCodePoint);
+    if (numberOfChar >= bufferSize - 1) {
+      assert(buffer[bufferSize - 1] == 0);
+      return bufferSize - 1;
     }
   }
 
@@ -226,33 +243,29 @@ int InfixPrefix(
   return numberOfChar;
 }
 
-int SerializationHelper::Infix(
-    const TreeNode * node,
-    char * buffer,
-    int bufferSize,
-    Preferences::PrintFloatMode floatDisplayMode,
-    int numberOfDigits,
-    const char * operatorName,
-    int firstChildIndex,
-    int lastChildIndex)
-{
-  return InfixPrefix(false, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, ParenthesisType::None, firstChildIndex, lastChildIndex);
+int SerializationHelper::Infix(const TreeNode *node, char *buffer,
+                               int bufferSize,
+                               Preferences::PrintFloatMode floatDisplayMode,
+                               int numberOfDigits, const char *operatorName,
+                               int firstChildIndex, int lastChildIndex) {
+  return InfixPrefix(false, node, buffer, bufferSize, floatDisplayMode,
+                     numberOfDigits, operatorName, ParenthesisType::None,
+                     firstChildIndex, lastChildIndex);
 }
 
-int SerializationHelper::Prefix(
-    const TreeNode * node,
-    char * buffer,
-    int bufferSize,
-    Preferences::PrintFloatMode floatDisplayMode,
-    int numberOfDigits,
-    const char * operatorName,
-    ParenthesisType typeOfParenthesis,
-    int lastChildIndex)
-{
-  return InfixPrefix(true, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, typeOfParenthesis, 0, lastChildIndex);
+int SerializationHelper::Prefix(const TreeNode *node, char *buffer,
+                                int bufferSize,
+                                Preferences::PrintFloatMode floatDisplayMode,
+                                int numberOfDigits, const char *operatorName,
+                                ParenthesisType typeOfParenthesis,
+                                int lastChildIndex) {
+  return InfixPrefix(true, node, buffer, bufferSize, floatDisplayMode,
+                     numberOfDigits, operatorName, typeOfParenthesis, 0,
+                     lastChildIndex);
 }
 
-int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoint c) {
+int SerializationHelper::CodePoint(char *buffer, int bufferSize,
+                                   class CodePoint c) {
   {
     int result = 0;
     if (checkBufferSize(buffer, bufferSize, &result)) {
@@ -271,11 +284,15 @@ int SerializationHelper::CodePoint(char * buffer, int bufferSize, class CodePoin
   return length;
 }
 
-bool SerializationHelper::PostfixChildNeedsSystemParenthesesAtSerialization(const TreeNode * child) {
-  if (static_cast<const ExpressionNode *>(child)->type() == ExpressionNode::Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
+bool SerializationHelper::PostfixChildNeedsSystemParenthesesAtSerialization(
+    const TreeNode *child) {
+  if (static_cast<const ExpressionNode *>(child)->type() ==
+          ExpressionNode::Type::Rational &&
+      !static_cast<const RationalNode *>(child)->isInteger()) {
     return true;
   }
-  return static_cast<const ExpressionNode *>(child)->isOfType({ExpressionNode::Type::Division, ExpressionNode::Type::Power});
+  return static_cast<const ExpressionNode *>(child)->isOfType(
+      {ExpressionNode::Type::Division, ExpressionNode::Type::Power});
 }
 
-}
+}  // namespace Poincare

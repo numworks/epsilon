@@ -12,15 +12,15 @@
  * which results in a very consequent speedup (up to ~10x faster). */
 
 #include <ion/display_constants.h>
-#include <kandinsky/rect.h>
 #include <kandinsky/color.h>
+#include <kandinsky/rect.h>
 
 namespace Ion {
 namespace Display {
 
-void pushRect(KDRect r, const KDColor * pixels);
+void pushRect(KDRect r, const KDColor* pixels);
 void pushRectUniform(KDRect r, KDColor c);
-void pullRect(KDRect r, KDColor * pixels);
+void pullRect(KDRect r, KDColor* pixels);
 
 bool waitForVBlank();
 
@@ -29,9 +29,9 @@ int displayUniformTilingSize10(KDColor c);
 int displayColoredTilingSize10();
 void POSTPushMulticolor(int rootNumberTiles, int tileSize);
 
-void setScreenshotCallback(void(*)(void));
+void setScreenshotCallback(void (*)(void));
 
-}
-}
+}  // namespace Display
+}  // namespace Ion
 
 #endif

@@ -1,21 +1,22 @@
 #ifndef ESCHER_METRIC_H
 #define ESCHER_METRIC_H
 
+#include <ion/display.h>
 #include <kandinsky/coordinate.h>
 #include <kandinsky/font.h>
-#include <ion/display.h>
 
 namespace Escher {
 
 class Metric {
-public:
+ public:
   // Common margins
   constexpr static KDCoordinate CommonMargin = 14;
   constexpr static KDCoordinate ScrollViewBarThickness = 2;
   constexpr static KDCoordinate CommonBottomMargin = CommonMargin;
   constexpr static KDCoordinate CommonLargeMargin = 10;
   constexpr static KDCoordinate CommonLeftMargin = CommonMargin;
-  constexpr static KDCoordinate CommonMenuMargin = (CommonMargin - ScrollViewBarThickness)/2;
+  constexpr static KDCoordinate CommonMenuMargin =
+      (CommonMargin - ScrollViewBarThickness) / 2;
   constexpr static KDCoordinate CommonRightMargin = CommonMargin;
   constexpr static KDCoordinate CommonSmallMargin = 5;
   constexpr static KDCoordinate CommonTopMargin = CommonMargin;
@@ -42,7 +43,8 @@ public:
   constexpr static KDCoordinate EllipsisCellWidth = 37;
   constexpr static KDCoordinate ExpressionViewMargin = 5;
   constexpr static KDCoordinate ExpressionInputBarMinimalHeight = 37;
-  constexpr static KDCoordinate EditableExpressionAdditionalMargin = BigCellMargin - ExpressionViewMargin;
+  constexpr static KDCoordinate EditableExpressionAdditionalMargin =
+      BigCellMargin - ExpressionViewMargin;
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
   constexpr static KDCoordinate MinimalBracketAndParenthesisChildHeight = 16;
@@ -68,14 +70,18 @@ public:
   constexpr static KDCoordinate SmallEditableCellHeight = 20;
 
   // Display
-  constexpr static KDCoordinate DisplayHeightWithoutTitleBar = Ion::Display::Height - TitleBarHeight;
+  constexpr static KDCoordinate DisplayHeightWithoutTitleBar =
+      Ion::Display::Height - TitleBarHeight;
 
-  constexpr static KDCoordinate SmallFontCellWidth(int numberOfChars, KDCoordinate margin) {
+  constexpr static KDCoordinate SmallFontCellWidth(int numberOfChars,
+                                                   KDCoordinate margin) {
     return numberOfChars * KDFont::GlyphWidth(KDFont::Size::Small) + 2 * margin;
   }
 
-  constexpr static int MinimalNumberOfScrollableRowsToFillDisplayHeight(KDCoordinate rowHeight, KDCoordinate unusableHeight = 0) {
-    return 1 + 1 + ((DisplayHeightWithoutTitleBar - unusableHeight - 1) / rowHeight);
+  constexpr static int MinimalNumberOfScrollableRowsToFillDisplayHeight(
+      KDCoordinate rowHeight, KDCoordinate unusableHeight = 0) {
+    return 1 + 1 +
+           ((DisplayHeightWithoutTitleBar - unusableHeight - 1) / rowHeight);
     /* The -1 and one of the +1 ensures that we ceil the result.
      * The other +1 is to take into account that the rows are scrollable
      * so there can be half of one at the top and half of another one at the
@@ -84,5 +90,5 @@ public:
   }
 };
 
-}
+}  // namespace Escher
 #endif

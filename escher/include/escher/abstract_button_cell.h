@@ -11,34 +11,41 @@
 namespace Escher {
 
 class AbstractButtonCell : public HighlightCell, public Responder {
-public:
-  AbstractButtonCell(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDFont::Size font = KDFont::Size::Small, KDColor textColor = KDColorBlack);
+ public:
+  AbstractButtonCell(Responder* parentResponder, I18n::Message textBody,
+                     Invocation invocation,
+                     KDFont::Size font = KDFont::Size::Small,
+                     KDColor textColor = KDColorBlack);
 
   bool handleEvent(Ion::Events::Event event) override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void setHighlighted(bool highlight) override;
-  Responder * responder() override { return this; }
+  Responder* responder() override { return this; }
 
   virtual KDColor highlightedBackgroundColor() const { return Palette::Select; }
-  void setMessage(I18n::Message message) { m_messageTextView.setMessage(message); }
+  void setMessage(I18n::Message message) {
+    m_messageTextView.setMessage(message);
+  }
 
-protected:
+ protected:
   MessageTextView m_messageTextView;
-  void layoutSubviews(bool force = false) override { m_messageTextView.setFrame(bounds(), force); }
+  void layoutSubviews(bool force = false) override {
+    m_messageTextView.setFrame(bounds(), force);
+  }
 
-private:
+ private:
   constexpr static KDCoordinate k_verticalMarginSmall = 5;
   constexpr static KDCoordinate k_verticalMarginLarge = 17;
   constexpr static KDCoordinate k_horizontalMarginSmall = 10;
   constexpr static KDCoordinate k_horizontalMarginLarge = 20;
 
   int numberOfSubviews() const override { return 1; }
-  View * subviewAtIndex(int index) override;
+  View* subviewAtIndex(int index) override;
 
   Invocation m_invocation;
   KDFont::Size m_font;
 };
 
-}
+}  // namespace Escher
 
 #endif

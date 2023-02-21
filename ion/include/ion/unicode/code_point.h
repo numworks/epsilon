@@ -4,41 +4,30 @@
 #include <stdint.h>
 
 class CodePoint {
-public:
+ public:
   constexpr static int MaxCodePointCharLength = sizeof(uint32_t) / sizeof(char);
   constexpr CodePoint(uint32_t c) : m_code(c) {}
   constexpr operator uint32_t() const { return m_code; }
   char getChar() const;
 
-  bool isBinaryDigit() const {
-    return '0' <= m_code && m_code <= '1';
-  }
-  bool isDecimalDigit() const {
-    return '0' <= m_code && m_code <= '9';
-  }
+  bool isBinaryDigit() const { return '0' <= m_code && m_code <= '1'; }
+  bool isDecimalDigit() const { return '0' <= m_code && m_code <= '9'; }
   bool isHexadecimalDigit() const {
-    return isDecimalDigit() || ('A' <= m_code && m_code <= 'F') || ('a' <= m_code && m_code <= 'f');
+    return isDecimalDigit() || ('A' <= m_code && m_code <= 'F') ||
+           ('a' <= m_code && m_code <= 'f');
   }
-  bool isLatinCapitalLetter() const {
-    return 'A' <= m_code && m_code <= 'Z';
-  }
-  bool isLatinSmallLetter() const {
-    return 'a' <= m_code && m_code <= 'z';
-  }
+  bool isLatinCapitalLetter() const { return 'A' <= m_code && m_code <= 'Z'; }
+  bool isLatinSmallLetter() const { return 'a' <= m_code && m_code <= 'z'; }
   bool isLatinLetter() const {
     return isLatinCapitalLetter() || isLatinSmallLetter();
   }
-  bool isCombining() const {
-    return (m_code >= 0x300 && m_code <= 0x036F);
-  }
+  bool isCombining() const { return (m_code >= 0x300 && m_code <= 0x036F); }
   bool isGreekCapitalLetter() const {
     return 0x391 <= m_code && m_code <= 0x3a9 && m_code != 0x3a2;
   }
-  bool isGreekSmallLetter() const {
-    return 0x3b1 <= m_code && m_code <= 0x3c9;
-  }
-  bool isEquationOperator() const; // <, =, >, ≤, ≥
-private:
+  bool isGreekSmallLetter() const { return 0x3b1 <= m_code && m_code <= 0x3c9; }
+  bool isEquationOperator() const;  // <, =, >, ≤, ≥
+ private:
   uint32_t m_code;
 };
 

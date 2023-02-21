@@ -9,13 +9,16 @@ namespace Shared {
 class TextFieldDelegateApp;
 
 class TextFieldDelegate : public Escher::TextFieldDelegate {
-public:
-  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
-protected:
-  TextFieldDelegateApp * textFieldDelegateApp() const;
+ public:
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
+                                    Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
+                                Ion::Events::Event event) override;
+
+ protected:
+  TextFieldDelegateApp* textFieldDelegateApp() const;
 };
 
-}
+}  // namespace Shared
 
 #endif

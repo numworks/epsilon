@@ -1,30 +1,42 @@
+#include <assert.h>
+#include <float.h>
+#include <ion.h>
 #include <poincare/ceiling.h>
-#include <poincare/constant.h>
 #include <poincare/ceiling_layout.h>
+#include <poincare/constant.h>
 #include <poincare/float.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
+
 #include <cmath>
-#include <ion.h>
-#include <assert.h>
-#include <float.h>
 
 namespace Poincare {
 
-int CeilingNode::numberOfChildren() const { return Ceiling::s_functionHelper.numberOfChildren(); }
-
-Layout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return CeilingLayout::Builder(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context));
+int CeilingNode::numberOfChildren() const {
+  return Ceiling::s_functionHelper.numberOfChildren();
 }
 
-int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Ceiling::s_functionHelper.aliasesList().mainAlias());
+Layout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits,
+                                 Context* context) const {
+  return CeilingLayout::Builder(childAtIndex(0)->createLayout(
+      floatDisplayMode, numberOfSignificantDigits, context));
 }
 
-template<typename T>
-Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+int CeilingNode::serialize(char* buffer, int bufferSize,
+                           Preferences::PrintFloatMode floatDisplayMode,
+                           int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(
+      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+      Ceiling::s_functionHelper.aliasesList().mainAlias());
+}
+
+template <typename T>
+Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c,
+                                         Preferences::ComplexFormat,
+                                         Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
     return Complex<T>::RealUndefined();
   }
@@ -36,21 +48,19 @@ Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c, Preferences::C
   return Complex<T>::Builder(std::ceil(c.real()));
 }
 
-Expression CeilingNode::shallowReduce(const ReductionContext& reductionContext) {
+Expression CeilingNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return Ceiling(this).shallowReduce(reductionContext);
 }
-
 
 Expression Ceiling::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::ExtractUnitsOfFirstChild,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-        SimplificationHelper::ListReduction::DistributeOverLists
-    );
+        SimplificationHelper::ListReduction::DistributeOverLists);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -59,7 +69,8 @@ Expression Ceiling::shallowReduce(ReductionContext reductionContext) {
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();
-    IntegerDivision div = Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
+    IntegerDivision div =
+        Integer::Division(r.signedIntegerNumerator(), r.integerDenominator());
     assert(!div.remainder.isOverflow());
     if (div.remainder.isZero()) {
       Expression result = Rational::Builder(div.quotient);
@@ -77,4 +88,4 @@ Expression Ceiling::shallowReduce(ReductionContext reductionContext) {
   return shallowReduceUsingApproximation(reductionContext);
 }
 
-}
+}  // namespace Poincare

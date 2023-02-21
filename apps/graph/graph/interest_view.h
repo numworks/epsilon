@@ -1,8 +1,8 @@
 #ifndef GRAPH_INTEREST_VIEW_H
 #define GRAPH_INTEREST_VIEW_H
 
-#include <escher/view.h>
 #include <apps/shared/dots.h>
+#include <escher/view.h>
 #include <poincare/solver.h>
 
 namespace Graph {
@@ -13,15 +13,17 @@ class GraphView;
  * the other subviews (cursor and banner) and it owns another dirtyRect */
 class InterestView : public Escher::View {
   friend class GraphView;
-public:
-  InterestView(GraphView * parentView) : Escher::View(), m_parentView(parentView) {}
-  void drawRect(KDContext * ctx, KDRect rect) const override;
 
-private:
+ public:
+  InterestView(GraphView* parentView)
+      : Escher::View(), m_parentView(parentView) {}
+  void drawRect(KDContext* ctx, KDRect rect) const override;
+
+ private:
   void dirtyBounds() { markRectAsDirty(bounds()); }
-  GraphView * m_parentView;
+  GraphView* m_parentView;
 };
 
-}
+}  // namespace Graph
 
 #endif

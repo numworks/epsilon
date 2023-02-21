@@ -9,20 +9,24 @@
 namespace Escher {
 
 class BufferTableCell : public TableCell {
-public:
+ public:
   BufferTableCell();
-  BufferTableCell(KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, size_t maxNumberOfChars);
-  const View * labelView() const override { return &m_labelView; }
+  BufferTableCell(KDFont::Size font, float horizontalAlignment,
+                  float verticalAlignment, KDColor textColor,
+                  KDColor backgroundColor, size_t maxNumberOfChars);
+  const View* labelView() const override { return &m_labelView; }
   void setHighlighted(bool highlight) override;
-  void setLabelText(const char * textBody);
+  void setLabelText(const char* textBody);
   void setMessageWithPlaceholders(I18n::Message message, ...);
-  void appendText(const char * textBody);
-protected:
+  void appendText(const char* textBody);
+
+ protected:
   BufferTextView m_labelView;
-private:
+
+ private:
   KDColor m_backgroundColor;
 };
 
-}
+}  // namespace Escher
 
 #endif

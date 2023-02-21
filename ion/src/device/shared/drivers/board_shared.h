@@ -9,8 +9,8 @@ namespace Ion {
 namespace Device {
 namespace Board {
 
-KernelHeader * kernelHeader();
-UserlandHeader * userlandHeader();
+KernelHeader* kernelHeader();
+UserlandHeader* userlandHeader();
 uint32_t userlandStart();
 uint32_t userlandEnd();
 uint32_t writableSRAMEndAddress();
@@ -18,8 +18,8 @@ uint32_t writableSRAMStartAddress();
 bool isRunningSlotA();
 uint32_t securityLevel();
 
-}
-}
-}
+}  // namespace Board
+}  // namespace Device
+}  // namespace Ion
 
 #endif

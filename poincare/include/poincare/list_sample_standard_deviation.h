@@ -5,33 +5,48 @@
 
 namespace Poincare {
 
-class ListSampleStandardDeviationNode : public ListFunctionWithOneOrTwoParametersNode {
-public:
+class ListSampleStandardDeviationNode
+    : public ListFunctionWithOneOrTwoParametersNode {
+ public:
   constexpr static char k_functionName[] = "samplestddev";
-  const char * functionName() const override { return k_functionName; }
+  const char* functionName() const override { return k_functionName; }
 
-  size_t size() const override { return sizeof(ListSampleStandardDeviationNode); }
+  size_t size() const override {
+    return sizeof(ListSampleStandardDeviationNode);
+  }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream& stream) const override {
     stream << "ListSampleStandardDeviation";
   }
 #endif
   Type type() const override { return Type::ListSampleStandardDeviation; }
 
-private:
+ private:
   Expression shallowReduce(const ReductionContext& reductionContext) override;
 
-  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
-  template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
+  Evaluation<float> approximate(
+      SinglePrecision p,
+      const ApproximationContext& approximationContext) const override {
+    return templatedApproximate<float>(approximationContext);
+  }
+  Evaluation<double> approximate(
+      DoublePrecision p,
+      const ApproximationContext& approximationContext) const override {
+    return templatedApproximate<double>(approximationContext);
+  }
+  template <typename T>
+  Evaluation<T> templatedApproximate(
+      const ApproximationContext& approximationContext) const;
 };
 
-class ListSampleStandardDeviation : public ExpressionUpToTwoChildren<ListSampleStandardDeviation, ListSampleStandardDeviationNode> {
-public:
+class ListSampleStandardDeviation
+    : public ExpressionUpToTwoChildren<ListSampleStandardDeviation,
+                                       ListSampleStandardDeviationNode> {
+ public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ReductionContext reductionContext);
 };
 
-}
+}  // namespace Poincare
 
 #endif

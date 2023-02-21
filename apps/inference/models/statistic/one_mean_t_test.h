@@ -8,19 +8,36 @@
 namespace Inference {
 
 class OneMeanTTest : public Test {
-public:
-  SignificanceTestType significanceTestType() const override { return SignificanceTestType::OneMean; }
-  DistributionType distributionType() const override { return DistributionType::T; }
+ public:
+  SignificanceTestType significanceTestType() const override {
+    return SignificanceTestType::OneMean;
+  }
+  DistributionType distributionType() const override {
+    return DistributionType::T;
+  }
   I18n::Message title() const override { return OneMean::TTitle(); }
-  I18n::Message graphTitleFormat() const override { return DistributionT::GraphTitleFormat(); }
+  I18n::Message graphTitleFormat() const override {
+    return DistributionT::GraphTitleFormat();
+  }
 
   // Significance Test: OneMean
-  bool initializeDistribution(DistributionType distributionType) override { return OneMean::TestInitializeDistribution(this, distributionType); }
-  int numberOfAvailableDistributions() const override { return OneMean::NumberOfAvailableDistributions(); }
-  I18n::Message distributionTitle() const override { return OneMean::DistributionTitle(); }
-  const char * hypothesisSymbol() override { return OneMean::HypothesisSymbol(); }
+  bool initializeDistribution(DistributionType distributionType) override {
+    return OneMean::TestInitializeDistribution(this, distributionType);
+  }
+  int numberOfAvailableDistributions() const override {
+    return OneMean::NumberOfAvailableDistributions();
+  }
+  I18n::Message distributionTitle() const override {
+    return OneMean::DistributionTitle();
+  }
+  const char* hypothesisSymbol() override {
+    return OneMean::HypothesisSymbol();
+  }
   void initParameters() override { OneMean::InitTestParameters(this); }
-  bool authorizedParameterAtIndex(double p, int i) const override { return Inference::authorizedParameterAtIndex(p, i) && OneMean::TAuthorizedParameterAtIndex(i, p); }
+  bool authorizedParameterAtIndex(double p, int i) const override {
+    return Inference::authorizedParameterAtIndex(p, i) &&
+           OneMean::TAuthorizedParameterAtIndex(i, p);
+  }
   void setParameterAtIndex(double p, int index) override {
     p = OneMean::ProcessParamaterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
@@ -29,23 +46,40 @@ public:
   void compute() override { OneMean::ComputeTTest(this); }
 
   // Distribution: t
-  Poincare::Layout testCriticalValueSymbol() override { return DistributionT::TestCriticalValueSymbol(); }
-  float canonicalDensityFunction(float x) const override { return DistributionT::CanonicalDensityFunction(x, m_degreesOfFreedom); }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override { return DistributionT::CumulativeNormalizedDistributionFunction(x, m_degreesOfFreedom); }
-  double cumulativeDistributiveInverseForProbability(double p) const override { return DistributionT::CumulativeNormalizedInverseDistributionFunction(p, m_degreesOfFreedom); }
+  Poincare::Layout testCriticalValueSymbol() override {
+    return DistributionT::TestCriticalValueSymbol();
+  }
+  float canonicalDensityFunction(float x) const override {
+    return DistributionT::CanonicalDensityFunction(x, m_degreesOfFreedom);
+  }
+  double cumulativeDistributiveFunctionAtAbscissa(double x) const override {
+    return DistributionT::CumulativeNormalizedDistributionFunction(
+        x, m_degreesOfFreedom);
+  }
+  double cumulativeDistributiveInverseForProbability(double p) const override {
+    return DistributionT::CumulativeNormalizedInverseDistributionFunction(
+        p, m_degreesOfFreedom);
+  }
 
-private:
+ private:
   // Significance Test: OneMean
-  int numberOfStatisticParameters() const override { return OneMean::NumberOfParameters(); }
-  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override { return OneMean::TParameterRepresentationAtIndex(i); }
-  double * parametersArray() override { return m_params; }
+  int numberOfStatisticParameters() const override {
+    return OneMean::NumberOfParameters();
+  }
+  Shared::ParameterRepresentation paramRepresentationAtIndex(
+      int i) const override {
+    return OneMean::TParameterRepresentationAtIndex(i);
+  }
+  double* parametersArray() override { return m_params; }
 
   // Distribution: t
-  float computeYMax() const override { return DistributionT::YMax(m_degreesOfFreedom); }
+  float computeYMax() const override {
+    return DistributionT::YMax(m_degreesOfFreedom);
+  }
 
   double m_params[OneMean::k_numberOfParams];
 };
 
-}
+}  // namespace Inference
 
 #endif

@@ -1,4 +1,5 @@
-#include <poincare/unit_convert.h>
+#include <assert.h>
+#include <math.h>
 #include <poincare/complex.h>
 #include <poincare/context.h>
 #include <poincare/division.h>
@@ -9,13 +10,12 @@
 #include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
-#include <assert.h>
-#include <math.h>
+#include <poincare/unit_convert.h>
 #include <stdlib.h>
 
 namespace Poincare {
 
-Expression UnitConvertNode::removeUnit(Expression * unit) {
+Expression UnitConvertNode::removeUnit(Expression* unit) {
   /* Warning: removeUnit of a UnitConvert doesn't make much sense but we
    * implement a 'dummy' version since UnitConvert still exists among the
    * reduced expression. We do not return any unit as we do not want the caller
@@ -24,12 +24,14 @@ Expression UnitConvertNode::removeUnit(Expression * unit) {
   return UnitConvert(this).replaceWithUndefinedInPlace();
 }
 
-Expression UnitConvertNode::shallowBeautify(const ReductionContext& reductionContext) {
+Expression UnitConvertNode::shallowBeautify(
+    const ReductionContext& reductionContext) {
   return UnitConvert(this).shallowBeautify(reductionContext);
 }
 
-template<typename T>
-Evaluation<T> UnitConvertNode::templatedApproximate(const ApproximationContext& approximationContext) const {
+template <typename T>
+Evaluation<T> UnitConvertNode::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
   /* If we are here, it means that the unit convert node was not shallowReduced.
    * Otherwise, it would have been replaced by the division of the value by the
    * unit. We thus return Undefined. */
@@ -39,7 +41,8 @@ Evaluation<T> UnitConvertNode::templatedApproximate(const ApproximationContext& 
 void UnitConvert::deepReduceChildren(const ReductionContext& reductionContext) {
   childAtIndex(0).deepReduce(reductionContext);
   ReductionContext childContext = reductionContext;
-  childContext.setSymbolicComputation(SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+  childContext.setSymbolicComputation(
+      SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   childContext.setUnitConversion(UnitConversion::None);
   // Don't transform the targeted unit
   childAtIndex(1).deepReduce(childContext);
@@ -53,13 +56,16 @@ Expression UnitConvert::deepBeautify(const ReductionContext& reductionContext) {
   return e;
 }
 
-Expression UnitConvert::shallowBeautify(const ReductionContext& reductionContext) {
+Expression UnitConvert::shallowBeautify(
+    const ReductionContext& reductionContext) {
   // Discard cases like 4 -> _m/_km
   {
     ReductionContext reductionContextWithUnits = reductionContext;
-    reductionContextWithUnits.setSymbolicComputation(SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+    reductionContextWithUnits.setSymbolicComputation(
+        SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     Expression unit;
-    Expression childWithoutUnit = childAtIndex(1).clone().reduceAndRemoveUnit(reductionContextWithUnits, &unit);
+    Expression childWithoutUnit = childAtIndex(1).clone().reduceAndRemoveUnit(
+        reductionContextWithUnits, &unit);
     if (childWithoutUnit.isUndefined() || unit.isUninitialized()) {
       // There is no unit on the right
       return replaceWithUndefinedInPlace();
@@ -76,9 +82,11 @@ Expression UnitConvert::shallowBeautify(const ReductionContext& reductionContext
   /* Handle temperatures, as converting between Kelvin, Celsius and Fahrenheit
    * cannot be done with a division. */
   if (unit.type() == ExpressionNode::Type::Unit) {
-    Unit unitRef = static_cast<Unit &>(unit);
-    if (unitRef.representative()->dimensionVector() == Unit::TemperatureRepresentative::Default().dimensionVector()) {
-      Expression result = Unit::ConvertTemperatureUnits(childAtIndex(0), unitRef, reductionContext);
+    Unit unitRef = static_cast<Unit&>(unit);
+    if (unitRef.representative()->dimensionVector() ==
+        Unit::TemperatureRepresentative::Default().dimensionVector()) {
+      Expression result = Unit::ConvertTemperatureUnits(
+          childAtIndex(0), unitRef, reductionContext);
       replaceWithInPlace(result);
       return result;
     }
@@ -91,8 +99,11 @@ Expression UnitConvert::shallowBeautify(const ReductionContext& reductionContext
   if (!divisionUnit.isUninitialized()) {
     if (unit.isPureAngleUnit()) {
       // Try again with the current angle unit
-      Unit currentAngleUnit = Unit::Builder(UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(reductionContext.angleUnit()));
-      division = Multiplication::Builder(division, divisionUnit, currentAngleUnit);
+      Unit currentAngleUnit = Unit::Builder(
+          UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(
+              reductionContext.angleUnit()));
+      division =
+          Multiplication::Builder(division, divisionUnit, currentAngleUnit);
       divisionUnit = Expression();
       division = division.reduceAndRemoveUnit(reductionContext, &divisionUnit);
       if (!divisionUnit.isUninitialized()) {
@@ -106,14 +117,17 @@ Expression UnitConvert::shallowBeautify(const ReductionContext& reductionContext
   Expression result = Multiplication::Builder(division, unit);
   replaceWithInPlace(result);
   ReductionContext childContext = reductionContext;
-  childContext.setSymbolicComputation(SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+  childContext.setSymbolicComputation(
+      SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   childContext.setUnitConversion(UnitConversion::None);
   result = result.shallowReduce(childContext);
   result = result.shallowBeautify(childContext);
   return result;
 }
 
-template Evaluation<float> UnitConvertNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
-template Evaluation<double> UnitConvertNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
+template Evaluation<float> UnitConvertNode::templatedApproximate<float>(
+    const ApproximationContext& approximationContext) const;
+template Evaluation<double> UnitConvertNode::templatedApproximate<double>(
+    const ApproximationContext& approximationContext) const;
 
-}
+}  // namespace Poincare

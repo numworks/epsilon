@@ -1,13 +1,16 @@
-#include <iostream>
-#include <fstream>
-#include <random>
-#include <cstdio>
 #include <ion/events.h>
+
+#include <cstdio>
+#include <fstream>
+#include <iostream>
+#include <random>
 
 // TODO : Update this script to handle state file headers
 
-void writeEventsToFile(std::ofstream & file, int numberOfEvents, std::mt19937 & rng) {
-  std::uniform_int_distribution<int> distribution(0, Ion::Events::Event::k_specialEventsOffset);
+void writeEventsToFile(std::ofstream& file, int numberOfEvents,
+                       std::mt19937& rng) {
+  std::uniform_int_distribution<int> distribution(
+      0, Ion::Events::Event::k_specialEventsOffset);
 
   int i = numberOfEvents;
   while (i > 0) {
@@ -20,7 +23,7 @@ void writeEventsToFile(std::ofstream & file, int numberOfEvents, std::mt19937 & 
   }
 }
 
-int main(int argc, char * argv[]) {
+int main(int argc, char* argv[]) {
   if (argc != 3) {
     std::cerr << "Usage: event_generator <count> <length_avg>" << std::endl;
     return -1;
@@ -35,7 +38,7 @@ int main(int argc, char * argv[]) {
 
   std::normal_distribution<> lengthDistribution(lengthAvg, lengthStdDev);
 
-  for (int i=0; i<count; i++) {
+  for (int i = 0; i < count; i++) {
     char buffer[32];
     sprintf(buffer, "scenario_%04d.bin", i);
     std::string fileName(buffer);

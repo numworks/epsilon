@@ -3,11 +3,7 @@
 
 namespace Escher {
 
-EvenOddCell::EvenOddCell() :
-  HighlightCell(),
-  m_even(false)
-{
-}
+EvenOddCell::EvenOddCell() : HighlightCell(), m_even(false) {}
 
 void EvenOddCell::setEven(bool even) {
   if (even != m_even) {
@@ -39,9 +35,9 @@ KDColor EvenOddCell::backgroundColor() const {
   return m_even ? KDColorWhite : Palette::WallScreen;
 }
 
-void EvenOddCell::drawRect(KDContext * ctx, KDRect rect) const {
+void EvenOddCell::drawRect(KDContext* ctx, KDRect rect) const {
   KDColor background = backgroundColor();
   ctx->fillRect(rect, background);
 }
 
-}
+}  // namespace Escher

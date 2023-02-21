@@ -3,8 +3,6 @@
 
 namespace Escher {
 
-void Init() {
-  KDIonContext::SharedContext.init();
-}
+void Init() { KDIonContext::SharedContext.init(); }
 
-}
+}  // namespace Escher

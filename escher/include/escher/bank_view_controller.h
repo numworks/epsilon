@@ -6,39 +6,41 @@
 namespace Escher {
 
 class BankViewController : public ViewController {
-public:
-  BankViewController(Responder * parentViewController);
+ public:
+  BankViewController(Responder* parentViewController);
 
-  virtual ViewController * childAtIndex(int i) = 0;
+  virtual ViewController* childAtIndex(int i) = 0;
   virtual int numberOfChildren() = 0;
 
   void setActiveIndex(int i);
   int activeIndex() const { return m_activeIndex; }
 
-  View * view() override { return &m_view; }
+  View* view() override { return &m_view; }
   void didBecomeFirstResponder() override;
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-private:
+
+ private:
   class ContentView : public View {
-  public:
-    ContentView(): View(), m_subview(nullptr) {}
-    void setSubview(View * view);
-  private:
+   public:
+    ContentView() : View(), m_subview(nullptr) {}
+    void setSubview(View* view);
+
+   private:
     int numberOfSubviews() const override {
       return m_subview == nullptr ? 0 : 1;
     }
-    View * subviewAtIndex(int index) override {
+    View* subviewAtIndex(int index) override {
       assert(index == 0);
       return m_subview;
     }
     void layoutSubviews(bool force = false) override {
       m_subview->setFrame(bounds(), force);
     }
-    View * m_subview;
+    View* m_subview;
   };
-  ViewController * activeViewController() {
+  ViewController* activeViewController() {
     assert(m_activeIndex >= 0 && m_activeIndex < numberOfChildren());
     return childAtIndex(m_activeIndex);
   }
@@ -46,6 +48,6 @@ private:
   int m_activeIndex;
 };
 
-}
+}  // namespace Escher
 
 #endif

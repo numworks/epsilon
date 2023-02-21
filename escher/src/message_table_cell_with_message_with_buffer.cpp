@@ -3,13 +3,13 @@
 
 namespace Escher {
 
-MessageTableCellWithMessageWithBuffer::MessageTableCellWithMessageWithBuffer(I18n::Message message) :
-  MessageTableCellWithMessage(message),
-  m_accessoryView(KDFont::Size::Large, 1.0f, 0.5f, KDColorBlack)
-{
-}
+MessageTableCellWithMessageWithBuffer::MessageTableCellWithMessageWithBuffer(
+    I18n::Message message)
+    : MessageTableCellWithMessage(message),
+      m_accessoryView(KDFont::Size::Large, 1.0f, 0.5f, KDColorBlack) {}
 
-void MessageTableCellWithMessageWithBuffer::setAccessoryText(const char * textBody) {
+void MessageTableCellWithMessageWithBuffer::setAccessoryText(
+    const char* textBody) {
   m_accessoryView.setText(textBody);
   layoutSubviews();
 }
@@ -19,4 +19,4 @@ void MessageTableCellWithMessageWithBuffer::setHighlighted(bool highlight) {
   m_accessoryView.setBackgroundColor(defaultBackgroundColor());
 }
 
-}
+}  // namespace Escher

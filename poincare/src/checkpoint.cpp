@@ -2,9 +2,9 @@
 
 namespace Poincare {
 
-Checkpoint * Checkpoint::s_topmost = nullptr;
+Checkpoint* Checkpoint::s_topmost = nullptr;
 
-TreeNode * Checkpoint::TopmostEndOfPool() {
+TreeNode* Checkpoint::TopmostEndOfPool() {
   return s_topmost ? s_topmost->m_endOfPool : nullptr;
 }
 
@@ -20,4 +20,4 @@ void Checkpoint::rollbackException() {
   m_parent->rollbackException();
 }
 
-}
+}  // namespace Poincare

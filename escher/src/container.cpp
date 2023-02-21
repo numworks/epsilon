@@ -1,15 +1,12 @@
-#include <escher/container.h>
 #include <assert.h>
+#include <escher/container.h>
 
 namespace Escher {
 
-Container::Container() :
-  RunLoop()
-{
-}
+Container::Container() : RunLoop() {}
 
 // Initialize private static member
-App * Container::s_activeApp = nullptr;
+App* Container::s_activeApp = nullptr;
 
 Container::~Container() {
   if (s_activeApp) {
@@ -17,7 +14,7 @@ Container::~Container() {
   }
 }
 
-void Container::switchToBuiltinApp(App::Snapshot * snapshot) {
+void Container::switchToBuiltinApp(App::Snapshot* snapshot) {
   if (s_activeApp && snapshot == s_activeApp->snapshot()) {
     return;
   }
@@ -56,20 +53,18 @@ int Container::numberOfTimers() {
   return s_activeApp->numberOfTimers() + numberOfContainerTimers();
 }
 
-Timer * Container::timerAtIndex(int i) {
+Timer* Container::timerAtIndex(int i) {
   if (i < s_activeApp->numberOfTimers()) {
     return s_activeApp->timerAtIndex(i);
   }
-  return containerTimerAtIndex(i-s_activeApp->numberOfTimers());
+  return containerTimerAtIndex(i - s_activeApp->numberOfTimers());
 }
 
-int Container::numberOfContainerTimers() {
-  return 0;
-}
+int Container::numberOfContainerTimers() { return 0; }
 
-Timer * Container::containerTimerAtIndex(int i) {
+Timer* Container::containerTimerAtIndex(int i) {
   assert(false);
   return nullptr;
 }
 
-}
+}  // namespace Escher

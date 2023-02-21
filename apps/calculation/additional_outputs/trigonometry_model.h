@@ -1,8 +1,8 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_TRIGONOMETRY_MODEL_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_TRIGONOMETRY_MODEL_H
 
-#include <escher/metric.h>
 #include <apps/shared/curve_view_range.h>
+#include <escher/metric.h>
 
 namespace Calculation {
 
@@ -21,7 +21,7 @@ namespace Calculation {
 */
 
 class TrigonometryModel : public Shared::CurveViewRange {
-public:
+ public:
   TrigonometryModel() : Shared::CurveViewRange(), m_angle(NAN) {}
 
   // CurveViewRange
@@ -34,10 +34,15 @@ public:
   float angle() const { return m_angle; }
   void setAngle(float f) { m_angle = f; }
 
-private:
-  constexpr static float k_targetRatio = 4.f / 260.f; // see above
-  constexpr static float k_width =  Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin - Escher::Metric::CellSeparatorThickness * 2;
-  static_assert(k_width == 264, "Trigonometry model is built with the assumption that the graph view is 264 pixels wide.");
+ private:
+  constexpr static float k_targetRatio = 4.f / 260.f;  // see above
+  constexpr static float k_width = Ion::Display::Width -
+                                   Escher::Metric::PopUpRightMargin -
+                                   Escher::Metric::PopUpLeftMargin -
+                                   Escher::Metric::CellSeparatorThickness * 2;
+  static_assert(k_width == 264,
+                "Trigonometry model is built with the assumption that the "
+                "graph view is 264 pixels wide.");
 
   // We center the yRange around the semi-circle where the angle is
   float yCenter() const { return std::sin(angle()) >= 0.0f ? 0.5f : -0.5f; }
@@ -48,6 +53,6 @@ private:
   float m_angle;
 };
 
-}
+}  // namespace Calculation
 
 #endif

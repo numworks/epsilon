@@ -6,9 +6,9 @@
 namespace Code {
 namespace Helpers {
 
-const char * PythonTextForEvent(Ion::Events::Event event);
+const char* PythonTextForEvent(Ion::Events::Event event);
 
 }
-}
+}  // namespace Code
 
 #endif

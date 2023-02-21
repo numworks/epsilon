@@ -6,20 +6,18 @@
 namespace Poincare {
 
 class GhostNode final : public TreeNode {
-public:
+ public:
   // TreeNode
   int numberOfChildren() const override { return 0; }
   size_t size() const override { return sizeof(GhostNode); }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
-    stream << "Ghost";
-  }
+  void logNodeName(std::ostream& stream) const override { stream << "Ghost"; }
 #endif
 
   // Ghost
   bool isGhost() const override { return true; }
 };
 
-}
+}  // namespace Poincare
 
 #endif

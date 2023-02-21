@@ -2,14 +2,10 @@
 
 namespace Escher {
 
-Invocation::Invocation(Action a, void * c) :
-  m_action(a),
-  m_context(c)
-{
-}
+Invocation::Invocation(Action a, void* c) : m_action(a), m_context(c) {}
 
-bool Invocation::perform(void * sender) {
+bool Invocation::perform(void* sender) {
   return (*m_action)(m_context, sender);
 }
 
-}
+}  // namespace Escher

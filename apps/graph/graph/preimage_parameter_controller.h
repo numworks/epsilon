@@ -7,19 +7,23 @@
 namespace Graph {
 
 class PreimageParameterController : public Shared::GoToParameterController {
-public:
+ public:
   PreimageParameterController(
-    Escher::Responder * parentResponder,
-    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-    Shared::InteractiveCurveViewRange * graphRange,
-    Shared::CurveViewCursor * cursor,
-    PreimageGraphController * preimageGraphController
-  );
-  const char * title() override { return I18n::translate(I18n::Message::Preimage); }
+      Escher::Responder* parentResponder,
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+      Shared::InteractiveCurveViewRange* graphRange,
+      Shared::CurveViewCursor* cursor,
+      PreimageGraphController* preimageGraphController);
+  const char* title() override {
+    return I18n::translate(I18n::Message::Preimage);
+  }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   void viewWillAppear() override;
-  TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastThreeTitles; }
-private:
+  TitlesDisplay titlesDisplay() override {
+    return TitlesDisplay::DisplayLastThreeTitles;
+  }
+
+ private:
   void buttonAction() override;
   double extractParameterAtIndex(int index) override {
     assert(index == 0);
@@ -27,9 +31,9 @@ private:
   }
   bool confirmParameterAtIndex(int parameterIndex, double f) override;
   Ion::Storage::Record m_record;
-  PreimageGraphController * m_preimageGraphController;
+  PreimageGraphController* m_preimageGraphController;
 };
 
-}
+}  // namespace Graph
 
 #endif

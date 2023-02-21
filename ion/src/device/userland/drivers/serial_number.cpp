@@ -3,7 +3,7 @@
 
 namespace Ion {
 
-const char * serialNumber() {
+const char* serialNumber() {
   static char serialNumberBuffer[k_serialNumberLength + 1] = {0};
   if (serialNumberBuffer[0] == 0) {
     Device::SerialNumber::copy(serialNumberBuffer);
@@ -11,4 +11,4 @@ const char * serialNumber() {
   return serialNumberBuffer;
 }
 
-}
+}  // namespace Ion

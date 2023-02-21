@@ -8,8 +8,8 @@
 LIBA_BEGIN_DECLS
 
 #if (__GLIBC__ || __MINGW32__)
-size_t strlcat(char * dst, const char * src, size_t dstSize);
-size_t strlcpy(char * dst, const char * src, size_t len);
+size_t strlcat(char* dst, const char* src, size_t dstSize);
+size_t strlcpy(char* dst, const char* src, size_t len);
 #endif
 
 LIBA_END_DECLS

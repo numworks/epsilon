@@ -2,7 +2,7 @@
 
 namespace Escher {
 
-void ListViewDataSource::initCellSize(TableView * view) {
+void ListViewDataSource::initCellSize(TableView* view) {
   int nRows = numberOfRows();
   for (int row = 0; row < nRows; row++) {
     int type = typeAtIndex(row);
@@ -11,12 +11,15 @@ void ListViewDataSource::initCellSize(TableView * view) {
       /* Some cells need a width to compute their height, so we need to set
        * width. We also provide a default height because if we set the frame of
        * a cell to a empty-area rectangle, the subviews aren't layouted. */
-      reusableCell(i, type)->setSize(KDSize(view->bounds().width() - view->rightMargin() - view->leftMargin(), view->bounds().height() - view->topMargin() - view->bottomMargin()));
+      reusableCell(i, type)->setSize(KDSize(
+          view->bounds().width() - view->rightMargin() - view->leftMargin(),
+          view->bounds().height() - view->topMargin() - view->bottomMargin()));
     }
   }
 }
 
-bool ListViewDataSource::canReusableIndexBeAssumed(int index, int type, int reusableCellCount) const {
+bool ListViewDataSource::canReusableIndexBeAssumed(
+    int index, int type, int reusableCellCount) const {
   /* Ensure the reusable cell index "j" can be assumed from the cell index
    * "index" */
   if (reusableCellCount <= 0) {
@@ -68,7 +71,8 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int index) {
   return heightForCellAtIndex(reusableCell(j, type), index);
 }
 
-KDCoordinate ListViewDataSource::heightForCellAtIndexWithWidthInit(HighlightCell * cell, int index) {
+KDCoordinate ListViewDataSource::heightForCellAtIndexWithWidthInit(
+    HighlightCell* cell, int index) {
   // Warning: this copy the size of a random cell of the table
   if (!cell->isVisible()) {
     return 0;
@@ -77,11 +81,13 @@ KDCoordinate ListViewDataSource::heightForCellAtIndexWithWidthInit(HighlightCell
   return heightForCellAtIndex(cell, index);
 }
 
-KDCoordinate ListViewDataSource::heightForCellAtIndex(HighlightCell * cell, int index) {
+KDCoordinate ListViewDataSource::heightForCellAtIndex(HighlightCell* cell,
+                                                      int index) {
   if (!cell->isVisible()) {
     return 0;
   }
-  // Some cells have to know their width to be able to compute their required height
+  // Some cells have to know their width to be able to compute their required
+  // height
   assert(cell->bounds().width() != 0);
   // Setup cell as if it was to be displayed
   willDisplayCellForIndex(cell, index);
@@ -89,4 +95,4 @@ KDCoordinate ListViewDataSource::heightForCellAtIndex(HighlightCell * cell, int 
   return cell->minimalSizeForOptimalDisplay().height();
 }
 
-}
+}  // namespace Escher

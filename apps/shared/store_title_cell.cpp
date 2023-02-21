@@ -2,24 +2,22 @@
 
 namespace Shared {
 
-StoreTitleCell::StoreTitleCell() :
-  BufferFunctionTitleCell(KDFont::Size::Small),
-  Separable()
-{}
+StoreTitleCell::StoreTitleCell()
+    : BufferFunctionTitleCell(KDFont::Size::Small), Separable() {}
 
-void StoreTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
+void StoreTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
   BufferFunctionTitleCell::drawRect(ctx, rect);
   // Draw the separator
   KDRect r = separatorRect(bounds(), k_colorIndicatorThickness);
-  ctx->fillRect(r, m_separatorLeft ? EvenOddCell::k_hideColor : backgroundColor());
+  ctx->fillRect(r,
+                m_separatorLeft ? EvenOddCell::k_hideColor : backgroundColor());
 }
 
 void StoreTitleCell::layoutSubviews(bool force) {
-  bufferTextView()->setFrame(rectWithoutSeparator(bufferTextViewFrame()), force);
+  bufferTextView()->setFrame(rectWithoutSeparator(bufferTextViewFrame()),
+                             force);
 }
 
-void StoreTitleCell::didSetSeparator() {
-  reloadCell();
-}
+void StoreTitleCell::didSetSeparator() { reloadCell(); }
 
-}
+}  // namespace Shared

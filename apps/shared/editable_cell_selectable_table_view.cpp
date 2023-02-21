@@ -1,33 +1,43 @@
 #include "editable_cell_selectable_table_view.h"
+
 #include "editable_cell_table_view_controller.h"
 
 using namespace Escher;
 
 namespace Shared {
 
-EditableCellSelectableTableView::EditableCellSelectableTableView(EditableCellTableViewController * tableViewController, Responder * parentResponder, TableViewDataSource * dataSource, SelectableTableViewDataSource * selectionDataSource, SelectableTableViewDelegate * delegate) :
-  SelectableTableView(parentResponder, dataSource, selectionDataSource, delegate),
-  m_tableViewController(tableViewController)
-{}
+EditableCellSelectableTableView::EditableCellSelectableTableView(
+    EditableCellTableViewController* tableViewController,
+    Responder* parentResponder, TableViewDataSource* dataSource,
+    SelectableTableViewDataSource* selectionDataSource,
+    SelectableTableViewDelegate* delegate)
+    : SelectableTableView(parentResponder, dataSource, selectionDataSource,
+                          delegate),
+      m_tableViewController(tableViewController) {}
 
 bool EditableCellSelectableTableView::handleEvent(Ion::Events::Event event) {
   int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::Down) {
-    return selectNonHiddenCellAtClippedLocation(selectedColumn(), selectedRow() + step);
+    return selectNonHiddenCellAtClippedLocation(selectedColumn(),
+                                                selectedRow() + step);
   }
   if (event == Ion::Events::Up) {
-    return selectNonHiddenCellAtClippedLocation(selectedColumn(), selectedRow() - step);
+    return selectNonHiddenCellAtClippedLocation(selectedColumn(),
+                                                selectedRow() - step);
   }
   if (event == Ion::Events::Left) {
-    return selectNonHiddenCellAtClippedLocation(selectedColumn() - step, selectedRow());
+    return selectNonHiddenCellAtClippedLocation(selectedColumn() - step,
+                                                selectedRow());
   }
   if (event == Ion::Events::Right) {
-    return selectNonHiddenCellAtClippedLocation(selectedColumn() + step, selectedRow());
+    return selectNonHiddenCellAtClippedLocation(selectedColumn() + step,
+                                                selectedRow());
   }
   return SelectableTableView::handleEvent(event);
 }
 
-bool EditableCellSelectableTableView::selectNonHiddenCellAtClippedLocation(int i, int j) {
+bool EditableCellSelectableTableView::selectNonHiddenCellAtClippedLocation(
+    int i, int j) {
   // Clip i to retrieve a valid seriesIndex
   if (i < 0) {
     i = 0;
@@ -42,4 +52,4 @@ bool EditableCellSelectableTableView::selectNonHiddenCellAtClippedLocation(int i
   return selectCellAtClippedLocation(i, j);
 }
 
-}
+}  // namespace Shared

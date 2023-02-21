@@ -1,5 +1,5 @@
-#include <escher/table_view.h>
 #include <escher/metric.h>
+#include <escher/table_view.h>
 
 extern "C" {
 #include <assert.h>
@@ -8,11 +8,10 @@ extern "C" {
 
 namespace Escher {
 
-TableView::TableView(TableViewDataSource * dataSource, ScrollViewDataSource * scrollDataSource) :
-  ScrollView(&m_contentView, scrollDataSource),
-  m_contentView(this, dataSource, 0, Metric::CellSeparatorThickness)
-{
-}
+TableView::TableView(TableViewDataSource* dataSource,
+                     ScrollViewDataSource* scrollDataSource)
+    : ScrollView(&m_contentView, scrollDataSource),
+      m_contentView(this, dataSource, 0, Metric::CellSeparatorThickness) {}
 
 void TableView::initSize(KDRect rect) {
   if (bounds().width() <= 0 || bounds().height() <= 0) {
@@ -30,7 +29,8 @@ void TableView::reloadVisibleCellsAtColumn(int column) {
     return;
   }
   int firstVisibleRow = firstDisplayedRowIndex();
-  int lastVisibleRow = std::max(firstVisibleRow + numberOfDisplayableRows(), m_contentView.dataSource()->numberOfRows() - 1);
+  int lastVisibleRow = std::max(firstVisibleRow + numberOfDisplayableRows(),
+                                m_contentView.dataSource()->numberOfRows() - 1);
 
   for (int j = firstVisibleRow; j <= lastVisibleRow; j++) {
     reloadCellAtLocation(column, j);
@@ -60,13 +60,15 @@ void TableView::layoutSubviews(bool force) {
 
 /* TableView::ContentView */
 
-TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource * dataSource, KDCoordinate horizontalCellOverlap, KDCoordinate verticalCellOverlap) :
-  View(),
-  m_tableView(tableView),
-  m_dataSource(dataSource),
-  m_horizontalCellOverlap(horizontalCellOverlap),
-  m_verticalCellOverlap(verticalCellOverlap)
-{}
+TableView::ContentView::ContentView(TableView* tableView,
+                                    TableViewDataSource* dataSource,
+                                    KDCoordinate horizontalCellOverlap,
+                                    KDCoordinate verticalCellOverlap)
+    : View(),
+      m_tableView(tableView),
+      m_dataSource(dataSource),
+      m_horizontalCellOverlap(horizontalCellOverlap),
+      m_verticalCellOverlap(verticalCellOverlap) {}
 
 KDRect TableView::ContentView::cellFrame(int i, int j) const {
   KDCoordinate columnWidth = m_dataSource->columnWidth(i);
@@ -74,29 +76,32 @@ KDRect TableView::ContentView::cellFrame(int i, int j) const {
   if (columnWidth == 0 || rowHeight == 0) {
     return KDRectZero;
   }
-  if (columnWidth == KDCOORDINATE_MAX) { // For ListViewDataSource
+  if (columnWidth == KDCOORDINATE_MAX) {  // For ListViewDataSource
     columnWidth = m_tableView->maxContentWidthDisplayableWithoutScrolling();
   }
-  return KDRect(
-    m_dataSource->cumulatedWidthBeforeIndex(i),
-    m_dataSource->cumulatedHeightBeforeIndex(j),
-    columnWidth + m_horizontalCellOverlap,
-    rowHeight + m_verticalCellOverlap
-  );
+  return KDRect(m_dataSource->cumulatedWidthBeforeIndex(i),
+                m_dataSource->cumulatedHeightBeforeIndex(j),
+                columnWidth + m_horizontalCellOverlap,
+                rowHeight + m_verticalCellOverlap);
 }
 
 KDCoordinate TableView::ContentView::width() const {
-  int result = m_dataSource->cumulatedWidthBeforeIndex(m_dataSource->numberOfColumns())+m_horizontalCellOverlap;
+  int result =
+      m_dataSource->cumulatedWidthBeforeIndex(m_dataSource->numberOfColumns()) +
+      m_horizontalCellOverlap;
   // handle the case of list: cumulatedWidthBeforeIndex() = KDCOORDINATE_MAX
-  return result == KDCOORDINATE_MAX ? m_tableView->maxContentWidthDisplayableWithoutScrolling() : result;
+  return result == KDCOORDINATE_MAX
+             ? m_tableView->maxContentWidthDisplayableWithoutScrolling()
+             : result;
 }
 
-void TableView::ContentView::reloadCellAtLocation(int i, int j, bool forceSetFrame) {
-  HighlightCell * cell = cellAtLocation(i, j);
+void TableView::ContentView::reloadCellAtLocation(int i, int j,
+                                                  bool forceSetFrame) {
+  HighlightCell* cell = cellAtLocation(i, j);
   if (cell) {
     m_dataSource->willDisplayCellAtLocation(cell, i, j);
     if (forceSetFrame) {
-      cell->setFrame(cellFrame(i,j), true);
+      cell->setFrame(cellFrame(i, j), true);
     }
   }
 }
@@ -109,7 +114,8 @@ int TableView::ContentView::typeOfSubviewAtIndex(int index) const {
   return type;
 }
 
-int TableView::ContentView::typeIndexFromSubviewIndex(int index, int type) const {
+int TableView::ContentView::typeIndexFromSubviewIndex(int index,
+                                                      int type) const {
   int typeIndex = 0;
   for (int k = 0; k < index; k++) {
     if (typeOfSubviewAtIndex(k) == type) {
@@ -120,19 +126,20 @@ int TableView::ContentView::typeIndexFromSubviewIndex(int index, int type) const
   return typeIndex;
 }
 
-HighlightCell * TableView::ContentView::cellAtLocation(int x, int y) {
-  int relativeX = x-columnsScrollingOffset();
-  int relativeY = y-rowsScrollingOffset();
-  if (relativeY < 0 || relativeY >= numberOfDisplayableRows() || relativeX < 0 || relativeX >= numberOfDisplayableColumns()) {
+HighlightCell* TableView::ContentView::cellAtLocation(int x, int y) {
+  int relativeX = x - columnsScrollingOffset();
+  int relativeY = y - rowsScrollingOffset();
+  if (relativeY < 0 || relativeY >= numberOfDisplayableRows() ||
+      relativeX < 0 || relativeX >= numberOfDisplayableColumns()) {
     return nullptr;
   }
   int type = m_dataSource->typeAtLocation(x, y);
-  int index = relativeY*numberOfDisplayableColumns()+relativeX;
+  int index = relativeY * numberOfDisplayableColumns() + relativeX;
   int typeIndex = typeIndexFromSubviewIndex(index, type);
   return m_dataSource->reusableCell(typeIndex, type);
 }
 
-View * TableView::ContentView::subview(int index) {
+View* TableView::ContentView::subview(int index) {
   /* This is a hack: the redrawing routine tracks a rectangle which has to be
    * redrawn. Thereby, the union of the rectangles that need to be redrawn
    * sometimes covers areas that are uselessly redrawn. We reverse the order of
@@ -143,17 +150,18 @@ View * TableView::ContentView::subview(int index) {
   return View::subview(numberOfSubviews() - 1 - index);
 }
 
-HighlightCell * TableView::ContentView::reusableCellAtIndex(int index) {
+HighlightCell* TableView::ContentView::reusableCellAtIndex(int index) {
   int type = typeOfSubviewAtIndex(index);
   int typeIndex = typeIndexFromSubviewIndex(index, type);
   return m_dataSource->reusableCell(typeIndex, type);
 }
 
-void TableView::ContentView::layoutSubviews(bool force, bool updateCellContent) {
+void TableView::ContentView::layoutSubviews(bool force,
+                                            bool updateCellContent) {
   /* The number of cells might change during the layouting so it needs to be
    * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfDisplayableCells(); index++) {
-    HighlightCell * cell = reusableCellAtIndex(index);
+    HighlightCell* cell = reusableCellAtIndex(index);
     int col = absoluteColumnIndexFromSubviewIndex(index);
     int row = absoluteRowIndexFromSubviewIndex(index);
     assert(cellAtLocation(col, row) == cell);
@@ -168,16 +176,25 @@ void TableView::ContentView::layoutSubviews(bool force, bool updateCellContent) 
 
 int TableView::ContentView::numberOfDisplayableRows() const {
   int rowOffset = rowsScrollingOffset();
-  int cumulatedHeightOfLastVisiblePixel = m_tableView->bounds().height() + invisibleHeight() - 1;
-  int cumulatedRowIndexOfLastVisiblePixel = m_dataSource->indexAfterCumulatedHeight(cumulatedHeightOfLastVisiblePixel);
-  return std::min(m_dataSource->numberOfRows(), cumulatedRowIndexOfLastVisiblePixel + 1) - rowOffset;
+  int cumulatedHeightOfLastVisiblePixel =
+      m_tableView->bounds().height() + invisibleHeight() - 1;
+  int cumulatedRowIndexOfLastVisiblePixel =
+      m_dataSource->indexAfterCumulatedHeight(
+          cumulatedHeightOfLastVisiblePixel);
+  return std::min(m_dataSource->numberOfRows(),
+                  cumulatedRowIndexOfLastVisiblePixel + 1) -
+         rowOffset;
 }
 
 int TableView::ContentView::numberOfDisplayableColumns() const {
   int columnOffset = columnsScrollingOffset();
-  int cumulatedWidthOfLastVisiblePixel = m_tableView->bounds().width() + invisibleWidth() - 1;
-  int cumulatedColumnIndexOfLastVisiblePixel = m_dataSource->indexAfterCumulatedWidth(cumulatedWidthOfLastVisiblePixel);
-  return std::min(m_dataSource->numberOfColumns(), cumulatedColumnIndexOfLastVisiblePixel + 1) - columnOffset;
+  int cumulatedWidthOfLastVisiblePixel =
+      m_tableView->bounds().width() + invisibleWidth() - 1;
+  int cumulatedColumnIndexOfLastVisiblePixel =
+      m_dataSource->indexAfterCumulatedWidth(cumulatedWidthOfLastVisiblePixel);
+  return std::min(m_dataSource->numberOfColumns(),
+                  cumulatedColumnIndexOfLastVisiblePixel + 1) -
+         columnOffset;
 }
 
-}
+}  // namespace Escher

@@ -1,6 +1,6 @@
-#include <quiz.h>
-#include <ion.h>
 #include <assert.h>
+#include <ion.h>
+#include <quiz.h>
 
 using namespace Ion::Keyboard;
 
@@ -11,4 +11,3 @@ QUIZ_CASE(ion_keyboard) {
     }
   }
 }
-

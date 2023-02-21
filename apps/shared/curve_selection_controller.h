@@ -23,18 +23,21 @@ namespace Shared {
  * ExpressionView is not Scrollable.
  */
 class CurveSelectionCell : public Escher::TableCell {
-public:
-  CurveSelectionCell() :
-    Escher::TableCell(),
-    m_expressionView(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite),
-    m_color(KDColorBlack)
-  {}
-  Escher::View * labelView() const override { return const_cast<Escher::ExpressionView *>(&m_expressionView); }
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+ public:
+  CurveSelectionCell()
+      : Escher::TableCell(),
+        m_expressionView(KDContext::k_alignLeft, KDContext::k_alignCenter,
+                         KDColorBlack, KDColorWhite),
+        m_color(KDColorBlack) {}
+  Escher::View *labelView() const override {
+    return const_cast<Escher::ExpressionView *>(&m_expressionView);
+  }
+  void drawRect(KDContext *ctx, KDRect rect) const override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) { m_color = color; }
   void setLayout(Poincare::Layout layout);
-private:
+
+ private:
   constexpr static KDCoordinate k_colorIndicatorThickness = 3;
 
   Escher::ExpressionView m_expressionView;
@@ -43,30 +46,35 @@ private:
 
 class InteractiveCurveViewController;
 
-class CurveSelectionController : public Escher::ViewController, public Escher::SelectableTableViewDataSource, public Escher::ListViewDataSource {
-public:
-  CurveSelectionController(InteractiveCurveViewController * graphController);
+class CurveSelectionController : public Escher::ViewController,
+                                 public Escher::SelectableTableViewDataSource,
+                                 public Escher::ListViewDataSource {
+ public:
+  CurveSelectionController(InteractiveCurveViewController *graphController);
 
-  Escher::View * view() override { return &m_selectableTableView; }
+  Escher::View *view() override { return &m_selectableTableView; }
   void viewWillAppear() override { m_selectableTableView.reloadData(); }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-protected:
+ protected:
   // Add chevron
   class CurveSelectionCellWithChevron : public CurveSelectionCell {
-  public:
+   public:
     CurveSelectionCellWithChevron() : CurveSelectionCell() {}
-    Escher::View * accessoryView() const override { return const_cast<Escher::ChevronView *>(&m_chevronView); }
+    Escher::View *accessoryView() const override {
+      return const_cast<Escher::ChevronView *>(&m_chevronView);
+    }
     bool subviewsCanOverlap() const override { return true; }
-  private:
+
+   private:
     Escher::ChevronView m_chevronView;
   };
 
-  InteractiveCurveViewController * m_graphController;
+  InteractiveCurveViewController *m_graphController;
   Escher::SelectableTableView m_selectableTableView;
 };
 
-}
+}  // namespace Shared
 
 #endif

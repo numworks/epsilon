@@ -8,12 +8,14 @@
 namespace Inference {
 
 class PooledTwoMeansTTest : public TwoMeansTTest {
-public:
-  DistributionType distributionType() const override { return DistributionType::TPooled; }
+ public:
+  DistributionType distributionType() const override {
+    return DistributionType::TPooled;
+  }
   I18n::Message title() const override { return PooledTwoMeans::Title(); }
   void compute() override { PooledTwoMeans::ComputeTest(this); }
 };
 
-}
+}  // namespace Inference
 
 #endif

@@ -7,6 +7,6 @@ namespace Reset {
 void core();
 
 }
-}
+}  // namespace Ion
 
 #endif

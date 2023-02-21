@@ -17,7 +17,7 @@ int ColorsLCDPixelFailures();
 // Tests if text is displayed OK
 bool TextLCDGlyphFailures();
 
-}
-}
+}  // namespace POSTAndHardwareTests
+}  // namespace Ion
 
 #endif

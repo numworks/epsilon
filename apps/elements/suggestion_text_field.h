@@ -6,37 +6,50 @@
 namespace Elements {
 
 class SuggestionTextField : public Escher::AbstractTextField {
-public:
-  SuggestionTextField(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::TextFieldDelegate * delegate);
+ public:
+  SuggestionTextField(
+      Escher::Responder* parentResponder,
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+      Escher::TextFieldDelegate* delegate);
 
   // Escher::Responder
   bool handleEvent(Ion::Events::Event event) override;
 
-  void setSuggestion(const char * suggestion) { m_contentView.setSuggestion(suggestion); }
+  void setSuggestion(const char* suggestion) {
+    m_contentView.setSuggestion(suggestion);
+  }
   void commitSuggestion();
 
-private:
+ private:
   class ContentView : public Escher::AbstractTextField::ContentView {
-  public:
-    ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor);
+   public:
+    ContentView(char* textBuffer, size_t textBufferSize,
+                size_t draftTextBufferSize, KDFont::Size font,
+                float horizontalAlignment, float verticalAlignment,
+                KDColor textColor, KDColor backgroundColor);
 
     // Escher::View
-    void drawRect(KDContext * ctx, KDRect rect) const override;
+    void drawRect(KDContext* ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override;
 
-    const char * suggestion() const { return m_suggestion; }
-    const char * suggestionSuffix() const { return UTF8Helper::SuffixCaseInsensitiveNoCombining(editedText(), m_suggestion); }
-    void setSuggestion(const char * suggestion);
+    const char* suggestion() const { return m_suggestion; }
+    const char* suggestionSuffix() const {
+      return UTF8Helper::SuffixCaseInsensitiveNoCombining(editedText(),
+                                                          m_suggestion);
+    }
+    void setSuggestion(const char* suggestion);
 
-  private:
-    const char * m_suggestion;
+   private:
+    const char* m_suggestion;
   };
 
-  const ContentView * nonEditableContentView() const override { return &m_contentView; }
+  const ContentView* nonEditableContentView() const override {
+    return &m_contentView;
+  }
 
   ContentView m_contentView;
 };
 
-}
+}  // namespace Elements
 
 #endif

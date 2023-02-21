@@ -8,7 +8,7 @@
 namespace Elements {
 
 class ElementData {
-public:
+ public:
   constexpr static double k_unknown = NAN;
   /* Greatest known number of mass is 272, well below 65536. */
   constexpr static uint16_t k_AUnknown = static_cast<uint16_t>(-1);
@@ -36,37 +36,27 @@ public:
 
   enum class PhysicalState : uint8_t { Solid, Liquid, Gas };
 
-  constexpr ElementData(
-    const char * symbol,
-    I18n::Message name,
-    uint16_t numberOfMass,
-    double molarMass,
-    double electronegativity,
-    double radius,
-    double meltingPoint,
-    double boilingPoint,
-    double density,
-    double affinity,
-    double energyOfIonization,
-    Group group,
-    PhysicalState physicalState,
-    Block block
-  ) :
-    m_molarMass(molarMass),
-    m_electronegativity(electronegativity),
-    m_radius(radius),
-    m_meltingPoint(meltingPoint),
-    m_boilingPoint(boilingPoint),
-    m_density(density),
-    m_affinity(affinity),
-    m_energyOfIonization(energyOfIonization),
-    m_symbol(symbol),
-    m_name(name),
-    m_numberOfMass(numberOfMass),
-    m_group(group),
-    m_physicalState(physicalState),
-    m_block(block)
-  {}
+  constexpr ElementData(const char* symbol, I18n::Message name,
+                        uint16_t numberOfMass, double molarMass,
+                        double electronegativity, double radius,
+                        double meltingPoint, double boilingPoint,
+                        double density, double affinity,
+                        double energyOfIonization, Group group,
+                        PhysicalState physicalState, Block block)
+      : m_molarMass(molarMass),
+        m_electronegativity(electronegativity),
+        m_radius(radius),
+        m_meltingPoint(meltingPoint),
+        m_boilingPoint(boilingPoint),
+        m_density(density),
+        m_affinity(affinity),
+        m_energyOfIonization(energyOfIonization),
+        m_symbol(symbol),
+        m_name(name),
+        m_numberOfMass(numberOfMass),
+        m_group(group),
+        m_physicalState(physicalState),
+        m_block(block) {}
 
   double molarMass() const { return m_molarMass; }
   double electronegativity() const { return m_electronegativity; }
@@ -76,14 +66,14 @@ public:
   double density() const { return m_density; }
   double affinity() const { return m_affinity; }
   double energyOfIonization() const { return m_energyOfIonization; }
-  const char * symbol() const { return m_symbol; }
+  const char* symbol() const { return m_symbol; }
   I18n::Message name() const { return m_name; }
   uint16_t numberOfMass() const { return m_numberOfMass; }
   Group group() const { return m_group; }
   PhysicalState physicalState() const { return m_physicalState; }
   Block block() const { return m_block; }
 
-private:
+ private:
   double m_molarMass;
   double m_electronegativity;
   double m_radius;
@@ -92,7 +82,7 @@ private:
   double m_density;
   double m_affinity;
   double m_energyOfIonization;
-  const char * m_symbol;
+  const char* m_symbol;
   I18n::Message m_name;
   uint16_t m_numberOfMass;
   Group m_group;
@@ -100,6 +90,6 @@ private:
   Block m_block;
 };
 
-}
+}  // namespace Elements
 
 #endif

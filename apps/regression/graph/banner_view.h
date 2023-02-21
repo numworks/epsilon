@@ -1,9 +1,9 @@
 #ifndef REGRESSION_BANNER_VIEW_H
 #define REGRESSION_BANNER_VIEW_H
 
+#include <apps/shared/xy_banner_view.h>
 #include <escher/buffer_text_view.h>
 #include <escher/message_text_view.h>
-#include <apps/shared/xy_banner_view.h>
 
 namespace Regression {
 
@@ -13,18 +13,20 @@ namespace Regression {
  *  - m_dataNotSuitableView : A message text displayed last */
 
 class BannerView : public Shared::XYBannerView {
-public:
-  BannerView(
-      Escher::Responder * parentResponder,
-      Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-      Escher::TextFieldDelegate * textFieldDelegate
-  );
-  Escher::BufferTextView * otherView() { return &m_otherView; }
-  void setDisplayParameters(bool displayOtherView, bool otherViewIsFirst, bool displayDataNotSuitable);
+ public:
+  BannerView(Escher::Responder* parentResponder,
+             Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+             Escher::TextFieldDelegate* textFieldDelegate);
+  Escher::BufferTextView* otherView() { return &m_otherView; }
+  void setDisplayParameters(bool displayOtherView, bool otherViewIsFirst,
+                            bool displayDataNotSuitable);
 
-private:
-  int numberOfSubviews() const override { return XYBannerView::k_numberOfSubviews + m_displayOtherView + m_displayDataNotSuitable; }
-  Escher::View * subviewAtIndex(int index) override;
+ private:
+  int numberOfSubviews() const override {
+    return XYBannerView::k_numberOfSubviews + m_displayOtherView +
+           m_displayDataNotSuitable;
+  }
+  Escher::View* subviewAtIndex(int index) override;
 
   Escher::BufferTextView m_otherView;
   Escher::MessageTextView m_dataNotSuitableView;
@@ -33,6 +35,6 @@ private:
   bool m_displayDataNotSuitable;
 };
 
-}
+}  // namespace Regression
 
 #endif

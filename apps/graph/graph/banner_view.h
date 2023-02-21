@@ -2,35 +2,36 @@
 #define GRAPH_BANNER_VIEW_H
 
 #include <escher/message_text_view.h>
+
 #include "../../shared/cursor_view.h"
 #include "../../shared/xy_banner_view.h"
 
 namespace Graph {
 
 class BannerView : public Shared::XYBannerView {
-public:
-  BannerView(
-    Escher::Responder * parentResponder,
-    Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
-    Escher::TextFieldDelegate * textFieldDelegate
-  );
+ public:
+  BannerView(Escher::Responder* parentResponder,
+             Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
+             Escher::TextFieldDelegate* textFieldDelegate);
 
-  Escher::BufferTextView * derivativeView() { return &m_derivativeView; }
-  Escher::BufferTextView * aView() { return &m_aView; }
-  Escher::BufferTextView * bView() { return &m_bView; }
+  Escher::BufferTextView* derivativeView() { return &m_derivativeView; }
+  Escher::BufferTextView* aView() { return &m_aView; }
+  Escher::BufferTextView* bView() { return &m_bView; }
   int numberOfInterestMessages() const;
-  void addInterestMessage(I18n::Message message, Shared::CursorView * cursor);
-  void emptyInterestMessages(Shared::CursorView * cursor);
-  void setDisplayParameters(bool showInterest, bool showDerivative, bool showTangent);
+  void addInterestMessage(I18n::Message message, Shared::CursorView* cursor);
+  void emptyInterestMessages(Shared::CursorView* cursor);
+  void setDisplayParameters(bool showInterest, bool showDerivative,
+                            bool showTangent);
 
-private:
+ private:
   constexpr static int k_maxNumberOfInterests = 3;
   int numberOfSubviews() const override {
     // there are 3 views for tangent (aView, bView, tangentEquationView)
-    return XYBannerView::k_numberOfSubviews + numberOfInterestMessages() + m_showDerivative + 3 * m_showTangent;
+    return XYBannerView::k_numberOfSubviews + numberOfInterestMessages() +
+           m_showDerivative + 3 * m_showTangent;
   };
-  Escher::View * subviewAtIndex(int index) override;
-  bool lineBreakBeforeSubview(Escher::View * subview) const override;
+  Escher::View* subviewAtIndex(int index) override;
+  bool lineBreakBeforeSubview(Escher::View* subview) const override;
   bool hasInterestMessage(int i) const {
     assert(i >= 0 && i < k_maxNumberOfInterests);
     return m_showInterest && m_interestMessageView[i].text()[0] != '\0';
@@ -46,6 +47,6 @@ private:
   bool m_showTangent : 1;
 };
 
-}
+}  // namespace Graph
 
 #endif

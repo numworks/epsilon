@@ -9,23 +9,35 @@
 namespace Graph {
 
 class DomainParameterController : public Shared::SingleRangeController {
-public:
-  DomainParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
+ public:
+  DomainParameterController(
+      Escher::Responder* parentResponder,
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
 
   // ViewController
-  const char * title() override { return I18n::translate(I18n::Message::FunctionDomain); }
-  TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastThreeTitles; }
+  const char* title() override {
+    return I18n::translate(I18n::Message::FunctionDomain);
+  }
+  TitlesDisplay titlesDisplay() override {
+    return TitlesDisplay::DisplayLastThreeTitles;
+  }
   TELEMETRY_ID("DomainParameter");
 
   // TextFieldDelegate
-  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
+                                Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
+                                 const char* text,
+                                 Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
-  bool isVisible() const { return m_record.isNull() ? false : function()->properties().canHaveCustomDomain(); }
+  bool isVisible() const {
+    return m_record.isNull() ? false
+                             : function()->properties().canHaveCustomDomain();
+  }
 
-private:
+ private:
   I18n::Message parameterMessage(int index) const override;
   // Return false if temporary parameters and function parameters are equal.
   bool parametersAreDifferent() override;
@@ -34,16 +46,23 @@ private:
   void setAutoStatus(bool autoParam) override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
   // Applies temporary parameters to function.
-  void confirmParameters() override ;
-  void pop(bool onConfirmation) override { onConfirmation ? stackController()->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true) : stackController()->pop(); }
+  void confirmParameters() override;
+  void pop(bool onConfirmation) override {
+    onConfirmation ? stackController()->popUntilDepth(
+                         Shared::InteractiveCurveViewController::
+                             k_graphControllerStackDepth,
+                         true)
+                   : stackController()->pop();
+  }
   InfinityTolerance infinityAllowanceForRow(int row) const override;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
-  void switchToolboxContent(Escher::AbstractTextField * textField, bool setSpecificContent);
+  void switchToolboxContent(Escher::AbstractTextField* textField,
+                            bool setSpecificContent);
 
   Shared::MessagePopUpController m_confirmPopUpController;
   Ion::Storage::Record m_record;
 };
 
-}
+}  // namespace Graph
 
 #endif

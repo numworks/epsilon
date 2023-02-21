@@ -19,7 +19,7 @@ enum class Key : uint8_t {
 };
 // clang-format on
 
-}
-}
+}  // namespace Keyboard
+}  // namespace Ion
 
 #endif

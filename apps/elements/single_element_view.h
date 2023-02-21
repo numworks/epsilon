@@ -1,19 +1,23 @@
 #ifndef ELEMENTS_SINGLE_ELEMENT_VIEW_H
 #define ELEMENTS_SINGLE_ELEMENT_VIEW_H
 
-#include "elements_view_data_source.h"
 #include <escher/view.h>
+
+#include "elements_view_data_source.h"
 
 namespace Elements {
 
 class SingleElementView : public Escher::View {
-public:
-  SingleElementView(KDColor backgroundColor) : m_backgroundColor(backgroundColor) {}
+ public:
+  SingleElementView(KDColor backgroundColor)
+      : m_backgroundColor(backgroundColor) {}
 
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-  KDSize minimalSizeForOptimalDisplay() const override { return KDSize(k_totalSize, k_totalSize); }
+  void drawRect(KDContext* ctx, KDRect rect) const override;
+  KDSize minimalSizeForOptimalDisplay() const override {
+    return KDSize(k_totalSize, k_totalSize);
+  }
 
-private:
+ private:
   constexpr static KDCoordinate k_cellSize = 46;
   constexpr static KDCoordinate k_borderSize = 2;
   constexpr static KDCoordinate k_totalSize = k_cellSize + 2 * k_borderSize;
@@ -26,6 +30,6 @@ private:
   KDColor m_backgroundColor;
 };
 
-}
+}  // namespace Elements
 
 #endif

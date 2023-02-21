@@ -1,14 +1,13 @@
 #ifndef POINCARE_CONIC_H
 #define POINCARE_CONIC_H
 
-#include <poincare/expression.h>
 #include <float.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
 class Conic {
-public:
-
+ public:
   enum class Shape : uint8_t {
     Hyperbola = 0,
     Parabola,
@@ -19,11 +18,7 @@ public:
     NumberOfShapes
   };
 
-  enum class CoordinateType : uint8_t {
-    Cartesian = 0,
-    Polar,
-    Parametric
-  };
+  enum class CoordinateType : uint8_t { Cartesian = 0, Polar, Parametric };
 
   typedef struct {
     CoordinateType coordinateType;
@@ -38,47 +33,69 @@ public:
    * details for all types of conic. */
 
   // Conic Eccentricity
-  virtual double getEccentricity() const { assert(false); return 0.0; }
+  virtual double getEccentricity() const {
+    assert(false);
+    return 0.0;
+  }
   // Conic Center
-  virtual void getCenter(double * cx, double * cy) const { assert(false);}
+  virtual void getCenter(double* cx, double* cy) const { assert(false); }
   // Ellipse or Hyperbola's semi major axis
-  virtual double getSemiMajorAxis() const { assert(false); return 0.0; }
+  virtual double getSemiMajorAxis() const {
+    assert(false);
+    return 0.0;
+  }
   // Ellipse or Hyperbola's linear eccentricity
-  virtual double getLinearEccentricity() const { assert(false); return 0.0; }
+  virtual double getLinearEccentricity() const {
+    assert(false);
+    return 0.0;
+  }
   // Ellipse or Hyperbola's semi minor axis
-  virtual double getSemiMinorAxis() const { assert(false); return 0.0; }
+  virtual double getSemiMinorAxis() const {
+    assert(false);
+    return 0.0;
+  }
   // Parabola's parameter
-  virtual double getParameter() const { assert(false); return 0.0; }
+  virtual double getParameter() const {
+    assert(false);
+    return 0.0;
+  }
   // Coordinates of Parabola's summit (relative to parameters' center)
-  virtual void getSummit(double * sx, double * sy) const { assert(false); }
+  virtual void getSummit(double* sx, double* sy) const { assert(false); }
   // Circle's radius
-  virtual double getRadius() const { assert(false); return 0.0; }
+  virtual double getRadius() const {
+    assert(false);
+    return 0.0;
+  }
 
-protected:
+ protected:
   virtual CoordinateType coordinateType() const = 0;
   Shape m_shape;
 };
 
 class CartesianConic : public Conic {
-public:
+ public:
   // Extract A,B,C,D,E,F parameters
-  CartesianConic(const Expression e, Context * context, const char * x = "x", const char * y = "y");
+  CartesianConic(const Expression e, Context* context, const char* x = "x",
+                 const char* y = "y");
   double getEccentricity() const override;
-  void getCenter(double * cx, double * cy) const override;
+  void getCenter(double* cx, double* cy) const override;
   double getSemiMajorAxis() const override;
   double getLinearEccentricity() const override;
   double getSemiMinorAxis() const override;
   double getParameter() const override;
-  void getSummit(double * sx, double * sy) const override;
+  void getSummit(double* sx, double* sy) const override;
   double getRadius() const override;
 
-private:
-  CoordinateType coordinateType() const override { return CoordinateType::Cartesian; }
+ private:
+  CoordinateType coordinateType() const override {
+    return CoordinateType::Cartesian;
+  }
 
   // Thereshold under which a parameter is considered null
-  constexpr static double k_tolerance = 10.0*DBL_EPSILON;
+  constexpr static double k_tolerance = 10.0 * DBL_EPSILON;
   // Return target if |target-value| is neglectable compared to |amplitude|
-  double roundIfNeglectable(double value, double target, double amplitude) const;
+  double roundIfNeglectable(double value, double target,
+                            double amplitude) const;
   // Round all coefficients to 0 if neglectable against the others
   void roundCoefficientsIfNeglectable();
   // Multiply all coefficients by a factor
@@ -114,19 +131,26 @@ private:
 };
 
 class PolarConic : public Conic {
-public:
-  PolarConic(const Expression& e, Context * context, const char * theta = "θ");
-private:
-  CoordinateType coordinateType() const override { return CoordinateType::Polar; }
+ public:
+  PolarConic(const Expression& e, Context* context, const char* theta = "θ");
+
+ private:
+  CoordinateType coordinateType() const override {
+    return CoordinateType::Polar;
+  }
 };
 
 class ParametricConic : public Conic {
-public:
-  ParametricConic(const Expression& e, Context * context, const char * symbol = "t");
-private:
-  CoordinateType coordinateType() const override { return CoordinateType::Parametric; }
+ public:
+  ParametricConic(const Expression& e, Context* context,
+                  const char* symbol = "t");
+
+ private:
+  CoordinateType coordinateType() const override {
+    return CoordinateType::Parametric;
+  }
 };
 
-}
+}  // namespace Poincare
 
 #endif

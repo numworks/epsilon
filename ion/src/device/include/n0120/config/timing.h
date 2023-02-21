@@ -15,9 +15,9 @@ constexpr static int LoopsPerMillisecondLowFrequency = 146;
 #endif
 constexpr static int LoopsPerMicrosecond = 86;
 
-}
-}
-}
-}
+}  // namespace Config
+}  // namespace Timing
+}  // namespace Device
+}  // namespace Ion
 
 #endif

@@ -1,27 +1,28 @@
 #ifndef LIBA_MATH_H
 #define LIBA_MATH_H
 
-#include "private/macros.h"
 #include <float.h>
+
+#include "private/macros.h"
 
 LIBA_BEGIN_DECLS
 
 typedef float float_t;
 typedef double double_t;
 
-#define M_E        2.71828182845904524
-#define M_LOG2E    1.44269504088896341
-#define M_LOG10E   0.43429448190325183
-#define M_LN2      0.69314718055994531
-#define M_LN10     2.30258509299404568
-#define M_PI       3.14159265358979324
-#define M_PI_2     1.57079632679489662
-#define M_PI_4     0.78539816339744831
-#define M_1_PI     0.31830988618379067
-#define M_2_PI     0.63661977236758134
+#define M_E 2.71828182845904524
+#define M_LOG2E 1.44269504088896341
+#define M_LOG10E 0.43429448190325183
+#define M_LN2 0.69314718055994531
+#define M_LN10 2.30258509299404568
+#define M_PI 3.14159265358979324
+#define M_PI_2 1.57079632679489662
+#define M_PI_4 0.78539816339744831
+#define M_1_PI 0.31830988618379067
+#define M_2_PI 0.63661977236758134
 #define M_2_SQRTPI 1.12837916709551257
-#define M_SQRT2    1.41421356237309505
-#define M_SQRT1_2  0.70710678118654752
+#define M_SQRT2 1.41421356237309505
+#define M_SQRT1_2 0.70710678118654752
 
 #define MAXFLOAT FLT_MAX
 #define HUGE_VAL __builtin_huge_val()
@@ -36,7 +37,8 @@ typedef double double_t;
 #define FP_ZERO 0x10
 
 #define finite(x) __builtin_finite(x)
-#define fpclassify(x) __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x)
+#define fpclassify(x) \
+  __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x)
 #define isfinite(x) __builtin_isfinite(x)
 #define isnormal(x) __builtin_isnormal(x)
 #define isnan(x) __builtin_isnan(x)

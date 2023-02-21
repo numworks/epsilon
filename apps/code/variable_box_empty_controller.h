@@ -6,18 +6,21 @@
 namespace Code {
 
 class VariableBoxEmptyController : public Escher::ModalViewEmptyController {
-public:
+ public:
   using Escher::ModalViewEmptyController::ModalViewEmptyController;
   // View Controller
-  Escher::View * view() override { return &m_view; }
-private:
-  class VariableBoxEmptyView : public Escher::ModalViewEmptyController::ModalViewEmptyView {
-  public:
+  Escher::View* view() override { return &m_view; }
+
+ private:
+  class VariableBoxEmptyView
+      : public Escher::ModalViewEmptyController::ModalViewEmptyView {
+   public:
     constexpr static int k_numberOfMessages = 1;
     VariableBoxEmptyView();
-  private:
+
+   private:
     int numberOfMessageTextViews() const override { return k_numberOfMessages; }
-    Escher::MessageTextView * messageTextViewAtIndex(int index) override {
+    Escher::MessageTextView* messageTextViewAtIndex(int index) override {
       assert(index >= 0 && index < k_numberOfMessages);
       return &m_message;
     }
@@ -26,6 +29,6 @@ private:
   VariableBoxEmptyView m_view;
 };
 
-}
+}  // namespace Code
 
 #endif

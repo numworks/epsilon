@@ -8,23 +8,29 @@ extern "C" {
 
 namespace Poincare {
 
-void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices, bool canContainMatrices) {
+void NAryExpressionNode::sortChildrenInPlace(ExpressionOrder order,
+                                             Context* context,
+                                             bool canSwapMatrices,
+                                             bool canContainMatrices) {
   Expression reference(this);
   const int childrenCount = reference.numberOfChildren();
   for (int i = 1; i < childrenCount; i++) {
     bool isSorted = true;
-    for (int j = 0; j < childrenCount-1; j++) {
+    for (int j = 0; j < childrenCount - 1; j++) {
       /* Warning: Matrix operations are not always commutative (ie,
        * multiplication) so we never swap 2 matrices. */
-      ExpressionNode * cj = childAtIndex(j);
-      ExpressionNode * cj1 = childAtIndex(j+1);
-      bool cjIsMatrix = Expression(cj).deepIsMatrix(context, canContainMatrices);
-      bool cj1IsMatrix = Expression(cj1).deepIsMatrix(context, canContainMatrices);
+      ExpressionNode* cj = childAtIndex(j);
+      ExpressionNode* cj1 = childAtIndex(j + 1);
+      bool cjIsMatrix =
+          Expression(cj).deepIsMatrix(context, canContainMatrices);
+      bool cj1IsMatrix =
+          Expression(cj1).deepIsMatrix(context, canContainMatrices);
       bool cj1GreaterThanCj = order(cj, cj1) > 0;
-      if ((cjIsMatrix && !cj1IsMatrix) || // we always put matrices at the end of expressions
+      if ((cjIsMatrix &&
+           !cj1IsMatrix) ||  // we always put matrices at the end of expressions
           (cjIsMatrix && cj1IsMatrix && canSwapMatrices && cj1GreaterThanCj) ||
           (!cjIsMatrix && !cj1IsMatrix && cj1GreaterThanCj)) {
-        reference.swapChildrenInPlace(j, j+1);
+        reference.swapChildrenInPlace(j, j + 1);
         isSorted = false;
       }
     }
@@ -59,7 +65,8 @@ void NAryExpression::mergeSameTypeChildrenInPlace() {
   }
 }
 
-int NAryExpression::allChildrenAreReal(Context * context, bool canContainMatrices) const {
+int NAryExpression::allChildrenAreReal(Context* context,
+                                       bool canContainMatrices) const {
   int i = 0;
   int result = 1;
   while (i < numberOfChildren()) {
@@ -74,11 +81,13 @@ int NAryExpression::allChildrenAreReal(Context * context, bool canContainMatrice
   return result;
 }
 
-Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(const ReductionContext& reductionContext) {
+Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
+    const ReductionContext& reductionContext) {
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; ++i) {
     Expression c = childAtIndex(i);
-    if (c.deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
+    if (c.deepIsMatrix(reductionContext.context(),
+                       reductionContext.shouldCheckMatrices())) {
       return replaceWithUndefinedInPlace();
     }
     if (c.type() != ExpressionNode::Type::Rational) {
@@ -86,22 +95,28 @@ Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(const Reduc
        * complex or finite non-integer number. Otherwise, rely on template
        * approximations. hasDefinedComplexApproximation is given Cartesian
        * complex format to force imaginary part approximation. */
-      if (!c.isReal(reductionContext.context(), reductionContext.shouldCheckMatrices()) && c.hasDefinedComplexApproximation(reductionContext.context(), Preferences::ComplexFormat::Cartesian, reductionContext.angleUnit())) {
+      if (!c.isReal(reductionContext.context(),
+                    reductionContext.shouldCheckMatrices()) &&
+          c.hasDefinedComplexApproximation(
+              reductionContext.context(), Preferences::ComplexFormat::Cartesian,
+              reductionContext.angleUnit())) {
         return replaceWithUndefinedInPlace();
       }
       // If c was complex but with a null imaginary part, real part is checked.
-      float app = c.approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
+      float app = c.approximateToScalar<float>(
+          reductionContext.context(), reductionContext.complexFormat(),
+          reductionContext.angleUnit(), true);
       if (std::isfinite(app) && app != std::round(app)) {
         return replaceWithUndefinedInPlace();
       }
       // Note : Child could be replaced with the approximation (if finite) here.
       return *this;
     }
-    if (!static_cast<Rational &>(c).isInteger()) {
+    if (!static_cast<Rational&>(c).isInteger()) {
       return replaceWithUndefinedInPlace();
     }
   }
   return Expression();
 }
 
-}
+}  // namespace Poincare

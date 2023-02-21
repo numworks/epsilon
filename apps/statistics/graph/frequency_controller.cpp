@@ -1,15 +1,24 @@
 #include "frequency_controller.h"
+
 #include <assert.h>
 #include <poincare/ieee754.h>
 
 namespace Statistics {
 
-FrequencyController::FrequencyController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::TabViewController * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
-    PlotController(parentResponder, header, tabController, stackViewController, typeViewController, store) {
+FrequencyController::FrequencyController(
+    Escher::Responder *parentResponder, Escher::ButtonRowController *header,
+    Escher::TabViewController *tabController,
+    Escher::StackViewController *stackViewController,
+    Escher::ViewController *typeViewController, Store *store)
+    : PlotController(parentResponder, header, tabController,
+                     stackViewController, typeViewController, store) {
   m_curveView.setCursorView(&m_cursorView);
 }
 
-void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {
+void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
+                                            char *labelBuffer, int maxSize,
+                                            int glyphLength,
+                                            int maxGlyphLength) const {
   if (axis == Shared::AbstractPlotView::Axis::Horizontal) {
     return;
   }
@@ -19,18 +28,20 @@ void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
     labelBuffer[0] = 0;
     return;
   }
-  assert(labelBuffer[length-1] != '%');
+  assert(labelBuffer[length - 1] != '%');
   labelBuffer[length] = '%';
-  labelBuffer[length+1] = 0;
+  labelBuffer[length + 1] = 0;
 }
 
 void FrequencyController::moveCursorToSelectedIndex() {
   m_cursorView.setIsRing(true);
-  m_cursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
+  m_cursorView.setColor(
+      Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
   PlotController::moveCursorToSelectedIndex();
 }
 
-bool FrequencyController::moveSelectionHorizontally(OMG::HorizontalDirection direction) {
+bool FrequencyController::moveSelectionHorizontally(
+    OMG::HorizontalDirection direction) {
   assert(m_selectedSeries >= 0);
   int totValues = totalValues(m_selectedSeries);
   if (totValues <= 1) {
@@ -38,7 +49,9 @@ bool FrequencyController::moveSelectionHorizontally(OMG::HorizontalDirection dir
   }
 
   // Compute cursor step
-  double step = (direction.isRight() ? 1 : -1) * static_cast<double>(m_graphRange.xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
+  double step = (direction.isRight() ? 1 : -1) *
+                static_cast<double>(m_graphRange.xGridUnit()) /
+                static_cast<double>(k_numberOfCursorStepsInGradUnit);
   assert(step != 0.0);
 
   double x = m_cursor.x();
@@ -48,7 +61,10 @@ bool FrequencyController::moveSelectionHorizontally(OMG::HorizontalDirection dir
   double snapFactor = 1.5;
 
   assert(x >= valueAtIndex(m_selectedSeries, m_selectedIndex));
-  int index = (step > 0.0 || x > valueAtIndex(m_selectedSeries, m_selectedIndex)) ? m_selectedIndex : m_selectedIndex - 1;
+  int index =
+      (step > 0.0 || x > valueAtIndex(m_selectedSeries, m_selectedIndex))
+          ? m_selectedIndex
+          : m_selectedIndex - 1;
   if (index < 0 || (step > 0.0 && index + 1 >= totValues)) {
     // Cursor cannot move further
     return false;
@@ -81,25 +97,32 @@ bool FrequencyController::moveSelectionHorizontally(OMG::HorizontalDirection dir
   } else {
     /* Using pixelWidth(), simplify the cursor's position value while staying at
      * the same pixel. */
-    double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(m_curveView.pixelWidth()) - 1.0);
+    double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(
+                                          m_curveView.pixelWidth()) -
+                                          1.0);
     double xSimplified = magnitude * std::round(x / magnitude);
     assert(std::fabs(xSimplified - x) <= std::fabs(step * simplifyFactor));
     x = xSimplified;
   }
 
   // Compute the cursor's position
-  double y = yValueForComputedXValues(m_selectedSeries, index, x, xIndex, xNextIndex);
-  m_cursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
+  double y =
+      yValueForComputedXValues(m_selectedSeries, index, x, xIndex, xNextIndex);
+  m_cursorView.setColor(
+      Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
   m_cursor.moveTo(x, x, y);
   m_curveView.reload();
   return true;
 }
 
-double FrequencyController::yValueForComputedXValues(int series, int index, double x, double xIndex, double xNextIndex) const {
+double FrequencyController::yValueForComputedXValues(int series, int index,
+                                                     double x, double xIndex,
+                                                     double xNextIndex) const {
   assert(x >= xIndex && x < xNextIndex);
   double yIndex = resultAtIndex(series, index);
   double yNextIndex = resultAtIndex(series, index + 1);
-  return yIndex + (yNextIndex - yIndex) * ((x - xIndex) / (xNextIndex - xIndex));
+  return yIndex +
+         (yNextIndex - yIndex) * ((x - xIndex) / (xNextIndex - xIndex));
 }
 
 double FrequencyController::yValueAtAbscissa(int series, double x) const {
@@ -118,7 +141,8 @@ double FrequencyController::yValueAtAbscissa(int series, double x) const {
   return resultAtIndex(series, n - 1);
 }
 
-int FrequencyController::nextSubviewWhenMovingVertically(OMG::VerticalDirection direction) const {
+int FrequencyController::nextSubviewWhenMovingVertically(
+    OMG::VerticalDirection direction) const {
   // Search first curve in direction
   int step = direction.isUp() ? -1 : 1;
   double closestYUpOrDown = NAN;
@@ -129,7 +153,8 @@ int FrequencyController::nextSubviewWhenMovingVertically(OMG::VerticalDirection 
     /* Browse series in order starting with m_selectingSeries +/- 1
      * This is useful when series are all on the same spot to properly
      * loop. */
-    int seriesIndex = (m_selectedSeries + step * s + Store::k_numberOfSeries) % Store::k_numberOfSeries;
+    int seriesIndex = (m_selectedSeries + step * s + Store::k_numberOfSeries) %
+                      Store::k_numberOfSeries;
     assert(seriesIndex != m_selectedSeries);
     if (!seriesIsActive(seriesIndex)) {
       continue;
@@ -139,17 +164,19 @@ int FrequencyController::nextSubviewWhenMovingVertically(OMG::VerticalDirection 
       // series is on the same spot and in the right direction in series list
       return seriesIndex;
     }
-    if (y * step < cursorY * step
-        && (std::isnan(closestYUpOrDown) || closestYUpOrDown * step < y * step)) {
+    if (y * step < cursorY * step &&
+        (std::isnan(closestYUpOrDown) || closestYUpOrDown * step < y * step)) {
       // series is in the right direction and closer than others
-      nextSubview = m_store->activeSeriesIndexFromSeriesIndex(seriesIndex, activeSeriesMethod());
+      nextSubview = m_store->activeSeriesIndexFromSeriesIndex(
+          seriesIndex, activeSeriesMethod());
       closestYUpOrDown = y;
     }
   }
   return nextSubview;
 }
 
-void FrequencyController::updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) {
+void FrequencyController::updateHorizontalIndexAfterSelectingNewSeries(
+    int previousSelectedSeries) {
   // Search closest index to cursor
   double currentXValue = m_cursor.x();
   if (valueAtIndex(m_selectedSeries, 0) >= currentXValue) {
@@ -163,7 +190,9 @@ void FrequencyController::updateHorizontalIndexAfterSelectingNewSeries(int previ
     if (valueAtI <= currentXValue) {
       // +1 if the next index is closer than the current.
       assert(std::isnan(previousValue) || currentXValue < previousValue);
-      m_selectedIndex = i + static_cast<int>(!std::isnan(previousValue) && (currentXValue - valueAtI > previousValue - currentXValue));
+      m_selectedIndex = i + static_cast<int>(!std::isnan(previousValue) &&
+                                             (currentXValue - valueAtI >
+                                              previousValue - currentXValue));
       return;
     }
     previousValue = valueAtI;
@@ -171,10 +200,10 @@ void FrequencyController::updateHorizontalIndexAfterSelectingNewSeries(int previ
   assert(false);
 }
 
-void FrequencyController::computeYBounds(float * yMin, float *yMax) const {
+void FrequencyController::computeYBounds(float *yMin, float *yMax) const {
   // Frequency curve is always bounded between 0 and 100
   *yMin = 0.0f;
   *yMax = 100.0f;
 }
 
-}
+}  // namespace Statistics

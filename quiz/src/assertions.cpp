@@ -1,11 +1,11 @@
 #include <ion.h>
-#include <stdlib.h>
 #include <quiz.h>
+#include <stdlib.h>
 
 bool sSkipAssertions = false;
 
 void quiz_assert(bool condition) {
-  if(!condition) {
+  if (!condition) {
     quiz_print("  ASSERTION FAILED");
     if (sSkipAssertions) {
       return;
@@ -18,8 +18,9 @@ void quiz_assert(bool condition) {
      * volatile objects, and performs no synchronization or atomic operations in
      * its body, controlling expression, or (in the case of a for statement) its
      * expression-3, may be assumed by the implementation to terminate.
-    */
-    while (true) {}
+     */
+    while (true) {
+    }
 #else
     abort();
 #endif

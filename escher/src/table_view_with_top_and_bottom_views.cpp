@@ -1,23 +1,26 @@
-#include <escher/table_view_with_top_and_bottom_views.h>
 #include <escher/palette.h>
+#include <escher/table_view_with_top_and_bottom_views.h>
+
 #include <algorithm>
 
 namespace Escher {
 
-TableViewWithTopAndBottomViews::TableViewWithTopAndBottomViews(SelectableTableView * table, TableViewDataSource * tableDataSource, View * topView, View * bottomView) :
-  m_tableDataSource(tableDataSource),
-  m_topView(topView),
-  m_table(table),
-  m_bottomView(bottomView)
-{
+TableViewWithTopAndBottomViews::TableViewWithTopAndBottomViews(
+    SelectableTableView* table, TableViewDataSource* tableDataSource,
+    View* topView, View* bottomView)
+    : m_tableDataSource(tableDataSource),
+      m_topView(topView),
+      m_table(table),
+      m_bottomView(bottomView) {
   m_table->setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
-void TableViewWithTopAndBottomViews::drawRect(KDContext * ctx, KDRect rect) const {
+void TableViewWithTopAndBottomViews::drawRect(KDContext* ctx,
+                                              KDRect rect) const {
   ctx->fillRect(rect, Palette::WallScreen);
 }
 
-View * TableViewWithTopAndBottomViews::subviewAtIndex(int i) {
+View* TableViewWithTopAndBottomViews::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
   i += (m_topView == nullptr);
   if (i == 0) {
@@ -52,19 +55,29 @@ void TableViewWithTopAndBottomViews::layoutSubviews(bool force) {
   if (m_topView) {
     topHeight = m_topView->minimalSizeForOptimalDisplay().height();
     topOrigin = tableRect.y() - topHeight;
-    m_topView->setFrame(KDRect(0, topOrigin, bounds().width(), topHeight), force);
+    m_topView->setFrame(KDRect(0, topOrigin, bounds().width(), topHeight),
+                        force);
   }
   if (m_bottomView) {
     bottomHeight = m_bottomView->minimalSizeForOptimalDisplay().height();
-    m_bottomView->setFrame(KDRect(0, tableRect.y() + tableRect.height(), bounds().width(), bottomHeight), force);
+    m_bottomView->setFrame(KDRect(0, tableRect.y() + tableRect.height(),
+                                  bounds().width(), bottomHeight),
+                           force);
   }
 
-  m_scrollBar.update(topHeight + tableHeight + bottomHeight, m_table->contentOffset().y() - topOrigin, bounds().height());
-  constexpr KDCoordinate barWidth = ScrollView::BarDecorator::k_barsFrameBreadth;
-  m_scrollBar.setFrame(KDRect(bounds().width() - barWidth, 0, barWidth, bounds().height()), force);
+  m_scrollBar.update(topHeight + tableHeight + bottomHeight,
+                     m_table->contentOffset().y() - topOrigin,
+                     bounds().height());
+  constexpr KDCoordinate barWidth =
+      ScrollView::BarDecorator::k_barsFrameBreadth;
+  m_scrollBar.setFrame(
+      KDRect(bounds().width() - barWidth, 0, barWidth, bounds().height()),
+      force);
 }
 
-void TableViewWithTopAndBottomViews::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+void TableViewWithTopAndBottomViews::tableViewDidChangeSelectionAndDidScroll(
+    SelectableTableView* t, int previousSelectedCellX,
+    int previousSelectedCellY, bool withinTemporarySelection) {
   /* TODO: This won't be called if the table view changed selection without
    * scrolling. This can be a problem if your table is small enough to fit in
    * the screen bounds but the bottom view does not fit in the screen.
@@ -85,9 +98,16 @@ void TableViewWithTopAndBottomViews::tableViewDidChangeSelectionAndDidScroll(Sel
     m_table->setContentOffset(KDPointZero);
   } else if (row == m_tableDataSource->numberOfRows() - 1 && m_bottomView) {
     m_table->setFrame(KDRectZero, false);
-    KDCoordinate topViewHeight = m_topView ? m_topView->minimalSizeForOptimalDisplay().height() - k_verticalMargin : 0;
-    KDCoordinate bottomViewHeight = m_bottomView->minimalSizeForOptimalDisplay().height() - k_verticalMargin;
-    m_table->setContentOffset(KDPoint(0, m_table->minimalSizeForOptimalDisplay().height() - bottomViewHeight + topViewHeight));
+    KDCoordinate topViewHeight =
+        m_topView ? m_topView->minimalSizeForOptimalDisplay().height() -
+                        k_verticalMargin
+                  : 0;
+    KDCoordinate bottomViewHeight =
+        m_bottomView->minimalSizeForOptimalDisplay().height() -
+        k_verticalMargin;
+    m_table->setContentOffset(
+        KDPoint(0, m_table->minimalSizeForOptimalDisplay().height() -
+                       bottomViewHeight + topViewHeight));
   }
   layoutSubviews(false);
 }
@@ -98,7 +118,8 @@ void TableViewWithTopAndBottomViews::reload() {
   layoutSubviews();
 }
 
-KDRect TableViewWithTopAndBottomViews::setTableFrame(KDCoordinate * yOffset, bool force) {
+KDRect TableViewWithTopAndBottomViews::setTableFrame(KDCoordinate* yOffset,
+                                                     bool force) {
   assert(yOffset);
   /* This function is called after the inner table view has scrolled. We update
    * its size and offset to maintain the illusion the three view are part of a
@@ -134,14 +155,18 @@ KDRect TableViewWithTopAndBottomViews::setTableFrame(KDCoordinate * yOffset, boo
     *yOffset = 0;
     if (m_topView) {
       m_table->setTopMargin(k_verticalMargin);
-      h = std::max<KDCoordinate>(h, bounds().height() - m_topView->minimalSizeForOptimalDisplay().height() - k_verticalMargin);
+      h = std::max<KDCoordinate>(
+          h, bounds().height() -
+                 m_topView->minimalSizeForOptimalDisplay().height() -
+                 k_verticalMargin);
     }
     currentResult = KDRect(0, bounds().height() - h, bounds().width(), h);
   }
   /* Set frame a first time now so that minimalSizeForOptimalDisplay can
    * be computed */
   m_table->setFrame(currentResult, force);
-  KDCoordinate fullTableHeight = m_table->minimalSizeForOptimalDisplay().height();
+  KDCoordinate fullTableHeight =
+      m_table->minimalSizeForOptimalDisplay().height();
   KDCoordinate bottom = currentResult.top() + fullTableHeight - *yOffset;
 
   if (bottom <= bounds().height()) {
@@ -155,9 +180,9 @@ KDRect TableViewWithTopAndBottomViews::setTableFrame(KDCoordinate * yOffset, boo
      *   |  | 4)       Old table |  | |  |
      *   |  | 5)           frame |  | | m_table->bounds().height()
      *   |  +--------------------+  | v  |
-     *   |  * 7)  Hidden content *  |    | m_table->minimalSizeForOptimalDisplay().height()
-     *   |  **********************  |    v
-     *   |                          |
+     *   |  * 7)  Hidden content *  |    |
+     * m_table->minimalSizeForOptimalDisplay().height() | **********************
+     * |    v |                          |
      *   +--------------------------+
      * - New frame:
      *   +--------------------------+
@@ -173,13 +198,21 @@ KDRect TableViewWithTopAndBottomViews::setTableFrame(KDCoordinate * yOffset, boo
     if (m_bottomView) {
       m_table->setBottomMargin(k_verticalMargin);
       /* Margin has changed, recompute bottom */
-      bottom = currentResult.top() + m_table->minimalSizeForOptimalDisplay().height() - *yOffset;
-      KDCoordinate bottomViewTop = std::min(static_cast<KDCoordinate>(bounds().height() - m_bottomView->minimalSizeForOptimalDisplay().height() - k_verticalMargin), bottom);
+      bottom = currentResult.top() +
+               m_table->minimalSizeForOptimalDisplay().height() - *yOffset;
+      KDCoordinate bottomViewTop =
+          std::min(static_cast<KDCoordinate>(
+                       bounds().height() -
+                       m_bottomView->minimalSizeForOptimalDisplay().height() -
+                       k_verticalMargin),
+                   bottom);
       if (bottom < bottomViewTop) {
         *yOffset -= bottomViewTop - bottom;
         bottom = bottomViewTop;
       }
-      currentResult.setSize(KDSize(currentResult.width(), currentResult.height() - bounds().height() + bottom));
+      currentResult.setSize(
+          KDSize(currentResult.width(),
+                 currentResult.height() - bounds().height() + bottom));
     }
   }
   if (currentResult.size() == bounds().size()) {
@@ -191,4 +224,4 @@ KDRect TableViewWithTopAndBottomViews::setTableFrame(KDCoordinate * yOffset, boo
   return currentResult;
 }
 
-}
+}  // namespace Escher

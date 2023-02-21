@@ -10,7 +10,7 @@ void resetMemoizedState();
 void pushState(State state);
 void keyboardWasScanned(State state);
 
-}
-}
+}  // namespace Keyboard
+}  // namespace Ion
 
 #endif

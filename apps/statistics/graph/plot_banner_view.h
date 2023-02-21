@@ -8,20 +8,21 @@
 namespace Statistics {
 
 class PlotBannerView : public Shared::BannerView {
-public:
+ public:
   PlotBannerView();
-  Escher::BufferTextView * seriesName() { return &m_seriesName; }
-  Escher::BufferTextView * value() { return &m_value; }
-  Escher::BufferTextView * result() { return &m_result; }
-private:
+  Escher::BufferTextView* seriesName() { return &m_seriesName; }
+  Escher::BufferTextView* value() { return &m_value; }
+  Escher::BufferTextView* result() { return &m_result; }
+
+ private:
   constexpr static int k_numberOfSubviews = 3;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
-  Escher::View * subviewAtIndex(int index) override;
+  Escher::View* subviewAtIndex(int index) override;
   Escher::BufferTextView m_seriesName;
   Escher::BufferTextView m_value;
   Escher::BufferTextView m_result;
 };
 
-}
+}  // namespace Statistics
 
 #endif

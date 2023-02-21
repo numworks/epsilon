@@ -3,12 +3,14 @@
 
 #include <apps/shared/global_context.h>
 #include <apps/shared/inference.h>
+
 #include "hypothesis_params.h"
 
 namespace Inference {
 
-/* A Statistic is something that is computed from a sample and whose distribution is known.
- * From its distribution, we can compute statistical test results and confidence intervals.
+/* A Statistic is something that is computed from a sample and whose
+ * distribution is known. From its distribution, we can compute statistical test
+ * results and confidence intervals.
  */
 
 enum class SignificanceTestType {
@@ -22,12 +24,7 @@ enum class SignificanceTestType {
   NumberOfSignificanceTestTypes
 };
 
-enum class DistributionType {
-  T,
-  TPooled,
-  Z,
-  Chi2
-};
+enum class DistributionType { T, TPooled, Z, Chi2 };
 
 enum class CategoricalType {
   // Order matter for cells order
@@ -36,29 +33,27 @@ enum class CategoricalType {
 };
 
 class Statistic : public Shared::Inference {
-friend class DistributionInterface;
-public:
-  Statistic() :
-    m_threshold(-1),
-    m_degreesOfFreedom(NAN) {}
+  friend class DistributionInterface;
 
-  enum class SubApp {
-    Test,
-    Interval,
-    NumberOfSubApps
-  };
+ public:
+  Statistic() : m_threshold(-1), m_degreesOfFreedom(NAN) {}
+
+  enum class SubApp { Test, Interval, NumberOfSubApps };
 
   virtual void init() {}
   virtual void tidy() {}
 
-  static bool Initialize(Statistic * statistic, SubApp subApp);
+  static bool Initialize(Statistic* statistic, SubApp subApp);
   /* This poor man's RTTI is required only to avoid reinitializing the model
    * everytime we enter a subapp. */
   virtual SubApp subApp() const = 0;
 
-  constexpr static int k_numberOfSignificanceTestType = static_cast<int>(SignificanceTestType::NumberOfSignificanceTestTypes);
+  constexpr static int k_numberOfSignificanceTestType =
+      static_cast<int>(SignificanceTestType::NumberOfSignificanceTestTypes);
 
-  virtual int numberOfSignificancesTestTypes() const { return k_numberOfSignificanceTestType; }
+  virtual int numberOfSignificancesTestTypes() const {
+    return k_numberOfSignificanceTestType;
+  }
   virtual int numberOfAvailableDistributions() const { return 1; }
 
   virtual I18n::Message statisticTitle() const = 0;
@@ -66,26 +61,46 @@ public:
   virtual I18n::Message tStatisticMessage() const = 0;
   virtual I18n::Message zStatisticMessage() const = 0;
   virtual I18n::Message tOrZStatisticMessage() const = 0;
-  virtual I18n::Message distributionTitle() const { return I18n::Message::Default; }
+  virtual I18n::Message distributionTitle() const {
+    return I18n::Message::Default;
+  }
   virtual bool hasHypothesisParameters() const { return false; }
-  virtual HypothesisParams * hypothesisParams() { assert(false); return nullptr; }
-  virtual const char * hypothesisSymbol() { assert(false); return nullptr; }
+  virtual HypothesisParams* hypothesisParams() {
+    assert(false);
+    return nullptr;
+  }
+  virtual const char* hypothesisSymbol() {
+    assert(false);
+    return nullptr;
+  }
   virtual I18n::Message tDistributionName() const = 0;
   virtual I18n::Message tPooledDistributionName() const = 0;
   virtual I18n::Message zDistributionName() const = 0;
-  virtual void setGraphTitle(char * buffer, size_t bufferSize) const = 0;
-  virtual void setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const {}
+  virtual void setGraphTitle(char* buffer, size_t bufferSize) const = 0;
+  virtual void setResultTitle(char* buffer, size_t bufferSize,
+                              bool resultIsTopPage) const {}
 
-  /* Instantiate correct Statistic based on SignificanceTestType, DistributionType and CategoricalType. */
+  /* Instantiate correct Statistic based on SignificanceTestType,
+   * DistributionType and CategoricalType. */
   virtual SignificanceTestType significanceTestType() const = 0;
-  virtual bool initializeSignificanceTest(SignificanceTestType testType, Shared::GlobalContext * context) { return testType != significanceTestType(); } // Default implementation used in final implementation
+  virtual bool initializeSignificanceTest(SignificanceTestType testType,
+                                          Shared::GlobalContext* context) {
+    return testType != significanceTestType();
+  }  // Default implementation used in final implementation
   virtual DistributionType distributionType() const = 0;
-  virtual bool initializeDistribution(DistributionType distribution) { return distribution != distributionType(); } // Default implementation used in final implementation
-  virtual CategoricalType categoricalType() const { assert(false); return CategoricalType::Homogeneity; }
+  virtual bool initializeDistribution(DistributionType distribution) {
+    return distribution != distributionType();
+  }  // Default implementation used in final implementation
+  virtual CategoricalType categoricalType() const {
+    assert(false);
+    return CategoricalType::Homogeneity;
+  }
   virtual void initParameters() = 0;
 
   // Input
-  int numberOfParameters() override { return numberOfStatisticParameters() + 1 /* threshold */; }
+  int numberOfParameters() override {
+    return numberOfStatisticParameters() + 1 /* threshold */;
+  }
   double parameterAtIndex(int i) const override;
   void setParameterAtIndex(double f, int i) override;
   double threshold() const { return m_threshold; }
@@ -99,7 +114,9 @@ public:
 
   // Outputs
   virtual int numberOfResults() const = 0;
-  virtual void resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage, int * precision) = 0;
+  virtual void resultAtIndex(int index, double* value,
+                             Poincare::Layout* message,
+                             I18n::Message* subMessage, int* precision) = 0;
   bool hasDegreeOfFreedom() const { return !std::isnan(m_degreesOfFreedom); }
   double degreeOfFreedom() const { return m_degreesOfFreedom; }
 
@@ -110,7 +127,7 @@ public:
   // CurveViewRange
   virtual bool isGraphable() const { return true; }
 
-protected:
+ protected:
   virtual float canonicalDensityFunction(float x) const = 0;
   virtual int numberOfStatisticParameters() const = 0;
 
@@ -119,6 +136,6 @@ protected:
   double m_degreesOfFreedom;
 };
 
-}
+}  // namespace Inference
 
 #endif

@@ -5,10 +5,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionApp::Snapshot::Snapshot() :
-  m_selectedCurveIndex(0)
-{
-}
+FunctionApp::Snapshot::Snapshot() : m_selectedCurveIndex(0) {}
 
 void FunctionApp::Snapshot::reset() {
   m_selectedCurveIndex = 0;
@@ -19,12 +16,17 @@ void FunctionApp::prepareForIntrusiveStorageChange() {
   ExpressionFieldDelegateApp::prepareForIntrusiveStorageChange();
   assert(m_activeControllerBeforeStore == nullptr);
   int tab = m_tabViewController.activeTab();
-  StackViewController * tabStacks[] = {&m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController};
+  StackViewController* tabStacks[] = {&m_listStackViewController,
+                                      &m_graphStackViewController,
+                                      &m_valuesStackViewController};
   assert(0 <= tab && tab < 3);
-  if (tabStacks[tab]->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth) {
+  if (tabStacks[tab]->depth() >
+      Shared::InteractiveCurveViewController::k_graphControllerStackDepth) {
     /* Close the details/curve menu/calculation views (minimum...)/column header
      * since they may not make sense with the updated function. */
-    tabStacks[tab]->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
+    tabStacks[tab]->popUntilDepth(
+        Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
+        true);
   }
   /* Changing the storage may have deactivated all active functions. We pop
    * then push to make sur the graph gets updated to its empty counterpart if
@@ -68,34 +70,54 @@ void FunctionApp::concludeIntrusiveStorageChange() {
   }
 #endif
   int tab = m_tabViewController.activeTab();
-  StackViewController * tabStacks[] = {&m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController};
+  StackViewController* tabStacks[] = {&m_listStackViewController,
+                                      &m_graphStackViewController,
+                                      &m_valuesStackViewController};
   assert(0 <= tab && tab < 3);
   tabStacks[tab]->push(m_activeControllerBeforeStore);
   m_activeControllerBeforeStore = nullptr;
 }
 
-bool FunctionApp::storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const {
+bool FunctionApp::storageCanChangeForRecordName(
+    const Ion::Storage::Record::Name recordName) const {
   /* Prevent functions from being (re)defined from the store menu and the
    * varBox.
    * Variables can be changed even if they are used in functions.
    * Warning: this has no effect on Sequence yet: we can't define sequences
    * from the store menu.  */
-  return !m_intrusiveStorageChangeFlag || strcmp(recordName.extension, functionStore()->modelExtension()) != 0;
+  return !m_intrusiveStorageChangeFlag ||
+         strcmp(recordName.extension, functionStore()->modelExtension()) != 0;
 }
 
-FunctionApp::FunctionApp(Snapshot * snapshot, Shared::FunctionListController * listController, Shared::FunctionGraphController * graphController, Shared::ValuesController * valuesController) :
-  ExpressionFieldDelegateApp(snapshot, &m_tabViewController),
-  m_listFooter(&m_listHeader, listController, listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGray),
-  m_listHeader(&m_listStackViewController, &m_listFooter, listController),
-  m_listStackViewController(&m_tabViewController, &m_listHeader, Escher::StackViewController::Style::WhiteUniform),
-  m_graphAlternateEmptyViewController(&m_graphHeader, graphController, graphController),
-  m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, graphController),
-  m_graphStackViewController(&m_tabViewController, &m_graphHeader, Escher::StackViewController::Style::WhiteUniform),
-  m_valuesAlternateEmptyViewController(&m_valuesHeader, valuesController, valuesController),
-  m_valuesHeader(&m_valuesStackViewController, &m_valuesAlternateEmptyViewController, valuesController),
-  m_valuesStackViewController(&m_tabViewController, &m_valuesHeader, Escher::StackViewController::Style::WhiteUniform),
-  m_tabViewController(&m_modalViewController, snapshot, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
-  m_activeControllerBeforeStore(nullptr)
-{}
+FunctionApp::FunctionApp(Snapshot* snapshot,
+                         Shared::FunctionListController* listController,
+                         Shared::FunctionGraphController* graphController,
+                         Shared::ValuesController* valuesController)
+    : ExpressionFieldDelegateApp(snapshot, &m_tabViewController),
+      m_listFooter(&m_listHeader, listController, listController,
+                   ButtonRowController::Position::Bottom,
+                   ButtonRowController::Style::EmbossedGray),
+      m_listHeader(&m_listStackViewController, &m_listFooter, listController),
+      m_listStackViewController(
+          &m_tabViewController, &m_listHeader,
+          Escher::StackViewController::Style::WhiteUniform),
+      m_graphAlternateEmptyViewController(&m_graphHeader, graphController,
+                                          graphController),
+      m_graphHeader(&m_graphStackViewController,
+                    &m_graphAlternateEmptyViewController, graphController),
+      m_graphStackViewController(
+          &m_tabViewController, &m_graphHeader,
+          Escher::StackViewController::Style::WhiteUniform),
+      m_valuesAlternateEmptyViewController(&m_valuesHeader, valuesController,
+                                           valuesController),
+      m_valuesHeader(&m_valuesStackViewController,
+                     &m_valuesAlternateEmptyViewController, valuesController),
+      m_valuesStackViewController(
+          &m_tabViewController, &m_valuesHeader,
+          Escher::StackViewController::Style::WhiteUniform),
+      m_tabViewController(
+          &m_modalViewController, snapshot, &m_listStackViewController,
+          &m_graphStackViewController, &m_valuesStackViewController),
+      m_activeControllerBeforeStore(nullptr) {}
 
-}
+}  // namespace Shared

@@ -1,9 +1,10 @@
 #ifndef POINCARE_LINEAR_LAYOUT_DECODER_H
 #define POINCARE_LINEAR_LAYOUT_DECODER_H
 
-#include "horizontal_layout.h"
-#include "code_point_layout.h"
 #include <ion/unicode/utf8_decoder.h>
+
+#include "code_point_layout.h"
+#include "horizontal_layout.h"
 
 namespace Poincare {
 
@@ -11,16 +12,18 @@ namespace Poincare {
  * only CodePointLayouts (used in layout fields in linear mode) */
 
 class LinearLayoutDecoder : public UnicodeDecoder {
-public:
-  LinearLayoutDecoder(const HorizontalLayout layout, size_t initialPosition = 0, size_t layoutEnd = 0) :
-    UnicodeDecoder(initialPosition, layoutEnd ? layoutEnd : layout.numberOfChildren()),
-    m_layout(layout)
-  {
+ public:
+  LinearLayoutDecoder(const HorizontalLayout layout, size_t initialPosition = 0,
+                      size_t layoutEnd = 0)
+      : UnicodeDecoder(initialPosition,
+                       layoutEnd ? layoutEnd : layout.numberOfChildren()),
+        m_layout(layout) {
     assert(!m_layout.isUninitialized());
   }
   CodePoint nextCodePoint() { return codePointAt(m_position++); }
   CodePoint previousCodePoint() { return codePointAt(--m_position); }
-private:
+
+ private:
   CodePoint codePointAt(size_t index) {
     if (index == m_end) {
       return UCodePointNull;
@@ -33,6 +36,6 @@ private:
   const HorizontalLayout m_layout;
 };
 
-}
+}  // namespace Poincare
 
 #endif

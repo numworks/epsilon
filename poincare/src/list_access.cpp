@@ -1,73 +1,108 @@
-#include <poincare/list_access.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/list.h>
+#include <poincare/list_access.h>
 #include <poincare/list_complex.h>
 #include <poincare/rational.h>
 #include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
-template<>
+template <>
 ExpressionNode::Type ListAccessNode<1>::type() const {
   return Type::ListElement;
 }
 
-template<>
+template <>
 ExpressionNode::Type ListAccessNode<2>::type() const {
   return Type::ListSlice;
 }
 
-template<int U>
-int ListAccessNode<U>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  int written = childAtIndex(k_listChildIndex)->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+template <int U>
+int ListAccessNode<U>::serialize(char* buffer, int bufferSize,
+                                 Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits) const {
+  int written = childAtIndex(k_listChildIndex)
+                    ->serialize(buffer, bufferSize, floatDisplayMode,
+                                numberOfSignificantDigits);
   if (written == -1 || bufferSize - written <= 0) {
     return -1;
   }
-  return written + SerializationHelper::Prefix(this, buffer + written, bufferSize - written, floatDisplayMode, numberOfSignificantDigits, "", SerializationHelper::ParenthesisType::Classic, U - 1);
+  return written + SerializationHelper::Prefix(
+                       this, buffer + written, bufferSize - written,
+                       floatDisplayMode, numberOfSignificantDigits, "",
+                       SerializationHelper::ParenthesisType::Classic, U - 1);
 }
 
-template<>
-Layout ListAccessNode<1>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
+template <>
+Layout ListAccessNode<1>::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
   HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), false), 0);
-  result.addOrMergeChildAtIndex(childAtIndex(k_listChildIndex)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0);
+  result.addOrMergeChildAtIndex(
+      LayoutHelper::Parentheses(
+          childAtIndex(0)->createLayout(floatDisplayMode,
+                                        numberOfSignificantDigits, context),
+          false),
+      0);
+  result.addOrMergeChildAtIndex(
+      childAtIndex(k_listChildIndex)
+          ->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      0);
   return std::move(result);
 }
 
-template<>
-Layout ListAccessNode<2>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
+template <>
+Layout ListAccessNode<2>::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
   HorizontalLayout parameters = HorizontalLayout::Builder();
-  parameters.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0);
+  parameters.addOrMergeChildAtIndex(
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits,
+                                    context),
+      0);
   parameters.addOrMergeChildAtIndex(CodePointLayout::Builder(','), 0);
-  parameters.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0);
+  parameters.addOrMergeChildAtIndex(
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits,
+                                    context),
+      0);
 
   HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(parameters, false), 0);
-  result.addOrMergeChildAtIndex(childAtIndex(k_listChildIndex)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0);
+  result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(parameters, false),
+                                0);
+  result.addOrMergeChildAtIndex(
+      childAtIndex(k_listChildIndex)
+          ->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      0);
   return std::move(result);
 }
 
-template<>
-Expression ListAccessNode<1>::shallowReduce(const ReductionContext& reductionContext) {
+template <>
+Expression ListAccessNode<1>::shallowReduce(
+    const ReductionContext& reductionContext) {
   return ListElement(this).shallowReduce(reductionContext);
 }
 
-template<>
-Expression ListAccessNode<2>::shallowReduce(const ReductionContext& reductionContext) {
+template <>
+Expression ListAccessNode<2>::shallowReduce(
+    const ReductionContext& reductionContext) {
   return ListSlice(this).shallowReduce(reductionContext);
 }
 
-template<>
-template<typename T> Evaluation<T> ListAccessNode<1>::templatedApproximate(const ApproximationContext& approximationContext) const {
-  Evaluation<T> child = childAtIndex(ListAccessNode<1>::k_listChildIndex)->approximate(T(), approximationContext);
+template <>
+template <typename T>
+Evaluation<T> ListAccessNode<1>::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
+  Evaluation<T> child = childAtIndex(ListAccessNode<1>::k_listChildIndex)
+                            ->approximate(T(), approximationContext);
   if (child.type() != EvaluationNode<T>::Type::ListComplex) {
     return Complex<T>::Undefined();
   }
   ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
 
-  T indexChild = childAtIndex(0)->approximate(T(), approximationContext).toScalar();
+  T indexChild =
+      childAtIndex(0)->approximate(T(), approximationContext).toScalar();
   if (std::isnan(indexChild) || static_cast<int>(indexChild) != indexChild) {
     return Complex<T>::Undefined();
   }
@@ -78,19 +113,24 @@ template<typename T> Evaluation<T> ListAccessNode<1>::templatedApproximate(const
   return Complex<T>::Builder(listChild.complexAtIndex(indexInt - 1));
 }
 
-template<>
-template<typename T> Evaluation<T> ListAccessNode<2>::templatedApproximate(const ApproximationContext& approximationContext) const {
-  Evaluation<T> child = childAtIndex(ListAccessNode<2>::k_listChildIndex)->approximate(T(), approximationContext);
+template <>
+template <typename T>
+Evaluation<T> ListAccessNode<2>::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
+  Evaluation<T> child = childAtIndex(ListAccessNode<2>::k_listChildIndex)
+                            ->approximate(T(), approximationContext);
   if (child.type() != EvaluationNode<T>::Type::ListComplex) {
     return Complex<T>::Undefined();
   }
   ListComplex<T> listChild = static_cast<ListComplex<T>&>(child);
 
-  T startIndex = childAtIndex(0)->approximate(T(), approximationContext).toScalar();
+  T startIndex =
+      childAtIndex(0)->approximate(T(), approximationContext).toScalar();
   if (std::isnan(startIndex) || static_cast<int>(startIndex) != startIndex) {
     return Complex<T>::Undefined();
   }
-  T endIndex = childAtIndex(1)->approximate(T(), approximationContext).toScalar();
+  T endIndex =
+      childAtIndex(1)->approximate(T(), approximationContext).toScalar();
   if (std::isnan(endIndex) || static_cast<int>(endIndex) != endIndex) {
     return Complex<T>::Undefined();
   }
@@ -104,14 +144,17 @@ template<typename T> Evaluation<T> ListAccessNode<2>::templatedApproximate(const
     if (i < 0) {
       continue;
     }
-    returnList.addChildAtIndexInPlace(Complex<T>::Builder(listChild.complexAtIndex(i)), returnList.numberOfChildren(), returnList.numberOfChildren());
+    returnList.addChildAtIndexInPlace(
+        Complex<T>::Builder(listChild.complexAtIndex(i)),
+        returnList.numberOfChildren(), returnList.numberOfChildren());
   }
   return std::move(returnList);
 }
 
 Expression ListElement::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
+    Expression e =
+        SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -125,7 +168,8 @@ Expression ListElement::shallowReduce(ReductionContext reductionContext) {
   int index;
   int indexChildIndex = 0;
   bool indexIsSymbol;
-  bool indexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, indexChildIndex, &index, &indexIsSymbol);
+  bool indexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(
+      *this, indexChildIndex, &index, &indexIsSymbol);
   if (!indexIsInteger) {
     return replaceWithUndefinedInPlace();
   }
@@ -133,7 +177,7 @@ Expression ListElement::shallowReduce(ReductionContext reductionContext) {
     return *this;
   }
 
-  index = index - 1; // List index starts at 1
+  index = index - 1;  // List index starts at 1
   if (index < 0 || index >= listChild.numberOfChildren()) {
     return replaceWithUndefinedInPlace();
   }
@@ -145,7 +189,8 @@ Expression ListElement::shallowReduce(ReductionContext reductionContext) {
 
 Expression ListSlice::shallowReduce(ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
+    Expression e =
+        SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -160,7 +205,8 @@ Expression ListSlice::shallowReduce(ReductionContext reductionContext) {
   bool oneOfTheIndexesIsSymbol = false;
   for (int childIndex = 0; childIndex <= 1; childIndex++) {
     bool indexIsSymbol;
-    bool indexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, childIndex, indexes + childIndex, &indexIsSymbol);
+    bool indexIsInteger = SimplificationHelper::extractIntegerChildAtIndex(
+        *this, childIndex, indexes + childIndex, &indexIsSymbol);
     if (!indexIsInteger) {
       return replaceWithUndefinedInPlace();
     }
@@ -171,9 +217,9 @@ Expression ListSlice::shallowReduce(ReductionContext reductionContext) {
   }
 
   int listNumberOfChildren = listChild.numberOfChildren();
-  int firstIndex = indexes[0] - 1; // List index starts at 1
+  int firstIndex = indexes[0] - 1;  // List index starts at 1
   int lastIndex = indexes[1] - 1;
-  List typedList = static_cast<List &>(listChild);
+  List typedList = static_cast<List&>(listChild);
 
   if (lastIndex < -1) {
     lastIndex = -1;
@@ -195,11 +241,19 @@ Expression ListSlice::shallowReduce(ReductionContext reductionContext) {
   return std::move(typedList);
 }
 
-template int ListAccessNode<1>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
-template int ListAccessNode<2>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
-template Evaluation<float> ListAccessNode<1>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
-template Evaluation<float> ListAccessNode<2>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListAccessNode<1>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
-template Evaluation<double> ListAccessNode<2>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
+template int ListAccessNode<1>::serialize(
+    char* buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const;
+template int ListAccessNode<2>::serialize(
+    char* buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const;
+template Evaluation<float> ListAccessNode<1>::templatedApproximate<float>(
+    const ApproximationContext& approximationContext) const;
+template Evaluation<float> ListAccessNode<2>::templatedApproximate<float>(
+    const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListAccessNode<1>::templatedApproximate<double>(
+    const ApproximationContext& approximationContext) const;
+template Evaluation<double> ListAccessNode<2>::templatedApproximate<double>(
+    const ApproximationContext& approximationContext) const;
 
-}
+}  // namespace Poincare

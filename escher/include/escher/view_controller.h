@@ -29,20 +29,20 @@ extern "C" {
  * The method initView is called before setting a View (or often sets itself)
  * and laying it out. */
 
-#include <escher/view.h>
 #include <escher/responder.h>
+#include <escher/view.h>
 #include <stdint.h>
 
 namespace Escher {
 
 class ViewController : public Responder {
-public:
+ public:
   /* TitlesDisplay is only used within StackViewController for now. It
    * modifies the stack headers display. */
   enum class TitlesDisplay : uint8_t {
     DisplayAllTitles = 0b11111111,
-    /* NeverDisplayOwnHeader is a special value, which not only hides the current title,
-     * but also does not add it to the stack headers. */
+    /* NeverDisplayOwnHeader is a special value, which not only hides the
+     * current title, but also does not add it to the stack headers. */
     NeverDisplayOwnTitle = 0b11111110,
     /* Hide all previous headers but the last one. */
     DisplayLastFourTitles = 0b00001111,
@@ -55,26 +55,29 @@ public:
     DisplayNoTitle = 0b00000000
   };
 
-  ViewController(Responder * parentResponder) : Responder(parentResponder) {}
-  virtual const char * title() { return nullptr; }
-  virtual View * view() = 0;
+  ViewController(Responder* parentResponder) : Responder(parentResponder) {}
+  virtual const char* title() { return nullptr; }
+  virtual View* view() = 0;
   virtual void initView() {}
   virtual void viewWillAppear();
   virtual void viewDidDisappear() {}
-  virtual TitlesDisplay titlesDisplay() { return TitlesDisplay::DisplayAllTitles; }
+  virtual TitlesDisplay titlesDisplay() {
+    return TitlesDisplay::DisplayAllTitles;
+  }
   /* Use these two functions only if the controller is in a stack hierarchy */
   // Pushes the given controller onto the parent StackViewController responder
-  virtual void stackOpenPage(ViewController * nextPage);
+  virtual void stackOpenPage(ViewController* nextPage);
   // Pop the parent StackViewController responder on a Left event
   bool popFromStackViewControllerOnLeftEvent(Ion::Events::Event event);
-protected:
+
+ protected:
 #if EPSILON_TELEMETRY
-  virtual const char * telemetryId() const { return nullptr; }
-  void telemetryReportEvent(const char * action, const char * label) const;
+  virtual const char* telemetryId() const { return nullptr; }
+  void telemetryReportEvent(const char* action, const char* label) const;
 #else
-  void telemetryReportEvent(const char * action, const char * label) const {}
+  void telemetryReportEvent(const char* action, const char* label) const {}
 #endif
 };
 
-}
+}  // namespace Escher
 #endif

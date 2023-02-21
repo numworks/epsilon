@@ -1,12 +1,14 @@
-#include <stdint.h>
 #include <alloca.h>
+#include <stdint.h>
+
 #include "helpers.h"
 
 /* MicroPython configuration options
  * We're not listing the default options as defined in mpconfig.h */
 
 #if __EMSCRIPTEN__
-// Enable a PyStack where most objects are allocated instead of always using the heap
+// Enable a PyStack where most objects are allocated instead of always using the
+// heap
 /* This enables to allocate and free memory in a scope (thus, Python can call
  * Python) but also has the collateral effect of removing bugs regarding
  * garbage collection on the web simulator. Indeed, fewer objetcts are
@@ -27,7 +29,8 @@
 // Whether to check C stack usage
 #define MICROPY_STACK_CHECK (1)
 
-// Whether to provide the mp_kbd_exception object, and micropython.kbd_intr function
+// Whether to provide the mp_kbd_exception object, and micropython.kbd_intr
+// function
 #define MICROPY_KBD_EXCEPTION (1)
 
 // Long int implementation
@@ -87,7 +90,8 @@
 // Whether to provide math.factorial function
 #define MICROPY_PY_MATH_FACTORIAL (1)
 
-// Whether math.factorial is large, fast and recursive (1) or small and slow (0).
+// Whether math.factorial is large, fast and recursive (1) or small and slow
+// (0).
 #define MICROPY_OPT_MATH_FACTORIAL (1)
 
 // Whether to provide "cmath" module
@@ -123,15 +127,15 @@
 
 #define MICROPY_VM_HOOK_LOOP micropython_port_vm_hook_loop();
 
-typedef intptr_t mp_int_t; // must be pointer size
-typedef uintptr_t mp_uint_t; // must be pointer size
+typedef intptr_t mp_int_t;    // must be pointer size
+typedef uintptr_t mp_uint_t;  // must be pointer size
 
 typedef long mp_off_t;
 
 // extra built in names to add to the global namespace
-#define MICROPY_PORT_BUILTINS \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_open), (mp_obj_t)&mp_builtin_open_obj }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_input), (mp_obj_t)&mp_builtin_input_obj },
+#define MICROPY_PORT_BUILTINS                                      \
+  {MP_OBJ_NEW_QSTR(MP_QSTR_open), (mp_obj_t)&mp_builtin_open_obj}, \
+      {MP_OBJ_NEW_QSTR(MP_QSTR_input), (mp_obj_t)&mp_builtin_input_obj},
 
 #define MP_STATE_PORT MP_STATE_VM
 
@@ -142,11 +146,11 @@ extern const struct _mp_obj_module_t modpyplot_module;
 extern const struct _mp_obj_module_t modtime_module;
 extern const struct _mp_obj_module_t modturtle_module;
 
-#define MICROPY_PORT_BUILTIN_MODULES \
-    { MP_ROM_QSTR(MP_QSTR_ion), MP_ROM_PTR(&modion_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_kandinsky), MP_ROM_PTR(&modkandinsky_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_matplotlib), MP_ROM_PTR(&modmatplotlib_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_matplotlib_dot_pyplot), MP_ROM_PTR(&modpyplot_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module) }, \
-    { MP_ROM_QSTR(MP_QSTR_turtle), MP_ROM_PTR(&modturtle_module) }, \
-
+#define MICROPY_PORT_BUILTIN_MODULES                                        \
+  {MP_ROM_QSTR(MP_QSTR_ion), MP_ROM_PTR(&modion_module)},                   \
+      {MP_ROM_QSTR(MP_QSTR_kandinsky), MP_ROM_PTR(&modkandinsky_module)},   \
+      {MP_ROM_QSTR(MP_QSTR_matplotlib), MP_ROM_PTR(&modmatplotlib_module)}, \
+      {MP_ROM_QSTR(MP_QSTR_matplotlib_dot_pyplot),                          \
+       MP_ROM_PTR(&modpyplot_module)},                                      \
+      {MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module)},             \
+      {MP_ROM_QSTR(MP_QSTR_turtle), MP_ROM_PTR(&modturtle_module)},

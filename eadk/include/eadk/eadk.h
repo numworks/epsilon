@@ -31,7 +31,8 @@ typedef struct {
 
 #define EADK_SCREEN_WIDTH 320
 #define EADK_SCREEN_HEIGHT 240
-static const eadk_rect_t eadk_screen_rect = {0, 0, EADK_SCREEN_WIDTH, EADK_SCREEN_HEIGHT};
+static const eadk_rect_t eadk_screen_rect = {0, 0, EADK_SCREEN_WIDTH,
+                                             EADK_SCREEN_HEIGHT};
 
 typedef uint64_t eadk_keyboard_state_t;
 typedef enum {
@@ -84,22 +85,23 @@ typedef enum {
 } eadk_key_t;
 
 eadk_keyboard_state_t eadk_keyboard_scan();
-static inline bool eadk_keyboard_key_down(eadk_keyboard_state_t state, eadk_key_t key) {
-  return (state>>(uint8_t)key) & 1;
+static inline bool eadk_keyboard_key_down(eadk_keyboard_state_t state,
+                                          eadk_key_t key) {
+  return (state >> (uint8_t)key) & 1;
 }
 
 typedef uint16_t eadk_event_t;
 enum {
   eadk_event_left = 0,
   eadk_event_up = 1,
-  eadk_event_down  = 2,
+  eadk_event_down = 2,
   eadk_event_right = 3,
-  eadk_event_ok    = 4,
-  eadk_event_back  = 5,
+  eadk_event_ok = 4,
+  eadk_event_back = 5,
   eadk_event_shift = 12,
   eadk_event_alpha = 13,
-  eadk_event_xnt   = 14,
-  eadk_event_var   = 15,
+  eadk_event_xnt = 14,
+  eadk_event_var = 15,
   eadk_event_toolbox = 16,
   eadk_event_backspace = 17,
   eadk_event_exp = 18,
@@ -124,7 +126,7 @@ enum {
   eadk_event_six = 38,
   eadk_event_multiplication = 39,
   eadk_event_division = 40,
-  eadk_event_one  = 42,
+  eadk_event_one = 42,
   eadk_event_two = 43,
   eadk_event_three = 44,
   eadk_event_plus = 45,
@@ -134,9 +136,9 @@ enum {
   eadk_event_ee = 50,
   eadk_event_ans = 51,
   eadk_event_exe = 52,
-  eadk_event_shift_left  = 54,
-  eadk_event_shift_up    = 55,
-  eadk_event_shift_down  = 56,
+  eadk_event_shift_left = 54,
+  eadk_event_shift_up = 55,
+  eadk_event_shift_down = 56,
   eadk_event_shift_right = 57,
   eadk_event_alpha_lock = 67,
   eadk_event_cut = 68,
@@ -216,7 +218,7 @@ enum {
   eadk_event_upper_z = 207,
 };
 
-eadk_event_t eadk_event_get(int32_t * timeout);
+eadk_event_t eadk_event_get(int32_t* timeout);
 
 // Backlight
 
@@ -231,11 +233,13 @@ float eadk_battery_voltage();
 
 // Display
 
-void eadk_display_push_rect(eadk_rect_t rect, const eadk_color_t * pixels);
+void eadk_display_push_rect(eadk_rect_t rect, const eadk_color_t* pixels);
 void eadk_display_push_rect_uniform(eadk_rect_t rect, eadk_color_t color);
-void eadk_display_pull_rect(eadk_rect_t rect, eadk_color_t * pixels);
+void eadk_display_pull_rect(eadk_rect_t rect, eadk_color_t* pixels);
 bool eadk_display_wait_for_vblank();
-void eadk_display_draw_string(const char * text, eadk_point_t point, bool large_font, eadk_color_t text_color, eadk_color_t background_color);
+void eadk_display_draw_string(const char* text, eadk_point_t point,
+                              bool large_font, eadk_color_t text_color,
+                              eadk_color_t background_color);
 
 // Timing
 
@@ -245,7 +249,7 @@ uint64_t eadk_timing_millis();
 
 // External data
 
-extern const char * eadk_external_data;
+extern const char* eadk_external_data;
 extern size_t eadk_external_data_size;
 
 // Misc

@@ -1,48 +1,60 @@
 #ifndef POINCARE_SUM_H
 #define POINCARE_SUM_H
 
-#include <poincare/sum_and_product.h>
 #include <poincare/addition.h>
+#include <poincare/sum_and_product.h>
 
 namespace Poincare {
 
 class SumNode final : public SumAndProductNode {
-public:
+ public:
   // TreeNode
   size_t size() const override { return sizeof(SumNode); }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
-    stream << "Sum";
-  }
+  void logNodeName(std::ostream& stream) const override { stream << "Sum"; }
 #endif
 
   Type type() const override { return Type::Sum; }
 
-private:
+ private:
   float emptySumAndProductValue() const override { return 0.0f; }
-  Layout createSumAndProductLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createSumAndProductLayout(Layout argumentLayout, Layout symbolLayout,
+                                   Layout subscriptLayout,
+                                   Layout superscriptLayout) const override;
+  int serialize(char* buffer, int bufferSize,
+                Preferences::PrintFloatMode floatDisplayMode,
+                int numberOfSignificantDigits) const override;
 
   // Evaluation
-  Evaluation<double> evaluateWithNextTerm(DoublePrecision p, Evaluation<double> a, Evaluation<double> b, Preferences::ComplexFormat complexFormat) const override {
+  Evaluation<double> evaluateWithNextTerm(
+      DoublePrecision p, Evaluation<double> a, Evaluation<double> b,
+      Preferences::ComplexFormat complexFormat) const override {
     return AdditionNode::Compute<double>(a, b, complexFormat);
   }
-  Evaluation<float> evaluateWithNextTerm(SinglePrecision p, Evaluation<float> a, Evaluation<float> b, Preferences::ComplexFormat complexFormat) const override {
+  Evaluation<float> evaluateWithNextTerm(
+      SinglePrecision p, Evaluation<float> a, Evaluation<float> b,
+      Preferences::ComplexFormat complexFormat) const override {
     return AdditionNode::Compute<float>(a, b, complexFormat);
   }
 };
 
 class Sum final : public SumAndProduct {
-friend class SumNode;
-public:
-  Sum(const SumNode * n) : SumAndProduct(n) {}
-  static Sum Builder(Expression argument, Symbol symbol, Expression subScript, Expression superScript) { return TreeHandle::FixedArityBuilder<Sum, SumNode>({argument, symbol, subScript, superScript}); }
+  friend class SumNode;
+
+ public:
+  Sum(const SumNode* n) : SumAndProduct(n) {}
+  static Sum Builder(Expression argument, Symbol symbol, Expression subScript,
+                     Expression superScript) {
+    return TreeHandle::FixedArityBuilder<Sum, SumNode>(
+        {argument, symbol, subScript, superScript});
+  }
   static Expression UntypedBuilder(Expression children);
 
-  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sum", 4, &UntypedBuilder);
+  constexpr static Expression::FunctionHelper s_functionHelper =
+      Expression::FunctionHelper("sum", 4, &UntypedBuilder);
   constexpr static char defaultXNTChar = SumAndProduct::k_defaultXNTChar;
 };
 
-}
+}  // namespace Poincare
 
 #endif

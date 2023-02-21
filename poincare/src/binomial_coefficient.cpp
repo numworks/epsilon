@@ -1,45 +1,61 @@
+#include <assert.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/binomial_coefficient.h>
 #include <poincare/binomial_coefficient_layout.h>
-#include <poincare/approximation_helper.h>
-#include <poincare/letter_c_with_sub_and_superscript_layout.h>
-#include <poincare/rational.h>
 #include <poincare/layout_helper.h>
+#include <poincare/letter_c_with_sub_and_superscript_layout.h>
 #include <poincare/preferences.h>
+#include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 #include <stdlib.h>
-#include <assert.h>
+
 #include <cmath>
 #include <utility>
 
 namespace Poincare {
 
-int BinomialCoefficientNode::numberOfChildren() const { return BinomialCoefficient::s_functionHelper.numberOfChildren(); }
+int BinomialCoefficientNode::numberOfChildren() const {
+  return BinomialCoefficient::s_functionHelper.numberOfChildren();
+}
 
-Expression BinomialCoefficientNode::shallowReduce(const ReductionContext& reductionContext) {
+Expression BinomialCoefficientNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return BinomialCoefficient(this).shallowReduce(reductionContext);
 }
 
-Layout BinomialCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  Layout child0 = childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
-  Layout child1 = childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
-  if (Preferences::sharedPreferences->combinatoricSymbols() == Preferences::CombinatoricSymbols::Default) {
+Layout BinomialCoefficientNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
+  Layout child0 = childAtIndex(0)->createLayout(
+      floatDisplayMode, numberOfSignificantDigits, context);
+  Layout child1 = childAtIndex(1)->createLayout(
+      floatDisplayMode, numberOfSignificantDigits, context);
+  if (Preferences::sharedPreferences->combinatoricSymbols() ==
+      Preferences::CombinatoricSymbols::Default) {
     return BinomialCoefficientLayout::Builder(child0, child1);
   } else {
     return LetterCWithSubAndSuperscriptLayout::Builder(child0, child1);
   }
 }
 
-int BinomialCoefficientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::s_functionHelper.aliasesList().mainAlias());
+int BinomialCoefficientNode::serialize(
+    char* buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode,
+    int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(
+      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+      BinomialCoefficient::s_functionHelper.aliasesList().mainAlias());
 }
 
-template<typename T>
-Evaluation<T> BinomialCoefficientNode::templatedApproximate(const ApproximationContext& approximationContext) const {
-  return ApproximationHelper::Map<T>(this,
-      approximationContext,
-      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
+template <typename T>
+Evaluation<T> BinomialCoefficientNode::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
+  return ApproximationHelper::Map<T>(
+      this, approximationContext,
+      [](const std::complex<T>* c, int numberOfComplexes,
+         Preferences::ComplexFormat complexFormat,
+         Preferences::AngleUnit angleUnit, void* ctx) {
         assert(numberOfComplexes == 2);
         T n = ComplexNode<T>::ToScalar(c[0]);
         T k = ComplexNode<T>::ToScalar(c[1]);
@@ -47,7 +63,7 @@ Evaluation<T> BinomialCoefficientNode::templatedApproximate(const ApproximationC
       });
 }
 
-template<typename T>
+template <typename T>
 T BinomialCoefficientNode::compute(T k, T n) {
   if (std::isnan(n) || std::isnan(k) || k != std::round(k)) {
     return NAN;
@@ -71,17 +87,15 @@ T BinomialCoefficientNode::compute(T k, T n) {
   return generalized ? result : std::round(result);
 }
 
-
-Expression BinomialCoefficient::shallowReduce(ReductionContext reductionContext) {
+Expression BinomialCoefficient::shallowReduce(
+    ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-        SimplificationHelper::ListReduction::DistributeOverLists
-    );
+        SimplificationHelper::ListReduction::DistributeOverLists);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -89,7 +103,8 @@ Expression BinomialCoefficient::shallowReduce(ReductionContext reductionContext)
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);
 
-  if (c0.type() != ExpressionNode::Type::Rational || c1.type() != ExpressionNode::Type::Rational) {
+  if (c0.type() != ExpressionNode::Type::Rational ||
+      c1.type() != ExpressionNode::Type::Rational) {
     return *this;
   }
 
@@ -154,4 +169,4 @@ Expression BinomialCoefficient::shallowReduce(ReductionContext reductionContext)
 template double BinomialCoefficientNode::compute(double k, double n);
 template float BinomialCoefficientNode::compute(float k, float n);
 
-}
+}  // namespace Poincare

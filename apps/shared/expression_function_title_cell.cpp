@@ -1,4 +1,5 @@
 #include "expression_function_title_cell.h"
+
 #include <assert.h>
 
 using namespace Poincare;
@@ -6,10 +7,10 @@ using namespace Escher;
 
 namespace Shared {
 
-ExpressionFunctionTitleCell::ExpressionFunctionTitleCell(KDFont::Size font) :
-  FunctionTitleCell(),
-  m_titleTextView(k_alignment, k_alignment, KDColorBlack, KDColorWhite, font)
-{}
+ExpressionFunctionTitleCell::ExpressionFunctionTitleCell(KDFont::Size font)
+    : FunctionTitleCell(),
+      m_titleTextView(k_alignment, k_alignment, KDColorBlack, KDColorWhite,
+                      font) {}
 
 void ExpressionFunctionTitleCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);
@@ -36,7 +37,7 @@ void ExpressionFunctionTitleCell::reloadCell() {
   FunctionTitleCell::reloadCell();
 }
 
-View * ExpressionFunctionTitleCell::subviewAtIndex(int index) {
+View* ExpressionFunctionTitleCell::subviewAtIndex(int index) {
   assert(index == 0);
   return &m_titleTextView;
 }
@@ -46,4 +47,4 @@ void ExpressionFunctionTitleCell::layoutSubviews(bool force) {
   m_titleTextView.setFrame(subviewFrame(), force);
 }
 
-}
+}  // namespace Shared

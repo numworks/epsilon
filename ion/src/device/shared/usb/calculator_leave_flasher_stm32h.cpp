@@ -13,6 +13,6 @@ void Calculator::leave(uint32_t leaveAddress) {
   assert(false);
 }
 
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion

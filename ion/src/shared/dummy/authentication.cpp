@@ -3,9 +3,7 @@
 namespace Ion {
 namespace Authentication {
 
-ClearanceLevel clearanceLevel() {
-  return ClearanceLevel::NumWorks;
-}
+ClearanceLevel clearanceLevel() { return ClearanceLevel::NumWorks; }
 
-}
-}
+}  // namespace Authentication
+}  // namespace Ion

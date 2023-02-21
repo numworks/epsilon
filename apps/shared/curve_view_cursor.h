@@ -4,14 +4,14 @@
 namespace Shared {
 
 class CurveViewCursor {
-public:
+ public:
   CurveViewCursor(double maxValue = k_defaultMaxValue);
   double t() const { return m_t; }
   double x() const { return m_x; }
   double y() const { return m_y; }
   void moveTo(double t, double x, double y);
 
-private:
+ private:
   constexpr static double k_defaultMaxValue = 1E+8;
   double clipped(double f, bool canBeInfinite);
 
@@ -21,6 +21,6 @@ private:
   const double m_maxValue;
 };
 
-}
+}  // namespace Shared
 
 #endif

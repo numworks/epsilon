@@ -1,6 +1,8 @@
 #include "pyplot_view.h"
-#include <algorithm>
+
 #include <python/port/port.h>
+
+#include <algorithm>
 
 using namespace Shared;
 using namespace Poincare;
@@ -9,8 +11,9 @@ namespace Matplotlib {
 
 // OptionalAxes
 
-void OptionalAxes::drawAxesAndGrid(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
-  PlotStore * store = plotStore();
+void OptionalAxes::drawAxesAndGrid(const Shared::AbstractPlotView* plotView,
+                                   KDContext* ctx, KDRect rect) const {
+  PlotStore* store = plotStore();
   if (store->gridRequested()) {
     m_grid.drawAxesAndGrid(plotView, ctx, rect);
   }
@@ -21,7 +24,8 @@ void OptionalAxes::drawAxesAndGrid(const Shared::AbstractPlotView * plotView, KD
 
 // PyplotPolicy
 
-void PyplotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+void PyplotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
+                            KDRect rect) const {
   /* The following lines use MicroPython, which can fail, so we need to use nlr
    * to catch any errors. */
   nlr_buf_t nlr;
@@ -39,48 +43,63 @@ void PyplotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, 
       traceRect(plotView, ctx, rect, rectangle);
     }
     nlr_pop();
-  } else { // Uncaught exception
-    MicroPython::ExecutionEnvironment::HandleException(&nlr, m_micropythonEnvironment);
+  } else {  // Uncaught exception
+    MicroPython::ExecutionEnvironment::HandleException(
+        &nlr, m_micropythonEnvironment);
   }
 }
 
-void PyplotPolicy::traceDot(const AbstractPlotView * plotView, KDContext * ctx, KDRect r, PlotStore::Dot dot) const {
-  plotView->drawDot(ctx, r, Dots::Size::Tiny, Poincare::Coordinate2D<float>(dot.x(), dot.y()), dot.color());
+void PyplotPolicy::traceDot(const AbstractPlotView* plotView, KDContext* ctx,
+                            KDRect r, PlotStore::Dot dot) const {
+  plotView->drawDot(ctx, r, Dots::Size::Tiny,
+                    Poincare::Coordinate2D<float>(dot.x(), dot.y()),
+                    dot.color());
 }
 
-void PyplotPolicy::traceSegment(const AbstractPlotView * plotView, KDContext * ctx, KDRect r, PlotStore::Segment segment) const {
-  plotView->drawSegment(ctx, r, Coordinate2D<float>(segment.xStart(), segment.yStart()), Coordinate2D<float>(segment.xEnd(), segment.yEnd()), segment.color(), true);
+void PyplotPolicy::traceSegment(const AbstractPlotView* plotView,
+                                KDContext* ctx, KDRect r,
+                                PlotStore::Segment segment) const {
+  plotView->drawSegment(ctx, r,
+                        Coordinate2D<float>(segment.xStart(), segment.yStart()),
+                        Coordinate2D<float>(segment.xEnd(), segment.yEnd()),
+                        segment.color(), true);
   if (!std::isnan(segment.arrowWidth())) {
     float dx = segment.xEnd() - segment.xStart();
     float dy = segment.yEnd() - segment.yStart();
-    plotView->drawArrowhead(ctx, r, Coordinate2D<float>(segment.xEnd(), segment.yEnd()), Coordinate2D<float>(dx, dy), segment.arrowWidth(), segment.color(), true);
+    plotView->drawArrowhead(ctx, r,
+                            Coordinate2D<float>(segment.xEnd(), segment.yEnd()),
+                            Coordinate2D<float>(dx, dy), segment.arrowWidth(),
+                            segment.color(), true);
   }
 }
 
-void PyplotPolicy::traceRect(const AbstractPlotView * plotView, KDContext * ctx, KDRect r, PlotStore::Rect rect) const {
-  KDCoordinate left = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, rect.left());
-  KDCoordinate right = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, rect.right());
-  KDCoordinate top = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical, rect.top());
-  KDCoordinate bottom = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical, rect.bottom());
+void PyplotPolicy::traceRect(const AbstractPlotView* plotView, KDContext* ctx,
+                             KDRect r, PlotStore::Rect rect) const {
+  KDCoordinate left = plotView->floatToKDCoordinatePixel(
+      AbstractPlotView::Axis::Horizontal, rect.left());
+  KDCoordinate right = plotView->floatToKDCoordinatePixel(
+      AbstractPlotView::Axis::Horizontal, rect.right());
+  KDCoordinate top = plotView->floatToKDCoordinatePixel(
+      AbstractPlotView::Axis::Vertical, rect.top());
+  KDCoordinate bottom = plotView->floatToKDCoordinatePixel(
+      AbstractPlotView::Axis::Vertical, rect.bottom());
   KDRect pixelRect(
-    left,
-    top,
-    std::max(right - left, 1), // Rectangle should at least be visible
-    bottom - top
-  );
+      left, top,
+      std::max(right - left, 1),  // Rectangle should at least be visible
+      bottom - top);
   ctx->fillRect(pixelRect, rect.color());
 }
 
-void PyplotPolicy::traceLabel(const AbstractPlotView * plotView, KDContext * ctx, KDRect r, PlotStore::Label label) const {
-  plotView->drawLabel(ctx, r, label.string(), Coordinate2D<float>(label.x(), label.y()), AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::After, KDColorBlack);
+void PyplotPolicy::traceLabel(const AbstractPlotView* plotView, KDContext* ctx,
+                              KDRect r, PlotStore::Label label) const {
+  plotView->drawLabel(ctx, r, label.string(),
+                      Coordinate2D<float>(label.x(), label.y()),
+                      AbstractPlotView::RelativePosition::After,
+                      AbstractPlotView::RelativePosition::After, KDColorBlack);
 }
 
 // PyplotView
 
-PyplotView::PyplotView(PlotStore * s) :
-  PlotView(s)
-{
-  m_store = s;
-}
+PyplotView::PyplotView(PlotStore* s) : PlotView(s) { m_store = s; }
 
-}
+}  // namespace Matplotlib

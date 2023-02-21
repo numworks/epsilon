@@ -10,7 +10,7 @@ namespace Reset {
 void jump(uint32_t jumpIsrVectorAddress);
 
 }
-}
-}
+}  // namespace Device
+}  // namespace Ion
 
 #endif

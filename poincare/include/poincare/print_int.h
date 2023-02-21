@@ -14,11 +14,11 @@ namespace PrintInt {
  *  - Right prints on the right, padding on the left with zeroes if needed. It
  *      returns the number of chars written (bufferLength) */
 
-int Left(uint32_t integer, char * buffer, int bufferLength);
-int Right(uint32_t integer, char * buffer, int bufferLength);
+int Left(uint32_t integer, char* buffer, int bufferLength);
+int Right(uint32_t integer, char* buffer, int bufferLength);
 
-}
+}  // namespace PrintInt
 
-}
+}  // namespace Poincare
 
 #endif

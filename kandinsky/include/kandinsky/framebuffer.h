@@ -5,15 +5,16 @@
 #include <kandinsky/rect.h>
 
 class KDFrameBuffer {
-public:
-  KDFrameBuffer(KDColor * pixels, KDSize size);
-  void pushRect(KDRect rect, const KDColor * pixels);
+ public:
+  KDFrameBuffer(KDColor* pixels, KDSize size);
+  void pushRect(KDRect rect, const KDColor* pixels);
   void pushRectUniform(KDRect rect, KDColor color);
-  void pullRect(KDRect rect, KDColor * pixels);
+  void pullRect(KDRect rect, KDColor* pixels);
   KDRect bounds();
-private:
-  KDColor * pixelAddress(KDPoint p) const;
-  KDColor * m_pixels;
+
+ private:
+  KDColor* pixelAddress(KDPoint p) const;
+  KDColor* m_pixels;
   KDSize m_size;
 };
 

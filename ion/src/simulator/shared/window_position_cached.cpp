@@ -1,16 +1,17 @@
-#include "window.h"
-#include "platform.h"
 #include <SDL.h>
 #include <stdio.h>
+
+#include "platform.h"
+#include "window.h"
 
 namespace Ion {
 namespace Simulator {
 namespace Window {
 
-bool readCachedWindowPosition(int * x, int * y) {
+bool readCachedWindowPosition(int* x, int* y) {
   // Read previous location if exists
-  const char * path = Platform::cacheWindowPositionFilePath();
-  FILE * pos = fopen(path, "r");
+  const char* path = Platform::cacheWindowPositionFilePath();
+  FILE* pos = fopen(path, "r");
   if (pos == nullptr) {
     return false;
   }
@@ -19,9 +20,9 @@ bool readCachedWindowPosition(int * x, int * y) {
   return read == 2;
 }
 
-bool cacheWindowPosition(SDL_Window * window) {
-  const char * path = Platform::cacheWindowPositionFilePath();
-  FILE * pos = fopen(path, "w");
+bool cacheWindowPosition(SDL_Window* window) {
+  const char* path = Platform::cacheWindowPositionFilePath();
+  FILE* pos = fopen(path, "w");
   if (pos == nullptr) {
     return false;
   }
@@ -33,8 +34,7 @@ bool cacheWindowPosition(SDL_Window * window) {
   return true;
 }
 
-
-void didInit(SDL_Window * window) {
+void didInit(SDL_Window* window) {
   int x, y;
   if (!readCachedWindowPosition(&x, &y)) {
     x = SDL_WINDOWPOS_CENTERED;
@@ -43,10 +43,8 @@ void didInit(SDL_Window * window) {
   SDL_SetWindowPosition(window, x, y);
 }
 
-void willShutdown(SDL_Window * window) {
-  cacheWindowPosition(window);
-}
+void willShutdown(SDL_Window* window) { cacheWindowPosition(window); }
 
-}
-}
-}
+}  // namespace Window
+}  // namespace Simulator
+}  // namespace Ion

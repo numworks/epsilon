@@ -1,6 +1,8 @@
 #include "helpers.h"
-#include "port.h"
+
 #include <ion.h>
+
+#include "port.h"
 extern "C" {
 #include "mphalport.h"
 }
@@ -28,8 +30,10 @@ bool micropython_port_vm_hook_loop() {
 }
 
 void micropython_port_vm_hook_refresh_print() {
-  assert(MicroPython::ExecutionEnvironment::currentExecutionEnvironment() != nullptr);
-  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->refreshPrintOutput();
+  assert(MicroPython::ExecutionEnvironment::currentExecutionEnvironment() !=
+         nullptr);
+  MicroPython::ExecutionEnvironment::currentExecutionEnvironment()
+      ->refreshPrintOutput();
 }
 
 bool micropython_port_interruptible_msleep(int32_t delay) {
@@ -38,14 +42,18 @@ bool micropython_port_interruptible_msleep(int32_t delay) {
    * frequency. */
   constexpr int32_t interruptionCheckDelay = 100;
   const int32_t numberOfInterruptionChecks = delay / interruptionCheckDelay;
-  int32_t remainingDelay = delay - numberOfInterruptionChecks * interruptionCheckDelay;
+  int32_t remainingDelay =
+      delay - numberOfInterruptionChecks * interruptionCheckDelay;
   int32_t currentRemainingInterruptionChecks = numberOfInterruptionChecks;
   do {
     // We assume the time taken by the interruption check is insignificant
     if (micropython_port_interrupt_if_needed()) {
       return true;
     }
-    Ion::Timing::msleep(currentRemainingInterruptionChecks == numberOfInterruptionChecks ? remainingDelay : interruptionCheckDelay);
+    Ion::Timing::msleep(currentRemainingInterruptionChecks ==
+                                numberOfInterruptionChecks
+                            ? remainingDelay
+                            : interruptionCheckDelay);
     currentRemainingInterruptionChecks--;
   } while (currentRemainingInterruptionChecks >= 0);
   return false;
@@ -53,7 +61,8 @@ bool micropython_port_interruptible_msleep(int32_t delay) {
 
 bool micropython_port_interrupt_if_needed() {
   Ion::Keyboard::State state(0);
-  Ion::Keyboard::Key interruptKey = static_cast<Ion::Keyboard::Key>(mp_interrupt_char);
+  Ion::Keyboard::Key interruptKey =
+      static_cast<Ion::Keyboard::Key>(mp_interrupt_char);
   bool interruption = false;
   while (state != Ion::Keyboard::State(-1)) {
     interruption = state.keyDown(interruptKey) ? true : interruption;
@@ -67,6 +76,4 @@ bool micropython_port_interrupt_if_needed() {
   return false;
 }
 
-int micropython_port_random() {
-  return Ion::random();
-}
+int micropython_port_random() { return Ion::random(); }

@@ -3,11 +3,11 @@
 
 namespace Escher {
 
-MessageTableCellWithExpression::MessageTableCellWithExpression(I18n::Message message) :
-  MessageTableCell(message),
-  m_subtitleView(KDContext::k_alignRight, KDContext::k_alignCenter, Palette::GrayDark)
-{
-}
+MessageTableCellWithExpression::MessageTableCellWithExpression(
+    I18n::Message message)
+    : MessageTableCell(message),
+      m_subtitleView(KDContext::k_alignRight, KDContext::k_alignCenter,
+                     Palette::GrayDark) {}
 
 void MessageTableCellWithExpression::setHighlighted(bool highlight) {
   MessageTableCell::setHighlighted(highlight);
@@ -19,4 +19,4 @@ void MessageTableCellWithExpression::setLayout(Poincare::Layout layout) {
   reloadCell();
 }
 
-}
+}  // namespace Escher

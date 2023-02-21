@@ -1,7 +1,9 @@
 #include "generic_sub_controller.h"
+
+#include <assert.h>
 #include <escher/container.h>
 #include <escher/message_table_cell.h>
-#include <assert.h>
+
 #include <cmath>
 
 using namespace Poincare;
@@ -9,13 +11,11 @@ using namespace Escher;
 
 namespace Settings {
 
-GenericSubController::GenericSubController(Responder * parentResponder) :
-  SelectableListViewController(parentResponder),
-  m_messageTreeModel(nullptr)
-{
-}
+GenericSubController::GenericSubController(Responder *parentResponder)
+    : SelectableListViewController(parentResponder),
+      m_messageTreeModel(nullptr) {}
 
-const char * GenericSubController::title() {
+const char *GenericSubController::title() {
   if (m_messageTreeModel) {
     return I18n::translate(m_messageTreeModel->label());
   }
@@ -60,12 +60,14 @@ KDCoordinate GenericSubController::nonMemoizedRowHeight(int index) {
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
-void GenericSubController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
+void GenericSubController::willDisplayCellForIndex(HighlightCell *cell,
+                                                   int index) {
+  MessageTableCell *myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(m_messageTreeModel->childAtIndex(index)->label());
 }
 
-void GenericSubController::setMessageTreeModel(const MessageTree * messageTreeModel) {
+void GenericSubController::setMessageTreeModel(
+    const MessageTree *messageTreeModel) {
   m_messageTreeModel = (MessageTree *)messageTreeModel;
 }
 
@@ -73,8 +75,8 @@ void GenericSubController::viewDidDisappear() {
   m_selectableTableView.deselectTable();
 }
 
-StackViewController * GenericSubController::stackController() const {
+StackViewController *GenericSubController::stackController() const {
   return (StackViewController *)parentResponder();
 }
 
-}
+}  // namespace Settings

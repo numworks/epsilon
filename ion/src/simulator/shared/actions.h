@@ -12,8 +12,8 @@ void saveScreenshot();
 void copyScreenshot();
 void saveStateForReload();
 void handleUSR1Sig(int i);
-}
-}
-}
+}  // namespace Actions
+}  // namespace Simulator
+}  // namespace Ion
 
 #endif

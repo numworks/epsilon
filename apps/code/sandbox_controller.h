@@ -10,22 +10,24 @@
 namespace Code {
 
 class SandboxController : public Escher::ViewController {
-public:
-  SandboxController(Escher::Responder * parentResponder);
-  Escher::StackViewController * stackViewController();
+ public:
+  SandboxController(Escher::Responder* parentResponder);
+  Escher::StackViewController* stackViewController();
   void reset();
 
   // ViewController
-  Escher::View * view() override { return &m_solidColorView; }
+  Escher::View* view() override { return &m_solidColorView; }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayNoTitle; }
+  Escher::ViewController::TitlesDisplay titlesDisplay() override {
+    return Escher::ViewController::TitlesDisplay::DisplayNoTitle;
+  }
 
-private:
+ private:
   void redrawWindow();
   Escher::SolidColorView m_solidColorView;
 };
-}
+}  // namespace Code
 
 #endif

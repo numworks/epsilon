@@ -5,16 +5,21 @@
 
 namespace Calculation {
 
-class ScientificNotationListController : public ChainedExpressionsListController {
-public:
-  ScientificNotationListController(EditExpressionController * editExpressionController) :
-    ChainedExpressionsListController(editExpressionController, true) {}
+class ScientificNotationListController
+    : public ChainedExpressionsListController {
+ public:
+  ScientificNotationListController(
+      EditExpressionController* editExpressionController)
+      : ChainedExpressionsListController(editExpressionController, true) {}
 
-  void setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) override;
-private:
+  void setExactAndApproximateExpression(
+      Poincare::Expression exactExpression,
+      Poincare::Expression approximateExpression) override;
+
+ private:
   I18n::Message messageAtIndex(int index) override;
 };
 
-}
+}  // namespace Calculation
 
 #endif

@@ -1,6 +1,6 @@
+#include <assert.h>
 #include <ion/unicode/code_point.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <assert.h>
 
 char CodePoint::getChar() const {
   assert(UTF8Decoder::CharSizeOfCodePoint(*this) == 1);
@@ -8,9 +8,6 @@ char CodePoint::getChar() const {
 }
 
 bool CodePoint::isEquationOperator() const {
-  return m_code == '<'
-      || m_code == '='
-      || m_code == '>'
-      || m_code == UCodePointInferiorEqual
-      || m_code == UCodePointSuperiorEqual;
+  return m_code == '<' || m_code == '=' || m_code == '>' ||
+         m_code == UCodePointInferiorEqual || m_code == UCodePointSuperiorEqual;
 }

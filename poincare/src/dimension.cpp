@@ -1,54 +1,66 @@
 #include <poincare/dimension.h>
-#include <poincare/matrix_complex.h>
 #include <poincare/layout_helper.h>
 #include <poincare/list_complex.h>
 #include <poincare/matrix.h>
+#include <poincare/matrix_complex.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+
 #include <cmath>
 #include <utility>
 
 namespace Poincare {
 
-int DimensionNode::numberOfChildren() const { return Dimension::s_functionHelper.numberOfChildren(); }
+int DimensionNode::numberOfChildren() const {
+  return Dimension::s_functionHelper.numberOfChildren();
+}
 
-Expression DimensionNode::shallowReduce(const ReductionContext& reductionContext) {
+Expression DimensionNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return Dimension(this).shallowReduce(reductionContext);
 }
 
-Layout DimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(Dimension(this), floatDisplayMode, numberOfSignificantDigits, Dimension::s_functionHelper.aliasesList().mainAlias(), context);
+Layout DimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits,
+                                   Context* context) const {
+  return LayoutHelper::Prefix(
+      Dimension(this), floatDisplayMode, numberOfSignificantDigits,
+      Dimension::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int DimensionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Dimension::s_functionHelper.aliasesList().mainAlias());
+int DimensionNode::serialize(char* buffer, int bufferSize,
+                             Preferences::PrintFloatMode floatDisplayMode,
+                             int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(
+      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+      Dimension::s_functionHelper.aliasesList().mainAlias());
 }
 
-template<typename T>
-Evaluation<T> DimensionNode::templatedApproximate(const ApproximationContext& approximationContext) const {
+template <typename T>
+Evaluation<T> DimensionNode::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
   Evaluation<T> input = childAtIndex(0)->approximate(T(), approximationContext);
   if (input.type() == EvaluationNode<T>::Type::ListComplex) {
     return Complex<T>::Builder(std::complex<T>(input.numberOfChildren()));
   }
   std::complex<T> operands[2];
   if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
-    operands[0] = std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfRows());
-    operands[1] = std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfColumns());
+    operands[0] =
+        std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfRows());
+    operands[1] = std::complex<T>(
+        static_cast<MatrixComplex<T>&>(input).numberOfColumns());
     return MatrixComplex<T>::Builder(operands, 1, 2);
   }
   return Complex<T>::Undefined();
 }
 
-
 Expression Dimension::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits
-    );
+        SimplificationHelper::UnitReduction::BanUnits);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -62,14 +74,15 @@ Expression Dimension::shallowReduce(ReductionContext reductionContext) {
   }
 
   if (c.type() != ExpressionNode::Type::Matrix) {
-    if (c.deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
+    if (c.deepIsMatrix(reductionContext.context(),
+                       reductionContext.shouldCheckMatrices())) {
       return *this;
     }
     return replaceWithUndefinedInPlace();
   }
 
   Matrix result = Matrix::Builder();
-  Matrix m = static_cast<Matrix &>(c);
+  Matrix m = static_cast<Matrix&>(c);
   result.addChildAtIndexInPlace(Rational::Builder(m.numberOfRows()), 0, 0);
   result.addChildAtIndexInPlace(Rational::Builder(m.numberOfColumns()), 1, 1);
   result.setDimensions(1, 2);
@@ -77,4 +90,4 @@ Expression Dimension::shallowReduce(ReductionContext reductionContext) {
   return std::move(result);
 }
 
-}
+}  // namespace Poincare

@@ -1,13 +1,14 @@
 extern "C" {
 #include "modturtle.h"
+
 #include <py/gc.h>
 #include <py/objtuple.h>
 #include <py/runtime.h>
 }
-#include "turtle.h"
-#include "../../port.h"
-
 #include <kandinsky/ion_context.h>
+
+#include "../../port.h"
+#include "turtle.h"
 
 static Turtle sTurtle;
 
@@ -16,9 +17,7 @@ void modturtle_gc_collect() {
   MicroPython::collectRootsAtAddress((char *)&sTurtle, sizeof(Turtle));
 }
 
-void modturtle_view_did_disappear() {
-  sTurtle.viewDidDisappear();
-}
+void modturtle_view_did_disappear() { sTurtle.viewDidDisappear(); }
 
 mp_obj_t modturtle___init__() {
   sTurtle = Turtle();
@@ -58,8 +57,7 @@ mp_obj_t modturtle_circle(size_t n_args, const mp_obj_t *args) {
 
   if (n_args == 1) {
     sTurtle.circle(radius);
-  }
-  else {
+  } else {
     mp_float_t angle = mp_obj_get_float(args[1]);
     sTurtle.circle(radius, angle);
   }
@@ -71,12 +69,11 @@ mp_obj_t modturtle_goto(size_t n_args, const mp_obj_t *args) {
   mp_float_t y = 0;
 
   if (n_args == 1) {
-    mp_obj_t * mp_coords;
+    mp_obj_t *mp_coords;
     mp_obj_get_array_fixed_n(args[0], 2, &mp_coords);
     x = mp_obj_get_float(mp_coords[0]);
     y = mp_obj_get_float(mp_coords[1]);
-  }
-  else {
+  } else {
     x = mp_obj_get_float(args[0]);
     y = mp_obj_get_float(args[1]);
   }
@@ -106,9 +103,7 @@ mp_obj_t modturtle_position() {
   return mp_obj_new_tuple(2, mp_pos);
 }
 
-mp_obj_t modturtle_heading() {
-  return mp_obj_new_float(sTurtle.heading());
-}
+mp_obj_t modturtle_heading() { return mp_obj_new_float(sTurtle.heading()); }
 
 mp_obj_t modturtle_pendown() {
   sTurtle.setPenDown(true);
@@ -132,14 +127,16 @@ mp_obj_t modturtle_isdown() {
   return sTurtle.isPenDown() ? mp_const_true : mp_const_false;
 }
 
-mp_float_t uint8tColorToDouble(uint8_t c) { return static_cast<double>(c)/255.0; }
+mp_float_t uint8tColorToDouble(uint8_t c) {
+  return static_cast<double>(c) / 255.0;
+}
 
 mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
   if (n_args == 0) {
     // pencolor()
     KDColor c = sTurtle.color();
     mp_obj_t mp_col[3];
-    if(sTurtle.colorMode() == MicroPython::Color::Mode::MaxIntensity255){
+    if (sTurtle.colorMode() == MicroPython::Color::Mode::MaxIntensity255) {
       mp_col[0] = mp_obj_new_int_from_uint(c.red());
       mp_col[1] = mp_obj_new_int_from_uint(c.green());
       mp_col[2] = mp_obj_new_int_from_uint(c.blue());
@@ -166,10 +163,11 @@ mp_obj_t modturtle_pencolor(size_t n_args, const mp_obj_t *args) {
 }
 
 mp_obj_t modturtle_colormode(size_t n_args, const mp_obj_t *args) {
-  if(n_args == 0){
+  if (n_args == 0) {
     return mp_obj_new_int_from_uint(static_cast<int>(sTurtle.colorMode()));
   } else {
-    // To accept both colormode(1) and colormode(1.0) we try to get args[0] as both int and float
+    // To accept both colormode(1) and colormode(1.0) we try to get args[0] as
+    // both int and float
     mp_float_t decimalOne = mp_obj_get_float(args[0]);
     int colorMode;
     // But only 1 is accepted as float, 255 must be int
@@ -178,8 +176,10 @@ mp_obj_t modturtle_colormode(size_t n_args, const mp_obj_t *args) {
     } else {
       colorMode = mp_obj_get_int(args[0]);
     }
-    if (colorMode != static_cast<int>(MicroPython::Color::Mode::MaxIntensity1) &&
-        colorMode != static_cast<int>(MicroPython::Color::Mode::MaxIntensity255)) {
+    if (colorMode !=
+            static_cast<int>(MicroPython::Color::Mode::MaxIntensity1) &&
+        colorMode !=
+            static_cast<int>(MicroPython::Color::Mode::MaxIntensity255)) {
       mp_raise_ValueError("Colormode can be 1 or 255");
       return mp_const_none;
     }
@@ -203,7 +203,7 @@ mp_obj_t modturtle_isvisible() {
 }
 
 mp_obj_t modturtle_write(mp_obj_t s) {
-  const char * string = mp_obj_str_get_str(s);
+  const char *string = mp_obj_str_get_str(s);
   sTurtle.write(string);
   return mp_const_none;
 }

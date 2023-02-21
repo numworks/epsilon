@@ -1,4 +1,5 @@
 #include <quiz.h>
+
 #include "execution_environment.h"
 
 QUIZ_CASE(python_math) {
@@ -15,5 +16,3 @@ QUIZ_CASE(python_cmath) {
   assert_command_execution_succeeds(env, "cos(0)", "(1+-0j)\n");
   deinit_environment();
 }
-
-

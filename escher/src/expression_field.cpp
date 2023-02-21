@@ -1,6 +1,7 @@
+#include <assert.h>
 #include <escher/expression_field.h>
 #include <poincare/preferences.h>
-#include <assert.h>
+
 #include <algorithm>
 
 using namespace Poincare;
@@ -12,16 +13,17 @@ namespace Escher {
  * double buffering in TextField and still open the store menu within texts. */
 static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
 
-ExpressionField::ExpressionField(Responder * parentResponder,
-                                 InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                 LayoutFieldDelegate * layoutFieldDelegate,
-                                 float horizontalAlignment,
-                                 float verticalAlignment) :
-    LayoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate, KDFont::Size::Large, horizontalAlignment, verticalAlignment),
-    m_inputViewMemoizedHeight(0),
-    m_draftBuffer(s_draftBuffer),
-    m_draftBufferSize(AbstractTextField::MaxBufferSize())
-{
+ExpressionField::ExpressionField(
+    Responder *parentResponder,
+    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    LayoutFieldDelegate *layoutFieldDelegate, float horizontalAlignment,
+    float verticalAlignment)
+    : LayoutField(parentResponder, inputEventHandlerDelegate,
+                  layoutFieldDelegate, KDFont::Size::Large, horizontalAlignment,
+                  verticalAlignment),
+      m_inputViewMemoizedHeight(0),
+      m_draftBuffer(s_draftBuffer),
+      m_draftBufferSize(AbstractTextField::MaxBufferSize()) {
   setBackgroundColor(KDColorWhite);
 }
 
@@ -30,12 +32,12 @@ void ExpressionField::clearAndSetEditing(bool isEditing) {
   LayoutField::setEditing(isEditing);
 }
 
-const char * ExpressionField::text() {
+const char *ExpressionField::text() {
   layout().serializeForParsing(m_draftBuffer, m_draftBufferSize);
   return m_draftBuffer;
 }
 
-void ExpressionField::setText(const char * text) {
+void ExpressionField::setText(const char *text) {
   clearLayout();
   handleEventWithText(text, false, true);
 }
@@ -46,7 +48,8 @@ void ExpressionField::didBecomeFirstResponder() {
 }
 
 KDSize ExpressionField::minimalSizeForOptimalDisplay() const {
-  return KDSize(LayoutField::minimalSizeForOptimalDisplay().width(), inputViewHeight());
+  return KDSize(LayoutField::minimalSizeForOptimalDisplay().width(),
+                inputViewHeight());
 }
 
 bool ExpressionField::inputViewHeightDidChange() {
@@ -64,20 +67,23 @@ void ExpressionField::reload() {
 }
 
 KDCoordinate ExpressionField::inputViewHeight() const {
-  return std::max(k_minimalHeight, LayoutField::minimalSizeForOptimalDisplay().height());
+  return std::max(k_minimalHeight,
+                  LayoutField::minimalSizeForOptimalDisplay().height());
 }
 
-void ExpressionField::restoreContent(const char * buffer, size_t size, int * cursorOffset, int * position) {
+void ExpressionField::restoreContent(const char *buffer, size_t size,
+                                     int *cursorOffset, int *position) {
   if (size == 0) {
     return;
   }
   setLayout(Layout::LayoutFromAddress(buffer, size));
   if (*cursorOffset != -1) {
-    const LayoutNode * cursorNode = reinterpret_cast<const LayoutNode *>(reinterpret_cast<char *>(layout().node()) + *cursorOffset);
+    const LayoutNode *cursorNode = reinterpret_cast<const LayoutNode *>(
+        reinterpret_cast<char *>(layout().node()) + *cursorOffset);
     LayoutCursor restoredCursor = LayoutCursor(Layout(cursorNode));
     restoredCursor.setPosition(*position);
     *cursor() = restoredCursor;
   }
 }
 
-}
+}  // namespace Escher

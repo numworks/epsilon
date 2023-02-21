@@ -2,6 +2,7 @@
 #define OMG_GLOBAL_BOX_H
 
 #include <stdint.h>
+
 #include <new>
 
 /* This template wraps another type and manually control when its constructor
@@ -11,12 +12,14 @@
 
 namespace OMG {
 
-template <typename T> class alignas(T) GlobalBox {
-public:
+template <typename T>
+class alignas(T) GlobalBox {
+ public:
 #if ASSERTIONS
   GlobalBox() : m_isInitialized(false) {}
 #endif
-  template <typename... Args> void init(Args... args) {
+  template <typename... Args>
+  void init(Args... args) {
 #if ASSERTIONS
     assert(!m_isInitialized);
 #endif
@@ -35,26 +38,28 @@ public:
 #endif
   }
 
-  T * get() {
+  T* get() {
 #if ASSERTIONS
     assert(m_isInitialized);
 #endif
-    return reinterpret_cast< T*>(m_buffer);
+    return reinterpret_cast<T*>(m_buffer);
   }
-  T * operator->() { return get(); }
+  T* operator->() { return get(); }
   operator T*() { return get(); }
 
-private:
+ private:
   uint8_t m_buffer[sizeof(T)];
 #if ASSERTIONS
   bool m_isInitialized;
 #endif
 };
 
-template <typename T> class TrackedGlobalBox : public GlobalBox<T> {
-public:
+template <typename T>
+class TrackedGlobalBox : public GlobalBox<T> {
+ public:
   TrackedGlobalBox() : GlobalBox<T>(), m_isInitialized(false) {}
-  template <typename... Args> void init(Args... args) {
+  template <typename... Args>
+  void init(Args... args) {
     if (!m_isInitialized) {
       GlobalBox<T>::init(args...);
       m_isInitialized = true;
@@ -69,10 +74,10 @@ public:
 
   bool isInitialized() const { return m_isInitialized; }
 
-private:
+ private:
   bool m_isInitialized;
 };
 
-}
+}  // namespace OMG
 
 #endif

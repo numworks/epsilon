@@ -1,4 +1,8 @@
 #include "values_controller.h"
+
+#include <apps/constant.h>
+#include <apps/shared/expression_display_permissions.h>
+#include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/clipboard.h>
 #include <poincare/circuit_breaker_checkpoint.h>
@@ -8,9 +12,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/square_bracket_pair_layout.h>
 #include <poincare/string_layout.h>
-#include <apps/shared/poincare_helpers.h>
-#include <apps/shared/expression_display_permissions.h>
-#include <apps/constant.h>
+
 #include "../app.h"
 
 using namespace Shared;
@@ -21,33 +23,54 @@ namespace Graph {
 
 /* PUBLIC */
 
-ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, FunctionParameterController * functionParameterController) :
-  Shared::ValuesController(parentResponder, header),
-  m_functionParameterController(functionParameterController),
-  m_intervalParameterController(this, inputEventHandlerDelegate),
-  m_derivativeParameterController(this),
-  m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation::Builder<ValuesController>([](ValuesController * valuesController, void * sender) {
-    StackViewController * stack = ((StackViewController *)valuesController->stackController());
-    IntervalParameterSelectorController * intervalSelectorController = valuesController->intervalParameterSelectorController();
-    if (intervalSelectorController->numberOfRows() == 1) {
-      IntervalParameterController * intervalController = valuesController->intervalParameterController();
-      intervalController->setInterval(valuesController->intervalAtColumn(0));
-      int i = 1;
-      intervalSelectorController->setStartEndMessages(intervalController, valuesController->symbolTypeAtColumn(&i));
-      stack->push(intervalController);
-      return true;
-    }
-    stack->push(intervalSelectorController);
-    return true;
-  }, this), k_cellFont),
-  m_exactValuesButton(this, I18n::Message::ExactResults, Invocation::Builder<ValuesController>([](ValuesController * valuesController, void * sender) {
-    valuesController->exactValuesButtonAction();
-    return true;
-  }, this), &m_exactValuesDotView, k_cellFont),
-  m_widthManager(this),
-  m_heightManager(this),
-  m_exactValuesAreActivated(false)
-{
+ValuesController::ValuesController(
+    Responder *parentResponder,
+    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
+    ButtonRowController *header,
+    FunctionParameterController *functionParameterController)
+    : Shared::ValuesController(parentResponder, header),
+      m_functionParameterController(functionParameterController),
+      m_intervalParameterController(this, inputEventHandlerDelegate),
+      m_derivativeParameterController(this),
+      m_setIntervalButton(
+          this, I18n::Message::IntervalSet,
+          Invocation::Builder<ValuesController>(
+              [](ValuesController *valuesController, void *sender) {
+                StackViewController *stack =
+                    ((StackViewController *)
+                         valuesController->stackController());
+                IntervalParameterSelectorController
+                    *intervalSelectorController =
+                        valuesController->intervalParameterSelectorController();
+                if (intervalSelectorController->numberOfRows() == 1) {
+                  IntervalParameterController *intervalController =
+                      valuesController->intervalParameterController();
+                  intervalController->setInterval(
+                      valuesController->intervalAtColumn(0));
+                  int i = 1;
+                  intervalSelectorController->setStartEndMessages(
+                      intervalController,
+                      valuesController->symbolTypeAtColumn(&i));
+                  stack->push(intervalController);
+                  return true;
+                }
+                stack->push(intervalSelectorController);
+                return true;
+              },
+              this),
+          k_cellFont),
+      m_exactValuesButton(
+          this, I18n::Message::ExactResults,
+          Invocation::Builder<ValuesController>(
+              [](ValuesController *valuesController, void *sender) {
+                valuesController->exactValuesButtonAction();
+                return true;
+              },
+              this),
+          &m_exactValuesDotView, k_cellFont),
+      m_widthManager(this),
+      m_heightManager(this),
+      m_exactValuesAreActivated(false) {
   m_prefacedTwiceTableView.setPrefaceDelegate(this);
   initValueCells();
   m_exactValuesButton.setState(m_exactValuesAreActivated);
@@ -56,7 +79,8 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
 
 bool ValuesController::displayButtonExactValues() const {
   // Above this value, the performances significantly drop.
-  return numberOfValuesColumns() <= ContinuousFunctionStore::k_maxNumberOfMemoizedModels;
+  return numberOfValuesColumns() <=
+         ContinuousFunctionStore::k_maxNumberOfMemoizedModels;
 }
 
 // ViewController
@@ -68,24 +92,29 @@ void ValuesController::viewDidDisappear() {
 
 // TableViewDataSource
 
-void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
+void ValuesController::willDisplayCellAtLocation(HighlightCell *cell, int i,
+                                                 int j) {
   // Handle hidden cells
-  int typeAtLoc = typeAtLocation(i,j);
+  int typeAtLoc = typeAtLocation(i, j);
   if (typeAtLoc == k_editableValueCellType) {
-    StoreCell * storeCell = static_cast<StoreCell *>(cell);
+    StoreCell *storeCell = static_cast<StoreCell *>(cell);
     storeCell->setSeparatorLeft(i > 0);
   }
-  if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
+  if (typeAtLoc == k_notEditableValueCellType ||
+      typeAtLoc == k_editableValueCellType) {
     const int numberOfElementsInCol = numberOfElementsInColumn(i);
-    EvenOddCell * eoCell = static_cast<EvenOddCell *>(cell);
+    EvenOddCell *eoCell = static_cast<EvenOddCell *>(cell);
     eoCell->setVisible(j <= numberOfElementsInCol + 1);
     if (j >= numberOfElementsInCol + 1) {
-      static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
+      static_cast<EvenOddCell *>(cell)->setEven(j % 2 == 0);
       if (typeAtLoc == k_notEditableValueCellType) {
         static_cast<EvenOddExpressionCell *>(eoCell)->setLayout(Layout());
       } else {
         assert(typeAtLoc == k_editableValueCellType);
-        static_cast<StoreCell *>(eoCell)->editableTextCell()->textField()->setText("");
+        static_cast<StoreCell *>(eoCell)
+            ->editableTextCell()
+            ->textField()
+            ->setText("");
       }
       return;
     }
@@ -100,8 +129,11 @@ int ValuesController::typeAtLocation(int i, int j) {
 
 // ButtonRowDelegate
 
-Escher::AbstractButtonCell * ValuesController::buttonAtIndex(int index, Escher::ButtonRowController::Position position) const {
-  return index == 0 && displayButtonExactValues() ? const_cast<Escher::ButtonState *>(&m_exactValuesButton) : const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
+Escher::AbstractButtonCell *ValuesController::buttonAtIndex(
+    int index, Escher::ButtonRowController::Position position) const {
+  return index == 0 && displayButtonExactValues()
+             ? const_cast<Escher::ButtonState *>(&m_exactValuesButton)
+             : const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
 }
 
 // PrefacedTableViewDelegate
@@ -112,14 +144,17 @@ int ValuesController::columnToFreeze() {
     return -1;
   }
   int indexOfLastColumn = -1;
-  for (size_t symbolType = 0; symbolType < k_maxNumberOfSymbolTypes; symbolType++) {
+  for (size_t symbolType = 0; symbolType < k_maxNumberOfSymbolTypes;
+       symbolType++) {
     int nbOfValuesColumns = m_numberOfValuesColumnsForType[symbolType];
     if (nbOfValuesColumns == 0) {
       continue;
     }
     int indexOfAbscissaColumn = indexOfLastColumn + 1;
     indexOfLastColumn = indexOfAbscissaColumn + nbOfValuesColumns;
-    KDCoordinate subTableWidth = cumulatedWidthBeforeIndex(indexOfLastColumn + 1) - cumulatedWidthBeforeIndex(indexOfAbscissaColumn);
+    KDCoordinate subTableWidth =
+        cumulatedWidthBeforeIndex(indexOfLastColumn + 1) -
+        cumulatedWidthBeforeIndex(indexOfAbscissaColumn);
     /*
      *     -----------------------------------------------------------
      *    |  x  | f(x) | g(x) | h(x) |  θ  | i(θ) |  t  | j(t) | k(t) |
@@ -134,9 +169,10 @@ int ValuesController::columnToFreeze() {
     }
     // From here, we have an abscissa column candidate for freezing.
     if (cumulatedWidthBeforeIndex(indexOfLastColumn) >= offset().x()) {
-      /* We take the first candidate for which last column is not hidden by scroll.
-       * Indeed, if last column is hidden (even partly) by scroll, it means focus
-       * is not on this subtable so we don't want to freeze this abscissa. */
+      /* We take the first candidate for which last column is not hidden by
+       * scroll. Indeed, if last column is hidden (even partly) by scroll, it
+       * means focus is not on this subtable so we don't want to freeze this
+       * abscissa. */
       return indexOfAbscissaColumn;
     }
   }
@@ -148,16 +184,20 @@ int ValuesController::columnToFreeze() {
 
 KDSize ValuesController::ApproximatedParametricCellSize() {
   KDSize layoutSize = SquareBracketPairLayoutNode::SizeGivenChildSize(KDSize(
-    PrintFloat::glyphLengthForFloatWithPrecision(::Preferences::VeryLargeNumberOfSignificantDigits) * KDFont::GlyphWidth(k_cellFont),
-    2 * KDFont::GlyphHeight(k_cellFont) + GridLayoutNode::k_gridEntryMargin));
-  return layoutSize + KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
+      PrintFloat::glyphLengthForFloatWithPrecision(
+          ::Preferences::VeryLargeNumberOfSignificantDigits) *
+          KDFont::GlyphWidth(k_cellFont),
+      2 * KDFont::GlyphHeight(k_cellFont) + GridLayoutNode::k_gridEntryMargin));
+  return layoutSize +
+         KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
 }
 
 KDSize ValuesController::CellSizeWithLayout(Layout l) {
   EvenOddExpressionCell tempCell;
   tempCell.setFont(k_cellFont);
   tempCell.setLayout(l);
-  return tempCell.minimalSizeForOptimalDisplay() + KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
+  return tempCell.minimalSizeForOptimalDisplay() +
+         KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
 }
 
 // TableViewDataSource
@@ -174,7 +214,10 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
     columnWidth = Shared::ValuesController::defaultColumnWidth();
   }
   if (typeAtLocation(i, 0) == k_functionTitleCellType) {
-    columnWidth = std::min(maxColumnWidth, std::max(CellSizeWithLayout(functionTitleLayout(i)).width(), columnWidth));
+    columnWidth =
+        std::min(maxColumnWidth,
+                 std::max(CellSizeWithLayout(functionTitleLayout(i)).width(),
+                          columnWidth));
   }
   if (!m_exactValuesAreActivated) {
     // Width is constant when displaying approximations
@@ -201,7 +244,8 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
   if (j == 0) {
     for (int i = 0; i < nColumns; i++) {
       if (typeAtLocation(i, 0) == k_functionTitleCellType) {
-        rowHeight = std::max(CellSizeWithLayout(functionTitleLayout(i)).height(), rowHeight);
+        rowHeight = std::max(
+            CellSizeWithLayout(functionTitleLayout(i)).height(), rowHeight);
       }
       if (rowHeight > maxRowHeight) {
         return maxRowHeight;
@@ -211,18 +255,21 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
   }
   for (int i = 0; i < nColumns; i++) {
     int tempI = i;
-    ContinuousFunctionProperties::SymbolType symbol = symbolTypeAtColumn(&tempI);
+    ContinuousFunctionProperties::SymbolType symbol =
+        symbolTypeAtColumn(&tempI);
     if (!m_exactValuesAreActivated) {
-     if (symbol != ContinuousFunctionProperties::SymbolType::T || j >= numberOfElementsInColumn(i) + 1) {
-      /* Height is constant when exact result is not displayed and
-       * either there is no parametric function or it's the last row
-       * of the column. */
-      continue;
-     } else {
-      return ApproximatedParametricCellSize().height();
-     }
+      if (symbol != ContinuousFunctionProperties::SymbolType::T ||
+          j >= numberOfElementsInColumn(i) + 1) {
+        /* Height is constant when exact result is not displayed and
+         * either there is no parametric function or it's the last row
+         * of the column. */
+        continue;
+      } else {
+        return ApproximatedParametricCellSize().height();
+      }
     }
-    if (typeAtLocation(i, j) == k_notEditableValueCellType && j < numberOfElementsInColumn(i) + 1) {
+    if (typeAtLocation(i, j) == k_notEditableValueCellType &&
+        j < numberOfElementsInColumn(i) + 1) {
       assert(m_exactValuesAreActivated);
       Layout l = memoizedLayoutForCell(i, j);
       assert(!l.isUninitialized());
@@ -237,13 +284,15 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
 
 // ColumnHelper
 
-int ValuesController::fillColumnName(int columnIndex, char * buffer) {
+int ValuesController::fillColumnName(int columnIndex, char *buffer) {
   if (typeAtLocation(columnIndex, 0) == k_functionTitleCellType) {
     Layout functionTitle = functionTitleLayout(columnIndex, true);
-    constexpr size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
+    constexpr size_t bufferNameSize =
+        ContinuousFunction::k_maxNameWithArgumentSize + 1;
     int size = functionTitle.serializeForParsing(buffer, bufferNameSize);
     // Serialization may have introduced system parentheses.
-    SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer, bufferNameSize - 1);
+    SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
+        buffer, bufferNameSize - 1);
     return size;
   }
   return Shared::ValuesController::fillColumnName(columnIndex, buffer);
@@ -260,9 +309,9 @@ void ValuesController::reloadEditedCell(int column, int row) {
   Shared::ValuesController::reloadEditedCell(column, row);
 }
 
-void ValuesController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
-  if (typeAtLocation(columnIndex, 0)  == k_abscissaTitleCellType) {
-    AbscissaTitleCell * myCell = static_cast<AbscissaTitleCell *>(cell);
+void ValuesController::setTitleCellStyle(HighlightCell *cell, int columnIndex) {
+  if (typeAtLocation(columnIndex, 0) == k_abscissaTitleCellType) {
+    AbscissaTitleCell *myCell = static_cast<AbscissaTitleCell *>(cell);
     myCell->setSeparatorLeft(columnIndex > 0);
     return;
   }
@@ -277,145 +326,177 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 }
 
 void ValuesController::updateNumberOfColumns() const {
-  for (size_t symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
+  for (size_t symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes;
+       symbolTypeIndex++) {
     m_numberOfValuesColumnsForType[symbolTypeIndex] = 0;
   }
-  int numberOfActiveFunctionsInTable = functionStore()->numberOfActiveFunctionsInTable();
+  int numberOfActiveFunctionsInTable =
+      functionStore()->numberOfActiveFunctionsInTable();
   for (int i = 0; i < numberOfActiveFunctionsInTable; i++) {
-    Ion::Storage::Record record = functionStore()->activeRecordInTableAtIndex(i);
-    ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
+    Ion::Storage::Record record =
+        functionStore()->activeRecordInTableAtIndex(i);
+    ExpiringPointer<ContinuousFunction> f =
+        functionStore()->modelForRecord(record);
     int symbolTypeIndex = static_cast<int>(f->properties().symbolType());
-    m_numberOfValuesColumnsForType[symbolTypeIndex] += numberOfColumnsForRecord(record);
+    m_numberOfValuesColumnsForType[symbolTypeIndex] +=
+        numberOfColumnsForRecord(record);
   }
   m_numberOfColumns = 0;
-  for (size_t symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
+  for (size_t symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes;
+       symbolTypeIndex++) {
     // Count abscissa column if the sub table does exist
     m_numberOfColumns += numberOfColumnsForSymbolType(symbolTypeIndex);
   }
 }
 
-Poincare::Layout * ValuesController::memoizedLayoutAtIndex(int i) {
+Poincare::Layout *ValuesController::memoizedLayoutAtIndex(int i) {
   assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
   return &m_memoizedLayouts[i];
 }
 
-Layout ValuesController::functionTitleLayout(int columnIndex, bool forceShortVersion) {
+Layout ValuesController::functionTitleLayout(int columnIndex,
+                                             bool forceShortVersion) {
   assert(typeAtLocation(columnIndex, 0) == k_functionTitleCellType);
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
-  Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
+  Shared::ExpiringPointer<ContinuousFunction> function =
+      functionStore()->modelForRecord(record);
   if (isDerivative) {
     return function->derivativeTitleLayout();
   }
-  return function->titleLayout(textFieldDelegateApp()->localContext(), forceShortVersion || function->isNamed());
+  return function->titleLayout(textFieldDelegateApp()->localContext(),
+                               forceShortVersion || function->isNamed());
 }
 
-int ValuesController::numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const {
+int ValuesController::numberOfAbscissaColumnsBeforeAbsoluteColumn(
+    int column) const {
   int abscissaColumns = 0;
-  int symbolType = column < 0 ?  k_maxNumberOfSymbolTypes : (int)symbolTypeAtColumn(&column) + 1;
-  for (int symbolTypeIndex = 0; symbolTypeIndex < symbolType; symbolTypeIndex++) {
+  int symbolType = column < 0 ? k_maxNumberOfSymbolTypes
+                              : (int)symbolTypeAtColumn(&column) + 1;
+  for (int symbolTypeIndex = 0; symbolTypeIndex < symbolType;
+       symbolTypeIndex++) {
     abscissaColumns += (m_numberOfValuesColumnsForType[symbolTypeIndex] > 0);
   }
   return abscissaColumns;
 }
 
-int ValuesController::numberOfAbscissaColumnsBeforeValuesColumn(int column) const {
+int ValuesController::numberOfAbscissaColumnsBeforeValuesColumn(
+    int column) const {
   int abscissaColumns = 0;
   int valuesColumns = 0;
   size_t symbolTypeIndex = 0;
   while (valuesColumns <= column) {
     assert(symbolTypeIndex < k_maxNumberOfSymbolTypes);
-    const int numberOfValuesColumnsForType = m_numberOfValuesColumnsForType[symbolTypeIndex++];
+    const int numberOfValuesColumnsForType =
+        m_numberOfValuesColumnsForType[symbolTypeIndex++];
     valuesColumns += numberOfValuesColumnsForType;
     abscissaColumns += (numberOfValuesColumnsForType > 0);
   }
   return abscissaColumns;
 }
 
-void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
-  m_intervalParameterSelectorController.setStartEndMessages(controller, symbolTypeAtColumn(&column));
+void ValuesController::setStartEndMessages(
+    Shared::IntervalParameterController *controller, int column) {
+  m_intervalParameterSelectorController.setStartEndMessages(
+      controller, symbolTypeAtColumn(&column));
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
   double abscissa;
   bool isDerivative = false;
-  Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  Shared::ExpiringPointer<ContinuousFunction> function =
+      functionAtIndex(column, row, &abscissa, &isDerivative);
+  Poincare::Context *context = textFieldDelegateApp()->localContext();
   Expression result;
   if (isDerivative) {
     // Compute derivative approximate result
-    result = Float<double>::Builder(function->approximateDerivative(abscissa, context, 0, false));
+    result = Float<double>::Builder(
+        function->approximateDerivative(abscissa, context, 0, false));
   } else {
     // Compute exact result
     result = function->expressionReduced(context);
-    Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
-    Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
-    abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
+    Poincare::VariableContext abscissaContext =
+        Poincare::VariableContext(Shared::Function::k_unknownName, context);
+    Poincare::Expression abscissaExpression =
+        Poincare::Decimal::Builder<double>(abscissa);
+    abscissaContext.setExpressionForSymbolAbstract(
+        abscissaExpression,
+        Symbol::Builder(Shared::Function::k_unknownName,
+                        strlen(Shared::Function::k_unknownName)));
     bool simplificationFailure = false;
     PoincareHelpers::CloneAndSimplify(
-        &result,
-        &abscissaContext,
-        Poincare::ReductionTarget::User,
-        Poincare::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+        &result, &abscissaContext, Poincare::ReductionTarget::User,
+        Poincare::SymbolicComputation::
+            ReplaceAllSymbolsWithDefinitionsOrUndefined,
         Poincare::UnitConversion::Default,
-        Poincare::Preferences::sharedPreferences,
-        true,
-        &simplificationFailure);
-    /* Approximate in case of simplification failure, as we cannot display a non-beautified expression. */
-    if (simplificationFailure || !m_exactValuesAreActivated || ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(function->originalEquation(), result, context)) {
+        Poincare::Preferences::sharedPreferences, true, &simplificationFailure);
+    /* Approximate in case of simplification failure, as we cannot display a
+     * non-beautified expression. */
+    if (simplificationFailure || !m_exactValuesAreActivated ||
+        ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+            function->originalEquation(), result, context)) {
       // Do not show exact expressions in certain cases, use approximate result
       result = PoincareHelpers::Approximate<double>(result, context);
     }
   }
-  *memoizedLayoutAtIndex(index) = result.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
+  *memoizedLayoutAtIndex(index) = result.createLayout(
+      Preferences::PrintFloatMode::Decimal,
+      Preferences::VeryLargeNumberOfSignificantDigits, context);
 }
 
 int ValuesController::numberOfColumnsForAbscissaColumn(int column) {
   return numberOfColumnsForSymbolType((int)symbolTypeAtColumn(&column));
 }
 
-void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int row) {
+void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(
+    int column, KDCoordinate columnPreviousWidth, int row) {
   // Update the size only if column becomes larger
   if (m_exactValuesAreActivated) {
-    KDCoordinate minimalWidthForColumn = std::min(k_maxColumnWidth, CellSizeWithLayout(memoizedLayoutForCell(column, row)).width());
+    KDCoordinate minimalWidthForColumn = std::min(
+        k_maxColumnWidth,
+        CellSizeWithLayout(memoizedLayoutForCell(column, row)).width());
     if (columnPreviousWidth < minimalWidthForColumn) {
-      m_widthManager.updateMemoizationForIndex(column, columnPreviousWidth, minimalWidthForColumn);
+      m_widthManager.updateMemoizationForIndex(column, columnPreviousWidth,
+                                               minimalWidthForColumn);
     }
   }
 }
 
-Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
+Shared::Interval *ValuesController::intervalAtColumn(int columnIndex) {
   return App::app()->intervalForSymbolType(symbolTypeAtColumn(&columnIndex));
 }
 
-I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
-  return ContinuousFunctionProperties::MessageForSymbolType(symbolTypeAtColumn(&columnIndex));
+I18n::Message ValuesController::valuesParameterMessageAtColumn(
+    int columnIndex) const {
+  return ContinuousFunctionProperties::MessageForSymbolType(
+      symbolTypeAtColumn(&columnIndex));
 }
 
-Shared::ExpressionFunctionTitleCell * ValuesController::functionTitleCells(int j) {
+Shared::ExpressionFunctionTitleCell *ValuesController::functionTitleCells(
+    int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableColumns);
   return &m_functionTitleCells[j];
 }
 
-EvenOddExpressionCell * ValuesController::valueCells(int j) {
+EvenOddExpressionCell *ValuesController::valueCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
   return &m_valueCells[j];
 }
 
-Escher::EvenOddEditableTextCell * ValuesController::abscissaCells(int j) {
-  assert (j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells);
+Escher::EvenOddEditableTextCell *ValuesController::abscissaCells(int j) {
+  assert(j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells);
   return &m_abscissaCells[j];
 }
 
-Escher::EvenOddMessageTextCell * ValuesController::abscissaTitleCells(int j) {
-  assert (j >= 0 && j < abscissaTitleCellsCount());
+Escher::EvenOddMessageTextCell *ValuesController::abscissaTitleCells(int j) {
+  assert(j >= 0 && j < abscissaTitleCellsCount());
   return &m_abscissaTitleCells[j];
 }
 
 // Graph::ValuesController
 
 template <class T>
-T * ValuesController::parameterController() {
+T *ValuesController::parameterController() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
   if (!functionStore()->modelForRecord(record)->properties().isCartesian()) {
@@ -429,7 +510,7 @@ T * ValuesController::parameterController() {
   return m_functionParameterController;
 }
 
- bool ValuesController::exactValuesButtonAction() {
+bool ValuesController::exactValuesButtonAction() {
   assert(m_exactValuesButton.state() == m_exactValuesAreActivated);
   /* Approximated values computation is much faster than exact values so it's
    * uninterruptable and if the exact values computation is interrupted, it
@@ -444,7 +525,8 @@ T * ValuesController::parameterController() {
   }
 
   {
-    CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
+    CircuitBreakerCheckpoint checkpoint(
+        Ion::CircuitBreaker::CheckpointType::Back);
     if (CircuitBreakerRun(checkpoint)) {
       activateExactValues(true);
       m_selectableTableView.reloadData();
@@ -463,16 +545,21 @@ void ValuesController::activateExactValues(bool activate) {
   m_exactValuesButton.setState(m_exactValuesAreActivated);
 }
 
-Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative) {
+Ion::Storage::Record ValuesController::recordAtColumn(int i,
+                                                      bool *isDerivative) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
   ContinuousFunctionProperties::SymbolType symbolType = symbolTypeAtColumn(&i);
   int index = 1;
-  int numberOfActiveFunctionsInTableOfSymbolType = functionStore()->numberOfActiveFunctionsInTableOfSymbolType(symbolType);
+  int numberOfActiveFunctionsInTableOfSymbolType =
+      functionStore()->numberOfActiveFunctionsInTableOfSymbolType(symbolType);
   for (int k = 0; k < numberOfActiveFunctionsInTableOfSymbolType; k++) {
-    Ion::Storage::Record record = functionStore()->activeRecordOfSymbolTypeInTableAtIndex(symbolType, k);
-    const int numberOfColumnsForCurrentRecord = numberOfColumnsForRecord(record);
+    Ion::Storage::Record record =
+        functionStore()->activeRecordOfSymbolTypeInTableAtIndex(symbolType, k);
+    const int numberOfColumnsForCurrentRecord =
+        numberOfColumnsForRecord(record);
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
-      ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
+      ExpiringPointer<ContinuousFunction> f =
+          functionStore()->modelForRecord(record);
       *isDerivative = i != index && f->canDisplayDerivative();
       return record;
     }
@@ -482,22 +569,29 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
   return nullptr;
 }
 
-Shared::ExpiringPointer<ContinuousFunction> ValuesController::functionAtIndex(int column, int row, double * abscissa, bool * isDerivative) {
-  *abscissa = intervalAtColumn(column)->element(row-1); // Subtract the title row from row to get the element index
+Shared::ExpiringPointer<ContinuousFunction> ValuesController::functionAtIndex(
+    int column, int row, double *abscissa, bool *isDerivative) {
+  *abscissa = intervalAtColumn(column)->element(
+      row - 1);  // Subtract the title row from row to get the element index
   Ion::Storage::Record record = recordAtColumn(column, isDerivative);
   return functionStore()->modelForRecord(record);
 }
 
-int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) const {
-  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
+int ValuesController::numberOfColumnsForRecord(
+    Ion::Storage::Record record) const {
+  ExpiringPointer<ContinuousFunction> f =
+      functionStore()->modelForRecord(record);
   return 1 + (f->properties().isCartesian() && f->displayDerivative());
 }
 
 int ValuesController::numberOfColumnsForSymbolType(int symbolTypeIndex) const {
-  return m_numberOfValuesColumnsForType[symbolTypeIndex] + (m_numberOfValuesColumnsForType[symbolTypeIndex] > 0); // Count abscissa column if there is one
+  return m_numberOfValuesColumnsForType[symbolTypeIndex] +
+         (m_numberOfValuesColumnsForType[symbolTypeIndex] >
+          0);  // Count abscissa column if there is one
 }
 
-ContinuousFunctionProperties::SymbolType ValuesController::symbolTypeAtColumn(int * column) const {
+ContinuousFunctionProperties::SymbolType ValuesController::symbolTypeAtColumn(
+    int *column) const {
   // column becomes the index of the column in the sub table (of symbol type)
   size_t symbolTypeIndex = 0;
   while (*column >= numberOfColumnsForSymbolType(symbolTypeIndex)) {
@@ -507,4 +601,4 @@ ContinuousFunctionProperties::SymbolType ValuesController::symbolTypeAtColumn(in
   return static_cast<ContinuousFunctionProperties::SymbolType>(symbolTypeIndex);
 }
 
-}
+}  // namespace Graph

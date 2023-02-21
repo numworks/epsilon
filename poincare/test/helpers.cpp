@@ -1,4 +1,5 @@
 #include <poincare/helpers.h>
+
 #include "helper.h"
 
 static inline void assert_gcd_is(size_t a, size_t b, size_t g) {
@@ -16,7 +17,7 @@ QUIZ_CASE(poincare_helpers_insert_simple_swap) {
   constexpr size_t bufSize = 3;
   uint32_t buf[bufSize];
   for (size_t i = 0; i < bufSize; i++) {
-    buf[i] = (uint32_t) i;
+    buf[i] = (uint32_t)i;
   }
 
   Poincare::Helpers::Rotate(&buf[0], &buf[1], 1);
@@ -30,12 +31,14 @@ QUIZ_CASE(poincare_helpers_insert_simple_swap) {
   quiz_assert(buf[2] == 2);
 }
 
-static inline void test_rotate(uint32_t buf[], size_t bufSize, size_t dstIndex, size_t srcIndex, size_t len) {
+static inline void test_rotate(uint32_t buf[], size_t bufSize, size_t dstIndex,
+                               size_t srcIndex, size_t len) {
   quiz_assert(len == 0 || (srcIndex + len - 1 < bufSize));
 
   Poincare::Helpers::Rotate(&buf[dstIndex], &buf[srcIndex], len);
 
-  if (len == 0 || srcIndex == dstIndex || (dstIndex > srcIndex && dstIndex < srcIndex + len)) {
+  if (len == 0 || srcIndex == dstIndex ||
+      (dstIndex > srcIndex && dstIndex < srcIndex + len)) {
     for (size_t i = 0; i < bufSize; i++) {
       quiz_assert(buf[i] == i);
     }
@@ -98,7 +101,7 @@ QUIZ_CASE(poincare_helpers_rotate) {
       for (size_t len = 0; len < bufSize - src + 1; len++) {
         // Reset the start buffer
         for (size_t i = 0; i < bufSize; i++) {
-          buf[i] = (uint32_t) i;
+          buf[i] = (uint32_t)i;
         }
         // Launch the test
         test_rotate(buf, bufSize, dst, src, len);

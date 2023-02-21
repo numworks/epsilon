@@ -9,20 +9,20 @@ namespace Ion {
 namespace Events {
 
 class State {
-public:
-  State() :
-    m_lastEvent(Events::None),
-    m_lastKeyboardState(0),
-    m_currentKeyboardState(0),
-    m_keysSeenUp(-1),
-    m_lastEventShift(false),
-    m_lastEventAlpha(false),
-    m_idleWasSent(false)
-  {}
-  Event sharedGetEvent(int * timeout);
+ public:
+  State()
+      : m_lastEvent(Events::None),
+        m_lastKeyboardState(0),
+        m_currentKeyboardState(0),
+        m_keysSeenUp(-1),
+        m_lastEventShift(false),
+        m_lastEventAlpha(false),
+        m_idleWasSent(false) {}
+  Event sharedGetEvent(int* timeout);
   void resetKeyboardState();
-private:
-  Event privateSharedGetEvent(int * timeout);
+
+ private:
+  Event privateSharedGetEvent(int* timeout);
 
   Event m_lastEvent;
   Keyboard::State m_lastKeyboardState;
@@ -36,8 +36,8 @@ private:
 extern OMG::GlobalBox<State> SharedState;
 
 // Functions defined in events.cpp
-Event sharedGetEvent(int * timeout);
-size_t sharedCopyText(uint8_t eventId, char * buffer, size_t bufferSize);
+Event sharedGetEvent(int* timeout);
+size_t sharedCopyText(uint8_t eventId, char* buffer, size_t bufferSize);
 bool sharedIsDefined(uint8_t eventId);
 void resetKeyboardState();
 
@@ -48,10 +48,10 @@ void resetPreemptiveKeyboardState();
 
 Event getPlatformEvent();
 void didPressNewKey();
-void openURL(const char * url);
-bool waitForInterruptingEvent(int maximumDelay, int * timeout);
+void openURL(const char* url);
+bool waitForInterruptingEvent(int maximumDelay, int* timeout);
 
-}
-}
+}  // namespace Events
+}  // namespace Ion
 
 #endif

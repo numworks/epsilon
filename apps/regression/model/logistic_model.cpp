@@ -1,6 +1,5 @@
 #include "logistic_model.h"
-#include "../store.h"
-#include <cmath>
+
 #include <assert.h>
 #include <poincare/based_integer.h>
 #include <poincare/code_point_layout.h>
@@ -13,71 +12,76 @@
 #include <poincare/print.h>
 #include <poincare/vertical_offset_layout.h>
 
+#include <cmath>
+
+#include "../store.h"
+
 using namespace Poincare;
 
 namespace Regression {
 
 Layout LogisticModel::templateLayout() const {
   return FractionLayout::Builder(
-    CodePointLayout::Builder('c'),
-    HorizontalLayout::Builder({
-      CodePointLayout::Builder('1'),
-      CodePointLayout::Builder('+'),
-      CodePointLayout::Builder('a'),
-      CodePointLayout::Builder(UCodePointMiddleDot),
-      CodePointLayout::Builder('e'),
-      VerticalOffsetLayout::Builder(
-        HorizontalLayout::Builder({
-          CodePointLayout::Builder('-'),
-          CodePointLayout::Builder('b'),
-          CodePointLayout::Builder(UCodePointMiddleDot),
-          CodePointLayout::Builder('x')
-        }),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript)}));
+      CodePointLayout::Builder('c'),
+      HorizontalLayout::Builder(
+          {CodePointLayout::Builder('1'), CodePointLayout::Builder('+'),
+           CodePointLayout::Builder('a'),
+           CodePointLayout::Builder(UCodePointMiddleDot),
+           CodePointLayout::Builder('e'),
+           VerticalOffsetLayout::Builder(
+               HorizontalLayout::Builder(
+                   {CodePointLayout::Builder('-'),
+                    CodePointLayout::Builder('b'),
+                    CodePointLayout::Builder(UCodePointMiddleDot),
+                    CodePointLayout::Builder('x')}),
+               VerticalOffsetLayoutNode::VerticalPosition::Superscript)}));
 }
 
-Poincare::Expression LogisticModel::privateExpression(double * modelCoefficients) const {
+Poincare::Expression LogisticModel::privateExpression(
+    double* modelCoefficients) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   // c/(1+a*e^(-b*x))
-  return
-    Division::Builder(
+  return Division::Builder(
       Number::DecimalNumber(c),
       AdditionOrSubtractionBuilder(
-        BasedInteger::Builder(1),
-        Multiplication::Builder(
-          Number::DecimalNumber(std::fabs(a)),
-          Power::Builder(
-            Constant::ExponentialEBuilder(),
-            Multiplication::Builder(
-              Number::DecimalNumber(-b),
-              Symbol::Builder(k_xSymbol)))),
-        a >= 0.0));
+          BasedInteger::Builder(1),
+          Multiplication::Builder(
+              Number::DecimalNumber(std::fabs(a)),
+              Power::Builder(
+                  Constant::ExponentialEBuilder(),
+                  Multiplication::Builder(Number::DecimalNumber(-b),
+                                          Symbol::Builder(k_xSymbol)))),
+          a >= 0.0));
 }
 
-double LogisticModel::evaluate(double * modelCoefficients, double x) const {
+double LogisticModel::evaluate(double* modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  return c/(1.0+a*std::exp(-b*x));
+  return c / (1.0 + a * std::exp(-b * x));
 }
 
-double LogisticModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
+double LogisticModel::levelSet(double* modelCoefficients, double xMin,
+                               double xMax, double y,
+                               Poincare::Context* context) {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   if (a == 0 || b == 0 || c == 0 || y == 0) {
     return NAN;
   }
-  double lnArgument = (c/y - 1)/a;
+  double lnArgument = (c / y - 1) / a;
   if (lnArgument <= 0) {
     return NAN;
   }
-  return -std::log(lnArgument)/b;
+  return -std::log(lnArgument) / b;
 }
 
-double LogisticModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
+double LogisticModel::partialDerivate(double* modelCoefficients,
+                                      int derivateCoefficientIndex,
+                                      double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -95,8 +99,12 @@ double LogisticModel::partialDerivate(double * modelCoefficients, int derivateCo
   return 1.0 / denominator;
 }
 
-void LogisticModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
-  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsActive(series));
+void LogisticModel::specializedInitCoefficientsForFit(double* modelCoefficients,
+                                                      double defaultValue,
+                                                      Store* store,
+                                                      int series) const {
+  assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries &&
+         store->seriesIsActive(series));
   /* We optimize fit for data that actually follow a logistic function curve :
    * f(x)=c/(1+a*e^(-bx))
    * We use these properties :
@@ -121,7 +129,8 @@ void LogisticModel::specializedInitCoefficientsForFit(double * modelCoefficients
   /* We assume most data point are distributed around the interesting part,
    * where X data is within (ln(a)-5)/b  and (ln(a)+5)/b (2). We can therefore
    * estimate b from X's range of values (dependent on outliers). */
-  double b = 10.0 / (store->maxValueOfColumn(series, 0) - store->minValueOfColumn(series, 0));
+  double b = 10.0 / (store->maxValueOfColumn(series, 0) -
+                     store->minValueOfColumn(series, 0));
   double slope = store->slope(series);
   if (!std::isfinite(b)) {
     b = defaultValue;
@@ -146,5 +155,4 @@ void LogisticModel::specializedInitCoefficientsForFit(double * modelCoefficients
   modelCoefficients[2] = c;
 }
 
-
-}
+}  // namespace Regression

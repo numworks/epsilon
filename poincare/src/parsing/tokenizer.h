@@ -8,6 +8,7 @@
  * Parser. */
 
 #include <ion/unicode/utf8_decoder.h>
+
 #include "parsing_context.h"
 #include "token.h"
 
@@ -15,33 +16,35 @@ namespace Poincare {
 
 class Tokenizer {
   friend class InputBeautification;
-public:
-  Tokenizer(const char * text, ParsingContext * parsingContext, const char * textEnd = nullptr) :
-    m_decoder(text, text, textEnd),
-    m_parsingContext(parsingContext),
-    m_numberOfStoredIdentifiers(0),
-    m_poppingSystemToken(false)
-  {}
+
+ public:
+  Tokenizer(const char* text, ParsingContext* parsingContext,
+            const char* textEnd = nullptr)
+      : m_decoder(text, text, textEnd),
+        m_parsingContext(parsingContext),
+        m_numberOfStoredIdentifiers(0),
+        m_poppingSystemToken(false) {}
   Token popToken();
 
   // Rewind tokenizer
-  const char * currentPosition() { return m_decoder.stringPosition(); }
-  const char * endPosition() { return m_decoder.stringEnd(); }
-  void goToPosition(const char * position) {
+  const char* currentPosition() { return m_decoder.stringPosition(); }
+  const char* endPosition() { return m_decoder.stringEnd(); }
+  void goToPosition(const char* position) {
     /* WARNING:
      * Sometimes the decoder will be one char after the null terminating zero.
      * The following condition should prevent ASAN issues. */
-    const char * currentPos = currentPosition();
-    if (position < currentPos
-        || (position > currentPos
-            && *(position - 1) != 0)) {
+    const char* currentPos = currentPosition();
+    if (position < currentPos ||
+        (position > currentPos && *(position - 1) != 0)) {
       m_decoder.setPosition(position);
     }
   }
-private:
-  constexpr static int k_maxNumberOfIdentifiersInList = 10; // Used for m_storedIdentifiersList
+
+ private:
+  constexpr static int k_maxNumberOfIdentifiersInList =
+      10;  // Used for m_storedIdentifiersList
   typedef bool (*PopTest)(CodePoint c);
-  const CodePoint nextCodePoint(PopTest popTest, bool * testResult = nullptr);
+  const CodePoint nextCodePoint(PopTest popTest, bool* testResult = nullptr);
   static bool IsIdentifierMaterial(const CodePoint c);
   bool canPopCodePoint(const CodePoint c);
   size_t popWhile(PopTest popTest);
@@ -62,7 +65,8 @@ private:
    *
    * This is a right-to-eager tokenizer.
    * When parsing abc, we'll first consider abc, then bc, then c.
-   * This behavior is a convenient way to give precedence to function over symbols
+   * This behavior is a convenient way to give precedence to function over
+   *symbols
    *
    * -- EXAMPLES --
    * Original state :
@@ -91,8 +95,8 @@ private:
    *
    * This is used for instance in the calculation history, where the context
    * might have changed between the time when an expression was entered and the
-   * time it is displayed in the history. We do not save each calculation context
-   * in the history.
+   * time it is displayed in the history. We do not save each calculation
+   *context in the history.
    *
    * Example : xy(5) will be tokenized as x*y*(5) if the context exists
    * but doesn't contain any variable.
@@ -108,8 +112,9 @@ private:
    * */
   size_t popIdentifiersString();
   void fillIdentifiersList();
-  Token popLongestRightMostIdentifier(const char * stringStart, const char * * stringEnd);
-  Token::Type stringTokenType(const char * string, size_t * length) const;
+  Token popLongestRightMostIdentifier(const char* stringStart,
+                                      const char** stringEnd);
+  Token::Type stringTokenType(const char* string, size_t* length) const;
 
   /* ========== IMPLICIT ADDITION BETWEEN UNITS ==========
    * An implicit addition between units is an expression like "3h40min32.5s".
@@ -124,7 +129,7 @@ private:
   size_t popImplicitAdditionBetweenUnits();
 
   UTF8Decoder m_decoder;
-  ParsingContext * m_parsingContext;
+  ParsingContext* m_parsingContext;
   /* This list is used to memoize the identifiers we already parsed.
    * Ex: When parsing abc, we first turn it into ab*c and store "c",
    * then a*b*c and store "b" and "a". This is useful because we pop
@@ -137,6 +142,6 @@ private:
   bool m_poppingSystemToken;
 };
 
-}
+}  // namespace Poincare
 
 #endif

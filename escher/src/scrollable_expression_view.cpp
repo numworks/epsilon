@@ -1,22 +1,22 @@
+#include <assert.h>
+#include <escher/metric.h>
 #include <escher/scrollable_expression_view.h>
 #include <poincare/layout.h>
-#include <escher/metric.h>
-#include <assert.h>
 
 namespace Escher {
 
-ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder, KDCoordinate leftRightMargin, KDCoordinate topBottomMargin, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, KDFont::Size font) :
-  ScrollableView(parentResponder, &m_expressionView, this),
-  m_expressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor, font)
-{
+ScrollableExpressionView::ScrollableExpressionView(
+    Responder* parentResponder, KDCoordinate leftRightMargin,
+    KDCoordinate topBottomMargin, float horizontalAlignment,
+    float verticalAlignment, KDColor textColor, KDColor backgroundColor,
+    KDFont::Size font)
+    : ScrollableView(parentResponder, &m_expressionView, this),
+      m_expressionView(horizontalAlignment, verticalAlignment, textColor,
+                       backgroundColor, font) {
   setDecoratorType(ScrollView::Decorator::Type::Arrows);
   setDecoratorFont(font);
-  setMargins(
-    topBottomMargin,
-    leftRightMargin,
-    topBottomMargin,
-    leftRightMargin
-  );
+  setMargins(topBottomMargin, leftRightMargin, topBottomMargin,
+             leftRightMargin);
   setBackgroundColor(backgroundColor);
 }
 
@@ -33,8 +33,9 @@ void ScrollableExpressionView::setBackgroundColor(KDColor backgroundColor) {
   ScrollableView::setBackgroundColor(backgroundColor);
 }
 
-void ScrollableExpressionView::setExpressionBackgroundColor(KDColor backgroundColor) {
+void ScrollableExpressionView::setExpressionBackgroundColor(
+    KDColor backgroundColor) {
   m_expressionView.setBackgroundColor(backgroundColor);
 }
 
-}
+}  // namespace Escher

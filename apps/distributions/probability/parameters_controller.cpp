@@ -10,13 +10,17 @@ namespace Distributions {
 
 /* Parameters Controller */
 
-ParametersController::ParametersController(Escher::StackViewController * parentResponder,
-                                           InputEventHandlerDelegate * inputEventHandlerDelegate,
-                                           Distribution * distribution,
-                                           CalculationController * calculationController) :
-      FloatParameterController<double>(parentResponder),
-      m_headerView(KDFont::Size::Small, I18n::Message::DefineParameters, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
-      m_bottomView(KDFont::Size::Small, I18n::Message::LeaveAFieldEmpty, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
+ParametersController::ParametersController(
+    Escher::StackViewController *parentResponder,
+    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    Distribution *distribution, CalculationController *calculationController)
+    : FloatParameterController<double>(parentResponder),
+      m_headerView(KDFont::Size::Small, I18n::Message::DefineParameters,
+                   KDContext::k_alignCenter, KDContext::k_alignCenter,
+                   Escher::Palette::GrayDark, Escher::Palette::WallScreen),
+      m_bottomView(KDFont::Size::Small, I18n::Message::LeaveAFieldEmpty,
+                   KDContext::k_alignCenter, KDContext::k_alignCenter,
+                   Escher::Palette::GrayDark, Escher::Palette::WallScreen),
       m_contentView(&m_selectableTableView, this, &m_headerView, &m_bottomView),
       m_distribution(distribution),
       m_calculationController(calculationController) {
@@ -28,7 +32,7 @@ ParametersController::ParametersController(Escher::StackViewController * parentR
   }
 }
 
-const char * ParametersController::title() {
+const char *ParametersController::title() {
   return I18n::translate(m_distribution->title());
 }
 
@@ -59,11 +63,12 @@ int ParametersController::numberOfRows() const {
   return 1 + m_distribution->numberOfParameters();
 }
 
-void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void ParametersController::willDisplayCellForIndex(HighlightCell *cell,
+                                                   int index) {
   if (index == numberOfRows() - 1) {
     return;
   }
-  ExpressionCellWithEditableTextWithMessage * myCell =
+  ExpressionCellWithEditableTextWithMessage *myCell =
       static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
   myCell->setLayout(m_distribution->parameterSymbolAtIndex(index));
   myCell->setSubLabelMessage(m_distribution->parameterDefinitionAtIndex(index));
@@ -74,15 +79,22 @@ void ParametersController::willDisplayCellForIndex(HighlightCell * cell, int ind
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-bool ParametersController::isCellEditing(Escher::HighlightCell * cell, int index) {
-  return static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)->textField()->isEditing();
+bool ParametersController::isCellEditing(Escher::HighlightCell *cell,
+                                         int index) {
+  return static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)
+      ->textField()
+      ->isEditing();
 }
 
-void ParametersController::setTextInCell(Escher::HighlightCell * cell, const char * text, int index) {
-  static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)->textField()->setText(text);
+void ParametersController::setTextInCell(Escher::HighlightCell *cell,
+                                         const char *text, int index) {
+  static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)
+      ->textField()
+      ->setText(text);
 }
 
-HighlightCell * ParametersController::reusableParameterCell(int index, int type) {
+HighlightCell *ParametersController::reusableParameterCell(int index,
+                                                           int type) {
   assert(index >= 0);
   assert(index < k_maxNumberOfCells);
   return &m_menuListCell[index];
@@ -106,10 +118,10 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
   return true;
 }
 
-bool ParametersController::textFieldDidFinishEditing(AbstractTextField * textField,
-                                                     const char * text,
-                                                     Ion::Events::Event event) {
-  if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
+bool ParametersController::textFieldDidFinishEditing(
+    AbstractTextField *textField, const char *text, Ion::Events::Event event) {
+  if (FloatParameterController::textFieldDidFinishEditing(textField, text,
+                                                          event)) {
     resetMemoization();
     m_selectableTableView.reloadData();
     return true;
@@ -121,12 +133,14 @@ void ParametersController::buttonAction() {
   stackOpenPage(m_calculationController);
 }
 
-bool ParametersController::hasUndefinedValue(const char * text, double floatValue) const {
+bool ParametersController::hasUndefinedValue(const char *text,
+                                             double floatValue) const {
   if (text[0] == 0) {
     // Accept empty inputs
     return false;
   }
-  return Shared::FloatParameterController<double>::hasUndefinedValue(text, floatValue);
+  return Shared::FloatParameterController<double>::hasUndefinedValue(
+      text, floatValue);
 }
 
-}
+}  // namespace Distributions

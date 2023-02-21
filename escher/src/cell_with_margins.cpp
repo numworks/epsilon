@@ -2,23 +2,25 @@
 
 namespace Escher {
 
-CellWithMargins::CellWithMargins(HighlightCell * innerCell) :
-  HighlightCell(),
-  m_innerCell(innerCell)
-{}
+CellWithMargins::CellWithMargins(HighlightCell* innerCell)
+    : HighlightCell(), m_innerCell(innerCell) {}
 
 KDSize CellWithMargins::minimalSizeForOptimalDisplay() const {
   KDSize innerSize = m_innerCell->minimalSizeForOptimalDisplay();
-  return KDSize(innerSize.width() + 2 * Metric::CommonMargin, innerSize.height());
+  return KDSize(innerSize.width() + 2 * Metric::CommonMargin,
+                innerSize.height());
 }
 
-void CellWithMargins::drawRect(KDContext * ctx, KDRect rect) const {
+void CellWithMargins::drawRect(KDContext* ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
 
   // Draw horizontal margins
-  ctx->fillRect(KDRect(0, 0, Metric::CommonMargin, height), Palette::WallScreenDark);
-  ctx->fillRect(KDRect(width - Metric::CommonMargin, 0, Metric::CommonMargin, height), Escher::Palette::WallScreenDark);
+  ctx->fillRect(KDRect(0, 0, Metric::CommonMargin, height),
+                Palette::WallScreenDark);
+  ctx->fillRect(
+      KDRect(width - Metric::CommonMargin, 0, Metric::CommonMargin, height),
+      Escher::Palette::WallScreenDark);
 }
 
 void CellWithMargins::setHighlighted(bool highlight) {
@@ -29,7 +31,9 @@ void CellWithMargins::setHighlighted(bool highlight) {
 void CellWithMargins::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  m_innerCell->setFrame(KDRect(Metric::CommonMargin, 0, width - 2 * Metric::CommonMargin, height), force);
+  m_innerCell->setFrame(
+      KDRect(Metric::CommonMargin, 0, width - 2 * Metric::CommonMargin, height),
+      force);
 }
 
-}
+}  // namespace Escher

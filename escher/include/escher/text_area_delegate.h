@@ -6,9 +6,10 @@ namespace Escher {
 class TextArea;
 
 class TextAreaDelegate {
-public:
-  virtual bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) = 0;
+ public:
+  virtual bool textAreaDidReceiveEvent(TextArea* textArea,
+                                       Ion::Events::Event event) = 0;
 };
 
-}
+}  // namespace Escher
 #endif

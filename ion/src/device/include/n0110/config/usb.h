@@ -9,8 +9,8 @@ namespace Config {
 constexpr static int BCDDevice = 0x0110;
 
 }
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion
 
 #endif

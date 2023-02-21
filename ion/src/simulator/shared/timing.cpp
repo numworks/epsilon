@@ -1,7 +1,9 @@
-#include <ion/timing.h>
-#include "window.h"
-#include <chrono>
 #include <SDL.h>
+#include <ion/timing.h>
+
+#include <chrono>
+
+#include "window.h"
 
 static auto start = std::chrono::steady_clock::now();
 
@@ -20,5 +22,5 @@ void msleep(uint32_t ms) {
   SDL_Delay(ms);
 }
 
-}
-}
+}  // namespace Timing
+}  // namespace Ion

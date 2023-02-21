@@ -1,7 +1,5 @@
 #include "hypothesis_controller.h"
-#include "inference/app.h"
-#include "inference/statistic/input_controller.h"
-#include "inference/text_helpers.h"
+
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
@@ -15,22 +13,28 @@
 #include <shared/poincare_helpers.h>
 #include <string.h>
 
+#include "inference/app.h"
+#include "inference/statistic/input_controller.h"
+#include "inference/text_helpers.h"
+
 using namespace Escher;
 
 namespace Inference {
 
-HypothesisController::HypothesisController(Escher::StackViewController * parent,
-                                           InputController * inputController,
-                                           InputSlopeController * inputSlopeController,
-                                           InputEventHandlerDelegate * handler,
-                                           Test * test) :
-      Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(parent, this),
+HypothesisController::HypothesisController(
+    Escher::StackViewController* parent, InputController* inputController,
+    InputSlopeController* inputSlopeController,
+    InputEventHandlerDelegate* handler, Test* test)
+    : Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(
+          parent, this),
       m_inputController(inputController),
       m_inputSlopeController(inputSlopeController),
       m_operatorDataSource(test),
       m_h0(&m_selectableTableView, handler, this),
       m_ha(&m_selectableTableView, &m_operatorDataSource, this),
-      m_next(&m_selectableTableView, I18n::Message::Next, Invocation::Builder<HypothesisController>(&HypothesisController::ButtonAction, this)),
+      m_next(&m_selectableTableView, I18n::Message::Next,
+             Invocation::Builder<HypothesisController>(
+                 &HypothesisController::ButtonAction, this)),
       m_test(test) {
   Poincare::Layout h0 = Poincare::HorizontalLayout::Builder(
       Poincare::CodePointLayout::Builder('H'),
@@ -48,11 +52,10 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
   m_ha.setSubLabelMessage(I18n::Message::HaSub);
 }
 
-const char * HypothesisController::title() {
-  Poincare::Print::CustomPrintf(m_titleBuffer,
-           sizeof(m_titleBuffer),
-           I18n::translate(m_test->title()),
-           I18n::translate(I18n::Message::Test));
+const char* HypothesisController::title() {
+  Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
+                                I18n::translate(m_test->title()),
+                                I18n::translate(I18n::Message::Test));
   return m_titleBuffer;
 }
 
@@ -62,25 +65,29 @@ bool HypothesisController::handleEvent(Ion::Events::Event event) {
 
 // TextFieldDelegate
 
-bool HypothesisController::textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) {
-  if (textFieldIsEditable(textField) && (event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
+bool HypothesisController::textFieldDidReceiveEvent(
+    Escher::AbstractTextField* textField, Ion::Events::Event event) {
+  if (textFieldIsEditable(textField) &&
+      (event == Ion::Events::OK || event == Ion::Events::EXE) &&
+      !textField->isEditing()) {
     // Remove prefix to edit text
-    textField->setText(textField->text() + strlen(symbolPrefix()) + 1 /* = symbol */);
+    textField->setText(textField->text() + strlen(symbolPrefix()) +
+                       1 /* = symbol */);
   }
   return false;
 };
 
-bool HypothesisController::textFieldShouldFinishEditing(Escher::AbstractTextField * textField,
-                                                                     Ion::Events::Event event) {
+bool HypothesisController::textFieldShouldFinishEditing(
+    Escher::AbstractTextField* textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool HypothesisController::textFieldDidFinishEditing(Escher::AbstractTextField * textField,
-                                                                  const char * text,
-                                                                  Ion::Events::Event event) {
-  double h0 = Shared::PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<double>(
-      text,
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+bool HypothesisController::textFieldDidFinishEditing(
+    Escher::AbstractTextField* textField, const char* text,
+    Ion::Events::Event event) {
+  double h0 =
+      Shared::PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<double>(
+          text, AppsContainerHelper::sharedAppsContainerGlobalContext());
   // Check
   if (std::isnan(h0) || !m_test->isValidH0(h0)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);
@@ -93,21 +100,23 @@ bool HypothesisController::textFieldDidFinishEditing(Escher::AbstractTextField *
   return true;
 }
 
-bool HypothesisController::textFieldDidAbortEditing(AbstractTextField * textField) {
+bool HypothesisController::textFieldDidAbortEditing(
+    AbstractTextField* textField) {
   // Reload params to add "p=..."
   loadHypothesisParam();
   return true;
 }
 
 void HypothesisController::onDropdownSelected(int selectedRow) {
-  m_test->hypothesisParams()->setComparisonOperator(ComparisonOperatorPopupDataSource::OperatorTypeForRow(selectedRow));
+  m_test->hypothesisParams()->setComparisonOperator(
+      ComparisonOperatorPopupDataSource::OperatorTypeForRow(selectedRow));
 }
 
-const char * HypothesisController::symbolPrefix() {
+const char* HypothesisController::symbolPrefix() {
   return m_test->hypothesisSymbol();
 }
 
-HighlightCell * HypothesisController::reusableCell(int i, int type) {
+HighlightCell* HypothesisController::reusableCell(int i, int type) {
   switch (i) {
     case k_indexOfH0:
       return &m_h0;
@@ -129,8 +138,10 @@ void HypothesisController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData(true);
 }
 
-bool HypothesisController::ButtonAction(HypothesisController * controller, void * s) {
-  if (controller->m_test->significanceTestType() == SignificanceTestType::Slope) {
+bool HypothesisController::ButtonAction(HypothesisController* controller,
+                                        void* s) {
+  if (controller->m_test->significanceTestType() ==
+      SignificanceTestType::Slope) {
     controller->stackOpenPage(controller->m_inputSlopeController);
   } else {
     controller->stackOpenPage(controller->m_inputController);
@@ -141,11 +152,15 @@ bool HypothesisController::ButtonAction(HypothesisController * controller, void 
 void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "%s=%*.*ed", symbolPrefix(), m_test->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+  Poincare::Print::CustomPrintf(
+      buffer, bufferSize, "%s=%*.*ed", symbolPrefix(),
+      m_test->hypothesisParams()->firstParam(),
+      Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits);
   m_h0.setAccessoryText(buffer);
   m_ha.reload();
   resetMemoization();
   m_selectableTableView.reloadData();
 }
 
-}
+}  // namespace Inference

@@ -3,7 +3,7 @@
 namespace Escher {
 
 void SelectableViewController::centerTable(KDCoordinate availableHeight) {
-  SelectableTableView * table = static_cast<SelectableTableView*>(view());
+  SelectableTableView* table = static_cast<SelectableTableView*>(view());
   // Give a maximum of space to the table to let it compute its preferred size
   table->setTopMargin(0);
   table->setBottomMargin(0);
@@ -13,5 +13,4 @@ void SelectableViewController::centerTable(KDCoordinate availableHeight) {
   table->setTopMargin((availableHeight - tableHeight) / 2);
 }
 
-}
-
+}  // namespace Escher

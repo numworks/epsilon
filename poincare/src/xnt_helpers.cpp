@@ -3,7 +3,7 @@
 
 namespace Poincare {
 
-static bool Contains(UnicodeDecoder & string, UnicodeDecoder & pattern) {
+static bool Contains(UnicodeDecoder& string, UnicodeDecoder& pattern) {
   while (CodePoint c = pattern.nextCodePoint()) {
     if (string.nextCodePoint() != c) {
       return false;
@@ -12,7 +12,8 @@ static bool Contains(UnicodeDecoder & string, UnicodeDecoder & pattern) {
   return true;
 }
 
-bool FindXNTSymbol(UnicodeDecoder & functionDecoder, bool * defaultXNTHasChanged, CodePoint * defaultXNTCodePoint) {
+bool FindXNTSymbol(UnicodeDecoder& functionDecoder, bool* defaultXNTHasChanged,
+                   CodePoint* defaultXNTCodePoint) {
   /* If cursor is in one of the following functions, and everything before the
    * cursor is correctly nested, the default XNTCodePoint will be improved.
    * These functions all have the following structure :
@@ -20,12 +21,15 @@ bool FindXNTSymbol(UnicodeDecoder & functionDecoder, bool * defaultXNTHasChanged
    * If the cursor is in an argument field, and the variable is well nested and
    * defined, the variable will be inserted into the given buffer. Otherwise,
    * the (improved or not) defaultXNTCodePoint is inserted. */
-  constexpr static struct { AliasesList aliasesList; char xnt; } sFunctions[] = {
-    { Derivative::s_functionHelper.aliasesList(), Derivative::k_defaultXNTChar },
-    { Integral::s_functionHelper.aliasesList(), Integral::k_defaultXNTChar },
-    { Product::s_functionHelper.aliasesList(), Product::k_defaultXNTChar },
-    { Sum::s_functionHelper.aliasesList(), Sum::k_defaultXNTChar }
-  };
+  constexpr static struct {
+    AliasesList aliasesList;
+    char xnt;
+  } sFunctions[] = {
+      {Derivative::s_functionHelper.aliasesList(),
+       Derivative::k_defaultXNTChar},
+      {Integral::s_functionHelper.aliasesList(), Integral::k_defaultXNTChar},
+      {Product::s_functionHelper.aliasesList(), Product::k_defaultXNTChar},
+      {Sum::s_functionHelper.aliasesList(), Sum::k_defaultXNTChar}};
   // Step 1 : Identify the function the cursor is in
   size_t textStart = functionDecoder.start();
   size_t location = functionDecoder.position();
@@ -48,15 +52,17 @@ bool FindXNTSymbol(UnicodeDecoder & functionDecoder, bool * defaultXNTHasChanged
           break;
         }
         // Skip over whitespace.
-        while (location > textStart && functionDecoder.previousCodePoint() == ' ') {
+        while (location > textStart &&
+               functionDecoder.previousCodePoint() == ' ') {
           location = functionDecoder.position();
         }
         // Move back right before the last non whitespace code-point
         functionDecoder.nextCodePoint();
         location = functionDecoder.position();
         // Identify one of the functions
-        for (size_t i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
-          const char * name = sFunctions[i].aliasesList.mainAlias();
+        for (size_t i = 0; i < sizeof(sFunctions) / sizeof(sFunctions[0]);
+             i++) {
+          const char* name = sFunctions[i].aliasesList.mainAlias();
           size_t length = UTF8Helper::StringCodePointLength(name);
           if (location >= textStart + length) {
             UTF8Decoder nameDecoder(name);
@@ -68,7 +74,7 @@ bool FindXNTSymbol(UnicodeDecoder & functionDecoder, bool * defaultXNTHasChanged
               // Update default code point
               *defaultXNTCodePoint = CodePoint(sFunctions[i].xnt);
               *defaultXNTHasChanged = true;
-            }    
+            }
             functionDecoder.unsafeSetPosition(savePosition);
           }
         }
@@ -82,8 +88,8 @@ bool FindXNTSymbol(UnicodeDecoder & functionDecoder, bool * defaultXNTHasChanged
         if (functionLevel == 0) {
           if (cursorInVariableField) {
             // Cursor is out of context, skip to the next matching '('
-            functionLevel ++;
-            cursorLevel ++;
+            functionLevel++;
+            cursorLevel++;
           }
           // Update cursor's position status
           cursorInVariableField = !cursorInVariableField;
@@ -91,7 +97,7 @@ bool FindXNTSymbol(UnicodeDecoder & functionDecoder, bool * defaultXNTHasChanged
         break;
       case ')':
         // Skip to the next matching '('.
-        functionLevel ++;
+        functionLevel++;
         break;
     }
     c = functionDecoder.previousCodePoint();
@@ -101,4 +107,4 @@ bool FindXNTSymbol(UnicodeDecoder & functionDecoder, bool * defaultXNTHasChanged
   return functionFound && !cursorInVariableField;
 }
 
-}
+}  // namespace Poincare

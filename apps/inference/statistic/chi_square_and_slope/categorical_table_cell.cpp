@@ -1,7 +1,9 @@
 #include "categorical_table_cell.h"
-#include "inference/app.h"
+
 #include <inference/models/statistic/slope_t_interval.h>
 #include <inference/models/statistic/slope_t_test.h>
+
+#include "inference/app.h"
 
 using namespace Escher;
 
@@ -9,12 +11,15 @@ namespace Inference {
 
 /* CategoricalTableCell */
 
-CategoricalTableCell::CategoricalTableCell(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDelegate * selectableTableViewDelegate) :
-  Escher::Responder(parentResponder),
-  m_selectableTableView(this, dataSource, this, selectableTableViewDelegate)
-{
+CategoricalTableCell::CategoricalTableCell(
+    Escher::Responder *parentResponder, Escher::TableViewDataSource *dataSource,
+    Escher::SelectableTableViewDelegate *selectableTableViewDelegate)
+    : Escher::Responder(parentResponder),
+      m_selectableTableView(this, dataSource, this,
+                            selectableTableViewDelegate) {
   m_selectableTableView.setBackgroundColor(Escher::Palette::WallScreenDark);
-  m_selectableTableView.setDecoratorType(Escher::ScrollView::Decorator::Type::None);
+  m_selectableTableView.setDecoratorType(
+      Escher::ScrollView::Decorator::Type::None);
   setScrollViewDelegate(this);
 }
 
@@ -33,7 +38,7 @@ bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {
   return false;
 }
 
-void CategoricalTableCell::drawRect(KDContext * ctx, KDRect rect) const {
+void CategoricalTableCell::drawRect(KDContext *ctx, KDRect rect) const {
   // Draw only part borders between cells (in *)
   // ┌─────┐*┌─────┐
   // │cell │*│cell │
@@ -44,74 +49,102 @@ void CategoricalTableCell::drawRect(KDContext * ctx, KDRect rect) const {
   // └─────┘
 
   KDPoint scrollingOffset = m_selectableTableView.contentOffset();
-  KDPoint offset = KDPoint(m_selectableTableView.leftMargin() - scrollingOffset.x(), std::max(0, m_selectableTableView.topMargin() - scrollingOffset.y()));
-  TableViewDataSource * data = const_cast<CategoricalTableCell *>(this)->tableViewDataSource();
+  KDPoint offset = KDPoint(
+      m_selectableTableView.leftMargin() - scrollingOffset.x(),
+      std::max(0, m_selectableTableView.topMargin() - scrollingOffset.y()));
+  TableViewDataSource *data =
+      const_cast<CategoricalTableCell *>(this)->tableViewDataSource();
 
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
   for (int row = 0; row < data->numberOfRows() - 1; row++) {
-    KDRect horizontalBorder = KDRect(0,
-                                     data->cumulatedHeightBeforeIndex(row) + data->rowHeight(row),
-                                     width,
-                                     data->cumulatedHeightBeforeIndex(row + 1) - data->cumulatedHeightBeforeIndex(row) - data->rowHeight(row));
-    ctx->fillRect(horizontalBorder.translatedBy(offset), m_selectableTableView.backgroundColor());
+    KDRect horizontalBorder = KDRect(
+        0, data->cumulatedHeightBeforeIndex(row) + data->rowHeight(row), width,
+        data->cumulatedHeightBeforeIndex(row + 1) -
+            data->cumulatedHeightBeforeIndex(row) - data->rowHeight(row));
+    ctx->fillRect(horizontalBorder.translatedBy(offset),
+                  m_selectableTableView.backgroundColor());
   }
 
   for (int column = 0; column < data->numberOfColumns() - 1; column++) {
-    KDRect verticalBorder = KDRect(data->cumulatedWidthBeforeIndex(column) + data->columnWidth(column),
-                                   0,
-                                   data->cumulatedWidthBeforeIndex(column + 1) - data->cumulatedWidthBeforeIndex(column) - data->columnWidth(column),
-                                   height - Metric::CellSeparatorThickness);
-    ctx->fillRect(verticalBorder.translatedBy(offset), m_selectableTableView.backgroundColor());
+    KDRect verticalBorder = KDRect(
+        data->cumulatedWidthBeforeIndex(column) + data->columnWidth(column), 0,
+        data->cumulatedWidthBeforeIndex(column + 1) -
+            data->cumulatedWidthBeforeIndex(column) - data->columnWidth(column),
+        height - Metric::CellSeparatorThickness);
+    ctx->fillRect(verticalBorder.translatedBy(offset),
+                  m_selectableTableView.backgroundColor());
   }
 }
 
 void CategoricalTableCell::layoutSubviews(bool force) {
-  // We let an empty border as it will be drawn by the next cell (thanks to the cell overlap)
-  m_selectableTableView.setFrame(KDRect(0, 0, bounds().width(), bounds().height() - Metric::CellSeparatorThickness), force);
+  // We let an empty border as it will be drawn by the next cell (thanks to the
+  // cell overlap)
+  m_selectableTableView.setFrame(
+      KDRect(0, 0, bounds().width(),
+             bounds().height() - Metric::CellSeparatorThickness),
+      force);
 }
 
-void CategoricalTableCell::scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) {
+void CategoricalTableCell::scrollViewDidChangeOffset(
+    ScrollViewDataSource *scrollViewDataSource) {
   // Force redrawing the borders between table cells
   HighlightCell::reloadCell();
 }
 
 /* EditableCategoricalTableCell */
 
-EditableCategoricalTableCell::EditableCategoricalTableCell(Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDelegate, Statistic * statistic) :
-  CategoricalTableCell(parentResponder, dataSource, selectableTableViewDelegate),
-  DynamicSizeTableViewDataSource(dynamicSizeTableViewDelegate),
-  m_statistic(statistic)
-{
+EditableCategoricalTableCell::EditableCategoricalTableCell(
+    Escher::Responder *parentResponder, Escher::TableViewDataSource *dataSource,
+    Escher::SelectableTableViewDelegate *selectableTableViewDelegate,
+    DynamicSizeTableViewDataSourceDelegate *dynamicSizeTableViewDelegate,
+    Statistic *statistic)
+    : CategoricalTableCell(parentResponder, dataSource,
+                           selectableTableViewDelegate),
+      DynamicSizeTableViewDataSource(dynamicSizeTableViewDelegate),
+      m_statistic(statistic) {
   m_selectableTableView.setBottomMargin(k_bottomMargin);
 }
 
-bool EditableCategoricalTableCell::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
+bool EditableCategoricalTableCell::textFieldShouldFinishEditing(
+    AbstractTextField *textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE ||
          (event == Ion::Events::Right &&
-          m_selectableTableView.selectedColumn() < tableViewDataSource()->numberOfColumns() - 1) ||
-         (event == Ion::Events::Left && m_selectableTableView.selectedColumn() > 0) ||
+          m_selectableTableView.selectedColumn() <
+              tableViewDataSource()->numberOfColumns() - 1) ||
+         (event == Ion::Events::Left &&
+          m_selectableTableView.selectedColumn() > 0) ||
          (event == Ion::Events::Down &&
-          m_selectableTableView.selectedRow() < tableViewDataSource()->numberOfRows()) ||
+          m_selectableTableView.selectedRow() <
+              tableViewDataSource()->numberOfRows()) ||
          (event == Ion::Events::Up && m_selectableTableView.selectedRow() > 0);
 }
 
-bool EditableCategoricalTableCell::textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) {
+bool EditableCategoricalTableCell::textFieldDidFinishEditing(
+    Escher::AbstractTextField *textField, const char *text,
+    Ion::Events::Event event) {
   double p = textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
   if (textFieldDelegateApp()->hasUndefinedValue(p, false, false)) {
     return false;
   }
-  int row = m_selectableTableView.selectedRow(), column = m_selectableTableView.selectedColumn();
-  if (!tableModel()->authorizedParameterAtPosition(p, relativeRowIndex(row), relativeColumnIndex(column))) {
+  int row = m_selectableTableView.selectedRow(),
+      column = m_selectableTableView.selectedColumn();
+  if (!tableModel()->authorizedParameterAtPosition(
+          p, relativeRowIndex(row), relativeColumnIndex(column))) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  tableModel()->setParameterAtPosition(p,  relativeRowIndex(row), relativeColumnIndex(column));
+  tableModel()->setParameterAtPosition(p, relativeRowIndex(row),
+                                       relativeColumnIndex(column));
 
   m_selectableTableView.deselectTable(true);
   // Add row or column
-  if ((row == tableViewDataSource()->numberOfRows() - 1 && relativeRowIndex(tableViewDataSource()->numberOfRows()) < tableModel()->maxNumberOfRows()) ||
-      (column == tableViewDataSource()->numberOfColumns() - 1 && relativeColumnIndex(tableViewDataSource()->numberOfColumns()) < tableModel()->maxNumberOfColumns())) {
+  if ((row == tableViewDataSource()->numberOfRows() - 1 &&
+       relativeRowIndex(tableViewDataSource()->numberOfRows()) <
+           tableModel()->maxNumberOfRows()) ||
+      (column == tableViewDataSource()->numberOfColumns() - 1 &&
+       relativeColumnIndex(tableViewDataSource()->numberOfColumns()) <
+           tableModel()->maxNumberOfColumns())) {
     recomputeDimensions();
   }
   m_selectableTableView.reloadCellAtLocation(column, row);
@@ -127,7 +160,8 @@ bool EditableCategoricalTableCell::handleEvent(Ion::Events::Event event) {
   int column = m_selectableTableView.selectedColumn();
   int row = m_selectableTableView.selectedRow();
   int cellType = tableViewDataSource()->typeAtLocation(column, row);
-  if (event == Ion::Events::Backspace && cellType == CategoricalTableViewDataSource::k_typeOfInnerCells) {
+  if (event == Ion::Events::Backspace &&
+      cellType == CategoricalTableViewDataSource::k_typeOfInnerCells) {
     deleteSelectedValue();
     return true;
   } else if (event == Ion::Events::Backspace || event == Ion::Events::Clear) {
@@ -137,21 +171,25 @@ bool EditableCategoricalTableCell::handleEvent(Ion::Events::Event event) {
   return CategoricalTableCell::handleEvent(event);
 }
 
-void EditableCategoricalTableCell::initCell(EvenOddEditableTextCell, void * cell, int index) {
-  EvenOddEditableTextCell * c = static_cast<EvenOddEditableTextCell *>(cell);
+void EditableCategoricalTableCell::initCell(EvenOddEditableTextCell, void *cell,
+                                            int index) {
+  EvenOddEditableTextCell *c = static_cast<EvenOddEditableTextCell *>(cell);
   c->setParentResponder(&m_selectableTableView);
   c->editableTextCell()->textField()->setDelegates(App::app(), this);
   c->setFont(KDFont::Size::Small);
 }
 
 bool EditableCategoricalTableCell::deleteSelectedValue() {
-  int row = m_selectableTableView.selectedRow(), col = m_selectableTableView.selectedColumn();
+  int row = m_selectableTableView.selectedRow(),
+      col = m_selectableTableView.selectedColumn();
   assert(relativeRowIndex(row) >= 0 && relativeColumnIndex(col) >= 0);
   // Remove value
-  bool shouldDeleteRowOrCol = tableModel()->deleteParameterAtPosition(relativeRowIndex(row), relativeColumnIndex(col));
+  bool shouldDeleteRowOrCol = tableModel()->deleteParameterAtPosition(
+      relativeRowIndex(row), relativeColumnIndex(col));
   if (!shouldDeleteRowOrCol) {
     // Only one cell needs to reload.
-    assert(row < tableViewDataSource()->numberOfRows() && col < tableViewDataSource()->numberOfColumns());
+    assert(row < tableViewDataSource()->numberOfRows() &&
+           col < tableViewDataSource()->numberOfColumns());
     m_selectableTableView.reloadCellAtLocation(col, row);
     return false;
   } else {
@@ -197,12 +235,13 @@ bool EditableCategoricalTableCell::recomputeDimensions() {
   return didChangeSize(dimensions.row, dimensions.col);
 }
 
-Table * EditableCategoricalTableCell::tableModel() {
+Table *EditableCategoricalTableCell::tableModel() {
   if (m_statistic->subApp() == Statistic::SubApp::Test) {
     if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
       return static_cast<SlopeTTest *>(m_statistic);
     } else {
-      assert(m_statistic->significanceTestType() == SignificanceTestType::Categorical);
+      assert(m_statistic->significanceTestType() ==
+             SignificanceTestType::Categorical);
       return static_cast<Chi2Test *>(m_statistic);
     }
   }
@@ -213,10 +252,17 @@ Table * EditableCategoricalTableCell::tableModel() {
 
 /* DoubleColumnTableCell */
 
-DoubleColumnTableCell::DoubleColumnTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, Statistic * statistic) :
-  EditableCategoricalTableCell(parentResponder, this, selectableTableViewDelegate, dynamicSizeTableViewDataSourceDelegate, statistic),
-  DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_doubleColumnTableNumberOfReusableCells>(this)
-{}
+DoubleColumnTableCell::DoubleColumnTableCell(
+    Escher::Responder *parentResponder,
+    DynamicSizeTableViewDataSourceDelegate
+        *dynamicSizeTableViewDataSourceDelegate,
+    Escher::SelectableTableViewDelegate *selectableTableViewDelegate,
+    Statistic *statistic)
+    : EditableCategoricalTableCell(
+          parentResponder, this, selectableTableViewDelegate,
+          dynamicSizeTableViewDataSourceDelegate, statistic),
+      DynamicCellsDataSource<Escher::EvenOddEditableTextCell,
+                             k_doubleColumnTableNumberOfReusableCells>(this) {}
 
 int DoubleColumnTableCell::reusableCellCount(int type) {
   if (type == k_typeOfHeaderCells) {
@@ -225,7 +271,7 @@ int DoubleColumnTableCell::reusableCellCount(int type) {
   return k_maxNumberOfReusableRows * k_maxNumberOfColumns;
 }
 
-HighlightCell * DoubleColumnTableCell::reusableCell(int i, int type) {
+HighlightCell *DoubleColumnTableCell::reusableCell(int i, int type) {
   assert(i < reusableCellCount(type));
   if (type == k_typeOfHeaderCells) {
     assert(i < 2);
@@ -234,12 +280,15 @@ HighlightCell * DoubleColumnTableCell::reusableCell(int i, int type) {
   return cell(i);
 }
 
-void DoubleColumnTableCell::willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) {
+void DoubleColumnTableCell::willDisplayCellAtLocation(
+    Escher::HighlightCell *cell, int i, int j) {
   if (j == 0) {  // Header
     return;
   }
-  Escher::EvenOddEditableTextCell * myCell = static_cast<Escher::EvenOddEditableTextCell *>(cell);
-  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, i, j - 1, tableModel());
+  Escher::EvenOddEditableTextCell *myCell =
+      static_cast<Escher::EvenOddEditableTextCell *>(cell);
+  willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(),
+                                 myCell, i, j - 1, tableModel());
 }
 
-}
+}  // namespace Inference

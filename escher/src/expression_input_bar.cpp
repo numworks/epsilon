@@ -1,21 +1,22 @@
+#include <assert.h>
 #include <escher/expression_input_bar.h>
 #include <poincare/preferences.h>
-#include <assert.h>
+
 #include <algorithm>
 
 namespace Escher {
 
-AbstractExpressionInputBar::AbstractExpressionInputBar() :
-  m_line(Palette::GrayMiddle)
-{
-}
+AbstractExpressionInputBar::AbstractExpressionInputBar()
+    : m_line(Palette::GrayMiddle) {}
 
 void AbstractExpressionInputBar::layoutSubviews(bool force) {
   m_line.setFrame(KDRect(0, 0, bounds().width(), k_separatorThickness), force);
-  expressionField()->setFrame(KDRect(0, k_separatorThickness, bounds().width(), bounds().height() - k_separatorThickness), force);
+  expressionField()->setFrame(KDRect(0, k_separatorThickness, bounds().width(),
+                                     bounds().height() - k_separatorThickness),
+                              force);
 }
 
-View * AbstractExpressionInputBar::subviewAtIndex(int index) {
+View* AbstractExpressionInputBar::subviewAtIndex(int index) {
   if (index == 0) {
     return expressionField();
   }
@@ -28,7 +29,8 @@ KDSize AbstractExpressionInputBar::minimalSizeForOptimalDisplay() const {
 }
 
 KDCoordinate AbstractExpressionInputBar::inputViewHeight() const {
-  return std::clamp(expressionField()->inputViewHeight(), k_minimalHeight, k_maximalHeight);
+  return std::clamp(expressionField()->inputViewHeight(), k_minimalHeight,
+                    k_maximalHeight);
 }
 
-}
+}  // namespace Escher

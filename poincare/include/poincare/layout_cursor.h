@@ -35,14 +35,14 @@ namespace Poincare {
  * */
 
 class LayoutCursor final {
-public:
+ public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 
   /* This constructor either set the cursor at the leftMost or rightMost
    * position in the layout. */
-  LayoutCursor(Layout layout, OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right()) :
-    m_startOfSelection(-1)
-  {
+  LayoutCursor(Layout layout,
+               OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
+      : m_startOfSelection(-1) {
     if (!layout.isUninitialized()) {
       setLayout(layout, sideOfLayout);
     }
@@ -51,43 +51,58 @@ public:
   LayoutCursor() : LayoutCursor(Layout()) {}
 
   LayoutCursor(LayoutCursor& other) {
-     m_layout = other.m_layout;
-     m_position = other.m_position;
-     m_startOfSelection = other.m_startOfSelection;
+    m_layout = other.m_layout;
+    m_position = other.m_position;
+    m_startOfSelection = other.m_startOfSelection;
   }
 
   // Definition
   bool isUninitialized() const { return m_layout.isUninitialized(); }
-  bool isValid() const { return !m_layout.deepIsGhost() && (isUninitialized() || (m_position >= leftMostPosition() && m_position <= rightMostPosition())); }
+  bool isValid() const {
+    return !m_layout.deepIsGhost() &&
+           (isUninitialized() || (m_position >= leftMostPosition() &&
+                                  m_position <= rightMostPosition()));
+  }
 
   // Getters and setters
   Layout layout() { return m_layout; }
   int position() const { return m_position; }
   bool isSelecting() const { return m_startOfSelection >= 0; }
-  LayoutSelection selection() const { return isSelecting() ? LayoutSelection(m_layout, m_startOfSelection, m_position) : LayoutSelection(); }
+  LayoutSelection selection() const {
+    return isSelecting()
+               ? LayoutSelection(m_layout, m_startOfSelection, m_position)
+               : LayoutSelection();
+  }
 
   void setPosition(int position);
 
   /* Position and size */
   KDCoordinate cursorHeight(KDFont::Size font);
   KDPoint cursorAbsoluteOrigin(KDFont::Size font);
-  KDPoint middleLeftPoint(KDFont::Size font) { return KDPoint(cursorAbsoluteOrigin(font).x(), cursorAbsoluteOrigin(font).y() + cursorHeight(font) / 2); }
+  KDPoint middleLeftPoint(KDFont::Size font) {
+    return KDPoint(cursorAbsoluteOrigin(font).x(),
+                   cursorAbsoluteOrigin(font).y() + cursorHeight(font) / 2);
+  }
 
   /* Move */
   // Return false if could not move
-  bool move(OMG::Direction direction, bool selecting, bool * shouldRedrawLayout);
-  bool moveMultipleSteps(OMG::Direction direction, int step, bool selecting, bool * shouldRedrawLayout);
+  bool move(OMG::Direction direction, bool selecting, bool* shouldRedrawLayout);
+  bool moveMultipleSteps(OMG::Direction direction, int step, bool selecting,
+                         bool* shouldRedrawLayout);
 
   /* Layout insertion */
-  void insertLayoutAtCursor(Layout layout, Context * context, bool forceRight = false, bool forceLeft = false);
-  void addEmptyExponentialLayout(Context * context);
-  void addEmptyMatrixLayout(Context * context);
-  void addEmptyPowerLayout(Context * context);
-  void addEmptySquareRootLayout(Context * context);
-  void addEmptySquarePowerLayout(Context * context);
-  void addEmptyTenPowerLayout(Context * context);
-  void addFractionLayoutAndCollapseSiblings(Context * context);
-  void insertText(const char * text, Context * context, bool forceCursorRightOfText = false, bool forceCursorLeftOfText = false, bool linearMode = false);
+  void insertLayoutAtCursor(Layout layout, Context* context,
+                            bool forceRight = false, bool forceLeft = false);
+  void addEmptyExponentialLayout(Context* context);
+  void addEmptyMatrixLayout(Context* context);
+  void addEmptyPowerLayout(Context* context);
+  void addEmptySquareRootLayout(Context* context);
+  void addEmptySquarePowerLayout(Context* context);
+  void addEmptyTenPowerLayout(Context* context);
+  void addFractionLayoutAndCollapseSiblings(Context* context);
+  void insertText(const char* text, Context* context,
+                  bool forceCursorRightOfText = false,
+                  bool forceCursorLeftOfText = false, bool linearMode = false);
 
   /* Layout deletion */
   void performBackspace();
@@ -101,30 +116,38 @@ public:
 
   bool isAtNumeratorOfEmptyFraction() const;
 
-private:
+ private:
   void setLayout(Layout layout, OMG::HorizontalDirection sideOfLayout);
 
   Layout leftLayout();
   Layout rightLayout();
   Layout layoutToFit(KDFont::Size font);
 
-  int leftMostPosition() const { return 0;}
-  int rightMostPosition() const { return m_layout.isHorizontal() ? m_layout.numberOfChildren() : 1;}
-  bool horizontalMove(OMG::HorizontalDirection direction, bool * shouldRedrawLayout);
-  bool verticalMove(OMG::VerticalDirection direction, bool * shouldRedrawLayout);
-  bool verticalMoveWithoutSelection(OMG::VerticalDirection direction, bool * shouldRedrawLayout);
+  int leftMostPosition() const { return 0; }
+  int rightMostPosition() const {
+    return m_layout.isHorizontal() ? m_layout.numberOfChildren() : 1;
+  }
+  bool horizontalMove(OMG::HorizontalDirection direction,
+                      bool* shouldRedrawLayout);
+  bool verticalMove(OMG::VerticalDirection direction, bool* shouldRedrawLayout);
+  bool verticalMoveWithoutSelection(OMG::VerticalDirection direction,
+                                    bool* shouldRedrawLayout);
 
   void privateStartSelecting();
 
   void deleteAndResetSelection();
-  void privateDelete(LayoutNode::DeletionMethod deletionMethod, bool deletionAppliedToParent);
+  void privateDelete(LayoutNode::DeletionMethod deletionMethod,
+                     bool deletionAppliedToParent);
 
-  bool setEmptyRectangleVisibilityAtCurrentPosition(EmptyRectangle::State state);
+  bool setEmptyRectangleVisibilityAtCurrentPosition(
+      EmptyRectangle::State state);
   void removeEmptyRowOrColumnOfGridParentIfNeeded();
   void invalidateSizesAndPositions();
 
   void collapseSiblingsOfLayout(Layout l);
-  void collapseSiblingsOfLayoutOnDirection(Layout l, OMG::HorizontalDirection direction, int absorbingChildIndex);
+  void collapseSiblingsOfLayoutOnDirection(Layout l,
+                                           OMG::HorizontalDirection direction,
+                                           int absorbingChildIndex);
 
   void balanceAutocompletedBracketsAndKeepAValidCursor();
 
@@ -135,6 +158,6 @@ private:
   int m_startOfSelection;
 };
 
-}
+}  // namespace Poincare
 
 #endif

@@ -13,47 +13,58 @@ extern "C" {
 
 namespace Poincare {
 
-int ComplexArgumentNode::numberOfChildren() const { return ComplexArgument::s_functionHelper.numberOfChildren(); }
-
-Layout ComplexArgumentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(ComplexArgument(this), floatDisplayMode, numberOfSignificantDigits, ComplexArgument::s_functionHelper.aliasesList().mainAlias(), context);
+int ComplexArgumentNode::numberOfChildren() const {
+  return ComplexArgument::s_functionHelper.numberOfChildren();
 }
 
-int ComplexArgumentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ComplexArgument::s_functionHelper.aliasesList().mainAlias());
+Layout ComplexArgumentNode::createLayout(
+    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
+    Context* context) const {
+  return LayoutHelper::Prefix(
+      ComplexArgument(this), floatDisplayMode, numberOfSignificantDigits,
+      ComplexArgument::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-Expression ComplexArgumentNode::shallowReduce(const ReductionContext& reductionContext) {
+int ComplexArgumentNode::serialize(char* buffer, int bufferSize,
+                                   Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(
+      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+      ComplexArgument::s_functionHelper.aliasesList().mainAlias());
+}
+
+Expression ComplexArgumentNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return ComplexArgument(this).shallowReduce(reductionContext);
 }
 
-template<typename T>
-Complex<T> ComplexArgumentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
+template <typename T>
+Complex<T> ComplexArgumentNode::computeOnComplex(
+    const std::complex<T> c, Preferences::ComplexFormat,
+    Preferences::AngleUnit angleUnit) {
   return Complex<T>::Builder(std::arg(c));
 }
 
 Expression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-        SimplificationHelper::ListReduction::DistributeOverLists
-    );
+        SimplificationHelper::ListReduction::DistributeOverLists);
     if (!e.isUninitialized()) {
       return e;
     }
   }
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
-    ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
+    ComplexCartesian complexChild = static_cast<ComplexCartesian&>(c);
     Expression childArg = complexChild.argument(reductionContext);
     replaceWithInPlace(childArg);
     return childArg.shallowReduce(reductionContext);
   }
-  Context * context = reductionContext.context();
+  Context* context = reductionContext.context();
   Expression res;
   if (c.isNull(context) == TrinaryBoolean::True) {
     res = Undefined::Builder();
@@ -62,14 +73,16 @@ Expression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
   } else if (c.isPositive(context) == TrinaryBoolean::False) {
     res = Constant::PiBuilder();
   } else {
-    double approximation = c.approximateToScalar<double>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true);
+    double approximation =
+        c.approximateToScalar<double>(context, reductionContext.complexFormat(),
+                                      reductionContext.angleUnit(), true);
     if (approximation < 0.0) {
       res = Constant::PiBuilder();
     } else if (approximation > 0.0) {
       res = Rational::Builder(0);
     } else if (approximation == 0.0) {
       res = Undefined::Builder();
-    } // else, approximation is NaN
+    }  // else, approximation is NaN
   }
   if (res.isUninitialized()) {
     return *this;
@@ -79,4 +92,4 @@ Expression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
   }
 }
 
-}
+}  // namespace Poincare

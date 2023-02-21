@@ -1,33 +1,34 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_TRIGONOMETRY_LIST_CONTROLLER_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_TRIGONOMETRY_LIST_CONTROLLER_H
 
+#include "illustrated_expressions_list_controller.h"
 #include "trigonometry_graph_cell.h"
 #include "trigonometry_model.h"
-#include "illustrated_expressions_list_controller.h"
 
 namespace Calculation {
 
 class TrigonometryListController : public IllustratedExpressionsListController {
-public:
-  TrigonometryListController(EditExpressionController * editExpressionController) :
-    IllustratedExpressionsListController(editExpressionController),
-    m_graphCell(&m_model) {}
+ public:
+  TrigonometryListController(EditExpressionController* editExpressionController)
+      : IllustratedExpressionsListController(editExpressionController),
+        m_graphCell(&m_model) {}
   void setExpression(Poincare::Expression e) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 
   /* See comment in parent class for why we need this. Since we need to display
    * fractions of radians in the angle cell, we reduce the graph further. */
   constexpr static KDCoordinate k_illustrationHeight = 105;
-private:
+
+ private:
   constexpr static CodePoint k_symbol = UCodePointGreekSmallLetterTheta;
   I18n::Message messageAtIndex(int index) override;
-  Escher::HighlightCell * illustrationCell() override { return &m_graphCell; }
+  Escher::HighlightCell* illustrationCell() override { return &m_graphCell; }
   TrigonometryGraphCell m_graphCell;
   TrigonometryModel m_model;
   bool m_anglesAreEqual;
 };
 
-}
+}  // namespace Calculation
 
 #endif

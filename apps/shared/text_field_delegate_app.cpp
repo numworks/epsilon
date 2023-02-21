@@ -1,17 +1,20 @@
 #include "text_field_delegate_app.h"
-#include "continuous_function.h"
+
 #include <apps/apps_container_helper.h>
 #include <apps/constant.h>
 #include <apps/shared/poincare_helpers.h>
-#include <cmath>
 #include <string.h>
+
+#include <cmath>
+
+#include "continuous_function.h"
 
 using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {
 
-Context * TextFieldDelegateApp::localContext() {
+Context *TextFieldDelegateApp::localContext() {
   return AppsContainerHelper::sharedAppsContainerGlobalContext();
 }
 
@@ -19,11 +22,13 @@ CodePoint TextFieldDelegateApp::XNT() {
   return ContinuousFunction::k_cartesianSymbol;
 }
 
-bool TextFieldDelegateApp::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
+bool TextFieldDelegateApp::textFieldShouldFinishEditing(
+    AbstractTextField *textField, Ion::Events::Event event) {
   return isFinishingEvent(event);
 }
 
-bool TextFieldDelegateApp::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
+bool TextFieldDelegateApp::textFieldDidReceiveEvent(
+    AbstractTextField *textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     if (textField->text()[0] == 0) {
       // Empty field, let the textfield handle the event
@@ -39,8 +44,7 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(AbstractTextField * textFiel
   return false;
 }
 
-
-bool TextFieldDelegateApp::isAcceptableText(const char * text) {
+bool TextFieldDelegateApp::isAcceptableText(const char *text) {
   Expression exp = Expression::Parse(text, localContext());
   bool isAcceptable = isAcceptableExpression(exp);
   if (!isAcceptable) {
@@ -49,16 +53,18 @@ bool TextFieldDelegateApp::isAcceptableText(const char * text) {
   return isAcceptable;
 }
 
-template<typename T>
-T TextFieldDelegateApp::parseInputtedFloatValue(const char * text) {
-  return PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<T>(text, localContext());
+template <typename T>
+T TextFieldDelegateApp::parseInputtedFloatValue(const char *text) {
+  return PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<T>(
+      text, localContext());
 }
 
-template<typename T>
-bool TextFieldDelegateApp::hasUndefinedValue(T value, bool enablePlusInfinity, bool enableMinusInfinity) {
-  bool isUndefined = std::isnan(value)
-    || (!enablePlusInfinity && value > 0 && std::isinf(value))
-    || (!enableMinusInfinity && value < 0 && std::isinf(value));
+template <typename T>
+bool TextFieldDelegateApp::hasUndefinedValue(T value, bool enablePlusInfinity,
+                                             bool enableMinusInfinity) {
+  bool isUndefined = std::isnan(value) ||
+                     (!enablePlusInfinity && value > 0 && std::isinf(value)) ||
+                     (!enableMinusInfinity && value < 0 && std::isinf(value));
   if (isUndefined) {
     displayWarning(I18n::Message::UndefinedValue);
   }
@@ -67,20 +73,25 @@ bool TextFieldDelegateApp::hasUndefinedValue(T value, bool enablePlusInfinity, b
 
 /* Protected */
 
-TextFieldDelegateApp::TextFieldDelegateApp(Snapshot * snapshot, ViewController * rootViewController) :
-  InputEventHandlerDelegateApp(snapshot, rootViewController),
-  TextFieldDelegate()
-{
-}
+TextFieldDelegateApp::TextFieldDelegateApp(Snapshot *snapshot,
+                                           ViewController *rootViewController)
+    : InputEventHandlerDelegateApp(snapshot, rootViewController),
+      TextFieldDelegate() {}
 
-bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder * responder, Ion::Events::Event event) {
+bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField *field,
+                                                Responder *responder,
+                                                Ion::Events::Event event) {
   if (event == Ion::Events::XNT) {
     CodePoint defaultXNT = XNT();
     int XNTIndex = Ion::Events::repetitionFactor();
     if (XNTIndex > 0) {
       // Cycle through XNT CodePoints, starting from default code point position
-      constexpr CodePoint XNTCodePoints[] = {ContinuousFunction::k_cartesianSymbol, 'n', ContinuousFunction::k_parametricSymbol, ContinuousFunction::k_polarSymbol};
-      constexpr size_t k_numberOfCodePoints = sizeof(XNTCodePoints)/sizeof(CodePoint);
+      constexpr CodePoint XNTCodePoints[] = {
+          ContinuousFunction::k_cartesianSymbol, 'n',
+          ContinuousFunction::k_parametricSymbol,
+          ContinuousFunction::k_polarSymbol};
+      constexpr size_t k_numberOfCodePoints =
+          sizeof(XNTCodePoints) / sizeof(CodePoint);
       for (size_t i = 0; i < k_numberOfCodePoints; i++) {
         if (XNTCodePoints[i] == defaultXNT) {
           break;
@@ -104,12 +115,14 @@ bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp) {
   return !(exp.isUninitialized() || exp.type() == ExpressionNode::Type::Store);
 }
 
-bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression, bool replaceAns, Expression ansExpression, Context * context) {
+bool TextFieldDelegateApp::ExpressionCanBeSerialized(
+    const Expression expression, bool replaceAns, Expression ansExpression,
+    Context *context) {
   if (expression.isUninitialized()) {
     return false;
   }
   Expression exp = expression;
-  if (replaceAns){
+  if (replaceAns) {
     exp = expression.clone();
     Symbol ansSymbol = Symbol::Ans();
     exp = exp.replaceSymbolWithExpression(ansSymbol, ansExpression);
@@ -119,7 +132,7 @@ bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression
   int length = PoincareHelpers::Serialize(exp, buffer, maxSerializationSize);
   /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
    * escaped before printing utterly the expression. */
-  if (length >= maxSerializationSize-1) {
+  if (length >= maxSerializationSize - 1) {
     return false;
   }
   if (replaceAns) {
@@ -132,9 +145,11 @@ bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression
   return true;
 }
 
-template float TextFieldDelegateApp::parseInputtedFloatValue<float>(const char *);
-template double TextFieldDelegateApp::parseInputtedFloatValue<double>(const char *);
+template float TextFieldDelegateApp::parseInputtedFloatValue<float>(
+    const char *);
+template double TextFieldDelegateApp::parseInputtedFloatValue<double>(
+    const char *);
 template bool TextFieldDelegateApp::hasUndefinedValue(float, bool, bool);
 template bool TextFieldDelegateApp::hasUndefinedValue(double, bool, bool);
 
-}
+}  // namespace Shared

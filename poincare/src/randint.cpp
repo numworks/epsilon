@@ -1,15 +1,15 @@
-#include <poincare/randint.h>
+#include <ion.h>
 #include <poincare/based_integer.h>
 #include <poincare/complex.h>
 #include <poincare/float.h>
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/layout_helper.h>
+#include <poincare/randint.h>
 #include <poincare/rational.h>
-#include <poincare/undefined.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
-#include <ion.h>
+#include <poincare/undefined.h>
 
 extern "C" {
 #include <assert.h>
@@ -20,26 +20,42 @@ namespace Poincare {
 
 Expression RandintNode::createExpressionWithTwoChildren() const {
   if (numberOfChildren() == 1) {
-    return Randint::Builder(BasedInteger::Builder(k_defaultMinBound), Expression(childAtIndex(0)).clone());
+    return Randint::Builder(BasedInteger::Builder(k_defaultMinBound),
+                            Expression(childAtIndex(0)).clone());
   }
   assert(numberOfChildren() == 2);
   return Randint(this);
 }
 
-Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(createExpressionWithTwoChildren(), floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.aliasesList().mainAlias(), context);
+Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits,
+                                 Context* context) const {
+  return LayoutHelper::Prefix(
+      createExpressionWithTwoChildren(), floatDisplayMode,
+      numberOfSignificantDigits,
+      Randint::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
-int RandintNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(createExpressionWithTwoChildren().node(), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.aliasesList().mainAlias());
+int RandintNode::serialize(char* buffer, int bufferSize,
+                           Preferences::PrintFloatMode floatDisplayMode,
+                           int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(
+      createExpressionWithTwoChildren().node(), buffer, bufferSize,
+      floatDisplayMode, numberOfSignificantDigits,
+      Randint::s_functionHelper.aliasesList().mainAlias());
 }
 
-Expression RandintNode::shallowReduce(const ReductionContext& reductionContext) {
+Expression RandintNode::shallowReduce(
+    const ReductionContext& reductionContext) {
   return Randint(this).shallowReduce(reductionContext);
 }
 
-template <typename T> Evaluation<T> RandintNode::templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined) const {
-  Evaluation<T> aInput; Evaluation<T> bInput;
+template <typename T>
+Evaluation<T> RandintNode::templateApproximate(
+    const ApproximationContext& approximationContext,
+    bool* inputIsUndefined) const {
+  Evaluation<T> aInput;
+  Evaluation<T> bInput;
   if (numberOfChildren() == 1) {
     aInput = Complex<T>::Builder(static_cast<T>(k_defaultMinBound));
     bInput = childAtIndex(0)->approximate(T(), approximationContext);
@@ -53,10 +69,12 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(const Appro
     *inputIsUndefined = aInput.isUndefined() || bInput.isUndefined();
   }
   return ApproximationHelper::Map<T>(
-      this,
-      approximationContext,
-      [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
-        T a; T b;
+      this, approximationContext,
+      [](const std::complex<T>* c, int numberOfComplexes,
+         Preferences::ComplexFormat complexFormat,
+         Preferences::AngleUnit angleUnit, void* ctx) {
+        T a;
+        T b;
         if (numberOfComplexes == 1) {
           a = static_cast<T>(k_defaultMinBound);
           b = ComplexNode<T>::ToScalar(c[0]);
@@ -75,10 +93,10 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(const Appro
          *   between 0 and 1 - we can't map the integers of the range with all
          *   representable double numbers from 0 to 1.
          *  */
-        if (std::isnan(a) || std::isnan(b) || std::isinf(a) || std::isinf(b)
-            || a > b
-            || a != (int)a || b != (int)b
-            || (Float<T>::EpsilonLax()*(b+static_cast<T>(1.0)-a) > static_cast<T>(1.0))) {
+        if (std::isnan(a) || std::isnan(b) || std::isinf(a) || std::isinf(b) ||
+            a > b || a != (int)a || b != (int)b ||
+            (Float<T>::EpsilonLax() * (b + static_cast<T>(1.0) - a) >
+             static_cast<T>(1.0))) {
           return Complex<T>::RealUndefined();
         }
         return Complex<T>::Builder(Randint::RandomInt(a, b));
@@ -88,13 +106,11 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(const Appro
 Expression Randint::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-        SimplificationHelper::ListReduction::DistributeOverLists
-    );
+        SimplificationHelper::ListReduction::DistributeOverLists);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -102,4 +118,4 @@ Expression Randint::shallowReduce(ReductionContext reductionContext) {
   return *this;
 }
 
-}
+}  // namespace Poincare

@@ -1,17 +1,16 @@
 #ifndef ION_UNICODE_UTF8_DECODER_H
 #define ION_UNICODE_UTF8_DECODER_H
 
-#include "code_point.h"
+#include <assert.h>
 #include <stddef.h>
 #include <string.h>
-#include <assert.h>
+
+#include "code_point.h"
 
 class UnicodeDecoder {
-public:
-  UnicodeDecoder(size_t initialPosition, size_t end) :
-    m_position(initialPosition),
-    m_end(end)
-  {}
+ public:
+  UnicodeDecoder(size_t initialPosition, size_t end)
+      : m_position(initialPosition), m_end(end) {}
   virtual CodePoint nextCodePoint() = 0;
   virtual CodePoint previousCodePoint() = 0;
   size_t nextGlyphPosition();
@@ -21,7 +20,7 @@ public:
   size_t end() const { return m_end; }
   void unsafeSetPosition(size_t position) { m_position = position; }
 
-protected:
+ protected:
   size_t m_position;
   size_t m_end;
 };
@@ -50,34 +49,41 @@ protected:
  */
 
 class UTF8Decoder : public UnicodeDecoder {
-public:
-  UTF8Decoder(const char * string, const char * initialPosition = nullptr, const char * stringEnd = nullptr) :
-    UnicodeDecoder(initialPosition ? initialPosition - string : 0, stringEnd ? stringEnd - string : strlen(string)),
-    m_string(string)
-    {
-      assert(string != nullptr);
-    }
+ public:
+  UTF8Decoder(const char* string, const char* initialPosition = nullptr,
+              const char* stringEnd = nullptr)
+      : UnicodeDecoder(initialPosition ? initialPosition - string : 0,
+                       stringEnd ? stringEnd - string : strlen(string)),
+        m_string(string) {
+    assert(string != nullptr);
+  }
 
   CodePoint nextCodePoint() override;
   CodePoint previousCodePoint() override;
-  const char * nextGlyphPosition() { return m_string + UnicodeDecoder::nextGlyphPosition(); }
-  const char * previousGlyphPosition() { return m_string + UnicodeDecoder::previousGlyphPosition(); }
-  const char * string() const { return m_string; }
-  const char * stringPosition() { return m_string + m_position; }
-  const char * stringEnd() const { return m_string + m_end; }
-  void setPosition(const char * position);
+  const char* nextGlyphPosition() {
+    return m_string + UnicodeDecoder::nextGlyphPosition();
+  }
+  const char* previousGlyphPosition() {
+    return m_string + UnicodeDecoder::previousGlyphPosition();
+  }
+  const char* string() const { return m_string; }
+  const char* stringPosition() { return m_string + m_position; }
+  const char* stringEnd() const { return m_string + m_end; }
+  void setPosition(const char* position);
   constexpr static size_t CharSizeOfCodePoint(CodePoint c) {
     return c <= 0x7F ? 1 : (c <= 0x7FF ? 2 : (c <= 0xFFFF ? 3 : 4));
   }
   // No null-terminating char
-  static size_t CodePointToChars(CodePoint c, char * buffer, size_t bufferLength);
-  static size_t CodePointToCharsWithNullTermination(CodePoint c, char * buffer, size_t bufferSize);
+  static size_t CodePointToChars(CodePoint c, char* buffer,
+                                 size_t bufferLength);
+  static size_t CodePointToCharsWithNullTermination(CodePoint c, char* buffer,
+                                                    size_t bufferSize);
   static bool IsInTheMiddleOfACodePoint(uint8_t value);
 
-private:
+ private:
   char nextByte() { return m_string[m_position++]; }
   char previousByte() { return m_string[--m_position]; }
-  const char * m_string;
+  const char* m_string;
 };
 
 #endif

@@ -1,15 +1,16 @@
 #include "discrete_calculation.h"
-#include "../distribution/distribution.h"
 
 #include <assert.h>
+
 #include <cmath>
+
+#include "../distribution/distribution.h"
 
 namespace Distributions {
 
-DiscreteCalculation::DiscreteCalculation(Distribution * distribution) :
-  Calculation(distribution),
-  m_abscissa(distribution->defaultComputedValue())
-{}
+DiscreteCalculation::DiscreteCalculation(Distribution* distribution)
+    : Calculation(distribution),
+      m_abscissa(distribution->defaultComputedValue()) {}
 
 I18n::Message DiscreteCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
@@ -26,7 +27,6 @@ void DiscreteCalculation::setParameterAtIndex(double f, int index) {
   compute(index);
 }
 
-
 double DiscreteCalculation::parameterAtIndex(int index) {
   assert(index >= 0 && index < 2);
   if (index == 0) {
@@ -42,4 +42,4 @@ void DiscreteCalculation::compute(int indexKnownElement) {
   m_result = m_distribution->evaluateAtDiscreteAbscissa(m_abscissa);
 }
 
-}
+}  // namespace Distributions

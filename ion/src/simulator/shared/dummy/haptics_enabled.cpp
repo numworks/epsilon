@@ -10,6 +10,6 @@ bool isEnabled() {
   return false;
 }
 
-}
-}
-}
+}  // namespace Haptics
+}  // namespace Simulator
+}  // namespace Ion

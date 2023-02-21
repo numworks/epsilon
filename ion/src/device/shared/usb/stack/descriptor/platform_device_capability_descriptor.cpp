@@ -4,7 +4,7 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-void PlatformDeviceCapabilityDescriptor::push(Channel * c) const {
+void PlatformDeviceCapabilityDescriptor::push(Channel* c) const {
   DeviceCapabilityDescriptor::push(c);
   c->push(m_bReserved);
   for (int i = 0; i < k_platformCapabilityUUIDSize; i++) {
@@ -12,6 +12,6 @@ void PlatformDeviceCapabilityDescriptor::push(Channel * c) const {
   }
 }
 
-}
-}
-}
+}  // namespace USB
+}  // namespace Device
+}  // namespace Ion

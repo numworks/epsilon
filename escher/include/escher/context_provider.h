@@ -7,11 +7,12 @@
 namespace Escher {
 
 class ContextProvider {
-public:
-  Poincare::Context * context() const {
+ public:
+  Poincare::Context* context() const {
     assert(Escher::Container::activeApp());
     return Escher::Container::activeApp()->localContext();
-  }};
-}
+  }
+};
+}  // namespace Escher
 
 #endif

@@ -11,17 +11,18 @@ namespace epsilon {
  * be reset when Epsilon is restarted. */
 
 class ResetGlobalsCheck : public ClangTidyCheck {
-public:
+ public:
   ResetGlobalsCheck(StringRef Name, ClangTidyContext *Context)
       : ClangTidyCheck(Name, Context) {}
   void registerMatchers(ast_matchers::MatchFinder *Finder) override;
   void check(const ast_matchers::MatchFinder::MatchResult &Result) override;
-private:
-  void diagnose(const VarDecl * decl, const char * message);
+
+ private:
+  void diagnose(const VarDecl *decl, const char *message);
 };
 
-}
-}
-}
+}  // namespace epsilon
+}  // namespace tidy
+}  // namespace clang
 
 #endif

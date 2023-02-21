@@ -1,4 +1,5 @@
 #include "range_parameter_controller.h"
+
 #include "poincare_helpers.h"
 
 using namespace Escher;
@@ -8,23 +9,34 @@ namespace Shared {
 
 // RangeParameterController
 
-RangeParameterController::RangeParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveRange) :
-  SelectableListViewController(parentResponder),
-  m_interactiveRange(interactiveRange),
-  m_tempInteractiveRange(*interactiveRange),
-  m_okButton(&m_selectableTableView, I18n::Message::Ok, Invocation::Builder<RangeParameterController>([](RangeParameterController * parameterController, void * sender) {
-    parameterController->buttonAction();
-    return true;
-  }, this)),
-  m_confirmPopUpController(Invocation::Builder<RangeParameterController>([](RangeParameterController * controller, void * sender) {
-    controller->stackController()->pop();
-    return true;
-  }, this)),
-  m_singleInteractiveCurveViewRangeController(parentResponder, inputEventHandlerDelegate, &m_tempInteractiveRange, &m_confirmPopUpController)
-{}
+RangeParameterController::RangeParameterController(
+    Responder *parentResponder,
+    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    InteractiveCurveViewRange *interactiveRange)
+    : SelectableListViewController(parentResponder),
+      m_interactiveRange(interactiveRange),
+      m_tempInteractiveRange(*interactiveRange),
+      m_okButton(
+          &m_selectableTableView, I18n::Message::Ok,
+          Invocation::Builder<RangeParameterController>(
+              [](RangeParameterController *parameterController, void *sender) {
+                parameterController->buttonAction();
+                return true;
+              },
+              this)),
+      m_confirmPopUpController(Invocation::Builder<RangeParameterController>(
+          [](RangeParameterController *controller, void *sender) {
+            controller->stackController()->pop();
+            return true;
+          },
+          this)),
+      m_singleInteractiveCurveViewRangeController(
+          parentResponder, inputEventHandlerDelegate, &m_tempInteractiveRange,
+          &m_confirmPopUpController) {}
 
 int RangeParameterController::typeAtIndex(int index) const {
-  int types[] = {k_normalizeCellType, k_rangeCellType, k_rangeCellType, k_okCellType};
+  int types[] = {k_normalizeCellType, k_rangeCellType, k_rangeCellType,
+                 k_okCellType};
   return types[index + !displayNormalizeCell()];
 }
 
@@ -36,7 +48,7 @@ int RangeParameterController::reusableCellCount(int type) {
   }
 }
 
-HighlightCell * RangeParameterController::reusableCell(int index, int type) {
+HighlightCell *RangeParameterController::reusableCell(int index, int type) {
   if (type == k_normalizeCellType) {
     assert(index == 0);
     return &m_normalizeCell;
@@ -51,16 +63,19 @@ HighlightCell * RangeParameterController::reusableCell(int index, int type) {
 }
 
 KDCoordinate RangeParameterController::nonMemoizedRowHeight(int j) {
-  HighlightCell * cells[] = {&m_normalizeCell, m_rangeCells, m_rangeCells + 1, &m_okButton};
+  HighlightCell *cells[] = {&m_normalizeCell, m_rangeCells, m_rangeCells + 1,
+                            &m_okButton};
   assert(j < numberOfRows());
   return heightForCellAtIndex(cells[j + !displayNormalizeCell()], j);
 }
 
-void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void RangeParameterController::willDisplayCellForIndex(HighlightCell *cell,
+                                                       int index) {
   if (typeAtIndex(index) == k_rangeCellType) {
     float min, max;
     bool isAuto = false;
-    int i = static_cast<MessageTableCellWithChevronAndBuffer *>(cell) - m_rangeCells;
+    int i = static_cast<MessageTableCellWithChevronAndBuffer *>(cell) -
+            m_rangeCells;
     if (i == 0) {
       m_rangeCells[0].setMessage(I18n::Message::ValuesOfX);
       if (m_tempInteractiveRange.xAuto()) {
@@ -80,16 +95,22 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell * cell, int
       }
     }
     constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
-    constexpr int bufferSize = 2 * PrintFloat::charSizeForFloatsWithPrecision(precision) + 4;
+    constexpr int bufferSize =
+        2 * PrintFloat::charSizeForFloatsWithPrecision(precision) + 4;
     char buffer[bufferSize];
     if (isAuto) {
-      strlcpy(buffer, I18n::translate(I18n::Message::DefaultSetting), bufferSize);
+      strlcpy(buffer, I18n::translate(I18n::Message::DefaultSetting),
+              bufferSize);
     } else {
-      int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(min, buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+      int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+          min, buffer, bufferSize, precision,
+          Preferences::PrintFloatMode::Decimal);
       buffer[numberOfChars++] = ' ';
       buffer[numberOfChars++] = ';';
       buffer[numberOfChars++] = ' ';
-      numberOfChars += PoincareHelpers::ConvertFloatToTextWithDisplayMode(max, buffer + numberOfChars, bufferSize - numberOfChars, precision, Preferences::PrintFloatMode::Decimal);
+      numberOfChars += PoincareHelpers::ConvertFloatToTextWithDisplayMode(
+          max, buffer + numberOfChars, bufferSize - numberOfChars, precision,
+          Preferences::PrintFloatMode::Decimal);
       buffer[numberOfChars++] = '\0';
     }
     m_rangeCells[i].setSubLabelText(buffer);
@@ -107,7 +128,9 @@ void RangeParameterController::viewWillAppear() {
   } else {
     /* If the table has not been deselected, it means we come from the
      * SingleRangeController. */
-    int row = (m_singleInteractiveCurveViewRangeController.editXRange() ? 0 : 1) + displayNormalizeCell();
+    int row =
+        (m_singleInteractiveCurveViewRangeController.editXRange() ? 0 : 1) +
+        displayNormalizeCell();
     selectCellAtLocation(selectedColumn(), row);
   }
   resetMemoization();
@@ -121,27 +144,26 @@ void RangeParameterController::viewDidDisappear() {
 }
 
 bool RangeParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back
-   && (m_interactiveRange->rangeChecksum() != m_tempInteractiveRange.rangeChecksum()
-    || m_interactiveRange->xAuto() != m_tempInteractiveRange.xAuto()
-    || m_interactiveRange->yAuto() != m_tempInteractiveRange.yAuto()))
-  {
+  if (event == Ion::Events::Back &&
+      (m_interactiveRange->rangeChecksum() !=
+           m_tempInteractiveRange.rangeChecksum() ||
+       m_interactiveRange->xAuto() != m_tempInteractiveRange.xAuto() ||
+       m_interactiveRange->yAuto() != m_tempInteractiveRange.yAuto())) {
     // Open pop-up to confirm discarding values
     m_confirmPopUpController.presentModally();
     return true;
   }
-  if (displayNormalizeCell() && selectedRow() == 0
-   && (event == Ion::Events::OK || event == Ion::Events::EXE))
-  {
+  if (displayNormalizeCell() && selectedRow() == 0 &&
+      (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     m_normalizeCell.setHighlighted(false);
     m_tempInteractiveRange.normalize();
     buttonAction();
     return true;
   }
   int index = selectedRow() - displayNormalizeCell();
-  if (index >= 0 && index < k_numberOfRangeCells
-   && (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right))
-  {
+  if (index >= 0 && index < k_numberOfRangeCells &&
+      (event == Ion::Events::OK || event == Ion::Events::EXE ||
+       event == Ion::Events::Right)) {
     assert(typeAtIndex(selectedRow()) == k_rangeCellType);
     m_singleInteractiveCurveViewRangeController.setEditXRange(index == 0);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);
@@ -150,7 +172,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void RangeParameterController::setRange(InteractiveCurveViewRange * range) {
+void RangeParameterController::setRange(InteractiveCurveViewRange *range) {
   m_interactiveRange = range;
   m_tempInteractiveRange = *range;
 }
@@ -170,11 +192,13 @@ void RangeParameterController::buttonAction() {
 
 // RangeParameterController::NormalizeCell
 
-KDSize RangeParameterController::NormalizeCell::minimalSizeForOptimalDisplay() const {
+KDSize RangeParameterController::NormalizeCell::minimalSizeForOptimalDisplay()
+    const {
   m_cell.setSize(bounds().size());
   KDSize cellSize = m_cell.minimalSizeForOptimalDisplay();
   // An additional border is required after separator (and will be overlapped)
-  return KDSize(cellSize.width(), cellSize.height() + k_margin + k_lineThickness);
+  return KDSize(cellSize.width(),
+                cellSize.height() + k_margin + k_lineThickness);
 }
 
-}
+}  // namespace Shared

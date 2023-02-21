@@ -15,17 +15,19 @@ namespace Escher {
  */
 
 class Timer {
-public:
-  constexpr static int TickDuration = 300; // In Miliseconds
-  Timer(uint32_t period); // Period is in ticks
+ public:
+  constexpr static int TickDuration = 300;  // In Miliseconds
+  Timer(uint32_t period);                   // Period is in ticks
   bool tick();
   void reset();
-protected:
+
+ protected:
   virtual bool fire() = 0;
-private:
+
+ private:
   uint32_t m_period;
   uint32_t m_numberOfTicksBeforeFire;
 };
 
-}
+}  // namespace Escher
 #endif

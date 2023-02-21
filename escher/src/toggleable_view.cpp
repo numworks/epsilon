@@ -1,6 +1,5 @@
 #include <escher/toggleable_view.h>
 
-
 namespace Escher {
 
 void ToggleableView::setState(bool state) {
@@ -10,4 +9,4 @@ void ToggleableView::setState(bool state) {
   }
 }
 
-}
+}  // namespace Escher

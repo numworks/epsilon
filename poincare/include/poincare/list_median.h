@@ -6,35 +6,48 @@
 namespace Poincare {
 
 class ListMedianNode : public ListFunctionWithOneOrTwoParametersNode {
-public:
+ public:
   constexpr static const char k_functionName[] = "med";
-  const char * functionName() const override { return k_functionName; }
+  const char* functionName() const override { return k_functionName; }
 
   size_t size() const override { return sizeof(ListMedianNode); }
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
+  void logNodeName(std::ostream& stream) const override {
     stream << "ListMedian";
   }
 #endif
   Type type() const override { return Type::ListMedian; }
 
-private:
+ private:
   Expression shallowReduce(const ReductionContext& reductionContext) override;
 
-  Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
-  Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
-  template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
+  Evaluation<float> approximate(
+      SinglePrecision p,
+      const ApproximationContext& approximationContext) const override {
+    return templatedApproximate<float>(approximationContext);
+  }
+  Evaluation<double> approximate(
+      DoublePrecision p,
+      const ApproximationContext& approximationContext) const override {
+    return templatedApproximate<double>(approximationContext);
+  }
+  template <typename T>
+  Evaluation<T> templatedApproximate(
+      const ApproximationContext& approximationContext) const;
 };
 
-class ListMedian : public ExpressionUpToTwoChildren<ListMedian, ListMedianNode> {
-public:
+class ListMedian
+    : public ExpressionUpToTwoChildren<ListMedian, ListMedianNode> {
+ public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ReductionContext reductionContext);
 
-private:
-  void approximationHelper(int * index1, int * index2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+ private:
+  void approximationHelper(int* index1, int* index2, Context* context,
+                           Preferences::ComplexFormat complexFormat,
+                           Preferences::AngleUnit angleUnit) const;
 };
 
-}
+}  // namespace Poincare
 
 #endif

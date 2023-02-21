@@ -1,6 +1,8 @@
 #include "colors_lcd_test_controller.h"
-#include "../apps_container.h"
+
 #include <ion/post_and_hardware_tests.h>
+
+#include "../apps_container.h"
 
 using namespace Poincare;
 
@@ -12,7 +14,8 @@ bool ColorsLCDTestController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::OK) {
-    if (strcmp(m_view.colorsLCDStateTextView()->text(), k_colorsLCDOKText) == 0) {
+    if (strcmp(m_view.colorsLCDStateTextView()->text(), k_colorsLCDOKText) ==
+        0) {
       // Handled in WizardViewController
       return false;
     }
@@ -21,16 +24,17 @@ bool ColorsLCDTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void ColorsLCDTestController::viewWillAppear() {
-  bool testOK = Ion::POSTAndHardwareTests::ColorsLCDPixelFailures() <= k_numberOfAcceptablesGlyphErrors;
+  bool testOK = Ion::POSTAndHardwareTests::ColorsLCDPixelFailures() <=
+                k_numberOfAcceptablesGlyphErrors;
   m_view.setColor(testOK ? KDColorGreen : KDColorRed);
-  m_view.colorsLCDStateTextView()->setText(testOK ? k_colorsLCDOKText : k_colorsLCDFailTest);
+  m_view.colorsLCDStateTextView()->setText(testOK ? k_colorsLCDOKText
+                                                  : k_colorsLCDFailTest);
 }
 
-ColorsLCDTestController::ContentView::ContentView() :
-  SolidColorView(KDColorWhite),
-  m_colorsLCDStateView(KDFont::Size::Large, KDContext::k_alignCenter, KDContext::k_alignCenter)
-{
-}
+ColorsLCDTestController::ContentView::ContentView()
+    : SolidColorView(KDColorWhite),
+      m_colorsLCDStateView(KDFont::Size::Large, KDContext::k_alignCenter,
+                           KDContext::k_alignCenter) {}
 
 void ColorsLCDTestController::ContentView::setColor(KDColor color) {
   SolidColorView::setColor(color);
@@ -41,4 +45,4 @@ void ColorsLCDTestController::ContentView::layoutSubviews(bool force) {
   m_colorsLCDStateView.setFrame(KDRectScreen, force);
 }
 
-}
+}  // namespace HardwareTest

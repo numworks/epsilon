@@ -10,8 +10,8 @@ namespace Telemetry {
 void init();
 void shutdown();
 
-}
-}
-}
+}  // namespace Telemetry
+}  // namespace Simulator
+}  // namespace Ion
 
 #endif

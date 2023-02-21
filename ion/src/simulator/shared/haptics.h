@@ -10,8 +10,8 @@ bool isEnabled();
 void rumble();
 void shutdown();
 
-}
-}
-}
+}  // namespace Haptics
+}  // namespace Simulator
+}  // namespace Ion
 
 #endif

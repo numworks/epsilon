@@ -5,9 +5,12 @@
 
 namespace OMG {
 
-template<typename T>
-static inline T LaxToZero(T x) { return std::fabs(x) < Poincare::Float<T>::EpsilonLax() ? static_cast<T>(0.f) : x; }
-
+template <typename T>
+static inline T LaxToZero(T x) {
+  return std::fabs(x) < Poincare::Float<T>::EpsilonLax() ? static_cast<T>(0.f)
+                                                         : x;
 }
+
+}  // namespace OMG
 
 #endif

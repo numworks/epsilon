@@ -14,21 +14,19 @@ void Window::redraw(bool force) {
   View::redraw(bounds());
 }
 
-void Window::setContentView(View * contentView) {
+void Window::setContentView(View* contentView) {
   m_contentView = contentView;
   markRectAsDirty(bounds());
   layoutSubviews();
 }
 
-const Window * Window::window() const {
-  return this;
-}
+const Window* Window::window() const { return this; }
 
 int Window::numberOfSubviews() const {
   return (m_contentView == nullptr ? 0 : 1);
 }
 
-View * Window::subviewAtIndex(int index) {
+View* Window::subviewAtIndex(int index) {
   assert(m_contentView != nullptr && index == 0);
   return m_contentView;
 }
@@ -40,10 +38,8 @@ void Window::layoutSubviews(bool force) {
 }
 
 #if ESCHER_VIEW_LOGGING
-const char * Window::className() const {
-  return "Window";
-}
+const char* Window::className() const { return "Window"; }
 
 #endif
 
-}
+}  // namespace Escher

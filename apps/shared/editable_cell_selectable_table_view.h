@@ -8,14 +8,20 @@ namespace Shared {
 class EditableCellTableViewController;
 
 class EditableCellSelectableTableView : public Escher::SelectableTableView {
-public:
-  EditableCellSelectableTableView(EditableCellTableViewController * tableViewController, Escher::Responder * parentResponder, Escher::TableViewDataSource * dataSource, Escher::SelectableTableViewDataSource * selectionDataSource = nullptr, Escher::SelectableTableViewDelegate * delegate = nullptr);
+ public:
+  EditableCellSelectableTableView(
+      EditableCellTableViewController* tableViewController,
+      Escher::Responder* parentResponder,
+      Escher::TableViewDataSource* dataSource,
+      Escher::SelectableTableViewDataSource* selectionDataSource = nullptr,
+      Escher::SelectableTableViewDelegate* delegate = nullptr);
   bool handleEvent(Ion::Events::Event event) override;
-private:
+
+ private:
   bool selectNonHiddenCellAtClippedLocation(int i, int j);
-  EditableCellTableViewController * m_tableViewController;
+  EditableCellTableViewController* m_tableViewController;
 };
 
-}
+}  // namespace Shared
 
 #endif

@@ -9,16 +9,21 @@ namespace Shared {
 class ExpressionFieldDelegateApp;
 
 class LayoutFieldDelegate : public Escher::LayoutFieldDelegate {
-public:
-  bool layoutFieldShouldFinishEditing(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
-  bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
-  bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
-  bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
-  void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
-protected:
-  ExpressionFieldDelegateApp * expressionFieldDelegateApp() const;
+ public:
+  bool layoutFieldShouldFinishEditing(Escher::LayoutField* layoutField,
+                                      Ion::Events::Event event) override;
+  bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
+                                  Ion::Events::Event event) override;
+  bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
+                                   Poincare::Layout layoutR,
+                                   Ion::Events::Event event) override;
+  bool layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
+  void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
+
+ protected:
+  ExpressionFieldDelegateApp* expressionFieldDelegateApp() const;
 };
 
-}
+}  // namespace Shared
 
 #endif

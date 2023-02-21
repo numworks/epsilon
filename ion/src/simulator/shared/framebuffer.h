@@ -7,11 +7,11 @@ namespace Ion {
 namespace Simulator {
 namespace Framebuffer {
 
-const KDColor * address();
+const KDColor* address();
 void setActive(bool enabled);
 
-}
-}
-}
+}  // namespace Framebuffer
+}  // namespace Simulator
+}  // namespace Ion
 
 #endif

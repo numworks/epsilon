@@ -2,13 +2,14 @@
 #define GRAPH_FUNCTION_TOOLBOX_H
 
 #include <escher/expression_table_cell.h>
-#include "../../math_toolbox.h"
 #include <poincare/layout.h>
+
+#include "../../math_toolbox.h"
 
 namespace Graph {
 
 class FunctionToolbox : public MathToolbox {
-public:
+ public:
   enum class AddedCellsContent : uint8_t {
     None,
     ComparisonOperators,
@@ -24,22 +25,26 @@ public:
   int numberOfRows() const override;
   KDCoordinate nonMemoizedRowHeight(int index) override;
   int reusableCellCount(int type) override;
-  Escher::HighlightCell * reusableCell(int index, int type) override;
-  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  Escher::HighlightCell* reusableCell(int index, int type) override;
+  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   int typeAtIndex(int index) const override;
 
-protected:
-  const Escher::ToolboxMessageTree * messageTreeModelAtIndex(int index) const override {
+ protected:
+  const Escher::ToolboxMessageTree* messageTreeModelAtIndex(
+      int index) const override {
     assert(index >= addedCellsAtRoot());
     return MathToolbox::messageTreeModelAtIndex(index - addedCellsAtRoot());
   }
   int controlChecksum() const override;
-private:
+
+ private:
   constexpr static int k_addedCellType = 2;
   constexpr static int k_maxNumberOfAddedCells = 2;
 
   // At root depth, there are additional rows to display.
-  int addedCellsAtRoot() const { return m_messageTreeModel == rootModel() ? numberOfAddedCells() : 0; }
+  int addedCellsAtRoot() const {
+    return m_messageTreeModel == rootModel() ? numberOfAddedCells() : 0;
+  }
   bool selectAddedCell(int selectedRow);
   int numberOfAddedCells() const;
 
@@ -48,6 +53,6 @@ private:
   AddedCellsContent m_addedCellsContent;
 };
 
-}
+}  // namespace Graph
 
 #endif

@@ -4,10 +4,10 @@
 namespace Ion {
 namespace Telemetry {
 
-void reportScreen(const char * screenName);
-void reportEvent(const char * category, const char * action, const char * label);
+void reportScreen(const char* screenName);
+void reportEvent(const char* category, const char* action, const char* label);
 
-}
-}
+}  // namespace Telemetry
+}  // namespace Ion
 
 #endif

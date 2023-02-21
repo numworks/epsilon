@@ -1,22 +1,19 @@
-#include "quiz.h"
-#include "symbols.h"
-#include <ion.h>
 #include <apps/init.h>
 #include <escher/init.h>
-#include <poincare/init.h>
-#include <poincare/tree_pool.h>
+#include <ion.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/init.h>
 #include <poincare/print.h>
+#include <poincare/tree_pool.h>
 
-void quiz_print(const char * message) {
-  Ion::Console::writeLine(message);
-}
+#include "quiz.h"
+#include "symbols.h"
 
-bool quiz_print_clear() {
-  return Ion::Console::clear();
-}
+void quiz_print(const char *message) { Ion::Console::writeLine(message); }
 
-static inline void ion_main_inner(const char * testFilter) {
+bool quiz_print_clear() { return Ion::Console::clear(); }
+
+static inline void ion_main_inner(const char *testFilter) {
   int i = 0;
   int time = Ion::Timing::millis();
   int totalCases = 0;
@@ -24,7 +21,8 @@ static inline void ion_main_inner(const char * testFilter) {
   // First pass to count the number of quiz cases
   while (quiz_cases[i] != NULL) {
 #ifndef PLATFORM_DEVICE
-    if (testFilter && strstr(quiz_case_names[i], testFilter) != quiz_case_names[i]) {
+    if (testFilter &&
+        strstr(quiz_case_names[i], testFilter) != quiz_case_names[i]) {
       i++;
       continue;
     }
@@ -40,7 +38,8 @@ static inline void ion_main_inner(const char * testFilter) {
   int caseIndex = 0;
   while (quiz_cases[i] != NULL) {
 #ifndef PLATFORM_DEVICE
-    if (testFilter && strstr(quiz_case_names[i], testFilter) != quiz_case_names[i]) {
+    if (testFilter &&
+        strstr(quiz_case_names[i], testFilter) != quiz_case_names[i]) {
       i++;
       continue;
     }
@@ -49,7 +48,8 @@ static inline void ion_main_inner(const char * testFilter) {
     QuizCase c = quiz_cases[i];
     if (quiz_print_clear()) {
       // Avoid cluttering the display if it can't be cleared
-      Poincare::Print::CustomPrintf(buffer, k_bufferSize, "TEST: %i/%i", caseIndex, totalCases);
+      Poincare::Print::CustomPrintf(buffer, k_bufferSize, "TEST: %i/%i",
+                                    caseIndex, totalCases);
       quiz_print(buffer);
     }
     quiz_print(quiz_case_names[i]);
@@ -63,7 +63,8 @@ static inline void ion_main_inner(const char * testFilter) {
   quiz_print_clear();
 
   // Display test results
-  Poincare::Print::CustomPrintf(buffer, k_bufferSize, "ALL %i TESTS FINISHED", caseIndex);
+  Poincare::Print::CustomPrintf(buffer, k_bufferSize, "ALL %i TESTS FINISHED",
+                                caseIndex);
   quiz_print(buffer);
 
   // Display test duration
@@ -77,19 +78,18 @@ static inline void ion_main_inner(const char * testFilter) {
 #endif
 }
 
-
-void ion_main(int argc, const char * const argv[]) {
-  Poincare::Init(); // Initialize Poincare::TreePool::sharedPool
+void ion_main(int argc, const char *const argv[]) {
+  Poincare::Init();  // Initialize Poincare::TreePool::sharedPool
   Escher::Init();
   Apps::Init();
 
-  const char * testFilter = nullptr;
+  const char *testFilter = nullptr;
   sSkipAssertions = false;
 #if !PLATFORM_DEVICE
-  for (int i=1; i<argc; i++) {
+  for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "--filter") == 0) {
-      assert(i+1 < argc);
-      testFilter = argv[i+1];
+      assert(i + 1 < argc);
+      testFilter = argv[i + 1];
     } else if (strcmp(argv[i], "--skip-assertions") == 0) {
       sSkipAssertions = true;
     }

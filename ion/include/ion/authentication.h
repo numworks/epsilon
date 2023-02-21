@@ -14,8 +14,7 @@ enum class ClearanceLevel {
 
 ClearanceLevel clearanceLevel();
 
-}
-}
+}  // namespace Authentication
+}  // namespace Ion
 
 #endif
-

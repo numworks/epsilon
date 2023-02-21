@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 namespace Shared {
-  class MemoizedCursorView;
+class MemoizedCursorView;
 }
 
 namespace Escher {
@@ -37,28 +37,27 @@ class View {
   friend class TransparentView;
   // We only want Window to be able to invoke View::redraw
   friend class Window;
-public:
+
+ public:
   View() : m_frame(KDRectZero), m_superview(nullptr), m_dirtyRect(KDRectZero) {}
 
-  void resetSuperview() {
-    m_superview = nullptr;
-  }
+  void resetSuperview() { m_superview = nullptr; }
   /* The drawRect method should be implemented by each View subclass. In a
    * typical drawRect implementation, a subclass will make drawing calls to the
    * Kandinsky library using the provided context. */
-  virtual void drawRect(KDContext * ctx, KDRect rect) const {
+  virtual void drawRect(KDContext *ctx, KDRect rect) const {
     // By default, a view doesn't do anything, it's transparent
   }
 
   void setSize(KDSize size);
   void setFrame(KDRect frame, bool force);
-  KDPoint pointFromPointInView(View * view, KDPoint point);
+  KDPoint pointFromPointInView(View *view, KDPoint point);
 
   KDRect bounds() const;
   KDRect dirtyRect() const { return m_dirtyRect; }
   virtual bool isVisible() const { return true; }
 
-  virtual View * subview(int index);
+  virtual View *subview(int index);
 
   virtual KDSize minimalSizeForOptimalDisplay() const { return KDSizeZero; }
 
@@ -66,27 +65,29 @@ public:
   friend std::ostream &operator<<(std::ostream &os, View &view);
   __attribute__((__used__)) void log() const;
 #endif
-protected:
+ protected:
   /* The whole point of the dirty-tracking mechanism is to identify which
    * pixels have to be redrawn. So in the end it doesn't really need to be bound
    * to a view, it's really absolute pixels that count.
    *
    * That being said, what are the case of dirtyness that we know of?
    *  - Scrolling -> well, everything has to be redrawn anyway
-   *  - Moving a cursor -> In that case, there's really a much more efficient way
+   *  - Moving a cursor -> In that case, there's really a much more efficient
+   * way
    *  - ... and that's all I can think of.
    */
   virtual void markRectAsDirty(KDRect rect);
 #if ESCHER_VIEW_LOGGING
-  virtual const char * className() const;
+  virtual const char *className() const;
   virtual void logAttributes(std::ostream &os) const;
 #endif
   KDRect m_frame;
   virtual int numberOfSubviews() const { return 0; }
-  virtual View * subviewAtIndex(int index) { return nullptr; }
-private:
+  virtual View *subviewAtIndex(int index) { return nullptr; }
+
+ private:
   virtual void layoutSubviews(bool force = false) {}
-  virtual const Window * window() const;
+  virtual const Window *window() const;
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);
   KDPoint absoluteOrigin() const;
   KDRect absoluteVisibleFrame() const;
@@ -97,9 +98,9 @@ private:
    * view and its subviews are then destroyed concomitantly.
    * Otherwise, we would just have to implement the destructor to notify
    * subviews that 'm_superview = nullptr'. */
-  View * m_superview;
+  View *m_superview;
   KDRect m_dirtyRect;
 };
 
-}
+}  // namespace Escher
 #endif

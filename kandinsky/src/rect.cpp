@@ -1,25 +1,20 @@
 #include <kandinsky/rect.h>
+
 #include <algorithm>
 
 KDRect KDRect::translatedBy(KDPoint p) const {
   return KDRect(origin().translatedBy(p), size());
 }
 
-KDRect KDRect::movedTo(KDPoint p) const {
-  return KDRect(p, size());
+KDRect KDRect::movedTo(KDPoint p) const { return KDRect(p, size()); }
+
+bool KDRect::intersects(const KDRect& other) const {
+  return (other.right() >= left() && other.left() <= right() &&
+          other.top() <= bottom() && other.bottom() >= top() &&
+          !other.isEmpty() && !isEmpty());
 }
 
-bool KDRect::intersects(const KDRect & other) const {
-  return (
-      other.right() >= left() &&
-      other.left() <= right() &&
-      other.top() <= bottom() &&
-      other.bottom() >= top() &&
-      !other.isEmpty() && !isEmpty()
-      );
-}
-
-KDRect KDRect::intersectedWith(const KDRect & other) const {
+KDRect KDRect::intersectedWith(const KDRect& other) const {
   if (!intersects(other)) {
     return KDRectZero;
   }
@@ -29,18 +24,15 @@ KDRect KDRect::intersectedWith(const KDRect & other) const {
   KDCoordinate intersectionTop = std::max(top(), other.top());
   KDCoordinate intersectionBottom = std::min(bottom(), other.bottom());
 
-  return KDRect(
-      intersectionLeft,
-      intersectionTop,
-      intersectionRight - intersectionLeft + 1,
-      intersectionBottom - intersectionTop + 1);
+  return KDRect(intersectionLeft, intersectionTop,
+                intersectionRight - intersectionLeft + 1,
+                intersectionBottom - intersectionTop + 1);
 }
 
 void computeUnionBound(KDCoordinate size1, KDCoordinate size2,
-    KDCoordinate * outputMin, KDCoordinate * outputMax,
-    KDCoordinate min1, KDCoordinate min2,
-    KDCoordinate max1, KDCoordinate max2)
-{
+                       KDCoordinate* outputMin, KDCoordinate* outputMax,
+                       KDCoordinate min1, KDCoordinate min2, KDCoordinate max1,
+                       KDCoordinate max2) {
   if (size1 != 0) {
     if (size2 != 0) {
       *outputMin = std::min(min1, min2);
@@ -57,7 +49,7 @@ void computeUnionBound(KDCoordinate size1, KDCoordinate size2,
   }
 }
 
-KDRect KDRect::unionedWith(const KDRect & other) const {
+KDRect KDRect::unionedWith(const KDRect& other) const {
   if (this->isEmpty()) {
     return other;
   }
@@ -72,25 +64,17 @@ KDRect KDRect::unionedWith(const KDRect & other) const {
   KDCoordinate resultRight = 0;
   KDCoordinate resultBottom = 0;
 
-  computeUnionBound(width(), other.width(),
-      &resultLeft, &resultRight,
-      left(), other.left(),
-      right(), other.right());
+  computeUnionBound(width(), other.width(), &resultLeft, &resultRight, left(),
+                    other.left(), right(), other.right());
 
-  computeUnionBound(height(), other.height(),
-      &resultTop, &resultBottom,
-      top(), other.top(),
-      bottom(), other.bottom());
+  computeUnionBound(height(), other.height(), &resultTop, &resultBottom, top(),
+                    other.top(), bottom(), other.bottom());
 
-  return KDRect(
-    resultLeft,
-    resultTop,
-    resultRight - resultLeft + 1,
-    resultBottom - resultTop + 1
-    );
+  return KDRect(resultLeft, resultTop, resultRight - resultLeft + 1,
+                resultBottom - resultTop + 1);
 }
 
-KDRect KDRect::differencedWith(const KDRect & other) const {
+KDRect KDRect::differencedWith(const KDRect& other) const {
   if (this->isEmpty() || other.isEmpty()) {
     return *this;
   }
@@ -123,19 +107,16 @@ KDRect KDRect::differencedWith(const KDRect & other) const {
     }
   }
 
-  return KDRect(
-    resultLeft,
-    resultTop,
-    resultRight - resultLeft + 1,
-    resultBottom - resultTop + 1
-    );
+  return KDRect(resultLeft, resultTop, resultRight - resultLeft + 1,
+                resultBottom - resultTop + 1);
 }
 
 bool KDRect::contains(KDPoint p) const {
-  return (p.x() >= x() && p.x() <= right() && p.y() >= y() && p.y() <= bottom());
+  return (p.x() >= x() && p.x() <= right() && p.y() >= y() &&
+          p.y() <= bottom());
 }
 
-bool KDRect::containsRect(const KDRect & other) const {
+bool KDRect::containsRect(const KDRect& other) const {
   if (other.isEmpty()) {
     return true;
   }
@@ -145,18 +126,13 @@ bool KDRect::containsRect(const KDRect & other) const {
   return contains(other.topLeft()) && contains(other.bottomRight());
 }
 
-bool KDRect::isAbove(KDPoint p) const {
-  return (p.y() >= y());
-}
+bool KDRect::isAbove(KDPoint p) const { return (p.y() >= y()); }
 
-bool KDRect::isUnder(KDPoint p) const {
-  return (p.y() <= bottom());
-}
+bool KDRect::isUnder(KDPoint p) const { return (p.y() <= bottom()); }
 
-bool KDRect::isEmpty() const {
-  return (width() <= 0 || height() <= 0);
-}
+bool KDRect::isEmpty() const { return (width() <= 0 || height() <= 0); }
 
 KDRect KDRect::paddedWith(KDCoordinate value) const {
-  return KDRect(x() - value, y() - value, width() + 2 * value, height() + 2 * value);
+  return KDRect(x() - value, y() - value, width() + 2 * value,
+                height() + 2 * value);
 }

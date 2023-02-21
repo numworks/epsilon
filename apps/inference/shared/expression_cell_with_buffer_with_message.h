@@ -6,23 +6,25 @@
 
 namespace Inference {
 
-class ExpressionCellWithBufferWithMessage : public Escher::ExpressionTableCellWithMessage {
-public:
-  const View * accessoryView() const override { return &m_labelView; }
-  void setAccessoryText(const char * textBody) { m_labelView.setText(textBody); }
+class ExpressionCellWithBufferWithMessage
+    : public Escher::ExpressionTableCellWithMessage {
+ public:
+  const View* accessoryView() const override { return &m_labelView; }
+  void setAccessoryText(const char* textBody) { m_labelView.setText(textBody); }
   void setHighlighted(bool highlight) override {
     ExpressionTableCellWithMessage::setHighlighted(highlight);
-    m_labelView.setBackgroundColor(highlight ? Escher::Palette::Select : backgroundColor());
+    m_labelView.setBackgroundColor(highlight ? Escher::Palette::Select
+                                             : backgroundColor());
   }
   bool forceAlignLabelAndAccessory() const override { return true; }
   bool shouldAlignSublabelRight() const override { return false; }
-  Escher::BufferTextView * bufferTextView() { return &m_labelView; }
-  const char * text() const override { return m_labelView.text(); }
+  Escher::BufferTextView* bufferTextView() { return &m_labelView; }
+  const char* text() const override { return m_labelView.text(); }
 
-private:
+ private:
   Escher::BufferTextView m_labelView;
 };
 
-}
+}  // namespace Inference
 
 #endif

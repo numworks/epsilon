@@ -29,7 +29,8 @@ void KDContext::drawLine(KDPoint p1, KDPoint p2, KDColor c) {
   KDCoordinate deltaX = 2 * (right.x() - left.x());
   KDCoordinate deltaY = 2 * (bottom.y() - top.y());
 
-  KDPoint p = KDPointZero, alwaysTranslate = KDPointZero, conditionalTranslate = KDPointZero;
+  KDPoint p = KDPointZero, alwaysTranslate = KDPointZero,
+          conditionalTranslate = KDPointZero;
   KDCoordinate scanLength, error, minusError, plusError;
 
   if (deltaX >= deltaY) {
@@ -62,7 +63,8 @@ void KDContext::drawLine(KDPoint p1, KDPoint p2, KDColor c) {
   }
 }
 
-void KDContext::drawAntialiasedLine(float x1, float y1, float x2, float y2, KDColor c, KDColor background) {
+void KDContext::drawAntialiasedLine(float x1, float y1, float x2, float y2,
+                                    KDColor c, KDColor background) {
   // Implements Xiaolin Wu's line algorithm
   // https://en.wikipedia.org/wiki/Xiaolin_Wu%27s_line_algorithm
 

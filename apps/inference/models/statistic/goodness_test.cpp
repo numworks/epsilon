@@ -1,12 +1,15 @@
 #include "goodness_test.h"
+
 #include <float.h>
-#include <poincare/print.h>
 #include <inference/models/statistic/interfaces/significance_tests.h>
+#include <poincare/print.h>
+
 #include "homogeneity_test.h"
 
 namespace Inference {
 
-static_assert(sizeof(GoodnessTest) < sizeof(HomogeneityTest), "Make sure this size increase was decided");
+static_assert(sizeof(GoodnessTest) < sizeof(HomogeneityTest),
+              "Make sure this size increase was decided");
 
 GoodnessTest::GoodnessTest() {
   for (int i = 0; i < k_maxNumberOfRows * k_maxNumberOfColumns; i++) {
@@ -14,20 +17,30 @@ GoodnessTest::GoodnessTest() {
   }
 }
 
-void GoodnessTest::setGraphTitle(char * buffer, size_t bufferSize) const {
-  const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormatGoodnessTest);
-  Poincare::Print::CustomPrintf(buffer, bufferSize, format,
-      degreeOfFreedom(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-      threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-      testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-      pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+void GoodnessTest::setGraphTitle(char* buffer, size_t bufferSize) const {
+  const char* format = I18n::translate(
+      I18n::Message::StatisticGraphControllerTestTitleFormatGoodnessTest);
+  Poincare::Print::CustomPrintf(
+      buffer, bufferSize, format, degreeOfFreedom(),
+      Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits, threshold(),
+      Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits,
+      testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits, pValue(),
+      Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-void GoodnessTest::setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const {
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "df=%*.*ed %s=%*.*ed",
-      degreeOfFreedom(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-      I18n::translate(I18n::Message::GreekAlpha),
-      threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+void GoodnessTest::setResultTitle(char* buffer, size_t bufferSize,
+                                  bool resultIsTopPage) const {
+  Poincare::Print::CustomPrintf(
+      buffer, bufferSize, "df=%*.*ed %s=%*.*ed", degreeOfFreedom(),
+      Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits,
+      I18n::translate(I18n::Message::GreekAlpha), threshold(),
+      Poincare::Preferences::PrintFloatMode::Decimal,
+      Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
 void GoodnessTest::compute() {
@@ -78,11 +91,13 @@ void GoodnessTest::setParameterAtIndex(double p, int i) {
 }
 
 bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
-  if (i < numberOfStatisticParameters() && i % k_maxNumberOfColumns == 1 && std::fabs(p) < DBL_MIN) {
+  if (i < numberOfStatisticParameters() && i % k_maxNumberOfColumns == 1 &&
+      std::fabs(p) < DBL_MIN) {
     // Expected value should not be null
     return false;
   }
-  if (i == indexOfDegreeOfFreedom() && (p != std::round(p) || p < 1.0 || p > k_maxDegreeOfFreedom)) {
+  if (i == indexOfDegreeOfFreedom() &&
+      (p != std::round(p) || p < 1.0 || p > k_maxDegreeOfFreedom)) {
     return false;
   }
   return Chi2Test::authorizedParameterAtIndex(p, i);
@@ -108,4 +123,4 @@ void GoodnessTest::setObservedValue(int index, double value) {
   parametersArray()[index2DToIndex(index, 0)] = value;
 }
 
-}
+}  // namespace Inference

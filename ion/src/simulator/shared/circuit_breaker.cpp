@@ -1,11 +1,12 @@
-#include <ion/circuit_breaker.h>
 #include <assert.h>
+#include <ion/circuit_breaker.h>
 
 namespace Ion {
 namespace CircuitBreaker {
 
 Status sStatus = Status::Interrupted;
-constexpr static int k_numberOfCheckpointTypes = static_cast<uint8_t>(CheckpointType::NumberOfCheckpoints); // 3
+constexpr static int k_numberOfCheckpointTypes =
+    static_cast<uint8_t>(CheckpointType::NumberOfCheckpoints);  // 3
 bool sCheckpointsSet[k_numberOfCheckpointTypes] = {false, false, false};
 jmp_buf sBuffers[k_numberOfCheckpointTypes];
 jmp_buf sDummyBuffer;
@@ -14,9 +15,7 @@ int sNumberOfLocks = 0;
 bool sLoadCheckpointInterrupted = false;
 CheckpointType sLockedCheckpointType;
 
-Status status() {
-  return sStatus;
-}
+Status status() { return sStatus; }
 
 bool hasCheckpoint(CheckpointType type) {
   return sCheckpointsSet[static_cast<uint8_t>(type)];
@@ -53,9 +52,7 @@ void loadCheckpoint(CheckpointType type) {
   longjmp(sBuffers[static_cast<uint8_t>(type)], 1);
 }
 
-void lock() {
-  sNumberOfLocks++;
-}
+void lock() { sNumberOfLocks++; }
 
 void unlock() {
   assert(sNumberOfLocks > 0);
@@ -77,9 +74,10 @@ Status statusAfterSetjmp(int jmpStatus, CheckpointType type) {
   return sStatus;
 }
 
-jmp_buf * jmpbufForType(CheckpointType type) {
-  return hasCheckpoint(type) ? &sDummyBuffer : sBuffers + static_cast<uint8_t>(type);
+jmp_buf* jmpbufForType(CheckpointType type) {
+  return hasCheckpoint(type) ? &sDummyBuffer
+                             : sBuffers + static_cast<uint8_t>(type);
 }
 
-}
-}
+}  // namespace CircuitBreaker
+}  // namespace Ion

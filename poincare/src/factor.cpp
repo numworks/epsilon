@@ -1,45 +1,58 @@
-#include <poincare/factor.h>
-#include <poincare/undefined.h>
 #include <poincare/arithmetic.h>
-#include <poincare/power.h>
 #include <poincare/division.h>
-#include <poincare/opposite.h>
+#include <poincare/factor.h>
 #include <poincare/layout_helper.h>
+#include <poincare/opposite.h>
+#include <poincare/power.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/undefined.h>
 extern "C" {
-#include <stdlib.h>
 #include <assert.h>
+#include <stdlib.h>
 }
 #include <cmath>
 #include <utility>
 
 namespace Poincare {
 
-int FactorNode::numberOfChildren() const { return Factor::s_functionHelper.numberOfChildren(); }
-
-Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.aliasesList().mainAlias(), context);
+int FactorNode::numberOfChildren() const {
+  return Factor::s_functionHelper.numberOfChildren();
 }
 
-int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.aliasesList().mainAlias());
+Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
+                                int numberOfSignificantDigits,
+                                Context* context) const {
+  return LayoutHelper::Prefix(
+      Factor(this), floatDisplayMode, numberOfSignificantDigits,
+      Factor::s_functionHelper.aliasesList().mainAlias(), context);
+}
+
+int FactorNode::serialize(char* buffer, int bufferSize,
+                          Preferences::PrintFloatMode floatDisplayMode,
+                          int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(
+      this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits,
+      Factor::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression FactorNode::shallowReduce(const ReductionContext& reductionContext) {
   return Factor(this).shallowReduce(reductionContext);
 }
 
-Expression FactorNode::shallowBeautify(const ReductionContext& reductionContext) {
+Expression FactorNode::shallowBeautify(
+    const ReductionContext& reductionContext) {
   return Factor(this).shallowBeautify(reductionContext);
 }
 
 // Add tests :)
-template<typename T>
-Evaluation<T> FactorNode::templatedApproximate(const ApproximationContext& approximationContext) const {
-  return ApproximationHelper::MapOneChild<T>(this,
-      approximationContext,
-      [] (const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+template <typename T>
+Evaluation<T> FactorNode::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
+  return ApproximationHelper::MapOneChild<T>(
+      this, approximationContext,
+      [](const std::complex<T> c, Preferences::ComplexFormat complexFormat,
+         Preferences::AngleUnit angleUnit) {
         if (std::isnan(ComplexNode<T>::ToScalar(c))) {
           return Complex<T>::Undefined();
         }
@@ -47,8 +60,8 @@ Evaluation<T> FactorNode::templatedApproximate(const ApproximationContext& appro
       });
 }
 
-
-Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i) const {
+Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(
+    Integer i) const {
   assert(!i.isZero());
   assert(!i.isNegative());
   Multiplication m = Multiplication::Builder();
@@ -65,9 +78,11 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   for (int index = 0; index < numberOfPrimeFactors; index++) {
     Expression factor = Rational::Builder(*arithmetic.factorAtIndex(index));
     if (!arithmetic.coefficientAtIndex(index)->isOne()) {
-      factor = Power::Builder(factor, Rational::Builder(*arithmetic.coefficientAtIndex(index)));
+      factor = Power::Builder(
+          factor, Rational::Builder(*arithmetic.coefficientAtIndex(index)));
     }
-    m.addChildAtIndexInPlace(factor, m.numberOfChildren(), m.numberOfChildren());
+    m.addChildAtIndexInPlace(factor, m.numberOfChildren(),
+                             m.numberOfChildren());
   }
   return m;
 }
@@ -75,13 +90,11 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
 Expression Factor::shallowReduce(ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
+        *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-        SimplificationHelper::ListReduction::DistributeOverLists
-    );
+        SimplificationHelper::ListReduction::DistributeOverLists);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -94,22 +107,26 @@ Expression Factor::shallowBeautify(const ReductionContext& reductionContext) {
   if (c.type() != ExpressionNode::Type::Rational) {
     return replaceWithUndefinedInPlace();
   }
-  Rational r = static_cast<Rational &>(c);
+  Rational r = static_cast<Rational&>(c);
   if (r.isZero()) {
     replaceWithInPlace(r);
     return std::move(r);
   }
-  Multiplication numeratorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.unsignedIntegerNumerator());
+  Multiplication numeratorDecomp =
+      createMultiplicationOfIntegerPrimeDecomposition(
+          r.unsignedIntegerNumerator());
   if (numeratorDecomp.numberOfChildren() == 0) {
     return replaceWithUndefinedInPlace();
   }
   Expression result = numeratorDecomp.squashUnaryHierarchyInPlace();
   if (!r.isInteger()) {
-    Multiplication denominatorDecomp = createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator());
+    Multiplication denominatorDecomp =
+        createMultiplicationOfIntegerPrimeDecomposition(r.integerDenominator());
     if (denominatorDecomp.numberOfChildren() == 0) {
       return replaceWithUndefinedInPlace();
     }
-    result = Division::Builder(result, denominatorDecomp.squashUnaryHierarchyInPlace());
+    result = Division::Builder(result,
+                               denominatorDecomp.squashUnaryHierarchyInPlace());
   }
   if (r.isPositive() == TrinaryBoolean::False) {
     result = Opposite::Builder(result);
@@ -118,4 +135,4 @@ Expression Factor::shallowBeautify(const ReductionContext& reductionContext) {
   return result;
 }
 
-}
+}  // namespace Poincare

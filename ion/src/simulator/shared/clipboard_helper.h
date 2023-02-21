@@ -6,10 +6,10 @@
 namespace Ion {
 namespace Clipboard {
 
-void sendToSystemClipboard(const char * text);
-void fetchFromSystemClipboard(char * buffer, size_t bufferSize);
+void sendToSystemClipboard(const char* text);
+void fetchFromSystemClipboard(char* buffer, size_t bufferSize);
 
-}
-}
+}  // namespace Clipboard
+}  // namespace Ion
 
 #endif

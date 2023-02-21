@@ -199,7 +199,6 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   if (m_contentView.expressionView()->numberOfLayouts() + xnt.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
     return true;
   }
-  // TODO: Insert text if linearMode
   insertLayoutAtCursor(xnt, true);
   return true;
 }
@@ -409,7 +408,6 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
 }
 
 void LayoutField::insertLayoutAtCursor(Layout layout, bool forceCursorRightOfLayout, bool forceCursorLeftOfLayout) {
-  assert(!linearMode());
   if (layout.isUninitialized()) {
     return;
   }

@@ -33,8 +33,8 @@ void assert_store_is(CalculationStore *store, const char **result) {
   }
 }
 
-KDCoordinate dummyHeight(::Calculation::Calculation *c,
-                         Context *context, bool expanded) {
+KDCoordinate dummyHeight(::Calculation::Calculation *c, Context *context,
+                         bool expanded) {
   return 0;
 }
 
@@ -150,12 +150,10 @@ QUIZ_CASE(calculation_ans) {
   // Setup complex format and exam mode
   Preferences::ComplexFormat previousComplexFormat =
       Preferences::sharedPreferences->complexFormat();
-  ExamMode previousExamMode =
-      Preferences::sharedPreferences->examMode();
+  ExamMode previousExamMode = Preferences::sharedPreferences->examMode();
   Preferences::sharedPreferences->setComplexFormat(
       Preferences::ComplexFormat::Real);
-  Preferences::sharedPreferences->setExamMode(
-      ExamMode::Mode::Off);
+  Preferences::sharedPreferences->setExamMode(ExamMode::Mode::Off);
 
   store.push("1+3/4", &globalContext, dummyHeight);
   store.push("ans+2/3", &globalContext, dummyHeight);
@@ -184,8 +182,7 @@ QUIZ_CASE(calculation_ans) {
 
   assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
 
-  Preferences::sharedPreferences->setExamMode(
-      ExamMode::Mode::Dutch);
+  Preferences::sharedPreferences->setExamMode(ExamMode::Mode::Dutch);
   assert(Shared::ExpressionDisplayPermissions::ExactExpressionIsForbidden(
       SquareRoot::Builder(Rational::Builder(2))));
 
@@ -193,8 +190,7 @@ QUIZ_CASE(calculation_ans) {
 
   // Restore complex format and exam mode
   Preferences::sharedPreferences->setExamMode(previousExamMode);
-  Preferences::sharedPreferences->setComplexFormat(
-      previousComplexFormat);
+  Preferences::sharedPreferences->setComplexFormat(previousComplexFormat);
   store.deleteAll();
 }
 
@@ -378,10 +374,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Preferences::sharedPreferences->setAngleUnit(Preferences::AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
-  ExamMode previousExamMode =
-      Preferences::sharedPreferences->examMode();
-  Preferences::sharedPreferences->setExamMode(
-      ExamMode::Mode::Dutch);
+  ExamMode previousExamMode = Preferences::sharedPreferences->examMode();
+  Preferences::sharedPreferences->setExamMode(ExamMode::Mode::Dutch);
 
   assertCalculationIs("1+1", DisplayOutput::ApproximateOnly, EqualSign::Unknown,
                       nullptr, "2", "2", &globalContext, &store);

@@ -30,7 +30,7 @@ class ExamModeController : public GenericSubController {
 
   int initialSelectedRow() const override;
   Poincare::ExamMode examMode();
-  Poincare::ExamMode::Mode examModeAtIndex(size_t index) const;
+  Poincare::ExamMode::Ruleset examModeRulesetAtIndex(size_t index) const;
   I18n::Message examModeActivationMessage(size_t index) const;
 
   SelectableViewWithMessages m_contentView;

@@ -8,7 +8,7 @@ namespace Poincare {
 
 class ExamMode : public Ion::ExamMode::Configuration {
  public:
-  using Mode = Ion::ExamMode::Mode;
+  using Ruleset = Ion::ExamMode::Ruleset;
 
   union PressToTestFlags {
     bool operator==(const PressToTestFlags& other) const {
@@ -30,8 +30,8 @@ class ExamMode : public Ion::ExamMode::Configuration {
   };
 
   ExamMode() : Configuration() {}
-  ExamMode(Mode mode, PressToTestFlags flags = {.value = 0})
-      : Configuration(mode, flags.value) {}
+  ExamMode(Ruleset rules, PressToTestFlags flags = {.value = 0})
+      : Configuration(rules, flags.value) {}
   ExamMode(Configuration config) : Configuration(config) {}
 
   PressToTestFlags flags() const { return {.value = Configuration::flags()}; }

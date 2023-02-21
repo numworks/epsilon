@@ -171,7 +171,8 @@ void Controller::switchToSelectedApp() {
   AppsContainer *container = AppsContainer::sharedAppsContainer();
   int appIdx = indexOfAppAtColumnAndRow(selectionDataSource()->selectedColumn(),
                                         selectionDataSource()->selectedRow());
-  ExamMode::Mode examMode = Preferences::sharedPreferences->examMode().mode();
+  ExamMode::Ruleset rules =
+      Preferences::sharedPreferences->examMode().ruleset();
   if (appIdx < container->numberOfBuiltinApps()) {
     ::App::Snapshot *selectedSnapshot =
         container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx));
@@ -182,7 +183,7 @@ void Controller::switchToSelectedApp() {
       container->switchToBuiltinApp(selectedSnapshot);
     }
   } else {
-    assert(examMode != ExamMode::Mode::Off);
+    assert(rules != ExamMode::Ruleset::Off);
     m_view.reload();
     Ion::ExternalApps::App a = container->externalAppAtIndex(
         appIdx - container->numberOfBuiltinApps());
@@ -200,7 +201,7 @@ bool Controller::appIsForbidden(I18n::Message appName) const {
 
 I18n::Message Controller::forbiddenAppMessage(int line) const {
   ExamMode mode = Preferences::sharedPreferences->examMode();
-  if (mode.mode() == ExamMode::Mode::PressToTest) {
+  if (mode.ruleset() == ExamMode::Ruleset::PressToTest) {
     constexpr I18n::Message messages[] = {
         I18n::Message::ForbiddenAppInPressToTestMode1,
         I18n::Message::ForbiddenAppInPressToTestMode2};

@@ -98,14 +98,14 @@ void TitleBarView::layoutSubviews(bool force) {
                k_examTextWidth, bounds().height() - k_verticalShift),
         force);
     I18n::Message examModeMessage;
-    switch (Preferences::sharedPreferences->examMode().mode()) {
-      case ExamMode::Mode::English:
+    switch (Preferences::sharedPreferences->examMode().ruleset()) {
+      case ExamMode::Ruleset::English:
         examModeMessage = I18n::Message::ExamModeTitleBarUK;
         break;
-      case ExamMode::Mode::Dutch:
+      case ExamMode::Ruleset::Dutch:
         examModeMessage = I18n::Message::ExamModeTitleBarNL;
         break;
-      case ExamMode::Mode::Portuguese:
+      case ExamMode::Ruleset::Portuguese:
         examModeMessage = I18n::Message::ExamModeTitleBarPT;
         break;
       default:

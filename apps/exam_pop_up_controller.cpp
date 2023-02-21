@@ -39,7 +39,7 @@ bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
 
 I18n::Message ExamPopUpController::activationWarningMessage() const {
   constexpr size_t numberOfModes =
-      static_cast<size_t>(ExamMode::Mode::NumberOfModes);
+      static_cast<size_t>(ExamMode::Ruleset::NumberOfRulesets);
   constexpr size_t messagesPerMode = 2;
   constexpr I18n::Message messages[numberOfModes * messagesPerMode] = {
       I18n::Message::ExitExamMode,
@@ -57,11 +57,11 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       I18n::Message::ActiveEnglishExamModeMessage,
       I18n::Message::ActiveEnglishExamModeWithResetMessage,  // English
   };
-  ExamMode::Mode mode = m_targetExamMode.mode();
-  size_t index = static_cast<size_t>(mode) * messagesPerMode;
-  index += (mode == ExamMode::Mode::Off &&
-            Preferences::sharedPreferences->examMode().mode() ==
-                ExamMode::Mode::PressToTest) ||
+  ExamMode::Ruleset rules = m_targetExamMode.ruleset();
+  size_t index = static_cast<size_t>(rules) * messagesPerMode;
+  index += (rules == ExamMode::Ruleset::Off &&
+            Preferences::sharedPreferences->examMode().ruleset() ==
+                ExamMode::Ruleset::PressToTest) ||
            Ion::Authentication::clearanceLevel() !=
                Ion::Authentication::ClearanceLevel::NumWorks;
   assert(index < numberOfModes * messagesPerMode);
@@ -76,11 +76,11 @@ bool ExamPopUpController::handleButton() const {
   AppsContainer* container = AppsContainer::sharedAppsContainer();
   App* activeApp = container->activeApp();
 
-  ExamMode::Mode previousMode =
-      Preferences::sharedPreferences->examMode().mode();
+  ExamMode::Ruleset previousRules =
+      Preferences::sharedPreferences->examMode().ruleset();
   Preferences::sharedPreferences->setExamMode(m_targetExamMode);
-  if (previousMode == ExamMode::Mode::PressToTest &&
-      m_targetExamMode.mode() == ExamMode::Mode::Off) {
+  if (previousRules == ExamMode::Ruleset::PressToTest &&
+      m_targetExamMode.ruleset() == ExamMode::Ruleset::Off) {
     Ion::Reset::core();
   }
 

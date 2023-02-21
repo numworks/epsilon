@@ -12,20 +12,22 @@ namespace Poincare {
 bool ExamMode::forbidSolverApp() const { return flags().forbidEquationSolver; }
 
 bool ExamMode::forbidElementsApp() const {
-  return flags().forbidElementsApp || mode() == Mode::Dutch ||
-         mode() == Mode::Portuguese || mode() == Mode::English;
+  return flags().forbidElementsApp || ruleset() == Ruleset::Dutch ||
+         ruleset() == Ruleset::Portuguese || ruleset() == Ruleset::English;
 }
 
-bool ExamMode::forbidCodeApp() const { return mode() == Mode::Dutch; }
+bool ExamMode::forbidCodeApp() const { return ruleset() == Ruleset::Dutch; }
 
-bool ExamMode::forbidLineDetails() const { return mode() == Mode::IBTest; }
+bool ExamMode::forbidLineDetails() const {
+  return ruleset() == Ruleset::IBTest;
+}
 
 bool ExamMode::forbidInequalityGraphing() const {
   return flags().forbidInequalityGraphing;
 }
 
 bool ExamMode::forbidImplicitPlots() const {
-  return flags().forbidImplicitPlots || mode() == Mode::IBTest;
+  return flags().forbidImplicitPlots || ruleset() == Ruleset::IBTest;
 }
 
 bool ExamMode::forbidStatsDiagnostics() const {
@@ -33,7 +35,7 @@ bool ExamMode::forbidStatsDiagnostics() const {
 }
 
 bool ExamMode::forbidVectorProduct() const {
-  return flags().forbidVectors || mode() == Mode::IBTest;
+  return flags().forbidVectors || ruleset() == Ruleset::IBTest;
 }
 
 bool ExamMode::forbidVectorNorm() const { return flags().forbidVectors; }
@@ -45,15 +47,15 @@ bool ExamMode::forbidBasedLogarithm() const {
 bool ExamMode::forbidSum() const { return flags().forbidSum; }
 
 bool ExamMode::forbidUnits() const {
-  return mode() == Mode::Dutch || mode() == Mode::IBTest;
+  return ruleset() == Ruleset::Dutch || ruleset() == Ruleset::IBTest;
 }
 
 bool ExamMode::forbidAdditionalResults() const {
-  return mode() == Mode::Dutch || mode() == Mode::IBTest;
+  return ruleset() == Ruleset::Dutch || ruleset() == Ruleset::IBTest;
 }
 
 bool ExamMode::forbidExactResults() const {
-  return flags().forbidExactResults || mode() == Mode::Dutch;
+  return flags().forbidExactResults || ruleset() == Ruleset::Dutch;
 }
 
 }  // namespace Poincare

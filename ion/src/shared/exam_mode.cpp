@@ -13,7 +13,7 @@ Configuration get() {
   if (config.isUninitialized()) {
     /* The persisting bytes do not contain a valid exam mode, most likely
      * because of a botched install. */
-    config = Configuration(Mode::Off);
+    config = Configuration(Ruleset::Off);
     set(config);
   }
   return config;

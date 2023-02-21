@@ -156,7 +156,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       Ion::LED::updateColorWithPlugAndCharge();
       switchToBuiltinApp(activeSnapshot);
     } else if (m_firstUSBEnumeration) {
-      displayExamModePopUp(ExamMode::Mode::Off);
+      displayExamModePopUp(ExamMode::Ruleset::Off);
       // Warning: if the window is dirtied, you need to call window()->redraw()
       window()->redraw();
     }

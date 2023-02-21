@@ -119,7 +119,7 @@ int FunctionToolbox::typeAtIndex(int index) const {
 int FunctionToolbox::controlChecksum() const {
   return MathToolbox::controlChecksum() +
          numberOfAddedCells() *
-             static_cast<int>(ExamMode::Mode::NumberOfModes) *
+             static_cast<int>(ExamMode::Ruleset::NumberOfRulesets) *
              I18n::NumberOfCountries;
 }
 

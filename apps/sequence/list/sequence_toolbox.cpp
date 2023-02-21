@@ -103,7 +103,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char *sequenceName,
 int SequenceToolbox::controlChecksum() const {
   return MathToolbox::controlChecksum() +
          m_numberOfAddedCells *
-             static_cast<int>(ExamMode::Mode::NumberOfModes) *
+             static_cast<int>(ExamMode::Ruleset::NumberOfRulesets) *
              I18n::NumberOfCountries;
 }
 

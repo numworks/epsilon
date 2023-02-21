@@ -9,7 +9,7 @@ namespace ExamMode {
 
 using Int = PersistingBytes::PersistingBytesInt;
 
-enum class Mode : Int {
+enum class Ruleset : Int {
   Off = 0,
   Standard,
   Dutch,
@@ -17,12 +17,12 @@ enum class Mode : Int {
   PressToTest,
   Portuguese,
   English,
-  NumberOfModes,
+  NumberOfRulesets,
 };
 
 class Configuration {
  public:
-  Configuration(Mode mode, Int flags = 0);
+  Configuration(Ruleset rules, Int flags = 0);
   Configuration() : Configuration(-1) {}
   Configuration(Int raw) : m_internals{.raw = raw} {}
 
@@ -30,7 +30,7 @@ class Configuration {
     return m_internals.raw == other.m_internals.raw;
   }
 
-  Mode mode() const;
+  Ruleset ruleset() const;
   Int flags() const;
   Int raw() const { return m_internals.raw; }
   bool isUninitialized() const;

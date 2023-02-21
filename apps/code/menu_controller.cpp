@@ -20,6 +20,7 @@ MenuController::MenuController(Responder *parentResponder, App *pythonDelegate,
       RegularHeightTableViewDataSource(),
       ButtonRowDelegate(nullptr, footer),
       m_scriptStore(scriptStore),
+      m_addNewScriptCell(KDFont::Size::Large, 0),
       m_consoleButton(
           this, I18n::Message::Console,
           Invocation::Builder<MenuController>(
@@ -37,6 +38,7 @@ MenuController::MenuController(Responder *parentResponder, App *pythonDelegate,
       m_shouldDisplayAddScriptRow(true) {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_addNewScriptCell.setLeftMargin(Metric::BigCellMargin);
   m_addNewScriptCell.setMessage(I18n::Message::AddScript);
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
     m_scriptCells[i].setParentResponder(&m_selectableTableView);
@@ -248,12 +250,15 @@ void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell *cell,
       ->setText(m_scriptStore->scriptAtIndex(index).fullName());
 }
 
-void MenuController::tableViewDidChangeSelection(
+void MenuController::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView *t, int previousSelectedCellX,
     int previousSelectedCellY, bool withinTemporarySelection) {
   if (selectedRow() == numberOfRows() - 1 && selectedColumn() == 1 &&
       m_shouldDisplayAddScriptRow) {
     t->selectCellAtLocation(0, numberOfRows() - 1);
+  } else {
+    // Copy the selection state of addModelCell to make it look as a single cell
+    m_emptyCell.setHighlighted(selectedRow() == numberOfRows() - 1);
   }
 }
 

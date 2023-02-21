@@ -121,12 +121,12 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
     getTextForSelectedRecord(initialTextContent, initialTextContentMaxSize);
     expressionField()->setText(initialTextContent);
   }
-  selectableTableView()->reloadData(false);
   expressionField()->setEditing(true);
   Container::activeApp()->setFirstResponder(expressionField());
   if (!(event == Ion::Events::OK || event == Ion::Events::EXE)) {
     expressionField()->handleEvent(event);
   }
+  layoutFieldDidChangeSize(expressionField());
 }
 
 bool ExpressionModelListController::editSelectedRecordWithText(const char * text) {

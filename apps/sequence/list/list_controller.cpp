@@ -227,7 +227,6 @@ void ListController::editExpression(Ion::Events::Event event) {
   m_editableCell.setHighlighted(true);
   // Invalidate the sequences context cache
   App::app()->localContext()->resetCache();
-  resetSizesMemoization();
 }
 
 bool ListController::editSelectedRecordWithText(const char * text) {

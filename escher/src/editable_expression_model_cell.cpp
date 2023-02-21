@@ -10,6 +10,7 @@ EditableExpressionModelCell::EditableExpressionModelCell(Responder * parentRespo
   m_leftMargin(0),
   m_rightMargin(0)
 {
+  m_expressionField.setLeftMargin(Metric::EditableExpressionAdditionalMargin);
 }
 
 KDSize EditableExpressionModelCell::minimalSizeForOptimalDisplay() const {

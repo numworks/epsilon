@@ -58,9 +58,9 @@ class GraphView : public Shared::FunctionGraphView,
   void drawPolar(KDContext *ctx, KDRect rect, Shared::ContinuousFunction *f,
                  float tMin, float tMax, float tStep,
                  DiscontinuityTest discontinuity) const;
-  void drawParametric(KDContext *ctx, KDRect rect,
-                      Shared::ContinuousFunction *f, float tMin, float tMax,
-                      float tStep, DiscontinuityTest discontinuity) const;
+  void drawFunction(KDContext *ctx, KDRect rect, Shared::ContinuousFunction *f,
+                    float tMin, float tMax, float tStep,
+                    DiscontinuityTest discontinuity) const;
   void drawPointsOfInterest(KDContext *ctx, KDRect rect);
 
   KDRect boundsWithoutBanner() const;

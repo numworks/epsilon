@@ -15,6 +15,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/builtin.cpp \
   expression/comparison.cpp \
   expression/integer.cpp \
+  expression/number.cpp \
   expression/polynomial.cpp \
   expression/rational.cpp \
   expression/simplification.cpp \

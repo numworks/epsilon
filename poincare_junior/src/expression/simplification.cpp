@@ -1,32 +1,59 @@
 #include "simplification.h"
 
 #include <poincare_junior/src/memory/node_iterator.h>
+#include <poincare_junior/src/n_ary.h>
+
+#include "number.h"
 
 namespace PoincareJ {
 
-void Simplification::BasicReduction(EditionReference reference) {
+EditionReference Simplification::BasicReduction(EditionReference reference) {
   // TODO: Macro to automatically generate switch
   switch (reference.type()) {
     case BlockType::Division:
       return DivisionReduction(reference);
     case BlockType::Subtraction:
       return SubtractionReduction(reference);
+    case BlockType::Addition:
+      ReduceNumbersInNAry(reference, Number::Addition);
+      return NAry::SquashIfUnary(reference);
+    case BlockType::Multiplication:
+      ReduceNumbersInNAry(reference, Number::Multiplication);
+      return NAry::SquashIfUnary(reference);
     default:
-      return;
+      return reference;
   }
 }
 
-void Simplification::DivisionReduction(EditionReference reference) {
+void Simplification::ReduceNumbersInNAry(EditionReference reference,
+                                         NumberOperation operation) {
+  size_t index = 0;
+  size_t nbOfChildren = reference.numberOfChildren();
+  assert(nbOfChildren > 0);
+  EditionReference child0 = reference.nextNode();
+  EditionReference child1 = child0.nextTree();
+  while (index + 1 < nbOfChildren && child0.block()->isNumber() &&
+         child1.block()->isNumber()) {
+    EditionReference reducedChild = operation(child0, child1);
+    child0.replaceTreeByTree(reducedChild);
+    child1 = child1.nextTree();
+    child1.removeTree();
+    index++;
+  }
+}
+
+EditionReference Simplification::DivisionReduction(EditionReference reference) {
   assert(reference.type() == BlockType::Division);
-  ProjectionReduction(
+  return ProjectionReduction(
       reference,
       []() { return EditionReference::Push<BlockType::Multiplication>(2); },
       []() { return EditionReference::Push<BlockType::Power>(); });
 }
 
-void Simplification::SubtractionReduction(EditionReference reference) {
+EditionReference Simplification::SubtractionReduction(
+    EditionReference reference) {
   assert(reference.type() == BlockType::Subtraction);
-  ProjectionReduction(
+  return ProjectionReduction(
       reference,
       []() { return EditionReference::Push<BlockType::Addition>(2); },
       []() { return EditionReference::Push<BlockType::Multiplication>(2); });
@@ -63,7 +90,7 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
   return reference;
 }
 
-void Simplification::ProjectionReduction(
+EditionReference Simplification::ProjectionReduction(
     EditionReference division, EditionReference (*PushProjectedEExpression)(),
     EditionReference (*PushInverse)()) {
   /* Rule a / b --> a * b^-1 (or a - b --> a + b * -1) */
@@ -87,6 +114,7 @@ void Simplification::ProjectionReduction(
   // Replace single-noded division (or subtraction) by the new multiplication
   // (or addition)
   division.replaceNodeByTree(multiplication);
+  return multiplication;
 }
 
 }  // namespace PoincareJ

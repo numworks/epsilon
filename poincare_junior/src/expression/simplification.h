@@ -8,20 +8,26 @@ namespace PoincareJ {
 
 class Simplification {
  public:
-  static void BasicReduction(EditionReference reference);
-  static void ShallowBeautify(EditionReference reference) {}
+  static EditionReference BasicReduction(EditionReference reference);
+  static EditionReference ShallowBeautify(EditionReference reference) {
+    return reference;
+  }
 
-  static void DivisionReduction(EditionReference reference);
-  static void SubtractionReduction(EditionReference reference);
+  static EditionReference DivisionReduction(EditionReference reference);
+  static EditionReference SubtractionReduction(EditionReference reference);
   static EditionReference DistributeMultiplicationOverAddition(
       EditionReference reference);
 
  private:
-  static void ProjectionReduction(
+  typedef EditionReference (*NumberOperation)(const Node, const Node);
+  static void ReduceNumbersInNAry(EditionReference reference,
+                                  NumberOperation operation);
+  static EditionReference ProjectionReduction(
       EditionReference reference,
       EditionReference (*PushProjectedEExpression)(),
       EditionReference (*PushInverse)());
 };
+
 }  // namespace PoincareJ
 
 #endif

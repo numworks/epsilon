@@ -19,6 +19,7 @@ class NAry {
   static void SetNumberOfChildren(EditionReference reference,
                                   size_t numberOfChildren);
   static EditionReference Flatten(EditionReference reference);
+  static EditionReference SquashIfUnary(EditionReference reference);
 };
 
 }  // namespace PoincareJ

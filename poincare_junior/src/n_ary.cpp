@@ -76,4 +76,13 @@ EditionReference NAry::Flatten(EditionReference reference) {
   return reference;
 }
 
+EditionReference NAry::SquashIfUnary(EditionReference reference) {
+  if (reference.numberOfChildren() == 1) {
+    EditionReference child = reference.nextNode();
+    reference.replaceTreeByTree(child);
+    return child;
+  }
+  return reference;
+}
+
 }  // namespace PoincareJ

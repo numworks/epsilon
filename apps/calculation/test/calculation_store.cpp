@@ -153,7 +153,7 @@ QUIZ_CASE(calculation_ans) {
   ExamMode previousExamMode = Preferences::sharedPreferences->examMode();
   Preferences::sharedPreferences->setComplexFormat(
       Preferences::ComplexFormat::Real);
-  Preferences::sharedPreferences->setExamMode(ExamMode::Mode::Off);
+  Preferences::sharedPreferences->setExamMode(ExamMode(ExamMode::Ruleset::Off));
 
   store.push("1+3/4", &globalContext, dummyHeight);
   store.push("ans+2/3", &globalContext, dummyHeight);
@@ -182,7 +182,8 @@ QUIZ_CASE(calculation_ans) {
 
   assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
 
-  Preferences::sharedPreferences->setExamMode(ExamMode::Mode::Dutch);
+  Preferences::sharedPreferences->setExamMode(
+      ExamMode(ExamMode::Ruleset::Dutch));
   assert(Shared::ExpressionDisplayPermissions::ExactExpressionIsForbidden(
       SquareRoot::Builder(Rational::Builder(2))));
 
@@ -375,7 +376,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   ExamMode previousExamMode = Preferences::sharedPreferences->examMode();
-  Preferences::sharedPreferences->setExamMode(ExamMode::Mode::Dutch);
+  Preferences::sharedPreferences->setExamMode(
+      ExamMode(ExamMode::Ruleset::Dutch));
 
   assertCalculationIs("1+1", DisplayOutput::ApproximateOnly, EqualSign::Unknown,
                       nullptr, "2", "2", &globalContext, &store);

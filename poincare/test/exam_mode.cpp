@@ -5,7 +5,7 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_exam_mode_off) {
-  ExamMode mode(ExamMode::Mode::Off);
+  ExamMode mode(ExamMode::Ruleset::Off);
   quiz_assert(!mode.forbidSolverApp());
   quiz_assert(!mode.forbidElementsApp());
   quiz_assert(!mode.forbidCodeApp());
@@ -23,7 +23,7 @@ QUIZ_CASE(poincare_exam_mode_off) {
 }
 
 QUIZ_CASE(poincare_exam_mode_standard) {
-  ExamMode mode(ExamMode::Mode::Standard);
+  ExamMode mode(ExamMode::Ruleset::Standard);
   quiz_assert(!mode.forbidSolverApp());
   quiz_assert(!mode.forbidElementsApp());
   quiz_assert(!mode.forbidCodeApp());
@@ -41,7 +41,7 @@ QUIZ_CASE(poincare_exam_mode_standard) {
 }
 
 QUIZ_CASE(poincare_exam_mode_dutch) {
-  ExamMode mode(ExamMode::Mode::Dutch);
+  ExamMode mode(ExamMode::Ruleset::Dutch);
   quiz_assert(!mode.forbidSolverApp());
   quiz_assert(mode.forbidElementsApp());
   quiz_assert(mode.forbidCodeApp());
@@ -59,7 +59,7 @@ QUIZ_CASE(poincare_exam_mode_dutch) {
 }
 
 QUIZ_CASE(poincare_exam_mode_ibtest) {
-  ExamMode mode(ExamMode::Mode::IBTest);
+  ExamMode mode(ExamMode::Ruleset::IBTest);
   quiz_assert(!mode.forbidSolverApp());
   quiz_assert(!mode.forbidElementsApp());
   quiz_assert(!mode.forbidCodeApp());
@@ -77,7 +77,7 @@ QUIZ_CASE(poincare_exam_mode_ibtest) {
 }
 
 QUIZ_CASE(poincare_exam_mode_portuguese) {
-  ExamMode mode(ExamMode::Mode::Portuguese);
+  ExamMode mode(ExamMode::Ruleset::Portuguese);
   quiz_assert(!mode.forbidSolverApp());
   quiz_assert(mode.forbidElementsApp());
   quiz_assert(!mode.forbidCodeApp());
@@ -95,7 +95,7 @@ QUIZ_CASE(poincare_exam_mode_portuguese) {
 }
 
 QUIZ_CASE(poincare_exam_mode_english) {
-  ExamMode mode(ExamMode::Mode::English);
+  ExamMode mode(ExamMode::Ruleset::English);
   quiz_assert(!mode.forbidSolverApp());
   quiz_assert(mode.forbidElementsApp());
   quiz_assert(!mode.forbidCodeApp());
@@ -114,7 +114,8 @@ QUIZ_CASE(poincare_exam_mode_english) {
 
 QUIZ_CASE(poincare_exam_mode_press_to_test) {
   {
-    ExamMode mode(ExamMode::Mode::PressToTest, {.forbidEquationSolver = true});
+    ExamMode mode(ExamMode::Ruleset::PressToTest,
+                  {.forbidEquationSolver = true});
     quiz_assert(mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -131,7 +132,7 @@ QUIZ_CASE(poincare_exam_mode_press_to_test) {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Mode::PressToTest,
+    ExamMode mode(ExamMode::Ruleset::PressToTest,
                   {.forbidInequalityGraphing = true});
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
@@ -149,7 +150,8 @@ QUIZ_CASE(poincare_exam_mode_press_to_test) {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Mode::PressToTest, {.forbidImplicitPlots = true});
+    ExamMode mode(ExamMode::Ruleset::PressToTest,
+                  {.forbidImplicitPlots = true});
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -166,7 +168,7 @@ QUIZ_CASE(poincare_exam_mode_press_to_test) {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Mode::PressToTest,
+    ExamMode mode(ExamMode::Ruleset::PressToTest,
                   {.forbidStatsDiagnostics = true});
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
@@ -184,7 +186,7 @@ QUIZ_CASE(poincare_exam_mode_press_to_test) {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Mode::PressToTest, {.forbidVectors = true});
+    ExamMode mode(ExamMode::Ruleset::PressToTest, {.forbidVectors = true});
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -201,7 +203,8 @@ QUIZ_CASE(poincare_exam_mode_press_to_test) {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Mode::PressToTest, {.forbidBasedLogarithm = true});
+    ExamMode mode(ExamMode::Ruleset::PressToTest,
+                  {.forbidBasedLogarithm = true});
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -218,7 +221,7 @@ QUIZ_CASE(poincare_exam_mode_press_to_test) {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Mode::PressToTest, {.forbidSum = true});
+    ExamMode mode(ExamMode::Ruleset::PressToTest, {.forbidSum = true});
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -235,7 +238,7 @@ QUIZ_CASE(poincare_exam_mode_press_to_test) {
     quiz_assert(!mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Mode::PressToTest, {.forbidExactResults = true});
+    ExamMode mode(ExamMode::Ruleset::PressToTest, {.forbidExactResults = true});
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(!mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());
@@ -252,7 +255,7 @@ QUIZ_CASE(poincare_exam_mode_press_to_test) {
     quiz_assert(mode.forbidExactResults());
   }
   {
-    ExamMode mode(ExamMode::Mode::PressToTest, {.forbidElementsApp = true});
+    ExamMode mode(ExamMode::Ruleset::PressToTest, {.forbidElementsApp = true});
     quiz_assert(!mode.forbidSolverApp());
     quiz_assert(mode.forbidElementsApp());
     quiz_assert(!mode.forbidCodeApp());

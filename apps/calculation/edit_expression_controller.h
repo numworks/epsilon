@@ -24,9 +24,7 @@ class EditExpressionController : public Escher::ViewController,
    * CalculationStore, and as a storage for the current input when leaving the
    * application. */
   constexpr static int k_cacheBufferSize =
-      (k_layoutBufferMaxSize < Constant::MaxSerializedExpressionSize)
-          ? Constant::MaxSerializedExpressionSize
-          : k_layoutBufferMaxSize;
+      std::max(k_layoutBufferMaxSize, Constant::MaxSerializedExpressionSize);
 
   EditExpressionController(
       Escher::Responder* parentResponder,

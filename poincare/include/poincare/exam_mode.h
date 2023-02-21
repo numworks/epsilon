@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: CC-BY-NC-ND-4.0
+// Caution: Dutch exam mode is subject to a compliance certification by a
+// government agency. Distribution of a non-certified Dutch exam mode is
+// illegal.
+
 #ifndef POINCARE_EXAM_MODE_H
 #define POINCARE_EXAM_MODE_H
 
@@ -37,20 +42,35 @@ class ExamMode : public Ion::ExamMode::Configuration {
   PressToTestFlags flags() const { return {.value = Configuration::flags()}; }
 
   // Exam mode permissions
-  bool forbidSolverApp() const;
-  bool forbidElementsApp() const;
-  bool forbidCodeApp() const;
-  bool forbidLineDetails() const;
-  bool forbidInequalityGraphing() const;
-  bool forbidImplicitPlots() const;
-  bool forbidStatsDiagnostics() const;
-  bool forbidVectorProduct() const;
-  bool forbidVectorNorm() const;
-  bool forbidBasedLogarithm() const;
-  bool forbidSum() const;
-  bool forbidUnits() const;
-  bool forbidAdditionalResults() const;
-  bool forbidExactResults() const;
+  bool forbidSolverApp() const { return flags().forbidEquationSolver; }
+  bool forbidElementsApp() const {
+    return flags().forbidElementsApp || ruleset() == Ruleset::Dutch ||
+           ruleset() == Ruleset::Portuguese || ruleset() == Ruleset::English;
+  }
+  bool forbidCodeApp() const { return ruleset() == Ruleset::Dutch; }
+  bool forbidLineDetails() const { return ruleset() == Ruleset::IBTest; }
+  bool forbidInequalityGraphing() const {
+    return flags().forbidInequalityGraphing;
+  }
+  bool forbidImplicitPlots() const {
+    return flags().forbidImplicitPlots || ruleset() == Ruleset::IBTest;
+  }
+  bool forbidStatsDiagnostics() const { return flags().forbidStatsDiagnostics; }
+  bool forbidVectorProduct() const {
+    return flags().forbidVectors || ruleset() == Ruleset::IBTest;
+  }
+  bool forbidVectorNorm() const { return flags().forbidVectors; }
+  bool forbidBasedLogarithm() const { return flags().forbidBasedLogarithm; }
+  bool forbidSum() const { return flags().forbidSum; }
+  bool forbidUnits() const {
+    return ruleset() == Ruleset::Dutch || ruleset() == Ruleset::IBTest;
+  }
+  bool forbidAdditionalResults() const {
+    return ruleset() == Ruleset::Dutch || ruleset() == Ruleset::IBTest;
+  }
+  bool forbidExactResults() const {
+    return flags().forbidExactResults || ruleset() == Ruleset::Dutch;
+  }
 };
 
 static_assert(sizeof(ExamMode) == sizeof(Ion::ExamMode::Configuration),

@@ -41,6 +41,7 @@ public:
   constexpr static KDCoordinate BannerTextMargin = 2;
   constexpr static KDCoordinate EllipsisCellWidth = 37;
   constexpr static KDCoordinate ExpressionViewMargin = 5;
+  constexpr static KDCoordinate ExpressionInputBarMinimalHeight = 37;
   constexpr static KDCoordinate EditableExpressionAdditionalMargin = BigCellMargin - ExpressionViewMargin;
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;

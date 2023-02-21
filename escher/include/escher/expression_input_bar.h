@@ -22,6 +22,7 @@ protected:
   constexpr static KDCoordinate k_margin = Metric::ExpressionViewMargin;
 
 private:
+  constexpr static KDCoordinate k_minimalHeight = Metric::ExpressionInputBarMinimalHeight;
   constexpr static KDCoordinate k_maximalHeight = 0.6*Ion::Display::Height;
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   KDCoordinate inputViewHeight() const;

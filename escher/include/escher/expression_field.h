@@ -35,7 +35,7 @@ public:
   using LayoutField::layoutSubviews;
 
 private:
-  constexpr static KDCoordinate k_minimalHeight = 37;
+  constexpr static KDCoordinate k_minimalHeight = KDFont::GlyphHeight(KDFont::Size::Large);
   KDCoordinate m_inputViewMemoizedHeight;
   char * m_draftBuffer;
   size_t m_draftBufferSize;

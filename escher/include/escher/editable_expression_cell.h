@@ -26,9 +26,10 @@ public:
   View * subviewAtIndex(int index) override { return &m_expressionField; }
   void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
-  KDSize minimalSizeForOptimalDisplay() const override { return m_expressionField.minimalSizeForOptimalDisplay(); }
+  KDSize minimalSizeForOptimalDisplay() const override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
+  constexpr static KDCoordinate k_minimalHeigh = Metric::ExpressionInputBarMinimalHeight;
   constexpr static KDCoordinate k_margin = Metric::ExpressionViewMargin;
   // topMargin has + 1 to look the same as when the separator was included in it
   constexpr static KDCoordinate k_topMargin = k_margin + 1;

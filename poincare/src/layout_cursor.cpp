@@ -345,11 +345,24 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
   // This is only used to check if we properly left the last subscript
   int currentSubscriptDepth = 0;
 
+  bool setCursorToFirstEmptyCodePoint = linearMode && !forceCursorLeftOfText && !forceCursorRightOfText;
+
   while (codePoint != UCodePointNull) {
     assert(!codePoint.isCombining());
     CodePoint nextCodePoint = decoder.nextCodePoint();
     if (codePoint == UCodePointEmpty) {
       codePoint = nextCodePoint;
+      if (setCursorToFirstEmptyCodePoint) {
+        /* To force cursor at first empty code point in linear mode, insert
+         * the first half of text now, and then insert the end of the text
+         * and force the cursor left of it. */
+        assert(currentSubscriptDepth == 0);
+        insertLayoutAtCursor(layoutToInsert, context, forceCursorRightOfText, forceCursorLeftOfText);
+        layoutToInsert = HorizontalLayout::Builder();
+        currentLayout = layoutToInsert;
+        forceCursorLeftOfText = true;
+        setCursorToFirstEmptyCodePoint = false;
+      }
       assert(!codePoint.isCombining());
       continue;
     }

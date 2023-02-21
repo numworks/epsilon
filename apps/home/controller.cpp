@@ -171,8 +171,6 @@ void Controller::switchToSelectedApp() {
   AppsContainer *container = AppsContainer::sharedAppsContainer();
   int appIdx = indexOfAppAtColumnAndRow(selectionDataSource()->selectedColumn(),
                                         selectionDataSource()->selectedRow());
-  ExamMode::Ruleset rules =
-      Preferences::sharedPreferences->examMode().ruleset();
   if (appIdx < container->numberOfBuiltinApps()) {
     ::App::Snapshot *selectedSnapshot =
         container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx));
@@ -183,7 +181,8 @@ void Controller::switchToSelectedApp() {
       container->switchToBuiltinApp(selectedSnapshot);
     }
   } else {
-    assert(rules != ExamMode::Ruleset::Off);
+    assert(Preferences::sharedPreferences->examMode().ruleset() !=
+           ExamMode::Ruleset::Off);
     m_view.reload();
     Ion::ExternalApps::App a = container->externalAppAtIndex(
         appIdx - container->numberOfBuiltinApps());

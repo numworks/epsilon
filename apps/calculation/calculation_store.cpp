@@ -303,8 +303,10 @@ Expression CalculationStore::EnhancePushedExpression(Expression expression,
    * Ex: If angleUnit = rad, cos(4)->cos(4rad)
    *     If angleUnit = deg, cos(π)->cos(π°)
    * */
-  expression = Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
-      expression, Preferences::sharedPreferences->angleUnit());
+  if (!ExamModeConfiguration::unitsAreForbidden()) {
+    expression = Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+        expression, Preferences::sharedPreferences->angleUnit());
+  }
   return expression;
 }
 

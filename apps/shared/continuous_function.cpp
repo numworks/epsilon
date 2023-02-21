@@ -455,6 +455,8 @@ Expression ContinuousFunction::Model::expressionReduced(
     }
     Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(
         complexFormat(record, context));
+    /* Polar, inversePolar and cartesian equations are unnamed. Here
+     * only cartesian equations are processed. */
     if (!properties().isPolar() && !properties().isInversePolar() &&
         (record->fullName() == nullptr ||
          record->fullName()[0] == k_unnamedRecordFirstChar)) {

@@ -44,7 +44,7 @@ class Configuration {
       bool configurable : 1;
       Int data : 14;
       bool clearBit : 1;
-    };
+    } fields;
   } m_internals;
 };
 

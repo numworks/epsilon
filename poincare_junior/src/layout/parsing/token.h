@@ -8,7 +8,7 @@
  *   - an Expression, specifically for a Number Token,
  *   - a string (m_text, m_length), specifically for an Identifier Token. */
 
-#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/node.h>
 
 namespace PoincareJ {
 
@@ -63,10 +63,11 @@ public:
     ReservedFunction,
     SpecialIdentifier,
     CustomIdentifier,
+    Layout,
     Undefined
   };
 
-  Token(Type type = Type::Undefined) : m_type(type), m_text(0), m_length(0) {};
+  Token(Type type = Type::Undefined) : m_type(type), m_firstLayout(), m_length(0) {};
 
   Type type() const { return m_type; }
   void setType(Type t) { m_type = t; }
@@ -74,20 +75,17 @@ public:
   bool isNumber() const { return m_type == Type::Number || m_type == Type::BinaryNumber || m_type == Type::HexadecimalNumber; }
   bool isEndOfStream() const { return is(Type::EndOfStream); }
 
-  EditionReference expression() const { return m_expression; }
-  const char * text() const { return m_text; }
+  Node firstLayout() const { return m_firstLayout; }
   size_t length() const { return m_length; }
 
-  void setExpression(EditionReference e) { m_expression = e; }
-  void setString(const char * text, size_t length) {
-    m_text = text;
+  void setRange(Node firstLayout, size_t length) {
+    m_firstLayout = firstLayout;
     m_length = length;
   }
 
 private:
   Type m_type;
-  EditionReference m_expression;
-  const char * m_text;
+  Node m_firstLayout;
   size_t m_length;
 };
 

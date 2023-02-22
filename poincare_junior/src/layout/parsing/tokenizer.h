@@ -7,7 +7,7 @@
  * Tokenizer determines a Type and may save other relevant data intended for the
  * Parser. */
 
-#include <ion/unicode/utf8_decoder.h>
+#include <poincare_junior/src/layout/rack_layout_decoder.h>
 #include "parsing_context.h"
 #include "token.h"
 
@@ -16,8 +16,8 @@ namespace PoincareJ {
 class Tokenizer {
   friend class InputBeautification;
 public:
-  Tokenizer(const char * text, ParsingContext * parsingContext, const char * textEnd = nullptr) :
-    m_decoder(text, text, textEnd),
+  Tokenizer(const Node node, ParsingContext * parsingContext, size_t textEnd = 0) :
+    m_decoder(node, 0, textEnd),
     m_parsingContext(parsingContext),
     m_numberOfStoredIdentifiers(0),
     m_poppingSystemToken(false)
@@ -25,19 +25,9 @@ public:
   Token popToken();
 
   // Rewind tokenizer
-  const char * currentPosition() { return m_decoder.stringPosition(); }
-  const char * endPosition() { return m_decoder.stringEnd(); }
-  void goToPosition(const char * position) {
-    /* WARNING:
-     * Sometimes the decoder will be one char after the null terminating zero.
-     * The following condition should prevent ASAN issues. */
-    const char * currentPos = currentPosition();
-    if (position < currentPos
-        || (position > currentPos
-            && *(position - 1) != 0)) {
-      m_decoder.setPosition(position);
-    }
-  }
+  size_t currentPosition() { return m_decoder.stringPosition(); }
+  size_t endPosition() { return m_decoder.stringEnd(); }
+
 private:
   constexpr static int k_maxNumberOfIdentifiersInList = 10; // Used for m_storedIdentifiersList
   typedef bool (*PopTest)(CodePoint c);
@@ -108,8 +98,8 @@ private:
    * */
   size_t popIdentifiersString();
   void fillIdentifiersList();
-  Token popLongestRightMostIdentifier(const char * stringStart, const char * * stringEnd);
-  Token::Type stringTokenType(const char * string, size_t * length) const;
+  Token popLongestRightMostIdentifier(size_t stringStart, size_t * stringEnd);
+  Token::Type stringTokenType(size_t string, size_t * length) const;
 
   /* ========== IMPLICIT ADDITION BETWEEN UNITS ==========
    * An implicit addition between units is an expression like "3h40min32.5s".
@@ -123,7 +113,7 @@ private:
    * Same for "2h30mincos(x) = 2*h30*min*cos(x)". */
   size_t popImplicitAdditionBetweenUnits();
 
-  UTF8Decoder m_decoder;
+  RackLayoutDecoder m_decoder;
   ParsingContext * m_parsingContext;
   /* This list is used to memoize the identifiers we already parsed.
    * Ex: When parsing abc, we first turn it into ab*c and store "c",

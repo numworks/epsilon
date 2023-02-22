@@ -23,6 +23,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   layout/fraction_layout.cpp \
   layout/parenthesis_layout.cpp \
   layout/parser.cpp \
+  layout/parsing/tokenizer.cpp \
   layout/rack_layout.cpp \
   layout/render.cpp \
   layout/vertical_offset_layout.cpp \

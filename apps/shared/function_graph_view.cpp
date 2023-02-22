@@ -53,8 +53,9 @@ bool FunctionGraphPolicy::allFunctionsInterrupted() const {
   /* The number of functions displayed at the same time is theoretically
    * unbounded, but we only store the status of 32 functions. */
   int numberOfFunctions = numberOfDrawnRecords();
-  if (numberOfFunctions <= 0 || static_cast<size_t>(numberOfFunctions) >
-                                    8 * sizeof(m_functionsInterrupted)) {
+  if (numberOfFunctions <= 0 ||
+      static_cast<size_t>(numberOfFunctions) >
+          OMG::BitHelper::numberOfBitsInType<uint32_t>()) {
     return false;
   }
   return m_functionsInterrupted ==
@@ -62,17 +63,17 @@ bool FunctionGraphPolicy::allFunctionsInterrupted() const {
 }
 
 bool FunctionGraphPolicy::functionWasInterrupted(int index) const {
-  if (index < 0 ||
-      static_cast<size_t>(index) >= 8 * sizeof(m_functionsInterrupted)) {
+  if (index < 0 || static_cast<size_t>(index) >=
+                       OMG::BitHelper::numberOfBitsInType<uint32_t>()) {
     return false;
   }
-  return (1 << index) & m_functionsInterrupted;
+  return OMG::BitHelper::bitAtIndex(m_functionsInterrupted, index);
 }
 
 void FunctionGraphPolicy::setFunctionInterrupted(int index) const {
-  if (index >= 0 &&
-      static_cast<size_t>(index) < 8 * sizeof(m_functionsInterrupted)) {
-    m_functionsInterrupted |= 1 << index;
+  if (index >= 0 && static_cast<size_t>(index) <
+                        OMG::BitHelper::numberOfBitsInType<uint32_t>()) {
+    OMG::BitHelper::setBitAtIndex(m_functionsInterrupted, index, true);
   }
 }
 

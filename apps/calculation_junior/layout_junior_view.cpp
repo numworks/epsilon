@@ -2,7 +2,7 @@
 
 using namespace CalculationJunior;
 
-void LayoutJuniorView::drawRect(KDContext * ctx, KDRect rect) const {
+void LayoutJuniorView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();

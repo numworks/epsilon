@@ -1,41 +1,46 @@
 #ifndef CALCULATION_JUNIOR_MAIN_CONTROLLER_H
 #define CALCULATION_JUNIOR_MAIN_CONTROLLER_H
 
-#include <escher/stack_view_controller.h>
-#include <escher/view_controller.h>
-#include <escher/text_field.h>
-#include <escher/buffer_text_view.h>
-#include "layout_junior_view.h"
-#include <poincare_junior/include/layout.h>
-#include <poincare_junior/include/expression.h>
 #include <apps/shared/text_field_delegate_app.h>
+#include <escher/buffer_text_view.h>
+#include <escher/stack_view_controller.h>
+#include <escher/text_field.h>
+#include <escher/view_controller.h>
+#include <poincare_junior/include/expression.h>
+#include <poincare_junior/include/layout.h>
+
+#include "layout_junior_view.h"
 
 namespace CalculationJunior {
 
 class MainController : public Escher::ViewController {
-public:
-  MainController(Escher::StackViewController * parentResponder, Shared::TextFieldDelegateApp * textFieldDelegateApp);
+ public:
+  MainController(Escher::StackViewController* parentResponder,
+                 Shared::TextFieldDelegateApp* textFieldDelegateApp);
 
   bool handleEvent(Ion::Events::Event e) override;
-  Escher::View * view() override { return &m_view; }
+  Escher::View* view() override { return &m_view; }
   void didBecomeFirstResponder() override;
 
-private:
+ private:
   class ContentView : public Escher::View {
-  public:
+   public:
     constexpr static int k_numberOfSubviews = 4;
     constexpr static KDCoordinate k_LayoutViewHeight = 81;
     constexpr static KDCoordinate k_textViewHeight = 30;
 
-    ContentView(Escher::Responder * parentResponder, Shared::TextFieldDelegateApp * textFieldDelegateApp);
+    ContentView(Escher::Responder* parentResponder,
+                Shared::TextFieldDelegateApp* textFieldDelegateApp);
     int numberOfSubviews() const override { return k_numberOfSubviews; }
-    View * subviewAtIndex(int index) override;
+    View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
 
-    Escher::TextField * textField() { return &m_textField; }
-    LayoutJuniorView * inputLayoutView() { return &m_inputLayoutView; }
-    LayoutJuniorView * reductionLayoutView() { return &m_reductionLayoutView; }
-    Escher::BufferTextView * approximationTextView() { return &m_approximationView; }
+    Escher::TextField* textField() { return &m_textField; }
+    LayoutJuniorView* inputLayoutView() { return &m_inputLayoutView; }
+    LayoutJuniorView* reductionLayoutView() { return &m_reductionLayoutView; }
+    Escher::BufferTextView* approximationTextView() {
+      return &m_approximationView;
+    }
 
     constexpr static int k_bufferSize = Escher::TextField::MaxBufferSize();
     char m_buffer[k_bufferSize];
@@ -53,6 +58,6 @@ private:
   PoincareJ::Expression m_reducedExpression;
 };
 
-}
+}  // namespace CalculationJunior
 
 #endif

@@ -71,16 +71,16 @@ size_t Tokenizer::popHexadecimalDigits() {
 }
 
 Token Tokenizer::popNumber() {
-  size_t integralPartText = m_decoder.stringPosition();
+  size_t integralPartText = m_decoder.position();
   size_t integralPartLength = popDigits();
 
-  size_t fractionalPartText = m_decoder.stringPosition();
+  size_t fractionalPartText = m_decoder.position();
   size_t fractionalPartLength = 0;
 
   // Check for binary or hexadecimal number
   if (integralPartLength == 1 && m_decoder.codePointAt(integralPartText) == '0') {
     // Save string position if no binary/hexadecimal number
-    size_t string = m_decoder.stringPosition();
+    size_t string = m_decoder.position();
     // Look for "0b"
     bool binary = canPopCodePoint('b');
     bool hexa = false;
@@ -89,7 +89,7 @@ Token Tokenizer::popNumber() {
       hexa = canPopCodePoint('x');
     }
     if (binary || hexa) {
-      size_t binaryOrHexaText = m_decoder.stringPosition();
+      size_t binaryOrHexaText = m_decoder.position();
       size_t binaryOrHexaLength = binary ? popBinaryDigits() : popHexadecimalDigits();
       if (binaryOrHexaLength > 0) {
         Token result(binary ? Token::Type::BinaryNumber : Token::Type::HexadecimalNumber);
@@ -104,7 +104,7 @@ Token Tokenizer::popNumber() {
   }
 
   if (canPopCodePoint('.')) {
-    fractionalPartText = m_decoder.stringPosition();
+    fractionalPartText = m_decoder.position();
     fractionalPartLength = popDigits();
   } else {
     assert(integralPartLength > 0);
@@ -114,12 +114,12 @@ Token Tokenizer::popNumber() {
     return Token(Token::Type::Undefined);
   }
 
-  size_t exponentPartText = m_decoder.stringPosition();
+  size_t exponentPartText = m_decoder.position();
   size_t exponentPartLength = 0;
   bool exponentIsNegative = false;
   if (canPopCodePoint(UCodePointLatinLetterSmallCapitalE)) {
     exponentIsNegative = canPopCodePoint('-');
-    exponentPartText = m_decoder.stringPosition();
+    exponentPartText = m_decoder.position();
     exponentPartLength = popDigits();
     if (exponentPartLength == 0) {
       return Token(Token::Type::Undefined);
@@ -148,9 +148,9 @@ Token Tokenizer::popToken() {
     return result;
   }
   
-  /* Save for later use (since m_decoder.stringPosition() is altered by
+  /* Save for later use (since m_decoder.position() is altered by
    * popNumber and popIdentifiersString). */
-  size_t start = m_decoder.stringPosition();
+  size_t start = m_decoder.position();
 
   /* A leading UCodePointSystem transforms the next token into its system
    * counterpart. */
@@ -330,7 +330,7 @@ void Tokenizer::fillIdentifiersList() {
    * */
   Token rightMostParsedToken =  m_storedIdentifiersList[0];
   m_decoder.setPosition(rightMostParsedToken.firstLayout());
-  m_decoder.setPosition(m_decoder.stringPosition() + rightMostParsedToken.length());
+  m_decoder.setPosition(m_decoder.position() + rightMostParsedToken.length());
 }
 
 Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart, size_t * stringEnd) {
@@ -350,7 +350,7 @@ Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart, size_t * stri
       break;
     }
     decoder.nextCodePoint();
-    nextTokenStart = decoder.stringPosition();
+    nextTokenStart = decoder.position();
   }
   if (stringStart + tokenLength != *stringEnd) {
     /* The token doesn't go to the end of the string.
@@ -374,7 +374,7 @@ static bool stringIsACodePointFollowedByNumbers(Node layout, size_t string, size
   if (!IsNonDigitalIdentifierMaterial(c)) {
     return false;
   }
-  while (tempDecoder.stringPosition() < string + length) {
+  while (tempDecoder.position() < string + length) {
     CodePoint c = tempDecoder.nextCodePoint();
     if (!c.isDecimalDigit()) {
       return false;
@@ -411,7 +411,7 @@ static size_t CodePointSearch(const Node layout, size_t start, CodePoint c, size
   RackLayoutDecoder decoder(layout, start, stoppingPosition);
   while (start < stoppingPosition) {
     if (decoder.nextCodePoint() == c) {
-      return decoder.stringPosition();
+      return decoder.position();
     }
   }
   return stoppingPosition;
@@ -491,7 +491,7 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t * length) const {
 // ========== Implicit addition between units ==========
 
 size_t Tokenizer::popImplicitAdditionBetweenUnits() {
-  size_t stringStart = m_decoder.stringPosition();
+  size_t stringStart = m_decoder.position();
   CodePoint c = m_decoder.nextCodePoint();
   assert(c.isDecimalDigit() || c == '.');
   bool isImplicitAddition = false;
@@ -512,7 +512,7 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       break;
     }
     length += lengthOfNumber;
-    size_t currentStringStart = m_decoder.stringPosition() - UTF8Decoder::CharSizeOfCodePoint(c);
+    size_t currentStringStart = m_decoder.position() - UTF8Decoder::CharSizeOfCodePoint(c);
     size_t lengthOfPotentialUnit = 0;
     while (IsNonDigitalIdentifierMaterial(c)) {
       lengthOfPotentialUnit += UTF8Decoder::CharSizeOfCodePoint(c);

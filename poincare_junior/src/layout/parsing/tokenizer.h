@@ -25,8 +25,8 @@ public:
   Token popToken();
 
   // Rewind tokenizer
-  size_t currentPosition() { return m_decoder.stringPosition(); }
-  size_t endPosition() { return m_decoder.stringEnd(); }
+  size_t currentPosition() { return m_decoder.position(); }
+  size_t endPosition() { return m_decoder.end(); }
 
 private:
   constexpr static int k_maxNumberOfIdentifiersInList = 10; // Used for m_storedIdentifiersList

@@ -13,35 +13,35 @@ namespace PoincareJ {
 class RackLayoutDecoder : public UnicodeDecoder {
 public:
   RackLayoutDecoder(const Node layout, size_t initialPosition = 0, size_t layoutEnd = 0) :
-    UnicodeDecoder(0, initialPosition, layoutEnd),
+    UnicodeDecoder(initialPosition, layoutEnd),
     m_layout(layout)
   {
     assert(layout.type() == BlockType::RackLayout);
   }
   const Node mainLayout() const { return m_layout; }
-  Node nextLayout() { return layoutAt(m_stringPosition++); }
-  bool nextLayoutIsCodePoint() { return m_stringPosition < m_stringEnd && m_layout.childAtIndex(m_stringPosition+1).type() == BlockType::CodePointLayout; }
-  CodePoint nextCodePoint() { return codePointAt(m_stringPosition++); }
-  CodePoint previousCodePoint() { return codePointAt(--m_stringPosition); }
+  Node nextLayout() { return layoutAt(m_position++); }
+  bool nextLayoutIsCodePoint() { return m_position < m_end && m_layout.childAtIndex(m_position+1).type() == BlockType::CodePointLayout; }
+  CodePoint nextCodePoint() { return codePointAt(m_position++); }
+  CodePoint previousCodePoint() { return codePointAt(--m_position); }
   void setPosition(size_t index) {
-    assert(0 <= index && index < reinterpret_cast<size_t>(m_stringEnd));
-    m_stringPosition = index;
+    assert(0 <= index && index < reinterpret_cast<size_t>(m_end));
+    m_position = index;
   }
   void setPosition(Node child) {
-    m_stringPosition = m_layout.hasChild(child) ? m_layout.indexOfChild(child) : m_stringEnd;
+    m_position = m_layout.hasChild(child) ? m_layout.indexOfChild(child) : m_end;
   }
   Node layoutAt(size_t index) {
-    // if (index == reinterpret_cast<size_t>(m_stringEnd)) {
+    // if (index == reinterpret_cast<size_t>(m_end)) {
       // return UCodePointNull;
     // }
-    assert(0 <= index && index < reinterpret_cast<size_t>(m_stringEnd));
+    assert(0 <= index && index < reinterpret_cast<size_t>(m_end));
     return m_layout.childAtIndex(index);
   }
   CodePoint codePointAt(size_t index) const {
-    if (index == reinterpret_cast<size_t>(m_stringEnd)) {
+    if (index == reinterpret_cast<size_t>(m_end)) {
       return UCodePointNull;
     }
-    assert(0 <= index && index < reinterpret_cast<size_t>(m_stringEnd));
+    assert(0 <= index && index < reinterpret_cast<size_t>(m_end));
     assert(m_layout.childAtIndex(index).type() == BlockType::CodePointLayout);
     return CodePointLayout::GetCodePoint(m_layout.childAtIndex(index));
   }

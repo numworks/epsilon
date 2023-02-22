@@ -55,7 +55,7 @@ void PressToTestController::resetController() {
         Preferences::sharedPreferences->examMode().flags();
   } else {
     // Reset switches so that all features are enabled.
-    m_tempPressToTestParams = {.value = 0};
+    m_tempPressToTestParams = {};
   }
 }
 
@@ -160,7 +160,7 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
     // Deselect table because select cell will change anyway
     m_selectableTableView.deselectTable();
     if (!Preferences::sharedPreferences->examMode().isActive() &&
-        !(m_tempPressToTestParams.value == 0)) {
+        !(m_tempPressToTestParams == ExamMode::PressToTestFlags{})) {
       // Scroll to validation cell if m_confirmPopUpController is discarded.
       selectCellAtLocation(0, numberOfRows() - 1);
       // Open pop-up to confirm discarding values

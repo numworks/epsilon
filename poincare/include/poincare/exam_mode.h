@@ -15,31 +15,31 @@ class ExamMode : public Ion::ExamMode::Configuration {
  public:
   using Ruleset = Ion::ExamMode::Ruleset;
 
-  union PressToTestFlags {
+  struct PressToTestFlags {
     bool operator==(const PressToTestFlags& other) const {
-      return value == other.value;
+      return PressToTestUnion{.flags = *this}.value ==
+             PressToTestUnion{.flags = other}.value;
     }
 
-    uint16_t value;
-    struct {
-      bool forbidEquationSolver : 1;
-      bool forbidInequalityGraphing : 1;
-      bool forbidImplicitPlots : 1;
-      bool forbidStatsDiagnostics : 1;
-      bool forbidVectors : 1;
-      bool forbidBasedLogarithm : 1;
-      bool forbidSum : 1;
-      bool forbidExactResults : 1;
-      bool forbidElementsApp : 1;
-    };
+    bool forbidEquationSolver : 1;
+    bool forbidInequalityGraphing : 1;
+    bool forbidImplicitPlots : 1;
+    bool forbidStatsDiagnostics : 1;
+    bool forbidVectors : 1;
+    bool forbidBasedLogarithm : 1;
+    bool forbidSum : 1;
+    bool forbidExactResults : 1;
+    bool forbidElementsApp : 1;
   };
 
   ExamMode() : Configuration() {}
-  explicit ExamMode(Ruleset rules, PressToTestFlags flags = {.value = 0})
-      : Configuration(rules, flags.value) {}
+  explicit ExamMode(Ruleset rules, PressToTestFlags flags = {})
+      : Configuration(rules, PressToTestUnion{.flags = flags}.value) {}
   ExamMode(Configuration config) : Configuration(config) {}
 
-  PressToTestFlags flags() const { return {.value = Configuration::flags()}; }
+  PressToTestFlags flags() const {
+    return PressToTestUnion{.value = Configuration::flags()}.flags;
+  }
 
   // Exam mode permissions
   bool forbidSolverApp() const { return flags().forbidEquationSolver; }
@@ -71,6 +71,12 @@ class ExamMode : public Ion::ExamMode::Configuration {
   bool forbidExactResults() const {
     return flags().forbidExactResults || ruleset() == Ruleset::Dutch;
   }
+
+ private:
+  union PressToTestUnion {
+    Ion::ExamMode::Int value;
+    PressToTestFlags flags;
+  };
 };
 
 static_assert(sizeof(ExamMode) == sizeof(Ion::ExamMode::Configuration),

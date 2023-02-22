@@ -59,7 +59,14 @@ class Polynomial final {
   // Computation
   // Unit normal GCD of coefficients
   // static EditionReference Content(EditionReference polynomial);
-  // Pseudo-division
+  /* Pseudo-division
+   * NB: the order of variables affects the result of the pseudo division.
+   * A = Q*B + R with either deg(R) < deg(Q) or lc(R) is not a divisor of lc(B)
+   * If the second condition stops the iteration, the representation is not
+   * unique. If B is a divisor of A, the process terminates at the unique
+   * representation A = B*Q.
+   * Ex: x^2y^2+x = xy * (xy+1) + x-xy if we consider the variable x first
+   * variable and  x^2y^2+x = (xy-1)*(xy+1) + x+1 if y is the first variable. */
   static std::pair<EditionReference, EditionReference> PseudoDivision(
       EditionReference polA, EditionReference polB);
   // GCD

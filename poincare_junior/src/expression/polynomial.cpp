@@ -183,7 +183,8 @@ static void extractDegreeAndLeadingCoefficient(EditionReference pol,
                                                EditionReference x,
                                                uint8_t* degree,
                                                EditionReference* coefficient) {
-  if (Comparison::AreEqual(x, Polynomial::Variable(pol))) {
+  if (pol.type() == BlockType::Polynomial &&
+      Comparison::AreEqual(x, Polynomial::Variable(pol))) {
     *degree = Polynomial::Degree(pol);
     *coefficient = Polynomial::LeadingCoefficient(pol);
   } else {

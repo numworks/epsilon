@@ -21,10 +21,10 @@ PatternMatching::Context PatternMatching::Match(const Node pattern, Node source,
           static_cast<uint8_t>(*node.block()->next()));
       if (result[placeholder].isUninitialized()) {
         result[placeholder] = source;
-        source = source.nextTree();
       } else if (!result[placeholder].treeIsIdenticalTo(source)) {
         return Context();
       }
+      source = source.nextTree();
     } else {
       if (!node.isIdenticalTo(source)) {
         return Context();

@@ -57,8 +57,7 @@ Configuration::Configuration(Ruleset rules, Int flags)
                                   : static_cast<Int>(rules),
                       .clearBit = 0,
                   }} {
-  assert(rules < Ruleset::NumberOfRulesets &&
-         (rules == Ruleset::PressToTest || flags == 0));
+  assert(!isUninitialized());
 }
 
 Ruleset Configuration::ruleset() const {

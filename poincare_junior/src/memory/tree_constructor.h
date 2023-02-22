@@ -91,6 +91,22 @@ template<Block Tag, TreeConcept ...CTS> static consteval auto __NAry(CTS...) {
 template <Block Tag, TreeCompatibleConcept ...CTS> consteval auto NAry(CTS... args) { return __NAry<Tag>(Tree(args)...); }
 
 
+/* The following dummy constructors are here to make the error message clearer
+ * when someone tries to use a Node inside a Tree constructor.
+ * Without these you get "no matching function for call to 'Unary'" and details
+ * on why each candidate concept is unmatched.
+ * With these constructors, they match and then you get a "call to consteval
+ * function ... is not a constant expression" since they are marked consteval.
+ */
+
+template <Block Tag> consteval Node Unary(Node a) { return Tree<>(); }
+
+template <Block Tag> consteval Node Binary(Node a, Node b) { return Tree<>(); }
+
+template <class...Args> concept HasANodeConcept = (false || ... || std::is_same<Node, Args>::value);
+template <Block Tag, class...Args> requires HasANodeConcept<Args...> consteval Node NAry(Args...args) { return Tree<>(); }
+
+
 // Constructors
 
 template <class...Args> consteval auto Fact(Args...args) { return Unary<BlockType::Factorial>(args...); }

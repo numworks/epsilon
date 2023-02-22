@@ -8,6 +8,7 @@
 #include "comparison.h"
 #include "rational.h"
 #include "set.h"
+#include "simplification.h"
 
 namespace PoincareJ {
 
@@ -118,7 +119,7 @@ EditionReference Polynomial::Operation(
               : EditionReference::Push<BlockType::Multiplication>(2);
       op.insertTreeAfterNode(polB);
       op.insertTreeAfterNode(polA);
-      return op;  // TODO: basicReduction
+      return Simplification::SystematicReduction(op);
     }
     return Operation(polB, polA, blockType, operationMonomial,
                      operationMonomialAndReduce);
@@ -403,8 +404,8 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
         /* TODO: if the previous assertion is wrong, we have to multiply
          * children coefficients and addition children exponents. */
         child.replaceTreeByTree(childCoefficient);
-        // TODO: call basicReduction
-        return std::make_pair(expression, childExponent);
+        return std::make_pair(Simplification::SystematicReduction(expression),
+                              childExponent);
       }
       childCoefficient.removeTree();
     }

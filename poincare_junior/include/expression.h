@@ -14,6 +14,8 @@ class Expression final : public Reference {
   }
   using Reference::Reference;
   // TODO : Delete this method and adapt tests ?
+  static Expression Parse(const char* text);
+  static Expression Parse(const Layout* layout);
   static Expression CreateSystematicReduction(void* treeAddress);
   Layout toLayout() const;
   float approximate() const;

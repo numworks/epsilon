@@ -36,6 +36,8 @@ static constexpr Placeholder<PlaceholderTag::C> C;
 
 class Context {
  public:
+  Context(Node a = Node(), Node b = Node(), Node c = Node())
+      : m_array{a, b, c} {}
   Node& operator[](PlaceholderTag placeholder) {
     return m_array[static_cast<uint8_t>(placeholder)];
   }

@@ -2,6 +2,7 @@
 
 #include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/memory/node_iterator.h>
+#include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/memory/value_block.h>
 #include <poincare_junior/src/n_ary.h>
 
@@ -382,18 +383,20 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
     expression.replaceTreeByTree(Node(&OneBlock));
     return std::make_pair(expression, static_cast<uint8_t>(1));
   }
-  BlockType type = expression.type();
-  if (type == BlockType::Power) {
-    Node base = expression.nextNode();
-    Node exponent = base.nextTree();
-    if (Comparison::AreEqual(base, variable) && Integer::IsUint8(exponent)) {
+  PatternMatching::Context ctx(variable);
+  ctx = PatternMatching::Match(
+      KPow(PatternMatching::Placeholders::A, PatternMatching::Placeholders::B),
+      expression, ctx);
+  if (!ctx.isUninitialized()) {
+    Node exponent = ctx[PatternMatching::Placeholders::B];
+    if (Integer::IsUint8(exponent)) {
       uint8_t exp = Integer::Uint8(exponent);
       assert(exp > 1);
       expression.replaceTreeByTree(Node(&OneBlock));
       return std::make_pair(expression, exp);
     }
   }
-  if (type == BlockType::Multiplication) {
+  if (expression.type() == BlockType::Multiplication) {
     for (std::pair<EditionReference, int> indexedRef :
          NodeIterator::Children<Forward, Editable>(expression)) {
       EditionReference child = std::get<EditionReference>(indexedRef);

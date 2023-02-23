@@ -6,6 +6,28 @@
 namespace PoincareJ {
 
 class Polynomial final {
+  /* We opt for the recursive representation.
+   * - Node:
+   *   | P TAG | number of terms | highest exponant | second highest exponant |
+   * ... | number of terms | P TAG |
+   * - Children: the first child is the variable, the others are the
+   * coefficients corresponding at each exponant.
+   *
+   * TODO:
+   * - Polynomial could have no representation and we would just implement
+   *   functions to get the variables, exponents and coefficients dynamically.
+   * - Polynomial could have a monomial (non-recursive) sparse representation.
+   * Would it speed up polynomial algorithms (GCD, Gröbner basis)? Monomial
+   * representation:
+   * - Polynomial P = a0*x0^e0(x0)*x1^e0(x1)*... + a1*x0^e1(x0)*x1^e1(x1)*... +
+   *   n = number of variables
+   *   m = number of terms
+   *   ei(xi) are uint8_t
+   *   a0 are int32_t
+   *  | P TAG | n | m | e0(x0) | e0(x1) | ... | e1(x0) | e1(x1) | ... | a | n *
+   * m | P TAG | This node has n children: the first n children describe the
+   * variables, the next m children describe the coefficients.
+   */
   friend class PolynomialParser;
 
  public:
@@ -40,11 +62,6 @@ class Polynomial final {
   static void RemoveExponentAtIndex(EditionReference polynomial, int index);
 
   // Operations
-  // *x^n
-  // * lambda
-  // monomial c*x^n
-  // si variable != --> polynom(biggest variable) * lambda
-  // si variable == --> plusieurs monomial
   static void AddMonomial(EditionReference polynomial,
                           std::pair<EditionReference, uint8_t> monomial);
   // Operations consume both polynomials
@@ -54,11 +71,6 @@ class Polynomial final {
                                          EditionReference polB);
   static EditionReference Subtraction(EditionReference polA,
                                       EditionReference polB);
-  //
-  // monomial multiplication
-  // Computation
-  // Unit normal GCD of coefficients
-  // static EditionReference Content(EditionReference polynomial);
   /* Pseudo-division
    * NB: the order of variables affects the result of the pseudo division.
    * A = Q*B + R with either deg(R) < deg(Q) or lc(R) is not a divisor of lc(B)
@@ -69,8 +81,7 @@ class Polynomial final {
    * variable and  x^2y^2+x = (xy-1)*(xy+1) + x+1 if y is the first variable. */
   static std::pair<EditionReference, EditionReference> PseudoDivision(
       EditionReference polA, EditionReference polB);
-  // GCD
-  // static Edi
+
  private:
   // Discard null term and potentially discard the polynomial structure
   static EditionReference Sanitize(EditionReference pol);
@@ -89,35 +100,29 @@ class Polynomial final {
 };
 
 class PolynomialParser final {
-  /* TODO: Polynomial could have their own sparse representation to speed up
-   * polynomial GCD, Grobner basis... But this would require to implement their
-   * own operations.
-   */
-
  public:
   static EditionReference GetVariables(const Node expression);
   static EditionReference RecursivelyParse(EditionReference expression,
                                            EditionReference variables,
                                            size_t variableIndex = 0);
-  // static uint8_t Degree(const Node expression, const Node variable);
-  // static EditionReference Coefficient(const Node expression, const Node
-  // variable, uint8_t exponent); static  LeadingCoefficient(const Node
-  // expression, const Node variable);
-  /* Parsing polynomial:
-   * - getVariables
-   * - n0 = degree in x0
-   * - a = coefficient in x0^n
-   * - n1 = degree in x1 of a
-   * - a = coefficent in x1^n1
-   *   when no variable anymore, a = coefficient of x0^n*x1^m
-   *
-   *   DECIDE monomial / recursive*/
+
  private:
   static EditionReference Parse(EditionReference expression,
                                 EditionReference variable);
   static std::pair<EditionReference, uint8_t> ParseMonomial(
       EditionReference expression, EditionReference variable);
 #if 0
+  //static  LeadingCoefficient(const Node expression, const Node variable);
+  // *x^n
+  // * lambda
+  // monomial c*x^n
+  // si variable != --> polynom(biggest variable) * lambda
+  // si variable == --> plusieurs monomial
+  // monomial multiplication
+  // Unit normal GCD of coefficients
+  //static EditionReference Content(EditionReference polynomial);
+  // GCD
+  //static Edi
   Node PolynomialInterpretation
   Node RationalInterpretation --> list of 2 polynomial
   // Set!

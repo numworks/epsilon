@@ -24,7 +24,7 @@ public:
   CodePoint nextCodePoint() { return codePointAt(m_position++); }
   CodePoint previousCodePoint() { return codePointAt(--m_position); }
   void setPosition(size_t index) {
-    assert(0 <= index && index < m_end);
+    assert(0 <= index && index <= m_end);
     m_position = index;
   }
   void setPosition(Node child) {

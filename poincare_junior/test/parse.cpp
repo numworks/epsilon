@@ -21,6 +21,9 @@ QUIZ_CASE(pcj_layout_tokenize) {
   quiz_assert(token.type() == Token::Type::Number && token.length() == 6);
   token = tokenizer.popToken();
   quiz_assert(token.type() == Token::Type::EndOfStream);
+
+  token = Tokenizer("log2"_l, &context).popToken();
+  quiz_assert(token.type() == Token::Type::ReservedFunction && token.length() == 3);
 }
 
 QUIZ_CASE(pcj_aliases_list) {

@@ -77,6 +77,7 @@ void Node::logName(std::ostream & stream) const {
     "ArcCosine",
     "ArcSine",
     "ArcTangent",
+    "Logarithm",
     "RackLayout",
     "FractionLayout",
     "ParenthesisLayout",

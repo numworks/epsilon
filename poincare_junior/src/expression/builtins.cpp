@@ -16,6 +16,8 @@ constexpr AliasesList Builtins::Name(BlockType type) {
       return AliasesLists::k_asinAliases;
     case BlockType::ArcTangent:
       return AliasesLists::k_atanAliases;
+    case BlockType::Logarithm:
+      return "log";
     default:
       assert(false);
       return "";

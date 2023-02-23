@@ -90,6 +90,7 @@ enum class BlockType : uint8_t {
   ArcCosine,
   ArcSine,
   ArcTangent,
+  Logarithm,
   NumberOfExpressions,
   // Layout
   FirstLayout = NumberOfExpressions,

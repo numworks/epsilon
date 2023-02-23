@@ -3,6 +3,7 @@
 // #include "parser.h"
 #include <ion/unicode/utf8_helper.h>
 #include <poincare_junior/src/expression/aliases_list.h>
+#include <poincare_junior/src/expression/builtins.h>
 
 namespace PoincareJ {
 
@@ -379,11 +380,12 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(Node layout, size_
   if (identifierLength == *length) {
     return false;
   }
-  // if (Logarithm::s_functionHelper.aliasesList().contains(string, identifierLength)) {
-    // *returnType = Token::Type::ReservedFunction;
-    // *length = identifierLength;
-    // return true;
-  // }
+  RackLayoutDecoder subString(layout, string, string + identifierLength);
+  if (Builtins::Name(BlockType::Logarithm).contains(&subString)) {
+    *returnType = Token::Type::ReservedFunction;
+    *length = identifierLength;
+    return true;
+  }
   // if (ParsingHelper::IsSpecialIdentifierName(string, identifierLength)) {
     // *returnType = Token::Type::SpecialIdentifier;
     // *length = identifierLength;

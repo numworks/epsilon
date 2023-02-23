@@ -2,10 +2,7 @@
 
 namespace PoincareJ {
 
-//TODO: aliases
-
-const char * Builtins::Name(const Node node) {
-  BlockType type = node.type();
+constexpr AliasesList Builtins::Name(BlockType type) {
   switch (type) {
     case BlockType::Cosine:
       return "cos";
@@ -14,15 +11,19 @@ const char * Builtins::Name(const Node node) {
     case BlockType::Tangent:
       return "tan";
     case BlockType::ArcCosine:
-      return "arccos";
+      return AliasesLists::k_acosAliases;
     case BlockType::ArcSine:
-      return "arcsin";
+      return AliasesLists::k_asinAliases;
     case BlockType::ArcTangent:
-      return "arctan";
+      return AliasesLists::k_atanAliases;
     default:
       assert(false);
       return "";
   }
+}
+
+AliasesList Builtins::Name(const Node node) {
+  return Name(node.type());
 }
 
 }

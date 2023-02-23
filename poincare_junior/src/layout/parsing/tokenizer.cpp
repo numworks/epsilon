@@ -46,7 +46,6 @@ size_t Tokenizer::popWhile(PopTest popTest) {
 }
 
 static bool IsNonDigitalIdentifierMaterial(const CodePoint c) {
-  // CodePointSystem is used to parse dependencies
   return c.isLatinLetter() || c == '_' || c == UCodePointDegreeSign || c == '\'' || c == '"' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
 }
 
@@ -55,8 +54,6 @@ bool Tokenizer::IsIdentifierMaterial(const CodePoint c) {
 }
 
 size_t Tokenizer::popIdentifiersString() {
-  /* An identifier can start with a single UCodePointSystem. */
-  nextCodePoint([](CodePoint cp) { return cp == UCodePointSystem; });
   return popWhile(IsIdentifierMaterial);
 }
 
@@ -152,17 +149,6 @@ Token Tokenizer::popToken() {
    * popNumber and popIdentifiersString). */
   size_t start = m_decoder.position();
 
-  /* A leading UCodePointSystem transforms the next token into its system
-   * counterpart. */
-  bool nextCodePointIsSystem = false;
-  nextCodePoint([](CodePoint cp) { return cp == UCodePointSystem; }, &nextCodePointIsSystem);
-  if (nextCodePointIsSystem) {
-    m_poppingSystemToken = true;
-    Token result = popToken();
-    m_poppingSystemToken = false;
-    return result;
-  }
-
   /* If the next code point is the start of a number, we do not want to pop it
    * because popNumber needs this code point. */
   bool nextCodePointIsNeitherDotNorDigit = true;
@@ -198,13 +184,6 @@ Token Tokenizer::popToken() {
     // }
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();
-    if (m_poppingSystemToken) {
-      /* A system code point was popped, meaning the current identifier is a
-       * system identifier and should begin with a system code point. */
-      CodePoint previousSystemCodePoint = m_decoder.previousCodePoint();
-      assert(previousSystemCodePoint == UCodePointSystem);
-      (void)previousSystemCodePoint;
-    }
     assert(m_numberOfStoredIdentifiers == 0); // assert we're done with previous tokenization
     fillIdentifiersList();
     assert(m_numberOfStoredIdentifiers > 0);
@@ -258,12 +237,8 @@ Token Tokenizer::popToken() {
   case UCodePointMultiplicationSign:
   case UCodePointMiddleDot:
     return Token(Token::Type::Times, layout);
-  case '^': {
-    if (canPopCodePoint(UCodePointLeftSystemParenthesis)) {
-      return Token(Token::Type::CaretWithParenthesis, layout);
-    }
+  case '^':
     return Token(Token::Type::Caret, layout);
-  }
   case '!':
     return Token(Token::Type::Bang, layout);
   case UCodePointNorthEastArrow:
@@ -332,11 +307,6 @@ Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart, size_t * stri
     stringStart = nextTokenStart;
     tokenLength = *stringEnd - stringStart;
     tokenType = stringTokenType(stringStart, &tokenLength);
-    if (m_poppingSystemToken && tokenType == Token::Type::Undefined) {
-      /* Never break up a system identifier into pieces ; it should either be
-       * recognized or throw a syntax error. */
-      break;
-    }
     decoder.nextCodePoint();
     nextTokenStart = decoder.position();
   }
@@ -448,7 +418,6 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t * length) const {
   // }
   bool hasUnitOnlyCodePoint = false; //UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + *length) || UTF8Helper::HasCodePoint(string, '\'', string + *length) || UTF8Helper::HasCodePoint(string, '"', string + *length);
   // if (!hasUnitOnlyCodePoint // CustomIdentifiers can't contain °, ' or "
-      // && !m_poppingSystemToken
       // && (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment
         // || m_parsingContext->context() == nullptr
         // || m_parsingContext->context()->expressionTypeForIdentifier(string, *length) != Context::SymbolAbstractType::None)) {

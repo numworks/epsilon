@@ -9,10 +9,6 @@ namespace Poincare {
 
 class SquareBracketPairLayoutNode : public BracketPairLayoutNode {
  public:
-  static bool IsSquareBracketPairType(Type type) {
-    return type == Type::AbsoluteValueLayout || type == Type::CeilingLayout ||
-           type == Type::FloorLayout || type == Type::VectorNormLayout;
-  }
   static void RenderWithChildSize(bool left, KDCoordinate childHeight,
                                   KDContext* ctx, KDPoint p,
                                   KDColor expressionColor,

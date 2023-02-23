@@ -113,7 +113,11 @@ bool Layout::shouldCollapseSiblingsOnRight() const {
   return type() == LayoutNode::Type::ConjugateLayout ||
          type() == LayoutNode::Type::FractionLayout ||
          type() == LayoutNode::Type::NthRootLayout ||
-         SquareBracketPairLayoutNode::IsSquareBracketPairType(type());
+         // SquareBracketPairLayouts
+         type() == LayoutNode::Type::AbsoluteValueLayout ||
+         type() == LayoutNode::Type::CeilingLayout ||
+         type() == LayoutNode::Type::FloorLayout ||
+         type() == LayoutNode::Type::VectorNormLayout;
 }
 
 Layout Layout::childAtIndex(int i) const {

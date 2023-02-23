@@ -1,0 +1,23 @@
+#include <quiz.h>
+#include <poincare_junior/include/expression.h>
+#include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/expression/constructor.h>
+#include <poincare_junior/src/layout/constructor.h>
+#include <poincare_junior/src/layout/parsing/tokenizer.h>
+
+using namespace PoincareJ;
+
+QUIZ_CASE(pcj_layout_tokenize) {
+  ParsingContext context(ParsingContext::ParsingMethod::Classic);
+  Tokenizer tokenizer("ab*123.45"_l, &context);
+  Token token = tokenizer.popToken();
+  quiz_assert(token.type() == Token::Type::CustomIdentifier && token.length() == 1);
+  token = tokenizer.popToken();
+  quiz_assert(token.type() == Token::Type::CustomIdentifier && token.length() == 1);
+  token = tokenizer.popToken();
+  quiz_assert(token.type() == Token::Type::Times && token.length() == 1);
+  token = tokenizer.popToken();
+  quiz_assert(token.type() == Token::Type::Number && token.length() == 6);
+  token = tokenizer.popToken();
+  quiz_assert(token.type() == Token::Type::EndOfStream);
+}

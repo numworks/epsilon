@@ -51,6 +51,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   memory_elements.cpp \
   memory_edition.cpp \
   memory_cache.cpp \
+  parse.cpp \
   polynomial.cpp \
   set.cpp \
   tree_constructor.cpp \

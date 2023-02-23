@@ -91,17 +91,16 @@ class LayoutCursor final {
                          bool* shouldRedrawLayout);
 
   /* Layout insertion */
-  void insertLayoutAtCursor(Layout layout, Context* context,
-                            bool forceRight = false, bool forceLeft = false);
-  void addEmptyExponentialLayout(Context* context);
-  void addEmptyMatrixLayout(Context* context);
-  void addEmptyPowerLayout(Context* context);
-  void addEmptySquareRootLayout(Context* context);
-  void addEmptySquarePowerLayout(Context* context);
-  void addEmptyTenPowerLayout(Context* context);
-  void addFractionLayoutAndCollapseSiblings(Context* context);
-  void insertText(const char* text, Context* context,
-                  bool forceCursorRightOfText = false,
+  void insertLayoutAtCursor(Layout layout, bool forceRight = false,
+                            bool forceLeft = false);
+  void addEmptyExponentialLayout();
+  void addEmptyMatrixLayout();
+  void addEmptyPowerLayout();
+  void addEmptySquareRootLayout();
+  void addEmptySquarePowerLayout();
+  void addEmptyTenPowerLayout();
+  void addFractionLayoutAndCollapseSiblings();
+  void insertText(const char* text, bool forceCursorRightOfText = false,
                   bool forceCursorLeftOfText = false, bool linearMode = false);
 
   /* Layout deletion */

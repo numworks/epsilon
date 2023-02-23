@@ -31,7 +31,7 @@ void assert_inserted_layout_points_to(Layout layoutToInsert,
 
   /* LayoutField forces right of layout when expression has 0 children.
    * We mimic this behaviour here. */
-  c.insertLayoutAtCursor(layoutToInsert, nullptr,
+  c.insertLayoutAtCursor(layoutToInsert,
                          !correspondingExpression.isUninitialized() &&
                              correspondingExpression.numberOfChildren() == 0);
 
@@ -177,8 +177,8 @@ QUIZ_CASE(poincare_layout_parentheses) {
   {
     Layout l = HorizontalLayout::Builder();
     LayoutCursor c(l);
-    c.insertText("(", nullptr);
-    c.insertText(")", nullptr);
+    c.insertText("(");
+    c.insertText(")");
     assert_layout_serialize_to(l, "()");
     assert_cursor_is_at(c, l, l.numberOfChildren());
     quiz_assert(c.layout() == l && c.position() == l.numberOfChildren());
@@ -190,8 +190,8 @@ QUIZ_CASE(poincare_layout_parentheses) {
   {
     Layout l = HorizontalLayout::Builder();
     LayoutCursor c(l);
-    c.insertText(")", nullptr);
-    c.insertText("(", nullptr);
+    c.insertText(")");
+    c.insertText("(");
     assert_layout_serialize_to(l, "()()");
     assert_cursor_is_at(c, l.childAtIndex(1).childAtIndex(0), 0);
   }
@@ -202,8 +202,8 @@ QUIZ_CASE(poincare_layout_parentheses) {
   {
     Layout l = HorizontalLayout::Builder();
     LayoutCursor c(l);
-    c.insertText("(", nullptr);
-    c.insertText("(", nullptr);
+    c.insertText("(");
+    c.insertText("(");
     assert_layout_serialize_to(l, "(())");
     assert_cursor_is_at(
         c, l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0),
@@ -220,7 +220,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
          CodePointLayout::Builder('5')});
     LayoutCursor c(l);
     c.setPosition(2);
-    c.insertText("(", nullptr);
+    c.insertText("(");
     assert_layout_serialize_to(l, "12(345)");
     assert_cursor_is_at(c, l.childAtIndex(2).childAtIndex(0), 0);
   }
@@ -236,7 +236,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
             VerticalOffsetLayoutNode::VerticalPosition::Superscript));
     LayoutCursor c(l);
     c.setPosition(1);
-    c.insertText("(", nullptr);
+    c.insertText("(");
     assert_layout_serialize_to(l, "2(^\u00123\u0013)");
     assert_cursor_is_at(c, l.childAtIndex(1).childAtIndex(0), 0);
   }
@@ -304,7 +304,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
         l.childAtIndex(0).childAtIndex(0).childAtIndex(0).node())
         ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
     LayoutCursor c(l.childAtIndex(0).childAtIndex(0), OMG::Direction::Right());
-    c.insertText(")", nullptr);
+    c.insertText(")");
     assert_layout_serialize_to(l, "√\u0012(3)\u0013");
     assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0), 1);
   }
@@ -316,7 +316,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
     static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())
         ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
     LayoutCursor c(l, OMG::Direction::Left());
-    c.insertLayoutAtCursor(CurlyBraceLayout::Builder(), nullptr);
+    c.insertLayoutAtCursor(CurlyBraceLayout::Builder());
     assert_layout_serialize_to(l, "{}{}");
     assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0), 0);
   }

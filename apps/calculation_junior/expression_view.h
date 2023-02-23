@@ -4,8 +4,7 @@
 #include <escher/glyphs_view.h>
 #include <kandinsky/color.h>
 #include <poincare_junior/include/layout.h>
-
-#include "layout_selection.h"
+#include <poincare_junior/src/layout/layout_selection.h>
 
 // TODO : Rename this class LayoutView
 
@@ -33,8 +32,9 @@ class ExpressionView : public Escher::GlyphsView {
   mutable PoincareJ::Layout m_layout;
 
  private:
-  virtual LayoutSelection selection() const { return LayoutSelection(); }
-
+  virtual PoincareJ::LayoutSelection selection() const {
+    return PoincareJ::LayoutSelection();
+  }
   KDCoordinate m_horizontalMargin;
 };
 
@@ -50,7 +50,7 @@ class ExpressionViewWithCursor : public ExpressionView {
   }
 
  private:
-  LayoutSelection selection() const override {
+  PoincareJ::LayoutSelection selection() const override {
     return m_cursor->selection();
   }
   Poincare::LayoutCursor* m_cursor;

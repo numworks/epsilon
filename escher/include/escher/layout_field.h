@@ -102,9 +102,6 @@ class LayoutField : public WithBlinkingTextCursor<ScrollableView>,
   void insertLayoutAtCursor(Poincare::Layout layoutR,
                             bool forceCursorRightOfLayout = false,
                             bool forceCursorLeftOfLayout = false);
-  Poincare::Context* delegateContext() {
-    return m_delegate ? m_delegate->context() : nullptr;
-  }
   TextCursorView* textCursorView() override {
     return m_contentView.textCursorView();
   }

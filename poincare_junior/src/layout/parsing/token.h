@@ -68,6 +68,7 @@ public:
   };
 
   Token(Type type = Type::Undefined) : m_type(type), m_firstLayout(), m_length(0) {};
+  Token(Type type, Node layout, size_t length = 1) : m_type(type), m_firstLayout(layout), m_length(length) {};
 
   Type type() const { return m_type; }
   void setType(Type t) { m_type = t; }

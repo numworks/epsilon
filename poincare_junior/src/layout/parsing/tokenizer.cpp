@@ -143,9 +143,7 @@ Token Tokenizer::popToken() {
   while (canPopCodePoint(' ')) {}
 
   if (!m_decoder.nextLayoutIsCodePoint()) {
-    Token result(Token::Type::Layout);
-    result.setRange(m_decoder.nextLayout(), 1);
-    return result;
+    return Token(Token::Type::Layout, m_decoder.nextLayout());
   }
   
   /* Save for later use (since m_decoder.position() is altered by
@@ -176,24 +174,18 @@ Token Tokenizer::popToken() {
     if (m_parsingContext->parsingMethod() != ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
       size_t lengthOfImplicitAdditionBetweenUnits = popImplicitAdditionBetweenUnits();
       if (lengthOfImplicitAdditionBetweenUnits > 0) {
-        Token result = Token(Token::Type::ImplicitAdditionBetweenUnits);
-        result.setRange(m_decoder.layoutAt(start), lengthOfImplicitAdditionBetweenUnits);
-        return result;
+        return Token(Token::Type::ImplicitAdditionBetweenUnits, m_decoder.layoutAt(start), lengthOfImplicitAdditionBetweenUnits);
       }
     }
     // Pop number
     return popNumber();
   }
 
-  if (c == UCodePointGreekSmallLetterPi)
-  {
-    Token result(Token::Type::Constant);
-    result.setRange(m_decoder.layoutAt(start), UTF8Decoder::CharSizeOfCodePoint(c));
-    return result;
+  if (c == UCodePointGreekSmallLetterPi) {
+    return Token(Token::Type::Constant, m_decoder.layoutAt(start));
   }
 
-  if (IsIdentifierMaterial(c))
-  {
+  if (IsIdentifierMaterial(c)) {
     // if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
       /* If currently popping an implicit addition, we have already
        * checked that any identifier is a unit. */
@@ -233,7 +225,7 @@ Token Tokenizer::popToken() {
     /* The dot code point is the second last of that range, but it is matched
      * before (with popNumber). */
     assert(c != '.');
-    return Token(typeForCodePoint[c - '(']);
+    return Token(typeForCodePoint[c - '('], m_decoder.layoutAt(start));
   }
 
   // ComparisonNode::OperatorType comparisonOperatorType;
@@ -254,54 +246,48 @@ Token Tokenizer::popToken() {
     // return result;
   // }
 
+  if (c == 0) {
+    return Token(Token::Type::EndOfStream);
+  }
+
+  // All the remaining cases are single codepoint tokens
+  Node layout = m_decoder.layoutAt(start);
   switch (c) {
   case UCodePointMultiplicationSign:
   case UCodePointMiddleDot:
-    return Token(Token::Type::Times);
-  // case UCodePointLeftSystemParenthesis:
-    // return Token(Token::Type::LeftSystemParenthesis);
-  // case UCodePointRightSystemParenthesis:
-    // return Token(Token::Type::RightSystemParenthesis);
+    return Token(Token::Type::Times, layout);
   case '^': {
     if (canPopCodePoint(UCodePointLeftSystemParenthesis)) {
-      return Token(Token::Type::CaretWithParenthesis);
+      return Token(Token::Type::CaretWithParenthesis, layout);
     }
-    return Token(Token::Type::Caret);
+    return Token(Token::Type::Caret, layout);
   }
   case '!':
-    return Token(Token::Type::Bang);
+    return Token(Token::Type::Bang, layout);
   case UCodePointNorthEastArrow:
-    return Token(Token::Type::NorthEastArrow);
+    return Token(Token::Type::NorthEastArrow, layout);
   case UCodePointSouthEastArrow:
-    return Token(Token::Type::SouthEastArrow);
+    return Token(Token::Type::SouthEastArrow, layout);
   case '%':
-    return Token(Token::Type::Percent);
+    return Token(Token::Type::Percent, layout);
   case '[':
-    return Token(Token::Type::LeftBracket);
+    return Token(Token::Type::LeftBracket, layout);
   case ']':
-    return Token(Token::Type::RightBracket);
+    return Token(Token::Type::RightBracket, layout);
   case '{':
-    return /*m_poppingSystemToken ? Token(Token::Type::LeftSystemBrace) :*/ Token(Token::Type::LeftBrace);
+    return Token(Token::Type::LeftBrace, layout);
   case '}':
-    return /*m_poppingSystemToken ? Token(Token::Type::RightSystemBrace) :*/ Token(Token::Type::RightBrace);
-  case UCodePointSquareRoot: {
-    Token result(Token::Type::ReservedFunction);
-    result.setRange(m_decoder.layoutAt(start), UTF8Decoder::CharSizeOfCodePoint(c));
-    return result;
-  }
+    return Token(Token::Type::RightBrace, layout);
+  case UCodePointSquareRoot:
+    return Token(Token::Type::ReservedFunction, layout);
   case UCodePointEmpty:
-    return Token(Token::Type::Empty);
+    return Token(Token::Type::Empty, layout);
   case UCodePointRightwardsArrow:
-    return Token(Token::Type::RightwardsArrow);
-  case UCodePointInfinity: {
-    Token result = Token(Token::Type::SpecialIdentifier);
-    result.setRange(m_decoder.layoutAt(start), UTF8Decoder::CharSizeOfCodePoint(UCodePointInfinity));
-    return result;
-  }
-  case 0:
-    return Token(Token::Type::EndOfStream);
+    return Token(Token::Type::RightwardsArrow, layout);
+  case UCodePointInfinity:
+    return Token(Token::Type::SpecialIdentifier, layout);
   default:
-    return Token(Token::Type::Undefined);
+    return Token(Token::Type::Undefined, layout);
   }
 }
 
@@ -363,9 +349,7 @@ Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart, size_t * stri
     m_numberOfStoredIdentifiers = 0;
   }
   *stringEnd = stringStart;
-  Token result(tokenType);
-  result.setRange(m_decoder.layoutAt(stringStart), tokenLength);
-  return result;
+  return Token(tokenType, m_decoder.layoutAt(stringStart), tokenLength);
 }
 
 static bool stringIsACodePointFollowedByNumbers(Node layout, size_t string, size_t length) {

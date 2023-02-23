@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/constructor.h>
 #include <poincare_junior/src/layout/constructor.h>
 #include <poincare_junior/src/layout/parsing/tokenizer.h>
+#include <poincare_junior/src/expression/aliases_list.h>
 
 using namespace PoincareJ;
 
@@ -20,4 +21,10 @@ QUIZ_CASE(pcj_layout_tokenize) {
   quiz_assert(token.type() == Token::Type::Number && token.length() == 6);
   token = tokenizer.popToken();
   quiz_assert(token.type() == Token::Type::EndOfStream);
+}
+
+QUIZ_CASE(pcj_aliases_list) {
+  Node layout = "acos"_l;
+  RackLayoutDecoder decoder(layout);
+  quiz_assert(AliasesLists::k_acosAliases.contains(&decoder));
 }

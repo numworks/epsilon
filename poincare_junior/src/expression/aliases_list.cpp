@@ -3,16 +3,33 @@
 
 namespace PoincareJ {
 
-int AliasesList::maxDifferenceWith(const char* alias, int aliasLen) const {
+static int CompareDecoders(UnicodeDecoder * a, UnicodeDecoder * b) {
+  while (CodePoint c = a->nextCodePoint()) {
+    CodePoint d = b->nextCodePoint();
+    if (c != d) {
+      return c - d;
+    }
+  }
+  return b->nextCodePoint();
+}
+
+static int CompareDecoderWithNullTerminatedString(UnicodeDecoder * decoder, const char * string) {
+  // TODO this UnicodeDecoder API is aweful
+  size_t position = decoder->position();
+  UTF8Decoder stringDecoder(string);
+  int result = CompareDecoders(decoder, &stringDecoder);
+  decoder->unsafeSetPosition(position);
+  return result;
+}
+
+int AliasesList::maxDifferenceWith(UnicodeDecoder * decoder) const {
   if (!hasMultipleAliases()) {
-    return UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
-        alias, aliasLen, m_formattedAliasesList);
+    return CompareDecoderWithNullTerminatedString(decoder, m_formattedAliasesList);
   }
   int maxValueOfComparison = 0;
   for (const char* aliasInList : *this) {
     int tempValueOfComparison =
-        UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
-            alias, aliasLen, aliasInList);
+        CompareDecoderWithNullTerminatedString(decoder, aliasInList);
     if (tempValueOfComparison == 0) {
       return 0;
     }

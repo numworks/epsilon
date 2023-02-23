@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <ion/unicode/utf8_decoder.h>
 
 /* This class is used to handle name's aliases for reserved functions, units
  * and constants.
@@ -34,15 +35,13 @@ class AliasesList {
  public:
   constexpr AliasesList(const char* formattedAliasesList)
       : m_formattedAliasesList(formattedAliasesList) {}
-  constexpr operator const char*() const { return m_formattedAliasesList; }
 
   constexpr const char* mainAlias() const {
     return m_formattedAliasesList + hasMultipleAliases();
   }
 
-  bool contains(const char* alias, int aliasLen = -1) const {
-    return maxDifferenceWith(alias, aliasLen > -1 ? aliasLen : strlen(alias)) ==
-           0;
+  bool contains(UnicodeDecoder * decoder) const {
+    return maxDifferenceWith(decoder) == 0;
   }
   bool isEquivalentTo(AliasesList otherList) {
     return strcmp(mainAlias(), otherList.mainAlias()) == 0;
@@ -51,7 +50,7 @@ class AliasesList {
   /* Return 0 if name is alias of this,
    * else, return the max difference value between name and the aliases
    * of this. */
-  int maxDifferenceWith(const char* alias, int aliasLen) const;
+  int maxDifferenceWith(UnicodeDecoder * decoder) const;
 
   /* You can iterate through the names list with syntax:
    * for (const char * alias : name ) {} */

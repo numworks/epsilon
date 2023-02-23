@@ -1,5 +1,5 @@
-#ifndef POINCARE_LAYOUT_RENDER_H
-#define POINCARE_LAYOUT_RENDER_H
+#ifndef POINCARE_JUNIOR_LAYOUT_RENDER_H
+#define POINCARE_JUNIOR_LAYOUT_RENDER_H
 
 #include <poincare_junior/src/memory/node.h>
 #include <kandinsky/font.h>

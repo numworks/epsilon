@@ -1,5 +1,5 @@
-#ifndef POINCARE_FRACTION_LAYOUT_H
-#define POINCARE_FRACTION_LAYOUT_H
+#ifndef POINCARE_JUNIOR_FRACTION_LAYOUT_H
+#define POINCARE_JUNIOR_FRACTION_LAYOUT_H
 
 #include "render.h"
 #include <escher/metric.h>

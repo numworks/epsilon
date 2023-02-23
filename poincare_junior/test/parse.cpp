@@ -24,6 +24,9 @@ QUIZ_CASE(pcj_layout_tokenize) {
 
   token = Tokenizer("log2"_l, &context).popToken();
   quiz_assert(token.type() == Token::Type::ReservedFunction && token.length() == 3);
+
+  token = Tokenizer("tantan"_l, &context).popToken();
+  quiz_assert(token.type() == Token::Type::ReservedFunction && token.length() == 3);
 }
 
 QUIZ_CASE(pcj_aliases_list) {

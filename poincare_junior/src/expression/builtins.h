@@ -10,6 +10,7 @@ class Builtins {
 public:
   constexpr static AliasesList Name(BlockType type);
   static AliasesList Name(const Node block);
+  static bool HasReservedFunction(UnicodeDecoder * name);
 };
 
 }

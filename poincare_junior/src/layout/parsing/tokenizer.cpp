@@ -438,9 +438,9 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t * length) const {
      * (3->min is not allowed, just like 3->cos) */
     // return *(string + *length) == '(' ? Token::Type::ReservedFunction : Token::Type::Unit;
   // }
-  // if (ParsingHelper::GetReservedFunction(string, *length) != nullptr) {
-    // return Token::Type::ReservedFunction;
-  // }
+  if (Builtins::HasReservedFunction(&subString)) {
+    return Token::Type::ReservedFunction;
+  }
   /* When parsing for unit conversion, the identifier "m" should always
    * be understood as the unit and not the variable. */
   // if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string, *length, nullptr, nullptr)) {

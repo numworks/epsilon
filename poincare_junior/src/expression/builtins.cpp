@@ -2,6 +2,21 @@
 
 namespace PoincareJ {
 
+/* TODO Choose between the map and the switch, and sort along one of the two
+ * keys to enable dichotomy. Devise a pattern for maps and move it in OMG. */
+
+static std::pair<BlockType, AliasesList> s_builtins[] = {
+  { BlockType::Cosine, "cos" },
+  { BlockType::Sine, "sin" },
+  { BlockType::Tangent, "tan" },
+  { BlockType::ArcCosine, AliasesLists::k_acosAliases },
+  { BlockType::ArcSine, AliasesLists::k_asinAliases },
+  { BlockType::ArcTangent, AliasesLists::k_atanAliases },
+  { BlockType::Logarithm, "log" },
+};
+
+static int s_builtinsLength = sizeof(s_builtins) / sizeof(std::pair<BlockType, AliasesList>);
+
 constexpr AliasesList Builtins::Name(BlockType type) {
   switch (type) {
     case BlockType::Cosine:
@@ -26,6 +41,15 @@ constexpr AliasesList Builtins::Name(BlockType type) {
 
 AliasesList Builtins::Name(const Node node) {
   return Name(node.type());
+}
+
+bool Builtins::HasReservedFunction(UnicodeDecoder * name) {
+  for (auto [block, aliases] : s_builtins) {
+    if (aliases.contains(name)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 }

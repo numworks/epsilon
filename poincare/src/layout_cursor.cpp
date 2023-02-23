@@ -29,7 +29,6 @@ void LayoutCursor::setPosition(int position) {
 KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) {
   LayoutSelection currentSelection = selection();
   if (currentSelection.isEmpty()) {
-    Layout baseLayout = layoutToFit(font);
     return layoutToFit(font).layoutSize(font).height();
   }
 

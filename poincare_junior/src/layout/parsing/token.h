@@ -19,8 +19,6 @@ public:
     EndOfStream = 0, // Must be the first
     RightwardsArrow,
     AssignmentEqual,
-    // RightSystemParenthesis,
-    // RightSystemBrace,
     RightBracket,
     RightParenthesis,
     RightBrace,
@@ -52,8 +50,6 @@ public:
     LeftBracket,
     LeftParenthesis,
     LeftBrace,
-    // LeftSystemParenthesis,
-    // LeftSystemBrace,
     Empty,
     Constant,
     Number,

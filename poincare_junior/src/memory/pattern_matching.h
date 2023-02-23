@@ -53,7 +53,7 @@ namespace PatternMatching {
   };
 
   Context Match(const Node pattern, Node source, Context context = Context());
-  EditionReference Create(const Node structure, const Context context);
+  EditionReference Create(const Node structure, const Context context = Context());
 };
 
 template <PatternMatching::PlaceholderTag P> Tree(PatternMatching::Placeholder<P>) -> Tree<BlockType::Placeholder, static_cast<uint8_t>(P), BlockType::Placeholder>;

@@ -3,10 +3,10 @@
 
 namespace Poincare {
 
-OMG::GlobalBox<Preferences> s_sharedPreferences;
+OMG::GlobalBox<Preferences> s_SharedPreferences();
 
-void Preferences::Init() { s_sharedPreferences.init(); }
+void Preferences::Init() { s_SharedPreferences().init(); }
 
-Preferences* Preferences::SharedPreferences() { return s_sharedPreferences; }
+Preferences* Preferences::SharedPreferences() { return s_SharedPreferences(); }
 
 }  // namespace Poincare

@@ -140,6 +140,7 @@ template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Multiplication, int>(int);
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Constant, char16_t>(char16_t);
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Power>();
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Factorial>();
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Subtraction>();
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Division>();
 template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::IntegerShort>(int8_t);

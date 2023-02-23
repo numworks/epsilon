@@ -24,6 +24,7 @@ public:
   Token popToken();
 
   // Rewind tokenizer
+  void goToPosition(size_t position) { m_decoder.setPosition(position); }
   size_t currentPosition() { return m_decoder.position(); }
   size_t endPosition() { return m_decoder.end(); }
 

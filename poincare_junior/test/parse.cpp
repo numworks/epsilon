@@ -4,6 +4,7 @@
 #include <poincare_junior/src/expression/constructor.h>
 #include <poincare_junior/src/layout/constructor.h>
 #include <poincare_junior/src/layout/parsing/tokenizer.h>
+#include <poincare_junior/src/layout/parsing/parser.h>
 
 using namespace PoincareJ;
 
@@ -29,4 +30,8 @@ QUIZ_CASE(pcj_layout_tokenize) {
 
   token = Tokenizer("atan"_l, &context).popToken();
   quiz_assert(token.type() == Token::Type::ReservedFunction && token.length() == 4);
+}
+
+QUIZ_CASE(pcj_layout_parse) {
+  Parser("2(2+3+2*2)"_l).parse().log();
 }

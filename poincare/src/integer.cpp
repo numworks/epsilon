@@ -461,8 +461,8 @@ Integer Integer::RandomInt(const Integer &a, const Integer &b) {
     rand = Ion::random() & ((static_cast<double_native_uint_t>(1) << k) - 1);
   } while (rand > lastDigit && counter++ < k_maxNumberOfDraws);
   if (rand > lastDigit) {
-    // Too many iterations, prevent from slowing everything down
-    return Integer::Overflow(false);
+    // Introduce a tiny bias not to slow down too much some computation
+    rand = rand >> 1;
   }
   s_workingBuffer[nbOfDigits - 1] = rand;
   while (nbOfDigits > 0 && s_workingBuffer[nbOfDigits - 1] == 0) {

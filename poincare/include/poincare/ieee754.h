@@ -78,12 +78,6 @@ class IEEE754 final {
     return exponentBase10;
   }
 
- private:
-  union uint_float {
-    uint64_t ui;
-    T f;
-  };
-
   constexpr static size_t k_signNbBits = 1;
   constexpr static size_t k_exponentNbBits =
       sizeof(T) == sizeof(float) ? 8 : 11;
@@ -91,6 +85,12 @@ class IEEE754 final {
       sizeof(T) == sizeof(float) ? 23 : 52;
   constexpr static size_t k_totalNumberOfBits =
       k_signNbBits + k_exponentNbBits + k_mantissaNbBits;
+
+ private:
+  union uint_float {
+    uint64_t ui;
+    T f;
+  };
 };
 
 }  // namespace Poincare

@@ -74,16 +74,16 @@ public:
     return exponentBase10;
   }
 
+  constexpr static size_t k_signNbBits = 1;
+  constexpr static size_t k_exponentNbBits = sizeof(T) == sizeof(float) ? 8 : 11;
+  constexpr static size_t k_mantissaNbBits = sizeof(T) == sizeof(float) ? 23 : 52;
+  constexpr static size_t k_totalNumberOfBits = k_signNbBits+k_exponentNbBits+k_mantissaNbBits;
+
 private:
   union uint_float {
     uint64_t ui;
     T f;
   };
-
-  constexpr static size_t k_signNbBits = 1;
-  constexpr static size_t k_exponentNbBits = sizeof(T) == sizeof(float) ? 8 : 11;
-  constexpr static size_t k_mantissaNbBits = sizeof(T) == sizeof(float) ? 23 : 52;
-  constexpr static size_t k_totalNumberOfBits = k_signNbBits+k_exponentNbBits+k_mantissaNbBits;
 };
 
 }

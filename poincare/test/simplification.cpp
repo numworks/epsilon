@@ -1077,8 +1077,10 @@ QUIZ_CASE(poincare_simplification_random) {
 }
 
 QUIZ_CASE(poincare_simplification_randint) {
-  // Randint is not simplified
-  assert_parsed_expression_simplify_to("randint(1,3)", "randint(1,3)");
+  // assert_parsed_expression_simplify_to("randint(1,1)", "1", User);
+  //  Randint is not simplified if ReductionTarget = SystemForApproximation
+  assert_parsed_expression_simplify_to("randint(1,3)", "randint(1,3)",
+                                       SystemForApproximation);
 }
 
 QUIZ_CASE(poincare_simplification_function) {

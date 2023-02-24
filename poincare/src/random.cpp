@@ -1,6 +1,7 @@
 #include <poincare/random.h>
 #include <poincare/complex.h>
 #include <ion.h>
+#include <poincare/ieee754.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <assert.h>
@@ -22,17 +23,35 @@ template <typename T> Evaluation<T> RandomNode::templateApproximate() const {
   return Complex<T>::Builder(Random::random<T>());
 }
 
-template<typename T> T Random::random() {
+template <typename T> T Random::random() {
+  /* source: Frédéric Goualard. Generating Random Floating-Point Numbers by
+   * Dividing Integers: a Case Study. Proceedings of ICCS 2020, Jun 2020,
+   * Amsterdam, Netherlands. ffhal-02427338
+   *
+   * Random number in [0,1) is obtained by dividing a random integer x in
+   * [0,2^k) by 2^k.
+   * - Assumption (1): k has to be a power of 2
+   * - Assumption (2): k <= p with p the number of bits in mantissa + 1 (p = 24
+   *   for float, p = 53 for double)
+   * Otherwise the division x/2^k can be unrepresentable (because not dyadic (1)
+   * or in-between two consecutive representables float (2)). If so, the
+   * rounding to obtain floats lead to bias in the distribution.
+   * The major con of this method is that we sample only among 1.5% (or 0.2%
+   * for double) of representable floats in [0,1)...
+   * TODO: find a way to be able to draw any float in [0,1)? */
+
+  size_t p = IEEE754<T>::k_mantissaNbBits + 1;
   if (sizeof(T) == sizeof(float)) {
-    uint32_t r = Ion::random();
-    return (float)r/(float)(0xFFFFFFFF);
+    uint32_t r = Ion::random() & ((1 << p) - 1);
+    return static_cast<float>(r) / static_cast<float>((1 << p));
   } else {
     assert(sizeof(T) == sizeof(double));
     uint64_t r;
     uint32_t * rAddress = (uint32_t *)&r;
     *rAddress = Ion::random();
-    *(rAddress+1) = Ion::random();
-    return (double)r/(double)(0xFFFFFFFFFFFFFFFF);
+    *(rAddress + 1) = Ion::random() & ((1 << (p - OMG::BitHelper::k_numberOfBitsInUint32)) - 1);
+    return static_cast<double>(r) /
+           static_cast<double>((static_cast<uint64_t>(1) << p));
   }
 }
 

@@ -145,13 +145,14 @@ public:
     return (NaturalOrder(*this, other) < 0);
   }
 
-    // Arithmetic
+  // Arithmetic
   static Integer Addition(const Integer & i, const Integer & j) { return addition(i, j, false); }
   static Integer Subtraction(const Integer & i, const Integer & j) { return addition(i, j, true); }
   static Integer Multiplication(const Integer & i, const Integer & j) { return multiplication(i, j); }
   static IntegerDivision Division(const Integer & numerator, const Integer & denominator);
   static Integer Power(const Integer & i, const Integer & j);
   static Integer Factorial(const Integer & i);
+  static Integer RandomInt(const Integer &a, const Integer &b);
 
   // Derived expression builder
   static Expression CreateEuclideanDivision(const Integer & num, const Integer & denom);

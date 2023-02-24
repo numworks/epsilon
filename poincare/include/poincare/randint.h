@@ -48,8 +48,6 @@ private:
 class Randint final : public ExpressionUpToTwoChildren<Randint,RandintNode> {
 friend class RandintNode;
 public:
-  // Return a random integer in [a,b]
-  static int RandomInt(int a, int b) { return std::floor(Random::random<float>() * (b + 1 - a) + a); }
   using ExpressionBuilder::ExpressionBuilder;
 
   Expression shallowReduce(ReductionContext reductionContext);

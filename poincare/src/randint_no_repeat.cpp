@@ -54,7 +54,9 @@ Evaluation<T> RandintNoRepeatNode::templatedApproximate(
    *    For instance, if r = 2, it maps to 4. */
   ListComplex<T> sorted = ListComplex<T>::Builder();
   for (int i = 0; i < n; i++) {
-    int r = Randint::RandomInt(a, b - i);
+    int r = Integer::RandomInt(static_cast<native_int_t>(a),
+                               static_cast<native_int_t>(b - i))
+                .extractedInt();
     assert(sorted.numberOfChildren() == i);
     int insertionIndex = i;
     for (int j = 0; j < i; j++) {
@@ -73,7 +75,8 @@ Evaluation<T> RandintNoRepeatNode::templatedApproximate(
   /* Then, shuffle the list. */
   ListComplex<T> result = ListComplex<T>::Builder();
   for (int i = 0; i < n; i++) {
-    int r = Randint::RandomInt(0, n - 1 - i);
+    int r = Integer::RandomInt(0, static_cast<native_int_t>(n - 1 - i))
+                .extractedInt();
     Evaluation<T> e = sorted.childAtIndex(r);
     sorted.removeChildInPlace(e, 0);
     result.addChildAtIndexInPlace(e, i, i);

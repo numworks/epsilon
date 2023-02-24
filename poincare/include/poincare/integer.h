@@ -195,6 +195,7 @@ class Integer final : public TreeHandle {
                                   const Integer &denominator);
   static Integer Power(const Integer &i, const Integer &j);
   static Integer Factorial(const Integer &i);
+  static Integer RandomInt(const Integer &a, const Integer &b);
 
   // Derived expression builder
   static Expression CreateEuclideanDivision(const Integer &num,

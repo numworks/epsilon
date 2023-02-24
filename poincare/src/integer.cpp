@@ -1,5 +1,4 @@
-#include <ion/unicode/utf8_decoder.h>
-#include <ion/unicode/utf8_helper.h>
+#include <ion.h>
 #include <poincare/addition.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/comparison.h>
@@ -435,6 +434,42 @@ Integer Integer::Factorial(const Integer &i) {
     j = usum(j, Integer(1), false);
   }
   return result;
+}
+
+Integer Integer::RandomInt(const Integer &a, const Integer &b) {
+  if (NaturalOrder(a, b) > 0) {
+    return Integer::Overflow(false);
+  }
+  Integer range = Integer::Subtraction(b, a);
+  if (range.isZero()) {
+    return a;
+  }
+  // Fill each 'full' digits with random bits
+  for (uint8_t i = 0; i < range.numberOfDigits() - 1; i++) {
+    s_workingBuffer[i] = Ion::random();
+  }
+  size_t nbOfDigits = range.numberOfDigits();
+  native_uint_t lastDigit = range.digit(nbOfDigits - 1);
+  /* For the 'not-full' digit, we find the smallest k where last_digit <= 2^k,
+   * and generate k random bits. We accept the draw if the drawn integer
+   * is <= range. */
+  size_t k = OMG::BitHelper::indexOfMostSignificantBit(lastDigit) + 1;
+  native_uint_t rand;
+  size_t counter = 0;
+  constexpr size_t k_maxNumberOfDraws = 10;
+  do {
+    rand = Ion::random() & ((static_cast<double_native_uint_t>(1) << k) - 1);
+  } while (rand > lastDigit && counter++ < k_maxNumberOfDraws);
+  if (rand > lastDigit) {
+    // Too many iterations, prevent from slowing everything down
+    return Integer::Overflow(false);
+  }
+  s_workingBuffer[nbOfDigits - 1] = rand;
+  while (nbOfDigits > 0 && s_workingBuffer[nbOfDigits - 1] == 0) {
+    nbOfDigits--;
+  }
+  Integer randRange = BuildInteger(s_workingBuffer, nbOfDigits, false);
+  return Integer::Addition(randRange, a);
 }
 
 Integer Integer::addition(const Integer &a, const Integer &b,

@@ -101,6 +101,40 @@ Expression Randint::shallowReduce(ReductionContext reductionContext) {
     }
   }
   return *this;
+#if 0
+  // TODO: handle sum(randint(0,2), {randint(0,23)}_k<=10
+  Expression c0 = childAtIndex(0);
+  Expression c1 = childAtIndex(1);
+
+  if (c0.type() != ExpressionNode::Type::Rational ||
+      c1.type() != ExpressionNode::Type::Rational) {
+    return *this;
+  }
+
+  Rational r0 = static_cast<Rational&>(c0);
+  Rational r1 = static_cast<Rational&>(c1);
+
+  if (!r0.isInteger() || !r1.isInteger()) {
+    // Randint is only defined on integers.
+    return replaceWithUndefinedInPlace();
+  }
+
+  if (reductionContext.target() == ReductionTarget::SystemForApproximation) {
+    /* The reduction is used for multiple approximations. Randint has to be
+     * recomputed at every approximation. */
+    return *this;
+  }
+
+  Integer a = r0.signedIntegerNumerator();
+  Integer b = r1.signedIntegerNumerator();
+  Integer randint = Integer::RandomInt(a, b);
+  if (randint.isOverflow()) {
+    return replaceWithUndefinedInPlace();
+  }
+  Rational result = Rational::Builder(randint);
+  replaceWithInPlace(result);
+  return result;
+#endif
 }
 
 }

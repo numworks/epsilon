@@ -114,7 +114,7 @@ Token Tokenizer::popNumber() {
   size_t exponentPartText = m_decoder.position();
   size_t exponentPartLength = 0;
   bool exponentIsNegative = false;
-  if (canPopCodePoint(UCodePointLatinLetterSmallCapitalE)) {
+  if (canPopCodePoint('E')) { // UCodePointLatinLetterSmallCapitalE)) {
     exponentIsNegative = canPopCodePoint('-');
     exponentPartText = m_decoder.position();
     exponentPartLength = popDigits();

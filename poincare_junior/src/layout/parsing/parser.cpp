@@ -377,6 +377,16 @@ void Parser::parseUnexpected(EditionReference &leftHandSide,
   m_status = Status::Error;  // Unexpected Token
 }
 
+static size_t CodePointSearch(UnicodeDecoder & decoder, CodePoint c) {
+  while (CodePoint codePoint = decoder.nextCodePoint()) {
+    if (codePoint == c) {
+      return decoder.position() - 1;
+    }
+  }
+  decoder.previousCodePoint();
+  return decoder.position();
+}
+
 void Parser::parseNumber(EditionReference &leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // FIXME
@@ -389,9 +399,36 @@ void Parser::parseNumber(EditionReference &leftHandSide, Token::Type stoppingTyp
   if (m_currentToken.type() == Token::Type::HexadecimalNumber || m_currentToken.type() == Token::Type::BinaryNumber) {
     start += 2; // Skip 0b / 0x prefix
     base = m_currentToken.type() == Token::Type::HexadecimalNumber ? OMG::Base::Hexadecimal : OMG::Base::Binary;
+    RackLayoutDecoder decoder(rack, start, end);
+    leftHandSide = Integer::Push(decoder, base);
+  } else {
+    // the tokenizer have already ensured the float is syntactically correct
+    RackLayoutDecoder decoder(rack, start, end);
+    size_t decimalPoint = CodePointSearch(decoder, '.');
+    // continue with the same decoder since E should be after the .
+    size_t smallE = CodePointSearch(decoder, 'E'); // UCodePointLatinLetterSmallCapitalE);
+
+    RackLayoutDecoder integerDigits(rack, start, decimalPoint);
+    RackLayoutDecoder fractionalDigits(rack, std::min(decimalPoint + 1, end), smallE);
+    RackLayoutDecoder exponent(rack, std::min(smallE + 1, end), end); // may have a minus sign
+
+    // Build (integerDigits + fractionalDigits * 10^(-numberOfFractionalDigits)) * 10^(exponent)
+    leftHandSide = EditionReference::Push<BlockType::Multiplication>(2);
+    EditionReference::Push<BlockType::Addition>(2);
+    Integer::Push(integerDigits, base);
+    EditionReference::Push<BlockType::Multiplication>(2);
+    Integer::Push(fractionalDigits, base);
+    EditionReference::Push<BlockType::Power>();
+    EditionReference::Clone(10_e);
+    EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(- smallE + decimalPoint + 1));
+    EditionReference::Push<BlockType::Power>();
+    EditionReference::Clone(10_e);
+    Integer::Push(exponent, base);
+
+    float value = Approximation::To<float>(leftHandSide);
+    leftHandSide = leftHandSide.replaceTreeByTree(EditionReference::Push<BlockType::Float>(value));
   }
-  RackLayoutDecoder decoder(rack, start, end);
-  leftHandSide = Integer::Push(&decoder, base);
+
   if (generateMixedFractionIfNeeded(leftHandSide)) {
     return;
   }

@@ -562,10 +562,10 @@ void IntegerHandler::sanitize() {
 
 /* Integer */
 
-EditionReference Integer::Push(UnicodeDecoder * decoder, OMG::Base base) {
+EditionReference Integer::Push(UnicodeDecoder & decoder, OMG::Base base) {
   EditionReference result = IntegerHandler(static_cast<uint8_t>(0)).pushOnEditionPool();
   IntegerHandler baseInteger(static_cast<uint8_t>(base));
-  while (CodePoint digit = decoder->nextCodePoint()) {
+  while (CodePoint digit = decoder.nextCodePoint()) {
     assert(digit.isHexadecimalDigit());
     EditionReference multiplication = IntegerHandler::Multiplication(Integer::Handler(result), baseInteger);
     result = result.replaceTreeByTree(multiplication);

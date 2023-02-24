@@ -10,6 +10,7 @@ namespace BitHelper {
 
 constexpr static size_t k_numberOfBitsInByte = 8;
 constexpr static size_t k_numberOfBitsInInt = sizeof(int) * k_numberOfBitsInByte;
+constexpr static size_t k_numberOfBitsInUint32 = sizeof(uint32_t) * k_numberOfBitsInByte;
 
 template <typename T>
 constexpr size_t numberOfBitsInType() {

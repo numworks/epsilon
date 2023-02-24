@@ -562,6 +562,19 @@ void IntegerHandler::sanitize() {
 
 /* Integer */
 
+EditionReference Integer::Push(UnicodeDecoder * decoder, OMG::Base base) {
+  EditionReference result = IntegerHandler(static_cast<uint8_t>(0)).pushOnEditionPool();
+  IntegerHandler baseInteger(static_cast<uint8_t>(base));
+  while (CodePoint digit = decoder->nextCodePoint()) {
+    assert(digit.isHexadecimalDigit());
+    EditionReference multiplication = IntegerHandler::Multiplication(Integer::Handler(result), baseInteger);
+    result = result.replaceTreeByTree(multiplication);
+    EditionReference addition = IntegerHandler::Addition(Integer::Handler(result), IntegerHandler(OMG::Print::DigitForCharacter(digit)));
+    result = result.replaceTreeByTree(addition);
+  }
+  return result;
+}
+
 // TODO: tests
 
 IntegerHandler Integer::Handler(const Node expression) {

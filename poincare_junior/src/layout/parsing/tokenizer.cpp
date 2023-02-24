@@ -88,11 +88,9 @@ Token Tokenizer::popNumber() {
       hexa = canPopCodePoint('x');
     }
     if (binary || hexa) {
-      size_t binaryOrHexaText = m_decoder.position();
       size_t binaryOrHexaLength = binary ? popBinaryDigits() : popHexadecimalDigits();
       if (binaryOrHexaLength > 0) {
         Token result(binary ? Token::Type::BinaryNumber : Token::Type::HexadecimalNumber);
-        // result.setExpression(BasedInteger::Builder(binaryOrHexaText, binaryOrHexaLength, binary ? OMG::Base::Binary : OMG::Base::Hexadecimal));
         result.setRange(m_decoder.layoutAt(integralPartText), integralPartLength + 1 + binaryOrHexaLength);
         return result;
       } else {

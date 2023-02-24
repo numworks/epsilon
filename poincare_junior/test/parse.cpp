@@ -33,5 +33,5 @@ QUIZ_CASE(pcj_layout_tokenize) {
 }
 
 QUIZ_CASE(pcj_layout_parse) {
-  Parser("2(2+3+2*2)"_l).parse().log();
+  Parser("12(223+0x2a+2*0b0101)"_l).parse().log();
 }

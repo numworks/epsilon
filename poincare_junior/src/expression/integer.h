@@ -4,6 +4,7 @@
 #include <omg/bit_helper.h>
 #include <omgpj/bit.h>
 #include <omg/enums.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <stdlib.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
@@ -146,6 +147,7 @@ private:
 class Integer {
 public:
   static EditionReference Push(const char * digits, size_t length, OMG::Base base = OMG::Base::Decimal) { return IntegerHandler::Parse(digits, length, base).pushOnEditionPool(); }
+  static EditionReference Push(UnicodeDecoder * decoder, OMG::Base base = OMG::Base::Decimal);
   static IntegerHandler Handler(const Node expression);
   static bool IsUint8(const Node expression);
   static uint8_t Uint8(const Node expression);

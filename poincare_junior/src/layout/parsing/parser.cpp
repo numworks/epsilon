@@ -382,7 +382,16 @@ void Parser::parseNumber(EditionReference &leftHandSide, Token::Type stoppingTyp
     m_status = Status::Error;  // FIXME
     return;
   }
-  leftHandSide = PatternMatching::Create(42_e); // m_currentToken.expression(); // TODO
+  Node rack = m_currentToken.firstLayout().parent();
+  size_t start = rack.indexOfChild(m_currentToken.firstLayout());
+  size_t end = start + m_currentToken.length();
+  OMG::Base base(OMG::Base::Decimal);
+  if (m_currentToken.type() == Token::Type::HexadecimalNumber || m_currentToken.type() == Token::Type::BinaryNumber) {
+    start += 2; // Skip 0b / 0x prefix
+    base = m_currentToken.type() == Token::Type::HexadecimalNumber ? OMG::Base::Hexadecimal : OMG::Base::Binary;
+  }
+  RackLayoutDecoder decoder(rack, start, end);
+  leftHandSide = Integer::Push(&decoder, base);
   if (generateMixedFractionIfNeeded(leftHandSide)) {
     return;
   }

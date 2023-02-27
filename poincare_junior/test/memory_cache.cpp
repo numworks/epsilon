@@ -6,7 +6,7 @@
 
 using namespace PoincareJ;
 
-static constexpr Tree tree = Add(3_e, 4_e);
+static constexpr Tree bigTree = Add(3_e, 4_e);
 static constexpr Tree smallTree = 4_e;
 
 void execute_push_tree_and_modify() {
@@ -17,24 +17,24 @@ void execute_push_tree_and_modify() {
         return (reinterpret_cast<PoincareJ::Reference::InitializerFromTreeInplace>(subAction))(editedTree);
       },
       reinterpret_cast<void *>(treeModifier),
-      &tree.k_blocks
+      &bigTree.k_blocks
     );
 }
 
 QUIZ_CASE(pcj_cache_pool) {
   CachePool * cachePool = CachePool::sharedCachePool();
   EditionPool * editionPool = cachePool->editionPool();
-  size_t treeSize = static_cast<Node>(tree).treeSize();
+  size_t treeSize = static_cast<Node>(bigTree).treeSize();
   cachePool->reset();
 
   // storeEditedTree
-  editionPool->initFromTree(tree);
+  editionPool->initFromTree(bigTree);
   assert_pools_tree_sizes_are(0, 1);
   cachePool->storeEditedTree();
   assert_pools_tree_sizes_are(1, 0);
 
   // needFreeBlocks
-  editionPool->initFromTree(tree);
+  editionPool->initFromTree(bigTree);
   cachePool->storeEditedTree();
   assert_pools_tree_sizes_are(2, 0);
   cachePool->needFreeBlocks(1);
@@ -42,7 +42,7 @@ QUIZ_CASE(pcj_cache_pool) {
   cachePool->needFreeBlocks(treeSize - 1);
   assert_pools_tree_sizes_are(0, 0);
   for (int i = 0; i < 3; i++) {
-    editionPool->initFromTree(tree);
+    editionPool->initFromTree(bigTree);
     cachePool->storeEditedTree();
   }
   assert_pools_tree_sizes_are(3, 0);
@@ -50,7 +50,7 @@ QUIZ_CASE(pcj_cache_pool) {
   assert_pools_tree_sizes_are(1, 0);
 
   // reset
-  editionPool->initFromTree(tree);
+  editionPool->initFromTree(bigTree);
   assert_pools_tree_sizes_are(1, 1);
   cachePool->reset();
   assert_pools_tree_sizes_are(0, 0);
@@ -65,14 +65,14 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   CachePool * cachePool = CachePool::sharedCachePool();
   EditionPool * editionPool = cachePool->editionPool();
   cachePool->reset();
-  size_t treeSize = static_cast<Node>(tree).treeSize();
+  size_t treeSize = static_cast<Node>(bigTree).treeSize();
 
   /* test overflowing the edition pool */
   // 1. Almost fill the whole cache
     // Fill the cache
   size_t maxNumberOfTreesInCache = CachePool::k_maxNumberOfBlocks/treeSize;
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
-    editionPool->initFromTree(tree);
+    editionPool->initFromTree(bigTree);
     cachePool->storeEditedTree();
   }
   assert_pools_tree_sizes_are(maxNumberOfTreesInCache, 0);
@@ -138,7 +138,7 @@ void check_reference_invalidation_and_reconstruction(Reference reference, uint16
 
 QUIZ_CASE(pcj_cache_reference_invalidation) {
   CachePool * cachePool = CachePool::sharedCachePool();
-  size_t treeSize = static_cast<Node>(tree).treeSize();
+  size_t treeSize = static_cast<Node>(bigTree).treeSize();
   Reference reference([] (){ EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(28)); });
   reference.send([](const Node tree, void * result) {}, nullptr);
   uint16_t identifier = reference.id();
@@ -148,7 +148,7 @@ QUIZ_CASE(pcj_cache_reference_invalidation) {
   // Fill the cache
   int maxNumberOfTreesInCache = CachePool::k_maxNumberOfBlocks/treeSize;
   for (int i = 0; i < maxNumberOfTreesInCache + 1; i++) {
-    Reference reference1([] (Node node){}, static_cast<Node>(tree).block());
+    Reference reference1([] (Node node){}, static_cast<Node>(bigTree).block());
     reference1.send([](const Node tree, void * result) {}, nullptr);
   }
   // TODO: factorize

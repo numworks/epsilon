@@ -12,15 +12,22 @@ namespace PoincareJ {
 
 class RackLayoutDecoder : public UnicodeDecoder {
 public:
-  RackLayoutDecoder(const Node layout, size_t initialPosition = 0, size_t layoutEnd = 0) :
-    UnicodeDecoder(initialPosition, layoutEnd ? layoutEnd : layout.numberOfChildren()),
-    m_layout(layout)
-  {
-    assert(layout.type() == BlockType::RackLayout);
-  }
-  const Node mainLayout() const { return m_layout; }
-  Node nextLayout() { return layoutAt(m_position++); }
-  bool nextLayoutIsCodePoint() { return m_position == m_end || (m_position < m_end && m_layout.childAtIndex(m_position).type() == BlockType::CodePointLayout); }
+ RackLayoutDecoder(const Node layout, size_t initialPosition = 0,
+                   size_t layoutEnd = 0)
+     : UnicodeDecoder(initialPosition,
+                      layoutEnd ? layoutEnd : layout.numberOfChildren()),
+       m_layout(layout) {
+   assert(layout.type() == BlockType::RackLayout);
+   if (m_position > m_end) {
+     m_position = m_end;
+   }
+ }
+ const Node mainLayout() const { return m_layout; }
+ Node nextLayout() { return layoutAt(m_position++); }
+ bool nextLayoutIsCodePoint() {
+   return m_position == m_end ||
+          (m_position < m_end && m_layout.childAtIndex(m_position).type() ==
+                                     BlockType::CodePointLayout); }
   CodePoint nextCodePoint() { return codePointAt(m_position++); }
   CodePoint previousCodePoint() { return codePointAt(--m_position); }
   void setPosition(size_t index) {

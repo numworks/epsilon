@@ -61,14 +61,8 @@ const App::Descriptor *App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-bool App::storageCanChangeForRecordName(
-    const Ion::Storage::Record::Name recordName) const {
-  return !m_intrusiveStorageChangeFlag ||
-         strcmp(recordName.extension, Ion::Storage::lisExtension) != 0;
-}
-
 App::App(Snapshot *snapshot, Poincare::Context *parentContext)
-    : ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
+    : StoreApp(snapshot, &m_inputViewController),
       m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(),
               snapshot->storePreferences(), snapshot->regressionTypes()),
       m_calculationController(&m_calculationAlternateEmptyViewController,

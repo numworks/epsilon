@@ -406,30 +406,39 @@ void Parser::parseNumber(EditionReference &leftHandSide, Token::Type stoppingTyp
     // the tokenizer have already ensured the float is syntactically correct
     RackLayoutDecoder decoder(rack, start, end);
     size_t decimalPoint = CodePointSearch(decoder, '.');
-    // continue with the same decoder since E should be after the .
+    if (decimalPoint == end) {
+      /* continue with the same decoder since E should be after the decimal
+       * point, except when there is no point */
+      decoder.setPosition(start);
+    }
     size_t smallE =
         CodePointSearch(decoder, 'E');  // UCodePointLatinLetterSmallCapitalE);
 
-    RackLayoutDecoder integerDigits(rack, start, decimalPoint);
+    RackLayoutDecoder integerDigits(rack, start, std::min(smallE, decimalPoint));
     RackLayoutDecoder fractionalDigits(rack, decimalPoint + 1, smallE);
     RackLayoutDecoder exponent(rack, smallE + 1,
                                end);  // TODO may have a minus sign
 
-    /* Build (integerDigits + fractionalDigits * 10^(-numberOfFractionalDigits))
-     *           * 10^(exponent) */
-    leftHandSide = MULTIPLICATION(
+    if (decimalPoint == end && smallE == end) {
+      // Decimal integer
+      leftHandSide = Integer::Push(integerDigits, OMG::Base::Decimal);
+    } else {
+      /* Build (integerDigits + fractionalDigits * 10^(-numberOfFractionalDigits))
+       *           * 10^(exponent) */
+      leftHandSide = MULTIPLICATION(
         ADDITION(
-            Integer::Push(integerDigits, base),
-            MULTIPLICATION(
-                Integer::Push(fractionalDigits, base),
-                POWER(EditionReference::Clone(10_e),
-                      EditionReference::Push<BlockType::IntegerShort>(
-                          static_cast<int8_t>(-smallE + decimalPoint + 1))))),
+          Integer::Push(integerDigits, base),
+          MULTIPLICATION(
+            Integer::Push(fractionalDigits, base),
+            POWER(EditionReference::Clone(10_e),
+                  EditionReference::Push<BlockType::IntegerShort>(
+                    static_cast<int8_t>(-smallE + decimalPoint + 1))))),
         POWER(EditionReference::Clone(10_e), Integer::Push(exponent, base)));
 
-    float value = Approximation::To<float>(leftHandSide);
-    leftHandSide = leftHandSide.replaceTreeByTree(
+      float value = Approximation::To<float>(leftHandSide);
+      leftHandSide = leftHandSide.replaceTreeByTree(
         EditionReference::Push<BlockType::Float>(value));
+    }
   }
 
   if (generateMixedFractionIfNeeded(leftHandSide)) {

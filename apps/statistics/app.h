@@ -50,6 +50,9 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
 
   TELEMETRY_ID("Statistics");
 
+  Shared::StoreController *storeController() override {
+    return &m_storeController;
+  }
   Escher::InputViewController *inputViewController() {
     return &m_inputViewController;
   }

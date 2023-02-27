@@ -52,6 +52,9 @@ class App : public Shared::StoreApp {
 
   TELEMETRY_ID("Regression");
 
+  Shared::StoreController *storeController() override {
+    return &m_storeController;
+  }
   RegressionController *regressionController() {
     return &m_regressionController;
   }

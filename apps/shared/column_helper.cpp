@@ -6,6 +6,7 @@
 
 #include "column_parameter_controller.h"
 #include "poincare_helpers.h"
+#include "store_app.h"
 
 using namespace Escher;
 using namespace Poincare;
@@ -141,8 +142,17 @@ bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(
 void StoreColumnHelper::resetMemoizedFormulasForSeries(int series) {
   assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
   for (int i = 0; i < DoublePairStore::k_numberOfColumnsPerSeries; i++) {
-    m_memoizedFormulaForColumn[series * DoublePairStore::k_numberOfSeries + i] =
-        Layout();
+    memoizeFormulaAtColumn(Layout(),
+                           series * DoublePairStore::k_numberOfSeries + i);
+  }
+}
+
+void StoreColumnHelper::loadMemoizedFormulasFromSnapshot() {
+  for (int i = 0; i < DoublePairStore::k_numberOfSeries *
+                          DoublePairStore::k_numberOfColumnsPerSeries;
+       i++) {
+    m_memoizedFormulaForColumn[i] =
+        StoreApp::storeApp()->storeAppSnapshot()->memoizedFormulaAtColumn(i);
   }
 }
 
@@ -194,7 +204,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
       return false;
     }
     reload();
-    m_memoizedFormulaForColumn[referencedColumn()] = formulaLayout;
+    memoizeFormulaAtColumn(formulaLayout, referencedColumn());
     return true;
   }
   // If formula contains a random formula, evaluate it for each pairs.
@@ -222,7 +232,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     return false;
   }
   reloadSeriesVisibleCells(seriesToFill);
-  m_memoizedFormulaForColumn[referencedColumn()] = formulaLayout;
+  memoizeFormulaAtColumn(formulaLayout, referencedColumn());
   return true;
 }
 
@@ -238,6 +248,13 @@ void StoreColumnHelper::reloadSeriesVisibleCells(int series,
       table()->reloadVisibleCellsAtColumn(i);
     }
   }
+}
+
+void StoreColumnHelper::memoizeFormulaAtColumn(Poincare::Layout formula,
+                                               int column) {
+  m_memoizedFormulaForColumn[column] = formula;
+  StoreApp::storeApp()->storeAppSnapshot()->memoizeFormulaAtColumn(formula,
+                                                                   column);
 }
 
 }  // namespace Shared

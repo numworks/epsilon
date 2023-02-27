@@ -133,7 +133,7 @@ void App::activeViewDidBecomeFirstResponder(
 void App::didBecomeActive(Escher::Window *windows) {
   // Sorted indexes are not kept in the snapshot, they have been invalidated.
   m_store.invalidateSortedIndexes();
-  Escher::App::didBecomeActive(windows);
+  Shared::StoreApp::didBecomeActive(windows);
   m_tabViewController.enterActiveTab();
 }
 

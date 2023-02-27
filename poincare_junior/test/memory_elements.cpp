@@ -88,25 +88,24 @@ QUIZ_CASE(pcj_type_block) {
   }
 }
 
-template <unsigned N>
-void assert_tree_equals_blocks(Tree<N> tree, std::initializer_list<Block> blocks) {
-  assert_node_equals_blocks(static_cast<Node>(tree), blocks);
-  assert(blocks.size() == N);
+void assert_tree_equals_blocks(Node node, std::initializer_list<Block> blocks) {
+  assert_node_equals_blocks(node, blocks);
+  assert(blocks.size() == node.treeSize());
 }
 
 QUIZ_CASE(pcj_constexpr_tree_constructor) {
-  Node n = "12"_e;
+  Node n = 12_e;
   assert_tree_equals_blocks(0_e, {TypeBlock(BlockType::Zero)});
   assert_tree_equals_blocks(1_e, {TypeBlock(BlockType::One)});
   assert_tree_equals_blocks(2_e, {TypeBlock(BlockType::Two)});
-  assert_tree_equals_blocks("12"_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(12), TypeBlock(BlockType::IntegerShort)});
-  assert_tree_equals_blocks("127"_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(127), TypeBlock(BlockType::IntegerShort)});
-  assert_tree_equals_blocks("128"_e, {TypeBlock(BlockType::IntegerPosBig), ValueBlock(1), ValueBlock(128), ValueBlock(1), TypeBlock(BlockType::IntegerPosBig)});
-  assert_tree_equals_blocks("256"_e, {TypeBlock(BlockType::IntegerPosBig), ValueBlock(2), ValueBlock(0), ValueBlock(1), ValueBlock(2), TypeBlock(BlockType::IntegerPosBig)});
+  assert_tree_equals_blocks(12_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(12), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks(127_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(127), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks(128_e, {TypeBlock(BlockType::IntegerPosBig), ValueBlock(1), ValueBlock(128), ValueBlock(1), TypeBlock(BlockType::IntegerPosBig)});
+  assert_tree_equals_blocks(256_e, {TypeBlock(BlockType::IntegerPosBig), ValueBlock(2), ValueBlock(0), ValueBlock(1), ValueBlock(2), TypeBlock(BlockType::IntegerPosBig)});
   assert_tree_equals_blocks(-1_e, {TypeBlock(BlockType::MinusOne)});
-  assert_tree_equals_blocks("-12"_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(-12), TypeBlock(BlockType::IntegerShort)});
-  assert_tree_equals_blocks("-128"_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(-128), TypeBlock(BlockType::IntegerShort)});
-  assert_tree_equals_blocks("-129"_e, {TypeBlock(BlockType::IntegerNegBig), ValueBlock(1), ValueBlock(129), ValueBlock(1), TypeBlock(BlockType::IntegerNegBig)});
+  assert_tree_equals_blocks(-12_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(-12), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks(-128_e, {TypeBlock(BlockType::IntegerShort), ValueBlock(-128), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks(-129_e, {TypeBlock(BlockType::IntegerNegBig), ValueBlock(1), ValueBlock(129), ValueBlock(1), TypeBlock(BlockType::IntegerNegBig)});
 
   assert_tree_equals_blocks(π_e, {TypeBlock(BlockType::Constant), ValueBlock(static_cast<uint8_t>(Constant::Type::Pi)), TypeBlock(BlockType::Constant)});
   assert_tree_equals_blocks(2.0_e, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0), ValueBlock(0), ValueBlock(64), TypeBlock(BlockType::Float)});
@@ -234,7 +233,7 @@ QUIZ_CASE(pcj_node) {
   EditionPool * editionPool = cachePool->editionPool();
 
   // operator==
-  Node node0 = "42"_e;
+  Node node0 = 42_e;
   Node node1 = EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(42));
   assert(node0 != node1 && *node0.block() == *node1.block());
   Node node2(editionPool->firstBlock());

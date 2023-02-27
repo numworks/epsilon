@@ -203,12 +203,16 @@ Tree(IntegerLitteral<2>)->Tree<BlockType::Two>;
 
 template <int V> requires (V >= INT8_MIN && V <= INT8_MAX) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerShort, V, BlockType::IntegerShort>;
 
+template <int V> requires (V > INT8_MAX && Integer::NumberOfDigits(V) == 1) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerPosBig, 1, Bit::getByteAtIndex(V, 0), 1, BlockType::IntegerPosBig>;
+
 template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 2) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerPosBig, 2, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), 2, BlockType::IntegerPosBig>;
 
 template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 3) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerPosBig, 3, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), 3, BlockType::IntegerPosBig>;
 
 template <int V> requires (V > 0 && Integer::NumberOfDigits(V) == 4) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerPosBig, 4, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), Bit::getByteAtIndex(V, 3), 4, BlockType::IntegerPosBig>;
 
+
+template <int V> requires (V < INT8_MIN && Integer::NumberOfDigits(-V) == 1) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerNegBig, 1, Bit::getByteAtIndex(-V, 0), 1, BlockType::IntegerNegBig>;
 
 template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 2) Tree(IntegerLitteral<V>) -> Tree<BlockType::IntegerNegBig, 2, Bit::getByteAtIndex(-V, 0), Bit::getByteAtIndex(-V, 1), 2, BlockType::IntegerNegBig>;
 

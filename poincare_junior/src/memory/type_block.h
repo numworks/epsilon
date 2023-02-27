@@ -104,6 +104,7 @@ enum class BlockType : uint8_t {
   // Misc
   TreeBorder = NumberOfLayouts,
   Placeholder,
+  SystemList,
   NumberOfTypes
 };
 
@@ -173,7 +174,7 @@ public:
     return false;
   }
 
-  constexpr bool isNAry() const { return isOfType({BlockType::Addition, BlockType::Multiplication, BlockType::RackLayout, BlockType::Set, BlockType::List, BlockType::Polynomial}); }
+  constexpr bool isNAry() const { return isOfType({BlockType::Addition, BlockType::Multiplication, BlockType::RackLayout, BlockType::Set, BlockType::List, BlockType::Polynomial, BlockType::SystemList}); }
   constexpr bool isInteger() const { return isOfType({BlockType::Zero, BlockType::One, BlockType::Two, BlockType::MinusOne, BlockType::IntegerShort, BlockType::IntegerPosBig, BlockType::IntegerNegBig}); }
   constexpr bool isRational() const { return isOfType({BlockType::Half, BlockType::RationalShort, BlockType::RationalPosBig, BlockType::RationalNegBig}) || isInteger(); }
   constexpr bool isNumber() const { return isOfType({BlockType::Float}) || isRational(); }
@@ -202,6 +203,7 @@ public:
       case BlockType::Set:
       case BlockType::List:
       case BlockType::RackLayout:
+      case BlockType::SystemList:
         return 3;
       case BlockType::Polynomial:
       case BlockType::UserSymbol:

@@ -85,6 +85,7 @@ void Node::logName(std::ostream & stream) const {
     "CodePointLayout",
     "TreeBorder",
     "Placeholder",
+    "SystemList",
   };
   static_assert(sizeof(names)/sizeof(const char *) == static_cast<uint8_t>(BlockType::NumberOfTypes));
   stream << names[static_cast<uint8_t>(*m_block)];

@@ -101,11 +101,13 @@ int IntervalController::reusableParameterCellCount(int type) {
 }
 
 double IntervalController::parameterAtIndex(int index) {
-  return m_equationStore->intervalBound(index);
+  return index == 0 ? m_equationStore->approximateResolutionMinimum()
+                    : m_equationStore->approximateResolutionMaximum();
 }
 
 bool IntervalController::setParameterAtIndex(int parameterIndex, double f) {
-  m_equationStore->setIntervalBound(parameterIndex, f);
+  parameterIndex == 0 ? m_equationStore->setApproximateResolutionMinimum(f)
+                      : m_equationStore->setApproximateResolutionMaximum(f);
   return true;
 }
 
@@ -123,8 +125,7 @@ bool IntervalController::textFieldDidFinishEditing(AbstractTextField *textField,
 
 void IntervalController::buttonAction() {
   StackViewController *stack = stackController();
-  m_equationStore->approximateSolve(textFieldDelegateApp()->localContext(),
-                                    m_shouldReplaceFunctionsButNotSymbols);
+  m_equationStore->approximateSolve(textFieldDelegateApp()->localContext());
   stack->push(App::app()->solutionsControllerStack());
 }
 

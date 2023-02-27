@@ -3,168 +3,132 @@
 
 #include <apps/shared/expression_model_store.h>
 #include <poincare/symbol_abstract.h>
-#include <stdint.h>
 
 #include "equation.h"
+#include "solution.h"
 
 namespace Solver {
 
 class EquationStore : public Shared::ExpressionModelStore {
  public:
-  enum class Type {
+  enum class Type : uint8_t {
     LinearSystem,
     PolynomialMonovariable,
-    Monovariable,
+    GeneralMonovariable,
   };
-  enum class Error : int16_t {
+
+  enum class Error : uint8_t {
     NoError = 0,
-    EquationUndefined = -1,
-    EquationNonreal = -2,
-    TooManyVariables = -3,
-    NonLinearSystem = -4,
-    RequireApproximateSolution = -5,
+    EquationUndefined = 1,
+    EquationNonreal = 2,
+    TooManyVariables = 3,
+    NonLinearSystem = 4,
+    RequireApproximateSolution = 5,
   };
-  EquationStore();
 
-  /* ExpressionModelStore */
-  Shared::ExpiringPointer<Equation> modelForRecord(
-      Ion::Storage::Record record) const {
-    return Shared::ExpiringPointer<Equation>(
-        static_cast<Equation *>(privateModelForRecord(record)));
-  }
-  Ion::Storage::Record::ErrorStatus addEmptyModel() override;
-
-  /* EquationStore */
-  Type type() const { return m_type; }
-  int degree() const { return m_degree; }
-  const char *variableAtIndex(size_t i) {
-    assert(i < Poincare::Expression::k_maxNumberOfVariables &&
-           m_variables[i][0] != 0);
-    return m_variables[i];
-  }
-  const char *userVariableAtIndex(size_t i) {
-    assert(i < Poincare::Expression::k_maxNumberOfVariables &&
-           m_userVariables[i][0] != 0);
-    return m_userVariables[i];
-  }
-  int numberOfUserVariables() const { return m_numberOfUserVariables; }
-  bool userVariablesUsed() const { return m_userVariablesUsed; }
-  int numberOfSolutions() const { return m_numberOfSolutions; }
-
-  /* Exact resolution */
-  Error exactSolve(Poincare::Context *context,
-                   bool *replaceFunctionsButNotSymbols);
-  /* The exact solutions are displayed in a table with 2 layouts: an exact
-   * Layout and an approximate layout. For example, 'sqrt(2)' and '1.414213'.
-   * The boolean exactLayout indicates if we want the exact layout or the
-   * approximate one. */
-  Poincare::Layout exactSolutionLayoutAtIndex(int i, bool exactLayout);
-  /* Exact layout and approximate layout of an exact solution can be:
-   * - identical: for instance, 5 and 5
-   * - equal: for instance 1/2 and 0.5
-   * - non-equal: for instance 1/3 and 0.333.
-   */
-  bool exactSolutionLayoutsAtIndexAreIdentical(int i) {
-    assert(
-        m_type != Type::Monovariable && i >= 0 &&
-        (i < m_numberOfSolutions ||
-         (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
-    return m_exactSolutionIdentity[i];
-  }
-  bool exactSolutionLayoutsAtIndexAreEqual(int i) {
-    assert(
-        m_type != Type::Monovariable && i >= 0 &&
-        (i < m_numberOfSolutions ||
-         (i == m_numberOfSolutions && m_type == Type::PolynomialMonovariable)));
-    return m_exactSolutionEquality[i];
-  }
-
-  /* Approximate resolution */
-  double intervalBound(int index) const;
-  void setIntervalBound(int index, double value);
-  double approximateSolutionAtIndex(int i) {
-    assert(m_type == Type::Monovariable && i >= 0 && i < m_numberOfSolutions);
-    return m_approximateSolutions[i];
-  }
-  void approximateSolve(Poincare::Context *context,
-                        bool shouldReplaceFuncionsButNotSymbols);
-  bool haveMoreApproximationSolutions() {
-    return m_hasMoreThanMaxNumberOfApproximateSolution;
-  }
-
-  void tidyDownstreamPoolFrom(char *treePoolCursor = nullptr) override;
-
+  constexpr static int k_maxNumberOfEquations =
+      Poincare::Expression::k_maxNumberOfVariables;
   constexpr static int k_maxNumberOfExactSolutions =
       Poincare::Expression::k_maxNumberOfVariables >
               Poincare::Expression::k_maxPolynomialDegree + 1
           ? Poincare::Expression::k_maxNumberOfVariables
           : Poincare::Expression::k_maxPolynomialDegree + 1;
   constexpr static int k_maxNumberOfApproximateSolutions = 10;
-  bool m_hasMoreThanMaxNumberOfApproximateSolution;
   constexpr static int k_maxNumberOfSolutions =
       k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions
           ? k_maxNumberOfExactSolutions
           : k_maxNumberOfApproximateSolutions;
 
- private:
-  constexpr static double k_precision = 0.01;
-  // Enable the same number of equations as the number of unknown variables
-  constexpr static int k_maxNumberOfEquations =
-      Poincare::Expression::k_maxNumberOfVariables;
+  // System analysis
+  Type type() const { return m_type; }
+  int degree() const { return m_degree; }
+  const char* variable(int index) const {
+    assert(index < m_numberOfResolutionVariables);
+    return m_variables[index];
+  }
+  size_t numberOfUserVariables() const { return m_numberOfUserVariables; }
+  const char* userVariable(int index) const {
+    assert(index < m_numberOfUserVariables);
+    return m_userVariables[index];
+  }
+  bool overrideUserVariables() const { return m_overrideUserVariables; }
+
+  // Resolution methods
+  double approximateResolutionMinimum() const {
+    return m_approximateResolutionMinimum;
+  }
+  double approximateResolutionMaximum() const {
+    return m_approximateResolutionMaximum;
+  }
+  void setApproximateResolutionMinimum(double value) {
+    m_approximateResolutionMinimum = value;
+  }
+  void setApproximateResolutionMaximum(double value) {
+    m_approximateResolutionMaximum = value;
+  }
+  Error exactSolve(Poincare::Context* context);
+  void approximateSolve(Poincare::Context* context);
+
+  // Solutions getters
+  size_t numberOfSolutions() const { return m_numberOfSolutions; }
+  const Solution* solution(int index) const {
+    assert(index < m_numberOfSolutions);
+    return m_solutions + index;
+  }
+  bool hasMoreApproximateSolutions() const {
+    return m_hasMoreApproximateSolutions;
+  }
 
   // ExpressionModelStore
+  void tidyDownstreamPoolFrom(char* treePoolCursor = nullptr) override;
+  Ion::Storage::Record::ErrorStatus addEmptyModel() override;
+  Shared::ExpiringPointer<Equation> modelForRecord(
+      Ion::Storage::Record record) const {
+    return Shared::ExpiringPointer<Equation>(
+        static_cast<Equation*>(privateModelForRecord(record)));
+  }
+
+ private:
+  // ExpressionModelStore
+  const char* modelExtension() const override {
+    return Ion::Storage::eqExtension;
+  }
   int maxNumberOfMemoizedModels() const override {
     return k_maxNumberOfEquations;
   }
-  const char *modelExtension() const override {
-    return Ion::Storage::eqExtension;
-  }
-  /* We don't really use model memoization as the number of Equation is limited
-   * and we keep enough Equations to store them all. */
-  Shared::ExpressionModelHandle *setMemoizedModelAtIndex(
-      int cacheIndex, Ion::Storage::Record record) const override;
-  Shared::ExpressionModelHandle *memoizedModelAtIndex(
+  Shared::ExpressionModelHandle* setMemoizedModelAtIndex(
+      int cacheIndex, Ion::Storage::Record) const override;
+  Shared::ExpressionModelHandle* memoizedModelAtIndex(
       int cacheIndex) const override;
+  void tidySolutions(char* treePoolcursor);
 
-  Error privateExactSolve(Poincare::Context *context,
-                          bool replaceFunctionsButNotSymbols);
-  Error resolveLinearSystem(
-      Poincare::Expression solutions[k_maxNumberOfExactSolutions],
-      Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions],
-      Poincare::Expression
-          coefficients[k_maxNumberOfEquations]
-                      [Poincare::Expression::k_maxNumberOfVariables],
-      Poincare::Expression constants[k_maxNumberOfEquations],
-      Poincare::Context *context);
-  Error oneDimensionalPolynomialSolve(
-      Poincare::Expression solutions[k_maxNumberOfExactSolutions],
-      Poincare::Expression solutionApproximations[k_maxNumberOfExactSolutions],
-      Poincare::Expression polynomialCoefficients
-          [Poincare::Expression::k_maxNumberOfPolynomialCoefficients],
-      Poincare::Context *context);
-  void tidySolution(char *treePoolCursor);
-  bool isExplicitlyComplex(Poincare::Context *context);
-  Poincare::Preferences::ComplexFormat updatedComplexFormat(
-      Poincare::Context *context);
+  Error privateExactSolve(Poincare::Context* context);
+  Error simplifyAndFindVariables(Poincare::Context* context,
+                                 Poincare::Expression* simplifiedEquations);
+  Error solveLinearSystem(Poincare::Context* context,
+                          Poincare::Expression* simplifiedEquations);
+  Error solvePolynomial(Poincare::Context* context,
+                        Poincare::Expression* simplifiedEquations);
+  Error registerSolution(Poincare::Expression e, Poincare::Context* context,
+                         bool expressionIsApproximate = false);
+  void registerSolution(double f);
 
   mutable Equation m_equations[k_maxNumberOfEquations];
-  Poincare::Layout
-      m_exactSolutionExactLayouts[k_maxNumberOfApproximateSolutions];
-  Poincare::Layout
-      m_exactSolutionApproximateLayouts[k_maxNumberOfExactSolutions];
+  Solution m_solutions[k_maxNumberOfSolutions];
+  double m_approximateResolutionMinimum;
+  double m_approximateResolutionMaximum;
+  size_t m_numberOfResolutionVariables;
+  size_t m_numberOfUserVariables;
+  size_t m_numberOfSolutions;
+  int m_degree;
   char m_variables[Poincare::Expression::k_maxNumberOfVariables]
                   [Poincare::SymbolAbstractNode::k_maxNameSize];
   char m_userVariables[Poincare::Expression::k_maxNumberOfVariables]
                       [Poincare::SymbolAbstractNode::k_maxNameSize];
-  double m_intervalApproximateSolutions[2];
-  double m_approximateSolutions[k_maxNumberOfApproximateSolutions];
-  int m_degree;
-  int m_numberOfSolutions;
-  int m_numberOfUserVariables;
   Type m_type;
-  bool m_userVariablesUsed;
-  bool m_exactSolutionIdentity[k_maxNumberOfExactSolutions];
-  bool m_exactSolutionEquality[k_maxNumberOfExactSolutions];
+  Poincare::Preferences::ComplexFormat m_complexFormat;
+  bool m_overrideUserVariables;
+  bool m_hasMoreApproximateSolutions;
 };
 
 }  // namespace Solver

@@ -198,8 +198,8 @@ void ListController::resolveEquations() {
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
     bool resultWithoutUserDefinedSymbols = false;
-    EquationStore::Error e = modelStore()->exactSolve(
-        App::app()->localContext(), &resultWithoutUserDefinedSymbols);
+    EquationStore::Error e =
+        modelStore()->exactSolve(App::app()->localContext());
     switch (e) {
       case EquationStore::Error::EquationUndefined:
         Container::activeApp()->displayWarning(

@@ -100,7 +100,6 @@ class SymbolAbstract : public Expression {
   static size_t TruncateExtension(char *dst, const char *src, size_t size);
   static bool matches(const SymbolAbstract &symbol, ExpressionTrinaryTest test,
                       Context *context, void *auxiliary = nullptr);
-  constexpr static size_t k_maxNameSize = 8;
 
  protected:
   SymbolAbstract(const SymbolAbstractNode *node) : Expression(node) {}

@@ -49,8 +49,6 @@ const App::Descriptor *App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-void App::Snapshot::tidy() { app()->m_store.tidy(); }
-
 App::App(Snapshot *snapshot, Poincare::Context *parentContext)
     : StoreApp(snapshot, &m_inputViewController),
       m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(),

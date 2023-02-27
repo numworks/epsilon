@@ -39,8 +39,6 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     UserPreferences *userPreferences() { return &m_userPreferences; }
 
    private:
-    void tidy() override;
-
     uint32_t m_storeVersion;
     GraphViewModel m_graphViewModel;
     UserPreferences m_userPreferences;

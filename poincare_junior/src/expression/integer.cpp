@@ -564,12 +564,20 @@ void IntegerHandler::sanitize() {
 
 EditionReference Integer::Push(UnicodeDecoder & decoder, OMG::Base base) {
   EditionReference result = IntegerHandler(static_cast<uint8_t>(0)).pushOnEditionPool();
+  NonStrictSign sign = NonStrictSign::Positive;
+  if (decoder.nextCodePoint() == '-') {
+    sign = NonStrictSign::Negative;
+  } else {
+    decoder.previousCodePoint();
+  }
   IntegerHandler baseInteger(static_cast<uint8_t>(base));
   while (CodePoint digit = decoder.nextCodePoint()) {
     assert(digit.isHexadecimalDigit());
     EditionReference multiplication = IntegerHandler::Multiplication(Integer::Handler(result), baseInteger);
     result = result.replaceTreeByTree(multiplication);
-    EditionReference addition = IntegerHandler::Addition(Integer::Handler(result), IntegerHandler(OMG::Print::DigitForCharacter(digit)));
+    IntegerHandler digitHandler = IntegerHandler(OMG::Print::DigitForCharacter(digit));
+    digitHandler.setSign(sign);
+    EditionReference addition = IntegerHandler::Addition(Integer::Handler(result), digitHandler);
     result = result.replaceTreeByTree(addition);
   }
   return result;

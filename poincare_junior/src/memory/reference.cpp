@@ -122,9 +122,7 @@ Reference::Reference(InitializerFromTreeInplace initializer, const Reference * t
 
 void Reference::send(FunctionOnConstTree function, void * context) const {
   assert(isInitialized());
-  const Node tree = isCacheReference()
-                    ? CachePool::sharedCachePool()->nodeForIdentifier(id())
-                    : Node(reinterpret_cast<const TypeBlock *>(m_data.data()));
+  const Node tree = getTree();
   return function(tree, context);
 }
 
@@ -148,12 +146,6 @@ size_t Reference::treeSize() const {
   return result;
 }
 
-bool Reference::treeIsIdenticalTo(const Reference &other) const {
-  const Node tree = CachePool::sharedCachePool()->nodeForIdentifier(id());
-  const Node otherTree = CachePool::sharedCachePool()->nodeForIdentifier(other.id());
-  return tree.treeIsIdenticalTo(otherTree);
-}
-
 #if POINCARE_MEMORY_TREE_LOG
 void Reference::log() {
   std::cout << "id: " << m_id;
@@ -174,6 +166,12 @@ int Reference::id() const {
     m_id = cache->execute(m_initializer, m_subInitializer, m_data.data());
   }
   return m_id;
+}
+
+const Node Reference::getTree() const {
+  return isCacheReference()
+         ? CachePool::sharedCachePool()->nodeForIdentifier(id())
+         : Node(reinterpret_cast<const TypeBlock *>(m_data.data()));
 }
 
 }

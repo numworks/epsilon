@@ -56,7 +56,9 @@ public:
 
   void dumpAt(void * address) const;
   size_t treeSize() const;
-  bool treeIsIdenticalTo(const Reference &other) const;
+  bool treeIsIdenticalTo(const Reference &other) const {
+    return getTree().treeIsIdenticalTo(other.getTree());
+  }
 #if POINCARE_MEMORY_TREE_LOG
   void log();
 #endif
@@ -81,6 +83,8 @@ private:
 #endif
     m_id(-1)
   {}
+
+  const Node getTree() const;
 
   ActionWithContext m_initializer;
   void * m_subInitializer;

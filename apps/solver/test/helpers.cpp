@@ -36,10 +36,8 @@ void solve_and_process_error(std::initializer_list<const char *> equations,
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None,
                                  equation);
   }
-  bool replaceFunctionsButNotSymbols = false;
   equationStore.tidyDownstreamPoolFrom();
-  EquationStore::Error err =
-      equationStore.exactSolve(&solverContext, &replaceFunctionsButNotSymbols);
+  EquationStore::Error err = equationStore.exactSolve(&solverContext);
   lambda(&equationStore, err);
   equationStore.removeAll();
 }
@@ -91,7 +89,7 @@ void assert_solves_to(std::initializer_list<const char *> equations,
         /* For some reason the EquationStore returns up to 3 results but always
          * just one variable, so we don't check variable name...
          * TODO: Change this poor behavior. */
-        const char *obtainedVariable = store->variableAtIndex(i);
+        const char *obtainedVariable = store->variable(i);
         quiz_assert(strcmp(obtainedVariable, expectedVariable) == 0);
       }
 
@@ -113,7 +111,7 @@ void assert_solves_to(std::initializer_list<const char *> equations,
           Expression::Parse(expectedValue, &solverContext, false);
       quiz_assert(!expectedExpression.isUninitialized());
 
-      Layout obtainedLayout = store->exactSolutionLayoutAtIndex(i, true);
+      Layout obtainedLayout = store->solution(i)->exactLayout();
       constexpr int bufferSize = 200;
       char obtainedLayoutBuffer[bufferSize];
       obtainedLayout.serializeForParsing(obtainedLayoutBuffer, bufferSize);
@@ -131,24 +129,23 @@ void assert_solves_to(std::initializer_list<const char *> equations,
 void assert_solves_numerically_to(const char *equation, double min, double max,
                                   std::initializer_list<double> solutions,
                                   const char *variable) {
-  solve_and_process_error(
-      {equation}, [min, max, solutions, variable](EquationStore *store,
-                                                  EquationStore::Error e) {
-        Shared::GlobalContext globalContext;
-        SolverContext solverContext(&globalContext);
-        quiz_assert(e == RequireApproximateSolution);
-        store->setIntervalBound(0, min);
-        store->setIntervalBound(1, max);
-        store->approximateSolve(&solverContext, false);
+  solve_and_process_error({equation}, [min, max, solutions, variable](
+                                          EquationStore *store,
+                                          EquationStore::Error e) {
+    Shared::GlobalContext globalContext;
+    SolverContext solverContext(&globalContext);
+    quiz_assert(e == RequireApproximateSolution);
+    store->setApproximateResolutionMinimum(min);
+    store->setApproximateResolutionMaximum(max);
+    store->approximateSolve(&solverContext);
 
-        quiz_assert(strcmp(store->variableAtIndex(0), variable) == 0);
-        int i = 0;
-        for (double solution : solutions) {
-          assert_roughly_equal(store->approximateSolutionAtIndex(i++), solution,
-                               1E-5);
-        }
-        quiz_assert(store->numberOfSolutions() == i);
-      });
+    quiz_assert(strcmp(store->variable(0), variable) == 0);
+    int i = 0;
+    for (double solution : solutions) {
+      assert_roughly_equal(store->solution(i++)->approximate(), solution, 1E-5);
+    }
+    quiz_assert(store->numberOfSolutions() == i);
+  });
 }
 
 void set_complex_format(Preferences::ComplexFormat format) {

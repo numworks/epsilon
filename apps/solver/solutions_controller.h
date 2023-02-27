@@ -206,7 +206,7 @@ class SolutionsController : public Escher::ViewController,
   constexpr static int k_numberOfEmptyCells = 2;
 
   bool usedUserVariables() const {
-    return m_equationStore->userVariablesUsed();
+    return !m_equationStore->overrideUserVariables();
   }
   int userVariablesMessageRow() const;
   int numberOfDisplayedSolutions() const;

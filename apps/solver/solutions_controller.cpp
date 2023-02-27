@@ -157,7 +157,7 @@ SolutionsController::SolutionsController(Responder *parentResponder,
 
 /* ViewController */
 const char *SolutionsController::title() {
-  if (m_equationStore->type() == EquationStore::Type::Monovariable) {
+  if (m_equationStore->type() == EquationStore::Type::GeneralMonovariable) {
     return I18n::translate(I18n::Message::ApproximateSolution);
   }
   return I18n::translate(I18n::Message::Solution);
@@ -170,8 +170,9 @@ void SolutionsController::viewWillAppear() {
     // There are no solutions
     m_contentView.setWarningMessages(noSolutionMessage(),
                                      I18n::Message::Default);
-  } else if (m_equationStore->type() == EquationStore::Type::Monovariable &&
-             m_equationStore->haveMoreApproximationSolutions()) {
+  } else if (m_equationStore->type() ==
+                 EquationStore::Type::GeneralMonovariable &&
+             m_equationStore->hasMoreApproximateSolutions()) {
     // There are more approximate solutions
     m_contentView.setWarningMessages(
         I18n::Message::OnlyFirstSolutionsDisplayed0,
@@ -282,13 +283,13 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
         if (m_equationStore->type() == EquationStore::Type::LinearSystem) {
           /* The system has more than one variable: the cell text is the
            * variable name */
-          const char *varName = m_equationStore->variableAtIndex(j);
+          const char *varName = m_equationStore->variable(j);
           SymbolAbstractNode::NameWithoutQuotationMarks(
               bufferSymbol, k_maxSize, varName, strlen(varName));
         } else {
           /* The system has one variable but might have many solutions: the cell
            * text is variableX, with X the row index + 1 (e.g. x1, x2,...) */
-          const char *varName = m_equationStore->variableAtIndex(0);
+          const char *varName = m_equationStore->variable(0);
           int length = SymbolAbstractNode::NameWithoutQuotationMarks(
               bufferSymbol, k_maxSize, varName, strlen(varName));
           if (j < 9) {
@@ -303,8 +304,8 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
       } else {
         // It's a user variable row, get variable name
         assert(rowOfUserVariablesMessage >= 0);
-        const char *varName = m_equationStore->userVariableAtIndex(
-            j - rowOfUserVariablesMessage - 1);
+        const char *varName =
+            m_equationStore->userVariable(j - rowOfUserVariablesMessage - 1);
         SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, k_maxSize,
                                                       varName, strlen(varName));
       }
@@ -314,7 +315,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
     if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
       // It's a solution row
       assert(numberOfDisplayedSolutions() > 0);
-      if (m_equationStore->type() == EquationStore::Type::Monovariable) {
+      if (m_equationStore->type() == EquationStore::Type::GeneralMonovariable) {
         // Get values of the solutions
         EvenOddBufferTextCell *valueCell =
             static_cast<EvenOddBufferTextCell *>(cell);
@@ -324,7 +325,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
             PrintFloat::charSizeForFloatsWithPrecision(precision);
         char bufferValue[bufferSize];
         PoincareHelpers::ConvertFloatToText<double>(
-            m_equationStore->approximateSolutionAtIndex(j), bufferValue,
+            m_equationStore->solution(j)->approximate(), bufferValue,
             bufferSize, precision);
         valueCell->setText(bufferValue);
       } else {
@@ -332,22 +333,24 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
         ScrollableTwoExpressionsCell *valueCell =
             static_cast<ScrollableTwoExpressionsCell *>(cell);
         Poincare::Layout exactLayout =
-            m_equationStore->exactSolutionLayoutsAtIndexAreIdentical(j)
+            m_equationStore->solution(j)->approximationType() ==
+                    Solution::ApproximationType::Identical
                 ? Poincare::Layout()
-                : m_equationStore->exactSolutionLayoutAtIndex(j, true);
+                : m_equationStore->solution(j)->exactLayout();
         valueCell->setLayouts(
-            exactLayout, m_equationStore->exactSolutionLayoutAtIndex(j, false));
+            exactLayout, m_equationStore->solution(j)->approximateLayout());
         if (!exactLayout.isUninitialized()) {
           valueCell->setRightIsStrictlyEqual(
-              m_equationStore->exactSolutionLayoutsAtIndexAreEqual(j));
+              m_equationStore->solution(j)->approximationType() ==
+              Solution::ApproximationType::Equal);
         }
       }
     } else {
       // It's a user variable row, get values of the solutions or discriminant
       ScrollableTwoExpressionsCell *valueCell =
           static_cast<ScrollableTwoExpressionsCell *>(cell);
-      const char *symbol = m_equationStore->userVariableAtIndex(
-          j - rowOfUserVariablesMessage - 1);
+      const char *symbol =
+          m_equationStore->userVariable(j - rowOfUserVariablesMessage - 1);
       Poincare::Layout layout = PoincareHelpers::CreateLayout(
           App::app()->localContext()->expressionForSymbolAbstract(
               Poincare::Symbol::Builder(symbol, strlen(symbol)), false),
@@ -364,13 +367,12 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
   if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
     // It's a solution row
     assert(numberOfDisplayedSolutions() > 0);
-    if (m_equationStore->type() == EquationStore::Type::Monovariable) {
+    if (m_equationStore->type() == EquationStore::Type::GeneralMonovariable) {
       return k_defaultCellHeight;
     }
-    Poincare::Layout exactLayout =
-        m_equationStore->exactSolutionLayoutAtIndex(j, true);
+    Poincare::Layout exactLayout = m_equationStore->solution(j)->exactLayout();
     Poincare::Layout approximateLayout =
-        m_equationStore->exactSolutionLayoutAtIndex(j, false);
+        m_equationStore->solution(j)->approximateLayout();
     KDCoordinate approximateLayoutHeight =
         approximateLayout.layoutSize(k_solutionsFont).height();
     KDCoordinate layoutHeight;
@@ -394,7 +396,7 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
   }
   // TODO: memoize user symbols if too slow
   const char *symbol =
-      m_equationStore->userVariableAtIndex(j - rowOfUserVariablesMessage - 1);
+      m_equationStore->userVariable(j - rowOfUserVariablesMessage - 1);
   Poincare::Layout layout = PoincareHelpers::CreateLayout(
       App::app()->localContext()->expressionForSymbolAbstract(
           Poincare::Symbol::Builder(symbol, strlen(symbol)), false),
@@ -456,7 +458,7 @@ int SolutionsController::typeAtLocation(int i, int j) {
     return k_symbolCellType;
   }
   if ((rowOfUserVariableMessage < 0 || j < rowOfUserVariableMessage - 1) &&
-      m_equationStore->type() == EquationStore::Type::Monovariable) {
+      m_equationStore->type() == EquationStore::Type::GeneralMonovariable) {
     return k_approximateValueCellType;
   }
   return k_exactValueCellType;
@@ -511,7 +513,7 @@ I18n::Message SolutionsController::noSolutionMessage() {
   if (m_equationStore->numberOfSolutions() == INT_MAX) {
     return I18n::Message::InfiniteNumberOfSolutions;
   }
-  if (m_equationStore->type() == EquationStore::Type::Monovariable) {
+  if (m_equationStore->type() == EquationStore::Type::GeneralMonovariable) {
     return I18n::Message::NoSolutionInterval;
   }
   if (m_equationStore->numberOfDefinedModels() <= 1) {

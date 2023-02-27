@@ -1,10 +1,8 @@
 #ifndef REGRESSION_APP_H
 #define REGRESSION_APP_H
 
-#include <apps/shared/expression_field_delegate_app.h>
-#include <apps/shared/shared_app.h>
+#include <apps/shared/store_app.h>
 #include <escher/tab_view_controller.h>
-#include <escher/tab_view_data_source.h>
 
 #include "data/store_controller.h"
 #include "graph/graph_controller.h"
@@ -14,7 +12,7 @@
 
 namespace Regression {
 
-class App : public Shared::ExpressionFieldDelegateApp {
+class App : public Shared::StoreApp {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:
@@ -23,8 +21,7 @@ class App : public Shared::ExpressionFieldDelegateApp {
     const Escher::Image *icon() const override;
   };
 
-  class Snapshot : public Shared::SharedApp::Snapshot,
-                   public Escher::TabViewDataSource {
+  class Snapshot : public Shared::StoreApp::Snapshot {
    public:
     Snapshot();
 
@@ -72,8 +69,6 @@ class App : public Shared::ExpressionFieldDelegateApp {
 
  private:
   App(Snapshot *snapshot, Poincare::Context *parentContext);
-  bool storageCanChangeForRecordName(
-      const Ion::Storage::Record::Name recordName) const override;
 
   Store m_store;
   CalculationController m_calculationController;

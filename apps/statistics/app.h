@@ -1,12 +1,10 @@
 #ifndef STAT_APP_H
 #define STAT_APP_H
 
-#include <apps/shared/expression_field_delegate_app.h>
-#include <apps/shared/shared_app.h>
+#include <apps/shared/store_app.h>
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/alternate_view_controller.h>
 #include <escher/tab_view_controller.h>
-#include <escher/tab_view_data_source.h>
 
 #include "data/store_controller.h"
 #include "graph/box_controller.h"
@@ -20,8 +18,7 @@
 
 namespace Statistics {
 
-class App : public Shared::ExpressionFieldDelegateApp,
-            Escher::AlternateViewDelegate {
+class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:
@@ -30,8 +27,7 @@ class App : public Shared::ExpressionFieldDelegateApp,
     const Escher::Image *icon() const override;
   };
 
-  class Snapshot : public Shared::SharedApp::Snapshot,
-                   public Escher::TabViewDataSource {
+  class Snapshot : public Shared::StoreApp::Snapshot {
    public:
     Snapshot();
 
@@ -55,9 +51,6 @@ class App : public Shared::ExpressionFieldDelegateApp,
   }
 
   TELEMETRY_ID("Statistics");
-
-  bool storageCanChangeForRecordName(
-      const Ion::Storage::Record::Name recordName) const override;
 
   Escher::InputViewController *inputViewController() {
     return &m_inputViewController;

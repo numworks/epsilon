@@ -3,6 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/constant.h>
 #include <apps/shared/poincare_helpers.h>
+#include <apps/shared/store_app.h>
 #include <assert.h>
 #include <escher/metric.h>
 
@@ -234,6 +235,34 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
 
 int StoreController::numberOfElementsInColumn(int columnIndex) const {
   return m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(columnIndex));
+}
+
+void StoreController::resetMemoizedFormulasForSeries(int series) {
+  assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
+  for (int i = 0; i < DoublePairStore::k_numberOfColumnsPerSeries; i++) {
+    memoizeFormulaAtColumn(Layout(),
+                           series * DoublePairStore::k_numberOfSeries + i);
+  }
+}
+
+void StoreController::loadMemoizedFormulasFromSnapshot() {
+  for (int i = 0; i < DoublePairStore::k_numberOfSeries *
+                          DoublePairStore::k_numberOfColumnsPerSeries;
+       i++) {
+    if (m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(i)) == 0) {
+      m_memoizedFormulaForColumn[i] = Layout();
+    } else {
+      m_memoizedFormulaForColumn[i] =
+          StoreApp::storeApp()->storeAppSnapshot()->memoizedFormulaAtColumn(i);
+    }
+  }
+}
+
+void StoreController::memoizeFormulaAtColumn(Poincare::Layout formula,
+                                             int column) {
+  m_memoizedFormulaForColumn[column] = formula;
+  StoreApp::storeApp()->storeAppSnapshot()->memoizeFormulaAtColumn(formula,
+                                                                   column);
 }
 
 }  // namespace Shared

@@ -62,6 +62,8 @@ class StoreController : public EditableCellTableViewController,
     return row > 0;
   }
 
+  void loadMemoizedFormulasFromSnapshot();
+
  protected:
   constexpr static int k_maxNumberOfDisplayableRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
@@ -93,9 +95,18 @@ class StoreController : public EditableCellTableViewController,
                          int columnIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;
 
+  Poincare::Layout memoizedFormulaAtColumn(int column) override {
+    return m_memoizedFormulaForColumn[column];
+  }
+  void resetMemoizedFormulasForSeries(int series);
+  void memoizeFormulaAtColumn(Poincare::Layout formula, int column) override;
+
   PrefacedTableView m_prefacedTableView;
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore* m_store;
+  Poincare::Layout
+      m_memoizedFormulaForColumn[DoublePairStore::k_numberOfSeries *
+                                 DoublePairStore::k_numberOfColumnsPerSeries];
 
  private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;

@@ -6,7 +6,6 @@
 
 #include "column_parameter_controller.h"
 #include "poincare_helpers.h"
-#include "store_app.h"
 
 using namespace Escher;
 using namespace Poincare;
@@ -84,9 +83,8 @@ void StoreColumnHelper::sortSelectedColumn() {
 }
 
 void StoreColumnHelper::displayFormulaInput() {
-  if (!m_memoizedFormulaForColumn[referencedColumn()].isUninitialized()) {
-    fillFormulaInputWithTemplate(
-        m_memoizedFormulaForColumn[referencedColumn()]);
+  if (!memoizedFormulaAtColumn(referencedColumn()).isUninitialized()) {
+    fillFormulaInputWithTemplate(memoizedFormulaAtColumn(referencedColumn()));
     return;
   }
   Container::activeApp()->displayModalViewController(
@@ -137,23 +135,6 @@ bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(
     return true;
   }
   return false;
-}
-
-void StoreColumnHelper::resetMemoizedFormulasForSeries(int series) {
-  assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
-  for (int i = 0; i < DoublePairStore::k_numberOfColumnsPerSeries; i++) {
-    memoizeFormulaAtColumn(Layout(),
-                           series * DoublePairStore::k_numberOfSeries + i);
-  }
-}
-
-void StoreColumnHelper::loadMemoizedFormulasFromSnapshot() {
-  for (int i = 0; i < DoublePairStore::k_numberOfSeries *
-                          DoublePairStore::k_numberOfColumnsPerSeries;
-       i++) {
-    m_memoizedFormulaForColumn[i] =
-        StoreApp::storeApp()->storeAppSnapshot()->memoizedFormulaAtColumn(i);
-  }
 }
 
 bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
@@ -248,13 +229,6 @@ void StoreColumnHelper::reloadSeriesVisibleCells(int series,
       table()->reloadVisibleCellsAtColumn(i);
     }
   }
-}
-
-void StoreColumnHelper::memoizeFormulaAtColumn(Poincare::Layout formula,
-                                               int column) {
-  m_memoizedFormulaForColumn[column] = formula;
-  StoreApp::storeApp()->storeAppSnapshot()->memoizeFormulaAtColumn(formula,
-                                                                   column);
 }
 
 }  // namespace Shared

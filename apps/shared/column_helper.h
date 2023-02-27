@@ -67,8 +67,6 @@ class StoreColumnHelper {
   void fillFormulaInputWithTemplate(Poincare::Layout layout);
   bool fillColumnWithFormula(Poincare::Expression formula);
   bool createExpressionForFillingColumnWithFormula(const char* text);
-  void resetMemoizedFormulasForSeries(int series);
-  void loadMemoizedFormulasFromSnapshot();
 
   /* Clear series */
   int fillColumnNameFromStore(int columnIndex, char* buffer) {
@@ -86,15 +84,15 @@ class StoreColumnHelper {
   void reloadSeriesVisibleCells(int series, int relativeColumn = -1);
 
  private:
-  void memoizeFormulaAtColumn(Poincare::Layout formula, int column);
+  virtual Poincare::Layout memoizedFormulaAtColumn(int column) {
+    return Poincare::Layout();
+  }
+  virtual void memoizeFormulaAtColumn(Poincare::Layout formula, int column) {}
 
   ClearColumnHelper* m_clearColumnHelper;
   /* Fill with formula */
   FormulaTemplateMenuController m_templateController;
   Escher::StackViewController m_templateStackController;
-  Poincare::Layout
-      m_memoizedFormulaForColumn[DoublePairStore::k_numberOfSeries *
-                                 DoublePairStore::k_numberOfColumnsPerSeries];
   Poincare::Context* m_parentContext;
 };
 

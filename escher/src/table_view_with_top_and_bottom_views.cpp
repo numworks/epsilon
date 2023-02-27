@@ -107,7 +107,7 @@ void TableViewWithTopAndBottomViews::tableViewDidChangeSelectionAndDidScroll(
         k_verticalMargin;
     m_table->setContentOffset(
         KDPoint(0, m_table->minimalSizeForOptimalDisplay().height() -
-                       bottomViewHeight + topViewHeight));
+                       bottomViewHeight - topViewHeight));
   }
   layoutSubviews(false);
 }

@@ -157,7 +157,6 @@ EditionReference Parser::parseUntil(Token::Type stoppingType,
       &Parser::parseMatrix,                   // Token::Type::LeftBracket
       &Parser::parseLeftParenthesis,  // Token::Type::LeftParenthesis
       &Parser::parseList,             // Token::Type::LeftBrace
-      &Parser::parseEmpty,              // Token::Type::Empty
       &Parser::parseConstant,           // Token::Type::Constant
       &Parser::parseNumber,             // Token::Type::Number
       &Parser::parseNumber,             // Token::Type::BinaryNumber
@@ -255,9 +254,6 @@ EditionReference Parser::parseUntil(Token::Type stoppingType,
   static_assert(tokenParsers[static_cast<int>(Token::Type::LeftBrace)] ==
                     &Parser::parseList,
                 "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Empty)] == &Parser::parseEmpty,
-      "Wrong order of TokenParsers");
   static_assert(tokenParsers[static_cast<int>(Token::Type::Constant)] ==
                     &Parser::parseConstant,
                 "Wrong order of TokenParsers");
@@ -455,16 +451,6 @@ void Parser::parseNumber(EditionReference &leftHandSide, Token::Type stoppingTyp
     return;
   }
   isThereImplicitOperator();
-}
-
-void Parser::parseEmpty(EditionReference &leftHandSide, Token::Type stoppingType) {
-  if (!leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // FIXME
-    return;
-  }
-  // We probably don't want empty in expressions
-  // leftHandSide = EmptyExpression::Builder();
-  generateMixedFractionIfNeeded(leftHandSide);
 }
 
 void Parser::parsePlus(EditionReference &leftHandSide, Token::Type stoppingType) {
@@ -1283,8 +1269,7 @@ bool Parser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
   // Check for mixed fraction. There is a mixed fraction if :
   if (IsIntegerBaseTenOrEmptyExpression(leftHandSide)
       // The next token is either a number or empty
-      && (m_nextToken.is(Token::Type::Number) ||
-          m_nextToken.is(Token::Type::Empty))) {
+      && m_nextToken.is(Token::Type::Number)) {
     m_waitingSlashForMixedFraction = true;
     EditionReference rightHandSide = parseUntil(Token::Type::LeftBrace);
     m_waitingSlashForMixedFraction = false;

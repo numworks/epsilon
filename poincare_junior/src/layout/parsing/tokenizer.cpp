@@ -255,8 +255,6 @@ Token Tokenizer::popToken() {
     return Token(Token::Type::RightBrace, layout);
   case UCodePointSquareRoot:
     return Token(Token::Type::ReservedFunction, layout);
-  case UCodePointEmpty:
-    return Token(Token::Type::Empty, layout);
   case UCodePointRightwardsArrow:
     return Token(Token::Type::RightwardsArrow, layout);
   case UCodePointInfinity:

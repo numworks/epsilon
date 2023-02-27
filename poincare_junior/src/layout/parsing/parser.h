@@ -71,8 +71,6 @@ class Parser {
                               Token::Type stoppingType = (Token::Type)0);
   void parseCustomIdentifier(EditionReference& leftHandSide,
                              Token::Type stoppingType = (Token::Type)0);
-  void parseEmpty(EditionReference& leftHandSide,
-                  Token::Type stoppingType = (Token::Type)0);
   void parseMatrix(EditionReference& leftHandSide,
                    Token::Type stoppingType = (Token::Type)0);
   void parseLeftParenthesis(EditionReference& leftHandSide,

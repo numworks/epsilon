@@ -49,7 +49,6 @@ public:
     LeftBracket,
     LeftParenthesis,
     LeftBrace,
-    Empty,
     Constant,
     Number,
     BinaryNumber,

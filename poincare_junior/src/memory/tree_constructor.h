@@ -220,7 +220,7 @@ template <int V> requires (V < 0 && Integer::NumberOfDigits(-V) == 4) Tree(Integ
 constexpr Tree π_e = Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi), BlockType::Constant>();
 
 // TODO: move in OMG?
-constexpr static uint64_t Value(const char * str, size_t size) {
+constexpr static uint64_t IntegerValue(const char * str, size_t size) {
   uint64_t value = 0;
   for (int i = 0; i < size - 1; i++) {
     uint8_t digit = OMG::Print::DigitForCharacter(str[i]);
@@ -231,11 +231,60 @@ constexpr static uint64_t Value(const char * str, size_t size) {
   return value;
 }
 
+constexpr bool HasDecimalPoint(const char * str, size_t size) {
+  for (int i = 0; i < size - 1; i++) {
+    if (str[i] == '.') {
+      return true;
+    }
+  }
+  return false;
+}
+
+constexpr static float FloatValue(const char * str, size_t size) {
+  float value = 0;
+  bool fractionalPart = false;
+  float base = 1;
+  for (int i = 0; i < size - 1; i++) {
+    if (str[i] == '.') {
+      fractionalPart = true;
+      continue;
+    }
+    uint8_t digit = OMG::Print::DigitForCharacter(str[i]);
+    // No overflow
+    constexpr_assert(value <= (UINT64_MAX - digit)/10);
+    if (!fractionalPart) {
+      value = 10 * value + digit;
+    } else {
+      // TODO use a better algo precision-wise
+      base *= 10.f;
+      value += digit / base;
+    }
+  }
+  return value;
+}
+
+/* A template <float V> would be cool but support for this is poor yet so we
+ * have to store the bit representation of the float. */
+template <uint32_t V> class FloatLitteral : public AbstractTreeCompatible {
+public:
+  template <Block...B> consteval operator Tree<B...> () { return Tree<B...>(); }
+
+  constexpr operator const Node () { return Tree(FloatLitteral<V>()); }
+
+  // Since we are using the representation we have to manually flip the sign bit
+  consteval auto operator-() { return FloatLitteral<V ^ (1 << 31)>(); }
+};
+
+template <uint32_t V> Tree(FloatLitteral<V>) -> Tree<BlockType::Float, Bit::getByteAtIndex(V, 0), Bit::getByteAtIndex(V, 1), Bit::getByteAtIndex(V, 2), Bit::getByteAtIndex(V, 3), BlockType::Float>;
+
 template <char...C>
 consteval auto operator"" _e () {
   constexpr const char value[] = { C... , '\0' };
-  constexpr int V = Value(value, sizeof...(C) + 1);
-  return IntegerLitteral<V>();
+  if constexpr (HasDecimalPoint(value, sizeof...(C) + 1)) {
+    return FloatLitteral<std::bit_cast<uint32_t>(FloatValue(value, sizeof...(C) + 1))>();
+  } else {
+    return IntegerLitteral<IntegerValue(value, sizeof...(C) + 1)>();
+  }
 }
 
 

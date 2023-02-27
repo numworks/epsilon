@@ -1,5 +1,6 @@
 #include "print.h"
 #include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/src/expression/approximation.h>
 
 using namespace PoincareJ;
 
@@ -19,6 +20,9 @@ QUIZ_CASE(pcj_tree_constructor) {
   assert(poly.treeSize() == 17);
 
   (void) Pol(Exponents<1>(), "x"_e, 2_e);
+
+  assert(Approximation::To<float>(0.125_e) == 0.125);
+  assert(Approximation::To<float>(-2.5_e) == -2.5);
 }
 
 QUIZ_CASE(pcj_tree_integer_constructor) {

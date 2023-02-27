@@ -60,9 +60,23 @@ void TableViewWithTopAndBottomViews::layoutSubviews(bool force) {
   }
   if (m_bottomView) {
     bottomHeight = m_bottomView->minimalSizeForOptimalDisplay().height();
-    m_bottomView->setFrame(KDRect(0, tableRect.y() + tableRect.height(),
-                                  bounds().width(), bottomHeight),
-                           force);
+    KDCoordinate tableBottom = tableRect.y() + tableRect.height();
+    KDCoordinate topOfBottomView = tableBottom;
+    if (tableBottom + bottomHeight < bounds().height()) {
+      /* If the bottom view does not take up the whole space under the table,
+       * center it vertically between the bottom of the table and the bottom
+       * of the window.
+       *
+       * TODO: If a TableViewWithTopAndBottomViews without this behaviour
+       * is needed at some point, this can rely on a parameter in the
+       * constructor.
+       * */
+      topOfBottomView =
+          (tableBottom + bounds().height() - bottomHeight - k_verticalMargin) /
+          2;
+    }
+    m_bottomView->setFrame(
+        KDRect(0, topOfBottomView, bounds().width(), bottomHeight), force);
   }
 
   m_scrollBar.update(topHeight + tableHeight + bottomHeight,

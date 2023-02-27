@@ -300,6 +300,7 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
         minAbscissa, tangentParameterA * minAbscissa + tangentParameterB);
     Coordinate2D<float> rightIntersection(
         maxAbscissa, tangentParameterA * maxAbscissa + tangentParameterB);
+    int numberOfCandidateDots = 2;
     Coordinate2D<float> bottomIntersection(NAN, NAN);
     Coordinate2D<float> topIntersection(NAN, NAN);
     if (tangentParameterA != 0.) {
@@ -307,29 +308,32 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
           (minOrdinate - tangentParameterB) / tangentParameterA, minOrdinate);
       topIntersection = Coordinate2D<float>(
           (maxOrdinate - tangentParameterB) / tangentParameterA, maxOrdinate);
+      numberOfCandidateDots += 2;
     }
 
     /* After computing the 4 intersections, choose the two that are visible
      * in the window to ensure their coordinates are not too far appart. */
-    int numberOfCandidateDots = tangentParameterA == 0 ? 2 : 4;
     Coordinate2D<float> candidateDots[] = {leftIntersection, rightIntersection,
                                            bottomIntersection, topIntersection};
-    Coordinate2D<float> visibleDots[2];
-    int foundVisibleDots = 0;
+    Coordinate2D<float> firstVisibleDot;
+    bool foundFirstVisibleDot = false;
     for (int i = 0; i < numberOfCandidateDots; i++) {
       Coordinate2D<float> currentDot = candidateDots[i];
-      if (currentDot.x1IsIn(minAbscissa, maxAbscissa, true, true) &&
-          currentDot.x2IsIn(minOrdinate, maxOrdinate, true, true)) {
-        visibleDots[foundVisibleDots] = currentDot;
-        foundVisibleDots++;
-        if (foundVisibleDots == 2) {
-          break;
-        }
+      if (!currentDot.x1IsIn(minAbscissa, maxAbscissa, true, true) ||
+          !currentDot.x2IsIn(minOrdinate, maxOrdinate, true, true)) {
+        // Dot is not in window
+        continue;
       }
-    }
-    if (foundVisibleDots == 2) {
-      drawSegment(ctx, rect, visibleDots[0], visibleDots[1],
-                  Palette::GrayVeryDark, false);
+      if (!foundFirstVisibleDot) {
+        // First dot in window found
+        firstVisibleDot = currentDot;
+        foundFirstVisibleDot = true;
+        continue;
+      }
+      // Second dot in window found
+      drawSegment(ctx, rect, firstVisibleDot, currentDot, Palette::GrayVeryDark,
+                  false);
+      break;
     }
   }
 }

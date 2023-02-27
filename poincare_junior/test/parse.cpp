@@ -1,3 +1,4 @@
+#include "helper.h"
 #include <quiz.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
@@ -34,4 +35,6 @@ QUIZ_CASE(pcj_layout_tokenize) {
 
 QUIZ_CASE(pcj_layout_parse) {
   Parser("12(123.4567E2 +  0x2a+2*0b0101)"_l).parse().log();
+  Parser("2^(3+1)^4"_l).parse().log();
+  assert_trees_are_equal(Parser("2^(3+1)^4"_l).parse(), Pow(2_e, Pow(Add(3_e, 1_e), 4_e)));
 }

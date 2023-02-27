@@ -594,11 +594,24 @@ void Parser::privateParseTimes(EditionReference &leftHandSide,
   }
 }
 
+static void turnIntoBinaryNode(Node node, EditionReference &leftHandSide, EditionReference &rightHandSide) {
+  assert(leftHandSide.nextTree() == rightHandSide);
+  leftHandSide.insertNodeBeforeNode(node);
+  leftHandSide = leftHandSide.previousNode();
+}
+
 void Parser::parseCaret(EditionReference &leftHandSide, Token::Type stoppingType) {
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide,
                           Token::Type::ImplicitTimes)) {
-    // leftHandSide = Power::ChainedPowerBuilder(leftHandSide, rightHandSide);
+    if (leftHandSide.type() == BlockType::Power) {
+      // l         r -> l
+      // (POW A B) C -> POW A (POW B C)
+      assert(leftHandSide.nextTree() == rightHandSide);
+      leftHandSide.childAtIndex(1).insertNodeBeforeNode(Tree<BlockType::Power>());
+    } else {
+      turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
+    }
   }
 }
 

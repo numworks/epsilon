@@ -152,8 +152,7 @@ class Parser {
   void privateParseTimes(EditionReference& leftHandSide, Token::Type stoppingType);
   void privateParseReservedFunction(
       EditionReference& leftHandSide,
-      // const EditionReference::FunctionHelper* const* functionHelper
-      const std::pair<BlockType, AliasesList> functionHelper);
+      const Builtin * builtin);
   void privateParseCustomIdentifier(EditionReference& leftHandSide, const char* name,
                                     size_t length, Token::Type stoppingType);
   void parseSequence(EditionReference& leftHandSide, const char* name,

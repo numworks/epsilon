@@ -7,6 +7,7 @@
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/expression_builder.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
+#include <poincare_junior/src/n_ary.h>
 #include <stdlib.h>
 
 #include <algorithm>
@@ -383,6 +384,13 @@ static size_t CodePointSearch(UnicodeDecoder & decoder, CodePoint c) {
   return decoder.position();
 }
 
+static RackLayoutDecoder TokenToDecoder(const Token & token) {
+  Node rack = token.firstLayout().parent();
+  size_t start = rack.indexOfChild(token.firstLayout());
+  size_t end = start + token.length();
+  return RackLayoutDecoder(rack, start, end);
+}
+
 void Parser::parseNumber(EditionReference &leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // FIXME
@@ -492,8 +500,7 @@ void Parser::privateParsePlusAndMinus(EditionReference &leftHandSide, bool plus,
       return;
     }
     if (leftHandSide.type() == BlockType::Addition) {
-      int childrenCount = leftHandSide.numberOfChildren();
-      *leftHandSide.block()->next() = ValueBlock(childrenCount + 1);
+      NAry::SetNumberOfChildren(leftHandSide, leftHandSide.numberOfChildren() + 1);
     } else {
       leftHandSide.insertNodeBeforeNode(Tree<BlockType::Addition, 2, BlockType::Addition>());
       leftHandSide = leftHandSide.previousNode();
@@ -570,8 +577,7 @@ void Parser::privateParseTimes(EditionReference &leftHandSide,
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, stoppingType)) {
     if (leftHandSide.type() == BlockType::Multiplication) {
-      int childrenCount = leftHandSide.numberOfChildren();
-      *leftHandSide.block()->next() = ValueBlock(childrenCount + 1);
+      NAry::SetNumberOfChildren(leftHandSide, leftHandSide.numberOfChildren() + 1);
     } else {
       leftHandSide.insertNodeBeforeNode(Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
       leftHandSide = leftHandSide.previousNode();
@@ -820,19 +826,17 @@ void Parser::parseUnit(EditionReference &leftHandSide, Token::Type stoppingType)
 void Parser::parseReservedFunction(EditionReference &leftHandSide,
                                    Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  // const Expression::FunctionHelper *const *functionHelper =
-      // ParsingHelper::GetReservedFunction(m_currentToken.text(),
-                                         // m_currentToken.length());
-  // assert(functionHelper != nullptr);
-  // privateParseReservedFunction(leftHandSide, functionHelper);
+  RackLayoutDecoder decoder = TokenToDecoder(m_currentToken);
+  const Builtin * builtin = Builtins::GetReservedFunction(&decoder);
+  privateParseReservedFunction(leftHandSide, builtin);
   isThereImplicitOperator();
 }
 
-/*void Parser::privateParseReservedFunction(
+void Parser::privateParseReservedFunction(
     EditionReference &leftHandSide,
-    const Expression::FunctionHelper *const *functionHelper) {
-  AliasesList aliasesList = (**functionHelper).aliasesList();
-  if (aliasesList.contains("log") &&
+    const Builtin * builtin) {
+  const AliasesList * aliasesList = builtin->aliasesList();
+  /*if (aliasesList.contains("log") &&
       popTokenIfType(Token::Type::LeftSystemBrace)) {
     // Special case for the log function (e.g. "log\x14{2\x14}(8)")
     EditionReference base = parseUntil(Token::Type::RightSystemBrace);
@@ -850,6 +854,7 @@ void Parser::parseReservedFunction(EditionReference &leftHandSide,
     }
     return;
   }
+  */
 
   // Parse cos^n(x)
   Token::Type endDelimiterOfPower;
@@ -864,7 +869,7 @@ void Parser::parseReservedFunction(EditionReference &leftHandSide,
     }
   }
   EditionReference base;
-  if (hasCaret) {
+  /*if (hasCaret) {
     base = parseUntil(endDelimiterOfPower);
     if (m_status != Status::Progress) {
       return;
@@ -892,63 +897,63 @@ void Parser::parseReservedFunction(EditionReference &leftHandSide,
       m_status = Status::Error;
       return;
     }
-  }
+  }*/
 
   EditionReference parameters;
-  if (m_parsingContext.context() &&
-      ParsingHelper::IsParameteredExpression(*functionHelper)) {
+  // if (m_parsingContext.context() &&
+      // ParsingHelper::IsParameteredExpression(*functionHelper)) {
     // We must make sure that the parameter is parsed as a single variable.
-    const char *parameterText;
-    size_t parameterLength;
-    if (ParameteredExpression::ParameterText(
-            m_currentToken.text() + m_currentToken.length() + 1, &parameterText,
-            &parameterLength)) {
-      Context *oldContext = m_parsingContext.context();
-      VariableContext parameterContext(
-          Symbol::Builder(parameterText, parameterLength), oldContext);
-      m_parsingContext.setContext(&parameterContext);
-      parameters = parseFunctionParameters();
-      m_parsingContext.setContext(oldContext);
-    } else {
-      parameters = parseFunctionParameters();
-    }
-  } else {
+    // const char *parameterText;
+    // size_t parameterLength;
+    // if (ParameteredExpression::ParameterText(
+            // m_currentToken.text() + m_currentToken.length() + 1, &parameterText,
+            // &parameterLength)) {
+      // Context *oldContext = m_parsingContext.context();
+      // VariableContext parameterContext(
+          // Symbol::Builder(parameterText, parameterLength), oldContext);
+      // m_parsingContext.setContext(&parameterContext);
+      // parameters = parseFunctionParameters();
+      // m_parsingContext.setContext(oldContext);
+    // } else {
+      // parameters = parseFunctionParameters();
+    // }
+  // } else {
     parameters = parseFunctionParameters();
-  }
+  // }
 
   if (m_status != Status::Progress) {
     return;
-  }*/
+  }
   /* The following lines are there because some functions have the same name
    * but not same number of parameters.
    * This is currently only useful for "sum" which can be sum({1,2,3}) or
    * sum(1/k, k, 1, n) */
-  /*int numberOfParameters = parameters.numberOfChildren();
-  if ((**functionHelper).minNumberOfChildren() >= 0) {
-    while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
-      functionHelper++;
-      if (functionHelper >= ParsingHelper::ReservedFunctionsUpperBound() ||
-          !(**functionHelper).aliasesList().isEquivalentTo(aliasesList)) {
-        m_status = Status::Error;  // Too many parameters provided.
-        return;
-      }
-    }
-  }
+  int numberOfParameters = parameters.numberOfChildren();
+  // if ((**functionHelper).minNumberOfChildren() >= 0) {
+    // while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
+      // functionHelper++;
+      // if (functionHelper >= ParsingHelper::ReservedFunctionsUpperBound() ||
+          // !(**functionHelper).aliasesList().isEquivalentTo(aliasesList)) {
+        // m_status = Status::Error;  // Too many parameters provided.
+        // return;
+      // }
+    // }
+  // }
 
-  if (numberOfParameters < (**functionHelper).minNumberOfChildren()) {
+  if (numberOfParameters < Builtins::MinNumberOfParameters(builtin->blockType())) {
     m_status = Status::Error;  // Too few parameters provided.
     return;
   }
 
-  leftHandSide = (**functionHelper).build(parameters);
+  leftHandSide = Builtins::Build(builtin->blockType(), parameters);
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Incorrect parameter type or too few args
     return;
   }
-  if (powerFunction) {
-    leftHandSide = Power::Builder(leftHandSide, base);
-  }
-}*/
+  // if (powerFunction) {
+    // leftHandSide = Power::Builder(leftHandSide, base);
+  // }
+}
 
 void Parser::parseSequence(EditionReference &leftHandSide, const char *name,
                            Token::Type rightDelimiter) {
@@ -1128,7 +1133,7 @@ EditionReference Parser::parseFunctionParameters() {
     return EditionReference();
   }
   if (!popTokenIfType(Token::Type::RightParenthesis)) {
-    // Right parenthesis missing or wrong type of right parenthesis
+    // Right parenthesis missing
     m_status = Status::Error;
     return EditionReference();
   }
@@ -1183,18 +1188,17 @@ EditionReference Parser::parseVector() {
 }
 
 EditionReference Parser::parseCommaSeparatedList() {
-  return EditionReference();
-  // List commaSeparatedList = List::Builder();
-  // int length = 0;
-  // do {
-    // EditionReference item = parseUntil(Token::Type::Comma);
-    // if (m_status != Status::Progress) {
-      // return EditionReference();
-    // }
-    // commaSeparatedList.addChildAtIndexInPlace(item, length, length);
-    // length++;
-  // } while (popTokenIfType(Token::Type::Comma));
-  // return std::move(commaSeparatedList);
+  EditionReference list = EditionReference::Push<BlockType::SystemList>(0);
+  int length = 0;
+  do {
+    parseUntil(Token::Type::Comma);
+    if (m_status != Status::Progress) {
+      return EditionReference();
+    }
+    length++;
+    NAry::SetNumberOfChildren(list, length);
+  } while (popTokenIfType(Token::Type::Comma));
+  return list;
 }
 
 void Parser::parseList(EditionReference &leftHandSide, Token::Type stoppingType) {

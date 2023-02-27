@@ -1,11 +1,12 @@
 #include "builtins.h"
+#include <poincare_junior/src/memory/tree_constructor.h>
 
 namespace PoincareJ {
 
 /* TODO Choose between the map and the switch, and sort along one of the two
  * keys to enable dichotomy. Devise a pattern for maps and move it in OMG. */
 
-static std::pair<BlockType, AliasesList> s_builtins[] = {
+constexpr static Builtin s_builtins[] = {
   { BlockType::Cosine, "cos" },
   { BlockType::Sine, "sin" },
   { BlockType::Tangent, "tan" },
@@ -15,28 +16,13 @@ static std::pair<BlockType, AliasesList> s_builtins[] = {
   { BlockType::Logarithm, "log" },
 };
 
-static int s_builtinsLength = sizeof(s_builtins) / sizeof(std::pair<BlockType, AliasesList>);
-
 constexpr AliasesList Builtins::Name(BlockType type) {
-  switch (type) {
-    case BlockType::Cosine:
-      return "cos";
-    case BlockType::Sine:
-      return "sin";
-    case BlockType::Tangent:
-      return "tan";
-    case BlockType::ArcCosine:
-      return AliasesLists::k_acosAliases;
-    case BlockType::ArcSine:
-      return AliasesLists::k_asinAliases;
-    case BlockType::ArcTangent:
-      return AliasesLists::k_atanAliases;
-    case BlockType::Logarithm:
-      return "log";
-    default:
-      assert(false);
-      return "";
+  for (auto &[block, aliases] : s_builtins) {
+    if (block == type) {
+      return aliases;
+    }
   }
+  assert(false);
 }
 
 AliasesList Builtins::Name(const Node node) {
@@ -50,6 +36,47 @@ bool Builtins::HasReservedFunction(UnicodeDecoder * name) {
     }
   }
   return false;
+}
+
+const Builtin * Builtins::GetReservedFunction(UnicodeDecoder * name) {
+  for (const Builtin &builtin : s_builtins) {
+    if (builtin.second.contains(name)) {
+      return &builtin;
+    }
+  }
+  assert(false);
+}
+
+uint8_t Builtins::MinNumberOfParameters(BlockType type) {
+  return 1;
+}
+
+EditionReference Builtins::Build(BlockType type, EditionReference parameters) {
+  Node header;
+  switch (type) {
+  case BlockType::Cosine:
+    header = Tree<BlockType::Cosine>();
+    break;
+  case BlockType::Sine:
+    header = Tree<BlockType::Sine>();
+    break;
+  case BlockType::Tangent:
+    header = Tree<BlockType::Tangent>();
+    break;
+  case BlockType::ArcCosine:
+    header = Tree<BlockType::ArcCosine>();
+    break;
+  case BlockType::ArcSine:
+    header = Tree<BlockType::ArcSine>();
+    break;
+  case BlockType::ArcTangent:
+    header = Tree<BlockType::ArcTangent>();
+    break;
+  default:
+    assert(false);
+  }
+  parameters.replaceNodeByNode(header);
+  return parameters;
 }
 
 }

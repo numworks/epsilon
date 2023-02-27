@@ -44,7 +44,6 @@ public:
     Percent,
     Caret,
     Bang,
-    CaretWithParenthesis,
     ImplicitAdditionBetweenUnits,
     // ^ Used to parse 4h50min34s and other implicit additions of units
     LeftBracket,

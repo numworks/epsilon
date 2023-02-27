@@ -77,10 +77,6 @@ class Parser {
                    Token::Type stoppingType = (Token::Type)0);
   void parseLeftParenthesis(EditionReference& leftHandSide,
                             Token::Type stoppingType = (Token::Type)0);
-  void parseLeftSystemParenthesis(EditionReference& leftHandSide,
-                                  Token::Type stoppingType = (Token::Type)0);
-  void parseLeftSystemBrace(EditionReference& leftHandSide,
-                            Token::Type stoppingType = (Token::Type)0);
   void parseBang(EditionReference& leftHandSide,
                  Token::Type stoppingType = (Token::Type)0);
   void parsePercent(EditionReference& leftHandSide,
@@ -164,9 +160,6 @@ class Parser {
                                     size_t length, Token::Type stoppingType);
   void parseSequence(EditionReference& leftHandSide, const char* name,
                      Token::Type rightDelimiter);
-  void defaultParseLeftParenthesis(bool isSystemParenthesis,
-                                   EditionReference& leftHandSide,
-                                   Token::Type stoppingType);
   bool generateMixedFractionIfNeeded(EditionReference& leftHandSide);
   // Allows you to rewind to previous position
   void rememberCurrentParsingPosition(size_t* tokenizerPosition,

@@ -152,7 +152,6 @@ EditionReference Parser::parseUntil(Token::Type stoppingType,
       &Parser::parsePercent,             // Token::Type::Percent
       &Parser::parseCaret,               // Token::Type::Caret
       &Parser::parseBang,                // Token::Type::Bang
-      nullptr, //&Parser::parseCaretWithParenthesis,  // Token::Type::CaretWithParenthesis
       &Parser::
           parseImplicitAdditionBetweenUnits,  // Token::Type::ImplicitAdditionBetweenUnits
       &Parser::parseMatrix,                   // Token::Type::LeftBracket
@@ -776,56 +775,22 @@ bool Parser::parseBinaryOperator(const EditionReference &leftHandSide,
 
 void Parser::parseLeftParenthesis(EditionReference &leftHandSide,
                                   Token::Type stoppingType) {
-  defaultParseLeftParenthesis(false, leftHandSide, stoppingType);
-}
-
-void Parser::parseLeftSystemParenthesis(EditionReference &leftHandSide,
-                                        Token::Type stoppingType) {
-  defaultParseLeftParenthesis(true, leftHandSide, stoppingType);
-}
-
-void Parser::parseLeftSystemBrace(EditionReference &leftHandSide,
-                                  Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
-    m_status = Status::Error;
+    m_status = Status::Error;  // FIXME
     return;
   }
-  /* A leading system brace is the result of serializing a NL logarithm. */
-  // EditionReference index = parseUntil(Token::Type::RightSystemBrace);
-  // if (m_status != Status::Error && !index.isUninitialized() &&
-      // popTokenIfType(Token::Type::RightSystemBrace)) {
-    // const Expression::FunctionHelper *const *functionHelper =
-        // ParsingHelper::GetReservedFunction(m_nextToken.text(),
-                                           // m_nextToken.length());
-    // if (functionHelper && (**functionHelper).aliasesList().contains("log") &&
-        // popTokenIfType(Token::Type::ReservedFunction)) {
-      // EditionReference parameter = parseFunctionParameters();
-      // if (!parameter.isUninitialized() && parameter.numberOfChildren() == 1) {
-        // leftHandSide = Logarithm::Builder(parameter.childAtIndex(0), index);
-        // isThereImplicitOperator();
-        // return;
-      // }
-    // }
-  // }
-  // m_status = Status::Error;
-  // return;
+  Token::Type endToken = Token::Type::RightParenthesis;
+  leftHandSide = parseUntil(endToken);
+  if (m_status != Status::Progress) {
+    return;
+  }
+  if (!popTokenIfType(endToken)) {
+    m_status = Status::Error;  // Right parenthesis missing.
+    return;
+  }
+  // leftHandSide = Parenthesis::Builder(leftHandSide);
+  isThereImplicitOperator();
 }
-
-/*
- ref = push(Factorial)
- push(Number(42))
- ! 42
- ^
-
- 42
- ^
-
- 42 !
- ^  ^
-
- should parse Bang assert that it is at the very end of the pool ?
- maybe we should have a terminal edition reference ?
- */
 
 void Parser::parseBang(EditionReference &leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
@@ -1244,28 +1209,6 @@ EditionReference Parser::parseCommaSeparatedList() {
     // length++;
   // } while (popTokenIfType(Token::Type::Comma));
   // return std::move(commaSeparatedList);
-}
-
-void Parser::defaultParseLeftParenthesis(bool isSystemParenthesis,
-                                         EditionReference &leftHandSide,
-                                         Token::Type stoppingType) {
-  if (!leftHandSide.isUninitialized()) {
-    m_status = Status::Error;  // FIXME
-    return;
-  }
-  Token::Type endToken = Token::Type::RightParenthesis;
-  leftHandSide = parseUntil(endToken);
-  if (m_status != Status::Progress) {
-    return;
-  }
-  if (!popTokenIfType(endToken)) {
-    m_status = Status::Error;  // Right parenthesis missing.
-    return;
-  }
-  if (!isSystemParenthesis) {
-    // leftHandSide = Parenthesis::Builder(leftHandSide);
-  }
-  isThereImplicitOperator();
 }
 
 void Parser::parseList(EditionReference &leftHandSide, Token::Type stoppingType) {

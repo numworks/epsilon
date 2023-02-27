@@ -24,6 +24,7 @@ public:
   static bool HasReservedFunction(UnicodeDecoder * name);
   static const Builtin * GetReservedFunction(UnicodeDecoder * name);
   static uint8_t MinNumberOfParameters(BlockType type);
+  static uint8_t MaxNumberOfParameters(BlockType type);
   static EditionReference Build(BlockType type, EditionReference parameters);
 };
 

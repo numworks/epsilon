@@ -51,6 +51,10 @@ uint8_t Builtins::MinNumberOfParameters(BlockType type) {
   return 1;
 }
 
+uint8_t Builtins::MaxNumberOfParameters(BlockType type) {
+  return 1;
+}
+
 EditionReference Builtins::Build(BlockType type, EditionReference parameters) {
   Node header;
   switch (type) {

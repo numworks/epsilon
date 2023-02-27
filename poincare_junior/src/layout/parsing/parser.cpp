@@ -945,6 +945,11 @@ void Parser::privateParseReservedFunction(
     return;
   }
 
+  if (numberOfParameters > Builtins::MaxNumberOfParameters(builtin->blockType())) {
+    m_status = Status::Error;  // Too many parameters provided.
+    return;
+  }
+
   leftHandSide = Builtins::Build(builtin->blockType(), parameters);
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Incorrect parameter type or too few args

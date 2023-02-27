@@ -16,6 +16,8 @@ public:
   static KDPoint PositionOfChild(const Node node, int childIndex, KDFont::Size font);
   static KDCoordinate Baseline(const Node node, KDFont::Size font);
   static void Draw(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+private:
+  static void PrivateDraw(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   static void RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
 };
 

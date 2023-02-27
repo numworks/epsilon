@@ -33,7 +33,7 @@ KDPoint Render::AbsoluteOrigin(const Node node, KDFont::Size font) {
   if (parent.isUninitialized()) {
     return KDPointZero;
   }
-  return Render::AbsoluteOrigin(parent, font).translatedBy(Render::PositionOfChild(parent, parent.indexOfChild(node), font));
+  return AbsoluteOrigin(parent, font).translatedBy(PositionOfChild(parent, parent.indexOfChild(node), font));
 }
 
 KDPoint Render::PositionOfChild(const Node node, int childIndex, KDFont::Size font) {
@@ -73,21 +73,29 @@ KDCoordinate Render::Baseline(const Node node, KDFont::Size font) {
 }
 
 void Render::Draw(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
+  /* AbsoluteOrigin relies on the fact that any layout is drawn as a whole.
+   * Drawing is therefore restricted to the highest parent only.
+   * TODO : Uncomment this assert, which currently can't be used because we
+   *        don't handle well parents of Node living out of the CachePool. */
+  // assert(node.parent().isUninitialized());
+  PrivateDraw(node, ctx, p, font, expressionColor, backgroundColor);
+}
+
+void Render::PrivateDraw(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   assert(node.block()->isLayout());
-  KDPoint renderingAbsoluteOrigin = Render::AbsoluteOrigin(node, font).translatedBy(p);
-  KDSize size = Render::Size(node, font);
+  KDSize size = Size(node, font);
   if (size.height() <= 0 || size.width() <= 0
-      || size.height() > KDCOORDINATE_MAX - renderingAbsoluteOrigin.y()
-      || size.width() > KDCOORDINATE_MAX - renderingAbsoluteOrigin.x()) {
+      || size.height() > KDCOORDINATE_MAX - p.y()
+      || size.width() > KDCOORDINATE_MAX - p.x()) {
     // Layout size overflows KDCoordinate
     return;
   }
   /* Redraw the background for each Node (used with selection which isn't
    * implemented yet) */
-  ctx->fillRect(KDRect(renderingAbsoluteOrigin, size), backgroundColor);
-  Render::RenderNode(node, ctx, renderingAbsoluteOrigin, font, expressionColor, backgroundColor);
+  ctx->fillRect(KDRect(p, size), backgroundColor);
+  RenderNode(node, ctx, p, font, expressionColor, backgroundColor);
   for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(node)) {
-    Render::Draw(child, ctx, p, font, expressionColor, backgroundColor);
+    Draw(child, ctx, PositionOfChild(node, index, font).translatedBy(p), font, expressionColor, backgroundColor);
   }
 }
 

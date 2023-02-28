@@ -20,13 +20,12 @@ class StoreApp : public ExpressionFieldDelegateApp {
     Poincare::Layout memoizedFormulaAtColumn(int column) const;
 
    private:
-    constexpr static int k_maxFormulaSize = 1024;
+    constexpr static size_t k_bufferSize = Escher::TextField::MaxBufferSize();
     constexpr static int k_numberOfColumns =
         DoublePairStore::k_numberOfColumnsPerSeries *
         DoublePairStore::k_numberOfSeries;
 
-    char m_memoizedFormulasBuffer[k_numberOfColumns][k_maxFormulaSize];
-    size_t m_memoizedFormulasSize[k_numberOfColumns];
+    char m_memoizedFormulasBuffer[k_numberOfColumns][k_bufferSize];
   };
 
   static StoreApp *storeApp() {

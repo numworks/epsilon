@@ -84,7 +84,7 @@ template <Block Tag, TreeCompatibleConcept A, TreeCompatibleConcept B> consteval
   return Binary<Tag>(Tree(a), Tree(b));
 }
 
-template<Block Tag, TreeConcept ...CTS> requires (sizeof...(CTS)>=2) static consteval auto __NAry(CTS...) {
+template<Block Tag, TreeConcept ...CTS> static consteval auto __NAry(CTS...) {
   return Concat<Tree<Tag, sizeof...(CTS), Tag>, CTS...>();
 }
 
@@ -320,29 +320,21 @@ consteval auto operator"" _e () {
 }
 
 // TODO : A RackLayout shouldn't have RackLayout children.
-template<unsigned ...Len> static consteval auto RackL(const Tree<Len> (&...children)) { return MakeTree<BlockType::RackLayout>(children...); }
-template<unsigned L1, unsigned L2> static consteval Tree<L1+L2+1> FracL(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::FractionLayout>(child1, child2); }
-template<unsigned L1> static consteval Tree<L1+1> VertOffL(const Tree<L1> child1) { return MakeTree<BlockType::VerticalOffsetLayout>(child1); }
-template<unsigned L1> static consteval Tree<L1+1> ParenthesisL(const Tree<L1> child1) { return MakeTree<BlockType::ParenthesisLayout>(child1); }
+template <class...Args> consteval auto RackL(Args...args) { return NAry<BlockType::RackLayout>(args...); }
 
-template <String S>
-consteval auto operator"" _l () {
-  constexpr int size = S.size()-1;
-  constexpr int codePointLayoutMetaSize = TypeBlock::NumberOfMetaBlocks(BlockType::CodePointLayout);
-  constexpr int rackLayoutMetaSize = TypeBlock::NumberOfMetaBlocks(BlockType::RackLayout);
-  constexpr int metaSize = rackLayoutMetaSize + size * codePointLayoutMetaSize;
-  Tree<metaSize> tree;
-  CreateNode<BlockType::RackLayout>(&tree, size);
-  for (int i = 0; i < size; i++) {
-    int metaIndex = rackLayoutMetaSize + i * codePointLayoutMetaSize;
-    Tree<codePointLayoutMetaSize> tree2;
-    CreateNode<BlockType::CodePointLayout>(&tree2, CodePoint(S[i]));
-    for (int j = 0; j < codePointLayoutMetaSize; j++) {
-      tree[metaIndex + j] = tree2[j];
-    }
-  }
-  return tree;
-}
+template <class...Args> consteval auto FracL(Args...args) { return Binary<BlockType::FractionLayout>(args...); }
+template <class...Args> consteval auto VertOffL(Args...args) { return Unary<BlockType::VerticalOffsetLayout>(args...); }
+template <class...Args> consteval auto ParenthesisL(Args...args) { return Unary<BlockType::ParenthesisLayout>(args...); }
+
+// Templating over uint32_t and not CodePoint to keep m_code private in CodePoint
+template <uint32_t cp> using CodePointL = Tree<BlockType::CodePointLayout, CodePointLayout::SubCodePointLayoutAtIndex(cp, 0), CodePointLayout::SubCodePointLayoutAtIndex(cp, 1), CodePointLayout::SubCodePointLayoutAtIndex(cp, 2), CodePointLayout::SubCodePointLayoutAtIndex(cp, 3), BlockType::CodePointLayout>;
+
+template <String S, typename IS = decltype(std::make_index_sequence<S.size() - 1>())> struct _RackLayoutHelper;
+
+template <String S, std::size_t... I>
+struct _RackLayoutHelper<S, std::index_sequence<I...>> : Concat<Tree<BlockType::RackLayout, sizeof...(I), BlockType::RackLayout>, CodePointL<S[I]>...> {};
+
+template <String S> consteval auto operator"" _l () { return _RackLayoutHelper<S>(); }
 
 }
 

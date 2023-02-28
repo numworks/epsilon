@@ -310,6 +310,7 @@ template <String S, typename IS = decltype(std::make_index_sequence<S.size() - 1
 
 template <String S, std::size_t... I>
 struct Variable<S, std::index_sequence<I...>> {
+  static_assert(!OMG::Print::IsDigit(S[0]), "Integer litterals should be written without quotes");
   using tree = Tree<BlockType::UserSymbol, sizeof...(I), S[I]..., sizeof...(I), BlockType::UserSymbol>;
 };
 

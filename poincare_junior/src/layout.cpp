@@ -7,7 +7,7 @@
 namespace PoincareJ {
 
 EditionReference Layout::EditionPoolTextToLayout(const char * text) {
-  int n = std::strlen(text);
+  int n = strlen(text);
   EditionReference ref = EditionReference::Push<BlockType::RackLayout>(n);
   for (int i = 0; i < n; i++) {
     EditionReference::Push<BlockType::CodePointLayout, CodePoint>(text[i]);

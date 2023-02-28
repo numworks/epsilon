@@ -1,5 +1,6 @@
 #include "column_helper.h"
 
+#include <apps/constant.h>
 #include <escher/container.h>
 #include <poincare/comparison.h>
 #include <poincare/print.h>
@@ -93,9 +94,7 @@ void StoreColumnHelper::displayFormulaInput() {
 }
 
 void StoreColumnHelper::fillFormulaInputWithTemplate(Layout templateLayout) {
-  constexpr int k_sizeOfBuffer =
-      DoublePairStore::k_columnNamesLength + 1 +
-      FormulaTemplateMenuController::k_maxSizeOfTemplateText;
+  constexpr int k_sizeOfBuffer = Constant::MaxSerializedExpressionSize;
   char templateString[k_sizeOfBuffer];
   int filledLength =
       fillColumnNameFromStore(referencedColumn(), templateString);

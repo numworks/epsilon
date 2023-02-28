@@ -95,7 +95,7 @@ void Render::PrivateDraw(const Node node, KDContext * ctx, KDPoint p, KDFont::Si
   ctx->fillRect(KDRect(p, size), backgroundColor);
   RenderNode(node, ctx, p, font, expressionColor, backgroundColor);
   for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(node)) {
-    Draw(child, ctx, PositionOfChild(node, index, font).translatedBy(p), font, expressionColor, backgroundColor);
+    PrivateDraw(child, ctx, PositionOfChild(node, index, font).translatedBy(p), font, expressionColor, backgroundColor);
   }
 }
 

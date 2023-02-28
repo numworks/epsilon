@@ -129,7 +129,7 @@ void Reference::send(FunctionOnConstTree function, void * context) const {
 void Reference::dumpAt(void * address) const {
   send(
     [](const Node tree, void * buffer) {
-      memcpy(buffer, tree.block(), tree.treeSize());
+      tree.copyTreeTo(buffer);
     },
     address
   );

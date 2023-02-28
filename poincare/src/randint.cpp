@@ -117,7 +117,7 @@ Expression Randint::shallowReduce(ReductionContext reductionContext) {
     }
   }
   return *this;
-  // TODO: handle sum(randint(0,2), {randint(0,23)}_k<=10
+  // TODO: handle sum(randint(0,2)) and {randint(0,23)}_k<=10
 #if 0
   Expression c0 = childAtIndex(0);
   Expression c1 = childAtIndex(1);

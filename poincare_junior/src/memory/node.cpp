@@ -104,6 +104,31 @@ void Node::logAttributes(std::ostream & stream) const {
   }
 }
 
+void Node::logBlocks(std::ostream & stream, bool recursive, int indentation) const {
+  for (int i = 0; i < indentation; ++i) {
+      stream << "  ";
+  }
+  stream << "[";
+  logName(stream);
+  stream << "]";
+  int size = nodeSize();
+  if (size > 1) {
+    for (int i = 1; i < size - 1; i++) {
+      stream << "[" << static_cast<int>(static_cast<uint8_t>(m_block[i])) << "]";
+    }
+    stream << "[";
+    logName(stream);
+    stream << "]";
+  }
+  stream << "\n";
+  if (recursive) {
+    indentation += 1;
+    for (const auto [child, index] : NodeIterator::Children<Forward, NoEditable>(*this)) {
+      child.logBlocks(stream, recursive, indentation);
+    }
+  }
+}
+
 #endif
 
 void Node::copyTreeTo(void * address) const {

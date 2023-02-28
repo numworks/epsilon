@@ -40,6 +40,8 @@ public:
   void log(std::ostream & stream, bool recursive = true, int indentation = 0, bool verbose = true) const;
   void logName(std::ostream & stream) const;
   void logAttributes(std::ostream & stream) const;
+  __attribute__((__used__)) void logBlocks() const { logBlocks(std::cout); }
+  void logBlocks(std::ostream & stream, bool recursive = true, int indentation = 0) const;
 #endif
 
   constexpr TypeBlock * block() const { return m_block; }

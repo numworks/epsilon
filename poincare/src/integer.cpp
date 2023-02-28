@@ -455,15 +455,10 @@ Integer Integer::RandomInt(const Integer &a, const Integer &b) {
    * is <= range. */
   size_t k = OMG::BitHelper::indexOfMostSignificantBit(lastDigit) + 1;
   native_uint_t rand;
-  size_t counter = 0;
-  constexpr size_t k_maxNumberOfDraws = 10;
   do {
     rand = Ion::random() & ((static_cast<double_native_uint_t>(1) << k) - 1);
-  } while (rand > lastDigit && counter++ < k_maxNumberOfDraws);
-  if (rand > lastDigit) {
-    // Introduce a tiny bias not to slow down too much some computation
-    rand = rand >> 1;
-  }
+    // The loop ends with probability 0.5 at each iteration
+  } while (rand > lastDigit);
   s_workingBuffer[nbOfDigits - 1] = rand;
   while (nbOfDigits > 0 && s_workingBuffer[nbOfDigits - 1] == 0) {
     nbOfDigits--;

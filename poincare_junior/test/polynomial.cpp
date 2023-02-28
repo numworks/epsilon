@@ -1,6 +1,6 @@
 #include "print.h"
 #include <poincare_junior/src/expression/polynomial.h>
-#include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/src/expression/constructor.h>
 
 using namespace PoincareJ;
 

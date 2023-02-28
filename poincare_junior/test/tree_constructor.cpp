@@ -1,5 +1,5 @@
 #include "print.h"
-#include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/src/expression/constructor.h>
 #include <poincare_junior/src/expression/approximation.h>
 
 using namespace PoincareJ;

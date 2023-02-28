@@ -1,6 +1,8 @@
 #include "print.h"
 #include <poincare_junior/src/memory/node_iterator.h>
-#include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/src/memory/value_block.h>
+#include <poincare_junior/src/expression/constructor.h>
+#include <poincare_junior/src/layout/constructor.h>
 
 using namespace PoincareJ;
 
@@ -270,7 +272,7 @@ QUIZ_CASE(pcj_node_size) {
   assert(node.nodeSize() == 6);
 }
 
-QUIZ_CASE(pcj_layout_constructor) {
+QUIZ_CASE(pcj_constructor) {
   assert_tree_equals_blocks(
     RackL(
       "1+"_l,

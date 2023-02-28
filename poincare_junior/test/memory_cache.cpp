@@ -1,6 +1,6 @@
 #include "print.h"
 #include <poincare_junior/src/memory/node_iterator.h>
-#include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/src/expression/constructor.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
 

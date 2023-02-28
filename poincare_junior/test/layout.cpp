@@ -1,7 +1,8 @@
 #include "print.h"
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
-#include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/src/expression/constructor.h>
+#include <poincare_junior/src/layout/constructor.h>
 #include <poincare_junior/src/layout/render.h>
 #include <kandinsky/ion_context.h>
 

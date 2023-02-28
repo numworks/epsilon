@@ -53,7 +53,7 @@ T Random::random() {
    * for double) of representable floats in [0,1)...
    * TODO: find a way to be able to draw any float in [0,1)? */
 
-  size_t p = IEEE754<T>::k_mantissaNbBits + 1;
+  constexpr size_t p = IEEE754<T>::k_mantissaNbBits + 1;
   if (sizeof(T) == sizeof(float)) {
     uint32_t r = Ion::random() & ((1 << p) - 1);
     return static_cast<float>(r) / static_cast<float>((1 << p));
@@ -62,8 +62,8 @@ T Random::random() {
     uint64_t r;
     uint32_t *rAddress = (uint32_t *)&r;
     *rAddress = Ion::random();
-    *(rAddress + 1) = Ion::random() &
-                      ((1 << (p - OMG::BitHelper::k_numberOfBitsInUint32)) - 1);
+    *(rAddress + 1) = Ion::random();
+    r = r & ((static_cast<uint64_t>(1) << p) - 1);
     return static_cast<double>(r) /
            static_cast<double>((static_cast<uint64_t>(1) << p));
   }

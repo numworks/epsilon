@@ -216,6 +216,20 @@ constexpr TypeBlock MinusOneBlock = TypeBlock(BlockType::MinusOne);
 constexpr TypeBlock HalfBlock = TypeBlock(BlockType::Half);
 constexpr TypeBlock NodeBorderBlock = TypeBlock(BlockType::NodeBorder);
 
+// Surround tree with NodeBorder blocks to allow uninitialized parent detection
+template <int size>
+class TypeBlockBuffer {
+public:
+  constexpr TypeBlockBuffer() {
+    m_blocks[0] = NodeBorderBlock;
+    m_blocks[size + 1] = NodeBorderBlock;
+  }
+  constexpr operator TypeBlock * () { return m_blocks + 1; }
+
+private:
+  TypeBlock m_blocks[size + 2];
+};
+
 }
 
 #endif

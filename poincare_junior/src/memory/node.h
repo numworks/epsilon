@@ -22,7 +22,7 @@ namespace PoincareJ {
 class Node {
 public:
   constexpr Node(TypeBlock * block = nullptr) : m_block(block) {}
-  constexpr Node(const Block * block) : m_block(static_cast<TypeBlock *>(const_cast<Block *>(block))) {}
+  constexpr Node(const Block * block) : Node(static_cast<TypeBlock *>(const_cast<Block *>(block))) {}
 
   bool operator==(const Node& n) const { return n.m_block == m_block; }
   bool operator!=(const Node& n) { return n.m_block != m_block; }
@@ -50,7 +50,10 @@ public:
   void copyTreeTo(void * address) const;
 
   // Block Navigation
-  constexpr const Node nextNode() const { return Node(m_block + nodeSize()); }
+  constexpr const Node nextNode() const {
+    assert(type() != BlockType::NodeBorder);
+    return Node(m_block + nodeSize());
+  }
   constexpr Node nextNode() { return Utils::DeconstifyObj(&Node::nextNode, this); };
   const Node previousNode() const;
   Node previousNode() { return Utils::DeconstifyObj(&Node::previousNode, this);}

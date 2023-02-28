@@ -18,11 +18,11 @@ class Calculation {
 public:
   Calculation(const char * textInput);
   TypeBlock * input() { return m_input; }
-  PoincareJ::Expression output() { return m_output; }
+  Expression output() { return m_output; }
 private:
   constexpr static int k_bufferSize = 128;
-  TypeBlock m_input[k_bufferSize];
-  PoincareJ::Expression m_output;
+  TypeBlockBuffer<k_bufferSize> m_input;
+  Expression m_output;
 };
 
 Calculation::Calculation(const char * textInput) {
@@ -36,6 +36,15 @@ QUIZ_CASE(pcj_calculation) {
   std::cout << "\n---------------- Push Calculation (1-2)/3/4 ----------------" << std::endl;
   calculation.output().log();
 #endif
+}
+
+// Check TypeBlockBuffer
+
+QUIZ_CASE(pcj_calculation_type_block_buffer) {
+  Calculation calculation("(1-2)/3/4");
+  const Node input = Node(calculation.input());
+  quiz_assert(input.parent().isUninitialized());
+  quiz_assert(input.type() == BlockType::Division);
 }
 
 // Check SharedPointer

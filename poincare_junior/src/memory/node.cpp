@@ -138,10 +138,9 @@ void Node::copyTreeTo(void * address) const {
 
 const Node Node::previousNode() const {
   CachePool * cache = CachePool::sharedCachePool();
-  /* TODO : Node may not live in the CachePool, calling previousNode on them
-   *        can lead to undefined behavior. Handle it or uncomment this */
-  // assert(cache->mayContain(m_block));
-  if (m_block == cache->firstBlock() || (cache->size() == 0 && m_block == cache->lastBlock())) {
+  if (type() == BlockType::NodeBorder
+      || m_block == cache->firstBlock()
+      || (cache->size() == 0 && m_block == cache->lastBlock())) {
     return Node();
   }
   const Block * block = m_block->previous();

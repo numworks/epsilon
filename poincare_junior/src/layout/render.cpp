@@ -74,10 +74,8 @@ KDCoordinate Render::Baseline(const Node node, KDFont::Size font) {
 
 void Render::Draw(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
   /* AbsoluteOrigin relies on the fact that any layout is drawn as a whole.
-   * Drawing is therefore restricted to the highest parent only.
-   * TODO : Uncomment this assert, which currently can't be used because we
-   *        don't handle well parents of Node living out of the CachePool. */
-  // assert(node.parent().isUninitialized());
+   * Drawing is therefore restricted to the highest parent only. */
+  assert(node.parent().isUninitialized());
   PrivateDraw(node, ctx, p, font, expressionColor, backgroundColor);
 }
 

@@ -9,11 +9,11 @@ namespace PoincareJ {
 /* TODO:
  * - Are Zero, One etc useful?
  * - Short integers could be coded on n-bytes (with n static) instead of 1-byte. Choosing n = 4 and aligning the node could be useful?
- * - algining all nodes on 4 bytes might speed up every computation
+ * - aligning all nodes on 4 bytes might speed up every computation
 */
 
 /* Node description by type:
- * - Zero Z (same for One, Two, Half, MinusOne)
+ * - Zero Z (same for One, Two, Half, MinusOne, NodeBorder)
  * | Z TAG |
  *
  * - IntegerShort IS
@@ -85,7 +85,7 @@ enum class BlockType : uint8_t {
   List,
   Polynomial,
   NumberOfExpressions,
-
+  // Layout
   FirstLayout = NumberOfExpressions,
   RackLayout = FirstLayout,
   FractionLayout,
@@ -93,7 +93,9 @@ enum class BlockType : uint8_t {
   VerticalOffsetLayout,
   CodePointLayout,
   LastLayout = CodePointLayout,
-
+  NumberOfLayouts,
+  // Misc
+  NodeBorder = NumberOfLayouts,
   Placeholder,
   NumberOfTypes
 };
@@ -151,7 +153,7 @@ public:
   }
 
   constexpr bool isExpression() const { return m_content < static_cast<uint8_t>(BlockType::NumberOfExpressions); }
-  constexpr bool isLayout() const { return m_content >= static_cast<uint8_t>(BlockType::NumberOfExpressions) && m_content < static_cast<uint8_t>(BlockType::NumberOfTypes); }
+  constexpr bool isLayout() const { return m_content >= static_cast<uint8_t>(BlockType::NumberOfExpressions) && m_content < static_cast<uint8_t>(BlockType::NumberOfLayouts); }
 
   constexpr bool isOfType(std::initializer_list<BlockType> types) const {
     BlockType thisType = type();
@@ -212,6 +214,7 @@ constexpr TypeBlock OneBlock = TypeBlock(BlockType::One);
 constexpr TypeBlock TwoBlock = TypeBlock(BlockType::Two);
 constexpr TypeBlock MinusOneBlock = TypeBlock(BlockType::MinusOne);
 constexpr TypeBlock HalfBlock = TypeBlock(BlockType::Half);
+constexpr TypeBlock NodeBorderBlock = TypeBlock(BlockType::NodeBorder);
 
 }
 

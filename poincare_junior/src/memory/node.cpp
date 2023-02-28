@@ -77,6 +77,7 @@ void Node::logName(std::ostream & stream) const {
     "ParenthesisLayout",
     "VerticalOffsetLayout",
     "CodePointLayout",
+    "NodeBorder",
     "Placeholder",
   };
   static_assert(sizeof(names)/sizeof(const char *) == static_cast<uint8_t>(BlockType::NumberOfTypes));

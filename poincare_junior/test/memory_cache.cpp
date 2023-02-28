@@ -17,7 +17,7 @@ void execute_push_tree_and_modify() {
         return (reinterpret_cast<PoincareJ::Reference::InitializerFromTreeInplace>(subAction))(editedTree);
       },
       reinterpret_cast<void *>(treeModifier),
-      &tree
+      &tree.k_blocks
     );
 }
 

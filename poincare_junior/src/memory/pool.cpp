@@ -2,8 +2,8 @@
 
 namespace PoincareJ {
 
-size_t Pool::numberOfTrees() {
-  Block * currentBlock = firstBlock();
+size_t Pool::numberOfTrees() const {
+  const Block * currentBlock = firstBlock();
   if (!currentBlock) {
     return 0;
   }
@@ -94,14 +94,14 @@ Pool::Nodes Pool::allNodes() {
   if (firstBlock() == nullptr) {
     return Nodes(nullptr, 0);
   }
-  return Nodes(firstBlock(), lastBlock() - static_cast<Block *>(firstBlock()));
+  return Nodes(firstBlock(), lastBlock() - firstBlock());
 }
 
 Pool::Trees Pool::trees() {
   if (firstBlock() == nullptr) {
     return Trees(nullptr, 0);
   }
-  return Trees(firstBlock(), lastBlock() - static_cast<Block *>(firstBlock()));
+  return Trees(firstBlock(), lastBlock() - firstBlock());
 }
 
 }

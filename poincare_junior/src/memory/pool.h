@@ -19,11 +19,14 @@ public:
 
   Block * blockAtIndex(int i) { return firstBlock() + i; }
 
-  bool contains(Block * block) { return block >= firstBlock() && block < lastBlock(); }
-  virtual TypeBlock * firstBlock() = 0;
-  virtual Block * lastBlock() = 0;
-  size_t size() { return firstBlock() ? lastBlock() - static_cast<Block *>(firstBlock()) : 0; }
-  size_t numberOfTrees();
+  const Node nodeForIdentifier(uint16_t id) { return referenceTable()->nodeForIdentifier(id); }
+  bool contains(Block * block) const { return block >= firstBlock() && block < lastBlock(); }
+  virtual const TypeBlock * firstBlock() const = 0;
+  TypeBlock * firstBlock() { return const_cast<TypeBlock *>(const_cast<const Pool *>(this)->firstBlock()); }
+  virtual const TypeBlock * lastBlock() const = 0;
+  TypeBlock * lastBlock() { return const_cast<TypeBlock *>(const_cast<const Pool *>(this)->lastBlock()); }
+  size_t size() const { return firstBlock() ? lastBlock() - firstBlock() : 0; }
+  size_t numberOfTrees() const;
 
 #if POINCARE_MEMORY_TREE_LOG
   enum class LogFormat {
@@ -54,13 +57,14 @@ protected:
     uint16_t m_length;
     Pool * m_pool;
   };
+private:
+  virtual const ReferenceTable * referenceTable() const = 0;
 
 #if POINCARE_MEMORY_TREE_LOG
 public:
 
   virtual const char * name() = 0;
   void log(std::ostream & stream, LogFormat format, bool verbose);
-  virtual const ReferenceTable * referenceTable() const = 0;
   void logReferences(std::ostream & stream, LogFormat format, bool verbose = true) { return referenceTable()->log(stream, format, verbose); }
   __attribute__((__used__)) void log() { log(std::cout, LogFormat::Tree, false); }
   __attribute__((__used__)) void logReferences() { logReferences(std::cout, LogFormat::Tree, false); }

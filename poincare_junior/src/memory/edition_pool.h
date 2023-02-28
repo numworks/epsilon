@@ -19,7 +19,6 @@ public:
   void reinit(TypeBlock * firstBlock, size_t size);
 
   uint16_t referenceNode(Node node);
-  Node nodeForIdentifier(uint16_t id) { return m_referenceTable.nodeForIdentifier(id); }
   void flush();
 
   Block * pushBlock(Block block);
@@ -33,9 +32,10 @@ public:
   Node initFromTree(const Node node) { return initFromAddress(static_cast<const void *>(node.block())); }
   Node initFromAddress(const void * address);
 
-  TypeBlock * firstBlock() override { return m_firstBlock; }
-  Block * lastBlock() override { return m_firstBlock + m_numberOfBlocks; }
-  Block * blockAtIndex(int i) { return m_firstBlock + i * sizeof(Block); }
+  using Pool::firstBlock;
+  const TypeBlock * firstBlock() const override { return m_firstBlock; }
+  using Pool::lastBlock;
+  const TypeBlock * lastBlock() const override { return m_firstBlock + m_numberOfBlocks; }
   size_t fullSize() const { return m_size; }
   void setNumberOfBlocks(int numberOfBlocks) { m_numberOfBlocks = numberOfBlocks; }
 
@@ -44,7 +44,6 @@ private:
   // Pool memory
   bool checkForEnoughSpace(size_t numberOfRequiredBlock);
 #if POINCARE_MEMORY_TREE_LOG
-  const ReferenceTable * referenceTable() const override { return &m_referenceTable; }
   const char * name() override { return "Edition"; }
 #endif
 
@@ -68,6 +67,7 @@ private:
     uint16_t * nodeOffsetArray() override { return m_nodeOffsetForIdentifier; }
     uint16_t m_nodeOffsetForIdentifier[EditionPool::k_maxNumberOfReferences];
   };
+  const ReferenceTable * referenceTable() const override { return &m_referenceTable; }
 
   ReferenceTable m_referenceTable;
   TypeBlock * m_firstBlock;

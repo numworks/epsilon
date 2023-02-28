@@ -14,8 +14,6 @@ class CachePool final : public Pool {
 public:
   static CachePool * sharedCachePool();
 
-  const Node nodeForIdentifier(uint16_t id) { return m_referenceTable.nodeForIdentifier(id); }
-
   uint16_t storeEditedTree();
 
   EditionPool * editionPool() { return &m_editionPool; }
@@ -26,10 +24,12 @@ public:
 
   int execute(ActionWithContext action, void * subAction, const void * data);
 
-  TypeBlock * firstBlock() override { return m_referenceTable.isEmpty() ? nullptr : static_cast<TypeBlock *>(&m_blocks[0]); }
-  TypeBlock * lastBlock() override { return  static_cast<TypeBlock *>(m_referenceTable.isEmpty() ? &m_blocks[0] : Node(&m_blocks[0] + m_referenceTable.lastOffset()).nextTree().block()); }
+  using Pool::firstBlock;
+  const TypeBlock * firstBlock() const override { return m_referenceTable.isEmpty() ? nullptr : static_cast<const TypeBlock *>(&m_blocks[0]); }
+  using Pool::lastBlock;
+  const TypeBlock * lastBlock() const override { return static_cast<const TypeBlock *>(m_referenceTable.isEmpty() ? &m_blocks[0] : Node(&m_blocks[0] + m_referenceTable.lastOffset()).nextTree().block()); }
 
-  // Less permissive, and const, implementation of Pool::contains
+  // Broader implementation of Pool::contains, checking unused pool as well
   bool mayContain(const Block * block) const { return block >= m_blocks && block < m_blocks + k_maxNumberOfBlocks; }
 
   constexpr static int k_maxNumberOfBlocks = 1024;
@@ -40,7 +40,6 @@ private:
   void translate(uint16_t offset, size_t cachePoolSize);
   void resetEditionPool();
 #if POINCARE_MEMORY_TREE_LOG
-  const ReferenceTable * referenceTable() const override { return &m_referenceTable; }
   const char * name() override { return "Cache"; }
 #endif
 
@@ -95,6 +94,7 @@ private:
     uint16_t m_nodeOffsetForIdentifier[CachePool::k_maxNumberOfReferences];
     uint16_t m_startIdentifier;
   };
+  const ReferenceTable * referenceTable() const override { return &m_referenceTable; }
 
   ReferenceTable m_referenceTable;
   EditionPool m_editionPool;

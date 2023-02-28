@@ -35,7 +35,7 @@ QUIZ_CASE(pcj_elementary_tree_manipulation) {
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n--- Develop (1+2)*3*4 ---" << std::endl;
 #endif
-  TypeBlock * root = editionPool->firstBlock();
+  const TypeBlock * root = editionPool->firstBlock();
   assert(root->type() == BlockType::Multiplication);
   Simplification::DistributeMultiplicationOverAddition(EditionReference(root));
 

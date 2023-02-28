@@ -66,7 +66,7 @@ inline void assert_trees_are_equal(const Node tree0, const Node tree1) {
   assert(Comparison::AreEqual(tree0, tree1));
 }
 
-using FunctionSize = size_t (Pool::*)();
+using FunctionSize = size_t (Pool::*)() const;
 inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize, FunctionSize functionSize) {
   CachePool * cachePool = CachePool::sharedCachePool();
   EditionPool * editionPool = cachePool->editionPool();

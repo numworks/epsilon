@@ -67,7 +67,7 @@ Block * EditionPool::pushBlock(Block block) {
     return nullptr;
   }
   assert(m_numberOfBlocks < m_size);
-  *lastBlock() = block;
+  *static_cast<Block *>(lastBlock()) = block;
   m_numberOfBlocks++;
   return lastBlock() - 1;
 }
@@ -86,7 +86,7 @@ bool EditionPool::insertBlocks(Block * destination, Block * source, size_t numbe
     return false;
   }
   size_t insertionSize = numberOfBlocks * sizeof(Block);
-  memmove(destination + insertionSize, destination, lastBlock() - destination);
+  memmove(destination + insertionSize, destination, static_cast<Block *>(lastBlock()) - destination);
   m_numberOfBlocks += numberOfBlocks;
   memcpy(destination, source, insertionSize);
   m_referenceTable.updateNodes(
@@ -101,7 +101,7 @@ bool EditionPool::insertBlocks(Block * destination, Block * source, size_t numbe
 void EditionPool::removeBlocks(Block * address, size_t numberOfBlocks) {
   int deletionSize = numberOfBlocks * sizeof(Block);
   m_numberOfBlocks -= numberOfBlocks;
-  memmove(address, address + deletionSize, lastBlock() - address);
+  memmove(address, address + deletionSize, static_cast<Block *>(lastBlock()) - address);
   m_referenceTable.updateNodes(
       [](uint16_t * offset, Block * testedBlock, Block * address, Block * block, int numberOfBlocks) {
         if (testedBlock > address) {

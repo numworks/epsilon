@@ -62,6 +62,28 @@ void WorkingBuffer::garbageCollect(std::initializer_list<IntegerHandler *> keptI
 
 /* IntegerHandler */
 
+IntegerHandler IntegerHandler::Parse(const char * digits, size_t length, OMG::Base base) {
+  assert(digits != nullptr);
+  NonStrictSign sign = NonStrictSign::Positive;
+  if (*digits == '-') {
+    sign = NonStrictSign::Negative;
+    digits++;
+    length--;
+  }
+  IntegerHandler result(0);
+  IntegerHandler baseInteger(static_cast<uint8_t>(base));
+  WorkingBuffer workingBuffer;
+  for (size_t i = 0; i < length; i++) {
+    IntegerHandler multiplication = Mult(result, baseInteger, &workingBuffer);
+    workingBuffer.garbageCollect({&baseInteger, &multiplication});
+    IntegerHandler digit = IntegerHandler(OMG::Print::DigitForCharacter(*digits++));
+    digit.setSign(sign);
+    result = Sum(multiplication, digit, false, &workingBuffer);
+    workingBuffer.garbageCollect({&baseInteger, &result});
+  }
+  return result;
+}
+
 IntegerHandler::Digits::Digits(const uint8_t * digits, uint8_t numberOfDigits) {
   if (numberOfDigits <= sizeof(native_uint_t)) {
     m_digit = 0;
@@ -545,27 +567,6 @@ void IntegerHandler::sanitize() {
 }
 
 /* Integer */
-
-EditionReference Integer::Push(const char * digits, size_t length, OMG::Base base) {
-  assert(digits != nullptr);
-  EditionReference result = IntegerHandler(static_cast<uint8_t>(0)).pushOnEditionPool();
-  NonStrictSign sign = NonStrictSign::Positive;
-  if (*digits == '-') {
-    sign = NonStrictSign::Negative;
-    digits++;
-    length--;
-  }
-  IntegerHandler baseInteger(static_cast<uint8_t>(base));
-  for (size_t i = 0; i < length; i++) {
-    EditionReference multiplication = IntegerHandler::Multiplication(Integer::Handler(result), baseInteger);
-    result = result.replaceTreeByTree(multiplication);
-    IntegerHandler digit = IntegerHandler(OMG::Print::DigitForCharacter(*digits++));
-    digit.setSign(sign);
-    EditionReference addition = IntegerHandler::Addition(Integer::Handler(result), digit);
-    result = result.replaceTreeByTree(addition);
-  }
-  return result;
-}
 
 // TODO: tests
 

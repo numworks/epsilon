@@ -3,7 +3,7 @@
 namespace PoincareJ {
 
 size_t Pool::numberOfTrees() const {
-  const Block * currentBlock = firstBlock();
+  const TypeBlock * currentBlock = firstBlock();
   if (!currentBlock) {
     return 0;
   }

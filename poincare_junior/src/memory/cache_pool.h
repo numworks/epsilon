@@ -25,12 +25,12 @@ public:
   int execute(ActionWithContext action, void * subAction, const void * data);
 
   using Pool::firstBlock;
-  const TypeBlock * firstBlock() const override { return m_referenceTable.isEmpty() ? nullptr : static_cast<const TypeBlock *>(&m_blocks[0]); }
+  const TypeBlock * firstBlock() const override { return m_referenceTable.isEmpty() ? nullptr : m_blocks; }
   using Pool::lastBlock;
-  const TypeBlock * lastBlock() const override { return static_cast<const TypeBlock *>(m_referenceTable.isEmpty() ? &m_blocks[0] : Node(&m_blocks[0] + m_referenceTable.lastOffset()).nextTree().block()); }
+  const TypeBlock * lastBlock() const override { return m_referenceTable.isEmpty() ? m_blocks : Node(m_blocks + m_referenceTable.lastOffset()).nextTree().block(); }
 
   // Broader implementation of Pool::contains, checking unused pool as well
-  bool mayContain(const Block * block) const { return block >= m_blocks && block < m_blocks + k_maxNumberOfBlocks; }
+  bool mayContain(const TypeBlock * block) const { return block >= m_blocks && block < m_blocks + k_maxNumberOfBlocks; }
 
   constexpr static int k_maxNumberOfBlocks = 1024;
   constexpr static int k_maxNumberOfReferences = 128;
@@ -98,7 +98,7 @@ private:
 
   ReferenceTable m_referenceTable;
   EditionPool m_editionPool;
-  Block m_blocks[k_maxNumberOfBlocks];
+  TypeBlock m_blocks[k_maxNumberOfBlocks];
 };
 
 }

@@ -17,10 +17,10 @@ public:
   Pool & operator=(Pool &&) = delete;
   Pool & operator=(const Pool&) = delete;
 
-  Block * blockAtIndex(int i) { return firstBlock() + i; }
+  TypeBlock * blockAtIndex(int i) { return firstBlock() + i; }
 
   const Node nodeForIdentifier(uint16_t id) { return referenceTable()->nodeForIdentifier(id); }
-  bool contains(Block * block) const { return block >= firstBlock() && block < lastBlock(); }
+  bool contains(TypeBlock * block) const { return block >= firstBlock() && block < lastBlock(); }
   virtual const TypeBlock * firstBlock() const = 0;
   TypeBlock * firstBlock() { return const_cast<TypeBlock *>(const_cast<const Pool *>(this)->firstBlock()); }
   virtual const TypeBlock * lastBlock() const = 0;

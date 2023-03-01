@@ -20,7 +20,7 @@ SharedPointer::SharedPointer(const void * data
   m_checksum = checksum(data, dataSize);
 #endif
   // Reference data cannot live in the CachePool
-  assert(!CachePool::sharedCachePool()->mayContain(static_cast<const Block *>(m_data)));
+  assert(!CachePool::sharedCachePool()->mayContain(static_cast<const TypeBlock *>(m_data)));
 }
 
 #if ASSERTIONS

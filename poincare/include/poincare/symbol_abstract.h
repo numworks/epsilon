@@ -72,10 +72,7 @@ class SymbolAbstractNode : public ExpressionNode {
                 int numberOfSignificantDigits) const override;
 
   // editableName is used in setName
-  virtual char *editableName() {
-    assert(false);
-    return nullptr;
-  }
+  virtual char *editableName() = 0;
   void setName(const char *name, size_t length);
 
  private:

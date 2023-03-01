@@ -17,6 +17,8 @@ enum class Ruleset : Int {
   PressToTest,
   Portuguese,
   English,
+  STAAR,
+  Keystone,
   NumberOfRulesets,
 };
 

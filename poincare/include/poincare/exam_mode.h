@@ -42,7 +42,9 @@ class ExamMode : public Ion::ExamMode::Configuration {
   }
 
   // Exam mode permissions
-  bool forbidSolverApp() const { return flags().forbidEquationSolver; }
+  bool forbidSolverApp() const {
+    return flags().forbidEquationSolver || ruleset() == Ruleset::Keystone;
+  }
   bool forbidElementsApp() const {
     return flags().forbidElementsApp || ruleset() == Ruleset::Dutch ||
            ruleset() == Ruleset::Portuguese || ruleset() == Ruleset::English;
@@ -50,10 +52,11 @@ class ExamMode : public Ion::ExamMode::Configuration {
   bool forbidCodeApp() const { return ruleset() == Ruleset::Dutch; }
   bool forbidLineDetails() const { return ruleset() == Ruleset::IBTest; }
   bool forbidInequalityGraphing() const {
-    return flags().forbidInequalityGraphing;
+    return flags().forbidInequalityGraphing || ruleset() == Ruleset::STAAR;
   }
   bool forbidImplicitPlots() const {
-    return flags().forbidImplicitPlots || ruleset() == Ruleset::IBTest;
+    return flags().forbidImplicitPlots || ruleset() == Ruleset::IBTest ||
+           ruleset() == Ruleset::Keystone || ruleset() == Ruleset::STAAR;
   }
   bool forbidStatsDiagnostics() const { return flags().forbidStatsDiagnostics; }
   bool forbidVectorProduct() const {
@@ -69,7 +72,8 @@ class ExamMode : public Ion::ExamMode::Configuration {
     return ruleset() == Ruleset::Dutch || ruleset() == Ruleset::IBTest;
   }
   bool forbidExactResults() const {
-    return flags().forbidExactResults || ruleset() == Ruleset::Dutch;
+    return flags().forbidExactResults || ruleset() == Ruleset::Dutch ||
+           ruleset() == Ruleset::Keystone;
   }
 
  private:

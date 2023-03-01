@@ -7,7 +7,7 @@ constexpr inline void constexpr_assert(bool check) {
 #if ASSERTIONS
   void(0);
 #else
-  ((check) ? void(0) : []{assert(!#CHECK);}() )
+  ((check) ? void(0) : []{assert(!#CHECK);}() );
 #endif
 }
 

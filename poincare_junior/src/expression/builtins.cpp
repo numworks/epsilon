@@ -16,7 +16,7 @@ constexpr static Builtin s_builtins[] = {
   { BlockType::Logarithm, "log" },
 };
 
-constexpr AliasesList Builtins::Name(BlockType type) {
+AliasesList Builtins::Name(BlockType type) {
   for (auto &[block, aliases] : s_builtins) {
     if (block == type) {
       return aliases;

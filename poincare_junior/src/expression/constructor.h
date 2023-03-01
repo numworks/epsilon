@@ -4,6 +4,7 @@
 #include <poincare_junior/src/memory/tree_constructor.h>
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/integer.h>
+#include <bit>
 
 namespace PoincareJ {
 

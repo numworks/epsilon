@@ -206,6 +206,51 @@ public:
     };
   }
 
+  constexpr size_t nodeSize(bool head) const {
+    BlockType t = type();
+    size_t numberOfMetaBlocks = NumberOfMetaBlocks(t);
+    switch (t) {
+      case BlockType::IntegerPosBig:
+      case BlockType::IntegerNegBig: {
+        uint8_t numberOfDigits = static_cast<uint8_t>(*(head ? next() : previous()));
+        return numberOfMetaBlocks + numberOfDigits;
+      }
+      case BlockType::RationalPosBig:
+      case BlockType::RationalNegBig: {
+        uint8_t numberOfDigits = static_cast<uint8_t>(*(head ? nextNth(3) : previous()));
+        return numberOfMetaBlocks + numberOfDigits;
+      }
+      case BlockType::Polynomial: {
+        uint8_t numberOfTerms = static_cast<uint8_t>(*(head ? next() : previous())) - 1;
+        return numberOfMetaBlocks + numberOfTerms;
+      }
+      case BlockType::UserSymbol: {
+        uint8_t numberOfChars = static_cast<uint8_t>(*(head ? next() : previous()));
+        return numberOfMetaBlocks + numberOfChars;
+      }
+      default:
+        return numberOfMetaBlocks;
+    }
+  }
+
+  constexpr int numberOfChildren(bool head) const {
+    if (isNAry()) {
+      return static_cast<uint8_t>(*(head ? next() : previous()));
+    }
+    switch (type()) {
+      case BlockType::Power:
+      case BlockType::Subtraction:
+      case BlockType::Division:
+      case BlockType::FractionLayout:
+        return 2;
+      case BlockType::Factorial:
+      case BlockType::ParenthesisLayout:
+      case BlockType::VerticalOffsetLayout:
+        return 1;
+      default:
+        return 0;
+    }
+  }
 };
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));

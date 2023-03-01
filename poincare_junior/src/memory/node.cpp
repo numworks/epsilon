@@ -138,8 +138,8 @@ const Node Node::previousNode() const {
   if (type() == BlockType::NodeBorder) {
     return Node();
   }
-  const Block * block = m_block->previous();
-  return Node(m_block - Node(block).nodeSize(false));
+  int previousSize = static_cast<TypeBlock *>(m_block->previous())->nodeSize(false);
+  return Node(m_block - previousSize);
 }
 
 const Node Node::previousTree() const {

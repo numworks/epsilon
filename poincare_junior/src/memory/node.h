@@ -49,7 +49,7 @@ public:
   bool isUninitialized() const { return m_block == nullptr; }
   void copyTreeTo(void * address) const;
 
-  // Block Navigation
+  // Node Navigation
   constexpr const Node nextNode() const {
     assert(type() != BlockType::NodeBorder);
     return Node(m_block + nodeSize());
@@ -90,61 +90,9 @@ public:
   bool isHorizontal() const { return type() == BlockType::RackLayout; }
   bool isEmpty() const { return isHorizontal() && numberOfChildren() == 0; }
 
-  constexpr size_t nodeSize(bool head = true) const {
-    BlockType t = type();
-    size_t numberOfMetaBlocks = TypeBlock::NumberOfMetaBlocks(t);
-    switch (t) {
-      case BlockType::IntegerPosBig:
-      case BlockType::IntegerNegBig:
-      {
-        uint8_t numberOfDigits = static_cast<uint8_t>(*(head ? m_block->next() : m_block->previous()));
-        return numberOfMetaBlocks + numberOfDigits;
-      }
-      case BlockType::RationalPosBig:
-      case BlockType::RationalNegBig:
-      {
-        if (!head) {
-          uint8_t numberOfDigits = static_cast<uint8_t>(*(m_block->previous()));
-          return numberOfMetaBlocks + numberOfDigits;
-        }
-        uint8_t numeratorNumberOfDigits = static_cast<uint8_t>(*(m_block->next()));
-        uint8_t denominatorNumberOfDigits = static_cast<uint8_t>(*(m_block->nextNth(2)));
-        return numberOfMetaBlocks + numeratorNumberOfDigits + denominatorNumberOfDigits;
-      }
-      case BlockType::Polynomial:
-      {
-        uint8_t numberOfTerms = static_cast<uint8_t>(*(head ? m_block->next() : m_block->previous())) - 1;
-        return numberOfMetaBlocks + numberOfTerms;
-      }
-      case BlockType::UserSymbol:
-      {
-        uint8_t numberOfChars = static_cast<uint8_t>(*(head ? m_block->next() : m_block->previous()));
-        return numberOfMetaBlocks + numberOfChars;
-      }
-      default:
-        return numberOfMetaBlocks;
-    }
-  }
-  constexpr int numberOfChildren() const {
-    if (block()->isNAry()) {
-      return static_cast<uint8_t>(*(m_block->next()));
-    }
-    switch (type()) {
-      case BlockType::Power:
-      case BlockType::Subtraction:
-      case BlockType::Division:
-      case BlockType::FractionLayout:
-        return 2;
-      case BlockType::Factorial:
-      case BlockType::ParenthesisLayout:
-      case BlockType::VerticalOffsetLayout:
-        return 1;
-      default:
-        return 0;
-    }
-  }
-
   constexpr BlockType type() const { return m_block->type(); }
+  constexpr size_t nodeSize() const { return m_block->nodeSize(true); }
+  constexpr int numberOfChildren() const { return m_block->numberOfChildren(true); }
 
   // Recursive helper
   typedef void (*InPlaceConstTreeFunction)(const Node node);

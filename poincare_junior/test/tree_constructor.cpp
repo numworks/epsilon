@@ -44,4 +44,6 @@ QUIZ_CASE(pcj_tree_integer_constructor) {
   quiz_assert(Integer::Handler(-123456_e).to<double>() == -123456.0);
   quiz_assert(Integer::Handler( 123456789_e).to<double>() == 123456789.0);
   quiz_assert(Integer::Handler(-123456789_e).to<double>() == -123456789.0);
+
+  quiz_assert(Node(12_e).parent().isUninitialized());
 }

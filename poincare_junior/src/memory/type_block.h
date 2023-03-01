@@ -145,6 +145,7 @@ BLOCK_TYPE_IS_LAYOUT(BlockType::CodePointLayout);
 class TypeBlock : public Block {
 public:
   constexpr TypeBlock(BlockType content = BlockType::Zero) : Block(static_cast<uint8_t>(content)) {
+    assert(m_content < static_cast<uint8_t>(BlockType::NumberOfTypes));
     // assert that number are always sorted before other types
     assert(isNumber() || m_content >= static_cast<uint8_t>(BlockType::NumberOfNumbersExpression));
   }

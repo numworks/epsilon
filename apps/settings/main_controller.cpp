@@ -333,13 +333,10 @@ bool MainController::hasPressToTestCell() const {
     return false;
   }
   ExamMode examMode = Preferences::sharedPreferences->examMode();
-  CountryPreferences::AvailableExamModes availableExamModes =
-      GlobalPreferences::sharedGlobalPreferences->availableExamModes();
   return examMode.ruleset() == ExamMode::Ruleset::PressToTest ||
-         ((availableExamModes ==
-               CountryPreferences::AvailableExamModes::PressToTestOnly ||
-           availableExamModes == CountryPreferences::AvailableExamModes::All) &&
-          examMode.ruleset() == ExamMode::Ruleset::Off);
+         (examMode.ruleset() == ExamMode::Ruleset::Off &&
+          GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
+              CountryPreferences::AvailableExamModes::PressToTestOnly);
 }
 
 bool MainController::hasTestModeCell() const {

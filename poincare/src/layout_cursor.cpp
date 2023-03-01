@@ -76,7 +76,7 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) {
 
 /* Move */
 bool LayoutCursor::move(OMG::Direction direction, bool selecting,
-                        bool *shouldRedrawLayout) {
+                        bool *shouldRedrawLayout, Context *context) {
   *shouldRedrawLayout = false;
   if (!selecting && isSelecting()) {
     stopSelecting();
@@ -96,6 +96,15 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   assert(!*shouldRedrawLayout || moved);
   if (moved) {
     *shouldRedrawLayout = selecting || *shouldRedrawLayout;
+    if (cloneCursor.layout() != m_layout) {
+      // Beautify the layout that was just left
+      LayoutCursor rightMostPositionOfPreviousLayout(cloneCursor.layout(),
+                                                     OMG::Direction::Right());
+      *shouldRedrawLayout =
+          InputBeautification::BeautifyIdentifiersLeftOfCursor(
+              &rightMostPositionOfPreviousLayout, context) ||
+          *shouldRedrawLayout;
+    }
     // Ensure that didEnterCurrentPosition is always called by being left of ||
     *shouldRedrawLayout =
         didEnterCurrentPosition(cloneCursor) || *shouldRedrawLayout;
@@ -107,10 +116,11 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
 }
 
 bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,
-                                     bool selecting, bool *shouldRedrawLayout) {
+                                     bool selecting, bool *shouldRedrawLayout,
+                                     Context *context) {
   assert(step > 0);
   for (int i = 0; i < step; i++) {
-    if (!move(direction, selecting, shouldRedrawLayout)) {
+    if (!move(direction, selecting, shouldRedrawLayout, context)) {
       return i > 0;
     }
   }

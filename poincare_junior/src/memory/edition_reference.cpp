@@ -27,7 +27,7 @@ void EditionReference::log() const {
 template <BlockType blockType, typename... Types>
 EditionReference EditionReference::Push(Types... args) {
   EditionPool * pool = EditionPool::sharedEditionPool();
-  TypeBlock * newNode = static_cast<TypeBlock *>(pool->lastBlock());
+  TypeBlock * newNode = pool->lastBlock();
 
   size_t i = 0;
   bool endOfNode = false;

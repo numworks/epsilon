@@ -1,5 +1,3 @@
-#include "cache_pool.h"
-#include "edition_reference.h"
 #include "node_iterator.h"
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/polynomial.h>
@@ -137,10 +135,7 @@ void Node::copyTreeTo(void * address) const {
 }
 
 const Node Node::previousNode() const {
-  CachePool * cache = CachePool::sharedCachePool();
-  if (type() == BlockType::NodeBorder
-      || m_block == cache->firstBlock()
-      || (cache->size() == 0 && m_block == cache->lastBlock())) {
+  if (type() == BlockType::NodeBorder) {
     return Node();
   }
   const Block * block = m_block->previous();

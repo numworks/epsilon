@@ -133,7 +133,7 @@ Node EditionPool::initFromAddress(const void * address) {
   if (!checkForEnoughSpace(size)) {
     return Node();
   }
-  TypeBlock * copiedTree = static_cast<TypeBlock *>(lastBlock());
+  TypeBlock * copiedTree = lastBlock();
   memcpy(copiedTree, address, size * sizeof(Block));
   m_numberOfBlocks += size;
   return Node(copiedTree);

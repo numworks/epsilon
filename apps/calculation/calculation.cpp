@@ -198,7 +198,8 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
        strcmp(inputText(), exactOutputText()) == 0) ||
       // Other conditions are factorized in ExpressionDisplayPermissions
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          inputExp, outputExp, context)) {
+          inputExp, outputExp,
+          approximateOutput(NumberOfSignificantDigits::UserDefined), context)) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (inputExp.recursivelyMatches(Expression::IsApproximate, context) ||
              outputExp.recursivelyMatches(Expression::IsApproximate, context) ||

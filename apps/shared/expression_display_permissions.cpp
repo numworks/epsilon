@@ -76,13 +76,25 @@ bool ShouldNeverDisplayExactOutput(Poincare::Expression exactOutput,
                                ExpressionNode::Type::Dependency});
           },
           context) ||
-      exactOutput.hasUnit(true);  // Angle units can display exact output
+      // Angle units can have an exact output contrary to other units
+      exactOutput.hasUnit(true);
 }
 
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input,
                                     Poincare::Expression exactOutput,
+                                    Poincare::Expression approximateOutput,
                                     Poincare::Context* context) {
-  return ShouldNeverDisplayExactOutput(exactOutput, context) ||
+  /* The angle units could display exact output but we want to avoid exact
+   * results that are not in radians like "(3/sqrt(2))°" because they are not
+   * relevant for the user.
+   * On the other hand, we'd like "cos(4°)" to be displayed as exact result.
+   * To do so, the approximateOutput is checked rather than the exactOutput,
+   * because the approximateOutput has a unit only if the degree unit is not
+   * in a trig function.
+   * */
+  return (approximateOutput.hasUnit() &&
+          !approximateOutput.isInRadians(context)) ||
+         ShouldNeverDisplayExactOutput(exactOutput, context) ||
          ShouldNeverDisplayReduction(input, context);
 }
 

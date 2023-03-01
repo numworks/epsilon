@@ -127,7 +127,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
       if (storeExpression.childAtIndex(1).type() ==
               ExpressionNode::Type::Symbol &&
           ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-              inputExpression, exactStoredExpression, context)) {
+              inputExpression, exactStoredExpression,
+              approximateStoredExpression, context)) {
         storeExpression.replaceChildAtIndexInPlace(0,
                                                    approximateStoredExpression);
       }

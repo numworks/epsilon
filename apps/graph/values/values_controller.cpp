@@ -432,11 +432,13 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         Poincare::Preferences::sharedPreferences, true, &simplificationFailure);
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */
+    Expression approximation =
+        PoincareHelpers::Approximate<double>(result, context);
     if (simplificationFailure || !m_exactValuesAreActivated ||
         ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-            function->originalEquation(), result, context)) {
+            function->originalEquation(), result, approximation, context)) {
       // Do not show exact expressions in certain cases, use approximate result
-      result = PoincareHelpers::Approximate<double>(result, context);
+      result = approximation;
     }
   }
   *memoizedLayoutAtIndex(index) = result.createLayout(

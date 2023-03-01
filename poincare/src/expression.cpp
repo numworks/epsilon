@@ -861,6 +861,19 @@ bool Expression::isPureAngleUnit() const {
              Unit::AngleRepresentative::Default().dimensionVector();
 }
 
+bool Expression::isInRadians(Context *context) const {
+  Expression thisClone = clone();
+  Expression units;
+  ReductionContext reductionContext;
+  reductionContext.setContext(context);
+  reductionContext.setUnitConversion(UnitConversion::None);
+  thisClone.reduceAndRemoveUnit(reductionContext, &units);
+  return !units.isUninitialized() &&
+         units.type() == ExpressionNode::Type::Unit &&
+         units.convert<Unit>().representative() ==
+             &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
+}
+
 /* Complex */
 
 bool Expression::EncounteredComplex() {

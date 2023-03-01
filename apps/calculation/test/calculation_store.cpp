@@ -343,7 +343,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("(π/6)_rad", DisplayOutput::ApproximateOnly,
                       EqualSign::Approximation, nullptr, "30×_°", "30×_°",
                       &globalContext, &store);
-  assertCalculationIs("(1/11)_°", DisplayOutput::ApproximateOnly,
+  assertCalculationIs("(1/11)_°", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, nullptr, "5.454545455×_'",
                       "5.4545454545455×_'", &globalContext, &store);
   assertCalculationIs("180→rad", DisplayOutput::ExactAndApproximate,
@@ -360,8 +360,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Unknown, nullptr, "90×_°", "90×_°",
                       &globalContext, &store);
   assertCalculationIs(
-      "(1/6)_rad^(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown,
-      nullptr, "0.1666666667×_rad^\u0012-1\u0013",
+      "(1/6)_rad^(-1)", DisplayOutput::ExactAndApproximateToggle,
+      EqualSign::Unknown, nullptr, "0.1666666667×_rad^\u0012-1\u0013",
       "0.16666666666667×_rad^\u0012-1\u0013", &globalContext, &store);
   assertCalculationIs("diff(x^2,x,3)_rad", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "6×_rad", "6×_rad",

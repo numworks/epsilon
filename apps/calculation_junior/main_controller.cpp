@@ -26,12 +26,13 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     // Parse input text into Layout. TODO : Input a Layout directly
     m_view.inputLayoutView()->setLayout(
         PoincareJ::Layout::Parse(m_view.textField()->text()));
-    /* Dump parsed expression into m_input TypeBlock array.
+    /* Dump parsed expression into m_buffer.blocks() TypeBlock array.
      * TODO : CreateBasicReduction from expressions. */
     PoincareJ::Expression::Parse(m_view.inputLayoutView()->getLayout())
-        .dumpAt(m_input);
+        .dumpAt(m_buffer.blocks());
     // The reduced expression has to live somewhere so layout can be initialized
-    m_reducedExpression = PoincareJ::Expression::CreateBasicReduction(m_input);
+    m_reducedExpression =
+        PoincareJ::Expression::CreateBasicReduction(m_buffer.blocks());
     m_view.reductionLayoutView()->setLayout(m_reducedExpression.toLayout());
     // Approximate reduced expression
     float approximation = m_reducedExpression.approximate();

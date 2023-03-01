@@ -225,7 +225,8 @@ public:
     m_blocks[0] = NodeBorderBlock;
     m_blocks[size + 1] = NodeBorderBlock;
   }
-  constexpr operator TypeBlock * () { return m_blocks + 1; }
+  constexpr TypeBlock * blocks() { return m_blocks + 1; }
+  constexpr const TypeBlock * blocks() const { return m_blocks + 1; }
 
 private:
   TypeBlock m_blocks[size + 2];

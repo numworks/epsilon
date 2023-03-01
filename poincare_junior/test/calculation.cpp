@@ -17,17 +17,17 @@ class Calculation {
 
 public:
   Calculation(const char * textInput);
-  TypeBlock * input() { return m_input; }
+  TypeBlock * input() { return m_buffer.blocks(); }
   Expression output() { return m_output; }
 private:
   constexpr static int k_bufferSize = 128;
-  TypeBlockBuffer<k_bufferSize> m_input;
+  TypeBlockBuffer<k_bufferSize> m_buffer;
   Expression m_output;
 };
 
 Calculation::Calculation(const char * textInput) {
-  Expression::Parse(textInput).dumpAt(m_input);
-  m_output = Expression::CreateBasicReduction(m_input);
+  Expression::Parse(textInput).dumpAt(m_buffer.blocks());
+  m_output = Expression::CreateBasicReduction(m_buffer.blocks());
 }
 
 QUIZ_CASE(pcj_calculation) {

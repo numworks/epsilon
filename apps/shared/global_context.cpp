@@ -217,24 +217,24 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(
   PoincareHelpers::CloneAndSimplify(
       &expressionToStore, this, ReductionTarget::User,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  /* "approximateKeepingUnits" is called because the expression might contain
+   * units, and juste calling "approximate" would return undef
+   */
+  Poincare::Preferences *preferences = Poincare::Preferences::sharedPreferences;
+  Poincare::Preferences::ComplexFormat complexFormat =
+      Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
+          preferences->complexFormat(), expressionToStore, this);
+  Expression approximation = expressionToStore.approximateKeepingUnits<double>(
+      Poincare::ReductionContext(
+          this, complexFormat, preferences->angleUnit(),
+          GlobalPreferences::sharedGlobalPreferences->unitFormat(),
+          ReductionTarget::User,
+          SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
+          Poincare::UnitConversion::Default));
   // Do not store exact derivative, etc.
   if (ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          expression, expressionToStore, this)) {
-    /* "approximateKeepingUnits" is called because the expression might contain
-     * units, and juste calling "approximate" would return undef
-     */
-    Poincare::Preferences *preferences =
-        Poincare::Preferences::sharedPreferences;
-    Poincare::Preferences::ComplexFormat complexFormat =
-        Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-            preferences->complexFormat(), expressionToStore, this);
-    expressionToStore = expressionToStore.approximateKeepingUnits<double>(
-        Poincare::ReductionContext(
-            this, complexFormat, preferences->angleUnit(),
-            GlobalPreferences::sharedGlobalPreferences->unitFormat(),
-            ReductionTarget::User,
-            SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
-            Poincare::UnitConversion::Default));
+          expression, expressionToStore, approximation, this)) {
+    expressionToStore = approximation;
   }
   ExpressionNode::Type type = expressionToStore.type();
   const char *extension;

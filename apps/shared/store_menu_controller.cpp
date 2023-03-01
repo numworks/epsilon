@@ -134,14 +134,16 @@ bool StoreMenuController::parseAndStore(const char* text) {
     openAbortWarning();
     return false;
   }
-  bool isVariable = reducedExp.childAtIndex(1).type() ==
-                    Poincare::ExpressionNode::Type::Symbol;
+  bool isVariable =
+      reducedExp.childAtIndex(1).type() == ExpressionNode::Type::Symbol;
+  Expression leftHandSideApproximation =
+      PoincareHelpers::ApproximateKeepingUnits<double>(
+          reducedExp.childAtIndex(0), context);
   if (isVariable &&
       ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-          input, reducedExp, context)) {
-    reducedExp.replaceChildAtIndexInPlace(
-        0, PoincareHelpers::ApproximateKeepingUnits<double>(
-               reducedExp.childAtIndex(0), context));
+          input, reducedExp.childAtIndex(0), leftHandSideApproximation,
+          context)) {
+    reducedExp.replaceChildAtIndexInPlace(0, leftHandSideApproximation);
   }
   Store store = static_cast<Store&>(reducedExp);
   close();

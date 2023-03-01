@@ -14,6 +14,7 @@ bool ShouldNeverDisplayExactOutput(Poincare::Expression exactOutput,
                                    Poincare::Context* context);
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input,
                                     Poincare::Expression exactOutput,
+                                    Poincare::Expression approximateOutput,
                                     Poincare::Context* context);
 
 }  // namespace ExpressionDisplayPermissions

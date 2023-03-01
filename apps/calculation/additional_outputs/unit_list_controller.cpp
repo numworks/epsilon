@@ -181,9 +181,8 @@ void UnitListController::setExpression(Poincare::Expression e) {
     if (!expressions[i].isUninitialized()) {
       m_layouts[i] = Shared::PoincareHelpers::CreateLayout(
           expressions[i], App::app()->localContext());
-      /* Angles may have two layouts to display. Check if the expression
-       * has no other unit than angle. */
-      if (!expressions[i].hasUnit(true)) {
+      // Radians may have two layouts to display
+      if (expressions[i].isInRadians(App::app()->localContext())) {
         Layout approximated = Shared::PoincareHelpers::CreateLayout(
             expressions[i].approximateKeepingUnits<double>(reductionContext),
             App::app()->localContext());

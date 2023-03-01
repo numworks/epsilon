@@ -88,9 +88,10 @@ class LayoutCursor final {
 
   /* Move */
   // Return false if could not move
-  bool move(OMG::Direction direction, bool selecting, bool* shouldRedrawLayout);
+  bool move(OMG::Direction direction, bool selecting, bool* shouldRedrawLayout,
+            Context* context = nullptr);
   bool moveMultipleSteps(OMG::Direction direction, int step, bool selecting,
-                         bool* shouldRedrawLayout);
+                         bool* shouldRedrawLayout, Context* context = nullptr);
 
   /* Layout insertion */
   void insertLayoutAtCursor(Layout layout, Context* context,

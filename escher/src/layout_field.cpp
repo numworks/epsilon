@@ -501,7 +501,7 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event,
   }
   return m_contentView.cursor()->moveMultipleSteps(
       OMG::Direction(event), Ion::Events::longPressFactor(), isSelectionEvent,
-      shouldRedrawLayout);
+      shouldRedrawLayout, context());
 }
 
 void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {

@@ -18,6 +18,8 @@ WorkingBuffer::WorkingBuffer() :
 }
 
 uint8_t * WorkingBuffer::allocate(size_t size) {
+  /* We allow one native_uint_t of overflow that can appear when dividing a
+   * Integer with k_maxNumberOfDigits. */
   assert(size <= IntegerHandler::k_maxNumberOfDigits + sizeof(native_uint_t));
   if (size > m_remainingSize) {
     // TODO: set the error type to be "Integer computation requires to much space"/"edition pool overflowed"
@@ -37,14 +39,18 @@ uint8_t * WorkingBuffer::allocateForImmediateDigit() {
 }
 
 void WorkingBuffer::garbageCollect(std::initializer_list<IntegerHandler *> keptIntegers) {
-  uint8_t * previousStart = initialStartOfBuffer();
   uint8_t * previousEnd = m_start;
+  (void)previousEnd; // Silent warning
   m_start = initialStartOfBuffer();
   m_remainingSize = initialSizeOfBuffer();
   for (IntegerHandler * integer : keptIntegers) {
     if (integer->usesImmediateDigit()) {
+      /* Integer digit is actually directly stored within the integer object,
+       * we allocate some room to be able to push the digits on the pool if
+       * necessary but we don't need to copy the data. */
       allocateForImmediateDigit();
-    } else if (previousStart <= integer->digits() && integer->digits() < previousEnd) {
+    } else {
+      assert(m_start <= integer->digits() && integer->digits() + integer->numberOfDigits() * sizeof(uint8_t) <= previousEnd);
       // TODO: assert that the Integer are sorted by digits() pointer
       uint8_t nbOfDigits = integer->numberOfDigits();
       uint8_t * newDigitsPointer = allocate(nbOfDigits);
@@ -67,15 +73,14 @@ IntegerHandler::Digits::Digits(const uint8_t * digits, uint8_t numberOfDigits) {
 
 template <typename T>
 IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer * buffer) {
-  size_t sizeInByte = size * sizeof(T);
-  if (sizeInByte <= sizeof(native_uint_t)) {
+  size_t sizeInBytes = size * sizeof(T);
+  if (sizeInBytes <= sizeof(native_uint_t)) {
     buffer->allocateForImmediateDigit();
-    /* Force the maximal m_numberOfDigits to be able to get any digit without
-     * requiring sanitizing the IntegerHandler first. */
+    /* Force the maximal m_numberOfDigits (4 = sizeof(native_uint_t)) to be
+     * able to easily access any digit. */
     native_uint_t initialValue = 0;
     return IntegerHandler(reinterpret_cast<const uint8_t *>(&initialValue), sizeof(native_uint_t), NonStrictSign::Positive);
   } else {
-    size_t sizeInBytes = size * sizeof(T);
     return IntegerHandler(buffer->allocate(sizeInBytes), sizeInBytes, NonStrictSign::Positive);
   }
 }
@@ -542,14 +547,14 @@ void IntegerHandler::sanitize() {
 /* Integer */
 
 EditionReference Integer::Push(const char * digits, size_t length, OMG::Base base) {
+  assert(digits != nullptr);
   EditionReference result = IntegerHandler(static_cast<uint8_t>(0)).pushOnEditionPool();
   NonStrictSign sign = NonStrictSign::Positive;
-  if (digits != nullptr && *digits == '-') {
+  if (*digits == '-') {
     sign = NonStrictSign::Negative;
     digits++;
     length--;
   }
-  assert(digits != nullptr);
   IntegerHandler baseInteger(static_cast<uint8_t>(base));
   for (size_t i = 0; i < length; i++) {
     EditionReference multiplication = IntegerHandler::Multiplication(Integer::Handler(result), baseInteger);

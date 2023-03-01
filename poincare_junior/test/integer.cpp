@@ -255,7 +255,7 @@ static inline void assert_did_not_overflow(ActionWithContext action) {
 }
 
 QUIZ_CASE(pcj_integer_overflows) {
-  // Contrsutction
+  // Construction
   assert_did_overflow(
       [] (void * subAction, const void * data) {
         CreateIntegerHandler(OverflowedIntegerString());

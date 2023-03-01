@@ -9,9 +9,9 @@
 
 namespace PoincareJ {
 
-/* Most significant digit last
- * TODO: try with uint8_t native_uint_t! I'm really not sure we're speeding up things here...
- * */
+/* TODO:I'm not sure using uint32_t over uint8_t is worth the trouble.
+ * The set of operations of test/integer.cpp was only 14% slower when
+ * native_uint_t = uint8_t. */
 
 typedef uint16_t half_native_uint_t;
 typedef uint32_t native_uint_t;
@@ -24,11 +24,13 @@ static_assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t), "double_n
 class IntegerHandler;
 
 class WorkingBuffer {
+
 /* To compute operations between Integers, we need an array where to store the
  * intermediate result digits. Instead of allocating it on the stack which could
  * eventually lead to a stack overflow, we use the remaining space of the
  * edition pool. In case of overflow, we raise an exception in order to restart
  * after freeing some cached trees. */
+
 public:
   WorkingBuffer();
   uint8_t * allocate(size_t size);
@@ -37,7 +39,6 @@ public:
   uint8_t * allocateForImmediateDigit();
   /* Clean the working buffer from all integers but the sorted keptInteger. */
   void garbageCollect(std::initializer_list<IntegerHandler *> keptIntegers);
-  uint8_t * start() { return m_start; }
 private:
   /* We let an offset of 2 blocks at the end of the edition pool before the
    * working buffer to be able to push the meta blocks of a Big Int before

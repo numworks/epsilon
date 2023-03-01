@@ -75,7 +75,7 @@ int ExamModeController::numberOfRows() const {
     case CountryPreferences::AvailableExamModes::StandardAndDutch:
       // Standard and Dutch
       return 2;
-    case CountryPreferences::AvailableExamModes::PressToTestOnly:
+    case CountryPreferences::AvailableExamModes::AmericanAll:
       // Menu shouldn't be visible
       return 0;
     default:
@@ -192,7 +192,7 @@ I18n::Message ExamModeController::examModeActivationMessage(
   assert(examMode != ExamMode::Ruleset::Off &&
          examMode != ExamMode::Ruleset::PressToTest &&
          GlobalPreferences::sharedGlobalPreferences->availableExamModes() !=
-             CountryPreferences::AvailableExamModes::PressToTestOnly);
+             CountryPreferences::AvailableExamModes::AmericanAll);
   size_t messageIndex =
       static_cast<size_t>(examMode) * messagesPerMode + isReactivation;
   if (examMode == ExamMode::Ruleset::Standard &&

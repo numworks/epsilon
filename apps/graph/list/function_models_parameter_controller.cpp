@@ -56,7 +56,7 @@ const char* FunctionModelsParameterController::title() {
 
 void FunctionModelsParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  m_selectableTableView.selectCell(0);
   m_selectableTableView.reloadData();
 }
 

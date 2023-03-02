@@ -221,8 +221,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
           m_consoleStore.lineAtIndex(m_selectableTableView.selectedRow())
               .text();
       m_editCell.setEditing(true);
-      m_selectableTableView.selectCellAtLocation(
-          0, m_consoleStore.numberOfLines());
+      m_selectableTableView.selectCell(m_consoleStore.numberOfLines());
       Container::activeApp()->setFirstResponder(&m_editCell);
       return m_editCell.insertText(text);
     }
@@ -230,8 +229,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
     m_selectableTableView.deselectTable();
     m_consoleStore.clear();
     m_selectableTableView.reloadData();
-    m_selectableTableView.selectCellAtLocation(0,
-                                               m_consoleStore.numberOfLines());
+    m_selectableTableView.selectCell(m_consoleStore.numberOfLines());
     return true;
   } else if (event == Ion::Events::Backspace) {
     int selectedRow = m_selectableTableView.selectedRow();
@@ -240,7 +238,7 @@ bool ConsoleController::handleEvent(Ion::Events::Event event) {
     int firstDeletedLineIndex =
         m_consoleStore.deleteCommandAndResultsAtIndex(selectedRow);
     m_selectableTableView.reloadData();
-    m_selectableTableView.selectCellAtLocation(0, firstDeletedLineIndex);
+    m_selectableTableView.selectCell(firstDeletedLineIndex);
     return true;
   }
 #if EPSILON_GETOPT
@@ -350,8 +348,7 @@ bool ConsoleController::textFieldDidReceiveEvent(AbstractTextField *textField,
     if (m_consoleStore.numberOfLines() > 0 &&
         m_selectableTableView.selectedRow() == m_consoleStore.numberOfLines()) {
       m_editCell.setEditing(false);
-      m_selectableTableView.selectCellAtLocation(
-          0, m_consoleStore.numberOfLines() - 1);
+      m_selectableTableView.selectCell(m_consoleStore.numberOfLines() - 1);
       return true;
     }
   }
@@ -444,7 +441,7 @@ void ConsoleController::refreshPrintOutput() {
 
 void ConsoleController::reloadData(bool isEditing) {
   m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, m_consoleStore.numberOfLines());
+  m_selectableTableView.selectCell(m_consoleStore.numberOfLines());
   if (isEditing) {
     m_editCell.setEditing(true);
     m_editCell.setText("");

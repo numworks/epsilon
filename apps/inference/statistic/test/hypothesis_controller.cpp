@@ -96,7 +96,7 @@ bool HypothesisController::textFieldDidFinishEditing(
 
   m_test->hypothesisParams()->setFirstParam(h0);
   loadHypothesisParam();
-  m_selectableTableView.selectCellAtLocation(0, k_indexOfHa);
+  m_selectableTableView.selectCell(k_indexOfHa);
   return true;
 }
 

@@ -67,7 +67,7 @@ void CalculationParameterController::viewWillAppear() {
 
 void CalculationParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
+    m_selectableTableView.selectCell(0);
   }
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }

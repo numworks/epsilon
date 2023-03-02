@@ -33,7 +33,7 @@ void StoreMenuController::close() {
 }
 
 void StoreMenuController::InnerListController::didBecomeFirstResponder() {
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  m_selectableTableView.selectCell(0);
   m_selectableTableView.reloadData();
 }
 

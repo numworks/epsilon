@@ -108,6 +108,9 @@ void TitleBarView::layoutSubviews(bool force) {
       case ExamMode::Ruleset::Portuguese:
         examModeMessage = I18n::Message::ExamModeTitleBarPT;
         break;
+      case ExamMode::Ruleset::IBTest:
+        examModeMessage = I18n::Message::ExamModeTitleBarIB;
+        break;
       case ExamMode::Ruleset::STAAR:
         examModeMessage = I18n::Message::ExamModeTitleBarSTAAR;
         break;

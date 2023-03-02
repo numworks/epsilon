@@ -5,6 +5,7 @@
 #include <poincare/print.h>
 
 #include "exam_icon.h"
+#include "staar_icon.h"
 extern "C" {
 #include <assert.h>
 }
@@ -70,7 +71,7 @@ View* TitleBarView::subviewAtIndex(int index) {
 void TitleBarView::layoutSubviews(bool force) {
   /* We here cheat to layout the main title. The application title is written
    * with upper cases. But, as upper letters are on the same baseline as lower
-   * letters, they seem to be slightly above when they are perferctly centered
+   * letters, they seem to be slightly above when they are perfectly centered
    * (because their glyph never cross the baseline). To avoid this effect, we
    * translate the frame of the title downwards.*/
   constexpr int k_verticalShift = 2;
@@ -98,7 +99,16 @@ void TitleBarView::layoutSubviews(bool force) {
                k_examTextWidth, bounds().height() - k_verticalShift),
         force);
     I18n::Message examModeMessage;
-    switch (Preferences::sharedPreferences->examMode().ruleset()) {
+
+    ExamMode::Ruleset ruleset =
+        Preferences::sharedPreferences->examMode().ruleset();
+    if (ruleset == ExamMode::Ruleset::STAAR) {
+      m_examModeIconView.setImage(ImageStore::StaarIcon);
+    } else {
+      m_examModeIconView.setImage(ImageStore::ExamIcon);
+    }
+
+    switch (ruleset) {
       case ExamMode::Ruleset::English:
         examModeMessage = I18n::Message::ExamModeTitleBarUK;
         break;

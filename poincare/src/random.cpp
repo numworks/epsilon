@@ -55,7 +55,7 @@ T Random::random() {
 
   constexpr size_t p = IEEE754<T>::k_mantissaNbBits + 1;
   if (sizeof(T) == sizeof(float)) {
-    uint32_t r = Ion::random() & ((1 << p) - 1);
+    uint32_t r = Ion::random() & ((static_cast<uint32_t>(1) << p) - 1);
     return static_cast<float>(r) / static_cast<float>((1 << p));
   } else {
     assert(sizeof(T) == sizeof(double));

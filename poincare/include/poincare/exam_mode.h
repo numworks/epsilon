@@ -17,6 +17,8 @@ class ExamMode : public Ion::ExamMode::Configuration {
 
   struct PressToTestFlags {
     bool operator==(const PressToTestFlags& other) const {
+      assert(unusedBits == 0 && discardedBits == 0);
+      assert(other.unusedBits == 0 && other.discardedBits == 0);
       return PressToTestUnion{.flags = *this}.value ==
              PressToTestUnion{.flags = other}.value;
     }
@@ -30,7 +32,12 @@ class ExamMode : public Ion::ExamMode::Configuration {
     bool forbidSum : 1;
     bool forbidExactResults : 1;
     bool forbidElementsApp : 1;
+    // These bits are available, unused and preserved at 0 for == operator
+    Ion::ExamMode::Int unusedBits : 5;
+    // These bits will be discarded when cast into 14 bits in an Configuration
+    Ion::ExamMode::Int discardedBits : 2;
   };
+  static_assert(sizeof(PressToTestFlags) <= sizeof(Ion::ExamMode::Int));
 
   ExamMode() : Configuration() {}
   explicit ExamMode(Ruleset rules, PressToTestFlags flags = {})

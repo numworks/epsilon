@@ -132,6 +132,7 @@ void ListController::willDisplayCellForIndex(HighlightCell *cell, int index) {
     SequenceCell *sequenceCell = static_cast<SequenceCell *>(cell);
     willDisplayExpressionCellAtIndex(sequenceCell->expressionCell(), index);
     willDisplayTitleCellAtIndex(sequenceCell->titleCell(), index);
+    sequenceCell->setParameterSelected(m_parameterColumnSelected);
   }
   EvenOddCell *myCell = static_cast<EvenOddCell *>(cell);
   myCell->setEven(modelIndexForRow(index) % 2 == 0);
@@ -144,7 +145,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);
-      selectableTableView()->selectCellAtLocation(1, numberOfRows() - 1);
+      selectableTableView()->selectCellAtLocation(0, numberOfRows() - 1);
       Container::activeApp()->setFirstResponder(selectableTableView());
       return true;
     }
@@ -161,6 +162,17 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     footer()->setSelectedButton(0);
     return true;
   }
+  if (event == Ion::Events::Right && m_parameterColumnSelected) {
+    // Leave parameter column
+    m_parameterColumnSelected = false;
+    selectableTableView()->reloadData();
+    return true;
+  } else if (event == Ion::Events::Left && !m_parameterColumnSelected) {
+    // Enter parameter column
+    m_parameterColumnSelected = true;
+    selectableTableView()->reloadData();
+    return true;
+  }
   if (selectedRow() < 0) {
     return false;
   }
@@ -171,21 +183,21 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     if (removeModelRow(record)) {
       int newSelectedRow =
           selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
-      selectCellAtLocation(selectedColumn(), newSelectedRow);
+      selectCellAtLocation(0, newSelectedRow);
       selectableTableView()->reloadData();
     }
     return true;
   }
-  if (selectedColumn() == 0) {
-    return handleEventOnExpression(event);
+  if (m_parameterColumnSelected && !isAddEmptyRow(selectedRow())) {
+    if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+      configureFunction(
+          modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
+      return true;
+    }
+    return false;
   }
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    assert(selectedColumn() == 0);
-    configureFunction(
-        modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
-    return true;
-  }
-  return false;
+  return handleEventOnExpression(event);
+  ;
 }
 
 /* SelectableTableViewDelegate*/

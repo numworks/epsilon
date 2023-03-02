@@ -99,14 +99,15 @@ class ListController : public Shared::FunctionListController,
   int maxNumberOfDisplayableRows() override { return k_maxNumberOfRows; }
   Escher::HighlightCell* titleCells(int index);
   Escher::HighlightCell* functionCells(int index) override;
-  void willDisplayTitleCellAtIndex(Escher::HighlightCell* cell, int j);
+  void willDisplayTitleCellAtIndex(Escher::HighlightCell* cell, int j,
+                                   Escher::HighlightCell* expressionCell);
   void willDisplayExpressionCellAtIndex(Escher::HighlightCell* cell,
                                         int j) override;
   int modelIndexForRow(int j) const override;
   int sequenceDefinitionForRow(int j) const;
   KDCoordinate maxFunctionNameWidth();
   void didChangeModelsList() override;
-  KDCoordinate baseline(int j);
+  KDCoordinate baseline(int j, Escher::HighlightCell* cell);
   void addModel() override;
   bool editSelectedRecordWithText(const char* text) override;
   void getTextForSelectedRecord(char* text, size_t size) const override;

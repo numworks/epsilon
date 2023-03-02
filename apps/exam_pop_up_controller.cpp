@@ -56,6 +56,10 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       I18n::Message::ActiveExamModeWithResetMessage,  // Portuguese
       I18n::Message::ActiveEnglishExamModeMessage,
       I18n::Message::ActiveEnglishExamModeWithResetMessage,  // English
+      I18n::Message::ActiveSTAARExamModeMessage,
+      I18n::Message::ActiveSTAARExamModeWithResetMessage,  // STAAR
+      I18n::Message::ActiveKeystoneExamModeMessage,
+      I18n::Message::ActiveKeystoneExamModeWithResetMessage,  // Keystone
   };
   static_assert(sizeof(messages) / sizeof(I18n::Message) ==
                     numberOfModes * messagesPerMode,

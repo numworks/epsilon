@@ -1,12 +1,11 @@
 #include "exam_mode_controller.h"
 
+#include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <assert.h>
 
 #include <cmath>
-
-#include "../../apps_container.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -59,6 +58,8 @@ int ExamModeController::numberOfRows() const {
     case ExamMode::Ruleset::IBTest:
     case ExamMode::Ruleset::Portuguese:
     case ExamMode::Ruleset::English:
+    case ExamMode::Ruleset::STAAR:
+    case ExamMode::Ruleset::Keystone:
       // Reactivation button
       return 1;
     default:
@@ -76,8 +77,8 @@ int ExamModeController::numberOfRows() const {
       // Standard and Dutch
       return 2;
     case CountryPreferences::AvailableExamModes::AmericanAll:
-      // Menu shouldn't be visible
-      return 0;
+      // STAAR, Keystone and IB
+      return 3;
     default:
       assert(availableExamModes == CountryPreferences::AvailableExamModes::All);
   }
@@ -131,20 +132,24 @@ ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
     case CountryPreferences::AvailableExamModes::EnglishOnly:
       assert(index == 0);
       return ExamMode::Ruleset::English;
+    case CountryPreferences::AvailableExamModes::AmericanAll:
+      // Offset index to display american exam modes only.
+      index += 4;
     default:
       assert(availableExamModes ==
                  CountryPreferences::AvailableExamModes::StandardOnly ||
              availableExamModes ==
                  CountryPreferences::AvailableExamModes::StandardAndDutch ||
+             availableExamModes ==
+                 CountryPreferences::AvailableExamModes::AmericanAll ||
              availableExamModes == CountryPreferences::AvailableExamModes::All);
       constexpr ExamMode::Ruleset modes[] = {
-          ExamMode::Ruleset::Standard, ExamMode::Ruleset::Dutch,
+          ExamMode::Ruleset::Standard,   ExamMode::Ruleset::Dutch,
           ExamMode::Ruleset::Portuguese, ExamMode::Ruleset::English,
+          ExamMode::Ruleset::STAAR,      ExamMode::Ruleset::Keystone,
           ExamMode::Ruleset::IBTest};
-      // -2 for Off and Press-to-test rulesets
       static_assert(
-          sizeof(modes) / sizeof(ExamMode::Ruleset) ==
-              static_cast<size_t>(ExamMode::Ruleset::NumberOfRulesets) - 2,
+          sizeof(modes) / sizeof(ExamMode::Ruleset) == k_maxNumberOfCells,
           "modes must contain each available exam mode");
       assert(index < sizeof(modes) / sizeof(modes[0]));
       return modes[index];
@@ -178,6 +183,12 @@ I18n::Message ExamModeController::examModeActivationMessage(
       // English
       I18n::Message::ActivateEnglishExamMode,
       I18n::Message::ReactivateEnglishExamMode,
+      // STAAR
+      I18n::Message::ActivateSTAARExamMode,
+      I18n::Message::ReactivateSTAARExamMode,
+      // Keystone
+      I18n::Message::ActivateKeystoneExamMode,
+      I18n::Message::ReactivateKeystoneExamMode,
   };
   static_assert(sizeof(messages) / sizeof(I18n::Message) ==
                     numberOfModes * messagesPerMode,
@@ -190,9 +201,7 @@ I18n::Message ExamModeController::examModeActivationMessage(
   // Exam mode is either the selected ruleset or the already activated one.
   examMode = isReactivation ? examMode : examModeRulesetAtIndex(index);
   assert(examMode != ExamMode::Ruleset::Off &&
-         examMode != ExamMode::Ruleset::PressToTest &&
-         GlobalPreferences::sharedGlobalPreferences->availableExamModes() !=
-             CountryPreferences::AvailableExamModes::AmericanAll);
+         examMode != ExamMode::Ruleset::PressToTest);
   size_t messageIndex =
       static_cast<size_t>(examMode) * messagesPerMode + isReactivation;
   if (examMode == ExamMode::Ruleset::Standard &&

@@ -15,6 +15,7 @@ app_sequence_src = $(addprefix apps/sequence/,\
   graph/graph_controller.cpp \
   graph/graph_view.cpp \
   graph/term_sum_controller.cpp \
+  list/editable_sequence_cell.cpp \
   list/list_controller.cpp \
   list/list_parameter_controller.cpp \
   list/sequence_cell.cpp \

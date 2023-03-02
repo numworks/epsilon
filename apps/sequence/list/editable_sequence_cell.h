@@ -22,9 +22,14 @@ class EditableSequenceCell : public AbstractSequenceCell {
   const Escher::EditableExpressionModelCell* expressionCell() const override {
     return &m_expressionField;
   }
-  void updateSubviewsBackgroundAfterChangingState() override {}
+  void updateSubviewsBackgroundAfterChangingState() override {
+    m_expressionBackground = backgroundColor();
+  }
+
+  void layoutSubviews(bool force) override;
 
  private:
+  static constexpr KDCoordinate k_expressionMargin = 5;
   Escher::EditableExpressionModelCell m_expressionField;
 };
 

@@ -198,7 +198,7 @@ void VariableBoxController::tableViewDidChangeSelection(
       typeAtIndex(currentSelectedRow) == k_subtitleCellType) {
     if (currentSelectedRow == 0) {
       // We scroll to the first cell, otherwise it will never appear again
-      t->scrollToCell(0, 0);
+      t->scrollToCell(0);
       t->selectCell(1);
     } else {
       t->selectCell(selectedRow() +

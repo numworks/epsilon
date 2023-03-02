@@ -61,7 +61,7 @@ template <typename T>
 void FloatParameterController<T>::viewDidDisappear() {
   if (parentResponder() == nullptr) {
     m_selectableTableView.deselectTable();
-    m_selectableTableView.scrollToCell(0, 0);
+    m_selectableTableView.scrollToCell(0);
   }
 }
 

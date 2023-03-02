@@ -1003,7 +1003,7 @@ void PythonToolbox::scrollToLetter(char letter) {
 
 void PythonToolbox::scrollToAndSelectChild(int i) {
   assert(i >= 0 && i < m_messageTreeModel->numberOfChildren());
-  m_selectableTableView.scrollToCell(0, i);
+  m_selectableTableView.scrollToCell(i);
   m_selectableTableView.selectCell(i);
 }
 

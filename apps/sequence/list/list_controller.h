@@ -4,9 +4,9 @@
 #include <apps/i18n.h>
 #include <apps/shared/function_list_controller.h>
 #include <apps/shared/sequence_store.h>
-#include <escher/editable_expression_model_cell.h>
-#include <escher/table_view_data_source.h>
+#include <escher/list_view_data_source.h>
 
+#include "editable_sequence_cell.h"
 #include "list_parameter_controller.h"
 #include "sequence_cell.h"
 #include "sequence_toolbox.h"
@@ -15,7 +15,7 @@
 namespace Sequence {
 
 class ListController : public Shared::FunctionListController,
-                       public Escher::ListViewDataSource {
+                       public Escher::MemoizedListViewDataSource {
  public:
   ListController(Escher::Responder* parentResponder,
                  Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
@@ -114,13 +114,13 @@ class ListController : public Shared::FunctionListController,
   Shared::SequenceStore* modelStore() const override;
   KDCoordinate nameWidth(int nameLength) const;
   Escher::ExpressionField* expressionField() override {
-    return m_editableCell.expressionField();
+    return m_editableCell.expressionCell()->expressionField();
   }
 
   Escher::SelectableTableView m_selectableTableView;
   Escher::EvenOddCell m_emptyCell;
   SequenceCell m_sequenceCells[k_maxNumberOfRows];
-  Escher::EditableExpressionModelCell m_editableCell;
+  EditableSequenceCell m_editableCell;
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
   Escher::StackViewController m_typeStackController;

@@ -28,7 +28,8 @@ ListController::ListController(
       m_typeStackController(nullptr, &m_typeParameterController,
                             StackViewController::Style::PurpleWhite),
       m_titlesColumnWidth(k_minTitleColumnWidth) {
-  m_editableCell.setMargins(k_expressionMargin, k_expressionMargin);
+  m_editableCell.expressionCell()->setMargins(k_expressionMargin,
+                                              k_expressionMargin);
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_sequenceCells[i].expressionCell()->setLeftMargin(k_expressionMargin);
     m_sequenceCells[i].expressionCell()->setRightMargin(0);
@@ -52,7 +53,9 @@ KDCoordinate ListController::expressionRowHeight(int j) {
   KDCoordinate defaultHeight = Metric::StoreRowHeight;
   KDCoordinate sequenceHeight;
   if (j == m_editedCellIndex) {
-    sequenceHeight = m_editableCell.minimalSizeForOptimalDisplay().height();
+    sequenceHeight = m_editableCell.expressionCell()
+                         ->minimalSizeForOptimalDisplay()
+                         .height();
   } else {
     if (isAddEmptyRow(j)) {
       return defaultHeight;
@@ -125,11 +128,9 @@ HighlightCell *ListController::reusableCell(int index, int type) {
 }
 
 void ListController::willDisplayCellForIndex(HighlightCell *cell, int index) {
-  if (cell == &m_editableCell) {
-    return;
-  }
   if (!isAddEmptyRow(index)) {
-    SequenceCell *sequenceCell = static_cast<SequenceCell *>(cell);
+    AbstractSequenceCell *sequenceCell =
+        static_cast<AbstractSequenceCell *>(cell);
     willDisplayExpressionCellAtIndex(sequenceCell->expressionCell(), index);
     willDisplayTitleCellAtIndex(sequenceCell->titleCell(), index);
     sequenceCell->setParameterSelected(m_parameterColumnSelected);

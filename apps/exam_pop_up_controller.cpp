@@ -41,7 +41,7 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
   constexpr size_t numberOfModes =
       static_cast<size_t>(ExamMode::Ruleset::NumberOfRulesets);
   constexpr size_t messagesPerMode = 2;
-  constexpr I18n::Message messages[numberOfModes * messagesPerMode] = {
+  constexpr I18n::Message messages[] = {
       I18n::Message::ExitExamMode,
       I18n::Message::ExitPressToTestExamMode,  // Off
       I18n::Message::ActiveExamModeMessage,
@@ -57,6 +57,9 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       I18n::Message::ActiveEnglishExamModeMessage,
       I18n::Message::ActiveEnglishExamModeWithResetMessage,  // English
   };
+  static_assert(sizeof(messages) / sizeof(I18n::Message) ==
+                    numberOfModes * messagesPerMode,
+                "messages size is invalid");
   ExamMode::Ruleset rules = m_targetExamMode.ruleset();
   size_t index = static_cast<size_t>(rules) * messagesPerMode;
   index += (rules == ExamMode::Ruleset::Off &&

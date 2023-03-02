@@ -50,40 +50,39 @@ int ExamModeController::numberOfRows() const {
    * A user could first activate an exam mode and then change the country. */
   ExamMode::Ruleset rules =
       Preferences::sharedPreferences->examMode().ruleset();
-  if (rules == ExamMode::Ruleset::Standard ||
-      rules == ExamMode::Ruleset::Dutch || rules == ExamMode::Ruleset::IBTest ||
-      rules == ExamMode::Ruleset::Portuguese ||
-      rules == ExamMode::Ruleset::English) {
-    // Reactivation button
-    return 1;
+  switch (rules) {
+    case ExamMode::Ruleset::PressToTest:
+      // Menu shouldn't be visible
+      return 0;
+    case ExamMode::Ruleset::Standard:
+    case ExamMode::Ruleset::Dutch:
+    case ExamMode::Ruleset::IBTest:
+    case ExamMode::Ruleset::Portuguese:
+    case ExamMode::Ruleset::English:
+      // Reactivation button
+      return 1;
+    default:
+      assert(rules == ExamMode::Ruleset::Off);
   }
   CountryPreferences::AvailableExamModes availableExamModes =
       GlobalPreferences::sharedGlobalPreferences->availableExamModes();
-
-  if (availableExamModes ==
-          CountryPreferences::AvailableExamModes::PressToTestOnly ||
-      rules == ExamMode::Ruleset::PressToTest) {
-    assert(rules == ExamMode::Ruleset::Off ||
-           rules == ExamMode::Ruleset::PressToTest);
-    // Menu shouldn't be visible
-    return 0;
-  }
   // Activation button(s)
-  assert(rules == ExamMode::Ruleset::Off);
-  if (availableExamModes ==
-          CountryPreferences::AvailableExamModes::StandardOnly ||
-      availableExamModes ==
-          CountryPreferences::AvailableExamModes::PortugueseOnly ||
-      availableExamModes ==
-          CountryPreferences::AvailableExamModes::EnglishOnly) {
-    return 1;
+  switch (availableExamModes) {
+    case CountryPreferences::AvailableExamModes::StandardOnly:
+    case CountryPreferences::AvailableExamModes::PortugueseOnly:
+    case CountryPreferences::AvailableExamModes::EnglishOnly:
+      return 1;
+    case CountryPreferences::AvailableExamModes::StandardAndDutch:
+      // Standard and Dutch
+      return 2;
+    case CountryPreferences::AvailableExamModes::PressToTestOnly:
+      // Menu shouldn't be visible
+      return 0;
+    default:
+      assert(availableExamModes == CountryPreferences::AvailableExamModes::All);
   }
-  if (availableExamModes ==
-      CountryPreferences::AvailableExamModes::StandardAndDutch) {
-    return 2;
-  }
-  assert(availableExamModes == CountryPreferences::AvailableExamModes::All);
-  return 5;
+  // All exam modes
+  return k_maxNumberOfCells;
 }
 
 HighlightCell *ExamModeController::reusableCell(int index, int type) {
@@ -123,7 +122,9 @@ ExamMode ExamModeController::examMode() {
 
 ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
     size_t index) const {
-  switch (GlobalPreferences::sharedGlobalPreferences->availableExamModes()) {
+  CountryPreferences::AvailableExamModes availableExamModes =
+      GlobalPreferences::sharedGlobalPreferences->availableExamModes();
+  switch (availableExamModes) {
     case CountryPreferences::AvailableExamModes::PortugueseOnly:
       assert(index == 0);
       return ExamMode::Ruleset::Portuguese;
@@ -131,10 +132,20 @@ ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
       assert(index == 0);
       return ExamMode::Ruleset::English;
     default:
-      ExamMode::Ruleset modes[] = {
+      assert(availableExamModes ==
+                 CountryPreferences::AvailableExamModes::StandardOnly ||
+             availableExamModes ==
+                 CountryPreferences::AvailableExamModes::StandardAndDutch ||
+             availableExamModes == CountryPreferences::AvailableExamModes::All);
+      constexpr ExamMode::Ruleset modes[] = {
           ExamMode::Ruleset::Standard, ExamMode::Ruleset::Dutch,
           ExamMode::Ruleset::Portuguese, ExamMode::Ruleset::English,
           ExamMode::Ruleset::IBTest};
+      // -2 for Off and Press-to-test rulesets
+      static_assert(
+          sizeof(modes) / sizeof(ExamMode::Ruleset) ==
+              static_cast<size_t>(ExamMode::Ruleset::NumberOfRulesets) - 2,
+          "modes must contain each available exam mode");
       assert(index < sizeof(modes) / sizeof(modes[0]));
       return modes[index];
   }
@@ -142,47 +153,56 @@ ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
 
 I18n::Message ExamModeController::examModeActivationMessage(
     size_t index) const {
+  constexpr size_t numberOfModes =
+      static_cast<size_t>(ExamMode::Ruleset::NumberOfRulesets);
+  constexpr size_t messagesPerMode = 2;
+  constexpr I18n::Message messages[] = {
+      // Off, used to specify french exam mode type
+      I18n::Message::ActivateFrenchExamMode,
+      I18n::Message::ReactivateFrenchExamMode,
+      // Standard
+      I18n::Message::ActivateExamMode,
+      I18n::Message::ReactivateExamMode,
+      // Dutch
+      I18n::Message::ActivateDutchExamMode,
+      I18n::Message::ReactivateDutchExamMode,
+      // IBTest
+      I18n::Message::ActivateIBExamMode,
+      I18n::Message::ReactivateIBExamMode,
+      // PressToTest, unused // TODO : move it add the end of the ruleset list
+      I18n::Message::Default,
+      I18n::Message::Default,
+      // Portuguese
+      I18n::Message::ActivatePortugueseExamMode,
+      I18n::Message::ReactivatePortugueseExamMode,
+      // English
+      I18n::Message::ActivateEnglishExamMode,
+      I18n::Message::ReactivateEnglishExamMode,
+  };
+  static_assert(sizeof(messages) / sizeof(I18n::Message) ==
+                    numberOfModes * messagesPerMode,
+                "messages size is invalid");
+
   ExamMode::Ruleset examMode =
       Preferences::sharedPreferences->examMode().ruleset();
-  /* If the country has all exam mode, we specify which one will be reactivated.
-   * The country might still have been updated by the user after activation. */
-  bool specifyFrenchExamModeType =
+  bool isReactivation = (examMode != ExamMode::Ruleset::Off);
+  assert(!isReactivation || index == 0);
+  // Exam mode is either the selected ruleset or the already activated one.
+  examMode = isReactivation ? examMode : examModeRulesetAtIndex(index);
+  assert(examMode != ExamMode::Ruleset::Off &&
+         examMode != ExamMode::Ruleset::PressToTest &&
+         GlobalPreferences::sharedGlobalPreferences->availableExamModes() !=
+             CountryPreferences::AvailableExamModes::PressToTestOnly);
+  size_t messageIndex =
+      static_cast<size_t>(examMode) * messagesPerMode + isReactivation;
+  if (examMode == ExamMode::Ruleset::Standard &&
       GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
-      CountryPreferences::AvailableExamModes::All;
-  assert(examMode == ExamMode::Ruleset::Off || index == 0);
-  switch (examMode) {
-    case ExamMode::Ruleset::Standard:
-      return (specifyFrenchExamModeType
-                  ? I18n::Message::ReactivateFrenchExamMode
-                  : I18n::Message::ReactivateExamMode);
-    case ExamMode::Ruleset::Dutch:
-      return I18n::Message::ReactivateDutchExamMode;
-    case ExamMode::Ruleset::IBTest:
-      return I18n::Message::ReactivateIBExamMode;
-    case ExamMode::Ruleset::Portuguese:
-      return I18n::Message::ReactivatePortugueseExamMode;
-    case ExamMode::Ruleset::English:
-      return I18n::Message::ReactivateEnglishExamMode;
-    default:
-      assert(examMode == ExamMode::Ruleset::Off);
-      switch (examModeRulesetAtIndex(index)) {
-        case ExamMode::Ruleset::Standard:
-          return (specifyFrenchExamModeType
-                      ? I18n::Message::ActivateFrenchExamMode
-                      : I18n::Message::ActivateExamMode);
-        case ExamMode::Ruleset::Dutch:
-          return I18n::Message::ActivateDutchExamMode;
-        case ExamMode::Ruleset::Portuguese:
-          return I18n::Message::ActivatePortugueseExamMode;
-        case ExamMode::Ruleset::English:
-          return I18n::Message::ActivateEnglishExamMode;
-        case ExamMode::Ruleset::IBTest:
-          return I18n::Message::ActivateIBExamMode;
-        default:
-          assert(false);
-          return I18n::Message::Default;
-      }
+          CountryPreferences::AvailableExamModes::All) {
+    // Specify french exam mode type
+    messageIndex -= messagesPerMode;
   }
+  assert(messageIndex >= 0 && messageIndex < numberOfModes * messagesPerMode);
+  return messages[messageIndex];
 }
 
 }  // namespace Settings

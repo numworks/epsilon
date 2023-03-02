@@ -325,18 +325,13 @@ ViewController *MainController::subControllerForCell(
 }
 
 bool MainController::hasExamModeCell() const {
+  // If only exam modes are available
   return !hasTestModeCell() && m_examModeController.numberOfRows() > 0;
 }
 
 bool MainController::hasPressToTestCell() const {
-  if (hasTestModeCell()) {
-    return false;
-  }
-  ExamMode examMode = Preferences::sharedPreferences->examMode();
-  return examMode.ruleset() == ExamMode::Ruleset::PressToTest ||
-         (examMode.ruleset() == ExamMode::Ruleset::Off &&
-          GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
-              CountryPreferences::AvailableExamModes::PressToTestOnly);
+  // If only press to test is available
+  return m_examModeController.numberOfRows() == 0;
 }
 
 bool MainController::hasTestModeCell() const {

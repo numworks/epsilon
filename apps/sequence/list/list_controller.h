@@ -120,13 +120,13 @@ class ListController : public Shared::FunctionListController,
   Escher::SelectableTableView m_selectableTableView;
   Escher::EvenOddCell m_emptyCell;
   SequenceCell m_sequenceCells[k_maxNumberOfRows];
-  // Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
   Escher::EditableExpressionModelCell m_editableCell;
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
   Escher::StackViewController m_typeStackController;
   SequenceToolbox m_sequenceToolbox;
   KDCoordinate m_titlesColumnWidth;
+  bool m_parameterColumnSelected;
 };
 
 }  // namespace Sequence

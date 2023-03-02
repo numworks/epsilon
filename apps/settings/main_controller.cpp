@@ -1,9 +1,8 @@
 #include "main_controller.h"
 
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <assert.h>
-
-#include "../global_preferences.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -335,10 +334,15 @@ bool MainController::hasPressToTestCell() const {
 }
 
 bool MainController::hasTestModeCell() const {
-  return Preferences::sharedPreferences->examMode().ruleset() ==
-             ExamMode::Ruleset::Off &&
-         GlobalPreferences::sharedGlobalPreferences->availableExamModes() ==
-             CountryPreferences::AvailableExamModes::All;
+  // If both exam mode and press to test are available
+  switch (GlobalPreferences::sharedGlobalPreferences->availableExamModes()) {
+    case CountryPreferences::AvailableExamModes::All:
+    case CountryPreferences::AvailableExamModes::AmericanAll:
+      return Preferences::sharedPreferences->examMode().ruleset() ==
+             ExamMode::Ruleset::Off;
+    default:
+      return false;
+  }
 }
 
 int MainController::getModelIndex(int index) const {

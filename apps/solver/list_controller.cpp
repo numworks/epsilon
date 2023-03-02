@@ -35,9 +35,7 @@ ListController::ListController(
       m_modelsParameterController(this, equationStore, this),
       m_modelsStackController(nullptr, &m_modelsParameterController,
                               StackViewController::Style::PurpleWhite) {
-  // (EquationListView::k_braceTotalWidth+k_expressionMargin) /
-  // (Ion::Display::Width-m_addNewModel.text().size()) = (30+5)/(320-200)
-  m_addNewModel.setAlignment(0.3f, KDContext::k_alignCenter);
+  m_addNewModel.setLeftMargin(k_newModelMargin);
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i].setLeftMargin(EquationListView::k_braceTotalWidth +
                                        k_expressionMargin);
@@ -265,6 +263,15 @@ void ListController::reloadBrace() {
                  ? EquationListView::BraceStyle::Full
                  : EquationListView::BraceStyle::OneRowShort);
   m_equationListView.setBraceStyle(braceStyle);
+  m_expressionCells[0].setLeftMargin(
+      (modelStore()->numberOfModels() <= 1
+           ?: EquationListView::k_braceTotalWidth) +
+      k_expressionMargin);
+  m_editableCell.setMargins((modelStore()->numberOfModels() <= 1
+                                 ? 0
+                                 : EquationListView::k_braceTotalWidth) +
+                                k_expressionMargin,
+                            k_expressionMargin);
 }
 
 EquationStore *ListController::modelStore() const {

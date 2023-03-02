@@ -129,8 +129,10 @@ void ListController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   if (!isAddEmptyRow(index)) {
     AbstractSequenceCell *sequenceCell =
         static_cast<AbstractSequenceCell *>(cell);
+    // Update the expression cell first since the title's baseline depends on it
     willDisplayExpressionCellAtIndex(sequenceCell->expressionCell(), index);
-    willDisplayTitleCellAtIndex(sequenceCell->titleCell(), index);
+    willDisplayTitleCellAtIndex(sequenceCell->titleCell(), index,
+                                sequenceCell->expressionCell());
     sequenceCell->setParameterSelected(m_parameterColumnSelected);
   }
   EvenOddCell *myCell = static_cast<EvenOddCell *>(cell);
@@ -293,14 +295,12 @@ HighlightCell *ListController::functionCells(int index) {
   return m_sequenceCells[index].expressionCell();
 }
 
-void ListController::willDisplayTitleCellAtIndex(HighlightCell *cell, int j) {
+void ListController::willDisplayTitleCellAtIndex(
+    HighlightCell *cell, int j, HighlightCell *expressionCell) {
   assert(j >= 0 && j < k_maxNumberOfRows);
   VerticalSequenceTitleCell *myCell =
       static_cast<VerticalSequenceTitleCell *>(cell);
-  // Update the corresponding expression cell to get its baseline
-  // willDisplayExpressionCellAtIndex(m_selectableTableView.cellAtLocation(1,
-  // j), j);
-  myCell->setBaseline(baseline(j));
+  myCell->setBaseline(baseline(j, expressionCell));
 
   Ion::Storage::Record record =
       modelStore()->recordAtIndex(modelIndexForRow(j));
@@ -415,13 +415,9 @@ void ListController::didChangeModelsList() {
   }
 }
 
-KDCoordinate ListController::baseline(int j) {
+KDCoordinate ListController::baseline(int j, HighlightCell *cell) {
   assert(j >= 0 &&
          j < const_cast<ListController *>(this)->numberOfExpressionRows());
-  Escher::HighlightCell *cell =
-      functionCells(j); /*static_cast<Escher::HighlightCell
-*>( (const_cast<SelectableTableView *>(&m_selectableTableView))
-->cellAtLocation(1, j));*/
   Poincare::Layout layout = cell->layout();
   if (layout.isUninitialized()) {
     return -1;  // Baseline < 0 triggers default behaviour (centered alignment)

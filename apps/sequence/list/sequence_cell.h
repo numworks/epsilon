@@ -11,8 +11,8 @@ namespace Sequence {
 class AbstractSequenceCell : public Escher::EvenOddCell {
  public:
   void setParameterSelected(bool selected);
-  virtual Escher::EvenOddExpressionCell* expressionCell() = 0;
-  virtual const Escher::EvenOddExpressionCell* expressionCell() const = 0;
+  virtual Escher::HighlightCell* expressionCell() = 0;
+  virtual const Escher::HighlightCell* expressionCell() const = 0;
   VerticalSequenceTitleCell* titleCell() { return &m_sequenceTitleCell; }
 
  private:
@@ -21,8 +21,8 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   void setEven(bool even) override;
-  void updateSubviewsBackgroundAfterChangingState() override;
 
+ protected:
   VerticalSequenceTitleCell m_sequenceTitleCell;
   bool m_parameterSelected;
 };
@@ -35,6 +35,9 @@ class SequenceCell : public AbstractSequenceCell {
   const Escher::EvenOddExpressionCell* expressionCell() const override {
     return &m_expressionCell;
   }
+  void updateSubviewsBackgroundAfterChangingState() override;
+
+ private:
   Escher::EvenOddExpressionCell m_expressionCell;
 };
 

@@ -2,6 +2,7 @@
 #define POINCARE_JUNIOR_PARENTHESIS_LAYOUT_H
 
 #include "render.h"
+#include "../memory/edition_reference.h"
 
 namespace PoincareJ {
 
@@ -12,6 +13,7 @@ public:
   static KDCoordinate Baseline(const Node node, KDFont::Size font);
   static KDPoint PositionOfChild(const Node node, int childIndex, KDFont::Size font);
   static void RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+  static EditionReference Parse(const Node node);
 private:
   constexpr static KDCoordinate k_verticalPadding = 2;
   constexpr static KDCoordinate HorizontalPadding(KDFont::Size font) {

@@ -10,6 +10,10 @@
 #include <poincare_junior/src/n_ary.h>
 #include <stdlib.h>
 
+#include <poincare_junior/src/layout/fraction_layout.h>
+#include <poincare_junior/src/layout/parenthesis_layout.h>
+#include <poincare_junior/src/layout/vertical_offset_layout.h>
+
 #include <algorithm>
 #include <utility>
 
@@ -166,7 +170,7 @@ EditionReference Parser::parseUntil(Token::Type stoppingType,
       &Parser::parseReservedFunction,   // Token::Type::ReservedFunction
       &Parser::parseSpecialIdentifier,  // Token::Type::SpecialIdentifier
       &Parser::parseCustomIdentifier,   // Token::Type::CustomIdentifier
-      &Parser::parseUnexpected,         // Token::Type::Layout
+      &Parser::parseLayout,             // Token::Type::Layout
       &Parser::parseUnexpected          // Token::Type::Undefined
   };
   static_assert(tokenParsers[static_cast<int>(Token::Type::EndOfStream)] ==
@@ -349,7 +353,8 @@ void Parser::isThereImplicitOperator() {
    * to true, so that popToken, popTokenIfType, nextTokenHasPrecedenceOver can
    * handle implicit multiplication. */
   m_pendingImplicitOperator =
-      (m_nextToken.is(Token::Type::Number) ||
+    ((m_nextToken.is(Token::Type::Layout) && m_nextToken.firstLayout().type() != BlockType::VerticalOffsetLayout) ||
+       m_nextToken.is(Token::Type::Number) ||
        m_nextToken.is(Token::Type::Constant) ||
        m_nextToken.is(Token::Type::Unit) ||
        m_nextToken.is(Token::Type::ReservedFunction) ||
@@ -1247,6 +1252,38 @@ void Parser::parseList(EditionReference &leftHandSide, Token::Type stoppingType)
       return;
     }
     leftHandSide = result;
+  }
+  isThereImplicitOperator();
+}
+
+void Parser::parseLayout(EditionReference &leftHandSide, Token::Type stoppingType) {
+  // if (!leftHandSide.isUninitialized()) {
+    // m_status = Status::Error;
+    // return;
+  // }
+  assert(m_currentToken.length() == 1);
+  Node layout = m_currentToken.firstLayout();
+  assert(layout.block()->isLayout());
+  switch (layout.type()) {
+  case BlockType::FractionLayout:
+    leftHandSide = FractionLayout::Parse(layout);
+    break;
+  case BlockType::ParenthesisLayout:
+    leftHandSide = ParenthesisLayout::Parse(layout);
+    break;
+  case BlockType::VerticalOffsetLayout: {
+    if (leftHandSide.isUninitialized()) {
+      m_status = Status::Error;
+      return;
+    }
+    EditionReference rightHandSide = VerticalOffsetLayout::Parse(layout);
+    turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
+    break;
+  }
+  default:
+    assert(false);
+    m_status = Status::Error;
+    return;
   }
   isThereImplicitOperator();
 }

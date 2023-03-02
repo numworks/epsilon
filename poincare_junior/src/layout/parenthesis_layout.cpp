@@ -1,4 +1,5 @@
 #include "parenthesis_layout.h"
+#include "parser.h"
 
 namespace PoincareJ {
 
@@ -30,6 +31,10 @@ void ParenthesisLayout::RenderNode(const Node node, KDContext * ctx, KDPoint p, 
     .backgroundColor = backgroundColor,
     .font = font}
   );
+}
+
+EditionReference ParenthesisLayout::Parse(const Node node) {
+  return Parser::EditionPoolLayoutToExpression(node.childAtIndex(0));
 }
 
 }

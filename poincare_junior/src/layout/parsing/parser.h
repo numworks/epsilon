@@ -135,7 +135,8 @@ class Parser {
                            Token::Type stoppingType = (Token::Type)0);
   void parseSouthEastArrow(EditionReference& leftHandSide,
                            Token::Type stoppingType = (Token::Type)0);
-
+  void parseLayout(EditionReference& leftHandSide,
+                   Token::Type stoppingType = (Token::Type)0);
   // Parsing helpers
   void privateParsePlusAndMinus(EditionReference& leftHandSide, bool plus,
                                 Token::Type stoppingType = (Token::Type)0);

@@ -3,6 +3,8 @@
 #include "parser.h"
 #include "fraction_layout.h"
 #include "rack_layout.h"
+#include "parenthesis_layout.h"
+#include "vertical_offset_layout.h"
 
 namespace PoincareJ {
 
@@ -13,6 +15,12 @@ EditionReference Parser::EditionPoolLayoutToExpression(const Node node) {
     return FractionLayout::Parse(node);
   case BlockType::RackLayout:
     return RackLayout::Parse(node);
+  case BlockType::ParenthesisLayout:
+    return ParenthesisLayout::Parse(node);
+  case BlockType::VerticalOffsetLayout:
+    return VerticalOffsetLayout::Parse(node);
+  default:
+    assert(false);
   }
 }
 

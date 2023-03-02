@@ -1,4 +1,5 @@
 #include "vertical_offset_layout.h"
+#include "parser.h"
 
 namespace PoincareJ {
 
@@ -13,6 +14,10 @@ KDCoordinate VerticalOffsetLayout::Baseline(const Node node, KDFont::Size font) 
 
 KDPoint VerticalOffsetLayout::PositionOfChild(const Node node, int childIndex, KDFont::Size font) {
   return KDPointZero;
+}
+
+EditionReference VerticalOffsetLayout::Parse(const Node node) {
+  return Parser::EditionPoolLayoutToExpression(node.childAtIndex(0));
 }
 
 }

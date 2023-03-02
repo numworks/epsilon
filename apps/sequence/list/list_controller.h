@@ -8,14 +8,14 @@
 #include <escher/table_view_data_source.h>
 
 #include "list_parameter_controller.h"
+#include "sequence_cell.h"
 #include "sequence_toolbox.h"
 #include "type_parameter_controller.h"
-#include "vertical_sequence_title_cell.h"
 
 namespace Sequence {
 
 class ListController : public Shared::FunctionListController,
-                       public Escher::TableViewDataSource {
+                       public Escher::ListViewDataSource {
  public:
   ListController(Escher::Responder* parentResponder,
                  Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
@@ -33,14 +33,12 @@ class ListController : public Shared::FunctionListController,
   void viewWillAppear() override;
   /* TableViewDataSource */
   int numberOfRows() const override { return this->numberOfExpressionRows(); }
-  int numberOfColumns() const override { return 2; }
-  int typeAtLocation(int i, int j) override;
+  int typeAtIndex(int index) const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override {
     return type > k_expressionCellType ? 1 : maxNumberOfDisplayableRows();
   }
-  void willDisplayCellAtLocation(Escher::HighlightCell* cell, int i,
-                                 int j) override;
+  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
   /* ViewController */
@@ -65,11 +63,9 @@ class ListController : public Shared::FunctionListController,
 
  private:
   /* Cell types */
-  constexpr static int k_titleCellType = 0;
-  constexpr static int k_expressionCellType = k_titleCellType + 1;
+  constexpr static int k_expressionCellType = 0;
   constexpr static int k_editableCellType = k_expressionCellType + 1;
-  constexpr static int k_emptyRowCellType = k_editableCellType + 1;
-  constexpr static int k_addModelCellType = k_emptyRowCellType + 1;
+  constexpr static int k_addModelCellType = k_editableCellType + 1;
   /* Model definitions */
   constexpr static int k_otherDefinition = -1;
   constexpr static int k_sequenceDefinition = 0;
@@ -85,16 +81,13 @@ class ListController : public Shared::FunctionListController,
       3 * Shared::SequenceStore::k_maxNumberOfSequences;
 
   // Responder
-  int initialColumnToSelect() const override { return 1; }
+  int initialColumnToSelect() const override { return 0; }
 
   // TableViewDataSource
-  KDCoordinate nonMemoizedColumnWidth(int i) override;
   KDCoordinate nonMemoizedRowHeight(int j) override {
     return expressionRowHeight(j);
   }
-  Escher::TableSize1DManager* rowHeightManager() override {
-    return &m_heightManager;
-  }
+  void initCellSize(Escher::TableView* view) override {}
 
   // ExpressionModelListController
   void resetSizesMemoization() override { resetMemoization(); }
@@ -126,15 +119,14 @@ class ListController : public Shared::FunctionListController,
 
   Escher::SelectableTableView m_selectableTableView;
   Escher::EvenOddCell m_emptyCell;
-  VerticalSequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
-  Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
+  SequenceCell m_sequenceCells[k_maxNumberOfRows];
+  // Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
   Escher::EditableExpressionModelCell m_editableCell;
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
   Escher::StackViewController m_typeStackController;
   SequenceToolbox m_sequenceToolbox;
   KDCoordinate m_titlesColumnWidth;
-  Escher::ShortMemoizedRowHeightManager m_heightManager;
 };
 
 }  // namespace Sequence

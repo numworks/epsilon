@@ -27,12 +27,11 @@ ListController::ListController(
       m_typeParameterController(this, this),
       m_typeStackController(nullptr, &m_typeParameterController,
                             StackViewController::Style::PurpleWhite),
-      m_titlesColumnWidth(k_minTitleColumnWidth),
-      m_heightManager(this) {
+      m_titlesColumnWidth(k_minTitleColumnWidth) {
   m_editableCell.setMargins(k_expressionMargin, k_expressionMargin);
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_expressionCells[i].setLeftMargin(k_expressionMargin);
-    m_expressionCells[i].setRightMargin(0);
+    m_sequenceCells[i].expressionCell()->setLeftMargin(k_expressionMargin);
+    m_sequenceCells[i].expressionCell()->setRightMargin(0);
   }
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setVerticalCellOverlap(0);
@@ -105,55 +104,37 @@ void ListController::viewWillAppear() {
   computeTitlesColumnWidth();
 }
 
-KDCoordinate ListController::nonMemoizedColumnWidth(int i) {
-  switch (i) {
-    case 0:
-      return m_titlesColumnWidth;
-    default:
-      assert(i == 1);
-      return selectableTableView()->bounds().width() - m_titlesColumnWidth;
-  }
-}
-
-int ListController::typeAtLocation(int i, int j) {
-  assert(i == 0 || i == 1);
-  if (i == 1 && j == m_editedCellIndex) {
+int ListController::typeAtIndex(int index) const {
+  if (index == m_editedCellIndex) {
     return k_editableCellType;
   }
-  return isAddEmptyRow(j) ? k_emptyRowCellType + i : i;
+  return isAddEmptyRow(index) ? k_addModelCellType : k_expressionCellType;
 }
 
 HighlightCell *ListController::reusableCell(int index, int type) {
   assert(index >= 0 && index < maxNumberOfDisplayableRows());
   switch (type) {
-    case k_titleCellType:
-      return titleCells(index);
     case k_expressionCellType:
-      return functionCells(index);
+      return &m_sequenceCells[index];
     case k_editableCellType:
       return &m_editableCell;
-    case k_emptyRowCellType:
-      return &m_emptyCell;
     default:
       assert(type == k_addModelCellType);
       return &(m_addNewModel);
   }
 }
 
-void ListController::willDisplayCellAtLocation(HighlightCell *cell, int i,
-                                               int j) {
-  if (!isAddEmptyRow(j)) {
-    if (i == 0) {
-      willDisplayTitleCellAtIndex(cell, j);
-    } else {
-      willDisplayExpressionCellAtIndex(cell, j);
-    }
-  }
+void ListController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   if (cell == &m_editableCell) {
     return;
   }
+  if (!isAddEmptyRow(index)) {
+    SequenceCell *sequenceCell = static_cast<SequenceCell *>(cell);
+    willDisplayExpressionCellAtIndex(sequenceCell->expressionCell(), index);
+    willDisplayTitleCellAtIndex(sequenceCell->titleCell(), index);
+  }
   EvenOddCell *myCell = static_cast<EvenOddCell *>(cell);
-  myCell->setEven(modelIndexForRow(j) % 2 == 0);
+  myCell->setEven(modelIndexForRow(index) % 2 == 0);
   myCell->reloadCell();
 }
 
@@ -195,7 +176,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (selectedColumn() == 1) {
+  if (selectedColumn() == 0) {
     return handleEventOnExpression(event);
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
@@ -293,12 +274,12 @@ void ListController::getTextForSelectedRecord(char *text, size_t size) const {
 
 HighlightCell *ListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  return &m_sequenceTitleCells[index];
+  return m_sequenceCells[index].titleCell();
 }
 
 HighlightCell *ListController::functionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  return &m_expressionCells[index];
+  return m_sequenceCells[index].expressionCell();
 }
 
 void ListController::willDisplayTitleCellAtIndex(HighlightCell *cell, int j) {
@@ -306,8 +287,8 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell *cell, int j) {
   VerticalSequenceTitleCell *myCell =
       static_cast<VerticalSequenceTitleCell *>(cell);
   // Update the corresponding expression cell to get its baseline
-  willDisplayExpressionCellAtIndex(m_selectableTableView.cellAtLocation(1, j),
-                                   j);
+  // willDisplayExpressionCellAtIndex(m_selectableTableView.cellAtLocation(1,
+  // j), j);
   myCell->setBaseline(baseline(j));
 
   Ion::Storage::Record record =
@@ -426,9 +407,10 @@ void ListController::didChangeModelsList() {
 KDCoordinate ListController::baseline(int j) {
   assert(j >= 0 &&
          j < const_cast<ListController *>(this)->numberOfExpressionRows());
-  Escher::HighlightCell *cell = static_cast<Escher::HighlightCell *>(
-      (const_cast<SelectableTableView *>(&m_selectableTableView))
-          ->cellAtLocation(1, j));
+  Escher::HighlightCell *cell =
+      functionCells(j); /*static_cast<Escher::HighlightCell
+*>( (const_cast<SelectableTableView *>(&m_selectableTableView))
+->cellAtLocation(1, j));*/
   Poincare::Layout layout = cell->layout();
   if (layout.isUninitialized()) {
     return -1;  // Baseline < 0 triggers default behaviour (centered alignment)

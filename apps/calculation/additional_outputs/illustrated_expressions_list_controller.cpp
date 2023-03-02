@@ -81,7 +81,7 @@ void IllustratedExpressionsListController::
    * ScrollableThreeExpressionsCell in order display the
    * illustration cell. */
   if (t->selectedRow() == 1 && showIllustration()) {
-    t->scrollToCell(0, 0);
+    t->scrollToCell(0);
   }
 }
 

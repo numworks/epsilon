@@ -34,16 +34,16 @@ class WorkingBuffer {
 public:
   WorkingBuffer();
   uint8_t * allocate(size_t size);
-  /* Allocate some room to be able to push the digits on the pool even if we
-   * don't use it to store the Integer. */
-  uint8_t * allocateForImmediateDigit();
   /* Clean the working buffer from all integers but the sorted keptInteger. */
   void garbageCollect(std::initializer_list<IntegerHandler *> keptIntegers);
 private:
-  /* We let an offset of 2 blocks at the end of the edition pool before the
-   * working buffer to be able to push the meta blocks of a Big Int before
-   * moving the digits around. */
-  constexpr static size_t k_blockOffset = TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig)/2;
+  /* We let an offset at the end of the edition pool before the working buffer
+   * to be able to push either:
+   * - the meta blocks of a Big Int before moving the digits from the
+   *   WorkingBuffer to the EditionPool,
+   * - the maximal size of an Integer Node that an immediate digit represents.
+   */
+  constexpr static size_t k_blockOffset = TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) + sizeof(native_int_t);
   uint8_t * initialStartOfBuffer() { return reinterpret_cast<uint8_t *>(EditionPool::sharedEditionPool()->lastBlock() + k_blockOffset); }
   size_t initialSizeOfBuffer() { return (EditionPool::sharedEditionPool()->fullSize() - EditionPool::sharedEditionPool()->size() - k_blockOffset); }
   uint8_t * m_start;

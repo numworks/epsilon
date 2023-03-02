@@ -32,24 +32,15 @@ uint8_t * WorkingBuffer::allocate(size_t size) {
   return allocatedMemory;
 }
 
-uint8_t * WorkingBuffer::allocateForImmediateDigit() {
-  assert(TypeBlock::NumberOfMetaBlocks(BlockType::IntegerNegBig) == TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig));
-  assert(TypeBlock::NumberOfMetaBlocks(BlockType::IntegerShort) <= TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig));
-  return allocate(TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) + sizeof(native_int_t));
-}
-
 void WorkingBuffer::garbageCollect(std::initializer_list<IntegerHandler *> keptIntegers) {
   uint8_t * previousEnd = m_start;
   (void)previousEnd; // Silent warning
   m_start = initialStartOfBuffer();
   m_remainingSize = initialSizeOfBuffer();
   for (IntegerHandler * integer : keptIntegers) {
-    if (integer->usesImmediateDigit()) {
-      /* Integer digit is actually directly stored within the integer object,
-       * we allocate some room to be able to push the digits on the pool if
-       * necessary but we don't need to copy the data. */
-      allocateForImmediateDigit();
-    } else {
+    /* Immediate digits are actually directly stored within the integer handler
+     * object */
+    if (!integer->usesImmediateDigit()) {
       assert(m_start <= integer->digits() && integer->digits() + integer->numberOfDigits() * sizeof(uint8_t) <= previousEnd);
       // TODO: assert that the Integer are sorted by digits() pointer
       uint8_t nbOfDigits = integer->numberOfDigits();
@@ -97,7 +88,6 @@ template <typename T>
 IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer * buffer) {
   size_t sizeInBytes = size * sizeof(T);
   if (sizeInBytes <= sizeof(native_uint_t)) {
-    buffer->allocateForImmediateDigit();
     /* Force the maximal m_numberOfDigits (4 = sizeof(native_uint_t)) to be
      * able to easily access any digit. */
     native_uint_t initialValue = 0;
@@ -391,6 +381,10 @@ std::pair<EditionReference, EditionReference> IntegerHandler::Division(const Int
     remainder = Usum(denominator, remainder, true, &workingBuffer); // |denominator|-remainder
   }
   quotient.setSign(numerator.sign() == denominator.sign() ? NonStrictSign::Positive : NonStrictSign::Negative);
+  /* If both IntegerHandler are stored on the WorkingBuffer, they need to be
+   * ordered to ensure that pushing the digits of one on the EditionPool won't
+   * override the other one. */
+  assert(quotient.usesImmediateDigit() || remainder.usesImmediateDigit() || quotient.digits() < remainder.digits());
   EditionReference q = quotient.pushOnEditionPool();
   EditionReference r = remainder.pushOnEditionPool();
   return std::make_pair(q, r);

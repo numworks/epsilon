@@ -199,11 +199,10 @@ void VariableBoxController::tableViewDidChangeSelection(
     if (currentSelectedRow == 0) {
       // We scroll to the first cell, otherwise it will never appear again
       t->scrollToCell(0, 0);
-      t->selectCellAtLocation(0, 1);
+      t->selectCell(1);
     } else {
-      t->selectCellAtLocation(
-          0, selectedRow() +
-                 (previousSelectedCellY < currentSelectedRow ? 1 : -1));
+      t->selectCell(selectedRow() +
+                    (previousSelectedCellY < currentSelectedRow ? 1 : -1));
     }
   }
 }

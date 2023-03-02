@@ -104,7 +104,7 @@ KDCoordinate ListController::nonMemoizedRowHeight(int index) {
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up && selectedRow() == -1) {
     footer()->setSelectedButton(-1);
-    selectableTableView()->selectCellAtLocation(0, numberOfRows() - 1);
+    selectableTableView()->selectCell(numberOfRows() - 1);
     Container::activeApp()->setFirstResponder(selectableTableView());
     return true;
   }

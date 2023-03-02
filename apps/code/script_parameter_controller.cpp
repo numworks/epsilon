@@ -66,7 +66,7 @@ void ScriptParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   resetMemoization();
   m_selectableTableView.reloadData();
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  m_selectableTableView.selectCell(0);
 }
 
 void ScriptParameterController::didBecomeFirstResponder() {

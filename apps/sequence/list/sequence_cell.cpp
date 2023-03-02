@@ -21,8 +21,12 @@ View* AbstractSequenceCell::subviewAtIndex(int index) {
   }
 }
 
+void AbstractSequenceCell::drawRect(KDContext* ctx, KDRect rect) const {
+  // Color the main background
+  ctx->fillRect(bounds(), m_expressionBackground);
+}
+
 void AbstractSequenceCell::layoutSubviews(bool force) {
-  KDCoordinate k_titlesColmunWidth = 65;
   m_sequenceTitleCell.setFrame(
       KDRect(0, 0, k_titlesColmunWidth, bounds().height()), force);
   expressionCell()->setFrame(
@@ -41,8 +45,9 @@ void SequenceCell::updateSubviewsBackgroundAfterChangingState() {
   // If not highlighted, selectedColor is defaultColor
   KDColor selectedColor = backgroundColor();
   m_sequenceTitleCell.setHighlighted(isHighlighted() && m_parameterSelected);
-  expressionCell()->setBackgroundColor(m_parameterSelected ? defaultColor
-                                                           : selectedColor);
+  m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
+  expressionCell()->setHighlighted(isHighlighted() && !m_parameterSelected);
+  expressionCell()->setBackgroundColor(m_expressionBackground);
 }
 
 void AbstractSequenceCell::setParameterSelected(bool selected) {
@@ -50,6 +55,11 @@ void AbstractSequenceCell::setParameterSelected(bool selected) {
     m_parameterSelected = selected;
     updateSubviewsBackgroundAfterChangingState();
   }
+}
+
+void SequenceCell::setEven(bool even) {
+  m_expressionCell.setEven(even);
+  AbstractSequenceCell::setEven(even);
 }
 
 }  // namespace Sequence

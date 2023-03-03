@@ -38,6 +38,7 @@ class EquationStore : public Shared::ExpressionModelStore {
       k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions
           ? k_maxNumberOfExactSolutions
           : k_maxNumberOfApproximateSolutions;
+  constexpr static size_t k_infiniteSolutions = -1;
 
   // System analysis
   Type type() const { return m_type; }

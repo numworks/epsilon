@@ -15,7 +15,7 @@ EquationStore::Error EquationStore::exactSolve(Context *context) {
   m_overrideUserVariables = false;
   Error firstError = privateExactSolve(context);
   if (firstError == Error::NoError && m_numberOfSolutions > 0 &&
-      m_numberOfSolutions < INT_MAX) {
+      m_numberOfSolutions < k_infiniteSolutions) {
     return firstError;
   }
   size_t firstNumberOfSolutions = m_numberOfSolutions;
@@ -236,7 +236,7 @@ EquationStore::Error EquationStore::solveLinearSystem(
     return Error::EquationUndefined;
   }
   // Initialize the number of solutions
-  m_numberOfSolutions = INT_MAX;
+  m_numberOfSolutions = k_infiniteSolutions;
   /* If the matrix has one null row except the last column, the system is
    * inconsistent (equivalent to 0 = x with x non-null */
   for (int j = m - 1; j >= 0; j--) {

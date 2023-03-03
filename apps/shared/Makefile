@@ -101,7 +101,6 @@ app_shared_src = $(addprefix apps/shared/,\
   values_controller.cpp \
   values_parameter_controller.cpp \
   vertical_cursor_view.cpp \
-  xy_banner_view.cpp \
 )
 
 app_shared_src += $(app_shared_test_src)

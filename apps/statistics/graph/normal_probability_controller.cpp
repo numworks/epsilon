@@ -1,6 +1,7 @@
 #include "normal_probability_controller.h"
 
 #include <assert.h>
+#include <poincare/print.h>
 
 #include <algorithm>
 
@@ -14,6 +15,7 @@ NormalProbabilityController::NormalProbabilityController(
     : PlotController(parentResponder, header, tabController,
                      stackViewController, typeViewController, store) {
   m_curveView.setCursorView(&m_cursorView);
+  m_view.setBannerView(&m_simpleBannerView);
 }
 
 bool NormalProbabilityController::drawSeriesZScoreLine(int series, float *x,
@@ -35,6 +37,18 @@ void NormalProbabilityController::moveCursorToSelectedIndex() {
   m_cursorView.setColor(
       Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
   PlotController::moveCursorToSelectedIndex();
+}
+
+void NormalProbabilityController::reloadValueInBanner(
+    Poincare::Preferences::PrintFloatMode displayMode, int precision) {
+  constexpr static int k_bufferSize =
+      1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
+  char buffer[k_bufferSize] = "";
+  Poincare::Print::CustomPrintf(buffer, k_bufferSize, "%s%s%*.*ed",
+                                I18n::translate(I18n::Message::StatisticsValue),
+                                I18n::translate(I18n::Message::ColonConvention),
+                                m_cursor.x(), displayMode, precision);
+  m_simpleBannerView.value()->setText(buffer);
 }
 
 bool NormalProbabilityController::moveSelectionHorizontally(

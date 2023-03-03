@@ -60,6 +60,8 @@ class PlotController : public DataViewController {
   virtual void moveCursorToSelectedIndex();
 
   // DataViewController
+  virtual void reloadValueInBanner(
+      Poincare::Preferences::PrintFloatMode displayMode, int precision) = 0;
   bool reloadBannerView() override;
   void updateHorizontalIndexAfterSelectingNewSeries(
       int previousSelectedSeries) override {
@@ -69,9 +71,9 @@ class PlotController : public DataViewController {
                     static_cast<double>(totalValues(previousSelectedSeries))));
   }
 
+  virtual PlotBannerView *bannerView() = 0;
   Shared::CurveViewCursor m_cursor;
   PlotRange m_graphRange;
-  PlotBannerView m_bannerView;
   PlotView m_view;
   PlotCurveView m_curveView;
 

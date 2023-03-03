@@ -49,6 +49,8 @@ class NormalProbabilityController : public PlotController,
 
  private:
   // PlotController
+  void reloadValueInBanner(Poincare::Preferences::PrintFloatMode displayMode,
+                           int precision) override;
   // Hide series having invalid total values.
   Shared::DoublePairStore::ActiveSeriesTest activeSeriesMethod()
       const override {
@@ -65,8 +67,9 @@ class NormalProbabilityController : public PlotController,
   I18n::Message resultMessage() const override {
     return I18n::Message::StatisticsNormalProbabilityZScore;
   }
-
+  PlotBannerView *bannerView() override { return &m_simpleBannerView; }
   Shared::RingCursorView m_cursorView;
+  SimplePlotBannerView m_simpleBannerView;
 };
 
 }  // namespace Statistics

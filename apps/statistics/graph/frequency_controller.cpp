@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <poincare/ieee754.h>
+#include <poincare/print.h>
 
 namespace Statistics {
 
@@ -12,6 +13,7 @@ FrequencyController::FrequencyController(
     Escher::ViewController *typeViewController, Store *store)
     : PlotController(parentResponder, header, tabController,
                      stackViewController, typeViewController, store) {
+  m_view.setBannerView(&m_bannerViewWithEditableField);
   m_curveView.setCursorView(&m_cursorView);
 }
 
@@ -31,6 +33,19 @@ void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
   assert(labelBuffer[length - 1] != '%');
   labelBuffer[length] = '%';
   labelBuffer[length + 1] = 0;
+}
+
+void FrequencyController::reloadValueInBanner(
+    Poincare::Preferences::PrintFloatMode displayMode, int precision) {
+  // TODO
+  constexpr static int k_bufferSize =
+      1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
+  char buffer[k_bufferSize] = "";
+  Poincare::Print::CustomPrintf(buffer, k_bufferSize, "%s%s%*.*ed",
+                                I18n::translate(I18n::Message::StatisticsValue),
+                                I18n::translate(I18n::Message::ColonConvention),
+                                m_cursor.x(), displayMode, precision);
+  m_bannerViewWithEditableField.value()->setText(buffer);
 }
 
 void FrequencyController::moveCursorToSelectedIndex() {

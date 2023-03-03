@@ -1,6 +1,5 @@
 #include "plot_controller.h"
 
-#include <poincare/preferences.h>
 #include <poincare/print.h>
 
 #include "../data/store_controller.h"
@@ -16,9 +15,10 @@ PlotController::PlotController(Escher::Responder *parentResponder,
     : DataViewController(parentResponder, tabController, header,
                          stackViewController, typeViewController, store),
       m_cursor(FLT_MAX),
-      m_view(&m_curveView, &m_graphRange, &m_bannerView),
-      // No bannerView given to the curve view because the display is handled
-      // here
+      // Banner view should be passed to the plot view by derived classes
+      m_view(&m_curveView, &m_graphRange, nullptr),
+      /* No bannerView given to the curve view because the display is handled
+       * here */
       m_curveView(&m_graphRange, &m_cursor, nullptr, this) {}
 
 void PlotController::moveCursorToSelectedIndex() {
@@ -29,7 +29,7 @@ void PlotController::moveCursorToSelectedIndex() {
 }
 
 void PlotController::viewWillAppearBeforeReload() {
-  computeRanges(m_bannerView.bounds().height());
+  computeRanges(bannerView()->bounds().height());
   // Sanitize m_selectedBarIndex and cursor's position
   m_selectedIndex =
       SanitizeIndex(m_selectedIndex, totalValues(m_selectedSeries));
@@ -53,7 +53,7 @@ bool PlotController::reloadBannerView() {
     return false;
   }
   KDCoordinate previousHeight =
-      m_bannerView.minimalSizeForOptimalDisplay().height();
+      bannerView()->minimalSizeForOptimalDisplay().height();
 
   int precision =
       Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();
@@ -65,24 +65,21 @@ bool PlotController::reloadBannerView() {
 
   // Display series name
   StoreController::FillSeriesName(m_selectedSeries, buffer, false);
-  m_bannerView.seriesName()->setText(buffer);
+  bannerView()->seriesName()->setText(buffer);
 
   // Display selected value
-  Poincare::Print::CustomPrintf(buffer, k_bufferSize, "%s%s%*.*ed",
-                                I18n::translate(I18n::Message::StatisticsValue),
-                                I18n::translate(I18n::Message::ColonConvention),
-                                m_cursor.x(), displayMode, precision);
-  m_bannerView.value()->setText(buffer);
+  reloadValueInBanner(displayMode, precision);
 
   // Display result value
   Poincare::Print::CustomPrintf(buffer, k_bufferSize, resultMessageTemplate(),
                                 I18n::translate(resultMessage()),
                                 I18n::translate(I18n::Message::ColonConvention),
                                 m_cursor.y(), displayMode, precision);
-  m_bannerView.result()->setText(buffer);
+  bannerView()->result()->setText(buffer);
 
-  m_bannerView.reload();
-  KDCoordinate newHeight = m_bannerView.minimalSizeForOptimalDisplay().height();
+  bannerView()->reload();
+  KDCoordinate newHeight =
+      bannerView()->minimalSizeForOptimalDisplay().height();
   if (previousHeight != newHeight) {
     computeRanges(newHeight);
     return true;

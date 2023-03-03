@@ -48,6 +48,8 @@ class FrequencyController : public PlotController {
                                   double xIndex, double xNextIndex) const;
 
   // PlotController
+  void reloadValueInBanner(Poincare::Preferences::PrintFloatMode displayMode,
+                           int precision) override;
   void moveCursorToSelectedIndex() override;
   bool moveSelectionHorizontally(OMG::HorizontalDirection direction) override;
   void computeYBounds(float *yMin, float *yMax) const override;
@@ -66,7 +68,12 @@ class FrequencyController : public PlotController {
     return I18n::Message::StatisticsFrequencyFcc;
   }
 
+  PlotBannerView *bannerView() override {
+    return &m_bannerViewWithEditableField;
+  }
   Shared::ToggleableRingRoundCursorView m_cursorView;
+  // TODO: Change the class of this in next commit
+  SimplePlotBannerView m_bannerViewWithEditableField;
 };
 
 }  // namespace Statistics

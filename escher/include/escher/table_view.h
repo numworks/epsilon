@@ -37,6 +37,8 @@ class TableView : public ScrollView {
   virtual void scrollToCell(int col, int row) {
     scrollToContentRect(m_contentView.cellFrame(col, row), true);
   }
+  /* TODO we should create a ListView or something similar to enforce via the
+   * type the use of the correct list/table api by the controller */
   void scrollToCell(int row) {
     assert(dataSource()->numberOfColumns() == 1);
     scrollToCell(0, row);

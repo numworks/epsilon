@@ -330,7 +330,7 @@ float ContinuousFunction::autoTMax() const {
   return properties().isCartesian()
              ? INFINITY
              : (properties().isInversePolar()
-                    ? 10.f
+                    ? Range1D::k_defaultHalfLength
                     : 2.f * Trigonometry::PiInAngleUnit(
                                 Preferences::sharedPreferences->angleUnit()));
 }
@@ -338,7 +338,8 @@ float ContinuousFunction::autoTMax() const {
 float ContinuousFunction::autoTMin() const {
   return properties().isCartesian()
              ? -INFINITY
-             : (properties().isInversePolar() ? -10.f : 0.f);
+             : (properties().isInversePolar() ? -Range1D::k_defaultHalfLength
+                                              : 0.f);
 }
 
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context *context) const {

@@ -504,13 +504,15 @@ int SolutionsController::userVariablesMessageRow() const {
 
 int SolutionsController::numberOfDisplayedSolutions() const {
   // No displayed solutions if there are an infinite number of them.
-  return m_equationStore->numberOfSolutions() == INT_MAX
+  return m_equationStore->numberOfSolutions() ==
+                 EquationStore::k_infiniteSolutions
              ? 0
              : m_equationStore->numberOfSolutions();
 }
 
 I18n::Message SolutionsController::noSolutionMessage() {
-  if (m_equationStore->numberOfSolutions() == INT_MAX) {
+  if (m_equationStore->numberOfSolutions() ==
+      EquationStore::k_infiniteSolutions) {
     return I18n::Message::InfiniteNumberOfSolutions;
   }
   if (m_equationStore->type() == EquationStore::Type::GeneralMonovariable) {

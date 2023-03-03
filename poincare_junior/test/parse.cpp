@@ -33,8 +33,18 @@ QUIZ_CASE(pcj_layout_tokenize) {
   quiz_assert(token.type() == Token::Type::ReservedFunction && token.length() == 4);
 }
 
+void assert_is_parsable(Node layout) {
+  EditionReference expression = Parser(layout).parse();
+  quiz_assert(!expression.isUninitialized());
+  // expression.log();
+}
+
 QUIZ_CASE(pcj_layout_parse) {
-  Parser("12(123.4567E2 +  0x2a+2*0b0101)"_l).parse().log();
-  Parser("2^(3+1)^4"_l).parse().log();
   assert_trees_are_equal(Parser("2^(3+1)^4"_l).parse(), Pow(2_e, Pow(Add(3_e, 1_e), 4_e)));
+  assert_is_parsable("12(123.4567E2 +  0x2a+2*0b0101)"_l);
+  assert_is_parsable("-1"_l);
+  assert_is_parsable("1+2+3+4+5+6"_l);
+  assert_is_parsable("(1+(2+(3+4)))"_l);
+  assert_is_parsable(RackL(FracL("2"_l, "3"_l), ParenthesisL("4"_l)));
+  assert_is_parsable(RackL(FracL("2"_l, "3"_l), VertOffL(FracL("4"_l, "5"_l))));
 }

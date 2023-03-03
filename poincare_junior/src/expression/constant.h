@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_CONSTANT_H
 
 #include <assert.h>
+#include <poincare_junior/src/memory/node.h>
 #include <stdint.h>
 
 namespace PoincareJ {

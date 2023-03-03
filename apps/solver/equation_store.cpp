@@ -361,6 +361,10 @@ EquationStore::Error EquationStore::registerSolution(Expression e,
       Preferences::sharedPreferences->angleUnit();
   Expression exact, approximate;
 
+  if (e.type() == ExpressionNode::Type::Dependency) {
+    e = e.childAtIndex(0);
+  }
+
   if (type == SolutionType::Approximate) {
     approximate = e;
   } else {

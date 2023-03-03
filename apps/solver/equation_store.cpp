@@ -230,44 +230,42 @@ EquationStore::Error EquationStore::solveLinearSystem(
     ++abChildren;
   }
   ab.setDimensions(m, n + 1);
+
   // Compute the rank of (A|b)
   int rank = ab.rank(context, m_complexFormat, angleUnit, unitFormat, true);
   if (rank == -1) {
     return Error::EquationUndefined;
   }
-  // Initialize the number of solutions
-  m_numberOfSolutions = k_infiniteSolutions;
-  /* If the matrix has one null row except the last column, the system is
-   * inconsistent (equivalent to 0 = x with x non-null */
+
   for (int j = m - 1; j >= 0; j--) {
-    bool rowWithNullCoefficients = true;
-    for (int i = 0; i < n; i++) {
-      if (ab.matrixChild(j, i).isNull(context) != TrinaryBoolean::True) {
-        rowWithNullCoefficients = false;
+    if (ab.matrixChild(j, n).isNull(context) != TrinaryBoolean::True &&
+        (j >= n ||
+         ab.matrixChild(j, j).isNull(context) == TrinaryBoolean::True)) {
+      /* Row j describes an equation of the form '0=b', the system has no
+       * solution. */
+      m_numberOfSolutions = 0;
+      return Error::NoError;
+    }
+  }
+
+  if (rank == n && n > 0) {
+    /* The rank is equal to the number of variables: the system has n solutions,
+     * and after canonization their values are the values on the last column. */
+    assert(m_numberOfSolutions == 0);
+    Error error;
+    for (size_t i = 0; i < n; i++) {
+      error = registerSolution(ab.matrixChild(i, n), context);
+      if (error != Error::NoError) {
         break;
       }
     }
-    if (rowWithNullCoefficients &&
-        ab.matrixChild(j, n).isNull(context) != TrinaryBoolean::True) {
-      // TODO: Handle ExpressionNode::NullStatus::Unknown
-      m_numberOfSolutions = 0;
-    }
+    assert(error != Error::NoError || m_numberOfSolutions == n);
+    return error;
   }
-  if (m_numberOfSolutions > 0) {
-    // if rank(A | b) < n, the system has an infinite number of solutions
-    if (rank == n && n > 0) {
-      /* Otherwise, the system has n solutions which correspond to the last
-       * column */
-      // Set m_numberOfSolutions to 0, as registerSolution will increment it.
-      m_numberOfSolutions = 0;
-      for (int i = 0; i < n; i++) {
-        Error error = registerSolution(ab.matrixChild(i, n), context);
-        if (error != Error::NoError) {
-          return error;
-        }
-      }
-    }
-  }
+
+  /* TODO The system is insufficiently qualified: bind the value of n-rank
+   * variables to parameters. */
+  m_numberOfSolutions = k_infiniteSolutions;
   return Error::NoError;
 }
 

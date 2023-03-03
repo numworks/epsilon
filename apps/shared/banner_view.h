@@ -25,7 +25,6 @@ class BannerView : public Escher::View {
       KDCoordinate width) const;
   void reload() { layoutSubviews(); }
 
- protected:
   class LabelledView : public Escher::View {
    public:
     LabelledView(Escher::View* labelView, Escher::View* infoView)
@@ -41,6 +40,7 @@ class BannerView : public Escher::View {
     Escher::View* m_infoView;
   };
 
+ protected:
   virtual bool lineBreakBeforeSubview(Escher::View* subview) const {
     return false;
   }

@@ -53,21 +53,20 @@ void WorkingBuffer::garbageCollect(std::initializer_list<IntegerHandler *> keptI
 
 /* IntegerHandler */
 
-IntegerHandler IntegerHandler::Parse(const char * digits, size_t length, OMG::Base base) {
-  assert(digits != nullptr);
+IntegerHandler IntegerHandler::Parse(UnicodeDecoder & decoder, OMG::Base base) {
   NonStrictSign sign = NonStrictSign::Positive;
-  if (*digits == '-') {
+  if (decoder.nextCodePoint() == '-') {
     sign = NonStrictSign::Negative;
-    digits++;
-    length--;
+  } else {
+    decoder.previousCodePoint();
   }
   IntegerHandler result(0);
   IntegerHandler baseInteger(static_cast<uint8_t>(base));
   WorkingBuffer workingBuffer;
-  for (size_t i = 0; i < length; i++) {
+  while (CodePoint codePoint = decoder.nextCodePoint()) {
     IntegerHandler multiplication = Mult(result, baseInteger, &workingBuffer);
     workingBuffer.garbageCollect({&baseInteger, &multiplication});
-    IntegerHandler digit = IntegerHandler(OMG::Print::DigitForCharacter(*digits++));
+    IntegerHandler digit = IntegerHandler(OMG::Print::DigitForCharacter(codePoint));
     digit.setSign(sign);
     result = Sum(multiplication, digit, false, &workingBuffer);
     workingBuffer.garbageCollect({&baseInteger, &result});
@@ -562,26 +561,6 @@ void IntegerHandler::sanitize() {
 
 /* Integer */
 
-EditionReference Integer::Push(UnicodeDecoder & decoder, OMG::Base base) {
-  EditionReference result = IntegerHandler(static_cast<uint8_t>(0)).pushOnEditionPool();
-  NonStrictSign sign = NonStrictSign::Positive;
-  if (decoder.nextCodePoint() == '-') {
-    sign = NonStrictSign::Negative;
-  } else {
-    decoder.previousCodePoint();
-  }
-  IntegerHandler baseInteger(static_cast<uint8_t>(base));
-  while (CodePoint digit = decoder.nextCodePoint()) {
-    assert(digit.isHexadecimalDigit());
-    EditionReference multiplication = IntegerHandler::Multiplication(Integer::Handler(result), baseInteger);
-    result = result.replaceTreeByTree(multiplication);
-    IntegerHandler digitHandler = IntegerHandler(OMG::Print::DigitForCharacter(digit));
-    digitHandler.setSign(sign);
-    EditionReference addition = IntegerHandler::Addition(Integer::Handler(result), digitHandler);
-    result = result.replaceTreeByTree(addition);
-  }
-  return result;
-}
 
 // TODO: tests
 

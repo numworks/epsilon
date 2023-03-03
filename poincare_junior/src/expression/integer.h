@@ -65,7 +65,7 @@ public:
   IntegerHandler(native_int_t value) : IntegerHandler(abs(value), value >= 0 ? NonStrictSign::Positive : NonStrictSign::Negative) {}
   IntegerHandler(native_uint_t value, NonStrictSign sign) : m_sign(sign), m_digitAccessor(value), m_numberOfDigits(NumberOfDigits(value)) {}
 
-  static IntegerHandler Parse(const char * digits, size_t length, OMG::Base base);
+  static IntegerHandler Parse(UnicodeDecoder & decoder, OMG::Base base);
 
   template <typename T> static IntegerHandler Allocate(size_t size, WorkingBuffer * buffer);
 
@@ -146,8 +146,11 @@ private:
 
 class Integer {
 public:
-  static EditionReference Push(const char * digits, size_t length, OMG::Base base = OMG::Base::Decimal) { return IntegerHandler::Parse(digits, length, base).pushOnEditionPool(); }
-  static EditionReference Push(UnicodeDecoder & decoder, OMG::Base base = OMG::Base::Decimal);
+  static EditionReference Push(const char * digits, size_t length, OMG::Base base = OMG::Base::Decimal) {
+    UTF8Decoder decoder(digits, digits, digits + length);
+    return IntegerHandler::Parse(decoder, base).pushOnEditionPool();
+  }
+  static EditionReference Push(UnicodeDecoder & decoder, OMG::Base base = OMG::Base::Decimal) { return IntegerHandler::Parse(decoder, base).pushOnEditionPool(); }
   static IntegerHandler Handler(const Node expression);
   static bool IsUint8(const Node expression);
   static uint8_t Uint8(const Node expression);

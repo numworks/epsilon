@@ -35,7 +35,7 @@ class SelectableTableView : public TableView, public Responder {
   HighlightCell* selectedCell();
   bool selectCellAtLocation(int col, int row, bool setFirstResponder = true,
                             bool withinTemporarySelection = false);
-  bool selectCell(int index) { return selectCellAtLocation(0, index); }
+  bool selectCell(int row);
   bool selectCellAtClippedLocation(int col, int row,
                                    bool setFirstResponder = true,
                                    bool withinTemporarySelection = false);

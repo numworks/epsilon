@@ -110,8 +110,14 @@ class EquationStore : public Shared::ExpressionModelStore {
                           Poincare::Expression* simplifiedEquations);
   Error solvePolynomial(Poincare::Context* context,
                         Poincare::Expression* simplifiedEquations);
+
+  enum class SolutionType : uint8_t {
+    Exact,
+    Approximate,
+    Formal,
+  };
   Error registerSolution(Poincare::Expression e, Poincare::Context* context,
-                         bool expressionIsApproximate = false);
+                         SolutionType type);
   void registerSolution(double f);
 
   mutable Equation m_equations[k_maxNumberOfEquations];

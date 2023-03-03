@@ -5,6 +5,7 @@
 #include <apps/solver/equation_store.h>
 #include <poincare/matrix.h>
 #include <poincare/polynomial.h>
+#include <poincare/symbol.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -254,7 +255,8 @@ EquationStore::Error EquationStore::solveLinearSystem(
     assert(m_numberOfSolutions == 0);
     Error error;
     for (size_t i = 0; i < n; i++) {
-      error = registerSolution(ab.matrixChild(i, n), context);
+      error =
+          registerSolution(ab.matrixChild(i, n), context, SolutionType::Exact);
       if (error != Error::NoError) {
         break;
       }
@@ -263,10 +265,45 @@ EquationStore::Error EquationStore::solveLinearSystem(
     return error;
   }
 
-  /* TODO The system is insufficiently qualified: bind the value of n-rank
+  /* The system is insufficiently qualified: bind the value of n-rank
    * variables to parameters. */
   m_numberOfSolutions = k_infiniteSolutions;
-  return Error::NoError;
+  if (n == 0) {
+    return Error::NoError;
+  }
+  assert(rank < n);
+  assert(abChildren == m * (n + 1));
+  size_t numberOfParameters = n - rank;
+  for (size_t j = 0; j < numberOfParameters; j++) {
+    for (size_t i = 0; i < n; i++) {
+      ab.addChildAtIndexInPlace(
+          Rational::Builder(n - i == numberOfParameters - j ? 1 : 0),
+          abChildren, abChildren);
+      ++abChildren;
+    }
+    assert(j < 10);
+    const char parameterName[] = {'t', static_cast<char>('0' + j), '\0'};
+    ab.addChildAtIndexInPlace(Symbol::Builder(parameterName, 2), abChildren,
+                              abChildren);
+    ++abChildren;
+  }
+  ab.setDimensions(m + numberOfParameters, n + 1);
+  int newRank = ab.rank(context, m_complexFormat, angleUnit, unitFormat, true);
+  Error error;
+  if (newRank == -1) {
+    error = Error::EquationUndefined;
+  } else {
+    assert(newRank == n);
+    /* FIXME */ m_numberOfSolutions = 0;
+    for (size_t i = 0; i < n; i++) {
+      error =
+          registerSolution(ab.matrixChild(i, n), context, SolutionType::Formal);
+      if (error != Error::NoError) {
+        break;
+      }
+    }
+  }
+  return error;
 }
 
 EquationStore::Error EquationStore::solvePolynomial(
@@ -305,23 +342,26 @@ EquationStore::Error EquationStore::solvePolynomial(
         coefficients[3], coefficients[2], coefficients[1], coefficients[0], x,
         x + 1, x + 2, &delta, reductionContext, &solutionsAreApproximate);
   }
+  SolutionType type =
+      solutionsAreApproximate ? SolutionType::Approximate : SolutionType::Exact;
   for (size_t i = 0; i < numberOfSolutions; i++) {
-    Error error = registerSolution(x[i], context, solutionsAreApproximate);
+    Error error = registerSolution(x[i], context, type);
     if (error != Error::NoError) {
       return error;
     }
   }
   // Account for delta
-  return registerSolution(delta, context);
+  return registerSolution(delta, context, type);
 }
 
-EquationStore::Error EquationStore::registerSolution(
-    Expression e, Context *context, bool expressionIsApproximate) {
+EquationStore::Error EquationStore::registerSolution(Expression e,
+                                                     Context *context,
+                                                     SolutionType type) {
   Preferences::AngleUnit angleUnit =
       Preferences::sharedPreferences->angleUnit();
   Expression exact, approximate;
 
-  if (expressionIsApproximate) {
+  if (type == SolutionType::Approximate) {
     approximate = e;
   } else {
     Preferences::UnitFormat unitFormat =
@@ -337,7 +377,8 @@ EquationStore::Error EquationStore::registerSolution(
   if (approximate.type() == ExpressionNode::Type::Nonreal) {
     return Error::NoError;
   }
-  if (approximate.type() == ExpressionNode::Type::Undefined) {
+  if (type != SolutionType::Formal &&
+      approximate.type() == ExpressionNode::Type::Undefined) {
     return Error::EquationUndefined;
   }
 
@@ -347,10 +388,12 @@ EquationStore::Error EquationStore::registerSolution(
 
   // Compare approximate and exact layouts
   Solution::ApproximationType approximationType;
-  if (expressionIsApproximate ||
+  if (type == SolutionType::Approximate ||
       ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(exact,
                                                                   context)) {
     approximationType = Solution::ApproximationType::Identical;
+  } else if (type == SolutionType::Formal) {
+    approximationType = Solution::ApproximationType::Approximate;
   } else {
     char exactBuffer[::Constant::MaxSerializedExpressionSize];
     char approximateBuffer[::Constant::MaxSerializedExpressionSize];

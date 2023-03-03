@@ -41,7 +41,9 @@ EditionReference Expression::EditionPoolLayoutToExpression(Node node) {
 
 Expression Expression::Parse(const char * textInput) {
   return Expression([](const char * text) {
-      Parser::EditionPoolLayoutToExpression(Layout::EditionPoolTextToLayout(text));
+    EditionReference layout = Layout::EditionPoolTextToLayout(text);
+    Parser::EditionPoolLayoutToExpression(layout);
+    layout.removeTree();
     }, textInput);
 }
 

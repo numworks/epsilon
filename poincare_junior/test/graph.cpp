@@ -28,7 +28,7 @@ QUIZ_CASE(pcj_graph) {
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n---------------- Push Graph (1-2)/3/4 ----------------" << std::endl;
 #endif
-  Graph graph("cos(x)");
+  Graph graph("(1-2)/3/4");
   float valueAt0 = graph.approximateAtAbscissa();
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "Approximation = " << valueAt0 << std::endl;

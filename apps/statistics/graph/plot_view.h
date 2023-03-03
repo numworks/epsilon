@@ -33,6 +33,7 @@ class PlotView : public DataView {
     return m_plotCurveView;
   }
   PlotBannerView* bannerView() override { return m_bannerView; }
+  void setBannerView(PlotBannerView* bannerView) { m_bannerView = bannerView; }
   void reload() override;
 
  protected:

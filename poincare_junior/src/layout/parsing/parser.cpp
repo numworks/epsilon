@@ -480,9 +480,16 @@ void Parser::privateParsePlusAndMinus(EditionReference &leftHandSide, bool plus,
     // +2 = 2, -2 = -2
     EditionReference rightHandSide =
         parseUntil(std::max(stoppingType, Token::Type::Minus));
-    // if (m_status == Status::Progress) {
-      // leftHandSide = plus ? rightHandSide : Opposite::Builder(rightHandSide);
-    // }
+    if (m_status == Status::Progress) {
+      if (plus) {
+        leftHandSide = rightHandSide;
+      } else {
+        // TODO Opposite instead of multiplication by -1
+        rightHandSide.insertNodeBeforeNode(Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
+        rightHandSide.insertNodeBeforeNode(-1_e);
+        leftHandSide = rightHandSide.previousNode().previousNode();
+      }
+    }
     return;
   }
   EditionReference rightHandSide;

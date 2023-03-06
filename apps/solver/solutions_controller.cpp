@@ -333,21 +333,13 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
             bufferSize, precision);
         valueCell->setText(bufferValue);
       } else {
-        // Get values of the solutions or discriminant
+        const Solution *solution = m_equationStore->solution(j);
         ScrollableTwoExpressionsCell *valueCell =
             static_cast<ScrollableTwoExpressionsCell *>(cell);
-        Poincare::Layout exactLayout =
-            m_equationStore->solution(j)->approximationType() ==
-                    Solution::ApproximationType::Identical
-                ? Poincare::Layout()
-                : m_equationStore->solution(j)->exactLayout();
-        valueCell->setLayouts(
-            exactLayout, m_equationStore->solution(j)->approximateLayout());
-        if (!exactLayout.isUninitialized()) {
-          valueCell->setRightIsStrictlyEqual(
-              m_equationStore->solution(j)->approximationType() ==
-              Solution::ApproximationType::Equal);
-        }
+        valueCell->setLayouts(solution->exactLayout(),
+                              solution->approximateLayout());
+        valueCell->setRightIsStrictlyEqual(
+            solution->exactAndApproximateAreEqual());
       }
     } else {
       // It's a user variable row, get values of the solutions or discriminant
@@ -377,12 +369,15 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
     Poincare::Layout exactLayout = m_equationStore->solution(j)->exactLayout();
     Poincare::Layout approximateLayout =
         m_equationStore->solution(j)->approximateLayout();
-    KDCoordinate approximateLayoutHeight =
-        approximateLayout.layoutSize(k_solutionsFont).height();
     KDCoordinate layoutHeight;
     if (exactLayout.isUninitialized()) {
-      layoutHeight = approximateLayoutHeight;
+      assert(!approximateLayout.isUninitialized());
+      layoutHeight = approximateLayout.layoutSize(k_solutionsFont).height();
+    } else if (approximateLayout.isUninitialized()) {
+      layoutHeight = exactLayout.layoutSize(k_solutionsFont).height();
     } else {
+      KDCoordinate approximateLayoutHeight =
+          approximateLayout.layoutSize(k_solutionsFont).height();
       KDCoordinate exactLayoutHeight =
           exactLayout.layoutSize(k_solutionsFont).height();
       layoutHeight =

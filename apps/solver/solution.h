@@ -7,33 +7,26 @@ namespace Solver {
 
 class Solution {
  public:
-  enum class ApproximationType : uint8_t {
-    Identical,
-    Equal,
-    Approximate,
-  };
-
-  Solution()
-      : m_approximate(NAN),
-        m_exactLayout(),
-        m_type(ApproximationType::Identical) {}
+  Solution() : m_approximate(NAN) {}
   Solution(Poincare::Layout exactLayout, Poincare::Layout approximateLayout,
-           double approximate, ApproximationType type)
+           double approximate, bool exactAndApproximateAreEqual)
       : m_approximate(approximate),
         m_exactLayout(exactLayout),
         m_approximateLayout(approximateLayout),
-        m_type(type) {}
+        m_exactAndApproximateAreEqual(exactAndApproximateAreEqual) {}
 
   Poincare::Layout exactLayout() const { return m_exactLayout; }
   double approximate() const { return m_approximate; }
   Poincare::Layout approximateLayout() const { return m_approximateLayout; }
-  ApproximationType approximationType() const { return m_type; }
+  bool exactAndApproximateAreEqual() const {
+    return m_exactAndApproximateAreEqual;
+  }
 
  private:
   double m_approximate;
   Poincare::Layout m_exactLayout;
   Poincare::Layout m_approximateLayout;
-  ApproximationType m_type;
+  bool m_exactAndApproximateAreEqual;
 };
 
 }  // namespace Solver

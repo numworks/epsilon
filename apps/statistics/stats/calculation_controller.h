@@ -37,8 +37,8 @@ class CalculationController : public Shared::DoublePairTableController {
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView* t,
-                                   int previousSelectedCellX,
-                                   int previousSelectedCellY,
+                                   int previousSelectedCol,
+                                   int previousSelectedRow,
                                    bool withinTemporarySelection) override;
 
  private:

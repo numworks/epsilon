@@ -45,8 +45,8 @@ void CalculationController::viewWillAppear() {
 }
 
 void CalculationController::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }
@@ -57,7 +57,7 @@ void CalculationController::tableViewDidChangeSelection(
    * previous cell cannot be the top left corner cell if it also is the
    * selected one. */
   if (t->selectedRow() == 0 && t->selectedColumn() <= 1) {
-    if (previousSelectedCellX <= 1 && previousSelectedCellY == 1) {
+    if (previousSelectedCol <= 1 && previousSelectedRow == 1) {
       selectableTableView()->deselectTable();
       tabController()->selectTab();
     } else {

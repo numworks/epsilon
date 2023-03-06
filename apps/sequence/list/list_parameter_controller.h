@@ -33,8 +33,8 @@ class ListParameterController : public Shared::ListParameterController,
                                  const char *text,
                                  Ion::Events::Event event) override;
   void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView *t, int previousSelectedCellX,
-      int previousSelectedCellY, bool withinTemporarySelection) override;
+      Escher::SelectableTableView *t, int previousSelectedCol,
+      int previousSelectedRow, bool withinTemporarySelection) override;
 
   // MemoizedListViewDataSource
   Escher::HighlightCell *cell(int index) override;

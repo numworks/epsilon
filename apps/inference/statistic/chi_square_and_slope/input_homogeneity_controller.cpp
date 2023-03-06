@@ -13,13 +13,12 @@ InputHomogeneityController::InputHomogeneityController(
       m_inputHomogeneityTable(&m_selectableListView, this, this, statistic) {}
 
 void InputHomogeneityController::tableViewDidChangeSelection(
-    SelectableTableView* t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
-  m_inputHomogeneityTable.unselectTopLeftCell(t, previousSelectedCellX,
-                                              previousSelectedCellY);
+    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
+  m_inputHomogeneityTable.unselectTopLeftCell(t, previousSelectedCol,
+                                              previousSelectedRow);
   InputCategoricalController::tableViewDidChangeSelection(
-      t, previousSelectedCellX, previousSelectedCellY,
-      withinTemporarySelection);
+      t, previousSelectedCol, previousSelectedRow, withinTemporarySelection);
 }
 
 }  // namespace Inference

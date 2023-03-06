@@ -17,8 +17,8 @@ namespace Calculation {
 /* HistoryViewCellDataSource */
 
 void HistoryViewCellDataSource::setSelectedSubviewType(
-    SubviewType subviewType, bool sameCell, int previousSelectedCellX,
-    int previousSelectedCellY) {
+    SubviewType subviewType, bool sameCell, int previousSelectedCol,
+    int previousSelectedRow) {
   HistoryViewCell *selectedCell = nullptr;
   HistoryViewCell *previouslySelectedCell = nullptr;
   SubviewType previousSubviewType = m_selectedSubviewType;
@@ -26,9 +26,9 @@ void HistoryViewCellDataSource::setSelectedSubviewType(
   /* We need to notify the whole table that the selection changed if it
    * involves the selection/deselection of an output. Indeed, only them can
    * trigger change in the displayed expressions. */
-  historyViewCellDidChangeSelection(
-      &selectedCell, &previouslySelectedCell, previousSelectedCellX,
-      previousSelectedCellY, subviewType, previousSubviewType);
+  historyViewCellDidChangeSelection(&selectedCell, &previouslySelectedCell,
+                                    previousSelectedCol, previousSelectedRow,
+                                    subviewType, previousSubviewType);
 
   previousSubviewType = sameCell ? previousSubviewType : SubviewType::None;
   if (selectedCell) {

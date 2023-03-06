@@ -31,8 +31,7 @@ class TableViewWithTopAndBottomViews : public View,
 
   /* SelectableTableViewDelegate */
   void tableViewDidChangeSelectionAndDidScroll(
-      SelectableTableView* t, int previousSelectedCellX,
-      int previousSelectedCellY,
+      SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
       bool withinTemporarySelection = false) override;
 
   void reload();

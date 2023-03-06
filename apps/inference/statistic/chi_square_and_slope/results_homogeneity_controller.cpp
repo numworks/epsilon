@@ -42,12 +42,11 @@ bool ResultsHomogeneityController::ResultsTableController::handleEvent(
 }
 
 void ResultsHomogeneityController::ResultsTableController::
-    tableViewDidChangeSelection(SelectableTableView* t,
-                                int previousSelectedCellX,
-                                int previousSelectedCellY,
+    tableViewDidChangeSelection(SelectableTableView* t, int previousSelectedCol,
+                                int previousSelectedRow,
                                 bool withinTemporarySelection) {
-  if (m_resultHomogeneityTable.unselectTopLeftCell(t, previousSelectedCellX,
-                                                   previousSelectedCellY) &&
+  if (m_resultHomogeneityTable.unselectTopLeftCell(t, previousSelectedCol,
+                                                   previousSelectedRow) &&
       t->selectedColumn() == 0) {
     m_resultHomogeneityTable.tableView()->deselectTable();
     tabController()->selectTab();

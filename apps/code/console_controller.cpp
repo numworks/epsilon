@@ -301,8 +301,8 @@ void ConsoleController::willDisplayCellForIndex(HighlightCell *cell,
 }
 
 void ConsoleController::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }
@@ -311,11 +311,11 @@ void ConsoleController::tableViewDidChangeSelectionAndDidScroll(
     return;
   }
   if (t->selectedRow() > -1) {
-    if (previousSelectedCellY > -1 &&
-        previousSelectedCellY < m_consoleStore.numberOfLines()) {
+    if (previousSelectedRow > -1 &&
+        previousSelectedRow < m_consoleStore.numberOfLines()) {
       // Reset the scroll of the previous cell
       ConsoleLineCell *previousCell = (ConsoleLineCell *)(t->cellAtLocation(
-          previousSelectedCellX, previousSelectedCellY));
+          previousSelectedCol, previousSelectedRow));
       if (previousCell) {
         previousCell->reloadCell();
       }

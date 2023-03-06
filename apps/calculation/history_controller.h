@@ -41,9 +41,8 @@ class HistoryController : public Escher::ViewController,
                               int previousSelectedX = -1,
                               int previousSelectedY = -1) override;
   void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView* t, int previousSelectedCellX,
-      int previousSelectedCellY,
-      bool withinTemporarySelection = false) override;
+      Escher::SelectableTableView* t, int previousSelectedCol,
+      int previousSelectedRow, bool withinTemporarySelection = false) override;
   void recomputeHistoryCellHeightsIfNeeded() {
     m_calculationStore->recomputeHeightsIfPreferencesHaveChanged(
         Poincare::Preferences::sharedPreferences, HistoryViewCell::Height);
@@ -57,8 +56,8 @@ class HistoryController : public Escher::ViewController,
   bool calculationAtIndexToggles(int index);
   void historyViewCellDidChangeSelection(HistoryViewCell** cell,
                                          HistoryViewCell** previousCell,
-                                         int previousSelectedCellX,
-                                         int previousSelectedCellY,
+                                         int previousSelectedCol,
+                                         int previousSelectedRow,
                                          SubviewType type,
                                          SubviewType previousType) override;
 

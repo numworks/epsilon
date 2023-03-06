@@ -58,8 +58,8 @@ void IllustratedExpressionsListController::willDisplayCellForIndex(
 }
 
 void IllustratedExpressionsListController::tableViewDidChangeSelection(
-    SelectableTableView* t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
+    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }
@@ -71,8 +71,8 @@ void IllustratedExpressionsListController::tableViewDidChangeSelection(
 
 void IllustratedExpressionsListController::
     tableViewDidChangeSelectionAndDidScroll(SelectableTableView* t,
-                                            int previousSelectedCellX,
-                                            int previousSelectedCellY,
+                                            int previousSelectedCol,
+                                            int previousSelectedRow,
                                             bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;

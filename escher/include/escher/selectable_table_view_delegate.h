@@ -15,11 +15,11 @@ class SelectableTableViewDelegate : public ContextProvider {
    * the previous selected cell. We might implement different course of action
    * when the selection change is 'real' or within temporary selection. */
   virtual void tableViewDidChangeSelection(
-      SelectableTableView* t, int previousSelectedCellX,
-      int previousSelectedCellY, bool withinTemporarySelection = false) {}
+      SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
+      bool withinTemporarySelection = false) {}
   virtual void tableViewDidChangeSelectionAndDidScroll(
-      SelectableTableView* t, int previousSelectedCellX,
-      int previousSelectedCellY, bool withinTemporarySelection = false) {}
+      SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
+      bool withinTemporarySelection = false) {}
   virtual bool canStoreContentOfCellAtLocation(SelectableTableView* t, int col,
                                                int row) const {
     return true;

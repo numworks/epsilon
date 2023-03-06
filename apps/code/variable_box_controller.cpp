@@ -187,8 +187,8 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
 }
 
 void VariableBoxController::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
   SelectableListView *selectableListView = static_cast<SelectableListView *>(t);
   if (withinTemporarySelection || !m_displaySubtitles) {
     return;
@@ -203,8 +203,7 @@ void VariableBoxController::tableViewDidChangeSelection(
       selectableListView->selectCell(1);
     } else {
       selectableListView->selectCell(
-          selectedRow() +
-          (previousSelectedCellY < currentSelectedRow ? 1 : -1));
+          selectedRow() + (previousSelectedRow < currentSelectedRow ? 1 : -1));
     }
   }
 }

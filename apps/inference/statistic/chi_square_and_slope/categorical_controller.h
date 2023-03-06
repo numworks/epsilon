@@ -42,8 +42,8 @@ class CategoricalController
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView* t,
-                                   int previousSelectedCellX,
-                                   int previousSelectedCellY,
+                                   int previousSelectedCol,
+                                   int previousSelectedRow,
                                    bool withinTemporarySelection) override;
 
   // ListViewDataSource

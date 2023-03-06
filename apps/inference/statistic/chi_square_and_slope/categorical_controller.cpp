@@ -102,11 +102,11 @@ bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
 }
 
 void CategoricalController::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
   int row = t->selectedRow();
   int col = t->selectedColumn();
-  if (!withinTemporarySelection && previousSelectedCellY != t->selectedRow()) {
+  if (!withinTemporarySelection && previousSelectedRow != t->selectedRow()) {
     KDCoordinate verticalOffset =
         categoricalTableCell()->selectableTableView()->contentOffset().y();
     KDCoordinate tableCellRequiredHeight = categoricalTableCell()

@@ -58,17 +58,16 @@ bool ListParameterController::textFieldDidFinishEditing(
 }
 
 void ListParameterController::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
-  if (withinTemporarySelection ||
-      (previousSelectedCellX == t->selectedColumn() &&
-       previousSelectedCellY == t->selectedRow())) {
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
+  if (withinTemporarySelection || (previousSelectedCol == t->selectedColumn() &&
+                                   previousSelectedRow == t->selectedRow())) {
     return;
   }
-  if (previousSelectedCellY == 1) {
+  if (previousSelectedRow == 1) {
     MessageTableCellWithEditableText *myCell =
         (MessageTableCellWithEditableText *)t->cellAtLocation(
-            previousSelectedCellX, previousSelectedCellY);
+            previousSelectedCol, previousSelectedRow);
     if (myCell) {
       myCell->setEditing(false);
     }

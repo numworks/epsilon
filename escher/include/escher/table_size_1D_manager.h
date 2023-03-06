@@ -46,13 +46,10 @@ class RegularTableSize1DManager : public TableSize1DManager {
  * This property slows down navigation due to complex cell size calculation.
  * To avoid that, cells size and cumulated size is memoized around the most
  * recently used cells. Total size is also memoized. */
-template <int N>
 class MemoizedTableSize1DManager : public TableSize1DManager {
  public:
   MemoizedTableSize1DManager(TableViewDataSource* tableViewDataSource)
-      : m_dataSource(tableViewDataSource), m_memoizationLockedLevel(0) {
-    resetMemoization(true);
-  }
+      : m_dataSource(tableViewDataSource), m_memoizationLockedLevel(0) {}
   KDCoordinate computeSizeAtIndex(int i) override;
   KDCoordinate computeCumulatedSizeBeforeIndex(
       int i, KDCoordinate defaultSize) override;
@@ -71,14 +68,14 @@ class MemoizedTableSize1DManager : public TableSize1DManager {
   virtual KDCoordinate sizeAtIndex(int i) const = 0;
   virtual KDCoordinate nonMemoizedSizeAtIndex(int i) const = 0;
   virtual KDCoordinate nonMemoizedCumulatedSizeBeforeIndex(int i) const = 0;
+  virtual int memoizedLinesCount() const = 0;
+  virtual KDCoordinate* memoizedSizes() = 0;
   TableViewDataSource* m_dataSource;
 
  private:
-  constexpr static int k_memoizedLinesCount = N;
   int getMemoizedIndex(int index) const;
   void setMemoizationIndex(int index);
   void shiftMemoization(bool lowerIndex);
-  KDCoordinate m_memoizedSizes[k_memoizedLinesCount];
   KDCoordinate m_memoizedCumulatedSizeOffset;
   KDCoordinate m_memoizedTotalSize;
   int m_memoizedIndexOffset;
@@ -86,10 +83,27 @@ class MemoizedTableSize1DManager : public TableSize1DManager {
 };
 
 template <int N>
-class MemoizedColumnWidthManager : public MemoizedTableSize1DManager<N> {
+class TemplatedMemoizedTableSize1DManager : public MemoizedTableSize1DManager {
+ public:
+  TemplatedMemoizedTableSize1DManager(TableViewDataSource* tableViewDataSource)
+      : MemoizedTableSize1DManager(tableViewDataSource) {
+    // Must be done here since virtual functions are not virtual in constructors
+    resetMemoization(true);
+  }
+
+ private:
+  constexpr static int k_memoizedLinesCount = N;
+  KDCoordinate* memoizedSizes() override { return m_memoizedSizes; }
+  int memoizedLinesCount() const override { return k_memoizedLinesCount; }
+  KDCoordinate m_memoizedSizes[k_memoizedLinesCount];
+};
+
+template <int N>
+class MemoizedColumnWidthManager
+    : public TemplatedMemoizedTableSize1DManager<N> {
  public:
   MemoizedColumnWidthManager(TableViewDataSource* dataSource)
-      : MemoizedTableSize1DManager<N>(dataSource) {}
+      : TemplatedMemoizedTableSize1DManager<N>(dataSource) {}
 
  protected:
   int numberOfLines() const override;
@@ -99,10 +113,10 @@ class MemoizedColumnWidthManager : public MemoizedTableSize1DManager<N> {
 };
 
 template <int N>
-class MemoizedRowHeightManager : public MemoizedTableSize1DManager<N> {
+class MemoizedRowHeightManager : public TemplatedMemoizedTableSize1DManager<N> {
  public:
   MemoizedRowHeightManager(TableViewDataSource* dataSource)
-      : MemoizedTableSize1DManager<N>(dataSource) {}
+      : TemplatedMemoizedTableSize1DManager<N>(dataSource) {}
 
  protected:
   int numberOfLines() const override;

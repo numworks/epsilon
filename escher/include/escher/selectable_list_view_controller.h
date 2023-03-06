@@ -29,9 +29,9 @@ class SelectableListViewController : public SelectableViewController,
  public:
   SelectableListViewController(
       Responder* parentResponder,
-      SelectableTableViewDelegate* tableDelegate = nullptr)
+      SelectableListViewDelegate* listDelegate = nullptr)
       : SelectableViewController(parentResponder),
-        m_selectableListView(this, this, this, tableDelegate) {}
+        m_selectableListView(this, this, this, listDelegate) {}
   /* ViewController */
   View* view() override { return &m_selectableListView; }
 

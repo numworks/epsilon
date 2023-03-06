@@ -11,11 +11,11 @@ using namespace Escher;
 namespace Shared {
 
 void ColumnParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void ColumnParameterController::viewWillAppear() {
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 void ColumnParameters::initializeColumnParameters() {

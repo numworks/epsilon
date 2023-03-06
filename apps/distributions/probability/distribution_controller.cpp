@@ -25,7 +25,7 @@ DistributionController::DistributionController(
     ParametersController *parametersController)
     : Escher::SelectableListViewController<Escher::SimpleListViewDataSource>(
           parentResponder),
-      m_contentView(&m_selectableTableView, I18n::Message::ChooseDistribution),
+      m_contentView(&m_selectableListView, I18n::Message::ChooseDistribution),
       m_distribution(distribution),
       m_parametersController(parametersController) {
   assert(m_distribution != nullptr);
@@ -39,7 +39,7 @@ void DistributionController::stackOpenPage(Escher::ViewController *nextPage) {
 }
 
 void DistributionController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 bool DistributionController::handleEvent(Ion::Events::Event event) {

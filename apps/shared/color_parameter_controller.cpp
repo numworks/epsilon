@@ -43,7 +43,7 @@ void ColorParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void ColorParameterController::willDisplayCellForIndex(HighlightCell *cell,

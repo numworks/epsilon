@@ -18,7 +18,7 @@ InterestMenuController::InterestMenuController(
       m_messageView(KDFont::Size::Small, I18n::Message::ParameterChoose,
                     KDContext::k_alignCenter, KDContext::k_alignCenter,
                     Escher::Palette::GrayDark, Escher::Palette::WallScreen),
-      m_contentView(&m_selectableTableView, this, &m_messageView),
+      m_contentView(&m_selectableListView, this, &m_messageView),
       m_interestController(interestController) {
   selectRow(0);
 }

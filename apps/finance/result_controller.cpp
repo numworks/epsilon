@@ -18,7 +18,7 @@ ResultController::ResultController(Escher::StackViewController* parentResponder)
       m_messageView(KDFont::Size::Small, I18n::Message::CalculatedValues,
                     KDContext::k_alignCenter, KDContext::k_alignCenter,
                     Escher::Palette::GrayDark, Escher::Palette::WallScreen),
-      m_contentView(&m_selectableTableView, this, &m_messageView) {}
+      m_contentView(&m_selectableListView, this, &m_messageView) {}
 
 void ResultController::didBecomeFirstResponder() {
   /* Build the result cell here because it only needs to be updated once this

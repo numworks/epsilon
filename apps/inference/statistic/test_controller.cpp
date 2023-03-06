@@ -46,9 +46,9 @@ void TestController::stackOpenPage(Escher::ViewController *nextPage) {
 }
 
 void TestController::didBecomeFirstResponder() {
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Escher::Container::activeApp()->setFirstResponder(&m_selectableListView);
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 bool TestController::handleEvent(Ion::Events::Event event) {

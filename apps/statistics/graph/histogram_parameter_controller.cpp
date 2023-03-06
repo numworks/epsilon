@@ -25,7 +25,7 @@ HistogramParameterController::HistogramParameterController(
               },
               this)) {
   for (int i = 0; i < k_numberOfCells; i++) {
-    m_cells[i].setParentResponder(&m_selectableTableView);
+    m_cells[i].setParentResponder(&m_selectableListView);
     m_cells[i].setDelegates(inputEventHandlerDelegate, this);
   }
 }

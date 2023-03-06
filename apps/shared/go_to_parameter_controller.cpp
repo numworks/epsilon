@@ -15,8 +15,7 @@ GoToParameterController::GoToParameterController(
     : FloatParameterController<double>(parentResponder),
       m_cursor(cursor),
       m_graphRange(graphRange),
-      m_parameterCell(&m_selectableTableView, inputEventHandlerDelegate, this) {
-}
+      m_parameterCell(&m_selectableListView, inputEventHandlerDelegate, this) {}
 
 HighlightCell *GoToParameterController::reusableParameterCell(int index,
                                                               int type) {

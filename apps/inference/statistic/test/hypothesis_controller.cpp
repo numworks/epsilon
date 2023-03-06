@@ -30,9 +30,9 @@ HypothesisController::HypothesisController(
       m_inputController(inputController),
       m_inputSlopeController(inputSlopeController),
       m_operatorDataSource(test),
-      m_h0(&m_selectableTableView, handler, this),
-      m_ha(&m_selectableTableView, &m_operatorDataSource, this),
-      m_next(&m_selectableTableView, I18n::Message::Next,
+      m_h0(&m_selectableListView, handler, this),
+      m_ha(&m_selectableListView, &m_operatorDataSource, this),
+      m_next(&m_selectableListView, I18n::Message::Next,
              Invocation::Builder<HypothesisController>(
                  &HypothesisController::ButtonAction, this)),
       m_test(test) {
@@ -96,7 +96,7 @@ bool HypothesisController::textFieldDidFinishEditing(
 
   m_test->hypothesisParams()->setFirstParam(h0);
   loadHypothesisParam();
-  m_selectableTableView.selectCell(k_indexOfHa);
+  m_selectableListView.selectCell(k_indexOfHa);
   return true;
 }
 
@@ -135,7 +135,7 @@ void HypothesisController::didBecomeFirstResponder() {
   m_ha.dropdown()->init();
   loadHypothesisParam();
   resetMemoization();
-  m_selectableTableView.reloadData(true);
+  m_selectableListView.reloadData(true);
 }
 
 bool HypothesisController::ButtonAction(HypothesisController* controller,
@@ -160,7 +160,7 @@ void HypothesisController::loadHypothesisParam() {
   m_h0.setAccessoryText(buffer);
   m_ha.reload();
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 }  // namespace Inference

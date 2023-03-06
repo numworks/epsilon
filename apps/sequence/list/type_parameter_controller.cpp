@@ -27,16 +27,16 @@ TypeParameterController::TypeParameterController(Responder *parentResponder,
           parentResponder),
       m_listController(list) {
   for (int i = 0; i < k_numberOfCells; i++) {
-    cellAtIndex(i)->setParentResponder(&m_selectableTableView);
+    cellAtIndex(i)->setParentResponder(&m_selectableListView);
   }
   cellAtIndex(k_indexOfExplicit)->setSubLabelMessage(I18n::Message::Explicit);
   cellAtIndex(k_indexOfRecurrence)
       ->setSubLabelMessage(I18n::Message::SingleRecurrence);
   cellAtIndex(k_indexOfDoubleRecurrence)
       ->setSubLabelMessage(I18n::Message::DoubleRecurrence);
-  m_selectableTableView.setMargins(topMargin, rightMargin, bottomMargin,
-                                   leftMargin);
-  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableListView.setMargins(topMargin, rightMargin, bottomMargin,
+                                  leftMargin);
+  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
 const char *TypeParameterController::title() {
@@ -48,18 +48,18 @@ const char *TypeParameterController::title() {
 
 void TypeParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 void TypeParameterController::viewDidDisappear() {
-  m_selectableTableView.deselectTable();
+  m_selectableListView.deselectTable();
   ViewController::viewDidDisappear();
 }
 
 void TypeParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(
       0, m_record == nullptr ? 0 : static_cast<uint8_t>(sequence()->type()));
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {

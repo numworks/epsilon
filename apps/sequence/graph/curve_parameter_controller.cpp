@@ -36,7 +36,7 @@ void CurveParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 void CurveParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void CurveParameterController::viewWillAppear() {
@@ -44,7 +44,7 @@ void CurveParameterController::viewWillAppear() {
     selectCellAtLocation(0, 0);
   }
   ExplicitSelectableListViewController::viewWillAppear();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {

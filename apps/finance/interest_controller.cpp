@@ -17,10 +17,10 @@ InterestController::InterestController(
     Escher::InputEventHandlerDelegate *handler,
     ResultController *resultController)
     : Shared::FloatParameterController<double>(parent),
-      m_dropdownCell(&m_selectableTableView, &m_dropdownDataSource, this),
+      m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this),
       m_resultController(resultController) {
   for (size_t i = 0; i < k_numberOfReusableInputs; i++) {
-    m_cells[i].setParentResponder(&m_selectableTableView);
+    m_cells[i].setParentResponder(&m_selectableListView);
     m_cells[i].setDelegates(handler, this);
   }
 }
@@ -54,7 +54,7 @@ void InterestController::didBecomeFirstResponder() {
   m_dropdownCell.dropdown()->init();
   m_dropdownCell.reload();
   resetMemoization();
-  m_selectableTableView.reloadData(true);
+  m_selectableListView.reloadData(true);
 }
 
 bool InterestController::handleEvent(Ion::Events::Event event) {

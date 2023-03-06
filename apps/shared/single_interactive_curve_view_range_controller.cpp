@@ -80,7 +80,7 @@ void SingleInteractiveCurveViewRangeController::setAutoStatus(bool autoParam) {
     }
   }
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(

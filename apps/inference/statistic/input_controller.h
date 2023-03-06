@@ -43,7 +43,7 @@ class InputController
   void initCell(Escher::ExpressionCellWithEditableTextWithMessage, void* cell,
                 int index) override;
   Escher::SelectableTableView* tableView() override {
-    return &m_selectableTableView;
+    return &m_selectableListView;
   }
 
   constexpr static int k_numberOfReusableCells =

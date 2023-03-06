@@ -21,7 +21,7 @@ PreferencesController::PreferencesController(Responder *parentResponder)
     : GenericSubController(parentResponder) {}
 
 void PreferencesController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 bool PreferencesController::handleEvent(Ion::Events::Event event) {

@@ -15,7 +15,7 @@ SingleRangeController::SingleRangeController(
       m_autoCell(I18n::Message::DefaultSetting),
       m_confirmPopUpController(confirmPopUpController) {
   for (int i = 0; i < k_numberOfTextCells; i++) {
-    m_boundsCells[i].setParentResponder(&m_selectableTableView);
+    m_boundsCells[i].setParentResponder(&m_selectableListView);
     m_boundsCells[i].setDelegates(inputEventHandlerDelegate, this);
   }
 }

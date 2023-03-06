@@ -25,17 +25,17 @@ GraphOptionsController::GraphOptionsController(
     GraphController *graphController)
     : ExplicitSelectableListViewController(parentResponder),
       m_changeRegressionCell(I18n::Message::RegressionModel),
-      m_regressionEquationCell(&m_selectableTableView,
+      m_regressionEquationCell(&m_selectableListView,
                                I18n::Message::RegressionEquation),
-      m_rCell(&m_selectableTableView, I18n::Message::Default,
+      m_rCell(&m_selectableListView, I18n::Message::Default,
               KDFont::Size::Large),
-      m_r2Cell(&m_selectableTableView, I18n::Message::Default,
+      m_r2Cell(&m_selectableListView, I18n::Message::Default,
                KDFont::Size::Large),
       m_residualPlotCell(I18n::Message::ResidualPlot),
       m_xParameterCell(I18n::Message::XPrediction),
       m_yParameterCell(I18n::Message::YPrediction),
       m_removeRegressionCell(
-          &(this->m_selectableTableView), I18n::Message::RemoveRegression,
+          &(this->m_selectableListView), I18n::Message::RemoveRegression,
           Invocation::Builder<GraphOptionsController>(
               [](GraphOptionsController *controller, void *sender) {
                 controller->removeRegression();
@@ -69,7 +69,7 @@ void GraphOptionsController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void GraphOptionsController::viewWillAppear() {
@@ -80,7 +80,7 @@ void GraphOptionsController::viewWillAppear() {
   // m_regressionEquationCell may have changed size
   m_regressionEquationCell.reloadScroll();
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 bool GraphOptionsController::handleEvent(Ion::Events::Event event) {

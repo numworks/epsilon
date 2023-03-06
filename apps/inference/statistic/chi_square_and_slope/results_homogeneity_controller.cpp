@@ -24,10 +24,10 @@ ResultsHomogeneityController::ResultsTableController::ResultsTableController(
     : CategoricalController(nullptr, resultsController,
                             Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
-      m_resultHomogeneityTable(&m_selectableTableView, this, statistic) {}
+      m_resultHomogeneityTable(&m_selectableListView, this, statistic) {}
 
 void ResultsHomogeneityController::ResultsTableController::viewWillAppear() {
-  m_selectableTableView.reloadData(false);
+  m_selectableListView.reloadData(false);
   CategoricalController::viewWillAppear();
 }
 

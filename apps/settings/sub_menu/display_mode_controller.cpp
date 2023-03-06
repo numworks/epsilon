@@ -18,7 +18,7 @@ DisplayModeController::DisplayModeController(
     Responder *parentResponder,
     InputEventHandlerDelegate *inputEventHandlerDelegate)
     : PreferencesController(parentResponder),
-      m_editableCell(&m_selectableTableView, inputEventHandlerDelegate, this) {
+      m_editableCell(&m_selectableListView, inputEventHandlerDelegate, this) {
   m_editableCell.messageTableCellWithEditableText()->setMessage(
       I18n::Message::SignificantFigures);
 }
@@ -91,9 +91,9 @@ bool DisplayModeController::textFieldDidFinishEditing(
   }
   Preferences::sharedPreferences->setNumberOfSignificantDigits(
       (char)std::round(floatBody));
-  m_selectableTableView.reloadCell(selectedRow());
+  m_selectableListView.reloadCell(selectedRow());
   if (event == Ion::Events::Up || event == Ion::Events::OK) {
-    m_selectableTableView.handleEvent(event);
+    m_selectableListView.handleEvent(event);
   }
   return true;
 }

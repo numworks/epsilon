@@ -34,7 +34,7 @@ void CategoricalTypeController::stackOpenPage(
 }
 
 void CategoricalTypeController::didBecomeFirstResponder() {
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Escher::Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {

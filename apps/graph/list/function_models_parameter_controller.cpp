@@ -24,8 +24,8 @@ FunctionModelsParameterController::FunctionModelsParameterController(
       m_emptyModelCell(I18n::Message::Empty),
       m_functionStore(functionStore),
       m_listController(listController) {
-  m_selectableTableView.setMargins(0);
-  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableListView.setMargins(0);
+  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
   const Model* models = Models();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     if (!ModelIsAllowed(models[i])) {
@@ -35,7 +35,7 @@ FunctionModelsParameterController::FunctionModelsParameterController(
     /* Building the cells here is possible since the list is modified when
      * entering exam mode or changing country which requires exiting the app and
      * rebuilding the cells when re-entering. */
-    m_modelCells[i].setParentResponder(&m_selectableTableView);
+    m_modelCells[i].setParentResponder(&m_selectableListView);
     m_modelCells[i].setSubLabelMessage(
         Preferences::sharedPreferences->examMode().forbidImplicitPlots()
             ? I18n::Message::Default
@@ -56,12 +56,12 @@ const char* FunctionModelsParameterController::title() {
 
 void FunctionModelsParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
-  m_selectableTableView.selectCell(0);
-  m_selectableTableView.reloadData();
+  m_selectableListView.selectCell(0);
+  m_selectableListView.reloadData();
 }
 
 void FunctionModelsParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void FunctionModelsParameterController::willDisplayCellForIndex(

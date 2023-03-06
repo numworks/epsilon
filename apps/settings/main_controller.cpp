@@ -46,7 +46,7 @@ MainController::MainController(
     : SelectableListViewController(parentResponder),
       m_brightnessCell(I18n::Message::Default),
       m_popUpCell(I18n::Message::Default),
-      m_resetButton(&m_selectableTableView, I18n::Message::ResetCalculator,
+      m_resetButton(&m_selectableListView, I18n::Message::ResetCalculator,
                     Invocation::Builder<MainController>(
                         [](MainController *controller, void *sender) {
                           controller->m_resetController.presentModally();
@@ -78,7 +78,7 @@ void MainController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
@@ -94,7 +94,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   if (type == k_popUpCellType) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
       globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
-      m_selectableTableView.reloadCell(m_selectableTableView.selectedRow());
+      m_selectableListView.reloadCell(m_selectableListView.selectedRow());
       return true;
     }
     return false;
@@ -110,7 +110,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
                         : -delta;
     globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel() +
                                           direction);
-    m_selectableTableView.reloadCell(m_selectableTableView.selectedRow());
+    m_selectableListView.reloadCell(m_selectableListView.selectedRow());
     return true;
   }
 
@@ -285,7 +285,7 @@ void MainController::willDisplayCellForIndex(HighlightCell *cell, int index) {
 void MainController::viewWillAppear() {
   ViewController::viewWillAppear();
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 I18n::Message MainController::messageAtModelIndex(int i) const {

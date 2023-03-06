@@ -17,7 +17,7 @@ RangeParameterController::RangeParameterController(
       m_interactiveRange(interactiveRange),
       m_tempInteractiveRange(*interactiveRange),
       m_okButton(
-          &m_selectableTableView, I18n::Message::Ok,
+          &m_selectableListView, I18n::Message::Ok,
           Invocation::Builder<RangeParameterController>(
               [](RangeParameterController *parameterController, void *sender) {
                 parameterController->buttonAction();
@@ -118,7 +118,7 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell *cell,
 }
 
 void RangeParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void RangeParameterController::viewWillAppear() {
@@ -134,12 +134,12 @@ void RangeParameterController::viewWillAppear() {
     selectCellAtLocation(selectedColumn(), row);
   }
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 void RangeParameterController::viewDidDisappear() {
   if (!stackController()) {
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
   }
 }
 
@@ -180,7 +180,7 @@ void RangeParameterController::setRange(InteractiveCurveViewRange *range) {
 void RangeParameterController::buttonAction() {
   /* Deselect the table before denormalizing, as it would mess up the index by
    * adding a new row. */
-  m_selectableTableView.deselectTable();
+  m_selectableListView.deselectTable();
 
   /* Use setZoomAuto to refresh the Auto button on the graph. */
   m_interactiveRange->setZoomAuto(m_tempInteractiveRange.zoomAuto());

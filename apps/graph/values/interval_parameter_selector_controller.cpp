@@ -20,15 +20,15 @@ const char *IntervalParameterSelectorController::title() {
 void IntervalParameterSelectorController::viewDidDisappear() {
   /* Deselect the table properly because it needs to be relayouted the next time
    * it appears: the number of rows might change according to the plot type. */
-  m_selectableTableView.deselectTable();
-  m_selectableTableView.setFrame(KDRectZero, false);
+  m_selectableListView.deselectTable();
+  m_selectableListView.setFrame(KDRectZero, false);
 }
 
 void IntervalParameterSelectorController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 bool IntervalParameterSelectorController::handleEvent(

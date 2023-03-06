@@ -384,48 +384,42 @@ EquationStore::Error EquationStore::registerSolution(Expression e,
     return Error::EquationUndefined;
   }
 
-  Layout exactLayout = PoincareHelpers::CreateLayout(exact, context);
-  Layout approximateLayout =
-      PoincareHelpers::CreateLayout(approximate, context);
+  Layout exactLayout, approximateLayout;
+  bool exactAndApproximateAreEqual = false;
 
-  // Compare approximate and exact layouts
-  Solution::ApproximationType approximationType;
-  if (type == SolutionType::Approximate ||
-      ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(exact,
-                                                                  context)) {
-    approximationType = Solution::ApproximationType::Identical;
-  } else if (type == SolutionType::Formal) {
-    approximationType = Solution::ApproximationType::Approximate;
-  } else {
-    char exactBuffer[::Constant::MaxSerializedExpressionSize];
-    char approximateBuffer[::Constant::MaxSerializedExpressionSize];
-    exactLayout.serializeForParsing(exactBuffer,
-                                    ::Constant::MaxSerializedExpressionSize);
-    approximateLayout.serializeForParsing(
-        approximateBuffer, ::Constant::MaxSerializedExpressionSize);
-    approximationType =
-        strcmp(exactBuffer, approximateBuffer) == 0
-            ? Solution::ApproximationType::Identical
-        : Expression::ExactAndApproximateExpressionsAreEqual(
-              exact, Expression::Parse(approximateBuffer, context))
-            ? Solution::ApproximationType::Equal
-            : Solution::ApproximationType::Approximate;
+  if (type != SolutionType::Approximate &&
+      !ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(exact,
+                                                                   context)) {
+    exactLayout = PoincareHelpers::CreateLayout(exact, context);
   }
-  m_solutions[m_numberOfSolutions++] =
-      Solution(approximationType == Solution::ApproximationType::Identical
-                   ? approximateLayout
-                   : exactLayout,
-               approximateLayout,
-               approximate.approximateToScalar<double>(context, m_complexFormat,
-                                                       angleUnit),
-               approximationType);
+  if (type != SolutionType::Formal) {
+    approximateLayout = PoincareHelpers::CreateLayout(approximate, context);
+    if (type == SolutionType::Exact) {
+      char exactBuffer[::Constant::MaxSerializedExpressionSize];
+      char approximateBuffer[::Constant::MaxSerializedExpressionSize];
+      exactLayout.serializeForParsing(exactBuffer,
+                                      ::Constant::MaxSerializedExpressionSize);
+      approximateLayout.serializeForParsing(
+          approximateBuffer, ::Constant::MaxSerializedExpressionSize);
+      if (strcmp(exactBuffer, approximateBuffer) == 0) {
+        exactLayout = Layout();
+      } else if (Expression::ExactAndApproximateExpressionsAreEqual(
+                     exact, Expression::Parse(approximateBuffer, context))) {
+        exactAndApproximateAreEqual = true;
+      }
+    }
+  }
+
+  assert(m_numberOfSolutions < k_maxNumberOfSolutions - 1);
+  m_solutions[m_numberOfSolutions++] = Solution(
+      exactLayout, approximateLayout, NAN, exactAndApproximateAreEqual);
+
   return Error::NoError;
 }
 
 void EquationStore::registerSolution(double f) {
   if (std::isfinite(f)) {
-    m_solutions[m_numberOfSolutions++] =
-        Solution(Layout(), Layout(), f, Solution::ApproximationType::Identical);
+    m_solutions[m_numberOfSolutions++] = Solution(Layout(), Layout(), f, false);
   }
 }
 

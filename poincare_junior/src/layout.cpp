@@ -21,8 +21,11 @@ Layout Layout::Parse(const char * textInput) {
     }, textInput);
 }
 
-void Layout::toText(char * buffer, size_t bufferSize) const {
+size_t Layout::toText(char * buffer, size_t bufferSize) const {
+  size_t layoutTextLength = strlen("-1+2*3");
+  assert(bufferSize > layoutTextLength);
   memcpy(buffer, "-1+2*3", bufferSize);
+  return layoutTextLength;
 }
 
 void Layout::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) const {

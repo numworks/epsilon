@@ -15,7 +15,7 @@ public:
   Layout(const Node tree) : Reference(tree) { assert(tree.block()->isLayout()); }
   using Reference::Reference;
   static Layout Parse(const char * text);
-  void toText(char * buffer, size_t bufferSize) const;
+  size_t toText(char * buffer, size_t bufferSize) const;
   void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) const;
   KDSize size(KDFont::Size font) const;
 private:

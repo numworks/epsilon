@@ -129,7 +129,7 @@ HighlightCell* HypothesisController::reusableCell(int i, int type) {
 }
 
 void HypothesisController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
+  selectCell(0);
   m_ha.dropdown()->selectRow(
       static_cast<int>(m_test->hypothesisParams()->comparisonOperator()));
   m_ha.dropdown()->init();

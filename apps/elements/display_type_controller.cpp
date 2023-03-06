@@ -17,7 +17,7 @@ void DisplayTypeController::viewWillAppear() {
     fieldIndex++;
     assert(fieldIndex < k_numberOfRows);
   }
-  selectCellAtLocation(0, fieldIndex);
+  selectCell(fieldIndex);
 }
 
 bool DisplayTypeController::handleEvent(Ion::Events::Event e) {

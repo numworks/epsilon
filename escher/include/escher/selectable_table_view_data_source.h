@@ -10,11 +10,11 @@ class SelectableTableViewDataSource : public ScrollViewDataSource {
   SelectableTableViewDataSource() : m_selectedColumn(0), m_selectedRow(-1) {}
   int selectedColumn() const { return m_selectedColumn; }
   int selectedRow() const { return m_selectedRow; }
-  void selectColumn(int i) { m_selectedColumn = i; }
-  void selectRow(int j) { m_selectedRow = j; }
-  void selectCellAtLocation(int i, int j) {
-    m_selectedColumn = i;
-    m_selectedRow = j;
+  void selectColumn(int col) { m_selectedColumn = col; }
+  void selectRow(int row) { m_selectedRow = row; }
+  void selectCellAtLocation(int col, int row) {
+    m_selectedColumn = col;
+    m_selectedRow = row;
   }
 
  private:

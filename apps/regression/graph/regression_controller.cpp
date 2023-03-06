@@ -60,7 +60,7 @@ void RegressionController::didBecomeFirstResponder() {
   } else {
     assert(type == Model::Type::None || type == ModelTypeAtIndex(initialIndex));
   }
-  selectCellAtLocation(0, initialIndex);
+  selectCell(initialIndex);
   Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 

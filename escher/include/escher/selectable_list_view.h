@@ -2,6 +2,7 @@
 #define ESCHER_SELECTABLE_LIST_VIEW_H
 
 #include <escher/list_view_data_source.h>
+#include <escher/selectable_list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 
 namespace Escher {
@@ -10,7 +11,7 @@ class SelectableListView : public SelectableTableView {
  public:
   SelectableListView(
       Responder* parentResponder, ListViewDataSource* dataSource,
-      SelectableTableViewDataSource* selectionDataSource = nullptr,
+      SelectableListViewDataSource* selectionDataSource = nullptr,
       SelectableTableViewDelegate* delegate = nullptr)
       : SelectableTableView(parentResponder, dataSource, selectionDataSource,
                             delegate) {}

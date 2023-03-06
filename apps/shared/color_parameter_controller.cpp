@@ -41,7 +41,7 @@ bool ColorParameterController::handleEvent(Ion::Events::Event event) {
 void ColorParameterController::didBecomeFirstResponder() {
   // TODO: This is duplicated in other classes
   if (selectedRow() < 0) {
-    selectCellAtLocation(0, 0);
+    selectCell(0);
   }
   Container::activeApp()->setFirstResponder(&m_selectableListView);
 }

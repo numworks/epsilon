@@ -57,8 +57,8 @@ void TypeParameterController::viewDidDisappear() {
 }
 
 void TypeParameterController::didBecomeFirstResponder() {
-  selectCellAtLocation(
-      0, m_record == nullptr ? 0 : static_cast<uint8_t>(sequence()->type()));
+  selectCell(m_record == nullptr ? 0
+                                 : static_cast<uint8_t>(sequence()->type()));
   Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 

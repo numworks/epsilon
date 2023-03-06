@@ -48,7 +48,7 @@ void InterestController::didBecomeFirstResponder() {
   m_dropdownDataSource.setMessages(
       App::GetInterestData()->dropdownMessageAtIndex(0),
       App::GetInterestData()->dropdownMessageAtIndex(1));
-  selectCellAtLocation(0, 0);
+  selectCell(0);
   m_dropdownCell.dropdown()->selectRow(
       App::GetInterestData()->m_booleanParam ? 0 : 1);
   m_dropdownCell.dropdown()->init();

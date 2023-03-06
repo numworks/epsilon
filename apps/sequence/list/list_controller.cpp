@@ -93,7 +93,7 @@ Toolbox *ListController::toolbox() {
 void ListController::selectPreviousNewSequenceCell() {
   int row = selectedRow();
   if (sequenceDefinitionForRow(row) >= 0) {
-    selectCellAtLocation(selectedColumn(), row - sequenceDefinitionForRow(row));
+    selectCell(row - sequenceDefinitionForRow(row));
   }
 }
 
@@ -184,7 +184,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     if (removeModelRow(record)) {
       int newSelectedRow =
           selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
-      selectCellAtLocation(0, newSelectedRow);
+      selectCell(newSelectedRow);
       selectableTableView()->reloadData();
     }
     return true;
@@ -211,7 +211,7 @@ void ListController::tableViewDidChangeSelection(
       t, previousSelectedCellX, previousSelectedCellY,
       withinTemporarySelection);
   // Do not select the cell left of the "addEmptyFunction" cell
-  if (isAddEmptyRow(selectedRow()) && selectedColumn() == 0) {
+  if (isAddEmptyRow(selectedRow())) {
     t->selectCellAtLocation(1, numberOfRows() - 1);
   }
 }

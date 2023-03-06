@@ -41,7 +41,7 @@ void CurveParameterController::didBecomeFirstResponder() {
 
 void CurveParameterController::viewWillAppear() {
   if (selectedRow() < 0 || !selectedCell()->isVisible()) {
-    selectCellAtLocation(0, 0);
+    selectCell(0);
   }
   ExplicitSelectableListViewController::viewWillAppear();
   m_selectableListView.reloadData();

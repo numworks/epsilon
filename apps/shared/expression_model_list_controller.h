@@ -16,7 +16,7 @@ namespace Shared {
 
 class ExpressionModelListController
     : public Escher::ViewController,
-      public Escher::SelectableTableViewDataSource,
+      public Escher::SelectableListViewDataSource,
       public Escher::SelectableTableViewDelegate,
       public LayoutFieldDelegate {
  public:

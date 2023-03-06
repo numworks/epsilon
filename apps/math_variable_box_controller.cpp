@@ -72,7 +72,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
       }
       int newSelectedRow =
           rowIndex >= numberOfRows() ? numberOfRows() - 1 : rowIndex;
-      selectCellAtLocation(selectedColumn(), newSelectedRow);
+      selectCell(newSelectedRow);
       resetMemoization();
       m_selectableTableView.reloadData();
       if (numberOfRows() == 0) {

@@ -65,7 +65,7 @@ const char *CurveParameterController::title() {
 
 void CurveParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
-    selectCellAtLocation(0, 0);
+    selectCell(0);
   }
   Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
@@ -186,7 +186,7 @@ void CurveParameterController::setRecord(Ion::Storage::Record record) {
       shouldDisplayDerivative() ||
       function()->properties().numberOfCurveParameters() == 3);
   m_calculationCell.setVisible(shouldDisplayCalculation());
-  selectCellAtLocation(0, 0);
+  selectCell(0);
   resetMemoization();
   m_preimageGraphController.setRecord(record);
 }

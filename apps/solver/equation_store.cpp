@@ -275,6 +275,7 @@ EquationStore::Error EquationStore::solveLinearSystem(
   assert(rank < n);
   assert(abChildren == m * (n + 1));
   size_t numberOfParameters = n - rank;
+  size_t parameterNameLength = numberOfParameters > 1 ? 2 : 1;
   for (size_t j = 0; j < numberOfParameters; j++) {
     for (size_t i = 0; i < n; i++) {
       ab.addChildAtIndexInPlace(
@@ -282,10 +283,11 @@ EquationStore::Error EquationStore::solveLinearSystem(
           abChildren, abChildren);
       ++abChildren;
     }
-    assert(j < 10);
-    const char parameterName[] = {'t', static_cast<char>('0' + j), '\0'};
-    ab.addChildAtIndexInPlace(Symbol::Builder(parameterName, 2), abChildren,
-                              abChildren);
+    assert(j < 9);
+    const char parameterName[] = {'t', static_cast<char>('1' + j), '\0'};
+    ab.addChildAtIndexInPlace(
+        Symbol::Builder(parameterName, parameterNameLength), abChildren,
+        abChildren);
     ++abChildren;
   }
   ab.setDimensions(m + numberOfParameters, n + 1);

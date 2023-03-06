@@ -216,6 +216,7 @@ EquationStore::Error EquationStore::solveLinearSystem(
   m_degree = 1;
   m_type = Type::LinearSystem;
 
+  m_hasMoreSolutions = false;
   // n unknown variables and m equations
   size_t n = m_numberOfResolutionVariables;
   // Create the matrix (A|b) for the equation Ax=b;

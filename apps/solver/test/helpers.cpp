@@ -64,8 +64,8 @@ void assert_solves_to_error(std::initializer_list<const char *> equations,
 void assert_solves_to_infinite_solutions(
     std::initializer_list<const char *> equations) {
   solve_and(equations, [](EquationStore *store) {
-    quiz_assert(store->numberOfSolutions() ==
-                EquationStore::k_infiniteSolutions);
+    quiz_assert(store->type() == EquationStore::Type::LinearSystem &&
+                store->hasMoreSolutions());
   });
 }
 

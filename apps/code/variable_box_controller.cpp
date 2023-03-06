@@ -189,6 +189,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
 void VariableBoxController::tableViewDidChangeSelection(
     SelectableTableView *t, int previousSelectedCellX,
     int previousSelectedCellY, bool withinTemporarySelection) {
+  SelectableListView *selectableListView = static_cast<SelectableListView *>(t);
   if (withinTemporarySelection || !m_displaySubtitles) {
     return;
   }
@@ -198,11 +199,12 @@ void VariableBoxController::tableViewDidChangeSelection(
       typeAtIndex(currentSelectedRow) == k_subtitleCellType) {
     if (currentSelectedRow == 0) {
       // We scroll to the first cell, otherwise it will never appear again
-      t->scrollToCell(0);
-      t->selectCell(1);
+      selectableListView->scrollToCell(0);
+      selectableListView->selectCell(1);
     } else {
-      t->selectCell(selectedRow() +
-                    (previousSelectedCellY < currentSelectedRow ? 1 : -1));
+      selectableListView->selectCell(
+          selectedRow() +
+          (previousSelectedCellY < currentSelectedRow ? 1 : -1));
     }
   }
 }

@@ -195,8 +195,7 @@ bool NestedMenuController::returnToRootMenu() {
 
 void NestedMenuController::loadState(NestedMenuController::StackState state) {
   bool isStateValid = state.selectedRow() < numberOfRows();
-  m_selectableTableView.selectCellAtLocation(
-      0, isStateValid ? state.selectedRow() : 0);
+  m_selectableTableView.selectCell(isStateValid ? state.selectedRow() : 0);
   KDPoint scroll = m_selectableTableView.contentOffset();
   m_selectableTableView.setContentOffset(
       KDPoint(scroll.x(), isStateValid ? state.verticalScroll() : 0));

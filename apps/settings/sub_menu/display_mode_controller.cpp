@@ -91,7 +91,7 @@ bool DisplayModeController::textFieldDidFinishEditing(
   }
   Preferences::sharedPreferences->setNumberOfSignificantDigits(
       (char)std::round(floatBody));
-  m_selectableTableView.reloadCellAtLocation(0, selectedRow());
+  m_selectableTableView.reloadCell(selectedRow());
   if (event == Ion::Events::Up || event == Ion::Events::OK) {
     m_selectableTableView.handleEvent(event);
   }

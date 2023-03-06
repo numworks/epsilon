@@ -4,6 +4,7 @@
 #include <escher/highlight_cell.h>
 #include <escher/list_view_data_source.h>
 #include <escher/responder.h>
+#include <escher/selectable_list_view.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_delegate.h>
 #include <escher/view_controller.h>
@@ -35,7 +36,7 @@ class SelectableListViewController : public SelectableViewController,
   View* view() override { return &m_selectableTableView; }
 
  protected:
-  SelectableTableView m_selectableTableView;
+  SelectableListView m_selectableTableView;
 };
 
 class ExplicitSelectableListViewController

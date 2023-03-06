@@ -7,7 +7,7 @@
 #include <escher/list_view_data_source.h>
 #include <escher/metric.h>
 #include <escher/pervasive_box.h>
-#include <escher/selectable_table_view.h>
+#include <escher/selectable_list_view.h>
 #include <escher/stack_view_controller.h>
 #include <ion.h>
 #include <ion/ring_buffer.h>
@@ -62,7 +62,7 @@ class NestedMenuController : public StackViewController,
   virtual HighlightCell* leafCellAtIndex(int index) = 0;
   virtual HighlightCell* nodeCellAtIndex(int index) = 0;
   virtual I18n::Message subTitle() = 0;
-  SelectableTableView m_selectableTableView;
+  SelectableListView m_selectableTableView;
   Ion::RingBuffer<StackState, k_maxModelTreeDepth>* stack() { return &m_stack; }
   virtual int controlChecksum() const { return 0; }
   virtual bool isToolbox() const { return false; }
@@ -71,7 +71,7 @@ class NestedMenuController : public StackViewController,
   class BreadcrumbController : public ViewController {
    public:
     BreadcrumbController(Responder* parentResponder,
-                         SelectableTableView* tableView)
+                         SelectableListView* tableView)
         : ViewController(parentResponder),
           m_selectableTableView(tableView),
           m_titleCount(0),
@@ -91,7 +91,7 @@ class NestedMenuController : public StackViewController,
     constexpr static int k_maxModelTreeDepth =
         StackViewController::k_maxNumberOfChildren - 1;
     void updateTitle();
-    SelectableTableView* m_selectableTableView;
+    SelectableListView* m_selectableTableView;
     int m_titleCount;
     I18n::Message m_titles[k_maxModelTreeDepth];
     char m_titleBuffer[k_maxTitleLength + 1];
@@ -99,7 +99,7 @@ class NestedMenuController : public StackViewController,
 
   class ListController : public ViewController {
    public:
-    ListController(Responder* parentResponder, SelectableTableView* tableView,
+    ListController(Responder* parentResponder, SelectableListView* tableView,
                    I18n::Message title)
         : ViewController(parentResponder),
           m_selectableTableView(tableView),
@@ -110,7 +110,7 @@ class NestedMenuController : public StackViewController,
     void didBecomeFirstResponder() override;
 
    private:
-    SelectableTableView* m_selectableTableView;
+    SelectableListView* m_selectableTableView;
     I18n::Message m_title;
   };
 

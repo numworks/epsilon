@@ -38,7 +38,7 @@ class ListController : public Shared::FunctionListController,
   // ExpressionModelListController
   void editExpression(Ion::Events::Event event) override;
   KDCoordinate expressionRowHeight(int j) override;
-  Escher::SelectableTableView* selectableTableView() override {
+  Escher::SelectableListView* selectableTableView() override {
     return &m_selectableTableView;
   }
   FunctionToolbox* toolbox() override;
@@ -84,7 +84,7 @@ class ListController : public Shared::FunctionListController,
     return m_editableCell.expressionField();
   }
 
-  Escher::SelectableTableView m_selectableTableView;
+  Escher::SelectableListView m_selectableTableView;
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   EditableFunctionCell m_editableCell;
   FunctionParameterController* m_parameterController;

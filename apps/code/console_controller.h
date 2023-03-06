@@ -120,7 +120,7 @@ class ConsoleController : public Escher::ViewController,
   App* m_pythonDelegate;
   bool m_importScriptsWhenViewAppears;
   ConsoleStore m_consoleStore;
-  Escher::SelectableTableView m_selectableTableView;
+  Escher::SelectableListView m_selectableTableView;
   ConsoleLineCell m_cells[k_numberOfLineCells];
   ConsoleEditCell m_editCell;
   char m_outputAccumulationBuffer[k_outputAccumulationBufferSize];

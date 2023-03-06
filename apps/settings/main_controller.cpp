@@ -94,9 +94,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   if (type == k_popUpCellType) {
     if (event == Ion::Events::OK || event == Ion::Events::EXE) {
       globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
-      m_selectableTableView.reloadCellAtLocation(
-          m_selectableTableView.selectedColumn(),
-          m_selectableTableView.selectedRow());
+      m_selectableTableView.reloadCell(m_selectableTableView.selectedRow());
       return true;
     }
     return false;
@@ -112,9 +110,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
                         : -delta;
     globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel() +
                                           direction);
-    m_selectableTableView.reloadCellAtLocation(
-        m_selectableTableView.selectedColumn(),
-        m_selectableTableView.selectedRow());
+    m_selectableTableView.reloadCell(m_selectableTableView.selectedRow());
     return true;
   }
 

@@ -38,7 +38,6 @@ class EquationStore : public Shared::ExpressionModelStore {
       k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions
           ? k_maxNumberOfExactSolutions
           : k_maxNumberOfApproximateSolutions;
-  constexpr static size_t k_infiniteSolutions = -1;
 
   // System analysis
   Type type() const { return m_type; }
@@ -76,9 +75,7 @@ class EquationStore : public Shared::ExpressionModelStore {
     assert(index < m_numberOfSolutions);
     return m_solutions + index;
   }
-  bool hasMoreApproximateSolutions() const {
-    return m_hasMoreApproximateSolutions;
-  }
+  bool hasMoreSolutions() const { return m_hasMoreSolutions; }
 
   // ExpressionModelStore
   void tidyDownstreamPoolFrom(char* treePoolCursor = nullptr) override;
@@ -135,7 +132,7 @@ class EquationStore : public Shared::ExpressionModelStore {
   Type m_type;
   Poincare::Preferences::ComplexFormat m_complexFormat;
   bool m_overrideUserVariables;
-  bool m_hasMoreApproximateSolutions;
+  bool m_hasMoreSolutions;
 };
 
 }  // namespace Solver

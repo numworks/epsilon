@@ -166,20 +166,20 @@ const char *SolutionsController::title() {
 void SolutionsController::viewWillAppear() {
   ViewController::viewWillAppear();
   bool requireWarning = true;
-  if (numberOfDisplayedSolutions() == 0) {
+  if (m_equationStore->numberOfSolutions() == 0) {
     // There are no solutions
     m_contentView.setWarningMessages(noSolutionMessage(),
                                      I18n::Message::Default);
   } else if (m_equationStore->type() ==
                  EquationStore::Type::GeneralMonovariable &&
-             m_equationStore->hasMoreApproximateSolutions()) {
+             m_equationStore->hasMoreSolutions()) {
     // There are more approximate solutions
     m_contentView.setWarningMessages(
         I18n::Message::OnlyFirstSolutionsDisplayed0,
         I18n::Message::OnlyFirstSolutionsDisplayed1);
   } else if (m_equationStore->type() ==
                  EquationStore::Type::PolynomialMonovariable &&
-             numberOfDisplayedSolutions() == 1) {
+             m_equationStore->numberOfSolutions() == 1) {
     // There are no real solutions
     if (m_equationStore->degree() == 2) {
       assert(Preferences::sharedPreferences->complexFormat() ==
@@ -192,6 +192,10 @@ void SolutionsController::viewWillAppear() {
       m_contentView.setWarningMessages(I18n::Message::NoSolutionInterval,
                                        I18n::Message::Default);
     }
+  } else if (m_equationStore->type() == EquationStore::Type::LinearSystem &&
+             m_equationStore->hasMoreSolutions()) {
+    m_contentView.setWarningMessages(I18n::Message::InfiniteNumberOfSolutions,
+                                     I18n::Message::Default);
   } else {
     requireWarning = false;
   }
@@ -224,7 +228,7 @@ Responder *SolutionsController::responderWhenEmpty() {
 /* TableViewDataSource */
 
 int SolutionsController::numberOfRows() const {
-  int numberOfRows = numberOfDisplayedSolutions();
+  int numberOfRows = m_equationStore->numberOfSolutions();
   if (m_equationStore->numberOfUserVariables() > 0) {
     // Add the empty row if there are rows above predefined variables message
     numberOfRows +=
@@ -259,7 +263,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
   if (i == 0) {
     if (m_equationStore->type() ==
             EquationStore::Type::PolynomialMonovariable &&
-        j == numberOfDisplayedSolutions() - 1) {
+        j == m_equationStore->numberOfSolutions() - 1) {
       // Formula of the discriminant
       assert(m_equationStore->degree() == 2 || m_equationStore->degree() == 3);
       EvenOddExpressionCell *deltaCell =
@@ -314,7 +318,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
   } else {
     if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
       // It's a solution row
-      assert(numberOfDisplayedSolutions() > 0);
+      assert(m_equationStore->numberOfSolutions() > 0);
       if (m_equationStore->type() == EquationStore::Type::GeneralMonovariable) {
         // Get values of the solutions
         EvenOddBufferTextCell *valueCell =
@@ -366,7 +370,7 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
     // It's a solution row
-    assert(numberOfDisplayedSolutions() > 0);
+    assert(m_equationStore->numberOfSolutions() > 0);
     if (m_equationStore->type() == EquationStore::Type::GeneralMonovariable) {
       return k_defaultCellHeight;
     }
@@ -452,7 +456,7 @@ int SolutionsController::typeAtLocation(int i, int j) {
   if (i == 0) {
     if (m_equationStore->type() ==
             EquationStore::Type::PolynomialMonovariable &&
-        j == numberOfDisplayedSolutions() - 1) {
+        j == m_equationStore->numberOfSolutions() - 1) {
       return k_deltaCellType;
     }
     return k_symbolCellType;
@@ -465,7 +469,7 @@ int SolutionsController::typeAtLocation(int i, int j) {
 }
 
 void SolutionsController::didBecomeFirstResponder() {
-  if (numberOfDisplayedSolutions() > 0) {
+  if (m_equationStore->numberOfSolutions() > 0) {
     Container::activeApp()->setFirstResponder(
         m_contentView.selectableTableView());
   }
@@ -494,27 +498,15 @@ int SolutionsController::userVariablesMessageRow() const {
     // No user variables
     return -1;
   }
-  if (numberOfDisplayedSolutions() == 0) {
+  if (m_equationStore->numberOfSolutions() == 0) {
     // Message row is first row, no need for an empty row
     return 0;
   }
   // Add an additional empty cell as a margin
-  return numberOfDisplayedSolutions() + 1;
-}
-
-int SolutionsController::numberOfDisplayedSolutions() const {
-  // No displayed solutions if there are an infinite number of them.
-  return m_equationStore->numberOfSolutions() ==
-                 EquationStore::k_infiniteSolutions
-             ? 0
-             : m_equationStore->numberOfSolutions();
+  return m_equationStore->numberOfSolutions() + 1;
 }
 
 I18n::Message SolutionsController::noSolutionMessage() {
-  if (m_equationStore->numberOfSolutions() ==
-      EquationStore::k_infiniteSolutions) {
-    return I18n::Message::InfiniteNumberOfSolutions;
-  }
   if (m_equationStore->type() == EquationStore::Type::GeneralMonovariable) {
     return I18n::Message::NoSolutionInterval;
   }

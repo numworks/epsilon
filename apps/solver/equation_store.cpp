@@ -15,11 +15,9 @@ namespace Solver {
 EquationStore::Error EquationStore::exactSolve(Context *context) {
   m_overrideUserVariables = false;
   Error firstError = privateExactSolve(context);
-  if (firstError == Error::NoError && m_numberOfSolutions > 0 &&
-      m_numberOfSolutions < k_infiniteSolutions) {
+  if (firstError == Error::NoError && m_numberOfSolutions > 0) {
     return firstError;
   }
-  size_t firstNumberOfSolutions = m_numberOfSolutions;
 
   m_overrideUserVariables = true;
   Error secondError = privateExactSolve(context);
@@ -27,7 +25,7 @@ EquationStore::Error EquationStore::exactSolve(Context *context) {
       secondError != Error::RequireApproximateSolution) {
     /* The system becomes invalid when overriding the user variables: the first
      * solution was better. */
-    m_numberOfSolutions = firstNumberOfSolutions;
+    m_numberOfSolutions = 0;
     return firstError;
   }
   return secondError;
@@ -37,7 +35,7 @@ void EquationStore::approximateSolve(Context *context) {
   assert(m_type == Type::GeneralMonovariable);
   assert(m_numberOfResolutionVariables == 1);
 
-  m_hasMoreApproximateSolutions = false;
+  m_hasMoreSolutions = false;
   Expression undevelopedExpression =
       modelForRecord(definedRecordAtIndex(0))
           ->standardForm(context, m_overrideUserVariables,
@@ -60,7 +58,7 @@ void EquationStore::approximateSolve(Context *context) {
     }
 
     if (i == k_maxNumberOfApproximateSolutions) {
-      m_hasMoreApproximateSolutions = true;
+      m_hasMoreSolutions = true;
     } else {
       if (std::isnan(root)) {
         break;
@@ -268,7 +266,7 @@ EquationStore::Error EquationStore::solveLinearSystem(
 
   /* The system is insufficiently qualified: bind the value of n-rank
    * variables to parameters. */
-  m_numberOfSolutions = k_infiniteSolutions;
+  m_hasMoreSolutions = true;
   if (n == 0) {
     return Error::NoError;
   }
@@ -295,7 +293,8 @@ EquationStore::Error EquationStore::solveLinearSystem(
     error = Error::EquationUndefined;
   } else {
     assert(newRank == n);
-    /* FIXME */ m_numberOfSolutions = 0;
+    /* Initialize m_numberOfSolutions as registerSolution will increment it. */
+    m_numberOfSolutions = 0;
     for (size_t i = 0; i < n; i++) {
       error =
           registerSolution(ab.matrixChild(i, n), context, SolutionType::Formal);

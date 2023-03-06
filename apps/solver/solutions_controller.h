@@ -209,7 +209,6 @@ class SolutionsController : public Escher::ViewController,
     return !m_equationStore->overrideUserVariables();
   }
   int userVariablesMessageRow() const;
-  int numberOfDisplayedSolutions() const;
   I18n::Message noSolutionMessage();
 
   EquationStore *m_equationStore;

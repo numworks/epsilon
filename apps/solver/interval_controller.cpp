@@ -57,11 +57,9 @@ void IntervalController::ContentView::layoutSubviews(bool force) {
 
 IntervalController::IntervalController(
     Responder *parentResponder,
-    InputEventHandlerDelegate *inputEventHandlerDelegate,
-    EquationStore *equationStore)
+    InputEventHandlerDelegate *inputEventHandlerDelegate)
     : FloatParameterController<double>(parentResponder),
       m_contentView(&m_selectableListView),
-      m_equationStore(equationStore),
       m_shouldReplaceFunctionsButNotSymbols(false) {
   m_selectableListView.setTopMargin(0);
   m_okButton.setMessage(I18n::Message::ResolveEquation);
@@ -101,13 +99,15 @@ int IntervalController::reusableParameterCellCount(int type) {
 }
 
 double IntervalController::parameterAtIndex(int index) {
-  return index == 0 ? m_equationStore->approximateResolutionMinimum()
-                    : m_equationStore->approximateResolutionMaximum();
+  System *system = App::app()->system();
+  return index == 0 ? system->approximateResolutionMinimum()
+                    : system->approximateResolutionMaximum();
 }
 
 bool IntervalController::setParameterAtIndex(int parameterIndex, double f) {
-  parameterIndex == 0 ? m_equationStore->setApproximateResolutionMinimum(f)
-                      : m_equationStore->setApproximateResolutionMaximum(f);
+  System *system = App::app()->system();
+  parameterIndex == 0 ? system->setApproximateResolutionMinimum(f)
+                      : system->setApproximateResolutionMaximum(f);
   return true;
 }
 
@@ -125,7 +125,8 @@ bool IntervalController::textFieldDidFinishEditing(AbstractTextField *textField,
 
 void IntervalController::buttonAction() {
   StackViewController *stack = stackController();
-  m_equationStore->approximateSolve(textFieldDelegateApp()->localContext());
+  App::app()->system()->approximateSolve(
+      textFieldDelegateApp()->localContext());
   stack->push(App::app()->solutionsControllerStack());
 }
 

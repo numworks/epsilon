@@ -12,8 +12,7 @@ class IntervalController : public Shared::FloatParameterController<double> {
  public:
   IntervalController(
       Escher::Responder* parentResponder,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      EquationStore* equationStore);
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
   const char* title() override;
   Escher::View* view() override { return &m_contentView; }
   TELEMETRY_ID("Interval");
@@ -50,7 +49,6 @@ class IntervalController : public Shared::FloatParameterController<double> {
   ContentView m_contentView;
   constexpr static int k_maxNumberOfCells = 2;
   Escher::MessageTableCellWithEditableText m_intervalCell[k_maxNumberOfCells];
-  EquationStore* m_equationStore;
   bool m_shouldReplaceFunctionsButNotSymbols;
 };
 

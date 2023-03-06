@@ -10,25 +10,11 @@ namespace Escher {
 class ListViewDataSource : public TableViewDataSource {
  public:
   void initCellSize(TableView* view) override;
-  // ListViewDataSource has only one column
-  int numberOfColumns() const override final { return 1; }
   /* reusableCellCount have a default implementation for specific simple
    * lists. Most implementations should override them.*/
   int reusableCellCount(int type) override { return numberOfRows(); }
-
   virtual void willDisplayCellForIndex(HighlightCell* cell, int index) {}
-  void willDisplayCellAtLocation(HighlightCell* cell, int col,
-                                 int row) override final {
-    if (cell->isVisible()) {  // Frame is already set to zero if hidden
-      willDisplayCellForIndex(cell, row);
-    }
-  }
-
   virtual int typeAtIndex(int index) const { return 0; }
-  int typeAtLocation(int col, int row) override final {
-    assert(col == 0);
-    return typeAtIndex(row);
-  }
   // Used to easily override nonMemoizedRowHeight
   KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell* cell,
                                                  int index);
@@ -38,13 +24,25 @@ class ListViewDataSource : public TableViewDataSource {
   /* nonMemoizedRowHeight has a default implementation for specific simple
    * lists. Most implementations should override them.*/
   KDCoordinate nonMemoizedRowHeight(int index) override;
+  KDCoordinate heightForCellAtIndex(HighlightCell* cell, int index);
+
+ private:
+  // ListViewDataSource has only one column
+  int numberOfColumns() const override final { return 1; }
+  void willDisplayCellAtLocation(HighlightCell* cell, int col,
+                                 int row) override final {
+    if (cell->isVisible()) {  // Frame is already set to zero if hidden
+      willDisplayCellForIndex(cell, row);
+    }
+  }
+  int typeAtLocation(int col, int row) override final {
+    assert(col == 0);
+    return typeAtIndex(row);
+  }
   // Just make this method final without changing behaviour
   KDCoordinate nonMemoizedColumnWidth(int index) override final {
     return TableViewDataSource::nonMemoizedColumnWidth(index);
   }
-  KDCoordinate heightForCellAtIndex(HighlightCell* cell, int index);
-
- private:
   // Only used in an assert
   bool canReusableIndexBeAssumed(int index, int type,
                                  int reusableCellCount) const;
@@ -104,12 +102,14 @@ class ExplicitListViewDataSource : public MemoizedListViewDataSource {
   }
   // HighlightCell * selectedCell() { return cell(selectedRow()); }
   void initCellSize(TableView* view) override;
-  bool cellAtLocationIsSelectable(HighlightCell* cell, int col,
-                                  int row) override;
 
  protected:
   virtual HighlightCell* cell(int index) = 0;
   virtual void fillCell(HighlightCell* cell) {}
+
+ private:
+  bool cellAtLocationIsSelectable(HighlightCell* cell, int col,
+                                  int row) override;
 };
 
 }  // namespace Escher

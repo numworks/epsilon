@@ -32,10 +32,7 @@ void FloatParameterController<T>::didBecomeFirstResponder() {
   if (selectedRow() >= 0) {
     int selRow = selectedRow();
     selRow = selRow >= numberOfRows() ? numberOfRows() - 1 : selRow;
-    int selColumn = selectedColumn();
-    selColumn =
-        selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
-    selectCellAtLocation(selColumn, selRow);
+    selectCellAtLocation(0, selRow);
   }
   Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
@@ -48,10 +45,7 @@ void FloatParameterController<T>::viewWillAppear() {
     selectCellAtLocation(0, 0);
   } else {
     selRow = selRow >= numberOfRows() ? numberOfRows() - 1 : selRow;
-    int selColumn = selectedColumn();
-    selColumn =
-        selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
-    selectCellAtLocation(selColumn, selRow);
+    selectCellAtLocation(0, selRow);
   }
   resetMemoization();
   m_selectableListView.reloadData();

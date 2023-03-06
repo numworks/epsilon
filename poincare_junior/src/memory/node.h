@@ -88,13 +88,13 @@ public:
   bool hasChild(const Node child) const;
   bool hasAncestor(const Node node, bool includeSelf) const;
   bool hasSibling(const Node e) const;
-  // TODO : Rename this method isRack
-  bool isHorizontal() const { return type() == BlockType::RackLayout; }
-  bool isEmpty() const { return isHorizontal() && numberOfChildren() == 0; }
 
   constexpr BlockType type() const { return m_block->type(); }
   constexpr size_t nodeSize() const { return m_block->nodeSize(true); }
   constexpr int numberOfChildren() const { return m_block->numberOfChildren(true); }
+  constexpr bool isNAry() const { return m_block->isNAry(); }
+  constexpr bool isHorizontal() const { return type() == BlockType::RackLayout; }
+  constexpr bool isEmpty() const { return isHorizontal() && numberOfChildren() == 0; }
 
   // Recursive helper
   typedef void (*InPlaceConstTreeFunction)(const Node node);

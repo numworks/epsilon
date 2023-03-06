@@ -42,7 +42,7 @@ QUIZ_CASE(pcj_elementary_tree_manipulation) {
   log_edition_pool();
 
 #if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n--- Store developped 1*3*4+2*3*4 ---" << std::endl;
+  std::cout << "\n--- Store developed 1*3*4+2*3*4 ---" << std::endl;
 #endif
   treeId = cache->storeEditedTree();
 
@@ -82,5 +82,25 @@ QUIZ_CASE(pcj_elementary_tree_manipulation) {
   std::cout << "\n--- Flatten 1+(2+3) ---" << std::endl;
 #endif
   NAry::Flatten(addition);
+  log_edition_pool();
+
+#if POINCARE_MEMORY_TREE_LOG
+  std::cout << "\n--- Create x^2-3+4 Layout ---" << std::endl;
+#endif
+  EditionReference rackLayout1 = EditionReference::Push<BlockType::RackLayout>(3);
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('x');
+  EditionReference::Push<BlockType::VerticalOffsetLayout>();
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('2');
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('+');
+
+  EditionReference rackLayout2 = EditionReference::Push<BlockType::RackLayout>(3);
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('-');
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('4');
+  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('3');
+
+  EditionReference four = NAry::DetachChildAtIndex(rackLayout2, 1);
+  NAry::AddChildAtIndex(rackLayout1, four, 3);
+  NAry::AddOrMergeChildAtIndex(rackLayout1, rackLayout2, 2);
+
   log_edition_pool();
 }

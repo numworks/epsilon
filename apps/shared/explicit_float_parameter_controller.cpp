@@ -21,8 +21,7 @@ ExplicitFloatParameterController::ExplicitFloatParameterController(
 void ExplicitFloatParameterController::didBecomeFirstResponder() {
   if (selectedRow() >= 0) {
     int selRow = std::min(selectedRow(), numberOfRows() - 1);
-    int selColumn = std::min(selectedColumn(), numberOfColumns() - 1);
-    selectCellAtLocation(selColumn, selRow);
+    selectCellAtLocation(0, selRow);
   }
   Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
@@ -34,8 +33,7 @@ void ExplicitFloatParameterController::viewWillAppear() {
     selectCellAtLocation(0, 0);
   } else {
     selRow = std::min(selectedRow(), numberOfRows() - 1);
-    int selColumn = std::min(selectedColumn(), numberOfColumns() - 1);
-    selectCellAtLocation(selColumn, selRow);
+    selectCellAtLocation(0, selRow);
   }
   resetMemoization();
   m_selectableListView.reloadData();

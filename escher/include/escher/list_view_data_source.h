@@ -17,17 +17,17 @@ class ListViewDataSource : public TableViewDataSource {
   int reusableCellCount(int type) override { return numberOfRows(); }
 
   virtual void willDisplayCellForIndex(HighlightCell* cell, int index) {}
-  void willDisplayCellAtLocation(HighlightCell* cell, int x,
-                                 int y) override final {
+  void willDisplayCellAtLocation(HighlightCell* cell, int col,
+                                 int row) override final {
     if (cell->isVisible()) {  // Frame is already set to zero if hidden
-      willDisplayCellForIndex(cell, y);
+      willDisplayCellForIndex(cell, row);
     }
   }
 
   virtual int typeAtIndex(int index) const { return 0; }
-  int typeAtLocation(int i, int j) override final {
-    assert(i == 0);
-    return typeAtIndex(j);
+  int typeAtLocation(int col, int row) override final {
+    assert(col == 0);
+    return typeAtIndex(row);
   }
   // Used to easily override nonMemoizedRowHeight
   KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell* cell,
@@ -67,7 +67,7 @@ class RegularListViewDataSource : public ListViewDataSource {
     // See ListViewDataSource::nonMemoizedRowHeight comment
     return ListViewDataSource::nonMemoizedRowHeight(0);
   }
-  KDCoordinate nonMemoizedRowHeight(int j) override final {
+  KDCoordinate nonMemoizedRowHeight(int row) override final {
     return defaultRowHeight();
   }
   TableSize1DManager* rowHeightManager() override final {
@@ -104,7 +104,8 @@ class ExplicitListViewDataSource : public MemoizedListViewDataSource {
   }
   // HighlightCell * selectedCell() { return cell(selectedRow()); }
   void initCellSize(TableView* view) override;
-  bool cellAtLocationIsSelectable(HighlightCell* cell, int i, int j) override;
+  bool cellAtLocationIsSelectable(HighlightCell* cell, int col,
+                                  int row) override;
 
  protected:
   virtual HighlightCell* cell(int index) = 0;

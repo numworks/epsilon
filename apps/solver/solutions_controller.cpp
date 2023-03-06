@@ -336,8 +336,16 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
         const Solution *solution = m_equationStore->solution(j);
         ScrollableTwoExpressionsCell *valueCell =
             static_cast<ScrollableTwoExpressionsCell *>(cell);
-        valueCell->setLayouts(solution->exactLayout(),
-                              solution->approximateLayout());
+        /* ScrollableTwoExpressionsCell will always try to display its
+         * approximate layout. If the only layout is the exact one, they need to
+         * be swapped.
+         * FIXME This is quirky and could be changed. */
+        bool noApproximateLayout =
+            solution->approximateLayout().isUninitialized();
+        valueCell->setLayouts(
+            noApproximateLayout ? Layout() : solution->exactLayout(),
+            noApproximateLayout ? solution->exactLayout()
+                                : solution->approximateLayout());
         valueCell->setRightIsStrictlyEqual(
             solution->exactAndApproximateAreEqual());
       }

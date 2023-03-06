@@ -4,7 +4,7 @@
 #include <apps/i18n.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_message_with_switch.h>
-#include <escher/selectable_table_view_delegate.h>
+#include <escher/selectable_list_view_delegate.h>
 
 #include "color_parameter_controller.h"
 #include "function_store.h"
@@ -17,7 +17,7 @@ class ListParameterController
   ListParameterController(
       Responder* parentResponder, I18n::Message functionColorMessage,
       I18n::Message deleteFunctionMessage,
-      Escher::SelectableTableViewDelegate* tableDelegate = nullptr);
+      Escher::SelectableListViewDelegate* listDelegate = nullptr);
 
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("ListParameter");

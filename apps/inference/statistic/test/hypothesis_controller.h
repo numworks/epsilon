@@ -22,7 +22,7 @@ class HypothesisController : public Escher::SelectableListViewController<
                                  Escher::MemoizedListViewDataSource>,
                              public Escher::TextFieldDelegate,
                              public Escher::DropdownCallback,
-                             public Escher::SelectableTableViewDelegate {
+                             public Escher::SelectableListViewDelegate {
  public:
   HypothesisController(Escher::StackViewController* parent,
                        InputController* inputController,
@@ -57,9 +57,9 @@ class HypothesisController : public Escher::SelectableListViewController<
     return false;
   }
 
-  // SelectableTableViewDelegate
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
-                                       int row) const override {
+  // SelectableListViewDelegate
+  bool canStoreContentOfCell(Escher::SelectableListView* t,
+                             int row) const override {
     return false;
   }
 

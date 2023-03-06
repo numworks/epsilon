@@ -57,25 +57,23 @@ bool ListParameterController::textFieldDidFinishEditing(
   return true;
 }
 
-void ListParameterController::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+void ListParameterController::listViewDidChangeSelectionAndDidScroll(
+    SelectableListView *l, int previousSelectedRow,
     bool withinTemporarySelection) {
-  if (withinTemporarySelection || (previousSelectedCol == t->selectedColumn() &&
-                                   previousSelectedRow == t->selectedRow())) {
+  if (withinTemporarySelection || previousSelectedRow == l->selectedRow()) {
     return;
   }
   if (previousSelectedRow == 1) {
     MessageTableCellWithEditableText *myCell =
-        (MessageTableCellWithEditableText *)t->cellAtLocation(
-            previousSelectedCol, previousSelectedRow);
+        (MessageTableCellWithEditableText *)l->cell(previousSelectedRow);
     if (myCell) {
       myCell->setEditing(false);
     }
     Container::activeApp()->setFirstResponder(&m_selectableListView);
   }
-  if (t->selectedRow() == 1) {
+  if (l->selectedRow() == 1) {
     MessageTableCellWithEditableText *myNewCell =
-        (MessageTableCellWithEditableText *)t->selectedCell();
+        (MessageTableCellWithEditableText *)l->selectedCell();
     Container::activeApp()->setFirstResponder(myNewCell);
   }
 }

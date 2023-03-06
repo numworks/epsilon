@@ -15,7 +15,7 @@ using namespace Escher;
 namespace Shared {
 
 StoreMenuController::InnerListController::InnerListController(
-    StoreMenuController* dataSource, SelectableTableViewDelegate* delegate)
+    StoreMenuController* dataSource, SelectableListViewDelegate* delegate)
     : ViewController(dataSource),
       m_selectableTableView(this, dataSource, dataSource, delegate) {
   m_selectableTableView.setMargins(0);

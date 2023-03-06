@@ -43,13 +43,8 @@ class ListController : public Shared::FunctionListController,
   bool handleEvent(Ion::Events::Event event) override;
   /* ViewController */
   Escher::View* view() override { return &m_selectableTableView; }
-  /* SelectableTableViewDelegate*/
-  void tableViewDidChangeSelection(Escher::SelectableTableView* t,
-                                   int previousSelectedCol,
-                                   int previousSelectedRow,
-                                   bool withinTemporarySelection) override;
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
-                                       int row) const override {
+  bool canStoreContentOfCell(Escher::SelectableListView* t,
+                             int row) const override {
     return false;
   }
   /* ExpressionModelListController */

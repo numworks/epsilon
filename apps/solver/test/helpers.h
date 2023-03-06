@@ -27,7 +27,8 @@ void assert_solves_numerically_to(const char *equation, double min, double max,
 void assert_solves_to_error(std::initializer_list<const char *> equations,
                             Solver::EquationStore::Error error);
 void assert_solves_to_infinite_solutions(
-    std::initializer_list<const char *> equations);
+    std::initializer_list<const char *> equations,
+    std::initializer_list<const char *> solutions);
 
 // Shorthands
 inline void assert_solves_to_no_solution(const char *equation) {
@@ -44,7 +45,7 @@ inline void assert_solves_to_error(const char *equation,
   assert_solves_to_error({equation}, error);
 }
 inline void assert_solves_to_infinite_solutions(const char *equation) {
-  assert_solves_to_infinite_solutions({equation});
+  assert_solves_to_infinite_solutions({equation}, {});
 }
 inline void assert_solves_to(const char *equation, const char *solution) {
   assert_solves_to({equation}, {solution});

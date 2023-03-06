@@ -61,72 +61,80 @@ void assert_solves_to_error(std::initializer_list<const char *> equations,
       });
 }
 
+static void compareSolutions(EquationStore *store,
+                             std::initializer_list<const char *> solutions) {
+  Shared::GlobalContext globalContext;
+  SolverContext solverContext(&globalContext);
+
+  size_t i = 0;
+  for (const char *solution : solutions) {
+    // Solutions are specified under the form "foo=bar"
+    constexpr int maxSolutionLength = 100;
+    char editableSolution[maxSolutionLength];
+    strlcpy(editableSolution, solution, maxSolutionLength);
+
+    char *equal = strchr(editableSolution, '=');
+    quiz_assert(equal != nullptr);
+    *equal = 0;
+
+    const char *expectedVariable = editableSolution;
+    if (store->type() != EquationStore::Type::PolynomialMonovariable) {
+      /* For some reason the EquationStore returns up to 3 results but always
+       * just one variable, so we don't check variable name...
+       * TODO: Change this poor behavior. */
+      const char *obtainedVariable = store->variable(i);
+      quiz_assert(strcmp(obtainedVariable, expectedVariable) == 0);
+    }
+
+    /* Now for the ugly part!
+     * At the moment, the EquationStore doesn't let us retrieve solutions as
+     * Expression. We can only get Layout. It somewhat makes sense for how it
+     * is used in the app, but it's a nightmare to test, so changing this
+     * behavior is a TODO. */
+
+    const char *expectedValue = equal + 1;
+
+    /* We compare Expressions, by parsing the expected Expression and
+     * serializing and parsing the obtained layout. We need to ignore the
+     * parentheses during the comparison, because to create an expression from
+     * a const char * we need to add parentheses that are not necessary when
+     * creating an expression from a layout. */
+
+    Expression expectedExpression =
+        Expression::Parse(expectedValue, &solverContext, false);
+    quiz_assert(!expectedExpression.isUninitialized());
+
+    Layout obtainedLayout = store->solution(i)->exactLayout();
+    if (obtainedLayout.isUninitialized()) {
+      obtainedLayout = store->solution(i)->approximateLayout();
+    }
+    constexpr int bufferSize = 200;
+    char obtainedLayoutBuffer[bufferSize];
+    obtainedLayout.serializeForParsing(obtainedLayoutBuffer, bufferSize);
+    Expression obtainedExpression =
+        Expression::Parse(obtainedLayoutBuffer, &solverContext, false);
+    quiz_assert(
+        expectedExpression.isIdenticalToWithoutParentheses(obtainedExpression));
+
+    i++;
+  }
+  quiz_assert(store->numberOfSolutions() == i);
+}
+
 void assert_solves_to_infinite_solutions(
-    std::initializer_list<const char *> equations) {
-  solve_and(equations, [](EquationStore *store) {
+    std::initializer_list<const char *> equations,
+    std::initializer_list<const char *> solutions) {
+  solve_and(equations, [solutions](EquationStore *store) {
     quiz_assert(store->type() == EquationStore::Type::LinearSystem &&
                 store->hasMoreSolutions());
+    compareSolutions(store, solutions);
   });
 }
 
 void assert_solves_to(std::initializer_list<const char *> equations,
                       std::initializer_list<const char *> solutions) {
   solve_and(equations, [solutions](EquationStore *store) {
-    Shared::GlobalContext globalContext;
-    SolverContext solverContext(&globalContext);
-    int i = 0;
-    for (const char *solution : solutions) {
-      // Solutions are specified under the form "foo=bar"
-      constexpr int maxSolutionLength = 100;
-      char editableSolution[maxSolutionLength];
-      strlcpy(editableSolution, solution, maxSolutionLength);
-
-      char *equal = strchr(editableSolution, '=');
-      quiz_assert(equal != nullptr);
-      *equal = 0;
-
-      const char *expectedVariable = editableSolution;
-      if (store->type() != EquationStore::Type::PolynomialMonovariable) {
-        /* For some reason the EquationStore returns up to 3 results but always
-         * just one variable, so we don't check variable name...
-         * TODO: Change this poor behavior. */
-        const char *obtainedVariable = store->variable(i);
-        quiz_assert(strcmp(obtainedVariable, expectedVariable) == 0);
-      }
-
-      /* Now for the ugly part!
-       * At the moment, the EquationStore doesn't let us retrieve solutions as
-       * Expression. We can only get Layout. It somewhat makes sense for how it
-       * is used in the app, but it's a nightmare to test, so changing this
-       * behavior is a TODO. */
-
-      const char *expectedValue = equal + 1;
-
-      /* We compare Expressions, by parsing the expected Expression and
-       * serializing and parsing the obtained layout. We need to ignore the
-       * parentheses during the comparison, because to create an expression from
-       * a const char * we need to add parentheses that are not necessary when
-       * creating an expression from a layout. */
-
-      Expression expectedExpression =
-          Expression::Parse(expectedValue, &solverContext, false);
-      quiz_assert(!expectedExpression.isUninitialized());
-
-      Layout obtainedLayout = store->solution(i)->exactLayout();
-      if (obtainedLayout.isUninitialized()) {
-        obtainedLayout = store->solution(i)->approximateLayout();
-      }
-      constexpr int bufferSize = 200;
-      char obtainedLayoutBuffer[bufferSize];
-      obtainedLayout.serializeForParsing(obtainedLayoutBuffer, bufferSize);
-      Expression obtainedExpression =
-          Expression::Parse(obtainedLayoutBuffer, &solverContext, false);
-      quiz_assert(expectedExpression.isIdenticalToWithoutParentheses(
-          obtainedExpression));
-
-      i++;
-    }
-    quiz_assert(store->numberOfSolutions() == i);
+    compareSolutions(store, solutions);
   });
 }
 

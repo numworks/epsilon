@@ -38,8 +38,7 @@ class HomogeneityTableDataSource
 
   // SelectableTableViewDelegate
   bool unselectTopLeftCell(Escher::SelectableTableView* t,
-                           int previousSelectedCellX,
-                           int previousSelectedCellY);
+                           int previousSelectedCol, int previousSelectedRow);
 
   constexpr static int k_columnWidth = 82;
   // 5 - we take into account the potential "Total" column

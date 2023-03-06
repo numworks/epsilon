@@ -204,12 +204,11 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 /* SelectableTableViewDelegate*/
 
 void ListController::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
   // Update memoization of cell heights
   ExpressionModelListController::tableViewDidChangeSelection(
-      t, previousSelectedCellX, previousSelectedCellY,
-      withinTemporarySelection);
+      t, previousSelectedCol, previousSelectedRow, withinTemporarySelection);
   // Do not select the cell left of the "addEmptyFunction" cell
   if (isAddEmptyRow(selectedRow())) {
     t->selectCellAtLocation(1, numberOfRows() - 1);

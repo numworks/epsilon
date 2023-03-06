@@ -257,27 +257,27 @@ Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(
 }
 
 void HistoryController::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
-  if (withinTemporarySelection || previousSelectedCellY == selectedRow()) {
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
+  if (withinTemporarySelection || previousSelectedRow == selectedRow()) {
     return;
   }
-  if (previousSelectedCellY == -1) {
-    setSelectedSubviewType(SubviewType::Output, false, previousSelectedCellX,
-                           previousSelectedCellY);
+  if (previousSelectedRow == -1) {
+    setSelectedSubviewType(SubviewType::Output, false, previousSelectedCol,
+                           previousSelectedRow);
   } else if (selectedRow() == -1) {
-    setSelectedSubviewType(SubviewType::Input, false, previousSelectedCellX,
-                           previousSelectedCellY);
+    setSelectedSubviewType(SubviewType::Input, false, previousSelectedCol,
+                           previousSelectedRow);
   } else {
     HistoryViewCell *selectedCell = (HistoryViewCell *)(t->selectedCell());
     SubviewType nextSelectedSubviewType = selectedSubviewType();
     if (selectedCell && !selectedCell->displaysSingleLine()) {
-      nextSelectedSubviewType = previousSelectedCellY < selectedRow()
+      nextSelectedSubviewType = previousSelectedRow < selectedRow()
                                     ? SubviewType::Input
                                     : SubviewType::Output;
     }
-    setSelectedSubviewType(nextSelectedSubviewType, false,
-                           previousSelectedCellX, previousSelectedCellY);
+    setSelectedSubviewType(nextSelectedSubviewType, false, previousSelectedCol,
+                           previousSelectedRow);
   }
 }
 
@@ -343,14 +343,14 @@ void HistoryController::setSelectedSubviewType(SubviewType subviewType,
 
 void HistoryController::historyViewCellDidChangeSelection(
     HistoryViewCell **cell, HistoryViewCell **previousCell,
-    int previousSelectedCellX, int previousSelectedCellY, SubviewType type,
+    int previousSelectedCol, int previousSelectedRow, SubviewType type,
     SubviewType previousType) {
   /* If the selection change triggers the toggling of the outputs, we update
    * the whole table as the height of the selected cell row might have changed.
    */
   if ((type == SubviewType::Output || previousType == SubviewType::Output) &&
       (calculationAtIndexToggles(selectedRow()) ||
-       calculationAtIndexToggles(previousSelectedCellY))) {
+       calculationAtIndexToggles(previousSelectedRow))) {
     m_selectableTableView.reloadData(false);
   }
 
@@ -366,7 +366,7 @@ void HistoryController::historyViewCellDidChangeSelection(
   *cell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
   *previousCell =
       static_cast<HistoryViewCell *>(m_selectableTableView.cellAtLocation(
-          previousSelectedCellX, previousSelectedCellY));
+          previousSelectedCol, previousSelectedRow));
   /* 'reloadData' calls 'willDisplayCellForIndex' for each cell while the table
    * has been deselected. To reload the expanded cell, we call one more time
    * 'willDisplayCellForIndex' but once the right cell has been selected. */

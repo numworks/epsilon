@@ -61,8 +61,8 @@ class ConsoleController : public Escher::ViewController,
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView* t, int previousSelectedCellX,
-      int previousSelectedCellY, bool withinTemporarySelection) override;
+      Escher::SelectableTableView* t, int previousSelectedCol,
+      int previousSelectedRow, bool withinTemporarySelection) override;
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,

@@ -223,16 +223,16 @@ void SelectableTableView::unhighlightSelectedCell() {
 
 void SelectableTableView::deselectTable(bool withinTemporarySelection) {
   unhighlightSelectedCell();
-  int previousSelectedCellX = selectedColumn();
-  int previousSelectedCellY = selectedRow();
+  int previousSelectedCol = selectedColumn();
+  int previousSelectedRow = selectedRow();
   selectColumn(0);
   selectRow(-1);
   if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX,
-                                            previousSelectedCellY,
+    m_delegate->tableViewDidChangeSelection(this, previousSelectedCol,
+                                            previousSelectedRow,
                                             withinTemporarySelection);
     m_delegate->tableViewDidChangeSelectionAndDidScroll(
-        this, previousSelectedCellX, previousSelectedCellY,
+        this, previousSelectedCol, previousSelectedRow,
         withinTemporarySelection);
   }
 }

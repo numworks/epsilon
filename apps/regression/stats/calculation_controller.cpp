@@ -47,8 +47,8 @@ void CalculationController::viewWillAppear() {
 }
 
 void CalculationController::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }
@@ -59,7 +59,7 @@ void CalculationController::tableViewDidChangeSelection(
    * previous cell cannot be the top left corner cell if it also is the
    * selected one. */
   if (t->selectedRow() == 0 && t->selectedColumn() <= 1) {
-    if (previousSelectedCellX <= 1 && previousSelectedCellY == 1) {
+    if (previousSelectedCol <= 1 && previousSelectedRow == 1) {
       selectableTableView()->deselectTable();
       tabController()->selectTab();
     } else {
@@ -69,8 +69,8 @@ void CalculationController::tableViewDidChangeSelection(
 }
 
 void CalculationController::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }
@@ -83,18 +83,18 @@ void CalculationController::tableViewDidChangeSelectionAndDidScroll(
         (EvenOddDoubleBufferTextCellWithSeparator *)t->selectedCell();
     // Default selected subcell is the left one
     bool firstSubCellSelected = true;
-    if (previousSelectedCellX > 1 && previousSelectedCellY >= 0 &&
-        previousSelectedCellY <= k_numberOfDoubleBufferCalculations) {
+    if (previousSelectedCol > 1 && previousSelectedRow >= 0 &&
+        previousSelectedRow <= k_numberOfDoubleBufferCalculations) {
       // If we come from another double text cell, we have to update
       // subselection
       EvenOddDoubleBufferTextCellWithSeparator *myPreviousCell =
           (EvenOddDoubleBufferTextCellWithSeparator *)t->cellAtLocation(
-              previousSelectedCellX, previousSelectedCellY);
+              previousSelectedCol, previousSelectedRow);
       /* If the selection stays in the same column, we copy the subselection
        * from previous cell. Otherwise, the selection has jumped to another
        * column, we thus subselect the other subcell. */
       assert(myPreviousCell);
-      firstSubCellSelected = t->selectedColumn() == previousSelectedCellX
+      firstSubCellSelected = t->selectedColumn() == previousSelectedCol
                                  ? myPreviousCell->firstTextSelected()
                                  : !myPreviousCell->firstTextSelected();
     }

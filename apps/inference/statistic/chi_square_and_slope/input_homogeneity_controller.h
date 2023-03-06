@@ -21,9 +21,8 @@ class InputHomogeneityController : public InputCategoricalController {
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(
-      Escher::SelectableTableView* t, int previousSelectedCellX,
-      int previousSelectedCellY,
-      bool withinTemporarySelection = false) override;
+      Escher::SelectableTableView* t, int previousSelectedCol,
+      int previousSelectedRow, bool withinTemporarySelection = false) override;
   bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
                                        int row) const override {
     return col > 0 && row > 0;

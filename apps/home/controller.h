@@ -39,8 +39,8 @@ class Controller : public Escher::ViewController,
     return row < numberOfRows() - 1 || column <= columnOfLastIcon();
   }
   void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView* t, int previousSelectedCellX,
-      int previousSelectedCellY, bool withinTemporarySelection) override;
+      Escher::SelectableTableView* t, int previousSelectedCol,
+      int previousSelectedRow, bool withinTemporarySelection) override;
 
  private:
   // SimpleTableViewDataSource

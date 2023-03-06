@@ -83,13 +83,13 @@ void HomogeneityTableDataSource::willDisplayCellAtLocation(
   }
 }
 
-bool HomogeneityTableDataSource::unselectTopLeftCell(
-    SelectableTableView *t, int previousSelectedCellX,
-    int previousSelectedCellY) {
+bool HomogeneityTableDataSource::unselectTopLeftCell(SelectableTableView *t,
+                                                     int previousSelectedCol,
+                                                     int previousSelectedRow) {
   // Prevent top left selection
   if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
-    t->selectRow(previousSelectedCellY);
-    t->selectColumn(previousSelectedCellX);
+    t->selectRow(previousSelectedRow);
+    t->selectColumn(previousSelectedCol);
     return true;
   }
   return false;

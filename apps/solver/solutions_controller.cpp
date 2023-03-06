@@ -470,8 +470,8 @@ void SolutionsController::didBecomeFirstResponder() {
 }
 
 void SolutionsController::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   if (rowOfUserVariablesMessage < 0) {
     return;
@@ -482,7 +482,7 @@ void SolutionsController::tableViewDidChangeSelection(
     t->selectCellAtLocation(
         t->selectedColumn(),
         rowOfUserVariablesMessage +
-            (rowOfUserVariablesMessage < previousSelectedCellY ? -2 : 1));
+            (rowOfUserVariablesMessage < previousSelectedRow ? -2 : 1));
   }
 }
 

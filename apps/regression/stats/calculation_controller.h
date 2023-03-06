@@ -26,12 +26,12 @@ class CalculationController : public Shared::DoublePairTableController {
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView* t,
-                                   int previousSelectedCellX,
-                                   int previousSelectedCellY,
+                                   int previousSelectedCol,
+                                   int previousSelectedRow,
                                    bool withinTemporarySelection) override;
   void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView* t, int previousSelectedCellX,
-      int previousSelectedCellY, bool withinTemporarySelection) override;
+      Escher::SelectableTableView* t, int previousSelectedCol,
+      int previousSelectedRow, bool withinTemporarySelection) override;
   bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
                                        int row) const override;
 

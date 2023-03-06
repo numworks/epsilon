@@ -45,8 +45,8 @@ class ListController : public Shared::FunctionListController,
   Escher::View* view() override { return &m_selectableTableView; }
   /* SelectableTableViewDelegate*/
   void tableViewDidChangeSelection(Escher::SelectableTableView* t,
-                                   int previousSelectedCellX,
-                                   int previousSelectedCellY,
+                                   int previousSelectedCol,
+                                   int previousSelectedRow,
                                    bool withinTemporarySelection) override;
   bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
                                        int row) const override {

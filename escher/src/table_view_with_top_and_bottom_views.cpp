@@ -90,8 +90,8 @@ void TableViewWithTopAndBottomViews::layoutSubviews(bool force) {
 }
 
 void TableViewWithTopAndBottomViews::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView* t, int previousSelectedCellX,
-    int previousSelectedCellY, bool withinTemporarySelection) {
+    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
   /* TODO: This won't be called if the table view changed selection without
    * scrolling. This can be a problem if your table is small enough to fit in
    * the screen bounds but the bottom view does not fit in the screen.

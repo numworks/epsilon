@@ -6,6 +6,7 @@
 #include <escher/message_text_view.h>
 #include <escher/metric.h>
 #include <escher/scroll_view.h>
+#include <escher/selectable_list_view_delegate.h>
 #include <escher/selectable_table_view.h>
 
 namespace Escher {
@@ -20,6 +21,12 @@ class TableViewWithTopAndBottomViews : public View,
   TableViewWithTopAndBottomViews(SelectableTableView* table,
                                  TableViewDataSource* tableDataSource,
                                  View* topView, View* bottomView = nullptr);
+
+  // TODO is this unsafe ?
+  SelectableListViewDelegate* asListViewDelegate() {
+    return static_cast<SelectableListViewDelegate*>(
+        static_cast<SelectableTableViewDelegate*>(this));
+  }
 
   /* View */
   void drawRect(KDContext* ctx, KDRect rect) const override;

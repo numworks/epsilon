@@ -20,6 +20,7 @@ class SelectableListView : public SelectableTableView {
   void scrollToCell(int row) { return scrollToCell(0, row); }
   bool selectCell(int row) { return selectCellAtLocation(0, row); }
   void reloadCell(int row) { return reloadCellAtLocation(0, row); }
+  HighlightCell* cell(int row) { return cellAtLocation(0, row); }
 
  private:
   // Hide column-related methods

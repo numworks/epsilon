@@ -64,7 +64,7 @@ class SelectableCellListPage : public SelectableListViewController<DataSource> {
 
  public:
   SelectableCellListPage(Responder* parent,
-                         SelectableTableViewDelegate* tableDelegate = nullptr)
+                         SelectableListViewDelegate* tableDelegate = nullptr)
       : SelectableListViewController<DataSource>(parent, tableDelegate) {}
   Cell* cellAtIndex(int i) {
     assert(i >= 0 && i < NumberOfCells);

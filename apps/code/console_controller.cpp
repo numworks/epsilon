@@ -300,27 +300,27 @@ void ConsoleController::willDisplayCellForIndex(HighlightCell *cell,
   }
 }
 
-void ConsoleController::tableViewDidChangeSelectionAndDidScroll(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+void ConsoleController::listViewDidChangeSelectionAndDidScroll(
+    Escher::SelectableListView *l, int previousSelectedRow,
     bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }
-  if (t->selectedRow() == m_consoleStore.numberOfLines()) {
+  if (l->selectedRow() == m_consoleStore.numberOfLines()) {
     m_editCell.setEditing(true);
     return;
   }
-  if (t->selectedRow() > -1) {
+  if (l->selectedRow() > -1) {
     if (previousSelectedRow > -1 &&
         previousSelectedRow < m_consoleStore.numberOfLines()) {
       // Reset the scroll of the previous cell
-      ConsoleLineCell *previousCell = (ConsoleLineCell *)(t->cellAtLocation(
-          previousSelectedCol, previousSelectedRow));
+      ConsoleLineCell *previousCell =
+          (ConsoleLineCell *)(l->cell(previousSelectedRow));
       if (previousCell) {
         previousCell->reloadCell();
       }
     }
-    ConsoleLineCell *selectedCell = (ConsoleLineCell *)(t->selectedCell());
+    ConsoleLineCell *selectedCell = (ConsoleLineCell *)(l->selectedCell());
     if (selectedCell) {
       selectedCell->reloadCell();
     }

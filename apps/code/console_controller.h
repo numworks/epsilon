@@ -19,7 +19,7 @@ class App;
 class ConsoleController : public Escher::ViewController,
                           public Escher::RegularListViewDataSource,
                           public Escher::SelectableListViewDataSource,
-                          public Escher::SelectableTableViewDelegate,
+                          public Escher::SelectableListViewDelegate,
                           public Escher::TextFieldDelegate,
                           public Shared::InputEventHandlerDelegate,
                           public MicroPython::ExecutionEnvironment {
@@ -60,9 +60,9 @@ class ConsoleController : public Escher::ViewController,
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView* t, int previousSelectedCol,
-      int previousSelectedRow, bool withinTemporarySelection) override;
+  void listViewDidChangeSelectionAndDidScroll(
+      Escher::SelectableListView* l, int previousSelectedRow,
+      bool withinTemporarySelection) override;
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,

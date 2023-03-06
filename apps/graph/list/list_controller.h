@@ -43,9 +43,9 @@ class ListController : public Shared::FunctionListController,
   }
   FunctionToolbox* toolbox() override;
   Shared::ListParameterController* parameterController() override;
-  // SelectableTableViewDelegate
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
-                                       int row) const override {
+  // SelectableListViewDelegate
+  bool canStoreContentOfCell(Escher::SelectableListView* l,
+                             int row) const override {
     return false;
   }
 

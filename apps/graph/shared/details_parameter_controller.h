@@ -15,7 +15,7 @@ namespace Graph {
 
 class DetailsParameterController : public Escher::SelectableListViewController<
                                        Escher::MemoizedListViewDataSource>,
-                                   public Escher::SelectableTableViewDelegate {
+                                   public Escher::SelectableListViewDelegate {
  public:
   DetailsParameterController(Escher::Responder* parentResponder);
 
@@ -39,9 +39,9 @@ class DetailsParameterController : public Escher::SelectableListViewController<
   int reusableCellCount(int type) override { return k_numberOfDataPoints; }
   int typeAtIndex(int index) const override { return 0; }
 
-  // SelectableTableViewDelegate
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
-                                       int row) const override {
+  // SelectableListViewDelegate
+  bool canStoreContentOfCell(Escher::SelectableListView* t,
+                             int row) const override {
     return row != k_indexOfCurveTypeRow;
   }
 

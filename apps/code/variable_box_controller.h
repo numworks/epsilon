@@ -28,10 +28,10 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
   int reusableCellCount(int type) override;
   int typeAtIndex(int i) const override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
-  /* SelectableTableViewDelegate */
-  void tableViewDidChangeSelection(
-      Escher::SelectableTableView* t, int previousSelectedCol,
-      int previousSelectedRow, bool withinTemporarySelection = false) override;
+  /* SelectableListViewDelegate */
+  void listViewDidChangeSelection(
+      Escher::SelectableListView* l, int previousSelectedRow,
+      bool withinTemporarySelection = false) override;
 
   // AlternateEmptyNestedMenuController
   Escher::ViewController* emptyViewController() override {

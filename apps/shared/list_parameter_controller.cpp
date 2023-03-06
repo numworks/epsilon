@@ -12,8 +12,8 @@ namespace Shared {
 ListParameterController::ListParameterController(
     Responder *parentResponder, I18n::Message functionColorMessage,
     I18n::Message deleteFunctionMessage,
-    SelectableTableViewDelegate *tableDelegate)
-    : ExplicitSelectableListViewController(parentResponder, tableDelegate),
+    SelectableListViewDelegate *listDelegate)
+    : ExplicitSelectableListViewController(parentResponder, listDelegate),
       m_enableCell(I18n::Message::ActivateDeactivateListParamTitle,
                    I18n::Message::ActivateDeactivateListParamDescription, true),
       m_deleteCell(deleteFunctionMessage),

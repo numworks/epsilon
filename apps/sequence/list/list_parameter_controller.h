@@ -19,7 +19,7 @@ namespace Sequence {
 class ListController;
 
 class ListParameterController : public Shared::ListParameterController,
-                                public Escher::SelectableTableViewDelegate,
+                                public Escher::SelectableListViewDelegate,
                                 public Shared::ParameterTextFieldDelegate {
  public:
   ListParameterController(
@@ -32,9 +32,9 @@ class ListParameterController : public Shared::ListParameterController,
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
                                  const char *text,
                                  Ion::Events::Event event) override;
-  void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView *t, int previousSelectedCol,
-      int previousSelectedRow, bool withinTemporarySelection) override;
+  void listViewDidChangeSelectionAndDidScroll(
+      Escher::SelectableListView *l, int previousSelectedRow,
+      bool withinTemporarySelection) override;
 
   // MemoizedListViewDataSource
   Escher::HighlightCell *cell(int index) override;

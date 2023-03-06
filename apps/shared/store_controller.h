@@ -19,7 +19,7 @@ namespace Shared {
 class StoreController : public EditableCellTableViewController,
                         public Escher::ButtonRowDelegate,
                         public StoreColumnHelper,
-                        public Escher::SelectableTableViewDelegate {
+                        public Escher::SelectableListViewDelegate {
  public:
   StoreController(Escher::Responder* parentResponder,
                   Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
@@ -56,9 +56,9 @@ class StoreController : public EditableCellTableViewController,
   // EditableCellTableViewController
   int numberOfRowsAtColumn(int i) const override;
 
-  // SelectableTableViewDelegate
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
-                                       int row) const override {
+  // SelectableListViewDelegate
+  bool canStoreContentOfCell(Escher::SelectableListView* t,
+                             int row) const override {
     return row > 0;
   }
 

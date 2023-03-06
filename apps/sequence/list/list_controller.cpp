@@ -201,20 +201,6 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   ;
 }
 
-/* SelectableTableViewDelegate*/
-
-void ListController::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
-  // Update memoization of cell heights
-  ExpressionModelListController::tableViewDidChangeSelection(
-      t, previousSelectedCol, previousSelectedRow, withinTemporarySelection);
-  // Do not select the cell left of the "addEmptyFunction" cell
-  if (isAddEmptyRow(selectedRow())) {
-    t->selectCellAtLocation(1, numberOfRows() - 1);
-  }
-}
-
 /* LayoutFieldDelegate */
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {

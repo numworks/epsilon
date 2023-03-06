@@ -53,7 +53,7 @@ class ListController : public Shared::FunctionListController,
     return false;
   }
   /* ExpressionModelListController */
-  Escher::SelectableTableView* selectableTableView() override {
+  Escher::SelectableListView* selectableTableView() override {
     return &m_selectableTableView;
   }
   void showLastSequence();
@@ -118,7 +118,7 @@ class ListController : public Shared::FunctionListController,
     return m_editableCell.expressionCell()->expressionField();
   }
 
-  Escher::SelectableTableView m_selectableTableView;
+  Escher::SelectableListView m_selectableTableView;
   Escher::EvenOddCell m_emptyCell;
   SequenceCell m_sequenceCells[k_maxNumberOfRows];
   EditableSequenceCell m_editableCell;

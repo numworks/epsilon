@@ -278,7 +278,7 @@ EquationStore *ListController::modelStore() const {
   return App::app()->equationStore();
 }
 
-SelectableTableView *ListController::selectableTableView() {
+SelectableListView *ListController::selectableTableView() {
   return m_equationListView.selectableTableView();
 }
 

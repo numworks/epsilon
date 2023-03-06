@@ -5,6 +5,7 @@
 #include <escher/even_odd_message_text_cell.h>
 #include <escher/expression_field.h>
 #include <escher/input_view_controller.h>
+#include <escher/selectable_list_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
 
@@ -46,7 +47,7 @@ class ExpressionModelListController
   virtual bool removeModelRow(Ion::Storage::Record record);
   virtual int modelIndexForRow(int j) const { return j; }
   // ViewController
-  virtual Escher::SelectableTableView* selectableTableView() = 0;
+  virtual Escher::SelectableListView* selectableTableView() = 0;
   virtual ExpressionModelStore* modelStore() const = 0;
   Escher::EvenOddMessageTextCell m_addNewModel;
   // LayoutDelegate

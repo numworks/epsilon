@@ -3,7 +3,7 @@
 
 #include <escher/responder.h>
 #include <escher/scroll_view.h>
-#include <escher/selectable_table_view.h>
+#include <escher/selectable_list_view.h>
 #include <escher/view.h>
 
 namespace Solver {
@@ -21,7 +21,7 @@ class EquationListView : public Escher::Responder,
   void scrollViewDidChangeOffset(
       Escher::ScrollViewDataSource* scrollViewDataSource) override;
   void didBecomeFirstResponder() override;
-  Escher::SelectableTableView* selectableTableView() { return &m_listView; }
+  Escher::SelectableListView* selectableTableView() { return &m_listView; }
   constexpr static KDCoordinate k_margin = 10;
   // 2*k_margin+BraceView::k_braceWidth;
   constexpr static KDCoordinate k_braceTotalWidth = 30;
@@ -38,7 +38,7 @@ class EquationListView : public Escher::Responder,
     constexpr static KDCoordinate k_braceWidth = 10;
   };
   BraceStyle m_braceStyle;
-  Escher::SelectableTableView m_listView;
+  Escher::SelectableListView m_listView;
   BraceView m_braceView;
   Escher::ScrollView m_scrollBraceView;
 };

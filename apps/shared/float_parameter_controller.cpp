@@ -141,10 +141,10 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(
     return false;
   }
   resetMemoization();
-  m_selectableTableView.reloadCellAtLocation(0, activeCell());
+  m_selectableTableView.reloadCell(activeCell());
   m_selectableTableView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    m_selectableTableView.selectCellAtLocation(selectedColumn(), row + 1);
+    m_selectableTableView.selectCell(row + 1);
   } else {
     m_selectableTableView.handleEvent(event);
   }

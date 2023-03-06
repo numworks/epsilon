@@ -146,7 +146,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);
-      selectableTableView()->selectCellAtLocation(0, numberOfRows() - 1);
+      selectableTableView()->selectCell(numberOfRows() - 1);
       Container::activeApp()->setFirstResponder(selectableTableView());
       return true;
     }
@@ -455,6 +455,6 @@ void ListController::showLastSequence() {
   bool hasAddSequenceButton =
       store->numberOfModels() == store->maxNumberOfModels();
   int lastRow = numberOfExpressionRows() - (hasAddSequenceButton ? 0 : 1) - 1;
-  m_selectableTableView.scrollToCell(1, lastRow);
+  m_selectableTableView.scrollToCell(lastRow);
 }
 }  // namespace Sequence

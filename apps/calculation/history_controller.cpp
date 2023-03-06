@@ -227,7 +227,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       Container::activeApp()->setFirstResponder(parentResponder());
       return true;
     }
-    m_selectableTableView.selectCell(focusRow > 0 ? focusRow - 1 : 0);
+    m_selectableTableView.selectCellAtLocation(0,
+                                               focusRow > 0 ? focusRow - 1 : 0);
     /* The parameters 'sameCell' and 'previousSelectedY' are chosen to enforce
      * toggling of the output when necessary. */
     setSelectedSubviewType(

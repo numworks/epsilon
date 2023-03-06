@@ -66,7 +66,7 @@ class ListController : public Shared::ExpressionModelListController,
           Escher::Metric::ButtonRowEmbossedStyleHeightLarge);
   constexpr static KDCoordinate k_newModelMargin =
       Escher::Metric::BigCellMargin + 3;
-  Escher::SelectableTableView* selectableTableView() override;
+  Escher::SelectableListView* selectableTableView() override;
   void reloadButtonMessage();
   void addModel() override;
   bool removeModelRow(Ion::Storage::Record record) override;

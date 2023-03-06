@@ -94,11 +94,10 @@ bool ExplicitFloatParameterController::textFieldDidFinishEditing(
     return false;
   }
   resetMemoization();
-  m_selectableTableView.reloadCellAtLocation(0, selectedRow());
+  m_selectableTableView.reloadCell(selectedRow());
   m_selectableTableView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    m_selectableTableView.selectCellAtLocation(selectedColumn(),
-                                               selectedRow() + 1);
+    m_selectableTableView.selectCell(selectedRow() + 1);
   } else {
     m_selectableTableView.handleEvent(event);
   }

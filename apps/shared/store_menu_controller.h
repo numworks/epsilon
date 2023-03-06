@@ -5,7 +5,7 @@
 #include <escher/editable_expression_cell.h>
 #include <escher/list_view_data_source.h>
 #include <escher/pervasive_box.h>
-#include <escher/selectable_table_view.h>
+#include <escher/selectable_list_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
 
@@ -67,7 +67,7 @@ class StoreMenuController : public Escher::ModalViewController,
     }
 
    private:
-    Escher::SelectableTableView m_selectableTableView;
+    Escher::SelectableListView m_selectableTableView;
   };
 
   bool parseAndStore(const char* text);

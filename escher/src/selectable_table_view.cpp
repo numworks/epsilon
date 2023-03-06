@@ -153,11 +153,6 @@ bool SelectableTableView::selectCellAtClippedLocation(
                               withinTemporarySelection);
 }
 
-bool SelectableTableView::selectCell(int row) {
-  assert(dataSource()->numberOfColumns() == 1);
-  return selectCellAtLocation(0, row);
-}
-
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   assert(dataSource()->numberOfRows() > 0);
   int step = Ion::Events::longPressFactor();

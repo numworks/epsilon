@@ -35,9 +35,6 @@ class SelectableTableView : public TableView, public Responder {
   HighlightCell* selectedCell();
   bool selectCellAtLocation(int col, int row, bool setFirstResponder = true,
                             bool withinTemporarySelection = false);
-  /* TODO we should create a SelectableListView or something similar to enforce
-   * via the type the use of the correct list/table api by the controller */
-  bool selectCell(int row);
   bool selectCellAtClippedLocation(int col, int row,
                                    bool setFirstResponder = true,
                                    bool withinTemporarySelection = false);

@@ -32,8 +32,8 @@ void TableView::reloadVisibleCellsAtColumn(int column) {
   int lastVisibleRow = std::max(firstVisibleRow + numberOfDisplayableRows(),
                                 m_contentView.dataSource()->numberOfRows() - 1);
 
-  for (int j = firstVisibleRow; j <= lastVisibleRow; j++) {
-    reloadCellAtLocation(column, j);
+  for (int row = firstVisibleRow; row <= lastVisibleRow; row++) {
+    reloadCellAtLocation(column, row);
   }
 }
 
@@ -70,17 +70,17 @@ TableView::ContentView::ContentView(TableView* tableView,
       m_horizontalCellOverlap(horizontalCellOverlap),
       m_verticalCellOverlap(verticalCellOverlap) {}
 
-KDRect TableView::ContentView::cellFrame(int i, int j) const {
-  KDCoordinate columnWidth = m_dataSource->columnWidth(i);
-  KDCoordinate rowHeight = m_dataSource->rowHeight(j);
+KDRect TableView::ContentView::cellFrame(int col, int row) const {
+  KDCoordinate columnWidth = m_dataSource->columnWidth(col);
+  KDCoordinate rowHeight = m_dataSource->rowHeight(row);
   if (columnWidth == 0 || rowHeight == 0) {
     return KDRectZero;
   }
   if (columnWidth == KDCOORDINATE_MAX) {  // For ListViewDataSource
     columnWidth = m_tableView->maxContentWidthDisplayableWithoutScrolling();
   }
-  return KDRect(m_dataSource->cumulatedWidthBeforeIndex(i),
-                m_dataSource->cumulatedHeightBeforeIndex(j),
+  return KDRect(m_dataSource->cumulatedWidthBeforeIndex(col),
+                m_dataSource->cumulatedHeightBeforeIndex(row),
                 columnWidth + m_horizontalCellOverlap,
                 rowHeight + m_verticalCellOverlap);
 }
@@ -95,22 +95,22 @@ KDCoordinate TableView::ContentView::width() const {
              : result;
 }
 
-void TableView::ContentView::reloadCellAtLocation(int i, int j,
+void TableView::ContentView::reloadCellAtLocation(int col, int row,
                                                   bool forceSetFrame) {
-  HighlightCell* cell = cellAtLocation(i, j);
+  HighlightCell* cell = cellAtLocation(col, row);
   if (cell) {
-    m_dataSource->willDisplayCellAtLocation(cell, i, j);
+    m_dataSource->willDisplayCellAtLocation(cell, col, row);
     if (forceSetFrame) {
-      cell->setFrame(cellFrame(i, j), true);
+      cell->setFrame(cellFrame(col, row), true);
     }
   }
 }
 
 int TableView::ContentView::typeOfSubviewAtIndex(int index) const {
   assert(index >= 0);
-  int i = absoluteColumnIndexFromSubviewIndex(index);
-  int j = absoluteRowIndexFromSubviewIndex(index);
-  int type = m_dataSource->typeAtLocation(i, j);
+  int col = absoluteColumnIndexFromSubviewIndex(index);
+  int row = absoluteRowIndexFromSubviewIndex(index);
+  int type = m_dataSource->typeAtLocation(col, row);
   return type;
 }
 
@@ -126,15 +126,15 @@ int TableView::ContentView::typeIndexFromSubviewIndex(int index,
   return typeIndex;
 }
 
-HighlightCell* TableView::ContentView::cellAtLocation(int x, int y) {
-  int relativeX = x - columnsScrollingOffset();
-  int relativeY = y - rowsScrollingOffset();
-  if (relativeY < 0 || relativeY >= numberOfDisplayableRows() ||
-      relativeX < 0 || relativeX >= numberOfDisplayableColumns()) {
+HighlightCell* TableView::ContentView::cellAtLocation(int col, int row) {
+  int relativeColumn = col - columnsScrollingOffset();
+  int relativeRow = row - rowsScrollingOffset();
+  if (relativeRow < 0 || relativeRow >= numberOfDisplayableRows() ||
+      relativeColumn < 0 || relativeColumn >= numberOfDisplayableColumns()) {
     return nullptr;
   }
-  int type = m_dataSource->typeAtLocation(x, y);
-  int index = relativeY * numberOfDisplayableColumns() + relativeX;
+  int type = m_dataSource->typeAtLocation(col, row);
+  int index = relativeRow * numberOfDisplayableColumns() + relativeColumn;
   int typeIndex = typeIndexFromSubviewIndex(index, type);
   return m_dataSource->reusableCell(typeIndex, type);
 }

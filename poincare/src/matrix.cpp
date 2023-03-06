@@ -144,11 +144,11 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
 
 int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
                  Preferences::AngleUnit angleUnit,
-                 Preferences::UnitFormat unitFormat, bool inPlace) {
+                 Preferences::UnitFormat unitFormat,
+                 ReductionTarget reductionTarget, bool inPlace) {
   Expression m;
-  ReductionContext systemReductionContext =
-      ReductionContext(context, complexFormat, angleUnit, unitFormat,
-                       ReductionTarget::SystemForApproximation);
+  ReductionContext systemReductionContext = ReductionContext(
+      context, complexFormat, angleUnit, unitFormat, reductionTarget);
 
   {
     ExceptionCheckpoint ecp;
@@ -332,6 +332,12 @@ Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
         Expression newOpHJ = Division::Builder(opHJ, divisor.clone());
         replaceChildAtIndexInPlace(h * n + j, newOpHJ);
         newOpHJ = newOpHJ.shallowReduce(reductionContext);
+        if (reductionContext.target() == ReductionTarget::SystemForAnalysis &&
+            newOpHJ.type() == ExpressionNode::Type::Dependency) {
+          Expression e = newOpHJ.childAtIndex(0);
+          newOpHJ.replaceChildAtIndexWithGhostInPlace(0);
+          newOpHJ.replaceWithInPlace(e);
+        }
       }
       replaceChildInPlace(divisor, Rational::Builder(1));
 
@@ -352,6 +358,12 @@ Matrix Matrix::rowCanonize(const ReductionContext &reductionContext,
           replaceChildAtIndexInPlace(i * n + j, newOpIJ);
           newOpIJ.childAtIndex(1).shallowReduce(reductionContext);
           newOpIJ = newOpIJ.shallowReduce(reductionContext);
+          if (reductionContext.target() == ReductionTarget::SystemForAnalysis &&
+              newOpIJ.type() == ExpressionNode::Type::Dependency) {
+            Expression e = newOpIJ.childAtIndex(0);
+            newOpIJ.replaceChildAtIndexWithGhostInPlace(0);
+            newOpIJ.replaceWithInPlace(e);
+          }
         }
         replaceChildAtIndexInPlace(i * n + k, Rational::Builder(0));
       }

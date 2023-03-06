@@ -232,7 +232,8 @@ EquationStore::Error EquationStore::solveLinearSystem(
   ab.setDimensions(m, n + 1);
 
   // Compute the rank of (A|b)
-  int rank = ab.rank(context, m_complexFormat, angleUnit, unitFormat, true);
+  int rank = ab.rank(context, m_complexFormat, angleUnit, unitFormat,
+                     ReductionTarget::SystemForApproximation, true);
   if (rank == -1) {
     return Error::EquationUndefined;
   }
@@ -287,7 +288,8 @@ EquationStore::Error EquationStore::solveLinearSystem(
     ++abChildren;
   }
   ab.setDimensions(m + numberOfParameters, n + 1);
-  int newRank = ab.rank(context, m_complexFormat, angleUnit, unitFormat, true);
+  int newRank = ab.rank(context, m_complexFormat, angleUnit, unitFormat,
+                        ReductionTarget::SystemForAnalysis, true);
   Error error;
   if (newRank == -1) {
     error = Error::EquationUndefined;
@@ -360,10 +362,6 @@ EquationStore::Error EquationStore::registerSolution(Expression e,
   Preferences::AngleUnit angleUnit =
       Preferences::sharedPreferences->angleUnit();
   Expression exact, approximate;
-
-  if (e.type() == ExpressionNode::Type::Dependency) {
-    e = e.childAtIndex(0);
-  }
 
   if (type == SolutionType::Approximate) {
     approximate = e;

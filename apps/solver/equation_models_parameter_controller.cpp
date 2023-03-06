@@ -22,8 +22,8 @@ EquationModelsParameterController::EquationModelsParameterController(
       m_emptyModelCell(I18n::Message::Empty),
       m_equationStore(equationStore),
       m_listController(listController) {
-  m_selectableTableView.setMargins(0);
-  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableListView.setMargins(0);
+  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Poincare::Expression e =
         Expression::Parse(k_models[i + 1], nullptr);  // No context needed
@@ -31,7 +31,7 @@ EquationModelsParameterController::EquationModelsParameterController(
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                        Preferences::ShortNumberOfSignificantDigits, nullptr);
     m_modelCells[i].setLayout(m_layouts[i]);
-    m_modelCells[i].setParentResponder(&m_selectableTableView);
+    m_modelCells[i].setParentResponder(&m_selectableListView);
   }
 }
 
@@ -45,7 +45,7 @@ void EquationModelsParameterController::viewWillAppear() {
 }
 
 void EquationModelsParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 bool EquationModelsParameterController::handleEvent(Ion::Events::Event event) {

@@ -16,7 +16,7 @@ namespace Settings {
 
 ExamModeController::ExamModeController(Responder *parentResponder)
     : GenericSubController(parentResponder),
-      m_contentView(&m_selectableTableView) {}
+      m_contentView(&m_selectableListView) {}
 
 bool ExamModeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {

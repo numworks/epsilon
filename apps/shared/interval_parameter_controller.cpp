@@ -25,7 +25,7 @@ IntervalParameterController::IntervalParameterController(
           },
           this)) {
   for (int i = 0; i < k_totalNumberOfCell; i++) {
-    m_intervalCells[i].setParentResponder(&m_selectableTableView);
+    m_intervalCells[i].setParentResponder(&m_selectableListView);
     m_intervalCells[i].setDelegates(inputEventHandlerDelegate, this);
   }
 }

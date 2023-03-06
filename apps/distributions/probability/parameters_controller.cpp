@@ -21,13 +21,13 @@ ParametersController::ParametersController(
       m_bottomView(KDFont::Size::Small, I18n::Message::LeaveAFieldEmpty,
                    KDContext::k_alignCenter, KDContext::k_alignCenter,
                    Escher::Palette::GrayDark, Escher::Palette::WallScreen),
-      m_contentView(&m_selectableTableView, this, &m_headerView, &m_bottomView),
+      m_contentView(&m_selectableListView, this, &m_headerView, &m_bottomView),
       m_distribution(distribution),
       m_calculationController(calculationController) {
   assert(m_distribution != nullptr);
   m_okButton.setMessage(I18n::Message::Next);
   for (int i = 0; i < k_maxNumberOfCells; i++) {
-    m_menuListCell[i].setParentResponder(&m_selectableTableView);
+    m_menuListCell[i].setParentResponder(&m_selectableListView);
     m_menuListCell[i].setDelegates(inputEventHandlerDelegate, this);
   }
 }
@@ -123,7 +123,7 @@ bool ParametersController::textFieldDidFinishEditing(
   if (FloatParameterController::textFieldDidFinishEditing(textField, text,
                                                           event)) {
     resetMemoization();
-    m_selectableTableView.reloadData();
+    m_selectableListView.reloadData();
     return true;
   }
   return false;

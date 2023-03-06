@@ -27,7 +27,7 @@ MenuController::MenuController(Escher::StackViewController* parentResponder,
 }
 
 void MenuController::didBecomeFirstResponder() {
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 bool MenuController::handleEvent(Ion::Events::Event event) {

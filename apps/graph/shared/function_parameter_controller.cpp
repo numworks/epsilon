@@ -126,7 +126,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (cell == &m_derivativeCell && m_derivativeCell.ShouldEnterOnEvent(event)) {
     function()->setDisplayDerivative(!function()->displayDerivative());
-    m_selectableTableView.reloadData();
+    m_selectableListView.reloadData();
     return true;
   }
   return Shared::ListParameterController::handleEvent(event);

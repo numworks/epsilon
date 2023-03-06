@@ -23,7 +23,7 @@ TypeController::TypeController(StackViewController *parent,
       m_hypothesisController(hypothesisController),
       m_inputController(inputController),
       m_statistic(statistic) {
-  m_selectableTableView.setBottomMargin(0);
+  m_selectableListView.setBottomMargin(0);
 
   // Init selection
   selectRow(0);
@@ -31,7 +31,7 @@ TypeController::TypeController(StackViewController *parent,
 
 void TypeController::didBecomeFirstResponder() {
   resetMemoization();
-  m_selectableTableView.reloadData(true);
+  m_selectableListView.reloadData(true);
 }
 
 bool TypeController::handleEvent(Ion::Events::Event event) {

@@ -23,7 +23,7 @@ const char *GenericSubController::title() {
 }
 
 void GenericSubController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void GenericSubController::viewWillAppear() {
@@ -37,7 +37,7 @@ void GenericSubController::viewWillAppear() {
    * reload its data when it is displayed as it could switch from displaying
    * "Angle unit" data to "Complex format" data for instance. */
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 bool GenericSubController::handleEvent(Ion::Events::Event event) {
@@ -72,7 +72,7 @@ void GenericSubController::setMessageTreeModel(
 }
 
 void GenericSubController::viewDidDisappear() {
-  m_selectableTableView.deselectTable();
+  m_selectableListView.deselectTable();
 }
 
 StackViewController *GenericSubController::stackController() const {

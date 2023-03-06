@@ -17,7 +17,7 @@ DetailsParameterController::DetailsParameterController(
     : SelectableListViewController(parentResponder, this) {}
 
 void DetailsParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 bool DetailsParameterController::handleEvent(Ion::Events::Event event) {
@@ -40,7 +40,7 @@ void DetailsParameterController::viewWillAppear() {
   assert(!m_record.isNull());
   selectCellAtLocation(0, 0);
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 KDCoordinate DetailsParameterController::nonMemoizedRowHeight(int j) {

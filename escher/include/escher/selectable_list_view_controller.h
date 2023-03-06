@@ -31,12 +31,12 @@ class SelectableListViewController : public SelectableViewController,
       Responder* parentResponder,
       SelectableTableViewDelegate* tableDelegate = nullptr)
       : SelectableViewController(parentResponder),
-        m_selectableTableView(this, this, this, tableDelegate) {}
+        m_selectableListView(this, this, this, tableDelegate) {}
   /* ViewController */
-  View* view() override { return &m_selectableTableView; }
+  View* view() override { return &m_selectableListView; }
 
  protected:
-  SelectableListView m_selectableTableView;
+  SelectableListView m_selectableListView;
 };
 
 class ExplicitSelectableListViewController

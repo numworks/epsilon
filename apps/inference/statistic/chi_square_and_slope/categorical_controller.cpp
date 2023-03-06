@@ -15,12 +15,12 @@ CategoricalController::CategoricalController(Responder *parent,
                                              Invocation invocation)
     : SelectableListViewController<ListViewDataSource>(parent),
       m_nextController(nextController),
-      m_next(&m_selectableTableView, I18n::Message::Next, invocation,
+      m_next(&m_selectableListView, I18n::Message::Next, invocation,
              Palette::WallScreenDark, Metric::CommonMargin) {
-  m_selectableTableView.setTopMargin(0);
-  m_selectableTableView.setLeftMargin(0);
-  m_selectableTableView.setRightMargin(0);
-  m_selectableTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_selectableListView.setTopMargin(0);
+  m_selectableListView.setLeftMargin(0);
+  m_selectableListView.setRightMargin(0);
+  m_selectableListView.setBackgroundColor(Palette::WallScreenDark);
   setScrollViewDelegate(this);
 }
 
@@ -30,7 +30,7 @@ void CategoricalController::didBecomeFirstResponder() {
     categoricalTableCell()->selectableTableView()->setContentOffset(
         KDPointZero);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 bool CategoricalController::handleEvent(Ion::Events::Event event) {
@@ -55,8 +55,8 @@ void CategoricalController::scrollViewDidChangeOffset(
   KDPoint currentOffset =
       categoricalTableCell()->selectableTableView()->contentOffset();
   KDCoordinate maximalOffsetY =
-      m_selectableTableView.minimalSizeForOptimalDisplay().height() -
-      m_selectableTableView.bounds().height();
+      m_selectableListView.minimalSizeForOptimalDisplay().height() -
+      m_selectableListView.bounds().height();
   KDCoordinate offsetToAdd = scrollViewDataSource->offset().y();
   if (offsetToAdd > maximalOffsetY) {
     /* Prevent the table from scrolling past the screen */
@@ -76,7 +76,7 @@ void CategoricalController::scrollViewDidChangeOffset(
       KDPoint(currentOffset.x(), newOffsetY));
   // Unset the ScrollViewDelegate to avoid infinite looping
   setScrollViewDelegate(nullptr);
-  m_selectableTableView.setContentOffset(KDPointZero);
+  m_selectableListView.setContentOffset(KDPointZero);
   setScrollViewDelegate(this);
 }
 
@@ -86,10 +86,10 @@ bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
     return false;
   }
 
-  ScrollView::BarDecorator *decorator = static_cast<ScrollView::BarDecorator *>(
-      m_selectableTableView.decorator());
+  ScrollView::BarDecorator *decorator =
+      static_cast<ScrollView::BarDecorator *>(m_selectableListView.decorator());
   KDCoordinate otherCellsHeight =
-      m_selectableTableView.minimalSizeForOptimalDisplay().height() -
+      m_selectableListView.minimalSizeForOptimalDisplay().height() -
       categoricalTableCell()->bounds().height();
   KDCoordinate trueOptimalHeight =
       categoricalTableCell()->minimalSizeForOptimalDisplay().height() +
@@ -97,7 +97,7 @@ bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
   *visible = decorator->verticalBar()->update(
       trueOptimalHeight,
       categoricalTableCell()->selectableTableView()->contentOffset().y(),
-      m_selectableTableView.bounds().height());
+      m_selectableListView.bounds().height());
   return true;
 }
 
@@ -113,7 +113,7 @@ void CategoricalController::tableViewDidChangeSelection(
                                                ->selectableTableView()
                                                ->minimalSizeForOptimalDisplay()
                                                .height();
-    KDCoordinate displayedHeight = m_selectableTableView.bounds().height();
+    KDCoordinate displayedHeight = m_selectableListView.bounds().height();
     KDCoordinate givenHeight;
     if (verticalOffset + displayedHeight < tableCellRequiredHeight) {
       // We need to clip the size of the CategoricalTableCell to force it to
@@ -125,12 +125,12 @@ void CategoricalController::tableViewDidChangeSelection(
       givenHeight = tableCellRequiredHeight - verticalOffset;
     }
     categoricalTableCell()->selectableTableView()->setSize(
-        KDSize(m_selectableTableView.bounds().width(), givenHeight));
+        KDSize(m_selectableListView.bounds().width(), givenHeight));
     categoricalTableCell()->selectableTableView()->scrollToCell(col, row);
     if (categoricalTableCell()->selectableTableView()->contentOffset().y() !=
         verticalOffset) {
       // Relayout the whole Categorical table if the scroll change
-      m_selectableTableView.reloadData(false);
+      m_selectableListView.reloadData(false);
     }
   }
 }
@@ -149,7 +149,7 @@ KDCoordinate CategoricalController::nonMemoizedRowHeight(int index) {
     return std::min(
         categoricalTableCell()->minimalSizeForOptimalDisplay().height() -
             categoricalTableCell()->selectableTableView()->contentOffset().y(),
-        static_cast<int>(m_selectableTableView.bounds().height()));
+        static_cast<int>(m_selectableListView.bounds().height()));
   }
   return ListViewDataSource::nonMemoizedRowHeight(index);
 }
@@ -162,7 +162,7 @@ InputCategoricalController::InputCategoricalController(
           Invocation::Builder<InputCategoricalController>(
               &InputCategoricalController::ButtonAction, this)),
       m_statistic(statistic),
-      m_innerSignificanceCell(&m_selectableTableView, inputEventHandlerDelegate,
+      m_innerSignificanceCell(&m_selectableListView, inputEventHandlerDelegate,
                               this),
       m_significanceCell(&m_innerSignificanceCell) {
   m_innerSignificanceCell.setMessage(I18n::Message::GreekAlpha);
@@ -183,7 +183,7 @@ bool InputCategoricalController::textFieldDidFinishEditing(
     return false;
   }
   return handleEditedValue(
-      indexOfEditedParameterAtIndex(m_selectableTableView.selectedRow()), p,
+      indexOfEditedParameterAtIndex(m_selectableListView.selectedRow()), p,
       textField, event);
 }
 
@@ -210,7 +210,7 @@ void InputCategoricalController::tableViewDataSourceDidChangeSize() {
    * its width might change but it won't relayout as its frame isn't changed by
    * the InputCategoricalController */
   categoricalTableCell()->selectableTableView()->reloadData(false);
-  m_selectableTableView.reloadData(false);
+  m_selectableListView.reloadData(false);
 }
 
 HighlightCell *InputCategoricalController::reusableCell(int index, int type) {
@@ -236,7 +236,7 @@ bool InputCategoricalController::handleEditedValue(int i, double p,
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     event = Ion::Events::Down;
   }
-  m_selectableTableView.handleEvent(event);
+  m_selectableListView.handleEvent(event);
   return true;
 }
 

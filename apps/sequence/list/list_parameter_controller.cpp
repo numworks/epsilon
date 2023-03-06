@@ -19,7 +19,7 @@ ListParameterController::ListParameterController(
                                       I18n::Message::SequenceColor,
                                       I18n::Message::DeleteSequence, this),
       m_typeCell(I18n::Message::SequenceType),
-      m_initialRankCell(&m_selectableTableView, inputEventHandlerDelegate, this,
+      m_initialRankCell(&m_selectableListView, inputEventHandlerDelegate, this,
                         I18n::Message::FirstTermIndex),
       m_typeParameterController(this, listController, Metric::CommonTopMargin,
                                 Metric::CommonRightMargin,
@@ -52,8 +52,8 @@ bool ListParameterController::textFieldDidFinishEditing(
   App::app()->snapshot()->updateInterval();
   // Invalidate sequence context cache when changing sequence type
   App::app()->localContext()->resetCache();
-  m_selectableTableView.reloadCell(selectedRow());
-  m_selectableTableView.handleEvent(event);
+  m_selectableListView.reloadCell(selectedRow());
+  m_selectableListView.handleEvent(event);
   return true;
 }
 
@@ -72,7 +72,7 @@ void ListParameterController::tableViewDidChangeSelectionAndDidScroll(
     if (myCell) {
       myCell->setEditing(false);
     }
-    Container::activeApp()->setFirstResponder(&m_selectableTableView);
+    Container::activeApp()->setFirstResponder(&m_selectableListView);
   }
   if (t->selectedRow() == 1) {
     MessageTableCellWithEditableText *myNewCell =
@@ -119,7 +119,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
     App::app()->localContext()->resetCache();
     function()->setActive(!function()->isActive());
     resetMemoization();
-    m_selectableTableView.reloadData();
+    m_selectableListView.reloadData();
     return true;
   }
   return Shared::ListParameterController::handleEvent(event);

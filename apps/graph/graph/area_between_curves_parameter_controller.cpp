@@ -40,7 +40,7 @@ AreaBetweenCurvesParameterController::AreaBetweenCurvesParameterController(
     : SelectableListViewController(parentResponder, &m_contentView),
       m_mainRecord(nullptr),
       m_areaGraphController(areaGraphController),
-      m_contentView(&m_selectableTableView, this, &m_topView),
+      m_contentView(&m_selectableListView, this, &m_topView),
       m_topView(KDFont::Size::Small, I18n::Message::SelectSecondCurve,
                 KDContext::k_alignCenter, KDContext::k_alignCenter,
                 Palette::GrayDark, Palette::WallScreen) {}
@@ -67,14 +67,14 @@ KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(int j) {
 void AreaBetweenCurvesParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 void AreaBetweenCurvesParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void AreaBetweenCurvesParameterController::willDisplayCellForIndex(

@@ -45,9 +45,9 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
       case 2:
         m_script.toggleAutoImportation();
         resetMemoization();
-        m_selectableTableView.reloadData();
+        m_selectableListView.reloadData();
         m_menuController->reloadConsole();
-        Container::activeApp()->setFirstResponder(&m_selectableTableView);
+        Container::activeApp()->setFirstResponder(&m_selectableListView);
         return true;
       case 3:
         dismissScriptParameterController();
@@ -65,13 +65,13 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
 void ScriptParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   resetMemoization();
-  m_selectableTableView.reloadData();
-  m_selectableTableView.selectCell(0);
+  m_selectableListView.reloadData();
+  m_selectableListView.selectCell(0);
 }
 
 void ScriptParameterController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 HighlightCell *ScriptParameterController::reusableCell(int index, int type) {

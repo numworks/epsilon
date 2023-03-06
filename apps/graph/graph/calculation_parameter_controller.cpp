@@ -62,14 +62,14 @@ void CalculationParameterController::viewWillAppear() {
     resetMemoization();
   }
   ViewController::viewWillAppear();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 void CalculationParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
-    m_selectableTableView.selectCell(0);
+    m_selectableListView.selectCell(0);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 template <class T>

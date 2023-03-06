@@ -13,7 +13,7 @@ InputSlopeController::InputSlopeController(
     Poincare::Context* context)
     : InputCategoricalController(parent, resultsController, statistic,
                                  inputEventHandlerDelegate),
-      m_slopeTableCell(&m_selectableTableView, this, this, statistic, context),
+      m_slopeTableCell(&m_selectableListView, this, this, statistic, context),
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),
       m_storeParameterController(parent, &m_slopeTableCell) {

@@ -103,7 +103,7 @@ void DomainParameterController::setAutoStatus(bool autoParam) {
   }
   m_autoParam = autoParam;
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 bool DomainParameterController::setParameterAtIndex(int parameterIndex,

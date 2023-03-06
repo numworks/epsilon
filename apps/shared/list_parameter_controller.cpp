@@ -20,7 +20,7 @@ ListParameterController::ListParameterController(
       m_colorParameterController(this) {}
 
 void ListParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void ListParameterController::viewWillAppear() {
@@ -31,7 +31,7 @@ void ListParameterController::viewWillAppear() {
     selectCellAtLocation(selectedColumn(), selectedRow());
   }
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell *cell,
@@ -58,7 +58,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   if (cell == &m_enableCell && m_enableCell.ShouldEnterOnEvent(event)) {
     function()->setActive(!function()->isActive());
     resetMemoization();
-    m_selectableTableView.reloadData();
+    m_selectableListView.reloadData();
     return true;
   }
   if (cell == &m_colorCell && m_colorCell.ShouldEnterOnEvent(event)) {
@@ -68,7 +68,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (cell == &m_deleteCell && m_deleteCell.ShouldEnterOnEvent(event)) {
     assert(functionStore()->numberOfModels() > 0);
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
     functionStore()->removeModel(m_record);
     StackViewController *stack =
         static_cast<StackViewController *>(parentResponder());

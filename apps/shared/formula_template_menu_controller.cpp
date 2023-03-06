@@ -17,8 +17,8 @@ FormulaTemplateMenuController::FormulaTemplateMenuController(
     : SelectableListViewController(parentResponder),
       m_emptyTemplateCell(I18n::Message::Empty),
       m_storeColumnHelper(storeColumnHelper) {
-  m_selectableTableView.setMargins(0);
-  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableListView.setMargins(0);
+  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
 const char *FormulaTemplateMenuController::title() {
@@ -45,7 +45,7 @@ void FormulaTemplateMenuController::willDisplayCellForIndex(HighlightCell *cell,
         static_cast<ExpressionTableCellWithMessage *>(cell);
     myCell->setLayout(m_layouts[i - 1]);
     myCell->setSubLabelMessage(k_subLabelMessages[index]);
-    myCell->setParentResponder(&m_selectableTableView);
+    myCell->setParentResponder(&m_selectableListView);
     return;
   }
   assert(type == CellType::TemplateWithBuffer);
@@ -53,7 +53,7 @@ void FormulaTemplateMenuController::willDisplayCellForIndex(HighlightCell *cell,
       static_cast<ExpressionTableCellWithBuffer *>(cell);
   myCell->setLayout(m_layouts[i - 1]);
   fillSubLabelBuffer(myCell, index);
-  myCell->setParentResponder(&m_selectableTableView);
+  myCell->setParentResponder(&m_selectableListView);
 }
 
 void FormulaTemplateMenuController::viewDidDisappear() {
@@ -65,7 +65,7 @@ void FormulaTemplateMenuController::viewDidDisappear() {
 }
 
 void FormulaTemplateMenuController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 bool FormulaTemplateMenuController::handleEvent(Ion::Events::Event event) {

@@ -24,7 +24,7 @@ InputController::InputController(Escher::StackViewController *parent,
       m_resultsController(resultsController) {
   m_okButton.setMessage(I18n::Message::Next);
   // Initialize cells
-  m_significanceCell.setParentResponder(&m_selectableTableView);
+  m_significanceCell.setParentResponder(&m_selectableListView);
   m_significanceCell.innerCell()->setDelegates(handler, this);
   m_significanceCell.innerCell()->setMessage(I18n::Message::Alpha);
   m_significanceCell.innerCell()->setSubLabelMessage(
@@ -35,7 +35,7 @@ void InputController::initCell(ExpressionCellWithEditableTextWithMessage,
                                void *cell, int index) {
   ExpressionCellWithEditableTextWithMessage *c =
       static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
-  c->setParentResponder(&m_selectableTableView);
+  c->setParentResponder(&m_selectableListView);
   c->setDelegates(App::app(), this);
 }
 
@@ -94,7 +94,7 @@ int InputController::typeAtIndex(int i) const {
 
 void InputController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Escher::Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void InputController::buttonAction() {

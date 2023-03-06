@@ -19,7 +19,7 @@ FloatParameterController<T>::FloatParameterController(
     Responder *parentResponder)
     : SelectableListViewController(parentResponder),
       m_okButton(
-          &(this->m_selectableTableView), I18n::Message::Ok,
+          &m_selectableListView, I18n::Message::Ok,
           Invocation::Builder<FloatParameterController>(
               [](FloatParameterController *parameterController, void *sender) {
                 parameterController->buttonAction();
@@ -37,7 +37,7 @@ void FloatParameterController<T>::didBecomeFirstResponder() {
         selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
     selectCellAtLocation(selColumn, selRow);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 template <typename T>
@@ -54,14 +54,14 @@ void FloatParameterController<T>::viewWillAppear() {
     selectCellAtLocation(selColumn, selRow);
   }
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 template <typename T>
 void FloatParameterController<T>::viewDidDisappear() {
   if (parentResponder() == nullptr) {
-    m_selectableTableView.deselectTable();
-    m_selectableTableView.scrollToCell(0);
+    m_selectableListView.deselectTable();
+    m_selectableListView.scrollToCell(0);
   }
 }
 
@@ -141,12 +141,12 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(
     return false;
   }
   resetMemoization();
-  m_selectableTableView.reloadCell(activeCell());
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadCell(activeCell());
+  m_selectableListView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    m_selectableTableView.selectCell(row + 1);
+    m_selectableListView.selectCell(row + 1);
   } else {
-    m_selectableTableView.handleEvent(event);
+    m_selectableListView.handleEvent(event);
   }
   return true;
 }

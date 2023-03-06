@@ -44,7 +44,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
        * PCB revision number, the flags used at compilation and the bootloader
        * running on the device. */
       MessageTableCellWithBuffer *myCell =
-          (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
+          (MessageTableCellWithBuffer *)m_selectableListView.selectedCell();
       const char *currentText = myCell->subLabelText();
       if (strcmp(currentText, Ion::patchLevel()) == 0) {
         myCell->setSubLabelText(Ion::pcbVersion());

@@ -24,7 +24,7 @@ void ExplicitFloatParameterController::didBecomeFirstResponder() {
     int selColumn = std::min(selectedColumn(), numberOfColumns() - 1);
     selectCellAtLocation(selColumn, selRow);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void ExplicitFloatParameterController::viewWillAppear() {
@@ -38,13 +38,13 @@ void ExplicitFloatParameterController::viewWillAppear() {
     selectCellAtLocation(selColumn, selRow);
   }
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 void ExplicitFloatParameterController::viewDidDisappear() {
   if (parentResponder() == nullptr) {
-    m_selectableTableView.deselectTable();
-    m_selectableTableView.scrollToCell(0);
+    m_selectableListView.deselectTable();
+    m_selectableListView.scrollToCell(0);
   }
 }
 
@@ -94,12 +94,12 @@ bool ExplicitFloatParameterController::textFieldDidFinishEditing(
     return false;
   }
   resetMemoization();
-  m_selectableTableView.reloadCell(selectedRow());
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadCell(selectedRow());
+  m_selectableListView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    m_selectableTableView.selectCell(selectedRow() + 1);
+    m_selectableListView.selectCell(selectedRow() + 1);
   } else {
-    m_selectableTableView.handleEvent(event);
+    m_selectableListView.handleEvent(event);
   }
   return true;
 }

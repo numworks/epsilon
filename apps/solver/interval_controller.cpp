@@ -60,13 +60,13 @@ IntervalController::IntervalController(
     InputEventHandlerDelegate *inputEventHandlerDelegate,
     EquationStore *equationStore)
     : FloatParameterController<double>(parentResponder),
-      m_contentView(&m_selectableTableView),
+      m_contentView(&m_selectableListView),
       m_equationStore(equationStore),
       m_shouldReplaceFunctionsButNotSymbols(false) {
-  m_selectableTableView.setTopMargin(0);
+  m_selectableListView.setTopMargin(0);
   m_okButton.setMessage(I18n::Message::ResolveEquation);
   for (int i = 0; i < k_maxNumberOfCells; i++) {
-    m_intervalCell[i].setParentResponder(&m_selectableTableView);
+    m_intervalCell[i].setParentResponder(&m_selectableListView);
     m_intervalCell[i].setDelegates(inputEventHandlerDelegate, this);
   }
 }
@@ -115,7 +115,7 @@ bool IntervalController::textFieldDidFinishEditing(AbstractTextField *textField,
   if (FloatParameterController::textFieldDidFinishEditing(textField, text,
                                                           event)) {
     resetMemoization();
-    m_selectableTableView.reloadData();
+    m_selectableListView.reloadData();
     return true;
   }
   return false;

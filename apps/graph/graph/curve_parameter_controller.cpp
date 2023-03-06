@@ -19,10 +19,10 @@ CurveParameterController::CurveParameterController(
     CurveViewCursor *cursor, GraphView *graphView,
     GraphController *graphController)
     : ExplicitFloatParameterController(parentResponder()),
-      m_abscissaCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
-      m_imageCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
+      m_abscissaCell({&m_selectableListView, inputEventHandlerDelegate, this}),
+      m_imageCell({&m_selectableListView, inputEventHandlerDelegate, this}),
       m_derivativeNumberCell(
-          {&m_selectableTableView, inputEventHandlerDelegate, this}),
+          {&m_selectableListView, inputEventHandlerDelegate, this}),
       m_calculationCell(I18n::Message::Find),
       m_optionsCell(I18n::Message::Options),
       m_graphController(graphController),
@@ -67,7 +67,7 @@ void CurveParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectCellAtLocation(0, 0);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell,
@@ -200,7 +200,7 @@ void CurveParameterController::viewWillAppear() {
       shouldDisplayDerivative() ||
       function()->properties().numberOfCurveParameters() == 3);
   resetMemoization();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
   SelectableListViewController::viewWillAppear();
 }
 

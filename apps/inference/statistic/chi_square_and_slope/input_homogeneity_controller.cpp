@@ -10,7 +10,7 @@ InputHomogeneityController::InputHomogeneityController(
     InputEventHandlerDelegate* inputEventHandlerDelegate)
     : InputCategoricalController(parent, resultsController, statistic,
                                  inputEventHandlerDelegate),
-      m_inputHomogeneityTable(&m_selectableTableView, this, this, statistic) {}
+      m_inputHomogeneityTable(&m_selectableListView, this, this, statistic) {}
 
 void InputHomogeneityController::tableViewDidChangeSelection(
     SelectableTableView* t, int previousSelectedCellX,

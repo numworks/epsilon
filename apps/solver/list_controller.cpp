@@ -119,12 +119,12 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 
 void ListController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
+    selectCell(0);
   } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
+    selectCell(selectedRow());
   }
   if (selectedRow() >= numberOfRows()) {
-    selectCellAtLocation(selectedColumn(), numberOfRows() - 1);
+    selectCell(numberOfRows() - 1);
   }
   footer()->setSelectedButton(-1);
   Container::activeApp()->setFirstResponder(selectableTableView());

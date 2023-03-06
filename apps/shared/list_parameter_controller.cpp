@@ -26,9 +26,9 @@ void ListParameterController::didBecomeFirstResponder() {
 void ListParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
+    selectCell(0);
   } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
+    selectCell(selectedRow());
   }
   resetMemoization();
   m_selectableListView.reloadData();
@@ -47,7 +47,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell *cell,
 
 void ListParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
-  selectCellAtLocation(0, 0);
+  selectCell(0);
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {

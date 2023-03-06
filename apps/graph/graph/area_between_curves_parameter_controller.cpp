@@ -72,7 +72,7 @@ void AreaBetweenCurvesParameterController::viewWillAppear() {
 
 void AreaBetweenCurvesParameterController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
-    selectCellAtLocation(0, 0);
+    selectCell(0);
   }
   Container::activeApp()->setFirstResponder(&m_selectableListView);
 }

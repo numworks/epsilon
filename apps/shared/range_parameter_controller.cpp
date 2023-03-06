@@ -124,14 +124,14 @@ void RangeParameterController::didBecomeFirstResponder() {
 void RangeParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
+    selectCell(0);
   } else {
     /* If the table has not been deselected, it means we come from the
      * SingleRangeController. */
     int row =
         (m_singleInteractiveCurveViewRangeController.editXRange() ? 0 : 1) +
         displayNormalizeCell();
-    selectCellAtLocation(selectedColumn(), row);
+    selectCell(row);
   }
   resetMemoization();
   m_selectableListView.reloadData();

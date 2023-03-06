@@ -70,7 +70,7 @@ void ScriptParameterController::viewWillAppear() {
 }
 
 void ScriptParameterController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
+  selectCell(0);
   Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 

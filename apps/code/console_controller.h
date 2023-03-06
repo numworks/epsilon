@@ -18,7 +18,7 @@ class App;
 
 class ConsoleController : public Escher::ViewController,
                           public Escher::RegularListViewDataSource,
-                          public Escher::SelectableTableViewDataSource,
+                          public Escher::SelectableListViewDataSource,
                           public Escher::SelectableTableViewDelegate,
                           public Escher::TextFieldDelegate,
                           public Shared::InputEventHandlerDelegate,

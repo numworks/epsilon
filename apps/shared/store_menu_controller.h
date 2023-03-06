@@ -17,7 +17,7 @@ namespace Shared {
 
 class StoreMenuController : public Escher::ModalViewController,
                             public Escher::ListViewDataSource,
-                            public Escher::SelectableTableViewDataSource,
+                            public Escher::SelectableListViewDataSource,
                             public TextFieldDelegate,
                             public LayoutFieldDelegate,
                             public Escher::PervasiveBox {

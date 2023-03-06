@@ -41,7 +41,7 @@ const char* EquationModelsParameterController::title() {
 
 void EquationModelsParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
-  selectCellAtLocation(0, 0);
+  selectCell(0);
 }
 
 void EquationModelsParameterController::didBecomeFirstResponder() {

@@ -73,12 +73,12 @@ void FunctionListController::willExitResponderChain(
 
 void FunctionListController::didBecomeFirstResponder() {
   if (selectedRow() == -1) {
-    selectCellAtLocation(initialColumnToSelect(), 0);
+    selectCell(0);
   } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
+    selectCell(selectedRow());
   }
   if (selectedRow() >= numberOfExpressionRows()) {
-    selectCellAtLocation(selectedColumn(), numberOfExpressionRows() - 1);
+    selectCell(numberOfExpressionRows() - 1);
   }
   footer()->setSelectedButton(-1);
   Container::activeApp()->setFirstResponder(selectableTableView());

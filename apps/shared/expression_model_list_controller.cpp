@@ -88,7 +88,7 @@ bool ExpressionModelListController::handleEventOnExpression(
       int newSelectedRow = selectedRow() >= numberOfExpressionRows()
                                ? numberOfExpressionRows() - 1
                                : selectedRow();
-      selectCellAtLocation(selectedColumn(), newSelectedRow);
+      selectCell(newSelectedRow);
       selectableTableView()->reloadData();
     }
     return true;

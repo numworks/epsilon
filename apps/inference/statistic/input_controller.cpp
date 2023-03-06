@@ -93,7 +93,7 @@ int InputController::typeAtIndex(int i) const {
 }
 
 void InputController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
+  selectCell(0);
   Escher::Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 

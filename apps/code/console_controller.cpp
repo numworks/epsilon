@@ -33,7 +33,7 @@ ConsoleController::ConsoleController(Responder *parentResponder,
 #endif
                                      )
     : ViewController(parentResponder),
-      SelectableTableViewDataSource(),
+      SelectableListViewDataSource(),
       TextFieldDelegate(),
       MicroPython::ExecutionEnvironment(),
       m_pythonDelegate(pythonDelegate),

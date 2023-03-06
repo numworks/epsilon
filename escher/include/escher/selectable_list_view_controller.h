@@ -14,7 +14,7 @@
 namespace Escher {
 
 class SelectableViewController : public ViewController,
-                                 public SelectableTableViewDataSource {
+                                 public SelectableListViewDataSource {
  public:
   SelectableViewController(Responder* parentResponder)
       : ViewController(parentResponder) {}

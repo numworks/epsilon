@@ -19,9 +19,16 @@ QUIZ_CASE(equation_solve_linear_system) {
                    {"x=(-π-20)/8", "y=(π+20)/8", "z=π/4"});
   assert_solves_to({"x+y=0", "3x+y=-5"}, {"x=-5/2", "y=5/2"});
   assert_solves_to_infinite_solutions("0=0");
-  assert_solves_to_infinite_solutions("x+y=0");
-  assert_solves_to_infinite_solutions("x-x=0");
-  assert_solves_to_infinite_solutions({"4y+(1-√(5))x=0", "x=(1+√(5))y"});
+  assert_solves_to_infinite_solutions({"x+y=0"}, {"x=-t", "y=t"});
+  assert_solves_to_infinite_solutions({"x-x=0"}, {"x=t"});
+  assert_solves_to_infinite_solutions({"4y+(1-√(5))x=0", "x=(1+√(5))y"},
+                                      {"x=√(5)t+t", "y=t"});
+  assert_solves_to_infinite_solutions({"x+y+z=0"},
+                                      {"x=-t1-t2", "y=t1", "z=t2"});
+  assert_solves_to_infinite_solutions({"x+y+z=0", "x+2y+3z=0"},
+                                      {"x=t", "y=-2t", "z=t"});
+  assert_solves_to_infinite_solutions({"x+y+z=2", "2x+y-z=3", "3x+2y=5"},
+                                      {"x=2t+1", "y=-3t+1", "z=t"});
   assert_solves_to_no_solution("2=0");
   assert_solves_to_no_solution("e=1");
   assert_solves_to_no_solution("i=5");
@@ -145,7 +152,9 @@ QUIZ_CASE(equation_and_symbolic_computation) {
    * store, m_variables is just before m_userVariables, so bad fetching in
    * m_variables might fetch into m_userVariables and create problems. */
   set("x", "0");
-  assert_solves_to_infinite_solutions({"b=0", "D=0", "c=0", "x+y+z+t=0"});
+  assert_solves_to_infinite_solutions(
+      {"b=0", "D=0", "c=0", "x+y+z+t=0"},
+      {"b=0", "D=0", "c=0", "t=-t1-t2", "y=t1", "z=t2"});
   unset("x");
 
   // Long variable names
@@ -165,7 +174,7 @@ QUIZ_CASE(equation_and_symbolic_computation) {
 
   unset("a");
 
-  assert_solves_to_infinite_solutions("x+a=0");
+  assert_solves_to_infinite_solutions({"x+a=0"}, {"a=-t", "x=t"});
 
   set("a", "-3");
   assert_solves_to("x+a=0", "x=3");
@@ -175,7 +184,7 @@ QUIZ_CASE(equation_and_symbolic_computation) {
    * replaced with its context value, and the solution is a = 0. */
 
   set("b", "-4");
-  assert_solves_to_infinite_solutions("a+b=0");
+  assert_solves_to_infinite_solutions({"a+b=0"}, {"a=-t", "b=t"});
   /* The equation has no solution since the user defined a = -3 and b = -4.
    * So neither a nor b are replaced with their context values. Therefore the
    * solution is an infinity of solutions. */
@@ -206,7 +215,8 @@ QUIZ_CASE(equation_and_symbolic_computation) {
   set("d", "5");
   set("c", "d");
   set("h(x)", "c+d+3");
-  assert_solves_to_infinite_solutions({"h(x)=0", "c=-3"});
+  assert_solves_to_infinite_solutions({"h(x)=0", "c=-3"},
+                                      {"c=-3", "d=0", "x=t"});
   // c and d context values should not be used
 
   assert_solves_to({"c+d=5", "c-d=1"}, {"c=3", "d=2"});

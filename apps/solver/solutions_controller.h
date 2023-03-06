@@ -14,6 +14,7 @@
 #include <ion.h>
 
 #include "equation_store.h"
+#include "system.h"
 
 namespace Solver {
 
@@ -23,8 +24,7 @@ class SolutionsController : public Escher::ViewController,
                             public Escher::TableViewDataSource,
                             public Escher::SelectableTableViewDelegate {
  public:
-  SolutionsController(Escher::Responder *parentResponder,
-                      EquationStore *equationStore);
+  SolutionsController(Escher::Responder *parentResponder);
 
   // ViewController
   const char *title() override;
@@ -180,38 +180,34 @@ class SolutionsController : public Escher::ViewController,
                 "k_maxNumberOfVisibleCells has changed");
   static_assert(
       k_maxNumberOfVisibleCells <=
-          EquationStore::k_maxNumberOfSolutions +
+          System::k_maxNumberOfSolutions +
               Poincare::Expression::k_maxNumberOfVariables,
       "We can reduce the number of cells in Solver:SolutionsController.");
   constexpr static int k_maxNumberOfSymbols =
-      EquationStore::k_maxNumberOfSolutions +
+      System::k_maxNumberOfSolutions +
       Poincare::Expression::k_maxNumberOfVariables;
   constexpr static int k_numberOfSymbolCells =
       (k_maxNumberOfVisibleCells < k_maxNumberOfSymbols)
           ? k_maxNumberOfVisibleCells
           : k_maxNumberOfSymbols;
   constexpr static int k_maxNumberOfExactValues =
-      EquationStore::k_maxNumberOfExactSolutions +
+      System::k_maxNumberOfExactSolutions +
       Poincare::Expression::k_maxNumberOfVariables;
   constexpr static int k_numberOfExactValueCells =
       (k_maxNumberOfVisibleCells < k_maxNumberOfExactValues)
           ? k_maxNumberOfVisibleCells
           : k_maxNumberOfExactValues;
   constexpr static int k_numberOfApproximateValueCells =
-      1 + (k_maxNumberOfVisibleCells <
-                   EquationStore::k_maxNumberOfApproximateSolutions
+      1 + (k_maxNumberOfVisibleCells < System::k_maxNumberOfApproximateSolutions
                ? k_maxNumberOfVisibleCells
-               : EquationStore::k_maxNumberOfApproximateSolutions);
+               : System::k_maxNumberOfApproximateSolutions);
   constexpr static int k_numberOfMessageCells = 2;
   constexpr static int k_numberOfEmptyCells = 2;
 
-  bool usedUserVariables() const {
-    return !m_equationStore->overrideUserVariables();
-  }
+  bool usedUserVariables() const;
   int userVariablesMessageRow() const;
   I18n::Message noSolutionMessage();
 
-  EquationStore *m_equationStore;
   Escher::EvenOddBufferTextCell m_symbolCells[k_numberOfSymbolCells];
   Escher::EvenOddExpressionCell m_deltaCell;
   Poincare::Layout m_delta2Layout;

@@ -41,9 +41,8 @@ void App::Snapshot::tidy() {
 
 App::App(Snapshot* snapshot)
     : ExpressionFieldDelegateApp(snapshot, &m_stackViewController),
-      m_solutionsController(&m_alternateEmptyViewController,
-                            snapshot->equationStore()),
-      m_intervalController(nullptr, this, snapshot->equationStore()),
+      m_solutionsController(&m_alternateEmptyViewController),
+      m_intervalController(nullptr, this),
       m_alternateEmptyViewController(nullptr, &m_solutionsController,
                                      &m_solutionsController),
       m_listController(&m_listFooter, this, snapshot->equationStore(),
@@ -54,6 +53,7 @@ App::App(Snapshot* snapshot)
                    ButtonRowController::Size::Large),
       m_stackViewController(&m_modalViewController, &m_listFooter,
                             StackViewController::Style::GrayGradation),
+      m_system(snapshot->equationStore()),
       m_context(AppsContainer::sharedAppsContainer()->globalContext()) {}
 
 bool App::isAcceptableExpression(const Poincare::Expression exp) {

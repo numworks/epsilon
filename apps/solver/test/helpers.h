@@ -7,15 +7,16 @@
 #include <initializer_list>
 
 #include "../equation_store.h"
+#include "../system.h"
 
 #define bring_in(prefix, value) static const prefix value = prefix::value;
 
-bring_in(Solver::EquationStore::Error, EquationUndefined);
-bring_in(Solver::EquationStore::Error, EquationNonreal);
-bring_in(Solver::EquationStore::Error, NoError);
-bring_in(Solver::EquationStore::Error, NonLinearSystem);
-bring_in(Solver::EquationStore::Error, RequireApproximateSolution);
-bring_in(Solver::EquationStore::Error, TooManyVariables);
+bring_in(Solver::System::Error, EquationUndefined);
+bring_in(Solver::System::Error, EquationNonreal);
+bring_in(Solver::System::Error, NoError);
+bring_in(Solver::System::Error, NonLinearSystem);
+bring_in(Solver::System::Error, RequireApproximateSolution);
+bring_in(Solver::System::Error, TooManyVariables);
 
 // Custom assertions
 
@@ -25,7 +26,7 @@ void assert_solves_numerically_to(const char *equation, double min, double max,
                                   std::initializer_list<double> solutions,
                                   const char *variable = "x");
 void assert_solves_to_error(std::initializer_list<const char *> equations,
-                            Solver::EquationStore::Error error);
+                            Solver::System::Error error);
 void assert_solves_to_infinite_solutions(
     std::initializer_list<const char *> equations,
     std::initializer_list<const char *> solutions);
@@ -41,7 +42,7 @@ inline void assert_solves_to_no_solution(
   assert_solves_to(equations, {});
 }
 inline void assert_solves_to_error(const char *equation,
-                                   Solver::EquationStore::Error error) {
+                                   Solver::System::Error error) {
   assert_solves_to_error({equation}, error);
 }
 inline void assert_solves_to_infinite_solutions(const char *equation) {

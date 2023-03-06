@@ -24,6 +24,7 @@ void solve_and_process_error(std::initializer_list<const char *> equations,
   Shared::GlobalContext globalContext;
   SolverContext solverContext(&globalContext);
   EquationStore equationStore;
+  System system(&equationStore);
   for (const char *equation : equations) {
     Ion::Storage::Record::ErrorStatus err = equationStore.addEmptyModel();
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None,
@@ -37,31 +38,30 @@ void solve_and_process_error(std::initializer_list<const char *> equations,
                                  equation);
   }
   equationStore.tidyDownstreamPoolFrom();
-  EquationStore::Error err = equationStore.exactSolve(&solverContext);
-  lambda(&equationStore, err);
+  System::Error err = system.exactSolve(&solverContext);
+  lambda(&system, err);
   equationStore.removeAll();
 }
 
 template <typename T>
 void solve_and(std::initializer_list<const char *> equations, T &&lambda) {
-  solve_and_process_error(
-      equations, [lambda](EquationStore *store, EquationStore::Error error) {
-        quiz_assert(error == NoError);
-        lambda(store);
-      });
+  solve_and_process_error(equations,
+                          [lambda](System *system, System::Error error) {
+                            quiz_assert(error == NoError);
+                            lambda(system);
+                          });
 }
 
 // Helpers
 
 void assert_solves_to_error(std::initializer_list<const char *> equations,
-                            EquationStore::Error error) {
-  solve_and_process_error(
-      equations, [error](EquationStore *store, EquationStore::Error e) {
-        quiz_assert(e == error);
-      });
+                            System::Error error) {
+  solve_and_process_error(equations, [error](System *system, System::Error e) {
+    quiz_assert(e == error);
+  });
 }
 
-static void compareSolutions(EquationStore *store,
+static void compareSolutions(System *system,
                              std::initializer_list<const char *> solutions) {
   Shared::GlobalContext globalContext;
   SolverContext solverContext(&globalContext);
@@ -78,11 +78,11 @@ static void compareSolutions(EquationStore *store,
     *equal = 0;
 
     const char *expectedVariable = editableSolution;
-    if (store->type() != EquationStore::Type::PolynomialMonovariable) {
+    if (system->type() != System::Type::PolynomialMonovariable) {
       /* For some reason the EquationStore returns up to 3 results but always
        * just one variable, so we don't check variable name...
        * TODO: Change this poor behavior. */
-      const char *obtainedVariable = store->variable(i);
+      const char *obtainedVariable = system->variable(i);
       quiz_assert(strcmp(obtainedVariable, expectedVariable) == 0);
     }
 
@@ -104,9 +104,9 @@ static void compareSolutions(EquationStore *store,
         Expression::Parse(expectedValue, &solverContext, false);
     quiz_assert(!expectedExpression.isUninitialized());
 
-    Layout obtainedLayout = store->solution(i)->exactLayout();
+    Layout obtainedLayout = system->solution(i)->exactLayout();
     if (obtainedLayout.isUninitialized()) {
-      obtainedLayout = store->solution(i)->approximateLayout();
+      obtainedLayout = system->solution(i)->approximateLayout();
     }
     constexpr int bufferSize = 200;
     char obtainedLayoutBuffer[bufferSize];
@@ -118,23 +118,23 @@ static void compareSolutions(EquationStore *store,
 
     i++;
   }
-  quiz_assert(store->numberOfSolutions() == i);
+  quiz_assert(system->numberOfSolutions() == i);
 }
 
 void assert_solves_to_infinite_solutions(
     std::initializer_list<const char *> equations,
     std::initializer_list<const char *> solutions) {
-  solve_and(equations, [solutions](EquationStore *store) {
-    quiz_assert(store->type() == EquationStore::Type::LinearSystem &&
-                store->hasMoreSolutions());
-    compareSolutions(store, solutions);
+  solve_and(equations, [solutions](System *system) {
+    quiz_assert(system->type() == System::Type::LinearSystem &&
+                system->hasMoreSolutions());
+    compareSolutions(system, solutions);
   });
 }
 
 void assert_solves_to(std::initializer_list<const char *> equations,
                       std::initializer_list<const char *> solutions) {
-  solve_and(equations, [solutions](EquationStore *store) {
-    compareSolutions(store, solutions);
+  solve_and(equations, [solutions](System *system) {
+    compareSolutions(system, solutions);
   });
 }
 
@@ -142,21 +142,21 @@ void assert_solves_numerically_to(const char *equation, double min, double max,
                                   std::initializer_list<double> solutions,
                                   const char *variable) {
   solve_and_process_error({equation}, [min, max, solutions, variable](
-                                          EquationStore *store,
-                                          EquationStore::Error e) {
+                                          System *system, System::Error e) {
     Shared::GlobalContext globalContext;
     SolverContext solverContext(&globalContext);
     quiz_assert(e == RequireApproximateSolution);
-    store->setApproximateResolutionMinimum(min);
-    store->setApproximateResolutionMaximum(max);
-    store->approximateSolve(&solverContext);
+    system->setApproximateResolutionMinimum(min);
+    system->setApproximateResolutionMaximum(max);
+    system->approximateSolve(&solverContext);
 
-    quiz_assert(strcmp(store->variable(0), variable) == 0);
+    quiz_assert(strcmp(system->variable(0), variable) == 0);
     int i = 0;
     for (double solution : solutions) {
-      assert_roughly_equal(store->solution(i++)->approximate(), solution, 1E-5);
+      assert_roughly_equal(system->solution(i++)->approximate(), solution,
+                           1E-5);
     }
-    quiz_assert(store->numberOfSolutions() == i);
+    quiz_assert(system->numberOfSolutions() == i);
   });
 }
 

@@ -113,6 +113,9 @@ void assert_solves_to(std::initializer_list<const char *> equations,
       quiz_assert(!expectedExpression.isUninitialized());
 
       Layout obtainedLayout = store->solution(i)->exactLayout();
+      if (obtainedLayout.isUninitialized()) {
+        obtainedLayout = store->solution(i)->approximateLayout();
+      }
       constexpr int bufferSize = 200;
       char obtainedLayoutBuffer[bufferSize];
       obtainedLayout.serializeForParsing(obtainedLayoutBuffer, bufferSize);

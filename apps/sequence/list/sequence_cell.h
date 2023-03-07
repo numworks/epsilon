@@ -14,7 +14,10 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
       : EvenOddCell(), m_expressionBackground(KDColorWhite) {}
   void setParameterSelected(bool selected);
   virtual Escher::HighlightCell* expressionCell() = 0;
-  virtual const Escher::HighlightCell* expressionCell() const = 0;
+  const Escher::HighlightCell* expressionCell() const {
+    return const_cast<Escher::HighlightCell*>(
+        const_cast<AbstractSequenceCell*>(this)->expressionCell());
+  }
   VerticalSequenceTitleCell* titleCell() { return &m_sequenceTitleCell; }
 
  private:
@@ -35,9 +38,6 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
 class SequenceCell : public AbstractSequenceCell {
  public:
   Escher::EvenOddExpressionCell* expressionCell() override {
-    return &m_expressionCell;
-  }
-  const Escher::EvenOddExpressionCell* expressionCell() const override {
     return &m_expressionCell;
   }
   void updateSubviewsBackgroundAfterChangingState() override;

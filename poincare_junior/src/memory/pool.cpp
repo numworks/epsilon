@@ -1,5 +1,7 @@
 #include "pool.h"
 
+#include <poincare_junior/include/poincare.h>
+
 namespace PoincareJ {
 
 size_t Pool::numberOfTrees() const {
@@ -47,24 +49,20 @@ bool Pool::ReferenceTable::reset() {
 }
 
 #if POINCARE_MEMORY_TREE_LOG
-void Pool::ReferenceTable::log(std::ostream &stream, LogFormat format,
-                               bool verbose) const {
-  stream << "<" << m_pool->name() << "Pool::References NumberOfStoredNode=\""
-         << numberOfStoredNodes() << "\">";
+
+void Pool::ReferenceTable::logIdsForNode(std::ostream &stream,
+                                         Node node) const {
+  bool found = false;
   for (size_t i = 0; i < m_length; i++) {
-    stream << "\n  <Reference id: " << identifierForIndex(i) << ">";
-    Node tree = Pool::ReferenceTable::nodeForIdentifier(i);
-    if (!m_pool->contains(tree.block())) {
-      stream << "\n    <Corrupted/>";
-    } else if (tree.isUninitialized()) {
-      stream << "\n    <Uninialized/>";
-    } else {
-      tree.log(stream, format == LogFormat::Tree, 2, verbose);
+    Node n = Pool::ReferenceTable::nodeForIdentifier(i);
+    if (node == n) {
+      stream << identifierForIndex(i) << ", ";
+      found = true;
     }
-    stream << "\n  </Reference>";
   }
-  stream << "\n</" << m_pool->name() << "Pool::References>";
-  stream << std::endl;
+  if (found == false) {
+    stream << "No reference";
+  }
 }
 
 #endif
@@ -73,22 +71,36 @@ void Pool::ReferenceTable::log(std::ostream &stream, LogFormat format,
 
 #if POINCARE_MEMORY_TREE_LOG
 
-void Pool::log(std::ostream &stream, LogFormat format, bool verbose) {
+void Pool::logNode(std::ostream &stream, Node node, bool recursive,
+                   bool verbose, int indentation) {
+  Indent(stream, indentation);
+  stream << "<Reference id: {";
+  referenceTable()->logIdsForNode(stream, node);
+  stream << "} >";
+  // TODO several id per nodes?
+  node.log(stream, recursive, verbose, indentation + 1);
+  stream << std::endl;
+  Indent(stream, indentation);
+  stream << "</Reference>" << std::endl;
+}
+
+void Pool::log(std::ostream &stream, LogFormat format, bool verbose,
+               int indentation) {
   const char *formatName = format == LogFormat::Tree ? "tree" : "flat";
+  Indent(stream, indentation);
   stream << "<" << name() << "Pool format=\"" << formatName << "\" size=\""
-         << size() << "\">";
+         << size() << "\">" << std::endl;
   if (format == LogFormat::Tree) {
     for (const Node tree : trees()) {
-      tree.log(stream, true, 1, verbose);
+      logNode(stream, tree, true, verbose, indentation + 1);
     }
   } else {
     for (const Node tree : allNodes()) {
-      tree.log(stream, false, 1, verbose);
+      logNode(stream, tree, false, verbose, indentation + 1);
     }
   }
-  stream << std::endl;
-  stream << "<" << name() << "/Pool>";
-  stream << std::endl;
+  Indent(stream, indentation);
+  stream << "</" << name() << "Pool>";
 }
 
 #endif

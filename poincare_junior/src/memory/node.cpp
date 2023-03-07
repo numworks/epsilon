@@ -1,3 +1,4 @@
+#include <poincare_junior/include/poincare.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/expression/symbol.h>
@@ -9,12 +10,11 @@
 namespace PoincareJ {
 
 #if POINCARE_MEMORY_TREE_LOG
-void Node::log(std::ostream &stream, bool recursive, int indentation,
-               bool verbose) const {
+
+void Node::log(std::ostream& stream, bool recursive, bool verbose,
+               int indentation) const {
   stream << "\n";
-  for (int i = 0; i < indentation; ++i) {
-    stream << "  ";
-  }
+  Indent(stream, indentation);
   stream << "<";
   if (isUninitialized()) {
     stream << "Uninitialized/>";
@@ -34,14 +34,12 @@ void Node::log(std::ostream &stream, bool recursive, int indentation,
         stream << ">";
         tagIsClosed = true;
       }
-      child.log(stream, recursive, indentation + 1, verbose);
+      child.log(stream, recursive, verbose, indentation + 1);
     }
   }
   if (tagIsClosed) {
     stream << "\n";
-    for (int i = 0; i < indentation; ++i) {
-      stream << "  ";
-    }
+    Indent(stream, indentation);
     stream << "</";
     logName(stream);
     stream << ">";

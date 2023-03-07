@@ -43,6 +43,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   memory/pool.cpp \
   memory/reference.cpp \
   n_ary.cpp \
+  poincare.cpp \
 )
 
 tests_src += $(addprefix poincare_junior/test/,\

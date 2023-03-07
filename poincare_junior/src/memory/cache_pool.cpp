@@ -1,6 +1,7 @@
 #include "cache_pool.h"
 
 #include <assert.h>
+#include <poincare_junior/include/poincare.h>
 #include <string.h>
 
 namespace PoincareJ {
@@ -22,7 +23,14 @@ uint16_t CachePool::ReferenceTable::storeNode(Node node) {
   if (isFull()) {
     removeFirstReferences(1, &node);
   }
-  return idForIndex(Pool::ReferenceTable::storeNodeAtIndex(node, m_length));
+  uint16_t indexOfNode = Pool::ReferenceTable::storeNodeAtIndex(node, m_length);
+#if POINCARE_POOL_VISUALIZATION
+  CacheLogger() << "<Add address=\"" << node.block() << "\">\n";
+  CachePool::sharedCachePool()->log(CacheLogger(), Pool::LogFormat::Tree, true,
+                                    1);
+  CacheLogger() << "\n</Add>" << std::endl;
+#endif
+  return idForIndex(indexOfNode);
 }
 
 bool CachePool::ReferenceTable::freeOldestBlocks(
@@ -74,6 +82,13 @@ void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex,
   }
   static_cast<CachePool *>(m_pool)->translate(numberOfFreedBlocks,
                                               cachePoolSize);
+#if POINCARE_POOL_VISUALIZATION
+  CacheLogger() << "<Remove numberOfBlocks=\"" << numberOfFreedBlocks
+                << "\">\n";
+  CachePool::sharedCachePool()->log(CacheLogger(), Pool::LogFormat::Tree, true,
+                                    1);
+  CacheLogger() << "\n</Remove>" << std::endl;
+#endif
 }
 
 // CachePool
@@ -109,6 +124,12 @@ void CachePool::reset() {
   m_referenceTable.reset();
   m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks);
   m_editionPool.flush();
+#if POINCARE_POOL_VISUALIZATION
+  CacheLogger() << "<Reset>\n";
+  CachePool::sharedCachePool()->log(CacheLogger(), Pool::LogFormat::Tree, true,
+                                    1);
+  CacheLogger() << "\n</Reset>" << std::endl;
+#endif
 }
 
 CachePool::CachePool()

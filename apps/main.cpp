@@ -1,5 +1,6 @@
 #include <escher/init.h>
 #include <poincare/init.h>
+#include <poincare_junior/include/poincare.h>
 
 #include "apps_container.h"
 #include "global_preferences.h"
@@ -37,6 +38,7 @@ void ion_main(int argc, const char* const argv[]) {
 void ion_main(int argc, const char *const argv[]) {
   // Initialize Poincare::TreePool::sharedPool
   Poincare::Init();
+  PoincareJ::Init();
   Escher::Init();
   Apps::Init();
 
@@ -108,6 +110,8 @@ void ion_main(int argc, const char *const argv[]) {
   Ion::setStackStart((void *)(&stackTop));
 
   AppsContainer::sharedAppsContainer()->run();
+
+  PoincareJ::Shutdown();
 }
 
 #endif

@@ -43,8 +43,8 @@ class Node {
     log(std::cout);
     std::cout << "\n";
   }
-  void log(std::ostream &stream, bool recursive = true, int indentation = 0,
-           bool verbose = true) const;
+  void log(std::ostream &stream, bool recursive = true, bool verbose = true,
+           int indentation = 0) const;
   void logName(std::ostream &stream) const;
   void logAttributes(std::ostream &stream) const;
   __attribute__((__used__)) void logBlocks() const { logBlocks(std::cout); }

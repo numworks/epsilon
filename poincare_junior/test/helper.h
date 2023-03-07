@@ -31,6 +31,7 @@ inline EditionReference createSimpleExpression() {
 }
 
 #if POINCARE_MEMORY_TREE_LOG
+
 __attribute__((__used__)) inline void log_edition_pool(
     bool corruptedEditionPool = false) {
   EditionPool* editionPool = CachePool::sharedCachePool()->editionPool();
@@ -40,19 +41,12 @@ __attribute__((__used__)) inline void log_edition_pool(
       true);
 }
 
-__attribute__((__used__)) inline void log_edition_references() {
-  CachePool::sharedCachePool()->editionPool()->logReferences(
-      std::cout, Pool::LogFormat::Tree);
-}
-
 __attribute__((__used__)) inline void log_cache_pool() {
   CachePool::sharedCachePool()->log(std::cout, Pool::LogFormat::Tree, true);
 }
 
-__attribute__((__used__)) inline void log_cache_references() {
-  CachePool::sharedCachePool()->logReferences(std::cout, Pool::LogFormat::Tree);
-}
 #else
+
 inline void log_edition_pool(bool corruptedEditionPool = false) {}
 inline void log_edition_references() {}
 inline void log_cache_pool() {}

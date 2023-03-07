@@ -54,7 +54,7 @@ class Pool {
     virtual Node nodeForIdentifier(uint16_t id) const;
     virtual bool reset();
 #if POINCARE_MEMORY_TREE_LOG
-    void log(std::ostream &stream, LogFormat format, bool verbose = true) const;
+    void logIdsForNode(std::ostream &stream, Node node) const;
     virtual uint16_t identifierForIndex(uint16_t index) const { return index; }
 #endif
    protected:
@@ -71,17 +71,14 @@ class Pool {
 #if POINCARE_MEMORY_TREE_LOG
  public:
   virtual const char *name() = 0;
-  void log(std::ostream &stream, LogFormat format, bool verbose);
-  void logReferences(std::ostream &stream, LogFormat format,
-                     bool verbose = true) {
-    return referenceTable()->log(stream, format, verbose);
-  }
+  void logNode(std::ostream &stream, Node node, bool recursive, bool verbose,
+               int indentation);
+  void log(std::ostream &stream, LogFormat format, bool verbose,
+           int indentation = 0);
   __attribute__((__used__)) void log() {
     log(std::cout, LogFormat::Tree, false);
   }
-  __attribute__((__used__)) void logReferences() {
-    logReferences(std::cout, LogFormat::Tree, false);
-  }
+
 #endif
 
  protected:

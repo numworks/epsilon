@@ -5,6 +5,7 @@
 #include <poincare/init.h>
 #include <poincare/print.h>
 #include <poincare/tree_pool.h>
+#include <poincare_junior/include/poincare.h>
 #include <poincare_junior/test/helper.h>
 
 #include "quiz.h"
@@ -83,6 +84,7 @@ static inline void ion_main_inner(const char *testFilter) {
 
 void ion_main(int argc, const char *const argv[]) {
   Poincare::Init();  // Initialize Poincare::TreePool::sharedPool
+  PoincareJ::Init();
   Escher::Init();
   Apps::Init();
 
@@ -115,4 +117,5 @@ void ion_main(int argc, const char *const argv[]) {
 #endif
     quiz_assert(false);
   }
+  PoincareJ::Shutdown();
 }

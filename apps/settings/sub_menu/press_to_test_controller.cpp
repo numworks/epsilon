@@ -15,7 +15,7 @@ namespace Settings {
 
 PressToTestController::PressToTestController(Responder *parentResponder)
     : ViewController(parentResponder),
-      m_selectableTableView(this, this, this, &m_view),
+      m_selectableListView(this, this, this, &m_view),
       m_topMessageView(KDFont::Size::Small, I18n::Message::Default,
                        KDContext::k_alignCenter, KDContext::k_alignCenter,
                        Palette::GrayDark, Palette::WallScreen),
@@ -23,11 +23,11 @@ PressToTestController::PressToTestController(Responder *parentResponder)
                           I18n::Message::ToDeactivatePressToTest1,
                           KDContext::k_alignCenter, KDContext::k_alignCenter,
                           KDColorBlack, Palette::WallScreen),
-      m_view(&m_selectableTableView, this, &m_topMessageView,
+      m_view(&m_selectableListView, this, &m_topMessageView,
              &m_bottomMessageView),
       m_tempPressToTestParams{},
       m_activateButton(
-          &m_selectableTableView, I18n::Message::ActivateTestMode,
+          &m_selectableListView, I18n::Message::ActivateTestMode,
           Invocation::Builder<PressToTestController>(
               [](PressToTestController *controller, void *sender) {
                 AppsContainer::sharedAppsContainer()->displayExamModePopUp(
@@ -48,7 +48,7 @@ PressToTestController::PressToTestController(Responder *parentResponder)
 }
 
 void PressToTestController::resetController() {
-  selectCellAtLocation(0, 0);
+  selectCell(0);
   if (Preferences::sharedPreferences->examMode().isActive()) {
     // Reset switches states to press-to-test current parameter.
     m_tempPressToTestParams =
@@ -153,16 +153,16 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
     setParamAtIndex(row, !getParamAtIndex(row));
     /* Memoization isn't resetted here because changing a switch state does not
      * alter the cell's height. */
-    m_selectableTableView.reloadCellAtLocation(selectedColumn(), row);
+    m_selectableListView.reloadCell(row);
     return true;
   }
   if (event == Ion::Events::Left || event == Ion::Events::Back) {
     // Deselect table because select cell will change anyway
-    m_selectableTableView.deselectTable();
+    m_selectableListView.deselectTable();
     if (!Preferences::sharedPreferences->examMode().isActive() &&
         !(m_tempPressToTestParams == ExamMode::PressToTestFlags{})) {
       // Scroll to validation cell if m_confirmPopUpController is discarded.
-      selectCellAtLocation(0, numberOfRows() - 1);
+      selectCell(numberOfRows() - 1);
       // Open pop-up to confirm discarding values
       m_confirmPopUpController.presentModally();
     } else {
@@ -175,7 +175,7 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void PressToTestController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void PressToTestController::didEnterResponderChain(

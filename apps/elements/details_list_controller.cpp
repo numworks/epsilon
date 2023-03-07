@@ -12,13 +12,13 @@ namespace Elements {
 DetailsListController::DetailsListController(
     StackViewController *parentResponder)
     : ViewController(parentResponder),
-      m_selectableTableView(this, this, this, &m_view),
+      m_selectableListView(this, this, this, &m_view),
       m_topElementView(Escher::Palette::WallScreen),
       m_bottomMessageView(
           KDFont::Size::Small, I18n::Message::ElementsDataConditions,
           KDContext::k_alignCenter, KDContext::k_alignCenter,
           Escher::Palette::GrayDark, Escher::Palette::WallScreen),
-      m_view(&m_selectableTableView, this, &m_topElementView,
+      m_view(&m_selectableListView, this, &m_topElementView,
              &m_bottomMessageView) {}
 
 bool DetailsListController::handleEvent(Ion::Events::Event e) {

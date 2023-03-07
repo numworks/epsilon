@@ -3,7 +3,7 @@
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/expression_cell_with_editable_text_with_message.h>
-#include <escher/table_view_with_top_and_bottom_views.h>
+#include <escher/list_view_with_top_and_bottom_views.h>
 
 #include "calculation_controller.h"
 #include "distributions/models/distribution/distribution.h"
@@ -47,7 +47,7 @@ class ParametersController : public Shared::FloatParameterController<double> {
   constexpr static int k_maxNumberOfCells = 3;
   Escher::MessageTextView m_headerView;
   Escher::MessageTextView m_bottomView;
-  Escher::TableViewWithTopAndBottomViews m_contentView;
+  Escher::ListViewWithTopAndBottomViews m_contentView;
   Escher::ExpressionCellWithEditableTextWithMessage
       m_menuListCell[k_maxNumberOfCells];
   Distribution* m_distribution;

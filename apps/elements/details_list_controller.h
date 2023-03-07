@@ -1,9 +1,9 @@
 #ifndef ELEMENTS_DETAILS_LIST_CONTROLLER
 #define ELEMENTS_DETAILS_LIST_CONTROLLER
 
+#include <escher/list_view_with_top_and_bottom_views.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
-#include <escher/table_view_with_top_and_bottom_views.h>
 
 #include "physical_quantity_cell.h"
 #include "single_element_view.h"
@@ -12,7 +12,7 @@ namespace Elements {
 
 class DetailsListController : public Escher::ViewController,
                               public Escher::MemoizedListViewDataSource,
-                              public Escher::SelectableTableViewDataSource {
+                              public Escher::SelectableListViewDataSource {
  public:
   DetailsListController(Escher::StackViewController *parentResponder);
 
@@ -49,10 +49,10 @@ class DetailsListController : public Escher::ViewController,
     return static_cast<Escher::StackViewController *>(parentResponder());
   }
 
-  Escher::SelectableTableView m_selectableTableView;
+  Escher::SelectableListView m_selectableListView;
   SingleElementView m_topElementView;
   Escher::MessageTextView m_bottomMessageView;
-  Escher::TableViewWithTopAndBottomViews m_view;
+  Escher::ListViewWithTopAndBottomViews m_view;
   PhysicalQuantityCell m_normalCells[k_numberOfNormalCells];
   PhysicalQuantityCellWithSeparator m_separatorCells[k_numberOfSeparatorCells];
 };

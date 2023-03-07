@@ -68,7 +68,7 @@ bool MainController::handleEvent(Ion::Events::Event e) {
   }
 
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
-    m_detailsController.selectCellAtLocation(0, 0);
+    m_detailsController.selectCell(0);
     stackOpenPage(&m_detailsController);
     return true;
   }

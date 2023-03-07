@@ -37,7 +37,7 @@ class InterestMenuController
   uint8_t paramaterAtIndex(int index) const;
 
   Escher::MessageTextView m_messageView;
-  Escher::TableViewWithTopAndBottomViews m_contentView;
+  Escher::ListViewWithTopAndBottomViews m_contentView;
   InterestController* m_interestController;
 };
 

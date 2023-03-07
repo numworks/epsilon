@@ -27,8 +27,8 @@ ListController::ListController(
       m_modelsStackController(nullptr, &m_modelsParameterController,
                               StackViewController::Style::PurpleWhite),
       m_parameterColumnSelected(false) {
-  m_addNewModel.setLeftMargin(Metric::BigCellMargin +
-                              FunctionCell::k_colorIndicatorThickness);
+  m_addNewModelCell.setLeftMargin(Metric::BigCellMargin +
+                                  FunctionCell::k_colorIndicatorThickness);
 }
 
 /* TableViewDataSource */
@@ -39,7 +39,7 @@ HighlightCell *ListController::reusableCell(int index, int type) {
     return &m_editableCell;
   }
   if (type == k_addNewModelCellType) {
-    return &m_addNewModel;
+    return &m_addNewModelCell;
   }
   assert(type == k_functionCellType);
   return functionCells(index);

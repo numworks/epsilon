@@ -55,7 +55,7 @@ class ExpressionModelListController
   // ViewController
   virtual Escher::SelectableListView* selectableTableView() = 0;
   virtual ExpressionModelStore* modelStore() const = 0;
-  Escher::EvenOddMessageTextCell m_addNewModel;
+  Escher::EvenOddMessageTextCell m_addNewModelCell;
   // LayoutDelegate
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Poincare::Layout layout,

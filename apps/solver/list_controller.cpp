@@ -35,7 +35,7 @@ ListController::ListController(
       m_modelsParameterController(this, equationStore, this),
       m_modelsStackController(nullptr, &m_modelsParameterController,
                               StackViewController::Style::PurpleWhite) {
-  m_addNewModel.setLeftMargin(k_newModelMargin);
+  m_addNewModelCell.setLeftMargin(k_newModelMargin);
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i].setLeftMargin(EquationListView::k_braceTotalWidth +
                                        k_expressionMargin);
@@ -69,7 +69,7 @@ HighlightCell *ListController::reusableCell(int index, int type) {
     case k_equationCellType:
       return &m_expressionCells[index];
     case k_addNewModelCellType:
-      return &m_addNewModel;
+      return &m_addNewModelCell;
     case k_editableCellType:
       return &m_editableCell;
     default:

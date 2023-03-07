@@ -105,13 +105,6 @@ void ListController::viewWillAppear() {
   computeTitlesColumnWidth();
 }
 
-int ListController::typeAtIndex(int index) const {
-  if (index == m_editedCellIndex) {
-    return k_editableCellType;
-  }
-  return isAddEmptyRow(index) ? k_addNewModelCellType : k_expressionCellType;
-}
-
 HighlightCell *ListController::reusableCell(int index, int type) {
   assert(index >= 0 && index < maxNumberOfDisplayableRows());
   switch (type) {

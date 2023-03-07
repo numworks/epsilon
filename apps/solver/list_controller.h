@@ -27,11 +27,6 @@ class ListController : public Shared::ExpressionModelListController,
   Escher::AbstractButtonCell* buttonAtIndex(
       int index, Escher::ButtonRowController::Position position) const override;
   /* ListViewDataSource */
-  int numberOfRows() const override { return numberOfExpressionRows(); }
-  int typeAtIndex(int index) const override {
-    return index == m_editedCellIndex ? k_editableCellType
-                                      : isAddEmptyRow(index);
-  }
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;

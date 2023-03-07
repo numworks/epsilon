@@ -36,6 +36,16 @@ bool ExpressionModelListController::isAddEmptyRow(int j) const {
          modelStore()->numberOfModels() != modelStore()->maxNumberOfModels();
 }
 
+int ExpressionModelListController::typeAtIndex(int index) const {
+  if (index == m_editedCellIndex) {
+    return k_editableCellType;
+  }
+  if (isAddEmptyRow(index)) {
+    return k_addNewModelCellType;
+  }
+  return k_expressionCellType;
+}
+
 KDCoordinate ExpressionModelListController::ExpressionRowHeightFromLayoutHeight(
     KDCoordinate modelHeight) {
   KDCoordinate modelHeightWithMargins =

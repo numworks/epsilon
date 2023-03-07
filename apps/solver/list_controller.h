@@ -29,7 +29,8 @@ class ListController : public Shared::ExpressionModelListController,
   /* ListViewDataSource */
   int numberOfRows() const override { return numberOfExpressionRows(); }
   int typeAtIndex(int index) const override {
-    return index == m_editedCellIndex ? k_editedCellType : isAddEmptyRow(index);
+    return index == m_editedCellIndex ? k_editableCellType
+                                      : isAddEmptyRow(index);
   }
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
@@ -56,9 +57,7 @@ class ListController : public Shared::ExpressionModelListController,
   void resolveEquations();
 
  private:
-  constexpr static int k_equationCellType = 0;
-  constexpr static int k_addNewModelType = 1;
-  constexpr static int k_editedCellType = 2;
+  constexpr static int k_equationCellType = k_expressionCellType;
   constexpr static int k_maxNumberOfRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::Metric::StoreRowHeight,

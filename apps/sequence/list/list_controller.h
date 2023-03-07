@@ -56,10 +56,6 @@ class ListController : public Shared::FunctionListController {
                                   Ion::Events::Event event) override;
 
  private:
-  /* Cell types */
-  constexpr static int k_expressionCellType = 0;
-  constexpr static int k_editableCellType = k_expressionCellType + 1;
-  constexpr static int k_addModelCellType = k_editableCellType + 1;
   /* Model definitions */
   constexpr static int k_otherDefinition = -1;
   constexpr static int k_sequenceDefinition = 0;

@@ -109,7 +109,7 @@ int ListController::typeAtIndex(int index) const {
   if (index == m_editedCellIndex) {
     return k_editableCellType;
   }
-  return isAddEmptyRow(index) ? k_addModelCellType : k_expressionCellType;
+  return isAddEmptyRow(index) ? k_addNewModelCellType : k_expressionCellType;
 }
 
 HighlightCell *ListController::reusableCell(int index, int type) {
@@ -120,7 +120,7 @@ HighlightCell *ListController::reusableCell(int index, int type) {
     case k_editableCellType:
       return &m_editableCell;
     default:
-      assert(type == k_addModelCellType);
+      assert(type == k_addNewModelCellType);
       return &(m_addNewModel);
   }
 }

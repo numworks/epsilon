@@ -21,12 +21,12 @@ ResultsController::ResultsController(
     Escher::InputEventHandlerDelegate *handler,
     Escher::TextFieldDelegate *textFieldDelegate)
     : Escher::ViewController(parent),
-      m_tableView(this, &m_resultsDataSource, this, &m_contentView),
+      m_selectableListView(this, &m_resultsDataSource, this, &m_contentView),
       m_title(KDFont::Size::Small, I18n::Message::CalculatedValues,
               KDContext::k_alignCenter, KDContext::k_alignCenter,
               Palette::GrayDark, Palette::WallScreen),
-      m_contentView(&m_tableView, &m_resultsDataSource, &m_title),
-      m_resultsDataSource(&m_tableView, statistic,
+      m_contentView(&m_selectableListView, &m_resultsDataSource, &m_title),
+      m_resultsDataSource(&m_selectableListView, statistic,
                           Invocation::Builder<ResultsController>(
                               &ResultsController::ButtonAction, this),
                           this),
@@ -35,8 +35,8 @@ ResultsController::ResultsController(
       m_intervalGraphController(intervalGraphController) {}
 
 void ResultsController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
-  Escher::Container::activeApp()->setFirstResponder(&m_tableView);
+  selectCell(0);
+  Escher::Container::activeApp()->setFirstResponder(&m_selectableListView);
   m_resultsDataSource.resetMemoization();
   m_contentView.reload();
 }
@@ -89,7 +89,7 @@ bool ResultsController::ButtonAction(ResultsController *controller, void *s) {
 void ResultsController::initCell(ExpressionCellWithBufferWithMessage,
                                  void *cell, int index) {
   static_cast<ExpressionCellWithBufferWithMessage *>(cell)->setParentResponder(
-      &m_tableView);
+      &m_selectableListView);
 }
 
 }  // namespace Inference

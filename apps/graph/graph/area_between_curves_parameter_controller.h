@@ -2,8 +2,8 @@
 #define GRAPH_AREA_BETWEEN_CURVES_PARAMETER_CONTROLLER
 
 #include <apps/shared/curve_selection_controller.h>
+#include <escher/list_view_with_top_and_bottom_views.h>
 #include <escher/selectable_list_view_controller.h>
-#include <escher/table_view_with_top_and_bottom_views.h>
 
 #include "area_between_curves_graph_controller.h"
 

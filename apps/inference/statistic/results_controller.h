@@ -3,10 +3,10 @@
 
 #include <apps/i18n.h>
 #include <escher/input_event_handler_delegate.h>
+#include <escher/list_view_with_top_and_bottom_views.h>
 #include <escher/palette.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
-#include <escher/table_view_with_top_and_bottom_views.h>
 #include <escher/text_field_delegate.h>
 #include <escher/view_controller.h>
 
@@ -18,7 +18,7 @@
 namespace Inference {
 
 class ResultsController : public Escher::ViewController,
-                          public Escher::SelectableTableViewDataSource,
+                          public Escher::SelectableListViewDataSource,
                           public DynamicCellsDataSourceDelegate<
                               ExpressionCellWithBufferWithMessage> {
  public:
@@ -35,12 +35,14 @@ class ResultsController : public Escher::ViewController,
 
   void initCell(ExpressionCellWithBufferWithMessage, void* cell,
                 int index) override;
-  Escher::SelectableTableView* tableView() override { return &m_tableView; }
+  Escher::SelectableListView* tableView() override {
+    return &m_selectableListView;
+  }
 
  protected:
-  Escher::SelectableTableView m_tableView;
+  Escher::SelectableListView m_selectableListView;
   Escher::MessageTextView m_title;
-  Escher::TableViewWithTopAndBottomViews m_contentView;
+  Escher::ListViewWithTopAndBottomViews m_contentView;
 
   ResultsDataSource m_resultsDataSource;
   Statistic* m_statistic;

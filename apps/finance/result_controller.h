@@ -1,11 +1,11 @@
 #ifndef FINANCE_RESULT_CONTROLLER_H
 #define FINANCE_RESULT_CONTROLLER_H
 
+#include <escher/list_view_with_top_and_bottom_views.h>
 #include <escher/message_table_cell_with_message_with_buffer.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
-#include <escher/table_view_with_top_and_bottom_views.h>
 #include <ion/display.h>
 #include <ion/events.h>
 
@@ -34,7 +34,7 @@ class ResultController
   char m_titleBuffer[k_titleBufferSize];
 
   Escher::MessageTextView m_messageView;
-  Escher::TableViewWithTopAndBottomViews m_contentView;
+  Escher::ListViewWithTopAndBottomViews m_contentView;
 };
 
 }  // namespace Finance

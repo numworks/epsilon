@@ -111,7 +111,7 @@ HighlightCell *ListController::reusableCell(int index, int type) {
       return &m_editableCell;
     default:
       assert(type == k_addNewModelCellType);
-      return &(m_addNewModel);
+      return &m_addNewModelCell;
   }
 }
 

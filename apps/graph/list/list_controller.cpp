@@ -27,8 +27,9 @@ ListController::ListController(
       m_modelsStackController(nullptr, &m_modelsParameterController,
                               StackViewController::Style::PurpleWhite),
       m_parameterColumnSelected(false) {
-  m_addNewModelCell.setLeftMargin(Metric::BigCellMargin +
-                                  FunctionCell::k_colorIndicatorThickness);
+  static_assert(k_newModelMargin == FunctionCell::k_colorIndicatorThickness +
+                                        Metric::BigCellMargin);
+  m_addNewModelCell.setLeftMargin(k_newModelMargin);
 }
 
 /* TableViewDataSource */

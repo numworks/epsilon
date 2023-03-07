@@ -91,7 +91,6 @@ class ListController : public Shared::FunctionListController {
     return m_editableCell.expressionCell()->expressionField();
   }
 
-  Escher::EvenOddCell m_emptyCell;
   SequenceCell m_sequenceCells[k_maxNumberOfRows];
   EditableSequenceCell m_editableCell;
   ListParameterController m_parameterController;

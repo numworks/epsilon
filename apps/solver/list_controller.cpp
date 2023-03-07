@@ -263,15 +263,12 @@ void ListController::reloadBrace() {
                  ? EquationListView::BraceStyle::Full
                  : EquationListView::BraceStyle::OneRowShort);
   m_equationListView.setBraceStyle(braceStyle);
-  m_expressionCells[0].setLeftMargin(
-      (modelStore()->numberOfModels() <= 1
-           ?: EquationListView::k_braceTotalWidth) +
-      k_expressionMargin);
-  m_editableCell.setMargins((modelStore()->numberOfModels() <= 1
-                                 ? 0
-                                 : EquationListView::k_braceTotalWidth) +
-                                k_expressionMargin,
-                            k_expressionMargin);
+  KDCoordinate margin = k_expressionMargin;
+  if (modelStore()->numberOfModels() > 1) {
+    margin += EquationListView::k_braceTotalWidth;
+  }
+  m_expressionCells[0].setLeftMargin(margin);
+  m_editableCell.setMargins(margin, k_expressionMargin);
 }
 
 EquationStore *ListController::modelStore() const {

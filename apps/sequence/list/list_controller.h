@@ -63,14 +63,7 @@ class ListController : public Shared::FunctionListController {
   constexpr static int k_maxNumberOfRows =
       3 * Shared::SequenceStore::k_maxNumberOfSequences;
 
-  // TableViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int j) override {
-    return expressionRowHeight(j);
-  }
   void initCellSize(Escher::TableView* view) override {}
-
-  // ExpressionModelListController
-  void resetSizesMemoization() override { resetMemoization(); }
 
   void computeTitlesColumnWidth(bool forceMax = false);
   ListParameterController* parameterController() override {

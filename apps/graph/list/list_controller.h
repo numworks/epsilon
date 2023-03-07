@@ -46,13 +46,6 @@ class ListController : public Shared::FunctionListController {
   // 6 rows of undefined empty functions
   constexpr static int k_maxNumberOfDisplayableRows = 6;
 
-  // ExpressionModelListController
-  void resetSizesMemoization() override { resetMemoization(); }
-  // ListViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int j) override {
-    return expressionRowHeight(j);
-  }
-
   void fillWithDefaultFunctionEquation(
       char* buffer, size_t bufferSize,
       FunctionModelsParameterController* modelsParameterController,

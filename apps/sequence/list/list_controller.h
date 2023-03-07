@@ -39,14 +39,9 @@ class ListController : public Shared::FunctionListController {
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
   /* ViewController */
-  Escher::View* view() override { return &m_selectableTableView; }
   bool canStoreContentOfCell(Escher::SelectableListView* t,
                              int row) const override {
     return false;
-  }
-  /* ExpressionModelListController */
-  Escher::SelectableListView* selectableTableView() override {
-    return &m_selectableTableView;
   }
   void showLastSequence();
   /* LayoutFieldDelegate */
@@ -103,7 +98,6 @@ class ListController : public Shared::FunctionListController {
     return m_editableCell.expressionCell()->expressionField();
   }
 
-  Escher::SelectableListView m_selectableTableView;
   Escher::EvenOddCell m_emptyCell;
   SequenceCell m_sequenceCells[k_maxNumberOfRows];
   EditableSequenceCell m_editableCell;

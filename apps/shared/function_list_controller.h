@@ -35,8 +35,14 @@ class FunctionListController : public ExpressionModelListController,
   void didBecomeFirstResponder() override;
 
   /* ViewController */
+  Escher::View* view() override { return &m_selectableListView; }
   ViewController::TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::NeverDisplayOwnTitle;
+  }
+
+  /* ExpressionModelListController */
+  Escher::SelectableListView* selectableTableView() override {
+    return &m_selectableListView;
   }
 
  protected:
@@ -48,6 +54,7 @@ class FunctionListController : public ExpressionModelListController,
   virtual ListParameterController* parameterController() = 0;
   virtual int maxNumberOfDisplayableRows() = 0;
   virtual Escher::HighlightCell* functionCells(int index) = 0;
+  Escher::SelectableListView m_selectableListView;
   Escher::AbstractButtonCell m_plotButton;
   Escher::AbstractButtonCell m_valuesButton;
 };

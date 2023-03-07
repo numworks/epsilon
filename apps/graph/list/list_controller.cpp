@@ -21,15 +21,12 @@ ListController::ListController(
     FunctionParameterController *functionParameterController)
     : Shared::FunctionListController(parentResponder, header, footer,
                                      I18n::Message::AddFunction),
-      m_selectableTableView(this, this, this, this),
       m_editableCell(this, this, this),
       m_parameterController(functionParameterController),
       m_modelsParameterController(this, nullptr, this),
       m_modelsStackController(nullptr, &m_modelsParameterController,
                               StackViewController::Style::PurpleWhite),
       m_parameterColumnSelected(false) {
-  m_selectableTableView.setMargins(0);
-  m_selectableTableView.setVerticalCellOverlap(0);
   m_addNewModel.setLeftMargin(Metric::BigCellMargin +
                               FunctionCell::k_colorIndicatorThickness);
 }

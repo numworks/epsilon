@@ -21,7 +21,6 @@ ListController::ListController(
     ButtonRowController *header, ButtonRowController *footer)
     : Shared::FunctionListController(parentResponder, header, footer,
                                      I18n::Message::AddSequence),
-      m_selectableTableView(this, this, this, this),
       m_editableCell(this, this, this),
       m_parameterController(inputEventHandlerDelegate, this),
       m_typeParameterController(this, this),
@@ -32,8 +31,6 @@ ListController::ListController(
     m_sequenceCells[i].expressionCell()->setLeftMargin(k_expressionMargin);
     m_sequenceCells[i].expressionCell()->setRightMargin(0);
   }
-  m_selectableTableView.setMargins(0);
-  m_selectableTableView.setVerticalCellOverlap(0);
 }
 
 int ListController::numberOfExpressionRows() const {
@@ -433,6 +430,6 @@ void ListController::showLastSequence() {
   bool hasAddSequenceButton =
       store->numberOfModels() == store->maxNumberOfModels();
   int lastRow = numberOfExpressionRows() - (hasAddSequenceButton ? 0 : 1) - 1;
-  m_selectableTableView.scrollToCell(lastRow);
+  selectableTableView()->scrollToCell(lastRow);
 }
 }  // namespace Sequence

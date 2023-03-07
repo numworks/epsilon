@@ -15,6 +15,7 @@ FunctionListController::FunctionListController(Responder *parentResponder,
     : ExpressionModelListController(parentResponder, text),
       ButtonRowDelegate(header, footer),
       InputEventHandlerDelegate(),
+      m_selectableListView(this, this, this, this),
       m_plotButton(this, I18n::Message::Plot,
                    Invocation::Builder<FunctionListController>(
                        [](FunctionListController *list, void *sender) {
@@ -34,7 +35,10 @@ FunctionListController::FunctionListController(Responder *parentResponder,
                            return true;
                          },
                          this),
-                     KDFont::Size::Small, Palette::PurpleBright) {}
+                     KDFont::Size::Small, Palette::PurpleBright) {
+  m_selectableListView.setMargins(0);
+  m_selectableListView.setVerticalCellOverlap(0);
+}
 
 /* ButtonRowDelegate */
 

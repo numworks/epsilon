@@ -1,6 +1,7 @@
 #ifndef ESCHER_SELECTABLE_LIST_VIEW_CONTROLLER_H
 #define ESCHER_SELECTABLE_LIST_VIEW_CONTROLLER_H
 
+#include <escher/explicit_list_view_data_source.h>
 #include <escher/highlight_cell.h>
 #include <escher/list_view_data_source.h>
 #include <escher/responder.h>

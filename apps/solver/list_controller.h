@@ -57,8 +57,6 @@ class ListController : public Shared::ExpressionModelListController,
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::Metric::StoreRowHeight,
           Escher::Metric::ButtonRowEmbossedStyleHeightLarge);
-  constexpr static KDCoordinate k_newModelMargin =
-      Escher::Metric::BigCellMargin + 3;
   Escher::SelectableListView* selectableTableView() override;
   void reloadButtonMessage();
   void addModel() override;

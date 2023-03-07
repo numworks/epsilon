@@ -15,8 +15,7 @@
 namespace Solver {
 
 class ListController : public Shared::ExpressionModelListController,
-                       public Escher::ButtonRowDelegate,
-                       public Escher::MemoizedListViewDataSource {
+                       public Escher::ButtonRowDelegate {
  public:
   ListController(Escher::Responder* parentResponder,
                  Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,

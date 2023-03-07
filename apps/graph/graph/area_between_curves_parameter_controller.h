@@ -52,7 +52,7 @@ class AreaBetweenCurvesParameterController
 
   Ion::Storage::Record m_mainRecord;
   AreaBetweenCurvesGraphController* m_areaGraphController;
-  Escher::TableViewWithTopAndBottomViews m_contentView;
+  Escher::ListViewWithTopAndBottomViews m_contentView;
   Escher::MessageTextView m_topView;
   Shared::CurveSelectionCell m_cells[k_maxNumberOfDisplayableRows];
 };

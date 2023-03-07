@@ -37,8 +37,7 @@ AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(
 AreaBetweenCurvesParameterController::AreaBetweenCurvesParameterController(
     Responder *parentResponder,
     AreaBetweenCurvesGraphController *areaGraphController)
-    : SelectableListViewController(parentResponder,
-                                   m_contentView.asListViewDelegate()),
+    : SelectableListViewController(parentResponder, &m_contentView),
       m_mainRecord(nullptr),
       m_areaGraphController(areaGraphController),
       m_contentView(&m_selectableListView, this, &m_topView),

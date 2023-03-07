@@ -54,6 +54,7 @@ escher_src += $(addprefix escher/src/,\
   key_view.cpp \
   layout_field.cpp \
   list_view_data_source.cpp \
+  list_view_with_top_and_bottom_views.cpp \
   message_table_cell.cpp \
   message_table_cell_with_buffer.cpp \
   message_table_cell_with_chevron_and_buffer.cpp \
@@ -93,7 +94,6 @@ escher_src += $(addprefix escher/src/,\
   tab_view_controller.cpp \
   tab_view_data_source.cpp \
   table_view_with_frozen_header.cpp \
-  table_view_with_top_and_bottom_views.cpp \
   table_cell.cpp \
   table_size_1D_manager.cpp \
   table_view.cpp \

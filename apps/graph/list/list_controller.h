@@ -24,7 +24,6 @@ class ListController : public Shared::FunctionListController {
   int reusableCellCount(int type) override;
   // ViewController
   const char* title() override;
-  Escher::View* view() override { return &m_selectableTableView; }
   void viewWillAppear() override;
   // LayoutFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
@@ -34,9 +33,6 @@ class ListController : public Shared::FunctionListController {
   // ExpressionModelListController
   void editExpression(Ion::Events::Event event) override;
   KDCoordinate expressionRowHeight(int j) override;
-  Escher::SelectableListView* selectableTableView() override {
-    return &m_selectableTableView;
-  }
   FunctionToolbox* toolbox() override;
   Shared::ListParameterController* parameterController() override;
   // SelectableListViewDelegate
@@ -75,7 +71,6 @@ class ListController : public Shared::FunctionListController {
     return m_editableCell.expressionField();
   }
 
-  Escher::SelectableListView m_selectableTableView;
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   EditableFunctionCell m_editableCell;
   FunctionParameterController* m_parameterController;

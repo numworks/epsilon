@@ -13,8 +13,7 @@
 
 namespace Graph {
 
-class ListController : public Shared::FunctionListController,
-                       public Escher::MemoizedListViewDataSource {
+class ListController : public Shared::FunctionListController {
  public:
   ListController(Escher::Responder* parentResponder,
                  Escher::ButtonRowController* header,

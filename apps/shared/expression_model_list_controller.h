@@ -18,6 +18,7 @@ class ExpressionModelListController
     : public Escher::ViewController,
       public Escher::SelectableListViewDataSource,
       public Escher::SelectableListViewDelegate,
+      public Escher::MemoizedListViewDataSource,
       public LayoutFieldDelegate {
  public:
   ExpressionModelListController(Escher::Responder* parentResponder,

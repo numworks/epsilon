@@ -14,8 +14,7 @@
 
 namespace Sequence {
 
-class ListController : public Shared::FunctionListController,
-                       public Escher::MemoizedListViewDataSource {
+class ListController : public Shared::FunctionListController {
  public:
   ListController(Escher::Responder* parentResponder,
                  Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,

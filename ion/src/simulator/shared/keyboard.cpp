@@ -38,6 +38,7 @@ constexpr static KeySDLKeyPair sKeyPairs[] = {
     KeySDLKeyPair(Key::Shift, SDL_SCANCODE_LSHIFT),
     KeySDLKeyPair(Key::Shift, SDL_SCANCODE_RSHIFT),
     KeySDLKeyPair(Key::EXE, SDL_SCANCODE_RETURN),
+    KeySDLKeyPair(Key::EXE, SDL_SCANCODE_KP_ENTER),
     KeySDLKeyPair(Key::Back, SDL_SCANCODE_ESCAPE),
     KeySDLKeyPair(Key::Toolbox, SDL_SCANCODE_TAB),
 };

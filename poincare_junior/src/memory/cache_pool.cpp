@@ -124,8 +124,7 @@ CachePool::CachePool() :
 }
 
 void CachePool::resetEditionPool() {
-  size_t numberOfCachedBlocks = lastBlock() - firstBlock();
-  m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks - numberOfCachedBlocks);
+  m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks - size());
 }
 
 void CachePool::translate(uint16_t offset, size_t cachePoolSize) {

@@ -25,7 +25,7 @@ public:
   int execute(ActionWithContext action, void * subAction, const void * data);
 
   using Pool::firstBlock;
-  const TypeBlock * firstBlock() const override { return m_referenceTable.isEmpty() ? nullptr : m_buffer.blocks(); }
+  const TypeBlock * firstBlock() const override { return m_buffer.blocks(); }
   using Pool::lastBlock;
   const TypeBlock * lastBlock() const override { return m_referenceTable.isEmpty() ? m_buffer.blocks() : Node(m_buffer.blocks() + m_referenceTable.lastOffset()).nextTree().block(); }
 

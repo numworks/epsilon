@@ -102,6 +102,7 @@ inline void reset_pools() {
 }
 
 inline void assert_pool_contains(Pool * pool, std::initializer_list<const Node> nodes) {
+  quiz_assert(pool->size() > 0);
   Node tree(pool->firstBlock());
   for (const Node n : nodes) {
     assert_trees_are_equal(n, tree);

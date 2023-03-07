@@ -25,7 +25,7 @@ public:
   TypeBlock * firstBlock() { return const_cast<TypeBlock *>(const_cast<const Pool *>(this)->firstBlock()); }
   virtual const TypeBlock * lastBlock() const = 0;
   TypeBlock * lastBlock() { return const_cast<TypeBlock *>(const_cast<const Pool *>(this)->lastBlock()); }
-  size_t size() const { return firstBlock() ? lastBlock() - firstBlock() : 0; }
+  size_t size() const { return lastBlock() - firstBlock(); }
   size_t numberOfTrees() const;
 
 #if POINCARE_MEMORY_TREE_LOG
@@ -83,7 +83,7 @@ protected:
 public:
   class Nodes final {
   public:
-    Nodes(TypeBlock * block, int numberOfBlocks) : m_node(block), m_numberOfBlocks(numberOfBlocks) {}
+    Nodes(TypeBlock * block, int numberOfBlocks) : m_node(numberOfBlocks > 0 ? block : nullptr), m_numberOfBlocks(numberOfBlocks) {}
     class Iterator : public AbstractIterator {
     public:
       using AbstractIterator::AbstractIterator;
@@ -98,11 +98,11 @@ public:
     Node m_node;
     int m_numberOfBlocks;
   };
-  Nodes allNodes();
+  Nodes allNodes() { return Nodes(firstBlock(), size()); }
 
   class Trees final {
   public:
-    Trees(TypeBlock * block, int numberOfBlocks) : m_node(block), m_numberOfBlocks(numberOfBlocks) {}
+    Trees(TypeBlock * block, int numberOfBlocks) : m_node(numberOfBlocks > 0 ? block : nullptr), m_numberOfBlocks(numberOfBlocks) {}
     class Iterator : public AbstractIterator {
     public:
       using AbstractIterator::AbstractIterator;
@@ -117,7 +117,7 @@ public:
     Node m_node;
     int m_numberOfBlocks;
   };
-  Trees trees();
+  Trees trees() { return Trees(firstBlock(), size()); }
 };
 
 }

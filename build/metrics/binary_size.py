@@ -8,6 +8,8 @@ import os
 import re
 import urllib.parse
 
+EXCLUDED_APPS = {'Escher', 'HardwareTest', 'Home', 'OnBoarding', 'USB'}
+
 # binary_size.py \
 #        --sections @Flash .text .rodata @RAM .bss .data
 #        @Base foo_a.elf foo_b.elf @Head bar_a.elf bar_b.elf
@@ -50,7 +52,55 @@ def section_size(file, section_name):
       return section.data_size
   return None
 
-def format_html_table(grouped_sections, grouped_files, file_section_sizes, show_file_detail):
+def app_sizes(file):
+  sizes = {}
+  elffile = ELFFile(open(file, 'rb'))
+  dwarf = elffile.get_dwarf_info()
+  for cu in dwarf.iter_CUs():
+    if not cu.get_top_DIE().get_full_path().endswith("/app.cpp"):
+      continue
+    for die in cu.iter_DIEs():
+      if die.tag == 'DW_TAG_class_type' and die.get_full_path() == 'App':
+        if "DW_AT_byte_size" in die.attributes:
+          namespace = die.get_parent().get_full_path()
+          if namespace in EXCLUDED_APPS: continue
+          app_size = die.attributes["DW_AT_byte_size"].value
+          for child in die.iter_children():
+            if child.tag == 'DW_TAG_class_type' and child.get_full_path() == 'Snapshot':
+              snapshot_size = child.attributes["DW_AT_byte_size"].value
+              sizes[namespace] = (app_size, snapshot_size)
+              break
+  return sizes
+
+def format_html_apps_table(sizes):
+  output = ""
+  output += '<table>'
+  apps = next(iter(sizes.values()))
+  output += '<tr><th/>'
+  for tag in sizes.keys():
+    output += f'<th align="left">{tag}</th>'
+  add_delta = len(sizes) == 2
+  if add_delta:
+    output += '<th align="left">Delta</th>'
+    before, after = sizes
+  output += '</tr>'
+  for type_id, type_name in enumerate(('App','Snapshot')):
+    output += f'<tr><th align="left">{type_name}</th></tr>'
+    for app in apps:
+      output += '<tr>'
+      output += f'<td>{app}</td>'
+      for size in sizes.values():
+        output += f'<td align="right">{size[app][type_id]:_}</td>'
+      if add_delta:
+        delta = sizes[after][app][type_id] - sizes[before][app][type_id]
+        if delta:
+          output += f'<td align="right">{delta:+_}</td>'
+      output += '</tr>'
+
+  output += '</table>'
+  return output
+
+def format_html_section_table(grouped_sections, grouped_files, file_section_sizes, show_file_detail):
   output = ""
   output += '<table>'
 
@@ -139,19 +189,26 @@ parser = argparse.ArgumentParser(description='Compute binary size metrics')
 parser.add_argument('files', type=str, nargs='+', help='an ELF file')
 parser.add_argument('--sections', type=str, nargs='+', help='Section (prefix) to list')
 parser.add_argument('--summarize', action=argparse.BooleanOptionalAction, help='Show a summarized version')
+parser.add_argument('--app-sizes', action=argparse.BooleanOptionalAction, help='Show app sizes')
 
 args = parser.parse_args()
 
-grouped_sections = named_groups(args.sections)
 grouped_files = named_groups(args.files)
 
-# For each file, compute the size of each section
-file_section_sizes = {}
-for _,files in grouped_files:
-  for file in files:
-    file_section_sizes.setdefault(file, {})
-    for _,sections in grouped_sections:
-      for section in sections:
-        file_section_sizes[file][section] = section_size(file, section)
-
-print(format_html_table(grouped_sections, grouped_files, file_section_sizes, args.summarize))
+if args.app_sizes:
+  sizes = {}
+  for tag,files in grouped_files:
+    assert len(files) == 1 and "userland" in files[0]
+    sizes[tag] = app_sizes(files[0])
+  print(format_html_apps_table(sizes))
+else:
+  grouped_sections = named_groups(args.sections)
+  # For each file, compute the size of each section
+  file_section_sizes = {}
+  for _,files in grouped_files:
+    for file in files:
+      file_section_sizes.setdefault(file, {})
+      for _,sections in grouped_sections:
+        for section in sections:
+          file_section_sizes[file][section] = section_size(file, section)
+  print(format_html_section_table(grouped_sections, grouped_files, file_section_sizes, args.summarize))

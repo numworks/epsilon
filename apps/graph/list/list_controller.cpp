@@ -36,17 +36,6 @@ ListController::ListController(
 
 /* TableViewDataSource */
 
-int ListController::typeAtIndex(int index) const {
-  if (index == m_editedCellIndex) {
-    return k_editableCellType;
-  }
-  if (isAddEmptyRow(index)) {
-    return k_addNewModelCellType;
-  }
-  assert(index >= 0 && index < modelStore()->numberOfModels());
-  return k_functionCellType;
-}
-
 HighlightCell *ListController::reusableCell(int index, int type) {
   assert(index >= 0 && index < reusableCellCount(type));
   if (type == k_editableCellType) {

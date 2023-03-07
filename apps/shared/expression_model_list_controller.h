@@ -38,7 +38,9 @@ class ExpressionModelListController
   constexpr static int k_expressionCellType = 0;
   constexpr static int k_addNewModelCellType = 1;
   constexpr static int k_editableCellType = 2;
-  // TableViewDataSource
+  // ListViewDataSource
+  int numberOfRows() const override { return this->numberOfExpressionRows(); }
+  int typeAtIndex(int index) const override;
   virtual int numberOfExpressionRows() const;
   bool isAddEmptyRow(int j) const;
   static KDCoordinate ExpressionRowHeightFromLayoutHeight(KDCoordinate height);

@@ -20,9 +20,6 @@ class ListController : public Shared::FunctionListController {
                  Escher::ButtonRowController* footer,
                  GraphController* graphController,
                  FunctionParameterController* functionParameterController);
-  // ListViewDataSource
-  int numberOfRows() const override { return this->numberOfExpressionRows(); }
-  int typeAtIndex(int index) const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   // ViewController

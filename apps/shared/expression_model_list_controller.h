@@ -41,6 +41,9 @@ class ExpressionModelListController
   // ListViewDataSource
   int numberOfRows() const override { return this->numberOfExpressionRows(); }
   int typeAtIndex(int index) const override;
+  KDCoordinate nonMemoizedRowHeight(int j) override {
+    return expressionRowHeight(j);
+  }
   virtual int numberOfExpressionRows() const;
   bool isAddEmptyRow(int j) const;
   static KDCoordinate ExpressionRowHeightFromLayoutHeight(KDCoordinate height);
@@ -49,7 +52,7 @@ class ExpressionModelListController
                                                 int j);
   // Responder
   virtual void addModel();
-  virtual void didChangeModelsList() { resetSizesMemoization(); }
+  virtual void didChangeModelsList() { resetMemoization(); }
   virtual bool removeModelRow(Ion::Storage::Record record);
   virtual int modelIndexForRow(int j) const { return j; }
   // ViewController
@@ -62,8 +65,6 @@ class ExpressionModelListController
                                    Ion::Events::Event event) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
   bool layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
-  // Memoization
-  virtual void resetSizesMemoization() {}
   // EditableCell
   virtual Escher::ExpressionField* expressionField() = 0;
   int16_t m_editedCellIndex;

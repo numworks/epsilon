@@ -191,13 +191,13 @@ bool ExpressionModelListController::removeModelRow(
 
 void ExpressionModelListController::layoutFieldDidChangeSize(
     LayoutField *layoutField) {
-  resetSizesMemoization();
+  resetMemoization();
   selectableTableView()->reloadData(false);
 }
 
 void ExpressionModelListController::finishEdition() {
   m_editedCellIndex = -1;
-  resetSizesMemoization();
+  resetMemoization();
   selectableTableView()->reloadData(true);
 }
 

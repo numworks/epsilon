@@ -425,7 +425,7 @@ KDCoordinate ListController::nameWidth(int nameLength) const {
 }
 
 void ListController::showLastSequence() {
-  resetSizesMemoization();
+  resetMemoization();
   SequenceStore *store = const_cast<ListController *>(this)->modelStore();
   bool hasAddSequenceButton =
       store->numberOfModels() == store->maxNumberOfModels();

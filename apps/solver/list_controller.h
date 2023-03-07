@@ -69,8 +69,6 @@ class ListController : public Shared::ExpressionModelListController,
 
   // ListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  // ExpressionModelListController
-  void resetSizesMemoization() override { resetMemoization(); }
   Escher::ExpressionField* expressionField() override {
     return m_editableCell.expressionField();
   }

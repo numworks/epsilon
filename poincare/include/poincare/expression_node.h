@@ -111,6 +111,7 @@ class ExpressionNode : public TreeNode {
     Opposite,
     Parenthesis,
     PermuteCoefficient,
+    Point,
     Product,
     Random,
     Randint,

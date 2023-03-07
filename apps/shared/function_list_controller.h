@@ -45,7 +45,6 @@ class FunctionListController : public ExpressionModelListController,
   Escher::TabViewController* tabController() const;
 
  private:
-  virtual int initialColumnToSelect() const = 0;
   virtual ListParameterController* parameterController() = 0;
   virtual int maxNumberOfDisplayableRows() = 0;
   virtual Escher::HighlightCell* functionCells(int index) = 0;

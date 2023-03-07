@@ -122,7 +122,8 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
   return BeautifyFirstOrderDerivativeIntoNthOrder(h, insertedLayoutIndex,
                                                   layoutCursor) ||
          BeautifyPipeKey(h, insertedLayoutIndex, layoutCursor) ||
-         BeautifySymbols(h, insertedLayoutIndex, layoutCursor);
+         BeautifySymbols(h, insertedLayoutIndex, layoutCursor) ||
+         BeautifySum(h, insertedLayoutIndex, context, layoutCursor);
 }
 
 // private
@@ -139,6 +140,10 @@ bool InputBeautification::BeautifySymbols(HorizontalLayout h,
   assert(!h.isUninitialized());
   assert(rightMostIndexToBeautify < h.numberOfChildren() &&
          rightMostIndexToBeautify >= 0);
+  if (h.childAtIndex(rightMostIndexToBeautify).type() !=
+      LayoutNode::Type::CodePointLayout) {
+    return false;
+  }
   // Try beautifying non-identifiers (ex: <=, ->, ...)
   for (BeautificationRule beautificationRule : k_symbolsRules) {
     /* This routine does not work if the listOfBeautifiedAliases contains
@@ -180,11 +185,11 @@ bool InputBeautification::BeautifySymbols(HorizontalLayout h,
 
 bool InputBeautification::BeautifyIdentifiers(
     HorizontalLayout h, int rightMostIndexToBeautify, Context *context,
-    LayoutCursor *layoutCursor, bool afterLeftParenthesisInsertion) {
+    LayoutCursor *layoutCursor, bool beautifyFunctions, bool beautifySum) {
   assert(!h.isUninitialized());
   assert(rightMostIndexToBeautify < h.numberOfChildren() &&
          rightMostIndexToBeautify >= 0);
-  assert(!afterLeftParenthesisInsertion ||
+  assert(!beautifyFunctions ||
          (rightMostIndexToBeautify < h.numberOfChildren() - 1 &&
           h.childAtIndex(rightMostIndexToBeautify + 1).type() ==
               LayoutNode::Type::ParenthesisLayout));
@@ -262,7 +267,7 @@ bool InputBeautification::BeautifyIdentifiers(
     }
 
     // Following beautification routines are for functions
-    if (!afterLeftParenthesisInsertion) {
+    if (!beautifyFunctions) {
       continue;
     }
 
@@ -303,6 +308,14 @@ bool InputBeautification::BeautifyIdentifiers(
       assert(numberOfLayoutsAddedOrRemovedLastLoop == 0);
       int comparison = 0;
       for (BeautificationRule beautificationRule : k_functionsRules) {
+        if (!beautifySum &&
+            beautificationRule.listOfBeautifiedAliases.isEquivalentTo(
+                Sum::s_functionHelper.aliasesList())) {
+          /* "sum(" is not alway beautified since it can be either the
+           * sum of a list (which should not be beautified) or a sum between k
+           * and n (which should be beautified). */
+          continue;
+        }
         layoutsWereBeautified =
             CompareAndBeautifyIdentifier(
                 currentIdentifier.text(), currentIdentifier.length(),
@@ -378,7 +391,7 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
   h.removeChildAtIndexInPlace(indexOfSuperscript);
   if (layoutCursor->layout() == h &&
       layoutCursor->position() > h.numberOfChildren()) {
-    *layoutCursor = LayoutCursor(derivativeOrder, OMG::Direction::Right());
+    layoutCursor->safeSetLayout(derivativeOrder, OMG::Direction::Right());
   }
   HigherOrderDerivativeLayout newDerivative =
       HigherOrderDerivativeLayout::Builder(firstOrderDerivative.childAtIndex(0),
@@ -387,6 +400,45 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
                                            derivativeOrder);
   firstOrderDerivative.replaceWithInPlace(newDerivative);
   return true;
+}
+
+bool InputBeautification::BeautifySum(HorizontalLayout h, int indexOfComma,
+                                      Context *context,
+                                      LayoutCursor *layoutCursor) {
+  /* The "sum(" function is ambiguous". It can either be:
+   *  - The sum of a list, which should not be beautified.
+   *  - The sum between k and n, which should be beautified.
+   *
+   * To avoid beautifying when it should not be, the sum function
+   * is beautified only when a ',' is inserted.
+   *
+   * Example:
+   *  - "sum|" -> insert "(" -> "sum(" -> do not beautify
+   *  - "sum(k^2|" -> insert "," -> "sum(k^2,|" -> beautify with a big sigma
+   * */
+  assert(!h.isUninitialized());
+  assert(indexOfComma < h.numberOfChildren() && indexOfComma >= 0);
+  Layout comma = h.childAtIndex(indexOfComma);
+  if (comma.type() != LayoutNode::Type::CodePointLayout ||
+      static_cast<CodePointLayout &>(comma).codePoint() != CodePoint(',')) {
+    return false;
+  }
+  Layout parenthesis = h.parent();
+  if (parenthesis.isUninitialized() ||
+      parenthesis.type() != LayoutNode::Type::ParenthesisLayout) {
+    return false;
+  }
+  Layout horizontalParent = parenthesis.parent();
+  if (horizontalParent.isUninitialized() || !horizontalParent.isHorizontal()) {
+    return false;
+  }
+  int indexOfParenthesis = horizontalParent.indexOfChild(parenthesis);
+  if (indexOfParenthesis == 0) {
+    return false;
+  }
+  return BeautifyIdentifiers(static_cast<HorizontalLayout &>(horizontalParent),
+                             indexOfParenthesis - 1, context, layoutCursor,
+                             true, true);
 }
 
 bool InputBeautification::CompareAndBeautifyIdentifier(
@@ -422,7 +474,11 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
         (beautificationRule.listOfBeautifiedAliases.isEquivalentTo(
              Derivative::s_functionHelper.aliasesList()) ||
          beautificationRule.listOfBeautifiedAliases.isEquivalentTo(
-             Integral::s_functionHelper.aliasesList()));
+             Integral::s_functionHelper.aliasesList()) ||
+         beautificationRule.listOfBeautifiedAliases.isEquivalentTo(
+             Product::s_functionHelper.aliasesList()) ||
+         beautificationRule.listOfBeautifiedAliases.isEquivalentTo(
+             Sum::s_functionHelper.aliasesList()));
     inserted = ReplaceEmptyLayoutsWithParameters(
         inserted, h, endIndex + 1, layoutCursor, isParameteredExpression);
     endIndex++;  // Include parenthesis in layouts to delete
@@ -510,10 +566,13 @@ Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(
   int n = parametersContainer.numberOfChildren();
   int numberOfEmptyLayoutsToSkip = 0;
   HorizontalLayout currentParameter = HorizontalLayout::Builder();
-  Layout nextLayoutOfCursor = layoutCursor->layout() == parametersContainer
-                                  ? currentParameter
-                                  : Layout();
+  int cursorPosition = layoutCursor->layout() == parametersContainer
+                           ? layoutCursor->position()
+                           : -1;
   while (currentParameterIndex <= n) {
+    if (cursorPosition == 0) {
+      layoutCursor->safeSetLayout(currentParameter, OMG::Direction::Right());
+    }
     Layout child = currentParameterIndex < n
                        ? parametersContainer.childAtIndex(currentParameterIndex)
                        : Layout();
@@ -548,19 +607,15 @@ Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(
       }
       layoutToReplace.replaceWithInPlace(currentParameter);
       numberOfParameters++;
+      cursorPosition--;
       currentParameter = HorizontalLayout::Builder();
     } else {
       // Add layout to parameter
       currentParameter.addOrMergeChildAtIndex(
           child.clone(), currentParameter.numberOfChildren());
+      cursorPosition--;
     }
     currentParameterIndex++;
-  }
-  if (!nextLayoutOfCursor.isUninitialized()) {
-    /* With the current implementation, this occurs only when the cursor is
-     * left of the parenthesis. */
-    assert(layoutCursor->position() == 0);
-    layoutCursor->safeSetLayout(nextLayoutOfCursor, OMG::Direction::Left());
   }
   return layoutToModify;
 }

@@ -13,7 +13,9 @@
 #include <poincare/nth_root.h>
 #include <poincare/piecewise_operator.h>
 #include <poincare/power.h>
+#include <poincare/product.h>
 #include <poincare/square_root.h>
+#include <poincare/sum.h>
 #include <poincare_layouts.h>
 
 namespace Poincare {
@@ -217,6 +219,13 @@ class InputBeautification {
          layout.addRow(HorizontalLayout::Builder());
          return static_cast<Layout>(layout);
        }},
+      {/* product( */
+       Product::s_functionHelper.aliasesList(),
+       [](Layout builderParameter) {
+         return static_cast<Layout>(ProductLayout::Builder(
+             HorizontalLayout::Builder(), CodePointLayout::Builder('k'),
+             HorizontalLayout::Builder(), HorizontalLayout::Builder()));
+       }},
       {/* root( */
        NthRoot::s_functionHelper.aliasesList(),
        [](Layout builderParameter) {
@@ -229,7 +238,12 @@ class InputBeautification {
          return static_cast<Layout>(
              NthRootLayout::Builder(HorizontalLayout::Builder()));
        }},
-  };
+      {/* sum( */
+       Sum::s_functionHelper.aliasesList(), [](Layout builderParameter) {
+         return static_cast<Layout>(SumLayout::Builder(
+             HorizontalLayout::Builder(), CodePointLayout::Builder('k'),
+             HorizontalLayout::Builder(), HorizontalLayout::Builder()));
+       }}};
 
   static bool LayoutIsIdentifierMaterial(Layout l);
 
@@ -245,7 +259,8 @@ class InputBeautification {
   static bool BeautifyIdentifiers(HorizontalLayout h,
                                   int rightMostIndexToBeautify,
                                   Context* context, LayoutCursor* layoutCursor,
-                                  bool afterLeftParenthesisInsertion);
+                                  bool beautifyFunctions,
+                                  bool beautifySum = false);
 
   static bool BeautifyPipeKey(HorizontalLayout h, int indexOfPipeKey,
                               LayoutCursor* cursor);
@@ -255,6 +270,9 @@ class InputBeautification {
                                              LayoutCursor* layoutCursor);
   static bool BeautifyFirstOrderDerivativeIntoNthOrder(
       HorizontalLayout h, int indexOfSuperscript, LayoutCursor* layoutCursor);
+
+  static bool BeautifySum(HorizontalLayout h, int indexOfComma,
+                          Context* context, LayoutCursor* layoutCursor);
 
   static bool CompareAndBeautifyIdentifier(
       const char* identifier, size_t identifierLength,

@@ -57,5 +57,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              body: `# Binary size analysis\n\n${{ steps.binary_size_summary.outputs.table }}\n<details>\n<summary>Full details</summary>\n\n## Apps\n\n${{ steps.app_sizes.outputs.table }}\n\n## N0110\n\n${{ steps.binary_size_n0110.outputs.table }}</details>`,
+              body: `### Binary size analysis\n\n${{ steps.binary_size_summary.outputs.table }}\n<details>\n<summary>Full details</summary>\n\n### Apps\n\n${{ steps.app_sizes.outputs.table }}\n\n### N0110\n\n${{ steps.binary_size_n0110.outputs.table }}</details>`,
             });

@@ -18,13 +18,15 @@ def iso_separate(string):
   space = ' ' # We may want to use a thin non-breaking space as thousands separator
   return string.replace('_',space).replace('+','+'+space).replace('-','-'+space)
 
-def format_bytes(value, force_sign=False):
+def format_bytes(value, force_sign=False, bytes_suffix=True):
   if value is None:
     return ''
   number_format = '{:'
   if force_sign:
     number_format += '+'
-  number_format += '_} bytes'
+  number_format += '_}'
+  if bytes_suffix:
+    number_format += ' bytes'
   return iso_separate(number_format.format(value))
 
 # Convert a flat list '@foo', 'bar', 'baz', '@faa', 'boo' into a nested list
@@ -90,11 +92,11 @@ def format_html_apps_table(sizes):
       output += '<tr>'
       output += f'<td>{app}</td>'
       for size in sizes.values():
-        output += f'<td align="right">{size[app][type_id]:_}</td>'
+        output += f'<td align="right">{format_bytes(size[app][type_id],False,False)}</td>'
       if add_delta:
         delta = sizes[after][app][type_id] - sizes[before][app][type_id]
         if delta:
-          output += f'<td align="right">{delta:+_}</td>'
+          output += f'<td align="right">{format_bytes(delta,True,False)}</td>'
       output += '</tr>'
 
   output += '</table>'

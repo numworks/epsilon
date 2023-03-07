@@ -38,6 +38,7 @@ void solve_and_process_error(std::initializer_list<const char *> equations,
                                  equation);
   }
   equationStore.tidyDownstreamPoolFrom();
+  system.tidy();
   System::Error err = system.exactSolve(&solverContext);
   lambda(&system, err);
   equationStore.removeAll();

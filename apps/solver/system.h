@@ -77,7 +77,7 @@ class System {
   }
   bool hasMoreSolutions() const { return m_hasMoreSolutions; }
 
-  void tidy(char* treePoolCursor);
+  void tidy(char* treePoolCursor = nullptr);
 
  private:
   Error privateExactSolve(Poincare::Context* context);

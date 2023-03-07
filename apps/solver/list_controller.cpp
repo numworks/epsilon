@@ -194,6 +194,7 @@ void ListController::resolveEquations() {
   }
   // Tidy model before checkpoint, during which older TreeNodes can't be altered
   modelStore()->tidyDownstreamPoolFrom();
+  App::app()->system()->tidy();
   Poincare::CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
@@ -232,6 +233,7 @@ void ListController::resolveEquations() {
     }
   } else {
     modelStore()->tidyDownstreamPoolFrom();
+    App::app()->system()->tidy();
   }
 }
 

@@ -1,11 +1,14 @@
+#include "equation_store.h"
+
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
 #include <apps/shared/poincare_helpers.h>
-#include <apps/solver/equation_store.h>
 #include <poincare/matrix.h>
 #include <poincare/polynomial.h>
 #include <poincare/symbol.h>
+
+#include "app.h"
 
 using namespace Poincare;
 using namespace Shared;

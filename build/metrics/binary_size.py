@@ -75,30 +75,36 @@ def app_sizes(file):
   return sizes
 
 def format_html_apps_table(sizes):
+  add_delta = len(sizes) == 2
+  types = ['App', 'Snapshot']
   output = ""
   output += '<table>'
   apps = next(iter(sizes.values()))
   output += '<tr><th/>'
-  for tag in sizes.keys():
-    output += f'<th align="left">{tag}</th>'
-  add_delta = len(sizes) == 2
-  if add_delta:
-    output += '<th align="left">Delta</th>'
-    before, after = sizes
+  for type_name in types:
+    output += f'<th colspan={len(sizes) + add_delta}>{type_name}</th>'
   output += '</tr>'
-  for type_id, type_name in enumerate(('App','Snapshot')):
-    output += f'<tr><th align="left">{type_name}</th></tr>'
-    for app in apps:
-      output += '<tr>'
-      output += f'<td>{app}</td>'
+  output += '<tr><th/>'
+  for type_id in range(len(types)):
+    for tag in sizes.keys():
+      output += f'<th>{tag}</th>'
+    if add_delta:
+      output += '<th>Delta</th>'
+      before, after = sizes
+  output += '</tr>'
+  for app in apps:
+    output += '<tr>'
+    output += f'<td>{app}</td>'
+    for type_id in range(len(types)):
       for size in sizes.values():
         output += f'<td align="right">{format_bytes(size[app][type_id],False,False)}</td>'
       if add_delta:
         delta = sizes[after][app][type_id] - sizes[before][app][type_id]
         if delta:
-          output += f'<td align="right">{format_bytes(delta,True,False)}</td>'
-      output += '</tr>'
-
+          output += f'<th align="right">{format_bytes(delta,True,False)}</td>'
+        else:
+          output += f'<th/>'
+    output += '</tr>'
   output += '</table>'
   return output
 

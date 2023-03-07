@@ -35,6 +35,9 @@ class ExpressionModelListController
  protected:
   constexpr static KDFont::Size k_font = KDFont::Size::Large;
   constexpr static KDCoordinate k_expressionMargin = 5;
+  constexpr static int k_expressionCellType = 0;
+  constexpr static int k_addNewModelCellType = 1;
+  constexpr static int k_editableCellType = 2;
   // TableViewDataSource
   virtual int numberOfExpressionRows() const;
   bool isAddEmptyRow(int j) const;

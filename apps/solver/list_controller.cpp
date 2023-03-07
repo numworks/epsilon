@@ -68,9 +68,9 @@ HighlightCell *ListController::reusableCell(int index, int type) {
   switch (type) {
     case k_equationCellType:
       return &m_expressionCells[index];
-    case k_addNewModelType:
+    case k_addNewModelCellType:
       return &m_addNewModel;
-    case k_editedCellType:
+    case k_editableCellType:
       return &m_editableCell;
     default:
       assert(false);

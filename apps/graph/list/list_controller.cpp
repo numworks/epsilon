@@ -41,7 +41,7 @@ int ListController::typeAtIndex(int index) const {
     return k_editableCellType;
   }
   if (isAddEmptyRow(index)) {
-    return k_addNewModelType;
+    return k_addNewModelCellType;
   }
   assert(index >= 0 && index < modelStore()->numberOfModels());
   return k_functionCellType;
@@ -52,7 +52,7 @@ HighlightCell *ListController::reusableCell(int index, int type) {
   if (type == k_editableCellType) {
     return &m_editableCell;
   }
-  if (type == k_addNewModelType) {
+  if (type == k_addNewModelCellType) {
     return &m_addNewModel;
   }
   assert(type == k_functionCellType);
@@ -202,7 +202,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
   if (j == m_editedCellIndex) {
     return m_editableCell.minimalSizeForOptimalDisplay().height();
   }
-  if (typeAtIndex(j) == k_addNewModelType) {
+  if (typeAtIndex(j) == k_addNewModelCellType) {
     return Shared::FunctionListController::expressionRowHeight(j);
   }
   FunctionCell tempCell;
@@ -278,7 +278,7 @@ void ListController::willDisplayCellForIndex(HighlightCell *cell, int j) {
   EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
   evenOddCell->setEven(j % 2 == 0);
   int type = typeAtIndex(j);
-  if (type == k_addNewModelType) {
+  if (type == k_addNewModelCellType) {
     evenOddCell->reloadCell();
     return;
   }

@@ -24,11 +24,15 @@ QUIZ_CASE(equation_solve_linear_system) {
   assert_solves_to_infinite_solutions({"4y+(1-√(5))x=0", "x=(1+√(5))y"},
                                       {"x=√(5)t+t", "y=t"});
   assert_solves_to_infinite_solutions({"x+y+z=0"},
-                                      {"x=-t1-t2", "y=t1", "z=t2"});
+                                      {"x=-t1-t2", "y=t2", "z=t1"});
   assert_solves_to_infinite_solutions({"x+y+z=0", "x+2y+3z=0"},
                                       {"x=t", "y=-2t", "z=t"});
   assert_solves_to_infinite_solutions({"x+y+z=2", "2x+y-z=3", "3x+2y=5"},
                                       {"x=2t+1", "y=-3t+1", "z=t"});
+  assert_solves_to_infinite_solutions({"a=b", "c=d"},
+                                      {"a=t2", "b=t2", "c=t1", "d=t1"});
+  assert_solves_to_infinite_solutions({"a-b+c=0", "c-d=0"},
+                                      {"a=-t1+t2", "b=t2", "c=t1", "d=t1"});
   assert_solves_to_no_solution("2=0");
   assert_solves_to_no_solution("e=1");
   assert_solves_to_no_solution("i=5");
@@ -154,7 +158,7 @@ QUIZ_CASE(equation_and_symbolic_computation) {
   set("x", "0");
   assert_solves_to_infinite_solutions(
       {"b=0", "D=0", "c=0", "x+y+z+t=0"},
-      {"b=0", "D=0", "c=0", "t=-t1-t2", "y=t1", "z=t2"});
+      {"b=0", "D=0", "c=0", "t=-t1-t2", "y=t2", "z=t1"});
   unset("x");
 
   // Long variable names

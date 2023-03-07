@@ -247,46 +247,62 @@ System::Error System::solveLinearSystem(Context *context,
   /* The system is insufficiently qualified: bind the value of n-rank
    * variables to parameters. */
   m_hasMoreSolutions = true;
-  if (n == 0) {
-    return Error::NoError;
-  }
-  assert(rank < n);
-  assert(abChildren == m * (n + 1));
-  size_t numberOfParameters = n - rank;
-  size_t parameterNameLength = numberOfParameters > 1 ? 2 : 1;
-  for (size_t j = 0; j < numberOfParameters; j++) {
+
+  size_t parameterNameLength = n - rank == 1 ? 1 : 2;
+  char parameterSuffix = '1';
+  while (rank < n) {
+    // Find the last unbound variable, i.e. the first row that is not
+    // triangular, starting from the bottom.
+    size_t variable;
+    for (size_t k = 0; k < m; k++) {
+      bool rowIsTriangular =
+          ab.matrixChild(m - 1 - k, n - 1 - k).isNull(context) !=
+          TrinaryBoolean::True;
+      size_t x = 0;
+      while (rowIsTriangular && x < n - 1 - k) {
+        if (ab.matrixChild(m - 1 - k, x).isNull(context) !=
+            TrinaryBoolean::True) {
+          rowIsTriangular = false;
+        }
+        x++;
+      }
+      if (!rowIsTriangular) {
+        variable = n - 1 - k;
+        break;
+      }
+    }
+    // Add the row variable=parameter to increase the rank of the system.
     for (size_t i = 0; i < n; i++) {
-      ab.addChildAtIndexInPlace(
-          Rational::Builder(n - i == numberOfParameters - j ? 1 : 0),
-          abChildren, abChildren);
+      ab.addChildAtIndexInPlace(Rational::Builder(i == variable ? 1 : 0),
+                                abChildren, abChildren);
       ++abChildren;
     }
-    assert(j < 9);
-    const char parameterName[] = {'t', static_cast<char>('1' + j), '\0'};
+    assert(parameterSuffix <= '9');
+    const char parameterName[] = {'t', static_cast<char>(parameterSuffix++),
+                                  '\0'};
     ab.addChildAtIndexInPlace(
         Symbol::Builder(parameterName, parameterNameLength), abChildren,
         abChildren);
     ++abChildren;
-  }
-  ab.setDimensions(m + numberOfParameters, n + 1);
-  int newRank = ab.rank(context, m_complexFormat, angleUnit, unitFormat,
-                        ReductionTarget::SystemForAnalysis, true);
-  Error error;
-  if (newRank == -1) {
-    error = Error::EquationUndefined;
-  } else {
-    assert(newRank == n);
-    /* Initialize m_numberOfSolutions as registerSolution will increment it. */
-    m_numberOfSolutions = 0;
-    for (size_t i = 0; i < n; i++) {
-      error =
-          registerSolution(ab.matrixChild(i, n), context, SolutionType::Formal);
-      if (error != Error::NoError) {
-        break;
-      }
+
+    ab.setDimensions(++m, n + 1);
+    rank = ab.rank(context, m_complexFormat, angleUnit, unitFormat,
+                   ReductionTarget::SystemForAnalysis, true);
+    if (rank == -1) {
+      return Error::EquationUndefined;
     }
   }
-  return error;
+  assert(rank == n);
+  // System is fully qualified, register the parametric solutions.
+  m_numberOfSolutions = 0;
+  for (size_t i = 0; i < n; i++) {
+    Error error =
+        registerSolution(ab.matrixChild(i, n), context, SolutionType::Formal);
+    if (error != Error::NoError) {
+      return error;
+    }
+  }
+  return Error::NoError;
 }
 
 System::Error System::solvePolynomial(Context *context,

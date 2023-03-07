@@ -75,9 +75,6 @@ class ListController : public Shared::FunctionListController,
   constexpr static int k_maxNumberOfRows =
       3 * Shared::SequenceStore::k_maxNumberOfSequences;
 
-  // Responder
-  int initialColumnToSelect() const override { return 0; }
-
   // TableViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override {
     return expressionRowHeight(j);

@@ -56,9 +56,6 @@ class ListController : public Shared::FunctionListController,
   // 6 rows of undefined empty functions
   constexpr static int k_maxNumberOfDisplayableRows = 6;
 
-  // Responder
-  int initialColumnToSelect() const override { return 0; }
-
   // ExpressionModelListController
   void resetSizesMemoization() override { resetMemoization(); }
   // ListViewDataSource

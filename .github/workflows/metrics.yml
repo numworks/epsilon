@@ -42,6 +42,9 @@ jobs:
       - name: Binary size summary
         id: binary_size_summary
         run: echo "table=$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" >> $GITHUB_OUTPUT
+      - name: App sizes
+        id: app_sizes
+        run: echo "table=$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes)" >> $GITHUB_OUTPUT
       - name: Binary size N0110
         id: binary_size_n0110
         run: echo "table=$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/bootloader/bootloader.elf base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/bootloader/bootloader.elf head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" >> $GITHUB_OUTPUT
@@ -54,5 +57,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              body: `# Binary size analysis\n\n${{ steps.binary_size_summary.outputs.table }}\n<details>\n<summary>Full details</summary>\n\n## N0110\n\n${{ steps.binary_size_n0110.outputs.table }}</details>`,
+              body: `# Binary size analysis\n\n${{ steps.binary_size_summary.outputs.table }}\n<details>\n<summary>Full details</summary>\n\n## Apps\n\n${{ steps.app_sizes.outputs.table }}## N0110\n\n${{ steps.binary_size_n0110.outputs.table }}</details>`,
             });

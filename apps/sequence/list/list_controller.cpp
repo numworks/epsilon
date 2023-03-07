@@ -271,29 +271,26 @@ HighlightCell *ListController::functionCells(int index) {
 }
 
 void ListController::willDisplayTitleCellAtIndex(
-    HighlightCell *cell, int j, HighlightCell *expressionCell) {
+    VerticalSequenceTitleCell *cell, int j, HighlightCell *expressionCell) {
   assert(j >= 0 && j < k_maxNumberOfRows);
-  VerticalSequenceTitleCell *myCell =
-      static_cast<VerticalSequenceTitleCell *>(cell);
-  myCell->setBaseline(baseline(j, expressionCell));
-
+  cell->setBaseline(baseline(j, expressionCell));
   Ion::Storage::Record record =
       modelStore()->recordAtIndex(modelIndexForRow(j));
   Shared::Sequence *sequence = modelStore()->modelForRecord(record);
   // Set the color
   KDColor nameColor =
       sequence->isActive() ? sequence->color() : Palette::GrayDark;
-  myCell->setColor(nameColor);
+  cell->setColor(nameColor);
   // Set the layout
   int sequenceDefinition = sequenceDefinitionForRow(j);
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
-      return myCell->setLayout(sequence->definitionName());
+      return cell->setLayout(sequence->definitionName());
     case k_firstInitialCondition:
-      return myCell->setLayout(sequence->firstInitialConditionName());
+      return cell->setLayout(sequence->firstInitialConditionName());
     default:
       assert(sequenceDefinition == k_secondInitialCondition);
-      return myCell->setLayout(sequence->secondInitialConditionName());
+      return cell->setLayout(sequence->secondInitialConditionName());
   }
 }
 

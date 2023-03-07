@@ -69,10 +69,6 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
 }
 
 bool ExamPopUpController::handleButton() const {
-  if (Ion::Authentication::clearanceLevel() !=
-      Ion::Authentication::ClearanceLevel::NumWorks) {
-    Ion::Reset::core();
-  }
   AppsContainer* container = AppsContainer::sharedAppsContainer();
   App* activeApp = container->activeApp();
 

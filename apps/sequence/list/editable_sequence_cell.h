@@ -19,9 +19,6 @@ class EditableSequenceCell : public AbstractSequenceCell {
   Escher::EditableExpressionModelCell* expressionCell() override {
     return &m_expressionField;
   }
-  const Escher::EditableExpressionModelCell* expressionCell() const override {
-    return &m_expressionField;
-  }
   void updateSubviewsBackgroundAfterChangingState() override {
     m_expressionBackground = backgroundColor();
   }

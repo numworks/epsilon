@@ -10,9 +10,13 @@ namespace ExamMode {
 
 Configuration get() {
   Configuration config(PersistingBytes::read());
-  if (config.isUninitialized()) {
-    /* The persisting bytes do not contain a valid exam mode, most likely
-     * because of a botched install. */
+  if (config.isUninitialized() ||
+      (Authentication::clearanceLevel() !=
+           Authentication::ClearanceLevel::NumWorks &&
+       config.isActive())) {
+    /* The persisting bytes do not contain a valid exam mode (most likely
+     * because of a botched install), or an unauthentified firmware ended up in
+     * exam mode. */
     config = Configuration(Ruleset::Off);
     set(config);
   }
@@ -22,6 +26,7 @@ Configuration get() {
 void set(Configuration config) {
   assert(!config.isUninitialized());
   Configuration previous = get();
+
   PersistingBytes::write(config.raw());
 
   if (config.isActive()) {
@@ -30,6 +35,8 @@ void set(Configuration config) {
 
     if (Authentication::clearanceLevel() !=
         Authentication::ClearanceLevel::NumWorks) {
+      /* The device will reset on official firmware, and pick up the
+       * configuration left in the persisting bytes. */
       Reset::core();
     }
 

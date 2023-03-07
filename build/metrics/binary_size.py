@@ -18,15 +18,13 @@ def iso_separate(string):
   space = ' ' # We may want to use a thin non-breaking space as thousands separator
   return string.replace('_',space).replace('+','+'+space).replace('-','-'+space)
 
-def format_bytes(value, force_sign=False, bytes_suffix=True):
+def format_bytes(value, force_sign=False):
   if value is None:
     return ''
   number_format = '{:'
   if force_sign:
     number_format += '+'
   number_format += '_}'
-  if bytes_suffix:
-    number_format += ' bytes'
   return iso_separate(number_format.format(value))
 
 # Convert a flat list '@foo', 'bar', 'baz', '@faa', 'boo' into a nested list
@@ -83,6 +81,8 @@ def format_html_apps_table(sizes):
   output += '<tr><th/>'
   for type_name in types:
     output += f'<th colspan={len(sizes) + add_delta}>{type_name}</th>'
+    if type_name == types[0]:
+      output += f'<th/>'
   output += '</tr>'
   output += '<tr><th/>'
   for type_id in range(len(types)):
@@ -91,19 +91,23 @@ def format_html_apps_table(sizes):
     if add_delta:
       output += '<th>Delta</th>'
       before, after = sizes
+    if type_id == 0:
+      output += f'<th/>'
   output += '</tr>'
   for app in apps:
     output += '<tr>'
     output += f'<td>{app}</td>'
     for type_id in range(len(types)):
       for size in sizes.values():
-        output += f'<td align="right">{format_bytes(size[app][type_id],False,False)}</td>'
+        output += f'<td align="right">{format_bytes(size[app][type_id])}</td>'
       if add_delta:
         delta = sizes[after][app][type_id] - sizes[before][app][type_id]
         if delta:
-          output += f'<th align="right">{format_bytes(delta,True,False)}</td>'
+          output += f'<th align="right">{format_bytes(delta, True)}</td>'
         else:
           output += f'<th/>'
+      if type_id == 0:
+        output += f'<td/>'
     output += '</tr>'
   output += '</table>'
   return output
@@ -123,7 +127,7 @@ def format_html_section_table(grouped_sections, grouped_files, file_section_size
     output += '<tr>'
     output += f'<td rowspan="2" colspan="{show_section_groups + show_file_detail}"></td>'
     for title,sections in grouped_sections:
-      output += f'<th colspan="{len(sections)}" align="left">{title}</th>'
+      output += f'<th colspan="{len(sections)}" align="left">{title} in bytes</th>'
     output += '</tr>'
 
   # Header sections row (e.g. ".text", ".rodata")
@@ -185,7 +189,7 @@ def format_html_section_table(grouped_sections, grouped_files, file_section_size
             total_reference_size += reference_sizes[section_index_start+i]
             total_size += current_sizes[section_index_start+i]
           section_index_start += len(sections)
-          output += f'<th colspan="{len(sections)}" align="left">{format_bytes(total_size-total_reference_size, force_sign=True)}</th>'
+          output += f'<th colspan="{len(sections)}" align="right">{format_bytes(total_size-total_reference_size, force_sign=True)}</th>'
         output += '</tr>'
 
   output += '</table>'

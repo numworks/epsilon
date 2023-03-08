@@ -102,11 +102,9 @@ void TitleBarView::layoutSubviews(bool force) {
 
     ExamMode::Ruleset ruleset =
         Preferences::sharedPreferences->examMode().ruleset();
-    if (ruleset == ExamMode::Ruleset::STAAR) {
-      m_examModeIconView.setImage(ImageStore::StaarIcon);
-    } else {
-      m_examModeIconView.setImage(ImageStore::ExamIcon);
-    }
+    m_examModeIconView.setImage(ruleset == ExamMode::Ruleset::STAAR
+                                    ? ImageStore::StaarIcon
+                                    : ImageStore::ExamIcon);
 
     switch (ruleset) {
       case ExamMode::Ruleset::English:

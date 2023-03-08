@@ -335,14 +335,12 @@ bool MainController::hasPressToTestCell() const {
 
 bool MainController::hasTestModeCell() const {
   // If both exam mode and press to test are available
-  switch (GlobalPreferences::sharedGlobalPreferences->availableExamModes()) {
-    case CountryPreferences::AvailableExamModes::All:
-    case CountryPreferences::AvailableExamModes::AmericanAll:
-      return Preferences::sharedPreferences->examMode().ruleset() ==
+  CountryPreferences::AvailableExamModes examMode =
+      GlobalPreferences::sharedGlobalPreferences->availableExamModes();
+  return (examMode == CountryPreferences::AvailableExamModes::All ||
+          examMode == CountryPreferences::AvailableExamModes::AmericanAll) &&
+         Preferences::sharedPreferences->examMode().ruleset() ==
              ExamMode::Ruleset::Off;
-    default:
-      return false;
-  }
 }
 
 int MainController::getModelIndex(int index) const {

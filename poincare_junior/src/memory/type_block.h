@@ -266,12 +266,12 @@ constexpr TypeBlock NodeBorderBlock = TypeBlock(BlockType::NodeBorder);
 template <int size>
 class TypeBlockBuffer {
 public:
-  constexpr TypeBlockBuffer() {
+  consteval TypeBlockBuffer() {
     m_blocks[0] = NodeBorderBlock;
     m_blocks[size + 1] = NodeBorderBlock;
   }
   constexpr TypeBlock * blocks() { return m_blocks + 1; }
-  constexpr const TypeBlock * blocks() const { return m_blocks + 1; }
+  consteval const TypeBlock * blocks() const { return m_blocks + 1; }
 
 private:
   TypeBlock m_blocks[size + 2];

@@ -13,9 +13,9 @@ constexpr int
 
 LocalizationController::ContentView::ContentView(
     LocalizationController *controller,
-    SelectableTableViewDataSource *dataSource)
+    SelectableListViewDataSource *dataSource)
     : m_controller(controller),
-      m_selectableTableView(controller, controller, dataSource),
+      m_selectableListView(controller, controller, dataSource),
       m_countryTitleMessage(KDFont::Size::Large, I18n::Message::Country),
       m_borderView(Palette::GrayBright) {
   m_countryTitleMessage.setBackgroundColor(Palette::WallScreen);
@@ -48,7 +48,7 @@ View *LocalizationController::ContentView::subviewAtIndex(int i) {
          m_controller->shouldDisplayWarning());
   switch (i) {
     case 0:
-      return &m_selectableTableView;
+      return &m_selectableListView;
     case 3:
       return &m_borderView;
     case 4:
@@ -102,21 +102,21 @@ KDCoordinate LocalizationController::ContentView::layoutWarningSubview(
 KDCoordinate LocalizationController::ContentView::layoutTableSubview(
     bool force, KDCoordinate verticalOrigin) {
   // SelectableTableView must be given a width before computing height.
-  m_selectableTableView.initSize(bounds());
+  m_selectableListView.initSize(bounds());
   KDCoordinate tableHeight = std::min<KDCoordinate>(
       bounds().height() - verticalOrigin,
-      m_selectableTableView.minimalSizeForOptimalDisplay().height());
+      m_selectableListView.minimalSizeForOptimalDisplay().height());
 
   if (m_controller->shouldDisplayWarning()) {
     m_borderView.setFrame(
-        KDRect(m_selectableTableView.leftMargin(),
-               verticalOrigin + m_selectableTableView.topMargin(),
-               bounds().width() - m_selectableTableView.leftMargin() -
-                   m_selectableTableView.rightMargin(),
+        KDRect(m_selectableListView.leftMargin(),
+               verticalOrigin + m_selectableListView.topMargin(),
+               bounds().width() - m_selectableListView.leftMargin() -
+                   m_selectableListView.rightMargin(),
                Metric::CellSeparatorThickness),
         force);
   }
-  m_selectableTableView.setFrame(
+  m_selectableListView.setFrame(
       KDRect(0, verticalOrigin, bounds().width(), tableHeight), force);
   return verticalOrigin + tableHeight;
 }
@@ -162,12 +162,12 @@ LocalizationController::LocalizationController(
 }
 
 void LocalizationController::resetSelection() {
-  selectableTableView()->deselectTable();
-  selectCellAtLocation(0, indexOfCellToSelectOnReset());
+  selectableListView()->deselectTable();
+  selectCell(indexOfCellToSelectOnReset());
 }
 
 void LocalizationController::setMode(LocalizationController::Mode mode) {
-  selectableTableView()->deselectTable();
+  selectableListView()->deselectTable();
   resetMemoization();
   m_mode = mode;
   setVerticalMargins();
@@ -192,7 +192,7 @@ void LocalizationController::viewWillAppear() {
   ViewController::viewWillAppear();
   resetSelection();
   resetMemoization();
-  selectableTableView()->reloadData();
+  selectableListView()->reloadData();
 }
 
 bool LocalizationController::handleEvent(Ion::Events::Event event) {
@@ -231,9 +231,9 @@ void LocalizationController::willDisplayCellForIndex(HighlightCell *cell,
 void LocalizationController::setVerticalMargins() {
   KDCoordinate topMargin =
       shouldDisplayWarning() ? 0 : Escher::Metric::CommonTopMargin;
-  selectableTableView()->setTopMargin(topMargin);
-  // Fit m_selectableTableView scroll to content size
-  selectableTableView()->decorator()->setVerticalMargins(
+  selectableListView()->setTopMargin(topMargin);
+  // Fit m_selectableListView scroll to content size
+  selectableListView()->decorator()->setVerticalMargins(
       topMargin, Escher::Metric::CommonBottomMargin);
 }
 

@@ -25,8 +25,7 @@ HypothesisController::HypothesisController(
     Escher::StackViewController* parent, InputController* inputController,
     InputSlopeController* inputSlopeController,
     InputEventHandlerDelegate* handler, Test* test)
-    : Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(
-          parent, this),
+    : Escher::ExplicitSelectableListViewController(parent, this),
       m_inputController(inputController),
       m_inputSlopeController(inputSlopeController),
       m_operatorDataSource(test),
@@ -116,16 +115,9 @@ const char* HypothesisController::symbolPrefix() {
   return m_test->hypothesisSymbol();
 }
 
-HighlightCell* HypothesisController::reusableCell(int i, int type) {
-  switch (i) {
-    case k_indexOfH0:
-      return &m_h0;
-    case k_indexOfHa:
-      return &m_ha;
-    default:
-      assert(i == k_indexOfNext);
-      return &m_next;
-  }
+HighlightCell* HypothesisController::cell(int index) {
+  HighlightCell* cells[] = {&m_h0, &m_ha, &m_spacer, &m_next};
+  return cells[index];
 }
 
 void HypothesisController::didBecomeFirstResponder() {

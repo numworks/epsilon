@@ -32,6 +32,8 @@ __ZN3Ion6Events8getEventEPi \
 __ZN3Ion6Events14sharedGetEventEPi \
 __ZN3Ion6Events16popKeyboardStateEv \
 __ZN3Ion6Events21privateSharedGetEventEPi \
+__ZN3Ion6Events5State14sharedGetEventEPi \
+__ZN3Ion6Events5State21privateSharedGetEventEPi \
 __ZN3Ion6Events24waitForInterruptingEventEiPi \
 __ZN3Ion8Keyboard8popStateEv \
 __ZN3Ion6EventsL16sleepWithTimeoutEiPi \
@@ -128,6 +130,7 @@ _SDL_Delay \
 _SDL_RenderPresent \
 _SDL_UpdateWindowSurface \
 _SDL_UpdateWindowSurfaceRects \
+_SW_RenderPresent \
 _Emscripten_UpdateWindowFramebuffer \
 __ZN3Ion9Simulator6Window7refreshEv
 

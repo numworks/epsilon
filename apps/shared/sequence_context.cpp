@@ -43,7 +43,7 @@ bool TemplatedSequenceContext<T>::iterateUntilRank(int n,
   if (m_commonRank > n) {
     m_commonRank = -1;
   }
-  if (n < 0 || n - m_commonRank > k_maxRecurrentRank) {
+  if (n < 0 || n > k_maxRecurrentRank) {
     return false;
   }
   while (m_commonRank < n) {

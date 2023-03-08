@@ -62,7 +62,7 @@ class NestedMenuController : public StackViewController,
   virtual HighlightCell* leafCellAtIndex(int index) = 0;
   virtual HighlightCell* nodeCellAtIndex(int index) = 0;
   virtual I18n::Message subTitle() = 0;
-  SelectableListView m_selectableTableView;
+  SelectableListView m_selectableListView;
   Ion::RingBuffer<StackState, k_maxModelTreeDepth>* stack() { return &m_stack; }
   virtual int controlChecksum() const { return 0; }
   virtual bool isToolbox() const { return false; }
@@ -115,7 +115,7 @@ class NestedMenuController : public StackViewController,
   };
 
   StackState currentState() const {
-    return StackState(selectedRow(), m_selectableTableView.contentOffset().y());
+    return StackState(selectedRow(), m_selectableListView.contentOffset().y());
   }
   void loadState(StackState state);
   // NestedMenuController implementations will not interact with the app pages

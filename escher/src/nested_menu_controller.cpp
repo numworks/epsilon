@@ -77,12 +77,12 @@ NestedMenuController::NestedMenuController(Responder* parentResponder,
                                            I18n::Message title)
     : StackViewController(parentResponder, &m_listController,
                           StackViewController::Style::PurpleWhite),
-      m_selectableTableView(&m_listController, this, this, this),
-      m_breadcrumbController(this, &m_selectableTableView),
-      m_listController(this, &m_selectableTableView, title),
+      m_selectableListView(&m_listController, this, this, this),
+      m_breadcrumbController(this, &m_selectableListView),
+      m_listController(this, &m_selectableListView, title),
       m_savedChecksum(0) {
-  m_selectableTableView.setMargins(0);
-  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableListView.setMargins(0);
+  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
   /* Title and breadcrumb headers should not overlap. Breadcrumb should.
    * Using default tableCell's border color. */
   setupHeadersBorderOverlaping(false, true, Palette::GrayBright);
@@ -92,7 +92,7 @@ void NestedMenuController::viewWillAppear() {
   // Reset memoization first, so that the right cells are manipulated
   resetMemoization();
   StackViewController::viewWillAppear();
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 
   int checksum = controlChecksum();
   if (checksum != m_savedChecksum || numberOfRows() == 0) {
@@ -150,7 +150,7 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
   resetMemoization();
   int previousDepth = stackDepth();
   m_stack.push(
-      StackState(selectedRow, m_selectableTableView.contentOffset().y()));
+      StackState(selectedRow, m_selectableListView.contentOffset().y()));
 
   /* Unless breadcrumb wasn't visible (depth 0), we need to pop it first to push
    * it again, in order to force title refresh. */
@@ -159,7 +159,7 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
   }
   m_breadcrumbController.pushTitle(subTitle());
   StackViewController::push(&m_breadcrumbController);
-  m_selectableTableView.selectRow(0);
+  m_selectableListView.selectRow(0);
   Container::activeApp()->setFirstResponder(&m_listController);
   return true;
 }
@@ -183,7 +183,7 @@ bool NestedMenuController::returnToPreviousMenu() {
 
 bool NestedMenuController::returnToRootMenu() {
   resetMemoization();
-  m_selectableTableView.selectRow(0);
+  m_selectableListView.selectRow(0);
   if (stackDepth() > 0) {
     // Reset breadcrumb and stack
     m_stack.reset();
@@ -195,9 +195,9 @@ bool NestedMenuController::returnToRootMenu() {
 
 void NestedMenuController::loadState(NestedMenuController::StackState state) {
   bool isStateValid = state.selectedRow() < numberOfRows();
-  m_selectableTableView.selectCell(isStateValid ? state.selectedRow() : 0);
-  KDPoint scroll = m_selectableTableView.contentOffset();
-  m_selectableTableView.setContentOffset(
+  m_selectableListView.selectCell(isStateValid ? state.selectedRow() : 0);
+  KDPoint scroll = m_selectableListView.contentOffset();
+  m_selectableListView.setContentOffset(
       KDPoint(scroll.x(), isStateValid ? state.verticalScroll() : 0));
 }
 

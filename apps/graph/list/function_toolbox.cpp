@@ -19,7 +19,7 @@ FunctionToolbox::FunctionToolbox()
        * setAddedCellsContent. */
       m_addedCellsContent(AddedCellsContent::None) {
   for (int i = 0; i < k_maxNumberOfAddedCells; i++) {
-    m_addedCells[i].setParentResponder(&m_selectableTableView);
+    m_addedCells[i].setParentResponder(&m_selectableListView);
   }
   setAddedCellsContent(AddedCellsContent::ComparisonOperators);
 }

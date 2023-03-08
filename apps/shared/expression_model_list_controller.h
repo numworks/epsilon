@@ -43,7 +43,7 @@ class ExpressionModelListController
   constexpr static KDCoordinate k_newModelMargin =
       Escher::Metric::BigCellMargin + 3;
   // ListViewDataSource
-  int numberOfRows() const override { return this->numberOfExpressionRows(); }
+  int numberOfRows() const override { return numberOfExpressionRows(); }
   int typeAtIndex(int index) const override;
   KDCoordinate nonMemoizedRowHeight(int j) override {
     return expressionRowHeight(j);

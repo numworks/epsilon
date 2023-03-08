@@ -66,7 +66,7 @@ HighlightCell *ListController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_maxNumberOfRows);
   switch (type) {
-    case k_equationCellType:
+    case k_expressionCellType:
       return &m_expressionCells[index];
     case k_addNewModelCellType:
       return &m_addNewModelCell;
@@ -79,7 +79,7 @@ HighlightCell *ListController::reusableCell(int index, int type) {
 }
 
 int ListController::reusableCellCount(int type) {
-  if (type == k_equationCellType) {
+  if (type == k_expressionCellType) {
     return k_maxNumberOfRows;
   }
   return 1;

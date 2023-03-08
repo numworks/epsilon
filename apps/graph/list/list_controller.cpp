@@ -42,12 +42,12 @@ HighlightCell *ListController::reusableCell(int index, int type) {
   if (type == k_addNewModelCellType) {
     return &m_addNewModelCell;
   }
-  assert(type == k_functionCellType);
+  assert(type == k_expressionCellType);
   return functionCells(index);
 }
 
 int ListController::reusableCellCount(int type) {
-  if (type == k_functionCellType) {
+  if (type == k_expressionCellType) {
     return maxNumberOfDisplayableRows();
   }
   return 1;
@@ -269,12 +269,12 @@ void ListController::willDisplayCellForIndex(HighlightCell *cell, int j) {
     evenOddCell->reloadCell();
     return;
   }
-  assert(type == k_functionCellType || type == k_editableCellType);
+  assert(type == k_expressionCellType || type == k_editableCellType);
   AbstractFunctionCell *functionCell =
       static_cast<AbstractFunctionCell *>(cell);
   ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
-  if (type == k_functionCellType) {
+  if (type == k_expressionCellType) {
     functionCell->setLayout(f->layout());
     functionCell->setMessage(
         Preferences::sharedPreferences->examMode().forbidImplicitPlots()

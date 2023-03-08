@@ -52,7 +52,6 @@ class ListController : public Shared::ExpressionModelListController,
   void resolveEquations();
 
  private:
-  constexpr static int k_equationCellType = k_expressionCellType;
   constexpr static int k_maxNumberOfRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::Metric::StoreRowHeight,

@@ -42,7 +42,6 @@ class ListController : public Shared::FunctionListController {
   }
 
  private:
-  constexpr static int k_functionCellType = k_expressionCellType;
   // 6 rows of undefined empty functions
   constexpr static int k_maxNumberOfDisplayableRows = 6;
 

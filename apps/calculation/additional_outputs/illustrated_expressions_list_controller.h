@@ -11,7 +11,7 @@ namespace Calculation {
 
 class IllustratedExpressionsListController
     : public ChainedExpressionsListController,
-      public Escher::SelectableTableViewDelegate {
+      public Escher::SelectableListViewDelegate {
  public:
   IllustratedExpressionsListController(
       EditExpressionController* editExpressionController,
@@ -34,13 +34,12 @@ class IllustratedExpressionsListController
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(Escher::SelectableTableView* t,
-                                   int previousSelectedCol,
-                                   int previousSelectedRow,
-                                   bool withinTemporarySelection) override;
-  void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView* t, int previousSelectedCol,
-      int previousSelectedRow, bool withinTemporarySelection) override;
+  void listViewDidChangeSelection(Escher::SelectableListView* l,
+                                  int previousSelectedRow,
+                                  bool withinTemporarySelection) override;
+  void listViewDidChangeSelectionAndDidScroll(
+      Escher::SelectableListView* t, int previousSelectedRow,
+      bool withinTemporarySelection) override;
 
   /* Since we can't focus the illustration, we need to keep its height small
    * enough for a sufficient part of the first expressionCell to be visible when

@@ -14,7 +14,7 @@ using namespace Escher;
 namespace Calculation {
 
 void IllustratedExpressionsListController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, showIllustration());
+  selectCell(showIllustration());
   ListController::didBecomeFirstResponder();
 }
 
@@ -57,31 +57,30 @@ void IllustratedExpressionsListController::willDisplayCellForIndex(
       cell, index - showIllustration());
 }
 
-void IllustratedExpressionsListController::tableViewDidChangeSelection(
-    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
+void IllustratedExpressionsListController::listViewDidChangeSelection(
+    SelectableListView* l, int previousSelectedRow,
     bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }
   // Forbid selecting Illustration cell
-  if (t->selectedRow() == 0 && showIllustration()) {
-    t->selectRow(1);
+  if (l->selectedRow() == 0 && showIllustration()) {
+    l->selectRow(1);
   }
 }
 
 void IllustratedExpressionsListController::
-    tableViewDidChangeSelectionAndDidScroll(SelectableTableView* t,
-                                            int previousSelectedCol,
-                                            int previousSelectedRow,
-                                            bool withinTemporarySelection) {
+    listViewDidChangeSelectionAndDidScroll(SelectableListView* l,
+                                           int previousSelectedRow,
+                                           bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }
   /* But scroll to the top when we select the first
    * ScrollableThreeExpressionsCell in order display the
    * illustration cell. */
-  if (t->selectedRow() == 1 && showIllustration()) {
-    t->scrollToCell(0, 0);
+  if (l->selectedRow() == 1 && showIllustration()) {
+    l->scrollToCell(0);
   }
 }
 

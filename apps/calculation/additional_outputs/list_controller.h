@@ -4,9 +4,9 @@
 #include <apps/i18n.h>
 #include <escher/expression_table_cell_with_message.h>
 #include <escher/list_view_data_source.h>
-#include <escher/selectable_table_view.h>
-#include <escher/selectable_table_view_data_source.h>
-#include <escher/selectable_table_view_delegate.h>
+#include <escher/selectable_list_view.h>
+#include <escher/selectable_list_view_data_source.h>
+#include <escher/selectable_list_view_delegate.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/expression.h>
 
@@ -16,10 +16,10 @@ class EditExpressionController;
 
 class ListController : public Escher::StackViewController,
                        public Escher::MemoizedListViewDataSource,
-                       public Escher::SelectableTableViewDataSource {
+                       public Escher::SelectableListViewDataSource {
  public:
   ListController(EditExpressionController* editExpressionController,
-                 Escher::SelectableTableViewDelegate* delegate = nullptr);
+                 Escher::SelectableListViewDelegate* delegate = nullptr);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -39,20 +39,19 @@ class ListController : public Escher::StackViewController,
  protected:
   class InnerListController : public ViewController {
    public:
-    InnerListController(
-        ListController* dataSource,
-        Escher::SelectableTableViewDelegate* delegate = nullptr);
+    InnerListController(ListController* dataSource,
+                        Escher::SelectableListViewDelegate* delegate = nullptr);
     const char* title() override {
       return I18n::translate(I18n::Message::AdditionalResults);
     }
-    Escher::View* view() override { return &m_selectableTableView; }
+    Escher::View* view() override { return &m_selectableListView; }
     void didBecomeFirstResponder() override;
-    Escher::SelectableTableView* selectableTableView() {
-      return &m_selectableTableView;
+    Escher::SelectableListView* selectableListView() {
+      return &m_selectableListView;
     }
 
    private:
-    Escher::SelectableTableView m_selectableTableView;
+    Escher::SelectableListView m_selectableListView;
   };
   InnerListController m_listController;
   EditExpressionController* m_editExpressionController;

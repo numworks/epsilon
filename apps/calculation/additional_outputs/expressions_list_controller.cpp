@@ -12,16 +12,16 @@ namespace Calculation {
 
 ExpressionsListController::ExpressionsListController(
     EditExpressionController *editExpressionController,
-    bool highlightWholeCells, Escher::SelectableTableViewDelegate *delegate)
+    bool highlightWholeCells, Escher::SelectableListViewDelegate *delegate)
     : ListController(editExpressionController, delegate) {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_cells[i].setParentResponder(m_listController.selectableTableView());
+    m_cells[i].setParentResponder(m_listController.selectableListView());
     m_cells[i].setHighlightWholeCell(highlightWholeCells);
   }
 }
 
 void ExpressionsListController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
+  selectCell(0);
   ListController::didBecomeFirstResponder();
 }
 

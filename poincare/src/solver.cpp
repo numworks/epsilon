@@ -26,8 +26,8 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void *aux,
   Coordinate2D<T> p1, p2(start(), f(start(), aux)),
       p3(nextX(p2.x1(), end(), static_cast<T>(1.)), k_NAN);
   p3.setX2(f(p3.x1(), aux));
-  Coordinate2D<T> finalSolution;
-  Interest finalInterest = Interest::None;
+  Coordinate2D<T> definitiveSolution;
+  Interest definitiveInterest = Interest::None;
 
   constexpr bool isDouble = sizeof(T) == sizeof(double);
 
@@ -65,14 +65,14 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void *aux,
       Coordinate2D<T> solution = honeAndRoundSolution(
           f, aux, start.x1(), end.x1(), interest, hone, discontinuityTest);
       if (std::isfinite(solution.x1()) && validSolution(solution.x1())) {
-        finalSolution = solution;
-        finalInterest = interest;
+        definitiveSolution = solution;
+        definitiveInterest = interest;
         break;
       }
     }
   }
 
-  registerSolution(finalSolution, finalInterest);
+  registerSolution(definitiveSolution, definitiveInterest);
   return result();
 }
 

@@ -34,10 +34,10 @@ class ExamMode : public Ion::ExamMode::Configuration {
     bool forbidElementsApp : 1;
     // These bits are available, unused and preserved at 0 for == operator
     Ion::ExamMode::Int unusedBits : 5;
-    // These bits will be discarded when cast into 14 bits in an Configuration
+    // These bits will be discarded when cast into 14 bits in a Configuration
     Ion::ExamMode::Int discardedBits : 2;
   };
-  static_assert(sizeof(PressToTestFlags) <= sizeof(Ion::ExamMode::Int));
+  static_assert(sizeof(PressToTestFlags) == sizeof(Ion::ExamMode::Int));
 
   ExamMode() : Configuration() {}
   explicit ExamMode(Ruleset rules, PressToTestFlags flags = {})

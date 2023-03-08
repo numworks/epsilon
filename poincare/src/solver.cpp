@@ -57,7 +57,7 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void *aux,
        * recompute the interest in this interval.
        * */
       ExcludeUndefinedFromBracket(&start, &middle, &end, f, aux,
-                                  minimalStep(middle.x1(), slope));
+                                  MinimalStep(middle.x1(), slope));
       interest = test(start, middle, end, aux);
     }
 
@@ -395,7 +395,7 @@ T Solver<T>::MaximalStep(T intervalAmplitude) {
 }
 
 template <typename T>
-T Solver<T>::minimalStep(T x, T slope) const {
+T Solver<T>::MinimalStep(T x, T slope) {
   T minimalStep = k_minimalPracticalStep;
   constexpr bool preventTooSmallStep = sizeof(T) == sizeof(double);
   if (preventTooSmallStep) {
@@ -418,7 +418,7 @@ T Solver<T>::minimalStep(T x, T slope) const {
 
 template <typename T>
 bool Solver<T>::validSolution(T x) const {
-  T minStep = minimalStep(m_xStart);
+  T minStep = MinimalStep(m_xStart);
   /* NAN is implicitly handled by the comparisons. */
   return m_xStart < m_xEnd ? m_xStart + minStep < x && x < m_xEnd
                            : m_xEnd < x && x < m_xStart - minStep;
@@ -456,7 +456,7 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
   constexpr T upperTypicalMagnitude = static_cast<T>(3.);
 
   T maxStep = maximalStep();
-  T minStep = minimalStep(x, slope);
+  T minStep = MinimalStep(x, slope);
   T stepSign = x < direction ? static_cast<T>(1.) : static_cast<T>(-1.);
 
   T magnitude = std::log10(std::fabs(x));

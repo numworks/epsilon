@@ -57,7 +57,7 @@ class ListController : public Shared::ExpressionModelListController,
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::Metric::StoreRowHeight,
           Escher::Metric::ButtonRowEmbossedStyleHeightLarge);
-  Escher::SelectableListView* selectableTableView() override;
+  Escher::SelectableListView* selectableListView() override;
   void reloadButtonMessage();
   void addModel() override;
   bool removeModelRow(Ion::Storage::Record record) override;

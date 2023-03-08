@@ -136,11 +136,11 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);
-      selectableTableView()->selectCell(numberOfRows() - 1);
-      Container::activeApp()->setFirstResponder(selectableTableView());
+      selectableListView()->selectCell(numberOfRows() - 1);
+      Container::activeApp()->setFirstResponder(selectableListView());
       return true;
     }
-    selectableTableView()->deselectTable();
+    selectableListView()->deselectTable();
     assert(selectedRow() == -1);
     tabController()->selectTab();
     return true;
@@ -149,19 +149,19 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     if (selectedRow() == -1) {
       return false;
     }
-    selectableTableView()->deselectTable();
+    selectableListView()->deselectTable();
     footer()->setSelectedButton(0);
     return true;
   }
   if (event == Ion::Events::Right && m_parameterColumnSelected) {
     // Leave parameter column
     m_parameterColumnSelected = false;
-    selectableTableView()->reloadData();
+    selectableListView()->reloadData();
     return true;
   } else if (event == Ion::Events::Left && !m_parameterColumnSelected) {
     // Enter parameter column
     m_parameterColumnSelected = true;
-    selectableTableView()->reloadData();
+    selectableListView()->reloadData();
     return true;
   }
   if (selectedRow() < 0) {
@@ -175,7 +175,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       int newSelectedRow =
           selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
       selectCell(newSelectedRow);
-      selectableTableView()->reloadData();
+      selectableListView()->reloadData();
     }
     return true;
   }
@@ -427,6 +427,6 @@ void ListController::showLastSequence() {
   bool hasAddSequenceButton =
       store->numberOfModels() == store->maxNumberOfModels();
   int lastRow = numberOfExpressionRows() - (hasAddSequenceButton ? 0 : 1) - 1;
-  selectableTableView()->scrollToCell(lastRow);
+  selectableListView()->scrollToCell(lastRow);
 }
 }  // namespace Sequence

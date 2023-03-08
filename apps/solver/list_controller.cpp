@@ -102,15 +102,15 @@ KDCoordinate ListController::nonMemoizedRowHeight(int index) {
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up && selectedRow() == -1) {
     footer()->setSelectedButton(-1);
-    selectableTableView()->selectCell(numberOfRows() - 1);
-    Container::activeApp()->setFirstResponder(selectableTableView());
+    selectableListView()->selectCell(numberOfRows() - 1);
+    Container::activeApp()->setFirstResponder(selectableListView());
     return true;
   }
   if (event == Ion::Events::Down) {
     if (selectedRow() == -1) {
       return false;
     }
-    selectableTableView()->deselectTable();
+    selectableListView()->deselectTable();
     footer()->setSelectedButton(0);
     return true;
   }
@@ -127,11 +127,11 @@ void ListController::didBecomeFirstResponder() {
     selectCell(numberOfRows() - 1);
   }
   footer()->setSelectedButton(-1);
-  Container::activeApp()->setFirstResponder(selectableTableView());
+  Container::activeApp()->setFirstResponder(selectableListView());
 }
 
 void ListController::didEnterResponderChain(Responder *previousFirstResponder) {
-  selectableTableView()->reloadData(false);
+  selectableListView()->reloadData(false);
   // Reload brace if the model store has evolved
   reloadBrace();
 }
@@ -275,8 +275,8 @@ EquationStore *ListController::modelStore() const {
   return App::app()->equationStore();
 }
 
-SelectableListView *ListController::selectableTableView() {
-  return m_equationListView.selectableTableView();
+SelectableListView *ListController::selectableListView() {
+  return m_equationListView.selectableListView();
 }
 
 StackViewController *ListController::stackController() const {

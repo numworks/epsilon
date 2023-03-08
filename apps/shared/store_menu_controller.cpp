@@ -17,9 +17,9 @@ namespace Shared {
 StoreMenuController::InnerListController::InnerListController(
     StoreMenuController* dataSource, SelectableListViewDelegate* delegate)
     : ViewController(dataSource),
-      m_selectableTableView(this, dataSource, dataSource, delegate) {
-  m_selectableTableView.setMargins(0);
-  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+      m_selectableListView(this, dataSource, dataSource, delegate) {
+  m_selectableListView.setMargins(0);
+  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
 void StoreMenuController::open() {
@@ -33,8 +33,8 @@ void StoreMenuController::close() {
 }
 
 void StoreMenuController::InnerListController::didBecomeFirstResponder() {
-  m_selectableTableView.selectCell(0);
-  m_selectableTableView.reloadData();
+  m_selectableListView.selectCell(0);
+  m_selectableListView.reloadData();
 }
 
 StoreMenuController::StoreMenuController()

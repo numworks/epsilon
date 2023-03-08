@@ -41,7 +41,7 @@ class FunctionListController : public ExpressionModelListController,
   }
 
   /* ExpressionModelListController */
-  Escher::SelectableListView* selectableTableView() override {
+  Escher::SelectableListView* selectableListView() override {
     return &m_selectableListView;
   }
 

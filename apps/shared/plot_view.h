@@ -84,8 +84,8 @@ class AbstractPlotView : public Escher::View {
   Poincare::Coordinate2D<float> floatToPixel2D(
       Poincare::Coordinate2D<float> p) const {
     return Poincare::Coordinate2D<float>(
-        floatToFloatPixel(Axis::Horizontal, p.x1()),
-        floatToFloatPixel(Axis::Vertical, p.x2()));
+        floatToFloatPixel(Axis::Horizontal, p.x()),
+        floatToFloatPixel(Axis::Vertical, p.y()));
   }
   double angleFromPoint(KDPoint point) const;
   /* Compute the rect where a label will be drawn. */

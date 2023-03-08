@@ -85,11 +85,11 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
       increasing
           ? m_x
           : sequence->evaluateXYAtParameter(static_cast<float>(rank), context)
-                .x2();
+                .y();
   float y = rank == sequence->initialRank() ? 0 : x;
   float uOfX =
       sequence->evaluateXYAtParameter(static_cast<float>(rank + 1), context)
-          .x2();
+          .y();
   KDMeasuringContext measuringContext(*ctx);
   for (int i = initialStep; i < m_step; i++) {
     rank++;
@@ -104,7 +104,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
     y = uOfX;
     float uOfuOfX =
         sequence->evaluateXYAtParameter(static_cast<float>(rank + 1), context)
-            .x2();
+            .y();
     measuringContext.reset();
     plotView->drawDashedStraightSegment(&measuringContext, rect,
                                         AbstractPlotView::Axis::Horizontal, y,

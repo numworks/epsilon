@@ -11,7 +11,7 @@ void assert_next_solution_is(const char* expression, Context* context,
                              Solver<double>* solver,
                              Coordinate2D<double> expected, Interest interest,
                              const char* otherExpression) {
-  assert(std::isnan(expected.x1()) == std::isnan(expected.x2()));
+  assert(std::isnan(expected.x()) == std::isnan(expected.y()));
 
   Expression e = parse_expression(expression, context, false);
 
@@ -36,15 +36,13 @@ void assert_next_solution_is(const char* expression, Context* context,
   constexpr double relativePrecision =
       2. * Helpers::SquareRoot(2. * Float<double>::Epsilon());
   quiz_assert_print_if_failure(
-      std::isnan(observed.x1()) == std::isnan(expected.x1()), expression);
-  if (std::isfinite(expected.x1())) {
+      std::isnan(observed.x()) == std::isnan(expected.x()), expression);
+  if (std::isfinite(expected.x())) {
     quiz_assert_print_if_failure(
-        Helpers::RelativelyEqual(observed.x1(), expected.x1(),
-                                 relativePrecision),
+        Helpers::RelativelyEqual(observed.x(), expected.x(), relativePrecision),
         expression);
     quiz_assert_print_if_failure(
-        Helpers::RelativelyEqual(observed.x2(), expected.x2(),
-                                 relativePrecision),
+        Helpers::RelativelyEqual(observed.y(), expected.y(), relativePrecision),
         expression);
   }
 }

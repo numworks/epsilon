@@ -457,11 +457,11 @@ void GraphController::jumpToLeftRightCurve(double t,
              subCurveIndex++) {
           Coordinate2D<double> xy = f->evaluateXYAtParameter(
               potentialNextT, App::app()->localContext(), subCurveIndex);
-          if (currentXDelta < xDelta || std::abs(xy.x2() - m_cursor->y()) <
+          if (currentXDelta < xDelta || std::abs(xy.y() - m_cursor->y()) <
                                             std::abs(nextY - m_cursor->y())) {
             nextCurveIndex = i;
             xDelta = currentXDelta;
-            nextY = xy.x2();
+            nextY = xy.y();
             nextT = potentialNextT;
             nextSubCurve = subCurveIndex;
           }

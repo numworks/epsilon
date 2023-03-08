@@ -216,11 +216,11 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
          curveIndex++) {
       Coordinate2D<double> xy =
           f->evaluateXYAtParameter(0., context, curveIndex);
-      if (std::isfinite(xy.x1()) && std::isfinite(xy.x2())) {
+      if (std::isfinite(xy.x()) && std::isfinite(xy.y())) {
         if (f->isAlongY()) {
-          xy = Coordinate2D<double>(xy.x2(), xy.x1());
+          xy = Coordinate2D<double>(xy.y(), xy.x());
         }
-        append(xy.x1(), xy.x2(), Solver<double>::Interest::YIntercept, 0,
+        append(xy.x(), xy.y(), Solver<double>::Interest::YIntercept, 0,
                curveIndex);
       }
     }
@@ -243,13 +243,13 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     solver.stretch();
     Coordinate2D<double> solution;
     while (std::isfinite(
-        (solution = (solver.*next)(e)).x1())) {  // assignment in condition
+        (solution = (solver.*next)(e)).x())) {  // assignment in condition
       /* Ensure that the solution is in [start, end), even if the interval was
        * stretched. */
-      if (!solution.x1IsIn(start, end, true, false)) {
+      if (!solution.xIsIn(start, end, true, false)) {
         continue;
       }
-      append(solution.x1(), solution.x2(), solver.lastInterest());
+      append(solution.x(), solution.y(), solver.lastInterest());
     }
   }
 
@@ -278,14 +278,14 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     Expression diff;
     Coordinate2D<double> intersection;
     while (std::isfinite((intersection = solver.nextIntersection(e, e2, &diff))
-                             .x1())) {  // assignment in condition
+                             .x())) {  // assignment in condition
       assert(sizeof(record) == sizeof(uint32_t));
       /* Ensure that the intersection is in [start, end), even if the interval
        * was stretched. */
-      if (!intersection.x1IsIn(start, end, true, false)) {
+      if (!intersection.xIsIn(start, end, true, false)) {
         continue;
       }
-      append(intersection.x1(), intersection.x2(),
+      append(intersection.x(), intersection.y(),
              Solver<double>::Interest::Intersection,
              *reinterpret_cast<uint32_t *>(&record));
     }

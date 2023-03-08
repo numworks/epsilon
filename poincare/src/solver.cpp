@@ -24,22 +24,22 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void *aux,
                                 BracketTest test, HoneResult hone,
                                 DiscontinuityEvaluation discontinuityTest) {
   Coordinate2D<T> p1, p2(start(), f(start(), aux)),
-      p3(nextX(p2.x1(), end(), static_cast<T>(1.)), k_NAN);
-  p3.setX2(f(p3.x1(), aux));
+      p3(nextX(p2.x(), end(), static_cast<T>(1.)), k_NAN);
+  p3.setY(f(p3.x(), aux));
   Coordinate2D<T> definitiveSolution;
   Interest definitiveInterest = Interest::None;
 
   constexpr bool isDouble = sizeof(T) == sizeof(double);
 
-  while ((start() < p3.x1()) == (p3.x1() < end())) {
+  while ((start() < p3.x()) == (p3.x() < end())) {
     p1 = p2;
     p2 = p3;
     /* If the solver is in float, the slope is not used by minimalStep
      * so its computation is skipped here. */
-    T slope = isDouble ? (p2.x2() - p1.x2()) / (p2.x1() - p1.x1())
-                       : static_cast<T>(1.);
-    p3.setX1(nextX(p2.x1(), end(), slope));
-    p3.setX2(f(p3.x1(), aux));
+    T slope =
+        isDouble ? (p2.y() - p1.y()) / (p2.x() - p1.x()) : static_cast<T>(1.);
+    p3.setX(nextX(p2.x(), end(), slope));
+    p3.setY(f(p3.x(), aux));
 
     Coordinate2D<T> start = p1;
     Coordinate2D<T> middle = p2;
@@ -57,14 +57,14 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void *aux,
        * recompute the interest in this interval.
        * */
       ExcludeUndefinedFromBracket(&start, &middle, &end, f, aux,
-                                  MinimalStep(middle.x1(), slope));
+                                  MinimalStep(middle.x(), slope));
       interest = test(start, middle, end, aux);
     }
 
     if (interest != Interest::None) {
       Coordinate2D<T> solution = honeAndRoundSolution(
-          f, aux, start.x1(), end.x1(), interest, hone, discontinuityTest);
-      if (std::isfinite(solution.x1()) && validSolution(solution.x1())) {
+          f, aux, start.x(), end.x(), interest, hone, discontinuityTest);
+      if (std::isfinite(solution.x()) && validSolution(solution.x())) {
         definitiveSolution = solution;
         definitiveInterest = interest;
         break;
@@ -248,7 +248,7 @@ Coordinate2D<T> Solver<T>::SafeBrentMaximum(FunctionEvaluation f,
   };
   Coordinate2D<T> res =
       SafeBrentMinimum(minusF, pack, xMin, xMax, interest, precision);
-  return Coordinate2D<T>(res.x1(), -res.x2());
+  return Coordinate2D<T>(res.x(), -res.y());
 }
 
 template <typename T>
@@ -270,18 +270,19 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
     assert(interest == Interest::LocalMaximum);
     res = SafeBrentMaximum(f, aux, xMin, xMax, interest, precision);
   }
-  if (std::isfinite(res.x1()) &&
-      std::fabs(res.x2()) < NullTolerance(res.x1())) {
+  if (std::isfinite(res.x()) && std::fabs(res.y()) < NullTolerance(res.x())) {
     return res;
   }
-  return Coordinate2D<T>(k_NAN, k_NAN);
+  return std::isfinite(res.x()) && std::fabs(res.y()) < NullTolerance(res.x())
+             ? res
+             : Coordinate2D<T>();
 }
 
 template <typename T>
 bool Solver<T>::IsOddRoot(Coordinate2D<T> root, FunctionEvaluation f,
                           const void *aux) {
-  T b = root.x1();
-  T fb = root.x2();
+  T b = root.x();
+  T fb = root.y();
   if (!std::isfinite(fb)) {
     return false;
   }
@@ -314,26 +315,26 @@ void Solver<T>::ExcludeUndefinedFromBracket(
   Coordinate2D<T> lowerBoundOfDiscontinuity = *p1;
   Coordinate2D<T> middleOfDiscontinuity = *p2;
   Coordinate2D<T> upperBoundOfDiscontinuity = *p3;
-  while (upperBoundOfDiscontinuity.x1() - lowerBoundOfDiscontinuity.x1() >=
+  while (upperBoundOfDiscontinuity.x() - lowerBoundOfDiscontinuity.x() >=
          minimalSizeOfInterval) {
     if (UndefinedInBracket(lowerBoundOfDiscontinuity, dummy,
                            middleOfDiscontinuity,
                            aux) == Interest::Discontinuity) {
       upperBoundOfDiscontinuity = middleOfDiscontinuity;
-      middleOfDiscontinuity.setX1(
-          (lowerBoundOfDiscontinuity.x1() + middleOfDiscontinuity.x1()) / 2.0);
-      middleOfDiscontinuity.setX2(f(middleOfDiscontinuity.x1(), aux));
+      middleOfDiscontinuity.setX(
+          (lowerBoundOfDiscontinuity.x() + middleOfDiscontinuity.x()) / 2.0);
+      middleOfDiscontinuity.setY(f(middleOfDiscontinuity.x(), aux));
     } else if (UndefinedInBracket(middleOfDiscontinuity, dummy,
                                   upperBoundOfDiscontinuity,
                                   aux) == Interest::Discontinuity) {
       lowerBoundOfDiscontinuity = middleOfDiscontinuity;
-      middleOfDiscontinuity.setX1(
-          (middleOfDiscontinuity.x1() + upperBoundOfDiscontinuity.x1()) / 2.0);
-      middleOfDiscontinuity.setX2(f(middleOfDiscontinuity.x1(), aux));
+      middleOfDiscontinuity.setX(
+          (middleOfDiscontinuity.x() + upperBoundOfDiscontinuity.x()) / 2.0);
+      middleOfDiscontinuity.setY(f(middleOfDiscontinuity.x(), aux));
     } else {
       /* This can happen if std::isinf(middleOfDiscontinuity), in which case no
        * smaller interval with the undefined can be found. */
-      assert(std::isinf(middleOfDiscontinuity.x2()));
+      assert(std::isinf(middleOfDiscontinuity.y()));
       break;
     }
     // assert that dummy has no impact
@@ -343,14 +344,14 @@ void Solver<T>::ExcludeUndefinedFromBracket(
   }
   /* The smallest interval containing the undefined is found. Now
    * set p1, p2 and p3 outside of it. */
-  if (std::isnan(lowerBoundOfDiscontinuity.x2())) {
+  if (std::isnan(lowerBoundOfDiscontinuity.y())) {
     *p1 = upperBoundOfDiscontinuity;
   } else {
-    assert(std::isnan(upperBoundOfDiscontinuity.x2()));
+    assert(std::isnan(upperBoundOfDiscontinuity.y()));
     *p3 = lowerBoundOfDiscontinuity;
   }
-  p2->setX1((p1->x1() + p3->x1()) / 2.0);
-  p2->setX2(f(p2->x1(), aux));
+  p2->setX((p1->x() + p3->x()) / 2.0);
+  p2->setY(f(p2->x(), aux));
 }
 
 template <typename T>
@@ -530,7 +531,7 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression &e,
   Expression child = e.childAtIndex(childIndex);
   T xRoot;
   while (std::isfinite(
-      xRoot = solver.nextRoot(child).x1())) {  // assignment in condition
+      xRoot = solver.nextRoot(child).x())) {  // assignment in condition
     /* Check the result in case another term is undefined,
      * e.g. (x+1)*ln(x) for x =- 1.
      * This comparison relies on the fact that it is false for a NAN
@@ -552,7 +553,7 @@ Coordinate2D<T> Solver<T>::nextRootInChildren(
   int n = e.numberOfChildren();
   for (int i = 0; i < n; i++) {
     if (test(e.childAtIndex(i), m_context, aux)) {
-      T xRootChild = nextPossibleRootInChild(e, i).x1();
+      T xRootChild = nextPossibleRootInChild(e, i).x();
       if (std::isfinite(xRootChild) &&
           (!std::isfinite(xRoot) ||
            std::fabs(m_xStart - xRootChild) < std::fabs(m_xStart - xRoot))) {
@@ -605,9 +606,9 @@ Coordinate2D<T> Solver<T>::nextRootInAddition(const Expression &e) const {
         aux);
   };
   T xChildrenRoot =
-      nextRootInChildren(e, test, const_cast<Solver<T> *>(this)).x1();
+      nextRootInChildren(e, test, const_cast<Solver<T> *>(this)).x();
   Solver<T> solver = *this;
-  T xRoot = solver.next(e, EvenOrOddRootInBracket, CompositeBrentForRoot).x1();
+  T xRoot = solver.next(e, EvenOrOddRootInBracket, CompositeBrentForRoot).x();
   if (!std::isfinite(xRoot) ||
       std::fabs(xChildrenRoot - m_xStart) < std::fabs(xRoot - m_xStart)) {
     xRoot = xChildrenRoot;
@@ -621,11 +622,11 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
     HoneResult hone, DiscontinuityEvaluation discontinuityTest) {
   Coordinate2D<T> solution =
       hone(f, aux, start, end, interest, k_absolutePrecision);
-  if (!std::isfinite(solution.x1()) || !validSolution(solution.x1())) {
+  if (!std::isfinite(solution.x()) || !validSolution(solution.x())) {
     return solution;
   }
 
-  T x = solution.x1();
+  T x = solution.x();
   /* When searching for an extremum, the function can take the extremal value
    * on several abscissas, and Brent can pick up any of them. This deviation
    * is particularly visible if the theoretical solution is an integer. */
@@ -651,7 +652,7 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
                (interest == Interest::LocalMinimum && fIntX < fx) ||
                (interest == Interest::LocalMaximum && fIntX > fx)) {
       // Round is better
-      solution.setX1(roundX);
+      solution.setX(roundX);
     }
   }
   return solution;
@@ -659,16 +660,16 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
 
 template <typename T>
 void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
-  if (std::isnan(solution.x1())) {
+  if (std::isnan(solution.x())) {
     m_lastInterest = Interest::None;
     m_xStart = k_NAN;
     m_yResult = k_NAN;
     return;
   }
-  assert(validSolution(solution.x1()));
-  m_xStart = solution.x1();
-  m_yResult = solution.x2();
-  if (std::fabs(m_yResult) < NullTolerance(solution.x1())) {
+  assert(validSolution(solution.x()));
+  m_xStart = solution.x();
+  m_yResult = solution.y();
+  if (std::fabs(m_yResult) < NullTolerance(solution.x())) {
     m_yResult = k_zero;
   }
   m_lastInterest = interest;

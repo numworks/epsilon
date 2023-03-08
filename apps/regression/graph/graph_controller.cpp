@@ -244,7 +244,7 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
     *m_selectedCurveIndex = curveIndex;
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(),
                                        textFieldDelegateApp()->localContext());
-    m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
+    m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
   if (curveIsScatterPlot(*m_selectedCurveIndex)) {
     // Push regression controller directly

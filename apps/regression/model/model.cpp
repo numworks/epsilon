@@ -55,7 +55,7 @@ double Model::levelSet(double* modelCoefficients, double xMin, double xMax,
                        double y, Poincare::Context* context) {
   return PoincareHelpers::Solver(xMin, xMax, "x", context)
       .nextIntersection(Number::DecimalNumber(y), expression(modelCoefficients))
-      .x1();
+      .x();
 }
 
 void Model::fit(Store* store, int series, double* modelCoefficients,

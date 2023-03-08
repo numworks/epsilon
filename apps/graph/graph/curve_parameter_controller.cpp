@@ -124,7 +124,7 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex,
 
   Poincare::Coordinate2D<double> xy =
       function()->evaluateXYAtParameter(f, App::app()->localContext());
-  m_cursor->moveTo(f, xy.x1(), xy.x2());
+  m_cursor->moveTo(f, xy.x(), xy.y());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   return true;

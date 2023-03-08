@@ -48,26 +48,26 @@ class Solver {
   }
   static Interest OddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                    Coordinate2D<T> c, const void *) {
-    return BoolToInterest((a.x2() < k_zero && k_zero < c.x2()) ||
-                              (c.x2() < k_zero && k_zero < a.x2()),
+    return BoolToInterest((a.y() < k_zero && k_zero < c.y()) ||
+                              (c.y() < k_zero && k_zero < a.y()),
                           Interest::Root);
   }
   static Interest EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                          Coordinate2D<T> c, const void *);
   static Interest MinimumInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                    Coordinate2D<T> c, const void *) {
-    return BoolToInterest(b.x2() < a.x2() && b.x2() < c.x2(),
+    return BoolToInterest(b.y() < a.y() && b.y() < c.y(),
                           Interest::LocalMinimum);
   }
   static Interest MaximumInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                    Coordinate2D<T> c, const void *) {
-    return BoolToInterest(a.x2() < b.x2() && c.x2() < b.x2(),
+    return BoolToInterest(a.y() < b.y() && c.y() < b.y(),
                           Interest::LocalMaximum);
   }
   static Interest UndefinedInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
                                      Coordinate2D<T> c, const void *) {
-    return BoolToInterest((std::isfinite(a.x2()) && std::isnan(c.x2())) ||
-                              (std::isfinite(c.x2()) && std::isnan(a.x2())),
+    return BoolToInterest((std::isfinite(a.y()) && std::isnan(c.y())) ||
+                              (std::isfinite(c.y()) && std::isnan(a.y())),
                           Interest::Discontinuity);
   }
 

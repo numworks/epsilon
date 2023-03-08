@@ -124,7 +124,7 @@ int ContinuousFunction::printValue(double cursorT, double cursorX,
   }
   if (thisProperties.isPolar() || thisProperties.isInversePolar()) {
     return PoincareHelpers::ConvertFloatToText<double>(
-        evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize,
+        evaluate2DAtParameter(cursorT, context).y(), buffer, bufferSize,
         precision);
   }
   return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer,
@@ -227,12 +227,11 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT,
   switch (properties().symbolType()) {
     case ContinuousFunctionProperties::SymbolType::T:
       return index == 0   ? cursorT
-             : index == 1 ? evaluateXYAtParameter(cursorT, context).x1()
-                          : evaluateXYAtParameter(cursorT, context).x2();
+             : index == 1 ? evaluateXYAtParameter(cursorT, context).x()
+                          : evaluateXYAtParameter(cursorT, context).y();
     case ContinuousFunctionProperties::SymbolType::Theta:
     case ContinuousFunctionProperties::SymbolType::Radius:
-      return index == 0 ? cursorT
-                        : evaluate2DAtParameter(cursorT, context).x2();
+      return index == 0 ? cursorT : evaluate2DAtParameter(cursorT, context).y();
     default:
       return index == 0 ? cursorX : cursorY;
   }
@@ -390,8 +389,8 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
     return x1x2;
   }
   assert(properties().isPolar() || properties().isInversePolar());
-  const T r = properties().isPolar() ? x1x2.x2() : x1x2.x1();
-  const T angle = (properties().isPolar() ? x1x2.x1() : x1x2.x2()) * M_PI /
+  const T r = properties().isPolar() ? x1x2.y() : x1x2.x();
+  const T angle = (properties().isPolar() ? x1x2.x() : x1x2.y()) * M_PI /
                   Trigonometry::PiInAngleUnit(
                       Poincare::Preferences::sharedPreferences->angleUnit());
   return Coordinate2D<T>(r * std::cos(angle), r * std::sin(angle));

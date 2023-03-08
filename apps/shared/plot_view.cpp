@@ -145,10 +145,10 @@ static KDPoint computeOrigin(Coordinate2D<float> xy, KDSize size,
                              AbstractPlotView::RelativePosition yPosition,
                              bool ignoreMargin) {
   KDCoordinate x =
-      std::round(xy.x1()) +
+      std::round(xy.x()) +
       relativePositionToOffset(xPosition, size.width(), ignoreMargin);
   KDCoordinate y =
-      std::round(xy.x2()) +
+      std::round(xy.y()) +
       relativePositionToOffset(yPosition, size.height(), ignoreMargin);
   return KDPoint(x, y);
 }
@@ -215,8 +215,8 @@ KDRect AbstractPlotView::dotRect(Dots::Size size,
   /* If circle has an even diameter, out of the four center pixels, the bottom
    * left one will be placed at (x, y) */
   Coordinate2D<float> pF = floatToPixel2D(xy);
-  KDPoint p(std::round(pF.x1()) - (diameter - 1) / 2,
-            std::round(pF.x2()) - diameter / 2);
+  KDPoint p(std::round(pF.x()) - (diameter - 1) / 2,
+            std::round(pF.y()) - diameter / 2);
   return KDRect(p.x(), p.y(), diameter, diameter);
 }
 
@@ -377,14 +377,13 @@ void AbstractPlotView::drawArrowhead(KDContext *ctx, KDRect rect,
    *      -- l --
    */
 
-  Coordinate2D<float> xy2(xy.x1() - dxy.x1(), xy.x2() - dxy.x2());
+  Coordinate2D<float> xy2(xy.x() - dxy.x(), xy.y() - dxy.y());
   Coordinate2D<float> pA = floatToPixel2D(xy);
   Coordinate2D<float> pB = floatToPixel2D(xy2);
-  Coordinate2D<float> pAB(pB.x1() - pA.x1(), pB.x2() - pA.x2());
-  float bodyLength =
-      std::sqrt(std::pow(pAB.x1(), 2.f) + std::pow(pAB.x2(), 2.f));
-  Coordinate2D<float> u(pAB.x1() / bodyLength, pAB.x2() / bodyLength);
-  Coordinate2D<float> v(-u.x2(), u.x1());
+  Coordinate2D<float> pAB(pB.x() - pA.x(), pB.y() - pA.y());
+  float bodyLength = std::sqrt(std::pow(pAB.x(), 2.f) + std::pow(pAB.y(), 2.f));
+  Coordinate2D<float> u(pAB.x() / bodyLength, pAB.y() / bodyLength);
+  Coordinate2D<float> v(-u.y(), u.x());
 
   if (pixelArrowWidth == 0.f) {
     constexpr float defaultArrowWidth = 8.f;
@@ -393,10 +392,10 @@ void AbstractPlotView::drawArrowhead(KDContext *ctx, KDRect rect,
   float h = pixelArrowWidth * 0.5f;
   float l = h / tanAngle;
 
-  Coordinate2D<float> pC(pA.x1() + l * u.x1() + h * v.x1(),
-                         pA.x2() + l * u.x2() + h * v.x2());
-  Coordinate2D<float> pD(pA.x1() + l * u.x1() - h * v.x1(),
-                         pA.x2() + l * u.x2() - h * v.x2());
+  Coordinate2D<float> pC(pA.x() + l * u.x() + h * v.x(),
+                         pA.y() + l * u.y() + h * v.y());
+  Coordinate2D<float> pD(pA.x() + l * u.x() - h * v.x(),
+                         pA.y() + l * u.y() - h * v.y());
 
   straightJoinDots(ctx, rect, pA, pC, color, thick);
   straightJoinDots(ctx, rect, pA, pD, color, thick);
@@ -586,15 +585,15 @@ void AbstractPlotView::straightJoinDots(KDContext *ctx, KDRect rect,
   float end = 1;
   KDCoordinate stampSize = thick ? k_thickStampSize : k_thinStampSize;
   clipBarycentricCoordinatesBetweenBounds(&start, &end, rect.left() - stampSize,
-                                          rect.right() + stampSize, pixelA.x1(),
-                                          pixelB.x1());
+                                          rect.right() + stampSize, pixelA.x(),
+                                          pixelB.x());
   clipBarycentricCoordinatesBetweenBounds(&start, &end, rect.top() - stampSize,
-                                          rect.bottom() + stampSize,
-                                          pixelA.x2(), pixelB.x2());
-  float puf = start * pixelB.x1() + (1 - start) * pixelA.x1();
-  float pvf = start * pixelB.x2() + (1 - start) * pixelA.x2();
-  float pxf = end * pixelB.x1() + (1 - end) * pixelA.x1();
-  float pyf = end * pixelB.x2() + (1 - end) * pixelA.x2();
+                                          rect.bottom() + stampSize, pixelA.y(),
+                                          pixelB.y());
+  float puf = start * pixelB.x() + (1 - start) * pixelA.x();
+  float pvf = start * pixelB.y() + (1 - start) * pixelA.y();
+  float pxf = end * pixelB.x() + (1 - end) * pixelA.x();
+  float pyf = end * pixelB.y() + (1 - end) * pixelA.y();
 
   float deltaX = pxf - puf;
   float deltaY = pyf - pvf;
@@ -636,8 +635,8 @@ void AbstractPlotView::stamp(KDContext *ctx, KDRect rect, Coordinate2D<float> p,
    */
 
   KDCoordinate stampSize = thick ? k_thickStampSize : k_thinStampSize;
-  float pxf = p.x1() - 0.5f * stampSize;
-  float pyf = p.x2() - 0.5f * stampSize;
+  float pxf = p.x() - 0.5f * stampSize;
+  float pyf = p.y() - 0.5f * stampSize;
   KDCoordinate px = std::ceil(pxf);
   KDCoordinate py = std::ceil(pyf);
   KDRect stampRect(px, py, stampSize, stampSize);
@@ -663,8 +662,8 @@ bool AbstractPlotView::pointsInSameStamp(Coordinate2D<float> p1,
                                          Coordinate2D<float> p2,
                                          bool thick) const {
   KDCoordinate diameter = thick ? k_thickCircleDiameter : k_thinCircleDiameter;
-  const float deltaX = p1.x1() - p2.x1();
-  const float deltaY = p1.x2() - p2.x2();
+  const float deltaX = p1.x() - p2.x();
+  const float deltaY = p1.y() - p2.y();
   return deltaX * deltaX + deltaY * deltaY < 0.25f * diameter * diameter;
 }
 

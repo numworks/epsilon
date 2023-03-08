@@ -53,7 +53,7 @@ void SystemOfEquations::approximateSolve(Context *context) {
   solver.stretch();
 
   for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
-    double root = solver.nextRoot(undevelopedExpression).x1();
+    double root = solver.nextRoot(undevelopedExpression).x();
     if (root < m_approximateResolutionMinimum) {
       i--;
       continue;

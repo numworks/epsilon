@@ -56,7 +56,7 @@ bool CalculationGraphController::handleEnter() {
           ->functionStore()
           ->modelForRecord(m_record)
           ->evaluateXYAtParameter(t, App::app()->localContext());
-  m_cursor->moveTo(t, xy.x1(), xy.x2());
+  m_cursor->moveTo(t, xy.x(), xy.y());
   return Shared::SimpleInteractiveCurveViewController::handleEnter();
 }
 
@@ -66,7 +66,7 @@ void CalculationGraphController::viewWillAppear() {
   assert(!m_record.isNull());
   Coordinate2D<double> pointOfInterest = computeNewPointOfInterestFromAbscissa(
       m_graphRange->xMin(), OMG::Direction::Right());
-  if (std::isnan(pointOfInterest.x1())) {
+  if (std::isnan(pointOfInterest.x())) {
     m_isActive = false;
     m_graphView->setCursorView(nullptr);
     m_graphView->setBannerView(&m_defaultBannerView);
@@ -77,8 +77,8 @@ void CalculationGraphController::viewWillAppear() {
                ->modelForRecord(m_record)
                ->properties()
                .isCartesian());
-    m_cursor->moveTo(pointOfInterest.x1(), pointOfInterest.x1(),
-                     pointOfInterest.x2());
+    m_cursor->moveTo(pointOfInterest.x(), pointOfInterest.x(),
+                     pointOfInterest.y());
     m_graphView->cursorView()->setHighlighted(specialInterest() !=
                                               Solver<double>::Interest::None);
     m_bannerView->setDisplayParameters(false, false, false);
@@ -142,7 +142,7 @@ bool CalculationGraphController::moveCursorHorizontally(
   }
   Coordinate2D<double> newPointOfInterest =
       computeNewPointOfInterestFromAbscissa(m_cursor->x(), direction);
-  if (std::isnan(newPointOfInterest.x1())) {
+  if (std::isnan(newPointOfInterest.x())) {
     return false;
   }
   assert(App::app()
@@ -150,8 +150,8 @@ bool CalculationGraphController::moveCursorHorizontally(
              ->modelForRecord(m_record)
              ->properties()
              .isCartesian());
-  m_cursor->moveTo(newPointOfInterest.x1(), newPointOfInterest.x1(),
-                   newPointOfInterest.x2());
+  m_cursor->moveTo(newPointOfInterest.x(), newPointOfInterest.x(),
+                   newPointOfInterest.y());
   return true;
 }
 

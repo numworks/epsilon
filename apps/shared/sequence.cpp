@@ -321,7 +321,7 @@ Expression Sequence::sumBetweenBounds(double start, double end,
     if (i == i - 1.0 || i == i + 1.0) {
       return Float<double>::Builder(NAN);
     }
-    result += evaluateXYAtParameter(i, context).x2();
+    result += evaluateXYAtParameter(i, context).y();
   }
   return Float<double>::Builder(result);
 }

@@ -9,12 +9,12 @@ namespace Poincare {
 
 void Zoom::HorizontalAsymptoteHelper::update(Coordinate2D<float> p,
                                              float slope) {
-  Coordinate2D<float> *bound = p.x1() < m_center ? &m_left : &m_right;
+  Coordinate2D<float> *bound = p.x() < m_center ? &m_left : &m_right;
   slope = std::fabs(slope);
   if (!std::isfinite(slope)) {
     return;
   }
-  if (std::isnan(bound->x1())) {
+  if (std::isnan(bound->x())) {
     if (slope < k_threshold - k_hysteresis) {
       *bound = p;
     }
@@ -114,9 +114,9 @@ void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped, float leftMargin,
   Range1D yRWithoutMargins(m_interestingRange.yMin() + bottomMargin * yL,
                            m_interestingRange.yMax() - topMargin * yL);
   Range1D xR = computeNewBoundsAfterZoomingOut(
-      xy.x1(), xRWithoutMargins, leftMargin, rightMargin, m_maxFloat);
+      xy.x(), xRWithoutMargins, leftMargin, rightMargin, m_maxFloat);
   Range1D yR = computeNewBoundsAfterZoomingOut(
-      xy.x2(), yRWithoutMargins, bottomMargin, topMargin, m_maxFloat);
+      xy.y(), yRWithoutMargins, bottomMargin, topMargin, m_maxFloat);
   privateFitPoint(Coordinate2D<float>(xR.min(), yR.min()), flipped);
   privateFitPoint(Coordinate2D<float>(xR.max(), yR.max()), flipped);
 }
@@ -151,9 +151,9 @@ void Zoom::fitPointsOfInterest(Function2DWithContext<float> f,
                                Function2DWithContext<double> fDouble) {
   HorizontalAsymptoteHelper asymptotes(m_bounds.center());
   float (Coordinate2D<float>::*ordinate)() const =
-      vertical ? &Coordinate2D<float>::x1 : &Coordinate2D<float>::x2;
+      vertical ? &Coordinate2D<float>::x : &Coordinate2D<float>::y;
   double (Coordinate2D<double>::*ordinateDouble)() const =
-      vertical ? &Coordinate2D<double>::x1 : &Coordinate2D<double>::x2;
+      vertical ? &Coordinate2D<double>::x : &Coordinate2D<double>::y;
   InterestParameters params = {.f = f,
                                .fDouble = fDouble,
                                .model = model,
@@ -199,8 +199,8 @@ void Zoom::fitIntersections(Function2DWithContext<float> f1, const void *model1,
   Solver<float>::FunctionEvaluation evaluator = [](float t, const void *aux) {
     const IntersectionParameters *p =
         static_cast<const IntersectionParameters *>(aux);
-    return p->f1(t, p->model1, p->context).x2() -
-           p->f2(t, p->model2, p->context).x2();
+    return p->f1(t, p->model1, p->context).y() -
+           p->f2(t, p->model2, p->context).y();
   };
   bool dummy;
   fitWithSolver(&dummy, &dummy, evaluator, &params,
@@ -242,7 +242,7 @@ void Zoom::fitConditions(PiecewiseOperator p,
                                        Coordinate2D<float>,
                                        Coordinate2D<float> c, const void *) {
     return Solver<float>::BoolToInterest(
-        a.x2() != c.x2(), Solver<float>::Interest::Discontinuity);
+        a.y() != c.y(), Solver<float>::Interest::Discontinuity);
   };
   Solver<float>::HoneResult hone = [](Solver<float>::FunctionEvaluation,
                                       const void *aux, float a, float b,
@@ -268,7 +268,7 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void *model,
   int nPop = 0, pPop = 0;
 
   float (Coordinate2D<float>::*ordinate)() const =
-      vertical ? &Coordinate2D<float>::x1 : &Coordinate2D<float>::x2;
+      vertical ? &Coordinate2D<float>::x : &Coordinate2D<float>::y;
   Range2D saneRange = sanitizedRange();
   Range1D xRange = *(vertical ? saneRange.y() : saneRange.x());
   float step = xRange.length() / (k_sampleSize - 1);
@@ -310,8 +310,8 @@ void Zoom::fitBounds(Function2DWithContext<float> f, const void *model,
   float tMiddle = (tMin + tMax) / 2;
   Coordinate2D<float> middle(f(tMiddle, model, m_context));
   Coordinate2D<float> pointToFit =
-      vertical ? Coordinate2D<float>(tMiddle, middle.x1())
-               : Coordinate2D<float>(tMiddle, middle.x2());
+      vertical ? Coordinate2D<float>(tMiddle, middle.x())
+               : Coordinate2D<float>(tMiddle, middle.y());
   privateFitPoint(pointToFit, vertical);
 
   /* Set the default half length in case the middle is the only point
@@ -328,7 +328,7 @@ Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a,
                                                  const void *aux) {
   const InterestParameters *params =
       static_cast<const InterestParameters *>(aux);
-  float slope = (c.x2() - a.x2()) / (c.x1() - a.x1());
+  float slope = (c.y() - a.y()) / (c.x() - a.x());
   params->asymptotes->update(c, slope);
   Solver<float>::Interest res = pointIsInterestingHelper(a, b, c, aux);
   /* Filter out variations that are caused by:
@@ -344,8 +344,8 @@ Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a,
   constexpr float k_tolerance = 4.f * Solver<float>::k_relativePrecision;
   if ((res == Solver<float>::Interest::LocalMinimum ||
        res == Solver<float>::Interest::LocalMaximum) &&
-      (std::fabs((a.x2() - b.x2()) / b.x1()) < k_tolerance ||
-       std::fabs((a.x2() - b.x2()) / b.x2()) < k_tolerance)) {
+      (std::fabs((a.y() - b.y()) / b.x()) < k_tolerance ||
+       std::fabs((a.y() - b.y()) / b.y()) < k_tolerance)) {
     return Solver<float>::Interest::None;
   }
   return res;
@@ -380,12 +380,12 @@ static void honeHelper(Solver<float>::FunctionEvaluation f, const void *aux,
     if (test(*pu, *pv, *pb, aux) != Solver<float>::Interest::None) {
       *pa = *pu;
       *pu = *pv;
-      float newV = pb->x1() - (pu->x1() - pa->x1());
+      float newV = pb->x() - (pu->x() - pa->x());
       *pv = Coordinate2D<float>(newV, f(newV, aux));
     } else if (test(*pa, *pu, *pv, aux) != Solver<float>::Interest::None) {
       *pb = *pv;
       *pv = *pu;
-      float newU = pa->x1() + (pb->x1() - pv->x1());
+      float newU = pa->x() + (pb->x() - pv->x());
       *pu = Coordinate2D<float>(newU, f(newU, aux));
     } else {
       break;
@@ -407,14 +407,14 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
   bool discontinuous =
       (interest == Solver<float>::Interest::LocalMinimum ||
        interest == Solver<float>::Interest::LocalMaximum) &&
-      (std::max((pu.x2() - pa.x2()) / (pu.x1() - pa.x1()),
-                (pv.x2() - pb.x2()) / (pv.x1() - pb.x1())) > k_tolerance);
+      (std::max((pu.y() - pa.y()) / (pu.x() - pa.x()),
+                (pv.y() - pb.y()) / (pv.x() - pb.x())) > k_tolerance);
   /* If the function is discontinuous around the solution (e.g. 1/x^2), we
    * discard the y value to avoid zooming in on diverging points. */
-  return Coordinate2D<float>(pb.x1(), interest == Solver<float>::Interest::Root
-                                          ? 0.f
-                                      : discontinuous ? NAN
-                                                      : pb.x2());
+  return Coordinate2D<float>(pb.x(), interest == Solver<float>::Interest::Root
+                                         ? 0.f
+                                     : discontinuous ? NAN
+                                                     : pb.y());
 }
 
 Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
@@ -432,13 +432,13 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
    * FIXME This test will fail when confronted with discontinuous functions
    * that do not have asymptotes. */
   constexpr float k_threshold = 1.f;
-  if (!(std::fabs(pb.x2()) < k_threshold)) {
+  if (!(std::fabs(pb.y()) < k_threshold)) {
     return Coordinate2D<float>();
   }
 
   const IntersectionParameters *p =
       static_cast<const IntersectionParameters *>(aux);
-  return p->f1(pb.x1(), p->model1, p->context);
+  return p->f1(pb.x(), p->model1, p->context);
 }
 
 static Range1D sanitationHelper(Range1D range, float defaultHalfLength) {
@@ -611,10 +611,10 @@ bool Zoom::fitWithSolverHelper(float start, float end,
   int n = 0;
   Coordinate2D<float> p;
   while (std::isfinite((p = solver.next(evaluator, aux, test, hone))
-                           .x1())) {  // assignment in condition
+                           .x())) {  // assignment in condition
     if (fDouble != nullptr &&
         solver.lastInterest() == Solver<float>::Interest::Discontinuity &&
-        std::isnan(p.x2()) && std::isfinite(fDouble(p.x1(), aux))) {
+        std::isnan(p.y()) && std::isfinite(fDouble(p.x(), aux))) {
       /* The function evaluates to NAN in single-precision only. It is likely
        * we have reached the limits of the float type, such as when
        * evaluating y=(e^x-1)/(e^x+1) for x~90 (which leads to ∞/∞). */
@@ -633,8 +633,8 @@ bool Zoom::fitWithSolverHelper(float start, float end,
 }
 
 void Zoom::privateFitPoint(Coordinate2D<float> xy, bool flipped) {
-  m_interestingRange.extend(
-      flipped ? Coordinate2D<float>(xy.x2(), xy.x1()) : xy, m_maxFloat);
+  m_interestingRange.extend(flipped ? Coordinate2D<float>(xy.y(), xy.x()) : xy,
+                            m_maxFloat);
 }
 
 }  // namespace Poincare

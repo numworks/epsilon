@@ -58,7 +58,7 @@ void check_sequences_defined_by(
     for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
       if (seqs[i]->isDefined()) {
         double un =
-            seqs[i]->evaluateXYAtParameter((double)j, sequenceContext).x2();
+            seqs[i]->evaluateXYAtParameter((double)j, sequenceContext).y();
         quiz_assert((std::isnan(un) && std::isnan(result[i][j])) ||
                     (un == result[i][j]));
       }
@@ -699,7 +699,7 @@ QUIZ_CASE(sequence_order) {
   assert(v->fullName()[0] == 'v');
 
   sequenceContext->resetCache();
-  quiz_assert(v->evaluateXYAtParameter(1., sequenceContext).x2() == 4.);
+  quiz_assert(v->evaluateXYAtParameter(1., sequenceContext).y() == 4.);
 
   store->removeAll();
   u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr,
@@ -708,7 +708,7 @@ QUIZ_CASE(sequence_order) {
                   sequenceContext);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("u.seq").destroy();
   sequenceContext->resetCache();
-  quiz_assert(v->evaluateXYAtParameter(1., sequenceContext).x2() == 1.);
+  quiz_assert(v->evaluateXYAtParameter(1., sequenceContext).y() == 1.);
 
   store->removeAll();
   store->tidyDownstreamPoolFrom();

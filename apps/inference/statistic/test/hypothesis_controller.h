@@ -1,12 +1,13 @@
 #ifndef INFERENCE_STATISTIC_TEST_HYPOTHESIS_CONTROLLER_H
 #define INFERENCE_STATISTIC_TEST_HYPOTHESIS_CONTROLLER_H
 
-#include <apps/shared/button_with_separator.h>
+#include <escher/button_cell.h>
 #include <escher/expression_cell_with_editable_text_with_message.h>
 #include <escher/highlight_cell.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/palette.h>
 #include <escher/selectable_list_view_controller.h>
+#include <escher/spacer_cell.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 #include <escher/view.h>
@@ -18,11 +19,11 @@
 
 namespace Inference {
 
-class HypothesisController : public Escher::SelectableListViewController<
-                                 Escher::MemoizedListViewDataSource>,
-                             public Escher::TextFieldDelegate,
-                             public Escher::DropdownCallback,
-                             public Escher::SelectableListViewDelegate {
+class HypothesisController
+    : public Escher::ExplicitSelectableListViewController,
+      public Escher::TextFieldDelegate,
+      public Escher::DropdownCallback,
+      public Escher::SelectableListViewDelegate {
  public:
   HypothesisController(Escher::StackViewController* parent,
                        InputController* inputController,
@@ -37,8 +38,8 @@ class HypothesisController : public Escher::SelectableListViewController<
   const char* title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Escher::HighlightCell* reusableCell(int i, int type) override;
-  int numberOfRows() const override { return 3; }
+  Escher::HighlightCell* cell(int i) override;
+  int numberOfRows() const override { return 4; }
 
   // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
@@ -72,7 +73,6 @@ class HypothesisController : public Escher::SelectableListViewController<
 
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;
-  constexpr static int k_indexOfNext = 2;
   constexpr static int k_cellBufferSize =
       7 /* μ1-μ2 */ + 1 /* = */ +
       Constants::k_shortFloatNumberOfChars /* float */ + 1 /* \0 */;
@@ -83,7 +83,8 @@ class HypothesisController : public Escher::SelectableListViewController<
 
   Escher::ExpressionCellWithEditableTextWithMessage m_h0;
   ExpressionCellWithSublabelAndDropdown m_ha;
-  Shared::ButtonWithSeparator m_next;
+  Escher::SpacerCell m_spacer;
+  Escher::ButtonCell m_next;
 
   constexpr static int k_titleBufferSize =
       Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);

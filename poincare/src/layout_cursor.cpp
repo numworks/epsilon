@@ -162,12 +162,13 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
 }
 
 /* Layout insertion */
-void LayoutCursor::insertLayoutAtCursor(Layout layout, bool forceRight,
-                                        bool forceLeft) {
+void LayoutCursor::insertLayoutAtCursor(Layout layout, Context *context,
+                                        bool forceRight, bool forceLeft) {
   assert(!isUninitialized() && isValid());
   if (layout.isEmpty()) {
     return;
   }
+  assert(!forceRight || !forceLeft);
   // - Step 1 - Delete selection
   deleteAndResetSelection();
 
@@ -322,52 +323,61 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, bool forceRight,
   invalidateSizesAndPositions();
 }
 
-void LayoutCursor::addEmptyExponentialLayout() {
-  insertLayoutAtCursor(HorizontalLayout::Builder(
-      CodePointLayout::Builder('e'),
+void LayoutCursor::addEmptyExponentialLayout(Context *context) {
+  insertLayoutAtCursor(
+      HorizontalLayout::Builder(
+          CodePointLayout::Builder('e'),
+          VerticalOffsetLayout::Builder(
+              HorizontalLayout::Builder(),
+              VerticalOffsetLayoutNode::VerticalPosition::Superscript)),
+      context);
+}
+
+void LayoutCursor::addEmptyMatrixLayout(Context *context) {
+  insertLayoutAtCursor(MatrixLayout::EmptyMatrixBuilder(), context);
+}
+
+void LayoutCursor::addEmptySquareRootLayout(Context *context) {
+  insertLayoutAtCursor(NthRootLayout::Builder(HorizontalLayout::Builder()),
+                       context);
+}
+
+void LayoutCursor::addEmptyPowerLayout(Context *context) {
+  insertLayoutAtCursor(
       VerticalOffsetLayout::Builder(
           HorizontalLayout::Builder(),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
+          VerticalOffsetLayoutNode::VerticalPosition::Superscript),
+      context);
 }
 
-void LayoutCursor::addEmptyMatrixLayout() {
-  insertLayoutAtCursor(MatrixLayout::EmptyMatrixBuilder());
-}
-
-void LayoutCursor::addEmptySquareRootLayout() {
-  insertLayoutAtCursor(NthRootLayout::Builder(HorizontalLayout::Builder()));
-}
-
-void LayoutCursor::addEmptyPowerLayout() {
-  insertLayoutAtCursor(VerticalOffsetLayout::Builder(
-      HorizontalLayout::Builder(),
-      VerticalOffsetLayoutNode::VerticalPosition::Superscript));
-}
-
-void LayoutCursor::addEmptySquarePowerLayout() {
+void LayoutCursor::addEmptySquarePowerLayout(Context *context) {
   /* Force the cursor right of the layout. */
   insertLayoutAtCursor(
       VerticalOffsetLayout::Builder(
           CodePointLayout::Builder('2'),
           VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-      true);
+      context, true);
 }
 
-void LayoutCursor::addEmptyTenPowerLayout() {
-  insertLayoutAtCursor(HorizontalLayout::Builder(
-      {CodePointLayout::Builder(UCodePointMultiplicationSign),
-       CodePointLayout::Builder('1'), CodePointLayout::Builder('0'),
-       VerticalOffsetLayout::Builder(
-           HorizontalLayout::Builder(),
-           VerticalOffsetLayoutNode::VerticalPosition::Superscript)}));
+void LayoutCursor::addEmptyTenPowerLayout(Context *context) {
+  insertLayoutAtCursor(
+      HorizontalLayout::Builder(
+          {CodePointLayout::Builder(UCodePointMultiplicationSign),
+           CodePointLayout::Builder('1'), CodePointLayout::Builder('0'),
+           VerticalOffsetLayout::Builder(
+               HorizontalLayout::Builder(),
+               VerticalOffsetLayoutNode::VerticalPosition::Superscript)}),
+      context);
 }
 
-void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
+void LayoutCursor::addFractionLayoutAndCollapseSiblings(Context *context) {
   insertLayoutAtCursor(FractionLayout::Builder(HorizontalLayout::Builder(),
-                                               HorizontalLayout::Builder()));
+                                               HorizontalLayout::Builder()),
+                       context);
 }
 
-void LayoutCursor::insertText(const char *text, bool forceCursorRightOfText,
+void LayoutCursor::insertText(const char *text, Context *context,
+                              bool forceCursorRightOfText,
                               bool forceCursorLeftOfText, bool linearMode) {
   UTF8Decoder decoder(text);
 
@@ -397,7 +407,7 @@ void LayoutCursor::insertText(const char *text, bool forceCursorRightOfText,
          * the first half of text now, and then insert the end of the text
          * and force the cursor left of it. */
         assert(currentSubscriptDepth == 0);
-        insertLayoutAtCursor(layoutToInsert, forceCursorRightOfText,
+        insertLayoutAtCursor(layoutToInsert, context, forceCursorRightOfText,
                              forceCursorLeftOfText);
         layoutToInsert = HorizontalLayout::Builder();
         currentLayout = layoutToInsert;
@@ -483,10 +493,8 @@ void LayoutCursor::insertText(const char *text, bool forceCursorRightOfText,
   assert(currentSubscriptDepth == 0);
 
   // - Step 2 - Inserted the created layout
-  insertLayoutAtCursor(layoutToInsert, forceCursorRightOfText,
+  insertLayoutAtCursor(layoutToInsert, context, forceCursorRightOfText,
                        forceCursorLeftOfText);
-
-  // TODO: Restore beautification
 }
 
 void LayoutCursor::performBackspace() {

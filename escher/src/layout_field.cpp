@@ -239,7 +239,7 @@ void LayoutField::reload(KDSize previousSize) {
   markRectAsDirty(bounds());
 }
 
-typedef void (Poincare::LayoutCursor::*AddLayoutPointer)();
+typedef void (Poincare::LayoutCursor::*AddLayoutPointer)(Context *context);
 
 bool LayoutField::handleEventWithText(const char *text, bool indentation,
                                       bool forceCursorRightOfText) {
@@ -284,13 +284,13 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
       Ion::Events::copyText(static_cast<uint8_t>(specialEvents[i]), buffer,
                             Ion::Events::EventData::k_maxDataSize);
       if (strcmp(text, buffer) == 0) {
-        (cursor->*handleSpecialEvents[i])();
+        (cursor->*handleSpecialEvents[i])(context());
         return true;
       }
     }
   }
   if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
-    cursor->addEmptyMatrixLayout();
+    cursor->addEmptyMatrixLayout(context());
     return true;
   }
   // Single keys are not parsed to avoid changing " or g to _" or _g
@@ -303,8 +303,8 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
   if (linearMode() || resultExpression.isUninitialized()) {
     // The text is not parsable (for instance, ",") and is added char by char.
     KDSize previousLayoutSize = minimalSizeForOptimalDisplay();
-    cursor->insertText(text, forceCursorRightOfText, forceCursorLeftOfText,
-                       linearMode());
+    cursor->insertText(text, context(), forceCursorRightOfText,
+                       forceCursorLeftOfText, linearMode());
     reload(previousLayoutSize);
     return true;
   }
@@ -524,8 +524,8 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
   }
   layout = layout.makeEditable();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  m_contentView.cursor()->insertLayoutAtCursor(layout, forceCursorRightOfLayout,
-                                               forceCursorLeftOfLayout);
+  m_contentView.cursor()->insertLayoutAtCursor(
+      layout, context(), forceCursorRightOfLayout, forceCursorLeftOfLayout);
 
   // Reload
   reload(previousSize);

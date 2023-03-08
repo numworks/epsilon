@@ -151,7 +151,7 @@ class Solver {
       Solver<T>::FunctionEvaluation f, const void *aux, T xMin, T xMax);
 
   T maximalStep() const { return m_maximalXStep; }
-  T minimalStep(T x, T slope = static_cast<T>(1.)) const;
+  static T MinimalStep(T x, T slope = static_cast<T>(1.));
   bool validSolution(T x) const;
   T nextX(T x, T direction, T slope) const;
   Coordinate2D<T> nextPossibleRootInChild(const Expression &e,

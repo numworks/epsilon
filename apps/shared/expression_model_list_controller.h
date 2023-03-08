@@ -60,7 +60,7 @@ class ExpressionModelListController
   virtual bool removeModelRow(Ion::Storage::Record record);
   virtual int modelIndexForRow(int j) const { return j; }
   // ViewController
-  virtual Escher::SelectableListView* selectableTableView() = 0;
+  virtual Escher::SelectableListView* selectableListView() = 0;
   virtual ExpressionModelStore* modelStore() const = 0;
   Escher::EvenOddMessageTextCell m_addNewModelCell;
   // LayoutDelegate

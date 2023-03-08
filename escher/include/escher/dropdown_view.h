@@ -116,8 +116,8 @@ class Dropdown : public PopupItemView, public Responder {
     ListViewDataSource* m_listViewDataSource;
     PopupItemView m_popupViews[k_maxNumberOfPopupItems];
     KDCoordinate m_memoizedCellWidth;
-    SelectableTableViewDataSource m_selectionDataSource;
-    SelectableTableView m_selectableTableView;
+    SelectableListViewDataSource m_selectionDataSource;
+    SelectableListView m_selectableListView;
     BorderingView m_borderingView;
     DropdownCallback* m_callback;
     Dropdown* m_dropdown;

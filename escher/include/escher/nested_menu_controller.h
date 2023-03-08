@@ -73,14 +73,14 @@ class NestedMenuController : public StackViewController,
     BreadcrumbController(Responder* parentResponder,
                          SelectableListView* tableView)
         : ViewController(parentResponder),
-          m_selectableTableView(tableView),
+          m_selectableListView(tableView),
           m_titleCount(0),
           m_titleBuffer("") {}
     const char* title() override { return m_titleBuffer; }
     void popTitle();
     void pushTitle(I18n::Message title);
     void resetTitle();
-    View* view() override { return m_selectableTableView; }
+    View* view() override { return m_selectableListView; }
 
    private:
     constexpr static int k_maxTitleLength =
@@ -91,7 +91,7 @@ class NestedMenuController : public StackViewController,
     constexpr static int k_maxModelTreeDepth =
         StackViewController::k_maxNumberOfChildren - 1;
     void updateTitle();
-    SelectableListView* m_selectableTableView;
+    SelectableListView* m_selectableListView;
     int m_titleCount;
     I18n::Message m_titles[k_maxModelTreeDepth];
     char m_titleBuffer[k_maxTitleLength + 1];

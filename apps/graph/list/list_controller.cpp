@@ -66,7 +66,7 @@ void ListController::viewWillAppear() {
   /* FunctionListcontroller::didEnterResponderChain might not be called,
    * (if the list tab is displayed but not selected using Back-Back)
    * therefore we also need to manually reload the table here. */
-  selectableTableView()->reloadData(false);
+  selectableListView()->reloadData(false);
 }
 
 // Fills buffer with a default function equation, such as "f(x)=", "y=" or "r="
@@ -214,24 +214,24 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       if (event == Ion::Events::Left) {
         // Leave parameter column
         m_parameterColumnSelected = false;
-        selectableTableView()->reloadData();
+        selectableListView()->reloadData();
         return true;
       }
     } else if (event == Ion::Events::Right) {
       // Enter parameter column
       m_parameterColumnSelected = true;
-      selectableTableView()->reloadData();
+      selectableListView()->reloadData();
       return true;
     }
   }
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);
-      selectableTableView()->selectCell(numberOfRows() - 1);
-      Container::activeApp()->setFirstResponder(selectableTableView());
+      selectableListView()->selectCell(numberOfRows() - 1);
+      Container::activeApp()->setFirstResponder(selectableListView());
       return true;
     }
-    selectableTableView()->deselectTable();
+    selectableListView()->deselectTable();
     assert(selectedRow() == -1);
     tabController()->selectTab();
     return true;
@@ -240,7 +240,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Down) {
-    selectableTableView()->deselectTable();
+    selectableListView()->deselectTable();
     footer()->setSelectedButton(0);
     return true;
   }

@@ -21,7 +21,7 @@ class EquationListView : public Escher::Responder,
   void scrollViewDidChangeOffset(
       Escher::ScrollViewDataSource* scrollViewDataSource) override;
   void didBecomeFirstResponder() override;
-  Escher::SelectableListView* selectableTableView() { return &m_listView; }
+  Escher::SelectableListView* selectableListView() { return &m_listView; }
   constexpr static KDCoordinate k_margin = 10;
   // 2*k_margin+BraceView::k_braceWidth;
   constexpr static KDCoordinate k_braceTotalWidth = 30;

@@ -79,20 +79,20 @@ Dropdown::DropdownPopupController::DropdownPopupController(
       m_listViewDataSource(listDataSource),
       m_memoizedCellWidth(-1),
       m_selectionDataSource(),
-      m_selectableTableView(this, this, &m_selectionDataSource),
-      m_borderingView(&m_selectableTableView),
+      m_selectableListView(this, this, &m_selectionDataSource),
+      m_borderingView(&m_selectableListView),
       m_callback(callback),
       m_dropdown(dropdown) {
-  m_selectableTableView.setMargins(0);
+  m_selectableListView.setMargins(0);
 }
 
 void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
   resetMemoization();
   if (m_selectionDataSource.selectedRow() < 0) {
     m_selectionDataSource.selectRow(0);
-    m_selectableTableView.reloadData(false);
+    m_selectableListView.reloadData(false);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
@@ -190,7 +190,7 @@ bool Dropdown::handleEvent(Ion::Events::Event e) {
 void Dropdown::reloadAllCells() {
   // Reload popup list
   m_popup.resetMemoization();  // Reset computed width
-  m_popup.m_selectableTableView.reloadData(false);
+  m_popup.m_selectableListView.reloadData(false);
   if (!m_isPoppingUp) {
     /* Build the innerCell so that is has the right width.
      * Mimicking Dropdown::DropdownPopupController::willDisplayCellForIndex
@@ -218,7 +218,7 @@ void Dropdown::init() {
 void Dropdown::open() {
   // Reload popup list
   m_popup.resetMemoization();
-  m_popup.m_selectableTableView.reloadData(false);
+  m_popup.m_selectableListView.reloadData(false);
 
   KDPoint topLeftAngle = m_popup.topLeftCornerForSelection(this);
   Container::activeApp()->displayModalViewController(

@@ -33,7 +33,7 @@ class IllustratedExpressionsListController
   }
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 
-  // SelectableTableViewDelegate
+  // SelectableListViewDelegate
   void listViewDidChangeSelection(Escher::SelectableListView* l,
                                   int previousSelectedRow,
                                   bool withinTemporarySelection) override;

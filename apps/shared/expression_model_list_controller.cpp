@@ -99,7 +99,7 @@ bool ExpressionModelListController::handleEventOnExpression(
                                ? numberOfExpressionRows() - 1
                                : selectedRow();
       selectCell(newSelectedRow);
-      selectableTableView()->reloadData();
+      selectableListView()->reloadData();
     }
     return true;
   }
@@ -140,7 +140,7 @@ bool ExpressionModelListController::addEmptyModel() {
   }
   assert(error == Ion::Storage::Record::ErrorStatus::None);
   didChangeModelsList();
-  selectableTableView()->reloadData();
+  selectableListView()->reloadData();
   return true;
 }
 
@@ -192,13 +192,13 @@ bool ExpressionModelListController::removeModelRow(
 void ExpressionModelListController::layoutFieldDidChangeSize(
     LayoutField *layoutField) {
   resetMemoization();
-  selectableTableView()->reloadData(false);
+  selectableListView()->reloadData(false);
 }
 
 void ExpressionModelListController::finishEdition() {
   m_editedCellIndex = -1;
   resetMemoization();
-  selectableTableView()->reloadData(true);
+  selectableListView()->reloadData(true);
 }
 
 bool ExpressionModelListController::layoutFieldDidFinishEditing(

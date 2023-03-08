@@ -63,14 +63,14 @@ AbstractButtonCell *FunctionListController::buttonAtIndex(
 
 void FunctionListController::didEnterResponderChain(
     Responder *previousFirstResponder) {
-  selectableTableView()->reloadData(false);
+  selectableListView()->reloadData(false);
 }
 
 void FunctionListController::willExitResponderChain(
     Responder *nextFirstResponder) {
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
-    selectableTableView()->deselectTable();
+    selectableListView()->deselectTable();
     footer()->setSelectedButton(-1);
   }
 }
@@ -85,7 +85,7 @@ void FunctionListController::didBecomeFirstResponder() {
     selectCell(numberOfExpressionRows() - 1);
   }
   footer()->setSelectedButton(-1);
-  Container::activeApp()->setFirstResponder(selectableTableView());
+  Container::activeApp()->setFirstResponder(selectableListView());
 }
 
 /* ExpressionModelListController */

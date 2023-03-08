@@ -59,14 +59,14 @@ class StoreMenuController : public Escher::ModalViewController,
     const char* title() override {
       return I18n::translate(I18n::Message::DefineVariable);
     }
-    Escher::View* view() override { return &m_selectableTableView; }
+    Escher::View* view() override { return &m_selectableListView; }
     void didBecomeFirstResponder() override;
     Escher::SelectableTableView* selectableTableView() {
-      return &m_selectableTableView;
+      return &m_selectableListView;
     }
 
    private:
-    Escher::SelectableListView m_selectableTableView;
+    Escher::SelectableListView m_selectableListView;
   };
 
   bool parseAndStore(const char* text);

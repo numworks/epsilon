@@ -5,7 +5,6 @@
 #include <poincare/print.h>
 
 #include "exam_icon.h"
-#include "staar_icon.h"
 extern "C" {
 #include <assert.h>
 }
@@ -99,14 +98,7 @@ void TitleBarView::layoutSubviews(bool force) {
                k_examTextWidth, bounds().height() - k_verticalShift),
         force);
     I18n::Message examModeMessage;
-
-    ExamMode::Ruleset ruleset =
-        Preferences::sharedPreferences->examMode().ruleset();
-    m_examModeIconView.setImage(ruleset == ExamMode::Ruleset::STAAR
-                                    ? ImageStore::StaarIcon
-                                    : ImageStore::ExamIcon);
-
-    switch (ruleset) {
+    switch (Preferences::sharedPreferences->examMode().ruleset()) {
       case ExamMode::Ruleset::English:
         examModeMessage = I18n::Message::ExamModeTitleBarUK;
         break;

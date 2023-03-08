@@ -74,7 +74,9 @@ class LayoutCursor final {
                : LayoutSelection();
   }
 
-  void setPosition(int position);
+  // These will call didEnterCurrentPosition
+  void safeSetLayout(Layout layout, OMG::HorizontalDirection sideOfLayout);
+  void safeSetPosition(int position);
 
   /* Position and size */
   KDCoordinate cursorHeight(KDFont::Size font);

@@ -3,7 +3,6 @@
 
 #include <poincare/empty_rectangle.h>
 #include <poincare/layout.h>
-#include <poincare/layout_cursor.h>
 
 namespace Poincare {
 

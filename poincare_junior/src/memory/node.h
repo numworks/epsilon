@@ -50,13 +50,17 @@ public:
   void copyTreeTo(void * address) const;
 
   // Node Navigation
-  constexpr const Node nextNode() const {
-    assert(type() != BlockType::NodeBorder);
-    return Node(m_block + nodeSize());
-  }
+  /* Note : parent() access may be forbidden and deleted in the future.
+   * In this case, previousBlock won't exist anymore.
+   * If parent() remains enabled, previousNode could be optimized by sprinkling
+   * NodeBorders blocks between every tree of the cache.
+   * previousNode and nextNode could then be simplified. */
+  bool canNavigateNext() const;
+  bool canNavigatePrevious() const;
+  const Node nextNode() const;
   constexpr Node nextNode() { return Utils::DeconstifyObj(&Node::nextNode, this); };
   const Node previousNode() const;
-  Node previousNode() { return Utils::DeconstifyObj(&Node::previousNode, this);}
+  constexpr Node previousNode() { return Utils::DeconstifyObj(&Node::previousNode, this);}
   constexpr const Node nextTree() const {
     Node result = *this;
     int nbOfChildrenToScan = result.numberOfChildren();
@@ -71,7 +75,7 @@ public:
   Node previousTree() { return Utils::DeconstifyObj(&Node::previousTree, this);}
 
   // Sizes
-  constexpr size_t treeSize() const { return nextTree().block() - block(); }
+  constexpr size_t treeSize() const { assert(!isUninitialized()); return nextTree().block() - block(); }
 
   // Node Hierarchy
   const Node parent() const;

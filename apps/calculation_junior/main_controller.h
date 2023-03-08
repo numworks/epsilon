@@ -53,7 +53,7 @@ class MainController : public Escher::ViewController {
 
   // Used by m_reducedExpression initializer
   constexpr static int k_bufferSize = 128;
-  PoincareJ::TypeBlockBuffer<k_bufferSize> m_buffer;
+  PoincareJ::BlockBuffer<k_bufferSize> m_buffer;
   // Used by m_reductionLayoutView::m_layout initializer
   PoincareJ::Expression m_reducedExpression;
 };

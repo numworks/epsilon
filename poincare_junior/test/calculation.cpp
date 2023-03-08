@@ -21,7 +21,7 @@ public:
   Expression output() { return m_output; }
 private:
   constexpr static int k_bufferSize = 128;
-  TypeBlockBuffer<k_bufferSize> m_buffer;
+  BlockBuffer<k_bufferSize> m_buffer;
   Expression m_output;
 };
 
@@ -38,7 +38,7 @@ QUIZ_CASE(pcj_calculation) {
 #endif
 }
 
-// Check TypeBlockBuffer
+// Check BlockBuffer
 
 QUIZ_CASE(pcj_calculation_type_block_buffer) {
   Calculation calculation("(1-2)/3/4");

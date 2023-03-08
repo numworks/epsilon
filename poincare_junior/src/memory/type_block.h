@@ -264,17 +264,17 @@ constexpr TypeBlock NodeBorderBlock = TypeBlock(BlockType::NodeBorder);
 
 // Surround tree with NodeBorder blocks to allow uninitialized parent detection
 template <int size>
-class TypeBlockBuffer {
+class BlockBuffer {
 public:
-  consteval TypeBlockBuffer() {
+  consteval BlockBuffer() {
     m_blocks[0] = NodeBorderBlock;
     m_blocks[size + 1] = NodeBorderBlock;
   }
-  constexpr TypeBlock * blocks() { return m_blocks + 1; }
-  consteval const TypeBlock * blocks() const { return m_blocks + 1; }
+  constexpr TypeBlock * blocks() { return static_cast<TypeBlock *>(m_blocks + 1); }
+  consteval const TypeBlock * blocks() const { return static_cast<const TypeBlock *>(m_blocks) + 1; }
 
 private:
-  TypeBlock m_blocks[size + 2];
+  Block m_blocks[size + 2];
 };
 
 }

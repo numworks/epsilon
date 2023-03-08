@@ -82,7 +82,6 @@ $(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
 # Handle PNG files
 
 $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
-$(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/staar_icon.png))
 
 $(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h

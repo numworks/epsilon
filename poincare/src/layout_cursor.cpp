@@ -173,8 +173,8 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
 }
 
 /* Layout insertion */
-void LayoutCursor::insertLayoutAtCursor(Layout layout, Context *context,
-                                        bool forceRight, bool forceLeft) {
+void LayoutCursor::insertLayout(Layout layout, Context *context,
+                                bool forceRight, bool forceLeft) {
   assert(!isUninitialized() && isValid());
   if (layout.isEmpty()) {
     return;
@@ -347,7 +347,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context *context,
 }
 
 void LayoutCursor::addEmptyExponentialLayout(Context *context) {
-  insertLayoutAtCursor(
+  insertLayout(
       HorizontalLayout::Builder(
           CodePointLayout::Builder('e'),
           VerticalOffsetLayout::Builder(
@@ -357,33 +357,30 @@ void LayoutCursor::addEmptyExponentialLayout(Context *context) {
 }
 
 void LayoutCursor::addEmptyMatrixLayout(Context *context) {
-  insertLayoutAtCursor(MatrixLayout::EmptyMatrixBuilder(), context);
+  insertLayout(MatrixLayout::EmptyMatrixBuilder(), context);
 }
 
 void LayoutCursor::addEmptySquareRootLayout(Context *context) {
-  insertLayoutAtCursor(NthRootLayout::Builder(HorizontalLayout::Builder()),
-                       context);
+  insertLayout(NthRootLayout::Builder(HorizontalLayout::Builder()), context);
 }
 
 void LayoutCursor::addEmptyPowerLayout(Context *context) {
-  insertLayoutAtCursor(
-      VerticalOffsetLayout::Builder(
-          HorizontalLayout::Builder(),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-      context);
+  insertLayout(VerticalOffsetLayout::Builder(
+                   HorizontalLayout::Builder(),
+                   VerticalOffsetLayoutNode::VerticalPosition::Superscript),
+               context);
 }
 
 void LayoutCursor::addEmptySquarePowerLayout(Context *context) {
   /* Force the cursor right of the layout. */
-  insertLayoutAtCursor(
-      VerticalOffsetLayout::Builder(
-          CodePointLayout::Builder('2'),
-          VerticalOffsetLayoutNode::VerticalPosition::Superscript),
-      context, true);
+  insertLayout(VerticalOffsetLayout::Builder(
+                   CodePointLayout::Builder('2'),
+                   VerticalOffsetLayoutNode::VerticalPosition::Superscript),
+               context, true);
 }
 
 void LayoutCursor::addEmptyTenPowerLayout(Context *context) {
-  insertLayoutAtCursor(
+  insertLayout(
       HorizontalLayout::Builder(
           {CodePointLayout::Builder(UCodePointMultiplicationSign),
            CodePointLayout::Builder('1'), CodePointLayout::Builder('0'),
@@ -394,9 +391,9 @@ void LayoutCursor::addEmptyTenPowerLayout(Context *context) {
 }
 
 void LayoutCursor::addFractionLayoutAndCollapseSiblings(Context *context) {
-  insertLayoutAtCursor(FractionLayout::Builder(HorizontalLayout::Builder(),
-                                               HorizontalLayout::Builder()),
-                       context);
+  insertLayout(FractionLayout::Builder(HorizontalLayout::Builder(),
+                                       HorizontalLayout::Builder()),
+               context);
 }
 
 void LayoutCursor::insertText(const char *text, Context *context,
@@ -430,8 +427,8 @@ void LayoutCursor::insertText(const char *text, Context *context,
          * the first half of text now, and then insert the end of the text
          * and force the cursor left of it. */
         assert(currentSubscriptDepth == 0);
-        insertLayoutAtCursor(layoutToInsert, context, forceCursorRightOfText,
-                             forceCursorLeftOfText);
+        insertLayout(layoutToInsert, context, forceCursorRightOfText,
+                     forceCursorLeftOfText);
         layoutToInsert = HorizontalLayout::Builder();
         currentLayout = layoutToInsert;
         forceCursorLeftOfText = true;
@@ -497,7 +494,7 @@ void LayoutCursor::insertText(const char *text, Context *context,
     if (!linearMode &&
         AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairCodePoint(
             codePoint, &bracketType, &bracketSide)) {
-      // Brackets will be balanced later in insertLayoutAtCursor
+      // Brackets will be balanced later in insertLayout
       newChild =
           AutocompletedBracketPairLayoutNode::BuildFromBracketType(bracketType);
       static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())
@@ -516,8 +513,8 @@ void LayoutCursor::insertText(const char *text, Context *context,
   assert(currentSubscriptDepth == 0);
 
   // - Step 2 - Inserted the created layout
-  insertLayoutAtCursor(layoutToInsert, context, forceCursorRightOfText,
-                       forceCursorLeftOfText);
+  insertLayout(layoutToInsert, context, forceCursorRightOfText,
+               forceCursorLeftOfText);
 }
 
 void LayoutCursor::performBackspace() {

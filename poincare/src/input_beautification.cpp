@@ -343,7 +343,7 @@ bool InputBeautification::BeautifyPipeKey(HorizontalLayout h,
   Layout toInsert = k_absoluteValueRule.layoutBuilder(Layout());
   LayoutCursor cursorForInsertion(h);
   cursorForInsertion.safeSetPosition(indexOfPipeKey);
-  cursorForInsertion.insertLayoutAtCursor(toInsert, nullptr);
+  cursorForInsertion.insertLayout(toInsert, nullptr);
   if (cursor->layout() == h && cursor->position() == indexOfPipeKey + 1) {
     cursor->safeSetLayout(toInsert.childAtIndex(0), OMG::Direction::Left());
   }

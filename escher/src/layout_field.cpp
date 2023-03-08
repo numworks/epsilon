@@ -524,7 +524,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
   }
   layout = layout.makeEditable();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  m_contentView.cursor()->insertLayoutAtCursor(
+  m_contentView.cursor()->insertLayout(
       layout, context(), forceCursorRightOfLayout, forceCursorLeftOfLayout);
 
   // Reload

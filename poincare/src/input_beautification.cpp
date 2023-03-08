@@ -569,9 +569,10 @@ Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(
   int cursorPosition = layoutCursor->layout() == parametersContainer
                            ? layoutCursor->position()
                            : -1;
+  LayoutCursor newCursor;
   while (currentParameterIndex <= n) {
     if (cursorPosition == 0) {
-      layoutCursor->safeSetLayout(currentParameter, OMG::Direction::Right());
+      newCursor = LayoutCursor(currentParameter, OMG::Direction::Right());
     }
     Layout child = currentParameterIndex < n
                        ? parametersContainer.childAtIndex(currentParameterIndex)
@@ -582,8 +583,10 @@ Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(
       // right parenthesis or ',' reached. Add parameter
       int tempNumberOfEmptyLayoutsToSkip = numberOfEmptyLayoutsToSkip;
       Layout layoutToReplace;
-      if (isParameteredExpression &&
-          numberOfParameters == ParameteredExpression::ParameterChildIndex()) {
+      bool isAtParameter =
+          isParameteredExpression &&
+          numberOfParameters == ParameteredExpression::ParameterChildIndex();
+      if (isAtParameter) {
         // This parameter can't be empty
         layoutToReplace = layoutToModify.childAtIndex(numberOfParameters);
       } else {
@@ -605,7 +608,16 @@ Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(
             ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right,
                            rightParenthesisIsTemporary);
       }
-      layoutToReplace.replaceWithInPlace(currentParameter);
+      if (currentParameter.isEmpty() && isAtParameter) {
+        // Do not replace parameter with an empty expression.
+        if (newCursor.layout() == currentParameter) {
+          // If cursor was in an empty parameter, put it in the next layout
+          newCursor = LayoutCursor();
+          cursorPosition++;
+        }
+      } else {
+        layoutToReplace.replaceWithInPlace(currentParameter);
+      }
       numberOfParameters++;
       cursorPosition--;
       currentParameter = HorizontalLayout::Builder();
@@ -616,6 +628,15 @@ Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(
       cursorPosition--;
     }
     currentParameterIndex++;
+  }
+  if (!newCursor.isUninitialized()) {
+    /* When newCursor was created, its layout might was not attached to its
+     * parent. It's a problem when the new layout is a PiecewiseLayout, which
+     * needs to know it has to startEditing().
+     * By setting the cursor now, we ensure that didEnterCurrentPosition() is
+     * properly called and will startEditing the parent PiecewiseLayout. */
+    layoutCursor->safeSetLayout(newCursor.layout(), OMG::Direction::Left());
+    layoutCursor->safeSetPosition(newCursor.position());
   }
   return layoutToModify;
 }

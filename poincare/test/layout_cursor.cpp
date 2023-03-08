@@ -31,9 +31,9 @@ void assert_inserted_layout_points_to(Layout layoutToInsert,
 
   /* LayoutField forces right of layout when expression has 0 children.
    * We mimic this behaviour here. */
-  c.insertLayoutAtCursor(layoutToInsert, nullptr,
-                         !correspondingExpression.isUninitialized() &&
-                             correspondingExpression.numberOfChildren() == 0);
+  c.insertLayout(layoutToInsert, nullptr,
+                 !correspondingExpression.isUninitialized() &&
+                     correspondingExpression.numberOfChildren() == 0);
 
   int addressOffsetAfterInsertion =
       c.layout().node() - (insertingHorizontalLayout
@@ -316,7 +316,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
     static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())
         ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
     LayoutCursor c(l, OMG::Direction::Left());
-    c.insertLayoutAtCursor(CurlyBraceLayout::Builder(), nullptr);
+    c.insertLayout(CurlyBraceLayout::Builder(), nullptr);
     assert_layout_serialize_to(l, "{}{}");
     assert_cursor_is_at(c, l.childAtIndex(0).childAtIndex(0), 0);
   }

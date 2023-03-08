@@ -94,8 +94,8 @@ class LayoutCursor final {
                          bool* shouldRedrawLayout, Context* context = nullptr);
 
   /* Layout insertion */
-  void insertLayoutAtCursor(Layout layout, Context* context,
-                            bool forceRight = false, bool forceLeft = false);
+  void insertLayout(Layout layout, Context* context, bool forceRight = false,
+                    bool forceLeft = false);
   void addEmptyExponentialLayout(Context* context);
   void addEmptyMatrixLayout(Context* context);
   void addEmptyPowerLayout(Context* context);

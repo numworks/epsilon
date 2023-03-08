@@ -15,7 +15,7 @@ namespace Sequence {
 
 SequenceToolbox::SequenceToolbox() : MathToolbox(), m_numberOfAddedCells(0) {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_addedCells[i].setParentResponder(&m_selectableTableView);
+    m_addedCells[i].setParentResponder(&m_selectableListView);
   }
 }
 

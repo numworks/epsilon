@@ -29,7 +29,7 @@ MathVariableBoxController::MathVariableBoxController()
       m_defineVariableCell(I18n::Message::DefineVariable),
       m_firstMemoizedLayoutIndex(0) {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_leafCells[i].setParentResponder(&m_selectableTableView);
+    m_leafCells[i].setParentResponder(&m_selectableListView);
     m_leafCells[i].setSubLabelFont(k_subLabelFont);
   }
 }
@@ -74,7 +74,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
           rowIndex >= numberOfRows() ? numberOfRows() - 1 : rowIndex;
       selectCell(newSelectedRow);
       resetMemoization();
-      m_selectableTableView.reloadData();
+      m_selectableListView.reloadData();
       if (numberOfRows() == 0) {
         returnToRootMenu();
       }

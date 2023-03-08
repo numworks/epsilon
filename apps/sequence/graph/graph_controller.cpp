@@ -84,7 +84,7 @@ bool GraphController::textFieldDidFinishEditing(AbstractTextField *textField,
 void GraphController::moveToRank(int n) {
   double y =
       xyValues(selectedCurveIndex(), n, textFieldDelegateApp()->localContext())
-          .x2();
+          .y();
   m_cursor->moveTo(n, n, y);
   interactiveCurveViewRange()->panToMakePointVisible(
       m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(),
@@ -156,7 +156,7 @@ bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
   Shared::Sequence *s =
       functionStore()->modelForRecord(recordAtSelectedCurveIndex());
   double y =
-      s->evaluateXYAtParameter(x, textFieldDelegateApp()->localContext()).x2();
+      s->evaluateXYAtParameter(x, textFieldDelegateApp()->localContext()).y();
   m_cursor->moveTo(x, x, y);
   return true;
 }

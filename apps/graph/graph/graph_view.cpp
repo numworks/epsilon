@@ -268,7 +268,7 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
         f->approximateDerivative(m_cursor->x(), context(), 0);
     float tangentParameterB =
         -tangentParameterA * m_cursor->x() +
-        f->evaluateXYAtParameter(m_cursor->x(), context(), 0).x2();
+        f->evaluateXYAtParameter(m_cursor->x(), context(), 0).y();
 
     /* To represent the tangent, we draw segment between the intersections
      * of the tangent and the drawnRect.
@@ -319,8 +319,8 @@ void GraphView::drawCartesian(KDContext *ctx, KDRect rect,
     bool foundFirstVisibleDot = false;
     for (int i = 0; i < numberOfCandidateDots; i++) {
       Coordinate2D<float> currentDot = candidateDots[i];
-      if (!currentDot.x1IsIn(minAbscissa, maxAbscissa, true, true) ||
-          !currentDot.x2IsIn(minOrdinate, maxOrdinate, true, true)) {
+      if (!currentDot.xIsIn(minAbscissa, maxAbscissa, true, true) ||
+          !currentDot.yIsIn(minOrdinate, maxOrdinate, true, true)) {
         // Dot is not in window
         continue;
       }

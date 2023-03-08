@@ -99,7 +99,7 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
 
   /* TODO We would like to assert that the function is not a parametered
    * function, so we can indeed evaluate the function for parameter x. */
-  double y = function->evaluateXYAtParameter(x, myApp->localContext()).x2();
+  double y = function->evaluateXYAtParameter(x, myApp->localContext()).y();
   m_cursor->moveTo(x, x, y);
   if (m_step == Step::SecondParameter) {
     assert(allowEndLowerThanStart() || m_cursor->x() >= m_startSum);
@@ -123,7 +123,7 @@ void SumGraphController::makeCursorVisible() {
   float y =
       function
           ->evaluateXYAtParameter(position, FunctionApp::app()->localContext())
-          .x2();
+          .y();
   // Do not zoom out if user is selecting first parameter
   makeDotVisible(position, y, m_step != Step::FirstParameter);
   // zoomOut is always true so that the user can see both dots

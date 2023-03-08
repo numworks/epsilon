@@ -100,7 +100,7 @@ class Zoom {
     constexpr static float k_hysteresis = 0.01f;  // TODO Tune
 
     Coordinate2D<float> privateGet(const Coordinate2D<float> *p) const {
-      return std::isfinite(p->x1()) ? *p : Coordinate2D<float>();
+      return std::isfinite(p->x()) ? *p : Coordinate2D<float>();
     }
 
     float m_center;

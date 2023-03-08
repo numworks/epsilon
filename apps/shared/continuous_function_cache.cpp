@@ -137,15 +137,15 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(
   if (function->properties().isCartesian()) {
     if (IsSignalingNan(m_cache[i])) {
       m_cache[i] =
-          function->privateEvaluateXYAtParameter(t, context, curveIndex).x2();
+          function->privateEvaluateXYAtParameter(t, context, curveIndex).y();
     }
     return Poincare::Coordinate2D<float>(t, m_cache[i]);
   }
   if (IsSignalingNan(m_cache[2 * i]) || IsSignalingNan(m_cache[2 * i + 1])) {
     Poincare::Coordinate2D<float> res =
         function->privateEvaluateXYAtParameter(t, context, curveIndex);
-    m_cache[2 * i] = res.x1();
-    m_cache[2 * i + 1] = res.x2();
+    m_cache[2 * i] = res.x();
+    m_cache[2 * i + 1] = res.y();
   }
   return Poincare::Coordinate2D<float>(m_cache[2 * i], m_cache[2 * i + 1]);
 }

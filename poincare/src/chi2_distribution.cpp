@@ -64,7 +64,7 @@ T Chi2Distribution::CumulativeDistributiveInverseForProbability(T probability,
 
   Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
       xmin, xmax, DBL_EPSILON, evaluation, &args);
-  return result.x1();
+  return result.x();
 }
 
 template <typename T>

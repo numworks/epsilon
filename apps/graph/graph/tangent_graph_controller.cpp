@@ -58,7 +58,7 @@ bool TangentGraphController::textFieldDidFinishEditing(
       App::app()->functionStore()->modelForRecord(m_record);
   assert(function->properties().isCartesian());
   double y =
-      function->evaluate2DAtParameter(floatBody, myApp->localContext()).x2();
+      function->evaluate2DAtParameter(floatBody, myApp->localContext()).y();
   m_cursor->moveTo(floatBody, floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(
       m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(),

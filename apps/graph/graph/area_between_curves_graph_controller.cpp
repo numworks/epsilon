@@ -46,7 +46,7 @@ void AreaBetweenCurvesGraphController::makeCursorVisible() {
   float yF =
       functionF
           ->evaluateXYAtParameter(position, FunctionApp::app()->localContext())
-          .x2();
+          .y();
   // Do not zoom out if user is selecting first parameter
   makeDotVisible(position, yF, m_step != Step::FirstParameter);
   assert(!secondSelectedRecord().isNull());
@@ -56,7 +56,7 @@ void AreaBetweenCurvesGraphController::makeCursorVisible() {
   float yG =
       functionG
           ->evaluateXYAtParameter(position, FunctionApp::app()->localContext())
-          .x2();
+          .y();
   // zoomOut is always true so that the user can see both dots
   makeDotVisible(position, yG, true);
 }
@@ -73,8 +73,8 @@ double AreaBetweenCurvesGraphController::cursorNextStep(
           ->firstPointInDirection(position, nextSnap,
                                   Solver<double>::Interest::Intersection)
           .xy();
-  if (std::isfinite(nextIntersection.x1())) {
-    return nextIntersection.x1();
+  if (std::isfinite(nextIntersection.x())) {
+    return nextIntersection.x();
   }
   return nextX;
 }

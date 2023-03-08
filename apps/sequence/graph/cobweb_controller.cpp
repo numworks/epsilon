@@ -78,7 +78,7 @@ void CobwebController::setupRange() {
     float value = sequence()
                       ->evaluateXYAtParameter(
                           static_cast<float>(rankAtStep(step)), sequenceContext)
-                      .x2();
+                      .y();
     zoom.fitPoint(Coordinate2D<float>(value, step == 0 ? 0.f : value), false,
                   k_margin, k_margin, k_margin, k_margin);
   }
@@ -130,7 +130,7 @@ bool CobwebController::handleZoom(Ion::Events::Event event) {
       sequence()
           ->evaluateXYAtParameter(static_cast<float>(rankAtCurrentStep()),
                                   App::app()->localContext())
-          .x2();
+          .y();
   interactiveCurveViewRange()->zoom(ratio, value, m_step ? value : 0.f);
   m_graphView.resetCachedStep();
   curveView()->reload(true);

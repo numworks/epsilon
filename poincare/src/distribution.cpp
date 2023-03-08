@@ -112,9 +112,9 @@ double Distribution::
       pack);
   /* Either no result was found, the precision is ok or the result was outside
    * the given ax bx bounds */
-  if (!(std::isnan(result.x2()) || std::fabs(result.x2()) <= FLT_EPSILON ||
-        std::fabs(result.x1() - ax) < FLT_EPSILON ||
-        std::fabs(result.x1() - bx) < FLT_EPSILON)) {
+  if (!(std::isnan(result.y()) || std::fabs(result.y()) <= FLT_EPSILON ||
+        std::fabs(result.x() - ax) < FLT_EPSILON ||
+        std::fabs(result.x() - bx) < FLT_EPSILON)) {
     /* We would like to put this as an assertion, but sometimes we do get
      * false result: we replace them with inf to make the problem obvious to
      * the student. */
@@ -123,7 +123,7 @@ double Distribution::
                  // If it doesn't, then we can remove this block of code
     return p > 0.5 ? INFINITY : -INFINITY;
   }
-  return result.x1();
+  return result.x();
 }
 
 template void Distribution::findBoundsForBinarySearch<float>(

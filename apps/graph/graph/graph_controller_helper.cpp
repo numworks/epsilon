@@ -46,7 +46,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     assert(subCurveIndex != nullptr);
     // previousXY will be needed for conic's special horizontal cursor moves.
     specialConicCursorMove = std::isfinite(
-        function->evaluateXYAtParameter(tCursor, context, *subCurveIndex).x2());
+        function->evaluateXYAtParameter(tCursor, context, *subCurveIndex).y());
     if (*subCurveIndex == 1 &&
         !function->properties().isCartesianHyperbolaOfDegreeTwo()) {
       // On the sub curve, pressing left actually moves the cursor right
@@ -149,7 +149,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
   Coordinate2D<double> xy =
       function->evaluateXYAtParameter(t, context, subCurveIndexValue);
 
-  if (specialConicCursorMove && std::isnan(xy.x2())) {
+  if (specialConicCursorMove && std::isnan(xy.y())) {
     if (function->properties().isCartesianHyperbolaOfDegreeTwo()) {
       // Hyperbolas have an undefined section along-side the x axis.
       double previousT = t;
@@ -161,7 +161,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
         t += dir * step;
         xy = function->evaluateXYAtParameter(t, context, *subCurveIndex);
         tries++;
-      } while (std::isnan(xy.x2()) && tries < maxTries);
+      } while (std::isnan(xy.y()) && tries < maxTries);
       if (tries >= maxTries || t < tMin || t > tMax) {
         // Reset to default t and xy
         t = previousT;
@@ -176,7 +176,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     }
   }
 
-  cursor->moveTo(t, xy.x1(), xy.x2());
+  cursor->moveTo(t, xy.x(), xy.y());
   return true;
 }
 
@@ -222,11 +222,11 @@ bool GraphControllerHelper::snapToInterestAndUpdateCursor(
                                   Poincare::Solver<double>::Interest::None,
                                   subCurveIndex);
   Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
-  if (!std::isfinite(nextPointOfInterestXY.x1())) {
+  if (!std::isfinite(nextPointOfInterestXY.x())) {
     return false;
   }
-  cursor->moveTo(nextPointOfInterest.abscissa(), nextPointOfInterestXY.x1(),
-                 nextPointOfInterestXY.x2());
+  cursor->moveTo(nextPointOfInterest.abscissa(), nextPointOfInterestXY.x(),
+                 nextPointOfInterestXY.y());
   return true;
 }
 

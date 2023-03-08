@@ -59,7 +59,7 @@ void FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
     Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(),
                                        textFieldDelegateApp()->localContext(),
                                        m_selectedSubCurveIndex);
-    m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
+    m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
   curveParameterControllerWithRecord()->setRecord(recordAtSelectedCurveIndex());
   stackController()->push(curveParameterController());
@@ -150,7 +150,7 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
     currentX = middle + (iterations % 2 == 0 ? -1 : 1) *
                             ((iterations + 1) / 2) * gridUnit;
     // Using first subCurve for default cursor.
-    currentY = function->evaluateXYAtParameter(currentX, context, 0).x2();
+    currentY = function->evaluateXYAtParameter(currentX, context, 0).y();
     iterations++;
   } while (xMin < currentX && currentX < xMax &&
            !isCursorVisibleAtPosition(Coordinate2D<float>(currentX, currentY),
@@ -197,7 +197,7 @@ void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
                                              ignoreMargins);
   }
 
-  m_cursor->moveTo(t, xy.x1(), xy.x2());
+  m_cursor->moveTo(t, xy.x(), xy.y());
   selectCurveAtIndex(functionIndex, false);
 }
 
@@ -223,7 +223,7 @@ bool FunctionGraphController::moveCursorVertically(
   }
   Poincare::Coordinate2D<double> cursorPosition =
       f->evaluateXYAtParameter(clippedT, context, nextSubCurve);
-  m_cursor->moveTo(clippedT, cursorPosition.x1(), cursorPosition.x2());
+  m_cursor->moveTo(clippedT, cursorPosition.x(), cursorPosition.y());
   selectCurveAtIndex(nextActiveFunctionIndex, true);
   // Prevent the abscissaValue from edition if the function is along y
   Escher::Responder *responder = isAlongY(*m_selectedCurveIndex)

@@ -155,11 +155,11 @@ void WithCurves::CurveDrawing::draw(const AbstractPlotView *plotView,
   float previousT = NAN, t = NAN;
   Coordinate2D<float> previousXY, xy;
   float (Coordinate2D<float>::*abscissa)() const =
-      m_axis == AbstractPlotView::Axis::Horizontal ? &Coordinate2D<float>::x1
-                                                   : &Coordinate2D<float>::x2;
+      m_axis == AbstractPlotView::Axis::Horizontal ? &Coordinate2D<float>::x
+                                                   : &Coordinate2D<float>::y;
   float (Coordinate2D<float>::*ordinate)() const =
-      m_axis == AbstractPlotView::Axis::Horizontal ? &Coordinate2D<float>::x2
-                                                   : &Coordinate2D<float>::x1;
+      m_axis == AbstractPlotView::Axis::Horizontal ? &Coordinate2D<float>::y
+                                                   : &Coordinate2D<float>::x;
   int i = 0;
   bool isLastSegment = false;
 
@@ -228,8 +228,8 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
   assert(plotView);
 
   bool isFirstDot = std::isnan(t1);
-  bool isLeftDotValid = std::isfinite(xy1.x1()) && std::isfinite(xy1.x2());
-  bool isRightDotValid = std::isfinite(xy2.x1()) && std::isfinite(xy2.x2());
+  bool isLeftDotValid = std::isfinite(xy1.x()) && std::isfinite(xy1.y());
+  bool isRightDotValid = std::isfinite(xy2.x()) && std::isfinite(xy2.y());
 
   if (!(isLeftDotValid || isRightDotValid)) {
     return;
@@ -246,9 +246,9 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
      * as wrong points will be off by a large margin. */
     constexpr float pixelTolerance = 1.f;
     if (!m_curveDouble ||
-        (std::fabs(p2.x2() - (plotView->floatToPixel2D(m_curveDouble(
-                                  t2, m_curve.model(), m_context)))
-                                 .x2()) < pixelTolerance)) {
+        (std::fabs(p2.y() - (plotView->floatToPixel2D(
+                                 m_curveDouble(t2, m_curve.model(), m_context)))
+                                .y()) < pixelTolerance)) {
       plotView->stamp(ctx, rect, p2, m_color, m_thick);
     }
     return;
@@ -273,13 +273,13 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
     }
   } else if (isLeftDotValid && isRightDotValid &&
              (m_drawStraightLinesEarly || remainingIterations <= 0) &&
-             pointInBoundingBox(xy1.x1(), xy1.x2(), xy2.x1(), xy2.x2(),
-                                xy12.x1(), xy12.x2())) {
+             pointInBoundingBox(xy1.x(), xy1.y(), xy2.x(), xy2.y(), xy12.x(),
+                                xy12.y())) {
     /* As the middle dot is between the two dots, we assume that we
      * can draw a 'straight' line between the two */
     constexpr float dangerousSlope = 1e6f;
     if (m_curveDouble &&
-        std::fabs((p2.x2() - p1.x2()) / (p2.x1() - p1.x1())) > dangerousSlope) {
+        std::fabs((p2.y() - p1.y()) / (p2.x() - p1.x())) > dangerousSlope) {
       /* We need to make sure we're not drawing a vertical asymptote because of
        * rounding errors. */
       Coordinate2D<double> xy1Double =
@@ -288,9 +288,8 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
           m_curveDouble(t2, m_curve.model(), m_context);
       Coordinate2D<double> xy12Double =
           m_curveDouble(t12, m_curve.model(), m_context);
-      if (pointInBoundingBox(xy1Double.x1(), xy1Double.x2(), xy2Double.x1(),
-                             xy2Double.x2(), xy12Double.x1(),
-                             xy12Double.x2())) {
+      if (pointInBoundingBox(xy1Double.x(), xy1Double.y(), xy2Double.x(),
+                             xy2Double.y(), xy12Double.x(), xy12Double.y())) {
         plotView->straightJoinDots(
             ctx, rect, plotView->floatToPixel2D(xy1Double),
             plotView->floatToPixel2D(xy2Double), m_color, m_thick);
@@ -310,10 +309,10 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView *plotView,
     float xMax = range->xMax();
     float yMin = range->yMin();
     float yMax = range->yMax();
-    if ((xMax < xy1.x1() && xMax < xy2.x1()) ||
-        (xy1.x1() < xMin && xy2.x1() < xMin) ||
-        (yMax < xy1.x2() && yMax < xy2.x2()) ||
-        (xy1.x2() < yMin && xy2.x2() < yMin)) {
+    if ((xMax < xy1.x() && xMax < xy2.x()) ||
+        (xy1.x() < xMin && xy2.x() < xMin) ||
+        (yMax < xy1.y() && yMax < xy2.y()) ||
+        (xy1.y() < yMin && xy2.y() < yMin)) {
       /* Discard some recursion steps to save computation time on dots that are
        * likely not to be drawn. This makes it so some parametric functions
        * are drawn faster. Example: f(t) = [floor(t)*cos(t), floor(t)*sin(t)]
@@ -348,7 +347,7 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView *plotView,
   float radiusInPixel = std::max(width / plotView->pixelWidth(),
                                  height / plotView->pixelHeight());
   float angleStep = segmentLength / radiusInPixel;
-  float parameters[] = {center.x1(), center.x2(), width, height};
+  float parameters[] = {center.x(), center.y(), width, height};
   Curve2DEvaluation<float> arc = [](float t, void *model, void *) {
     float *parameters = reinterpret_cast<float *>(model);
     float x = parameters[0];

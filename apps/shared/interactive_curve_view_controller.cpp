@@ -143,7 +143,7 @@ void InteractiveCurveViewController::refreshCursor(bool ignoreMargins,
   if (cursorHasAPosition && selectedModelIsValid()) {
     // Move the cursor onto the selected curve
     Poincare::Coordinate2D<double> xy = selectedModelXyValues(t);
-    m_cursor->moveTo(t, xy.x1(), xy.x2());
+    m_cursor->moveTo(t, xy.x(), xy.y());
     cursorIsValid = isCursorCurrentlyVisible(ignoreMargins, !forceFiniteY);
   }
 
@@ -198,7 +198,7 @@ bool InteractiveCurveViewController::textFieldDidReceiveEvent(
 void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   Coordinate2D<double> xy = xyValues(selectedCurveIndex(), t,
                                      textFieldDelegateApp()->localContext(), 0);
-  m_cursor->moveTo(t, xy.x1(), xy.x2());
+  m_cursor->moveTo(t, xy.x(), xy.y());
   reloadBannerView();
   if (!isCursorCurrentlyVisible(false, true)) {
     interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::X,
@@ -226,7 +226,7 @@ bool InteractiveCurveViewController::isCursorVisibleAtPosition(
   InteractiveCurveViewRange *range = interactiveCurveViewRange();
   float xRange = range->xMax() - range->xMin();
   float yRange = range->yMax() - range->yMin();
-  float x = position.x1(), y = position.x2();
+  float x = position.x(), y = position.y();
   return x >= range->xMin() +
                   (ignoreMargins ? 0.f : cursorLeftMarginRatio() * xRange) &&
          x <= range->xMax() -
@@ -271,9 +271,9 @@ int InteractiveCurveViewController::closestCurveIndexVertically(
       }
       Poincare::Coordinate2D<double> newXY =
           xyValues(curveIndex, x, context, subCurveIndex);
-      double newY = newXY.x2();
+      double newY = newXY.y();
       if (isAlongY(curveIndex)) {
-        newY = newXY.x1();
+        newY = newXY.x();
       }
       if (!suitableYValue(newY)) {
         continue;

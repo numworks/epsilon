@@ -32,9 +32,9 @@ void assert_check_cartesian_cache_against_function(
         cache->valueForParameter(function, context, t, 0);
     Coordinate2D<float> functionValues =
         function->evaluateXYAtParameter(t, context);
-    assert_float_equals(t, cacheValues.x1());
-    assert_float_equals(t, functionValues.x1());
-    assert_float_equals(cacheValues.x2(), functionValues.x2());
+    assert_float_equals(t, cacheValues.x());
+    assert_float_equals(t, functionValues.x());
+    assert_float_equals(cacheValues.y(), functionValues.y());
   }
   /* We set back the cache, so that it will not be invalidated in
    * PrepareForCaching later. */
@@ -54,7 +54,7 @@ void assert_cartesian_cache_stays_valid_while_panning(
   for (int i = 0; i < numberOfMoves; i++) {
     cursor->moveTo(
         cursor->t() + step, cursor->x() + step,
-        function->evaluateXYAtParameter(cursor->x() + step, context).x2());
+        function->evaluateXYAtParameter(cursor->x() + step, context).y());
     range->panToMakePointVisible(
         cursor->x(), cursor->y(), margin, margin, margin, margin,
         (range->xMax() - range->xMin()) / (Ion::Display::Width - 1));
@@ -96,8 +96,8 @@ void assert_check_polar_cache_against_function(ContinuousFunction* function,
         cache->valueForParameter(function, context, t, 0);
     Coordinate2D<float> functionValues =
         function->evaluateXYAtParameter(t, context);
-    assert_float_equals(cacheValues.x1(), functionValues.x1());
-    assert_float_equals(cacheValues.x2(), functionValues.x2());
+    assert_float_equals(cacheValues.x(), functionValues.x());
+    assert_float_equals(cacheValues.y(), functionValues.y());
   }
 }
 
@@ -117,7 +117,7 @@ void assert_cache_stays_valid(const char* definition, float rangeXMin = -5,
       addFunction(definition, &functionStore, &globalContext);
   Coordinate2D<float> origin =
       function->evaluateXYAtParameter(0.f, &globalContext, 0);
-  cursor.moveTo(0.f, origin.x1(), origin.x2());
+  cursor.moveTo(0.f, origin.x(), origin.y());
 
   if (function->properties().isCartesian()) {
     assert_cartesian_cache_stays_valid_while_panning(

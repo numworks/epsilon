@@ -176,7 +176,7 @@ double computeRPct(double N, double PV, double Pmt, double FV, double PY,
         return PV + a * Pmt + b * FV;
       };
   Poincare::Solver<double> solver(-100., 100.);
-  return solver.nextRoot(evaluation, parameters).x1();
+  return solver.nextRoot(evaluation, parameters).x();
 }
 
 double computePV(double Pmt, double FV, double a, double b) {

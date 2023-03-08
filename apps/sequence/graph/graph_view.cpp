@@ -23,7 +23,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   float xMin = range()->xMin(), xMax = range()->xMax();
 
   for (int x = xMin; x <= xMax; x += xStep) {
-    float y = s->evaluateXYAtParameter(static_cast<float>(x), context()).x2();
+    float y = s->evaluateXYAtParameter(static_cast<float>(x), context()).y();
     if (std::isnan(y)) {
       continue;
     }

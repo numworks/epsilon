@@ -23,14 +23,13 @@ KDRect WithCursor::cursorFrame(AbstractPlotView* plotView) {
   static_assert((Ion::Display::Width * 2 < maxCursorPixel) &&
                     (Ion::Display::Height * 2 < maxCursorPixel),
                 "maxCursorPixel should be bigger");
-  if (std::fabs(p.x1()) > maxCursorPixel ||
-      std::fabs(p.x2()) > maxCursorPixel) {
+  if (std::fabs(p.x()) > maxCursorPixel || std::fabs(p.y()) > maxCursorPixel) {
     return KDRectZero;
   }
 
-  KDCoordinate px = std::round(p.x1());
+  KDCoordinate px = std::round(p.x());
   px -= (size.width() - 1) / 2;
-  KDCoordinate py = std::round(p.x2());
+  KDCoordinate py = std::round(p.y());
   py -= (size.height() - 1) / 2;
   if (size.height() == 0) {
     // The cursor is supposed to take up all the available vertical space.

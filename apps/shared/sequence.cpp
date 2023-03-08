@@ -213,18 +213,16 @@ T Sequence::approximateToNextRank(int n, SequenceContext *sqctx,
   if (n < initialRank() || n < 0) {
     return NAN;
   }
-
   SequenceCacheContext<T> ctx = SequenceCacheContext<T>(sqctx, sequenceIndex);
-  // Hold values u(n), u(n-1), u(n-2), v(n), v(n-1), v(n-2)...
+
+  // Hold values = {{u(n), u(n-1), u(n-2)}, {v(n), v(n-1), v(n-2)}, {w(n),
+  // w(n-1), w(n-2)}}
   T values[SequenceStore::k_maxNumberOfSequences]
           [SequenceStore::k_maxRecurrenceDepth + 1];
-
-  /* In case we step only one sequence to the next step, the data stored in
-   * values is not necessarily u(n), u(n-1).... Indeed, since the indexes are
-   * independent, if the index for u is 3 but the one for v is 5, value will
-   * hold u(3), u(2), u(1) | v(5), v(4), v(3). Therefore, the calculation will
-   * be wrong if they relay on a symbol such as u(n). To prevent this, we align
-   * all the values around the index of the sequence we are stepping. */
+  /* In case we step only one sequence (sequenceIndex != -1), we use independant
+   * values stored in SequenceContext (m_independentRankValues). However, these
+   * values might not be aligned on the same rank. Thus, we align them all at
+   * the rank of the sequence we are stepping. */
   int independentRank = sqctx->independentSequenceRank<T>(sequenceIndex);
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     if (sequenceIndex != -1 &&
@@ -247,7 +245,8 @@ T Sequence::approximateToNextRank(int n, SequenceContext *sqctx,
       }
     }
   }
-  // Hold symbols u(n), u(n+1), v(n), v(n+1), w(n), w(n+1)
+
+  // Hold symbols = {{"u(n)", "u(n+1)"}, {"v(n)", "v(n+1)"}, {"w(n)", "w(n+1)"}}
   Poincare::Symbol symbols[SequenceStore::k_maxNumberOfSequences]
                           [SequenceStore::k_maxRecurrenceDepth];
   char name[SequenceStore::k_maxRecurrenceDepth][7] = {"0(n)", "0(n+1)"};
@@ -257,9 +256,11 @@ T Sequence::approximateToNextRank(int n, SequenceContext *sqctx,
       symbols[i][j] = Symbol::Builder(name[j], strlen(name[j]));
     }
   }
+
   // Update angle unit and complex format
   Preferences preferences =
       Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));
+
   switch (type()) {
     case Type::Explicit: {
       for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {

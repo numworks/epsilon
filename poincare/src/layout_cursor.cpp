@@ -16,7 +16,14 @@
 
 namespace Poincare {
 
-void LayoutCursor::setPosition(int position) {
+void LayoutCursor::safeSetLayout(Layout layout,
+                                 OMG::HorizontalDirection sideOfLayout) {
+  LayoutCursor previousCursor = *this;
+  setLayout(layout, sideOfLayout);
+  didEnterCurrentPosition(previousCursor);
+}
+
+void LayoutCursor::safeSetPosition(int position) {
   assert(position >= 0);
   assert((m_layout.isHorizontal() && position <= m_layout.numberOfChildren()) ||
          (!m_layout.isHorizontal() && position <= 1));

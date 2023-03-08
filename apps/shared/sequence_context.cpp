@@ -56,59 +56,65 @@ template <typename T>
 void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
                                        int sequenceIndex) {
   // First we increment the rank
-  bool stepMultipleSequences = sequenceIndex == -1;
-  if (stepMultipleSequences) {
+  bool stepAllSequences = sequenceIndex == -1;
+  if (stepAllSequences) {
     m_commonRank++;
   } else {
-    setIndependentSequenceRank(independentSequenceRank(sequenceIndex) + 1,
-                               sequenceIndex);
+    m_independentRanks[sequenceIndex]++;
   }
 
   // Then we shift the values stored in the arrays
-  int start, stop, rank;
-  T *sequenceArray;
-  if (stepMultipleSequences) {
+  int start, stop;
+  T *sequencesRankValues;
+  if (stepAllSequences) {
     start = 0;
     stop = SequenceStore::k_maxNumberOfSequences;
-    sequenceArray = reinterpret_cast<T *>(&m_commonRankValues);
-    rank = m_commonRank;
+    sequencesRankValues = reinterpret_cast<T *>(&m_commonRankValues);
   } else {
     start = sequenceIndex;
     stop = sequenceIndex + 1;
-    sequenceArray = reinterpret_cast<T *>(&m_independentRankValues);
-    rank = independentSequenceRank(sequenceIndex);
+    sequencesRankValues = reinterpret_cast<T *>(&m_independentRankValues);
   }
-
-  for (int i = start; i < stop; i++) {
-    T *rowPointer =
-        sequenceArray + i * (SequenceStore::k_maxRecurrenceDepth + 1);
-    for (int j = SequenceStore::k_maxRecurrenceDepth; j > 0; j--) {
-      *(rowPointer + j) = *(rowPointer + j - 1);
+  for (int sequence = start; sequence < stop; sequence++) {
+    T *sequencePointer =
+        sequencesRankValues + sequence * k_numberOfValuesInCachePerSequence;
+    // {u(n), u(n-1), u(n-2)} becomes {NaN, u(n), u(n-1)}
+    for (int depth = k_numberOfValuesInCachePerSequence - 1; depth > 0;
+         depth--) {
+      *(sequencePointer + depth) = *(sequencePointer + depth - 1);
     }
-    *rowPointer = NAN;
+    *sequencePointer = NAN;
   }
 
   // We create an array containing the sequences we want to update
-  Sequence *sequences[SequenceStore::k_maxNumberOfSequences] = {
+  Sequence *sequencesToUpdate[SequenceStore::k_maxNumberOfSequences] = {
       nullptr, nullptr, nullptr};
-  int usedSize =
-      stepMultipleSequences ? SequenceStore::k_maxNumberOfSequences : 1;
   SequenceStore *sequenceStore = sqctx->sequenceStore();
-  for (int i = start; i < stop; i++) {
-    Ion::Storage::Record record = sequenceStore->recordAtNameIndex(i);
-    if (!record.isNull()) {
-      Sequence *u = sequenceStore->modelForRecord(record);
-      int index = stepMultipleSequences
-                      ? SequenceStore::sequenceIndexForName(u->fullName()[0])
-                      : 0;
-      sequences[index] = u->isDefined() ? u : nullptr;
+  for (int sequence = start; sequence < stop; sequence++) {
+    Ion::Storage::Record record = sequenceStore->recordAtNameIndex(sequence);
+    if (record.isNull()) {
+      continue;
     }
+    Sequence *s = sequenceStore->modelForRecord(record);
+    if (!s->isDefined()) {
+      continue;
+    }
+    int index = stepAllSequences
+                    ? SequenceStore::sequenceIndexForName(s->fullName()[0])
+                    : 0;
+    sequencesToUpdate[index] = s;
   }
 
   // We approximate the value of the next rank for each sequence we want to
   // update
-  stop = stepMultipleSequences ? SequenceStore::k_maxNumberOfSequences
-                               : sequenceIndex + 1;
+  int rank, usedSize;
+  if (stepAllSequences) {
+    rank = m_commonRank;
+    usedSize = SequenceStore::k_maxNumberOfSequences;
+  } else {
+    rank = m_independentRanks[sequenceIndex];
+    usedSize = 1;
+  }
   /* In case stop is SequenceStore::k_maxNumberOfSequences, we approximate u, v
    * and w at the new rank. We have to evaluate all sequences
    * SequenceStore::k_maxNumberOfSequences times in case the evaluations depend
@@ -118,15 +124,16 @@ void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
    * is 1, there is only one sequence we want to update. Moreover, the call to
    * approximateToNextRank will handle potential dependencies. */
   for (int k = 0; k < usedSize; k++) {
-    for (int i = start; i < stop; i++) {
-      T *pointerToUpdate =
-          sequenceArray + i * (SequenceStore::k_maxRecurrenceDepth + 1);
-      if (std::isnan(*(pointerToUpdate))) {
-        int j = stepMultipleSequences ? i : 0;
-        *pointerToUpdate =
-            sequences[j] ? sequences[j]->template approximateToNextRank<T>(
-                               rank, sqctx, sequenceIndex)
-                         : NAN;
+    for (int sequence = start; sequence < stop; sequence++) {
+      T *sequencePointer =
+          sequencesRankValues + sequence * k_numberOfValuesInCachePerSequence;
+      if (std::isnan(*sequencePointer)) {
+        int j = stepAllSequences ? sequence : 0;
+        *sequencePointer =
+            sequencesToUpdate[j]
+                ? sequencesToUpdate[j]->template approximateToNextRank<T>(
+                      rank, sqctx, sequenceIndex)
+                : NAN;
       }
     }
   }

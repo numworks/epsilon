@@ -6,8 +6,7 @@
 #include <escher/expression_view.h>
 #include <escher/list_view_data_source.h>
 #include <escher/message_table_cell.h>
-#include <escher/selectable_table_view.h>
-#include <escher/selectable_table_view_data_source.h>
+#include <escher/selectable_list_view.h>
 #include <escher/solid_color_view.h>
 #include <escher/view_controller.h>
 
@@ -17,7 +16,7 @@ namespace Shared {
 
 class LocalizationController : public Escher::ViewController,
                                public Escher::MemoizedListViewDataSource,
-                               public Escher::SelectableTableViewDataSource {
+                               public Escher::SelectableListViewDataSource {
  public:
   static int IndexOfCountry(I18n::Country country);
   static I18n::Country CountryAtIndex(int i);
@@ -36,7 +35,7 @@ class LocalizationController : public Escher::ViewController,
   Escher::View* view() override { return &m_contentView; }
   const char* title() override;
   void didBecomeFirstResponder() override {
-    Escher::Container::activeApp()->setFirstResponder(selectableTableView());
+    Escher::Container::activeApp()->setFirstResponder(selectableListView());
   }
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -56,10 +55,10 @@ class LocalizationController : public Escher::ViewController,
   class ContentView : public Escher::View {
    public:
     ContentView(LocalizationController* controller,
-                Escher::SelectableTableViewDataSource* dataSource);
+                Escher::SelectableListViewDataSource* dataSource);
 
-    Escher::SelectableTableView* selectableTableView() {
-      return &m_selectableTableView;
+    Escher::SelectableListView* selectableListView() {
+      return &m_selectableListView;
     }
     void drawRect(KDContext* ctx, KDRect rect) const override {
       ctx->fillRect(bounds(), Escher::Palette::WallScreen);
@@ -77,15 +76,15 @@ class LocalizationController : public Escher::ViewController,
     Escher::View* subviewAtIndex(int i) override;
 
     LocalizationController* m_controller;
-    Escher::SelectableTableView m_selectableTableView;
+    Escher::SelectableListView m_selectableListView;
     Escher::MessageTextView m_countryTitleMessage;
     Escher::MessageTextView
         m_countryWarningLines[k_numberOfCountryWarningLines];
     Escher::SolidColorView m_borderView;
   };
 
-  Escher::SelectableTableView* selectableTableView() {
-    return m_contentView.selectableTableView();
+  Escher::SelectableListView* selectableListView() {
+    return m_contentView.selectableListView();
   }
 
   ContentView m_contentView;

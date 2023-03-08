@@ -5,6 +5,7 @@
 #include <poincare/curly_brace_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/input_beautification.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/matrix_layout.h>
@@ -172,7 +173,14 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context *context,
   // - Step 1 - Delete selection
   deleteAndResetSelection();
 
-  /* - Step 2 - Add empty row to grid layout if needed
+  // - Step 2 - Beautify the current layout if needed.
+  InputBeautification::InsertionBeautificationMethod beautificationMethod =
+      InputBeautification::BeautificationMethodWhenInsertingLayout(layout);
+  if (beautificationMethod.beautifyIdentifiersBeforeInserting) {
+    InputBeautification::BeautifyIdentifiersLeftOfCursor(this, context);
+  }
+
+  /* - Step 3 - Add empty row to grid layout if needed
    * When an empty child at the bottom or right of the grid is filled,
    * an empty row/column is added below/on the right.
    */
@@ -181,7 +189,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context *context,
         ->willFillEmptyChildAtIndex(m_layout.parent().indexOfChild(m_layout));
   }
 
-  /* - Step 3 - Close brackets on the left/right
+  /* - Step 4 - Close brackets on the left/right
    *
    * For example, if the current layout is "(3+4]|" (where "|"" is the cursor
    * and "]" is a temporary parenthesis), inserting something on the right
@@ -228,7 +236,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context *context,
                 AutocompletedBracketPairLayoutNode::Side::Right));
   }
 
-  /* - Step 4 - Add parenthesis around vertical offset
+  /* - Step 5 - Add parenthesis around vertical offset
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
   if (m_layout.isHorizontal() &&
@@ -259,7 +267,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context *context,
     }
   }
 
-  // - Step 5 - Find position to point to if layout will be merged
+  // - Step 6 - Find position to point to if layout will me merged
   LayoutCursor previousCursor = *this;
   Layout childToPoint;
   bool layoutToInsertIsHorizontal = layout.isHorizontal();
@@ -275,7 +283,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context *context,
     }
   }
 
-  // - Step 6 - Insert layout
+  // - Step 7 - Insert layout
   int numberOfInsertedChildren =
       layout.isHorizontal() ? layout.numberOfChildren() : 1;
 
@@ -298,7 +306,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context *context,
     m_position += numberOfInsertedChildren;
   }
 
-  /* - Step 7 - Collapse siblings and find position to point to if layout was
+  /* - Step 8 - Collapse siblings and find position to point to if layout was
    * not merged */
   if (!layoutToInsertIsHorizontal) {
     collapseSiblingsOfLayout(layout);
@@ -310,16 +318,21 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, Context *context,
     }
   }
 
-  // - Step 8 - Point to required position
+  // - Step 9 - Point to required position
   if (!childToPoint.isUninitialized()) {
     *this = LayoutCursor(childToPoint, OMG::Direction::Left());
     didEnterCurrentPosition(previousCursor);
   }
 
-  // - Step 9 - Balance brackets
+  // - Step 10 - Balance brackets
   balanceAutocompletedBracketsAndKeepAValidCursor();
 
-  // - Step 10 - Invalidate layout sizes and positions
+  // - Step 11 - Beautify after insertion if needed
+  if (beautificationMethod.beautifyAfterInserting) {
+    InputBeautification::BeautifyLeftOfCursorAfterInsertion(this, context);
+  }
+
+  // - Step 12 - Invalidate layout sizes and positions
   invalidateSizesAndPositions();
 }
 

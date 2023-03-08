@@ -287,6 +287,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext *sqctx,
           &preferences, false);
     }
     default: {
+      assert(type() == Type::DoubleRecurrence);
       if (n == initialRank()) {
         return PoincareHelpers::ApproximateWithValueForSymbol(
             firstInitialConditionExpressionReduced(sqctx), k_unknownName,

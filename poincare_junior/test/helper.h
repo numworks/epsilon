@@ -56,14 +56,14 @@ inline void log_cache_references() {}
 inline void assert_node_equals_blocks(const Node node, std::initializer_list<Block> blocks) {
   Block * block = node.block();
   for (Block b : blocks) {
-    assert(*block == b);
+    quiz_assert(*block == b);
     block = block->next();
   }
-  assert(node.treeSize() == blocks.size());
+  quiz_assert(node.treeSize() == blocks.size());
 }
 
 inline void assert_trees_are_equal(const Node tree0, const Node tree1) {
-  assert(Comparison::AreEqual(tree0, tree1));
+  quiz_assert(Comparison::AreEqual(tree0, tree1));
 }
 
 using FunctionSize = size_t (Pool::*)() const;
@@ -78,10 +78,10 @@ inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize,
     if ((pools[i]->*functionSize)() != theoreticalSizes[i]) {
       std::cout << "Expected "<< poolNames[i] <<" of size " << theoreticalSizes[i] << " but got " << pools[i]->size() << std::endl;
       pools[i]->log(std::cout, Pool::LogFormat::Tree, true);
-      assert(false);
+      quiz_assert(false);
     }
 #else
-    assert((pools[i]->*functionSize)() == theoreticalSizes[i]);
+    quiz_assert((pools[i]->*functionSize)() == theoreticalSizes[i]);
 #endif
   }
 }
@@ -108,7 +108,7 @@ inline void assert_pool_contains(Pool * pool, std::initializer_list<const Node> 
     assert_trees_are_equal(n, tree);
     tree = tree.nextTree();
   }
-  assert(tree.block() == pool->lastBlock());
+  quiz_assert(tree.block() == pool->lastBlock());
 }
 
 // Integer

@@ -251,7 +251,7 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, bool forceRight,
     }
   }
 
-  // - Step 5 - Find position to point to if layout will me merged
+  // - Step 5 - Find position to point to if layout will be merged
   LayoutCursor previousCursor = *this;
   Layout childToPoint;
   bool layoutToInsertIsHorizontal = layout.isHorizontal();
@@ -268,39 +268,26 @@ void LayoutCursor::insertLayoutAtCursor(Layout layout, bool forceRight,
   }
 
   // - Step 6 - Insert layout
-  if (m_layout.isHorizontal()) {
-    int positionShift = layout.isHorizontal() ? layout.numberOfChildren() : 1;
-    static_cast<HorizontalLayout &>(m_layout).addOrMergeChildAtIndex(
-        layout, m_position);
-    m_position += forceLeft ? 0 : positionShift;
-  } else {
+  int numberOfInsertedChildren =
+      layout.isHorizontal() ? layout.numberOfChildren() : 1;
+
+  if (!m_layout.isHorizontal()) {
     /* Replace the current layout with an HorizontalLayout so that a sibling
      * can be added to it. */
     assert(m_layout.parent().isUninitialized() ||
            !m_layout.parent().isHorizontal());
     HorizontalLayout newParent = HorizontalLayout::Builder();
     m_layout.replaceWithInPlace(newParent);
-    bool insertLeftOfCurrentLayout = m_position == 0;
     newParent.addOrMergeChildAtIndex(m_layout, 0);
-    newParent.addOrMergeChildAtIndex(
-        layout, insertLeftOfCurrentLayout ? 0 : newParent.numberOfChildren());
     m_layout = newParent;
-    /* How to compute new position:
-     * C is the current layout, that was there before insertion.
-     * N is the new layout(s), that were inserted.
-     *
-     * If it's inserted left of the current layout:
-     * |C -> NNNNN|C    the new position is numberOfChildren - 1
-     * if forceLeft:
-     * |C -> |NNNNNC    the new position is 0
-     *
-     * If it's inserted right of the current layout:
-     * C| -> CNNNNN|    the new position is numberOfChildren
-     * if forceLeft:
-     * C| -> C|NNNNN    the new position is 1
-     * */
-    m_position = (forceLeft ? 1 : m_layout.numberOfChildren()) -
-                 insertLeftOfCurrentLayout;
+  }
+  assert(m_layout.isHorizontal());
+  static_cast<HorizontalLayout &>(m_layout).addOrMergeChildAtIndex(layout,
+                                                                   m_position);
+
+  if (!forceLeft) {
+    // Move cursor right of inserted children
+    m_position += numberOfInsertedChildren;
   }
 
   /* - Step 7 - Collapse siblings and find position to point to if layout was

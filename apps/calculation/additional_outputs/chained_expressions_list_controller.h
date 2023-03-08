@@ -15,7 +15,7 @@ class ChainedExpressionsListController : public ExpressionsListController {
   ChainedExpressionsListController(
       EditExpressionController* editExpressionController,
       bool highlightWholeCells,
-      Escher::SelectableTableViewDelegate* delegate = nullptr)
+      Escher::SelectableListViewDelegate* delegate = nullptr)
       : ExpressionsListController(editExpressionController, highlightWholeCells,
                                   delegate),
         m_tail(nullptr) {}

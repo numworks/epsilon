@@ -14,7 +14,7 @@ class ExpressionsListController : public ListController {
   ExpressionsListController(
       EditExpressionController* editExpressionController,
       bool highlightWholeCells,
-      Escher::SelectableTableViewDelegate* delegate = nullptr);
+      Escher::SelectableListViewDelegate* delegate = nullptr);
 
   // Responder
   void viewDidDisappear() override;

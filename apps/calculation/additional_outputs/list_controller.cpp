@@ -10,22 +10,22 @@ namespace Calculation {
 /* Inner List Controller */
 
 ListController::InnerListController::InnerListController(
-    ListController* dataSource, SelectableTableViewDelegate* delegate)
+    ListController* dataSource, SelectableListViewDelegate* delegate)
     : ViewController(dataSource),
-      m_selectableTableView(this, dataSource, dataSource, delegate) {
-  m_selectableTableView.setMargins(0);
-  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+      m_selectableListView(this, dataSource, dataSource, delegate) {
+  m_selectableListView.setMargins(0);
+  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
 void ListController::InnerListController::didBecomeFirstResponder() {
-  m_selectableTableView.reloadData();
+  m_selectableListView.reloadData();
 }
 
 /* List Controller */
 
 ListController::ListController(
     EditExpressionController* editExpressionController,
-    SelectableTableViewDelegate* delegate)
+    SelectableListViewDelegate* delegate)
     : StackViewController(nullptr, &m_listController,
                           StackViewController::Style::PurpleWhite),
       m_listController(this, delegate),
@@ -36,8 +36,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     assert(selectedRow() >= 0);
     char buffer[Constant::MaxSerializedExpressionSize];
     HighlightCell* cell =
-        m_listController.selectableTableView()->cellAtLocation(0,
-                                                               selectedRow());
+        m_listController.selectableListView()->cell(selectedRow());
     textAtIndex(buffer, Constant::MaxSerializedExpressionSize, cell,
                 selectedRow());
     /* The order is important here: we dismiss the pop-up first because it

@@ -122,14 +122,15 @@ void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
       continue;
     }
     for (int sequence = start; sequence < stop; sequence++) {
+      if (!sequencesToUpdate[sequence]) {
+        continue;
+      }
       T *sequencePointer =
           sequencesRankValues + sequence * k_numberOfValuesInCachePerSequence;
       if (std::isnan(*sequencePointer)) {
         *sequencePointer =
-            sequencesToUpdate[sequence]
-                ? sequencesToUpdate[sequence]
-                      ->template approximateToNextRank<T>(sqctx, sequenceIndex)
-                : NAN;
+            sequencesToUpdate[sequence]->template approximateToNextRank<T>(
+                sqctx, sequenceIndex);
       }
     }
   }

@@ -117,19 +117,19 @@ void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
    * we evaluate v and u can only be known at the third iteration. In case stop
    * is 1, there is only one sequence we want to update. Moreover, the call to
    * approximateToNextRank will handle potential dependencies. */
-  for (int k = start; k < stop; k++) {
-    if (!sequencesToUpdate[k]) {
+  for (int i = start; i < stop; i++) {
+    if (!sequencesToUpdate[i]) {
       continue;
     }
-    for (int sequence = start; sequence < stop; sequence++) {
-      if (!sequencesToUpdate[sequence]) {
+    for (int j = start; j < stop; j++) {
+      if (!sequencesToUpdate[j]) {
         continue;
       }
       T *sequencePointer =
-          sequencesRankValues + sequence * k_numberOfValuesInCachePerSequence;
+          sequencesRankValues + j * k_numberOfValuesInCachePerSequence;
       if (std::isnan(*sequencePointer)) {
         *sequencePointer =
-            sequencesToUpdate[sequence]->template approximateToNextRank<T>(
+            sequencesToUpdate[j]->template approximateToNextRank<T>(
                 sqctx, sequenceIndex);
       }
     }

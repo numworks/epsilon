@@ -40,11 +40,15 @@ template <typename T>
 bool TemplatedSequenceContext<T>::iterateUntilRank(int n,
                                                    SequenceStore *sequenceStore,
                                                    SequenceContext *sqctx) {
-  if (m_commonRank > n) {
-    m_commonRank = -1;
-  }
   if (n < 0 || n > k_maxRecurrentRank) {
     return false;
+  }
+  // If values stored in cache starts are at a rank (m_commonRank) superior to
+  // n, we need to start computing back the recurrence from the initial rank and
+  // step until rank n. Otherwise, we can start at the common rank and step
+  // until rank n.
+  if (m_commonRank > n) {
+    m_commonRank = -1;
   }
   while (m_commonRank < n) {
     step(sqctx);

@@ -2,27 +2,24 @@
 
 #include "press_to_test_success.h"
 
+using namespace Escher;
+
 namespace Settings {
 
-PressToTestSwitch::PressToTestSwitch(I18n::Message message)
-    : Escher::MessageTableCellWithMessageWithSwitch(message),
-      m_displayImage(false) {
-  m_accessoryView.setImage(ImageStore::PressToTestSuccess);
-  m_accessoryView.setBackgroundColor(KDColorWhite);
+const View* AlternateSwitchAndImage::view() const {
+  return m_displayImage
+             ? (m_switch.state() ? static_cast<const View*>(&m_image) : nullptr)
+             : static_cast<const View*>(&m_switch);
 }
 
-const Escher::View* PressToTestSwitch::accessoryView() const {
-  return (m_displayImage
-              ? (state() ? &m_accessoryView : nullptr)
-              : Escher::MessageTableCellWithMessageWithSwitch::accessoryView());
-}
-
-void PressToTestSwitch::setHighlighted(bool highlighted) {
-  MessageTableCellWithMessageWithSwitch::setHighlighted(highlighted);
-  if (m_displayImage && state()) {
-    m_accessoryView.setBackgroundColor(highlighted ? Escher::Palette::Select
-                                                   : KDColorWhite);
-  }
+PressToTestSwitch::PressToTestSwitch(I18n::Message message) {
+  m_accessory.setDisplayImage(false);
+  m_accessory.imageView()->setImage(ImageStore::PressToTestSuccess);
+  m_accessory.imageView()->setBackgroundColor(KDColorWhite);
+  // TODO: DefaultInitialization
+  m_subLabel.setFont(KDFont::Size::Small);
+  m_subLabel.setAlignment(KDContext::k_alignLeft, KDContext::k_alignCenter);
+  m_subLabel.setTextColor(Palette::GrayDark);
 }
 
 }  // namespace Settings

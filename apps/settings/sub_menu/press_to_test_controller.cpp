@@ -218,15 +218,15 @@ void PressToTestController::willDisplayCellForIndex(HighlightCell *cell,
   PressToTestSwitch *myCell = static_cast<PressToTestSwitch *>(cell);
   // A true params means the feature is disabled,
   bool featureIsDisabled = getParamAtIndex(index);
-  myCell->setMessage(LabelAtIndex(index));
-  myCell->setTextColor(Preferences::sharedPreferences->examMode().isActive() &&
-                               featureIsDisabled
-                           ? Palette::GrayDark
-                           : KDColorBlack);
-  myCell->setSubLabelMessage(SubLabelAtIndex(index));
+  myCell->label()->setMessage(LabelAtIndex(index));
+  myCell->label()->setTextColor(
+      Preferences::sharedPreferences->examMode().isActive() && featureIsDisabled
+          ? Palette::GrayDark
+          : KDColorBlack);
+  myCell->subLabel()->setMessage(SubLabelAtIndex(index));
   // Switch is toggled if the feature must stay activated.
-  myCell->setState(!featureIsDisabled);
-  myCell->setDisplayImage(
+  myCell->accessory()->switchView()->setState(!featureIsDisabled);
+  myCell->accessory()->setDisplayImage(
       Preferences::sharedPreferences->examMode().isActive());
 }
 

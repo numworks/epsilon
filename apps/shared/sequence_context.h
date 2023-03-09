@@ -15,11 +15,15 @@ template <typename T>
 class TemplatedSequenceContext {
  public:
   TemplatedSequenceContext();
-  T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) const;
   void resetCache();
   bool iterateUntilRank(int n, SequenceStore* sequenceStore,
                         SequenceContext* sqctx);
+  void step(SequenceContext* sqctx, int sequenceIndex = -1);
 
+  // Common rank
+  T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) const;
+
+  // Independant rank
   int independentSequenceRank(int sequenceIndex) {
     return m_independentRanks[sequenceIndex];
   }
@@ -32,7 +36,6 @@ class TemplatedSequenceContext {
   void setIndependentSequenceValue(T value, int sequenceIndex, int depth) {
     m_independentRankValues[sequenceIndex][depth] = value;
   }
-  void step(SequenceContext* sqctx, int sequenceIndex = -1);
 
  private:
   constexpr static int k_maxRecurrentRank = 10000;
@@ -83,11 +86,6 @@ class SequenceContext : public Poincare::ContextWithParent {
    * expressionForSymbolAbstract) always call the parent context. */
   Poincare::Context::SymbolAbstractType expressionTypeForIdentifier(
       const char* identifier, int length) override;
-  template <typename T>
-  T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) {
-    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->valueOfCommonRankSequenceAtPreviousRank(sequenceIndex, rank);
-  }
 
   void resetCache() {
     m_floatSequenceContext.resetCache();
@@ -99,6 +97,26 @@ class SequenceContext : public Poincare::ContextWithParent {
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
         ->iterateUntilRank(n, m_sequenceStore, this);
   }
+
+  template <typename T>
+  void stepSequenceAtIndex(int sequenceIndex) {
+    static_cast<TemplatedSequenceContext<T>*>(helper<T>())
+        ->step(this, sequenceIndex);
+  }
+
+  SequenceStore* sequenceStore() { return m_sequenceStore; }
+
+  void tidyDownstreamPoolFrom(char* treePoolCursor) override;
+
+  // Common rank
+
+  template <typename T>
+  T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) {
+    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
+        ->valueOfCommonRankSequenceAtPreviousRank(sequenceIndex, rank);
+  }
+
+  // Independant rank
 
   template <typename T>
   int independentSequenceRank(int sequenceIndex) {
@@ -123,14 +141,6 @@ class SequenceContext : public Poincare::ContextWithParent {
     static_cast<TemplatedSequenceContext<T>*>(helper<T>())
         ->setIndependentSequenceValue(value, sequenceIndex, depth);
   }
-
-  template <typename T>
-  void stepSequenceAtIndex(int sequenceIndex) {
-    static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->step(this, sequenceIndex);
-  }
-  SequenceStore* sequenceStore() { return m_sequenceStore; }
-  void tidyDownstreamPoolFrom(char* treePoolCursor) override;
 
  private:
   TemplatedSequenceContext<float> m_floatSequenceContext;

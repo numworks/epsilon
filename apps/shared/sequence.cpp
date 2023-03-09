@@ -249,17 +249,6 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
     }
   }
 
-  // Hold symbols = {{"u(n)", "u(n+1)"}, {"v(n)", "v(n+1)"}, {"w(n)", "w(n+1)"}}
-  Poincare::Symbol symbols[SequenceStore::k_maxNumberOfSequences]
-                          [SequenceStore::k_maxRecurrenceDepth];
-  char name[SequenceStore::k_maxRecurrenceDepth][7] = {"0(n)", "0(n+1)"};
-  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    for (int j = 0; j < SequenceStore::k_maxRecurrenceDepth; j++) {
-      name[j][0] = SequenceStore::k_sequenceNames[i][0];
-      symbols[i][j] = Symbol::Builder(name[j], strlen(name[j]));
-    }
-  }
-
   // Update angle unit and complex format
   Preferences preferences =
       Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));
@@ -271,7 +260,7 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
     case Type::Explicit: {
       for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
         // Set in context u(n) = u(n) for all sequences
-        ctx.setValueForSymbol(values[i][0], symbols[i][0]);
+        ctx.setValue(values[i][0], i, 0);
       }
       x = static_cast<T>(n);
       e = expressionReduced(sqctx);
@@ -285,8 +274,8 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
       }
       for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
         // Set in context u(n) = u(n-1) and u(n+1) = u(n) for all sequences
-        ctx.setValueForSymbol(values[i][0], symbols[i][1]);
-        ctx.setValueForSymbol(values[i][1], symbols[i][0]);
+        ctx.setValue(values[i][0], i, 1);
+        ctx.setValue(values[i][1], i, 0);
       }
       x = static_cast<T>(n - 1);
       e = expressionReduced(sqctx);
@@ -306,8 +295,8 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
       }
       for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
         // Set in context u(n) = u(n-2) and u(n+1) = u(n-1) for all sequences
-        ctx.setValueForSymbol(values[i][1], symbols[i][1]);
-        ctx.setValueForSymbol(values[i][2], symbols[i][0]);
+        ctx.setValue(values[i][1], i, 1);
+        ctx.setValue(values[i][2], i, 0);
       }
       x = static_cast<T>(n - 2);
       e = expressionReduced(sqctx);

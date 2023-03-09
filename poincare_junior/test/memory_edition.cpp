@@ -9,7 +9,7 @@ QUIZ_CASE(pcj_edition_pool) {
   cachePool->reset();
   EditionPool * pool = cachePool->editionPool();
 
-  constexpr Tree k_expression = Mult(Add(1_e, 2_e), 3_e, 4_e);
+  constexpr Tree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   const Node handingNode = static_cast<Node>(k_expression);
   const Node editedNode = pool->initFromTree(handingNode);
   assert(pool->size() == handingNode.treeSize());
@@ -49,8 +49,8 @@ QUIZ_CASE(pcj_edition_reference) {
   cachePool->reset();
   EditionPool * editionPool = cachePool->editionPool();
 
-  constexpr Tree k_expression0 = Mult(Add(1_e, 2_e), 3_e, 4_e);
-  constexpr Tree k_expression1 = Pow(Sub(5_e, 6_e), 7_e);
+  constexpr Tree k_expression0 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
+  constexpr Tree k_expression1 = KPow(KSub(5_e, 6_e), 7_e);
 
   // Operator ==
   EditionReference reference0;
@@ -103,10 +103,10 @@ QUIZ_CASE(pcj_edition_reference) {
   // Detach
   reference3.childAtIndex(0).detachTree();
   reference3.insertTreeAfterNode(13_e);
-  assert_pool_contains(editionPool, {k_expression0, 10_e, Pow(13_e, 7_e), 10_e, 9_e, Sub(5_e, 6_e)});
+  assert_pool_contains(editionPool, {k_expression0, 10_e, KPow(13_e, 7_e), 10_e, 9_e, KSub(5_e, 6_e)});
   reference3.childAtIndex(1).detachNode();
   reference3.insertTreeAfterNode(14_e);
-  assert_pool_contains(editionPool, {k_expression0, 10_e, Pow(14_e, 13_e), 10_e, 9_e, Sub(5_e, 6_e), 7_e});
+  assert_pool_contains(editionPool, {k_expression0, 10_e, KPow(14_e, 13_e), 10_e, 9_e, KSub(5_e, 6_e), 7_e});
 }
 
 QUIZ_CASE(pcj_edition_reference_reallocation) {

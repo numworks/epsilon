@@ -6,7 +6,7 @@
 
 using namespace PoincareJ;
 
-static constexpr Tree bigTree = Add(3_e, 4_e);
+static constexpr Tree bigTree = KAdd(3_e, 4_e);
 static constexpr Tree smallTree = 4_e;
 
 void execute_push_tree_and_modify() {
@@ -57,7 +57,7 @@ QUIZ_CASE(pcj_cache_pool) {
 
   // execute
   execute_push_tree_and_modify();
-  assert_pool_contains(cachePool, {Mult(3_e, 4_e)});
+  assert_pool_contains(cachePool, {KMult(3_e, 4_e)});
   assert_pools_tree_sizes_are(1, 0);
 }
 
@@ -81,7 +81,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
   execute_push_tree_and_modify();
   assert(cachePool->numberOfTrees() < maxNumberOfTreesInCache);
   Node lastTree = Node(cachePool->lastBlock()).previousTree();
-  assert_trees_are_equal(lastTree, Mult(3_e, 4_e));
+  assert_trees_are_equal(lastTree, KMult(3_e, 4_e));
 
   /* test overflowing the cache identifier */
   cachePool->reset();
@@ -121,10 +121,10 @@ QUIZ_CASE(pcj_cache_references) {
         ref.insertNodeBeforeNode(EditionReference::Push<BlockType::Addition>(2));
         ref.insertNodeAfterNode(6_e);
       }, &reference1);
-  assert_check_cache_reference(reference2, {5_e, Add(5_e, 6_e)});
+  assert_check_cache_reference(reference2, {5_e, KAdd(5_e, 6_e)});
 
   Reference reference3([] (const char * string){ EditionReference::Push<BlockType::Addition>(string[0] - '0'); }, "0");
-  assert_check_cache_reference(reference3, {Add()});
+  assert_check_cache_reference(reference3, {KAdd()});
 }
 
 void check_reference_invalidation_and_reconstruction(Reference reference, uint16_t identifier, Node node) {

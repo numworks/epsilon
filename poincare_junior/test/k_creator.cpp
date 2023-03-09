@@ -7,19 +7,19 @@ using namespace PoincareJ;
 QUIZ_CASE(pcj_k_creator) {
   constexpr Tree tree = 3_e;
 
-  Node node = Mult(Add(5_e, 8_e, 4_e), 3_e, tree);
+  Node node = KMult(KAdd(5_e, 8_e, 4_e), 3_e, tree);
   quiz_assert(node.numberOfChildren() == 3);
   quiz_assert(node.numberOfDescendants(true) == 7);
 
   quiz_assert(Node("x"_e).nodeSize() == 5);
   quiz_assert(Node("var"_e).nodeSize() == 7);
 
-  Node poly = Pol(Exponents<2, 3>(), "x"_e, 2_e, "a"_e);
+  Node poly = KPol(Exponents<2, 3>(), "x"_e, 2_e, "a"_e);
   quiz_assert(poly.numberOfChildren() == 3);
   quiz_assert(poly.nodeSize() == 6);
   quiz_assert(poly.treeSize() == 17);
 
-  (void) Pol(Exponents<1>(), "x"_e, 2_e);
+  (void) KPol(Exponents<1>(), "x"_e, 2_e);
 
   quiz_assert(Approximation::To<float>(0.125_e) == 0.125);
   quiz_assert(Approximation::To<float>(-2.5_e) == -2.5);

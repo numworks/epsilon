@@ -16,7 +16,7 @@ QUIZ_CASE(pcj_layout_creation) {
   Layout l2 = e1.toLayout();
   assert(l2.treeIsIdenticalTo(l1));
   // expression node -> Expression -> Layout
-  Expression e2 = Expression(Add(-1_e, Mult(2_e, 3_e)));
+  Expression e2 = Expression(KAdd(-1_e, KMult(2_e, 3_e)));
   Layout l3 = e2.toLayout();
   // layout Node -> Layout
   assert(l3.treeIsIdenticalTo(l1));
@@ -28,20 +28,20 @@ QUIZ_CASE(pcj_layout_creation) {
 QUIZ_CASE(pcj_layout_render) {
   KDContext * ctx = KDIonContext::SharedContext;
   Layout l = Layout(
-    RackL(
+    KRackL(
       "1+"_l,
-      ParenthesisL(
-        RackL(
+      KParenthesisL(
+        KRackL(
           "2*"_l,
-          ParenthesisL(
-            RackL(
+          KParenthesisL(
+            KRackL(
               "1+"_l,
-              FracL("1"_l, "2"_l)
+              KFracL("1"_l, "2"_l)
             )
           )
         )
       ),
-      VertOffL("2"_l),
+      KVertOffL("2"_l),
       "-2"_l
     )
   );

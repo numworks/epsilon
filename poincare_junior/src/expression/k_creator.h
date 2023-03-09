@@ -10,19 +10,19 @@ namespace PoincareJ {
 
 // Constructors
 
-template <class...Args> consteval auto Fact(Args...args) { return Unary<BlockType::Factorial>(args...); }
+template <class...Args> consteval auto KFayct(Args...args) { return KUnary<BlockType::Factorial>(args...); }
 
-template <class...Args> consteval auto Div(Args...args) { return Binary<BlockType::Division>(args...); }
+template <class...Args> consteval auto KDiv(Args...args) { return KBinary<BlockType::Division>(args...); }
 
-template <class...Args> consteval auto Sub(Args...args) { return Binary<BlockType::Subtraction>(args...); }
+template <class...Args> consteval auto KSub(Args...args) { return KBinary<BlockType::Subtraction>(args...); }
 
-template <class...Args> consteval auto Pow(Args...args) { return Binary<BlockType::Power>(args...); }
+template <class...Args> consteval auto KPow(Args...args) { return KBinary<BlockType::Power>(args...); }
 
-template <class...Args> consteval auto Add(Args...args) { return NAry<BlockType::Addition>(args...); }
+template <class...Args> consteval auto KAdd(Args...args) { return KNAry<BlockType::Addition>(args...); }
 
-template <class...Args> consteval auto Mult(Args...args) { return NAry<BlockType::Multiplication>(args...); }
+template <class...Args> consteval auto KMult(Args...args) { return KNAry<BlockType::Multiplication>(args...); }
 
-template <class...Args> consteval auto Set(Args...args) { return NAry<BlockType::Set>(args...); }
+template <class...Args> consteval auto KSet(Args...args) { return KNAry<BlockType::Set>(args...); }
 
 /* if you want to add operator+ and so on, you can revert them from the commit
  * [poincare_junior] Split tree_constructor.h */
@@ -41,7 +41,7 @@ template<TreeConcept Exp, TreeConcept ...CTS> static consteval auto __Pol(Exp ex
   return Concat<Tree<BlockType::Polynomial, Size>, Exp, Tree<Size, BlockType::Polynomial>, CTS...>();
 }
 
-template<TreeConcept Exp, TreeCompatibleConcept ...CTS> static consteval auto Pol(Exp exponents, CTS... args) {
+template<TreeConcept Exp, TreeCompatibleConcept ...CTS> static consteval auto KPol(Exp exponents, CTS... args) {
   constexpr uint8_t Size = sizeof...(CTS);
   static_assert(Exp::k_size == Size - 1, "Number of children and exponents do not match in constant polynomial");
   return __Pol(exponents, Tree(args)...);

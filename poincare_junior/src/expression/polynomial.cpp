@@ -236,7 +236,7 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
 
 EditionReference PolynomialParser::GetVariables(const Node expression) {
   if (expression.block()->isInteger()) { // TODO: generic belongToField?
-    return EditionReference(Set());
+    return EditionReference(KSet());
   }
   BlockType type = expression.type();
   // TODO: match
@@ -251,7 +251,7 @@ EditionReference PolynomialParser::GetVariables(const Node expression) {
     }
   }
   if (type == BlockType::Addition || type == BlockType::Multiplication) {
-    EditionReference variables = EditionReference(Set());
+    EditionReference variables = EditionReference(KSet());
     for (std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(expression)) {
       Node child = std::get<Node>(indexedNode);
       if (child.type() == BlockType::Addition) {

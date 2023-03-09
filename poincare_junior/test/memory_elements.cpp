@@ -113,12 +113,12 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
   assert_tree_equals_blocks(2.0_e, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0), ValueBlock(0), ValueBlock(64), TypeBlock(BlockType::Float)});
   assert_tree_equals_blocks(-1_e, {MinusOneBlock});
   assert_tree_equals_blocks(1_e, {OneBlock});
-  assert_tree_equals_blocks(Add(1_e, 2_e), {TypeBlock(BlockType::Addition), ValueBlock(2), TypeBlock(BlockType::Addition), OneBlock, TwoBlock});
-  assert_tree_equals_blocks(Mult(1_e, 2_e, -1_e), {TypeBlock(BlockType::Multiplication), ValueBlock(3), TypeBlock(BlockType::Multiplication), OneBlock, TwoBlock, MinusOneBlock});
-  assert_tree_equals_blocks(Set(1_e), {TypeBlock(BlockType::Set), ValueBlock(1), TypeBlock(BlockType::Set), OneBlock});
-  assert_tree_equals_blocks(Pow(1_e, 2_e), {TypeBlock(BlockType::Power), OneBlock, TwoBlock});
-  assert_tree_equals_blocks(Sub(1_e, 2_e), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
-  assert_tree_equals_blocks(Sub(1_e, 2_e), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
+  assert_tree_equals_blocks(KAdd(1_e, 2_e), {TypeBlock(BlockType::Addition), ValueBlock(2), TypeBlock(BlockType::Addition), OneBlock, TwoBlock});
+  assert_tree_equals_blocks(KMult(1_e, 2_e, -1_e), {TypeBlock(BlockType::Multiplication), ValueBlock(3), TypeBlock(BlockType::Multiplication), OneBlock, TwoBlock, MinusOneBlock});
+  assert_tree_equals_blocks(KSet(1_e), {TypeBlock(BlockType::Set), ValueBlock(1), TypeBlock(BlockType::Set), OneBlock});
+  assert_tree_equals_blocks(KPow(1_e, 2_e), {TypeBlock(BlockType::Power), OneBlock, TwoBlock});
+  assert_tree_equals_blocks(KSub(1_e, 2_e), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
+  assert_tree_equals_blocks(KSub(1_e, 2_e), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
   assert_tree_equals_blocks("var"_e, {TypeBlock(BlockType::UserSymbol), ValueBlock(3), ValueBlock('v'), ValueBlock('a'), ValueBlock('r'), ValueBlock(3), TypeBlock(BlockType::UserSymbol)});
 }
 
@@ -129,10 +129,10 @@ QUIZ_CASE(pcj_edition_node_constructor) {
 }
 
 QUIZ_CASE(pcj_node_iterator) {
-  constexpr Tree k_simpleExpression = Mult(Add(1_e, 2_e), 3_e, 4_e);
+  constexpr Tree k_simpleExpression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   EditionReference mult(k_simpleExpression);
   size_t numberOfChildren = mult.numberOfChildren();
-  Tree a = Add(1_e, 2_e);
+  Tree a = KAdd(1_e, 2_e);
   Tree b = 3_e;
   Tree c = 4_e;
   Node children[] = {a, b, c};
@@ -169,7 +169,7 @@ QUIZ_CASE(pcj_node_iterator) {
     assert_trees_are_equal(std::get<Node>(indexedNode), newChildren[numberOfChildren - 1 - std::get<int>(indexedNode)]);
   }
 
-  constexpr Tree k_secondSimpleExpression = Mult(Add(1_e, 2_e), 3_e);
+  constexpr Tree k_secondSimpleExpression = KMult(KAdd(1_e, 2_e), 3_e);
   EditionReference mult2(k_secondSimpleExpression);
   size_t numberOfChildren2 = mult2.numberOfChildren();
   Node children2[] = {a, b};
@@ -242,12 +242,12 @@ QUIZ_CASE(pcj_node) {
   assert(node2 == node1);
 
   // Node navigation
-  constexpr Tree e1 = Mult(Add(1_e, 2_e), 3_e, 4_e);
-  constexpr Tree e2 = Pow(5_e, 6_e);
+  constexpr Tree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
+  constexpr Tree e2 = KPow(5_e, 6_e);
   Node n1 = EditionReference(e1);
   Node n2 = EditionReference(e2);
   assert(n1.treeSize() == 14); // TODO: Magic Number
-  assert_trees_are_equal(n1.nextNode(), Add(1_e, 2_e));
+  assert_trees_are_equal(n1.nextNode(), KAdd(1_e, 2_e));
   assert_trees_are_equal(n1.nextTree(), e2);
   assert_trees_are_equal(n2.previousNode(), 4_e);
   assert_trees_are_equal(n2.previousTree(), e1);
@@ -274,20 +274,20 @@ QUIZ_CASE(pcj_node_size) {
 
 QUIZ_CASE(pcj_constructor) {
   assert_tree_equals_blocks(
-    RackL(
+    KRackL(
       "1+"_l,
-      ParenthesisL(
-        RackL(
+      KParenthesisL(
+        KRackL(
           "2*"_l,
-          ParenthesisL(
-            RackL(
+          KParenthesisL(
+            KRackL(
               "1+"_l,
-              FracL("1"_l, "2"_l)
+              KFracL("1"_l, "2"_l)
             )
           )
         )
       ),
-      VertOffL("2"_l),
+      KVertOffL("2"_l),
       "-2"_l
     ),
     {

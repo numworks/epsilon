@@ -69,27 +69,27 @@ template <TreeConcept CT1, TreeConcept... CT> struct Concat : __ConcatTwo<CT1, C
 
 // Helpers
 
-template <Block Tag, Block... B1> consteval auto Unary(Tree<B1...>) {
+template <Block Tag, Block... B1> consteval auto KUnary(Tree<B1...>) {
   return Tree<Tag, B1...>();
 }
 
-template <Block Tag, TreeCompatibleConcept A> consteval auto Unary(A a) {
-  return Unary<Tag>(Tree(a));
+template <Block Tag, TreeCompatibleConcept A> consteval auto KUnary(A a) {
+  return KUnary<Tag>(Tree(a));
 }
 
-template <Block Tag, Block... B1, Block... B2> consteval auto Binary(Tree<B1...>, Tree<B2...>) {
+template <Block Tag, Block... B1, Block... B2> consteval auto KBinary(Tree<B1...>, Tree<B2...>) {
   return Tree<Tag, B1..., B2...>();
 }
 
-template <Block Tag, TreeCompatibleConcept A, TreeCompatibleConcept B> consteval auto Binary(A a, B b) {
-  return Binary<Tag>(Tree(a), Tree(b));
+template <Block Tag, TreeCompatibleConcept A, TreeCompatibleConcept B> consteval auto KBinary(A a, B b) {
+  return KBinary<Tag>(Tree(a), Tree(b));
 }
 
 template<Block Tag, TreeConcept ...CTS> static consteval auto __NAry(CTS...) {
   return Concat<Tree<Tag, sizeof...(CTS), Tag>, CTS...>();
 }
 
-template <Block Tag, TreeCompatibleConcept ...CTS> consteval auto NAry(CTS... args) { return __NAry<Tag>(Tree(args)...); }
+template <Block Tag, TreeCompatibleConcept ...CTS> consteval auto KNAry(CTS... args) { return __NAry<Tag>(Tree(args)...); }
 
 
 /* The following dummy constructors are here to make the error message clearer
@@ -100,12 +100,12 @@ template <Block Tag, TreeCompatibleConcept ...CTS> consteval auto NAry(CTS... ar
  * function ... is not a constant expression" since they are marked consteval.
  */
 
-template <Block Tag> consteval Node Unary(Node a) { return Tree<>(); }
+template <Block Tag> consteval Node KUnary(Node a) { return Tree<>(); }
 
-template <Block Tag> consteval Node Binary(Node a, Node b) { return Tree<>(); }
+template <Block Tag> consteval Node KBinary(Node a, Node b) { return Tree<>(); }
 
 template <class...Args> concept HasANodeConcept = (false || ... || std::is_same<Node, Args>::value);
-template <Block Tag, class...Args> requires HasANodeConcept<Args...> consteval Node NAry(Args...args) { return Tree<>(); }
+template <Block Tag, class...Args> requires HasANodeConcept<Args...> consteval Node KNAry(Args...args) { return Tree<>(); }
 
 
 // String type used for templated string litterals

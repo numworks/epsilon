@@ -16,11 +16,17 @@ StoreParameterController::StoreParameterController(
     : ColumnParameterController(parentResponder),
       m_storeColumnHelper(storeColumnHelper),
       m_fillFormula(I18n::Message::FillWithFormula),
-      m_sortCell(I18n::Message::SortCellLabel),
-      m_hideCell(I18n::Message::ActivateDeactivateStoreParamTitle,
-                 I18n::Message::ActivateDeactivateStoreParamDescription,
-                 false) {
+      m_sortCell(I18n::Message::SortCellLabel) {
   m_clearColumn.setMessageWithPlaceholders(I18n::Message::ClearColumn);
+  m_hideCell.label()->setMessage(
+      I18n::Message::ActivateDeactivateStoreParamTitle);
+  m_hideCell.subLabel()->setMessage(
+      I18n::Message::ActivateDeactivateStoreParamDescription);
+  // TODO: DefaultInitialization
+  m_hideCell.subLabel()->setFont(KDFont::Size::Small);
+  m_hideCell.subLabel()->setAlignment(KDContext::k_alignLeft,
+                                      KDContext::k_alignCenter);
+  m_hideCell.subLabel()->setTextColor(Palette::GrayDark);
 }
 
 void StoreParameterController::initializeColumnParameters() {
@@ -76,7 +82,8 @@ HighlightCell* StoreParameterController::reusableCell(int index, int type) {
 void StoreParameterController::willDisplayCellForIndex(
     Escher::HighlightCell* cell, int index) {
   if (typeAtIndex(index) == k_hideCellType) {
-    m_hideCell.setState(m_storeColumnHelper->selectedSeriesIsActive());
+    m_hideCell.accessory()->setState(
+        m_storeColumnHelper->selectedSeriesIsActive());
   }
 }
 

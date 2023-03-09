@@ -44,7 +44,6 @@ MainController::MainController(
     InputEventHandlerDelegate *inputEventHandlerDelegate)
     : SelectableListViewController(parentResponder),
       m_brightnessCell(I18n::Message::Default),
-      m_popUpCell(I18n::Message::Default),
       m_resetButton(&m_selectableListView, I18n::Message::ResetCalculator,
                     Invocation::Builder<MainController>(
                         [](MainController *controller, void *sender) {
@@ -71,6 +70,7 @@ MainController::MainController(
          &m_examModeController);
   assert(subControllerForCell(messageAtModelIndex(k_indexOfExamModeCell + 1)) ==
          &m_pressToTestController);
+  m_popUpCell.label()->setMessage(I18n::Message::Default);
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
@@ -222,9 +222,8 @@ void MainController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   MessageTableCell *myCell = static_cast<MessageTableCell *>(cell);
   myCell->setMessage(title);
   if (type == k_popUpCellType) {
-    MessageTableCellWithSwitch *mySwitchCell =
-        static_cast<MessageTableCellWithSwitch *>(cell);
-    mySwitchCell->setState(globalPreferences->showPopUp());
+    assert(cell == &m_popUpCell);
+    m_popUpCell.accessory()->setState(globalPreferences->showPopUp());
     return;
   }
   assert(type == k_defaultCellType);

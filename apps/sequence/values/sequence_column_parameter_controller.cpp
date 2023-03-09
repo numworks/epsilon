@@ -13,10 +13,15 @@ namespace Sequence {
 SequenceColumnParameterController::SequenceColumnParameterController(
     ValuesController* valuesController)
     : ColumnParameterController(valuesController),
-      m_showSumCell(I18n::Message::ShowSumOfTerms,
-                    I18n::Message::ShowSumOfTermsSublabel),
       m_valuesController(valuesController) {
-  m_showSumCell.setState(false);
+  m_showSumCell.accessory()->setState(false);
+  m_showSumCell.label()->setMessage(I18n::Message::ShowSumOfTerms);
+  m_showSumCell.subLabel()->setMessage(I18n::Message::ShowSumOfTermsSublabel);
+  // TODO: DefaultInitialization
+  m_showSumCell.subLabel()->setFont(KDFont::Size::Small);
+  m_showSumCell.subLabel()->setAlignment(KDContext::k_alignLeft,
+                                         KDContext::k_alignCenter);
+  m_showSumCell.subLabel()->setTextColor(Palette::GrayDark);
 }
 
 Shared::ColumnNameHelper*
@@ -25,13 +30,13 @@ SequenceColumnParameterController::columnNameHelper() {
 }
 
 bool SequenceColumnParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    assert(selectedRow() == 0);
+  assert(selectedRow() == 0);
+  if (m_showSumCell.enterOnEvent(event)) {
     ExpiringPointer<Shared::Sequence> currentSequence =
         GlobalContext::sequenceStore->modelForRecord(m_record);
     bool currentState = currentSequence->displaySum();
-    assert(m_showSumCell.state() == currentState);
-    m_showSumCell.setState(!currentState);
+    assert(m_showSumCell.accessory()->state() == currentState);
+    m_showSumCell.accessory()->setState(!currentState);
     currentSequence->setDisplaySum(!currentState);
     return true;
   }
@@ -44,7 +49,7 @@ void SequenceColumnParameterController::willDisplayCellForIndex(
   assert(index == 0 && cell == &m_showSumCell);
   ExpiringPointer<Shared::Sequence> currentSequence =
       GlobalContext::sequenceStore->modelForRecord(m_record);
-  m_showSumCell.setState(currentSequence->displaySum());
+  m_showSumCell.accessory()->setState(currentSequence->displaySum());
 }
 
 }  // namespace Sequence

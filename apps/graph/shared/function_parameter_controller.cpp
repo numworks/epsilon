@@ -23,10 +23,11 @@ FunctionParameterController::FunctionParameterController(
     : Shared::ListParameterController(parentResponder, functionColorMessage,
                                       deleteFunctionMessage),
       m_detailsCell(I18n::Message::Details),
-      m_derivativeCell(I18n::Message::GraphDerivative),
       m_detailsParameterController(this),
       m_domainParameterController(nullptr, inputEventHandlerDelegate),
-      m_valuesController(valuesController) {}
+      m_valuesController(valuesController) {
+  m_derivativeCell.label()->setMessage(I18n::Message::GraphDerivative);
+}
 
 const char *FunctionParameterController::title() {
   return m_useColumnTitle ? m_titleBuffer
@@ -79,7 +80,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell *cell,
                                                           int index) {
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_derivativeCell) {
-    m_derivativeCell.setState(function()->displayDerivative());
+    m_derivativeCell.accessory()->setState(function()->displayDerivative());
     return;
   }
   if ((cell == &m_detailsCell || cell == &m_functionDomainCell) &&
@@ -126,7 +127,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
     stack->push(&m_domainParameterController);
     return true;
   }
-  if (cell == &m_derivativeCell && m_derivativeCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_derivativeCell && m_derivativeCell.enterOnEvent(event)) {
     function()->setDisplayDerivative(!function()->displayDerivative());
     m_selectableListView.reloadData();
     return true;

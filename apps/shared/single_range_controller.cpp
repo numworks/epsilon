@@ -12,12 +12,12 @@ SingleRangeController::SingleRangeController(
     InputEventHandlerDelegate *inputEventHandlerDelegate,
     Shared::MessagePopUpController *confirmPopUpController)
     : FloatParameterController<float>(parentResponder),
-      m_autoCell(I18n::Message::DefaultSetting),
       m_confirmPopUpController(confirmPopUpController) {
   for (int i = 0; i < k_numberOfTextCells; i++) {
     m_boundsCells[i].setParentResponder(&m_selectableListView);
     m_boundsCells[i].setDelegates(inputEventHandlerDelegate, this);
   }
+  m_autoCell.label()->setMessage(I18n::Message::DefaultSetting);
 }
 
 void SingleRangeController::viewWillAppear() {
@@ -52,25 +52,25 @@ void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell *cell,
                                                     int index) {
   int type = typeAtIndex(index);
   if (type == k_autoCellType) {
-    m_autoCell.setState(m_autoParam);
+    m_autoCell.accessory()->setState(m_autoParam);
     return;
   }
   FloatParameterController<float>::willDisplayCellForIndex(cell, index);
 }
 
 bool SingleRangeController::handleEvent(Ion::Events::Event event) {
+  if (typeAtIndex(selectedRow()) == k_autoCellType &&
+      m_autoCell.enterOnEvent(event)) {
+    // Update auto status
+    setAutoStatus(!m_autoParam);
+    return true;
+  }
   if (event == Ion::Events::Left || event == Ion::Events::Back) {
     if (parametersAreDifferent()) {
       m_confirmPopUpController->presentModally();
     } else {
       pop(false);
     }
-    return true;
-  }
-  if (selectedRow() == 0 &&
-      (event == Ion::Events::OK || event == Ion::Events::EXE)) {
-    // Update auto status
-    setAutoStatus(!m_autoParam);
     return true;
   }
   return FloatParameterController<float>::handleEvent(event);

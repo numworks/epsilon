@@ -4,7 +4,6 @@
 #include <apps/i18n.h>
 #include <escher/buffer_table_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/message_table_cell_with_switch.h>
 
 #include "area_between_curves_graph_controller.h"
 #include "area_between_curves_parameter_controller.h"

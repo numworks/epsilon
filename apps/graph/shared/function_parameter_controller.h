@@ -3,6 +3,7 @@
 
 #include <apps/shared/column_parameter_controller.h>
 #include <apps/shared/list_parameter_controller.h>
+#include <escher/menu_cell.h>
 #include <escher/message_table_cell_with_chevron_and_buffer.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 
@@ -56,7 +57,9 @@ class FunctionParameterController : public Shared::ListParameterController,
 
   Escher::MessageTableCellWithChevronAndMessage m_detailsCell;
   Escher::MessageTableCellWithChevronAndBuffer m_functionDomainCell;
-  Escher::MessageTableCellWithMessageWithSwitch m_derivativeCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::SwitchView>
+      m_derivativeCell;
   DetailsParameterController m_detailsParameterController;
   DomainParameterController m_domainParameterController;
   ValuesController* m_valuesController;

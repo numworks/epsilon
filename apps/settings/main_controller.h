@@ -3,10 +3,11 @@
 
 #include <apps/shared/pop_up_controller.h>
 #include <escher/button_cell.h>
+#include <escher/menu_cell.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_gauge.h>
-#include <escher/message_table_cell_with_switch.h>
 #include <escher/selectable_list_view_controller.h>
+#include <escher/switch_view.h>
 
 #include "message_tree.h"
 #include "sub_menu/about_controller.h"
@@ -67,10 +68,13 @@ class MainController : public Escher::SelectableListViewController<
   constexpr static int k_numberOfSimpleChevronCells =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::TableCell::k_minimalLargeFontCellHeight);
+
   Escher::MessageTableCellWithChevronAndMessage
       m_cells[k_numberOfSimpleChevronCells];
   Escher::MessageTableCellWithGauge m_brightnessCell;
-  Escher::MessageTableCellWithSwitch m_popUpCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::SwitchView>
+      m_popUpCell;
   Escher::ButtonCell m_resetButton;
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;

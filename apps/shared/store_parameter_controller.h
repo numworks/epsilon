@@ -3,10 +3,11 @@
 
 #include <apps/i18n.h>
 #include <escher/buffer_table_cell.h>
+#include <escher/menu_cell.h>
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_message.h>
-#include <escher/message_table_cell_with_message_with_switch.h>
 #include <escher/selectable_list_view_controller.h>
+#include <escher/switch_view.h>
 
 #include "column_parameter_controller.h"
 
@@ -46,7 +47,9 @@ class StoreParameterController : public ColumnParameterController {
 
   Escher::MessageTableCell m_fillFormula;
   Escher::MessageTableCellWithMessage m_sortCell;
-  Escher::MessageTableCellWithMessageWithSwitch m_hideCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::SwitchView>
+      m_hideCell;
 };
 
 }  // namespace Shared

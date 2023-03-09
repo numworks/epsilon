@@ -2,8 +2,9 @@
 #define SEQUENCE_SEQUENCE_COLUMN_PARAM_CONTROLLER_H
 
 #include <apps/shared/continuous_function_store.h>
-#include <escher/message_table_cell_with_message_with_switch.h>
+#include <escher/menu_cell.h>
 #include <escher/selectable_list_view_controller.h>
+#include <escher/switch_view.h>
 
 #include "../../shared/column_parameter_controller.h"
 
@@ -28,7 +29,9 @@ class SequenceColumnParameterController
  private:
   constexpr static int k_totalNumberOfCell = 1;
   Shared::ColumnNameHelper* columnNameHelper() override;
-  Escher::MessageTableCellWithMessageWithSwitch m_showSumCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::SwitchView>
+      m_showSumCell;
   Ion::Storage::Record m_record;
   ValuesController* m_valuesController;
 };

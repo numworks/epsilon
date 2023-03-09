@@ -13,11 +13,18 @@ ScriptParameterController::ScriptParameterController(
       m_pageTitle(title),
       m_executeScript(I18n::Message::ExecuteScript),
       m_renameScript(I18n::Message::Rename),
-      m_autoImportScript(I18n::Message::AutoImportScript,
-                         I18n::Message::AutoImportScriptSubLabel),
       m_deleteScript(I18n::Message::DeleteScript),
       m_script(Ion::Storage::Record()),
-      m_menuController(menuController) {}
+      m_menuController(menuController) {
+  m_autoImportScript.label()->setMessage(I18n::Message::AutoImportScript);
+  m_autoImportScript.subLabel()->setMessage(
+      I18n::Message::AutoImportScriptSubLabel);
+  // TODO: DefaultInitialization
+  m_autoImportScript.subLabel()->setFont(KDFont::Size::Small);
+  m_autoImportScript.subLabel()->setAlignment(KDContext::k_alignLeft,
+                                              KDContext::k_alignCenter);
+  m_autoImportScript.subLabel()->setTextColor(Palette::GrayDark);
+}
 
 void ScriptParameterController::setScript(Script script) { m_script = script; }
 
@@ -86,7 +93,7 @@ HighlightCell *ScriptParameterController::reusableCell(int index, int type) {
 void ScriptParameterController::willDisplayCellForIndex(HighlightCell *cell,
                                                         int index) {
   if (cell == &m_autoImportScript && !m_script.isNull()) {
-    m_autoImportScript.setState(m_script.autoImportation());
+    m_autoImportScript.accessory()->setState(m_script.autoImportation());
   }
 }
 

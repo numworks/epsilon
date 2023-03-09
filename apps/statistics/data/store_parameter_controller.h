@@ -2,8 +2,9 @@
 #define STATISTICS_STORE_PARAMETER_CONTROLLER_H
 
 #include <apps/shared/store_parameter_controller.h>
+#include <escher/menu_cell.h>
 #include <escher/message_table_cell_with_message.h>
-#include <escher/message_table_cell_with_message_with_switch.h>
+#include <escher/switch_view.h>
 
 #include "../store.h"
 
@@ -38,7 +39,9 @@ class StoreParameterController : public Shared::StoreParameterController {
                                     : I18n::Message::SortSizes;
   }
 
-  Escher::MessageTableCellWithMessageWithSwitch m_displayCumulatedFrequencyCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::SwitchView>
+      m_displayCumulatedFrequencyCell;
   Escher::MessageTableCellWithMessage m_hideCumulatedFrequencyCell;
   Store* m_store;
   bool m_isCumulatedFrequencyColumnSelected;

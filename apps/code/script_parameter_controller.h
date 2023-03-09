@@ -2,11 +2,12 @@
 #define CODE_SCRIPT_PARAMETER_CONTROLLER_H
 
 #include <apps/i18n.h>
+#include <escher/menu_cell.h>
 #include <escher/message_table_cell.h>
-#include <escher/message_table_cell_with_message_with_switch.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
+#include <escher/switch_view.h>
 
 #include "script_store.h"
 
@@ -41,7 +42,9 @@ class ScriptParameterController : public Escher::SelectableListViewController<
   I18n::Message m_pageTitle;
   Escher::MessageTableCell m_executeScript;
   Escher::MessageTableCell m_renameScript;
-  Escher::MessageTableCellWithMessageWithSwitch m_autoImportScript;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::SwitchView>
+      m_autoImportScript;
   Escher::MessageTableCell m_deleteScript;
   Script m_script;
   MenuController* m_menuController;

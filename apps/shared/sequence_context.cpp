@@ -109,7 +109,6 @@ void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
 
   // We approximate the value of the next rank for each sequence we want to
   // update
-  int rank = stepAllSequences ? m_commonRank : m_independentRanks[sequenceIndex];
   /* In case stop is SequenceStore::k_maxNumberOfSequences, we approximate u, v
    * and w at the new rank. We have to evaluate all sequences
    * SequenceStore::k_maxNumberOfSequences times in case the evaluations depend
@@ -128,8 +127,8 @@ void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
       if (std::isnan(*sequencePointer)) {
         *sequencePointer =
             sequencesToUpdate[sequence]
-                ? sequencesToUpdate[sequence]->template approximateToNextRank<T>(
-                      rank, sqctx, sequenceIndex)
+                ? sequencesToUpdate[sequence]
+                      ->template approximateToNextRank<T>(sqctx, sequenceIndex)
                 : NAN;
       }
     }

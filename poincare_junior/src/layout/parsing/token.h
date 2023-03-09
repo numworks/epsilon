@@ -4,9 +4,7 @@
 /* The Token class is meant to be the output type of the Tokenizer.
  * While processing a text input, the Tokenizer indeed produces (pops)
  * the successive Tokens, that are then consumed by the Parser.
- * Each Token has a Type and may hold other relevant data intended for the Parser:
- *   - an Expression, specifically for a Number Token,
- *   - a string (m_text, m_length), specifically for an Identifier Token. */
+ * Each Token has a Type and a range (firstLayout, length). */
 
 #include <poincare_junior/src/memory/node.h>
 

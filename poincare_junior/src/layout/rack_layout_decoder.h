@@ -7,8 +7,9 @@
 
 namespace PoincareJ {
 
-/* If we decide to keep StringLayouts, the RackLayoutDecoder should probably
- * enter strings and yield its codepoints instead of yielding the layout */
+/* TODO: If we decide to keep StringLayouts, the RackLayoutDecoder should
+ * probably enter strings and yield its codepoints instead of yielding the
+ * layout */
 
 class RackLayoutDecoder : public UnicodeDecoder {
 public:
@@ -38,9 +39,6 @@ public:
     m_position = m_layout.hasChild(child) ? m_layout.indexOfChild(child) : m_end;
   }
   Node layoutAt(size_t index) {
-    // if (index == reinterpret_cast<size_t>(m_end)) {
-      // return UCodePointNull;
-    // }
     assert(0 <= index && index < m_end);
     return m_layout.childAtIndex(index);
   }

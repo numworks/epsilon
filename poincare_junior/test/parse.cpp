@@ -39,6 +39,8 @@ void assert_is_parsable(Node layout) {
   // expression.log();
 }
 
+// TODO import all the parsing tests from poincare
+
 QUIZ_CASE(pcj_layout_parse) {
   assert_trees_are_equal(Parser("2^(3+1)^4"_l).parse(), KPow(2_e, KPow(KAdd(3_e, 1_e), 4_e)));
   assert_is_parsable("12(123.4567E2 +  0x2a+2*0b0101)"_l);

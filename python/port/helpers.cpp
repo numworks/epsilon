@@ -37,23 +37,34 @@ void micropython_port_vm_hook_refresh_print() {
 }
 
 bool micropython_port_interruptible_msleep(int32_t delay) {
+  static uint64_t lastRun = 0;
   assert(delay >= 0);
-  /* We don't use millis because the systick drifts when changing the HCLK
-   * frequency. */
+  constexpr int32_t miniumDelayBetweenInterruptions = 25;
   constexpr int32_t interruptionCheckDelay = 100;
   const int32_t numberOfInterruptionChecks = delay / interruptionCheckDelay;
   int32_t remainingDelay =
       delay - numberOfInterruptionChecks * interruptionCheckDelay;
   int32_t currentRemainingInterruptionChecks = numberOfInterruptionChecks;
   do {
-    // We assume the time taken by the interruption check is insignificant
-    if (micropython_port_interrupt_if_needed()) {
-      return true;
+    int32_t timeToSleep =
+        currentRemainingInterruptionChecks == numberOfInterruptionChecks
+            ? remainingDelay
+            : interruptionCheckDelay;
+    /* On simulators the interruption check also refreshes the screen and takes
+     * about 15ms. We make sure not to execute it too often to ensure a
+     * consistent speed between platforms. */
+    uint64_t run = Ion::Timing::millis();
+    if (run - lastRun > miniumDelayBetweenInterruptions) {
+      if (micropython_port_interrupt_if_needed()) {
+        return true;
+      }
+      lastRun = run;
+      /* Remove from timeToSleep the time taken by the check */
+      timeToSleep -= Ion::Timing::millis() - run;
     }
-    Ion::Timing::msleep(currentRemainingInterruptionChecks ==
-                                numberOfInterruptionChecks
-                            ? remainingDelay
-                            : interruptionCheckDelay);
+    if (timeToSleep > 0) {
+      Ion::Timing::msleep(timeToSleep);
+    }
     currentRemainingInterruptionChecks--;
   } while (currentRemainingInterruptionChecks >= 0);
   return false;

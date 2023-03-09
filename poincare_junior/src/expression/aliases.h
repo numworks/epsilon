@@ -47,11 +47,6 @@ class Aliases {
     return strcmp(mainAlias(), other.mainAlias()) == 0;
   }
 
-  /* Return 0 if name is alias of this,
-   * else, return the max difference value between name and the aliases
-   * of this. */
-  int maxDifferenceWith(UnicodeDecoder * decoder) const;
-
   /* You can iterate through the names list with syntax:
    * for (const char * alias : name ) {} */
   template <typename T>
@@ -69,6 +64,7 @@ class Aliases {
     }
 
    protected:
+    // We use a template otherwise Aliases would be incomplete here
     T m_list;
     const char* m_currentAlias;
   };
@@ -82,6 +78,11 @@ class Aliases {
 
  private:
   constexpr static char k_listStart = '\01';
+
+  /* Return 0 if name is alias of this,
+   * else, return the max difference value between name and the aliases
+   * of this. */
+  int maxDifferenceWith(UnicodeDecoder * decoder) const;
 
   constexpr bool hasMultipleAliases() const {
     return m_formattedAliases[0] == k_listStart;

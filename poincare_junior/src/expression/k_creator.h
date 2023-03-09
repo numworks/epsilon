@@ -1,7 +1,7 @@
-#ifndef POINCARE_EXPRESSION_CONSTRUCTOR_H
-#define POINCARE_EXPRESSION_CONSTRUCTOR_H
+#ifndef POINCARE_EXPRESSION_K_CREATOR_H
+#define POINCARE_EXPRESSION_K_CREATOR_H
 
-#include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/src/memory/k_creator.h>
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <bit>

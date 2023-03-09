@@ -1,7 +1,7 @@
-#ifndef POINCARE_LAYOUT_CONSTRUCTOR_H
-#define POINCARE_LAYOUT_CONSTRUCTOR_H
+#ifndef POINCARE_LAYOUT_K_CREATOR_H
+#define POINCARE_LAYOUT_K_CREATOR_H
 
-#include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/src/memory/k_creator.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
 
 namespace PoincareJ {

@@ -4,7 +4,7 @@
 #include <array>
 #include "node.h"
 #include "node_iterator.h"
-#include "tree_constructor.h"
+#include "k_creator.h"
 #include "edition_reference.h"
 #include "pool.h"
 

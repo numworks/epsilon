@@ -1,5 +1,5 @@
 #include "builtin.h"
-#include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/src/memory/k_creator.h>
 
 namespace PoincareJ {
 

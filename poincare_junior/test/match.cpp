@@ -1,6 +1,6 @@
 #include "helper.h"
 #include <poincare_junior/src/memory/pattern_matching.h>
-#include <poincare_junior/src/expression/constructor.h>
+#include <poincare_junior/src/expression/k_creator.h>
 #include <quiz.h>
 
 using namespace PoincareJ;

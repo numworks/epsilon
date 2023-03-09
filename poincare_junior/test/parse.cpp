@@ -2,8 +2,8 @@
 #include <quiz.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
-#include <poincare_junior/src/expression/constructor.h>
-#include <poincare_junior/src/layout/constructor.h>
+#include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/layout/k_creator.h>
 #include <poincare_junior/src/layout/parsing/tokenizer.h>
 #include <poincare_junior/src/layout/parsing/parser.h>
 

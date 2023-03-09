@@ -1,10 +1,10 @@
 #include "helper.h"
-#include <poincare_junior/src/expression/constructor.h>
+#include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/expression/approximation.h>
 
 using namespace PoincareJ;
 
-QUIZ_CASE(pcj_tree_constructor) {
+QUIZ_CASE(pcj_k_creator) {
   constexpr Tree tree = 3_e;
 
   Node node = Mult(Add(5_e, 8_e, 4_e), 3_e, tree);
@@ -25,7 +25,7 @@ QUIZ_CASE(pcj_tree_constructor) {
   quiz_assert(Approximation::To<float>(-2.5_e) == -2.5);
 }
 
-QUIZ_CASE(pcj_tree_integer_constructor) {
+QUIZ_CASE(pcj_k_creator_integer) {
   quiz_assert(Node(1_e).nodeSize() == 1);
   quiz_assert(Node(12_e).nodeSize() == 3);
   quiz_assert(Node(1234_e).nodeSize() == 6);

@@ -3,7 +3,7 @@
 #include <ion/unicode/utf8_decoder.h>
 // #include <poincare/empty_context.h>
 #include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/constructor.h>
+#include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/memory/pattern_matching.h>

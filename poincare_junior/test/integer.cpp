@@ -1,7 +1,7 @@
 #include "helper.h"
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/rational.h>
-#include <poincare_junior/src/memory/tree_constructor.h>
+#include <poincare_junior/src/memory/k_creator.h>
 #include <quiz.h>
 
 using namespace PoincareJ;

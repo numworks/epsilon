@@ -1,8 +1,8 @@
 #include "helper.h"
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/value_block.h>
-#include <poincare_junior/src/expression/constructor.h>
-#include <poincare_junior/src/layout/constructor.h>
+#include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/layout/k_creator.h>
 
 using namespace PoincareJ;
 

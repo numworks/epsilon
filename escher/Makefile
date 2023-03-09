@@ -54,6 +54,7 @@ escher_src += $(addprefix escher/src/,\
   layout_field.cpp \
   list_view_data_source.cpp \
   list_view_with_top_and_bottom_views.cpp \
+  menu_cell.cpp \
   message_table_cell.cpp \
   message_table_cell_with_buffer.cpp \
   message_table_cell_with_chevron_and_buffer.cpp \

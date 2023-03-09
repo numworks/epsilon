@@ -51,7 +51,7 @@ uint8_t Builtin::MaxNumberOfParameters(BlockType type) {
   return 1;
 }
 
-EditionReference Builtin::Build(BlockType type, EditionReference parameters) {
+EditionReference Builtin::Promote(EditionReference parameterList, BlockType type) {
   Node header;
   switch (type) {
   case BlockType::Cosine:
@@ -75,8 +75,8 @@ EditionReference Builtin::Build(BlockType type, EditionReference parameters) {
   default:
     assert(false);
   }
-  parameters.replaceNodeByNode(header);
-  return parameters;
+  parameterList.replaceNodeByNode(header);
+  return parameterList;
 }
 
 }

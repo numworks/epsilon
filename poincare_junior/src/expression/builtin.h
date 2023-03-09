@@ -21,7 +21,7 @@ public:
   static const Builtin * GetReservedFunction(UnicodeDecoder * name);
   static uint8_t MinNumberOfParameters(BlockType type);
   static uint8_t MaxNumberOfParameters(BlockType type);
-  static EditionReference Build(BlockType type, EditionReference parameters);
+  static EditionReference Promote(EditionReference parameterList, BlockType type);
 };
 
 namespace BuiltinsAliases {

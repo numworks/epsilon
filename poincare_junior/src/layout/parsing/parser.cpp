@@ -962,7 +962,7 @@ void Parser::privateParseReservedFunction(
     return;
   }
 
-  leftHandSide = Builtin::Build(builtin->blockType(), parameters);
+  leftHandSide = Builtin::Promote(parameters, builtin->blockType());
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Incorrect parameter type or too few args
     return;

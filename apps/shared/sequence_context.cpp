@@ -21,6 +21,9 @@ TemplatedSequenceContext<T>::TemplatedSequenceContext()
 template <typename T>
 T TemplatedSequenceContext<T>::valueOfCommonRankSequenceAtPreviousRank(
     int sequenceIndex, int rank) const {
+  assert(0 <= sequenceIndex &&
+         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= rank && rank < k_numberOfValuesInCachePerSequence);
   return m_commonRankValues[sequenceIndex][rank];
 }
 
@@ -49,6 +52,12 @@ bool TemplatedSequenceContext<T>::iterateUntilRank(int n,
   // until rank n.
   if (m_commonRank > n) {
     m_commonRank = -1;
+    for (int sequence = 0; sequence < SequenceStore::k_maxNumberOfSequences;
+         sequence++) {
+      for (int depth = 0; depth < k_numberOfValuesInCachePerSequence; depth++) {
+        m_commonRankValues[sequence][depth] = NAN;
+      }
+    }
   }
   while (m_commonRank < n) {
     step(sqctx);

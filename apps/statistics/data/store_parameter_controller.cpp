@@ -8,13 +8,21 @@ namespace Statistics {
 StoreParameterController::StoreParameterController(
     Responder* parentResponder, StoreController* storeController, Store* store)
     : Shared::StoreParameterController(parentResponder, storeController),
-      m_displayCumulatedFrequencyCell(
-          I18n::Message::CumulatedFrequencyColumnToggleTitle,
-          I18n::Message::CumulatedFrequencyColumnToggleDescription),
       m_hideCumulatedFrequencyCell(
           I18n::Message::CumulatedFrequencyColumnHideTitle,
           I18n::Message::CumulatedFrequencyColumnHideDescription),
-      m_store(store) {}
+      m_store(store) {
+  m_displayCumulatedFrequencyCell.label()->setMessage(
+      I18n::Message::CumulatedFrequencyColumnToggleTitle);
+  m_displayCumulatedFrequencyCell.subLabel()->setMessage(
+      I18n::Message::CumulatedFrequencyColumnToggleDescription);
+  // TODO: DefaultInitialization
+  m_displayCumulatedFrequencyCell.subLabel()->setFont(KDFont::Size::Small);
+  m_displayCumulatedFrequencyCell.subLabel()->setAlignment(
+      KDContext::k_alignLeft, KDContext::k_alignCenter);
+  m_displayCumulatedFrequencyCell.subLabel()->setTextColor(
+      Escher::Palette::GrayDark);
+}
 
 void StoreParameterController::initializeColumnParameters() {
   // Number of cells and cells size may change when switching between columns
@@ -55,7 +63,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       stackView()->pop();
     } else {
       // We are in the options of column V1 or N1
-      m_displayCumulatedFrequencyCell.setState(!previousStatus);
+      m_displayCumulatedFrequencyCell.accessory()->setState(!previousStatus);
     }
     return true;
   }
@@ -96,7 +104,7 @@ void StoreParameterController::willDisplayCellForIndex(
   int type = typeAtIndex(index);
   if (type == k_displayCumulatedFrequencyCellType) {
     assert(cell == &m_displayCumulatedFrequencyCell);
-    m_displayCumulatedFrequencyCell.setState(
+    m_displayCumulatedFrequencyCell.accessory()->setState(
         m_store->displayCumulatedFrequenciesForSeries(
             m_storeColumnHelper->selectedSeries()));
     return;

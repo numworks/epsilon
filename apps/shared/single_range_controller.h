@@ -2,8 +2,9 @@
 #define SHARED_SINGLE_RANGE_CONTROLLER_H
 
 #include <apps/i18n.h>
+#include <escher/menu_cell.h>
 #include <escher/message_table_cell_with_editable_text.h>
-#include <escher/message_table_cell_with_switch.h>
+#include <escher/switch_view.h>
 #include <poincare/range.h>
 
 #include "float_parameter_controller.h"
@@ -66,7 +67,9 @@ class SingleRangeController : public FloatParameterController<float> {
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
   void buttonAction() override;
 
-  Escher::MessageTableCellWithSwitch m_autoCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::SwitchView>
+      m_autoCell;
   Shared::MessagePopUpController* m_confirmPopUpController;
 };
 

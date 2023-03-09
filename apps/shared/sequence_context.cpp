@@ -117,7 +117,7 @@ void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
    * we evaluate v and u can only be known at the third iteration. In case stop
    * is 1, there is only one sequence we want to update. Moreover, the call to
    * approximateToNextRank will handle potential dependencies. */
-  for (int k = 0; k < SequenceStore::k_maxNumberOfSequences; k++) {
+  for (int k = start; k < stop; k++) {
     if (!sequencesToUpdate[k]) {
       continue;
     }

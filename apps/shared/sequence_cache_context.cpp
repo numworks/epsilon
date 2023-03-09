@@ -72,6 +72,8 @@ const Poincare::Expression SequenceCacheContext<T>::protectedExpressionForSymbol
 
 template <typename T>
 void SequenceCacheContext<T>::setValue(T value, int nameIndex, int depth) {
+  assert(0 <= nameIndex && nameIndex < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= depth && depth < SequenceStore::k_maxRecurrenceDepth);
   m_values[nameIndex][depth] = value;
 }
 

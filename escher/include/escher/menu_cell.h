@@ -109,6 +109,11 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   void setHighlighted(bool highlight) override;
   void setBackgroundColor(KDColor color);
 
+  bool enterOnEvent(Ion::Events::Event event) {
+    return event == Ion::Events::OK || event == Ion::Events::EXE ||
+           accessory()->enterOnEvent(event);
+  }
+
  protected:
   // View
   int numberOfSubviews() const override;

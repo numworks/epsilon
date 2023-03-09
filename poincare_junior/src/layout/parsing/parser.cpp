@@ -5,7 +5,7 @@
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/constructor.h>
 #include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/expression/expression_builder.h>
+#include <poincare_junior/src/expression/p_pusher.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 #include <stdlib.h>
@@ -433,15 +433,15 @@ void Parser::parseNumber(EditionReference &leftHandSide, Token::Type stoppingTyp
     } else {
       /* Build (integerDigits + fractionalDigits * 10^(-numberOfFractionalDigits))
        *           * 10^(exponent) */
-      leftHandSide = MULTIPLICATION(
-        ADDITION(
+      leftHandSide = P_MULT(
+        P_ADD(
           Integer::Push(integerDigits, base),
-          MULTIPLICATION(
+          P_MULT(
             Integer::Push(fractionalDigits, base),
-            POWER(EditionReference::Clone(10_e),
+            P_POW(EditionReference::Clone(10_e),
                   EditionReference::Push<BlockType::IntegerShort>(
                     static_cast<int8_t>(-smallE + decimalPoint + 1))))),
-        POWER(EditionReference::Clone(10_e), Integer::Push(exponent, base)));
+        P_POW(EditionReference::Clone(10_e), Integer::Push(exponent, base)));
 
       float value = Approximation::To<float>(leftHandSide);
       leftHandSide = leftHandSide.replaceTreeByTree(

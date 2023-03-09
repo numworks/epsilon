@@ -1,5 +1,5 @@
 #include <ion/unicode/utf8_helper.h>
-#include "aliases_list.h"
+#include "aliases.h"
 
 namespace PoincareJ {
 
@@ -22,9 +22,9 @@ static int CompareDecoderWithNullTerminatedString(UnicodeDecoder * decoder, cons
   return result;
 }
 
-int AliasesList::maxDifferenceWith(UnicodeDecoder * decoder) const {
+int Aliases::maxDifferenceWith(UnicodeDecoder * decoder) const {
   if (!hasMultipleAliases()) {
-    return CompareDecoderWithNullTerminatedString(decoder, m_formattedAliasesList);
+    return CompareDecoderWithNullTerminatedString(decoder, m_formattedAliases);
   }
   int maxValueOfComparison = 0;
   for (const char* aliasInList : *this) {
@@ -41,14 +41,14 @@ int AliasesList::maxDifferenceWith(UnicodeDecoder * decoder) const {
   return maxValueOfComparison;
 }
 
-const char* AliasesList::nextAlias(
-    const char* currentPositionInAliasesList) const {
+const char* Aliases::nextAlias(
+    const char* currentPositionInAliases) const {
   if (!hasMultipleAliases()) {
     return nullptr;
   }
-  assert(strlen(currentPositionInAliasesList) != 0);
+  assert(strlen(currentPositionInAliases) != 0);
   const char* beginningOfNextAlias =
-      currentPositionInAliasesList + strlen(currentPositionInAliasesList) + 1;
+      currentPositionInAliases + strlen(currentPositionInAliases) + 1;
   if (beginningOfNextAlias[0] == 0) {
     return nullptr;  // End of list
   }

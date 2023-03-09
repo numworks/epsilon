@@ -10,7 +10,7 @@ poincare_junior_src += $(omgpj_src)
 
 poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/algebraic.cpp \
-  expression/aliases_list.cpp \
+  expression/aliases.cpp \
   expression/approximation.cpp \
   expression/builtins.cpp \
   expression/comparison.cpp \

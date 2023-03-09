@@ -1,5 +1,5 @@
-#ifndef POINCARE_JUNIOR_EXPRESSION_ALIASES_LIST_H
-#define POINCARE_JUNIOR_EXPRESSION_ALIASES_LIST_H
+#ifndef POINCARE_JUNIOR_EXPRESSION_ALIASES_H
+#define POINCARE_JUNIOR_EXPRESSION_ALIASES_H
 
 #include <assert.h>
 #include <string.h>
@@ -9,7 +9,7 @@
  * and constants.
  *
  * === SIMPLE NAMES WITHOUT ALIAS ===
- * If a name has no alias, the AliasesList object is equivalent to the string of
+ * If a name has no alias, the Aliases object is equivalent to the string of
  * the name.
  *
  * === ALIASES LIST SYNTAX ===
@@ -31,20 +31,20 @@
 
 namespace PoincareJ {
 
-class AliasesList {
+class Aliases {
  public:
-  constexpr AliasesList(const char* formattedAliasesList)
-      : m_formattedAliasesList(formattedAliasesList) {}
+  constexpr Aliases(const char* formattedAliases)
+      : m_formattedAliases(formattedAliases) {}
 
   constexpr const char* mainAlias() const {
-    return m_formattedAliasesList + hasMultipleAliases();
+    return m_formattedAliases + hasMultipleAliases();
   }
 
   bool contains(UnicodeDecoder * decoder) const {
     return maxDifferenceWith(decoder) == 0;
   }
-  bool isEquivalentTo(AliasesList otherList) {
-    return strcmp(mainAlias(), otherList.mainAlias()) == 0;
+  bool isEquivalentTo(Aliases other) {
+    return strcmp(mainAlias(), other.mainAlias()) == 0;
   }
 
   /* Return 0 if name is alias of this,
@@ -73,44 +73,24 @@ class AliasesList {
     const char* m_currentAlias;
   };
 
-  Iterator<AliasesList> begin() const {
-    return Iterator<AliasesList>(*this, mainAlias());
+  Iterator<Aliases> begin() const {
+    return Iterator<Aliases>(*this, mainAlias());
   }
-  Iterator<AliasesList> end() const {
-    return Iterator<AliasesList>(*this, nullptr);
+  Iterator<Aliases> end() const {
+    return Iterator<Aliases>(*this, nullptr);
   }
 
  private:
   constexpr static char k_listStart = '\01';
 
   constexpr bool hasMultipleAliases() const {
-    return m_formattedAliasesList[0] == k_listStart;
+    return m_formattedAliases[0] == k_listStart;
   }
   // Returns nullptr if there is no next name
   const char* nextAlias(const char* currentPositionInAliasesList) const;
 
-  const char* m_formattedAliasesList;
+  const char* m_formattedAliases;
 };
-
-namespace AliasesLists {
-// Special identifiers
-constexpr static AliasesList k_ansAliases = "\01Ans\00ans\00";
-constexpr static AliasesList k_trueAliases = "\01True\00true\00";
-constexpr static AliasesList k_falseAliases = "\01False\00false\00";
-constexpr static AliasesList k_infinityAliases = "\01∞\00inf\00";
-// Constants
-constexpr static AliasesList k_piAliases = "\01π\00pi\00";
-// Symbols
-constexpr static AliasesList k_thetaAliases = "\01θ\00theta\00";
-// Units
-constexpr static AliasesList k_litersAliases = "\01L\00l\00";
-// Inverse trigo
-constexpr static AliasesList k_acosAliases = "\01arccos\00acos\00";
-constexpr static AliasesList k_asinAliases = "\01arcsin\00asin\00";
-constexpr static AliasesList k_atanAliases = "\01arctan\00atan\00";
-// Other functions
-constexpr static AliasesList k_squareRootAliases = "\01√\00sqrt\00";
-}  // namespace AliasesLists
 
 }  // namespace PoincareJ
 #endif

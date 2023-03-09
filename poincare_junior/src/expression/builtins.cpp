@@ -10,13 +10,13 @@ constexpr static Builtin s_builtins[] = {
   { BlockType::Cosine, "cos" },
   { BlockType::Sine, "sin" },
   { BlockType::Tangent, "tan" },
-  { BlockType::ArcCosine, AliasesLists::k_acosAliases },
-  { BlockType::ArcSine, AliasesLists::k_asinAliases },
-  { BlockType::ArcTangent, AliasesLists::k_atanAliases },
+  { BlockType::ArcCosine, BuiltinsAliases::k_acosAliases },
+  { BlockType::ArcSine, BuiltinsAliases::k_asinAliases },
+  { BlockType::ArcTangent, BuiltinsAliases::k_atanAliases },
   { BlockType::Logarithm, "log" },
 };
 
-AliasesList Builtins::Name(BlockType type) {
+Aliases Builtins::Name(BlockType type) {
   for (auto &[block, aliases] : s_builtins) {
     if (block == type) {
       return aliases;
@@ -25,7 +25,7 @@ AliasesList Builtins::Name(BlockType type) {
   assert(false);
 }
 
-AliasesList Builtins::Name(const Node node) {
+Aliases Builtins::Name(const Node node) {
   return Name(node.type());
 }
 

@@ -2,31 +2,51 @@
 #define POINCARE_EXPRESSION_BUILTINS_H
 
 #include <poincare_junior/src/memory/edition_reference.h>
-#include "aliases_list.h"
+#include "aliases.h"
 
 namespace PoincareJ {
 
-class Builtin : public std::pair<BlockType, AliasesList> {
+class Builtin : public std::pair<BlockType, Aliases> {
 public:
   using pair::pair;
   const BlockType blockType() const {
     return first;
   }
-  const AliasesList * aliasesList() const {
+  const Aliases * aliases() const {
     return &second;
   }
 };
 
 class Builtins {
 public:
-  static AliasesList Name(BlockType type);
-  static AliasesList Name(const Node block);
+  static Aliases Name(BlockType type);
+  static Aliases Name(const Node block);
   static bool HasReservedFunction(UnicodeDecoder * name);
   static const Builtin * GetReservedFunction(UnicodeDecoder * name);
   static uint8_t MinNumberOfParameters(BlockType type);
   static uint8_t MaxNumberOfParameters(BlockType type);
   static EditionReference Build(BlockType type, EditionReference parameters);
 };
+
+namespace BuiltinsAliases {
+// Special identifiers
+constexpr static Aliases k_ansAliases = "\01Ans\00ans\00";
+constexpr static Aliases k_trueAliases = "\01True\00true\00";
+constexpr static Aliases k_falseAliases = "\01False\00false\00";
+constexpr static Aliases k_infinityAliases = "\01∞\00inf\00";
+// Constants
+constexpr static Aliases k_piAliases = "\01π\00pi\00";
+// Symbols
+constexpr static Aliases k_thetaAliases = "\01θ\00theta\00";
+// Units
+constexpr static Aliases k_litersAliases = "\01L\00l\00";
+// Inverse trigo
+constexpr static Aliases k_acosAliases = "\01arccos\00acos\00";
+constexpr static Aliases k_asinAliases = "\01arcsin\00asin\00";
+constexpr static Aliases k_atanAliases = "\01arctan\00atan\00";
+// Other functions
+constexpr static Aliases k_squareRootAliases = "\01√\00sqrt\00";
+}  // namespace AliasesLists
 
 }
 

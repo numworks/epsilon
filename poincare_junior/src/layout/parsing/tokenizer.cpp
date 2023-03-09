@@ -2,7 +2,7 @@
 // #include "helper.h"
 // #include "parser.h"
 #include <ion/unicode/utf8_helper.h>
-#include <poincare_junior/src/expression/aliases_list.h>
+#include <poincare_junior/src/expression/aliases.h>
 #include <poincare_junior/src/expression/builtins.h>
 
 namespace PoincareJ {
@@ -383,7 +383,7 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t * length) const {
     // return Token::Type::Constant;
   // }
   RackLayoutDecoder subString(m_decoder.mainLayout(), string, string + *length);
-  if (AliasesLists::k_thetaAliases.contains(&subString)) {
+  if (BuiltinsAliases::k_thetaAliases.contains(&subString)) {
     return Token::Type::CustomIdentifier;
   }
   Token::Type logicalOperatorType;

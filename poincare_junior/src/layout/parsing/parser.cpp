@@ -847,7 +847,7 @@ void Parser::parseReservedFunction(EditionReference &leftHandSide,
 void Parser::privateParseReservedFunction(
     EditionReference &leftHandSide,
     const Builtin * builtin) {
-  const AliasesList * aliasesList = builtin->aliasesList();
+  const Aliases * aliasesList = builtin->aliases();
   /*if (aliasesList.contains("log") &&
       popTokenIfType(Token::Type::LeftSystemBrace)) {
     // Special case for the log function (e.g. "log\x14{2\x14}(8)")

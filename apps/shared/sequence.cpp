@@ -218,8 +218,10 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
   }
   SequenceCacheContext<T> ctx = SequenceCacheContext<T>(sqctx, sequenceIndex);
 
-  // Hold values = {{u(n), u(n-1), u(n-2)}, {v(n), v(n-1), v(n-2)}, {w(n),
-  // w(n-1), w(n-2)}}
+  /* Hold values = {{u(n), u(n-1), u(n-2)}, {v(n), v(n-1), v(n-2)}, {w(n),
+   * w(n-1), w(n-2)}}
+   * WARNING : values must be ordered by name index (u then v then w) because
+   * SequenceCacheContext needs it. */
   T values[SequenceStore::k_maxNumberOfSequences]
           [SequenceStore::k_maxRecurrenceDepth + 1];
   /* In case we step only one sequence (sequenceIndex != -1), we use independant

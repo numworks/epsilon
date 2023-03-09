@@ -69,9 +69,8 @@ const Poincare::Expression SequenceCacheContext<T>::protectedExpressionForSymbol
 }
 
 template <typename T>
-void SequenceCacheContext<T>::setValueForSymbol(
-    T value, const Poincare::Symbol &symbol) {
-  m_values[nameIndexForSymbol(symbol)][rankIndexForSymbol(symbol)] = value;
+void SequenceCacheContext<T>::setValue(T value, int nameIndex, int depth) {
+  m_values[nameIndex][depth] = value;
 }
 
 template <typename T>
@@ -85,20 +84,6 @@ int SequenceCacheContext<T>::nameIndexForSymbol(
           SequenceStore::k_sequenceNames[SequenceStore::k_maxNumberOfSequences -
                                          1][0]);
   return name - 'u';
-}
-
-template <typename T>
-int SequenceCacheContext<T>::rankIndexForSymbol(
-    const Poincare::Symbol &symbol) {
-  // u(n) or u(n+1)
-  assert(strcmp(symbol.name() + 1, "(n)") == 0 ||
-         strcmp(symbol.name() + 1, "(n+1)") == 0);
-  if (symbol.name()[3] == ')') {
-    // (n)
-    return 0;
-  }
-  // (n+1)
-  return 1;
 }
 
 template class SequenceCacheContext<float>;

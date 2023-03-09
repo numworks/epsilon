@@ -14,14 +14,13 @@ class SequenceCacheContext : public Poincare::ContextWithParent {
  public:
   SequenceCacheContext(SequenceContext* sequenceContext,
                        int forbiddenSequenceIndex);
-  void setValueForSymbol(T value, const Poincare::Symbol& symbol);
+  void setValue(T value, int nameIndex, int depth);
 
  private:
   const Poincare::Expression protectedExpressionForSymbolAbstract(
       const Poincare::SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override;
   int nameIndexForSymbol(const Poincare::Symbol& symbol);
-  int rankIndexForSymbol(const Poincare::Symbol& symbol);
 
   // m_values = {{u(n), u(n+1)}, {v(n), v(n+1)}, {w(n), w(n+1)}}
   T m_values[SequenceStore::k_maxNumberOfSequences]

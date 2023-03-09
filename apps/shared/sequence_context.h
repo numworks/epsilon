@@ -21,6 +21,7 @@ class TemplatedSequenceContext {
   void step(SequenceContext* sqctx, int sequenceIndex = -1);
 
   // Common rank
+  int commonRank() const { return m_commonRank; }
   T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) const;
 
   // Independant rank
@@ -109,6 +110,11 @@ class SequenceContext : public Poincare::ContextWithParent {
   void tidyDownstreamPoolFrom(char* treePoolCursor) override;
 
   // Common rank
+
+  template <typename T>
+  int commonRank() {
+    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())->commonRank();
+  }
 
   template <typename T>
   T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) {

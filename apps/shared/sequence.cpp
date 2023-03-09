@@ -208,8 +208,11 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
 }
 
 template <typename T>
-T Sequence::approximateToNextRank(int n, SequenceContext *sqctx,
+T Sequence::approximateToNextRank(SequenceContext *sqctx,
                                   int sequenceIndex) const {
+  int n = sequenceIndex == -1
+              ? sqctx->commonRank<T>()
+              : sqctx->independentSequenceRank<T>(sequenceIndex);
   if (n < initialRank() || n < 0) {
     return NAN;
   }
@@ -467,9 +470,9 @@ template double Sequence::templatedApproximateAtAbscissa<double>(
     double, SequenceContext *) const;
 template float Sequence::templatedApproximateAtAbscissa<float>(
     float, SequenceContext *) const;
-template double Sequence::approximateToNextRank<double>(int, SequenceContext *,
+template double Sequence::approximateToNextRank<double>(SequenceContext *,
                                                         int) const;
-template float Sequence::approximateToNextRank<float>(int, SequenceContext *,
+template float Sequence::approximateToNextRank<float>(SequenceContext *,
                                                       int) const;
 template double Sequence::valueAtRank<double>(int, SequenceContext *);
 template float Sequence::valueAtRank<float>(int, SequenceContext *);

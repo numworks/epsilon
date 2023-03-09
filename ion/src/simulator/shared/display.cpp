@@ -30,14 +30,8 @@ void shutdown() {
 }
 
 void draw(SDL_Renderer* renderer, SDL_Rect* rect) {
-  int pitch = 0;
-  void* pixels = nullptr;
-  SDL_LockTexture(sFramebufferTexture, nullptr, &pixels, &pitch);
-  assert(pitch == sizeof(KDColor) * Ion::Display::Width);
-  memcpy(pixels, Framebuffer::address(),
-         sizeof(KDColor) * Ion::Display::Width * Ion::Display::Height);
-  SDL_UnlockTexture(sFramebufferTexture);
-
+  SDL_UpdateTexture(sFramebufferTexture, nullptr, Framebuffer::address(),
+                    sizeof(KDColor) * Ion::Display::Width);
   SDL_RenderCopy(renderer, sFramebufferTexture, nullptr, rect);
 }
 

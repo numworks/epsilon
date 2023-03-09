@@ -103,22 +103,13 @@ void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
     if (!s->isDefined()) {
       continue;
     }
-    int index = stepAllSequences
-                    ? SequenceStore::sequenceIndexForName(s->fullName()[0])
-                    : 0;
+    int index = SequenceStore::sequenceIndexForName(s->fullName()[0]);
     sequencesToUpdate[index] = s;
   }
 
   // We approximate the value of the next rank for each sequence we want to
   // update
-  int rank, usedSize;
-  if (stepAllSequences) {
-    rank = m_commonRank;
-    usedSize = SequenceStore::k_maxNumberOfSequences;
-  } else {
-    rank = m_independentRanks[sequenceIndex];
-    usedSize = 1;
-  }
+  int rank = stepAllSequences ? m_commonRank : m_independentRanks[sequenceIndex];
   /* In case stop is SequenceStore::k_maxNumberOfSequences, we approximate u, v
    * and w at the new rank. We have to evaluate all sequences
    * SequenceStore::k_maxNumberOfSequences times in case the evaluations depend
@@ -127,15 +118,17 @@ void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
    * we evaluate v and u can only be known at the third iteration. In case stop
    * is 1, there is only one sequence we want to update. Moreover, the call to
    * approximateToNextRank will handle potential dependencies. */
-  for (int k = 0; k < usedSize; k++) {
+  for (int k = 0; k < SequenceStore::k_maxNumberOfSequences; k++) {
+    if (!sequencesToUpdate[k]) {
+      continue;
+    }
     for (int sequence = start; sequence < stop; sequence++) {
       T *sequencePointer =
           sequencesRankValues + sequence * k_numberOfValuesInCachePerSequence;
       if (std::isnan(*sequencePointer)) {
-        int j = stepAllSequences ? sequence : 0;
         *sequencePointer =
-            sequencesToUpdate[j]
-                ? sequencesToUpdate[j]->template approximateToNextRank<T>(
+            sequencesToUpdate[sequence]
+                ? sequencesToUpdate[sequence]->template approximateToNextRank<T>(
                       rank, sqctx, sequenceIndex)
                 : NAN;
       }

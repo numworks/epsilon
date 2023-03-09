@@ -839,7 +839,7 @@ void Parser::parseReservedFunction(EditionReference &leftHandSide,
                                    Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
   RackLayoutDecoder decoder = TokenToDecoder(m_currentToken);
-  const Builtin * builtin = Builtins::GetReservedFunction(&decoder);
+  const Builtin * builtin = Builtin::GetReservedFunction(&decoder);
   privateParseReservedFunction(leftHandSide, builtin);
   isThereImplicitOperator();
 }
@@ -952,17 +952,17 @@ void Parser::privateParseReservedFunction(
     // }
   // }
 
-  if (numberOfParameters < Builtins::MinNumberOfParameters(builtin->blockType())) {
+  if (numberOfParameters < Builtin::MinNumberOfParameters(builtin->blockType())) {
     m_status = Status::Error;  // Too few parameters provided.
     return;
   }
 
-  if (numberOfParameters > Builtins::MaxNumberOfParameters(builtin->blockType())) {
+  if (numberOfParameters > Builtin::MaxNumberOfParameters(builtin->blockType())) {
     m_status = Status::Error;  // Too many parameters provided.
     return;
   }
 
-  leftHandSide = Builtins::Build(builtin->blockType(), parameters);
+  leftHandSide = Builtin::Build(builtin->blockType(), parameters);
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Incorrect parameter type or too few args
     return;

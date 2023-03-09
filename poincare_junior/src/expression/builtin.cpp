@@ -1,4 +1,4 @@
-#include "builtins.h"
+#include "builtin.h"
 #include <poincare_junior/src/memory/tree_constructor.h>
 
 namespace PoincareJ {
@@ -16,7 +16,7 @@ constexpr static Builtin s_builtins[] = {
   { BlockType::Logarithm, "log" },
 };
 
-Aliases Builtins::Name(BlockType type) {
+Aliases Builtin::Name(BlockType type) {
   for (auto &[block, aliases] : s_builtins) {
     if (block == type) {
       return aliases;
@@ -25,11 +25,7 @@ Aliases Builtins::Name(BlockType type) {
   assert(false);
 }
 
-Aliases Builtins::Name(const Node node) {
-  return Name(node.type());
-}
-
-bool Builtins::HasReservedFunction(UnicodeDecoder * name) {
+bool Builtin::HasReservedFunction(UnicodeDecoder * name) {
   for (auto [block, aliases] : s_builtins) {
     if (aliases.contains(name)) {
       return true;
@@ -38,7 +34,7 @@ bool Builtins::HasReservedFunction(UnicodeDecoder * name) {
   return false;
 }
 
-const Builtin * Builtins::GetReservedFunction(UnicodeDecoder * name) {
+const Builtin * Builtin::GetReservedFunction(UnicodeDecoder * name) {
   for (const Builtin &builtin : s_builtins) {
     if (builtin.second.contains(name)) {
       return &builtin;
@@ -47,15 +43,15 @@ const Builtin * Builtins::GetReservedFunction(UnicodeDecoder * name) {
   assert(false);
 }
 
-uint8_t Builtins::MinNumberOfParameters(BlockType type) {
+uint8_t Builtin::MinNumberOfParameters(BlockType type) {
   return 1;
 }
 
-uint8_t Builtins::MaxNumberOfParameters(BlockType type) {
+uint8_t Builtin::MaxNumberOfParameters(BlockType type) {
   return 1;
 }
 
-EditionReference Builtins::Build(BlockType type, EditionReference parameters) {
+EditionReference Builtin::Build(BlockType type, EditionReference parameters) {
   Node header;
   switch (type) {
   case BlockType::Cosine:

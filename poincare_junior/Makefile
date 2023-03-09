@@ -12,7 +12,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/algebraic.cpp \
   expression/aliases.cpp \
   expression/approximation.cpp \
-  expression/builtins.cpp \
+  expression/builtin.cpp \
   expression/comparison.cpp \
   expression/integer.cpp \
   expression/polynomial.cpp \

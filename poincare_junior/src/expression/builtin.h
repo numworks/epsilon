@@ -15,12 +15,8 @@ public:
   const Aliases * aliases() const {
     return &second;
   }
-};
-
-class Builtins {
-public:
   static Aliases Name(BlockType type);
-  static Aliases Name(const Node block);
+  static Aliases Name(const Node node) { return Name(node.type()); }
   static bool HasReservedFunction(UnicodeDecoder * name);
   static const Builtin * GetReservedFunction(UnicodeDecoder * name);
   static uint8_t MinNumberOfParameters(BlockType type);

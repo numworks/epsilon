@@ -10,7 +10,7 @@
 // #include "helper.h"
 #include "parsing_context.h"
 #include "tokenizer.h"
-#include <poincare_junior/src/expression/builtins.h>
+#include <poincare_junior/src/expression/builtin.h>
 
 namespace PoincareJ {
 

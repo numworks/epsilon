@@ -3,7 +3,7 @@
 // #include "parser.h"
 #include <ion/unicode/utf8_helper.h>
 #include <poincare_junior/src/expression/aliases.h>
-#include <poincare_junior/src/expression/builtins.h>
+#include <poincare_junior/src/expression/builtin.h>
 
 namespace PoincareJ {
 
@@ -347,7 +347,7 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(Node layout, size_
     return false;
   }
   RackLayoutDecoder subString(layout, string, string + identifierLength);
-  if (Builtins::Name(BlockType::Logarithm).contains(&subString)) {
+  if (Builtin::Name(BlockType::Logarithm).contains(&subString)) {
     *returnType = Token::Type::ReservedFunction;
     *length = identifierLength;
     return true;
@@ -404,7 +404,7 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t * length) const {
      * (3->min is not allowed, just like 3->cos) */
     // return *(string + *length) == '(' ? Token::Type::ReservedFunction : Token::Type::Unit;
   // }
-  if (Builtins::HasReservedFunction(&subString)) {
+  if (Builtin::HasReservedFunction(&subString)) {
     return Token::Type::ReservedFunction;
   }
   /* When parsing for unit conversion, the identifier "m" should always

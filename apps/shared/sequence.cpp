@@ -261,7 +261,7 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
   switch (type()) {
     case Type::Explicit: {
       for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-        // Set in context u(n) = u(n) for all sequences
+        // Store in context value of u(n) for "u(n)"
         ctx.setValue(values[i][0], i, 0);
       }
       x = static_cast<T>(n);
@@ -275,9 +275,10 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
         break;
       }
       for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-        // Set in context u(n) = u(n-1) and u(n+1) = u(n) for all sequences
-        ctx.setValue(values[i][0], i, 1);
+        // Store in context value of u(n-1) for "u(n)"
         ctx.setValue(values[i][1], i, 0);
+        // Store in context value of u(n) for "u(n+1)"
+        ctx.setValue(values[i][0], i, 1);
       }
       x = static_cast<T>(n - 1);
       e = expressionReduced(sqctx);
@@ -296,9 +297,10 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
         break;
       }
       for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-        // Set in context u(n) = u(n-2) and u(n+1) = u(n-1) for all sequences
-        ctx.setValue(values[i][1], i, 1);
+        // Store in context value of u(n-2) for "u(n)"
         ctx.setValue(values[i][2], i, 0);
+        // Store in context value of u(n-1) for "u(n+1)"
+        ctx.setValue(values[i][1], i, 1);
       }
       x = static_cast<T>(n - 2);
       e = expressionReduced(sqctx);

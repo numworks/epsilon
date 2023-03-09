@@ -24,17 +24,18 @@ template <typename T>
 const Poincare::Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
     const Poincare::SymbolAbstract &symbol, bool clone,
     ContextWithParent *lastDescendantContext) {
-  // [u|v|w](n(+1)?)
   if (symbol.type() == Poincare::ExpressionNode::Type::Sequence) {
     T result = NAN;
     int index = nameIndexForSymbol(const_cast<Poincare::Symbol &>(
         static_cast<const Poincare::Symbol &>(symbol)));
     Poincare::Expression rank = symbol.childAtIndex(0).clone();
     if (rank.isIdenticalTo(Poincare::Symbol::Builder(UCodePointUnknown))) {
+      // rank = n
       result = m_values[index][0];
     } else if (rank.isIdenticalTo(Poincare::Addition::Builder(
                    Poincare::Symbol::Builder(UCodePointUnknown),
                    Poincare::Rational::Builder(1)))) {
+      // rank = n+1
       result = m_values[index][1];
     }
     /* If the symbol was not in the two previous ranks, we try to approximate

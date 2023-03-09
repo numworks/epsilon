@@ -103,6 +103,8 @@ void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
     if (!s->isDefined()) {
       continue;
     }
+    /* WARNING : values must be ordered by name index (u then v then w) because
+     * approximateToNextRank needs it. */
     int index = SequenceStore::sequenceIndexForName(s->fullName()[0]);
     sequencesToUpdate[index] = s;
   }

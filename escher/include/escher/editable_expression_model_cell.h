@@ -9,9 +9,9 @@ namespace Escher {
 // Copy-pasted from EvenOddExpressionCell waiting for templatisation
 
 /* This cell is the editable counterpart of EvenOddExpressionCell, except that
- * it doesn't need to be editable since the background is always white.
- * Not be confused with EditableExpressionCell that is compatible with toolbox
- * like menus and not expression models lists. */
+ * it doesn't need to be even-odd since the background is always white.
+ * Not be confused with EditableExpressionCell that is compatible with
+ * toolbox-like menus and not expression models lists. */
 
 class EditableExpressionModelCell : public HighlightCell {
  public:

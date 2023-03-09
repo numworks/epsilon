@@ -10,8 +10,6 @@
 #include "sequence.h"
 #include "sequence_store.h"
 
-using namespace Poincare;
-
 namespace Shared {
 
 template <typename T>
@@ -23,19 +21,19 @@ SequenceCacheContext<T>::SequenceCacheContext(SequenceContext *sequenceContext,
       m_forbiddenSequenceIndex(forbiddenSequenceIndex) {}
 
 template <typename T>
-const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
+const Poincare::Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
     const Poincare::SymbolAbstract &symbol, bool clone,
     ContextWithParent *lastDescendantContext) {
   // [u|v|w](n(+1)?)
-  if (symbol.type() == ExpressionNode::Type::Sequence) {
+  if (symbol.type() == Poincare::ExpressionNode::Type::Sequence) {
     T result = NAN;
     int index = nameIndexForSymbol(
-        const_cast<Symbol &>(static_cast<const Symbol &>(symbol)));
-    Expression rank = symbol.childAtIndex(0).clone();
-    if (rank.isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
+        const_cast<Poincare::Symbol &>(static_cast<const Poincare::Symbol &>(symbol)));
+    Poincare::Expression rank = symbol.childAtIndex(0).clone();
+    if (rank.isIdenticalTo(Poincare::Symbol::Builder(UCodePointUnknown))) {
       result = m_values[index][0];
-    } else if (rank.isIdenticalTo(Addition::Builder(
-                   Symbol::Builder(UCodePointUnknown), Rational::Builder(1)))) {
+    } else if (rank.isIdenticalTo(Poincare::Addition::Builder(
+                   Poincare::Symbol::Builder(UCodePointUnknown), Poincare::Rational::Builder(1)))) {
       result = m_values[index][1];
     }
     /* If the symbol was not in the two previous ranks, we try to approximate
@@ -64,7 +62,7 @@ const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
         }
       }
     }
-    return Float<T>::Builder(result);
+    return Poincare::Float<T>::Builder(result);
   }
   return ContextWithParent::protectedExpressionForSymbolAbstract(
       symbol, clone, lastDescendantContext);

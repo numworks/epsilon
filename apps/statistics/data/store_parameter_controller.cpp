@@ -16,12 +16,6 @@ StoreParameterController::StoreParameterController(
       I18n::Message::CumulatedFrequencyColumnToggleTitle);
   m_displayCumulatedFrequencyCell.subLabel()->setMessage(
       I18n::Message::CumulatedFrequencyColumnToggleDescription);
-  // TODO: DefaultInitialization
-  m_displayCumulatedFrequencyCell.subLabel()->setFont(KDFont::Size::Small);
-  m_displayCumulatedFrequencyCell.subLabel()->setAlignment(
-      KDContext::k_alignLeft, KDContext::k_alignCenter);
-  m_displayCumulatedFrequencyCell.subLabel()->setTextColor(
-      Escher::Palette::GrayDark);
 }
 
 void StoreParameterController::initializeColumnParameters() {

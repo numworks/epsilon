@@ -22,11 +22,6 @@ StoreParameterController::StoreParameterController(
       I18n::Message::ActivateDeactivateStoreParamTitle);
   m_hideCell.subLabel()->setMessage(
       I18n::Message::ActivateDeactivateStoreParamDescription);
-  // TODO: DefaultInitialization
-  m_hideCell.subLabel()->setFont(KDFont::Size::Small);
-  m_hideCell.subLabel()->setAlignment(KDContext::k_alignLeft,
-                                      KDContext::k_alignCenter);
-  m_hideCell.subLabel()->setTextColor(Palette::GrayDark);
 }
 
 void StoreParameterController::initializeColumnParameters() {

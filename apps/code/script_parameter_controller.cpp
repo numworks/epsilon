@@ -19,11 +19,6 @@ ScriptParameterController::ScriptParameterController(
   m_autoImportScript.label()->setMessage(I18n::Message::AutoImportScript);
   m_autoImportScript.subLabel()->setMessage(
       I18n::Message::AutoImportScriptSubLabel);
-  // TODO: DefaultInitialization
-  m_autoImportScript.subLabel()->setFont(KDFont::Size::Small);
-  m_autoImportScript.subLabel()->setAlignment(KDContext::k_alignLeft,
-                                              KDContext::k_alignCenter);
-  m_autoImportScript.subLabel()->setTextColor(Palette::GrayDark);
 }
 
 void ScriptParameterController::setScript(Script script) { m_script = script; }

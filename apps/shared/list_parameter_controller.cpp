@@ -20,11 +20,6 @@ ListParameterController::ListParameterController(
       I18n::Message::ActivateDeactivateListParamTitle);
   m_enableCell.subLabel()->setMessage(
       I18n::Message::ActivateDeactivateListParamDescription);
-  // TODO: DefaultInitialization
-  m_enableCell.subLabel()->setFont(KDFont::Size::Small);
-  m_enableCell.subLabel()->setAlignment(KDContext::k_alignLeft,
-                                        KDContext::k_alignCenter);
-  m_enableCell.subLabel()->setTextColor(Palette::GrayDark);
 }
 
 void ListParameterController::viewWillAppear() {

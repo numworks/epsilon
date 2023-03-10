@@ -16,7 +16,7 @@ LocalizationController::ContentView::ContentView(
     SelectableListViewDataSource *dataSource)
     : m_controller(controller),
       m_selectableListView(controller, controller, dataSource),
-      m_countryTitleMessage(KDFont::Size::Large, I18n::Message::Country),
+      m_countryTitleMessage(I18n::Message::Country),
       m_borderView(Palette::GrayBright) {
   m_countryTitleMessage.setBackgroundColor(Palette::WallScreen);
   m_countryTitleMessage.setAlignment(KDContext::k_alignCenter,

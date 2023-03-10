@@ -3,9 +3,8 @@
 namespace Elements {
 
 PhysicalQuantityCell::PhysicalQuantityCell()
-    : m_subLabelView(KDFont::Size::Small, I18n::Message::Default,
-                     KDContext::k_alignLeft, KDContext::k_alignCenter,
-                     Escher::Palette::GrayDark, KDColorWhite) {}
+    : m_subLabelView(I18n::Message::Default,
+                     Escher::CellWidget::Type::SubLabel) {}
 
 void PhysicalQuantityCell::setLayouts(Poincare::Layout label,
                                       Poincare::Layout accessory) {

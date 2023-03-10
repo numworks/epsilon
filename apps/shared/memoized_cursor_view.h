@@ -13,7 +13,7 @@ class MemoizedCursorView : public CursorView {
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void setColor(KDColor color) override;
-  void setCursorFrame(KDRect frame, bool force) override;
+  void setCursorFrame(View* parent, KDRect frame, bool force) override;
   void resetMemoization() const { m_underneathPixelBufferLoaded = false; }
   void redrawCursor(KDRect rect);
 

@@ -36,7 +36,7 @@ public:
   }
 
 #if POINCARE_MEMORY_TREE_LOG
-  __attribute__((__used__)) void log() const { return log(std::cout); }
+  __attribute__((__used__)) void log() const { log(std::cout); std::cout << "\n"; }
   void log(std::ostream & stream, bool recursive = true, int indentation = 0, bool verbose = true) const;
   void logName(std::ostream & stream) const;
   void logAttributes(std::ostream & stream) const;

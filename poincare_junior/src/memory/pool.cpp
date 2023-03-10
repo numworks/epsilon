@@ -5,10 +5,11 @@ namespace PoincareJ {
 size_t Pool::numberOfTrees() const {
   const TypeBlock * currentBlock = firstBlock();
   size_t result = 0;
-  while (currentBlock != lastBlock()) {
+  while (currentBlock < lastBlock()) {
     currentBlock = Node(currentBlock).nextTree().block();
     result++;
   }
+  assert(currentBlock == lastBlock());
   return result;
 }
 

@@ -21,13 +21,13 @@ QUIZ_CASE(pcj_block) {
   assert_pools_block_sizes_are(0, 6);
 
   // Block navigation
-  assert(*firstBlock->nextNth(5) == *firstBlock);
-  assert(*firstBlock->next() != *firstBlock);
-  assert(*firstBlock->next() == OneBlock);
-  assert(static_cast<uint8_t>(*firstBlock->nextNth(3)) == 4);
-  assert(static_cast<int8_t>(*firstBlock->nextNth(4)) == -4);
-  assert(*lastBlock->previous() == ValueBlock(-4));
-  assert(*lastBlock->previousNth(2) == ValueBlock(4));
+  quiz_assert(*firstBlock->nextNth(5) == *firstBlock);
+  quiz_assert(*firstBlock->next() != *firstBlock);
+  quiz_assert(*firstBlock->next() == OneBlock);
+  quiz_assert(static_cast<uint8_t>(*firstBlock->nextNth(3)) == 4);
+  quiz_assert(static_cast<int8_t>(*firstBlock->nextNth(4)) == -4);
+  quiz_assert(*lastBlock->previous() == ValueBlock(-4));
+  quiz_assert(*lastBlock->previousNth(2) == ValueBlock(4));
 }
 
 QUIZ_CASE(pcj_type_block) {
@@ -80,19 +80,19 @@ QUIZ_CASE(pcj_type_block) {
   for (std::pair<BlockType, TypeBlockProperties> test : blockTypeTests) {
     TypeBlock block = TypeBlock(std::get<BlockType>(test));
     TypeBlockProperties properties = std::get<TypeBlockProperties>(test);
-    assert(block.isNAry() == properties.nAry);
-    assert(block.isExpression() == properties.expression);
-    assert(block.isLayout() == properties.layout);
-    assert(block.isInteger() == properties.integer);
-    assert(block.isRational() == properties.rational);
-    assert(block.isNumber() == properties.number);
-    assert(block.isUserNamed() == properties.userNamed);
+    quiz_assert(block.isNAry() == properties.nAry);
+    quiz_assert(block.isExpression() == properties.expression);
+    quiz_assert(block.isLayout() == properties.layout);
+    quiz_assert(block.isInteger() == properties.integer);
+    quiz_assert(block.isRational() == properties.rational);
+    quiz_assert(block.isNumber() == properties.number);
+    quiz_assert(block.isUserNamed() == properties.userNamed);
   }
 }
 
 void assert_tree_equals_blocks(Node node, std::initializer_list<Block> blocks) {
   assert_node_equals_blocks(node, blocks);
-  assert(blocks.size() == node.treeSize());
+  quiz_assert(blocks.size() == node.treeSize());
 }
 
 QUIZ_CASE(pcj_constexpr_tree_constructor) {
@@ -237,43 +237,43 @@ QUIZ_CASE(pcj_node) {
   // operator==
   Node node0 = 42_e;
   Node node1 = EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(42));
-  assert(node0 != node1 && *node0.block() == *node1.block());
+  quiz_assert(node0 != node1 && *node0.block() == *node1.block());
   Node node2(editionPool->firstBlock());
-  assert(node2 == node1);
+  quiz_assert(node2 == node1);
 
   // Node navigation
   constexpr Tree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   constexpr Tree e2 = KPow(5_e, 6_e);
   Node n1 = EditionReference(e1);
   Node n2 = EditionReference(e2);
-  assert(n1.treeSize() == 14); // TODO: Magic Number
+  quiz_assert(n1.treeSize() == 14); // TODO: Magic Number
   assert_trees_are_equal(n1.nextNode(), KAdd(1_e, 2_e));
   assert_trees_are_equal(n1.nextTree(), e2);
   assert_trees_are_equal(n2.previousNode(), 4_e);
   assert_trees_are_equal(n2.previousTree(), e1);
   assert_trees_are_equal(n1.nextNode().nextNode().parent(), n1.nextNode());
   assert_trees_are_equal(n1.nextNode().nextNode().root(), n1);
-  assert(n1.numberOfDescendants(false) == 5);
-  assert(n1.numberOfDescendants(true) == 6);
+  quiz_assert(n1.numberOfDescendants(false) == 5);
+  quiz_assert(n1.numberOfDescendants(true) == 6);
   assert_trees_are_equal(n1.childAtIndex(0), n1.nextNode());
   assert_trees_are_equal(n1.childAtIndex(1), n1.nextNode().nextNode().nextNode().nextNode());
-  assert(n1.indexOfChild(n1.childAtIndex(1)) == 1);
-  assert(n1.childAtIndex(0).indexInParent() == 0);
-  assert(!n1.hasChild(e2));
-  assert(n1.hasChild(n1.childAtIndex(2)));
-  assert(!n1.hasSibling(n1.childAtIndex(2)));
-  assert(n1.nextNode().hasSibling(n1.childAtIndex(2)));
-  assert(n1.commonAncestorWith(n1) == n1);
-  assert(n1.commonAncestorWith(n1.childAtIndex(0).childAtIndex(1)) == n1);
-  assert(n1.childAtIndex(0).childAtIndex(1).commonAncestorWith(n1) == n1);
-  assert(n1.childAtIndex(0).childAtIndex(1).commonAncestorWith(n1.childAtIndex(2)) == n1);
+  quiz_assert(n1.indexOfChild(n1.childAtIndex(1)) == 1);
+  quiz_assert(n1.childAtIndex(0).indexInParent() == 0);
+  quiz_assert(!n1.hasChild(e2));
+  quiz_assert(n1.hasChild(n1.childAtIndex(2)));
+  quiz_assert(!n1.hasSibling(n1.childAtIndex(2)));
+  quiz_assert(n1.nextNode().hasSibling(n1.childAtIndex(2)));
+  quiz_assert(n1.commonAncestorWith(n1) == n1);
+  quiz_assert(n1.commonAncestorWith(n1.childAtIndex(0).childAtIndex(1)) == n1);
+  quiz_assert(n1.childAtIndex(0).childAtIndex(1).commonAncestorWith(n1) == n1);
+  quiz_assert(n1.childAtIndex(0).childAtIndex(1).commonAncestorWith(n1.childAtIndex(2)) == n1);
 }
 
 QUIZ_CASE(pcj_node_size) {
   Node node = EditionReference::Push<BlockType::IntegerPosBig>(static_cast<uint64_t>(0x00FF0000));
-  assert(node.nodeSize() == 7);
+  quiz_assert(node.nodeSize() == 7);
   node = static_cast<Node>(EditionReference::Push<BlockType::IntegerNegBig>(static_cast<uint64_t>(0x0000FF00)));
-  assert(node.nodeSize() == 6);
+  quiz_assert(node.nodeSize() == 6);
 }
 
 QUIZ_CASE(pcj_constructor) {

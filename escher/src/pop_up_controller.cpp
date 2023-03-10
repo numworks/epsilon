@@ -99,10 +99,10 @@ void PopUpController::ContentView::layoutSubviews(bool force) {
   KDCoordinate remainingHeight =
       (height - k_topMargin - textHeight - k_buttonMargin - k_buttonHeight -
        detailTextHeight);
-  m_detailTextView->setFrame(
-      KDRect(0, k_topMargin + textHeight + remainingHeight / 2, width,
-             detailTextHeight),
-      force);
+  setChildFrame(m_detailTextView,
+                KDRect(0, k_topMargin + textHeight + remainingHeight / 2, width,
+                       detailTextHeight),
+                force);
   setChildFrame(&m_cancelButton,
                 KDRect(k_buttonMargin, height - k_buttonMargin - k_buttonHeight,
                        (width - 3 * k_buttonMargin) / 2, k_buttonHeight),

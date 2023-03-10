@@ -291,14 +291,14 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::layoutSubviews(
   KDRect rightFrame = KDRectZero;
   subviewFrames(&leftFrame, &centerFrame, &approximateSignFrame, &rightFrame);
   if (leftExpressionView() != nullptr) {
-    leftExpressionView()->setFrame(leftFrame, force);
+    setChildFrame(leftExpressionView(), leftFrame, force);
   }
   if (centeredExpressionView() != nullptr) {
-    centeredExpressionView()->setFrame(centerFrame, force);
+    setChildFrame(centeredExpressionView(), centerFrame, force);
   }
   setChildFrame(&m_approximateSign, approximateSignFrame, force);
   if (rightExpressionView() != nullptr) {
-    rightExpressionView()->setFrame(rightFrame, force);
+    setChildFrame(rightExpressionView(), rightFrame, force);
   }
 }
 

@@ -89,8 +89,9 @@ void AbstractFunctionCell::layoutSubviews(bool force) {
   KDCoordinate expressionHeight =
       mainView()->minimalSizeForOptimalDisplay().height();
   KDCoordinate availableWidth = bounds().width() - leftMargin - rightMargin;
-  mainView()->setFrame(
-      KDRect(leftMargin, k_margin, availableWidth, expressionHeight), force);
+  setChildFrame(mainView(),
+                KDRect(leftMargin, k_margin, availableWidth, expressionHeight),
+                force);
   if (displayFunctionType()) {
     KDCoordinate messageHeight =
         m_messageTextView.minimalSizeForOptimalDisplay().height();

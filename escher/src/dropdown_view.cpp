@@ -37,7 +37,8 @@ void PopupItemView::layoutSubviews(bool force) {
       m_cell ? m_cell->minimalSizeForOptimalDisplay() : KDSizeZero;
   KDSize caretSize = m_caret.minimalSizeForOptimalDisplay();
   if (m_cell) {
-    m_cell->setFrame(
+    setChildFrame(
+        m_cell,
         KDRect(KDPoint(k_marginImageHorizontal, k_marginImageVertical),
                cellSize),
         force);

@@ -185,7 +185,7 @@ bool TableCell::singleRowMode() const {
 
 KDRect TableCell::setFrameIfViewExists(View *v, KDRect rect, bool force) {
   if (v) {
-    v->setFrame(rect, force);
+    setChildFrame(v, rect, force);
     return rect;
   }
   return KDRectZero;

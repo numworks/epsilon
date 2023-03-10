@@ -31,13 +31,14 @@ KDRect DataView::bannerFrame() const {
 
 void DataView::layoutSubviews(bool force) {
   // We need to set the banner width first, so its height can be computed
-  bannerView()->setFrame(KDRect(0, 0, bounds().width(), 0), force);
+  setChildFrame(bannerView(), KDRect(0, 0, bounds().width(), 0), force);
   layoutDataSubviews(force);
   layoutBanner(force);
 }
 
 void DataView::layoutBanner(bool force) {
-  bannerView()->setFrame(m_displayBanner ? bannerFrame() : KDRectZero, force);
+  setChildFrame(bannerView(), m_displayBanner ? bannerFrame() : KDRectZero,
+                force);
 }
 
 }  // namespace Statistics

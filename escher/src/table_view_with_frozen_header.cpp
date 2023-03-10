@@ -39,10 +39,10 @@ void TableViewWithFrozenHeader::layoutSubviews(bool force) {
   m_selectableTableView->initSize(bounds());
   KDCoordinate tableHeight =
       m_selectableTableView->minimalSizeForOptimalDisplay().height();
-  m_selectableTableView->setFrame(
-      KDRect(0, titleHeight, bounds().width(), tableHeight)
-          .intersectedWith(bounds()),
-      force);
+  setChildFrame(m_selectableTableView,
+                KDRect(0, titleHeight, bounds().width(), tableHeight)
+                    .intersectedWith(bounds()),
+                force);
 }
 
 }  // namespace Escher

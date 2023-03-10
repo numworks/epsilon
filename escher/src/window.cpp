@@ -33,7 +33,7 @@ View* Window::subviewAtIndex(int index) {
 
 void Window::layoutSubviews(bool force) {
   if (m_contentView != nullptr) {
-    m_contentView->setFrame(bounds(), force);
+    setChildFrame(m_contentView, bounds(), force);
   }
 }
 

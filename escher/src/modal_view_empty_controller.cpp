@@ -69,11 +69,12 @@ void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {
   KDCoordinate margin =
       (height - numberOfMessageViews * textHeight - layoutHeight) / 2;
   if (hasExpression) {
-    expressionView()->setFrame(KDRect(k_separatorThickness,
-                                      k_separatorThickness + margin +
-                                          k_expressionViewRowIndex * textHeight,
-                                      width, layoutHeight),
-                               force);
+    setChildFrame(expressionView(),
+                  KDRect(k_separatorThickness,
+                         k_separatorThickness + margin +
+                             k_expressionViewRowIndex * textHeight,
+                         width, layoutHeight),
+                  force);
   }
   KDCoordinate currentHeight = k_separatorThickness;
   for (uint8_t i = 0; i < numberOfMessageViews; i++) {
@@ -83,8 +84,8 @@ void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {
     KDCoordinate h = (i == 0 || i == numberOfMessageViews - 1)
                          ? textHeight + margin
                          : textHeight;
-    messageTextViewAtIndex(i)->setFrame(
-        KDRect(k_separatorThickness, currentHeight, width, h), force);
+    setChildFrame(messageTextViewAtIndex(i),
+                  KDRect(k_separatorThickness, currentHeight, width, h), force);
     currentHeight += h;
   }
 }

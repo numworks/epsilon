@@ -24,9 +24,9 @@ View* AlternateEmptyViewController::ContentView::subviewAtIndex(int index) {
 
 void AlternateEmptyViewController::ContentView::layoutSubviews(bool force) {
   if (alternateEmptyViewDelegate()->isEmpty()) {
-    m_delegate->emptyView()->setFrame(bounds(), force);
+    setChildFrame(m_delegate->emptyView(), bounds(), force);
   } else {
-    m_mainViewController->view()->setFrame(bounds(), force);
+    setChildFrame(m_mainViewController->view(), bounds(), force);
   }
 }
 

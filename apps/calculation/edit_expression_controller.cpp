@@ -35,7 +35,7 @@ void EditExpressionController::ContentView::layoutSubviews(bool force) {
       m_expressionInputBar.minimalSizeForOptimalDisplay().height();
   KDRect mainViewFrame(0, 0, bounds().width(),
                        bounds().height() - inputViewFrameHeight);
-  m_mainView->setFrame(mainViewFrame, force);
+  setChildFrame(m_mainView, mainViewFrame, force);
   KDRect inputViewFrame(0, bounds().height() - inputViewFrameHeight,
                         bounds().width(), inputViewFrameHeight);
   setChildFrame(&m_expressionInputBar, inputViewFrame, force);

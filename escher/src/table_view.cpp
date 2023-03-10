@@ -101,7 +101,7 @@ void TableView::ContentView::reloadCellAtLocation(int col, int row,
   if (cell) {
     m_dataSource->willDisplayCellAtLocation(cell, col, row);
     if (forceSetFrame) {
-      cell->setFrame(cellFrame(col, row), true);
+      setChildFrame(cell, cellFrame(col, row), true);
     }
   }
 }
@@ -170,7 +170,7 @@ void TableView::ContentView::layoutSubviews(bool force,
     }
     /* Cell's content might change and fit in the same frame. LayoutSubviews
      * must be called on each cells even with an unchanged frame. */
-    cell->setFrame(cellFrame(col, row), true);
+    setChildFrame(cell, cellFrame(col, row), true);
   }
 }
 

@@ -32,7 +32,7 @@ void TabViewController::ContentView::layoutSubviews(bool force) {
   if (m_activeView) {
     KDRect activeViewFrame = KDRect(0, tabViewFrame.height(), m_frame.width(),
                                     m_frame.height() - tabViewFrame.height());
-    m_activeView->setFrame(activeViewFrame, force);
+    setChildFrame(m_activeView, activeViewFrame, force);
   }
 }
 

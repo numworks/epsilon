@@ -20,7 +20,7 @@ void PlotView::reload() {
 }
 
 void PlotView::layoutDataSubviews(bool force) {
-  m_plotCurveView->setFrame(bounds(), force);
+  setChildFrame(m_plotCurveView, bounds(), force);
 }
 
 }  // namespace Statistics

@@ -9,32 +9,14 @@ namespace Escher {
 
 /* This is outside of the class because Clang has a bug that prevent default
  * args to be used if the struct is within the class. */
-struct GlyphsParameters {
-  KDFont::Size fontSize = KDFont::Size::Large;
-  float horizontalAlginment = KDContext::k_alignLeft;
-  float verticalAlignment = KDContext::k_alignCenter;
-  KDColor textColor = KDColorBlack;
-  KDColor backgroundColor = KDColorWhite;
-};
 
 class GlyphsView : public View, public CellWidget {
  public:
-  GlyphsView(CellWidget::Type type = CellWidget::Type::Label) {
-    defaultInitialization(type);
-  }
+  GlyphsView(KDGlyph::Format format = {}) { setGlyphFormat(format); }
 
-  GlyphsView(KDFont::Size font,
-             float horizontalAlignment = k_defaultLabel.horizontalAlginment,
-             float verticalAlignment = k_defaultLabel.verticalAlignment,
-             KDColor textColor = k_defaultLabel.textColor,
-             KDColor backgroundColor = k_defaultLabel.backgroundColor)
-      : m_font(font),
-        m_textColor(textColor),
-        m_backgroundColor(backgroundColor),
-        m_horizontalAlignment(horizontalAlignment),
-        m_verticalAlignment(verticalAlignment) {}
+  KDFont::Size font() const { return m_glyphFormat.style.font; }
 
-  KDFont::Size font() const { return m_font; }
+  void setGlyphFormat(KDGlyph::Format format);
   void setFont(KDFont::Size font);
   void setTextColor(KDColor textColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
@@ -43,20 +25,25 @@ class GlyphsView : public View, public CellWidget {
   void setBackgroundColor(KDColor backgroundColor) override;
   const View* view() const override { return this; }
 
-  constexpr static GlyphsParameters k_defaultLabel = {};
-  constexpr static GlyphsParameters k_defaultSubLabel = {
-      .fontSize = KDFont::Size::Small, .textColor = Palette::GrayDark};
-  constexpr static GlyphsParameters k_defaultAccessory = {
-      .horizontalAlginment = KDContext::k_alignRight};
+  constexpr static KDGlyph::Format k_defaultLabel = {};
+  constexpr static KDGlyph::Format k_defaultSubLabel = {
+      {.glyphColor = Palette::GrayDark, .font = KDFont::Size::Small}};
+  constexpr static KDGlyph::Format k_defaultAccessory = {
+      .horizontalAlignment = KDGlyph::k_alignRight};
 
-  void defaultInitialization(CellWidget::Type type) override;
+  static KDGlyph::Format FormatForWidgetType(CellWidget::Type type) {
+    return type == CellWidget::Type::Label
+               ? k_defaultLabel
+               : (type == CellWidget::Type::SubLabel ? k_defaultSubLabel
+                                                     : k_defaultAccessory);
+  }
+
+  void defaultInitialization(CellWidget::Type type) override {
+    setGlyphFormat(FormatForWidgetType(type));
+  }
 
  protected:
-  KDFont::Size m_font;
-  KDColor m_textColor;
-  KDColor m_backgroundColor;
-  float m_horizontalAlignment;
-  float m_verticalAlignment;
+  KDGlyph::Format m_glyphFormat;
 };
 
 }  // namespace Escher

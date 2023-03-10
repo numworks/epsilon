@@ -9,6 +9,18 @@
 
 namespace Solver {
 
+/* SystemOfEquations provides an interface to solve the system described by
+ * EquationStore. The two main methods are:
+ * - exactSolve, which identify and compute exact solutions of linear systems,
+ *   and polynomial equations of degree 2 or 3.
+ * - approximateSolve, which computes numerical solutions for one equation of
+ *   one variable, using an implementation of Brent's algorithm.
+ *
+ * FIXME Preliminary analysis of the system (e.g. identifiying variables...) is
+ * only done when calling exactSolve. This works well for now as Solver will
+ * only call approximateSolve after first attempting to exactSolve, but might be
+ * a problem later. */
+
 class SystemOfEquations {
  public:
   enum class Type : uint8_t {

@@ -46,7 +46,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
   // This redraws the rectNeedingRedraw calling drawRect.
   if (!rectNeedingRedraw.isEmpty()) {
     KDPoint absOrigin = absoluteOrigin();
-    KDRect absRect = rectNeedingRedraw.translatedBy(absOrigin);
+    KDRect absRect = rectNeedingRedraw;
     KDRect absClippingRect = absoluteVisibleFrame().intersectedWith(absRect);
     KDContext *ctx = KDIonContext::SharedContext;
     ctx->setOrigin(absOrigin);
@@ -65,21 +65,13 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
     }
     assert(subview->m_superview == this);
 
-    // We transpose rect and forcedRedrawArea in the subview coordinates.
-    KDRect intersectionInSubview =
-        rect.intersectedWith(subview->m_frame)
-            .translatedBy(subview->m_frame.origin().opposite());
-    KDRect forcedRedrawAreaInSubview =
-        redrawnArea.translatedBy(subview->m_frame.origin().opposite());
-
     // We redraw the current subview by passing the rectangle previously redrawn
     // (by the parent view or previous sister views) as forced to be redraw.
     KDRect subviewRedrawnArea =
-        subview->redraw(intersectionInSubview, forcedRedrawAreaInSubview);
+        subview->redraw(rect.intersectedWith(subview->m_frame), redrawnArea);
 
     // We expand the redrawn area to include the area just drawn.
-    redrawnArea = redrawnArea.unionedWith(
-        subviewRedrawnArea.translatedBy(subview->m_frame.origin()));
+    redrawnArea = redrawnArea.unionedWith(subviewRedrawnArea);
   }
   // Eventually, mark that we don't need to be redrawn
   m_dirtyRect = KDRectZero;

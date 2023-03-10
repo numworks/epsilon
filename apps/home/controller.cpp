@@ -54,7 +54,7 @@ void Controller::ContentView::layoutSubviews(bool force) {
    * pixels at the bottom of the screen. */
   KDRect frame =
       KDRect(KDPointZero, m_frame.width(), m_frame.height() - k_bottomMargin);
-  m_selectableTableView.setFrame(frame, force);
+  setChildFrame(&m_selectableTableView, frame, force);
 }
 
 Controller::Controller(Responder *parentResponder,

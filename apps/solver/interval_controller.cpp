@@ -43,11 +43,13 @@ View *IntervalController::ContentView::subviewAtIndex(int index) {
 
 void IntervalController::ContentView::layoutSubviews(bool force) {
   KDCoordinate textHeight = KDFont::GlyphHeight(KDFont::Size::Small);
-  m_instructions0.setFrame(
+  setChildFrame(
+      &m_instructions0,
       KDRect(0, k_topMargin / 2 - textHeight, bounds().width(), textHeight),
       force);
-  m_instructions1.setFrame(
-      KDRect(0, k_topMargin / 2, bounds().width(), textHeight), force);
+  setChildFrame(&m_instructions1,
+                KDRect(0, k_topMargin / 2, bounds().width(), textHeight),
+                force);
   m_selectableTableView->setFrame(
       KDRect(0, k_topMargin, bounds().width(), bounds().height() - k_topMargin),
       force);

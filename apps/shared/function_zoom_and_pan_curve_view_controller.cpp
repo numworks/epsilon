@@ -113,11 +113,11 @@ View* FunctionZoomAndPanCurveViewController::ContentView::subviewAtIndex(
 void FunctionZoomAndPanCurveViewController::ContentView::layoutSubviews(
     bool force) {
   m_curveView->setFrame(bounds(), force);
-  m_legendView.setFrame(m_displayLegend
-                            ? KDRect(0, bounds().height() - k_legendHeight,
-                                     bounds().width(), k_legendHeight)
-                            : KDRectZero,
-                        force);
+  setChildFrame(&m_legendView,
+                m_displayLegend ? KDRect(0, bounds().height() - k_legendHeight,
+                                         bounds().width(), k_legendHeight)
+                                : KDRectZero,
+                force);
 }
 
 AbstractPlotView*
@@ -182,18 +182,19 @@ void FunctionZoomAndPanCurveViewController::ContentView::LegendView::
   KDCoordinate height = bounds().height();
 
   KDCoordinate x = halfSpacing;
-  m_legends[0].setFrame(KDRect(x, 0, legendWidth[0], height), force);
+  setChildFrame(&m_legends[0], KDRect(x, 0, legendWidth[0], height), force);
   x += legendWidth[0];
   for (int i = 0; i < k_numberOfTokens - 2; i++) {
-    m_legendPictograms[i].setFrame(KDRect(x, 0, k_tokenWidth, height), force);
+    setChildFrame(&m_legendPictograms[i], KDRect(x, 0, k_tokenWidth, height),
+                  force);
     x += k_tokenWidth;
   }
   x += 2 * halfSpacing;
   for (int i = 1; i < k_numberOfLegends; i++) {
-    m_legends[i].setFrame(KDRect(x, 0, legendWidth[i], height), force);
+    setChildFrame(&m_legends[i], KDRect(x, 0, legendWidth[i], height), force);
     x += legendWidth[i];
-    m_legendPictograms[k_numberOfTokens - 3 + i].setFrame(
-        KDRect(x, 0, k_tokenWidth, height), force);
+    setChildFrame(&m_legendPictograms[k_numberOfTokens - 3 + i],
+                  KDRect(x, 0, k_tokenWidth, height), force);
     x += k_tokenWidth;
   }
 }

@@ -54,9 +54,9 @@ void LCDDataTestController::ContentView::setStatus(bool success,
 }
 
 void LCDDataTestController::ContentView::layoutSubviews(bool force) {
-  m_lcdDataStateView.setFrame(KDRectScreen, force);
-  m_lcdNumberPixelFailuresView.setFrame(KDRect(10, 10, Ion::Display::Width, 20),
-                                        force);
+  setChildFrame(&m_lcdDataStateView, KDRectScreen, force);
+  setChildFrame(&m_lcdNumberPixelFailuresView,
+                KDRect(10, 10, Ion::Display::Width, 20), force);
 }
 
 }  // namespace HardwareTest

@@ -19,7 +19,7 @@ KDSize HighlightImageCell::minimalSizeForOptimalDisplay() const {
 }
 
 void HighlightImageCell::layoutSubviews(bool force) {
-  m_contentView.setFrame(bounds(), force);
+  setChildFrame(&m_contentView, bounds(), force);
 }
 
 }  // namespace Escher

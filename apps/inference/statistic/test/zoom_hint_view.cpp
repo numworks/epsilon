@@ -52,13 +52,15 @@ void ZoomHintView::layoutSubviews(bool force) {
   KDCoordinate height = bounds().height();
 
   KDCoordinate x = spacing;
-  m_legends[0].setFrame(KDRect(x, 0, legendWidth[0], height), force);
+  setChildFrame(&m_legends[0], KDRect(x, 0, legendWidth[0], height), force);
   x += legendWidth[0];
-  m_legendPictograms[0].setFrame(KDRect(x, 0, k_tokenWidth, height), force);
+  setChildFrame(&m_legendPictograms[0], KDRect(x, 0, k_tokenWidth, height),
+                force);
   x += k_tokenWidth;
-  m_legends[1].setFrame(KDRect(x, 0, legendWidth[1], height), force);
+  setChildFrame(&m_legends[1], KDRect(x, 0, legendWidth[1], height), force);
   x += legendWidth[1];
-  m_legendPictograms[1].setFrame(KDRect(x, 0, k_tokenWidth, height), force);
+  setChildFrame(&m_legendPictograms[1], KDRect(x, 0, k_tokenWidth, height),
+                force);
 }
 
 }  // namespace Inference

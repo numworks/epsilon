@@ -48,10 +48,10 @@ void MultipleBoxesView::layoutDataSubviews(bool force) {
   boxYPosition -= BoxToBoxMargin(numberOfDataSubviews);
   assert(bounds().height() >= boxYPosition + k_axisViewHeight + bannerHeight);
   // Layout the axis right above the banner
-  m_axisView.setFrame(
-      KDRect(0, bounds().height() - bannerHeight - k_axisViewHeight,
-             bounds().width(), k_axisViewHeight),
-      force);
+  setChildFrame(&m_axisView,
+                KDRect(0, bounds().height() - bannerHeight - k_axisViewHeight,
+                       bounds().width(), k_axisViewHeight),
+                force);
 }
 
 void MultipleBoxesView::reload() {

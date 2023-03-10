@@ -17,10 +17,12 @@ Escher::View* MainController::ContentView::subviewAtIndex(int index) {
 
 void MainController::ContentView::layoutSubviews(bool force) {
   KDSize bannerSize = m_bannerView.minimalSizeForOptimalDisplay();
-  m_bannerView.setFrame(KDRect(0, bounds().height() - bannerSize.height(),
-                               bounds().width(), bannerSize.height()),
-                        force);
-  m_elementsView.setFrame(
+  setChildFrame(&m_bannerView,
+                KDRect(0, bounds().height() - bannerSize.height(),
+                       bounds().width(), bannerSize.height()),
+                force);
+  setChildFrame(
+      &m_elementsView,
       KDRect(0, 0, bounds().width(), bounds().height() - bannerSize.height()),
       force);
 }

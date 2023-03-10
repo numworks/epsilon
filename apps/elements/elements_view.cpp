@@ -93,8 +93,8 @@ void ElementsView::layoutSubviews(bool force) {
   ElementsViewDataSource* dataSource = App::app()->elementsViewDataSource();
   AtomicNumber z = dataSource->selectedElement();
   if (!ElementsDataBase::IsElement(z)) {
-    m_singleElementView.setFrame(KDRectZero, force);
-    m_nameView.setFrame(KDRectZero, force);
+    setChildFrame(&m_singleElementView, KDRectZero, force);
+    setChildFrame(&m_nameView, KDRectZero, force);
     return;
   }
 
@@ -104,20 +104,20 @@ void ElementsView::layoutSubviews(bool force) {
                           zoomedRect.y() + zoomedRect.height() -
                               k_zoomedViewMargin - cellSize.height()),
                   cellSize);
-  m_singleElementView.setFrame(cellRect, true);
+  setChildFrame(&m_singleElementView, cellRect, true);
 
   m_nameView.setMessage(ElementsDataBase::Name(z));
   m_nameView.setTextColor(dataSource->field()->getColors(z).fg());
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
-  m_nameView.setFrame(
-      KDRect(
-          KDPoint(cellRect.x() + cellRect.width() +
-                      (zoomedRect.width() - cellRect.width() -
-                       k_zoomedViewMargin - nameSize.width()) /
-                          2,
-                  cellRect.y() + (cellRect.height() - nameSize.height()) / 2),
-          nameSize),
-      true);
+  setChildFrame(&m_nameView,
+                KDRect(KDPoint(cellRect.x() + cellRect.width() +
+                                   (zoomedRect.width() - cellRect.width() -
+                                    k_zoomedViewMargin - nameSize.width()) /
+                                       2,
+                               cellRect.y() +
+                                   (cellRect.height() - nameSize.height()) / 2),
+                       nameSize),
+                true);
 }
 
 void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext* ctx,

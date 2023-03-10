@@ -313,7 +313,7 @@ size_t AbstractTextField::ContentView::deleteSelection() {
 
 void AbstractTextField::ContentView::layoutSubviews(bool force) {
   if (!m_isEditing) {
-    m_cursorView.setFrame(KDRectZero, force);
+    setChildFrame(&m_cursorView, KDRectZero, force);
     return;
   }
   TextInput::ContentView::layoutSubviews(force);

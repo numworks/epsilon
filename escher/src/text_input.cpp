@@ -89,7 +89,7 @@ void TextInput::ContentView::reloadRectFromPosition(
 }
 
 void TextInput::ContentView::layoutSubviews(bool force) {
-  m_cursorView.setFrame(cursorRect(), force);
+  setChildFrame(&m_cursorView, cursorRect(), force);
 }
 
 void TextInput::ContentView::reloadRectFromAndToPositions(const char* start,

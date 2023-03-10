@@ -296,7 +296,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::layoutSubviews(
   if (centeredExpressionView() != nullptr) {
     centeredExpressionView()->setFrame(centerFrame, force);
   }
-  m_approximateSign.setFrame(approximateSignFrame, force);
+  setChildFrame(&m_approximateSign, approximateSignFrame, force);
   if (rightExpressionView() != nullptr) {
     rightExpressionView()->setFrame(rightFrame, force);
   }

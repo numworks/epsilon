@@ -131,7 +131,7 @@ class SolutionsController : public Escher::ViewController,
       return &m_messageView;
     }
     void layoutSubviews(bool force = false) override {
-      m_messageView.setFrame(bounds(), force);
+      setChildFrame(&m_messageView, bounds(), force);
     }
     Escher::MessageTextView m_messageView;
   };

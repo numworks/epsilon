@@ -32,7 +32,7 @@ void SubtitleCell::layoutSubviews(bool force) {
 
   assert(width > 0 && height > 0);
 
-  m_labelView.setFrame(KDRect(x, y, width, height), force);
+  setChildFrame(&m_labelView, KDRect(x, y, width, height), force);
 }
 
 }  // namespace Code

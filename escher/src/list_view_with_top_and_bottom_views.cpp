@@ -84,7 +84,8 @@ void ListViewWithTopAndBottomViews::layoutSubviews(bool force) {
                      bounds().height());
   constexpr KDCoordinate barWidth =
       ScrollView::BarDecorator::k_barsFrameBreadth;
-  m_scrollBar.setFrame(
+  setChildFrame(
+      &m_scrollBar,
       KDRect(bounds().width() - barWidth, 0, barWidth, bounds().height()),
       force);
 }

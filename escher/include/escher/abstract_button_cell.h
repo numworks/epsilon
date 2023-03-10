@@ -30,7 +30,7 @@ class AbstractButtonCell : public HighlightCell, public Responder {
  protected:
   MessageTextView m_messageTextView;
   void layoutSubviews(bool force = false) override {
-    m_messageTextView.setFrame(bounds(), force);
+    setChildFrame(&m_messageTextView, bounds(), force);
   }
 
  private:

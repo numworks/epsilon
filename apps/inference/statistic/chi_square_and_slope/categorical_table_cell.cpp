@@ -80,10 +80,10 @@ void CategoricalTableCell::drawRect(KDContext *ctx, KDRect rect) const {
 void CategoricalTableCell::layoutSubviews(bool force) {
   // We let an empty border as it will be drawn by the next cell (thanks to the
   // cell overlap)
-  m_selectableTableView.setFrame(
-      KDRect(0, 0, bounds().width(),
-             bounds().height() - Metric::CellSeparatorThickness),
-      force);
+  setChildFrame(&m_selectableTableView,
+                KDRect(0, 0, bounds().width(),
+                       bounds().height() - Metric::CellSeparatorThickness),
+                force);
 }
 
 void CategoricalTableCell::scrollViewDidChangeOffset(

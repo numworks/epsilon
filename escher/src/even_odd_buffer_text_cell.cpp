@@ -37,7 +37,7 @@ void EvenOddBufferTextCell::layoutSubviews(bool force) {
   KDRect boundsBuffer =
       KDRect(boundsThis.left() + k_horizontalMargin, boundsThis.top(),
              boundsThis.width() - 2 * k_horizontalMargin, boundsThis.height());
-  m_bufferTextView.setFrame(boundsBuffer, force);
+  setChildFrame(&m_bufferTextView, boundsBuffer, force);
 }
 
 }  // namespace Escher

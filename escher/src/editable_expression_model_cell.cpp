@@ -40,7 +40,8 @@ void EditableExpressionModelCell::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 void EditableExpressionModelCell::layoutSubviews(bool force) {
-  m_expressionField.setFrame(
+  setChildFrame(
+      &m_expressionField,
       KDRect(m_leftMargin, 0, bounds().width() - m_leftMargin - m_rightMargin,
              bounds().height()),
       force);

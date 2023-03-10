@@ -41,10 +41,11 @@ void MessageView::layoutSubviews(bool force) {
   KDCoordinate titleHeight =
       m_messageTextViews[0].minimalSizeForOptimalDisplay().height();
   KDCoordinate textHeight = KDFont::GlyphHeight(KDFont::Size::Small);
-  m_messageTextViews[0].setFrame(KDRect(0, k_titleMargin, width, titleHeight),
-                                 force);
+  setChildFrame(&m_messageTextViews[0],
+                KDRect(0, k_titleMargin, width, titleHeight), force);
   for (uint8_t i = 1; i < m_numberOfMessages; i++) {
-    m_messageTextViews[i].setFrame(
+    setChildFrame(
+        &m_messageTextViews[i],
         KDRect(0, k_paragraphHeight + (i - 1) * textHeight, width, textHeight),
         force);
   }

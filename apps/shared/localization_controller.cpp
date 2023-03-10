@@ -81,8 +81,9 @@ void LocalizationController::ContentView::layoutSubviews(bool force) {
 KDCoordinate LocalizationController::ContentView::layoutTitleSubview(
     bool force, KDCoordinate verticalOrigin) {
   KDCoordinate titleHeight = KDFont::GlyphHeight(m_countryTitleMessage.font());
-  m_countryTitleMessage.setFrame(
-      KDRect(0, verticalOrigin, bounds().width(), titleHeight), force);
+  setChildFrame(&m_countryTitleMessage,
+                KDRect(0, verticalOrigin, bounds().width(), titleHeight),
+                force);
   return verticalOrigin + titleHeight;
 }
 
@@ -92,8 +93,9 @@ KDCoordinate LocalizationController::ContentView::layoutWarningSubview(
   KDCoordinate textHeight =
       KDFont::GlyphHeight(m_countryWarningLines[0].font());
   for (int i = 0; i < k_numberOfCountryWarningLines; i++) {
-    m_countryWarningLines[i].setFrame(
-        KDRect(0, verticalOrigin, bounds().width(), textHeight), force);
+    setChildFrame(&m_countryWarningLines[i],
+                  KDRect(0, verticalOrigin, bounds().width(), textHeight),
+                  force);
     verticalOrigin += textHeight;
   }
   return verticalOrigin;
@@ -108,16 +110,17 @@ KDCoordinate LocalizationController::ContentView::layoutTableSubview(
       m_selectableListView.minimalSizeForOptimalDisplay().height());
 
   if (m_controller->shouldDisplayWarning()) {
-    m_borderView.setFrame(
-        KDRect(m_selectableListView.leftMargin(),
-               verticalOrigin + m_selectableListView.topMargin(),
-               bounds().width() - m_selectableListView.leftMargin() -
-                   m_selectableListView.rightMargin(),
-               Metric::CellSeparatorThickness),
-        force);
+    setChildFrame(&m_borderView,
+                  KDRect(m_selectableListView.leftMargin(),
+                         verticalOrigin + m_selectableListView.topMargin(),
+                         bounds().width() - m_selectableListView.leftMargin() -
+                             m_selectableListView.rightMargin(),
+                         Metric::CellSeparatorThickness),
+                  force);
   }
-  m_selectableListView.setFrame(
-      KDRect(0, verticalOrigin, bounds().width(), tableHeight), force);
+  setChildFrame(&m_selectableListView,
+                KDRect(0, verticalOrigin, bounds().width(), tableHeight),
+                force);
   return verticalOrigin + tableHeight;
 }
 

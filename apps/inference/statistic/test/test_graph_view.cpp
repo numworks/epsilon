@@ -10,7 +10,8 @@ void TestGraphView::reload() {
 void TestGraphView::layoutSubviews(bool force) {
   int availableHeight = m_frame.height();
   int availableWidth = m_frame.width();
-  m_curveView.setFrame(
+  setChildFrame(
+      &m_curveView,
       KDRect(KDPointZero,
              KDSize(availableWidth,
                     availableHeight - (m_displayHint ? k_zoomHintHeight : 0))),
@@ -19,12 +20,12 @@ void TestGraphView::layoutSubviews(bool force) {
   KDPoint legendOrigin =
       KDPoint(availableWidth - legendSize.width() - k_legendMarginRight,
               k_legendMarginTop);
-  m_legend.setFrame(KDRect(legendOrigin, legendSize), force);
-  m_zoom_hint.setFrame(m_displayHint
-                           ? KDRect(0, availableHeight - k_zoomHintHeight,
-                                    availableWidth, k_zoomHintHeight)
-                           : KDRectZero,
-                       force);
+  setChildFrame(&m_legend, KDRect(legendOrigin, legendSize), force);
+  setChildFrame(&m_zoom_hint,
+                m_displayHint ? KDRect(0, availableHeight - k_zoomHintHeight,
+                                       availableWidth, k_zoomHintHeight)
+                              : KDRectZero,
+                force);
 }
 
 Escher::View* TestGraphView::subviewAtIndex(int i) {

@@ -44,7 +44,7 @@ View* ExpressionFunctionTitleCell::subviewAtIndex(int index) {
 
 void ExpressionFunctionTitleCell::layoutSubviews(bool force) {
   assert(TreeNode::IsValidIdentifier(layout().identifier()));
-  m_titleTextView.setFrame(subviewFrame(), force);
+  setChildFrame(&m_titleTextView, subviewFrame(), force);
 }
 
 }  // namespace Shared

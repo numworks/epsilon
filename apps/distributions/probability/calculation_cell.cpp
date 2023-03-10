@@ -72,10 +72,12 @@ View* CalculationCell::subviewAtIndex(int index) {
 void CalculationCell::layoutSubviews(bool force) {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
   // A 1px offset is needed to vertically center text on calculation
-  m_text.setFrame(KDRect(k_margin, 0, textSize.width(),
-                         bounds().height() - k_textBottomOffset),
-                  force);
-  m_calculation.setFrame(
+  setChildFrame(&m_text,
+                KDRect(k_margin, 0, textSize.width(),
+                       bounds().height() - k_textBottomOffset),
+                force);
+  setChildFrame(
+      &m_calculation,
       KDRect(2 * k_margin + textSize.width() +
                  Escher::Metric::CellSeparatorThickness,
              Escher::Metric::CellSeparatorThickness, calculationCellWidth(),

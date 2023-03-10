@@ -30,19 +30,21 @@ View* WarningController::ContentView::subviewAtIndex(int index) {
 
 void WarningController::ContentView::layoutSubviews(bool force) {
   if (numberOfSubviews() == 1) {
-    m_textView1.setFrame(bounds(), force);
+    setChildFrame(&m_textView1, bounds(), force);
     m_textView1.setAlignment(k_middleAlignment, k_middleAlignment);
     return;
   }
   assert(numberOfSubviews() == 2);
   KDRect fullBounds = bounds();
   KDCoordinate halfHeight = fullBounds.height() / 2;
-  m_textView1.setFrame(
-      KDRect(fullBounds.topLeft(), fullBounds.width(), halfHeight), force);
+  setChildFrame(&m_textView1,
+                KDRect(fullBounds.topLeft(), fullBounds.width(), halfHeight),
+                force);
   m_textView1.setAlignment(k_middleAlignment, k_shiftedAlignment);
-  m_textView2.setFrame(KDRect(fullBounds.left(), fullBounds.top() + halfHeight,
-                              fullBounds.width(), halfHeight),
-                       force);
+  setChildFrame(&m_textView2,
+                KDRect(fullBounds.left(), fullBounds.top() + halfHeight,
+                       fullBounds.width(), halfHeight),
+                force);
 }
 
 KDSize WarningController::ContentView::minimalSizeForOptimalDisplay() const {

@@ -105,20 +105,25 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
       topMargin =
           (k_topMargin - warningMessage0Height - warningMessage1Height) / 2;
       // Set table frame
-      m_selectableTableView.setFrame(KDRect(0, k_topMargin, bounds().width(),
-                                            bounds().height() - k_topMargin),
-                                     force);
+      setChildFrame(&m_selectableTableView,
+                    KDRect(0, k_topMargin, bounds().width(),
+                           bounds().height() - k_topMargin),
+                    force);
     }
     assert(topMargin >= 0);
-    m_warningMessageView0.setFrame(
-        KDRect(0, topMargin, bounds().width(), warningMessage0Height), force);
-    m_warningMessageView1.setFrame(
-        KDRect(0, topMargin + warningMessage0Height, bounds().width(),
-               warningMessage1Height),
-        force);
+    m_warningMessageView0setChildFrame(&,
+                                       KDRect(0, topMargin, bounds().width(),
+                                              warningMessage0Height),
+                                       force);
+    m_warningMessageView1setChildFrame(&,
+                                       KDRect(0,
+                                              topMargin + warningMessage0Height,
+                                              bounds().width(),
+                                              warningMessage1Height),
+                                       force);
   } else {
     // Table frame occupy the entire view
-    m_selectableTableView.setFrame(bounds(), force);
+    setChildFrame(&m_selectableTableView, bounds(), force);
   }
 }
 

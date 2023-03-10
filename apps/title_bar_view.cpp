@@ -74,29 +74,32 @@ void TitleBarView::layoutSubviews(bool force) {
    * (because their glyph never cross the baseline). To avoid this effect, we
    * translate the frame of the title downwards.*/
   constexpr int k_verticalShift = 2;
-  m_titleView.setFrame(KDRect(0, k_verticalShift, bounds().width(),
-                              bounds().height() - k_verticalShift),
-                       force);
-  m_preferenceView.setFrame(
-      KDRect(Metric::TitleBarExternHorizontalMargin, 0,
-             m_preferenceView.minimalSizeForOptimalDisplay().width(),
-             bounds().height()),
-      force);
+  setChildFrame(&m_titleView,
+                KDRect(0, k_verticalShift, bounds().width(),
+                       bounds().height() - k_verticalShift),
+                force);
+  setChildFrame(&m_preferenceView,
+                KDRect(Metric::TitleBarExternHorizontalMargin, 0,
+                       m_preferenceView.minimalSizeForOptimalDisplay().width(),
+                       bounds().height()),
+                force);
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
-  m_batteryView.setFrame(
+  setChildFrame(
+      &m_batteryView,
       KDRect(bounds().width() - batterySize.width() -
                  Metric::TitleBarExternHorizontalMargin,
              (bounds().height() - batterySize.height()) / 2, batterySize),
       force);
   if (Preferences::sharedPreferences->examMode().isActive()) {
-    m_examModeIconView.setFrame(
+    setChildFrame(
+        &m_examModeIconView,
         KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight) / 2,
                k_examIconWidth, k_examIconHeight),
         force);
-    m_examModeTextView.setFrame(
-        KDRect(k_examIconMargin - k_examTextWidth, k_verticalShift,
-               k_examTextWidth, bounds().height() - k_verticalShift),
-        force);
+    setChildFrame(&m_examModeTextView,
+                  KDRect(k_examIconMargin - k_examTextWidth, k_verticalShift,
+                         k_examTextWidth, bounds().height() - k_verticalShift),
+                  force);
     I18n::Message examModeMessage;
     switch (Preferences::sharedPreferences->examMode().ruleset()) {
       case ExamMode::Ruleset::English:
@@ -122,18 +125,18 @@ void TitleBarView::layoutSubviews(bool force) {
     }
     m_examModeTextView.setMessage(examModeMessage);
   } else {
-    m_examModeIconView.setFrame(KDRectZero, force);
+    setChildFrame(&m_examModeIconView, KDRectZero, force);
     m_examModeTextView.setMessage(I18n::Message::Default);
   }
   KDSize shiftAlphaLockSize =
       m_shiftAlphaLockView.minimalSizeForOptimalDisplay();
-  m_shiftAlphaLockView.setFrame(
-      KDRect(bounds().width() - batterySize.width() -
-                 Metric::TitleBarExternHorizontalMargin - k_alphaRightMargin -
-                 shiftAlphaLockSize.width(),
-             (bounds().height() - shiftAlphaLockSize.height()) / 2,
-             shiftAlphaLockSize),
-      force);
+  setChildFrame(&m_shiftAlphaLockView,
+                KDRect(bounds().width() - batterySize.width() -
+                           Metric::TitleBarExternHorizontalMargin -
+                           k_alphaRightMargin - shiftAlphaLockSize.width(),
+                       (bounds().height() - shiftAlphaLockSize.height()) / 2,
+                       shiftAlphaLockSize),
+                force);
 }
 
 void TitleBarView::refreshPreferences() {

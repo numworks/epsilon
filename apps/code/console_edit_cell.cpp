@@ -39,9 +39,11 @@ View *ConsoleEditCell::subviewAtIndex(int index) {
 
 void ConsoleEditCell::layoutSubviews(bool force) {
   KDSize promptSize = m_promptView.minimalSizeForOptimalDisplay();
-  m_promptView.setFrame(
-      KDRect(KDPointZero, promptSize.width(), bounds().height()), force);
-  m_textField.setFrame(
+  setChildFrame(&m_promptView,
+                KDRect(KDPointZero, promptSize.width(), bounds().height()),
+                force);
+  setChildFrame(
+      &m_textField,
       KDRect(KDPoint(promptSize.width(), KDCoordinate(0)),
              bounds().width() - promptSize.width(), bounds().height()),
       force);

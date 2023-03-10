@@ -25,7 +25,8 @@ void MessageTableCellWithSeparator::drawRect(KDContext* ctx,
 
 KDSize MessageTableCellWithSeparator::minimalSizeForOptimalDisplay() const {
   if (m_innerCell.bounds().width() == 0) {
-    m_innerCell.setFrame(KDRect(KDPointZero, bounds().width(), 40), false);
+    setChildFrame(&m_innerCell, KDRect(KDPointZero, bounds().width(), 40),
+                  false);
   }
   KDSize requiredSize = m_innerCell.minimalSizeForOptimalDisplay();
   return KDSize(requiredSize.width(),
@@ -33,9 +34,10 @@ KDSize MessageTableCellWithSeparator::minimalSizeForOptimalDisplay() const {
 }
 
 void MessageTableCellWithSeparator::layoutSubviews(bool force) {
-  m_innerCell.setFrame(KDRect(0, k_margin + k_lineThickness, bounds().width(),
-                              bounds().height() - k_margin - k_lineThickness),
-                       force);
+  setChildFrame(&m_innerCell,
+                KDRect(0, k_margin + k_lineThickness, bounds().width(),
+                       bounds().height() - k_margin - k_lineThickness),
+                force);
 }
 
 void MessageTableCellWithSeparator::setHighlighted(bool highlight) {

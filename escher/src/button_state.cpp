@@ -32,7 +32,7 @@ void ButtonState::layoutSubviews(bool force) {
   KDRect stateRect = KDRect(textSize.width(), verticalOffset, stateSize.width(),
                             stateSize.height());
 
-  m_messageTextView.setFrame(textRect, force);
+  setChildFrame(&m_messageTextView, textRect, force);
   m_stateView->setFrame(stateRect, force);
 }
 

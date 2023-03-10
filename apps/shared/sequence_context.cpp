@@ -60,7 +60,7 @@ void TemplatedSequenceContext<T>::stepCommonRankUntilRank(
     }
   }
   while (m_commonRank < n) {
-    step(sqctx);
+    stepToNextRank(sqctx);
   }
 }
 
@@ -82,13 +82,13 @@ void TemplatedSequenceContext<T>::stepIndependentRankUntilRank(
     }
   }
   while (m_independentRanks[sequenceIndex] < n) {
-    step(sqctx, sequenceIndex);
+    stepToNextRank(sqctx, sequenceIndex);
   }
 }
 
 template <typename T>
-void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
-                                       int sequenceIndex) {
+void TemplatedSequenceContext<T>::stepToNextRank(SequenceContext *sqctx,
+                                                 int sequenceIndex) {
   // First we increment the rank
   bool stepAllSequences = sequenceIndex == -1;
   if (stepAllSequences) {

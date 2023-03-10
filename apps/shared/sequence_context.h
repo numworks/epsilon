@@ -40,8 +40,6 @@ class TemplatedSequenceContext {
 
  private:
   constexpr static int k_maxRecurrentRank = 10000;
-  constexpr static int k_numberOfValuesInCachePerSequence =
-      SequenceStore::k_maxRecurrenceDepth + 1;
   /* Cache:
    * We use two types of cache :
    * The first one is used to to accelerate the
@@ -63,14 +61,14 @@ class TemplatedSequenceContext {
   // For example if m_commonRank = 9, then m_commonRankValues = {{u9,u8,u7},
   // {v9,v8,v7}, {w9,w8,w7}}
   T m_commonRankValues[SequenceStore::k_maxNumberOfSequences]
-                      [k_numberOfValuesInCachePerSequence];
+                      [SequenceStore::k_maxRecurrenceDepth + 1];
 
   // Used for fixed computations
   int m_independentRanks[SequenceStore::k_maxNumberOfSequences];
   // For example if m_independentRanks = {9,5,4}, then m_independentRanks =
   // {{u9,u8,u7}, {v5,v4,v3}, {w4,w3,w2}}
   T m_independentRankValues[SequenceStore::k_maxNumberOfSequences]
-                           [k_numberOfValuesInCachePerSequence];
+                           [SequenceStore::k_maxRecurrenceDepth + 1];
 };
 
 class SequenceContext : public Poincare::ContextWithParent {

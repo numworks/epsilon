@@ -23,7 +23,7 @@ T TemplatedSequenceContext<T>::valueOfCommonRankSequenceAtPreviousRank(
     int sequenceIndex, int rank) const {
   assert(0 <= sequenceIndex &&
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-  assert(0 <= rank && rank < k_numberOfValuesInCachePerSequence);
+  assert(0 <= rank && rank < SequenceStore::k_maxRecurrenceDepth + 1);
   return m_commonRankValues[sequenceIndex][rank];
 }
 
@@ -54,7 +54,8 @@ bool TemplatedSequenceContext<T>::iterateUntilRank(int n,
     m_commonRank = -1;
     for (int sequence = 0; sequence < SequenceStore::k_maxNumberOfSequences;
          sequence++) {
-      for (int depth = 0; depth < k_numberOfValuesInCachePerSequence; depth++) {
+      for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
+           depth++) {
         m_commonRankValues[sequence][depth] = NAN;
       }
     }
@@ -89,11 +90,10 @@ void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
     sequencesRankValues = reinterpret_cast<T *>(&m_independentRankValues);
   }
   for (int sequence = start; sequence < stop; sequence++) {
-    T *sequencePointer =
-        sequencesRankValues + sequence * k_numberOfValuesInCachePerSequence;
+    T *sequencePointer = sequencesRankValues +
+                         sequence * (SequenceStore::k_maxRecurrenceDepth + 1);
     // {u(n), u(n-1), u(n-2)} becomes {NaN, u(n), u(n-1)}
-    for (int depth = k_numberOfValuesInCachePerSequence - 1; depth > 0;
-         depth--) {
+    for (int depth = SequenceStore::k_maxRecurrenceDepth; depth > 0; depth--) {
       *(sequencePointer + depth) = *(sequencePointer + depth - 1);
     }
     *sequencePointer = NAN;
@@ -137,7 +137,7 @@ void TemplatedSequenceContext<T>::step(SequenceContext *sqctx,
         continue;
       }
       T *sequencePointer =
-          sequencesRankValues + j * k_numberOfValuesInCachePerSequence;
+          sequencesRankValues + j * (SequenceStore::k_maxRecurrenceDepth + 1);
       if (std::isnan(*sequencePointer)) {
         *sequencePointer = sequencesToUpdate[j]->approximateToNextRank<T>(
             sqctx, !stepAllSequences);

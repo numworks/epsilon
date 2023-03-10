@@ -19,7 +19,6 @@ class TemplatedSequenceContext {
   void stepCommonRankUntilRank(int n, SequenceContext* sqctx);
   void stepIndependentRankUntilRank(int sequenceIndex, int n,
                                     SequenceContext* sqctx);
-  void step(SequenceContext* sqctx, int sequenceIndex = -1);
   constexpr static bool IsAcceptableRank(int n) {
     return 0 <= n && n <= k_maxRecurrentRank;
   }
@@ -38,6 +37,7 @@ class TemplatedSequenceContext {
 
  private:
   constexpr static int k_maxRecurrentRank = 10000;
+  void stepToNextRank(SequenceContext* sqctx, int sequenceIndex = -1);
   /* Cache:
    * We use two types of cache :
    * The first one is used to to accelerate the

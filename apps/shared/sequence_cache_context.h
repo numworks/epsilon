@@ -22,9 +22,10 @@ class SequenceCacheContext : public Poincare::ContextWithParent {
       ContextWithParent* lastDescendantContext) override;
   int nameIndexForSymbol(const Poincare::Symbol& symbol);
 
-  // m_values = {{u(n), u(n+1)}, {v(n), v(n+1)}, {w(n), w(n+1)}}
+  // m_values = {{u(n), u(n+1), u(n+2)}, {v(n), v(n+1), v(n+2)}, {w(n), w(n+1),
+  // w(n+2)}}
   T m_values[SequenceStore::k_maxNumberOfSequences]
-            [SequenceStore::k_maxRecurrenceDepth];
+            [SequenceStore::k_maxRecurrenceDepth + 1];
   SequenceContext* m_sequenceContext;
   int m_sequenceBeingComputed;
 };

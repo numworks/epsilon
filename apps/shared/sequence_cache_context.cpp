@@ -16,12 +16,13 @@ template <typename T>
 SequenceCacheContext<T>::SequenceCacheContext(SequenceContext *sequenceContext,
                                               int sequenceBeingComputed)
     : ContextWithParent(sequenceContext),
-      m_values{{NAN, NAN}, {NAN, NAN}, {NAN, NAN}},
+      m_values{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}},
       m_sequenceContext(sequenceContext),
       m_sequenceBeingComputed(sequenceBeingComputed) {}
 
 template <typename T>
-const Poincare::Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
+const Poincare::Expression
+SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
     const Poincare::SymbolAbstract &symbol, bool clone,
     ContextWithParent *lastDescendantContext) {
   if (symbol.type() == Poincare::ExpressionNode::Type::Sequence) {
@@ -37,6 +38,11 @@ const Poincare::Expression SequenceCacheContext<T>::protectedExpressionForSymbol
                    Poincare::Rational::Builder(1)))) {
       // rank = n+1
       result = m_values[index][1];
+    } else if (rank.isIdenticalTo(Poincare::Addition::Builder(
+                   Poincare::Symbol::Builder(UCodePointUnknown),
+                   Poincare::Rational::Builder(2)))) {
+      // rank = n+2
+      result = m_values[index][2];
     }
     /* If the symbol was not in the two previous ranks, we try to approximate
      * the sequence independently from the others at the required rank (this
@@ -73,7 +79,7 @@ const Poincare::Expression SequenceCacheContext<T>::protectedExpressionForSymbol
 template <typename T>
 void SequenceCacheContext<T>::setValue(T value, int nameIndex, int depth) {
   assert(0 <= nameIndex && nameIndex < SequenceStore::k_maxNumberOfSequences);
-  assert(0 <= depth && depth < SequenceStore::k_maxRecurrenceDepth);
+  assert(0 <= depth && depth < SequenceStore::k_maxRecurrenceDepth + 1);
   m_values[nameIndex][depth] = value;
 }
 

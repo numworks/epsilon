@@ -153,7 +153,8 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   KDColor m_backgroundColor;
 };
 
-template <typename Label, typename SubLabel, typename Accessory>
+template <typename Label, typename SubLabel = EmptyCellWidget,
+          typename Accessory = EmptyCellWidget>
 class MenuCell : public AbstractMenuCell {
  public:
 #ifndef PLATFORM_DEVICE

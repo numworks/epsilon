@@ -25,10 +25,10 @@ class TemplatedSequenceContext {
   T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) const;
 
   // Independant rank
-  int independentSequenceRank(int sequenceIndex) {
+  int independentRank(int sequenceIndex) {
     return m_independentRanks[sequenceIndex];
   }
-  void setIndependentSequenceRank(int rank, int sequenceIndex) {
+  void setIndependentRank(int rank, int sequenceIndex) {
     m_independentRanks[sequenceIndex] = rank;
   }
   T independentSequenceValue(int sequenceIndex, int depth) {
@@ -125,15 +125,15 @@ class SequenceContext : public Poincare::ContextWithParent {
   // Independant rank
 
   template <typename T>
-  int independentSequenceRank(int sequenceIndex) {
+  int independentRank(int sequenceIndex) {
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->independentSequenceRank(sequenceIndex);
+        ->independentRank(sequenceIndex);
   }
 
   template <typename T>
-  void setIndependentSequenceRank(int rank, int sequenceIndex) {
+  void setIndependentRank(int rank, int sequenceIndex) {
     static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->setIndependentSequenceRank(rank, sequenceIndex);
+        ->setIndependentRank(rank, sequenceIndex);
   }
 
   template <typename T>

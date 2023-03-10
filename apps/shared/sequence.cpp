@@ -190,18 +190,18 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
     return NAN;
   }
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
-  if (sqctx->independentSequenceRank<T>(sequenceIndex) > n ||
-      sqctx->independentSequenceRank<T>(sequenceIndex) < 0) {
+  if (sqctx->independentRank<T>(sequenceIndex) > n ||
+      sqctx->independentRank<T>(sequenceIndex) < 0) {
     // Reset cache indexes and cache values
-    sqctx->setIndependentSequenceRank<T>(-1, sequenceIndex);
+    sqctx->setIndependentRank<T>(-1, sequenceIndex);
     for (int i = 0; i < SequenceStore::k_maxRecurrenceDepth + 1; i++) {
       sqctx->setIndependentSequenceValue<T>(NAN, sequenceIndex, i);
     }
   }
-  while (sqctx->independentSequenceRank<T>(sequenceIndex) < n) {
+  while (sqctx->independentRank<T>(sequenceIndex) < n) {
     sqctx->stepSequenceAtIndex<T>(sequenceIndex);
   }
-  /* In case we have sqctx->independentSequenceRank<T>(sequenceIndex) = n, we
+  /* In case we have sqctx->independentRank<T>(sequenceIndex) = n, we
    * can return the value */
   T value = sqctx->independentSequenceValue<T>(sequenceIndex, 0);
   return value;
@@ -210,9 +210,8 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
 template <typename T>
 T Sequence::approximateToNextRank(SequenceContext *sqctx,
                                   int sequenceIndex) const {
-  int n = sequenceIndex == -1
-              ? sqctx->commonRank<T>()
-              : sqctx->independentSequenceRank<T>(sequenceIndex);
+  int n = sequenceIndex == -1 ? sqctx->commonRank<T>()
+                              : sqctx->independentRank<T>(sequenceIndex);
   if (n < initialRank() || n < 0) {
     return NAN;
   }
@@ -228,11 +227,11 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
    * values stored in SequenceContext (m_independentRankValues). However, these
    * values might not be aligned on the same rank. Thus, we align them all at
    * the rank of the sequence we are stepping. */
-  int independentRank = sqctx->independentSequenceRank<T>(sequenceIndex);
+  int independentRank = sqctx->independentRank<T>(sequenceIndex);
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     if (sequenceIndex != -1 &&
-        sqctx->independentSequenceRank<T>(i) != independentRank) {
-      int offset = independentRank - sqctx->independentSequenceRank<T>(i);
+        sqctx->independentRank<T>(i) != independentRank) {
+      int offset = independentRank - sqctx->independentRank<T>(i);
       if (offset != 0) {
         for (int j = SequenceStore::k_maxRecurrenceDepth; j >= 0; j--) {
           values[i][j] =

@@ -40,29 +40,29 @@ void DetailsParameterController::viewWillAppear() {
 }
 
 KDCoordinate DetailsParameterController::nonMemoizedRowHeight(int j) {
-  MessageTableCellWithMessageWithBuffer tempCell;
+  DetailCell tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
 void DetailsParameterController::willDisplayCellForIndex(HighlightCell *cell,
                                                          int index) {
   assert(0 <= index && index < k_numberOfDataPoints);
-  MessageTableCellWithMessageWithBuffer *myCell =
-      static_cast<MessageTableCellWithMessageWithBuffer *>(cell);
+  DetailCell *myCell = static_cast<DetailCell *>(cell);
   if (index == k_indexOfCurveTypeRow) {
-    myCell->setMessage(I18n::Message::CurveType);
-    myCell->setSubLabelMessage(I18n::Message::Default);
-    myCell->setAccessoryText(
+    myCell->label()->setMessage(I18n::Message::CurveType);
+    myCell->subLabel()->setMessage(I18n::Message::Default);
+    myCell->accessory()->setText(
         I18n::translate(function()->properties().caption()));
   } else {
-    myCell->setMessage(detailsTitle(index - 1));
+    myCell->label()->setMessage(detailsTitle(index - 1));
     double value = detailsValue(index - 1);
     if (index - 1 == 0 && functionIsNonVerticalLine()) {
       assert(std::isnan(value));
       /* For the line's equation cell, we want the detail description (y=mx+b)
        * to be displayed as the value would : a large font accessory. */
-      myCell->setAccessoryText(I18n::translate(detailsDescription(index - 1)));
-      myCell->setSubLabelMessage(I18n::Message::Default);
+      myCell->accessory()->setText(
+          I18n::translate(detailsDescription(index - 1)));
+      myCell->subLabel()->setMessage(I18n::Message::Default);
     } else {
       constexpr int precision =
           Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
@@ -72,14 +72,13 @@ void DetailsParameterController::willDisplayCellForIndex(HighlightCell *cell,
       Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
           value, buffer, bufferSize, precision,
           Poincare::Preferences::PrintFloatMode::Decimal);
-      myCell->setAccessoryText(buffer);
-      myCell->setSubLabelMessage(detailsDescription(index - 1));
+      myCell->accessory()->setText(buffer);
+      myCell->subLabel()->setMessage(detailsDescription(index - 1));
     }
   }
 }
 
-MessageTableCellWithMessageWithBuffer *DetailsParameterController::reusableCell(
-    int index, int type) {
+DetailCell *DetailsParameterController::reusableCell(int index, int type) {
   assert(0 <= index && index < reusableCellCount(type));
   return &m_cells[index];
 }

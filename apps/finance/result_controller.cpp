@@ -13,8 +13,10 @@ using namespace Finance;
 
 ResultController::ResultController(Escher::StackViewController* parentResponder)
     : Escher::SelectableCellListPage<
-          Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells,
-          Escher::MemoizedListViewDataSource>(parentResponder),
+          Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                           Escher::BufferTextView>,
+          k_numberOfResultCells, Escher::MemoizedListViewDataSource>(
+          parentResponder),
       m_messageView(KDFont::Size::Small, I18n::Message::CalculatedValues,
                     KDContext::k_alignCenter, KDContext::k_alignCenter,
                     Escher::Palette::GrayDark, Escher::Palette::WallScreen),
@@ -23,9 +25,9 @@ ResultController::ResultController(Escher::StackViewController* parentResponder)
 void ResultController::didBecomeFirstResponder() {
   /* Build the result cell here because it only needs to be updated once this
    * controller become first responder. */
-  cellAtIndex(0)->setMessage(App::GetInterestData()->labelForParameter(
+  cellAtIndex(0)->label()->setMessage(App::GetInterestData()->labelForParameter(
       App::GetInterestData()->getUnknown()));
-  cellAtIndex(0)->setSubLabelMessage(
+  cellAtIndex(0)->subLabel()->setMessage(
       App::GetInterestData()->sublabelForParameter(
           App::GetInterestData()->getUnknown()));
   double value = App::GetInterestData()->computeUnknownValue();
@@ -39,7 +41,7 @@ void ResultController::didBecomeFirstResponder() {
   Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
       value, buffer, bufferSize, precision,
       Poincare::Preferences::PrintFloatMode::Decimal);
-  cellAtIndex(0)->setAccessoryText(buffer);
+  cellAtIndex(0)->accessory()->setText(buffer);
   resetMemoization(true);
   selectRow(-1);
   m_contentView.reload();

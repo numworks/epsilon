@@ -3,7 +3,8 @@
 
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/expiring_pointer.h>
-#include <escher/message_table_cell_with_message_with_buffer.h>
+#include <escher/buffer_text_view.h>
+#include <escher/menu_cell.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
@@ -12,6 +13,10 @@
 #include <poincare/conic.h>
 
 namespace Graph {
+
+using DetailCell =
+    Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                     Escher::BufferTextView>;
 
 class DetailsParameterController : public Escher::SelectableListViewController<
                                        Escher::MemoizedListViewDataSource>,
@@ -33,8 +38,7 @@ class DetailsParameterController : public Escher::SelectableListViewController<
   int numberOfRows() const override { return 1 + detailsNumberOfSections(); }
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
-  Escher::MessageTableCellWithMessageWithBuffer* reusableCell(
-      int index, int type) override;
+  DetailCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfDataPoints; }
   int typeAtIndex(int index) const override { return 0; }
 
@@ -77,7 +81,7 @@ class DetailsParameterController : public Escher::SelectableListViewController<
   void setConicDetailsValues(Poincare::Conic* conic);
 
   Escher::StackViewController* stackController() const;
-  Escher::MessageTableCellWithMessageWithBuffer m_cells[k_numberOfDataPoints];
+  DetailCell m_cells[k_numberOfDataPoints];
   double m_detailValues[k_numberOfDataPoints - 1];
   Ion::Storage::Record m_record;
 };

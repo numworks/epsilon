@@ -149,7 +149,7 @@ KDRect View::absoluteVisibleFrame() const {
   }
 }
 
-KDRect View::oldFrame() const {
+KDRect View::relativeFrame() const {
   if (m_superview == nullptr) {
     return m_frame;
   }

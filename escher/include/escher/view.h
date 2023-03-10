@@ -54,7 +54,7 @@ class View {
   void setAbsoluteFrame(KDRect frame, bool force) { m_frame = frame; }
   void setChildFrame(View *child, KDRect frame, bool force) const;
   KDPoint pointFromPointInView(View *view, KDPoint point);
-  KDRect oldFrame() const;
+  KDRect relativeFrame() const;
 
   KDRect bounds() const;
   KDRect dirtyRect() const { return m_dirtyRect; }

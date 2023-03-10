@@ -31,7 +31,7 @@ void MemoizedCursorView::setColor(KDColor color) {
 void MemoizedCursorView::setCursorFrame(KDRect f, bool force) {
   /* TODO This is quite dirty (we are out of the dirty tracking and we assume
    * the cursor is the upmost view) but it works well. */
-  if (m_frame == f && !force) {
+  if (relativeFrame() == f && !force) {
     return;
   }
   /* We want to avoid drawing the curve just because the cursor has been

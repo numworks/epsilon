@@ -78,7 +78,7 @@ KDPoint ExpressionView::drawingOrigin() const {
 }
 
 KDPoint ExpressionView::absoluteDrawingOrigin() const {
-  return drawingOrigin().translatedBy(m_frame.topLeft());
+  return drawingOrigin().translatedBy(relativeFrame().topLeft());
 }
 
 void ExpressionView::drawRect(KDContext* ctx, KDRect rect) const {

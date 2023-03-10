@@ -16,8 +16,7 @@ class TemplatedSequenceContext {
  public:
   TemplatedSequenceContext();
   void resetCache();
-  void stepCommonRankUntilRank(int n, SequenceStore* sequenceStore,
-                               SequenceContext* sqctx);
+  void stepCommonRankUntilRank(int n, SequenceContext* sqctx);
   void step(SequenceContext* sqctx, int sequenceIndex = -1);
   constexpr static bool IsAcceptableRank(int n) {
     return 0 <= n && n <= k_maxRecurrentRank;
@@ -97,7 +96,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   template <typename T>
   void stepCommonRankUntilRank(int n) {
     static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->stepCommonRankUntilRank(n, m_sequenceStore, this);
+        ->stepCommonRankUntilRank(n, this);
   }
 
   template <typename T>

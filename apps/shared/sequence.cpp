@@ -209,13 +209,15 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
 
 template <typename T>
 T Sequence::approximateToNextRank(SequenceContext *sqctx,
-                                  int sequenceIndex) const {
-  int n = sequenceIndex == -1 ? sqctx->commonRank<T>()
-                              : sqctx->independentRank<T>(sequenceIndex);
+                                  bool independent) const {
+  int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
+  int n = independent ? sqctx->independentRank<T>(sequenceIndex)
+                      : sqctx->commonRank<T>();
   if (n < initialRank() || n < 0) {
     return NAN;
   }
-  SequenceCacheContext<T> ctx = SequenceCacheContext<T>(sqctx, sequenceIndex);
+  SequenceCacheContext<T> ctx =
+      SequenceCacheContext<T>(sqctx, independent ? sequenceIndex : -1);
 
   /* Hold values = {{u(n), u(n-1), u(n-2)}, {v(n), v(n-1), v(n-2)}, {w(n),
    * w(n-1), w(n-2)}}
@@ -223,12 +225,12 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
    * SequenceCacheContext needs it. */
   T values[SequenceStore::k_maxNumberOfSequences]
           [SequenceStore::k_maxRecurrenceDepth + 1];
-  /* In case we step only one sequence (sequenceIndex != -1), we use independant
-   * values stored in SequenceContext (m_independentRankValues). However, these
-   * values might not be aligned on the same rank. Thus, we align them all at
-   * the rank of the sequence we are stepping. */
+  /* In case we step only one sequence, we use independant values stored in
+   * SequenceContext (m_independentRankValues). However, these values might not
+   * be aligned on the same rank. Thus, we align them all at the rank of the
+   * sequence we are stepping. */
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    if (sequenceIndex != -1 && sqctx->independentRank<T>(i) != n) {
+    if (independent && sqctx->independentRank<T>(i) != n) {
       int offset = n - sqctx->independentRank<T>(i);
       if (offset != 0) {
         for (int j = SequenceStore::k_maxRecurrenceDepth; j >= 0; j--) {
@@ -241,7 +243,7 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
     } else {
       for (int j = 0; j < SequenceStore::k_maxRecurrenceDepth + 1; j++) {
         values[i][j] =
-            sequenceIndex != -1
+            independent
                 ? sqctx->independentSequenceValue<T>(i, j)
                 : sqctx->valueOfCommonRankSequenceAtPreviousRank<T>(i, j);
       }
@@ -469,9 +471,9 @@ template double Sequence::templatedApproximateAtAbscissa<double>(
 template float Sequence::templatedApproximateAtAbscissa<float>(
     float, SequenceContext *) const;
 template double Sequence::approximateToNextRank<double>(SequenceContext *,
-                                                        int) const;
+                                                        bool) const;
 template float Sequence::approximateToNextRank<float>(SequenceContext *,
-                                                      int) const;
+                                                      bool) const;
 template double Sequence::valueAtRank<double>(int, SequenceContext *);
 template float Sequence::valueAtRank<float>(int, SequenceContext *);
 

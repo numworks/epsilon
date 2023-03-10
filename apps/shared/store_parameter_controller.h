@@ -46,7 +46,7 @@ class StoreParameterController : public ColumnParameterController {
   virtual I18n::Message sortMessage() { return I18n::Message::SortValues; }
 
   Escher::MessageTableCell m_fillFormula;
-  Escher::MessageTableCellWithMessage m_sortCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView> m_sortCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::SwitchView>
       m_hideCell;

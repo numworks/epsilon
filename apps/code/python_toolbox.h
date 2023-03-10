@@ -3,12 +3,15 @@
 
 #include <apps/i18n.h>
 #include <escher/container.h>
-#include <escher/message_table_cell_with_message.h>
+#include <escher/menu_cell.h>
 #include <escher/toolbox.h>
 #include <ion/events.h>
 #include <kandinsky/font.h>
 
 namespace Code {
+
+using ToolboxLeafCell =
+    Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView>;
 
 class PythonToolbox : public Escher::Toolbox {
  public:
@@ -27,7 +30,7 @@ class PythonToolbox : public Escher::Toolbox {
  protected:
   bool selectLeaf(int selectedRow) override;
   const Escher::ToolboxMessageTree* rootModel() const override;
-  Escher::MessageTableCellWithMessage* leafCellAtIndex(int index) override;
+  ToolboxLeafCell* leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
   constexpr static int k_maxNumberOfDisplayedRows =
@@ -38,7 +41,7 @@ class PythonToolbox : public Escher::Toolbox {
  private:
   void scrollToLetter(char letter);
   void scrollToAndSelectChild(int i);
-  Escher::MessageTableCellWithMessage m_leafCells[k_maxNumberOfDisplayedRows];
+  ToolboxLeafCell m_leafCells[k_maxNumberOfDisplayedRows];
   Escher::MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
 };
 

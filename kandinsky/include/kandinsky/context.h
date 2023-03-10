@@ -1,18 +1,11 @@
 #ifndef KANDINSKY_CONTEXT_H
 #define KANDINSKY_CONTEXT_H
 
-#include <kandinsky/color.h>
-#include <kandinsky/font.h>
+#include <kandinsky/glyph.h>
 #include <kandinsky/rect.h>
 
 class KDContext {
  public:
-  constexpr static float k_alignLeft = 0.;
-  constexpr static float k_alignRight = 1.;
-  constexpr static float k_alignCenter = 0.5;
-  constexpr static float k_alignTop = 0.;
-  constexpr static float k_alignBottom = 1.;
-
   KDPoint origin() const { return m_origin; }
   KDRect clippingRect() const { return m_clippingRect; }
   void setOrigin(KDPoint origin) { m_origin = origin; }
@@ -25,16 +18,10 @@ class KDContext {
 
   // Text
   KDPoint drawString(const char* text, KDPoint p,
-                     KDFont::Size font = KDFont::Size::Large,
-                     KDColor textColor = KDColorBlack,
-                     KDColor backgroundColor = KDColorWhite,
+                     KDGlyph::Style style = KDGlyph::Style{},
                      int maxLength = -1);
-  KDPoint alignAndDrawString(
-      const char* text, KDPoint p, KDSize frame,
-      float horizontalAlignment = KDContext::k_alignCenter,
-      float verticalAlignment = KDContext::k_alignCenter,
-      KDFont::Size font = KDFont::Size::Large, KDColor textColor = KDColorBlack,
-      KDColor backgroundColor = KDColorWhite, int maxLength = -1);
+  KDPoint alignAndDrawString(const char* text, KDPoint p, KDSize frame,
+                             KDGlyph::Format format = {}, int maxLength = -1);
 
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);
@@ -75,8 +62,7 @@ class KDContext {
  private:
   KDPoint alignAndDrawSingleLineString(const char* text, KDPoint p,
                                        KDSize frame, float horizontalAlignment,
-                                       KDFont::Size font, KDColor textColor,
-                                       KDColor backgroundColor, int maxLength);
+                                       KDGlyph::Style style, int maxLength);
   KDRect absoluteFillRect(KDRect rect);
   KDPoint pushOrPullString(const char* text, KDPoint p, KDFont::Size font,
                            KDColor textColor, KDColor backgroundColor,

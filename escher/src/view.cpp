@@ -45,7 +45,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
    * rectangle rect. */
   KDRect rectNeedingRedraw =
       rect.intersectedWith(m_dirtyRect)
-          .unionedWith(forceRedrawRect.intersectedWith(bounds()));
+          .unionedWith(forceRedrawRect.intersectedWith(m_frame));
 
   // This redraws the rectNeedingRedraw calling drawRect.
   if (!rectNeedingRedraw.isEmpty()) {
@@ -55,7 +55,8 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
     KDContext *ctx = KDIonContext::SharedContext;
     ctx->setOrigin(absOrigin);
     ctx->setClippingRect(absClippingRect);
-    this->drawRect(ctx, rectNeedingRedraw);
+    this->drawRect(ctx,
+                   rectNeedingRedraw.translatedBy(m_frame.origin().opposite()));
   }
   // This initializes the area that has been redrawn.
   KDRect redrawnArea = rectNeedingRedraw;

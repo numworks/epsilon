@@ -33,6 +33,7 @@ QUIZ_CASE(equation_solve_linear_system) {
                                       {"a=t2", "b=t2", "c=t1", "d=t1"});
   assert_solves_to_infinite_solutions({"a-b+c=0", "c-d=0"},
                                       {"a=-t1+t2", "b=t2", "c=t1", "d=t1"});
+  assert_solves_to_infinite_solutions({"x=x", "y=y"}, {"x=t2", "y=t1"});
   assert_solves_to_no_solution("2=0");
   assert_solves_to_no_solution("e=1");
   assert_solves_to_no_solution("i=5");

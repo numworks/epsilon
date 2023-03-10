@@ -182,7 +182,7 @@ T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext *sqctx) const {
   }
   sqctx->stepCommonRankUntilRank<T>(n);
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
-  return sqctx->valueOfCommonRankSequenceAtPreviousRank<T>(sequenceIndex, 0);
+  return sqctx->commonRankSequenceValue<T>(sequenceIndex, 0);
 }
 
 template <typename T>
@@ -192,7 +192,7 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
   }
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
   sqctx->stepIndependentRankUntilRank<T>(sequenceIndex, n);
-  return sqctx->independentSequenceValue<T>(sequenceIndex, 0);
+  return sqctx->independentRankSequenceValue<T>(sequenceIndex, 0);
 }
 
 template <typename T>
@@ -225,15 +225,14 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
           values[i][j] =
               j - offset < 0 || j - offset > SequenceStore::k_maxRecurrenceDepth
                   ? NAN
-                  : sqctx->independentSequenceValue<T>(i, j - offset);
+                  : sqctx->independentRankSequenceValue<T>(i, j - offset);
         }
       }
     } else {
       for (int j = 0; j < SequenceStore::k_maxRecurrenceDepth + 1; j++) {
-        values[i][j] =
-            independent
-                ? sqctx->independentSequenceValue<T>(i, j)
-                : sqctx->valueOfCommonRankSequenceAtPreviousRank<T>(i, j);
+        values[i][j] = independent
+                           ? sqctx->independentRankSequenceValue<T>(i, j)
+                           : sqctx->commonRankSequenceValue<T>(i, j);
       }
     }
   }

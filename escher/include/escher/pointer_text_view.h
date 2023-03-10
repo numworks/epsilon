@@ -8,9 +8,8 @@ namespace Escher {
 
 class PointerTextView : public TextView {
  public:
-  PointerTextView(KDFont::Size font = KDFont::Size::Large,
-                  const char* text = nullptr, float horizontalAlignment = 0.0f,
-                  float verticalAlignment = 0.0f,
+  PointerTextView(KDFont::Size font, const char* text,
+                  float horizontalAlignment, float verticalAlignment,
                   KDColor textColor = KDColorBlack,
                   KDColor backgroundColor = KDColorWhite);
   const char* text() const override { return m_text; }

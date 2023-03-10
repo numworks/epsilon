@@ -13,18 +13,22 @@ class BufferTextView : public TextView {
 
  public:
   constexpr static size_t k_maxNumberOfChar = 256;
-  BufferTextView(KDFont::Size font = KDFont::Size::Large,
-                 float horizontalAlignment = KDContext::k_alignLeft,
-                 float verticalAlignment = KDContext::k_alignCenter,
-                 KDColor textColor = KDColorBlack,
+  BufferTextView(CellWidget::Type type = CellWidget::Type::Label)
+      : TextView(type), m_maxDisplayedTextLength(k_maxNumberOfChar - 1) {}
+  BufferTextView(KDFont::Size font, float horizontalAlignment,
+                 float verticalAlignment, KDColor textColor = KDColorBlack,
                  KDColor backgroundColor = KDColorWhite,
                  size_t maxDisplayedTextLength = k_maxNumberOfChar - 1);
+
+  // View
+  KDSize minimalSizeForOptimalDisplay() const override;
+
+  // TextView
+  const char* text() const override;
   void setText(const char* text) override;
 
   void setMessageWithPlaceholders(I18n::Message message, ...);
-  const char* text() const override;
   void appendText(const char* text);
-  KDSize minimalSizeForOptimalDisplay() const override;
 
  protected:
   void privateSetMessageWithPlaceholders(I18n::Message message, va_list args);

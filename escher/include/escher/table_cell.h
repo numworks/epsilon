@@ -127,7 +127,7 @@ class TableCell : public Bordered, public HighlightCell {
     return std::max(accessoryMinimalWidthOverridden(), accessorySize().width());
   }
 
-  static KDRect setFrameIfViewExists(View* v, KDRect rect, bool force);
+  KDRect setFrameIfViewExists(View* v, KDRect rect, bool force);
 };
 }  // namespace Escher
 #endif

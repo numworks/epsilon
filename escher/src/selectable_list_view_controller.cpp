@@ -7,8 +7,8 @@ void SelectableViewController::centerTable(KDCoordinate availableHeight) {
   // Give a maximum of space to the table to let it compute its preferred size
   table->setTopMargin(0);
   table->setBottomMargin(0);
-  setChildFrame(table, KDRect(0, 0, Ion::Display::Width, availableHeight),
-                true);
+  view()->setChildFrame(
+      table, KDRect(0, 0, Ion::Display::Width, availableHeight), true);
   KDCoordinate tableHeight = table->minimalSizeForOptimalDisplay().height();
   assert(tableHeight < availableHeight);
   table->setTopMargin((availableHeight - tableHeight) / 2);

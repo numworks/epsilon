@@ -267,7 +267,7 @@ void AppsContainer::handleRunException(bool resetSnapshot) {
 }
 
 void AppsContainer::run() {
-  window()->setFrame(KDRectScreen, false);
+  window()->setAbsoluteFrame(KDRectScreen, false);
   Preferences* poincarePreferences = Preferences::sharedPreferences;
   Poincare::ExamMode examMode = poincarePreferences->examMode();
   if (examMode.isActive()) {

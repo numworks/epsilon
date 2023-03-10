@@ -103,7 +103,7 @@ void View::setSize(KDSize size) {
 
 void View::setChildFrame(View *child, KDRect frame, bool force) const {
   assert(child && (!child->m_superview || child->m_superview == this));
-  setChildFrame(child, frame.translatedBy(m_frame.origin()), force);
+  child->setFrame(frame.translatedBy(m_frame.origin()), force);
 }
 
 void View::setFrame(KDRect frame, bool force) {

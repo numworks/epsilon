@@ -59,7 +59,7 @@ View *LocalizationController::ContentView::subviewAtIndex(int i) {
 }
 
 void LocalizationController::ContentView::modeHasChanged() {
-  if (!m_frame.isEmpty()) {
+  if (!bounds().isEmpty()) {
     layoutSubviews();
   }
   markRectAsDirty(bounds());

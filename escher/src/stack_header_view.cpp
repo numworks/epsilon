@@ -23,7 +23,7 @@ void StackHeaderView::drawRect(KDContext *ctx, KDRect rect) const {
   drawInnerRect(ctx, b, m_backgroundColor);
   // Write title
   KDFont::Size font = KDFont::Size::Small;
-  ctx->alignAndDrawString(m_controller->title(), KDPointZero, m_frame.size(),
+  ctx->alignAndDrawString(m_controller->title(), KDPointZero, bounds().size(),
                           KDContext::k_alignCenter, KDContext::k_alignCenter,
                           font, m_textColor, m_backgroundColor);
 }

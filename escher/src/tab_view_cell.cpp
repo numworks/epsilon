@@ -48,7 +48,7 @@ void TabViewCell::drawRect(KDContext *ctx, KDRect rect) const {
     ctx->fillRect(KDRect(0, 0, width, height), background);
   }
   // Write title
-  ctx->alignAndDrawString(m_controller->title(), KDPointZero, m_frame.size(),
+  ctx->alignAndDrawString(m_controller->title(), KDPointZero, bounds().size(),
                           KDContext::k_alignCenter, KDContext::k_alignCenter,
                           KDFont::Size::Small, text, background);
 }

@@ -14,8 +14,8 @@ void TableCell::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 KDSize TableCell::minimalSizeForOptimalDisplay() const {
-  assert(m_frame.width() > 0);
-  return KDSize(m_frame.width(), minimalHeightForOptimalDisplay());
+  assert(bounds().width() > 0);
+  return KDSize(bounds().width(), minimalHeightForOptimalDisplay());
 }
 
 KDCoordinate TableCell::minimalHeightForOptimalDisplay() const {

@@ -215,7 +215,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::subviewFrames(
   /* Handle horizontal alignment right, left or center. Vertical alignment
    * could be handled here too but there is no use for implementing it
    * for now. */
-  if (currentWidth < m_frame.width()) {
+  if (currentWidth < bounds().width()) {
     KDCoordinate horizontalOffset =
         currentWidth < bounds().width()
             ? std::round((bounds().width() - currentWidth) *

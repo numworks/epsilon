@@ -13,7 +13,7 @@ void BannerView::drawRect(KDContext *ctx, KDRect rect) const {
   assert(!bounds().isEmpty());
   const KDCoordinate frameHeight = bounds().height();
   const KDCoordinate lineHeight = KDFont::GlyphHeight(k_font) + LineSpacing;
-  const KDCoordinate lineWidth = m_frame.width();
+  const KDCoordinate lineWidth = bounds().width();
   for (KDCoordinate y = 0; y < frameHeight; y += lineHeight) {
     ctx->fillRect(KDRect(0, y, lineWidth, LineSpacing), BackgroundColor());
   }
@@ -30,13 +30,13 @@ KDCoordinate BannerView::minimalHeightForOptimalDisplayGivenWidth(
 }
 
 void BannerView::layoutSubviews(bool force) {
-  if (m_frame.isEmpty()) {
+  if (bounds().isEmpty()) {
     /* If the frame has not been set yet, there is no point in layouting the
      * subviews.
      * TODO: Do not call layout Subviews if the frame has not been set? */
     return;
   }
-  const KDCoordinate width = m_frame.width();
+  const KDCoordinate width = bounds().width();
   int firstSubview = 0;
   KDCoordinate y = LineSpacing;
   while (firstSubview < numberOfSubviews()) {

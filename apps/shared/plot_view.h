@@ -64,9 +64,9 @@ class AbstractPlotView : public Escher::View {
   float rangeMax(Axis axis) const {
     return axis == Axis::Horizontal ? m_range->xMax() : m_range->yMax();
   }
-  KDCoordinate graphWidth() const { return m_frame.width() - 1; }
+  KDCoordinate graphWidth() const { return bounds().width() - 1; }
   KDCoordinate graphHeight() const {
-    return m_frame.height() - 1 -
+    return bounds().height() - 1 -
            (m_bannerOverlapsGraph ? 0 : bannerView()->bounds().height());
   }
   float pixelWidth() const {

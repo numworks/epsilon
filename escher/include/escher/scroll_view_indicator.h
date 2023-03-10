@@ -39,7 +39,7 @@ class ScrollViewHorizontalBar : public ScrollViewBar {
   constexpr static KDCoordinate k_leftMargin = Metric::CommonLeftMargin;
   constexpr static KDCoordinate k_rightMargin = Metric::CommonRightMargin;
   KDCoordinate totalLength() const {
-    return m_frame.width() - k_leftMargin - k_rightMargin;
+    return bounds().width() - k_leftMargin - k_rightMargin;
   }
 };
 
@@ -52,7 +52,7 @@ class ScrollViewVerticalBar : public ScrollViewBar {
 
  private:
   KDCoordinate totalLength() const {
-    return m_frame.height() - m_topMargin - m_bottomMargin;
+    return bounds().height() - m_topMargin - m_bottomMargin;
   }
   KDCoordinate m_topMargin;
   KDCoordinate m_bottomMargin;

@@ -26,12 +26,12 @@ void TabViewController::ContentView::setDisplayTabs(bool display) {
 
 void TabViewController::ContentView::layoutSubviews(bool force) {
   KDRect tabViewFrame = m_displayTabs
-                            ? KDRect(0, 0, m_frame.width(), Metric::TabHeight)
+                            ? KDRect(0, 0, bounds().width(), Metric::TabHeight)
                             : KDRectZero;
   setChildFrame(&m_tabView, tabViewFrame, force);
   if (m_activeView) {
-    KDRect activeViewFrame = KDRect(0, tabViewFrame.height(), m_frame.width(),
-                                    m_frame.height() - tabViewFrame.height());
+    KDRect activeViewFrame = KDRect(0, tabViewFrame.height(), bounds().width(),
+                                    bounds().height() - tabViewFrame.height());
     setChildFrame(m_activeView, activeViewFrame, force);
   }
 }

@@ -53,7 +53,7 @@ void Controller::ContentView::layoutSubviews(bool force) {
    * table view and ContentView::drawRect will take care of drawing the white
    * pixels at the bottom of the screen. */
   KDRect frame =
-      KDRect(KDPointZero, m_frame.width(), m_frame.height() - k_bottomMargin);
+      KDRect(KDPointZero, bounds().width(), bounds().height() - k_bottomMargin);
   setChildFrame(&m_selectableTableView, frame, force);
 }
 

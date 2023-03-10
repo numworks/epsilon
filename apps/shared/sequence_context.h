@@ -25,11 +25,11 @@ class TemplatedSequenceContext {
 
   // Common rank
   int commonRank() const { return m_commonRank; }
-  T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) const {
+  T commonRankSequenceValue(int sequenceIndex, int depth) const {
     assert(0 <= sequenceIndex &&
            sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-    assert(0 <= rank && rank < SequenceStore::k_maxRecurrenceDepth + 1);
-    return m_commonRankValues[sequenceIndex][rank];
+    assert(0 <= depth && depth < SequenceStore::k_maxRecurrenceDepth + 1);
+    return m_commonRankValues[sequenceIndex][depth];
   }
 
   // Independant rank
@@ -38,7 +38,7 @@ class TemplatedSequenceContext {
            sequenceIndex < SequenceStore::k_maxNumberOfSequences);
     return m_independentRanks[sequenceIndex];
   }
-  T independentSequenceValue(int sequenceIndex, int depth) {
+  T independentRankSequenceValue(int sequenceIndex, int depth) {
     assert(0 <= sequenceIndex &&
            sequenceIndex < SequenceStore::k_maxNumberOfSequences);
     assert(0 <= depth && depth < SequenceStore::k_maxRecurrenceDepth + 1);
@@ -123,9 +123,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   }
 
   template <typename T>
-  T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) {
+  T commonRankSequenceValue(int sequenceIndex, int rank) {
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->valueOfCommonRankSequenceAtPreviousRank(sequenceIndex, rank);
+        ->commonRankSequenceValue(sequenceIndex, rank);
   }
 
   // Independant rank
@@ -137,9 +137,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   }
 
   template <typename T>
-  T independentSequenceValue(int sequenceIndex, int depth) {
+  T independentRankSequenceValue(int sequenceIndex, int depth) {
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->independentSequenceValue(sequenceIndex, depth);
+        ->independentRankSequenceValue(sequenceIndex, depth);
   }
 
  private:

@@ -37,6 +37,13 @@ EditionReference NAry::DetachChildAtIndex(EditionReference nary, int index) {
   return child;
 }
 
+void NAry::RemoveChildAtIndex(EditionReference nary, int index) {
+  assert(static_cast<Node>(nary).isNAry());
+  EditionReference child = nary.childAtIndex(index);
+  child.removeTree();
+  SetNumberOfChildren(nary, nary.numberOfChildren() - 1);
+}
+
 void NAry::SetNumberOfChildren(EditionReference reference, size_t numberOfChildren) {
   assert(static_cast<Node>(reference).isNAry());
   assert(numberOfChildren < UINT8_MAX);

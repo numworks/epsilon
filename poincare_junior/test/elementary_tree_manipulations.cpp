@@ -85,7 +85,7 @@ QUIZ_CASE(pcj_elementary_tree_manipulation) {
   log_edition_pool();
 
 #if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n--- Create x^2-3+4 Layout ---" << std::endl;
+  std::cout << "\n--- Create x^2-34 Layout ---" << std::endl;
 #endif
   EditionReference rackLayout1 = EditionReference::Push<BlockType::RackLayout>(3);
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('x');
@@ -101,6 +101,7 @@ QUIZ_CASE(pcj_elementary_tree_manipulation) {
   EditionReference four = NAry::DetachChildAtIndex(rackLayout2, 1);
   NAry::AddChildAtIndex(rackLayout1, four, 3);
   NAry::AddOrMergeChildAtIndex(rackLayout1, rackLayout2, 2);
+  NAry::RemoveChildAtIndex(rackLayout1, 4);
 
   log_edition_pool();
 }

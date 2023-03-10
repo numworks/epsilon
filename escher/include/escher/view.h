@@ -39,7 +39,7 @@ class View {
   friend class Window;
 
  public:
-  View() : m_frame(KDRectZero), m_superview(nullptr), m_dirtyRect(KDRectZero) {}
+  View() : m_superview(nullptr), m_frame(KDRectZero), m_dirtyRect(KDRectZero) {}
 
   void resetSuperview() { m_superview = nullptr; }
   /* The drawRect method should be implemented by each View subclass. In a
@@ -85,7 +85,6 @@ class View {
   virtual const char *className() const;
   virtual void logAttributes(std::ostream &os) const;
 #endif
-  KDRect m_frame;  // absolute
   virtual int numberOfSubviews() const { return 0; }
   virtual View *subviewAtIndex(int index) { return nullptr; }
 
@@ -103,6 +102,7 @@ class View {
    * Otherwise, we would just have to implement the destructor to notify
    * subviews that 'm_superview = nullptr'. */
   View *m_superview;
+  KDRect m_frame;      // absolute
   KDRect m_dirtyRect;  // absolute
 };
 

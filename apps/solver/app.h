@@ -10,7 +10,7 @@
 #include "list_controller.h"
 #include "solutions_controller.h"
 #include "solver_context.h"
-#include "system.h"
+#include "system_of_equations.h"
 
 namespace Solver {
 
@@ -50,7 +50,7 @@ class App : public Shared::ExpressionFieldDelegateApp {
   }
 
   EquationStore *equationStore() { return snapshot()->equationStore(); }
-  System *system() { return &m_system; }
+  SystemOfEquations *system() { return &m_system; }
   Escher::ViewController *solutionsControllerStack() {
     return &m_alternateEmptyViewController;
   }
@@ -74,7 +74,7 @@ class App : public Shared::ExpressionFieldDelegateApp {
   ListController m_listController;
   Escher::ButtonRowController m_listFooter;
   Escher::StackViewController m_stackViewController;
-  System m_system;
+  SystemOfEquations m_system;
   SolverContext m_context;
 };
 

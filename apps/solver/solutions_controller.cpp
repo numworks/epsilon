@@ -155,7 +155,8 @@ SolutionsController::SolutionsController(Responder *parentResponder)
 
 /* ViewController */
 const char *SolutionsController::title() {
-  if (App::app()->system()->type() == System::Type::GeneralMonovariable) {
+  if (App::app()->system()->type() ==
+      SystemOfEquations::Type::GeneralMonovariable) {
     return I18n::translate(I18n::Message::ApproximateSolution);
   }
   return I18n::translate(I18n::Message::Solution);
@@ -164,18 +165,19 @@ const char *SolutionsController::title() {
 void SolutionsController::viewWillAppear() {
   ViewController::viewWillAppear();
   bool requireWarning = true;
-  System *system = App::app()->system();
+  SystemOfEquations *system = App::app()->system();
   if (system->numberOfSolutions() == 0) {
     // There are no solutions
     m_contentView.setWarningMessages(noSolutionMessage(),
                                      I18n::Message::Default);
-  } else if (system->type() == System::Type::GeneralMonovariable &&
+  } else if (system->type() == SystemOfEquations::Type::GeneralMonovariable &&
              system->hasMoreSolutions()) {
     // There are more approximate solutions
     m_contentView.setWarningMessages(
         I18n::Message::OnlyFirstSolutionsDisplayed0,
         I18n::Message::OnlyFirstSolutionsDisplayed1);
-  } else if (system->type() == System::Type::PolynomialMonovariable &&
+  } else if (system->type() ==
+                 SystemOfEquations::Type::PolynomialMonovariable &&
              system->numberOfSolutions() == 1) {
     // There are no real solutions
     if (system->degree() == 2) {
@@ -189,7 +191,7 @@ void SolutionsController::viewWillAppear() {
       m_contentView.setWarningMessages(I18n::Message::NoSolutionInterval,
                                        I18n::Message::Default);
     }
-  } else if (system->type() == System::Type::LinearSystem &&
+  } else if (system->type() == SystemOfEquations::Type::LinearSystem &&
              system->hasMoreSolutions()) {
     m_contentView.setWarningMessages(I18n::Message::InfiniteNumberOfSolutions,
                                      I18n::Message::Default);
@@ -212,7 +214,7 @@ void SolutionsController::viewDidDisappear() {
 void SolutionsController::didEnterResponderChain(
     Responder *previousFirstResponder) {
   // Select the most left present subview on all cells and reinitialize scroll
-  for (int i = 0; i < System::k_maxNumberOfExactSolutions; i++) {
+  for (int i = 0; i < SystemOfEquations::k_maxNumberOfExactSolutions; i++) {
     m_exactValueCells[i].reinitSelection();
   }
 }
@@ -225,7 +227,7 @@ Responder *SolutionsController::responderWhenEmpty() {
 /* TableViewDataSource */
 
 int SolutionsController::numberOfRows() const {
-  System *system = App::app()->system();
+  SystemOfEquations *system = App::app()->system();
   int numberOfRows = system->numberOfSolutions();
   if (system->numberOfUserVariables() > 0) {
     // Add the empty row if there are rows above predefined variables message
@@ -237,7 +239,7 @@ int SolutionsController::numberOfRows() const {
 
 void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
                                                     int j) {
-  System *system = App::app()->system();
+  SystemOfEquations *system = App::app()->system();
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   if (j == rowOfUserVariablesMessage - 1) {
     return;  // Empty row
@@ -260,7 +262,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
     return;
   }
   if (i == 0) {
-    if (system->type() == System::Type::PolynomialMonovariable &&
+    if (system->type() == SystemOfEquations::Type::PolynomialMonovariable &&
         j == system->numberOfSolutions() - 1) {
       // Formula of the discriminant
       assert(system->degree() == 2 || system->degree() == 3);
@@ -282,7 +284,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
       char bufferSymbol[k_maxSize + 2];
       if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
         // It's a solution row, get symbol name
-        if (system->type() == System::Type::LinearSystem) {
+        if (system->type() == SystemOfEquations::Type::LinearSystem) {
           /* The system has more than one variable: the cell text is the
            * variable name */
           const char *varName = system->variable(j);
@@ -317,7 +319,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
     if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
       // It's a solution row
       assert(system->numberOfSolutions() > 0);
-      if (system->type() == System::Type::GeneralMonovariable) {
+      if (system->type() == SystemOfEquations::Type::GeneralMonovariable) {
         // Get values of the solutions
         EvenOddBufferTextCell *valueCell =
             static_cast<EvenOddBufferTextCell *>(cell);
@@ -366,11 +368,11 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
 
 KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
-  System *system = App::app()->system();
+  SystemOfEquations *system = App::app()->system();
   if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
     // It's a solution row
     assert(system->numberOfSolutions() > 0);
-    if (system->type() == System::Type::GeneralMonovariable) {
+    if (system->type() == SystemOfEquations::Type::GeneralMonovariable) {
       return k_defaultCellHeight;
     }
     Poincare::Layout exactLayout = system->solution(j)->exactLayout();
@@ -448,7 +450,7 @@ int SolutionsController::reusableCellCount(int type) {
 
 int SolutionsController::typeAtLocation(int i, int j) {
   const int rowOfUserVariableMessage = userVariablesMessageRow();
-  System *system = App::app()->system();
+  SystemOfEquations *system = App::app()->system();
   if (j == rowOfUserVariableMessage - 1) {
     return k_emptyCellType;
   }
@@ -456,21 +458,21 @@ int SolutionsController::typeAtLocation(int i, int j) {
     return k_messageCellType;
   }
   if (i == 0) {
-    if (system->type() == System::Type::PolynomialMonovariable &&
+    if (system->type() == SystemOfEquations::Type::PolynomialMonovariable &&
         j == system->numberOfSolutions() - 1) {
       return k_deltaCellType;
     }
     return k_symbolCellType;
   }
   if ((rowOfUserVariableMessage < 0 || j < rowOfUserVariableMessage - 1) &&
-      system->type() == System::Type::GeneralMonovariable) {
+      system->type() == SystemOfEquations::Type::GeneralMonovariable) {
     return k_approximateValueCellType;
   }
   return k_exactValueCellType;
 }
 
 void SolutionsController::didBecomeFirstResponder() {
-  System *system = App::app()->system();
+  SystemOfEquations *system = App::app()->system();
   if (system->numberOfSolutions() > 0) {
     Container::activeApp()->setFirstResponder(
         m_contentView.selectableTableView());
@@ -499,7 +501,7 @@ bool SolutionsController::usedUserVariables() const {
 }
 
 int SolutionsController::userVariablesMessageRow() const {
-  System *system = App::app()->system();
+  SystemOfEquations *system = App::app()->system();
   assert(system->numberOfUserVariables() >= 0);
   if (system->numberOfUserVariables() == 0) {
     // No user variables
@@ -514,7 +516,8 @@ int SolutionsController::userVariablesMessageRow() const {
 }
 
 I18n::Message SolutionsController::noSolutionMessage() {
-  if (App::app()->system()->type() == System::Type::GeneralMonovariable) {
+  if (App::app()->system()->type() ==
+      SystemOfEquations::Type::GeneralMonovariable) {
     return I18n::Message::NoSolutionInterval;
   }
   if (App::app()->equationStore()->numberOfDefinedModels() <= 1) {

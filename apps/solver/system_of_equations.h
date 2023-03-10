@@ -1,5 +1,5 @@
-#ifndef SOLVER_SYSTEM_H
-#define SOLVER_SYSTEM_H
+#ifndef SOLVER_SYSTEM_OF_EQUATIONS_H
+#define SOLVER_SYSTEM_OF_EQUATIONS_H
 
 #include <poincare/symbol_abstract.h>
 
@@ -9,7 +9,7 @@
 
 namespace Solver {
 
-class System {
+class SystemOfEquations {
  public:
   enum class Type : uint8_t {
     LinearSystem,
@@ -26,7 +26,7 @@ class System {
     RequireApproximateSolution = 5,
   };
 
-  System(EquationStore* store) : m_store(store) {}
+  SystemOfEquations(EquationStore* store) : m_store(store) {}
 
   constexpr static int k_maxNumberOfExactSolutions =
       std::max(Poincare::Expression::k_maxNumberOfVariables,

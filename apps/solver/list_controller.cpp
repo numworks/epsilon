@@ -199,23 +199,23 @@ void ListController::resolveEquations() {
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
     bool resultWithoutUserDefinedSymbols = false;
-    System::Error e =
+    SystemOfEquations::Error e =
         App::app()->system()->exactSolve(App::app()->localContext());
     switch (e) {
-      case System::Error::EquationUndefined:
+      case SystemOfEquations::Error::EquationUndefined:
         Container::activeApp()->displayWarning(
             I18n::Message::UndefinedEquation);
         return;
-      case System::Error::EquationNonreal:
+      case SystemOfEquations::Error::EquationNonreal:
         Container::activeApp()->displayWarning(I18n::Message::NonrealEquation);
         return;
-      case System::Error::TooManyVariables:
+      case SystemOfEquations::Error::TooManyVariables:
         Container::activeApp()->displayWarning(I18n::Message::TooManyVariables);
         return;
-      case System::Error::NonLinearSystem:
+      case SystemOfEquations::Error::NonLinearSystem:
         Container::activeApp()->displayWarning(I18n::Message::NonLinearSystem);
         return;
-      case System::Error::RequireApproximateSolution: {
+      case SystemOfEquations::Error::RequireApproximateSolution: {
         reinterpret_cast<IntervalController *>(App::app()->intervalController())
             ->setShouldReplaceFuncionsButNotSymbols(
                 resultWithoutUserDefinedSymbols);
@@ -223,7 +223,7 @@ void ListController::resolveEquations() {
         return;
       }
       default: {
-        assert(e == System::Error::NoError);
+        assert(e == SystemOfEquations::Error::NoError);
         StackViewController *stack = stackController();
         reinterpret_cast<IntervalController *>(App::app()->intervalController())
             ->setShouldReplaceFuncionsButNotSymbols(

@@ -1,5 +1,3 @@
-#include "system.h"
-
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
@@ -9,13 +7,14 @@
 #include <poincare/symbol.h>
 
 #include "app.h"
+#include "system_of_equations.h"
 
 using namespace Poincare;
 using namespace Shared;
 
 namespace Solver {
 
-System::Error System::exactSolve(Context *context) {
+SystemOfEquations::Error SystemOfEquations::exactSolve(Context *context) {
   m_overrideUserVariables = false;
   Error firstError = privateExactSolve(context);
   if (firstError == Error::NoError && m_numberOfSolutions > 0) {
@@ -34,7 +33,7 @@ System::Error System::exactSolve(Context *context) {
   return secondError;
 }
 
-void System::approximateSolve(Context *context) {
+void SystemOfEquations::approximateSolve(Context *context) {
   assert(m_type == Type::GeneralMonovariable);
   assert(m_numberOfResolutionVariables == 1);
 
@@ -71,7 +70,7 @@ void System::approximateSolve(Context *context) {
   }
 }
 
-void System::tidy(char *treePoolCursor) {
+void SystemOfEquations::tidy(char *treePoolCursor) {
   for (int i = 0; i < k_maxNumberOfSolutions; i++) {
     if (treePoolCursor == nullptr ||
         m_solutions[i].exactLayout().isDownstreamOf(treePoolCursor) ||
@@ -81,7 +80,8 @@ void System::tidy(char *treePoolCursor) {
   }
 }
 
-System::Error System::privateExactSolve(Context *context) {
+SystemOfEquations::Error SystemOfEquations::privateExactSolve(
+    Context *context) {
   m_numberOfSolutions = 0;
   Expression simplifiedEquations[EquationStore::k_maxNumberOfEquations];
   Error error = simplifyAndFindVariables(context, simplifiedEquations);
@@ -101,7 +101,7 @@ System::Error System::privateExactSolve(Context *context) {
   return error;
 }
 
-System::Error System::simplifyAndFindVariables(
+SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
     Context *context, Expression *simplifiedEquations) {
   m_numberOfResolutionVariables = 0;
   m_numberOfUserVariables = 0;
@@ -168,8 +168,8 @@ System::Error System::simplifyAndFindVariables(
   return Error::NoError;
 }
 
-System::Error System::solveLinearSystem(Context *context,
-                                        Expression *simplifiedEquations) {
+SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
+    Context *context, Expression *simplifiedEquations) {
   Preferences::AngleUnit angleUnit =
       Preferences::sharedPreferences->angleUnit();
   Preferences::UnitFormat unitFormat =
@@ -318,8 +318,8 @@ System::Error System::solveLinearSystem(Context *context,
   return Error::NoError;
 }
 
-System::Error System::solvePolynomial(Context *context,
-                                      Expression *simplifiedEquations) {
+SystemOfEquations::Error SystemOfEquations::solvePolynomial(
+    Context *context, Expression *simplifiedEquations) {
   assert(m_numberOfResolutionVariables == 1 &&
          m_store->numberOfDefinedModels() == 1);
   Preferences::AngleUnit angleUnit =
@@ -367,8 +367,8 @@ System::Error System::solvePolynomial(Context *context,
   return registerSolution(delta, context, type);
 }
 
-System::Error System::registerSolution(Expression e, Context *context,
-                                       SolutionType type) {
+SystemOfEquations::Error SystemOfEquations::registerSolution(
+    Expression e, Context *context, SolutionType type) {
   Preferences::AngleUnit angleUnit =
       Preferences::sharedPreferences->angleUnit();
   Expression exact, approximate;
@@ -427,7 +427,7 @@ System::Error System::registerSolution(Expression e, Context *context,
   return Error::NoError;
 }
 
-void System::registerSolution(double f) {
+void SystemOfEquations::registerSolution(double f) {
   if (std::isfinite(f)) {
     m_solutions[m_numberOfSolutions++] = Solution(Layout(), Layout(), f, false);
   }

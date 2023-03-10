@@ -58,8 +58,8 @@ KDSize SubappCell::minimalSizeForOptimalDisplay() const {
 }
 
 void SubappCell::layoutSubviews(bool force) {
-  KDCoordinate width = m_frame.width();
-  KDCoordinate height = m_frame.height();
+  KDCoordinate width = bounds().width();
+  KDCoordinate height = bounds().height();
 
   KDSize iconSize = m_icon.minimalSizeForOptimalDisplay();
   setChildFrame(&m_icon,

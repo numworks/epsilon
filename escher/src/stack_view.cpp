@@ -78,7 +78,7 @@ void StackView::layoutSubviews(bool force) {
             |  [content]  |    [content] |
    */
   // Compute view frames
-  KDCoordinate width = m_frame.width();
+  KDCoordinate width = bounds().width();
   int heightOffset = 0;
   int heightDiff =
       Metric::StackTitleHeight +
@@ -110,7 +110,7 @@ void StackView::layoutSubviews(bool force) {
     }
     // Content view frame
     KDRect contentViewFrame =
-        KDRect(0, heightOffset, width, m_frame.height() - heightOffset);
+        KDRect(0, heightOffset, width, bounds().height() - heightOffset);
     setChildFrame(m_contentView, contentViewFrame, force);
   }
 }

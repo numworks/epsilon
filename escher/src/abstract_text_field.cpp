@@ -334,13 +334,14 @@ KDRect AbstractTextField::ContentView::glyphFrameAtPosition(
       m_horizontalAlignment == 0.0f
           ? 0.0f
           : m_horizontalAlignment *
-                (m_frame.width() -
+                (bounds().width() -
                  KDFont::Font(m_font)->stringSize(buffer).width() -
                  cursorWidth);
   return KDRect(
       horizontalOffset +
           KDFont::Font(m_font)->stringSizeUntil(buffer, position).width(),
-      m_verticalAlignment * (m_frame.height() - glyphSize.height()), glyphSize);
+      m_verticalAlignment * (bounds().height() - glyphSize.height()),
+      glyphSize);
 }
 
 /* AbstractTextField */

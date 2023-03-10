@@ -431,8 +431,8 @@ void AbstractPlotView::layoutSubviews(bool force) {
       KDCoordinate dirtyHeight =
           std::max(oldFrame.height(), banner->bounds().height()) +
           KDFont::GlyphSize(k_font).height() + 2 * k_labelMargin;
-      markRectAsDirty(KDRect(0, m_frame.height() - dirtyHeight, m_frame.width(),
-                             dirtyHeight));
+      markRectAsDirty(KDRect(0, bounds().height() - dirtyHeight,
+                             bounds().width(), dirtyHeight));
     }
   }
   CursorView *cursor = cursorView();

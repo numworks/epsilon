@@ -87,10 +87,10 @@ class TableCell : public Bordered, public HighlightCell {
   KDCoordinate minimalHeightForOptimalDisplay() const;
 
   KDCoordinate innerWidth() const {
-    return m_frame.width() - k_leftOffset - k_rightOffset;
+    return bounds().width() - k_leftOffset - k_rightOffset;
   }
   KDCoordinate innerHeight() const {
-    return m_frame.height() - k_topOffset - k_bottomOffset;
+    return bounds().height() - k_topOffset - k_bottomOffset;
   }
 
  protected:

@@ -34,7 +34,7 @@ KDSize ScrollView::minimalSizeForOptimalDisplay() const {
    * With a 0.0 tolerance, right and bottom margin is never cropped.
    * With a 0.8 tolerance, at most 80% of right or bottom margin can be cropped.
    * With a 1.0 tolerance, right or bottom margin can be entirely cropped. */
-  KDCoordinate excessWidth = width - m_frame.width();
+  KDCoordinate excessWidth = width - bounds().width();
   if (excessWidth > 0 &&
       excessWidth <= marginPortionTolerance() * m_rightMargin) {
     width -= excessWidth;
@@ -42,7 +42,7 @@ KDSize ScrollView::minimalSizeForOptimalDisplay() const {
   } else {
     m_excessWidth = 0;
   }
-  KDCoordinate excessHeight = height - m_frame.height();
+  KDCoordinate excessHeight = height - bounds().height();
   if (excessHeight > 0 &&
       excessHeight <= marginPortionTolerance() * m_bottomMargin) {
     height -= excessHeight;
@@ -173,8 +173,8 @@ void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
 KDRect ScrollView::visibleContentRect() {
   return KDRect(
       contentOffset().x(), contentOffset().y(),
-      m_frame.width() - m_leftMargin - m_rightMargin + m_excessWidth,
-      m_frame.height() - m_topMargin - m_bottomMargin + m_excessHeight);
+      bounds().width() - m_leftMargin - m_rightMargin + m_excessWidth,
+      bounds().height() - m_topMargin - m_bottomMargin + m_excessHeight);
 }
 
 void ScrollView::layoutSubviews(bool force) {

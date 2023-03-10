@@ -40,7 +40,7 @@ void TextView::drawRect(KDContext* ctx, KDRect rect) const {
     return;
   }
   ctx->fillRect(bounds(), m_backgroundColor);
-  ctx->alignAndDrawString(text(), KDPointZero, m_frame.size(),
+  ctx->alignAndDrawString(text(), KDPointZero, bounds().size(),
                           m_horizontalAlignment, m_verticalAlignment, m_font,
                           m_textColor, m_backgroundColor);
 }

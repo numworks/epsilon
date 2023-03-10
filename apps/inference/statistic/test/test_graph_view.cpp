@@ -8,8 +8,8 @@ void TestGraphView::reload() {
 }
 
 void TestGraphView::layoutSubviews(bool force) {
-  int availableHeight = m_frame.height();
-  int availableWidth = m_frame.width();
+  int availableHeight = bounds().height();
+  int availableWidth = bounds().width();
   setChildFrame(
       &m_curveView,
       KDRect(KDPointZero,

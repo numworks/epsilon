@@ -75,7 +75,7 @@ void TabView::layoutSubviews(bool force) {
       tabWidth = bounds().width() - widthUsed;
     }
     KDRect cellFrame =
-        KDRect(widthUsed, 0, tabWidth, m_frame.height() - k_activeTabHeight);
+        KDRect(widthUsed, 0, tabWidth, bounds().height() - k_activeTabHeight);
     setChildFrame(&m_cells[i], cellFrame, force);
     widthUsed += tabWidth;
   }

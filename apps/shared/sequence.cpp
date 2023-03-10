@@ -201,10 +201,7 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
   while (sqctx->independentRank<T>(sequenceIndex) < n) {
     sqctx->stepSequenceAtIndex<T>(sequenceIndex);
   }
-  /* In case we have sqctx->independentRank<T>(sequenceIndex) = n, we
-   * can return the value */
-  T value = sqctx->independentSequenceValue<T>(sequenceIndex, 0);
-  return value;
+  return sqctx->independentSequenceValue<T>(sequenceIndex, 0);
 }
 
 template <typename T>

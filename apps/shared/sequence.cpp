@@ -298,6 +298,8 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
         ctx.setValue(values[i][2], i, 0);
         // Store in context value of u(n-1) for "u(n+1)"
         ctx.setValue(values[i][1], i, 1);
+        // Store in context value of u(n) for "u(n+2)"
+        ctx.setValue(values[i][0], i, 2);
       }
       x = static_cast<T>(n - 2);
       e = expressionReduced(sqctx);

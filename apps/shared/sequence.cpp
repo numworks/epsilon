@@ -186,7 +186,7 @@ T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext *sqctx) const {
 
 template <typename T>
 T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
-  if (n < 0) {
+  if (n < initialRank()) {
     return NAN;
   }
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
@@ -213,7 +213,7 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
   int n = independent ? sqctx->independentRank<T>(sequenceIndex)
                       : sqctx->commonRank<T>();
-  if (n < initialRank() || n < 0) {
+  if (n < initialRank()) {
     return NAN;
   }
   SequenceCacheContext<T> ctx =

@@ -9,6 +9,10 @@
 namespace PoincareJ {
 
 EditionReference::EditionReference(Node node) {
+  if (node.isUninitialized()) {
+    m_identifier = EditionPool::ReferenceTable::NoNodeIdentifier;
+    return;
+  }
   EditionPool * pool = EditionPool::sharedEditionPool();
   if (!pool->contains(node.block()) && node.block() != pool->lastBlock()) {
     node = pool->initFromTree(node);
@@ -45,7 +49,6 @@ EditionReference EditionReference::Clone(const Node node) {
 
 EditionReference::operator const Node() const {
   Node n = EditionPool::sharedEditionPool()->nodeForIdentifier(m_identifier);
-  assert(!n.isUninitialized());
   return n;
 }
 

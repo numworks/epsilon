@@ -15,18 +15,18 @@ StoreParameterController::StoreParameterController(
     Responder* parentResponder, StoreColumnHelper* storeColumnHelper)
     : ColumnParameterController(parentResponder),
       m_storeColumnHelper(storeColumnHelper),
-      m_fillFormula(I18n::Message::FillWithFormula),
-      m_sortCell(I18n::Message::SortCellLabel) {
+      m_fillFormula(I18n::Message::FillWithFormula) {
   m_clearColumn.setMessageWithPlaceholders(I18n::Message::ClearColumn);
   m_hideCell.label()->setMessage(
       I18n::Message::ActivateDeactivateStoreParamTitle);
   m_hideCell.subLabel()->setMessage(
       I18n::Message::ActivateDeactivateStoreParamDescription);
+  m_sortCell.label()->setMessage(I18n::Message::SortCellLabel);
 }
 
 void StoreParameterController::initializeColumnParameters() {
   ColumnParameterController::initializeColumnParameters();
-  m_sortCell.setSubLabelMessage(sortMessage());
+  m_sortCell.subLabel()->setMessage(sortMessage());
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {

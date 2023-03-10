@@ -932,7 +932,8 @@ const ToolboxMessageTree *PythonToolbox::rootModel() const {
   return &toolboxModel;
 }
 
-MessageTableCellWithMessage *PythonToolbox::leafCellAtIndex(int index) {
+MenuCell<MessageTextView, MessageTextView> *PythonToolbox::leafCellAtIndex(
+    int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }
@@ -948,7 +949,7 @@ int PythonToolbox::maxNumberOfDisplayedRows() {
 
 KDCoordinate PythonToolbox::nonMemoizedRowHeight(int index) {
   if (m_messageTreeModel->childAtIndex(index)->numberOfChildren() == 0) {
-    MessageTableCellWithMessage tempCell;
+    ToolboxLeafCell tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   return Escher::Toolbox::nonMemoizedRowHeight(index);
@@ -960,18 +961,17 @@ void PythonToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
           m_messageTreeModel->childAtIndex(index));
   // Message is leaf
   if (messageTree->numberOfChildren() == 0) {
-    MessageTableCellWithMessage *myCell =
-        static_cast<MessageTableCellWithMessage *>(cell);
+    ToolboxLeafCell *myCell = static_cast<ToolboxLeafCell *>(cell);
     if (messageTree->text() == I18n::Message::Default &&
         UTF8Helper::HasCodePoint(I18n::translate(messageTree->label()), '\n')) {
       // Leaf node with a multiple row label and no subLabel have a small font.
-      myCell->setMessageFont(KDFont::Size::Small);
+      myCell->label()->setFont(KDFont::Size::Small);
     } else {
       // Reset cell's font (to prevent a small font from being memoized)
-      myCell->setMessageFont(KDFont::Size::Large);
+      myCell->label()->setFont(KDFont::Size::Large);
     }
-    myCell->setMessage(messageTree->label());
-    myCell->setSubLabelMessage(messageTree->text());
+    myCell->label()->setMessage(messageTree->label());
+    myCell->subLabel()->setMessage(messageTree->text());
     return;
   }
   Escher::Toolbox::willDisplayCellForIndex(cell, index);

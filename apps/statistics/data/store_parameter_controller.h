@@ -42,7 +42,8 @@ class StoreParameterController : public Shared::StoreParameterController {
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::SwitchView>
       m_displayCumulatedFrequencyCell;
-  Escher::MessageTableCellWithMessage m_hideCumulatedFrequencyCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView>
+      m_hideCumulatedFrequencyCell;
   Store* m_store;
   bool m_isCumulatedFrequencyColumnSelected;
 };

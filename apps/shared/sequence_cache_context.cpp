@@ -27,8 +27,20 @@ SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
     ContextWithParent *lastDescendantContext) {
   if (symbol.type() == Poincare::ExpressionNode::Type::Sequence) {
     T result = NAN;
+    /* Do not use recordAtIndex : if the sequences have been reordered, the
+     * name index and the record index may not correspond. */
     int index = nameIndexForSymbol(const_cast<Poincare::Symbol &>(
         static_cast<const Poincare::Symbol &>(symbol)));
+    Ion::Storage::Record record =
+        m_sequenceContext->sequenceStore()->recordAtNameIndex(index);
+    if (record.isNull()) {
+      return Poincare::Float<T>::Builder(result);
+    }
+    assert(record.fullName()[0] == symbol.name()[0]);
+    Sequence *seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
+    if (!seq->fullName()) {
+      return Poincare::Float<T>::Builder(result);
+    }
     Poincare::Expression rank = symbol.childAtIndex(0).clone();
     if (rank.isIdenticalTo(Poincare::Symbol::Builder(UCodePointUnknown))) {
       // rank = n
@@ -49,23 +61,13 @@ SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
      * will solve u(n) = 5*n, v(n) = u(n+10) for instance). But we avoid doing
      * so if the sequence referencing itself to avoid an infinite loop. */
     if (std::isnan(result) && index != m_sequenceBeingComputed) {
-      /* Do not use recordAtIndex : if the sequences have been reordered, the
-       * name index and the record index may not correspond. */
-      Ion::Storage::Record record =
-          m_sequenceContext->sequenceStore()->recordAtNameIndex(index);
-      if (!record.isNull()) {
-        assert(record.fullName()[0] == symbol.name()[0]);
-        Sequence *seq =
-            m_sequenceContext->sequenceStore()->modelForRecord(record);
-        /* The lastDesendantContext might contain informations on variables
-         * that are contained in the rank expression. */
-        T n = PoincareHelpers::ApproximateToScalar<T>(
-            rank, lastDescendantContext ? lastDescendantContext : this);
-        // In case the sequence referenced is not defined or if the rank is not
-        // an int, return NAN
-        if (seq->fullName() != nullptr && std::floor(n) == n) {
-          result = seq->valueAtRank<T>(n, m_sequenceContext);
-        }
+      /* The lastDesendantContext might contain informations on variables
+       * that are contained in the rank expression. */
+      T n = PoincareHelpers::ApproximateToScalar<T>(
+          rank, lastDescendantContext ? lastDescendantContext : this);
+      // If the rank is not an int, return NAN
+      if (std::floor(n) == n) {
+        result = seq->valueAtRank<T>(n, m_sequenceContext);
       }
     }
     return Poincare::Float<T>::Builder(result);

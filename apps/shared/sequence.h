@@ -145,7 +145,10 @@ class Sequence : public Function {
           m_displaySum(false) {}
     Type type() const { return m_type; }
     void setType(Type type) { m_type = type; }
-    int initialRank() const { return m_initialRank; }
+    int initialRank() const {
+      assert(m_initialRank >= 0);
+      return m_initialRank;
+    }
     void setInitialRank(int initialRank) { m_initialRank = initialRank; }
     size_t initialConditionSize(int conditionIndex) {
       assert(conditionIndex >= 0 && conditionIndex < 2);

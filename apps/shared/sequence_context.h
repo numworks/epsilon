@@ -16,8 +16,8 @@ class TemplatedSequenceContext {
  public:
   TemplatedSequenceContext();
   void resetCache();
-  bool iterateUntilRank(int n, SequenceStore* sequenceStore,
-                        SequenceContext* sqctx);
+  bool stepCommonRankUntilRank(int n, SequenceStore* sequenceStore,
+                               SequenceContext* sqctx);
   void step(SequenceContext* sqctx, int sequenceIndex = -1);
 
   // Common rank
@@ -92,9 +92,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   }
 
   template <typename T>
-  bool iterateUntilRank(int n) {
+  bool stepCommonRankUntilRank(int n) {
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->iterateUntilRank(n, m_sequenceStore, this);
+        ->stepCommonRankUntilRank(n, m_sequenceStore, this);
   }
 
   template <typename T>

@@ -40,9 +40,8 @@ void TemplatedSequenceContext<T>::resetCache() {
 }
 
 template <typename T>
-bool TemplatedSequenceContext<T>::iterateUntilRank(int n,
-                                                   SequenceStore *sequenceStore,
-                                                   SequenceContext *sqctx) {
+bool TemplatedSequenceContext<T>::stepCommonRankUntilRank(
+    int n, SequenceStore *sequenceStore, SequenceContext *sqctx) {
   if (n < 0 || n > k_maxRecurrentRank) {
     return false;
   }

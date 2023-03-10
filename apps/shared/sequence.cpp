@@ -178,7 +178,7 @@ template <typename T>
 T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext *sqctx) const {
   T n = std::round(x);
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
-  if (sqctx->iterateUntilRank<T>(n)) {
+  if (sqctx->stepCommonRankUntilRank<T>(n)) {
     return sqctx->valueOfCommonRankSequenceAtPreviousRank<T>(sequenceIndex, 0);
   }
   return NAN;

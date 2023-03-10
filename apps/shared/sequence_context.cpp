@@ -19,15 +19,6 @@ TemplatedSequenceContext<T>::TemplatedSequenceContext()
           {NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}} {}
 
 template <typename T>
-T TemplatedSequenceContext<T>::valueOfCommonRankSequenceAtPreviousRank(
-    int sequenceIndex, int rank) const {
-  assert(0 <= sequenceIndex &&
-         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-  assert(0 <= rank && rank < SequenceStore::k_maxRecurrenceDepth + 1);
-  return m_commonRankValues[sequenceIndex][rank];
-}
-
-template <typename T>
 void TemplatedSequenceContext<T>::resetCache() {
   /* We only need to reset the ranks. Indeed, when we compute the values of the
    * sequences, we use ranks as memoization indexes. Therefore, we know that the

@@ -25,7 +25,12 @@ class TemplatedSequenceContext {
 
   // Common rank
   int commonRank() const { return m_commonRank; }
-  T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) const;
+  T valueOfCommonRankSequenceAtPreviousRank(int sequenceIndex, int rank) const {
+    assert(0 <= sequenceIndex &&
+           sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+    assert(0 <= rank && rank < SequenceStore::k_maxRecurrenceDepth + 1);
+    return m_commonRankValues[sequenceIndex][rank];
+  }
 
   // Independant rank
   int independentRank(int sequenceIndex) {

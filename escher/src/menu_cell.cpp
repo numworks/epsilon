@@ -45,16 +45,16 @@ KDCoordinate AbstractMenuCell::minimalHeightForOptimalDisplay() const {
 void AbstractMenuCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight ? Palette::Select : m_backgroundColor;
-  label()->setWidgetBackgroundColor(backgroundColor);
-  subLabel()->setWidgetBackgroundColor(backgroundColor);
-  accessory()->setWidgetBackgroundColor(backgroundColor);
+  label()->setBackgroundColor(backgroundColor);
+  subLabel()->setBackgroundColor(backgroundColor);
+  accessory()->setBackgroundColor(backgroundColor);
 }
 
 void AbstractMenuCell::setBackgroundColor(KDColor color) {
   m_backgroundColor = color;
-  label()->setWidgetBackgroundColor(color);
-  subLabel()->setWidgetBackgroundColor(color);
-  accessory()->setWidgetBackgroundColor(color);
+  label()->setBackgroundColor(color);
+  subLabel()->setBackgroundColor(color);
+  accessory()->setBackgroundColor(color);
 }
 
 int AbstractMenuCell::numberOfSubviews() const {

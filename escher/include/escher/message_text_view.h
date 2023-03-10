@@ -10,14 +10,14 @@ class MessageTextView : public TextView {
  public:
   MessageTextView(I18n::Message message = (I18n::Message)0,
                   CellWidget::Type type = CellWidget::Type::Label)
-      : m_message(message) {
-    defaultInitialization(type);
-  }
+      : TextView(type), m_message(message) {}
 
-  MessageTextView(KDFont::Size font, I18n::Message message,
-                  float horizontalAlignment, float verticalAlignment,
-                  KDColor textColor = KDColorBlack,
-                  KDColor backgroundColor = KDColorWhite)
+  MessageTextView(
+      KDFont::Size font, I18n::Message message,
+      float horizontalAlignment = k_defaultLabel.horizontalAlginment,
+      float verticalAlignment = k_defaultAccessory.verticalAlignment,
+      KDColor textColor = k_defaultLabel.textColor,
+      KDColor backgroundColor = k_defaultLabel.backgroundColor)
       : TextView(font, horizontalAlignment, verticalAlignment, textColor,
                  backgroundColor),
         m_message(message) {}

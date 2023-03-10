@@ -13,7 +13,7 @@ class CellWidget {
 
   virtual void defaultInitialization(Type type) {}
 
-  virtual void setWidgetBackgroundColor(KDColor color) {}
+  virtual void setBackgroundColor(KDColor color) {}
   virtual bool enterOnEvent(Ion::Events::Event event) const { return false; }
 };
 

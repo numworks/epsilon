@@ -1,3 +1,5 @@
+#include "system_of_equations.h"
+
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/expression_display_permissions.h>
@@ -7,7 +9,6 @@
 #include <poincare/symbol.h>
 
 #include "app.h"
-#include "system_of_equations.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -96,6 +97,8 @@ SystemOfEquations::Error SystemOfEquations::privateExactSolve(
   error = solvePolynomial(context, simplifiedEquations);
   if (error == Error::RequireApproximateSolution) {
     m_type = Type::GeneralMonovariable;
+    m_approximateResolutionMinimum = -k_defaultApproximateSearchRange;
+    m_approximateResolutionMaximum = k_defaultApproximateSearchRange;
   }
   assert(error != Error::NoError || m_type == Type::PolynomialMonovariable);
   return error;

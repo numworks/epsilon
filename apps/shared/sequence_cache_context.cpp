@@ -63,10 +63,8 @@ SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
             rank, lastDescendantContext ? lastDescendantContext : this);
         // In case the sequence referenced is not defined or if the rank is not
         // an int, return NAN
-        if (seq->fullName() != nullptr) {
-          if (std::floor(n) == n) {
-            result = seq->valueAtRank<T>(n, m_sequenceContext);
-          }
+        if (seq->fullName() != nullptr && std::floor(n) == n) {
+          result = seq->valueAtRank<T>(n, m_sequenceContext);
         }
       }
     }

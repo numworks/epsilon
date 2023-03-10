@@ -30,16 +30,13 @@ Layout Layout::LayoutFromAddress(const void *address, size_t size) {
       TreePool::sharedPool->copyTreeFromAddress(address, size)));
 }
 
-void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
-                  KDColor expressionColor, KDColor backgroundColor,
+void Layout::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
                   LayoutSelection selection, KDColor selectionColor) {
-  node()->draw(ctx, p, font, expressionColor, backgroundColor, selection,
-               selectionColor);
+  node()->draw(ctx, p, style, selection, selectionColor);
 }
 
-void Layout::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
-                  KDColor expressionColor, KDColor backgroundColor) {
-  draw(ctx, p, font, expressionColor, backgroundColor, LayoutSelection());
+void Layout::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
+  draw(ctx, p, style, LayoutSelection());
 }
 
 int Layout::serializeParsedExpression(char *buffer, int bufferSize,

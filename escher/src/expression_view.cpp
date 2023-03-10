@@ -8,13 +8,6 @@ using namespace Poincare;
 
 namespace Escher {
 
-ExpressionView::ExpressionView(float horizontalAlignment,
-                               float verticalAlignment, KDColor textColor,
-                               KDColor backgroundColor, KDFont::Size font)
-    : GlyphsView(font, horizontalAlignment, verticalAlignment, textColor,
-                 backgroundColor),
-      m_horizontalMargin(0) {}
-
 bool ExpressionView::setLayout(Layout layoutR) {
   /* Check m_layout.wasErasedByException(), otherwise accessing m_layout would
    * result in an ACCESS ERROR. */
@@ -37,27 +30,26 @@ KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
   if (m_layout.isUninitialized()) {
     return KDSizeZero;
   }
-  KDSize expressionSize = m_layout.layoutSize(m_font);
+  KDSize expressionSize = m_layout.layoutSize(font());
   return KDSize(expressionSize.width() + 2 * m_horizontalMargin,
                 expressionSize.height());
 }
 
 KDPoint ExpressionView::drawingOrigin() const {
-  KDSize expressionSize = m_layout.layoutSize(m_font);
+  KDSize expressionSize = m_layout.layoutSize(font());
   return KDPoint(
-      m_horizontalMargin +
-          m_horizontalAlignment * (bounds().width() - 2 * m_horizontalMargin -
-                                   expressionSize.width()),
+      m_horizontalMargin + m_glyphFormat.horizontalAlignment *
+                               (bounds().width() - 2 * m_horizontalMargin -
+                                expressionSize.width()),
       std::max<KDCoordinate>(
-          0,
-          m_verticalAlignment * (bounds().height() - expressionSize.height())));
+          0, m_glyphFormat.verticalAlignment *
+                 (bounds().height() - expressionSize.height())));
 }
 
 void ExpressionView::drawRect(KDContext* ctx, KDRect rect) const {
-  ctx->fillRect(rect, m_backgroundColor);
+  ctx->fillRect(rect, m_glyphFormat.style.backgroundColor);
   if (!m_layout.isUninitialized()) {
-    m_layout.draw(ctx, drawingOrigin(), m_font, m_textColor, m_backgroundColor,
-                  selection());
+    m_layout.draw(ctx, drawingOrigin(), m_glyphFormat.style, selection());
   }
 }
 

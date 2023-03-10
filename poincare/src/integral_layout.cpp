@@ -343,46 +343,45 @@ KDCoordinate IntegralLayoutNode::centralArgumentHeight(KDFont::Size font) {
   }
 }
 
-void IntegralLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
-                                KDColor expressionColor,
-                                KDColor backgroundColor) {
-  KDSize integrandSize = integrandLayout()->layoutSize(font);
-  KDCoordinate centralArgHeight = centralArgumentHeight(font);
+void IntegralLayoutNode::render(KDContext *ctx, KDPoint p,
+                                KDGlyph::Style style) {
+  KDSize integrandSize = integrandLayout()->layoutSize(style.font);
+  KDCoordinate centralArgHeight = centralArgumentHeight(style.font);
   KDColor workingBuffer[k_symbolWidth * k_symbolHeight];
 
   // Render the integral symbol
   KDCoordinate offsetX = p.x() + k_symbolWidth;
   KDCoordinate offsetY = p.y() + k_boundVerticalMargin +
-                         boundMaxHeight(BoundPosition::UpperBound, font) +
+                         boundMaxHeight(BoundPosition::UpperBound, style.font) +
                          k_integrandVerticalMargin - k_symbolHeight;
 
   // Upper part
   KDRect topSymbolFrame(offsetX, offsetY, k_symbolWidth, k_symbolHeight);
-  ctx->blendRectWithMask(topSymbolFrame, expressionColor,
+  ctx->blendRectWithMask(topSymbolFrame, style.glyphColor,
                          (const uint8_t *)topSymbolPixel,
                          (KDColor *)workingBuffer);
 
   // Central bar
   offsetY = offsetY + k_symbolHeight;
   ctx->fillRect(KDRect(offsetX, offsetY, k_lineThickness, centralArgHeight),
-                expressionColor);
+                style.glyphColor);
 
   // Lower part
   offsetX = offsetX - k_symbolWidth + k_lineThickness;
   offsetY = offsetY + centralArgHeight;
   KDRect bottomSymbolFrame(offsetX, offsetY, k_symbolWidth, k_symbolHeight);
-  ctx->blendRectWithMask(bottomSymbolFrame, expressionColor,
+  ctx->blendRectWithMask(bottomSymbolFrame, style.glyphColor,
                          (const uint8_t *)bottomSymbolPixel,
                          (KDColor *)workingBuffer);
 
   // Render "d"
   KDPoint dPosition =
-      p.translatedBy(positionOfChild(integrandLayout(), font))
+      p.translatedBy(positionOfChild(integrandLayout(), style.font))
           .translatedBy(
               KDPoint(integrandSize.width() + k_differentialHorizontalMargin,
-                      integrandLayout()->baseline(font) -
-                          KDFont::GlyphHeight(font) / 2));
-  ctx->drawString("d", dPosition, font, expressionColor, backgroundColor);
+                      integrandLayout()->baseline(style.font) -
+                          KDFont::GlyphHeight(style.font) / 2));
+  ctx->drawString("d", dPosition, style);
 }
 
 }  // namespace Poincare

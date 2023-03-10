@@ -29,7 +29,7 @@ class BufferFunctionTitleCell : public FunctionTitleCell {
   Escher::EvenOddBufferTextCell* bufferTextView() { return &m_bufferTextView; }
 
  private:
-  constexpr static float k_verticalAlignment = KDContext::k_alignCenter;
+  constexpr static float k_verticalAlignment = KDGlyph::k_alignCenter;
 
   Escher::EvenOddBufferTextCell m_bufferTextView;
 };

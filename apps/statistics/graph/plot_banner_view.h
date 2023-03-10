@@ -25,9 +25,7 @@ class PlotBannerView : public Shared::BannerView {
 
 class SimplePlotBannerView : public PlotBannerView {
  public:
-  SimplePlotBannerView()
-      : m_value(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter,
-                TextColor(), BackgroundColor()) {}
+  SimplePlotBannerView() : m_value(k_defaultFormat) {}
   Escher::BufferTextView* value() { return &m_value; }
 
  private:

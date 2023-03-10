@@ -86,7 +86,9 @@ void EditorView::GutterView::drawRect(KDContext* ctx, KDRect rect) const {
     ctx->drawString(lineNumber,
                     KDPoint(k_margin + leftPadding,
                             i * glyphSize.height() - firstLinePixelOffset),
-                    m_font, textColor, backgroundColor);
+                    KDGlyph::Style{.glyphColor = textColor,
+                                   .backgroundColor = backgroundColor,
+                                   .font = m_font});
   }
 }
 

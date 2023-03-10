@@ -67,8 +67,11 @@ mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t *args) {
       (n_args >= 5) ? MicroPython::Color::Parse(args[4]) : KDColorWhite;
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()
       ->displaySandbox();
-  KDIonContext::SharedContext->drawString(text, point, KDFont::Size::Large,
-                                          textColor, backgroundColor);
+  KDIonContext::SharedContext->drawString(
+      text, point,
+      KDGlyph::Style{.glyphColor = textColor,
+                     .backgroundColor = backgroundColor,
+                     .font = KDFont::Size::Large});
   return mp_const_none;
 }
 

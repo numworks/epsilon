@@ -7,8 +7,9 @@ namespace Elements {
 
 ElementsView::ElementsView()
     : m_singleElementView(KDColorWhite),
-      m_nameView(KDFont::Size::Small, I18n::Message::Default,
-                 KDContext::k_alignCenter, KDContext::k_alignCenter),
+      m_nameView(I18n::Message::Default,
+                 {{.font = KDFont::Size::Small},
+                  .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_redrawBackground(true) {}
 
 void ElementsView::drawRect(KDContext* ctx, KDRect rect) const {
@@ -132,8 +133,10 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext* ctx,
   KDSize symbolSize = KDFont::Font(KDFont::Size::Small)->stringSize(symbol);
   KDPoint textOrigin(cell.x() + (cell.width() - symbolSize.width()) / 2,
                      cell.y() + (cell.height() - symbolSize.height()) / 2 + 1);
-  ctx->drawString(symbol, textOrigin, KDFont::Size::Small, colors.fg(),
-                  colors.bg());
+  ctx->drawString(symbol, textOrigin,
+                  KDGlyph::Style{.glyphColor = colors.fg(),
+                                 .backgroundColor = colors.bg(),
+                                 .font = KDFont::Size::Small});
 }
 
 void ElementsView::drawElementBorder(AtomicNumber z, KDColor color,

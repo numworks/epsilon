@@ -24,7 +24,7 @@ class ExpressionFunctionTitleCell : public FunctionTitleCell {
   Escher::EvenOddExpressionCell m_titleTextView;
 
  private:
-  constexpr static float k_alignment = KDContext::k_alignCenter;
+  constexpr static float k_alignment = KDGlyph::k_alignCenter;
 
   int numberOfSubviews() const override { return 1; }
   Escher::View* subviewAtIndex(int index) override;

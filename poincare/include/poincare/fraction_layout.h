@@ -61,8 +61,7 @@ class FractionLayoutNode final : public LayoutNode {
   constexpr static int k_numeratorIndex = 0;
   constexpr static int k_denominatorIndex = 1;
 
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
   LayoutNode* numeratorLayout() { return childAtIndex(k_numeratorIndex); }
   LayoutNode* denominatorLayout() { return childAtIndex(k_denominatorIndex); }
 };

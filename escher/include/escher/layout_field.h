@@ -26,8 +26,8 @@ class LayoutField
               InputEventHandlerDelegate* inputEventHandlerDelegate,
               LayoutFieldDelegate* delegate = nullptr,
               KDFont::Size font = KDFont::Size::Large,
-              float horizontalAlignment = KDContext::k_alignLeft,
-              float verticalAlignment = KDContext::k_alignCenter)
+              float horizontalAlignment = KDGlyph::k_alignLeft,
+              float verticalAlignment = KDGlyph::k_alignCenter)
       : WithBlinkingTextCursor<ScrollableView>(parentResponder, &m_contentView,
                                                this),
         EditableField(inputEventHandlerDelegate),

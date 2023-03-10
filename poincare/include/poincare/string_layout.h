@@ -55,8 +55,7 @@ class StringLayoutNode : public LayoutNode {
     return KDPointZero;
   }
   int firstNonDigitIndex();
-  void render(KDContext *ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) override;
 
   char m_string[0];
 };

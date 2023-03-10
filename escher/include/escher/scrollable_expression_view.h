@@ -14,11 +14,7 @@ class ScrollableExpressionView
   ScrollableExpressionView(Responder* parentResponder,
                            KDCoordinate leftRightMargin,
                            KDCoordinate topBottomMargin,
-                           float horizontalAlignment = KDContext::k_alignLeft,
-                           float verticalAlignment = KDContext::k_alignCenter,
-                           KDColor textColor = KDColorBlack,
-                           KDColor backgroundColor = KDColorWhite,
-                           KDFont::Size font = KDFont::Size::Large);
+                           KDGlyph::Format format = {});
   Poincare::Layout layout() const;
   KDFont::Size font() const { return m_expressionView.font(); }
   void setFont(KDFont::Size font) {

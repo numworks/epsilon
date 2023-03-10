@@ -35,11 +35,11 @@ void LCDDataTestController::viewWillAppear() {
 
 LCDDataTestController::ContentView::ContentView()
     : SolidColorView(KDColorWhite),
-      m_lcdDataStateView(KDFont::Size::Large, KDContext::k_alignCenter,
-                         KDContext::k_alignCenter),
-      m_lcdNumberPixelFailuresView(KDFont::Size::Small,
-                                   KDContext::k_alignCenter,
-                                   KDContext::k_alignCenter) {}
+      m_lcdDataStateView({.horizontalAlignment = KDGlyph::k_alignCenter}),
+      m_lcdNumberPixelFailuresView({
+          {.font = KDFont::Size::Small},
+          .horizontalAlignment = KDGlyph::k_alignCenter,
+      }) {}
 
 void LCDDataTestController::ContentView::setStatus(bool success,
                                                    int numberOfErrors) {

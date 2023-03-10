@@ -147,19 +147,18 @@ KDPoint FractionLayoutNode::positionOfChild(LayoutNode* child,
   return KDPoint(x, y);
 }
 
-void FractionLayoutNode::render(KDContext* ctx, KDPoint p, KDFont::Size font,
-                                KDColor expressionColor,
-                                KDColor backgroundColor) {
-  KDCoordinate fractionLineY = p.y() +
-                               numeratorLayout()->layoutSize(font).height() +
-                               k_fractionLineMargin;
+void FractionLayoutNode::render(KDContext* ctx, KDPoint p,
+                                KDGlyph::Style style) {
+  KDCoordinate fractionLineY =
+      p.y() + numeratorLayout()->layoutSize(style.font).height() +
+      k_fractionLineMargin;
   ctx->fillRect(
       KDRect(p.x() + Escher::Metric::FractionAndConjugateHorizontalMargin,
              fractionLineY,
-             layoutSize(font).width() -
+             layoutSize(style.font).width() -
                  2 * Escher::Metric::FractionAndConjugateHorizontalMargin,
              k_fractionLineHeight),
-      expressionColor);
+      style.glyphColor);
 }
 
 }  // namespace Poincare

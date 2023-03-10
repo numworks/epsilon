@@ -178,12 +178,11 @@ KDRect HorizontalLayoutNode::relativeSelectionRect(int leftIndex,
                 layoutSizeBetweenIndexes(leftIndex, rightIndex, font));
 }
 
-void HorizontalLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
-                                  KDColor expressionColor,
-                                  KDColor backgroundColor) {
+void HorizontalLayoutNode::render(KDContext *ctx, KDPoint p,
+                                  KDGlyph::Style style) {
   if (shouldDrawEmptyRectangle()) {
     // If the layout is empty, draw an empty rectangle
-    EmptyRectangle::DrawEmptyRectangle(ctx, p, font, m_emptyColor);
+    EmptyRectangle::DrawEmptyRectangle(ctx, p, style.font, m_emptyColor);
   }
 }
 

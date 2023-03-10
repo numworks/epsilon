@@ -7,7 +7,9 @@ EvenOddBufferTextCell::EvenOddBufferTextCell(KDFont::Size font,
                                              float horizontalAlignment,
                                              float verticalAlignment)
     : EvenOddCell(),
-      m_bufferTextView(font, horizontalAlignment, verticalAlignment) {}
+      m_bufferTextView({{.font = font},
+                        .horizontalAlignment = horizontalAlignment,
+                        .verticalAlignment = verticalAlignment}) {}
 
 const char* EvenOddBufferTextCell::text() const {
   return m_bufferTextView.text();

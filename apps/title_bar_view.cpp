@@ -16,15 +16,10 @@ using namespace Escher;
 
 TitleBarView::TitleBarView()
     : View(),
-      m_titleView(KDFont::Size::Small, I18n::Message::Default,
-                  KDContext::k_alignCenter, KDContext::k_alignCenter,
-                  KDColorWhite, Palette::YellowDark),
-      m_preferenceView(KDFont::Size::Small, KDContext::k_alignRight,
-                       KDContext::k_alignCenter, KDColorWhite,
-                       Palette::YellowDark),
-      m_examModeTextView(KDFont::Size::Small, I18n::Message::Default,
-                         KDContext::k_alignCenter, KDContext::k_alignCenter,
-                         KDColorWhite, Palette::YellowDark) {
+      m_titleView(I18n::Message::Default, k_glyphsFormat),
+      m_preferenceView(k_glyphsFormat),
+      m_examModeTextView(I18n::Message::Default, k_glyphsFormat) {
+  m_preferenceView.setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
   m_examModeIconView.setImage(ImageStore::ExamIcon);
 }
 

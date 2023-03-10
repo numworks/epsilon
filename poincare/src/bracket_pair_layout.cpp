@@ -29,14 +29,13 @@ KDPoint BracketPairLayoutNode::positionOfChild(LayoutNode* child,
   return ChildOffset(verticalMargin(), bracketWidth());
 }
 
-void BracketPairLayoutNode::render(KDContext* ctx, KDPoint p, KDFont::Size font,
-                                   KDColor expressionColor,
-                                   KDColor backgroundColor) {
-  renderOneBracket(true, ctx, p, font, expressionColor, backgroundColor);
+void BracketPairLayoutNode::render(KDContext* ctx, KDPoint p,
+                                   KDGlyph::Style style) {
+  renderOneBracket(true, ctx, p, style);
   KDCoordinate rightBracketOffset =
-      bracketWidth() + childLayout()->layoutSize(font).width();
+      bracketWidth() + childLayout()->layoutSize(style.font).width();
   renderOneBracket(false, ctx, p.translatedBy(KDPoint(rightBracketOffset, 0)),
-                   font, expressionColor, backgroundColor);
+                   style);
 }
 
 int BracketPairLayoutNode::serializeWithSymbol(

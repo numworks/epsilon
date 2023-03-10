@@ -6,9 +6,11 @@ using namespace Escher;
 
 ShiftAlphaLockView::ShiftAlphaLockView()
     : View(),
-      m_shiftAlphaView(KDFont::Size::Small, I18n::Message::Default,
-                       KDContext::k_alignRight, KDContext::k_alignCenter,
-                       KDColorWhite, Palette::YellowDark),
+      m_shiftAlphaView(I18n::Message::Default,
+                       {{.glyphColor = KDColorWhite,
+                         .backgroundColor = Palette::YellowDark,
+                         .font = KDFont::Size::Small},
+                        .horizontalAlignment = KDGlyph::k_alignRight}),
       m_status(Ion::Events::ShiftAlphaStatus::Default) {}
 
 void ShiftAlphaLockView::drawRect(KDContext* ctx, KDRect rect) const {

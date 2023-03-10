@@ -67,12 +67,11 @@ void BatteryTestController::updateBatteryState(float batteryLevel,
 
 BatteryTestController::ContentView::ContentView()
     : SolidColorView(KDColorWhite),
-      m_batteryStateView(KDFont::Size::Large, KDContext::k_alignCenter,
-                         KDContext::k_alignCenter),
-      m_batteryLevelView(KDFont::Size::Small, KDContext::k_alignCenter,
-                         KDContext::k_alignCenter),
-      m_batteryChargingView(KDFont::Size::Small, KDContext::k_alignCenter,
-                            KDContext::k_alignCenter) {}
+      m_batteryStateView({.horizontalAlignment = KDGlyph::k_alignCenter}),
+      m_batteryLevelView({{.font = KDFont::Size::Small},
+                          .horizontalAlignment = KDGlyph::k_alignCenter}),
+      m_batteryChargingView({{.font = KDFont::Size::Small},
+                             .horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
 BufferTextView* BatteryTestController::ContentView::batteryStateTextView() {
   return &m_batteryStateView;

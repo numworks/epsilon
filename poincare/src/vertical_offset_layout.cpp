@@ -209,9 +209,7 @@ bool VerticalOffsetLayoutNode::protectedIsIdenticalTo(Layout l) {
 }
 
 void VerticalOffsetLayoutNode::render(KDContext *ctx, KDPoint p,
-                                      KDFont::Size font,
-                                      KDColor expressionColor,
-                                      KDColor backgroundColor) {
+                                      KDGlyph::Style style) {
   if (baseLayout() || m_emptyBaseVisibility == EmptyRectangle::State::Hidden) {
     return;
   }
@@ -223,13 +221,14 @@ void VerticalOffsetLayoutNode::render(KDContext *ctx, KDPoint p,
     emptyRectangleHorizontalOrigin = 0;
   } else {
     assert(horizontalPosition() == HorizontalPosition::Prefix);
-    KDCoordinate totalWidth = layoutSize(font).width();
+    KDCoordinate totalWidth = layoutSize(style.font).width();
     emptyRectangleHorizontalOrigin =
-        totalWidth - EmptyRectangle::RectangleSize(font).width();
+        totalWidth - EmptyRectangle::RectangleSize(style.font).width();
   }
-  KDPoint emptyRectangleOrigin = p.translatedBy(KDPoint(
-      emptyRectangleHorizontalOrigin, baseline(font) - baseBaseline(font)));
-  EmptyRectangle::DrawEmptyRectangle(ctx, emptyRectangleOrigin, font,
+  KDPoint emptyRectangleOrigin =
+      p.translatedBy(KDPoint(emptyRectangleHorizontalOrigin,
+                             baseline(style.font) - baseBaseline(style.font)));
+  EmptyRectangle::DrawEmptyRectangle(ctx, emptyRectangleOrigin, style.font,
                                      EmptyRectangle::Color::Yellow);
 }
 

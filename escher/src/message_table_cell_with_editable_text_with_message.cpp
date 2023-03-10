@@ -11,9 +11,9 @@ MessageTableCellWithEditableTextWithMessage::
     : MessageTableCellWithEditableText(
           parentResponder, inputEventHandlerDelegate, this, message),
       ChainedTextFieldDelegate(textFieldDelegate),
-      m_subLabelView(KDFont::Size::Small, (I18n::Message)0,
-                     KDContext::k_alignLeft, KDContext::k_alignCenter,
-                     Palette::GrayDark) {}
+      m_subLabelView((I18n::Message)0) {
+  m_subLabelView.defaultInitialization(CellWidget::Type::SubLabel);
+}
 
 void MessageTableCellWithEditableTextWithMessage::setSubLabelMessage(
     I18n::Message textBody) {

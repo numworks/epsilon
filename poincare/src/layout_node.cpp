@@ -27,18 +27,17 @@ bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
 
 // Rendering
 
-void LayoutNode::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
-                      KDColor expressionColor, KDColor backgroundColor,
+void LayoutNode::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
                       LayoutSelection selection, KDColor selectionColor) {
   if (!selection.isEmpty() && selection.containsNode(this)) {
     selection = LayoutSelection();
-    backgroundColor = selectionColor;
+    style.backgroundColor = selectionColor;
   }
 
-  KDPoint renderingAbsoluteOrigin = absoluteOrigin(font).translatedBy(p);
+  KDPoint renderingAbsoluteOrigin = absoluteOrigin(style.font).translatedBy(p);
   KDPoint renderingOriginWithMargin =
-      absoluteOriginWithMargin(font).translatedBy(p);
-  KDSize size = layoutSize(font);
+      absoluteOriginWithMargin(style.font).translatedBy(p);
+  KDSize size = layoutSize(style.font);
 
   if (size.height() <= 0 || size.width() <= 0 ||
       size.height() > KDCOORDINATE_MAX - renderingAbsoluteOrigin.y() ||
@@ -47,19 +46,18 @@ void LayoutNode::draw(KDContext *ctx, KDPoint p, KDFont::Size font,
     return;
   }
 
-  ctx->fillRect(KDRect(renderingOriginWithMargin, size), backgroundColor);
+  ctx->fillRect(KDRect(renderingOriginWithMargin, size), style.backgroundColor);
   if (!selection.isEmpty() && selection.layout().node() == this &&
       isHorizontal()) {
     KDRect selectionRectangle =
         static_cast<HorizontalLayoutNode *>(this)->relativeSelectionRect(
-            selection.leftPosition(), selection.rightPosition(), font);
+            selection.leftPosition(), selection.rightPosition(), style.font);
     ctx->fillRect(selectionRectangle.translatedBy(renderingOriginWithMargin),
                   selectionColor);
   }
-  render(ctx, renderingAbsoluteOrigin, font, expressionColor, backgroundColor);
+  render(ctx, renderingAbsoluteOrigin, style);
   for (LayoutNode *l : children()) {
-    l->draw(ctx, p, font, expressionColor, backgroundColor, selection,
-            selectionColor);
+    l->draw(ctx, p, style, selection, selectionColor);
   }
 }
 

@@ -3,13 +3,13 @@
 
 #include <kandinsky/color.h>
 #include <kandinsky/font.h>
+#include <kandinsky/glyph.h>
 #include <kandinsky/point.h>
 
 namespace Ion {
 namespace Display {
 
-void drawString(const char* text, KDPoint point, bool largeFont,
-                KDColor textColor, KDColor backgroundColor);
+void drawString(const char* text, KDPoint point, KDGlyph::Style style);
 
 }
 }  // namespace Ion

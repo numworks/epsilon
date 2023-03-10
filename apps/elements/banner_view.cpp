@@ -30,8 +30,9 @@ void BannerView::DotView::setColor(KDColor color) {
 BannerView::BannerView(Escher::Responder* textFieldParent,
                        Escher::TextFieldDelegate* textFieldDelegate)
     : m_textField(textFieldParent, nullptr, textFieldDelegate),
-      m_legendView(KDContext::k_alignLeft, KDContext::k_alignCenter,
-                   k_legendColor, k_backgroundColor, k_legendSize),
+      m_legendView({{.glyphColor = k_legendColor,
+                     .backgroundColor = k_backgroundColor,
+                     .font = k_legendSize}}),
       m_button(k_backgroundColor) {
   m_textField.setLeftMargin(Escher::Metric::CommonSmallMargin);
 }

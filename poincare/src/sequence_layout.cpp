@@ -214,9 +214,9 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(
   return numberOfChar;
 }
 
-void SequenceLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
-                                KDColor expressionColor,
-                                KDColor backgroundColor) {
+void SequenceLayoutNode::render(KDContext *ctx, KDPoint p,
+                                KDGlyph::Style style) {
+  KDFont::Size font = style.font;
   // Render the "="
   KDSize variableSize = variableLayout()->layoutSize(font);
   KDPoint equalPosition =
@@ -225,8 +225,7 @@ void SequenceLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
               variableSize.width(),
               variableLayout()->baseline(font) -
                   KDFont::Font(font)->stringSize(k_equal).height() / 2));
-  ctx->drawString(k_equal, equalPosition.translatedBy(p), font, expressionColor,
-                  backgroundColor);
+  ctx->drawString(k_equal, equalPosition.translatedBy(p), style);
 
   // Render the parentheses
   KDSize argumentSize = argumentLayout()->layoutSize(font);
@@ -243,11 +242,11 @@ void SequenceLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
           .translatedBy(argumentPosition);
   ParenthesisLayoutNode::RenderWithChildHeight(
       true, argumentSize.height(), ctx, leftParenthesisPosition.translatedBy(p),
-      expressionColor, backgroundColor);
+      style.glyphColor, style.backgroundColor);
   ParenthesisLayoutNode::RenderWithChildHeight(
       false, argumentSize.height(), ctx,
-      rightParenthesisPosition.translatedBy(p), expressionColor,
-      backgroundColor);
+      rightParenthesisPosition.translatedBy(p), style.glyphColor,
+      style.backgroundColor);
 }
 
 KDCoordinate SequenceLayoutNode::completeLowerBoundX(KDFont::Size font) {

@@ -8,9 +8,10 @@ namespace Escher {
 ExpressionTableCellWithExpression::ExpressionTableCellWithExpression(
     Responder* parentResponder, KDFont::Size font)
     : ExpressionTableCell(parentResponder, font),
-      m_subLabelExpressionView(this, 0, 0, KDContext::k_alignRight,
-                               KDContext::k_alignCenter, Palette::GrayDark,
-                               KDColorWhite, font) {}
+      m_subLabelExpressionView(
+          this, 0, 0,
+          KDGlyph::Format{{.glyphColor = Palette::GrayDark, .font = font},
+                          .horizontalAlignment = KDGlyph::k_alignRight}) {}
 
 void ExpressionTableCellWithExpression::setHighlighted(bool highlight) {
   ExpressionTableCell::setHighlighted(highlight);

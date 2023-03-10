@@ -14,8 +14,8 @@ CalculationCell::CalculationCell(
     Responder* parentResponder,
     InputEventHandlerDelegate* inputEventHandlerDelegate,
     TextFieldDelegate* textFieldDelegate)
-    : m_text(KDFont::Size::Large, I18n::Message::Default,
-             KDContext::k_alignCenter, KDContext::k_alignCenter),
+    : m_text(I18n::Message::Default,
+             {.horizontalAlignment = KDGlyph::k_alignCenter}),
       m_calculation(parentResponder, inputEventHandlerDelegate,
                     textFieldDelegate),
       m_isResponder(true) {}

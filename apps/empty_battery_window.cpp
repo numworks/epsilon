@@ -13,5 +13,5 @@ void EmptyBatteryWindow::drawRect(KDContext* ctx, KDRect rect) const {
   const char* warningMessage = I18n::translate(I18n::Message::LowBattery);
   ctx->alignAndDrawString(warningMessage, KDPointZero,
                           KDSize(Ion::Display::Width, Ion::Display::Height),
-                          KDContext::k_alignCenter, KDContext::k_alignCenter);
+                          {.horizontalAlignment = KDGlyph::k_alignCenter});
 }

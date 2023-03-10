@@ -72,8 +72,7 @@ class LayoutNode : public TreeNode {
   bool isIdenticalTo(Layout l, bool makeEditable = false);
 
   // Rendering
-  void draw(KDContext *ctx, KDPoint p, KDFont::Size font,
-            KDColor expressionColor, KDColor backgroundColor,
+  void draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
             LayoutSelection selection, KDColor selectionColor = KDColorRed);
   KDPoint absoluteOrigin(KDFont::Size font) {
     return absoluteOriginWithMargin(font).translatedBy(
@@ -180,8 +179,7 @@ class LayoutNode : public TreeNode {
 
  private:
   KDPoint absoluteOriginWithMargin(KDFont::Size font);
-  virtual void render(KDContext *ctx, KDPoint p, KDFont::Size font,
-                      KDColor expressionColor, KDColor backgroundColor) = 0;
+  virtual void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) = 0;
   bool changeGraySquaresOfAllGridRelatives(bool add, bool ancestors,
                                            Layout layoutToExclude);
 

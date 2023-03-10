@@ -19,10 +19,16 @@ void LegendView::StripedDotView::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 LegendView::LegendView()
-    : m_pValueLabel(KDFont::Size::Small, I18n::Message::PValue, 0.0, 0.0,
-                    Palette::GrayVeryDark, k_backgroundColor),
-      m_alphaLabel(KDFont::Size::Small, I18n::Message::GreekAlpha, 0.0, 0.0,
-                   Palette::GrayVeryDark, k_backgroundColor) {}
+    : m_pValueLabel(I18n::Message::PValue,
+                    {{.glyphColor = Palette::GrayVeryDark,
+                      .backgroundColor = k_backgroundColor,
+                      .font = KDFont::Size::Small},
+                     .verticalAlignment = KDGlyph::k_alignTop}),
+      m_alphaLabel(I18n::Message::GreekAlpha,
+                   {{.glyphColor = Palette::GrayVeryDark,
+                     .backgroundColor = k_backgroundColor,
+                     .font = KDFont::Size::Small},
+                    .verticalAlignment = KDGlyph::k_alignTop}) {}
 
 View* LegendView::subviewAtIndex(int i) {
   switch (i) {

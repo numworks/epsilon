@@ -8,17 +8,10 @@ using namespace Escher;
 namespace Statistics {
 
 HistogramBannerView::HistogramBannerView()
-    : m_seriesName(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter,
-                   TextColor(), BackgroundColor()),
-      m_intervalBuffer(k_font, KDContext::k_alignCenter,
-                       KDContext::k_alignCenter, TextColor(),
-                       BackgroundColor()),
-      m_frequencyBuffer(k_font, KDContext::k_alignCenter,
-                        KDContext::k_alignCenter, TextColor(),
-                        BackgroundColor()),
-      m_relativeFrequencyBuffer(k_font, KDContext::k_alignCenter,
-                                KDContext::k_alignCenter, TextColor(),
-                                BackgroundColor()) {}
+    : m_seriesName(k_defaultFormat),
+      m_intervalBuffer(k_defaultFormat),
+      m_frequencyBuffer(k_defaultFormat),
+      m_relativeFrequencyBuffer(k_defaultFormat) {}
 
 View* HistogramBannerView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());

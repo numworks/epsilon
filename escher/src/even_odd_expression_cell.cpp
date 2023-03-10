@@ -10,8 +10,11 @@ EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment,
                                              KDColor backgroundColor,
                                              KDFont::Size font)
     : EvenOddCell(),
-      m_expressionView(horizontalAlignment, verticalAlignment, textColor,
-                       backgroundColor, font),
+      m_expressionView({{.glyphColor = textColor,
+                         .backgroundColor = backgroundColor,
+                         .font = font},
+                        .horizontalAlignment = horizontalAlignment,
+                        .verticalAlignment = verticalAlignment}),
       m_leftMargin(0),
       m_rightMargin(0) {}
 

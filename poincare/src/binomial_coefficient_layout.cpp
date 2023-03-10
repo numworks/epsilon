@@ -84,21 +84,19 @@ KDPoint BinomialCoefficientLayoutNode::positionOfChild(LayoutNode* child,
 }
 
 void BinomialCoefficientLayoutNode::render(KDContext* ctx, KDPoint p,
-                                           KDFont::Size font,
-                                           KDColor expressionColor,
-                                           KDColor backgroundColor) {
+                                           KDGlyph::Style style) {
   // Render the parentheses.
-  KDCoordinate childHeight = knHeight(font);
+  KDCoordinate childHeight = knHeight(style.font);
   KDCoordinate rightParenthesisPointX =
-      std::max(nLayout()->layoutSize(font).width(),
-               kLayout()->layoutSize(font).width()) +
+      std::max(nLayout()->layoutSize(style.font).width(),
+               kLayout()->layoutSize(style.font).width()) +
       ParenthesisLayoutNode::k_parenthesisWidth;
   ParenthesisLayoutNode::RenderWithChildHeight(
-      true, childHeight, ctx, p, expressionColor, backgroundColor);
+      true, childHeight, ctx, p, style.glyphColor, style.backgroundColor);
   ParenthesisLayoutNode::RenderWithChildHeight(
       false, childHeight, ctx,
-      p.translatedBy(KDPoint(rightParenthesisPointX, 0)), expressionColor,
-      backgroundColor);
+      p.translatedBy(KDPoint(rightParenthesisPointX, 0)), style.glyphColor,
+      style.backgroundColor);
 }
 
 }  // namespace Poincare

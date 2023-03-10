@@ -54,14 +54,13 @@ class ParenthesisLayoutNode : public AutocompletedBracketPairLayoutNode {
   // BracketPairLayoutNode
   KDCoordinate bracketWidth() const override { return k_parenthesisWidth; }
   KDCoordinate verticalMargin() const override { return k_verticalMargin; }
-  void renderOneBracket(bool left, KDContext* ctx, KDPoint p, KDFont::Size font,
-                        KDColor expressionColor,
-                        KDColor backgroundColor) override {
-    RenderWithChildHeight(left, childLayout()->layoutSize(font).height(), ctx,
-                          p,
+  void renderOneBracket(bool left, KDContext* ctx, KDPoint p,
+                        KDGlyph::Style style) override {
+    RenderWithChildHeight(left, childLayout()->layoutSize(style.font).height(),
+                          ctx, p,
                           bracketColor(left ? Side::Left : Side::Right,
-                                       expressionColor, backgroundColor),
-                          backgroundColor);
+                                       style.glyphColor, style.backgroundColor),
+                          style.backgroundColor);
   }
 };
 

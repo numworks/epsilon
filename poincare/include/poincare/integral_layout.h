@@ -77,8 +77,7 @@ class IntegralLayoutNode final : public LayoutNode {
   LayoutNode* upperBoundLayout() {
     return childAtIndex(k_upperBoundLayoutIndex);
   }  // b
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
   enum class BoundPosition : uint8_t { UpperBound, LowerBound };
 

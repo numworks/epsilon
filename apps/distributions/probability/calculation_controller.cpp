@@ -25,9 +25,9 @@ CalculationController::ContentView::ContentView(
     Calculation *calculation)
     : m_selectableTableView(selectableTableView),
       m_distributionCurveView(distribution, calculation),
-      m_unknownParameterBanner(KDFont::Size::Large, KDContext::k_alignCenter,
-                               KDContext::k_alignCenter, KDColorBlack,
-                               Escher::Palette::WallScreen) {}
+      m_unknownParameterBanner(
+          {{.backgroundColor = Escher::Palette::WallScreen},
+           .horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
 View *CalculationController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());

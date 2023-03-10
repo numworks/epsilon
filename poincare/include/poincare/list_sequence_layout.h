@@ -48,8 +48,7 @@ class ListSequenceLayoutNode final : public LayoutNode {
   KDPoint positionOfVariable(KDFont::Size font);
   KDCoordinate variableSlotBaseline(KDFont::Size font);
   KDCoordinate bracesWidth(KDFont::Size font);
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 };
 
 class ListSequenceLayout final

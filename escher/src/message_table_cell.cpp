@@ -5,10 +5,7 @@
 namespace Escher {
 
 MessageTableCell::MessageTableCell(I18n::Message label)
-    : TableCell(),
-      m_messageTextView(KDFont::Size::Large, label, 0, 0.5, KDColorBlack,
-                        KDColorWhite),
-      m_backgroundColor(KDColorWhite) {}
+    : TableCell(), m_messageTextView(label), m_backgroundColor(KDColorWhite) {}
 
 void MessageTableCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);

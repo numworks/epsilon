@@ -61,8 +61,7 @@ class CodePointLayoutNode : public LayoutNode {
 
  private:
   constexpr static const int k_middleDotWidth = 5;
-  void render(KDContext *ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) override;
 };
 
 class CodePointLayout : public Layout {

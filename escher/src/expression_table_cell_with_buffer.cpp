@@ -5,9 +5,9 @@ namespace Escher {
 
 ExpressionTableCellWithBuffer::ExpressionTableCellWithBuffer(
     Responder* responder)
-    : ExpressionTableCell(responder),
-      m_subLabelView(KDFont::Size::Small, KDContext::k_alignRight,
-                     KDContext::k_alignCenter, Palette::GrayDark) {}
+    : ExpressionTableCell(responder), m_subLabelView() {
+  m_subLabelView.defaultInitialization(CellWidget::Type::SubLabel);
+}
 
 void ExpressionTableCellWithBuffer::setSubLabelText(const char* textBody) {
   m_subLabelView.setText(textBody);

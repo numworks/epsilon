@@ -9,8 +9,8 @@ namespace Escher {
 class EvenOddBufferTextCell : public EvenOddCell {
  public:
   EvenOddBufferTextCell(KDFont::Size font = KDFont::Size::Small,
-                        float horizontalAlignment = KDContext::k_alignRight,
-                        float verticalAlignment = KDContext::k_alignCenter);
+                        float horizontalAlignment = KDGlyph::k_alignRight,
+                        float verticalAlignment = KDGlyph::k_alignCenter);
   const char* text() const override;
   void setFont(KDFont::Size font) { m_bufferTextView.setFont(font); }
   KDFont::Size font() const { return m_bufferTextView.font(); }

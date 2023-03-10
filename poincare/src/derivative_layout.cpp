@@ -310,25 +310,24 @@ void HigherOrderDerivativeLayoutNode::setOrderSlot(
   }
 }
 
-void DerivativeLayoutNode::render(KDContext* ctx, KDPoint p, KDFont::Size font,
-                                  KDColor expressionColor,
-                                  KDColor backgroundColor) {
+void DerivativeLayoutNode::render(KDContext* ctx, KDPoint p,
+                                  KDGlyph::Style style) {
   // d/dx...
-  ctx->drawString(k_d, positionOfDInNumerator(font).translatedBy(p), font,
-                  expressionColor, backgroundColor);
-  ctx->drawString(k_d, positionOfDInDenominator(font).translatedBy(p), font,
-                  expressionColor, backgroundColor);
+  ctx->drawString(k_d, positionOfDInNumerator(style.font).translatedBy(p),
+                  style);
+  ctx->drawString(k_d, positionOfDInDenominator(style.font).translatedBy(p),
+                  style);
 
-  KDRect horizontalBar =
-      KDRect(Escher::Metric::FractionAndConjugateHorizontalMargin,
-             baseline(font) - FractionLayoutNode::k_fractionLineHeight,
-             fractionBarWidth(font), FractionLayoutNode::k_fractionLineHeight);
-  ctx->fillRect(horizontalBar.translatedBy(p), expressionColor);
+  KDRect horizontalBar = KDRect(
+      Escher::Metric::FractionAndConjugateHorizontalMargin,
+      baseline(style.font) - FractionLayoutNode::k_fractionLineHeight,
+      fractionBarWidth(style.font), FractionLayoutNode::k_fractionLineHeight);
+  ctx->fillRect(horizontalBar.translatedBy(p), style.glyphColor);
 
   // ...(f)...
-  KDSize derivandSize = derivandLayout()->layoutSize(font);
-  KDPoint derivandPosition = positionOfChild(derivandLayout(), font);
-  KDCoordinate derivandBaseline = derivandLayout()->baseline(font);
+  KDSize derivandSize = derivandLayout()->layoutSize(style.font);
+  KDPoint derivandPosition = positionOfChild(derivandLayout(), style.font);
+  KDCoordinate derivandBaseline = derivandLayout()->baseline(style.font);
 
   KDPoint leftParenthesisPosition =
       ParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(
@@ -336,7 +335,7 @@ void DerivativeLayoutNode::render(KDContext* ctx, KDPoint p, KDFont::Size font,
           .translatedBy(derivandPosition);
   ParenthesisLayoutNode::RenderWithChildHeight(
       true, derivandSize.height(), ctx, leftParenthesisPosition.translatedBy(p),
-      expressionColor, backgroundColor);
+      style.glyphColor, style.backgroundColor);
 
   KDPoint rightParenthesisPosition =
       ParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(
@@ -344,35 +343,35 @@ void DerivativeLayoutNode::render(KDContext* ctx, KDPoint p, KDFont::Size font,
           .translatedBy(derivandPosition);
   ParenthesisLayoutNode::RenderWithChildHeight(
       false, derivandSize.height(), ctx,
-      rightParenthesisPosition.translatedBy(p), expressionColor,
-      backgroundColor);
+      rightParenthesisPosition.translatedBy(p), style.glyphColor,
+      style.backgroundColor);
 
   // ...|x=
-  KDSize variableSize = variableLayout()->layoutSize(font);
-  KDRect verticalBar(rightParenthesisPosition.x() +
-                         ParenthesisLayoutNode::k_parenthesisWidth +
-                         k_barHorizontalMargin,
-                     0, k_barWidth,
-                     abscissaBaseline(font) - variableLayout()->baseline(font) +
-                         variableSize.height());
-  ctx->fillRect(verticalBar.translatedBy(p), expressionColor);
+  KDSize variableSize = variableLayout()->layoutSize(style.font);
+  KDRect verticalBar(
+      rightParenthesisPosition.x() + ParenthesisLayoutNode::k_parenthesisWidth +
+          k_barHorizontalMargin,
+      0, k_barWidth,
+      abscissaBaseline(style.font) - variableLayout()->baseline(style.font) +
+          variableSize.height());
+  ctx->fillRect(verticalBar.translatedBy(p), style.glyphColor);
 
-  KDPoint variableAssignmentPosition = positionOfVariableInAssignmentSlot(font);
+  KDPoint variableAssignmentPosition =
+      positionOfVariableInAssignmentSlot(style.font);
   KDPoint equalPosition = variableAssignmentPosition.translatedBy(
       KDPoint(variableSize.width(),
-              variableLayout()->baseline(font) -
-                  KDFont::Font(font)->stringSize("=").height() / 2));
-  ctx->drawString("=", equalPosition.translatedBy(p), font, expressionColor,
-                  backgroundColor);
+              variableLayout()->baseline(style.font) -
+                  KDFont::Font(style.font)->stringSize("=").height() / 2));
+  ctx->drawString("=", equalPosition.translatedBy(p), style);
 
   // Draw the copy of x
   Layout variableCopy =
       HorizontalLayout::Builder(Layout(variableLayout()).clone());
   KDPoint copyPosition = m_variableSlot == VariableSlot::Fraction
                              ? variableAssignmentPosition
-                             : positionOfVariableInFractionSlot(font);
-  variableCopy.draw(ctx, copyPosition.translatedBy(p), font, expressionColor,
-                    backgroundColor, LayoutSelection());
+                             : positionOfVariableInFractionSlot(style.font);
+  variableCopy.draw(ctx, copyPosition.translatedBy(p), style,
+                    LayoutSelection());
 }
 
 KDPoint HigherOrderDerivativeLayoutNode::positionOfChild(LayoutNode* child,
@@ -400,18 +399,15 @@ KDPoint HigherOrderDerivativeLayoutNode::positionOfOrderInDenominator(
 }
 
 void HigherOrderDerivativeLayoutNode::render(KDContext* ctx, KDPoint p,
-                                             KDFont::Size font,
-                                             KDColor expressionColor,
-                                             KDColor backgroundColor) {
+                                             KDGlyph::Style style) {
   // Draw the copy of the order
   Layout orderCopy = HorizontalLayout::Builder(Layout(orderLayout()).clone());
   KDPoint copyPosition = m_orderSlot == OrderSlot::Denominator
-                             ? positionOfOrderInNumerator(font)
-                             : positionOfOrderInDenominator(font);
-  orderCopy.draw(ctx, copyPosition.translatedBy(p), font, expressionColor,
-                 backgroundColor, LayoutSelection());
+                             ? positionOfOrderInNumerator(style.font)
+                             : positionOfOrderInDenominator(style.font);
+  orderCopy.draw(ctx, copyPosition.translatedBy(p), style, LayoutSelection());
 
-  DerivativeLayoutNode::render(ctx, p, font, expressionColor, backgroundColor);
+  DerivativeLayoutNode::render(ctx, p, style);
 }
 
 }  // namespace Poincare

@@ -17,9 +17,11 @@ ResultController::ResultController(Escher::StackViewController* parentResponder)
                            Escher::BufferTextView>,
           k_numberOfResultCells, Escher::MemoizedListViewDataSource>(
           parentResponder),
-      m_messageView(KDFont::Size::Small, I18n::Message::CalculatedValues,
-                    KDContext::k_alignCenter, KDContext::k_alignCenter,
-                    Escher::Palette::GrayDark, Escher::Palette::WallScreen),
+      m_messageView(I18n::Message::CalculatedValues,
+                    {{.glyphColor = Escher::Palette::GrayDark,
+                      .backgroundColor = Escher::Palette::WallScreen,
+                      .font = KDFont::Size::Small},
+                     .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_contentView(&m_selectableListView, this, &m_messageView) {}
 
 void ResultController::didBecomeFirstResponder() {

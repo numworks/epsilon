@@ -24,8 +24,7 @@ class SumLayoutNode final : public SequenceLayoutNode {
 #endif
 
  private:
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 };
 
 class SumLayout final : public LayoutFourChildren<SumLayout, SumLayoutNode> {

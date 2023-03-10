@@ -19,10 +19,11 @@ CalculationGraphController::CalculationGraphController(
       m_graphView(graphView),
       m_bannerView(bannerView),
       m_graphRange(curveViewRange),
-      m_defaultBannerView(BannerView::k_font, defaultMessage,
-                          KDContext::k_alignCenter, KDContext::k_alignCenter,
-                          BannerView::TextColor(),
-                          BannerView::BackgroundColor()),
+      m_defaultBannerView(defaultMessage,
+                          {{.glyphColor = BannerView::TextColor(),
+                            .backgroundColor = BannerView::BackgroundColor(),
+                            .font = BannerView::k_font},
+                           .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_isActive(false) {}
 
 bool CalculationGraphController::handleEvent(Ion::Events::Event event) {

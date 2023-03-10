@@ -54,8 +54,7 @@ class BinomialCoefficientLayoutNode final : public LayoutNode {
            GridLayoutNode::k_gridEntryMargin +
            kLayout()->layoutSize(font).height();
   }
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
   LayoutNode* nLayout() const { return childAtIndex(k_nLayoutIndex); }
   LayoutNode* kLayout() const { return childAtIndex(k_kLayoutIndex); }

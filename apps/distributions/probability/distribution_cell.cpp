@@ -5,10 +5,7 @@ using namespace Escher;
 namespace Distributions {
 
 DistributionCell::DistributionCell()
-    : TableCell(),
-      m_messageView(KDFont::Size::Large, (I18n::Message)0,
-                    KDContext::k_alignLeft, KDContext::k_alignCenter,
-                    KDColorBlack, KDColorWhite) {
+    : TableCell(), m_messageView((I18n::Message)0) {
   m_iconView.setBackgroundColor(KDColorWhite);
 }
 

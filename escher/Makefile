@@ -41,10 +41,11 @@ escher_src += $(addprefix escher/src/,\
   expression_table_cell_with_expression.cpp \
   expression_table_cell_with_message.cpp \
   expression_view.cpp \
+  gauge_view.cpp \
+  glyphs_view.cpp \
   highlight_cell.cpp \
   highlight_image_cell.cpp \
   horizontal_or_vertical_layout.cpp \
-  gauge_view.cpp \
   image_view.cpp \
   init.cpp \
   input_event_handler.cpp \

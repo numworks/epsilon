@@ -31,8 +31,7 @@ void VBlankTestController::viewWillAppear() {
 
 VBlankTestController::ContentView::ContentView()
     : SolidColorView(KDColorWhite),
-      m_vBlankStateView(KDFont::Size::Large, KDContext::k_alignCenter,
-                        KDContext::k_alignCenter) {}
+      m_vBlankStateView({.horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
 void VBlankTestController::ContentView::setColor(KDColor color) {
   SolidColorView::setColor(color);

@@ -7,8 +7,8 @@ namespace Escher {
 MessageTableCellWithChevronAndExpression::
     MessageTableCellWithChevronAndExpression(I18n::Message message)
     : MessageTableCellWithChevron(message),
-      m_subtitleView(KDContext::k_alignRight, KDContext::k_alignCenter,
-                     Palette::GrayDark) {}
+      m_subtitleView({{.glyphColor = Palette::GrayDark},
+                      .horizontalAlignment = KDGlyph::k_alignRight}) {}
 
 void MessageTableCellWithChevronAndExpression::setHighlighted(bool highlight) {
   MessageTableCellWithChevron::setHighlighted(highlight);

@@ -13,13 +13,8 @@ class BufferTextView : public TextView {
 
  public:
   constexpr static size_t k_maxNumberOfChar = 256;
-  BufferTextView(CellWidget::Type type = CellWidget::Type::Label)
-      : TextView(type), m_maxDisplayedTextLength(k_maxNumberOfChar - 1) {}
-  BufferTextView(KDFont::Size font,
-                 float horizontalAlignment = k_defaultLabel.horizontalAlginment,
-                 float verticalAlignment = k_defaultAccessory.verticalAlignment,
-                 KDColor textColor = k_defaultLabel.textColor,
-                 KDColor backgroundColor = k_defaultLabel.backgroundColor,
+
+  BufferTextView(KDGlyph::Format format = {},
                  size_t maxDisplayedTextLength = k_maxNumberOfChar - 1);
 
   // View

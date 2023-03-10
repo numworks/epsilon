@@ -46,12 +46,10 @@ KDCoordinate StringLayoutNode::computeBaseline(KDFont::Size font) {
   return KDFont::GlyphHeight(font) / 2;
 }
 
-void StringLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
-                              KDColor expressionColor,
-                              KDColor backgroundColor) {
+void StringLayoutNode::render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
   int nThousandsSeparators = numberOfThousandsSeparators();
   if (nThousandsSeparators == 0) {
-    ctx->drawString(m_string, p, font, expressionColor, backgroundColor);
+    ctx->drawString(m_string, p, style);
     return;
   }
   // Draw the thousand separators
@@ -60,21 +58,19 @@ void StringLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
   char groupedNumbersBuffer[4];
   // Draw the first separator first
   strlcpy(groupedNumbersBuffer, m_string, firstSeparatorIndex + 2);
-  p = ctx->drawString(groupedNumbersBuffer, p, font, expressionColor,
-                      backgroundColor);
+  p = ctx->drawString(groupedNumbersBuffer, p, style);
   p = p.translatedBy(KDPoint(Escher::Metric::ThousandsSeparatorWidth, 0));
   // Draw the other separators.
   for (int i = 0; i < nThousandsSeparators - 1; i++) {
     strlcpy(groupedNumbersBuffer, &m_string[firstSeparatorIndex + i * 3 + 1],
             4);
-    p = ctx->drawString(groupedNumbersBuffer, p, font, expressionColor,
-                        backgroundColor);
+    p = ctx->drawString(groupedNumbersBuffer, p, style);
     p = p.translatedBy(KDPoint(Escher::Metric::ThousandsSeparatorWidth, 0));
   }
   // Draw the end of the string.
   ctx->drawString(
       &m_string[firstSeparatorIndex + 3 * (nThousandsSeparators - 1) + 1], p,
-      font, expressionColor, backgroundColor);
+      style);
 }
 
 int StringLayoutNode::numberOfThousandsSeparators() {

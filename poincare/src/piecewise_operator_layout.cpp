@@ -81,9 +81,7 @@ KDCoordinate PiecewiseOperatorLayoutNode::computeBaseline(KDFont::Size font) {
 }
 
 void PiecewiseOperatorLayoutNode::render(KDContext *ctx, KDPoint p,
-                                         KDFont::Size font,
-                                         KDColor expressionColor,
-                                         KDColor backgroundColor) {
+                                         KDGlyph::Style style) {
   assert(numberOfColumns() == 2);
   bool cursorIsInsideOperator = isEditing();
 
@@ -111,11 +109,12 @@ void PiecewiseOperatorLayoutNode::render(KDContext *ctx, KDPoint p,
 
   // Draw the grid and the {
   CurlyBraceLayoutNode::RenderWithChildHeight(
-      true, gridSize(font).height(), ctx, p, expressionColor, backgroundColor);
+      true, gridSize(style.font).height(), ctx, p, style.glyphColor,
+      style.backgroundColor);
 
   // Draw the commas
   KDCoordinate commaAbscissa = CurlyBraceLayoutNode::k_curlyBraceWidth +
-                               columnWidth(0, font) + k_gridEntryMargin;
+                               columnWidth(0, style.font) + k_gridEntryMargin;
   for (int i = 0; i < numberOfRows(); i++) {
     LayoutNode *leftChild = childAtIndex(i * 2);
     LayoutNode *rightChild = childAtIndex(1 + i * 2);
@@ -127,17 +126,16 @@ void PiecewiseOperatorLayoutNode::render(KDContext *ctx, KDPoint p,
           EmptyRectangle::State::Hidden);
       continue;  // Do not draw the comma
     }
-    KDPoint leftChildPosition = positionOfChild(leftChild, font);
+    KDPoint leftChildPosition = positionOfChild(leftChild, style.font);
     KDPoint commaPosition = KDPoint(
-        commaAbscissa, leftChildPosition.y() + leftChild->baseline(font) -
-                           KDFont::GlyphHeight(font) / 2);
-    bool drawInGray =
-        rightChild->isEmpty() &&
+        commaAbscissa, leftChildPosition.y() + leftChild->baseline(style.font) -
+                           KDFont::GlyphHeight(style.font) / 2);
+    if (rightChild->isEmpty() &&
         static_cast<HorizontalLayoutNode *>(rightChild)->emptyColor() ==
-            EmptyRectangle::Color::Gray;
-    ctx->drawString(",", commaPosition.translatedBy(p), font,
-                    drawInGray ? Escher::Palette::GrayDark : expressionColor,
-                    backgroundColor);
+            EmptyRectangle::Color::Gray) {
+      style.glyphColor = Escher::Palette::GrayDark;
+    }
+    ctx->drawString(",", commaPosition.translatedBy(p), style);
   }
 }
 

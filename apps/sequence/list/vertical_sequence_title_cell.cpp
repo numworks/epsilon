@@ -28,7 +28,10 @@ void VerticalSequenceTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
   // -1 is visually needed
   KDPoint p = KDPoint(bounds().width() - k_equalWidthWithMargins,
                       m_baseline - KDFont::GlyphHeight(k_font) / 2 - 1);
-  ctx->drawString("=", p, k_font, m_functionColor, backgroundColor);
+  ctx->drawString("=", p,
+                  KDGlyph::Style{.glyphColor = m_functionColor,
+                                 .backgroundColor = backgroundColor,
+                                 .font = k_font});
 }
 
 KDRect VerticalSequenceTitleCell::subviewFrame() const {
@@ -45,7 +48,7 @@ void VerticalSequenceTitleCell::layoutSubviews(bool force) {
 
 float VerticalSequenceTitleCell::verticalAlignment() const {
   if (m_baseline < 0) {
-    return KDContext::k_alignCenter;
+    return KDGlyph::k_alignCenter;
   }
   Poincare::Layout l = layout();
   float alignment = static_cast<float>(m_baseline - l.baseline(k_font)) /

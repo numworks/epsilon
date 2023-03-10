@@ -41,9 +41,11 @@ AreaBetweenCurvesParameterController::AreaBetweenCurvesParameterController(
       m_mainRecord(nullptr),
       m_areaGraphController(areaGraphController),
       m_contentView(&m_selectableListView, this, &m_topView),
-      m_topView(KDFont::Size::Small, I18n::Message::SelectSecondCurve,
-                KDContext::k_alignCenter, KDContext::k_alignCenter,
-                Palette::GrayDark, Palette::WallScreen) {}
+      m_topView(I18n::Message::SelectSecondCurve,
+                {{.glyphColor = Palette::GrayDark,
+                  .backgroundColor = Palette::WallScreen,
+                  .font = KDFont::Size::Small},
+                 .horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
 const char *AreaBetweenCurvesParameterController::title() {
   return I18n::translate(I18n::Message::AreaBetweenCurves);

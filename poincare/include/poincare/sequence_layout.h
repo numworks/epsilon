@@ -89,8 +89,7 @@ class SequenceLayoutNode : public LayoutNode {
   LayoutNode* upperBoundLayout() {
     return childAtIndex(k_upperBoundLayoutIndex);
   }
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
  private:
   KDCoordinate completeLowerBoundX(KDFont::Size font);

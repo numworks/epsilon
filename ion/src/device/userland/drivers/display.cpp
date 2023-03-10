@@ -26,14 +26,11 @@ void SVC_ATTRIBUTES POSTPushMulticolor(int rootNumberTiles, int tileSize) {
   SVC_RETURNING_VOID(SVC_DISPLAY_POST_PUSH_MULTICOLOR)
 }
 
-void drawString(const char* text, KDPoint point, bool largeFont,
-                KDColor textColor, KDColor backgroundColor) {
+void drawString(const char* text, KDPoint point, KDGlyph::Style style) {
   KDContext* ctx = KDIonContext::SharedContext;
   ctx->setOrigin(KDPointZero);
   ctx->setClippingRect(KDRectScreen);
-  ctx->drawString(text, point,
-                  largeFont ? KDFont::Size::Large : KDFont::Size::Small,
-                  textColor, backgroundColor, 255);
+  ctx->drawString(text, point, style, 255);
 }
 
 void setScreenshotCallback(void (*)(void)) {}

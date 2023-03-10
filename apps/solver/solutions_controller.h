@@ -91,6 +91,9 @@ class SolutionsController : public Escher::ViewController,
 
    private:
     constexpr static KDFont::Size k_warningMessageFont = KDFont::Size::Small;
+    constexpr static KDGlyph::Format k_warningFormat{
+        {.backgroundColor = k_backgroundColor, .font = k_warningMessageFont},
+        .horizontalAlignment = KDGlyph::k_alignCenter};
 
     bool hideTableView() const {
       return m_selectableTableView.numberOfDisplayableRows() == 0;
@@ -107,9 +110,13 @@ class SolutionsController : public Escher::ViewController,
   class MessageCell : public Escher::HighlightCell {
    public:
     MessageCell()
-        : m_messageView(KDFont::Size::Small, (I18n::Message)0, 0.0f,
-                        k_verticalAlignment, KDColorBlack,
-                        SolutionsController::ContentView::k_backgroundColor) {}
+        : m_messageView(
+              (I18n::Message)0,
+              {{.backgroundColor =
+                    SolutionsController::ContentView::k_backgroundColor,
+                .font = KDFont::Size::Small},
+               .verticalAlignment = k_verticalAlignment}) {}
+
     void setBackgroundColor(KDColor color) {
       m_messageView.setBackgroundColor(color);
     }
@@ -124,7 +131,7 @@ class SolutionsController : public Escher::ViewController,
     /* Text is placed at the very top of the cell to simplify text centering
      * when there are no cells above. To add a "margin" in other cases, we
      * precede the message row with an empty row. */
-    constexpr static float k_verticalAlignment = 0.0f;
+    constexpr static float k_verticalAlignment = KDGlyph::k_alignTop;
     int numberOfSubviews() const override { return 1; }
     Escher::View *subviewAtIndex(int index) override {
       assert(index == 0);

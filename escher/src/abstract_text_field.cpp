@@ -57,27 +57,33 @@ void AbstractTextField::ContentView::drawRect(KDContext *ctx,
     backgroundColor = KDColorWhite;
   }
   ctx->fillRect(bounds(), backgroundColor);
+  KDGlyph::Style glyphStyle{.glyphColor = m_textColor,
+                            .backgroundColor = backgroundColor,
+                            .font = m_font};
   if (selectionIsEmpty()) {
     ctx->drawString(text(), glyphFrameAtPosition(text(), text()).origin(),
-                    m_font, m_textColor, backgroundColor);
+                    glyphStyle);
   } else {
     assert(m_isEditing);
     int selectionOffset = selectionLeft() - editedText();
     const char *textToDraw = text();
     // Draw the non selected text on the left of the selection
     ctx->drawString(textToDraw, glyphFrameAtPosition(text(), text()).origin(),
-                    m_font, m_textColor, backgroundColor, selectionOffset);
+                    glyphStyle, selectionOffset);
     int selectionLength = selectionRight() - selectionLeft();
     textToDraw += selectionOffset;
     // Draw the selected text
     ctx->drawString(text() + selectionOffset,
-                    glyphFrameAtPosition(text(), textToDraw).origin(), m_font,
-                    m_textColor, Palette::Select, selectionLength);
+                    glyphFrameAtPosition(text(), textToDraw).origin(),
+                    KDGlyph::Style{.glyphColor = m_textColor,
+                                   .backgroundColor = Palette::Select,
+                                   .font = m_font},
+                    selectionLength);
     textToDraw += selectionLength;
     // Draw the non selected text on the right of the selection
     ctx->drawString(text() + selectionOffset + selectionLength,
-                    glyphFrameAtPosition(text(), textToDraw).origin(), m_font,
-                    m_textColor, backgroundColor);
+                    glyphFrameAtPosition(text(), textToDraw).origin(),
+                    glyphStyle);
   }
 }
 

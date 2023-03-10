@@ -105,8 +105,8 @@ KDCoordinate ListSequenceLayoutNode::bracesWidth(KDFont::Size font) {
 }
 
 void ListSequenceLayoutNode::render(KDContext* ctx, KDPoint p,
-                                    KDFont::Size font, KDColor expressionColor,
-                                    KDColor backgroundColor) {
+                                    KDGlyph::Style style) {
+  KDFont::Size font = style.font;
   // Draw {  }
   KDSize functionSize = functionLayout()->layoutSize(font);
   KDPoint functionPosition = positionOfChild(functionLayout(), font);
@@ -116,9 +116,9 @@ void ListSequenceLayoutNode::render(KDContext* ctx, KDPoint p,
       CurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(
           true, functionSize, functionBaseline)
           .translatedBy(functionPosition);
-  CurlyBraceLayoutNode::RenderWithChildHeight(true, functionSize.height(), ctx,
-                                              leftBracePosition.translatedBy(p),
-                                              expressionColor, backgroundColor);
+  CurlyBraceLayoutNode::RenderWithChildHeight(
+      true, functionSize.height(), ctx, leftBracePosition.translatedBy(p),
+      style.glyphColor, style.backgroundColor);
 
   KDPoint rightBracePosition =
       CurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(
@@ -126,14 +126,13 @@ void ListSequenceLayoutNode::render(KDContext* ctx, KDPoint p,
           .translatedBy(functionPosition);
   CurlyBraceLayoutNode::RenderWithChildHeight(
       false, functionSize.height(), ctx, rightBracePosition.translatedBy(p),
-      expressionColor, backgroundColor);
+      style.glyphColor, style.backgroundColor);
 
   // Draw k≤...
   KDPoint inferiorEqualPosition = KDPoint(
       positionOfVariable(font).x() + variableLayout()->layoutSize(font).width(),
       variableSlotBaseline(font) - KDFont::GlyphHeight(font) / 2);
-  ctx->drawString("≤", inferiorEqualPosition.translatedBy(p), font,
-                  expressionColor, backgroundColor);
+  ctx->drawString("≤", inferiorEqualPosition.translatedBy(p), style);
 }
 
 }  // namespace Poincare

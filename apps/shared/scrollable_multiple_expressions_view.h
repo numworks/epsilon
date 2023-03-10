@@ -48,7 +48,7 @@ class AbstractScrollableMultipleExpressionsView
  protected:
   class ContentCell : public Escher::EvenOddCell {
    public:
-    ContentCell(float horizontalAlignment = KDContext::k_alignLeft,
+    ContentCell(float horizontalAlignment = KDGlyph::k_alignLeft,
                 KDFont::Size font = KDFont::Size::Large);
     KDColor backgroundColor() const override;
     void setHighlighted(bool highlight) override;
@@ -125,10 +125,9 @@ class AbstractScrollableMultipleExpressionsView
 class ScrollableTwoExpressionsView
     : public AbstractScrollableMultipleExpressionsView {
  public:
-  ScrollableTwoExpressionsView(
-      Escher::Responder* parentResponder,
-      float horizontalAlignment = KDContext::k_alignLeft,
-      KDFont::Size font = KDFont::Size::Large)
+  ScrollableTwoExpressionsView(Escher::Responder* parentResponder,
+                               float horizontalAlignment = KDGlyph::k_alignLeft,
+                               KDFont::Size font = KDFont::Size::Large)
       : AbstractScrollableMultipleExpressionsView(parentResponder,
                                                   &m_contentCell),
         m_contentCell(horizontalAlignment, font) {

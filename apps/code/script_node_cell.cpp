@@ -8,11 +8,10 @@ namespace Code {
 
 ScriptNodeCell::ScriptNodeCell()
     : TableCell(),
-      m_labelView(KDFont::Size::Large, KDContext::k_alignLeft,
-                  KDContext::k_alignCenter, KDColorBlack, KDColorWhite,
-                  k_maxNumberOfCharsInLabel),
-      m_subLabelView(KDFont::Size::Small, KDContext::k_alignLeft,
-                     KDContext::k_alignCenter, Escher::Palette::GrayDark) {}
+      m_labelView(KDGlyph::Format{}, k_maxNumberOfCharsInLabel),
+      m_subLabelView() {
+  m_subLabelView.defaultInitialization(CellWidget::Type::SubLabel);
+}
 
 void ScriptNodeCell::setScriptNode(ScriptNode* node) {
   /* Use a temporary buffer to crop label name, as strlen(node->name()) may be

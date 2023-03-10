@@ -4,9 +4,9 @@
 namespace Escher {
 
 MessageTableCellWithBuffer::MessageTableCellWithBuffer(I18n::Message message)
-    : MessageTableCell(message),
-      m_subLabelView(KDFont::Size::Small, KDContext::k_alignRight,
-                     KDContext::k_alignCenter, Palette::GrayDark) {}
+    : MessageTableCell(message), m_subLabelView() {
+  m_subLabelView.defaultInitialization(CellWidget::Type::SubLabel);
+}
 
 void MessageTableCellWithBuffer::setSubLabelText(const char* textBody) {
   m_subLabelView.setText(textBody);

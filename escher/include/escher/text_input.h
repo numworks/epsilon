@@ -41,8 +41,8 @@ class TextInput
   class ContentView : public View {
    public:
     ContentView(KDFont::Size font,
-                float horizontalAlignment = KDContext::k_alignLeft,
-                float verticalAlignment = KDContext::k_alignCenter)
+                float horizontalAlignment = KDGlyph::k_alignLeft,
+                float verticalAlignment = KDGlyph::k_alignCenter)
         : View(),
           m_cursorView(this),
           m_cursorLocation(nullptr),

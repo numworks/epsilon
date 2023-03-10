@@ -1,6 +1,7 @@
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/src/layout/render.h>
+#include <poincare_junior/src/n_ary.h>
 #include <ion/unicode/code_point.h>
 #include <string.h>
 
@@ -8,9 +9,33 @@ namespace PoincareJ {
 
 EditionReference Layout::EditionPoolTextToLayout(const char * text) {
   int n = strlen(text);
-  EditionReference ref = EditionReference::Push<BlockType::RackLayout>(n);
+  const EditionReference ref = EditionReference::Push<BlockType::RackLayout>(0);
+  EditionReference currentLayout = ref;
   for (int i = 0; i < n; i++) {
-    EditionReference::Push<BlockType::CodePointLayout, CodePoint>(text[i]);
+    EditionReference child;
+    switch (text[i]) {
+    case '(':
+      child = EditionReference::Push<BlockType::ParenthesisLayout>();
+      EditionReference::Push<BlockType::RackLayout>(0);
+      NAry::AddOrMergeChildAtIndex(currentLayout, child, currentLayout.numberOfChildren());
+      currentLayout = child.childAtIndex(0);
+      continue;
+    case UCodePointEmpty:
+      child = EditionReference::Push<BlockType::RackLayout>(0);
+      break;
+    case ')':
+      if (!currentLayout.parent().isUninitialized() &&
+          !currentLayout.parent().parent().isUninitialized() &&
+          currentLayout.parent().parent().type() == BlockType::RackLayout) {
+        currentLayout = currentLayout.parent().parent();
+        continue;
+      }
+      // Jump to default case
+    default:
+      child = EditionReference::Push<BlockType::CodePointLayout, CodePoint>(text[i]);
+      break;
+    }
+    NAry::AddOrMergeChildAtIndex(currentLayout, child, currentLayout.numberOfChildren());
   }
   return ref;
 }

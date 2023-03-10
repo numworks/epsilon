@@ -112,7 +112,7 @@ class Sequence : public Function {
                x, reinterpret_cast<SequenceContext *>(context)));
   }
   template <typename T>
-  T approximateToNextRank(SequenceContext *sqctx, int sequenceIndex = -1) const;
+  T approximateToNextRank(SequenceContext *sqctx, bool independent) const;
   template <typename T>
   T valueAtRank(int n, SequenceContext *sqctx);
 

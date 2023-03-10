@@ -40,7 +40,7 @@ inline uint8_t DigitForCharacter(char c) {
 }
 
 constexpr size_t MaxLengthOfUInt32(Base base) {
-  return OMG::BitHelper::numberOfBitsInType<uint32_t>() /
+  return OMG::BitHelper::numberOfBitsIn<uint32_t>() /
          OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<uint8_t>(base));
 }
 

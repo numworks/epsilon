@@ -3,7 +3,6 @@
 #include <apps/apps_container.h>
 #include <apps/shared/sequence.h>
 #include <assert.h>
-#include <escher/message_table_cell_with_message.h>
 #include <escher/metric.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/exception_checkpoint.h>

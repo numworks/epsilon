@@ -6,10 +6,6 @@
 #include <escher/view.h>
 #include <kandinsky/color.h>
 
-/* alignment = 0 -> align left or top
- * alignment = 0.5 -> align center
- * alignment = 1.0 -> align right or bottom */
-
 namespace Escher {
 
 class TextView : public View, public CellWidget {

@@ -177,11 +177,12 @@ void Sequence::tidyDownstreamPoolFrom(char *treePoolCursor) const {
 template <typename T>
 T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext *sqctx) const {
   T n = std::round(x);
-  int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
-  if (sqctx->stepCommonRankUntilRank<T>(n)) {
-    return sqctx->valueOfCommonRankSequenceAtPreviousRank<T>(sequenceIndex, 0);
+  if (!TemplatedSequenceContext<T>::IsAcceptableRank(n)) {
+    return NAN;
   }
-  return NAN;
+  sqctx->stepCommonRankUntilRank<T>(n);
+  int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
+  return sqctx->valueOfCommonRankSequenceAtPreviousRank<T>(sequenceIndex, 0);
 }
 
 template <typename T>

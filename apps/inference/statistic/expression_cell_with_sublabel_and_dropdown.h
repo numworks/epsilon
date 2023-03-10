@@ -4,7 +4,6 @@
 #include <escher/container.h>
 #include <escher/dropdown_view.h>
 #include <escher/expression_table_cell_with_message.h>
-#include <escher/message_table_cell_with_message.h>
 #include <escher/responder.h>
 
 namespace Inference {

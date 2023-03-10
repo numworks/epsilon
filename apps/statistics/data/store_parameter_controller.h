@@ -3,7 +3,6 @@
 
 #include <apps/shared/store_parameter_controller.h>
 #include <escher/menu_cell.h>
-#include <escher/message_table_cell_with_message.h>
 #include <escher/switch_view.h>
 
 #include "../store.h"

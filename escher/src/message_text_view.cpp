@@ -3,14 +3,6 @@
 
 namespace Escher {
 
-MessageTextView::MessageTextView(KDFont::Size font, I18n::Message message,
-                                 float horizontalAlignment,
-                                 float verticalAlignment, KDColor textColor,
-                                 KDColor backgroundColor)
-    : TextView(font, horizontalAlignment, verticalAlignment, textColor,
-               backgroundColor),
-      m_message(message) {}
-
 const char* MessageTextView::text() const { return I18n::translate(m_message); }
 
 void MessageTextView::setText(const char* text) { assert(false); }

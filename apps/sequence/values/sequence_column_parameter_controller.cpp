@@ -17,11 +17,6 @@ SequenceColumnParameterController::SequenceColumnParameterController(
   m_showSumCell.accessory()->setState(false);
   m_showSumCell.label()->setMessage(I18n::Message::ShowSumOfTerms);
   m_showSumCell.subLabel()->setMessage(I18n::Message::ShowSumOfTermsSublabel);
-  // TODO: DefaultInitialization
-  m_showSumCell.subLabel()->setFont(KDFont::Size::Small);
-  m_showSumCell.subLabel()->setAlignment(KDContext::k_alignLeft,
-                                         KDContext::k_alignCenter);
-  m_showSumCell.subLabel()->setTextColor(Palette::GrayDark);
 }
 
 Shared::ColumnNameHelper*

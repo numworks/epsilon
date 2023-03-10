@@ -165,6 +165,11 @@ class MenuCell : public AbstractMenuCell {
   static_assert(std::is_base_of<CellWidget, Accessory>(),
                 "Accessory is not a CellWidget");
 #endif
+  MenuCell() : AbstractMenuCell() {
+    m_label.defaultInitialization(CellWidget::Type::Label);
+    m_subLabel.defaultInitialization(CellWidget::Type::SubLabel);
+    m_accessory.defaultInitialization(CellWidget::Type::Accessory);
+  }
 
   Label* label() override { return &m_label; }
   SubLabel* subLabel() override { return &m_subLabel; }

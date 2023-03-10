@@ -8,7 +8,11 @@ namespace Escher {
 
 class CellWidget {
  public:
+  enum class Type { Label, SubLabel, Accessory };
   virtual const View* view() const = 0;
+
+  virtual void defaultInitialization(Type type) {}
+
   virtual void setWidgetBackgroundColor(KDColor color) {}
   virtual bool enterOnEvent(Ion::Events::Event event) const { return false; }
 };

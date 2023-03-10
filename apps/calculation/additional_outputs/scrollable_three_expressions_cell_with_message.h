@@ -19,9 +19,7 @@ class ScrollableThreeExpressionsCellWithMessage
   ScrollableThreeExpressionsCellWithMessage(
       I18n::Message subLabelMessage = I18n::Message::Default)
       : ScrollableThreeExpressionsCell(),
-        m_subLabelView(KDFont::Size::Small, subLabelMessage,
-                       KDContext::k_alignLeft, KDContext::k_alignCenter,
-                       Escher::Palette::GrayDark, KDColorWhite),
+        m_subLabelView(subLabelMessage, Escher::CellWidget::Type::SubLabel),
         m_highlightWholeCell(false) {}
 
   void setHighlighted(bool highlight) override {

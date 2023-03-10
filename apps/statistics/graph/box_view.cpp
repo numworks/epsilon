@@ -185,7 +185,7 @@ KDRect BoxView::selectedCalculationRect() const {
   return KDRect(minX, 0, width,
                 BoxFrameHeight(m_store->numberOfActiveSeries(
                     Shared::DoublePairStore::DefaultActiveSeriesTest)))
-      .translatedBy(m_frame.origin());
+      .translatedBy(relativeFrame().origin());
 }
 
 bool BoxView::canIncrementSelectedCalculation(int deltaIndex) const {
@@ -202,7 +202,7 @@ void BoxView::incrementSelectedCalculation(int deltaIndex) {
 
 KDRect BoxView::rectToReload() {
   // Transpose the rect into parent's view coordinates
-  return boxRect().translatedBy(m_frame.origin());
+  return boxRect().translatedBy(relativeFrame().origin());
 }
 
 KDRect BoxView::boxRect() const {

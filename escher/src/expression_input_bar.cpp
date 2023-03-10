@@ -12,9 +12,10 @@ AbstractExpressionInputBar::AbstractExpressionInputBar()
 void AbstractExpressionInputBar::layoutSubviews(bool force) {
   setChildFrame(&m_line, KDRect(0, 0, bounds().width(), k_separatorThickness),
                 force);
-  expressionField()->setFrame(KDRect(0, k_separatorThickness, bounds().width(),
-                                     bounds().height() - k_separatorThickness),
-                              force);
+  setChildFrame(expressionField(),
+                KDRect(0, k_separatorThickness, bounds().width(),
+                       bounds().height() - k_separatorThickness),
+                force);
 }
 
 View* AbstractExpressionInputBar::subviewAtIndex(int index) {

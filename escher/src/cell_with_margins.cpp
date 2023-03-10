@@ -31,7 +31,8 @@ void CellWithMargins::setHighlighted(bool highlight) {
 void CellWithMargins::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  m_innerCell->setFrame(
+  setChildFrame(
+      m_innerCell,
       KDRect(Metric::CommonMargin, 0, width - 2 * Metric::CommonMargin, height),
       force);
 }

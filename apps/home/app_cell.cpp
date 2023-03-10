@@ -36,13 +36,13 @@ void AppCell::layoutSubviews(bool force) {
                        k_iconWidth, k_iconHeight),
                 force);
   KDSize nameSize = textView()->minimalSizeForOptimalDisplay();
-  const_cast<TextView *>(textView())
-      ->setFrame(
-          KDRect((bounds().width() - nameSize.width()) / 2 - k_nameWidthMargin,
-                 bounds().height() - nameSize.height() - 2 * k_nameHeightMargin,
-                 nameSize.width() + 2 * k_nameWidthMargin,
-                 nameSize.height() + 2 * k_nameHeightMargin),
-          force);
+  setChildFrame(
+      const_cast<TextView *>(textView()),
+      KDRect((bounds().width() - nameSize.width()) / 2 - k_nameWidthMargin,
+             bounds().height() - nameSize.height() - 2 * k_nameHeightMargin,
+             nameSize.width() + 2 * k_nameWidthMargin,
+             nameSize.height() + 2 * k_nameHeightMargin),
+      force);
 }
 
 void AppCell::setBuiltinAppDescriptor(const ::App::Descriptor *descriptor) {

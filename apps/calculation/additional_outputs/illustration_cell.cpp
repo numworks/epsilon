@@ -7,7 +7,8 @@ using namespace Escher;
 namespace Calculation {
 
 void IllustrationCell::layoutSubviews(bool force) {
-  view()->setFrame(
+  setChildFrame(
+      view(),
       KDRect(Metric::CellSeparatorThickness, Metric::CellSeparatorThickness,
              bounds().width() - 2 * Metric::CellSeparatorThickness,
              bounds().height() - 2 * Metric::CellSeparatorThickness),

@@ -36,7 +36,7 @@ class BankViewController : public ViewController {
       return m_subview;
     }
     void layoutSubviews(bool force = false) override {
-      m_subview->setFrame(bounds(), force);
+      setChildFrame(m_subview, bounds(), force);
     }
     View* m_subview;
   };

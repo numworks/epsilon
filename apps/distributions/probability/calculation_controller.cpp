@@ -42,8 +42,8 @@ View *CalculationController::ContentView::subviewAtIndex(int index) {
 
 void CalculationController::ContentView::layoutSubviews(bool force) {
   KDSize tableSize = m_selectableTableView->minimalSizeForOptimalDisplay();
-  m_selectableTableView->setFrame(
-      KDRect(0, 0, bounds().width(), tableSize.height()), force);
+  setChildFrame(m_selectableTableView,
+                KDRect(0, 0, bounds().width(), tableSize.height()), force);
   KDCoordinate bannerHeight = 0;
   if (m_unknownParameterBanner.text()[0] == 0) {
     setChildFrame(&m_unknownParameterBanner, KDRect(0, 0, 0, 0), force);

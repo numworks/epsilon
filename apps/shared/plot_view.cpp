@@ -424,7 +424,7 @@ void AbstractPlotView::layoutSubviews(bool force) {
   View *banner = bannerView();
   if (banner) {
     KDRect oldFrame = banner->bounds();
-    banner->setFrame(bannerFrame(), force);
+    setChildFrame(banner, bannerFrame(), force);
     /* If the banner frame changes, dirty the area right above it, since the X
      * axis labels may have moved. */
     if (!(oldFrame == banner->bounds())) {
@@ -441,7 +441,7 @@ void AbstractPlotView::layoutSubviews(bool force) {
   }
   View *ornament = ornamentView();
   if (ornament) {
-    ornament->setFrame(bounds().differencedWith(bannerFrame()), force);
+    setChildFrame(ornament, bounds().differencedWith(bannerFrame()), force);
   }
 }
 

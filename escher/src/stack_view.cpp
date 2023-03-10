@@ -85,7 +85,8 @@ void StackView::layoutSubviews(bool force) {
       (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
   int numberOfStacks = m_stackHeaderViews.length();
   for (int i = 0; i < numberOfStacks; i++) {
-    m_stackHeaderViews.elementAtIndex(i)->setFrame(
+    setChildFrame(
+        m_stackHeaderViews.elementAtIndex(i),
         KDRect(0, heightOffset, width,
                Metric::StackTitleHeight + Metric::CellSeparatorThickness),
         force);
@@ -110,7 +111,7 @@ void StackView::layoutSubviews(bool force) {
     // Content view frame
     KDRect contentViewFrame =
         KDRect(0, heightOffset, width, m_frame.height() - heightOffset);
-    m_contentView->setFrame(contentViewFrame, force);
+    setChildFrame(m_contentView, contentViewFrame, force);
   }
 }
 

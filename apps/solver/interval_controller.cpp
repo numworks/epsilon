@@ -50,7 +50,8 @@ void IntervalController::ContentView::layoutSubviews(bool force) {
   setChildFrame(&m_instructions1,
                 KDRect(0, k_topMargin / 2, bounds().width(), textHeight),
                 force);
-  m_selectableTableView->setFrame(
+  setChildFrame(
+      m_selectableTableView,
       KDRect(0, k_topMargin, bounds().width(), bounds().height() - k_topMargin),
       force);
 }

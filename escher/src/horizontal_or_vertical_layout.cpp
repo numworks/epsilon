@@ -40,7 +40,7 @@ void OrientedLayout::layoutSubviews(bool force) {
     const KDRect suggestedFrame =
         KDRect(KDPoint(m_secondaryDirectionMargin, offsetMainDirection),
                availableSecondaryDirection, requiredMainDirectionLength);
-    subview->setFrame(adaptRect(suggestedFrame), false);
+    setChildFrame(subview, adaptRect(suggestedFrame), false);
     offsetMainDirection += requiredMainDirectionLength;
   }
 }

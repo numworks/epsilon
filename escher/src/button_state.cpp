@@ -33,7 +33,7 @@ void ButtonState::layoutSubviews(bool force) {
                             stateSize.height());
 
   setChildFrame(&m_messageTextView, textRect, force);
-  m_stateView->setFrame(stateRect, force);
+  setChildFrame(m_stateView, stateRect, force);
 }
 
 void ButtonState::drawRect(KDContext* ctx, KDRect rect) const {

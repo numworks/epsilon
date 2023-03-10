@@ -55,7 +55,7 @@ void MultipleDataView::layoutDataSubviews(bool force) {
       AbstractPlotView* plotView = plotViewForSeries(i);
       KDRect frame = KDRect(0, displayedSubviewIndex * subHeight,
                             bounds().width(), subHeight);
-      plotView->setFrame(frame, force);
+      setChildFrame(plotView, frame, force);
       displayedSubviewIndex++;
     }
   }

@@ -14,8 +14,8 @@ void StoreTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 void StoreTitleCell::layoutSubviews(bool force) {
-  bufferTextView()->setFrame(rectWithoutSeparator(bufferTextViewFrame()),
-                             force);
+  setChildFrame(bufferTextView(), rectWithoutSeparator(bufferTextViewFrame()),
+                force);
 }
 
 void StoreTitleCell::didSetSeparator() { reloadCell(); }

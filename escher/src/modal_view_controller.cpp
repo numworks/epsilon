@@ -72,13 +72,14 @@ void ModalViewController::ContentView::layoutSubviews(bool force) {
     if (m_modalGrowingOnly) {
       modalFrame = modalFrame.unionedWith(oldFrame);
     }
-    m_regularView->setFrame(modalFrame == bounds() ? KDRectZero : bounds(),
-                            force);
-    m_currentModalView->setFrame(modalFrame, force || oldFrame == modalFrame);
+    setChildFrame(m_regularView, modalFrame == bounds() ? KDRectZero : bounds(),
+                  force);
+    setChildFrame(m_currentModalView, modalFrame,
+                  force || oldFrame == modalFrame);
   } else {
-    m_regularView->setFrame(bounds(), force);
+    setChildFrame(m_regularView, bounds(), force);
     if (m_currentModalView) {
-      m_currentModalView->setFrame(KDRectZero, force);
+      setChildFrame(m_currentModalView, KDRectZero, force);
     }
   }
 }

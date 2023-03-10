@@ -55,8 +55,8 @@ void ListViewWithTopAndBottomViews::layoutSubviews(bool force) {
   if (m_topView) {
     topHeight = m_topView->minimalSizeForOptimalDisplay().height();
     topOrigin = tableRect.y() - topHeight;
-    m_topView->setFrame(KDRect(0, topOrigin, bounds().width(), topHeight),
-                        force);
+    setChildFrame(m_topView, KDRect(0, topOrigin, bounds().width(), topHeight),
+                  force);
   }
   if (m_bottomView) {
     bottomHeight = m_bottomView->minimalSizeForOptimalDisplay().height();
@@ -75,8 +75,9 @@ void ListViewWithTopAndBottomViews::layoutSubviews(bool force) {
           (tableBottom + bounds().height() - bottomHeight - k_verticalMargin) /
           2;
     }
-    m_bottomView->setFrame(
-        KDRect(0, topOfBottomView, bounds().width(), bottomHeight), force);
+    setChildFrame(m_bottomView,
+                  KDRect(0, topOfBottomView, bounds().width(), bottomHeight),
+                  force);
   }
 
   m_scrollBar.update(topHeight + tableHeight + bottomHeight,
@@ -108,10 +109,10 @@ void ListViewWithTopAndBottomViews::listViewDidChangeSelectionAndDidScroll(
   int row = m_list->selectedRow();
 
   if (row == 0 && m_topView) {
-    m_list->setFrame(KDRectZero, false);
+    setChildFrame(m_list, KDRectZero, false);
     m_list->setContentOffset(KDPointZero);
   } else if (row == m_listDataSource->numberOfRows() - 1 && m_bottomView) {
-    m_list->setFrame(KDRectZero, false);
+    setChildFrame(m_list, KDRectZero, false);
     KDCoordinate topViewHeight =
         m_topView ? m_topView->minimalSizeForOptimalDisplay().height() -
                         k_verticalMargin
@@ -178,7 +179,7 @@ KDRect ListViewWithTopAndBottomViews::setListFrame(KDCoordinate* yOffset,
   }
   /* Set frame a first time now so that minimalSizeForOptimalDisplay can
    * be computed */
-  m_list->setFrame(currentResult, force);
+  setChildFrame(m_list, currentResult, force);
   KDCoordinate fullListHeight = m_list->minimalSizeForOptimalDisplay().height();
   KDCoordinate bottom = currentResult.top() + fullListHeight - *yOffset;
 
@@ -233,7 +234,7 @@ KDRect ListViewWithTopAndBottomViews::setListFrame(KDCoordinate* yOffset,
     m_list->setTopMargin(Metric::CommonTopMargin);
     m_list->setBottomMargin(Metric::CommonBottomMargin);
   }
-  m_list->setFrame(currentResult, force);
+  setChildFrame(m_list, currentResult, force);
   return currentResult;
 }
 

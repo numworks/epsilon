@@ -39,7 +39,7 @@ void MultipleBoxesView::layoutDataSubviews(bool force) {
           KDRect(0, boxYPosition - BoxPlotPolicy::BoxVerticalMargin(),
                  bounds().width(),
                  BoxPlotPolicy::BoxFrameHeight(numberOfDataSubviews));
-      plotViewForSeries(i)->setFrame(frame, force);
+      setChildFrame(plotViewForSeries(i), frame, force);
       boxYPosition += BoxPlotPolicy::BoxHeight(numberOfDataSubviews) +
                       BoxToBoxMargin(numberOfDataSubviews);
     }

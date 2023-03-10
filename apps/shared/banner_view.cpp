@@ -59,7 +59,8 @@ void BannerView::layoutSubviews(bool force) {
       }
       /* A subview's structure can change without it being reflected on the
        * frame. As such, we force a relayout. */
-      subviewAtIndex(i)->setFrame(KDRect(x, y, width, size.height()), true);
+      setChildFrame(subviewAtIndex(i), KDRect(x, y, width, size.height()),
+                    true);
       x += width;
     }
     y += maxHeight + LineSpacing;
@@ -125,12 +126,12 @@ void BannerView::LabelledView::layoutSubviews(bool force) {
   KDCoordinate spacing =
       (bounds().width() - labelSize.width() - infoSize.width()) / 2;
   KDCoordinate labelTotalWidth = spacing + labelSize.width();
-  m_labelView->setFrame(KDRect(0, 0, labelTotalWidth, bounds().height()),
-                        force);
-  m_infoView->setFrame(
-      KDRect(labelTotalWidth, 0, bounds().width() - labelTotalWidth,
-             bounds().height()),
-      force);
+  setChildFrame(m_labelView, KDRect(0, 0, labelTotalWidth, bounds().height()),
+                force);
+  setChildFrame(m_infoView,
+                KDRect(labelTotalWidth, 0, bounds().width() - labelTotalWidth,
+                       bounds().height()),
+                force);
 }
 
 }  // namespace Shared

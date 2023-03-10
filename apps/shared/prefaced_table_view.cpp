@@ -113,17 +113,17 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
                                     // margin is dependant on row frozen (follow
                                     // the implementation used for column
                                     // preface)
-    m_mainTableView->setFrame(rect, force);
+    setChildFrame(m_mainTableView, rect, force);
     verticalBar->setTopMargin(rowPrefaceHeight + 2 * m_mainTableViewTopMargin);
   } else {
     // WARNING: If we need a separator below the preface row, we should set a
     // bottom margin for rowPrefaceView here (follow the implementation used for
     // column preface)
     m_mainTableView->setTopMargin(0);
-    m_mainTableView->setFrame(
-        KDRect(rect.x(), rect.y() + rowPrefaceHeight, rect.width(),
-               rect.height() - rowPrefaceHeight),
-        force);
+    setChildFrame(m_mainTableView,
+                  KDRect(rect.x(), rect.y() + rowPrefaceHeight, rect.width(),
+                         rect.height() - rowPrefaceHeight),
+                  force);
     verticalBar->setTopMargin(2 * m_mainTableViewTopMargin);
   }
 

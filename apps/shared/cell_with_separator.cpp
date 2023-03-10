@@ -27,7 +27,8 @@ View* CellWithSeparator::subviewAtIndex(int index) {
 
 void CellWithSeparator::layoutSubviews(bool force) {
   // With the separator, an additional border is visible.
-  cell()->setFrame(
+  setChildFrame(
+      cell(),
       KDRect(0, separatorAboveCell() ? k_margin + k_lineThickness : 0,
              bounds().width(), bounds().height() - k_margin - k_lineThickness),
       force);

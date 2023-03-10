@@ -17,8 +17,8 @@ class AlternateSwitchAndImage : public Escher::CellWidget {
 
   // CellWidget
   const Escher::View* view() const override;
-  void setWidgetBackgroundColor(KDColor color) override {
-    m_switch.setWidgetBackgroundColor(color);
+  void setBackgroundColor(KDColor color) override {
+    m_switch.setBackgroundColor(color);
     m_image.setBackgroundColor(color);
   }
 

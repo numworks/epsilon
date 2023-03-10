@@ -13,7 +13,7 @@ template <typename T>
 class SequenceCacheContext : public Poincare::ContextWithParent {
  public:
   SequenceCacheContext(SequenceContext* sequenceContext,
-                       int forbiddenSequenceIndex);
+                       int sequenceBeingComputed);
   void setValue(T value, int nameIndex, int depth);
 
  private:
@@ -26,7 +26,7 @@ class SequenceCacheContext : public Poincare::ContextWithParent {
   T m_values[SequenceStore::k_maxNumberOfSequences]
             [SequenceStore::k_maxRecurrenceDepth];
   SequenceContext* m_sequenceContext;
-  int m_forbiddenSequenceIndex;
+  int m_sequenceBeingComputed;
 };
 
 }  // namespace Shared

@@ -14,11 +14,11 @@ namespace Shared {
 
 template <typename T>
 SequenceCacheContext<T>::SequenceCacheContext(SequenceContext *sequenceContext,
-                                              int forbiddenSequenceIndex)
+                                              int sequenceBeingComputed)
     : ContextWithParent(sequenceContext),
       m_values{{NAN, NAN}, {NAN, NAN}, {NAN, NAN}},
       m_sequenceContext(sequenceContext),
-      m_forbiddenSequenceIndex(forbiddenSequenceIndex) {}
+      m_sequenceBeingComputed(sequenceBeingComputed) {}
 
 template <typename T>
 const Poincare::Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
@@ -42,7 +42,7 @@ const Poincare::Expression SequenceCacheContext<T>::protectedExpressionForSymbol
      * the sequence independently from the others at the required rank (this
      * will solve u(n) = 5*n, v(n) = u(n+10) for instance). But we avoid doing
      * so if the sequence referencing itself to avoid an infinite loop. */
-    if (std::isnan(result) && index != m_forbiddenSequenceIndex) {
+    if (std::isnan(result) && index != m_sequenceBeingComputed) {
       /* Do not use recordAtIndex : if the sequences have been reordered, the
        * name index and the record index may not correspond. */
       Ion::Storage::Record record =

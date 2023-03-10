@@ -57,7 +57,7 @@ public:
   void dumpAt(void * address) const;
   size_t treeSize() const;
   bool treeIsIdenticalTo(const Reference &other) const {
-    return getTree().treeIsIdenticalTo(other.getTree());
+    return (isInitialized() == other.isInitialized()) && (!isInitialized() || getTree().treeIsIdenticalTo(other.getTree()));
   }
 #if POINCARE_MEMORY_TREE_LOG
   void log();

@@ -169,6 +169,7 @@ int Reference::id() const {
 }
 
 const Node Reference::getTree() const {
+  assert(isInitialized());
   return isCacheReference()
          ? CachePool::sharedCachePool()->nodeForIdentifier(id())
          : Node(reinterpret_cast<const TypeBlock *>(m_data.data()));

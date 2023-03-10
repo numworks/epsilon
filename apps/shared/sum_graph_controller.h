@@ -98,6 +98,8 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
     constexpr static KDFont::Size k_font = KDFont::Size::Small;
     constexpr static KDCoordinate k_symbolHeightMargin = 8;
     constexpr static KDCoordinate k_sigmaHeight = 18;
+    constexpr static KDGlyph::Format k_glyphsFormat = {
+        {.backgroundColor = Escher::Palette::GrayMiddle, .font = k_font}};
 
     constexpr static KDCoordinate editableZoneWidth() {
       return 12 * KDFont::GlyphWidth(k_font);

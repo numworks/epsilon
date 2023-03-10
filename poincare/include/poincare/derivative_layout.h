@@ -65,8 +65,7 @@ class DerivativeLayoutNode : public LayoutNode {
   constexpr static KDCoordinate k_dxHorizontalMargin = 2;
   constexpr static KDCoordinate k_barHorizontalMargin = 2;
   constexpr static KDCoordinate k_barWidth = 1;
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
   /* There are two slots for the variable name: the Fraction and the Assignment
    * slots. This member is used to make the two copies of the variable name
@@ -150,8 +149,7 @@ class HigherOrderDerivativeLayoutNode final : public DerivativeLayoutNode {
     return orderLayout()->layoutSize(font).width();
   }
 
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
   void setOrderSlot(OrderSlot orderSlot, bool* shouldRecomputeLayout);
 

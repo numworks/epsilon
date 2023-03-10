@@ -11,8 +11,8 @@ constexpr KDColor SubtitleCell::k_backgroundColor;
 constexpr KDColor SubtitleCell::k_textColor;
 
 SubtitleCell::SubtitleCell()
-    : BufferTableCell(KDFont::Size::Small, KDContext::k_alignLeft,
-                      KDContext::k_alignCenter, k_textColor, k_backgroundColor,
+    : BufferTableCell(KDFont::Size::Small, KDGlyph::k_alignLeft,
+                      KDGlyph::k_alignCenter, k_textColor, k_backgroundColor,
                       k_maxNumberOfCharsInBuffer) {}
 
 void SubtitleCell::layoutSubviews(bool force) {

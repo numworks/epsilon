@@ -49,8 +49,10 @@ void TabViewCell::drawRect(KDContext *ctx, KDRect rect) const {
   }
   // Write title
   ctx->alignAndDrawString(m_controller->title(), KDPointZero, bounds().size(),
-                          KDContext::k_alignCenter, KDContext::k_alignCenter,
-                          KDFont::Size::Small, text, background);
+                          {{.glyphColor = text,
+                            .backgroundColor = background,
+                            .font = KDFont::Size::Small},
+                           .horizontalAlignment = KDGlyph::k_alignCenter});
 }
 
 #if ESCHER_VIEW_LOGGING

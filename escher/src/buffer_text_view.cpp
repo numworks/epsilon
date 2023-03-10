@@ -6,14 +6,9 @@
 
 namespace Escher {
 
-BufferTextView::BufferTextView(KDFont::Size font, float horizontalAlignment,
-                               float verticalAlignment, KDColor textColor,
-                               KDColor backgroundColor,
+BufferTextView::BufferTextView(KDGlyph::Format format,
                                size_t maxDisplayedTextLength)
-    : TextView(font, horizontalAlignment, verticalAlignment, textColor,
-               backgroundColor),
-      m_buffer(),
-      m_maxDisplayedTextLength(maxDisplayedTextLength) {
+    : TextView(format), m_maxDisplayedTextLength(maxDisplayedTextLength) {
   assert(m_maxDisplayedTextLength < k_maxNumberOfChar &&
          m_maxDisplayedTextLength >= 0);
 }
@@ -50,7 +45,7 @@ void BufferTextView::appendText(const char* text) {
 }
 
 KDSize BufferTextView::minimalSizeForOptimalDisplay() const {
-  return KDFont::Font(m_font)->stringSize(text());
+  return KDFont::Font(font())->stringSize(text());
 }
 
 }  // namespace Escher

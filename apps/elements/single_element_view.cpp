@@ -62,17 +62,23 @@ void SingleElementView::drawRect(KDContext* ctx, KDRect rect) const {
       bgRect.x() + (k_cellSize - symbolSize.width() - symbolXOffset) / 2 +
           symbolXOffset,
       bgRect.y() + (k_cellSize - symbolSize.height()) / 2);
-  ctx->drawString(symbol, symbolOrigin, k_symbolFont, colors.fg(), colors.bg());
+  KDGlyph::Style numbersStyle{.glyphColor = colors.fg(),
+                              .backgroundColor = colors.bg(),
+                              .font = k_numbersFont};
+  KDGlyph::Style symbolStyle{.glyphColor = colors.fg(),
+                             .backgroundColor = colors.bg(),
+                             .font = k_symbolFont};
+  ctx->drawString(symbol, symbolOrigin, symbolStyle);
   ctx->drawString(
       zBuffer,
       KDPoint(symbolOrigin.x() - zSize.width() - k_symbolZAMargin,
               symbolOrigin.y() + symbolSize.height() - k_ZVerticalOffset),
-      k_numbersFont, colors.fg(), colors.bg());
+      numbersStyle);
   ctx->drawString(
       aBuffer,
       KDPoint(symbolOrigin.x() - aSize.width() - k_symbolZAMargin,
               symbolOrigin.y() - aSize.height() + k_AVerticalOffset),
-      k_numbersFont, colors.fg(), colors.bg());
+      numbersStyle);
 }
 
 }  // namespace Elements

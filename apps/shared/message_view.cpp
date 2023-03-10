@@ -15,8 +15,8 @@ MessageView::MessageView(const I18n::Message* messages, const KDColor* colors,
     m_messageTextViews[i].setFont(i == 0 ? KDFont::Size::Large
                                          : KDFont::Size::Small);
     m_messageTextViews[i].setMessage(messages[i]);
-    m_messageTextViews[i].setAlignment(KDContext::k_alignCenter,
-                                       KDContext::k_alignCenter);
+    m_messageTextViews[i].setAlignment(KDGlyph::k_alignCenter,
+                                       KDGlyph::k_alignCenter);
     m_messageTextViews[i].setTextColor(colors[i]);
   }
 }

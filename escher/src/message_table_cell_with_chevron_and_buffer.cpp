@@ -4,9 +4,9 @@
 namespace Escher {
 
 MessageTableCellWithChevronAndBuffer::MessageTableCellWithChevronAndBuffer()
-    : MessageTableCellWithChevron((I18n::Message)0),
-      m_subLabelView(KDFont::Size::Small, KDContext::k_alignRight,
-                     KDContext::k_alignCenter, Palette::GrayDark) {}
+    : MessageTableCellWithChevron((I18n::Message)0), m_subLabelView() {
+  m_subLabelView.defaultInitialization(CellWidget::Type::SubLabel);
+}
 
 void MessageTableCellWithChevronAndBuffer::setHighlighted(bool highlight) {
   MessageTableCellWithChevron::setHighlighted(highlight);

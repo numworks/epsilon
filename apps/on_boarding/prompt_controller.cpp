@@ -12,8 +12,9 @@ PromptController::MessageViewWithSkip::MessageViewWithSkip(
     const I18n::Message* messages, const KDColor* colors,
     uint8_t numberOfMessages)
     : MessageView(messages, colors, numberOfMessages),
-      m_skipView(KDFont::Size::Small, I18n::Message::Skip,
-                 KDContext::k_alignRight, KDContext::k_alignCenter) {}
+      m_skipView(I18n::Message::Skip,
+                 {{.font = KDFont::Size::Small},
+                  .horizontalAlignment = KDGlyph::k_alignRight}) {}
 
 int PromptController::MessageViewWithSkip::numberOfSubviews() const {
   return MessageView::numberOfSubviews() + 2;

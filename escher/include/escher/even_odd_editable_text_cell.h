@@ -14,8 +14,8 @@ class EvenOddEditableTextCell : public EvenOddCell, public Responder {
       InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
       TextFieldDelegate* delegate = nullptr,
       KDFont::Size font = KDFont::Size::Small,
-      float horizontalAlignment = KDContext::k_alignRight,
-      float verticalAlignment = KDContext::k_alignCenter);
+      float horizontalAlignment = KDGlyph::k_alignRight,
+      float verticalAlignment = KDGlyph::k_alignCenter);
   EditableTextCell* editableTextCell();
   Responder* responder() override { return this; }
   const char* text() const override { return m_editableCell.text(); }

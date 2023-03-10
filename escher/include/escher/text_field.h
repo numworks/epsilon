@@ -11,8 +11,8 @@ class TextField : public AbstractTextField {
             InputEventHandlerDelegate* inputEventHandlerDelegate,
             TextFieldDelegate* delegate = nullptr,
             KDFont::Size font = KDFont::Size::Large,
-            float horizontalAlignment = KDContext::k_alignLeft,
-            float verticalAlignment = KDContext::k_alignCenter,
+            float horizontalAlignment = KDGlyph::k_alignLeft,
+            float verticalAlignment = KDGlyph::k_alignCenter,
             KDColor textColor = KDColorBlack,
             KDColor backgroundColor = KDColorWhite)
       : AbstractTextField(parentResponder, &m_contentView,

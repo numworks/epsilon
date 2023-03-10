@@ -8,9 +8,9 @@ ExpressionTableCellWithMessage::ExpressionTableCellWithMessage(
     Responder* parentResponder, I18n::Message subLabelMessage,
     KDFont::Size expressionFont)
     : ExpressionTableCell(parentResponder, expressionFont),
-      m_subLabelView(KDFont::Size::Small, subLabelMessage,
-                     KDContext::k_alignLeft, KDContext::k_alignCenter,
-                     Palette::GrayDark, KDColorWhite) {}
+      m_subLabelView(subLabelMessage) {
+  m_subLabelView.defaultInitialization(CellWidget::Type::SubLabel);
+}
 
 void ExpressionTableCellWithMessage::setHighlighted(bool highlight) {
   ExpressionTableCell::setHighlighted(highlight);

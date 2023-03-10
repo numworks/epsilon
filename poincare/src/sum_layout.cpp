@@ -28,8 +28,8 @@ int SumLayoutNode::serialize(char *buffer, int bufferSize,
       "sum", buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
-void SumLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
-                           KDColor expressionColor, KDColor backgroundColor) {
+void SumLayoutNode::render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
+  KDFont::Size font = style.font;
   // Creates half size sigma symbol from one branch
   uint8_t symbolPixel[SymbolHeight(font) * SymbolWidth(font)];
   int whiteOffset;
@@ -86,11 +86,11 @@ void SumLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
                        argumentLayout()->baseline(font) -
                            (SymbolHeight(font) + 1) / 2),
       SymbolWidth(font), SymbolHeight(font));
-  ctx->blendRectWithMask(symbolFrame, expressionColor,
+  ctx->blendRectWithMask(symbolFrame, style.glyphColor,
                          (const uint8_t *)symbolPixel,
                          (KDColor *)workingBuffer);
 
   // Render the "n=" and the parentheses.
-  SequenceLayoutNode::render(ctx, p, font, expressionColor, backgroundColor);
+  SequenceLayoutNode::render(ctx, p, style);
 }
 }  // namespace Poincare

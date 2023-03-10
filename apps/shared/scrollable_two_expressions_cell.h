@@ -8,10 +8,9 @@ namespace Shared {
 class ScrollableTwoExpressionsCell : public Escher::EvenOddCell,
                                      public Escher::Responder {
  public:
-  ScrollableTwoExpressionsCell(
-      Escher::Responder* parentResponder = nullptr,
-      float horizontalAlignment = KDContext::k_alignLeft,
-      KDFont::Size font = KDFont::Size::Large);
+  ScrollableTwoExpressionsCell(Escher::Responder* parentResponder = nullptr,
+                               float horizontalAlignment = KDGlyph::k_alignLeft,
+                               KDFont::Size font = KDFont::Size::Large);
   void setLayouts(Poincare::Layout exactLayout,
                   Poincare::Layout approximateLayout);
   void setRightIsStrictlyEqual(bool isEqual) {

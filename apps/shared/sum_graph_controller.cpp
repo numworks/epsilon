@@ -232,14 +232,12 @@ SumGraphController::LegendView::LegendView(
     SumGraphController *controller,
     Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
     CodePoint sumSymbol)
-    : m_sum(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack,
-            Palette::GrayMiddle, k_font),
-      m_legend(k_font, I18n::Message::Default, KDContext::k_alignLeft,
-               KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle),
+    : m_sum(k_glyphsFormat),
+      m_legend(I18n::Message::Default, k_glyphsFormat),
       m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize,
                      inputEventHandlerDelegate, controller, k_font,
-                     KDContext::k_alignLeft, KDContext::k_alignCenter,
-                     KDColorBlack, Palette::GrayMiddle),
+                     KDGlyph::k_alignLeft, KDGlyph::k_alignCenter, KDColorBlack,
+                     Palette::GrayMiddle),
       m_sumSymbol(sumSymbol) {
   m_textBuffer[0] = 0;
 }
@@ -318,8 +316,8 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
   }
   m_sum.setLayout(sumLayout);
   m_sum.setAlignment(
-      step == Step::Result ? KDContext::k_alignCenter : KDContext::k_alignLeft,
-      KDContext::k_alignCenter);
+      step == Step::Result ? KDGlyph::k_alignCenter : KDGlyph::k_alignLeft,
+      KDGlyph::k_alignCenter);
   layoutSubviews(step, false);
 }
 

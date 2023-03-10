@@ -15,12 +15,8 @@ ParametersController::ParametersController(
     InputEventHandlerDelegate *inputEventHandlerDelegate,
     Distribution *distribution, CalculationController *calculationController)
     : FloatParameterController<double>(parentResponder),
-      m_headerView(KDFont::Size::Small, I18n::Message::DefineParameters,
-                   KDContext::k_alignCenter, KDContext::k_alignCenter,
-                   Escher::Palette::GrayDark, Escher::Palette::WallScreen),
-      m_bottomView(KDFont::Size::Small, I18n::Message::LeaveAFieldEmpty,
-                   KDContext::k_alignCenter, KDContext::k_alignCenter,
-                   Escher::Palette::GrayDark, Escher::Palette::WallScreen),
+      m_headerView(I18n::Message::DefineParameters, k_format),
+      m_bottomView(I18n::Message::LeaveAFieldEmpty, k_format),
       m_contentView(&m_selectableListView, this, &m_headerView, &m_bottomView),
       m_distribution(distribution),
       m_calculationController(calculationController) {

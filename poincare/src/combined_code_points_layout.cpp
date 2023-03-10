@@ -18,14 +18,12 @@ int CombinedCodePointsLayoutNode::serialize(
 }
 
 void CombinedCodePointsLayoutNode::render(KDContext *ctx, KDPoint p,
-                                          KDFont::Size font,
-                                          KDColor expressionColor,
-                                          KDColor backgroundColor) {
+                                          KDGlyph::Style style) {
   // Null-terminating char
   constexpr int bufferSize = 2 * sizeof(CodePoint) / sizeof(char) + 1;
   char buffer[bufferSize];
   serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, 0);
-  ctx->drawString(buffer, p, font, expressionColor, backgroundColor);
+  ctx->drawString(buffer, p, style);
 }
 
 bool CombinedCodePointsLayoutNode::protectedIsIdenticalTo(Layout l) {

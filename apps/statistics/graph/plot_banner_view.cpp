@@ -5,10 +5,7 @@
 namespace Statistics {
 
 PlotBannerView::PlotBannerView()
-    : m_seriesName(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter,
-                   TextColor(), BackgroundColor()),
-      m_result(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter,
-               TextColor(), BackgroundColor()) {}
+    : m_seriesName(k_defaultFormat), m_result(k_defaultFormat) {}
 
 Escher::View* PlotBannerView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());

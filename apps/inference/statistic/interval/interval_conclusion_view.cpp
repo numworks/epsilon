@@ -11,7 +11,7 @@ namespace Inference {
 
 IntervalConclusionView::IntervalConclusionView() {
   setFont(KDFont::Size::Large);
-  setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);
+  setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
   setBackgroundColor(Escher::Palette::WallScreen);
 }
 

@@ -19,7 +19,7 @@ namespace Shared {
 ExpressionModelListController::ExpressionModelListController(
     Responder *parentResponder, I18n::Message text)
     : ViewController(parentResponder),
-      m_addNewModelCell(k_font, KDContext::k_alignLeft),
+      m_addNewModelCell(k_font, KDGlyph::k_alignLeft),
       m_editedCellIndex(-1) {
   m_addNewModelCell.setMessage(text);
 }

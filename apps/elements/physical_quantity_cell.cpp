@@ -3,8 +3,9 @@
 namespace Elements {
 
 PhysicalQuantityCell::PhysicalQuantityCell()
-    : m_subLabelView(I18n::Message::Default,
-                     Escher::CellWidget::Type::SubLabel) {}
+    : m_subLabelView(I18n::Message::Default) {
+  m_subLabelView.defaultInitialization(Escher::CellWidget::Type::SubLabel);
+}
 
 void PhysicalQuantityCell::setLayouts(Poincare::Layout label,
                                       Poincare::Layout accessory) {

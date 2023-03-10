@@ -10,10 +10,9 @@ namespace Regression {
 class EvenOddDoubleBufferTextCell : public Escher::EvenOddCell,
                                     public Escher::Responder {
  public:
-  EvenOddDoubleBufferTextCell(
-      Escher::Responder* parentResponder = nullptr,
-      float horizontalAlignment = KDContext::k_alignRight,
-      float verticalAlignment = KDContext::k_alignCenter);
+  EvenOddDoubleBufferTextCell(Escher::Responder* parentResponder = nullptr,
+                              float horizontalAlignment = KDGlyph::k_alignRight,
+                              float verticalAlignment = KDGlyph::k_alignCenter);
   const char* text() const override;
   const char* firstText() const;
   const char* secondText() const;

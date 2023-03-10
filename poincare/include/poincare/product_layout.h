@@ -24,8 +24,7 @@ class ProductLayoutNode final : public SequenceLayoutNode {
 #endif
 
  protected:
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
  private:
   constexpr static KDCoordinate k_lineThickness = 1;

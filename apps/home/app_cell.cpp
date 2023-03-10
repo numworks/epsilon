@@ -8,12 +8,9 @@ namespace Home {
 
 AppCell::AppCell()
     : HighlightCell(),
-      m_messageNameView(KDFont::Size::Small, (I18n::Message)0,
-                        KDContext::k_alignCenter, KDContext::k_alignCenter,
-                        KDColorBlack, KDColorWhite),
+      m_messageNameView((I18n::Message)0, k_glyphsFormat),
       m_image(0, 0, nullptr, 0),
-      m_pointerNameView(KDFont::Size::Small, nullptr, KDContext::k_alignCenter,
-                        KDContext::k_alignCenter, KDColorBlack, KDColorWhite) {}
+      m_pointerNameView(nullptr, k_glyphsFormat) {}
 
 void AppCell::drawRect(KDContext *ctx, KDRect rect) const {
   KDSize nameSize = textView()->minimalSizeForOptimalDisplay();

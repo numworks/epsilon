@@ -66,8 +66,7 @@ class VerticalOffsetLayoutNode final : public LayoutNode {
   KDSize computeSize(KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode *child, KDFont::Size font) override;
-  void render(KDContext *ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) override;
   bool protectedIsIdenticalTo(Layout l) override;
 
   LayoutNode *indiceLayout() { return childAtIndex(0); }

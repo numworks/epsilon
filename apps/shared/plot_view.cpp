@@ -166,8 +166,10 @@ KDRect AbstractPlotView::labelRect(const char *label, Coordinate2D<float> xy,
 void AbstractPlotView::drawLabel(KDContext *ctx, KDRect rect, const char *label,
                                  const KDRect labelRect, KDColor color) const {
   if (labelRect.intersects(rect)) {
-    ctx->drawString(label, labelRect.origin(), k_font, color,
-                    backgroundColor());
+    ctx->drawString(label, labelRect.origin(),
+                    KDGlyph::Style{.glyphColor = color,
+                                   .backgroundColor = backgroundColor(),
+                                   .font = k_font});
   }
 }
 
@@ -190,7 +192,10 @@ void AbstractPlotView::drawLayout(KDContext *ctx, KDRect rect, Layout layout,
   KDPoint layoutOrigin = computeOrigin(floatToPixel2D(xy), layoutSize,
                                        xPosition, yPosition, ignoreMargin);
   if (KDRect(layoutOrigin, layoutSize).intersects(rect)) {
-    layout.draw(ctx, layoutOrigin, k_font, color, backgroundColor());
+    layout.draw(ctx, layoutOrigin,
+                KDGlyph::Style{.glyphColor = color,
+                               .backgroundColor = backgroundColor(),
+                               .font = k_font});
   }
 }
 
@@ -624,9 +629,9 @@ void AbstractPlotView::stamp(KDContext *ctx, KDRect rect, Coordinate2D<float> p,
   /* The (pxf, pyf) coordinates are not generally locating the center of a
    * pixel. We use stampMask, which is one pixel wider and higher than
    * stampSize, in order to cover stampRect without aligning the pixels. Then
-   * shiftedMask is computed so that each pixel is the average of the values of
-   * the four pixels of stampMask by which it is covered, proportionally to the
-   * area of the intersection with each of those.
+   * shiftedMask is computed so that each pixel is the average of the values
+   * of the four pixels of stampMask by which it is covered, proportionally to
+   * the area of the intersection with each of those.
    *
    * In order to compute the coordinates (px, py) of the top-left pixel of
    * stampRect, we consider that stampMask is centered at the provided point

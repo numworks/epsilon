@@ -19,8 +19,9 @@ ConsoleEditCell::ConsoleEditCell(
     TextFieldDelegate *delegate)
     : HighlightCell(),
       Responder(parentResponder),
-      m_promptView(GlobalPreferences::sharedGlobalPreferences->font(), nullptr,
-                   KDContext::k_alignLeft, KDContext::k_alignCenter),
+      m_promptView(
+          nullptr,
+          {{.font = GlobalPreferences::sharedGlobalPreferences->font()}}),
       m_textField(this, nullptr, TextField::MaxBufferSize(),
                   inputEventHandlerDelegate, delegate,
                   GlobalPreferences::sharedGlobalPreferences->font()) {}

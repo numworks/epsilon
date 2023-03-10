@@ -12,13 +12,11 @@ namespace Shared {
 
 AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell(
     float horizontalAlignment, KDFont::Size font)
-    : m_rightExpressionView(KDContext::k_alignLeft, KDContext::k_alignCenter,
-                            KDColorBlack, KDColorWhite, font),
-      m_approximateSign(font, k_defaultApproximateMessage,
-                        KDContext::k_alignCenter, KDContext::k_alignCenter,
-                        Palette::GrayVeryDark),
-      m_centeredExpressionView(KDContext::k_alignLeft, KDContext::k_alignCenter,
-                               KDColorBlack, KDColorWhite, font),
+    : m_rightExpressionView({{.font = font}}),
+      m_approximateSign(k_defaultApproximateMessage,
+                        {{.glyphColor = Palette::GrayVeryDark, .font = font},
+                         .horizontalAlignment = KDGlyph::k_alignCenter}),
+      m_centeredExpressionView({{.font = font}}),
       m_selectedSubviewPosition(SubviewPosition::Center),
       m_displayCenter(true),
       m_horizontalAlignment(horizontalAlignment) {}

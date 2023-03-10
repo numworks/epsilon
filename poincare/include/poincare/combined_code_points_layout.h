@@ -45,8 +45,7 @@ class CombinedCodePointsLayoutNode final : public CodePointLayoutNode {
   }
 
  private:
-  void render(KDContext *ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) override;
   bool protectedIsIdenticalTo(Layout l) override;
 
   CodePoint m_CombinedCodePoints;

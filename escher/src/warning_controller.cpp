@@ -7,10 +7,17 @@ namespace Escher {
 
 WarningController::ContentView::ContentView()
     : SolidColorView(KDColorBlack),
-      m_textView1(KDFont::Size::Small, (I18n::Message)0, k_middleAlignment,
-                  k_middleAlignment, KDColorWhite, KDColorBlack),
-      m_textView2(KDFont::Size::Small, (I18n::Message)0, k_middleAlignment,
-                  (1.0f - k_shiftedAlignment), KDColorWhite, KDColorBlack) {}
+      m_textView1((I18n::Message)0,
+                  {{.glyphColor = KDColorWhite,
+                    .backgroundColor = KDColorBlack,
+                    .font = KDFont::Size::Small},
+                   .horizontalAlignment = KDGlyph::k_alignCenter}),
+      m_textView2((I18n::Message)0,
+                  {{.glyphColor = KDColorWhite,
+                    .backgroundColor = KDColorBlack,
+                    .font = KDFont::Size::Small},
+                   .horizontalAlignment = KDGlyph::k_alignCenter,
+                   .verticalAlignment = (1.0f - k_shiftedAlignment)}) {}
 
 void WarningController::ContentView::setLabels(I18n::Message label1,
                                                I18n::Message label2) {
@@ -31,7 +38,7 @@ View* WarningController::ContentView::subviewAtIndex(int index) {
 void WarningController::ContentView::layoutSubviews(bool force) {
   if (numberOfSubviews() == 1) {
     setChildFrame(&m_textView1, bounds(), force);
-    m_textView1.setAlignment(k_middleAlignment, k_middleAlignment);
+    m_textView1.setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     return;
   }
   assert(numberOfSubviews() == 2);
@@ -40,7 +47,7 @@ void WarningController::ContentView::layoutSubviews(bool force) {
   setChildFrame(&m_textView1,
                 KDRect(fullBounds.topLeft(), fullBounds.width(), halfHeight),
                 force);
-  m_textView1.setAlignment(k_middleAlignment, k_shiftedAlignment);
+  m_textView1.setAlignment(KDGlyph::k_alignCenter, k_shiftedAlignment);
   setChildFrame(&m_textView2,
                 KDRect(fullBounds.left(), fullBounds.top() + halfHeight,
                        fullBounds.width(), halfHeight),

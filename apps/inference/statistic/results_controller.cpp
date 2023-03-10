@@ -22,9 +22,11 @@ ResultsController::ResultsController(
     Escher::TextFieldDelegate *textFieldDelegate)
     : Escher::ViewController(parent),
       m_selectableListView(this, &m_resultsDataSource, this),
-      m_title(KDFont::Size::Small, I18n::Message::CalculatedValues,
-              KDContext::k_alignCenter, KDContext::k_alignCenter,
-              Palette::GrayDark, Palette::WallScreen),
+      m_title(I18n::Message::CalculatedValues,
+              {{.glyphColor = Palette::GrayDark,
+                .backgroundColor = Palette::WallScreen,
+                .font = KDFont::Size::Small},
+               .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_contentView(&m_selectableListView, &m_resultsDataSource, &m_title),
       m_resultsDataSource(&m_selectableListView, statistic,
                           Invocation::Builder<ResultsController>(

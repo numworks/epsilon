@@ -13,8 +13,8 @@ class ExpressionField : public LayoutField {
   ExpressionField(Responder* parentResponder,
                   InputEventHandlerDelegate* inputEventHandler,
                   LayoutFieldDelegate* layoutFieldDelegate,
-                  float horizontalAlignment = KDContext::k_alignLeft,
-                  float verticalAlignment = KDContext::k_alignCenter);
+                  float horizontalAlignment = KDGlyph::k_alignLeft,
+                  float verticalAlignment = KDGlyph::k_alignCenter);
 
   void clearAndSetEditing(bool isEditing);
   /* Warning: this function is VERY dangerous! Indeed: sometimes the

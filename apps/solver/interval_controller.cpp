@@ -12,14 +12,10 @@ namespace Solver {
 
 IntervalController::ContentView::ContentView(
     SelectableTableView *selectableTableView)
-    : m_instructions0(KDFont::Size::Small,
-                      I18n::Message::ApproximateSolutionIntervalInstruction0,
-                      KDContext::k_alignCenter, KDContext::k_alignCenter,
-                      KDColorBlack, Palette::WallScreen),
-      m_instructions1(KDFont::Size::Small,
-                      I18n::Message::ApproximateSolutionIntervalInstruction1,
-                      KDContext::k_alignCenter, KDContext::k_alignCenter,
-                      KDColorBlack, Palette::WallScreen),
+    : m_instructions0(I18n::Message::ApproximateSolutionIntervalInstruction0,
+                      k_glyphFormat),
+      m_instructions1(I18n::Message::ApproximateSolutionIntervalInstruction1,
+                      k_glyphFormat),
       m_selectableTableView(selectableTableView) {}
 
 void IntervalController::ContentView::drawRect(KDContext *ctx,

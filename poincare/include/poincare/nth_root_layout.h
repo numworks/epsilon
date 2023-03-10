@@ -57,8 +57,7 @@ class NthRootLayoutNode final : public LayoutNode {
   constexpr static KDCoordinate k_widthMargin = 2;
   constexpr static KDCoordinate k_radixLineThickness = 1;
   KDSize adjustedIndexSize(KDFont::Size font);
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
   bool protectedIsIdenticalTo(Layout l) override;
 
   constexpr static int k_radicandLayoutIndex = 0;

@@ -25,6 +25,7 @@ class BannerView : public Shared::XYBannerView {
 
  private:
   constexpr static int k_maxNumberOfInterests = 3;
+
   int numberOfSubviews() const override {
     // there are 3 views for tangent (aView, bView, tangentEquationView)
     return XYBannerView::k_numberOfSubviews + numberOfInterestMessages() +

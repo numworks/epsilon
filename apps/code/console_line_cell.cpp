@@ -22,9 +22,12 @@ void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::setLine(
 void ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::drawRect(
     KDContext* ctx, KDRect rect) const {
   ctx->fillRect(bounds(), KDColorWhite);
-  ctx->drawString(m_line->text(), KDPointZero,
-                  GlobalPreferences::sharedGlobalPreferences->font(),
-                  textColor(m_line), defaultBackgroundColor());
+  ctx->drawString(
+      m_line->text(), KDPointZero,
+      KDGlyph::Style{
+          .glyphColor = textColor(m_line),
+          .backgroundColor = defaultBackgroundColor(),
+          .font = GlobalPreferences::sharedGlobalPreferences->font()});
 }
 
 KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::
@@ -45,9 +48,9 @@ ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(
 ConsoleLineCell::ConsoleLineCell(Responder* parentResponder)
     : HighlightCell(),
       Responder(parentResponder),
-      m_promptView(GlobalPreferences::sharedGlobalPreferences->font(),
-                   I18n::Message::ConsolePrompt, KDContext::k_alignLeft,
-                   KDContext::k_alignCenter),
+      m_promptView(
+          I18n::Message::ConsolePrompt,
+          {{.font = GlobalPreferences::sharedGlobalPreferences->font()}}),
       m_scrollableView(this) {}
 
 void ConsoleLineCell::setLine(ConsoleLine line) {

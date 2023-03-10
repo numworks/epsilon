@@ -43,15 +43,12 @@ class Layout : public TreeHandle {
   }
 
   // Rendering
-  void draw(KDContext *ctx, KDPoint p, KDFont::Size font,
-            KDColor expressionColor, KDColor backgroundColor,
+  void draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
             LayoutSelection selection,
             KDColor selectionColor = Escher::Palette::Select);
-  void draw(KDContext *ctx, KDPoint p, KDFont::Size font,
-            KDColor expressionColor, KDColor backgroundColor);
-  void render(KDContext *ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) {
-    return node()->render(ctx, p, font, expressionColor, backgroundColor);
+  void draw(KDContext *ctx, KDPoint p, KDGlyph::Style style);
+  void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
+    return node()->render(ctx, p, style);
   }
   KDSize layoutSize(KDFont::Size font) const {
     return node()->layoutSize(font);

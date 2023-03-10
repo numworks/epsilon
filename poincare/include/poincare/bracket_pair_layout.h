@@ -63,8 +63,7 @@ class BracketPairLayoutNode : public LayoutNode {
   KDSize computeSize(KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode* child, KDFont::Size font) override;
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 
   LayoutNode* childLayout() const { return childAtIndex(0); }
   int serializeWithSymbol(char symbolOpen, char symbolClose, char* buffer,
@@ -74,8 +73,7 @@ class BracketPairLayoutNode : public LayoutNode {
   virtual KDCoordinate bracketWidth() const = 0;
   virtual KDCoordinate verticalMargin() const = 0;
   virtual void renderOneBracket(bool left, KDContext* ctx, KDPoint p,
-                                KDFont::Size font, KDColor expressionColor,
-                                KDColor backgroundColor) = 0;
+                                KDGlyph::Style style) = 0;
 };
 
 }  // namespace Poincare

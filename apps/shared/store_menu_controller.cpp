@@ -24,7 +24,7 @@ StoreMenuController::InnerListController::InnerListController(
 
 void StoreMenuController::open() {
   Container::activeApp()->displayModalViewController(
-      this, KDContext::k_alignCenter, KDContext::k_alignCenter, 0,
+      this, KDGlyph::k_alignCenter, KDGlyph::k_alignCenter, 0,
       Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin, true);
 }
 
@@ -114,8 +114,8 @@ void StoreMenuController::openAbortWarning() {
    * the store menu to be relayouted with the minimalsizeForOptimalDisplay of
    * the warning. We could save a reload by moving the centering logic after the
    * embedded pop-up. */
-  displayModalViewController(&m_abortController, KDContext::k_alignCenter,
-                             KDContext::k_alignCenter);
+  displayModalViewController(&m_abortController, KDGlyph::k_alignCenter,
+                             KDGlyph::k_alignCenter);
   Container::activeApp()->modalViewController()->reloadModal();
 }
 

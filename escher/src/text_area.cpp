@@ -537,12 +537,15 @@ void TextArea::ContentView::drawStringAt(
     return;
   }
   KDSize glyphSize = KDFont::GlyphSize(m_font);
+  KDGlyph::Style glyphStyle{.glyphColor = textColor,
+                            .backgroundColor = backgroundColor,
+                            .font = m_font};
 
   bool drawSelection = selectionStart != nullptr && selectionEnd > text &&
                        selectionStart < text + length;
   KDPoint nextPoint = ctx->drawString(
       text, KDPoint(column * glyphSize.width(), line * glyphSize.height()),
-      m_font, textColor, backgroundColor,
+      glyphStyle,
       drawSelection
           ? (selectionStart >= text
                  ? std::min<KDCoordinate>(length, selectionStart - text)
@@ -556,14 +559,17 @@ void TextArea::ContentView::drawStringAt(
       std::min(selectionEnd - highlightedDrawStart,
                length - (highlightedDrawStart - text));
 
-  nextPoint =
-      ctx->drawString(highlightedDrawStart, nextPoint, m_font, textColor,
-                      backgroundHighlightColor, highlightedDrawLength);
+  nextPoint = ctx->drawString(
+      highlightedDrawStart, nextPoint,
+      KDGlyph::Style{.glyphColor = textColor,
+                     .backgroundColor = backgroundHighlightColor,
+                     .font = m_font},
+      highlightedDrawLength);
 
   const char *notHighlightedDrawStart =
       highlightedDrawStart + highlightedDrawLength;
-  ctx->drawString(notHighlightedDrawStart, nextPoint, m_font, textColor,
-                  backgroundColor, length - (notHighlightedDrawStart - text));
+  ctx->drawString(notHighlightedDrawStart, nextPoint, glyphStyle,
+                  length - (notHighlightedDrawStart - text));
 }
 
 KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {

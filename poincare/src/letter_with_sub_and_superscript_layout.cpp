@@ -77,16 +77,14 @@ KDPoint LetterWithSubAndSuperscriptLayoutNode::positionOfChild(
 }
 
 void LetterWithSubAndSuperscriptLayoutNode::render(KDContext* ctx, KDPoint p,
-                                                   KDFont::Size font,
-                                                   KDColor expressionColor,
-                                                   KDColor backgroundColor) {
-  KDCoordinate combinationSymbolX = nLayout()->layoutSize(font).width();
-  KDCoordinate combinationSymbolY = aboveSymbol(font);
+                                                   KDGlyph::Style style) {
+  KDCoordinate combinationSymbolX = nLayout()->layoutSize(style.font).width();
+  KDCoordinate combinationSymbolY = aboveSymbol(style.font);
   KDPoint base =
       p.translatedBy(KDPoint(combinationSymbolX, combinationSymbolY));
 
   // Margin around the letter is left to the letter renderer
-  renderLetter(ctx, base, expressionColor, backgroundColor);
+  renderLetter(ctx, base, style.glyphColor, style.backgroundColor);
 }
 
 }  // namespace Poincare

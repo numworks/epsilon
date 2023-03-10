@@ -11,9 +11,10 @@ namespace Escher {
 class AlternateEmptyViewDelegate {
  public:
   AlternateEmptyViewDelegate()
-      : m_message(KDFont::Size::Small, (I18n::Message)0,
-                  KDContext::k_alignCenter, KDContext::k_alignCenter,
-                  KDColorBlack, Palette::WallScreen) {}
+      : m_message((I18n::Message)0,
+                  {{.backgroundColor = Palette::WallScreen,
+                    .font = KDFont::Size::Small},
+                   .horizontalAlignment = KDGlyph::k_alignCenter}) {}
   virtual bool isEmpty() const = 0;
   virtual View* emptyView() {
     m_message.setMessage(emptyMessage());

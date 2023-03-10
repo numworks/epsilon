@@ -140,48 +140,48 @@ KDSize NthRootLayoutNode::adjustedIndexSize(KDFont::Size font) {
                       indexLayout()->layoutSize(font).height());
 }
 
-void NthRootLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
-                               KDColor expressionColor,
-                               KDColor backgroundColor) {
-  KDSize radicandSize = radicandLayout()->layoutSize(font);
-  KDSize indexSize = adjustedIndexSize(font);
+void NthRootLayoutNode::render(KDContext *ctx, KDPoint p,
+                               KDGlyph::Style style) {
+  KDSize radicandSize = radicandLayout()->layoutSize(style.font);
+  KDSize indexSize = adjustedIndexSize(style.font);
   KDColor workingBuffer[k_leftRadixWidth * k_leftRadixHeight];
   KDRect leftRadixFrame(
       p.x() + indexSize.width() + k_widthMargin - k_leftRadixWidth,
-      p.y() + baseline(font) + radicandSize.height() -
-          radicandLayout()->baseline(font) - k_leftRadixHeight,
+      p.y() + baseline(style.font) + radicandSize.height() -
+          radicandLayout()->baseline(style.font) - k_leftRadixHeight,
       k_leftRadixWidth, k_leftRadixHeight);
-  ctx->blendRectWithMask(leftRadixFrame, expressionColor,
+  ctx->blendRectWithMask(leftRadixFrame, style.glyphColor,
                          (const uint8_t *)radixPixel, (KDColor *)workingBuffer);
   // If the indice is higher than the root.
-  if (indexSize.height() > radicandLayout()->baseline(font) +
+  if (indexSize.height() > radicandLayout()->baseline(style.font) +
                                k_radixLineThickness + k_heightMargin) {
     // Vertical radix bar
     ctx->fillRect(
         KDRect(p.x() + indexSize.width() + k_widthMargin,
-               p.y() + indexSize.height() - radicandLayout()->baseline(font) -
+               p.y() + indexSize.height() -
+                   radicandLayout()->baseline(style.font) -
                    k_radixLineThickness - k_heightMargin,
                k_radixLineThickness,
                radicandSize.height() + k_heightMargin + k_radixLineThickness),
-        expressionColor);
+        style.glyphColor);
     // Horizontal radix bar
-    ctx->fillRect(
-        KDRect(p.x() + indexSize.width() + k_widthMargin,
-               p.y() + indexSize.height() - radicandLayout()->baseline(font) -
-                   k_radixLineThickness - k_heightMargin,
-               radicandSize.width() + 2 * k_widthMargin + 1,
-               k_radixLineThickness),
-        expressionColor);
+    ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin,
+                         p.y() + indexSize.height() -
+                             radicandLayout()->baseline(style.font) -
+                             k_radixLineThickness - k_heightMargin,
+                         radicandSize.width() + 2 * k_widthMargin + 1,
+                         k_radixLineThickness),
+                  style.glyphColor);
   } else {
     ctx->fillRect(
         KDRect(p.x() + indexSize.width() + k_widthMargin, p.y(),
                k_radixLineThickness,
                radicandSize.height() + k_heightMargin + k_radixLineThickness),
-        expressionColor);
+        style.glyphColor);
     ctx->fillRect(
         KDRect(p.x() + indexSize.width() + k_widthMargin, p.y(),
                radicandSize.width() + 2 * k_widthMargin, k_radixLineThickness),
-        expressionColor);
+        style.glyphColor);
   }
 }
 

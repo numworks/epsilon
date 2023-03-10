@@ -100,8 +100,7 @@ class HorizontalLayoutNode final : public LayoutNode {
   }
   KDPoint positionOfChild(LayoutNode *l, KDFont::Size font) override;
 
-  void render(KDContext *ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) override;
 
   bool shouldDrawEmptyRectangle() const;
 

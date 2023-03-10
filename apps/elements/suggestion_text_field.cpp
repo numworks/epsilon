@@ -23,7 +23,9 @@ void SuggestionTextField::ContentView::drawRect(KDContext* ctx,
     ctx->drawString(
         suggestionSuffix(),
         glyphFrameAtPosition(text(), text() + editedTextLength()).origin(),
-        m_font, Palette::GrayDark, KDColorWhite);
+        KDGlyph::Style{.glyphColor = Palette::GrayDark,
+                       .backgroundColor = KDColorWhite,
+                       .font = m_font});
   }
 }
 
@@ -51,8 +53,8 @@ SuggestionTextField::SuggestionTextField(
     : AbstractTextField(parentResponder, &m_contentView,
                         inputEventHandlerDelegate, delegate),
       m_contentView(nullptr, MaxBufferSize(), KDFont::Size::Large,
-                    KDContext::k_alignLeft, KDContext::k_alignCenter,
-                    KDColorBlack, KDColorWhite) {}
+                    KDGlyph::k_alignLeft, KDGlyph::k_alignCenter, KDColorBlack,
+                    KDColorWhite) {}
 
 bool SuggestionTextField::handleEvent(Ion::Events::Event event) {
   if (cursorAtEndOfText() && m_contentView.suggestion() &&

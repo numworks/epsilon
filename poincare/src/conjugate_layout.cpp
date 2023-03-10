@@ -47,16 +47,15 @@ KDPoint ConjugateLayoutNode::positionOfChild(LayoutNode* child,
                  k_overlineWidth + k_overlineVerticalMargin);
 }
 
-void ConjugateLayoutNode::render(KDContext* ctx, KDPoint p, KDFont::Size font,
-                                 KDColor expressionColor,
-                                 KDColor backgroundColor) {
+void ConjugateLayoutNode::render(KDContext* ctx, KDPoint p,
+                                 KDGlyph::Style style) {
   ctx->fillRect(
       KDRect(p.x() + Escher::Metric::FractionAndConjugateHorizontalMargin,
              p.y(),
-             childLayout()->layoutSize(font).width() +
+             childLayout()->layoutSize(style.font).width() +
                  2 * Escher::Metric::FractionAndConjugateHorizontalOverflow,
              k_overlineWidth),
-      expressionColor);
+      style.glyphColor);
 }
 
 }  // namespace Poincare

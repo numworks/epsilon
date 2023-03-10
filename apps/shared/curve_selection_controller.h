@@ -24,10 +24,7 @@ namespace Shared {
 class CurveSelectionCell : public Escher::TableCell {
  public:
   CurveSelectionCell()
-      : Escher::TableCell(),
-        m_expressionView(KDContext::k_alignLeft, KDContext::k_alignCenter,
-                         KDColorBlack, KDColorWhite),
-        m_color(KDColorBlack) {}
+      : Escher::TableCell(), m_expressionView(), m_color(KDColorBlack) {}
   Escher::View *labelView() const override {
     return const_cast<Escher::ExpressionView *>(&m_expressionView);
   }

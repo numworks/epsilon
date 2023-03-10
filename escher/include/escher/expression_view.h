@@ -15,11 +15,9 @@ namespace Escher {
 
 class ExpressionView : public GlyphsView {
  public:
-  ExpressionView(float horizontalAlignment = KDContext::k_alignLeft,
-                 float verticalAlignment = KDContext::k_alignCenter,
-                 KDColor textColor = KDColorBlack,
-                 KDColor backgroundColor = KDColorWhite,
-                 KDFont::Size font = KDFont::Size::Large);
+  ExpressionView(KDGlyph::Format format = {})
+      : GlyphsView(format), m_horizontalMargin(0) {}
+
   Poincare::Layout layout() const { return m_layout; }
   bool setLayout(Poincare::Layout layout);
   void drawRect(KDContext* ctx, KDRect rect) const override;
@@ -54,14 +52,8 @@ class ExpressionView : public GlyphsView {
 class ExpressionViewWithCursor : public ExpressionView {
  public:
   ExpressionViewWithCursor(Poincare::LayoutCursor* cursor,
-                           float horizontalAlignment = KDContext::k_alignLeft,
-                           float verticalAlignment = KDContext::k_alignCenter,
-                           KDColor textColor = KDColorBlack,
-                           KDColor backgroundColor = KDColorWhite,
-                           KDFont::Size font = KDFont::Size::Large)
-      : ExpressionView(horizontalAlignment, verticalAlignment, textColor,
-                       backgroundColor, font),
-        m_cursor(cursor) {
+                           KDGlyph::Format format = {})
+      : ExpressionView(format), m_cursor(cursor) {
     assert(cursor);
   }
 

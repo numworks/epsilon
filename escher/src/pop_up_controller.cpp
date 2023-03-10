@@ -60,9 +60,11 @@ PopUpController::ContentView::ContentView(Responder* parentResponder,
       m_cancelButton(this, cancelMessage, cancelInvocation,
                      KDFont::Size::Small),
       m_okButton(this, okMessage, okInvocation, KDFont::Size::Small),
-      m_warningTextView(KDFont::Size::Small, warningMessage,
-                        KDContext::k_alignCenter, KDContext::k_alignCenter,
-                        KDColorWhite, KDColorBlack),
+      m_warningTextView(warningMessage,
+                        {{.glyphColor = KDColorWhite,
+                          .backgroundColor = KDColorBlack,
+                          .font = KDFont::Size::Small},
+                         .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_detailTextView(detailTextView) {}
 
 void PopUpController::ContentView::setSelectedButton(int selectedButton) {
@@ -114,8 +116,8 @@ void PopUpController::ContentView::layoutSubviews(bool force) {
                 force);
 
   m_detailTextView->setFont(KDFont::Size::Small);
-  m_detailTextView->setAlignment(KDContext::k_alignCenter,
-                                 KDContext::k_alignCenter);
+  m_detailTextView->setAlignment(KDGlyph::k_alignCenter,
+                                 KDGlyph::k_alignCenter);
   m_detailTextView->setBackgroundColor(KDColorBlack);
   m_detailTextView->setTextColor(KDColorWhite);
 }

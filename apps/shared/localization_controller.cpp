@@ -19,8 +19,8 @@ LocalizationController::ContentView::ContentView(
       m_countryTitleMessage(I18n::Message::Country),
       m_borderView(Palette::GrayBright) {
   m_countryTitleMessage.setBackgroundColor(Palette::WallScreen);
-  m_countryTitleMessage.setAlignment(KDContext::k_alignCenter,
-                                     KDContext::k_alignCenter);
+  m_countryTitleMessage.setAlignment(KDGlyph::k_alignCenter,
+                                     KDGlyph::k_alignCenter);
   assert(k_numberOfCountryWarningLines == 2);  // textMessages is not overflowed
   I18n::Message textMessages[k_numberOfCountryWarningLines] = {
       I18n::Message::CountryWarning1, I18n::Message::CountryWarning2};
@@ -28,8 +28,8 @@ LocalizationController::ContentView::ContentView(
     m_countryWarningLines[i].setBackgroundColor(Palette::WallScreen);
     m_countryWarningLines[i].setFont(KDFont::Size::Small);
     m_countryWarningLines[i].setTextColor(Escher::Palette::GrayDark);
-    m_countryWarningLines[i].setAlignment(KDContext::k_alignCenter,
-                                          KDContext::k_alignCenter);
+    m_countryWarningLines[i].setAlignment(KDGlyph::k_alignCenter,
+                                          KDGlyph::k_alignCenter);
     m_countryWarningLines[i].setMessage(textMessages[i]);
   }
 }

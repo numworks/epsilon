@@ -45,8 +45,7 @@ class PiecewiseOperatorLayoutNode final : public GridLayoutNode {
   KDSize computeSize(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode *l, KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
-  void render(KDContext *ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) override;
 
   void makeLastConditionVisibleIfEmpty(bool visible);
 };

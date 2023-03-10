@@ -5,18 +5,16 @@
 
 namespace Escher {
 
-ScrollableExpressionView::ScrollableExpressionView(
-    Responder* parentResponder, KDCoordinate leftRightMargin,
-    KDCoordinate topBottomMargin, float horizontalAlignment,
-    float verticalAlignment, KDColor textColor, KDColor backgroundColor,
-    KDFont::Size font)
+ScrollableExpressionView::ScrollableExpressionView(Responder* parentResponder,
+                                                   KDCoordinate leftRightMargin,
+                                                   KDCoordinate topBottomMargin,
+                                                   KDGlyph::Format format)
     : ScrollableView(parentResponder, &m_expressionView, this),
-      m_expressionView(horizontalAlignment, verticalAlignment, textColor,
-                       backgroundColor, font) {
-  decorator()->setFont(font);
+      m_expressionView(format) {
+  decorator()->setFont(format.style.font);
   setMargins(topBottomMargin, leftRightMargin, topBottomMargin,
              leftRightMargin);
-  setBackgroundColor(backgroundColor);
+  setBackgroundColor(format.style.backgroundColor);
 }
 
 Poincare::Layout ScrollableExpressionView::layout() const {

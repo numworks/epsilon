@@ -80,18 +80,17 @@ KDCoordinate CodePointLayoutNode::computeBaseline(KDFont::Size font) {
   return KDFont::GlyphHeight(font) / 2;
 }
 
-void CodePointLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
-                                 KDColor expressionColor,
-                                 KDColor backgroundColor) {
+void CodePointLayoutNode::render(KDContext *ctx, KDPoint p,
+                                 KDGlyph::Style style) {
   // Handle the case of the middle dot which has to be drawn by hand since it is
   // thinner than the other glyphs.
   if (m_codePoint == UCodePointMiddleDot) {
     int width = k_middleDotWidth;
-    int height = KDFont::GlyphHeight(font);
-    ctx->fillRect(KDRect(p, width, height), backgroundColor);
+    int height = KDFont::GlyphHeight(style.font);
+    ctx->fillRect(KDRect(p, width, height), style.backgroundColor);
     ctx->fillRect(
         KDRect(p.translatedBy(KDPoint(width / 2, height / 2 - 1)), 1, 1),
-        expressionColor);
+        style.glyphColor);
     return;
   }
   // General case
@@ -99,7 +98,7 @@ void CodePointLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
   constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
   char buffer[bufferSize];
   SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
-  ctx->drawString(buffer, p, font, expressionColor, backgroundColor);
+  ctx->drawString(buffer, p, style);
 }
 
 bool CodePointLayoutNode::isMultiplicationCodePoint() const {

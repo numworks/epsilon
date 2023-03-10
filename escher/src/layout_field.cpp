@@ -23,8 +23,9 @@ namespace Escher {
 LayoutField::ContentView::ContentView(KDFont::Size font,
                                       float horizontalAlignment,
                                       float verticalAlignment)
-    : m_expressionView(&m_cursor, horizontalAlignment, verticalAlignment,
-                       KDColorBlack, KDColorWhite, font),
+    : m_expressionView(&m_cursor, {{.font = font},
+                                   .horizontalAlignment = horizontalAlignment,
+                                   .verticalAlignment = verticalAlignment}),
       m_cursorView(this),
       m_isEditing(false) {
   clearLayout();

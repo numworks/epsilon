@@ -39,8 +39,7 @@ class ConjugateLayoutNode : public LayoutNode {
   LayoutNode* childLayout() { return childAtIndex(0); }
 
  private:
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override;
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override;
 };
 
 class ConjugateLayout final

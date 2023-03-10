@@ -119,17 +119,15 @@ KDCoordinate MatrixLayoutNode::computeBaseline(KDFont::Size font) {
          BracketPairLayoutNode::k_lineThickness;
 }
 
-void MatrixLayoutNode::render(KDContext *ctx, KDPoint p, KDFont::Size font,
-                              KDColor expressionColor,
-                              KDColor backgroundColor) {
-  KDSize s = gridSize(font);
+void MatrixLayoutNode::render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
+  KDSize s = gridSize(style.font);
   SquareBracketPairLayoutNode::RenderWithChildSize(
-      true, s.height(), ctx, p, expressionColor, backgroundColor);
+      true, s.height(), ctx, p, style.glyphColor, style.backgroundColor);
   KDCoordinate rightOffset =
       SquareBracketPairLayoutNode::ChildOffset().x() + s.width();
   SquareBracketPairLayoutNode::RenderWithChildSize(
       false, s.height(), ctx, p.translatedBy(KDPoint(rightOffset, 0)),
-      expressionColor, backgroundColor);
+      style.glyphColor, style.backgroundColor);
 }
 
 MatrixLayout MatrixLayout::Builder(Layout l1) {

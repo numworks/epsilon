@@ -47,13 +47,12 @@ class SquareBracketPairLayoutNode : public BracketPairLayoutNode {
   // BracketPairLayoutNode
   KDCoordinate bracketWidth() const override { return k_bracketWidth; }
   KDCoordinate verticalMargin() const override { return k_verticalMargin; }
-  void renderOneBracket(bool left, KDContext* ctx, KDPoint p, KDFont::Size font,
-                        KDColor expressionColor,
-                        KDColor backgroundColor) override {
-    RenderWithParameters(left, childLayout()->layoutSize(font).height(), ctx, p,
-                         expressionColor, backgroundColor, verticalMargin(),
-                         bracketWidth(), renderTopBar(), renderBottomBar(),
-                         renderDoubleBar());
+  void renderOneBracket(bool left, KDContext* ctx, KDPoint p,
+                        KDGlyph::Style style) override {
+    RenderWithParameters(left, childLayout()->layoutSize(style.font).height(),
+                         ctx, p, style.glyphColor, style.backgroundColor,
+                         verticalMargin(), bracketWidth(), renderTopBar(),
+                         renderBottomBar(), renderDoubleBar());
   }
 
   virtual bool renderTopBar() const { return k_renderTopBar; }

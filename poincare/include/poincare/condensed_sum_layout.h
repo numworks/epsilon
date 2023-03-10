@@ -47,8 +47,7 @@ class CondensedSumLayoutNode final : public LayoutNode {
   KDPoint positionOfChild(LayoutNode* child, KDFont::Size font) override;
 
  private:
-  void render(KDContext* ctx, KDPoint p, KDFont::Size font,
-              KDColor expressionColor, KDColor backgroundColor) override {}
+  void render(KDContext* ctx, KDPoint p, KDGlyph::Style style) override {}
   LayoutNode* baseLayout() { return childAtIndex(0); }
   LayoutNode* subscriptLayout() { return childAtIndex(1); }
   LayoutNode* superscriptLayout() { return childAtIndex(2); }

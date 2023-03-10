@@ -8,7 +8,7 @@ namespace Shared {
 
 BufferFunctionTitleCell::BufferFunctionTitleCell(KDFont::Size font)
     : FunctionTitleCell(),
-      m_bufferTextView(font, KDContext::k_alignCenter, k_verticalAlignment) {}
+      m_bufferTextView(font, KDGlyph::k_alignCenter, k_verticalAlignment) {}
 
 void BufferFunctionTitleCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);

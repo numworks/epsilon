@@ -17,8 +17,8 @@ class EditableTextCell : public HighlightCell, public Responder {
       InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
       TextFieldDelegate* delegate = nullptr,
       KDFont::Size font = KDFont::Size::Large,
-      float horizontalAlignment = KDContext::k_alignLeft,
-      float verticalAlignment = KDContext::k_alignCenter,
+      float horizontalAlignment = KDGlyph::k_alignLeft,
+      float verticalAlignment = KDGlyph::k_alignCenter,
       KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
   TextField* textField();
   void setHighlighted(bool highlight) override;

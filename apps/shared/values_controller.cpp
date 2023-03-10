@@ -474,7 +474,7 @@ void ValuesController::initValueCells() {
     EvenOddExpressionCell *valueCell = valueCells(i);
     assert(valueCell);
     valueCell->setFont(k_cellFont);
-    valueCell->setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
+    valueCell->setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
     // TODO: Factorize margin computation
     valueCell->setLeftMargin(EvenOddCell::k_horizontalMargin);
     valueCell->setRightMargin(EvenOddCell::k_horizontalMargin);

@@ -14,9 +14,9 @@ int ProductLayoutNode::serialize(char* buffer, int bufferSize,
       numberOfSignificantDigits);
 }
 
-void ProductLayoutNode::render(KDContext* ctx, KDPoint p, KDFont::Size font,
-                               KDColor expressionColor,
-                               KDColor backgroundColor) {
+void ProductLayoutNode::render(KDContext* ctx, KDPoint p,
+                               KDGlyph::Style style) {
+  KDFont::Size font = style.font;
   // Compute sizes.
   KDSize upperBoundSize = upperBoundLayout()->layoutSize(font);
   KDSize lowerBoundNEqualsSize = lowerBoundSizeWithVariableEquals(font);
@@ -32,7 +32,7 @@ void ProductLayoutNode::render(KDContext* ctx, KDPoint p, KDFont::Size font,
                               argumentLayout()->baseline(font) -
                                   (SymbolHeight(font) + 1) / 2),
              k_lineThickness, SymbolHeight(font)),
-      expressionColor);
+      style.glyphColor);
   ctx->fillRect(
       KDRect(p.x() +
                  std::max(
@@ -43,7 +43,7 @@ void ProductLayoutNode::render(KDContext* ctx, KDPoint p, KDFont::Size font,
                               argumentLayout()->baseline(font) -
                                   (SymbolHeight(font) + 1) / 2),
              SymbolWidth(font), k_lineThickness),
-      expressionColor);
+      style.glyphColor);
   ctx->fillRect(
       KDRect(p.x() +
                  std::max({0, (upperBoundSize.width() - SymbolWidth(font)) / 2,
@@ -55,10 +55,10 @@ void ProductLayoutNode::render(KDContext* ctx, KDPoint p, KDFont::Size font,
                               argumentLayout()->baseline(font) -
                                   (SymbolHeight(font) + 1) / 2),
              k_lineThickness, SymbolHeight(font)),
-      expressionColor);
+      style.glyphColor);
 
   // Render the "n=" and the parentheses.
-  SequenceLayoutNode::render(ctx, p, font, expressionColor, backgroundColor);
+  SequenceLayoutNode::render(ctx, p, style);
 }
 
 }  // namespace Poincare

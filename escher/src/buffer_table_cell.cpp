@@ -14,8 +14,12 @@ BufferTableCell::BufferTableCell(KDFont::Size font, float horizontalAlignment,
                                  KDColor backgroundColor,
                                  size_t maxNumberOfChars)
     : TableCell(),
-      m_labelView(font, horizontalAlignment, verticalAlignment, textColor,
-                  backgroundColor, maxNumberOfChars),
+      m_labelView({{.glyphColor = textColor,
+                    .backgroundColor = backgroundColor,
+                    .font = font},
+                   .horizontalAlignment = horizontalAlignment,
+                   .verticalAlignment = verticalAlignment},
+                  maxNumberOfChars),
       m_backgroundColor(backgroundColor) {}
 
 void BufferTableCell::setHighlighted(bool highlight) {

@@ -19,8 +19,8 @@ class EditableExpressionModelCell : public HighlightCell {
       Responder* parentResponder,
       InputEventHandlerDelegate* inputEventHandlerDelegate,
       LayoutFieldDelegate* layoutDelegate,
-      float horizontalAlignment = KDContext::k_alignLeft,
-      float verticalAlignment = KDContext::k_alignCenter,
+      float horizontalAlignment = KDGlyph::k_alignLeft,
+      float verticalAlignment = KDGlyph::k_alignCenter,
       KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite,
       KDFont::Size font = KDFont::Size::Large);
   void setLayout(Poincare::Layout layout) {

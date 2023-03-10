@@ -12,20 +12,14 @@ BannerView::BannerView(Responder* parentResponder,
                        TextFieldDelegate* textFieldDelegate)
     : Shared::XYBannerView(parentResponder, inputEventHandlerDelegate,
                            textFieldDelegate),
-      m_derivativeView(k_font, KDContext::k_alignCenter,
-                       KDContext::k_alignCenter, TextColor(),
-                       BackgroundColor()),
-      m_tangentEquationView(k_font, I18n::Message::LinearRegressionFormula,
-                            KDContext::k_alignCenter, KDContext::k_alignCenter,
-                            TextColor(), BackgroundColor()),
-      m_aView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter,
-              TextColor(), BackgroundColor()),
-      m_bView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter,
-              TextColor(), BackgroundColor()) {
+      m_derivativeView(k_defaultFormat),
+      m_tangentEquationView(I18n::Message::LinearRegressionFormula,
+                            k_defaultFormat),
+      m_aView(k_defaultFormat),
+      m_bView(k_defaultFormat) {
   for (int i = 0; i < k_maxNumberOfInterests; i++) {
-    m_interestMessageView[i] = MessageTextView(
-        k_font, I18n::Message::Default, KDContext::k_alignCenter,
-        KDContext::k_alignCenter, TextColor(), BackgroundColor());
+    m_interestMessageView[i] =
+        MessageTextView(I18n::Message::Default, k_defaultFormat);
   }
 }
 

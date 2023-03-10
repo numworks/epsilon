@@ -20,17 +20,17 @@ CalculationController::CalculationController(Responder *parentResponder,
     m_seriesTitleCells[i].setFont(KDFont::Size::Small);
   }
   for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
-    m_calculationTitleCells[i].setAlignment(KDContext::k_alignRight,
-                                            KDContext::k_alignCenter);
+    m_calculationTitleCells[i].setAlignment(KDGlyph::k_alignRight,
+                                            KDGlyph::k_alignCenter);
     m_calculationTitleCells[i].setMessageFont(KDFont::Size::Small);
-    m_calculationSymbolCells[i].setAlignment(KDContext::k_alignCenter,
-                                             KDContext::k_alignCenter);
+    m_calculationSymbolCells[i].setAlignment(KDGlyph::k_alignCenter,
+                                             KDGlyph::k_alignCenter);
     m_calculationSymbolCells[i].setMessageFont(KDFont::Size::Small);
-    m_calculationModeTitleCells[i].setAlignment(KDContext::k_alignRight,
-                                                KDContext::k_alignCenter);
+    m_calculationModeTitleCells[i].setAlignment(KDGlyph::k_alignRight,
+                                                KDGlyph::k_alignCenter);
     m_calculationModeTitleCells[i].setFont(KDFont::Size::Small);
-    m_calculationModeSymbolCells[i].setAlignment(KDContext::k_alignCenter,
-                                                 KDContext::k_alignCenter);
+    m_calculationModeSymbolCells[i].setAlignment(KDGlyph::k_alignCenter,
+                                                 KDGlyph::k_alignCenter);
     m_calculationModeSymbolCells[i].setFont(KDFont::Size::Small);
   }
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {

@@ -24,12 +24,8 @@ namespace Solver {
 constexpr KDColor SolutionsController::ContentView::k_backgroundColor;
 
 SolutionsController::ContentView::ContentView(SolutionsController *controller)
-    : m_warningMessageView0(k_warningMessageFont, I18n::Message::Default,
-                            KDContext::k_alignCenter, KDContext::k_alignCenter,
-                            KDColorBlack, k_backgroundColor),
-      m_warningMessageView1(k_warningMessageFont, I18n::Message::Default,
-                            KDContext::k_alignCenter, KDContext::k_alignCenter,
-                            KDColorBlack, k_backgroundColor),
+    : m_warningMessageView0(I18n::Message::Default, k_warningFormat),
+      m_warningMessageView1(I18n::Message::Default, k_warningFormat),
       m_selectableTableView(controller, controller, controller, controller),
       m_displayWarningMoreSolutions(false) {
   m_selectableTableView.setBackgroundColor(k_backgroundColor);
@@ -126,8 +122,8 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
 
 SolutionsController::SolutionsController(Responder *parentResponder)
     : ViewController(parentResponder),
-      m_deltaCell(KDContext::k_alignCenter, KDContext::k_alignCenter,
-                  KDColorBlack, KDColorWhite, k_deltaFont),
+      m_deltaCell(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter, KDColorBlack,
+                  KDColorWhite, k_deltaFont),
       m_contentView(this) {
   const char *delta =
       GlobalPreferences::sharedGlobalPreferences->discriminantSymbol();
@@ -149,8 +145,8 @@ SolutionsController::SolutionsController(Responder *parentResponder)
     m_approximateValueCells[i].setFont(k_solutionsFont);
   }
   for (int i = 0; i < k_numberOfSymbolCells; i++) {
-    m_symbolCells[i].setAlignment(KDContext::k_alignCenter,
-                                  KDContext::k_alignCenter);
+    m_symbolCells[i].setAlignment(KDGlyph::k_alignCenter,
+                                  KDGlyph::k_alignCenter);
     m_symbolCells[i].setFont(k_solutionsFont);
   }
 }

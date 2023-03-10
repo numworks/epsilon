@@ -99,8 +99,8 @@ void App::displayWarning(I18n::Message warningMessage1,
                          I18n::Message warningMessage2, bool specialExitKeys) {
   m_warningController.setLabel(warningMessage1, warningMessage2,
                                specialExitKeys);
-  displayModalViewController(&m_warningController, KDContext::k_alignCenter,
-                             KDContext::k_alignCenter);
+  displayModalViewController(&m_warningController, KDGlyph::k_alignCenter,
+                             KDGlyph::k_alignCenter);
 }
 
 void App::didBecomeActive(Window* window) {

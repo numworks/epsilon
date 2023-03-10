@@ -6,8 +6,9 @@ namespace Escher {
 MessageTableCellWithExpression::MessageTableCellWithExpression(
     I18n::Message message)
     : MessageTableCell(message),
-      m_subtitleView(KDContext::k_alignRight, KDContext::k_alignCenter,
-                     Palette::GrayDark) {}
+      m_subtitleView(
+          KDGlyph::Format{{.glyphColor = Palette::GrayDark},
+                          .horizontalAlignment = KDGlyph::k_alignRight}) {}
 
 void MessageTableCellWithExpression::setHighlighted(bool highlight) {
   MessageTableCell::setHighlighted(highlight);

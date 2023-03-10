@@ -11,11 +11,8 @@ namespace Escher {
 ExpressionView::ExpressionView(float horizontalAlignment,
                                float verticalAlignment, KDColor textColor,
                                KDColor backgroundColor, KDFont::Size font)
-    : m_textColor(textColor),
-      m_backgroundColor(backgroundColor),
-      m_font(font),
-      m_horizontalAlignment(horizontalAlignment),
-      m_verticalAlignment(verticalAlignment),
+    : GlyphsView(font, horizontalAlignment, verticalAlignment, textColor,
+                 backgroundColor),
       m_horizontalMargin(0) {}
 
 bool ExpressionView::setLayout(Layout layoutR) {
@@ -30,27 +27,6 @@ bool ExpressionView::setLayout(Layout layoutR) {
     markRectAsDirty(bounds());
   }
   return shouldRedraw;
-}
-
-void ExpressionView::setBackgroundColor(KDColor backgroundColor) {
-  if (m_backgroundColor != backgroundColor) {
-    m_backgroundColor = backgroundColor;
-    markRectAsDirty(bounds());
-  }
-}
-
-void ExpressionView::setTextColor(KDColor textColor) {
-  if (textColor != m_textColor) {
-    m_textColor = textColor;
-    markRectAsDirty(bounds());
-  }
-}
-
-void ExpressionView::setAlignment(float horizontalAlignment,
-                                  float verticalAlignment) {
-  m_horizontalAlignment = horizontalAlignment;
-  m_verticalAlignment = verticalAlignment;
-  markRectAsDirty(bounds());
 }
 
 int ExpressionView::numberOfLayouts() const {

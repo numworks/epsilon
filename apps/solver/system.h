@@ -29,15 +29,11 @@ class System {
   System(EquationStore* store) : m_store(store) {}
 
   constexpr static int k_maxNumberOfExactSolutions =
-      Poincare::Expression::k_maxNumberOfVariables >
-              Poincare::Expression::k_maxPolynomialDegree + 1
-          ? Poincare::Expression::k_maxNumberOfVariables
-          : Poincare::Expression::k_maxPolynomialDegree + 1;
+      std::max(Poincare::Expression::k_maxNumberOfVariables,
+               Poincare::Expression::k_maxPolynomialDegree + 1);
   constexpr static int k_maxNumberOfApproximateSolutions = 10;
   constexpr static int k_maxNumberOfSolutions =
-      k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions
-          ? k_maxNumberOfExactSolutions
-          : k_maxNumberOfApproximateSolutions;
+      std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
 
   // System analysis
   Type type() const { return m_type; }
@@ -80,6 +76,8 @@ class System {
   void tidy(char* treePoolCursor = nullptr);
 
  private:
+  constexpr static char k_parameterPrefix = 't';
+
   Error privateExactSolve(Poincare::Context* context);
   Error simplifyAndFindVariables(Poincare::Context* context,
                                  Poincare::Expression* simplifiedEquations);

@@ -290,8 +290,8 @@ System::Error System::solveLinearSystem(Context *context,
       ++abChildren;
     }
     assert(parameterSuffix <= '9');
-    const char parameterName[] = {'t', static_cast<char>(parameterSuffix++),
-                                  '\0'};
+    const char parameterName[] = {k_parameterPrefix,
+                                  static_cast<char>(parameterSuffix++), '\0'};
     ab.addChildAtIndexInPlace(
         Symbol::Builder(parameterName, parameterNameLength), abChildren,
         abChildren);

@@ -437,7 +437,7 @@ void AbstractPlotView::layoutSubviews(bool force) {
   }
   CursorView *cursor = cursorView();
   if (cursor) {
-    cursor->setCursorFrame(cursorFrame(), force);
+    cursor->setCursorFrame(this, cursorFrame(), force);
   }
   View *ornament = ornamentView();
   if (ornament) {

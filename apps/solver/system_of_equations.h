@@ -39,12 +39,14 @@ class SystemOfEquations {
   Type type() const { return m_type; }
   int degree() const { return m_degree; }
   const char* variable(int index) const {
-    assert(index < m_numberOfResolutionVariables);
+    assert(index < m_numberOfResolutionVariables &&
+           m_variables[index][0] != '\0');
     return m_variables[index];
   }
   size_t numberOfUserVariables() const { return m_numberOfUserVariables; }
   const char* userVariable(int index) const {
-    assert(index < m_numberOfUserVariables);
+    assert(index < m_numberOfUserVariables &&
+           m_userVariables[index][0] != '\0');
     return m_userVariables[index];
   }
   bool overrideUserVariables() const { return m_overrideUserVariables; }

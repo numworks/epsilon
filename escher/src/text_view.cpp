@@ -45,4 +45,17 @@ void TextView::drawRect(KDContext* ctx, KDRect rect) const {
                           m_textColor, m_backgroundColor);
 }
 
+void TextView::defaultInitialization(CellWidget::Type type) {
+  InitializationParameters parameters =
+      type == CellWidget::Type::Label
+          ? k_labelInitializationParameters
+          : (type == CellWidget::Type::SubLabel
+                 ? k_subLabelInitializationParameters
+                 : k_accessoryInitializationParameters);
+  setFont(parameters.fontSize);
+  setTextColor(parameters.textColor);
+  setBackgroundColor(KDColorWhite);
+  setAlignment(parameters.horizontalAlginment, parameters.verticalAlignment);
+}
+
 }  // namespace Escher

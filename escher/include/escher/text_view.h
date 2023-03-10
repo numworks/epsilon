@@ -41,14 +41,25 @@ class TextView : public View, public CellWidget {
 
   // CellWidget
   const View* view() const override { return this; }
-  void defaultInitialization(CellWidget::Type type) override {
-    bool isLabel = type == CellWidget::Type::Label;
-    setFont(isLabel ? KDFont::Size::Large : KDFont::Size::Small);
-    setTextColor(isLabel ? KDColorBlack : Palette::GrayDark);
-    setBackgroundColor(KDColorWhite);
-    setAlignment(KDContext::k_alignLeft,
-                 isLabel ? KDContext::k_alignTop : KDContext::k_alignCenter);
-  }
+
+  typedef struct {
+    KDFont::Size fontSize;
+    KDColor textColor;
+    float horizontalAlginment;
+    float verticalAlignment;
+  } InitializationParameters;
+  constexpr static InitializationParameters k_labelInitializationParameters = {
+      KDFont::Size::Large, KDColorBlack, KDContext::k_alignLeft,
+      KDContext::k_alignCenter};
+  constexpr static InitializationParameters k_subLabelInitializationParameters =
+      {KDFont::Size::Small, Palette::GrayDark, KDContext::k_alignLeft,
+       KDContext::k_alignCenter};
+  constexpr static InitializationParameters
+      k_accessoryInitializationParameters = {KDFont::Size::Large, KDColorBlack,
+                                             KDContext::k_alignRight,
+                                             KDContext::k_alignCenter};
+  void defaultInitialization(CellWidget::Type type) override;
+
   void setWidgetBackgroundColor(KDColor color) override {
     setBackgroundColor(color);
   }

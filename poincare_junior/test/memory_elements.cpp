@@ -263,6 +263,10 @@ QUIZ_CASE(pcj_node) {
   assert(n1.hasChild(n1.childAtIndex(2)));
   assert(!n1.hasSibling(n1.childAtIndex(2)));
   assert(n1.nextNode().hasSibling(n1.childAtIndex(2)));
+  assert(n1.commonAncestorWith(n1) == n1);
+  assert(n1.commonAncestorWith(n1.childAtIndex(0).childAtIndex(1)) == n1);
+  assert(n1.childAtIndex(0).childAtIndex(1).commonAncestorWith(n1) == n1);
+  assert(n1.childAtIndex(0).childAtIndex(1).commonAncestorWith(n1.childAtIndex(2)) == n1);
 }
 
 QUIZ_CASE(pcj_node_size) {

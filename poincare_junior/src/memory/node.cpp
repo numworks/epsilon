@@ -176,6 +176,19 @@ const Node Node::root() const {
   return ancestor;
 }
 
+const Node Node::commonAncestorWith(const Node node) const {
+  if (block() > node.block()) {
+    return node.commonAncestorWith(*this);
+  }
+  // *this is leftmost node
+  Node currentNode = node;
+  while (currentNode.block() > block()) {
+    currentNode = currentNode.parent();
+    assert(!currentNode.isUninitialized());
+  }
+  return currentNode;
+}
+
 int Node::numberOfDescendants(bool includeSelf) const {
   int result = includeSelf ? 1 : 0;
   Node nextTreeNode = nextTree();

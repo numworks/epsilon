@@ -17,8 +17,8 @@ KDPoint ParenthesisLayout::PositionOfChild(const Node node, int childIndex, KDFo
 }
 
 void ParenthesisLayout::RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
-  KDSize size = Render::Size(node, font);
-  KDCoordinate y = p.y() + (size.height() - KDFont::GlyphSize(font).height()) / 2;
+  KDSize size = Size(node, font);
+  KDCoordinate y = p.y() + Baseline(node, font) - (KDFont::GlyphSize(font).height()) / 2;
   KDCoordinate x = p.x();
   ctx->drawString("(", KDPoint(x, y), KDGlyph::Style{
     .glyphColor = expressionColor,

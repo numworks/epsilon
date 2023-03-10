@@ -17,6 +17,8 @@ class TemplatedSequenceContext {
   TemplatedSequenceContext();
   void resetCache();
   void stepCommonRankUntilRank(int n, SequenceContext* sqctx);
+  void stepIndependentRankUntilRank(int sequenceIndex, int n,
+                                    SequenceContext* sqctx);
   void step(SequenceContext* sqctx, int sequenceIndex = -1);
   constexpr static bool IsAcceptableRank(int n) {
     return 0 <= n && n <= k_maxRecurrentRank;
@@ -30,14 +32,8 @@ class TemplatedSequenceContext {
   int independentRank(int sequenceIndex) {
     return m_independentRanks[sequenceIndex];
   }
-  void setIndependentRank(int rank, int sequenceIndex) {
-    m_independentRanks[sequenceIndex] = rank;
-  }
   T independentSequenceValue(int sequenceIndex, int depth) {
     return m_independentRankValues[sequenceIndex][depth];
-  }
-  void setIndependentSequenceValue(T value, int sequenceIndex, int depth) {
-    m_independentRankValues[sequenceIndex][depth] = value;
   }
 
  private:
@@ -100,9 +96,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   }
 
   template <typename T>
-  void stepSequenceAtIndex(int sequenceIndex) {
+  void stepIndependentRankUntilRank(int sequenceIndex, int n) {
     static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->step(this, sequenceIndex);
+        ->stepIndependentRankUntilRank(sequenceIndex, n, this);
   }
 
   SequenceStore* sequenceStore() { return m_sequenceStore; }
@@ -131,21 +127,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   }
 
   template <typename T>
-  void setIndependentRank(int rank, int sequenceIndex) {
-    static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->setIndependentRank(rank, sequenceIndex);
-  }
-
-  template <typename T>
   T independentSequenceValue(int sequenceIndex, int depth) {
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
         ->independentSequenceValue(sequenceIndex, depth);
-  }
-
-  template <typename T>
-  void setIndependentSequenceValue(T value, int sequenceIndex, int depth) {
-    static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->setIndependentSequenceValue(value, sequenceIndex, depth);
   }
 
  private:

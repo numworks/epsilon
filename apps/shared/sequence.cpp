@@ -191,17 +191,7 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
     return NAN;
   }
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
-  if (sqctx->independentRank<T>(sequenceIndex) > n ||
-      sqctx->independentRank<T>(sequenceIndex) < 0) {
-    // Reset cache indexes and cache values
-    sqctx->setIndependentRank<T>(-1, sequenceIndex);
-    for (int i = 0; i < SequenceStore::k_maxRecurrenceDepth + 1; i++) {
-      sqctx->setIndependentSequenceValue<T>(NAN, sequenceIndex, i);
-    }
-  }
-  while (sqctx->independentRank<T>(sequenceIndex) < n) {
-    sqctx->stepSequenceAtIndex<T>(sequenceIndex);
-  }
+  sqctx->stepIndependentRankUntilRank<T>(sequenceIndex, n);
   return sqctx->independentSequenceValue<T>(sequenceIndex, 0);
 }
 

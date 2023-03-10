@@ -64,11 +64,12 @@ StoreMenuController::StoreMenuController()
   m_abortController.setContentMessage(I18n::Message::InvalidInputWarning);
   /* We need to set the width early since minimalSizeForOptimalDisplay will be
    * called before willDisplayCell. */
-  m_cell.setFrame(KDRect(0, 0,
-                         Ion::Display::Width - Metric::PopUpLeftMargin -
-                             Metric::PopUpRightMargin,
-                         0),
-                  false);
+  view()->setChildFrame(&m_cell,
+                        KDRect(0, 0,
+                               Ion::Display::Width - Metric::PopUpLeftMargin -
+                                   Metric::PopUpRightMargin,
+                               0),
+                        false);
   m_cell.expressionField()->setTextEditionBuffer(
       m_savedDraftTextBuffer, AbstractTextField::MaxBufferSize());
 }

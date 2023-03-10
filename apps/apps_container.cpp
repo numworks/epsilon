@@ -33,7 +33,7 @@ AppsContainer::AppsContainer()
       m_initialAppSnapshot(nullptr)
 #endif
 {
-  m_emptyBatteryWindow.setFrame(KDRectScreen, false);
+  m_emptyBatteryWindow.setAbsoluteFrame(KDRectScreen, false);
   Ion::Storage::FileSystem::sharedFileSystem->setDelegate(this);
   Shared::RecordRestrictiveExtensions::
       registerRestrictiveExtensionsToSharedStorage();

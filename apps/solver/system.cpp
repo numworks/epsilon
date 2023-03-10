@@ -250,26 +250,38 @@ System::Error System::solveLinearSystem(Context *context,
 
   size_t parameterNameLength = n - rank == 1 ? 1 : 2;
   char parameterSuffix = '1';
+  size_t variable = n - 1;
   while (rank < n) {
-    // Find the last unbound variable, i.e. the first row that is not
-    // triangular, starting from the bottom.
-    size_t variable;
-    for (size_t k = 0; k < m; k++) {
-      bool rowIsTriangular =
-          ab.matrixChild(m - 1 - k, n - 1 - k).isNull(context) !=
-          TrinaryBoolean::True;
-      size_t x = 0;
-      while (rowIsTriangular && x < n - 1 - k) {
-        if (ab.matrixChild(m - 1 - k, x).isNull(context) !=
-            TrinaryBoolean::True) {
-          rowIsTriangular = false;
-        }
-        x++;
+    /* Find the last free variable
+     * e.g. with n = 3 and variable = x1
+     *   - the row (1 1 -1 0) qualifies x0, move to the next row.
+     *   - the row (0 0 2 3) does not qualify x1. Since the matrix is in row
+     *     echelon form, the next row won't qualify x1 either: x1 is free.
+     *   - the row (0 1 0 4) qualifies x1: x1 is not free
+     *   - the row (0 1 2 -3) cannot be encountered: trying to find if x1 is
+     *     free means x2 is already bound, so row canonization form should have
+     *     eliminated coefficient for x2. */
+    TrinaryBoolean variableIsFree = TrinaryBoolean::Unknown;
+    for (size_t row = 0; variableIsFree == TrinaryBoolean::Unknown && row < m;
+         row++) {
+      bool noPreviousVariables = true;
+      for (size_t col = 0; noPreviousVariables && col < variable; col++) {
+        noPreviousVariables =
+            noPreviousVariables &&
+            ab.matrixChild(row, col).isNull(context) == TrinaryBoolean::True;
       }
-      if (!rowIsTriangular) {
-        variable = n - 1 - k;
-        break;
+      if (noPreviousVariables) {
+        bool rowQualifiesVariable =
+            ab.matrixChild(row, variable).isNull(context) !=
+            TrinaryBoolean::True;
+        variableIsFree =
+            rowQualifiesVariable ? TrinaryBoolean::False : TrinaryBoolean::True;
       }
+    }
+    if (variableIsFree == TrinaryBoolean::False) {
+      assert(variable > 0);
+      --variable;
+      continue;
     }
     // Add the row variable=parameter to increase the rank of the system.
     for (size_t i = 0; i < n; i++) {
@@ -292,6 +304,7 @@ System::Error System::solveLinearSystem(Context *context,
       return Error::EquationUndefined;
     }
   }
+
   assert(rank == n);
   // System is fully qualified, register the parametric solutions.
   m_numberOfSolutions = 0;

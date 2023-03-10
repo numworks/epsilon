@@ -64,12 +64,12 @@ void SelectableViewWithMessages::layoutSubviews(bool force) {
 
   // Layout the text
   for (int i = 0; i < m_numberOfMessages; i++) {
-    m_messageLines[i].setFrame(
-        KDRect(0, defOrigin, bounds().width(), textHeight), force);
+    setChildFrame(&m_messageLines[i],
+                  KDRect(0, defOrigin, bounds().width(), textHeight), force);
     defOrigin += textHeight;
   }
   for (int i = m_numberOfMessages; i < k_maxNumberOfLines; i++) {
-    m_messageLines[i].setFrame(KDRectZero, force);
+    setChildFrame(&m_messageLines[i], KDRectZero, force);
   }
 }
 

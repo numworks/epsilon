@@ -40,7 +40,7 @@ void VBlankTestController::ContentView::setColor(KDColor color) {
 }
 
 void VBlankTestController::ContentView::layoutSubviews(bool force) {
-  m_vBlankStateView.setFrame(KDRectScreen, force);
+  setChildFrame(&m_vBlankStateView, KDRectScreen, force);
 }
 
 }  // namespace HardwareTest

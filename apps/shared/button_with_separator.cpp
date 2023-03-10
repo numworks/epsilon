@@ -58,12 +58,12 @@ void ButtonWithSeparator::drawRect(KDContext* ctx, KDRect rect) const {
 void ButtonWithSeparator::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  m_messageTextView.setFrame(
-      KDRect(m_horizontalMargins + k_lineThickness,
-             k_margin + k_lineThickness + k_lineThickness,
-             width - 2 * m_horizontalMargins - 2 * k_lineThickness,
-             height - 5 * k_lineThickness - k_margin),
-      force);
+  setChildFrame(&m_messageTextView,
+                KDRect(m_horizontalMargins + k_lineThickness,
+                       k_margin + k_lineThickness + k_lineThickness,
+                       width - 2 * m_horizontalMargins - 2 * k_lineThickness,
+                       height - 5 * k_lineThickness - k_margin),
+                force);
 }
 
 KDSize ButtonWithSeparator::minimalSizeForOptimalDisplay() const {

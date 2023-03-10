@@ -345,15 +345,17 @@ void SumGraphController::LegendView::layoutSubviews(Step step, bool force) {
   KDSize legendSize = m_legend.minimalSizeForOptimalDisplay();
 
   if (legendSize.width() > 0) {
-    m_sum.setFrame(KDRect(0, k_symbolHeightMargin, width - legendSize.width(),
-                          m_sum.minimalSizeForOptimalDisplay().height()),
-                   force);
-    m_legend.setFrame(
+    setChildFrame(&m_sum,
+                  KDRect(0, k_symbolHeightMargin, width - legendSize.width(),
+                         m_sum.minimalSizeForOptimalDisplay().height()),
+                  force);
+    setChildFrame(
+        &m_legend,
         KDRect(width - legendSize.width(), 0, legendSize.width(), heigth),
         force);
   } else {
-    m_sum.setFrame(bounds(), force);
-    m_legend.setFrame(KDRectZero, force);
+    setChildFrame(&m_sum, bounds(), force);
+    setChildFrame(&m_legend, KDRectZero, force);
   }
 
   KDRect frame =
@@ -363,7 +365,7 @@ void SumGraphController::LegendView::layoutSubviews(Step step, bool force) {
                    k_symbolHeightMargin + k_sigmaHeight / 2 -
                        (step == Step::SecondParameter) * editableZoneHeight(),
                    editableZoneWidth(), editableZoneHeight());
-  m_editableZone.setFrame(frame, force);
+  setChildFrame(&m_editableZone, frame, force);
 }
 
 Layout SumGraphController::LegendView::defaultSumResultLayout(

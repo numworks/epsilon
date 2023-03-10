@@ -5,7 +5,7 @@ namespace Escher {
 EvenOddCellWithEllipsis::EvenOddCellWithEllipsis() : EvenOddCell() {}
 
 void EvenOddCellWithEllipsis::layoutSubviews(bool force) {
-  m_ellipsisView.setFrame(bounds(), force);
+  setChildFrame(&m_ellipsisView, bounds(), force);
 }
 
 }  // namespace Escher

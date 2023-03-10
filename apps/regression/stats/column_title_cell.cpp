@@ -21,15 +21,16 @@ void ColumnTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
 void ColumnTitleCell::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width() - Metric::TableSeparatorThickness;
   KDCoordinate height = bounds().height();
-  m_firstBufferTextView.setFrame(
+  setChildFrame(
+      &m_firstBufferTextView,
       KDRect(Metric::TableSeparatorThickness, k_colorIndicatorThickness,
              width / 2, height - k_colorIndicatorThickness),
       force);
-  m_secondBufferTextView.setFrame(
-      KDRect(Metric::TableSeparatorThickness + width / 2,
-             k_colorIndicatorThickness, width - width / 2,
-             height - k_colorIndicatorThickness),
-      force);
+  setChildFrame(&m_secondBufferTextView,
+                KDRect(Metric::TableSeparatorThickness + width / 2,
+                       k_colorIndicatorThickness, width - width / 2,
+                       height - k_colorIndicatorThickness),
+                force);
 }
 
 }  // namespace Regression

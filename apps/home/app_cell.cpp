@@ -31,9 +31,10 @@ View *AppCell::subviewAtIndex(int index) {
 }
 
 void AppCell::layoutSubviews(bool force) {
-  m_iconView.setFrame(KDRect((bounds().width() - k_iconWidth) / 2, k_iconMargin,
-                             k_iconWidth, k_iconHeight),
-                      force);
+  setChildFrame(&m_iconView,
+                KDRect((bounds().width() - k_iconWidth) / 2, k_iconMargin,
+                       k_iconWidth, k_iconHeight),
+                force);
   KDSize nameSize = textView()->minimalSizeForOptimalDisplay();
   const_cast<TextView *>(textView())
       ->setFrame(

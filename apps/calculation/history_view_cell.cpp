@@ -224,9 +224,9 @@ void HistoryViewCell::layoutSubviews(bool force) {
 
   // Required even if ellipsisFrame is KDRectZero, to mark previous rect as
   // dirty
-  m_ellipsis.setFrame(ellipsisFrame, force);
-  m_inputView.setFrame(inputFrame, force);
-  m_scrollableOutputView.setFrame(outputFrame, force);
+  setChildFrame(&m_ellipsis, ellipsisFrame, force);
+  setChildFrame(&m_inputView, inputFrame, force);
+  setChildFrame(&m_scrollableOutputView, outputFrame, force);
 }
 
 void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth,

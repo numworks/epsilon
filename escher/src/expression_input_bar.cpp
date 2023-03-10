@@ -10,7 +10,8 @@ AbstractExpressionInputBar::AbstractExpressionInputBar()
     : m_line(Palette::GrayMiddle) {}
 
 void AbstractExpressionInputBar::layoutSubviews(bool force) {
-  m_line.setFrame(KDRect(0, 0, bounds().width(), k_separatorThickness), force);
+  setChildFrame(&m_line, KDRect(0, 0, bounds().width(), k_separatorThickness),
+                force);
   expressionField()->setFrame(KDRect(0, k_separatorThickness, bounds().width(),
                                      bounds().height() - k_separatorThickness),
                               force);

@@ -80,9 +80,10 @@ View* AbstractFunctionCell::subviewAtIndex(int index) {
 }
 
 void AbstractFunctionCell::layoutSubviews(bool force) {
-  m_ellipsisView.setFrame(KDRect(bounds().width() - k_parametersColumnWidth, 0,
-                                 k_parametersColumnWidth, bounds().height()),
-                          force);
+  setChildFrame(&m_ellipsisView,
+                KDRect(bounds().width() - k_parametersColumnWidth, 0,
+                       k_parametersColumnWidth, bounds().height()),
+                force);
   KDCoordinate leftMargin = k_colorIndicatorThickness + k_margin;
   KDCoordinate rightMargin = k_margin + k_parametersColumnWidth;
   KDCoordinate expressionHeight =
@@ -93,7 +94,8 @@ void AbstractFunctionCell::layoutSubviews(bool force) {
   if (displayFunctionType()) {
     KDCoordinate messageHeight =
         m_messageTextView.minimalSizeForOptimalDisplay().height();
-    m_messageTextView.setFrame(
+    setChildFrame(
+        &m_messageTextView,
         KDRect(leftMargin, bounds().height() - k_margin - messageHeight,
                availableWidth, messageHeight),
         force);

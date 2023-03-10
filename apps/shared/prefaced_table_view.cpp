@@ -135,13 +135,14 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
 
   // Row preface
   if (hideRowPreface) {
-    m_rowPrefaceView.setFrame(KDRectZero, force);
+    setChildFrame(&m_rowPrefaceView, KDRectZero, force);
   } else {
     m_rowPrefaceView.setLeftMargin(m_mainTableView->leftMargin());
     m_rowPrefaceView.setContentOffset(
         KDPoint(m_mainTableView->contentOffset().x(), 0));
-    m_rowPrefaceView.setFrame(
-        KDRect(rect.x(), rect.y(), rect.width(), rowPrefaceHeight), force);
+    setChildFrame(&m_rowPrefaceView,
+                  KDRect(rect.x(), rect.y(), rect.width(), rowPrefaceHeight),
+                  force);
     assert(m_rowPrefaceView.leftMargin() == m_mainTableView->leftMargin());
     assert(m_rowPrefaceView.rightMargin() == m_mainTableView->rightMargin());
     assert(m_rowPrefaceView.topMargin() == 0);

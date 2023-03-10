@@ -19,15 +19,17 @@ EditableFunctionCell::EditableFunctionCell(
 }
 
 void EditableFunctionCell::layoutSubviews(bool force) {
-  m_ellipsisView.setFrame(KDRect(bounds().width() - k_parametersColumnWidth, 0,
-                                 k_parametersColumnWidth, bounds().height()),
-                          force);
+  setChildFrame(&m_ellipsisView,
+                KDRect(bounds().width() - k_parametersColumnWidth, 0,
+                       k_parametersColumnWidth, bounds().height()),
+                force);
   KDCoordinate leftMargin = k_colorIndicatorThickness + k_expressionMargin;
   KDCoordinate rightMargin = k_expressionMargin + k_parametersColumnWidth;
   KDCoordinate availableWidth = bounds().width() - leftMargin - rightMargin;
-  m_expressionField.setFrame(
-      KDRect(leftMargin, 0, availableWidth, bounds().height()), force);
-  m_messageTextView.setFrame(KDRectZero, force);
+  setChildFrame(&m_expressionField,
+                KDRect(leftMargin, 0, availableWidth, bounds().height()),
+                force);
+  setChildFrame(&m_messageTextView, KDRectZero, force);
 }
 
 void EditableFunctionCell::updateSubviewsBackgroundAfterChangingState() {

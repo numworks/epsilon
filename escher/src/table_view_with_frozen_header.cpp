@@ -33,7 +33,8 @@ View* TableViewWithFrozenHeader::subviewAtIndex(int index) {
 void TableViewWithFrozenHeader::layoutSubviews(bool force) {
   KDCoordinate titleHeight =
       KDFont::GlyphHeight(KDFont::Size::Small) + k_titleMargin;
-  m_headerView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
+  setChildFrame(&m_headerView, KDRect(0, 0, bounds().width(), titleHeight),
+                force);
   /* SelectableTableView must be given a width before computing height. */
   m_selectableTableView->initSize(bounds());
   KDCoordinate tableHeight =

@@ -101,9 +101,10 @@ View* EvenOddDoubleBufferTextCellWithSeparator::subviewAtIndex(int index) {
 void EvenOddDoubleBufferTextCellWithSeparator::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width() - k_separatorWidth;
   KDCoordinate height = bounds().height();
-  m_firstBufferTextView.setFrame(KDRect(k_separatorWidth, 0, width / 2, height),
-                                 force);
-  m_secondBufferTextView.setFrame(
+  setChildFrame(&m_firstBufferTextView,
+                KDRect(k_separatorWidth, 0, width / 2, height), force);
+  setChildFrame(
+      &m_secondBufferTextView,
       KDRect(k_separatorWidth + width / 2, 0, width - width / 2, height),
       force);
 }

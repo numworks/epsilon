@@ -50,7 +50,7 @@ View* ScrollableTwoExpressionsCell::subviewAtIndex(int index) {
 }
 
 void ScrollableTwoExpressionsCell::layoutSubviews(bool force) {
-  m_view.setFrame(bounds(), force);
+  setChildFrame(&m_view, bounds(), force);
 }
 
 }  // namespace Shared

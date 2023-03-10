@@ -47,18 +47,21 @@ KDSize LegendView::minimalSizeForOptimalDisplay() const {
 }
 
 void LegendView::layoutSubviews(bool force) {
-  m_pValueIcon.setFrame(KDRect(0, k_offsetTop, k_diameter, k_diameter), force);
+  setChildFrame(&m_pValueIcon, KDRect(0, k_offsetTop, k_diameter, k_diameter),
+                force);
   KDSize pLabelSize = m_pValueLabel.minimalSizeForOptimalDisplay();
-  m_pValueLabel.setFrame(KDRect(k_diameter + k_marginBetween, 0, pLabelSize),
-                         force);
+  setChildFrame(&m_pValueLabel,
+                KDRect(k_diameter + k_marginBetween, 0, pLabelSize), force);
 
   assert(k_offsetTop + k_diameter <= pLabelSize.height());
   KDCoordinate secondRowY = pLabelSize.height();
-  m_alphaIcon.setFrame(
-      KDRect(0, secondRowY + k_offsetTop, k_diameter, k_diameter), force);
+  setChildFrame(&m_alphaIcon,
+                KDRect(0, secondRowY + k_offsetTop, k_diameter, k_diameter),
+                force);
   KDSize aLabelSize = m_alphaLabel.minimalSizeForOptimalDisplay();
-  m_alphaLabel.setFrame(
-      KDRect(k_diameter + k_marginBetween, secondRowY, aLabelSize), force);
+  setChildFrame(&m_alphaLabel,
+                KDRect(k_diameter + k_marginBetween, secondRowY, aLabelSize),
+                force);
 }
 
 }  // namespace Inference

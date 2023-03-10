@@ -44,7 +44,8 @@ void PopupItemView::layoutSubviews(bool force) {
   }
   KDCoordinate yCaret =
       (cellSize.height() - caretSize.height()) / 2 + k_marginImageVertical;
-  m_caret.setFrame(
+  setChildFrame(
+      &m_caret,
       KDRect(KDPoint(2 * k_marginImageHorizontal + cellSize.width(), yCaret),
              caretSize),
       force);

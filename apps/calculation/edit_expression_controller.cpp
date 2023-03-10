@@ -38,7 +38,7 @@ void EditExpressionController::ContentView::layoutSubviews(bool force) {
   m_mainView->setFrame(mainViewFrame, force);
   KDRect inputViewFrame(0, bounds().height() - inputViewFrameHeight,
                         bounds().width(), inputViewFrameHeight);
-  m_expressionInputBar.setFrame(inputViewFrame, force);
+  setChildFrame(&m_expressionInputBar, inputViewFrame, force);
 }
 
 void EditExpressionController::ContentView::reload() {

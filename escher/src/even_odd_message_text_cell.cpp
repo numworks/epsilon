@@ -33,11 +33,11 @@ View* EvenOddMessageTextCell::subviewAtIndex(int index) {
 
 void EvenOddMessageTextCell::layoutSubviews(bool force) {
   KDRect boundsThis = bounds();
-  m_messageTextView.setFrame(
-      KDRect(m_leftMargin, 0,
-             boundsThis.width() - k_horizontalMargin - m_leftMargin,
-             boundsThis.height()),
-      force);
+  setChildFrame(&m_messageTextView,
+                KDRect(m_leftMargin, 0,
+                       boundsThis.width() - k_horizontalMargin - m_leftMargin,
+                       boundsThis.height()),
+                force);
 }
 
 }  // namespace Escher

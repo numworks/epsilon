@@ -112,10 +112,10 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     layoutSubviewsInRect(bounds(), force);
 
     // Column preface
-    m_columnPrefaceView.setFrame(KDRectZero, force);
+    setChildFrame(&m_columnPrefaceView, KDRectZero, force);
 
     // Intersection preface
-    m_prefaceIntersectionView.setFrame(KDRectZero, force);
+    setChildFrame(&m_prefaceIntersectionView, KDRectZero, force);
   } else {
     m_columnPrefaceView.setRightMargin(
         m_marginDelegate ? m_marginDelegate->columnPrefaceRightMargin() : 0);
@@ -136,9 +136,10 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     m_columnPrefaceView.setTopMargin(m_mainTableView->topMargin());
     m_columnPrefaceView.setContentOffset(
         KDPoint(0, m_mainTableView->contentOffset().y()));
-    m_columnPrefaceView.setFrame(KDRect(0, rowPrefaceHeight, columnPrefaceWidth,
-                                        bounds().height() - rowPrefaceHeight),
-                                 force);
+    setChildFrame(&m_columnPrefaceView,
+                  KDRect(0, rowPrefaceHeight, columnPrefaceWidth,
+                         bounds().height() - rowPrefaceHeight),
+                  force);
     assert(m_columnPrefaceView.leftMargin() == 0);
     assert(m_columnPrefaceView.topMargin() == m_mainTableView->topMargin());
     assert(m_columnPrefaceView.bottomMargin() ==
@@ -147,10 +148,10 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     // Intersection preface
     m_prefaceIntersectionView.setRightMargin(m_columnPrefaceView.rightMargin());
     m_prefaceIntersectionView.setBottomMargin(m_rowPrefaceView.bottomMargin());
-    m_prefaceIntersectionView.setFrame(
-        KDRect(0, 0, rowPrefaceHeight ? columnPrefaceWidth : 0,
-               rowPrefaceHeight),
-        force);
+    setChildFrame(&m_prefaceIntersectionView,
+                  KDRect(0, 0, rowPrefaceHeight ? columnPrefaceWidth : 0,
+                         rowPrefaceHeight),
+                  force);
     assert(m_prefaceIntersectionView.leftMargin() ==
            m_columnPrefaceView.leftMargin());
     assert(m_prefaceIntersectionView.rightMargin() ==

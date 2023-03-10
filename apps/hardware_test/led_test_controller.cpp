@@ -59,26 +59,28 @@ SolidColorView* LEDTestController::ContentView::LEDColorIndicatorView() {
 
 void LEDTestController::ContentView::layoutSubviews(bool force) {
   KDSize ledSize = m_ledView.minimalSizeForOptimalDisplay();
-  m_ledView.setFrame(KDRect((Ion::Display::Width - ledSize.width() -
-                             k_indicatorSize - k_indicatorMargin) /
-                                2,
-                            k_arrowLength + 2 * k_arrowMargin, ledSize.width(),
-                            ledSize.height()),
-                     force);
-  m_ledColorIndicatorView.setFrame(
-      KDRect((Ion::Display::Width - k_indicatorSize) / 2 +
-                 k_indicatorMargin / 2 + ledSize.width() / 2,
-             k_arrowLength + 2 * k_arrowMargin, k_indicatorSize,
-             k_indicatorSize),
-      force);
-  m_ledColorOutlineView.setFrame(
-      KDRect((Ion::Display::Width - k_indicatorSize) / 2 +
-                 k_indicatorMargin / 2 + ledSize.width() / 2 - 1,
-             k_arrowLength + 2 * k_arrowMargin - 1, k_indicatorSize + 2,
-             k_indicatorSize + 2),
-      force);
-  m_arrowView.setFrame(
-      KDRect(0, k_arrowMargin, bounds().width(), k_arrowLength), force);
+  setChildFrame(&m_ledView,
+                KDRect((Ion::Display::Width - ledSize.width() -
+                        k_indicatorSize - k_indicatorMargin) /
+                           2,
+                       k_arrowLength + 2 * k_arrowMargin, ledSize.width(),
+                       ledSize.height()),
+                force);
+  setChildFrame(&m_ledColorIndicatorView,
+                KDRect((Ion::Display::Width - k_indicatorSize) / 2 +
+                           k_indicatorMargin / 2 + ledSize.width() / 2,
+                       k_arrowLength + 2 * k_arrowMargin, k_indicatorSize,
+                       k_indicatorSize),
+                force);
+  setChildFrame(&m_ledColorOutlineView,
+                KDRect((Ion::Display::Width - k_indicatorSize) / 2 +
+                           k_indicatorMargin / 2 + ledSize.width() / 2 - 1,
+                       k_arrowLength + 2 * k_arrowMargin - 1,
+                       k_indicatorSize + 2, k_indicatorSize + 2),
+                force);
+  setChildFrame(&m_arrowView,
+                KDRect(0, k_arrowMargin, bounds().width(), k_arrowLength),
+                force);
 }
 
 int LEDTestController::ContentView::numberOfSubviews() const { return 4; }

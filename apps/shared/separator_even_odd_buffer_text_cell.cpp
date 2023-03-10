@@ -21,7 +21,7 @@ void SeparatorEvenOddBufferTextCell::layoutSubviews(bool force) {
              boundsThis.top(),
              boundsThis.width() - k_separatorWidth - 2 * k_horizontalMargin,
              boundsThis.height());
-  m_bufferTextView.setFrame(frame, force);
+  setChildFrame(&m_bufferTextView, frame, force);
 }
 
 }  // namespace Shared

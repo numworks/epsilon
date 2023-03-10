@@ -37,7 +37,7 @@ View* EditableTextCell::subviewAtIndex(int index) {
 
 void EditableTextCell::layoutSubviews(bool force) {
   KDRect cellBounds = bounds();
-  m_textField.setFrame(cellBounds, force);
+  setChildFrame(&m_textField, cellBounds, force);
 }
 
 void EditableTextCell::didBecomeFirstResponder() {

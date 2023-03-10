@@ -36,9 +36,10 @@ void ExpressionWithEqualSignView::layoutSubviews(bool force) {
   KDSize equalSize = m_equalSign.minimalSizeForOptimalDisplay();
   KDCoordinate expressionBaseline = layout().baseline(k_font);
   if (!m_showEqual) {
-    m_equalSign.setFrame(KDRectZero, force);
+    setChildFrame(&m_equalSign, KDRectZero, force);
   } else {
-    m_equalSign.setFrame(
+    setChildFrame(
+        &m_equalSign,
         KDRect(expressionSize.width() + Metric::CommonLargeMargin,
                expressionBaseline - equalSize.height() / 2, equalSize),
         force);

@@ -43,11 +43,11 @@ void ButtonCell::drawRect(KDContext* ctx, KDRect rect) const {
 void ButtonCell::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width();
   KDCoordinate height = bounds().height();
-  m_messageTextView.setFrame(
-      KDRect(m_horizontalMargins + k_lineThickness, k_lineThickness,
-             width - 2 * m_horizontalMargins - 2 * k_lineThickness,
-             height - 4 * k_lineThickness),
-      force);
+  setChildFrame(&m_messageTextView,
+                KDRect(m_horizontalMargins + k_lineThickness, k_lineThickness,
+                       width - 2 * m_horizontalMargins - 2 * k_lineThickness,
+                       height - 4 * k_lineThickness),
+                force);
 }
 
 KDSize ButtonCell::minimalSizeForOptimalDisplay() const {

@@ -31,7 +31,7 @@ View* EvenOddEditableTextCell::subviewAtIndex(int index) {
 }
 
 void EvenOddEditableTextCell::layoutSubviews(bool force) {
-  m_editableCell.setFrame(bounds(), force);
+  setChildFrame(&m_editableCell, bounds(), force);
 }
 
 void EvenOddEditableTextCell::didBecomeFirstResponder() {

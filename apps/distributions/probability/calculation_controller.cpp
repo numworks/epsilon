@@ -46,18 +46,18 @@ void CalculationController::ContentView::layoutSubviews(bool force) {
       KDRect(0, 0, bounds().width(), tableSize.height()), force);
   KDCoordinate bannerHeight = 0;
   if (m_unknownParameterBanner.text()[0] == 0) {
-    m_unknownParameterBanner.setFrame(KDRect(0, 0, 0, 0), force);
+    setChildFrame(&m_unknownParameterBanner, KDRect(0, 0, 0, 0), force);
   } else {
     bannerHeight = k_bannerHeight;
-    m_unknownParameterBanner.setFrame(
-        KDRect(0, bounds().height() - bannerHeight, bounds().width(),
-               bannerHeight),
-        force);
+    setChildFrame(&m_unknownParameterBanner,
+                  KDRect(0, bounds().height() - bannerHeight, bounds().width(),
+                         bannerHeight),
+                  force);
   }
-  m_distributionCurveView.setFrame(
-      KDRect(0, tableSize.height(), bounds().width(),
-             bounds().height() - tableSize.height() - bannerHeight),
-      force);
+  setChildFrame(&m_distributionCurveView,
+                KDRect(0, tableSize.height(), bounds().width(),
+                       bounds().height() - tableSize.height() - bannerHeight),
+                force);
 }
 
 CalculationController::CalculationController(

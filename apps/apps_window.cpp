@@ -60,7 +60,8 @@ View* AppsWindow::subviewAtIndex(int index) {
 
 void AppsWindow::layoutSubviews(bool force) {
   KDCoordinate titleHeight = m_hideTitleBarView ? 0 : Metric::TitleBarHeight;
-  m_titleBarView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
+  setChildFrame(&m_titleBarView, KDRect(0, 0, bounds().width(), titleHeight),
+                force);
   if (m_contentView != nullptr) {
     m_contentView->setFrame(KDRect(0, titleHeight, bounds().width(),
                                    bounds().height() - titleHeight),

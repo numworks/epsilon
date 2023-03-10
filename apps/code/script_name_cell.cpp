@@ -29,10 +29,10 @@ void ScriptNameCell::updateSubviewsBackgroundAfterChangingState() {
 
 void ScriptNameCell::layoutSubviews(bool force) {
   KDRect cellBounds = bounds();
-  m_textField.setFrame(
-      KDRect(cellBounds.x() + k_leftMargin, cellBounds.y(),
-             cellBounds.width() - k_leftMargin, cellBounds.height()),
-      force);
+  setChildFrame(&m_textField,
+                KDRect(cellBounds.x() + k_leftMargin, cellBounds.y(),
+                       cellBounds.width() - k_leftMargin, cellBounds.height()),
+                force);
 }
 
 }  // namespace Code

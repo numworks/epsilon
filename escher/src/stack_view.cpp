@@ -102,7 +102,8 @@ void StackView::layoutSubviews(bool force) {
       // Shift content position up by the separator thickness
       heightOffset -= Metric::CellSeparatorThickness;
       // Layout the common border (which will override content)
-      m_borderView.setFrame(
+      setChildFrame(
+          &m_borderView,
           KDRect(0, heightOffset, width, Metric::CellSeparatorThickness),
           force);
     }

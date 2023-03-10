@@ -42,13 +42,15 @@ void PromptController::MessageViewWithSkip::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width();
   KDCoordinate textHeight = KDFont::GlyphHeight(KDFont::Size::Small);
   KDSize okSize = m_okView.minimalSizeForOptimalDisplay();
-  m_skipView.setFrame(
+  setChildFrame(
+      &m_skipView,
       KDRect(0, height - k_bottomMargin - textHeight,
              width - okSize.width() - k_okMargin - k_skipMargin, textHeight),
       force);
-  m_okView.setFrame(KDRect(width - okSize.width() - k_okMargin,
-                           height - okSize.height() - k_okMargin, okSize),
-                    force);
+  setChildFrame(&m_okView,
+                KDRect(width - okSize.width() - k_okMargin,
+                       height - okSize.height() - k_okMargin, okSize),
+                force);
 }
 
 PromptController::PromptController(const I18n::Message* messages,

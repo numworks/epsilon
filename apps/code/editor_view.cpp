@@ -47,9 +47,11 @@ void EditorView::layoutSubviews(bool force) {
   m_gutterView.setOffset(0);
   KDCoordinate gutterWidth =
       m_gutterView.minimalSizeForOptimalDisplay().width();
-  m_gutterView.setFrame(KDRect(0, 0, gutterWidth, bounds().height()), force);
+  setChildFrame(&m_gutterView, KDRect(0, 0, gutterWidth, bounds().height()),
+                force);
 
-  m_textArea.setFrame(
+  setChildFrame(
+      &m_textArea,
       KDRect(gutterWidth, 0, bounds().width() - gutterWidth, bounds().height()),
       force);
 }

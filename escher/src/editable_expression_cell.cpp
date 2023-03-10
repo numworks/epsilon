@@ -27,7 +27,8 @@ void EditableExpressionCell::setHighlighted(bool highlight) {
 }
 
 void EditableExpressionCell::layoutSubviews(bool force) {
-  m_expressionField.setFrame(bounds().trimmedBy(k_separatorThickness), force);
+  setChildFrame(&m_expressionField, bounds().trimmedBy(k_separatorThickness),
+                force);
 }
 
 void EditableExpressionCell::didBecomeFirstResponder() {

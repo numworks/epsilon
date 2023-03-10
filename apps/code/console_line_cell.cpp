@@ -93,17 +93,19 @@ void ConsoleLineCell::layoutSubviews(bool force) {
     KDSize promptSize =
         KDFont::Font(GlobalPreferences::sharedGlobalPreferences->font())
             ->stringSize(I18n::translate(I18n::Message::ConsolePrompt));
-    m_promptView.setFrame(
-        KDRect(KDPointZero, promptSize.width(), bounds().height()), force);
-    m_scrollableView.setFrame(
+    setChildFrame(&m_promptView,
+                  KDRect(KDPointZero, promptSize.width(), bounds().height()),
+                  force);
+    setChildFrame(
+        &m_scrollableView,
         KDRect(KDPoint(promptSize.width(), 0),
                bounds().width() - promptSize.width(), bounds().height()),
         force);
     return;
   }
   assert(m_line.isResult());
-  m_promptView.setFrame(KDRectZero, force);
-  m_scrollableView.setFrame(bounds(), force);
+  setChildFrame(&m_promptView, KDRectZero, force);
+  setChildFrame(&m_scrollableView, bounds(), force);
 }
 
 void ConsoleLineCell::didBecomeFirstResponder() {

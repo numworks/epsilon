@@ -56,9 +56,9 @@ void LCDTimingTestController::ContentView::setStatus(bool success,
 }
 
 void LCDTimingTestController::ContentView::layoutSubviews(bool force) {
-  m_lcdTimingStateView.setFrame(KDRectScreen, force);
-  m_lcdNumberGlyphFailuresView.setFrame(KDRect(10, 10, Ion::Display::Width, 20),
-                                        force);
+  setChildFrame(&m_lcdTimingStateView, KDRectScreen, force);
+  setChildFrame(&m_lcdNumberGlyphFailuresView,
+                KDRect(10, 10, Ion::Display::Width, 20), force);
 }
 
 }  // namespace HardwareTest

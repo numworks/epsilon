@@ -14,7 +14,7 @@ void AbscissaTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 void AbscissaTitleCell::layoutSubviews(bool force) {
-  m_messageTextView.setFrame(rectWithoutSeparator(bounds()), force);
+  setChildFrame(&m_messageTextView, rectWithoutSeparator(bounds()), force);
 }
 
 void AbscissaTitleCell::didSetSeparator() { reloadCell(); }

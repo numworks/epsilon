@@ -15,7 +15,7 @@ class BufferTextHighlightCell : public HighlightCell {
     return m_textView.minimalSizeForOptimalDisplay();
   }
   void layoutSubviews(bool force) override {
-    m_textView.setFrame(bounds(), force);
+    setChildFrame(&m_textView, bounds(), force);
   }
   void setHighlighted(bool highlight) override {
     m_textView.setBackgroundColor(highlight ? Palette::Select : KDColorWhite);

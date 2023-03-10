@@ -94,7 +94,8 @@ void PopUpController::ContentView::layoutSubviews(bool force) {
   KDCoordinate detailTextHeight =
       m_detailTextView->minimalSizeForOptimalDisplay().height();
 
-  m_warningTextView.setFrame(KDRect(0, k_topMargin, width, textHeight), force);
+  setChildFrame(&m_warningTextView, KDRect(0, k_topMargin, width, textHeight),
+                force);
   KDCoordinate remainingHeight =
       (height - k_topMargin - textHeight - k_buttonMargin - k_buttonHeight -
        detailTextHeight);
@@ -102,15 +103,15 @@ void PopUpController::ContentView::layoutSubviews(bool force) {
       KDRect(0, k_topMargin + textHeight + remainingHeight / 2, width,
              detailTextHeight),
       force);
-  m_cancelButton.setFrame(
-      KDRect(k_buttonMargin, height - k_buttonMargin - k_buttonHeight,
-             (width - 3 * k_buttonMargin) / 2, k_buttonHeight),
-      force);
-  m_okButton.setFrame(
-      KDRect(2 * k_buttonMargin + (width - 3 * k_buttonMargin) / 2,
-             height - k_buttonMargin - k_buttonHeight,
-             (width - 3 * k_buttonMargin) / 2, k_buttonHeight),
-      force);
+  setChildFrame(&m_cancelButton,
+                KDRect(k_buttonMargin, height - k_buttonMargin - k_buttonHeight,
+                       (width - 3 * k_buttonMargin) / 2, k_buttonHeight),
+                force);
+  setChildFrame(&m_okButton,
+                KDRect(2 * k_buttonMargin + (width - 3 * k_buttonMargin) / 2,
+                       height - k_buttonMargin - k_buttonHeight,
+                       (width - 3 * k_buttonMargin) / 2, k_buttonHeight),
+                force);
 
   m_detailTextView->setFont(KDFont::Size::Small);
   m_detailTextView->setAlignment(KDContext::k_alignCenter,

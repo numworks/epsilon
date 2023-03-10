@@ -27,8 +27,8 @@ void AbstractSequenceCell::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 void AbstractSequenceCell::layoutSubviews(bool force) {
-  m_sequenceTitleCell.setFrame(
-      KDRect(0, 0, k_titlesColmunWidth, bounds().height()), force);
+  setChildFrame(&m_sequenceTitleCell,
+                KDRect(0, 0, k_titlesColmunWidth, bounds().height()), force);
   expressionCell()->setFrame(
       KDRect(k_titlesColmunWidth, 0, bounds().width() - k_titlesColmunWidth,
              bounds().height()),

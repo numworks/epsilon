@@ -19,6 +19,10 @@ void View::markRectAsDirty(KDRect rect) {
   m_dirtyRect = m_dirtyRect.unionedWith(rect.translatedBy(m_frame.origin()));
 }
 
+void View::markAbsoluteRectAsDirty(KDRect rect) {
+  m_dirtyRect = m_dirtyRect.unionedWith(rect);
+}
+
 KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
   /* View::redraw recursively redraws the rectangle 'rect' of the view and all
    * its subviews.
@@ -110,7 +114,7 @@ void View::setFrame(KDRect frame, bool force) {
      * where it previously was.
      * At this point, we know that the only area that needs to be redrawn in the
      * superview is the old frame minus the part covered by the new frame.*/
-    m_superview->markRectAsDirty(m_frame.differencedWith(frame));
+    m_superview->markAbsoluteRectAsDirty(m_frame.differencedWith(frame));
   }
 
   m_frame = frame;
@@ -143,6 +147,14 @@ KDRect View::absoluteVisibleFrame() const {
     KDRect parentDrawingArea = m_superview->absoluteVisibleFrame();
     return m_frame.intersectedWith(parentDrawingArea);
   }
+}
+
+KDRect View::oldFrame() const {
+  if (m_superview == nullptr) {
+    return m_frame;
+  }
+  // Frame relative to the parent's origin
+  return m_frame.translatedBy(m_superview->absoluteOrigin().opposite());
 }
 
 #if ESCHER_VIEW_LOGGING

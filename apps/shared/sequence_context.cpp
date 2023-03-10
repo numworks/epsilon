@@ -43,11 +43,13 @@ template <typename T>
 void TemplatedSequenceContext<T>::stepCommonRankUntilRank(
     int n, SequenceContext *sqctx) {
   assert(IsAcceptableRank(n));
+  assert(m_commonRank >= 0 || m_commonRank == -1);
   // If values stored in cache starts are at a rank (m_commonRank) superior to
   // n, we need to start computing back the recurrence from the initial rank and
   // step until rank n. Otherwise, we can start at the common rank and step
   // until rank n.
   if (m_commonRank > n) {
+    // Reset common rank and its values for all sequences
     m_commonRank = -1;
     for (int sequence = 0; sequence < SequenceStore::k_maxNumberOfSequences;
          sequence++) {

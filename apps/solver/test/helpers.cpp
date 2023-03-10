@@ -24,7 +24,7 @@ void solve_and_process_error(std::initializer_list<const char *> equations,
   Shared::GlobalContext globalContext;
   SolverContext solverContext(&globalContext);
   EquationStore equationStore;
-  System system(&equationStore);
+  SystemOfEquations system(&equationStore);
   for (const char *equation : equations) {
     Ion::Storage::Record::ErrorStatus err = equationStore.addEmptyModel();
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None,
@@ -39,30 +39,31 @@ void solve_and_process_error(std::initializer_list<const char *> equations,
   }
   equationStore.tidyDownstreamPoolFrom();
   system.tidy();
-  System::Error err = system.exactSolve(&solverContext);
+  SystemOfEquations::Error err = system.exactSolve(&solverContext);
   lambda(&system, err);
   equationStore.removeAll();
 }
 
 template <typename T>
 void solve_and(std::initializer_list<const char *> equations, T &&lambda) {
-  solve_and_process_error(equations,
-                          [lambda](System *system, System::Error error) {
-                            quiz_assert(error == NoError);
-                            lambda(system);
-                          });
+  solve_and_process_error(equations, [lambda](SystemOfEquations *system,
+                                              SystemOfEquations::Error error) {
+    quiz_assert(error == NoError);
+    lambda(system);
+  });
 }
 
 // Helpers
 
 void assert_solves_to_error(std::initializer_list<const char *> equations,
-                            System::Error error) {
-  solve_and_process_error(equations, [error](System *system, System::Error e) {
+                            SystemOfEquations::Error error) {
+  solve_and_process_error(equations, [error](SystemOfEquations *system,
+                                             SystemOfEquations::Error e) {
     quiz_assert(e == error);
   });
 }
 
-static void compareSolutions(System *system,
+static void compareSolutions(SystemOfEquations *system,
                              std::initializer_list<const char *> solutions) {
   Shared::GlobalContext globalContext;
   SolverContext solverContext(&globalContext);
@@ -79,7 +80,7 @@ static void compareSolutions(System *system,
     *equal = 0;
 
     const char *expectedVariable = editableSolution;
-    if (system->type() != System::Type::PolynomialMonovariable) {
+    if (system->type() != SystemOfEquations::Type::PolynomialMonovariable) {
       /* For some reason the EquationStore returns up to 3 results but always
        * just one variable, so we don't check variable name...
        * TODO: Change this poor behavior. */
@@ -125,8 +126,8 @@ static void compareSolutions(System *system,
 void assert_solves_to_infinite_solutions(
     std::initializer_list<const char *> equations,
     std::initializer_list<const char *> solutions) {
-  solve_and(equations, [solutions](System *system) {
-    quiz_assert(system->type() == System::Type::LinearSystem &&
+  solve_and(equations, [solutions](SystemOfEquations *system) {
+    quiz_assert(system->type() == SystemOfEquations::Type::LinearSystem &&
                 system->hasMoreSolutions());
     compareSolutions(system, solutions);
   });
@@ -134,7 +135,7 @@ void assert_solves_to_infinite_solutions(
 
 void assert_solves_to(std::initializer_list<const char *> equations,
                       std::initializer_list<const char *> solutions) {
-  solve_and(equations, [solutions](System *system) {
+  solve_and(equations, [solutions](SystemOfEquations *system) {
     compareSolutions(system, solutions);
   });
 }
@@ -142,23 +143,24 @@ void assert_solves_to(std::initializer_list<const char *> equations,
 void assert_solves_numerically_to(const char *equation, double min, double max,
                                   std::initializer_list<double> solutions,
                                   const char *variable) {
-  solve_and_process_error({equation}, [min, max, solutions, variable](
-                                          System *system, System::Error e) {
-    Shared::GlobalContext globalContext;
-    SolverContext solverContext(&globalContext);
-    quiz_assert(e == RequireApproximateSolution);
-    system->setApproximateResolutionMinimum(min);
-    system->setApproximateResolutionMaximum(max);
-    system->approximateSolve(&solverContext);
+  solve_and_process_error(
+      {equation}, [min, max, solutions, variable](SystemOfEquations *system,
+                                                  SystemOfEquations::Error e) {
+        Shared::GlobalContext globalContext;
+        SolverContext solverContext(&globalContext);
+        quiz_assert(e == RequireApproximateSolution);
+        system->setApproximateResolutionMinimum(min);
+        system->setApproximateResolutionMaximum(max);
+        system->approximateSolve(&solverContext);
 
-    quiz_assert(strcmp(system->variable(0), variable) == 0);
-    int i = 0;
-    for (double solution : solutions) {
-      assert_roughly_equal(system->solution(i++)->approximate(), solution,
-                           1E-5);
-    }
-    quiz_assert(system->numberOfSolutions() == i);
-  });
+        quiz_assert(strcmp(system->variable(0), variable) == 0);
+        int i = 0;
+        for (double solution : solutions) {
+          assert_roughly_equal(system->solution(i++)->approximate(), solution,
+                               1E-5);
+        }
+        quiz_assert(system->numberOfSolutions() == i);
+      });
 }
 
 void set_complex_format(Preferences::ComplexFormat format) {

@@ -99,13 +99,13 @@ int IntervalController::reusableParameterCellCount(int type) {
 }
 
 double IntervalController::parameterAtIndex(int index) {
-  System *system = App::app()->system();
+  SystemOfEquations *system = App::app()->system();
   return index == 0 ? system->approximateResolutionMinimum()
                     : system->approximateResolutionMaximum();
 }
 
 bool IntervalController::setParameterAtIndex(int parameterIndex, double f) {
-  System *system = App::app()->system();
+  SystemOfEquations *system = App::app()->system();
   parameterIndex == 0 ? system->setApproximateResolutionMinimum(f)
                       : system->setApproximateResolutionMaximum(f);
   return true;

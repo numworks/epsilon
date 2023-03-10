@@ -14,7 +14,7 @@
 #include <ion.h>
 
 #include "equation_store.h"
-#include "system.h"
+#include "system_of_equations.h"
 
 namespace Solver {
 
@@ -180,27 +180,28 @@ class SolutionsController : public Escher::ViewController,
                 "k_maxNumberOfVisibleCells has changed");
   static_assert(
       k_maxNumberOfVisibleCells <=
-          System::k_maxNumberOfSolutions +
+          SystemOfEquations::k_maxNumberOfSolutions +
               Poincare::Expression::k_maxNumberOfVariables,
       "We can reduce the number of cells in Solver:SolutionsController.");
   constexpr static int k_maxNumberOfSymbols =
-      System::k_maxNumberOfSolutions +
+      SystemOfEquations::k_maxNumberOfSolutions +
       Poincare::Expression::k_maxNumberOfVariables;
   constexpr static int k_numberOfSymbolCells =
       (k_maxNumberOfVisibleCells < k_maxNumberOfSymbols)
           ? k_maxNumberOfVisibleCells
           : k_maxNumberOfSymbols;
   constexpr static int k_maxNumberOfExactValues =
-      System::k_maxNumberOfExactSolutions +
+      SystemOfEquations::k_maxNumberOfExactSolutions +
       Poincare::Expression::k_maxNumberOfVariables;
   constexpr static int k_numberOfExactValueCells =
       (k_maxNumberOfVisibleCells < k_maxNumberOfExactValues)
           ? k_maxNumberOfVisibleCells
           : k_maxNumberOfExactValues;
   constexpr static int k_numberOfApproximateValueCells =
-      1 + (k_maxNumberOfVisibleCells < System::k_maxNumberOfApproximateSolutions
+      1 + (k_maxNumberOfVisibleCells <
+                   SystemOfEquations::k_maxNumberOfApproximateSolutions
                ? k_maxNumberOfVisibleCells
-               : System::k_maxNumberOfApproximateSolutions);
+               : SystemOfEquations::k_maxNumberOfApproximateSolutions);
   constexpr static int k_numberOfMessageCells = 2;
   constexpr static int k_numberOfEmptyCells = 2;
 

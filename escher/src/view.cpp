@@ -16,7 +16,7 @@ const Window *View::window() const {
 }
 
 void View::markRectAsDirty(KDRect rect) {
-  m_dirtyRect = m_dirtyRect.unionedWith(rect);
+  m_dirtyRect = m_dirtyRect.unionedWith(rect.translatedBy(m_frame.origin()));
 }
 
 KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
@@ -101,6 +101,11 @@ void View::setSize(KDSize size) {
   setFrame(KDRect(m_frame.origin(), size), false);
 }
 
+void View::setChildFrame(View *child, KDRect frame, bool force) {
+  assert(child && (!child->m_superview || child->m_superview == this));
+  child->setFrame(frame.translatedBy(m_frame.origin()), force);
+}
+
 void View::setFrame(KDRect frame, bool force) {
   if (frame == m_frame && !force) {
     return;
@@ -138,25 +143,13 @@ KDPoint View::pointFromPointInView(View *view, KDPoint point) {
 
 KDRect View::bounds() const { return m_frame.movedTo(KDPointZero); }
 
-KDPoint View::absoluteOrigin() const {
-  if (m_superview == nullptr) {
-    assert(this == (View *)window());
-    return m_frame.origin();
-  } else {
-    return m_frame.origin().translatedBy(m_superview->absoluteOrigin());
-  }
-}
-
 KDRect View::absoluteVisibleFrame() const {
   if (m_superview == nullptr) {
     assert(this == (View *)window());
     return m_frame;
   } else {
     KDRect parentDrawingArea = m_superview->absoluteVisibleFrame();
-
-    KDRect absoluteFrame = m_frame.movedTo(absoluteOrigin());
-
-    return absoluteFrame.intersectedWith(parentDrawingArea);
+    return m_frame.intersectedWith(parentDrawingArea);
   }
 }
 

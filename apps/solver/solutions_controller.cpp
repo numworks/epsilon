@@ -111,16 +111,13 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
                     force);
     }
     assert(topMargin >= 0);
-    m_warningMessageView0setChildFrame(&,
-                                       KDRect(0, topMargin, bounds().width(),
-                                              warningMessage0Height),
-                                       force);
-    m_warningMessageView1setChildFrame(&,
-                                       KDRect(0,
-                                              topMargin + warningMessage0Height,
-                                              bounds().width(),
-                                              warningMessage1Height),
-                                       force);
+    setChildFrame(&m_warningMessageView0,
+                  KDRect(0, topMargin, bounds().width(), warningMessage0Height),
+                  force);
+    setChildFrame(&m_warningMessageView1,
+                  KDRect(0, topMargin + warningMessage0Height, bounds().width(),
+                         warningMessage1Height),
+                  force);
   } else {
     // Table frame occupy the entire view
     setChildFrame(&m_selectableTableView, bounds(), force);

@@ -43,9 +43,10 @@ class ScrollView : public View {
       assert(false);
       return nullptr;
     }
-    virtual KDRect layoutIndicators(KDSize content, KDPoint offset,
-                                    KDRect frame, KDRect *dirtyRect1,
-                                    KDRect *dirtyRect2, bool force,
+    virtual KDRect layoutIndicators(View *parent, KDSize content,
+                                    KDPoint offset, KDRect frame,
+                                    KDRect *dirtyRect1, KDRect *dirtyRect2,
+                                    bool force,
                                     ScrollViewDelegate *delegate = nullptr) {
       return frame;
     }
@@ -64,8 +65,9 @@ class ScrollView : public View {
     }
     int numberOfIndicators() const override { return 2; }
     View *indicatorAtIndex(int index) override;
-    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame,
-                            KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
+    KDRect layoutIndicators(View *parent, KDSize content, KDPoint offset,
+                            KDRect frame, KDRect *dirtyRect1,
+                            KDRect *dirtyRect2, bool force,
                             ScrollViewDelegate *delegate = nullptr) override;
     ScrollViewVerticalBar *verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar *horizontalBar() { return &m_horizontalBar; }
@@ -82,8 +84,9 @@ class ScrollView : public View {
           m_leftArrow(ScrollViewArrow::Side::Left) {}
     int numberOfIndicators() const override { return 2; }
     View *indicatorAtIndex(int index) override;
-    KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame,
-                            KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
+    KDRect layoutIndicators(View *parent, KDSize content, KDPoint offset,
+                            KDRect frame, KDRect *dirtyRect1,
+                            KDRect *dirtyRect2, bool force,
                             ScrollViewDelegate *delegate = nullptr) override;
     void setBackgroundColor(KDColor c) override;
     void setFont(KDFont::Size font) override;

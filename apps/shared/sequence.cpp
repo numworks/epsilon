@@ -227,11 +227,9 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
    * values stored in SequenceContext (m_independentRankValues). However, these
    * values might not be aligned on the same rank. Thus, we align them all at
    * the rank of the sequence we are stepping. */
-  int independentRank = sqctx->independentRank<T>(sequenceIndex);
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    if (sequenceIndex != -1 &&
-        sqctx->independentRank<T>(i) != independentRank) {
-      int offset = independentRank - sqctx->independentRank<T>(i);
+    if (sequenceIndex != -1 && sqctx->independentRank<T>(i) != n) {
+      int offset = n - sqctx->independentRank<T>(i);
       if (offset != 0) {
         for (int j = SequenceStore::k_maxRecurrenceDepth; j >= 0; j--) {
           values[i][j] =

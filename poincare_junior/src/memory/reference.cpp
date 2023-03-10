@@ -146,6 +146,17 @@ size_t Reference::treeSize() const {
   return result;
 }
 
+int Reference::numberOfChildren() const {
+  int result;
+  send(
+    [](const Node tree, void * result) {
+      int * res = static_cast<int *>(result);
+      *res = tree.numberOfChildren();
+    },
+    &result);
+  return result;
+}
+
 #if POINCARE_MEMORY_TREE_LOG
 void Reference::log() {
   std::cout << "id: " << m_id;

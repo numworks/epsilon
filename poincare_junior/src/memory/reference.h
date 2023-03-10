@@ -56,6 +56,7 @@ public:
 
   void dumpAt(void * address) const;
   size_t treeSize() const;
+  int numberOfChildren() const;
   bool treeIsIdenticalTo(const Reference &other) const {
     return (isInitialized() == other.isInitialized()) && (!isInitialized() || getTree().treeIsIdenticalTo(other.getTree()));
   }

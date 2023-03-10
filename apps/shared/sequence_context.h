@@ -34,9 +34,14 @@ class TemplatedSequenceContext {
 
   // Independant rank
   int independentRank(int sequenceIndex) {
+    assert(0 <= sequenceIndex &&
+           sequenceIndex < SequenceStore::k_maxNumberOfSequences);
     return m_independentRanks[sequenceIndex];
   }
   T independentSequenceValue(int sequenceIndex, int depth) {
+    assert(0 <= sequenceIndex &&
+           sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+    assert(0 <= depth && depth < SequenceStore::k_maxRecurrenceDepth + 1);
     return m_independentRankValues[sequenceIndex][depth];
   }
 

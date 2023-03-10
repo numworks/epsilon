@@ -51,6 +51,8 @@ class View {
 
   void setSize(KDSize size);
   void setFrame(KDRect frame, bool force);
+  void setAbsoluteFrame(KDRect frame, bool force) { m_frame = frame; }
+  void setChildFrame(View *child, KDRect frame, bool force) const;
   KDPoint pointFromPointInView(View *view, KDPoint point);
 
   KDRect bounds() const;
@@ -81,7 +83,7 @@ class View {
   virtual const char *className() const;
   virtual void logAttributes(std::ostream &os) const;
 #endif
-  KDRect m_frame;
+  KDRect m_frame;  // absolute
   virtual int numberOfSubviews() const { return 0; }
   virtual View *subviewAtIndex(int index) { return nullptr; }
 
@@ -89,7 +91,7 @@ class View {
   virtual void layoutSubviews(bool force = false) {}
   virtual const Window *window() const;
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);
-  KDPoint absoluteOrigin() const;
+  KDPoint absoluteOrigin() const { return m_frame.origin(); }
   KDRect absoluteVisibleFrame() const;
 
   /* At destruction, subviews aren't notified that their own pointer
@@ -99,7 +101,7 @@ class View {
    * Otherwise, we would just have to implement the destructor to notify
    * subviews that 'm_superview = nullptr'. */
   View *m_superview;
-  KDRect m_dirtyRect;
+  KDRect m_dirtyRect;  // absolute
 };
 
 }  // namespace Escher

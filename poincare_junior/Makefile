@@ -22,6 +22,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/symbol.cpp \
   expression.cpp \
   layout/code_point_layout.cpp \
+  layout/empty_rectangle.cpp \
   layout/fraction_layout.cpp \
   layout/parenthesis_layout.cpp \
   layout/parser.cpp \

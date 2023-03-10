@@ -106,6 +106,8 @@ void Render::RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont::Siz
       return ParenthesisLayout::RenderNode(node, ctx, p, font, expressionColor, backgroundColor);
     case BlockType::CodePointLayout:
       return CodePointLayout::RenderNode(node, ctx, p, font, expressionColor, backgroundColor);
+    case BlockType::RackLayout:
+      return RackLayout::RenderNode(node, ctx, p, font, expressionColor, backgroundColor);
     default:;
   };
 }

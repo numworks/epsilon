@@ -15,19 +15,24 @@ constexpr static size_t k_numberOfBitsInUint32 =
     sizeof(uint32_t) * k_numberOfBitsInByte;
 
 template <typename T>
-constexpr size_t numberOfBitsInType() {
+constexpr size_t numberOfBitsIn() {
   return sizeof(T) * k_numberOfBitsInByte;
 }
 
 template <typename T>
+constexpr size_t numberOfBitsIn(const T& t) {
+  return sizeof(t) * k_numberOfBitsInByte;
+}
+
+template <typename T>
 constexpr bool bitAtIndex(T mask, size_t i) {
-  assert(i >= 0 && i < numberOfBitsInType<T>());
+  assert(i >= 0 && i < numberOfBitsIn<T>());
   return (mask >> i) & 1U;
 }
 
 template <typename T>
 constexpr void setBitAtIndex(T& mask, size_t i, bool b) {
-  assert(i < numberOfBitsInType<T>());
+  assert(i < numberOfBitsIn<T>());
   T one = 1;
   if (b) {
     mask |= (one << i);
@@ -49,7 +54,7 @@ constexpr inline size_t numberOfOnes(uint32_t i) {
 }
 
 constexpr inline size_t indexOfMostSignificantBit(uint32_t i) {
-  return numberOfBitsInType<uint32_t>() - countLeadingZeros(i) - 1;
+  return numberOfBitsIn<uint32_t>() - countLeadingZeros(i) - 1;
 }
 
 constexpr inline size_t numberOfBitsToCountUpTo(uint32_t i) {
@@ -68,7 +73,7 @@ uint8_t log2(T v) {
       return i;
     }
   }
-  return numberOfBitsInType<T>();
+  return numberOfBitsIn<T>();
 }
 
 }  // namespace BitHelper

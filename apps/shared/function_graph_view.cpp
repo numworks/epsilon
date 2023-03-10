@@ -55,7 +55,7 @@ bool FunctionGraphPolicy::allFunctionsInterrupted() const {
   int numberOfFunctions = numberOfDrawnRecords();
   if (numberOfFunctions <= 0 ||
       static_cast<size_t>(numberOfFunctions) >
-          OMG::BitHelper::numberOfBitsInType<uint32_t>()) {
+          OMG::BitHelper::numberOfBitsIn(m_functionsInterrupted)) {
     return false;
   }
   return m_functionsInterrupted ==
@@ -64,15 +64,15 @@ bool FunctionGraphPolicy::allFunctionsInterrupted() const {
 
 bool FunctionGraphPolicy::functionWasInterrupted(int index) const {
   if (index < 0 || static_cast<size_t>(index) >=
-                       OMG::BitHelper::numberOfBitsInType<uint32_t>()) {
+                       OMG::BitHelper::numberOfBitsIn(m_functionsInterrupted)) {
     return false;
   }
   return OMG::BitHelper::bitAtIndex(m_functionsInterrupted, index);
 }
 
 void FunctionGraphPolicy::setFunctionInterrupted(int index) const {
-  if (index >= 0 && static_cast<size_t>(index) <
-                        OMG::BitHelper::numberOfBitsInType<uint32_t>()) {
+  if (index >= 0 && static_cast<size_t>(index) < OMG::BitHelper::numberOfBitsIn(
+                                                     m_functionsInterrupted)) {
     OMG::BitHelper::setBitAtIndex(m_functionsInterrupted, index, true);
   }
 }

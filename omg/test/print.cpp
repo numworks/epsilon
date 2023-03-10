@@ -6,7 +6,7 @@ using namespace OMG;
 void assert_int_prints_as(uint32_t integer, const char* result, Base base,
                           OMG::Print::LeadingZeros printLeadingZeros =
                               OMG::Print::LeadingZeros::Trim) {
-  constexpr int bufferSize = OMG::BitHelper::numberOfBitsInType<uint32_t>() + 1;
+  constexpr int bufferSize = OMG::BitHelper::numberOfBitsIn<uint32_t>() + 1;
   char buffer[bufferSize];
   for (int i = 0; i < bufferSize; i++) {
     buffer[i] = 0;

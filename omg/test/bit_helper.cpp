@@ -4,8 +4,9 @@
 using namespace OMG;
 
 QUIZ_CASE(omg_bit_helper) {
-  quiz_assert(BitHelper::numberOfBitsInType<uint32_t>() == 32);
-  quiz_assert(BitHelper::numberOfBitsInType<int8_t>() == 8);
+  quiz_assert(BitHelper::numberOfBitsIn<uint32_t>() == 32);
+  quiz_assert(BitHelper::numberOfBitsIn<int8_t>() == 8);
+  quiz_assert(BitHelper::numberOfBitsIn(static_cast<int16_t>(0)) == 16);
   uint8_t mask = 0b10101111;
   quiz_assert(BitHelper::bitAtIndex(mask, 2) == true);
   quiz_assert(BitHelper::bitAtIndex(mask, 4) == false);

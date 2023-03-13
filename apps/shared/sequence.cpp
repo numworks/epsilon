@@ -199,16 +199,16 @@ template <typename T>
 T Sequence::approximateToNextRank(SequenceContext *sqctx,
                                   bool independent) const {
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
-  int n = independent ? sqctx->independentRank<T>(sequenceIndex)
-                      : sqctx->commonRank<T>();
-  if (n < initialRank()) {
+  int rank = independent ? sqctx->independentRank<T>(sequenceIndex)
+                         : sqctx->commonRank<T>();
+  if (rank < initialRank()) {
     return NAN;
   }
   SequenceCacheContext<T> ctx =
       SequenceCacheContext<T>(sqctx, independent ? sequenceIndex : -1);
 
-  /* Hold values = {{u(n), u(n-1), u(n-2)}, {v(n), v(n-1), v(n-2)}, {w(n),
-   * w(n-1), w(n-2)}}
+  /* Hold values = {{u(rank), u(rank-1), u(rank-2)}, {v(rank), v(rank-1),
+   * v(rank-2)}, {w(rank), w(rank-1), w(rank-2)}}
    * WARNING : values must be ordered by name index (u then v then w) because
    * SequenceCacheContext needs it. */
   T values[SequenceStore::k_maxNumberOfSequences]
@@ -218,8 +218,8 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
    * be aligned on the same rank. Thus, we align them all at the rank of the
    * sequence we are stepping. */
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    if (independent && sqctx->independentRank<T>(i) != n) {
-      int offset = n - sqctx->independentRank<T>(i);
+    if (independent && sqctx->independentRank<T>(i) != rank) {
+      int offset = rank - sqctx->independentRank<T>(i);
       if (offset != 0) {
         for (int j = SequenceStore::k_maxRecurrenceDepth; j >= 0; j--) {
           values[i][j] =
@@ -246,52 +246,55 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
 
   switch (type()) {
     case Type::Explicit: {
+      // we want to assess u(n) at n=rank
+      x = static_cast<T>(rank);
+      e = expressionReduced(sqctx);
       for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-        // Store in context value of u(n) for "u(n)"
+        // In context, u(rank) matches u(n)
         ctx.setValue(values[i][0], i, 0);
       }
-      x = static_cast<T>(n);
-      e = expressionReduced(sqctx);
       break;
     }
     case Type::SingleRecurrence: {
-      if (n == initialRank()) {
+      if (rank == initialRank()) {
         x = static_cast<T>(NAN);
         e = firstInitialConditionExpressionReduced(sqctx);
         break;
       }
-      for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-        // Store in context value of u(n-1) for "u(n)"
-        ctx.setValue(values[i][1], i, 0);
-        // Store in context value of u(n) for "u(n+1)"
-        ctx.setValue(values[i][0], i, 1);
-      }
-      x = static_cast<T>(n - 1);
+      // we want to assess u(n+1) at n=rank-1
+      x = static_cast<T>(rank - 1);
       e = expressionReduced(sqctx);
+      for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+        // In context, u(rank) matches u(n+1)
+        ctx.setValue(values[i][0], i, 1);
+        // In context, u(rank-1) matches u(n)
+        ctx.setValue(values[i][1], i, 0);
+      }
       break;
     }
     default: {
       assert(type() == Type::DoubleRecurrence);
-      if (n == initialRank()) {
+      if (rank == initialRank()) {
         x = static_cast<T>(NAN);
         e = firstInitialConditionExpressionReduced(sqctx);
         break;
       }
-      if (n == initialRank() + 1) {
+      if (rank == initialRank() + 1) {
         x = static_cast<T>(NAN);
         e = secondInitialConditionExpressionReduced(sqctx);
         break;
       }
-      for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-        // Store in context value of u(n-2) for "u(n)"
-        ctx.setValue(values[i][2], i, 0);
-        // Store in context value of u(n-1) for "u(n+1)"
-        ctx.setValue(values[i][1], i, 1);
-        // Store in context value of u(n) for "u(n+2)"
-        ctx.setValue(values[i][0], i, 2);
-      }
-      x = static_cast<T>(n - 2);
+      // we want to assess u(n+2) at n=rank-2
+      x = static_cast<T>(rank - 2);
       e = expressionReduced(sqctx);
+      for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+        // In context, u(rank) matches u(n+2)
+        ctx.setValue(values[i][0], i, 2);
+        // In context, u(rank-1) matches u(n+1)
+        ctx.setValue(values[i][1], i, 1);
+        // In context, u(rank-2) matches u(n)
+        ctx.setValue(values[i][2], i, 0);
+      }
       break;
     }
   }

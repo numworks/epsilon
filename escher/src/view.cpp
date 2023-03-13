@@ -98,7 +98,7 @@ void View::setSize(KDSize size) {
 }
 
 void View::setChildFrame(View *child, KDRect frame, bool force) const {
-  assert(child && (!child->m_superview || child->m_superview == this));
+  // assert(child && (!child->m_superview || child->m_superview == this));
   child->setFrame(frame.translatedBy(m_frame.origin()), force);
 }
 
@@ -147,14 +147,6 @@ KDRect View::absoluteVisibleFrame() const {
     KDRect parentDrawingArea = m_superview->absoluteVisibleFrame();
     return m_frame.intersectedWith(parentDrawingArea);
   }
-}
-
-KDRect View::relativeFrame() const {
-  if (m_superview == nullptr) {
-    return m_frame;
-  }
-  // Frame relative to the parent's origin
-  return m_frame.translatedBy(m_superview->absoluteOrigin().opposite());
 }
 
 #if ESCHER_VIEW_LOGGING

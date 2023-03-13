@@ -31,14 +31,14 @@ void MemoizedCursorView::setColor(KDColor color) {
 void MemoizedCursorView::setCursorFrame(View* parent, KDRect f, bool force) {
   /* TODO This is quite dirty (we are out of the dirty tracking and we assume
    * the cursor is the upmost view) but it works well. */
-  if (relativeFrame() == f && !force) {
+  if (absoluteFrame().relativeTo(parent->absoluteOrigin()) == f && !force) {
     return;
   }
   /* We want to avoid drawing the curve just because the cursor has been
    * repositioned, as it is very slow for non cartesian curves.*/
   if (eraseCursorIfPossible()) {
     // Set the frame
-    m_frame = f.translatedBy(parent->m_frame.origin());
+    m_frame = f.translatedBy(parent->absoluteOrigin());
     markRectAsDirty(bounds());
     return;
   }
@@ -81,7 +81,7 @@ void MemoizedCursorView::redrawCursor(KDRect rect) {
   KDContext* ctx = KDIonContext::SharedContext;
   KDPoint previousOrigin = ctx->origin();
   KDRect previousClippingRect = ctx->clippingRect();
-  redraw(rect.translatedBy(m_superview->m_frame.origin()));
+  redraw(rect);
   ctx->setOrigin(previousOrigin);
   ctx->setClippingRect(previousClippingRect);
 }

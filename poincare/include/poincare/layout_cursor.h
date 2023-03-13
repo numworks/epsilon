@@ -50,12 +50,6 @@ class LayoutCursor final {
 
   LayoutCursor() : LayoutCursor(Layout()) {}
 
-  LayoutCursor(LayoutCursor& other) {
-    m_layout = other.m_layout;
-    m_position = other.m_position;
-    m_startOfSelection = other.m_startOfSelection;
-  }
-
   // Definition
   bool isUninitialized() const { return m_layout.isUninitialized(); }
   bool isValid() const {

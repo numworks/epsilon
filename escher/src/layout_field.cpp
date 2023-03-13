@@ -24,6 +24,7 @@ LayoutField::ContentView::ContentView(KDFont::Size font,
                                       float verticalAlignment)
     : m_expressionView(&m_cursor, horizontalAlignment, verticalAlignment,
                        KDColorBlack, KDColorWhite, font),
+      m_cursorView(this),
       m_isEditing(false) {
   clearLayout();
 }

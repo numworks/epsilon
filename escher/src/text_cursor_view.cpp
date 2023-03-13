@@ -35,19 +35,7 @@ void TextCursorView::setVisible(bool visible) {
     return;
   }
   m_visible = visible;
-  if (m_visible) {
-    markRectAsDirty(bounds());
-    // } else if (window()) {
-    // TODO
-    /* 'pointFromPointInView' can only be called from a view attached to the
-     * window. */
-    // m_superview->markRectAsDirty(bounds().translatedBy(
-    // m_superview->pointFromPointInView(this, KDPointZero)));
-  } else {
-    /* 'setVisible' may only be called by the blink timer, meaning the timer is
-     * currently trying to blink an offscreen cursor. */
-    BlinkTimer::RegisterCursor(nullptr);
-  }
+  markRectAsDirty(bounds());
 }
 
 }  // namespace Escher

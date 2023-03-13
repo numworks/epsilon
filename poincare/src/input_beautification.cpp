@@ -296,7 +296,8 @@ bool InputBeautification::BeautifyIdentifiers(
               firstIndexOfIdentifier + currentIdentifier.length() +
                   nextIdentifier.length() - 1,
               k_logarithmRule, layoutCursor, true,
-              &numberOfLayoutsAddedOrRemovedLastLoop, baseOfLog) ||
+              &numberOfLayoutsAddedOrRemovedLastLoop, baseOfLog,
+              k_indexOfBaseOfLog) ||
           layoutsWereBeautified;
       continue;
     }
@@ -340,7 +341,8 @@ bool InputBeautification::BeautifyPipeKey(HorizontalLayout h,
     return false;
   }
   h.removeChildAtIndexInPlace(indexOfPipeKey);
-  Layout toInsert = k_absoluteValueRule.layoutBuilder(Layout());
+  Layout parameter = HorizontalLayout::Builder();
+  Layout toInsert = k_absoluteValueRule.layoutBuilder(&parameter);
   LayoutCursor cursorForInsertion(h);
   cursorForInsertion.safeSetPosition(indexOfPipeKey);
   cursorForInsertion.insertLayout(toInsert, nullptr);
@@ -461,32 +463,27 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
     HorizontalLayout h, int startIndex, int endIndex,
     BeautificationRule beautificationRule, LayoutCursor *layoutCursor,
     bool isBeautifyingFunction, int *numberOfLayoutsAddedOrRemoved,
-    Layout builderParameter) {
+    Layout preProcessedParameter, int indexOfPreProcessedParameter) {
   assert(!isBeautifyingFunction || h.childAtIndex(endIndex + 1).type() ==
                                        LayoutNode::Type::ParenthesisLayout);
   int currentNumberOfChildren = h.numberOfChildren();
   // Create pattern layout
-  Layout inserted = beautificationRule.layoutBuilder(builderParameter);
+  Layout parameters[k_maxNumberOfParameters];
+  if (!preProcessedParameter.isUninitialized()) {
+    assert(indexOfPreProcessedParameter < k_maxNumberOfParameters);
+    parameters[indexOfPreProcessedParameter] = preProcessedParameter;
+  }
   if (isBeautifyingFunction) {
-    /* Insert parameters between parentheses in function if user typed it
-     * left of an already filled parenthesis */
-    bool isParameteredExpression =
-        (beautificationRule.listOfBeautifiedAliases.isEquivalentTo(
-             Derivative::s_functionHelper.aliasesList()) ||
-         beautificationRule.listOfBeautifiedAliases.isEquivalentTo(
-             Integral::s_functionHelper.aliasesList()) ||
-         beautificationRule.listOfBeautifiedAliases.isEquivalentTo(
-             Product::s_functionHelper.aliasesList()) ||
-         beautificationRule.listOfBeautifiedAliases.isEquivalentTo(
-             Sum::s_functionHelper.aliasesList()));
-    inserted = ReplaceEmptyLayoutsWithParameters(
-        inserted, h, endIndex + 1, layoutCursor, isParameteredExpression);
     endIndex++;  // Include parenthesis in layouts to delete
-    if (inserted.isUninitialized()) {
-      // Too much parameters, beautification is cancelled
+    bool validNumberOfParams = CreateParametersList(
+        parameters, h, endIndex, beautificationRule, layoutCursor);
+    if (!validNumberOfParams) {
+      // Too many parameters, beautification is cancelled
       return false;
     }
   }
+  Layout inserted = beautificationRule.layoutBuilder(parameters);
+
   // Remove layout
   int numberOfRemovedLayouts = endIndex - startIndex + 1;
   bool cursorIsInRemovedLayouts = layoutCursor->layout() == h &&
@@ -510,7 +507,17 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
     layoutCursor->safeSetPosition(layoutCursor->position() -
                                   numberOfRemovedLayouts +
                                   numberOfInsertedLayouts);
+  } else {
+    /* When creating the parameters of a function, a new cursor was created at a
+     * moment where its layout was not attached to its parent. It's a problem
+     * when the new layout is a PiecewiseLayout, which needs to know it has to
+     * startEditing().
+     * So the cursor is reset here to ensure every initialization is properly
+     * done.*/
+    layoutCursor->didExitPosition();
+    layoutCursor->didEnterCurrentPosition();
   }
+
   if (numberOfLayoutsAddedOrRemoved) {
     *numberOfLayoutsAddedOrRemoved =
         h.numberOfChildren() - currentNumberOfChildren;
@@ -518,127 +525,69 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
   return true;
 }
 
-static Layout DeepSearchEmptyLayout(Layout l, int *nSkips) {
-  if (l.isEmpty()) {
-    if (*nSkips == 0) {
-      return l;
-    }
-    (*nSkips)--;
-    return Layout();
-  }
-  int n = l.numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    Layout emptyLayout = DeepSearchEmptyLayout(l.childAtIndex(i), nSkips);
-    if (!emptyLayout.isUninitialized()) {
-      return emptyLayout;
-    }
-  }
-  return Layout();
-}
-
-static int DeepNumberOfEmptyLayouts(Layout l) {
-  int totalNumberOfEmptyFound = 0;
-  int currentNumberOfEmptyFound = 0;
-  while (
-      !DeepSearchEmptyLayout(l, &currentNumberOfEmptyFound).isUninitialized()) {
-    totalNumberOfEmptyFound++;
-    currentNumberOfEmptyFound = totalNumberOfEmptyFound;
-  }
-  return totalNumberOfEmptyFound;
-}
-
-Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(
-    Layout layoutToModify, HorizontalLayout h, int parenthesisIndexInParent,
-    LayoutCursor *layoutCursor, bool isParameteredExpression) {
+bool InputBeautification::CreateParametersList(
+    Layout *parameters, HorizontalLayout h, int parenthesisIndexInParent,
+    BeautificationRule beautificationRule, LayoutCursor *layoutCursor) {
   Layout parenthesis = h.childAtIndex(parenthesisIndexInParent);
   assert(parenthesis.type() == LayoutNode::Type::ParenthesisLayout);
-  bool rightParenthesisIsTemporary =
-      static_cast<AutocompletedBracketPairLayoutNode *>(parenthesis.node())
-          ->isTemporary(AutocompletedBracketPairLayoutNode::Side::Right);
-  // Left parenthesis was just input so it should not be temporary
+  // Left parenthesis should not be temporary
   assert(!static_cast<AutocompletedBracketPairLayoutNode *>(parenthesis.node())
               ->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left));
-  Layout parametersContainer = parenthesis.childAtIndex(0);
-  assert(parametersContainer.isHorizontal());
-  // Replace the empty layouts with the parameters between parentheses
-  int currentParameterIndex = 0;
-  int numberOfParameters = 0;
-  int n = parametersContainer.numberOfChildren();
-  int numberOfEmptyLayoutsToSkip = 0;
+
+  Layout paramsString = parenthesis.childAtIndex(0);
+  assert(paramsString.isHorizontal());
+  assert(beautificationRule.numberOfParameters <= k_maxNumberOfParameters);
+
+  int i = 0;  // Index in paramsString
+  int n = paramsString.numberOfChildren();
+  int parameterIndex = 0;
   HorizontalLayout currentParameter = HorizontalLayout::Builder();
-  int cursorPosition = layoutCursor->layout() == parametersContainer
-                           ? layoutCursor->position()
-                           : -1;
+
+  int cursorPosition =
+      layoutCursor->layout() == paramsString ? layoutCursor->position() : -1;
   LayoutCursor newCursor;
-  while (currentParameterIndex <= n) {
-    if (cursorPosition == 0) {
-      newCursor = LayoutCursor(currentParameter, OMG::Direction::Right());
+
+  while (i <= n) {
+    if (parameterIndex >= beautificationRule.numberOfParameters) {
+      // Too many parameters, cancel beautification
+      return false;
     }
-    Layout child = currentParameterIndex < n
-                       ? parametersContainer.childAtIndex(currentParameterIndex)
-                       : Layout();
-    if (currentParameterIndex == n ||
-        (child.type() == LayoutNode::Type::CodePointLayout &&
-         static_cast<CodePointLayout &>(child).codePoint() == ',')) {
+    if (cursorPosition == 0) {
+      newCursor = LayoutCursor(currentParameter);
+    }
+
+    Layout child = i < n ? paramsString.childAtIndex(i) : Layout();
+    if (i == n || (child.type() == LayoutNode::Type::CodePointLayout &&
+                   static_cast<CodePointLayout &>(child).codePoint() == ',')) {
       // right parenthesis or ',' reached. Add parameter
-      int tempNumberOfEmptyLayoutsToSkip = numberOfEmptyLayoutsToSkip;
-      Layout layoutToReplace;
-      bool isAtParameter =
-          isParameteredExpression &&
-          numberOfParameters == ParameteredExpression::ParameterChildIndex();
-      if (isAtParameter) {
-        // This parameter can't be empty
-        layoutToReplace = layoutToModify.childAtIndex(numberOfParameters);
-      } else {
-        /* Count empty layouts in parameter, so that they are skipped next
-         * time an empty layout is searched. */
-        numberOfEmptyLayoutsToSkip +=
-            DeepNumberOfEmptyLayouts(currentParameter);
-        layoutToReplace = DeepSearchEmptyLayout(
-            layoutToModify, &tempNumberOfEmptyLayoutsToSkip);
-      }
-      if (layoutToReplace.isUninitialized()) {
-        // Too much parameters, cancel beautification
-        return Layout();
-      }
-      if (layoutToReplace.parent().type() ==
-          LayoutNode::Type::ParenthesisLayout) {
-        static_cast<AutocompletedBracketPairLayoutNode *>(
-            layoutToReplace.parent().node())
-            ->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right,
-                           rightParenthesisIsTemporary);
-      }
-      if (currentParameter.isEmpty() && isAtParameter) {
-        // Do not replace parameter with an empty expression.
-        if (newCursor.layout() == currentParameter) {
-          // If cursor was in an empty parameter, put it in the next layout
-          newCursor = LayoutCursor();
-          cursorPosition++;
-        }
-      } else {
-        layoutToReplace.replaceWithInPlace(currentParameter);
-      }
-      numberOfParameters++;
-      cursorPosition--;
+      assert(parameterIndex < k_maxNumberOfParameters);
+      parameters[parameterIndex] = currentParameter;
       currentParameter = HorizontalLayout::Builder();
+      do {
+        parameterIndex++;
+        /* Some parameters are already preprocessed (like when beautifying
+         * log2(..)). Skip them. */
+      } while (parameterIndex < k_maxNumberOfParameters &&
+               !parameters[parameterIndex].isUninitialized());
     } else {
       // Add layout to parameter
       currentParameter.addOrMergeChildAtIndex(
           child.clone(), currentParameter.numberOfChildren());
-      cursorPosition--;
     }
-    currentParameterIndex++;
+
+    cursorPosition--;
+    i++;
   }
+
+  // Fill the remaining parameters with empty layouts
+  for (int p = parameterIndex; p < beautificationRule.numberOfParameters; p++) {
+    parameters[p] = HorizontalLayout::Builder();
+  }
+
   if (!newCursor.isUninitialized()) {
-    /* When newCursor was created, its layout might was not attached to its
-     * parent. It's a problem when the new layout is a PiecewiseLayout, which
-     * needs to know it has to startEditing().
-     * By setting the cursor now, we ensure that didEnterCurrentPosition() is
-     * properly called and will startEditing the parent PiecewiseLayout. */
-    layoutCursor->safeSetLayout(newCursor.layout(), OMG::Direction::Left());
-    layoutCursor->safeSetPosition(newCursor.position());
+    *layoutCursor = newCursor;
   }
-  return layoutToModify;
+  return true;
 }
 
 }  // namespace Poincare

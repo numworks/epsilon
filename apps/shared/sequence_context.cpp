@@ -31,48 +31,41 @@ void TemplatedSequenceContext<T>::resetCache() {
 }
 
 template <typename T>
-void TemplatedSequenceContext<T>::stepCommonRankUntilRank(
-    int n, SequenceContext *sqctx) {
+void TemplatedSequenceContext<T>::stepUntilRank(int n, SequenceContext *sqctx,
+                                                int sequenceIndex) {
   assert(IsAcceptableRank(n));
-  assert(m_commonRank >= 0 || m_commonRank == -1);
-  // If values stored in cache starts are at a rank (m_commonRank) superior to
-  // n, we need to start computing back the recurrence from the initial rank and
-  // step until rank n. Otherwise, we can start at the common rank and step
-  // until rank n.
-  if (m_commonRank > n) {
-    // Reset common rank and its values for all sequences
-    m_commonRank = -1;
-    for (int sequence = 0; sequence < SequenceStore::k_maxNumberOfSequences;
-         sequence++) {
-      for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
-           depth++) {
-        m_commonRankValues[sequence][depth] = NAN;
+  bool stepAllSequences = sequenceIndex == -1;
+  int *currentRank =
+      stepAllSequences ? &m_commonRank : m_independentRanks + sequenceIndex;
+  assert(*currentRank >= 0 || *currentRank == -1);
+
+  // If current rank is superior to n, we need to start computing back the
+  // recurrence from the initial rank and step until rank n. Otherwise, we can
+  // start at the current rank and step until rank n.
+  if (*currentRank > n) {
+    // Reset rank and its values
+    *currentRank = -1;
+    int start, stop;
+    T *sequencesRankValues;
+    if (stepAllSequences) {
+      start = 0;
+      stop = SequenceStore::k_maxNumberOfSequences;
+      sequencesRankValues = reinterpret_cast<T *>(&m_commonRankValues);
+    } else {
+      start = sequenceIndex;
+      stop = sequenceIndex + 1;
+      sequencesRankValues = reinterpret_cast<T *>(&m_independentRankValues);
+    }
+    for (int sequence = start; sequence < stop; sequence++) {
+      T *sequencePointer = sequencesRankValues +
+                           sequence * (SequenceStore::k_maxRecurrenceDepth + 1);
+      for (int depth = SequenceStore::k_maxRecurrenceDepth; depth > 0;
+           depth--) {
+        *(sequencePointer + depth) = NAN;
       }
     }
   }
-  while (m_commonRank < n) {
-    stepToNextRank(sqctx);
-  }
-}
-
-template <typename T>
-void TemplatedSequenceContext<T>::stepIndependentRankUntilRank(
-    int sequenceIndex, int n, SequenceContext *sqctx) {
-  assert(IsAcceptableRank(n));
-  assert(m_independentRanks[sequenceIndex] >= 0 ||
-         m_independentRanks[sequenceIndex] == -1);
-  // If values stored in cache starts are at a rank superior to n, we need to
-  // start computing back the recurrence from the initial rank and step until
-  // rank n. Otherwise, we can start at the stored rank and step until rank n.
-  if (m_independentRanks[sequenceIndex] > n) {
-    // Reset independent rank and its values for this sequence
-    m_independentRanks[sequenceIndex] = -1;
-    for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
-         depth++) {
-      m_independentRankValues[sequenceIndex][depth] = NAN;
-    }
-  }
-  while (m_independentRanks[sequenceIndex] < n) {
+  while (*currentRank < n) {
     stepToNextRank(sqctx, sequenceIndex);
   }
 }

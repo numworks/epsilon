@@ -180,7 +180,7 @@ T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext *sqctx) const {
   if (n < initialRank() || !TemplatedSequenceContext<T>::IsAcceptableRank(n)) {
     return NAN;
   }
-  sqctx->stepCommonRankUntilRank<T>(n);
+  sqctx->stepUntilRank<T>(n);
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
   return sqctx->commonRankSequenceValue<T>(sequenceIndex, 0);
 }
@@ -191,7 +191,7 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
     return NAN;
   }
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
-  sqctx->stepIndependentRankUntilRank<T>(sequenceIndex, n);
+  sqctx->stepUntilRank<T>(n, sequenceIndex);
   return sqctx->independentRankSequenceValue<T>(sequenceIndex, 0);
 }
 

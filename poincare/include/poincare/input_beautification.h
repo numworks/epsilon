@@ -260,13 +260,13 @@ class InputBeautification {
   // All following methods return true if layout was beautified
 
   /* Apply k_symbolsRules  */
-  static bool BeautifySymbols(HorizontalLayout h, int rightMostIndexToBeautify,
+  static bool BeautifySymbols(HorizontalLayout h, int rightmostIndexToBeautify,
                               LayoutCursor* layoutCursor);
 
   /* Apply the rules passed in rulesList as long as they match a tokenizable
    * identifiers. */
   static bool TokenizeAndBeautifyIdentifiers(
-      HorizontalLayout h, int rightMostIndexToBeautify,
+      HorizontalLayout h, int rightmostIndexToBeautify,
       const BeautificationRule* rulesList, size_t numberOfRules,
       Context* context, LayoutCursor* layoutCursor,
       bool logBeautification = false);

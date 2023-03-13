@@ -139,12 +139,12 @@ bool InputBeautification::LayoutIsIdentifierMaterial(Layout l) {
 }
 
 bool InputBeautification::BeautifySymbols(HorizontalLayout h,
-                                          int rightMostIndexToBeautify,
+                                          int rightmostIndexToBeautify,
                                           LayoutCursor *layoutCursor) {
   assert(!h.isUninitialized());
-  assert(rightMostIndexToBeautify < h.numberOfChildren() &&
-         rightMostIndexToBeautify >= 0);
-  if (h.childAtIndex(rightMostIndexToBeautify).type() !=
+  assert(rightmostIndexToBeautify < h.numberOfChildren() &&
+         rightmostIndexToBeautify >= 0);
+  if (h.childAtIndex(rightmostIndexToBeautify).type() !=
       LayoutNode::Type::CodePointLayout) {
     return false;
   }
@@ -158,14 +158,14 @@ bool InputBeautification::BeautifySymbols(HorizontalLayout h,
     const char *pattern =
         beautificationRule.listOfBeautifiedAliases.mainAlias();
     int length = strlen(pattern);
-    if (rightMostIndexToBeautify + 1 < length) {
+    if (rightmostIndexToBeautify + 1 < length) {
       continue;
     }
     // Compare the code points of the input with the pattern
     bool matchesPattern = true;
     for (int i = 0; i < length; i++) {
       Layout child =
-          h.childAtIndex(rightMostIndexToBeautify - (length - 1) + i);
+          h.childAtIndex(rightmostIndexToBeautify - (length - 1) + i);
       if (!CodePointLayoutNode::IsCodePoint(child, pattern[i])) {
         matchesPattern = false;
         break;
@@ -176,37 +176,37 @@ bool InputBeautification::BeautifySymbols(HorizontalLayout h,
     }
     // The pattern matches: beautify
     int startIndexOfBeautification =
-        rightMostIndexToBeautify -
+        rightmostIndexToBeautify -
         strlen(beautificationRule.listOfBeautifiedAliases.mainAlias()) + 1;
     return RemoveLayoutsBetweenIndexAndReplaceWithPattern(
-        h, startIndexOfBeautification, rightMostIndexToBeautify,
+        h, startIndexOfBeautification, rightmostIndexToBeautify,
         beautificationRule, layoutCursor);
   }
   return false;
 }
 
 bool InputBeautification::TokenizeAndBeautifyIdentifiers(
-    HorizontalLayout h, int rightMostIndexToBeautify,
+    HorizontalLayout h, int rightmostIndexToBeautify,
     const BeautificationRule *rulesList, size_t numberOfRules, Context *context,
     LayoutCursor *layoutCursor, bool logBeautification) {
   assert(!h.isUninitialized());
-  assert(rightMostIndexToBeautify < h.numberOfChildren() &&
-         rightMostIndexToBeautify >= 0);
+  assert(rightmostIndexToBeautify < h.numberOfChildren() &&
+         rightmostIndexToBeautify >= 0);
   bool followedByParenthesis =
-      (rightMostIndexToBeautify < h.numberOfChildren() - 1 &&
-       h.childAtIndex(rightMostIndexToBeautify + 1).type() ==
+      (rightmostIndexToBeautify < h.numberOfChildren() - 1 &&
+       h.childAtIndex(rightmostIndexToBeautify + 1).type() ==
            LayoutNode::Type::ParenthesisLayout);
 
   // Get the identifiers string.
   int firstIndexOfIdentifier = 0;
-  for (int i = rightMostIndexToBeautify; i >= 0; i--) {
+  for (int i = rightmostIndexToBeautify; i >= 0; i--) {
     Layout currentLayout = h.childAtIndex(i);
     if (!LayoutIsIdentifierMaterial(currentLayout)) {
       firstIndexOfIdentifier = i + 1;
       break;
     }
   }
-  if (firstIndexOfIdentifier > rightMostIndexToBeautify) {
+  if (firstIndexOfIdentifier > rightmostIndexToBeautify) {
     // No identifier material
     return false;
   }
@@ -216,7 +216,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
   constexpr static size_t bufferSize = 220;
   char identifiersString[bufferSize];
   int bufferCurrentLength = 0;
-  for (int i = firstIndexOfIdentifier; i <= rightMostIndexToBeautify; i++) {
+  for (int i = firstIndexOfIdentifier; i <= rightmostIndexToBeautify; i++) {
     Layout currentChild = h.childAtIndex(i);
     assert(currentChild.type() == LayoutNode::Type::CodePointLayout);
     CodePoint c = static_cast<CodePointLayout &>(currentChild).codePoint();

@@ -75,7 +75,7 @@ class GridLayoutNode : public Array, public LayoutNode {
   int rowAtChildIndex(int index) const;
   int columnAtChildIndex(int index) const;
   int indexAtRowColumn(int rowIndex, int columnIndex) const;
-  int rightMostNonGrayColumnIndex() const {
+  int rightmostNonGrayColumnIndex() const {
     return numberOfColumns() - 1 - (isEditing() && !numberOfColumnsIsFixed());
   }
   int closestNonGrayIndex(int index) const;

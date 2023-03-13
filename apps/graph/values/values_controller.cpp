@@ -68,6 +68,7 @@ ValuesController::ValuesController(
               },
               this),
           &m_exactValuesDotView, k_cellFont),
+      m_exactValuesDotView(&m_exactValuesButton),
       m_widthManager(this),
       m_heightManager(this),
       m_exactValuesAreActivated(false) {

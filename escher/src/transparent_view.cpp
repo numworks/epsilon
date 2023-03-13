@@ -3,12 +3,9 @@
 namespace Escher {
 
 void TransparentView::markRectAsDirty(KDRect rect) {
-  // TODO
-  // if (m_superview) {
-  // m_superview->markRectAsDirty(rect.translatedBy(
-  // m_frame.translatedBy(m_superview->absoluteOrigin().opposite())
-  // .origin()));
-  // }
+  if (m_superview) {
+    m_superview->markAbsoluteRectAsDirty(rect.translatedBy(absoluteOrigin()));
+  }
   View::markRectAsDirty(rect);
 }
 

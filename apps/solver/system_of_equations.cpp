@@ -436,4 +436,38 @@ void SystemOfEquations::registerSolution(double f) {
   }
 }
 
+uint32_t SystemOfEquations::tagParametersUsedAsVariables() const {
+  uint32_t tags = 0;
+  for (size_t i = 0; i < m_numberOfResolutionVariables; i++) {
+    tagVariableIfParameter(variable(i), &tags);
+  }
+  for (size_t i = 0; i < m_numberOfUserVariables; i++) {
+    tagVariableIfParameter(userVariable(i), &tags);
+  }
+  return tags;
+}
+
+void SystemOfEquations::tagVariableIfParameter(const char *variable,
+                                               uint32_t *tags) const {
+  if (variable[0] != k_parameterPrefix) {
+    return;
+  }
+  if (variable[1] == '\0') {
+    OMG::BitHelper::setBitAtIndex(*tags, 0, true);
+    return;
+  }
+  size_t maxIndex = OMG::BitHelper::numberOfBitsIn(*tags);
+  size_t maxNumberOfDigits =
+      OMG::Print::LengthOfUInt32(OMG::Base::Decimal, maxIndex);
+  size_t index = 0;
+  for (size_t digit = 1; digit < 1 + maxNumberOfDigits &&
+                         '0' <= variable[digit] && variable[digit] <= '9';
+       digit++) {
+    index = 10 * index + (variable[digit] - '0');
+  }
+  if (index > 0 && index < maxIndex) {
+    OMG::BitHelper::setBitAtIndex(*tags, index, true);
+  }
+}
+
 }  // namespace Solver

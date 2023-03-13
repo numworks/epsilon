@@ -175,8 +175,14 @@ void Sequence::tidyDownstreamPoolFrom(char *treePoolCursor) const {
 }
 
 template <typename T>
-T Sequence::templatedApproximateAtAbscissa(T x, SequenceContext *sqctx) const {
-  T n = std::round(x);
+T Sequence::privateEvaluateYAtX(T x, Poincare::Context *context) const {
+  int n = std::round(x);
+  return templatedApproximateAtRank<T>(
+      n, reinterpret_cast<SequenceContext *>(context));
+}
+
+template <typename T>
+T Sequence::templatedApproximateAtRank(int n, SequenceContext *sqctx) const {
   if (n < initialRank() || !TemplatedSequenceContext<T>::IsAcceptableRank(n)) {
     return NAN;
   }
@@ -456,10 +462,14 @@ void Sequence::InitialConditionModel::buildName(Sequence *sequence) {
           indexLayout, VerticalOffsetLayoutNode::VerticalPosition::Subscript));
 }
 
-template double Sequence::templatedApproximateAtAbscissa<double>(
-    double, SequenceContext *) const;
-template float Sequence::templatedApproximateAtAbscissa<float>(
-    float, SequenceContext *) const;
+template double Sequence::privateEvaluateYAtX<double>(
+    double, Poincare::Context *) const;
+template float Sequence::privateEvaluateYAtX<float>(float,
+                                                    Poincare::Context *) const;
+template double Sequence::templatedApproximateAtRank<double>(
+    int, SequenceContext *) const;
+template float Sequence::templatedApproximateAtRank<float>(
+    int, SequenceContext *) const;
 template double Sequence::approximateToNextRank<double>(SequenceContext *,
                                                         bool) const;
 template float Sequence::approximateToNextRank<float>(SequenceContext *,

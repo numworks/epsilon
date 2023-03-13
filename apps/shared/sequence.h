@@ -100,16 +100,12 @@ class Sequence : public Function {
   Poincare::Coordinate2D<float> evaluateXYAtParameter(
       float x, Poincare::Context *context,
       int subCurveIndex = 0) const override {
-    return Poincare::Coordinate2D<float>(
-        x, templatedApproximateAtAbscissa(
-               x, reinterpret_cast<SequenceContext *>(context)));
+    return Poincare::Coordinate2D<float>(x, privateEvaluateYAtX(x, context));
   }
   Poincare::Coordinate2D<double> evaluateXYAtParameter(
       double x, Poincare::Context *context,
       int subCurveIndex = 0) const override {
-    return Poincare::Coordinate2D<double>(
-        x, templatedApproximateAtAbscissa(
-               x, reinterpret_cast<SequenceContext *>(context)));
+    return Poincare::Coordinate2D<double>(x, privateEvaluateYAtX(x, context));
   }
   template <typename T>
   T approximateToNextRank(SequenceContext *sqctx, bool independent) const;
@@ -227,7 +223,9 @@ class Sequence : public Function {
   };
 
   template <typename T>
-  T templatedApproximateAtAbscissa(T x, SequenceContext *sqctx) const;
+  T privateEvaluateYAtX(T x, Poincare::Context *context) const;
+  template <typename T>
+  T templatedApproximateAtRank(int n, SequenceContext *sqctx) const;
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const ExpressionModel *model() const override { return &m_definition; }
   RecordDataBuffer *recordData() const;

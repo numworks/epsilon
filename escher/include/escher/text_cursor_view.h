@@ -21,8 +21,6 @@ class TextCursorView : public View {
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
-  KDRect frame() const { return relativeFrame(); }
-
  private:
   void setVisible(bool visible);
   void switchVisible() { setVisible(!m_visible); }

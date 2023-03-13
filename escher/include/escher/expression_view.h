@@ -33,7 +33,6 @@ class ExpressionView : public View {
   int numberOfLayouts() const;
   KDSize minimalSizeForOptimalDisplay() const override;
   KDPoint drawingOrigin() const;
-  KDPoint absoluteDrawingOrigin() const;
   bool layoutHasNode() const {
     return Poincare::TreeNode::IsValidIdentifier(m_layout.identifier()) &&
            !m_layout.wasErasedByException();

@@ -177,28 +177,18 @@ void Sequence::tidyDownstreamPoolFrom(char *treePoolCursor) const {
 template <typename T>
 T Sequence::privateEvaluateYAtX(T x, Poincare::Context *context) const {
   int n = std::round(x);
-  return templatedApproximateAtRank<T>(
-      n, reinterpret_cast<SequenceContext *>(context));
+  return valueAtRank<T>(n, reinterpret_cast<SequenceContext *>(context), false);
 }
 
 template <typename T>
-T Sequence::templatedApproximateAtRank(int n, SequenceContext *sqctx) const {
-  if (n < initialRank() || !TemplatedSequenceContext<T>::IsAcceptableRank(n)) {
-    return NAN;
-  }
-  sqctx->stepUntilRank<T>(n);
-  int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
-  return sqctx->commonRankSequenceValue<T>(sequenceIndex, 0);
-}
-
-template <typename T>
-T Sequence::valueAtRank(int n, SequenceContext *sqctx) {
+T Sequence::valueAtRank(int n, SequenceContext *sqctx, bool independent) const {
   if (n < initialRank() || !TemplatedSequenceContext<T>::IsAcceptableRank(n)) {
     return NAN;
   }
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
-  sqctx->stepUntilRank<T>(n, sequenceIndex);
-  return sqctx->independentRankSequenceValue<T>(sequenceIndex, 0);
+  sqctx->stepUntilRank<T>(n, independent ? sequenceIndex : -1);
+  return independent ? sqctx->independentRankSequenceValue<T>(sequenceIndex, 0)
+                     : sqctx->commonRankSequenceValue<T>(sequenceIndex, 0);
 }
 
 template <typename T>
@@ -466,15 +456,12 @@ template double Sequence::privateEvaluateYAtX<double>(
     double, Poincare::Context *) const;
 template float Sequence::privateEvaluateYAtX<float>(float,
                                                     Poincare::Context *) const;
-template double Sequence::templatedApproximateAtRank<double>(
-    int, SequenceContext *) const;
-template float Sequence::templatedApproximateAtRank<float>(
-    int, SequenceContext *) const;
 template double Sequence::approximateToNextRank<double>(SequenceContext *,
                                                         bool) const;
 template float Sequence::approximateToNextRank<float>(SequenceContext *,
                                                       bool) const;
-template double Sequence::valueAtRank<double>(int, SequenceContext *);
-template float Sequence::valueAtRank<float>(int, SequenceContext *);
+template double Sequence::valueAtRank<double>(int, SequenceContext *,
+                                              bool) const;
+template float Sequence::valueAtRank<float>(int, SequenceContext *, bool) const;
 
 }  // namespace Shared

@@ -110,7 +110,7 @@ class Sequence : public Function {
   template <typename T>
   T approximateToNextRank(SequenceContext *sqctx, bool independent) const;
   template <typename T>
-  T valueAtRank(int n, SequenceContext *sqctx);
+  T valueAtRank(int n, SequenceContext *sqctx, bool independent) const;
 
   Poincare::Expression sumBetweenBounds(
       double start, double end, Poincare::Context *context) const override;
@@ -224,8 +224,6 @@ class Sequence : public Function {
 
   template <typename T>
   T privateEvaluateYAtX(T x, Poincare::Context *context) const;
-  template <typename T>
-  T templatedApproximateAtRank(int n, SequenceContext *sqctx) const;
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const ExpressionModel *model() const override { return &m_definition; }
   RecordDataBuffer *recordData() const;

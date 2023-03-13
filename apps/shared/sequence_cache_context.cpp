@@ -67,7 +67,7 @@ SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
           rank, lastDescendantContext ? lastDescendantContext : this);
       // If the rank is not an int, return NAN
       if (std::floor(n) == n) {
-        result = seq->valueAtRank<T>(n, m_sequenceContext);
+        result = seq->valueAtRank<T>(n, m_sequenceContext, true);
       }
     }
     return Poincare::Float<T>::Builder(result);

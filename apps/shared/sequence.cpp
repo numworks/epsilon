@@ -139,6 +139,8 @@ bool Sequence::isSimplyRecursive(Context *context) {
   return type() == Shared::Sequence::Type::SingleRecurrence &&
          !expressionClone().recursivelyMatches(
              [](const Expression e, Context *context, void *arg) {
+               // Returns TrinaryBoolean::True for forbidden elements.
+               // Condition 1: u(n+1) mustn't depend on n
                if (e.type() == ExpressionNode::Type::Symbol) {
                  const Poincare::Symbol symbol =
                      static_cast<const Poincare::Symbol &>(e);
@@ -148,18 +150,20 @@ bool Sequence::isSimplyRecursive(Context *context) {
                if (e.type() != ExpressionNode::Type::Sequence) {
                  return TrinaryBoolean::Unknown;
                }
+               // Condition 2: u(n+1) mustn't depend on another sequence than u
                const Poincare::Sequence seq =
                    static_cast<const Poincare::Sequence &>(e);
                char *buffer = static_cast<char *>(arg);
                if (strcmp(seq.name(), buffer) != 0) {
                  return TrinaryBoolean::True;
                }
-               if (seq.childAtIndex(0).type() != ExpressionNode::Type::Symbol) {
+               Expression rank = seq.childAtIndex(0);
+               // Condition 3: u(n+1) mustn't depend on u(rank) with rank!=n
+               if (rank.type() != ExpressionNode::Type::Symbol) {
                  return TrinaryBoolean::True;
                }
-               Expression child = seq.childAtIndex(0);
                const Poincare::Symbol symbol =
-                   static_cast<const Poincare::Symbol &>(child);
+                   static_cast<const Poincare::Symbol &>(rank);
                return symbol.isSystemSymbol() ? TrinaryBoolean::False
                                               : TrinaryBoolean::True;
              },

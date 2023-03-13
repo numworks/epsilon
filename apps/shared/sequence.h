@@ -93,7 +93,8 @@ class Sequence : public Function {
   Poincare::Layout nameLayout();
   bool isDefined() override;
   bool isEmpty() override;
-  /* u_(n+1) must depend on u_n only not n nor v_n nor u_(n-1) */
+  /* Returns true if u(n+1) depends only on u(n) and not on n, another sequence
+   * or another rank of u */
   bool isSimplyRecursive(Poincare::Context *context);
 
   // Approximation

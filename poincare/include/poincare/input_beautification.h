@@ -22,12 +22,12 @@ namespace Poincare {
 
 class InputBeautification {
  public:
-  typedef struct {
+  struct BeautificationMethod {
     bool beautifyIdentifiersBeforeInserting;
     bool beautifyAfterInserting;
-  } InsertionBeautificationMethod;
+  };
 
-  static InsertionBeautificationMethod BeautificationMethodWhenInsertingLayout(
+  static BeautificationMethod BeautificationMethodWhenInsertingLayout(
       Layout insertedLayout);
 
   /* Both of the following functions return true if layouts were beautified.

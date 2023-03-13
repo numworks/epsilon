@@ -43,6 +43,7 @@ class TextInput : public WithBlinkingTextCursor<ScrollableView>,
                 float horizontalAlignment = KDContext::k_alignLeft,
                 float verticalAlignment = KDContext::k_alignCenter)
         : View(),
+          m_cursorView(this),
           m_font(font),
           m_selectionStart(nullptr),
           m_selectionEnd(nullptr),

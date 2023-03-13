@@ -2,11 +2,11 @@
 #define ESCHER_TEXT_CURSOR_VIEW_H
 
 #include <escher/responder.h>
-#include <escher/view.h>
+#include <escher/transparent_view.h>
 
 namespace Escher {
 
-class TextCursorView : public View {
+class TextCursorView : public TransparentView {
   friend class BlinkTimer;
   template <typename ResponderType>
   friend class WithBlinkingTextCursor;
@@ -14,7 +14,8 @@ class TextCursorView : public View {
  public:
   constexpr static KDCoordinate k_width = 1;
 
-  TextCursorView() : m_visible(true) {}
+  TextCursorView(View* superview)
+      : TransparentView(superview), m_visible(true) {}
   ~TextCursorView();
 
   // View

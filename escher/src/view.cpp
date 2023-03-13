@@ -55,8 +55,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
     KDContext *ctx = KDIonContext::SharedContext;
     ctx->setOrigin(absOrigin);
     ctx->setClippingRect(absClippingRect);
-    this->drawRect(ctx,
-                   rectNeedingRedraw.translatedBy(m_frame.origin().opposite()));
+    drawRect(ctx, rectNeedingRedraw.relativeTo(m_frame.origin()));
   }
   // This initializes the area that has been redrawn.
   KDRect redrawnArea = rectNeedingRedraw;
@@ -135,7 +134,7 @@ void View::setFrame(KDRect frame, bool force) {
 
 KDPoint View::pointFromPointInView(View *view, KDPoint point) {
   return point.translatedBy(
-      view->absoluteOrigin().translatedBy(absoluteOrigin().opposite()));
+      view->absoluteOrigin().relativeTo(absoluteOrigin()));
 }
 
 KDRect View::bounds() const { return m_frame.movedTo(KDPointZero); }

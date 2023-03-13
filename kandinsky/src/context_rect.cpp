@@ -2,12 +2,12 @@
 #include <kandinsky/context.h>
 
 KDRect KDContext::relativeRect(KDRect rect) {
-  return rect.intersectedWith(m_clippingRect).translatedBy(m_origin.opposite());
+  return rect.intersectedWith(m_clippingRect).relativeTo(m_origin);
 }
 
 KDRect KDContext::absoluteFillRect(KDRect rect) {
   // If rect is huge, it is safer to intersect it first and then translate it
-  return rect.intersectedWith(m_clippingRect.translatedBy(m_origin.opposite()))
+  return rect.intersectedWith(m_clippingRect.relativeTo(m_origin))
       .translatedBy(m_origin);
 }
 

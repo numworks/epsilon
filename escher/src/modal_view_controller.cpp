@@ -67,7 +67,8 @@ void ModalViewController::ContentView::layoutSubviews(bool force) {
   assert(m_regularView != nullptr);
   if (m_isDisplayingModal) {
     assert(m_currentModalView != nullptr);
-    KDRect oldFrame = m_currentModalView->relativeFrame();
+    KDRect oldFrame =
+        m_currentModalView->absoluteFrame().relativeTo(absoluteOrigin());
     KDRect modalFrame = modalViewFrame();
     if (m_modalGrowingOnly) {
       modalFrame = modalFrame.unionedWith(oldFrame);

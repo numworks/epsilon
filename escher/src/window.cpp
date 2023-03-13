@@ -20,8 +20,6 @@ void Window::setContentView(View* contentView) {
   layoutSubviews();
 }
 
-const Window* Window::window() const { return this; }
-
 int Window::numberOfSubviews() const {
   return (m_contentView == nullptr ? 0 : 1);
 }

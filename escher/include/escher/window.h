@@ -19,9 +19,6 @@ class Window : public View {
   void layoutSubviews(bool force = false) override;
   View* subviewAtIndex(int index) override;
   View* m_contentView;
-
- private:
-  const Window* window() const override;
 };
 
 }  // namespace Escher

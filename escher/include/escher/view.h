@@ -56,6 +56,7 @@ class View {
   KDPoint pointFromPointInView(View *view, KDPoint point);
   KDRect relativeFrame() const;
   KDRect absoluteFrame() const { return m_frame; }
+  KDPoint absoluteOrigin() const { return m_frame.origin(); }
 
   KDRect bounds() const;
   KDRect dirtyRect() const { return m_dirtyRect; }
@@ -93,7 +94,6 @@ class View {
   virtual void layoutSubviews(bool force = false) {}
   virtual const Window *window() const;
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);
-  KDPoint absoluteOrigin() const { return m_frame.origin(); }
   KDRect absoluteVisibleFrame() const;
 
   /* At destruction, subviews aren't notified that their own pointer

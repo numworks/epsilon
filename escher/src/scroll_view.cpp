@@ -208,10 +208,10 @@ void ScrollView::setContentOffset(KDPoint offset, bool forceRelayout) {
 void ScrollView::InnerView::drawRect(KDContext *ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
-  KDCoordinate offsetX =
-      m_scrollView->contentOffset().x() + relativeFrame().x();
-  KDCoordinate offsetY =
-      m_scrollView->contentOffset().y() + relativeFrame().y();
+  KDPoint offset = m_scrollView->contentOffset().translatedBy(
+      m_scrollView->absoluteOrigin().relativeTo(absoluteOrigin()));
+  KDCoordinate offsetX = offset.x();
+  KDCoordinate offsetY = offset.y();
   KDCoordinate contentHeight = m_scrollView->m_contentView->bounds().height();
   KDCoordinate contentWidth = m_scrollView->m_contentView->bounds().width();
   // Draw top margin

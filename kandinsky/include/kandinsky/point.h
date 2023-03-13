@@ -9,6 +9,7 @@ class KDPoint {
   KDCoordinate x() const { return m_x; }
   KDCoordinate y() const { return m_y; }
   KDPoint translatedBy(KDPoint other) const;
+  KDPoint relativeTo(KDPoint p) const { return translatedBy(p.opposite()); }
   KDPoint opposite() const;
   bool operator==(const KDPoint &other) const {
     return (m_x == other.m_x && m_y == other.m_y);

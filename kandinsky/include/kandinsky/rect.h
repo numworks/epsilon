@@ -59,6 +59,7 @@ class KDRect {
   void setSize(KDSize size) { m_size = size; }
 
   KDRect translatedBy(KDPoint p) const;
+  KDRect relativeTo(KDPoint p) const { return translatedBy(p.opposite()); }
   KDRect paddedWith(KDCoordinate value) const;
   KDRect trimmedBy(KDCoordinate value) const { return paddedWith(-value); }
   KDRect movedTo(KDPoint p) const;

@@ -32,15 +32,15 @@ class InputBeautification {
 
   /* Both of the following functions return true if layouts were beautified.
    *
-   * BeautifyIdentifiersLeftOfCursor will only apply the k_identifiersRules.
-   * This is called either:
+   * BeautifyIdentifiersLeftOfCursor will only apply the
+   * k_simpleIdentifiersRules. This is called either:
    *    - When moving out of an horizontal layout.
    *    - Just before inserting a non-identifier char.
    *
    * BeautifyLeftOfCursorAfterInsertion will apply:
    *    - k_onInsertionRules (all combinations of chars that are beautified
    *      immediatly when inserted).
-   *    - k_logarithmRule and k_functionsRules (if a left parenthesis was
+   *    - k_logarithmRule and k_identifiersRules (if a left parenthesis was
    *      just inserted).
    *    - BeautifyPipeKey, BeautifyFractionIntoDerivative and
    *      BeautifyFirstOrderDerivativeIntoNthOrder.
@@ -95,36 +95,22 @@ class InputBeautification {
        }},
   };
 
-  /* WARNING: The following arrays (convertIdentifiers and convertFunctions)
-   * will be beautified only if the expression can be parsed without being
-   * beautified.
-   * If you add any new identifiers to this list, they must be parsable.
-   * This is because we must be able to distinguish "asqrt" = "a*sqrt" from
-   * "asqlt" != "a*sqlt".
-   * */
+  constexpr static BeautificationRule k_infRule = {
+      "inf", 0, [](Layout* parameters) {
+        return static_cast<Layout>(
+            CodePointLayout::Builder(UCodePointInfinity));
+      }};
 
-  /* Sorted in alphabetical order like in parsing/helper.h
-   * "If the function has multiple aliases, take the first alias
-   * in alphabetical order to choose position in list." */
-  constexpr static const BeautificationRule k_identifiersRules[] = {
-      // inf
-      {"inf", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(
-             CodePointLayout::Builder(UCodePointInfinity));
-       }},
-      // Greek letters
-      {"pi", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(
-             CodePointLayout::Builder(UCodePointGreekSmallLetterPi));
-       }},
-      {"theta", 0,
-       [](Layout* parameters) {
-         return static_cast<Layout>(
-             CodePointLayout::Builder(UCodePointGreekSmallLetterTheta));
-       }},
-  };
+  constexpr static BeautificationRule k_piRule = {
+      "pi", 0, [](Layout* parameters) {
+        return static_cast<Layout>(
+            CodePointLayout::Builder(UCodePointGreekSmallLetterPi));
+      }};
+  constexpr static BeautificationRule k_thetaRule = {
+      "theta", 0, [](Layout* parameters) {
+        return static_cast<Layout>(
+            CodePointLayout::Builder(UCodePointGreekSmallLetterTheta));
+      }};
 
   constexpr static BeautificationRule k_absoluteValueRule = {
       AbsoluteValue::s_functionHelper.aliasesList(), 1, [](Layout* parameters) {
@@ -141,19 +127,23 @@ class InputBeautification {
             parameters[0], parameters[1], parameters[2]));
       }};
 
-  constexpr static BeautificationRule k_logarithmRule = {
-      Logarithm::s_functionHelper.aliasesList(), 2, [](Layout* parameters) {
-        return static_cast<Layout>(
-            LayoutHelper::Logarithm(parameters[0], parameters[1])
-                .makeEditable());
-      }};
-  constexpr static int k_indexOfBaseOfLog = 1;
-
-  /* Sorted in alphabetical order like in parsing/helper.h
+  /* WARNING 1: The following arrays (k_simpleIdentifiersRules and
+   * k_identifiersRules) will be beautified only if the expression can be parsed
+   * without being beautified. If you add any new identifiers to one of these
+   * lists, they must be parsable. This is because we must be able to
+   * distinguish "asqrt" = "a*sqrt" from "asqlt" != "a*sqlt".
+   *
+   * WARNING 2: These need to be sorted in alphabetical order like in
+   * parsing/helper.h:
    * "If the function has multiple aliases, take the first alias
    * in alphabetical order to choose position in list." */
-  constexpr static const BeautificationRule k_functionsRules[] = {
-      // Functions
+  constexpr static const BeautificationRule k_simpleIdentifiersRules[] = {
+      k_infRule, k_piRule, k_thetaRule};
+  constexpr static size_t k_lenOfSimpleIdentifiersRules =
+      sizeof(k_simpleIdentifiersRules) / sizeof(BeautificationRule);
+
+  // simpleIdentifiersRules are included in identifiersRules
+  constexpr static const BeautificationRule k_identifiersRules[] = {
       /* abs( */ k_absoluteValueRule,
       {/* binomial( */
        BinomialCoefficient::s_functionHelper.aliasesList(), 2,
@@ -186,6 +176,7 @@ class InputBeautification {
        [](Layout* parameters) {
          return static_cast<Layout>(FloorLayout::Builder(parameters[0]));
        }},
+      /* inf */ k_infRule,
       {/* int( */
        Integral::s_functionHelper.aliasesList(), 4,
        [](Layout* parameters) {
@@ -201,6 +192,7 @@ class InputBeautification {
        [](Layout* parameters) {
          return static_cast<Layout>(VectorNormLayout::Builder(parameters[0]));
        }},
+      /* pi */ k_piRule,
       {/* piecewise( */
        PiecewiseOperator::s_functionHelper.aliasesList(), 2,
        [](Layout* parameters) {
@@ -240,32 +232,44 @@ class InputBeautification {
        [](Layout* parameters) {
          return static_cast<Layout>(NthRootLayout::Builder(parameters[0]));
        }},
-      {/* sum( */
-       Sum::s_functionHelper.aliasesList(), 4, [](Layout* parameters) {
-         if (parameters[1].isEmpty()) {  // This preserves cursor
-           parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('k'),
-                                                0, 0);
-         }
-         return static_cast<Layout>(SumLayout::Builder(
-             parameters[0], parameters[1], parameters[2], parameters[3]));
-       }}};
+      /* theta */ k_thetaRule};
+
+  constexpr static size_t k_lenOfIdentifiersRules =
+      sizeof(k_identifiersRules) / sizeof(BeautificationRule);
+
+  constexpr static BeautificationRule k_sumRule = {
+      Sum::s_functionHelper.aliasesList(), 4, [](Layout* parameters) {
+        if (parameters[1].isEmpty()) {  // This preserves cursor
+          parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('k'), 0,
+                                               0);
+        }
+        return static_cast<Layout>(SumLayout::Builder(
+            parameters[0], parameters[1], parameters[2], parameters[3]));
+      }};
+
+  constexpr static BeautificationRule k_logarithmRule = {
+      Logarithm::s_functionHelper.aliasesList(), 2, [](Layout* parameters) {
+        return static_cast<Layout>(
+            LayoutHelper::Logarithm(parameters[0], parameters[1])
+                .makeEditable());
+      }};
+  constexpr static int k_indexOfBaseOfLog = 1;
 
   static bool LayoutIsIdentifierMaterial(Layout l);
 
-  // All following mathos return true if layout was beautified
+  // All following methods return true if layout was beautified
 
   /* Apply k_symbolsRules  */
   static bool BeautifySymbols(HorizontalLayout h, int rightMostIndexToBeautify,
                               LayoutCursor* layoutCursor);
 
-  /* Apply k_identifiersRules.
-   * If afterLeftParenthesisInsertion is true, also apply k_functionsRules and
-   * k_logarithmRule. */
-  static bool BeautifyIdentifiers(HorizontalLayout h,
-                                  int rightMostIndexToBeautify,
-                                  Context* context, LayoutCursor* layoutCursor,
-                                  bool beautifyFunctions,
-                                  bool beautifySum = false);
+  /* Apply the rules passed in rulesList as long as they match a tokenizable
+   * identifiers. */
+  static bool TokenizeAndBeautifyIdentifiers(
+      HorizontalLayout h, int rightMostIndexToBeautify,
+      const BeautificationRule* rulesList, size_t numberOfRules,
+      Context* context, LayoutCursor* layoutCursor,
+      bool logBeautification = false);
 
   static bool BeautifyPipeKey(HorizontalLayout h, int indexOfPipeKey,
                               LayoutCursor* cursor);
@@ -282,13 +286,13 @@ class InputBeautification {
   static bool CompareAndBeautifyIdentifier(
       const char* identifier, size_t identifierLength,
       BeautificationRule beautificationRule, HorizontalLayout h, int startIndex,
-      LayoutCursor* layoutCursor, bool isBeautifyingFunction,
-      int* comparisonResult, int* numberOfLayoutsAddedOrRemoved);
+      LayoutCursor* layoutCursor, int* comparisonResult,
+      int* numberOfLayoutsAddedOrRemoved);
 
   static bool RemoveLayoutsBetweenIndexAndReplaceWithPattern(
       HorizontalLayout h, int startIndex, int endIndex,
       BeautificationRule beautificationRule, LayoutCursor* layoutCursor,
-      bool isBeautifyingFunction, int* numberOfLayoutsAddedOrRemoved = nullptr,
+      int* numberOfLayoutsAddedOrRemoved = nullptr,
       Layout preProcessedParameter = Layout(),
       int indexOfPreProcessedParameter = -1);
 

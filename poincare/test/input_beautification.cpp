@@ -104,7 +104,7 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
   assert_inserted_text_turns_into(text6Left, l, text6Right);
 
   // Beautify logN()
-  constexpr static const char* text7 = "log52(6)";
+  constexpr static const char* text7 = "log52(6";
   l = HorizontalLayout::Builder(
       {CodePointLayout::Builder('l'), CodePointLayout::Builder('o'),
        CodePointLayout::Builder('g'),
@@ -167,7 +167,8 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
 
   constexpr static const char* text14 = "diff(";
   l = HorizontalLayout::Builder({FirstOrderDerivativeLayout::Builder(
-      HorizontalLayout::Builder(), CodePointLayout::Builder('x'),
+      HorizontalLayout::Builder(),
+      HorizontalLayout::Builder(CodePointLayout::Builder('x')),
       HorizontalLayout::Builder())});
   assert_inserted_text_turns_into(text14, l);
 
@@ -209,7 +210,8 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
 
   constexpr static const char* text21 = "int(";
   l = HorizontalLayout::Builder({IntegralLayout::Builder(
-      HorizontalLayout::Builder(), CodePointLayout::Builder('x'),
+      HorizontalLayout::Builder(),
+      HorizontalLayout::Builder(CodePointLayout::Builder('x')),
       HorizontalLayout::Builder(), HorizontalLayout::Builder())});
   assert_inserted_text_turns_into(text21, l);
 
@@ -226,7 +228,7 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
   constexpr static const char* text21RightBis = "2,,4";
   l = HorizontalLayout::Builder({IntegralLayout::Builder(
       HorizontalLayout::Builder(CodePointLayout::Builder('2')),
-      CodePointLayout::Builder('x'),
+      HorizontalLayout::Builder(CodePointLayout::Builder('x')),
       HorizontalLayout::Builder(CodePointLayout::Builder('4')),
       HorizontalLayout::Builder())});
   assert_inserted_text_turns_into(text21, l, text21RightBis);
@@ -256,8 +258,8 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
   constexpr static const char* text25bis = "sum(3,";
   l = HorizontalLayout::Builder(SumLayout::Builder(
       HorizontalLayout::Builder(CodePointLayout::Builder('3')),
-      CodePointLayout::Builder('k'), HorizontalLayout::Builder(),
-      HorizontalLayout::Builder()));
+      HorizontalLayout::Builder(CodePointLayout::Builder('k')),
+      HorizontalLayout::Builder(), HorizontalLayout::Builder()));
   assert_inserted_text_turns_into(text25bis, l);
 }
 
@@ -315,7 +317,8 @@ QUIZ_CASE(poincare_input_beautification_derivative) {
 
   const HorizontalLayout firstOrderDerivative =
       HorizontalLayout::Builder(FirstOrderDerivativeLayout::Builder(
-          HorizontalLayout::Builder(), CodePointLayout::Builder('x'),
+          HorizontalLayout::Builder(),
+          HorizontalLayout::Builder(CodePointLayout::Builder('x')),
           HorizontalLayout::Builder()));
   const HorizontalLayout nthOrderDerivative =
       HorizontalLayout::Builder(HigherOrderDerivativeLayout::Builder(

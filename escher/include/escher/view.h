@@ -93,7 +93,6 @@ class View {
   virtual void layoutSubviews(bool force = false) {}
   virtual const Window *window() const;
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);
-  KDRect absoluteVisibleFrame() const;
 
   /* At destruction, subviews aren't notified that their own pointer
    * 'm_superview' is outdated. This is not an issue since all view hierarchy

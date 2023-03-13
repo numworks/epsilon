@@ -43,18 +43,17 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
    * dirty rectangle and the rectangle forced to be redrawn. The rectangle to
    * redraw must also be included in the current view bounds and in the
    * rectangle rect. */
+  KDRect visibleRect = rect.intersectedWith(m_frame);
   KDRect rectNeedingRedraw =
-      rect.intersectedWith(m_dirtyRect)
+      visibleRect.intersectedWith(m_dirtyRect)
           .unionedWith(forceRedrawRect.intersectedWith(m_frame));
 
   // This redraws the rectNeedingRedraw calling drawRect.
   if (!rectNeedingRedraw.isEmpty()) {
     KDPoint absOrigin = absoluteOrigin();
-    KDRect absRect = rectNeedingRedraw;
-    KDRect absClippingRect = absoluteVisibleFrame().intersectedWith(absRect);
     KDContext *ctx = KDIonContext::SharedContext;
     ctx->setOrigin(absOrigin);
-    ctx->setClippingRect(absClippingRect);
+    ctx->setClippingRect(rectNeedingRedraw);
     drawRect(ctx, rectNeedingRedraw.relativeTo(m_frame.origin()));
   }
   // This initializes the area that has been redrawn.
@@ -71,8 +70,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
 
     // We redraw the current subview by passing the rectangle previously redrawn
     // (by the parent view or previous sister views) as forced to be redraw.
-    KDRect subviewRedrawnArea =
-        subview->redraw(rect.intersectedWith(subview->m_frame), redrawnArea);
+    KDRect subviewRedrawnArea = subview->redraw(visibleRect, redrawnArea);
 
     // We expand the redrawn area to include the area just drawn.
     redrawnArea = redrawnArea.unionedWith(subviewRedrawnArea);
@@ -138,16 +136,6 @@ KDPoint View::pointFromPointInView(View *view, KDPoint point) {
 }
 
 KDRect View::bounds() const { return m_frame.movedTo(KDPointZero); }
-
-KDRect View::absoluteVisibleFrame() const {
-  if (m_superview == nullptr) {
-    assert(this == (View *)window());
-    return m_frame;
-  } else {
-    KDRect parentDrawingArea = m_superview->absoluteVisibleFrame();
-    return m_frame.intersectedWith(parentDrawingArea);
-  }
-}
 
 #if ESCHER_VIEW_LOGGING
 const char *View::className() const { return "View"; }

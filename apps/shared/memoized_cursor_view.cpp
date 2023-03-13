@@ -58,7 +58,7 @@ bool MemoizedCursorView::eraseCursorIfPossible() {
   if (!m_underneathPixelBufferLoaded) {
     return false;
   }
-  const KDRect currentFrame = absoluteVisibleFrame();
+  const KDRect currentFrame = absoluteFrame();
   if (currentFrame.isEmpty()) {
     return false;
   }

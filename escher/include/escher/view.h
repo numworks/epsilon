@@ -29,7 +29,6 @@ namespace Escher {
  *   send any display command. */
 
 class Window;
-class TransparentView;
 
 class View {
   friend class Shared::MemoizedCursorView;
@@ -53,7 +52,6 @@ class View {
   void setFrame(KDRect frame, bool force);
   void setAbsoluteFrame(KDRect frame, bool force) { m_frame = frame; }
   void setChildFrame(View *child, KDRect frame, bool force);
-  void setChildFrame(TransparentView *child, KDRect frame, bool force);
   KDPoint pointFromPointInView(View *view, KDPoint point);
   KDRect absoluteFrame() const { return m_frame; }
   KDPoint absoluteOrigin() const { return m_frame.origin(); }

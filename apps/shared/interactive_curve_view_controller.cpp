@@ -30,6 +30,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(
       m_interactiveRange(interactiveRange),
       m_autoButton(this, I18n::Message::DefaultSetting, autoButtonInvocation(),
                    &m_autoDotView, k_buttonFont),
+      m_autoDotView(&m_autoButton),
       m_rangeButton(this, I18n::Message::Axis, rangeButtonInvocation(),
                     &m_rangeUnequalView, k_buttonFont),
       m_navigationButton(this, I18n::Message::Navigate,

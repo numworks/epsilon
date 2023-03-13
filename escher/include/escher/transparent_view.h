@@ -6,8 +6,17 @@
 namespace Escher {
 
 class TransparentView : public View {
+ public:
+  TransparentView(View* superview) : m_superview(superview) {}
+
+  // TODO remove this one after Cells templatization
+  TransparentView() : m_superview(nullptr) {}
+
  protected:
-  void markRectAsDirty(KDRect rect) override;
+  void markRectAsDirty(KDRect rect);
+
+ private:
+  View* m_superview;
 };
 
 }  // namespace Escher

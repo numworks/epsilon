@@ -88,14 +88,6 @@ void View::setChildFrame(View *child, KDRect frame, bool force) {
   child->setFrame(frame.translatedBy(m_frame.origin()), force);
 }
 
-void View::setChildFrame(TransparentView *child, KDRect frame, bool force) {
-  /* markRectAsDirty is always called directly and not with
-   * ptr->markRectAsDirty.  Therefore the only place where is polymorphism was
-   * used was the call in setFrame that was moved here. */
-  markRectAsDirty(child->absoluteFrame().relativeTo(absoluteOrigin()));
-  child->setFrame(frame.translatedBy(m_frame.origin()), force);
-}
-
 void View::setFrame(KDRect frame, bool force) {
   if (frame == m_frame && !force) {
     return;

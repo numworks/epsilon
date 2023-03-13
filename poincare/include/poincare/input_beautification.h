@@ -52,9 +52,11 @@ class InputBeautification {
                                                  Context* context);
 
  private:
-  typedef Layout (*BeautifiedLayoutBuilder)(Layout builderParameter);
+  using BeautifiedLayoutBuilder = Layout (*)(Layout* parameters);
+  constexpr static int k_maxNumberOfParameters = 4;
   struct BeautificationRule {
     AliasesList listOfBeautifiedAliases;
+    int numberOfParameters;
     BeautifiedLayoutBuilder layoutBuilder;
   };
 
@@ -65,29 +67,29 @@ class InputBeautification {
    * Currently, "*" is the only beautification affected. */
   constexpr static const BeautificationRule k_symbolsRules[] = {
       // Comparison operators
-      {"<=",
-       [](Layout builderParameter) {
+      {"<=", 0,
+       [](Layout* parameters) {
          return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(
              ComparisonNode::OperatorType::InferiorEqual));
        }},
-      {">=",
-       [](Layout builderParameter) {
+      {">=", 0,
+       [](Layout* parameters) {
          return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(
              ComparisonNode::OperatorType::SuperiorEqual));
        }},
-      {"!=",
-       [](Layout builderParameter) {
+      {"!=", 0,
+       [](Layout* parameters) {
          return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(
              ComparisonNode::OperatorType::NotEqual));
        }},
       // Special char
-      {"->",
-       [](Layout builderParameter) {
+      {"->", 0,
+       [](Layout* parameters) {
          return static_cast<Layout>(
              CodePointLayout::Builder(UCodePointRightwardsArrow));
        }},
-      {"*",
-       [](Layout builderParameter) {
+      {"*", 0,
+       [](Layout* parameters) {
          return static_cast<Layout>(
              CodePointLayout::Builder(UCodePointMultiplicationSign));
        }},
@@ -106,48 +108,46 @@ class InputBeautification {
    * in alphabetical order to choose position in list." */
   constexpr static const BeautificationRule k_identifiersRules[] = {
       // inf
-      {"inf",
-       [](Layout builderParameter) {
+      {"inf", 0,
+       [](Layout* parameters) {
          return static_cast<Layout>(
              CodePointLayout::Builder(UCodePointInfinity));
        }},
       // Greek letters
-      {"pi",
-       [](Layout builderParameter) {
+      {"pi", 0,
+       [](Layout* parameters) {
          return static_cast<Layout>(
              CodePointLayout::Builder(UCodePointGreekSmallLetterPi));
        }},
-      {"theta",
-       [](Layout builderParameter) {
+      {"theta", 0,
+       [](Layout* parameters) {
          return static_cast<Layout>(
              CodePointLayout::Builder(UCodePointGreekSmallLetterTheta));
        }},
   };
 
   constexpr static BeautificationRule k_absoluteValueRule = {
-      AbsoluteValue::s_functionHelper.aliasesList(),
-      [](Layout builderParameter) {
-        return static_cast<Layout>(AbsoluteValueLayout::Builder(
-            builderParameter.isUninitialized() ? HorizontalLayout::Builder()
-                                               : builderParameter));
+      AbsoluteValue::s_functionHelper.aliasesList(), 1, [](Layout* parameters) {
+        return static_cast<Layout>(AbsoluteValueLayout::Builder(parameters[0]));
       }};
 
   constexpr static BeautificationRule k_derivativeRule = {
-      Derivative::s_functionHelper.aliasesList(), [](Layout builderParameter) {
+      Derivative::s_functionHelper.aliasesList(), 3, [](Layout* parameters) {
+        if (parameters[1].isEmpty()) {  // This preserves cursor
+          parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('x'), 0,
+                                               0);
+        }
         return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(
-            HorizontalLayout::Builder(), CodePointLayout::Builder('x'),
-            HorizontalLayout::Builder()));
+            parameters[0], parameters[1], parameters[2]));
       }};
 
   constexpr static BeautificationRule k_logarithmRule = {
-      Logarithm::s_functionHelper.aliasesList(), [](Layout builderParameter) {
+      Logarithm::s_functionHelper.aliasesList(), 2, [](Layout* parameters) {
         return static_cast<Layout>(
-            LayoutHelper::Logarithm(HorizontalLayout::Builder(),
-                                    builderParameter.isUninitialized()
-                                        ? HorizontalLayout::Builder()
-                                        : builderParameter)
+            LayoutHelper::Logarithm(parameters[0], parameters[1])
                 .makeEditable());
       }};
+  constexpr static int k_indexOfBaseOfLog = 1;
 
   /* Sorted in alphabetical order like in parsing/helper.h
    * "If the function has multiple aliases, take the first alias
@@ -156,55 +156,54 @@ class InputBeautification {
       // Functions
       /* abs( */ k_absoluteValueRule,
       {/* binomial( */
-       BinomialCoefficient::s_functionHelper.aliasesList(),
-       [](Layout builderParameter) {
-         return static_cast<Layout>(BinomialCoefficientLayout::Builder(
-             HorizontalLayout::Builder(), HorizontalLayout::Builder()));
+       BinomialCoefficient::s_functionHelper.aliasesList(), 2,
+       [](Layout* parameters) {
+         return static_cast<Layout>(
+             BinomialCoefficientLayout::Builder(parameters[0], parameters[1]));
        }},
       {/* ceil( */
-       Ceiling::s_functionHelper.aliasesList(),
-       [](Layout builderParameter) {
-         return static_cast<Layout>(
-             CeilingLayout::Builder(HorizontalLayout::Builder()));
+       Ceiling::s_functionHelper.aliasesList(), 1,
+       [](Layout* parameters) {
+         return static_cast<Layout>(CeilingLayout::Builder(parameters[0]));
        }},
       {/* conj( */
-       Conjugate::s_functionHelper.aliasesList(),
-       [](Layout builderParameter) {
-         return static_cast<Layout>(
-             ConjugateLayout::Builder(HorizontalLayout::Builder()));
+       Conjugate::s_functionHelper.aliasesList(), 1,
+       [](Layout* parameters) {
+         return static_cast<Layout>(ConjugateLayout::Builder(parameters[0]));
        }},
       /* diff( */ k_derivativeRule,
       {/* exp( */
-       Power::s_exponentialFunctionHelper.aliasesList(),
-       [](Layout builderParameter) {
+       Power::s_exponentialFunctionHelper.aliasesList(), 1,
+       [](Layout* parameters) {
          return static_cast<Layout>(HorizontalLayout::Builder(
              CodePointLayout::Builder('e'),
              VerticalOffsetLayout::Builder(
-                 HorizontalLayout::Builder(),
+                 parameters[0],
                  VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
        }},
       {/* floor( */
-       Floor::s_functionHelper.aliasesList(),
-       [](Layout builderParameter) {
-         return static_cast<Layout>(
-             FloorLayout::Builder(HorizontalLayout::Builder()));
+       Floor::s_functionHelper.aliasesList(), 1,
+       [](Layout* parameters) {
+         return static_cast<Layout>(FloorLayout::Builder(parameters[0]));
        }},
       {/* int( */
-       Integral::s_functionHelper.aliasesList(),
-       [](Layout builderParameter) {
+       Integral::s_functionHelper.aliasesList(), 4,
+       [](Layout* parameters) {
+         if (parameters[1].isEmpty()) {  // This preserves cursor
+           parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('x'),
+                                                0, 0);
+         }
          return static_cast<Layout>(IntegralLayout::Builder(
-             HorizontalLayout::Builder(), CodePointLayout::Builder('x'),
-             HorizontalLayout::Builder(), HorizontalLayout::Builder()));
+             parameters[0], parameters[1], parameters[2], parameters[3]));
        }},
       {/* norm( */
-       VectorNorm::s_functionHelper.aliasesList(),
-       [](Layout builderParameter) {
-         return static_cast<Layout>(
-             VectorNormLayout::Builder(HorizontalLayout::Builder()));
+       VectorNorm::s_functionHelper.aliasesList(), 1,
+       [](Layout* parameters) {
+         return static_cast<Layout>(VectorNormLayout::Builder(parameters[0]));
        }},
       {/* piecewise( */
-       PiecewiseOperator::s_functionHelper.aliasesList(),
-       [](Layout builderParameter) {
+       PiecewiseOperator::s_functionHelper.aliasesList(), 2,
+       [](Layout* parameters) {
          /* WARNING: The implementation of ReplaceEmptyLayoutsWithParameters
           * needs the created layout to have empty layouts where the
           * parameters should be inserted. Since Piecewise operator does not
@@ -216,33 +215,39 @@ class InputBeautification {
           * though, and everything works fine when "piecewise(" is inserted
           * with nothing on its right. */
          PiecewiseOperatorLayout layout = PiecewiseOperatorLayout::Builder();
-         layout.addRow(HorizontalLayout::Builder());
+         layout.addRow(parameters[0],
+                       parameters[1].isEmpty() ? Layout() : parameters[1]);
          return static_cast<Layout>(layout);
        }},
       {/* product( */
-       Product::s_functionHelper.aliasesList(),
-       [](Layout builderParameter) {
+       Product::s_functionHelper.aliasesList(), 4,
+       [](Layout* parameters) {
+         if (parameters[1].isEmpty()) {  // This preserves cursor
+           parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('k'),
+                                                0, 0);
+         }
          return static_cast<Layout>(ProductLayout::Builder(
-             HorizontalLayout::Builder(), CodePointLayout::Builder('k'),
-             HorizontalLayout::Builder(), HorizontalLayout::Builder()));
+             parameters[0], parameters[1], parameters[2], parameters[3]));
        }},
       {/* root( */
-       NthRoot::s_functionHelper.aliasesList(),
-       [](Layout builderParameter) {
-         return static_cast<Layout>(NthRootLayout::Builder(
-             HorizontalLayout::Builder(), HorizontalLayout::Builder()));
+       NthRoot::s_functionHelper.aliasesList(), 2,
+       [](Layout* parameters) {
+         return static_cast<Layout>(
+             NthRootLayout::Builder(parameters[0], parameters[1]));
        }},
       {/* sqrt( */
-       SquareRoot::s_functionHelper.aliasesList(),
-       [](Layout builderParameter) {
-         return static_cast<Layout>(
-             NthRootLayout::Builder(HorizontalLayout::Builder()));
+       SquareRoot::s_functionHelper.aliasesList(), 1,
+       [](Layout* parameters) {
+         return static_cast<Layout>(NthRootLayout::Builder(parameters[0]));
        }},
       {/* sum( */
-       Sum::s_functionHelper.aliasesList(), [](Layout builderParameter) {
+       Sum::s_functionHelper.aliasesList(), 4, [](Layout* parameters) {
+         if (parameters[1].isEmpty()) {  // This preserves cursor
+           parameters[1].addChildAtIndexInPlace(CodePointLayout::Builder('k'),
+                                                0, 0);
+         }
          return static_cast<Layout>(SumLayout::Builder(
-             HorizontalLayout::Builder(), CodePointLayout::Builder('k'),
-             HorizontalLayout::Builder(), HorizontalLayout::Builder()));
+             parameters[0], parameters[1], parameters[2], parameters[3]));
        }}};
 
   static bool LayoutIsIdentifierMaterial(Layout l);
@@ -284,13 +289,14 @@ class InputBeautification {
       HorizontalLayout h, int startIndex, int endIndex,
       BeautificationRule beautificationRule, LayoutCursor* layoutCursor,
       bool isBeautifyingFunction, int* numberOfLayoutsAddedOrRemoved = nullptr,
-      Layout builderParameter = Layout());
+      Layout preProcessedParameter = Layout(),
+      int indexOfPreProcessedParameter = -1);
 
-  static Layout ReplaceEmptyLayoutsWithParameters(Layout layoutToModify,
-                                                  HorizontalLayout h,
-                                                  int parenthesisIndexInParent,
-                                                  LayoutCursor* layoutCursor,
-                                                  bool isParameteredExpression);
+  // Return false if there are too many parameters
+  static bool CreateParametersList(Layout* parameters, HorizontalLayout h,
+                                   int parenthesisIndexInParent,
+                                   BeautificationRule beautificationRule,
+                                   LayoutCursor* layoutCursor);
 };
 
 }  // namespace Poincare

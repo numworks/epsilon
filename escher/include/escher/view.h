@@ -29,6 +29,7 @@ namespace Escher {
  *   send any display command. */
 
 class Window;
+class TransparentView;
 
 class View {
   friend class Shared::MemoizedCursorView;
@@ -39,9 +40,8 @@ class View {
   friend class Window;
 
  public:
-  View() : m_superview(nullptr), m_frame(KDRectZero), m_dirtyRect(KDRectZero) {}
+  View() : m_frame(KDRectZero), m_dirtyRect(KDRectZero) {}
 
-  void resetSuperview() { m_superview = nullptr; }
   /* The drawRect method should be implemented by each View subclass. In a
    * typical drawRect implementation, a subclass will make drawing calls to the
    * Kandinsky library using the provided context. */
@@ -52,7 +52,8 @@ class View {
   void setSize(KDSize size);
   void setFrame(KDRect frame, bool force);
   void setAbsoluteFrame(KDRect frame, bool force) { m_frame = frame; }
-  void setChildFrame(View *child, KDRect frame, bool force) const;
+  void setChildFrame(View *child, KDRect frame, bool force);
+  void setChildFrame(TransparentView *child, KDRect frame, bool force);
   KDPoint pointFromPointInView(View *view, KDPoint point);
   KDRect absoluteFrame() const { return m_frame; }
   KDPoint absoluteOrigin() const { return m_frame.origin(); }
@@ -91,7 +92,6 @@ class View {
 
  private:
   virtual void layoutSubviews(bool force = false) {}
-  virtual const Window *window() const;
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);
 
   /* At destruction, subviews aren't notified that their own pointer
@@ -100,7 +100,6 @@ class View {
    * view and its subviews are then destroyed concomitantly.
    * Otherwise, we would just have to implement the destructor to notify
    * subviews that 'm_superview = nullptr'. */
-  View *m_superview;
   KDRect m_frame;      // absolute
   KDRect m_dirtyRect;  // absolute
 };

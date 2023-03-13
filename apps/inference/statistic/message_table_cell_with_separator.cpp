@@ -25,8 +25,9 @@ void MessageTableCellWithSeparator::drawRect(KDContext* ctx,
 
 KDSize MessageTableCellWithSeparator::minimalSizeForOptimalDisplay() const {
   if (m_innerCell.bounds().width() == 0) {
-    setChildFrame(&m_innerCell, KDRect(KDPointZero, bounds().width(), 40),
-                  false);
+    // TODO
+    // setChildFrame(&m_innerCell, KDRect(KDPointZero, bounds().width(), 40),
+    // false);
   }
   KDSize requiredSize = m_innerCell.minimalSizeForOptimalDisplay();
   return KDSize(requiredSize.width(),

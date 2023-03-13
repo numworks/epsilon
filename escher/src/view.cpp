@@ -1,3 +1,4 @@
+#include <escher/transparent_view.h>
 #include <escher/view.h>
 #include <kandinsky/ion_context.h>
 
@@ -6,14 +7,6 @@ extern "C" {
 }
 
 namespace Escher {
-
-const Window *View::window() const {
-  if (m_superview == nullptr) {
-    return nullptr;
-  } else {
-    return m_superview->window();
-  }
-}
 
 void View::markRectAsDirty(KDRect rect) {
   m_dirtyRect = m_dirtyRect.unionedWith(rect.translatedBy(m_frame.origin()));
@@ -33,11 +26,6 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
    * sister views are overlapping (provided that the sister views are indexed in
    * the right order).
    */
-  if (window() == nullptr) {
-    /* That view (and all of its subviews) is offscreen. That means so are all
-     * of its subviews. So there's no point in drawing them. */
-    return KDRectZero;
-  }
 
   /* First, for the current view, the rectangle to redraw is the union of the
    * dirty rectangle and the rectangle forced to be redrawn. The rectangle to
@@ -66,7 +54,6 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
     if (subview == nullptr) {
       continue;
     }
-    assert(subview->m_superview == this);
 
     // We redraw the current subview by passing the rectangle previously redrawn
     // (by the parent view or previous sister views) as forced to be redraw.
@@ -84,19 +71,28 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
 
 View *View::subview(int index) {
   assert(index >= 0 && index < numberOfSubviews());
-  View *subview = subviewAtIndex(index);
-  if (subview != nullptr) {
-    subview->m_superview = this;
-  }
-  return subview;
+  return subviewAtIndex(index);
 }
 
 void View::setSize(KDSize size) {
   setFrame(KDRect(m_frame.origin(), size), false);
 }
 
-void View::setChildFrame(View *child, KDRect frame, bool force) const {
-  // assert(child && (!child->m_superview || child->m_superview == this));
+void View::setChildFrame(View *child, KDRect frame, bool force) {
+  /* We will move the child. This will leave a blank spot in this view where it
+   * previously was.  At this point, we know that the only area that needs to be
+   * redrawn in the superview is the old frame minus the part covered by the new
+   * frame. */
+  KDRect previousFrame = child->absoluteFrame().relativeTo(absoluteOrigin());
+  markRectAsDirty(previousFrame.differencedWith(frame));
+  child->setFrame(frame.translatedBy(m_frame.origin()), force);
+}
+
+void View::setChildFrame(TransparentView *child, KDRect frame, bool force) {
+  /* markRectAsDirty is always called directly and not with
+   * ptr->markRectAsDirty.  Therefore the only place where is polymorphism was
+   * used was the call in setFrame that was moved here. */
+  markRectAsDirty(child->absoluteFrame().relativeTo(absoluteOrigin()));
   child->setFrame(frame.translatedBy(m_frame.origin()), force);
 }
 
@@ -106,14 +102,6 @@ void View::setFrame(KDRect frame, bool force) {
   }
   /* CAUTION: This code is not resilient to multiple consecutive setFrame()
    * calls without intermediate redraw() calls. */
-
-  if (m_superview != nullptr) {
-    /* We will move this view. This will leave a blank spot in its superview
-     * where it previously was.
-     * At this point, we know that the only area that needs to be redrawn in the
-     * superview is the old frame minus the part covered by the new frame.*/
-    m_superview->markAbsoluteRectAsDirty(m_frame.differencedWith(frame));
-  }
 
   m_frame = frame;
 
@@ -162,7 +150,6 @@ std::ostream &operator<<(std::ostream &os, View &view) {
     os << ">\n";
     for (int i = 0; i < view.numberOfSubviews(); i++) {
       indentColumn += 2;
-      assert(view.subview(i)->m_superview == &view);
       os << *view.subview(i) << '\n';
       indentColumn -= 2;
     }

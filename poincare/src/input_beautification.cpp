@@ -25,14 +25,15 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 
   /* Case 2: The inserted layout doesn't have identifier material on its left.
    *         = Apply beautification before inserting.
-   * Examples: "pi|" -> insert "+" -> "π|" -> "π+|"
-   *           "(pi|]" -> insert "[)" -> "(π|]" -> "(π)|"
-   *           "pi|" -> insert "/" -> "π|" -> "π/|"
+   * Examples: "pi|" -> insert "+3" -> "π|" -> "π+3|"
+   *           "(pi|]" -> insert "[)-1" -> "(π|]-1" -> "(π)-1|"
+   *           "pi|" -> insert "/2" -> "π|" -> "π/2|"
    *
    * Case 3: Same as Case 2 but the inserted layout is a single layout.
    *         = Apply beautification before and after insertion.
-   * Examples: "3<|" -> insert "=" -> "3<=|" -> "3≤|"
-   *           "xpi|" -> insert pipeKey -> "xπ\pipeKey|" -> "xπ\absLayout(|)"
+   * Examples: "pi<|" -> insert "=" -> "π<|" -> "π<=|" -> "π≤|"
+   *           "xpi|" -> insert pipeKey -> "xπ|" -> "xπ\pipeKey|"
+   *                                                      -> "xπ\absLayout(|)"
    *           "d/dx|()" -> insert "^n" -> "d^n/dx^n|()
    *
    * Case 4: The inserted layout is only a left parenthesis.
@@ -82,7 +83,7 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
   // - Step 1 - Find the inserted layout
   if (position == 0) {
     /* If the cursor is left of a layout, it should be because the inserted
-     * ayout is its parent and the cursor was placed inside it after the
+     * layout is its parent and the cursor was placed inside it after the
      * insertion. --> Beautify left of its parent
      * For example "sqrt(|4+5)" -> "|" is left of "|4+5", so
      * beautify left of the parenthesis ("sqrt()"). */

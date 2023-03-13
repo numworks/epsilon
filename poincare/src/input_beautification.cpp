@@ -433,9 +433,22 @@ bool InputBeautification::BeautifySum(HorizontalLayout h, int indexOfComma,
   /* The whole identifier string needs to be tokenized, to ensure that sum
    * can be beautified. For example, "asum(3," can't be beautified if "asum"
    * is a user-defined function. */
-  return TokenizeAndBeautifyIdentifiers(
+  bool result = TokenizeAndBeautifyIdentifiers(
       static_cast<HorizontalLayout &>(horizontalParent), indexOfParenthesis - 1,
       &k_sumRule, 1, context, layoutCursor);
+  if (result) {
+    // Replace the cursor if it's in variable slot
+    Layout parent = layoutCursor->layout().parent();
+    assert(!parent.isUninitialized() &&
+           parent.type() == LayoutNode::Type::SumLayout);
+    if (parent.indexOfChild(layoutCursor->layout()) ==
+        SequenceLayoutNode::k_variableLayoutIndex) {
+      layoutCursor->safeSetLayout(
+          parent.childAtIndex(SumLayoutNode::k_lowerBoundLayoutIndex),
+          OMG::Direction::Left());
+    }
+  }
+  return result;
 }
 
 bool InputBeautification::CompareAndBeautifyIdentifier(

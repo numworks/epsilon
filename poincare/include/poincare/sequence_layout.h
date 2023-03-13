@@ -42,6 +42,11 @@ class SequenceLayoutNode : public LayoutNode {
   // TreeNode
   int numberOfChildren() const override { return 4; }
 
+  constexpr static int k_argumentLayoutIndex = 0;
+  constexpr static int k_variableLayoutIndex = 1;
+  constexpr static int k_lowerBoundLayoutIndex = 2;
+  constexpr static int k_upperBoundLayoutIndex = 3;
+
  protected:
   constexpr static KDCoordinate k_upperBoundVerticalMarginLargeFont = 2;
   constexpr static KDCoordinate k_lowerBoundVerticalMarginLargeFont = 2;
@@ -88,10 +93,6 @@ class SequenceLayoutNode : public LayoutNode {
               KDColor expressionColor, KDColor backgroundColor) override;
 
  private:
-  constexpr static int k_argumentLayoutIndex = 0;
-  constexpr static int k_variableLayoutIndex = 1;
-  constexpr static int k_lowerBoundLayoutIndex = 2;
-  constexpr static int k_upperBoundLayoutIndex = 3;
   KDCoordinate completeLowerBoundX(KDFont::Size font);
   KDCoordinate subscriptBaseline(KDFont::Size font);
 };

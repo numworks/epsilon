@@ -58,7 +58,7 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
       .beautifyAfterInserting = onlyOneLayoutIsInserted};
 }
 
-bool InputBeautification::BeautifyIdentifiersLeftOfCursor(
+bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
     LayoutCursor *layoutCursor, Context *context) {
   Layout l = layoutCursor->layout();
   int position = layoutCursor->position();

@@ -106,7 +106,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
       LayoutCursor rightMostPositionOfPreviousLayout(cloneCursor.layout(),
                                                      OMG::Direction::Right());
       *shouldRedrawLayout =
-          InputBeautification::BeautifyIdentifiersLeftOfCursor(
+          InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
               &rightMostPositionOfPreviousLayout, context) ||
           *shouldRedrawLayout;
     }
@@ -192,7 +192,7 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
   InputBeautification::BeautificationMethod beautificationMethod =
       InputBeautification::BeautificationMethodWhenInsertingLayout(layout);
   if (beautificationMethod.beautifyIdentifiersBeforeInserting) {
-    InputBeautification::BeautifyIdentifiersLeftOfCursor(this, context);
+    InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(this, context);
   }
 
   /* - Step 3 - Add empty row to grid layout if needed

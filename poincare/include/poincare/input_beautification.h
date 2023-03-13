@@ -32,7 +32,7 @@ class InputBeautification {
 
   /* Both of the following functions return true if layouts were beautified.
    *
-   * BeautifyIdentifiersLeftOfCursor will only apply the
+   * BeautifyLeftOfCursorBeforeCursorMove will only apply the
    * k_simpleIdentifiersRules. This is called either:
    *    - When moving out of an horizontal layout.
    *    - Just before inserting a non-identifier char.
@@ -46,8 +46,8 @@ class InputBeautification {
    *      BeautifyFirstOrderDerivativeIntoNthOrder.
    * This is called only after an insertion, if the relevant char was inserted.
    */
-  static bool BeautifyIdentifiersLeftOfCursor(LayoutCursor* layoutCursor,
-                                              Context* context);
+  static bool BeautifyLeftOfCursorBeforeCursorMove(LayoutCursor* layoutCursor,
+                                                   Context* context);
   static bool BeautifyLeftOfCursorAfterInsertion(LayoutCursor* layoutCursor,
                                                  Context* context);
 

@@ -239,7 +239,8 @@ void LayoutField::reload(KDSize previousSize) {
   markRectAsDirty(bounds());
 }
 
-typedef void (Poincare::LayoutCursor::*AddLayoutPointer)(Context *context);
+using LayoutInsertionMethod =
+    void (Poincare::LayoutCursor::*)(Context *context);
 
 bool LayoutField::handleEventWithText(const char *text, bool indentation,
                                       bool forceCursorRightOfText) {
@@ -267,7 +268,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
   Ion::Events::Event specialEvents[] = {
       Ion::Events::Division, Ion::Events::Exp,    Ion::Events::Power,
       Ion::Events::Sqrt,     Ion::Events::Square, Ion::Events::EE};
-  AddLayoutPointer handleSpecialEvents[] = {
+  LayoutInsertionMethod handleSpecialEvents[] = {
       &Poincare::LayoutCursor::addFractionLayoutAndCollapseSiblings,
       &Poincare::LayoutCursor::addEmptyExponentialLayout,
       &Poincare::LayoutCursor::addEmptyPowerLayout,
@@ -277,7 +278,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
   int numberOfSpecialEvents =
       sizeof(specialEvents) / sizeof(Ion::Events::Event);
   assert(numberOfSpecialEvents ==
-         sizeof(handleSpecialEvents) / sizeof(AddLayoutPointer));
+         sizeof(handleSpecialEvents) / sizeof(LayoutInsertionMethod));
   if (!linearMode()) {
     char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
     for (int i = 0; i < numberOfSpecialEvents; i++) {

@@ -100,6 +100,8 @@ class SystemOfEquations {
                           Poincare::Expression* simplifiedEquations);
   Error solvePolynomial(Poincare::Context* context,
                         Poincare::Expression* simplifiedEquations);
+  uint32_t tagParametersUsedAsVariables() const;
+  void tagVariableIfParameter(const char* name, uint32_t* tags) const;
 
   enum class SolutionType : uint8_t {
     Exact,

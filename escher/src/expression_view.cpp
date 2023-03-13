@@ -77,10 +77,6 @@ KDPoint ExpressionView::drawingOrigin() const {
           m_verticalAlignment * (bounds().height() - expressionSize.height())));
 }
 
-KDPoint ExpressionView::absoluteDrawingOrigin() const {
-  return drawingOrigin().translatedBy(relativeFrame().topLeft());
-}
-
 void ExpressionView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(rect, m_backgroundColor);
   if (!m_layout.isUninitialized()) {

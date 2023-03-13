@@ -74,6 +74,11 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) {
       KDPoint(cursorXOffset, cursorYOriginInLayout));
 }
 
+KDPoint LayoutCursor::middleLeftPoint(KDFont::Size font) {
+  KDPoint origin = cursorAbsoluteOrigin(font);
+  return KDPoint(origin.x(), origin.y() + cursorHeight(font) / 2);
+}
+
 /* Move */
 bool LayoutCursor::move(OMG::Direction direction, bool selecting,
                         bool *shouldRedrawLayout, Context *context) {

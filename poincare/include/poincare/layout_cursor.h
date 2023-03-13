@@ -81,10 +81,7 @@ class LayoutCursor final {
   /* Position and size */
   KDCoordinate cursorHeight(KDFont::Size font);
   KDPoint cursorAbsoluteOrigin(KDFont::Size font);
-  KDPoint middleLeftPoint(KDFont::Size font) {
-    return KDPoint(cursorAbsoluteOrigin(font).x(),
-                   cursorAbsoluteOrigin(font).y() + cursorHeight(font) / 2);
-  }
+  KDPoint middleLeftPoint(KDFont::Size font);
 
   /* Move */
   // Return false if could not move

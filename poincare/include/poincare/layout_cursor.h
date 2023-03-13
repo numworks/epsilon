@@ -38,7 +38,7 @@ class LayoutCursor final {
  public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 
-  /* This constructor either set the cursor at the leftMost or rightMost
+  /* This constructor either set the cursor at the leftMost or rightmost
    * position in the layout. */
   LayoutCursor(Layout layout,
                OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
@@ -55,7 +55,7 @@ class LayoutCursor final {
   bool isValid() const {
     return !m_layout.deepIsGhost() &&
            (isUninitialized() || (m_position >= leftMostPosition() &&
-                                  m_position <= rightMostPosition()));
+                                  m_position <= rightmostPosition()));
   }
 
   // Getters and setters
@@ -118,7 +118,7 @@ class LayoutCursor final {
   Layout layoutToFit(KDFont::Size font);
 
   int leftMostPosition() const { return 0; }
-  int rightMostPosition() const {
+  int rightmostPosition() const {
     return m_layout.isHorizontal() ? m_layout.numberOfChildren() : 1;
   }
   bool horizontalMove(OMG::HorizontalDirection direction,

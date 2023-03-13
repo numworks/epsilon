@@ -103,11 +103,11 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
     *shouldRedrawLayout = selecting || *shouldRedrawLayout;
     if (cloneCursor.layout() != m_layout) {
       // Beautify the layout that was just left
-      LayoutCursor rightMostPositionOfPreviousLayout(cloneCursor.layout(),
+      LayoutCursor rightmostPositionOfPreviousLayout(cloneCursor.layout(),
                                                      OMG::Direction::Right());
       *shouldRedrawLayout =
           InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
-              &rightMostPositionOfPreviousLayout, context) ||
+              &rightmostPositionOfPreviousLayout, context) ||
           *shouldRedrawLayout;
     }
     // Ensure that didEnterCurrentPosition is always called by being left of ||
@@ -138,7 +138,7 @@ static bool IsEmptyChildOfGridLayout(Layout l) {
          GridLayoutNode::IsGridLayoutType(parent.type());
 }
 
-static Layout LeftOrRightMostLayout(Layout l,
+static Layout LeftOrRightmostLayout(Layout l,
                                     OMG::HorizontalDirection direction) {
   return l.isHorizontal()
              ? (l.childAtIndex(direction.isLeft() ? 0
@@ -237,7 +237,7 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
         ->makeChildrenPermanent(
             AutocompletedBracketPairLayoutNode::Side::Right,
             !IsTemporaryAutocompletedBracketPair(
-                LeftOrRightMostLayout(layout, OMG::Direction::Left()),
+                LeftOrRightmostLayout(layout, OMG::Direction::Left()),
                 AutocompletedBracketPairLayoutNode::Side::Left));
   }
   if (!rightL.isUninitialized() &&
@@ -247,7 +247,7 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
         ->makeChildrenPermanent(
             AutocompletedBracketPairLayoutNode::Side::Left,
             !IsTemporaryAutocompletedBracketPair(
-                LeftOrRightMostLayout(layout, OMG::Direction::Right()),
+                LeftOrRightmostLayout(layout, OMG::Direction::Right()),
                 AutocompletedBracketPairLayoutNode::Side::Right));
   }
 
@@ -639,7 +639,7 @@ void LayoutCursor::setLayout(Layout l, OMG::HorizontalDirection sideOfLayout) {
     return;
   }
   m_layout = l;
-  m_position = sideOfLayout.isLeft() ? leftMostPosition() : rightMostPosition();
+  m_position = sideOfLayout.isLeft() ? leftMostPosition() : rightmostPosition();
 }
 
 Layout LayoutCursor::leftLayout() {
@@ -775,7 +775,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
      *
      * */
     m_layout = nextLayout.childAtIndex(newIndex);
-    m_position = direction.isRight() ? leftMostPosition() : rightMostPosition();
+    m_position = direction.isRight() ? leftMostPosition() : rightmostPosition();
     return true;
   }
 
@@ -892,7 +892,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
           m_position =
               positionRelativeToNextLayout == LayoutNode::PositionInLayout::Left
                   ? leftMostPosition()
-                  : rightMostPosition();
+                  : rightmostPosition();
           return true;
         }
       }
@@ -908,7 +908,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
   LayoutNode::PositionInLayout currentPosition =
       m_position == leftMostPosition()
           ? LayoutNode::PositionInLayout::Left
-          : (m_position == rightMostPosition()
+          : (m_position == rightmostPosition()
                  ? LayoutNode::PositionInLayout::Right
                  : LayoutNode::PositionInLayout::Middle);
   while (!p.isUninitialized()) {
@@ -1083,10 +1083,10 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod,
       int currentRow = gridNode->rowAtChildIndex(currentIndex);
       assert(currentRow > 0 && gridNode->numberOfColumns() >= 2);
       newIndex = gridNode->indexAtRowColumn(
-          currentRow - 1, gridNode->rightMostNonGrayColumnIndex());
+          currentRow - 1, gridNode->rightmostNonGrayColumnIndex());
     }
     m_layout = m_layout.parent().childAtIndex(newIndex);
-    m_position = rightMostPosition();
+    m_position = rightmostPosition();
     return;
   }
 

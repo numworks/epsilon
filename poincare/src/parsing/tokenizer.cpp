@@ -328,20 +328,20 @@ void Tokenizer::fillIdentifiersList() {
        * list of token. */
       m_numberOfStoredIdentifiers = 0;
     }
-    Token rightMostToken = popLongestRightMostIdentifier(identifiersStringStart,
+    Token rightmostToken = popLongestRightmostIdentifier(identifiersStringStart,
                                                          &currentStringEnd);
-    m_storedIdentifiersList[m_numberOfStoredIdentifiers] = rightMostToken;
+    m_storedIdentifiersList[m_numberOfStoredIdentifiers] = rightmostToken;
     m_numberOfStoredIdentifiers++;
   }
   /* Since the m_storedIdentifiersList has limited size, fillIdentifiersList
    * will sometimes not parse the whole identifiers string.
    * If it's the case, rewind decoder to the end of the right-most parsed token
    * */
-  Token rightMostParsedToken = m_storedIdentifiersList[0];
-  goToPosition(rightMostParsedToken.text() + rightMostParsedToken.length());
+  Token rightmostParsedToken = m_storedIdentifiersList[0];
+  goToPosition(rightmostParsedToken.text() + rightmostParsedToken.length());
 }
 
-Token Tokenizer::popLongestRightMostIdentifier(const char* stringStart,
+Token Tokenizer::popLongestRightmostIdentifier(const char* stringStart,
                                                const char** stringEnd) {
   UTF8Decoder decoder(stringStart);
   Token::Type tokenType = Token::Type::Undefined;

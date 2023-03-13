@@ -189,7 +189,7 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
   deleteAndResetSelection();
 
   // - Step 2 - Beautify the current layout if needed.
-  InputBeautification::InsertionBeautificationMethod beautificationMethod =
+  InputBeautification::BeautificationMethod beautificationMethod =
       InputBeautification::BeautificationMethodWhenInsertingLayout(layout);
   if (beautificationMethod.beautifyIdentifiersBeforeInserting) {
     InputBeautification::BeautifyIdentifiersLeftOfCursor(this, context);

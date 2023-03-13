@@ -6,7 +6,7 @@ namespace Poincare {
 
 // public
 
-InputBeautification::InsertionBeautificationMethod
+InputBeautification::BeautificationMethod
 InputBeautification::BeautificationMethodWhenInsertingLayout(
     Layout insertedLayout) {
   Layout leftMostLayout =
@@ -19,9 +19,8 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
    * Example: "pi|" -> insert "a" -> "pia|" (do not beautify "pi" yet)
    * */
   if (LayoutIsIdentifierMaterial(leftMostLayout)) {
-    return InsertionBeautificationMethod{
-        .beautifyIdentifiersBeforeInserting = false,
-        .beautifyAfterInserting = false};
+    return BeautificationMethod{.beautifyIdentifiersBeforeInserting = false,
+                                .beautifyAfterInserting = false};
   }
 
   /* Case 2: The inserted layout doesn't have identifier material on its left.
@@ -52,7 +51,7 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
        !static_cast<ParenthesisLayoutNode *>(leftMostLayout.node())
             ->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left));
 
-  return InsertionBeautificationMethod{
+  return BeautificationMethod{
       .beautifyIdentifiersBeforeInserting = !onlyLeftParenthesisIsInserted,
       .beautifyAfterInserting = onlyOneLayoutIsInserted};
 }

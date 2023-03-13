@@ -540,7 +540,8 @@ void GraphView::drawPointsOfInterest(KDContext *ctx, KDRect rect) {
       drawRect(ctx, rect);
       if (cursorView()) {
         cursorView()->setHighlighted(false);
-        static_cast<MemoizedCursorView *>(cursorView())->redrawCursor(rect);
+        static_cast<MemoizedCursorView *>(cursorView())
+            ->redrawCursor(rect.translatedBy(absoluteOrigin()));
       }
     }
 
@@ -573,7 +574,8 @@ void GraphView::drawPointsOfInterest(KDContext *ctx, KDRect rect) {
        * but it is thanks to the constructor. */
       /* The cursor cannot be safely highlighted here since it might intersect
        * the dot of the point of interest without being exactly on it. */
-      static_cast<MemoizedCursorView *>(cursorView())->redrawCursor(rect);
+      static_cast<MemoizedCursorView *>(cursorView())
+          ->redrawCursor(rect.translatedBy(absoluteOrigin()));
     }
   } while (1);
 }

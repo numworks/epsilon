@@ -65,9 +65,11 @@ bool MultipleBoxesView::moveSelectionHorizontally(
   int deltaIndex = direction.isRight() ? 1 : -1;
   if (view->canIncrementSelectedCalculation(deltaIndex)) {
     // Mark rect as dirty in parent's view to also redraw the background
-    markRectAsDirty(view->selectedCalculationRect());
+    markRectAsDirty(
+        view->selectedCalculationRect().relativeTo(absoluteOrigin()));
     view->incrementSelectedCalculation(deltaIndex);
-    markRectAsDirty(view->selectedCalculationRect());
+    markRectAsDirty(
+        view->selectedCalculationRect().relativeTo(absoluteOrigin()));
     return true;
   }
   return false;
@@ -97,7 +99,8 @@ void MultipleBoxesView::drawRect(KDContext* ctx, KDRect rect) const {
 void MultipleBoxesView::changeDataViewSeriesSelection(int series, bool select) {
   MultipleDataView::changeDataViewSeriesSelection(series, select);
   // Mark rect as dirty in parent's view to also redraw the background
-  markRectAsDirty(plotViewForSeries(series)->rectToReload());
+  markRectAsDirty(
+      plotViewForSeries(series)->rectToReload().relativeTo(absoluteOrigin()));
 }
 
 }  // namespace Statistics

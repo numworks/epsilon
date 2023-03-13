@@ -29,7 +29,7 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
    *           "(pi|]" -> insert "[)" -> "(π|]" -> "(π)|"
    *           "pi|" -> insert "/" -> "π|" -> "π/|"
    *
-   * Case 3: Same as Case 3 but the inserted layout is a single layout.
+   * Case 3: Same as Case 2 but the inserted layout is a single layout.
    *         = Apply beautification before and after insertion.
    * Examples: "3<|" -> insert "=" -> "3<=|" -> "3≤|"
    *           "xpi|" -> insert pipeKey -> "xπ\pipeKey|" -> "xπ\absLayout(|)"
@@ -37,9 +37,11 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
    *
    * Case 4: The inserted layout is only a left parenthesis.
    *         = Apply beautification only after inserting.
-   * Beautifiying before is useless since identifiers need to be parsed when
+   * Beautifiying before is useless since identifiers need to be tokenized when
    * functions are beautified, so they can be beautified after the insertion.
+   * This avoid having to tokenize twice.
    * Example: "pisqrt|" -> insert "(" -> "pisqrt(|" -> π√|
+   *
    * */
 
   bool onlyOneLayoutIsInserted = (!insertedLayout.isHorizontal() ||
@@ -63,8 +65,10 @@ bool InputBeautification::BeautifyIdentifiersLeftOfCursor(
   if (!l.isHorizontal() || position == 0) {
     return false;
   }
-  return BeautifyIdentifiers(static_cast<HorizontalLayout &>(l), position - 1,
-                             context, layoutCursor, false);
+  return TokenizeAndBeautifyIdentifiers(static_cast<HorizontalLayout &>(l),
+                                        position - 1, k_simpleIdentifiersRules,
+                                        k_lenOfSimpleIdentifiersRules, context,
+                                        layoutCursor);
 }
 
 bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
@@ -109,8 +113,9 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
     if (insertedLayoutIndex == 0) {
       return false;
     }
-    return BeautifyIdentifiers(h, insertedLayoutIndex - 1, context,
-                               layoutCursor, true) ||
+    return TokenizeAndBeautifyIdentifiers(
+               h, insertedLayoutIndex - 1, k_identifiersRules,
+               k_lenOfIdentifiersRules, context, layoutCursor, true) ||
            BeautifyFractionIntoDerivative(h, insertedLayoutIndex - 1,
                                           layoutCursor);
   }
@@ -161,9 +166,7 @@ bool InputBeautification::BeautifySymbols(HorizontalLayout h,
     for (int i = 0; i < length; i++) {
       Layout child =
           h.childAtIndex(rightMostIndexToBeautify - (length - 1) + i);
-      if (child.type() != LayoutNode::Type::CodePointLayout ||
-          static_cast<CodePointLayout &>(child).codePoint() !=
-              CodePoint(pattern[i])) {
+      if (!CodePointLayoutNode::IsCodePoint(child, pattern[i])) {
         matchesPattern = false;
         break;
       }
@@ -177,55 +180,60 @@ bool InputBeautification::BeautifySymbols(HorizontalLayout h,
         strlen(beautificationRule.listOfBeautifiedAliases.mainAlias()) + 1;
     return RemoveLayoutsBetweenIndexAndReplaceWithPattern(
         h, startIndexOfBeautification, rightMostIndexToBeautify,
-        beautificationRule, layoutCursor, false);
+        beautificationRule, layoutCursor);
   }
   return false;
 }
 
-bool InputBeautification::BeautifyIdentifiers(
-    HorizontalLayout h, int rightMostIndexToBeautify, Context *context,
-    LayoutCursor *layoutCursor, bool beautifyFunctions, bool beautifySum) {
+bool InputBeautification::TokenizeAndBeautifyIdentifiers(
+    HorizontalLayout h, int rightMostIndexToBeautify,
+    const BeautificationRule *rulesList, size_t numberOfRules, Context *context,
+    LayoutCursor *layoutCursor, bool logBeautification) {
   assert(!h.isUninitialized());
   assert(rightMostIndexToBeautify < h.numberOfChildren() &&
          rightMostIndexToBeautify >= 0);
-  assert(!beautifyFunctions ||
-         (rightMostIndexToBeautify < h.numberOfChildren() - 1 &&
-          h.childAtIndex(rightMostIndexToBeautify + 1).type() ==
-              LayoutNode::Type::ParenthesisLayout));
+  bool followedByParenthesis =
+      (rightMostIndexToBeautify < h.numberOfChildren() - 1 &&
+       h.childAtIndex(rightMostIndexToBeautify + 1).type() ==
+           LayoutNode::Type::ParenthesisLayout);
 
-  // - Step 1 - Get the identifiers string.
-  int lastIndexOfIdentifier = rightMostIndexToBeautify;
+  // Get the identifiers string.
   int firstIndexOfIdentifier = 0;
-  for (int i = lastIndexOfIdentifier; i >= 0; i--) {
+  for (int i = rightMostIndexToBeautify; i >= 0; i--) {
     Layout currentLayout = h.childAtIndex(i);
     if (!LayoutIsIdentifierMaterial(currentLayout)) {
       firstIndexOfIdentifier = i + 1;
       break;
     }
   }
-  if (firstIndexOfIdentifier > lastIndexOfIdentifier) {
+  if (firstIndexOfIdentifier > rightMostIndexToBeautify) {
     // No identifier material
     return false;
   }
 
-  // - Step 2 - Fill a buffer with the identifiers string
+  // Fill a buffer with the identifiers string
   // TODO : Factorize bufferSize with TextField::k_maxBufferSize
-  constexpr static int bufferSize = 220;
+  constexpr static size_t bufferSize = 220;
   char identifiersString[bufferSize];
   int bufferCurrentLength = 0;
-  for (int i = firstIndexOfIdentifier; i <= lastIndexOfIdentifier; i++) {
+  for (int i = firstIndexOfIdentifier; i <= rightMostIndexToBeautify; i++) {
     Layout currentChild = h.childAtIndex(i);
     assert(currentChild.type() == LayoutNode::Type::CodePointLayout);
     CodePoint c = static_cast<CodePointLayout &>(currentChild).codePoint();
     // This does not add null termination
+    size_t cLen = UTF8Decoder::CharSizeOfCodePoint(c);
+    if (bufferCurrentLength + cLen >= bufferSize) {
+      // String is too long
+      return false;
+    }
     UTF8Decoder::CodePointToChars(c, identifiersString + bufferCurrentLength,
                                   bufferSize - bufferCurrentLength);
-    bufferCurrentLength += UTF8Decoder::CharSizeOfCodePoint(c);
+    bufferCurrentLength += cLen;
   }
   identifiersString[bufferCurrentLength] = 0;
 
-  /* - Step 3 - Tokenize the identifiers string (ex: xpiabs = x*pi*abs)
-   *            and try to beautify each token. */
+  /* Tokenize the identifiers string (ex: xpiabs = x*pi*abs) and try to
+   * beautify each token. */
   ParsingContext parsingContext(context,
                                 ParsingContext::ParsingMethod::Classic);
   Tokenizer tokenizer = Tokenizer(identifiersString, &parsingContext);
@@ -233,8 +241,9 @@ bool InputBeautification::BeautifyIdentifiers(
   Token nextIdentifier = tokenizer.popToken();
   bool layoutsWereBeautified = false;
   int numberOfLayoutsAddedOrRemovedLastLoop = 0;
+
   while (nextIdentifier.type() != Token::Type::EndOfStream) {
-    // - Step 3.0 - Offset the index of the identifier in the horizontal layout
+    // Offset the index of the identifier in the horizontal layout
     firstIndexOfIdentifier +=
         UTF8Helper::StringGlyphLength(currentIdentifier.text(),
                                       currentIdentifier.length()) +
@@ -243,36 +252,38 @@ bool InputBeautification::BeautifyIdentifiers(
     nextIdentifier = tokenizer.popToken();
     numberOfLayoutsAddedOrRemovedLastLoop = 0;
 
-    // - Step 3.1 - Beautify identifier in k_identifiersRules
-    if (currentIdentifier.type() == Token::Type::Constant ||
-        currentIdentifier.type() == Token::Type::CustomIdentifier ||
-        currentIdentifier.type() == Token::Type::SpecialIdentifier) {
-      bool tokenWasBeautified = false;
-      int comparison = 0;
-      for (BeautificationRule beautificationRule : k_identifiersRules) {
-        tokenWasBeautified = CompareAndBeautifyIdentifier(
-            currentIdentifier.text(), currentIdentifier.length(),
-            beautificationRule, h, firstIndexOfIdentifier, layoutCursor, false,
-            &comparison, &numberOfLayoutsAddedOrRemovedLastLoop);
-        if (comparison <= 0) {  // Break if equal or past the alphabetical order
-          break;
-        }
-        assert(!tokenWasBeautified);
-      }
-      if (tokenWasBeautified) {
-        layoutsWereBeautified = true;
+    // Beautify
+    for (int i = 0; i < numberOfRules; i++) {
+      BeautificationRule beautificationRule = rulesList[i];
+      if (beautificationRule.numberOfParameters > 0 &&
+          (!followedByParenthesis ||
+           nextIdentifier.type() != Token::Type::EndOfStream)) {
+        // Only last token can be a function
         continue;
       }
+      int comparison = 0;
+      layoutsWereBeautified =
+          CompareAndBeautifyIdentifier(
+              currentIdentifier.text(), currentIdentifier.length(),
+              beautificationRule, h, firstIndexOfIdentifier, layoutCursor,
+              &comparison, &numberOfLayoutsAddedOrRemovedLastLoop) ||
+          layoutsWereBeautified;
+      if (comparison <= 0) {  // Break if equal or past the alphabetical order
+        break;
+      }
     }
 
-    // Following beautification routines are for functions
-    if (!beautifyFunctions) {
-      continue;
-    }
-
-    // - Step 3.2 - Beautify logN(..)
-    // Check if next token is a number
-    if (nextIdentifier.type() == Token::Type::Number &&
+    /* The log beautification is using a bool in the signature of this method
+     * which is a bit too specific, but this ensures that, when beautifying
+     * after a parenthesis insertion, the identifiers string is tokenized
+     * only once.
+     * If a unique method for log beautification was implemented, the
+     * tokenization would occur twice. And the tokenization is one of the
+     * most time-consuming step of the beautification when the identifiers
+     * string is long.
+     * */
+    if (logBeautification && followedByParenthesis &&
+        nextIdentifier.type() == Token::Type::Number &&
         // Check if current token is a function
         currentIdentifier.type() == Token::Type::ReservedFunction &&
         // Check if logN is at the end of the identifiers string
@@ -294,38 +305,11 @@ bool InputBeautification::BeautifyIdentifiers(
               h, firstIndexOfIdentifier,
               firstIndexOfIdentifier + currentIdentifier.length() +
                   nextIdentifier.length() - 1,
-              k_logarithmRule, layoutCursor, true,
+              k_logarithmRule, layoutCursor,
               &numberOfLayoutsAddedOrRemovedLastLoop, baseOfLog,
               k_indexOfBaseOfLog) ||
           layoutsWereBeautified;
-      continue;
-    }
-
-    // - Step 3.3 - Beautify functions in k_functionsRules
-    if (currentIdentifier.type() == Token::Type::ReservedFunction
-        // Only the last token can be a function
-        && nextIdentifier.type() == Token::Type::EndOfStream) {
-      assert(numberOfLayoutsAddedOrRemovedLastLoop == 0);
-      int comparison = 0;
-      for (BeautificationRule beautificationRule : k_functionsRules) {
-        if (!beautifySum &&
-            beautificationRule.listOfBeautifiedAliases.isEquivalentTo(
-                Sum::s_functionHelper.aliasesList())) {
-          /* "sum(" is not alway beautified since it can be either the
-           * sum of a list (which should not be beautified) or a sum between k
-           * and n (which should be beautified). */
-          continue;
-        }
-        layoutsWereBeautified =
-            CompareAndBeautifyIdentifier(
-                currentIdentifier.text(), currentIdentifier.length(),
-                beautificationRule, h, firstIndexOfIdentifier, layoutCursor,
-                true, &comparison, &numberOfLayoutsAddedOrRemovedLastLoop) ||
-            layoutsWereBeautified;
-        if (comparison <= 0) {  // Break if equal or past the alphabetical order
-          break;
-        }
-      }
+      break;
     }
   }
   return layoutsWereBeautified;
@@ -335,8 +319,7 @@ bool InputBeautification::BeautifyPipeKey(HorizontalLayout h,
                                           int indexOfPipeKey,
                                           LayoutCursor *cursor) {
   Layout pipeKey = h.childAtIndex(indexOfPipeKey);
-  if (pipeKey.type() != LayoutNode::Type::CodePointLayout ||
-      static_cast<CodePointLayout &>(pipeKey).codePoint() != '|') {
+  if (!CodePointLayoutNode::IsCodePoint(pipeKey, '|')) {
     return false;
   }
   h.removeChildAtIndexInPlace(indexOfPipeKey);
@@ -365,8 +348,7 @@ bool InputBeautification::BeautifyFractionIntoDerivative(
     return false;
   }
   return RemoveLayoutsBetweenIndexAndReplaceWithPattern(
-      h, indexOfFraction, indexOfFraction, k_derivativeRule, layoutCursor,
-      true);
+      h, indexOfFraction, indexOfFraction, k_derivativeRule, layoutCursor);
 }
 
 bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
@@ -420,8 +402,7 @@ bool InputBeautification::BeautifySum(HorizontalLayout h, int indexOfComma,
   assert(!h.isUninitialized());
   assert(indexOfComma < h.numberOfChildren() && indexOfComma >= 0);
   Layout comma = h.childAtIndex(indexOfComma);
-  if (comma.type() != LayoutNode::Type::CodePointLayout ||
-      static_cast<CodePointLayout &>(comma).codePoint() != CodePoint(',')) {
+  if (!CodePointLayoutNode::IsCodePoint(comma, ',')) {
     return false;
   }
   Layout parenthesis = h.parent();
@@ -433,27 +414,41 @@ bool InputBeautification::BeautifySum(HorizontalLayout h, int indexOfComma,
   if (horizontalParent.isUninitialized() || !horizontalParent.isHorizontal()) {
     return false;
   }
+  constexpr AliasesList k_sumName =
+      Sum::s_functionHelper.aliasesList().mainAlias();
+  int nameLen = strlen(k_sumName);
   int indexOfParenthesis = horizontalParent.indexOfChild(parenthesis);
-  if (indexOfParenthesis == 0) {
+  if (indexOfParenthesis < nameLen) {
     return false;
   }
-  return BeautifyIdentifiers(static_cast<HorizontalLayout &>(horizontalParent),
-                             indexOfParenthesis - 1, context, layoutCursor,
-                             true, true);
+  // Check if "sum" is written before the parenthesis
+  for (int i = 0; i < nameLen; i++) {
+    if (!CodePointLayoutNode::IsCodePoint(
+            horizontalParent.childAtIndex(i + indexOfParenthesis - nameLen),
+            k_sumName[i])) {
+      return false;
+    }
+  }
+  /* The whole identifier string needs to be tokenized, to ensure that sum
+   * can be beautified. For example, "asum(3," can't be beautified if "asum"
+   * is a user-defined function. */
+  return TokenizeAndBeautifyIdentifiers(
+      static_cast<HorizontalLayout &>(horizontalParent), indexOfParenthesis - 1,
+      &k_sumRule, 1, context, layoutCursor);
 }
 
 bool InputBeautification::CompareAndBeautifyIdentifier(
     const char *identifier, size_t identifierLength,
     BeautificationRule beautificationRule, HorizontalLayout h, int startIndex,
-    LayoutCursor *layoutCursor, bool isBeautifyingFunction,
-    int *comparisonResult, int *numberOfLayoutsAddedOrRemoved) {
+    LayoutCursor *layoutCursor, int *comparisonResult,
+    int *numberOfLayoutsAddedOrRemoved) {
   AliasesList patternAliases = beautificationRule.listOfBeautifiedAliases;
   *comparisonResult =
       patternAliases.maxDifferenceWith(identifier, identifierLength);
   if (*comparisonResult == 0) {
     return RemoveLayoutsBetweenIndexAndReplaceWithPattern(
         h, startIndex, startIndex + identifierLength - 1, beautificationRule,
-        layoutCursor, isBeautifyingFunction, numberOfLayoutsAddedOrRemoved);
+        layoutCursor, numberOfLayoutsAddedOrRemoved);
   }
   return false;
 }
@@ -461,10 +456,11 @@ bool InputBeautification::CompareAndBeautifyIdentifier(
 bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
     HorizontalLayout h, int startIndex, int endIndex,
     BeautificationRule beautificationRule, LayoutCursor *layoutCursor,
-    bool isBeautifyingFunction, int *numberOfLayoutsAddedOrRemoved,
-    Layout preProcessedParameter, int indexOfPreProcessedParameter) {
-  assert(!isBeautifyingFunction || h.childAtIndex(endIndex + 1).type() ==
-                                       LayoutNode::Type::ParenthesisLayout);
+    int *numberOfLayoutsAddedOrRemoved, Layout preProcessedParameter,
+    int indexOfPreProcessedParameter) {
+  assert(beautificationRule.numberOfParameters == 0 ||
+         h.childAtIndex(endIndex + 1).type() ==
+             LayoutNode::Type::ParenthesisLayout);
   int currentNumberOfChildren = h.numberOfChildren();
   // Create pattern layout
   Layout parameters[k_maxNumberOfParameters];
@@ -472,7 +468,7 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
     assert(indexOfPreProcessedParameter < k_maxNumberOfParameters);
     parameters[indexOfPreProcessedParameter] = preProcessedParameter;
   }
-  if (isBeautifyingFunction) {
+  if (beautificationRule.numberOfParameters > 0) {
     endIndex++;  // Include parenthesis in layouts to delete
     bool validNumberOfParams = CreateParametersList(
         parameters, h, endIndex, beautificationRule, layoutCursor);
@@ -507,10 +503,10 @@ bool InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(
                                   numberOfRemovedLayouts +
                                   numberOfInsertedLayouts);
   } else {
-    /* When creating the parameters of a function, a new cursor was created at a
-     * moment where its layout was not attached to its parent. It's a problem
-     * when the new layout is a PiecewiseLayout, which needs to know it has to
-     * startEditing().
+    /* When creating the parameters of a function, a new cursor was created
+     * at a moment where its layout was not attached to its parent. It's a
+     * problem when the new layout is a PiecewiseLayout, which needs to know
+     * it has to startEditing().
      * So the cursor is reset here to ensure every initialization is properly
      * done.*/
     layoutCursor->didExitPosition();
@@ -556,8 +552,7 @@ bool InputBeautification::CreateParametersList(
     }
 
     Layout child = i < n ? paramsString.childAtIndex(i) : Layout();
-    if (i == n || (child.type() == LayoutNode::Type::CodePointLayout &&
-                   static_cast<CodePointLayout &>(child).codePoint() == ',')) {
+    if (i == n || CodePointLayoutNode::IsCodePoint(child, ',')) {
       // right parenthesis or ',' reached. Add parameter
       assert(parameterIndex < k_maxNumberOfParameters);
       parameters[parameterIndex] = currentParameter;

@@ -13,6 +13,8 @@ namespace Poincare {
 
 class CodePointLayoutNode : public LayoutNode {
  public:
+  static bool IsCodePoint(Layout l, CodePoint c);
+
   CodePointLayoutNode(CodePoint c = UCodePointNull)
       : LayoutNode(), m_codePoint(c) {}
 

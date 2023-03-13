@@ -4,6 +4,11 @@
 
 namespace Poincare {
 
+bool CodePointLayoutNode::IsCodePoint(Layout l, CodePoint c) {
+  return l.type() == Type::CodePointLayout &&
+         static_cast<CodePointLayout &>(l).codePoint() == c;
+}
+
 int CodePointLayoutNode::serialize(char *buffer, int bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {

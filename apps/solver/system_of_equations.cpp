@@ -6,6 +6,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/matrix.h>
 #include <poincare/polynomial.h>
+#include <poincare/print_int.h>
 #include <poincare/symbol.h>
 
 #include "app.h"
@@ -251,8 +252,11 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
    * variables to parameters. */
   m_hasMoreSolutions = true;
 
-  size_t parameterNameLength = n - rank == 1 ? 1 : 2;
-  char parameterSuffix = '1';
+  constexpr size_t parameterNameSize = 1 + 2 + 1;  // 't' + 2 digits + '\0'
+  char parameterName[parameterNameSize] = {k_parameterPrefix};
+  size_t parameterIndex = n - rank == 1 ? 0 : 1;
+  uint32_t usedParameterIndices = tagParametersUsedAsVariables();
+
   size_t variable = n - 1;
   while (rank < n) {
     /* Find the last free variable
@@ -292,9 +296,21 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
                                 abChildren, abChildren);
       ++abChildren;
     }
-    assert(parameterSuffix <= '9');
-    const char parameterName[] = {k_parameterPrefix,
-                                  static_cast<char>(parameterSuffix++), '\0'};
+
+    while (OMG::BitHelper::bitAtIndex(usedParameterIndices, parameterIndex)) {
+      parameterIndex++;
+      assert(parameterIndex <
+             OMG::BitHelper::numberOfBitsIn(usedParameterIndices));
+    }
+    int parameterNameLength =
+        parameterIndex == 0
+            ? 1
+            : 1 + PrintInt::Left(parameterIndex, parameterName + 1,
+                                 parameterNameSize - 2);
+    parameterIndex++;
+    assert(parameterNameLength >= 1 && parameterNameLength < parameterNameSize);
+    parameterName[parameterNameLength] = '\0';
+
     ab.addChildAtIndexInPlace(
         Symbol::Builder(parameterName, parameterNameLength), abChildren,
         abChildren);

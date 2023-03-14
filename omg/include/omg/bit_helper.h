@@ -20,8 +20,8 @@ constexpr size_t numberOfBitsIn() {
 }
 
 template <typename T>
-constexpr size_t numberOfBitsIn(const T& t) {
-  return sizeof(t) * k_numberOfBitsInByte;
+constexpr size_t numberOfBitsIn(const T&) {
+  return numberOfBitsIn<T>();
 }
 
 template <typename T>

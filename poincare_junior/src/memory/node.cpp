@@ -76,7 +76,7 @@ void Node::logName(std::ostream & stream) const {
     "ParenthesisLayout",
     "VerticalOffsetLayout",
     "CodePointLayout",
-    "NodeBorder",
+    "TreeBorder",
     "Placeholder",
   };
   static_assert(sizeof(names)/sizeof(const char *) == static_cast<uint8_t>(BlockType::NumberOfTypes));
@@ -142,13 +142,13 @@ void Node::copyTreeTo(void * address) const {
  * Here are the situations that indicate navigation must stop.
  *
  * nextNode() :
- * (1) NodeBorder         -> Anywhere
+ * (1) TreeBorder         -> Anywhere
  * (2) Anywhere           -> Cache first block
  * (3) Edition last block -> Anywhere
  * // (4) Cache Pool      -> Cache last block / Edition first block
  *
  * previousNode() :
- * (5) NodeBorder         <- Anywhere
+ * (5) TreeBorder         <- Anywhere
  * (6) Anywhere           <- Cache first block
  * // (7) Edition Pool    <- Edition last block
  * // (8) Cache Pool      <- Cache last block / Edition first block
@@ -166,7 +166,7 @@ void Node::copyTreeTo(void * address) const {
 
 bool Node::canNavigateNext() const {
   CachePool * cache(CachePool::sharedCachePool());
-  return m_block->type() != BlockType::NodeBorder
+  return m_block->type() != BlockType::TreeBorder
          && m_block + nodeSize() != cache->firstBlock()
          && m_block != cache->editionPool()->lastBlock();
 }
@@ -174,7 +174,7 @@ bool Node::canNavigateNext() const {
 bool Node::canNavigatePrevious() const {
   CachePool * cache(CachePool::sharedCachePool());
   BlockType destinationType = static_cast<TypeBlock *>(m_block->previous())->type();
-  return destinationType != BlockType::NodeBorder
+  return destinationType != BlockType::TreeBorder
          && m_block != cache->firstBlock();
 }
 

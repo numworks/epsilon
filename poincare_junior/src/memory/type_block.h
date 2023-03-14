@@ -13,7 +13,7 @@ namespace PoincareJ {
 */
 
 /* Node description by type:
- * - Zero Z (same for One, Two, Half, MinusOne, NodeBorder)
+ * - Zero Z (same for One, Two, Half, MinusOne, TreeBorder)
  * | Z TAG |
  *
  * - IntegerShort IS
@@ -95,7 +95,7 @@ enum class BlockType : uint8_t {
   LastLayout = CodePointLayout,
   NumberOfLayouts,
   // Misc
-  NodeBorder = NumberOfLayouts,
+  TreeBorder = NumberOfLayouts,
   Placeholder,
   NumberOfTypes
 };
@@ -260,15 +260,15 @@ constexpr TypeBlock OneBlock = TypeBlock(BlockType::One);
 constexpr TypeBlock TwoBlock = TypeBlock(BlockType::Two);
 constexpr TypeBlock MinusOneBlock = TypeBlock(BlockType::MinusOne);
 constexpr TypeBlock HalfBlock = TypeBlock(BlockType::Half);
-constexpr TypeBlock NodeBorderBlock = TypeBlock(BlockType::NodeBorder);
+constexpr TypeBlock TreeBorderBlock = TypeBlock(BlockType::TreeBorder);
 
-// Surround tree with NodeBorder blocks to allow uninitialized parent detection
+// Surround tree with TreeBorder blocks to allow uninitialized parent detection
 template <int size>
 class BlockBuffer {
 public:
   consteval BlockBuffer() {
-    m_blocks[0] = NodeBorderBlock;
-    m_blocks[size + 1] = NodeBorderBlock;
+    m_blocks[0] = TreeBorderBlock;
+    m_blocks[size + 1] = TreeBorderBlock;
   }
   constexpr TypeBlock * blocks() { return static_cast<TypeBlock *>(m_blocks + 1); }
   consteval const TypeBlock * blocks() const { return static_cast<const TypeBlock *>(m_blocks) + 1; }

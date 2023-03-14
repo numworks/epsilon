@@ -53,7 +53,7 @@ public:
   /* Note : parent() access may be forbidden and deleted in the future.
    * In this case, previousBlock won't exist anymore.
    * If parent() remains enabled, previousNode could be optimized by sprinkling
-   * NodeBorders blocks between every tree of the cache.
+   * TreeBorders blocks between every tree of the cache.
    * previousNode and nextNode could then be simplified. */
   bool canNavigateNext() const;
   bool canNavigatePrevious() const;

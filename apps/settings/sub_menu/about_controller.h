@@ -2,7 +2,9 @@
 #define SETTINGS_ABOUT_CONTROLLER_H
 
 #include <apps/shared/pop_up_controller.h>
-#include <escher/message_table_cell_with_buffer.h>
+#include <escher/buffer_text_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 
 #include "generic_sub_controller.h"
 
@@ -30,7 +32,8 @@ class AboutController : public GenericSubController {
   constexpr static int k_termsOfUseCellIndex = 3;
 #endif
 
-  Escher::MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
+  Escher::MenuCell<Escher::MessageTextView, Escher::BufferTextView>
+      m_cells[k_totalNumberOfCell];
   Shared::MessagePopUpController m_hardwareTestPopUpController;
 };
 

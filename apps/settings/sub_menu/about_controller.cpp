@@ -43,20 +43,21 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
        * Epsilon version number, the commit hash for this build of Epsilon, the
        * PCB revision number, the flags used at compilation and the bootloader
        * running on the device. */
-      MessageTableCellWithBuffer *myCell =
-          (MessageTableCellWithBuffer *)m_selectableListView.selectedCell();
-      const char *currentText = myCell->subLabelText();
+      MenuCell<MessageTextView, BufferTextView> *myCell =
+          (MenuCell<MessageTextView, BufferTextView> *)
+              m_selectableListView.selectedCell();
+      const char *currentText = myCell->subLabel()->text();
       if (strcmp(currentText, Ion::patchLevel()) == 0) {
-        myCell->setSubLabelText(Ion::pcbVersion());
+        myCell->subLabel()->setText(Ion::pcbVersion());
       } else if (strcmp(currentText, Ion::pcbVersion()) == 0) {
-        myCell->setSubLabelText(Ion::compilationFlags());
+        myCell->subLabel()->setText(Ion::compilationFlags());
       } else if (strcmp(currentText, Ion::compilationFlags()) == 0) {
-        myCell->setSubLabelText(Ion::runningBootloader());
+        myCell->subLabel()->setText(Ion::runningBootloader());
       } else if (strcmp(currentText, Ion::runningBootloader()) == 0) {
-        myCell->setSubLabelText(Ion::epsilonVersion());
+        myCell->subLabel()->setText(Ion::epsilonVersion());
       } else {
         assert(strcmp(currentText, Ion::epsilonVersion()) == 0);
-        myCell->setSubLabelText(Ion::patchLevel());
+        myCell->subLabel()->setText(Ion::patchLevel());
       }
       return true;
     }
@@ -79,8 +80,8 @@ HighlightCell *AboutController::reusableCell(int index, int type) {
 
 void AboutController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
-  MessageTableCellWithBuffer *myCell =
-      static_cast<MessageTableCellWithBuffer *>(cell);
+  MenuCell<MessageTextView, BufferTextView> *myCell =
+      static_cast<MenuCell<MessageTextView, BufferTextView> *>(cell);
   const char *messages[k_totalNumberOfCell] = {
     Ion::epsilonVersion(),
     Ion::serialNumber(),
@@ -90,7 +91,7 @@ void AboutController::willDisplayCellForIndex(HighlightCell *cell, int index) {
 #endif
   };
   assert(index >= 0 && index < k_totalNumberOfCell);
-  myCell->setSubLabelText(messages[index]);
+  myCell->subLabel()->setText(messages[index]);
 }
 
 KDCoordinate AboutController::nonMemoizedRowHeight(int index) {

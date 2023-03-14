@@ -10,9 +10,7 @@ class PointNode : public ExpressionNode {
   // ExpressionNode
   Type type() const override { return Type::Point; }
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int significantDigits, Context* context) const override {
-    return Layout();
-  }
+                      int significantDigits, Context* context) const override;
   Evaluation<float> approximate(
       SinglePrecision p, const ApproximationContext& context) const override {
     return templatedApproximate<float>(context);
@@ -31,8 +29,13 @@ class PointNode : public ExpressionNode {
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override { stream << "Point"; }
 #endif
+  int serialize(char* buffer, int bufferSize,
+                Preferences::PrintFloatMode floatDisplayMode,
+                int significantDigits) const override;
 
  private:
+  constexpr static char k_prefix[] = "";
+
   template <typename T>
   Evaluation<T> templatedApproximate(const ApproximationContext&) const {
     return Complex<T>::Undefined();

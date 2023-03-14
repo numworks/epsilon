@@ -68,10 +68,10 @@ void PrefacedTableView::tableViewDidChangeSelection(
 }
 
 void PrefacedTableView::resetContentOffset() {
-  // Main table
-  m_mainTableView->setContentOffset(KDPointZero);
   // Row preface
   m_rowPrefaceView.setContentOffset(KDPointZero);
+  // Main table
+  m_mainTableView->setContentOffset(KDPointZero);
 }
 
 void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(

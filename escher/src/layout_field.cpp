@@ -109,17 +109,17 @@ void LayoutField::ContentView::layoutSubviews(bool force) {
 }
 
 void LayoutField::ContentView::layoutCursorSubview(bool force) {
+  KDPoint cursorTopLeftPosition = m_expressionView.drawingOrigin().translatedBy(
+      m_cursor.cursorAbsoluteOrigin(font()));
   if (!m_isEditing) {
     /* We keep track of the cursor's position to prevent the input field from
      * scrolling to the beginning when switching to the history. This way,
      * when calling scrollToCursor after layoutCursorSubview, we don't lose
      * sight of the cursor. */
     expressionView()->setChildFrame(
-        &m_cursorView, KDRect(cursorRect().x(), cursorRect().y(), 0, 0), force);
+        &m_cursorView, KDRect(cursorTopLeftPosition, KDSizeZero), force);
     return;
   }
-  KDPoint cursorTopLeftPosition = m_expressionView.drawingOrigin().translatedBy(
-      m_cursor.cursorAbsoluteOrigin(font()));
   expressionView()->setChildFrame(
       &m_cursorView,
       KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth,

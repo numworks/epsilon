@@ -1,10 +1,13 @@
 #ifndef SEQUENCE_LIST_PARAM_CONTROLLER_H
 #define SEQUENCE_LIST_PARAM_CONTROLLER_H
 
+#include <escher/chevron_view.h>
 #include <escher/even_odd_expression_cell.h>
+#include <escher/expression_view.h>
 #include <escher/list_view_data_source.h>
-#include <escher/message_table_cell_with_chevron_and_expression.h>
+#include <escher/menu_cell.h>
 #include <escher/message_table_cell_with_editable_text.h>
+#include <escher/message_text_view.h>
 
 #include "../../shared/list_parameter_controller.h"
 #include "../../shared/parameter_text_field_delegate.h"
@@ -51,7 +54,9 @@ class ListParameterController : public Shared::ListParameterController,
   Shared::Sequence *sequence() {
     return static_cast<Shared::Sequence *>(function().pointer());
   }
-  Escher::MessageTableCellWithChevronAndExpression m_typeCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::ExpressionView,
+                   Escher::ChevronView>
+      m_typeCell;
   Escher::MessageTableCellWithEditableText m_initialRankCell;
   TypeParameterController m_typeParameterController;
 };

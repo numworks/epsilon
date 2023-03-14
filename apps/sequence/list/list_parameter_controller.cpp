@@ -18,13 +18,14 @@ ListParameterController::ListParameterController(
     : Shared::ListParameterController(listController,
                                       I18n::Message::SequenceColor,
                                       I18n::Message::DeleteSequence, this),
-      m_typeCell(I18n::Message::SequenceType),
       m_initialRankCell(&m_selectableListView, inputEventHandlerDelegate, this,
                         I18n::Message::FirstTermIndex),
       m_typeParameterController(this, listController, Metric::CommonTopMargin,
                                 Metric::CommonRightMargin,
                                 Metric::CommonBottomMargin,
-                                Metric::CommonLeftMargin) {}
+                                Metric::CommonLeftMargin) {
+  m_typeCell.label()->setMessage(I18n::Message::SequenceType);
+}
 
 const char *ListParameterController::title() {
   return I18n::translate(I18n::Message::SequenceOptions);
@@ -89,7 +90,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell *cell,
                                                       int index) {
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_typeCell && !m_record.isNull()) {
-    m_typeCell.setLayout(sequence()->definitionName());
+    m_typeCell.subLabel()->setLayout(sequence()->definitionName());
   }
   if (cell == &m_initialRankCell && !m_record.isNull()) {
     MessageTableCellWithEditableText *myCell =
@@ -106,7 +107,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell *cell,
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell *cell = selectedCell();
-  if (cell == &m_typeCell && m_typeCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_typeCell && m_typeCell.enterOnEvent(event)) {
     m_typeParameterController.setRecord(m_record);
     static_cast<StackViewController *>(parentResponder())
         ->push(&m_typeParameterController);

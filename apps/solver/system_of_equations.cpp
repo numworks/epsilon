@@ -264,41 +264,36 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   size_t parameterIndex = n - rank == 1 ? 0 : 1;
   uint32_t usedParameterIndices = tagParametersUsedAsVariables();
 
-  size_t variable = n - 1;
-  while (rank < n) {
-    /* Find the last free variable by scanning through the rows, from top to
-     * bottom (e.g. with n = 3 and variable = x1) :
-     *   - if the row qualifies x0 (e.g. {1 1 -1 0}), move to the next row.
-     *   - if the row (e.g. {0 0 2 3}) does not qualify x1, the next row won't
-     *     qualify x1 either since the matrix is in row echelon form: x1 is
-     *     free.
-     *   - if the row qualifies x1 but not x0 (e.g. {0 1 0 4}): x1 is not free.
-     *   - rows of the form {0 1 a b} cannot be encountered: trying to find
-     *     if x1 is free means x2 is already bound, so row canonization should
-     *     have eliminated coefficients for x2 by linear combination with a
-     *     row of the form {0 0 1 c}. */
-    TrinaryBoolean variableIsFree = TrinaryBoolean::Unknown;
-    for (size_t row = 0; variableIsFree == TrinaryBoolean::Unknown && row < m;
-         row++) {
-      bool noPreviousVariables = true;
-      for (size_t col = 0; noPreviousVariables && col < variable; col++) {
-        noPreviousVariables =
-            noPreviousVariables &&
-            ab.matrixChild(row, col).isNull(context) == TrinaryBoolean::True;
+  int variable = n - 1;
+  int row = m - 1;
+  int firstVariableInRow = -1;
+  while (variable >= 0) {
+    // Find the first variable with a non-null coefficient in the current row
+    if (row >= 0) {
+      for (int col = 0; firstVariableInRow < 0 && col < n; col++) {
+        if (ab.matrixChild(row, col).isNull(context) != TrinaryBoolean::True) {
+          firstVariableInRow = col;
+        }
       }
-      if (noPreviousVariables) {
-        bool rowQualifiesVariable =
-            ab.matrixChild(row, variable).isNull(context) !=
-            TrinaryBoolean::True;
-        variableIsFree =
-            rowQualifiesVariable ? TrinaryBoolean::False : TrinaryBoolean::True;
+
+      if (firstVariableInRow < 0 || firstVariableInRow == variable) {
+        /* If firstVariableInRow < 0, the row is null and provides no
+         * information. If variable is the first with a non-null coefficient,
+         * the current row uniquely qualifies it, no need to bind a parameter to
+         * it. */
+        row--;
+        if (firstVariableInRow == variable) {
+          variable--;
+        }
+        firstVariableInRow = -1;
+        continue;
       }
     }
-    if (variableIsFree == TrinaryBoolean::False) {
-      assert(variable > 0);
-      --variable;
-      continue;
-    }
+    /* If row < 0, there are still unbound variables after scanning all the row,
+     * so simply bind them all. */
+
+    assert(firstVariableInRow < variable);
+    // No row uniquely qualifies the current variable, bind it to a parameter.
     // Add the row variable=parameter to increase the rank of the system.
     for (size_t i = 0; i < n; i++) {
       ab.addChildAtIndexInPlace(Rational::Builder(i == variable ? 1 : 0),
@@ -306,6 +301,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
       ++abChildren;
     }
 
+    // Generate a unique identifier t? that does not collide with variables.
     while (OMG::BitHelper::bitAtIndex(usedParameterIndices, parameterIndex)) {
       parameterIndex++;
       assert(parameterIndex <
@@ -319,20 +315,19 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
     parameterIndex++;
     assert(parameterNameLength >= 1 && parameterNameLength < parameterNameSize);
     parameterName[parameterNameLength] = '\0';
-
     ab.addChildAtIndexInPlace(
         Symbol::Builder(parameterName, parameterNameLength), abChildren,
         abChildren);
     ++abChildren;
-
     ab.setDimensions(++m, n + 1);
-    rank = ab.rank(context, m_complexFormat, angleUnit, unitFormat,
-                   ReductionTarget::SystemForAnalysis, true);
-    if (rank == -1) {
-      return Error::EquationUndefined;
-    }
+    variable--;
   }
 
+  rank = ab.rank(context, m_complexFormat, angleUnit, unitFormat,
+                 ReductionTarget::SystemForAnalysis, true);
+  if (rank == -1) {
+    return Error::EquationUndefined;
+  }
   assert(rank == n);
   // System is fully qualified, register the parametric solutions.
   m_numberOfSolutions = 0;

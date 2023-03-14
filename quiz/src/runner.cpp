@@ -87,10 +87,11 @@ void ion_main(int argc, const char *const argv[]) {
   sSkipAssertions = false;
 #if !PLATFORM_DEVICE
   for (int i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "--filter") == 0) {
+    if (strcmp(argv[i], "--filter") == 0 || strcmp(argv[i], "-f") == 0) {
       assert(i + 1 < argc);
       testFilter = argv[i + 1];
-    } else if (strcmp(argv[i], "--skip-assertions") == 0) {
+    } else if (strcmp(argv[i], "--skip-assertions") == 0 ||
+               strcmp(argv[i], "-s") == 0) {
       sSkipAssertions = true;
     }
   }

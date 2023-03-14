@@ -119,7 +119,7 @@ start_execute:
 
 CachePool::CachePool() :
   m_referenceTable(this),
-  m_editionPool(m_blocks, k_maxNumberOfBlocks)
+  m_editionPool(static_cast<TypeBlock *>(m_blocks), k_maxNumberOfBlocks)
 {
 }
 
@@ -128,7 +128,7 @@ void CachePool::resetEditionPool() {
 }
 
 void CachePool::translate(uint16_t offset, size_t cachePoolSize) {
-  TypeBlock * newFirst = m_blocks + offset;
+  Block * newFirst = m_blocks + offset;
   memmove(m_blocks, newFirst, (cachePoolSize + m_editionPool.size()) * sizeof(TypeBlock));
   resetEditionPool();
 }

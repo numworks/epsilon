@@ -265,7 +265,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
   }
   if (i == 0) {
     if (system->type() == SystemOfEquations::Type::PolynomialMonovariable &&
-        j == system->numberOfSolutions() - 1) {
+        j == static_cast<int>(system->numberOfSolutions()) - 1) {
       // Formula of the discriminant
       assert(system->degree() == 2 || system->degree() == 3);
       EvenOddExpressionCell *deltaCell =
@@ -461,7 +461,7 @@ int SolutionsController::typeAtLocation(int i, int j) {
   }
   if (i == 0) {
     if (system->type() == SystemOfEquations::Type::PolynomialMonovariable &&
-        j == system->numberOfSolutions() - 1) {
+        j == static_cast<int>(system->numberOfSolutions()) - 1) {
       return k_deltaCellType;
     }
     return k_symbolCellType;

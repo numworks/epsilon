@@ -52,7 +52,7 @@ void SystemOfEquations::approximateSolve(Context *context) {
       m_variables[0], context);
   solver.stretch();
 
-  for (size_t i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
+  for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
     double root = solver.nextRoot(undevelopedExpression).x1();
     if (root < m_approximateResolutionMinimum) {
       i--;
@@ -114,8 +114,8 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
   m_complexFormat = Preferences::sharedPreferences->complexFormat();
 
   EquationStore *store = m_store;
-  size_t nEquations = store->numberOfDefinedModels();
-  for (size_t i = 0; i < nEquations; i++) {
+  int nEquations = store->numberOfDefinedModels();
+  for (int i = 0; i < nEquations; i++) {
     ExpiringPointer<Equation> equation =
         store->modelForRecord(store->definedRecordAtIndex(i));
     Expression equationsWithUserVariables = equation->standardForm(
@@ -157,17 +157,18 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
         m_complexFormat, simplifiedEquations[i], nullptr);
 
     // Gather resolution variables
-    m_numberOfResolutionVariables = simplifiedEquations[i].getVariables(
+    int nbResolutionVariables = simplifiedEquations[i].getVariables(
         context, [](const char *, Context *) { return true; },
         &m_variables[0][0], SymbolAbstractNode::k_maxNameSize,
         m_numberOfResolutionVariables);
     /* The equation has been parsed, so there should not be any variable with a
      * name that is too long. */
     // FIXME Special return values of getVariables should be named.
-    assert(m_numberOfResolutionVariables != -2);
-    if (m_numberOfResolutionVariables == -1) {
+    assert(nbResolutionVariables != -2);
+    if (nbResolutionVariables == -1) {
       return Error::TooManyVariables;
     }
+    m_numberOfResolutionVariables = nbResolutionVariables;
   }
   return Error::NoError;
 }
@@ -185,7 +186,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   Expression coefficients[EquationStore::k_maxNumberOfEquations]
                          [Expression::k_maxNumberOfVariables];
   Expression constants[EquationStore::k_maxNumberOfEquations];
-  size_t m = m_store->numberOfDefinedModels();
+  int m = m_store->numberOfDefinedModels();
   for (int i = 0; i < m; i++) {
     bool isLinear = simplifiedEquations[i].getLinearCoefficients(
         &m_variables[0][0], SymbolAbstractNode::k_maxNameSize, coefficients[i],
@@ -200,12 +201,12 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
 
   m_hasMoreSolutions = false;
   // n unknown variables and m equations
-  size_t n = m_numberOfResolutionVariables;
+  int n = m_numberOfResolutionVariables;
   // Create the matrix (A|b) for the equation Ax=b;
   Matrix ab = Matrix::Builder();
-  size_t abChildren = 0;
-  for (size_t i = 0; i < m; i++) {
-    for (size_t j = 0; j < n; j++) {
+  int abChildren = 0;
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
       ab.addChildAtIndexInPlace(coefficients[i][j], abChildren, abChildren);
       ++abChildren;
     }
@@ -244,7 +245,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
      * and after canonization their values are the values on the last column. */
     assert(m_numberOfSolutions == 0);
     Error error;
-    for (size_t i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
       error =
           registerSolution(ab.matrixChild(i, n), context, SolutionType::Exact);
       if (error != Error::NoError) {
@@ -261,7 +262,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
 
   constexpr size_t parameterNameSize = 1 + 2 + 1;  // 't' + 2 digits + '\0'
   char parameterName[parameterNameSize] = {k_parameterPrefix};
-  size_t parameterIndex = n - rank == 1 ? 0 : 1;
+  int parameterIndex = n - rank == 1 ? 0 : 1;
   uint32_t usedParameterIndices = tagParametersUsedAsVariables();
 
   int variable = n - 1;
@@ -295,7 +296,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
     assert(firstVariableInRow < variable);
     // No row uniquely qualifies the current variable, bind it to a parameter.
     // Add the row variable=parameter to increase the rank of the system.
-    for (size_t i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
       ab.addChildAtIndexInPlace(Rational::Builder(i == variable ? 1 : 0),
                                 abChildren, abChildren);
       ++abChildren;
@@ -331,7 +332,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   assert(rank == n);
   // System is fully qualified, register the parametric solutions.
   m_numberOfSolutions = 0;
-  for (size_t i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++) {
     Error error =
         registerSolution(ab.matrixChild(i, n), context, SolutionType::Formal);
     if (error != Error::NoError) {

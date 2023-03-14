@@ -68,7 +68,10 @@ Layout LayoutHelper::Prefix(const Expression& expression,
                             bool addParenthesese) {
   HorizontalLayout result = HorizontalLayout::Builder();
   // Add the operator name.
-  result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), 0);
+  size_t operatorLength = strlen(operatorName);
+  if (operatorLength > 0) {
+    result.addOrMergeChildAtIndex(String(operatorName, operatorLength), 0);
+  }
 
   // Create the layout of arguments separated by commas.
   HorizontalLayout args = HorizontalLayout::Builder();

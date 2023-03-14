@@ -259,15 +259,17 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
 
   size_t variable = n - 1;
   while (rank < n) {
-    /* Find the last free variable
-     * e.g. with n = 3 and variable = x1
-     *   - the row (1 1 -1 0) qualifies x0, move to the next row.
-     *   - the row (0 0 2 3) does not qualify x1. Since the matrix is in row
-     *     echelon form, the next row won't qualify x1 either: x1 is free.
-     *   - the row (0 1 0 4) qualifies x1: x1 is not free
-     *   - the row (0 1 2 -3) cannot be encountered: trying to find if x1 is
-     *     free means x2 is already bound, so row canonization form should have
-     *     eliminated coefficient for x2. */
+    /* Find the last free variable by scanning through the rows, from top to
+     * bottom (e.g. with n = 3 and variable = x1) :
+     *   - if the row qualifies x0 (e.g. {1 1 -1 0}), move to the next row.
+     *   - if the row (e.g. {0 0 2 3}) does not qualify x1, the next row won't
+     *     qualify x1 either since the matrix is in row echelon form: x1 is
+     *     free.
+     *   - if the row qualifies x1 but not x0 (e.g. {0 1 0 4}): x1 is not free.
+     *   - rows of the form {0 1 a b} cannot be encountered: trying to find
+     *     if x1 is free means x2 is already bound, so row canonization should
+     *     have eliminated coefficients for x2 by linear combination with a
+     *     row of the form {0 0 1 c}. */
     TrinaryBoolean variableIsFree = TrinaryBoolean::Unknown;
     for (size_t row = 0; variableIsFree == TrinaryBoolean::Unknown && row < m;
          row++) {

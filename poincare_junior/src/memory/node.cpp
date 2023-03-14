@@ -135,48 +135,6 @@ void Node::copyTreeTo(void * address) const {
   memcpy(address, m_block, treeSize());
 }
 
-/* When navigating between nodes, ensure that no undefined node is reached.
- * Also ensure that there is no navigation in or out of CachePool.
- * It is tolerated (and handled) in Node::previousNode to identify nodes that
- * have no parents for example.
- * Here are the situations that indicate navigation must stop.
- *
- * nextNode() :
- * (1) TreeBorder         -> Anywhere
- * (2) Anywhere           -> Cache first block
- * (3) Edition last block -> Anywhere
- * // (4) Cache Pool      -> Cache last block / Edition first block
- *
- * previousNode() :
- * (5) TreeBorder         <- Anywhere
- * (6) Anywhere           <- Cache first block
- * // (7) Edition Pool    <- Edition last block
- * // (8) Cache Pool      <- Cache last block / Edition first block
- *
- * Some notes :
- * - It is expected in (2) and (3) that no tree lives right next to the pool
- * - For both pools, last block represent the very first out of limit block.
- *   We need to call previousNode on them to access before last node so (7) and
- *   (8) are not checked.
- * - Cache last block is also Edition first block, and we need to call nextNode
- *   on before last node, so (4) is not checked.
- * - Source node is always expected to be defined. Allowing checks on
- *   nextNode's destination, but not previousNode's. */
-
-bool Node::canNavigateNext() const {
-  CachePool * cache(CachePool::sharedCachePool());
-  return m_block->type() != BlockType::TreeBorder
-         && m_block + nodeSize() != cache->firstBlock()
-         && m_block != cache->editionPool()->lastBlock();
-}
-
-bool Node::canNavigatePrevious() const {
-  CachePool * cache(CachePool::sharedCachePool());
-  BlockType destinationType = static_cast<TypeBlock *>(m_block->previous())->type();
-  return destinationType != BlockType::TreeBorder
-         && m_block != cache->firstBlock();
-}
-
 const Node Node::nextNode() const {
   assert(canNavigateNext());
   return Node(m_block + nodeSize());
@@ -277,6 +235,48 @@ void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
     child.recursivelyGet(treeFunction);
   }
   (*treeFunction)(*this);
+}
+
+/* When navigating between nodes, ensure that no undefined node is reached.
+ * Also ensure that there is no navigation in or out of CachePool.
+ * It is tolerated (and handled) in Node::previousNode to identify nodes that
+ * have no parents for example.
+ * Here are the situations that indicate navigation must stop.
+ *
+ * nextNode() :
+ * (1) TreeBorder         -> Anywhere
+ * (2) Anywhere           -> Cache first block
+ * (3) Edition last block -> Anywhere
+ * // (4) Cache Pool      -> Cache last block / Edition first block
+ *
+ * previousNode() :
+ * (5) TreeBorder         <- Anywhere
+ * (6) Anywhere           <- Cache first block
+ * // (7) Edition Pool    <- Edition last block
+ * // (8) Cache Pool      <- Cache last block / Edition first block
+ *
+ * Some notes :
+ * - It is expected in (2) and (3) that no tree lives right next to the pool
+ * - For both pools, last block represent the very first out of limit block.
+ *   We need to call previousNode on them to access before last node so (7) and
+ *   (8) are not checked.
+ * - Cache last block is also Edition first block, and we need to call nextNode
+ *   on before last node, so (4) is not checked.
+ * - Source node is always expected to be defined. Allowing checks on
+ *   nextNode's destination, but not previousNode's. */
+
+bool Node::canNavigateNext() const {
+  CachePool * cache(CachePool::sharedCachePool());
+  return m_block->type() != BlockType::TreeBorder
+         && m_block + nodeSize() != cache->firstBlock()
+         && m_block != cache->editionPool()->lastBlock();
+}
+
+bool Node::canNavigatePrevious() const {
+  CachePool * cache(CachePool::sharedCachePool());
+  BlockType destinationType = static_cast<TypeBlock *>(m_block->previous())->type();
+  return destinationType != BlockType::TreeBorder
+         && m_block != cache->firstBlock();
 }
 
 const Node Node::previousRelative(bool parent) const {

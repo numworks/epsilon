@@ -50,8 +50,6 @@ public:
   void copyTreeTo(void * address) const;
 
   // Node Navigation
-  bool canNavigateNext() const;
-  bool canNavigatePrevious() const;
   const Node nextNode() const;
   constexpr Node nextNode() { return Utils::DeconstifyObj(&Node::nextNode, this); };
   /* TODO : If costly, previousNode could be optimized by sprinkling TreeBorders
@@ -115,7 +113,10 @@ public:
   Blocks blocks() const { return Blocks(this); }
 
 private:
+  bool canNavigateNext() const;
+  bool canNavigatePrevious() const;
   const Node previousRelative(bool parent) const;
+
   TypeBlock * m_block;
 };
 

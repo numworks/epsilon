@@ -118,6 +118,11 @@ QUIZ_CASE(equation_solve_approximate) {
   // Steep slope, close to x=0
   assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001});
   assert_solves_numerically_to("10^4×abs(x-10^(-4))+0.001=0", -10, 10, {});
+  /* TODO: This does not work in real-mode because abs(x) is reduced to
+   * sign(x)*x which does not always approximate to the same value.
+   * set_complex_format(Real);
+   * assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001});
+   */
 }
 
 QUIZ_CASE(equation_solve_complex_real) {

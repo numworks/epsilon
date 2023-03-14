@@ -69,27 +69,8 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
 }
 
 bool ExamPopUpController::handleButton() const {
-  AppsContainer* container = AppsContainer::sharedAppsContainer();
-  App* activeApp = container->activeApp();
-
-  ExamMode::Ruleset previousRules =
-      Preferences::sharedPreferences->examMode().ruleset();
-  Preferences::sharedPreferences->setExamMode(m_targetExamMode);
-
-  if (m_targetExamMode.ruleset() != ExamMode::Ruleset::Off) {
-    container->reset();
-  } else if (previousRules == ExamMode::Ruleset::PressToTest) {
-    Ion::Reset::core();
-  }
-
-  container->refreshPreferences();
-  activeApp->modalViewController()->dismissModal();
-  if (activeApp->snapshot() != container->onBoardingAppSnapshot()) {
-    container->switchToBuiltinApp(container->homeAppSnapshot());
-  }
-  /* Warning : By unplugging before confirmation, the examMode may
-   * be deactivated within menus that depend on the examMode
-   * status (such as PressToTest settings menu after having
-   * changed the country). */
+  /* Warning : By unplugging before confirmation, the examMode may then be
+   *           deactivated while unplugged. */
+  AppsContainer::sharedAppsContainer()->setExamMode(m_targetExamMode);
   return true;
 }

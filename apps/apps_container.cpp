@@ -62,13 +62,31 @@ App::Snapshot* AppsContainer::usbConnectedAppSnapshot() {
   return &m_usbConnectedSnapshot;
 }
 
-void AppsContainer::reset() {
-  // Empty storage (delete functions, variables, python scripts)
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
-  // Empty clipboard
-  Clipboard::SharedClipboard()->reset();
-  for (int i = 0; i < numberOfBuiltinApps(); i++) {
-    appSnapshotAtIndex(i)->reset();
+void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode) {
+  ExamMode::Ruleset previousRules =
+      Preferences::sharedPreferences->examMode().ruleset();
+  Preferences::sharedPreferences->setExamMode(targetExamMode);
+
+  if (targetExamMode.ruleset() != ExamMode::Ruleset::Off) {
+    // Empty storage (delete functions, variables, python scripts)
+    Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+    // Empty clipboard
+    Clipboard::SharedClipboard()->reset();
+    for (int i = 0; i < numberOfBuiltinApps(); i++) {
+      appSnapshotAtIndex(i)->reset();
+    }
+  } else if (previousRules == ExamMode::Ruleset::PressToTest) {
+    // Reset when leaving PressToTest mode.
+    Ion::Reset::core();
+  }
+
+  refreshPreferences();
+  App* app = activeApp();
+  if (app) {
+    app->modalViewController()->dismissModal();
+    if (app->snapshot() != onBoardingAppSnapshot()) {
+      switchToBuiltinApp(homeAppSnapshot());
+    }
   }
 }
 
@@ -251,10 +269,12 @@ void AppsContainer::handleRunException(bool resetSnapshot) {
 void AppsContainer::run() {
   window()->setFrame(KDRectScreen, false);
   Preferences* poincarePreferences = Preferences::sharedPreferences;
-  if (poincarePreferences->examMode().isActive()) {
-    poincarePreferences->setExamMode(poincarePreferences->examMode());
+  Poincare::ExamMode examMode = poincarePreferences->examMode();
+  if (examMode.isActive()) {
+    setExamMode(examMode);
+  } else {
+    refreshPreferences();
   }
-  refreshPreferences();
   Ion::Power::selectStandbyMode(false);
   Ion::Events::setSpinner(true);
   Ion::Display::setScreenshotCallback(ShowCursor);

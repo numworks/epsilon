@@ -75,8 +75,10 @@ bool ExamPopUpController::handleButton() const {
   ExamMode::Ruleset previousRules =
       Preferences::sharedPreferences->examMode().ruleset();
   Preferences::sharedPreferences->setExamMode(m_targetExamMode);
-  if (previousRules == ExamMode::Ruleset::PressToTest &&
-      m_targetExamMode.ruleset() == ExamMode::Ruleset::Off) {
+
+  if (m_targetExamMode.ruleset() != ExamMode::Ruleset::Off) {
+    container->reset();
+  } else if (previousRules == ExamMode::Ruleset::PressToTest) {
     Ion::Reset::core();
   }
 

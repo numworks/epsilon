@@ -120,6 +120,7 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
         &m_cursorView, KDRect(cursorTopLeftPosition, KDSizeZero), force);
     return;
   }
+  m_cursorView.willMove();
   expressionView()->setChildFrame(
       &m_cursorView,
       KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth,
@@ -377,17 +378,21 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool shouldRedrawLayout = false;
   bool didHandleEvent = false;
+  bool shouldUpdateCursor = true;
   if (privateHandleMoveEvent(event, &shouldRedrawLayout)) {
     if (!isEditing()) {
       setEditing(true);
     }
     didHandleEvent = true;
-  } else if (privateHandleEvent(event, &shouldRedrawLayout)) {
+  } else if (privateHandleEvent(event, &shouldRedrawLayout,
+                                &shouldUpdateCursor)) {
     didHandleEvent = true;
   }
   if (!shouldRedrawLayout) {
-    m_contentView.cursorPositionChanged();
-    scrollToCursor();
+    if (shouldUpdateCursor) {
+      m_contentView.cursorPositionChanged();
+      scrollToCursor();
+    }
   } else {
     reload(previousSize);
   }
@@ -397,7 +402,8 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 }
 
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,
-                                     bool *shouldRedrawLayout) {
+                                     bool *shouldRedrawLayout,
+                                     bool *shouldUpdateCursor) {
   if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
   }
@@ -405,6 +411,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     if (!isEditing()) {
       setEditing(true);
     }
+    *shouldUpdateCursor = false;
     return true;
   }
   if (isEditing() && m_delegate &&

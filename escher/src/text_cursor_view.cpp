@@ -16,9 +16,10 @@ KDSize TextCursorView::minimalSizeForOptimalDisplay() const {
   return KDSize(k_width, 0);
 }
 
-void TextCursorView::layoutSubviews(bool force) {
-  /* Force the cursor to appears when its frame changes. This way, the user
-   * does not lose sight of the cursor when moving around. */
+void TextCursorView::willMove() {
+  /* Force the cursor to appears when its frame changes. This way, the user does
+   * not lose sight of the cursor when moving around.  We need to expose a
+   * callback since layoutSubviews is not called when the size is kept. */
   m_visible = true;
 }
 

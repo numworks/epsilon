@@ -90,6 +90,7 @@ class View {
 
  private:
   virtual void layoutSubviews(bool force = false) {}
+  void translate(KDPoint origin);
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);
 
   /* At destruction, subviews aren't notified that their own pointer

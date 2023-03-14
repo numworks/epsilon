@@ -89,8 +89,15 @@ void View::setChildFrame(View *child, KDRect frame, bool force) {
 }
 
 void View::setFrame(KDRect frame, bool force) {
-  if (frame == m_frame && !force) {
-    return;
+  if (!force) {
+    if (frame == m_frame) {
+      return;
+    }
+    if (frame.size() == m_frame.size()) {
+      translate(frame.origin().relativeTo(m_frame.origin()));
+      markRectAsDirty(bounds());
+      return;
+    }
   }
   /* CAUTION: This code is not resilient to multiple consecutive setFrame()
    * calls without intermediate redraw() calls. */
@@ -107,6 +114,18 @@ void View::setFrame(KDRect frame, bool force) {
 
   if (!m_frame.isEmpty()) {
     layoutSubviews(force);
+  }
+}
+
+void View::translate(KDPoint delta) {
+  m_frame = m_frame.translatedBy(delta);
+  uint8_t subviewsNumber = numberOfSubviews();
+  for (uint8_t i = 0; i < subviewsNumber; i++) {
+    View *subview = this->subview(i);
+    if (subview == nullptr) {
+      continue;
+    }
+    subview->translate(delta);
   }
 }
 

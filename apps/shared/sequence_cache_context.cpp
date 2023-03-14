@@ -44,16 +44,17 @@ SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
   if (!seq->fullName()) {
     return Poincare::Float<T>::Builder(result);
   }
-  Poincare::Expression rank = symbol.childAtIndex(0).clone();
-  if (rank.isIdenticalTo(Poincare::Symbol::Builder(UCodePointUnknown))) {
+  Poincare::Expression rankExpression = symbol.childAtIndex(0).clone();
+  if (rankExpression.isIdenticalTo(
+          Poincare::Symbol::Builder(UCodePointUnknown))) {
     // rank = n
     result = m_values[index][0];
-  } else if (rank.isIdenticalTo(Poincare::Addition::Builder(
+  } else if (rankExpression.isIdenticalTo(Poincare::Addition::Builder(
                  Poincare::Symbol::Builder(UCodePointUnknown),
                  Poincare::Rational::Builder(1)))) {
     // rank = n+1
     result = m_values[index][1];
-  } else if (rank.isIdenticalTo(Poincare::Addition::Builder(
+  } else if (rankExpression.isIdenticalTo(Poincare::Addition::Builder(
                  Poincare::Symbol::Builder(UCodePointUnknown),
                  Poincare::Rational::Builder(2)))) {
     // rank = n+2
@@ -66,11 +67,11 @@ SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
   if (std::isnan(result) && index != m_sequenceBeingComputed) {
     /* The lastDesendantContext might contain informations on variables
      * that are contained in the rank expression. */
-    T n = PoincareHelpers::ApproximateToScalar<T>(
-        rank, lastDescendantContext ? lastDescendantContext : this);
+    T rankValue = PoincareHelpers::ApproximateToScalar<T>(
+        rankExpression, lastDescendantContext ? lastDescendantContext : this);
     // If the rank is not an int, return NAN
-    if (std::floor(n) == n) {
-      result = seq->valueAtRank<T>(n, m_sequenceContext, true);
+    if (std::floor(rankValue) == rankValue) {
+      result = seq->valueAtRank<T>(rankValue, m_sequenceContext, true);
     }
   }
   return Poincare::Float<T>::Builder(result);

@@ -22,11 +22,11 @@ class ContinuousFunctionProperties {
   constexpr static CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
   constexpr static CodePoint k_radiusSymbol = 'r';
   constexpr static CodePoint k_ordinateSymbol = 'y';
-  constexpr static char k_ordinateName[2] = "y";
-  static_assert(k_ordinateSymbol == k_ordinateName[0]);
+  constexpr static CodePoint k_noSymbol = UCodePointEmpty;  // TODO
+  constexpr static char k_ordinateName[2] = {k_ordinateSymbol, '\0'};
 
   // Units are not handled when plotting function. The default unit does not
-  // matters
+  // matter
   constexpr static Poincare::Preferences::UnitFormat k_defaultUnitFormat =
       Poincare::Preferences::UnitFormat::Metric;
 
@@ -45,6 +45,7 @@ class ContinuousFunctionProperties {
     Theta,
     Radius,  // theta=f(r)
     T,
+    Index,
     NumberOfSymbolTypes
   };
   constexpr static size_t k_numberOfSymbolTypes =
@@ -59,6 +60,7 @@ class ContinuousFunctionProperties {
     Parametric,
     Polar,
     InversePolar,
+    ScatterPlot,
     NumberOfCurveParameterTypes
   };
 
@@ -140,9 +142,11 @@ class ContinuousFunctionProperties {
   }
 
   bool canBeActiveInTable() const {
-    return !isAlongY() && !isOfDegreeTwo() && isEquality();
+    return !isAlongY() && !isOfDegreeTwo() && isEquality() && !isScatterPlot();
   }
-  bool canHaveCustomDomain() const { return !isAlongY() && isEquality(); }
+  bool canHaveCustomDomain() const {
+    return !isAlongY() && isEquality() && !isScatterPlot();
+  }
 
   bool isLine() const {
     return getCurveParameterType() == CurveParameterType::VerticalLine ||
@@ -155,6 +159,9 @@ class ContinuousFunctionProperties {
   bool isCartesianHyperbolaOfDegreeTwo() const {
     return conicShape() == Poincare::Conic::Shape::Hyperbola && isCartesian() &&
            isOfDegreeTwo();
+  }
+  bool isScatterPlot() const {
+    return getCurveParameterType() == CurveParameterType::ScatterPlot;
   }
 
   bool canComputeIntersectionsWithFunctionsAlongSameVariable() const {

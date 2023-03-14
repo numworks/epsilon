@@ -50,15 +50,13 @@ public:
   void copyTreeTo(void * address) const;
 
   // Node Navigation
-  /* Note : parent() access may be forbidden and deleted in the future.
-   * In this case, previousBlock won't exist anymore.
-   * If parent() remains enabled, previousNode could be optimized by sprinkling
-   * TreeBorders blocks between every tree of the cache.
-   * previousNode and nextNode could then be simplified. */
   bool canNavigateNext() const;
   bool canNavigatePrevious() const;
   const Node nextNode() const;
   constexpr Node nextNode() { return Utils::DeconstifyObj(&Node::nextNode, this); };
+  /* TODO : If costly, previousNode could be optimized by sprinkling TreeBorders
+   *        blocks between every tree of the cache. PreviousNode and nextNode
+   *        would only have to check for TreeBorders. */
   const Node previousNode() const;
   constexpr Node previousNode() { return Utils::DeconstifyObj(&Node::previousNode, this);}
   constexpr const Node nextTree() const {
@@ -78,6 +76,8 @@ public:
   constexpr size_t treeSize() const { assert(!isUninitialized()); return nextTree().block() - block(); }
 
   // Node Hierarchy
+  /* TODO : parent, previousBlock and similar methods navigating backward could
+   *         be forbidden and deleted, optimizing node size and navigation. */
   const Node parent() const;
   Node parent() { return Utils::DeconstifyObj(&Node::parent, this);}
   const Node root() const;

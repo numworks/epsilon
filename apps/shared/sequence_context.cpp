@@ -59,8 +59,8 @@ void TemplatedSequenceContext<T>::stepUntilRank(int n, SequenceContext *sqctx,
     for (int sequence = start; sequence < stop; sequence++) {
       T *sequencePointer = sequencesRankValues +
                            sequence * (SequenceStore::k_maxRecurrenceDepth + 1);
-      for (int depth = SequenceStore::k_maxRecurrenceDepth; depth > 0;
-           depth--) {
+      for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
+           depth++) {
         *(sequencePointer + depth) = NAN;
       }
     }

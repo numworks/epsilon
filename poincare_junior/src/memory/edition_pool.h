@@ -35,6 +35,7 @@ public:
   using Pool::firstBlock;
   const TypeBlock * firstBlock() const override { return m_firstBlock; }
   using Pool::lastBlock;
+  // If EditionPool is empty, first and last blocks are the same one
   const TypeBlock * lastBlock() const override { return m_firstBlock + m_numberOfBlocks; }
   size_t fullSize() const { return m_size; }
   void setNumberOfBlocks(int numberOfBlocks) { m_numberOfBlocks = numberOfBlocks; }

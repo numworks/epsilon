@@ -161,8 +161,7 @@ void Node::copyTreeTo(void * address) const {
  * - Cache last block is also Edition first block, and we need to call nextNode
  *   on before last node, so (4) is not checked.
  * - Source node is always expected to be defined. Allowing checks on
- *   nextNode's destination, but not previousNode's.
- * - If a pool is empty, first and last blocks are the same one. */
+ *   nextNode's destination, but not previousNode's. */
 
 bool Node::canNavigateNext() const {
   CachePool * cache(CachePool::sharedCachePool());

@@ -27,6 +27,7 @@ public:
   using Pool::firstBlock;
   const TypeBlock * firstBlock() const override { return m_blocks; }
   using Pool::lastBlock;
+  // If CachePool is empty, first and last blocks are the same one
   const TypeBlock * lastBlock() const override { return m_referenceTable.isEmpty() ? m_blocks : Node(m_blocks + m_referenceTable.lastOffset()).nextTree().block(); }
 
   // Broader implementation of Pool::contains, checking unused pool as well

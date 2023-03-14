@@ -11,6 +11,7 @@ BufferTextView::BufferTextView(KDGlyph::Format format,
     : TextView(format), m_maxDisplayedTextLength(maxDisplayedTextLength) {
   assert(m_maxDisplayedTextLength < k_maxNumberOfChar &&
          m_maxDisplayedTextLength >= 0);
+  m_buffer[0] = 0;
 }
 
 const char* BufferTextView::text() const { return m_buffer; }

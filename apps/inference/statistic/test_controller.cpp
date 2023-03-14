@@ -4,7 +4,6 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/container.h>
-#include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 
@@ -14,16 +13,16 @@
 #include "type_controller.h"
 
 using namespace Inference;
+using namespace Escher;
 
-TestController::TestController(Escher::StackViewController *parentResponder,
+TestController::TestController(StackViewController *parentResponder,
                                HypothesisController *hypothesisController,
                                TypeController *typeController,
                                CategoricalTypeController *categoricalController,
                                InputSlopeController *inputSlopeController,
                                InputController *inputController,
                                Statistic *statistic)
-    : Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(
-          parentResponder),
+    : SelectableListViewController<MemoizedListViewDataSource>(parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),
       m_inputController(inputController),
@@ -38,7 +37,7 @@ const char *TestController::title() {
   return I18n::translate(m_statistic->statisticTitle());
 }
 
-void TestController::stackOpenPage(Escher::ViewController *nextPage) {
+void TestController::stackOpenPage(ViewController *nextPage) {
   SignificanceTestType type = m_statistic->significanceTestType();
   selectRow(type == SignificanceTestType::Slope ? virtualIndexOfSlope()
                                                 : static_cast<int>(type));
@@ -55,7 +54,7 @@ void TestController::didBecomeFirstResponder() {
 bool TestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE ||
       event == Ion::Events::Right) {
-    Escher::SelectableViewController *controller = nullptr;
+    SelectableViewController *controller = nullptr;
     SignificanceTestType testType;
     int row = selectedRow();
     if (row == k_indexOfOneProp) {
@@ -103,36 +102,36 @@ int TestController::numberOfRows() const {
   return m_statistic->numberOfSignificancesTestTypes();
 }
 
-void TestController::willDisplayCellForIndex(Escher::HighlightCell *cell,
-                                             int index) {
-  Escher::MessageTableCellWithChevronAndMessage *c =
-      static_cast<Escher::MessageTableCellWithChevronAndMessage *>(cell);
+void TestController::willDisplayCellForIndex(HighlightCell *cell, int index) {
+  MenuCell<MessageTextView, MessageTextView, ChevronView> *c =
+      static_cast<MenuCell<MessageTextView, MessageTextView, ChevronView> *>(
+          cell);
   if (index == virtualIndexOfSlope()) {
-    c->setMessage(I18n::Message::Slope);
-    c->setSubtitle(m_statistic->tStatisticMessage());
+    c->label()->setMessage(I18n::Message::Slope);
+    c->subLabel()->setMessage(m_statistic->tStatisticMessage());
     return;
   }
   switch (index) {
     case k_indexOfOneProp:
-      c->setMessage(I18n::Message::TestOneProp);
-      c->setSubtitle(m_statistic->zStatisticMessage());
+      c->label()->setMessage(I18n::Message::TestOneProp);
+      c->subLabel()->setMessage(m_statistic->zStatisticMessage());
       return;
     case k_indexOfOneMean:
-      c->setMessage(I18n::Message::TestOneMean);
-      c->setSubtitle(m_statistic->tOrZStatisticMessage());
+      c->label()->setMessage(I18n::Message::TestOneMean);
+      c->subLabel()->setMessage(m_statistic->tOrZStatisticMessage());
       return;
     case k_indexOfTwoProps:
-      c->setMessage(I18n::Message::TestTwoProps);
-      c->setSubtitle(m_statistic->zStatisticMessage());
+      c->label()->setMessage(I18n::Message::TestTwoProps);
+      c->subLabel()->setMessage(m_statistic->zStatisticMessage());
       return;
     case k_indexOfTwoMeans:
-      c->setMessage(I18n::Message::TestTwoMeans);
-      c->setSubtitle(m_statistic->tOrZStatisticMessage());
+      c->label()->setMessage(I18n::Message::TestTwoMeans);
+      c->subLabel()->setMessage(m_statistic->tOrZStatisticMessage());
       return;
     default:
       assert(index == k_indexOfCategorical);
-      c->setMessage(I18n::Message::TestCategorical);
-      c->setSubtitle(I18n::Message::X2Test);
+      c->label()->setMessage(I18n::Message::TestCategorical);
+      c->subLabel()->setMessage(I18n::Message::X2Test);
       return;
   }
 }

@@ -12,7 +12,8 @@ InterestMenuController::InterestMenuController(
     Escher::StackViewController* parentResponder,
     InterestController* interestController)
     : Escher::SelectableCellListPage<
-          Escher::MessageTableCellWithChevronAndMessage,
+          Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                           Escher::ChevronView>,
           k_numberOfInterestCells, Escher::MemoizedListViewDataSource>(
           parentResponder),
       m_messageView(I18n::Message::ParameterChoose,
@@ -29,9 +30,9 @@ void InterestMenuController::didBecomeFirstResponder() {
   resetMemoization(true);
   int nRows = numberOfRows();
   for (int i = 0; i < nRows; i++) {
-    cellAtIndex(i)->setMessage(
+    cellAtIndex(i)->label()->setMessage(
         App::GetInterestData()->labelForParameter(paramaterAtIndex(i)));
-    cellAtIndex(i)->setSubtitle(
+    cellAtIndex(i)->subLabel()->setMessage(
         App::GetInterestData()->sublabelForParameter(paramaterAtIndex(i)));
   }
   m_contentView.reload();

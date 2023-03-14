@@ -6,7 +6,6 @@
 #include <escher/buffer_text_view.h>
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
-#include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_text_view.h>
 #include <escher/switch_view.h>
 
@@ -58,7 +57,9 @@ class FunctionParameterController : public Shared::ListParameterController,
   void initializeColumnParameters() override;
   Shared::ColumnNameHelper* columnNameHelper() override;
 
-  Escher::MessageTableCellWithChevronAndMessage m_detailsCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::ChevronView>
+      m_detailsCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::BufferTextView,
                    Escher::ChevronView>
       m_functionDomainCell;

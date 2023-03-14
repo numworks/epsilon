@@ -39,8 +39,9 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell *cell,
     m_enableCell.accessory()->setState(function()->isActive());
   }
   if (cell == &m_colorCell) {
-    m_colorCell.setMessage(I18n::Message::Color);
-    m_colorCell.setSubtitle(ColorNames::NameForColor(function()->color()));
+    m_colorCell.label()->setMessage(I18n::Message::Color);
+    m_colorCell.subLabel()->setMessage(
+        ColorNames::NameForColor(function()->color()));
   }
 }
 
@@ -60,7 +61,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
     m_selectableListView.reloadData();
     return true;
   }
-  if (cell == &m_colorCell && m_colorCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_colorCell && m_colorCell.enterOnEvent(event)) {
     m_colorParameterController.setRecord(m_record);
     stack->push(&m_colorParameterController);
     return true;

@@ -22,10 +22,10 @@ FunctionParameterController::FunctionParameterController(
     GraphController *graphController, ValuesController *valuesController)
     : Shared::ListParameterController(parentResponder, functionColorMessage,
                                       deleteFunctionMessage),
-      m_detailsCell(I18n::Message::Details),
       m_detailsParameterController(this),
       m_domainParameterController(nullptr, inputEventHandlerDelegate),
       m_valuesController(valuesController) {
+  m_detailsCell.label()->setMessage(I18n::Message::Details);
   m_derivativeCell.label()->setMessage(I18n::Message::GraphDerivative);
 }
 
@@ -90,7 +90,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell *cell,
     Shared::ExpiringPointer<ContinuousFunction> function =
         myApp->functionStore()->modelForRecord(m_record);
     if (cell == &m_detailsCell) {
-      m_detailsCell.setSubtitle(function->properties().caption());
+      m_detailsCell.subLabel()->setMessage(function->properties().caption());
     } else {
       assert(cell == &m_functionDomainCell);
       m_functionDomainCell.label()->setMessage(I18n::Message::FunctionDomain);
@@ -118,7 +118,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
     stack->pop();
     return true;
   }
-  if (cell == &m_detailsCell && m_detailsCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_detailsCell && m_detailsCell.enterOnEvent(event)) {
     stack->push(&m_detailsParameterController);
     return true;
   }

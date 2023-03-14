@@ -2,7 +2,9 @@
 #define REGRESSION_STORE_PARAMETER_CONTROLLER_H
 
 #include <apps/shared/store_parameter_controller.h>
-#include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/chevron_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 
 #include "../store.h"
 
@@ -27,7 +29,9 @@ class StoreParameterController : public Shared::StoreParameterController {
       Shared::StoreParameterController::k_numberOfCells;
   constexpr static int k_changeRegressionCellIndex = 2;
 
-  Escher::MessageTableCellWithChevronAndMessage m_changeRegressionCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::ChevronView>
+      m_changeRegressionCell;
 };
 
 }  // namespace Regression

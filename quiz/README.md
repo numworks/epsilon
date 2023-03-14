@@ -16,6 +16,6 @@ Build the test.bin file (preferentially with DEBUG = 1) and run it with lldb.
 ### Arguments for running tests
 - `--headless` : Prevent Epsilon from displaying the calculator's screen. (always run with this argument)
 
-- `--filter my_test_name` : Only run one test.
+- `--filter my_test_name` or `-f my_test_name` : Only run one test.
 
-- `--skip-assertions` : Prevent the runner to stop when a test fails.
+- `--skip-assertions` or `-s` : Prevent the runner to stop when a test fails.

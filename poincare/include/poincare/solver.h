@@ -142,6 +142,10 @@ class Solver {
                                                const void *aux, T xMin, T xMax,
                                                Interest interest, T precision);
 
+  /* This filters out discontinuities by comparing the ordinate of the root to
+   * the ordinate of the points at abscissas around it. */
+  static bool IsOddRoot(Coordinate2D<T> root, FunctionEvaluation f,
+                        const void *aux);
   static void ExcludeUndefinedFromBracket(Coordinate2D<T> *p1,
                                           Coordinate2D<T> *p2,
                                           Coordinate2D<T> *p3,

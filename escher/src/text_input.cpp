@@ -19,6 +19,7 @@ void TextInput::ContentView::setCursorLocation(const char* location) {
   const char* adjustedLocation =
       std::min(location, editedText() + editedTextLength());
   m_cursorLocation = adjustedLocation;
+  m_cursorView.willMove();
   layoutSubviews();
 }
 

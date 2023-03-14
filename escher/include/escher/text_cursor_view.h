@@ -21,12 +21,13 @@ class TextCursorView : public TransparentView {
   // View
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
+  void willMove();
 
  private:
   void setVisible(bool visible);
   void switchVisible() { setVisible(!m_visible); }
   void setBlinking(bool blinking);
-  void layoutSubviews(bool force) override;
+  void layoutSubviews(bool force) override { willMove(); }
 
   bool m_visible;
 };

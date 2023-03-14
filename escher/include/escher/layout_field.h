@@ -94,8 +94,8 @@ class LayoutField : public WithBlinkingTextCursor<ScrollableView>,
                 "Maximal number of layouts in a layout field should be equal "
                 "to max number of char in text field");
   void reload(KDSize previousSize);
-  virtual bool privateHandleEvent(Ion::Events::Event event,
-                                  bool* shouldRedrawLayout);
+  bool privateHandleEvent(Ion::Events::Event event, bool* shouldRedrawLayout,
+                          bool* shouldUpdateCursor);
   bool privateHandleMoveEvent(Ion::Events::Event event,
                               bool* shouldRedrawLayout);
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);

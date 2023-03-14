@@ -3,9 +3,12 @@
 
 #include <apps/shared/column_parameter_controller.h>
 #include <apps/shared/list_parameter_controller.h>
+#include <escher/buffer_text_view.h>
+#include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
-#include <escher/message_table_cell_with_chevron_and_buffer.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/message_text_view.h>
+#include <escher/switch_view.h>
 
 #include "../graph/graph_controller.h"
 #include "details_parameter_controller.h"
@@ -56,7 +59,9 @@ class FunctionParameterController : public Shared::ListParameterController,
   Shared::ColumnNameHelper* columnNameHelper() override;
 
   Escher::MessageTableCellWithChevronAndMessage m_detailsCell;
-  Escher::MessageTableCellWithChevronAndBuffer m_functionDomainCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::BufferTextView,
+                   Escher::ChevronView>
+      m_functionDomainCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::SwitchView>
       m_derivativeCell;

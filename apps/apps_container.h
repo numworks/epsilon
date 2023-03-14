@@ -34,7 +34,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   Escher::App::Snapshot* onBoardingAppSnapshot();
   Escher::App::Snapshot* usbConnectedAppSnapshot();
   Home::App::Snapshot* homeAppSnapshot() { return &m_homeSnapshot; }
-  void reset();
+  void setExamMode(Poincare::ExamMode targetExamMode);
   Shared::GlobalContext* globalContext();
   MathToolbox* mathToolbox();
   MathVariableBoxController* variableBoxController();

@@ -60,7 +60,6 @@ escher_src += $(addprefix escher/src/,\
   message_table_cell_with_editable_text.cpp \
   message_table_cell_with_editable_text_with_message.cpp \
   message_table_cell_with_gauge.cpp \
-  message_table_cell_with_message.cpp \
   message_text_view.cpp \
   modal_view_controller.cpp \
   modal_view_empty_controller.cpp \

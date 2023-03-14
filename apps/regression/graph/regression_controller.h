@@ -3,7 +3,9 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <escher/message_table_cell_with_expression.h>
+#include <escher/expression_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 
 #include "../model/model.h"
@@ -94,14 +96,11 @@ class RegressionController : public Escher::SelectableListViewController<
                ? DefaultIndexOfModelType(type)
                : VariantIndexOfModelType(type);
   }
+  // Remaining cell can be above and below so we add +2
   constexpr static int k_numberOfCells =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-          Escher::TableCell::k_minimalLargeFontCellHeight,
-          Escher::Metric::TabHeight +
-              2 * Escher::Metric::StackTitleHeight);  // Remaining cell can be
-                                                      // above and below so we
-                                                      // add +2
-  constexpr static KDFont::Size k_modelLayoutFont = KDFont::Size::Small;
+          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
+          Escher::Metric::TabHeight + 2 * Escher::Metric::StackTitleHeight);
 
   // Display X?/Y? only when no other displayed title already names the series.
   bool displaySeriesNameAsTitle() const {
@@ -109,7 +108,8 @@ class RegressionController : public Escher::SelectableListViewController<
            m_store->seriesRegressionType(m_series) == Model::Type::None;
   }
 
-  Escher::MessageTableCellWithExpression m_regressionCells[k_numberOfCells];
+  Escher::MenuCell<Escher::MessageTextView, Escher::ExpressionView>
+      m_regressionCells[k_numberOfCells];
   Store* m_store;
   int m_series;
   bool m_displayedFromDataTab;

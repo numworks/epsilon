@@ -29,6 +29,10 @@ extern size_t eadk_external_data_size;
 #include <dlfcn.h>
 #endif
 
+constexpr static const char *k_loadStateFileKeys[] = {"--load-state-file",
+                                                      "-l"};
+constexpr static const char *k_headlessFlags[] = {"--headless", "-h"};
+
 /* The Args class allows parsing and editing command-line arguments
  * The editing part allows us to add/remove arguments before forwarding them to
  * ion_main. */
@@ -39,7 +43,9 @@ class Args {
   bool has(const char *key) const;
   const char *get(const char *key, bool pop = false);
   const char *pop(const char *key) { return get(key, true); }
+  const char *pop(const char *const *keys, size_t numberOfKeys);
   bool popFlag(const char *flag);
+  bool popFlags(const char *const *flags, size_t numberOfFlags);
   void push(const char *key, const char *value) {
     if (key != nullptr && value != nullptr) {
       m_arguments.push_back(key);
@@ -78,6 +84,14 @@ const char *Args::get(const char *argument, bool pop) {
   return nullptr;
 }
 
+const char *Args::pop(const char *const *keys, size_t numberOfKeys) {
+  const char *result = nullptr;
+  for (int i = 0; !result && i < numberOfKeys; i++) {
+    result = pop(keys[i]);
+  }
+  return result;
+}
+
 bool Args::popFlag(const char *argument) {
   auto flagIt = find(argument);
   if (flagIt != m_arguments.end()) {
@@ -85,6 +99,14 @@ bool Args::popFlag(const char *argument) {
     return true;
   }
   return false;
+}
+
+bool Args::popFlags(const char *const *flags, size_t numberOfFlags) {
+  bool result = false;
+  for (int i = 0; !result && i < numberOfFlags; i++) {
+    result = popFlag(flags[i]);
+  }
+  return result;
 }
 
 std::vector<const char *>::const_iterator Args::find(const char *name) const {
@@ -141,7 +163,8 @@ int main(int argc, char *argv[]) {
 #endif
 
 #if ION_SIMULATOR_FILES
-  const char *stateFile = args.pop("--load-state-file");
+  const char *stateFile = args.pop(
+      k_loadStateFileKeys, sizeof(k_loadStateFileKeys) / sizeof(char *));
   if (stateFile) {
     assert(Journal::replayJournal());
     StateFile::load(stateFile);
@@ -174,7 +197,8 @@ int main(int argc, char *argv[]) {
     args.push("--language", Platform::languageCode());
   }
 
-  bool headless = args.popFlag("--headless");
+  bool headless =
+      args.popFlags(k_headlessFlags, sizeof(k_headlessFlags) / sizeof(char *));
 
   Random::init();
   if (!headless) {

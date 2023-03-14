@@ -14,7 +14,7 @@ You should then add your test files to the "tests" variable in the Makefile.
 Build the test.bin file (preferentially with DEBUG = 1) and run it with lldb.
 
 ### Arguments for running tests
-- `--headless` : Prevent Epsilon from displaying the calculator's screen. (always run with this argument)
+- `--headless` or `-h` : Prevent Epsilon from displaying the calculator's screen. (always run with this argument)
 
 - `--filter my_test_name` or `-f my_test_name` : Only run one test.
 

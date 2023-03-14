@@ -3,8 +3,9 @@
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/highlight_cell.h>
+#include <escher/menu_cell_with_dropdown.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
-#include <escher/message_table_cell_with_sublabel_and_dropdown.h>
+#include <escher/message_text_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 #include <escher/view_controller.h>
@@ -57,7 +58,8 @@ class InterestController : public Shared::FloatParameterController<double>,
   TwoMessagesPopupDataSource m_dropdownDataSource;
   Escher::MessageTableCellWithEditableTextWithMessage
       m_cells[k_numberOfReusableInputs];
-  Escher::MessageTableCellWithSublabelAndDropdown m_dropdownCell;
+  Escher::MenuCellWithDropdown<Escher::MessageTextView, Escher::MessageTextView>
+      m_dropdownCell;
 
   constexpr static int k_titleBufferSize =
       1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);

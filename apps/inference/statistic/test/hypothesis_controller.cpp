@@ -47,8 +47,8 @@ HypothesisController::HypothesisController(
           Poincare::VerticalOffsetLayoutNode::VerticalPosition::Subscript));
   m_h0.setLayout(h0);
   m_h0.setSubLabelMessage(I18n::Message::H0Sub);
-  m_ha.setLayout(ha);
-  m_ha.setSubLabelMessage(I18n::Message::HaSub);
+  m_ha.label()->setLayout(ha);
+  m_ha.subLabel()->setMessage(I18n::Message::HaSub);
 }
 
 const char* HypothesisController::title() {

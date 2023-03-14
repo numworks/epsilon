@@ -59,12 +59,12 @@ void PrefacedTwiceTableView::setCellOverlap(KDCoordinate horizontal,
 }
 
 void PrefacedTwiceTableView::resetDataSourceSizeMemoization() {
-  // Main table and row preface
-  PrefacedTableView::resetDataSourceSizeMemoization();
-  // Column preface
-  m_columnPrefaceDataSource.resetMemoization();
   // Intersection preface
   m_prefaceIntersectionDataSource.resetMemoization();
+  // Column preface
+  m_columnPrefaceDataSource.resetMemoization();
+  // Main table and row preface
+  PrefacedTableView::resetDataSourceSizeMemoization();
 }
 
 View* PrefacedTwiceTableView::subviewAtIndex(int index) {

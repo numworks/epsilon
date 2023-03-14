@@ -60,8 +60,6 @@ class View {
   KDRect dirtyRect() const { return m_dirtyRect; }
   virtual bool isVisible() const { return true; }
 
-  virtual View *subview(int index);
-
   virtual KDSize minimalSizeForOptimalDisplay() const { return KDSizeZero; }
 
 #if ESCHER_VIEW_LOGGING

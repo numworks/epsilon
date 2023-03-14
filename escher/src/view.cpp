@@ -50,7 +50,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
   // Then, let's recursively draw our children over ourself
   uint8_t subviewsNumber = numberOfSubviews();
   for (uint8_t i = 0; i < subviewsNumber; i++) {
-    View *subview = this->subview(i);
+    View *subview = subviewAtIndex(i);
     if (subview == nullptr) {
       continue;
     }
@@ -67,11 +67,6 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
 
   // The function returns the total area that have been redrawn.
   return redrawnArea;
-}
-
-View *View::subview(int index) {
-  assert(index >= 0 && index < numberOfSubviews());
-  return subviewAtIndex(index);
 }
 
 void View::setSize(KDSize size) {
@@ -121,7 +116,7 @@ void View::translate(KDPoint delta) {
   m_frame = m_frame.translatedBy(delta);
   uint8_t subviewsNumber = numberOfSubviews();
   for (uint8_t i = 0; i < subviewsNumber; i++) {
-    View *subview = this->subview(i);
+    View *subview = subviewAtIndex(i);
     if (subview == nullptr) {
       continue;
     }
@@ -161,7 +156,7 @@ std::ostream &operator<<(std::ostream &os, View &view) {
     os << ">\n";
     for (int i = 0; i < view.numberOfSubviews(); i++) {
       indentColumn += 2;
-      os << *view.subview(i) << '\n';
+      os << *view.subviewAtIndex(i) << '\n';
       indentColumn -= 2;
     }
     os << indent << "</" << view.className() << ">";

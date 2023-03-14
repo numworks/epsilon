@@ -115,11 +115,7 @@ class TableView : public ScrollView {
     KDCoordinate width() const;
 
     int numberOfSubviews() const override { return numberOfDisplayableCells(); }
-    View *subview(int index) override;
-    View *subviewAtIndex(int index) override {
-      return static_cast<View *>(reusableCellAtIndex(index));
-    }
-
+    View *subviewAtIndex(int index) override;
     /* These two methods transform a positive index (of subview for instance)
      * into coordinates that refer to the data source entire table */
     int absoluteColumnIndexFromSubviewIndex(int index) const {

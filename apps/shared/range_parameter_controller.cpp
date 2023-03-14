@@ -74,10 +74,12 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell *cell,
   if (typeAtIndex(index) == k_rangeCellType) {
     float min, max;
     bool isAuto = false;
-    int i = static_cast<MessageTableCellWithChevronAndBuffer *>(cell) -
-            m_rangeCells;
+    int i =
+        static_cast<MenuCell<MessageTextView, BufferTextView, ChevronView> *>(
+            cell) -
+        m_rangeCells;
     if (i == 0) {
-      m_rangeCells[0].setMessage(I18n::Message::ValuesOfX);
+      m_rangeCells[0].label()->setMessage(I18n::Message::ValuesOfX);
       if (m_tempInteractiveRange.xAuto()) {
         isAuto = true;
       } else {
@@ -86,7 +88,7 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell *cell,
       }
     } else {
       assert(i == 1);
-      m_rangeCells[1].setMessage(I18n::Message::ValuesOfY);
+      m_rangeCells[1].label()->setMessage(I18n::Message::ValuesOfY);
       if (m_tempInteractiveRange.yAuto()) {
         isAuto = true;
       } else {
@@ -113,7 +115,7 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell *cell,
           Preferences::PrintFloatMode::Decimal);
       buffer[numberOfChars++] = '\0';
     }
-    m_rangeCells[i].setSubLabelText(buffer);
+    m_rangeCells[i].subLabel()->setText(buffer);
   }
 }
 
@@ -165,8 +167,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   }
   int index = selectedRow() - displayNormalizeCell();
   if (index >= 0 && index < k_numberOfRangeCells &&
-      (event == Ion::Events::OK || event == Ion::Events::EXE ||
-       event == Ion::Events::Right)) {
+      m_rangeCells[index].enterOnEvent(event)) {
     assert(typeAtIndex(selectedRow()) == k_rangeCellType);
     m_singleInteractiveCurveViewRangeController.setEditXRange(index == 0);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);

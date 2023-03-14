@@ -93,7 +93,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell *cell,
       m_detailsCell.setSubtitle(function->properties().caption());
     } else {
       assert(cell == &m_functionDomainCell);
-      m_functionDomainCell.setMessage(I18n::Message::FunctionDomain);
+      m_functionDomainCell.label()->setMessage(I18n::Message::FunctionDomain);
       double min = function->tMin();
       double max = function->tMax();
       constexpr int bufferSize = BufferTextView::k_maxNumberOfChar;
@@ -102,7 +102,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell *cell,
                     Preferences::VeryShortNumberOfSignificantDigits,
                     Preferences::sharedPreferences->displayMode());
       // Cell's layout will adapt to fit the subLabel.
-      m_functionDomainCell.setSubLabelText(buffer);
+      m_functionDomainCell.subLabel()->setText(buffer);
     }
   }
 }
@@ -123,7 +123,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (cell == &m_functionDomainCell &&
-      m_functionDomainCell.ShouldEnterOnEvent(event)) {
+      m_functionDomainCell.enterOnEvent(event)) {
     stack->push(&m_domainParameterController);
     return true;
   }

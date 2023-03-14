@@ -1,8 +1,11 @@
 #ifndef SHARED_RANGE_PARAMETER_CONTROLLER_H
 #define SHARED_RANGE_PARAMETER_CONTROLLER_H
 
+#include <escher/buffer_text_view.h>
 #include <escher/button_cell.h>
-#include <escher/message_table_cell_with_chevron_and_buffer.h>
+#include <escher/chevron_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/unequal_view.h>
 
 #include "interactive_curve_view_range.h"
@@ -67,7 +70,8 @@ class RangeParameterController : public Escher::SelectableListViewController<
   InteractiveCurveViewRange *m_interactiveRange;
   InteractiveCurveViewRange m_tempInteractiveRange;
   CellWithUnequal m_normalizeCell;
-  Escher::MessageTableCellWithChevronAndBuffer
+  Escher::MenuCell<Escher::MessageTextView, Escher::BufferTextView,
+                   Escher::ChevronView>
       m_rangeCells[k_numberOfRangeCells];
   Escher::ButtonCell m_okButton;
   Shared::MessagePopUpController m_confirmPopUpController;

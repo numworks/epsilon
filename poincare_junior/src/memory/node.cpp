@@ -238,25 +238,27 @@ void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
 }
 
 /* When navigating between nodes, ensure that no undefined node is reached.
- * Also ensure that there is no navigation in or out of CachePool.
- * It is tolerated (and handled) in Node::previousNode to identify nodes that
- * have no parents for example.
- * Here are the situations that indicate navigation must stop.
+ * Also ensure that there is no navigation:
+ * - crossing the borders of the CachePool
+ * - going across a TreeBorder
+ * Node::nextNode asserts that such events don't occur whereas
+ * Node::previousNode tolerates (and handles) them to identify root nodes.
+ * Here are the situations that indicate navigation must stop:
+ * nextNode:
+ * (1) From a TreeBorder
+ * (2) To the Cache first block
+ * (3) From the Edition pool last block
+ * // (4) To the Cache last block / Edition pool first block
  *
- * nextNode() :
- * (1) TreeBorder         -> Anywhere
- * (2) Anywhere           -> Cache first block
- * (3) Edition last block -> Anywhere
- * // (4) Cache Pool      -> Cache last block / Edition first block
- *
- * previousNode() :
- * (5) TreeBorder         <- Anywhere
- * (6) Anywhere           <- Cache first block
- * // (7) Edition Pool    <- Edition last block
- * // (8) Cache Pool      <- Cache last block / Edition first block
+ * previousNode:
+ * (5) To a TreeBorder
+ * (6) From the Cache first block
+ * // (7) From the Edition pool last block
+ * // (8) From the Cache last block / Edition pool first block
  *
  * Some notes :
- * - It is expected in (2) and (3) that no tree lives right next to the pool
+ * - It is expected in (2) and (3) that any tree out of the pool is wrapped in
+ *   TreeBorders.
  * - For both pools, last block represent the very first out of limit block.
  *   We need to call previousNode on them to access before last node so (7) and
  *   (8) are not checked.

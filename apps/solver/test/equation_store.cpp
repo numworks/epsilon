@@ -38,6 +38,8 @@ QUIZ_CASE(equation_solve_linear_system) {
   assert_solves_to_infinite_solutions(
       {"t1=t2+t3", "t5=t1-t6"},
       {"t1=t4+t7", "t2=t4+t7-t8", "t3=t8", "t5=t7", "t6=t4"});
+  assert_solves_to_infinite_solutions(
+      {"a+2b+c+3d=0", "c-d=2"}, {"a=-4t1-2t2-2", "b=t2", "c=t1+2", "d=t1"});
   assert_solves_to_no_solution("2=0");
   assert_solves_to_no_solution("e=1");
   assert_solves_to_no_solution("i=5");

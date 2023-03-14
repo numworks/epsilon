@@ -221,10 +221,17 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
     return Error::EquationUndefined;
   }
 
-  for (int j = m - 1; j >= 0; j--) {
-    if (ab.matrixChild(j, n).isNull(context) != TrinaryBoolean::True &&
-        (j >= n ||
-         ab.matrixChild(j, j).isNull(context) == TrinaryBoolean::True)) {
+  for (int row = 0; row < m; row++) {
+    if (ab.matrixChild(row, n).isNull(context) == TrinaryBoolean::True) {
+      continue;
+    }
+    bool allCoefficientsNull = true;
+    for (int col = 0; allCoefficientsNull && col < n; col++) {
+      if (ab.matrixChild(row, col).isNull(context) != TrinaryBoolean::True) {
+        allCoefficientsNull = false;
+      }
+    }
+    if (allCoefficientsNull) {
       /* Row j describes an equation of the form '0=b', the system has no
        * solution. */
       m_numberOfSolutions = 0;

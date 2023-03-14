@@ -28,11 +28,7 @@ RegressionController::RegressionController(Responder *parentResponder,
     : SelectableListViewController(parentResponder),
       m_store(store),
       m_series(-1),
-      m_displayedFromDataTab(true) {
-  for (size_t i = 0; i < k_numberOfCells; i++) {
-    m_regressionCells[i].setFont(k_modelLayoutFont);
-  }
-}
+      m_displayedFromDataTab(true) {}
 
 const char *RegressionController::title() {
   if (displaySeriesNameAsTitle()) {
@@ -86,8 +82,7 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
 }
 KDCoordinate RegressionController::nonMemoizedRowHeight(int j) {
   assert(j >= 0 && j < numberOfRows());
-  MessageTableCellWithExpression tempCell;
-  tempCell.setFont(k_modelLayoutFont);
+  MenuCell<MessageTextView, ExpressionView> tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
@@ -100,11 +95,11 @@ HighlightCell *RegressionController::reusableCell(int index, int type) {
 void RegressionController::willDisplayCellForIndex(HighlightCell *cell,
                                                    int index) {
   assert(index >= 0 && index < numberOfRows());
-  MessageTableCellWithExpression *castedCell =
-      static_cast<MessageTableCellWithExpression *>(cell);
+  MenuCell<MessageTextView, ExpressionView> *castedCell =
+      static_cast<MenuCell<MessageTextView, ExpressionView> *>(cell);
   Model *model = m_store->regressionModel(ModelTypeAtIndex(index));
-  castedCell->setMessage(model->name());
-  castedCell->setLayout(model->templateLayout());
+  castedCell->label()->setMessage(model->name());
+  castedCell->subLabel()->setLayout(model->templateLayout());
 }
 
 }  // namespace Regression

@@ -139,7 +139,7 @@ HighlightCell* TableView::ContentView::cellAtLocation(int col, int row) {
   return m_dataSource->reusableCell(typeIndex, type);
 }
 
-View* TableView::ContentView::subview(int index) {
+View* TableView::ContentView::subviewAtIndex(int index) {
   /* This is a hack: the redrawing routine tracks a rectangle which has to be
    * redrawn. Thereby, the union of the rectangles that need to be redrawn
    * sometimes covers areas that are uselessly redrawn. We reverse the order of
@@ -147,7 +147,8 @@ View* TableView::ContentView::subview(int index) {
    * redraw the top left cells rather than the bottom right cells. Due to the
    * screen driver specifications, blinking is less visible at the top left
    * corner than at the bottom right. */
-  return View::subview(numberOfSubviews() - 1 - index);
+  return static_cast<View*>(
+      reusableCellAtIndex(numberOfSubviews() - 1 - index));
 }
 
 HighlightCell* TableView::ContentView::reusableCellAtIndex(int index) {

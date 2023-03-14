@@ -2,8 +2,9 @@
 #define SHARED_LIST_PARAMETER_CONTROLLER_H
 
 #include <apps/i18n.h>
+#include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
-#include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_delegate.h>
 #include <escher/switch_view.h>
 
@@ -38,7 +39,9 @@ class ListParameterController
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::SwitchView>
       m_enableCell;
-  Escher::MessageTableCellWithChevronAndMessage m_colorCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::ChevronView>
+      m_colorCell;
   Escher::MessageTableCell m_deleteCell;
   Ion::Storage::Record m_record;
 

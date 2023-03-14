@@ -11,8 +11,9 @@ namespace Regression {
 
 StoreParameterController::StoreParameterController(
     Responder *parentResponder, Shared::StoreColumnHelper *storeColumnHelper)
-    : Shared::StoreParameterController(parentResponder, storeColumnHelper),
-      m_changeRegressionCell(I18n::Message::RegressionModel) {}
+    : Shared::StoreParameterController(parentResponder, storeColumnHelper) {
+  m_changeRegressionCell.label()->setMessage(I18n::Message::RegressionModel);
+}
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE ||
@@ -49,7 +50,7 @@ void StoreParameterController::willDisplayCellForIndex(
   if (typeAtIndex(index) == k_changeRegressionCellType) {
     assert(cell == &m_changeRegressionCell);
     Store *regressionStore = static_cast<Store *>(m_storeColumnHelper->store());
-    m_changeRegressionCell.setSubtitle(
+    m_changeRegressionCell.subLabel()->setMessage(
         regressionStore->modelForSeries(m_storeColumnHelper->selectedSeries())
             ->name());
     return;

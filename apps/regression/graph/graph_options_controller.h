@@ -3,11 +3,13 @@
 
 #include <apps/shared/curve_view_cursor.h>
 #include <escher/button_cell.h>
+#include <escher/chevron_view.h>
 #include <escher/expression_table_cell_with_message.h>
 #include <escher/expression_table_cell_with_message_with_buffer.h>
+#include <escher/menu_cell.h>
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/message_text_view.h>
 
 #include "../store.h"
 #include "go_to_parameter_controller.h"
@@ -53,7 +55,9 @@ class GraphOptionsController
   bool displayR2Cell() const;
   bool displayResidualPlotCell() const;
 
-  Escher::MessageTableCellWithChevronAndMessage m_changeRegressionCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::ChevronView>
+      m_changeRegressionCell;
   Escher::ExpressionTableCellWithMessage m_regressionEquationCell;
   Escher::ExpressionTableCellWithMessageWithBuffer m_rCell;
   Escher::ExpressionTableCellWithMessageWithBuffer m_r2Cell;

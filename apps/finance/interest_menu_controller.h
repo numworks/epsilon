@@ -1,9 +1,10 @@
 #ifndef FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H
 #define FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H
 
+#include <escher/chevron_view.h>
 #include <escher/list_view_data_source.h>
 #include <escher/list_view_with_top_and_bottom_views.h>
-#include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
@@ -19,7 +20,8 @@ constexpr int k_numberOfInterestCells = InterestData::k_maxNumberOfUnknowns;
 
 class InterestMenuController
     : public Escher::SelectableCellListPage<
-          Escher::MessageTableCellWithChevronAndMessage,
+          Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                           Escher::ChevronView>,
           k_numberOfInterestCells, Escher::MemoizedListViewDataSource> {
  public:
   InterestMenuController(Escher::StackViewController* parentResponder,

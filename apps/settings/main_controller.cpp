@@ -157,7 +157,7 @@ KDCoordinate MainController::nonMemoizedRowHeight(int index) {
     case k_resetCellType:
       return heightForCellAtIndex(&m_resetButton, index);
     default:
-      MessageTableCellWithChevronAndMessage tempCell;
+      SubMenuCell tempCell;
       return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
 }
@@ -230,18 +230,17 @@ void MainController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   I18n::Message message = messageAtModelIndex(modelIndex);
   if (message == I18n::Message::Language) {
     int languageIndex = (int)(globalPreferences->language());
-    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(
+    static_cast<SubMenuCell *>(cell)->subLabel()->setMessage(
         I18n::LanguageNames[languageIndex]);
     return;
   }
   if (message == I18n::Message::Country) {
     int countryIndex = (int)(globalPreferences->country());
-    static_cast<MessageTableCellWithChevronAndMessage *>(cell)->setSubtitle(
+    static_cast<SubMenuCell *>(cell)->subLabel()->setMessage(
         I18n::CountryNames[countryIndex]);
     return;
   }
-  MessageTableCellWithChevronAndMessage *myTextCell =
-      static_cast<MessageTableCellWithChevronAndMessage *>(cell);
+  SubMenuCell *myTextCell = static_cast<SubMenuCell *>(cell);
   int childIndex = -1;
   switch (message) {
     case I18n::Message::AngleUnit:
@@ -270,7 +269,7 @@ void MainController::willDisplayCellForIndex(HighlightCell *cell, int index) {
       childIndex >= 0
           ? model()->childAtIndex(modelIndex)->childAtIndex(childIndex)->label()
           : I18n::Message::Default;
-  myTextCell->setSubtitle(subtitle);
+  myTextCell->subLabel()->setMessage(subtitle);
 }
 
 KDCoordinate MainController::separatorBeforeRow(int index) {

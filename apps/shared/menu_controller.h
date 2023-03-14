@@ -1,7 +1,6 @@
 #ifndef SHARED_MENU_CONTROLLER_H
 #define SHARED_MENU_CONTROLLER_H
 
-#include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/subapp_cell.h>

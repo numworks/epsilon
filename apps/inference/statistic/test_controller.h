@@ -1,7 +1,9 @@
 #ifndef INFERENCE_STATISTIC_TEST_CONTROLLER_H
 #define INFERENCE_STATISTIC_TEST_CONTROLLER_H
 
-#include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/chevron_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <ion/events.h>
@@ -50,7 +52,8 @@ class TestController : public Escher::SelectableListViewController<
     return m_statistic->numberOfSignificancesTestTypes() - 1;
   }
 
-  Escher::MessageTableCellWithChevronAndMessage
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::ChevronView>
       m_cells[Statistic::k_numberOfSignificanceTestType];
   HypothesisController* m_hypothesisController;
   TypeController* m_typeController;

@@ -1,7 +1,9 @@
 #ifndef FINANCE_MENU_CONTROLLER_H
 #define FINANCE_MENU_CONTROLLER_H
 
-#include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/chevron_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
@@ -15,8 +17,9 @@ constexpr int k_numberOfFinanceCells = 2;
 
 class MenuController
     : public Escher::SelectableCellListPage<
-          Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells,
-          Escher::RegularListViewDataSource> {
+          Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                           Escher::ChevronView>,
+          k_numberOfFinanceCells, Escher::RegularListViewDataSource> {
  public:
   MenuController(Escher::StackViewController* parentResponder,
                  InterestMenuController* interestMenuController);

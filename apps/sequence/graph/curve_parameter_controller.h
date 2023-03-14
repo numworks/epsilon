@@ -2,6 +2,7 @@
 #define SEQUENCE_CURVE_PARAMETER_CONTROLLER_H
 
 #include <apps/shared/with_record.h>
+#include <escher/message_table_cell_with_chevron.h>
 
 #include "cobweb_controller.h"
 #include "go_to_parameter_controller.h"

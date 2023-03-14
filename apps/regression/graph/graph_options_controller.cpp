@@ -24,7 +24,6 @@ GraphOptionsController::GraphOptionsController(
     InteractiveCurveViewRange *range, Store *store, CurveViewCursor *cursor,
     GraphController *graphController)
     : ExplicitSelectableListViewController(parentResponder),
-      m_changeRegressionCell(I18n::Message::RegressionModel),
       m_regressionEquationCell(&m_selectableListView,
                                I18n::Message::RegressionEquation),
       m_rCell(&m_selectableListView, I18n::Message::Default,
@@ -53,6 +52,7 @@ GraphOptionsController::GraphOptionsController(
        VerticalOffsetLayout::Builder(
            CodePointLayout::Builder('2'),
            VerticalOffsetLayoutNode::VerticalPosition::Superscript)}));
+  m_changeRegressionCell.label()->setMessage(I18n::Message::RegressionModel);
 }
 
 void GraphOptionsController::removeRegression() {
@@ -91,7 +91,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
 
   HighlightCell *cell = selectedCell();
   if (event == Ion::Events::OK || event == Ion::Events::EXE ||
-      event == Ion::Events::Right) {
+      event == Ion::Events::Right) {  // TODO; use enterOnEvent
     if (cell == &m_changeRegressionCell) {
       RegressionController *controller = App::app()->regressionController();
       controller->setSeries(m_graphController->selectedSeriesIndex());
@@ -154,7 +154,7 @@ void GraphOptionsController::fillCell(HighlightCell *cell) {
   int series = m_graphController->selectedSeriesIndex();
   Regression::Model *model = m_store->modelForSeries(series);
   if (cell == &m_changeRegressionCell) {
-    m_changeRegressionCell.setSubtitle(model->name());
+    m_changeRegressionCell.subLabel()->setMessage(model->name());
     return;
   }
   const int significantDigits =

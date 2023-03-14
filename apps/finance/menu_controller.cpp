@@ -11,18 +11,24 @@ using namespace Finance;
 MenuController::MenuController(Escher::StackViewController* parentResponder,
                                InterestMenuController* interestMenuController)
     : Escher::SelectableCellListPage<
-          Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells,
-          Escher::RegularListViewDataSource>(parentResponder),
+          Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                           Escher::ChevronView>,
+          k_numberOfFinanceCells, Escher::RegularListViewDataSource>(
+          parentResponder),
       m_interestMenuController(interestMenuController) {
   selectRow(0);
   cellAtIndex(k_indexOfSimpleInterest)
+      ->label()
       ->setMessage(I18n::Message::SimpleInterest);
   cellAtIndex(k_indexOfSimpleInterest)
-      ->setSubtitle(I18n::Message::SimpleInterestDescription);
+      ->subLabel()
+      ->setMessage(I18n::Message::SimpleInterestDescription);
   cellAtIndex(k_indexOfCompoundInterest)
+      ->label()
       ->setMessage(I18n::Message::CompoundInterest);
   cellAtIndex(k_indexOfCompoundInterest)
-      ->setSubtitle(I18n::Message::CompoundInterestDescription);
+      ->subLabel()
+      ->setMessage(I18n::Message::CompoundInterestDescription);
   centerTable(Escher::Metric::DisplayHeightWithoutTitleBar);
 }
 

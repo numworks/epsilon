@@ -106,6 +106,17 @@ QUIZ_CASE(equation_solve_approximate) {
 
   assert_solves_to_error("(x-10)^7=0", RequireApproximateSolution);
   assert_solves_numerically_to("(x-10)^7=0", -100, 100, {10});
+
+  // Filter out fake root and keep real ones
+  assert_solves_numerically_to("floor(x)-0.5=0", -10, 10, {});
+  assert_solves_numerically_to("7×10^9×(3×10^8-x)/(3×10^8+x)=7×10^9-320", -10,
+                               10, {6.857143});
+  assert_solves_numerically_to("250e^(1.6x)=10^8", -10, 10, {8.062012});
+  // Gentle slope, far from x=0
+  assert_solves_numerically_to("10^(-4)×abs(x-10^4)=0", 9000, 11000, {10000});
+  // Steep slope, close to x=0
+  assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001});
+  assert_solves_numerically_to("10^4×abs(x-10^(-4))+0.001=0", -10, 10, {});
 }
 
 QUIZ_CASE(equation_solve_complex_real) {

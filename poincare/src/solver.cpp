@@ -261,9 +261,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
         SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
     /* Filter out roots that do not evaluate to zero. This can happen with
      * functions such as y=floor(x)-0.5. */
-    return std::fabs(solution.x2()) > NullTolerance(solution.x1())
-               ? Coordinate2D<T>()
-               : solution;
+    return IsOddRoot(solution, f, aux) ? solution : Coordinate2D<T>();
   }
   Coordinate2D<T> res;
   if (interest == Interest::LocalMinimum) {
@@ -277,6 +275,32 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
     return res;
   }
   return Coordinate2D<T>(k_NAN, k_NAN);
+}
+
+template <typename T>
+bool Solver<T>::IsOddRoot(Coordinate2D<T> root, FunctionEvaluation f,
+                          const void *aux) {
+  T b = root.x1();
+  T fb = root.x2();
+  if (!std::isfinite(fb)) {
+    return false;
+  }
+  if (std::fabs(fb) < NullTolerance(b)) {
+    return true;
+  }
+  T step = MinimalStep(b);
+  T a = b, c = b, fa = fb, fc = fb;
+  int i = 0;
+  do {
+    a = a - step;
+    fa = f(a, aux);
+    c = c + step;
+    fc = f(c, aux);
+  } while ((fa > k_zero) == (fc > k_zero) && ++i < 1000);
+  T fab = std::fabs(fa - fb);
+  T fcb = std::fabs(fc - fb);
+  constexpr T k_magnitude = static_cast<T>(10.);  // magic number
+  return i < 1000 && std::max(fab, fcb) < k_magnitude * std::min(fab, fcb);
 }
 
 template <typename T>

@@ -20,7 +20,6 @@ class SequenceCacheContext : public Poincare::ContextWithParent {
   const Poincare::Expression protectedExpressionForSymbolAbstract(
       const Poincare::SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override;
-  int nameIndexForSymbol(const Poincare::Symbol& symbol);
 
   // m_values = {{u(n), u(n+1), u(n+2)}, {v(n), v(n+1), v(n+2)}, {w(n), w(n+1),
   // w(n+2)}}

@@ -12,6 +12,20 @@
 
 namespace Shared {
 
+int nameIndexForSymbol(const Poincare::SymbolAbstract &symbol) {
+  // return 0 for u, 1 for v and 2 for w
+  char name = const_cast<Poincare::Symbol &>(
+                  static_cast<const Poincare::Symbol &>(symbol))
+                  .name()[0];
+  assert(name >= 'u' && name <= 'w');  // u, v or w
+  assert(
+      name >= SequenceStore::k_sequenceNames[0][0] &&
+      name <=
+          SequenceStore::k_sequenceNames[SequenceStore::k_maxNumberOfSequences -
+                                         1][0]);
+  return name - 'u';
+}
+
 template <typename T>
 SequenceCacheContext<T>::SequenceCacheContext(SequenceContext *sequenceContext,
                                               int sequenceBeingComputed)
@@ -32,8 +46,7 @@ SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
   T result = NAN;
   /* Do not use recordAtIndex : if the sequences have been reordered, the
    * name index and the record index may not correspond. */
-  int index = nameIndexForSymbol(const_cast<Poincare::Symbol &>(
-      static_cast<const Poincare::Symbol &>(symbol)));
+  int index = nameIndexForSymbol(symbol);
   Ion::Storage::Record record =
       m_sequenceContext->sequenceStore()->recordAtNameIndex(index);
   if (record.isNull()) {
@@ -82,19 +95,6 @@ void SequenceCacheContext<T>::setValue(T value, int nameIndex, int depth) {
   assert(0 <= nameIndex && nameIndex < SequenceStore::k_maxNumberOfSequences);
   assert(0 <= depth && depth < SequenceStore::k_maxRecurrenceDepth + 1);
   m_values[nameIndex][depth] = value;
-}
-
-template <typename T>
-int SequenceCacheContext<T>::nameIndexForSymbol(
-    const Poincare::Symbol &symbol) {
-  char name = symbol.name()[0];
-  assert(name >= 'u' && name <= 'w');  // u, v or w
-  assert(
-      name >= SequenceStore::k_sequenceNames[0][0] &&
-      name <=
-          SequenceStore::k_sequenceNames[SequenceStore::k_maxNumberOfSequences -
-                                         1][0]);
-  return name - 'u';
 }
 
 template class SequenceCacheContext<float>;

@@ -70,8 +70,9 @@ void InterestController::willDisplayCellForIndex(Escher::HighlightCell *cell,
   uint8_t param = interestParamaterAtIndex(index);
   if (type == k_dropdownCellType) {
     assert(&m_dropdownCell == cell);
-    m_dropdownCell.setMessage(App::GetInterestData()->labelForParameter(param));
-    m_dropdownCell.setSubLabelMessage(
+    m_dropdownCell.label()->setMessage(
+        App::GetInterestData()->labelForParameter(param));
+    m_dropdownCell.subLabel()->setMessage(
         App::GetInterestData()->sublabelForParameter(param));
     return;
   }

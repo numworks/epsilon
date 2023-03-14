@@ -2,6 +2,7 @@
 #define INFERENCE_STATISTIC_TYPE_CONTROLLER_H
 
 #include <escher/highlight_cell.h>
+#include <escher/message_table_cell_with_chevron.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>

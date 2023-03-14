@@ -47,6 +47,7 @@ QUIZ_CASE(equation_solve_linear_system) {
 }
 
 QUIZ_CASE(equation_solve_polynomials) {
+  set_complex_format(Cartesian);
   assert_solves_to("(x-3)^2=0", {"x=3", "delta=0"});
   assert_solves_to("(x-π)(x-ln(2))=0",
                    {"x=ln(2)", "x=π", "delta=ln(2)^2+π^2-2×π×ln(2)"});

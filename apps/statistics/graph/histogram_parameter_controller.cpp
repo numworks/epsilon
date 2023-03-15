@@ -47,15 +47,16 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell *cell,
   if (index == numberOfRows() - 1) {
     return;
   }
-  MessageTableCellWithEditableTextWithMessage *myCell =
-      static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
+  MenuCellWithEditableText<MessageTextView, MessageTextView> *myCell =
+      static_cast<MenuCellWithEditableText<MessageTextView, MessageTextView> *>(
+          cell);
   I18n::Message labels[k_numberOfCells] = {I18n::Message::RectangleWidth,
                                            I18n::Message::BarStart};
   I18n::Message sublabels[k_numberOfCells] = {
       I18n::Message::RectangleWidthDescription,
       I18n::Message::BarStartDescrition};
-  myCell->setMessage(labels[index]);
-  myCell->setSubLabelMessage(sublabels[index]);
+  myCell->label()->setMessage(labels[index]);
+  myCell->subLabel()->setMessage(sublabels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 

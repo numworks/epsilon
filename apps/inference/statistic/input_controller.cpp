@@ -26,8 +26,8 @@ InputController::InputController(Escher::StackViewController *parent,
   // Initialize cells
   m_significanceCell.setParentResponder(&m_selectableListView);
   m_significanceCell.setDelegates(handler, this);
-  m_significanceCell.setMessage(I18n::Message::Alpha);
-  m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
+  m_significanceCell.label()->setMessage(I18n::Message::Alpha);
+  m_significanceCell.subLabel()->setMessage(I18n::Message::SignificanceLevel);
 }
 
 void InputController::initCell(ExpressionCellWithEditableTextWithMessage,
@@ -117,8 +117,8 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell *cell,
     I18n::Message name, description;
     name = m_statistic->thresholdName();
     description = m_statistic->thresholdDescription();
-    m_significanceCell.setMessage(name);
-    m_significanceCell.setSubLabelMessage(description);
+    m_significanceCell.label()->setMessage(name);
+    m_significanceCell.subLabel()->setMessage(description);
   }
   FloatParameterController<double>::willDisplayCellForIndex(cell, index);
 }

@@ -66,8 +66,6 @@ class InputSlopeController : public InputCategoricalController,
   }
 
   char m_titleBuffer[InputController::k_titleBufferSize];
-  Escher::MessageTableCellWithEditableTextWithMessage
-      m_innerDegreeOfFreedomCell;
   SlopeTableCell m_slopeTableCell;
   /* This second stack view controller is used to make the banner of the store
    * parameter controller white, which deviates from the style of the main

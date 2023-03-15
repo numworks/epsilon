@@ -4,7 +4,7 @@
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/highlight_cell.h>
 #include <escher/menu_cell_with_dropdown.h>
-#include <escher/message_table_cell_with_editable_text_with_message.h>
+#include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
@@ -56,7 +56,8 @@ class InterestController : public Shared::FloatParameterController<double>,
   constexpr static int k_numberOfReusableInputs = 5;
 
   TwoMessagesPopupDataSource m_dropdownDataSource;
-  Escher::MessageTableCellWithEditableTextWithMessage
+  Escher::MenuCellWithEditableText<Escher::MessageTextView,
+                                   Escher::MessageTextView>
       m_cells[k_numberOfReusableInputs];
   Escher::MenuCellWithDropdown<Escher::MessageTextView, Escher::MessageTextView>
       m_dropdownCell;

@@ -5,7 +5,8 @@
 #include <escher/expression_cell_with_editable_text_with_message.h>
 #include <escher/highlight_cell.h>
 #include <escher/input_event_handler_delegate.h>
-#include <escher/message_table_cell_with_editable_text_with_message.h>
+#include <escher/menu_cell_with_editable_text.h>
+#include <escher/message_text_view.h>
 
 #include "inference/models/statistic/statistic.h"
 #include "inference/shared/dynamic_cells_data_source.h"
@@ -80,7 +81,9 @@ class InputController
 
   constexpr static int k_significanceCellType = 2;
 
-  Escher::MessageTableCellWithEditableTextWithMessage m_significanceCell;
+  Escher::MenuCellWithEditableText<Escher::MessageTextView,
+                                   Escher::MessageTextView>
+      m_significanceCell;
 };
 
 }  // namespace Inference

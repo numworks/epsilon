@@ -42,6 +42,8 @@ class InterestController : public Shared::FloatParameterController<double>,
   // Shared::FloatParameterController<double>
   int reusableParameterCellCount(int type) override;
   Escher::HighlightCell* reusableParameterCell(int i, int type) override;
+  Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
+                                            int index) override;
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   void buttonAction() override { stackOpenPage(m_resultController); }

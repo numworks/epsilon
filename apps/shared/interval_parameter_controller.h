@@ -2,7 +2,8 @@
 #define SHARED_INTERVAL_PARAM_CONTROLLER_H
 
 #include <assert.h>
-#include <escher/message_table_cell_with_editable_text.h>
+#include <escher/menu_cell_with_editable_text.h>
+#include <escher/message_text_view.h>
 
 #include "float_parameter_controller.h"
 #include "interval.h"
@@ -36,11 +37,14 @@ class IntervalParameterController
 
  private:
   static Interval::IntervalParameters* SharedTempIntervalParameters();
-  Escher::HighlightCell* reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
+  Escher::HighlightCell* reusableParameterCell(int index, int type) override;
+  Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
+                                            int index) override;
   double parameterAtIndex(int index) override;
   void buttonAction() override;
-  Escher::MessageTableCellWithEditableText m_intervalCells[k_totalNumberOfCell];
+  Escher::MenuCellWithEditableText<Escher::MessageTextView>
+      m_intervalCells[k_totalNumberOfCell];
   I18n::Message m_title;
   I18n::Message m_startMessage;
   I18n::Message m_endMessage;

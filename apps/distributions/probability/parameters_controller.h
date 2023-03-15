@@ -2,8 +2,10 @@
 #define DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H
 
 #include <apps/shared/float_parameter_controller.h>
-#include <escher/expression_cell_with_editable_text_with_message.h>
+#include <escher/expression_view.h>
 #include <escher/list_view_with_top_and_bottom_views.h>
+#include <escher/menu_cell_with_editable_text.h>
+#include <escher/message_text_view.h>
 
 #include "calculation_controller.h"
 #include "distributions/models/distribution/distribution.h"
@@ -35,14 +37,13 @@ class ParametersController : public Shared::FloatParameterController<double> {
        .backgroundColor = Escher::Palette::WallScreen,
        .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter};
-  Escher::HighlightCell* reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override;
+  Escher::HighlightCell* reusableParameterCell(int index, int type) override;
+  Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
+                                            int index) override;
   void buttonAction() override;
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
-  bool isCellEditing(Escher::HighlightCell* cell, int index) override;
-  void setTextInCell(Escher::HighlightCell* cell, const char* text,
-                     int index) override;
 
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  const char* text,
@@ -53,7 +54,8 @@ class ParametersController : public Shared::FloatParameterController<double> {
   Escher::MessageTextView m_headerView;
   Escher::MessageTextView m_bottomView;
   Escher::ListViewWithTopAndBottomViews m_contentView;
-  Escher::ExpressionCellWithEditableTextWithMessage
+  Escher::MenuCellWithEditableText<Escher::ExpressionView,
+                                   Escher::MessageTextView>
       m_menuListCell[k_maxNumberOfCells];
   Distribution* m_distribution;
   CalculationController* m_calculationController;

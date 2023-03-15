@@ -2,7 +2,8 @@
 #define SOLVER_INTERVAL_CONTROLLER_H
 
 #include <apps/shared/float_parameter_controller.h>
-#include <escher/message_table_cell_with_editable_text.h>
+#include <escher/menu_cell_with_editable_text.h>
+#include <escher/message_text_view.h>
 
 #include "equation_store.h"
 
@@ -25,6 +26,8 @@ class IntervalController : public Shared::FloatParameterController<double> {
 
  private:
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
+  Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
+                                            int index) override;
   int reusableParameterCellCount(int type) override;
   void buttonAction() override;
   double parameterAtIndex(int index) override;
@@ -52,7 +55,8 @@ class IntervalController : public Shared::FloatParameterController<double> {
   };
   ContentView m_contentView;
   constexpr static int k_maxNumberOfCells = 2;
-  Escher::MessageTableCellWithEditableText m_intervalCell[k_maxNumberOfCells];
+  Escher::MenuCellWithEditableText<Escher::MessageTextView>
+      m_intervalCell[k_maxNumberOfCells];
   bool m_shouldReplaceFunctionsButNotSymbols;
 };
 

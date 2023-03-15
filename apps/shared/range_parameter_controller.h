@@ -5,6 +5,7 @@
 #include <escher/button_cell.h>
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
+#include <escher/message_table_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/unequal_view.h>
 

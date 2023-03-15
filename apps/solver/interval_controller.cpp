@@ -81,9 +81,9 @@ void IntervalController::willDisplayCellForIndex(HighlightCell *cell,
   }
   I18n::Message labels[k_maxNumberOfCells] = {I18n::Message::XMin,
                                               I18n::Message::XMax};
-  MessageTableCellWithEditableText *myCell =
-      (MessageTableCellWithEditableText *)cell;
-  myCell->setMessage(labels[index]);
+  MenuCellWithEditableText<MessageTextView> *myCell =
+      static_cast<MenuCellWithEditableText<MessageTextView> *>(cell);
+  myCell->label()->setMessage(labels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
@@ -91,6 +91,13 @@ HighlightCell *IntervalController::reusableParameterCell(int index, int type) {
   assert(index >= 0);
   assert(index < 2);
   return &m_intervalCell[index];
+}
+
+TextField *IntervalController::textFieldOfCellAtIndex(HighlightCell *cell,
+                                                      int index) {
+  assert(typeAtIndex(index) == k_parameterCellType);
+  return static_cast<MenuCellWithEditableText<MessageTextView> *>(cell)
+      ->textField();
 }
 
 int IntervalController::reusableParameterCellCount(int type) {

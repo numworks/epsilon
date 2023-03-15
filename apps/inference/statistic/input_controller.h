@@ -2,11 +2,9 @@
 #define INFERENCE_STATISTIC_INPUT_CONTROLLER_H
 
 #include <apps/shared/float_parameter_controller.h>
-#include <escher/expression_cell_with_editable_text_with_message.h>
 #include <escher/highlight_cell.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/menu_cell_with_editable_text.h>
-#include <escher/message_text_view.h>
 
 #include "inference/models/statistic/statistic.h"
 #include "inference/shared/dynamic_cells_data_source.h"
@@ -14,13 +12,16 @@
 
 namespace Inference {
 
+using InputParameterCell =
+    Escher::MenuCellWithEditableText<Escher::ExpressionView,
+                                     Escher::MessageTextView>;
+
 class InputController
     : public Shared::FloatParameterController<double>,
       public DynamicCellsDataSource<
-          Escher::ExpressionCellWithEditableTextWithMessage,
+          InputParameterCell,
           k_maxNumberOfExpressionCellsWithEditableTextWithMessage>,
-      public DynamicCellsDataSourceDelegate<
-          Escher::ExpressionCellWithEditableTextWithMessage> {
+      public DynamicCellsDataSourceDelegate<InputParameterCell> {
   friend class InputSlopeController;
 
  public:
@@ -42,8 +43,7 @@ class InputController
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   KDCoordinate separatorBeforeRow(int index) override;
 
-  void initCell(Escher::ExpressionCellWithEditableTextWithMessage, void* cell,
-                int index) override;
+  void initCell(InputParameterCell, void* cell, int index) override;
   Escher::SelectableTableView* tableView() override {
     return &m_selectableListView;
   }
@@ -56,13 +56,12 @@ class InputController
   double parameterAtIndex(int i) override {
     return m_statistic->parameterAtIndex(i);
   }
-  bool isCellEditing(Escher::HighlightCell* cell, int index) override;
-  void setTextInCell(Escher::HighlightCell* cell, const char* text,
-                     int index) override;
 
  private:
   int reusableParameterCellCount(int type) override;
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
+  Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
+                                            int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   static void InputTitle(Escher::ViewController* vc, Statistic* statistic,
                          char* titleBuffer, size_t titleBufferSize);

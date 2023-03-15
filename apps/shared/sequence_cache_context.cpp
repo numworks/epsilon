@@ -58,17 +58,11 @@ const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
     return Float<T>::Builder(result);
   }
   Expression rankExpression = symbol.childAtIndex(0).clone();
-  if (rankExpression.isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
-    // rank = n
-    result = m_values[index][0];
-  } else if (rankExpression.isIdenticalTo(Addition::Builder(
-                 Symbol::Builder(UCodePointUnknown), Rational::Builder(1)))) {
-    // rank = n+1
-    result = m_values[index][1];
-  } else if (rankExpression.isIdenticalTo(Addition::Builder(
-                 Symbol::Builder(UCodePointUnknown), Rational::Builder(2)))) {
-    // rank = n+2
-    result = m_values[index][2];
+  for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
+       depth++) {
+    if (rankExpression.isRankNPlusK(depth)) {
+      result = m_values[index][depth];
+    }
   }
   /* If the symbol was not in the two previous ranks, we try to approximate
    * the sequence independently from the others at the required rank (this

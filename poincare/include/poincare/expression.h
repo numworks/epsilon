@@ -177,6 +177,7 @@ class Expression : public TreeHandle {
   bool isUndefined() const { return node()->isUndefined(); }
   bool allChildrenAreUndefined();
   bool isNumber() const { return node()->isNumber(); }
+  bool isZero() const;
   bool isRationalOne() const;
   bool isOne() const;
   bool isMinusOne() const;

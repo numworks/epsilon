@@ -87,6 +87,13 @@ Expression Expression::childAtIndex(int i) const {
 
 /* Properties */
 
+bool Expression::isZero() const {
+  return (type() == ExpressionNode::Type::Rational &&
+          convert<const Rational>().isZero()) ||
+         (type() == ExpressionNode::Type::BasedInteger &&
+          convert<const BasedInteger>().integer().isZero());
+}
+
 bool Expression::isRationalOne() const {
   return type() == ExpressionNode::Type::Rational &&
          convert<const Rational>().isOne();
@@ -660,11 +667,12 @@ bool Expression::hasBooleanValue() const {
 }
 
 bool Expression::isRankNPlusK(int k) {
+  Symbol n = Symbol::Builder(UCodePointUnknown);
   if (k == 0) {
-    return isIdenticalTo(Symbol::Builder(UCodePointUnknown));
+    return isIdenticalTo(n);
   }
-  return isIdenticalTo(Addition::Builder(Symbol::Builder(UCodePointUnknown),
-                                         Rational::Builder(k)));
+  return isIdenticalTo(Addition::Builder(n, Rational::Builder(k))) ||
+         isIdenticalTo(Addition::Builder(n, BasedInteger::Builder(k)));
 }
 
 bool Expression::derivate(const ReductionContext &reductionContext,

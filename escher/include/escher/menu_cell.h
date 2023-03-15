@@ -123,7 +123,6 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   KDColor backgroundColor() const { return m_backgroundColor; }
   virtual bool forceAlignLabelAndAccessory() const { return false; }
   virtual bool shouldAlignSublabelRight() const { return true; }
-  virtual KDCoordinate accessoryMinimalWidthOverridden() const { return -1; }
   virtual bool shouldHideSublabel() { return false; }
   // This method is only used to assert that no subview overlaps after layouting
   virtual bool subviewsCanOverlap() const { return false; }
@@ -144,9 +143,6 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   }
 
   bool shouldAlignLabelAndAccessory() const;
-  KDCoordinate accessoryMinimalWidth() const {
-    return std::max(accessoryMinimalWidthOverridden(), accessorySize().width());
-  }
 
   KDRect setFrameIfViewExists(View* v, KDRect rect, bool force);
 

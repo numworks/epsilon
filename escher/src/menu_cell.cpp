@@ -97,7 +97,7 @@ void AbstractMenuCell::layoutSubviews(bool force) {
   KDCoordinate subLabelWidth =
       shouldHideSublabel() ? 0 : std::min(thisSubLabelSize.width(), width);
   KDCoordinate accessoryHeight = std::min(thisAccessorySize.height(), height);
-  KDCoordinate accessoryWidth = std::min(accessoryMinimalWidth(), width);
+  KDCoordinate accessoryWidth = std::min(thisAccessorySize.width(), width);
 
   KDRect labelRect = KDRectZero, subLabelRect = KDRectZero,
          accessoryRect = KDRectZero;
@@ -178,20 +178,24 @@ bool AbstractMenuCell::shouldAlignLabelAndAccessory() const {
   KDCoordinate subLabelMinimalWidth =
       subLabelView()->minimalSizeForOptimalDisplay().width();
   KDCoordinate minimalCumulatedWidthOfAccessoryAndSubLabel =
-      subLabelMinimalWidth + k_innerHorizontalMargin + accessoryMinimalWidth();
+      subLabelMinimalWidth + k_innerHorizontalMargin + accessorySize().width();
   return minimalCumulatedWidthOfAccessoryAndSubLabel > innerWidth();
 }
 
 bool AbstractMenuCell::singleRowMode() const {
   KDSize thisLabelSize = labelSize();
   KDSize thisSubLabelSize = subLabelSize();
+  KDSize thisAccessorySize = accessorySize();
   KDCoordinate thisInnerWidth = innerWidth();
-  KDCoordinate accessoryWidth = accessoryMinimalWidth();
+
+  if (thisSubLabelSize.width() > 0 && giveAccessoryAllWidth()) {
+    return false;
+  }
 
   KDCoordinate minimalWidth = thisLabelSize.width() + k_innerHorizontalMargin +
                               thisSubLabelSize.width();
-  if (accessoryWidth > 0) {
-    minimalWidth += k_innerHorizontalMargin + accessoryWidth;
+  if (thisAccessorySize.width() > 0) {
+    minimalWidth += k_innerHorizontalMargin + thisAccessorySize.width();
   }
 
   return (minimalWidth < thisInnerWidth) || thisLabelSize.width() == 0 ||

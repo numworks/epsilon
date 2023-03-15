@@ -18,13 +18,13 @@ ListParameterController::ListParameterController(
     : Shared::ListParameterController(listController,
                                       I18n::Message::SequenceColor,
                                       I18n::Message::DeleteSequence, this),
-      m_initialRankCell(&m_selectableListView, inputEventHandlerDelegate, this,
-                        I18n::Message::FirstTermIndex),
+      m_initialRankCell(&m_selectableListView, inputEventHandlerDelegate, this),
       m_typeParameterController(this, listController, Metric::CommonTopMargin,
                                 Metric::CommonRightMargin,
                                 Metric::CommonBottomMargin,
                                 Metric::CommonLeftMargin) {
   m_typeCell.label()->setMessage(I18n::Message::SequenceType);
+  m_initialRankCell.label()->setMessage(I18n::Message::FirstTermIndex);
 }
 
 const char *ListParameterController::title() {
@@ -65,17 +65,13 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
     return;
   }
   if (previousSelectedRow == 1) {
-    MessageTableCellWithEditableText *myCell =
-        (MessageTableCellWithEditableText *)l->cell(previousSelectedRow);
-    if (myCell) {
-      myCell->setEditing(false);
-    }
+    assert(l->cell(previousSelectedRow) == &m_initialRankCell);
+    m_initialRankCell.textField()->setEditing(false);
     Container::activeApp()->setFirstResponder(&m_selectableListView);
   }
   if (l->selectedRow() == 1) {
-    MessageTableCellWithEditableText *myNewCell =
-        (MessageTableCellWithEditableText *)l->selectedCell();
-    Container::activeApp()->setFirstResponder(myNewCell);
+    assert(l->selectedCell() == &m_initialRankCell);
+    Container::activeApp()->setFirstResponder(&m_initialRankCell);
   }
 }
 
@@ -93,15 +89,13 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell *cell,
     m_typeCell.subLabel()->setLayout(sequence()->definitionName());
   }
   if (cell == &m_initialRankCell && !m_record.isNull()) {
-    MessageTableCellWithEditableText *myCell =
-        (MessageTableCellWithEditableText *)cell;
-    if (myCell->isEditing()) {
+    if (m_initialRankCell.textField()->isEditing()) {
       return;
     }
     char buffer[Shared::Sequence::k_initialRankNumberOfDigits + 1];
     Poincare::Integer(sequence()->initialRank())
         .serialize(buffer, Shared::Sequence::k_initialRankNumberOfDigits + 1);
-    myCell->setAccessoryText(buffer);
+    m_initialRankCell.textField()->setText(buffer);
   }
 }
 

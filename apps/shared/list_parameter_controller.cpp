@@ -14,10 +14,18 @@ ListParameterController::ListParameterController(
     I18n::Message deleteFunctionMessage,
     SelectableListViewDelegate *listDelegate)
     : ExplicitSelectableListViewController(parentResponder, listDelegate),
-      m_enableCell(I18n::Message::ActivateDeactivateListParamTitle,
-                   I18n::Message::ActivateDeactivateListParamDescription, true),
       m_deleteCell(deleteFunctionMessage),
-      m_colorParameterController(this) {}
+      m_colorParameterController(this) {
+  m_enableCell.label()->setMessage(
+      I18n::Message::ActivateDeactivateListParamTitle);
+  m_enableCell.subLabel()->setMessage(
+      I18n::Message::ActivateDeactivateListParamDescription);
+  // TODO: DefaultInitialization
+  m_enableCell.subLabel()->setFont(KDFont::Size::Small);
+  m_enableCell.subLabel()->setAlignment(KDContext::k_alignLeft,
+                                        KDContext::k_alignCenter);
+  m_enableCell.subLabel()->setTextColor(Palette::GrayDark);
+}
 
 void ListParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
@@ -33,7 +41,7 @@ void ListParameterController::viewWillAppear() {
 void ListParameterController::willDisplayCellForIndex(HighlightCell *cell,
                                                       int index) {
   if (cell == &m_enableCell && !m_record.isNull()) {
-    m_enableCell.setState(function()->isActive());
+    m_enableCell.accessory()->setState(function()->isActive());
   }
   if (cell == &m_colorCell) {
     m_colorCell.setMessage(I18n::Message::Color);
@@ -51,7 +59,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   StackViewController *stack =
       static_cast<StackViewController *>(parentResponder());
 
-  if (cell == &m_enableCell && m_enableCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_enableCell && m_enableCell.enterOnEvent(event)) {
     function()->setActive(!function()->isActive());
     resetMemoization();
     m_selectableListView.reloadData();

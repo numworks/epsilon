@@ -71,16 +71,18 @@ TableView::ContentView::ContentView(TableView* tableView,
       m_verticalCellOverlap(verticalCellOverlap) {}
 
 KDRect TableView::ContentView::cellFrame(int col, int row) const {
-  KDCoordinate columnWidth = m_dataSource->columnWidth(col);
-  KDCoordinate rowHeight = m_dataSource->rowHeight(row);
+  KDCoordinate columnWidth = m_dataSource->columnWidth(col, false);
+  KDCoordinate rowHeight = m_dataSource->rowHeight(row, false);
   if (columnWidth == 0 || rowHeight == 0) {
     return KDRectZero;
   }
   if (columnWidth == KDCOORDINATE_MAX) {  // For ListViewDataSource
     columnWidth = m_tableView->maxContentWidthDisplayableWithoutScrolling();
   }
-  return KDRect(m_dataSource->cumulatedWidthBeforeIndex(col),
-                m_dataSource->cumulatedHeightBeforeIndex(row),
+  return KDRect(m_dataSource->cumulatedWidthBeforeIndex(col) +
+                    m_dataSource->separatorBeforeColumn(col),
+                m_dataSource->cumulatedHeightBeforeIndex(row) +
+                    m_dataSource->separatorBeforeRow(row),
                 columnWidth + m_horizontalCellOverlap,
                 rowHeight + m_verticalCellOverlap);
 }

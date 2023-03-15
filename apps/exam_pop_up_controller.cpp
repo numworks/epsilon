@@ -42,24 +42,33 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       static_cast<size_t>(ExamMode::Ruleset::NumberOfRulesets);
   constexpr size_t messagesPerMode = 2;
   constexpr I18n::Message messages[] = {
+      // Off
       I18n::Message::ExitExamMode,
-      I18n::Message::ExitPressToTestExamMode,  // Off
+      I18n::Message::ExitPressToTestExamMode,
+      // Standard
       I18n::Message::ActiveExamModeMessage,
-      I18n::Message::ActiveExamModeWithResetMessage,  // Standard
+      I18n::Message::ActiveExamModeWithResetMessage,
+      // Dutch
       I18n::Message::ActiveDutchExamModeMessage,
-      I18n::Message::ActiveDutchExamModeWithResetMessage,  // Dutch
-      I18n::Message::ActiveIBExamModeMessage,
-      I18n::Message::ActiveIBExamModeWithResetMessage,  // IBTest
+      I18n::Message::ActiveDutchExamModeWithResetMessage,
+      // IBTest
+      I18n::Message::ActiveKeystoneSTAAROrIBExamModeMessage,
+      I18n::Message::ActiveKeystoneSTAAROrIBExamModeWithResetMessage,
+      // PressToTest
       I18n::Message::ActivePressToTestModeMessage,
-      I18n::Message::ActivePressToTestWithResetMessage,  // PressToTest
+      I18n::Message::ActivePressToTestWithResetMessage,
+      // Portuguese
       I18n::Message::ActivePortugueseExamModeMessage,
-      I18n::Message::ActiveExamModeWithResetMessage,  // Portuguese
+      I18n::Message::ActiveExamModeWithResetMessage,
+      // English
       I18n::Message::ActiveEnglishExamModeMessage,
-      I18n::Message::ActiveEnglishExamModeWithResetMessage,  // English
-      I18n::Message::ActiveSTAARExamModeMessage,
-      I18n::Message::ActiveSTAARExamModeWithResetMessage,  // STAAR
-      I18n::Message::ActiveKeystoneExamModeMessage,
-      I18n::Message::ActiveKeystoneExamModeWithResetMessage,  // Keystone
+      I18n::Message::ActiveEnglishExamModeWithResetMessage,
+      // STAAR
+      I18n::Message::ActiveKeystoneSTAAROrIBExamModeMessage,
+      I18n::Message::ActiveKeystoneSTAAROrIBExamModeWithResetMessage,
+      // Keystone
+      I18n::Message::ActiveKeystoneSTAAROrIBExamModeMessage,
+      I18n::Message::ActiveKeystoneSTAAROrIBExamModeWithResetMessage,
   };
   static_assert(sizeof(messages) / sizeof(I18n::Message) ==
                     numberOfModes * messagesPerMode,

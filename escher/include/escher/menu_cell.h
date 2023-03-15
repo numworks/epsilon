@@ -120,7 +120,15 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   bool forceAlignLabelAndAccessory() const {
     return constAccessory()->alwaysAlignWithLabelAsAccessory();
   }
-  virtual bool shouldAlignSublabelRight() const { return true; }
+  bool shouldAlignSublabelRight() const {
+    return !constLabel()->preventRightAlignedSubLabel(
+               CellWidget::Type::Label) &&
+           !constSubLabel()->preventRightAlignedSubLabel(
+               CellWidget::Type::SubLabel) &&
+           !constAccessory()->preventRightAlignedSubLabel(
+               CellWidget::Type::Accessory);
+  }
+
   virtual bool shouldHideSublabel() { return false; }
   // This method is only used to assert that no subview overlaps after layouting
   virtual bool subviewsCanOverlap() const { return false; }

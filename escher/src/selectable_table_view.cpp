@@ -232,11 +232,10 @@ void SelectableTableView::deselectTable(bool withinTemporarySelection) {
 }
 
 void SelectableTableView::reloadData(bool setFirstResponder) {
-  dataSource()->initCellSize(this);
   int col = selectedColumn();
   int row = selectedRow();
   deselectTable(true);
-  SelectableTableView::layoutSubviews();
+  SelectableTableView::layoutSubviews(true);
   selectCellAtLocation(col, row, setFirstResponder, true);
 }
 

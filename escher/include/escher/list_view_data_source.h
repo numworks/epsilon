@@ -45,6 +45,8 @@ class ListViewDataSource : public TableViewDataSource {
     return TableViewDataSource::nonMemoizedColumnWidth(column);
   }
   int typeIndexFromIndex(int index);
+  // TODO there are only two possible widths: settings-like and toolbox-like
+  KDCoordinate m_availableWidth;
 };
 
 template <int N>

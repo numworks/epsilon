@@ -5,29 +5,33 @@ namespace Escher {
 void TableViewDataSource::willDisplayCellAtLocation(HighlightCell* cell, int i,
                                                     int j) {}
 
-KDCoordinate TableViewDataSource::columnWidth(int i) {
+KDCoordinate TableViewDataSource::columnWidth(int i, bool withSeparator) {
+  KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (columnWidthManager()) {
-    KDCoordinate result = columnWidthManager()->computeSizeAtIndex(i);
-    if (result != TableSize1DManager::k_undefinedSize) {
-      assert(result >= 0);
-      return result;
-    }
+    result = columnWidthManager()->computeSizeAtIndex(i);
   }
-  KDCoordinate result = nonMemoizedColumnWidth(i);
+  if (result == TableSize1DManager::k_undefinedSize) {
+    result = nonMemoizedColumnWidth(i);
+  }
   assert(result >= 0);
+  if (result > 0 && withSeparator) {
+    return result + separatorBeforeColumn(i);
+  }
   return result;
 }
 
-KDCoordinate TableViewDataSource::rowHeight(int j) {
+KDCoordinate TableViewDataSource::rowHeight(int j, bool withSeparator) {
+  KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (rowHeightManager()) {
-    KDCoordinate result = rowHeightManager()->computeSizeAtIndex(j);
-    if (result != TableSize1DManager::k_undefinedSize) {
-      assert(result >= 0);
-      return result;
-    }
+    result = rowHeightManager()->computeSizeAtIndex(j);
   }
-  KDCoordinate result = nonMemoizedRowHeight(j);
+  if (result == TableSize1DManager::k_undefinedSize) {
+    result = nonMemoizedRowHeight(j);
+  }
   assert(result >= 0);
+  if (result > 0 && withSeparator) {
+    return result + separatorBeforeRow(j);
+  }
   return result;
 }
 

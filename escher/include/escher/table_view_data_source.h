@@ -16,6 +16,10 @@ class TableViewDataSource {
   friend class MemoizedColumnWidthManager;
 
  public:
+  // TODO: Factorize ovelap and separator
+  constexpr static KDCoordinate k_defaultRowSeparator =
+      Escher::Metric::CommonMenuMargin + Escher::Metric::CellSeparatorThickness;
+
   virtual void initCellSize(TableView* view) {}
   virtual int numberOfRows() const = 0;
   virtual int numberOfColumns() const = 0;
@@ -28,14 +32,17 @@ class TableViewDataSource {
     return !cell || cell->isSelectable();
   }
 
-  KDCoordinate columnWidth(int i);
-  KDCoordinate rowHeight(int j);
+  KDCoordinate columnWidth(int i, bool withSeparator = true);
+  KDCoordinate rowHeight(int j, bool withSeparator = true);
 
   KDCoordinate cumulatedWidthBeforeIndex(int i);
   KDCoordinate cumulatedHeightBeforeIndex(int j);
 
   int indexAfterCumulatedWidth(KDCoordinate offsetX);
   int indexAfterCumulatedHeight(KDCoordinate offsetY);
+
+  virtual KDCoordinate separatorBeforeColumn(int index) { return 0; }
+  virtual KDCoordinate separatorBeforeRow(int index) { return 0; }
 
   virtual HighlightCell* reusableCell(int index, int type) = 0;
   virtual int reusableCellCount(int type) = 0;

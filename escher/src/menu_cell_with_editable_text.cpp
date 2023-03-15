@@ -46,4 +46,6 @@ bool AbstractWithEditableText::textFieldDidAbortEditing(
   return ChainedTextFieldDelegate::textFieldDidAbortEditing(textField);
 }
 
+template class MenuCellWithEditableText<MessageTextView, MessageTextView>;
+
 }  // namespace Escher

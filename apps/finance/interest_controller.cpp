@@ -11,11 +11,11 @@
 #include "app.h"
 
 using namespace Finance;
+using namespace Escher;
 
-InterestController::InterestController(
-    Escher::StackViewController *parent,
-    Escher::InputEventHandlerDelegate *handler,
-    ResultController *resultController)
+InterestController::InterestController(StackViewController *parent,
+                                       InputEventHandlerDelegate *handler,
+                                       ResultController *resultController)
     : Shared::FloatParameterController<double>(parent),
       m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this),
       m_resultController(resultController) {
@@ -61,7 +61,7 @@ bool InterestController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-void InterestController::willDisplayCellForIndex(Escher::HighlightCell *cell,
+void InterestController::willDisplayCellForIndex(HighlightCell *cell,
                                                  int index) {
   int type = typeAtIndex(index);
   if (type == k_buttonCellType) {
@@ -76,10 +76,11 @@ void InterestController::willDisplayCellForIndex(Escher::HighlightCell *cell,
         App::GetInterestData()->sublabelForParameter(param));
     return;
   }
-  Escher::MessageTableCellWithEditableTextWithMessage *myCell =
-      static_cast<Escher::MessageTableCellWithEditableTextWithMessage *>(cell);
-  myCell->setMessage(App::GetInterestData()->labelForParameter(param));
-  myCell->setSubLabelMessage(
+  MenuCellWithEditableText<MessageTextView, MessageTextView> *myCell =
+      static_cast<MenuCellWithEditableText<MessageTextView, MessageTextView> *>(
+          cell);
+  myCell->label()->setMessage(App::GetInterestData()->labelForParameter(param));
+  myCell->subLabel()->setMessage(
       App::GetInterestData()->sublabelForParameter(param));
   return Shared::FloatParameterController<double>::willDisplayCellForIndex(
       cell, index);
@@ -95,7 +96,7 @@ int InterestController::typeAtIndex(int index) const {
 KDCoordinate InterestController::nonMemoizedRowHeight(int j) {
   int type = typeAtIndex(j);
   if (type == k_inputCellType) {
-    Escher::MessageTableCellWithEditableTextWithMessage tempCell;
+    MenuCellWithEditableText<MessageTextView, MessageTextView> tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, j);
   } else if (type == k_dropdownCellType) {
     return heightForCellAtIndex(&m_dropdownCell, j);
@@ -129,8 +130,7 @@ int InterestController::reusableParameterCellCount(int type) {
   return 1;
 }
 
-Escher::HighlightCell *InterestController::reusableParameterCell(int i,
-                                                                 int type) {
+HighlightCell *InterestController::reusableParameterCell(int i, int type) {
   switch (type) {
     case k_inputCellType:
       assert(i < k_numberOfReusableInputs);

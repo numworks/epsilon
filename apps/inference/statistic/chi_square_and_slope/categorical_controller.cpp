@@ -161,8 +161,8 @@ InputCategoricalController::InputCategoricalController(
       m_statistic(statistic),
       m_significanceCell(&m_selectableListView, inputEventHandlerDelegate,
                          this) {
-  m_significanceCell.setMessage(I18n::Message::GreekAlpha);
-  m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
+  m_significanceCell.label()->setMessage(I18n::Message::GreekAlpha);
+  m_significanceCell.subLabel()->setMessage(I18n::Message::SignificanceLevel);
 }
 
 bool InputCategoricalController::textFieldShouldFinishEditing(

@@ -3,7 +3,8 @@
 
 #include <escher/button_cell.h>
 #include <escher/invocation.h>
-#include <escher/message_table_cell_with_editable_text_with_message.h>
+#include <escher/menu_cell_with_editable_text.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
@@ -118,7 +119,9 @@ class InputCategoricalController
   }
 
   Statistic* m_statistic;
-  Escher::MessageTableCellWithEditableTextWithMessage m_significanceCell;
+  Escher::MenuCellWithEditableText<Escher::MessageTextView,
+                                   Escher::MessageTextView>
+      m_significanceCell;
 };
 
 }  // namespace Inference

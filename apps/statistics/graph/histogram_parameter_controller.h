@@ -3,7 +3,8 @@
 
 #include <apps/shared/float_parameter_controller.h>
 #include <apps/shared/pop_up_controller.h>
-#include <escher/message_table_cell_with_editable_text_with_message.h>
+#include <escher/menu_cell_with_editable_text.h>
+#include <escher/message_text_view.h>
 
 #include "../store.h"
 
@@ -32,7 +33,9 @@ class HistogramParameterController
   void buttonAction() override;
   bool authorizedParameters(double tempBarWidth,
                             double tempFirstDrawnBarAbscissa);
-  Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfCells];
+  Escher::MenuCellWithEditableText<Escher::MessageTextView,
+                                   Escher::MessageTextView>
+      m_cells[k_numberOfCells];
   Store* m_store;
   Shared::MessagePopUpController m_confirmPopUpController;
   // Temporary parameters

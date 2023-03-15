@@ -13,8 +13,8 @@ InputGoodnessController::InputGoodnessController(
       m_degreeOfFreedomCell(&m_selectableListView, inputEventHandlerDelegate,
                             this),
       m_goodnessTableCell(&m_selectableListView, this, this, statistic, this) {
-  m_degreeOfFreedomCell.setMessage(I18n::Message::DegreesOfFreedom);
-  m_degreeOfFreedomCell.setSubLabelMessage(I18n::Message::Default);
+  m_degreeOfFreedomCell.label()->setMessage(I18n::Message::DegreesOfFreedom);
+  m_degreeOfFreedomCell.subLabel()->setMessage(I18n::Message::Default);
 }
 
 void InputGoodnessController::updateDegreeOfFreedomCell() {

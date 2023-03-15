@@ -348,6 +348,9 @@ Evaluation<T> ApproximationHelper::MapReduce(
   assert(expression->numberOfChildren() > 0);
   Evaluation<T> result =
       expression->childAtIndex(0)->approximate(T(), approximationContext);
+  if (result.isUndefined()) {
+    return Complex<T>::Undefined();
+  }
   int childrenNumber = expression->numberOfChildren();
   for (int i = 1; i < childrenNumber; i++) {
     Evaluation<T> nextOperandEvaluation =

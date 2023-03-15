@@ -14,7 +14,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-int nameIndexForSymbol(const SymbolAbstract &symbol) {
+static int nameIndexForSymbol(const SymbolAbstract &symbol) {
   // return 0 for u, 1 for v and 2 for w
   char name =
       const_cast<Symbol &>(static_cast<const Symbol &>(symbol)).name()[0];

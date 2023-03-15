@@ -96,7 +96,6 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
     return const_cast<AbstractMenuCell*>(this)->accessory()->view();
   }
 
-  virtual bool giveAccessoryAllWidth() const { return false; }
   KDCoordinate minimalHeightForOptimalDisplay() const;
 
   KDCoordinate innerWidth() const {
@@ -121,6 +120,11 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   void layoutSubviews(bool force = false) override;
 
   KDColor backgroundColor() const { return m_backgroundColor; }
+  bool giveAccessoryAllWidth() const {
+    return const_cast<AbstractMenuCell*>(this)
+        ->accessory()
+        ->giveAllWidthAsAccessory();
+  }
   virtual bool forceAlignLabelAndAccessory() const { return false; }
   virtual bool shouldAlignSublabelRight() const { return true; }
   virtual bool shouldHideSublabel() { return false; }

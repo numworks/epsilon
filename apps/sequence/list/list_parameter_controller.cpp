@@ -112,7 +112,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
         ->push(&m_typeParameterController);
     return true;
   }
-  if (cell == &m_enableCell && m_enableCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_enableCell && m_enableCell.enterOnEvent(event)) {
     App::app()->localContext()->resetCache();
     function()->setActive(!function()->isActive());
     resetMemoization();

@@ -5,8 +5,7 @@
 #include <escher/even_odd_expression_cell.h>
 #include <escher/expression_view.h>
 #include <escher/list_view_data_source.h>
-#include <escher/menu_cell.h>
-#include <escher/message_table_cell_with_editable_text.h>
+#include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
 
 #include "../../shared/list_parameter_controller.h"
@@ -57,7 +56,7 @@ class ListParameterController : public Shared::ListParameterController,
   Escher::MenuCell<Escher::MessageTextView, Escher::ExpressionView,
                    Escher::ChevronView>
       m_typeCell;
-  Escher::MessageTableCellWithEditableText m_initialRankCell;
+  Escher::MenuCellWithEditableText<Escher::MessageTextView> m_initialRankCell;
   TypeParameterController m_typeParameterController;
 };
 

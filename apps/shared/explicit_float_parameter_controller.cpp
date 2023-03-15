@@ -56,7 +56,7 @@ bool ExplicitFloatParameterController::handleEvent(Ion::Events::Event event) {
 
 void ExplicitFloatParameterController::willDisplayCellForIndex(
     HighlightCell *cell, int index) {
-  if (isCellEditing(cell, index)) {
+  if (textFieldOfCellAtIndex(cell, index)->isEditing()) {
     return;
   }
   constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
@@ -66,7 +66,7 @@ void ExplicitFloatParameterController::willDisplayCellForIndex(
   PoincareHelpers::ConvertFloatToTextWithDisplayMode(
       parameterAtIndex(index), buffer, bufferSize, precision,
       Preferences::PrintFloatMode::Decimal);
-  setTextInCell(cell, buffer, index);
+  textFieldOfCellAtIndex(cell, index)->setText(buffer);
 }
 
 KDCoordinate ExplicitFloatParameterController::nonMemoizedRowHeight(int j) {
@@ -100,16 +100,6 @@ bool ExplicitFloatParameterController::textFieldDidFinishEditing(
     m_selectableListView.handleEvent(event);
   }
   return true;
-}
-
-bool ExplicitFloatParameterController::isCellEditing(
-    Escher::HighlightCell *cell, int index) {
-  return static_cast<BufferTableCellWithEditableText *>(cell)->isEditing();
-}
-
-void ExplicitFloatParameterController::setTextInCell(
-    Escher::HighlightCell *cell, const char *text, int index) {
-  static_cast<BufferTableCellWithEditableText *>(cell)->setAccessoryText(text);
 }
 
 }  // namespace Shared

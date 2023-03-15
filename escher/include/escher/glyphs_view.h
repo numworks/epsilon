@@ -22,8 +22,9 @@ class GlyphsView : public View, public CellWidget {
   void setAlignment(float horizontalAlignment, float verticalAlignment);
 
   // CellWidget
-  void setBackgroundColor(KDColor backgroundColor) override;
   const View* view() const override { return this; }
+  void setBackgroundColor(KDColor backgroundColor) override;
+  bool alwaysAlignWithLabelAsAccessory() const override { return true; }
 
   constexpr static KDGlyph::Format k_defaultLabel = {};
   constexpr static KDGlyph::Format k_defaultSubLabel = {

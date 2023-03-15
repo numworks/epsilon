@@ -31,6 +31,11 @@ class SelectableListView : public SelectableTableView {
     m_delegate = delegate;
   }
 
+  void layoutSubviews(bool force = false) override {
+    dataSource()->initCellSize(this);
+    SelectableTableView::layoutSubviews(force);
+  }
+
  private:
   // Hide column-related methods
   using SelectableTableView::selectCellAtClippedLocation;

@@ -39,22 +39,6 @@ void TableView::reloadVisibleCellsAtColumn(int column) {
   }
 }
 
-void TableView::layoutSubviews(bool force) {
-  /* We need to relayout m_contentView to reload data and sizes but also
-   * ScrollView if the offset or m_contentView's size changed.
-   * On the one hand, ScrollView::layoutSubviews() set m_contentView's frame,
-   * which calls layoutSubviews() over m_contentView IF the frame is changed.
-   * On the other hand, m_contentView.layoutSubviews() does not relayout
-   * ScrollView. For those reasons, we call both of them explicitly. Besides, we
-   * must call relayout m_contentView first in order to reload the table's data,
-   * otherwise the table's size might be miscomputed for ScrollView.
-   * FIXME: This solution is not optimal since layoutSubviews can be called
-   * twice over m_contentView. */
-  dataSource()->initCellSize(this);
-  m_contentView.layoutSubviews(force, true);
-  ScrollView::layoutSubviews(force);
-}
-
 /* TableView::ContentView */
 
 TableView::ContentView::ContentView(TableView* tableView,
@@ -220,9 +204,7 @@ void TableView::ContentView::layoutSubviews(bool force,
     int col = absoluteColumnFromSubviewIndex(index);
     int row = absoluteRowFromSubviewIndex(index);
     assert(cellAtLocation(col, row) == cell);
-    if (updateCellContent) {
-      m_dataSource->fillCellForLocation(cell, col, row);
-    }
+    m_dataSource->fillCellForLocation(cell, col, row);
     /* Cell's content might change and fit in the same frame. LayoutSubviews
      * must be called on each cells even with an unchanged frame. */
     setChildFrame(cell, cellFrame(col, row), true);

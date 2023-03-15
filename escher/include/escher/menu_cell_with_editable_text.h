@@ -37,11 +37,14 @@ class AbstractWithEditableText : public Responder,
       InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
       TextFieldDelegate* textFieldDelegate = nullptr);
 
+  void setEditable(bool isEditable) { m_editable = isEditable; }
   void setDelegates(InputEventHandlerDelegate* inputEventHandlerDelegate,
                     TextFieldDelegate* textFieldDelegate);
 
   void didBecomeFirstResponder() override {
-    Container::activeApp()->setFirstResponder(&m_textField);
+    if (m_editable) {
+      Container::activeApp()->setFirstResponder(&m_textField);
+    }
   }
   TextField* textField() { return &m_textField; }
   virtual void relayout() = 0;
@@ -51,10 +54,14 @@ class AbstractWithEditableText : public Responder,
   bool textFieldDidFinishEditing(AbstractTextField* textField, const char* text,
                                  Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(AbstractTextField* textField) override;
+  bool textFieldIsEditable(AbstractTextField* textField) override {
+    return m_editable;
+  }
 
  protected:
   TextField m_textField;
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
+  bool m_editable;
 };
 
 template <typename Label, typename SubLabel = EmptyCellWidget>

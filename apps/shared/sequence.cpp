@@ -172,6 +172,44 @@ bool Sequence::isSuitableForCobweb(Context *context) const {
              static_cast<void *>(buffer));
 }
 
+bool Sequence::mainExpressionIsNotComputable(Context *context) const {
+  constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
+  char buffer[bufferSize];
+  name(buffer, bufferSize);
+  Type type = this->type();
+  struct Pack {
+    char *name;
+    Type type;
+  };
+  struct Pack pack {
+    buffer, type
+  };
+  return expressionClone().recursivelyMatches(
+      [](const Expression e, Context *context, void *arg) {
+        if (e.type() != ExpressionNode::Type::Sequence) {
+          return TrinaryBoolean::Unknown;
+        }
+        const Poincare::Sequence seq =
+            static_cast<const Poincare::Sequence &>(e);
+        Pack *pack = static_cast<Pack *>(arg);
+        char *buffer = pack->name;
+        if (strcmp(seq.name(), buffer) != 0) {
+          return TrinaryBoolean::Unknown;
+        }
+        Expression rank = seq.childAtIndex(0);
+        Type type = pack->type;
+        if ((type != Type::Explicit &&
+             (rank.isRankNPlusK(0) || rank.isZero())) ||
+            (type == Type::DoubleRecurrence &&
+             (rank.isRankNPlusK(1) || rank.isOne()))) {
+          return TrinaryBoolean::False;
+        }
+        return TrinaryBoolean::True;
+      },
+      context, SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      &pack);
+}
+
 void Sequence::tidyDownstreamPoolFrom(char *treePoolCursor) const {
   model()->tidyDownstreamPoolFrom(treePoolCursor);
   m_firstInitialCondition.tidyDownstreamPoolFrom(treePoolCursor);
@@ -186,7 +224,8 @@ T Sequence::privateEvaluateYAtX(T x, Poincare::Context *context) const {
 
 template <typename T>
 T Sequence::valueAtRank(int n, SequenceContext *sqctx, bool independent) const {
-  if (n < initialRank() || !TemplatedSequenceContext<T>::IsAcceptableRank(n)) {
+  if (n < initialRank() || !TemplatedSequenceContext<T>::IsAcceptableRank(n) ||
+      (n >= firstNonInitialRank() && mainExpressionIsNotComputable(sqctx))) {
     return NAN;
   }
   int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
@@ -454,6 +493,22 @@ void Sequence::InitialConditionModel::buildName(Sequence *sequence) {
       CodePointLayout::Builder(sequence->fullName()[0]),
       VerticalOffsetLayout::Builder(
           indexLayout, VerticalOffsetLayoutNode::VerticalPosition::Subscript));
+}
+
+int Sequence::firstNonInitialRank() const {
+  int add;
+  switch (type()) {
+    case Type::Explicit:
+      add = 0;
+      break;
+    case Type::SingleRecurrence:
+      add = 1;
+      break;
+    default:
+      assert(type() == Type::DoubleRecurrence);
+      add = 2;
+  }
+  return initialRank() + add;
 }
 
 template double Sequence::privateEvaluateYAtX<double>(

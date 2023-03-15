@@ -10,17 +10,16 @@ InputGoodnessController::InputGoodnessController(
     InputEventHandlerDelegate *inputEventHandlerDelegate)
     : InputCategoricalController(parent, resultsController, statistic,
                                  inputEventHandlerDelegate),
-      m_innerDegreeOfFreedomCell(&m_selectableListView,
-                                 inputEventHandlerDelegate, this),
-      m_degreeOfFreedomCell(&m_innerDegreeOfFreedomCell),
+      m_degreeOfFreedomCell(&m_selectableListView, inputEventHandlerDelegate,
+                            this),
       m_goodnessTableCell(&m_selectableListView, this, this, statistic, this) {
-  m_innerDegreeOfFreedomCell.setMessage(I18n::Message::DegreesOfFreedom);
-  m_innerDegreeOfFreedomCell.setSubLabelMessage(I18n::Message::Default);
+  m_degreeOfFreedomCell.setMessage(I18n::Message::DegreesOfFreedom);
+  m_degreeOfFreedomCell.setSubLabelMessage(I18n::Message::Default);
 }
 
 void InputGoodnessController::updateDegreeOfFreedomCell() {
   PrintValueInTextHolder(m_statistic->degreeOfFreedom(),
-                         m_innerDegreeOfFreedomCell.textField(), true, true);
+                         m_degreeOfFreedomCell.textField(), true, true);
 }
 
 void InputGoodnessController::didBecomeFirstResponder() {

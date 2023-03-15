@@ -16,10 +16,8 @@ CategoricalController::CategoricalController(Responder *parent,
     : SelectableListViewController<ListViewDataSource>(parent),
       m_nextController(nextController),
       m_next(&m_selectableListView, I18n::Message::Next, invocation,
-             Palette::WallScreenDark, Metric::CommonMargin) {
+             Palette::WallScreenDark) {
   m_selectableListView.setTopMargin(0);
-  m_selectableListView.setLeftMargin(0);
-  m_selectableListView.setRightMargin(0);
   m_selectableListView.setBackgroundColor(Palette::WallScreenDark);
   setScrollViewDelegate(this);
 }
@@ -162,11 +160,10 @@ InputCategoricalController::InputCategoricalController(
           Invocation::Builder<InputCategoricalController>(
               &InputCategoricalController::ButtonAction, this)),
       m_statistic(statistic),
-      m_innerSignificanceCell(&m_selectableListView, inputEventHandlerDelegate,
-                              this),
-      m_significanceCell(&m_innerSignificanceCell) {
-  m_innerSignificanceCell.setMessage(I18n::Message::GreekAlpha);
-  m_innerSignificanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
+      m_significanceCell(&m_selectableListView, inputEventHandlerDelegate,
+                         this) {
+  m_significanceCell.setMessage(I18n::Message::GreekAlpha);
+  m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
 }
 
 bool InputCategoricalController::textFieldShouldFinishEditing(
@@ -201,7 +198,7 @@ void InputCategoricalController::viewWillAppear() {
   categoricalTableCell()->selectableTableView()->setContentOffset(KDPointZero);
   categoricalTableCell()->recomputeDimensions();
   PrintValueInTextHolder(m_statistic->threshold(),
-                         m_innerSignificanceCell.textField(), true, true);
+                         m_significanceCell.textField(), true, true);
   CategoricalController::viewWillAppear();
 }
 

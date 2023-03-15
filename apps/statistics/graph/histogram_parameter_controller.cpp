@@ -105,6 +105,14 @@ HighlightCell *HistogramParameterController::reusableParameterCell(int index,
   return &m_cells[index];
 }
 
+Escher::TextField *HistogramParameterController::textFieldOfCellAtIndex(
+    HighlightCell *cell, int index) {
+  assert(typeAtIndex(index) == k_parameterCellType);
+  return static_cast<
+             MenuCellWithEditableText<MessageTextView, MessageTextView> *>(cell)
+      ->textField();
+}
+
 void HistogramParameterController::buttonAction() {
   // Update parameters values and proceed.
   assert(authorizedParameters(m_tempBarWidth, m_tempFirstDrawnBarAbscissa));

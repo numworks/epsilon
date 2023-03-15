@@ -141,6 +141,14 @@ HighlightCell *InterestController::reusableParameterCell(int i, int type) {
   }
 }
 
+Escher::TextField *InterestController::textFieldOfCellAtIndex(
+    Escher::HighlightCell *cell, int index) {
+  assert(typeAtIndex(index) == k_parameterCellType);
+  return static_cast<
+             MenuCellWithEditableText<MessageTextView, MessageTextView> *>(cell)
+      ->textField();
+}
+
 double InterestController::parameterAtIndex(int index) {
   return App::GetInterestData()->getValue(interestParamaterAtIndex(index));
 }

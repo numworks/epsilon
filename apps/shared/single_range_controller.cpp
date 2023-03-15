@@ -22,8 +22,8 @@ SingleRangeController::SingleRangeController(
 
 void SingleRangeController::viewWillAppear() {
   extractParameters();
-  m_boundsCells[0].setMessage(parameterMessage(0));
-  m_boundsCells[1].setMessage(parameterMessage(1));
+  m_boundsCells[0].label()->setMessage(parameterMessage(0));
+  m_boundsCells[1].label()->setMessage(parameterMessage(1));
   FloatParameterController<float>::viewWillAppear();
 }
 
@@ -80,6 +80,13 @@ HighlightCell *SingleRangeController::reusableParameterCell(int index,
                                                             int type) {
   assert(index >= 1 && index < k_numberOfTextCells + 1);
   return &m_boundsCells[index - 1];
+}
+
+TextField *SingleRangeController::textFieldOfCellAtIndex(HighlightCell *cell,
+                                                         int index) {
+  assert(typeAtIndex(index) == k_parameterCellType);
+  return static_cast<MenuCellWithEditableText<MessageTextView> *>(cell)
+      ->textField();
 }
 
 void SingleRangeController::buttonAction() {

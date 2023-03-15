@@ -108,10 +108,10 @@ template class DynamicCellsDataSource<
 template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell,
                                       k_doubleColumnTableNumberOfReusableCells>;
 template class DynamicCellsDataSource<
-    ExpressionCellWithEditableTextWithMessage,
+    Escher::MenuCellWithEditableText<Escher::ExpressionView,
+                                     Escher::MessageTextView>,
     k_maxNumberOfExpressionCellsWithEditableTextWithMessage>;
 template class DynamicCellsDataSource<
     ExpressionCellWithBufferWithMessage,
     k_maxNumberOfExpressionCellsWithBufferWithMessage>;
-
 }  // namespace Inference

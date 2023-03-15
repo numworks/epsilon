@@ -55,13 +55,13 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell *cell,
     return;
   }
 
-  MessageTableCellWithEditableText *myCell =
-      static_cast<MessageTableCellWithEditableText *>(cell);
+  MenuCellWithEditableText<MessageTextView> *myCell =
+      static_cast<MenuCellWithEditableText<MessageTextView> *>(cell);
   assert(index >= 0 && index < 3);
   I18n::Message m = index == 0
                         ? m_startMessage
                         : (index == 1 ? m_endMessage : I18n::Message::Step);
-  myCell->setMessage(m);
+  myCell->label()->setMessage(m);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
@@ -103,6 +103,13 @@ HighlightCell *IntervalParameterController::reusableParameterCell(int index,
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   return &m_intervalCells[index];
+}
+
+TextField *IntervalParameterController::textFieldOfCellAtIndex(
+    HighlightCell *cell, int index) {
+  assert(typeAtIndex(index) == k_parameterCellType);
+  return static_cast<MenuCellWithEditableText<MessageTextView> *>(cell)
+      ->textField();
 }
 
 bool IntervalParameterController::handleEvent(Ion::Events::Event event) {

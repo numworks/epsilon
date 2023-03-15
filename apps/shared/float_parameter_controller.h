@@ -4,6 +4,7 @@
 #include <escher/button_cell.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
+#include <escher/text_field.h>
 
 #include "parameter_text_field_delegate.h"
 
@@ -47,9 +48,6 @@ class FloatParameterController : public Escher::SelectableListViewController<
     return static_cast<Escher::StackViewController *>(parentResponder());
   }
   virtual T parameterAtIndex(int index) = 0;
-  virtual bool isCellEditing(Escher::HighlightCell *cell, int index);
-  virtual void setTextInCell(Escher::HighlightCell *cell, const char *text,
-                             int index);
   virtual void buttonAction();
   virtual bool hasUndefinedValue(const char *text, T floatValue) const;
 
@@ -61,6 +59,8 @@ class FloatParameterController : public Escher::SelectableListViewController<
   }
   virtual int reusableParameterCellCount(int type) = 0;
   virtual Escher::HighlightCell *reusableParameterCell(int index, int type) = 0;
+  virtual Escher::TextField *textFieldOfCellAtIndex(Escher::HighlightCell *cell,
+                                                    int index) = 0;
   virtual bool setParameterAtIndex(int parameterIndex, T f) = 0;
 };
 

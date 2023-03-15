@@ -96,7 +96,8 @@ HighlightCell *FloatParameterController<T>::reusableCell(int index, int type) {
 template <typename T>
 void FloatParameterController<T>::willDisplayCellForIndex(HighlightCell *cell,
                                                           int index) {
-  if (typeAtIndex(index) == k_buttonCellType || isCellEditing(cell, index)) {
+  if (typeAtIndex(index) == k_buttonCellType ||
+      textFieldOfCellAtIndex(cell, index)->isEditing()) {
     return;
   }
   constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
@@ -106,7 +107,7 @@ void FloatParameterController<T>::willDisplayCellForIndex(HighlightCell *cell,
   PoincareHelpers::ConvertFloatToTextWithDisplayMode<T>(
       parameterAtIndex(index), buffer, bufferSize, precision,
       Preferences::PrintFloatMode::Decimal);
-  setTextInCell(cell, buffer, index);
+  textFieldOfCellAtIndex(cell, index)->setText(buffer);
 }
 
 template <typename T>
@@ -144,18 +145,6 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(
     m_selectableListView.handleEvent(event);
   }
   return true;
-}
-
-template <typename T>
-bool FloatParameterController<T>::isCellEditing(Escher::HighlightCell *cell,
-                                                int index) {
-  return static_cast<MessageTableCellWithEditableText *>(cell)->isEditing();
-}
-
-template <typename T>
-void FloatParameterController<T>::setTextInCell(Escher::HighlightCell *cell,
-                                                const char *text, int index) {
-  static_cast<MessageTableCellWithEditableText *>(cell)->setAccessoryText(text);
 }
 
 template <typename T>

@@ -18,7 +18,7 @@ InputController::InputController(Escher::StackViewController *parent,
                                  Escher::InputEventHandlerDelegate *handler)
     : FloatParameterController<double>(parent),
       DynamicCellsDataSource<
-          ExpressionCellWithEditableTextWithMessage,
+          InputParameterCell,
           k_maxNumberOfExpressionCellsWithEditableTextWithMessage>(this),
       m_statistic(statistic),
       m_resultsController(resultsController) {
@@ -30,8 +30,7 @@ InputController::InputController(Escher::StackViewController *parent,
   m_significanceCell.subLabel()->setMessage(I18n::Message::SignificanceLevel);
 }
 
-void InputController::initCell(ExpressionCellWithEditableTextWithMessage,
-                               void *cell, int index) {
+void InputController::initCell(InputParameterCell, void *cell, int index) {
   ExpressionCellWithEditableTextWithMessage *c =
       static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
   c->setParentResponder(&m_selectableListView);
@@ -137,8 +136,7 @@ int InputController::reusableParameterCellCount(int type) {
   return 1;
 }
 
-Escher::HighlightCell *InputController::reusableParameterCell(int index,
-                                                              int type) {
+HighlightCell *InputController::reusableParameterCell(int index, int type) {
   if (type == k_parameterCellType) {
     assert(index >= 0 && index < k_numberOfReusableCells);
     return cell(index);
@@ -147,33 +145,21 @@ Escher::HighlightCell *InputController::reusableParameterCell(int index,
   return &m_significanceCell;
 }
 
+TextField *InputController::textFieldOfCellAtIndex(HighlightCell *cell,
+                                                   int index) {
+  if (typeAtIndex(index) == k_significanceCellType) {
+    assert(cell == &m_significanceCell);
+    return m_significanceCell.textField();
+  }
+  assert(typeAtIndex(index) == k_parameterCellType);
+  return static_cast<InputParameterCell *>(cell)->textField();
+}
+
 bool InputController::handleEvent(Ion::Events::Event event) {
   // If the previous controller was the hypothesis controller, the pop on Left
   // event is unable.
   return !m_statistic->hasHypothesisParameters() &&
          popFromStackViewControllerOnLeftEvent(event);
-}
-
-bool InputController::isCellEditing(Escher::HighlightCell *cell, int index) {
-  if (typeAtIndex(index) == k_significanceCellType) {
-    assert(cell == &m_significanceCell);
-    return m_significanceCell.textField()->isEditing();
-  }
-  return static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)
-      ->textField()
-      ->isEditing();
-}
-
-void InputController::setTextInCell(Escher::HighlightCell *cell,
-                                    const char *text, int index) {
-  if (typeAtIndex(index) == k_significanceCellType) {
-    assert(cell == &m_significanceCell);
-    m_significanceCell.textField()->setText(text);
-  } else {
-    static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)
-        ->textField()
-        ->setText(text);
-  }
 }
 
 bool InputController::setParameterAtIndex(int parameterIndex, double f) {

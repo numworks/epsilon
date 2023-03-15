@@ -23,6 +23,12 @@ HighlightCell *GoToParameterController::reusableParameterCell(int index,
   return &m_parameterCell;
 }
 
+TextField *GoToParameterController::textFieldOfCellAtIndex(
+    Escher::HighlightCell *cell, int index) {
+  assert(typeAtIndex(index) == k_parameterCellType);
+  return m_parameterCell.textField();
+}
+
 bool GoToParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
     stackController()->pop();

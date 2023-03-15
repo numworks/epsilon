@@ -2,8 +2,7 @@
 #define SHARED_SINGLE_RANGE_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/menu_cell.h>
-#include <escher/message_table_cell_with_editable_text.h>
+#include <escher/menu_cell_with_editable_text.h>
 #include <escher/switch_view.h>
 #include <poincare/range.h>
 
@@ -56,7 +55,8 @@ class SingleRangeController : public FloatParameterController<float> {
   virtual void confirmParameters() = 0;
   virtual void pop(bool onConfirmation) = 0;
 
-  Escher::MessageTableCellWithEditableText m_boundsCells[k_numberOfTextCells];
+  Escher::MenuCellWithEditableText<Escher::MessageTextView>
+      m_boundsCells[k_numberOfTextCells];
   Poincare::Range1D m_rangeParam;
   bool m_autoParam;
 
@@ -65,6 +65,8 @@ class SingleRangeController : public FloatParameterController<float> {
     return k_numberOfTextCells;
   }
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
+  Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
+                                            int index) override;
   void buttonAction() override;
 
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,

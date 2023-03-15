@@ -64,29 +64,17 @@ void ParametersController::willDisplayCellForIndex(HighlightCell *cell,
   if (index == numberOfRows() - 1) {
     return;
   }
-  ExpressionCellWithEditableTextWithMessage *myCell =
-      static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
-  myCell->setLayout(m_distribution->parameterSymbolAtIndex(index));
-  myCell->setSubLabelMessage(m_distribution->parameterDefinitionAtIndex(index));
+  MenuCellWithEditableText<ExpressionView, MessageTextView> *myCell =
+      static_cast<MenuCellWithEditableText<ExpressionView, MessageTextView> *>(
+          cell);
+  myCell->label()->setLayout(m_distribution->parameterSymbolAtIndex(index));
+  myCell->subLabel()->setMessage(
+      m_distribution->parameterDefinitionAtIndex(index));
   if (m_distribution->uninitializedParameterIndex() == index) {
-    setTextInCell(cell, "", index);
+    textFieldOfCellAtIndex(cell, index)->setText("");
     return;
   }
   FloatParameterController::willDisplayCellForIndex(cell, index);
-}
-
-bool ParametersController::isCellEditing(Escher::HighlightCell *cell,
-                                         int index) {
-  return static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)
-      ->textField()
-      ->isEditing();
-}
-
-void ParametersController::setTextInCell(Escher::HighlightCell *cell,
-                                         const char *text, int index) {
-  static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)
-      ->textField()
-      ->setText(text);
 }
 
 HighlightCell *ParametersController::reusableParameterCell(int index,
@@ -94,6 +82,14 @@ HighlightCell *ParametersController::reusableParameterCell(int index,
   assert(index >= 0);
   assert(index < k_maxNumberOfCells);
   return &m_menuListCell[index];
+}
+
+TextField *ParametersController::textFieldOfCellAtIndex(HighlightCell *cell,
+                                                        int index) {
+  assert(typeAtIndex(index) == k_parameterCellType);
+  return static_cast<
+             MenuCellWithEditableText<ExpressionView, MessageTextView> *>(cell)
+      ->textField();
 }
 
 int ParametersController::reusableParameterCellCount(int type) {

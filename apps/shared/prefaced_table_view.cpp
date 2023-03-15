@@ -134,7 +134,7 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
         KDPoint(m_mainTableView->contentOffset().x(), 0));
     setChildFrame(&m_rowPrefaceView,
                   KDRect(rect.x(), rect.y(), rect.width(), rowPrefaceHeight),
-                  force);
+                  true);
     assert(m_rowPrefaceView.leftMargin() == m_mainTableView->leftMargin());
     assert(m_rowPrefaceView.rightMargin() == m_mainTableView->rightMargin());
     assert(m_rowPrefaceView.topMargin() == 0);

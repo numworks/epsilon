@@ -14,6 +14,9 @@ class DropdownWidget : public CellWidget {
   // CellWidget
   const View* view() const override { return m_dropdown; }
   bool alwaysAlignWithLabelAsAccessory() const override { return true; }
+  bool preventRightAlignedSubLabel(Type type) const override {
+    return type == Type::Accessory;
+  }
 
  private:
   Dropdown* m_dropdown;
@@ -52,7 +55,6 @@ class MenuCellWithDropdown : public MenuCell<Label, SubLabel, DropdownWidget>,
     m_dropdown.setHighlighted(highlight);
     MenuCell<Label, SubLabel, DropdownWidget>::setHighlighted(highlight);
   }
-  bool shouldAlignSublabelRight() const override { return false; }
 
  private:
   Dropdown m_dropdown;

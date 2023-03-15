@@ -55,7 +55,6 @@ class TableView : public ScrollView {
   const char *className() const override { return "TableView"; }
 #endif
   TableViewDataSource *dataSource() { return m_contentView.dataSource(); }
-  void layoutSubviews(bool force = false) override;
   int numberOfDisplayableCells() {
     return m_contentView.numberOfDisplayableCells();
   }

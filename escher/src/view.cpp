@@ -34,6 +34,9 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
    * dirty rectangle and the rectangle forced to be redrawn. The rectangle to
    * redraw must also be included in the current view bounds and in the
    * rectangle rect. */
+  if (rect.isEmpty()) {
+    return KDRectZero;
+  }
   KDRect visibleRect = rect.intersectedWith(m_frame);
   KDRect rectNeedingRedraw =
       visibleRect.intersectedWith(m_dirtyRect)

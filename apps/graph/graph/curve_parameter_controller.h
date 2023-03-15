@@ -1,7 +1,8 @@
 #ifndef GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 #define GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 
-#include <escher/buffer_table_cell_with_editable_text.h>
+#include <escher/buffer_text_view.h>
+#include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_table_cell_with_chevron.h>
 
 #include "../../shared/explicit_float_parameter_controller.h"
@@ -51,7 +52,8 @@ class CurveParameterController
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  const char* text,
                                  Ion::Events::Event event) override;
-
+  Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
+                                            int index) override;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;
@@ -60,15 +62,15 @@ class CurveParameterController
     return cell(index) == &m_derivativeNumberCell &&
            function()->properties().numberOfCurveParameters() == 2;
   };
-  int cellIndex(int visibleCellIndex) const;
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx,
    * CalculateOnTheCurve + max(Color*Curve)) */
   static constexpr size_t k_titleSize =
       40;  // "Berechnen auf der türkisen Kurve"
   char m_title[k_titleSize];
-  Escher::BufferTableCellWithEditableText m_abscissaCell;
-  Escher::BufferTableCellWithEditableText m_imageCell;
-  Escher::BufferTableCellWithEditableText m_derivativeNumberCell;
+  Escher::MenuCellWithEditableText<Escher::BufferTextView> m_abscissaCell;
+  Escher::MenuCellWithEditableText<Escher::BufferTextView> m_imageCell;
+  Escher::MenuCellWithEditableText<Escher::BufferTextView>
+      m_derivativeNumberCell;
   Escher::MessageTableCellWithChevron m_calculationCell;
   Escher::MessageTableCellWithChevron m_optionsCell;
   GraphController* m_graphController;

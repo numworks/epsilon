@@ -66,7 +66,7 @@ const char *CurveParameterController::title() {
 void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell,
                                                        int index) {
   I18n::Message name = I18n::Message::Default;
-  BufferTableCellWithEditableText *parameterCells[] = {
+  MenuCellWithEditableText<BufferTextView> *parameterCells[] = {
       &m_abscissaCell, &m_imageCell, &m_derivativeNumberCell};
   if (index < function()->properties().numberOfCurveParameters()) {
     ContinuousFunctionProperties::CurveParameter parameter =
@@ -75,7 +75,7 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell,
     parameterCells[index]->setEditable(parameter.editable);
   }
   if (name != I18n::Message::Default) {
-    parameterCells[index]->setMessageWithPlaceholders(name);
+    parameterCells[index]->label()->setMessageWithPlaceholders(name);
     ExplicitFloatParameterController::willDisplayCellForIndex(cell, index);
     return;
   }
@@ -92,7 +92,7 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell,
       assert(cell == &m_derivativeNumberCell);
       function()->derivativeNameWithArgument(buffer, bufferSize);
     }
-    parameterCells[index]->setLabelText(buffer);
+    parameterCells[index]->label()->setText(buffer);
     ExplicitFloatParameterController::willDisplayCellForIndex(cell, index);
   }
 }
@@ -145,6 +145,14 @@ bool CurveParameterController::textFieldDidFinishEditing(
     stack->push(&m_preimageGraphController);
   }
   return true;
+}
+
+TextField *CurveParameterController::textFieldOfCellAtIndex(
+    HighlightCell *thisCell, int index) {
+  assert(cell(index) == &m_abscissaCell || cell(index) == &m_imageCell ||
+         cell(index) == &m_derivativeNumberCell);
+  return static_cast<MenuCellWithEditableText<BufferTextView> *>(thisCell)
+      ->textField();
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {

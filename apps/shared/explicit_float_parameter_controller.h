@@ -10,7 +10,10 @@
 namespace Shared {
 
 /* This controller edits float parameter of any model (given through
- * parameterAtIndex and setParameterAtIndex). */
+ * parameterAtIndex and setParameterAtIndex).
+ *
+ * TODO: This class almost a copy paste of FloatParameterController
+ * and should probably be factorized/removed. */
 
 class ExplicitFloatParameterController
     : public Escher::ExplicitSelectableListViewController,
@@ -35,12 +38,11 @@ class ExplicitFloatParameterController
     return static_cast<Escher::StackViewController *>(parentResponder());
   }
   virtual float parameterAtIndex(int index) = 0;
-  virtual bool isCellEditing(Escher::HighlightCell *cell, int index);
-  virtual void setTextInCell(Escher::HighlightCell *cell, const char *text,
-                             int index);
 
  private:
   virtual bool setParameterAtIndex(int parameterIndex, float f) = 0;
+  virtual Escher::TextField *textFieldOfCellAtIndex(Escher::HighlightCell *cell,
+                                                    int index) = 0;
 };
 
 }  // namespace Shared

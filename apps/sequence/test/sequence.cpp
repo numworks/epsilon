@@ -730,19 +730,19 @@ QUIZ_CASE(sequence_simply_recursive) {
   SequenceContext* sequenceContext = globalContext.sequenceContext();
   quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence,
                           "3(u(n)+2)+u(n)", "0", nullptr, sequenceContext)
-                  ->isSimplyRecursive(sequenceContext));
+                  ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
   quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence, "v(n)+2",
                            "0", nullptr, sequenceContext)
-                   ->isSimplyRecursive(sequenceContext));
+                   ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
   quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence,
                            "u(n)+cos(n)", "0", nullptr, sequenceContext)
-                   ->isSimplyRecursive(sequenceContext));
+                   ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
   quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence, "2*u(n-2)",
                            "0", nullptr, sequenceContext)
-                   ->isSimplyRecursive(sequenceContext));
+                   ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
 }
 

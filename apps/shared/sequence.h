@@ -93,9 +93,9 @@ class Sequence : public Function {
   Poincare::Layout nameLayout();
   bool isDefined() override;
   bool isEmpty() override;
-  /* Returns true if u(n+1) depends only on u(n) and not on n, another sequence
-   * or another rank of u */
-  bool isSimplyRecursive(Poincare::Context *context);
+  /* Sequence u is suitable for cobweb if it is simply recursive and if u(n+1)
+   * depends only on u(n) and not on n, another sequence or another rank of u */
+  bool isSuitableForCobweb(Poincare::Context *context);
 
   // Approximation
   Poincare::Coordinate2D<float> evaluateXYAtParameter(

@@ -94,7 +94,7 @@ void CobwebController::setupRange() {
 
 void CobwebController::setRecord(Ion::Storage::Record record) {
   m_record = record;
-  m_isSuitable = sequence()->isSimplyRecursive(App::app()->localContext());
+  m_isSuitable = sequence()->isSuitableForCobweb(App::app()->localContext());
 }
 
 ExpiringPointer<Shared::Sequence> CobwebController::sequence() const {

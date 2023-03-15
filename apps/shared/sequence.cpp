@@ -132,7 +132,7 @@ bool Sequence::isEmpty() {
                                       data->initialConditionSize(1) == 0)));
 }
 
-bool Sequence::isSimplyRecursive(Context *context) {
+bool Sequence::isSuitableForCobweb(Context *context) {
   constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
   char buffer[bufferSize];
   name(buffer, bufferSize);

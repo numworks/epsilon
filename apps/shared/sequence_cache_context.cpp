@@ -10,13 +10,14 @@
 #include "sequence.h"
 #include "sequence_store.h"
 
+using namespace Poincare;
+
 namespace Shared {
 
-int nameIndexForSymbol(const Poincare::SymbolAbstract &symbol) {
+int nameIndexForSymbol(const SymbolAbstract &symbol) {
   // return 0 for u, 1 for v and 2 for w
-  char name = const_cast<Poincare::Symbol &>(
-                  static_cast<const Poincare::Symbol &>(symbol))
-                  .name()[0];
+  char name =
+      const_cast<Symbol &>(static_cast<const Symbol &>(symbol)).name()[0];
   assert(name >= 'u' && name <= 'w');  // u, v or w
   assert(
       name >= SequenceStore::k_sequenceNames[0][0] &&
@@ -35,11 +36,10 @@ SequenceCacheContext<T>::SequenceCacheContext(SequenceContext *sequenceContext,
       m_sequenceBeingComputed(sequenceBeingComputed) {}
 
 template <typename T>
-const Poincare::Expression
-SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
-    const Poincare::SymbolAbstract &symbol, bool clone,
+const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
+    const SymbolAbstract &symbol, bool clone,
     ContextWithParent *lastDescendantContext) {
-  if (symbol.type() != Poincare::ExpressionNode::Type::Sequence) {
+  if (symbol.type() != ExpressionNode::Type::Sequence) {
     return ContextWithParent::protectedExpressionForSymbolAbstract(
         symbol, clone, lastDescendantContext);
   }
@@ -50,26 +50,23 @@ SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
   Ion::Storage::Record record =
       m_sequenceContext->sequenceStore()->recordAtNameIndex(index);
   if (record.isNull()) {
-    return Poincare::Float<T>::Builder(result);
+    return Float<T>::Builder(result);
   }
   assert(record.fullName()[0] == symbol.name()[0]);
   Sequence *seq = m_sequenceContext->sequenceStore()->modelForRecord(record);
   if (!seq->fullName()) {
-    return Poincare::Float<T>::Builder(result);
+    return Float<T>::Builder(result);
   }
-  Poincare::Expression rankExpression = symbol.childAtIndex(0).clone();
-  if (rankExpression.isIdenticalTo(
-          Poincare::Symbol::Builder(UCodePointUnknown))) {
+  Expression rankExpression = symbol.childAtIndex(0).clone();
+  if (rankExpression.isIdenticalTo(Symbol::Builder(UCodePointUnknown))) {
     // rank = n
     result = m_values[index][0];
-  } else if (rankExpression.isIdenticalTo(Poincare::Addition::Builder(
-                 Poincare::Symbol::Builder(UCodePointUnknown),
-                 Poincare::Rational::Builder(1)))) {
+  } else if (rankExpression.isIdenticalTo(Addition::Builder(
+                 Symbol::Builder(UCodePointUnknown), Rational::Builder(1)))) {
     // rank = n+1
     result = m_values[index][1];
-  } else if (rankExpression.isIdenticalTo(Poincare::Addition::Builder(
-                 Poincare::Symbol::Builder(UCodePointUnknown),
-                 Poincare::Rational::Builder(2)))) {
+  } else if (rankExpression.isIdenticalTo(Addition::Builder(
+                 Symbol::Builder(UCodePointUnknown), Rational::Builder(2)))) {
     // rank = n+2
     result = m_values[index][2];
   }
@@ -87,7 +84,7 @@ SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
       result = seq->valueAtRank<T>(rankValue, m_sequenceContext, true);
     }
   }
-  return Poincare::Float<T>::Builder(result);
+  return Float<T>::Builder(result);
 }
 
 template <typename T>

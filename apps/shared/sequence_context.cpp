@@ -43,27 +43,7 @@ void TemplatedSequenceContext<T>::stepUntilRank(int n, SequenceContext *sqctx,
   // recurrence from the initial rank and step until rank n. Otherwise, we can
   // start at the current rank and step until rank n.
   if (*currentRank > n) {
-    // Reset rank and its values
     *currentRank = -1;
-    int start, stop;
-    T *sequencesRankValues;
-    if (stepAllSequences) {
-      start = 0;
-      stop = SequenceStore::k_maxNumberOfSequences;
-      sequencesRankValues = reinterpret_cast<T *>(&m_commonRankValues);
-    } else {
-      start = sequenceIndex;
-      stop = sequenceIndex + 1;
-      sequencesRankValues = reinterpret_cast<T *>(&m_independentRankValues);
-    }
-    for (int sequence = start; sequence < stop; sequence++) {
-      T *sequencePointer = sequencesRankValues +
-                           sequence * (SequenceStore::k_maxRecurrenceDepth + 1);
-      for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
-           depth++) {
-        *(sequencePointer + depth) = NAN;
-      }
-    }
   }
   while (*currentRank < n) {
     stepToNextRank(sqctx, sequenceIndex);

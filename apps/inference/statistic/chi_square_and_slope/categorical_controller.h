@@ -2,7 +2,6 @@
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_CONTROLLER_H
 
 #include <escher/button_cell.h>
-#include <escher/cell_with_margins.h>
 #include <escher/invocation.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/selectable_list_view_controller.h>
@@ -119,8 +118,7 @@ class InputCategoricalController
   }
 
   Statistic* m_statistic;
-  Escher::MessageTableCellWithEditableTextWithMessage m_innerSignificanceCell;
-  Escher::CellWithMargins m_significanceCell;
+  Escher::MessageTableCellWithEditableTextWithMessage m_significanceCell;
 };
 
 }  // namespace Inference

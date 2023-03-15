@@ -9,8 +9,11 @@ namespace Escher {
 
 class DropdownWidget : public CellWidget {
  public:
-  const View* view() const override { return m_dropdown; }
   void setDropdown(Dropdown* dropdown) { m_dropdown = dropdown; }
+
+  // CellWidget
+  const View* view() const override { return m_dropdown; }
+  bool alwaysAlignWithLabelAsAccessory() const override { return true; }
 
  private:
   Dropdown* m_dropdown;
@@ -50,7 +53,6 @@ class MenuCellWithDropdown : public MenuCell<Label, SubLabel, DropdownWidget>,
     MenuCell<Label, SubLabel, DropdownWidget>::setHighlighted(highlight);
   }
   bool shouldAlignSublabelRight() const override { return false; }
-  bool forceAlignLabelAndAccessory() const override { return true; }
 
  private:
   Dropdown m_dropdown;

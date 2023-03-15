@@ -86,15 +86,9 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   virtual CellWidget* subLabel() = 0;
   virtual CellWidget* accessory() = 0;
 
-  const View* labelView() const {
-    return const_cast<AbstractMenuCell*>(this)->label()->view();
-  }
-  const View* subLabelView() const {
-    return const_cast<AbstractMenuCell*>(this)->subLabel()->view();
-  }
-  const View* accessoryView() const {
-    return const_cast<AbstractMenuCell*>(this)->accessory()->view();
-  }
+  const View* labelView() const { return constLabel()->view(); }
+  const View* subLabelView() const { return constSubLabel()->view(); }
+  const View* accessoryView() const { return constAccessory()->view(); }
 
   KDCoordinate minimalHeightForOptimalDisplay() const;
 
@@ -121,11 +115,11 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
 
   KDColor backgroundColor() const { return m_backgroundColor; }
   bool giveAccessoryAllWidth() const {
-    return const_cast<AbstractMenuCell*>(this)
-        ->accessory()
-        ->giveAllWidthAsAccessory();
+    return constAccessory()->giveAllWidthAsAccessory();
   }
-  virtual bool forceAlignLabelAndAccessory() const { return false; }
+  bool forceAlignLabelAndAccessory() const {
+    return constAccessory()->alwaysAlignWithLabelAsAccessory();
+  }
   virtual bool shouldAlignSublabelRight() const { return true; }
   virtual bool shouldHideSublabel() { return false; }
   // This method is only used to assert that no subview overlaps after layouting
@@ -133,6 +127,16 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   bool singleRowMode() const;
 
  private:
+  const CellWidget* constLabel() const {
+    return const_cast<AbstractMenuCell*>(this)->label();
+  }
+  const CellWidget* constSubLabel() const {
+    return const_cast<AbstractMenuCell*>(this)->subLabel();
+  }
+  const CellWidget* constAccessory() const {
+    return const_cast<AbstractMenuCell*>(this)->accessory();
+  }
+
   KDSize labelSize() const {
     return labelView() ? labelView()->minimalSizeForOptimalDisplay()
                        : KDSizeZero;

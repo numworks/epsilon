@@ -13,6 +13,7 @@ class CellWidget {
   virtual void defaultInitialization(Type type) {}
   virtual void setBackgroundColor(KDColor color) {}
   virtual bool giveAllWidthAsAccessory() const { return false; }
+  virtual bool alwaysAlignWithLabelAsAccessory() const { return false; }
   virtual bool enterOnEvent(Ion::Events::Event event) const { return false; }
 };
 

@@ -120,7 +120,7 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
-  virtual KDColor backgroundColor() const { return KDColorWhite; }
+  KDColor backgroundColor() const { return m_backgroundColor; }
   virtual bool forceAlignLabelAndAccessory() const { return false; }
   virtual bool shouldAlignSublabelRight() const { return true; }
   virtual KDCoordinate accessoryMinimalWidthOverridden() const { return -1; }

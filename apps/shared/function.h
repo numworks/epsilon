@@ -44,7 +44,7 @@ class Function : public ExpressionModelHandle {
   virtual float rangeStep() const { return NAN; }
 
   // Name
-  int name(char* buffer, size_t bufferSize);
+  int name(char* buffer, size_t bufferSize) const;
   virtual int nameWithArgument(char* buffer, size_t bufferSize);
   // Insert the value of the evaluation (or the symbol if symbolValue) in buffer
   virtual int printValue(double cursorT, double cursorX, double cursorY,

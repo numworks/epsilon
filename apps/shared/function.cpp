@@ -38,7 +38,7 @@ int Function::printValue(double cursorT, double cursorX, double cursorY,
       symbolValue ? cursorT : cursorY, buffer, bufferSize, precision);
 }
 
-int Function::name(char *buffer, size_t bufferSize) {
+int Function::name(char *buffer, size_t bufferSize) const {
   return SymbolAbstract::TruncateExtension(buffer, fullName(), bufferSize);
 }
 

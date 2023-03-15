@@ -95,7 +95,7 @@ class Sequence : public Function {
   bool isEmpty() override;
   /* Sequence u is suitable for cobweb if it is simply recursive and if u(n+1)
    * depends only on u(n) and not on n, another sequence or another rank of u */
-  bool isSuitableForCobweb(Poincare::Context *context);
+  bool isSuitableForCobweb(Poincare::Context *context) const;
 
   // Approximation
   Poincare::Coordinate2D<float> evaluateXYAtParameter(

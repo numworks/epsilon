@@ -3,14 +3,13 @@
 namespace OMG {
 
 size_t CodePointSearch(UnicodeDecoder * decoder, CodePoint c) {
-  size_t start = decoder->start();
-  size_t stoppingPosition = decoder->end();
-  while (start < stoppingPosition) {
-    if (decoder->nextCodePoint() == c) {
-      return decoder->position();
+  while (CodePoint codePoint = decoder->nextCodePoint()) {
+    if (codePoint == c) {
+      return decoder->position() - 1;
     }
   }
-  return stoppingPosition;
+  decoder->previousCodePoint();
+  return decoder->position();
 }
 
 int CompareDecoders(UnicodeDecoder * a, UnicodeDecoder * b) {

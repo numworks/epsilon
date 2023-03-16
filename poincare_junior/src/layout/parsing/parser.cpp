@@ -14,6 +14,8 @@
 #include <poincare_junior/src/layout/parenthesis_layout.h>
 #include <poincare_junior/src/layout/vertical_offset_layout.h>
 
+#include <omgpj/unicode_helper.h>
+
 #include <algorithm>
 #include <utility>
 
@@ -379,16 +381,6 @@ void Parser::parseUnexpected(EditionReference &leftHandSide,
   m_status = Status::Error;  // Unexpected Token
 }
 
-static size_t CodePointSearch(UnicodeDecoder & decoder, CodePoint c) {
-  while (CodePoint codePoint = decoder.nextCodePoint()) {
-    if (codePoint == c) {
-      return decoder.position() - 1;
-    }
-  }
-  decoder.previousCodePoint();
-  return decoder.position();
-}
-
 static RackLayoutDecoder TokenToDecoder(const Token & token) {
   Node rack = token.firstLayout().parent();
   size_t start = rack.indexOfChild(token.firstLayout());
@@ -413,14 +405,14 @@ void Parser::parseNumber(EditionReference &leftHandSide, Token::Type stoppingTyp
   } else {
     // the tokenizer have already ensured the float is syntactically correct
     RackLayoutDecoder decoder(rack, start, end);
-    size_t decimalPoint = CodePointSearch(decoder, '.');
+    size_t decimalPoint = OMG::CodePointSearch(&decoder, '.');
     if (decimalPoint == end) {
       /* continue with the same decoder since E should be after the decimal
        * point, except when there is no point */
       decoder.setPosition(start);
     }
     size_t smallE =
-        CodePointSearch(decoder, 'E');  // UCodePointLatinLetterSmallCapitalE);
+      OMG::CodePointSearch(&decoder, 'E');  // UCodePointLatinLetterSmallCapitalE);
 
     RackLayoutDecoder integerDigits(rack, start, std::min(smallE, decimalPoint));
     RackLayoutDecoder fractionalDigits(rack, decimalPoint + 1, smallE);

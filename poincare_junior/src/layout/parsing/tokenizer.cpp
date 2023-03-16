@@ -366,7 +366,7 @@ Token::Type Tokenizer::stringTokenType(size_t string, size_t * length) const {
   // If there are two \" around an identifier, it is a forced custom identifier
   size_t lastCharOfString = string + *length - 1;
   RackLayoutDecoder insideQuotes(m_decoder.mainLayout(), string + 1, lastCharOfString);
-  if (*length > 2 && m_decoder.codePointAt(string) == '"' && m_decoder.codePointAt(lastCharOfString) == '"' && OMG::CodePointSearch(insideQuotes, '"') == lastCharOfString) {
+  if (*length > 2 && m_decoder.codePointAt(string) == '"' && m_decoder.codePointAt(lastCharOfString) == '"' && OMG::CodePointSearch(&insideQuotes, '"') == lastCharOfString) {
     return Token::Type::CustomIdentifier;
   }
   // if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {

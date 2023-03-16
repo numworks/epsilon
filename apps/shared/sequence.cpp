@@ -246,33 +246,22 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
   SequenceCacheContext<T> ctx =
       SequenceCacheContext<T>(sqctx, independent ? sequenceIndex : -1);
 
-  /* Hold values = {{u(rank), u(rank-1), u(rank-2)}, {v(rank), v(rank-1),
-   * v(rank-2)}, {w(rank), w(rank-1), w(rank-2)}}
-   * WARNING : values must be ordered by name index (u then v then w) because
-   * SequenceCacheContext needs it. */
+  int start, stop;
+  if (!independent) {
+    start = 0;
+    stop = SequenceStore::k_maxNumberOfSequences;
+  } else {
+    start = sequenceIndex;
+    stop = sequenceIndex + 1;
+  }
+
   T values[SequenceStore::k_maxNumberOfSequences]
-          [SequenceStore::k_maxRecurrenceDepth + 1];
-  /* In case we step only one sequence, we use independant values stored in
-   * SequenceContext (m_independentRankValues). However, these values might not
-   * be aligned on the same rank. Thus, we align them all at the rank of the
-   * sequence we are stepping. */
-  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    if (independent && sqctx->independentRank<T>(i) != rank) {
-      int offset = rank - sqctx->independentRank<T>(i);
-      if (offset != 0) {
-        for (int j = SequenceStore::k_maxRecurrenceDepth; j >= 0; j--) {
-          values[i][j] =
-              j - offset < 0 || j - offset > SequenceStore::k_maxRecurrenceDepth
-                  ? NAN
-                  : sqctx->independentRankSequenceValue<T>(i, j - offset);
-        }
-      }
-    } else {
-      for (int j = 0; j < SequenceStore::k_maxRecurrenceDepth + 1; j++) {
-        values[i][j] = independent
-                           ? sqctx->independentRankSequenceValue<T>(i, j)
-                           : sqctx->commonRankSequenceValue<T>(i, j);
-      }
+          [SequenceStore::k_maxRecurrenceDepth + 1] = {
+              {NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}};
+  for (int i = start; i < stop; i++) {
+    for (int j = 0; j < SequenceStore::k_maxRecurrenceDepth + 1; j++) {
+      values[i][j] = independent ? sqctx->independentRankSequenceValue<T>(i, j)
+                                 : sqctx->commonRankSequenceValue<T>(i, j);
     }
   }
 
@@ -288,7 +277,7 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
       // we want to assess u(n) at n=rank
       x = static_cast<T>(rank);
       e = expressionReduced(sqctx);
-      for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+      for (int i = start; i < stop; i++) {
         // In context, u(rank) matches u(n)
         ctx.setValue(values[i][0], i, 0);
       }
@@ -303,7 +292,7 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
       // we want to assess u(n+1) at n=rank-1
       x = static_cast<T>(rank - 1);
       e = expressionReduced(sqctx);
-      for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+      for (int i = start; i < stop; i++) {
         // In context, u(rank) matches u(n+1)
         ctx.setValue(values[i][0], i, 1);
         // In context, u(rank-1) matches u(n)
@@ -326,7 +315,7 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
       // we want to assess u(n+2) at n=rank-2
       x = static_cast<T>(rank - 2);
       e = expressionReduced(sqctx);
-      for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+      for (int i = start; i < stop; i++) {
         // In context, u(rank) matches u(n+2)
         ctx.setValue(values[i][0], i, 2);
         // In context, u(rank-1) matches u(n+1)

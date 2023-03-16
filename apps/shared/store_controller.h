@@ -6,13 +6,13 @@
 #include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
 
+#include "buffer_function_title_cell.h"
 #include "double_pair_store.h"
 #include "editable_cell_table_view_controller.h"
 #include "input_event_handler_delegate.h"
 #include "layout_field_delegate.h"
 #include "prefaced_table_view.h"
 #include "store_parameter_controller.h"
-#include "store_title_cell.h"
 
 namespace Shared {
 
@@ -128,7 +128,7 @@ class StoreController : public EditableCellTableViewController,
   // StoreColumnHelper
   DoublePairStore* store() override { return m_store; }
 
-  StoreTitleCell m_titleCells[k_numberOfTitleCells];
+  BufferFunctionTitleCell m_titleCells[k_numberOfTitleCells];
 
   Escher::RegularTableSize1DManager m_widthManager;
   Escher::RegularTableSize1DManager m_heightManager;

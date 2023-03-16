@@ -83,7 +83,6 @@ app_shared_src = $(addprefix apps/shared/,\
   round_cursor_view.cpp \
   scrollable_multiple_expressions_view.cpp \
   scrollable_two_expressions_cell.cpp \
-  separable.cpp \
   separator_even_odd_buffer_text_cell.cpp \
   sequence.cpp \
   sequence_cache_context.cpp \
@@ -96,7 +95,6 @@ app_shared_src = $(addprefix apps/shared/,\
   store_app.cpp \
   store_controller.cpp \
   store_parameter_controller.cpp \
-  store_title_cell.cpp \
   store_menu_controller.cpp \
   sum_graph_controller.cpp \
   tab_table_controller.cpp \

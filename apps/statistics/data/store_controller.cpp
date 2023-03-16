@@ -112,7 +112,8 @@ double StoreController::dataAtLocation(int columnIndex, int rowIndex) {
 
 void StoreController::setTitleCellText(HighlightCell *cell, int columnIndex) {
   assert(typeAtLocation(columnIndex, 0) == k_titleCellType);
-  StoreTitleCell *myTitleCell = static_cast<StoreTitleCell *>(cell);
+  BufferFunctionTitleCell *myTitleCell =
+      static_cast<BufferFunctionTitleCell *>(cell);
   if (isCumulatedFrequencyColumn(columnIndex)) {
     myTitleCell->setText(
         I18n::translate(I18n::Message::CumulatedFrequencyColumnName));

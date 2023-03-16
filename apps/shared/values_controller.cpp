@@ -8,7 +8,6 @@
 #include <algorithm>
 
 #include "function_app.h"
-#include "separable.h"
 
 using namespace Poincare;
 using namespace Escher;

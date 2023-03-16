@@ -1,9 +1,9 @@
 #ifndef STATISTICS_CALCULATION_CONTROLLER_H
 #define STATISTICS_CALCULATION_CONTROLLER_H
 
+#include <apps/shared/buffer_function_title_cell.h>
 #include <apps/shared/double_pair_table_controller.h>
 #include <apps/shared/separator_even_odd_buffer_text_cell.h>
-#include <apps/shared/store_title_cell.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 
@@ -31,6 +31,7 @@ class CalculationController : public Shared::DoublePairTableController {
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
+  KDCoordinate separatorBeforeColumn(int index) override;
 
   // ViewController
   TELEMETRY_ID("Calculation");
@@ -132,7 +133,8 @@ class CalculationController : public Shared::DoublePairTableController {
   int fixedNumberOfRows() const;
   Shared::DoublePairStore* store() const override { return m_store; }
 
-  Shared::StoreTitleCell m_seriesTitleCells[k_numberOfSeriesTitleCells];
+  Shared::BufferFunctionTitleCell
+      m_seriesTitleCells[k_numberOfSeriesTitleCells];
   Escher::EvenOddMessageTextCell
       m_calculationTitleCells[k_numberOfCalculationTitleCells];
   Escher::EvenOddMessageTextCell

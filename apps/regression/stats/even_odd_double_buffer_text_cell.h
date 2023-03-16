@@ -7,10 +7,10 @@
 
 namespace Regression {
 
-class EvenOddDoubleBufferTextCellWithSeparator : public Escher::EvenOddCell,
-                                                 public Escher::Responder {
+class EvenOddDoubleBufferTextCell : public Escher::EvenOddCell,
+                                    public Escher::Responder {
  public:
-  EvenOddDoubleBufferTextCellWithSeparator(
+  EvenOddDoubleBufferTextCell(
       Escher::Responder* parentResponder = nullptr,
       float horizontalAlignment = KDContext::k_alignRight,
       float verticalAlignment = KDContext::k_alignCenter);
@@ -26,7 +26,6 @@ class EvenOddDoubleBufferTextCellWithSeparator : public Escher::EvenOddCell,
   void setFirstText(const char* textContent);
   void setSecondText(const char* textContent);
   void setTextColor(KDColor textColor);
-  void drawRect(KDContext* ctx, KDRect rect) const override;
   int numberOfSubviews() const override;
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

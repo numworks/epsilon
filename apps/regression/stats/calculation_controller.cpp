@@ -79,17 +79,17 @@ void CalculationController::tableViewDidChangeSelectionAndDidScroll(
     /* If we are on a double text cell, we have to choose which subcell to
      * select It has to be done after the scroll for the selectedCell to be
      * defined */
-    EvenOddDoubleBufferTextCellWithSeparator *myCell =
-        (EvenOddDoubleBufferTextCellWithSeparator *)t->selectedCell();
+    EvenOddDoubleBufferTextCell *myCell =
+        static_cast<EvenOddDoubleBufferTextCell *>(t->selectedCell());
     // Default selected subcell is the left one
     bool firstSubCellSelected = true;
     if (previousSelectedCol > 1 && previousSelectedRow >= 0 &&
         previousSelectedRow <= k_numberOfDoubleBufferCalculations) {
       // If we come from another double text cell, we have to update
       // subselection
-      EvenOddDoubleBufferTextCellWithSeparator *myPreviousCell =
-          (EvenOddDoubleBufferTextCellWithSeparator *)t->cellAtLocation(
-              previousSelectedCol, previousSelectedRow);
+      EvenOddDoubleBufferTextCell *myPreviousCell =
+          static_cast<EvenOddDoubleBufferTextCell *>(
+              t->cellAtLocation(previousSelectedCol, previousSelectedRow));
       /* If the selection stays in the same column, we copy the subselection
        * from previous cell. Otherwise, the selection has jumped to another
        * column, we thus subselect the other subcell. */
@@ -115,9 +115,8 @@ bool CalculationController::canStoreContentOfCellAtLocation(
     return false;
   }
   if (calculationIndex > k_numberOfBufferCalculations) {
-    SeparatorEvenOddBufferTextCell *bufferCell =
-        static_cast<SeparatorEvenOddBufferTextCell *>(
-            t->cellAtLocation(col, row));
+    EvenOddBufferTextCell *bufferCell =
+        static_cast<EvenOddBufferTextCell *>(t->cellAtLocation(col, row));
     return strcmp(bufferCell->text(), I18n::translate(I18n::Message::Dash)) &&
            strcmp(bufferCell->text(), I18n::translate(I18n::Message::Disabled));
   }
@@ -212,8 +211,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
            Poincare::Helpers::EqualOrBothNan(
                *calculation2, (m_store->*calculationMethods[calculationIndex])(
                                   seriesNumber, 1, false)));
-    EvenOddDoubleBufferTextCellWithSeparator *myCell =
-        static_cast<EvenOddDoubleBufferTextCellWithSeparator *>(cell);
+    EvenOddDoubleBufferTextCell *myCell =
+        static_cast<EvenOddDoubleBufferTextCell *>(cell);
     constexpr int bufferSize =
         PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
@@ -225,8 +224,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     myCell->setSecondText(buffer);
     return;
   }
-  SeparatorEvenOddBufferTextCell *bufferCell =
-      static_cast<SeparatorEvenOddBufferTextCell *>(cell);
+  EvenOddBufferTextCell *bufferCell =
+      static_cast<EvenOddBufferTextCell *>(cell);
   bufferCell->setTextColor(KDColorBlack);
   if (calculationIndex < k_numberOfBufferCalculations) {
     const int singleCalculationIndex =

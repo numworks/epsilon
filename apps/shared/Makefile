@@ -82,7 +82,6 @@ app_shared_src = $(addprefix apps/shared/,\
   round_cursor_view.cpp \
   scrollable_multiple_expressions_view.cpp \
   scrollable_two_expressions_cell.cpp \
-  separator_even_odd_buffer_text_cell.cpp \
   sequence.cpp \
   sequence_cache_context.cpp \
   sequence_context.cpp \

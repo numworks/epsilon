@@ -20,27 +20,17 @@ class TemplatedSequenceContext {
   constexpr static bool IsAcceptableRank(int n) {
     return 0 <= n && n <= k_maxRecurrentRank;
   }
-
-  // Common rank
-  int commonRank() const { return m_commonRank; }
-  T commonRankSequenceValue(int sequenceIndex, int depth) const {
+  int rank(int sequenceIndex, bool independent) const {
+    assert(0 <= sequenceIndex &&
+           sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+    return independent ? m_independentRanks[sequenceIndex] : m_commonRank;
+  }
+  T rankSequenceValue(int sequenceIndex, int depth, bool independent) const {
     assert(0 <= sequenceIndex &&
            sequenceIndex < SequenceStore::k_maxNumberOfSequences);
     assert(0 <= depth && depth < SequenceStore::k_maxRecurrenceDepth + 1);
-    return m_commonRankValues[sequenceIndex][depth];
-  }
-
-  // Independant rank
-  int independentRank(int sequenceIndex) {
-    assert(0 <= sequenceIndex &&
-           sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-    return m_independentRanks[sequenceIndex];
-  }
-  T independentRankSequenceValue(int sequenceIndex, int depth) {
-    assert(0 <= sequenceIndex &&
-           sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-    assert(0 <= depth && depth < SequenceStore::k_maxRecurrenceDepth + 1);
-    return m_independentRankValues[sequenceIndex][depth];
+    return independent ? m_independentRankValues[sequenceIndex][depth]
+                       : m_commonRankValues[sequenceIndex][depth];
   }
 
  private:
@@ -107,31 +97,16 @@ class SequenceContext : public Poincare::ContextWithParent {
 
   void tidyDownstreamPoolFrom(char* treePoolCursor) override;
 
-  // Common rank
-
   template <typename T>
-  int commonRank() {
-    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())->commonRank();
+  int rank(int sequenceIndex, bool independent) {
+    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
+        ->rank(sequenceIndex, independent);
   }
 
   template <typename T>
-  T commonRankSequenceValue(int sequenceIndex, int rank) {
+  T rankSequenceValue(int sequenceIndex, int depth, bool independent) {
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->commonRankSequenceValue(sequenceIndex, rank);
-  }
-
-  // Independant rank
-
-  template <typename T>
-  int independentRank(int sequenceIndex) {
-    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->independentRank(sequenceIndex);
-  }
-
-  template <typename T>
-  T independentRankSequenceValue(int sequenceIndex, int depth) {
-    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->independentRankSequenceValue(sequenceIndex, depth);
+        ->rankSequenceValue(sequenceIndex, depth, independent);
   }
 
  private:

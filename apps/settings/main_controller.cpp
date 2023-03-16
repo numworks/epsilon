@@ -282,7 +282,10 @@ void MainController::willDisplayCellForIndex(HighlightCell *cell, int index) {
 }
 
 KDCoordinate MainController::separatorBeforeRow(int index) {
-  return typeAtIndex(index) == k_brightnessCellType ? k_defaultRowSeparator : 0;
+  return typeAtIndex(index) == k_brightnessCellType ||
+                 typeAtIndex(index) == k_resetCellType
+             ? k_defaultRowSeparator
+             : 0;
 }
 
 void MainController::viewWillAppear() {

@@ -2,8 +2,8 @@
 #define SETTINGS_PRESS_TO_TEST_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <apps/shared/button_with_separator.h>
 #include <apps/shared/pop_up_controller.h>
+#include <escher/button_cell.h>
 #include <escher/list_view_data_source.h>
 #include <escher/list_view_with_top_and_bottom_views.h>
 #include <escher/selectable_table_view.h>
@@ -33,6 +33,9 @@ class PressToTestController : public Escher::ViewController,
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate separatorBeforeRow(int index) override {
+    return typeAtIndex(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
+  }
   Poincare::ExamMode::PressToTestFlags getPressToTestParams();
   Escher::View* view() override { return &m_view; }
   void resetController();
@@ -56,7 +59,7 @@ class PressToTestController : public Escher::ViewController,
   Escher::ListViewWithTopAndBottomViews m_view;
   PressToTestSwitch m_switchCells[k_numberOfReusableSwitchCells];
   Poincare::ExamMode::PressToTestFlags m_tempPressToTestParams;
-  Shared::ButtonWithSeparator m_activateButton;
+  Escher::ButtonCell m_activateButton;
   Shared::MessagePopUpController m_confirmPopUpController;
 
   static I18n::Message LabelAtIndex(int index);

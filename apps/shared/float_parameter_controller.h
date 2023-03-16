@@ -1,10 +1,10 @@
 #ifndef SHARED_FLOAT_PARAMETER_CONTROLLER_H
 #define SHARED_FLOAT_PARAMETER_CONTROLLER_H
 
+#include <escher/button_cell.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
-#include "button_with_separator.h"
 #include "parameter_text_field_delegate.h"
 
 namespace Shared {
@@ -28,6 +28,9 @@ class FloatParameterController : public Escher::SelectableListViewController<
   Escher::HighlightCell *reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell *cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
+  KDCoordinate separatorBeforeRow(int index) override {
+    return typeAtIndex(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
+  }
   bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
@@ -50,7 +53,7 @@ class FloatParameterController : public Escher::SelectableListViewController<
   virtual void buttonAction();
   virtual bool hasUndefinedValue(const char *text, T floatValue) const;
 
-  ButtonWithSeparator m_okButton;
+  Escher::ButtonCell m_okButton;
 
  private:
   virtual InfinityTolerance infinityAllowanceForRow(int row) const {

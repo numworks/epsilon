@@ -66,14 +66,6 @@ class StoreController : public EditableCellTableViewController,
   void loadMemoizedFormulasFromSnapshot();
 
  protected:
-  constexpr static int k_maxNumberOfDisplayableRows =
-      Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-          k_cellHeight, Escher::Metric::TabHeight);
-  constexpr static int k_maxNumberOfDisplayableColumns =
-      Ion::Display::Width / k_cellWidth + 2;
-  constexpr static int k_maxNumberOfEditableCells =
-      k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableColumns;
-  constexpr static int k_numberOfTitleCells = 4;
   constexpr static int k_titleCellType = 0;
   constexpr static int k_editableCellType = 1;
 
@@ -103,7 +95,8 @@ class StoreController : public EditableCellTableViewController,
   void memoizeFormulaAtColumn(Poincare::Layout formula, int column) override;
 
   PrefacedTableView m_prefacedTableView;
-  Escher::EvenOddEditableTextCell m_editableCells[k_maxNumberOfEditableCells];
+  Escher::EvenOddEditableTextCell
+      m_editableCells[k_maxNumberOfDisplayableCells];
   DoublePairStore* m_store;
   Poincare::Layout
       m_memoizedFormulaForColumn[DoublePairStore::k_numberOfSeries *
@@ -128,7 +121,7 @@ class StoreController : public EditableCellTableViewController,
   // StoreColumnHelper
   DoublePairStore* store() override { return m_store; }
 
-  BufferFunctionTitleCell m_titleCells[k_numberOfTitleCells];
+  BufferFunctionTitleCell m_titleCells[k_maxNumberOfDisplayableColumns];
 
   Escher::RegularTableSize1DManager m_widthManager;
   Escher::RegularTableSize1DManager m_heightManager;

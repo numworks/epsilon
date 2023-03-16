@@ -99,6 +99,14 @@ class PrefacedTableView : public Escher::View,
       return m_mainDataSource->typeAtLocation(columnIndexInMainDataSource(i),
                                               rowIndexInMainDataSource(j));
     }
+    KDCoordinate separatorBeforeColumn(int index) override {
+      return m_mainDataSource->separatorBeforeColumn(
+          columnIndexInMainDataSource(index));
+    }
+    KDCoordinate separatorBeforeRow(int index) override {
+      return m_mainDataSource->separatorBeforeRow(
+          rowIndexInMainDataSource(index));
+    }
 
    protected:
     KDCoordinate nonMemoizedColumnWidth(int i) override final;

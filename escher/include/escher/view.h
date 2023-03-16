@@ -19,12 +19,11 @@ class MemoizedCursorView;
 }
 
 namespace Escher {
-
 /* Key concepts
  * - A View always clips: you cannot draw outside its frame
- * - A View can redraw its whole hierarchy, but a very important optimization is
- *   for it not to do this all the time. So a View will try to track which parts
- *   of it really need to be redrawn.
+ * - A View can redraw its whole hierarchy, but a very important optimization
+ *   is for it not to do this all the time. So a View will try to track which
+ *   parts of it really need to be redrawn.
  * - A view can be offscreen. Until it's attached to the screen, it shouldn't
  *   send any display command. */
 
@@ -41,8 +40,8 @@ class View {
   View() : m_frame(KDRectZero), m_dirtyRect(KDRectZero) {}
 
   /* The drawRect method should be implemented by each View subclass. In a
-   * typical drawRect implementation, a subclass will make drawing calls to the
-   * Kandinsky library using the provided context. */
+   * typical drawRect implementation, a subclass will make drawing calls to
+   * the Kandinsky library using the provided context. */
   virtual void drawRect(KDContext *ctx, KDRect rect) const {
     // By default, a view doesn't do anything, it's transparent
   }
@@ -65,8 +64,8 @@ class View {
 #endif
  protected:
   /* The whole point of the dirty-tracking mechanism is to identify which
-   * pixels have to be redrawn. So in the end it doesn't really need to be bound
-   * to a view, it's really absolute pixels that count.
+   * pixels have to be redrawn. So in the end it doesn't really need to be
+   * bound to a view, it's really absolute pixels that count.
    *
    * That being said, what are the case of dirtyness that we know of?
    *  - Scrolling -> well, everything has to be redrawn anyway

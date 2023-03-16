@@ -84,6 +84,12 @@ enum class BlockType : uint8_t {
   Set,
   List,
   Polynomial,
+  Cosine,
+  Sine,
+  Tangent,
+  ArcCosine,
+  ArcSine,
+  ArcTangent,
   NumberOfExpressions,
   // Layout
   FirstLayout = NumberOfExpressions,
@@ -243,6 +249,12 @@ public:
       case BlockType::Division:
       case BlockType::FractionLayout:
         return 2;
+      case BlockType::Cosine:
+      case BlockType::Sine:
+      case BlockType::Tangent:
+      case BlockType::ArcCosine:
+      case BlockType::ArcSine:
+      case BlockType::ArcTangent:
       case BlockType::Factorial:
       case BlockType::ParenthesisLayout:
       case BlockType::VerticalOffsetLayout:

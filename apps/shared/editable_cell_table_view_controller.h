@@ -48,12 +48,19 @@ class EditableCellTableViewController : public TabTableController,
       Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
           Poincare::Preferences::VeryLargeNumberOfSignificantDigits) *
           KDFont::GlyphWidth(k_cellFont) +
-      2 * Escher::Metric::SmallCellMargin +
-      Escher::Metric::TableSeparatorThickness;
+      2 * Escher::Metric::SmallCellMargin;
   constexpr static KDCoordinate k_margin =
       Escher::Metric::TableSeparatorThickness;
   constexpr static KDCoordinate k_scrollBarMargin =
       Escher::Metric::CommonRightMargin;
+
+  constexpr static int k_maxNumberOfDisplayableRows =
+      Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
+          k_cellHeight, Escher::Metric::TabHeight);
+  constexpr static int k_maxNumberOfDisplayableColumns =
+      Ion::Display::Width / k_cellWidth + 2;
+  constexpr static int k_maxNumberOfDisplayableCells =
+      k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableColumns;
 
   // TabTableController
   Escher::SelectableTableView* selectableTableView() override {

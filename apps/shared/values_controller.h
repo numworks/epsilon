@@ -75,10 +75,6 @@ class ValuesController : public EditableCellTableViewController,
   constexpr static int k_editableValueCellType = 2;
   constexpr static int k_notEditableValueCellType =
       3;  // Must be last for Graph::ValuesController
-  constexpr static int k_maxNumberOfDisplayableRows = 10;
-  constexpr static int k_maxNumberOfDisplayableColumns = 4;
-  constexpr static int k_maxNumberOfDisplayableCells =
-      k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableColumns;
   constexpr static int k_numberOfTitleRows = 1;
 
   void initValueCells();

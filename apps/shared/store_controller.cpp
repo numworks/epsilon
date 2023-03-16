@@ -27,7 +27,7 @@ StoreController::StoreController(
   m_prefacedTableView.setCellOverlap(0, 0);
   m_prefacedTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin,
                                  k_margin);
-  for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
+  for (int i = 0; i < k_maxNumberOfDisplayableCells; i++) {
     m_editableCells[i].setParentResponder(&m_selectableTableView);
     m_editableCells[i].editableTextCell()->textField()->setDelegates(
         inputEventHandlerDelegate, this);
@@ -71,10 +71,10 @@ HighlightCell *StoreController::reusableCell(int index, int type) {
   assert(index >= 0);
   switch (type) {
     case k_titleCellType:
-      assert(index < k_numberOfTitleCells);
+      assert(index < k_maxNumberOfDisplayableColumns);
       return &m_titleCells[index];
     case k_editableCellType:
-      assert(index < k_maxNumberOfEditableCells);
+      assert(index < k_maxNumberOfDisplayableCells);
       return &m_editableCells[index];
     default:
       assert(false);
@@ -83,8 +83,8 @@ HighlightCell *StoreController::reusableCell(int index, int type) {
 }
 
 int StoreController::reusableCellCount(int type) {
-  return type == k_titleCellType ? k_numberOfTitleCells
-                                 : k_maxNumberOfEditableCells;
+  return type == k_titleCellType ? k_maxNumberOfDisplayableColumns
+                                 : k_maxNumberOfDisplayableCells;
 }
 
 int StoreController::typeAtLocation(int i, int j) {

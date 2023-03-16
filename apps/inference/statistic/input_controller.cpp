@@ -25,10 +25,9 @@ InputController::InputController(Escher::StackViewController *parent,
   m_okButton.setMessage(I18n::Message::Next);
   // Initialize cells
   m_significanceCell.setParentResponder(&m_selectableListView);
-  m_significanceCell.innerCell()->setDelegates(handler, this);
-  m_significanceCell.innerCell()->setMessage(I18n::Message::Alpha);
-  m_significanceCell.innerCell()->setSubLabelMessage(
-      I18n::Message::SignificanceLevel);
+  m_significanceCell.setDelegates(handler, this);
+  m_significanceCell.setMessage(I18n::Message::Alpha);
+  m_significanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
 }
 
 void InputController::initCell(ExpressionCellWithEditableTextWithMessage,
@@ -113,16 +112,21 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell *cell,
         static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
     mCell->setLayout(m_statistic->parameterSymbolAtIndex(index));
     mCell->setSubLabelMessage(m_statistic->parameterDefinitionAtIndex(index));
-  } else if (index == m_statistic->indexOfThreshold()) {
-    MessageTableCellWithSeparator *thresholdCell =
-        static_cast<MessageTableCellWithSeparator *>(cell);
+  } else if (typeAtIndex(index) == k_significanceCellType) {
+    assert(cell == &m_significanceCell);
     I18n::Message name, description;
     name = m_statistic->thresholdName();
     description = m_statistic->thresholdDescription();
-    thresholdCell->innerCell()->setMessage(name);
-    thresholdCell->innerCell()->setSubLabelMessage(description);
+    m_significanceCell.setMessage(name);
+    m_significanceCell.setSubLabelMessage(description);
   }
   FloatParameterController<double>::willDisplayCellForIndex(cell, index);
+}
+
+KDCoordinate InputController::separatorBeforeRow(int index) {
+  return typeAtIndex(index) == k_significanceCellType
+             ? k_defaultRowSeparator
+             : FloatParameterController<double>::separatorBeforeRow(index);
 }
 
 int InputController::reusableParameterCellCount(int type) {
@@ -151,11 +155,9 @@ bool InputController::handleEvent(Ion::Events::Event event) {
 }
 
 bool InputController::isCellEditing(Escher::HighlightCell *cell, int index) {
-  if (index == m_statistic->indexOfThreshold()) {
-    return static_cast<MessageTableCellWithSeparator *>(cell)
-        ->innerCell()
-        ->textField()
-        ->isEditing();
+  if (typeAtIndex(index) == k_significanceCellType) {
+    assert(cell == &m_significanceCell);
+    return m_significanceCell.textField()->isEditing();
   }
   return static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)
       ->textField()
@@ -164,11 +166,9 @@ bool InputController::isCellEditing(Escher::HighlightCell *cell, int index) {
 
 void InputController::setTextInCell(Escher::HighlightCell *cell,
                                     const char *text, int index) {
-  if (index == m_statistic->indexOfThreshold()) {
-    static_cast<MessageTableCellWithSeparator *>(cell)
-        ->innerCell()
-        ->textField()
-        ->setText(text);
+  if (typeAtIndex(index) == k_significanceCellType) {
+    assert(cell == &m_significanceCell);
+    m_significanceCell.textField()->setText(text);
   } else {
     static_cast<ExpressionCellWithEditableTextWithMessage *>(cell)
         ->textField()

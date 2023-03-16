@@ -1,16 +1,15 @@
 #ifndef REGRESSION_COLUMN_TITLE_CELL_H
 #define REGRESSION_COLUMN_TITLE_CELL_H
 
-#include "even_odd_double_buffer_text_cell_with_separator.h"
+#include "even_odd_double_buffer_text_cell.h"
 
 namespace Regression {
 
-class ColumnTitleCell : public EvenOddDoubleBufferTextCellWithSeparator {
+class ColumnTitleCell : public EvenOddDoubleBufferTextCell {
  public:
   ColumnTitleCell(Escher::Responder* parentResponder = nullptr)
-      : EvenOddDoubleBufferTextCellWithSeparator(parentResponder,
-                                                 KDContext::k_alignCenter,
-                                                 KDContext::k_alignCenter),
+      : EvenOddDoubleBufferTextCell(parentResponder, KDContext::k_alignCenter,
+                                    KDContext::k_alignCenter),
         m_functionColor(Escher::Palette::Red) {}
   virtual void setColor(KDColor color);
   void drawRect(KDContext* ctx, KDRect rect) const override;

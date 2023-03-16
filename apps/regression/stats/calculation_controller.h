@@ -2,7 +2,7 @@
 #define REGRESSION_CALCULATION_CONTROLLER_H
 
 #include <apps/shared/double_pair_table_controller.h>
-#include <apps/shared/separator_even_odd_buffer_text_cell.h>
+#include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_expression_cell.h>
 #include <escher/even_odd_message_text_cell.h>
@@ -10,7 +10,7 @@
 
 #include "../store.h"
 #include "column_title_cell.h"
-#include "even_odd_double_buffer_text_cell_with_separator.h"
+#include "even_odd_double_buffer_text_cell.h"
 
 namespace Regression {
 
@@ -43,6 +43,11 @@ class CalculationController : public Shared::DoublePairTableController {
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
+  KDCoordinate separatorBeforeColumn(int index) override {
+    return typeAtLocation(index, 0) == k_columnTitleCellType
+               ? Escher::Metric::TableSeparatorThickness
+               : 0;
+  }
 
  private:
   // Mean, SumValues, SumSquareValues, StandardDeviationSigma, Deviation,
@@ -75,7 +80,7 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static KDCoordinate k_titleCalculationCellWidth =
       Escher::Metric::SmallFontCellWidth(
           k_titleNumberOfChars, Escher::Metric::CellVerticalElementMargin);
-  /* Separator and margins from EvenOddCell::layoutSubviews (and derived classes
+  /* Margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here.
    * Calculation width should at least be able to hold two numbers with
    * VeryLargeNumberOfSignificantDigits and contains two even odd cells. */
@@ -83,8 +88,7 @@ class CalculationController : public Shared::DoublePairTableController {
       2 * Escher::Metric::SmallFontCellWidth(
               Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
                   Poincare::Preferences::VeryLargeNumberOfSignificantDigits),
-              Escher::EvenOddCell::k_horizontalMargin) +
-      Escher::EvenOddCell::k_separatorWidth;
+              Escher::EvenOddCell::k_horizontalMargin);
   // To hold _y=a·x^3+b·x^2+c·x+d_
   constexpr static KDCoordinate k_cubicCalculationCellWidth =
       std::max<KDCoordinate>(Escher::Metric::SmallFontCellWidth(
@@ -132,10 +136,9 @@ class CalculationController : public Shared::DoublePairTableController {
   Escher::EvenOddMessageTextCell
       m_titleSymbolCells[k_maxNumberOfDisplayableRows];
   ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];
-  EvenOddDoubleBufferTextCellWithSeparator
+  EvenOddDoubleBufferTextCell
       m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
-  Shared::SeparatorEvenOddBufferTextCell
-      m_calculationCells[k_numberOfCalculationCells];
+  Escher::EvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
   Escher::EvenOddCell m_hideableCell[k_numberOfHeaderColumns];
   Store* m_store;
   double m_memoizedDoubleCalculationCells[Store::k_numberOfSeries][2]

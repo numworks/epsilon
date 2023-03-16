@@ -3,7 +3,7 @@
 
 #include <apps/shared/buffer_function_title_cell.h>
 #include <apps/shared/double_pair_table_controller.h>
-#include <apps/shared/separator_even_odd_buffer_text_cell.h>
+#include <escher/even_odd_buffer_text_cell.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 
@@ -66,14 +66,12 @@ class CalculationController : public Shared::DoublePairTableController {
         maxChars, Escher::Metric::CellVerticalElementMargin);
   }
   /* Margins from EvenOddCell::layoutSubviews (and derived classes
-   * implementations) must be accounted for here, along with the separator
-   * width from SeparatorEvenOddBufferTextCell. */
+   * implementations) must be accounted for here. */
   constexpr static KDCoordinate k_calculationCellWidth =
       Escher::Metric::SmallFontCellWidth(
           Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
               Poincare::Preferences::VeryLargeNumberOfSignificantDigits),
-          Escher::EvenOddCell::k_horizontalMargin) +
-      Escher::EvenOddCell::k_separatorWidth;
+          Escher::EvenOddCell::k_horizontalMargin);
 
   typedef struct {
     I18n::Message title;
@@ -143,8 +141,7 @@ class CalculationController : public Shared::DoublePairTableController {
       m_calculationModeTitleCells[k_numberOfCalculationTitleCells];
   Escher::EvenOddBufferTextCell
       m_calculationModeSymbolCells[k_numberOfCalculationTitleCells];
-  Shared::SeparatorEvenOddBufferTextCell
-      m_calculationCells[k_numberOfCalculationCells];
+  Escher::EvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
   Escher::EvenOddCell m_hideableCell[k_numberOfHeaderColumns];
   double m_memoizedCellContent[Store::k_numberOfSeries][k_numberOfCalculations];
   Store* m_store;

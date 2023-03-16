@@ -25,7 +25,7 @@ app_regression_src = $(addprefix apps/regression/,\
   app.cpp \
   stats/calculation_controller.cpp \
   stats/column_title_cell.cpp \
-  stats/even_odd_double_buffer_text_cell_with_separator.cpp \
+  stats/even_odd_double_buffer_text_cell.cpp \
   graph/banner_view.cpp \
   graph/graph_controller.cpp \
   graph/graph_options_controller.cpp \

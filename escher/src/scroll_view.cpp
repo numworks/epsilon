@@ -25,20 +25,6 @@ ScrollView::ScrollView(View *contentView, ScrollViewDataSource *dataSource)
   setDecoratorType(Decorator::Type::Bars);
 }
 
-ScrollView::ScrollView(ScrollView &&other)
-    : m_contentView(other.m_contentView),
-      m_dataSource(other.m_dataSource),
-      m_topMargin(other.m_topMargin),
-      m_rightMargin(other.m_rightMargin),
-      m_bottomMargin(other.m_bottomMargin),
-      m_leftMargin(other.m_leftMargin),
-      m_excessWidth(other.m_excessWidth),
-      m_excessHeight(other.m_excessHeight),
-      m_innerView(this),
-      m_backgroundColor(other.m_backgroundColor) {
-  setDecoratorType(other.m_decoratorType);
-}
-
 KDSize ScrollView::minimalSizeForOptimalDisplay() const {
   KDSize contentSize = m_contentView->minimalSizeForOptimalDisplay();
   KDCoordinate width = contentSize.width() + m_leftMargin + m_rightMargin;

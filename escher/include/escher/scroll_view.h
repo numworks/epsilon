@@ -17,7 +17,6 @@ class ScrollView : public View {
 
  public:
   ScrollView(View *contentView, ScrollViewDataSource *dataSource);
-  ScrollView(ScrollView &&other);
   KDSize minimalSizeForOptimalDisplay() const override;
 
   void setTopMargin(KDCoordinate m);
@@ -96,7 +95,6 @@ class ScrollView : public View {
 
   Decorator *decorator() { return m_decorators.activeDecorator(); }
   void setDecoratorType(Decorator::Type t) {
-    m_decoratorType = t;
     m_decorators.setActiveDecorator(t);
   }
   void setDecoratorFont(KDFont::Size font) {
@@ -166,7 +164,6 @@ class ScrollView : public View {
   mutable KDCoordinate m_excessHeight;
 
   InnerView m_innerView;
-  Decorator::Type m_decoratorType;
   union Decorators {
    public:
     Decorators();

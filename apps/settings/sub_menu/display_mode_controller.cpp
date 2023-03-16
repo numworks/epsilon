@@ -19,8 +19,7 @@ DisplayModeController::DisplayModeController(
     InputEventHandlerDelegate *inputEventHandlerDelegate)
     : PreferencesController(parentResponder),
       m_editableCell(&m_selectableListView, inputEventHandlerDelegate, this) {
-  m_editableCell.messageTableCellWithEditableText()->setMessage(
-      I18n::Message::SignificantFigures);
+  m_editableCell.setMessage(I18n::Message::SignificantFigures);
 }
 
 KDCoordinate DisplayModeController::nonMemoizedRowHeight(int j) {
@@ -50,16 +49,14 @@ int DisplayModeController::reusableCellCount(int type) {
 void DisplayModeController::willDisplayCellForIndex(HighlightCell *cell,
                                                     int index) {
   /* Number of significants figure row */
-  if (index == numberOfRows() - 1) {
-    MessageTableCellWithEditableTextWithSeparator *myCell =
-        static_cast<MessageTableCellWithEditableTextWithSeparator *>(cell);
-    GenericSubController::willDisplayCellForIndex(
-        myCell->messageTableCellWithEditableText(), index);
+  if (typeAtIndex(index) == k_significantDigitsType) {
+    assert(cell == &m_editableCell);
+    GenericSubController::willDisplayCellForIndex(cell, index);
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
     Integer(Preferences::sharedPreferences->numberOfSignificantDigits())
         .serialize(buffer, bufferSize);
-    myCell->messageTableCellWithEditableText()->setAccessoryText(buffer);
+    m_editableCell.setAccessoryText(buffer);
     return;
   }
   PreferencesController::willDisplayCellForIndex(cell, index);

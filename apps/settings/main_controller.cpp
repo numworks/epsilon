@@ -215,8 +215,8 @@ void MainController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
   int type = typeAtIndex(index);
   if (type == k_brightnessCellType) {
-    MessageTableCellWithGaugeWithSeparator *myGaugeCell =
-        static_cast<MessageTableCellWithGaugeWithSeparator *>(cell);
+    MessageTableCellWithGauge *myGaugeCell =
+        static_cast<MessageTableCellWithGauge *>(cell);
     myGaugeCell->setMessage(title);
     GaugeView *myGauge = (GaugeView *)myGaugeCell->accessoryView();
     myGauge->setLevel((float)globalPreferences->brightnessLevel() /
@@ -279,6 +279,10 @@ void MainController::willDisplayCellForIndex(HighlightCell *cell, int index) {
           ? model()->childAtIndex(modelIndex)->childAtIndex(childIndex)->label()
           : I18n::Message::Default;
   myTextCell->setSubtitle(subtitle);
+}
+
+KDCoordinate MainController::separatorBeforeRow(int index) {
+  return typeAtIndex(index) == k_brightnessCellType ? k_defaultRowSeparator : 0;
 }
 
 void MainController::viewWillAppear() {

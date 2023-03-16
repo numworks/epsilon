@@ -38,7 +38,6 @@ app_shared_test_src = $(addprefix apps/shared/,\
 app_shared_src = $(addprefix apps/shared/,\
   banner_view.cpp \
   buffer_function_title_cell.cpp \
-  button_with_separator.cpp \
   calculus_column_parameter_controller.cpp \
   color_cell.cpp \
   color_names.cpp \

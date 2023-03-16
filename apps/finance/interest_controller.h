@@ -1,7 +1,6 @@
 #ifndef FINANCE_SIMPLE_INTEREST_CONTROLLER_H
 #define FINANCE_SIMPLE_INTEREST_CONTROLLER_H
 
-#include <apps/shared/button_with_separator.h>
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/highlight_cell.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>

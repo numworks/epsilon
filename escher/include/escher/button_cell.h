@@ -23,7 +23,6 @@ class ButtonCell : public Escher::AbstractButtonCell {
  protected:
   constexpr static KDCoordinate k_lineThickness =
       Escher::Metric::CellSeparatorThickness;
-  constexpr static KDCoordinate k_margin = Escher::Metric::CommonMenuMargin;
 
  private:
   void layoutSubviews(bool force = false) override;

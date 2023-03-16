@@ -1,13 +1,13 @@
 #ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_CONTROLLER_H
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_CONTROLLER_H
 
+#include <escher/button_cell.h>
 #include <escher/cell_with_margins.h>
 #include <escher/invocation.h>
 #include <escher/message_table_cell_with_editable_text_with_message.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
-#include <shared/button_with_separator.h>
 
 #include "inference/models/statistic/chi2_test.h"
 #include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
@@ -53,6 +53,9 @@ class CategoricalController
   int numberOfRows() const override { return indexOfNextCell() + 1; }
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return 1; }
+  KDCoordinate separatorBeforeRow(int index) override {
+    return index == indexOfNextCell() ? k_defaultRowSeparator : 0;
+  }
 
  protected:
   constexpr static int k_marginVertical = 5;
@@ -64,7 +67,7 @@ class CategoricalController
   virtual CategoricalTableCell* categoricalTableCell() = 0;
 
   Escher::ViewController* m_nextController;
-  Shared::ButtonWithSeparator m_next;
+  Escher::ButtonCell m_next;
 };
 
 /* Common Controller between InputHomogeneityController and

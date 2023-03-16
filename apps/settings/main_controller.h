@@ -1,8 +1,8 @@
 #ifndef SETTINGS_MAIN_CONTROLLER_H
 #define SETTINGS_MAIN_CONTROLLER_H
 
-#include <apps/shared/button_with_separator.h>
 #include <apps/shared/pop_up_controller.h>
+#include <escher/button_cell.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_gauge.h>
 #include <escher/message_table_cell_with_switch.h>
@@ -72,7 +72,7 @@ class MainController : public Escher::SelectableListViewController<
       m_cells[k_numberOfSimpleChevronCells];
   Escher::MessageTableCellWithGauge m_brightnessCell;
   Escher::MessageTableCellWithSwitch m_popUpCell;
-  Shared::ButtonWithSeparator m_resetButton;
+  Escher::ButtonCell m_resetButton;
   PreferencesController m_preferencesController;
   DisplayModeController m_displayModeController;
   LocalizationController m_localizationController;

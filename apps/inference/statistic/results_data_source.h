@@ -1,7 +1,7 @@
 #ifndef INFERENCE_STATISTIC_RESULTS_DATA_SOURCE_H
 #define INFERENCE_STATISTIC_RESULTS_DATA_SOURCE_H
 
-#include <apps/shared/button_with_separator.h>
+#include <escher/button_cell.h>
 #include <escher/invocation.h>
 #include <escher/list_view_data_source.h>
 
@@ -31,6 +31,9 @@ class ResultsDataSource
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtIndex(int index) const override;
+  KDCoordinate separatorBeforeRow(int index) override {
+    return typeAtIndex(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
+  }
 
   constexpr static int k_numberOfReusableCells = 5;
 
@@ -38,7 +41,7 @@ class ResultsDataSource
   constexpr static int k_resultCellType = 0;
   constexpr static int k_buttonCellType = 1;
   Statistic* m_statistic;
-  Shared::ButtonWithSeparator m_next;
+  Escher::ButtonCell m_next;
 };
 
 }  // namespace Inference

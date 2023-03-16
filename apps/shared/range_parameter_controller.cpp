@@ -118,7 +118,10 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell *cell,
 }
 
 KDCoordinate RangeParameterController::separatorBeforeRow(int index) {
-  return displayNormalizeCell() && index == 1 ? k_defaultRowSeparator : 0;
+  return (displayNormalizeCell() && index == 1) ||
+                 typeAtIndex(index) == k_okCellType
+             ? k_defaultRowSeparator
+             : 0;
 }
 
 void RangeParameterController::didBecomeFirstResponder() {

@@ -2,15 +2,15 @@
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TABLE_VIEW_DATA_SOURCE_H
 
 #include <escher/even_odd_cell.h>
+#include <escher/table_view_data_source.h>
 
 #include "inference/models/statistic/table.h"
-#include "inference/statistic/chi_square_and_slope/bordered_table_view_data_source.h"
 #include "inference/statistic/chi_square_and_slope/dynamic_size_table_view_data_source.h"
 #include "inference/text_helpers.h"
 
 namespace Inference {
 
-class CategoricalTableViewDataSource : public BorderedTableViewDataSource {
+class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
  public:
   // TableViewDataSource
   template <typename TextHolder>
@@ -22,14 +22,16 @@ class CategoricalTableViewDataSource : public BorderedTableViewDataSource {
     evenOddCell->setEven(row % 2 == 1);
   }
 
-  // BorderedTableViewDataSource
-  KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
-
   constexpr static int k_rowHeight = Escher::Metric::SmallEditableCellHeight;
   constexpr static int k_maxNumberOfReusableRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           k_rowHeight, Escher::Metric::StackTitleHeight);
   constexpr static int k_typeOfInnerCells = 0;
+
+  // TableViewDataSource
+  KDCoordinate separatorBeforeColumn(int index) override {
+    return index > 0 ? k_borderBetweenColumns : 0;
+  }
 
  protected:
   constexpr static int k_typeOfHeaderCells = k_typeOfInnerCells + 1;
@@ -39,6 +41,7 @@ class CategoricalTableViewDataSource : public BorderedTableViewDataSource {
       (Ion::Display::Width - 2 * Escher::Metric::CommonLeftMargin -
        k_borderBetweenColumns) /
       2;
+
   KDCoordinate nonMemoizedRowHeight(int j) override { return k_rowHeight; }
 };
 

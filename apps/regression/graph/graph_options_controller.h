@@ -8,7 +8,6 @@
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
-#include <escher/spacer_cell.h>
 
 #include "../store.h"
 #include "go_to_parameter_controller.h"
@@ -40,9 +39,15 @@ class GraphOptionsController
   // MemoizedListViewDataSource
   int numberOfRows() const override { return k_maxNumberOfRows; }
   Escher::HighlightCell* cell(int index) override;
+  KDCoordinate separatorBeforeRow(int index) override {
+    return cell(index) == &m_xParameterCell ||
+                   cell(index) == &m_removeRegressionCell
+               ? k_defaultRowSeparator
+               : 0;
+  }
 
  private:
-  constexpr static int k_maxNumberOfRows = 10;
+  constexpr static int k_maxNumberOfRows = 8;
 
   bool displayRegressionEquationCell() const;
   bool displayRCell() const;
@@ -54,10 +59,8 @@ class GraphOptionsController
   Escher::ExpressionTableCellWithMessageWithBuffer m_rCell;
   Escher::ExpressionTableCellWithMessageWithBuffer m_r2Cell;
   Escher::MessageTableCell m_residualPlotCell;
-  Escher::SpacerCell m_spacerCell1;
   Escher::MessageTableCellWithChevron m_xParameterCell;
   Escher::MessageTableCellWithChevron m_yParameterCell;
-  Escher::SpacerCell m_spacerCell2;
   Escher::ButtonCell m_removeRegressionCell;
   GoToParameterController m_goToParameterController;
   ResidualPlotController m_residualPlotCellController;

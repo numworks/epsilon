@@ -3,7 +3,6 @@
 
 #include <escher/buffer_table_cell_with_editable_text.h>
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/spacer_cell.h>
 
 #include "../../shared/explicit_float_parameter_controller.h"
 #include "../../shared/with_record.h"
@@ -34,7 +33,11 @@ class CurveParameterController
   }
 
  private:
-  constexpr static int k_numberOfRows = 6;
+  constexpr static int k_numberOfRows = 5;
+  KDCoordinate separatorBeforeRow(int index) override {
+    return cell(index) == &m_calculationCell ? k_defaultRowSeparator : 0;
+  }
+
   float parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, float f) override {
     return confirmParameterAtIndex(parameterIndex, f);
@@ -67,7 +70,6 @@ class CurveParameterController
   Escher::BufferTableCellWithEditableText m_abscissaCell;
   Escher::BufferTableCellWithEditableText m_imageCell;
   Escher::BufferTableCellWithEditableText m_derivativeNumberCell;
-  Escher::SpacerCell m_spacer;
   Escher::MessageTableCellWithChevron m_calculationCell;
   Escher::MessageTableCellWithChevron m_optionsCell;
   GraphController* m_graphController;

@@ -150,10 +150,8 @@ HighlightCell *GraphOptionsController::cell(int index) {
       &m_r2Cell,
       &m_rCell,
       &m_residualPlotCell,
-      &m_spacerCell1,
       &m_xParameterCell,
       &m_yParameterCell,
-      &m_spacerCell2,
       &m_removeRegressionCell,
   };
   return cells[index];

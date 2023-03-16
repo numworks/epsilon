@@ -116,7 +116,7 @@ const char* HypothesisController::symbolPrefix() {
 }
 
 HighlightCell* HypothesisController::cell(int index) {
-  HighlightCell* cells[] = {&m_h0, &m_ha, &m_spacer, &m_next};
+  HighlightCell* cells[] = {&m_h0, &m_ha, &m_next};
   return cells[index];
 }
 

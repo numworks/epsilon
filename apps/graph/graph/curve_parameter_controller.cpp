@@ -36,9 +36,9 @@ CurveParameterController::CurveParameterController(
 
 Escher::HighlightCell *CurveParameterController::cell(int index) {
   assert(0 <= index && index < k_numberOfRows);
-  HighlightCell *cells[k_numberOfRows] = {
-      &m_abscissaCell, &m_imageCell,       &m_derivativeNumberCell,
-      &m_spacer,       &m_calculationCell, &m_optionsCell};
+  HighlightCell *cells[k_numberOfRows] = {&m_abscissaCell, &m_imageCell,
+                                          &m_derivativeNumberCell,
+                                          &m_calculationCell, &m_optionsCell};
   return cells[index];
 }
 

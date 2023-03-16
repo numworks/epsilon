@@ -7,7 +7,6 @@
 #include <escher/input_event_handler_delegate.h>
 #include <escher/palette.h>
 #include <escher/selectable_list_view_controller.h>
-#include <escher/spacer_cell.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 #include <escher/view.h>
@@ -39,7 +38,10 @@ class HypothesisController
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::HighlightCell* cell(int i) override;
-  int numberOfRows() const override { return 4; }
+  int numberOfRows() const override { return 3; }
+  KDCoordinate separatorBeforeRow(int index) override {
+    return cell(index) == &m_next ? k_defaultRowSeparator : 0;
+  }
 
   // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
@@ -83,7 +85,6 @@ class HypothesisController
 
   Escher::ExpressionCellWithEditableTextWithMessage m_h0;
   ExpressionCellWithSublabelAndDropdown m_ha;
-  Escher::SpacerCell m_spacer;
   Escher::ButtonCell m_next;
 
   constexpr static int k_titleBufferSize =

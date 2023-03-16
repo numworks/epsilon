@@ -67,6 +67,7 @@ class TableView : public ScrollView {
     KDSize minimalSizeForOptimalDisplay() const override {
       return KDSize(width(), height());
     }
+    void drawRect(KDContext *ctx, KDRect rect) const override;
 
     void setHorizontalCellOverlap(KDCoordinate o) {
       m_horizontalCellOverlap = o;

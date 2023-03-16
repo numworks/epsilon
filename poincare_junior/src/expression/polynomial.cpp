@@ -262,16 +262,20 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
     coefficient = nextCoefficient;
     i++;
   }
-  if (polynomial.numberOfChildren() == 1) {
+  int numberOfTerms = NumberOfTerms(polynomial);
+  if (numberOfTerms == 0) {
     EditionReference result = EditionReference(&ZeroBlock);
     polynomial.replaceTreeByTree(result);
     return result;
   }
-  if (polynomial.numberOfChildren() == 2 &&
-      ExponentAtIndex(polynomial, 0) == 0) {
+  if (numberOfTerms == 1 && ExponentAtIndex(polynomial, 0) == 0) {
     EditionReference result = polynomial.childAtIndex(1);
     polynomial.replaceTreeByTree(result);
     return result;
+  }
+  // Assert the exponents are ordered
+  for (int i = 1; i < numberOfTerms; i++) {
+    assert(ExponentAtIndex(polynomial, i - 1) > ExponentAtIndex(polynomial, i));
   }
   return polynomial;
 }

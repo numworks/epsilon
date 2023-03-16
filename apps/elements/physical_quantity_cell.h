@@ -36,16 +36,6 @@ class PhysicalQuantityCell : public Escher::TableCell {
   Escher::ExpressionView m_accessoryView;
 };
 
-class PhysicalQuantityCellWithSeparator : public Shared::CellWithSeparator {
- public:
-  PhysicalQuantityCell* innerCell() { return &m_cell; }
-
- private:
-  const Escher::TableCell* constCell() const override { return &m_cell; }
-
-  PhysicalQuantityCell m_cell;
-};
-
 }  // namespace Elements
 
 #endif

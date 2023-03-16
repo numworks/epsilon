@@ -92,14 +92,12 @@ class CalculationController : public Shared::DoublePairTableController {
   // To hold _y=a·x^3+b·x^2+c·x+d_
   constexpr static KDCoordinate k_cubicCalculationCellWidth =
       std::max<KDCoordinate>(Escher::Metric::SmallFontCellWidth(
-                                 21, Escher::EvenOddCell::k_horizontalMargin) +
-                                 Escher::EvenOddCell::k_separatorWidth,
+                                 21, Escher::EvenOddCell::k_horizontalMargin),
                              k_minCalculationCellWidth);
   // To hold _y=a·x^4+b·x^3+c·x^2+d·x+e_
   constexpr static KDCoordinate k_quarticCalculationCellWidth =
       std::max<KDCoordinate>(Escher::Metric::SmallFontCellWidth(
-                                 27, Escher::EvenOddCell::k_horizontalMargin) +
-                                 Escher::EvenOddCell::k_separatorWidth,
+                                 27, Escher::EvenOddCell::k_horizontalMargin),
                              k_minCalculationCellWidth);
   // Symbol column
   constexpr static int k_symbolColumnMaxNumberOfChars = 3;

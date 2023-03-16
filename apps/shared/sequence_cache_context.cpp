@@ -19,7 +19,6 @@ SequenceCacheContext<T>::SequenceCacheContext(SequenceContext *sequenceContext,
                                               int sequenceBeingComputed,
                                               bool independent)
     : ContextWithParent(sequenceContext),
-      m_values{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}},
       m_sequenceContext(sequenceContext),
       m_sequenceBeingComputed(sequenceBeingComputed),
       m_independent(independent) {}
@@ -32,6 +31,13 @@ const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
     return ContextWithParent::protectedExpressionForSymbolAbstract(
         symbol, clone, lastDescendantContext);
   }
+  Ion::Storage::Record recordOfSequenceBeingComputed =
+      m_sequenceContext->sequenceStore()->recordAtNameIndex(
+          m_sequenceBeingComputed);
+  assert(!recordOfSequenceBeingComputed.isNull());
+  Sequence *sequenceBeingComputed =
+      m_sequenceContext->sequenceStore()->modelForRecord(
+          recordOfSequenceBeingComputed);
   T result = NAN;
   /* Do not use recordAtIndex : if the sequences have been reordered, the
    * name index and the record index may not correspond. */
@@ -51,7 +57,13 @@ const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
   for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
        depth++) {
     if (rankExpression.isRankNPlusK(depth)) {
-      result = m_values[index][depth];
+      if ((!m_independent || index == m_sequenceBeingComputed) &&
+          depth <= sequenceBeingComputed->order()) {
+        // Independent rank of another sequence can be different
+        result = m_sequenceContext->rankSequenceValue<T>(
+            index, sequenceBeingComputed->order() - depth, m_independent);
+        break;
+      }
     }
   }
   /* If the symbol was not in the two previous ranks, we try to approximate
@@ -70,13 +82,6 @@ const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
     }
   }
   return Float<T>::Builder(result);
-}
-
-template <typename T>
-void SequenceCacheContext<T>::setValue(T value, int nameIndex, int depth) {
-  assert(0 <= nameIndex && nameIndex < SequenceStore::k_maxNumberOfSequences);
-  assert(0 <= depth && depth < SequenceStore::k_maxRecurrenceDepth + 1);
-  m_values[nameIndex][depth] = value;
 }
 
 template class SequenceCacheContext<float>;

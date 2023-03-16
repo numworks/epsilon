@@ -79,11 +79,9 @@ class ScrollView : public View {
   class ArrowDecorator : public Decorator {
    public:
     ArrowDecorator()
-        : m_topArrow(ScrollViewArrow::Side::Top),
-          m_rightArrow(ScrollViewArrow::Side::Right),
-          m_bottomArrow(ScrollViewArrow::Side::Bottom),
+        : m_rightArrow(ScrollViewArrow::Side::Right),
           m_leftArrow(ScrollViewArrow::Side::Left) {}
-    int numberOfIndicators() const override { return 4; }
+    int numberOfIndicators() const override { return 2; }
     View *indicatorAtIndex(int index) override;
     KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame,
                             KDRect *dirtyRect1, KDRect *dirtyRect2, bool force,
@@ -92,9 +90,7 @@ class ScrollView : public View {
     void setFont(KDFont::Size font) override;
 
    private:
-    ScrollViewArrow m_topArrow;
     ScrollViewArrow m_rightArrow;
-    ScrollViewArrow m_bottomArrow;
     ScrollViewArrow m_leftArrow;
   };
 

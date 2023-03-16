@@ -64,9 +64,7 @@ class ScrollViewVerticalBar : public ScrollViewBar {
 class ScrollViewArrow : public ScrollViewIndicator {
  public:
   enum Side : char {  // FIXME
-    Top = 't',
     Right = '>',
-    Bottom = 'b',
     Left = '<'
   };
   ScrollViewArrow(Side side);

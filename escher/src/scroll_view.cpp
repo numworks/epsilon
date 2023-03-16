@@ -297,13 +297,9 @@ KDRect ScrollView::BarDecorator::layoutIndicators(
 View *ScrollView::ArrowDecorator::indicatorAtIndex(int index) {
   switch (index) {
     case 1:
-      return &m_topArrow;
-    case 2:
       return &m_rightArrow;
-    case 3:
-      return &m_bottomArrow;
     default:
-      assert(index == 4);
+      assert(index == 2);
       return &m_leftArrow;
   }
 }
@@ -313,29 +309,19 @@ KDRect ScrollView::ArrowDecorator::layoutIndicators(
     KDRect *dirtyRect2, bool force, ScrollViewDelegate *delegate) {
   // There is no need to dirty the rects
   KDSize arrowSize = KDFont::GlyphSize(KDFont::Size::Large);
-  KDCoordinate topArrowFrameBreadth =
-      arrowSize.height() * m_topArrow.update(0 < offset.y());
   KDCoordinate rightArrowFrameBreadth =
       arrowSize.width() *
       m_rightArrow.update(offset.x() + frame.width() < content.width());
-  KDCoordinate bottomArrowFrameBreadth =
-      arrowSize.height() *
-      m_bottomArrow.update(offset.y() + frame.height() < content.height());
   KDCoordinate leftArrowFrameBreadth =
       arrowSize.width() * m_leftArrow.update(0 < offset.x());
-  m_topArrow.setFrame(KDRect(0, 0, frame.width(), topArrowFrameBreadth), force);
   m_rightArrow.setFrame(KDRect(frame.width() - rightArrowFrameBreadth, 0,
                                rightArrowFrameBreadth, frame.height()),
                         force);
-  m_bottomArrow.setFrame(KDRect(0, frame.height() - bottomArrowFrameBreadth,
-                                frame.width(), bottomArrowFrameBreadth),
-                         force);
   m_leftArrow.setFrame(KDRect(0, 0, leftArrowFrameBreadth, frame.height()),
                        force);
-  return KDRect(
-      frame.x() + leftArrowFrameBreadth, frame.y() + topArrowFrameBreadth,
-      frame.width() - leftArrowFrameBreadth - rightArrowFrameBreadth,
-      frame.height() - topArrowFrameBreadth - bottomArrowFrameBreadth);
+  return KDRect(frame.x() + leftArrowFrameBreadth, frame.y(),
+                frame.width() - leftArrowFrameBreadth - rightArrowFrameBreadth,
+                frame.height());
 }
 
 void ScrollView::ArrowDecorator::setBackgroundColor(KDColor c) {
@@ -347,9 +333,7 @@ void ScrollView::ArrowDecorator::setBackgroundColor(KDColor c) {
 }
 
 void ScrollView::ArrowDecorator::setFont(KDFont::Size font) {
-  m_topArrow.setFont(font);
   m_rightArrow.setFont(font);
-  m_bottomArrow.setFont(font);
   m_leftArrow.setFont(font);
 }
 

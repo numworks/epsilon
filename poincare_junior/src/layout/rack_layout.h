@@ -16,6 +16,15 @@ public:
   static KDCoordinate BaselineBetweenIndexes(const Node node, int leftPosition, int rightPosition, KDFont::Size font);
   static bool ShouldDrawEmptyRectangle(const Node node);
   static void RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+
+  /* RackLayout Simplifications: These methods can be called on any Node
+   * targetted by a LayoutCursor. A RackLayout will be inserted if necessary.
+   */
+  static int NumberOfLayouts(EditionReference reference);
+  static EditionReference AddOrMergeLayoutAtIndex(EditionReference reference, EditionReference child, int * index);
+  static EditionReference RemoveLayoutAtIndex(EditionReference reference, int * index);
+private:
+  static EditionReference RackParent(EditionReference reference, int * index);
 };
 
 }

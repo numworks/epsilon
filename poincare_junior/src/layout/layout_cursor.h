@@ -1,12 +1,15 @@
-#ifndef POINCARE_LAYOUT_CURSOR_H
-#define POINCARE_LAYOUT_CURSOR_H
+#ifndef POINCARE_JUNIOR_LAYOUT_CURSOR_H
+#define POINCARE_JUNIOR_LAYOUT_CURSOR_H
 
 #include <omg/directions.h>
-#include <poincare/empty_rectangle.h>
-#include <poincare/layout.h>
-#include <poincare/layout_selection.h>
+#include <poincare_junior/src/layout/empty_rectangle.h>
+#include <poincare_junior/src/memory/node.h>
+#include <poincare_junior/src/layout/render.h>
+#include <poincare_junior/src/memory/edition_reference.h>
 
-namespace Poincare {
+#include "layout_selection.h"
+
+namespace PoincareJ {
 
 /* The LayoutCursor has two main attributes: m_layout and m_position
  *
@@ -34,30 +37,48 @@ namespace Poincare {
  *
  * */
 
+// TODO : reimplement Context
+class Context {};
+
 class LayoutCursor final {
  public:
+  constexpr static KDCoordinate k_cursorWidth = 1;
+  // Cursor navigation // TODO : Do not duplicate them everywhere
+  constexpr static int k_outsideIndex = -1;
+  constexpr static int k_cantMoveIndex = -2;
+
   /* This constructor either set the cursor at the leftMost or rightmost
    * position in the layout. */
-  LayoutCursor(Layout layout,
-               OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
-      : m_position(0), m_startOfSelection(-1) {
-    if (!layout.isUninitialized()) {
-      setLayout(layout, sideOfLayout);
+  LayoutCursor(TypeBlock * layoutBuffer, Node layout,
+               OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right(), bool isEditing = false)
+      :
+      m_layoutBuffer(layoutBuffer),
+      m_isEditing(isEditing),
+      m_layout(layout),
+      m_startOfSelection(-1) {
+    if (!m_layout.isUninitialized()) {
+      setLayout(m_layout, sideOfLayout);
     }
   }
 
-  LayoutCursor() : LayoutCursor(Layout()) {}
+  LayoutCursor() : LayoutCursor(nullptr, Node()) {}
+
+  // LayoutCursor(LayoutCursor& other) :  m_layoutBuffer(other.m_layoutBuffer) {
+  //   m_isEditing = other.m_isEditing;
+  //   m_layout = other.m_layout;
+  //   m_position = other.m_position;
+  //   m_startOfSelection = other.m_startOfSelection;
+  // }
 
   // Definition
   bool isUninitialized() const { return m_layout.isUninitialized(); }
   bool isValid() const {
-    return !m_layout.deepIsGhost() &&
-           (isUninitialized() || (m_position >= leftMostPosition() &&
+    return (isUninitialized() || (m_position >= leftMostPosition() &&
                                   m_position <= rightmostPosition()));
   }
 
   // Getters and setters
-  Layout layout() { return m_layout; }
+  const Node layout() { return m_layout; }
   int position() const { return m_position; }
   bool isSelecting() const { return m_startOfSelection >= 0; }
   LayoutSelection selection() const {
@@ -65,10 +86,13 @@ class LayoutCursor final {
                ? LayoutSelection(m_layout, m_startOfSelection, m_position)
                : LayoutSelection();
   }
+  TypeBlock * layoutBuffer() { return m_layoutBuffer; }
 
+#if 0
   // These will call didEnterCurrentPosition
   void safeSetLayout(Layout layout, OMG::HorizontalDirection sideOfLayout);
   void safeSetPosition(int position);
+#endif
 
   /* Position and size */
   KDCoordinate cursorHeight(KDFont::Size font);
@@ -83,8 +107,8 @@ class LayoutCursor final {
                          bool* shouldRedrawLayout, Context* context = nullptr);
 
   /* Layout insertion */
-  void insertLayout(Layout layout, Context* context, bool forceRight = false,
-                    bool forceLeft = false);
+  void insertLayout(const Node layout, Context* context,
+                            bool forceRight = false, bool forceLeft = false, bool startEdition = false);
   void addEmptyExponentialLayout(Context* context);
   void addEmptyMatrixLayout(Context* context);
   void addEmptyPowerLayout(Context* context);
@@ -92,36 +116,34 @@ class LayoutCursor final {
   void addEmptySquarePowerLayout(Context* context);
   void addEmptyTenPowerLayout(Context* context);
   void addFractionLayoutAndCollapseSiblings(Context* context);
-  void insertText(const char* text, Context* context,
-                  bool forceCursorRightOfText = false,
+  void insertText(const char* text, Context* context, bool forceCursorRightOfText = false,
                   bool forceCursorLeftOfText = false, bool linearMode = false);
 
   /* Layout deletion */
   void performBackspace();
 
-  void resetSelection();
+  void stopSelecting();
 
   /* Set empty rectangle visibility and gray rectangle in grids. */
   bool didEnterCurrentPosition(LayoutCursor previousPosition = LayoutCursor());
-
   // Call this if the cursor is disappearing from the field
   bool didExitPosition();
-  /* This moves the cursor to a location that will stay valid after exiting the
-   * field */
-  void prepareForExitingPosition();
 
   bool isAtNumeratorOfEmptyFraction() const;
 
+#if 0
   static int RightmostPossibleCursorPosition(Layout l);
 
   void beautifyLeft(Context* context);
+#endif
 
  private:
-  void setLayout(Layout layout, OMG::HorizontalDirection sideOfLayout);
+  void setLayout(const Node layout,
+                 OMG::HorizontalDirection sideOfLayout);
 
-  Layout leftLayout();
-  Layout rightLayout();
-  Layout layoutToFit(KDFont::Size font);
+  const Node leftLayout();
+  const Node rightLayout();
+  const Node layoutToFit(KDFont::Size font);
 
   int leftMostPosition() const { return 0; }
   int rightmostPosition() const {
@@ -136,9 +158,9 @@ class LayoutCursor final {
   void privateStartSelecting();
 
   void deleteAndResetSelection();
-  void privateDelete(LayoutNode::DeletionMethod deletionMethod,
+  void privateDelete(Render::DeletionMethod deletionMethod,
                      bool deletionAppliedToParent);
-
+#if 0
   bool setEmptyRectangleVisibilityAtCurrentPosition(
       EmptyRectangle::State state);
   void removeEmptyRowOrColumnOfGridParentIfNeeded();
@@ -150,14 +172,25 @@ class LayoutCursor final {
                                            int absorbingChildIndex);
 
   void balanceAutocompletedBracketsAndKeepAValidCursor();
+#endif
 
-  Layout m_layout;
+  void startEditing();
+
+  void stopEditing();
+
+  // Buffer of cursor's layout
+  TypeBlock * m_layoutBuffer;
+  // Is editing status
+  bool m_isEditing;
+  // Cursor's node
+  Node m_layout;
+  // Cursor's horizontal position
   int m_position;
   /* -1 if no current selection. If m_startOfSelection >= 0, the selection is
    * between m_startOfSelection and m_position */
   int m_startOfSelection;
 };
 
-}  // namespace Poincare
+}  // namespace PoincareJ
 
 #endif

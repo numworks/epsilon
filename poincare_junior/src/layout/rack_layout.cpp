@@ -2,6 +2,7 @@
 #include "empty_rectangle.h"
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
+#include <poincare_junior/src/n_ary.h>
 
 namespace PoincareJ {
 
@@ -78,6 +79,45 @@ void RackLayout::RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont:
   if (ShouldDrawEmptyRectangle(node)) {
     EmptyRectangle::DrawEmptyRectangle(ctx, p, font, EmptyRectangle::Color::Yellow);
   }
+}
+
+int RackLayout::NumberOfLayouts(EditionReference reference) {
+  return static_cast<Node>(reference).isHorizontal() ? reference.numberOfChildren() : 1;
+}
+
+EditionReference RackLayout::AddOrMergeLayoutAtIndex(EditionReference reference, EditionReference child, int * index) {
+  assert(*index <= NumberOfLayouts(reference));
+  EditionReference nary = RackParent(reference, index);
+  NAry::AddOrMergeChildAtIndex(nary, child, *index);
+  return nary;
+}
+
+EditionReference RackLayout::RemoveLayoutAtIndex(EditionReference reference, int * index) {
+  assert(*index <= NumberOfLayouts(reference));
+  EditionReference nary = RackParent(reference, index);
+  NAry::RemoveChildAtIndex(nary, *index);
+  return nary;
+}
+
+// Return the nearest NAry
+EditionReference RackLayout::RackParent(EditionReference reference, int * index) {
+  if (static_cast<Node>(reference).isHorizontal()) {
+    return reference;
+  }
+  assert(*index <= 1);
+  // Find or make a RackLayout parent
+  EditionReference parent = reference.parent();
+  if (parent.isUninitialized() || !static_cast<Node>(parent).isHorizontal()) {
+    parent = EditionReference::Push<BlockType::RackLayout>(1);
+    reference.insertNodeBeforeNode(parent);
+  } else {
+    // TODO : This is not supposed to happen with cursor layouts.
+    // For now we do not take advantage of this :/
+    // assert(false);
+    // Index of reference in parent may not be 0
+    *index += parent.indexOfChild(reference);
+  }
+  return parent;
 }
 
 }

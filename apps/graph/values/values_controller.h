@@ -6,12 +6,12 @@
 #include <apps/shared/expression_function_title_cell.h>
 #include <apps/shared/interval_parameter_controller.h>
 #include <apps/shared/scrollable_two_expressions_cell.h>
-#include <apps/shared/store_cell.h>
 #include <apps/shared/values_controller.h>
 #include <escher/button_state.h>
+#include <escher/even_odd_editable_text_cell.h>
+#include <escher/even_odd_message_text_cell.h>
 #include <escher/toggleable_dot_view.h>
 
-#include "abscissa_title_cell.h"
 #include "derivative_parameter_controller.h"
 #include "interval_parameter_selector_controller.h"
 
@@ -33,6 +33,7 @@ class ValuesController : public Shared::ValuesController,
   void willDisplayCellAtLocation(Escher::HighlightCell *cell, int i,
                                  int j) override;
   int typeAtLocation(int i, int j) override;
+  KDCoordinate separatorBeforeColumn(int index) override;
 
   // ButtonRowDelegate
   int numberOfButtons(Escher::ButtonRowController::Position) const override {
@@ -158,8 +159,10 @@ class ValuesController : public Shared::ValuesController,
   Shared::ExpressionFunctionTitleCell
       m_functionTitleCells[k_maxNumberOfDisplayableColumns];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
-  AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
-  Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
+  Escher::EvenOddMessageTextCell
+      m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
+  Escher::EvenOddEditableTextCell
+      m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
   FunctionParameterController *m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;

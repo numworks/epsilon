@@ -96,15 +96,16 @@ void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int i,
   // Handle hidden cells
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
   if (j > numberOfElementsInCol + 1) {
-    StoreCell *myCell = static_cast<StoreCell *>(cell);
+    Escher::EvenOddEditableTextCell *myCell =
+        static_cast<Escher::EvenOddEditableTextCell *>(cell);
     myCell->editableTextCell()->textField()->setText("");
     myCell->hide();
     return;
   }
   if (typeAtLocation(i, j) == k_editableCellType) {
-    Shared::StoreCell *myCell = static_cast<StoreCell *>(cell);
+    Escher::EvenOddEditableTextCell *myCell =
+        static_cast<Escher::EvenOddEditableTextCell *>(cell);
     myCell->show();
-    myCell->setSeparatorLeft(i > 0 && (m_store->relativeColumnIndex(i) == 0));
     KDColor textColor =
         (m_store->seriesIsActive(m_store->seriesAtColumn(i)) ||
          m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(i)) == 0)
@@ -114,6 +115,12 @@ void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int i,
   }
   willDisplayCellAtLocationWithDisplayMode(
       cell, i, j, Preferences::sharedPreferences->displayMode());
+}
+
+KDCoordinate StoreController::separatorBeforeColumn(int index) {
+  return index > 0 && m_store->relativeColumnIndex(index) == 0
+             ? Escher::Metric::TableSeparatorThickness
+             : 0;
 }
 
 void StoreController::setTitleCellText(HighlightCell *cell, int columnIndex) {

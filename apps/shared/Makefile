@@ -94,7 +94,6 @@ app_shared_src = $(addprefix apps/shared/,\
   single_interactive_curve_view_range_controller.cpp \
   single_range_controller.cpp \
   store_app.cpp \
-  store_cell.cpp \
   store_controller.cpp \
   store_parameter_controller.cpp \
   store_title_cell.cpp \

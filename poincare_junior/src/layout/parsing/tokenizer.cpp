@@ -4,6 +4,7 @@
 #include <ion/unicode/utf8_helper.h>
 #include <poincare_junior/src/expression/aliases.h>
 #include <poincare_junior/src/expression/builtin.h>
+#include <omgpj/unicode_helper.h>
 
 namespace PoincareJ {
 
@@ -360,20 +361,12 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(Node layout, size_
   return false;
 }
 
-static size_t CodePointSearch(const Node layout, size_t start, CodePoint c, size_t stoppingPosition) {
-  RackLayoutDecoder decoder(layout, start, stoppingPosition);
-  while (start < stoppingPosition) {
-    if (decoder.nextCodePoint() == c) {
-      return decoder.position();
-    }
-  }
-  return stoppingPosition;
-}
 
 Token::Type Tokenizer::stringTokenType(size_t string, size_t * length) const {
   // If there are two \" around an identifier, it is a forced custom identifier
   size_t lastCharOfString = string + *length - 1;
-  if (*length > 2 && m_decoder.codePointAt(string) == '"' && m_decoder.codePointAt(lastCharOfString) == '"' && CodePointSearch(m_decoder.mainLayout(), string + 1, '"', lastCharOfString) == lastCharOfString) {
+  RackLayoutDecoder insideQuotes(m_decoder.mainLayout(), string + 1, lastCharOfString);
+  if (*length > 2 && m_decoder.codePointAt(string) == '"' && m_decoder.codePointAt(lastCharOfString) == '"' && OMG::CodePointSearch(insideQuotes, '"') == lastCharOfString) {
     return Token::Type::CustomIdentifier;
   }
   // if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {

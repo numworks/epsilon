@@ -5,4 +5,5 @@ omgpj_src += $(addprefix poincare_junior/omgpj/src/,\
   float.cpp \
   list.cpp \
   memory.cpp \
+  unicode_helper.cpp \
 )

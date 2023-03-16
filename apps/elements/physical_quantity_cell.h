@@ -2,7 +2,6 @@
 #define PERDIODIC_PHYSICAL_QUANTITY_CELL_H
 
 #include <apps/i18n.h>
-#include <apps/shared/cell_with_separator.h>
 #include <escher/expression_view.h>
 #include <escher/message_text_view.h>
 #include <escher/table_cell.h>

@@ -117,6 +117,10 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell *cell,
   }
 }
 
+KDCoordinate RangeParameterController::separatorBeforeRow(int index) {
+  return displayNormalizeCell() && index == 1 ? k_defaultRowSeparator : 0;
+}
+
 void RangeParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
@@ -188,17 +192,6 @@ void RangeParameterController::buttonAction() {
   *m_interactiveRange = m_tempInteractiveRange;
 
   stackController()->pop();
-}
-
-// RangeParameterController::NormalizeCell
-
-KDSize RangeParameterController::NormalizeCell::minimalSizeForOptimalDisplay()
-    const {
-  m_cell.setSize(bounds().size());
-  KDSize cellSize = m_cell.minimalSizeForOptimalDisplay();
-  // An additional border is required after separator (and will be overlapped)
-  return KDSize(cellSize.width(),
-                cellSize.height() + k_margin + k_lineThickness);
 }
 
 }  // namespace Shared

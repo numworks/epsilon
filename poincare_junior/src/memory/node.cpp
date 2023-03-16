@@ -14,6 +14,10 @@ void Node::log(std::ostream & stream, bool recursive, int indentation, bool verb
     stream << "  ";
   }
   stream << "<";
+  if (isUninitialized()) {
+    stream << "Uninitialized/>";
+    return;
+  }
   logName(stream);
   if (verbose) {
     stream << " size=\"" << nodeSize() << "\"";

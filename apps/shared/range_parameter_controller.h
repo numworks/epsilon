@@ -30,6 +30,7 @@ class RangeParameterController : public Escher::SelectableListViewController<
   Escher::HighlightCell *reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell *cell, int index) override;
+  KDCoordinate separatorBeforeRow(int index) override;
 
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
@@ -50,23 +51,14 @@ class RangeParameterController : public Escher::SelectableListViewController<
 
   class CellWithUnequal : public Escher::MessageTableCell {
    public:
-    using Escher::MessageTableCell::MessageTableCell;
+    CellWithUnequal()
+        : Escher::MessageTableCell(I18n::Message::MakeOrthonormal) {}
     Escher::View *accessoryView() const {
       return const_cast<Escher::UnequalView *>(&m_unequalView);
     }
 
    private:
     Escher::UnequalView m_unequalView;
-  };
-  class NormalizeCell : public CellWithSeparator {
-   public:
-    NormalizeCell() : m_cell(I18n::Message::MakeOrthonormal) {}
-    KDSize minimalSizeForOptimalDisplay() const override;
-
-   private:
-    const Escher::TableCell *constCell() const override { return &m_cell; }
-    bool separatorAboveCell() const override { return false; }
-    mutable CellWithUnequal m_cell;
   };
 
   void buttonAction();
@@ -76,7 +68,7 @@ class RangeParameterController : public Escher::SelectableListViewController<
 
   InteractiveCurveViewRange *m_interactiveRange;
   InteractiveCurveViewRange m_tempInteractiveRange;
-  NormalizeCell m_normalizeCell;
+  CellWithUnequal m_normalizeCell;
   Escher::MessageTableCellWithChevronAndBuffer
       m_rangeCells[k_numberOfRangeCells];
   ButtonWithSeparator m_okButton;

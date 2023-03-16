@@ -5,7 +5,6 @@
 #include <escher/unequal_view.h>
 
 #include "button_with_separator.h"
-#include "cell_with_separator.h"
 #include "interactive_curve_view_range.h"
 #include "pop_up_controller.h"
 #include "single_interactive_curve_view_range_controller.h"

@@ -33,15 +33,14 @@ class ScrollViewBar : public ScrollViewIndicator {
 
 class ScrollViewHorizontalBar : public ScrollViewBar {
  public:
-  ScrollViewHorizontalBar();
   void drawRect(KDContext *ctx, KDRect rect) const override;
 
  private:
+  constexpr static KDCoordinate k_leftMargin = Metric::CommonLeftMargin;
+  constexpr static KDCoordinate k_rightMargin = Metric::CommonRightMargin;
   KDCoordinate totalLength() const {
-    return m_frame.width() - m_leftMargin - m_rightMargin;
+    return m_frame.width() - k_leftMargin - k_rightMargin;
   }
-  KDCoordinate m_leftMargin;
-  KDCoordinate m_rightMargin;
 };
 
 class ScrollViewVerticalBar : public ScrollViewBar {

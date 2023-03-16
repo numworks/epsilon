@@ -24,20 +24,16 @@ bool ScrollViewBar::update(KDCoordinate totalContentLength,
   return visible();
 }
 
-ScrollViewHorizontalBar::ScrollViewHorizontalBar()
-    : m_leftMargin(Metric::CommonLeftMargin),
-      m_rightMargin(Metric::CommonRightMargin) {}
-
 void ScrollViewHorizontalBar::drawRect(KDContext *ctx, KDRect rect) const {
   if (!visible()) {
     return;
   }
   ctx->fillRect(
-      KDRect(m_leftMargin, (m_frame.height() - k_indicatorThickness) / 2,
+      KDRect(k_leftMargin, (m_frame.height() - k_indicatorThickness) / 2,
              totalLength(), k_indicatorThickness),
       k_trackColor);
   ctx->fillRect(
-      KDRect(m_leftMargin + m_offset * totalLength(),
+      KDRect(k_leftMargin + m_offset * totalLength(),
              (m_frame.height() - k_indicatorThickness) / 2,
              std::ceil(m_visibleLength * totalLength()), k_indicatorThickness),
       k_color);

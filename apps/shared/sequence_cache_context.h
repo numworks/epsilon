@@ -13,7 +13,7 @@ template <typename T>
 class SequenceCacheContext : public Poincare::ContextWithParent {
  public:
   SequenceCacheContext(SequenceContext* sequenceContext,
-                       int sequenceBeingComputed);
+                       int sequenceBeingComputed, bool independent);
   void setValue(T value, int nameIndex, int depth);
 
  private:
@@ -27,6 +27,7 @@ class SequenceCacheContext : public Poincare::ContextWithParent {
             [SequenceStore::k_maxRecurrenceDepth + 1];
   SequenceContext* m_sequenceContext;
   int m_sequenceBeingComputed;
+  bool m_independent;
 };
 
 }  // namespace Shared

@@ -16,11 +16,13 @@ namespace Shared {
 
 template <typename T>
 SequenceCacheContext<T>::SequenceCacheContext(SequenceContext *sequenceContext,
-                                              int sequenceBeingComputed)
+                                              int sequenceBeingComputed,
+                                              bool independent)
     : ContextWithParent(sequenceContext),
       m_values{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}},
       m_sequenceContext(sequenceContext),
-      m_sequenceBeingComputed(sequenceBeingComputed) {}
+      m_sequenceBeingComputed(sequenceBeingComputed),
+      m_independent(independent) {}
 
 template <typename T>
 const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
@@ -56,7 +58,8 @@ const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
    * the sequence independently from the others at the required rank (this
    * will solve u(n) = 5*n, v(n) = u(n+10) for instance). But we avoid doing
    * so if the sequence referencing itself to avoid an infinite loop. */
-  if (std::isnan(result) && index != m_sequenceBeingComputed) {
+  if (std::isnan(result) &&
+      (!m_independent || index != m_sequenceBeingComputed)) {
     /* The lastDesendantContext might contain informations on variables
      * that are contained in the rank expression. */
     T rankValue = PoincareHelpers::ApproximateToScalar<T>(

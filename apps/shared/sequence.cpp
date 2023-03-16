@@ -254,7 +254,7 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
   T x;
   Poincare::Expression e;
   SequenceCacheContext<T> ctx =
-      SequenceCacheContext<T>(sqctx, independent ? sequenceIndex : -1);
+      SequenceCacheContext<T>(sqctx, sequenceIndex, independent);
 
   switch (type()) {
     case Type::Explicit: {

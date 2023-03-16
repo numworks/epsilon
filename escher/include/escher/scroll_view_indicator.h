@@ -2,16 +2,14 @@
 #define ESCHER_SCROLL_VIEW_INDICATOR_H
 
 #include <escher/metric.h>
+#include <escher/palette.h>
 #include <escher/view.h>
 
 namespace Escher {
 
 class ScrollViewIndicator : public View {
- public:
-  ScrollViewIndicator();
-
  protected:
-  KDColor m_color;
+  constexpr static KDColor k_color = Palette::GrayDark;
 };
 
 class ScrollViewBar : public ScrollViewIndicator {
@@ -24,13 +22,13 @@ class ScrollViewBar : public ScrollViewIndicator {
  protected:
   constexpr static KDCoordinate k_indicatorThickness =
       Metric::ScrollViewBarThickness;
+  constexpr static KDColor k_trackColor = Palette::GrayMiddle;
 #if ESCHER_VIEW_LOGGING
   const char *className() const override;
   void logAttributes(std::ostream &os) const override;
 #endif
   float m_offset;
   float m_visibleLength;
-  KDColor m_trackColor;
 };
 
 class ScrollViewHorizontalBar : public ScrollViewBar {

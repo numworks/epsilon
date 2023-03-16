@@ -2,14 +2,14 @@
 #define CALCULATION_JUNIOR_APP_H
 
 #include <apps/shared/shared_app.h>
-#include <apps/shared/text_field_delegate_app.h>
-#include <escher/text_field.h>
 
+#include "expression_field_delegate_app.h"
+#include "layout_field.h"
 #include "main_controller.h"
 
 namespace CalculationJunior {
 
-class App : public Shared::TextFieldDelegateApp {
+class App : public ExpressionFieldDelegateApp {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:
@@ -22,12 +22,12 @@ class App : public Shared::TextFieldDelegateApp {
     App* unpack(Escher::Container* container) override;
     const Descriptor* descriptor() const override;
   };
-  bool textFieldDidHandleEvent(Escher::AbstractTextField* textField,
-                               bool returnValue, bool textDidChange) override {
-    return textDidChange || returnValue;
+  bool layoutFieldDidHandleEvent(LayoutField* layoutField, bool returnValue,
+                                 bool layoutDidChange) override {
+    return layoutDidChange || returnValue;
   }
-  bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
-                                    Ion::Events::Event event) override {
+  bool layoutFieldShouldFinishEditing(LayoutField* layoutField,
+                                      Ion::Events::Event event) override {
     return false;
   }
 

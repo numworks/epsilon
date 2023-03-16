@@ -2,12 +2,11 @@
 
 #include <apps/i18n.h>
 #include <escher/layout_field.h>
-#include <poincare/expression.h>
 
 using namespace Escher;
-using namespace Poincare;
+using namespace PoincareJ;
 
-namespace Shared {
+namespace CalculationJunior {
 
 ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(
     Snapshot* snapshot, ViewController* rootViewController)
@@ -21,6 +20,7 @@ bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(
 
 bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(
     LayoutField* layoutField, Ion::Events::Event event) {
+#if 0
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (layoutField->isEmpty()) {
       // Accept empty fields
@@ -71,12 +71,14 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(
       return true;
     }
   }
+#endif
   if (fieldDidReceiveEvent(layoutField, layoutField, event)) {
     return true;
   }
   return false;
 }
 
+#if 0
 bool ExpressionFieldDelegateApp::isAcceptableExpression(const Expression exp) {
   /* Override TextFieldDelegateApp because most ExpressionFieldDelegateApp
    * accept comparison operatoras. They should also be serializeable. */
@@ -105,5 +107,6 @@ bool ExpressionFieldDelegateApp::isStoreMenuOpen() const {
   return m_modalViewController.currentModalViewController() ==
          &m_storeMenuController;
 }
+#endif
 
-}  // namespace Shared
+}  // namespace CalculationJunior

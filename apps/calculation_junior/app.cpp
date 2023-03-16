@@ -29,7 +29,7 @@ const App::Descriptor* App::Snapshot::descriptor() const {
 }
 
 App::App(Snapshot* snapshot)
-    : Shared::TextFieldDelegateApp(snapshot, &m_stackViewController),
+    : ExpressionFieldDelegateApp(snapshot, &m_stackViewController),
       m_mainController(&m_stackViewController, this),
       m_stackViewController(&m_modalViewController, &m_mainController,
                             Escher::StackViewController::Style::WhiteUniform) {}

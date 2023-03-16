@@ -3,7 +3,7 @@
 
 #include <apps/shared/double_pair_table_controller.h>
 #include <apps/shared/separator_even_odd_buffer_text_cell.h>
-#include <apps/shared/store_cell.h>
+#include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_expression_cell.h>
 #include <escher/even_odd_message_text_cell.h>
 #include <poincare/preferences.h>

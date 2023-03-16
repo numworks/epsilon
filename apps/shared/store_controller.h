@@ -2,6 +2,7 @@
 #define SHARED_STORE_CONTROLLER_H
 
 #include <escher/button_row_controller.h>
+#include <escher/even_odd_editable_text_cell.h>
 #include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
 
@@ -10,7 +11,6 @@
 #include "input_event_handler_delegate.h"
 #include "layout_field_delegate.h"
 #include "prefaced_table_view.h"
-#include "store_cell.h"
 #include "store_parameter_controller.h"
 #include "store_title_cell.h"
 
@@ -39,6 +39,7 @@ class StoreController : public EditableCellTableViewController,
   int typeAtLocation(int i, int j) override;
   void willDisplayCellAtLocation(Escher::HighlightCell* cell, int i,
                                  int j) override;
+  KDCoordinate separatorBeforeColumn(int index) override;
 
   // ViewController
   Escher::View* view() override { return &m_prefacedTableView; }
@@ -102,7 +103,7 @@ class StoreController : public EditableCellTableViewController,
   void memoizeFormulaAtColumn(Poincare::Layout formula, int column) override;
 
   PrefacedTableView m_prefacedTableView;
-  StoreCell m_editableCells[k_maxNumberOfEditableCells];
+  Escher::EvenOddEditableTextCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore* m_store;
   Poincare::Layout
       m_memoizedFormulaForColumn[DoublePairStore::k_numberOfSeries *

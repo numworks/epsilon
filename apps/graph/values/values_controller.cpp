@@ -97,10 +97,6 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell *cell, int i,
                                                  int j) {
   // Handle hidden cells
   int typeAtLoc = typeAtLocation(i, j);
-  if (typeAtLoc == k_editableValueCellType) {
-    StoreCell *storeCell = static_cast<StoreCell *>(cell);
-    storeCell->setSeparatorLeft(i > 0);
-  }
   if (typeAtLoc == k_notEditableValueCellType ||
       typeAtLoc == k_editableValueCellType) {
     const int numberOfElementsInCol = numberOfElementsInColumn(i);
@@ -112,7 +108,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell *cell, int i,
         static_cast<EvenOddExpressionCell *>(eoCell)->setLayout(Layout());
       } else {
         assert(typeAtLoc == k_editableValueCellType);
-        static_cast<StoreCell *>(eoCell)
+        static_cast<Escher::EvenOddEditableTextCell *>(eoCell)
             ->editableTextCell()
             ->textField()
             ->setText("");
@@ -126,6 +122,12 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell *cell, int i,
 int ValuesController::typeAtLocation(int i, int j) {
   symbolTypeAtColumn(&i);
   return Shared::ValuesController::typeAtLocation(i, j);
+}
+
+KDCoordinate ValuesController::separatorBeforeColumn(int index) {
+  return index > 0 && typeAtLocation(index, 0) == k_abscissaTitleCellType
+             ? Escher::Metric::TableSeparatorThickness
+             : 0;
 }
 
 // ButtonRowDelegate
@@ -312,8 +314,6 @@ void ValuesController::reloadEditedCell(int column, int row) {
 
 void ValuesController::setTitleCellStyle(HighlightCell *cell, int columnIndex) {
   if (typeAtLocation(columnIndex, 0) == k_abscissaTitleCellType) {
-    AbscissaTitleCell *myCell = static_cast<AbscissaTitleCell *>(cell);
-    myCell->setSeparatorLeft(columnIndex > 0);
     return;
   }
   Shared::ValuesController::setTitleCellStyle(cell, columnIndex);

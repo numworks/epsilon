@@ -14,19 +14,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-static int nameIndexForSymbol(const SymbolAbstract &symbol) {
-  // return 0 for u, 1 for v and 2 for w
-  char name =
-      const_cast<Symbol &>(static_cast<const Symbol &>(symbol)).name()[0];
-  assert(name >= 'u' && name <= 'w');  // u, v or w
-  assert(
-      name >= SequenceStore::k_sequenceNames[0][0] &&
-      name <=
-          SequenceStore::k_sequenceNames[SequenceStore::k_maxNumberOfSequences -
-                                         1][0]);
-  return name - 'u';
-}
-
 template <typename T>
 SequenceCacheContext<T>::SequenceCacheContext(SequenceContext *sequenceContext,
                                               int sequenceBeingComputed)
@@ -46,7 +33,8 @@ const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
   T result = NAN;
   /* Do not use recordAtIndex : if the sequences have been reordered, the
    * name index and the record index may not correspond. */
-  int index = nameIndexForSymbol(symbol);
+  char name = static_cast<const Symbol &>(symbol).name()[0];
+  int index = SequenceStore::sequenceIndexForName(name);
   Ion::Storage::Record record =
       m_sequenceContext->sequenceStore()->recordAtNameIndex(index);
   if (record.isNull()) {

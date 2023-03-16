@@ -4,10 +4,10 @@
 #include <apps/shared/button_with_separator.h>
 #include <apps/shared/pop_up_controller.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
+#include <escher/message_table_cell_with_gauge.h>
 #include <escher/message_table_cell_with_switch.h>
 #include <escher/selectable_list_view_controller.h>
 
-#include "message_table_cell_with_gauge_with_separator.h"
 #include "message_tree.h"
 #include "sub_menu/about_controller.h"
 #include "sub_menu/display_mode_controller.h"
@@ -43,6 +43,7 @@ class MainController : public Escher::SelectableListViewController<
   int reusableCellCount(int type) override;
   int typeAtIndex(int index) const override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  KDCoordinate separatorBeforeRow(int index) override;
   void viewWillAppear() override;
   bool hasTestModeCell() const;
   TELEMETRY_ID("");
@@ -69,7 +70,7 @@ class MainController : public Escher::SelectableListViewController<
           Escher::TableCell::k_minimalLargeFontCellHeight);
   Escher::MessageTableCellWithChevronAndMessage
       m_cells[k_numberOfSimpleChevronCells];
-  MessageTableCellWithGaugeWithSeparator m_brightnessCell;
+  Escher::MessageTableCellWithGauge m_brightnessCell;
   Escher::MessageTableCellWithSwitch m_popUpCell;
   Shared::ButtonWithSeparator m_resetButton;
   PreferencesController m_preferencesController;

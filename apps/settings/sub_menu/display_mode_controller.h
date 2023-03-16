@@ -1,8 +1,9 @@
 #ifndef SETTINGS_DISPLAY_MODE_CONTROLLER_H
 #define SETTINGS_DISPLAY_MODE_CONTROLLER_H
 
+#include <escher/message_table_cell_with_editable_text.h>
+
 #include "../../shared/parameter_text_field_delegate.h"
-#include "../message_table_cell_with_editable_text_with_separator.h"
 #include "preferences_controller.h"
 
 namespace Settings {
@@ -21,6 +22,11 @@ class DisplayModeController : public PreferencesController,
     return (index == numberOfRows() - 1) ? k_significantDigitsType
                                          : k_resultFormatType;
   }
+  KDCoordinate separatorBeforeRow(int index) override {
+    return typeAtIndex(index) == k_significantDigitsType
+               ? k_defaultRowSeparator
+               : PreferencesController::separatorBeforeRow(index);
+  }
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
                                     Ion::Events::Event event) override;
@@ -31,7 +37,7 @@ class DisplayModeController : public PreferencesController,
  private:
   constexpr static int k_resultFormatType = 0;
   constexpr static int k_significantDigitsType = 1;
-  MessageTableCellWithEditableTextWithSeparator m_editableCell;
+  Escher::MessageTableCellWithEditableText m_editableCell;
 };
 
 }  // namespace Settings

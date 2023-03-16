@@ -253,15 +253,6 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
     stop = sequenceIndex + 1;
   }
 
-  T values[SequenceStore::k_maxNumberOfSequences]
-          [SequenceStore::k_maxRecurrenceDepth + 1] = {
-              {NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}};
-  for (int i = start; i < stop; i++) {
-    for (int j = 0; j < SequenceStore::k_maxRecurrenceDepth + 1; j++) {
-      values[i][j] = sqctx->rankSequenceValue<T>(i, j, independent);
-    }
-  }
-
   // Update angle unit and complex format
   Preferences preferences =
       Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));
@@ -276,7 +267,7 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
       e = expressionReduced(sqctx);
       for (int i = start; i < stop; i++) {
         // In context, u(rank) matches u(n)
-        ctx.setValue(values[i][0], i, 0);
+        ctx.setValue(sqctx->rankSequenceValue<T>(i, 0, independent), i, 0);
       }
       break;
     }
@@ -291,9 +282,9 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
       e = expressionReduced(sqctx);
       for (int i = start; i < stop; i++) {
         // In context, u(rank) matches u(n+1)
-        ctx.setValue(values[i][0], i, 1);
+        ctx.setValue(sqctx->rankSequenceValue<T>(i, 0, independent), i, 1);
         // In context, u(rank-1) matches u(n)
-        ctx.setValue(values[i][1], i, 0);
+        ctx.setValue(sqctx->rankSequenceValue<T>(i, 1, independent), i, 0);
       }
       break;
     }
@@ -314,11 +305,11 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
       e = expressionReduced(sqctx);
       for (int i = start; i < stop; i++) {
         // In context, u(rank) matches u(n+2)
-        ctx.setValue(values[i][0], i, 2);
+        ctx.setValue(sqctx->rankSequenceValue<T>(i, 0, independent), i, 2);
         // In context, u(rank-1) matches u(n+1)
-        ctx.setValue(values[i][1], i, 1);
+        ctx.setValue(sqctx->rankSequenceValue<T>(i, 1, independent), i, 1);
         // In context, u(rank-2) matches u(n)
-        ctx.setValue(values[i][2], i, 0);
+        ctx.setValue(sqctx->rankSequenceValue<T>(i, 2, independent), i, 0);
       }
       break;
     }

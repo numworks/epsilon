@@ -241,8 +241,6 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
   if (rank < initialRank()) {
     return NAN;
   }
-  SequenceCacheContext<T> ctx =
-      SequenceCacheContext<T>(sqctx, independent ? sequenceIndex : -1);
 
   int start, stop;
   if (!independent) {
@@ -253,12 +251,10 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
     stop = sequenceIndex + 1;
   }
 
-  // Update angle unit and complex format
-  Preferences preferences =
-      Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));
-
   T x;
   Poincare::Expression e;
+  SequenceCacheContext<T> ctx =
+      SequenceCacheContext<T>(sqctx, independent ? sequenceIndex : -1);
 
   switch (type()) {
     case Type::Explicit: {
@@ -314,6 +310,10 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
       break;
     }
   }
+
+  // Update angle unit and complex format
+  Preferences preferences =
+      Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));
 
   return PoincareHelpers::ApproximateWithValueForSymbol(
       e, k_unknownName, x, &ctx, &preferences, false);

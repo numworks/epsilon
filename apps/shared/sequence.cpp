@@ -472,20 +472,16 @@ void Sequence::InitialConditionModel::buildName(Sequence *sequence) {
           indexLayout, VerticalOffsetLayoutNode::VerticalPosition::Subscript));
 }
 
-int Sequence::firstNonInitialRank() const {
-  int add;
+int Sequence::order() const {
   switch (type()) {
     case Type::Explicit:
-      add = 0;
-      break;
+      return 0;
     case Type::SingleRecurrence:
-      add = 1;
-      break;
+      return 1;
     default:
       assert(type() == Type::DoubleRecurrence);
-      add = 2;
+      return 2;
   }
-  return initialRank() + add;
 }
 
 template double Sequence::privateEvaluateYAtX<double>(

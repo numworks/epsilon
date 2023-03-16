@@ -103,6 +103,8 @@ class Sequence : public Function {
    * - when double recurrence: if u(n+2) depends on a term of u other than
    *   u(n+1), u(n), u(1) and u(0) */
   bool mainExpressionIsNotComputable(Poincare::Context *context) const;
+  int order() const;
+  int firstNonInitialRank() const { return initialRank() + order(); }
 
   // Approximation
   Poincare::Coordinate2D<float> evaluateXYAtParameter(
@@ -235,7 +237,6 @@ class Sequence : public Function {
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const ExpressionModel *model() const override { return &m_definition; }
   RecordDataBuffer *recordData() const;
-  int firstNonInitialRank() const;
 
   DefinitionModel m_definition;
   FirstInitialConditionModel m_firstInitialCondition;

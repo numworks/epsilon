@@ -242,29 +242,13 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
     return NAN;
   }
 
-  int start, stop;
-  if (!independent) {
-    start = 0;
-    stop = SequenceStore::k_maxNumberOfSequences;
-  } else {
-    start = sequenceIndex;
-    stop = sequenceIndex + 1;
-  }
-
   T x;
   Poincare::Expression e;
-  SequenceCacheContext<T> ctx =
-      SequenceCacheContext<T>(sqctx, sequenceIndex, independent);
-
   switch (type()) {
     case Type::Explicit: {
       // we want to assess u(n) at n=rank
       x = static_cast<T>(rank);
       e = expressionReduced(sqctx);
-      for (int i = start; i < stop; i++) {
-        // In context, u(rank) matches u(n)
-        ctx.setValue(sqctx->rankSequenceValue<T>(i, 0, independent), i, 0);
-      }
       break;
     }
     case Type::SingleRecurrence: {
@@ -276,12 +260,6 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
       // we want to assess u(n+1) at n=rank-1
       x = static_cast<T>(rank - 1);
       e = expressionReduced(sqctx);
-      for (int i = start; i < stop; i++) {
-        // In context, u(rank) matches u(n+1)
-        ctx.setValue(sqctx->rankSequenceValue<T>(i, 0, independent), i, 1);
-        // In context, u(rank-1) matches u(n)
-        ctx.setValue(sqctx->rankSequenceValue<T>(i, 1, independent), i, 0);
-      }
       break;
     }
     default: {
@@ -299,22 +277,15 @@ T Sequence::approximateToNextRank(SequenceContext *sqctx,
       // we want to assess u(n+2) at n=rank-2
       x = static_cast<T>(rank - 2);
       e = expressionReduced(sqctx);
-      for (int i = start; i < stop; i++) {
-        // In context, u(rank) matches u(n+2)
-        ctx.setValue(sqctx->rankSequenceValue<T>(i, 0, independent), i, 2);
-        // In context, u(rank-1) matches u(n+1)
-        ctx.setValue(sqctx->rankSequenceValue<T>(i, 1, independent), i, 1);
-        // In context, u(rank-2) matches u(n)
-        ctx.setValue(sqctx->rankSequenceValue<T>(i, 2, independent), i, 0);
-      }
       break;
     }
   }
 
+  SequenceCacheContext<T> ctx =
+      SequenceCacheContext<T>(sqctx, sequenceIndex, independent);
   // Update angle unit and complex format
   Preferences preferences =
       Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));
-
   return PoincareHelpers::ApproximateWithValueForSymbol(
       e, k_unknownName, x, &ctx, &preferences, false);
 }

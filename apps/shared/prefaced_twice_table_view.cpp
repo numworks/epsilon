@@ -172,7 +172,8 @@ bool PrefacedTwiceTableView::ColumnPrefaceDataSource::prefaceIsAfterOffset(
   m_mainDataSource->lockMemoization(true);
   // x offset includes left margin
   bool result = offsetX - leftMargin <=
-                m_mainDataSource->cumulatedWidthBeforeIndex(m_prefaceColumn);
+                m_mainDataSource->cumulatedWidthBeforeIndex(m_prefaceColumn) +
+                    m_mainDataSource->separatorBeforeColumn(m_prefaceColumn);
   m_mainDataSource->lockMemoization(false);
   return result;
 }
@@ -197,7 +198,7 @@ KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
   assert(i == 0 || i == 1);
   m_mainDataSource->lockMemoization(true);
   KDCoordinate result =
-      i == 1 ? m_mainDataSource->columnWidth(m_prefaceColumn) : 0;
+      i == 1 ? m_mainDataSource->columnWidth(m_prefaceColumn, false) : 0;
   m_mainDataSource->lockMemoization(false);
   return result;
 }
@@ -206,7 +207,8 @@ int PrefacedTwiceTableView::ColumnPrefaceDataSource::
     nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  int result = offsetX < m_mainDataSource->columnWidth(m_prefaceColumn) ? 0 : 1;
+  int result =
+      offsetX < m_mainDataSource->columnWidth(m_prefaceColumn, false) ? 0 : 1;
   m_mainDataSource->lockMemoization(false);
   return result;
 }

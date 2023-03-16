@@ -139,6 +139,7 @@ class PrefacedTableView : public Escher::View,
     bool prefaceIsAfterOffset(KDCoordinate offsetY,
                               KDCoordinate topMargin) const;
     int numberOfRows() const override { return 1; }
+    KDCoordinate separatorBeforeRow(int index) override { return 0; }
 
    private:
     KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j) override;

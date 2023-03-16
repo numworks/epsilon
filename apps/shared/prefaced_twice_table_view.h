@@ -39,6 +39,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
     bool prefaceIsAfterOffset(KDCoordinate offsetX,
                               KDCoordinate leftMargin) const;
     int numberOfColumns() const override { return 1; }
+    KDCoordinate separatorBeforeColumn(int index) override { return 0; }
 
    private:
     Escher::HighlightCell* reusableCell(int index, int type) override;

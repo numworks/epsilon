@@ -234,7 +234,8 @@ bool PrefacedTableView::RowPrefaceDataSource::prefaceIsAfterOffset(
   m_mainDataSource->lockMemoization(true);
   // y offset includes top margin
   bool result = offsetY - topMargin <=
-                m_mainDataSource->cumulatedHeightBeforeIndex(m_prefaceRow);
+                m_mainDataSource->cumulatedHeightBeforeIndex(m_prefaceRow) +
+                    m_mainDataSource->separatorBeforeRow(m_prefaceRow);
   m_mainDataSource->lockMemoization(false);
   return result;
 }
@@ -245,7 +246,8 @@ PrefacedTableView::RowPrefaceDataSource::nonMemoizedCumulatedHeightBeforeIndex(
   // Do not alter main dataSource memoization
   assert(j == 0 || j == 1);
   m_mainDataSource->lockMemoization(true);
-  KDCoordinate result = j == 1 ? m_mainDataSource->rowHeight(m_prefaceRow) : 0;
+  KDCoordinate result =
+      j == 1 ? m_mainDataSource->rowHeight(m_prefaceRow, false) : 0;
   m_mainDataSource->lockMemoization(false);
   return result;
 }
@@ -254,7 +256,8 @@ int PrefacedTableView::RowPrefaceDataSource::
     nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  int result = offsetY < m_mainDataSource->rowHeight(m_prefaceRow) ? 0 : 1;
+  int result =
+      offsetY < m_mainDataSource->rowHeight(m_prefaceRow, false) ? 0 : 1;
   m_mainDataSource->lockMemoization(false);
   return result;
 }

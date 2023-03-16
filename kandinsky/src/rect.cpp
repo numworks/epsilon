@@ -2,6 +2,10 @@
 
 #include <algorithm>
 
+KDRect KDRect::transposed() const {
+  return KDRect(origin().y(), origin().x(), size().height(), size().width());
+}
+
 KDRect KDRect::translatedBy(KDPoint p) const {
   return KDRect(origin().translatedBy(p), size());
 }

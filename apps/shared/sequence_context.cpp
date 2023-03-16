@@ -99,7 +99,7 @@ void TemplatedSequenceContext<T>::stepToNextRank(SequenceContext *sqctx,
     }
     /* WARNING : values must be ordered by name index (u then v then w) because
      * approximateToNextRank needs it. */
-    int index = SequenceStore::sequenceIndexForName(s->fullName()[0]);
+    int index = SequenceStore::SequenceIndexForName(s->fullName()[0]);
     sequencesToUpdate[index] = s;
   }
 

@@ -28,8 +28,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
         PoincareJ::Layout::Parse(m_view.textField()->text()));
     /* Dump parsed expression into m_buffer.blocks() TypeBlock array.
      * TODO : CreateBasicReduction from expressions. */
-    PoincareJ::Expression::Parse(m_view.inputLayoutView()->getLayout())
-        .dumpAt(m_buffer.blocks());
+    PoincareJ::Layout tempLayout = m_view.inputLayoutView()->getLayout();
+    PoincareJ::Expression::Parse(&tempLayout).dumpAt(m_buffer.blocks());
     // The reduced expression has to live somewhere so layout can be initialized
     m_reducedExpression =
         PoincareJ::Expression::CreateBasicReduction(m_buffer.blocks());

@@ -1,48 +1,36 @@
-#ifndef ESCHER_LAYOUT_FIELD_DELEGATE_H
-#define ESCHER_LAYOUT_FIELD_DELEGATE_H
+#ifndef CALCULATION_JUNIOR_LAYOUT_FIELD_DELEGATE_H
+#define CALCULATION_JUNIOR_LAYOUT_FIELD_DELEGATE_H
 
 #include <escher/context_provider.h>
 #include <ion/events.h>
-#include <poincare/layout.h>
+#include <poincare_junior/include/layout.h>
 
-namespace Escher {
+namespace CalculationJunior {
 
 class LayoutField;
 
-class LayoutFieldDelegate : public ContextProvider {
+class LayoutFieldDelegate : public Escher::ContextProvider {
  public:
-  bool layoutFieldShouldFinishEditing(LayoutField* layoutField,
-                                      Ion::Events::Event event) {
-    return event == Ion::Events::OK || event == Ion::Events::EXE;
-  }
+  virtual bool layoutFieldShouldFinishEditing(LayoutField* layoutField,
+                                              Ion::Events::Event event) = 0;
   virtual bool layoutFieldDidReceiveEvent(LayoutField* layoutField,
-                                          Ion::Events::Event event) {
-    return false;
-  }
+                                          Ion::Events::Event event) = 0;
   virtual bool layoutFieldDidFinishEditing(LayoutField* layoutField,
+                                           PoincareJ::Layout layoutR,
                                            Ion::Events::Event event) {
     return false;
   }
-  virtual void layoutFieldDidAbortEditing(LayoutField* layoutField) {}
-  virtual void layoutFieldDidHandleEvent(LayoutField* layoutField) {}
+  virtual bool layoutFieldDidAbortEditing(LayoutField* layoutField) {
+    return false;
+  }
+  virtual bool layoutFieldDidHandleEvent(LayoutField* layoutField,
+                                         bool returnValue,
+                                         bool layoutDidChange) {
+    return returnValue;
+  }
   virtual void layoutFieldDidChangeSize(LayoutField* layoutField) {}
-
-  virtual bool shouldInsertTextForStoEvent(
-      Escher::LayoutField* layoutField) const {
-    return false;
-  }
-  virtual bool shouldInsertTextForAnsEvent(
-      Escher::LayoutField* layoutField) const {
-    return false;
-  }
-  virtual bool shouldInsertSingleQuoteInsteadOfDoubleQuotes(
-      LayoutField* layoutField) {
-    return true;
-  }
-  virtual void updateRepetitionIndexes(LayoutField* layoutField,
-                                       Ion::Events::Event event) {}
 };
 
-}  // namespace Escher
+}  // namespace CalculationJunior
 
 #endif

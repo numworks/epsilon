@@ -6,29 +6,17 @@ using namespace PoincareJ;
 
 namespace CalculationJunior {
 
-bool ExpressionView::setLayout(Layout layoutR) {
-  /* Check m_layout.wasErasedByException(), otherwise accessing m_layout would
-   * result in an ACCESS ERROR. */
-  bool shouldRedraw = !m_layout.treeIsIdenticalTo(layoutR);
-  // Overwrite m_layout anyway
-  m_layout = layoutR;
-  if (shouldRedraw) {
-    markRectAsDirty(bounds());
-  }
-  return shouldRedraw;
-}
-
-KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
-  if (!m_layout.isInitialized()) {
+KDSize AbstractExpressionView::minimalSizeForOptimalDisplay() const {
+  if (!getLayout().isInitialized()) {
     return KDSizeZero;
   }
-  KDSize expressionSize = m_layout.size(m_glyphFormat.style.font);
+  KDSize expressionSize = getLayout().size(m_glyphFormat.style.font);
   return KDSize(expressionSize.width() + 2 * m_horizontalMargin,
                 expressionSize.height());
 }
 
-KDPoint ExpressionView::drawingOrigin() const {
-  KDSize expressionSize = m_layout.size(m_glyphFormat.style.font);
+KDPoint AbstractExpressionView::drawingOrigin() const {
+  KDSize expressionSize = getLayout().size(m_glyphFormat.style.font);
   return KDPoint(
       m_horizontalMargin + m_glyphFormat.horizontalAlignment *
                                (bounds().width() - 2 * m_horizontalMargin -
@@ -38,14 +26,35 @@ KDPoint ExpressionView::drawingOrigin() const {
                  (bounds().height() - expressionSize.height())));
 }
 
-void ExpressionView::drawRect(KDContext* ctx, KDRect rect) const {
+void AbstractExpressionView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(rect, m_glyphFormat.style.backgroundColor);
-  if (m_layout.isInitialized()) {
+  if (getLayout().isInitialized()) {
     // TODO : Implement Selection here (use selection())
-    m_layout.draw(ctx, drawingOrigin(), m_glyphFormat.style.font,
-                  m_glyphFormat.style.glyphColor,
-                  m_glyphFormat.style.backgroundColor);
+    getLayout().draw(ctx, drawingOrigin(), m_glyphFormat.style.font,
+                     m_glyphFormat.style.glyphColor,
+                     m_glyphFormat.style.backgroundColor);
   }
+}
+
+bool ExpressionView::setLayout(Layout layoutR) {
+  bool shouldRedraw = !getLayout().treeIsIdenticalTo(layoutR);
+  // Overwrite m_layout anyway
+  m_layout = layoutR;
+  if (shouldRedraw) {
+    markRectAsDirty(bounds());
+  }
+  return shouldRedraw;
+}
+
+bool ExpressionViewWithCursor::setLayout(Layout layoutR) {
+  bool shouldRedraw = !getLayout().treeIsIdenticalTo(layoutR);
+  // Overwrite m_layout anyway
+  layoutR.dumpAt(m_cursor->layoutBuffer());
+  // TODO : Update the cursor if needed.
+  if (shouldRedraw) {
+    markRectAsDirty(bounds());
+  }
+  return shouldRedraw;
 }
 
 }  // namespace CalculationJunior

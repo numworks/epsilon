@@ -60,7 +60,7 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(
      * - log(x,2) */
     length =
         e.serialize(buffer, bufferSize,
-                    Poincare::Preferences::sharedPreferences->displayMode());
+                    Poincare::Preferences::SharedPreferences()->displayMode());
     if (length >= bufferSize - 1) {
       // Same comment as before
       displayWarning(I18n::Message::SyntaxError);

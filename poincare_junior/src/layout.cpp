@@ -84,4 +84,16 @@ KDSize Layout::size(KDFont::Size font) const {
   return result;
 }
 
+bool Layout::isEmpty() const {
+  bool result = false;
+  send(
+    [](const Node tree, void * context) {
+      bool  * result = static_cast<bool *>(context);
+      *result = tree.isEmpty();
+    },
+    &result
+  );
+  return result;
+}
+
 }

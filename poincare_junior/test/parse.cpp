@@ -5,7 +5,7 @@
 #include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/layout/k_creator.h>
 #include <poincare_junior/src/layout/parsing/tokenizer.h>
-#include <poincare_junior/src/layout/parsing/parser.h>
+#include <poincare_junior/src/layout/parsing/rack_parser.h>
 
 using namespace PoincareJ;
 
@@ -34,7 +34,7 @@ QUIZ_CASE(pcj_layout_tokenize) {
 }
 
 void assert_is_parsable(Node layout) {
-  EditionReference expression = Parser(layout).parse();
+  EditionReference expression = RackParser(layout).parse();
   quiz_assert(!expression.isUninitialized());
   // expression.log();
 }
@@ -42,7 +42,7 @@ void assert_is_parsable(Node layout) {
 // TODO import all the parsing tests from poincare
 
 QUIZ_CASE(pcj_layout_parse) {
-  assert_trees_are_equal(Parser("2^(3+1)^4"_l).parse(), KPow(2_e, KPow(KAdd(3_e, 1_e), 4_e)));
+  assert_trees_are_equal(RackParser("2^(3+1)^4"_l).parse(), KPow(2_e, KPow(KAdd(3_e, 1_e), 4_e)));
   assert_is_parsable("12(123.4567E2 +  0x2a+2*0b0101)"_l);
   assert_is_parsable("-1"_l);
   assert_is_parsable("1+2+3+4+5+6"_l);

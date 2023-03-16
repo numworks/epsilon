@@ -14,7 +14,7 @@
 
 namespace PoincareJ {
 
-class Parser {
+class RackParser {
  public:
   enum class Status { Success, Progress, Error };
 
@@ -27,7 +27,7 @@ class Parser {
    * but the parser will set parseForAssignment = false when it encounters a
    * "=". (so that f(x)=xy is parsed as f(x)=x*y, and not as f*(x)=x*y or as
    * f(x)=xy) */
-  Parser(const Node node, /*Context* context,*/ size_t textEnd = 0,
+  RackParser(const Node node, /*Context* context,*/ size_t textEnd = 0,
          ParsingContext::ParsingMethod parsingMethod =
              ParsingContext::ParsingMethod::Classic)
       : m_parsingContext(/*context,*/ parsingMethod),

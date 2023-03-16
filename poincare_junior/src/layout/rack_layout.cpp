@@ -1,6 +1,6 @@
 #include "rack_layout.h"
 #include <poincare_junior/src/memory/node_iterator.h>
-#include <poincare_junior/src/layout/parsing/parser.h>
+#include <poincare_junior/src/layout/parsing/rack_parser.h>
 
 namespace PoincareJ {
 
@@ -42,7 +42,7 @@ KDPoint RackLayout::PositionOfChild(const Node node, int childIndex, KDFont::Siz
 }
 
 EditionReference RackLayout::Parse(const Node node) {
-  return Parser(node).parse();
+  return RackParser(node).parse();
 }
 
 }

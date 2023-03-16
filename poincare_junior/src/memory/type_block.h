@@ -47,10 +47,11 @@ namespace PoincareJ {
  * - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | NUMBER CHARS | US TAG |
  *
- * - Polynomial P = a0*x^e0 + ... + a1*x^e1 + ... +
+ * - Polynomial P = a1*x^e1 + ... + an*x^en
  *   n = number of terms
- *  | P TAG | n | e0 | e1 | ... | n | P TAG |
- *  This node has n + 1 children:
+ *   ei are unsigned digits
+ *  | P TAG | n+1 | e1 | e2 | ... | en | n+1 | P TAG |
+ *  This node has n+1 children:
  *  - the first child describes the variable x
  *  - the n following children describe the coefficients.
  *  Polynomials can be recursive (have polynomials children)

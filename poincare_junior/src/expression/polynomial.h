@@ -85,19 +85,6 @@ class PolynomialParser final {
   /* TODO: Polynomial could have their own sparse representation to speed up
    * polynomial GCD, Grobner basis... But this would require to implement their
    * own operations.
-   *
-   * MONOMIAL REPRESENTATION
-   * - Polynomial P = a0*x0^e0(x0)*x1^e0(x1)*... + a1*x0^e1(x0)*x1^e1(x1)*... +
-   *   n = number of variables
-   *   m = number of terms
-   *   ei(xi) are uint8_t
-   *   a0 are int32_t
-   *  | P TAG | n | m | e0(x0) | e0(x1) | ... | e1(x0) | e1(x1) | ... | a | n *
-   * m | P TAG | This node has n children: the first n children describe the
-   * variables, the next m children describe the coefficients.
-   *
-   *  RECURSIVE REPRESENTATION
-   *  List of (EditionReference, uint8_t)
    */
 
  public:

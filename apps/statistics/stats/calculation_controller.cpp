@@ -17,7 +17,7 @@ CalculationController::CalculationController(Responder *parentResponder,
                                              Store *store)
     : DoublePairTableController(parentResponder, header), m_store(store) {
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
-    m_seriesTitleCells[i].setSeparatorLeft(true);
+    m_seriesTitleCells[i].setFont(KDFont::Size::Small);
   }
   for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
     m_calculationTitleCells[i].setAlignment(KDContext::k_alignRight,
@@ -84,9 +84,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
       int seriesNumber = m_store->seriesIndexFromActiveSeriesIndex(i - 2);
       char titleBuffer[] = {'V', static_cast<char>('1' + seriesNumber), '/',
                             'N', static_cast<char>('1' + seriesNumber), 0};
-      StoreTitleCell *storeTitleCell = static_cast<StoreTitleCell *>(cell);
-      storeTitleCell->setText(titleBuffer);
-      storeTitleCell->setColor(
+      BufferFunctionTitleCell *seriesTitleCell =
+          static_cast<BufferFunctionTitleCell *>(cell);
+      seriesTitleCell->setText(titleBuffer);
+      seriesTitleCell->setColor(
           DoublePairStore::colorOfSeriesAtIndex(seriesNumber));
       return;
     }
@@ -255,6 +256,12 @@ int CalculationController::typeAtLocation(int i, int j) {
     return k_seriesTitleCellType;
   }
   return k_calculationCellType;
+}
+
+KDCoordinate CalculationController::separatorBeforeColumn(int index) {
+  return typeAtLocation(index, 0) == k_seriesTitleCellType
+             ? Escher::Metric::TableSeparatorThickness
+             : 0;
 }
 
 int CalculationController::findCellIndex(int i) const {

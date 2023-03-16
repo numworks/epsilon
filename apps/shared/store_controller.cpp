@@ -125,19 +125,20 @@ KDCoordinate StoreController::separatorBeforeColumn(int index) {
 
 void StoreController::setTitleCellText(HighlightCell *cell, int columnIndex) {
   // Default : put column name in titleCell
-  StoreTitleCell *myTitleCell = static_cast<StoreTitleCell *>(cell);
+  BufferFunctionTitleCell *myTitleCell =
+      static_cast<BufferFunctionTitleCell *>(cell);
   fillColumnName(columnIndex, const_cast<char *>(myTitleCell->text()));
 }
 
 void StoreController::setTitleCellStyle(HighlightCell *cell, int columnIndex) {
   int seriesIndex = m_store->seriesAtColumn(columnIndex);
-  int realColumnIndex = m_store->relativeColumnIndex(columnIndex);
-  Shared::StoreTitleCell *myCell = static_cast<Shared::StoreTitleCell *>(cell);
+  Shared::BufferFunctionTitleCell *myCell =
+      static_cast<Shared::BufferFunctionTitleCell *>(cell);
   // TODO Share GrayDark with graph/list_controller
   myCell->setColor(!m_store->seriesIsActive(seriesIndex)
                        ? Palette::GrayDark
                        : DoublePairStore::colorOfSeriesAtIndex(seriesIndex));
-  myCell->setSeparatorLeft(columnIndex > 0 && (realColumnIndex == 0));
+  myCell->setFont(KDFont::Size::Small);
 }
 
 const char *StoreController::title() {

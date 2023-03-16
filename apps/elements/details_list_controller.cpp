@@ -77,25 +77,7 @@ const char *DetailsListController::title() {
       App::app()->elementsViewDataSource()->selectedElement()));
 }
 
-HighlightCell *DetailsListController::reusableCell(int index, int type) {
-  if (type == k_separatorCellType) {
-    assert(index < static_cast<int>(k_numberOfSeparatorCells));
-    return m_separatorCells + index;
-  }
-  assert(type == k_normalCellType &&
-         index < static_cast<int>(k_numberOfNormalCells));
-  return m_normalCells + index;
-}
-
-int DetailsListController::reusableCellCount(int type) {
-  if (type == k_separatorCellType) {
-    return k_numberOfSeparatorCells;
-  }
-  assert(type == k_normalCellType);
-  return k_numberOfNormalCells;
-}
-
-int DetailsListController::typeAtIndex(int index) const {
+KDCoordinate DetailsListController::separatorBeforeRow(int index) {
   assert(index < numberOfRows());
   const DataField *dataField = DataFieldForRow(index);
   if (dataField == &ElementsDataBase::ConfigurationField ||
@@ -103,19 +85,16 @@ int DetailsListController::typeAtIndex(int index) const {
       dataField == &ElementsDataBase::RadiusField ||
       dataField == &ElementsDataBase::StateField ||
       dataField == &ElementsDataBase::AffinityField) {
-    return k_separatorCellType;
+    return k_defaultRowSeparator;
   }
-  return k_normalCellType;
+  return 0;
 }
 
 void DetailsListController::willDisplayCellForIndex(HighlightCell *cell,
                                                     int index) {
   AtomicNumber z = App::app()->elementsViewDataSource()->selectedElement();
   assert(ElementsDataBase::IsElement(z));
-  PhysicalQuantityCell *typedCell =
-      typeAtIndex(index) == k_separatorCellType
-          ? static_cast<PhysicalQuantityCellWithSeparator *>(cell)->innerCell()
-          : static_cast<PhysicalQuantityCell *>(cell);
+  PhysicalQuantityCell *typedCell = static_cast<PhysicalQuantityCell *>(cell);
   const DataField *dataField = DataFieldForRow(index);
 
   I18n::Message sublabel = I18n::Message::Default;
@@ -133,12 +112,6 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell *cell,
 }
 
 KDCoordinate DetailsListController::nonMemoizedRowHeight(int j) {
-  int type = typeAtIndex(j);
-  if (type == k_separatorCellType) {
-    PhysicalQuantityCellWithSeparator tempCell;
-    return heightForCellAtIndexWithWidthInit(&tempCell, j);
-  }
-  assert(type == k_normalCellType);
   PhysicalQuantityCell tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }

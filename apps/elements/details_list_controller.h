@@ -26,19 +26,24 @@ class DetailsListController : public Escher::ViewController,
 
   // Escher::TableViewDataSource
   int numberOfRows() const override { return k_numberOfRows; }
-  Escher::HighlightCell *reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  Escher::HighlightCell *reusableCell(int index, int type) override {
+    return m_cells + index;
+  }
+  int reusableCellCount(int type) override {
+    return k_maxNumberOfDisplayedRows;
+  }
+  KDCoordinate separatorBeforeRow(int index) override;
 
   // Escher::ListViewDataSource
-  int typeAtIndex(int index) const override;
+  int typeAtIndex(int index) const override { return 0; }
   void willDisplayCellForIndex(Escher::HighlightCell *cell, int index) override;
 
  private:
-  constexpr static int k_normalCellType = 0;
-  constexpr static int k_separatorCellType = 1;
   constexpr static size_t k_numberOfRows = 13;
-  constexpr static size_t k_numberOfNormalCells = 4;
-  constexpr static size_t k_numberOfSeparatorCells = 4;
+  constexpr static size_t k_maxNumberOfDisplayedRows =
+      Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
+          Escher::TableCell::k_minimalLargeFontCellHeight,
+          Escher::Metric::StackTitleHeight);
 
   static const DataField *DataFieldForRow(int row);
 
@@ -53,8 +58,7 @@ class DetailsListController : public Escher::ViewController,
   SingleElementView m_topElementView;
   Escher::MessageTextView m_bottomMessageView;
   Escher::ListViewWithTopAndBottomViews m_view;
-  PhysicalQuantityCell m_normalCells[k_numberOfNormalCells];
-  PhysicalQuantityCellWithSeparator m_separatorCells[k_numberOfSeparatorCells];
+  PhysicalQuantityCell m_cells[k_maxNumberOfDisplayedRows];
 };
 
 }  // namespace Elements

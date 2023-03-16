@@ -8,7 +8,7 @@
 
 namespace PoincareJ {
 
-EditionReference Parser::EditionPoolLayoutToExpression(const Node node) {
+EditionReference Parser::Parse(const Node node) {
   assert(node.block()->isLayout());
   switch (node.type()) {
   case BlockType::FractionLayout:
@@ -17,8 +17,6 @@ EditionReference Parser::EditionPoolLayoutToExpression(const Node node) {
     return RackLayout::Parse(node);
   case BlockType::ParenthesisLayout:
     return ParenthesisLayout::Parse(node);
-  case BlockType::VerticalOffsetLayout:
-    return VerticalOffsetLayout::Parse(node);
   default:
     assert(false);
   }

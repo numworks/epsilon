@@ -23,36 +23,19 @@ EditionReference Expression::EditionPoolExpressionToLayout(Node node) {
   return ref;
 }
 
-EditionReference Expression::EditionPoolLayoutToExpression(Node node) {
-  assert(node.block()->isLayout());
-  // node == (1-2)/3/4
-  EditionReference ref = EditionReference::Push<BlockType::Division>();
-  EditionReference::Push<BlockType::Division>();
-  EditionReference::Push<BlockType::Subtraction>();
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
-  // Remove node from EditionReference
-  EditionReference nodeRef(node);
-  nodeRef.removeTree();
-  return ref;
-}
-
 Expression Expression::Parse(const char * textInput) {
   return Expression([](const char * text) {
     EditionReference layout = Layout::EditionPoolTextToLayout(text);
-    Parser::EditionPoolLayoutToExpression(layout);
+    Parser::Parse(layout);
     layout.removeTree();
     }, textInput);
 }
 
 Expression Expression::Parse(const Layout * layout) {
   return Expression([](Node node) {
-      Parser::EditionPoolLayoutToExpression(node);
-      EditionReference nodeRef(node);
-      nodeRef.removeTree();
-    }, layout);
+    Parser::Parse(node);
+    EditionReference(node).removeTree();
+  }, layout);
 }
 
 Expression Expression::CreateBasicReduction(void * expressionAddress) {

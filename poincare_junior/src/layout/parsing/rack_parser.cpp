@@ -10,8 +10,7 @@
 #include <poincare_junior/src/n_ary.h>
 #include <stdlib.h>
 
-#include <poincare_junior/src/layout/fraction_layout.h>
-#include <poincare_junior/src/layout/parenthesis_layout.h>
+#include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/layout/vertical_offset_layout.h>
 
 #include <omgpj/unicode_helper.h>
@@ -1256,26 +1255,20 @@ void RackParser::parseLayout(EditionReference &leftHandSide, Token::Type stoppin
   assert(m_currentToken.length() == 1);
   Node layout = m_currentToken.firstLayout();
   assert(layout.block()->isLayout());
+  /* Only layouts that can't be standalone are handled in this switch, others
+   * are in Parser::Parse */
   switch (layout.type()) {
-  case BlockType::FractionLayout:
-    leftHandSide = FractionLayout::Parse(layout);
-    break;
-  case BlockType::ParenthesisLayout:
-    leftHandSide = ParenthesisLayout::Parse(layout);
-    break;
   case BlockType::VerticalOffsetLayout: {
     if (leftHandSide.isUninitialized()) {
       m_status = Status::Error;
       return;
     }
-    EditionReference rightHandSide = VerticalOffsetLayout::Parse(layout);
+    EditionReference rightHandSide = Parser::Parse(layout.childAtIndex(0));
     turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
     break;
   }
   default:
-    assert(false);
-    m_status = Status::Error;
-    return;
+    leftHandSide = Parser::Parse(layout);
   }
   isThereImplicitOperator();
 }

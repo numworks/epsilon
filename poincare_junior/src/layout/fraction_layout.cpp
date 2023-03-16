@@ -28,8 +28,8 @@ void FractionLayout::RenderNode(const Node node, KDContext * ctx, KDPoint p, KDF
 
 EditionReference FractionLayout::Parse(const Node node) {
   EditionReference ref = EditionReference::Push<BlockType::Division>();
-  Parser::EditionPoolLayoutToExpression(node.childAtIndex(k_numeratorIndex));
-  Parser::EditionPoolLayoutToExpression(node.childAtIndex(k_denominatorIndex));
+  Parser::Parse(node.childAtIndex(k_numeratorIndex));
+  Parser::Parse(node.childAtIndex(k_denominatorIndex));
   return ref;
 }
 

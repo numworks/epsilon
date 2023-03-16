@@ -19,7 +19,6 @@ public:
   float approximate() const;
 private:
   static EditionReference EditionPoolExpressionToLayout(Node node);
-  static EditionReference EditionPoolLayoutToExpression(Node node);
 };
 
 static_assert(sizeof(Expression) == sizeof(Reference));

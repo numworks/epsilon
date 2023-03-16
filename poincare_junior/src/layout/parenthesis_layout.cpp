@@ -34,7 +34,7 @@ void ParenthesisLayout::RenderNode(const Node node, KDContext * ctx, KDPoint p, 
 }
 
 EditionReference ParenthesisLayout::Parse(const Node node) {
-  return Parser::EditionPoolLayoutToExpression(node.childAtIndex(0));
+  return Parser::Parse(node.childAtIndex(0));
 }
 
 }

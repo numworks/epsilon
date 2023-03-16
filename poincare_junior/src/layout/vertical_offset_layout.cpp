@@ -16,8 +16,4 @@ KDPoint VerticalOffsetLayout::PositionOfChild(const Node node, int childIndex, K
   return KDPointZero;
 }
 
-EditionReference VerticalOffsetLayout::Parse(const Node node) {
-  return Parser::EditionPoolLayoutToExpression(node.childAtIndex(0));
-}
-
 }

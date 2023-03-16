@@ -381,13 +381,6 @@ void Parser::parseUnexpected(EditionReference &leftHandSide,
   m_status = Status::Error;  // Unexpected Token
 }
 
-static RackLayoutDecoder TokenToDecoder(const Token & token) {
-  Node rack = token.firstLayout().parent();
-  size_t start = rack.indexOfChild(token.firstLayout());
-  size_t end = start + token.length();
-  return RackLayoutDecoder(rack, start, end);
-}
-
 void Parser::parseNumber(EditionReference &leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // FIXME
@@ -830,7 +823,7 @@ void Parser::parseUnit(EditionReference &leftHandSide, Token::Type stoppingType)
 void Parser::parseReservedFunction(EditionReference &leftHandSide,
                                    Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  RackLayoutDecoder decoder = TokenToDecoder(m_currentToken);
+  RackLayoutDecoder decoder = m_currentToken.toDecoder();
   const Builtin * builtin = Builtin::GetReservedFunction(&decoder);
   privateParseReservedFunction(leftHandSide, builtin);
   isThereImplicitOperator();

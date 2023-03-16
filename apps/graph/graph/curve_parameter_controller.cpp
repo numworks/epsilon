@@ -19,10 +19,10 @@ CurveParameterController::CurveParameterController(
     CurveViewCursor *cursor, GraphView *graphView,
     GraphController *graphController)
     : ExplicitFloatParameterController(parentResponder()),
-      m_abscissaCell({&m_selectableListView, inputEventHandlerDelegate, this}),
-      m_imageCell({&m_selectableListView, inputEventHandlerDelegate, this}),
-      m_derivativeNumberCell(
-          {&m_selectableListView, inputEventHandlerDelegate, this}),
+      m_abscissaCell(&m_selectableListView, inputEventHandlerDelegate, this),
+      m_imageCell(&m_selectableListView, inputEventHandlerDelegate, this),
+      m_derivativeNumberCell(&m_selectableListView, inputEventHandlerDelegate,
+                             this),
       m_calculationCell(I18n::Message::Find),
       m_optionsCell(I18n::Message::Options),
       m_graphController(graphController),

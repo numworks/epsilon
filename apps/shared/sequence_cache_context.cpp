@@ -34,7 +34,7 @@ const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
   /* Do not use recordAtIndex : if the sequences have been reordered, the
    * name index and the record index may not correspond. */
   char name = static_cast<const Symbol &>(symbol).name()[0];
-  int index = SequenceStore::sequenceIndexForName(name);
+  int index = SequenceStore::SequenceIndexForName(name);
   Ion::Storage::Record record =
       m_sequenceContext->sequenceStore()->recordAtNameIndex(index);
   if (record.isNull()) {

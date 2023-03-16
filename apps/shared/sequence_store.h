@@ -31,8 +31,8 @@ class SequenceStore : public FunctionStore {
     return modelForRecord(record)->color();
   }
 
-  static int sequenceIndexForName(char name);
-  static const char *firstAvailableName(size_t *nameIndex = nullptr);
+  static int SequenceIndexForName(char name);
+  static const char *FirstAvailableName(size_t *nameIndex = nullptr);
   constexpr static const char *k_sequenceNames[] = {"u", "v", "w"};
   constexpr static size_t k_maxSequenceNameLength = []() {
     size_t m = 0;

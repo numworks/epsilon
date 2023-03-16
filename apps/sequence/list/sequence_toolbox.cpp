@@ -78,7 +78,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char *sequenceName,
    * want to parse symbols u(n+2), v(n+2) or w(n+2). */
   m_numberOfAddedCells = 0;
   int sequenceIndex =
-      Shared::SequenceStore::sequenceIndexForName(sequenceName[0]);
+      Shared::SequenceStore::SequenceIndexForName(sequenceName[0]);
   for (int i = 0; i < Shared::SequenceStore::k_maxNumberOfSequences; i++) {
     for (int j = 0; j < recurrenceDepth + 1; j++) {
       // When defining u(n+1) for ex, don't add [u|v|w](n+2) or u(n+1)

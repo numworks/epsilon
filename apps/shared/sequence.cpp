@@ -228,7 +228,7 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx, bool independent) const {
       (n >= firstNonInitialRank() && mainExpressionIsNotComputable(sqctx))) {
     return NAN;
   }
-  int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
+  int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   sqctx->stepUntilRank<T>(n, independent ? sequenceIndex : -1);
   return independent ? sqctx->independentRankSequenceValue<T>(sequenceIndex, 0)
                      : sqctx->commonRankSequenceValue<T>(sequenceIndex, 0);
@@ -237,7 +237,7 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx, bool independent) const {
 template <typename T>
 T Sequence::approximateToNextRank(SequenceContext *sqctx,
                                   bool independent) const {
-  int sequenceIndex = SequenceStore::sequenceIndexForName(fullName()[0]);
+  int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   int rank = independent ? sqctx->independentRank<T>(sequenceIndex)
                          : sqctx->commonRank<T>();
   if (rank < initialRank()) {

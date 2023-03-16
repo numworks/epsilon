@@ -12,7 +12,7 @@ using namespace Escher;
 
 namespace Shared {
 
-const char* SequenceStore::firstAvailableName(size_t* nameIndex) {
+const char* SequenceStore::FirstAvailableName(size_t* nameIndex) {
   // Choose available name
   size_t currentNameIndex = 0;
   while (currentNameIndex < k_maxNumberOfSequences) {
@@ -33,7 +33,7 @@ const char* SequenceStore::firstAvailableName(size_t* nameIndex) {
 Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
   // Choose available name
   size_t nameIndex;
-  const char* name = firstAvailableName(&nameIndex);
+  const char* name = FirstAvailableName(&nameIndex);
   assert(name);
   // Choose the corresponding color
   assert(nameIndex < Palette::numberOfDataColors());
@@ -44,7 +44,7 @@ Ion::Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
       name, modelExtension(), &data, sizeof(data));
 }
 
-int SequenceStore::sequenceIndexForName(char name) {
+int SequenceStore::SequenceIndexForName(char name) {
   for (int i = 0; i < k_maxNumberOfSequences; i++) {
     if (k_sequenceNames[i][0] == name) {
       return i;
@@ -59,7 +59,7 @@ Shared::ExpressionModelHandle* SequenceStore::setMemoizedModelAtIndex(
   assert(cacheIndex >= 0 && cacheIndex < maxNumberOfMemoizedModels());
   int index = cacheIndex;
   if (!record.isNull()) {
-    index = SequenceStore::sequenceIndexForName(record.fullName()[0]);
+    index = SequenceStore::SequenceIndexForName(record.fullName()[0]);
   }
   m_sequences[index] = Sequence(record);
   return &m_sequences[index];

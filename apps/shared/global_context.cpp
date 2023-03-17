@@ -205,7 +205,7 @@ const Expression GlobalContext::expressionForSequence(
   }
   if (rankIsInteger) {
     return Float<double>::Builder(
-        seq.evaluateXYAtParameter(rankValue, sequenceContext()).y());
+        seq.approximateAtRank<double>(rankValue, sequenceContext(), true));
   }
   return Float<double>::Builder(NAN);
 }

@@ -15,6 +15,7 @@ template <typename T>
 class TemplatedSequenceContext {
  public:
   TemplatedSequenceContext(SequenceContext* sequenceContext);
+  void resetCacheOfSequence(int sequenceIndex);
   void resetCache();
   void stepUntilRank(int n, int sequenceIndex);
   constexpr static bool IsAcceptableRank(int n) {
@@ -25,13 +26,7 @@ class TemplatedSequenceContext {
            sequenceIndex < SequenceStore::k_maxNumberOfSequences);
     return independent ? m_independentRanks[sequenceIndex] : m_commonRank;
   }
-  T rankSequenceValue(int sequenceIndex, int depth, bool independent) const {
-    assert(0 <= sequenceIndex &&
-           sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-    assert(0 <= depth && depth < SequenceStore::k_maxRecurrenceDepth + 1);
-    return independent ? m_independentRankValues[sequenceIndex][depth]
-                       : m_commonRankValues[sequenceIndex][depth];
-  }
+  T storedValueOfSequenceAtRank(int sequenceIndex, int rank);
 
  private:
   constexpr static int k_maxRecurrentRank = 10000;
@@ -111,9 +106,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   }
 
   template <typename T>
-  T rankSequenceValue(int sequenceIndex, int depth, bool independent) {
+  T storedValueOfSequenceAtRank(int sequenceIndex, int rank) {
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->rankSequenceValue(sequenceIndex, depth, independent);
+        ->storedValueOfSequenceAtRank(sequenceIndex, rank);
   }
 
  private:

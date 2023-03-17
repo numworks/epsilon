@@ -30,6 +30,12 @@ QUIZ_CASE(pcj_match) {
   assert_trees_are_equal(ctx2[A], 2_e);
   PatternMatching::Context ctx3 = PatternMatching::Match(KAdd(A, 2_e), t);
   quiz_assert(ctx3.isUninitialized());
+
+  Node t2 = KAdd(1_e, 1_e, 2_e);
+  Node p = KAdd(A, A, B);
+  PatternMatching::Context ctx4 = PatternMatching::Match(p, t2);
+  assert_trees_are_equal(ctx4[A], 1_e);
+  assert_trees_are_equal(ctx4[B], 2_e);
 }
 
 QUIZ_CASE(pcj_rewrite) {

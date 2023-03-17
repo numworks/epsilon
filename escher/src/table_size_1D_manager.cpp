@@ -245,7 +245,8 @@ void MemoizedTableSize1DManager::shiftMemoization(bool lowerIndex) {
     }
     if (m_memoizedCumulatedSizeOffset != k_undefinedSize) {
       lockMemoization(true);
-      m_memoizedCumulatedSizeOffset += sizeAtIndex(m_memoizedIndexOffset);
+      m_memoizedCumulatedSizeOffset +=
+          nonMemoizedSizeAtIndex(m_memoizedIndexOffset);
       lockMemoization(false);
       assert(m_memoizedCumulatedSizeOffset != k_undefinedSize);
     }

@@ -965,9 +965,8 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
     assert(static_cast<void *>(m_leafCells) > static_cast<void *>(cell) ||
            static_cast<void *>(cell) >=
                static_cast<void *>(m_leafCells + k_maxNumberOfDisplayedRows));
-    // Message is a submenu
-    MessageTableCell *typedCell = static_cast<MessageTableCell *>(cell);
-    typedCell->setTextColor(textColor);
+    static_cast<NestedMenuController::NodeCell *>(cell)->label()->setTextColor(
+        textColor);
     Escher::Toolbox::willDisplayCellForIndex(cell, index);
   }
 }
@@ -1016,7 +1015,8 @@ ExpressionTableCellWithMessage *MathToolbox::leafCellAtIndex(int index) {
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron *MathToolbox::nodeCellAtIndex(int index) {
+Escher::NestedMenuController::NodeCell *MathToolbox::nodeCellAtIndex(
+    int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }

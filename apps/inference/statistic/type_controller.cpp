@@ -100,9 +100,11 @@ void TypeController::willDisplayCellForIndex(Escher::HighlightCell *cell,
     assert(i == k_indexOfPooledTest);
     message = m_statistic->tPooledDistributionName();
   }
-  Escher::MessageTableCellWithChevron *mcell =
-      static_cast<Escher::MessageTableCellWithChevron *>(cell);
-  mcell->setMessage(message);
+
+  static_cast<Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                               Escher::ChevronView> *>(cell)
+      ->label()
+      ->setMessage(message);
 }
 
 }  // namespace Inference

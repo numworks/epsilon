@@ -31,18 +31,19 @@ class PythonToolbox : public Escher::Toolbox {
   bool selectLeaf(int selectedRow) override;
   const Escher::ToolboxMessageTree* rootModel() const override;
   ToolboxLeafCell* leafCellAtIndex(int index) override;
-  Escher::MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
+  Escher::NestedMenuController::NodeCell* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
   constexpr static int k_maxNumberOfDisplayedRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-          Escher::TableCell::k_minimalSmallFontCellHeight,
+          Escher::AbstractMenuCell::k_minimalSmallFontCellHeight,
           Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight);
 
  private:
   void scrollToLetter(char letter);
   void scrollToAndSelectChild(int i);
   ToolboxLeafCell m_leafCells[k_maxNumberOfDisplayedRows];
-  Escher::MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
+  Escher::NestedMenuController::NodeCell
+      m_nodeCells[k_maxNumberOfDisplayedRows];
 };
 
 }  // namespace Code

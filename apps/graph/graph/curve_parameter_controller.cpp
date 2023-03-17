@@ -23,8 +23,6 @@ CurveParameterController::CurveParameterController(
       m_imageCell(&m_selectableListView, inputEventHandlerDelegate, this),
       m_derivativeNumberCell(&m_selectableListView, inputEventHandlerDelegate,
                              this),
-      m_calculationCell(I18n::Message::Find),
-      m_optionsCell(I18n::Message::Options),
       m_graphController(graphController),
       m_graphRange(graphRange),
       m_cursor(cursor),
@@ -32,7 +30,10 @@ CurveParameterController::CurveParameterController(
                                 cursor),
       m_calculationParameterController(this, inputEventHandlerDelegate,
                                        graphView, bannerView, graphRange,
-                                       cursor) {}
+                                       cursor) {
+  m_calculationCell.label()->setMessage(I18n::Message::Find);
+  m_optionsCell.label()->setMessage(I18n::Message::Options);
+}
 
 Escher::HighlightCell *CurveParameterController::cell(int index) {
   assert(0 <= index && index < k_numberOfRows);
@@ -159,14 +160,13 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell *cell = selectedCell();
   StackViewController *stack =
       static_cast<StackViewController *>(parentResponder());
-  if (cell == &m_calculationCell &&
-      m_calculationCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_calculationCell && m_calculationCell.enterOnEvent(event)) {
     m_calculationParameterController.setRecord(
         m_record);  // Will select row at location 0
     stack->push(&m_calculationParameterController);
     return true;
   }
-  if (cell == &m_optionsCell && m_optionsCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_optionsCell && m_optionsCell.enterOnEvent(event)) {
     Shared::ListParameterController *details =
         App::app()->listController()->parameterController();
     details->setRecord(m_record);  // Will select cell at location (0,0)

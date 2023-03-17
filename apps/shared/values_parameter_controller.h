@@ -1,8 +1,10 @@
 #ifndef SHARED_VALUES_PARAM_CONTROLLER_H
 #define SHARED_VALUES_PARAM_CONTROLLER_H
 
+#include <escher/chevron_view.h>
+#include <escher/menu_cell.h>
 #include <escher/message_table_cell.h>
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 
 #include "column_parameter_controller.h"
@@ -28,7 +30,9 @@ class ValuesParameterController : public ColumnParameterController {
   constexpr static int k_indexOfSetInterval = k_indexOfClearColumn + 1;
 
   Escher::MessageTableCell m_clearColumn;
-  Escher::MessageTableCellWithChevron m_setInterval;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::ChevronView>
+      m_setInterval;
 
   ValuesController* m_valuesController;
 };

@@ -2,8 +2,9 @@
 #define GRAPH_GRAPH_CURVE_PARAMETER_CONTROLLER_H
 
 #include <escher/buffer_text_view.h>
+#include <escher/chevron_view.h>
 #include <escher/menu_cell_with_editable_text.h>
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/message_text_view.h>
 
 #include "../../shared/explicit_float_parameter_controller.h"
 #include "../../shared/with_record.h"
@@ -71,8 +72,12 @@ class CurveParameterController
   Escher::MenuCellWithEditableText<Escher::BufferTextView> m_imageCell;
   Escher::MenuCellWithEditableText<Escher::BufferTextView>
       m_derivativeNumberCell;
-  Escher::MessageTableCellWithChevron m_calculationCell;
-  Escher::MessageTableCellWithChevron m_optionsCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::ChevronView>
+      m_calculationCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::ChevronView>
+      m_optionsCell;
   GraphController* m_graphController;
   Shared::InteractiveCurveViewRange* m_graphRange;
   Shared::CurveViewCursor* m_cursor;

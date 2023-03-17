@@ -13,15 +13,21 @@ CategoricalTypeController::CategoricalTypeController(
     Escher::StackViewController* parent, Chi2Test* statistic,
     InputGoodnessController* inputGoodnessController,
     InputHomogeneityController* inputHomogeneityController)
-    : Escher::SelectableCellListPage<Escher::MessageTableCellWithChevron,
-                                     k_numberOfCategoricalCells,
-                                     Escher::RegularListViewDataSource>(parent),
+    : Escher::SelectableCellListPage<
+          Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                           Escher::ChevronView>,
+          k_numberOfCategoricalCells, Escher::RegularListViewDataSource>(
+          parent),
       m_statistic(statistic),
       m_inputGoodnessController(inputGoodnessController),
       m_inputHomogeneityController(inputHomogeneityController) {
   selectRow(0);  // Select first row by default
-  cellAtIndex(k_indexOfGoodnessCell)->setMessage(I18n::Message::GoodnessOfFit);
-  cellAtIndex(k_indexOfHomogeneityCell)->setMessage(I18n::Message::Homogeneity);
+  cellAtIndex(k_indexOfGoodnessCell)
+      ->label()
+      ->setMessage(I18n::Message::GoodnessOfFit);
+  cellAtIndex(k_indexOfHomogeneityCell)
+      ->label()
+      ->setMessage(I18n::Message::Homogeneity);
 
   // Init selection
   selectRow(0);

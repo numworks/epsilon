@@ -2,7 +2,9 @@
 #define SEQUENCE_CURVE_PARAMETER_CONTROLLER_H
 
 #include <apps/shared/with_record.h>
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/chevron_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 
 #include "cobweb_controller.h"
 #include "go_to_parameter_controller.h"
@@ -31,7 +33,9 @@ class CurveParameterController
  private:
   constexpr static int k_numberOfRows = 3;
   GoToParameterController m_goToParameterController;
-  Escher::MessageTableCellWithChevron m_goToCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::ChevronView>
+      m_goToCell;
   Escher::MessageTableCell m_sumCell;
   Escher::MessageTableCell m_cobwebCell;
   CobwebController* m_cobwebController;

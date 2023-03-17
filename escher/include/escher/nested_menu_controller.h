@@ -1,10 +1,13 @@
 #ifndef ESCHER_NESTED_MENU_CONTROLLER_H
 #define ESCHER_NESTED_MENU_CONTROLLER_H
 
+#include <escher/chevron_view.h>
 #include <escher/container.h>
 #include <escher/highlight_cell.h>
 #include <escher/input_event_handler.h>
 #include <escher/list_view_data_source.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/metric.h>
 #include <escher/pervasive_box.h>
 #include <escher/selectable_list_view.h>
@@ -37,6 +40,8 @@ class NestedMenuController : public StackViewController,
   void open() override;
 
  protected:
+  using NodeCell = MenuCell<MessageTextView, EmptyCellWidget, ChevronView>;
+
   class StackState {
    public:
     StackState(int selectedRow = -1, KDCoordinate verticalScroll = 0)
@@ -60,7 +65,7 @@ class NestedMenuController : public StackViewController,
   virtual bool returnToRootMenu();
   virtual bool selectLeaf(int selectedRow) = 0;
   virtual HighlightCell* leafCellAtIndex(int index) = 0;
-  virtual HighlightCell* nodeCellAtIndex(int index) = 0;
+  virtual NodeCell* nodeCellAtIndex(int index) = 0;
   virtual I18n::Message subTitle() = 0;
   SelectableListView m_selectableListView;
   Ion::RingBuffer<StackState, k_maxModelTreeDepth>* stack() { return &m_stack; }

@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/expression_table_cell_with_expression.h>
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/message_table_cell.h>
 #include <escher/nested_menu_controller.h>
 #include <ion.h>
 
@@ -50,7 +50,7 @@ class MathVariableBoxController : public Escher::NestedMenuController {
   Escher::ExpressionTableCellWithExpression* leafCellAtIndex(
       int index) override;
   int defineVariableCellIndex() const { return numberOfRows() - 1; }
-  Escher::MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
+  Escher::NestedMenuController::NodeCell* nodeCellAtIndex(int index) override;
   I18n::Message subTitle() override;
   int numberOfElements(Page page) const;
   Page pageAtIndex(int index);
@@ -70,7 +70,7 @@ class MathVariableBoxController : public Escher::NestedMenuController {
   Page m_currentPage;
   Escher::ExpressionTableCellWithExpression
       m_leafCells[k_maxNumberOfDisplayedRows];
-  Escher::MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
+  Escher::NestedMenuController::NodeCell m_nodeCells[k_numberOfMenuRows];
   Escher::MessageTableCell m_defineVariableCell;
   // Layout memoization
   // TODO: make a helper doing the RingMemoizationOfConsecutiveObjets to

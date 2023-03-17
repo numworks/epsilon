@@ -20,7 +20,7 @@ class MathToolbox : public Escher::Toolbox {
   bool selectLeaf(int selectedRow) override;
   const Escher::ToolboxMessageTree* rootModel() const override;
   Escher::ExpressionTableCellWithMessage* leafCellAtIndex(int index) override;
-  Escher::MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
+  Escher::NestedMenuController::NodeCell* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
   int controlChecksum() const override;
   constexpr static int k_maxNumberOfDisplayedRows =
@@ -38,7 +38,8 @@ class MathToolbox : public Escher::Toolbox {
 
   Escher::ExpressionTableCellWithMessage
       m_leafCells[k_maxNumberOfDisplayedRows];
-  Escher::MessageTableCellWithChevron m_nodeCells[k_maxNumberOfDisplayedRows];
+  Escher::NestedMenuController::NodeCell
+      m_nodeCells[k_maxNumberOfDisplayedRows];
 };
 
 #endif

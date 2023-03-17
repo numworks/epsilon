@@ -37,6 +37,12 @@ void TextCursorView::setVisible(bool visible) {
     return;
   }
   m_visible = visible;
+  if (bounds().size() == KDSizeZero) {
+    /* 'setVisible' may only be called by the blink timer, meaning the timer is
+     * currently trying to blink an offscreen cursor. */
+    BlinkTimer::RegisterCursor(nullptr);
+    return;
+  }
   markRectAsDirty(bounds());
 }
 

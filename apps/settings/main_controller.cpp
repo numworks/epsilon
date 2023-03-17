@@ -43,7 +43,6 @@ MainController::MainController(
     Responder *parentResponder,
     InputEventHandlerDelegate *inputEventHandlerDelegate)
     : SelectableListViewController(parentResponder),
-      m_brightnessCell(I18n::Message::Default),
       m_resetButton(&m_selectableListView, I18n::Message::ResetCalculator,
                     Invocation::Builder<MainController>(
                         [](MainController *controller, void *sender) {
@@ -70,7 +69,6 @@ MainController::MainController(
          &m_examModeController);
   assert(subControllerForCell(messageAtModelIndex(k_indexOfExamModeCell + 1)) ==
          &m_pressToTestController);
-  m_popUpCell.label()->setMessage(I18n::Message::Default);
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
@@ -208,12 +206,11 @@ void MainController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
   int type = typeAtIndex(index);
   if (type == k_brightnessCellType) {
-    MessageTableCellWithGauge *myGaugeCell =
-        static_cast<MessageTableCellWithGauge *>(cell);
-    myGaugeCell->setMessage(title);
-    GaugeView *myGauge = (GaugeView *)myGaugeCell->accessoryView();
-    myGauge->setLevel((float)globalPreferences->brightnessLevel() /
-                      (float)Ion::Backlight::MaxBrightness);
+    assert(&m_brightnessCell == cell);
+    m_brightnessCell.label()->setMessage(title);
+    m_brightnessCell.accessory()->setLevel(
+        (float)globalPreferences->brightnessLevel() /
+        (float)Ion::Backlight::MaxBrightness);
     return;
   }
   if (type == k_resetCellType) {

@@ -4,8 +4,8 @@
 #include <apps/shared/pop_up_controller.h>
 #include <escher/button_cell.h>
 #include <escher/chevron_view.h>
+#include <escher/gauge_view.h>
 #include <escher/menu_cell.h>
-#include <escher/message_table_cell_with_gauge.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/switch_view.h>
@@ -75,7 +75,9 @@ class MainController : public Escher::SelectableListViewController<
                        Escher::ChevronView>;
 
   SubMenuCell m_cells[k_numberOfSimpleChevronCells];
-  Escher::MessageTableCellWithGauge m_brightnessCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::GaugeView>
+      m_brightnessCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::SwitchView>
       m_popUpCell;

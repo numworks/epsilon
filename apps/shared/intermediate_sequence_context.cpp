@@ -79,7 +79,7 @@ IntermediateSequenceContext<T>::protectedExpressionForSymbolAbstract(
         rankExpression, lastDescendantContext ? lastDescendantContext : this);
     // If the rank is not an int, return NAN
     if (std::floor(rankValue) == rankValue) {
-      result = seq->valueAtRank<T>(rankValue, m_sequenceContext, true);
+      result = seq->approximateAtRank<T>(rankValue, m_sequenceContext, true);
     }
   }
   return Float<T>::Builder(result);

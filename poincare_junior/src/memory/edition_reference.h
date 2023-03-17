@@ -118,6 +118,7 @@ class EditionReference {
 
   EditionReference matchAndRewrite(const Node pattern,
                                    const Node structure) const;
+  void matchAndReplace(const Node pattern, const Node structure);
 
  private:
   void insert(Node nodeToInsert, bool before, bool isTree);

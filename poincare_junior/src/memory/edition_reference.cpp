@@ -91,6 +91,93 @@ EditionReference EditionReference::matchAndRewrite(const Node pattern,
   return PatternMatching::Create(structure, ctx);
 }
 
+void EditionReference::matchAndReplace(const Node pattern,
+                                       const Node structure) {
+  // Step 1 - Match the pattern
+  PatternMatching::Context ctx = PatternMatching::Match(pattern, *this);
+  if (ctx.isUninitialized()) {
+    return;
+  }
+  EditionPool* editionPool = EditionPool::sharedEditionPool();
+  /* This is a representation of the EditionPool:
+   *   # is any block(s) or nodes
+   *   | delimits this reference
+   *   A A and B B B are placeholder match trees
+   *   _ is the end of the EditionPool
+   *   + marks an Addition block
+   *   n is the number of placeholder matches (initializedPlaceHolders)
+   *   " will delimit the created reference
+   */
+  // EditionPool : #|# A A # B B B #|# _
+
+  // Step 2 - Detach placeholder matches
+  /* Create ZeroBlock for each context node to be detached so that tree size is
+   * preserved. */
+  EditionReference treeNext = nextTree();
+  int initializedPlaceHolders = 0;
+  for (int i = 0; i < PatternMatching::k_numberOfPlaceholders; i++) {
+    PatternMatching::PlaceholderTag tag =
+        static_cast<PatternMatching::PlaceholderTag>(i);
+    if (ctx[tag].isUninitialized()) {
+      continue;
+    }
+    initializedPlaceHolders += 1;
+    treeNext.insertTreeBeforeNode(editionPool->pushBlock(ZeroBlock));
+  }
+  // EditionPool : #|# A A # B B B #|0 0 # _
+
+  EditionReference placeholders[PatternMatching::k_numberOfPlaceholders];
+  for (int i = 0; i < PatternMatching::k_numberOfPlaceholders; i++) {
+    PatternMatching::PlaceholderTag tag =
+        static_cast<PatternMatching::PlaceholderTag>(i);
+    // Keep track of placeholder matches before detaching them
+    placeholders[i] = EditionReference(ctx[tag]);
+  }
+
+  // Detach placeholder matches at the end of the EditionPool in an addition
+  EditionReference placeholderMatches(
+      editionPool->push<BlockType::Addition>(initializedPlaceHolders));
+
+  // EditionPool : #|# A A # B B B #|0 0 # + n _
+
+  for (int i = 0; i < PatternMatching::k_numberOfPlaceholders; i++) {
+    PatternMatching::PlaceholderTag tag =
+        static_cast<PatternMatching::PlaceholderTag>(i);
+    if (placeholders[i].isUninitialized()) {
+      continue;
+    }
+    // Warning : From this point forward, context[tag] is no longer reliable.
+    ctx[tag] = Node();
+    placeholders[i].detachTree();
+  }
+
+  // EditionPool : #|# # # 0 0|# + n A A B B B _
+
+  // Step 3 - Replace with placeholder matches only
+  replaceTreeByTree(placeholderMatches);
+  *this = placeholderMatches;
+
+  // EditionPool : #|+ n A A B B B|# _
+
+  // Step 4 - Update context with new placeholder matches position
+  for (int i = 0; i < PatternMatching::k_numberOfPlaceholders; i++) {
+    PatternMatching::PlaceholderTag tag =
+        static_cast<PatternMatching::PlaceholderTag>(i);
+    ctx[tag] = static_cast<Node>(placeholders[i]);
+  }
+
+  // Step 5 - Build the PatternMatching replacement
+  EditionReference createdRef = PatternMatching::Create(structure, ctx);
+
+  // EditionPool : #|+ n A A B B B|#"# B B B # B B B #"_
+
+  // Step 6 - Replace with created structure
+  replaceTreeByTree(createdRef);
+  *this = createdRef;
+
+  // EditionPool : #|# B B B # B B B #|# _
+}
+
 void EditionReference::remove(bool isTree) {
   Block* b = block();
   size_t size = isTree ? static_cast<Node>(*this).treeSize()

@@ -38,7 +38,7 @@ QUIZ_CASE(pcj_match) {
   assert_trees_are_equal(ctx4[B], 2_e);
 }
 
-QUIZ_CASE(pcj_rewrite) {
+QUIZ_CASE(pcj_rewrite_replace) {
   using namespace PatternMatching::Placeholders;
   EditionPool* editionPool = EditionPool::sharedEditionPool();
   Node p = KAdd(A, A);
@@ -48,4 +48,6 @@ QUIZ_CASE(pcj_rewrite) {
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   EditionReference result = ref.matchAndRewrite(p, s);
   assert_trees_are_equal(result, KMult(2_e, 5_e));
+  ref.matchAndReplace(p, s);
+  assert_trees_are_equal(result, ref);
 }

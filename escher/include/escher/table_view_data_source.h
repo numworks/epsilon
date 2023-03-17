@@ -53,7 +53,9 @@ class TableViewDataSource {
 
  protected:
   /* These should always be overriden unless sizes are regular, in which case
-   * only defaultColumnWidth and defaultRowHeight need to be overriden. */
+   * only defaultColumnWidth and defaultRowHeight need to be overriden.
+   *
+   * These two methods return width and height without separator. */
   virtual KDCoordinate nonMemoizedColumnWidth(int i) {
     return defaultColumnWidth();
   }

@@ -487,12 +487,14 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
       m_contentView.cursor()->performBackspace();
       *shouldRedrawLayout = true;
     }
+    *shouldUpdateCursor = event != Ion::Events::Sto;
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {
     clearLayout();
     return true;
   }
+  *shouldUpdateCursor = false;
   return false;
 }
 

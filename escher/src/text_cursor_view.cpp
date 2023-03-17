@@ -21,6 +21,7 @@ void TextCursorView::willMove() {
    * not lose sight of the cursor when moving around.  We need to expose a
    * callback since layoutSubviews is not called when the size is kept. */
   m_visible = true;
+  // No need to mark rect as dirty since it will be moved
 }
 
 void TextCursorView::setBlinking(bool blinking) {

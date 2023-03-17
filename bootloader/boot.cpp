@@ -107,7 +107,7 @@ void Boot::bootSlot(Bootloader::Slot s) {
   if (!s.userlandHeader()->isOmega() && !s.userlandHeader()->isUpsilon()) {
     // We are trying to boot epsilon, so we check the version and show an advertisement if needed
     const char * version = s.userlandHeader()->version();
-    const char * min = "20.3.1";
+    const char * min = "20.4.1";
     int versionSum = Utility::versionSum(version, strlen(version));
     int minimalVersionTrigger = Utility::versionSum(min, strlen(min));
     if (versionSum >= minimalVersionTrigger) {

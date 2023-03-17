@@ -72,7 +72,7 @@ public:
   constexpr static const char * aboutMessage4 = "and select the OS";
   constexpr static const char * aboutMessage5 = "to boot.";
 
-  constexpr static const char * bootloaderVersion = "Version 1.0.3 - FREED0M.20.3";
+  constexpr static const char * bootloaderVersion = "Version 1.0.4 - FREED0M.20.4";
 
   //USB NAMES
   constexpr static const char * usbUpsilonBootloader = "Upsilon Bootloader";

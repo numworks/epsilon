@@ -10,6 +10,7 @@ class Window : public View {
   Window() : m_contentView(nullptr) {}
   void redraw(bool force = false);
   void setContentView(View* contentView);
+  void setAbsoluteFrame(KDRect frame) { m_frame = frame; }
 
  protected:
 #if ESCHER_VIEW_LOGGING

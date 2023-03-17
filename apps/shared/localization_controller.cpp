@@ -215,19 +215,19 @@ bool LocalizationController::handleEvent(Ion::Events::Event event) {
 }
 
 KDCoordinate LocalizationController::nonMemoizedRowHeight(int j) {
-  MessageTableCell tempCell;
+  MenuCell<MessageTextView> tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
 void LocalizationController::willDisplayCellForIndex(HighlightCell *cell,
                                                      int index) {
   if (mode() == Mode::Language) {
-    static_cast<MessageTableCell *>(cell)->setMessage(
+    static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
         I18n::LanguageNames[index]);
     return;
   }
   assert(mode() == Mode::Country);
-  static_cast<MessageTableCell *>(cell)->setMessage(
+  static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
       I18n::CountryNames[static_cast<uint8_t>(CountryAtIndex(index))]);
 }
 

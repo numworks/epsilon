@@ -14,12 +14,12 @@ ListParameterController::ListParameterController(
     I18n::Message deleteFunctionMessage,
     SelectableListViewDelegate *listDelegate)
     : ExplicitSelectableListViewController(parentResponder, listDelegate),
-      m_deleteCell(deleteFunctionMessage),
       m_colorParameterController(this) {
   m_enableCell.label()->setMessage(
       I18n::Message::ActivateDeactivateListParamTitle);
   m_enableCell.subLabel()->setMessage(
       I18n::Message::ActivateDeactivateListParamDescription);
+  m_deleteCell.label()->setMessage(deleteFunctionMessage);
 }
 
 void ListParameterController::viewWillAppear() {
@@ -66,7 +66,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
     stack->push(&m_colorParameterController);
     return true;
   }
-  if (cell == &m_deleteCell && m_deleteCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_deleteCell && m_deleteCell.enterOnEvent(event)) {
     assert(functionStore()->numberOfModels() > 0);
     m_selectableListView.deselectTable();
     functionStore()->removeModel(m_record);

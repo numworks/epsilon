@@ -17,10 +17,10 @@ CurveParameterController::CurveParameterController(
     : ExplicitSelectableListViewController(nullptr, nullptr),
       m_goToParameterController(this, inputEventHandlerDelegate,
                                 graphController, graphRange, cursor),
-      m_sumCell(I18n::Message::TermSum),
-      m_cobwebCell(I18n::Message::CobwebPlot),
       m_cobwebController(cobwebController),
       m_graphController(graphController) {
+  m_sumCell.label()->setMessage(I18n::Message::TermSum);
+  m_cobwebCell.label()->setMessage(I18n::Message::CobwebPlot);
   m_goToCell.label()->setMessage(I18n::Message::Goto);
 }
 
@@ -48,7 +48,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell *cell = selectedCell();
   StackViewController *stack =
       static_cast<StackViewController *>(parentResponder());
-  if (cell == &m_sumCell && m_sumCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_sumCell && m_sumCell.enterOnEvent(event)) {
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
         false);
@@ -60,7 +60,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
     stack->push(&m_goToParameterController);
     return true;
   }
-  if (cell == &m_cobwebCell && m_cobwebCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_cobwebCell && m_cobwebCell.enterOnEvent(event)) {
     stack->pop();
     stack->push(m_cobwebController);
     return true;

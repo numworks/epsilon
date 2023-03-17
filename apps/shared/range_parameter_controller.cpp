@@ -32,7 +32,9 @@ RangeParameterController::RangeParameterController(
           this)),
       m_singleInteractiveCurveViewRangeController(
           parentResponder, inputEventHandlerDelegate, &m_tempInteractiveRange,
-          &m_confirmPopUpController) {}
+          &m_confirmPopUpController) {
+  m_normalizeCell.label()->setMessage(I18n::Message::MakeOrthonormal);
+}
 
 int RangeParameterController::typeAtIndex(int index) const {
   int types[] = {k_normalizeCellType, k_rangeCellType, k_rangeCellType,

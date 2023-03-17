@@ -4,7 +4,7 @@
 #include <apps/i18n.h>
 #include <escher/buffer_table_cell.h>
 #include <escher/menu_cell.h>
-#include <escher/message_table_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/switch_view.h>
 
@@ -44,7 +44,7 @@ class StoreParameterController : public ColumnParameterController {
   ColumnNameHelper* columnNameHelper() override;
   virtual I18n::Message sortMessage() { return I18n::Message::SortValues; }
 
-  Escher::MessageTableCell m_fillFormula;
+  Escher::MenuCell<Escher::MessageTextView> m_fillFormula;
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView> m_sortCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::SwitchView>

@@ -30,7 +30,6 @@ GraphOptionsController::GraphOptionsController(
               KDFont::Size::Large),
       m_r2Cell(&m_selectableListView, I18n::Message::Default,
                KDFont::Size::Large),
-      m_residualPlotCell(I18n::Message::ResidualPlot),
       m_removeRegressionCell(
           &(this->m_selectableListView), I18n::Message::RemoveRegression,
           Invocation::Builder<GraphOptionsController>(
@@ -44,6 +43,7 @@ GraphOptionsController::GraphOptionsController(
       m_residualPlotCellController(parentResponder, store),
       m_store(store),
       m_graphController(graphController) {
+  m_residualPlotCell.label()->setMessage(I18n::Message::ResidualPlot);
   m_rCell.setLayout(CodePointLayout::Builder('r'));
   m_r2Cell.setLayout(HorizontalLayout::Builder(
       {CodePointLayout::Builder('R'),

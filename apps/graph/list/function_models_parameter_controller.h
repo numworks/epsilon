@@ -4,7 +4,8 @@
 #include <apps/i18n.h>
 #include <apps/shared/continuous_function.h>
 #include <escher/expression_table_cell_with_message.h>
-#include <escher/message_table_cell.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
@@ -113,7 +114,7 @@ class FunctionModelsParameterController
   static const char* ModelWithDefaultName(Model model, char buffer[],
                                           size_t bufferSize);
   Escher::StackViewController* stackController() const;
-  Escher::MessageTableCell m_emptyModelCell;
+  Escher::MenuCell<Escher::MessageTextView> m_emptyModelCell;
   Escher::ExpressionTableCellWithMessage
       m_modelCells[k_numberOfExpressionCells];
   Poincare::Layout m_layouts[k_numberOfExpressionCells];

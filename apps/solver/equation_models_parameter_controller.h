@@ -2,7 +2,8 @@
 #define SOLVER_EQUATION_PARAMETER_CONTROLLER_H
 
 #include <escher/expression_table_cell.h>
-#include <escher/message_table_cell.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
@@ -38,7 +39,7 @@ class EquationModelsParameterController
       "", "x+y=0", "x^2+x+1=0", "x+y+z=0", "x^3+x^2+x+1=0", "x+y+z+t=0"};
   Escher::StackViewController* stackController() const;
   constexpr static int k_numberOfExpressionCells = k_numberOfModels - 1;
-  Escher::MessageTableCell m_emptyModelCell;
+  Escher::MenuCell<Escher::MessageTextView> m_emptyModelCell;
   Escher::ExpressionTableCell m_modelCells[k_numberOfExpressionCells];
   Poincare::Layout m_layouts[k_numberOfExpressionCells];
   EquationStore* m_equationStore;

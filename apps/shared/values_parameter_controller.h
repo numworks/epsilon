@@ -3,7 +3,6 @@
 
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
-#include <escher/message_table_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 
@@ -29,7 +28,7 @@ class ValuesParameterController : public ColumnParameterController {
   constexpr static int k_indexOfClearColumn = 0;
   constexpr static int k_indexOfSetInterval = k_indexOfClearColumn + 1;
 
-  Escher::MessageTableCell m_clearColumn;
+  Escher::MenuCell<Escher::MessageTextView> m_clearColumn;
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>
       m_setInterval;

@@ -19,9 +19,9 @@ EquationModelsParameterController::EquationModelsParameterController(
     Responder* parentResponder, EquationStore* equationStore,
     ListController* listController)
     : SelectableListViewController(parentResponder),
-      m_emptyModelCell(I18n::Message::Empty),
       m_equationStore(equationStore),
       m_listController(listController) {
+  m_emptyModelCell.label()->setMessage(I18n::Message::Empty);
   m_selectableListView.setMargins(0);
   m_selectableListView.hideScrollBars();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {

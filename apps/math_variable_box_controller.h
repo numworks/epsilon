@@ -3,7 +3,8 @@
 
 #include <apps/i18n.h>
 #include <escher/expression_table_cell_with_expression.h>
-#include <escher/message_table_cell.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/nested_menu_controller.h>
 #include <ion.h>
 
@@ -71,7 +72,7 @@ class MathVariableBoxController : public Escher::NestedMenuController {
   Escher::ExpressionTableCellWithExpression
       m_leafCells[k_maxNumberOfDisplayedRows];
   Escher::NestedMenuController::NodeCell m_nodeCells[k_numberOfMenuRows];
-  Escher::MessageTableCell m_defineVariableCell;
+  Escher::MenuCell<Escher::MessageTextView> m_defineVariableCell;
   // Layout memoization
   // TODO: make a helper doing the RingMemoizationOfConsecutiveObjets to
   // factorize this code and ExpressionModelStore code

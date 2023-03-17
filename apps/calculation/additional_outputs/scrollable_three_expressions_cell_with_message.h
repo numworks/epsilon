@@ -1,7 +1,7 @@
 #ifndef CALCULATION_SCROLLABLE_THREE_EXPRESSIONS_WITH_MESSAGE_CELL_H
 #define CALCULATION_SCROLLABLE_THREE_EXPRESSIONS_WITH_MESSAGE_CELL_H
 
-#include <escher/message_table_cell.h>
+#include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/palette.h>
 #include <escher/table_cell.h>

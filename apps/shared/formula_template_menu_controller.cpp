@@ -15,8 +15,8 @@ namespace Shared {
 FormulaTemplateMenuController::FormulaTemplateMenuController(
     Responder *parentResponder, StoreColumnHelper *storeColumnHelper)
     : SelectableListViewController(parentResponder),
-      m_emptyTemplateCell(I18n::Message::Empty),
       m_storeColumnHelper(storeColumnHelper) {
+  m_emptyTemplateCell.label()->setMessage(I18n::Message::Empty);
   m_selectableListView.setMargins(0);
   m_selectableListView.hideScrollBars();
 }

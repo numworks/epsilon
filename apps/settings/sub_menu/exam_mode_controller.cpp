@@ -99,8 +99,8 @@ int ExamModeController::reusableCellCount(int type) {
 
 void ExamModeController::willDisplayCellForIndex(HighlightCell *cell,
                                                  int index) {
-  MessageTableCell *myCell = static_cast<MessageTableCell *>(cell);
-  myCell->setMessage(examModeActivationMessage(index));
+  static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
+      examModeActivationMessage(index));
 }
 
 int ExamModeController::initialSelectedRow() const {

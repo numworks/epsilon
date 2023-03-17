@@ -7,8 +7,9 @@ namespace Shared {
 CalculusColumnParameterController::CalculusColumnParameterController(
     I18n::Message hideMessage, ValuesController *valuesController)
     : ColumnParameterController(valuesController),
-      m_hideColumn(hideMessage),
-      m_valuesController(valuesController) {}
+      m_valuesController(valuesController) {
+  m_hideColumn.label()->setMessage(hideMessage);
+}
 
 bool CalculusColumnParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {

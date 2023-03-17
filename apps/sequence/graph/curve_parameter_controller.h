@@ -36,8 +36,8 @@ class CurveParameterController
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>
       m_goToCell;
-  Escher::MessageTableCell m_sumCell;
-  Escher::MessageTableCell m_cobwebCell;
+  Escher::MenuCell<Escher::MessageTextView> m_sumCell;
+  Escher::MenuCell<Escher::MessageTextView> m_cobwebCell;
   CobwebController* m_cobwebController;
   GraphController* m_graphController;
 };

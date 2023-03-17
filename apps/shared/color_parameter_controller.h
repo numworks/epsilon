@@ -40,7 +40,7 @@ class ColorParameterController : public Escher::SelectableListViewController<
  private:
   constexpr static int k_numberOfCells =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-          Escher::TableCell::k_minimalLargeFontCellHeight,
+          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
           Escher::Metric::TabHeight +
               2 * Escher::Metric::StackTitleHeight);  // Remaining cell can be
                                                       // above and below so we

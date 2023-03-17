@@ -7,7 +7,6 @@
 #include <escher/expression_table_cell_with_message.h>
 #include <escher/expression_table_cell_with_message_with_buffer.h>
 #include <escher/menu_cell.h>
-#include <escher/message_table_cell.h>
 #include <escher/message_text_view.h>
 
 #include "../store.h"
@@ -60,7 +59,7 @@ class GraphOptionsController
   Escher::ExpressionTableCellWithMessage m_regressionEquationCell;
   Escher::ExpressionTableCellWithMessageWithBuffer m_rCell;
   Escher::ExpressionTableCellWithMessageWithBuffer m_r2Cell;
-  Escher::MessageTableCell m_residualPlotCell;
+  Escher::MenuCell<Escher::MessageTextView> m_residualPlotCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>
       m_xParameterCell;

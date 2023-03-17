@@ -42,7 +42,7 @@ class ListParameterController
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_colorCell;
-  Escher::MessageTableCell m_deleteCell;
+  Escher::MenuCell<Escher::MessageTextView> m_deleteCell;
   Ion::Storage::Record m_record;
 
  private:

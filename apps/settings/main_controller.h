@@ -68,7 +68,7 @@ class MainController : public Escher::SelectableListViewController<
   // Max number of visible cells
   constexpr static int k_numberOfSimpleChevronCells =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-          Escher::TableCell::k_minimalLargeFontCellHeight);
+          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight);
 
   using SubMenuCell =
       Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,

@@ -43,8 +43,8 @@ void ColorParameterController::willDisplayCellForIndex(HighlightCell *cell,
   ColorCell *colorCell = static_cast<ColorCell *>(cell);
   assert(index >= 0);
   assert(index < ColorNames::k_count);
-  colorCell->setMessage(ColorNames::k_messages[index]);
-  colorCell->setColor(ColorNames::k_colors[index]);
+  colorCell->label()->setMessage(ColorNames::k_messages[index]);
+  colorCell->accessory()->setColor(ColorNames::k_colors[index]);
 }
 
 KDCoordinate ColorParameterController::defaultRowHeight() {

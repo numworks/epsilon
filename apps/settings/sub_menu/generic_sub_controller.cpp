@@ -2,7 +2,8 @@
 
 #include <assert.h>
 #include <escher/container.h>
-#include <escher/message_table_cell.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 
 #include <cmath>
 
@@ -52,14 +53,14 @@ int GenericSubController::numberOfRows() const {
 }
 
 KDCoordinate GenericSubController::nonMemoizedRowHeight(int index) {
-  MessageTableCell tempCell;
+  MenuCell<MessageTextView> tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
 void GenericSubController::willDisplayCellForIndex(HighlightCell *cell,
                                                    int index) {
-  MessageTableCell *myCell = static_cast<MessageTableCell *>(cell);
-  myCell->setMessage(m_messageTreeModel->childAtIndex(index)->label());
+  static_cast<MessageTextView *>(static_cast<AbstractMenuCell *>(cell)->label())
+      ->setMessage(m_messageTreeModel->childAtIndex(index)->label());
 }
 
 void GenericSubController::setMessageTreeModel(

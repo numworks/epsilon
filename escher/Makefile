@@ -57,7 +57,6 @@ escher_src += $(addprefix escher/src/,\
   list_view_with_top_and_bottom_views.cpp \
   menu_cell.cpp \
   menu_cell_with_editable_text.cpp \
-  message_table_cell.cpp \
   message_text_view.cpp \
   modal_view_controller.cpp \
   modal_view_empty_controller.cpp \

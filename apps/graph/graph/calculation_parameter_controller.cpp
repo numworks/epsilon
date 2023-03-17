@@ -19,12 +19,6 @@ CalculationParameterController::CalculationParameterController(
     GraphView *graphView, BannerView *bannerView,
     InteractiveCurveViewRange *range, CurveViewCursor *cursor)
     : ExplicitSelectableListViewController(parentResponder),
-      m_intersectionCell(I18n::Message::Intersection),
-      m_minimumCell(I18n::Message::Minimum),
-      m_maximumCell(I18n::Message::Maximum),
-      m_integralCell(I18n::Message::Integral),
-      m_tangentCell(I18n::Message::Tangent),
-      m_rootCell(I18n::Message::Zeros),
       m_preimageParameterController(nullptr, inputEventHandlerDelegate, range,
                                     cursor, &m_preimageGraphController),
       m_preimageGraphController(nullptr, graphView, bannerView, range, cursor),
@@ -39,6 +33,12 @@ CalculationParameterController::CalculationParameterController(
       m_rootGraphController(nullptr, graphView, bannerView, range, cursor),
       m_intersectionGraphController(nullptr, graphView, bannerView, range,
                                     cursor) {
+  m_intersectionCell.label()->setMessage(I18n::Message::Intersection);
+  m_minimumCell.label()->setMessage(I18n::Message::Minimum);
+  m_maximumCell.label()->setMessage(I18n::Message::Maximum);
+  m_integralCell.label()->setMessage(I18n::Message::Integral);
+  m_tangentCell.label()->setMessage(I18n::Message::Tangent);
+  m_rootCell.label()->setMessage(I18n::Message::Zeros);
   m_preimageCell.label()->setMessage(I18n::Message::Preimage);
 }
 
@@ -87,22 +87,18 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell *cell = selectedCell();
   if (cell == &m_preimageCell && m_preimageCell.enterOnEvent(event)) {
     push(&m_preimageParameterController, false);
-  } else if (cell == &m_tangentCell &&
-             m_tangentCell.ShouldEnterOnEvent(event)) {
+  } else if (cell == &m_tangentCell && m_tangentCell.enterOnEvent(event)) {
     push(&m_tangentGraphController, true);
-  } else if (cell == &m_integralCell &&
-             m_integralCell.ShouldEnterOnEvent(event)) {
+  } else if (cell == &m_integralCell && m_integralCell.enterOnEvent(event)) {
     push(&m_integralGraphController, true);
-  } else if (cell == &m_minimumCell &&
-             m_minimumCell.ShouldEnterOnEvent(event)) {
+  } else if (cell == &m_minimumCell && m_minimumCell.enterOnEvent(event)) {
     push(&m_minimumGraphController, true);
-  } else if (cell == &m_maximumCell &&
-             m_maximumCell.ShouldEnterOnEvent(event)) {
+  } else if (cell == &m_maximumCell && m_maximumCell.enterOnEvent(event)) {
     push(&m_maximumGraphController, true);
   } else if (cell == &m_intersectionCell &&
-             m_intersectionCell.ShouldEnterOnEvent(event)) {
+             m_intersectionCell.enterOnEvent(event)) {
     push(&m_intersectionGraphController, true);
-  } else if (cell == &m_rootCell && m_rootCell.ShouldEnterOnEvent(event)) {
+  } else if (cell == &m_rootCell && m_rootCell.enterOnEvent(event)) {
     push(&m_rootGraphController, true);
   } else if (event == Ion::Events::Left) {
     StackViewController *stack =

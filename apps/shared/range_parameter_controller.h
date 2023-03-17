@@ -5,7 +5,6 @@
 #include <escher/button_cell.h>
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
-#include <escher/message_table_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/unequal_view.h>
 
@@ -51,18 +50,6 @@ class RangeParameterController : public Escher::SelectableListViewController<
   constexpr static int k_rangeCellType = 1;
   constexpr static int k_okCellType = 2;
 
-  class CellWithUnequal : public Escher::MessageTableCell {
-   public:
-    CellWithUnequal()
-        : Escher::MessageTableCell(I18n::Message::MakeOrthonormal) {}
-    Escher::View *accessoryView() const {
-      return const_cast<Escher::UnequalView *>(&m_unequalView);
-    }
-
-   private:
-    Escher::UnequalView m_unequalView;
-  };
-
   void buttonAction();
   bool displayNormalizeCell() const {
     return !m_tempInteractiveRange.zoomNormalize();
@@ -70,7 +57,9 @@ class RangeParameterController : public Escher::SelectableListViewController<
 
   InteractiveCurveViewRange *m_interactiveRange;
   InteractiveCurveViewRange m_tempInteractiveRange;
-  CellWithUnequal m_normalizeCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::UnequalView>
+      m_normalizeCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::BufferTextView,
                    Escher::ChevronView>
       m_rangeCells[k_numberOfRangeCells];

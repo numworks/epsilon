@@ -12,8 +12,10 @@ using namespace Poincare;
 namespace Shared {
 
 template <typename T>
-TemplatedSequenceContext<T>::TemplatedSequenceContext()
-    : m_commonRank(-1),
+TemplatedSequenceContext<T>::TemplatedSequenceContext(
+    SequenceContext *sequenceContext)
+    : m_sequenceContext(sequenceContext),
+      m_commonRank(-1),
       m_commonRankValues{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}},
       m_independentRanks{-1, -1, -1},
       m_independentRankValues{
@@ -32,8 +34,7 @@ void TemplatedSequenceContext<T>::resetCache() {
 }
 
 template <typename T>
-void TemplatedSequenceContext<T>::stepUntilRank(int n, SequenceContext *sqctx,
-                                                int sequenceIndex) {
+void TemplatedSequenceContext<T>::stepUntilRank(int n, int sequenceIndex) {
   assert(IsAcceptableRank(n));
   bool stepAllSequences = sequenceIndex == -1;
   int *currentRank =
@@ -47,13 +48,12 @@ void TemplatedSequenceContext<T>::stepUntilRank(int n, SequenceContext *sqctx,
     *currentRank = -1;
   }
   while (*currentRank < n) {
-    stepToNextRank(sqctx, sequenceIndex);
+    stepToNextRank(sequenceIndex);
   }
 }
 
 template <typename T>
-void TemplatedSequenceContext<T>::stepToNextRank(SequenceContext *sqctx,
-                                                 int sequenceIndex) {
+void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
   // First we increment the rank
   bool stepAllSequences = sequenceIndex == -1;
   if (stepAllSequences) {
@@ -87,7 +87,7 @@ void TemplatedSequenceContext<T>::stepToNextRank(SequenceContext *sqctx,
   // We create an array containing the sequences we want to update
   Sequence *sequencesToUpdate[SequenceStore::k_maxNumberOfSequences] = {
       nullptr, nullptr, nullptr};
-  SequenceStore *sequenceStore = sqctx->sequenceStore();
+  SequenceStore *sequenceStore = m_sequenceContext->sequenceStore();
   for (int sequence = start; sequence < stop; sequence++) {
     Ion::Storage::Record record = sequenceStore->recordAtNameIndex(sequence);
     if (record.isNull()) {
@@ -125,7 +125,7 @@ void TemplatedSequenceContext<T>::stepToNextRank(SequenceContext *sqctx,
           sequencesRankValues + j * (SequenceStore::k_maxRecurrenceDepth + 1);
       if (std::isnan(*sequencePointer)) {
         *sequencePointer = sequencesToUpdate[j]->approximateToNextRank<T>(
-            sqctx, !stepAllSequences);
+            m_sequenceContext, !stepAllSequences);
       }
     }
   }

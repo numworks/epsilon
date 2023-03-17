@@ -14,9 +14,9 @@ class Sequence;
 template <typename T>
 class TemplatedSequenceContext {
  public:
-  TemplatedSequenceContext();
+  TemplatedSequenceContext(SequenceContext* sequenceContext);
   void resetCache();
-  void stepUntilRank(int n, SequenceContext* sqctx, int sequenceIndex);
+  void stepUntilRank(int n, int sequenceIndex);
   constexpr static bool IsAcceptableRank(int n) {
     return 0 <= n && n <= k_maxRecurrentRank;
   }
@@ -35,7 +35,10 @@ class TemplatedSequenceContext {
 
  private:
   constexpr static int k_maxRecurrentRank = 10000;
-  void stepToNextRank(SequenceContext* sqctx, int sequenceIndex = -1);
+  void stepToNextRank(int sequenceIndex = -1);
+
+  SequenceContext* m_sequenceContext;
+
   /* Cache:
    * We use two types of cache :
    * The first one is used to to accelerate the
@@ -71,7 +74,11 @@ class SequenceContext : public Poincare::ContextWithParent {
  public:
   SequenceContext(Poincare::Context* parentContext,
                   SequenceStore* sequenceStore)
-      : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
+      : ContextWithParent(parentContext),
+        m_sequenceStore(sequenceStore),
+        m_floatSequenceContext(this),
+        m_doubleSequenceContext(this) {}
+
   /* u{n}, v{n} and w{n} must be parsed as sequences in the sequence app
    * so that u{n} can be defined as a function of v{n} without v{n} being
    * already defined.
@@ -90,7 +97,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   template <typename T>
   void stepUntilRank(int n, int sequenceIndex) {
     static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->stepUntilRank(n, this, sequenceIndex);
+        ->stepUntilRank(n, sequenceIndex);
   }
 
   SequenceStore* sequenceStore() { return m_sequenceStore; }
@@ -110,9 +117,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   }
 
  private:
+  SequenceStore* m_sequenceStore;
   TemplatedSequenceContext<float> m_floatSequenceContext;
   TemplatedSequenceContext<double> m_doubleSequenceContext;
-  SequenceStore* m_sequenceStore;
   template <typename T>
   void* helper() {
     return sizeof(T) == sizeof(float) ? (void*)&m_floatSequenceContext

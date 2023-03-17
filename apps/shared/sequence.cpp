@@ -219,11 +219,13 @@ void Sequence::tidyDownstreamPoolFrom(char *treePoolCursor) const {
 template <typename T>
 T Sequence::privateEvaluateYAtX(T x, Poincare::Context *context) const {
   int n = std::round(x);
-  return valueAtRank<T>(n, reinterpret_cast<SequenceContext *>(context), false);
+  return approximateAtRank<T>(n, reinterpret_cast<SequenceContext *>(context),
+                              false);
 }
 
 template <typename T>
-T Sequence::valueAtRank(int n, SequenceContext *sqctx, bool independent) const {
+T Sequence::approximateAtRank(int n, SequenceContext *sqctx,
+                              bool independent) const {
   if (n < initialRank() || !TemplatedSequenceContext<T>::IsAcceptableRank(n) ||
       (n >= firstNonInitialRank() && mainExpressionIsNotComputable(sqctx))) {
     return NAN;
@@ -463,8 +465,9 @@ template double Sequence::approximateAtContextRank<double>(SequenceContext *,
                                                            bool) const;
 template float Sequence::approximateAtContextRank<float>(SequenceContext *,
                                                          bool) const;
-template double Sequence::valueAtRank<double>(int, SequenceContext *,
-                                              bool) const;
-template float Sequence::valueAtRank<float>(int, SequenceContext *, bool) const;
+template double Sequence::approximateAtRank<double>(int, SequenceContext *,
+                                                    bool) const;
+template float Sequence::approximateAtRank<float>(int, SequenceContext *,
+                                                  bool) const;
 
 }  // namespace Shared

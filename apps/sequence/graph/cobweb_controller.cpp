@@ -110,7 +110,7 @@ void CobwebController::reloadBannerView() {
   Poincare::Print::CustomPrintf(buffer, bufferSize, "%i", rankAtCurrentStep());
   m_bannerView->abscissaValue()->setText(buffer);
   int nameLength = sequence()->nameWithArgument(buffer, bufferSize);
-  double u_n = sequence()->valueAtRank<double>(
+  double u_n = sequence()->approximateAtRank<double>(
       rankAtCurrentStep(), App::app()->localContext(), true);
   Poincare::Print::CustomPrintf(buffer + nameLength, bufferSize - nameLength,
                                 "=%*.*ef", u_n,
@@ -143,7 +143,7 @@ bool CobwebController::updateStep(int delta) {
     return false;
   }
   m_step += delta;
-  double u_n = sequence()->valueAtRank<double>(
+  double u_n = sequence()->approximateAtRank<double>(
       rankAtCurrentStep(), App::app()->localContext(), true);
   double x = u_n;
   double y = m_step == 0 ? 0.f : u_n;

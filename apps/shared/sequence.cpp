@@ -234,8 +234,8 @@ T Sequence::valueAtRank(int n, SequenceContext *sqctx, bool independent) const {
 }
 
 template <typename T>
-T Sequence::approximateToNextRank(SequenceContext *sqctx,
-                                  bool independent) const {
+T Sequence::approximateAtContextRank(SequenceContext *sqctx,
+                                     bool independent) const {
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   int rank = sqctx->rank<T>(sequenceIndex, independent);
   if (rank < initialRank()) {
@@ -459,10 +459,10 @@ template double Sequence::privateEvaluateYAtX<double>(
     double, Poincare::Context *) const;
 template float Sequence::privateEvaluateYAtX<float>(float,
                                                     Poincare::Context *) const;
-template double Sequence::approximateToNextRank<double>(SequenceContext *,
-                                                        bool) const;
-template float Sequence::approximateToNextRank<float>(SequenceContext *,
-                                                      bool) const;
+template double Sequence::approximateAtContextRank<double>(SequenceContext *,
+                                                           bool) const;
+template float Sequence::approximateAtContextRank<float>(SequenceContext *,
+                                                         bool) const;
 template double Sequence::valueAtRank<double>(int, SequenceContext *,
                                               bool) const;
 template float Sequence::valueAtRank<float>(int, SequenceContext *, bool) const;

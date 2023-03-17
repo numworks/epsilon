@@ -98,7 +98,7 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
       continue;
     }
     /* WARNING : values must be ordered by name index (u then v then w) because
-     * approximateToNextRank needs it. */
+     * approximateAtContextRank needs it. */
     int index = SequenceStore::SequenceIndexForName(s->fullName()[0]);
     sequencesToUpdate[index] = s;
   }
@@ -112,7 +112,7 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
    * w. At the first iteration, we can only evaluate w, at the second iteration
    * we evaluate v and u can only be known at the third iteration. In case stop
    * is 1, there is only one sequence we want to update. Moreover, the call to
-   * approximateToNextRank will handle potential dependencies. */
+   * approximateAtContextRank will handle potential dependencies. */
   for (int i = start; i < stop; i++) {
     if (!sequencesToUpdate[i]) {
       continue;
@@ -124,7 +124,7 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
       T *sequencePointer =
           sequencesRankValues + j * (SequenceStore::k_maxRecurrenceDepth + 1);
       if (std::isnan(*sequencePointer)) {
-        *sequencePointer = sequencesToUpdate[j]->approximateToNextRank<T>(
+        *sequencePointer = sequencesToUpdate[j]->approximateAtContextRank<T>(
             m_sequenceContext, independent);
       }
     }

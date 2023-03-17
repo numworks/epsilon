@@ -36,9 +36,9 @@ void TemplatedSequenceContext<T>::resetCache() {
 template <typename T>
 void TemplatedSequenceContext<T>::stepUntilRank(int n, int sequenceIndex) {
   assert(IsAcceptableRank(n));
-  bool stepAllSequences = sequenceIndex == -1;
+  bool independent = sequenceIndex != -1;
   int *currentRank =
-      stepAllSequences ? &m_commonRank : m_independentRanks + sequenceIndex;
+      independent ? m_independentRanks + sequenceIndex : &m_commonRank;
   assert(*currentRank >= 0 || *currentRank == -1);
 
   // If current rank is superior to n, we need to start computing back the
@@ -55,24 +55,24 @@ void TemplatedSequenceContext<T>::stepUntilRank(int n, int sequenceIndex) {
 template <typename T>
 void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
   // First we increment the rank
-  bool stepAllSequences = sequenceIndex == -1;
-  if (stepAllSequences) {
-    m_commonRank++;
-  } else {
+  bool independent = sequenceIndex != -1;
+  if (independent) {
     m_independentRanks[sequenceIndex]++;
+  } else {
+    m_commonRank++;
   }
 
   // Then we shift the values stored in the arrays
   int start, stop;
   T *sequencesRankValues;
-  if (stepAllSequences) {
-    start = 0;
-    stop = SequenceStore::k_maxNumberOfSequences;
-    sequencesRankValues = reinterpret_cast<T *>(&m_commonRankValues);
-  } else {
+  if (independent) {
     start = sequenceIndex;
     stop = sequenceIndex + 1;
     sequencesRankValues = reinterpret_cast<T *>(&m_independentRankValues);
+  } else {
+    start = 0;
+    stop = SequenceStore::k_maxNumberOfSequences;
+    sequencesRankValues = reinterpret_cast<T *>(&m_commonRankValues);
   }
   for (int sequence = start; sequence < stop; sequence++) {
     T *sequencePointer = sequencesRankValues +
@@ -125,7 +125,7 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
           sequencesRankValues + j * (SequenceStore::k_maxRecurrenceDepth + 1);
       if (std::isnan(*sequencePointer)) {
         *sequencePointer = sequencesToUpdate[j]->approximateToNextRank<T>(
-            m_sequenceContext, !stepAllSequences);
+            m_sequenceContext, independent);
       }
     }
   }

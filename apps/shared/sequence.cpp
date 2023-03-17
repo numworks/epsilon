@@ -232,7 +232,7 @@ T Sequence::approximateAtRank(int n, SequenceContext *sqctx,
   }
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   sqctx->stepUntilRank<T>(n, independent ? sequenceIndex : -1);
-  return sqctx->rankSequenceValue<T>(sequenceIndex, 0, independent);
+  return sqctx->storedValueOfSequenceAtRank<T>(sequenceIndex, n);
 }
 
 template <typename T>

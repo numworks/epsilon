@@ -22,15 +22,55 @@ TemplatedSequenceContext<T>::TemplatedSequenceContext(
           {NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}} {}
 
 template <typename T>
-void TemplatedSequenceContext<T>::resetCache() {
-  /* We only need to reset the ranks. Indeed, when we compute the values of the
-   * sequences, we use ranks as memoization indexes. Therefore, we know that the
-   * values stored in m_commomValues and m_independentRankValues are dirty
-   * and do not use them. */
-  m_commonRank = -1;
-  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    m_independentRanks[i] = -1;
+void TemplatedSequenceContext<T>::resetCacheOfSequence(int sequenceIndex) {
+  int start, stop;
+  T *sequencesRankValues;
+  if (sequenceIndex != -1) {
+    m_independentRanks[sequenceIndex] = -1;
+    start = sequenceIndex;
+    stop = sequenceIndex + 1;
+    sequencesRankValues = reinterpret_cast<T *>(&m_independentRankValues);
+  } else {
+    m_commonRank = -1;
+    start = 0;
+    stop = SequenceStore::k_maxNumberOfSequences;
+    sequencesRankValues = reinterpret_cast<T *>(&m_commonRankValues);
   }
+  for (int sequence = start; sequence < stop; sequence++) {
+    T *sequencePointer = sequencesRankValues +
+                         sequence * (SequenceStore::k_maxRecurrenceDepth + 1);
+    for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
+         depth++) {
+      *(sequencePointer + depth) = static_cast<T>(NAN);
+    }
+  }
+}
+
+template <typename T>
+void TemplatedSequenceContext<T>::resetCache() {
+  for (int i = -1; i < SequenceStore::k_maxNumberOfSequences; i++) {
+    resetCacheOfSequence(i);
+  }
+}
+
+template <typename T>
+T TemplatedSequenceContext<T>::storedValueOfSequenceAtRank(int sequenceIndex,
+                                                           int rank) {
+  if (m_commonRank >= 0) {
+    int offset = m_commonRank - rank;
+    if (0 <= offset && offset < SequenceStore::k_maxRecurrenceDepth + 1 &&
+        !std::isnan(m_commonRankValues[sequenceIndex][offset])) {
+      return m_commonRankValues[sequenceIndex][offset];
+    }
+  }
+  if (m_independentRanks[sequenceIndex] >= 0) {
+    int offset = m_independentRanks[sequenceIndex] - rank;
+    if (0 <= offset && offset < SequenceStore::k_maxRecurrenceDepth + 1 &&
+        !std::isnan(m_independentRankValues[sequenceIndex][offset])) {
+      return m_independentRankValues[sequenceIndex][offset];
+    }
+  }
+  return static_cast<T>(NAN);
 }
 
 template <typename T>
@@ -45,7 +85,7 @@ void TemplatedSequenceContext<T>::stepUntilRank(int n, int sequenceIndex) {
   // recurrence from the initial rank and step until rank n. Otherwise, we can
   // start at the current rank and step until rank n.
   if (*currentRank > n) {
-    *currentRank = -1;
+    resetCacheOfSequence(sequenceIndex);
   }
   while (*currentRank < n) {
     stepToNextRank(sequenceIndex);
@@ -56,11 +96,10 @@ template <typename T>
 void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
   // First we increment the rank
   bool independent = sequenceIndex != -1;
-  if (independent) {
-    m_independentRanks[sequenceIndex]++;
-  } else {
-    m_commonRank++;
-  }
+  int *currentRank =
+      independent ? m_independentRanks + sequenceIndex : &m_commonRank;
+  assert(*currentRank >= 0 || *currentRank == -1);
+  (*currentRank)++;
 
   // Then we shift the values stored in the arrays
   int start, stop;
@@ -124,8 +163,14 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
       T *sequencePointer =
           sequencesRankValues + j * (SequenceStore::k_maxRecurrenceDepth + 1);
       if (std::isnan(*sequencePointer)) {
-        *sequencePointer = sequencesToUpdate[j]->approximateAtContextRank<T>(
-            m_sequenceContext, independent);
+        T otherCacheValue = storedValueOfSequenceAtRank(j, *currentRank);
+        if (!std::isnan(otherCacheValue)) {
+          // If the other cache already knows this value, use it
+          *sequencePointer = otherCacheValue;
+        } else {
+          *sequencePointer = sequencesToUpdate[j]->approximateAtContextRank<T>(
+              m_sequenceContext, independent);
+        }
       }
     }
   }

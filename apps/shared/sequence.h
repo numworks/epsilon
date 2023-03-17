@@ -118,7 +118,7 @@ class Sequence : public Function {
     return Poincare::Coordinate2D<double>(x, privateEvaluateYAtX(x, context));
   }
   template <typename T>
-  T approximateToNextRank(SequenceContext *sqctx, bool independent) const;
+  T approximateAtContextRank(SequenceContext *sqctx, bool independent) const;
   template <typename T>
   T valueAtRank(int n, SequenceContext *sqctx, bool independent) const;
 

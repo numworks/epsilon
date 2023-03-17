@@ -58,6 +58,10 @@ class Context {
 
   bool isUninitialized() const;
 
+#if POINCARE_MEMORY_TREE_LOG
+  __attribute__((__used__)) void log() const;
+#endif
+
  private:
   Node m_array[k_numberOfPlaceholders];
 };

@@ -119,6 +119,13 @@ void Node::logAttributes(std::ostream &stream) const {
     (block()->isUserNamed() ? Symbol::GetName : CodePointLayout::GetName)(
         *this, buffer, sizeof(buffer));
     stream << " value=\"" << buffer << "\"";
+    return;
+  }
+  if (type() == BlockType::Placeholder) {
+    stream << " tag=\""
+           << static_cast<int>(static_cast<uint8_t>(*(block()->next())))
+           << "\"";
+    return;
   }
 }
 

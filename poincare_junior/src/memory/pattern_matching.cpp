@@ -11,6 +11,18 @@ bool PatternMatching::Context::isUninitialized() const {
   return true;
 }
 
+#if POINCARE_MEMORY_TREE_LOG
+void PatternMatching::Context::log() const {
+  std::cout << "Context: \n  A:";
+  (*this)[PlaceholderTag::A].log(std::cout, true, 2);
+  std::cout << "\n  B:";
+  (*this)[PlaceholderTag::B].log(std::cout, true, 2);
+  std::cout << "\n  C:";
+  (*this)[PlaceholderTag::C].log(std::cout, true, 2);
+  std::cout << "\n";
+}
+#endif
+
 PatternMatching::Context PatternMatching::Match(const Node pattern, Node source,
                                                 Context result) {
   Pool::Nodes patternNodes = Pool::Nodes(

@@ -1,5 +1,5 @@
-#ifndef SHARED_SEQUENCE_CACHE_CONTEXT_H
-#define SHARED_SEQUENCE_CACHE_CONTEXT_H
+#ifndef SHARED_INTERMEDIATE_SEQUENCE_CONTEXT_H
+#define SHARED_INTERMEDIATE_SEQUENCE_CONTEXT_H
 
 #include <poincare/context.h>
 #include <poincare/expression.h>
@@ -10,10 +10,10 @@
 namespace Shared {
 
 template <typename T>
-class SequenceCacheContext : public Poincare::ContextWithParent {
+class IntermediateSequenceContext : public Poincare::ContextWithParent {
  public:
-  SequenceCacheContext(SequenceContext* sequenceContext,
-                       int sequenceBeingComputed, bool independent);
+  IntermediateSequenceContext(SequenceContext* sequenceContext,
+                              int sequenceBeingComputed, bool independent);
 
  private:
   const Poincare::Expression protectedExpressionForSymbolAbstract(

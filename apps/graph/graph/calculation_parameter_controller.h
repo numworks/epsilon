@@ -3,7 +3,10 @@
 
 #include <apps/i18n.h>
 #include <escher/buffer_table_cell.h>
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/chevron_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_table_cell.h>
+#include <escher/message_text_view.h>
 
 #include "area_between_curves_graph_controller.h"
 #include "area_between_curves_parameter_controller.h"
@@ -60,17 +63,17 @@ class CalculationParameterController
     void displayChevron(bool display) { m_displayChevron = display; }
     bool subviewsCanOverlap() const override { return true; }
     bool shouldEnterOnEvent(Ion::Events::Event event) {
-      return m_displayChevron
-                 ? Escher::MessageTableCellWithChevron::ShouldEnterOnEvent(
-                       event)
-                 : Escher::MessageTableCell::ShouldEnterOnEvent(event);
+      return (m_displayChevron && event == Ion::Events::Right) ||
+             Escher::MessageTableCell::ShouldEnterOnEvent(event);
     }
 
    private:
     Escher::ChevronView m_accessoryView;
     bool m_displayChevron;
   };
-  Escher::MessageTableCellWithChevron m_preimageCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::ChevronView>
+      m_preimageCell;
   Escher::MessageTableCell m_intersectionCell;
   Escher::MessageTableCell m_minimumCell;
   Escher::MessageTableCell m_maximumCell;

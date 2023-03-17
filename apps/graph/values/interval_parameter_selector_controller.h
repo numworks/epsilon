@@ -2,7 +2,9 @@
 #define GRAPH_INTERVAL_PARAMETER_SELECTOR_CONTROLLER
 
 #include <apps/shared/interval_parameter_controller.h>
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/chevron_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 
 #include "../../shared/continuous_function.h"
@@ -31,7 +33,8 @@ class IntervalParameterSelectorController
   Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtRow(int j) const;
   I18n::Message messageForType(
       Shared::ContinuousFunctionProperties::SymbolType symbolType);
-  Escher::MessageTableCellWithChevron
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::ChevronView>
       m_intervalParameterCell[k_numberOfSymbolTypes];
 };
 

@@ -14,8 +14,9 @@ ValuesParameterController::ValuesParameterController(
     Responder* parentResponder, ValuesController* valuesController)
     : ColumnParameterController(parentResponder),
       m_clearColumn(I18n::Message::ClearColumn),
-      m_setInterval(I18n::Message::IntervalSet),
-      m_valuesController(valuesController) {}
+      m_valuesController(valuesController) {
+  m_setInterval.label()->setMessage(I18n::Message::IntervalSet);
+}
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE ||

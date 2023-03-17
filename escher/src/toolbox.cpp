@@ -22,14 +22,15 @@ void Toolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
   assert(typeAtIndex(index) == k_nodeCellType);
   const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(index);
   assert(messageTree->numberOfChildren() != 0);
-  MessageTableCell *myCell = static_cast<MessageTableCell *>(cell);
-  myCell->setMessage(messageTree->label());
+  NestedMenuController::NodeCell *myCell =
+      static_cast<NestedMenuController::NodeCell *>(cell);
+  myCell->label()->setMessage(messageTree->label());
   myCell->reloadCell();
 }
 
 KDCoordinate Toolbox::nonMemoizedRowHeight(int index) {
   assert(typeAtIndex(index) == k_nodeCellType);
-  MessageTableCell tempCell;
+  NestedMenuController::NodeCell tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 

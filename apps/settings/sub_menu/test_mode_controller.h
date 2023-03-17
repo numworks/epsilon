@@ -1,7 +1,9 @@
 #ifndef SETTINGS_TEST_MODE_CONTROLLER_H
 #define SETTINGS_TEST_MODE_CONTROLLER_H
 
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/chevron_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 
 #include "generic_sub_controller.h"
 
@@ -24,7 +26,9 @@ class TestModeController : public GenericSubController {
  private:
   constexpr static int k_numberOfCells = 2;
   MainController* m_mainController;
-  Escher::MessageTableCellWithChevron m_cells[k_numberOfCells];
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::ChevronView>
+      m_cells[k_numberOfCells];
 };
 
 }  // namespace Settings

@@ -139,9 +139,9 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
     if (index == defineVariableCellIndex()) {
       return;
     }
-    MessageTableCellWithChevron *myCell =
-        static_cast<MessageTableCellWithChevron *>(cell);
-    myCell->setMessage(nodeLabel(pageAtIndex(index)));
+    Escher::NestedMenuController::NodeCell *myCell =
+        static_cast<Escher::NestedMenuController::NodeCell *>(cell);
+    myCell->label()->setMessage(nodeLabel(pageAtIndex(index)));
     myCell->reloadCell();
     return;
   }
@@ -197,7 +197,7 @@ KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
       MessageTableCell tempCell;
       return heightForCellAtIndexWithWidthInit(&tempCell, index);
     }
-    MessageTableCellWithChevron tempCell;
+    Escher::NestedMenuController::NodeCell tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   ExpressionTableCellWithExpression tempCell;
@@ -231,8 +231,8 @@ ExpressionTableCellWithExpression *MathVariableBoxController::leafCellAtIndex(
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron *MathVariableBoxController::nodeCellAtIndex(
-    int index) {
+Escher::NestedMenuController::NodeCell *
+MathVariableBoxController::nodeCellAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfMenuRows);
   return &m_nodeCells[index];
 }

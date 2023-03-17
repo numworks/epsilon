@@ -108,7 +108,7 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
     assert(false);
     return nullptr;
   }
-  Escher::HighlightCell* nodeCellAtIndex(int index) override {
+  Escher::NestedMenuController::NodeCell* nodeCellAtIndex(int index) override {
     assert(false);
     return nullptr;
   }

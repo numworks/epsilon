@@ -1,8 +1,9 @@
 #ifndef INFERENCE_STATISTIC_TYPE_CONTROLLER_H
 #define INFERENCE_STATISTIC_TYPE_CONTROLLER_H
 
+#include <escher/chevron_view.h>
 #include <escher/highlight_cell.h>
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
@@ -47,7 +48,9 @@ class TypeController : public Escher::SelectableListViewController<
   HypothesisController* m_hypothesisController;
   InputController* m_inputController;
 
-  Escher::MessageTableCellWithChevron m_cells[k_numberOfRows];
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::ChevronView>
+      m_cells[k_numberOfRows];
 
   constexpr static int k_titleBufferSize =
       sizeof("intervalle pour une moyenne à deux échantillons");

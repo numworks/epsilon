@@ -31,8 +31,6 @@ GraphOptionsController::GraphOptionsController(
       m_r2Cell(&m_selectableListView, I18n::Message::Default,
                KDFont::Size::Large),
       m_residualPlotCell(I18n::Message::ResidualPlot),
-      m_xParameterCell(I18n::Message::XPrediction),
-      m_yParameterCell(I18n::Message::YPrediction),
       m_removeRegressionCell(
           &(this->m_selectableListView), I18n::Message::RemoveRegression,
           Invocation::Builder<GraphOptionsController>(
@@ -53,6 +51,8 @@ GraphOptionsController::GraphOptionsController(
            CodePointLayout::Builder('2'),
            VerticalOffsetLayoutNode::VerticalPosition::Superscript)}));
   m_changeRegressionCell.label()->setMessage(I18n::Message::RegressionModel);
+  m_xParameterCell.label()->setMessage(I18n::Message::XPrediction);
+  m_yParameterCell.label()->setMessage(I18n::Message::YPrediction);
 }
 
 void GraphOptionsController::removeRegression() {

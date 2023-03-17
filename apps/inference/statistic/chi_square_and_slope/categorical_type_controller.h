@@ -2,8 +2,10 @@
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TYPE_CONTROLLER_H
 
 #include <apps/i18n.h>
+#include <escher/chevron_view.h>
 #include <escher/highlight_cell.h>
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <ion/events.h>
@@ -18,9 +20,10 @@ class InputHomogeneityController;
 constexpr static int k_numberOfCategoricalCells = 2;
 
 class CategoricalTypeController
-    : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevron,
-                                            k_numberOfCategoricalCells,
-                                            Escher::RegularListViewDataSource> {
+    : public Escher::SelectableCellListPage<
+          Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                           Escher::ChevronView>,
+          k_numberOfCategoricalCells, Escher::RegularListViewDataSource> {
  public:
   CategoricalTypeController(
       Escher::StackViewController* parent, Chi2Test* statistic,

@@ -61,8 +61,9 @@ void IntervalParameterSelectorController::willDisplayCellForIndex(
   assert(0 <= index && index < numberOfRows());
   Shared::ContinuousFunctionProperties::SymbolType symbolType =
       symbolTypeAtRow(index);
-  static_cast<MessageTableCellWithChevron *>(cell)->setMessage(
-      messageForType(symbolType));
+  static_cast<MenuCell<MessageTextView, EmptyCellWidget, ChevronView> *>(cell)
+      ->label()
+      ->setMessage(messageForType(symbolType));
 }
 
 Shared::ContinuousFunctionProperties::SymbolType

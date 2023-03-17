@@ -938,7 +938,8 @@ MenuCell<MessageTextView, MessageTextView> *PythonToolbox::leafCellAtIndex(
   return &m_leafCells[index];
 }
 
-MessageTableCellWithChevron *PythonToolbox::nodeCellAtIndex(int index) {
+Escher::NestedMenuController::NodeCell *PythonToolbox::nodeCellAtIndex(
+    int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_nodeCells[index];
 }

@@ -8,7 +8,6 @@
 #include <escher/expression_table_cell_with_message_with_buffer.h>
 #include <escher/menu_cell.h>
 #include <escher/message_table_cell.h>
-#include <escher/message_table_cell_with_chevron.h>
 #include <escher/message_text_view.h>
 
 #include "../store.h"
@@ -62,8 +61,12 @@ class GraphOptionsController
   Escher::ExpressionTableCellWithMessageWithBuffer m_rCell;
   Escher::ExpressionTableCellWithMessageWithBuffer m_r2Cell;
   Escher::MessageTableCell m_residualPlotCell;
-  Escher::MessageTableCellWithChevron m_xParameterCell;
-  Escher::MessageTableCellWithChevron m_yParameterCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::ChevronView>
+      m_xParameterCell;
+  Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
+                   Escher::ChevronView>
+      m_yParameterCell;
   Escher::ButtonCell m_removeRegressionCell;
   GoToParameterController m_goToParameterController;
   ResidualPlotController m_residualPlotCellController;

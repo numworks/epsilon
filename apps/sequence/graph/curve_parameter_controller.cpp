@@ -17,11 +17,12 @@ CurveParameterController::CurveParameterController(
     : ExplicitSelectableListViewController(nullptr, nullptr),
       m_goToParameterController(this, inputEventHandlerDelegate,
                                 graphController, graphRange, cursor),
-      m_goToCell(I18n::Message::Goto),
       m_sumCell(I18n::Message::TermSum),
       m_cobwebCell(I18n::Message::CobwebPlot),
       m_cobwebController(cobwebController),
-      m_graphController(graphController) {}
+      m_graphController(graphController) {
+  m_goToCell.label()->setMessage(I18n::Message::Goto);
+}
 
 const char *CurveParameterController::title() {
   return I18n::translate(I18n::Message::SequenceOptions);
@@ -54,7 +55,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
     stack->push(m_graphController->termSumController());
     return true;
   }
-  if (cell == &m_goToCell && m_goToCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_goToCell && m_goToCell.enterOnEvent(event)) {
     assert(!m_record.isNull());
     stack->push(&m_goToParameterController);
     return true;

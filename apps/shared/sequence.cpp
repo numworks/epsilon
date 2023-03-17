@@ -18,7 +18,7 @@
 #include <cmath>
 
 #include "../shared/poincare_helpers.h"
-#include "sequence_cache_context.h"
+#include "intermediate_sequence_context.h"
 #include "sequence_store.h"
 
 using namespace Poincare;
@@ -281,8 +281,8 @@ T Sequence::approximateAtContextRank(SequenceContext *sqctx,
     }
   }
 
-  SequenceCacheContext<T> ctx =
-      SequenceCacheContext<T>(sqctx, sequenceIndex, independent);
+  IntermediateSequenceContext<T> ctx =
+      IntermediateSequenceContext<T>(sqctx, sequenceIndex, independent);
   // Update angle unit and complex format
   Preferences preferences =
       Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));

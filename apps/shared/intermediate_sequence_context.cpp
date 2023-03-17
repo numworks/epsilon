@@ -1,4 +1,4 @@
-#include "sequence_cache_context.h"
+#include "intermediate_sequence_context.h"
 
 #include <poincare/addition.h>
 #include <poincare/rational.h>
@@ -15,16 +15,17 @@ using namespace Poincare;
 namespace Shared {
 
 template <typename T>
-SequenceCacheContext<T>::SequenceCacheContext(SequenceContext *sequenceContext,
-                                              int sequenceBeingComputed,
-                                              bool independent)
+IntermediateSequenceContext<T>::IntermediateSequenceContext(
+    SequenceContext *sequenceContext, int sequenceBeingComputed,
+    bool independent)
     : ContextWithParent(sequenceContext),
       m_sequenceContext(sequenceContext),
       m_sequenceBeingComputed(sequenceBeingComputed),
       m_independent(independent) {}
 
 template <typename T>
-const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
+const Expression
+IntermediateSequenceContext<T>::protectedExpressionForSymbolAbstract(
     const SymbolAbstract &symbol, bool clone,
     ContextWithParent *lastDescendantContext) {
   if (symbol.type() != ExpressionNode::Type::Sequence) {
@@ -84,7 +85,7 @@ const Expression SequenceCacheContext<T>::protectedExpressionForSymbolAbstract(
   return Float<T>::Builder(result);
 }
 
-template class SequenceCacheContext<float>;
-template class SequenceCacheContext<double>;
+template class IntermediateSequenceContext<float>;
+template class IntermediateSequenceContext<double>;
 
 }  // namespace Shared

@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "../shared/poincare_helpers.h"
-#include "sequence_cache_context.h"
+#include "intermediate_sequence_context.h"
 #include "sequence_store.h"
 
 using namespace Poincare;

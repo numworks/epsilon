@@ -2,7 +2,7 @@
 #define SETTINGS_SELECTABLE_VIEW_WITH_MESSAGES_H
 
 #include <apps/i18n.h>
-#include <escher/message_table_cell_with_editable_text.h>
+#include <escher/menu_cell.h>
 #include <escher/selectable_table_view.h>
 
 namespace Settings {
@@ -22,7 +22,7 @@ class SelectableViewWithMessages : public Escher::View {
   constexpr static int k_maxNumberOfLines = 3;
   // When displaying the message, only one row is displayed.
   constexpr static KDCoordinate k_minSelectableTableViewHeight =
-      Escher::TableCell::k_minimalLargeFontCellHeight;
+      Escher::AbstractMenuCell::k_minimalLargeFontCellHeight;
   Escher::MessageTextView m_messageLines[k_maxNumberOfLines];
   int m_numberOfMessages;
 };

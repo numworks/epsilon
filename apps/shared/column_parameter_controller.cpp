@@ -1,7 +1,6 @@
 #include "column_parameter_controller.h"
 
 #include <assert.h>
-#include <escher/message_table_cell_with_editable_text.h>
 #include <poincare/print.h>
 
 #include "editable_cell_table_view_controller.h"

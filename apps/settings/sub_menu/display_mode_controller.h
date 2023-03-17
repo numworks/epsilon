@@ -1,7 +1,8 @@
 #ifndef SETTINGS_DISPLAY_MODE_CONTROLLER_H
 #define SETTINGS_DISPLAY_MODE_CONTROLLER_H
 
-#include <escher/message_table_cell_with_editable_text.h>
+#include <escher/menu_cell_with_editable_text.h>
+#include <escher/message_text_view.h>
 
 #include "../../shared/parameter_text_field_delegate.h"
 #include "preferences_controller.h"
@@ -37,7 +38,7 @@ class DisplayModeController : public PreferencesController,
  private:
   constexpr static int k_resultFormatType = 0;
   constexpr static int k_significantDigitsType = 1;
-  Escher::MessageTableCellWithEditableText m_editableCell;
+  Escher::MenuCellWithEditableText<Escher::MessageTextView> m_editableCell;
 };
 
 }  // namespace Settings

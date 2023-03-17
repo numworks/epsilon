@@ -19,7 +19,7 @@ DisplayModeController::DisplayModeController(
     InputEventHandlerDelegate *inputEventHandlerDelegate)
     : PreferencesController(parentResponder),
       m_editableCell(&m_selectableListView, inputEventHandlerDelegate, this) {
-  m_editableCell.setMessage(I18n::Message::SignificantFigures);
+  m_editableCell.label()->setMessage(I18n::Message::SignificantFigures);
 }
 
 KDCoordinate DisplayModeController::nonMemoizedRowHeight(int j) {
@@ -56,7 +56,7 @@ void DisplayModeController::willDisplayCellForIndex(HighlightCell *cell,
     char buffer[bufferSize];
     Integer(Preferences::sharedPreferences->numberOfSignificantDigits())
         .serialize(buffer, bufferSize);
-    m_editableCell.setAccessoryText(buffer);
+    m_editableCell.textField()->setText(buffer);
     return;
   }
   PreferencesController::willDisplayCellForIndex(cell, index);

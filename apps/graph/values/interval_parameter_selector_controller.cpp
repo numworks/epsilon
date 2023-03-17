@@ -17,17 +17,7 @@ const char *IntervalParameterSelectorController::title() {
   return I18n::translate(I18n::Message::IntervalSet);
 }
 
-void IntervalParameterSelectorController::viewDidDisappear() {
-  /* Deselect the table properly because it needs to be relayouted the next time
-   * it appears: the number of rows might change according to the plot type. */
-  m_selectableListView.deselectTable();
-  m_selectableListView.setAbsoluteFrame(KDRectZero, false);
-}
-
 void IntervalParameterSelectorController::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
-    selectCell(0);
-  }
   Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 

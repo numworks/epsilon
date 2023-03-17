@@ -15,7 +15,7 @@ class IntervalParameterSelectorController
  public:
   IntervalParameterSelectorController();
   const char* title() override;
-  void viewDidDisappear() override;
+  void viewWillAppear() override { m_selectableListView.reloadData(); }
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;

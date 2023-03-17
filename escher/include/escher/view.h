@@ -32,8 +32,6 @@ class Window;
 
 class View {
   friend class Shared::MemoizedCursorView;
-  friend class ModalViewController;
-  friend class TextCursorView;
   friend class TransparentView;
   // We only want Window to be able to invoke View::redraw
   friend class Window;
@@ -49,8 +47,6 @@ class View {
   }
 
   void setSize(KDSize size);
-  void setFrame(KDRect frame, bool force);
-  void setAbsoluteFrame(KDRect frame, bool force) { m_frame = frame; }
   void setChildFrame(View *child, KDRect frame, bool force);
   KDPoint pointFromPointInView(View *view, KDPoint point);
   KDRect absoluteFrame() const { return m_frame; }
@@ -87,6 +83,7 @@ class View {
   virtual View *subviewAtIndex(int index) { return nullptr; }
 
  private:
+  void setFrame(KDRect frame, bool force);
   virtual void layoutSubviews(bool force = false) {}
   void translate(KDPoint origin);
   KDRect redraw(KDRect rect, KDRect forceRedrawRect = KDRectZero);

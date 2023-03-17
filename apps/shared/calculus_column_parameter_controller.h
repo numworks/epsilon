@@ -3,7 +3,8 @@
 
 #include <apps/shared/function_store.h>
 #include <apps/shared/values_controller.h>
-#include <escher/message_table_cell.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 
 namespace Shared {
 
@@ -26,7 +27,7 @@ class CalculusColumnParameterController : public ColumnParameterController {
     return m_valuesController;
   }
   constexpr static int k_totalNumberOfCell = 1;
-  Escher::MessageTableCell m_hideColumn;
+  Escher::MenuCell<Escher::MessageTextView> m_hideColumn;
   Ion::Storage::Record m_record;
   ValuesController* m_valuesController;
 };

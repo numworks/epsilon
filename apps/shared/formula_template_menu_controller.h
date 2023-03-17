@@ -4,7 +4,8 @@
 #include <apps/i18n.h>
 #include <escher/expression_table_cell_with_buffer.h>
 #include <escher/expression_table_cell_with_message.h>
-#include <escher/message_table_cell.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/nested_menu_controller.h>
 #include <escher/selectable_list_view_controller.h>
 
@@ -83,7 +84,7 @@ class FormulaTemplateMenuController
   void fillSumColumnNames(char* buffers[]) const;
   void fillOtherAppColumnName(char* buffer) const;
 
-  Escher::MessageTableCell m_emptyTemplateCell;
+  Escher::MenuCell<Escher::MessageTextView> m_emptyTemplateCell;
   Escher::ExpressionTableCellWithMessage
       m_templatesWithMessage[k_numberOfExpressionCellsWithMessage];
   Escher::ExpressionTableCellWithBuffer

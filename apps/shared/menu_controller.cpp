@@ -4,7 +4,8 @@
 #include <assert.h>
 #include <escher/container.h>
 #include <escher/highlight_cell.h>
-#include <escher/message_table_cell.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/responder.h>
 
 #include <new>

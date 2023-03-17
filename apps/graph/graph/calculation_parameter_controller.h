@@ -5,7 +5,6 @@
 #include <escher/buffer_table_cell.h>
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
-#include <escher/message_table_cell.h>
 #include <escher/message_text_view.h>
 
 #include "area_between_curves_graph_controller.h"
@@ -64,7 +63,7 @@ class CalculationParameterController
     bool subviewsCanOverlap() const override { return true; }
     bool shouldEnterOnEvent(Ion::Events::Event event) {
       return (m_displayChevron && event == Ion::Events::Right) ||
-             Escher::MessageTableCell::ShouldEnterOnEvent(event);
+             event == Ion::Events::OK || event == Ion::Events::EXE;
     }
 
    private:
@@ -74,12 +73,12 @@ class CalculationParameterController
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>
       m_preimageCell;
-  Escher::MessageTableCell m_intersectionCell;
-  Escher::MessageTableCell m_minimumCell;
-  Escher::MessageTableCell m_maximumCell;
-  Escher::MessageTableCell m_integralCell;
-  Escher::MessageTableCell m_tangentCell;
-  Escher::MessageTableCell m_rootCell;
+  Escher::MenuCell<Escher::MessageTextView> m_intersectionCell;
+  Escher::MenuCell<Escher::MessageTextView> m_minimumCell;
+  Escher::MenuCell<Escher::MessageTextView> m_maximumCell;
+  Escher::MenuCell<Escher::MessageTextView> m_integralCell;
+  Escher::MenuCell<Escher::MessageTextView> m_tangentCell;
+  Escher::MenuCell<Escher::MessageTextView> m_rootCell;
   BufferTableCellWithHideableChevron m_areaCell;
   Ion::Storage::Record m_record;
   PreimageParameterController m_preimageParameterController;

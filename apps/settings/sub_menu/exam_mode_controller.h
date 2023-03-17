@@ -1,7 +1,8 @@
 #ifndef SETTINGS_EXAM_MODE_CONTROLLER_H
 #define SETTINGS_EXAM_MODE_CONTROLLER_H
 
-#include <escher/message_table_cell.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <poincare/preferences.h>
 
 #include "generic_sub_controller.h"
@@ -37,7 +38,7 @@ class ExamModeController : public GenericSubController {
   I18n::Message examModeActivationMessage(size_t index) const;
 
   SelectableViewWithMessages m_contentView;
-  Escher::MessageTableCell m_cell[k_maxNumberOfCells];
+  Escher::MenuCell<Escher::MessageTextView> m_cell[k_maxNumberOfCells];
 };
 
 }  // namespace Settings

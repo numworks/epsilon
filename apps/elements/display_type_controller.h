@@ -1,7 +1,8 @@
 #ifndef ELEMENTS_DISPLAY_TYPE_CONTROLLER_H
 #define ELEMENTS_DISPLAY_TYPE_CONTROLLER_H
 
-#include <escher/message_table_cell.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
@@ -54,7 +55,7 @@ class DisplayTypeController : public Escher::SelectableListViewController<
     return static_cast<Escher::StackViewController *>(parentResponder());
   }
 
-  Escher::MessageTableCell m_cells[k_numberOfCells];
+  Escher::MenuCell<Escher::MessageTextView> m_cells[k_numberOfCells];
 };
 
 }  // namespace Elements

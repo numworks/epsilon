@@ -11,11 +11,11 @@ ScriptParameterController::ScriptParameterController(
     MenuController *menuController)
     : SelectableListViewController(parentResponder),
       m_pageTitle(title),
-      m_executeScript(I18n::Message::ExecuteScript),
-      m_renameScript(I18n::Message::Rename),
-      m_deleteScript(I18n::Message::DeleteScript),
       m_script(Ion::Storage::Record()),
       m_menuController(menuController) {
+  m_executeScript.label()->setMessage(I18n::Message::ExecuteScript);
+  m_renameScript.label()->setMessage(I18n::Message::Rename);
+  m_deleteScript.label()->setMessage(I18n::Message::DeleteScript);
   m_autoImportScript.label()->setMessage(I18n::Message::AutoImportScript);
   m_autoImportScript.subLabel()->setMessage(
       I18n::Message::AutoImportScriptSubLabel);

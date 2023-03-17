@@ -13,9 +13,9 @@ namespace Shared {
 ValuesParameterController::ValuesParameterController(
     Responder* parentResponder, ValuesController* valuesController)
     : ColumnParameterController(parentResponder),
-      m_clearColumn(I18n::Message::ClearColumn),
       m_valuesController(valuesController) {
   m_setInterval.label()->setMessage(I18n::Message::IntervalSet);
+  m_clearColumn.label()->setMessage(I18n::Message::ClearColumn);
 }
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {

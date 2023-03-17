@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/menu_cell.h>
-#include <escher/message_table_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
@@ -40,12 +40,12 @@ class ScriptParameterController : public Escher::SelectableListViewController<
   constexpr static int k_totalNumberOfCell = 4;
   Escher::StackViewController* stackViewController();
   I18n::Message m_pageTitle;
-  Escher::MessageTableCell m_executeScript;
-  Escher::MessageTableCell m_renameScript;
+  Escher::MenuCell<Escher::MessageTextView> m_executeScript;
+  Escher::MenuCell<Escher::MessageTextView> m_renameScript;
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::SwitchView>
       m_autoImportScript;
-  Escher::MessageTableCell m_deleteScript;
+  Escher::MenuCell<Escher::MessageTextView> m_deleteScript;
   Script m_script;
   MenuController* m_menuController;
 };

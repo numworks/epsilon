@@ -25,8 +25,8 @@ using namespace Escher;
 MathVariableBoxController::MathVariableBoxController()
     : NestedMenuController(nullptr, I18n::Message::Variables),
       m_currentPage(Page::RootMenu),
-      m_defineVariableCell(I18n::Message::DefineVariable),
       m_firstMemoizedLayoutIndex(0) {
+  m_defineVariableCell.label()->setMessage(I18n::Message::DefineVariable);
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setParentResponder(&m_selectableListView);
     m_leafCells[i].setSubLabelFont(k_subLabelFont);
@@ -83,7 +83,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     }
   }
   if (m_currentPage == Page::RootMenu &&
-      m_defineVariableCell.ShouldEnterOnEvent(event) &&
+      m_defineVariableCell.enterOnEvent(event) &&
       selectedRow() == defineVariableCellIndex()) {
     Container::activeApp()->modalViewController()->dismissModal();
     sender()->handleStoreEvent();
@@ -194,7 +194,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
 KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
   if (m_currentPage == Page::RootMenu) {
     if (index == defineVariableCellIndex()) {
-      MessageTableCell tempCell;
+      MenuCell<MessageTextView> tempCell;
       return heightForCellAtIndexWithWidthInit(&tempCell, index);
     }
     Escher::NestedMenuController::NodeCell tempCell;

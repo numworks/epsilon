@@ -34,8 +34,8 @@ void DisplayTypeController::willDisplayCellForIndex(HighlightCell *cell,
                                                     int index) {
   assert(cell - static_cast<HighlightCell *>(m_cells) <
          static_cast<int>(k_numberOfCells * sizeof(m_cells[0])));
-  MessageTableCell *messageCell = static_cast<MessageTableCell *>(cell);
-  messageCell->setMessage(k_fields[index]->fieldLegend());
+  static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
+      k_fields[index]->fieldLegend());
 }
 
 }  // namespace Elements

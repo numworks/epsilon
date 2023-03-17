@@ -5,7 +5,8 @@
 #include <escher/container.h>
 #include <escher/expression_view.h>
 #include <escher/list_view_data_source.h>
-#include <escher/message_table_cell.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view.h>
 #include <escher/solid_color_view.h>
 #include <escher/view_controller.h>
@@ -95,7 +96,7 @@ class LocalizationController : public Escher::ViewController,
       I18n::NumberOfLanguages > I18n::NumberOfCountries
           ? I18n::NumberOfLanguages
           : I18n::NumberOfCountries;
-  Escher::MessageTableCell m_cells[k_numberOfCells];
+  Escher::MenuCell<Escher::MessageTextView> m_cells[k_numberOfCells];
   Mode m_mode;
 };
 

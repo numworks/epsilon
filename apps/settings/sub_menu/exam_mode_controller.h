@@ -1,6 +1,7 @@
 #ifndef SETTINGS_EXAM_MODE_CONTROLLER_H
 #define SETTINGS_EXAM_MODE_CONTROLLER_H
 
+#include <escher/message_table_cell.h>
 #include <poincare/preferences.h>
 
 #include "generic_sub_controller.h"

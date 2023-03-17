@@ -26,7 +26,10 @@ class PopupItemView : public HighlightCell, public Bordered {
   int numberOfSubviews() const override;
   View* subviewAtIndex(int i) override;
   HighlightCell* innerCell() { return m_cell; }
-  void setInnerCell(HighlightCell* cell) { m_cell = cell; }
+  void setInnerCell(HighlightCell* cell) {
+    m_cell = cell;
+    layoutSubviews(true);
+  }
   void drawRect(KDContext* ctx, KDRect rect) const override;
   void setPopping(bool popping) { m_isPoppingUp = popping; }
 
@@ -58,9 +61,6 @@ class Dropdown : public PopupItemView, public Responder {
            DropdownCallback* callback = nullptr);
   Responder* responder() override { return this; }
   bool handleEvent(Ion::Events::Event e) override;
-  void registerCallback(DropdownCallback* callback) {
-    m_popup.registerCallback(callback);
-  }
   void reloadAllCells();
   void init();
   int selectedRow() { return m_popup.selectedRow(); }
@@ -86,7 +86,6 @@ class Dropdown : public PopupItemView, public Responder {
     View* view() override { return &m_borderingView; }
     void didBecomeFirstResponder() override;
     bool handleEvent(Ion::Events::Event e) override;
-    void registerCallback(DropdownCallback* callback) { m_callback = callback; }
     int selectedRow() { return m_selectionDataSource.selectedRow(); }
     void selectRow(int row);
     void close();

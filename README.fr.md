@@ -193,7 +193,7 @@ sudo apt-get install build-essential git imagemagick libx11-dev libxext-dev libf
 
 ### Installation d'usbipd pour connecter la calculatrice à WSL (facultatif)
 
-Pour connecter la calculatrice, il faut installer cet [outil](https://github.com/dorssel/usbipd-win/releases/download/v1.3.0/usbipd-win_1.3.0.msi). Il permet de connecter deperiphériques USpar internet.Suivez les instructions pour installer.
+Pour connecter la calculatrice, il faut installer cet [outil](https://github.com/dorssel/usbipd-win/releases/download/v1.3.0/usbipd-win_1.3.0.msi). Il permet de connecter des périphériques par internet. Suivez les instructions pour installer.
 
 #### Ubuntu
 

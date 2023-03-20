@@ -14,8 +14,7 @@ using namespace Escher;
 namespace Settings {
 
 PressToTestController::PressToTestController(Responder *parentResponder)
-    : ViewController(parentResponder),
-      m_selectableListView(this, this, this, &m_view),
+    : SelectableListViewController(parentResponder, &m_view),
       m_topMessageView(KDFont::Size::Small, I18n::Message::Default,
                        KDContext::k_alignCenter, KDContext::k_alignCenter,
                        Palette::GrayDark, Palette::WallScreen),
@@ -172,10 +171,6 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   return false;
-}
-
-void PressToTestController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
 }
 
 void PressToTestController::didEnterResponderChain(

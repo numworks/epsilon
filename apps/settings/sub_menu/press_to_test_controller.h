@@ -6,7 +6,7 @@
 #include <escher/button_cell.h>
 #include <escher/list_view_data_source.h>
 #include <escher/list_view_with_top_and_bottom_views.h>
-#include <escher/selectable_table_view.h>
+#include <escher/selectable_list_view_controller.h>
 #include <escher/view_controller.h>
 #include <poincare/preferences.h>
 
@@ -14,9 +14,8 @@
 
 namespace Settings {
 
-class PressToTestController : public Escher::ViewController,
-                              public Escher::MemoizedListViewDataSource,
-                              public Escher::SelectableListViewDataSource {
+class PressToTestController : public Escher::SelectableListViewController<
+                                  Escher::MemoizedListViewDataSource> {
  public:
   PressToTestController(Escher::Responder* parentResponder);
   const char* title() override {
@@ -24,7 +23,6 @@ class PressToTestController : public Escher::ViewController,
   }
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("PressToTest");
-  void didBecomeFirstResponder() override;
   void didEnterResponderChain(
       Escher::Responder* previousFirstResponder) override;
   int numberOfRows() const override;
@@ -53,7 +51,6 @@ class PressToTestController : public Escher::ViewController,
   bool getParamAtIndex(int index);
   void setMessages();
 
-  Escher::SelectableListView m_selectableListView;
   Escher::MessageTextView m_topMessageView;
   Escher::MessageTextView m_bottomMessageView;
   Escher::ListViewWithTopAndBottomViews m_view;

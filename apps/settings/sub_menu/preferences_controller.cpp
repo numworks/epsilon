@@ -20,10 +20,6 @@ namespace Settings {
 PreferencesController::PreferencesController(Responder *parentResponder)
     : GenericSubController(parentResponder) {}
 
-void PreferencesController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 bool PreferencesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* Generic behaviour of preference menu*/

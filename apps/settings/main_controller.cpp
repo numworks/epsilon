@@ -73,13 +73,6 @@ MainController::MainController(
          &m_pressToTestController);
 }
 
-void MainController::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
-    selectCell(0);
-  }
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences *globalPreferences =
       GlobalPreferences::sharedGlobalPreferences;

@@ -30,7 +30,6 @@ class ColumnParameterController : public Escher::SelectableListViewController<
  public:
   ColumnParameterController(Escher::Responder* parentResponder)
       : SelectableListViewController(parentResponder), ColumnParameters() {}
-  void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   const char* title() override { return m_titleBuffer; }
 

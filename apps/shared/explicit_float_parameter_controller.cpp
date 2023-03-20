@@ -23,7 +23,7 @@ void ExplicitFloatParameterController::didBecomeFirstResponder() {
     int selRow = std::min(selectedRow(), numberOfRows() - 1);
     selectCell(selRow);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
+  SelectableViewController::didBecomeFirstResponder();
 }
 
 void ExplicitFloatParameterController::viewWillAppear() {

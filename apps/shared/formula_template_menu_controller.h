@@ -24,7 +24,6 @@ class FormulaTemplateMenuController
   void viewWillAppear() override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int i) override;
   void viewDidDisappear() override;
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override {
     return k_numberOfTemplates - (shouldDisplayOtherAppCell() ? 0 : 1);

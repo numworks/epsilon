@@ -112,6 +112,12 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
+  void initWidgets() {
+    label()->defaultInitialization(CellWidget::Type::Label);
+    subLabel()->defaultInitialization(CellWidget::Type::SubLabel);
+    accessory()->defaultInitialization(CellWidget::Type::Accessory);
+  }
+
   virtual KDColor backgroundColor() const { return KDColorWhite; }
   bool giveAccessoryAllWidth() const {
     return constAccessory()->giveAllWidthAsAccessory();
@@ -175,11 +181,7 @@ class MenuCell : public AbstractMenuCell {
   static_assert(std::is_base_of<CellWidget, Accessory>(),
                 "Accessory is not a CellWidget");
 #endif
-  MenuCell() : AbstractMenuCell() {
-    m_label.defaultInitialization(CellWidget::Type::Label);
-    m_subLabel.defaultInitialization(CellWidget::Type::SubLabel);
-    m_accessory.defaultInitialization(CellWidget::Type::Accessory);
-  }
+  MenuCell() : AbstractMenuCell() { initWidgets(); }
 
   Label* label() override { return &m_label; }
   SubLabel* subLabel() override { return &m_subLabel; }

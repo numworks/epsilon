@@ -140,10 +140,7 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
     if (!s->isDefined()) {
       continue;
     }
-    /* WARNING : values must be ordered by name index (u then v then w) because
-     * approximateAtContextRank needs it. */
-    int index = SequenceStore::SequenceIndexForName(s->fullName()[0]);
-    sequencesToUpdate[index] = s;
+    sequencesToUpdate[sequence] = s;
   }
 
   // We approximate the value of the next rank for each sequence we want to

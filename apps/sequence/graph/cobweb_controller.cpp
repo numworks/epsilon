@@ -110,8 +110,11 @@ void CobwebController::reloadBannerView() {
   Poincare::Print::CustomPrintf(buffer, bufferSize, "%i", rankAtCurrentStep());
   m_bannerView->abscissaValue()->setText(buffer);
   int nameLength = sequence()->nameWithArgument(buffer, bufferSize);
-  double u_n = sequence()->approximateAtRank<double>(
-      rankAtCurrentStep(), App::app()->localContext(), true);
+  double u_n =
+      sequence()
+          ->evaluateXYAtParameter(static_cast<double>(rankAtCurrentStep()),
+                                  App::app()->localContext())
+          .y();
   Poincare::Print::CustomPrintf(buffer + nameLength, bufferSize - nameLength,
                                 "=%*.*ef", u_n,
                                 Preferences::PrintFloatMode::Decimal,
@@ -143,8 +146,11 @@ bool CobwebController::updateStep(int delta) {
     return false;
   }
   m_step += delta;
-  double u_n = sequence()->approximateAtRank<double>(
-      rankAtCurrentStep(), App::app()->localContext(), true);
+  double u_n =
+      sequence()
+          ->evaluateXYAtParameter(static_cast<double>(rankAtCurrentStep()),
+                                  App::app()->localContext())
+          .y();
   double x = u_n;
   double y = m_step == 0 ? 0.f : u_n;
   if (!m_initialZoom && interactiveCurveViewRange()->panToMakePointVisible(

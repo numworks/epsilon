@@ -41,6 +41,16 @@ KDCoordinate AbstractMenuCell::minimalHeightForOptimalDisplay() const {
   return k_topOffset + contentHeight + k_bottomOffset;
 }
 
+Responder *AbstractMenuCell::responder() {
+  Responder *r = nullptr;
+  /* The priority order was chose arbitrarely because there currently is no cell
+   * with more than 1 responder. Accessory could be prioritized over subLabel or
+   * label if needed. */
+  (r = label()->responder()) || (r = subLabel()->responder()) ||
+      (r = accessory()->responder());
+  return r;
+}
+
 void AbstractMenuCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   KDColor bckgrnd = highlight ? Palette::Select : backgroundColor();

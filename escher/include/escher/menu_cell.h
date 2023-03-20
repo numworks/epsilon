@@ -99,6 +99,7 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
     return bounds().height() - k_topOffset - k_bottomOffset;
   }
 
+  Responder* responder() override;
   void setHighlighted(bool highlight) override;
 
   bool enterOnEvent(Ion::Events::Event event) {

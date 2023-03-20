@@ -2,10 +2,11 @@
 #define APPS_MATH_VARIABLE_BOX_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/expression_table_cell_with_expression.h>
+#include <escher/expression_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/nested_menu_controller.h>
+#include <escher/scrollable_expression_view.h>
 #include <ion.h>
 
 class MathVariableBoxController : public Escher::NestedMenuController {
@@ -40,7 +41,7 @@ class MathVariableBoxController : public Escher::NestedMenuController {
  private:
   constexpr static int k_maxNumberOfDisplayedRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-          Escher::TableCell::k_minimalLargeFontCellHeight,
+          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
           Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight);
   constexpr static int k_numberOfMenuRows =
       static_cast<int>(Page::NumberOfPages) - 1 /* RootMenu */ +
@@ -48,8 +49,10 @@ class MathVariableBoxController : public Escher::NestedMenuController {
   constexpr static KDCoordinate k_leafMargin = 20;
   constexpr static KDFont::Size k_subLabelFont = KDFont::Size::Small;
   constexpr static int k_defineVariableCellType = 2;
-  Escher::ExpressionTableCellWithExpression* leafCellAtIndex(
-      int index) override;
+
+  using LeafCell = Escher::MenuCell<Escher::ExpressionView,
+                                    Escher::ScrollableExpressionView>;
+  LeafCell* leafCellAtIndex(int index) override;
   int defineVariableCellIndex() const { return numberOfRows() - 1; }
   Escher::NestedMenuController::NodeCell* nodeCellAtIndex(int index) override;
   I18n::Message subTitle() override;
@@ -69,8 +72,7 @@ class MathVariableBoxController : public Escher::NestedMenuController {
   // Return false if destruction is prevented by the app
   bool destroyRecordAtRowIndex(int rowIndex);
   Page m_currentPage;
-  Escher::ExpressionTableCellWithExpression
-      m_leafCells[k_maxNumberOfDisplayedRows];
+  LeafCell m_leafCells[k_maxNumberOfDisplayedRows];
   Escher::NestedMenuController::NodeCell m_nodeCells[k_numberOfMenuRows];
   Escher::MenuCell<Escher::MessageTextView> m_defineVariableCell;
   // Layout memoization

@@ -2,7 +2,7 @@
 #define SHARED_STORE_PARAM_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/buffer_table_cell.h>
+#include <escher/buffer_text_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
@@ -38,7 +38,7 @@ class StoreParameterController : public ColumnParameterController {
   constexpr static int k_numberOfCells = k_clearCellType + 1;
 
   StoreColumnHelper* m_storeColumnHelper;
-  Escher::BufferTableCell m_clearColumn;
+  Escher::MenuCell<Escher::BufferTextView> m_clearColumn;
 
  private:
   ColumnNameHelper* columnNameHelper() override;

@@ -27,15 +27,16 @@ void StoreParameterController::initializeColumnParameters() {
   m_isCumulatedFrequencyColumnSelected = relativeColumnIndex == 2;
   // Initialize clear column message
   if (relativeColumnIndex == 1) {
-    m_clearColumn.setMessageWithPlaceholders(I18n::Message::ResetFrequencies);
+    m_clearColumn.label()->setMessageWithPlaceholders(
+        I18n::Message::ResetFrequencies);
     return;
   }
   if (relativeColumnIndex == 0) {
     int series = m_storeColumnHelper->selectedSeries();
     char tableName[StoreController::k_tableNameSize];
     StoreController::FillSeriesName(series, tableName);
-    m_clearColumn.setMessageWithPlaceholders(I18n::Message::ClearTable,
-                                             tableName);
+    m_clearColumn.label()->setMessageWithPlaceholders(I18n::Message::ClearTable,
+                                                      tableName);
     return;
   }
   assert(relativeColumnIndex == 2);

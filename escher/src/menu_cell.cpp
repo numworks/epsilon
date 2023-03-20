@@ -4,8 +4,7 @@
 #include <ion/display.h>
 namespace Escher {
 
-AbstractMenuCell::AbstractMenuCell()
-    : Bordered(), HighlightCell(), m_backgroundColor(KDColorWhite) {}
+AbstractMenuCell::AbstractMenuCell() : Bordered(), HighlightCell() {}
 
 void AbstractMenuCell::drawRect(KDContext *ctx, KDRect rect) const {
   KDColor backColor = isHighlighted() ? Palette::Select : backgroundColor();
@@ -44,17 +43,10 @@ KDCoordinate AbstractMenuCell::minimalHeightForOptimalDisplay() const {
 
 void AbstractMenuCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight ? Palette::Select : m_backgroundColor;
-  label()->setBackgroundColor(backgroundColor);
-  subLabel()->setBackgroundColor(backgroundColor);
-  accessory()->setBackgroundColor(backgroundColor);
-}
-
-void AbstractMenuCell::setBackgroundColor(KDColor color) {
-  m_backgroundColor = color;
-  label()->setBackgroundColor(color);
-  subLabel()->setBackgroundColor(color);
-  accessory()->setBackgroundColor(color);
+  KDColor bckgrnd = highlight ? Palette::Select : backgroundColor();
+  label()->setBackgroundColor(bckgrnd);
+  subLabel()->setBackgroundColor(bckgrnd);
+  accessory()->setBackgroundColor(bckgrnd);
 }
 
 int AbstractMenuCell::numberOfSubviews() const {

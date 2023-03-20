@@ -861,12 +861,7 @@ constexpr ToolboxMessageTree menu[] = {
 constexpr ToolboxMessageTree toolboxModel =
     ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
 
-MathToolbox::MathToolbox() : Toolbox(nullptr, rootModel()->label()) {
-  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_leafCells[i].setParentResponder(&m_selectableListView);
-    m_leafCells->setFont(KDFont::Size::Large);
-  }
-}
+MathToolbox::MathToolbox() : Toolbox(nullptr, rootModel()->label()) {}
 
 void MathToolbox::viewDidDisappear() {
   Toolbox::viewDidDisappear();
@@ -877,13 +872,13 @@ void MathToolbox::viewDidDisappear() {
 
   // Tidy the layouts displayed in the MathToolbox to clean TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_leafCells[i].setLayout(Layout());
+    m_leafCells[i].label()->setLayout(Layout());
   }
 }
 
 KDCoordinate MathToolbox::nonMemoizedRowHeight(int index) {
   if (typeAtIndex(index) == k_leafCellType) {
-    ExpressionTableCellWithMessage tempCell;
+    LeafCell tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   return Escher::Toolbox::nonMemoizedRowHeight(index);
@@ -932,8 +927,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
       // We are in lists stats sub-menu
       messageTree = messageTreeModelAtIndex(alternateListsStatsOrder[index]);
     }
-    ExpressionTableCellWithMessage *myCell =
-        static_cast<ExpressionTableCellWithMessage *>(cell);
+    LeafCell *myCell = static_cast<LeafCell *>(cell);
     const char *text = I18n::translate(messageTree->label());
     Layout resultLayout;
 
@@ -958,9 +952,9 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
       resultLayout = LayoutHelper::String(text, strlen(text));
     }
 
-    myCell->setLayout(resultLayout);
-    myCell->setSubLabelMessage(messageTree->text());
-    myCell->setTextColor(textColor);
+    myCell->label()->setLayout(resultLayout);
+    myCell->subLabel()->setMessage(messageTree->text());
+    myCell->label()->setTextColor(textColor);
   } else {
     assert(static_cast<void *>(m_leafCells) > static_cast<void *>(cell) ||
            static_cast<void *>(cell) >=
@@ -1010,7 +1004,7 @@ const ToolboxMessageTree *MathToolbox::rootModel() const {
   return &toolboxModel;
 }
 
-ExpressionTableCellWithMessage *MathToolbox::leafCellAtIndex(int index) {
+MathToolbox::LeafCell *MathToolbox::leafCellAtIndex(int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];
 }

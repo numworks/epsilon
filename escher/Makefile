@@ -33,7 +33,6 @@ escher_src += $(addprefix escher/src/,\
   explicit_list_view_data_source.h \
   expression_input_bar.cpp \
   expression_table_cell.cpp \
-  expression_table_cell_with_message.cpp \
   expression_view.cpp \
   gauge_view.cpp \
   glyphs_view.cpp \

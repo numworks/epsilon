@@ -22,18 +22,22 @@ TypeParameterController::TypeParameterController(Responder *parentResponder,
                                                  KDCoordinate rightMargin,
                                                  KDCoordinate bottomMargin,
                                                  KDCoordinate leftMargin)
-    : SelectableCellListPage<ExpressionTableCellWithMessage, k_numberOfCells,
-                             Escher::RegularListViewDataSource>(
-          parentResponder),
+    : SelectableCellListPage<
+          MenuCell<ScrollableExpressionView, MessageTextView>, k_numberOfCells,
+          RegularListViewDataSource>(parentResponder),
       m_listController(list) {
   for (int i = 0; i < k_numberOfCells; i++) {
-    cellAtIndex(i)->setParentResponder(&m_selectableListView);
+    cellAtIndex(i)->label()->setParentResponder(&m_selectableListView);
   }
-  cellAtIndex(k_indexOfExplicit)->setSubLabelMessage(I18n::Message::Explicit);
+  cellAtIndex(k_indexOfExplicit)
+      ->subLabel()
+      ->setMessage(I18n::Message::Explicit);
   cellAtIndex(k_indexOfRecurrence)
-      ->setSubLabelMessage(I18n::Message::SingleRecurrence);
+      ->subLabel()
+      ->setMessage(I18n::Message::SingleRecurrence);
   cellAtIndex(k_indexOfDoubleRecurrence)
-      ->setSubLabelMessage(I18n::Message::DoubleRecurrence);
+      ->subLabel()
+      ->setMessage(I18n::Message::DoubleRecurrence);
   m_selectableListView.setMargins(topMargin, rightMargin, bottomMargin,
                                   leftMargin);
   m_selectableListView.hideScrollBars();
@@ -135,10 +139,10 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell *cell,
       VerticalOffsetLayout::Builder(
           LayoutHelper::String(subscripts[j], strlen(subscripts[j])),
           VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-  ExpressionTableCellWithMessage *myCell =
-      static_cast<ExpressionTableCellWithMessage *>(cell);
-  myCell->setLayout(m_layouts[j]);
-  myCell->setFont(font);
+  MenuCell<ScrollableExpressionView, MessageTextView> *myCell =
+      static_cast<MenuCell<ScrollableExpressionView, MessageTextView> *>(cell);
+  myCell->label()->setLayout(m_layouts[j]);
+  myCell->label()->setFont(font);
 }
 
 void TypeParameterController::setRecord(Ion::Storage::Record record) {

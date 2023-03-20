@@ -2,7 +2,9 @@
 #define SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
 
 #include <escher/even_odd_expression_cell.h>
-#include <escher/expression_table_cell_with_message.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
+#include <escher/scrollable_expression_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/layout.h>
@@ -17,8 +19,9 @@ constexpr int k_numberOfCells = 3;
 
 class TypeParameterController
     : public Escher::SelectableCellListPage<
-          Escher::ExpressionTableCellWithMessage, k_numberOfCells,
-          Escher::RegularListViewDataSource> {
+          Escher::MenuCell<Escher::ScrollableExpressionView,
+                           Escher::MessageTextView>,
+          k_numberOfCells, Escher::RegularListViewDataSource> {
  public:
   TypeParameterController(Escher::Responder* parentResponder,
                           ListController* list, KDCoordinate topMargin = 0,

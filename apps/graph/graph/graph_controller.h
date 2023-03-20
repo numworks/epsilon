@@ -53,7 +53,8 @@ class GraphController : public Shared::FunctionGraphController,
     FunctionSelectionController(GraphController *graphController)
         : Shared::FunctionGraphController::FunctionSelectionController(
               graphController) {}
-    CurveSelectionCellWithChevron *reusableCell(int index, int type) override {
+    Shared::CurveSelectionCellWithChevron *reusableCell(int index,
+                                                        int type) override {
       assert(index >= 0 && index < k_maxNumberOfDisplayableFunctions);
       return m_cells + index;
     }
@@ -64,7 +65,8 @@ class GraphController : public Shared::FunctionGraphController,
    private:
     constexpr static int k_maxNumberOfDisplayableFunctions = 7;
     Poincare::Layout nameLayoutAtIndex(int j) const override;
-    CurveSelectionCellWithChevron m_cells[k_maxNumberOfDisplayableFunctions];
+    Shared::CurveSelectionCellWithChevron
+        m_cells[k_maxNumberOfDisplayableFunctions];
   };
 
   // ZoomCurveViewController

@@ -45,7 +45,7 @@ class AreaBetweenCurvesParameterController
  private:
   constexpr static int k_maxNumberOfDisplayableRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-          Escher::TableCell::k_minimalLargeFontCellHeight,
+          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
           Escher::Metric::TabHeight + 3 * Escher::Metric::StackTitleHeight);
   // There should always be 3 titles displayed.
 

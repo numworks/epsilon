@@ -103,7 +103,7 @@ void FunctionGraphController::FunctionSelectionController::
           graphController()->recordAtCurveIndex(index));
   static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(
       function->color());
-  static_cast<CurveSelectionCellWithChevron *>(cell)->setLayout(
+  static_cast<CurveSelectionCellWithChevron *>(cell)->label()->setLayout(
       function->layout().clone());
 }
 

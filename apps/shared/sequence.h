@@ -121,8 +121,7 @@ class Sequence : public Function {
   T approximateAtContextRank(SequenceContext *sqctx,
                              bool intermediateComputation) const;
   template <typename T>
-  T approximateAtRank(int n, SequenceContext *sqctx,
-                      bool intermediateComputation) const;
+  T approximateAtRank(int n, SequenceContext *sqctx) const;
 
   Poincare::Expression sumBetweenBounds(
       double start, double end, Poincare::Context *context) const override;

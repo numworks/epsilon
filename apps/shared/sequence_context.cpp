@@ -18,7 +18,8 @@ TemplatedSequenceContext<T>::TemplatedSequenceContext(
       m_mainRanks{-1, -1, -1},
       m_mainValues{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}},
       m_intermediateRanks{-1, -1, -1},
-      m_intermediateValues{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}} {}
+      m_intermediateValues{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}},
+      m_isComputingMainResult(false) {}
 
 template <typename T>
 void TemplatedSequenceContext<T>::resetCacheOfSequence(
@@ -67,9 +68,11 @@ T TemplatedSequenceContext<T>::storedValueOfSequenceAtRank(int sequenceIndex,
 }
 
 template <typename T>
-void TemplatedSequenceContext<T>::stepUntilRank(int n, int sequenceIndex,
-                                                bool intermediateComputation) {
+void TemplatedSequenceContext<T>::stepUntilRank(int n, int sequenceIndex) {
   assert(IsAcceptableRank(n));
+  bool intermediateComputation = m_isComputingMainResult;
+  m_isComputingMainResult = true;
+
   int *currentRank = intermediateComputation
                          ? m_intermediateRanks + sequenceIndex
                          : m_mainRanks + sequenceIndex;
@@ -83,6 +86,9 @@ void TemplatedSequenceContext<T>::stepUntilRank(int n, int sequenceIndex,
   }
   while (*currentRank < n) {
     stepToNextRank(sequenceIndex, intermediateComputation);
+  }
+  if (!intermediateComputation) {
+    m_isComputingMainResult = false;
   }
 }
 

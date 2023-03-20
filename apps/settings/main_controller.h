@@ -36,7 +36,6 @@ class MainController : public Escher::SelectableListViewController<
                  Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
   bool handleEvent(Ion::Events::Event event) override;
   void pushModel(const Escher::MessageTree* messageTreeModel);
-  void didBecomeFirstResponder() override;
   int numberOfRows() const override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;

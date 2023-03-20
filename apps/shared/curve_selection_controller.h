@@ -4,7 +4,7 @@
 #include <escher/chevron_view.h>
 #include <escher/expression_view.h>
 #include <escher/list_view_data_source.h>
-#include <escher/selectable_list_view.h>
+#include <escher/selectable_list_view_controller.h>
 #include <escher/table_cell.h>
 #include <escher/view_controller.h>
 
@@ -45,15 +45,12 @@ class CurveSelectionCell : public Escher::TableCell {
 
 class InteractiveCurveViewController;
 
-class CurveSelectionController : public Escher::ViewController,
-                                 public Escher::SelectableListViewDataSource,
-                                 public Escher::ListViewDataSource {
+class CurveSelectionController
+    : public Escher::SelectableListViewController<Escher::ListViewDataSource> {
  public:
   CurveSelectionController(InteractiveCurveViewController *graphController);
 
-  Escher::View *view() override { return &m_selectableListView; }
   void viewWillAppear() override { m_selectableListView.reloadData(); }
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
  protected:
@@ -71,7 +68,6 @@ class CurveSelectionController : public Escher::ViewController,
   };
 
   InteractiveCurveViewController *m_graphController;
-  Escher::SelectableListView m_selectableListView;
 };
 
 }  // namespace Shared

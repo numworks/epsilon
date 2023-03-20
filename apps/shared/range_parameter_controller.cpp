@@ -124,10 +124,6 @@ KDCoordinate RangeParameterController::separatorBeforeRow(int index) {
              : 0;
 }
 
-void RangeParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 void RangeParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   if (selectedRow() == -1) {

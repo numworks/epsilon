@@ -12,7 +12,6 @@ class GenericSubController : public Escher::SelectableListViewController<
  public:
   GenericSubController(Escher::Responder* parentResponder);
   const char* title() override;
-  void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;

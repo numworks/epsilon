@@ -22,7 +22,6 @@ class ListParameterController
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("ListParameter");
   virtual void setRecord(Ion::Storage::Record record);
-  void didBecomeFirstResponder() override;
   void viewWillAppear() override;
 
   // MemoizedListViewDataSource

@@ -38,14 +38,6 @@ bool ColorParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ColorParameterController::didBecomeFirstResponder() {
-  // TODO: This is duplicated in other classes
-  if (selectedRow() < 0) {
-    selectCell(0);
-  }
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 void ColorParameterController::willDisplayCellForIndex(HighlightCell *cell,
                                                        int index) {
   ColorCell *colorCell = static_cast<ColorCell *>(cell);

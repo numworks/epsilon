@@ -31,7 +31,6 @@ class RangeParameterController : public Escher::SelectableListViewController<
   void willDisplayCellForIndex(Escher::HighlightCell *cell, int index) override;
   KDCoordinate separatorBeforeRow(int index) override;
 
-  void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;

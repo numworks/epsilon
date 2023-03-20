@@ -25,7 +25,6 @@ class ColorParameterController : public Escher::SelectableListViewController<
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
 
   // SimpleListViewDataSource
   Escher::HighlightCell* reusableCell(int index) override {

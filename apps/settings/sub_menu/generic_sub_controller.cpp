@@ -22,10 +22,6 @@ const char *GenericSubController::title() {
   return "";
 }
 
-void GenericSubController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 void GenericSubController::viewWillAppear() {
   ViewController::viewWillAppear();
   /* This can't be done in didEnterResponderChain because we don't want it to

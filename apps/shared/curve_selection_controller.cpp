@@ -29,16 +29,8 @@ void CurveSelectionCell::setLayout(Poincare::Layout layout) {
 
 CurveSelectionController::CurveSelectionController(
     InteractiveCurveViewController* graphController)
-    : Escher::ViewController(graphController),
-      m_graphController(graphController),
-      m_selectableListView(this, this, this) {}
-
-void CurveSelectionController::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
-    selectCell(0);
-  }
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
+    : SelectableListViewController(graphController),
+      m_graphController(graphController) {}
 
 bool CurveSelectionController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE ||

@@ -17,6 +17,7 @@ class SelectableListView : public SelectableTableView {
       : SelectableTableView(parentResponder, dataSource, selectionDataSource,
                             delegate) {}
 
+  void didBecomeFirstResponder() override;
   void scrollToCell(int row) { return scrollToCell(0, row); }
   bool selectCell(int row) { return selectCellAtLocation(0, row); }
   void reloadCell(int row) { return reloadCellAtLocation(0, row); }

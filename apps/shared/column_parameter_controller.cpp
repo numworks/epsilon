@@ -10,10 +10,6 @@ using namespace Escher;
 
 namespace Shared {
 
-void ColumnParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 void ColumnParameterController::viewWillAppear() {
   m_selectableListView.reloadData();
 }

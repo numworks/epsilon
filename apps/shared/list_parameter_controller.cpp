@@ -19,10 +19,6 @@ ListParameterController::ListParameterController(
       m_deleteCell(deleteFunctionMessage),
       m_colorParameterController(this) {}
 
-void ListParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 void ListParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   if (selectedRow() == -1) {

@@ -64,10 +64,6 @@ void FormulaTemplateMenuController::viewDidDisappear() {
   ViewController::viewDidDisappear();
 }
 
-void FormulaTemplateMenuController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 bool FormulaTemplateMenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     int i = selectedRow();

@@ -10,10 +10,11 @@ namespace Code {
 constexpr KDColor SubtitleCell::k_backgroundColor;
 constexpr KDColor SubtitleCell::k_textColor;
 
-SubtitleCell::SubtitleCell()
-    : BufferTableCell(KDFont::Size::Small, KDGlyph::k_alignLeft,
-                      KDGlyph::k_alignCenter, k_textColor, k_backgroundColor,
-                      k_maxNumberOfCharsInBuffer) {}
+SubtitleCell::SubtitleCell() : MenuCell<BufferTextView>() {
+  label()->setGlyphFormat(KDGlyph::Format{.glyphColor = k_textColor,
+                                          .backgroundColor = k_backgroundColor,
+                                          .font = KDFont::Size::Small});
+}
 
 void SubtitleCell::layoutSubviews(bool force) {
   KDCoordinate width = bounds().width();
@@ -32,7 +33,7 @@ void SubtitleCell::layoutSubviews(bool force) {
 
   assert(width > 0 && height > 0);
 
-  setChildFrame(&m_labelView, KDRect(x, y, width, height), force);
+  setChildFrame(label(), KDRect(x, y, width, height), force);
 }
 
 }  // namespace Code

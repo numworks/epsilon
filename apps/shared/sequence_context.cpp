@@ -56,18 +56,19 @@ void TemplatedSequenceContext<T>::resetCache() {
 template <typename T>
 T TemplatedSequenceContext<T>::storedValueOfSequenceAtRank(int sequenceIndex,
                                                            int rank) {
-  if (m_commonRank >= 0) {
-    int offset = m_commonRank - rank;
-    if (0 <= offset && offset < SequenceStore::k_maxRecurrenceDepth + 1 &&
-        !std::isnan(m_commonRankValues[sequenceIndex][offset])) {
-      return m_commonRankValues[sequenceIndex][offset];
-    }
-  }
-  if (m_independentRanks[sequenceIndex] >= 0) {
-    int offset = m_independentRanks[sequenceIndex] - rank;
-    if (0 <= offset && offset < SequenceStore::k_maxRecurrenceDepth + 1 &&
-        !std::isnan(m_independentRankValues[sequenceIndex][offset])) {
-      return m_independentRankValues[sequenceIndex][offset];
+  for (int loop = 0; loop < 2; loop++) {
+    int storedRank =
+        loop == 0 ? m_commonRank : m_independentRanks[sequenceIndex];
+    if (storedRank >= 0) {
+      int offset = storedRank - rank;
+      if (0 <= offset && offset < SequenceStore::k_maxRecurrenceDepth + 1) {
+        T storedValue = loop == 0
+                            ? m_commonRankValues[sequenceIndex][offset]
+                            : m_independentRankValues[sequenceIndex][offset];
+        if (!std::isnan(storedValue)) {
+          return storedValue;
+        }
+      }
     }
   }
   return static_cast<T>(NAN);

@@ -1,17 +1,16 @@
 #ifndef CODE_SUBTITLE_CELL_H
 #define CODE_SUBTITLE_CELL_H
 
-#include <escher/buffer_table_cell.h>
 #include <escher/buffer_text_view.h>
+#include <escher/menu_cell.h>
 #include <escher/metric.h>
 #include <ion/display.h>
 
 namespace Code {
 
-class SubtitleCell : public Escher::BufferTableCell {
+class SubtitleCell : public Escher::MenuCell<Escher::BufferTextView> {
  public:
   SubtitleCell();
-  const Escher::View* labelView() const override { return &m_labelView; }
   void setHighlighted(bool highlight) override { assert(!highlight); }
   // Overriding TableCell row Height
   void layoutSubviews(bool force = false) override;
@@ -25,7 +24,7 @@ class SubtitleCell : public Escher::BufferTableCell {
   KDColor backgroundColor() const override { return k_backgroundColor; }
 
  private:
-  /* Text from BufferTableCell can be formed from user input (script names).
+  /* Text can be formed from user input (script names).
    * A char limit on display is enforced */
   constexpr static int k_maxNumberOfCharsInBuffer =
       (Ion::Display::Width - Escher::Metric::PopUpLeftMargin -

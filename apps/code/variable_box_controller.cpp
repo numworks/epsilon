@@ -181,9 +181,9 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
       suffix = I18n::Message::PythonModuleSuffix;
     }
   }
-  myCell->setLabelText(I18n::translate(prefix));
-  myCell->appendText(moduleName);
-  myCell->appendText(I18n::translate(suffix));
+  myCell->label()->setText(I18n::translate(prefix));
+  myCell->label()->appendText(moduleName);
+  myCell->label()->appendText(I18n::translate(suffix));
 }
 
 void VariableBoxController::listViewDidChangeSelection(

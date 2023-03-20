@@ -15,54 +15,35 @@ template <typename T>
 class TemplatedSequenceContext {
  public:
   TemplatedSequenceContext(SequenceContext* sequenceContext);
-  void resetCacheOfSequence(int sequenceIndex);
+  void resetCacheOfSequence(int sequenceIndex, bool intermediateComputation);
   void resetCache();
-  void stepUntilRank(int n, int sequenceIndex);
+  void stepUntilRank(int n, int sequenceIndex, bool intermediateComputation);
   constexpr static bool IsAcceptableRank(int n) {
     return 0 <= n && n <= k_maxRecurrentRank;
   }
-  int rank(int sequenceIndex, bool independent) const {
+  int rank(int sequenceIndex, bool intermediateComputation) const {
     assert(0 <= sequenceIndex &&
            sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-    return independent ? m_independentRanks[sequenceIndex] : m_commonRank;
+    return intermediateComputation ? m_intermediateRanks[sequenceIndex]
+                                   : m_mainRanks[sequenceIndex];
   }
   T storedValueOfSequenceAtRank(int sequenceIndex, int rank);
 
  private:
   constexpr static int k_maxRecurrentRank = 10000;
-  void stepToNextRank(int sequenceIndex = -1);
+  void stepToNextRank(int sequenceIndex, bool intermediateComputation);
 
   SequenceContext* m_sequenceContext;
 
-  /* Cache:
-   * We use two types of cache :
-   * The first one is used to to accelerate the
-   * computation of values of recurrent sequences. We memoize the last computed
-   * values of the sequences and their associated ranks (n and n+1 for
-   * instance). Thereby, when another evaluation at a superior rank k > n+1 is
-   * called, we avoid iterating from 0 but can start from n. This cache allows
-   * us to step all of the sequences at once.
-   *
-   * The second one used used for fixed term computation. For instance, if a
-   * sequence is defined using a fixed term of another, u(3) for instance, we
-   * compute its value through the second type of cache. This way, we do not
-   * erase the data stored in the first type of cache and we can compute the
-   * values of each sequence at independent rank. This means that
-   * (u(3), v(5), w(10)) can be computed at the same time.
-   * This cache is therefore used for independent steps of sequences
-   */
-  int m_commonRank;
-  // For example if m_commonRank = 9, then m_commonRankValues = {{u9,u8,u7},
-  // {v9,v8,v7}, {w9,w8,w7}}
-  T m_commonRankValues[SequenceStore::k_maxNumberOfSequences]
-                      [SequenceStore::k_maxRecurrenceDepth + 1];
-
-  // Used for fixed computations
-  int m_independentRanks[SequenceStore::k_maxNumberOfSequences];
-  // For example if m_independentRanks = {9,5,4}, then m_independentRanks =
-  // {{u9,u8,u7}, {v5,v4,v3}, {w4,w3,w2}}
-  T m_independentRankValues[SequenceStore::k_maxNumberOfSequences]
-                           [SequenceStore::k_maxRecurrenceDepth + 1];
+  /* Main ranks for main computations and intermediate ranks for intermediate
+   * computations (ex: computation of v(2) in u(3) = v(2) + 4). If ranks are
+   * {9,5,4} then values are {{u9,u8,u7}, {v5,v4,v3}, {w4,w3,w2}}. */
+  int m_mainRanks[SequenceStore::k_maxNumberOfSequences];
+  T m_mainValues[SequenceStore::k_maxNumberOfSequences]
+                [SequenceStore::k_maxRecurrenceDepth + 1];
+  int m_intermediateRanks[SequenceStore::k_maxNumberOfSequences];
+  T m_intermediateValues[SequenceStore::k_maxNumberOfSequences]
+                        [SequenceStore::k_maxRecurrenceDepth + 1];
 };
 
 class SequenceContext : public Poincare::ContextWithParent {
@@ -90,9 +71,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   }
 
   template <typename T>
-  void stepUntilRank(int n, int sequenceIndex) {
+  void stepUntilRank(int n, int sequenceIndex, bool intermediateComputation) {
     static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->stepUntilRank(n, sequenceIndex);
+        ->stepUntilRank(n, sequenceIndex, intermediateComputation);
   }
 
   SequenceStore* sequenceStore() { return m_sequenceStore; }
@@ -100,9 +81,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   void tidyDownstreamPoolFrom(char* treePoolCursor) override;
 
   template <typename T>
-  int rank(int sequenceIndex, bool independent) {
+  int rank(int sequenceIndex, bool intermediateComputation) {
     return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->rank(sequenceIndex, independent);
+        ->rank(sequenceIndex, intermediateComputation);
   }
 
   template <typename T>

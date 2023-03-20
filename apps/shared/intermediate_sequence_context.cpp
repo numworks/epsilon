@@ -17,11 +17,11 @@ namespace Shared {
 template <typename T>
 IntermediateSequenceContext<T>::IntermediateSequenceContext(
     SequenceContext *sequenceContext, int sequenceBeingComputed,
-    bool independent)
+    bool intermediateComputation)
     : ContextWithParent(sequenceContext),
       m_sequenceContext(sequenceContext),
       m_sequenceBeingComputed(sequenceBeingComputed),
-      m_independent(independent) {}
+      m_intermediateComputation(intermediateComputation) {}
 
 template <typename T>
 const Expression
@@ -58,7 +58,7 @@ IntermediateSequenceContext<T>::protectedExpressionForSymbolAbstract(
    * But we avoid doing so if the sequence referencing itself to avoid an
    * infinite loop. */
   if (std::isnan(result) &&
-      (!m_independent || index != m_sequenceBeingComputed)) {
+      (!m_intermediateComputation || index != m_sequenceBeingComputed)) {
     // If the rank is not an int, return NAN
     if (std::floor(rankValue) == rankValue) {
       result = seq->approximateAtRank<T>(rankValue, m_sequenceContext, true);

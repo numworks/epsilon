@@ -49,7 +49,7 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int index) {
   if (typeAtIndex(index) == k_expressionCellType) {
     return ExpressionsListController::nonMemoizedRowHeight(index);
   }
-  BufferTableCellWithMessage tempCell;
+  BufferCell tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
@@ -58,10 +58,9 @@ void UnitListController::willDisplayCellForIndex(HighlightCell *cell,
   if (typeAtIndex(index) == k_expressionCellType) {
     return ExpressionsListController::willDisplayCellForIndex(cell, index);
   }
-  BufferTableCellWithMessage *myCell =
-      static_cast<BufferTableCellWithMessage *>(cell);
+  BufferCell *myCell = static_cast<BufferCell *>(cell);
   fillBufferCellAtIndex(myCell, index - m_numberOfExpressionCells);
-  myCell->setSubLabelMessage(messageAtIndex(index));
+  myCell->subLabel()->setMessage(messageAtIndex(index));
 }
 
 int UnitListController::numberOfRows() const {
@@ -232,8 +231,8 @@ I18n::Message UnitListController::messageAtIndex(int index) {
   return (I18n::Message)0;
 }
 
-void UnitListController::fillBufferCellAtIndex(
-    Escher::BufferTableCellWithMessage *bufferCell, int index) {
+void UnitListController::fillBufferCellAtIndex(BufferCell *bufferCell,
+                                               int index) {
   assert(index < m_numberOfBufferCells);
   const UnitComparison::ReferenceValue *referenceValue =
       m_referenceValues[index];
@@ -248,7 +247,8 @@ void UnitListController::fillBufferCellAtIndex(
   } else {
     messageInCell = referenceValue->title2;
   }
-  bufferCell->setMessageWithPlaceholders(messageInCell, floatToTextBuffer);
+  bufferCell->label()->setMessageWithPlaceholders(messageInCell,
+                                                  floatToTextBuffer);
 }
 
 int UnitListController::textAtIndex(char *buffer, size_t bufferSize,

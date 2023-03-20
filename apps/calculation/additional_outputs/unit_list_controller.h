@@ -2,7 +2,9 @@
 #define CALCULATION_ADDITIONAL_OUTPUTS_UNIT_LIST_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/buffer_table_cell_with_message.h>
+#include <escher/buffer_text_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <poincare/expression.h>
 
 #include "expressions_list_controller.h"
@@ -36,15 +38,17 @@ class UnitListController : public ExpressionsListController {
                 ExpressionsListController::k_maxNumberOfRows);
   constexpr static int k_maxNumberOfBufferCells = 2;
 
+  using BufferCell =
+      Escher::MenuCell<Escher::BufferTextView, Escher::MessageTextView>;
+
   I18n::Message messageAtIndex(int index) override;
-  void fillBufferCellAtIndex(Escher::BufferTableCellWithMessage* bufferCell,
-                             int index);
+  void fillBufferCellAtIndex(BufferCell* bufferCell, int index);
   int textAtIndex(char* buffer, size_t bufferSize, Escher::HighlightCell* cell,
                   int index) override;
 
   int m_numberOfExpressionCells;
   int m_numberOfBufferCells;
-  Escher::BufferTableCellWithMessage m_bufferCells[k_maxNumberOfBufferCells];
+  BufferCell m_bufferCells[k_maxNumberOfBufferCells];
   const UnitComparison::ReferenceValue*
       m_referenceValues[k_maxNumberOfBufferCells];
   double m_SIValue;

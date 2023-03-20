@@ -11,7 +11,7 @@ namespace Escher {
 // This name is temporary
 class AbstractMenuCell : public Bordered, public HighlightCell {
  public:
-  /* TableCells are laid out as follow :
+  /* MenuCells are laid out as follow :
    * - Accessory is vertically centered on the right of the cell
    * - Label is vertically centered, aligned on the left of the cell
    * - If it fits, SubLabel is vertically centered between Label and Accessory,

@@ -21,7 +21,7 @@ using namespace Escher;
  * This would avoid to store duplicates const char *.
  * This would requires classes as:
  * - PointerTree parent of MessageTree and BufferTree
- * - PointerTableCell instead of MessageTableCell
+ * - MenuCell<PointerTextView> instead of MenuCell<MessageTextView>
  *
  * We should add in the model tree the possibility to indicate a Leaf that has
  * to be selected when the menu appears. */

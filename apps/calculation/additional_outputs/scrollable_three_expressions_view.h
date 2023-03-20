@@ -16,7 +16,7 @@ class ScrollableThreeExpressionsView
   ScrollableThreeExpressionsView(Responder *parentResponder = nullptr)
       : Shared::AbstractScrollableMultipleExpressionsView(parentResponder,
                                                           &m_contentCell) {
-    setMargins(0, 0, 0, 0);  // margins are already added by TableCell
+    setMargins(0, 0, 0, 0);  // margins are already added by MenuCell
     setBackgroundColor(KDColorWhite);
   }
   void resetMemoization();

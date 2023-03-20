@@ -78,7 +78,6 @@ escher_src += $(addprefix escher/src/,\
   tab_view_controller.cpp \
   tab_view_data_source.cpp \
   table_view_with_frozen_header.cpp \
-  table_cell.cpp \
   table_size_1D_manager.cpp \
   table_view.cpp \
   table_view_data_source.cpp \

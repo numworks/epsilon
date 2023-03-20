@@ -225,21 +225,21 @@ T Sequence::privateEvaluateYAtX(T x, Poincare::Context *context) const {
 
 template <typename T>
 T Sequence::approximateAtRank(int n, SequenceContext *sqctx,
-                              bool independent) const {
+                              bool intermediateComputation) const {
   if (n < initialRank() || !TemplatedSequenceContext<T>::IsAcceptableRank(n) ||
       (n >= firstNonInitialRank() && mainExpressionIsNotComputable(sqctx))) {
     return NAN;
   }
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
-  sqctx->stepUntilRank<T>(n, independent ? sequenceIndex : -1);
+  sqctx->stepUntilRank<T>(n, sequenceIndex, intermediateComputation);
   return sqctx->storedValueOfSequenceAtRank<T>(sequenceIndex, n);
 }
 
 template <typename T>
 T Sequence::approximateAtContextRank(SequenceContext *sqctx,
-                                     bool independent) const {
+                                     bool intermediateComputation) const {
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
-  int rank = sqctx->rank<T>(sequenceIndex, independent);
+  int rank = sqctx->rank<T>(sequenceIndex, intermediateComputation);
   if (rank < initialRank()) {
     return NAN;
   }
@@ -283,8 +283,8 @@ T Sequence::approximateAtContextRank(SequenceContext *sqctx,
     }
   }
 
-  IntermediateSequenceContext<T> ctx =
-      IntermediateSequenceContext<T>(sqctx, sequenceIndex, independent);
+  IntermediateSequenceContext<T> ctx = IntermediateSequenceContext<T>(
+      sqctx, sequenceIndex, intermediateComputation);
   // Update angle unit and complex format
   Preferences preferences =
       Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));

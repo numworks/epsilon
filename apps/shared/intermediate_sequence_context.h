@@ -13,7 +13,8 @@ template <typename T>
 class IntermediateSequenceContext : public Poincare::ContextWithParent {
  public:
   IntermediateSequenceContext(SequenceContext* sequenceContext,
-                              int sequenceBeingComputed, bool independent);
+                              int sequenceBeingComputed,
+                              bool intermediateComputation);
 
  private:
   const Poincare::Expression protectedExpressionForSymbolAbstract(
@@ -21,7 +22,7 @@ class IntermediateSequenceContext : public Poincare::ContextWithParent {
       ContextWithParent* lastDescendantContext) override;
   SequenceContext* m_sequenceContext;
   int m_sequenceBeingComputed;
-  bool m_independent;
+  bool m_intermediateComputation;
 };
 
 }  // namespace Shared

@@ -30,7 +30,7 @@ HypothesisController::HypothesisController(
       m_inputSlopeController(inputSlopeController),
       m_operatorDataSource(test),
       m_h0(&m_selectableListView, handler, this),
-      m_ha(&m_selectableListView, &m_operatorDataSource, this),
+      m_haDropdown(&m_selectableListView, &m_operatorDataSource, this),
       m_next(&m_selectableListView, I18n::Message::Next,
              Invocation::Builder<HypothesisController>(
                  &HypothesisController::ButtonAction, this)),
@@ -49,6 +49,7 @@ HypothesisController::HypothesisController(
   m_h0.setSubLabelMessage(I18n::Message::H0Sub);
   m_ha.label()->setLayout(ha);
   m_ha.subLabel()->setMessage(I18n::Message::HaSub);
+  m_ha.accessory()->setDropdown(&m_haDropdown);
 }
 
 const char* HypothesisController::title() {
@@ -122,9 +123,9 @@ HighlightCell* HypothesisController::cell(int index) {
 
 void HypothesisController::didBecomeFirstResponder() {
   selectCell(0);
-  m_ha.dropdown()->selectRow(
+  m_haDropdown.selectRow(
       static_cast<int>(m_test->hypothesisParams()->comparisonOperator()));
-  m_ha.dropdown()->init();
+  m_haDropdown.init();
   loadHypothesisParam();
   resetMemoization();
   m_selectableListView.reloadData(true);
@@ -150,7 +151,7 @@ void HypothesisController::loadHypothesisParam() {
       Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits);
   m_h0.setAccessoryText(buffer);
-  m_ha.reload();
+  m_haDropdown.reloadAllCells();
   resetMemoization();
   m_selectableListView.reloadData();
 }

@@ -66,7 +66,9 @@ constexpr I18n::Message sMessages[] = {
 void DistributionController::willDisplayCellForIndex(HighlightCell *cell,
                                                      int index) {
   DistributionCell *myCell = static_cast<DistributionCell *>(cell);
-  myCell->setLabel(sMessages[index]);
+  myCell->subLabel()->setGlyphFormat(
+      GlyphsView::FormatForWidgetType(CellWidget::Type::Label));
+  myCell->subLabel()->setMessage(sMessages[index]);
   const Image *images[k_totalNumberOfModels] = {
       ImageStore::BinomialIcon,    ImageStore::UniformIcon,
       ImageStore::ExponentialIcon, ImageStore::NormalIcon,
@@ -74,7 +76,7 @@ void DistributionController::willDisplayCellForIndex(HighlightCell *cell,
       ImageStore::GeometricIcon,   ImageStore::HypergeometricIcon,
       ImageStore::PoissonIcon,     ImageStore::FisherIcon,
   };
-  myCell->setImage(images[index]);
+  myCell->label()->setImage(images[index]);
   myCell->reloadCell();
 }
 

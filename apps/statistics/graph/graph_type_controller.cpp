@@ -10,8 +10,7 @@ GraphTypeController::GraphTypeController(
     Escher::TabViewController* tabController,
     Escher::StackViewController* stackView, Store* store,
     GraphViewModel* graphViewModel)
-    : Escher::SelectableCellListPage<Escher::TransparentImageCellWithMessage,
-                                     k_numberOfCells,
+    : Escher::SelectableCellListPage<GraphTypeCell, k_numberOfCells,
                                      Escher::RegularListViewDataSource>(
           parentResponder),
       m_tabController(tabController),
@@ -22,8 +21,13 @@ GraphTypeController::GraphTypeController(
       GraphViewModel::IndexOfGraphView(m_graphViewModel->selectedGraphView()));
   for (uint8_t i = 0; i < GraphViewModel::k_numberOfGraphViews; i++) {
     GraphViewModel::GraphView graphView = GraphViewModel::GraphViewAtIndex(i);
-    cellAtIndex(i)->setMessage(GraphViewModel::MessageForGraphView(graphView));
-    cellAtIndex(i)->setImage(GraphViewModel::ImageForGraphView(graphView));
+    cellAtIndex(i)->subLabel()->setGlyphFormat(
+        Escher::GlyphsView::FormatForWidgetType(
+            Escher::CellWidget::Type::Label));
+    cellAtIndex(i)->subLabel()->setMessage(
+        GraphViewModel::MessageForGraphView(graphView));
+    cellAtIndex(i)->label()->setImage(
+        GraphViewModel::ImageForGraphView(graphView));
   }
 }
 

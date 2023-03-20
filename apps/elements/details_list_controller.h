@@ -1,11 +1,13 @@
 #ifndef ELEMENTS_DETAILS_LIST_CONTROLLER
 #define ELEMENTS_DETAILS_LIST_CONTROLLER
 
+#include <escher/expression_view.h>
 #include <escher/list_view_with_top_and_bottom_views.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
-#include "physical_quantity_cell.h"
 #include "single_element_view.h"
 
 namespace Elements {
@@ -42,7 +44,7 @@ class DetailsListController : public Escher::ViewController,
   constexpr static size_t k_numberOfRows = 13;
   constexpr static size_t k_maxNumberOfDisplayedRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-          Escher::TableCell::k_minimalLargeFontCellHeight,
+          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
           Escher::Metric::StackTitleHeight);
 
   static const DataField *DataFieldForRow(int row);
@@ -53,6 +55,10 @@ class DetailsListController : public Escher::ViewController,
   Escher::StackViewController *stackViewController() const {
     return static_cast<Escher::StackViewController *>(parentResponder());
   }
+
+  using PhysicalQuantityCell =
+      Escher::MenuCell<Escher::ExpressionView, Escher::MessageTextView,
+                       Escher::ExpressionView>;
 
   Escher::SelectableListView m_selectableListView;
   SingleElementView m_topElementView;

@@ -105,11 +105,11 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell *cell,
     sublabel = dataField->fieldLegend();
   }
 
-  typedCell->setSubLabelMessage(sublabel);
+  typedCell->subLabel()->setMessage(sublabel);
   int significantDigits =
       Preferences::sharedPreferences->numberOfSignificantDigits();
-  typedCell->setLayouts(dataField->fieldSymbolLayout(),
-                        dataField->getLayout(z, significantDigits));
+  typedCell->label()->setLayout(dataField->fieldSymbolLayout());
+  typedCell->accessory()->setLayout(dataField->getLayout(z, significantDigits));
 }
 
 KDCoordinate DetailsListController::nonMemoizedRowHeight(int j) {

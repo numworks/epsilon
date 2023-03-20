@@ -1,13 +1,16 @@
 #ifndef DISTRIBUTIONS_PROBABILITY_DISTRIBUTION_CONTROLLER_H
 #define DISTRIBUTIONS_PROBABILITY_DISTRIBUTION_CONTROLLER_H
 
+#include <escher/chevron_view.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/table_view_with_frozen_header.h>
+#include <escher/transparent_image_view.h>
 
 #include <new>
 
 #include "distributions/models/distribution/distribution.h"
-#include "distributions/probability/distribution_cell.h"
 #include "parameters_controller.h"
 
 namespace Distributions {
@@ -34,10 +37,14 @@ class DistributionController : public Escher::SelectableListViewController<
   constexpr static int k_totalNumberOfModels = 10;
   constexpr static int k_numberOfCells =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-          Escher::TableCell::k_minimalLargeFontCellHeight,
+          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
           KDFont::GlyphHeight(KDFont::Size::Small));
 
   void setDistributionAccordingToIndex(int index);
+
+  using DistributionCell =
+      Escher::MenuCell<Escher::TransparentImageView, Escher::MessageTextView,
+                       Escher::ChevronView>;
 
   Escher::TableViewWithFrozenHeader m_contentView;
   DistributionCell m_cells[k_numberOfCells];

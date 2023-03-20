@@ -31,7 +31,6 @@ app_distributions_src += $(addprefix apps/distributions/probability/,\
   calculation_cell.cpp \
   calculation_controller.cpp \
   calculation_popup_data_source.cpp \
-  distribution_cell.cpp \
   distribution_controller.cpp \
   distribution_curve_view.cpp \
   parameters_controller.cpp \

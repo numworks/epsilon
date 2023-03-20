@@ -100,7 +100,6 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   }
 
   void setHighlighted(bool highlight) override;
-  void setBackgroundColor(KDColor color);
 
   bool enterOnEvent(Ion::Events::Event event) {
     return event == Ion::Events::OK || event == Ion::Events::EXE ||
@@ -113,7 +112,7 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
-  KDColor backgroundColor() const { return m_backgroundColor; }
+  virtual KDColor backgroundColor() const { return KDColorWhite; }
   bool giveAccessoryAllWidth() const {
     return constAccessory()->giveAllWidthAsAccessory();
   }
@@ -161,8 +160,6 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   bool shouldAlignLabelAndAccessory() const;
 
   KDRect setFrameIfViewExists(View* v, KDRect rect, bool force);
-
-  KDColor m_backgroundColor;
 };
 
 template <typename Label, typename SubLabel = EmptyCellWidget,

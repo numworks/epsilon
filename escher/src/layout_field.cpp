@@ -492,6 +492,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   }
   if (event == Ion::Events::Clear && isEditing()) {
     clearLayout();
+    *shouldRedrawLayout = true;
     return true;
   }
   *shouldUpdateCursor = false;

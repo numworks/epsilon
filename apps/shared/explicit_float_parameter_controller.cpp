@@ -1,7 +1,6 @@
 #include "explicit_float_parameter_controller.h"
 
 #include <assert.h>
-#include <escher/buffer_table_cell_with_editable_text.h>
 #include <poincare/preferences.h>
 
 #include <cmath>

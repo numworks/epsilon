@@ -30,8 +30,7 @@ EquationModelsParameterController::EquationModelsParameterController(
     m_layouts[i] =
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                        Preferences::ShortNumberOfSignificantDigits, nullptr);
-    m_modelCells[i].setLayout(m_layouts[i]);
-    m_modelCells[i].setParentResponder(&m_selectableListView);
+    m_modelCells[i].label()->setLayout(m_layouts[i]);
   }
 }
 

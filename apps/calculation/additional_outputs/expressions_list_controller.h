@@ -4,8 +4,8 @@
 #include <apps/i18n.h>
 #include <poincare/expression.h>
 
+#include "additionnal_result_cell.h"
 #include "list_controller.h"
-#include "scrollable_three_expressions_cell_with_message.h"
 
 namespace Calculation {
 
@@ -43,7 +43,7 @@ class ExpressionsListController : public ListController {
   mutable Poincare::Layout m_layouts[k_maxNumberOfRows];
   mutable Poincare::Layout m_exactLayouts[k_maxNumberOfRows];
   mutable Poincare::Layout m_approximatedLayouts[k_maxNumberOfRows];
-  ScrollableThreeExpressionsCellWithMessage m_cells[k_maxNumberOfRows];
+  AdditionnalResultCell m_cells[k_maxNumberOfRows];
 
  private:
   virtual I18n::Message messageAtIndex(int index) = 0;

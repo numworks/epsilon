@@ -1,7 +1,7 @@
 #ifndef CALCULATION_SCROLLABLE_THREE_EXPRESSIONS_CELL_H
 #define CALCULATION_SCROLLABLE_THREE_EXPRESSIONS_CELL_H
 
-#include <escher/table_cell.h>
+#include <escher/menu_cell.h>
 #include <poincare/layout.h>
 
 #include "../../shared/scrollable_multiple_expressions_view.h"
@@ -13,7 +13,7 @@ namespace Calculation {
 class ScrollableThreeExpressionsView
     : public Shared::AbstractScrollableMultipleExpressionsView {
  public:
-  ScrollableThreeExpressionsView(Responder *parentResponder)
+  ScrollableThreeExpressionsView(Responder *parentResponder = nullptr)
       : Shared::AbstractScrollableMultipleExpressionsView(parentResponder,
                                                           &m_contentCell) {
     setMargins(0, 0, 0, 0);  // margins are already added by TableCell
@@ -30,6 +30,12 @@ class ScrollableThreeExpressionsView
   void setHighlightWholeCell(bool highlightWholeCell) {
     m_contentCell.setHighlightWholeCell(highlightWholeCell);
   }
+  void didBecomeFirstResponder() override {
+    setSelectedSubviewPosition(leftMostPosition());
+    reloadScroll();
+  }
+  void setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerLayout,
+                  Poincare::Layout rightLayout) override;
 
  private:
   class ContentCell
@@ -62,44 +68,6 @@ class ScrollableThreeExpressionsView
   ContentCell *contentCell() override { return &m_contentCell; };
   const ContentCell *contentCell() const override { return &m_contentCell; };
   ContentCell m_contentCell;
-};
-
-class ScrollableThreeExpressionsCell : public Escher::TableCell,
-                                       public Escher::Responder {
- public:
-  ScrollableThreeExpressionsCell() : Responder(nullptr), m_view(this) {}
-
-  // Cell
-  Poincare::Layout layout() const override { return m_view.layout(); }
-  void setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerLayout,
-                  Poincare::Layout rightLayout);
-
-  // Responder cell
-  Escher::Responder *responder() override { return this; }
-  void didBecomeFirstResponder() override;
-
-  // Table cell
-  const View *labelView() const override { return &m_view; }
-
-  void setHighlighted(bool highlight) override {
-    m_view.evenOddCell()->setHighlighted(highlight);
-  }
-  void resetMemoization() { m_view.resetMemoization(); }
-  void setRightIsStrictlyEqual(bool isEqual) {
-    m_view.setRightIsStrictlyEqual(isEqual);
-  }
-  ScrollableThreeExpressionsView::SubviewPosition selectedSubviewPosition() {
-    return m_view.selectedSubviewPosition();
-  }
-  void setSelectedSubviewPosition(
-      ScrollableThreeExpressionsView::SubviewPosition subviewPosition) {
-    m_view.setSelectedSubviewPosition(subviewPosition);
-  }
-
-  void reinitSelection();
-
- protected:
-  ScrollableThreeExpressionsView m_view;
 };
 
 }  // namespace Calculation

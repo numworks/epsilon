@@ -1,7 +1,7 @@
 #include "expressions_list_controller.h"
 
 #include "../app.h"
-#include "scrollable_three_expressions_cell_with_message.h"
+#include "additionnal_result_cell.h"
 
 using namespace Poincare;
 using namespace Escher;
@@ -15,7 +15,8 @@ ExpressionsListController::ExpressionsListController(
     bool highlightWholeCells, Escher::SelectableListViewDelegate *delegate)
     : ListController(editExpressionController, delegate) {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_cells[i].setParentResponder(m_listController.selectableListView());
+    m_cells[i].label()->setParentResponder(
+        m_listController.selectableListView());
     m_cells[i].setHighlightWholeCell(highlightWholeCells);
   }
 }
@@ -33,7 +34,7 @@ void ExpressionsListController::viewDidDisappear() {
   ListController::viewDidDisappear();
   // Reset layout and cell memoization to avoid taking extra space in the pool
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_cells[i].resetMemoization();
+    m_cells[i].label()->resetMemoization();
     /* By reseting m_layouts, numberOfRow will go down to 0, and the highlighted
      * cells won't be unselected. Therefore we unselect them here. */
     m_cells[i].setHighlighted(false);
@@ -49,7 +50,7 @@ HighlightCell *ExpressionsListController::reusableCell(int index, int type) {
 }
 
 KDCoordinate ExpressionsListController::nonMemoizedRowHeight(int index) {
-  ScrollableThreeExpressionsCellWithMessage tempCell;
+  AdditionnalResultCell tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
@@ -58,11 +59,10 @@ void ExpressionsListController::willDisplayCellForIndex(HighlightCell *cell,
   /* Note : To further optimize memoization space in the pool, layout
    * serialization could be memoized instead, and layout would be recomputed
    * here, when setting cell's layout. */
-  ScrollableThreeExpressionsCellWithMessage *myCell =
-      static_cast<ScrollableThreeExpressionsCellWithMessage *>(cell);
-  myCell->setLayouts(m_layouts[index], m_exactLayouts[index],
-                     m_approximatedLayouts[index]);
-  myCell->setSubLabelMessage(messageAtIndex(index));
+  AdditionnalResultCell *myCell = static_cast<AdditionnalResultCell *>(cell);
+  myCell->label()->setLayouts(m_layouts[index], m_exactLayouts[index],
+                              m_approximatedLayouts[index]);
+  myCell->subLabel()->setMessage(messageAtIndex(index));
 }
 
 int ExpressionsListController::numberOfRows() const {
@@ -84,7 +84,7 @@ void ExpressionsListController::setExpression(Poincare::Expression e) {
     m_layouts[i] = Layout();
     m_exactLayouts[i] = Layout();
     m_approximatedLayouts[i] = Layout();
-    m_cells[i].setSelectedSubviewPosition(
+    m_cells[i].label()->setSelectedSubviewPosition(
         ScrollableThreeExpressionsView::SubviewPosition::Left);
   }
   m_expression = e;
@@ -94,7 +94,8 @@ int ExpressionsListController::textAtIndex(char *buffer, size_t bufferSize,
                                            HighlightCell *cell, int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   ScrollableThreeExpressionsView::SubviewPosition position =
-      static_cast<ScrollableThreeExpressionsCellWithMessage *>(cell)
+      static_cast<AdditionnalResultCell *>(cell)
+          ->label()
           ->selectedSubviewPosition();
   Layout layout;
   if (position == ScrollableThreeExpressionsView::SubviewPosition::Left) {

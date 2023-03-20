@@ -1,4 +1,4 @@
-#include "scrollable_three_expressions_cell.h"
+#include "scrollable_three_expressions_view.h"
 
 #include <poincare/exception_checkpoint.h>
 
@@ -20,6 +20,15 @@ void ScrollableThreeExpressionsView::resetMemoization() {
   setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
 }
 
+void ScrollableThreeExpressionsView::setLayouts(Poincare::Layout leftLayout,
+                                                Poincare::Layout centerLayout,
+                                                Poincare::Layout rightLayout) {
+  Shared::AbstractScrollableMultipleExpressionsView::setLayouts(
+      leftLayout, centerLayout, rightLayout);
+  setShowEqual(!centerLayout.isUninitialized() ||
+               !rightLayout.isUninitialized());
+}
+
 ScrollableThreeExpressionsView::SubviewPosition
 ScrollableThreeExpressionsView::leftMostPosition() {
   if (!m_contentCell.m_leftExpressionView.layout().isUninitialized()) {
@@ -28,24 +37,6 @@ ScrollableThreeExpressionsView::leftMostPosition() {
     return SubviewPosition::Center;
   }
   return SubviewPosition::Right;
-}
-
-void ScrollableThreeExpressionsCell::setLayouts(Poincare::Layout leftLayout,
-                                                Poincare::Layout centerLayout,
-                                                Poincare::Layout rightLayout) {
-  m_view.setLayouts(leftLayout, centerLayout, rightLayout);
-  m_view.setShowEqual(!centerLayout.isUninitialized() ||
-                      !rightLayout.isUninitialized());
-}
-
-void ScrollableThreeExpressionsCell::didBecomeFirstResponder() {
-  reinitSelection();
-  Container::activeApp()->setFirstResponder(&m_view);
-}
-
-void ScrollableThreeExpressionsCell::reinitSelection() {
-  m_view.setSelectedSubviewPosition(m_view.leftMostPosition());
-  m_view.reloadScroll();
 }
 
 }  // namespace Calculation

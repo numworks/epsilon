@@ -18,9 +18,8 @@ using InputParameterCell =
 
 class InputController
     : public Shared::FloatParameterController<double>,
-      public DynamicCellsDataSource<
-          InputParameterCell,
-          k_maxNumberOfExpressionCellsWithEditableTextWithMessage>,
+      public DynamicCellsDataSource<InputParameterCell,
+                                    k_maxNumberOfInputParameterCell>,
       public DynamicCellsDataSourceDelegate<InputParameterCell> {
   friend class InputSlopeController;
 

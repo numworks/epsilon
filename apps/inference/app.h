@@ -78,25 +78,24 @@ class App : public Shared::ExpressionFieldDelegateApp,
   void *buffer(size_t offset = 0) { return m_buffer + offset; }
   void cleanBuffer(DynamicCellsDataSourceDestructor *destructor);
 
-  constexpr static int k_bufferSize = std::max({
-      sizeof(ExpressionCellWithBufferWithMessage) *
-          k_maxNumberOfExpressionCellsWithBufferWithMessage,  // 824 * 5 = 4120
-      sizeof(Escher::ExpressionCellWithEditableTextWithMessage) *
-          k_maxNumberOfExpressionCellsWithEditableTextWithMessage,  // 1040 * 8
-                                                                    // = 8320
-      sizeof(Escher::EvenOddBufferTextCell) *
-          (k_homogeneityTableNumberOfReusableHeaderCells +
-           k_homogeneityTableNumberOfReusableInnerCells),  // 360 * (5 + 9 + 45)
-                                                           // = 21 240
-      sizeof(Escher::EvenOddEditableTextCell) *
-              k_homogeneityTableNumberOfReusableInnerCells +
-          sizeof(Escher::EvenOddBufferTextCell) *
-              k_homogeneityTableNumberOfReusableHeaderCells,  // 640 * 72 + 360
-                                                              // *(6+12) = 33
-                                                              // 840
-      sizeof(Escher::EvenOddEditableTextCell) *
-          k_doubleColumnTableNumberOfReusableCells  // 24 * 640 = 15 360
-  });
+  constexpr static int k_bufferSize =
+      std::max({// 824 * 5 = 4120
+                sizeof(ExpressionCellWithBufferWithMessage) *
+                    k_maxNumberOfExpressionCellsWithBufferWithMessage,
+                // 1040 * 8 = 8320
+                sizeof(InputParameterCell) * k_maxNumberOfInputParameterCell,
+                // 360 * (5 + 9 + 45) = 21 240
+                sizeof(Escher::EvenOddBufferTextCell) *
+                    (k_homogeneityTableNumberOfReusableHeaderCells +
+                     k_homogeneityTableNumberOfReusableInnerCells),
+                // 640 * 72 + 360 * (6+12) = 33 840
+                sizeof(Escher::EvenOddEditableTextCell) *
+                        k_homogeneityTableNumberOfReusableInnerCells +
+                    sizeof(Escher::EvenOddBufferTextCell) *
+                        k_homogeneityTableNumberOfReusableHeaderCells,
+                // 24 * 640 = 15 360
+                sizeof(Escher::EvenOddEditableTextCell) *
+                    k_doubleColumnTableNumberOfReusableCells});
 
   TELEMETRY_ID("Inference");
 

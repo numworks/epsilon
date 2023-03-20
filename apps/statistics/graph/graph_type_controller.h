@@ -3,23 +3,27 @@
 
 #include <apps/i18n.h>
 #include <escher/alternate_empty_view_delegate.h>
+#include <escher/menu_cell.h>
+#include <escher/message_text_view.h>
 #include <escher/responder.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/tab_view_controller.h>
-#include <escher/transparent_image_cell_with_message.h>
+#include <escher/transparent_image_view.h>
 
 #include "../store.h"
 #include "graph_view_model.h"
 
 namespace Statistics {
 
+using GraphTypeCell =
+    Escher::MenuCell<Escher::TransparentImageView, Escher::MessageTextView>;
+
 constexpr int k_numberOfCells = 4;
 class GraphTypeController
     : public Escher::AlternateEmptyViewDelegate,
-      public Escher::SelectableCellListPage<
-          Escher::TransparentImageCellWithMessage, k_numberOfCells,
-          Escher::RegularListViewDataSource> {
+      public Escher::SelectableCellListPage<GraphTypeCell, k_numberOfCells,
+                                            Escher::RegularListViewDataSource> {
  public:
   GraphTypeController(Escher::Responder* parentResponder,
                       Escher::TabViewController* tabController,

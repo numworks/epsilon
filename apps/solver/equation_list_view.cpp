@@ -16,7 +16,6 @@ EquationListView::EquationListView(ListController *listController)
       m_scrollBraceView(&m_braceView, this) {
   m_listView.setMargins(0);
   m_listView.setVerticalCellOverlap(0);
-  m_listView.setDecoratorType(ScrollView::Decorator::Type::None);
   listController->setScrollViewDelegate(this);
   m_scrollBraceView.setMargins(k_margin, k_margin, k_margin, k_margin);
   m_scrollBraceView.setDecoratorType(ScrollView::Decorator::Type::None);

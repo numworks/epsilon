@@ -8,7 +8,6 @@
 namespace Escher {
 
 class BufferTextView : public TextView {
-  friend class BufferTableCell;
   friend class BufferPopUpController;
 
  public:

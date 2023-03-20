@@ -28,8 +28,8 @@ MathVariableBoxController::MathVariableBoxController()
       m_firstMemoizedLayoutIndex(0) {
   m_defineVariableCell.label()->setMessage(I18n::Message::DefineVariable);
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_leafCells[i].setParentResponder(&m_selectableListView);
-    m_leafCells[i].setSubLabelFont(k_subLabelFont);
+    m_leafCells[i].subLabel()->setParentResponder(&m_selectableListView);
+    m_leafCells[i].subLabel()->setFont(k_subLabelFont);
   }
 }
 
@@ -44,8 +44,8 @@ void MathVariableBoxController::viewDidDisappear() {
   // Tidy the layouts displayed in the MathVariableBoxController to clean
   // TreePool
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_leafCells[i].setLayout(Layout());
-    m_leafCells[i].setSubLabelLayout(Layout());
+    m_leafCells[i].label()->setLayout(Layout());
+    m_leafCells[i].subLabel()->setLayout(Layout());
   }
 
   /* We need to remove the memoized layouts otherwise we risk leaking them into
@@ -145,8 +145,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
     myCell->reloadCell();
     return;
   }
-  ExpressionTableCellWithExpression *myCell =
-      static_cast<ExpressionTableCellWithExpression *>(cell);
+  LeafCell *myCell = static_cast<LeafCell *>(cell);
   Storage::Record record = recordAtIndex(index);
   char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
@@ -185,9 +184,9 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
   if (symbolLayout.isUninitialized()) {
     symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   }
-  myCell->setLayout(symbolLayout);
-  myCell->setSubLabelLayout(expressionLayoutForRecord(record, index));
-  myCell->reloadScroll();
+  myCell->label()->setLayout(symbolLayout);
+  myCell->subLabel()->setLayout(expressionLayoutForRecord(record, index));
+  myCell->subLabel()->reloadScroll();
   myCell->reloadCell();
 }
 
@@ -200,7 +199,7 @@ KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
     Escher::NestedMenuController::NodeCell tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
-  ExpressionTableCellWithExpression tempCell;
+  LeafCell tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
@@ -225,7 +224,7 @@ HighlightCell *MathVariableBoxController::reusableCell(int index, int type) {
   return nodeCellAtIndex(index);
 }
 
-ExpressionTableCellWithExpression *MathVariableBoxController::leafCellAtIndex(
+MathVariableBoxController::LeafCell *MathVariableBoxController::leafCellAtIndex(
     int index) {
   assert(index >= 0 && index < k_maxNumberOfDisplayedRows);
   return &m_leafCells[index];

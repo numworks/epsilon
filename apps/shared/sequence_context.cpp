@@ -148,33 +148,20 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
 
   // We approximate the value of the next rank for each sequence we want to
   // update
-  /* In case stop is SequenceStore::k_maxNumberOfSequences, we approximate u, v
-   * and w at the new rank. We have to evaluate all sequences
-   * SequenceStore::k_maxNumberOfSequences times in case the evaluations depend
-   * on each other. For example, if u expression depends on v and v depends on
-   * w. At the first iteration, we can only evaluate w, at the second iteration
-   * we evaluate v and u can only be known at the third iteration. In case stop
-   * is 1, there is only one sequence we want to update. Moreover, the call to
-   * approximateAtContextRank will handle potential dependencies. */
-  for (int i = start; i < stop; i++) {
-    if (!sequencesToUpdate[i]) {
+  for (int j = start; j < stop; j++) {
+    if (!sequencesToUpdate[j]) {
       continue;
     }
-    for (int j = start; j < stop; j++) {
-      if (!sequencesToUpdate[j]) {
-        continue;
-      }
-      T *sequencePointer =
-          sequencesRankValues + j * (SequenceStore::k_maxRecurrenceDepth + 1);
-      if (std::isnan(*sequencePointer)) {
-        T otherCacheValue = storedValueOfSequenceAtRank(j, *currentRank);
-        if (!std::isnan(otherCacheValue)) {
-          // If the other cache already knows this value, use it
-          *sequencePointer = otherCacheValue;
-        } else {
-          *sequencePointer = sequencesToUpdate[j]->approximateAtContextRank<T>(
-              m_sequenceContext, independent);
-        }
+    T *sequencePointer =
+        sequencesRankValues + j * (SequenceStore::k_maxRecurrenceDepth + 1);
+    if (std::isnan(*sequencePointer)) {
+      T otherCacheValue = storedValueOfSequenceAtRank(j, *currentRank);
+      if (!std::isnan(otherCacheValue)) {
+        // If the other cache already knows this value, use it
+        *sequencePointer = otherCacheValue;
+      } else {
+        *sequencePointer = sequencesToUpdate[j]->approximateAtContextRank<T>(
+            m_sequenceContext, independent);
       }
     }
   }

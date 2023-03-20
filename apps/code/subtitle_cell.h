@@ -12,7 +12,7 @@ class SubtitleCell : public Escher::MenuCell<Escher::BufferTextView> {
  public:
   SubtitleCell();
   void setHighlighted(bool highlight) override { assert(!highlight); }
-  // Overriding TableCell row Height
+  // Overriding MenuCell row Height
   void layoutSubviews(bool force = false) override;
   KDSize minimalSizeForOptimalDisplay() const override {
     return KDSize(bounds().width(), k_subtitleRowHeight);

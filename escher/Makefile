@@ -15,7 +15,6 @@ escher_src += $(addprefix escher/src/,\
   button_state.cpp \
   button_row_controller.cpp \
   buffer_table_cell.cpp \
-  buffer_table_cell_with_message.cpp \
   chained_text_field_delegate.cpp \
   chevron_view.cpp \
   clipboard.cpp \

@@ -19,8 +19,7 @@ namespace Inference {
 
 class ResultsController : public Escher::ViewController,
                           public Escher::SelectableListViewDataSource,
-                          public DynamicCellsDataSourceDelegate<
-                              ExpressionCellWithBufferWithMessage> {
+                          public DynamicCellsDataSourceDelegate<ResultCell> {
  public:
   ResultsController(Escher::StackViewController* parent, Statistic* statistic,
                     TestGraphController* testGraphController,
@@ -33,8 +32,6 @@ class ResultsController : public Escher::ViewController,
   static bool ButtonAction(ResultsController* controller, void* s);
   Escher::View* view() override { return &m_contentView; }
 
-  void initCell(ExpressionCellWithBufferWithMessage, void* cell,
-                int index) override;
   Escher::SelectableListView* tableView() override {
     return &m_selectableListView;
   }

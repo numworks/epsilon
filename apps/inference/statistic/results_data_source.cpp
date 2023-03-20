@@ -13,11 +13,9 @@ namespace Inference {
 ResultsDataSource::ResultsDataSource(
     Escher::Responder *parent, Statistic *statistic,
     Escher::Invocation invocation,
-    DynamicCellsDataSourceDelegate<ExpressionCellWithBufferWithMessage>
-        *dynamicCellsDataSourceDelegate)
+    DynamicCellsDataSourceDelegate<ResultCell> *dynamicCellsDataSourceDelegate)
     : MemoizedListViewDataSource(),
-      DynamicCellsDataSource<ExpressionCellWithBufferWithMessage,
-                             k_maxNumberOfExpressionCellsWithBufferWithMessage>(
+      DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>(
           dynamicCellsDataSourceDelegate),
       m_statistic(statistic),
       m_next(parent, I18n::Message::Next, invocation) {}
@@ -34,8 +32,7 @@ KDCoordinate ResultsDataSource::defaultColumnWidth() {
 void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell *cell,
                                                 int i) {
   if (i < numberOfRows() - 1) {
-    ExpressionCellWithBufferWithMessage *messageCell =
-        static_cast<ExpressionCellWithBufferWithMessage *>(cell);
+    ResultCell *messageCell = static_cast<ResultCell *>(cell);
     double value;
     Poincare::Layout message;
     I18n::Message subMessage;
@@ -47,9 +44,9 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell *cell,
         value, buffer, bufferSize, precision,
         Poincare::Preferences::PrintFloatMode::Decimal);
 
-    messageCell->setLayout(message);
-    messageCell->setAccessoryText(buffer);
-    messageCell->setSubLabelMessage(subMessage);
+    messageCell->label()->setLayout(message);
+    messageCell->subLabel()->setMessage(subMessage);
+    messageCell->accessory()->setText(buffer);
   }
 }
 

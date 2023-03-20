@@ -54,7 +54,7 @@ constexpr int k_inputControllerNumberOfReusableCells = 8;
 constexpr int k_maxNumberOfInputParameterCell =
     k_inputControllerNumberOfReusableCells;
 constexpr int k_resultDataSourceNumberOfReusableCells = 5;
-constexpr int k_maxNumberOfExpressionCellsWithBufferWithMessage =
+constexpr int k_maxNumberOfResultCells =
     k_resultDataSourceNumberOfReusableCells;
 
 }  // namespace Inference

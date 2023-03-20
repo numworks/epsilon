@@ -80,8 +80,7 @@ class App : public Shared::ExpressionFieldDelegateApp,
 
   constexpr static int k_bufferSize =
       std::max({// 824 * 5 = 4120
-                sizeof(ExpressionCellWithBufferWithMessage) *
-                    k_maxNumberOfExpressionCellsWithBufferWithMessage,
+                sizeof(ResultCell) * k_maxNumberOfResultCells,
                 // 1040 * 8 = 8320
                 sizeof(InputParameterCell) * k_maxNumberOfInputParameterCell,
                 // 360 * (5 + 9 + 45) = 21 240

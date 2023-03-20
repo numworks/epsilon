@@ -5,8 +5,8 @@
 #include <poincare/symbol.h>
 
 #include "../app.h"
+#include "additionnal_result_cell.h"
 #include "expressions_list_controller.h"
-#include "scrollable_three_expressions_cell_with_message.h"
 
 using namespace Poincare;
 using namespace Escher;
@@ -44,7 +44,7 @@ KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(int j) {
   if (typeAtIndex(j) == k_illustrationCellType) {
     return k_illustrationHeight;
   }
-  ScrollableThreeExpressionsCellWithMessage tempCell;
+  AdditionnalResultCell tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 

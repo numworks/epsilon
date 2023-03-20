@@ -116,7 +116,7 @@ void TrigonometryListController::setExpression(Expression e) {
 void TrigonometryListController::willDisplayCellForIndex(
     Escher::HighlightCell* cell, int index) {
   if (index == 1) {
-    static_cast<ScrollableThreeExpressionsCell*>(cell)->setRightIsStrictlyEqual(
+    static_cast<AdditionnalResultCell*>(cell)->label()->setRightIsStrictlyEqual(
         m_anglesAreEqual);
   }
   return IllustratedExpressionsListController::willDisplayCellForIndex(cell,

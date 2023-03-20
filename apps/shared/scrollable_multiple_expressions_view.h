@@ -12,7 +12,8 @@ namespace Shared {
 
 class AbstractScrollableMultipleExpressionsView
     : public Escher::ScrollableView<Escher::ScrollView::ArrowDecorator>,
-      public Escher::ScrollViewDataSource {
+      public Escher::ScrollViewDataSource,
+      public Escher::CellWidget {
  public:
   constexpr static KDCoordinate k_horizontalMargin =
       Escher::Metric::CommonLargeMargin;
@@ -21,8 +22,9 @@ class AbstractScrollableMultipleExpressionsView
   AbstractScrollableMultipleExpressionsView(Responder* parentResponder,
                                             View* contentCell);
   Escher::EvenOddCell* evenOddCell() { return contentCell(); }
-  void setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerlayout,
-                  Poincare::Layout rightLayout);
+  virtual void setLayouts(Poincare::Layout leftLayout,
+                          Poincare::Layout centerLayout,
+                          Poincare::Layout rightLayout);
   void setRightIsStrictlyEqual(bool isEqual) {
     contentCell()->setRightIsStrictlyEqual(isEqual);
   }
@@ -44,6 +46,14 @@ class AbstractScrollableMultipleExpressionsView
     return contentCell()->layoutAtPosition(position);
   }
   KDCoordinate baseline() const { return contentCell()->baseline(); }
+
+  // CellWidget
+  const View* view() const override { return this; }
+  Responder* responder() override { return this; }
+  void setBackgroundColor(KDColor color) override {
+    Escher::ScrollableView<
+        Escher::ScrollView::ArrowDecorator>::setBackgroundColor(color);
+  }
 
  protected:
   class ContentCell : public Escher::EvenOddCell {

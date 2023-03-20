@@ -13,11 +13,7 @@ using namespace Escher;
 
 namespace Sequence {
 
-SequenceToolbox::SequenceToolbox() : MathToolbox(), m_numberOfAddedCells(0) {
-  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_addedCells[i].setParentResponder(&m_selectableListView);
-  }
-}
+SequenceToolbox::SequenceToolbox() : MathToolbox(), m_numberOfAddedCells(0) {}
 
 bool SequenceToolbox::handleEvent(Ion::Events::Event event) {
   const int rowIndex = selectedRow();
@@ -44,7 +40,7 @@ HighlightCell *SequenceToolbox::reusableCell(int index, int type) {
 
 void SequenceToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
   if (typeAtIndex(index) == k_addedCellType) {
-    static_cast<ExpressionTableCell *>(cell)->setLayout(
+    static_cast<MenuCell<ExpressionView> *>(cell)->label()->setLayout(
         m_addedCellLayout[index]);
     cell->reloadCell();
     return;
@@ -54,7 +50,7 @@ void SequenceToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
 
 KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int index) {
   if (typeAtIndex(index) == k_addedCellType) {
-    ExpressionTableCell tempCell;
+    MenuCell<ExpressionView> tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   return MathToolbox::nonMemoizedRowHeight(index);

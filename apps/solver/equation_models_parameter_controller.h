@@ -1,7 +1,7 @@
 #ifndef SOLVER_EQUATION_PARAMETER_CONTROLLER_H
 #define SOLVER_EQUATION_PARAMETER_CONTROLLER_H
 
-#include <escher/expression_table_cell.h>
+#include <escher/expression_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
@@ -40,7 +40,8 @@ class EquationModelsParameterController
   Escher::StackViewController* stackController() const;
   constexpr static int k_numberOfExpressionCells = k_numberOfModels - 1;
   Escher::MenuCell<Escher::MessageTextView> m_emptyModelCell;
-  Escher::ExpressionTableCell m_modelCells[k_numberOfExpressionCells];
+  Escher::MenuCell<Escher::ExpressionView>
+      m_modelCells[k_numberOfExpressionCells];
   Poincare::Layout m_layouts[k_numberOfExpressionCells];
   EquationStore* m_equationStore;
   ListController* m_listController;

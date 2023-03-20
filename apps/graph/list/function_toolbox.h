@@ -1,7 +1,8 @@
 #ifndef GRAPH_FUNCTION_TOOLBOX_H
 #define GRAPH_FUNCTION_TOOLBOX_H
 
-#include <escher/expression_table_cell.h>
+#include <escher/expression_view.h>
+#include <escher/menu_cell.h>
 #include <poincare/layout.h>
 
 #include "../../math_toolbox.h"
@@ -48,7 +49,8 @@ class FunctionToolbox : public MathToolbox {
   bool selectAddedCell(int selectedRow);
   int numberOfAddedCells() const;
 
-  Escher::ExpressionTableCell m_addedCells[k_maxNumberOfAddedCells];
+  Escher::MenuCell<Escher::ExpressionView>
+      m_addedCells[k_maxNumberOfAddedCells];
   Poincare::Layout m_addedCellLayout[k_maxNumberOfAddedCells];
   AddedCellsContent m_addedCellsContent;
 };

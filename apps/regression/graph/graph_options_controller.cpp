@@ -24,8 +24,6 @@ GraphOptionsController::GraphOptionsController(
     InteractiveCurveViewRange *range, Store *store, CurveViewCursor *cursor,
     GraphController *graphController)
     : ExplicitSelectableListViewController(parentResponder),
-      m_regressionEquationCell(&m_selectableListView,
-                               I18n::Message::RegressionEquation),
       m_removeRegressionCell(
           &(this->m_selectableListView), I18n::Message::RemoveRegression,
           Invocation::Builder<GraphOptionsController>(
@@ -49,6 +47,9 @@ GraphOptionsController::GraphOptionsController(
   m_changeRegressionCell.label()->setMessage(I18n::Message::RegressionModel);
   m_xParameterCell.label()->setMessage(I18n::Message::XPrediction);
   m_yParameterCell.label()->setMessage(I18n::Message::YPrediction);
+  m_regressionEquationCell.label()->setParentResponder(&m_selectableListView);
+  m_regressionEquationCell.subLabel()->setMessage(
+      I18n::Message::RegressionEquation);
 }
 
 void GraphOptionsController::removeRegression() {
@@ -67,7 +68,7 @@ void GraphOptionsController::viewWillAppear() {
   m_r2Cell.setVisible(displayR2Cell());
   m_residualPlotCell.setVisible(displayResidualPlotCell());
   // m_regressionEquationCell may have changed size
-  m_regressionEquationCell.reloadScroll();
+  m_regressionEquationCell.label()->reloadScroll();
   resetMemoization();
   m_selectableListView.reloadData();
 }
@@ -160,7 +161,7 @@ void GraphOptionsController::fillCell(HighlightCell *cell) {
   if (cell == &m_regressionEquationCell) {
     double *coefficients = m_store->coefficientsForSeries(
         series, m_graphController->globalContext());
-    m_regressionEquationCell.setLayout(model->equationLayout(
+    m_regressionEquationCell.label()->setLayout(model->equationLayout(
         coefficients, "y", significantDigits, displayMode));
   } else if (cell == &m_rCell || cell == &m_r2Cell) {
     RCell *rCell = static_cast<RCell *>(cell);

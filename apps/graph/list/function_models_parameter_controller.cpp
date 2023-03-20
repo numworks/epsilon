@@ -35,8 +35,8 @@ FunctionModelsParameterController::FunctionModelsParameterController(
     /* Building the cells here is possible since the list is modified when
      * entering exam mode or changing country which requires exiting the app and
      * rebuilding the cells when re-entering. */
-    m_modelCells[i].setParentResponder(&m_selectableListView);
-    m_modelCells[i].setSubLabelMessage(
+    m_modelCells[i].label()->setParentResponder(&m_selectableListView);
+    m_modelCells[i].subLabel()->setMessage(
         Preferences::sharedPreferences->examMode().forbidImplicitPlots()
             ? I18n::Message::Default
             : k_modelDescriptions[static_cast<int>(models[i]) - 1]);
@@ -75,7 +75,7 @@ void FunctionModelsParameterController::willDisplayCellForIndex(
       e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                      Preferences::ShortNumberOfSignificantDigits,
                      AppsContainer::sharedAppsContainer()->globalContext());
-  m_modelCells[i].setLayout(m_layouts[i]);
+  m_modelCells[i].label()->setLayout(m_layouts[i]);
 }
 
 int FunctionModelsParameterController::DefaultName(char buffer[],

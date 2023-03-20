@@ -5,10 +5,10 @@
 #include <escher/buffer_text_view.h>
 #include <escher/button_cell.h>
 #include <escher/chevron_view.h>
-#include <escher/expression_table_cell_with_message.h>
 #include <escher/expression_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
+#include <escher/scrollable_expression_view.h>
 
 #include "../store.h"
 #include "go_to_parameter_controller.h"
@@ -61,7 +61,8 @@ class GraphOptionsController
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_changeRegressionCell;
-  Escher::ExpressionTableCellWithMessage m_regressionEquationCell;
+  Escher::MenuCell<Escher::ScrollableExpressionView, Escher::MessageTextView>
+      m_regressionEquationCell;
   RCell m_rCell;
   RCell m_r2Cell;
   Escher::MenuCell<Escher::MessageTextView> m_residualPlotCell;

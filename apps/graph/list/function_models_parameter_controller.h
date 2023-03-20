@@ -3,9 +3,9 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/continuous_function.h>
-#include <escher/expression_table_cell_with_message.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
+#include <escher/scrollable_expression_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
@@ -115,7 +115,7 @@ class FunctionModelsParameterController
                                           size_t bufferSize);
   Escher::StackViewController* stackController() const;
   Escher::MenuCell<Escher::MessageTextView> m_emptyModelCell;
-  Escher::ExpressionTableCellWithMessage
+  Escher::MenuCell<Escher::ScrollableExpressionView, Escher::MessageTextView>
       m_modelCells[k_numberOfExpressionCells];
   Poincare::Layout m_layouts[k_numberOfExpressionCells];
   void* m_functionStore;

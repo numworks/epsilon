@@ -26,6 +26,11 @@ class BufferTextView : public TextView {
   void setMessageWithPlaceholders(I18n::Message message, ...);
   void appendText(const char* text);
 
+  void setMaxDisplayedTextLength(size_t maxLength) {
+    assert(maxLength < k_maxNumberOfChar && maxLength >= 0);
+    m_maxDisplayedTextLength = maxLength;
+  }
+
  protected:
   void privateSetMessageWithPlaceholders(I18n::Message message, va_list args);
   char m_buffer[k_maxNumberOfChar];

@@ -8,6 +8,8 @@ namespace Code {
 
 class ScriptNode {
  public:
+  constexpr static char k_parentheses[] = "()";
+  constexpr static char k_parenthesesWithEmpty[] = "(\x11)";
   enum class Type : bool { WithoutParentheses, WithParentheses };
   ScriptNode(Type type = Type::WithoutParentheses, const char* name = nullptr,
              int nameLength = -1, const char* nodeSourceName = nullptr,

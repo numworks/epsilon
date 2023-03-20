@@ -546,7 +546,7 @@ bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex,
   }
 
   // Try to insert the parentheses if needed
-  const char *parentheses = ScriptNodeCell::k_parentheses;
+  const char *parentheses = ScriptNode::k_parentheses;
   constexpr int parenthesesLength = 2;
   assert(strlen(parentheses) == parenthesesLength);
   /* If couldInsertText is false, we should not try to add the parentheses as

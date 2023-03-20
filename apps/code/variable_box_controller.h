@@ -1,11 +1,12 @@
 #ifndef CODE_VARIABLE_BOX_CONTROLLER_H
 #define CODE_VARIABLE_BOX_CONTROLLER_H
 
+#include <escher/buffer_text_view.h>
+#include <escher/menu_cell.h>
 #include <escher/toolbox_message_tree.h>
 
 #include "alternate_empty_nested_menu_controller.h"
 #include "script_node.h"
-#include "script_node_cell.h"
 #include "script_store.h"
 #include "subtitle_cell.h"
 #include "variable_box_empty_controller.h"
@@ -54,12 +55,12 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
  private:
   constexpr static size_t k_maxNumberOfDisplayedItems =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-          Escher::TableCell::k_minimalSmallFontCellHeight,
+          Escher::AbstractMenuCell::k_minimalSmallFontCellHeight,
           Escher::Metric::PopUpTopMargin);
   constexpr static size_t k_maxNumberOfDisplayedSubtitles =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           SubtitleCell::k_subtitleRowHeight +
-              Escher::TableCell::k_minimalSmallFontCellHeight,
+              Escher::AbstractMenuCell::k_minimalSmallFontCellHeight,
           Escher::Metric::PopUpTopMargin);
   constexpr static size_t k_totalBuiltinNodesCount = 107;
   // Chosen without particular reasons
@@ -83,6 +84,18 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
           k_importedOrigin == 2,
       "These origin index must start at 0 and leave no gaps. k_importedOrigin "
       "must be the last one. Otherwise, for loops on origin must be updated.");
+
+  /* Labels of item cells can be formed from user variables, a char limit is
+   * enforced.*/
+  constexpr static int k_maxNumberOfCharsInLabel =
+      (Ion::Display::Width - Escher::Metric::PopUpLeftMargin -
+       2 * Escher::Metric::CellSeparatorThickness -
+       Escher::Metric::CellLeftMargin - Escher::Metric::CellRightMargin -
+       Escher::Metric::PopUpRightMargin) /
+      KDFont::GlyphWidth(KDFont::Size::Large);
+  static_assert(k_maxNumberOfCharsInLabel <
+                    Escher::BufferTextView::k_maxNumberOfChar,
+                "k_maxNumberOfCharsInLabel is too high");
 
   /* Returns:
    * - a negative int if the node name is before name in alphabetical
@@ -160,7 +173,8 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
                         const char* description = nullptr);
   VariableBoxEmptyController m_variableBoxEmptyController;
   ScriptNode m_scriptNodes[k_maxScriptNodesCount];
-  ScriptNodeCell m_itemCells[k_maxNumberOfDisplayedItems];
+  Escher::MenuCell<Escher::BufferTextView, Escher::BufferTextView>
+      m_itemCells[k_maxNumberOfDisplayedItems];
   SubtitleCell m_subtitleCells[k_maxNumberOfDisplayedSubtitles];
   ScriptStore* m_scriptStore;
   size_t m_nodesCount;                      // Number of nodes

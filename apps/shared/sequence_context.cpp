@@ -127,9 +127,7 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
     }
   }
 
-  // We create an array containing the sequences we want to update
-  Sequence *sequencesToUpdate[SequenceStore::k_maxNumberOfSequences] = {
-      nullptr, nullptr, nullptr};
+  // We approximate the value at next rank for each sequence we want to update
   SequenceStore *sequenceStore = m_sequenceContext->sequenceStore();
   for (int sequence = start; sequence < stop; sequence++) {
     Ion::Storage::Record record = sequenceStore->recordAtNameIndex(sequence);
@@ -140,25 +138,16 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
     if (!s->isDefined()) {
       continue;
     }
-    sequencesToUpdate[sequence] = s;
-  }
-
-  // We approximate the value of the next rank for each sequence we want to
-  // update
-  for (int j = start; j < stop; j++) {
-    if (!sequencesToUpdate[j]) {
-      continue;
-    }
-    T *sequencePointer =
-        sequencesRankValues + j * (SequenceStore::k_maxRecurrenceDepth + 1);
+    T *sequencePointer = sequencesRankValues +
+                         sequence * (SequenceStore::k_maxRecurrenceDepth + 1);
     if (std::isnan(*sequencePointer)) {
-      T otherCacheValue = storedValueOfSequenceAtRank(j, *currentRank);
+      T otherCacheValue = storedValueOfSequenceAtRank(sequence, *currentRank);
       if (!std::isnan(otherCacheValue)) {
         // If the other cache already knows this value, use it
         *sequencePointer = otherCacheValue;
       } else {
-        *sequencePointer = sequencesToUpdate[j]->approximateAtContextRank<T>(
-            m_sequenceContext, independent);
+        *sequencePointer =
+            s->approximateAtContextRank<T>(m_sequenceContext, independent);
       }
     }
   }

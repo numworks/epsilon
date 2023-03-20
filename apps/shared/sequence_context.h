@@ -17,7 +17,7 @@ class TemplatedSequenceContext {
   TemplatedSequenceContext(SequenceContext* sequenceContext);
   void resetCacheOfSequence(int sequenceIndex, bool intermediateComputation);
   void resetCache();
-  void stepUntilRank(int n, int sequenceIndex, bool intermediateComputation);
+  void stepUntilRank(int n, int sequenceIndex);
   constexpr static bool IsAcceptableRank(int n) {
     return 0 <= n && n <= k_maxRecurrentRank;
   }
@@ -44,6 +44,8 @@ class TemplatedSequenceContext {
   int m_intermediateRanks[SequenceStore::k_maxNumberOfSequences];
   T m_intermediateValues[SequenceStore::k_maxNumberOfSequences]
                         [SequenceStore::k_maxRecurrenceDepth + 1];
+
+  bool m_isComputingMainResult;
 };
 
 class SequenceContext : public Poincare::ContextWithParent {
@@ -71,9 +73,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   }
 
   template <typename T>
-  void stepUntilRank(int n, int sequenceIndex, bool intermediateComputation) {
+  void stepUntilRank(int n, int sequenceIndex) {
     static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->stepUntilRank(n, sequenceIndex, intermediateComputation);
+        ->stepUntilRank(n, sequenceIndex);
   }
 
   SequenceStore* sequenceStore() { return m_sequenceStore; }

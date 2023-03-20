@@ -17,12 +17,13 @@ InterestController::InterestController(StackViewController *parent,
                                        InputEventHandlerDelegate *handler,
                                        ResultController *resultController)
     : Shared::FloatParameterController<double>(parent),
-      m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this),
+      m_dropdown(&m_selectableListView, &m_dropdownDataSource, this),
       m_resultController(resultController) {
   for (size_t i = 0; i < k_numberOfReusableInputs; i++) {
     m_cells[i].setParentResponder(&m_selectableListView);
     m_cells[i].setDelegates(handler, this);
   }
+  m_dropdownCell.accessory()->setDropdown(&m_dropdown);
 }
 
 const char *InterestController::title() {
@@ -49,10 +50,9 @@ void InterestController::didBecomeFirstResponder() {
       App::GetInterestData()->dropdownMessageAtIndex(0),
       App::GetInterestData()->dropdownMessageAtIndex(1));
   selectCell(0);
-  m_dropdownCell.dropdown()->selectRow(
-      App::GetInterestData()->m_booleanParam ? 0 : 1);
-  m_dropdownCell.dropdown()->init();
-  m_dropdownCell.reload();
+  m_dropdown.selectRow(App::GetInterestData()->m_booleanParam ? 0 : 1);
+  m_dropdown.init();
+  m_dropdown.reloadAllCells();
   resetMemoization();
   m_selectableListView.reloadData(true);
 }

@@ -2,8 +2,8 @@
 #define FINANCE_SIMPLE_INTEREST_CONTROLLER_H
 
 #include <apps/shared/float_parameter_controller.h>
+#include <escher/dropdown_widget.h>
 #include <escher/highlight_cell.h>
-#include <escher/menu_cell_with_dropdown.h>
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
 #include <escher/stack_view_controller.h>
@@ -61,8 +61,10 @@ class InterestController : public Shared::FloatParameterController<double>,
   Escher::MenuCellWithEditableText<Escher::MessageTextView,
                                    Escher::MessageTextView>
       m_cells[k_numberOfReusableInputs];
-  Escher::MenuCellWithDropdown<Escher::MessageTextView, Escher::MessageTextView>
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::DropdownWidget>
       m_dropdownCell;
+  Escher::Dropdown m_dropdown;
 
   constexpr static int k_titleBufferSize =
       1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);

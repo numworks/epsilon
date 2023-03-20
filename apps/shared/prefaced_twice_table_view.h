@@ -71,7 +71,7 @@ class PrefacedTwiceTableView : public PrefacedTableView {
   };
 
   // View
-  int numberOfSubviews() const override { return 4; }
+  int numberOfSubviews() const override { return 6; }
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   void resetContentOffset() override;

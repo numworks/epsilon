@@ -2,6 +2,7 @@
 #define SHARED_PREFACED_TABLE_VIEW_H
 
 #include <escher/container.h>
+#include <escher/scroll_view.h>
 #include <escher/selectable_table_view.h>
 
 /* This class is used to add a "preface" to a selectable table : one of its
@@ -159,21 +160,21 @@ class PrefacedTableView : public Escher::View,
   };
 
   void layoutSubviewsInRect(KDRect rect, bool force);
+  void layoutScrollbars(bool force);
   virtual void resetContentOffset();
 
   RowPrefaceDataSource m_rowPrefaceDataSource;
   Escher::TableView m_rowPrefaceView;
+  Escher::ScrollView::BarDecorator m_barDecorator;
   Escher::SelectableTableView* m_mainTableView;
   MarginDelegate* m_marginDelegate;
   PrefacedTableViewDelegate* m_prefacedDelegate;
 
  private:
   // View
-  int numberOfSubviews() const override { return 2; }
-  Escher::View* subviewAtIndex(int index) override {
-    return index == 0 ? m_mainTableView : &m_rowPrefaceView;
-  }
+  int numberOfSubviews() const override { return 4; }
   void layoutSubviews(bool force = false) override;
+  Escher::View* subviewAtIndex(int index) override;
 
   Escher::SelectableTableViewDelegate* m_mainTableDelegate;
   KDCoordinate m_mainTableViewTopMargin;

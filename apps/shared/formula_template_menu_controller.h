@@ -2,8 +2,8 @@
 #define APPS_SHARED_FORMULA_TEMPLATE_MENU_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/expression_table_cell_with_buffer.h>
-#include <escher/expression_table_cell_with_message.h>
+#include <escher/buffer_text_view.h>
+#include <escher/expression_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/nested_menu_controller.h>
@@ -75,20 +75,23 @@ class FormulaTemplateMenuController
           I18n::Message::FormulaTemplateList,
       };
 
+  using BufferTemplateCell =
+      Escher::MenuCell<Escher::ExpressionView, Escher::BufferTextView>;
+  using MessageTemplateCell =
+      Escher::MenuCell<Escher::ExpressionView, Escher::MessageTextView>;
+
   int relativeCellIndex(int index, CellType type);
   bool shouldDisplayOtherAppCell() const;
   Poincare::Expression templateExpressionForCell(Cell cell);
   void computeUninitializedLayouts();
-  void fillSubLabelBuffer(Escher::ExpressionTableCellWithBuffer* cell,
-                          int index);
+  void fillSubLabelBuffer(BufferTemplateCell* cell, int index);
   void fillSumColumnNames(char* buffers[]) const;
   void fillOtherAppColumnName(char* buffer) const;
 
   Escher::MenuCell<Escher::MessageTextView> m_emptyTemplateCell;
-  Escher::ExpressionTableCellWithMessage
+  MessageTemplateCell
       m_templatesWithMessage[k_numberOfExpressionCellsWithMessage];
-  Escher::ExpressionTableCellWithBuffer
-      m_templatesWithBuffer[k_numberOfExpressionCellsWithBuffer];
+  BufferTemplateCell m_templatesWithBuffer[k_numberOfExpressionCellsWithBuffer];
   Poincare::Layout m_layouts[k_numberOfTemplates - 1];
   StoreColumnHelper* m_storeColumnHelper;
 };

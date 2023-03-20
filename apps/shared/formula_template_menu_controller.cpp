@@ -41,19 +41,15 @@ void FormulaTemplateMenuController::willDisplayCellForIndex(HighlightCell *cell,
   computeUninitializedLayouts();
   int index = relativeCellIndex(i, type);
   if (type == CellType::TemplateWithMessage) {
-    ExpressionTableCellWithMessage *myCell =
-        static_cast<ExpressionTableCellWithMessage *>(cell);
-    myCell->setLayout(m_layouts[i - 1]);
-    myCell->setSubLabelMessage(k_subLabelMessages[index]);
-    myCell->setParentResponder(&m_selectableListView);
+    MessageTemplateCell *myCell = static_cast<MessageTemplateCell *>(cell);
+    myCell->label()->setLayout(m_layouts[i - 1]);
+    myCell->subLabel()->setMessage(k_subLabelMessages[index]);
     return;
   }
   assert(type == CellType::TemplateWithBuffer);
-  ExpressionTableCellWithBuffer *myCell =
-      static_cast<ExpressionTableCellWithBuffer *>(cell);
-  myCell->setLayout(m_layouts[i - 1]);
+  BufferTemplateCell *myCell = static_cast<BufferTemplateCell *>(cell);
+  myCell->label()->setLayout(m_layouts[i - 1]);
   fillSubLabelBuffer(myCell, index);
-  myCell->setParentResponder(&m_selectableListView);
 }
 
 void FormulaTemplateMenuController::viewDidDisappear() {
@@ -173,8 +169,8 @@ void FormulaTemplateMenuController::computeUninitializedLayouts() {
   }
 }
 
-void FormulaTemplateMenuController::fillSubLabelBuffer(
-    Escher::ExpressionTableCellWithBuffer *cell, int index) {
+void FormulaTemplateMenuController::fillSubLabelBuffer(BufferTemplateCell *cell,
+                                                       int index) {
   I18n::Message message =
       k_subLabelMessages[index + k_numberOfExpressionCellsWithMessage];
   char buffer[BufferTextView::k_maxNumberOfChar];
@@ -185,7 +181,7 @@ void FormulaTemplateMenuController::fillSubLabelBuffer(
     fillSumColumnNames(columnNames);
     Print::CustomPrintf(buffer, BufferTextView::k_maxNumberOfChar + 1,
                         I18n::translate(message), name1, name2);
-    cell->setSubLabelText(buffer);
+    cell->subLabel()->setText(buffer);
     return;
   }
   assert(index == 1);
@@ -193,7 +189,7 @@ void FormulaTemplateMenuController::fillSubLabelBuffer(
   fillOtherAppColumnName(columnName);
   Print::CustomPrintf(buffer, BufferTextView::k_maxNumberOfChar + 1,
                       I18n::translate(message), columnName);
-  cell->setSubLabelText(buffer);
+  cell->subLabel()->setText(buffer);
 }
 
 void FormulaTemplateMenuController::fillSumColumnNames(char *buffers[]) const {

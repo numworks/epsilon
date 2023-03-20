@@ -17,6 +17,9 @@ ScrollableExpressionView::ScrollableExpressionView(Responder* parentResponder,
   setBackgroundColor(format.style.backgroundColor);
 }
 
+ScrollableExpressionView::ScrollableExpressionView(KDGlyph::Format format)
+    : ScrollableExpressionView(nullptr, 0, 0, format) {}
+
 Poincare::Layout ScrollableExpressionView::layout() const {
   return m_expressionView.layout();
 }

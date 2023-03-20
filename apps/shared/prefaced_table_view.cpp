@@ -93,6 +93,20 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
   layoutSubviews();
 }
 
+Escher::View* PrefacedTableView::subviewAtIndex(int index) {
+  switch (index) {
+    case 0:
+      return m_mainTableView;
+    case 1:
+      return &m_rowPrefaceView;
+    case 2:
+      return m_barDecorator.verticalBar();
+    default:
+      assert(index == 3);
+      return m_barDecorator.horizontalBar();
+  }
+}
+
 void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   KDCoordinate rowPrefaceHeight =
       m_rowPrefaceView.minimalSizeForOptimalDisplay().height();
@@ -104,9 +118,6 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
       m_rowPrefaceDataSource.prefaceIsAfterOffset(
           m_mainTableView->contentOffset().y(), m_mainTableView->topMargin()) ||
       m_mainTableView->selectedRow() == -1;
-  ScrollViewVerticalBar* verticalBar =
-      static_cast<TableView::BarDecorator*>(m_mainTableView->decorator())
-          ->verticalBar();
 
   // Main table
   if (hideRowPreface) {
@@ -116,7 +127,6 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
                                     // the implementation used for column
                                     // preface)
     setChildFrame(m_mainTableView, rect, force);
-    verticalBar->setTopMargin(rowPrefaceHeight + 2 * m_mainTableViewTopMargin);
   } else {
     // WARNING: If we need a separator below the preface row, we should set a
     // bottom margin for rowPrefaceView here (follow the implementation used for
@@ -126,7 +136,6 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
                   KDRect(rect.x(), rect.y() + rowPrefaceHeight, rect.width(),
                          rect.height() - rowPrefaceHeight),
                   force);
-    verticalBar->setTopMargin(2 * m_mainTableViewTopMargin);
   }
 
   if (m_mainTableView->selectedRow() >= 0) {
@@ -151,8 +160,21 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   }
 }
 
+void PrefacedTableView::layoutScrollbars(bool force) {
+  m_mainTableView->setDecoratorType(ScrollView::Decorator::Type::None);
+  // Content offset if we had no prefaces hiding a part of the table
+  KDPoint virtualOffset = m_mainTableView->contentOffset().relativeTo(
+      m_mainTableView->absoluteOrigin().relativeTo(absoluteOrigin()));
+  KDRect r1 = KDRectZero;
+  KDRect r2 = KDRectZero;
+  m_barDecorator.layoutIndicators(
+      this, m_mainTableView->minimalSizeForOptimalDisplay(), virtualOffset,
+      bounds(), &r1, &r2, force);
+}
+
 void PrefacedTableView::layoutSubviews(bool force) {
   layoutSubviewsInRect(bounds(), force);
+  layoutScrollbars(force);
 }
 
 HighlightCell* PrefacedTableView::IntermediaryDataSource::reusableCell(

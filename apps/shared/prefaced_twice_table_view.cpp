@@ -75,9 +75,13 @@ View* PrefacedTwiceTableView::subviewAtIndex(int index) {
       return &m_rowPrefaceView;
     case 2:
       return &m_columnPrefaceView;
-    default:
-      assert(index == 3);
+    case 3:
       return &m_prefaceIntersectionView;
+    case 4:
+      return m_barDecorator.verticalBar();
+    default:
+      assert(index == 5);
+      return m_barDecorator.horizontalBar();
   }
 }
 
@@ -164,6 +168,7 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
            m_prefaceIntersectionView.minimalSizeForOptimalDisplay() ==
                KDSize(columnPrefaceWidth, rowPrefaceHeight));
   }
+  layoutScrollbars(force);
 }
 
 bool PrefacedTwiceTableView::ColumnPrefaceDataSource::prefaceIsAfterOffset(

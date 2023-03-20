@@ -48,7 +48,8 @@ class InputController
   }
 
   constexpr static int k_numberOfReusableCells =
-      Ion::Display::Height / Escher::TableCell::k_minimalLargeFontCellHeight +
+      Ion::Display::Height /
+          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight +
       2;
 
  protected:

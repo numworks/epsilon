@@ -88,10 +88,4 @@ bool ResultsController::ButtonAction(ResultsController *controller, void *s) {
   return true;
 }
 
-void ResultsController::initCell(ExpressionCellWithBufferWithMessage,
-                                 void *cell, int index) {
-  static_cast<ExpressionCellWithBufferWithMessage *>(cell)->setParentResponder(
-      &m_selectableListView);
-}
-
 }  // namespace Inference

@@ -68,7 +68,8 @@ class GraphController : public Shared::InteractiveCurveViewController {
     int numberOfRows() const override {
       return graphController()->numberOfCurves();
     }
-    CurveSelectionCellWithChevron *reusableCell(int index, int type) override {
+    Shared::CurveSelectionCellWithChevron *reusableCell(int index,
+                                                        int type) override {
       assert(index >= 0 && index < Store::k_numberOfSeries);
       return m_cells + index;
     }
@@ -82,7 +83,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
       return static_cast<GraphController *>(
           const_cast<InteractiveCurveViewController *>(m_graphController));
     }
-    CurveSelectionCellWithChevron m_cells[Store::k_numberOfSeries];
+    Shared::CurveSelectionCellWithChevron m_cells[Store::k_numberOfSeries];
   };
 
   // ZoomCurveViewController

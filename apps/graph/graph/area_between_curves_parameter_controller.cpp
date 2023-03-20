@@ -60,7 +60,7 @@ KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(int j) {
       App::app()->functionStore()->modelForRecord(
           DerivableActiveFunctionAtIndex(j, m_mainRecord));
   CurveSelectionCell tempCell;
-  tempCell.setLayout(function->layout());
+  tempCell.label()->setLayout(function->layout());
   return tempCell.labelView()->minimalSizeForOptimalDisplay().height() +
          Metric::CellTopMargin + Metric::CellBottomMargin +
          Metric::CellSeparatorThickness;
@@ -78,7 +78,7 @@ void AreaBetweenCurvesParameterController::willDisplayCellForIndex(
       App::app()->functionStore()->modelForRecord(
           DerivableActiveFunctionAtIndex(index, m_mainRecord));
   static_cast<CurveSelectionCell *>(cell)->setColor(function->color());
-  static_cast<CurveSelectionCell *>(cell)->setLayout(
+  static_cast<CurveSelectionCell *>(cell)->label()->setLayout(
       function->layout().clone());
 }
 

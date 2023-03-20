@@ -51,7 +51,8 @@ class GraphController final : public Shared::FunctionGraphController {
     SequenceSelectionController(GraphController *graphController)
         : Shared::FunctionGraphController::FunctionSelectionController(
               graphController) {}
-    CurveSelectionCellWithChevron *reusableCell(int index, int type) override {
+    Shared::CurveSelectionCellWithChevron *reusableCell(int index,
+                                                        int type) override {
       assert(index >= 0 &&
              index < Shared::SequenceStore::k_maxNumberOfSequences);
       return m_cells + index;
@@ -62,7 +63,7 @@ class GraphController final : public Shared::FunctionGraphController {
 
    private:
     Poincare::Layout nameLayoutAtIndex(int j) const override;
-    CurveSelectionCellWithChevron
+    Shared::CurveSelectionCellWithChevron
         m_cells[Shared::SequenceStore::k_maxNumberOfSequences];
   };
 

@@ -111,7 +111,7 @@ void GraphController::CurveSelectionController::willDisplayCellForIndex(
   const char *name = Store::SeriesTitle(series);
   static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(
       DoublePairStore::colorOfSeriesAtIndex(series));
-  static_cast<CurveSelectionCellWithChevron *>(cell)->setLayout(
+  static_cast<CurveSelectionCellWithChevron *>(cell)->label()->setLayout(
       LayoutHelper::String(name));
 }
 

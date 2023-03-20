@@ -17,9 +17,8 @@ InputController::InputController(Escher::StackViewController *parent,
                                  Statistic *statistic,
                                  Escher::InputEventHandlerDelegate *handler)
     : FloatParameterController<double>(parent),
-      DynamicCellsDataSource<
-          InputParameterCell,
-          k_maxNumberOfExpressionCellsWithEditableTextWithMessage>(this),
+      DynamicCellsDataSource<InputParameterCell,
+                             k_maxNumberOfInputParameterCell>(this),
       m_statistic(statistic),
       m_resultsController(resultsController) {
   m_okButton.setMessage(I18n::Message::Next);
@@ -31,8 +30,7 @@ InputController::InputController(Escher::StackViewController *parent,
 }
 
 void InputController::initCell(InputParameterCell, void *cell, int index) {
-  ExpressionCellWithEditableTextWithMessage *c =
-      static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
+  InputParameterCell *c = static_cast<InputParameterCell *>(cell);
   c->setParentResponder(&m_selectableListView);
   c->setDelegates(App::app(), this);
 }
@@ -107,10 +105,10 @@ void InputController::buttonAction() {
 void InputController::willDisplayCellForIndex(Escher::HighlightCell *cell,
                                               int index) {
   if (index < m_statistic->indexOfThreshold()) {
-    ExpressionCellWithEditableTextWithMessage *mCell =
-        static_cast<ExpressionCellWithEditableTextWithMessage *>(cell);
-    mCell->setLayout(m_statistic->parameterSymbolAtIndex(index));
-    mCell->setSubLabelMessage(m_statistic->parameterDefinitionAtIndex(index));
+    InputParameterCell *mCell = static_cast<InputParameterCell *>(cell);
+    mCell->label()->setLayout(m_statistic->parameterSymbolAtIndex(index));
+    mCell->subLabel()->setMessage(
+        m_statistic->parameterDefinitionAtIndex(index));
   } else if (typeAtIndex(index) == k_significanceCellType) {
     assert(cell == &m_significanceCell);
     I18n::Message name, description;

@@ -45,8 +45,8 @@ HypothesisController::HypothesisController(
       Poincare::VerticalOffsetLayout::Builder(
           Poincare::CodePointLayout::Builder('a'),
           Poincare::VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-  m_h0.setLayout(h0);
-  m_h0.setSubLabelMessage(I18n::Message::H0Sub);
+  m_h0.label()->setLayout(h0);
+  m_h0.subLabel()->setMessage(I18n::Message::H0Sub);
   m_ha.label()->setLayout(ha);
   m_ha.subLabel()->setMessage(I18n::Message::HaSub);
   m_ha.accessory()->setDropdown(&m_haDropdown);
@@ -150,7 +150,7 @@ void HypothesisController::loadHypothesisParam() {
       m_test->hypothesisParams()->firstParam(),
       Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits);
-  m_h0.setAccessoryText(buffer);
+  m_h0.textField()->setText(buffer);
   m_haDropdown.reloadAllCells();
   resetMemoization();
   m_selectableListView.reloadData();

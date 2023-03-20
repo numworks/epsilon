@@ -76,6 +76,10 @@ VariableBoxController::VariableBoxController(ScriptStore *scriptStore)
   m_originsName[1] = I18n::translate(I18n::Message::BuiltinsAndKeywords);
   // Empty to initialize other class members
   empty();
+  for (int i = 0; i < k_maxNumberOfDisplayedItems; i++) {
+    m_itemCells[i].label()->setMaxDisplayedTextLength(
+        k_maxNumberOfCharsInLabel);
+  }
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {
@@ -109,7 +113,7 @@ KDCoordinate VariableBoxController::nonMemoizedRowHeight(int index) {
   assert(index >= 0 && index < numberOfRows());
   int cellType = typeAndOriginAtLocation(index);
   if (cellType == k_itemCellType) {
-    ScriptNodeCell tempCell;
+    MenuCell<BufferTextView, BufferTextView> tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   SubtitleCell tempCell;
@@ -154,8 +158,28 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
   int cellType =
       typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    static_cast<ScriptNodeCell *>(cell)->setScriptNode(scriptNodeAtIndex(
-        index - (m_displaySubtitles ? cumulatedOriginsCount : 0)));
+    MenuCell<BufferTextView, BufferTextView> *typedCell =
+        static_cast<MenuCell<BufferTextView, BufferTextView> *>(cell);
+    ScriptNode *node = scriptNodeAtIndex(
+        index - (m_displaySubtitles ? cumulatedOriginsCount : 0));
+    /* Use a temporary buffer to crop label name, as strlen(node->name()) may be
+     * greater than node->nameLength() */
+    const size_t labelLength =
+        std::min(node->nameLength(), k_maxNumberOfCharsInLabel);
+    char temp_buffer[k_maxNumberOfCharsInLabel + 1];
+    assert(strlen(node->name()) >= labelLength);
+    memcpy(temp_buffer, node->name(), labelLength);
+    temp_buffer[labelLength] = 0;
+
+    typedCell->label()->setText(temp_buffer);
+
+    if (node->type() == ScriptNode::Type::WithParentheses) {
+      typedCell->label()->appendText(ScriptNode::k_parentheses);
+    }
+
+    typedCell->subLabel()->setText(
+        node->description() != nullptr ? node->description() : "");
+    typedCell->reloadCell();
     return;
   }
   assert(m_displaySubtitles);
@@ -337,7 +361,7 @@ void VariableBoxController::insertAutocompletionResultAtIndex(int index) {
   // WARNING: selectedScriptNode is now invalid
 
   if (shouldAddParentheses) {
-    insertTextInCaller(ScriptNodeCell::k_parenthesesWithEmpty);
+    insertTextInCaller(ScriptNode::k_parenthesesWithEmpty);
   }
 }
 
@@ -1159,7 +1183,7 @@ bool VariableBoxController::addNodeIfMatches(
                0)) ||
          strlen(nodeName) +
                  (nodeType == ScriptNode::Type::WithParentheses ? 2 : 0) <=
-             ScriptNodeCell::k_maxNumberOfCharsInLabel);
+             k_maxNumberOfCharsInLabel);
 
   // Step 2.2: Add any new import source name
   if (nodeOrigin == m_originsCount && m_displaySubtitles) {

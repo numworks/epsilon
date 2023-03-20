@@ -22,7 +22,6 @@ app_code_test_src = $(addprefix apps/code/,\
   clipboard.cpp \
   python_toolbox.cpp \
   script.cpp \
-  script_node_cell.cpp \
   script_store.cpp \
   script_template.cpp \
   subtitle_cell.cpp \

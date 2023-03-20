@@ -11,7 +11,6 @@ app_elements_src = $(addprefix apps/elements/,\
   elements_view.cpp \
   elements_view_data_source.cpp \
   main_controller.cpp \
-  physical_quantity_cell.cpp \
   single_element_view.cpp \
   suggestion_text_field.cpp \
   table_layout.cpp \

@@ -2,7 +2,7 @@
 #define GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/buffer_table_cell.h>
+#include <escher/buffer_text_view.h>
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
@@ -52,24 +52,22 @@ class CalculationParameterController
   static bool ShouldDisplayAreaBetweenCurves();
   static bool ShouldDisplayChevronInAreaCell();
   // This class is used for the AreaBetweenCurves cell
-  class BufferTableCellWithHideableChevron : public Escher::BufferTableCell {
+  class HideableChevron : public Escher::ChevronView {
    public:
-    BufferTableCellWithHideableChevron()
-        : Escher::BufferTableCell(), m_displayChevron(true) {}
-    const Escher::View* accessoryView() const override {
-      return m_displayChevron ? &m_accessoryView : nullptr;
+    HideableChevron() : Escher::ChevronView(), m_displayChevron(true) {}
+    const View* view() const override {
+      return m_displayChevron ? this : nullptr;
     }
-    void displayChevron(bool display) { m_displayChevron = display; }
-    bool subviewsCanOverlap() const override { return true; }
-    bool shouldEnterOnEvent(Ion::Events::Event event) {
-      return (m_displayChevron && event == Ion::Events::Right) ||
-             event == Ion::Events::OK || event == Ion::Events::EXE;
+    bool enterOnEvent(Ion::Events::Event event) const override {
+      return m_displayChevron && event == Ion::Events::Right;
     }
 
+    void displayChevron(bool display) { m_displayChevron = display; }
+
    private:
-    Escher::ChevronView m_accessoryView;
     bool m_displayChevron;
   };
+
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>
       m_preimageCell;
@@ -79,7 +77,9 @@ class CalculationParameterController
   Escher::MenuCell<Escher::MessageTextView> m_integralCell;
   Escher::MenuCell<Escher::MessageTextView> m_tangentCell;
   Escher::MenuCell<Escher::MessageTextView> m_rootCell;
-  BufferTableCellWithHideableChevron m_areaCell;
+  Escher::MenuCell<Escher::BufferTextView, Escher::EmptyCellWidget,
+                   HideableChevron>
+      m_areaCell;
   Ion::Storage::Record m_record;
   PreimageParameterController m_preimageParameterController;
   PreimageGraphController m_preimageGraphController;

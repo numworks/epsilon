@@ -104,7 +104,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     StackViewController *stack =
         static_cast<StackViewController *>(parentResponder());
     stack->pop();
-  } else if (cell == &m_areaCell && m_areaCell.shouldEnterOnEvent(event)) {
+  } else if (cell == &m_areaCell && m_areaCell.enterOnEvent(event)) {
     if (!ShouldDisplayChevronInAreaCell()) {
       Ion::Storage::Record secondRecord =
           AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(
@@ -128,7 +128,7 @@ void CalculationParameterController::willDisplayCellForIndex(
   }
   assert(ShouldDisplayAreaBetweenCurves());
   // If there is only two derivable functions, hide the chevron
-  m_areaCell.displayChevron(ShouldDisplayChevronInAreaCell());
+  m_areaCell.accessory()->displayChevron(ShouldDisplayChevronInAreaCell());
   // Get the name of the selected function
   ExpiringPointer<ContinuousFunction> mainFunction =
       App::app()->functionStore()->modelForRecord(m_record);
@@ -148,20 +148,22 @@ void CalculationParameterController::willDisplayCellForIndex(
     secondFunction->nameWithArgument(secondPlaceHolder + 1, bufferSize);
     if (strcmp(mainFunctionName, secondPlaceHolder + 1) == 0) {
       // If both functions are name "y", display "Area between curves"
-      m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurves);
+      m_areaCell.label()->setMessageWithPlaceholders(
+          I18n::Message::AreaBetweenCurves);
       return;
     }
   } else {
     // If there are more than 2 functions, display "Area between f(x) and"
     secondPlaceHolder[0] = 0;
   }
-  m_areaCell.setMessageWithPlaceholders(
+  m_areaCell.label()->setMessageWithPlaceholders(
       I18n::Message::AreaBetweenCurvesWithFunctionName, mainFunctionName,
       secondPlaceHolder);
   if (m_areaCell.labelView()->minimalSizeForOptimalDisplay().width() >
       m_areaCell.innerWidth()) {
     // If there is not enough space in the cell, display "Area between curves"
-    m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurves);
+    m_areaCell.label()->setMessageWithPlaceholders(
+        I18n::Message::AreaBetweenCurves);
   }
 }
 

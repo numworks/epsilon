@@ -113,14 +113,18 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex) {
     stop = SequenceStore::k_maxNumberOfSequences;
     sequencesRankValues = reinterpret_cast<T *>(&m_commonRankValues);
   }
-  for (int sequence = start; sequence < stop; sequence++) {
-    T *sequencePointer = sequencesRankValues +
-                         sequence * (SequenceStore::k_maxRecurrenceDepth + 1);
-    // {u(n), u(n-1), u(n-2)} becomes {NaN, u(n), u(n-1)}
-    for (int depth = SequenceStore::k_maxRecurrenceDepth; depth > 0; depth--) {
-      *(sequencePointer + depth) = *(sequencePointer + depth - 1);
+  if (*currentRank > 0) {
+    // If rank was -1, all values are NAN, then no need to shift
+    for (int sequence = start; sequence < stop; sequence++) {
+      T *sequencePointer = sequencesRankValues +
+                           sequence * (SequenceStore::k_maxRecurrenceDepth + 1);
+      // {u(n), u(n-1), u(n-2)} becomes {NaN, u(n), u(n-1)}
+      for (int depth = SequenceStore::k_maxRecurrenceDepth; depth > 0;
+           depth--) {
+        *(sequencePointer + depth) = *(sequencePointer + depth - 1);
+      }
+      *sequencePointer = NAN;
     }
-    *sequencePointer = NAN;
   }
 
   // We create an array containing the sequences we want to update

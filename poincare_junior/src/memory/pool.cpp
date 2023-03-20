@@ -35,8 +35,13 @@ Node Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
     return Node();
   }
   assert(id < m_length);
-  return Node(m_pool->firstBlock() +
-              const_cast<Pool::ReferenceTable *>(this)->nodeOffsetArray()[id]);
+  uint16_t offset =
+      const_cast<Pool::ReferenceTable *>(this)->nodeOffsetArray()[id];
+  if (offset == NoNodeIdentifier) {
+    return Node();
+  }
+  assert(offset <= m_pool->size());
+  return Node(m_pool->firstBlock() + offset);
 }
 
 bool Pool::ReferenceTable::reset() {
@@ -54,6 +59,12 @@ void Pool::ReferenceTable::logIdsForNode(std::ostream &stream,
                                          Node node) const {
   bool found = false;
   for (size_t i = 0; i < m_length; i++) {
+    // Escape invalid offset in advance to preserve nodeForIdentifier's assert
+    uint16_t offset =
+        const_cast<Pool::ReferenceTable *>(this)->nodeOffsetArray()[i];
+    if (offset >= m_pool->size()) {
+      continue;
+    }
     Node n = Pool::ReferenceTable::nodeForIdentifier(i);
     if (node == n) {
       stream << identifierForIndex(i) << ", ";

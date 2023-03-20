@@ -2,10 +2,11 @@
 #define REGRESSION_GRAPH_OPTIONS_CONTROLLER_H
 
 #include <apps/shared/curve_view_cursor.h>
+#include <escher/buffer_text_view.h>
 #include <escher/button_cell.h>
 #include <escher/chevron_view.h>
 #include <escher/expression_table_cell_with_message.h>
-#include <escher/expression_table_cell_with_message_with_buffer.h>
+#include <escher/expression_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 
@@ -53,12 +54,16 @@ class GraphOptionsController
   bool displayR2Cell() const;
   bool displayResidualPlotCell() const;
 
+  using RCell =
+      Escher::MenuCell<Escher::ExpressionView, Escher::MessageTextView,
+                       Escher::BufferTextView>;
+
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_changeRegressionCell;
   Escher::ExpressionTableCellWithMessage m_regressionEquationCell;
-  Escher::ExpressionTableCellWithMessageWithBuffer m_rCell;
-  Escher::ExpressionTableCellWithMessageWithBuffer m_r2Cell;
+  RCell m_rCell;
+  RCell m_r2Cell;
   Escher::MenuCell<Escher::MessageTextView> m_residualPlotCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>

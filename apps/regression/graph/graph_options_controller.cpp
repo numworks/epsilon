@@ -26,10 +26,6 @@ GraphOptionsController::GraphOptionsController(
     : ExplicitSelectableListViewController(parentResponder),
       m_regressionEquationCell(&m_selectableListView,
                                I18n::Message::RegressionEquation),
-      m_rCell(&m_selectableListView, I18n::Message::Default,
-              KDFont::Size::Large),
-      m_r2Cell(&m_selectableListView, I18n::Message::Default,
-               KDFont::Size::Large),
       m_removeRegressionCell(
           &(this->m_selectableListView), I18n::Message::RemoveRegression,
           Invocation::Builder<GraphOptionsController>(
@@ -44,8 +40,8 @@ GraphOptionsController::GraphOptionsController(
       m_store(store),
       m_graphController(graphController) {
   m_residualPlotCell.label()->setMessage(I18n::Message::ResidualPlot);
-  m_rCell.setLayout(CodePointLayout::Builder('r'));
-  m_r2Cell.setLayout(HorizontalLayout::Builder(
+  m_rCell.label()->setLayout(CodePointLayout::Builder('r'));
+  m_r2Cell.label()->setLayout(HorizontalLayout::Builder(
       {CodePointLayout::Builder('R'),
        VerticalOffsetLayout::Builder(
            CodePointLayout::Builder('2'),
@@ -167,12 +163,11 @@ void GraphOptionsController::fillCell(HighlightCell *cell) {
     m_regressionEquationCell.setLayout(model->equationLayout(
         coefficients, "y", significantDigits, displayMode));
   } else if (cell == &m_rCell || cell == &m_r2Cell) {
-    ExpressionTableCellWithMessageWithBuffer *rCell =
-        static_cast<ExpressionTableCellWithMessageWithBuffer *>(cell);
+    RCell *rCell = static_cast<RCell *>(cell);
     if (Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
-      rCell->setTextColor(Palette::GrayDark);
-      rCell->setSubLabelMessage(I18n::Message::Disabled);
-      rCell->setAccessoryText("");
+      rCell->label()->setTextColor(Palette::GrayDark);
+      rCell->subLabel()->setMessage(I18n::Message::Disabled);
+      rCell->accessory()->setText("");
       return;
     }
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
@@ -184,7 +179,7 @@ void GraphOptionsController::fillCell(HighlightCell *cell) {
                              series, m_graphController->globalContext());
     Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
         value, buffer, bufferSize, significantDigits, displayMode);
-    rCell->setAccessoryText(buffer);
+    rCell->accessory()->setText(buffer);
   }
 }
 

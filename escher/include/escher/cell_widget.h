@@ -1,6 +1,7 @@
 #ifndef ESCHER_CELL_WIDGET_H
 #define ESCHER_CELL_WIDGET_H
 
+#include <escher/responder.h>
 #include <escher/view.h>
 #include <ion/events.h>
 
@@ -10,6 +11,7 @@ class CellWidget {
  public:
   enum class Type { Label, SubLabel, Accessory };
   virtual const View* view() const = 0;
+  virtual Responder* responder() { return nullptr; }
   virtual void defaultInitialization(Type type) {}
   virtual void setBackgroundColor(KDColor color) {}
   virtual bool giveAllWidthAsAccessory() const { return false; }

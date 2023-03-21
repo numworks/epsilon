@@ -14,7 +14,8 @@ class CellWidget {
   virtual Responder* responder() { return nullptr; }
   virtual void defaultInitialization(Type type) {}
   virtual void setBackgroundColor(KDColor color) {}
-  virtual bool giveAllWidthAsAccessory() const { return false; }
+  // This could be replaced by a type like Expressions or Layouts if needed
+  virtual bool isAnEditableTextField() const { return false; }
   virtual bool alwaysAlignWithLabelAsAccessory() const { return false; }
   virtual bool preventRightAlignedSubLabel(Type type) const { return false; }
   virtual bool enterOnEvent(Ion::Events::Event event) const { return false; }

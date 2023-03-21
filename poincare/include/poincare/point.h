@@ -16,6 +16,7 @@ class PointNode : public ExpressionNode {
       SinglePrecision p, const ApproximationContext& context) const override {
     return templatedApproximate<float>(context);
   }
+  Expression shallowReduce(const ReductionContext& reductionContext) override;
   Evaluation<double> approximate(
       DoublePrecision p, const ApproximationContext& context) const override {
     return templatedApproximate<double>(context);

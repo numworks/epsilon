@@ -1,6 +1,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/point.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 
 namespace Poincare {
 
@@ -15,6 +16,23 @@ int PointNode::serialize(char* buffer, int bufferSize,
                          int significantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode,
                                      significantDigits, k_prefix);
+}
+
+Expression PointNode::shallowReduce(const ReductionContext& reductionContext) {
+  return Point(this).shallowReduce(reductionContext);
+}
+
+Expression Point::shallowReduce(ReductionContext reductionContext) {
+  Expression e = SimplificationHelper::defaultShallowReduce(
+      *this, &reductionContext,
+      SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
+      SimplificationHelper::UnitReduction::BanUnits,
+      SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
+      SimplificationHelper::ListReduction::DistributeOverLists);
+  if (!e.isUninitialized()) {
+    return e;
+  }
+  return *this;
 }
 
 }  // namespace Poincare

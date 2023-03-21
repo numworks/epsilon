@@ -157,17 +157,10 @@ void AbstractMenuCell::layoutSubviews(bool force) {
   }
 
   // Set frames
-  labelRect =
-      setFrameIfViewExists(const_cast<View *>(labelView()), labelRect, force);
-  subLabelRect = setFrameIfViewExists(const_cast<View *>(subLabelView()),
-                                      subLabelRect, force);
-  accessoryRect = setFrameIfViewExists(const_cast<View *>(accessoryView()),
-                                       accessoryRect, force);
-
-  // Assert no subview intersects
-  assert(subviewsCanOverlap() || (!labelRect.intersects(subLabelRect) &&
-                                  !subLabelRect.intersects(accessoryRect) &&
-                                  !accessoryRect.intersects(labelRect)));
+  setFrameIfViewExists(const_cast<View *>(labelView()), labelRect, force);
+  setFrameIfViewExists(const_cast<View *>(subLabelView()), subLabelRect, force);
+  setFrameIfViewExists(const_cast<View *>(accessoryView()), accessoryRect,
+                       force);
 }
 
 bool AbstractMenuCell::shouldAlignLabelAndAccessory() const {

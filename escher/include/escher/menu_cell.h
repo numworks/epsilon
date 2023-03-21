@@ -136,8 +136,6 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   }
 
   virtual bool shouldHideSublabel() { return false; }
-  // This method is only used to assert that no subview overlaps after layouting
-  virtual bool subviewsCanOverlap() const { return false; }
   bool singleRowMode() const;
 
  private:

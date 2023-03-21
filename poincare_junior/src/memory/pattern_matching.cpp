@@ -43,13 +43,9 @@ EditionReference PatternMatching::Create(const Node structure,
       structure.block(), structure.nextTree().block() - structure.block());
   for (const Node node : nodes) {
     if (node.type() == BlockType::Placeholder) {
-      EditionPool::sharedEditionPool()->initFromTree(
-          context[static_cast<PlaceholderTag>(
-              static_cast<uint8_t>(*node.block()->next()))]);
+      EditionReference::Clone(context[static_cast<PlaceholderTag>(static_cast<uint8_t>(*node.block()->next()))], true);
     } else {
-      for (const Block block : node.blocks()) {
-        EditionPool::sharedEditionPool()->pushBlock(block);
-      }
+      EditionReference::Clone(node, false);
     }
   }
   return EditionReference(top);

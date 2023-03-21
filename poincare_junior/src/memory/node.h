@@ -122,20 +122,6 @@ class Node {
   typedef void (*InPlaceConstTreeFunction)(const Node node);
   void recursivelyGet(InPlaceConstTreeFunction treeFunction) const;
 
-  class Blocks {
-   public:
-    Blocks(const Node *node)
-        : m_begin(node->block()), m_end(node->block() + node->nodeSize()) {}
-    const Block *begin() { return m_begin; }
-    const Block *end() { return m_end; }
-
-   private:
-    const Block *m_begin;
-    const Block *m_end;
-  };
-
-  Blocks blocks() const { return Blocks(this); }
-
  private:
   bool canNavigateNext() const;
   bool canNavigatePrevious() const;

@@ -668,7 +668,7 @@ Expression ContinuousFunction::Model::expressionEquation(
         *computedFunctionSymbol =
             ContinuousFunctionProperties::SymbolType::Index;
       }
-      return result;
+      return Expression::ExpressionWithoutSymbols(result, context);
     }
     /* Happens when the input text is too long and "f(x)=" can't be inserted
      * or when inputting amiguous equations like "x+y>2>y" */

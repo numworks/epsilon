@@ -58,8 +58,7 @@ IntermediateSequenceContext<T>::protectedExpressionForSymbolAbstract(
    * required rank (this will solve u(n) = 5*n, v(n) = u(n+10) for instance).
    * But we avoid doing so if the sequence referencing itself to avoid an
    * infinite loop. */
-  if (OMG::IsSignalingNan(result) &&
-      (!m_intermediateComputation || index != m_sequenceBeingComputed)) {
+  if (OMG::IsSignalingNan(result)) {
     // If the rank is not an int, return NAN
     if (std::floor(rankValue) == rankValue) {
       result = seq->approximateAtRank<T>(rankValue, m_sequenceContext);

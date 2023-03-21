@@ -39,12 +39,20 @@ void TemplatedSequenceContext<T>::resetCacheOfSequence(
 }
 
 template <typename T>
+void TemplatedSequenceContext<T>::resetDataOfCurrentComputation() {
+  m_isComputingMainResult = false;
+  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+    m_smallestRankBeingComputed[i] = -1;
+  }
+}
+
+template <typename T>
 void TemplatedSequenceContext<T>::resetCache() {
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     resetCacheOfSequence(i, true);
     resetCacheOfSequence(i, false);
   }
-  m_isComputingMainResult = false;
+  resetDataOfCurrentComputation();
 }
 
 template <typename T>
@@ -88,7 +96,7 @@ void TemplatedSequenceContext<T>::stepUntilRank(int n, int sequenceIndex) {
     stepToNextRank(sequenceIndex, intermediateComputation);
   }
   if (!intermediateComputation) {
-    m_isComputingMainResult = false;
+    resetDataOfCurrentComputation();
   }
 }
 
@@ -131,8 +139,17 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex,
     // If the other cache already knows this value, use it
     *values = otherCacheValue;
   } else {
+    int previousSmallestRank = m_smallestRankBeingComputed[sequenceIndex];
+    if (previousSmallestRank == -1 || *currentRank < previousSmallestRank) {
+      m_smallestRankBeingComputed[sequenceIndex] = *currentRank;
+    } else {
+      // We are looping, return NAN as computed result
+      *values = static_cast<T>(NAN);
+      return;
+    }
     *values = s->approximateAtContextRank<T>(m_sequenceContext,
                                              intermediateComputation);
+    m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
   }
 }
 

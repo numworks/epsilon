@@ -36,7 +36,7 @@ int StoreParameterController::typeAtIndex(int index) const {
       index - (index > k_changeRegressionCellIndex));
 }
 
-HighlightCell *StoreParameterController::reusableCell(int index, int type) {
+AbstractMenuCell *StoreParameterController::reusableCell(int index, int type) {
   assert(index >= 0 && index < numberOfRows());
   if (type == k_changeRegressionCellType) {
     return &m_changeRegressionCell;

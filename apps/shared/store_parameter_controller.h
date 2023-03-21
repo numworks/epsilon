@@ -25,7 +25,7 @@ class StoreParameterController : public ColumnParameterController {
     assert(index < k_numberOfCells);
     return index;
   }
-  Escher::HighlightCell* reusableCell(int index, int type) override;
+  Escher::AbstractMenuCell* reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   void initializeColumnParameters() override;
 

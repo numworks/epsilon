@@ -154,7 +154,15 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
   m_parameterColumnSelected = false;
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    if (!layoutField->layout().hasTopLevelEquationSymbol()) {
+    char buffer[TextField::MaxBufferSize()];
+    layoutField->layout().serializeForParsing(buffer,
+                                              TextField::MaxBufferSize());
+    Expression parsedExpression = Expression::Parse(buffer, nullptr);
+    if (!parsedExpression.isOfType({
+            ExpressionNode::Type::Comparison,
+            ExpressionNode::Type::Point,
+        }) &&
+        !parsedExpression.deepIsList(nullptr)) {
       layoutField->putCursorOnOneSide(OMG::Direction::Left());
       CodePoint symbol =
           layoutRepresentsPolarFunction(layoutField->layout())
@@ -162,7 +170,6 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
               : (layoutRepresentsParametricFunction(layoutField->layout())
                      ? ContinuousFunction::k_parametricSymbol
                      : ContinuousFunction::k_cartesianSymbol);
-      // Inserted Layout must be an equation
       if (!completeEquation(layoutField, symbol)) {
         layoutField->putCursorOnOneSide(OMG::Direction::Right());
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);

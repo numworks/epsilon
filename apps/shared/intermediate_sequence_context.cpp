@@ -1,5 +1,6 @@
 #include "intermediate_sequence_context.h"
 
+#include <omg/signaling_nan.h>
 #include <poincare/addition.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
@@ -57,7 +58,7 @@ IntermediateSequenceContext<T>::protectedExpressionForSymbolAbstract(
    * required rank (this will solve u(n) = 5*n, v(n) = u(n+10) for instance).
    * But we avoid doing so if the sequence referencing itself to avoid an
    * infinite loop. */
-  if (std::isnan(result) &&
+  if (OMG::IsSignalingNan(result) &&
       (!m_intermediateComputation || index != m_sequenceBeingComputed)) {
     // If the rank is not an int, return NAN
     if (std::floor(rankValue) == rankValue) {

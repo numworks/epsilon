@@ -16,9 +16,8 @@ StoreParameterController::StoreParameterController(
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE ||
-       event == Ion::Events::Right) &&
-      typeAtIndex(selectedRow()) == k_changeRegressionCellType) {
+  if (typeAtIndex(selectedRow()) == k_changeRegressionCellType &&
+      m_changeRegressionCell.enterOnEvent(event)) {
     RegressionController *regressionController =
         App::app()->regressionController();
     regressionController->setSeries(m_storeColumnHelper->selectedSeries());

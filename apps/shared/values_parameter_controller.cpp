@@ -19,25 +19,18 @@ ValuesParameterController::ValuesParameterController(
 }
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE ||
-      (event == Ion::Events::Right && selectedRow() == 1)) {
-    switch (selectedRow()) {
-      case k_indexOfClearColumn: {
-        stackView()->pop();
-        m_valuesController->presentClearSelectedColumnPopupIfClearable();
-        return true;
-      }
-      case k_indexOfSetInterval: {
-        IntervalParameterController* intervalParameterController =
-            m_valuesController->intervalParameterController();
-        intervalParameterController->setTitle(I18n::Message::IntervalSet);
-        stackView()->push(intervalParameterController);
-        return true;
-      }
-      default:
-        assert(false);
-        return false;
-    }
+  if (selectedRow() == k_indexOfClearColumn &&
+      m_clearColumn.enterOnEvent(event)) {
+    stackView()->pop();
+    m_valuesController->presentClearSelectedColumnPopupIfClearable();
+    return true;
+  } else if (selectedRow() == k_indexOfSetInterval &&
+             m_setInterval.enterOnEvent(event)) {
+    IntervalParameterController* intervalParameterController =
+        m_valuesController->intervalParameterController();
+    intervalParameterController->setTitle(I18n::Message::IntervalSet);
+    stackView()->push(intervalParameterController);
+    return true;
   }
   return false;
 }

@@ -37,8 +37,8 @@ void MenuController::didBecomeFirstResponder() {
 }
 
 bool MenuController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE ||
-      event == Ion::Events::Right) {
+  // enterOnEvent can be called on any cell with chevron
+  if (cellAtIndex(0)->enterOnEvent(event)) {
     bool simpleInterestRowSelected = (selectedRow() == k_indexOfSimpleInterest);
     assert(simpleInterestRowSelected ||
            selectedRow() == k_indexOfCompoundInterest);

@@ -161,7 +161,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (displayNormalizeCell() && selectedRow() == 0 &&
-      (event == Ion::Events::OK || event == Ion::Events::EXE)) {
+      m_normalizeCell.enterOnEvent(event)) {
     m_normalizeCell.setHighlighted(false);
     m_tempInteractiveRange.normalize();
     buttonAction();

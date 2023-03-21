@@ -87,26 +87,8 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   }
 
   HighlightCell *cell = selectedCell();
-  if (event == Ion::Events::OK || event == Ion::Events::EXE ||
-      event == Ion::Events::Right) {  // TODO; use enterOnEvent
-    if (cell == &m_changeRegressionCell) {
-      RegressionController *controller = App::app()->regressionController();
-      controller->setSeries(m_graphController->selectedSeriesIndex());
-      controller->setDisplayedFromDataTab(false);
-      stack->push(controller);
-      return true;
-    } else if (cell == &m_residualPlotCell) {
-      m_residualPlotCellController.setSeries(
-          m_graphController->selectedSeriesIndex());
-      stack->push(&m_residualPlotCellController);
-      return true;
-    } else if (cell == &m_xParameterCell || cell == &m_yParameterCell) {
-      m_goToParameterController.setXPrediction(cell == &m_xParameterCell);
-      stack->push(&m_goToParameterController);
-      return true;
-    }
-  } else if ((event == Ion::Events::Copy || event == Ion::Events::Cut) ||
-             event == Ion::Events::Sto || event == Ion::Events::Var) {
+  if ((event == Ion::Events::Copy || event == Ion::Events::Cut) ||
+      event == Ion::Events::Sto || event == Ion::Events::Var) {
     if (cell == &m_r2Cell) {
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
         App::app()->storeValue(m_r2Cell.text());
@@ -128,7 +110,29 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
         return true;
       }
     }
+    return false;
   }
+
+  if (cell == &m_changeRegressionCell &&
+      m_changeRegressionCell.enterOnEvent(event)) {
+    RegressionController *controller = App::app()->regressionController();
+    controller->setSeries(m_graphController->selectedSeriesIndex());
+    controller->setDisplayedFromDataTab(false);
+    stack->push(controller);
+    return true;
+  } else if (cell == &m_residualPlotCell &&
+             m_residualPlotCell.enterOnEvent(event)) {
+    m_residualPlotCellController.setSeries(
+        m_graphController->selectedSeriesIndex());
+    stack->push(&m_residualPlotCellController);
+    return true;
+  } else if ((cell == &m_xParameterCell || cell == &m_yParameterCell) &&
+             static_cast<AbstractMenuCell *>(cell)->enterOnEvent(event)) {
+    m_goToParameterController.setXPrediction(cell == &m_xParameterCell);
+    stack->push(&m_goToParameterController);
+    return true;
+  }
+
   return false;
 }
 

@@ -12,8 +12,9 @@
 #include "test/hypothesis_controller.h"
 #include "type_controller.h"
 
-using namespace Inference;
 using namespace Escher;
+
+namespace Inference {
 
 TestController::TestController(StackViewController *parentResponder,
                                HypothesisController *hypothesisController,
@@ -52,50 +53,49 @@ void TestController::didBecomeFirstResponder() {
 }
 
 bool TestController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE ||
-      event == Ion::Events::Right) {
-    SelectableViewController *controller = nullptr;
-    SignificanceTestType testType;
-    int row = selectedRow();
-    if (row == k_indexOfOneProp) {
-      testType = SignificanceTestType::OneProportion;
-      controller = m_inputController;
-      if (m_statistic->hasHypothesisParameters()) {
-        controller = m_hypothesisController;
-      }
-    } else if (row == k_indexOfTwoProps) {
-      testType = SignificanceTestType::TwoProportions;
-      controller = m_inputController;
-      if (m_statistic->hasHypothesisParameters()) {
-        controller = m_hypothesisController;
-      }
-    } else if (row == k_indexOfOneMean) {
-      testType = SignificanceTestType::OneMean;
-      controller = m_typeController;
-    } else if (row == k_indexOfTwoMeans) {
-      testType = SignificanceTestType::TwoMeans;
-      controller = m_typeController;
-    } else if (row == virtualIndexOfSlope()) {
-      testType = SignificanceTestType::Slope;
-      controller = m_inputSlopeController;
-      if (m_statistic->hasHypothesisParameters()) {
-        controller = m_hypothesisController;
-      }
-    } else {
-      assert(selectedRow() == k_indexOfCategorical);
-      testType = SignificanceTestType::Categorical;
-      controller = m_categoricalController;
-    }
-    assert(controller != nullptr);
-    if (m_statistic->initializeSignificanceTest(
-            testType,
-            AppsContainerHelper::sharedAppsContainerGlobalContext())) {
-      controller->selectRow(0);
-    }
-    stackOpenPage(controller);
-    return true;
+  // enterOnEvent can be called on any cell with chevron
+  if (!m_cells[0].enterOnEvent(event)) {
+    return popFromStackViewControllerOnLeftEvent(event);
   }
-  return popFromStackViewControllerOnLeftEvent(event);
+  SelectableViewController *controller = nullptr;
+  SignificanceTestType testType;
+  int row = selectedRow();
+  if (row == k_indexOfOneProp) {
+    testType = SignificanceTestType::OneProportion;
+    controller = m_inputController;
+    if (m_statistic->hasHypothesisParameters()) {
+      controller = m_hypothesisController;
+    }
+  } else if (row == k_indexOfTwoProps) {
+    testType = SignificanceTestType::TwoProportions;
+    controller = m_inputController;
+    if (m_statistic->hasHypothesisParameters()) {
+      controller = m_hypothesisController;
+    }
+  } else if (row == k_indexOfOneMean) {
+    testType = SignificanceTestType::OneMean;
+    controller = m_typeController;
+  } else if (row == k_indexOfTwoMeans) {
+    testType = SignificanceTestType::TwoMeans;
+    controller = m_typeController;
+  } else if (row == virtualIndexOfSlope()) {
+    testType = SignificanceTestType::Slope;
+    controller = m_inputSlopeController;
+    if (m_statistic->hasHypothesisParameters()) {
+      controller = m_hypothesisController;
+    }
+  } else {
+    assert(selectedRow() == k_indexOfCategorical);
+    testType = SignificanceTestType::Categorical;
+    controller = m_categoricalController;
+  }
+  assert(controller != nullptr);
+  if (m_statistic->initializeSignificanceTest(
+          testType, AppsContainerHelper::sharedAppsContainerGlobalContext())) {
+    controller->selectRow(0);
+  }
+  stackOpenPage(controller);
+  return true;
 }
 
 int TestController::numberOfRows() const {
@@ -135,3 +135,5 @@ void TestController::willDisplayCellForIndex(HighlightCell *cell, int index) {
       return;
   }
 }
+
+}  // namespace Inference

@@ -431,11 +431,8 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     }
     assert(!point.isUninitialized() &&
            point.type() == ExpressionNode::Type::Point);
-    return Coordinate2D<T>(
-        PoincareHelpers::ApproximateToScalar<T>(e.childAtIndex(0), context,
-                                                &preferences, false),
-        PoincareHelpers::ApproximateToScalar<T>(e.childAtIndex(0), context,
-                                                &preferences, false));
+    return static_cast<Point &>(point).approximate2D<T>(
+        context, preferences.complexFormat(), preferences.angleUnit());
   }
 
   if (!properties().isParametric()) {

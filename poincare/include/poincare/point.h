@@ -1,6 +1,7 @@
 #ifndef POINCARE_POINT_H
 #define POINCARE_POINT_H
 
+#include <poincare/coordinate_2d.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
@@ -44,6 +45,18 @@ class PointNode : public ExpressionNode {
 
 class Point : public ExpressionTwoChildren<Point, PointNode> {
   using ExpressionBuilder::ExpressionBuilder;
+
+  Expression shallowReduce(ReductionContext reductionContext);
+
+  template <typename T>
+  Coordinate2D<T> approximate2D(Context* context,
+                                Preferences::ComplexFormat complexFormat,
+                                Preferences::AngleUnit angleUnit) {
+    return Coordinate2D<T>(childAtIndex(0).approximateToScalar<T>(
+                               context, complexFormat, angleUnit),
+                           childAtIndex(1).approximateToScalar<T>(
+                               context, complexFormat, angleUnit));
+  }
 };
 
 }  // namespace Poincare

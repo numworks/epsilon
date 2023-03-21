@@ -18,7 +18,9 @@ class CellWidget {
   virtual bool isAnEditableTextField() const { return false; }
   virtual bool alwaysAlignWithLabelAsAccessory() const { return false; }
   virtual bool preventRightAlignedSubLabel(Type type) const { return false; }
-  virtual bool enterOnEvent(Ion::Events::Event event) const { return false; }
+  virtual bool enterOnEvent(Ion::Events::Event event) const {
+    return event == Ion::Events::EXE || event == Ion::Events::OK;
+  }
 };
 
 class EmptyCellWidget : public CellWidget {

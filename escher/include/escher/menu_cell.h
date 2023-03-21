@@ -105,8 +105,8 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   void setHighlighted(bool highlight) override;
 
   bool enterOnEvent(Ion::Events::Event event) {
-    return event == Ion::Events::OK || event == Ion::Events::EXE ||
-           accessory()->enterOnEvent(event);
+    // This is only done on accessory for now but could also done on (sub)label
+    return accessory()->enterOnEvent(event);
   }
 
  protected:

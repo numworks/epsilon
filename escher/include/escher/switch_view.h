@@ -22,9 +22,9 @@ class SwitchView final : public ToggleableView, public CellWidget {
   // CellWidget
   const View* view() const override { return this; }
   bool enterOnEvent(Ion::Events::Event event) const override {
-    // TODO: This is not in the spec. Remove ?
     return (event == Ion::Events::Right && !state()) ||
-           (event == Ion::Events::Left && state());
+           (event == Ion::Events::Left && state()) ||
+           CellWidget::enterOnEvent(event);
   }
 
  private:

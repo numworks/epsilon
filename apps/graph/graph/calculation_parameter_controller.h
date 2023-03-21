@@ -59,7 +59,8 @@ class CalculationParameterController
       return m_displayChevron ? this : nullptr;
     }
     bool enterOnEvent(Ion::Events::Event event) const override {
-      return m_displayChevron && event == Ion::Events::Right;
+      return (m_displayChevron && Escher::ChevronView::enterOnEvent(event)) ||
+             Escher::CellWidget::enterOnEvent(event);
     }
 
     void displayChevron(bool display) { m_displayChevron = display; }

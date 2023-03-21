@@ -12,17 +12,13 @@ namespace Shared {
 template <typename T>
 class IntermediateSequenceContext : public Poincare::ContextWithParent {
  public:
-  IntermediateSequenceContext(SequenceContext* sequenceContext,
-                              int sequenceBeingComputed,
-                              bool intermediateComputation);
+  IntermediateSequenceContext(SequenceContext* sequenceContext);
 
  private:
   const Poincare::Expression protectedExpressionForSymbolAbstract(
       const Poincare::SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override;
   SequenceContext* m_sequenceContext;
-  int m_sequenceBeingComputed;
-  bool m_intermediateComputation;
 };
 
 }  // namespace Shared

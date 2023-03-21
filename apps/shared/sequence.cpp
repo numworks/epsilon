@@ -281,8 +281,7 @@ T Sequence::approximateAtContextRank(SequenceContext *sqctx,
     }
   }
 
-  IntermediateSequenceContext<T> ctx = IntermediateSequenceContext<T>(
-      sqctx, sequenceIndex, intermediateComputation);
+  IntermediateSequenceContext<T> ctx = IntermediateSequenceContext<T>(sqctx);
   // Update angle unit and complex format
   Preferences preferences =
       Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));

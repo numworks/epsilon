@@ -44,6 +44,7 @@ class GraphView : public Shared::FunctionGraphView,
 
  private:
   constexpr static int k_externRectMargin = 2;
+  constexpr static Shared::Dots::Size k_dotSize = Shared::Dots::Size::Tiny;
 
   static bool FunctionIsDiscontinuousBetweenFloatValues(float x1, float x2,
                                                         void *model,
@@ -61,6 +62,8 @@ class GraphView : public Shared::FunctionGraphView,
   void drawFunction(KDContext *ctx, KDRect rect, Shared::ContinuousFunction *f,
                     float tMin, float tMax, float tStep,
                     DiscontinuityTest discontinuity) const;
+  void drawScatterPlot(KDContext *ctx, KDRect rect,
+                       Shared::ContinuousFunction *f) const;
   void drawPointsOfInterest(KDContext *ctx, KDRect rect);
 
   KDRect boundsWithoutBanner() const;

@@ -1,4 +1,5 @@
 #include <escher/menu_cell.h>
+#include <escher/menu_cell_with_editable_text.h>
 #include <escher/metric.h>
 #include <escher/palette.h>
 #include <ion/display.h>
@@ -110,7 +111,7 @@ void AbstractMenuCell::layoutSubviews(bool force) {
         KDRect(x, y + (height - labelHeight) / 2, labelWidth, labelHeight);
     x += labelWidth + k_innerHorizontalMargin;
 
-    if (shouldAlignSublabelRight() && !giveAccessoryAllWidth()) {
+    if (shouldAlignSublabelRight()) {
       // Align SubLabel right
       x = xEnd - subLabelWidth;
       if (accessoryWidth > 0) {
@@ -126,12 +127,12 @@ void AbstractMenuCell::layoutSubviews(bool force) {
     }
 
     KDCoordinate accessoryY = y + (height - accessoryHeight) / 2;
-    if (giveAccessoryAllWidth()) {
-      accessoryRect = KDRect(x, accessoryY, xEnd - x, accessoryHeight);
-    } else {
-      accessoryRect = KDRect(xEnd - accessoryWidth, accessoryY, accessoryWidth,
-                             accessoryHeight);
+    if (accessoryIsAnEditableTextField()) {
+      // Editable text field takes up all width
+      accessoryWidth = xEnd - x;
     }
+    accessoryRect = KDRect(xEnd - accessoryWidth, accessoryY, accessoryWidth,
+                           accessoryHeight);
   } else {  // Two rows
     KDCoordinate firstRowHeight, firstColumnWidth, accessoryRowHeight;
     if (shouldAlignLabelAndAccessory()) {
@@ -144,7 +145,8 @@ void AbstractMenuCell::layoutSubviews(bool force) {
       accessoryRowHeight = height;
     }
     KDCoordinate accessoryX =
-        giveAccessoryAllWidth()
+        accessoryIsAnEditableTextField()
+            // Editable text field takes up all width
             ? k_leftOffset + k_innerHorizontalMargin + firstColumnWidth
             : xEnd - accessoryWidth;
     labelRect = KDRect(x, y + (firstRowHeight - labelHeight) / 2, labelWidth,
@@ -170,27 +172,33 @@ bool AbstractMenuCell::shouldAlignLabelAndAccessory() const {
   if (!subLabelView() || !accessoryView()) {
     return false;
   }
-  KDCoordinate subLabelMinimalWidth =
-      subLabelView()->minimalSizeForOptimalDisplay().width();
+  KDCoordinate subLabelMinimalWidth = subLabelSize().width();
   KDCoordinate minimalCumulatedWidthOfAccessoryAndSubLabel =
       subLabelMinimalWidth + k_innerHorizontalMargin + accessorySize().width();
   return minimalCumulatedWidthOfAccessoryAndSubLabel > innerWidth();
+}
+
+bool AbstractMenuCell::shouldHideSublabel() const {
+  return accessoryIsAnEditableTextField() && singleRowMode() &&
+         static_cast<const EditableTextWidget *>(constAccessory())->isEditing();
 }
 
 bool AbstractMenuCell::singleRowMode() const {
   KDSize thisLabelSize = labelSize();
   KDSize thisSubLabelSize = subLabelSize();
   KDSize thisAccessorySize = accessorySize();
+  KDCoordinate accessoryWidth =
+      accessoryIsAnEditableTextField()
+          ? std::max(thisAccessorySize.width(),
+                     static_cast<const EditableTextWidget *>(constAccessory())
+                         ->minimalWidth())
+          : thisAccessorySize.width();
   KDCoordinate thisInnerWidth = innerWidth();
-
-  if (thisSubLabelSize.width() > 0 && giveAccessoryAllWidth()) {
-    return false;
-  }
 
   KDCoordinate minimalWidth = thisLabelSize.width() + k_innerHorizontalMargin +
                               thisSubLabelSize.width();
-  if (thisAccessorySize.width() > 0) {
-    minimalWidth += k_innerHorizontalMargin + thisAccessorySize.width();
+  if (accessoryWidth > 0) {
+    minimalWidth += k_innerHorizontalMargin + accessoryWidth;
   }
 
   return (minimalWidth < thisInnerWidth) || thisLabelSize.width() == 0 ||

@@ -53,8 +53,6 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
    * When isAccessoryAlignedRight returns false, Accessory can be placed on the
    * left of the Cell. Label and SubLabel also take the two configurations
    * depending on the fit.
-   * When giveAccessoryAllWidth returns true, Accessory will take all available
-   * horizontal space, forcing label and subLabel to layout over two rows.
    */
 
   constexpr static KDCoordinate k_minimalLargeFontCellHeight =
@@ -120,9 +118,6 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   }
 
   virtual KDColor backgroundColor() const { return KDColorWhite; }
-  bool giveAccessoryAllWidth() const {
-    return constAccessory()->giveAllWidthAsAccessory();
-  }
   bool forceAlignLabelAndAccessory() const {
     return constAccessory()->alwaysAlignWithLabelAsAccessory();
   }
@@ -134,8 +129,7 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
            !constAccessory()->preventRightAlignedSubLabel(
                CellWidget::Type::Accessory);
   }
-
-  virtual bool shouldHideSublabel() { return false; }
+  bool shouldHideSublabel() const;
   bool singleRowMode() const;
 
  private:
@@ -160,6 +154,12 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   KDSize accessorySize() const {
     return accessoryView() ? accessoryView()->minimalSizeForOptimalDisplay()
                            : KDSizeZero;
+  }
+
+  /* Editable text field has unique properties. This avoid having too many
+   * virtual functions, only for this specific case. */
+  bool accessoryIsAnEditableTextField() const {
+    return constAccessory()->isAnEditableTextField();
   }
 
   bool shouldAlignLabelAndAccessory() const;

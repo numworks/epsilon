@@ -13,16 +13,24 @@ namespace Escher {
 class EditableTextWidget : public CellWidget {
  public:
   void setTextField(TextField* textField) { m_textField = textField; }
+  bool isEditing() const { return m_textField->isEditing(); }
 
   // CellWidget
   const View* view() const override { return m_textField; }
   void setBackgroundColor(KDColor color) override {
     m_textField->setBackgroundColor(color);
   }
-  bool giveAllWidthAsAccessory() const override { return true; }
+  bool isAnEditableTextField() const override { return true; }
   bool alwaysAlignWithLabelAsAccessory() const override { return true; }
   bool preventRightAlignedSubLabel(Type type) const override {
     return type == Type::Accessory;
+  }
+
+  KDCoordinate minimalWidth() const {
+    return Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
+               Poincare::Preferences::ShortNumberOfSignificantDigits + 1) *
+               KDFont::GlyphWidth(m_textField->font()) +
+           TextCursorView::k_width;
   }
 
  private:

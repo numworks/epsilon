@@ -16,6 +16,7 @@ class TemplatedSequenceContext {
  public:
   TemplatedSequenceContext(SequenceContext* sequenceContext);
   void resetCacheOfSequence(int sequenceIndex, bool intermediateComputation);
+  void resetDataOfCurrentComputation();
   void resetCache();
   void stepUntilRank(int n, int sequenceIndex);
   constexpr static bool IsAcceptableRank(int n) {
@@ -46,6 +47,7 @@ class TemplatedSequenceContext {
                         [SequenceStore::k_maxRecurrenceDepth + 1];
 
   bool m_isComputingMainResult;
+  int m_smallestRankBeingComputed[SequenceStore::k_maxNumberOfSequences];
 };
 
 class SequenceContext : public Poincare::ContextWithParent {

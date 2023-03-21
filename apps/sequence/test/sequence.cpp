@@ -642,6 +642,20 @@ QUIZ_CASE(sequence_evaluation) {
   conditions2[0] = "1";
   check_sequences_defined_by(result37, types, definitions, conditions1,
                              conditions2);
+
+  // u(n) = v(n+1), v(n) = u(n+1)
+  double result38[SequenceStore::k_maxNumberOfSequences][10] = {
+      {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
+      {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
+      {}};
+  types[0] = Sequence::Type::Explicit;
+  types[1] = Sequence::Type::Explicit;
+  definitions[0] = "v(n+1)";
+  definitions[1] = "u(n+1)";
+  conditions1[0] = nullptr;
+  conditions2[0] = nullptr;
+  check_sequences_defined_by(result38, types, definitions, conditions1,
+                             conditions2);
 }
 
 QUIZ_CASE(sequence_context) {

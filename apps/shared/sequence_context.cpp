@@ -171,9 +171,16 @@ SequenceContext::expressionTypeForIdentifier(const char *identifier,
                                                                   length);
 }
 
+template <typename T>
+TemplatedSequenceContext<T> *SequenceContext::context() {
+  void *helper = sizeof(T) == sizeof(float) ? (void *)&m_floatSequenceContext
+                                            : (void *)&m_doubleSequenceContext;
+  return static_cast<TemplatedSequenceContext<T> *>(helper);
+}
+
 template class TemplatedSequenceContext<float>;
 template class TemplatedSequenceContext<double>;
-template void *SequenceContext::helper<float>();
-template void *SequenceContext::helper<double>();
+template TemplatedSequenceContext<float> *SequenceContext::context<float>();
+template TemplatedSequenceContext<double> *SequenceContext::context<double>();
 
 }  // namespace Shared

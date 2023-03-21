@@ -76,8 +76,7 @@ class SequenceContext : public Poincare::ContextWithParent {
 
   template <typename T>
   void stepUntilRank(int n, int sequenceIndex) {
-    static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->stepUntilRank(n, sequenceIndex);
+    context<T>()->stepUntilRank(n, sequenceIndex);
   }
 
   SequenceStore* sequenceStore() { return m_sequenceStore; }
@@ -86,25 +85,21 @@ class SequenceContext : public Poincare::ContextWithParent {
 
   template <typename T>
   int rank(int sequenceIndex, bool intermediateComputation) {
-    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->rank(sequenceIndex, intermediateComputation);
+    return context<T>()->rank(sequenceIndex, intermediateComputation);
   }
 
   template <typename T>
   T storedValueOfSequenceAtRank(int sequenceIndex, int rank) {
-    return static_cast<TemplatedSequenceContext<T>*>(helper<T>())
-        ->storedValueOfSequenceAtRank(sequenceIndex, rank);
+    return context<T>()->storedValueOfSequenceAtRank(sequenceIndex, rank);
   }
 
  private:
+  template <typename T>
+  TemplatedSequenceContext<T>* context();
+
   SequenceStore* m_sequenceStore;
   TemplatedSequenceContext<float> m_floatSequenceContext;
   TemplatedSequenceContext<double> m_doubleSequenceContext;
-  template <typename T>
-  void* helper() {
-    return sizeof(T) == sizeof(float) ? (void*)&m_floatSequenceContext
-                                      : (void*)&m_doubleSequenceContext;
-  }
 };
 
 }  // namespace Shared

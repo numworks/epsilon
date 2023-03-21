@@ -79,7 +79,7 @@ CodePoint ContinuousFunctionProperties::symbol() const {
     case SymbolType::Radius:
       return k_radiusSymbol;
     case SymbolType::Index:
-      return k_noSymbol;
+      return k_cartesianSymbol;
     default:
       assert(symbolType() == SymbolType::X);
       return k_cartesianSymbol;

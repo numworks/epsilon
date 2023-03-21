@@ -91,9 +91,6 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
 }
 
 int ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize) {
-  if (properties().isScatterPlot()) {
-    return 0;
-  }
   if (isNamed()) {
     return Function::nameWithArgument(buffer, bufferSize);
   }

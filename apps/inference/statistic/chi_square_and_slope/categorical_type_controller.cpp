@@ -33,10 +33,6 @@ void CategoricalTypeController::stackOpenPage(
   ViewController::stackOpenPage(nextPage);
 }
 
-void CategoricalTypeController::didBecomeFirstResponder() {
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE ||
       event == Ion::Events::Right) {

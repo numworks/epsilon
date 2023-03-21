@@ -23,7 +23,6 @@ class AreaBetweenCurvesParameterController
   void setRecord(Ion::Storage::Record record) { m_mainRecord = record; }
 
   void viewWillAppear() override;
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::ViewController::TitlesDisplay titlesDisplay() override {
     return Escher::ViewController::TitlesDisplay::DisplayLastThreeTitles;

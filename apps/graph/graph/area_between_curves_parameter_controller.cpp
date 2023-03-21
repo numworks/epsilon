@@ -70,13 +70,6 @@ void AreaBetweenCurvesParameterController::viewWillAppear() {
   m_selectableListView.reloadData();
 }
 
-void AreaBetweenCurvesParameterController::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
-    selectCell(0);
-  }
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 void AreaBetweenCurvesParameterController::willDisplayCellForIndex(
     Escher::HighlightCell *cell, int index) {
   ExpiringPointer<ContinuousFunction> function =

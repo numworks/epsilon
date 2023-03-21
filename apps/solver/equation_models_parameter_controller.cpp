@@ -44,10 +44,6 @@ void EquationModelsParameterController::viewWillAppear() {
   selectCell(0);
 }
 
-void EquationModelsParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 bool EquationModelsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record::ErrorStatus error = m_equationStore->addEmptyModel();

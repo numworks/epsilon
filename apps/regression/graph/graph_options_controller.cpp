@@ -65,13 +65,6 @@ const char *GraphOptionsController::title() {
   return Store::SeriesTitle(m_graphController->selectedSeriesIndex());
 }
 
-void GraphOptionsController::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
-    selectCell(0);
-  }
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 void GraphOptionsController::viewWillAppear() {
   m_regressionEquationCell.setVisible(displayRegressionEquationCell());
   m_rCell.setVisible(displayRCell());

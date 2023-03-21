@@ -34,7 +34,8 @@ void FloatParameterController<T>::didBecomeFirstResponder() {
     selRow = selRow >= numberOfRows() ? numberOfRows() - 1 : selRow;
     selectCell(selRow);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
+  SelectableListViewController<
+      MemoizedListViewDataSource>::didBecomeFirstResponder();
 }
 
 template <typename T>

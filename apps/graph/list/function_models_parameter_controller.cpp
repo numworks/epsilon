@@ -60,10 +60,6 @@ void FunctionModelsParameterController::viewWillAppear() {
   m_selectableListView.reloadData();
 }
 
-void FunctionModelsParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 void FunctionModelsParameterController::willDisplayCellForIndex(
     Escher::HighlightCell* cell, int index) {
   if (cell == &m_emptyModelCell) {

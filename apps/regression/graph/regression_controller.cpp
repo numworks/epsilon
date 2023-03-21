@@ -61,7 +61,8 @@ void RegressionController::didBecomeFirstResponder() {
     assert(type == Model::Type::None || type == ModelTypeAtIndex(initialIndex));
   }
   selectCell(initialIndex);
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
+  SelectableListViewController<
+      MemoizedListViewDataSource>::didBecomeFirstResponder();
 }
 
 bool RegressionController::handleEvent(Ion::Events::Event event) {

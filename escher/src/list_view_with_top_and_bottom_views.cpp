@@ -113,16 +113,12 @@ void ListViewWithTopAndBottomViews::listViewDidChangeSelectionAndDidScroll(
     m_list->setContentOffset(KDPointZero);
   } else if (row == m_listDataSource->numberOfRows() - 1 && m_bottomView) {
     setChildFrame(m_list, KDRectZero, false);
-    KDCoordinate topViewHeight =
-        m_topView ? m_topView->minimalSizeForOptimalDisplay().height() -
-                        k_verticalMargin
-                  : 0;
     KDCoordinate bottomViewHeight =
-        m_bottomView->minimalSizeForOptimalDisplay().height() -
+        m_bottomView->minimalSizeForOptimalDisplay().height() +
         k_verticalMargin;
     m_list->setContentOffset(
-        KDPoint(0, m_list->minimalSizeForOptimalDisplay().height() -
-                       bottomViewHeight - topViewHeight));
+        KDPoint(0, m_list->minimalSizeForOptimalDisplay().height() +
+                       bottomViewHeight - bounds().height()));
   }
   layoutSubviews(false);
 }

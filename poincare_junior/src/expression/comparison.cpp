@@ -39,18 +39,17 @@ int Comparison::Compare(const Node node0, const Node node1) {
         return CompareConstants(node0, node1);
       case BlockType::Polynomial:
         return ComparePolynomial(node0, node1);
+#if POINCARE_JUNIOR_BACKWARD_SCAN
       case BlockType::Addition:
       case BlockType::Multiplication:
         return CompareChildren(node0, node1, ScanDirection::Backward);
+#endif
       default:
         return CompareChildren(node0, node1, ScanDirection::Forward);
     }
   } else {
     assert(type0 < type1);
     switch (type0) {
-      case BlockType::Addition:
-      case BlockType::Multiplication:
-        return CompareFirstChild(node0, node1, ScanDirection::Backward);
       case BlockType::Power: {
         int comparisonBase = Compare(node0.childAtIndex(0), node1);
         if (comparisonBase != 0) {
@@ -58,6 +57,11 @@ int Comparison::Compare(const Node node0, const Node node1) {
         }
         return Compare(node0.childAtIndex(1), &OneBlock);
       }
+      case BlockType::Addition:
+      case BlockType::Multiplication:
+#if POINCARE_JUNIOR_BACKWARD_SCAN
+        return CompareFirstChild(node0, node1, ScanDirection::Backward);
+#endif
       case BlockType::Factorial:
         return CompareFirstChild(node0, node1, ScanDirection::Forward);
       default:
@@ -146,7 +150,11 @@ int Comparison::CompareChildren(const Node node0, const Node node1,
   if (direction == ScanDirection::Forward) {
     comparison = PrivateCompareChildren<Forward>(node0, node1);
   } else {
+#if POINCARE_JUNIOR_BACKWARD_SCAN
     comparison = PrivateCompareChildren<Backward>(node0, node1);
+#else
+    assert(false);
+#endif
   }
   if (comparison) {
     return comparison;

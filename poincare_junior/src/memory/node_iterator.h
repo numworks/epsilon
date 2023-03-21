@@ -10,6 +10,13 @@
 
 namespace PoincareJ {
 
+#if POINCARE_JUNIOR_BACKWARD_SCAN
+/* Backward edition has issues with the offset being unreliable as the node is
+ * edited. In addition, we try to reduce our usage of previousTree and most
+ * Backward scan are currently unnecessary.
+ * TODO: Fix Backward scan if needed, delete otherwise. */
+#endif
+
 /* Usage
  *
  * Iterate backwards through on node's children:
@@ -229,6 +236,7 @@ class MultipleNodesIterator {
     int offset() const { return 1; }
   };
 
+#if POINCARE_JUNIOR_BACKWARD_SCAN
   class BackwardPolicy {
    protected:
     template <size_t N>
@@ -248,6 +256,7 @@ class MultipleNodesIterator {
 
     int offset() const { return -1; }
   };
+#endif
 };
 
 class NodeIterator : public MultipleNodesIterator {
@@ -301,7 +310,9 @@ class NodeIterator : public MultipleNodesIterator {
 };
 
 typedef MultipleNodesIterator::ForwardPolicy Forward;
+#if POINCARE_JUNIOR_BACKWARD_SCAN
 typedef MultipleNodesIterator::BackwardPolicy Backward;
+#endif
 typedef MultipleNodesIterator::NoEditablePolicy NoEditable;
 typedef MultipleNodesIterator::EditablePolicy Editable;
 

@@ -40,8 +40,8 @@ void CategoricalTypeController::stackOpenPage(
 }
 
 bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE ||
-      event == Ion::Events::Right) {
+  // enterOnEvent can be called on any cell with chevron
+  if (cellAtIndex(0)->enterOnEvent(event)) {
     Escher::ViewController* controller = nullptr;
     CategoricalType type;
     switch (selectedRow()) {

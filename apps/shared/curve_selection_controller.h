@@ -54,8 +54,11 @@ class CurveSelectionController
 
   void viewWillAppear() override { m_selectableListView.reloadData(); }
   bool handleEvent(Ion::Events::Event event) override;
+  int typeAtIndex(int index) const override { return k_curveSelectionCellType; }
+  CurveSelectionCellWithChevron *reusableCell(int index, int type) override = 0;
 
  protected:
+  constexpr static int k_curveSelectionCellType = 0;
   InteractiveCurveViewController *m_graphController;
 };
 

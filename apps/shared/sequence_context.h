@@ -12,7 +12,7 @@ namespace Shared {
 class Sequence;
 
 template <typename T>
-class TemplatedSequenceContext {
+class TemplatedSequenceContext : public Poincare::ContextWithParent {
  public:
   TemplatedSequenceContext(SequenceContext* sequenceContext);
   void resetCacheOfSequence(int sequenceIndex, bool intermediateComputation);
@@ -33,6 +33,9 @@ class TemplatedSequenceContext {
  private:
   constexpr static int k_maxRecurrentRank = 10000;
   void stepToNextRank(int sequenceIndex, bool intermediateComputation);
+  const Poincare::Expression protectedExpressionForSymbolAbstract(
+      const Poincare::SymbolAbstract& symbol, bool clone,
+      ContextWithParent* lastDescendantContext) override;
 
   SequenceContext* m_sequenceContext;
 
@@ -93,10 +96,10 @@ class SequenceContext : public Poincare::ContextWithParent {
     return context<T>()->storedValueOfSequenceAtRank(sequenceIndex, rank);
   }
 
- private:
   template <typename T>
   TemplatedSequenceContext<T>* context();
 
+ private:
   SequenceStore* m_sequenceStore;
   TemplatedSequenceContext<float> m_floatSequenceContext;
   TemplatedSequenceContext<double> m_doubleSequenceContext;

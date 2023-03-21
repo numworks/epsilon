@@ -33,35 +33,32 @@ const char *ScriptParameterController::title() {
 }
 
 bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    Script s = m_script;
-    switch (selectedRow()) {
-      case 0:
-        dismissScriptParameterController();
-        m_menuController->openConsoleWithScript(s);
-        return true;
-      case 1:
-        dismissScriptParameterController();
-        m_menuController->renameSelectedScript();
-        return true;
-      case 2:
-        m_script.toggleAutoImportation();
-        resetMemoization();
-        m_selectableListView.reloadData();
-        m_menuController->reloadConsole();
-        Container::activeApp()->setFirstResponder(&m_selectableListView);
-        return true;
-      case 3:
-        dismissScriptParameterController();
-        m_menuController->deleteScript(s);
-        m_menuController->reloadConsole();
-        return true;
-      default:
-        assert(false);
-        return false;
-    }
+  int index = selectedRow();
+  int type = typeAtIndex(index);
+  AbstractMenuCell *cell = reusableCell(index, type);
+  if (!cell->enterOnEvent(event)) {
+    return false;
   }
-  return false;
+  Script s = m_script;
+  if (cell == &m_executeScript) {
+    dismissScriptParameterController();
+    m_menuController->openConsoleWithScript(s);
+  } else if (cell == &m_renameScript) {
+    dismissScriptParameterController();
+    m_menuController->renameSelectedScript();
+  } else if (cell == &m_autoImportScript) {
+    m_script.toggleAutoImportation();
+    resetMemoization();
+    m_selectableListView.reloadData();
+    m_menuController->reloadConsole();
+    Container::activeApp()->setFirstResponder(&m_selectableListView);
+  } else {
+    assert(cell == &m_deleteScript);
+    dismissScriptParameterController();
+    m_menuController->deleteScript(s);
+    m_menuController->reloadConsole();
+  }
+  return true;
 }
 
 void ScriptParameterController::viewWillAppear() {
@@ -77,10 +74,10 @@ void ScriptParameterController::didBecomeFirstResponder() {
       MemoizedListViewDataSource>::didBecomeFirstResponder();
 }
 
-HighlightCell *ScriptParameterController::reusableCell(int index, int type) {
+AbstractMenuCell *ScriptParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  HighlightCell *cells[k_totalNumberOfCell] = {
+  AbstractMenuCell *cells[k_totalNumberOfCell] = {
       &m_executeScript, &m_renameScript, &m_autoImportScript, &m_deleteScript};
   return cells[index];
 }

@@ -44,9 +44,10 @@ void StoreParameterController::initializeColumnParameters() {
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   int type = typeAtIndex(selectedRow());
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
-      (type == k_displayCumulatedFrequencyCellType ||
-       type == k_hideCumulatedFrequencyCellType)) {
+  if ((type == k_displayCumulatedFrequencyCellType &&
+       m_displayCumulatedFrequencyCell.enterOnEvent(event)) ||
+      (type == k_hideCumulatedFrequencyCellType &&
+       m_hideCumulatedFrequencyCell.enterOnEvent(event))) {
     bool previousStatus = m_store->displayCumulatedFrequenciesForSeries(
         m_storeColumnHelper->selectedSeries());
     m_store->setDisplayCumulatedFrequenciesForSeries(
@@ -82,8 +83,8 @@ int StoreParameterController::typeAtIndex(int index) const {
   return Shared::StoreParameterController::typeAtIndex(index);
 }
 
-Escher::HighlightCell* StoreParameterController::reusableCell(int index,
-                                                              int type) {
+Escher::AbstractMenuCell* StoreParameterController::reusableCell(int index,
+                                                                 int type) {
   assert(index >= 0 && index < numberOfRows());
   switch (type) {
     case k_displayCumulatedFrequencyCellType:

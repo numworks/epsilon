@@ -32,7 +32,7 @@ class ScriptParameterController : public Escher::SelectableListViewController<
   TELEMETRY_ID("ScriptParameter");
 
   /* MemoizedListViewDataSource */
-  Escher::HighlightCell* reusableCell(int index, int type) override;
+  Escher::AbstractMenuCell* reusableCell(int index, int type) override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 

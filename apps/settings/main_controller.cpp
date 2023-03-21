@@ -81,13 +81,10 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     return false;
   }
 
-  if (type == k_popUpCellType) {
-    if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-      globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
-      m_selectableListView.reloadCell(m_selectableListView.selectedRow());
-      return true;
-    }
-    return false;
+  if (type == k_popUpCellType && m_popUpCell.enterOnEvent(event)) {
+    globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
+    m_selectableListView.reloadCell(m_selectableListView.selectedRow());
+    return true;
   }
 
   if (type == k_brightnessCellType &&

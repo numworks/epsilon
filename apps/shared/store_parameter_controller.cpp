@@ -29,47 +29,40 @@ void StoreParameterController::initializeColumnParameters() {
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
-  if (event != Ion::Events::OK && event != Ion::Events::EXE) {
-    return false;
-  }
   int index = selectedRow();
   int type = typeAtIndex(index);
-  switch (type) {
-    case k_sortCellType: {
-      m_storeColumnHelper->sortSelectedColumn();
-      stackView()->pop();
-      break;
+  AbstractMenuCell* cell = reusableCell(index, type);
+  if (!cell->enterOnEvent(event)) {
+    return false;
+  }
+  if (type == k_sortCellType) {
+    m_storeColumnHelper->sortSelectedColumn();
+    stackView()->pop();
+  } else if (type == k_fillFormulaCellType) {
+    stackView()->pop();
+    m_storeColumnHelper->displayFormulaInput();
+    return true;
+  } else if (type == k_hideCellType) {
+    bool canSwitchHideStatus =
+        m_storeColumnHelper->switchSelectedColumnHideStatus();
+    if (!canSwitchHideStatus) {
+      Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
+    } else {
+      m_selectableListView.reloadCell(index);
     }
-    case k_fillFormulaCellType: {
-      stackView()->pop();
-      m_storeColumnHelper->displayFormulaInput();
-      break;
-    }
-    case k_hideCellType: {
-      bool canSwitchHideStatus =
-          m_storeColumnHelper->switchSelectedColumnHideStatus();
-      if (!canSwitchHideStatus) {
-        Container::activeApp()->displayWarning(I18n::Message::DataNotSuitable);
-      } else {
-        m_selectableListView.reloadCell(index);
-      }
-      break;
-    }
-    default: {
-      assert(type == k_clearCellType);
-      stackView()->pop();
-      m_storeColumnHelper->clearColumnHelper()
-          ->presentClearSelectedColumnPopupIfClearable();
-      break;
-    }
+  } else {
+    assert(type == k_clearCellType);
+    stackView()->pop();
+    m_storeColumnHelper->clearColumnHelper()
+        ->presentClearSelectedColumnPopupIfClearable();
   }
   return true;
 }
 
-HighlightCell* StoreParameterController::reusableCell(int index, int type) {
+AbstractMenuCell* StoreParameterController::reusableCell(int index, int type) {
   assert(type >= 0 && type < k_numberOfCells);
-  HighlightCell* reusableCells[k_numberOfCells] = {&m_sortCell, &m_fillFormula,
-                                                   &m_hideCell, &m_clearColumn};
+  AbstractMenuCell* reusableCells[k_numberOfCells] = {
+      &m_sortCell, &m_fillFormula, &m_hideCell, &m_clearColumn};
   return reusableCells[type];
 }
 

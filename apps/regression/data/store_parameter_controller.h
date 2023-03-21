@@ -21,7 +21,7 @@ class StoreParameterController : public Shared::StoreParameterController {
     return Shared::StoreParameterController::numberOfRows() + 1;
   }
   int typeAtIndex(int index) const override;
-  Escher::HighlightCell* reusableCell(int index, int type) override;
+  Escher::AbstractMenuCell* reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 
  private:

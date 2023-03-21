@@ -12,35 +12,39 @@ void Init() {}
 
 void Shutdown() {
 #if POINCARE_POOL_VISUALIZATION
-  CloseCacheLogger();
+  CloseLogger(LoggerType::Cache);
+  CloseLogger(LoggerType::Edition);
 #endif
 }
 
 #if POINCARE_POOL_VISUALIZATION
-static bool s_forceClosed = false;
+static bool s_forceClosed[static_cast<int>(LoggerType::NumberOfLoggers)] = {false, false};
 
-std::ofstream& CacheLogger() {
-  static std::ofstream s_cacheLogger;
-  if (s_forceClosed) {
-    s_cacheLogger = std::ofstream("/dev/null");
+std::ofstream& Logger(LoggerType type) {
+  static std::ofstream s_loggerFiles[static_cast<int>(LoggerType::NumberOfLoggers)];
+  int indexOfType = static_cast<int>(type);
+  std::ofstream &file = s_loggerFiles[indexOfType];
+  if (s_forceClosed[indexOfType]) {
+    file = std::ofstream("/dev/null");
   }
-  if (!s_cacheLogger.is_open()) {
+  if (!file.is_open()) {
     std::filesystem::create_directories("./output/logs");
-    s_cacheLogger.open("./output/logs/cache.xml", std::ofstream::out | std::ofstream::trunc);
-    s_cacheLogger << "<?xml version=\"1.0\"?>\n<Data>\n";
+    const char * fileName = type == LoggerType::Cache ? "./output/logs/cache.xml" : "./output/logs/edition.xml";
+    file.open(fileName, std::ofstream::out | std::ofstream::trunc);
+    file << "<?xml version=\"1.0\"?>\n<Data>\n";
   }
-  assert(s_cacheLogger.is_open());
-  return s_cacheLogger;
+  assert(file.is_open());
+  return file;
 }
 
-void ResetCacheLogger() {
-  CacheLogger().close();
+void ResetLogger(LoggerType type) {
+  Logger(type).close();
 }
 
-void CloseCacheLogger() {
-  CacheLogger() << "</Data>" << std::endl;
-  CacheLogger().close();
-  s_forceClosed = true;
+void CloseLogger(LoggerType type) {
+  Logger(type) << "</Data>" << std::endl;
+  Logger(type).close();
+  s_forceClosed[static_cast<int>(type)] = true;
 }
 
 #endif

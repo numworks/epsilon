@@ -11,9 +11,17 @@ void Init();
 void Shutdown();
 
 #if POINCARE_POOL_VISUALIZATION
-std::ofstream& CacheLogger();
-__attribute__((__used__)) void ResetCacheLogger();
-__attribute__((__used__)) void CloseCacheLogger();
+
+enum class LoggerType {
+  Cache = 0,
+  Edition = 1,
+  NumberOfLoggers
+};
+
+std::ofstream& Logger(LoggerType type);
+__attribute__((__used__)) void ResetLogger(LoggerType type);
+__attribute__((__used__)) void CloseLogger(LoggerType type);
+
 #endif
 
 #if POINCARE_MEMORY_TREE_LOG

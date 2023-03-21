@@ -25,10 +25,10 @@ uint16_t CachePool::ReferenceTable::storeNode(Node node) {
   }
   uint16_t indexOfNode = Pool::ReferenceTable::storeNodeAtIndex(node, m_length);
 #if POINCARE_POOL_VISUALIZATION
-  CacheLogger() << "  <Add address=\"" << node.block() << "\">\n";
-  CachePool::sharedCachePool()->log(CacheLogger(), Pool::LogFormat::Tree, true,
+  Logger(LoggerType::Cache) << "  <Add address=\"" << node.block() << "\">\n";
+  CachePool::sharedCachePool()->log(Logger(LoggerType::Cache), Pool::LogFormat::Tree, true,
                                     2);
-  CacheLogger() << "\n  </Add>" << std::endl;
+  Logger(LoggerType::Cache) << "\n  </Add>" << std::endl;
 #endif
   return idForIndex(indexOfNode);
 }
@@ -83,11 +83,11 @@ void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex,
   static_cast<CachePool *>(m_pool)->translate(numberOfFreedBlocks,
                                               cachePoolSize);
 #if POINCARE_POOL_VISUALIZATION
-  CacheLogger() << "  <Remove numberOfBlocks=\"" << numberOfFreedBlocks
+  Logger(LoggerType::Cache) << "  <Remove numberOfBlocks=\"" << numberOfFreedBlocks
                 << "\">\n";
-  CachePool::sharedCachePool()->log(CacheLogger(), Pool::LogFormat::Tree, true,
+  CachePool::sharedCachePool()->log(Logger(LoggerType::Cache), Pool::LogFormat::Tree, true,
                                     2);
-  CacheLogger() << "\n  </Remove>" << std::endl;
+  Logger(LoggerType::Cache) << "\n  </Remove>" << std::endl;
 #endif
 }
 
@@ -125,10 +125,10 @@ void CachePool::reset() {
   m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks);
   m_editionPool.flush();
 #if POINCARE_POOL_VISUALIZATION
-  CacheLogger() << "  <Reset>\n";
-  CachePool::sharedCachePool()->log(CacheLogger(), Pool::LogFormat::Tree, true,
+  Logger(LoggerType::Cache) << "  <Reset>\n";
+  CachePool::sharedCachePool()->log(Logger(LoggerType::Cache), Pool::LogFormat::Tree, true,
                                     2);
-  CacheLogger() << "\n  </Reset>" << std::endl;
+  Logger(LoggerType::Cache) << "\n  </Reset>" << std::endl;
 #endif
 }
 

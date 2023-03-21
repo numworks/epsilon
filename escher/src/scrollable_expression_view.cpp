@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <escher/menu_cell.h>
 #include <escher/metric.h>
 #include <escher/scrollable_expression_view.h>
 #include <poincare/layout.h>
@@ -36,6 +37,12 @@ void ScrollableExpressionView::setBackgroundColor(KDColor backgroundColor) {
 void ScrollableExpressionView::setExpressionBackgroundColor(
     KDColor backgroundColor) {
   m_expressionView.setBackgroundColor(backgroundColor);
+}
+
+void ScrollableExpressionView::setHighlighted(bool highlighted) {
+  m_expressionView.setHighlighted(highlighted);
+  ScrollableView::setBackgroundColor(
+      AbstractMenuCell::BackgroundColor(highlighted));
 }
 
 }  // namespace Escher

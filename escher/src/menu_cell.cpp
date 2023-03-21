@@ -8,7 +8,7 @@ namespace Escher {
 AbstractMenuCell::AbstractMenuCell() : Bordered(), HighlightCell() {}
 
 void AbstractMenuCell::drawRect(KDContext *ctx, KDRect rect) const {
-  KDColor backColor = isHighlighted() ? Palette::Select : k_backgroundColor;
+  KDColor backColor = BackgroundColor(isHighlighted());
   drawInnerRect(ctx, bounds(), backColor);
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }
@@ -54,10 +54,9 @@ Responder *AbstractMenuCell::responder() {
 
 void AbstractMenuCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
-  KDColor bckgrnd = highlight ? Palette::Select : k_backgroundColor;
-  label()->setBackgroundColor(bckgrnd);
-  subLabel()->setBackgroundColor(bckgrnd);
-  accessory()->setBackgroundColor(bckgrnd);
+  label()->setHighlighted(highlight);
+  subLabel()->setHighlighted(highlight);
+  accessory()->setHighlighted(highlight);
 }
 
 int AbstractMenuCell::numberOfSubviews() const {

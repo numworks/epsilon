@@ -35,6 +35,7 @@ class ScrollableExpressionView
   void defaultInitialization(CellWidget::Type type) override {
     m_expressionView.defaultInitialization(type);
   }
+  void setHighlighted(bool highlighted) override;
 
  private:
   ExpressionView m_expressionView;

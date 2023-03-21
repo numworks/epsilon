@@ -1,4 +1,5 @@
 #include <escher/gauge_view.h>
+#include <escher/menu_cell.h>
 #include <escher/palette.h>
 
 namespace Escher {
@@ -30,9 +31,10 @@ void GaugeView::setLevel(float level) {
   }
 }
 
-void GaugeView::setBackgroundColor(KDColor color) {
-  if (m_backgroundColor != color) {
-    m_backgroundColor = color;
+void GaugeView::setHighlighted(bool highlighted) {
+  KDColor backgroundColor = AbstractMenuCell::BackgroundColor(highlighted);
+  if (m_backgroundColor != backgroundColor) {
+    m_backgroundColor = backgroundColor;
     markRectAsDirty(bounds());
   }
 }

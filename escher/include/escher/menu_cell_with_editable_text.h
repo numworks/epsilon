@@ -17,8 +17,9 @@ class EditableTextWidget : public CellWidget {
 
   // CellWidget
   const View* view() const override { return m_textField; }
-  void setBackgroundColor(KDColor color) override {
-    m_textField->setBackgroundColor(color);
+  void setHighlighted(bool highlighted) override {
+    m_textField->setBackgroundColor(
+        AbstractMenuCell::BackgroundColor(highlighted));
   }
   bool isAnEditableTextField() const override { return true; }
   bool alwaysAlignWithLabelAsAccessory() const override { return true; }

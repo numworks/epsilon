@@ -17,7 +17,7 @@ class GaugeView : public TransparentView, public CellWidget {
 
   // CellWidget
   const View* view() const override { return this; }
-  void setBackgroundColor(KDColor color) override;
+  void setHighlighted(bool highlighted) override;
 
  private:
   constexpr static KDCoordinate k_thickness = 2;

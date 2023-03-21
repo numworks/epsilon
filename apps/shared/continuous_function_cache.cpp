@@ -100,7 +100,7 @@ void ContinuousFunctionCache::ComputeNonCartesianSteps(float *tStep,
 // private
 void ContinuousFunctionCache::invalidateBetween(int iInf, int iSup) {
   for (int i = iInf; i < iSup; i++) {
-    m_cache[i] = OMG::SignalingNan();
+    m_cache[i] = OMG::SignalingNan<float>();
   }
 }
 

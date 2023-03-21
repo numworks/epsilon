@@ -28,10 +28,10 @@ class EditionReference {
             static_cast<Node>(*this) != static_cast<Node>(t));
   }
 
-  bool isUninitialized() const {
-    return m_identifier == EditionPool::ReferenceTable::NoNodeIdentifier;
-  }
   operator const Node() const;
+  bool isUninitialized() const {
+    return static_cast<Node>(*this).isUninitialized();
+  }
   TypeBlock* block() { return static_cast<Node>(*this).block(); }
   BlockType type() const { return static_cast<Node>(*this).type(); }
 

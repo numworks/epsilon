@@ -7,13 +7,17 @@ using namespace Escher;
 
 namespace Code {
 
-constexpr KDColor SubtitleCell::k_backgroundColor;
-constexpr KDColor SubtitleCell::k_textColor;
+SubtitleCell::SubtitleCell()
+    : Bordered(),
+      HighlightCell(),
+      m_textView({{.glyphColor = k_textColor,
+                   .backgroundColor = k_backgroundColor,
+                   .font = KDFont::Size::Small}}) {}
 
-SubtitleCell::SubtitleCell() : MenuCell<BufferTextView>() {
-  label()->setGlyphFormat(KDGlyph::Format{.glyphColor = k_textColor,
-                                          .backgroundColor = k_backgroundColor,
-                                          .font = KDFont::Size::Small});
+void SubtitleCell::drawRect(KDContext *ctx, KDRect rect) const {
+  KDColor backColor = isHighlighted() ? Palette::Select : k_backgroundColor;
+  drawInnerRect(ctx, bounds(), backColor);
+  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }
 
 void SubtitleCell::layoutSubviews(bool force) {
@@ -33,7 +37,7 @@ void SubtitleCell::layoutSubviews(bool force) {
 
   assert(width > 0 && height > 0);
 
-  setChildFrame(label(), KDRect(x, y, width, height), force);
+  setChildFrame(&m_textView, KDRect(x, y, width, height), force);
 }
 
 }  // namespace Code

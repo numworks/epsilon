@@ -27,7 +27,6 @@ app_shared_test_src = $(addprefix apps/shared/,\
   plot_view_cursors.cpp \
   plot_view_plots.cpp \
   sequence.cpp \
-  intermediate_sequence_context.cpp \
   sequence_context.cpp \
   sequence_store.cpp \
   toolbox_helpers.cpp \
@@ -82,7 +81,6 @@ app_shared_src = $(addprefix apps/shared/,\
   scrollable_multiple_expressions_view.cpp \
   scrollable_two_expressions_cell.cpp \
   sequence.cpp \
-  intermediate_sequence_context.cpp \
   sequence_context.cpp \
   sequence_store.cpp \
   shared_app.cpp \

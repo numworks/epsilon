@@ -18,7 +18,7 @@
 #include <cmath>
 
 #include "../shared/poincare_helpers.h"
-#include "intermediate_sequence_context.h"
+#include "sequence_context.h"
 #include "sequence_store.h"
 
 using namespace Poincare;
@@ -281,12 +281,12 @@ T Sequence::approximateAtContextRank(SequenceContext *sqctx,
     }
   }
 
-  IntermediateSequenceContext<T> ctx = IntermediateSequenceContext<T>(sqctx);
   // Update angle unit and complex format
   Preferences preferences =
       Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));
+
   return PoincareHelpers::ApproximateWithValueForSymbol(
-      e, k_unknownName, x, &ctx, &preferences, false);
+      e, k_unknownName, x, sqctx->context<T>(), &preferences, false);
 }
 
 Expression Sequence::sumBetweenBounds(double start, double end,

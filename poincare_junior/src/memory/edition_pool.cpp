@@ -146,9 +146,9 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
   m_referenceTable.updateNodes(
       [](uint16_t *offset, Block *testedBlock, const Block *address,
          const Block *block, int numberOfBlocks) {
-        if (testedBlock > address) {
+        if (testedBlock >= address + numberOfBlocks) {
           *offset -= numberOfBlocks;
-        } else if (testedBlock == address) {
+        } else if (testedBlock >= address) {
           *offset = ReferenceTable::UninitializedOffset;
         }
       },

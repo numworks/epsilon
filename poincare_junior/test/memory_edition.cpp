@@ -149,10 +149,15 @@ QUIZ_CASE(pcj_edition_reference) {
   reference0.replaceTreeByNode(12_e);
   assert_pool_contains(editionPool, {k_expression0, 10_e, k_expression1,
                                      k_expression1, 12_e, 10_e, 9_e});
+
+  EditionReference subReference1(reference1.childAtIndex(0).childAtIndex(1));
+  assert_trees_are_equal(subReference1, k_subExpression1);
+
   EditionReference reference8(k_expression0);
   reference1.replaceTreeByTree(reference8);
   assert_pool_contains(editionPool, {k_expression0, 10_e, k_expression0,
                                      k_expression1, 12_e, 10_e, 9_e});
+  quiz_assert(subReference1.isUninitialized());
 
   // Removals
   reference0.removeNode();

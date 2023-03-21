@@ -128,6 +128,10 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
               discontinuityEvaluation);
     return;
   }
+  if (f->properties().isScatterPlot()) {
+    drawScatterPlot(ctx, rect, f.operator->());
+    return;
+  }
   assert(f->properties().isParametric() || f->properties().isInversePolar());
   drawFunction(ctx, rect, f.operator->(), tCacheMin, tmax, tStepNonCartesian,
                discontinuityEvaluation);
@@ -477,6 +481,18 @@ void GraphView::drawFunction(KDContext *ctx, KDRect rect, ContinuousFunction *f,
   plot.draw(this, ctx, rect);
 }
 
+void GraphView::drawScatterPlot(KDContext *ctx, KDRect rect,
+                                ContinuousFunction *f) const {
+  // TODO Handle limiting tMax and tMin ?
+  for (Point p : f->iterateScatterPlot(context())) {
+    drawDot(ctx, rect, k_dotSize,
+            p.approximate2D<float>(
+                context(), Preferences::sharedPreferences->complexFormat(),
+                Preferences::sharedPreferences->angleUnit()),
+            f->color());
+  }
+}
+
 void GraphView::resumePointsOfInterestDrawing() {
   m_computePointsOfInterest = true;
   m_interestView.dirtyBounds();
@@ -554,7 +570,6 @@ void GraphView::drawPointsOfInterest(KDContext *ctx, KDRect rect) {
     Coordinate2D<float> dotCoordinates =
         static_cast<Coordinate2D<float>>(p.xy());
 
-    constexpr static Shared::Dots::Size k_dotSize = Shared::Dots::Size::Tiny;
     KDRect rectForDot = dotRect(k_dotSize, dotCoordinates);
     // If the dot intersects the dirty rect, force the redraw
     if (!rectForDot.intersects(dirtyRect()) && wasAlreadyDrawn) {

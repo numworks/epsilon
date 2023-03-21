@@ -69,15 +69,19 @@ class List : public Expression {
   friend class ListNode;
 
  public:
-  List() : Expression() {}
-  List(const ListNode* n) : Expression(n) {}
   static List Builder() { return TreeHandle::NAryBuilder<List, ListNode>(); }
   static Expression Ones(int length);
+
+  List() : Expression() {}
+  List(const ListNode* n) : Expression(n) {}
+
+  using TreeHandle::addChildAtIndexInPlace;
+  using TreeHandle::removeChildAtIndexInPlace;
+
   ListNode* node() const { return static_cast<ListNode*>(Expression::node()); }
   Expression extremum(const ReductionContext& reductionContext, bool minimum);
   Expression shallowReduce(ReductionContext reductionContext);
-  using TreeHandle::addChildAtIndexInPlace;
-  using TreeHandle::removeChildAtIndexInPlace;
+  bool isListOfPoints(Context* context) const;
 };
 
 }  // namespace Poincare

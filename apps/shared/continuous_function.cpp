@@ -91,6 +91,9 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
 }
 
 int ContinuousFunction::nameWithArgument(char *buffer, size_t bufferSize) {
+  if (properties().isScatterPlot()) {
+    return 0;
+  }
   if (isNamed()) {
     return Function::nameWithArgument(buffer, bufferSize);
   }
@@ -111,8 +114,10 @@ int ContinuousFunction::printValue(double cursorT, double cursorX,
     /* With Vertical curves, cursorT != cursorX .
      * We need the value for symbol=... */
     return PoincareHelpers::ConvertFloatToText<double>(
-        thisProperties.isCartesian() ? cursorX : cursorT, buffer, bufferSize,
-        precision);
+        thisProperties.isCartesian() || thisProperties.isScatterPlot()
+            ? cursorX
+            : cursorT,
+        buffer, bufferSize, precision);
   }
 
   if (thisProperties.isParametric()) {
@@ -383,14 +388,16 @@ float ContinuousFunction::rangeStep() const {
 template <typename T>
 Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
     T t, Context *context, int subCurveIndex) const {
+  ContinuousFunctionProperties thisProperties = properties();
   Coordinate2D<T> x1x2 =
       templatedApproximateAtParameter(t, context, subCurveIndex);
-  if (properties().isParametric() || properties().isCartesian()) {
+  if (thisProperties.isParametric() || thisProperties.isCartesian() ||
+      thisProperties.isScatterPlot()) {
     return x1x2;
   }
-  assert(properties().isPolar() || properties().isInversePolar());
-  const T r = properties().isPolar() ? x1x2.y() : x1x2.x();
-  const T angle = (properties().isPolar() ? x1x2.x() : x1x2.y()) * M_PI /
+  assert(thisProperties.isPolar() || thisProperties.isInversePolar());
+  const T r = thisProperties.isPolar() ? x1x2.y() : x1x2.x();
+  const T angle = (thisProperties.isPolar() ? x1x2.x() : x1x2.y()) * M_PI /
                   Trigonometry::PiInAngleUnit(
                       Poincare::Preferences::sharedPreferences->angleUnit());
   return Coordinate2D<T>(r * std::cos(angle), r * std::sin(angle));
@@ -405,6 +412,32 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   Expression e = expressionReduced(context);
   Preferences preferences =
       Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(context));
+
+  if (properties().isScatterPlot()) {
+    Expression point;
+    if (e.type() == ExpressionNode::Type::Point) {
+      if (t != static_cast<T>(0.)) {
+        return Coordinate2D<T>();
+      }
+      point = e;
+    } else {
+      assert(e.type() == ExpressionNode::Type::List);
+      int tInt = t;
+      if (static_cast<T>(tInt) != t || tInt < 0 ||
+          tInt >= e.numberOfChildren()) {
+        return Coordinate2D<T>();
+      }
+      point = point = e.childAtIndex(tInt);
+    }
+    assert(!point.isUninitialized() &&
+           point.type() == ExpressionNode::Type::Point);
+    return Coordinate2D<T>(
+        PoincareHelpers::ApproximateToScalar<T>(e.childAtIndex(0), context,
+                                                &preferences, false),
+        PoincareHelpers::ApproximateToScalar<T>(e.childAtIndex(0), context,
+                                                &preferences, false));
+  }
+
   if (!properties().isParametric()) {
     if (numberOfSubCurves() >= 2) {
       assert(e.numberOfChildren() > subCurveIndex);
@@ -448,7 +481,8 @@ Expression ContinuousFunction::Model::expressionReduced(
   if (m_expression.isUninitialized()) {
     // Retrieve the expression equation's expression.
     m_expression = expressionReducedForAnalysis(record, context);
-    if (properties().status() !=
+    ContinuousFunctionProperties thisProperties = properties();
+    if (thisProperties.status() !=
         ContinuousFunctionProperties::Status::Enabled) {
       m_expression = Undefined::Builder();
       return m_expression;
@@ -457,7 +491,8 @@ Expression ContinuousFunction::Model::expressionReduced(
         complexFormat(record, context));
     /* Polar, inversePolar and cartesian equations are unnamed. Here
      * only cartesian equations are processed. */
-    if (!properties().isPolar() && !properties().isInversePolar() &&
+    if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
+        !thisProperties.isScatterPlot() &&
         (record->fullName() == nullptr ||
          record->fullName()[0] == k_unnamedRecordFirstChar)) {
       /* Function isn't named, m_expression currently is an expression in y or x
@@ -603,8 +638,8 @@ Expression ContinuousFunction::Model::originalEquation(
       Symbol::SystemSymbol(), Symbol::Builder(symbol));
 }
 
-bool isValidNamedLeftExpression(const Expression e,
-                                ComparisonNode::OperatorType equationType) {
+static bool isValidNamedLeftExpression(
+    const Expression e, ComparisonNode::OperatorType equationType) {
   /* Examples of valid named expression : f(x)= or f(x)< or f(t)=
    * Examples of invalid named expression : cos(x)= or f(θ)< or f(t)<  */
   if (e.type() != ExpressionNode::Type::Function ||
@@ -631,10 +666,21 @@ Expression ContinuousFunction::Model::expressionEquation(
   ContinuousFunctionProperties::SymbolType tempFunctionSymbol =
       ContinuousFunctionProperties::k_defaultSymbolType;
   ComparisonNode::OperatorType equationType;
-  if (!ComparisonNode::IsBinaryComparison(result, &equationType) ||
-      equationType == ComparisonNode::OperatorType::NotEqual) {
+  if (!ComparisonNode::IsBinaryComparison(result, &equationType)) {
+    if (result.type() == ExpressionNode::Type::Point ||
+        (result.type() == ExpressionNode::Type::List &&
+         static_cast<List &>(result).isListOfPoints(context))) {
+      if (computedFunctionSymbol) {
+        *computedFunctionSymbol =
+            ContinuousFunctionProperties::SymbolType::Index;
+      }
+      return result;
+    }
     /* Happens when the input text is too long and "f(x)=" can't be inserted
      * or when inputting amiguous equations like "x+y>2>y" */
+    return Undefined::Builder();
+  }
+  if (equationType == ComparisonNode::OperatorType::NotEqual) {
     return Undefined::Builder();
   }
   if (computedEquationType) {

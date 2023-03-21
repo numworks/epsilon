@@ -1,5 +1,7 @@
 #include "sequence_context.h"
 
+#include <omg/signaling_nan.h>
+
 #include <array>
 #include <cmath>
 
@@ -32,7 +34,7 @@ void TemplatedSequenceContext<T>::resetCacheOfSequence(
   T *ptr = values + sequenceIndex * (SequenceStore::k_maxRecurrenceDepth + 1);
   for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
        depth++) {
-    *(ptr + depth) = static_cast<T>(NAN);
+    *(ptr + depth) = OMG::SignalingNan<T>();
   }
 }
 
@@ -56,13 +58,13 @@ T TemplatedSequenceContext<T>::storedValueOfSequenceAtRank(int sequenceIndex,
       if (0 <= offset && offset < SequenceStore::k_maxRecurrenceDepth + 1) {
         T storedValue = loop == 0 ? m_mainValues[sequenceIndex][offset]
                                   : m_intermediateValues[sequenceIndex][offset];
-        if (!std::isnan(storedValue)) {
+        if (!OMG::IsSignalingNan(storedValue)) {
           return storedValue;
         }
       }
     }
   }
-  return static_cast<T>(NAN);
+  return OMG::SignalingNan<T>();
 }
 
 template <typename T>
@@ -109,13 +111,13 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex,
   (*currentRank)++;
 
   // Then we shift the values stored in the arrays : {u(n), u(n-1), u(n-2)}
-  // becomes {NaN, u(n), u(n-1)}. If rank was -1, all values are NAN, then no
-  // need to shift.
+  // becomes {SignalingNan, u(n), u(n-1)}. If rank was -1, all values are
+  // SignalingNan, then no need to shift.
   if (*currentRank > 0) {
     for (int depth = SequenceStore::k_maxRecurrenceDepth; depth > 0; depth--) {
       *(values + depth) = *(values + depth - 1);
     }
-    *values = NAN;
+    *values = OMG::SignalingNan<T>();
   }
 
   // We approximate the value at new rank
@@ -125,7 +127,7 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex,
   Sequence *s = sequenceStore->modelForRecord(record);
   assert(s->isDefined());
   T otherCacheValue = storedValueOfSequenceAtRank(sequenceIndex, *currentRank);
-  if (!std::isnan(otherCacheValue)) {
+  if (!OMG::IsSignalingNan(otherCacheValue)) {
     // If the other cache already knows this value, use it
     *values = otherCacheValue;
   } else {

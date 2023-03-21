@@ -27,27 +27,8 @@ class ContinuousFunctionCache {
   // Sets step parameters for non-cartesian curves
   static void ComputeNonCartesianSteps(float* tStep, float* tCacheStep,
                                        float tMax, float tMin);
-  // Signaling NAN, indicating a default cache value. See comment on k_sNAN
-  static bool IsSignalingNan(float f) { return IntFloat{.f = f}.i == k_sNAN.i; }
-  static float SignalingNan() { return k_sNAN.f; }
 
  private:
-  /* Default value indicates the cache value has been cleared and should be
-   * re-computed. TODO: Move this logic in Poincare if it is useful elsewhere */
-  union IntFloat {
-    int i;
-    float f;
-  };
-#if __EMSCRIPTEN__
-  /* Emscripten cannot represent a NaN literal with custom bit pattern in
-   * NaN-canonicalizing JS engines. We use a magic number instead. */
-  constexpr static IntFloat k_sNAN = IntFloat{.f = -1.7014118346e+38};
-#else
-  /* We can't use a regular quiet NAN as it can often be an actual function
-   * value. Using an union, we create a signaling NAN instead.
-   * 0x7fa00000 corresponds to std::numeric_limits<float>::signaling_NaN() */
-  constexpr static IntFloat k_sNAN = IntFloat{.i = 0x7fa00000};
-#endif
   /* The size of the cache is chosen to optimize the display of cartesian
    * functions */
   constexpr static int k_sizeOfCache = Ion::Display::Width;

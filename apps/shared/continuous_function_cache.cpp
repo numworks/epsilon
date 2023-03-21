@@ -1,6 +1,7 @@
 #include "continuous_function_cache.h"
 
 #include <limits.h>
+#include <omg/signaling_nan.h>
 
 #include "continuous_function.h"
 
@@ -99,7 +100,7 @@ void ContinuousFunctionCache::ComputeNonCartesianSteps(float *tStep,
 // private
 void ContinuousFunctionCache::invalidateBetween(int iInf, int iSup) {
   for (int i = iInf; i < iSup; i++) {
-    m_cache[i] = SignalingNan();
+    m_cache[i] = OMG::SignalingNan();
   }
 }
 
@@ -135,13 +136,14 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(
     int i, int curveIndex) {
   assert(curveIndex == 0);
   if (function->properties().isCartesian()) {
-    if (IsSignalingNan(m_cache[i])) {
+    if (OMG::IsSignalingNan(m_cache[i])) {
       m_cache[i] =
           function->privateEvaluateXYAtParameter(t, context, curveIndex).y();
     }
     return Poincare::Coordinate2D<float>(t, m_cache[i]);
   }
-  if (IsSignalingNan(m_cache[2 * i]) || IsSignalingNan(m_cache[2 * i + 1])) {
+  if (OMG::IsSignalingNan(m_cache[2 * i]) ||
+      OMG::IsSignalingNan(m_cache[2 * i + 1])) {
     Poincare::Coordinate2D<float> res =
         function->privateEvaluateXYAtParameter(t, context, curveIndex);
     m_cache[2 * i] = res.x();

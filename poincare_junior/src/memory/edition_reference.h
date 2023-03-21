@@ -18,7 +18,7 @@ class EditionReference {
 
   template <BlockType blockType, typename... Types>
   static EditionReference Push(Types... args);
-  static EditionReference Clone(const Node node);
+  static EditionReference Clone(const Node node, bool isTree = true);
 
   /* Comparison */
   inline bool operator==(const EditionReference& t) const {

@@ -46,8 +46,8 @@ EditionReference EditionReference::Push(Types... args) {
   return EditionReference(Node(newNode));
 }
 
-EditionReference EditionReference::Clone(const Node node) {
-  return EditionReference(EditionPool::sharedEditionPool()->initFromTree(node));
+EditionReference EditionReference::Clone(const Node node, bool isTree) {
+  return EditionReference(EditionPool::sharedEditionPool()->initFromAddress(static_cast<const void *>(node.block()), isTree));
 }
 
 EditionReference::operator const Node() const {

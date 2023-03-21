@@ -195,8 +195,9 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
 #endif
 }
 
-Node EditionPool::initFromAddress(const void *address) {
-  size_t size = Node(reinterpret_cast<const TypeBlock *>(address)).treeSize();
+Node EditionPool::initFromAddress(const void *address, bool isTree) {
+  Node node = Node(reinterpret_cast<const TypeBlock *>(address));
+  size_t size = isTree ? node.treeSize() : node.nodeSize();
   if (!checkForEnoughSpace(size)) {
     return Node();
   }

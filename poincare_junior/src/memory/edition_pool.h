@@ -46,7 +46,7 @@ class EditionPool final : public Pool {
   Node initFromTree(const Node node) {
     return initFromAddress(static_cast<const void *>(node.block()));
   }
-  Node initFromAddress(const void *address);
+  Node initFromAddress(const void *address, bool isTree = true);
 
   using Pool::firstBlock;
   const TypeBlock *firstBlock() const override { return m_firstBlock; }

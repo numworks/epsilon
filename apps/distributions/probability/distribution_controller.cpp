@@ -38,10 +38,6 @@ void DistributionController::stackOpenPage(Escher::ViewController *nextPage) {
   ViewController::stackOpenPage(nextPage);
 }
 
-void DistributionController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 bool DistributionController::handleEvent(Ion::Events::Event event) {
   StackViewController *stack = (StackViewController *)parentResponder();
   if (event == Ion::Events::OK || event == Ion::Events::EXE ||

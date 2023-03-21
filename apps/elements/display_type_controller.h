@@ -16,9 +16,6 @@ class DisplayTypeController : public Escher::SelectableListViewController<
 
   // Escher::Responder
   bool handleEvent(Ion::Events::Event e) override;
-  void didBecomeFirstResponder() override {
-    Escher::Container::activeApp()->setFirstResponder(&m_selectableListView);
-  }
 
   // Escher::ViewController
   const char *title() override {

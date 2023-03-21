@@ -32,7 +32,6 @@ class GraphOptionsController
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void fillCell(Escher::HighlightCell* cell) override;
 

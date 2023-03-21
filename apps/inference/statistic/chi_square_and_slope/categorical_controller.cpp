@@ -24,11 +24,10 @@ CategoricalController::CategoricalController(Responder *parent,
 
 void CategoricalController::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
-    selectRow(0);
     categoricalTableCell()->selectableTableView()->setContentOffset(
         KDPointZero);
   }
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
+  SelectableListViewController<ListViewDataSource>::didBecomeFirstResponder();
 }
 
 bool CategoricalController::handleEvent(Ion::Events::Event event) {

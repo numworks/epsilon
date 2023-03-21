@@ -17,10 +17,6 @@ const char *IntervalParameterSelectorController::title() {
   return I18n::translate(I18n::Message::IntervalSet);
 }
 
-void IntervalParameterSelectorController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 bool IntervalParameterSelectorController::handleEvent(
     Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE ||

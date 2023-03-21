@@ -24,7 +24,6 @@ class DistributionController : public Escher::SelectableListViewController<
   Escher::View* view() override { return &m_contentView; }
   void stackOpenPage(Escher::ViewController* nextPage) override;
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
   int numberOfRows() const override { return k_totalNumberOfModels; }
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   Escher::HighlightCell* reusableCell(int index) override;

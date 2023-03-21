@@ -46,7 +46,8 @@ void TestController::stackOpenPage(Escher::ViewController *nextPage) {
 }
 
 void TestController::didBecomeFirstResponder() {
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableListView);
+  SelectableListViewController<
+      MemoizedListViewDataSource>::didBecomeFirstResponder();
   resetMemoization();
   m_selectableListView.reloadData();
 }

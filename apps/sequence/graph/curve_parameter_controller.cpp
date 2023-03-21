@@ -35,10 +35,6 @@ void CurveParameterController::setRecord(Ion::Storage::Record record) {
   resetMemoization();
 }
 
-void CurveParameterController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 void CurveParameterController::viewWillAppear() {
   if (selectedRow() < 0 || !selectedCell()->isVisible()) {
     selectCell(0);

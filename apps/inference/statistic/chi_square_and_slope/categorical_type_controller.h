@@ -33,7 +33,6 @@ class CategoricalTypeController
     return I18n::translate(I18n::Message::CategoricalTypeControllerTitle);
   }
   void stackOpenPage(Escher::ViewController* nextPage) override;
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
   constexpr static int k_indexOfGoodnessCell = 0;

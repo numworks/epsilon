@@ -19,7 +19,6 @@ class DetailsParameterController : public Escher::SelectableListViewController<
  public:
   DetailsParameterController(Escher::Responder* parentResponder);
 
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController

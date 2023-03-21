@@ -65,13 +65,6 @@ void CalculationParameterController::viewWillAppear() {
   m_selectableListView.reloadData();
 }
 
-void CalculationParameterController::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
-    m_selectableListView.selectCell(0);
-  }
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 template <class T>
 void CalculationParameterController::push(T *controller, bool pop) {
   StackViewController *stack =

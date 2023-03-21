@@ -71,7 +71,8 @@ void ScriptParameterController::viewWillAppear() {
 
 void ScriptParameterController::didBecomeFirstResponder() {
   selectCell(0);
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
+  SelectableListViewController<
+      MemoizedListViewDataSource>::didBecomeFirstResponder();
 }
 
 HighlightCell *ScriptParameterController::reusableCell(int index, int type) {

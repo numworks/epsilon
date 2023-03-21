@@ -93,7 +93,7 @@ int InputController::typeAtIndex(int i) const {
 
 void InputController::didBecomeFirstResponder() {
   selectCell(0);
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableListView);
+  Shared::FloatParameterController<double>::didBecomeFirstResponder();
 }
 
 void InputController::buttonAction() {

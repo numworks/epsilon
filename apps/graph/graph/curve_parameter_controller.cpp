@@ -63,13 +63,6 @@ const char *CurveParameterController::title() {
   return m_title;
 }
 
-void CurveParameterController::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
-    selectCell(0);
-  }
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-}
-
 void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell,
                                                        int index) {
   I18n::Message name = I18n::Message::Default;

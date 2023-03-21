@@ -22,7 +22,6 @@ class CurveParameterController
   const char* title() override;
   TELEMETRY_ID("CurveParameter");
   void viewWillAppear() override;
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record) override;
   int numberOfRows() const override { return k_numberOfRows; };

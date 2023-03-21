@@ -37,7 +37,7 @@ PatternMatching::Context PatternMatching::Match(const Node pattern, Node source,
 
 EditionReference PatternMatching::Create(const Node structure,
                                          const Context context) {
-  EditionReference top(EditionPool::sharedEditionPool()->lastBlock());
+  Node top = EditionPool::sharedEditionPool()->lastBlock();
   // TODO introduce a DFS iterator in node_iterator and use it here
   Pool::Nodes nodes = Pool::Nodes(
       structure.block(), structure.nextTree().block() - structure.block());
@@ -52,5 +52,5 @@ EditionReference PatternMatching::Create(const Node structure,
       }
     }
   }
-  return top;
+  return EditionReference(top);
 }

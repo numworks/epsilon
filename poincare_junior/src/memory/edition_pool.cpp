@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <omgpj.h>
+#include <poincare_junior/include/poincare.h>
 
 #include <algorithm>
 
@@ -38,11 +39,6 @@ uint16_t EditionPool::ReferenceTable::storeNode(Node node) {
   }
 };
 
-void EditionPool::reinit(TypeBlock *firstBlock, size_t size) {
-  m_firstBlock = firstBlock;
-  m_size = size;
-}
-
 void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
                                               Block *contextSelection1,
                                               Block *contextSelection2,
@@ -64,6 +60,11 @@ EditionPool *EditionPool::sharedEditionPool() {
   return CachePool::sharedCachePool()->editionPool();
 }
 
+void EditionPool::reinit(TypeBlock *firstBlock, size_t size) {
+  m_firstBlock = firstBlock;
+  m_size = size;
+}
+
 uint16_t EditionPool::referenceNode(Node node) {
   return m_referenceTable.storeNode(node);
 }
@@ -71,6 +72,12 @@ uint16_t EditionPool::referenceNode(Node node) {
 void EditionPool::flush() {
   m_numberOfBlocks = 0;
   m_referenceTable.reset();
+#if POINCARE_POOL_VISUALIZATION
+  Logger(LoggerType::Edition) << "  <Flush>\n";
+  CachePool::sharedCachePool()->log(Logger(LoggerType::Edition),
+                                    Pool::LogFormat::Tree, true, 2);
+  Logger(LoggerType::Edition) << "\n  </Flush>" << std::endl;
+#endif
 }
 
 bool EditionPool::executeAndDump(ActionWithContext action, void *context,
@@ -93,23 +100,20 @@ int EditionPool::executeAndCache(ActionWithContext action, void *context,
   return CachePool::sharedCachePool()->storeEditedTree();
 }
 
-Block *EditionPool::pushBlock(Block block) {
-  if (!checkForEnoughSpace(1)) {
-    return nullptr;
-  }
-  assert(m_numberOfBlocks < m_size);
-  *static_cast<Block *>(lastBlock()) = block;
-  m_numberOfBlocks++;
-  return lastBlock() - 1;
-}
-
-void EditionPool::popBlock() {
-  assert(m_numberOfBlocks > 0);
-  m_numberOfBlocks--;
-}
-
 void EditionPool::replaceBlock(Block *previousBlock, Block newBlock) {
-  *previousBlock = newBlock;
+  replaceBlocks(previousBlock, &newBlock, 1);
+}
+
+void EditionPool::replaceBlocks(Block *destination, const Block *source,
+                                size_t numberOfBlocks) {
+  memcpy(destination, source, numberOfBlocks * sizeof(Block));
+#if POINCARE_POOL_VISUALIZATION
+  Logger(LoggerType::Edition) << "  <Replace address=\"" << destination
+                              << "\" size=\"" << numberOfBlocks << "\">\n";
+  CachePool::sharedCachePool()->log(Logger(LoggerType::Edition),
+                                    Pool::LogFormat::Tree, true, 2);
+  Logger(LoggerType::Edition) << "\n  </Replace>" << std::endl;
+#endif
 }
 
 bool EditionPool::insertBlocks(Block *destination, Block *source,
@@ -130,10 +134,18 @@ bool EditionPool::insertBlocks(Block *destination, Block *source,
         }
       },
       destination, nullptr, numberOfBlocks);
+#if POINCARE_POOL_VISUALIZATION
+  Logger(LoggerType::Edition) << "  <Insert address=\"" << destination
+                              << "\" size=\"" << numberOfBlocks << "\">\n";
+  CachePool::sharedCachePool()->log(Logger(LoggerType::Edition),
+                                    Pool::LogFormat::Tree, true, 2);
+  Logger(LoggerType::Edition) << "\n  </Insert>" << std::endl;
+#endif
   return true;
 }
 
 void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
+  assert(m_numberOfBlocks >= numberOfBlocks);
   int deletionSize = numberOfBlocks * sizeof(Block);
   m_numberOfBlocks -= numberOfBlocks;
   memmove(address, address + deletionSize,
@@ -148,6 +160,13 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
         }
       },
       address, nullptr, numberOfBlocks);
+#if POINCARE_POOL_VISUALIZATION
+  Logger(LoggerType::Edition) << "  <Remove address=\"" << address
+                              << "\" size=\"" << numberOfBlocks << "\">\n";
+  CachePool::sharedCachePool()->log(Logger(LoggerType::Edition),
+                                    Pool::LogFormat::Tree, true, 2);
+  Logger(LoggerType::Edition) << "\n  </Remove>" << std::endl;
+#endif
 }
 
 void EditionPool::moveBlocks(Block *destination, Block *source,
@@ -167,6 +186,13 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
         }
       },
       destination, source, numberOfBlocks);
+#if POINCARE_POOL_VISUALIZATION
+  Logger(LoggerType::Edition) << "  <Move address=\"" << destination
+                              << "\" size=\"" << numberOfBlocks << "\">\n";
+  CachePool::sharedCachePool()->log(Logger(LoggerType::Edition),
+                                    Pool::LogFormat::Tree, true, 2);
+  Logger(LoggerType::Edition) << "\n  </Move>" << std::endl;
+#endif
 }
 
 Node EditionPool::initFromAddress(const void *address) {
@@ -175,8 +201,9 @@ Node EditionPool::initFromAddress(const void *address) {
     return Node();
   }
   TypeBlock *copiedTree = lastBlock();
-  memcpy(copiedTree, address, size * sizeof(Block));
   m_numberOfBlocks += size;
+  replaceBlocks(copiedTree, static_cast<const Block *>(address),
+                size * sizeof(Block));
   return Node(copiedTree);
 }
 

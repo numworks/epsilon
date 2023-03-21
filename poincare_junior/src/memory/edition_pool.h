@@ -29,13 +29,17 @@ class EditionPool final : public Pool {
   int executeAndCache(ActionWithContext action, void *context, const void *data,
                       Relax relax = k_defaultRelax);
 
-  Block *pushBlock(Block block);
-  void popBlock();
   void replaceBlock(Block *previousBlock, Block newBlock);
+  void replaceBlocks(Block *destination, const Block *newBlocks,
+                     size_t numberOfBlocks);
+  Block *pushBlock(Block block) {
+    return insertBlock(lastBlock(), block) ? lastBlock() - 1 : nullptr;
+  }
   bool insertBlock(Block *destination, Block block) {
     return insertBlocks(destination, &block, 1);
   }
   bool insertBlocks(Block *destination, Block *source, size_t numberOfBlocks);
+  void popBlock() { removeBlocks(lastBlock() - 1, 1); }
   void removeBlocks(Block *address, size_t numberOfBlocks);
   void moveBlocks(Block *destination, Block *source, size_t numberOfBlocks);
 

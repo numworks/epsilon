@@ -103,7 +103,7 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
                        oldSize);
   } else {
     size_t minSize = std::min(oldSize, newSize);
-    memcpy(oldBlock, newBlock, minSize);
+    pool->replaceBlocks(oldBlock, newBlock, minSize);
     if (oldSize > newSize) {
       pool->removeBlocks(oldBlock + minSize, oldSize - newSize);
     } else {

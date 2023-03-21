@@ -386,6 +386,10 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
                                        bool ignoreMargins) {
   ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
+  if (function->properties().isScatterPlot()) {
+    // TODO Scan the plot to find a point on screen
+    return 0.;
+  }
   if (function->properties().isCartesian()) {
     return FunctionGraphController::defaultCursorT(record, ignoreMargins);
   }

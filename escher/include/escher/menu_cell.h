@@ -74,6 +74,8 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   constexpr static KDCoordinate k_innerVerticalMargin =
       Metric::CellVerticalElementMargin;
 
+  constexpr static KDColor k_backgroundColor = KDColorWhite;
+
   AbstractMenuCell();
 
   // View
@@ -117,7 +119,6 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
     accessory()->defaultInitialization(CellWidget::Type::Accessory);
   }
 
-  virtual KDColor backgroundColor() const { return KDColorWhite; }
   bool forceAlignLabelAndAccessory() const {
     return constAccessory()->alwaysAlignWithLabelAsAccessory();
   }

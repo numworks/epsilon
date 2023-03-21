@@ -14,10 +14,11 @@ class ScatterPlotIterable {
 
   class Iterator {
    public:
-    Iterator(Poincare::List list, int i) : m_index(i), m_list(list) {}
+    Iterator(Poincare::Expression expression, int i)
+        : m_index(i), m_expression(expression) {}
 
     bool operator!=(const Iterator& other) const {
-      assert(m_list == other.m_list);
+      assert(m_expression == other.m_expression);
       return m_index != other.m_index;
     }
     Iterator& operator++() {
@@ -25,33 +26,40 @@ class ScatterPlotIterable {
       return *this;
     }
     Poincare::Point operator*() const {
-      assert(m_index < m_list.numberOfChildren());
-      Poincare::Expression e = m_list.childAtIndex(m_index);
+      assert(m_index < listLength(m_expression));
+      Poincare::Expression e =
+          m_expression.type() == Poincare::ExpressionNode::Type::List
+              ? m_expression.childAtIndex(m_index)
+              : m_expression;
       assert(e.type() == Poincare::ExpressionNode::Type::Point);
       return static_cast<Poincare::Point&>(e);
     }
 
    private:
     int m_index;
-    Poincare::List m_list;
+    Poincare::Expression m_expression;
   };
 
  public:
-  Iterator begin() const { return Iterator(m_list, 0); }
-  Iterator end() const { return Iterator(m_list, m_list.numberOfChildren()); }
-
- private:
-  ScatterPlotIterable(Poincare::Expression e) {
-    if (e.type() == Poincare::ExpressionNode::Type::List) {
-      m_list = static_cast<Poincare::List&>(e);
-    } else {
-      m_list = Poincare::List::Builder();
-      m_list.addChildAtIndexInPlace(e, 0, 0);
-    }
-    assert(m_list.isListOfPoints(nullptr));
+  Iterator begin() const { return Iterator(m_expression, 0); }
+  Iterator end() const {
+    return Iterator(m_expression, listLength(m_expression));
   }
 
-  Poincare::List m_list;
+ private:
+  ScatterPlotIterable(Poincare::Expression e) : m_expression(e) {
+    assert(e.type() == Poincare::ExpressionNode::Type::Point ||
+           (e.type() == Poincare::ExpressionNode::Type::List &&
+            static_cast<Poincare::List&>(e).isListOfPoints(nullptr)));
+  }
+
+  static int listLength(const Poincare::Expression& e) {
+    return e.type() == Poincare::ExpressionNode::Type::List
+               ? e.numberOfChildren()
+               : 1;
+  }
+
+  Poincare::Expression m_expression;
 };
 
 }  // namespace Shared

@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include "../../apps_container.h"
+#include "press_to_test_success.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -46,6 +47,12 @@ PressToTestController::PressToTestController(Responder *parentResponder)
             return true;
           },
           this)) {
+  for (int i = 0; i < k_numberOfReusableSwitchCells; i++) {
+    m_switchCells[i].accessory()->setDisplayImage(false);
+    m_switchCells[i].accessory()->imageView()->setImage(
+        ImageStore::PressToTestSuccess);
+    m_switchCells[i].accessory()->imageView()->setBackgroundColor(KDColorWhite);
+  }
   resetController();
 }
 
@@ -148,8 +155,9 @@ void PressToTestController::setMessages() {
 
 bool PressToTestController::handleEvent(Ion::Events::Event event) {
   int row = selectedRow();
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
-      typeAtIndex(row) == k_switchCellType &&
+  if (typeAtIndex(row) == k_switchCellType &&
+      static_cast<PressToTestSwitch *>(m_selectableListView.cell(row))
+          ->enterOnEvent(event) &&
       !Preferences::sharedPreferences->examMode().isActive()) {
     assert(row >= 0 && row < k_numberOfSwitchCells);
     setParamAtIndex(row, !getParamAtIndex(row));

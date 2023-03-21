@@ -16,11 +16,21 @@ class AlternateSwitchAndImage : public Escher::CellWidget {
   Escher::TransparentImageView* imageView() { return &m_image; }
 
   // CellWidget
-  const Escher::View* view() const override;
+  const Escher::View* view() const override {
+    return m_displayImage
+               ? (m_switch.state() ? static_cast<const Escher::View*>(&m_image)
+                                   : nullptr)
+               : static_cast<const Escher::View*>(&m_switch);
+  }
   void setHighlighted(bool highlighted) override {
     m_switch.setHighlighted(highlighted);
     m_image.setBackgroundColor(
         Escher::AbstractMenuCell::BackgroundColor(highlighted));
+  }
+  bool enterOnEvent(Ion::Events::Event event) const override {
+    return view() == &m_switch
+               ? m_switch.enterOnEvent(event)
+               : (view() == &m_image ? m_image.enterOnEvent(event) : false);
   }
 
  private:
@@ -29,12 +39,9 @@ class AlternateSwitchAndImage : public Escher::CellWidget {
   bool m_displayImage;
 };
 
-class PressToTestSwitch
-    : public Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
-                              AlternateSwitchAndImage> {
- public:
-  PressToTestSwitch(I18n::Message message = (I18n::Message)0);
-};
+using PressToTestSwitch =
+    Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                     AlternateSwitchAndImage>;
 
 }  // namespace Settings
 

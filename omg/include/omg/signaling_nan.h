@@ -15,19 +15,32 @@ union IntFloat {
   float f;
 };
 
+union IntDouble {
+  uint64_t i;
+  double d;
+};
+
 #if __EMSCRIPTEN__
 /* Emscripten cannot represent a NaN literal with custom bit pattern in
  * NaN-canonicalizing JS engines. We use a magic number instead. */
 constexpr static IntFloat k_sNanFloat = IntFloat{.f = -1.7014118346e+38};
+constexpr static IntDouble k_sNanDouble = IntDouble{.d = -1.7014118346e+38};
 #else
-/* 0x7fa00000 corresponds to std::numeric_limits<float>::signaling_NaN() */
+/* 0x7fa00000 corresponds to std::numeric_limits<float>::signaling_NaN()
+ * 0x7ff4000000000000 corresponds to
+ * std::numeric_limits<double>::signaling_NaN() */
 constexpr static IntFloat k_sNanFloat = IntFloat{.i = 0x7fa00000};
+constexpr static IntDouble k_sNanDouble = IntDouble{.i = 0x7ff4000000000000};
 #endif
 
-static bool IsSignalingNan(float f) {
+constexpr static bool IsSignalingNan(float f) {
   return IntFloat{.f = f}.i == k_sNanFloat.i;
 }
-static float SignalingNan() { return k_sNanFloat.f; }
+constexpr static bool IsSignalingNan(double d) {
+  return IntDouble{.d = d}.i == k_sNanDouble.i;
+}
+template <typename T>
+T SignalingNan();
 
 }  // namespace OMG
 

@@ -2,6 +2,7 @@
 #define ESCHER_GLYPHS_VIEW_H
 
 #include <escher/cell_widget.h>
+#include <escher/menu_cell.h>
 #include <escher/palette.h>
 #include <escher/view.h>
 
@@ -19,11 +20,14 @@ class GlyphsView : public View, public CellWidget {
   void setGlyphFormat(KDGlyph::Format format);
   void setFont(KDFont::Size font);
   void setTextColor(KDColor textColor);
+  void setBackgroundColor(KDColor backgroundColor);
   void setAlignment(float horizontalAlignment, float verticalAlignment);
 
   // CellWidget
   const View* view() const override { return this; }
-  void setBackgroundColor(KDColor backgroundColor) override;
+  void setHighlighted(bool highlighted) override {
+    setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
+  }
   bool alwaysAlignWithLabelAsAccessory() const override { return true; }
   bool preventRightAlignedSubLabel(Type type) const override {
     return type == Type::Accessory;

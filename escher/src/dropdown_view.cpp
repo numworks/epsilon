@@ -2,6 +2,7 @@
 #include <escher/container.h>
 #include <escher/dropdown_view.h>
 #include <escher/image/caret.h>
+#include <escher/menu_cell.h>
 #include <escher/palette.h>
 
 #include <algorithm>
@@ -18,7 +19,7 @@ void PopupItemView::setHighlighted(bool highlighted) {
   if (m_cell) {
     m_cell->setHighlighted(highlighted);
   }
-  m_caret.setBackgroundColor(highlighted ? Palette::Select : KDColorWhite);
+  m_caret.setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
   HighlightCell::setHighlighted(highlighted);
 }
 

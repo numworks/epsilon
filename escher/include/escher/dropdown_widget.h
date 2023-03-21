@@ -14,8 +14,8 @@ class DropdownWidget : public CellWidget {
   // CellWidget
   const View* view() const override { return m_dropdown; }
   Responder* responder() override { return m_dropdown; }
-  void setBackgroundColor(KDColor color) override {
-    m_dropdown->setHighlighted(color == Palette::Select);
+  void setHighlighted(bool highlighted) override {
+    m_dropdown->setHighlighted(highlighted);
   }
   bool alwaysAlignWithLabelAsAccessory() const override { return true; }
   bool preventRightAlignedSubLabel(Type type) const override {

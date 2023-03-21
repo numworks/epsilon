@@ -3,6 +3,7 @@
 
 #include "cell_widget.h"
 #include "image_view.h"
+#include "menu_cell.h"
 
 namespace Escher {
 
@@ -10,12 +11,15 @@ class TransparentImageView : public ImageView, public CellWidget {
  public:
   const View* view() const override { return this; }
   KDColor backgroundColor() const { return m_backgroundColor; }
-  void setBackgroundColor(KDColor backgroundColor) override {
+  void setBackgroundColor(KDColor backgroundColor) {
     m_backgroundColor = backgroundColor;
   }
   void drawRect(KDContext* ctx, KDRect rect) const override;
   bool preventRightAlignedSubLabel(Type type) const override {
     return type == Type::Label;
+  }
+  void setHighlighted(bool highlighted) override {
+    setBackgroundColor(AbstractMenuCell::BackgroundColor(highlighted));
   }
 
  private:

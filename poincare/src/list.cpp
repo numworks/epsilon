@@ -193,6 +193,18 @@ Expression List::extremum(const ReductionContext& reductionContext,
   return childAtIndex(extremumIndex);
 }
 
+bool List::isListOfPoints(Context* context) const {
+  int n = numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    Expression e = childAtIndex(i);
+    if (e.type() != ExpressionNode::Type::Point) {
+      return false;
+    }
+    // TODO Replace variables in context
+  }
+  return true;
+}
+
 template Evaluation<float> ListNode::templatedApproximate(
     const ApproximationContext& approximationContext) const;
 template Evaluation<double> ListNode::templatedApproximate(

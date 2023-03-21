@@ -74,40 +74,31 @@ MainController::MainController(
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences *globalPreferences =
       GlobalPreferences::sharedGlobalPreferences;
-  int type = typeAtIndex(selectedRow());
-
+  int index = selectedRow();
+  int type = typeAtIndex(index);
   if (type == k_resetCellType) {
-    // Needed for event == Ion::Events::Right when the Reset button is selected
+    // Escape now since ButtonCell is not a MenuCell
     return false;
   }
 
-  if (type == k_popUpCellType && m_popUpCell.enterOnEvent(event)) {
+  AbstractMenuCell *cell =
+      static_cast<AbstractMenuCell *>(m_selectableListView.cell(index));
+  if (!cell->enterOnEvent(event)) {
+    return false;
+  }
+
+  if (type == k_popUpCellType) {
     globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
     m_selectableListView.reloadCell(m_selectableListView.selectedRow());
-    return true;
-  }
-
-  if (type == k_brightnessCellType &&
-      (event == Ion::Events::Left || event == Ion::Events::Right ||
-       event == Ion::Events::Minus || event == Ion::Events::Plus)) {
+  } else if (type == k_brightnessCellType) {
     int delta = Ion::Backlight::MaxBrightness /
                 GlobalPreferences::NumberOfBrightnessStates;
-    int direction = (event == Ion::Events::Right || event == Ion::Events::Plus)
-                        ? delta
-                        : -delta;
+    assert(GaugeView::DirectionForEvent(event) != 0);
     globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel() +
-                                          direction);
+                                          GaugeView::DirectionForEvent(event) *
+                                              delta);
     m_selectableListView.reloadCell(m_selectableListView.selectedRow());
-    return true;
-  }
-
-  if (event == Ion::Events::OK || event == Ion::Events::EXE ||
-      event == Ion::Events::Right) {
-    if (type == k_brightnessCellType) {
-      /* Nothing is supposed to happen when OK or EXE are pressed on the
-       * brightness cell. The case of pressing Right has been handled above. */
-      return true;
-    }
+  } else {
     assert(type == k_defaultCellType);
     int modelIndex = getModelIndex(selectedRow());
     I18n::Message selectedMessage = messageAtModelIndex(modelIndex);
@@ -118,10 +109,8 @@ bool MainController::handleEvent(Ion::Events::Event event) {
       m_localizationController.setMode(LocalizationController::Mode::Country);
     }
     pushModel(model()->childAtIndex(modelIndex));
-    return true;
   }
-
-  return false;
+  return true;
 }
 
 void MainController::pushModel(const Escher::MessageTree *messageTreeModel) {

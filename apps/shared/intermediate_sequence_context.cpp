@@ -17,12 +17,8 @@ namespace Shared {
 
 template <typename T>
 IntermediateSequenceContext<T>::IntermediateSequenceContext(
-    SequenceContext *sequenceContext, int sequenceBeingComputed,
-    bool intermediateComputation)
-    : ContextWithParent(sequenceContext),
-      m_sequenceContext(sequenceContext),
-      m_sequenceBeingComputed(sequenceBeingComputed),
-      m_intermediateComputation(intermediateComputation) {}
+    SequenceContext *sequenceContext)
+    : ContextWithParent(sequenceContext), m_sequenceContext(sequenceContext) {}
 
 template <typename T>
 const Expression

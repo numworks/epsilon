@@ -4,6 +4,9 @@
 #if POINCARE_POOL_VISUALIZATION
 #include <fstream>
 #endif
+#if POINCARE_MEMORY_TREE_LOG
+#include <iostream>
+#endif
 
 namespace PoincareJ {
 

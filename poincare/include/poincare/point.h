@@ -1,7 +1,7 @@
 #ifndef POINCARE_POINT_H
 #define POINCARE_POINT_H
 
-#include <poincare/coordinate_2d.h>
+#include <poincare/coordinate_2D.h>
 #include <poincare/expression.h>
 
 namespace Poincare {
@@ -44,6 +44,7 @@ class PointNode : public ExpressionNode {
 };
 
 class Point : public ExpressionTwoChildren<Point, PointNode> {
+ public:
   using ExpressionBuilder::ExpressionBuilder;
 
   Expression shallowReduce(ReductionContext reductionContext);

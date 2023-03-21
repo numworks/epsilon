@@ -12,17 +12,6 @@ namespace Shared {
 class ScatterPlotIterable {
   friend class ContinuousFunction;
 
- protected:
-  ScatterPlotIterable(Poincare::Expression e) {
-    if (e.type() == Poincare::ExpressionNode::Type::List) {
-      m_list = static_cast<Poincare::List&>(e);
-    } else {
-      m_list = Poincare::List::Builder();
-      m_list.addChildAtIndexInPlace(e, 0, 0);
-    }
-    assert(m_list.isListOfPoints(nullptr));
-  }
-
   class Iterator {
    public:
     Iterator(Poincare::List list, int i) : m_index(i), m_list(list) {}
@@ -47,8 +36,20 @@ class ScatterPlotIterable {
     Poincare::List m_list;
   };
 
+ public:
   Iterator begin() const { return Iterator(m_list, 0); }
   Iterator end() const { return Iterator(m_list, m_list.numberOfChildren()); }
+
+ private:
+  ScatterPlotIterable(Poincare::Expression e) {
+    if (e.type() == Poincare::ExpressionNode::Type::List) {
+      m_list = static_cast<Poincare::List&>(e);
+    } else {
+      m_list = Poincare::List::Builder();
+      m_list.addChildAtIndexInPlace(e, 0, 0);
+    }
+    assert(m_list.isListOfPoints(nullptr));
+  }
 
   Poincare::List m_list;
 };

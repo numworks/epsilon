@@ -169,6 +169,12 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
       // Fit the zoom to the range of x(t) and y(t)
       zoom.fitPoint(Coordinate2D<float>(ranges[0].max(), ranges[1].max()));
       zoom.fitPoint(Coordinate2D<float>(ranges[0].min(), ranges[1].min()));
+    } else if (f->properties().isScatterPlot()) {
+      for (Point p : f->iterateScatterPlot(context)) {
+        zoom.fitPoint(p.approximate2D<float>(
+            context, Preferences::sharedPreferences->complexFormat(),
+            Preferences::sharedPreferences->angleUnit()));
+      }
     } else {
       assert(f->properties().isCartesian());
       bool alongY = f->isAlongY();

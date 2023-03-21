@@ -75,8 +75,8 @@ T TemplatedSequenceContext<T>::storedValueOfSequenceAtRank(int sequenceIndex,
 }
 
 template <typename T>
-void TemplatedSequenceContext<T>::stepUntilRank(int n, int sequenceIndex) {
-  assert(IsAcceptableRank(n));
+void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
+  assert(IsAcceptableRank(rank));
   bool intermediateComputation = m_isComputingMainResult;
   m_isComputingMainResult = true;
 
@@ -88,10 +88,10 @@ void TemplatedSequenceContext<T>::stepUntilRank(int n, int sequenceIndex) {
   // If current rank is superior to n, we need to start computing back the
   // recurrence from the initial rank and step until rank n. Otherwise, we can
   // start at the current rank and step until rank n.
-  if (*currentRank > n) {
+  if (*currentRank > rank) {
     resetCacheOfSequence(sequenceIndex, intermediateComputation);
   }
-  while (*currentRank < n) {
+  while (*currentRank < rank) {
     stepToNextRank(sequenceIndex, intermediateComputation);
   }
   if (!intermediateComputation) {

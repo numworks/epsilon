@@ -156,10 +156,4 @@ QUIZ_CASE(graph_caching) {
   Preferences::sharedPreferences->setAngleUnit(previousAngleUnit);
 }
 
-QUIZ_CASE(graph_caching_signaling_nan) {
-  quiz_assert(ContinuousFunctionCache::IsSignalingNan(
-      ContinuousFunctionCache::SignalingNan()));
-  quiz_assert(!ContinuousFunctionCache::IsSignalingNan(NAN));
-}
-
 }  // namespace Graph

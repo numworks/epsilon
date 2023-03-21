@@ -22,8 +22,8 @@ std::ofstream& CacheLogger() {
   static std::ofstream s_cacheLogger;
   if (!s_cacheLogger.is_open()) {
     std::filesystem::create_directories("./output/logs");
-    s_cacheLogger.open("./output/logs/cache.log");
-    s_cacheLogger << "<?xml version=\"1.0\"?>\n<Data>\nq";
+    s_cacheLogger.open("./output/logs/cache.xml");
+    s_cacheLogger << "<?xml version=\"1.0\"?>\n<Data>\n";
   }
   assert(s_cacheLogger.is_open());
   return s_cacheLogger;

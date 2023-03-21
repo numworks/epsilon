@@ -2,8 +2,9 @@ HOSTCC = gcc
 HOSTCXX = g++
 PYTHON := $(if $(shell $(call folder_check,.venv)),python3,.venv/bin/python3)
 
+POINCARE_POOL_VISUALIZATION ?= 0
 ifeq ($(POINCARE_POOL_VISUALIZATION),1)
-POINCARE_MEMORY_TREE_LOG ?= 1
+POINCARE_MEMORY_TREE_LOG = 1
 endif
 
 SFLAGS += -DEPSILON_GETOPT=$(EPSILON_GETOPT)

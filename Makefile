@@ -127,6 +127,7 @@ include eadk/Makefile
 # Executable Makefiles
 include apps/Makefile
 include build/struct_layout/Makefile
+include build/poincare_visualization/Makefile
 include quiz/Makefile # Quiz needs to be included at the end
 
 # Define main and shortcut targets

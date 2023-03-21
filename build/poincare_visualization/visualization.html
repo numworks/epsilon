@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8"/>
+<title>Poincare Logs</title>
+<style type="text/css">
+
+svg {
+  font: 10px sans-serif;
+  height: 40px;
+}
+
+rect.highlight {
+  height: 40px;
+  stroke:red;
+  stroke-width:4;
+  fill: transparent;
+}
+
+rect.reference {
+  height: 40px;
+  stroke:#edaa30;
+  stroke-width:1;
+  fill: transparent;
+}
+
+rect.node {
+  height: 28px;
+  stroke:black;
+  stroke-width:1;
+  opacity:0.5;
+}
+
+rect.node:hover {
+  fill: #edaa30;
+  opacity:1;
+  stroke-width:4;
+  stroke: #edaa30;
+}
+
+text {
+  fill: black;
+  font-family: Verdana;
+}
+
+.chart div {
+}
+
+</style>
+
+<h2>Chart</h2>
+<p id="chart" class="chart">
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+<script type="text/javascript">
+
+let nodeColors = {}
+
+d3.xml("XML_FILE", function(err, xml) {
+
+  let scale = 30
+  let textHeight = 11
+
+  let nodesSet = new Set()
+  initialize(xml.documentElement, nodesSet)
+
+  let poolEvent = d3.select("#chart")
+    .selectAll("div")
+    .data(xml.documentElement.children)
+    .enter()
+    .append("div")
+  let pootEventLabel = poolEvent.append("p")
+    .text((d) => { return eventName(d); })
+  let svg = poolEvent.append("svg")
+    .attr("width", (d) => { return poolSize(d) })
+  let reference = svg.selectAll("svg")
+    .data((d) => { return references(d); })
+    .enter()
+  let referenceRect = reference.append("rect")
+      .attr("class", "reference")
+      .attr("width", (d) => { return d.width; })
+      .attr("x", (d) => { return d.x; })
+  let highlightReferenceRect = reference.append("rect")
+      .attr("class", "highlight")
+      .attr("visibility", (d) => { return highlightReference(d) ? "visible" : "hidden" })
+      .attr("width", (d) => { return d.width; })
+      .attr("x", (d) => { return d.x; })
+  let referenceLabel = reference.append("text")
+    .text((d) => { return "Reference ID: " + d.getAttribute('id').replace(',','') })
+      .attr("x", (d) => { return d.x + 3; })
+      .attr("y", (d) => { return textHeight; })
+
+  let node = svg.selectAll("svg")
+    .data((d) => { return nodes(d); })
+    .enter()
+  let nodeRect = node.append("rect")
+    .attr("class", "node")
+    .attr("fill", (d) => { return nodeColor(d, nodesSet); })
+    .attr("x", (d) => { return d.x; })
+    .attr("y", (d) => { return 12; })
+    .attr("width", (d) => { return d.treeWidth; })
+  let nodeLabel = node.append("text")
+    .text((d) => { return d.nodeName.slice(0, d.nodeWidth / (0.2 * scale)) })
+    .attr("x", (d) => { return d.x; })
+    .attr("y", (d) => { return 2 * textHeight; })
+    .attr("width", (d) => { return d.nodeWidth; })
+  let nodeAttribute = node.append("text")
+    .text((d) => { return nodeAttributes(d).slice(0, d.nodeWidth / (0.2 * scale)) })
+    .attr("x", (d) => { return d.x; })
+    .attr("y", (d) => { return 3 * textHeight; })
+    .attr("width", (d) => { return d.nodeWidth; })
+
+  function initializeNode(node, offset, nodesSet) {
+    let nodeSize = parseInt(node.getAttribute('size')) * scale
+    let treeSize = nodeSize
+    for (const childNode of node.children) {
+      initializeNode(childNode, offset + treeSize, nodesSet)
+      treeSize += childNode.treeWidth
+    }
+    node.x = offset
+    node.treeWidth = treeSize
+    node.nodeWidth = nodeSize
+    nodesSet.add(node.nodeName)
+  }
+
+  function initialize(data, nodesSet) {
+    let poolEvents = data.children
+    for (const poolEvent of poolEvents) {
+      let references = poolEvent.firstElementChild.children
+      let referenceOffset = 0
+      for (const reference of references) {
+        let rootNode = reference.firstElementChild
+        initializeNode(rootNode, referenceOffset, nodesSet)
+        reference.x = referenceOffset
+        reference.width = rootNode.treeWidth
+        referenceOffset += rootNode.treeWidth
+      }
+    }
+  }
+
+  function references(data) {
+    return data.firstElementChild.children
+  }
+
+  function nodes(data) {
+    function nodesRec(currentNode) {
+      let nodes = []
+      nodes.push(currentNode)
+      for (const node of currentNode.children) {
+        nodes = nodes.concat(nodesRec(node))
+      }
+      return nodes
+    }
+    let nodes = []
+    let refs = references(data)
+    for (const ref of refs) {
+      let rootNode = ref.firstElementChild
+      nodes = nodes.concat(nodesRec(rootNode))
+    }
+    return nodes
+  }
+
+  function eventName(eventNode) {
+    let text = eventNode.nodeName
+    for (const name of eventNode.getAttributeNames()) {
+      text = text + " " + name + ": " + eventNode.getAttribute(name)
+    }
+    return text
+  }
+
+  function highlightReference(referenceNode) {
+    let eventNode = referenceNode.parentNode.parentNode
+    return referenceNode.firstElementChild.getAttribute("address") === eventNode.getAttribute("address")
+  }
+
+  function poolSize(eventNode) {
+    return eventNode.firstElementChild.getAttribute('size') * scale + "px"
+  }
+
+  function nodeColor(nodeNode, nodesSet) {
+    var myColor = d3.scaleOrdinal().domain(Array.from(nodesSet)).range(d3.schemeSet3);
+    return myColor(nodeNode.nodeName)
+  }
+
+  function nodeAttributes(nodeNode) {
+    let text = ""
+    for (const name of nodeNode.getAttributeNames()) {
+      if (name === "size" || name === "address") {
+        continue;
+      }
+      text = text + " " + name.slice(0, 5) + ": " + nodeNode.getAttribute(name)
+    }
+    return text
+  }
+})
+
+</script>
+</body>
+</html>

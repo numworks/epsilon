@@ -61,7 +61,7 @@ QUIZ_CASE(poincare_exam_mode_dutch) {
 QUIZ_CASE(poincare_exam_mode_ibtest) {
   ExamMode mode(ExamMode::Ruleset::IBTest);
   quiz_assert(!mode.forbidSolverApp());
-  quiz_assert(!mode.forbidElementsApp());
+  quiz_assert(mode.forbidElementsApp());
   quiz_assert(!mode.forbidCodeApp());
   quiz_assert(mode.forbidLineDetails());
   quiz_assert(!mode.forbidInequalityGraphing());

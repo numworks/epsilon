@@ -14,12 +14,9 @@ namespace Shared {
 template <typename T>
 TemplatedSequenceContext<T>::TemplatedSequenceContext(
     SequenceContext *sequenceContext)
-    : m_sequenceContext(sequenceContext),
-      m_mainRanks{-1, -1, -1},
-      m_mainValues{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}},
-      m_intermediateRanks{-1, -1, -1},
-      m_intermediateValues{{NAN, NAN, NAN}, {NAN, NAN, NAN}, {NAN, NAN, NAN}},
-      m_isComputingMainResult(false) {}
+    : m_sequenceContext(sequenceContext) {
+  resetCache();
+}
 
 template <typename T>
 void TemplatedSequenceContext<T>::resetCacheOfSequence(
@@ -45,6 +42,7 @@ void TemplatedSequenceContext<T>::resetCache() {
     resetCacheOfSequence(i, true);
     resetCacheOfSequence(i, false);
   }
+  m_isComputingMainResult = false;
 }
 
 template <typename T>

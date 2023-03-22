@@ -127,7 +127,9 @@ int CalculationController::numberOfRows() const {
   return 1 + k_numberOfDoubleBufferCalculations +
          k_numberOfSingleBufferCalculations + 1 +
          hasSeriesDisplaying(&DisplayRegression) +
-         numberOfDisplayedCoefficients() + hasSeriesDisplaying(&DisplayR2);
+         numberOfDisplayedCoefficients() +
+         hasSeriesDisplaying(&DisplayResidualStandardDeviation) +
+         hasSeriesDisplaying(&DisplayR2);
 }
 
 int CalculationController::numberOfColumns() const {
@@ -180,10 +182,27 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
       m_store->seriesIndexFromActiveSeriesIndex(i - k_numberOfHeaderColumns);
   assert(seriesNumber < DoublePairStore::k_numberOfSeries);
 
+  // Regression cell
+  if (c == Calculation::Regression) {
+    Model *model = m_store->modelForSeries(seriesNumber);
+    I18n::Message message =
+        shouldSeriesDisplay(seriesNumber, &DisplayRegression)
+            ? model->formulaMessage()
+            : I18n::Message::Dash;
+    static_cast<EvenOddBufferTextCell *>(cell)->setText(
+        I18n::translate(message));
+    static_cast<EvenOddBufferTextCell *>(cell)->setTextColor(KDColorBlack);
+    return;
+  }
+
   assert(i > 1 && j > 0);
-  // Calculation cell
   const int numberSignificantDigits =
       Preferences::VeryLargeNumberOfSignificantDigits;
+  constexpr int bufferSize =
+      PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
+  char buffer[bufferSize];
+
+  // Double calculation cells
   if (c <= Calculation::SampleStandardDeviationS) {
     int calculationIndex = static_cast<int>(c);
     using DoubleCalculation = double (Store::*)(int, int, bool) const;
@@ -214,9 +233,6 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
                                   seriesNumber, 1, false)));
     EvenOddDoubleBufferTextCell *myCell =
         static_cast<EvenOddDoubleBufferTextCell *>(cell);
-    constexpr int bufferSize =
-        PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
-    char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(
         *calculation1, buffer, bufferSize, numberSignificantDigits);
     myCell->setFirstText(buffer);
@@ -226,9 +242,13 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     return;
   }
 
+  // Single calculation cells
+  Poincare::Context *globContext =
+      AppsContainerHelper::sharedAppsContainerGlobalContext();
   EvenOddBufferTextCell *bufferCell =
       static_cast<EvenOddBufferTextCell *>(cell);
   bufferCell->setTextColor(KDColorBlack);
+  double result = NAN;
   if (c >= Calculation::NumberOfDots && c <= Calculation::SumOfProducts) {
     int calculationIndex =
         static_cast<int>(c) - static_cast<int>(Calculation::NumberOfDots);
@@ -253,28 +273,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
            (c == Calculation::SumOfProducts &&
             Poincare::Helpers::EqualOrBothNan(
                 *calculation, m_store->columnProductSum(seriesNumber))));
-    constexpr int bufferSize =
-        PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
-    char buffer[bufferSize];
-    PoincareHelpers::ConvertFloatToText<double>(
-        *calculation, buffer, bufferSize, numberSignificantDigits);
-    bufferCell->setText(buffer);
-    return;
-  }
-
-  if (c == Calculation::Regression) {
-    Model *model = m_store->modelForSeries(seriesNumber);
-    I18n::Message message =
-        shouldSeriesDisplay(seriesNumber, &DisplayRegression)
-            ? model->formulaMessage()
-            : I18n::Message::Dash;
-    bufferCell->setText(I18n::translate(message));
-    return;
-  }
-
-  Poincare::Context *globContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
-  if (c >= Calculation::CoefficientM && c <= Calculation::CoefficientE) {
+    result = *calculation;
+  } else if (c >= Calculation::CoefficientM && c <= Calculation::CoefficientE) {
     if (!m_store->coefficientsAreDefined(seriesNumber, globContext)) {
       // Put dashes if regression is not defined
       bufferCell->setText(I18n::translate(I18n::Message::Dash));
@@ -295,38 +295,40 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
       bufferCell->setText(I18n::translate(I18n::Message::Dash));
       return;
     }
-    double *coefficients =
-        m_store->coefficientsForSeries(seriesNumber, globContext);
-    constexpr int bufferSize =
-        PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
-    char buffer[bufferSize];
-    PoincareHelpers::ConvertFloatToText<double>(coefficients[coefficientIndex],
-                                                buffer, bufferSize,
-                                                numberSignificantDigits);
-    bufferCell->setText(buffer);
-    return;
+    result = m_store->coefficientsForSeries(seriesNumber,
+                                            globContext)[coefficientIndex];
+  } else {
+    /* Calculation is either R, R2 or the residual stddev.
+     * These could be memoized but don't seem to slow the table down for now. */
+    assert(c == Calculation::CorrelationCoeff ||
+           c == Calculation::DeterminationCoeff ||
+           c == Calculation::ResidualStandardDeviation);
+    if (c != Calculation::ResidualStandardDeviation &&
+        Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
+      bufferCell->setTextColor(Palette::GrayDark);
+      bufferCell->setText(I18n::translate(I18n::Message::Disabled));
+      return;
+    }
+    if ((c == Calculation::DeterminationCoeff &&
+         !shouldSeriesDisplay(seriesNumber, DisplayR2)) ||
+        (c == Calculation::ResidualStandardDeviation &&
+         !shouldSeriesDisplay(seriesNumber,
+                              DisplayResidualStandardDeviation)) ||
+        (c == Calculation::ResidualStandardDeviation &&
+         !shouldSeriesDisplay(seriesNumber,
+                              DisplayResidualStandardDeviation))) {
+      bufferCell->setText(I18n::translate(I18n::Message::Dash));
+      return;
+    }
+    result = (c == Calculation::CorrelationCoeff)
+                 ? m_store->correlationCoefficient(seriesNumber)
+                 : ((c == Calculation::ResidualStandardDeviation)
+                        ? m_store->residualStandardDeviation(seriesNumber,
+                                                             globContext)
+                        : m_store->determinationCoefficientForSeries(
+                              seriesNumber, globContext));
   }
-  // Calculation is either R or R2
-  assert(c == Calculation::CorrelationCoeff ||
-         c == Calculation::DeterminationCoeff);
-  if (Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
-    bufferCell->setTextColor(Palette::GrayDark);
-    bufferCell->setText(I18n::translate(I18n::Message::Disabled));
-    return;
-  }
-  if (c == Calculation::DeterminationCoeff &&
-      !shouldSeriesDisplay(seriesNumber, DisplayR2)) {
-    bufferCell->setText(I18n::translate(I18n::Message::Dash));
-    return;
-  }
-  double calculation = (c == Calculation::CorrelationCoeff)
-                           ? m_store->correlationCoefficient(seriesNumber)
-                           : m_store->determinationCoefficientForSeries(
-                                 seriesNumber, globContext);
-  constexpr int bufferSize =
-      PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
-  char buffer[bufferSize];
-  PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize,
+  PoincareHelpers::ConvertFloatToText<double>(result, buffer, bufferSize,
                                               numberSignificantDigits);
   bufferCell->setText(buffer);
 }
@@ -414,15 +416,25 @@ int CalculationController::typeAtLocation(int i, int j) {
 I18n::Message CalculationController::MessageForCalculation(Calculation c) {
   constexpr I18n::Message
       messages[static_cast<int>(Calculation::NumberOfRows)] = {
-          I18n::Message::Mean,          I18n::Message::Sum,
-          I18n::Message::SquareSum,     I18n::Message::StandardDeviation,
-          I18n::Message::Deviation,     I18n::Message::SampleStandardDeviationS,
-          I18n::Message::NumberOfDots,  I18n::Message::Covariance,
-          I18n::Message::SumOfProducts, I18n::Message::CorrelationCoeff,
-          I18n::Message::Regression,    I18n::Message::CoefficientM,
-          I18n::Message::CoefficientA,  I18n::Message::CoefficientB,
-          I18n::Message::CoefficientC,  I18n::Message::CoefficientD,
-          I18n::Message::CoefficientE,  I18n::Message::DeterminationCoeff,
+          I18n::Message::Mean,
+          I18n::Message::Sum,
+          I18n::Message::SquareSum,
+          I18n::Message::StandardDeviation,
+          I18n::Message::Deviation,
+          I18n::Message::SampleStandardDeviationS,
+          I18n::Message::NumberOfDots,
+          I18n::Message::Covariance,
+          I18n::Message::SumOfProducts,
+          I18n::Message::CorrelationCoeff,
+          I18n::Message::Regression,
+          I18n::Message::CoefficientM,
+          I18n::Message::CoefficientA,
+          I18n::Message::CoefficientB,
+          I18n::Message::CoefficientC,
+          I18n::Message::CoefficientD,
+          I18n::Message::CoefficientE,
+          I18n::Message::SquareSum,  // TODO: ResidualStddev
+          I18n::Message::DeterminationCoeff,
       };
   int index = static_cast<int>(c);
   assert(index >= 0 && index < static_cast<int>(Calculation::NumberOfRows));
@@ -449,6 +461,7 @@ I18n::Message CalculationController::SymbolForCalculation(Calculation c) {
           I18n::Message::C,
           I18n::Message::D,
           I18n::Message::E,
+          I18n::Message::SumValuesSymbol,  // TODO: ResidualStddev
           I18n::Message::R2,
       };
   int index = static_cast<int>(c);
@@ -483,6 +496,10 @@ CalculationController::Calculation CalculationController::calculationForRow(
   }
   row += static_cast<int>(Calculation::CoefficientE) -
          static_cast<int>(Calculation::CoefficientB) + 1 - displayedBCDECoeffs;
+  row += !hasSeriesDisplaying(&DisplayResidualStandardDeviation);
+  if (row == static_cast<int>(Calculation::ResidualStandardDeviation)) {
+    return Calculation::ResidualStandardDeviation;
+  }
   assert(row == static_cast<int>(Calculation::NumberOfRows) - 1 &&
          hasSeriesDisplaying(&DisplayR2));
   return static_cast<Calculation>(row);

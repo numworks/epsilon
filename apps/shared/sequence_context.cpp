@@ -26,16 +26,10 @@ void TemplatedSequenceContext<T>::resetCacheOfSequence(
   int *rank = rankPointer(sequenceIndex, intermediateComputation);
   *rank = -1;
   // Reset values
-  T *values;
-  if (intermediateComputation) {
-    values = reinterpret_cast<T *>(&m_intermediateValues);
-  } else {
-    values = reinterpret_cast<T *>(&m_mainValues);
-  }
-  T *ptr = values + sequenceIndex * (SequenceStore::k_maxRecurrenceDepth + 1);
+  T *values = valuesPointer(sequenceIndex, intermediateComputation);
   for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
        depth++) {
-    *(ptr + depth) = OMG::SignalingNan<T>();
+    *(values + depth) = OMG::SignalingNan<T>();
   }
 }
 
@@ -88,12 +82,10 @@ int *TemplatedSequenceContext<T>::rankPointer(int sequenceIndex,
 }
 
 template <typename T>
-void TemplatedSequenceContext<T>::shiftValuesLeft(int sequenceIndex,
-                                                  bool intermediateComputation,
-                                                  int delta) {
-  assert(0 < delta && delta <= SequenceStore::k_maxNumberOfSequences);
-
-  // Get values
+T *TemplatedSequenceContext<T>::valuesPointer(int sequenceIndex,
+                                              bool intermediateComputation) {
+  assert(0 <= sequenceIndex &&
+         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
   T *values;
   if (intermediateComputation) {
     values = reinterpret_cast<T *>(&m_intermediateValues);
@@ -101,8 +93,15 @@ void TemplatedSequenceContext<T>::shiftValuesLeft(int sequenceIndex,
     values = reinterpret_cast<T *>(&m_mainValues);
   }
   values += sequenceIndex * (SequenceStore::k_maxRecurrenceDepth + 1);
+  return values;
+}
 
-  // Shift values
+template <typename T>
+void TemplatedSequenceContext<T>::shiftValuesLeft(int sequenceIndex,
+                                                  bool intermediateComputation,
+                                                  int delta) {
+  assert(0 < delta && delta <= SequenceStore::k_maxNumberOfSequences);
+  T *values = valuesPointer(sequenceIndex, intermediateComputation);
   int stop = SequenceStore::k_maxRecurrenceDepth + 1 - delta;
   assert(0 < stop && stop < SequenceStore::k_maxRecurrenceDepth + 1);
   for (int depth = 0; depth < stop; depth++) {
@@ -145,13 +144,7 @@ template <typename T>
 void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex,
                                                  bool intermediateComputation) {
   int *currentRank = rankPointer(sequenceIndex, intermediateComputation);
-  T *values;
-  if (intermediateComputation) {
-    values = reinterpret_cast<T *>(&m_intermediateValues);
-  } else {
-    values = reinterpret_cast<T *>(&m_mainValues);
-  }
-  values += sequenceIndex * (SequenceStore::k_maxRecurrenceDepth + 1);
+  T *values = valuesPointer(sequenceIndex, intermediateComputation);
 
   // First we increment the rank
   (*currentRank)++;

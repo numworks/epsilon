@@ -18,8 +18,7 @@ CategoricalTableCell::CategoricalTableCell(
       m_selectableTableView(this, dataSource, this,
                             selectableTableViewDelegate) {
   m_selectableTableView.setBackgroundColor(Escher::Palette::WallScreenDark);
-  m_selectableTableView.setDecoratorType(
-      Escher::ScrollView::Decorator::Type::None);
+  m_selectableTableView.hideScrollBars();
   // The side margins will be provided by the outer selectableListView
   m_selectableTableView.setLeftMargin(0);
   m_selectableTableView.setRightMargin(0);

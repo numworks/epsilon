@@ -25,7 +25,7 @@ FunctionModelsParameterController::FunctionModelsParameterController(
       m_functionStore(functionStore),
       m_listController(listController) {
   m_selectableListView.setMargins(0);
-  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableListView.hideScrollBars();
   const Model* models = Models();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     if (!ModelIsAllowed(models[i])) {

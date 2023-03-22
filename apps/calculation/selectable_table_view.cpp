@@ -14,7 +14,7 @@ CalculationSelectableTableView::CalculationSelectableTableView(
                             delegate) {
   setVerticalCellOverlap(0);
   setMargins(0);
-  setDecoratorType(ScrollView::Decorator::Type::None);
+  hideScrollBars();
 }
 
 void CalculationSelectableTableView::scrollToBottom() {

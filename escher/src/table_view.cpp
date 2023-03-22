@@ -12,7 +12,7 @@ TableView::TableView(TableViewDataSource* dataSource,
                      ScrollViewDataSource* scrollDataSource)
     : ScrollView(&m_contentView, scrollDataSource),
       m_contentView(this, dataSource, 0, Metric::CellSeparatorThickness) {
-  setDecoratorType(Decorator::Type::Bars);
+  m_decorator.setVisibility(true);
 }
 
 void TableView::initSize(KDRect rect) {

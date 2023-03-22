@@ -37,7 +37,7 @@ MenuController::MenuController(Responder *parentResponder, App *pythonDelegate,
       m_reloadConsoleWhenBecomingFirstResponder(false),
       m_shouldDisplayAddScriptRow(true) {
   m_selectableTableView.setMargins(0);
-  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableTableView.hideScrollBars();
   m_addNewScriptCell.setLeftMargin(Metric::BigCellMargin);
   m_addNewScriptCell.setMessage(I18n::Message::AddScript);
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {

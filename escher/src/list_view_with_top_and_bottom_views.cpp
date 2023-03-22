@@ -12,7 +12,7 @@ ListViewWithTopAndBottomViews::ListViewWithTopAndBottomViews(
       m_topView(topView),
       m_list(table),
       m_bottomView(bottomView) {
-  m_list->setDecoratorType(ScrollView::Decorator::Type::None);
+  m_list->hideScrollBars();
   m_list->setDelegate(this);
 }
 

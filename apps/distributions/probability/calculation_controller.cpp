@@ -75,7 +75,7 @@ CalculationController::CalculationController(
   assert(calculation != nullptr);
   m_selectableTableView.setMargins(k_tableMargin);
   m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableTableView.hideScrollBars();
   m_selectableTableView.setBackgroundColor(KDColorWhite);
 
   for (int i = 0; i < k_numberOfCalculationCells; i++) {

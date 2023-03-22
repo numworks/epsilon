@@ -19,7 +19,7 @@ PrefacedTableView::PrefacedTableView(
       m_mainTableViewTopMargin(0) {
   m_mainTableView->setParentResponder(parentResponder);
   m_mainTableView->setDelegate(this);
-  m_rowPrefaceView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_rowPrefaceView.hideScrollBars();
 }
 
 void PrefacedTableView::setMargins(KDCoordinate top, KDCoordinate right,
@@ -161,7 +161,7 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
 }
 
 void PrefacedTableView::layoutScrollbars(bool force) {
-  m_mainTableView->setDecoratorType(ScrollView::Decorator::Type::None);
+  m_mainTableView->hideScrollBars();
   // Content offset if we had no prefaces hiding a part of the table
   KDPoint virtualOffset = m_mainTableView->contentOffset().relativeTo(
       relativeChildOrigin(m_mainTableView));

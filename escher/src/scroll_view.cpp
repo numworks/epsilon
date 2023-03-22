@@ -329,28 +329,6 @@ void ScrollView::ArrowDecorator::setFont(KDFont::Size font) {
   m_leftArrow.setFont(font);
 }
 
-ScrollView::Decorators::Decorators() {
-  /* We need to initiate the Union at construction to avoid destructing an
-   * uninitialized object when changing the decorator type. */
-  new (this) Decorator();
-}
-
-ScrollView::Decorators::~Decorators() { activeDecorator()->~Decorator(); }
-
-void ScrollView::Decorators::setActiveDecorator(Decorator::Type t) {
-  /* Decorator destructor is virtual so calling ~Decorator() on a Decorator
-   * pointer will call the appropriate destructor. */
-  activeDecorator()->~Decorator();
-  switch (t) {
-    case Decorator::Type::Bars:
-      new (&m_bars) BarDecorator();
-      break;
-    default:
-      assert(t == Decorator::Type::None);
-      new (&m_none) Decorator();
-  }
-}
-
 #if ESCHER_VIEW_LOGGING
 const char *ScrollView::className() const { return "ScrollView"; }
 

@@ -36,7 +36,7 @@ TypeParameterController::TypeParameterController(Responder *parentResponder,
       ->setSubLabelMessage(I18n::Message::DoubleRecurrence);
   m_selectableListView.setMargins(topMargin, rightMargin, bottomMargin,
                                   leftMargin);
-  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableListView.hideScrollBars();
 }
 
 const char *TypeParameterController::title() {

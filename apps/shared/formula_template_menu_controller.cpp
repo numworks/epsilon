@@ -18,7 +18,7 @@ FormulaTemplateMenuController::FormulaTemplateMenuController(
       m_emptyTemplateCell(I18n::Message::Empty),
       m_storeColumnHelper(storeColumnHelper) {
   m_selectableListView.setMargins(0);
-  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableListView.hideScrollBars();
 }
 
 const char *FormulaTemplateMenuController::title() {

@@ -19,7 +19,7 @@ PrefacedTwiceTableView::PrefacedTwiceTableView(
       m_prefaceIntersectionView(&m_prefaceIntersectionDataSource,
                                 &m_prefaceIntersectionDataSource),
       m_mainTableViewLeftMargin(0) {
-  m_columnPrefaceView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_columnPrefaceView.hideScrollBars();
 }
 
 void PrefacedTwiceTableView::setMargins(KDCoordinate top, KDCoordinate right,

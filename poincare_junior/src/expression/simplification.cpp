@@ -1,6 +1,8 @@
 #include "simplification.h"
 
+#include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/memory/node_iterator.h>
+#include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "number.h"
@@ -43,6 +45,48 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
     index++;
   }
   NAry::SetNumberOfChildren(reference, nbOfChildren - index);
+}
+
+// TODO : Limit the base to e
+Node expContracted1 = KPow(
+    PatternMatching::Placeholders::A,
+    KAdd(PatternMatching::Placeholders::B, PatternMatching::Placeholders::C));
+Node expExpanded1 = KMult(
+    KPow(PatternMatching::Placeholders::A, PatternMatching::Placeholders::B),
+    KPow(PatternMatching::Placeholders::A, PatternMatching::Placeholders::C));
+Node expContracted2 = KPow(
+    PatternMatching::Placeholders::A,
+    KMult(PatternMatching::Placeholders::B, PatternMatching::Placeholders::C));
+Node expExpanded2 = KPow(
+    KPow(PatternMatching::Placeholders::A, PatternMatching::Placeholders::B),
+    PatternMatching::Placeholders::C);
+// TODO : Implement Sin and Cos
+// Node sinContracted = Sin(A+B);
+// Node sinExpanded = KAdd(Mult(Sin(A),Cos(B)),Mult(Cos(A),Sin(B)));
+// Node cosContracted = Cos(A+B);
+// Node cosExpanded = Sub(Mult(Cos(A),Cos(B)),Mult(Sin(A),Sin(B)));
+// Node sinSinExpanded = Mult(Sin(A),Sin(B))
+// Node sinSinContracted = Sub(Div(Cos(Sub(A,B)),2),Div(Cos(Add(A,B)),2))
+// Node cosCosExpanded = Mult(Cos(A),Cos(B))
+// Node cosCosContracted = Add(Div(Cos(Sub(A,B)),2),Div(Cos(Add(A,B)),2))
+// Node sinCosExpanded = Mult(Sin(A),Cos(B))
+// Node sinCosContracted = Add(Div(Sin(Sub(A,B)),2),Div(Sin(Add(A,B)),2))
+
+EditionReference Simplification::ContractReduction(EditionReference reference) {
+  reference = reference.matchAndReplace(expExpanded1, expContracted1);
+  reference = reference.matchAndReplace(expExpanded2, expContracted2);
+  // reference.matchAndReplace(sinSinExpanded, sinSinContracted);
+  // reference.matchAndReplace(cosCosExpanded, cosCosContracted);
+  // reference.matchAndReplace(sinCosExpanded, sinCosContracted);
+  return reference;
+}
+
+EditionReference Simplification::ExpandReduction(EditionReference reference) {
+  reference = reference.matchAndReplace(expContracted1, expExpanded1);
+  reference = reference.matchAndReplace(expContracted2, expExpanded2);
+  // reference.matchAndReplace(sinContracted, sinExpanded);
+  // reference.matchAndReplace(cosContracted, cosExpanded);
+  return reference;
 }
 
 EditionReference Simplification::DivisionReduction(EditionReference reference) {

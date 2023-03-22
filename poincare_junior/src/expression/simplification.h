@@ -12,6 +12,8 @@ class Simplification {
   static EditionReference ShallowBeautify(EditionReference reference) {
     return reference;
   }
+  static EditionReference ContractReduction(EditionReference reference);
+  static EditionReference ExpandReduction(EditionReference reference);
 
   static EditionReference DivisionReduction(EditionReference reference);
   static EditionReference SubtractionReduction(EditionReference reference);

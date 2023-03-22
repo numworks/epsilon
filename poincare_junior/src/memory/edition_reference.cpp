@@ -103,12 +103,12 @@ EditionReference EditionReference::matchAndRewrite(const Node pattern,
   return PatternMatching::Create(structure, ctx);
 }
 
-void EditionReference::matchAndReplace(const Node pattern,
-                                       const Node structure) {
+EditionReference EditionReference::matchAndReplace(const Node pattern,
+                                                   const Node structure) {
   // Step 1 - Match the pattern
   PatternMatching::Context ctx = PatternMatching::Match(pattern, *this);
   if (ctx.isUninitialized()) {
-    return;
+    return *this;
   }
   EditionPool* editionPool = EditionPool::sharedEditionPool();
   /* This is a representation of the EditionPool:
@@ -188,6 +188,7 @@ void EditionReference::matchAndReplace(const Node pattern,
   *this = createdRef;
 
   // EditionPool : #|# B B B # B B B #|# _
+  return *this;
 }
 
 void EditionReference::remove(bool isTree) {

@@ -63,6 +63,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   parse.cpp \
   polynomial.cpp \
   set.cpp \
+  simplification.cpp \
 )
 
 tests_src += $(poincare_junior_src)

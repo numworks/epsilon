@@ -4,151 +4,145 @@
 
 using namespace Poincare;
 
-QUIZ_CASE(poincare_exam_mode_off) {
-  ExamMode mode(ExamMode::Ruleset::Off);
-  quiz_assert(!mode.forbidSolverApp());
-  quiz_assert(!mode.forbidElementsApp());
-  quiz_assert(!mode.forbidCodeApp());
-  quiz_assert(!mode.forbidLineDetails());
-  quiz_assert(!mode.forbidInequalityGraphing());
-  quiz_assert(!mode.forbidImplicitPlots());
-  quiz_assert(!mode.forbidStatsDiagnostics());
-  quiz_assert(!mode.forbidVectorProduct());
-  quiz_assert(!mode.forbidVectorNorm());
-  quiz_assert(!mode.forbidBasedLogarithm());
-  quiz_assert(!mode.forbidSum());
-  quiz_assert(!mode.forbidUnits());
-  quiz_assert(!mode.forbidAdditionalResults());
-  quiz_assert(!mode.forbidExactResults());
+void assert_exam_mode(ExamMode::Ruleset ruleset) {
+  ExamMode mode(ruleset);
+  switch (ruleset) {
+    case ExamMode::Ruleset::Off:
+      quiz_assert(!mode.forbidSolverApp());
+      quiz_assert(!mode.forbidElementsApp());
+      quiz_assert(!mode.forbidCodeApp());
+      quiz_assert(!mode.forbidLineDetails());
+      quiz_assert(!mode.forbidInequalityGraphing());
+      quiz_assert(!mode.forbidImplicitPlots());
+      quiz_assert(!mode.forbidStatsDiagnostics());
+      quiz_assert(!mode.forbidVectorProduct());
+      quiz_assert(!mode.forbidVectorNorm());
+      quiz_assert(!mode.forbidBasedLogarithm());
+      quiz_assert(!mode.forbidSum());
+      quiz_assert(!mode.forbidUnits());
+      quiz_assert(!mode.forbidAdditionalResults());
+      quiz_assert(!mode.forbidExactResults());
+      break;
+    case ExamMode::Ruleset::Standard:
+      quiz_assert(!mode.forbidSolverApp());
+      quiz_assert(!mode.forbidElementsApp());
+      quiz_assert(!mode.forbidCodeApp());
+      quiz_assert(!mode.forbidLineDetails());
+      quiz_assert(!mode.forbidInequalityGraphing());
+      quiz_assert(!mode.forbidImplicitPlots());
+      quiz_assert(!mode.forbidStatsDiagnostics());
+      quiz_assert(!mode.forbidVectorProduct());
+      quiz_assert(!mode.forbidVectorNorm());
+      quiz_assert(!mode.forbidBasedLogarithm());
+      quiz_assert(!mode.forbidSum());
+      quiz_assert(!mode.forbidUnits());
+      quiz_assert(!mode.forbidAdditionalResults());
+      quiz_assert(!mode.forbidExactResults());
+      break;
+    case ExamMode::Ruleset::Dutch:
+      quiz_assert(!mode.forbidSolverApp());
+      quiz_assert(mode.forbidElementsApp());
+      quiz_assert(mode.forbidCodeApp());
+      quiz_assert(!mode.forbidLineDetails());
+      quiz_assert(!mode.forbidInequalityGraphing());
+      quiz_assert(!mode.forbidImplicitPlots());
+      quiz_assert(!mode.forbidStatsDiagnostics());
+      quiz_assert(!mode.forbidVectorProduct());
+      quiz_assert(!mode.forbidVectorNorm());
+      quiz_assert(!mode.forbidBasedLogarithm());
+      quiz_assert(!mode.forbidSum());
+      quiz_assert(mode.forbidUnits());
+      quiz_assert(mode.forbidAdditionalResults());
+      quiz_assert(mode.forbidExactResults());
+      break;
+    case ExamMode::Ruleset::IBTest:
+      quiz_assert(!mode.forbidSolverApp());
+      quiz_assert(mode.forbidElementsApp());
+      quiz_assert(!mode.forbidCodeApp());
+      quiz_assert(mode.forbidLineDetails());
+      quiz_assert(!mode.forbidInequalityGraphing());
+      quiz_assert(mode.forbidImplicitPlots());
+      quiz_assert(!mode.forbidStatsDiagnostics());
+      quiz_assert(mode.forbidVectorProduct());
+      quiz_assert(!mode.forbidVectorNorm());
+      quiz_assert(!mode.forbidBasedLogarithm());
+      quiz_assert(!mode.forbidSum());
+      quiz_assert(mode.forbidUnits());
+      quiz_assert(mode.forbidAdditionalResults());
+      quiz_assert(!mode.forbidExactResults());
+      break;
+    case ExamMode::Ruleset::Portuguese:
+      quiz_assert(!mode.forbidSolverApp());
+      quiz_assert(mode.forbidElementsApp());
+      quiz_assert(!mode.forbidCodeApp());
+      quiz_assert(!mode.forbidLineDetails());
+      quiz_assert(!mode.forbidInequalityGraphing());
+      quiz_assert(!mode.forbidImplicitPlots());
+      quiz_assert(!mode.forbidStatsDiagnostics());
+      quiz_assert(!mode.forbidVectorProduct());
+      quiz_assert(!mode.forbidVectorNorm());
+      quiz_assert(!mode.forbidBasedLogarithm());
+      quiz_assert(!mode.forbidSum());
+      quiz_assert(!mode.forbidUnits());
+      quiz_assert(!mode.forbidAdditionalResults());
+      quiz_assert(!mode.forbidExactResults());
+      break;
+    case ExamMode::Ruleset::English:
+      quiz_assert(!mode.forbidSolverApp());
+      quiz_assert(mode.forbidElementsApp());
+      quiz_assert(!mode.forbidCodeApp());
+      quiz_assert(!mode.forbidLineDetails());
+      quiz_assert(!mode.forbidInequalityGraphing());
+      quiz_assert(!mode.forbidImplicitPlots());
+      quiz_assert(!mode.forbidStatsDiagnostics());
+      quiz_assert(!mode.forbidVectorProduct());
+      quiz_assert(!mode.forbidVectorNorm());
+      quiz_assert(!mode.forbidBasedLogarithm());
+      quiz_assert(!mode.forbidSum());
+      quiz_assert(!mode.forbidUnits());
+      quiz_assert(!mode.forbidAdditionalResults());
+      quiz_assert(!mode.forbidExactResults());
+      break;
+    case ExamMode::Ruleset::STAAR:
+      quiz_assert(!mode.forbidSolverApp());
+      quiz_assert(!mode.forbidElementsApp());
+      quiz_assert(!mode.forbidCodeApp());
+      quiz_assert(!mode.forbidLineDetails());
+      quiz_assert(mode.forbidInequalityGraphing());
+      quiz_assert(mode.forbidImplicitPlots());
+      quiz_assert(!mode.forbidStatsDiagnostics());
+      quiz_assert(!mode.forbidVectorProduct());
+      quiz_assert(!mode.forbidVectorNorm());
+      quiz_assert(!mode.forbidBasedLogarithm());
+      quiz_assert(!mode.forbidSum());
+      quiz_assert(!mode.forbidUnits());
+      quiz_assert(!mode.forbidAdditionalResults());
+      quiz_assert(!mode.forbidExactResults());
+      break;
+    case ExamMode::Ruleset::Keystone:
+      quiz_assert(mode.forbidSolverApp());
+      quiz_assert(!mode.forbidElementsApp());
+      quiz_assert(!mode.forbidCodeApp());
+      quiz_assert(!mode.forbidLineDetails());
+      quiz_assert(!mode.forbidInequalityGraphing());
+      quiz_assert(mode.forbidImplicitPlots());
+      quiz_assert(!mode.forbidStatsDiagnostics());
+      quiz_assert(!mode.forbidVectorProduct());
+      quiz_assert(!mode.forbidVectorNorm());
+      quiz_assert(!mode.forbidBasedLogarithm());
+      quiz_assert(!mode.forbidSum());
+      quiz_assert(!mode.forbidUnits());
+      quiz_assert(!mode.forbidAdditionalResults());
+      quiz_assert(mode.forbidExactResults());
+      break;
+    default:
+      quiz_assert(ruleset == ExamMode::Ruleset::PressToTest);
+      // PressToTest is asserted in another test.
+      break;
+  }
 }
 
-QUIZ_CASE(poincare_exam_mode_standard) {
-  ExamMode mode(ExamMode::Ruleset::Standard);
-  quiz_assert(!mode.forbidSolverApp());
-  quiz_assert(!mode.forbidElementsApp());
-  quiz_assert(!mode.forbidCodeApp());
-  quiz_assert(!mode.forbidLineDetails());
-  quiz_assert(!mode.forbidInequalityGraphing());
-  quiz_assert(!mode.forbidImplicitPlots());
-  quiz_assert(!mode.forbidStatsDiagnostics());
-  quiz_assert(!mode.forbidVectorProduct());
-  quiz_assert(!mode.forbidVectorNorm());
-  quiz_assert(!mode.forbidBasedLogarithm());
-  quiz_assert(!mode.forbidSum());
-  quiz_assert(!mode.forbidUnits());
-  quiz_assert(!mode.forbidAdditionalResults());
-  quiz_assert(!mode.forbidExactResults());
-}
-
-QUIZ_CASE(poincare_exam_mode_dutch) {
-  ExamMode mode(ExamMode::Ruleset::Dutch);
-  quiz_assert(!mode.forbidSolverApp());
-  quiz_assert(mode.forbidElementsApp());
-  quiz_assert(mode.forbidCodeApp());
-  quiz_assert(!mode.forbidLineDetails());
-  quiz_assert(!mode.forbidInequalityGraphing());
-  quiz_assert(!mode.forbidImplicitPlots());
-  quiz_assert(!mode.forbidStatsDiagnostics());
-  quiz_assert(!mode.forbidVectorProduct());
-  quiz_assert(!mode.forbidVectorNorm());
-  quiz_assert(!mode.forbidBasedLogarithm());
-  quiz_assert(!mode.forbidSum());
-  quiz_assert(mode.forbidUnits());
-  quiz_assert(mode.forbidAdditionalResults());
-  quiz_assert(mode.forbidExactResults());
-}
-
-QUIZ_CASE(poincare_exam_mode_ibtest) {
-  ExamMode mode(ExamMode::Ruleset::IBTest);
-  quiz_assert(!mode.forbidSolverApp());
-  quiz_assert(mode.forbidElementsApp());
-  quiz_assert(!mode.forbidCodeApp());
-  quiz_assert(mode.forbidLineDetails());
-  quiz_assert(!mode.forbidInequalityGraphing());
-  quiz_assert(mode.forbidImplicitPlots());
-  quiz_assert(!mode.forbidStatsDiagnostics());
-  quiz_assert(mode.forbidVectorProduct());
-  quiz_assert(!mode.forbidVectorNorm());
-  quiz_assert(!mode.forbidBasedLogarithm());
-  quiz_assert(!mode.forbidSum());
-  quiz_assert(mode.forbidUnits());
-  quiz_assert(mode.forbidAdditionalResults());
-  quiz_assert(!mode.forbidExactResults());
-}
-
-QUIZ_CASE(poincare_exam_mode_portuguese) {
-  ExamMode mode(ExamMode::Ruleset::Portuguese);
-  quiz_assert(!mode.forbidSolverApp());
-  quiz_assert(mode.forbidElementsApp());
-  quiz_assert(!mode.forbidCodeApp());
-  quiz_assert(!mode.forbidLineDetails());
-  quiz_assert(!mode.forbidInequalityGraphing());
-  quiz_assert(!mode.forbidImplicitPlots());
-  quiz_assert(!mode.forbidStatsDiagnostics());
-  quiz_assert(!mode.forbidVectorProduct());
-  quiz_assert(!mode.forbidVectorNorm());
-  quiz_assert(!mode.forbidBasedLogarithm());
-  quiz_assert(!mode.forbidSum());
-  quiz_assert(!mode.forbidUnits());
-  quiz_assert(!mode.forbidAdditionalResults());
-  quiz_assert(!mode.forbidExactResults());
-}
-
-QUIZ_CASE(poincare_exam_mode_english) {
-  ExamMode mode(ExamMode::Ruleset::English);
-  quiz_assert(!mode.forbidSolverApp());
-  quiz_assert(mode.forbidElementsApp());
-  quiz_assert(!mode.forbidCodeApp());
-  quiz_assert(!mode.forbidLineDetails());
-  quiz_assert(!mode.forbidInequalityGraphing());
-  quiz_assert(!mode.forbidImplicitPlots());
-  quiz_assert(!mode.forbidStatsDiagnostics());
-  quiz_assert(!mode.forbidVectorProduct());
-  quiz_assert(!mode.forbidVectorNorm());
-  quiz_assert(!mode.forbidBasedLogarithm());
-  quiz_assert(!mode.forbidSum());
-  quiz_assert(!mode.forbidUnits());
-  quiz_assert(!mode.forbidAdditionalResults());
-  quiz_assert(!mode.forbidExactResults());
-}
-
-QUIZ_CASE(poincare_exam_mode_staar) {
-  ExamMode mode(ExamMode::Ruleset::STAAR);
-  quiz_assert(!mode.forbidSolverApp());
-  quiz_assert(!mode.forbidElementsApp());
-  quiz_assert(!mode.forbidCodeApp());
-  quiz_assert(!mode.forbidLineDetails());
-  quiz_assert(mode.forbidInequalityGraphing());
-  quiz_assert(mode.forbidImplicitPlots());
-  quiz_assert(!mode.forbidStatsDiagnostics());
-  quiz_assert(!mode.forbidVectorProduct());
-  quiz_assert(!mode.forbidVectorNorm());
-  quiz_assert(!mode.forbidBasedLogarithm());
-  quiz_assert(!mode.forbidSum());
-  quiz_assert(!mode.forbidUnits());
-  quiz_assert(!mode.forbidAdditionalResults());
-  quiz_assert(!mode.forbidExactResults());
-}
-
-QUIZ_CASE(poincare_exam_mode_keystone) {
-  ExamMode mode(ExamMode::Ruleset::Keystone);
-  quiz_assert(mode.forbidSolverApp());
-  quiz_assert(!mode.forbidElementsApp());
-  quiz_assert(!mode.forbidCodeApp());
-  quiz_assert(!mode.forbidLineDetails());
-  quiz_assert(!mode.forbidInequalityGraphing());
-  quiz_assert(mode.forbidImplicitPlots());
-  quiz_assert(!mode.forbidStatsDiagnostics());
-  quiz_assert(!mode.forbidVectorProduct());
-  quiz_assert(!mode.forbidVectorNorm());
-  quiz_assert(!mode.forbidBasedLogarithm());
-  quiz_assert(!mode.forbidSum());
-  quiz_assert(!mode.forbidUnits());
-  quiz_assert(!mode.forbidAdditionalResults());
-  quiz_assert(mode.forbidExactResults());
-}
-
-QUIZ_CASE(poincare_exam_mode_press_to_test) {
+void assert_press_to_test() {
   {
     ExamMode mode(ExamMode::Ruleset::PressToTest,
                   {.forbidEquationSolver = true});
@@ -307,4 +301,12 @@ QUIZ_CASE(poincare_exam_mode_press_to_test) {
     quiz_assert(!mode.forbidAdditionalResults());
     quiz_assert(!mode.forbidExactResults());
   }
+}
+
+QUIZ_CASE(poincare_exam_modes) {
+  for (int i = 0; i < static_cast<int>(ExamMode::Ruleset::NumberOfRulesets);
+       i++) {
+    assert_exam_mode(static_cast<ExamMode::Ruleset>(i));
+  }
+  assert_press_to_test();
 }

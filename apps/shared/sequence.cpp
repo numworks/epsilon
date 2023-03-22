@@ -244,40 +244,17 @@ T Sequence::approximateAtContextRank(SequenceContext *sqctx,
 
   T x;
   Poincare::Expression e;
-  switch (type()) {
-    case Type::Explicit: {
-      // we want to assess u(n) at n=rank
-      x = static_cast<T>(rank);
-      e = expressionReduced(sqctx);
-      break;
-    }
-    case Type::SingleRecurrence: {
-      if (rank == initialRank()) {
-        x = static_cast<T>(NAN);
-        e = firstInitialConditionExpressionReduced(sqctx);
-        break;
-      }
-      // we want to assess u(n+1) at n=rank-1
-      x = static_cast<T>(rank - 1);
-      e = expressionReduced(sqctx);
-      break;
-    }
-    default: {
+  if (rank >= firstNonInitialRank()) {
+    x = static_cast<T>(rank - order());
+    e = expressionReduced(sqctx);
+  } else {
+    assert(type() != Type::Explicit);
+    x = static_cast<T>(NAN);
+    if (rank == initialRank()) {
+      e = firstInitialConditionExpressionReduced(sqctx);
+    } else {
       assert(type() == Type::DoubleRecurrence);
-      if (rank == initialRank()) {
-        x = static_cast<T>(NAN);
-        e = firstInitialConditionExpressionReduced(sqctx);
-        break;
-      }
-      if (rank == initialRank() + 1) {
-        x = static_cast<T>(NAN);
-        e = secondInitialConditionExpressionReduced(sqctx);
-        break;
-      }
-      // we want to assess u(n+2) at n=rank-2
-      x = static_cast<T>(rank - 2);
-      e = expressionReduced(sqctx);
-      break;
+      e = secondInitialConditionExpressionReduced(sqctx);
     }
   }
 

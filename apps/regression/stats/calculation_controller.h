@@ -50,18 +50,35 @@ class CalculationController : public Shared::DoublePairTableController {
   }
 
  private:
-  // Mean, SumValues, SumSquareValues, StandardDeviationSigma, Deviation,
-  // SampleStandardDeviationS
-  constexpr static int k_numberOfDoubleBufferCalculations = 6;
+  enum class Calculation : uint8_t {
+    Mean = 0,
+    Sum = 1,
+    SquareSum = 2,
+    StandardDeviation = 3,
+    Deviation = 4,
+    SampleStandardDeviationS = 5,
+    NumberOfDots = 6,
+    Covariance = 7,
+    SumOfProducts = 8,
+    CorrelationCoeff = 9,
+    Regression = 10,
+    CoefficientM = 11,
+    CoefficientA = 12,
+    CoefficientB = 13,
+    CoefficientC = 14,
+    CoefficientD = 15,
+    CoefficientE = 16,
+    DeterminationCoeff = 17,
+    NumberOfRows = 18,  // Always last
+  };
+  /* Mean, SumValues, SumSquareValues, StandardDeviationSigma, Deviation,
+   * SampleStandardDeviationS */
+  constexpr static int k_numberOfDoubleBufferCalculations =
+      static_cast<int>(Calculation::SampleStandardDeviationS) + 1;
   // NumberOfDots, Covariance, SumOfProducts
-  constexpr static int k_numberOfSingleBufferCalculations = 3;
-  constexpr static int k_numberOfBufferCalculations =
-      k_numberOfDoubleBufferCalculations + k_numberOfSingleBufferCalculations;
-  // M, A, B, C, D ,E
-  constexpr static int k_maxNumberOfDistinctCoefficients = 6;
-  // BufferCalculations + Regression + coefficients + R + R2
-  constexpr static int k_maxNumberOfRows =
-      k_numberOfBufferCalculations + 1 + k_maxNumberOfDistinctCoefficients + 2;
+  constexpr static int k_numberOfSingleBufferCalculations =
+      static_cast<int>(Calculation::SumOfProducts) -
+      static_cast<int>(Calculation::NumberOfDots) + 1;
   // Displayable cells
   constexpr static int k_numberOfDoubleCalculationCells =
       Store::k_numberOfSeries * k_numberOfDoubleBufferCalculations;
@@ -117,11 +134,10 @@ class CalculationController : public Shared::DoublePairTableController {
   static bool DisplayRegression(Model::Type type) {
     return type != Model::Type::None;
   }
-  static I18n::Message MessageForCalculation(int calculationRow);
-  static I18n::Message SymbolForCalculation(int calculationRow);
+  static I18n::Message MessageForCalculation(Calculation c);
+  static I18n::Message SymbolForCalculation(Calculation c);
 
-  // Return a calculation index for a displayed row index
-  int getCalculationIndex(int j) const;
+  Calculation calculationForRow(int row) const;
   bool hasSeriesDisplaying(DisplayCondition condition) const;
   bool shouldSeriesDisplay(int series, DisplayCondition condition) const;
   int numberOfDisplayedCoefficients() const;
@@ -142,8 +158,7 @@ class CalculationController : public Shared::DoublePairTableController {
   double m_memoizedDoubleCalculationCells[Store::k_numberOfSeries][2]
                                          [k_numberOfDoubleBufferCalculations];
   double m_memoizedSimpleCalculationCells[Store::k_numberOfSeries]
-                                         [k_numberOfBufferCalculations -
-                                          k_numberOfDoubleBufferCalculations];
+                                         [k_numberOfSingleBufferCalculations];
 };
 
 }  // namespace Regression

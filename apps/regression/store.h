@@ -123,7 +123,6 @@ class Store : public Shared::LinearRegressionStore {
   bool m_recomputeCoefficients[k_numberOfSeries];
 };
 
-typedef double (Store::*ArgCalculPointer)(int, int, bool) const;
 typedef void (Store::*RangeMethodPointer)();
 
 }  // namespace Regression

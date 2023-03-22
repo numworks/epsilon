@@ -39,14 +39,18 @@ class LinearRegressionStore : public Shared::DoublePairStore {
   double squaredValueSumOfColumn(int series, int i,
                                  bool lnOfSeries = false) const;
   double leastSquaredSum(int series) const;
-  double columnProductSum(int series, bool lnOfSeries = false) const;
+  double columnProductSum(int series, bool lnOfSeries) const;
+  double columnProductSum(int series) const {
+    return columnProductSum(series, false);
+  }
   double meanOfColumn(int series, int i, bool lnOfSeries = false) const;
   double varianceOfColumn(int series, int i, bool lnOfSeries = false) const;
   double standardDeviationOfColumn(int series, int i,
                                    bool lnOfSeries = false) const;
   double sampleStandardDeviationOfColumn(int series, int i,
                                          bool lnOfSeries = false) const;
-  double covariance(int series, bool lnOfSeries = false) const;
+  double covariance(int series, bool lnOfSeries) const;
+  double covariance(int series) const { return covariance(series, false); }
   double slope(int series, bool lnOfSeries = false) const;
   double yIntercept(int series, bool lnOfSeries = false) const;
   double correlationCoefficient(int series) const;  // R

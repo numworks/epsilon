@@ -2,6 +2,7 @@
 
 #include <omg/print.h>
 #include <omgpj/arithmetic.h>
+#include <poincare_junior/include/poincare.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/value_block.h>
 
@@ -131,6 +132,9 @@ EditionReference IntegerHandler::pushOnEditionPool() {
   pushDigitsOnEditionPool();
   pool->pushBlock(m_numberOfDigits);
   pool->pushBlock(typeBlock);
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "PushInteger", reference.block(), static_cast<Node>(reference).treeSize());
+#endif
   return reference;
 }
 

@@ -1,6 +1,7 @@
 #include "edition_reference.h"
 
 #include <ion/unicode/code_point.h>
+#include <poincare_junior/include/poincare.h>
 #include <string.h>
 
 #include "edition_pool.h"
@@ -43,11 +44,18 @@ EditionReference EditionReference::Push(Types... args) {
         &block, i++, args...);
     pool->pushBlock(block);
   } while (!endOfNode);
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "Push", newNode, i);
+#endif
   return EditionReference(Node(newNode));
 }
 
 EditionReference EditionReference::Clone(const Node node, bool isTree) {
-  return EditionReference(EditionPool::sharedEditionPool()->initFromAddress(static_cast<const void *>(node.block()), isTree));
+  Node newNode = EditionPool::sharedEditionPool()->initFromAddress(static_cast<const void *>(node.block()), isTree);
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "Clone", newNode.block(), isTree ? node.treeSize() : node.nodeSize());
+#endif
+  return EditionReference(newNode);
 }
 
 EditionReference::operator const Node() const {
@@ -101,6 +109,9 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
     pool->moveBlocks(oldBlock, newBlock, newSize);
     pool->removeBlocks(oldBlock > newBlock ? oldBlock : oldBlock + newSize,
                        oldSize);
+#if POINCARE_POOL_VISUALIZATION
+    Log(LoggerType::Edition, "Replace", oldBlock, newSize, newBlock);
+#endif
   } else {
     size_t minSize = std::min(oldSize, newSize);
     pool->replaceBlocks(oldBlock, newBlock, minSize);
@@ -110,6 +121,9 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
       pool->insertBlocks(oldBlock + minSize, newBlock + minSize,
                          newSize - oldSize);
     }
+#if POINCARE_POOL_VISUALIZATION
+    Log(LoggerType::Edition, "Replace", oldBlock, newSize);
+#endif
   }
 }
 
@@ -124,9 +138,13 @@ EditionReference EditionReference::matchAndRewrite(const Node pattern,
 }
 
 void EditionReference::remove(bool isTree) {
-  EditionPool::sharedEditionPool()->removeBlocks(
-      block(), isTree ? static_cast<Node>(*this).treeSize()
-                      : static_cast<Node>(*this).nodeSize());
+  Block * b = block();
+  size_t size = isTree ? static_cast<Node>(*this).treeSize()
+                      : static_cast<Node>(*this).nodeSize();
+  EditionPool::sharedEditionPool()->removeBlocks(b, size);
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "Remove", nullptr, INT_MAX, b);
+#endif
 }
 
 void EditionReference::insert(Node nodeToInsert, bool before, bool isTree) {
@@ -136,8 +154,16 @@ void EditionReference::insert(Node nodeToInsert, bool before, bool isTree) {
       isTree ? nodeToInsert.treeSize() : nodeToInsert.nodeSize();
   if (pool->contains(nodeToInsert.block())) {
     pool->moveBlocks(destination.block(), nodeToInsert.block(), sizeToInsert);
+#if POINCARE_POOL_VISUALIZATION
+    Block * dst = destination.block();
+    Block * addedBlock = dst >= nodeToInsert.block() ? dst - sizeToInsert : dst;
+    Log(LoggerType::Edition, "Insert", addedBlock, sizeToInsert, nodeToInsert.block());
+#endif
   } else {
     pool->insertBlocks(destination.block(), nodeToInsert.block(), sizeToInsert);
+#if POINCARE_POOL_VISUALIZATION
+    Log(LoggerType::Edition, "Insert", destination.block(), sizeToInsert);
+#endif
   }
 }
 
@@ -147,6 +173,9 @@ void EditionReference::detach(bool isTree) {
   size_t sizeToMove = isTree ? static_cast<Node>(*this).treeSize()
                              : static_cast<Node>(*this).nodeSize();
   pool->moveBlocks(destination, static_cast<Node>(*this).block(), sizeToMove);
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "Detach", destination, sizeToMove, static_cast<Node>(*this).block());
+#endif
 }
 
 }  // namespace PoincareJ

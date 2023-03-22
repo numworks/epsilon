@@ -49,13 +49,16 @@ void CloseLogger(LoggerType type) {
   s_forceClosed[static_cast<int>(type)] = true;
 }
 
-void Log(LoggerType type, const char * event, void * address, size_t size) {
+void Log(LoggerType type, const char * event, void * blockAddress, size_t blockSize, void * pointerAddress) {
   Logger(type) << "  <" << event;
-  if (address) {
-    Logger(type) << " address=\"" << address << "\"";
+  if (blockAddress) {
+    Logger(type) << " blockAddress=\"" << blockAddress << "\"";
   }
-  if (size < INT_MAX) {
-    Logger(type) << " size=\"" << size << "\"";
+  if (blockSize < INT_MAX) {
+    Logger(type) << " blockSize=\"" << blockSize << "\"";
+  }
+  if (pointerAddress) {
+    Logger(type) << " pointerAddress=\"" << pointerAddress << "\"";
   }
   Logger(type) << ">\n";
   Pool * pool;

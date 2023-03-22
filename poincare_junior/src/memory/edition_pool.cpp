@@ -1,6 +1,7 @@
 #include "edition_pool.h"
 
 #include <assert.h>
+#include <poincare_junior/include/poincare.h>
 #include <omgpj.h>
 #include <poincare_junior/include/poincare.h>
 
@@ -72,6 +73,9 @@ uint16_t EditionPool::referenceNode(Node node) {
 void EditionPool::flush() {
   m_numberOfBlocks = 0;
   m_referenceTable.reset();
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "Flush");
+#endif
 }
 
 bool EditionPool::executeAndDump(ActionWithContext action, void *context,

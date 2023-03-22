@@ -1,5 +1,6 @@
 #include "rational.h"
 
+#include <poincare_junior/include/poincare.h>
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/value_block.h>
 
@@ -123,6 +124,9 @@ EditionReference Rational::Push(IntegerHandler numerator,
   pool->pushBlock(
       ValueBlock(numberOfDigitsOfNumerator + numberOfDigitsOfDenominator));
   pool->pushBlock(typeBlock);
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "PushRational", reference.block(), static_cast<Node>(reference).treeSize());
+#endif
   return reference;
 }
 

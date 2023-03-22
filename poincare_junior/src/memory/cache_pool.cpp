@@ -118,7 +118,7 @@ void CachePool::reset() {
   m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks);
   m_editionPool.flush();
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Cache, "Reset");
+  Log(LoggerType::Cache, "Flush");
 #endif
 }
 

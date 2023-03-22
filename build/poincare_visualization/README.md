@@ -13,5 +13,12 @@ ResetLogger(LoggerType::Edition);
 
 CloseLogger(LoggerType::Edition);
 ```
+or
+```C++
+ResetLogger(LoggerType::Cache);
 
-to visualize the evolution of the pools only while executing the snippet.
+/* Your code */
+
+CloseLogger(LoggerType::Cache);
+```
+to reduce the visualization only while executing the snippet.

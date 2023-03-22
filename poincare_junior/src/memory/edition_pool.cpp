@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <omgpj.h>
 
+#include <algorithm>
+
 #include "cache_pool.h"
 #include "exception_checkpoint.h"
 

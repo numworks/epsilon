@@ -113,7 +113,8 @@ void CachePool::reset() {
 
 CachePool::CachePool()
     : m_referenceTable(this),
-      m_editionPool(static_cast<TypeBlock *>(m_blocks), k_maxNumberOfBlocks) {}
+      m_editionPool(static_cast<TypeBlock *>(static_cast<Block *>(m_blocks)),
+                    k_maxNumberOfBlocks) {}
 
 void CachePool::resetEditionPool() {
   m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks - size());

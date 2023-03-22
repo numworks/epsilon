@@ -1,6 +1,7 @@
 #ifndef POINCARE_MEMORY_NODE_H
 #define POINCARE_MEMORY_NODE_H
 
+#include <omgpj/assert.h>
 #include <string.h>
 
 #include <utility>
@@ -54,7 +55,7 @@ class Node {
 
   constexpr TypeBlock *block() const { return m_block; }
   constexpr TypeBlock *block() { return m_block; }
-  bool isUninitialized() const { return m_block == nullptr; }
+  constexpr bool isUninitialized() const { return m_block == nullptr; }
   void copyTreeTo(void *address) const;
 
   // Node Navigation
@@ -88,7 +89,7 @@ class Node {
 
   // Sizes
   constexpr size_t treeSize() const {
-    assert(!isUninitialized());
+    constexpr_assert(!isUninitialized());
     return nextTree().block() - block();
   }
 

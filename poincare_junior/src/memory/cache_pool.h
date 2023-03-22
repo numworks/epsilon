@@ -24,13 +24,14 @@ class CachePool final : public Pool {
 
   using Pool::firstBlock;
   const TypeBlock *firstBlock() const override {
-    return static_cast<const TypeBlock *>(m_blocks);
+    return static_cast<const TypeBlock *>(static_cast<const Block *>(m_blocks));
   }
   using Pool::lastBlock;
   // If CachePool is empty, first and last blocks are the same one
   const TypeBlock *lastBlock() const override {
     return m_referenceTable.isEmpty()
-               ? static_cast<const TypeBlock *>(m_blocks)
+               ? static_cast<const TypeBlock *>(
+                     static_cast<const Block *>(m_blocks))
                : Node(m_blocks + m_referenceTable.lastOffset())
                      .nextTree()
                      .block();

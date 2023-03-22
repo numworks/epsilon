@@ -319,7 +319,7 @@ constexpr TypeBlock TreeBorderBlock = TypeBlock(BlockType::TreeBorder);
 template <int size>
 class BlockBuffer {
  public:
-  consteval BlockBuffer() {
+  constexpr BlockBuffer() {
     m_blocks[0] = TreeBorderBlock;
     m_blocks[size + 1] = TreeBorderBlock;
   }

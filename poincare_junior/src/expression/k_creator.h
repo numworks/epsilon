@@ -168,7 +168,7 @@ constexpr Tree π_e =
 // TODO: move in OMG?
 constexpr static uint64_t IntegerValue(const char* str, size_t size) {
   uint64_t value = 0;
-  for (int i = 0; i < size - 1; i++) {
+  for (size_t i = 0; i < size - 1; i++) {
     uint8_t digit = OMG::Print::DigitForCharacter(str[i]);
     // No overflow
     constexpr_assert(value <= (UINT64_MAX - digit) / 10);
@@ -178,7 +178,7 @@ constexpr static uint64_t IntegerValue(const char* str, size_t size) {
 }
 
 constexpr bool HasDecimalPoint(const char* str, size_t size) {
-  for (int i = 0; i < size - 1; i++) {
+  for (size_t i = 0; i < size - 1; i++) {
     if (str[i] == '.') {
       return true;
     }
@@ -190,7 +190,7 @@ constexpr static float FloatValue(const char* str, size_t size) {
   float value = 0;
   bool fractionalPart = false;
   float base = 1;
-  for (int i = 0; i < size - 1; i++) {
+  for (size_t i = 0; i < size - 1; i++) {
     if (str[i] == '.') {
       fractionalPart = true;
       continue;

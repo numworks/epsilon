@@ -75,6 +75,8 @@ class Store : public Shared::LinearRegressionStore {
                          Poincare::Context* globalContext);
   double residualAtIndexForSeries(int series, int index,
                                   Poincare::Context* globalContext);
+  double residualStandardDeviation(int series,
+                                   Poincare::Context* globalContext);
   bool seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const;
 
   // To speed up computation during drawings, float is returned.

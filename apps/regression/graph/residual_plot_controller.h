@@ -59,6 +59,7 @@ class ResidualPlotController : public Escher::ViewController {
   ResidualPlotRange m_range;
   ResidualPlotBannerView m_bannerView;
   ResidualPlotCurveView m_curveView;
+  double m_memoizedResidualStddev;
   int m_selectedDotIndex;
   int m_selectedSeriesIndex;
 };

@@ -278,6 +278,22 @@ double Store::residualAtIndexForSeries(int series, int index,
   return get(series, 1, index) - yValueForXValue(series, x, globalContext);
 }
 
+double Store::residualStandardDeviation(int series,
+                                        Poincare::Context *globalContext) {
+  int nCoeff =
+      regressionModel(m_regressionTypes[series])->numberOfCoefficients();
+  int n = numberOfPairsOfSeries(series);
+  if (n <= nCoeff) {
+    return NAN;
+  }
+  double sum = 0.;
+  for (int i = 0; i < n; i++) {
+    double res = residualAtIndexForSeries(series, i, globalContext);
+    sum += res * res;
+  }
+  return std::sqrt(sum) / (n - nCoeff);
+}
+
 bool Store::seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const {
   assert(series >= 0 && series < k_numberOfSeries);
   int count = 0;

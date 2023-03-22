@@ -732,18 +732,4 @@ bool AbstractTextField::handleStoreEvent() {
   return true;
 }
 
-/* TextField */
-
-TextField::TextField(Responder *parentResponder, char *textBuffer,
-                     size_t textBufferSize, size_t draftTextBufferSize,
-                     InputEventHandlerDelegate *inputEventHandlerDelegate,
-                     TextFieldDelegate *delegate, KDFont::Size font,
-                     float horizontalAlignment, float verticalAlignment,
-                     KDColor textColor, KDColor backgroundColor)
-    : AbstractTextField(parentResponder, &m_contentView,
-                        inputEventHandlerDelegate, delegate),
-      m_contentView(textBuffer, textBufferSize, draftTextBufferSize, font,
-                    horizontalAlignment, verticalAlignment, textColor,
-                    backgroundColor) {}
-
 }  // namespace Escher

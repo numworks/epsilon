@@ -15,7 +15,12 @@ class TextField : public AbstractTextField {
             float horizontalAlignment = KDContext::k_alignLeft,
             float verticalAlignment = KDContext::k_alignCenter,
             KDColor textColor = KDColorBlack,
-            KDColor backgroundColor = KDColorWhite);
+            KDColor backgroundColor = KDColorWhite)
+      : AbstractTextField(parentResponder, &m_contentView,
+                          inputEventHandlerDelegate, delegate),
+        m_contentView(textBuffer, textBufferSize, draftTextBufferSize, font,
+                      horizontalAlignment, verticalAlignment, textColor,
+                      backgroundColor) {}
 
  protected:
   const AbstractTextField::ContentView* nonEditableContentView() const {

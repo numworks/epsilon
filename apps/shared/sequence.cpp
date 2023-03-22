@@ -225,7 +225,6 @@ T Sequence::privateEvaluateYAtX(T x, Poincare::Context *context) const {
 template <typename T>
 T Sequence::approximateAtRank(int rank, SequenceContext *sqctx) const {
   if (rank < initialRank() ||
-      !TemplatedSequenceContext<T>::IsAcceptableRank(rank) ||
       (rank >= firstNonInitialRank() && mainExpressionIsNotComputable(sqctx))) {
     return NAN;
   }

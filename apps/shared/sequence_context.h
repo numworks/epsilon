@@ -19,9 +19,6 @@ class TemplatedSequenceContext : public Poincare::ContextWithParent {
   void resetDataOfCurrentComputation();
   void resetCache();
   void stepUntilRank(int sequenceIndex, int rank);
-  constexpr static bool IsAcceptableRank(int rank) {
-    return 0 <= rank && rank <= k_maxRecurrentRank;
-  }
   int rank(int sequenceIndex, bool intermediateComputation) const {
     assert(0 <= sequenceIndex &&
            sequenceIndex < SequenceStore::k_maxNumberOfSequences);

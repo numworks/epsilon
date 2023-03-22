@@ -76,7 +76,10 @@ T TemplatedSequenceContext<T>::storedValueOfSequenceAtRank(int sequenceIndex,
 
 template <typename T>
 void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
-  assert(IsAcceptableRank(rank));
+  assert(rank >= 0);
+  if (rank > k_maxRecurrentRank) {
+    return;
+  }
   bool intermediateComputation = m_isComputingMainResult;
   m_isComputingMainResult = true;
 

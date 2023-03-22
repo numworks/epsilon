@@ -96,6 +96,8 @@ class SequenceContext : public Poincare::ContextWithParent {
   template <typename T>
   TemplatedSequenceContext<T>* context();
 
+  Sequence* sequenceAtNameIndex(int sequenceIndex) const;
+
  private:
   SequenceStore* m_sequenceStore;
   TemplatedSequenceContext<float> m_floatSequenceContext;

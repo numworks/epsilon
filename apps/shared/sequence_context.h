@@ -15,8 +15,6 @@ template <typename T>
 class TemplatedSequenceContext : public Poincare::ContextWithParent {
  public:
   TemplatedSequenceContext(SequenceContext* sequenceContext);
-  void resetCacheOfSequence(int sequenceIndex, bool intermediateComputation);
-  void resetDataOfCurrentComputation();
   void resetCache();
   void stepUntilRank(int sequenceIndex, int rank);
   int rank(int sequenceIndex, bool intermediateComputation) const {
@@ -33,7 +31,13 @@ class TemplatedSequenceContext : public Poincare::ContextWithParent {
   T* valuesPointer(int sequenceIndex, bool intermediateComputation);
   void shiftValuesLeft(int sequenceIndex, bool intermediateComputation,
                        int delta);
+  void shiftValuesRight(int sequenceIndex, bool intermediateComputation,
+                        int delta);
   void stepToNextRank(int sequenceIndex, bool intermediateComputation);
+  void resetValuesOfSequence(int sequenceIndex, bool intermediateComputation);
+  void resetRanksAndValuesOfSequence(int sequenceIndex,
+                                     bool intermediateComputation);
+  void resetDataOfCurrentComputation();
   const Poincare::Expression protectedExpressionForSymbolAbstract(
       const Poincare::SymbolAbstract& symbol, bool clone,
       ContextWithParent* lastDescendantContext) override;

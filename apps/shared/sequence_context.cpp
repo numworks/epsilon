@@ -20,17 +20,21 @@ TemplatedSequenceContext<T>::TemplatedSequenceContext(
 }
 
 template <typename T>
-void TemplatedSequenceContext<T>::resetCacheOfSequence(
+void TemplatedSequenceContext<T>::resetValuesOfSequence(
     int sequenceIndex, bool intermediateComputation) {
-  // Reset rank
-  int *rank = rankPointer(sequenceIndex, intermediateComputation);
-  *rank = -1;
-  // Reset values
   T *values = valuesPointer(sequenceIndex, intermediateComputation);
   for (int depth = 0; depth < SequenceStore::k_maxRecurrenceDepth + 1;
        depth++) {
     *(values + depth) = OMG::SignalingNan<T>();
   }
+}
+
+template <typename T>
+void TemplatedSequenceContext<T>::resetRanksAndValuesOfSequence(
+    int sequenceIndex, bool intermediateComputation) {
+  int *rank = rankPointer(sequenceIndex, intermediateComputation);
+  *rank = -1;
+  resetValuesOfSequence(sequenceIndex, intermediateComputation);
 }
 
 template <typename T>
@@ -44,8 +48,8 @@ void TemplatedSequenceContext<T>::resetDataOfCurrentComputation() {
 template <typename T>
 void TemplatedSequenceContext<T>::resetCache() {
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
-    resetCacheOfSequence(i, true);
-    resetCacheOfSequence(i, false);
+    resetRanksAndValuesOfSequence(i, true);
+    resetRanksAndValuesOfSequence(i, false);
   }
   resetDataOfCurrentComputation();
 }
@@ -114,6 +118,26 @@ void TemplatedSequenceContext<T>::shiftValuesLeft(int sequenceIndex,
 }
 
 template <typename T>
+void TemplatedSequenceContext<T>::shiftValuesRight(int sequenceIndex,
+                                                   bool intermediateComputation,
+                                                   int delta) {
+  assert(delta > 0);
+  if (delta > SequenceStore::k_maxNumberOfSequences) {
+    resetValuesOfSequence(sequenceIndex, intermediateComputation);
+    return;
+  }
+  T *values = valuesPointer(sequenceIndex, intermediateComputation);
+  int stop = delta - 1;
+  assert(0 <= stop && stop < SequenceStore::k_maxNumberOfSequences);
+  for (int depth = SequenceStore::k_maxRecurrenceDepth; depth > stop; depth--) {
+    *(values + depth) = *(values + depth - delta);
+  }
+  for (int depth = stop; depth >= 0; depth--) {
+    *(values + depth) = OMG::SignalingNan<T>();
+  }
+}
+
+template <typename T>
 void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
   assert(rank >= 0);
   if (rank > k_maxRecurrentRank) {
@@ -126,7 +150,7 @@ void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
 
   int offset = *currentRank - rank;
   if (offset > SequenceStore::k_maxRecurrenceDepth) {
-    resetCacheOfSequence(sequenceIndex, intermediateComputation);
+    resetRanksAndValuesOfSequence(sequenceIndex, intermediateComputation);
   } else if (offset > 0) {
     *currentRank = rank;
     shiftValuesLeft(sequenceIndex, intermediateComputation, offset);
@@ -153,10 +177,7 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex,
   // becomes {SignalingNan, u(n), u(n-1)}. If rank was -1, all values are
   // SignalingNan, then no need to shift.
   if (*currentRank > 0) {
-    for (int depth = SequenceStore::k_maxRecurrenceDepth; depth > 0; depth--) {
-      *(values + depth) = *(values + depth - 1);
-    }
-    *values = OMG::SignalingNan<T>();
+    shiftValuesRight(sequenceIndex, intermediateComputation, 1);
   }
 
   // We approximate the value at new rank

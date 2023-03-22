@@ -68,27 +68,4 @@ bool ConsoleEditCell::insertText(const char *text) {
   return m_textField.handleEventWithText(text);
 }
 
-void ConsoleEditCell::clearAndReduceSize() {
-  setText("");
-  // TODO
-  /*
-  size_t previousBufferSize = m_textField.draftTextBufferSize();
-  assert(previousBufferSize > 1);
-  m_textField.setDraftTextBufferSize(previousBufferSize - 1);*/
-}
-
-const char *ConsoleEditCell::shiftCurrentTextAndClear() {
-  // TODO
-  /* size_t previousBufferSize = m_textField.draftTextBufferSize();
-   m_textField.setDraftTextBufferSize(previousBufferSize + 1);
-   char *textFieldBuffer = const_cast<char *>(m_textField.text());
-   char *newTextPosition = textFieldBuffer + 1;
-   assert(previousBufferSize > 0);
-   size_t copyLength = std::min(previousBufferSize - 1,
-   strlen(textFieldBuffer)); memmove(newTextPosition, textFieldBuffer,
-   copyLength); newTextPosition[copyLength] = 0; textFieldBuffer[0] = 0; return
-   newTextPosition; */
-  return const_cast<char *>(m_textField.text());
-}
-
 }  // namespace Code

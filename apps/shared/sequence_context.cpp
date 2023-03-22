@@ -139,7 +139,11 @@ void TemplatedSequenceContext<T>::shiftValuesRight(int sequenceIndex,
 template <typename T>
 void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
   assert(rank >= 0);
-  if (rank > k_maxRecurrentRank) {
+  Sequence *s = m_sequenceContext->sequenceAtNameIndex(sequenceIndex);
+  bool explicitComputation =
+      rank >= s->firstNonInitialRank() && s->canBeHandleAsExplicit(this);
+
+  if (!explicitComputation && rank > k_maxRecurrentRank) {
     return;
   }
   bool intermediateComputation = m_isComputingMainResult;
@@ -154,10 +158,6 @@ void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
     *currentRank = rank;
     shiftValuesLeft(sequenceIndex, intermediateComputation, offset);
   }
-
-  Sequence *s = m_sequenceContext->sequenceAtNameIndex(sequenceIndex);
-  bool explicitComputation =
-      rank >= s->firstNonInitialRank() && s->canBeHandleAsExplicit(this);
 
   while (*currentRank < rank) {
     int step = explicitComputation ? rank - *currentRank : 1;

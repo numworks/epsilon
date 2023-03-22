@@ -7,8 +7,9 @@
 
 namespace Escher {
 
-class ScrollableExpressionView : public ScrollableView,
-                                 public ScrollViewDataSource {
+class ScrollableExpressionView
+    : public ScrollableView<ScrollView::ArrowDecorator>,
+      public ScrollViewDataSource {
  public:
   ScrollableExpressionView(Responder* parentResponder,
                            KDCoordinate leftRightMargin,

@@ -13,12 +13,11 @@ EquationListView::EquationListView(ListController *listController)
       View(),
       m_braceStyle(BraceStyle::None),
       m_listView(this, listController, listController, listController),
-      m_scrollBraceView(&m_braceView, this) {
+      m_scrollBraceView(this, &m_braceView, this) {
   m_listView.setMargins(0);
   m_listView.setVerticalCellOverlap(0);
   listController->setScrollViewDelegate(this);
   m_scrollBraceView.setMargins(k_margin, k_margin, k_margin, k_margin);
-  m_scrollBraceView.setDecoratorType(ScrollView::Decorator::Type::None);
   m_scrollBraceView.setBackgroundColor(KDColorWhite);
 }
 

@@ -11,7 +11,7 @@
 namespace Shared {
 
 class AbstractScrollableMultipleExpressionsView
-    : public Escher::ScrollableView,
+    : public Escher::ScrollableView<Escher::ScrollView::ArrowDecorator>,
       public Escher::ScrollViewDataSource {
  public:
   constexpr static KDCoordinate k_horizontalMargin =

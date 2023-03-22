@@ -12,7 +12,7 @@ svg {
 rect.highlight {
   height: 40px;
   stroke:red;
-  stroke-width:4;
+  stroke-width:3;
   fill: transparent;
 }
 
@@ -33,7 +33,6 @@ rect.node {
 rect.node:hover {
   fill: #edaa30;
   opacity:1;
-  stroke-width:4;
   stroke: #edaa30;
 }
 
@@ -58,7 +57,6 @@ text {
 let nodeColors = {}
 
 d3.xml("XML_FILE", function(err, xml) {
-
   let scale = 30
   let textHeight = 11
 
@@ -70,68 +68,96 @@ d3.xml("XML_FILE", function(err, xml) {
     .data(xml.documentElement.children)
     .enter()
     .append("div")
+    .attr("style", (d) => { return displayEvent(d) ? "" : "display: none" })
+
   let pootEventLabel = poolEvent.append("p")
     .text((d) => { return eventName(d); })
+
   let svg = poolEvent.append("svg")
     .attr("width", (d) => { return poolSize(d) })
+
   let reference = svg.selectAll("svg")
     .data((d) => { return references(d); })
     .enter()
+
   let referenceRect = reference.append("rect")
       .attr("class", "reference")
       .attr("width", (d) => { return d.width; })
       .attr("x", (d) => { return d.x; })
-  let highlightReferenceRect = reference.append("rect")
-      .attr("class", "highlight")
-      .attr("visibility", (d) => { return highlightReference(d) ? "visible" : "hidden" })
-      .attr("width", (d) => { return d.width; })
-      .attr("x", (d) => { return d.x; })
+
   let referenceLabel = reference.append("text")
-    .text((d) => { return "Reference ID: " + d.getAttribute('id').replace(',','') })
+    .text((d) => { return "Refs: " + d.getAttribute('id').replace(',','') })
       .attr("x", (d) => { return d.x + 3; })
       .attr("y", (d) => { return textHeight; })
 
   let node = svg.selectAll("svg")
     .data((d) => { return nodes(d); })
     .enter()
+
+  let highlightedNodeRect = node.append("rect")
+      .attr("class", "highlight")
+      .attr("width", (d) => { return d.nodeWidth; })
+      .attr("x", (d) => { return d.x; })
+      .attr("visibility", (d) => { return d.highlighted ? "visible" : "hidden" })
+
+  let highlightedNodePointer = node.append("rect")
+      .attr("class", "highlight")
+      .attr("visibility", (d) => { return d.pointerOffset < 0 ? "hidden" : "visible" })
+      .attr("width", (d) => { return 4; })
+      .attr("x", (d) => { return d.x + d.pointerOffset; })
+
   let nodeRect = node.append("rect")
     .attr("class", "node")
     .attr("fill", (d) => { return nodeColor(d, nodesSet); })
     .attr("x", (d) => { return d.x; })
     .attr("y", (d) => { return 12; })
     .attr("width", (d) => { return d.treeWidth; })
-  let nodeLabel = node.append("text")
+
+    let nodeLabel = node.append("text")
     .text((d) => { return d.nodeName.slice(0, d.nodeWidth / (0.2 * scale)) })
     .attr("x", (d) => { return d.x; })
     .attr("y", (d) => { return 2 * textHeight; })
     .attr("width", (d) => { return d.nodeWidth; })
+
   let nodeAttribute = node.append("text")
     .text((d) => { return nodeAttributes(d).slice(0, d.nodeWidth / (0.2 * scale)) })
     .attr("x", (d) => { return d.x; })
     .attr("y", (d) => { return 3 * textHeight; })
     .attr("width", (d) => { return d.nodeWidth; })
 
-  function initializeNode(node, offset, nodesSet) {
-    let nodeSize = parseInt(node.getAttribute('size')) * scale
-    let treeSize = nodeSize
+  function initializeNode(node, offset, nodesSet, eventBlockAddress, eventBlockSize, eventPointerAddress) {
+    let nodeSize = parseInt(node.getAttribute('size'))
+    let nodeWidth = nodeSize * scale
+    let treeWidth = nodeWidth
     for (const childNode of node.children) {
-      initializeNode(childNode, offset + treeSize, nodesSet)
-      treeSize += childNode.treeWidth
+      initializeNode(childNode, offset + treeWidth, nodesSet, eventBlockAddress, eventBlockSize, eventPointerAddress)
+      treeWidth += childNode.treeWidth
     }
     node.x = offset
-    node.treeWidth = treeSize
-    node.nodeWidth = nodeSize
+    node.treeWidth = treeWidth
+    node.nodeWidth = nodeWidth
     nodesSet.add(node.nodeName)
+    let nodeAddress = parseInt(node.getAttribute("address"), 16)
+    node.highlighted = eventBlockAddress && nodeAddress >= eventBlockAddress && nodeAddress < eventBlockAddress + eventBlockSize
+    if (eventPointerAddress >= nodeAddress && eventPointerAddress < nodeAddress + nodeSize) {
+      node.pointerOffset = eventPointerAddress - nodeAddress
+    } else {
+      node.pointerOffset = -1
+    }
   }
 
   function initialize(data, nodesSet) {
     let poolEvents = data.children
     for (const poolEvent of poolEvents) {
+      poolEvent.occurences = 1
       let references = poolEvent.firstElementChild.children
       let referenceOffset = 0
+      let eventBlockAddress = parseInt(poolEvent.getAttribute("blockAddress"), 16)
+      let eventBlockSize = parseInt(poolEvent.getAttribute("blockSize"))
+      let eventPointerAddress = parseInt(poolEvent.getAttribute("pointerAddress"), 16)
       for (const reference of references) {
         let rootNode = reference.firstElementChild
-        initializeNode(rootNode, referenceOffset, nodesSet)
+        initializeNode(rootNode, referenceOffset, nodesSet, eventBlockAddress, eventBlockSize, eventPointerAddress)
         reference.x = referenceOffset
         reference.width = rootNode.treeWidth
         referenceOffset += rootNode.treeWidth
@@ -162,16 +188,21 @@ d3.xml("XML_FILE", function(err, xml) {
   }
 
   function eventName(eventNode) {
-    let text = eventNode.nodeName
+    let text = eventNode.nodeName + " (" + eventNode.occurences + ")"
     for (const name of eventNode.getAttributeNames()) {
       text = text + " " + name + ": " + eventNode.getAttribute(name)
     }
     return text
   }
 
-  function highlightReference(referenceNode) {
-    let eventNode = referenceNode.parentNode.parentNode
-    return referenceNode.firstElementChild.getAttribute("address") === eventNode.getAttribute("address")
+  function displayEvent(eventNode) {
+    if (eventNode.nodeName !== "Flush" || eventNode.nextElementSibling === null || eventNode.nextElementSibling.nodeName !== "Flush") {
+      // Don't display consecutive Flush
+      return true
+    }
+    // Count the number of skipped events
+    eventNode.nextElementSibling.occurences = eventNode.nextElementSibling.occurences + eventNode.occurences
+    return false
   }
 
   function poolSize(eventNode) {

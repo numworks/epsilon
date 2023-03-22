@@ -60,21 +60,27 @@ class ScrollViewVerticalBar : public ScrollViewBar {
 
 class ScrollViewArrow : public ScrollViewIndicator {
  public:
-  enum Side : char {  // FIXME
-    Right = '>',
-    Left = '<'
-  };
-  ScrollViewArrow(Side side);
+  ScrollViewArrow();
   bool update(bool visible);
   void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
   void setFont(KDFont::Size font) { m_font = font; }
   void drawRect(KDContext *ctx, KDRect rect) const override;
+  virtual const char *arrow() const = 0;
 
  private:
-  bool m_visible;
-  const char m_arrow;
   KDColor m_backgroundColor;
   KDFont::Size m_font;
+  bool m_visible;
+};
+
+class ScrollViewLeftArrow : public ScrollViewArrow {
+ public:
+  const char *arrow() const override { return "<"; }
+};
+
+class ScrollViewRightArrow : public ScrollViewArrow {
+ public:
+  const char *arrow() const override { return ">"; }
 };
 
 }  // namespace Escher

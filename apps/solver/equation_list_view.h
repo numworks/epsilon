@@ -2,7 +2,7 @@
 #define SOLVER_EQUATION_LIST_VIEW_H
 
 #include <escher/responder.h>
-#include <escher/scroll_view.h>
+#include <escher/scrollable_view.h>
 #include <escher/selectable_list_view.h>
 #include <escher/view.h>
 
@@ -40,7 +40,7 @@ class EquationListView : public Escher::Responder,
   BraceStyle m_braceStyle;
   Escher::SelectableListView m_listView;
   BraceView m_braceView;
-  Escher::ScrollView m_scrollBraceView;
+  Escher::ScrollableView<Escher::ScrollView::NoDecorator> m_scrollBraceView;
 };
 
 }  // namespace Solver

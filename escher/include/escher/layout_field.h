@@ -15,9 +15,10 @@
 
 namespace Escher {
 
-class LayoutField : public WithBlinkingTextCursor<ScrollableView>,
-                    public ScrollViewDataSource,
-                    public EditableField {
+class LayoutField
+    : public WithBlinkingTextCursor<ScrollableView<ScrollView::NoDecorator>>,
+      public ScrollViewDataSource,
+      public EditableField {
   friend class ExpressionField;
 
  public:

@@ -305,9 +305,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::layoutSubviews(
 AbstractScrollableMultipleExpressionsView::
     AbstractScrollableMultipleExpressionsView(Responder* parentResponder,
                                               View* contentCell)
-    : ScrollableView(parentResponder, contentCell, this) {
-  setDecoratorType(ScrollView::Decorator::Type::Arrows);
-}
+    : ScrollableView(parentResponder, contentCell, this) {}
 
 void AbstractScrollableMultipleExpressionsView::setLayouts(
     Poincare::Layout leftLayout, Poincare::Layout centerLayout,

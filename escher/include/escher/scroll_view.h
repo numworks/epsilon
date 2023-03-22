@@ -34,7 +34,7 @@ class ScrollView : public View {
 
   class Decorator {
    public:
-    enum class Type { None, Bars, Arrows };
+    enum class Type { None, Bars };
     /* We want (Decorator *)->~Decorator() to call ~BarDecorator() or
      * ~ArrowDecorator() when required. */
     virtual ~Decorator() = default;
@@ -52,8 +52,10 @@ class ScrollView : public View {
     }
     virtual void setBackgroundColor(KDColor c) {}
     virtual void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) {}
-    virtual void setFont(KDFont::Size font) {}
   };
+
+  // Decorator is the base class and an empty decorator
+  using NoDecorator = Decorator;
 
   class BarDecorator : public Decorator {
    public:
@@ -89,20 +91,14 @@ class ScrollView : public View {
                             KDRect *dirtyRect2, bool force,
                             ScrollViewDelegate *delegate = nullptr) override;
     void setBackgroundColor(KDColor c) override;
-    void setFont(KDFont::Size font) override;
+    void setFont(KDFont::Size font);
 
    private:
     ScrollViewArrow m_rightArrow;
     ScrollViewArrow m_leftArrow;
   };
 
-  Decorator *decorator() { return m_decorators.activeDecorator(); }
-  void setDecoratorType(Decorator::Type t) {
-    m_decorators.setActiveDecorator(t);
-  }
-  void setDecoratorFont(KDFont::Size font) {
-    m_decorators.activeDecorator()->setFont(font);
-  }
+  virtual Decorator *decorator() = 0;
   virtual void setBackgroundColor(KDColor c) {
     m_backgroundColor = c;
     decorator()->setBackgroundColor(m_backgroundColor);
@@ -142,6 +138,19 @@ class ScrollView : public View {
   }
   View *m_contentView;
 
+ protected:
+  union Decorators {
+   public:
+    Decorators();
+    ~Decorators();
+    Decorator *activeDecorator() { return &m_none; }
+    void setActiveDecorator(Decorator::Type t);
+
+   private:
+    NoDecorator m_none;
+    BarDecorator m_bars;
+  };
+
  private:
   ScrollViewDataSource *m_dataSource;
 
@@ -167,19 +176,6 @@ class ScrollView : public View {
   mutable KDCoordinate m_excessHeight;
 
   InnerView m_innerView;
-  union Decorators {
-   public:
-    Decorators();
-    ~Decorators();
-    Decorator *activeDecorator() { return &m_none; }
-    void setActiveDecorator(Decorator::Type t);
-
-   private:
-    Decorator m_none;
-    BarDecorator m_bars;
-    ArrowDecorator m_arrows;
-  };
-  Decorators m_decorators;
   KDColor m_backgroundColor;
 };
 

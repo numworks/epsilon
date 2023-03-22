@@ -32,8 +32,9 @@ class ConsoleLineCell : public Escher::HighlightCell, public Escher::Responder {
   void didBecomeFirstResponder() override;
 
  private:
-  class ScrollableConsoleLineView : public Escher::ScrollableView,
-                                    public Escher::ScrollViewDataSource {
+  class ScrollableConsoleLineView
+      : public Escher::ScrollableView<Escher::ScrollView::ArrowDecorator>,
+        public Escher::ScrollViewDataSource {
    public:
     class ConsoleLineView : public HighlightCell {
      public:

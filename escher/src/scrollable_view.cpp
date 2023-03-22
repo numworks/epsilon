@@ -6,13 +6,12 @@
 
 namespace Escher {
 
-ScrollableView::ScrollableView(Responder* parentResponder, View* view,
-                               ScrollViewDataSource* dataSource)
-    : Responder(parentResponder), ScrollView(view, dataSource) {
-  setDecoratorType(ScrollView::Decorator::Type::None);
-}
+AbstractScrollableView::AbstractScrollableView(Responder* parentResponder,
+                                               View* view,
+                                               ScrollViewDataSource* dataSource)
+    : Responder(parentResponder), ScrollView(view, dataSource) {}
 
-bool ScrollableView::handleEvent(Ion::Events::Event event) {
+bool AbstractScrollableView::handleEvent(Ion::Events::Event event) {
   KDPoint translation = KDPointZero;
   KDCoordinate scrollStep = Ion::Events::longPressFactor() * Metric::ScrollStep;
   if (event == Ion::Events::Left) {
@@ -48,11 +47,11 @@ bool ScrollableView::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ScrollableView::reloadScroll(bool forceReLayout) {
+void AbstractScrollableView::reloadScroll(bool forceReLayout) {
   setContentOffset(KDPointZero, forceReLayout);
 }
 
-KDSize ScrollableView::contentSize() const {
+KDSize AbstractScrollableView::contentSize() const {
   KDSize viewSize = ScrollView::contentSize();
   KDCoordinate viewWidth =
       std::max(viewSize.width(), maxContentWidthDisplayableWithoutScrolling());

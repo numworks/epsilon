@@ -22,7 +22,6 @@ ScrollView::ScrollView(View *contentView, ScrollViewDataSource *dataSource)
       m_innerView(this),
       m_backgroundColor(Palette::WallScreen) {
   assert(m_dataSource != nullptr);
-  setDecoratorType(Decorator::Type::Bars);
 }
 
 KDSize ScrollView::minimalSizeForOptimalDisplay() const {
@@ -345,9 +344,6 @@ void ScrollView::Decorators::setActiveDecorator(Decorator::Type t) {
   switch (t) {
     case Decorator::Type::Bars:
       new (&m_bars) BarDecorator();
-      break;
-    case Decorator::Type::Arrows:
-      new (&m_arrows) ArrowDecorator();
       break;
     default:
       assert(t == Decorator::Type::None);

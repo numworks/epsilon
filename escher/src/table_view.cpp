@@ -11,7 +11,9 @@ namespace Escher {
 TableView::TableView(TableViewDataSource* dataSource,
                      ScrollViewDataSource* scrollDataSource)
     : ScrollView(&m_contentView, scrollDataSource),
-      m_contentView(this, dataSource, 0, Metric::CellSeparatorThickness) {}
+      m_contentView(this, dataSource, 0, Metric::CellSeparatorThickness) {
+  setDecoratorType(Decorator::Type::Bars);
+}
 
 void TableView::initSize(KDRect rect) {
   if (bounds().width() <= 0 || bounds().height() <= 0) {

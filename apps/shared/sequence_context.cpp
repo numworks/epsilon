@@ -22,12 +22,14 @@ TemplatedSequenceContext<T>::TemplatedSequenceContext(
 template <typename T>
 void TemplatedSequenceContext<T>::resetCacheOfSequence(
     int sequenceIndex, bool intermediateComputation) {
+  // Reset rank
+  int *rank = rankPointer(sequenceIndex, intermediateComputation);
+  *rank = -1;
+  // Reset values
   T *values;
   if (intermediateComputation) {
-    m_intermediateRanks[sequenceIndex] = -1;
     values = reinterpret_cast<T *>(&m_intermediateValues);
   } else {
-    m_mainRanks[sequenceIndex] = -1;
     values = reinterpret_cast<T *>(&m_mainValues);
   }
   T *ptr = values + sequenceIndex * (SequenceStore::k_maxRecurrenceDepth + 1);
@@ -75,6 +77,17 @@ T TemplatedSequenceContext<T>::storedValueOfSequenceAtRank(int sequenceIndex,
 }
 
 template <typename T>
+int *TemplatedSequenceContext<T>::rankPointer(int sequenceIndex,
+                                              bool intermediateComputation) {
+  assert(0 <= sequenceIndex &&
+         sequenceIndex < SequenceStore::k_maxNumberOfSequences);
+  int *rank = intermediateComputation ? m_intermediateRanks : m_mainRanks;
+  rank += sequenceIndex;
+  assert(*rank >= 0 || *rank == -1);
+  return rank;
+}
+
+template <typename T>
 void TemplatedSequenceContext<T>::shiftValuesLeft(int sequenceIndex,
                                                   bool intermediateComputation,
                                                   int delta) {
@@ -110,10 +123,7 @@ void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
   bool intermediateComputation = m_isComputingMainResult;
   m_isComputingMainResult = true;
 
-  int *currentRank = intermediateComputation
-                         ? m_intermediateRanks + sequenceIndex
-                         : m_mainRanks + sequenceIndex;
-  assert(*currentRank >= 0 || *currentRank == -1);
+  int *currentRank = rankPointer(sequenceIndex, intermediateComputation);
 
   int offset = *currentRank - rank;
   if (offset > SequenceStore::k_maxRecurrenceDepth) {
@@ -134,16 +144,13 @@ void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
 template <typename T>
 void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex,
                                                  bool intermediateComputation) {
-  int *currentRank;
+  int *currentRank = rankPointer(sequenceIndex, intermediateComputation);
   T *values;
   if (intermediateComputation) {
-    currentRank = m_intermediateRanks;
     values = reinterpret_cast<T *>(&m_intermediateValues);
   } else {
-    currentRank = m_mainRanks;
     values = reinterpret_cast<T *>(&m_mainValues);
   }
-  currentRank += sequenceIndex;
   values += sequenceIndex * (SequenceStore::k_maxRecurrenceDepth + 1);
 
   // First we increment the rank

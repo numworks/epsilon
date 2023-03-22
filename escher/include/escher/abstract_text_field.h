@@ -123,7 +123,6 @@ class AbstractTextField : public TextInput, public EditableField {
 
    private:
     void layoutSubviews(bool force = false) override;
-    size_t editionBufferSize() const;
 
     char *m_textBuffer;
     size_t m_textBufferSize;

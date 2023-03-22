@@ -31,8 +31,7 @@ AbstractTextField::ContentView::ContentView(
       m_textColor(textColor),
       m_backgroundColor(backgroundColor),
       m_isEditing(false),
-      m_isStalled(false),
-      m_useDraftBuffer(true) {
+      m_isStalled(false) {
   if (textBuffer == nullptr) {
     m_textBuffer = s_draftTextBuffer;
   }
@@ -83,18 +82,16 @@ void AbstractTextField::ContentView::drawRect(KDContext *ctx,
 }
 
 const char *AbstractTextField::ContentView::text() const {
-  return const_cast<const char *>(
-      m_isEditing && m_useDraftBuffer ? s_draftTextBuffer : m_textBuffer);
+  return const_cast<const char *>(m_isEditing ? s_draftTextBuffer
+                                              : m_textBuffer);
 }
 
 const char *AbstractTextField::ContentView::editedText() const {
-  assert(m_useDraftBuffer ||
-         (m_textBuffer != nullptr && m_textBuffer != s_draftTextBuffer));
-  return m_useDraftBuffer ? s_draftTextBuffer : m_textBuffer;
+  return s_draftTextBuffer;
 }
 
 size_t AbstractTextField::ContentView::editedTextLength() const {
-  return m_useDraftBuffer ? s_currentDraftTextLength : strlen(m_textBuffer);
+  return s_currentDraftTextLength;
 }
 
 void AbstractTextField::ContentView::setText(const char *text) {
@@ -149,12 +146,8 @@ void AbstractTextField::ContentView::reinitDraftTextBuffer() {
   /* We first need to clear the buffer, otherwise setCursorLocation might do
    * various operations on a buffer with maybe non-initialized content, such as
    * stringSize, etc. Those operation might be perilous on non-UTF8 content. */
-  if (m_useDraftBuffer) {
-    s_draftTextBuffer[0] = 0;
-    s_currentDraftTextLength = 0;
-  } else {
-    m_textBuffer[0] = 0;
-  }
+  s_draftTextBuffer[0] = 0;
+  s_currentDraftTextLength = 0;
   setCursorLocation(editedText());
 }
 
@@ -265,17 +258,8 @@ void AbstractTextField::ContentView::willModifyTextBuffer() {
 void AbstractTextField::ContentView::didModifyTextBuffer() {
   /* This method should be called when the buffer is modified outside the
    * content view, for instance from the textfield directly. */
-  if (m_useDraftBuffer) {
-    s_currentDraftTextLength = strlen(s_draftTextBuffer);
-  }
+  s_currentDraftTextLength = strlen(s_draftTextBuffer);
   layoutSubviews();
-}
-
-void AbstractTextField::ContentView::setEditionBuffer(char *buffer,
-                                                      size_t bufferSize) {
-  m_textBuffer = buffer;
-  m_textBufferSize = bufferSize;
-  m_useDraftBuffer = false;
 }
 
 size_t AbstractTextField::dumpContent(char *buffer, size_t bufferSize,
@@ -318,7 +302,7 @@ void AbstractTextField::ContentView::layoutSubviews(bool force) {
 }
 
 size_t AbstractTextField::ContentView::editionBufferSize() const {
-  return m_useDraftBuffer ? draftTextBufferSize() : m_textBufferSize;
+  return draftTextBufferSize();
 }
 
 KDRect AbstractTextField::ContentView::glyphFrameAtPosition(

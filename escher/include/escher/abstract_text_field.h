@@ -65,9 +65,6 @@ class AbstractTextField : public TextInput, public EditableField {
   bool cursorAtEndOfText() const {
     return isEditing() && cursorLocation() == text() + draftTextLength();
   }
-  void setEditionBuffer(char *buffer, size_t bufferSize) {
-    contentView()->setEditionBuffer(buffer, bufferSize);
-  }
   size_t dumpContent(char *buffer, size_t bufferSize, int *cursorOffset);
 
  protected:
@@ -115,7 +112,6 @@ class AbstractTextField : public TextInput, public EditableField {
     size_t draftTextBufferSize() const { return MaxBufferSize(); }
     void willModifyTextBuffer();
     void didModifyTextBuffer();
-    void setEditionBuffer(char *buffer, size_t bufferSize);
 
     void stallOrStopEditing();
     bool isStalled() const { return m_isStalled; }
@@ -137,7 +133,6 @@ class AbstractTextField : public TextInput, public EditableField {
     /* The textfield is 'Stalling' when the edition has been interrupted (by a
      * 'syntax error pop-up for instance) but should not be discarded. */
     bool m_isStalled;
-    bool m_useDraftBuffer;
   };
 
   const ContentView *nonEditableContentView() const override = 0;

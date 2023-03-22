@@ -81,7 +81,6 @@ int *TemplatedSequenceContext<T>::rankPointer(int sequenceIndex,
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
   int *rank = intermediateComputation ? m_intermediateRanks : m_mainRanks;
   rank += sequenceIndex;
-  assert(*rank >= 0 || *rank == -1);
   return rank;
 }
 

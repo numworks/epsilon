@@ -34,10 +34,6 @@ class ScrollView : public View {
 
   class Decorator {
    public:
-    enum class Type { None, Bars };
-    /* We want (Decorator *)->~Decorator() to call ~BarDecorator() or
-     * ~ArrowDecorator() when required. */
-    virtual ~Decorator() = default;
     virtual int numberOfIndicators() const { return 0; }
     virtual View *indicatorAtIndex(int index) {
       assert(false);
@@ -51,7 +47,6 @@ class ScrollView : public View {
       return frame;
     }
     virtual void setBackgroundColor(KDColor c) {}
-    virtual void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) {}
   };
 
   // Decorator is the base class and an empty decorator
@@ -61,11 +56,10 @@ class ScrollView : public View {
    public:
     constexpr static KDCoordinate k_barsFrameBreadth =
         Metric::CommonRightMargin;
-    using Decorator::Decorator;
-    void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) override {
+    void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) {
       m_verticalBar.setMargins(top, bottom);
     }
-    int numberOfIndicators() const override { return 2; }
+    int numberOfIndicators() const override { return m_visible ? 2 : 0; }
     View *indicatorAtIndex(int index) override;
     KDRect layoutIndicators(View *parent, KDSize content, KDPoint offset,
                             KDRect frame, KDRect *dirtyRect1,
@@ -73,10 +67,12 @@ class ScrollView : public View {
                             ScrollViewDelegate *delegate = nullptr) override;
     ScrollViewVerticalBar *verticalBar() { return &m_verticalBar; }
     ScrollViewHorizontalBar *horizontalBar() { return &m_horizontalBar; }
+    void setVisibility(bool visible) { m_visible = visible; }
 
    private:
     ScrollViewVerticalBar m_verticalBar;
     ScrollViewHorizontalBar m_horizontalBar;
+    bool m_visible;
   };
 
   class ArrowDecorator : public Decorator {
@@ -137,19 +133,6 @@ class ScrollView : public View {
     return (index == 0) ? &m_innerView : decorator()->indicatorAtIndex(index);
   }
   View *m_contentView;
-
- protected:
-  union Decorators {
-   public:
-    Decorators();
-    ~Decorators();
-    Decorator *activeDecorator() { return &m_none; }
-    void setActiveDecorator(Decorator::Type t);
-
-   private:
-    NoDecorator m_none;
-    BarDecorator m_bars;
-  };
 
  private:
   ScrollViewDataSource *m_dataSource;

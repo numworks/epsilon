@@ -45,10 +45,8 @@ class TableView : public ScrollView {
   }
   void initSize(KDRect rect);
   void reloadVisibleCellsAtColumn(int column);
-  void setDecoratorType(Decorator::Type t) {
-    m_decorators.setActiveDecorator(t);
-  }
-  Decorator *decorator() override { return m_decorators.activeDecorator(); };
+  void hideScrollBars() { m_decorator.setVisibility(false); }
+  BarDecorator *decorator() override { return &m_decorator; };
 
  protected:
 #if ESCHER_VIEW_LOGGING
@@ -143,7 +141,7 @@ class TableView : public ScrollView {
     KDCoordinate m_horizontalCellOverlap;
     KDCoordinate m_verticalCellOverlap;
   };
-  ScrollView::Decorators m_decorators;
+  BarDecorator m_decorator;
   ContentView m_contentView;
 };
 

@@ -23,7 +23,7 @@ EquationModelsParameterController::EquationModelsParameterController(
       m_equationStore(equationStore),
       m_listController(listController) {
   m_selectableListView.setMargins(0);
-  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableListView.hideScrollBars();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Poincare::Expression e =
         Expression::Parse(k_models[i + 1], nullptr);  // No context needed

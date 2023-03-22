@@ -19,7 +19,7 @@ StoreMenuController::InnerListController::InnerListController(
     : ViewController(dataSource),
       m_selectableListView(this, dataSource, dataSource, delegate) {
   m_selectableListView.setMargins(0);
-  m_selectableListView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_selectableListView.hideScrollBars();
 }
 
 void StoreMenuController::open() {

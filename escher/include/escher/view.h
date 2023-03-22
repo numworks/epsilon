@@ -54,7 +54,6 @@ class View {
 
   KDRect bounds() const;
   KDRect dirtyRect() const { return m_dirtyRect; }
-  virtual bool isVisible() const { return true; }
 
   virtual KDSize minimalSizeForOptimalDisplay() const { return KDSizeZero; }
 

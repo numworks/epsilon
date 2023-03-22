@@ -96,7 +96,7 @@ size_t AbstractTextField::ContentView::editedTextLength() const {
 
 void AbstractTextField::ContentView::setText(const char *text) {
   size_t textRealLength = strlen(text);
-  size_t maxBufferSize = editionBufferSize();
+  size_t maxBufferSize = draftTextBufferSize();
   char *buffer = const_cast<char *>(this->text());
   if (textRealLength > maxBufferSize - 1) {
     // The text was too long to be copied
@@ -161,7 +161,7 @@ bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
 
   size_t textLength = textLen < 0 ? strlen(text) : (size_t)textLen;
   // TODO when paste fails because of a too big message, create a pop-up
-  if (editedLength + textLength >= editionBufferSize() || textLength == 0) {
+  if (editedLength + textLength >= draftTextBufferSize() || textLength == 0) {
     return false;
   }
 
@@ -170,9 +170,9 @@ bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
 
   // Caution! One byte will be overridden by the null-terminating char of
   // strlcpy
-  size_t copySize =
-      std::min(textLength + 1,
-               static_cast<size_t>((buffer + editionBufferSize()) - location));
+  size_t copySize = std::min(
+      textLength + 1,
+      static_cast<size_t>((buffer + draftTextBufferSize()) - location));
   char *overridenByteLocation = location + copySize - 1;
   char overridenByte = *overridenByteLocation;
   strlcpy(location, text, copySize);
@@ -281,7 +281,7 @@ size_t AbstractTextField::ContentView::deleteSelection() {
   size_t removedLength = selectionRight() - selectionLeft();
   char *buffer = const_cast<char *>(editedText());
   strlcpy(const_cast<char *>(selectionLeft()), selectionRight(),
-          editionBufferSize() - (selectionLeft() - buffer));
+          draftTextBufferSize() - (selectionLeft() - buffer));
   // We cannot call resetSelection() because m_selectionEnd is invalid.
   m_selectionStart = nullptr;
   if (buffer == s_draftTextBuffer) {
@@ -297,10 +297,6 @@ void AbstractTextField::ContentView::layoutSubviews(bool force) {
     return;
   }
   TextInput::ContentView::layoutSubviews(force);
-}
-
-size_t AbstractTextField::ContentView::editionBufferSize() const {
-  return draftTextBufferSize();
 }
 
 KDRect AbstractTextField::ContentView::glyphFrameAtPosition(

@@ -102,7 +102,7 @@ void Node::logAttributes(std::ostream &stream) const {
     stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
     if (type() == BlockType::Polynomial) {
       for (int i = 0; i < Polynomial::NumberOfTerms(*this); i++) {
-        stream << " exponent(\"" << i << "\") = \""
+        stream << " exponent" << i << "=\""
                << static_cast<int>(
                       static_cast<uint8_t>(*(block()->nextNth(2 + i))))
                << "\"";

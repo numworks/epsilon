@@ -172,7 +172,8 @@ bool Sequence::isSuitableForCobweb(Context *context) const {
              static_cast<void *>(buffer));
 }
 
-bool Sequence::mainExpressionIsNotComputable(Context *context) const {
+bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
+                                                    bool allowRecursion) const {
   constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
   char buffer[bufferSize];
   name(buffer, bufferSize);
@@ -180,9 +181,10 @@ bool Sequence::mainExpressionIsNotComputable(Context *context) const {
   struct Pack {
     char *name;
     Type type;
+    bool recursion;
   };
   struct Pack pack {
-    buffer, type
+    buffer, type, allowRecursion
   };
   return expressionClone().recursivelyMatches(
       [](const Expression e, Context *context, void *arg) {
@@ -198,10 +200,13 @@ bool Sequence::mainExpressionIsNotComputable(Context *context) const {
         }
         Expression rank = seq.childAtIndex(0);
         Type type = pack->type;
-        if ((type != Type::Explicit &&
-             (rank.isRankNPlusK(0) || rank.isZero())) ||
-            (type == Type::DoubleRecurrence &&
-             (rank.isRankNPlusK(1) || rank.isOne()))) {
+        if ((type != Type::Explicit && rank.isZero()) ||
+            (type == Type::DoubleRecurrence && rank.isOne())) {
+          return TrinaryBoolean::False;
+        }
+        if (pack->recursion &&
+            ((type != Type::Explicit && rank.isRankNPlusK(0)) ||
+             (type == Type::DoubleRecurrence && rank.isRankNPlusK(1)))) {
           return TrinaryBoolean::False;
         }
         return TrinaryBoolean::True;

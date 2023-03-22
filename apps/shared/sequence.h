@@ -96,13 +96,14 @@ class Sequence : public Function {
   /* Sequence u is suitable for cobweb if it is simply recursive and if u(n+1)
    * depends only on u(n) and not on n, another sequence or another rank of u */
   bool isSuitableForCobweb(Poincare::Context *context) const;
-  /* Sequence u is not computable:
-   * - when explicit: if u(n) depends on a term of u
-   * - when simple recurrence: if u(n+1) depends on a term of u other than u(n)
-   *   and u(0)
-   * - when double recurrence: if u(n+2) depends on a term of u other than
-   *   u(n+1), u(n), u(1) and u(0) */
-  bool mainExpressionIsNotComputable(Poincare::Context *context) const;
+  /* Sequence u can be handled as explicit if main expression does not contains
+   * forbidden terms:
+   * - explicit: any term of u
+   * - simple recurrence: any term of u other than u(0)
+   * - double recurrence: any term of u other than u(1), u(0) */
+  bool canBeHandleAsExplicit(Poincare::Context *context) const {
+    return !mainExpressionContainsForbiddenTerms(context, false);
+  }
   int order() const;
   int firstNonInitialRank() const { return initialRank() + order(); }
 
@@ -238,6 +239,16 @@ class Sequence : public Function {
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const ExpressionModel *model() const override { return &m_definition; }
   RecordDataBuffer *recordData() const;
+
+  bool mainExpressionContainsForbiddenTerms(Poincare::Context *context,
+                                            bool allowRecursion) const;
+  /* Sequence u is not computable if main expression contains forbidden terms:
+   * - explicit: any term of u
+   * - simple recurrence: any term of u other than u(n), u(0)
+   * - double recurrence: any term of u other than u(n+1), u(n), u(1), u(0) */
+  bool mainExpressionIsNotComputable(Poincare::Context *context) const {
+    return mainExpressionContainsForbiddenTerms(context, true);
+  }
 
   DefinitionModel m_definition;
   FirstInitialConditionModel m_firstInitialCondition;

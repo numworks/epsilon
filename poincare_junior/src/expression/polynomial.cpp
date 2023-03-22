@@ -401,11 +401,10 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
     return std::make_pair(one, static_cast<uint8_t>(1));
   }
   PatternMatching::Context ctx(variable);
-  ctx = PatternMatching::Match(
-      KPow(PatternMatching::Placeholders::A, PatternMatching::Placeholders::B),
-      expression, ctx);
+  ctx = PatternMatching::Match(KPow(Placeholders::A, Placeholders::B),
+                               expression, ctx);
   if (!ctx.isUninitialized()) {
-    Node exponent = ctx[PatternMatching::Placeholders::B];
+    Node exponent = ctx[Placeholders::B];
     if (Integer::IsUint8(exponent)) {
       uint8_t exp = Integer::Uint8(exponent);
       assert(exp > 1);

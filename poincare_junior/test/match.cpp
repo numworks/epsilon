@@ -7,13 +7,13 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_placeholders) {
-  using namespace PatternMatching::Placeholders;
+  using namespace Placeholders;
   constexpr Tree a = A;
   (void)KAdd(2_e, a, A);
 }
 
 QUIZ_CASE(pcj_context) {
-  using namespace PatternMatching::Placeholders;
+  using namespace Placeholders;
   PatternMatching::Context ctx;
   ctx[A] = KAdd(2_e, 1_e);
   Node structure = KMult(5_e, KAdd(A, A));
@@ -22,7 +22,7 @@ QUIZ_CASE(pcj_context) {
 }
 
 QUIZ_CASE(pcj_match) {
-  using namespace PatternMatching::Placeholders;
+  using namespace Placeholders;
   Node t = KAdd(2_e, 1_e);
   PatternMatching::Context ctx = PatternMatching::Match(A, t);
   assert_trees_are_equal(ctx[A], t);
@@ -39,7 +39,7 @@ QUIZ_CASE(pcj_match) {
 }
 
 QUIZ_CASE(pcj_rewrite_replace) {
-  using namespace PatternMatching::Placeholders;
+  using namespace Placeholders;
   EditionPool* editionPool = EditionPool::sharedEditionPool();
   Node p = KAdd(A, A);
   Node s = KMult(2_e, A);

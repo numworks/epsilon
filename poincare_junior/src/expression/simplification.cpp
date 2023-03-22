@@ -48,18 +48,14 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
 }
 
 // TODO : Limit the base to e
-Node expContracted1 = KPow(
-    PatternMatching::Placeholders::A,
-    KAdd(PatternMatching::Placeholders::B, PatternMatching::Placeholders::C));
-Node expExpanded1 = KMult(
-    KPow(PatternMatching::Placeholders::A, PatternMatching::Placeholders::B),
-    KPow(PatternMatching::Placeholders::A, PatternMatching::Placeholders::C));
-Node expContracted2 = KPow(
-    PatternMatching::Placeholders::A,
-    KMult(PatternMatching::Placeholders::B, PatternMatching::Placeholders::C));
-Node expExpanded2 = KPow(
-    KPow(PatternMatching::Placeholders::A, PatternMatching::Placeholders::B),
-    PatternMatching::Placeholders::C);
+Node expContracted1 =
+    KPow(Placeholders::A, KAdd(Placeholders::B, Placeholders::C));
+Node expExpanded1 = KMult(KPow(Placeholders::A, Placeholders::B),
+                          KPow(Placeholders::A, Placeholders::C));
+Node expContracted2 =
+    KPow(Placeholders::A, KMult(Placeholders::B, Placeholders::C));
+Node expExpanded2 =
+    KPow(KPow(Placeholders::A, Placeholders::B), Placeholders::C);
 // TODO : Implement Sin and Cos
 // Node sinContracted = Sin(A+B);
 // Node sinExpanded = KAdd(Mult(Sin(A),Cos(B)),Mult(Cos(A),Sin(B)));

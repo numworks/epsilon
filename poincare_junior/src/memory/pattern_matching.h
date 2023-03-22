@@ -28,12 +28,6 @@ struct Placeholder : public AbstractTreeCompatible {
   constexpr operator const Node() const { return Tree(Placeholder<P>()); }
 };
 
-namespace Placeholders {
-static constexpr Placeholder<PlaceholderTag::A> A;
-static constexpr Placeholder<PlaceholderTag::B> B;
-static constexpr Placeholder<PlaceholderTag::C> C;
-}  // namespace Placeholders
-
 class Context {
  public:
   Context(Node a = Node(), Node b = Node(), Node c = Node())
@@ -71,6 +65,18 @@ Context Match(const Node pattern, const Node source,
 EditionReference Create(const Node structure,
                         const Context context = Context());
 };  // namespace PatternMatching
+
+namespace Placeholders {
+static constexpr PatternMatching::Placeholder<
+    PatternMatching::PlaceholderTag::A>
+    A;
+static constexpr PatternMatching::Placeholder<
+    PatternMatching::PlaceholderTag::B>
+    B;
+static constexpr PatternMatching::Placeholder<
+    PatternMatching::PlaceholderTag::C>
+    C;
+}  // namespace Placeholders
 
 template <PatternMatching::PlaceholderTag P>
 Tree(PatternMatching::Placeholder<P>)

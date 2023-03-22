@@ -6,9 +6,9 @@
 #include <apps/shared/curve_view_cursor.h>
 #include <apps/shared/memoized_curve_view_range.h>
 #include <apps/shared/round_cursor_view.h>
-#include <apps/shared/xy_banner_view.h>
 #include <escher/view_controller.h>
 
+#include "residual_plot_banner_view.h"
 #include "residual_plot_curve_view.h"
 #include "residual_plot_range.h"
 
@@ -57,7 +57,7 @@ class ResidualPlotController : public Escher::ViewController {
   Shared::CurveViewCursor m_cursor;
   Shared::RingCursorView m_cursorView;
   ResidualPlotRange m_range;
-  Shared::XYBannerView m_bannerView;
+  ResidualPlotBannerView m_bannerView;
   ResidualPlotCurveView m_curveView;
   int m_selectedDotIndex;
   int m_selectedSeriesIndex;

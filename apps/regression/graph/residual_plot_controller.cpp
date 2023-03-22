@@ -12,7 +12,6 @@ ResidualPlotController::ResidualPlotController(
     : Escher::ViewController(parentResponder),
       m_store(store),
       m_cursor(FLT_MAX),
-      m_bannerView(this, nullptr, nullptr),
       m_curveView(&m_range, &m_cursor, &m_bannerView, &m_cursorView, this),
       m_selectedDotIndex(0),
       m_selectedSeriesIndex(0) {}
@@ -36,16 +35,18 @@ void ResidualPlotController::updateCursor() {
       Shared::BannerView::k_maxLengthDisplayed - 2;  // -2 for "x="
   char buffer[bufferSize];
 
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "%*.*ed", x, displayMode,
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "x=%*.*ed", x, displayMode,
                                 significantDigits);
-  m_bannerView.abscissaValue()->setText(buffer);
-  m_bannerView.abscissaSymbol()->setText("x=");
+  m_bannerView.abscissaView()->setText(buffer);
 
   Poincare::Print::CustomPrintf(buffer, bufferSize, "%s%s%*.*ed",
                                 I18n::translate(I18n::Message::Residual),
                                 I18n::translate(I18n::Message::ColonConvention),
                                 y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
+
+  // TODO
+  m_bannerView.stddevView()->setText("Residual standard deviation: ???");
 
   m_curveView.reload();
   m_bannerView.reload();

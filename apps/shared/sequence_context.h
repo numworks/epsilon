@@ -30,6 +30,7 @@ class TemplatedSequenceContext : public Poincare::ContextWithParent {
  private:
   constexpr static int k_maxRecurrentRank = 10000;
   int* rankPointer(int sequenceIndex, bool intermediateComputation);
+  T* valuesPointer(int sequenceIndex, bool intermediateComputation);
   void shiftValuesLeft(int sequenceIndex, bool intermediateComputation,
                        int delta);
   void stepToNextRank(int sequenceIndex, bool intermediateComputation);

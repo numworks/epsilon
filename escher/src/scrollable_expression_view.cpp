@@ -13,7 +13,7 @@ ScrollableExpressionView::ScrollableExpressionView(
     : ScrollableView(parentResponder, &m_expressionView, this),
       m_expressionView(horizontalAlignment, verticalAlignment, textColor,
                        backgroundColor, font) {
-  setDecoratorFont(font);
+  decorator()->setFont(font);
   setMargins(topBottomMargin, leftRightMargin, topBottomMargin,
              leftRightMargin);
   setBackgroundColor(backgroundColor);

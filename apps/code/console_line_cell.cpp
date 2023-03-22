@@ -38,7 +38,7 @@ KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::
 ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(
     Responder* parentResponder)
     : ScrollableView(parentResponder, &m_consoleLineView, this) {
-  setDecoratorFont(GlobalPreferences::sharedGlobalPreferences->font());
+  decorator()->setFont(GlobalPreferences::sharedGlobalPreferences->font());
   setBackgroundColor(KDColorWhite);
 }
 

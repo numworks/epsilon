@@ -1,8 +1,11 @@
 #include "frequency_controller.h"
 
 #include <assert.h>
+#include <escher/container.h>
 #include <poincare/ieee754.h>
 #include <poincare/print.h>
+
+#include "../app.h"
 
 namespace Statistics {
 
@@ -12,9 +15,50 @@ FrequencyController::FrequencyController(
     Escher::StackViewController *stackViewController,
     Escher::ViewController *typeViewController, Store *store)
     : PlotController(parentResponder, header, tabController,
-                     stackViewController, typeViewController, store) {
+                     stackViewController, typeViewController, store),
+      m_bannerViewWithEditableField(this, App::app(), this) {
   m_view.setBannerView(&m_bannerViewWithEditableField);
   m_curveView.setCursorView(&m_cursorView);
+}
+
+void FrequencyController::didBecomeFirstResponder() {
+  if (m_curveView.hasFocus()) {
+    Escher::Container::activeApp()->setFirstResponder(
+        m_bannerViewWithEditableField.value());
+  } else {
+    PlotController::didBecomeFirstResponder();
+  }
+}
+
+bool FrequencyController::textFieldDidFinishEditing(
+    Escher::AbstractTextField *textField, const char *text,
+    Ion::Events::Event event) {
+  double newX = textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
+  if (textFieldDelegateApp()->hasUndefinedValue(newX)) {
+    return false;
+  }
+  // Check if x is out of bounds
+  int n = totalValues(m_selectedSeries);
+  if (newX < valueAtIndex(m_selectedSeries, 0) ||
+      newX > valueAtIndex(m_selectedSeries, n - 1)) {
+    textFieldDelegateApp()->displayWarning(I18n::Message::UndefinedValue);
+    return false;
+  }
+  // Compute the new selected index
+  m_selectedIndex = n - 1;
+  for (int i = 0; i < n - 1; i++) {
+    if (valueAtIndex(m_selectedSeries, i + 1) > newX) {
+      m_selectedIndex = i;
+      break;
+    }
+  }
+  // Update cursor
+  m_cursor.moveTo(newX, newX, yValueAtAbscissa(m_selectedSeries, newX));
+  m_cursorView.setIsRing(newX ==
+                         valueAtIndex(m_selectedSeries, m_selectedIndex));
+  reloadBannerView();
+  m_curveView.reload();
+  return true;
 }
 
 void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
@@ -37,14 +81,17 @@ void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
 
 void FrequencyController::reloadValueInBanner(
     Poincare::Preferences::PrintFloatMode displayMode, int precision) {
-  // TODO
   constexpr static int k_bufferSize =
-      1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
+      Shared::BannerView::k_maxLengthDisplayed + 1;
   char buffer[k_bufferSize] = "";
-  Poincare::Print::CustomPrintf(buffer, k_bufferSize, "%s%s%*.*ed",
-                                I18n::translate(I18n::Message::StatisticsValue),
-                                I18n::translate(I18n::Message::ColonConvention),
-                                m_cursor.x(), displayMode, precision);
+  Poincare::Print::CustomPrintf(
+      buffer, k_bufferSize, "%s%s",
+      I18n::translate(I18n::Message::StatisticsValue),
+      I18n::translate(I18n::Message::ColonConvention));
+  m_bannerViewWithEditableField.valueLabel()->setText(buffer);
+  buffer[0] = 0;
+  Poincare::Print::CustomPrintf(buffer, k_bufferSize, "%*.*ed", m_cursor.x(),
+                                displayMode, precision);
   m_bannerViewWithEditableField.value()->setText(buffer);
 }
 

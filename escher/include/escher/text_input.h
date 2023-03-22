@@ -45,12 +45,11 @@ class TextInput
                 float verticalAlignment = KDContext::k_alignCenter)
         : View(),
           m_cursorView(this),
-          m_font(font),
-          m_selectionStart(nullptr),
-          m_selectionEnd(nullptr),
           m_cursorLocation(nullptr),
+          m_selectionStart(nullptr),
           m_horizontalAlignment(horizontalAlignment),
-          m_verticalAlignment(verticalAlignment) {}
+          m_verticalAlignment(verticalAlignment),
+          m_font(font) {}
 
     // Font
     void setFont(KDFont::Size font);
@@ -73,9 +72,13 @@ class TextInput
     virtual bool removeEndOfLine() = 0;
 
     // Selection
-    const char *selectionStart() const { return m_selectionStart; }
-    const char *selectionEnd() const { return m_selectionEnd; }
-    void addSelection(const char *left, const char *right);
+    const char *selectionLeft() const {
+      return std::min(m_selectionStart, m_cursorLocation);
+    }
+    const char *selectionRight() const {
+      return std::max(m_selectionStart, m_cursorLocation);
+    }
+    void updateSelection(const char *previousCursorLocation);
     bool resetSelection();  // returns true if the selection was indeed reset
     bool selectionIsEmpty() const;
     virtual size_t deleteSelection() = 0;
@@ -96,12 +99,11 @@ class TextInput
     virtual KDRect dirtyRectFromPosition(const char *position,
                                          bool includeFollowingLines) const;
     TextCursorView m_cursorView;
-    KDFont::Size m_font;
-    const char *m_selectionStart;
-    const char *m_selectionEnd;
     const char *m_cursorLocation;
+    const char *m_selectionStart;
     float m_horizontalAlignment;
     float m_verticalAlignment;
+    KDFont::Size m_font;
 
    private:
     int numberOfSubviews() const override { return 1; }

@@ -2,18 +2,28 @@
 #define STATISTICS_FREQUENCY_CONTROLLER_H
 
 #include <apps/shared/round_cursor_view.h>
+#include <apps/shared/text_field_delegate.h>
 
 #include "plot_controller.h"
 
 namespace Statistics {
 
-class FrequencyController : public PlotController {
+class FrequencyController : public PlotController,
+                            public Shared::TextFieldDelegate {
  public:
   FrequencyController(Escher::Responder *parentResponder,
                       Escher::ButtonRowController *header,
                       Escher::TabViewController *tabController,
                       Escher::StackViewController *stackViewController,
                       Escher::ViewController *typeViewController, Store *store);
+
+  // Responder
+  void didBecomeFirstResponder() override;
+
+  // TextFieldDelegate
+  bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
+                                 const char *text,
+                                 Ion::Events::Event event) override;
 
   // PlotController
   int totalValues(int series) const override {
@@ -72,8 +82,7 @@ class FrequencyController : public PlotController {
     return &m_bannerViewWithEditableField;
   }
   Shared::ToggleableRingRoundCursorView m_cursorView;
-  // TODO: Change the class of this in next commit
-  SimplePlotBannerView m_bannerViewWithEditableField;
+  PlotBannerViewWithEditableField m_bannerViewWithEditableField;
 };
 
 }  // namespace Statistics

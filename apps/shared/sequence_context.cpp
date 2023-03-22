@@ -155,8 +155,13 @@ void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
     shiftValuesLeft(sequenceIndex, intermediateComputation, offset);
   }
 
+  Sequence *s = m_sequenceContext->sequenceAtNameIndex(sequenceIndex);
+  bool explicitComputation =
+      rank >= s->firstNonInitialRank() && s->canBeHandleAsExplicit(this);
+
   while (*currentRank < rank) {
-    stepToNextRank(sequenceIndex, intermediateComputation);
+    int step = explicitComputation ? rank - *currentRank : 1;
+    stepRanks(sequenceIndex, intermediateComputation, step);
   }
   if (!intermediateComputation) {
     resetDataOfCurrentComputation();
@@ -164,20 +169,17 @@ void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
 }
 
 template <typename T>
-void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex,
-                                                 bool intermediateComputation) {
+void TemplatedSequenceContext<T>::stepRanks(int sequenceIndex,
+                                            bool intermediateComputation,
+                                            int step) {
   int *currentRank = rankPointer(sequenceIndex, intermediateComputation);
   T *values = valuesPointer(sequenceIndex, intermediateComputation);
 
   // First we increment the rank
-  (*currentRank)++;
+  *currentRank += step;
 
-  // Then we shift the values stored in the arrays : {u(n), u(n-1), u(n-2)}
-  // becomes {SignalingNan, u(n), u(n-1)}. If rank was -1, all values are
-  // SignalingNan, then no need to shift.
-  if (*currentRank > 0) {
-    shiftValuesRight(sequenceIndex, intermediateComputation, 1);
-  }
+  // Then we shift the values
+  shiftValuesRight(sequenceIndex, intermediateComputation, step);
 
   // We approximate the value at new rank
   T otherCacheValue = storedValueOfSequenceAtRank(sequenceIndex, *currentRank);

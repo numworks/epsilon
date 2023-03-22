@@ -33,7 +33,7 @@ class TemplatedSequenceContext : public Poincare::ContextWithParent {
                        int delta);
   void shiftValuesRight(int sequenceIndex, bool intermediateComputation,
                         int delta);
-  void stepToNextRank(int sequenceIndex, bool intermediateComputation);
+  void stepRanks(int sequenceIndex, bool intermediateComputation, int step);
   void resetValuesOfSequence(int sequenceIndex, bool intermediateComputation);
   void resetRanksAndValuesOfSequence(int sequenceIndex,
                                      bool intermediateComputation);

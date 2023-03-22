@@ -61,7 +61,7 @@ void Pool::ReferenceTable::logIdsForNode(std::ostream &stream,
     }
   }
   if (found == false) {
-    stream << "No reference";
+    stream << "ø";
   }
 }
 

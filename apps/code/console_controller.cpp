@@ -133,31 +133,8 @@ const char *ConsoleController::inputText(const char *prompt) {
     }
   }
 
-  const char *previousPrompt = m_editCell.promptText();
   m_editCell.setPrompt(promptText);
-
-  // clang-format off
-  /* The user will input some text that is stored in the edit cell. When the
-   * input is finished, we want to clear that cell and return the input text.
-   * We choose to shift the input in the edit cell and put a null char in first
-   * position, so that the cell seems cleared but we can still use it to store
-   * the input.
-   * To do so, we need to reduce the cell buffer size by one, so that the input
-   * can be shifted afterwards, even if it has maxSize.
-   *
-   * Illustration of a input sequence:
-   * | | | | | | | | |  <- the edit cell buffer
-   * |0| | | | | | |X|  <- clear and reduce the size
-   * |a|0| | | | | |X|  <- user input
-   * |a|b|0| | | | |X|  <- user input
-   * |a|b|c|0| | | |X|  <- user input
-   * |a|b|c|d|0| | |X|  <- last user input
-   * | |a|b|c|d|0| | |  <- increase the buffer size and shift the user input by one
-   * |0|a|b|c|d|0| | |  <- put a zero in first position: the edit cell seems empty
-   */
-  // clang-format on
-
-  m_editCell.clearAndReduceSize();
+  m_editCell.setText("");
 
   // Reload the history
   reloadData(true);
@@ -179,12 +156,7 @@ const char *ConsoleController::inputText(const char *prompt) {
   size_t textSize = strlen(text);
   printText(text, textSize);
   flushOutputAccumulationBufferToStore();
-
-  // Clear the edit cell and return the input
-  text = m_editCell.shiftCurrentTextAndClear();
-  m_editCell.setPrompt(previousPrompt);
   refreshPrintOutput();
-
   return text;
 }
 

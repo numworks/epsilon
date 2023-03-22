@@ -34,8 +34,6 @@ class ConsoleEditCell : public Escher::HighlightCell, public Escher::Responder {
   bool insertText(const char* text);
   void setPrompt(const char* prompt);
   const char* promptText() const { return m_promptView.text(); }
-  void clearAndReduceSize();
-  const char* shiftCurrentTextAndClear();
 
  private:
   Escher::PointerTextView m_promptView;

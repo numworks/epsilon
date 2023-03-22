@@ -75,6 +75,33 @@ T TemplatedSequenceContext<T>::storedValueOfSequenceAtRank(int sequenceIndex,
 }
 
 template <typename T>
+void TemplatedSequenceContext<T>::shiftValuesLeft(int sequenceIndex,
+                                                  bool intermediateComputation,
+                                                  int delta) {
+  assert(0 < delta && delta <= SequenceStore::k_maxNumberOfSequences);
+
+  // Get values
+  T *values;
+  if (intermediateComputation) {
+    values = reinterpret_cast<T *>(&m_intermediateValues);
+  } else {
+    values = reinterpret_cast<T *>(&m_mainValues);
+  }
+  values += sequenceIndex * (SequenceStore::k_maxRecurrenceDepth + 1);
+
+  // Shift values
+  int stop = SequenceStore::k_maxRecurrenceDepth + 1 - delta;
+  assert(0 < stop && stop < SequenceStore::k_maxRecurrenceDepth + 1);
+  for (int depth = 0; depth < stop; depth++) {
+    *(values + depth) = *(values + depth + delta);
+  }
+  for (int depth = stop; depth < SequenceStore::k_maxRecurrenceDepth + 1;
+       depth++) {
+    *(values + depth) = OMG::SignalingNan<T>();
+  }
+}
+
+template <typename T>
 void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
   assert(rank >= 0);
   if (rank > k_maxRecurrentRank) {
@@ -88,12 +115,14 @@ void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
                          : m_mainRanks + sequenceIndex;
   assert(*currentRank >= 0 || *currentRank == -1);
 
-  // If current rank is superior to n, we need to start computing back the
-  // recurrence from the initial rank and step until rank n. Otherwise, we can
-  // start at the current rank and step until rank n.
-  if (*currentRank > rank) {
+  int offset = *currentRank - rank;
+  if (offset > SequenceStore::k_maxRecurrenceDepth) {
     resetCacheOfSequence(sequenceIndex, intermediateComputation);
+  } else if (offset > 0) {
+    *currentRank = rank;
+    shiftValuesLeft(sequenceIndex, intermediateComputation, offset);
   }
+
   while (*currentRank < rank) {
     stepToNextRank(sequenceIndex, intermediateComputation);
   }

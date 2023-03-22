@@ -27,53 +27,32 @@ KDRect TextInput::ContentView::cursorRect() {
   return glyphFrameAtPosition(editedText(), m_cursorLocation);
 }
 
-void TextInput::ContentView::addSelection(const char* left, const char* right) {
+void TextInput::ContentView::updateSelection(
+    const char* previousCursorLocation) {
   bool emptySelection = selectionIsEmpty();
-  if (emptySelection) {
-    m_selectionStart = left;
-    m_selectionEnd = right;
-  } else if (left == m_selectionEnd) {
-    m_selectionEnd = right;
-  } else if (right == m_selectionStart) {
-    m_selectionStart = left;
-  } else if (right == m_selectionEnd) {
-    if (left >= m_selectionStart) {
-      m_selectionEnd = left;
-    } else {
-      m_selectionEnd = m_selectionStart;
-      m_selectionStart = left;
-    }
-  } else {
-    assert(left == m_selectionStart);
-    if (right <= m_selectionEnd) {
-      m_selectionStart = right;
-    } else {
-      m_selectionStart = m_selectionEnd;
-      m_selectionEnd = right;
-    }
+  if (selectionIsEmpty()) {
+    m_selectionStart = previousCursorLocation;
   }
-  reloadRectFromAndToPositions(left, right);
-  if (m_selectionStart == m_selectionEnd) {
+  if (m_selectionStart == m_cursorLocation) {
     m_selectionStart = nullptr;
-    m_selectionEnd = nullptr;
   }
+  reloadRectFromAndToPositions(
+      std::min(m_cursorLocation, previousCursorLocation),
+      std::max(m_cursorLocation, previousCursorLocation));
 }
 
 bool TextInput::ContentView::resetSelection() {
   if (selectionIsEmpty()) {
     return false;
   }
-  const char* previousStart = m_selectionStart;
-  const char* previousEnd = m_selectionEnd;
+  const char* previousStart = selectionLeft();
+  const char* previousEnd = selectionRight();
   m_selectionStart = nullptr;
-  m_selectionEnd = nullptr;
   reloadRectFromAndToPositions(previousStart, previousEnd);
   return true;
 }
 
 bool TextInput::ContentView::selectionIsEmpty() const {
-  assert(m_selectionStart != nullptr || m_selectionEnd == nullptr);
-  assert(m_selectionEnd != nullptr || m_selectionStart == nullptr);
   return m_selectionStart == nullptr;
 }
 
@@ -161,11 +140,11 @@ void TextInput::deleteSelection() {
   assert(!cv->selectionIsEmpty());
   const float horizontalAlignment = cv->horizontalAlignment();
   if (horizontalAlignment == 0.0f) {
-    cv->reloadRectFromPosition(cv->selectionStart(), true);
+    cv->reloadRectFromPosition(cv->selectionLeft(), true);
   }
-  bool cursorIsAtEndOfSelection = cv->selectionEnd() == cv->cursorLocation();
+  bool cursorIsRightOfSelection = cv->selectionRight() == cv->cursorLocation();
   size_t removedLength = cv->deleteSelection();
-  if (cursorIsAtEndOfSelection) {
+  if (cursorIsRightOfSelection) {
     setCursorLocation(cv->cursorLocation() - removedLength);
   }
   layoutSubviews(
@@ -234,30 +213,23 @@ bool TextInput::moveCursorRight(int step) {
 
 bool TextInput::selectLeftRight(OMG::HorizontalDirection direction, bool all,
                                 int step) {
-  const char* cursorLoc = cursorLocation();
-  const char* nextCursorLoc = nullptr;
+  const char* previousCursorLoc = cursorLocation();
   if (!all) {
     bool moved =
         direction.isLeft() ? moveCursorLeft(step) : moveCursorRight(step);
     if (!moved) {
       return false;
     }
-    nextCursorLoc = cursorLocation();
   } else {
     const char* t = text();
-    nextCursorLoc = direction.isLeft() ? t : t + strlen(t);
+    const char* nextCursorLoc = direction.isLeft() ? t : t + strlen(t);
     willSetCursorLocation(&nextCursorLoc);
-    if (cursorLoc == nextCursorLoc) {
+    if (previousCursorLoc == nextCursorLoc) {
       return false;
     }
     setCursorLocation(nextCursorLoc);
   }
-  if (direction.isLeft()) {
-    contentView()->addSelection(nextCursorLoc, cursorLoc);
-    return true;
-  }
-  assert(direction.isRight());
-  contentView()->addSelection(cursorLoc, nextCursorLoc);
+  contentView()->updateSelection(previousCursorLoc);
   return true;
 }
 

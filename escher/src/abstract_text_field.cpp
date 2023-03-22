@@ -62,12 +62,12 @@ void AbstractTextField::ContentView::drawRect(KDContext *ctx,
                     m_font, m_textColor, backgroundColor);
   } else {
     assert(m_isEditing);
-    int selectionOffset = m_selectionStart - editedText();
+    int selectionOffset = selectionLeft() - editedText();
     const char *textToDraw = text();
     // Draw the non selected text on the left of the selection
     ctx->drawString(textToDraw, glyphFrameAtPosition(text(), text()).origin(),
                     m_font, m_textColor, backgroundColor, selectionOffset);
-    int selectionLength = m_selectionEnd - m_selectionStart;
+    int selectionLength = selectionRight() - selectionLeft();
     textToDraw += selectionOffset;
     // Draw the selected text
     ctx->drawString(text() + selectionOffset,
@@ -278,14 +278,12 @@ size_t AbstractTextField::dumpContent(char *buffer, size_t bufferSize,
 size_t AbstractTextField::ContentView::deleteSelection() {
   assert(!selectionIsEmpty());
   assert(m_isEditing);
-  size_t removedLength = m_selectionEnd - m_selectionStart;
+  size_t removedLength = selectionRight() - selectionLeft();
   char *buffer = const_cast<char *>(editedText());
-  strlcpy(const_cast<char *>(m_selectionStart), m_selectionEnd,
-          editionBufferSize() - (m_selectionStart - buffer));
-  /* We cannot call resetSelection() because m_selectionStart and m_selectionEnd
-   * are invalid */
+  strlcpy(const_cast<char *>(selectionLeft()), selectionRight(),
+          editionBufferSize() - (selectionLeft() - buffer));
+  // We cannot call resetSelection() because m_selectionEnd is invalid.
   m_selectionStart = nullptr;
-  m_selectionEnd = nullptr;
   if (buffer == s_draftTextBuffer) {
     assert(removedLength <= s_currentDraftTextLength);
     s_currentDraftTextLength -= removedLength;
@@ -689,9 +687,9 @@ bool AbstractTextField::storeInClipboard() const {
     Clipboard::SharedClipboard()->store(text());
     return true;
   } else if (!nonEditableContentView()->selectionIsEmpty()) {
-    const char *start = nonEditableContentView()->selectionStart();
+    const char *start = nonEditableContentView()->selectionLeft();
     Clipboard::SharedClipboard()->store(
-        start, nonEditableContentView()->selectionEnd() - start);
+        start, nonEditableContentView()->selectionRight() - start);
     return true;
   }
   return false;
@@ -701,12 +699,12 @@ bool AbstractTextField::handleStoreEvent() {
   if (!isEditing() && m_delegate->textFieldIsStorable(this)) {
     Container::activeApp()->storeValue(text());
   } else if (isEditing() && !nonEditableContentView()->selectionIsEmpty()) {
-    const char *start = nonEditableContentView()->selectionStart();
+    const char *start = nonEditableContentView()->selectionLeft();
     static_assert(TextField::MaxBufferSize() ==
                   Escher::Clipboard::k_bufferSize);
     char buffer[Escher::Clipboard::k_bufferSize];
     strlcpy(buffer, start,
-            nonEditableContentView()->selectionEnd() - start + 1);
+            nonEditableContentView()->selectionRight() - start + 1);
     Container::activeApp()->storeValue(buffer);
   } else {
     Container::activeApp()->storeValue();

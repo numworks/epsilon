@@ -227,9 +227,9 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     if (contentView()->selectionIsEmpty()) {
       return false;
     }
-    const char *start = contentView()->selectionStart();
+    const char *start = contentView()->selectionLeft();
     Escher::Clipboard::SharedClipboard()->store(
-        start, contentView()->selectionEnd() - start);
+        start, contentView()->selectionRight() - start);
     if (event == Ion::Events::Cut) {
       deleteSelection();
     }
@@ -523,7 +523,7 @@ void TextArea::ContentView::drawRect(KDContext *ctx, KDRect rect) const {
     if (y >= topLeft.line() && y <= bottomRight.line() &&
         topLeft.column() < (int)width) {
       drawLine(ctx, y, line.text(), line.charLength(), topLeft.column(),
-               bottomRight.column(), m_selectionStart, m_selectionEnd);
+               bottomRight.column(), selectionLeft(), selectionRight());
     }
     y++;
   }
@@ -647,11 +647,9 @@ size_t TextArea::ContentView::removeText(const char *start, const char *end) {
 
 size_t TextArea::ContentView::deleteSelection() {
   assert(!selectionIsEmpty());
-  size_t removedLength = removeText(m_selectionStart, m_selectionEnd);
-  /* We cannot call resetSelection() because m_selectionStart and m_selectionEnd
-   * are invalid */
+  size_t removedLength = removeText(selectionLeft(), selectionRight());
+  // We cannot call resetSelection() because m_selectionStart is invalid.
   m_selectionStart = nullptr;
-  m_selectionEnd = nullptr;
   return removedLength;
 }
 
@@ -692,12 +690,7 @@ void TextArea::ContentView::moveCursorGeo(int deltaX, int deltaY) {
 void TextArea::selectUpDown(OMG::VerticalDirection direction, int step) {
   const char *previousCursorLocation = contentView()->cursorLocation();
   contentView()->moveCursorGeo(0, direction.isUp() ? -step : step);
-  const char *newCursorLocation = contentView()->cursorLocation();
-  if (direction.isUp()) {
-    contentView()->addSelection(newCursorLocation, previousCursorLocation);
-  } else {
-    contentView()->addSelection(previousCursorLocation, newCursorLocation);
-  }
+  contentView()->updateSelection(previousCursorLocation);
   scrollToCursor();
 }
 

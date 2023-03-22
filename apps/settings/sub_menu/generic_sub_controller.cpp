@@ -59,7 +59,8 @@ KDCoordinate GenericSubController::nonMemoizedRowHeight(int index) {
 
 void GenericSubController::willDisplayCellForIndex(HighlightCell *cell,
                                                    int index) {
-  static_cast<MessageTextView *>(static_cast<AbstractMenuCell *>(cell)->label())
+  static_cast<MessageTextView *>(
+      static_cast<AbstractMenuCell *>(cell)->widget(CellWidget::Type::Label))
       ->setMessage(m_messageTreeModel->childAtIndex(index)->label());
 }
 

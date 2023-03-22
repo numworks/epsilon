@@ -1,4 +1,6 @@
 #include "poincare_junior/include/poincare.h"
+#include "poincare_junior/src/memory/cache_pool.h"
+#include "poincare_junior/src/memory/edition_pool.h"
 
 #include <assert.h>
 
@@ -45,6 +47,28 @@ void CloseLogger(LoggerType type) {
   Logger(type) << "</Data>" << std::endl;
   Logger(type).close();
   s_forceClosed[static_cast<int>(type)] = true;
+}
+
+void Log(LoggerType type, const char * event, void * address, size_t size) {
+  Logger(type) << "  <" << event;
+  if (address) {
+    Logger(type) << " address=\"" << address << "\"";
+  }
+  if (size < INT_MAX) {
+    Logger(type) << " size=\"" << size << "\"";
+  }
+  Logger(type) << ">\n";
+  Pool * pool;
+  Pool::LogFormat format;
+  if (type == LoggerType::Cache) {
+   pool = CachePool::sharedCachePool();
+   format = Pool::LogFormat::Tree;
+  } else {
+   pool = EditionPool::sharedEditionPool();
+   format = Pool::LogFormat::Flat;
+  }
+  pool->log(Logger(type), format, true, 2);
+  Logger(type) << "\n  </" << event << ">" << std::endl;
 }
 
 #endif

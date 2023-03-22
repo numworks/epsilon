@@ -7,11 +7,11 @@ You can visualize the evolution of the poincare cache pools by running:
 
 You can also wrap a snippet of code with:
 ```C++
-ResetCacheLogger();
+ResetLogger(LoggerType::Edition);
 
 /* Your code */
 
-CloseCacheLogger();
+CloseLogger(LoggerType::Edition);
 ```
 
 to visualize the evolution of the pools only while executing the snippet.

@@ -27,8 +27,7 @@ endif
 
 OUTPUT_LOGS := output/logs
 
-.PHONY: $(OUTPUT_LOGS)/cache.xml
-$(OUTPUT_LOGS)/*.xml:
+$(OUTPUT_LOGS)/%.xml:
 	@echo "LOG     $@"
 	@mkdir -p $(OUTPUT_LOGS)
 	@$(MAKE) -j8 $(MAKE_FLAGS) $(notdir $(EXECUTABLE_FILE))
@@ -36,5 +35,5 @@ $(OUTPUT_LOGS)/*.xml:
 
 poincare_log_visualization: $(OUTPUT_LOGS)/cache.xml
 	@for arg in cache; do cp build/poincare_visualization/visualization.html $(OUTPUT_LOGS)/$${arg}.html; sed -i '' "s/XML_FILE/$${arg}.xml/g" $(OUTPUT_LOGS)/$${arg}.html; done
-	@echo "In a browser, go to http://localhost:8000/cache.html to visualize the cache logs"
+	@echo "In a browser, go to http://localhost:8000/*.html to visualize the cache logs"
 	@cd $(OUTPUT_LOGS) && $(PYTHON) -m http.server 8000

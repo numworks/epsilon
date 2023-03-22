@@ -25,10 +25,7 @@ uint16_t CachePool::ReferenceTable::storeNode(Node node) {
   }
   uint16_t indexOfNode = Pool::ReferenceTable::storeNodeAtIndex(node, m_length);
 #if POINCARE_POOL_VISUALIZATION
-  Logger(LoggerType::Cache) << "  <Add address=\"" << node.block() << "\">\n";
-  CachePool::sharedCachePool()->log(Logger(LoggerType::Cache), Pool::LogFormat::Tree, true,
-                                    2);
-  Logger(LoggerType::Cache) << "\n  </Add>" << std::endl;
+  Log(LoggerType::Cache, "Add", node.block(), node.treeSize());
 #endif
   return idForIndex(indexOfNode);
 }
@@ -83,11 +80,7 @@ void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex,
   static_cast<CachePool *>(m_pool)->translate(numberOfFreedBlocks,
                                               cachePoolSize);
 #if POINCARE_POOL_VISUALIZATION
-  Logger(LoggerType::Cache) << "  <Remove numberOfBlocks=\"" << numberOfFreedBlocks
-                << "\">\n";
-  CachePool::sharedCachePool()->log(Logger(LoggerType::Cache), Pool::LogFormat::Tree, true,
-                                    2);
-  Logger(LoggerType::Cache) << "\n  </Remove>" << std::endl;
+  Log(LoggerType::Cache, "Remove", m_pool->firstBlock(), numberOfFreedBlocks);
 #endif
 }
 
@@ -125,10 +118,7 @@ void CachePool::reset() {
   m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks);
   m_editionPool.flush();
 #if POINCARE_POOL_VISUALIZATION
-  Logger(LoggerType::Cache) << "  <Reset>\n";
-  CachePool::sharedCachePool()->log(Logger(LoggerType::Cache), Pool::LogFormat::Tree, true,
-                                    2);
-  Logger(LoggerType::Cache) << "\n  </Reset>" << std::endl;
+  Log(LoggerType::Cache, "Reset");
 #endif
 }
 

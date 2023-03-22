@@ -108,12 +108,11 @@ bool CalculationController::canStoreContentOfCellAtLocation(
     return false;
   }
   assert(row > 0 && col > 1);
-  const int calculationIndex = getCalculationIndex(row);
-  if (calculationIndex == k_numberOfBufferCalculations) {
-    // Regression formula
+  const Calculation c = calculationForRow(row);
+  if (c == Calculation::Regression) {
     return false;
   }
-  if (calculationIndex > k_numberOfBufferCalculations) {
+  if (c == Calculation::CorrelationCoeff || c > Calculation::Regression) {
     EvenOddBufferTextCell *bufferCell =
         static_cast<EvenOddBufferTextCell *>(t->cellAtLocation(col, row));
     return strcmp(bufferCell->text(), I18n::translate(I18n::Message::Dash)) &&
@@ -159,17 +158,17 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     return;
   }
 
-  const int calculationIndex = getCalculationIndex(j);
+  const Calculation c = calculationForRow(j);
   // Calculation title and symbols
   if (i <= 1) {
     EvenOddMessageTextCell *myCell =
         static_cast<EvenOddMessageTextCell *>(cell);
     myCell->setTextColor(i == 0 ? KDColorBlack : Palette::GrayDark);
-    I18n::Message message = (i == 0) ? MessageForCalculation(calculationIndex)
-                                     : SymbolForCalculation(calculationIndex);
+    I18n::Message message =
+        (i == 0) ? MessageForCalculation(c) : SymbolForCalculation(c);
     myCell->setMessage(message);
-    if (calculationIndex >= k_numberOfBufferCalculations + 1 +
-                                k_maxNumberOfDistinctCoefficients &&
+    if ((c == Calculation::CorrelationCoeff ||
+         c == Calculation::DeterminationCoeff) &&
         Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
       // R and R2 messages should be grayed out.
       myCell->setTextColor(Palette::GrayDark);
@@ -185,15 +184,18 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   // Calculation cell
   const int numberSignificantDigits =
       Preferences::VeryLargeNumberOfSignificantDigits;
-  if (calculationIndex < k_numberOfDoubleBufferCalculations) {
-    ArgCalculPointer calculationMethods[k_numberOfDoubleBufferCalculations] = {
-        &Store::meanOfColumn,
-        &Store::sumOfColumn,
-        &Store::squaredValueSumOfColumn,
-        &Store::standardDeviationOfColumn,
-        &Store::varianceOfColumn,
-        &Store::sampleStandardDeviationOfColumn,
-    };
+  if (c <= Calculation::SampleStandardDeviationS) {
+    int calculationIndex = static_cast<int>(c);
+    using DoubleCalculation = double (Store::*)(int, int, bool) const;
+    constexpr DoubleCalculation
+        calculationMethods[k_numberOfDoubleBufferCalculations] = {
+            &Store::meanOfColumn,
+            &Store::sumOfColumn,
+            &Store::squaredValueSumOfColumn,
+            &Store::standardDeviationOfColumn,
+            &Store::varianceOfColumn,
+            &Store::sampleStandardDeviationOfColumn,
+        };
     double *calculation1 =
         m_memoizedDoubleCalculationCells[seriesNumber][0] + calculationIndex;
     double *calculation2 =
@@ -223,32 +225,32 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     myCell->setSecondText(buffer);
     return;
   }
+
   EvenOddBufferTextCell *bufferCell =
       static_cast<EvenOddBufferTextCell *>(cell);
   bufferCell->setTextColor(KDColorBlack);
-  if (calculationIndex < k_numberOfBufferCalculations) {
-    const int singleCalculationIndex =
-        calculationIndex - k_numberOfDoubleBufferCalculations;
+  if (c >= Calculation::NumberOfDots && c <= Calculation::SumOfProducts) {
+    int calculationIndex =
+        static_cast<int>(c) - static_cast<int>(Calculation::NumberOfDots);
+    using SingleCalculation = double (Store::*)(int) const;
+    constexpr SingleCalculation
+        calculationMethods[k_numberOfSingleBufferCalculations] = {
+            &Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance,
+            &Store::columnProductSum};
     double *calculation =
-        m_memoizedSimpleCalculationCells[seriesNumber] + singleCalculationIndex;
+        m_memoizedSimpleCalculationCells[seriesNumber] + calculationIndex;
     if (std::isnan(*calculation)) {
-      if (singleCalculationIndex == 0) {
-        *calculation = m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber);
-      } else if (singleCalculationIndex == 1) {
-        *calculation = m_store->covariance(seriesNumber);
-      } else {
-        assert(singleCalculationIndex == 2);
-        *calculation = m_store->columnProductSum(seriesNumber);
-      }
+      *calculation =
+          (m_store->*calculationMethods[calculationIndex])(seriesNumber);
     }
-    assert((singleCalculationIndex == 0 &&
+    assert((c == Calculation::NumberOfDots &&
             Poincare::Helpers::EqualOrBothNan(
                 *calculation,
                 m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber))) ||
-           (singleCalculationIndex == 1 &&
+           (c == Calculation::Covariance &&
             Poincare::Helpers::EqualOrBothNan(
                 *calculation, m_store->covariance(seriesNumber))) ||
-           (singleCalculationIndex == 2 &&
+           (c == Calculation::SumOfProducts &&
             Poincare::Helpers::EqualOrBothNan(
                 *calculation, m_store->columnProductSum(seriesNumber))));
     constexpr int bufferSize =
@@ -259,7 +261,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     bufferCell->setText(buffer);
     return;
   }
-  if (calculationIndex == k_numberOfBufferCalculations) {
+
+  if (c == Calculation::Regression) {
     Model *model = m_store->modelForSeries(seriesNumber);
     I18n::Message message =
         shouldSeriesDisplay(seriesNumber, &DisplayRegression)
@@ -268,17 +271,17 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     bufferCell->setText(I18n::translate(message));
     return;
   }
+
   Poincare::Context *globContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  if (calculationIndex <
-      k_numberOfBufferCalculations + 1 + k_maxNumberOfDistinctCoefficients) {
+  if (c >= Calculation::CoefficientM && c <= Calculation::CoefficientE) {
     if (!m_store->coefficientsAreDefined(seriesNumber, globContext)) {
       // Put dashes if regression is not defined
       bufferCell->setText(I18n::translate(I18n::Message::Dash));
       return;
     }
     int coefficientIndex =
-        calculationIndex - (k_numberOfBufferCalculations + 1) - 1;
+        static_cast<int>(c) - static_cast<int>(Calculation::CoefficientA);
     int numberOfCoefficients =
         m_store->modelForSeries(seriesNumber)->numberOfCoefficients();
     if (shouldDisplayMCoefficient() &&
@@ -304,19 +307,19 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     return;
   }
   // Calculation is either R or R2
-  assert(calculationIndex >=
-         k_numberOfBufferCalculations + 1 + k_maxNumberOfDistinctCoefficients);
+  assert(c == Calculation::CorrelationCoeff ||
+         c == Calculation::DeterminationCoeff);
   if (Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
     bufferCell->setTextColor(Palette::GrayDark);
     bufferCell->setText(I18n::translate(I18n::Message::Disabled));
     return;
   }
-  bool calculationIsR = (calculationIndex == k_maxNumberOfRows - 2);
-  if (!calculationIsR && !shouldSeriesDisplay(seriesNumber, DisplayR2)) {
+  if (c == Calculation::DeterminationCoeff &&
+      !shouldSeriesDisplay(seriesNumber, DisplayR2)) {
     bufferCell->setText(I18n::translate(I18n::Message::Dash));
     return;
   }
-  double calculation = calculationIsR
+  double calculation = (c == Calculation::CorrelationCoeff)
                            ? m_store->correlationCoefficient(seriesNumber)
                            : m_store->determinationCoefficientForSeries(
                                  seriesNumber, globContext);
@@ -408,91 +411,81 @@ int CalculationController::typeAtLocation(int i, int j) {
   return k_standardCalculationCellType;
 }
 
-I18n::Message CalculationController::MessageForCalculation(
-    int calculationIndex) {
-  I18n::Message messages[k_maxNumberOfRows] = {
-      I18n::Message::Mean,
-      I18n::Message::Sum,
-      I18n::Message::SquareSum,
-      I18n::Message::StandardDeviation,
-      I18n::Message::Deviation,
-      I18n::Message::SampleStandardDeviationS,
-      I18n::Message::NumberOfDots,
-      I18n::Message::Covariance,
-      I18n::Message::SumOfProducts,
-      I18n::Message::Regression,
-      I18n::Message::CoefficientM,
-      I18n::Message::CoefficientA,
-      I18n::Message::CoefficientB,
-      I18n::Message::CoefficientC,
-      I18n::Message::CoefficientD,
-      I18n::Message::CoefficientE,
-      I18n::Message::CorrelationCoeff,
-      I18n::Message::DeterminationCoeff};
-  return messages[calculationIndex];
+I18n::Message CalculationController::MessageForCalculation(Calculation c) {
+  constexpr I18n::Message
+      messages[static_cast<int>(Calculation::NumberOfRows)] = {
+          I18n::Message::Mean,          I18n::Message::Sum,
+          I18n::Message::SquareSum,     I18n::Message::StandardDeviation,
+          I18n::Message::Deviation,     I18n::Message::SampleStandardDeviationS,
+          I18n::Message::NumberOfDots,  I18n::Message::Covariance,
+          I18n::Message::SumOfProducts, I18n::Message::CorrelationCoeff,
+          I18n::Message::Regression,    I18n::Message::CoefficientM,
+          I18n::Message::CoefficientA,  I18n::Message::CoefficientB,
+          I18n::Message::CoefficientC,  I18n::Message::CoefficientD,
+          I18n::Message::CoefficientE,  I18n::Message::DeterminationCoeff,
+      };
+  int index = static_cast<int>(c);
+  assert(index >= 0 && index < static_cast<int>(Calculation::NumberOfRows));
+  return messages[index];
 }
 
-I18n::Message CalculationController::SymbolForCalculation(
-    int calculationIndex) {
-  I18n::Message messages[k_maxNumberOfRows] = {
-      I18n::Message::MeanSymbol,
-      I18n::Message::SumValuesSymbol,
-      I18n::Message::SumSquareValuesSymbol,
-      I18n::Message::StandardDeviationSigmaSymbol,
-      I18n::Message::DeviationSymbol,
-      I18n::Message::SampleStandardDeviationSSymbol,
-      I18n::Message::UpperN,
-      I18n::Message::Cov,
-      I18n::Message::Sxy,
-      I18n::Message::Y,
-      I18n::Message::M,
-      I18n::Message::A,
-      I18n::Message::B,
-      I18n::Message::C,
-      I18n::Message::D,
-      I18n::Message::E,
-      I18n::Message::R,
-      I18n::Message::R2};
-  return messages[calculationIndex];
+I18n::Message CalculationController::SymbolForCalculation(Calculation c) {
+  constexpr I18n::Message
+      messages[static_cast<int>(Calculation::NumberOfRows)] = {
+          I18n::Message::MeanSymbol,
+          I18n::Message::SumValuesSymbol,
+          I18n::Message::SumSquareValuesSymbol,
+          I18n::Message::StandardDeviationSigmaSymbol,
+          I18n::Message::DeviationSymbol,
+          I18n::Message::SampleStandardDeviationSSymbol,
+          I18n::Message::UpperN,
+          I18n::Message::Cov,
+          I18n::Message::Sxy,
+          I18n::Message::R,
+          I18n::Message::Y,
+          I18n::Message::M,
+          I18n::Message::A,
+          I18n::Message::B,
+          I18n::Message::C,
+          I18n::Message::D,
+          I18n::Message::E,
+          I18n::Message::R2,
+      };
+  int index = static_cast<int>(c);
+  assert(index >= 0 && index < static_cast<int>(Calculation::NumberOfRows));
+  return messages[index];
 }
 
-int CalculationController::getCalculationIndex(int j) const {
-  assert(j > 0 && j < numberOfRows());
+CalculationController::Calculation CalculationController::calculationForRow(
+    int row) const {
+  assert(row > 0 && row < numberOfRows());
   // Ignore top row
-  int calculationIndex = j - 1;
-  if (calculationIndex < k_numberOfBufferCalculations) {
-    return calculationIndex;
+  row--;
+  if (row < static_cast<int>(Calculation::Regression)) {
+    return static_cast<Calculation>(row);
   }
-  if (calculationIndex == k_numberOfBufferCalculations) {
-    // Correlation coefficient
-    return k_maxNumberOfRows - 2;
+  row += !hasSeriesDisplaying(&DisplayRegression);
+  if (row == static_cast<int>(Calculation::Regression)) {
+    return Calculation::Regression;
   }
-  calculationIndex -= 1;
-  bool displayRegression = hasSeriesDisplaying(&DisplayRegression);
-  if (calculationIndex < k_numberOfBufferCalculations + displayRegression) {
-    return calculationIndex;
+  row += !shouldDisplayMCoefficient();
+  if (row == static_cast<int>(Calculation::CoefficientM)) {
+    return Calculation::CoefficientM;
   }
-  calculationIndex += !displayRegression;
-  bool displayCoeffM = shouldDisplayMCoefficient();
-  if (calculationIndex < k_numberOfBufferCalculations + 1 + displayCoeffM) {
-    return calculationIndex;
+  row += !shouldDisplayACoefficient();
+  if (row == static_cast<int>(Calculation::CoefficientA)) {
+    return Calculation::CoefficientA;
   }
-  calculationIndex += !displayCoeffM;
-  bool displayCoeffA = shouldDisplayACoefficient();
-  if (calculationIndex < k_numberOfBufferCalculations + 2 + displayCoeffA) {
-    return calculationIndex;
-  }
-  calculationIndex += !displayCoeffA;
   int displayedBCDECoeffs = numberOfDisplayedBCDECoefficients();
-  if (calculationIndex <
-      k_numberOfBufferCalculations + 3 + displayedBCDECoeffs) {
-    return calculationIndex;
+  if (row <=
+      static_cast<int>(Calculation::CoefficientA) + displayedBCDECoeffs) {
+    return static_cast<Calculation>(row);
   }
-  calculationIndex +=
-      k_maxNumberOfDistinctCoefficients - 2 - displayedBCDECoeffs;
-  assert(calculationIndex == k_maxNumberOfRows - 2 &&
+  row += static_cast<int>(Calculation::CoefficientE) -
+         static_cast<int>(Calculation::CoefficientB) + 1 - displayedBCDECoeffs;
+  assert(row == static_cast<int>(Calculation::NumberOfRows) - 1 &&
          hasSeriesDisplaying(&DisplayR2));
-  return calculationIndex + 1;
+  return static_cast<Calculation>(row);
 }
 
 bool CalculationController::shouldSeriesDisplay(
@@ -575,9 +568,7 @@ void CalculationController::resetMemoization(bool force) {
         m_memoizedDoubleCalculationCells[s][i][j] = NAN;
       }
     }
-    for (int i = 0;
-         i < k_numberOfBufferCalculations - k_numberOfDoubleBufferCalculations;
-         i++) {
+    for (int i = 0; i < k_numberOfSingleBufferCalculations; i++) {
       m_memoizedSimpleCalculationCells[s][i] = NAN;
     }
   }

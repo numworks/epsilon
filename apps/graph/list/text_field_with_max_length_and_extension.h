@@ -10,7 +10,7 @@ class TextFieldWithMaxLengthAndExtension
  public:
   TextFieldWithMaxLengthAndExtension(
       size_t extensionLength, Escher::Responder* parentResponder,
-      char* textBuffer, size_t textBufferSize, size_t draftTextBufferSize,
+      char* textBuffer, size_t textBufferSize,
       Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
       Escher::TextFieldDelegate* delegate = nullptr,
       KDFont::Size size = KDFont::Size::Large,
@@ -18,13 +18,9 @@ class TextFieldWithMaxLengthAndExtension
       float verticalAlignment = KDContext::k_alignCenter,
       KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite)
       : TextFieldWithExtension(extensionLength, parentResponder, textBuffer,
-                               textBufferSize, draftTextBufferSize,
-                               inputEventHandlerDelegate, delegate, size,
-                               horizontalAlignment, verticalAlignment,
-                               textColor, backgroundColor) {}
-  void setDraftTextBufferSize(size_t size) {
-    m_contentView.setDraftTextBufferSize(size);
-  }
+                               textBufferSize, inputEventHandlerDelegate,
+                               delegate, size, horizontalAlignment,
+                               verticalAlignment, textColor, backgroundColor) {}
 };
 
 }  // namespace Graph

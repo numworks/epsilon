@@ -18,7 +18,6 @@ class ScriptNameCell : public Escher::EvenOddCell, public Escher::Responder {
       : Escher::EvenOddCell(),
         Escher::Responder(parentResponder),
         m_textField(k_extensionLength, this, m_textBody,
-                    Escher::TextField::MaxBufferSize(),
                     Escher::TextField::MaxBufferSize(), nullptr, delegate) {
     m_textBody[0] = 0;
   }

@@ -11,8 +11,7 @@ ExpressionCellWithEditableTextWithMessage::
     : Escher::ExpressionTableCellWithMessage(parent),
       ChainedTextFieldDelegate(textFieldDelegate),
       m_textField(this, m_textBody, sizeof(m_textBody),
-                  Escher::TextField::MaxBufferSize(), inputEventHandlerDelegate,
-                  this, KDFont::Size::Large, 1.) {
+                  inputEventHandlerDelegate, this, KDFont::Size::Large, 1.) {
   m_textBody[0] = '\0';
 }
 

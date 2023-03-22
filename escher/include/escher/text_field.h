@@ -8,7 +8,6 @@ namespace Escher {
 class TextField : public AbstractTextField {
  public:
   TextField(Responder* parentResponder, char* textBuffer, size_t textBufferSize,
-            size_t draftTextBufferSize,
             InputEventHandlerDelegate* inputEventHandlerDelegate,
             TextFieldDelegate* delegate = nullptr,
             KDFont::Size font = KDFont::Size::Large,
@@ -18,9 +17,8 @@ class TextField : public AbstractTextField {
             KDColor backgroundColor = KDColorWhite)
       : AbstractTextField(parentResponder, &m_contentView,
                           inputEventHandlerDelegate, delegate),
-        m_contentView(textBuffer, textBufferSize, draftTextBufferSize, font,
-                      horizontalAlignment, verticalAlignment, textColor,
-                      backgroundColor) {}
+        m_contentView(textBuffer, textBufferSize, font, horizontalAlignment,
+                      verticalAlignment, textColor, backgroundColor) {}
 
  protected:
   const AbstractTextField::ContentView* nonEditableContentView() const {

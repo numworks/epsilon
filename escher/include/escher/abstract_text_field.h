@@ -56,13 +56,7 @@ class AbstractTextField : public TextInput, public EditableField {
   char *draftTextBuffer() const {
     return const_cast<char *>(nonEditableContentView()->editedText());
   }
-  size_t draftTextBufferSize() const {
-    return nonEditableContentView()->draftTextBufferSize();
-  }
   size_t draftTextLength() const;
-  void setDraftTextBufferSize(size_t size) {
-    contentView()->setDraftTextBufferSize(size);
-  }
   void reinitDraftTextBuffer() { contentView()->reinitDraftTextBuffer(); }
   KDFont::Size font() const { return nonEditableContentView()->font(); }
   void setTextColor(KDColor textColor);
@@ -89,8 +83,7 @@ class AbstractTextField : public TextInput, public EditableField {
      * = 212 characters. */
     constexpr static int k_maxBufferSize = 220;
 
-    ContentView(char *textBuffer, size_t textBufferSize,
-                size_t draftTextBufferSize, KDFont::Size font,
+    ContentView(char *textBuffer, size_t textBufferSize, KDFont::Size font,
                 float horizontalAlignment, float verticalAlignment,
                 KDColor textColor, KDColor backgroundColor);
 
@@ -119,11 +112,7 @@ class AbstractTextField : public TextInput, public EditableField {
     void setText(const char *text);
     void setEditing(bool isEditing);
     void reinitDraftTextBuffer();
-    void setDraftTextBufferSize(size_t size) {
-      assert(size <= k_maxBufferSize);
-      m_draftTextBufferSize = size;
-    }
-    size_t draftTextBufferSize() const { return m_draftTextBufferSize; }
+    size_t draftTextBufferSize() const { return MaxBufferSize(); }
     void willModifyTextBuffer();
     void didModifyTextBuffer();
     void setEditionBuffer(char *buffer, size_t bufferSize);
@@ -142,7 +131,6 @@ class AbstractTextField : public TextInput, public EditableField {
 
     char *m_textBuffer;
     size_t m_textBufferSize;
-    size_t m_draftTextBufferSize;
     KDColor m_textColor;
     KDColor m_backgroundColor;
     bool m_isEditing;

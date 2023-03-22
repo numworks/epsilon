@@ -22,13 +22,12 @@ static size_t s_currentDraftTextLength;
 /* AbstractTextField::ContentView */
 
 AbstractTextField::ContentView::ContentView(
-    char *textBuffer, size_t textBufferSize, size_t draftTextBufferSize,
-    KDFont::Size font, float horizontalAlignment, float verticalAlignment,
-    KDColor textColor, KDColor backgroundColor)
+    char *textBuffer, size_t textBufferSize, KDFont::Size font,
+    float horizontalAlignment, float verticalAlignment, KDColor textColor,
+    KDColor backgroundColor)
     : TextInput::ContentView(font, horizontalAlignment, verticalAlignment),
       m_textBuffer(textBuffer),
       m_textBufferSize(textBufferSize),
-      m_draftTextBufferSize(draftTextBufferSize),
       m_textColor(textColor),
       m_backgroundColor(backgroundColor),
       m_isEditing(false),
@@ -37,7 +36,6 @@ AbstractTextField::ContentView::ContentView(
   if (textBuffer == nullptr) {
     m_textBuffer = s_draftTextBuffer;
   }
-  assert(m_draftTextBufferSize <= k_maxBufferSize);
   assert(m_textBufferSize <= k_maxBufferSize);
   reinitDraftTextBuffer();
 }
@@ -320,7 +318,7 @@ void AbstractTextField::ContentView::layoutSubviews(bool force) {
 }
 
 size_t AbstractTextField::ContentView::editionBufferSize() const {
-  return m_useDraftBuffer ? m_draftTextBufferSize : m_textBufferSize;
+  return m_useDraftBuffer ? draftTextBufferSize() : m_textBufferSize;
 }
 
 KDRect AbstractTextField::ContentView::glyphFrameAtPosition(

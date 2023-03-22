@@ -62,8 +62,8 @@ void ScrollViewVerticalBar::drawRect(KDContext *ctx, KDRect rect) const {
       k_color);
 }
 
-ScrollViewArrow::ScrollViewArrow(Side side)
-    : m_visible(false), m_arrow(side), m_font(KDFont::Size::Large) {}
+ScrollViewArrow::ScrollViewArrow()
+    : m_visible(false), m_font(KDFont::Size::Large) {}
 
 bool ScrollViewArrow::update(bool visible) {
   if (m_visible != visible) {
@@ -75,12 +75,9 @@ bool ScrollViewArrow::update(bool visible) {
 
 void ScrollViewArrow::drawRect(KDContext *ctx, KDRect rect) const {
   ctx->fillRect(bounds(), m_backgroundColor);
-  char arrowString[2] = {m_arrow, 0};  // TODO Change when code points
-  ctx->alignAndDrawString(
-      arrowString, KDPointZero, bounds().size(), KDContext::k_alignLeft,
-      (m_arrow == Left || m_arrow == Right) ? KDContext::k_alignCenter
-                                            : KDContext::k_alignTop,
-      m_font, k_color, m_backgroundColor, m_visible);
+  ctx->alignAndDrawString(arrow(), KDPointZero, bounds().size(),
+                          KDContext::k_alignLeft, KDContext::k_alignCenter,
+                          m_font, k_color, m_backgroundColor, m_visible);
 }
 
 #if ESCHER_VIEW_LOGGING

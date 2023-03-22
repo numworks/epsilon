@@ -202,7 +202,8 @@ void MainController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   if (type == k_resetCellType) {
     return;
   }
-  static_cast<MessageTextView *>(static_cast<AbstractMenuCell *>(cell)->label())
+  static_cast<MessageTextView *>(
+      static_cast<AbstractMenuCell *>(cell)->widget(CellWidget::Type::Label))
       ->setMessage(title);
   if (type == k_popUpCellType) {
     assert(cell == &m_popUpCell);

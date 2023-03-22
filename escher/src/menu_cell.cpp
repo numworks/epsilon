@@ -47,16 +47,17 @@ Responder *AbstractMenuCell::responder() {
   /* The priority order was chose arbitrarely because there currently is no cell
    * with more than 1 responder. Accessory could be prioritized over subLabel or
    * label if needed. */
-  (r = label()->responder()) || (r = subLabel()->responder()) ||
-      (r = accessory()->responder());
+  (r = widget(CellWidget::Type::Label)->responder()) ||
+      (r = widget(CellWidget::Type::SubLabel)->responder()) ||
+      (r = widget(CellWidget::Type::Accessory)->responder());
   return r;
 }
 
 void AbstractMenuCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
-  label()->setHighlighted(highlight);
-  subLabel()->setHighlighted(highlight);
-  accessory()->setHighlighted(highlight);
+  widget(CellWidget::Type::Label)->setHighlighted(highlight);
+  widget(CellWidget::Type::SubLabel)->setHighlighted(highlight);
+  widget(CellWidget::Type::Accessory)->setHighlighted(highlight);
 }
 
 int AbstractMenuCell::numberOfSubviews() const {
@@ -179,7 +180,9 @@ bool AbstractMenuCell::shouldAlignLabelAndAccessory() const {
 
 bool AbstractMenuCell::shouldHideSublabel() const {
   return accessoryIsAnEditableTextField() && singleRowMode() &&
-         static_cast<const EditableTextWidget *>(constAccessory())->isEditing();
+         static_cast<const EditableTextWidget *>(
+             constWidget(CellWidget::Type::Accessory))
+             ->isEditing();
 }
 
 bool AbstractMenuCell::singleRowMode() const {
@@ -189,7 +192,8 @@ bool AbstractMenuCell::singleRowMode() const {
   KDCoordinate accessoryWidth =
       accessoryIsAnEditableTextField()
           ? std::max(thisAccessorySize.width(),
-                     static_cast<const EditableTextWidget *>(constAccessory())
+                     static_cast<const EditableTextWidget *>(
+                         constWidget(CellWidget::Type::Accessory))
                          ->minimalWidth())
           : thisAccessorySize.width();
   KDCoordinate thisInnerWidth = innerWidth();

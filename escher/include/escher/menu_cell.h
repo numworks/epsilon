@@ -84,13 +84,20 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
-  virtual CellWidget* label() = 0;
-  virtual CellWidget* subLabel() = 0;
-  virtual CellWidget* accessory() = 0;
+  virtual CellWidget* widget(CellWidget::Type type) = 0;
+  const CellWidget* constWidget(CellWidget::Type type) const {
+    return const_cast<AbstractMenuCell*>(this)->widget(type);
+  }
 
-  const View* labelView() const { return constLabel()->view(); }
-  const View* subLabelView() const { return constSubLabel()->view(); }
-  const View* accessoryView() const { return constAccessory()->view(); }
+  const View* labelView() const {
+    return constWidget(CellWidget::Type::Label)->view();
+  }
+  const View* subLabelView() const {
+    return constWidget(CellWidget::Type::SubLabel)->view();
+  }
+  const View* accessoryView() const {
+    return constWidget(CellWidget::Type::Accessory)->view();
+  }
 
   KDCoordinate minimalHeightForOptimalDisplay() const;
 
@@ -106,7 +113,7 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
 
   bool enterOnEvent(Ion::Events::Event event) {
     // This is only done on accessory for now but could also done on (sub)label
-    return accessory()->enterOnEvent(event);
+    return widget(CellWidget::Type::Accessory)->enterOnEvent(event);
   }
 
  protected:
@@ -116,36 +123,30 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   void layoutSubviews(bool force = false) override;
 
   void initWidgets() {
-    label()->defaultInitialization(CellWidget::Type::Label);
-    subLabel()->defaultInitialization(CellWidget::Type::SubLabel);
-    accessory()->defaultInitialization(CellWidget::Type::Accessory);
+    widget(CellWidget::Type::Label)
+        ->defaultInitialization(CellWidget::Type::Label);
+    widget(CellWidget::Type::SubLabel)
+        ->defaultInitialization(CellWidget::Type::SubLabel);
+    widget(CellWidget::Type::Accessory)
+        ->defaultInitialization(CellWidget::Type::Accessory);
   }
 
   bool forceAlignLabelAndAccessory() const {
-    return constAccessory()->alwaysAlignWithLabelAsAccessory();
+    return constWidget(CellWidget::Type::Accessory)
+        ->alwaysAlignWithLabelAsAccessory();
   }
   bool shouldAlignSublabelRight() const {
-    return !constLabel()->preventRightAlignedSubLabel(
-               CellWidget::Type::Label) &&
-           !constSubLabel()->preventRightAlignedSubLabel(
-               CellWidget::Type::SubLabel) &&
-           !constAccessory()->preventRightAlignedSubLabel(
-               CellWidget::Type::Accessory);
+    return !constWidget(CellWidget::Type::Label)
+                ->preventRightAlignedSubLabel(CellWidget::Type::Label) &&
+           !constWidget(CellWidget::Type::SubLabel)
+                ->preventRightAlignedSubLabel(CellWidget::Type::SubLabel) &&
+           !constWidget(CellWidget::Type::Accessory)
+                ->preventRightAlignedSubLabel(CellWidget::Type::Accessory);
   }
   bool shouldHideSublabel() const;
   bool singleRowMode() const;
 
  private:
-  const CellWidget* constLabel() const {
-    return const_cast<AbstractMenuCell*>(this)->label();
-  }
-  const CellWidget* constSubLabel() const {
-    return const_cast<AbstractMenuCell*>(this)->subLabel();
-  }
-  const CellWidget* constAccessory() const {
-    return const_cast<AbstractMenuCell*>(this)->accessory();
-  }
-
   KDSize labelSize() const {
     return labelView() ? labelView()->minimalSizeForOptimalDisplay()
                        : KDSizeZero;
@@ -162,7 +163,7 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   /* Editable text field has unique properties. This avoid having too many
    * virtual functions, only for this specific case. */
   bool accessoryIsAnEditableTextField() const {
-    return constAccessory()->isAnEditableTextField();
+    return constWidget(CellWidget::Type::Accessory)->isAnEditableTextField();
   }
 
   bool shouldAlignLabelAndAccessory() const;
@@ -185,9 +186,17 @@ class MenuCell : public AbstractMenuCell {
 #endif
   MenuCell() : AbstractMenuCell() { initWidgets(); }
 
-  Label* label() override { return &m_label; }
-  SubLabel* subLabel() override { return &m_subLabel; }
-  Accessory* accessory() override { return &m_accessory; }
+  Label* label() { return &m_label; }
+  SubLabel* subLabel() { return &m_subLabel; }
+  Accessory* accessory() { return &m_accessory; }
+
+  CellWidget* widget(CellWidget::Type type) override {
+    return type == CellWidget::Type::Label
+               ? static_cast<CellWidget*>(label())
+               : (type == CellWidget::Type::SubLabel
+                      ? static_cast<CellWidget*>(subLabel())
+                      : static_cast<CellWidget*>(accessory()));
+  }
 
  protected:
   Label m_label;

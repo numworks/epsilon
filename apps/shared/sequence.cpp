@@ -226,7 +226,7 @@ template <typename T>
 T Sequence::approximateAtRank(int rank, SequenceContext *sqctx) const {
   if (rank < initialRank() ||
       (rank >= firstNonInitialRank() && mainExpressionIsNotComputable(sqctx))) {
-    return NAN;
+    return static_cast<T>(NAN);
   }
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   sqctx->stepUntilRank<T>(sequenceIndex, rank);
@@ -239,7 +239,7 @@ T Sequence::approximateAtContextRank(SequenceContext *sqctx,
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   int rank = sqctx->rank<T>(sequenceIndex, intermediateComputation);
   if (rank < initialRank()) {
-    return NAN;
+    return static_cast<T>(NAN);
   }
 
   T x;

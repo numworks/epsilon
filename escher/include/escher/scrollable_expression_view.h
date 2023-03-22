@@ -23,7 +23,7 @@ class ScrollableExpressionView
   KDFont::Size font() const { return m_expressionView.font(); }
   void setFont(KDFont::Size font) {
     m_expressionView.setFont(font);
-    setDecoratorFont(font);
+    decorator()->setFont(font);
   }
   void setLayout(Poincare::Layout layout);
   void setTextColor(KDColor color) { m_expressionView.setTextColor(color); }

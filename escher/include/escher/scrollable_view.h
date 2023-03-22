@@ -18,24 +18,15 @@ class AbstractScrollableView : public Responder, public ScrollView {
   KDSize contentSize() const override;
 };
 
-template <typename D>
+template <typename T>
 class ScrollableView : public AbstractScrollableView {
-  using AbstractScrollableView::AbstractScrollableView;
-  Decorator* decorator() override { return &m_decorator; }
-  D m_decorator;
-};
-
-template <>
-class ScrollableView<ScrollView::ArrowDecorator>
-    : public AbstractScrollableView {
   using AbstractScrollableView::AbstractScrollableView;
 
  protected:
-  void setDecoratorFont(KDFont::Size font) { m_decorator.setFont(font); }
+  T* decorator() override { return &m_decorator; }
 
  private:
-  Decorator* decorator() override { return &m_decorator; }
-  ArrowDecorator m_decorator;
+  T m_decorator;
 };
 
 }  // namespace Escher

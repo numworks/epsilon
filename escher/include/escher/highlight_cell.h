@@ -13,7 +13,7 @@ class HighlightCell : public View {
  public:
   HighlightCell();
 
-  bool isVisible() const override { return m_state != State::Hidden; }
+  bool isVisible() const { return m_state != State::Hidden; }
   virtual void setVisible(bool visible);
   void show() { setVisible(true); }
   void hide() { setVisible(false); }

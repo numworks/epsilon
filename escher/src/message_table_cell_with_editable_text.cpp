@@ -10,10 +10,9 @@ MessageTableCellWithEditableText::MessageTableCellWithEditableText(
     : Responder(parentResponder),
       MessageTableCell(message),
       m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize,
-                  TextField::MaxBufferSize(), inputEventHandlerDelegate,
-                  textFieldDelegate, KDFont::Size::Large,
-                  KDContext::k_alignRight, KDContext::k_alignCenter,
-                  KDColorBlack) {
+                  inputEventHandlerDelegate, textFieldDelegate,
+                  KDFont::Size::Large, KDContext::k_alignRight,
+                  KDContext::k_alignCenter, KDColorBlack) {
   m_textBody[0] = '\0';
 }
 

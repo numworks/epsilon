@@ -14,9 +14,9 @@ EditableTextCell::EditableTextCell(
     : HighlightCell(),
       Responder(parentResponder),
       m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize,
-                  TextField::MaxBufferSize(), inputEventHandlerDelegate,
-                  delegate, font, horizontalAlignment, verticalAlignment,
-                  textColor, backgroundColor) {
+                  inputEventHandlerDelegate, delegate, font,
+                  horizontalAlignment, verticalAlignment, textColor,
+                  backgroundColor) {
   m_textBody[0] = 0;
 }
 

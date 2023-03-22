@@ -9,7 +9,7 @@ class TextFieldWithExtension : public Escher::TextField {
  public:
   TextFieldWithExtension(
       size_t extensionLength, Responder* parentResponder, char* textBuffer,
-      size_t textBufferSize, size_t draftTextBufferSize,
+      size_t textBufferSize,
       Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
       Escher::TextFieldDelegate* delegate = nullptr,
       KDFont::Size size = KDFont::Size::Large,
@@ -17,8 +17,8 @@ class TextFieldWithExtension : public Escher::TextField {
       float verticalAlignment = KDContext::k_alignCenter,
       KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite)
       : TextField(parentResponder, textBuffer, textBufferSize,
-                  draftTextBufferSize, inputEventHandlerDelegate, delegate,
-                  size, horizontalAlignment, verticalAlignment, textColor,
+                  inputEventHandlerDelegate, delegate, size,
+                  horizontalAlignment, verticalAlignment, textColor,
                   backgroundColor),
         m_extensionLength(extensionLength) {}
   void setExtensionLength(size_t extensionLength) {

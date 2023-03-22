@@ -237,10 +237,9 @@ SumGraphController::LegendView::LegendView(
       m_legend(k_font, I18n::Message::Default, KDContext::k_alignLeft,
                KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle),
       m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize,
-                     TextField::MaxBufferSize(), inputEventHandlerDelegate,
-                     controller, k_font, KDContext::k_alignLeft,
-                     KDContext::k_alignCenter, KDColorBlack,
-                     Palette::GrayMiddle),
+                     inputEventHandlerDelegate, controller, k_font,
+                     KDContext::k_alignLeft, KDContext::k_alignCenter,
+                     KDColorBlack, Palette::GrayMiddle),
       m_sumSymbol(sumSymbol) {
   m_textBuffer[0] = 0;
 }

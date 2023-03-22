@@ -68,8 +68,9 @@ class CalculationController : public Shared::DoublePairTableController {
     CoefficientC = 14,
     CoefficientD = 15,
     CoefficientE = 16,
-    DeterminationCoeff = 17,
-    NumberOfRows = 18,  // Always last
+    ResidualStandardDeviation = 17,
+    DeterminationCoeff = 18,
+    NumberOfRows = 19,  // Always last
   };
   /* Mean, SumValues, SumSquareValues, StandardDeviationSigma, Deviation,
    * SampleStandardDeviationS */
@@ -133,6 +134,11 @@ class CalculationController : public Shared::DoublePairTableController {
   }
   static bool DisplayRegression(Model::Type type) {
     return type != Model::Type::None;
+  }
+  static bool DisplayResidualStandardDeviation(Model::Type type) {
+    return GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() ==
+               CountryPreferences::RegressionModelOrder::Variant1 &&
+           type != Model::Type::None;
   }
   static I18n::Message MessageForCalculation(Calculation c);
   static I18n::Message SymbolForCalculation(Calculation c);

@@ -131,11 +131,6 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex,
   }
 
   // We approximate the value at new rank
-  SequenceStore *sequenceStore = m_sequenceContext->sequenceStore();
-  Ion::Storage::Record record = sequenceStore->recordAtNameIndex(sequenceIndex);
-  assert(!record.isNull());
-  Sequence *s = sequenceStore->modelForRecord(record);
-  assert(s->isDefined());
   T otherCacheValue = storedValueOfSequenceAtRank(sequenceIndex, *currentRank);
   if (!OMG::IsSignalingNan(otherCacheValue)) {
     // If the other cache already knows this value, use it
@@ -149,8 +144,9 @@ void TemplatedSequenceContext<T>::stepToNextRank(int sequenceIndex,
       *values = static_cast<T>(NAN);
       return;
     }
-    *values = s->approximateAtContextRank<T>(m_sequenceContext,
-                                             intermediateComputation);
+    *values = m_sequenceContext->sequenceAtNameIndex(sequenceIndex)
+                  ->approximateAtContextRank<T>(m_sequenceContext,
+                                                intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
   }
 }
@@ -221,6 +217,15 @@ TemplatedSequenceContext<T> *SequenceContext::context() {
   void *helper = sizeof(T) == sizeof(float) ? (void *)&m_floatSequenceContext
                                             : (void *)&m_doubleSequenceContext;
   return static_cast<TemplatedSequenceContext<T> *>(helper);
+}
+
+Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
+  Ion::Storage::Record record =
+      m_sequenceStore->recordAtNameIndex(sequenceIndex);
+  assert(!record.isNull());
+  Sequence *s = m_sequenceStore->modelForRecord(record);
+  assert(s->isDefined());
+  return s;
 }
 
 template class TemplatedSequenceContext<float>;

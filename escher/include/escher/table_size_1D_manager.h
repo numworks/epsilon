@@ -12,6 +12,7 @@ class TableViewDataSource;
 class TableSize1DManager {
  public:
   constexpr static KDCoordinate k_undefinedSize = -1;
+  // The sizes are memoized and returned with separators
   virtual KDCoordinate computeSizeAtIndex(int i) = 0;
   virtual KDCoordinate computeCumulatedSizeBeforeIndex(
       int i, KDCoordinate defaultSize) = 0;
@@ -25,7 +26,9 @@ class TableSize1DManager {
 /* Use RegularTableSize1DManager if the height or width is constant.
  * The main advantage of this class is to compute cumulatedSizeAtIndex
  * and indexAfterCumulatedSize without going through a for-loop and adding
- * n-times for the same value. */
+ * n-times for the same value.
+ *
+ * WARNING: This size manager does not work properly with table separators. */
 class RegularTableSize1DManager : public TableSize1DManager {
  public:
   KDCoordinate computeSizeAtIndex(int i) override { return k_undefinedSize; }

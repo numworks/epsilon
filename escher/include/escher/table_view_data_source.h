@@ -63,6 +63,9 @@ class TableViewDataSource {
     return defaultRowHeight();
   }
 
+  KDCoordinate nonMemoizedColumnWidth(int i, bool withSeparator);
+  KDCoordinate nonMemoizedRowHeight(int j, bool withSeparator);
+
   // These should be overriden if a RegularTableSize1DManager is used.
   virtual KDCoordinate defaultColumnWidth() {
     return TableSize1DManager::k_undefinedSize;

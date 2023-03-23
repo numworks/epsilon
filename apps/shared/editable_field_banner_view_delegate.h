@@ -10,10 +10,9 @@
 
 namespace Shared {
 
-// TODO: Find a better name ?
-class EditableFieldForBannerView {
+class EditableFieldBannerViewDelegate {
  public:
-  EditableFieldForBannerView(
+  EditableFieldBannerViewDelegate(
       Escher::Responder* parentResponder,
       Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
       Escher::TextFieldDelegate* textFieldDelegate)

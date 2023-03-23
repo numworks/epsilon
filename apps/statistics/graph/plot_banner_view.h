@@ -1,7 +1,7 @@
 #ifndef STATISTICS_PLOT_BANNER_VIEW_H
 #define STATISTICS_PLOT_BANNER_VIEW_H
 
-#include <apps/shared/editable_field_for_banner_view.h>
+#include <apps/shared/editable_field_banner_view_delegate.h>
 #include <escher/buffer_text_view.h>
 #include <escher/text_field.h>
 #include <escher/view.h>
@@ -37,13 +37,13 @@ class SimplePlotBannerView : public PlotBannerView {
 
 class PlotBannerViewWithEditableField
     : public PlotBannerView,
-      public Shared::EditableFieldForBannerView {
+      public Shared::EditableFieldBannerViewDelegate {
  public:
   PlotBannerViewWithEditableField(
       Escher::Responder* parentResponder,
       Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
       Escher::TextFieldDelegate* textFieldDelegate)
-      : Shared::EditableFieldForBannerView(
+      : Shared::EditableFieldBannerViewDelegate(
             parentResponder, inputEventHandlerDelegate, textFieldDelegate) {}
   Escher::BufferTextView* valueLabel() { return editableFieldLabel(); }
   Escher::TextField* value() { return editableField(); }

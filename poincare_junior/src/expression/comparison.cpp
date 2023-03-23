@@ -62,6 +62,13 @@ int Comparison::Compare(const Node node0, const Node node1) {
 #if POINCARE_JUNIOR_BACKWARD_SCAN
         return CompareFirstChild(node0, node1, ScanDirection::Backward);
 #endif
+      case BlockType::Cosine:
+      case BlockType::Sine:
+      case BlockType::Tangent:
+      case BlockType::ArcCosine:
+      case BlockType::ArcSine:
+      case BlockType::ArcTangent:
+      case BlockType::Logarithm:
       case BlockType::Factorial:
         return CompareFirstChild(node0, node1, ScanDirection::Forward);
       default:

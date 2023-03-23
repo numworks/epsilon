@@ -12,7 +12,42 @@ namespace PoincareJ {
 // Constructors
 
 template <class... Args>
-consteval auto KFayct(Args... args) {
+consteval auto KCos(Args... args) {
+  return KUnary<BlockType::Cosine>(args...);
+}
+
+template <class... Args>
+consteval auto KSin(Args... args) {
+  return KUnary<BlockType::Sine>(args...);
+}
+
+template <class... Args>
+consteval auto KTan(Args... args) {
+  return KUnary<BlockType::Tangent>(args...);
+}
+
+template <class... Args>
+consteval auto KACos(Args... args) {
+  return KUnary<BlockType::ArcCosine>(args...);
+}
+
+template <class... Args>
+consteval auto KASin(Args... args) {
+  return KUnary<BlockType::ArcSine>(args...);
+}
+
+template <class... Args>
+consteval auto KATan(Args... args) {
+  return KUnary<BlockType::ArcTangent>(args...);
+}
+
+template <class... Args>
+consteval auto KLog(Args... args) {
+  return KUnary<BlockType::Logarithm>(args...);
+}
+
+template <class... Args>
+consteval auto KFact(Args... args) {
   return KUnary<BlockType::Factorial>(args...);
 }
 

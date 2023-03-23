@@ -140,6 +140,13 @@ BLOCK_TYPE_IS_EXPRESSION(BlockType::Constant);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Addition);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Multiplication);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Power);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Cosine);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Sine);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Tangent);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::ArcCosine);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::ArcSine);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::ArcTangent);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Logarithm);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Factorial);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::UserSymbol);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::UserFunction);
@@ -296,6 +303,7 @@ class TypeBlock : public Block {
       case BlockType::ArcCosine:
       case BlockType::ArcSine:
       case BlockType::ArcTangent:
+      case BlockType::Logarithm:
       case BlockType::Factorial:
       case BlockType::ParenthesisLayout:
       case BlockType::VerticalOffsetLayout:

@@ -6,13 +6,13 @@
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_simplification_expansion) {
-  EditionReference ref(KPow(3_e, KAdd(1_e, 2_e)));
+  EditionReference ref(KPow(e_e, KAdd(1_e, 2_e)));
   ref = Simplification::ExpandReduction(ref);
-  assert_trees_are_equal(ref, KMult(KPow(3_e, 1_e), KPow(3_e, 2_e)));
+  assert_trees_are_equal(ref, KMult(KPow(e_e, 1_e), KPow(e_e, 2_e)));
 }
 
 QUIZ_CASE(pcj_simplification_contraction) {
-  EditionReference ref(KMult(KPow(3_e, 1_e), KPow(3_e, 2_e)));
+  EditionReference ref(KMult(KPow(e_e, 1_e), KPow(e_e, 2_e)));
   ref = Simplification::ContractReduction(ref);
-  assert_trees_are_equal(ref, KPow(3_e, KAdd(1_e, 2_e)));
+  assert_trees_are_equal(ref, KPow(e_e, KAdd(1_e, 2_e)));
 }

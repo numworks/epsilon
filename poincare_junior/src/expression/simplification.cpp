@@ -47,15 +47,11 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
   NAry::SetNumberOfChildren(reference, nbOfChildren - index);
 }
 
-// TODO : Limit the base to e
-Node expContracted1 =
-    KPow(Placeholders::A, KAdd(Placeholders::B, Placeholders::C));
-Node expExpanded1 = KMult(KPow(Placeholders::A, Placeholders::B),
-                          KPow(Placeholders::A, Placeholders::C));
-Node expContracted2 =
-    KPow(Placeholders::A, KMult(Placeholders::B, Placeholders::C));
-Node expExpanded2 =
-    KPow(KPow(Placeholders::A, Placeholders::B), Placeholders::C);
+Node expContracted1 = KPow(e_e, KAdd(Placeholders::A, Placeholders::B));
+Node expExpanded1 =
+    KMult(KPow(e_e, Placeholders::A), KPow(e_e, Placeholders::B));
+Node expContracted2 = KPow(e_e, KMult(Placeholders::A, Placeholders::B));
+Node expExpanded2 = KPow(KPow(e_e, Placeholders::A), Placeholders::B);
 // TODO : Implement Sin and Cos
 // Node sinContracted = Sin(A+B);
 // Node sinExpanded = KAdd(Mult(Sin(A),Cos(B)),Mult(Cos(A),Sin(B)));

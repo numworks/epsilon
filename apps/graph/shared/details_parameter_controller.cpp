@@ -106,10 +106,18 @@ int DetailsParameterController::detailsNumberOfSections() const {
   if (m_record.isNull() || function()->properties().hideDetails()) {
     return 0;
   }
+  ExamMode examMode = Preferences::sharedPreferences->examMode();
+  if (examMode.forbidLineDetails()) {
+    /* Implicit plots are expected to be disabled if line details are.
+     * Otherwise, one could have details on conics but not lines. */
+    return 0;
+  }
   if (functionIsNonVerticalLine()) {
-    return Preferences::sharedPreferences->examMode().forbidLineDetails()
-               ? 0
-               : k_lineDetailsSections;
+    return k_lineDetailsSections;
+  }
+  if (examMode.forbidImplicitPlots()) {
+    // No conic details are expected if implicit plots are disabled
+    return 0;
   }
   Shared::ContinuousFunctionProperties properties = function()->properties();
   if (!properties.isConic() || !properties.isCartesian()) {
@@ -117,6 +125,7 @@ int DetailsParameterController::detailsNumberOfSections() const {
      * be for polar and parametric conics. */
     return 0;
   }
+
   switch (properties.conicShape()) {
     case Conic::Shape::Circle:
       return k_circleDetailsSections;

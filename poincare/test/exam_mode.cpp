@@ -123,7 +123,7 @@ void assert_exam_mode(ExamMode::Ruleset ruleset) {
       quiz_assert(mode.forbidSolverApp());
       quiz_assert(!mode.forbidElementsApp());
       quiz_assert(!mode.forbidCodeApp());
-      quiz_assert(!mode.forbidLineDetails());
+      quiz_assert(mode.forbidLineDetails());
       quiz_assert(!mode.forbidInequalityGraphing());
       quiz_assert(mode.forbidImplicitPlots());
       quiz_assert(!mode.forbidStatsDiagnostics());

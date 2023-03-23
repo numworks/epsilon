@@ -100,23 +100,6 @@ T *TemplatedSequenceContext<T>::valuesPointer(int sequenceIndex,
 }
 
 template <typename T>
-void TemplatedSequenceContext<T>::shiftValuesLeft(int sequenceIndex,
-                                                  bool intermediateComputation,
-                                                  int delta) {
-  assert(0 < delta && delta <= SequenceStore::k_maxNumberOfSequences);
-  T *values = valuesPointer(sequenceIndex, intermediateComputation);
-  int stop = SequenceStore::k_maxRecurrenceDepth + 1 - delta;
-  assert(0 < stop && stop < SequenceStore::k_maxRecurrenceDepth + 1);
-  for (int depth = 0; depth < stop; depth++) {
-    *(values + depth) = *(values + depth + delta);
-  }
-  for (int depth = stop; depth < SequenceStore::k_maxRecurrenceDepth + 1;
-       depth++) {
-    *(values + depth) = OMG::SignalingNan<T>();
-  }
-}
-
-template <typename T>
 void TemplatedSequenceContext<T>::shiftValuesRight(int sequenceIndex,
                                                    bool intermediateComputation,
                                                    int delta) {
@@ -146,19 +129,18 @@ void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
   if (!explicitComputation && rank > k_maxRecurrentRank) {
     return;
   }
+  T cacheValue = storedValueOfSequenceAtRank(sequenceIndex, rank);
+  if (!OMG::IsSignalingNan(cacheValue)) {
+    return;
+  }
+
   bool intermediateComputation = m_isComputingMainResult;
   m_isComputingMainResult = true;
 
   int *currentRank = rankPointer(sequenceIndex, intermediateComputation);
-
-  int offset = *currentRank - rank;
-  if (offset > SequenceStore::k_maxRecurrenceDepth) {
+  if (*currentRank > rank) {
     resetRanksAndValuesOfSequence(sequenceIndex, intermediateComputation);
-  } else if (offset > 0) {
-    *currentRank = rank;
-    shiftValuesLeft(sequenceIndex, intermediateComputation, offset);
   }
-
   while (*currentRank < rank) {
     int step = explicitComputation ? rank - *currentRank : 1;
     stepRanks(sequenceIndex, intermediateComputation, step);

@@ -118,9 +118,7 @@ class LayoutField : public WithBlinkingTextCursor<ScrollableView>,
     }
     void setCursor(Poincare::LayoutCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(false); }
-    KDRect cursorRect() {
-      return m_cursorView.absoluteFrame().relativeTo(absoluteOrigin());
-    }
+    KDRect cursorRect() { return relativeChildFrame(&m_cursorView); }
     Poincare::LayoutCursor* cursor() { return &m_cursor; }
     const ExpressionView* expressionView() const { return &m_expressionView; }
     ExpressionView* expressionView() { return &m_expressionView; }

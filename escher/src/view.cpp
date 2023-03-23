@@ -78,7 +78,7 @@ void View::setChildFrame(View *child, KDRect frame, bool force) {
    * previously was.  At this point, we know that the only area that needs to be
    * redrawn in the superview is the old frame minus the part covered by the new
    * frame. */
-  KDRect previousFrame = child->absoluteFrame().relativeTo(absoluteOrigin());
+  KDRect previousFrame = relativeChildFrame(child);
   markRectAsDirty(previousFrame.differencedWith(frame));
   child->setFrame(frame.translatedBy(m_frame.origin()), force);
 }
@@ -125,8 +125,7 @@ void View::translate(KDPoint delta) {
 }
 
 KDPoint View::pointFromPointInView(View *view, KDPoint point) {
-  return point.translatedBy(
-      view->absoluteOrigin().relativeTo(absoluteOrigin()));
+  return point.translatedBy(relativeChildOrigin(view));
 }
 
 KDRect View::bounds() const { return m_frame.movedTo(KDPointZero); }

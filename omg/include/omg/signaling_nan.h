@@ -33,10 +33,10 @@ constexpr static IntFloat k_sNanFloat = IntFloat{.i = 0x7fa00000};
 constexpr static IntDouble k_sNanDouble = IntDouble{.i = 0x7ff4000000000000};
 #endif
 
-constexpr static bool IsSignalingNan(float f) {
+static inline bool IsSignalingNan(float f) {
   return IntFloat{.f = f}.i == k_sNanFloat.i;
 }
-constexpr static bool IsSignalingNan(double d) {
+static inline bool IsSignalingNan(double d) {
   return IntDouble{.d = d}.i == k_sNanDouble.i;
 }
 template <typename T>

@@ -6,10 +6,10 @@ SFLAGS += -fPIE
 TARGET ?= $(HOST)
 
 COVERAGE =
-ifneq ($(filter coverage,$(MAKECMDGOALS)),)
+ifneq ($(findstring coverage,$(MAKECMDGOALS)),)
 COVERAGE = coverage
 endif
 
-BUILD_DIR := $(BUILD_DIR)/$(TARGET)/$(COVERAGE)
+BUILD_DIR := $(BUILD_DIR)/$(TARGET)/$(MAKECMDGOALS)
 
 include build/platform.simulator.$(TARGET).mak

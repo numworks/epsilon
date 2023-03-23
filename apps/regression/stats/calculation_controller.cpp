@@ -531,7 +531,7 @@ int CalculationController::numberOfDisplayedBCDECoefficients() const {
   int maxNumberCoefficients = 0;
   int numberOfDefinedSeries = m_store->numberOfActiveSeries();
   /* "mx+b" is the only model having a "m": coefficient. It is only available in
-   * Variant1 of RegressionModelOrder. */
+   * Variant1 of RegressionApp. */
   for (int i = 0; i < numberOfDefinedSeries; i++) {
     int series = m_store->seriesIndexFromActiveSeriesIndex(i);
     int numberOfCoefficients =
@@ -544,8 +544,8 @@ int CalculationController::numberOfDisplayedBCDECoefficients() const {
 }
 
 bool CalculationController::shouldDisplayMCoefficient() const {
-  if (GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() !=
-      CountryPreferences::RegressionModelOrder::Variant1) {
+  if (GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() !=
+      CountryPreferences::RegressionApp::Variant1) {
     // LinearAxpb is displayed as mx+b in Variant1 only
     return false;
   }
@@ -562,8 +562,8 @@ bool CalculationController::shouldDisplayMCoefficient() const {
 
 bool CalculationController::shouldDisplayACoefficient() const {
   bool canDisplayM =
-      (GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() ==
-       CountryPreferences::RegressionModelOrder::Variant1);
+      (GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+       CountryPreferences::RegressionApp::Variant1);
   int numberOfDefinedSeries = m_store->numberOfActiveSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
     int series = m_store->seriesIndexFromActiveSeriesIndex(i);

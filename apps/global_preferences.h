@@ -54,8 +54,8 @@ class GlobalPreferences {
   Poincare::Preferences::MixedFractions mixedFractions() const {
     return preferences().mixedFractions();
   }
-  CountryPreferences::RegressionModelOrder regressionModelOrder() const {
-    return preferences().regressionModelOrder();
+  CountryPreferences::RegressionApp regressionAppVariant() const {
+    return preferences().regressionAppVariant();
   }
   CountryPreferences::GraphTemplatesLayout graphTemplatesLayout() const {
     return preferences().graphTemplatesLayout();

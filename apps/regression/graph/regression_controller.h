@@ -33,8 +33,8 @@ class RegressionController : public Escher::SelectableListViewController<
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfCells; }
   int numberOfRows() const override {
-    return GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() ==
-                   CountryPreferences::RegressionModelOrder::Default
+    return GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+                   CountryPreferences::RegressionApp::Default
                ? k_defaultNumberOfRows
                : k_variantNumberOfRows;
   }
@@ -85,14 +85,14 @@ class RegressionController : public Escher::SelectableListViewController<
   }
 
   static Model::Type ModelTypeAtIndex(int index) {
-    return GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() ==
-                   CountryPreferences::RegressionModelOrder::Default
+    return GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+                   CountryPreferences::RegressionApp::Default
                ? DefaultModelTypeAtIndex(index)
                : VariantModelTypeAtIndex(index);
   }
   static int IndexOfModelType(Model::Type type) {
-    return GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() ==
-                   CountryPreferences::RegressionModelOrder::Default
+    return GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+                   CountryPreferences::RegressionApp::Default
                ? DefaultIndexOfModelType(type)
                : VariantIndexOfModelType(type);
   }

@@ -49,8 +49,8 @@ void RegressionController::didBecomeFirstResponder() {
   int initialIndex = std::max(0, IndexOfModelType(type));
   if (initialIndex >= numberOfRows()) {
     assert(type == Model::Type::LinearApbx &&
-           GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() ==
-               CountryPreferences::RegressionModelOrder::Default);
+           GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+               CountryPreferences::RegressionApp::Default);
     // Type is hidden for selected country, select the first line.
     initialIndex = 0;
   } else {

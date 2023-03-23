@@ -254,7 +254,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
     numberOfLayoutsAddedOrRemovedLastLoop = 0;
 
     // Beautify
-    for (int i = 0; i < numberOfRules; i++) {
+    for (size_t i = 0; i < numberOfRules; i++) {
       BeautificationRule beautificationRule = rulesList[i];
       if (beautificationRule.numberOfParameters > 0 &&
           (!followedByParenthesis ||

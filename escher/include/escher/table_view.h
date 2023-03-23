@@ -117,6 +117,10 @@ class TableView : public ScrollView {
 
     int numberOfSubviews() const override { return numberOfDisplayableCells(); }
     View *subviewAtIndex(int index) override;
+    HighlightCell *cellAtRelativeLocation(int relativeColumn, int relativeRow) {
+      return cellAtLocation(relativeColumn + columnsScrollingOffset(),
+                            relativeRow + rowsScrollingOffset());
+    }
     /* These two methods transform a positive index (of subview for instance)
      * into coordinates that refer to the data source entire table */
     int absoluteColumnIndexFromSubviewIndex(int index) const {

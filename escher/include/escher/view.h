@@ -32,7 +32,6 @@ class Window;
 class View {
   friend class Shared::MemoizedCursorView;
   friend class TransparentView;
-  friend class TableView;
   // We only want Window to be able to invoke View::redraw
   friend class Window;
 

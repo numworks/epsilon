@@ -73,12 +73,8 @@ TableView::ContentView::ContentView(TableView* tableView,
 void TableView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
   /* The separators between cells need to be filled with background color.
    * Cells frames are already set, so we just need to browse through the
-   * subviews and detect when there is a gap in their frames coordinates.
+   * cells and detect when there is a gap in their frames coordinates.
    *
-   * Cells are indexed as subview from left to right and from top to bottom.
-   * [00] [01] [02] [03]
-   * [04] [05] [06] [07]
-   * [08] [09] [10] [11]
    * Since the separators are for whole columns and rows, it is not necessary
    * to browse through all the cells, so we just go through the first row and
    * the first column.
@@ -99,9 +95,9 @@ void TableView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
     KDCoordinate length = col ? bounds().height() : bounds().width();
     for (int i = 0; i < iMax; i++) {
       const View* sv =
-          const_cast<TableView::ContentView*>(this)->subviewAtIndex(
-              i * (col ? 1 : nC));
-      KDRect subviewFrame = sv->m_frame;
+          const_cast<TableView::ContentView*>(this)->cellAtRelativeLocation(
+              col ? i : 0, col ? 0 : i);
+      KDRect subviewFrame = sv->absoluteFrame().relativeTo(absoluteOrigin());
       if (subviewFrame == KDRectZero) {
         continue;
       }
@@ -115,10 +111,10 @@ void TableView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
         }
         ctx->fillRect(r, bColor);
       }
-      c = col ? subviewFrame.right() : subviewFrame.bottom();
+      c = col ? subviewFrame.right() + 1 : subviewFrame.bottom() + 1;
     }
     // Draw the separator on the right/bottom of the table
-    KDCoordinate cMax = col ? bounds().right() : bounds().bottom();
+    KDCoordinate cMax = col ? bounds().right() + 1 : bounds().bottom() + 1;
     if (c < cMax) {
       KDRect r = KDRect(c, 0, cMax - c, length);
       if (!col) {

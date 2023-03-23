@@ -87,7 +87,7 @@ constexpr inline size_t indexOfMostSignificantBit(uint32_t i) {
 }
 
 constexpr inline size_t numberOfBitsToCountUpTo(uint32_t i) {
-  return i == 0 ? 0 : indexOfMostSignificantBit(i - 1) + 1;
+  return i <= 1 ? 0 : indexOfMostSignificantBit(i - 1) + 1;
 }
 
 template <typename T>

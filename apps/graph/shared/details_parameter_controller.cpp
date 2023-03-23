@@ -107,9 +107,7 @@ int DetailsParameterController::detailsNumberOfSections() const {
     return 0;
   }
   ExamMode examMode = Preferences::sharedPreferences->examMode();
-  if (examMode.forbidLineDetails()) {
-    /* Implicit plots are expected to be disabled if line details are.
-     * Otherwise, one could have details on conics but not lines. */
+  if (examMode.forbidGraphDetails()) {
     return 0;
   }
   if (functionIsNonVerticalLine()) {

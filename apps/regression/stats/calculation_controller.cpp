@@ -433,7 +433,7 @@ I18n::Message CalculationController::MessageForCalculation(Calculation c) {
           I18n::Message::CoefficientC,
           I18n::Message::CoefficientD,
           I18n::Message::CoefficientE,
-          I18n::Message::SquareSum,  // TODO: ResidualStddev
+          I18n::Message::ResidualStandardDeviationMessageInTable,
           I18n::Message::DeterminationCoeff,
       };
   int index = static_cast<int>(c);
@@ -461,7 +461,7 @@ I18n::Message CalculationController::SymbolForCalculation(Calculation c) {
           I18n::Message::C,
           I18n::Message::D,
           I18n::Message::E,
-          I18n::Message::SumValuesSymbol,  // TODO: ResidualStddev
+          I18n::Message::ResidualStandardDeviationSymbol,
           I18n::Message::R2,
       };
   int index = static_cast<int>(c);

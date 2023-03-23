@@ -48,7 +48,8 @@ void ResidualPlotController::updateCursor() {
 
   // TODO: Add translations
   Poincare::Print::CustomPrintf(
-      buffer, bufferSize, "%s%s%*.*ed", "Residual standard deviation",
+      buffer, bufferSize, "%s%s%*.*ed",
+      I18n::translate(I18n::Message::ResidualStandardDeviation),
       I18n::translate(I18n::Message::ColonConvention), m_memoizedResidualStddev,
       displayMode, significantDigits);
   m_bannerView.stddevView()->setText(buffer);

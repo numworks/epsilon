@@ -97,7 +97,7 @@ void TableView::ContentView::drawRect(KDContext* ctx, KDRect rect) const {
       const View* sv =
           const_cast<TableView::ContentView*>(this)->cellAtRelativeLocation(
               col ? i : 0, col ? 0 : i);
-      KDRect subviewFrame = sv->absoluteFrame().relativeTo(absoluteOrigin());
+      KDRect subviewFrame = relativeChildFrame(sv);
       if (subviewFrame == KDRectZero) {
         continue;
       }

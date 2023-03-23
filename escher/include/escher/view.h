@@ -50,6 +50,12 @@ class View {
   KDPoint pointFromPointInView(View *view, KDPoint point);
   KDRect absoluteFrame() const { return m_frame; }
   KDPoint absoluteOrigin() const { return m_frame.origin(); }
+  KDRect relativeChildFrame(const View *child) const {
+    return child->absoluteFrame().relativeTo(absoluteOrigin());
+  }
+  KDPoint relativeChildOrigin(const View *child) const {
+    return child->absoluteOrigin().relativeTo(absoluteOrigin());
+  }
 
   KDRect bounds() const;
   KDRect dirtyRect() const { return m_dirtyRect; }

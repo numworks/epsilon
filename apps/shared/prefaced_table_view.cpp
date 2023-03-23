@@ -164,7 +164,7 @@ void PrefacedTableView::layoutScrollbars(bool force) {
   m_mainTableView->setDecoratorType(ScrollView::Decorator::Type::None);
   // Content offset if we had no prefaces hiding a part of the table
   KDPoint virtualOffset = m_mainTableView->contentOffset().relativeTo(
-      m_mainTableView->absoluteOrigin().relativeTo(absoluteOrigin()));
+      relativeChildOrigin(m_mainTableView));
   KDRect r1 = KDRectZero;
   KDRect r2 = KDRectZero;
   m_barDecorator.layoutIndicators(

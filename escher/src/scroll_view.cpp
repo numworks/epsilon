@@ -209,7 +209,7 @@ void ScrollView::InnerView::drawRect(KDContext *ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
   KDPoint offset = m_scrollView->contentOffset().translatedBy(
-      m_scrollView->absoluteOrigin().relativeTo(absoluteOrigin()));
+      relativeChildOrigin(m_scrollView));
   KDCoordinate offsetX = offset.x();
   KDCoordinate offsetY = offset.y();
   KDCoordinate contentHeight = m_scrollView->m_contentView->bounds().height();

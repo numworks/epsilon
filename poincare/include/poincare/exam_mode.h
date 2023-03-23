@@ -58,7 +58,9 @@ class ExamMode : public Ion::ExamMode::Configuration {
            ruleset() == Ruleset::IBTest;
   }
   bool forbidCodeApp() const { return ruleset() == Ruleset::Dutch; }
-  bool forbidLineDetails() const { return ruleset() == Ruleset::IBTest; }
+  bool forbidLineDetails() const {
+    return ruleset() == Ruleset::IBTest || ruleset() == Ruleset::Keystone;
+  }
   bool forbidInequalityGraphing() const {
     return flags().forbidInequalityGraphing || ruleset() == Ruleset::STAAR;
   }

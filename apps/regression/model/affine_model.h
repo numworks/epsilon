@@ -30,8 +30,8 @@ class AffineModel : public Model {
 
  private:
   static bool UseMxpbForm() {
-    return GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() ==
-           CountryPreferences::RegressionModelOrder::Variant1;
+    return GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+           CountryPreferences::RegressionApp::Variant1;
   }
 
   double partialDerivate(double* modelCoefficients,

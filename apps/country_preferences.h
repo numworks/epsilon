@@ -50,7 +50,10 @@ class CountryPreferences {
     Variant2,
   };
 
-  enum class RegressionModelOrder : bool {
+  /* Variant1 -> The models change (mx+p instead of ax+b) and display residual
+   * standard deviation in table.
+   * These two behaviours can be splitted if needed. */
+  enum class RegressionApp : bool {
     Default,
     Variant1,
   };
@@ -67,7 +70,7 @@ class CountryPreferences {
       ListsStatsOrderInToolbox listsStatsOrderInToolbox,
       SequencesInitialRank sequencesInitialRank,
       Poincare::Preferences::MixedFractions mixedFractions,
-      RegressionModelOrder regressionModelOrder,
+      RegressionApp regressionAppVariant,
       GraphTemplatesLayout graphTemplatesLayout,
       Poincare::Preferences::LogarithmBasePosition logarithmBasePosition,
       Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent,
@@ -85,7 +88,7 @@ class CountryPreferences {
         m_listsStatsOrderInToolbox(listsStatsOrderInToolbox),
         m_sequencesInitialRank(sequencesInitialRank),
         m_mixedFractions(mixedFractions),
-        m_regressionModelOrder(regressionModelOrder),
+        m_regressionAppVariant(regressionAppVariant),
         m_graphTemplatesLayout(graphTemplatesLayout),
         m_logarithmBasePosition(logarithmBasePosition),
         m_logarithmKeyEvent(logarithmKeyEvent),
@@ -129,8 +132,8 @@ class CountryPreferences {
   constexpr Poincare::Preferences::MixedFractions mixedFractions() const {
     return m_mixedFractions;
   }
-  constexpr RegressionModelOrder regressionModelOrder() const {
-    return m_regressionModelOrder;
+  constexpr RegressionApp regressionAppVariant() const {
+    return m_regressionAppVariant;
   }
   constexpr GraphTemplatesLayout graphTemplatesLayout() const {
     return m_graphTemplatesLayout;
@@ -160,7 +163,7 @@ class CountryPreferences {
   const ListsStatsOrderInToolbox m_listsStatsOrderInToolbox;
   const SequencesInitialRank m_sequencesInitialRank;
   const Poincare::Preferences::MixedFractions m_mixedFractions;
-  const RegressionModelOrder m_regressionModelOrder;
+  const RegressionApp m_regressionAppVariant;
   const GraphTemplatesLayout m_graphTemplatesLayout;
   const Poincare::Preferences::LogarithmBasePosition m_logarithmBasePosition;
   const Poincare::Preferences::LogarithmKeyEvent m_logarithmKeyEvent;

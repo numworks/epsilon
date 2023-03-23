@@ -136,8 +136,8 @@ class CalculationController : public Shared::DoublePairTableController {
     return type != Model::Type::None;
   }
   static bool DisplayResidualStandardDeviation(Model::Type type) {
-    return GlobalPreferences::sharedGlobalPreferences->regressionModelOrder() ==
-               CountryPreferences::RegressionModelOrder::Variant1 &&
+    return GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+               CountryPreferences::RegressionApp::Variant1 &&
            type != Model::Type::None;
   }
   static I18n::Message MessageForCalculation(Calculation c);

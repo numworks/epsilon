@@ -61,6 +61,10 @@ help:
 	@echo "  make format BASE=<ref>"
 	@echo "Format given files"
 	@echo "  make format FILES='file1 file2'"
+	@echo ""
+	@echo "Visualize the coverage of the unary tests or the screenshot tests"
+	@echo "  make PLATFORM=simulator ARCH=arm64 coverage_unary"
+	@echo "  make PLATFORM=simulator ARCH=arm64 coverage_integration"
 
 # Since we're building out-of-tree, we need to make sure the output directories
 # are created, otherwise the receipes will fail (e.g. gcc will fail to create

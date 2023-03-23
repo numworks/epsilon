@@ -10,13 +10,14 @@ KDCoordinate TableViewDataSource::columnWidth(int i, bool withSeparator) {
   if (columnWidthManager()) {
     result = columnWidthManager()->computeSizeAtIndex(i);
   }
+  if (result > 0 && !withSeparator) {
+    // Remove the separator from the memoized size
+    result -= separatorBeforeColumn(i);
+  }
   if (result == TableSize1DManager::k_undefinedSize) {
-    result = nonMemoizedColumnWidth(i);
+    result = nonMemoizedColumnWidth(i, withSeparator);
   }
   assert(result >= 0);
-  if (result > 0 && withSeparator) {
-    return result + separatorBeforeColumn(i);
-  }
   return result;
 }
 
@@ -25,12 +26,31 @@ KDCoordinate TableViewDataSource::rowHeight(int j, bool withSeparator) {
   if (rowHeightManager()) {
     result = rowHeightManager()->computeSizeAtIndex(j);
   }
+  if (result > 0 && !withSeparator) {
+    // Remove the separator from the memoized size
+    result -= separatorBeforeRow(j);
+  }
   if (result == TableSize1DManager::k_undefinedSize) {
-    result = nonMemoizedRowHeight(j);
+    result = nonMemoizedRowHeight(j, withSeparator);
   }
   assert(result >= 0);
+  return result;
+}
+
+KDCoordinate TableViewDataSource::nonMemoizedColumnWidth(int i,
+                                                         bool withSeparator) {
+  KDCoordinate result = nonMemoizedColumnWidth(i);
   if (result > 0 && withSeparator) {
-    return result + separatorBeforeRow(j);
+    result += separatorBeforeColumn(i);
+  }
+  return result;
+}
+
+KDCoordinate TableViewDataSource::nonMemoizedRowHeight(int j,
+                                                       bool withSeparator) {
+  KDCoordinate result = nonMemoizedRowHeight(j);
+  if (result > 0 && withSeparator) {
+    result += separatorBeforeRow(j);
   }
   return result;
 }

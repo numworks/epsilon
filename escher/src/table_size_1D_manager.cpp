@@ -269,7 +269,7 @@ KDCoordinate MemoizedColumnWidthManager<N>::sizeAtIndex(int i) const {
 template <int N>
 KDCoordinate MemoizedColumnWidthManager<N>::nonMemoizedSizeAtIndex(
     int i) const {
-  return this->m_dataSource->nonMemoizedColumnWidth(i);
+  return this->m_dataSource->nonMemoizedColumnWidth(i, true);
 }
 
 template <int N>
@@ -290,7 +290,7 @@ KDCoordinate MemoizedRowHeightManager<N>::sizeAtIndex(int i) const {
 
 template <int N>
 KDCoordinate MemoizedRowHeightManager<N>::nonMemoizedSizeAtIndex(int i) const {
-  return this->m_dataSource->nonMemoizedRowHeight(i);
+  return this->m_dataSource->nonMemoizedRowHeight(i, true);
 }
 
 template <int N>

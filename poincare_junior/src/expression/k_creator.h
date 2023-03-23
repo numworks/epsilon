@@ -200,6 +200,10 @@ constexpr Tree π_e =
     Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::Pi),
          BlockType::Constant>();
 
+constexpr Tree e_e =
+    Tree<BlockType::Constant, static_cast<uint8_t>(Constant::Type::E),
+         BlockType::Constant>();
+
 // TODO: move in OMG?
 constexpr static uint64_t IntegerValue(const char* str, size_t size) {
   uint64_t value = 0;

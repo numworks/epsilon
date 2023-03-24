@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <bit>
+
 namespace OMG {
 namespace BitHelper {
 
@@ -71,37 +73,24 @@ constexpr void setBitAtIndex(T& mask, I i, bool b) {
 }
 
 constexpr inline size_t countLeadingZeros(uint32_t i) {
-  return __builtin_clz(i);
+  return std::countl_zero(i);
 }
 
-constexpr inline size_t countTrailingZeros(uint32_t i) {
-  return __builtin_ctz(i);
-}
-
-constexpr inline size_t numberOfOnes(uint32_t i) {
-  return __builtin_popcount(i);
-}
+constexpr inline size_t numberOfOnes(uint32_t i) { return std::popcount(i); }
 
 constexpr inline size_t indexOfMostSignificantBit(uint32_t i) {
   return numberOfBitsIn<uint32_t>() - countLeadingZeros(i) - 1;
 }
 
 constexpr inline size_t numberOfBitsToCountUpTo(uint32_t i) {
-  return i <= 1 ? 0 : indexOfMostSignificantBit(i - 1) + 1;
+  return i == 0 ? 0 : std::bit_width(i - 1);
 }
 
 template <typename T>
 uint8_t log2(T v) {
-  constexpr int nativeUnsignedIntegerBitCount =
-      k_numberOfBitsInByte * sizeof(T);
-  static_assert(nativeUnsignedIntegerBitCount < 256,
+  static_assert(numberOfBitsIn<T>() < 256,
                 "uint8_t cannot contain the log2 of a templated class T");
-  for (uint8_t i = 0; i < nativeUnsignedIntegerBitCount; i++) {
-    if (v < (static_cast<T>(1) << i)) {
-      return i;
-    }
-  }
-  return numberOfBitsIn<T>();
+  return std::bit_width(v);
 }
 
 }  // namespace BitHelper

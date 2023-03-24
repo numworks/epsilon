@@ -8,6 +8,29 @@ constexpr To bit_cast(const From& src) noexcept {
   return __builtin_bit_cast(To, src);
 }
 
+template <class T>
+constexpr int countl_zero(T x) noexcept;
+
+template <>
+constexpr int countl_zero<unsigned int>(unsigned int x) noexcept {
+  return x == 0 ? 8 * sizeof(unsigned int) : __builtin_clz(x);
+}
+
+template <>
+constexpr int countl_zero<unsigned long>(unsigned long x) noexcept {
+  return x == 0 ? 8 * sizeof(unsigned long) : __builtin_clzl(x);
+}
+
+template <class T>
+constexpr int bit_width(T x) noexcept {
+  return 8 * sizeof(T) - countl_zero(x);
+}
+
+template <class T>
+constexpr int popcount(T x) noexcept {
+  return __builtin_popcount(x);
+}
+
 }  // namespace std
 
 #endif

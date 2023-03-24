@@ -181,7 +181,7 @@ KDRect ListViewWithTopAndBottomViews::setListFrame(KDCoordinate* yOffset,
   KDCoordinate fullListHeight = m_list->minimalSizeForOptimalDisplay().height();
   KDCoordinate bottom = currentResult.top() + fullListHeight - *yOffset;
 
-  if (bottom <= bounds().height()) {
+  if (m_bottomView && bottom <= bounds().height()) {
     /* Bottom of the table can fit on screen. Increase the size to push down
      * the bottom view.
      * - Old frame, after scroll:
@@ -207,26 +207,25 @@ KDRect ListViewWithTopAndBottomViews::setListFrame(KDCoordinate* yOffset,
      *   +--------------------------+
      */
 
-    if (m_bottomView) {
-      m_list->setBottomMargin(k_verticalMargin);
-      /* Margin has changed, recompute bottom */
-      bottom = currentResult.top() +
-               m_list->minimalSizeForOptimalDisplay().height() - *yOffset;
-      KDCoordinate bottomViewTop =
-          std::min(static_cast<KDCoordinate>(
-                       bounds().height() -
-                       m_bottomView->minimalSizeForOptimalDisplay().height() -
-                       k_verticalMargin),
-                   bottom);
-      if (bottom < bottomViewTop) {
-        *yOffset -= bottomViewTop - bottom;
-        bottom = bottomViewTop;
-      }
-      currentResult.setSize(
-          KDSize(currentResult.width(),
-                 currentResult.height() - bounds().height() + bottom));
+    m_list->setBottomMargin(k_verticalMargin);
+    /* Margin has changed, recompute bottom */
+    bottom = currentResult.top() +
+             m_list->minimalSizeForOptimalDisplay().height() - *yOffset;
+    KDCoordinate bottomViewTop =
+        std::min(static_cast<KDCoordinate>(
+                     bounds().height() -
+                     m_bottomView->minimalSizeForOptimalDisplay().height() -
+                     k_verticalMargin),
+                 bottom);
+    if (bottom < bottomViewTop) {
+      *yOffset -= bottomViewTop - bottom;
+      bottom = bottomViewTop;
     }
+    currentResult.setSize(
+        KDSize(currentResult.width(),
+               currentResult.height() - bounds().height() + bottom));
   }
+
   if (currentResult.size() == bounds().size()) {
     /* Neither top nor bottom view is visible. */
     m_list->setTopMargin(Metric::CommonTopMargin);

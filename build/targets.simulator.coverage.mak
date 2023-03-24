@@ -1,14 +1,14 @@
 # Coverage
 
 coverage_src := $(sort $(apps_src) $(base_src)))
-to_remove = quiz/src/i18n.cpp \
+to_remove = \
  apps/exam_mode_configuration_non_official.cpp \
  apps/exam_mode_configuration_non_official.cpp:-official \
  apps/apps_container_helper.cpp \
- apps/init.cpp \
+ apps/init.cpp
 coverage_src := $(filter-out $(to_remove),$(sort $(coverage_src)))
 coverage_unary_src := $(filter-out apps/main.cpp ion/src/simulator/external/%,$(coverage_src)))
-coverage_unary_src += $(test_runner_src) $(runner_src) $(tests_src)
+coverage_unary_src += $(filter-out quiz/src/i18n.cpp,$(test_runner_src))
 coverage_integration_src := $(coverage_src)
 
 $(call flavored_object_for,$(coverage_unary_src) $(coverage_integration_src),consoledisplay): SFLAGS += --coverage

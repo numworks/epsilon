@@ -109,9 +109,11 @@ void ListViewWithTopAndBottomViews::listViewDidChangeSelectionAndDidScroll(
   int row = m_list->selectedRow();
 
   if (row == 0 && m_topView) {
+    m_list->setTopMargin(k_verticalMargin);
     setChildFrame(m_list, KDRectZero, false);
     m_list->setContentOffset(KDPointZero);
   } else if (row == m_listDataSource->numberOfRows() - 1 && m_bottomView) {
+    m_list->setBottomMargin(k_verticalMargin);
     setChildFrame(m_list, KDRectZero, false);
     KDCoordinate bottomViewHeight =
         m_bottomView->minimalSizeForOptimalDisplay().height() +

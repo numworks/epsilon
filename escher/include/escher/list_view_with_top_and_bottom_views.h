@@ -43,6 +43,12 @@ class ListViewWithTopAndBottomViews : public View,
   constexpr static KDCoordinate k_verticalMargin =
       Metric::TableSeparatorThickness;
 
+  static KDCoordinate ViewHeightWithMargin(View* view) {
+    return view ? view->minimalSizeForOptimalDisplay().height() +
+                      k_verticalMargin
+                : 0;
+  }
+
   KDRect setListFrame(KDCoordinate* yOffset, bool force);
 
   ScrollViewVerticalBar m_scrollBar;

@@ -94,34 +94,10 @@ void ListViewWithTopAndBottomViews::layoutSubviews(bool force) {
 void ListViewWithTopAndBottomViews::listViewDidChangeSelectionAndDidScroll(
     SelectableListView* l, int previousSelectedRow,
     bool withinTemporarySelection) {
-  /* TODO: This won't be called if the table view changed selection without
-   * scrolling. This can be a problem if your table is small enough to fit in
-   * the screen bounds but the bottom view does not fit in the screen.
-   * When the user will scroll to the last cell, the table won't scroll to make
-   * the bottom view appear.
-   *
-   * This case does not occur anywhere right now but might need one day to be
-   * implemented.
-   * */
   if (withinTemporarySelection) {
     return;
   }
-  int row = m_list->selectedRow();
-
-  if (row == 0 && m_topView) {
-    m_list->setTopMargin(k_verticalMargin);
-    setChildFrame(m_list, KDRectZero, false);
-    m_list->setContentOffset(KDPointZero);
-  } else if (row == m_listDataSource->numberOfRows() - 1 && m_bottomView) {
-    m_list->setBottomMargin(k_verticalMargin);
-    setChildFrame(m_list, KDRectZero, false);
-    KDCoordinate bottomViewHeight =
-        m_bottomView->minimalSizeForOptimalDisplay().height() +
-        k_verticalMargin;
-    m_list->setContentOffset(
-        KDPoint(0, m_list->minimalSizeForOptimalDisplay().height() +
-                       bottomViewHeight - bounds().height()));
-  }
+  // Properly re-layout top and bottom view depending on the scroll
   layoutSubviews(false);
 }
 
@@ -138,9 +114,18 @@ KDRect ListViewWithTopAndBottomViews::setListFrame(KDCoordinate* yOffset,
    * its size and offset to maintain the illusion the three view are part of a
    * seamless scroll. */
 
+  int selectedRow = m_list->selectedRow();
+  /* Having only one row could conflict between displaying the top view when the
+   * first row is selected and displaying the bottom view when the last row is
+   * selected.  */
+  assert(m_listDataSource->numberOfRows() > 1 || !(m_bottomView && m_topView));
+
   KDRect currentResult = bounds();
 
-  if (*yOffset + m_list->bounds().height() <= bounds().height()) {
+  KDCoordinate tableHeight =
+      selectedRow == 0 ? 0 : *yOffset + m_list->bounds().height();
+
+  if (m_topView && tableHeight <= bounds().height()) {
     /* Top of the table can fit on screen. Increase the size and set the offset
      * to zero. Doing so will move the top of the table and the top view, but
      * not the table content. We make sure to not leave more space above the
@@ -164,24 +149,28 @@ KDRect ListViewWithTopAndBottomViews::setListFrame(KDCoordinate* yOffset,
      *   |  | 4)                 |  |
      *   +--------------------------+
      */
-    KDCoordinate h = m_list->bounds().height() + *yOffset;
     *yOffset = 0;
-    if (m_topView) {
-      m_list->setTopMargin(k_verticalMargin);
-      h = std::max<KDCoordinate>(
-          h, bounds().height() -
-                 m_topView->minimalSizeForOptimalDisplay().height() -
-                 k_verticalMargin);
-    }
-    currentResult = KDRect(0, bounds().height() - h, bounds().width(), h);
+    m_list->setTopMargin(k_verticalMargin);
+    tableHeight = std::max<KDCoordinate>(
+        tableHeight, bounds().height() - ViewHeightWithMargin(m_topView));
+    currentResult = KDRect(0, bounds().height() - tableHeight, bounds().width(),
+                           tableHeight);
+  } else {
+    m_list->setTopMargin(Metric::CommonTopMargin);
   }
+
   /* Set frame a first time now so that minimalSizeForOptimalDisplay can
    * be computed */
   setChildFrame(m_list, currentResult, force);
-  KDCoordinate fullListHeight = m_list->minimalSizeForOptimalDisplay().height();
-  KDCoordinate bottom = currentResult.top() + fullListHeight - *yOffset;
+  bool lastRowSelected = selectedRow == m_listDataSource->numberOfRows() - 1;
+  KDCoordinate tableBottom = currentResult.top() +
+                             m_list->minimalSizeForOptimalDisplay().height() -
+                             *yOffset;
 
-  if (m_bottomView && bottom <= bounds().height()) {
+  /* WARNING: The behaviour is broken if the top and bottom view can be seen at
+   * the same time but the bottom view needs a bit of scrolling to be fully
+   * displayed. This does not occur anywhere in epsilon for now though. */
+  if (m_bottomView && (lastRowSelected || tableBottom <= bounds().height())) {
     /* Bottom of the table can fit on screen. Increase the size to push down
      * the bottom view.
      * - Old frame, after scroll:
@@ -208,29 +197,24 @@ KDRect ListViewWithTopAndBottomViews::setListFrame(KDCoordinate* yOffset,
      */
 
     m_list->setBottomMargin(k_verticalMargin);
-    /* Margin has changed, recompute bottom */
-    bottom = currentResult.top() +
-             m_list->minimalSizeForOptimalDisplay().height() - *yOffset;
+    /* Margin might have changed, recompute bottom */
+    tableBottom = currentResult.top() +
+                  m_list->minimalSizeForOptimalDisplay().height() - *yOffset;
     KDCoordinate bottomViewTop =
-        std::min(static_cast<KDCoordinate>(
-                     bounds().height() -
-                     m_bottomView->minimalSizeForOptimalDisplay().height() -
-                     k_verticalMargin),
-                 bottom);
-    if (bottom < bottomViewTop) {
-      *yOffset -= bottomViewTop - bottom;
-      bottom = bottomViewTop;
+        std::min(static_cast<KDCoordinate>(bounds().height() -
+                                           ViewHeightWithMargin(m_bottomView)),
+                 tableBottom);
+    if (lastRowSelected) {
+      *yOffset += tableBottom - bottomViewTop;
+      tableBottom = bottomViewTop;
     }
     currentResult.setSize(
         KDSize(currentResult.width(),
-               currentResult.height() - bounds().height() + bottom));
-  }
-
-  if (currentResult.size() == bounds().size()) {
-    /* Neither top nor bottom view is visible. */
-    m_list->setTopMargin(Metric::CommonTopMargin);
+               currentResult.height() - bounds().height() + tableBottom));
+  } else {
     m_list->setBottomMargin(Metric::CommonBottomMargin);
   }
+
   setChildFrame(m_list, currentResult, force);
   return currentResult;
 }

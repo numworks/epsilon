@@ -91,33 +91,6 @@ void EditExpressionController::viewWillAppear() {
   m_historyController->viewWillAppear();
 }
 
-bool EditExpressionController::textFieldDidReceiveEvent(
-    AbstractTextField *textField, Ion::Events::Event event) {
-  bool shouldDuplicateLastCalculation = textField->isEditing() &&
-                                        textField->shouldFinishEditing(event) &&
-                                        textField->draftTextLength() == 0;
-  if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
-    return true;
-  }
-  return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
-}
-
-bool EditExpressionController::textFieldDidHandleEvent(
-    Escher::AbstractTextField *textField, bool returnValue,
-    bool textDidChange) {
-  return inputViewDidHandleEvent(returnValue);
-}
-
-bool EditExpressionController::textFieldDidFinishEditing(
-    AbstractTextField *textField, const char *text, Ion::Events::Event event) {
-  return inputViewDidFinishEditing(text, nullptr);
-}
-
-bool EditExpressionController::textFieldDidAbortEditing(
-    AbstractTextField *textField) {
-  return inputViewDidAbortEditing(textField->text());
-}
-
 bool EditExpressionController::layoutFieldDidReceiveEvent(
     ::LayoutField *layoutField, Ion::Events::Event event) {
   bool shouldDuplicateLastCalculation =
@@ -171,7 +144,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(
   if (shouldDuplicateLastCalculation && m_workingBuffer[0] != 0) {
     /* The input text store in m_workingBuffer might have been correct the first
      * time but then be too long when replacing ans in another context */
-    Shared::TextFieldDelegateApp *myApp = textFieldDelegateApp();
+    Shared::TextFieldDelegateApp *myApp = App::app();
     if (!myApp->isAcceptableText(m_workingBuffer)) {
       return true;
     }
@@ -211,7 +184,7 @@ bool EditExpressionController::inputViewDidHandleEvent(bool returnValue) {
 
 bool EditExpressionController::inputViewDidFinishEditing(const char *text,
                                                          Layout layoutR) {
-  Context *context = textFieldDelegateApp()->localContext();
+  Context *context = App::app()->localContext();
   if (layoutR.isUninitialized()) {
     assert(text);
     strlcpy(m_workingBuffer, text, k_cacheBufferSize);

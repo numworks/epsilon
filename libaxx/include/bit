@@ -4,11 +4,10 @@
 namespace std {
 
 template <class To, class From>
-constexpr To bit_cast(const From& src) noexcept
-{
-    return __builtin_bit_cast(To, src);
+constexpr To bit_cast(const From& src) noexcept {
+  return __builtin_bit_cast(To, src);
 }
 
-}
+}  // namespace std
 
 #endif

@@ -12,18 +12,32 @@ struct pair {
   V second;
 };
 
-template <typename U, typename V> pair<U,V> make_pair(U u, V v) {
-  return pair<U,V>(u,v);
+template <typename U, typename V>
+pair<U, V> make_pair(U u, V v) {
+  return pair<U, V>(u, v);
 }
 
 // The important trick is to change U and V only in the argument type
-/* https://github.com/llvm/llvm-project/blob/main/libcxx/include/__utility/pair.h */
+/* https://github.com/llvm/llvm-project/blob/main/libcxx/include/__utility/pair.h
+ */
 
-template <class U, class V> constexpr U& get(pair<U, V> &pair) { return pair.first; }
-template <class U, class V> constexpr U& get(pair<V, U> &pair) { return pair.second; }
-template <class U, class V> constexpr const U& get(const pair<U, V> &pair) { return pair.first; }
-template <class U, class V> constexpr const U& get(const pair<V, U> &pair) { return pair.second; }
-
+template <class U, class V>
+constexpr U& get(pair<U, V>& pair) {
+  return pair.first;
 }
+template <class U, class V>
+constexpr U& get(pair<V, U>& pair) {
+  return pair.second;
+}
+template <class U, class V>
+constexpr const U& get(const pair<U, V>& pair) {
+  return pair.first;
+}
+template <class U, class V>
+constexpr const U& get(const pair<V, U>& pair) {
+  return pair.second;
+}
+
+}  // namespace std
 
 #endif

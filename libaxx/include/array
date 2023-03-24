@@ -24,13 +24,11 @@ class array {
   array() {}
   constexpr array(initializer_list<U> init) {
     int index = 0;
-    for (const U &u : init) {
+    for (const U& u : init) {
       m_array[index++] = u;
     }
   }
-  constexpr U& operator[](unsigned int n) {
-    return m_array[n];
-  }
+  constexpr U& operator[](unsigned int n) { return m_array[n]; }
 
  private:
   U m_array[N];

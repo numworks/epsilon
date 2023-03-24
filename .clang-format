@@ -1,4 +1,5 @@
 ---
-Language:        Cpp
-BasedOnStyle:  Google
+Language:     Cpp
+Standard:     c++20
+BasedOnStyle: Google
 ...

@@ -12,7 +12,7 @@
 namespace PoincareJ {
 
 namespace PatternMatching {
-enum class PlaceholderTag : uint8_t {
+enum PlaceholderTag : uint8_t {
   A,
   B,
   C,
@@ -32,22 +32,21 @@ class Context {
  public:
   Context(Node a = Node(), Node b = Node(), Node c = Node())
       : m_array{a, b, c} {}
-  Node& operator[](PlaceholderTag placeholder) {
-    return m_array[static_cast<uint8_t>(placeholder)];
-  }
+
+  Node& operator[](PlaceholderTag placeholder) { return m_array[placeholder]; }
 
   template <PlaceholderTag P>
   Node& operator[](Placeholder<P> placeholder) {
-    return m_array[static_cast<uint8_t>(P)];
+    return m_array[P];
   }
 
   const Node& operator[](PlaceholderTag placeholder) const {
-    return m_array[static_cast<uint8_t>(placeholder)];
+    return m_array[placeholder];
   }
 
   template <PlaceholderTag P>
   const Node& operator[](Placeholder<P> placeholder) const {
-    return m_array[static_cast<uint8_t>(P)];
+    return m_array[P];
   }
 
   bool isUninitialized() const;

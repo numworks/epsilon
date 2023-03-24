@@ -14,7 +14,7 @@ InterestMenuController::InterestMenuController(
     : Escher::SelectableCellListPage<
           Escher::MessageTableCellWithChevronAndMessage,
           k_numberOfInterestCells, Escher::MemoizedListViewDataSource>(
-          parentResponder, &m_contentView),
+          parentResponder),
       m_messageView(KDFont::Size::Small, I18n::Message::ParameterChoose,
                     KDContext::k_alignCenter, KDContext::k_alignCenter,
                     Escher::Palette::GrayDark, Escher::Palette::WallScreen),

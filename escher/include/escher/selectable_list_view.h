@@ -22,6 +22,9 @@ class SelectableListView : public SelectableTableView {
   bool selectCell(int row) { return selectCellAtLocation(0, row); }
   void reloadCell(int row) { return reloadCellAtLocation(0, row); }
   HighlightCell* cell(int row) { return cellAtLocation(0, row); }
+  void setDelegate(SelectableListViewDelegate* delegate) {
+    m_delegate = delegate;
+  }
 
  private:
   // Hide column-related methods

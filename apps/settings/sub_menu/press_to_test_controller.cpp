@@ -14,7 +14,7 @@ using namespace Escher;
 namespace Settings {
 
 PressToTestController::PressToTestController(Responder *parentResponder)
-    : SelectableListViewController(parentResponder, &m_view),
+    : SelectableListViewController(parentResponder),
       m_topMessageView(KDFont::Size::Small, I18n::Message::Default,
                        KDContext::k_alignCenter, KDContext::k_alignCenter,
                        Palette::GrayDark, Palette::WallScreen),

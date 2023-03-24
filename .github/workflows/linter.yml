@@ -23,7 +23,7 @@ jobs:
 
       # TODO Only install clang-format
       - name: Install dependencies
-        run: build/setup.sh
+        uses: numworks/setup-llvm@latest
 
       - name: Lint files changed by PR
         run: make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS="--dry-run --Werror"

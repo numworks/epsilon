@@ -4,7 +4,6 @@
 #include <assert.h>
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
-#include <omgpj/assert.h>
 #include <stdint.h>
 
 namespace OMG {
@@ -28,15 +27,15 @@ inline char CharacterForDigit(Base base, uint8_t d) {
 }
 
 inline constexpr uint8_t DigitForCharacter(char c) {
-  constexpr_assert(c >= '0');
+  assert(c >= '0');
   if (c <= '9') {
     return c - '0';
   }
   if (c <= 'F') {
-    constexpr_assert(c >= 'A');
+    assert(c >= 'A');
     return c - 'A' + 10;
   }
-  constexpr_assert(c >= 'a' && c <= 'f');
+  assert(c >= 'a' && c <= 'f');
   return c - 'a' + 10;
 }
 

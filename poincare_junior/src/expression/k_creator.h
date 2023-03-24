@@ -171,7 +171,7 @@ constexpr static uint64_t IntegerValue(const char* str, size_t size) {
   for (size_t i = 0; i < size - 1; i++) {
     uint8_t digit = OMG::Print::DigitForCharacter(str[i]);
     // No overflow
-    constexpr_assert(value <= (UINT64_MAX - digit) / 10);
+    assert(value <= (UINT64_MAX - digit) / 10);
     value = 10 * value + digit;
   }
   return value;
@@ -197,7 +197,7 @@ constexpr static float FloatValue(const char* str, size_t size) {
     }
     uint8_t digit = OMG::Print::DigitForCharacter(str[i]);
     // No overflow
-    constexpr_assert(value <= (UINT64_MAX - digit) / 10);
+    assert(value <= (UINT64_MAX - digit) / 10);
     if (!fractionalPart) {
       value = 10 * value + digit;
     } else {

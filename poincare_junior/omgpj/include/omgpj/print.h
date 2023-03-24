@@ -3,7 +3,6 @@
 
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
-#include <omgpj/assert.h>
 #include <stdint.h>
 
 namespace OMG {

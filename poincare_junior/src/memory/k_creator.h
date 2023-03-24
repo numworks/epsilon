@@ -2,7 +2,6 @@
 #define POINCARE_MEMORY_K_CREATOR_H
 
 #include <omg/print.h>
-#include <omgpj/assert.h>
 #include <omgpj/concept.h>
 #include <omgpj/print.h>
 

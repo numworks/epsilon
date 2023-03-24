@@ -1,7 +1,6 @@
 #ifndef POINCARE_MEMORY_NODE_H
 #define POINCARE_MEMORY_NODE_H
 
-#include <omgpj/assert.h>
 #include <string.h>
 
 #include <utility>
@@ -89,7 +88,7 @@ class Node {
 
   // Sizes
   constexpr size_t treeSize() const {
-    constexpr_assert(!isUninitialized());
+    assert(!isUninitialized());
     return nextTree().block() - block();
   }
 

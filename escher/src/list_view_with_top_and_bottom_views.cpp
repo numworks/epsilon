@@ -13,6 +13,7 @@ ListViewWithTopAndBottomViews::ListViewWithTopAndBottomViews(
       m_list(table),
       m_bottomView(bottomView) {
   m_list->setDecoratorType(ScrollView::Decorator::Type::None);
+  m_list->setDelegate(this);
 }
 
 void ListViewWithTopAndBottomViews::drawRect(KDContext* ctx,

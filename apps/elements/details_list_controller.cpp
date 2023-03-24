@@ -12,7 +12,7 @@ namespace Elements {
 DetailsListController::DetailsListController(
     StackViewController *parentResponder)
     : ViewController(parentResponder),
-      m_selectableListView(this, this, this, &m_view),
+      m_selectableListView(this, this, this),
       m_topElementView(Escher::Palette::WallScreen),
       m_bottomMessageView(
           KDFont::Size::Small, I18n::Message::ElementsDataConditions,

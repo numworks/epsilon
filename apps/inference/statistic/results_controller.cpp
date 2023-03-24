@@ -21,7 +21,7 @@ ResultsController::ResultsController(
     Escher::InputEventHandlerDelegate *handler,
     Escher::TextFieldDelegate *textFieldDelegate)
     : Escher::ViewController(parent),
-      m_selectableListView(this, &m_resultsDataSource, this, &m_contentView),
+      m_selectableListView(this, &m_resultsDataSource, this),
       m_title(KDFont::Size::Small, I18n::Message::CalculatedValues,
               KDContext::k_alignCenter, KDContext::k_alignCenter,
               Palette::GrayDark, Palette::WallScreen),

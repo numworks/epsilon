@@ -313,9 +313,6 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
          !shouldSeriesDisplay(seriesNumber, DisplayR2)) ||
         (c == Calculation::ResidualStandardDeviation &&
          !shouldSeriesDisplay(seriesNumber,
-                              DisplayResidualStandardDeviation)) ||
-        (c == Calculation::ResidualStandardDeviation &&
-         !shouldSeriesDisplay(seriesNumber,
                               DisplayResidualStandardDeviation))) {
       bufferCell->setText(I18n::translate(I18n::Message::Dash));
       return;

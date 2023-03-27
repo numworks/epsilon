@@ -82,7 +82,7 @@ void ScrollView::setMargins(KDCoordinate top, KDCoordinate right,
 void ScrollView::scrollToContentPoint(KDPoint p) {
   KDRect visibleRect = visibleContentRect();
 
-  if (visibleRect.width() < 0 || visibleRect.height() < 0) {
+  if (visibleRect.isEmpty()) {
     return;
   }
 
@@ -119,9 +119,6 @@ void ScrollView::scrollToContentPoint(KDPoint p) {
 
 void ScrollView::scrollToContentRect(KDRect rect) {
   KDRect visibleRect = visibleContentRect();
-  if (visibleRect == KDRectZero) {
-    return;
-  }
   /* Compute the farthest corner of the rect to scroll to.
    * By scrolling to it, the whole rect should be displayed.
    */

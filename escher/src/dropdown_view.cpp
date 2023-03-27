@@ -111,6 +111,10 @@ bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
     }
     return true;
   }
+  if (e == Ion::Events::Back) {
+    close();
+    return true;
+  }
   return false;
 }
 
@@ -120,6 +124,7 @@ void Dropdown::DropdownPopupController::selectRow(int row) {
 }
 
 void Dropdown::DropdownPopupController::close() {
+  m_dropdown->layoutSubviews(true);
   Container::activeApp()->modalViewController()->dismissModal();
 }
 

@@ -244,16 +244,16 @@ void Zoom::fitConditions(PiecewiseOperator p,
     return Solver<float>::BoolToInterest(
         a.y() != c.y(), Solver<float>::Interest::Discontinuity);
   };
-  Solver<float>::HoneResult hone = [](Solver<float>::FunctionEvaluation,
-                                      const void *aux, float a, float b,
-                                      Solver<float>::Interest, float) {
-    const ConditionsParameters *params =
-        static_cast<const ConditionsParameters *>(aux);
-    params->zoom->fitPoint(
-        params->fullFunction(a, params->model, params->zoom->m_context),
-        params->vertical);
-    return params->fullFunction(b, params->model, params->zoom->m_context);
-  };
+  Solver<float>::HoneResult hone =
+      [](Solver<float>::FunctionEvaluation, const void *aux, float a, float b,
+         Solver<float>::Interest, float, TrinaryBoolean) {
+        const ConditionsParameters *params =
+            static_cast<const ConditionsParameters *>(aux);
+        params->zoom->fitPoint(
+            params->fullFunction(a, params->model, params->zoom->m_context),
+            params->vertical);
+        return params->fullFunction(b, params->model, params->zoom->m_context);
+      };
   bool dummy;
   fitWithSolver(&dummy, &dummy, evaluator, &params, test, hone, vertical);
 }
@@ -396,7 +396,8 @@ static void honeHelper(Solver<float>::FunctionEvaluation f, const void *aux,
 Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
                                     const void *aux, float a, float b,
                                     Solver<float>::Interest interest,
-                                    float precision) {
+                                    float precision,
+                                    TrinaryBoolean discontinuous) {
   Coordinate2D<float> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, pointIsInterestingHelper, &pa, &pu, &pv,
              &pb);
@@ -404,23 +405,25 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f,
   constexpr float k_tolerance = 1.f / Solver<float>::k_relativePrecision;
   /* Most functions will taper off near a local extremum. If the slope
    * diverges, it is more likely we have found an even vertical asymptote. */
-  bool discontinuous =
-      (interest == Solver<float>::Interest::LocalMinimum ||
-       interest == Solver<float>::Interest::LocalMaximum) &&
-      (std::max((pu.y() - pa.y()) / (pu.x() - pa.x()),
-                (pv.y() - pb.y()) / (pv.x() - pb.x())) > k_tolerance);
+  bool isDiscontinuous =
+      discontinuous == TrinaryBoolean::True ||
+      ((interest == Solver<float>::Interest::LocalMinimum ||
+        interest == Solver<float>::Interest::LocalMaximum) &&
+       (std::max((pu.y() - pa.y()) / (pu.x() - pa.x()),
+                 (pv.y() - pb.y()) / (pv.x() - pb.x())) > k_tolerance));
   /* If the function is discontinuous around the solution (e.g. 1/x^2), we
    * discard the y value to avoid zooming in on diverging points. */
   return Coordinate2D<float>(pb.x(), interest == Solver<float>::Interest::Root
                                          ? 0.f
-                                     : discontinuous ? NAN
-                                                     : pb.y());
+                                     : isDiscontinuous ? NAN
+                                                       : pb.y());
 }
 
 Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
                                            const void *aux, float a, float b,
                                            Solver<float>::Interest interest,
-                                           float precision) {
+                                           float precision,
+                                           TrinaryBoolean discontinuous) {
   Coordinate2D<float> pa, pu, pv, pb;
   honeHelper(f, aux, a, b, interest, Solver<float>::EvenOrOddRootInBracket, &pa,
              &pu, &pv, &pb);

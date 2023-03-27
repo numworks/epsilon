@@ -94,23 +94,8 @@ Coordinate2D<T> Solver<T>::next(const Expression &e, BracketTest test,
     return p->expression.approximateWithValueForSymbol(
         p->unknown, x, p->context, p->complexFormat, p->angleUnit);
   };
-  DiscontinuityEvaluation discontinuityTestForPiecewise = [](T x1, T x2,
-                                                             const void *aux) {
-    const FunctionEvaluationParameters *p =
-        reinterpret_cast<const FunctionEvaluationParameters *>(aux);
-    assert(p->expression.type() == ExpressionNode::Type::PiecewiseOperator);
-    const PiecewiseOperator piecewise =
-        static_cast<const PiecewiseOperator &>(p->expression);
-    return piecewise.indexOfFirstTrueConditionWithValueForSymbol<T>(
-               p->unknown, x1, p->context, p->complexFormat, p->angleUnit) !=
-           piecewise.indexOfFirstTrueConditionWithValueForSymbol(
-               p->unknown, x2, p->context, p->complexFormat, p->angleUnit);
-  };
 
-  return next(f, &parameters, test, hone,
-              e.type() == ExpressionNode::Type::PiecewiseOperator
-                  ? discontinuityTestForPiecewise
-                  : nullptr);
+  return next(f, &parameters, test, hone, &DiscontinuityTest);
 }
 
 template <typename T>
@@ -219,9 +204,11 @@ typename Solver<T>::Interest Solver<T>::EvenOrOddRootInBracket(
 template <typename T>
 Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
                                             const void *aux, T xMin, T xMax,
-                                            Interest interest, T precision) {
+                                            Interest interest, T precision,
+                                            TrinaryBoolean discontinuous) {
   if (xMax < xMin) {
-    return SafeBrentMinimum(f, aux, xMax, xMin, interest, precision);
+    return SafeBrentMinimum(f, aux, xMax, xMin, interest, precision,
+                            discontinuous);
   }
   assert(xMin < xMax);
 
@@ -238,7 +225,8 @@ Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f,
 template <typename T>
 Coordinate2D<T> Solver<T>::SafeBrentMaximum(FunctionEvaluation f,
                                             const void *aux, T xMin, T xMax,
-                                            Interest interest, T precision) {
+                                            Interest interest, T precision,
+                                            TrinaryBoolean discontinuous) {
   const void *pack[] = {&f, aux};
   FunctionEvaluation minusF = [](T x, const void *aux) {
     const void *const *param = reinterpret_cast<const void *const *>(aux);
@@ -246,8 +234,8 @@ Coordinate2D<T> Solver<T>::SafeBrentMaximum(FunctionEvaluation f,
         reinterpret_cast<const FunctionEvaluation *>(param[0]);
     return -(*f)(x, param[1]);
   };
-  Coordinate2D<T> res =
-      SafeBrentMinimum(minusF, pack, xMin, xMax, interest, precision);
+  Coordinate2D<T> res = SafeBrentMinimum(minusF, pack, xMin, xMax, interest,
+                                         precision, discontinuous);
   return Coordinate2D<T>(res.x(), -res.y());
 }
 
@@ -255,7 +243,8 @@ template <typename T>
 Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
                                                  const void *aux, T xMin,
                                                  T xMax, Interest interest,
-                                                 T precision) {
+                                                 T precision,
+                                                 TrinaryBoolean discontinuous) {
   if (interest == Interest::Root) {
     Coordinate2D<T> solution =
         SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
@@ -265,10 +254,12 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
   }
   Coordinate2D<T> res;
   if (interest == Interest::LocalMinimum) {
-    res = SafeBrentMinimum(f, aux, xMin, xMax, interest, precision);
+    res = SafeBrentMinimum(f, aux, xMin, xMax, interest, precision,
+                           discontinuous);
   } else {
     assert(interest == Interest::LocalMaximum);
-    res = SafeBrentMaximum(f, aux, xMin, xMax, interest, precision);
+    res = SafeBrentMaximum(f, aux, xMin, xMax, interest, precision,
+                           discontinuous);
   }
   if (std::isfinite(res.x()) && std::fabs(res.y()) < NullTolerance(res.x())) {
     return res;
@@ -316,6 +307,14 @@ bool Solver<T>::IsOddRoot(Coordinate2D<T> root, FunctionEvaluation f,
   return i < k_nIterations &&
          std::max(fab, fcb) < k_magnitude * std::min(fab, fcb);
 }
+
+template <typename T>
+bool Solver<T>::DiscontinuityTest(T x1, T x2, const void *aux) {
+  const Solver<T>::FunctionEvaluationParameters *p =
+      reinterpret_cast<const Solver<T>::FunctionEvaluationParameters *>(aux);
+  return p->expression.isDiscontinuousBetweenValuesForSymbol(
+      p->unknown, x1, x2, p->context, p->complexFormat, p->angleUnit);
+};
 
 template <typename T>
 void Solver<T>::ExcludeUndefinedFromBracket(
@@ -633,8 +632,13 @@ template <typename T>
 Coordinate2D<T> Solver<T>::honeAndRoundSolution(
     FunctionEvaluation f, const void *aux, T start, T end, Interest interest,
     HoneResult hone, DiscontinuityEvaluation discontinuityTest) {
+  TrinaryBoolean discontinuous = TrinaryBoolean::Unknown;
+  if (discontinuityTest) {
+    discontinuous = discontinuityTest(start, end, aux) ? TrinaryBoolean::True
+                                                       : TrinaryBoolean::False;
+  }
   Coordinate2D<T> solution =
-      hone(f, aux, start, end, interest, k_absolutePrecision);
+      hone(f, aux, start, end, interest, k_absolutePrecision, discontinuous);
   if (!std::isfinite(solution.x()) || !validSolution(solution.x())) {
     return solution;
   }
@@ -647,8 +651,8 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
   T roundX = k_roundingOrder * std::round(x / k_roundingOrder);
   if (std::isfinite(roundX) && validSolution(roundX)) {
     T fIntX = f(roundX, aux);
-    T fx = f(x, aux);  // f(x) is different from the honed solution when
-                       // searching intersections
+    // f(x) is different from the honed solution when searching intersections
+    T fx = f(x, aux);
     /* Filter out solutions that are close to a discontinuity. This can
      * happen with functions such as  y = (-x when x < 0, x-1 otherwise)
      * with which a root is found in (0,0) when it should not.
@@ -702,7 +706,8 @@ template Coordinate2D<double> Solver<double>::nextIntersection(
     const Expression &, const Expression &, Expression *);
 template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::SafeBrentMaximum(
-    FunctionEvaluation, const void *, double, double, Interest, double);
+    FunctionEvaluation, const void *, double, double, Interest, double,
+    TrinaryBoolean);
 template double Solver<double>::MaximalStep(double);
 template void Solver<double>::ExcludeUndefinedFromBracket(
     Coordinate2D<double> *p1, Coordinate2D<double> *p2,

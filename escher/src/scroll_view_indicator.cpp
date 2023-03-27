@@ -28,15 +28,14 @@ void ScrollViewHorizontalBar::drawRect(KDContext *ctx, KDRect rect) const {
   if (!visible()) {
     return;
   }
-  ctx->fillRect(
-      KDRect(k_leftMargin, (bounds().height() - k_indicatorThickness) / 2,
-             totalLength(), k_indicatorThickness),
-      k_trackColor);
-  ctx->fillRect(
-      KDRect(k_leftMargin + m_offset * totalLength(),
-             (bounds().height() - k_indicatorThickness) / 2,
-             std::ceil(m_visibleLength * totalLength()), k_indicatorThickness),
-      k_color);
+  KDCoordinate y = (bounds().height() - k_indicatorThickness) / 2;
+  KDCoordinate height = k_indicatorThickness;
+  ctx->fillRect(KDRect(k_leftMargin, y, totalLength(), height), k_trackColor);
+
+  KDCoordinate x = int(std::round(m_offset * totalLength()));
+  KDCoordinate width =
+      std::min(int(m_visibleLength * totalLength()), totalLength() - x);
+  ctx->fillRect(KDRect(k_leftMargin + x, y, width, height), k_color);
 }
 
 ScrollViewVerticalBar::ScrollViewVerticalBar()
@@ -52,14 +51,14 @@ void ScrollViewVerticalBar::drawRect(KDContext *ctx, KDRect rect) const {
   if (!visible()) {
     return;
   }
-  ctx->fillRect(KDRect((bounds().width() - k_indicatorThickness) / 2,
-                       m_topMargin, k_indicatorThickness, totalLength()),
-                k_trackColor);
-  ctx->fillRect(
-      KDRect((bounds().width() - k_indicatorThickness) / 2,
-             m_topMargin + m_offset * totalLength(), k_indicatorThickness,
-             std::ceil(m_visibleLength * totalLength())),
-      k_color);
+  KDCoordinate x = (bounds().width() - k_indicatorThickness) / 2;
+  KDCoordinate width = k_indicatorThickness;
+  ctx->fillRect(KDRect(x, m_topMargin, width, totalLength()), k_trackColor);
+
+  KDCoordinate y = int(std::round(m_offset * totalLength()));
+  KDCoordinate height =
+      std::min(int(m_visibleLength * totalLength()), totalLength() - y);
+  ctx->fillRect(KDRect(x, m_topMargin + y, width, height), k_color);
 }
 
 ScrollViewArrow::ScrollViewArrow()

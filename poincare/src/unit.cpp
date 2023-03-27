@@ -16,67 +16,6 @@
 
 namespace Poincare {
 
-constexpr const UnitNode::Prefix Unit::k_prefixes[];
-constexpr const UnitNode::TimeRepresentative Unit::k_timeRepresentatives[];
-constexpr const UnitNode::DistanceRepresentative
-    Unit::k_distanceRepresentatives[];
-constexpr const UnitNode::AngleRepresentative Unit::k_angleRepresentatives[];
-constexpr const UnitNode::MassRepresentative Unit::k_massRepresentatives[];
-constexpr const UnitNode::CurrentRepresentative
-    Unit::k_currentRepresentatives[];
-constexpr const UnitNode::TemperatureRepresentative
-    Unit::k_temperatureRepresentatives[];
-constexpr const UnitNode::AmountOfSubstanceRepresentative
-    Unit::k_amountOfSubstanceRepresentatives[];
-constexpr const UnitNode::LuminousIntensityRepresentative
-    Unit::k_luminousIntensityRepresentatives[];
-constexpr const UnitNode::FrequencyRepresentative
-    Unit::k_frequencyRepresentatives[];
-constexpr const UnitNode::ForceRepresentative Unit::k_forceRepresentatives[];
-constexpr const UnitNode::PressureRepresentative
-    Unit::k_pressureRepresentatives[];
-constexpr const UnitNode::EnergyRepresentative Unit::k_energyRepresentatives[];
-constexpr const UnitNode::PowerRepresentative Unit::k_powerRepresentatives[];
-constexpr const UnitNode::ElectricChargeRepresentative
-    Unit::k_electricChargeRepresentatives[];
-constexpr const UnitNode::ElectricPotentialRepresentative
-    Unit::k_electricPotentialRepresentatives[];
-constexpr const UnitNode::ElectricCapacitanceRepresentative
-    Unit::k_electricCapacitanceRepresentatives[];
-constexpr const UnitNode::ElectricResistanceRepresentative
-    Unit::k_electricResistanceRepresentatives[];
-constexpr const UnitNode::ElectricConductanceRepresentative
-    Unit::k_electricConductanceRepresentatives[];
-constexpr const UnitNode::MagneticFluxRepresentative
-    Unit::k_magneticFluxRepresentatives[];
-constexpr const UnitNode::MagneticFieldRepresentative
-    Unit::k_magneticFieldRepresentatives[];
-constexpr const UnitNode::InductanceRepresentative
-    Unit::k_inductanceRepresentatives[];
-constexpr const UnitNode::CatalyticActivityRepresentative
-    Unit::k_catalyticActivityRepresentatives[];
-constexpr const UnitNode::SurfaceRepresentative
-    Unit::k_surfaceRepresentatives[];
-constexpr const UnitNode::VolumeRepresentative Unit::k_volumeRepresentatives[];
-
-constexpr const int Unit::k_emptyPrefixIndex, Unit::k_kiloPrefixIndex,
-    Unit::k_secondRepresentativeIndex, Unit::k_minuteRepresentativeIndex,
-    Unit::k_hourRepresentativeIndex, Unit::k_dayRepresentativeIndex,
-    Unit::k_monthRepresentativeIndex, Unit::k_yearRepresentativeIndex,
-    Unit::k_meterRepresentativeIndex, Unit::k_inchRepresentativeIndex,
-    Unit::k_footRepresentativeIndex, Unit::k_yardRepresentativeIndex,
-    Unit::k_mileRepresentativeIndex, Unit::k_radianRepresentativeIndex,
-    Unit::k_degreeRepresentativeIndex, Unit::k_arcMinuteRepresentativeIndex,
-    Unit::k_arcSecondRepresentativeIndex, Unit::k_gradianRepresentativeIndex,
-    Unit::k_ounceRepresentativeIndex, Unit::k_poundRepresentativeIndex,
-    Unit::k_shortTonRepresentativeIndex, Unit::k_kelvinRepresentativeIndex,
-    Unit::k_celsiusRepresentativeIndex, Unit::k_fahrenheitRepresentativeIndex,
-    Unit::k_jouleRepresentativeIndex, Unit::k_electronVoltRepresentativeIndex,
-    Unit::k_wattRepresentativeIndex, Unit::k_hectareRepresentativeIndex,
-    Unit::k_acreRepresentativeIndex, Unit::k_literRepresentativeIndex,
-    Unit::k_cupRepresentativeIndex, Unit::k_pintRepresentativeIndex,
-    Unit::k_quartRepresentativeIndex, Unit::k_gallonRepresentativeIndex;
-
 // UnitNode::Prefix
 const UnitNode::Prefix* UnitNode::Prefix::Prefixes() {
   return Unit::k_prefixes;

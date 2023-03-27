@@ -396,6 +396,8 @@ constexpr ToolboxMessageTree unitPowerWattChildren[] = {
                              I18n::Message::UnitPowerWattMega),
     ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattGigaSymbol,
                              I18n::Message::UnitPowerWattGiga),
+    ToolboxMessageTree::Leaf(I18n::Message::UnitHorsePowerSymbol,
+                             I18n::Message::UnitHorsePower),
 };
 
 constexpr ToolboxMessageTree unitEnergyElectronVoltChildren[] = {

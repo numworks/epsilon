@@ -129,11 +129,8 @@ class ScrollView : public View {
   View *subviewAtIndex(int index) override {
     return (index == 0) ? &m_innerView : decorator()->indicatorAtIndex(index);
   }
-  View *m_contentView;
 
  private:
-  ScrollViewDataSource *m_dataSource;
-
   class InnerView : public View {
    public:
     InnerView(ScrollView *scrollView) : View(), m_scrollView(scrollView) {}
@@ -148,6 +145,10 @@ class ScrollView : public View {
     const ScrollView *m_scrollView;
   };
 
+  ScrollViewDataSource *m_dataSource;
+  View *m_contentView;
+  InnerView m_innerView;
+
   KDCoordinate m_topMargin;
   KDCoordinate m_rightMargin;
   KDCoordinate m_bottomMargin;
@@ -155,7 +156,6 @@ class ScrollView : public View {
   mutable KDCoordinate m_excessWidth;
   mutable KDCoordinate m_excessHeight;
 
-  InnerView m_innerView;
   KDColor m_backgroundColor;
 };
 

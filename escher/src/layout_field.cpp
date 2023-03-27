@@ -190,7 +190,8 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
       if (ParameteredExpression::ParameterText(decoder, &parameterStart,
                                                &parameterLength)) {
         HorizontalLayout parameter = HorizontalLayout::Builder();
-        for (int childIndex = 0; childIndex < parameterLength; childIndex++) {
+        for (size_t childIndex = 0; childIndex < parameterLength;
+             childIndex++) {
           parameter.addChildAtIndexInPlace(
               horizontalLayout.childAtIndex(childIndex + parameterStart)
                   .clone(),

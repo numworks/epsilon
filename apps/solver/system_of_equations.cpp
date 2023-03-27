@@ -252,7 +252,8 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
         break;
       }
     }
-    assert(error != Error::NoError || m_numberOfSolutions == n);
+    assert(error != Error::NoError ||
+           m_numberOfSolutions == static_cast<size_t>(n));
     return error;
   }
 
@@ -262,7 +263,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
 
   constexpr size_t parameterNameSize = 1 + 2 + 1;  // 't' + 2 digits + '\0'
   char parameterName[parameterNameSize] = {k_parameterPrefix};
-  int parameterIndex = n - rank == 1 ? 0 : 1;
+  size_t parameterIndex = n - rank == 1 ? 0 : 1;
   uint32_t usedParameterIndices = tagParametersUsedAsVariables();
 
   int variable = n - 1;
@@ -308,7 +309,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
       assert(parameterIndex <
              OMG::BitHelper::numberOfBitsIn(usedParameterIndices));
     }
-    int parameterNameLength =
+    size_t parameterNameLength =
         parameterIndex == 0
             ? 1
             : 1 + PrintInt::Left(parameterIndex, parameterName + 1,

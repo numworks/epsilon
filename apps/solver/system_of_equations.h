@@ -50,13 +50,13 @@ class SystemOfEquations {
   // System analysis
   Type type() const { return m_type; }
   int degree() const { return m_degree; }
-  const char* variable(int index) const {
+  const char* variable(size_t index) const {
     assert(index < m_numberOfResolutionVariables &&
            m_variables[index][0] != '\0');
     return m_variables[index];
   }
   size_t numberOfUserVariables() const { return m_numberOfUserVariables; }
-  const char* userVariable(int index) const {
+  const char* userVariable(size_t index) const {
     assert(index < m_numberOfUserVariables &&
            m_userVariables[index][0] != '\0');
     return m_userVariables[index];
@@ -81,7 +81,7 @@ class SystemOfEquations {
 
   // Solutions getters
   size_t numberOfSolutions() const { return m_numberOfSolutions; }
-  const Solution* solution(int index) const {
+  const Solution* solution(size_t index) const {
     assert(index < m_numberOfSolutions);
     return m_solutions + index;
   }

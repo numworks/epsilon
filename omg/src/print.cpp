@@ -11,7 +11,7 @@ int Print::UInt32(Base base, uint32_t integer, LeadingZeros printLeadingZeros,
   size_t length = printLeadingZeros == LeadingZeros::Keep
                       ? MaxLengthOfUInt32(base)
                       : LengthOfUInt32(base, integer);
-  assert(length < bufferSize);
+  assert(static_cast<int>(length) < bufferSize);
   for (size_t index = 0; index < length; index++) {
     buffer[index] = CharacterForDigit(
         base, (integer >> (length - 1 - index) * numberOfBitsPerDigit) &

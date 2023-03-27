@@ -248,7 +248,7 @@ bool AbstractLabeledAxis::labelWillBeDisplayed(int i, KDRect rect) const {
 KDRect AbstractLabeledAxis::labelRect(int i, float t,
                                       const AbstractPlotView* plotView,
                                       AbstractPlotView::Axis axis) const {
-  assert(i < numberOfLabels());
+  assert(static_cast<size_t>(i) < numberOfLabels());
 
   const char* text = label(i);
   if (m_hidden || text[0] == '\0') {

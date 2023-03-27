@@ -32,7 +32,7 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
     if (s == selectedSeries) {
       continue;
     }
-    int series = s;
+    size_t series = s;
     if (s == Store::k_numberOfSeries) {
       series = selectedSeries;
     }

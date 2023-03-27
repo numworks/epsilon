@@ -7,6 +7,9 @@
 
 namespace Escher {
 
+/* Widgets need a default constructor, which is not the case for dropdowns. This
+ * widget allows the controller to own the dropdown, initialize it, and then
+ * pass it to the widget. */
 class DropdownWidget : public CellWidget {
  public:
   void setDropdown(Dropdown* dropdown) { m_dropdown = dropdown; }

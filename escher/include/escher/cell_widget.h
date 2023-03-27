@@ -7,6 +7,7 @@
 
 namespace Escher {
 
+// Widgets need a default constructor.
 class CellWidget {
  public:
   enum class Type { Label, SubLabel, Accessory };

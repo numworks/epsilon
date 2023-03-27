@@ -248,8 +248,8 @@ int StoreController::numberOfElementsInColumn(int columnIndex) const {
 void StoreController::resetMemoizedFormulasForSeries(int series) {
   assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
   for (int i = 0; i < DoublePairStore::k_numberOfColumnsPerSeries; i++) {
-    memoizeFormulaAtColumn(Layout(),
-                           series * DoublePairStore::k_numberOfSeries + i);
+    memoizeFormulaAtColumn(
+        Layout(), series * DoublePairStore::k_numberOfColumnsPerSeries + i);
   }
 }
 

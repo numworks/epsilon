@@ -101,9 +101,9 @@ class ScrollView : public View {
   void setContentOffset(KDPoint offset, bool forceRelayout = false);
   KDPoint contentOffset() const { return m_dataSource->offset(); }
 
-  void scrollToContentPoint(KDPoint p, bool allowOverscroll = false);
+  void scrollToContentPoint(KDPoint point);
   // Minimal scrolling to make this rect visible
-  void scrollToContentRect(KDRect rect, bool allowOverscroll = false);
+  void scrollToContentRect(KDRect rect);
 
  protected:
   KDCoordinate maxContentWidthDisplayableWithoutScrolling() const {

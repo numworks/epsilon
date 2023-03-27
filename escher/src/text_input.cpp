@@ -131,7 +131,7 @@ void TextInput::scrollToCursor() {
   KDRect cursorRect = contentView()->cursorRect();
   assert(cursorRect.top() >= 0 && cursorRect.right() >= 0 &&
          cursorRect.bottom() >= 0 && cursorRect.left() >= 0);
-  scrollToContentRect(cursorRect, true);
+  scrollToContentRect(cursorRect);
 }
 
 void TextInput::deleteSelection() {

@@ -8,9 +8,6 @@
 
 namespace Escher {
 
-/* This is outside of the class because Clang has a bug that prevent default
- * args to be used if the struct is within the class. */
-
 class GlyphsView : public View, public CellWidget {
  public:
   GlyphsView(KDGlyph::Format format = {}) { setGlyphFormat(format); }

@@ -338,12 +338,11 @@ void AbstractScrollableMultipleExpressionsView::reloadScroll() {
     /* Scroll to the right extremity, then back to the beginning of the right
      * expression. This ensures that the beginning of the expression is in
      * frame, and that as much of it as possible is visible. */
-    scrollToContentPoint(KDPoint(contentCell()->bounds().width(), 0), true);
+    scrollToContentPoint(KDPoint(contentCell()->bounds().width(), 0));
     scrollToContentPoint(
         KDPoint(contentCell()->bounds().width() -
                     contentCell()->rightExpressionView()->bounds().width(),
-                0),
-        true);
+                0));
   } else {
     /* Scroll to the left extremity. */
     ScrollableView::reloadScroll();

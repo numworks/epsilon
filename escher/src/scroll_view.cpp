@@ -79,11 +79,7 @@ void ScrollView::setMargins(KDCoordinate top, KDCoordinate right,
   setLeftMargin(left);
 }
 
-void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
-  if (!allowOverscroll && !m_contentView->bounds().contains(p)) {
-    return;
-  }
-
+void ScrollView::scrollToContentPoint(KDPoint p) {
   KDRect visibleRect = visibleContentRect();
 
   if (visibleRect.width() < 0 || visibleRect.height() < 0) {
@@ -121,7 +117,7 @@ void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {
                    KDCoordinate(0)))));
 }
 
-void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
+void ScrollView::scrollToContentRect(KDRect rect) {
   KDRect visibleRect = visibleContentRect();
   if (visibleRect == KDRectZero) {
     return;
@@ -169,7 +165,7 @@ void ScrollView::scrollToContentRect(KDRect rect, bool allowOverscroll) {
           KDPoint(rect.right() - visibleRect.width(), farthestCorner.y());
     }
   }
-  scrollToContentPoint(farthestCorner, allowOverscroll);
+  scrollToContentPoint(farthestCorner);
 }
 
 KDRect ScrollView::visibleContentRect() {

@@ -623,7 +623,8 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(
             symbol, x1, context, complexFormat, angleUnit)) !=
         std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(
             symbol, x2, context, complexFormat, angleUnit));
-  } else if (type() == ExpressionNode::Type::AbsoluteValue) {
+  } else if (type() == ExpressionNode::Type::AbsoluteValue ||
+             type() == ExpressionNode::Type::SignFunction) {
     // is discontinuous if the child changes sign
     isDiscontinuous =
         (childAtIndex(0).approximateWithValueForSymbol<float>(

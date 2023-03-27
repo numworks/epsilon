@@ -250,8 +250,10 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
         SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
     /* If the function is discontinuous and the discontinuity is on both sides
      * of the abscissa axis, a fake root could have been found. Filter it out
-     * using null tolerance. This can happens for example with the function
-     * y=floor(x)-0.5, at x == 1. */
+     * using null tolerance. This can happens for example with the functions:
+     *   > f(x) = floor(x) - 0.5 for x == 1
+     *   > f(x) = x / abs(x) for x == 0
+     * */
     if (discontinuous == TrinaryBoolean::True &&
         std::fabs(solution.y()) > NullTolerance(solution.x())) {
       return Coordinate2D<T>();

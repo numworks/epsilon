@@ -11,15 +11,15 @@ namespace Escher {
 
 ScrollView::ScrollView(View *contentView, ScrollViewDataSource *dataSource)
     : View(),
-      m_contentView(contentView),
       m_dataSource(dataSource),
+      m_contentView(contentView),
+      m_innerView(this),
       m_topMargin(0),
       m_rightMargin(0),
       m_bottomMargin(0),
       m_leftMargin(0),
       m_excessWidth(0),
       m_excessHeight(0),
-      m_innerView(this),
       m_backgroundColor(Palette::WallScreen) {
   assert(m_dataSource != nullptr);
 }

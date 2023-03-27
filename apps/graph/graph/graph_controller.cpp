@@ -336,6 +336,14 @@ bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
       record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
 }
 
+void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible) {
+  m_cursorView.setIsRing(functionStore()
+                             ->modelForRecord(recordAtCurveIndex(curveIndex))
+                             ->properties()
+                             .isScatterPlot());
+  FunctionGraphController::selectCurveAtIndex(curveIndex, willBeVisible);
+}
+
 int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
                                               int currentSelectedCurve,
                                               Poincare::Context *context,

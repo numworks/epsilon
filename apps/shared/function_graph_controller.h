@@ -84,7 +84,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;
 
-  void selectCurveAtIndex(int curveIndex, bool willBeVisible);
+  virtual void selectCurveAtIndex(int curveIndex, bool willBeVisible);
   virtual double defaultCursorT(Ion::Storage::Record record,
                                 bool ignoreMargins);
   virtual FunctionStore *functionStore() const;

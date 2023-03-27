@@ -47,9 +47,7 @@ bool AbstractScrollableView::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void AbstractScrollableView::reloadScroll(bool forceReLayout) {
-  setContentOffset(KDPointZero, forceReLayout);
-}
+void AbstractScrollableView::reloadScroll() { setContentOffset(KDPointZero); }
 
 KDSize AbstractScrollableView::contentSize() const {
   KDSize viewSize = ScrollView::contentSize();

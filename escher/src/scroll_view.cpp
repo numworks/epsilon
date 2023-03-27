@@ -196,8 +196,8 @@ void ScrollView::layoutSubviews(bool force) {
   m_innerView.setChildFrame(m_contentView, contentFrame, force);
 }
 
-void ScrollView::setContentOffset(KDPoint offset, bool forceRelayout) {
-  if (m_dataSource->setOffset(offset) || forceRelayout) {
+void ScrollView::setContentOffset(KDPoint offset) {
+  if (m_dataSource->setOffset(offset)) {
     layoutSubviews();
   }
 }

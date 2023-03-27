@@ -392,9 +392,7 @@ bool AbstractTextField::privateHandleEventWhileEditing(
       // Clean draft text for next use
       reinitDraftTextBuffer();
       resetSelection();
-      /* We allow overscroll to avoid calling layoutSubviews twice because the
-       * content might have changed. */
-      reloadScroll(true);
+      reloadScroll();
       return true;
     }
     setEditing(true);
@@ -421,7 +419,7 @@ bool AbstractTextField::privateHandleEventWhileEditing(
     resetSelection();
     setEditing(false);
     m_delegate->textFieldDidAbortEditing(this);
-    reloadScroll(true);
+    reloadScroll();
     return true;
   }
 

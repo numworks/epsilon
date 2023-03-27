@@ -470,15 +470,15 @@ void Multiplication::computeOnArrays(T *m, T *n, T *result,
 }
 
 static bool CanSimplifyUnitProduct(
-    const UnitNode::Vector<int> &unitsExponents, size_t &unitsSupportSize,
-    const UnitNode::Vector<int> *entryUnitExponents, int entryUnitExponent,
-    int8_t &bestUnitExponent, UnitNode::Vector<int> &bestRemainderExponents,
+    const UnitNode::DimensionVector &unitsExponents, size_t &unitsSupportSize,
+    const UnitNode::DimensionVector *entryUnitExponents, int entryUnitExponent,
+    int8_t &bestUnitExponent, UnitNode::DimensionVector &bestRemainderExponents,
     size_t &bestRemainderSupportSize) {
   /* This function tries to simplify a Unit product (given as the
    * 'unitsExponents' int array), by applying a given operation. If the
    * result of the operation is simpler, 'bestUnit' and
    * 'bestRemainder' are updated accordingly. */
-  UnitNode::Vector<int> simplifiedExponents;
+  UnitNode::DimensionVector simplifiedExponents;
 
 #if 0
   /* In the current algorithm, simplification is attempted using derived units
@@ -630,10 +630,10 @@ Expression Multiplication::shallowBeautify(
       /* If exponents are not integers, FromBaseUnits will return a null
        * vector, preventing any attempt at simplification. This protects us
        * against undue "simplifications" such as _C^1.3 -> _C*_A^0.3*_s^0.3 */
-      UnitNode::Vector<int> unitsExponents =
-          UnitNode::Vector<int>::FromBaseUnits(units);
+      UnitNode::DimensionVector unitsExponents =
+          UnitNode::DimensionVector::FromBaseUnits(units);
       size_t unitsSupportSize = unitsExponents.supportSize();
-      UnitNode::Vector<int> bestRemainderExponents;
+      UnitNode::DimensionVector bestRemainderExponents;
       size_t bestRemainderSupportSize;
       while (unitsSupportSize > 1) {
         const UnitNode::Representative *bestDim = nullptr;
@@ -643,7 +643,7 @@ Expression Multiplication::shallowBeautify(
              i < UnitNode::Representative::k_numberOfDimensions - 1; i++) {
           const UnitNode::Representative *dim =
               UnitNode::Representative::DefaultRepresentatives()[i];
-          const UnitNode::Vector<int> entryUnitExponents =
+          const UnitNode::DimensionVector entryUnitExponents =
               dim->dimensionVector();
           // A simplification is tried by either multiplying or dividing
           if (CanSimplifyUnitProduct(unitsExponents, unitsSupportSize,
@@ -729,7 +729,7 @@ Expression Multiplication::shallowBeautify(
         const bool forceVolumeRepresentative =
             reductionContext.unitFormat() ==
                 Preferences::UnitFormat::Imperial &&
-            UnitNode::Vector<int>::FromBaseUnits(units) ==
+            UnitNode::DimensionVector::FromBaseUnits(units) ==
                 UnitNode::VolumeRepresentative::Default().dimensionVector();
         const UnitNode::Representative *repr;
         if (forceVolumeRepresentative) {

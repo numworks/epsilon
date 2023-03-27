@@ -55,18 +55,18 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   StackViewController *stack =
       static_cast<StackViewController *>(parentResponder());
 
-  if (cell == &m_enableCell && m_enableCell.enterOnEvent(event)) {
+  if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
     function()->setActive(!function()->isActive());
     resetMemoization();
     m_selectableListView.reloadData();
     return true;
   }
-  if (cell == &m_colorCell && m_colorCell.enterOnEvent(event)) {
+  if (cell == &m_colorCell && m_colorCell.canBeActivatedByEvent(event)) {
     m_colorParameterController.setRecord(m_record);
     stack->push(&m_colorParameterController);
     return true;
   }
-  if (cell == &m_deleteCell && m_deleteCell.enterOnEvent(event)) {
+  if (cell == &m_deleteCell && m_deleteCell.canBeActivatedByEvent(event)) {
     assert(functionStore()->numberOfModels() > 0);
     m_selectableListView.deselectTable();
     functionStore()->removeModel(m_record);

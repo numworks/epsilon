@@ -111,9 +111,9 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   Responder* responder() override;
   void setHighlighted(bool highlight) override;
 
-  bool enterOnEvent(Ion::Events::Event event) {
+  bool canBeActivatedByEvent(Ion::Events::Event event) {
     // This is only done on accessory for now but could also done on (sub)label
-    return widget(CellWidget::Type::Accessory)->enterOnEvent(event);
+    return widget(CellWidget::Type::Accessory)->canBeActivatedByEvent(event);
   }
 
  protected:

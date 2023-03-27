@@ -48,19 +48,19 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell *cell = selectedCell();
   StackViewController *stack =
       static_cast<StackViewController *>(parentResponder());
-  if (cell == &m_sumCell && m_sumCell.enterOnEvent(event)) {
+  if (cell == &m_sumCell && m_sumCell.canBeActivatedByEvent(event)) {
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
         false);
     stack->push(m_graphController->termSumController());
     return true;
   }
-  if (cell == &m_goToCell && m_goToCell.enterOnEvent(event)) {
+  if (cell == &m_goToCell && m_goToCell.canBeActivatedByEvent(event)) {
     assert(!m_record.isNull());
     stack->push(&m_goToParameterController);
     return true;
   }
-  if (cell == &m_cobwebCell && m_cobwebCell.enterOnEvent(event)) {
+  if (cell == &m_cobwebCell && m_cobwebCell.canBeActivatedByEvent(event)) {
     stack->pop();
     stack->push(m_cobwebController);
     return true;

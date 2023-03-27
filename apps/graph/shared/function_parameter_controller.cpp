@@ -111,16 +111,17 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell *cell = selectedCell();
   StackViewController *stack =
       static_cast<StackViewController *>(parentResponder());
-  if (cell == &m_detailsCell && m_detailsCell.enterOnEvent(event)) {
+  if (cell == &m_detailsCell && m_detailsCell.canBeActivatedByEvent(event)) {
     stack->push(&m_detailsParameterController);
     return true;
   }
   if (cell == &m_functionDomainCell &&
-      m_functionDomainCell.enterOnEvent(event)) {
+      m_functionDomainCell.canBeActivatedByEvent(event)) {
     stack->push(&m_domainParameterController);
     return true;
   }
-  if (cell == &m_derivativeCell && m_derivativeCell.enterOnEvent(event)) {
+  if (cell == &m_derivativeCell &&
+      m_derivativeCell.canBeActivatedByEvent(event)) {
     function()->setDisplayDerivative(!function()->displayDerivative());
     m_selectableListView.reloadData();
     return true;

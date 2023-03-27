@@ -83,7 +83,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
 
   AbstractMenuCell *cell =
       static_cast<AbstractMenuCell *>(m_selectableListView.cell(index));
-  if (!cell->enterOnEvent(event)) {
+  if (!cell->canBeActivatedByEvent(event)) {
     return false;
   }
 

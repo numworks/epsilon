@@ -26,7 +26,7 @@ SequenceColumnParameterController::columnNameHelper() {
 
 bool SequenceColumnParameterController::handleEvent(Ion::Events::Event event) {
   assert(selectedRow() == 0);
-  if (m_showSumCell.enterOnEvent(event)) {
+  if (m_showSumCell.canBeActivatedByEvent(event)) {
     ExpiringPointer<Shared::Sequence> currentSequence =
         GlobalContext::sequenceStore->modelForRecord(m_record);
     bool currentState = currentSequence->displaySum();

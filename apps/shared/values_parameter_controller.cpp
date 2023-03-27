@@ -20,12 +20,12 @@ ValuesParameterController::ValuesParameterController(
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
   if (selectedRow() == k_indexOfClearColumn &&
-      m_clearColumn.enterOnEvent(event)) {
+      m_clearColumn.canBeActivatedByEvent(event)) {
     stackView()->pop();
     m_valuesController->presentClearSelectedColumnPopupIfClearable();
     return true;
   } else if (selectedRow() == k_indexOfSetInterval &&
-             m_setInterval.enterOnEvent(event)) {
+             m_setInterval.canBeActivatedByEvent(event)) {
     IntervalParameterController* intervalParameterController =
         m_valuesController->intervalParameterController();
     intervalParameterController->setTitle(I18n::Message::IntervalSet);

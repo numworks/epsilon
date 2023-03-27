@@ -114,20 +114,21 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   }
 
   if (cell == &m_changeRegressionCell &&
-      m_changeRegressionCell.enterOnEvent(event)) {
+      m_changeRegressionCell.canBeActivatedByEvent(event)) {
     RegressionController *controller = App::app()->regressionController();
     controller->setSeries(m_graphController->selectedSeriesIndex());
     controller->setDisplayedFromDataTab(false);
     stack->push(controller);
     return true;
   } else if (cell == &m_residualPlotCell &&
-             m_residualPlotCell.enterOnEvent(event)) {
+             m_residualPlotCell.canBeActivatedByEvent(event)) {
     m_residualPlotCellController.setSeries(
         m_graphController->selectedSeriesIndex());
     stack->push(&m_residualPlotCellController);
     return true;
   } else if ((cell == &m_xParameterCell || cell == &m_yParameterCell) &&
-             static_cast<AbstractMenuCell *>(cell)->enterOnEvent(event)) {
+             static_cast<AbstractMenuCell *>(cell)->canBeActivatedByEvent(
+                 event)) {
     m_goToParameterController.setXPrediction(cell == &m_xParameterCell);
     stack->push(&m_goToParameterController);
     return true;

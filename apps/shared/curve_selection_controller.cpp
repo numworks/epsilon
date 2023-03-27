@@ -12,8 +12,8 @@ CurveSelectionController::CurveSelectionController(
       m_graphController(graphController) {}
 
 bool CurveSelectionController::handleEvent(Ion::Events::Event event) {
-  // enterOnEvent can be called on any cell with chevron
-  if (reusableCell(0, k_curveSelectionCellType)->enterOnEvent(event)) {
+  // canBeActivatedByEvent can be called on any cell with chevron
+  if (reusableCell(0, k_curveSelectionCellType)->canBeActivatedByEvent(event)) {
     m_graphController->openMenuForCurveAtIndex(selectedRow());
     return true;
   }

@@ -19,8 +19,8 @@ const char *IntervalParameterSelectorController::title() {
 
 bool IntervalParameterSelectorController::handleEvent(
     Ion::Events::Event event) {
-  // enterOnEvent can be called on any cell with chevron
-  if (m_intervalParameterCell[0].enterOnEvent(event)) {
+  // canBeActivatedByEvent can be called on any cell with chevron
+  if (m_intervalParameterCell[0].canBeActivatedByEvent(event)) {
     StackViewController *stack = (StackViewController *)parentResponder();
     Shared::IntervalParameterController *controller =
         App::app()->valuesController()->intervalParameterController();

@@ -53,8 +53,8 @@ void TestController::didBecomeFirstResponder() {
 }
 
 bool TestController::handleEvent(Ion::Events::Event event) {
-  // enterOnEvent can be called on any cell with chevron
-  if (!m_cells[0].enterOnEvent(event)) {
+  // canBeActivatedByEvent can be called on any cell with chevron
+  if (!m_cells[0].canBeActivatedByEvent(event)) {
     return popFromStackViewControllerOnLeftEvent(event);
   }
   SelectableViewController *controller = nullptr;

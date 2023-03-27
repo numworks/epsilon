@@ -26,7 +26,7 @@ void BoxParameterController::willDisplayCellForIndex(HighlightCell* cell,
                                                      int index) {}
 
 bool BoxParameterController::handleEvent(Ion::Events::Event event) {
-  if (cellAtIndex(0)->enterOnEvent(event)) {
+  if (cellAtIndex(0)->canBeActivatedByEvent(event)) {
     m_store->setDisplayOutliers(!m_store->displayOutliers());
     cellAtIndex(0)->accessory()->setState(m_store->displayOutliers());
     // Reset selected box calculation because the total number may have changed

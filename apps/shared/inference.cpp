@@ -15,6 +15,7 @@ void Inference::computeCurveViewRange() {
   if (!yRange.isValid()) {
     yRange = DefaultYRange();
   }
+  yRange.stretchIfTooSmall();
   protectedSetY(yRange);
 }
 

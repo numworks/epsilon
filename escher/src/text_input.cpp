@@ -29,7 +29,6 @@ KDRect TextInput::ContentView::cursorRect() {
 
 void TextInput::ContentView::updateSelection(
     const char* previousCursorLocation) {
-  bool emptySelection = selectionIsEmpty();
   if (selectionIsEmpty()) {
     m_selectionStart = previousCursorLocation;
   }

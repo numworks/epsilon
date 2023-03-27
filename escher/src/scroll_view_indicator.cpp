@@ -63,7 +63,7 @@ void ScrollViewVerticalBar::drawRect(KDContext *ctx, KDRect rect) const {
 }
 
 ScrollViewArrow::ScrollViewArrow()
-    : m_visible(false), m_font(KDFont::Size::Large) {}
+    : m_font(KDFont::Size::Large), m_visible(false) {}
 
 bool ScrollViewArrow::update(bool visible) {
   if (m_visible != visible) {

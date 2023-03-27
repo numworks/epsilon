@@ -328,7 +328,7 @@ void ContinuousFunction::setTAuto(bool tAuto) {
 }
 
 float ContinuousFunction::autoTMax() const {
-  return properties().isCartesian()
+  return properties().isCartesian() || properties().isScatterPlot()
              ? INFINITY
              : (properties().isInversePolar()
                     ? Range1D::k_defaultHalfLength

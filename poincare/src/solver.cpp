@@ -248,9 +248,15 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
   if (interest == Interest::Root) {
     Coordinate2D<T> solution =
         SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
-    /* Filter out roots that do not evaluate to zero. This can happen with
-     * functions such as y=floor(x)-0.5. */
-    return IsOddRoot(solution, f, aux) ? solution : Coordinate2D<T>();
+    /* If the function is discontinuous and the discontinuity is on both sides
+     * of the abscissa axis, a fake root could have been found. Filter it out
+     * using null tolerance. This can happens for example with the function
+     * y=floor(x)-0.5, at x == 1. */
+    if (discontinuous == TrinaryBoolean::True &&
+        std::fabs(solution.y()) > NullTolerance(solution.x())) {
+      return Coordinate2D<T>();
+    }
+    return solution;
   }
   Coordinate2D<T> res;
   if (interest == Interest::LocalMinimum) {
@@ -267,45 +273,6 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
   return std::isfinite(res.x()) && std::fabs(res.y()) < NullTolerance(res.x())
              ? res
              : Coordinate2D<T>();
-}
-
-template <typename T>
-bool Solver<T>::IsOddRoot(Coordinate2D<T> root, FunctionEvaluation f,
-                          const void *aux) {
-  T b = root.x();
-  T fb = root.y();
-  if (!std::isfinite(fb)) {
-    return false;
-  }
-  if (std::fabs(fb) < NullTolerance(b)) {
-    return true;
-  }
-  /* Move away from b in both directions until you find a value above zero and
-   * one under zero. Then compare theses values with the value of the root. If
-   * fb is a lot closer to one of these values than to the other one, it means
-   * that there is probably a discontinuity.
-   *
-   * ex: f(x) = floor(x) - 0.5
-   *  A root is detected at x = 1. f(1) = 0.5
-   *  But f(1.1) = 0.5 and f(0.9) = -0.5
-   *  abs(f(1.1) - f(1)) <<< abs(f(1) - f(0.9))
-   *  so there is probably a discontinuity
-   *    */
-  T step = MinimalStep(b);
-  T a = b, c = b, fa = fb, fc = fb;
-  int i = 0;
-  constexpr int k_nIterations = 1000;
-  do {
-    a = a - step;
-    fa = f(a, aux);
-    c = c + step;
-    fc = f(c, aux);
-  } while ((fa > k_zero) == (fc > k_zero) && ++i < k_nIterations);
-  T fab = std::fabs(fa - fb);
-  T fcb = std::fabs(fc - fb);
-  constexpr T k_magnitude = static_cast<T>(10.);  // magic number
-  return i < k_nIterations &&
-         std::max(fab, fcb) < k_magnitude * std::min(fab, fcb);
 }
 
 template <typename T>

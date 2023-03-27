@@ -252,6 +252,7 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(
   /* This assert can be removed if at some point a cursorLayout is passed
    * to this method but could be unaffected by the balancing of brackets. */
   assert(placedCursor);
+  (void)placedCursor;
 
   /* Now that the result is ready to replace hLayout, replaceWithInPlace
    * cannot be used since hLayout might not have a parent.

@@ -32,6 +32,7 @@ void set(Configuration config) {
   if (config.isActive()) {
     /* Exam mode should be deactivated before setting a new mode. */
     assert(!previous.isActive());
+    (void)previous;
 
     if (Authentication::clearanceLevel() !=
         Authentication::ClearanceLevel::NumWorks) {

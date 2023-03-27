@@ -12,7 +12,7 @@ class AbstractScrollableView : public Responder, public ScrollView {
   AbstractScrollableView(Responder* parentResponder, View* view,
                          ScrollViewDataSource* dataSource);
   bool handleEvent(Ion::Events::Event event) override;
-  void reloadScroll(bool forceRelayout = false);
+  void reloadScroll();
 
  protected:
   KDSize contentSize() const override;

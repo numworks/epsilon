@@ -28,7 +28,7 @@ class Solver {
   typedef Interest (*BracketTest)(Coordinate2D<T>, Coordinate2D<T>,
                                   Coordinate2D<T>, const void *);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void *, T, T,
-                                        Interest, T);
+                                        Interest, T, TrinaryBoolean);
   typedef bool (*DiscontinuityEvaluation)(T, T, const void *);
 
   constexpr static T k_relativePrecision = Float<T>::Epsilon();
@@ -134,18 +134,22 @@ class Solver {
 
   static Coordinate2D<T> SafeBrentMinimum(FunctionEvaluation f, const void *aux,
                                           T xMin, T xMax, Interest interest,
-                                          T precision);
+                                          T precision,
+                                          TrinaryBoolean discontinuous);
   static Coordinate2D<T> SafeBrentMaximum(FunctionEvaluation f, const void *aux,
                                           T xMin, T xMax, Interest interest,
-                                          T precision);
+                                          T precision,
+                                          TrinaryBoolean discontinuous);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f,
                                                const void *aux, T xMin, T xMax,
-                                               Interest interest, T precision);
+                                               Interest interest, T precision,
+                                               TrinaryBoolean discontinuous);
 
   /* This filters out discontinuities by comparing the ordinate of the root to
    * the ordinate of the points at abscissas around it. */
   static bool IsOddRoot(Coordinate2D<T> root, FunctionEvaluation f,
                         const void *aux);
+  static bool DiscontinuityTest(T x1, T x2, const void *aux);
   static void ExcludeUndefinedFromBracket(Coordinate2D<T> *p1,
                                           Coordinate2D<T> *p2,
                                           Coordinate2D<T> *p3,

@@ -230,7 +230,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 7; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
     bool isBaseUnit() const override {
       return this == representativesOfSameDimension();
@@ -265,7 +265,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 8; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
     bool isBaseUnit() const override {
       return this == representativesOfSameDimension();
@@ -309,7 +309,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 5; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
     bool isBaseUnit() const override {
       return this == representativesOfSameDimension();
@@ -347,7 +347,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 7; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
     const Prefix* basePrefix() const override;
     bool isBaseUnit() const override {
@@ -386,7 +386,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
     bool isBaseUnit() const override {
       return this == representativesOfSameDimension();
@@ -417,7 +417,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 3; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
     bool isBaseUnit() const override {
       return this == representativesOfSameDimension();
@@ -459,7 +459,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 1,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
     bool isBaseUnit() const override {
       return this == representativesOfSameDimension();
@@ -487,7 +487,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 1};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
     bool isBaseUnit() const override {
       return this == representativesOfSameDimension();
@@ -515,7 +515,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -540,7 +540,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -565,7 +565,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 3; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -590,7 +590,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 2; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
     bool hasSpecialAdditionalExpressions(
         double value, Preferences::UnitFormat unitFormat) const override {
@@ -622,7 +622,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 2; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -648,7 +648,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
   };
 
@@ -670,7 +670,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -695,7 +695,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -720,7 +720,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -745,7 +745,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -770,7 +770,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -795,7 +795,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -820,7 +820,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -845,7 +845,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 1,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -870,7 +870,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 2; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
     const Representative* standardRepresentative(
         double value, double exponent, const ReductionContext& reductionContext,
@@ -905,7 +905,7 @@ class UnitNode final : public ExpressionNode {
                              .amountOfSubstance = 0,
                              .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 8; }
+    int numberOfRepresentatives() const override;
     const Representative* representativesOfSameDimension() const override;
     const Representative* standardRepresentative(
         double value, double exponent, const ReductionContext& reductionContext,

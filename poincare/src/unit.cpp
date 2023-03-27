@@ -388,104 +388,226 @@ const UnitNode::Prefix* UnitNode::Representative::findBestPrefix(
 }
 
 // UnitNode::___Representative
+int UnitNode::TimeRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_timeRepresentatives) /
+         sizeof(UnitNode::TimeRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::TimeRepresentative::representativesOfSameDimension() const {
   return Unit::k_timeRepresentatives;
+}
+
+int UnitNode::DistanceRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_distanceRepresentatives) /
+         sizeof(UnitNode::DistanceRepresentative);
 }
 const UnitNode::Representative*
 UnitNode::DistanceRepresentative::representativesOfSameDimension() const {
   return Unit::k_distanceRepresentatives;
 }
+
+int UnitNode::AngleRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_angleRepresentatives) /
+         sizeof(UnitNode::AngleRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::AngleRepresentative::representativesOfSameDimension() const {
   return Unit::k_angleRepresentatives;
+}
+
+int UnitNode::MassRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_massRepresentatives) /
+         sizeof(UnitNode::MassRepresentative);
 }
 const UnitNode::Representative*
 UnitNode::MassRepresentative::representativesOfSameDimension() const {
   return Unit::k_massRepresentatives;
 }
+
+int UnitNode::CurrentRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_currentRepresentatives) /
+         sizeof(UnitNode::CurrentRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::CurrentRepresentative::representativesOfSameDimension() const {
   return Unit::k_currentRepresentatives;
 }
+
+int UnitNode::TemperatureRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_temperatureRepresentatives) /
+         sizeof(UnitNode::TemperatureRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::TemperatureRepresentative::representativesOfSameDimension() const {
   return Unit::k_temperatureRepresentatives;
+}
+
+int UnitNode::AmountOfSubstanceRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_amountOfSubstanceRepresentatives) /
+         sizeof(UnitNode::AmountOfSubstanceRepresentative);
 }
 const UnitNode::Representative*
 UnitNode::AmountOfSubstanceRepresentative::representativesOfSameDimension()
     const {
   return Unit::k_amountOfSubstanceRepresentatives;
 }
+
+int UnitNode::LuminousIntensityRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_luminousIntensityRepresentatives) /
+         sizeof(UnitNode::LuminousIntensityRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::LuminousIntensityRepresentative::representativesOfSameDimension()
     const {
   return Unit::k_luminousIntensityRepresentatives;
 }
+
+int UnitNode::FrequencyRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_frequencyRepresentatives) /
+         sizeof(UnitNode::FrequencyRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::FrequencyRepresentative::representativesOfSameDimension() const {
   return Unit::k_frequencyRepresentatives;
+}
+
+int UnitNode::ForceRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_forceRepresentatives) /
+         sizeof(UnitNode::ForceRepresentative);
 }
 const UnitNode::Representative*
 UnitNode::ForceRepresentative::representativesOfSameDimension() const {
   return Unit::k_forceRepresentatives;
 }
+
+int UnitNode::PressureRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_pressureRepresentatives) /
+         sizeof(UnitNode::PressureRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::PressureRepresentative::representativesOfSameDimension() const {
   return Unit::k_pressureRepresentatives;
+}
+
+int UnitNode::EnergyRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_energyRepresentatives) /
+         sizeof(UnitNode::EnergyRepresentative);
 }
 const UnitNode::Representative*
 UnitNode::EnergyRepresentative::representativesOfSameDimension() const {
   return Unit::k_energyRepresentatives;
 }
+
+int UnitNode::PowerRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_powerRepresentatives) /
+         sizeof(UnitNode::PowerRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::PowerRepresentative::representativesOfSameDimension() const {
   return Unit::k_powerRepresentatives;
 }
+
+int UnitNode::ElectricChargeRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_electricChargeRepresentatives) /
+         sizeof(UnitNode::ElectricChargeRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::ElectricChargeRepresentative::representativesOfSameDimension() const {
   return Unit::k_electricChargeRepresentatives;
+}
+
+int UnitNode::ElectricPotentialRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_electricPotentialRepresentatives) /
+         sizeof(UnitNode::ElectricPotentialRepresentative);
 }
 const UnitNode::Representative*
 UnitNode::ElectricPotentialRepresentative::representativesOfSameDimension()
     const {
   return Unit::k_electricPotentialRepresentatives;
 }
+
+int UnitNode::ElectricCapacitanceRepresentative::numberOfRepresentatives()
+    const {
+  return sizeof(Unit::k_electricCapacitanceRepresentatives) /
+         sizeof(UnitNode::ElectricCapacitanceRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::ElectricCapacitanceRepresentative::representativesOfSameDimension()
     const {
   return Unit::k_electricCapacitanceRepresentatives;
+}
+
+int UnitNode::ElectricResistanceRepresentative::numberOfRepresentatives()
+    const {
+  return sizeof(Unit::k_electricResistanceRepresentatives) /
+         sizeof(UnitNode::ElectricResistanceRepresentative);
 }
 const UnitNode::Representative*
 UnitNode::ElectricResistanceRepresentative::representativesOfSameDimension()
     const {
   return Unit::k_electricResistanceRepresentatives;
 }
+
+int UnitNode::ElectricConductanceRepresentative::numberOfRepresentatives()
+    const {
+  return sizeof(Unit::k_electricConductanceRepresentatives) /
+         sizeof(UnitNode::ElectricConductanceRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::ElectricConductanceRepresentative::representativesOfSameDimension()
     const {
   return Unit::k_electricConductanceRepresentatives;
 }
+
+int UnitNode::MagneticFluxRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_magneticFluxRepresentatives) /
+         sizeof(UnitNode::MagneticFluxRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::MagneticFluxRepresentative::representativesOfSameDimension() const {
   return Unit::k_magneticFluxRepresentatives;
+}
+
+int UnitNode::MagneticFieldRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_magneticFieldRepresentatives) /
+         sizeof(UnitNode::MagneticFieldRepresentative);
 }
 const UnitNode::Representative*
 UnitNode::MagneticFieldRepresentative::representativesOfSameDimension() const {
   return Unit::k_magneticFieldRepresentatives;
 }
+
+int UnitNode::InductanceRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_inductanceRepresentatives) /
+         sizeof(UnitNode::InductanceRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::InductanceRepresentative::representativesOfSameDimension() const {
   return Unit::k_inductanceRepresentatives;
+}
+
+int UnitNode::CatalyticActivityRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_catalyticActivityRepresentatives) /
+         sizeof(UnitNode::CatalyticActivityRepresentative);
 }
 const UnitNode::Representative*
 UnitNode::CatalyticActivityRepresentative::representativesOfSameDimension()
     const {
   return Unit::k_catalyticActivityRepresentatives;
 }
+
+int UnitNode::SurfaceRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_surfaceRepresentatives) /
+         sizeof(UnitNode::SurfaceRepresentative);
+}
 const UnitNode::Representative*
 UnitNode::SurfaceRepresentative::representativesOfSameDimension() const {
   return Unit::k_surfaceRepresentatives;
+}
+
+int UnitNode::VolumeRepresentative::numberOfRepresentatives() const {
+  return sizeof(Unit::k_volumeRepresentatives) /
+         sizeof(UnitNode::VolumeRepresentative);
 }
 const UnitNode::Representative*
 UnitNode::VolumeRepresentative::representativesOfSameDimension() const {

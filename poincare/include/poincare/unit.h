@@ -620,7 +620,7 @@ class UnitNode final : public ExpressionNode {
                          .amountOfSubstance = 0,
                          .luminuousIntensity = 0};
     }
-    int numberOfRepresentatives() const override { return 1; }
+    int numberOfRepresentatives() const override { return 2; }
     const Representative* representativesOfSameDimension() const override;
 
    private:
@@ -1171,8 +1171,11 @@ class Unit : public Expression {
   };
   typedef UnitNode::PowerRepresentative PowerRepresentative;
   constexpr static const PowerRepresentative k_powerRepresentatives[] = {
+
       PowerRepresentative("W", DEFINE_TWICE(1.), Prefixable::All,
-                          Prefixable::LongScale)};
+                          Prefixable::LongScale),
+      PowerRepresentative("hp", DEFINE_TWICE(745.699872), Prefixable::None,
+                          Prefixable::None)};
   typedef UnitNode::ElectricChargeRepresentative ElectricChargeRepresentative;
   constexpr static const ElectricChargeRepresentative
       k_electricChargeRepresentatives[] = {ElectricChargeRepresentative(

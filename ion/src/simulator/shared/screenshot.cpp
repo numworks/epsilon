@@ -94,8 +94,9 @@ void Screenshot::capture(Events::Event nextEvent) {
 #endif
 
   if (m_path != nullptr) {
-    char path[1024];
-    std::sprintf(path, "%s/img-%04d.png", m_path, m_stepNumber++);
+    constexpr size_t pathSize = 1024;
+    char path[pathSize];
+    std::snprintf(path, pathSize, "%s/img-%04d.png", m_path, m_stepNumber++);
 
     Simulator::Platform::saveImage(pixelsBuffer, k_width, height,
                                    m_eachStep ? path : m_path);

@@ -26,10 +26,7 @@ class PopupItemView : public HighlightCell, public Bordered {
   int numberOfSubviews() const override;
   View* subviewAtIndex(int i) override;
   HighlightCell* innerCell() { return m_cell; }
-  void setInnerCell(HighlightCell* cell) {
-    m_cell = cell;
-    layoutSubviews(true);
-  }
+  void setInnerCell(HighlightCell* cell) { m_cell = cell; }
   void drawRect(KDContext* ctx, KDRect rect) const override;
   void setPopping(bool popping) { m_isPoppingUp = popping; }
 

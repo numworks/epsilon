@@ -25,6 +25,9 @@ bool ExactExpressionIsForbidden(Expression e) {
   if (!Preferences::sharedPreferences->examMode().forbidExactResults()) {
     return false;
   }
+  if (e.type() == ExpressionNode::Type::Opposite) {
+    return ExactExpressionIsForbidden(e.childAtIndex(0));
+  }
   bool isFraction = e.type() == ExpressionNode::Type::Division &&
                     e.childAtIndex(0).isNumber() &&
                     e.childAtIndex(1).isNumber();

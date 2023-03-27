@@ -90,6 +90,7 @@ class GraphController : public Shared::FunctionGraphController,
                               int scrollSpeed = 1) override;
 
   // FunctionGraphController
+  void selectCurveAtIndex(int curveIndex, bool willBeVisible) override;
   int nextCurveIndexVertically(OMG::VerticalDirection direction,
                                int currentSelectedCurve,
                                Poincare::Context *context,
@@ -129,7 +130,7 @@ class GraphController : public Shared::FunctionGraphController,
       Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin,
       float tMax, float step, float *xm, float *xM, float *ym, float *yM) const;
 
-  Shared::RoundCursorView m_cursorView;
+  Shared::ToggleableRingRoundCursorView m_cursorView;
   BannerView m_bannerView;
   GraphView m_view;
   Shared::InteractiveCurveViewRange *m_graphRange;

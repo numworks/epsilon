@@ -169,15 +169,18 @@ class PrefacedTableView : public Escher::View,
   Escher::SelectableTableView* m_mainTableView;
   MarginDelegate* m_marginDelegate;
   PrefacedTableViewDelegate* m_prefacedDelegate;
+  KDCoordinate m_mainTableViewTopMargin;
 
  private:
   // View
   int numberOfSubviews() const override { return 4; }
   void layoutSubviews(bool force = false) override;
   Escher::View* subviewAtIndex(int index) override;
+  virtual KDPoint marginToAddForVirtualOffset() const {
+    return KDPoint(0, m_mainTableViewTopMargin - m_mainTableView->topMargin());
+  }
 
   Escher::SelectableTableViewDelegate* m_mainTableDelegate;
-  KDCoordinate m_mainTableViewTopMargin;
 };
 
 }  // namespace Shared

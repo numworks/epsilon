@@ -75,6 +75,10 @@ class PrefacedTwiceTableView : public PrefacedTableView {
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   void resetContentOffset() override;
+  KDPoint marginToAddForVirtualOffset() const override {
+    return KDPoint(m_mainTableViewLeftMargin - m_mainTableView->leftMargin(),
+                   m_mainTableViewTopMargin - m_mainTableView->topMargin());
+  }
 
   ColumnPrefaceDataSource m_columnPrefaceDataSource;
   Escher::TableView m_columnPrefaceView;

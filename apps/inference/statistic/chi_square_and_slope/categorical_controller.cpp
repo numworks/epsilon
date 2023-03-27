@@ -217,6 +217,18 @@ HighlightCell *InputCategoricalController::reusableCell(int index, int type) {
   }
 }
 
+void InputCategoricalController::willDisplayCellForIndex(
+    Escher::HighlightCell *cell, int index) {
+  if (index == indexOfSignificanceCell()) {
+    assert(cell == &m_significanceCell);
+    I18n::Message name, description;
+    name = m_statistic->thresholdName();
+    description = m_statistic->thresholdDescription();
+    m_significanceCell.label()->setMessage(name);
+    m_significanceCell.subLabel()->setMessage(description);
+  }
+}
+
 bool InputCategoricalController::handleEditedValue(int i, double p,
                                                    AbstractTextField *textField,
                                                    Ion::Events::Event event) {

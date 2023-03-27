@@ -107,7 +107,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
       units.type() == ExpressionNode::Type::Unit
           ? static_cast<Unit &>(units).representative()
           : UnitNode::Representative::RepresentativeForDimension(
-                UnitNode::Vector<int>::FromBaseUnits(units));
+                UnitNode::DimensionVector::FromBaseUnits(units));
   if (representative &&
       representative->dimensionVector() ==
           Unit::AngleRepresentative::Default().dimensionVector()) {

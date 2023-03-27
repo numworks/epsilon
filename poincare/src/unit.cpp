@@ -26,8 +26,7 @@ const UnitNode::Prefix* UnitNode::Prefix::EmptyPrefix() {
 }
 
 // UnitNode::Vector
-template <>
-size_t UnitNode::Vector<int>::supportSize() const {
+size_t UnitNode::DimensionVector::supportSize() const {
   size_t supportSize = 0;
   for (int i = 0; i < k_numberOfBaseUnits; i++) {
     if (coefficientAtIndex(i) == 0) {
@@ -38,21 +37,19 @@ size_t UnitNode::Vector<int>::supportSize() const {
   return supportSize;
 }
 
-template <>
-void UnitNode::Vector<int>::addAllCoefficients(const Vector<int> other,
-                                               int factor) {
+void UnitNode::DimensionVector::addAllCoefficients(const DimensionVector other,
+                                                   int factor) {
   for (int i = 0; i < UnitNode::k_numberOfBaseUnits; i++) {
     setCoefficientAtIndex(
         i, coefficientAtIndex(i) + other.coefficientAtIndex(i) * factor);
   }
 }
 
-template <>
-UnitNode::Vector<int> UnitNode::Vector<int>::FromBaseUnits(
+UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
     const Expression baseUnits) {
   /* Returns the vector of Base units with integer exponents. If rational, the
    * closest integer will be used. */
-  Vector<int> nullVector = {
+  DimensionVector nullVector = {
       .time = 0,
       .distance = 0,
       .angle = 0,
@@ -62,7 +59,7 @@ UnitNode::Vector<int> UnitNode::Vector<int>::FromBaseUnits(
       .amountOfSubstance = 0,
       .luminuousIntensity = 0,
   };
-  Vector<int> vector = nullVector;
+  DimensionVector vector = nullVector;
   int numberOfFactors;
   int factorIndex = 0;
   Expression factor;
@@ -116,8 +113,7 @@ UnitNode::Vector<int> UnitNode::Vector<int>::FromBaseUnits(
   return vector;
 }
 
-template <>
-Expression UnitNode::Vector<int>::toBaseUnits() const {
+Expression UnitNode::DimensionVector::toBaseUnits() const {
   Expression result = Multiplication::Builder();
   int numberOfChildren = 0;
   for (int i = 0; i < k_numberOfBaseUnits; i++) {
@@ -184,7 +180,7 @@ UnitNode::Representative::DefaultRepresentatives() {
 
 const UnitNode::Representative*
 UnitNode::Representative::RepresentativeForDimension(
-    UnitNode::Vector<int> vector) {
+    UnitNode::DimensionVector vector) {
   for (int i = 0; i < k_numberOfDimensions; i++) {
     const Representative* representative =
         Representative::DefaultRepresentatives()[i];
@@ -992,8 +988,8 @@ int UnitNode::simplificationOrderSameType(const ExpressionNode* e,
   }
   assert(type() == e->type());
   const UnitNode* eNode = static_cast<const UnitNode*>(e);
-  Vector<int> v = representative()->dimensionVector();
-  Vector<int> w = eNode->representative()->dimensionVector();
+  DimensionVector v = representative()->dimensionVector();
+  DimensionVector w = eNode->representative()->dimensionVector();
   for (int i = 0; i < k_numberOfBaseUnits; i++) {
     if (v.coefficientAtIndex(i) != w.coefficientAtIndex(i)) {
       return v.coefficientAtIndex(i) - w.coefficientAtIndex(i);
@@ -1099,7 +1095,8 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit,
   if (unit.isUninitialized() || !std::isfinite(value)) {
     return false;
   }
-  UnitNode::Vector<int> vector = UnitNode::Vector<int>::FromBaseUnits(unit);
+  UnitNode::DimensionVector vector =
+      UnitNode::DimensionVector::FromBaseUnits(unit);
   const Representative* representative =
       Representative::RepresentativeForDimension(vector);
 
@@ -1124,7 +1121,7 @@ int Unit::SetAdditionalExpressions(Expression units, double value,
       units.type() == ExpressionNode::Type::Unit
           ? static_cast<Unit&>(units).node()->representative()
           : UnitNode::Representative::RepresentativeForDimension(
-                UnitNode::Vector<int>::FromBaseUnits(units));
+                UnitNode::DimensionVector::FromBaseUnits(units));
   if (!representative) {
     return 0;
   }

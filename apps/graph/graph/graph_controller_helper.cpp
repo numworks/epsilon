@@ -129,6 +129,11 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     if (std::abs(t - tCursor) < minimalAbsoluteStep) {
       t = tCursor + dir * minimalAbsoluteStep;
     }
+  } else if (function->properties().isScatterPlot()) {
+    float newT = std::floor(t + dir);
+    if (0.f <= newT && newT < function->iterateScatterPlot(context).length()) {
+      t = newT;
+    }
   } else {
     /* If function is not along X or Y, the cursor speed along t should not
      * depend on pixelWidth since the t interval can be very small even if the
@@ -142,7 +147,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
         0.05 * step, true);
   }
   // t must have changed
-  assert(tCursor != t);
+  assert(tCursor != t || function->properties().isScatterPlot());
 
   t = std::max(tMin, std::min(tMax, t));
   int subCurveIndexValue = subCurveIndex == nullptr ? 0 : *subCurveIndex;

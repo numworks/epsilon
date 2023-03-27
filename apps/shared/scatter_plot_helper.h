@@ -26,7 +26,7 @@ class ScatterPlotIterable {
       return *this;
     }
     Poincare::Point operator*() const {
-      assert(m_index < listLength(m_expression));
+      assert(m_index < ListLength(m_expression));
       Poincare::Expression e =
           m_expression.type() == Poincare::ExpressionNode::Type::List
               ? m_expression.childAtIndex(m_index)
@@ -43,8 +43,10 @@ class ScatterPlotIterable {
  public:
   Iterator begin() const { return Iterator(m_expression, 0); }
   Iterator end() const {
-    return Iterator(m_expression, listLength(m_expression));
+    return Iterator(m_expression, ListLength(m_expression));
   }
+
+  int length() const { return ListLength(m_expression); }
 
  private:
   ScatterPlotIterable(Poincare::Expression e) : m_expression(e) {
@@ -53,7 +55,7 @@ class ScatterPlotIterable {
             static_cast<Poincare::List&>(e).isListOfPoints(nullptr)));
   }
 
-  static int listLength(const Poincare::Expression& e) {
+  static int ListLength(const Poincare::Expression& e) {
     return e.type() == Poincare::ExpressionNode::Type::List
                ? e.numberOfChildren()
                : 1;

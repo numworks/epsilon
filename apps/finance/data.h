@@ -177,8 +177,10 @@ class Data {
  public:
   // By default, select the simple interest data model
   Data()
-      : m_compoundInterestData(m_sharedValues),
-        m_simpleInterestData(m_sharedValues),
+      /* The cast is there to prevent GCC from warning about m_sharedValues
+       * array being used uninitialized */
+      : m_compoundInterestData(static_cast<double *>(m_sharedValues)),
+        m_simpleInterestData(static_cast<double *>(m_sharedValues)),
         m_selectedModel(true) {}
   void reset();
   void setModel(bool selectedModel) { m_selectedModel = selectedModel; }

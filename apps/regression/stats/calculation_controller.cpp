@@ -249,6 +249,15 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
       static_cast<EvenOddBufferTextCell *>(cell);
   bufferCell->setTextColor(KDColorBlack);
   double result = NAN;
+
+  if ((c == Calculation::CorrelationCoeff ||
+       c == Calculation::DeterminationCoeff) &&
+      Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
+    bufferCell->setTextColor(Palette::GrayDark);
+    bufferCell->setText(I18n::translate(I18n::Message::Disabled));
+    return;
+  }
+
   if (c >= Calculation::NumberOfDots && c <= Calculation::SumOfProducts) {
     int calculationIndex =
         static_cast<int>(c) - static_cast<int>(Calculation::NumberOfDots);
@@ -297,34 +306,27 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     }
     result = m_store->coefficientsForSeries(seriesNumber,
                                             globContext)[coefficientIndex];
+  } else if (c == Calculation::CorrelationCoeff) {
+    // This could be memoized but don't seem to slow the table down for now.
+    result = m_store->correlationCoefficient(seriesNumber);
   } else {
-    /* Calculation is either R, R2 or the residual stddev.
-     * These could be memoized but don't seem to slow the table down for now. */
-    assert(c == Calculation::CorrelationCoeff ||
-           c == Calculation::DeterminationCoeff ||
-           c == Calculation::ResidualStandardDeviation);
-    if (c != Calculation::ResidualStandardDeviation &&
-        Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
-      bufferCell->setTextColor(Palette::GrayDark);
-      bufferCell->setText(I18n::translate(I18n::Message::Disabled));
-      return;
-    }
-    if ((c == Calculation::DeterminationCoeff &&
-         !shouldSeriesDisplay(seriesNumber, DisplayR2)) ||
-        (c == Calculation::ResidualStandardDeviation &&
-         !shouldSeriesDisplay(seriesNumber,
-                              DisplayResidualStandardDeviation))) {
+    // These could be memoized but don't seem to slow the table down for now.
+    assert(c == Calculation::ResidualStandardDeviation ||
+           c == Calculation::DeterminationCoeff);
+    bool isR2 = (c == Calculation::DeterminationCoeff);
+    DisplayCondition condition =
+        isR2 ? DisplayR2 : DisplayResidualStandardDeviation;
+    if (!shouldSeriesDisplay(seriesNumber, condition) ||
+        !m_store->coefficientsAreDefined(seriesNumber, globContext)) {
       bufferCell->setText(I18n::translate(I18n::Message::Dash));
       return;
     }
-    result = (c == Calculation::CorrelationCoeff)
-                 ? m_store->correlationCoefficient(seriesNumber)
-                 : ((c == Calculation::ResidualStandardDeviation)
-                        ? m_store->residualStandardDeviation(seriesNumber,
-                                                             globContext)
-                        : m_store->determinationCoefficientForSeries(
-                              seriesNumber, globContext));
+    result =
+        isR2 ? m_store->determinationCoefficientForSeries(seriesNumber,
+                                                          globContext)
+             : m_store->residualStandardDeviation(seriesNumber, globContext);
   }
+
   PoincareHelpers::ConvertFloatToText<double>(result, buffer, bufferSize,
                                               numberSignificantDigits);
   bufferCell->setText(buffer);

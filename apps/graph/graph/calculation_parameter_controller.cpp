@@ -85,26 +85,30 @@ void CalculationParameterController::push(T *controller, bool pop) {
 
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell *cell = selectedCell();
-  if (cell == &m_preimageCell && m_preimageCell.enterOnEvent(event)) {
+  if (cell == &m_preimageCell && m_preimageCell.canBeActivatedByEvent(event)) {
     push(&m_preimageParameterController, false);
-  } else if (cell == &m_tangentCell && m_tangentCell.enterOnEvent(event)) {
+  } else if (cell == &m_tangentCell &&
+             m_tangentCell.canBeActivatedByEvent(event)) {
     push(&m_tangentGraphController, true);
-  } else if (cell == &m_integralCell && m_integralCell.enterOnEvent(event)) {
+  } else if (cell == &m_integralCell &&
+             m_integralCell.canBeActivatedByEvent(event)) {
     push(&m_integralGraphController, true);
-  } else if (cell == &m_minimumCell && m_minimumCell.enterOnEvent(event)) {
+  } else if (cell == &m_minimumCell &&
+             m_minimumCell.canBeActivatedByEvent(event)) {
     push(&m_minimumGraphController, true);
-  } else if (cell == &m_maximumCell && m_maximumCell.enterOnEvent(event)) {
+  } else if (cell == &m_maximumCell &&
+             m_maximumCell.canBeActivatedByEvent(event)) {
     push(&m_maximumGraphController, true);
   } else if (cell == &m_intersectionCell &&
-             m_intersectionCell.enterOnEvent(event)) {
+             m_intersectionCell.canBeActivatedByEvent(event)) {
     push(&m_intersectionGraphController, true);
-  } else if (cell == &m_rootCell && m_rootCell.enterOnEvent(event)) {
+  } else if (cell == &m_rootCell && m_rootCell.canBeActivatedByEvent(event)) {
     push(&m_rootGraphController, true);
   } else if (event == Ion::Events::Left) {
     StackViewController *stack =
         static_cast<StackViewController *>(parentResponder());
     stack->pop();
-  } else if (cell == &m_areaCell && m_areaCell.enterOnEvent(event)) {
+  } else if (cell == &m_areaCell && m_areaCell.canBeActivatedByEvent(event)) {
     if (!ShouldDisplayChevronInAreaCell()) {
       Ion::Storage::Record secondRecord =
           AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(

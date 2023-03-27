@@ -101,13 +101,13 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell *cell,
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell *cell = selectedCell();
-  if (cell == &m_typeCell && m_typeCell.enterOnEvent(event)) {
+  if (cell == &m_typeCell && m_typeCell.canBeActivatedByEvent(event)) {
     m_typeParameterController.setRecord(m_record);
     static_cast<StackViewController *>(parentResponder())
         ->push(&m_typeParameterController);
     return true;
   }
-  if (cell == &m_enableCell && m_enableCell.enterOnEvent(event)) {
+  if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
     App::app()->localContext()->resetCache();
     function()->setActive(!function()->isActive());
     resetMemoization();

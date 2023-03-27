@@ -26,7 +26,7 @@ class GaugeView : public TransparentView, public CellWidget {
   // CellWidget
   const View* view() const override { return this; }
   void setHighlighted(bool highlighted) override;
-  bool enterOnEvent(Ion::Events::Event event) const override {
+  bool canBeActivatedByEvent(Ion::Events::Event event) const override {
     return DirectionForEvent(event) != 0;
   }
 

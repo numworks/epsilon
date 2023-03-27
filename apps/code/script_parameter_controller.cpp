@@ -36,7 +36,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
   int index = selectedRow();
   int type = typeAtIndex(index);
   AbstractMenuCell *cell = reusableCell(index, type);
-  if (!cell->enterOnEvent(event)) {
+  if (!cell->canBeActivatedByEvent(event)) {
     return false;
   }
   Script s = m_script;

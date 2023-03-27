@@ -39,8 +39,8 @@ void InterestMenuController::didBecomeFirstResponder() {
 }
 
 bool InterestMenuController::handleEvent(Ion::Events::Event event) {
-  // enterOnEvent can be called on any cell with chevron
-  if (cellAtIndex(0)->enterOnEvent(event)) {
+  // canBeActivatedByEvent can be called on any cell with chevron
+  if (cellAtIndex(0)->canBeActivatedByEvent(event)) {
     App::GetInterestData()->setUnknown(paramaterAtIndex(selectedRow()));
     stackOpenPage(m_interestController);
     return true;

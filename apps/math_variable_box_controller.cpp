@@ -83,7 +83,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     }
   }
   if (m_currentPage == Page::RootMenu &&
-      m_defineVariableCell.enterOnEvent(event) &&
+      m_defineVariableCell.canBeActivatedByEvent(event) &&
       selectedRow() == defineVariableCellIndex()) {
     Container::activeApp()->modalViewController()->dismissModal();
     sender()->handleStoreEvent();

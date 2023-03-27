@@ -157,7 +157,7 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
   int row = selectedRow();
   if (typeAtIndex(row) == k_switchCellType &&
       static_cast<PressToTestSwitch *>(m_selectableListView.cell(row))
-          ->enterOnEvent(event) &&
+          ->canBeActivatedByEvent(event) &&
       !Preferences::sharedPreferences->examMode().isActive()) {
     assert(row >= 0 && row < k_numberOfSwitchCells);
     setParamAtIndex(row, !getParamAtIndex(row));

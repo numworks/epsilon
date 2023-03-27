@@ -45,9 +45,9 @@ void StoreParameterController::initializeColumnParameters() {
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   int type = typeAtIndex(selectedRow());
   if ((type == k_displayCumulatedFrequencyCellType &&
-       m_displayCumulatedFrequencyCell.enterOnEvent(event)) ||
+       m_displayCumulatedFrequencyCell.canBeActivatedByEvent(event)) ||
       (type == k_hideCumulatedFrequencyCellType &&
-       m_hideCumulatedFrequencyCell.enterOnEvent(event))) {
+       m_hideCumulatedFrequencyCell.canBeActivatedByEvent(event))) {
     bool previousStatus = m_store->displayCumulatedFrequenciesForSeries(
         m_storeColumnHelper->selectedSeries());
     m_store->setDisplayCumulatedFrequenciesForSeries(

@@ -40,8 +40,8 @@ void DistributionController::stackOpenPage(Escher::ViewController *nextPage) {
 
 bool DistributionController::handleEvent(Ion::Events::Event event) {
   StackViewController *stack = (StackViewController *)parentResponder();
-  // enterOnEvent can be called on any cell with chevron
-  if (m_cells[0].enterOnEvent(event)) {
+  // canBeActivatedByEvent can be called on any cell with chevron
+  if (m_cells[0].canBeActivatedByEvent(event)) {
     setDistributionAccordingToIndex(selectedRow());
     stack->push(m_parametersController);
     return true;

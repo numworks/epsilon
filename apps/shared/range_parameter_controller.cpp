@@ -161,7 +161,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (displayNormalizeCell() && selectedRow() == 0 &&
-      m_normalizeCell.enterOnEvent(event)) {
+      m_normalizeCell.canBeActivatedByEvent(event)) {
     m_normalizeCell.setHighlighted(false);
     m_tempInteractiveRange.normalize();
     buttonAction();
@@ -169,7 +169,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   }
   int index = selectedRow() - displayNormalizeCell();
   if (index >= 0 && index < k_numberOfRangeCells &&
-      m_rangeCells[index].enterOnEvent(event)) {
+      m_rangeCells[index].canBeActivatedByEvent(event)) {
     assert(typeAtIndex(selectedRow()) == k_rangeCellType);
     m_singleInteractiveCurveViewRangeController.setEditXRange(index == 0);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);

@@ -27,10 +27,11 @@ class AlternateSwitchAndImage : public Escher::CellWidget {
     m_image.setBackgroundColor(
         Escher::AbstractMenuCell::BackgroundColor(highlighted));
   }
-  bool enterOnEvent(Ion::Events::Event event) const override {
+  bool canBeActivatedByEvent(Ion::Events::Event event) const override {
     return view() == &m_switch
-               ? m_switch.enterOnEvent(event)
-               : (view() == &m_image ? m_image.enterOnEvent(event) : false);
+               ? m_switch.canBeActivatedByEvent(event)
+               : (view() == &m_image ? m_image.canBeActivatedByEvent(event)
+                                     : false);
   }
 
  private:

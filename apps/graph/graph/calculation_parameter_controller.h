@@ -58,9 +58,10 @@ class CalculationParameterController
     const View* view() const override {
       return m_displayChevron ? this : nullptr;
     }
-    bool enterOnEvent(Ion::Events::Event event) const override {
-      return (m_displayChevron && Escher::ChevronView::enterOnEvent(event)) ||
-             Escher::CellWidget::enterOnEvent(event);
+    bool canBeActivatedByEvent(Ion::Events::Event event) const override {
+      return (m_displayChevron &&
+              Escher::ChevronView::canBeActivatedByEvent(event)) ||
+             Escher::CellWidget::canBeActivatedByEvent(event);
     }
 
     void displayChevron(bool display) { m_displayChevron = display; }

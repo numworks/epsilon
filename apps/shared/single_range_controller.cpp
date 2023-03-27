@@ -60,7 +60,7 @@ void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell *cell,
 
 bool SingleRangeController::handleEvent(Ion::Events::Event event) {
   if (typeAtIndex(selectedRow()) == k_autoCellType &&
-      m_autoCell.enterOnEvent(event)) {
+      m_autoCell.canBeActivatedByEvent(event)) {
     // Update auto status
     setAutoStatus(!m_autoParam);
     return true;

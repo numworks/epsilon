@@ -16,8 +16,9 @@ class ChevronView : public TransparentView, public CellWidget {
 
   // CellWidget
   const View* view() const override { return this; }
-  bool enterOnEvent(Ion::Events::Event event) const override {
-    return event == Ion::Events::Right || CellWidget::enterOnEvent(event);
+  bool canBeActivatedByEvent(Ion::Events::Event event) const override {
+    return event == Ion::Events::Right ||
+           CellWidget::canBeActivatedByEvent(event);
   }
 };
 

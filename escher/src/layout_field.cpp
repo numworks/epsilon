@@ -518,7 +518,6 @@ bool LayoutField::privateHandleMoveEvent(Ion::Events::Event event,
 }
 
 void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
-  scrollToContentRect(rect);
   // Show the rect area around its baseline
   KDCoordinate underBaseline = rect.height() - baseline;
   KDCoordinate minAroundBaseline = std::min(baseline, underBaseline);

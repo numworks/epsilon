@@ -169,136 +169,54 @@ Expression Parser::parseUntil(Token::Type stoppingType,
       &Parser::parseCustomIdentifier,   // Token::Type::CustomIdentifier
       &Parser::parseUnexpected          // Token::Type::Undefined
   };
-  static_assert(tokenParsers[static_cast<int>(Token::Type::EndOfStream)] ==
-                    &Parser::parseUnexpected,
+#define assert_order(token, function)                               \
+  static_assert(&function == tokenParsers[static_cast<int>(token)], \
                 "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::RightwardsArrow)] ==
-                    &Parser::parseRightwardsArrow,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::AssignmentEqual)] ==
-                    &Parser::parseAssigmentEqual,
-                "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::RightSystemParenthesis)] ==
-          &Parser::parseUnexpected,
-      "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::RightBracket)] ==
-                    &Parser::parseUnexpected,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::RightParenthesis)] ==
-                    &Parser::parseUnexpected,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::RightBrace)] ==
-                    &Parser::parseUnexpected,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::Comma)] ==
-                    &Parser::parseUnexpected,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::Nor)] ==
-                    &Parser::parseNorOperator,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::Xor)] ==
-                    &Parser::parseXorOperator,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::Or)] ==
-                    &Parser::parseOrOperator,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::Nand)] ==
-                    &Parser::parseNandOperator,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::And)] ==
-                    &Parser::parseAndOperator,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::Not)] ==
-                    &Parser::parseLogicalOperatorNot,
-                "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::ComparisonOperator)] ==
-          &Parser::parseComparisonOperator,
-      "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::NorthEastArrow)] ==
-                    &Parser::parseNorthEastArrow,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::SouthEastArrow)] ==
-                    &Parser::parseSouthEastArrow,
-                "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Plus)] == &Parser::parsePlus,
-      "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Minus)] == &Parser::parseMinus,
-      "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Times)] == &Parser::parseTimes,
-      "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Slash)] == &Parser::parseSlash,
-      "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::ImplicitTimes)] ==
-                    &Parser::parseImplicitTimes,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::Percent)] ==
-                    &Parser::parsePercent,
-                "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Caret)] == &Parser::parseCaret,
-      "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Bang)] == &Parser::parseBang,
-      "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::CaretWithParenthesis)] ==
-          &Parser::parseCaretWithParenthesis,
-      "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(
-                    Token::Type::ImplicitAdditionBetweenUnits)] ==
-                    &Parser::parseImplicitAdditionBetweenUnits,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::LeftBracket)] ==
-                    &Parser::parseMatrix,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::LeftParenthesis)] ==
-                    &Parser::parseLeftParenthesis,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::LeftBrace)] ==
-                    &Parser::parseList,
-                "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::LeftSystemParenthesis)] ==
-          &Parser::parseLeftSystemParenthesis,
-      "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Empty)] == &Parser::parseEmpty,
-      "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::Constant)] ==
-                    &Parser::parseConstant,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::Number)] ==
-                    &Parser::parseNumber,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::BinaryNumber)] ==
-                    &Parser::parseNumber,
-                "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::HexadecimalNumber)] ==
-          &Parser::parseNumber,
-      "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Unit)] == &Parser::parseUnit,
-      "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::ReservedFunction)] ==
-                    &Parser::parseReservedFunction,
-                "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::SpecialIdentifier)] ==
-          &Parser::parseSpecialIdentifier,
-      "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::CustomIdentifier)] ==
-                    &Parser::parseCustomIdentifier,
-                "Wrong order of TokenParsers");
-  static_assert(tokenParsers[static_cast<int>(Token::Type::Undefined)] ==
-                    &Parser::parseUnexpected,
-                "Wrong order of TokenParsers");
+  assert_order(Token::Type::EndOfStream, Parser::parseUnexpected);
+  assert_order(Token::Type::RightwardsArrow, Parser::parseRightwardsArrow);
+  assert_order(Token::Type::AssignmentEqual, Parser::parseAssigmentEqual);
+  assert_order(Token::Type::RightSystemParenthesis, Parser::parseUnexpected);
+  assert_order(Token::Type::RightBracket, Parser::parseUnexpected);
+  assert_order(Token::Type::RightParenthesis, Parser::parseUnexpected);
+  assert_order(Token::Type::RightBrace, Parser::parseUnexpected);
+  assert_order(Token::Type::Comma, Parser::parseUnexpected);
+  assert_order(Token::Type::Nor, Parser::parseNorOperator);
+  assert_order(Token::Type::Xor, Parser::parseXorOperator);
+  assert_order(Token::Type::Or, Parser::parseOrOperator);
+  assert_order(Token::Type::Nand, Parser::parseNandOperator);
+  assert_order(Token::Type::And, Parser::parseAndOperator);
+  assert_order(Token::Type::Not, Parser::parseLogicalOperatorNot);
+  assert_order(Token::Type::ComparisonOperator,
+               Parser::parseComparisonOperator);
+  assert_order(Token::Type::NorthEastArrow, Parser::parseNorthEastArrow);
+  assert_order(Token::Type::SouthEastArrow, Parser::parseSouthEastArrow);
+  assert_order(Token::Type::Plus, Parser::parsePlus);
+  assert_order(Token::Type::Minus, Parser::parseMinus);
+  assert_order(Token::Type::Times, Parser::parseTimes);
+  assert_order(Token::Type::Slash, Parser::parseSlash);
+  assert_order(Token::Type::ImplicitTimes, Parser::parseImplicitTimes);
+  assert_order(Token::Type::Percent, Parser::parsePercent);
+  assert_order(Token::Type::Caret, Parser::parseCaret);
+  assert_order(Token::Type::Bang, Parser::parseBang);
+  assert_order(Token::Type::CaretWithParenthesis,
+               Parser::parseCaretWithParenthesis);
+  assert_order(Token::Type::ImplicitAdditionBetweenUnits,
+               Parser::parseImplicitAdditionBetweenUnits);
+  assert_order(Token::Type::LeftBracket, Parser::parseMatrix);
+  assert_order(Token::Type::LeftParenthesis, Parser::parseLeftParenthesis);
+  assert_order(Token::Type::LeftBrace, Parser::parseList);
+  assert_order(Token::Type::LeftSystemParenthesis,
+               Parser::parseLeftSystemParenthesis);
+  assert_order(Token::Type::Empty, Parser::parseEmpty);
+  assert_order(Token::Type::Constant, Parser::parseConstant);
+  assert_order(Token::Type::Number, Parser::parseNumber);
+  assert_order(Token::Type::BinaryNumber, Parser::parseNumber);
+  assert_order(Token::Type::HexadecimalNumber, Parser::parseNumber);
+  assert_order(Token::Type::Unit, Parser::parseUnit);
+  assert_order(Token::Type::ReservedFunction, Parser::parseReservedFunction);
+  assert_order(Token::Type::SpecialIdentifier, Parser::parseSpecialIdentifier);
+  assert_order(Token::Type::CustomIdentifier, Parser::parseCustomIdentifier);
+  assert_order(Token::Type::Undefined, Parser::parseUnexpected);
 
   do {
     popToken();

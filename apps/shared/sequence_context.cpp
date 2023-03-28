@@ -101,13 +101,13 @@ void TemplatedSequenceContext<T>::shiftValuesRight(int sequenceIndex,
                                                    bool intermediateComputation,
                                                    int delta) {
   assert(delta > 0);
-  if (delta > SequenceStore::k_maxNumberOfSequences) {
+  if (delta > SequenceStore::k_maxRecurrenceDepth) {
     resetValuesOfSequence(sequenceIndex, intermediateComputation);
     return;
   }
   T *values = valuesPointer(sequenceIndex, intermediateComputation);
   int stop = delta - 1;
-  assert(0 <= stop && stop < SequenceStore::k_maxNumberOfSequences);
+  assert(0 <= stop && stop < SequenceStore::k_maxRecurrenceDepth);
   for (int depth = SequenceStore::k_maxRecurrenceDepth; depth > stop; depth--) {
     *(values + depth) = *(values + depth - delta);
   }

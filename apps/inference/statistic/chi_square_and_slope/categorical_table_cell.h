@@ -19,8 +19,7 @@ namespace Inference {
 
 class CategoricalTableCell : public Escher::HighlightCell,
                              public Escher::Responder,
-                             public Escher::SelectableTableViewDataSource,
-                             Escher::ScrollViewDelegate {
+                             public Escher::SelectableTableViewDataSource {
  public:
   CategoricalTableCell(
       Escher::Responder *parentResponder,
@@ -31,17 +30,10 @@ class CategoricalTableCell : public Escher::HighlightCell,
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
 
-  // View
-  void drawRect(KDContext *ctx, KDRect rect) const override;
-
   // HighlightCell
   // Avoid reloading the whole table when
   void reloadCell() override {}
   Responder *responder() override { return this; }
-
-  // ScrollViewDelegate
-  void scrollViewDidChangeOffset(
-      ScrollViewDataSource *scrollViewDataSource) override;
 
   Escher::SelectableTableView *selectableTableView() {
     return &m_selectableTableView;

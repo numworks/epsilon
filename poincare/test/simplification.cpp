@@ -1064,6 +1064,8 @@ QUIZ_CASE(poincare_simplification_random) {
                                        "random()+random()");
   assert_parsed_expression_simplify_to("random()-random()",
                                        "-random()+random()");
+  assert_parsed_expression_simplify_to("abs(random()-random())",
+                                       "abs(-random()+random())");
   assert_parsed_expression_simplify_to("1/random()+1/3+1/4+1/random()",
                                        "7/12+1/random()+1/random()");
   assert_parsed_expression_simplify_to("random()×random()",

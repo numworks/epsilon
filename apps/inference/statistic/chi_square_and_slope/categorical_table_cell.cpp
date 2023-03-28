@@ -22,7 +22,6 @@ CategoricalTableCell::CategoricalTableCell(
   // The side margins will be provided by the outer selectableListView
   m_selectableTableView.setLeftMargin(0);
   m_selectableTableView.setRightMargin(0);
-  setScrollViewDelegate(this);
 }
 
 void CategoricalTableCell::didBecomeFirstResponder() {
@@ -40,45 +39,6 @@ bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {
   return false;
 }
 
-void CategoricalTableCell::drawRect(KDContext *ctx, KDRect rect) const {
-  // Draw only part borders between cells (in *)
-  // ┌─────┐*┌─────┐
-  // │cell │*│cell │
-  // └─────┘*└─────┘
-  // ********
-  // ┌─────┐
-  // │cell │
-  // └─────┘
-
-  KDPoint scrollingOffset = m_selectableTableView.contentOffset();
-  KDPoint offset = KDPoint(
-      m_selectableTableView.leftMargin() - scrollingOffset.x(),
-      std::max(0, m_selectableTableView.topMargin() - scrollingOffset.y()));
-  TableViewDataSource *data =
-      const_cast<CategoricalTableCell *>(this)->tableViewDataSource();
-
-  KDCoordinate width = bounds().width();
-  KDCoordinate height = bounds().height();
-  for (int row = 0; row < data->numberOfRows() - 1; row++) {
-    KDRect horizontalBorder = KDRect(
-        0, data->cumulatedHeightBeforeIndex(row) + data->rowHeight(row), width,
-        data->cumulatedHeightBeforeIndex(row + 1) -
-            data->cumulatedHeightBeforeIndex(row) - data->rowHeight(row));
-    ctx->fillRect(horizontalBorder.translatedBy(offset),
-                  m_selectableTableView.backgroundColor());
-  }
-
-  for (int column = 0; column < data->numberOfColumns() - 1; column++) {
-    KDRect verticalBorder = KDRect(
-        data->cumulatedWidthBeforeIndex(column) + data->columnWidth(column), 0,
-        data->cumulatedWidthBeforeIndex(column + 1) -
-            data->cumulatedWidthBeforeIndex(column) - data->columnWidth(column),
-        height - Metric::CellSeparatorThickness);
-    ctx->fillRect(verticalBorder.translatedBy(offset),
-                  m_selectableTableView.backgroundColor());
-  }
-}
-
 void CategoricalTableCell::layoutSubviews(bool force) {
   // We let an empty border as it will be drawn by the next cell (thanks to the
   // cell overlap)
@@ -86,12 +46,6 @@ void CategoricalTableCell::layoutSubviews(bool force) {
                 KDRect(0, 0, bounds().width(),
                        bounds().height() - Metric::CellSeparatorThickness),
                 force);
-}
-
-void CategoricalTableCell::scrollViewDidChangeOffset(
-    ScrollViewDataSource *scrollViewDataSource) {
-  // Force redrawing the borders between table cells
-  HighlightCell::reloadCell();
 }
 
 /* EditableCategoricalTableCell */

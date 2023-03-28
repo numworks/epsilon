@@ -49,8 +49,8 @@ bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {
 }
 
 void CategoricalTableCell::layoutSubviews(bool force) {
-  // We let an empty border as it will be drawn by the next cell (thanks to the
-  // cell overlap)
+  /* We let an empty border as it will be drawn by the next cell (thanks to the
+   * cell overlap) */
   setChildFrame(&m_selectableTableView,
                 KDRect(0, 0, bounds().width(),
                        bounds().height() - Metric::CellSeparatorThickness),

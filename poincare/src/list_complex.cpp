@@ -17,6 +17,13 @@ std::complex<T> ListComplexNode<T>::complexAtIndex(int index) const {
 }
 
 template <typename T>
+static bool isScalarEvaluationType(typename EvaluationNode<T>::Type type) {
+  return type == EvaluationNode<T>::Type::Complex ||
+         type == EvaluationNode<T>::Type::BooleanEvaluation ||
+         type == EvaluationNode<T>::Type::Point;
+}
+
+template <typename T>
 Expression ListComplexNode<T>::complexToExpression(
     Preferences::Preferences::ComplexFormat complexFormat) const {
   if (isUndefined()) {
@@ -26,8 +33,7 @@ Expression ListComplexNode<T>::complexToExpression(
   int i = 0;
   for (EvaluationNode<T> *c : this->children()) {
     Expression childExpression = Undefined::Builder();
-    if (c->type() == EvaluationNode<T>::Type::Complex ||
-        c->type() == EvaluationNode<T>::Type::BooleanEvaluation) {
+    if (isScalarEvaluationType<T>(c->type())) {
       childExpression = c->complexToExpression(complexFormat);
     }
     list.addChildAtIndexInPlace(childExpression, i, i);
@@ -40,8 +46,7 @@ template <typename T>
 void ListComplex<T>::addChildAtIndexInPlace(Evaluation<T> t, int index,
                                             int currentNumberOfChildren) {
   assert(!node()->isUndefined());
-  if (t.type() != EvaluationNode<T>::Type::Complex &&
-      t.type() != EvaluationNode<T>::Type::BooleanEvaluation) {
+  if (!isScalarEvaluationType<T>(t.type())) {
     t = Complex<T>::Undefined();
   }
   Evaluation<T>::addChildAtIndexInPlace(t, index, currentNumberOfChildren);

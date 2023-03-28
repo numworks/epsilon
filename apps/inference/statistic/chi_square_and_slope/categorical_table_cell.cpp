@@ -27,6 +27,8 @@ CategoricalTableCell::CategoricalTableCell(
 void CategoricalTableCell::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectRow(1);
+  } else if (selectedRow() >= tableViewDataSource()->numberOfRows()) {
+    selectRow(tableViewDataSource()->numberOfRows() - 1);
   }
   Escher::Container::activeApp()->setFirstResponder(selectableTableView());
 }
@@ -35,6 +37,13 @@ bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::Left) {
     // Catch left event to avoid popping controller from StackViewController
     return true;
+  }
+  int nRows = tableViewDataSource()->numberOfRows();
+  if (e == Ion::Events::Down && selectedRow() == nRows - 1) {
+    /* When leaving the table from the bottom, deselect the last row  so that
+     * it's not highlighted when the subviews are redrawn later.*/
+    selectRow(nRows);
+    layoutSubviews(true);
   }
   return false;
 }

@@ -31,7 +31,12 @@ int RandomNode::serialize(char *buffer, int bufferSize,
 }
 
 template <typename T>
-Evaluation<T> RandomNode::templateApproximate() const {
+Evaluation<T> RandomNode::templateApproximate(
+    const ApproximationContext &approximationContext) const {
+  if (approximationContext.withinReduce()) {
+    // Return NAN to prevent the reduction from assuming anything at this point
+    return Complex<T>::Undefined();
+  }
   return Complex<T>::Builder(Random::random<T>());
 }
 
@@ -69,8 +74,10 @@ T Random::random() {
   }
 }
 
-template Evaluation<float> RandomNode::templateApproximate<float>() const;
-template Evaluation<double> RandomNode::templateApproximate<double>() const;
+template Evaluation<float> RandomNode::templateApproximate<float>(
+    const ApproximationContext &approximationContext) const;
+template Evaluation<double> RandomNode::templateApproximate<double>(
+    const ApproximationContext &approximationContext) const;
 template float Random::random();
 template double Random::random();
 

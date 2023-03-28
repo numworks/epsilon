@@ -674,7 +674,7 @@ Expression ContinuousFunction::Model::expressionEquation(
          static_cast<List &>(result).isListOfPoints(context))) {
       if (computedFunctionSymbol) {
         *computedFunctionSymbol =
-            ContinuousFunctionProperties::SymbolType::Index;
+            ContinuousFunctionProperties::SymbolType::NoSymbol;
       }
       return Expression::ExpressionWithoutSymbols(result, context);
     }

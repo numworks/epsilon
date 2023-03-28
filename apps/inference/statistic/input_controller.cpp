@@ -20,11 +20,9 @@ InputController::InputController(Escher::StackViewController *parent,
       DynamicCellsDataSource<InputParameterCell,
                              k_maxNumberOfInputParameterCell>(this),
       m_statistic(statistic),
-      m_resultsController(resultsController) {
+      m_resultsController(resultsController),
+      m_significanceCell(&m_selectableListView, handler, this) {
   m_okButton.setMessage(I18n::Message::Next);
-  // Initialize cells
-  m_significanceCell.setParentResponder(&m_selectableListView);
-  m_significanceCell.setDelegates(handler, this);
 }
 
 void InputController::initCell(InputParameterCell, void *cell, int index) {

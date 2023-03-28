@@ -15,13 +15,13 @@ class CellWidget {
   virtual Responder* responder() { return nullptr; }
   virtual void defaultInitialization(Type type) {}
   virtual void setHighlighted(bool highlighted) {}
-  /*This could be replaced by a type like Expressions or Layouts if needed. For
-   * now, only editable text fields have a very specific behaviour. */
+  /* This could be replaced by a type like Expressions or Layouts if needed.
+   * For now, only editable text fields have a very specific behaviour. */
   virtual bool isAnEditableTextField() const { return false; }
-  /* This returns true if this widget should aligned with the label when it is
-   * an accessory. */
+  /* This returns true if this widget should be aligned with the label when it
+   * is an accessory. */
   virtual bool alwaysAlignWithLabelAsAccessory() const { return false; }
-  /* This returns true if this widget prevent the sublabel of being
+  /* This returns true if this widget prevents the sublabel from being
    * right-aligned. */
   virtual bool preventRightAlignedSubLabel(Type type) const { return false; }
   virtual bool canBeActivatedByEvent(Ion::Events::Event event) const {

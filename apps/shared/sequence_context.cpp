@@ -89,12 +89,9 @@ T *TemplatedSequenceContext<T>::valuesPointer(int sequenceIndex,
                                               bool intermediateComputation) {
   assert(0 <= sequenceIndex &&
          sequenceIndex < SequenceStore::k_maxNumberOfSequences);
-  T *values;
-  if (intermediateComputation) {
-    values = reinterpret_cast<T *>(&m_intermediateValues);
-  } else {
-    values = reinterpret_cast<T *>(&m_mainValues);
-  }
+  T *values = intermediateComputation
+                  ? reinterpret_cast<T *>(&m_intermediateValues)
+                  : reinterpret_cast<T *>(&m_mainValues);
   values += sequenceIndex * (SequenceStore::k_maxRecurrenceDepth + 1);
   return values;
 }

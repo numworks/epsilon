@@ -1,5 +1,6 @@
 #include "sequence_context.h"
 
+#include <array>
 #include <cmath>
 
 #include "../shared/poincare_helpers.h"
@@ -138,8 +139,7 @@ Poincare::Context::SymbolAbstractType
 SequenceContext::expressionTypeForIdentifier(const char *identifier,
                                              int length) {
   const char *const *sequenceNames = SequenceStore::k_sequenceNames;
-  int numberOfSequencesNames =
-      sizeof(SequenceStore::k_sequenceNames) / sizeof(char *);
+  int numberOfSequencesNames = std::size(SequenceStore::k_sequenceNames);
   for (int i = 0; i < numberOfSequencesNames; i++) {
     if (strncmp(identifier, sequenceNames[i], length) == 0) {
       return Poincare::Context::SymbolAbstractType::Sequence;

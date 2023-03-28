@@ -10,6 +10,8 @@
 #include <poincare/matrix.h>
 #include <poincare/symbol.h>
 
+#include <array>
+
 #include "continuous_function_store.h"
 #include "sequence_context.h"
 #include "sequence_store.h"
@@ -22,8 +24,7 @@ class GlobalContext final : public Poincare::Context {
       Ion::Storage::expExtension,  Ion::Storage::matExtension,
       Ion::Storage::funcExtension, Ion::Storage::lisExtension,
       Ion::Storage::seqExtension,  Ion::Storage::regExtension};
-  constexpr static int k_numberOfExtensions =
-      sizeof(k_extensions) / sizeof(char *);
+  constexpr static int k_numberOfExtensions = std::size(k_extensions);
 
   // Storage information
   static bool SymbolAbstractNameIsFree(const char *baseName);

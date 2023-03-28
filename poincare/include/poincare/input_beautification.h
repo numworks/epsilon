@@ -18,6 +18,8 @@
 #include <poincare/sum.h>
 #include <poincare_layouts.h>
 
+#include <array>
+
 namespace Poincare {
 
 class InputBeautification {
@@ -140,7 +142,7 @@ class InputBeautification {
   constexpr static const BeautificationRule k_simpleIdentifiersRules[] = {
       k_infRule, k_piRule, k_thetaRule};
   constexpr static size_t k_lenOfSimpleIdentifiersRules =
-      sizeof(k_simpleIdentifiersRules) / sizeof(BeautificationRule);
+      std::size(k_simpleIdentifiersRules);
 
   // simpleIdentifiersRules are included in identifiersRules
   constexpr static const BeautificationRule k_identifiersRules[] = {
@@ -235,7 +237,7 @@ class InputBeautification {
       /* theta */ k_thetaRule};
 
   constexpr static size_t k_lenOfIdentifiersRules =
-      sizeof(k_identifiersRules) / sizeof(BeautificationRule);
+      std::size(k_identifiersRules);
 
   constexpr static BeautificationRule k_sumRule = {
       Sum::s_functionHelper.aliasesList(), 4, [](Layout* parameters) {

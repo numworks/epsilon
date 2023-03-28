@@ -4,6 +4,8 @@
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
+#include <array>
+
 #include "exam_icon.h"
 extern "C" {
 #include <assert.h>
@@ -63,7 +65,7 @@ View* TitleBarView::subviewAtIndex(int index) {
   View* views[] = {&m_titleView,          &m_preferenceView,
                    &m_examModeIconView,   &m_examModeTextView,
                    &m_shiftAlphaLockView, &m_batteryView};
-  assert(0 <= index && index < sizeof(views) / sizeof(View*));
+  assert(0 <= index && index < std::size(views));
   return views[index];
 }
 

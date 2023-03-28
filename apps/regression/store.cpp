@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 
 #include "app.h"
@@ -380,7 +381,7 @@ Model *Store::regressionModel(int index) {
       &m_logarithmicModel, &m_exponentialAebxModel, &m_exponentialAbxModel,
       &m_powerModel,       &m_trigonometricModel,   &m_logisticModel,
       &m_medianModel,      &m_linearApbxModel};
-  static_assert(sizeof(models) / sizeof(Model *) == Model::k_numberOfModels,
+  static_assert(std::size(models) == Model::k_numberOfModels,
                 "Inconsistency between the number of models in the store and "
                 "the real number.");
   return models[index];

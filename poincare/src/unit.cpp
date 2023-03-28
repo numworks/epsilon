@@ -12,6 +12,7 @@
 #include <poincare/unit.h>
 
 #include <algorithm>
+#include <array>
 #include <utility>
 
 namespace Poincare {
@@ -389,8 +390,7 @@ const UnitNode::Prefix* UnitNode::Representative::findBestPrefix(
 
 // UnitNode::___Representative
 int UnitNode::TimeRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_timeRepresentatives) /
-         sizeof(UnitNode::TimeRepresentative);
+  return std::size(Unit::k_timeRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::TimeRepresentative::representativesOfSameDimension() const {
@@ -398,8 +398,7 @@ UnitNode::TimeRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::DistanceRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_distanceRepresentatives) /
-         sizeof(UnitNode::DistanceRepresentative);
+  return std::size(Unit::k_distanceRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::DistanceRepresentative::representativesOfSameDimension() const {
@@ -407,8 +406,7 @@ UnitNode::DistanceRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::AngleRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_angleRepresentatives) /
-         sizeof(UnitNode::AngleRepresentative);
+  return std::size(Unit::k_angleRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::AngleRepresentative::representativesOfSameDimension() const {
@@ -416,8 +414,7 @@ UnitNode::AngleRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::MassRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_massRepresentatives) /
-         sizeof(UnitNode::MassRepresentative);
+  return std::size(Unit::k_massRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::MassRepresentative::representativesOfSameDimension() const {
@@ -425,8 +422,7 @@ UnitNode::MassRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::CurrentRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_currentRepresentatives) /
-         sizeof(UnitNode::CurrentRepresentative);
+  return std::size(Unit::k_currentRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::CurrentRepresentative::representativesOfSameDimension() const {
@@ -434,8 +430,7 @@ UnitNode::CurrentRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::TemperatureRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_temperatureRepresentatives) /
-         sizeof(UnitNode::TemperatureRepresentative);
+  return std::size(Unit::k_temperatureRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::TemperatureRepresentative::representativesOfSameDimension() const {
@@ -443,8 +438,7 @@ UnitNode::TemperatureRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::AmountOfSubstanceRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_amountOfSubstanceRepresentatives) /
-         sizeof(UnitNode::AmountOfSubstanceRepresentative);
+  return std::size(Unit::k_amountOfSubstanceRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::AmountOfSubstanceRepresentative::representativesOfSameDimension()
@@ -453,8 +447,7 @@ UnitNode::AmountOfSubstanceRepresentative::representativesOfSameDimension()
 }
 
 int UnitNode::LuminousIntensityRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_luminousIntensityRepresentatives) /
-         sizeof(UnitNode::LuminousIntensityRepresentative);
+  return std::size(Unit::k_luminousIntensityRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::LuminousIntensityRepresentative::representativesOfSameDimension()
@@ -463,8 +456,7 @@ UnitNode::LuminousIntensityRepresentative::representativesOfSameDimension()
 }
 
 int UnitNode::FrequencyRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_frequencyRepresentatives) /
-         sizeof(UnitNode::FrequencyRepresentative);
+  return std::size(Unit::k_frequencyRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::FrequencyRepresentative::representativesOfSameDimension() const {
@@ -472,8 +464,7 @@ UnitNode::FrequencyRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::ForceRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_forceRepresentatives) /
-         sizeof(UnitNode::ForceRepresentative);
+  return std::size(Unit::k_forceRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::ForceRepresentative::representativesOfSameDimension() const {
@@ -481,8 +472,7 @@ UnitNode::ForceRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::PressureRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_pressureRepresentatives) /
-         sizeof(UnitNode::PressureRepresentative);
+  return std::size(Unit::k_pressureRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::PressureRepresentative::representativesOfSameDimension() const {
@@ -490,8 +480,7 @@ UnitNode::PressureRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::EnergyRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_energyRepresentatives) /
-         sizeof(UnitNode::EnergyRepresentative);
+  return std::size(Unit::k_energyRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::EnergyRepresentative::representativesOfSameDimension() const {
@@ -499,8 +488,7 @@ UnitNode::EnergyRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::PowerRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_powerRepresentatives) /
-         sizeof(UnitNode::PowerRepresentative);
+  return std::size(Unit::k_powerRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::PowerRepresentative::representativesOfSameDimension() const {
@@ -508,8 +496,7 @@ UnitNode::PowerRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::ElectricChargeRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_electricChargeRepresentatives) /
-         sizeof(UnitNode::ElectricChargeRepresentative);
+  return std::size(Unit::k_electricChargeRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::ElectricChargeRepresentative::representativesOfSameDimension() const {
@@ -517,8 +504,7 @@ UnitNode::ElectricChargeRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::ElectricPotentialRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_electricPotentialRepresentatives) /
-         sizeof(UnitNode::ElectricPotentialRepresentative);
+  return std::size(Unit::k_electricPotentialRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::ElectricPotentialRepresentative::representativesOfSameDimension()
@@ -528,8 +514,7 @@ UnitNode::ElectricPotentialRepresentative::representativesOfSameDimension()
 
 int UnitNode::ElectricCapacitanceRepresentative::numberOfRepresentatives()
     const {
-  return sizeof(Unit::k_electricCapacitanceRepresentatives) /
-         sizeof(UnitNode::ElectricCapacitanceRepresentative);
+  return std::size(Unit::k_electricCapacitanceRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::ElectricCapacitanceRepresentative::representativesOfSameDimension()
@@ -539,8 +524,7 @@ UnitNode::ElectricCapacitanceRepresentative::representativesOfSameDimension()
 
 int UnitNode::ElectricResistanceRepresentative::numberOfRepresentatives()
     const {
-  return sizeof(Unit::k_electricResistanceRepresentatives) /
-         sizeof(UnitNode::ElectricResistanceRepresentative);
+  return std::size(Unit::k_electricResistanceRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::ElectricResistanceRepresentative::representativesOfSameDimension()
@@ -550,8 +534,7 @@ UnitNode::ElectricResistanceRepresentative::representativesOfSameDimension()
 
 int UnitNode::ElectricConductanceRepresentative::numberOfRepresentatives()
     const {
-  return sizeof(Unit::k_electricConductanceRepresentatives) /
-         sizeof(UnitNode::ElectricConductanceRepresentative);
+  return std::size(Unit::k_electricConductanceRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::ElectricConductanceRepresentative::representativesOfSameDimension()
@@ -560,8 +543,7 @@ UnitNode::ElectricConductanceRepresentative::representativesOfSameDimension()
 }
 
 int UnitNode::MagneticFluxRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_magneticFluxRepresentatives) /
-         sizeof(UnitNode::MagneticFluxRepresentative);
+  return std::size(Unit::k_magneticFluxRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::MagneticFluxRepresentative::representativesOfSameDimension() const {
@@ -569,8 +551,7 @@ UnitNode::MagneticFluxRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::MagneticFieldRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_magneticFieldRepresentatives) /
-         sizeof(UnitNode::MagneticFieldRepresentative);
+  return std::size(Unit::k_magneticFieldRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::MagneticFieldRepresentative::representativesOfSameDimension() const {
@@ -578,8 +559,7 @@ UnitNode::MagneticFieldRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::InductanceRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_inductanceRepresentatives) /
-         sizeof(UnitNode::InductanceRepresentative);
+  return std::size(Unit::k_inductanceRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::InductanceRepresentative::representativesOfSameDimension() const {
@@ -587,8 +567,7 @@ UnitNode::InductanceRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::CatalyticActivityRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_catalyticActivityRepresentatives) /
-         sizeof(UnitNode::CatalyticActivityRepresentative);
+  return std::size(Unit::k_catalyticActivityRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::CatalyticActivityRepresentative::representativesOfSameDimension()
@@ -597,8 +576,7 @@ UnitNode::CatalyticActivityRepresentative::representativesOfSameDimension()
 }
 
 int UnitNode::SurfaceRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_surfaceRepresentatives) /
-         sizeof(UnitNode::SurfaceRepresentative);
+  return std::size(Unit::k_surfaceRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::SurfaceRepresentative::representativesOfSameDimension() const {
@@ -606,8 +584,7 @@ UnitNode::SurfaceRepresentative::representativesOfSameDimension() const {
 }
 
 int UnitNode::VolumeRepresentative::numberOfRepresentatives() const {
-  return sizeof(Unit::k_volumeRepresentatives) /
-         sizeof(UnitNode::VolumeRepresentative);
+  return std::size(Unit::k_volumeRepresentatives);
 }
 const UnitNode::Representative*
 UnitNode::VolumeRepresentative::representativesOfSameDimension() const {
@@ -682,8 +659,8 @@ int UnitNode::DistanceRepresentative::setAdditionalExpressions(
           representativesOfSameDimension() + Unit::k_mileRepresentativeIndex,
           Prefix::EmptyPrefix()),
   };
-  dest[0] = Unit::BuildSplit(
-      value, splitUnits, sizeof(splitUnits) / sizeof(Unit), reductionContext);
+  dest[0] = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
+                             reductionContext);
   return 1;
 }
 
@@ -759,8 +736,8 @@ int UnitNode::AngleRepresentative::setAdditionalExpressionsWithExactValue(
           representativesOfSameDimension() + Unit::k_degreeRepresentativeIndex,
           Prefix::EmptyPrefix()),
   };
-  Expression split = Unit::BuildSplit(
-      value, splitUnits, sizeof(splitUnits) / sizeof(Unit), reductionContext);
+  Expression split = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
+                                      reductionContext);
   if (!split.isUndefined()) {
     dest[numberOfResults++] = split;
   }
@@ -820,8 +797,8 @@ int UnitNode::MassRepresentative::setAdditionalExpressions(
                         Unit::k_shortTonRepresentativeIndex,
                     Prefix::EmptyPrefix()),
   };
-  dest[0] = Unit::BuildSplit(
-      value, splitUnits, sizeof(splitUnits) / sizeof(Unit), reductionContext);
+  dest[0] = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
+                             reductionContext);
   return 1;
 }
 
@@ -868,7 +845,7 @@ int UnitNode::TemperatureRepresentative::setAdditionalExpressions(
           : celsius,
       kelvin};
   int numberOfExpressionsSet = 0;
-  int numberOfTargets = sizeof(targets) / sizeof(Representative*);
+  int numberOfTargets = std::size(targets);
   for (int i = 0; i < numberOfTargets; i++) {
     if (targets[i] == this) {
       continue;
@@ -1016,8 +993,8 @@ int UnitNode::VolumeRepresentative::setAdditionalExpressions(
           representativesOfSameDimension() + Unit::k_gallonRepresentativeIndex,
           Prefix::EmptyPrefix()),
   };
-  *destImperial = Unit::BuildSplit(
-      value, splitUnits, sizeof(splitUnits) / sizeof(Unit), reductionContext);
+  *destImperial = Unit::BuildSplit(value, splitUnits, std::size(splitUnits),
+                                   reductionContext);
   return 2;
 }
 

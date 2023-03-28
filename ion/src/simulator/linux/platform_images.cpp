@@ -5,6 +5,8 @@
 #include <png.h>
 #include <stdlib.h>
 
+#include <array>
+
 #include "../shared/platform.h"
 
 namespace Ion {
@@ -114,8 +116,7 @@ SDL_Texture *loadImage(SDL_Renderer *renderer, const char *identifier) {
   AssetFormat format = AssetFormat::None;
 
   // Find the asset corresponding to identifier
-  for (size_t i = 0;
-       i < sizeof(resources_addresses) / sizeof(resources_addresses[0]); i++) {
+  for (size_t i = 0; i < std::size(resources_addresses); i++) {
     if (strcmp(identifier, resources_addresses[i].identifier()) == 0) {
       if (strcmp(jpgExtension,
                  identifier + strlen(identifier) - strlen(jpgExtension)) == 0) {

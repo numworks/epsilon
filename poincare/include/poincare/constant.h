@@ -5,6 +5,8 @@
 #include <poincare/expression.h>
 #include <poincare/expression_node.h>
 
+#include <array>
+
 namespace Poincare {
 
 class ConstantNode final : public ExpressionNode {
@@ -92,8 +94,7 @@ class ConstantNode final : public ExpressionNode {
       /* "_hplanck" has the longest name. Modify the constexpr in
        * ConstantNode::createLayout if that's not the case anymore. */
       ConstantInfo{"_hplanck", 3, 6.62607015e-34, "_J*_s"}};
-  constexpr static int k_numberOfConstants =
-      sizeof(k_constants) / sizeof(ConstantInfo);
+  constexpr static int k_numberOfConstants = std::size(k_constants);
 
   const ConstantInfo constantInfo() const {
     assert(m_constantInfo);

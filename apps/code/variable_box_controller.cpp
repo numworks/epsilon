@@ -582,8 +582,9 @@ void VariableBoxController::loadBuiltinNodes(const char *textToAutocomplete,
       {"with", ScriptNode::Type::WithoutParentheses},
       {"yield", ScriptNode::Type::WithoutParentheses},
       {qstr_str(MP_QSTR_zip), ScriptNode::Type::WithParentheses}};
-  assert(sizeof(builtinNames) / sizeof(builtinNames[0]) ==
-         k_totalBuiltinNodesCount);
+  static_assert(sizeof(builtinNames) / sizeof(builtinNames[0]) ==
+                    k_totalBuiltinNodesCount,
+                "Wrong numner of builtin names.");
   for (size_t i = 0; i < k_totalBuiltinNodesCount; i++) {
     if (addNodeIfMatches(textToAutocomplete, textToAutocompleteLength,
                          builtinNames[i].type, k_builtinsOrigin,

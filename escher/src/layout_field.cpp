@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <array>
 
 using namespace Poincare;
 
@@ -268,20 +269,19 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
 
   Poincare::LayoutCursor *cursor = m_contentView.cursor();
   // Handle special cases
-  Ion::Events::Event specialEvents[] = {
+  constexpr Ion::Events::Event specialEvents[] = {
       Ion::Events::Division, Ion::Events::Exp,    Ion::Events::Power,
       Ion::Events::Sqrt,     Ion::Events::Square, Ion::Events::EE};
-  LayoutInsertionMethod handleSpecialEvents[] = {
+  constexpr LayoutInsertionMethod handleSpecialEvents[] = {
       &Poincare::LayoutCursor::addFractionLayoutAndCollapseSiblings,
       &Poincare::LayoutCursor::addEmptyExponentialLayout,
       &Poincare::LayoutCursor::addEmptyPowerLayout,
       &Poincare::LayoutCursor::addEmptySquareRootLayout,
       &Poincare::LayoutCursor::addEmptySquarePowerLayout,
       &Poincare::LayoutCursor::addEmptyTenPowerLayout};
-  int numberOfSpecialEvents =
-      sizeof(specialEvents) / sizeof(Ion::Events::Event);
-  assert(numberOfSpecialEvents ==
-         sizeof(handleSpecialEvents) / sizeof(LayoutInsertionMethod));
+  constexpr int numberOfSpecialEvents = std::size(specialEvents);
+  static_assert(numberOfSpecialEvents == std::size(handleSpecialEvents),
+                "Wrong number of layout insertion methods");
   if (!linearMode()) {
     char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
     for (int i = 0; i < numberOfSpecialEvents; i++) {

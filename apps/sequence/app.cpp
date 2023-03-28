@@ -2,6 +2,8 @@
 
 #include <apps/global_preferences.h>
 
+#include <array>
+
 #include "../apps_container.h"
 #include "../shared/global_context.h"
 #include "sequence_icon.h"
@@ -28,7 +30,7 @@ App::Snapshot::Snapshot()
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
       ->registerArrayOfReservedNames(
           Shared::SequenceStore::k_sequenceNames, Ion::Storage::seqExtension, 0,
-          sizeof(Shared::SequenceStore::k_sequenceNames) / sizeof(char *));
+          std::size(Shared::SequenceStore::k_sequenceNames));
 }
 
 App *App::Snapshot::unpack(Container *container) {

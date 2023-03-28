@@ -8,6 +8,8 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 
+#include <array>
+
 namespace Graph {
 
 class ListController;
@@ -68,8 +70,7 @@ class FunctionModelsParameterController
       sizeof(layoutDefault) == sizeof(layoutVariant1) &&
           sizeof(layoutDefault) == sizeof(layoutVariant2),
       "Template layouts are assumed to be the same length in all countries");
-  constexpr static int k_numberOfExpressionCells =
-      static_cast<int>(sizeof(layoutDefault) / sizeof(Model));
+  constexpr static int k_numberOfExpressionCells = std::size(layoutDefault);
 
   constexpr static const char* k_models[static_cast<int>(
       Model::NumberOfModels)] = {"",

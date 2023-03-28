@@ -3,6 +3,8 @@
 
 #include <poincare_expressions.h>
 
+#include <array>
+
 #include "token.h"
 
 namespace Poincare {
@@ -54,7 +56,7 @@ class ParsingHelper {
       {Undefined::Name(),
        [] { return static_cast<Expression>(Undefined::Builder()); }}};
   constexpr static int k_numberOfSpecialIdentifiers =
-      sizeof(s_specialIdentifiers) / sizeof(SpecialIdentifier);
+      std::size(s_specialIdentifiers);
 
   static int SpecialIdentifierIndexForName(const char *name, size_t nameLength);
 
@@ -166,8 +168,7 @@ class ParsingHelper {
 
   constexpr static const Expression::FunctionHelper *const
       *s_reservedFunctionsUpperBound =
-          s_reservedFunctions +
-          (sizeof(s_reservedFunctions) / sizeof(Expression::FunctionHelper *));
+          s_reservedFunctions + std::size(s_reservedFunctions);
 
   // The array of functions that can be aliases to f^-1
   struct FunctionMapping {
@@ -179,8 +180,7 @@ class ParsingHelper {
       {&Sine::s_functionHelper, &ArcSine::s_functionHelper},
       {&Tangent::s_functionHelper, &ArcTangent::s_functionHelper},
   };
-  constexpr static int k_numberOfInverses =
-      sizeof(s_inverses) / sizeof(FunctionMapping);
+  constexpr static int k_numberOfInverses = std::size(s_inverses);
   constexpr static FunctionMapping const *s_inverseFunctionsUpperBound =
       s_inverses + (k_numberOfInverses);
 };

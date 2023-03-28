@@ -5,6 +5,8 @@
 #include <olectl.h>
 #include <windows.h>
 
+#include <array>
+
 #include "../shared/platform.h"
 
 /* Loading images using GDI+
@@ -97,9 +99,7 @@ SDL_Texture *loadImage(SDL_Renderer *renderer, const char *identifier) {
 
   LPSTREAM stream;
   int resourceID = -1;
-  for (size_t i = 0;
-       i < sizeof(resourcesIdentifiers) / sizeof(resourcesIdentifiers[0]);
-       i++) {
+  for (size_t i = 0; i < std::size(resourcesIdentifiers); i++) {
     if (strcmp(identifier, resourcesIdentifiers[i].identifier()) == 0) {
       resourceID = resourcesIdentifiers[i].id();
     }

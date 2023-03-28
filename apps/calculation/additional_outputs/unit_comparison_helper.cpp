@@ -6,6 +6,7 @@
 #include <poincare/print_float.h>
 #include <poincare/unit.h>
 
+#include <array>
 #include <cmath>
 
 #include "../app.h"
@@ -473,28 +474,23 @@ constexpr static const struct {
   size_t tableLength;
 } k_referenceTables[] = {
     {ReferenceUnit({"_m", "_m"}), k_lengthReferences,
-     sizeof(k_lengthReferences) / sizeof(ReferenceValue)},
+     std::size(k_lengthReferences)},
     {ReferenceUnit({"_s", "_s"}), k_timeReferences,
-     sizeof(k_timeReferences) / sizeof(ReferenceValue)},
+     std::size(k_timeReferences)},
     {ReferenceUnit({"_kg", "_kg"}), k_massReferences,
-     sizeof(k_massReferences) / sizeof(ReferenceValue)},
+     std::size(k_massReferences)},
     {ReferenceUnit({"_m^2", "_m^2"}), k_areaReferences,
-     sizeof(k_areaReferences) / sizeof(ReferenceValue)},
+     std::size(k_areaReferences)},
     {ReferenceUnit({"_m^3", "_m^3"}), k_volumeReferences,
-     sizeof(k_volumeReferences) / sizeof(ReferenceValue)},
+     std::size(k_volumeReferences)},
     {ReferenceUnit({"_kg×_m^2×_s^\u0012-3\u0013", "_W"}), k_powerReferences,
-     sizeof(k_powerReferences) / sizeof(ReferenceValue)},
+     std::size(k_powerReferences)},
     {ReferenceUnit({"_m×_s^\u0012-1\u0013", "_m×_s^\u0012-1\u0013"}),
-     k_velocityReferences,
-     sizeof(k_velocityReferences) / sizeof(ReferenceValue)},
+     k_velocityReferences, std::size(k_velocityReferences)},
     {ReferenceUnit({"_kg×_m^\u0012-1\u0013×_s^\u0012-2\u0013", "_Pa"}),
-     k_pressureReferences,
-     sizeof(k_pressureReferences) / sizeof(ReferenceValue)}};
+     k_pressureReferences, std::size(k_pressureReferences)}};
 
-static_assert(sizeof(k_referenceTables) /
-                      (sizeof(ReferenceValue *) + sizeof(ReferenceUnit) +
-                       sizeof(size_t)) ==
-                  k_numberOfReferenceTables,
+static_assert(std::size(k_referenceTables) == k_numberOfReferenceTables,
               "Wrong number of reference tables or missing reference table");
 
 int FindUpperAndLowerReferenceValues(

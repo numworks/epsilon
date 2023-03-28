@@ -3,6 +3,7 @@
 #include <kandinsky/color.h>
 #include <quiz.h>
 
+#include <array>
 #include <cmath>
 
 QUIZ_CASE(kandinsky_color_rgb) {
@@ -79,8 +80,7 @@ QUIZ_CASE(kandinsky_color_hsv) {
       KDColor::HSVColor({28.0, 0.878, 254.0}),   // Orange
   };
   constexpr static int nRows = Escher::Palette::numberOfDataColors();
-  static_assert(sizeof(dataColorsConversion) / sizeof(KDColor::HSVColor) ==
-                nRows);
+  static_assert(std::size(dataColorsConversion) == nRows);
   for (int i = 0; i < nRows; i++) {
     KDColor conversionColor = KDColor::ConvertHSVToRGB(dataColorsConversion[i]);
     KDColor dataColor = Escher::Palette::DataColor[i];

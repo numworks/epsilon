@@ -4,6 +4,8 @@
 #include <escher/metric.h>
 #include <poincare/print.h>
 
+#include <array>
+
 #include "../../shared/poincare_helpers.h"
 #include "../app.h"
 
@@ -36,7 +38,7 @@ HighlightCell *FunctionParameterController::cell(int index) {
   HighlightCell *const cells[] = {&m_detailsCell,    &m_colorCell,
                                   &m_derivativeCell, &m_functionDomainCell,
                                   &m_enableCell,     &m_deleteCell};
-  static_assert(sizeof(cells) / sizeof(HighlightCell *) == k_numberOfRows);
+  static_assert(std::size(cells) == k_numberOfRows);
   return cells[index];
 }
 

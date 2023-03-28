@@ -4,6 +4,8 @@
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 
+#include <array>
+
 #include "stat_icon.h"
 
 using namespace Shared;
@@ -21,14 +23,13 @@ const Image *App::Descriptor::icon() const { return ImageStore::StatIcon; }
 
 App::Snapshot::Snapshot() : m_storeVersion(0) {
   // Register V1, V2, V3, N1, N2, N3 as reserved names to the sharedStorage.
-  static_assert(
-      sizeof(DoublePairStore::k_statisticsColumNames) / sizeof(char *) == 2,
-      "Number of reserved lists in statistics changed.");
+  static_assert(std::size(DoublePairStore::k_statisticsColumNames) == 2,
+                "Number of reserved lists in statistics changed.");
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
       ->registerArrayOfReservedNames(
           DoublePairStore::k_statisticsColumNames, Ion::Storage::lisExtension,
           Shared::DoublePairStore::k_numberOfSeries,
-          sizeof(DoublePairStore::k_statisticsColumNames) / sizeof(char *));
+          std::size(DoublePairStore::k_statisticsColumNames));
 }
 
 App *App::Snapshot::unpack(Container *container) {

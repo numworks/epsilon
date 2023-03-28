@@ -1,6 +1,8 @@
 #include <poincare/xnt_helpers.h>
 #include <poincare_expressions.h>
 
+#include <array>
+
 namespace Poincare {
 
 static bool Contains(UnicodeDecoder& string, UnicodeDecoder& pattern) {
@@ -60,8 +62,7 @@ bool FindXNTSymbol(UnicodeDecoder& functionDecoder, bool* defaultXNTHasChanged,
         functionDecoder.nextCodePoint();
         location = functionDecoder.position();
         // Identify one of the functions
-        for (size_t i = 0; i < sizeof(sFunctions) / sizeof(sFunctions[0]);
-             i++) {
+        for (size_t i = 0; i < std::size(sFunctions); i++) {
           const char* name = sFunctions[i].aliasesList.mainAlias();
           size_t length = UTF8Helper::StringCodePointLength(name);
           if (location >= textStart + length) {

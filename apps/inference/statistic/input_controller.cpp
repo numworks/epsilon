@@ -25,8 +25,6 @@ InputController::InputController(Escher::StackViewController *parent,
   // Initialize cells
   m_significanceCell.setParentResponder(&m_selectableListView);
   m_significanceCell.setDelegates(handler, this);
-  m_significanceCell.label()->setMessage(I18n::Message::Alpha);
-  m_significanceCell.subLabel()->setMessage(I18n::Message::SignificanceLevel);
 }
 
 void InputController::initCell(InputParameterCell, void *cell, int index) {

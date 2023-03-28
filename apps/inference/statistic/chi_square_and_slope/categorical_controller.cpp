@@ -160,10 +160,7 @@ InputCategoricalController::InputCategoricalController(
               &InputCategoricalController::ButtonAction, this)),
       m_statistic(statistic),
       m_significanceCell(&m_selectableListView, inputEventHandlerDelegate,
-                         this) {
-  m_significanceCell.label()->setMessage(I18n::Message::GreekAlpha);
-  m_significanceCell.subLabel()->setMessage(I18n::Message::SignificanceLevel);
-}
+                         this) {}
 
 bool InputCategoricalController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {

@@ -199,12 +199,15 @@ void Store::updateCoefficients(int series, Poincare::Context *globalContext) {
     m_recomputeCoefficients[series] = false;
     storeRegressionFunction(
         series, seriesModel->expression(m_regressionCoefficients[series]));
-    /* m_determinationCoefficient must be updated after m_recomputeCoefficients
-     * updates to avoid infinite recursive calls as
-     * computeDeterminationCoefficient calls yValueForXValue which calls
-     * coefficientsForSeries which calls updateCoefficients */
+    /* m_determinationCoefficient and m_residualStandardDeviation must be
+     * updated after m_recomputeCoefficients updates to avoid infinite recursive
+     * calls as computeDeterminationCoefficient and residualStandardDeviation
+     * call yValueForXValue which calls coefficientsForSeries which calls
+     * updateCoefficients */
     m_determinationCoefficient[series] =
         computeDeterminationCoefficient(series, globalContext);
+    m_residualStandardDeviation[series] =
+        computeResidualStandardDeviation(series, globalContext);
   }
 }
 
@@ -232,6 +235,12 @@ double Store::determinationCoefficientForSeries(
    * It will be updated if the regression has been updated */
   updateCoefficients(series, globalContext);
   return m_determinationCoefficient[series];
+}
+
+double Store::residualStandardDeviation(int series,
+                                        Poincare::Context *globalContext) {
+  updateCoefficients(series, globalContext);
+  return m_residualStandardDeviation[series];
 }
 
 void Store::resetMemoization() {
@@ -276,22 +285,6 @@ double Store::residualAtIndexForSeries(int series, int index,
                                        Poincare::Context *globalContext) {
   double x = get(series, 0, index);
   return get(series, 1, index) - yValueForXValue(series, x, globalContext);
-}
-
-double Store::residualStandardDeviation(int series,
-                                        Poincare::Context *globalContext) {
-  int nCoeff =
-      regressionModel(m_regressionTypes[series])->numberOfCoefficients();
-  int n = numberOfPairsOfSeries(series);
-  if (n <= nCoeff) {
-    return NAN;
-  }
-  double sum = 0.;
-  for (int i = 0; i < n; i++) {
-    double res = residualAtIndexForSeries(series, i, globalContext);
-    sum += res * res;
-  }
-  return std::sqrt(sum) / (n - nCoeff);
 }
 
 bool Store::seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const {
@@ -388,6 +381,22 @@ double Store::computeDeterminationCoefficient(
   // assert(r2 >= 0 || seriesRegressionType(series) ==
   // Model::Type::Proportional);
   return r2;
+}
+
+double Store::computeResidualStandardDeviation(
+    int series, Poincare::Context *globalContext) {
+  int nCoeff =
+      regressionModel(m_regressionTypes[series])->numberOfCoefficients();
+  int n = numberOfPairsOfSeries(series);
+  if (n <= nCoeff) {
+    return NAN;
+  }
+  double sum = 0.;
+  for (int i = 0; i < n; i++) {
+    double res = residualAtIndexForSeries(series, i, globalContext);
+    sum += res * res;
+  }
+  return std::sqrt(sum) / (n - nCoeff);
 }
 
 Model *Store::regressionModel(int index) {

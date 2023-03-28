@@ -76,8 +76,8 @@ class CalculationController : public Shared::DoublePairTableController {
    * SampleStandardDeviationS */
   constexpr static int k_numberOfDoubleBufferCalculations =
       static_cast<int>(Calculation::SampleStandardDeviationS) + 1;
-  // NumberOfDots, Covariance, SumOfProducts, ResidualStandardDeviation
-  constexpr static int k_numberOfMemoizedSingleBufferCalculations = 4;
+  // NumberOfDots, Covariance, SumOfProducts
+  constexpr static int k_numberOfMemoizedSingleBufferCalculations = 3;
   // Displayable cells
   constexpr static int k_numberOfDoubleCalculationCells =
       Store::k_numberOfSeries * k_numberOfDoubleBufferCalculations;

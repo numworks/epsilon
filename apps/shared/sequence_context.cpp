@@ -39,7 +39,7 @@ void TemplatedSequenceContext<T>::resetRanksAndValuesOfSequence(
 
 template <typename T>
 void TemplatedSequenceContext<T>::resetDataOfCurrentComputation() {
-  m_isComputingMainResult = false;
+  m_isInsideComputation = false;
   for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
     m_smallestRankBeingComputed[i] = -1;
   }
@@ -134,8 +134,8 @@ void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
     return;
   }
 
-  bool intermediateComputation = m_isComputingMainResult;
-  m_isComputingMainResult = true;
+  bool intermediateComputation = m_isInsideComputation;
+  m_isInsideComputation = true;
 
   int *currentRank = rankPointer(sequenceIndex, intermediateComputation);
   if (*currentRank > rank) {

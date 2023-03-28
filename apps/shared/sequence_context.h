@@ -52,7 +52,7 @@ class TemplatedSequenceContext : public Poincare::ContextWithParent {
   T m_intermediateValues[SequenceStore::k_maxNumberOfSequences]
                         [SequenceStore::k_maxRecurrenceDepth + 1];
 
-  bool m_isComputingMainResult;
+  bool m_isInsideComputation;
   int m_smallestRankBeingComputed[SequenceStore::k_maxNumberOfSequences];
 };
 

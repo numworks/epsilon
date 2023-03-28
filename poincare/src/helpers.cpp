@@ -4,6 +4,8 @@
 
 #include <cmath>
 
+#include "poincare/point.h"
+
 namespace Poincare {
 
 size_t Helpers::AlignedSize(size_t realSize, size_t alignment) {
@@ -131,12 +133,28 @@ bool Helpers::ListEvaluationComparisonAtIndex(int i, int j, void *context,
   ApproximationContext *approximationContext =
       reinterpret_cast<ApproximationContext *>(c[1]);
   bool *nanIsGreatest = reinterpret_cast<bool *>(c[2]);
-  float xI = list->childAtIndex(i)
-                 ->approximate(static_cast<float>(0), *approximationContext)
-                 .toScalar();
-  float xJ = list->childAtIndex(j)
-                 ->approximate(static_cast<float>(0), *approximationContext)
-                 .toScalar();
+
+  ExpressionNode *eI = list->childAtIndex(i);
+  ExpressionNode *eJ = list->childAtIndex(j);
+  if (eI->type() == ExpressionNode::Type::Point &&
+      eJ->type() == ExpressionNode::Type::Point) {
+    Point pI(static_cast<PointNode *>(eI));
+    Point pJ(static_cast<PointNode *>(eJ));
+    return pI
+        .approximate2D<float>(approximationContext->context(),
+                              approximationContext->complexFormat(),
+                              approximationContext->angleUnit(), true)
+        .isGreaterThan(
+            pJ.approximate2D<float>(approximationContext->context(),
+                                    approximationContext->complexFormat(),
+                                    approximationContext->angleUnit(), true),
+            *nanIsGreatest);
+  }
+
+  float xI =
+      eI->approximate(static_cast<float>(0), *approximationContext).toScalar();
+  float xJ =
+      eJ->approximate(static_cast<float>(0), *approximationContext).toScalar();
   return FloatIsGreater(xI, xJ, *nanIsGreatest);
 }
 

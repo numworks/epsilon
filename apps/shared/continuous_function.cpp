@@ -7,6 +7,7 @@
 #include <poincare/function.h>
 #include <poincare/helpers.h>
 #include <poincare/integral.h>
+#include <poincare/list_sort.h>
 #include <poincare/matrix.h>
 #include <poincare/polynomial.h>
 #include <poincare/print.h>
@@ -483,12 +484,19 @@ Expression ContinuousFunction::Model::expressionReduced(
     }
     Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(
         complexFormat(record, context));
-    /* Polar, inversePolar and cartesian equations are unnamed. Here
-     * only cartesian equations are processed. */
-    if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
-        !thisProperties.isScatterPlot() &&
-        (record->fullName() == nullptr ||
-         record->fullName()[0] == k_unnamedRecordFirstChar)) {
+    if (thisProperties.isScatterPlot()) {
+      /* Scatter plots do not depend on any variable, so they can be
+       * approximated in advance.
+       * In addition, they are sorted to be travelled from left to right (i.e.
+       * in order of ascending x). */
+      m_expression = PoincareHelpers::Approximate<double>(
+          ListSort::Builder(m_expression), context);
+    } else if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
+               !thisProperties.isScatterPlot() &&
+               (record->fullName() == nullptr ||
+                record->fullName()[0] == k_unnamedRecordFirstChar)) {
+      /* Polar, inversePolar and cartesian equations are unnamed. Here
+       * only cartesian equations are processed. */
       /* Function isn't named, m_expression currently is an expression in y or x
        * such as y = x. We extract the solution by solving in y or x. */
       int yDegree = m_expression.polynomialDegree(
@@ -558,13 +566,13 @@ Expression ContinuousFunction::Model::expressionReduced(
        * sometimes way simpler than the one from SystemForAnalysis.
        * For example (x+9)^6 is fully developped in SystemForAnalysis,
        * which results in approximation inaccuracy.
-       * On the other hand, the expression (x+1)^2-x^2-2x-1 should be developped
-       * so that we understand that it's equal to zero, and is better handled
-       * by SystemForAnalysis.
-       * To solve this problem, we try to simplify both ways and compare the
-       * number of nodes of each expression. We take the one that has the less
-       * node. This is not ideal because an expression with less node does not
-       * always mean a simpler expression, but it's a good compromise for now.
+       * On the other hand, the expression (x+1)^2-x^2-2x-1 should be
+       * developped so that we understand that it's equal to zero, and is
+       * better handled by SystemForAnalysis. To solve this problem, we try to
+       * simplify both ways and compare the number of nodes of each
+       * expression. We take the one that has the less node. This is not ideal
+       * because an expression with less node does not always mean a simpler
+       * expression, but it's a good compromise for now.
        */
       Expression resultForApproximation = expressionEquation(record, context);
       if (!resultForApproximation.isUninitialized()) {

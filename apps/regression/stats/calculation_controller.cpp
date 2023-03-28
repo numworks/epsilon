@@ -146,16 +146,16 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   // Coordinate and series title
   if (j == 0 && i > 1) {
     ColumnTitleCell *myCell = static_cast<ColumnTitleCell *>(cell);
-    size_t seriesNumber =
+    size_t series =
         m_store->seriesIndexFromActiveSeriesIndex(i - k_numberOfHeaderColumns);
-    assert(seriesNumber < DoublePairStore::k_numberOfSeries);
+    assert(series < DoublePairStore::k_numberOfSeries);
     char buffer[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
-    m_store->fillColumnName(seriesNumber, 0, buffer);
+    m_store->fillColumnName(series, 0, buffer);
     myCell->setFirstText(buffer);
-    m_store->fillColumnName(seriesNumber, 1, buffer);
+    m_store->fillColumnName(series, 1, buffer);
     myCell->setSecondText(buffer);
-    assert(seriesNumber < Palette::numberOfDataColors());
-    myCell->setColor(Palette::DataColor[seriesNumber]);
+    assert(series < Palette::numberOfDataColors());
+    myCell->setColor(Palette::DataColor[series]);
     return;
   }
 
@@ -177,17 +177,16 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     return;
   }
 
-  size_t seriesNumber =
+  size_t series =
       m_store->seriesIndexFromActiveSeriesIndex(i - k_numberOfHeaderColumns);
-  assert(seriesNumber < DoublePairStore::k_numberOfSeries);
+  assert(series < DoublePairStore::k_numberOfSeries);
 
   // Regression cell
   if (c == Calculation::Regression) {
-    Model *model = m_store->modelForSeries(seriesNumber);
-    I18n::Message message =
-        shouldSeriesDisplay(seriesNumber, &DisplayRegression)
-            ? model->formulaMessage()
-            : I18n::Message::Dash;
+    Model *model = m_store->modelForSeries(series);
+    I18n::Message message = shouldSeriesDisplay(series, &DisplayRegression)
+                                ? model->formulaMessage()
+                                : I18n::Message::Dash;
     static_cast<EvenOddBufferTextCell *>(cell)->setText(
         I18n::translate(message));
     static_cast<EvenOddBufferTextCell *>(cell)->setTextColor(KDColorBlack);
@@ -215,21 +214,21 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
             &Store::sampleStandardDeviationOfColumn,
         };
     double *calculation1 =
-        m_memoizedDoubleCalculationCells[seriesNumber][0] + calculationIndex;
+        m_memoizedDoubleCalculationCells[series][0] + calculationIndex;
     double *calculation2 =
-        m_memoizedDoubleCalculationCells[seriesNumber][1] + calculationIndex;
+        m_memoizedDoubleCalculationCells[series][1] + calculationIndex;
     if (std::isnan(*calculation1) || std::isnan(*calculation2)) {
-      *calculation1 = (m_store->*calculationMethods[calculationIndex])(
-          seriesNumber, 0, false);
-      *calculation2 = (m_store->*calculationMethods[calculationIndex])(
-          seriesNumber, 1, false);
+      *calculation1 =
+          (m_store->*calculationMethods[calculationIndex])(series, 0, false);
+      *calculation2 =
+          (m_store->*calculationMethods[calculationIndex])(series, 1, false);
     }
     assert(Poincare::Helpers::EqualOrBothNan(
                *calculation1, (m_store->*calculationMethods[calculationIndex])(
-                                  seriesNumber, 0, false)) &&
+                                  series, 0, false)) &&
            Poincare::Helpers::EqualOrBothNan(
                *calculation2, (m_store->*calculationMethods[calculationIndex])(
-                                  seriesNumber, 1, false)));
+                                  series, 1, false)));
     EvenOddDoubleBufferTextCell *myCell =
         static_cast<EvenOddDoubleBufferTextCell *>(cell);
     PoincareHelpers::ConvertFloatToText<double>(
@@ -267,24 +266,23 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
             &Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance,
             &Store::columnProductSum};
     double *calculation =
-        m_memoizedSimpleCalculationCells[seriesNumber] + calculationIndex;
+        m_memoizedSimpleCalculationCells[series] + calculationIndex;
     if (std::isnan(*calculation)) {
-      *calculation =
-          (m_store->*calculationMethods[calculationIndex])(seriesNumber);
+      *calculation = (m_store->*calculationMethods[calculationIndex])(series);
     }
     assert((c == Calculation::NumberOfDots &&
             Poincare::Helpers::EqualOrBothNan(
                 *calculation,
-                m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber))) ||
+                m_store->doubleCastedNumberOfPairsOfSeries(series))) ||
            (c == Calculation::Covariance &&
-            Poincare::Helpers::EqualOrBothNan(
-                *calculation, m_store->covariance(seriesNumber))) ||
+            Poincare::Helpers::EqualOrBothNan(*calculation,
+                                              m_store->covariance(series))) ||
            (c == Calculation::SumOfProducts &&
             Poincare::Helpers::EqualOrBothNan(
-                *calculation, m_store->columnProductSum(seriesNumber))));
+                *calculation, m_store->columnProductSum(series))));
     result = *calculation;
   } else if (c >= Calculation::CoefficientM && c <= Calculation::CoefficientE) {
-    if (!m_store->coefficientsAreDefined(seriesNumber, globContext)) {
+    if (!m_store->coefficientsAreDefined(series, globContext)) {
       // Put dashes if regression is not defined
       bufferCell->setText(I18n::translate(I18n::Message::Dash));
       return;
@@ -292,10 +290,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     int coefficientIndex =
         static_cast<int>(c) - static_cast<int>(Calculation::CoefficientA);
     int numberOfCoefficients =
-        m_store->modelForSeries(seriesNumber)->numberOfCoefficients();
+        m_store->modelForSeries(series)->numberOfCoefficients();
     if (shouldDisplayMCoefficient() &&
-        m_store->seriesRegressionType(seriesNumber) ==
-            Model::Type::LinearAxpb &&
+        m_store->seriesRegressionType(series) == Model::Type::LinearAxpb &&
         coefficientIndex <= 0) {
       // In that case only, M is coefficientIndex 0 and A is coefficientIndex -1
       coefficientIndex = -coefficientIndex - 1;
@@ -304,11 +301,11 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
       bufferCell->setText(I18n::translate(I18n::Message::Dash));
       return;
     }
-    result = m_store->coefficientsForSeries(seriesNumber,
-                                            globContext)[coefficientIndex];
+    result =
+        m_store->coefficientsForSeries(series, globContext)[coefficientIndex];
   } else if (c == Calculation::CorrelationCoeff) {
     // This could be memoized but don't seem to slow the table down for now.
-    result = m_store->correlationCoefficient(seriesNumber);
+    result = m_store->correlationCoefficient(series);
   } else {
     // These could be memoized but don't seem to slow the table down for now.
     assert(c == Calculation::ResidualStandardDeviation ||
@@ -316,24 +313,22 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     bool isR2 = (c == Calculation::DeterminationCoeff);
     DisplayCondition condition =
         isR2 ? DisplayR2 : DisplayResidualStandardDeviation;
-    if (!shouldSeriesDisplay(seriesNumber, condition) ||
-        !m_store->coefficientsAreDefined(seriesNumber, globContext)) {
+    if (!shouldSeriesDisplay(series, condition) ||
+        !m_store->coefficientsAreDefined(series, globContext)) {
       bufferCell->setText(I18n::translate(I18n::Message::Dash));
       return;
     }
     if (isR2) {
-      result =
-          m_store->determinationCoefficientForSeries(seriesNumber, globContext);
+      result = m_store->determinationCoefficientForSeries(series, globContext);
     } else {
-      double *calculation = m_memoizedSimpleCalculationCells[seriesNumber] +
+      double *calculation = m_memoizedSimpleCalculationCells[series] +
                             k_numberOfMemoizedSingleBufferCalculations - 1;
       if (std::isnan(*calculation)) {
-        *calculation =
-            m_store->residualStandardDeviation(seriesNumber, globContext);
+        *calculation = m_store->residualStandardDeviation(series, globContext);
       }
       assert(Poincare::Helpers::EqualOrBothNan(
           *calculation,
-          m_store->residualStandardDeviation(seriesNumber, globContext)));
+          m_store->residualStandardDeviation(series, globContext)));
     }
   }
 

@@ -845,7 +845,7 @@ int UnitNode::TemperatureRepresentative::setAdditionalExpressions(
           : celsius,
       kelvin};
   int numberOfExpressionsSet = 0;
-  int numberOfTargets = std::size(targets);
+  constexpr int numberOfTargets = std::size(targets);
   for (int i = 0; i < numberOfTargets; i++) {
     if (targets[i] == this) {
       continue;

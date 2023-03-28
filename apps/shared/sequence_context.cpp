@@ -138,10 +138,10 @@ void SequenceContext::tidyDownstreamPoolFrom(char *treePoolCursor) {
 Poincare::Context::SymbolAbstractType
 SequenceContext::expressionTypeForIdentifier(const char *identifier,
                                              int length) {
-  const char *const *sequenceNames = SequenceStore::k_sequenceNames;
-  int numberOfSequencesNames = std::size(SequenceStore::k_sequenceNames);
+  constexpr int numberOfSequencesNames =
+      std::size(SequenceStore::k_sequenceNames);
   for (int i = 0; i < numberOfSequencesNames; i++) {
-    if (strncmp(identifier, sequenceNames[i], length) == 0) {
+    if (strncmp(identifier, SequenceStore::k_sequenceNames[i], length) == 0) {
       return Poincare::Context::SymbolAbstractType::Sequence;
     }
   }

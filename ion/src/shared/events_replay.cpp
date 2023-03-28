@@ -15,7 +15,7 @@ const Event sequence[] = {Right, Right, Right, OK, Down, Down, Down, Down,
 
 Event Ion::Events::getEvent(int* timeout) {
   static int i = 0;
-  int sequenceLength = std::size(sequence);
+  constexpr int sequenceLength = std::size(sequence);
   if (i == sequenceLength) {
     i = sequenceLength - loopLength;
   }

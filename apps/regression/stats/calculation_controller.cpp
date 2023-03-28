@@ -122,10 +122,9 @@ bool CalculationController::canStoreContentOfCellAtLocation(
 }
 
 int CalculationController::numberOfRows() const {
-  /* Rows for : title + Mean ... Variance + Number of points + Covariance + ∑xy
-   * + r + (Regression) + Coefficients + (R2) */
-  return 1 + k_numberOfDoubleBufferCalculations +
-         k_numberOfSingleBufferCalculations + 1 +
+  /* Rows for : title + Mean ... CorrelationCoeff + (Regression) + Coefficients
+   * + (Residual stddev) + (R2) */
+  return 1 + static_cast<int>(Calculation::CorrelationCoeff) + 1 +
          hasSeriesDisplaying(&DisplayRegression) +
          numberOfDisplayedCoefficients() +
          hasSeriesDisplaying(&DisplayResidualStandardDeviation) +
@@ -263,7 +262,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
         static_cast<int>(c) - static_cast<int>(Calculation::NumberOfDots);
     using SingleCalculation = double (Store::*)(int) const;
     constexpr SingleCalculation
-        calculationMethods[k_numberOfSingleBufferCalculations] = {
+        calculationMethods[static_cast<int>(Calculation::SumOfProducts) -
+                           static_cast<int>(Calculation::NumberOfDots) + 1] = {
             &Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance,
             &Store::columnProductSum};
     double *calculation =
@@ -321,10 +321,20 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
       bufferCell->setText(I18n::translate(I18n::Message::Dash));
       return;
     }
-    result =
-        isR2 ? m_store->determinationCoefficientForSeries(seriesNumber,
-                                                          globContext)
-             : m_store->residualStandardDeviation(seriesNumber, globContext);
+    if (isR2) {
+      result =
+          m_store->determinationCoefficientForSeries(seriesNumber, globContext);
+    } else {
+      double *calculation = m_memoizedSimpleCalculationCells[seriesNumber] +
+                            k_numberOfMemoizedSingleBufferCalculations - 1;
+      if (std::isnan(*calculation)) {
+        *calculation =
+            m_store->residualStandardDeviation(seriesNumber, globContext);
+      }
+      assert(Poincare::Helpers::EqualOrBothNan(
+          *calculation,
+          m_store->residualStandardDeviation(seriesNumber, globContext)));
+    }
   }
 
   PoincareHelpers::ConvertFloatToText<double>(result, buffer, bufferSize,
@@ -371,7 +381,7 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
     assert(index >= 0 && index < k_numberOfHeaderColumns);
     return &m_hideableCell[index];
   }
-  assert(index >= 0 && index < k_numberOfCalculationCells);
+  assert(index >= 0 && index < k_numberOfDisplayableCalculationCells);
   return &m_calculationCells[index];
 }
 
@@ -387,10 +397,10 @@ int CalculationController::reusableCellCount(int type) {
     return k_numberOfDoubleCalculationCells;
   }
   if (type == k_hideableCellType) {
-    return 2;
+    return k_numberOfHeaderColumns;
   }
   assert(type == k_standardCalculationCellType);
-  return k_numberOfCalculationCells;
+  return k_numberOfDisplayableCalculationCells;
 }
 
 int CalculationController::typeAtLocation(int i, int j) {
@@ -584,7 +594,7 @@ void CalculationController::resetMemoization(bool force) {
         m_memoizedDoubleCalculationCells[s][i][j] = NAN;
       }
     }
-    for (int i = 0; i < k_numberOfSingleBufferCalculations; i++) {
+    for (int i = 0; i < k_numberOfMemoizedSingleBufferCalculations; i++) {
       m_memoizedSimpleCalculationCells[s][i] = NAN;
     }
   }

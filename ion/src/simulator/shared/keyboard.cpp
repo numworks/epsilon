@@ -5,6 +5,8 @@
 #include <ion/src/shared/keyboard.h>
 #include <ion/src/shared/keyboard_queue.h>
 
+#include <array>
+
 #include "layout.h"
 #include "window.h"
 
@@ -43,7 +45,7 @@ constexpr static KeySDLKeyPair sKeyPairs[] = {
     KeySDLKeyPair(Key::Toolbox, SDL_SCANCODE_TAB),
 };
 
-constexpr int sNumberOfKeyPairs = sizeof(sKeyPairs) / sizeof(KeySDLKeyPair);
+constexpr int sNumberOfKeyPairs = std::size(sKeyPairs);
 
 namespace Ion {
 namespace Keyboard {

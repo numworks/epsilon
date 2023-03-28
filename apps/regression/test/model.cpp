@@ -9,6 +9,8 @@
 #include <quiz.h>
 #include <string.h>
 
+#include <array>
+
 #include "../store.h"
 
 using namespace Poincare;
@@ -290,8 +292,8 @@ QUIZ_CASE(trigonometric_regression1) {
   double y[] = {9.24,  10.05, 11.33, 12.72, 14.16, 14.98, 15.14,
                 14.41, 13.24, 11.88, 10.54, 9.48,  9.19};
   double coefficients[] = {2.9723, 0.016780, -1.3067, 12.146};
-  int numberOfPoints = sizeof(x) / sizeof(double);
-  assert(sizeof(y) == sizeof(double) * numberOfPoints);
+  int numberOfPoints = std::size(x);
+  assert(std::size(y) == numberOfPoints);
 
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients, r2,
                                      Poincare::Preferences::AngleUnit::Radian);
@@ -304,8 +306,8 @@ QUIZ_CASE(trigonometric_regression2) {
   double y[] = {-2, -4, -5, -2, 3, 6, 8,  11, 9, 5, 2, 1, 0,
                 -3, -5, -2, 3,  5, 7, 10, 10, 5, 2, 2, 1};
   double coefficients[] = {6.42, 0.26, -2.16, 2.82};
-  int numberOfPoints = sizeof(x) / sizeof(double);
-  assert(sizeof(y) == sizeof(double) * numberOfPoints);
+  int numberOfPoints = std::size(x);
+  assert(std::size(y) == numberOfPoints);
 
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients, r2,
                                      Poincare::Preferences::AngleUnit::Radian);
@@ -316,8 +318,8 @@ QUIZ_CASE(trigonometric_regression3) {
   double x[] = {1, 2, 3, 4, 5, 6};
   double y[] = {8, 13, 21, 36, 47, 53};
   double coefficients[] = {22.55, 0.5955, -2.180, 30.86};
-  int numberOfPoints = sizeof(x) / sizeof(double);
-  assert(sizeof(y) == sizeof(double) * numberOfPoints);
+  int numberOfPoints = std::size(x);
+  assert(std::size(y) == numberOfPoints);
 
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients, r2,
                                      Poincare::Preferences::AngleUnit::Radian);

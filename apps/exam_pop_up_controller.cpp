@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <ion/usb.h>
 
+#include <array>
+
 #include "apps_container.h"
 
 using namespace Escher;
@@ -70,8 +72,7 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       I18n::Message::ActiveKeystoneSTAAROrIBExamModeMessage,
       I18n::Message::ActiveKeystoneSTAAROrIBExamModeWithResetMessage,
   };
-  static_assert(sizeof(messages) / sizeof(I18n::Message) ==
-                    numberOfModes * messagesPerMode,
+  static_assert(std::size(messages) == numberOfModes * messagesPerMode,
                 "messages size is invalid");
   ExamMode::Ruleset rules = m_targetExamMode.ruleset();
   size_t index = static_cast<size_t>(rules) * messagesPerMode;

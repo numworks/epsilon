@@ -163,6 +163,6 @@ constexpr
         0xFFFD,  // � // REPLACEMENT CHARACTER
 };
 
-const int NumberOfCodePoints = sizeof(CodePoints) / sizeof(CodePoints[0]);
+const int NumberOfCodePoints = sizeof(CodePoints) / sizeof(uint32_t);
 
 #endif

@@ -2,6 +2,8 @@
 #include <poincare/test/helper.h>
 #include <quiz.h>
 
+#include <array>
+
 #include "inference/models/statistic/goodness_test.h"
 #include "inference/models/statistic/homogeneity_test.h"
 #include "inference/models/statistic/one_mean_t_interval.h"
@@ -158,7 +160,7 @@ QUIZ_CASE(probability_one_proportion_statistic) {
 
   OneProportionZTest test;
   OneProportionZInterval interval;
-  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
     inputValues(&interval, tests[i], 0.95);
@@ -208,7 +210,7 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
 
   OneMeanTTest test;
   OneMeanTInterval interval;
-  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
     inputValues(&interval, tests[i], 0.95);
@@ -257,7 +259,7 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
 
   OneMeanZTest test;
   OneMeanZInterval interval;
-  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
     inputValues(&interval, tests[i], 0.95);
@@ -307,7 +309,7 @@ QUIZ_CASE(probability_two_proportions_statistic) {
 
   TwoProportionsZTest test;
   TwoProportionsZInterval interval;
-  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
     inputValues(&interval, tests[i], 0.95);
@@ -363,7 +365,7 @@ QUIZ_CASE(probability_two_means_t_statistic) {
 
   TwoMeansTTest test;
   TwoMeansTInterval interval;
-  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
     inputValues(&interval, tests[i], 0.95);
@@ -419,7 +421,7 @@ QUIZ_CASE(probability_pooled_t_test) {
 
   PooledTwoMeansTTest test;
   PooledTwoMeansTInterval interval;
-  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
     inputValues(&interval, tests[i], 0.95);
@@ -474,7 +476,7 @@ QUIZ_CASE(probability_two_means_z_statistic) {
 
   TwoMeansZTest test;
   TwoMeansZInterval interval;
-  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
     inputValues(&interval, tests[i], 0.95);
@@ -504,7 +506,7 @@ QUIZ_CASE(probability_goodness_test) {
   tests[0].m_testCriticalValue = 2.0833332539;
   tests[0].m_pValue = 0.5552918911;
 
-  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < std::size(tests); i++) {
     stat.recomputeData();
     // Initialize values before calling computeDegreesOfFreedom
     inputTableValues(&stat, &stat, tests[i]);
@@ -535,7 +537,7 @@ QUIZ_CASE(probability_homogeneity_test) {
      NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
      NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN,
      NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN} */
-  for (size_t i = 0; i < sizeof(tests[0].m_inputs)/sizeof(tests[0].m_inputs[0]); i++) {
+  for (size_t i = 0; i < std::size(tests[0].m_inputs); i++) {
     tests[0].m_inputs[i] = NAN;
   }
   tests[0].m_inputs[0 * 9 + 0] = 1;
@@ -569,7 +571,7 @@ QUIZ_CASE(probability_homogeneity_test) {
        NAN,   NAN,     NAN,    NAN,   NAN,   NAN,   NAN,   NAN,   NAN}};
   // clang-format on
   HomogeneityTest test;
-  for (size_t i = 0; i < sizeof(tests) / sizeof(StatisticTestCase); i++) {
+  for (size_t i = 0; i < std::size(tests); i++) {
     test.recomputeData();
     inputTableValues(&test, &test, tests[i]);
 

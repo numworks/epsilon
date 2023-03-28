@@ -5,6 +5,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <string.h>
 
+#include <array>
 #include <cmath>
 
 #include "continuous_function.h"
@@ -90,8 +91,7 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField *field,
           ContinuousFunction::k_cartesianSymbol, 'n',
           ContinuousFunction::k_parametricSymbol,
           ContinuousFunction::k_polarSymbol};
-      constexpr size_t k_numberOfCodePoints =
-          sizeof(XNTCodePoints) / sizeof(CodePoint);
+      constexpr size_t k_numberOfCodePoints = std::size(XNTCodePoints);
       for (size_t i = 0; i < k_numberOfCodePoints; i++) {
         if (XNTCodePoints[i] == defaultXNT) {
           break;

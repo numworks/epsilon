@@ -3,6 +3,8 @@
 #include <ion/events.h>
 #include <ion/timing.h>
 
+#include <array>
+
 #include "../../../poincare/include/poincare/print_int.h"
 
 namespace Ion {
@@ -66,7 +68,7 @@ constexpr static Scenario scenarios[] = {
     Scenario::build("Probability", scenarioProbability),
     Scenario::build("Equation", scenarioEquation)};
 
-constexpr static int numberOfScenari = sizeof(scenarios) / sizeof(Scenario);
+constexpr static int numberOfScenari = std::size(scenarios);
 
 Event getEvent(int* timeout) {
   static int scenarioIndex = 0;

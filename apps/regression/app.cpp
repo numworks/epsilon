@@ -4,6 +4,8 @@
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 
+#include <array>
+
 #include "regression_icon.h"
 
 using namespace Shared;
@@ -29,14 +31,13 @@ App::Snapshot::Snapshot()
       m_regressionTypes{Model::Type::None, Model::Type::None,
                         Model::Type::None} {
   // Register X1, X2, X3, Y1, Y2, Y3 as reserved lists to the sharedStorage.
-  static_assert(
-      sizeof(DoublePairStore::k_regressionColumNames) / sizeof(char *) == 2,
-      "Number of reserved lists in regression changed.");
+  static_assert(std::size(DoublePairStore::k_regressionColumNames) == 2,
+                "Number of reserved lists in regression changed.");
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
       ->registerArrayOfReservedNames(
           DoublePairStore::k_regressionColumNames, Ion::Storage::lisExtension,
           Shared::DoublePairStore::k_numberOfSeries,
-          sizeof(DoublePairStore::k_regressionColumNames) / sizeof(char *));
+          std::size(DoublePairStore::k_regressionColumNames));
 
   // Register R1, R2, and R3 as reserved functions to the sharedStorage.
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()

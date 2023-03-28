@@ -3,6 +3,8 @@
 
 #include <poincare/expression.h>
 
+#include <array>
+
 namespace Poincare {
 
 class LogicalOperatorNode : public ExpressionNode {
@@ -113,8 +115,7 @@ class BinaryLogicalOperatorNode : public LogicalOperatorNode {
       {OperatorType::Xor, "xor"},
       {OperatorType::Nand, "nand"},
       {OperatorType::Nor, "nor"}};
-  static_assert(sizeof(k_operatorNames) / sizeof(OperatorName) ==
-                    k_numberOfOperators,
+  static_assert(std::size(k_operatorNames) == k_numberOfOperators,
                 "Wrong number of binary logical operators");
 
   const char* operatorName() const override;

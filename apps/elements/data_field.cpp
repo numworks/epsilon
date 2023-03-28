@@ -7,6 +7,8 @@
 #include <poincare/multiplication.h>
 #include <poincare/vertical_offset_layout.h>
 
+#include <array>
+
 #include "elements_data_base.h"
 
 using namespace Poincare;
@@ -135,7 +137,7 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
   constexpr int k_lMax = 4;
   constexpr char k_lSymbols[k_lMax] = {'s', 'p', 'd', 'f'};
   constexpr AtomicNumber k_nobles[] = {10, 18, 36, 54, 86};
-  constexpr size_t k_numberOfNobles = sizeof(k_nobles) / sizeof(k_nobles[0]);
+  constexpr size_t k_numberOfNobles = std::size(k_nobles);
 
   int conf[k_nMax * k_lMax];
   for (int i = 0; i < k_nMax * k_lMax; i++) {
@@ -277,7 +279,7 @@ I18n::Message GroupDataField::protectedGetMessage(AtomicNumber z) const {
       I18n::Message::ElementsGroupUnidentified,
   };
   ElementData::Group group = ElementsDataBase::Group(z);
-  assert(static_cast<uint8_t>(group) < sizeof(k_titles) / sizeof(k_titles[0]));
+  assert(static_cast<uint8_t>(group) < std::size(k_titles));
   return k_titles[static_cast<uint8_t>(group)];
 }
 
@@ -296,7 +298,7 @@ DataField::ColorPair GroupDataField::getColors(AtomicNumber z) const {
       ColorPair(Palette::ElementGrayDark, Palette::ElementGrayLight),
   };
   ElementData::Group group = ElementsDataBase::Group(z);
-  assert(static_cast<uint8_t>(group) < sizeof(k_colors) / sizeof(k_colors[0]));
+  assert(static_cast<uint8_t>(group) < std::size(k_colors));
   return k_colors[static_cast<uint8_t>(group)];
 }
 
@@ -310,7 +312,7 @@ I18n::Message BlockDataField::protectedGetMessage(AtomicNumber z) const {
       I18n::Message::ElementsBlockF,
   };
   ElementData::Block block = ElementsDataBase::Block(z);
-  assert(static_cast<uint8_t>(block) < sizeof(k_titles) / sizeof(k_titles[0]));
+  assert(static_cast<uint8_t>(block) < std::size(k_titles));
   return k_titles[static_cast<uint8_t>(block)];
 }
 
@@ -323,7 +325,7 @@ DataField::ColorPair BlockDataField::getColors(AtomicNumber z) const {
       /* f */ ColorPair(Palette::ElementGreenDark, Palette::ElementGreenLight),
   };
   ElementData::Block block = ElementsDataBase::Block(z);
-  assert(static_cast<uint8_t>(block) < sizeof(k_colors) / sizeof(k_colors[0]));
+  assert(static_cast<uint8_t>(block) < std::size(k_colors));
   return k_colors[static_cast<uint8_t>(block)];
 }
 
@@ -358,7 +360,7 @@ DataField::ColorPair MetalDataField::getColors(AtomicNumber z) const {
                 Palette::MetallicAquamarineLight),
       ColorPair(Palette::MetallicGreenDark, Palette::MetallicGreenLight),
   };
-  assert(static_cast<uint8_t>(group) < sizeof(k_colors) / sizeof(k_colors[0]));
+  assert(static_cast<uint8_t>(group) < std::size(k_colors));
   return k_colors[static_cast<uint8_t>(group)];
 }
 
@@ -371,7 +373,7 @@ I18n::Message StateDataField::protectedGetMessage(AtomicNumber z) const {
       I18n::Message::ElementsStateGas,
   };
   ElementData::PhysicalState state = ElementsDataBase::PhysicalState(z);
-  assert(static_cast<uint8_t>(state) < sizeof(k_titles) / sizeof(k_titles[0]));
+  assert(static_cast<uint8_t>(state) < std::size(k_titles));
   return k_titles[static_cast<uint8_t>(state)];
 }
 

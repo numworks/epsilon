@@ -5,6 +5,8 @@
 #include <poincare/expression.h>
 #include <poincare/helpers.h>
 
+#include <array>
+
 namespace Poincare {
 
 /* The units having the same physical dimension are grouped together.
@@ -1592,20 +1594,15 @@ class Unit : public Expression {
   constexpr static RepresentativesList
       k_representativesAllowingImplicitAddition[] = {
           {k_timeRepresentativesAllowingImplicitAddition,
-           sizeof(k_timeRepresentativesAllowingImplicitAddition) /
-               sizeof(UnitNode::Representative*)},
+           std::size(k_timeRepresentativesAllowingImplicitAddition)},
           {k_distanceRepresentativesAllowingImplicitAddition,
-           sizeof(k_distanceRepresentativesAllowingImplicitAddition) /
-               sizeof(UnitNode::Representative*)},
+           std::size(k_distanceRepresentativesAllowingImplicitAddition)},
           {k_massRepresentativesAllowingImplicitAddition,
-           sizeof(k_massRepresentativesAllowingImplicitAddition) /
-               sizeof(UnitNode::Representative*)},
+           std::size(k_massRepresentativesAllowingImplicitAddition)},
           {k_angleRepresentativesAllowingImplicitAddition,
-           sizeof(k_angleRepresentativesAllowingImplicitAddition) /
-               sizeof(UnitNode::Representative*)}};
+           std::size(k_angleRepresentativesAllowingImplicitAddition)}};
   constexpr static int k_representativesAllowingImplicitAdditionLength =
-      sizeof(k_representativesAllowingImplicitAddition) /
-      sizeof(RepresentativesList);
+      std::size(k_representativesAllowingImplicitAddition);
   static bool AllowImplicitAddition(
       const UnitNode::Representative* smallestRepresentative,
       const UnitNode::Representative* biggestRepresentative);
@@ -1619,8 +1616,7 @@ class Unit : public Expression {
           &k_temperatureRepresentatives[2]   // °F
       };
   constexpr static int k_numberOfRepresentativesWithoutLeftMargin =
-      sizeof(k_representativesWithoutLeftMargin) /
-      sizeof(UnitNode::Representative*);
+      std::size(k_representativesWithoutLeftMargin);
   static_assert(Helpers::StringsAreEqual(
                     k_representativesWithoutLeftMargin[0]->m_rootSymbols, "\""),
                 "Wrong unit without margin");

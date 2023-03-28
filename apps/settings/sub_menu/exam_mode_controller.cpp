@@ -5,6 +5,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 
+#include <array>
 #include <cmath>
 
 using namespace Poincare;
@@ -148,10 +149,9 @@ ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
           ExamMode::Ruleset::Portuguese, ExamMode::Ruleset::English,
           ExamMode::Ruleset::STAAR,      ExamMode::Ruleset::Keystone,
           ExamMode::Ruleset::IBTest};
-      static_assert(
-          sizeof(modes) / sizeof(ExamMode::Ruleset) == k_maxNumberOfCells,
-          "modes must contain each available exam mode");
-      assert(index < sizeof(modes) / sizeof(modes[0]));
+      static_assert(std::size(modes) == k_maxNumberOfCells,
+                    "modes must contain each available exam mode");
+      assert(index < std::size(modes));
       return modes[index];
   }
 }
@@ -190,8 +190,7 @@ I18n::Message ExamModeController::examModeActivationMessage(
       I18n::Message::ActivateKeystoneExamMode,
       I18n::Message::ReactivateKeystoneExamMode,
   };
-  static_assert(sizeof(messages) / sizeof(I18n::Message) ==
-                    numberOfModes * messagesPerMode,
+  static_assert(std::size(messages) == numberOfModes * messagesPerMode,
                 "messages size is invalid");
 
   ExamMode::Ruleset examMode =

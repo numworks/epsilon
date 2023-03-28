@@ -1,6 +1,8 @@
 #include <apps/shared/global_context.h>
 #include <poincare_layouts.h>
 
+#include <array>
+
 #include "helper.h"
 
 using namespace Poincare;
@@ -299,8 +301,7 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_layout) {
       &LayoutCursor::addEmptySquarePowerLayout,
       &LayoutCursor::addEmptyTenPowerLayout,
       &LayoutCursor::addEmptyMatrixLayout};
-  int numberOfFunctions =
-      sizeof(layoutInsertionFunction) / sizeof(AddLayoutPointer);
+  int numberOfFunctions = std::size(layoutInsertionFunction);
 
   for (int i = 0; i < numberOfFunctions; i++) {
     assert_apply_beautification_after_layout_insertion(

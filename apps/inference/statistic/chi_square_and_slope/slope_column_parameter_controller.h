@@ -1,6 +1,8 @@
 #ifndef INFERENCE_SLOPE_COLUMN_PARAMETER_CONTROLLER_H
 #define INFERENCE_SLOPE_COLUMN_PARAMETER_CONTROLLER_H
 
+#include <array>
+
 #include "shared/store_parameter_controller.h"
 
 namespace Inference {
@@ -14,9 +16,7 @@ class SlopeColumnParameterController : public Shared::StoreParameterController {
   void setTitlesDisplay(Escher::ViewController::TitlesDisplay titlesDisplay) {
     m_titlesDisplay = titlesDisplay;
   }
-  int numberOfRows() const override {
-    return sizeof(k_typesOrder) / sizeof(int);
-  }
+  int numberOfRows() const override { return std::size(k_typesOrder); }
   int typeAtIndex(int index) const override { return k_typesOrder[index]; }
 
  private:

@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include <algorithm>
+#include <array>
 
 #include "global_context.h"
 
@@ -25,14 +26,12 @@ class DoublePairStore {
   constexpr static uint8_t k_maxNumberOfPairs = 100;
   // Must be 1 char long or change the name-related methods.
   constexpr static const char *k_regressionColumNames[] = {"X", "Y"};
-  static_assert(sizeof(k_regressionColumNames) / sizeof(char *) ==
-                    k_numberOfColumnsPerSeries,
+  static_assert(std::size(k_regressionColumNames) == k_numberOfColumnsPerSeries,
                 "Number of columns per series does not match number of column "
                 "names in Regression.");
   // Must be 1 char long or change the name-related methods.
   constexpr static const char *k_statisticsColumNames[] = {"V", "N"};
-  static_assert(sizeof(k_statisticsColumNames) / sizeof(char *) ==
-                    k_numberOfColumnsPerSeries,
+  static_assert(std::size(k_statisticsColumNames) == k_numberOfColumnsPerSeries,
                 "Number of columns per series does not match number of column "
                 "names in Statistics.");
 

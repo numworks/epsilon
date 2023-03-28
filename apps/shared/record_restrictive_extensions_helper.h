@@ -3,6 +3,8 @@
 
 #include <ion/storage/file_system.h>
 
+#include <array>
+
 namespace Shared {
 
 namespace RecordRestrictiveExtensions {
@@ -18,7 +20,7 @@ constexpr static RestrictiveExtension k_restrictiveExtensions[] = {
     {Ion::Storage::lisExtension, 3}, {Ion::Storage::matExtension, 3},
 };
 constexpr static int k_numberOfRestrictiveExtensions =
-    sizeof(k_restrictiveExtensions) / sizeof(RestrictiveExtension);
+    std::size(k_restrictiveExtensions);
 
 void registerRestrictiveExtensionsToSharedStorage() {
   Ion::Storage::RecordNameVerifier* recordNameVerifier =

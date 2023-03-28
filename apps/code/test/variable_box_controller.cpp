@@ -3,6 +3,8 @@
 #include <quiz.h>
 #include <string.h>
 
+#include <array>
+
 #include "../script_store.h"
 
 using namespace Code;
@@ -61,6 +63,5 @@ QUIZ_CASE(variable_box_controller) {
   const char *expectedVariables[] = {"froo", "from", "frozenset()"};
   // FIXME This test does not load imported variables for now
   assert_variables_are("\x01 from math import *\nfroo=3", 21, 2,
-                       expectedVariables,
-                       sizeof(expectedVariables) / sizeof(const char *));
+                       expectedVariables, std::size(expectedVariables));
 }

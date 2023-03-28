@@ -4,6 +4,8 @@
 #include <kandinsky/color.h>
 #include <stddef.h>
 
+#include <array>
+
 namespace Escher {
 
 class Palette {
@@ -44,11 +46,9 @@ class Palette {
   constexpr static KDColor DataColorLight[] = {RedLight, BlueLight, GreenLight,
                                                YellowLight};
 
-  constexpr static size_t numberOfDataColors() {
-    return sizeof(DataColor) / sizeof(KDColor);
-  }
+  constexpr static size_t numberOfDataColors() { return std::size(DataColor); }
   constexpr static size_t numberOfLightDataColors() {
-    return sizeof(DataColorLight) / sizeof(KDColor);
+    return std::size(DataColorLight);
   }
   static KDColor nextDataColor(int* colorIndex);
 };

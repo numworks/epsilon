@@ -1,5 +1,7 @@
 #include "apps_container_storage.h"
 
+#include <array>
+
 #ifndef APPS_CONTAINER_SNAPSHOT_CONSTRUCTORS
 #error Missing snapshot constructors
 #endif
@@ -30,7 +32,7 @@ Escher::App::Snapshot* AppsContainerStorage::appSnapshotAtIndex(int index) {
   assert(index < numberOfBuiltinApps());
   Escher::App::Snapshot* snapshots[] = {homeAppSnapshot()
                                             APPS_CONTAINER_SNAPSHOT_LIST};
-  assert(sizeof(snapshots) / sizeof(snapshots[0]) == numberOfBuiltinApps());
+  assert(std::size(snapshots) == numberOfBuiltinApps());
   assert(index >= 0 && index < numberOfBuiltinApps());
   return snapshots[index];
 }

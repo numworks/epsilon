@@ -4,6 +4,8 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <poincare/expression.h>
 
+#include <array>
+
 /* This class can have any number of children.
  * This implements "x = y", "1 < x <= y" and any other sequence of comparisons
  * like "x > 6 != 7 <= y = z".
@@ -82,7 +84,7 @@ class ComparisonNode : public ExpressionNode {
       {OperatorType::Inferior, "<", nullptr},
       {OperatorType::SuperiorEqual, "≥", ">="},
       {OperatorType::InferiorEqual, "≤", "<="}};
-  static_assert(sizeof(k_operatorStrings) / sizeof(OperatorString) ==
+  static_assert(std::size(k_operatorStrings) ==
                     static_cast<int>(OperatorType::NumberOfTypes),
                 "Missing string for comparison operator.");
 

@@ -6,6 +6,7 @@
 #include <poincare/sum_and_product.h>
 
 #include <algorithm>
+#include <array>
 
 namespace Poincare {
 
@@ -176,7 +177,7 @@ int SequenceLayoutNode::writeDerivedClassInBuffer(
       const_cast<SequenceLayoutNode *>(this)->variableLayout(),
       const_cast<SequenceLayoutNode *>(this)->lowerBoundLayout(),
       const_cast<SequenceLayoutNode *>(this)->upperBoundLayout()};
-  for (uint8_t i = 0; i < sizeof(argLayouts) / sizeof(argLayouts[0]); i++) {
+  for (uint8_t i = 0; i < std::size(argLayouts); i++) {
     if (i != 0) {
       // Write the comma
       numberOfChar += SerializationHelper::CodePoint(

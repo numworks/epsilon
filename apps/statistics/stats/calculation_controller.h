@@ -7,6 +7,8 @@
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 
+#include <array>
+
 #include "../store.h"
 #include "calculation_selectable_table_view.h"
 
@@ -119,8 +121,7 @@ class CalculationController : public Shared::DoublePairTableController {
       {I18n::Message::StatisticsSampleMean, I18n::Message::MeanSymbol,
        &Store::mean, 16, 11},  // Not displayed with defaultLayout
   };
-  constexpr static int k_numberOfCalculations =
-      sizeof(k_calculationRows) / sizeof(CalculationRow);
+  constexpr static int k_numberOfCalculations = std::size(k_calculationRows);
 
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int i) override;

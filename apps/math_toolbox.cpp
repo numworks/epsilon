@@ -6,6 +6,8 @@
 #include <poincare/layout_helper.h>
 #include <string.h>
 
+#include <array>
+
 #include "./shared/toolbox_helpers.h"
 #include "apps/i18n.h"
 #include "global_preferences.h"
@@ -776,8 +778,8 @@ constexpr int alternateListsStatsOrder[]{
     3   // Variance
 };
 
-static_assert(sizeof(alternateListsStatsOrder) / sizeof(int) ==
-                  sizeof(listsStatsChildren) / sizeof(ToolboxMessageTree),
+static_assert(std::size(alternateListsStatsOrder) ==
+                  std::size(listsStatsChildren),
               "Alternate lists stats order in toolbox has wrong size");
 
 constexpr ToolboxMessageTree listsOperationsChildren[] = {

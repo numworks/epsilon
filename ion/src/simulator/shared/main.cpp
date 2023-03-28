@@ -3,6 +3,7 @@
 #include <ion/src/shared/init.h>
 
 #include <algorithm>
+#include <array>
 #include <vector>
 
 #include "haptics.h"
@@ -163,8 +164,8 @@ int main(int argc, char *argv[]) {
 #endif
 
 #if ION_SIMULATOR_FILES
-  const char *stateFile = args.pop(
-      k_loadStateFileKeys, sizeof(k_loadStateFileKeys) / sizeof(char *));
+  const char *stateFile =
+      args.pop(k_loadStateFileKeys, std::size(k_loadStateFileKeys));
   if (stateFile) {
     assert(Journal::replayJournal());
     StateFile::load(stateFile);
@@ -197,8 +198,7 @@ int main(int argc, char *argv[]) {
     args.push("--language", Platform::languageCode());
   }
 
-  bool headless =
-      args.popFlags(k_headlessFlags, sizeof(k_headlessFlags) / sizeof(char *));
+  bool headless = args.popFlags(k_headlessFlags, std::size(k_headlessFlags));
 
   Random::init();
   if (!headless) {

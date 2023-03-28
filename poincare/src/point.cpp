@@ -1,5 +1,6 @@
 #include <poincare/layout_helper.h>
 #include <poincare/point.h>
+#include <poincare/point_evaluation.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 
@@ -20,6 +21,15 @@ int PointNode::serialize(char* buffer, int bufferSize,
 
 Expression PointNode::shallowReduce(const ReductionContext& reductionContext) {
   return Point(this).shallowReduce(reductionContext);
+}
+
+template <typename T>
+Evaluation<T> PointNode::templatedApproximate(
+    const ApproximationContext& approximationContext) const {
+  Coordinate2D<T> xy = Point(this).approximate2D<T>(
+      approximationContext.context(), approximationContext.complexFormat(),
+      approximationContext.angleUnit());
+  return PointEvaluation<T>::Builder(xy.x(), xy.y());
 }
 
 Expression Point::shallowReduce(ReductionContext reductionContext) {

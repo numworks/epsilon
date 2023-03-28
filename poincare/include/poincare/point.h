@@ -39,9 +39,7 @@ class PointNode : public ExpressionNode {
   constexpr static char k_prefix[] = "";
 
   template <typename T>
-  Evaluation<T> templatedApproximate(const ApproximationContext&) const {
-    return Complex<T>::Undefined();
-  }
+  Evaluation<T> templatedApproximate(const ApproximationContext&) const;
 };
 
 class Point : public ExpressionTwoChildren<Point, PointNode> {

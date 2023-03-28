@@ -5,10 +5,11 @@
 
 namespace std {
 
-template <class T> typename remove_reference<T>::type&& move(T&& a) {
-  return (typename remove_reference<T>::type&&)a;
+template <class T>
+typename remove_reference<T>::type&& move(T&& a) {
+  return (typename remove_reference<T>::type &&) a;
 }
 
-}
+}  // namespace std
 
 #endif

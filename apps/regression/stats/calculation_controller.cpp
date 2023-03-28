@@ -6,7 +6,6 @@
 #include <assert.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/helpers.h>
-#include <poincare/preferences.h>
 #include <poincare/vertical_offset_layout.h>
 
 #include <algorithm>
@@ -290,9 +289,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
         static_cast<int>(c) - static_cast<int>(Calculation::CoefficientA);
     int numberOfCoefficients =
         m_store->modelForSeries(series)->numberOfCoefficients();
-    if (shouldDisplayMCoefficient() &&
-        m_store->seriesRegressionType(series) == Model::Type::LinearAxpb &&
-        coefficientIndex <= 0) {
+    if (coefficientIndex <= 0 &&
+        DisplayMCoefficient(m_store->seriesRegressionType(series))) {
+      assert(!DisplayACoefficient(m_store->seriesRegressionType(series)));
       // In that case only, M is coefficientIndex 0 and A is coefficientIndex -1
       coefficientIndex = -coefficientIndex - 1;
     }
@@ -474,11 +473,11 @@ CalculationController::Calculation CalculationController::calculationForRow(
   if (row == static_cast<int>(Calculation::Regression)) {
     return Calculation::Regression;
   }
-  row += !shouldDisplayMCoefficient();
+  row += !hasSeriesDisplaying(&DisplayMCoefficient);
   if (row == static_cast<int>(Calculation::CoefficientM)) {
     return Calculation::CoefficientM;
   }
-  row += !shouldDisplayACoefficient();
+  row += !hasSeriesDisplaying(&DisplayACoefficient);
   if (row == static_cast<int>(Calculation::CoefficientA)) {
     return Calculation::CoefficientA;
   }
@@ -516,7 +515,8 @@ bool CalculationController::hasSeriesDisplaying(
 }
 
 int CalculationController::numberOfDisplayedCoefficients() const {
-  return shouldDisplayMCoefficient() + shouldDisplayACoefficient() +
+  return hasSeriesDisplaying(&DisplayMCoefficient) +
+         hasSeriesDisplaying(&DisplayACoefficient) +
          numberOfDisplayedBCDECoefficients();
 }
 
@@ -534,40 +534,6 @@ int CalculationController::numberOfDisplayedBCDECoefficients() const {
         std::max(maxNumberCoefficients, numberOfCoefficients - 1);
   }
   return maxNumberCoefficients;
-}
-
-bool CalculationController::shouldDisplayMCoefficient() const {
-  if (GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() !=
-      CountryPreferences::RegressionApp::Variant1) {
-    // LinearAxpb is displayed as mx+b in Variant1 only
-    return false;
-  }
-  int numberOfDefinedSeries = m_store->numberOfActiveSeries();
-  for (int i = 0; i < numberOfDefinedSeries; i++) {
-    int series = m_store->seriesIndexFromActiveSeriesIndex(i);
-    if (m_store->seriesRegressionType(series) == Model::Type::LinearAxpb) {
-      // This series needs a M coefficient.
-      return true;
-    }
-  }
-  return false;
-}
-
-bool CalculationController::shouldDisplayACoefficient() const {
-  bool canDisplayM =
-      (GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
-       CountryPreferences::RegressionApp::Variant1);
-  int numberOfDefinedSeries = m_store->numberOfActiveSeries();
-  for (int i = 0; i < numberOfDefinedSeries; i++) {
-    int series = m_store->seriesIndexFromActiveSeriesIndex(i);
-    if (!(canDisplayM &&
-          m_store->seriesRegressionType(series) == Model::Type::LinearAxpb) &&
-        m_store->modelForSeries(series)->numberOfCoefficients() > 0) {
-      // This series needs a A coefficient.
-      return true;
-    }
-  }
-  return false;
 }
 
 void CalculationController::resetMemoization(bool force) {

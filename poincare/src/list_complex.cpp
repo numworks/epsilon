@@ -1,6 +1,7 @@
 #include <poincare/list.h>
 #include <poincare/list_complex.h>
 #include <poincare/list_sort.h>
+#include <poincare/point_evaluation.h>
 #include <poincare/undefined.h>
 
 namespace Poincare {
@@ -67,8 +68,18 @@ ListComplex<T> ListComplex<T>::sort() {
       // Compare
       [](int i, int j, void *context, int numberOfElements) {
         ListComplex<T> *list = reinterpret_cast<ListComplex<T> *>(context);
-        float xI = list->childAtIndex(i).toScalar();
-        float xJ = list->childAtIndex(j).toScalar();
+
+        Evaluation<T> eI = list->childAtIndex(i);
+        Evaluation<T> eJ = list->childAtIndex(j);
+        if (eI.type() == EvaluationNode<T>::Type::Point &&
+            eJ.type() == EvaluationNode<T>::Type::Point) {
+          return static_cast<PointEvaluation<T> &>(eI).xy().isGreaterThan(
+              static_cast<PointEvaluation<T> &>(eJ).xy(),
+              ListSort::k_nanIsGreatest);
+        }
+
+        float xI = eI.toScalar();
+        float xJ = eJ.toScalar();
         return Helpers::FloatIsGreater(xI, xJ, ListSort::k_nanIsGreatest);
       },
       ctx, numberOfChildren());

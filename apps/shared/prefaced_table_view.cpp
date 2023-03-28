@@ -58,9 +58,6 @@ void PrefacedTableView::tableViewDidChangeSelection(
     Escher::SelectableTableView* t, int previousSelectedCol,
     int previousSelectedRow, bool withinTemporarySelection) {
   assert(t == m_mainTableView);
-  if (withinTemporarySelection) {
-    return;
-  }
   if (m_mainTableDelegate) {
     m_mainTableDelegate->tableViewDidChangeSelection(
         t, previousSelectedCol, previousSelectedRow, withinTemporarySelection);
@@ -80,9 +77,6 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
     Escher::SelectableTableView* t, int previousSelectedCol,
     int previousSelectedRow, bool withinTemporarySelection) {
   assert(t == m_mainTableView);
-  if (withinTemporarySelection) {
-    return;
-  }
   if (m_mainTableDelegate) {
     m_mainTableDelegate->tableViewDidChangeSelectionAndDidScroll(
         t, previousSelectedCol, previousSelectedRow, withinTemporarySelection);

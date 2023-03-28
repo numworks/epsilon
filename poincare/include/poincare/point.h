@@ -51,11 +51,13 @@ class Point : public ExpressionTwoChildren<Point, PointNode> {
   template <typename T>
   Coordinate2D<T> approximate2D(Context* context,
                                 Preferences::ComplexFormat complexFormat,
-                                Preferences::AngleUnit angleUnit) {
-    return Coordinate2D<T>(childAtIndex(0).approximateToScalar<T>(
-                               context, complexFormat, angleUnit),
-                           childAtIndex(1).approximateToScalar<T>(
-                               context, complexFormat, angleUnit));
+                                Preferences::AngleUnit angleUnit,
+                                bool withinReduce = false) {
+    return Coordinate2D<T>(
+        childAtIndex(0).approximateToScalar<T>(context, complexFormat,
+                                               angleUnit, withinReduce),
+        childAtIndex(1).approximateToScalar<T>(context, complexFormat,
+                                               angleUnit, withinReduce));
   }
 };
 

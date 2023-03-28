@@ -1,6 +1,7 @@
 #ifndef REGRESSION_CALCULATION_CONTROLLER_H
 #define REGRESSION_CALCULATION_CONTROLLER_H
 
+#include <apps/global_preferences.h>
 #include <apps/shared/double_pair_table_controller.h>
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
@@ -138,6 +139,15 @@ class CalculationController : public Shared::DoublePairTableController {
                CountryPreferences::RegressionApp::Variant1 &&
            type != Model::Type::None;
   }
+  static bool DisplayMCoefficient(Model::Type type) {
+    return GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+               CountryPreferences::RegressionApp::Variant1 &&
+           (type == Model::Type::LinearAxpb || type == Model::Type::Median);
+  }
+  static bool DisplayACoefficient(Model::Type type) {
+    // Any regression type not displaying M coefficient displays A coefficient
+    return type != Model::Type::None && !DisplayMCoefficient(type);
+  }
   static I18n::Message MessageForCalculation(Calculation c);
   static I18n::Message SymbolForCalculation(Calculation c);
 
@@ -145,8 +155,6 @@ class CalculationController : public Shared::DoublePairTableController {
   bool hasSeriesDisplaying(DisplayCondition condition) const;
   bool shouldSeriesDisplay(int series, DisplayCondition condition) const;
   int numberOfDisplayedCoefficients() const;
-  bool shouldDisplayMCoefficient() const;
-  bool shouldDisplayACoefficient() const;
   int numberOfDisplayedBCDECoefficients() const;
   void resetMemoization(bool force = true) override;
 

@@ -96,7 +96,7 @@ size_t AbstractTextField::ContentView::editedTextLength() const {
 
 void AbstractTextField::ContentView::setText(const char *text) {
   size_t textRealLength = strlen(text);
-  size_t maxBufferSize = draftTextBufferSize();
+  size_t maxBufferSize = m_isEditing ? draftTextBufferSize() : m_textBufferSize;
   char *buffer = const_cast<char *>(this->text());
   if (textRealLength > maxBufferSize - 1) {
     // The text was too long to be copied

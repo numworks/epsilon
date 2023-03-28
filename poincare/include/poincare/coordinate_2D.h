@@ -2,6 +2,7 @@
 #define POINCARE_COORDINATE_2D_H
 
 #include <math.h>
+#include <poincare/helpers.h>
 
 namespace Poincare {
 
@@ -28,6 +29,12 @@ class Coordinate2D final {
   bool yIsIn(T start, T end, bool includeStart = false,
              bool includeEnd = false) {
     return coordinateIsIn(false, start, end, includeStart, includeEnd);
+  }
+
+  bool isGreaterThan(const Coordinate2D& other, bool nanIsGreatest) {
+    return (m_x == other.m_x &&
+            Helpers::FloatIsGreater(m_y, other.m_y, nanIsGreatest)) ||
+           (Helpers::FloatIsGreater(m_x, other.m_x, nanIsGreatest));
   }
 
  private:

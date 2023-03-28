@@ -23,7 +23,8 @@ class EvaluationNode : public TreeNode {
     BooleanEvaluation,
     Complex,
     MatrixComplex,
-    ListComplex
+    ListComplex,
+    Point
   };
   EvaluationNode<T> *childAtIndex(int index) const {
     return static_cast<EvaluationNode<T> *>(TreeNode::childAtIndex(index));

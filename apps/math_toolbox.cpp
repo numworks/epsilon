@@ -385,7 +385,25 @@ constexpr ToolboxMessageTree unitEnergyJouleChildren[] = {
                              I18n::Message::UnitEnergyJouleKilo),
 };
 
-constexpr ToolboxMessageTree unitPowerWattChildren[] = {
+constexpr ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
+    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMilliSymbol,
+                             I18n::Message::UnitEnergyElectronVoltMilli),
+    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltSymbol,
+                             I18n::Message::UnitEnergyElectronVolt),
+    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltKiloSymbol,
+                             I18n::Message::UnitEnergyElectronVoltKilo),
+    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMegaSymbol,
+                             I18n::Message::UnitEnergyElectronVoltMega),
+};
+
+constexpr ToolboxMessageTree unitEnergyChildren[] = {
+    ToolboxMessageTree::Node(I18n::Message::UnitEnergyJouleMenu,
+                             unitEnergyJouleChildren),
+    ToolboxMessageTree::Node(I18n::Message::UnitEnergyEletronVoltMenu,
+                             unitEnergyElectronVoltChildren),
+};
+
+constexpr ToolboxMessageTree unitPowerChildren[] = {
     ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattMicroSymbol,
                              I18n::Message::UnitPowerWattMicro),
     ToolboxMessageTree::Leaf(I18n::Message::UnitPowerWattMilliSymbol,
@@ -402,24 +420,9 @@ constexpr ToolboxMessageTree unitPowerWattChildren[] = {
                              I18n::Message::UnitHorsePower),
 };
 
-constexpr ToolboxMessageTree unitEnergyElectronVoltChildren[] = {
-    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMilliSymbol,
-                             I18n::Message::UnitEnergyElectronVoltMilli),
-    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltSymbol,
-                             I18n::Message::UnitEnergyElectronVolt),
-    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltKiloSymbol,
-                             I18n::Message::UnitEnergyElectronVoltKilo),
-    ToolboxMessageTree::Leaf(I18n::Message::UnitEnergyElectronVoltMegaSymbol,
-                             I18n::Message::UnitEnergyElectronVoltMega),
-};
-
 constexpr ToolboxMessageTree energyAndPowerChildren[] = {
-    ToolboxMessageTree::Node(I18n::Message::UnitEnergyJouleMenu,
-                             unitEnergyJouleChildren),
-    ToolboxMessageTree::Node(I18n::Message::UnitPowerMenu,
-                             unitPowerWattChildren),
-    ToolboxMessageTree::Node(I18n::Message::UnitEnergyEletronVoltMenu,
-                             unitEnergyElectronVoltChildren),
+    ToolboxMessageTree::Node(I18n::Message::UnitEnergyMenu, unitEnergyChildren),
+    ToolboxMessageTree::Node(I18n::Message::UnitPowerMenu, unitPowerChildren),
 };
 
 constexpr ToolboxMessageTree unitTemperatureKelvin =

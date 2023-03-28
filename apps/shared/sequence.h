@@ -89,7 +89,7 @@ class Sequence : public Function {
   void tidyDownstreamPoolFrom(char *treePoolCursor = nullptr) const override;
 
   // Sequence properties
-  int numberOfElements() { return (int)type() + 1; }
+  int numberOfElements() { return order() + 1; }
   Poincare::Layout nameLayout();
   bool isDefined() override;
   bool isEmpty() override;

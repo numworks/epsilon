@@ -10,6 +10,11 @@
 
 namespace Escher {
 
+/* MenuCells containing an editable TextField have a specific derived class
+ * called MenuCellWithEditableField, because they need to be a
+ * TextFieldDelegate, so that they can be re-layouted when the TextField starts
+ * or finishes edition. */
+
 class EditableTextWidget : public CellWidget {
  public:
   void setTextField(TextField* textField) { m_textField = textField; }
@@ -38,6 +43,8 @@ class EditableTextWidget : public CellWidget {
   TextField* m_textField;
 };
 
+/* This abstract class only purpose is to make the templated class
+ * MenuCellWithEditableText thinner. */
 class AbstractWithEditableText : public Responder,
                                  public ChainedTextFieldDelegate {
  public:

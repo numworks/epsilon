@@ -54,6 +54,10 @@ template <typename T>
 Evaluation<T> RandintNode::templateApproximate(
     const ApproximationContext& approximationContext,
     bool* inputIsUndefined) const {
+  if (approximationContext.withinReduce()) {
+    // Return NAN to prevent the reduction from assuming anything at this point
+    return Complex<T>::Undefined();
+  }
   Evaluation<T> aInput;
   Evaluation<T> bInput;
   if (numberOfChildren() == 1) {

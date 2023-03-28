@@ -35,6 +35,10 @@ Expression RandintNoRepeatNode::shallowReduce(
 template <typename T>
 Evaluation<T> RandintNoRepeatNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
+  if (approximationContext.withinReduce()) {
+    // Return NAN to prevent the reduction from assuming anything at this point
+    return Complex<T>::Undefined();
+  }
   T ta = childAtIndex(0)->approximate(T(), approximationContext).toScalar();
   T tb = childAtIndex(1)->approximate(T(), approximationContext).toScalar();
   T tn = childAtIndex(2)->approximate(T(), approximationContext).toScalar();

@@ -13,7 +13,6 @@ ResidualPlotController::ResidualPlotController(
       m_store(store),
       m_cursor(FLT_MAX),
       m_curveView(&m_range, &m_cursor, &m_bannerView, &m_cursorView, this),
-      m_memoizedResidualStddev(NAN),
       m_selectedDotIndex(0),
       m_selectedSeriesIndex(0) {}
 
@@ -49,7 +48,10 @@ void ResidualPlotController::updateCursor() {
   Poincare::Print::CustomPrintf(
       buffer, bufferSize, "%s%s%*.*ed",
       I18n::translate(I18n::Message::ResidualStandardDeviation),
-      I18n::translate(I18n::Message::ColonConvention), m_memoizedResidualStddev,
+      I18n::translate(I18n::Message::ColonConvention),
+      m_store->residualStandardDeviation(
+          m_selectedSeriesIndex,
+          AppsContainerHelper::sharedAppsContainerGlobalContext()),
       displayMode, significantDigits);
   m_bannerView.stddevView()->setText(buffer);
 
@@ -102,10 +104,6 @@ void ResidualPlotController::viewWillAppear() {
   }
   m_range.calibrate(xMin, xMax, yMin, yMax, view()->bounds().height(),
                     m_bannerView.bounds().height());
-
-  m_memoizedResidualStddev = m_store->residualStandardDeviation(
-      m_selectedSeriesIndex,
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
 
   updateCursor();
 }

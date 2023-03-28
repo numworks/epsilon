@@ -90,6 +90,8 @@ class Store : public Shared::LinearRegressionStore {
  private:
   double computeDeterminationCoefficient(int series,
                                          Poincare::Context* globalContext);
+  double computeResidualStandardDeviation(int series,
+                                          Poincare::Context* globalContext);
   void resetMemoization();
   Model* regressionModel(int index);
 
@@ -120,6 +122,7 @@ class Store : public Shared::LinearRegressionStore {
   double m_regressionCoefficients[k_numberOfSeries]
                                  [Model::k_maxNumberOfCoefficients];
   double m_determinationCoefficient[k_numberOfSeries];
+  double m_residualStandardDeviation[k_numberOfSeries];
   bool m_recomputeCoefficients[k_numberOfSeries];
 };
 

@@ -261,8 +261,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
         static_cast<int>(c) - static_cast<int>(Calculation::NumberOfDots);
     using SingleCalculation = double (Store::*)(int) const;
     constexpr SingleCalculation
-        calculationMethods[static_cast<int>(Calculation::SumOfProducts) -
-                           static_cast<int>(Calculation::NumberOfDots) + 1] = {
+        calculationMethods[k_numberOfMemoizedSingleBufferCalculations] = {
             &Store::doubleCastedNumberOfPairsOfSeries, &Store::covariance,
             &Store::columnProductSum};
     double *calculation =
@@ -307,7 +306,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     // This could be memoized but don't seem to slow the table down for now.
     result = m_store->correlationCoefficient(series);
   } else {
-    // These could be memoized but don't seem to slow the table down for now.
+    // These are memoized in the store
     assert(c == Calculation::ResidualStandardDeviation ||
            c == Calculation::DeterminationCoeff);
     bool isR2 = (c == Calculation::DeterminationCoeff);
@@ -318,20 +317,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
       bufferCell->setText(I18n::translate(I18n::Message::Dash));
       return;
     }
-    if (isR2) {
-      result = m_store->determinationCoefficientForSeries(series, globContext);
-    } else {
-      double *calculation = m_memoizedSimpleCalculationCells[series] +
-                            k_numberOfMemoizedSingleBufferCalculations - 1;
-      if (std::isnan(*calculation)) {
-        *calculation = m_store->residualStandardDeviation(series, globContext);
-      }
-      assert(Poincare::Helpers::EqualOrBothNan(
-          *calculation,
-          m_store->residualStandardDeviation(series, globContext)));
-    }
+    result =
+        isR2 ? m_store->determinationCoefficientForSeries(series, globContext)
+             : m_store->residualStandardDeviation(series, globContext);
   }
-
   PoincareHelpers::ConvertFloatToText<double>(result, buffer, bufferSize,
                                               numberSignificantDigits);
   bufferCell->setText(buffer);

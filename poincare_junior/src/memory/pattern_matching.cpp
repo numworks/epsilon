@@ -13,13 +13,11 @@ bool PatternMatching::Context::isUninitialized() const {
 
 #if POINCARE_MEMORY_TREE_LOG
 void PatternMatching::Context::log() const {
-  std::cout << "Context: \n  A:";
-  (*this)[PlaceholderTag::A].log(std::cout, true, 2);
-  std::cout << "\n  B:";
-  (*this)[PlaceholderTag::B].log(std::cout, true, 2);
-  std::cout << "\n  C:";
-  (*this)[PlaceholderTag::C].log(std::cout, true, 2);
-  std::cout << "\n";
+  std::cout << "<Context>";
+  for (const Node &node : m_array) {
+    node.log(std::cout, true, 1);
+  }
+  std::cout << "\n</Context>";
 }
 #endif
 
@@ -31,11 +29,10 @@ PatternMatching::Context PatternMatching::Match(const Node pattern,
   Node currentNode = source;
   for (const Node node : patternNodes) {
     if (node.type() == BlockType::Placeholder) {
-      PlaceholderTag placeholder = static_cast<PlaceholderTag>(
-          static_cast<uint8_t>(*node.block()->next()));
-      if (result[placeholder].isUninitialized()) {
-        result[placeholder] = currentNode;
-      } else if (!result[placeholder].treeIsIdenticalTo(currentNode)) {
+      Placeholder::Tag tag = Placeholder::NodeToTag(node);
+      if (result[tag].isUninitialized()) {
+        result[tag] = currentNode;
+      } else if (!result[tag].treeIsIdenticalTo(currentNode)) {
         return Context();
       }
       currentNode = currentNode.nextTree();
@@ -57,13 +54,14 @@ EditionReference PatternMatching::Create(const Node structure,
   Pool::Nodes nodes = Pool::Nodes(
       structure.block(), structure.nextTree().block() - structure.block());
   for (const Node node : nodes) {
-    if (node.type() == BlockType::Placeholder) {
-      editionPool->clone(context[static_cast<PlaceholderTag>(
-                             static_cast<uint8_t>(*node.block()->next()))],
-                         true);
-    } else {
+    if (node.type() != BlockType::Placeholder) {
       editionPool->clone(node, false);
+      continue;
     }
+    Placeholder::Tag tag = Placeholder::NodeToTag(node);
+    Node nodeToInsert = context[tag];
+    assert(!nodeToInsert.isUninitialized());
+    editionPool->clone(nodeToInsert, true);
   }
   return EditionReference(top);
 }

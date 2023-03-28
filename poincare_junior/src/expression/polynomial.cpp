@@ -400,11 +400,11 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
     expression.replaceTreeByTree(one);
     return std::make_pair(one, static_cast<uint8_t>(1));
   }
-  PatternMatching::Context ctx(variable);
-  ctx = PatternMatching::Match(KPow(Placeholders::A, Placeholders::B),
-                               expression, ctx);
+  PatternMatching::Context ctx;
+  ctx[Placeholder::NodeToTag(A_e)] = static_cast<Node>(variable);
+  ctx = PatternMatching::Match(KPow(A_e, B_e), expression, ctx);
   if (!ctx.isUninitialized()) {
-    Node exponent = ctx[Placeholders::B];
+    Node exponent = ctx[Placeholder::NodeToTag(B_e)];
     if (Integer::IsUint8(exponent)) {
       uint8_t exp = Integer::Uint8(exponent);
       assert(exp > 1);

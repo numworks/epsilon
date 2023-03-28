@@ -1,6 +1,8 @@
 #ifndef POINCARE_MEMORY_PATTERN_MATCHING_H
 #define POINCARE_MEMORY_PATTERN_MATCHING_H
 
+#include <poincare_junior/src/expression/placeholder.h>
+
 #include <array>
 
 #include "edition_reference.h"
@@ -12,43 +14,11 @@
 namespace PoincareJ {
 
 namespace PatternMatching {
-enum PlaceholderTag : uint8_t {
-  A,
-  B,
-  C,
-};
-static constexpr int k_numberOfPlaceholders = 3;
-
-template <PlaceholderTag P>
-struct Placeholder : public AbstractTreeCompatible {
-  template <Block... B>
-  consteval operator Tree<B...>() const {
-    return Tree<B...>();
-  }
-  constexpr operator const Node() const { return Tree(Placeholder<P>()); }
-};
 
 class Context {
  public:
-  Context(Node a = Node(), Node b = Node(), Node c = Node())
-      : m_array{a, b, c} {}
-
-  Node& operator[](PlaceholderTag placeholder) { return m_array[placeholder]; }
-
-  template <PlaceholderTag P>
-  Node& operator[](Placeholder<P> placeholder) {
-    return m_array[P];
-  }
-
-  const Node& operator[](PlaceholderTag placeholder) const {
-    return m_array[placeholder];
-  }
-
-  template <PlaceholderTag P>
-  const Node& operator[](Placeholder<P> placeholder) const {
-    return m_array[P];
-  }
-
+  Node& operator[](uint8_t tag) { return m_array[tag]; }
+  const Node& operator[](uint8_t tag) const { return m_array[tag]; }
   bool isUninitialized() const;
 
 #if POINCARE_MEMORY_TREE_LOG
@@ -56,31 +26,15 @@ class Context {
 #endif
 
  private:
-  Node m_array[k_numberOfPlaceholders];
+  Node m_array[Placeholder::Tag::numberOfTags];
 };
 
 Context Match(const Node pattern, const Node source,
               Context context = Context());
 EditionReference Create(const Node structure,
                         const Context context = Context());
+
 };  // namespace PatternMatching
-
-namespace Placeholders {
-static constexpr PatternMatching::Placeholder<
-    PatternMatching::PlaceholderTag::A>
-    A;
-static constexpr PatternMatching::Placeholder<
-    PatternMatching::PlaceholderTag::B>
-    B;
-static constexpr PatternMatching::Placeholder<
-    PatternMatching::PlaceholderTag::C>
-    C;
-}  // namespace Placeholders
-
-template <PatternMatching::PlaceholderTag P>
-Tree(PatternMatching::Placeholder<P>)
-    -> Tree<BlockType::Placeholder, static_cast<uint8_t>(P),
-            BlockType::Placeholder>;
 
 }  // namespace PoincareJ
 

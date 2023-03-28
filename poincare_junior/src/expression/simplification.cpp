@@ -47,35 +47,31 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
   NAry::SetNumberOfChildren(reference, nbOfChildren - index);
 }
 
-Node expContracted1 = KPow(e_e, KAdd(Placeholders::A, Placeholders::B));
-Node expExpanded1 =
-    KMult(KPow(e_e, Placeholders::A), KPow(e_e, Placeholders::B));
+Node expContracted1 = KPow(e_e, KAdd(A_e, B_e));
+Node expExpanded1 = KMult(KPow(e_e, A_e), KPow(e_e, B_e));
 
-Node expContracted2 = KPow(e_e, KMult(Placeholders::A, Placeholders::B));
-Node expExpanded2 = KPow(KPow(e_e, Placeholders::A), Placeholders::B);
+Node expContracted2 = KPow(e_e, KMult(A_e, B_e));
+Node expExpanded2 = KPow(KPow(e_e, A_e), B_e);
 
-Node sinContracted = KSin(KAdd(Placeholders::A, Placeholders::B));
-Node sinExpanded = KAdd(KMult(KSin(Placeholders::A), KCos(Placeholders::B)),
-                        KMult(KCos(Placeholders::A), KSin(Placeholders::B)));
+Node sinContracted = KSin(KAdd(A_e, B_e));
+Node sinExpanded =
+    KAdd(KMult(KSin(A_e), KCos(B_e)), KMult(KCos(A_e), KSin(B_e)));
 
-Node cosContracted = KCos(KAdd(Placeholders::A, Placeholders::B));
-Node cosExpanded = KSub(KMult(KCos(Placeholders::A), KCos(Placeholders::B)),
-                        KMult(KSin(Placeholders::A), KSin(Placeholders::B)));
+Node cosContracted = KCos(KAdd(A_e, B_e));
+Node cosExpanded =
+    KSub(KMult(KCos(A_e), KCos(B_e)), KMult(KSin(A_e), KSin(B_e)));
 
-Node sinSinContracted = KDiv(KSub(KCos(KSub(Placeholders::A, Placeholders::B)),
-                                  KCos(KAdd(Placeholders::A, Placeholders::B))),
-                             2_e);
-Node sinSinExpanded = KMult(KSin(Placeholders::A), KSin(Placeholders::B));
+Node sinSinContracted =
+    KDiv(KSub(KCos(KSub(A_e, B_e)), KCos(KAdd(A_e, B_e))), 2_e);
+Node sinSinExpanded = KMult(KSin(A_e), KSin(B_e));
 
-Node cosCosContracted = KDiv(KAdd(KCos(KSub(Placeholders::A, Placeholders::B)),
-                                  KCos(KAdd(Placeholders::A, Placeholders::B))),
-                             2_e);
-Node cosCosExpanded = KMult(KCos(Placeholders::A), KCos(Placeholders::B));
+Node cosCosContracted =
+    KDiv(KAdd(KCos(KSub(A_e, B_e)), KCos(KAdd(A_e, B_e))), 2_e);
+Node cosCosExpanded = KMult(KCos(A_e), KCos(B_e));
 
-Node sinCosContracted = KDiv(KAdd(KSin(KSub(Placeholders::A, Placeholders::B)),
-                                  KSin(KAdd(Placeholders::A, Placeholders::B))),
-                             2_e);
-Node sinCosExpanded = KMult(KSin(Placeholders::A), KCos(Placeholders::B));
+Node sinCosContracted =
+    KDiv(KAdd(KSin(KSub(A_e, B_e)), KSin(KAdd(A_e, B_e))), 2_e);
+Node sinCosExpanded = KMult(KSin(A_e), KCos(B_e));
 
 EditionReference Simplification::ContractReduction(EditionReference reference) {
   reference = reference.matchAndReplace(expExpanded1, expContracted1);

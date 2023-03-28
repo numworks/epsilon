@@ -3,6 +3,7 @@
 
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/integer.h>
+#include <poincare_junior/src/expression/placeholder.h>
 #include <poincare_junior/src/memory/k_creator.h>
 
 #include <bit>
@@ -301,6 +302,13 @@ consteval auto operator"" _e() {
   return typename Variable<S>::tree();
 }
 
+#define PLACEHOLDER(tag)                                          \
+  Tree<BlockType::Placeholder, Placeholder::ParamsToValue((tag)), \
+       BlockType::Placeholder>();
+
+constexpr Tree A_e = PLACEHOLDER(Placeholder::Tag::A);
+constexpr Tree B_e = PLACEHOLDER(Placeholder::Tag::B);
+constexpr Tree C_e = PLACEHOLDER(Placeholder::Tag::C);
 }  // namespace PoincareJ
 
 #endif

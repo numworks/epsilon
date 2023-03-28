@@ -1,5 +1,6 @@
 #include <poincare_junior/include/poincare.h>
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/placeholder.h>
 #include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
@@ -122,9 +123,7 @@ void Node::logAttributes(std::ostream &stream) const {
     return;
   }
   if (type() == BlockType::Placeholder) {
-    stream << " tag=\""
-           << static_cast<int>(static_cast<uint8_t>(*(block()->next())))
-           << "\"";
+    stream << " tag=" << static_cast<int>(Placeholder::NodeToTag(*this));
     return;
   }
 }

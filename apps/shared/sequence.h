@@ -101,7 +101,7 @@ class Sequence : public Function {
    * - explicit: any term of u
    * - simple recurrence: any term of u other than u(0)
    * - double recurrence: any term of u other than u(1), u(0) */
-  bool canBeHandleAsExplicit(Poincare::Context *context) const {
+  bool canBeHandledAsExplicit(Poincare::Context *context) const {
     return !mainExpressionContainsForbiddenTerms(context, false);
   }
   int order() const;

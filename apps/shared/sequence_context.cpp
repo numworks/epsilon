@@ -121,7 +121,7 @@ void TemplatedSequenceContext<T>::stepUntilRank(int sequenceIndex, int rank) {
   assert(rank >= 0);
   Sequence *s = m_sequenceContext->sequenceAtNameIndex(sequenceIndex);
   bool explicitComputation =
-      rank >= s->firstNonInitialRank() && s->canBeHandleAsExplicit(this);
+      rank >= s->firstNonInitialRank() && s->canBeHandledAsExplicit(this);
 
   if (!explicitComputation && rank > k_maxRecurrentRank) {
     return;

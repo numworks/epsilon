@@ -21,4 +21,9 @@ PointEvaluation<T> PointEvaluation<T>::Builder(T x, T y) {
   return static_cast<PointEvaluation<T> &>(h);
 }
 
+template PointEvaluation<float> PointEvaluation<float>::Builder(float x,
+                                                                float y);
+template PointEvaluation<double> PointEvaluation<double>::Builder(double x,
+                                                                  double y);
+
 }  // namespace Poincare

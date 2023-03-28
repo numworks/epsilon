@@ -1,6 +1,7 @@
 #ifndef POINCARE_POINT_EVALUATION_H
 #define POINCARE_POINT_EVALUATION_H
 
+#include "poincare/coordinate_2D.h"
 #include "poincare/evaluation.h"
 
 namespace Poincare {
@@ -9,6 +10,8 @@ template <typename T>
 class PointEvaluationNode final : public EvaluationNode<T> {
  public:
   PointEvaluationNode(T x, T y) : m_x(x), m_y(y) {}
+
+  Coordinate2D<T> xy() const { return Coordinate2D<T>(m_x, m_y); }
 
   // EvaluationNode
   typename EvaluationNode<T>::Type type() const override {
@@ -46,6 +49,10 @@ class PointEvaluation final : public Evaluation<T> {
  public:
   PointEvaluation(PointEvaluation<T>* node) : Evaluation<T>(node) {}
   static PointEvaluation Builder(T x, T y);
+
+  Coordinate2D<T> xy() const {
+    return static_cast<PointEvaluationNode<T>*>(this->node())->xy();
+  }
 };
 
 }  // namespace Poincare

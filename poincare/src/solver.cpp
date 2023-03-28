@@ -95,7 +95,7 @@ Coordinate2D<T> Solver<T>::next(const Expression &e, BracketTest test,
         p->unknown, x, p->context, p->complexFormat, p->angleUnit);
   };
 
-  return next(f, &parameters, test, hone, &DiscontinuityTest);
+  return next(f, &parameters, test, hone, &DiscontinuityTestForExpression);
 }
 
 template <typename T>
@@ -278,7 +278,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f,
 }
 
 template <typename T>
-bool Solver<T>::DiscontinuityTest(T x1, T x2, const void *aux) {
+bool Solver<T>::DiscontinuityTestForExpression(T x1, T x2, const void *aux) {
   const Solver<T>::FunctionEvaluationParameters *p =
       reinterpret_cast<const Solver<T>::FunctionEvaluationParameters *>(aux);
   return p->expression.isDiscontinuousBetweenValuesForSymbol(

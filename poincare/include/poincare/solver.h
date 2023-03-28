@@ -145,7 +145,7 @@ class Solver {
                                                Interest interest, T precision,
                                                TrinaryBoolean discontinuous);
 
-  static bool DiscontinuityTest(T x1, T x2, const void *aux);
+  static bool DiscontinuityTestForExpression(T x1, T x2, const void *aux);
   static void ExcludeUndefinedFromBracket(Coordinate2D<T> *p1,
                                           Coordinate2D<T> *p2,
                                           Coordinate2D<T> *p3,

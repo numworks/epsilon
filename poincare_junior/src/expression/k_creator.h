@@ -302,13 +302,43 @@ consteval auto operator"" _e() {
   return typename Variable<S>::tree();
 }
 
-#define PLACEHOLDER(tag)                                          \
-  Tree<BlockType::Placeholder, Placeholder::ParamsToValue((tag)), \
+#define PLACEHOLDER(tag, filter)                                            \
+  Tree<BlockType::Placeholder, Placeholder::ParamsToValue((tag), (filter)), \
        BlockType::Placeholder>();
 
-constexpr Tree A_e = PLACEHOLDER(Placeholder::Tag::A);
-constexpr Tree B_e = PLACEHOLDER(Placeholder::Tag::B);
-constexpr Tree C_e = PLACEHOLDER(Placeholder::Tag::C);
+constexpr Tree A_e =
+    PLACEHOLDER(Placeholder::Tag::A, Placeholder::Filter::None);
+constexpr Tree AAdd_e =
+    PLACEHOLDER(Placeholder::Tag::A, Placeholder::Filter::Addition);
+constexpr Tree AMul_e =
+    PLACEHOLDER(Placeholder::Tag::A, Placeholder::Filter::Multiplication);
+constexpr Tree A1_e =
+    PLACEHOLDER(Placeholder::Tag::A, Placeholder::Filter::First);
+constexpr Tree A2_e =
+    PLACEHOLDER(Placeholder::Tag::A, Placeholder::Filter::Others);
+
+constexpr Tree B_e =
+    PLACEHOLDER(Placeholder::Tag::B, Placeholder::Filter::None);
+constexpr Tree BAdd_e =
+    PLACEHOLDER(Placeholder::Tag::B, Placeholder::Filter::Addition);
+constexpr Tree BMul_e =
+    PLACEHOLDER(Placeholder::Tag::B, Placeholder::Filter::Multiplication);
+constexpr Tree B1_e =
+    PLACEHOLDER(Placeholder::Tag::B, Placeholder::Filter::First);
+constexpr Tree B2_e =
+    PLACEHOLDER(Placeholder::Tag::B, Placeholder::Filter::Others);
+
+constexpr Tree C_e =
+    PLACEHOLDER(Placeholder::Tag::C, Placeholder::Filter::None);
+constexpr Tree CAdd_e =
+    PLACEHOLDER(Placeholder::Tag::C, Placeholder::Filter::Addition);
+constexpr Tree CMul_e =
+    PLACEHOLDER(Placeholder::Tag::C, Placeholder::Filter::Multiplication);
+constexpr Tree C1_e =
+    PLACEHOLDER(Placeholder::Tag::C, Placeholder::Filter::First);
+constexpr Tree C2_e =
+    PLACEHOLDER(Placeholder::Tag::C, Placeholder::Filter::Others);
+
 }  // namespace PoincareJ
 
 #endif

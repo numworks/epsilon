@@ -124,6 +124,7 @@ void Node::logAttributes(std::ostream &stream) const {
   }
   if (type() == BlockType::Placeholder) {
     stream << " tag=" << static_cast<int>(Placeholder::NodeToTag(*this));
+    stream << " filter=" << static_cast<int>(Placeholder::NodeToFilter(*this));
     return;
   }
 }

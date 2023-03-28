@@ -14,6 +14,11 @@ QUIZ_CASE(pcj_simplification_expansion) {
   ref2 = Simplification::ExpandReduction(ref2);
   assert_trees_are_equal(ref2, KSub(KMult(KCos(π_e), KCos(KPow("x"_e, 2_e))),
                                     KMult(KSin(π_e), KSin(KPow("x"_e, 2_e)))));
+
+  EditionReference ref3(KPow(e_e, KAdd(1_e, 2_e, 3_e)));
+  ref3 = Simplification::ExpandReduction(ref3);
+  assert_trees_are_equal(ref3,
+                         KMult(KPow(e_e, 1_e), KPow(e_e, KAdd(2_e, 3_e))));
 }
 
 QUIZ_CASE(pcj_simplification_contraction) {

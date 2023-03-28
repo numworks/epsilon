@@ -43,3 +43,19 @@ QUIZ_CASE(pcj_rewrite_replace) {
   ref.matchAndReplace(p, s);
   assert_trees_are_equal(result, ref);
 }
+
+QUIZ_CASE(pcj_match_n_ary) {
+  Node source = KMult(KAdd(1_e, 2_e, 3_e), KAdd(4_e, 5_e));
+  quiz_assert(PatternMatching::Match(BAdd_e, source).isUninitialized());
+  quiz_assert(
+      PatternMatching::Match(KMult(AAdd_e, AAdd_e), source).isUninitialized());
+  Node pattern = KMult(AAdd_e, B_e);
+  PatternMatching::Context ctx = PatternMatching::Match(pattern, source);
+  assert_trees_are_equal(ctx[Placeholder::NodeToTag(A_e)], KAdd(1_e, 2_e, 3_e));
+  assert_trees_are_equal(ctx[Placeholder::NodeToTag(B_e)], KAdd(4_e, 5_e));
+
+  Node structure = KAdd(KMult(A1_e, B_e), KMult(A2_e, B_e));
+  EditionReference result = PatternMatching::Create(structure, ctx);
+  assert_trees_are_equal(result, KAdd(KMult(1_e, KAdd(4_e, 5_e)),
+                                      KMult(KAdd(2_e, 3_e), KAdd(4_e, 5_e))));
+}

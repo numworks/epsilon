@@ -31,6 +31,14 @@ PatternMatching::Context PatternMatching::Match(const Node pattern,
     if (node.type() == BlockType::Placeholder) {
       Placeholder::Tag tag = Placeholder::NodeToTag(node);
       if (result[tag].isUninitialized()) {
+        Placeholder::Filter filter = Placeholder::NodeToFilter(node);
+        if (!(filter == Placeholder::Filter::None ||
+              (filter == Placeholder::Filter::Addition &&
+               currentNode.type() == BlockType::Addition) ||
+              (filter == Placeholder::Filter::Multiplication &&
+               currentNode.type() == BlockType::Multiplication))) {
+          return Context();
+        }
         result[tag] = currentNode;
       } else if (!result[tag].treeIsIdenticalTo(currentNode)) {
         return Context();
@@ -59,8 +67,33 @@ EditionReference PatternMatching::Create(const Node structure,
       continue;
     }
     Placeholder::Tag tag = Placeholder::NodeToTag(node);
+    Placeholder::Filter filter = Placeholder::NodeToFilter(node);
     Node nodeToInsert = context[tag];
     assert(!nodeToInsert.isUninitialized());
+    if (filter == Placeholder::Filter::Others) {
+      int childrenToInsert = nodeToInsert.numberOfChildren() - 1;
+      bool isAddition = (nodeToInsert.type() == BlockType::Addition);
+      if (childrenToInsert > 1) {
+        if (isAddition) {
+          editionPool->push<BlockType::Addition>(childrenToInsert);
+        } else {
+          editionPool->push<BlockType::Multiplication>(childrenToInsert);
+        }
+        nodeToInsert = nodeToInsert.childAtIndex(1);
+        for (int i = 0; i < childrenToInsert; i++) {
+          editionPool->clone(nodeToInsert, true);
+          nodeToInsert = nodeToInsert.nextTree();
+        }
+        continue;
+      } else {
+        assert(childrenToInsert == 1);
+        nodeToInsert = nodeToInsert.childAtIndex(1);
+      }
+    } else if (filter == Placeholder::Filter::First) {
+      nodeToInsert = nodeToInsert.childAtIndex(0);
+    } else {
+      assert(filter == Placeholder::Filter::None);
+    }
     editionPool->clone(nodeToInsert, true);
   }
   return EditionReference(top);

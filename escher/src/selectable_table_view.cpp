@@ -129,10 +129,9 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
   HighlightCell* cell = selectedCell();
   if (cell) {
     // Update first responder
-    if ((selectedColumn() != previousColumn || selectedRow() != previousRow) &&
-        setFirstResponder) {
-      Container::activeApp()->setFirstResponder(
-          cell->responder() ? cell->responder() : this);
+    Responder* r = cell->responder() ? cell->responder() : this;
+    if (setFirstResponder && Container::activeApp()->firstResponder() != r) {
+      Container::activeApp()->setFirstResponder(r);
     }
     // Highlight new cell
     cell->setHighlighted(true);

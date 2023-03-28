@@ -79,7 +79,7 @@ CodePoint ContinuousFunctionProperties::symbol() const {
       return k_polarSymbol;
     case SymbolType::Radius:
       return k_radiusSymbol;
-    case SymbolType::Index:
+    case SymbolType::NoSymbol:
       return k_cartesianSymbol;
     default:
       assert(symbolType() == SymbolType::X);
@@ -96,7 +96,7 @@ I18n::Message ContinuousFunctionProperties::MessageForSymbolType(
       return I18n::Message::Theta;
     case SymbolType::Radius:
       return I18n::Message::R;
-    case SymbolType::Index:
+    case SymbolType::NoSymbol:
       return I18n::Message::Default;
     default:
       assert(symbolType == SymbolType::X);
@@ -225,7 +225,7 @@ void ContinuousFunctionProperties::update(
       return;
     }
 
-    if (precomputedFunctionSymbol == SymbolType::Index) {
+    if (precomputedFunctionSymbol == SymbolType::NoSymbol) {
       setCaption(I18n::Message::Default);  // TODO
       setCurveParameterType(CurveParameterType::ScatterPlot);
       return;

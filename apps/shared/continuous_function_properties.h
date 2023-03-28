@@ -45,11 +45,13 @@ class ContinuousFunctionProperties {
     Theta,
     Radius,  // theta=f(r)
     T,
-    Index,
+    NoSymbol,
     NumberOfSymbolTypes
   };
   constexpr static size_t k_numberOfSymbolTypes =
       static_cast<size_t>(SymbolType::NumberOfSymbolTypes);
+  constexpr static size_t k_numberOfVariableSymbolTypes =
+      k_numberOfSymbolTypes - 1;
 
   enum class CurveParameterType : uint8_t {
     Default,

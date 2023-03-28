@@ -45,7 +45,8 @@ ContinuousFunctionProperties::getCurveParameter(int index) const {
       return {.parameterName = index == 0 ? Message::R : Message::Theta,
               .editable = index == 0};
     case CurveParameterType::ScatterPlot:
-      return {.parameterName = Message::Default, .editable = false};
+      return {.parameterName = index == 0 ? Message::X : Message::Default,
+              .editable = false};
     default:
       assert(getCurveParameterType() == CurveParameterType::Default);
       // Conics

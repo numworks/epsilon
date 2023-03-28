@@ -76,14 +76,12 @@ class CalculationController : public Shared::DoublePairTableController {
    * SampleStandardDeviationS */
   constexpr static int k_numberOfDoubleBufferCalculations =
       static_cast<int>(Calculation::SampleStandardDeviationS) + 1;
-  // NumberOfDots, Covariance, SumOfProducts
-  constexpr static int k_numberOfSingleBufferCalculations =
-      static_cast<int>(Calculation::SumOfProducts) -
-      static_cast<int>(Calculation::NumberOfDots) + 1;
+  // NumberOfDots, Covariance, SumOfProducts, ResidualStandardDeviation
+  constexpr static int k_numberOfMemoizedSingleBufferCalculations = 4;
   // Displayable cells
   constexpr static int k_numberOfDoubleCalculationCells =
       Store::k_numberOfSeries * k_numberOfDoubleBufferCalculations;
-  constexpr static int k_numberOfCalculationCells =
+  constexpr static int k_numberOfDisplayableCalculationCells =
       Store::k_numberOfSeries * k_maxNumberOfDisplayableRows;
   // Cell types
   constexpr static int k_standardCalculationTitleCellType = 0;
@@ -158,13 +156,14 @@ class CalculationController : public Shared::DoublePairTableController {
   ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCell
       m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
-  Escher::EvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
+  Escher::EvenOddBufferTextCell
+      m_calculationCells[k_numberOfDisplayableCalculationCells];
   Escher::EvenOddCell m_hideableCell[k_numberOfHeaderColumns];
   Store* m_store;
   double m_memoizedDoubleCalculationCells[Store::k_numberOfSeries][2]
                                          [k_numberOfDoubleBufferCalculations];
-  double m_memoizedSimpleCalculationCells[Store::k_numberOfSeries]
-                                         [k_numberOfSingleBufferCalculations];
+  double m_memoizedSimpleCalculationCells
+      [Store::k_numberOfSeries][k_numberOfMemoizedSingleBufferCalculations];
 };
 
 }  // namespace Regression

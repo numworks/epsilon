@@ -7,22 +7,23 @@
 namespace std {
 
 template <class T>
-inline constexpr const T & min(const T & a, const T & b ) {
+inline constexpr const T& min(const T& a, const T& b) {
   return (b < a) ? b : a;
 }
 
 template <class T>
-inline constexpr const T & max(const T & a, const T & b ) {
+inline constexpr const T& max(const T& a, const T& b) {
   return (b > a) ? b : a;
 }
 
 template <class T>
-inline constexpr const T & clamp(const T & v, const T & lo, const T & hi) {
+inline constexpr const T& clamp(const T& v, const T& lo, const T& hi) {
   return (v < lo) ? lo : (v > hi) ? hi : v;
 }
 
-template <class T >
-inline constexpr T actionOnList(std::initializer_list<T> ilist, const T & (*Method)(const T & a, const T & b)) {
+template <class T>
+inline constexpr T actionOnList(std::initializer_list<T> ilist,
+                                const T& (*Method)(const T& a, const T& b)) {
   T m = *ilist.begin();
   for (T elt : ilist) {
     m = Method(m, elt);
@@ -30,19 +31,23 @@ inline constexpr T actionOnList(std::initializer_list<T> ilist, const T & (*Meth
   return m;
 }
 
-template< class T >
-inline constexpr T min(std::initializer_list<T> ilist) { return actionOnList(ilist, std::min<T>); }
+template <class T>
+inline constexpr T min(std::initializer_list<T> ilist) {
+  return actionOnList(ilist, std::min<T>);
+}
 
-template< class T >
-inline constexpr T max(std::initializer_list<T> ilist) { return actionOnList(ilist, std::max<T>); }
+template <class T>
+inline constexpr T max(std::initializer_list<T> ilist) {
+  return actionOnList(ilist, std::max<T>);
+}
 
-template< class T >
-void swap( T& a, T& b ) {
+template <class T>
+void swap(T& a, T& b) {
   T temp = std::move(a);
   a = std::move(b);
   b = std::move(temp);
 }
 
-}
+}  // namespace std
 
 #endif

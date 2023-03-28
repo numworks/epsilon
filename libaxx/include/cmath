@@ -98,7 +98,10 @@
 
 namespace std {
 
-inline constexpr int fpclassify(float x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
+inline constexpr int fpclassify(float x) {
+  return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL,
+                              FP_ZERO, x);
+}
 inline constexpr bool isfinite(float x) { return __builtin_isfinite(x); }
 inline constexpr bool isinf(float x) { return __builtin_isinf(x); }
 inline constexpr bool isnan(float x) { return __builtin_isnan(x); }
@@ -110,10 +113,14 @@ inline constexpr float acosh(float x) { return __builtin_acoshf(x); }
 inline constexpr float asin(float x) { return __builtin_asinf(x); }
 inline constexpr float asinh(float x) { return __builtin_asinhf(x); }
 inline constexpr float atan(float x) { return __builtin_atanf(x); }
-inline constexpr float atan2(float y, float x) { return __builtin_atan2f(y, x); }
+inline constexpr float atan2(float y, float x) {
+  return __builtin_atan2f(y, x);
+}
 inline constexpr float atanh(float x) { return __builtin_atanhf(x); }
 inline constexpr float ceil(float x) { return __builtin_ceilf(x); }
-inline constexpr float copysign(float x, float y) { return __builtin_copysignf(x, y); }
+inline constexpr float copysign(float x, float y) {
+  return __builtin_copysignf(x, y);
+}
 inline constexpr float cos(float x) { return __builtin_cosf(x); }
 inline constexpr float cosh(float x) { return __builtin_coshf(x); }
 inline constexpr float erf(float x) { return __builtin_erff(x); }
@@ -124,22 +131,36 @@ inline constexpr float fabs(float x) { return __builtin_fabsf(x); }
 inline constexpr float floor(float x) { return __builtin_floorf(x); }
 inline constexpr float fmax(float x, float y) { return __builtin_fmaxf(x, y); }
 inline constexpr float fmod(float x, float y) { return __builtin_fmodf(x, y); }
-inline constexpr float frexp(float x, int *exp) { return __builtin_frexpf(x, exp); }
-inline constexpr float hypot(float x, float y) { return __builtin_hypotf(x, y); }
-inline constexpr float ldexp(float x, int exp) { return __builtin_ldexpf(x, exp); }
+inline constexpr float frexp(float x, int *exp) {
+  return __builtin_frexpf(x, exp);
+}
+inline constexpr float hypot(float x, float y) {
+  return __builtin_hypotf(x, y);
+}
+inline constexpr float ldexp(float x, int exp) {
+  return __builtin_ldexpf(x, exp);
+}
 inline constexpr float lgamma(float x) { return __builtin_lgammaf(x); }
-inline constexpr float lgamma_r(float x, int *signgamp) { return __builtin_lgammaf_r(x, signgamp); }
+inline constexpr float lgamma_r(float x, int *signgamp) {
+  return __builtin_lgammaf_r(x, signgamp);
+}
 inline constexpr float log(float x) { return __builtin_logf(x); }
 inline constexpr float log1p(float x) { return __builtin_log1pf(x); }
 inline constexpr float log10(float x) { return __builtin_log10f(x); }
 inline constexpr float logb(float x) { return __builtin_logbf(x); }
-inline constexpr float modf(float x, float *iptr) { return __builtin_modff(x, iptr); }
+inline constexpr float modf(float x, float *iptr) {
+  return __builtin_modff(x, iptr);
+}
 inline constexpr float nanf(const char *tagp) { return __builtin_nanf(tagp); }
 inline constexpr float nearbyint(float x) { return __builtin_nearbyintf(x); }
-inline constexpr float nextafter(float from, float to) { return __builtin_nextafterf(from, to); }
+inline constexpr float nextafter(float from, float to) {
+  return __builtin_nextafterf(from, to);
+}
 inline constexpr float pow(float x, float y) { return __builtin_powf(x, y); }
 inline constexpr float round(float x) { return __builtin_roundf(x); }
-inline constexpr float scalbn(float x, int exp) { return __builtin_scalbnf(x, exp); }
+inline constexpr float scalbn(float x, int exp) {
+  return __builtin_scalbnf(x, exp);
+}
 inline constexpr float sin(float x) { return __builtin_sinf(x); }
 inline constexpr float sinh(float x) { return __builtin_sinhf(x); }
 inline constexpr float sqrt(float x) { return __builtin_sqrtf(x); }
@@ -147,7 +168,10 @@ inline constexpr float tan(float x) { return __builtin_tanf(x); }
 inline constexpr float tanh(float x) { return __builtin_tanhf(x); }
 inline constexpr float trunc(float x) { return __builtin_truncf(x); }
 
-inline constexpr int fpclassify(double x) { return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x); }
+inline constexpr int fpclassify(double x) {
+  return __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL,
+                              FP_ZERO, x);
+}
 inline constexpr bool isfinite(double x) { return __builtin_isfinite(x); }
 inline constexpr bool isinf(double x) { return __builtin_isinf(x); }
 inline constexpr bool isnan(double x) { return __builtin_isnan(x); }
@@ -159,10 +183,14 @@ inline constexpr double acosh(double x) { return __builtin_acosh(x); }
 inline constexpr double asin(double x) { return __builtin_asin(x); }
 inline constexpr double asinh(double x) { return __builtin_asinh(x); }
 inline constexpr double atan(double x) { return __builtin_atan(x); }
-inline constexpr double atan2(double y, double x) { return __builtin_atan2(y, x); }
+inline constexpr double atan2(double y, double x) {
+  return __builtin_atan2(y, x);
+}
 inline constexpr double atanh(double x) { return __builtin_atanh(x); }
 inline constexpr double ceil(double x) { return __builtin_ceil(x); }
-inline constexpr double copysign(double x, double y) { return __builtin_copysign(x, y); }
+inline constexpr double copysign(double x, double y) {
+  return __builtin_copysign(x, y);
+}
 inline constexpr double cos(double x) { return __builtin_cos(x); }
 inline constexpr double cosh(double x) { return __builtin_cosh(x); }
 inline constexpr double erf(double x) { return __builtin_erf(x); }
@@ -171,27 +199,47 @@ inline constexpr double exp(double x) { return __builtin_exp(x); }
 inline constexpr double expm1(double x) { return __builtin_expm1(x); }
 inline constexpr double fabs(double x) { return __builtin_fabs(x); }
 inline constexpr double floor(double x) { return __builtin_floor(x); }
-inline constexpr double fmax(double x, double y) { return __builtin_fmax(x, y); }
-inline constexpr double fmod(double x, double y) { return __builtin_fmod(x, y); }
-inline constexpr double frexp(double x, int *exp) { return __builtin_frexp(x, exp); }
-inline constexpr double hypot(double x, double y) { return __builtin_hypot(x, y); }
-inline constexpr double ldexp(double x, int exp) { return __builtin_scalbn(x, exp); }
+inline constexpr double fmax(double x, double y) {
+  return __builtin_fmax(x, y);
+}
+inline constexpr double fmod(double x, double y) {
+  return __builtin_fmod(x, y);
+}
+inline constexpr double frexp(double x, int *exp) {
+  return __builtin_frexp(x, exp);
+}
+inline constexpr double hypot(double x, double y) {
+  return __builtin_hypot(x, y);
+}
+inline constexpr double ldexp(double x, int exp) {
+  return __builtin_scalbn(x, exp);
+}
 inline constexpr double lgamma(double x) { return __builtin_lgamma(x); }
-inline constexpr double lgamma_r(double x, int *signgamp) { return __builtin_lgamma_r(x, signgamp); }
+inline constexpr double lgamma_r(double x, int *signgamp) {
+  return __builtin_lgamma_r(x, signgamp);
+}
 inline constexpr double log(double x) { return __builtin_log(x); }
 inline constexpr double log1p(double x) { return __builtin_log1p(x); }
 inline constexpr double log10(double x) { return __builtin_log10(x); }
 inline constexpr double log2(double x) { return __builtin_log2(x); }
 inline constexpr double logb(double x) { return __builtin_logb(x); }
-inline constexpr double modf(double x, double *iptr) { return __builtin_modf(x, iptr); }
+inline constexpr double modf(double x, double *iptr) {
+  return __builtin_modf(x, iptr);
+}
 inline constexpr double nan(const char *tagp) { return __builtin_nan(tagp); }
 inline constexpr double nearbyint(double x) { return __builtin_nearbyint(x); }
-inline constexpr double nextafter(double from, double to) { return __builtin_nextafter(from, to); }
+inline constexpr double nextafter(double from, double to) {
+  return __builtin_nextafter(from, to);
+}
 inline constexpr double pow(double x, double y) { return __builtin_pow(x, y); }
 inline constexpr double rint(double x) { return __builtin_rint(x); }
 inline constexpr double round(double x) { return __builtin_round(x); }
-inline constexpr double scalb(double x, double exp) { return __builtin_scalb(x, exp); }
-inline constexpr double scalbn(double x, int exp) { return __builtin_scalbn(x, exp); }
+inline constexpr double scalb(double x, double exp) {
+  return __builtin_scalb(x, exp);
+}
+inline constexpr double scalbn(double x, int exp) {
+  return __builtin_scalbn(x, exp);
+}
 inline constexpr double sin(double x) { return __builtin_sin(x); }
 inline constexpr double sinh(double x) { return __builtin_sinh(x); }
 inline constexpr double sqrt(double x) { return __builtin_sqrt(x); }
@@ -200,6 +248,6 @@ inline constexpr double tanh(double x) { return __builtin_tanh(x); }
 inline constexpr double tgamma(double x) { return __builtin_tgamma(x); }
 inline constexpr double trunc(double x) { return __builtin_trunc(x); }
 
-}
+}  // namespace std
 
 #endif

@@ -208,7 +208,6 @@ class Expression : public TreeHandle {
   bool hasMatrixOrListChild(Context* context, bool isReduced = true) const {
     return node()->hasMatrixOrListChild(context, isReduced);
   }
-  bool isRankNPlusK(int k);
 
   /* recursivelyMatches will test each node recursively with the function
    * provided as argument. If the result is True, it will stop searching and

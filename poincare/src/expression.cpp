@@ -666,15 +666,6 @@ bool Expression::hasBooleanValue() const {
          type() == ExpressionNode::Type::BinaryLogicalOperator;
 }
 
-bool Expression::isRankNPlusK(int k) {
-  Symbol n = Symbol::Builder(UCodePointUnknown);
-  if (k == 0) {
-    return isIdenticalTo(n);
-  }
-  return isIdenticalTo(Addition::Builder(n, Rational::Builder(k))) ||
-         isIdenticalTo(Addition::Builder(n, BasedInteger::Builder(k)));
-}
-
 bool Expression::derivate(const ReductionContext &reductionContext,
                           Symbol symbol, Expression symbolValue) {
   return node()->derivate(reductionContext, symbol, symbolValue);

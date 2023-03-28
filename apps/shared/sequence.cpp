@@ -204,9 +204,12 @@ bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
             (type == Type::DoubleRecurrence && rank.isOne())) {
           return TrinaryBoolean::False;
         }
+        Symbol n = Symbol::Builder(UCodePointUnknown);
         if (pack->recursion &&
-            ((type != Type::Explicit && rank.isRankNPlusK(0)) ||
-             (type == Type::DoubleRecurrence && rank.isRankNPlusK(1)))) {
+            ((type != Type::Explicit && rank.isIdenticalTo(n)) ||
+             (type == Type::DoubleRecurrence &&
+              rank.isIdenticalTo(
+                  Addition::Builder(n, BasedInteger::Builder(1)))))) {
           return TrinaryBoolean::False;
         }
         return TrinaryBoolean::True;

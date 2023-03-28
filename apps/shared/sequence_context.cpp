@@ -242,11 +242,14 @@ SequenceContext::expressionTypeForIdentifier(const char *identifier,
                                                                   length);
 }
 
-template <typename T>
-TemplatedSequenceContext<T> *SequenceContext::context() {
-  void *helper = sizeof(T) == sizeof(float) ? (void *)&m_floatSequenceContext
-                                            : (void *)&m_doubleSequenceContext;
-  return static_cast<TemplatedSequenceContext<T> *>(helper);
+template <>
+TemplatedSequenceContext<float> *SequenceContext::context<float>() {
+  return &m_floatSequenceContext;
+}
+
+template <>
+TemplatedSequenceContext<double> *SequenceContext::context<double>() {
+  return &m_doubleSequenceContext;
 }
 
 Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
@@ -260,7 +263,5 @@ Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
 
 template class TemplatedSequenceContext<float>;
 template class TemplatedSequenceContext<double>;
-template TemplatedSequenceContext<float> *SequenceContext::context<float>();
-template TemplatedSequenceContext<double> *SequenceContext::context<double>();
 
 }  // namespace Shared

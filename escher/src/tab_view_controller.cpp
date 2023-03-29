@@ -61,9 +61,9 @@ TabViewController::TabViewController(Responder* parentResponder,
     : ViewController(parentResponder),
       m_dataSource(dataSource),
       m_isSelected(false) {
-  assert(one != nullptr);
-  assert(two != nullptr || (three == nullptr && four == nullptr));
-  assert(three != nullptr || four == nullptr);
+  // assert(one != nullptr);
+  // assert(two != nullptr || (three == nullptr && four == nullptr));
+  // assert(three != nullptr || four == nullptr);
   m_children[0] = one;
   m_children[1] = two;
   m_children[2] = three;
@@ -122,14 +122,14 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
 
 void TabViewController::setActiveTab(int8_t i, bool enter) {
   assert(i >= 0 && i < m_numberOfChildren);
-  ViewController* activeVC = m_children[i];
+  ViewController* activeVC = children(i);
   if (i != m_dataSource->activeTab()) {
     m_view.setActiveView(activeVC->view());
-    m_children[i]->viewWillAppear();
+    children(i)->viewWillAppear();
     m_view.m_tabView.setActiveIndex(i);
   }
   if (i != m_dataSource->activeTab()) {
-    m_children[m_dataSource->activeTab()]->viewDidDisappear();
+    children(m_dataSource->activeTab())->viewDidDisappear();
     m_dataSource->setActiveTab(i);
   }
   /* If enter is false, we switch to the ith tab but the focus stays on the tab
@@ -160,13 +160,13 @@ View* TabViewController::view() { return &m_view; }
 uint8_t TabViewController::numberOfTabs() { return m_numberOfChildren; }
 
 const char* TabViewController::tabName(uint8_t index) {
-  return m_children[index]->title();
+  return children(index)->title();
 }
 
 void TabViewController::initView() {
   for (int i = 0; i < m_numberOfChildren; i++) {
-    m_view.m_tabView.addTab(m_children[i]);
-    m_children[i]->initView();
+    m_view.m_tabView.addTab(tabName(i));
+    children(i)->initView();
   }
 }
 
@@ -174,7 +174,7 @@ void TabViewController::viewWillAppear() {
   if (m_dataSource->activeTab() < 0) {
     m_dataSource->setActiveTab(0);
   }
-  m_view.setActiveView(m_children[m_dataSource->activeTab()]->view());
+  m_view.setActiveView(children(m_dataSource->activeTab())->view());
   activeViewController()->viewWillAppear();
   m_view.m_tabView.setActiveIndex(m_dataSource->activeTab());
 }
@@ -186,7 +186,7 @@ void TabViewController::viewDidDisappear() {
 ViewController* TabViewController::activeViewController() {
   assert(m_dataSource->activeTab() >= 0 &&
          m_dataSource->activeTab() < m_numberOfChildren);
-  return m_children[m_dataSource->activeTab()];
+  return children(m_dataSource->activeTab());
 }
 
 }  // namespace Escher

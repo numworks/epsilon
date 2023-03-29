@@ -1,6 +1,7 @@
 #ifndef ESCHER_TAB_VIEW_CONTROLLER_H
 #define ESCHER_TAB_VIEW_CONTROLLER_H
 
+#include <escher/app.h>
 #include <escher/palette.h>
 #include <escher/tab_view.h>
 #include <escher/tab_view_data_source.h>
@@ -17,12 +18,12 @@ class TabViewController : public ViewController {
   int activeTab() const;
   void selectTab();
   void setSelectedTab(int8_t index);
-  void setActiveTab(int8_t index, bool enter = true);
+  virtual void setActiveTab(int8_t index, bool enter = true);
   void setDisplayTabs(bool display) { m_view.setDisplayTabs(display); }
   void enterActiveTab() { setActiveTab(activeTab()); }
   uint8_t numberOfTabs();
 
-  const char* tabName(uint8_t index);
+  virtual const char* tabName(uint8_t index);
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void willResignFirstResponder() override;
@@ -32,7 +33,7 @@ class TabViewController : public ViewController {
 
   virtual KDColor tabBackgroundColor() const { return Palette::PurpleBright; }
 
- private:
+ protected:
   ViewController* activeViewController();
   class ContentView : public View {
    public:
@@ -57,6 +58,7 @@ class TabViewController : public ViewController {
 
   ContentView m_view;
 
+  virtual ViewController* children(uint8_t index) { return m_children[index]; }
   constexpr static uint8_t k_maxNumberOfChildren = 4;
   ViewController* m_children[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;

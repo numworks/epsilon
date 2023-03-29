@@ -12,7 +12,7 @@ class TabViewCell : public View {
  public:
   TabViewCell();
   void drawRect(KDContext *ctx, KDRect rect) const override;
-  void setNamedController(ViewController *controller);
+  void setName(const char *title);
   void setActive(bool active);
   void setSelected(bool selected);
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -25,7 +25,7 @@ class TabViewCell : public View {
  private:
   bool m_active;
   bool m_selected;
-  ViewController *m_controller;
+  const char *m_title;
 };
 
 }  // namespace Escher

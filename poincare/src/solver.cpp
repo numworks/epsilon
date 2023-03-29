@@ -452,7 +452,8 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
    *   i.e. 0.1 < |(t+dt)/t| < 10
    * - there is a minimal value for dt, to allow crossing zero.
    * - always sample a minimal number of points in the whole interval. */
-  constexpr T baseGrowthSpeed = static_cast<T>(1.01);
+  constexpr T baseGrowthSpeed =
+      sizeof(T) == sizeof(double) ? static_cast<T>(1.01) : static_cast<T>(1.05);
   static_assert(baseGrowthSpeed > static_cast<T>(1.),
                 "Growth speed must be greater than 1");
   constexpr T maximalGrowthSpeed = static_cast<T>(10.);

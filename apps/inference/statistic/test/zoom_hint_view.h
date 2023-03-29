@@ -22,9 +22,9 @@ class ZoomHintView : public Escher::View {
   constexpr static int k_numberOfLegends = 2;
   constexpr static int k_numberOfTokens = 2;
   constexpr static KDCoordinate k_tokenWidth = 10;
-  constexpr static KDColor BackgroundColor() {
-    return Shared::BannerView::BackgroundColor();
-  }
+  constexpr static KDColor k_backgroundColor =
+      Shared::BannerView::k_bannerFieldFormat.style.backgroundColor;
+
   void layoutSubviews(bool force = false) override;
   int numberOfSubviews() const override;
   Escher::View* subviewAtIndex(int index) override;

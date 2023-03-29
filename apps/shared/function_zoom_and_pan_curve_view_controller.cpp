@@ -133,7 +133,7 @@ FunctionZoomAndPanCurveViewController::ContentView::LegendView::LegendView() {
   for (int i = 0; i < k_numberOfLegends; i++) {
     m_legends[i].setFont(ContentView::k_legendFont);
     m_legends[i].setMessage(messages[i]);
-    m_legends[i].setBackgroundColor(BackgroundColor());
+    m_legends[i].setBackgroundColor(k_backgroundColor);
     m_legends[i].setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
   }
   KeyView::Type tokenTypes[k_numberOfTokens] = {
@@ -148,7 +148,7 @@ void FunctionZoomAndPanCurveViewController::ContentView::LegendView::drawRect(
     KDContext* ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(),
                        k_legendHeight),
-                BackgroundColor());
+                k_backgroundColor);
 }
 
 int FunctionZoomAndPanCurveViewController::ContentView::LegendView::

@@ -10,7 +10,7 @@ ZoomHintView::ZoomHintView() {
   for (int i = 0; i < k_numberOfLegends; i++) {
     m_legends[i].setFont(k_legendFont);
     m_legends[i].setMessage(messages[i]);
-    m_legends[i].setBackgroundColor(BackgroundColor());
+    m_legends[i].setBackgroundColor(k_backgroundColor);
     m_legends[i].setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
   }
   KeyView::Type tokenTypes[k_numberOfTokens] = {KeyView::Type::Plus,
@@ -23,7 +23,7 @@ ZoomHintView::ZoomHintView() {
 void ZoomHintView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, bounds().height() - k_legendHeight, bounds().width(),
                        k_legendHeight),
-                BackgroundColor());
+                k_backgroundColor);
 }
 
 int ZoomHintView::numberOfSubviews() const {

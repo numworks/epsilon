@@ -183,9 +183,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
     Type type;
     bool recursion;
   };
-  struct Pack pack {
-    buffer, type, allowRecursion
-  };
+  Pack pack{buffer, type, allowRecursion};
   return expressionClone().recursivelyMatches(
       [](const Expression e, Context *context, void *arg) {
         if (e.type() != ExpressionNode::Type::Sequence) {

@@ -203,9 +203,7 @@ bool Expression::recursivelyMatches(ExpressionTestAuxiliary test,
                ? TrinaryBoolean::True
                : TrinaryBoolean::Unknown;
   };
-  struct Pack pack {
-    &test, auxiliary
-  };
+  Pack pack{&test, auxiliary};
   return recursivelyMatches(ternary, context, replaceSymbols, &pack);
 }
 

@@ -19,10 +19,10 @@ void TabView::drawRect(KDContext *ctx, KDRect rect) const {
                 KDColorWhite);
 }
 
-void TabView::addTab(ViewController *controller) {
+void TabView::addTab(const char *title) {
   assert(m_numberOfTabs < k_maxNumberOfTabs);
   uint8_t tabIndex = m_numberOfTabs;
-  m_cells[tabIndex].setNamedController(controller);
+  m_cells[tabIndex].setName(title);
   m_numberOfTabs++;
   markRectAsDirty(bounds());
 }

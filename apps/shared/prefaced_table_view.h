@@ -17,7 +17,6 @@ class PrefacedTableViewDelegate {
   virtual KDCoordinate maxRowPrefaceHeight() const = 0;
   virtual int
   columnToFreeze() = 0;  // Returns -1 if there is no column to freeze
-  virtual int firstFeezableColumn() const = 0;
 };
 
 class PrefacedTableView : public Escher::View,

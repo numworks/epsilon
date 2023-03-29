@@ -135,7 +135,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
     return m_store->seriesRegressionType(seriesIndexFromCurveIndex(curveIndex));
   }
   bool curveIsScatterPlot(int curveIndex) const {
-    return regressionTypeOfCurve(curveIndex) == Model::Type::None;
+    return !Store::HasCoefficients(regressionTypeOfCurve(curveIndex));
   }
   int numberOfDotsOfCurve(int curveIndex) const {
     return m_store->numberOfPairsOfSeries(

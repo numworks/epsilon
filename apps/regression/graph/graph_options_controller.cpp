@@ -189,18 +189,15 @@ bool GraphOptionsController::displayRegressionEquationCell() const {
 }
 
 bool GraphOptionsController::displayRCell() const {
-  Model::Type type =
-      m_store->seriesRegressionType(m_graphController->selectedSeriesIndex());
-  return (type == Regression::Model::Type::LinearApbx ||
-          type == Regression::Model::Type::LinearAxpb) &&
-         displayRegressionEquationCell();
+  return displayRegressionEquationCell() &&
+         m_store->seriesSatisfy(m_graphController->selectedSeriesIndex(),
+                                Store::DisplayRInGraphOptions);
 }
 
 bool GraphOptionsController::displayR2Cell() const {
-  return m_store->seriesRegressionType(
-             m_graphController->selectedSeriesIndex()) !=
-             Regression::Model::Type::Median &&
-         displayRegressionEquationCell();
+  return displayRegressionEquationCell() &&
+         m_store->seriesSatisfy(m_graphController->selectedSeriesIndex(),
+                                Store::DisplayR2);
 }
 
 bool GraphOptionsController::displayResidualPlotCell() const {

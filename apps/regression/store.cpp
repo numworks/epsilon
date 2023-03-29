@@ -78,7 +78,7 @@ int Store::closestVerticalDot(OMG::VerticalDirection direction, double x,
     int numberOfDots = numberOfPairsOfSeries(series);
     float xMin = App::app()->graphRange()->xMin();
     float xMax = App::app()->graphRange()->xMax();
-    bool displayMean = seriesRegressionType(series) != Model::Type::None;
+    bool displayMean = seriesSatisfy(series, HasCoefficients);
     for (int i = 0; i < numberOfDots + displayMean; i++) {
       double currentX =
           i < numberOfDots ? get(series, 0, i) : meanOfColumn(series, 0);
@@ -309,6 +309,16 @@ bool Store::seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const {
   return count >= i;
 }
 
+bool Store::AnyActiveSeriesSatisfy(TypeProperty property) const {
+  int numberOfDefinedSeries = numberOfActiveSeries();
+  for (int i = 0; i < numberOfDefinedSeries; i++) {
+    if (seriesSatisfy(seriesIndexFromActiveSeriesIndex(i), property)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 double Store::computeDeterminationCoefficient(
     int series, Poincare::Context *globalContext) {
   /* Computes and returns the determination coefficient (R2) of the regression.
@@ -321,14 +331,11 @@ double Store::computeDeterminationCoefficient(
    * R2 does not need to be computed if model is median-median, so we avoid
    * computation. If needed, it could be computed though.
    * */
-  if (m_regressionTypes[series] == Model::Type::Median ||
-      m_regressionTypes[series] == Model::Type::None) {
+  if (!seriesSatisfy(series, DisplayR2)) {
     return NAN;
   }
-  /* Exponential Regression are fitted with a z = ln(+-y) change of variable.
-   * This change must be replicated here when computing R2. */
-  bool applyLn = m_regressionTypes[series] == Model::Type::ExponentialAbx ||
-                 m_regressionTypes[series] == Model::Type::ExponentialAebx;
+  // Ln(Y) change of variable must be replicated here when computing R2.
+  bool applyLn = seriesSatisfy(series, FitsLnY);
   bool applyOpposite = applyLn && get(series, 1, 0) < 0.0;
   // Residual sum of squares
   double ssr = 0;

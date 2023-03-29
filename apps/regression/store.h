@@ -99,8 +99,13 @@ class Store : public Shared::LinearRegressionStore {
            type == Model::Type::ExponentialAbx ||
            type == Model::Type::ExponentialAebx;
   }
+  static bool DisplayRSquared(Model::Type type) {
+    return HasCoefficients(type) && DisplayR(type);
+  }
   static bool DisplayR2(Model::Type type) {
-    return HasCoefficients(type) && type != Model::Type::Median;
+    return type == Model::Type::Proportional ||
+           type == Model::Type::Quadratic || type == Model::Type::Cubic ||
+           type == Model::Type::Quartic;
   }
   static bool DisplayResidualStandardDeviation(Model::Type type) {
     return HasCoefficients(type) &&

@@ -331,7 +331,8 @@ double Store::computeDeterminationCoefficient(
    * R2 does not need to be computed if model is median-median, so we avoid
    * computation. If needed, it could be computed though.
    * */
-  if (!seriesSatisfy(series, DisplayR2)) {
+  if (!seriesSatisfy(series, DisplayR2) &&
+      !seriesSatisfy(series, DisplayRSquared)) {
     return NAN;
   }
   // Ln(Y) change of variable must be replicated here when computing R2.

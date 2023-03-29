@@ -92,8 +92,12 @@ class Store : public Shared::LinearRegressionStore {
   static bool HasCoefficients(Model::Type type) {
     return type != Model::Type::None;
   }
-  static bool DisplayRInGraphOptions(Model::Type type) {
-    return type == Model::Type::LinearApbx || type == Model::Type::LinearAxpb;
+  static bool DisplayR(Model::Type type) {
+    return type == Model::Type::None || type == Model::Type::LinearApbx ||
+           type == Model::Type::LinearAxpb || type == Model::Type::Power ||
+           type == Model::Type::Logarithmic ||
+           type == Model::Type::ExponentialAbx ||
+           type == Model::Type::ExponentialAebx;
   }
   static bool DisplayR2(Model::Type type) {
     return HasCoefficients(type) && type != Model::Type::Median;

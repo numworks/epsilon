@@ -121,9 +121,10 @@ bool CalculationController::canStoreContentOfCellAtLocation(
 }
 
 int CalculationController::numberOfRows() const {
-  /* Rows for : title + Mean ... CorrelationCoeff + (Regression) + Coefficients
-   * + (Residual stddev) + (R2) */
-  return 1 + static_cast<int>(Calculation::CorrelationCoeff) + 1 +
+  /* Rows for : title + Mean ... Sum of Products + (CorrelationCoeff) +
+   * (Regression) + (Coefficients) + (Residual stddev) + (R2) */
+  return 1 + (static_cast<int>(Calculation::SumOfProducts) + 1) +
+         m_store->AnyActiveSeriesSatisfy(Store::DisplayR) +
          m_store->AnyActiveSeriesSatisfy(Store::HasCoefficients) +
          numberOfDisplayedCoefficients() +
          m_store->AnyActiveSeriesSatisfy(
@@ -304,6 +305,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
         m_store->coefficientsForSeries(series, globContext)[coefficientIndex];
   } else if (c == Calculation::CorrelationCoeff) {
     // This could be memoized but don't seem to slow the table down for now.
+    if (!Store::DisplayR(type)) {
+      return bufferCell->setText(I18n::translate(I18n::Message::Dash));
+    }
     result = m_store->correlationCoefficient(series);
   } else {
     // These are memoized in the store
@@ -467,8 +471,12 @@ CalculationController::Calculation CalculationController::calculationForRow(
   assert(row > 0 && row < numberOfRows());
   // Ignore top row
   row--;
-  if (row < static_cast<int>(Calculation::Regression)) {
+  if (row < static_cast<int>(Calculation::CorrelationCoeff)) {
     return static_cast<Calculation>(row);
+  }
+  row += !m_store->AnyActiveSeriesSatisfy(Store::DisplayR);
+  if (row == static_cast<int>(Calculation::CorrelationCoeff)) {
+    return Calculation::CorrelationCoeff;
   }
   row += !m_store->AnyActiveSeriesSatisfy(Store::HasCoefficients);
   if (row == static_cast<int>(Calculation::Regression)) {

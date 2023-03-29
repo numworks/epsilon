@@ -183,8 +183,8 @@ void GraphOptionsController::fillCell(HighlightCell *cell) {
     RCell *rCell = static_cast<RCell *>(cell);
     if (Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
       rCell->label()->setTextColor(Palette::GrayDark);
-      rCell->subLabel()->setMessage(I18n::Message::Disabled);
-      rCell->accessory()->setText("");
+      rCell->accessory()->setTextColor(Palette::GrayDark);
+      rCell->accessory()->setText(I18n::translate(I18n::Message::Disabled));
       return;
     }
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(

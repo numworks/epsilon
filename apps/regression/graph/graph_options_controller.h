@@ -55,7 +55,7 @@ class GraphOptionsController
   bool displayResidualPlotCell() const;
 
   using RCell =
-      Escher::MenuCell<Escher::ExpressionView, Escher::MessageTextView,
+      Escher::MenuCell<Escher::ExpressionView, Escher::EmptyCellWidget,
                        Escher::BufferTextView>;
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,

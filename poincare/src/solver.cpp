@@ -608,7 +608,7 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
                                                        : TrinaryBoolean::False;
   }
   Coordinate2D<T> solution =
-      hone(f, aux, start, end, interest, k_absolutePrecision, discontinuous);
+      hone(f, aux, start, end, interest, NullTolerance(start), discontinuous);
   if (!std::isfinite(solution.x()) || !validSolution(solution.x())) {
     return solution;
   }

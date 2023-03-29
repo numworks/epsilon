@@ -132,52 +132,10 @@ bool Sequence::isEmpty() {
                                       data->initialConditionSize(1) == 0)));
 }
 
-bool Sequence::isSuitableForCobweb(Context *context) const {
-  constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
-  char buffer[bufferSize];
-  name(buffer, bufferSize);
-  return type() == Shared::Sequence::Type::SingleRecurrence &&
-         !expressionClone().recursivelyMatches(
-             [](const Expression e, Context *context, void *arg) {
-               // Returns TrinaryBoolean::True for forbidden elements.
-               // Condition 1: u(n+1) mustn't depend on n
-               if (e.type() == ExpressionNode::Type::Symbol) {
-                 const Poincare::Symbol symbol =
-                     static_cast<const Poincare::Symbol &>(e);
-                 return symbol.isSystemSymbol() ? TrinaryBoolean::True
-                                                : TrinaryBoolean::Unknown;
-               }
-               if (e.type() != ExpressionNode::Type::Sequence) {
-                 return TrinaryBoolean::Unknown;
-               }
-               // Condition 2: u(n+1) mustn't depend on another sequence than u
-               const Poincare::Sequence seq =
-                   static_cast<const Poincare::Sequence &>(e);
-               char *buffer = static_cast<char *>(arg);
-               if (strcmp(seq.name(), buffer) != 0) {
-                 return TrinaryBoolean::True;
-               }
-               Expression rank = seq.childAtIndex(0);
-               // Condition 3: u(n+1) mustn't depend on u(rank) with rank other
-               // than n and 0
-               if (rank.isZero()) {
-                 return TrinaryBoolean::False;
-               }
-               if (rank.type() != ExpressionNode::Type::Symbol) {
-                 return TrinaryBoolean::True;
-               }
-               const Poincare::Symbol symbol =
-                   static_cast<const Poincare::Symbol &>(rank);
-               return symbol.isSystemSymbol() ? TrinaryBoolean::False
-                                              : TrinaryBoolean::True;
-             },
-             context,
-             SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-             static_cast<void *>(buffer));
-}
-
 bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
-                                                    bool allowRecursion) const {
+                                                    bool allowRecursion,
+                                                    bool forCobweb) const {
+  assert((forCobweb && allowRecursion) || !forCobweb);
   constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
   char buffer[bufferSize];
   name(buffer, bufferSize);
@@ -186,19 +144,26 @@ bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
     char *name;
     Type type;
     bool recursion;
+    bool cobweb;
   };
-  Pack pack{buffer, type, allowRecursion};
+  Pack pack{buffer, type, allowRecursion, forCobweb};
   return expressionClone().recursivelyMatches(
       [](const Expression e, Context *context, void *arg) {
+        Pack *pack = static_cast<Pack *>(arg);
+        if (pack->cobweb && e.type() == ExpressionNode::Type::Symbol) {
+          const Poincare::Symbol symbol =
+              static_cast<const Poincare::Symbol &>(e);
+          return symbol.isSystemSymbol() ? TrinaryBoolean::True
+                                         : TrinaryBoolean::Unknown;
+        }
         if (e.type() != ExpressionNode::Type::Sequence) {
           return TrinaryBoolean::Unknown;
         }
         const Poincare::Sequence seq =
             static_cast<const Poincare::Sequence &>(e);
-        Pack *pack = static_cast<Pack *>(arg);
         char *buffer = pack->name;
         if (strcmp(seq.name(), buffer) != 0) {
-          return TrinaryBoolean::Unknown;
+          return pack->cobweb ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
         }
         Expression rank = seq.childAtIndex(0);
         Type type = pack->type;

@@ -40,7 +40,15 @@ static inline bool IsSignalingNan(double d) {
   return IntDouble{.d = d}.i == k_sNanDouble.i;
 }
 template <typename T>
-T SignalingNan();
+inline T SignalingNan();
+template <>
+inline float SignalingNan<float>() {
+  return k_sNanFloat.f;
+}
+template <>
+inline double SignalingNan<double>() {
+  return k_sNanDouble.d;
+}
 
 }  // namespace OMG
 

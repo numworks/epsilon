@@ -3,7 +3,6 @@ SFLAGS += -Iomg/include
 omg_src += $(addprefix omg/src/,\
   print.cpp \
   directions.cpp \
-  signaling_nan.cpp\
 )
 
 tests_src += $(addprefix omg/test/,\

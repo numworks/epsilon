@@ -206,7 +206,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
             (type == Type::DoubleRecurrence && rank.isOne())) {
           return TrinaryBoolean::False;
         }
-        Symbol n = Symbol::Builder(UCodePointUnknown);
+        Symbol n = Symbol::SystemSymbol();
         if (pack->recursion &&
             ((type != Type::Explicit && rank.isIdenticalTo(n)) ||
              (type == Type::DoubleRecurrence &&

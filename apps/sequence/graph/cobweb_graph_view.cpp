@@ -55,8 +55,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
    * a recursive definition, n is Symbol(0x1)
    * and u(n) is Poincare::Sequence('u', Symbol(0x1)) */
   Poincare::Sequence sequenceSymbol = Poincare::Sequence::Builder(
-      name, strlen(name), Poincare::Symbol::Builder(UCodePointUnknown));
-  Poincare::Symbol variable = Poincare::Symbol::Builder(UCodePointUnknown);
+      name, strlen(name), Poincare::Symbol::SystemSymbol());
+  Poincare::Symbol variable = Poincare::Symbol::SystemSymbol();
   Poincare::Expression function =
       sequence->expressionClone().replaceSymbolWithExpression(sequenceSymbol,
                                                               variable);

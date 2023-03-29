@@ -129,7 +129,7 @@ Poincare::Expression AreaBetweenCurvesGraphController::createSumExpression(
       function->expressionReduced(context).clone();
   return Integral::Builder(
       AbsoluteValue::Builder(Subtraction::Builder(expressionF, expressionG)),
-      Symbol::Builder(UCodePointUnknown), Float<double>::Builder(startSum),
+      Symbol::SystemSymbol(), Float<double>::Builder(startSum),
       Float<double>::Builder(endSum));
 }
 

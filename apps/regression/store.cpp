@@ -437,7 +437,7 @@ void Store::storeRegressionFunction(int series,
   BuildFunctionName(series, name, k_functionNameSize);
   expression = expression.replaceSymbolWithExpression(
       Poincare::Symbol::Builder(Model::k_xSymbol),
-      Poincare::Symbol::Builder(UCodePointUnknown));
+      Poincare::Symbol::SystemSymbol());
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       name, Ion::Storage::regExtension, expression.addressInPool(),
       expression.size(), true);

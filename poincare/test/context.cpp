@@ -171,21 +171,19 @@ QUIZ_CASE(
   Poincare::SerializationHelper::CodePoint(x, bufferSize, UCodePointUnknown);
 
   assert_parsed_expression_approximates_with_value_for_symbol(
-      Function::Builder("f", 1,
-                        Subtraction::Builder(Symbol::Builder(UCodePointUnknown),
-                                             Rational::Builder(2))),
+      Function::Builder(
+          "f", 1,
+          Subtraction::Builder(Symbol::SystemSymbol(), Rational::Builder(2))),
       x, 5.0, 9.0);
   // Approximate f(?-1)+f(?+1) with ? = 3
   assert_parsed_expression_approximates_with_value_for_symbol(
       Addition::Builder(
+          Function::Builder("f", 1,
+                            Subtraction::Builder(Symbol::SystemSymbol(),
+                                                 Rational::Builder(1))),
           Function::Builder(
               "f", 1,
-              Subtraction::Builder(Symbol::Builder(UCodePointUnknown),
-                                   Rational::Builder(1))),
-          Function::Builder(
-              "f", 1,
-              Addition::Builder(Symbol::Builder(UCodePointUnknown),
-                                Rational::Builder(1)))),
+              Addition::Builder(Symbol::SystemSymbol(), Rational::Builder(1)))),
       x, 3.0, 20.0);
 
   // Clean the storage for other tests
@@ -196,12 +194,11 @@ QUIZ_CASE(
   // Approximate f(?) with ? = 5
   // Cartesian
   assert_parsed_expression_approximates_with_value_for_symbol(
-      Function::Builder("f", 1, Symbol::Builder(UCodePointUnknown)), x, 1.0,
-      -1.0);
+      Function::Builder("f", 1, Symbol::SystemSymbol()), x, 1.0, -1.0);
   // Real
   assert_parsed_expression_approximates_with_value_for_symbol(
-      Function::Builder("f", 1, Symbol::Builder(UCodePointUnknown)), x, 1.0,
-      (double)NAN, Real);
+      Function::Builder("f", 1, Symbol::SystemSymbol()), x, 1.0, (double)NAN,
+      Real);
 
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();

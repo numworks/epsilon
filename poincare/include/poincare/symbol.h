@@ -85,6 +85,7 @@ class Symbol final : public SymbolAbstract {
 
  public:
   constexpr static AliasesList k_ansAliases = AliasesLists::k_ansAliases;
+  static Symbol SystemSymbol() { return Builder(UCodePointUnknown); }
 
   Symbol(const SymbolNode* node = nullptr) : SymbolAbstract(node) {}
   static Symbol Builder(const char* name, int length) {

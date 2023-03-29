@@ -17,7 +17,7 @@ namespace Graph {
 
 ListController::ListController(
     Responder *parentResponder, ButtonRowController *header,
-    ButtonRowController *footer, GraphController *graphController,
+    ButtonRowController *footer,
     FunctionParameterController *functionParameterController)
     : Shared::FunctionListController(parentResponder, header, footer,
                                      I18n::Message::AddFunction),

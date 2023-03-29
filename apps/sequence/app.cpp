@@ -81,15 +81,21 @@ bool App::isAcceptableExpression(const Poincare::Expression exp) {
          exp.type() != ExpressionNode::Type::Comparison;
 }
 
-App::App(Snapshot *snapshot)
-    : FunctionApp(snapshot, &m_listController, &m_graphController,
-                  &m_valuesController),
-      m_listController(&m_listFooter, this, &m_listHeader, &m_listFooter),
-      m_graphController(&m_graphAlternateEmptyViewController, this,
-                        &m_graphHeader, snapshot->graphRange(),
-                        snapshot->cursor(), snapshot->selectedCurveIndex(),
-                        snapshot->functionStore()),
-      m_valuesController(&m_valuesAlternateEmptyViewController, this,
+App::ListTab::ListTab()
+    : Shared::FunctionApp::ListTab(&m_listController),
+      m_listController(&m_listFooter, app(), &m_listHeader, &m_listFooter) {}
+
+App::GraphTab::GraphTab()
+    : Shared::FunctionApp::GraphTab(&m_graphController),
+      m_graphController(&m_graphAlternateEmptyViewController, app(),
+                        &m_graphHeader, app()->snapshot()->graphRange(),
+                        app()->snapshot()->cursor(),
+                        app()->snapshot()->selectedCurveIndex(),
+                        app()->snapshot()->functionStore()) {}
+
+App::ValuesTab::ValuesTab()
+    : Shared::FunctionApp::ValuesTab(&m_valuesController),
+      m_valuesController(&m_valuesAlternateEmptyViewController, app(),
                          &m_valuesHeader) {}
 
 }  // namespace Sequence

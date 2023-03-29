@@ -71,14 +71,29 @@ class App : public Shared::FunctionApp {
         ->sequenceStore;
   }
   Shared::Interval *interval() { return snapshot()->interval(); }
-  ValuesController *valuesController() override { return &m_valuesController; }
+  ValuesController *valuesController() override {
+    return &m_tabs.tab<ValuesTab>()->m_valuesController;
+  }
   bool isAcceptableExpression(const Poincare::Expression expression) override;
 
  private:
-  App(Snapshot *snapshot);
-  ListController m_listController;
-  GraphController m_graphController;
-  ValuesController m_valuesController;
+  App(Snapshot *snapshot)
+      : FunctionApp(snapshot, &m_tabs, I18n::Message::SequenceTab) {}
+
+  struct ListTab : public Shared::FunctionApp::ListTab {
+    ListTab();
+    ListController m_listController;
+  };
+  struct GraphTab : public Shared::FunctionApp::GraphTab {
+    GraphTab();
+    GraphController m_graphController;
+  };
+  struct ValuesTab : public Shared::FunctionApp::ValuesTab {
+    ValuesTab();
+    ValuesController m_valuesController;
+  };
+
+  Escher::TabUnion<ListTab, GraphTab, ValuesTab> m_tabs;
 };
 
 }  // namespace Sequence

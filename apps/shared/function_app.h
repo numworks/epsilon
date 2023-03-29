@@ -3,6 +3,7 @@
 
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/input_view_controller.h>
+#include <escher/tab_union_view_controller.h>
 #include <escher/tab_view_data_source.h>
 
 #include "curve_view_cursor.h"
@@ -49,21 +50,38 @@ class FunctionApp : public ExpressionFieldDelegateApp {
   void concludeIntrusiveStorageChange() override;
 
  protected:
-  FunctionApp(Snapshot *snapshot,
-              Shared::FunctionListController *listController,
-              Shared::FunctionGraphController *graphController,
-              Shared::ValuesController *valuesController);
+  FunctionApp(Snapshot *snapshot, Escher::AbstractTabUnion *tabs,
+              I18n::Message firstTabName);
 
-  Escher::ButtonRowController m_listFooter;
-  Escher::ButtonRowController m_listHeader;
-  Escher::StackViewController m_listStackViewController;
-  Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
-  Escher::ButtonRowController m_graphHeader;
-  Escher::StackViewController m_graphStackViewController;
-  Escher::AlternateEmptyViewController m_valuesAlternateEmptyViewController;
-  Escher::ButtonRowController m_valuesHeader;
-  Escher::StackViewController m_valuesStackViewController;
-  Escher::TabViewController m_tabViewController;
+  struct ListTab : public Escher::Tab {
+    ListTab(Shared::FunctionListController *listController);
+    Escher::ViewController *top() override {
+      return &m_listStackViewController;
+    }
+    Escher::ButtonRowController m_listFooter;
+    Escher::ButtonRowController m_listHeader;
+    Escher::StackViewController m_listStackViewController;
+  };
+  struct GraphTab : public Escher::Tab {
+    GraphTab(Shared::FunctionGraphController *graphController);
+    Escher::ViewController *top() override {
+      return &m_graphStackViewController;
+    }
+    Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
+    Escher::ButtonRowController m_graphHeader;
+    Escher::StackViewController m_graphStackViewController;
+  };
+  struct ValuesTab : public Escher::Tab {
+    ValuesTab(Shared::ValuesController *valuesController);
+    Escher::ViewController *top() override {
+      return &m_valuesStackViewController;
+    }
+    Escher::AlternateEmptyViewController m_valuesAlternateEmptyViewController;
+    Escher::ButtonRowController m_valuesHeader;
+    Escher::StackViewController m_valuesStackViewController;
+  };
+
+  Escher::TabUnionViewController m_tabViewController;
   Escher::ViewController *m_activeControllerBeforeStore;
 };
 

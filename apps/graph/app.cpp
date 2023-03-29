@@ -44,22 +44,11 @@ void App::Snapshot::tidy() {
   m_graphRange.setDelegate(nullptr);
 }
 
-App::App(Snapshot* snapshot)
-    : FunctionApp(snapshot, &m_listController, &m_graphController,
-                  &m_valuesController),
-      m_listController(&m_listFooter, &m_listHeader, &m_listFooter,
-                       &m_graphController, &m_functionParameterController),
-      m_graphController(&m_graphAlternateEmptyViewController, this,
-                        &m_graphHeader, snapshot->graphRange(),
-                        snapshot->cursor(), snapshot->selectedCurveIndex()),
-      m_valuesController(&m_valuesAlternateEmptyViewController, this,
-                         &m_valuesHeader, &m_functionParameterController),
-      m_functionParameterController(this, I18n::Message::FunctionColor,
-                                    I18n::Message::DeleteExpression, this,
-                                    &m_graphController, &m_valuesController) {}
-
 CodePoint App::XNT() {
-  int selectedFunctionIndex = m_listController.selectedRow();
+  if (snapshot()->activeTab() != 0) {
+    return ContinuousFunction::k_cartesianSymbol;
+  }
+  int selectedFunctionIndex = listController()->selectedRow();
   if (!isStoreMenuOpen() && selectedFunctionIndex >= 0) {
     assert(selectedFunctionIndex < functionStore()->numberOfModels());
     Ion::Storage::Record record =
@@ -68,5 +57,28 @@ CodePoint App::XNT() {
   }
   return ContinuousFunction::k_cartesianSymbol;
 }
+
+App::ListTab::ListTab()
+    : Shared::FunctionApp::ListTab(&m_listController),
+      m_listController(&m_listFooter, &m_listHeader, &m_listFooter,
+                       &app()->m_functionParameterController) {}
+
+App::GraphTab::GraphTab()
+    : Shared::FunctionApp::GraphTab(&m_graphController),
+      m_graphController(&m_graphAlternateEmptyViewController, app(),
+                        &m_graphHeader, app()->snapshot()->graphRange(),
+                        app()->snapshot()->cursor(),
+                        app()->snapshot()->selectedCurveIndex()) {}
+
+App::ValuesTab::ValuesTab()
+    : Shared::FunctionApp::ValuesTab(&m_valuesController),
+      m_valuesController(&m_valuesAlternateEmptyViewController, app(),
+                         &m_valuesHeader,
+                         &app()->m_functionParameterController) {}
+
+App::App(Snapshot* snapshot)
+    : FunctionApp(snapshot, &m_tabs, I18n::Message::Expressions),
+      m_functionParameterController(this, I18n::Message::FunctionColor,
+                                    I18n::Message::DeleteExpression, this) {}
 
 }  // namespace Graph

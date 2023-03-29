@@ -169,7 +169,7 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (cell == &m_optionsCell && m_optionsCell.canBeActivatedByEvent(event)) {
     Shared::ListParameterController *details =
-        App::app()->listController()->parameterController();
+        App::app()->parameterController();
     details->setRecord(m_record);  // Will select cell at location (0,0)
     stack->push(details);
     return true;

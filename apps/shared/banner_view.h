@@ -11,12 +11,11 @@ namespace Shared {
 class BannerView : public Escher::View {
  public:
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
-  constexpr static KDColor TextColor() {
-    return k_defaultFormat.style.glyphColor;
-  }
-  constexpr static KDColor BackgroundColor() {
-    return k_defaultFormat.style.backgroundColor;
-  }
+  constexpr static KDGlyph::Format k_bannerFieldFormat = {
+      {.glyphColor = KDColorBlack,
+       .backgroundColor = Escher::Palette::GrayMiddle,
+       .font = k_font},
+      .horizontalAlignment = KDGlyph::k_alignCenter};
   constexpr static float k_maxLengthDisplayed =
       Ion::Display::Width / KDFont::GlyphWidth(k_font);
 
@@ -46,13 +45,6 @@ class BannerView : public Escher::View {
   virtual bool lineBreakBeforeSubview(Escher::View* subview) const {
     return false;
   }
-
- protected:
-  constexpr static KDGlyph::Format k_defaultFormat = {
-      .style = {.glyphColor = KDColorBlack,
-                .backgroundColor = Escher::Palette::GrayMiddle,
-                .font = k_font},
-      .horizontalAlignment = KDGlyph::k_alignCenter};
 
  private:
   constexpr static KDCoordinate LineSpacing = Escher::Metric::BannerTextMargin;

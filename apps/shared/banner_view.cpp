@@ -15,7 +15,8 @@ void BannerView::drawRect(KDContext *ctx, KDRect rect) const {
   const KDCoordinate lineHeight = KDFont::GlyphHeight(k_font) + LineSpacing;
   const KDCoordinate lineWidth = bounds().width();
   for (KDCoordinate y = 0; y < frameHeight; y += lineHeight) {
-    ctx->fillRect(KDRect(0, y, lineWidth, LineSpacing), BackgroundColor());
+    ctx->fillRect(KDRect(0, y, lineWidth, LineSpacing),
+                  k_bannerFieldFormat.style.backgroundColor);
   }
 }
 

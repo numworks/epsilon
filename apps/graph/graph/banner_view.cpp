@@ -12,14 +12,14 @@ BannerView::BannerView(Responder* parentResponder,
                        TextFieldDelegate* textFieldDelegate)
     : Shared::XYBannerView(parentResponder, inputEventHandlerDelegate,
                            textFieldDelegate),
-      m_derivativeView(k_defaultFormat),
+      m_derivativeView(k_bannerFieldFormat),
       m_tangentEquationView(I18n::Message::LinearRegressionFormula,
-                            k_defaultFormat),
-      m_aView(k_defaultFormat),
-      m_bView(k_defaultFormat) {
+                            k_bannerFieldFormat),
+      m_aView(k_bannerFieldFormat),
+      m_bView(k_bannerFieldFormat) {
   for (int i = 0; i < k_maxNumberOfInterests; i++) {
     m_interestMessageView[i] =
-        MessageTextView(I18n::Message::Default, k_defaultFormat);
+        MessageTextView(I18n::Message::Default, k_bannerFieldFormat);
   }
 }
 

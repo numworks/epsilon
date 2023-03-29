@@ -13,7 +13,7 @@ class XYBannerView : public BannerView, EditableFieldBannerViewDelegate {
                Escher::TextFieldDelegate* textFieldDelegate)
       : EditableFieldBannerViewDelegate(
             parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-        m_ordinateView(k_defaultFormat) {}
+        m_ordinateView(k_bannerFieldFormat) {}
 
   Escher::BufferTextView* abscissaSymbol() { return editableFieldLabel(); }
   Escher::TextField* abscissaValue() { return editableField(); }

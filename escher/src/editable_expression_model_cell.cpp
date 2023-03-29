@@ -6,12 +6,10 @@ namespace Escher {
 EditableExpressionModelCell::EditableExpressionModelCell(
     Responder* parentResponder,
     InputEventHandlerDelegate* inputEventHandlerDelegate,
-    LayoutFieldDelegate* layoutDelegate, float horizontalAlignment,
-    float verticalAlignment, KDColor textColor, KDColor backgroundColor,
-    KDFont::Size font)
+    LayoutFieldDelegate* layoutDelegate, KDGlyph::Format format)
     : HighlightCell(),
       m_expressionField(parentResponder, inputEventHandlerDelegate,
-                        layoutDelegate, horizontalAlignment, verticalAlignment),
+                        layoutDelegate, format),
       m_leftMargin(0),
       m_rightMargin(0) {
   m_expressionField.setLeftMargin(Metric::EditableExpressionAdditionalMargin);

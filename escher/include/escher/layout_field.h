@@ -25,13 +25,11 @@ class LayoutField
   LayoutField(Responder* parentResponder,
               InputEventHandlerDelegate* inputEventHandlerDelegate,
               LayoutFieldDelegate* delegate = nullptr,
-              KDFont::Size font = KDFont::Size::Large,
-              float horizontalAlignment = KDGlyph::k_alignLeft,
-              float verticalAlignment = KDGlyph::k_alignCenter)
+              KDGlyph::Format format = {})
       : WithBlinkingTextCursor<ScrollableView>(parentResponder, &m_contentView,
                                                this),
         EditableField(inputEventHandlerDelegate),
-        m_contentView(font, horizontalAlignment, verticalAlignment),
+        m_contentView(format),
         m_delegate(delegate) {}
   void setDelegates(InputEventHandlerDelegate* inputEventHandlerDelegate,
                     LayoutFieldDelegate* delegate) {
@@ -109,8 +107,7 @@ class LayoutField
 
   class ContentView : public View {
    public:
-    ContentView(KDFont::Size font, float horizontalAlignment,
-                float verticalAlignment);
+    ContentView(KDGlyph::Format format);
     bool isEditing() const { return m_isEditing; }
     // returns True if LayoutField should reload
     bool setEditing(bool isEditing);

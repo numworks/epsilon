@@ -16,11 +16,9 @@ static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
 ExpressionField::ExpressionField(
     Responder *parentResponder,
     InputEventHandlerDelegate *inputEventHandlerDelegate,
-    LayoutFieldDelegate *layoutFieldDelegate, float horizontalAlignment,
-    float verticalAlignment)
+    LayoutFieldDelegate *layoutFieldDelegate, KDGlyph::Format format)
     : LayoutField(parentResponder, inputEventHandlerDelegate,
-                  layoutFieldDelegate, KDFont::Size::Large, horizontalAlignment,
-                  verticalAlignment),
+                  layoutFieldDelegate, format),
       m_inputViewMemoizedHeight(0),
       m_draftBuffer(s_draftBuffer),
       m_draftBufferSize(AbstractTextField::MaxBufferSize()) {

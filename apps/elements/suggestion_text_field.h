@@ -23,9 +23,7 @@ class SuggestionTextField : public Escher::AbstractTextField {
  private:
   class ContentView : public Escher::AbstractTextField::ContentView {
    public:
-    ContentView(char* textBuffer, size_t textBufferSize, KDFont::Size font,
-                float horizontalAlignment, float verticalAlignment,
-                KDColor textColor, KDColor backgroundColor);
+    ContentView();
 
     // Escher::View
     void drawRect(KDContext* ctx, KDRect rect) const override;

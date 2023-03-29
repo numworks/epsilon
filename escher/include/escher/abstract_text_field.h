@@ -80,9 +80,8 @@ class AbstractTextField : public TextInput, public EditableField {
      * = 212 characters. */
     constexpr static int k_maxBufferSize = 220;
 
-    ContentView(char *textBuffer, size_t textBufferSize, KDFont::Size font,
-                float horizontalAlignment, float verticalAlignment,
-                KDColor textColor, KDColor backgroundColor);
+    ContentView(char *textBuffer, size_t textBufferSize,
+                KDGlyph::Format format);
 
     // View
     void drawRect(KDContext *ctx, KDRect rect) const override;

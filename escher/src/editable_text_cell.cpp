@@ -9,14 +9,11 @@ namespace Escher {
 EditableTextCell::EditableTextCell(
     Responder* parentResponder,
     InputEventHandlerDelegate* inputEventHandlerDelegate,
-    TextFieldDelegate* delegate, KDFont::Size font, float horizontalAlignment,
-    float verticalAlignment, KDColor textColor, KDColor backgroundColor)
+    TextFieldDelegate* delegate, KDGlyph::Format format)
     : HighlightCell(),
       Responder(parentResponder),
       m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize,
-                  inputEventHandlerDelegate, delegate, font,
-                  horizontalAlignment, verticalAlignment, textColor,
-                  backgroundColor) {
+                  inputEventHandlerDelegate, delegate, format) {
   m_textBody[0] = 0;
 }
 

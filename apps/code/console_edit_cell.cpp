@@ -23,9 +23,12 @@ ConsoleEditCell::ConsoleEditCell(
           nullptr,
           {.style = {.font =
                          GlobalPreferences::sharedGlobalPreferences->font()}}),
-      m_textField(this, nullptr, TextField::MaxBufferSize(),
-                  inputEventHandlerDelegate, delegate,
-                  GlobalPreferences::sharedGlobalPreferences->font()) {}
+      m_textField(
+          this, nullptr, TextField::MaxBufferSize(), inputEventHandlerDelegate,
+          delegate,
+          {.style = {.font =
+                         GlobalPreferences::sharedGlobalPreferences->font()}}) {
+}
 
 int ConsoleEditCell::numberOfSubviews() const { return 2; }
 

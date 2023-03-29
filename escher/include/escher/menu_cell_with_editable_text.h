@@ -78,6 +78,9 @@ class AbstractWithEditableText : public Responder,
   }
 
  protected:
+  constexpr static KDGlyph::Format k_defaultFormat = {
+      .horizontalAlignment = KDGlyph::k_alignRight};
+
   TextField m_textField;
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
   bool m_editable;

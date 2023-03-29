@@ -15,11 +15,7 @@ class EditableTextCell : public HighlightCell, public Responder {
   EditableTextCell(
       Responder* parentResponder = nullptr,
       InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
-      TextFieldDelegate* delegate = nullptr,
-      KDFont::Size font = KDFont::Size::Large,
-      float horizontalAlignment = KDGlyph::k_alignLeft,
-      float verticalAlignment = KDGlyph::k_alignCenter,
-      KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorWhite);
+      TextFieldDelegate* delegate = nullptr, KDGlyph::Format format = {});
   TextField* textField();
   void setHighlighted(bool highlight) override;
   Responder* responder() override { return this; }

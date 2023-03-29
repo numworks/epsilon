@@ -121,8 +121,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
          symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
   Expression childSymbol = symbol.childAtIndex(0);
   finalExpression = finalExpression.replaceSymbolWithExpression(
-      static_cast<const Symbol &>(childSymbol),
-      Symbol::Builder(UCodePointUnknown));
+      static_cast<const Symbol &>(childSymbol), Symbol::SystemSymbol());
   if (!(childSymbol.isIdenticalTo(
             Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) ||
         childSymbol.isIdenticalTo(
@@ -175,8 +174,7 @@ const Expression GlobalContext::ExpressionForFunction(
     e = ContinuousFunction(r).expressionClone();
   }
   if (!e.isUninitialized()) {
-    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown),
-                                      parameter);
+    e = e.replaceSymbolWithExpression(Symbol::SystemSymbol(), parameter);
   }
   return e;
 }

@@ -365,7 +365,7 @@ Expression ContinuousFunction::sumBetweenBounds(double start, double end,
   end = std::min<double>(end, tMax());
   // Integral takes ownership of args
   return Integral::Builder(
-      expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknown),
+      expressionReduced(context).clone(), Symbol::SystemSymbol(),
       Float<double>::Builder(start), Float<double>::Builder(end));
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
@@ -521,8 +521,7 @@ Expression ContinuousFunction::Model::expressionReduced(
       if (!willBeAlongX && yDegree != 0) {
         // No need to replace anything if yDegree is 0
         m_expression.replaceSymbolWithExpression(
-            Symbol::Builder(k_ordinateSymbol),
-            Symbol::Builder(UCodePointUnknown));
+            Symbol::Builder(k_ordinateSymbol), Symbol::SystemSymbol());
       }
     } else {
       /* m_expression is resulting of a simplification with the target
@@ -601,7 +600,7 @@ Expression ContinuousFunction::Model::originalEquation(
     return unknownSymbolEquation;
   }
   return unknownSymbolEquation.replaceSymbolWithExpression(
-      Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
+      Symbol::SystemSymbol(), Symbol::Builder(symbol));
 }
 
 bool isValidNamedLeftExpression(const Expression e,
@@ -669,8 +668,7 @@ Expression ContinuousFunction::Model::expressionEquation(
     } else {
       /* Function in first half of the equation refer to an already defined one.
        * Replace the symbol. */
-      leftExpression.replaceChildAtIndexInPlace(
-          0, Symbol::Builder(UCodePointUnknown));
+      leftExpression.replaceChildAtIndexInPlace(0, Symbol::SystemSymbol());
     }
   } else if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol)) ||
              leftExpression.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
@@ -722,9 +720,8 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(
     if (numberOfSubCurves(record) > 1) {
       m_expressionDerivate = Undefined::Builder();
     } else {
-      m_expressionDerivate =
-          Derivative::Builder(expression, Symbol::Builder(UCodePointUnknown),
-                              Symbol::Builder(UCodePointUnknown));
+      m_expressionDerivate = Derivative::Builder(
+          expression, Symbol::SystemSymbol(), Symbol::SystemSymbol());
       Preferences preferences =
           Preferences::ClonePreferencesWithNewComplexFormat(
               complexFormat(record, context));

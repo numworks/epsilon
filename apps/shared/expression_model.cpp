@@ -36,7 +36,7 @@ void ExpressionModel::text(const Storage::Record* record, char* buffer,
     return;
   }
   if (symbol != 0) {
-    e = e.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown),
+    e = e.replaceSymbolWithExpression(Symbol::SystemSymbol(),
                                       Symbol::Builder(symbol));
   }
   int serializedSize = e.serialize(buffer, bufferSize);
@@ -148,8 +148,8 @@ Layout ExpressionModel::layout(const Storage::Record* record,
     assert(record->fullName() != nullptr);
     Expression clone = ExpressionModel::expressionClone(record);
     if (!clone.isUninitialized() && symbol != 0) {
-      clone = clone.replaceSymbolWithExpression(
-          Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
+      clone = clone.replaceSymbolWithExpression(Symbol::SystemSymbol(),
+                                                Symbol::Builder(symbol));
     }
     m_layout = PoincareHelpers::CreateLayout(
         clone, AppsContainer::activeApp()->localContext());
@@ -244,7 +244,7 @@ Poincare::Expression ExpressionModel::ReplaceSymbolWithUnknown(
     Poincare::Expression e, CodePoint symbol) {
   if (!e.isUninitialized() && symbol != 0) {
     return e.replaceSymbolWithExpression(Symbol::Builder(symbol),
-                                         Symbol::Builder(UCodePointUnknown));
+                                         Symbol::SystemSymbol());
   }
   return e;
 }

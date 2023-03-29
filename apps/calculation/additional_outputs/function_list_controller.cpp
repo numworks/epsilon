@@ -33,7 +33,7 @@ void FunctionListController::setExactAndApproximateExpression(
   Context* context = App::app()->localContext();
 
   float abscissa = exactExpression.getNumericalValue();
-  Symbol variable = Symbol::Builder(UCodePointUnknown);
+  Symbol variable = Symbol::SystemSymbol();
   exactExpression.replaceNumericalValuesWithSymbol(variable);
 
   Expression simplifiedExpression = exactExpression;

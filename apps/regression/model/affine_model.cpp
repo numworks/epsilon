@@ -41,16 +41,4 @@ double AffineModel::levelSet(double* modelCoefficients, double xMin,
   return (y - yIntercept) / slope;
 }
 
-double AffineModel::partialDerivate(double* modelCoefficients,
-                                    int derivateCoefficientIndex,
-                                    double x) const {
-  if (derivateCoefficientIndex == slopeCoefficientIndex()) {
-    // Derivate with respect to slope: x
-    return x;
-  }
-  assert(derivateCoefficientIndex == yInterceptCoefficientIndex());
-  // Derivate with respect to yIntercept: 1
-  return 1.0;
-}
-
 }  // namespace Regression

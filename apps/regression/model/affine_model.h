@@ -34,8 +34,6 @@ class AffineModel : public Model {
            CountryPreferences::RegressionApp::Variant1;
   }
 
-  double partialDerivate(double* modelCoefficients,
-                         int derivateCoefficientIndex, double x) const override;
   void privateFit(Store* store, int series, double* modelCoefficients,
                   Poincare::Context* context) override = 0;
 };

@@ -10,7 +10,8 @@ namespace Shared {
 
 class BufferFunctionTitleCell : public FunctionTitleCell {
  public:
-  BufferFunctionTitleCell(KDFont::Size font = KDFont::Size::Large);
+  BufferFunctionTitleCell(KDGlyph::Format format = {
+                              .horizontalAlignment = KDGlyph::k_alignCenter});
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;

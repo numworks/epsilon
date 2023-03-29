@@ -15,7 +15,11 @@ class EvenOddCell : public HighlightCell {
   void setHighlighted(bool highlighted) override;
   virtual KDColor backgroundColor() const;
   void drawRect(KDContext* ctx, KDRect rect) const override;
+
   constexpr static KDCoordinate k_horizontalMargin = Metric::SmallCellMargin;
+  constexpr static KDGlyph::Format k_smallCellDefaultFormat = {
+      {.font = KDFont::Size::Small},
+      .horizontalAlignment = KDGlyph::k_alignRight};
 
  protected:
   virtual void updateSubviewsBackgroundAfterChangingState() {}

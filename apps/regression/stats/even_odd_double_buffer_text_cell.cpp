@@ -9,15 +9,12 @@ using namespace Escher;
 namespace Regression {
 
 EvenOddDoubleBufferTextCell::EvenOddDoubleBufferTextCell(
-    Responder* parentResponder, float horizontalAlignment,
-    float verticalAlignment)
+    Responder* parentResponder, KDGlyph::Format format)
     : EvenOddCell(),
       Responder(parentResponder),
       m_firstTextSelected(true),
-      m_firstBufferTextView(KDFont::Size::Small, horizontalAlignment,
-                            verticalAlignment),
-      m_secondBufferTextView(KDFont::Size::Small, horizontalAlignment,
-                             verticalAlignment) {}
+      m_firstBufferTextView(format),
+      m_secondBufferTextView(format) {}
 
 const char* EvenOddDoubleBufferTextCell::text() const {
   if (m_firstTextSelected) {

@@ -3,13 +3,8 @@
 
 namespace Escher {
 
-EvenOddBufferTextCell::EvenOddBufferTextCell(KDFont::Size font,
-                                             float horizontalAlignment,
-                                             float verticalAlignment)
-    : EvenOddCell(),
-      m_bufferTextView({.style = {.font = font},
-                        .horizontalAlignment = horizontalAlignment,
-                        .verticalAlignment = verticalAlignment}) {}
+EvenOddBufferTextCell::EvenOddBufferTextCell(KDGlyph::Format format)
+    : EvenOddCell(), m_bufferTextView(format) {}
 
 const char* EvenOddBufferTextCell::text() const {
   return m_bufferTextView.text();

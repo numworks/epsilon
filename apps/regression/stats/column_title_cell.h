@@ -8,8 +8,9 @@ namespace Regression {
 class ColumnTitleCell : public EvenOddDoubleBufferTextCell {
  public:
   ColumnTitleCell(Escher::Responder* parentResponder = nullptr)
-      : EvenOddDoubleBufferTextCell(parentResponder, KDGlyph::k_alignCenter,
-                                    KDGlyph::k_alignCenter),
+      : EvenOddDoubleBufferTextCell(
+            parentResponder, {{.font = KDFont::Size::Small},
+                              .horizontalAlignment = KDGlyph::k_alignCenter}),
         m_functionColor(Escher::Palette::Red) {}
   virtual void setColor(KDColor color);
   void drawRect(KDContext* ctx, KDRect rect) const override;

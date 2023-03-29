@@ -616,8 +616,19 @@ Coordinate2D<T> Solver<T>::honeAndRoundSolution(
     discontinuous = discontinuityTest(start, end, aux) ? TrinaryBoolean::True
                                                        : TrinaryBoolean::False;
   }
+  /* WARNING: This is a hack for discontinuous functions. BrentForRoot
+   * needs to be very precise to find a root that is on the discontinuity bound.
+   *
+   * For other functions, we prefer a precision of NullTolerance because if the
+   * precision is too high, the honing is more subject to approximations errors.
+   */
+  constexpr T precisionForDiscontinuousFunctions =
+      k_relativePrecision * k_minimalAbsoluteStep;
+  T precision = discontinuous == TrinaryBoolean::True
+                    ? precisionForDiscontinuousFunctions
+                    : NullTolerance(start);
   Coordinate2D<T> solution =
-      hone(f, aux, start, end, interest, NullTolerance(start), discontinuous);
+      hone(f, aux, start, end, interest, precision, discontinuous);
   if (!std::isfinite(solution.x()) || !validSolution(solution.x())) {
     return solution;
   }

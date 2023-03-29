@@ -158,7 +158,11 @@ bool Sequence::isSuitableForCobweb(Context *context) const {
                  return TrinaryBoolean::True;
                }
                Expression rank = seq.childAtIndex(0);
-               // Condition 3: u(n+1) mustn't depend on u(rank) with rank!=n
+               // Condition 3: u(n+1) mustn't depend on u(rank) with rank other
+               // than n and 0
+               if (rank.isZero()) {
+                 return TrinaryBoolean::False;
+               }
                if (rank.type() != ExpressionNode::Type::Symbol) {
                  return TrinaryBoolean::True;
                }

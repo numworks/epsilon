@@ -19,10 +19,10 @@ class ScrollView : public View {
   ScrollView(View *contentView, ScrollViewDataSource *dataSource);
   KDSize minimalSizeForOptimalDisplay() const override;
 
-  void setTopMargin(KDCoordinate m);
+  void setTopMargin(KDCoordinate m) { m_topMargin = m; }
   void setRightMargin(KDCoordinate m) { m_rightMargin = m; }
   void setBottomMargin(KDCoordinate m) { m_bottomMargin = m; }
-  void setLeftMargin(KDCoordinate m);
+  void setLeftMargin(KDCoordinate m) { m_leftMargin = m; }
   KDCoordinate topMargin() const { return m_topMargin; }
   KDCoordinate rightMargin() const { return m_rightMargin; }
   KDCoordinate bottomMargin() const { return m_bottomMargin; }

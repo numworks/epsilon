@@ -63,7 +63,6 @@ class ValuesController : public Shared::ValuesController,
   // PrefacedTableViewDelegate
   KDCoordinate maxRowPrefaceHeight() const override { return 3 * k_cellHeight; }
   int columnToFreeze() override;
-  int firstFeezableColumn() const override { return 0; }
 
  private:
   constexpr static size_t k_maxNumberOfSymbolTypes =

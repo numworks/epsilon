@@ -104,7 +104,7 @@ class Sequence : public Function {
   bool canBeHandledAsExplicit(Poincare::Context *context) const {
     return !mainExpressionContainsForbiddenTerms(context, false);
   }
-  int order() const;
+  int order() const { return static_cast<int>(type()); }
   int firstNonInitialRank() const { return initialRank() + order(); }
 
   // Approximation

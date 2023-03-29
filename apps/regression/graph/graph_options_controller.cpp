@@ -191,7 +191,7 @@ bool GraphOptionsController::displayRegressionEquationCell() const {
 bool GraphOptionsController::displayRCell() const {
   return displayRegressionEquationCell() &&
          m_store->seriesSatisfy(m_graphController->selectedSeriesIndex(),
-                                Store::DisplayRInGraphOptions);
+                                Store::DisplayR);
 }
 
 bool GraphOptionsController::displayR2Cell() const {

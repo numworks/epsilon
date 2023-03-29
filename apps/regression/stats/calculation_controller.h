@@ -127,33 +127,10 @@ class CalculationController : public Shared::DoublePairTableController {
   KDCoordinate nonMemoizedColumnWidth(int i) override;
 
   Shared::DoublePairStore* store() const override { return m_store; }
-  typedef bool (*DisplayCondition)(Model::Type type);
-  static bool DisplayR2(Model::Type type) {
-    return type != Model::Type::None && type != Model::Type::Median;
-  }
-  static bool DisplayRegression(Model::Type type) {
-    return type != Model::Type::None;
-  }
-  static bool DisplayResidualStandardDeviation(Model::Type type) {
-    return GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
-               CountryPreferences::RegressionApp::Variant1 &&
-           type != Model::Type::None;
-  }
-  static bool DisplayMCoefficient(Model::Type type) {
-    return GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
-               CountryPreferences::RegressionApp::Variant1 &&
-           (type == Model::Type::LinearAxpb || type == Model::Type::Median);
-  }
-  static bool DisplayACoefficient(Model::Type type) {
-    // Any regression type not displaying M coefficient displays A coefficient
-    return type != Model::Type::None && !DisplayMCoefficient(type);
-  }
   static I18n::Message MessageForCalculation(Calculation c);
   static I18n::Message SymbolForCalculation(Calculation c);
 
   Calculation calculationForRow(int row) const;
-  bool hasSeriesDisplaying(DisplayCondition condition) const;
-  bool shouldSeriesDisplay(int series, DisplayCondition condition) const;
   int numberOfDisplayedCoefficients() const;
   int numberOfDisplayedBCDECoefficients() const;
   void resetMemoization(bool force = true) override;

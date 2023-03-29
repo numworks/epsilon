@@ -38,7 +38,7 @@ class Store : public Shared::LinearRegressionStore {
 
   // Regression
   void setSeriesRegressionType(int series, Model::Type type);
-  Model::Type seriesRegressionType(int series) {
+  Model::Type seriesRegressionType(int series) const {
     return m_regressionTypes[series];
   }
   Model* modelForSeries(int series) {
@@ -86,6 +86,42 @@ class Store : public Shared::LinearRegressionStore {
   // Double Pair Store
   bool updateSeries(int series, bool delayUpdate = false,
                     bool updateDisplayAdditionalColumn = true) override;
+
+  // Type-specific properties
+  typedef bool (*TypeProperty)(Model::Type type);
+  static bool HasCoefficients(Model::Type type) {
+    return type != Model::Type::None;
+  }
+  static bool DisplayRInGraphOptions(Model::Type type) {
+    return type == Model::Type::LinearApbx || type == Model::Type::LinearAxpb;
+  }
+  static bool DisplayR2(Model::Type type) {
+    return HasCoefficients(type) && type != Model::Type::Median;
+  }
+  static bool DisplayResidualStandardDeviation(Model::Type type) {
+    return HasCoefficients(type) &&
+           GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+               CountryPreferences::RegressionApp::Variant1;
+  }
+  static bool HasMCoefficient(Model::Type type) {
+    return GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
+               CountryPreferences::RegressionApp::Variant1 &&
+           (type == Model::Type::LinearAxpb || type == Model::Type::Median);
+  }
+  static bool HasACoefficient(Model::Type type) {
+    // Any regression type not having M coefficient have A coefficient
+    return HasCoefficients(type) && !HasMCoefficient(type);
+  }
+  static bool FitsLnY(Model::Type type) {
+    // Exponential Regression are fitted with a z = ln(+-y) change of variable.
+    // TODO : Add Power model
+    return type == Model::Type::ExponentialAbx ||
+           type == Model::Type::ExponentialAebx;
+  }
+  bool AnyActiveSeriesSatisfy(TypeProperty property) const;
+  bool seriesSatisfy(int series, TypeProperty property) const {
+    return property(seriesRegressionType(series));
+  }
 
  private:
   double computeDeterminationCoefficient(int series,

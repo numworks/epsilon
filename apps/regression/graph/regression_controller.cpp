@@ -54,7 +54,8 @@ void RegressionController::didBecomeFirstResponder() {
     // Type is hidden for selected country, select the first line.
     initialIndex = 0;
   } else {
-    assert(type == Model::Type::None || type == ModelTypeAtIndex(initialIndex));
+    assert(!Store::HasCoefficients(type) ||
+           type == ModelTypeAtIndex(initialIndex));
   }
   selectCell(initialIndex);
   SelectableListViewController<

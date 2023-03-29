@@ -124,10 +124,11 @@ int CalculationController::numberOfRows() const {
   /* Rows for : title + Mean ... CorrelationCoeff + (Regression) + Coefficients
    * + (Residual stddev) + (R2) */
   return 1 + static_cast<int>(Calculation::CorrelationCoeff) + 1 +
-         hasSeriesDisplaying(&DisplayRegression) +
+         m_store->AnyActiveSeriesSatisfy(Store::HasCoefficients) +
          numberOfDisplayedCoefficients() +
-         hasSeriesDisplaying(&DisplayResidualStandardDeviation) +
-         hasSeriesDisplaying(&DisplayR2);
+         m_store->AnyActiveSeriesSatisfy(
+             Store::DisplayResidualStandardDeviation) +
+         m_store->AnyActiveSeriesSatisfy(Store::DisplayR2);
 }
 
 int CalculationController::numberOfColumns() const {
@@ -179,11 +180,12 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   size_t series =
       m_store->seriesIndexFromActiveSeriesIndex(i - k_numberOfHeaderColumns);
   assert(series < DoublePairStore::k_numberOfSeries);
+  Model::Type type = m_store->seriesRegressionType(series);
 
   // Regression cell
   if (c == Calculation::Regression) {
     Model *model = m_store->modelForSeries(series);
-    I18n::Message message = shouldSeriesDisplay(series, &DisplayRegression)
+    I18n::Message message = Store::HasCoefficients(type)
                                 ? model->formulaMessage()
                                 : I18n::Message::Dash;
     static_cast<EvenOddBufferTextCell *>(cell)->setText(
@@ -289,9 +291,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
         static_cast<int>(c) - static_cast<int>(Calculation::CoefficientA);
     int numberOfCoefficients =
         m_store->modelForSeries(series)->numberOfCoefficients();
-    if (coefficientIndex <= 0 &&
-        DisplayMCoefficient(m_store->seriesRegressionType(series))) {
-      assert(!DisplayACoefficient(m_store->seriesRegressionType(series)));
+    if (coefficientIndex <= 0 && Store::HasMCoefficient(type)) {
+      assert(!Store::HasACoefficient(type));
       // In that case only, M is coefficientIndex 0 and A is coefficientIndex -1
       coefficientIndex = -coefficientIndex - 1;
     }
@@ -309,9 +310,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     assert(c == Calculation::ResidualStandardDeviation ||
            c == Calculation::DeterminationCoeff);
     bool isR2 = (c == Calculation::DeterminationCoeff);
-    DisplayCondition condition =
-        isR2 ? DisplayR2 : DisplayResidualStandardDeviation;
-    if (!shouldSeriesDisplay(series, condition) ||
+    Store::TypeProperty property =
+        isR2 ? Store::DisplayR2 : Store::DisplayResidualStandardDeviation;
+    if (!property(type) ||
         !m_store->coefficientsAreDefined(series, globContext)) {
       bufferCell->setText(I18n::translate(I18n::Message::Dash));
       return;
@@ -469,15 +470,15 @@ CalculationController::Calculation CalculationController::calculationForRow(
   if (row < static_cast<int>(Calculation::Regression)) {
     return static_cast<Calculation>(row);
   }
-  row += !hasSeriesDisplaying(&DisplayRegression);
+  row += !m_store->AnyActiveSeriesSatisfy(Store::HasCoefficients);
   if (row == static_cast<int>(Calculation::Regression)) {
     return Calculation::Regression;
   }
-  row += !hasSeriesDisplaying(&DisplayMCoefficient);
+  row += !m_store->AnyActiveSeriesSatisfy(Store::HasMCoefficient);
   if (row == static_cast<int>(Calculation::CoefficientM)) {
     return Calculation::CoefficientM;
   }
-  row += !hasSeriesDisplaying(&DisplayACoefficient);
+  row += !m_store->AnyActiveSeriesSatisfy(Store::HasACoefficient);
   if (row == static_cast<int>(Calculation::CoefficientA)) {
     return Calculation::CoefficientA;
   }
@@ -488,35 +489,19 @@ CalculationController::Calculation CalculationController::calculationForRow(
   }
   row += static_cast<int>(Calculation::CoefficientE) -
          static_cast<int>(Calculation::CoefficientB) + 1 - displayedBCDECoeffs;
-  row += !hasSeriesDisplaying(&DisplayResidualStandardDeviation);
+  row +=
+      !m_store->AnyActiveSeriesSatisfy(Store::DisplayResidualStandardDeviation);
   if (row == static_cast<int>(Calculation::ResidualStandardDeviation)) {
     return Calculation::ResidualStandardDeviation;
   }
   assert(row == static_cast<int>(Calculation::NumberOfRows) - 1 &&
-         hasSeriesDisplaying(&DisplayR2));
+         m_store->AnyActiveSeriesSatisfy(Store::DisplayR2));
   return static_cast<Calculation>(row);
 }
 
-bool CalculationController::shouldSeriesDisplay(
-    int series, DisplayCondition condition) const {
-  return condition(m_store->seriesRegressionType(series));
-}
-
-bool CalculationController::hasSeriesDisplaying(
-    DisplayCondition condition) const {
-  int numberOfDefinedSeries = m_store->numberOfActiveSeries();
-  for (int i = 0; i < numberOfDefinedSeries; i++) {
-    if (shouldSeriesDisplay(m_store->seriesIndexFromActiveSeriesIndex(i),
-                            condition)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 int CalculationController::numberOfDisplayedCoefficients() const {
-  return hasSeriesDisplaying(&DisplayMCoefficient) +
-         hasSeriesDisplaying(&DisplayACoefficient) +
+  return m_store->AnyActiveSeriesSatisfy(Store::HasMCoefficient) +
+         m_store->AnyActiveSeriesSatisfy(Store::HasACoefficient) +
          numberOfDisplayedBCDECoefficients();
 }
 

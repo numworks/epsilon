@@ -167,9 +167,9 @@ void GraphController::reloadBannerView() {
     // Display MeanDot before x= and y=
     m_bannerView.setDisplayParameters(true, true, !coefficientsAreDefined);
     m_bannerView.otherView()->setText(I18n::translate(I18n::Message::MeanDot));
-  } else if (modelType == Model::Type::None &&
-             !Preferences::sharedPreferences->examMode()
-                  .forbidStatsDiagnostics()) {
+  } else if (!(Store::HasCoefficients(modelType) ||
+               Preferences::sharedPreferences->examMode()
+                   .forbidStatsDiagnostics())) {
     // Display correlation coefficient
     m_bannerView.setDisplayParameters(true, false, !coefficientsAreDefined);
     Poincare::Print::CustomPrintf(

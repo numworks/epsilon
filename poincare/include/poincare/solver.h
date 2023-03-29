@@ -129,8 +129,6 @@ class Solver {
    * precise computations. */
   constexpr static T k_minimalPracticalStep =
       std::max(static_cast<T>(1e-6), k_minimalAbsoluteStep);
-  constexpr static T k_absolutePrecision =
-      k_relativePrecision * k_minimalAbsoluteStep;
 
   static Coordinate2D<T> SafeBrentMinimum(FunctionEvaluation f, const void *aux,
                                           T xMin, T xMax, Interest interest,

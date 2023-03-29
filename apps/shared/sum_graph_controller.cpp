@@ -235,9 +235,7 @@ SumGraphController::LegendView::LegendView(
     : m_sum(k_glyphsFormat),
       m_legend(I18n::Message::Default, k_glyphsFormat),
       m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize,
-                     inputEventHandlerDelegate, controller, k_font,
-                     KDGlyph::k_alignLeft, KDGlyph::k_alignCenter, KDColorBlack,
-                     Palette::GrayMiddle),
+                     inputEventHandlerDelegate, controller, k_glyphsFormat),
       m_sumSymbol(sumSymbol) {
   m_textBuffer[0] = 0;
 }

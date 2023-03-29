@@ -9,8 +9,7 @@ AbstractWithEditableText::AbstractWithEditableText(
     : Responder(parentResponder),
       ChainedTextFieldDelegate(textFieldDelegate),
       m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize,
-                  inputEventHandlerDelegate, this, KDFont::Size::Large,
-                  KDGlyph::k_alignRight, KDGlyph::k_alignCenter, KDColorBlack),
+                  inputEventHandlerDelegate, this, k_defaultFormat),
       m_editable(true) {
   m_textBody[0] = '\0';
 }

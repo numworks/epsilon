@@ -23,9 +23,10 @@ class EditableFieldBannerViewDelegate {
              .horizontalAlignment = KDGlyph::k_alignRight}),
         m_editableField(parentResponder, m_textBody, k_bufferSize,
                         inputEventHandlerDelegate, textFieldDelegate,
-                        BannerView::k_font, KDGlyph::k_alignLeft,
-                        KDGlyph::k_alignCenter, BannerView::TextColor(),
-                        BannerView::BackgroundColor()),
+                        {{.glyphColor = BannerView::TextColor(),
+                          .backgroundColor = BannerView::BackgroundColor(),
+                          .font = BannerView::k_font},
+                         .horizontalAlignment = KDGlyph::k_alignLeft}),
         m_editableView(&m_editableFieldLabel, &m_editableField) {
     m_textBody[0] = 0;
   }

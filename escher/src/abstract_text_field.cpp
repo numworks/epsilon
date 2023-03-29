@@ -21,15 +21,15 @@ static size_t s_currentDraftTextLength;
 
 /* AbstractTextField::ContentView */
 
-AbstractTextField::ContentView::ContentView(
-    char *textBuffer, size_t textBufferSize, KDFont::Size font,
-    float horizontalAlignment, float verticalAlignment, KDColor textColor,
-    KDColor backgroundColor)
-    : TextInput::ContentView(font, horizontalAlignment, verticalAlignment),
+AbstractTextField::ContentView::ContentView(char *textBuffer,
+                                            size_t textBufferSize,
+                                            KDGlyph::Format format)
+    : TextInput::ContentView(format.style.font, format.horizontalAlignment,
+                             format.verticalAlignment),
       m_textBuffer(textBuffer),
       m_textBufferSize(textBufferSize),
-      m_textColor(textColor),
-      m_backgroundColor(backgroundColor),
+      m_textColor(format.style.glyphColor),
+      m_backgroundColor(format.style.backgroundColor),
       m_isEditing(false),
       m_isStalled(false) {
   if (textBuffer == nullptr) {

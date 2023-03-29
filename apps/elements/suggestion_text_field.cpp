@@ -6,13 +6,8 @@ namespace Elements {
 
 // SuggestionTextField::ContentView
 
-SuggestionTextField::ContentView::ContentView(
-    char* textBuffer, size_t textBufferSize, KDFont::Size font,
-    float horizontalAlignment, float verticalAlignment, KDColor textColor,
-    KDColor backgroundColor)
-    : AbstractTextField::ContentView(textBuffer, textBufferSize, font,
-                                     horizontalAlignment, verticalAlignment,
-                                     textColor, backgroundColor),
+SuggestionTextField::ContentView::ContentView()
+    : AbstractTextField::ContentView(nullptr, MaxBufferSize(), {}),
       m_suggestion(nullptr) {}
 
 void SuggestionTextField::ContentView::drawRect(KDContext* ctx,
@@ -51,10 +46,7 @@ SuggestionTextField::SuggestionTextField(
     InputEventHandlerDelegate* inputEventHandlerDelegate,
     TextFieldDelegate* delegate)
     : AbstractTextField(parentResponder, &m_contentView,
-                        inputEventHandlerDelegate, delegate),
-      m_contentView(nullptr, MaxBufferSize(), KDFont::Size::Large,
-                    KDGlyph::k_alignLeft, KDGlyph::k_alignCenter, KDColorBlack,
-                    KDColorWhite) {}
+                        inputEventHandlerDelegate, delegate) {}
 
 bool SuggestionTextField::handleEvent(Ion::Events::Event event) {
   if (cursorAtEndOfText() && m_contentView.suggestion() &&

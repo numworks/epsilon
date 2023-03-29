@@ -13,9 +13,7 @@ class EvenOddEditableTextCell : public EvenOddCell, public Responder {
       Responder* parentResponder = nullptr,
       InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
       TextFieldDelegate* delegate = nullptr,
-      KDFont::Size font = KDFont::Size::Small,
-      float horizontalAlignment = KDGlyph::k_alignRight,
-      float verticalAlignment = KDGlyph::k_alignCenter);
+      KDGlyph::Format format = k_defaultFormat);
   EditableTextCell* editableTextCell();
   Responder* responder() override { return this; }
   const char* text() const override { return m_editableCell.text(); }
@@ -24,6 +22,9 @@ class EvenOddEditableTextCell : public EvenOddCell, public Responder {
 
  private:
   constexpr static KDCoordinate k_rightMargin = Escher::Metric::SmallCellMargin;
+  constexpr static KDGlyph::Format k_defaultFormat = {
+      {.font = KDFont::Size::Small},
+      .horizontalAlignment = KDGlyph::k_alignRight};
   void updateSubviewsBackgroundAfterChangingState() override;
   int numberOfSubviews() const override;
   View* subviewAtIndex(int index) override;

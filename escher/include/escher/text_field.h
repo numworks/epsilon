@@ -10,16 +10,10 @@ class TextField : public AbstractTextField {
   // TODO: Initalize with KDGlyph::Format
   TextField(Responder* parentResponder, char* textBuffer, size_t textBufferSize,
             InputEventHandlerDelegate* inputEventHandlerDelegate,
-            TextFieldDelegate* delegate = nullptr,
-            KDFont::Size font = KDFont::Size::Large,
-            float horizontalAlignment = KDGlyph::k_alignLeft,
-            float verticalAlignment = KDGlyph::k_alignCenter,
-            KDColor textColor = KDColorBlack,
-            KDColor backgroundColor = KDColorWhite)
+            TextFieldDelegate* delegate = nullptr, KDGlyph::Format format = {})
       : AbstractTextField(parentResponder, &m_contentView,
                           inputEventHandlerDelegate, delegate),
-        m_contentView(textBuffer, textBufferSize, font, horizontalAlignment,
-                      verticalAlignment, textColor, backgroundColor) {}
+        m_contentView(textBuffer, textBufferSize, format) {}
 
  protected:
   const AbstractTextField::ContentView* nonEditableContentView() const {

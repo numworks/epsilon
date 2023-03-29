@@ -18,7 +18,6 @@ class ListController : public Shared::FunctionListController {
   ListController(Escher::Responder* parentResponder,
                  Escher::ButtonRowController* header,
                  Escher::ButtonRowController* footer,
-                 GraphController* graphController,
                  FunctionParameterController* functionParameterController);
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;

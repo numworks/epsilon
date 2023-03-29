@@ -23,8 +23,7 @@ class FunctionParameterController : public Shared::ListParameterController,
   FunctionParameterController(
       Escher::Responder* parentResponder, I18n::Message functionColorMessage,
       I18n::Message deleteFunctionMessage,
-      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-      GraphController* graphController, ValuesController* valuesController);
+      Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
   void setRecord(Ion::Storage::Record record) override;
   // MemoizedListViewDataSource
   Escher::HighlightCell* cell(int index) override;
@@ -68,7 +67,6 @@ class FunctionParameterController : public Shared::ListParameterController,
       m_derivativeCell;
   DetailsParameterController m_detailsParameterController;
   DomainParameterController m_domainParameterController;
-  ValuesController* m_valuesController;
   bool m_useColumnTitle;
 };
 

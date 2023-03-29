@@ -31,10 +31,10 @@ class TabViewController : public ViewController {
   void viewWillAppear() override;
   void viewDidDisappear() override;
 
+  ViewController* activeViewController();
   virtual KDColor tabBackgroundColor() const { return Palette::PurpleBright; }
 
  protected:
-  ViewController* activeViewController();
   class ContentView : public View {
    public:
     ContentView();

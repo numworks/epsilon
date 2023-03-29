@@ -62,16 +62,37 @@ class App : public Shared::FunctionApp {
       Shared::ContinuousFunctionProperties::SymbolType symbolType) {
     return snapshot()->intervalForSymbolType(symbolType);
   }
-  ValuesController *valuesController() override { return &m_valuesController; }
-  ListController *listController() { return &m_listController; }
-  GraphController *graphController() { return &m_graphController; }
+  ValuesController *valuesController() override {
+    return &m_tabs.tab<ValuesTab>()->m_valuesController;
+  }
+  ListController *listController() {
+    return &m_tabs.tab<ListTab>()->m_listController;
+  }
+  GraphController *graphController() {
+    return &m_tabs.tab<GraphTab>()->m_graphController;
+  }
+  FunctionParameterController *parameterController() {
+    return &m_functionParameterController;
+  }
 
  private:
   App(Snapshot *snapshot);
-  ListController m_listController;
-  GraphController m_graphController;
-  ValuesController m_valuesController;
+
+  struct ListTab : public Shared::FunctionApp::ListTab {
+    ListTab();
+    ListController m_listController;
+  };
+  struct GraphTab : public Shared::FunctionApp::GraphTab {
+    GraphTab();
+    GraphController m_graphController;
+  };
+  struct ValuesTab : public Shared::FunctionApp::ValuesTab {
+    ValuesTab();
+    ValuesController m_valuesController;
+  };
+
   FunctionParameterController m_functionParameterController;
+  Escher::TabUnion<ListTab, GraphTab, ValuesTab> m_tabs;
 };
 
 }  // namespace Graph

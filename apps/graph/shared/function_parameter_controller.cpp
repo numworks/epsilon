@@ -18,13 +18,11 @@ namespace Graph {
 FunctionParameterController::FunctionParameterController(
     Responder *parentResponder, I18n::Message functionColorMessage,
     I18n::Message deleteFunctionMessage,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
-    GraphController *graphController, ValuesController *valuesController)
+    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate)
     : Shared::ListParameterController(parentResponder, functionColorMessage,
                                       deleteFunctionMessage),
       m_detailsParameterController(this),
-      m_domainParameterController(nullptr, inputEventHandlerDelegate),
-      m_valuesController(valuesController) {
+      m_domainParameterController(nullptr, inputEventHandlerDelegate) {
   m_detailsCell.label()->setMessage(I18n::Message::Details);
   m_derivativeCell.label()->setMessage(I18n::Message::GraphDerivative);
 }
@@ -146,7 +144,7 @@ void FunctionParameterController::initializeColumnParameters() {
 }
 
 Shared::ColumnNameHelper *FunctionParameterController::columnNameHelper() {
-  return m_valuesController;
+  return App::app()->valuesController();
 }
 
 }  // namespace Graph

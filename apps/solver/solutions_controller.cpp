@@ -122,8 +122,8 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
 
 SolutionsController::SolutionsController(Responder *parentResponder)
     : ViewController(parentResponder),
-      m_deltaCell(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter, KDColorBlack,
-                  KDColorWhite, k_deltaFont),
+      m_deltaCell({{.font = k_deltaFont},
+                   .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_contentView(this) {
   const char *delta =
       GlobalPreferences::sharedGlobalPreferences->discriminantSymbol();

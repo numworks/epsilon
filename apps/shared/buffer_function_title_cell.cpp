@@ -6,9 +6,8 @@ using namespace Escher;
 
 namespace Shared {
 
-BufferFunctionTitleCell::BufferFunctionTitleCell(KDFont::Size font)
-    : FunctionTitleCell(),
-      m_bufferTextView(font, KDGlyph::k_alignCenter, k_verticalAlignment) {}
+BufferFunctionTitleCell::BufferFunctionTitleCell(KDGlyph::Format format)
+    : FunctionTitleCell(), m_bufferTextView(format) {}
 
 void BufferFunctionTitleCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);

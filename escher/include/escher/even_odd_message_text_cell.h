@@ -9,8 +9,8 @@ namespace Escher {
 
 class EvenOddMessageTextCell : public EvenOddCell {
  public:
-  EvenOddMessageTextCell(KDFont::Size font = KDFont::Size::Large,
-                         float horizontalAlignment = KDGlyph::k_alignCenter);
+  EvenOddMessageTextCell(KDGlyph::Format format = {
+                             .horizontalAlignment = KDGlyph::k_alignCenter});
   void setMessage(I18n::Message textContent) {
     m_messageTextView.setMessage(textContent);
   }

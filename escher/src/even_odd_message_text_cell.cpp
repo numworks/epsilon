@@ -3,12 +3,9 @@
 
 namespace Escher {
 
-EvenOddMessageTextCell::EvenOddMessageTextCell(KDFont::Size font,
-                                               float horizontalAlignment)
+EvenOddMessageTextCell::EvenOddMessageTextCell(KDGlyph::Format format)
     : EvenOddCell(),
-      m_messageTextView((I18n::Message)0,
-                        {.style = {.font = font},
-                         .horizontalAlignment = horizontalAlignment}),
+      m_messageTextView((I18n::Message)0, format),
       m_leftMargin(k_horizontalMargin) {}
 
 void EvenOddMessageTextCell::setAlignment(float horizontalAlignment,

@@ -4,17 +4,9 @@ using namespace Poincare;
 
 namespace Escher {
 
-EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment,
-                                             float verticalAlignment,
-                                             KDColor textColor,
-                                             KDColor backgroundColor,
-                                             KDFont::Size font)
+EvenOddExpressionCell::EvenOddExpressionCell(KDGlyph::Format format)
     : EvenOddCell(),
-      m_expressionView({.style = {.glyphColor = textColor,
-                                  .backgroundColor = backgroundColor,
-                                  .font = font},
-                        .horizontalAlignment = horizontalAlignment,
-                        .verticalAlignment = verticalAlignment}),
+      m_expressionView(format),
       m_leftMargin(0),
       m_rightMargin(0) {}
 

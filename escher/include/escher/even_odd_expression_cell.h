@@ -8,11 +8,7 @@ namespace Escher {
 
 class EvenOddExpressionCell : public EvenOddCell {
  public:
-  EvenOddExpressionCell(float horizontalAlignment = KDGlyph::k_alignLeft,
-                        float verticalAlignment = KDGlyph::k_alignCenter,
-                        KDColor textColor = KDColorBlack,
-                        KDColor backgroundColor = KDColorWhite,
-                        KDFont::Size font = KDFont::Size::Large);
+  EvenOddExpressionCell(KDGlyph::Format format = {});
   void setLayout(Poincare::Layout layout);
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);

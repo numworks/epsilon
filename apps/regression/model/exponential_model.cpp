@@ -119,20 +119,6 @@ void ExponentialModel::privateFit(Store* store, int series,
       sign * std::exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, slope));
 }
 
-double ExponentialModel::partialDerivate(double* modelCoefficients,
-                                         int derivateCoefficientIndex,
-                                         double x) const {
-  const double b = aebxFormatBValue(modelCoefficients);
-  if (derivateCoefficientIndex == 0) {
-    // Derivate with respect to a: exp(b*x)
-    return std::exp(b * x);
-  }
-  assert(derivateCoefficientIndex == 1);
-  // Derivate with respect to b: a*x*exp(b*x)
-  double a = modelCoefficients[0];
-  return a * x * std::exp(b * x);
-}
-
 bool ExponentialModel::dataSuitableForFit(Store* store, int series) const {
   if (!Model::dataSuitableForFit(store, series)) {
     return false;

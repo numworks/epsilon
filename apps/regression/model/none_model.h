@@ -37,12 +37,6 @@ class NoneModel : public Model {
       double* modelCoefficients) const override {
     return Poincare::Expression();
   }
-  double partialDerivate(double* modelCoefficients,
-                         int derivateCoefficientIndex,
-                         double x) const override {
-    assert(false);
-    return NAN;
-  }
   void privateFit(Store* store, int series, double* modelCoefficients,
                   Poincare::Context* context) override {}
 };

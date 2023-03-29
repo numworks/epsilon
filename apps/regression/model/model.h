@@ -74,8 +74,10 @@ class Model {
  private:
   // Model attributes
   virtual double partialDerivate(double* modelCoefficients,
-                                 int derivateCoefficientIndex,
-                                 double x) const = 0;
+                                 int derivateCoefficientIndex, double x) const {
+    assert(false);
+    return 0.0;
+  };
 
   // Levenberg-Marquardt
   constexpr static double k_maxIterations = 300;

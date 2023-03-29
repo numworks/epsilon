@@ -108,6 +108,11 @@ QUIZ_CASE(equation_solve_approximate) {
   assert_solves_to_error("(x-10)^7=0", RequireApproximateSolution);
   assert_solves_numerically_to("(x-10)^7=0", -100, 100, {10});
 
+  assert_solves_numerically_to("abs(x-145)=0.75", 0, 300, {144.25, 145.75});
+  assert_solves_numerically_to(
+      "6x^5-x^4-43x^3+42x^2+x-7=0", -10, 10,
+      {-2.99103, -0.3591962, 0.6322375, 0.8400476, 2.044608});
+
   // Filter out fake root and keep real ones
   assert_solves_numerically_to("floor(x)-0.5=0", -10, 10, {});
   assert_solves_numerically_to("7×10^9×(3×10^8-x)/(3×10^8+x)=7×10^9-320", -10,

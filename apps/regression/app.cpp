@@ -62,41 +62,56 @@ const App::Descriptor *App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-App::App(Snapshot *snapshot, Poincare::Context *parentContext)
-    : StoreApp(snapshot, &m_inputViewController),
-      m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(),
-              snapshot->storePreferences(), snapshot->regressionTypes()),
-      m_calculationController(&m_calculationAlternateEmptyViewController,
-                              &m_calculationHeader, &m_store),
-      m_calculationAlternateEmptyViewController(&m_calculationHeader,
-                                                &m_calculationController,
-                                                &m_calculationController),
-      m_calculationHeader(&m_tabViewController,
-                          &m_calculationAlternateEmptyViewController,
-                          &m_calculationController),
-      m_graphController(&m_graphAlternateEmptyViewController, this,
-                        &m_graphHeader, snapshot->graphRange(),
-                        snapshot->cursor(), snapshot->graphSelectedDotIndex(),
-                        snapshot->selectedCurveIndex(), &m_store),
+void App::didBecomeActive(Escher::Window *window) {
+  // Delay loadMemoizedFormulasFromSnapshot to tab activation
+  ExpressionFieldDelegateApp::didBecomeActive(window);
+}
+
+App::StoreTab::StoreTab()
+    : m_storeController(&m_storeHeader, app(), &app()->m_store, &m_storeHeader,
+                        app()->m_context),
+      m_storeHeader(&m_storeStackViewController, &m_storeController,
+                    &m_storeController),
+      m_storeStackViewController(
+          &app()->m_tabViewController, &m_storeHeader,
+          Escher::StackViewController::Style::WhiteUniform) {
+  m_storeController.loadMemoizedFormulasFromSnapshot();
+}
+
+App::GraphTab::GraphTab()
+    : m_graphController(
+          &m_graphAlternateEmptyViewController, app(), &m_graphHeader,
+          app()->snapshot()->graphRange(), app()->snapshot()->cursor(),
+          app()->snapshot()->graphSelectedDotIndex(),
+          app()->snapshot()->selectedCurveIndex(), &app()->m_store),
       m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController,
                                           &m_graphController),
       m_graphHeader(&m_graphStackViewController,
                     &m_graphAlternateEmptyViewController, &m_graphController),
       m_graphStackViewController(
-          &m_tabViewController, &m_graphHeader,
-          Escher::StackViewController::Style::WhiteUniform),
-      m_storeController(&m_storeHeader, this, &m_store, &m_storeHeader,
-                        parentContext),
-      m_storeHeader(&m_storeStackViewController, &m_storeController,
-                    &m_storeController),
-      m_storeStackViewController(
-          &m_tabViewController, &m_storeHeader,
-          Escher::StackViewController::Style::WhiteUniform),
-      m_tabViewController(&m_inputViewController, snapshot,
-                          &m_storeStackViewController,
-                          &m_graphStackViewController, &m_calculationHeader),
+          &app()->m_tabViewController, &m_graphHeader,
+          Escher::StackViewController::Style::WhiteUniform) {}
+
+App::CalculationTab::CalculationTab()
+    : m_calculationController(&m_calculationAlternateEmptyViewController,
+                              &m_calculationHeader, &app()->m_store),
+      m_calculationAlternateEmptyViewController(&m_calculationHeader,
+                                                &m_calculationController,
+                                                &m_calculationController),
+      m_calculationHeader(&app()->m_tabViewController,
+                          &m_calculationAlternateEmptyViewController,
+                          &m_calculationController) {}
+
+App::App(Snapshot *snapshot, Poincare::Context *parentContext)
+    : StoreApp(snapshot, &m_inputViewController),
+      m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(),
+              snapshot->storePreferences(), snapshot->regressionTypes()),
       m_regressionController(nullptr, &m_store),
       m_inputViewController(&m_modalViewController, &m_tabViewController, this,
-                            this) {}
+                            this),
+      m_context(parentContext),
+      m_tabViewController(&m_inputViewController, snapshot, this, &m_tabs,
+                          I18n::Message::DataTab, I18n::Message::GraphTab,
+                          I18n::Message::StatTab) {}
 
 }  // namespace Regression

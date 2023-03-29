@@ -129,11 +129,21 @@ int CalculationController::numberOfRows() const {
          numberOfDisplayedCoefficients() +
          m_store->AnyActiveSeriesSatisfy(
              Store::DisplayResidualStandardDeviation) +
-         m_store->AnyActiveSeriesSatisfy(Store::DisplayR2);
+         m_store->AnyActiveSeriesSatisfy(Store::DisplayR2) +
+         m_store->AnyActiveSeriesSatisfy(Store::DisplayRSquared);
 }
 
 int CalculationController::numberOfColumns() const {
   return 2 + m_store->numberOfActiveSeries();
+}
+
+void DashBufferCell(EvenOddBufferTextCell *bufferCell) {
+  bufferCell->setText(I18n::translate(I18n::Message::Dash));
+}
+
+void DisableBufferCell(EvenOddBufferTextCell *bufferCell) {
+  bufferCell->setTextColor(Palette::GrayDark);
+  bufferCell->setText(I18n::translate(I18n::Message::Disabled));
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
@@ -161,6 +171,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   }
 
   const Calculation c = calculationForRow(j);
+  bool forbidStatsDiagnostics =
+      Preferences::sharedPreferences->examMode().forbidStatsDiagnostics();
   // Calculation title and symbols
   if (i <= 1) {
     EvenOddMessageTextCell *myCell =
@@ -170,8 +182,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
         (i == 0) ? MessageForCalculation(c) : SymbolForCalculation(c);
     myCell->setMessage(message);
     if ((c == Calculation::CorrelationCoeff ||
-         c == Calculation::DeterminationCoeff) &&
-        Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
+         c == Calculation::DeterminationCoeff || c == Calculation::RSquared) &&
+        forbidStatsDiagnostics) {
       // R and R2 messages should be grayed out.
       myCell->setTextColor(Palette::GrayDark);
     }
@@ -250,14 +262,6 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   bufferCell->setTextColor(KDColorBlack);
   double result = NAN;
 
-  if ((c == Calculation::CorrelationCoeff ||
-       c == Calculation::DeterminationCoeff) &&
-      Preferences::sharedPreferences->examMode().forbidStatsDiagnostics()) {
-    bufferCell->setTextColor(Palette::GrayDark);
-    bufferCell->setText(I18n::translate(I18n::Message::Disabled));
-    return;
-  }
-
   if (c >= Calculation::NumberOfDots && c <= Calculation::SumOfProducts) {
     int calculationIndex =
         static_cast<int>(c) - static_cast<int>(Calculation::NumberOfDots);
@@ -285,8 +289,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   } else if (c >= Calculation::CoefficientM && c <= Calculation::CoefficientE) {
     if (!m_store->coefficientsAreDefined(series, globContext)) {
       // Put dashes if regression is not defined
-      bufferCell->setText(I18n::translate(I18n::Message::Dash));
-      return;
+      return DashBufferCell(bufferCell);
     }
     int coefficientIndex =
         static_cast<int>(c) - static_cast<int>(Calculation::CoefficientA);
@@ -298,32 +301,35 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
       coefficientIndex = -coefficientIndex - 1;
     }
     if (coefficientIndex < 0 || coefficientIndex >= numberOfCoefficients) {
-      bufferCell->setText(I18n::translate(I18n::Message::Dash));
-      return;
+      return DashBufferCell(bufferCell);
     }
     result =
         m_store->coefficientsForSeries(series, globContext)[coefficientIndex];
   } else if (c == Calculation::CorrelationCoeff) {
     // This could be memoized but don't seem to slow the table down for now.
     if (!Store::DisplayR(type)) {
-      return bufferCell->setText(I18n::translate(I18n::Message::Dash));
+      return DashBufferCell(bufferCell);
+    }
+    if (forbidStatsDiagnostics) {
+      return DisableBufferCell(bufferCell);
     }
     result = m_store->correlationCoefficient(series);
-  } else {
-    // These are memoized in the store
-    assert(c == Calculation::ResidualStandardDeviation ||
-           c == Calculation::DeterminationCoeff);
-    bool isR2 = (c == Calculation::DeterminationCoeff);
-    Store::TypeProperty property =
-        isR2 ? Store::DisplayR2 : Store::DisplayResidualStandardDeviation;
-    if (!property(type) ||
-        !m_store->coefficientsAreDefined(series, globContext)) {
-      bufferCell->setText(I18n::translate(I18n::Message::Dash));
-      return;
+  } else if (c == Calculation::ResidualStandardDeviation) {
+    if (!Store::DisplayResidualStandardDeviation(type)) {
+      return DashBufferCell(bufferCell);
     }
-    result =
-        isR2 ? m_store->determinationCoefficientForSeries(series, globContext)
-             : m_store->residualStandardDeviation(series, globContext);
+    result = m_store->residualStandardDeviation(series, globContext);
+  } else {
+    assert(c == Calculation::DeterminationCoeff || c == Calculation::RSquared);
+    if ((c == Calculation::DeterminationCoeff && Store::DisplayR2(type)) ||
+        (c == Calculation::RSquared && Store::DisplayRSquared(type))) {
+      if (forbidStatsDiagnostics) {
+        return DisableBufferCell(bufferCell);
+      }
+      result = m_store->determinationCoefficientForSeries(series, globContext);
+    } else {
+      return DashBufferCell(bufferCell);
+    }
   }
   PoincareHelpers::ConvertFloatToText<double>(result, buffer, bufferSize,
                                               numberSignificantDigits);
@@ -432,6 +438,7 @@ I18n::Message CalculationController::MessageForCalculation(Calculation c) {
           I18n::Message::CoefficientE,
           I18n::Message::ResidualStandardDeviationMessageInTable,
           I18n::Message::DeterminationCoeff,
+          I18n::Message::DeterminationCoeff,
       };
   int index = static_cast<int>(c);
   assert(index >= 0 && index < static_cast<int>(Calculation::NumberOfRows));
@@ -460,6 +467,7 @@ I18n::Message CalculationController::SymbolForCalculation(Calculation c) {
           I18n::Message::E,
           I18n::Message::ResidualStandardDeviationSymbol,
           I18n::Message::R2,
+          I18n::Message::RSquared,
       };
   int index = static_cast<int>(c);
   assert(index >= 0 && index < static_cast<int>(Calculation::NumberOfRows));
@@ -502,8 +510,12 @@ CalculationController::Calculation CalculationController::calculationForRow(
   if (row == static_cast<int>(Calculation::ResidualStandardDeviation)) {
     return Calculation::ResidualStandardDeviation;
   }
+  row += !m_store->AnyActiveSeriesSatisfy(Store::DisplayR2);
+  if (row == static_cast<int>(Calculation::DeterminationCoeff)) {
+    return Calculation::DeterminationCoeff;
+  }
   assert(row == static_cast<int>(Calculation::NumberOfRows) - 1 &&
-         m_store->AnyActiveSeriesSatisfy(Store::DisplayR2));
+         m_store->AnyActiveSeriesSatisfy(Store::DisplayRSquared));
   return static_cast<Calculation>(row);
 }
 

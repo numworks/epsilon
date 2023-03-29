@@ -71,7 +71,8 @@ class CalculationController : public Shared::DoublePairTableController {
     CoefficientE = 16,
     ResidualStandardDeviation = 17,
     DeterminationCoeff = 18,
-    NumberOfRows = 19,  // Always last
+    RSquared = 19,
+    NumberOfRows = 20,  // Always last
   };
   /* Mean, SumValues, SumSquareValues, StandardDeviationSigma, Deviation,
    * SampleStandardDeviationS */

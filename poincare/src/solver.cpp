@@ -1,4 +1,5 @@
 #include <poincare/piecewise_operator.h>
+#include <poincare/rational.h>
 #include <poincare/solver.h>
 #include <poincare/solver_algorithms.h>
 #include <poincare/subtraction.h>
@@ -516,9 +517,17 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression &e,
       xRoot = solver.nextRoot(child).x())) {  // assignment in condition
     /* Check the result in case another term is undefined,
      * e.g. (x+1)*ln(x) for x =- 1.
-     * This comparison relies on the fact that it is false for a NAN
+     *
+     * Sometimes, xRoot is not precise enough and e can approximate to undef
+     * even if it's not. e.g. f(x)=sqrt(cos(x)), when searching roots of cos(x),
+     * sometimes we find cos(xRoot) = -0.0..01, so sqrt(cos(xRoot)) = undef.
+     * To avoid this problem, clone e and replace cos(xRoot) by 0.
+     * */
+    Expression ebis = e.clone();
+    ebis.replaceChildAtIndexInPlace(childIndex, Rational::Builder(0));
+    /* This comparison relies on the fact that it is false for a NAN
      * approximation. */
-    if (std::fabs(e.approximateWithValueForSymbol<T>(
+    if (std::fabs(ebis.approximateWithValueForSymbol<T>(
             m_unknown, xRoot, m_context, m_complexFormat, m_angleUnit)) <
         NullTolerance(xRoot)) {
       return Coordinate2D<T>(xRoot, k_zero);

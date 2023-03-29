@@ -112,17 +112,6 @@ class PolynomialParser final {
   static std::pair<EditionReference, uint8_t> ParseMonomial(
       EditionReference expression, EditionReference variable);
 #if 0
-  //static  LeadingCoefficient(const Node expression, const Node variable);
-  // *x^n
-  // * lambda
-  // monomial c*x^n
-  // si variable != --> polynom(biggest variable) * lambda
-  // si variable == --> plusieurs monomial
-  // monomial multiplication
-  // Unit normal GCD of coefficients
-  //static EditionReference Content(EditionReference polynomial);
-  // GCD
-  //static Edi
   Node PolynomialInterpretation
   Node RationalInterpretation --> list of 2 polynomial
   // Set!

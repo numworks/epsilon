@@ -5,7 +5,7 @@
 
 namespace OMG {
 
-/* Signaling NAN indicating an unsual NAN value, for example a default cache
+/* Signaling NAN indicating an unusual NAN value, for example a default cache
  * value, an uninitialized value. It is used to make the difference with quiet
  * NAN, which is the result of an operation, for example the value of a
  * function. */

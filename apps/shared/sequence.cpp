@@ -425,18 +425,6 @@ void Sequence::InitialConditionModel::buildName(Sequence *sequence) {
           indexLayout, VerticalOffsetLayoutNode::VerticalPosition::Subscript));
 }
 
-int Sequence::order() const {
-  switch (type()) {
-    case Type::Explicit:
-      return 0;
-    case Type::SingleRecurrence:
-      return 1;
-    default:
-      assert(type() == Type::DoubleRecurrence);
-      return 2;
-  }
-}
-
 template double Sequence::privateEvaluateYAtX<double>(
     double, Poincare::Context *) const;
 template float Sequence::privateEvaluateYAtX<float>(float,

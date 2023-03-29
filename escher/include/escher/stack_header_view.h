@@ -21,6 +21,8 @@ class StackHeaderView : public View, public Bordered {
   void logAttributes(std::ostream &os) const override;
 #endif
  private:
+  constexpr static KDFont::Size k_font = KDFont::Size::Small;
+
   KDColor m_textColor;
   KDColor m_backgroundColor;
   KDColor m_separatorColor;

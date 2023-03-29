@@ -22,11 +22,10 @@ void StackHeaderView::drawRect(KDContext *ctx, KDRect rect) const {
   drawBorderOfRect(ctx, b, m_separatorColor);
   drawInnerRect(ctx, b, m_backgroundColor);
   // Write title
-  KDFont::Size font = KDFont::Size::Small;
   ctx->alignAndDrawString(m_controller->title(), KDPointZero, bounds().size(),
                           {.style = {.glyphColor = m_textColor,
                                      .backgroundColor = m_backgroundColor,
-                                     .font = font},
+                                     .font = k_font},
                            .horizontalAlignment = KDGlyph::k_alignCenter});
 }
 

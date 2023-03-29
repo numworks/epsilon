@@ -4,7 +4,7 @@
 #include <apps/shared/store_app.h>
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/alternate_view_controller.h>
-#include <escher/tab_view_controller.h>
+#include <escher/tab_union_view_controller.h>
 
 #include "data/store_controller.h"
 #include "graph/box_controller.h"
@@ -51,7 +51,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
   TELEMETRY_ID("Statistics");
 
   Shared::StoreController *storeController() override {
-    return &m_storeController;
+    return &m_tabs.tab<StoreTab>()->m_storeController;
   }
   Escher::InputViewController *inputViewController() {
     return &m_inputViewController;
@@ -78,33 +78,55 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
   }
   void didBecomeActive(Escher::Window *window) override;
 
+  struct StoreTab : public Escher::Tab {
+    StoreTab();
+    Escher::ViewController *top() override {
+      return &m_storeStackViewController;
+    }
+    StoreController m_storeController;
+    Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
+    Escher::StackViewController m_storeStackViewController;
+  };
+
+  struct GraphTab : public Escher::Tab {
+    GraphTab();
+    Escher::ViewController *top() override {
+      return &m_graphMenuAlternateEmptyViewController;
+    }
+    NormalProbabilityController m_normalProbabilityController;
+    /* NormalProbabilityController is the only DataView overriding series
+     * validity It may be empty when other graph views are not */
+    Escher::AlternateEmptyViewController
+        m_normalProbabilityAlternateEmptyViewController;
+    Escher::ButtonRowController m_normalProbabilityHeader;
+    FrequencyController m_frequencyController;
+    Escher::ButtonRowController m_frequencyHeader;
+    BoxController m_boxController;
+    Escher::ButtonRowController m_boxHeader;
+    HistogramController m_histogramController;
+    Escher::ButtonRowController m_histogramHeader;
+    GraphTypeController m_graphTypeController;
+    Escher::AlternateViewController m_graphController;
+    Escher::StackViewController m_graphMenuStackViewController;
+    Escher::AlternateEmptyViewController
+        m_graphMenuAlternateEmptyViewController;
+  };
+
+  struct CalculationTab : public Escher::Tab {
+    CalculationTab();
+    Escher::ViewController *top() override { return &m_calculationHeader; }
+    CalculationController m_calculationController;
+    Escher::AlternateEmptyViewController
+        m_calculationAlternateEmptyViewController;
+    Escher::ButtonRowController
+        m_calculationHeader;  // Needed for upper margin only
+  };
+
   Store m_store;
-  CalculationController m_calculationController;
-  Escher::AlternateEmptyViewController
-      m_calculationAlternateEmptyViewController;
-  Escher::ButtonRowController
-      m_calculationHeader;  // Needed for upper margin only
-  NormalProbabilityController m_normalProbabilityController;
-  /* NormalProbabilityController is the only DataView overriding series validity
-   * It may be empty when other graph views are not */
-  Escher::AlternateEmptyViewController
-      m_normalProbabilityAlternateEmptyViewController;
-  Escher::ButtonRowController m_normalProbabilityHeader;
-  FrequencyController m_frequencyController;
-  Escher::ButtonRowController m_frequencyHeader;
-  BoxController m_boxController;
-  Escher::ButtonRowController m_boxHeader;
-  HistogramController m_histogramController;
-  Escher::ButtonRowController m_histogramHeader;
-  GraphTypeController m_graphTypeController;
-  Escher::AlternateViewController m_graphController;
-  Escher::StackViewController m_graphMenuStackViewController;
-  Escher::AlternateEmptyViewController m_graphMenuAlternateEmptyViewController;
-  StoreController m_storeController;
-  Escher::ButtonRowController m_storeHeader;  // Needed for upper margin only
-  Escher::StackViewController m_storeStackViewController;
-  Escher::TabViewController m_tabViewController;
+  Poincare::Context *m_context;
   Escher::InputViewController m_inputViewController;
+  Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_tabs;
+  Escher::TabUnionViewController m_tabViewController;
 };
 
 }  // namespace Statistics

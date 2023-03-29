@@ -50,68 +50,81 @@ const App::Descriptor *App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-App::App(Snapshot *snapshot, Poincare::Context *parentContext)
-    : StoreApp(snapshot, &m_inputViewController),
-      m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(),
-              snapshot->userPreferences()),
-      m_calculationController(&m_calculationAlternateEmptyViewController,
-                              &m_calculationHeader, &m_store),
-      m_calculationAlternateEmptyViewController(&m_calculationHeader,
-                                                &m_calculationController,
-                                                &m_calculationController),
-      m_calculationHeader(&m_tabViewController,
-                          &m_calculationAlternateEmptyViewController,
-                          &m_calculationController),
-      m_normalProbabilityController(
+App::StoreTab::StoreTab()
+    : m_storeController(&m_storeHeader, app(), &app()->m_store, &m_storeHeader,
+                        app()->m_context),
+      m_storeHeader(&m_storeStackViewController, &m_storeController,
+                    &m_storeController),
+      m_storeStackViewController(
+          &app()->m_tabViewController, &m_storeHeader,
+          Escher::StackViewController::Style::WhiteUniform) {
+  m_storeController.loadMemoizedFormulasFromSnapshot();
+}
+
+App::GraphTab::GraphTab()
+    : m_normalProbabilityController(
           &m_normalProbabilityAlternateEmptyViewController,
-          &m_normalProbabilityHeader, &m_tabViewController,
-          &m_graphMenuStackViewController, &m_graphTypeController, &m_store),
+          &m_normalProbabilityHeader, &app()->m_tabViewController,
+          &m_graphMenuStackViewController, &m_graphTypeController,
+          &app()->m_store),
       m_normalProbabilityAlternateEmptyViewController(
           &m_normalProbabilityHeader, &m_normalProbabilityController,
           &m_normalProbabilityController),
       m_normalProbabilityHeader(
           &m_graphController, &m_normalProbabilityAlternateEmptyViewController,
           &m_normalProbabilityController),
-      m_frequencyController(
-          &m_frequencyHeader, &m_frequencyHeader, &m_tabViewController,
-          &m_graphMenuStackViewController, &m_graphTypeController, &m_store),
+      m_frequencyController(&m_frequencyHeader, &m_frequencyHeader,
+                            &app()->m_tabViewController,
+                            &m_graphMenuStackViewController,
+                            &m_graphTypeController, &app()->m_store),
       m_frequencyHeader(&m_graphController, &m_frequencyController,
                         &m_frequencyController),
-      m_boxController(&m_boxHeader, &m_boxHeader, &m_tabViewController,
+      m_boxController(&m_boxHeader, &m_boxHeader, &app()->m_tabViewController,
                       &m_graphMenuStackViewController, &m_graphTypeController,
-                      &m_store),
+                      &app()->m_store),
       m_boxHeader(&m_graphController, &m_boxController, &m_boxController),
-      m_histogramController(
-          &m_histogramHeader, this, &m_histogramHeader, &m_tabViewController,
-          &m_graphMenuStackViewController, &m_graphTypeController, &m_store,
-          snapshot->storeVersion()),
+      m_histogramController(&m_histogramHeader, app(), &m_histogramHeader,
+                            &app()->m_tabViewController,
+                            &m_graphMenuStackViewController,
+                            &m_graphTypeController, &app()->m_store,
+                            app()->snapshot()->storeVersion()),
       m_histogramHeader(&m_graphController, &m_histogramController,
                         &m_histogramController),
       m_graphTypeController(&m_graphMenuStackViewController,
-                            &m_tabViewController,
-                            &m_graphMenuStackViewController, &m_store,
-                            snapshot->graphViewModel()),
-      m_graphController(&m_graphMenuStackViewController, this,
+                            &app()->m_tabViewController,
+                            &m_graphMenuStackViewController, &app()->m_store,
+                            app()->snapshot()->graphViewModel()),
+      m_graphController(&m_graphMenuStackViewController, app(),
                         {&m_histogramHeader, &m_boxHeader, &m_frequencyHeader,
                          &m_normalProbabilityHeader}),
       m_graphMenuStackViewController(
           &m_graphMenuAlternateEmptyViewController, &m_graphController,
           Escher::StackViewController::Style::WhiteUniform),
-      m_graphMenuAlternateEmptyViewController(&m_tabViewController,
+      m_graphMenuAlternateEmptyViewController(&app()->m_tabViewController,
                                               &m_graphMenuStackViewController,
-                                              &m_graphTypeController),
-      m_storeController(&m_storeHeader, this, &m_store, &m_storeHeader,
-                        parentContext),
-      m_storeHeader(&m_storeStackViewController, &m_storeController,
-                    &m_storeController),
-      m_storeStackViewController(
-          &m_tabViewController, &m_storeHeader,
-          Escher::StackViewController::Style::WhiteUniform),
-      m_tabViewController(
-          &m_inputViewController, snapshot, &m_storeStackViewController,
-          &m_graphMenuAlternateEmptyViewController, &m_calculationHeader),
+                                              &m_graphTypeController) {}
+
+App::CalculationTab::CalculationTab()
+    : m_calculationController(&m_calculationAlternateEmptyViewController,
+                              &m_calculationHeader, &app()->m_store),
+      m_calculationAlternateEmptyViewController(&m_calculationHeader,
+                                                &m_calculationController,
+                                                &m_calculationController),
+      m_calculationHeader(&app()->m_tabViewController,
+                          &m_calculationAlternateEmptyViewController,
+                          &m_calculationController) {}
+
+App::App(Snapshot *snapshot, Poincare::Context *parentContext)
+    : StoreApp(snapshot, &m_inputViewController),
+      m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(),
+              snapshot->userPreferences()),
+      m_context(parentContext),
       m_inputViewController(&m_modalViewController, &m_tabViewController, this,
-                            this) {
+                            this),
+      m_tabViewController(&m_inputViewController, snapshot, this, &m_tabs,
+                          I18n::Message::DataTab,
+                          I18n::Message::StatisticsGraphTab,
+                          I18n::Message::StatTab) {
   // Order used in m_graphController constructor
   assert(GraphViewModel::IndexOfGraphView(
              GraphViewModel::GraphView::Histogram) == 0);
@@ -125,7 +138,8 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
 void App::activeViewDidBecomeFirstResponder(
     Escher::ViewController *activeViewController) {
   if (m_store.graphViewHasBeenInvalidated()) {
-    m_graphMenuStackViewController.push(&m_graphTypeController);
+    m_tabs.tab<GraphTab>()->m_graphMenuStackViewController.push(
+        &m_tabs.tab<GraphTab>()->m_graphTypeController);
   } else {
     setFirstResponder(activeViewController);
   }
@@ -134,7 +148,7 @@ void App::activeViewDidBecomeFirstResponder(
 void App::didBecomeActive(Escher::Window *windows) {
   // Sorted indexes are not kept in the snapshot, they have been invalidated.
   m_store.invalidateSortedIndexes();
-  Shared::StoreApp::didBecomeActive(windows);
+  ExpressionFieldDelegateApp::didBecomeActive(windows);
   m_tabViewController.enterActiveTab();
 }
 

@@ -2,7 +2,7 @@
 #define REGRESSION_APP_H
 
 #include <apps/shared/store_app.h>
-#include <escher/tab_view_controller.h>
+#include <escher/tab_union_view_controller.h>
 
 #include "data/store_controller.h"
 #include "graph/graph_controller.h"
@@ -53,7 +53,7 @@ class App : public Shared::StoreApp {
   TELEMETRY_ID("Regression");
 
   Shared::StoreController *storeController() override {
-    return &m_storeController;
+    return &m_tabs.tab<StoreTab>()->m_storeController;
   }
   RegressionController *regressionController() {
     return &m_regressionController;
@@ -61,7 +61,6 @@ class App : public Shared::StoreApp {
   Escher::InputViewController *inputViewController() {
     return &m_inputViewController;
   }
-  GraphController *graphController() { return &m_graphController; }
   Snapshot *snapshot() const {
     return static_cast<Snapshot *>(
         Shared::ExpressionFieldDelegateApp::snapshot());
@@ -69,25 +68,48 @@ class App : public Shared::StoreApp {
   Shared::InteractiveCurveViewRange *graphRange() const {
     return snapshot()->graphRange();
   }
+  GraphController *graphController() {
+    return &m_tabs.tab<GraphTab>()->m_graphController;
+  }
 
  private:
   App(Snapshot *snapshot, Poincare::Context *parentContext);
+  void didBecomeActive(Escher::Window *window) override;
+
+  struct StoreTab : public Escher::Tab {
+    StoreTab();
+    Escher::ViewController *top() override {
+      return &m_storeStackViewController;
+    }
+    StoreController m_storeController;
+    Escher::ButtonRowController m_storeHeader;
+    Escher::StackViewController m_storeStackViewController;
+  };
+  struct GraphTab : public Escher::Tab {
+    GraphTab();
+    Escher::ViewController *top() override {
+      return &m_graphStackViewController;
+    }
+    GraphController m_graphController;
+    Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
+    Escher::ButtonRowController m_graphHeader;
+    Escher::StackViewController m_graphStackViewController;
+  };
+  struct CalculationTab : public Escher::Tab {
+    CalculationTab();
+    Escher::ViewController *top() override { return &m_calculationHeader; }
+    CalculationController m_calculationController;
+    Escher::AlternateEmptyViewController
+        m_calculationAlternateEmptyViewController;
+    Escher::ButtonRowController m_calculationHeader;
+  };
 
   Store m_store;
-  CalculationController m_calculationController;
-  Escher::AlternateEmptyViewController
-      m_calculationAlternateEmptyViewController;
-  Escher::ButtonRowController m_calculationHeader;
-  GraphController m_graphController;
-  Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
-  Escher::ButtonRowController m_graphHeader;
-  Escher::StackViewController m_graphStackViewController;
-  StoreController m_storeController;
-  Escher::ButtonRowController m_storeHeader;
-  Escher::StackViewController m_storeStackViewController;
-  Escher::TabViewController m_tabViewController;
   RegressionController m_regressionController;
   Escher::InputViewController m_inputViewController;
+  Poincare::Context *m_context;
+  Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_tabs;
+  Escher::TabUnionViewController m_tabViewController;
 };
 
 }  // namespace Regression

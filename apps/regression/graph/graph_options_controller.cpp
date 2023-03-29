@@ -135,8 +135,8 @@ HighlightCell *GraphOptionsController::cell(int index) {
   HighlightCell *cells[k_maxNumberOfRows] = {
       &m_changeRegressionCell,
       &m_regressionEquationCell,
-      &m_r2Cell,
       &m_rCell,
+      &m_r2Cell,
       &m_residualPlotCell,
       &m_xParameterCell,
       &m_yParameterCell,

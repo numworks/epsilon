@@ -15,10 +15,10 @@ class ScriptNode {
              int nameLength = -1, const char* nodeSourceName = nullptr,
              const char* description = nullptr)
       : m_type(type),
+        m_nameLength(nameLength),
         m_name(name),
         m_nodeSourceName(nodeSourceName),
-        m_description(description),
-        m_nameLength(nameLength) {}
+        m_description(description) {}
   Type type() const { return m_type; }
   const char* name() const { return m_name; }
   int nameLength() const { return static_cast<int>(m_nameLength); }
@@ -27,10 +27,10 @@ class ScriptNode {
 
  private:
   Type m_type;
+  int16_t m_nameLength;
   const char* m_name;
   const char* m_nodeSourceName;
   const char* m_description;
-  size_t m_nameLength;
 };
 
 }  // namespace Code

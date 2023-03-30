@@ -38,9 +38,8 @@ void AbstractExpressionView::drawRect(KDContext* ctx, KDRect rect) const {
 
 bool ExpressionView::setLayout(Layout layoutR) {
   bool shouldRedraw = !getLayout().treeIsIdenticalTo(layoutR);
-  // Overwrite m_layout anyway
-  m_layout = layoutR;
   if (shouldRedraw) {
+    m_layout = layoutR;
     markRectAsDirty(bounds());
   }
   return shouldRedraw;
@@ -48,10 +47,9 @@ bool ExpressionView::setLayout(Layout layoutR) {
 
 bool ExpressionViewWithCursor::setLayout(Layout layoutR) {
   bool shouldRedraw = !getLayout().treeIsIdenticalTo(layoutR);
-  // Overwrite m_layout anyway
-  layoutR.dumpAt(m_cursor->layoutBuffer());
   // TODO : Update the cursor if needed.
   if (shouldRedraw) {
+    layoutR.dumpAt(m_cursor->layoutBuffer());
     markRectAsDirty(bounds());
   }
   return shouldRedraw;

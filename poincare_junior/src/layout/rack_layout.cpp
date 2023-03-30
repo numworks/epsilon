@@ -114,7 +114,7 @@ EditionReference RackLayout::RackParent(EditionReference reference, int * index)
   } else {
     // TODO : This is not supposed to happen with cursor layouts.
     // For now we do not take advantage of this :/
-    // assert(false);
+    assert(false);
     // Index of reference in parent may not be 0
     *index += parent.indexOfChild(reference);
   }

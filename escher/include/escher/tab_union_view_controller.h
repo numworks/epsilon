@@ -91,9 +91,17 @@ class TabUnion : public AbstractTabUnion {
 class TabUnionViewController : public TabViewController {
  public:
   TabUnionViewController(Responder* parentResponder,
-                         TabViewDataSource* dataSource, App* app,
-                         AbstractTabUnion* tabs, I18n::Message titleOne,
-                         I18n::Message titleTwo, I18n::Message titleThree);
+                         TabViewDataSource* dataSource, AbstractTabUnion* tabs,
+                         I18n::Message titleOne, I18n::Message titleTwo,
+                         I18n::Message titleThree);
+
+  template <class T0, class T1, class T2>
+  TabUnionViewController(Responder* parentResponder,
+                         TabViewDataSource* dataSource,
+                         TabUnion<T0, T1, T2>* tabs)
+      : TabUnionViewController(parentResponder, dataSource, tabs, T0::k_title,
+                               T1::k_title, T2::k_title) {}
+
   void setActiveTab(int8_t index, bool enter = true) override;
   void initView() override;
   const char* tabName(uint8_t index) override {

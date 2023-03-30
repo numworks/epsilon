@@ -110,8 +110,6 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
       m_inputViewController(&m_modalViewController, &m_tabViewController, this,
                             this),
       m_context(parentContext),
-      m_tabViewController(&m_inputViewController, snapshot, this, &m_tabs,
-                          I18n::Message::DataTab, I18n::Message::GraphTab,
-                          I18n::Message::StatTab) {}
+      m_tabViewController(&m_inputViewController, snapshot, &m_tabs) {}
 
 }  // namespace Regression

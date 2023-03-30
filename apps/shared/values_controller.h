@@ -29,9 +29,6 @@ class ValuesController : public EditableCellTableViewController,
 
   // View controller
   Escher::View* view() override { return &m_prefacedTwiceTableView; }
-  const char* title() override {
-    return I18n::translate(I18n::Message::ValuesTab);
-  }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   TELEMETRY_ID("Values");

@@ -22,7 +22,6 @@ class ListController : public Shared::FunctionListController {
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   // ViewController
-  const char* title() override;
   void viewWillAppear() override;
   // LayoutFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,

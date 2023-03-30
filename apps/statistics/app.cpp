@@ -121,10 +121,7 @@ App::App(Snapshot *snapshot, Poincare::Context *parentContext)
       m_context(parentContext),
       m_inputViewController(&m_modalViewController, &m_tabViewController, this,
                             this),
-      m_tabViewController(&m_inputViewController, snapshot, this, &m_tabs,
-                          I18n::Message::DataTab,
-                          I18n::Message::StatisticsGraphTab,
-                          I18n::Message::StatTab) {
+      m_tabViewController(&m_inputViewController, snapshot, &m_tabs) {
   // Order used in m_graphController constructor
   assert(GraphViewModel::IndexOfGraphView(
              GraphViewModel::GraphView::Histogram) == 0);

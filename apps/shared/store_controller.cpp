@@ -141,10 +141,6 @@ void StoreController::setTitleCellStyle(HighlightCell *cell, int columnIndex) {
   myCell->setFont(KDFont::Size::Small);
 }
 
-const char *StoreController::title() {
-  return I18n::translate(I18n::Message::DataTab);
-}
-
 bool StoreController::handleEvent(Ion::Events::Event event) {
   if (EditableCellTableViewController::handleEvent(event)) {
     return true;

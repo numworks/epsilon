@@ -43,7 +43,6 @@ class StoreController : public EditableCellTableViewController,
 
   // ViewController
   Escher::View* view() override { return &m_prefacedTableView; }
-  const char* title() override;
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

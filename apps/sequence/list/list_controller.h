@@ -20,9 +20,6 @@ class ListController : public Shared::FunctionListController {
                  Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
                  Escher::ButtonRowController* header,
                  Escher::ButtonRowController* footer);
-  const char* title() override {
-    return I18n::translate(I18n::Message::SequenceTab);
-  }
   int numberOfExpressionRows() const override;
   KDCoordinate expressionRowHeight(int j) override;
   Escher::Toolbox* toolbox() override;

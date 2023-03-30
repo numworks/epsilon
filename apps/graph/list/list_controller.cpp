@@ -55,10 +55,6 @@ int ListController::reusableCellCount(int type) {
 
 /* ViewController */
 
-const char *ListController::title() {
-  return I18n::translate(I18n::Message::FunctionTab);
-}
-
 void ListController::viewWillAppear() {
   // A function could have been deleted from the option menu of the Graph tab.
   resetMemoization();

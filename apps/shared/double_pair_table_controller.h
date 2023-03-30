@@ -34,9 +34,6 @@ class DoublePairTableController
   Escher::Responder *responderWhenEmpty() override;
 
   // ViewController
-  const char *title() override {
-    return I18n::translate(I18n::Message::StatTab);
-  }
   Escher::View *view() override { return &m_prefacedTwiceTableView; }
 
   // Responder

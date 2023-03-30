@@ -9,7 +9,7 @@ namespace Escher {
 
 TabUnionViewController::TabUnionViewController(Responder* parentResponder,
                                                TabViewDataSource* dataSource,
-                                               App* app, AbstractTabUnion* tabs,
+                                               AbstractTabUnion* tabs,
                                                I18n::Message titleOne,
                                                I18n::Message titleTwo,
                                                I18n::Message titleThree)

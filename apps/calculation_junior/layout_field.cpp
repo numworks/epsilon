@@ -43,9 +43,9 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 
 void LayoutField::ContentView::clearLayout() {
   EditionReference emptyRack = EditionReference::Push<BlockType::RackLayout>(0);
-  static_cast<Node>(emptyRack).copyTreeTo(m_layoutBuffer);
+  static_cast<Node>(emptyRack).copyTreeTo(m_layoutBuffer.blocks());
   emptyRack.removeTree();
-  m_cursor = LayoutCursor(m_layoutBuffer, Node(m_layoutBuffer));
+  m_cursor = LayoutCursor(m_layoutBuffer.blocks(), node());
 }
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {

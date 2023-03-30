@@ -134,7 +134,7 @@ class LayoutField
     void copySelection(bool intoStoreMenu);
     KDFont::Size font() const { return m_expressionView.font(); }
     Escher::TextCursorView* textCursorView() { return &m_cursorView; }
-    PoincareJ::Node node() { return PoincareJ::Node(m_layoutBuffer); }
+    PoincareJ::Node node() { return PoincareJ::Node(m_layoutBuffer.blocks()); }
 
    private:
     int numberOfSubviews() const override { return 2; }
@@ -146,8 +146,8 @@ class LayoutField
     Escher::TextCursorView m_cursorView;
     bool m_isEditing;
     // Buffer where layout being edited is stored. TODO : refine size
-    PoincareJ::TypeBlock
-        m_layoutBuffer[PoincareJ::LayoutCursor::k_layoutBufferSize];
+    PoincareJ::BlockBuffer<PoincareJ::LayoutCursor::k_layoutBufferSize>
+        m_layoutBuffer;
   };
   ContentView m_contentView;
   LayoutFieldDelegate* m_delegate;

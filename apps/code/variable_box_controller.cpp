@@ -113,7 +113,7 @@ KDCoordinate VariableBoxController::nonMemoizedRowHeight(int index) {
   assert(index >= 0 && index < numberOfRows());
   int cellType = typeAndOriginAtLocation(index);
   if (cellType == k_itemCellType) {
-    MenuCell<BufferTextView, BufferTextView> tempCell;
+    MenuCell<BufferTextView, PointerTextView> tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   SubtitleCell tempCell;
@@ -158,8 +158,8 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
   int cellType =
       typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    MenuCell<BufferTextView, BufferTextView> *typedCell =
-        static_cast<MenuCell<BufferTextView, BufferTextView> *>(cell);
+    MenuCell<BufferTextView, PointerTextView> *typedCell =
+        static_cast<MenuCell<BufferTextView, PointerTextView> *>(cell);
     ScriptNode *node = scriptNodeAtIndex(
         index - (m_displaySubtitles ? cumulatedOriginsCount : 0));
     /* Use a temporary buffer to crop label name, as strlen(node->name()) may be

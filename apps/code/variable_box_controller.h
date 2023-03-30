@@ -3,6 +3,7 @@
 
 #include <escher/buffer_text_view.h>
 #include <escher/menu_cell.h>
+#include <escher/pointer_text_view.h>
 #include <escher/toolbox_message_tree.h>
 
 #include "alternate_empty_nested_menu_controller.h"
@@ -173,7 +174,7 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
                         const char* description = nullptr);
   VariableBoxEmptyController m_variableBoxEmptyController;
   ScriptNode m_scriptNodes[k_maxScriptNodesCount];
-  Escher::MenuCell<Escher::BufferTextView, Escher::BufferTextView>
+  Escher::MenuCell<Escher::BufferTextView, Escher::PointerTextView>
       m_itemCells[k_maxNumberOfDisplayedItems];
   SubtitleCell m_subtitleCells[k_maxNumberOfDisplayedSubtitles];
   ScriptStore* m_scriptStore;

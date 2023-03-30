@@ -97,10 +97,6 @@ class LayoutField
   }
 
  private:
-  constexpr static int k_maxNumberOfLayouts = 220;
-  static_assert(k_maxNumberOfLayouts == Escher::TextField::MaxBufferSize(),
-                "Maximal number of layouts in a layout field should be equal "
-                "to max number of char in text field");
   void reload(KDSize previousSize);
   bool privateHandleEvent(Ion::Events::Event event, bool* shouldRedrawLayout,
                           bool* shouldUpdateCursor);
@@ -150,7 +146,8 @@ class LayoutField
     Escher::TextCursorView m_cursorView;
     bool m_isEditing;
     // Buffer where layout being edited is stored. TODO : refine size
-    PoincareJ::TypeBlock m_layoutBuffer[k_maxNumberOfLayouts];
+    PoincareJ::TypeBlock
+        m_layoutBuffer[PoincareJ::LayoutCursor::k_layoutBufferSize];
   };
   ContentView m_contentView;
   LayoutFieldDelegate* m_delegate;

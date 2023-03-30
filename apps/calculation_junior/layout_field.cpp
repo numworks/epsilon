@@ -275,7 +275,8 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
 
   int currentNumberOfLayouts =
       m_contentView.expressionView()->numberOfLayouts();
-  if (currentNumberOfLayouts >= k_maxNumberOfLayouts - 6) {
+  if (currentNumberOfLayouts >=
+      PoincareJ::LayoutCursor::k_layoutBufferSize - 6) {
     /* We add -6 because in some cases (Ion::Events::Division,
      * Ion::Events::Exp...) we let the layout cursor handle the layout insertion
      * and these events may add at most 6 layouts (e.g *10^). */
@@ -336,7 +337,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
       true);
 #endif
   if (currentNumberOfLayouts + resultLayout.treeSize() >=
-      k_maxNumberOfLayouts) {
+      PoincareJ::LayoutCursor::k_layoutBufferSize) {
     return false;
   }
 #if 0

@@ -7,6 +7,7 @@
 #include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/include/layout.h>
+#include <escher/text_field.h>
 
 #include "layout_selection.h"
 
@@ -47,6 +48,11 @@ class LayoutCursor final {
   // Cursor navigation // TODO : Do not duplicate them everywhere
   constexpr static int k_outsideIndex = -1;
   constexpr static int k_cantMoveIndex = -2;
+  // TODO : Find a better value and store it at the right place
+  constexpr static int k_layoutBufferSize = 220;
+  static_assert(k_layoutBufferSize == Escher::TextField::MaxBufferSize(),
+                "Maximal number of layouts in a layout field should be equal "
+                "to max number of char in text field");
 
   /* This constructor either set the cursor at the leftMost or rightmost
    * position in the layout. */

@@ -699,13 +699,13 @@ void LayoutCursor::setLayout(const Node l,
     m_position = m_layout.indexOfChild(l) + (sideOfLayout.isRight());
     TypeBlock * source = m_isEditing ? EditionPool::sharedEditionPool()->firstBlock() : m_layoutBuffer;
     size_t offset = m_layout.block() - source;
-    assert(offset >= 0 && offset < 100);
+    assert(offset >= 0 && offset < k_layoutBufferSize);
     return;
   }
   m_layout = l;
   TypeBlock * source = m_isEditing ? EditionPool::sharedEditionPool()->firstBlock() : m_layoutBuffer;
   size_t offset = m_layout.block() - source;
-  assert(offset >= 0 && offset < 100);
+  assert(offset >= 0 && offset < k_layoutBufferSize);
   m_position = sideOfLayout.isLeft() ? leftMostPosition() : rightmostPosition();
 }
 

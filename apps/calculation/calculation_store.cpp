@@ -80,113 +80,125 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
   m_inUsePreferences = *Preferences::sharedPreferences;
   char *cursor = endOfCalculations();
+  Expression inputExpression, exactOutputExpression,
+      approximateOutputExpression, storeExpression;
 
-  CircuitBreakerCheckpoint checkpoint(
-      Ion::CircuitBreaker::CheckpointType::Back);
-  if (CircuitBreakerRun(checkpoint)) {
-    /* Compute Ans now before the store is updated or the last calculation
-     * deleted. */
-    const Expression ans = ansExpression(context);
+  {
+    CircuitBreakerCheckpoint checkpoint(
+        Ion::CircuitBreaker::CheckpointType::Back);
+    if (CircuitBreakerRun(checkpoint)) {
+      /* Compute Ans now before the store is updated or the last calculation
+       * deleted. */
+      const Expression ans = ansExpression(context);
 
-    // Push a new, empty Calculation
-    cursor = pushEmptyCalculation(cursor);
-    assert(cursor != k_pushError);
+      // Push a new, empty Calculation
+      cursor = pushEmptyCalculation(cursor);
+      assert(cursor != k_pushError);
 
-    // Push the input
-    Expression inputExpression = Expression::Parse(text, context);
-    inputExpression = EnhancePushedExpression(inputExpression, ans);
-    cursor =
-        pushSerializedExpression(cursor, inputExpression, maxNumberOfDigits);
-    if (cursor == k_pushError) {
-      return errorPushUndefined(heightComputer);
-    }
-    /* Recompute the location of the input text in case a calculation was
-     * deleted. */
-    char *const inputText = endOfCalculations() + sizeof(Calculation);
-
-    // Parse and compute the expression
-    Expression exactOutputExpression, approximateOutputExpression;
-    PoincareHelpers::ParseAndSimplifyAndApproximate(
-        inputText, &inputExpression, &exactOutputExpression,
-        &approximateOutputExpression, context);
-
-    // Post-processing of some corner case expressions
-    exactOutputExpression = EnhancePushedExpression(exactOutputExpression);
-    if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
-      /* When a input contains a store it is kept by the reduction in the
-       * exact output and the actual store is performed here. The global
-       * context will perform the store and ensure that no symbol is kept in
-       * the definition of a variable.
-       * Once this is done we replace the output with the stored expression
-       * and approximate it to mimic the behaviour of normal computations. */
-      Store storeExpression = reinterpret_cast<Store &>(exactOutputExpression);
-      Expression exactStoredExpression = storeExpression.childAtIndex(0);
-      Expression approximateStoredExpression =
-          PoincareHelpers::ApproximateKeepingUnits<double>(
-              exactStoredExpression, context);
-      if (storeExpression.childAtIndex(1).type() ==
-              ExpressionNode::Type::Symbol &&
-          ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
-              inputExpression, exactStoredExpression,
-              approximateStoredExpression, context)) {
-        storeExpression.replaceChildAtIndexInPlace(0,
-                                                   approximateStoredExpression);
+      // Push the input
+      inputExpression = Expression::Parse(text, context);
+      inputExpression = EnhancePushedExpression(inputExpression, ans);
+      cursor =
+          pushSerializedExpression(cursor, inputExpression, maxNumberOfDigits);
+      if (cursor == k_pushError) {
+        return errorPushUndefined(heightComputer);
       }
-      storeExpression.storeValueForSymbol(context);
-      exactOutputExpression =
-          context->expressionForSymbolAbstract(storeExpression.symbol(), false);
-      if (exactOutputExpression.isUninitialized()) {
-        exactOutputExpression = Undefined::Builder();
-      }
-      approximateOutputExpression = approximateStoredExpression;
-    }
-    if (m_inUsePreferences.examMode().forbidUnits() &&
-        approximateOutputExpression.hasUnit()) {
-      approximateOutputExpression = Undefined::Builder();
-      exactOutputExpression = Undefined::Builder();
-    }
+      /* Recompute the location of the input text in case a calculation was
+       * deleted. */
+      char *const inputText = endOfCalculations() + sizeof(Calculation);
 
-    /* Push the outputs: exact output, and approximate output with maximum
-     * number of significant digits and displayed number of digits.
-     * If one is too big for the store, push undef instead. */
-    for (int i = 0; i < Calculation::k_numberOfExpressions - 1; i++) {
-      Expression e =
-          i == 0 ? exactOutputExpression : approximateOutputExpression;
-      int digits = i == Calculation::k_numberOfExpressions - 2
-                       ? m_inUsePreferences.numberOfSignificantDigits()
-                       : maxNumberOfDigits;
+      // Parse and compute the expression
+      PoincareHelpers::ParseAndSimplifyAndApproximate(
+          inputText, &inputExpression, &exactOutputExpression,
+          &approximateOutputExpression, context);
 
-      char *nextCursor = pushSerializedExpression(cursor, e, digits);
-      if (nextCursor == k_pushError) {
-        nextCursor = pushUndefined(cursor);
-        if (nextCursor == k_pushError) {
-          return errorPushUndefined(heightComputer);
+      // Post-processing of store expression
+      exactOutputExpression = EnhancePushedExpression(exactOutputExpression);
+      if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
+        storeExpression = exactOutputExpression;
+        Expression exactStoredExpression =
+            static_cast<Store &>(storeExpression).value();
+        approximateOutputExpression =
+            PoincareHelpers::ApproximateKeepingUnits<double>(
+                exactStoredExpression, context);
+        if (storeExpression.childAtIndex(1).type() ==
+                ExpressionNode::Type::Symbol &&
+            ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
+                inputExpression, exactStoredExpression,
+                approximateOutputExpression, context)) {
+          storeExpression.replaceChildAtIndexInPlace(
+              0, approximateOutputExpression);
         }
       }
-      cursor = nextCursor;
+    } else {
+      context->tidyDownstreamPoolFrom();
+      return nullptr;
     }
-
-    /* All data has been appended, store the pointer to the end of the
-     * calculation. */
-    assert(cursor < pointerArea() - sizeof(Calculation *));
-    pointerArray()[-1] = cursor;
-
-    // Compute the calculation heights
-    Calculation *newCalculation =
-        reinterpret_cast<Calculation *>(endOfCalculations());
-    SetCalculationHeights(newCalculation, heightComputer, context);
-
-    /* Now that the calculation is fully built, we can finally update
-     * m_numberOfCalculations. As that is the only variable tracking the state
-     * of the store, updating it only at the end of the push ensures that,
-     * should an interruption occur, all the temporary states are silently
-     * discarded and no ill-formed Calculation is stored. */
-    m_numberOfCalculations++;
-    return ExpiringPointer(newCalculation);
-  } else {
-    context->tidyDownstreamPoolFrom();
-    return nullptr;
   }
+
+  /* When a input contains a store, it is kept by the reduction in the
+   * exact output and the actual store is performed here. The global
+   * context will perform the store and ensure that no symbol is kept in
+   * the definition of a variable.
+   * This must be done after the checkpoint because it can delete
+   * some memoized expressions in the Sequence store, which would alter the pool
+   * above the checkpoint.
+   *
+   * Once this is done, replace the output with the stored expression. To do
+   * so, retrieve the expression of the symbol after it is stored because it can
+   * be different from the value in the storeExpression.
+   * e.g. if f(x) = cos(x), the expression "f(x^2)->f(x)" will return
+   * "cos(x^2)".
+   * */
+  if (!storeExpression.isUninitialized()) {
+    assert(storeExpression.type() == ExpressionNode::Type::Store);
+    static_cast<Store &>(storeExpression).storeValueForSymbol(context);
+    exactOutputExpression = context->expressionForSymbolAbstract(
+        static_cast<Store &>(storeExpression).symbol(), false);
+  }
+
+  if (m_inUsePreferences.examMode().forbidUnits() &&
+      approximateOutputExpression.hasUnit()) {
+    approximateOutputExpression = Undefined::Builder();
+    exactOutputExpression = Undefined::Builder();
+  }
+
+  /* Push the outputs: exact output, and approximate output with maximum
+   * number of significant digits and displayed number of digits.
+   * If one is too big for the store, push undef instead. */
+  for (int i = 0; i < Calculation::k_numberOfExpressions - 1; i++) {
+    Expression e = i == 0 ? exactOutputExpression : approximateOutputExpression;
+    int digits = i == Calculation::k_numberOfExpressions - 2
+                     ? m_inUsePreferences.numberOfSignificantDigits()
+                     : maxNumberOfDigits;
+
+    char *nextCursor = pushSerializedExpression(cursor, e, digits);
+    if (nextCursor == k_pushError) {
+      nextCursor = pushUndefined(cursor);
+      if (nextCursor == k_pushError) {
+        return errorPushUndefined(heightComputer);
+      }
+    }
+    cursor = nextCursor;
+  }
+
+  /* All data has been appended, store the pointer to the end of the
+   * calculation. */
+  assert(cursor < pointerArea() - sizeof(Calculation *));
+  pointerArray()[-1] = cursor;
+
+  // Compute the calculation heights
+  Calculation *newCalculation =
+      reinterpret_cast<Calculation *>(endOfCalculations());
+  SetCalculationHeights(newCalculation, heightComputer, context);
+
+  /* Now that the calculation is fully built, we can finally update
+   * m_numberOfCalculations. As that is the only variable tracking the state
+   * of the store, updating it only at the end of the push ensures that,
+   * should an interruption occur, all the temporary states are silently
+   * discarded and no ill-formed Calculation is stored. */
+  m_numberOfCalculations++;
+  return ExpiringPointer(newCalculation);
 }
 
 void CalculationStore::recomputeHeightsIfPreferencesHaveChanged(

@@ -199,7 +199,7 @@ void LayoutCursor::insertLayout(const Node tree, Context *context,
   }
 
   if (startEdition) {
-    startEditing();
+    setEditing(true);
   }
   assert(!forceRight || !forceLeft);
   // - Step 1 - Delete selection
@@ -370,20 +370,20 @@ void LayoutCursor::insertLayout(const Node tree, Context *context,
 #endif
 
   if (startEdition) {
-    stopEditing();
+    setEditing(false);
   }
 }
 
 void LayoutCursor::addEmptyExponentialLayout(Context *context) {
   // TODO : Avoid the RackLayout inside a RackLayout
   // insertLayout(RackL("e"_l,KVertOffL(""_l)), false, false, true);
-  startEditing();
+  setEditing(true);
   EditionReference ref = EditionReference::Push<BlockType::RackLayout>(2);
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('e');
   EditionReference::Push<BlockType::VerticalOffsetLayout>();
   EditionReference::Push<BlockType::RackLayout>(0);
   insertLayout(ref, context, false, false, false);
-  stopEditing();
+  setEditing(false);
 }
 
 void LayoutCursor::addEmptyMatrixLayout(Context *context) {
@@ -410,14 +410,14 @@ void LayoutCursor::addEmptySquarePowerLayout(Context *context) {
 void LayoutCursor::addEmptyTenPowerLayout(Context *context) {
   // TODO : Avoid the RackLayout inside a RackLayout
   // insertLayout(RackL("10"_l,KVertOffL(""_l)), false, false, true);
-  startEditing();
+  setEditing(true);
   EditionReference ref = EditionReference::Push<BlockType::RackLayout>(3);
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1');
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('0');
   EditionReference::Push<BlockType::VerticalOffsetLayout>();
   EditionReference::Push<BlockType::RackLayout>(0);
   insertLayout(ref, context, false, false, false);
-  stopEditing();
+  setEditing(false);
 }
 
 void LayoutCursor::addFractionLayoutAndCollapseSiblings(Context *context) {
@@ -432,7 +432,7 @@ void LayoutCursor::insertText(const char *text, Context * context, bool forceCur
   if (codePoint == UCodePointNull) {
     return;
   }
-  startEditing();
+  setEditing(true);
 
   /* - Step 1 -
    * Read the text from left to right and create an Horizontal layout
@@ -554,12 +554,14 @@ void LayoutCursor::insertText(const char *text, Context * context, bool forceCur
                        forceCursorLeftOfText);
 
   // TODO: Restore beautification
-  stopEditing();
+  setEditing(false);
 }
 
 void LayoutCursor::performBackspace() {
   if (isSelecting()) {
+    setEditing(true);
     deleteAndResetSelection();
+    setEditing(false);
     return;
   }
 
@@ -697,15 +699,11 @@ void LayoutCursor::setLayout(const Node l,
       Layout::IsHorizontal(l.parent())) {
     m_layout = l.parent();
     m_position = m_layout.indexOfChild(l) + (sideOfLayout.isRight());
-    TypeBlock * source = m_isEditing ? EditionPool::sharedEditionPool()->firstBlock() : m_layoutBuffer;
-    size_t offset = m_layout.block() - source;
-    assert(offset >= 0 && offset < k_layoutBufferSize);
+    assert(cursorOffset() >= 0 && cursorOffset() < k_layoutBufferSize);
     return;
   }
   m_layout = l;
-  TypeBlock * source = m_isEditing ? EditionPool::sharedEditionPool()->firstBlock() : m_layoutBuffer;
-  size_t offset = m_layout.block() - source;
-  assert(offset >= 0 && offset < k_layoutBufferSize);
+  assert(cursorOffset() >= 0 && cursorOffset() < k_layoutBufferSize);
   m_position = sideOfLayout.isLeft() ? leftMostPosition() : rightmostPosition();
 }
 
@@ -1054,7 +1052,7 @@ void LayoutCursor::invalidateSizesAndPositions() {
 void LayoutCursor::privateDelete(Render::DeletionMethod deletionMethod,
                                  bool deletionAppliedToParent) {
   assert(!deletionAppliedToParent || !m_layout.parent().isUninitialized());
-  startEditing();
+  setEditing(true);
 #if 0
   if (deletionMethod == LayoutNode::DeletionMethod::MoveLeft) {
     bool dummy = false;
@@ -1196,7 +1194,7 @@ void LayoutCursor::privateDelete(Render::DeletionMethod deletionMethod,
   assert(m_position != 0);
   m_position--;
   m_layout = static_cast<Node>(RackLayout::RemoveLayoutAtIndex(m_layout, &m_position));
-  stopEditing();
+  setEditing(false);
 }
 
 #if 0
@@ -1326,26 +1324,20 @@ void LayoutCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
  * edited there. Once the edition stops, it is dumped back to the buffer. The
  * cursor follow around and can navigate around the tree in both configurations.
  */
-
-void LayoutCursor::startEditing() {
-  assert(!m_isEditing && EditionPool::sharedEditionPool()->numberOfTrees() == 0);
-  size_t offset = m_layout.block() - m_layoutBuffer;
-  EditionReference source = EditionReference(m_layoutBuffer);
-  assert(!source.isUninitialized());
-  m_layout = Node(source.block() + offset);
-  m_isEditing = true;
+void LayoutCursor::setEditing(bool status) {
+  assert(status != m_isEditing);
+  assert(EditionPool::sharedEditionPool()->numberOfTrees() == m_isEditing);
+  size_t offset = cursorOffset();
+  if (status) {
+    // Clone layout Buffer into the EditionPool
+    EditionReference::Clone(root());
+  } else {
+    // Flush the EditionPool into the layout buffer
+    root().copyTreeTo(m_layoutBuffer);
+    EditionPool::sharedEditionPool()->flush();
+  }
+  m_isEditing = status;
+  m_layout = Node(root().block() + offset);
 }
-
-void LayoutCursor::stopEditing() {
-  assert(m_isEditing);
-  TypeBlock * source = EditionPool::sharedEditionPool()->firstBlock();
-  size_t offset = m_layout.block() - source;
-  assert(!Node(source).isUninitialized());
-  Node(source).copyTreeTo(m_layoutBuffer);
-  EditionPool::sharedEditionPool()->flush();
-  m_layout = Node(m_layoutBuffer + offset);
-  m_isEditing = false;
-}
-
 
 }  // namespace PoincareJ

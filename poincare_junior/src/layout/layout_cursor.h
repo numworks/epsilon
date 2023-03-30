@@ -180,10 +180,11 @@ class LayoutCursor final {
 
   void balanceAutocompletedBracketsAndKeepAValidCursor();
 #endif
-
-  void startEditing();
-
-  void stopEditing();
+  void setEditing(bool status);
+  const Node root() const {
+    return Node(m_isEditing ? EditionPool::sharedEditionPool()->firstBlock() : m_layoutBuffer);
+  }
+  int cursorOffset() const { return m_layout.block() - root().block(); }
 
   // Buffer of cursor's layout
   TypeBlock * m_layoutBuffer;

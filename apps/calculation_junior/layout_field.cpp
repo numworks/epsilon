@@ -573,8 +573,9 @@ void LayoutField::insertLayoutAtCursor(PoincareJ::Node layout,
   layout = layout.makeEditable();
 #endif
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  m_contentView.cursor()->insertLayout(
-      layout, context(), forceCursorRightOfLayout, forceCursorLeftOfLayout);
+  m_contentView.cursor()->insertLayout(layout, context(),
+                                       forceCursorRightOfLayout,
+                                       forceCursorLeftOfLayout, true);
 
   // Reload
   reload(previousSize);

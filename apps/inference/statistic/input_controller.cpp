@@ -107,11 +107,9 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell *cell,
         m_statistic->parameterDefinitionAtIndex(index));
   } else if (typeAtIndex(index) == k_significanceCellType) {
     assert(cell == &m_significanceCell);
-    I18n::Message name, description;
-    name = m_statistic->thresholdName();
-    description = m_statistic->thresholdDescription();
-    m_significanceCell.label()->setMessage(name);
-    m_significanceCell.subLabel()->setMessage(description);
+    m_significanceCell.label()->setMessage(m_statistic->thresholdName());
+    m_significanceCell.subLabel()->setMessage(
+        m_statistic->thresholdDescription());
   }
   FloatParameterController<double>::willDisplayCellForIndex(cell, index);
 }

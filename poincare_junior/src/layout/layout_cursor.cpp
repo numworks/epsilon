@@ -321,10 +321,11 @@ void LayoutCursor::insertLayout(const Node tree, Context *context,
 
   // - Step 7 - Insert layout
   int numberOfInsertedChildren = RackLayout::NumberOfLayouts(tree);
-  // This will replace current layout with an HorizontalLayout if needed.
+  /* AddOrMergeLayoutAtIndex will replace current layout with an
+   * HorizontalLayout if needed. With this assert, m_position is guaranteed to
+   * be preserved. */
   assert(Layout::IsHorizontal(m_layout) || m_layout.parent().isUninitialized() ||
          !Layout::IsHorizontal(m_layout.parent()));
-  // With this assert, m_position is guaranteed to be preserved
   m_layout = static_cast<Node>(RackLayout::AddOrMergeLayoutAtIndex(m_layout, tree, &m_position));
   assert(Layout::IsHorizontal(m_layout));
 

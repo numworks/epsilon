@@ -19,8 +19,7 @@ namespace Poincare {
 
 Expression ExpressionNode::replaceSymbolWithExpression(
     const SymbolAbstract& symbol, const Expression& expression) {
-  return Expression(this).defaultReplaceSymbolWithExpression(symbol,
-                                                             expression);
+  return Expression(this).deepReplaceSymbolWithExpression(symbol, expression);
 }
 
 int ExpressionNode::polynomialDegree(Context* context,

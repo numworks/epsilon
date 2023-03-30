@@ -169,7 +169,7 @@ Expression ParameteredExpression::replaceSymbolWithExpression(
   if (symbol.type() != ExpressionNode::Type::Symbol ||
       !parameter().hasSameNameAs(symbol)) {
     // If the symbol is not the parameter, replace normally
-    return defaultReplaceSymbolWithExpression(symbol, expression);
+    return deepReplaceSymbolWithExpression(symbol, expression);
   }
 
   /* If the symbol is the parameter, replace it in all children except

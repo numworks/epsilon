@@ -35,7 +35,7 @@ class PythonToolbox : public Escher::Toolbox {
   int maxNumberOfDisplayedRows() override;
   constexpr static int k_maxNumberOfDisplayedRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
-          Escher::AbstractMenuCell::k_minimalSmallFontCellHeight,
+          Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
           Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight);
 
  private:

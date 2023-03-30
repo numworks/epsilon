@@ -6,11 +6,8 @@
 
 namespace Escher {
 
-BufferTextView::BufferTextView(KDGlyph::Format format,
-                               size_t maxDisplayedTextLength)
-    : TextView(format), m_maxDisplayedTextLength(maxDisplayedTextLength) {
-  assert(m_maxDisplayedTextLength < k_maxNumberOfChar &&
-         m_maxDisplayedTextLength >= 0);
+BufferTextView::BufferTextView(KDGlyph::Format format)
+    : TextView(format), m_maxDisplayedTextLength(k_maxNumberOfChar - 1) {
   m_buffer[0] = 0;
 }
 

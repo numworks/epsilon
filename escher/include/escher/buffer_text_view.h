@@ -11,10 +11,10 @@ class BufferTextView : public TextView {
   friend class BufferPopUpController;
 
  public:
-  constexpr static size_t k_maxNumberOfChar = 256;
+  constexpr static size_t k_maxNumberOfChar =
+      Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small) + 1;
 
-  BufferTextView(KDGlyph::Format format = {},
-                 size_t maxDisplayedTextLength = k_maxNumberOfChar - 1);
+  BufferTextView(KDGlyph::Format format = {});
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;

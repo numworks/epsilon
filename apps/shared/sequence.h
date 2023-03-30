@@ -93,13 +93,12 @@ class Sequence : public Function {
   Poincare::Layout nameLayout();
   bool isDefined() override;
   bool isEmpty() override;
-  /* Sequence u is suitable for cobweb if it is simply recursive and if u(n+1)
-   * depends only on u(n) or u(0) and not on n, on another sequence or on
-   * another rank of u */
-  bool isSuitableForCobweb(Poincare::Context *context) const {
-    return type() == Shared::Sequence::Type::SingleRecurrence &&
-           !mainExpressionContainsForbiddenTerms(context, true, true);
-  }
+  /* Sequence u is suitable for cobweb if:
+   * - it is simply recursive
+   * - u(n+1) depends only on u(n) or u(0) and not on n, on another sequence or
+   *   on another rank of u
+   * - u(0) has a non NAN value */
+  bool isSuitableForCobweb(Poincare::Context *context) const;
   /* Sequence u can be handled as explicit if main expression does not contains
    * forbidden terms:
    * - explicit: any term of u

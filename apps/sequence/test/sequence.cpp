@@ -738,7 +738,7 @@ QUIZ_CASE(sequence_sum_evaluation) {
                                        "u(n)+u(n+1)+2", "0", "0");
 }
 
-QUIZ_CASE(sequence_simply_recursive) {
+QUIZ_CASE(sequence_suitable_for_cobweb) {
   Shared::GlobalContext globalContext;
   SequenceStore* store = globalContext.sequenceStore;
   SequenceContext* sequenceContext = globalContext.sequenceContext();
@@ -758,6 +758,16 @@ QUIZ_CASE(sequence_simply_recursive) {
                            "0", nullptr, sequenceContext)
                    ->isSuitableForCobweb(sequenceContext));
   store->removeAll();
+  quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence,
+                          "2*u(n)+u(0)", "0", nullptr, sequenceContext)
+                  ->isSuitableForCobweb(sequenceContext));
+  store->removeAll();
+  sequenceContext->resetCache();  // for computation of u(0)
+  quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence,
+                           "2*u(n)+u(0)", "n", nullptr, sequenceContext)
+                   ->isSuitableForCobweb(sequenceContext));
+  store->removeAll();
+  store->tidyDownstreamPoolFrom();
 }
 
 }  // namespace Shared

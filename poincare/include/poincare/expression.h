@@ -134,8 +134,9 @@ class Expression : public TreeHandle {
   friend class SumAndProduct;
   friend class SumAndProductNode;
   friend class Symbol;
-  friend class SymbolAbstractNode;
   friend class SymbolNode;
+  friend class SymbolAbstract;
+  friend class SymbolAbstractNode;
   friend class Tangent;
   friend class Trigonometry;
   friend class TrigonometryCheatTable;

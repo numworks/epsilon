@@ -23,8 +23,6 @@ class SymbolNode final : public SymbolAbstractNode {
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::Unknown;
   }
-  Expression replaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                         const Expression& expression) override;
   int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 Expression coefficients[]) const override;
@@ -105,8 +103,6 @@ class Symbol final : public SymbolAbstract {
   Expression shallowReduce(ReductionContext reductionContext);
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 Expression symbolValue);
-  Expression replaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                         const Expression& expression);
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 Expression coefficients[]) const;
   Expression deepReplaceReplaceableSymbols(

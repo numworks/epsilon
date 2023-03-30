@@ -5,6 +5,7 @@
 #include <poincare/dependency.h>
 #include <poincare/function.h>
 #include <poincare/helpers.h>
+#include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/sequence.h>
 #include <poincare/symbol.h>
@@ -28,6 +29,11 @@ size_t SymbolAbstractNode::NameWithoutQuotationMarks(char *buffer,
   }
   assert(bufferSize > nameLength);
   return strlcpy(buffer, name, bufferSize);
+}
+
+Expression SymbolAbstractNode::replaceSymbolWithExpression(
+    const SymbolAbstract &symbol, const Expression &expression) {
+  return SymbolAbstract(this).replaceSymbolWithExpression(symbol, expression);
 }
 
 size_t SymbolAbstractNode::size() const {
@@ -98,6 +104,32 @@ bool SymbolAbstract::matches(const SymbolAbstract &symbol,
          e.recursivelyMatches(test, context,
                               SymbolicComputation::DoNotReplaceAnySymbol,
                               auxiliary);
+}
+
+Expression SymbolAbstract::replaceSymbolWithExpression(
+    const SymbolAbstract &symbol, const Expression &expression) {
+  deepReplaceSymbolWithExpression(symbol, expression);
+  if (symbol.type() == type() && hasSameNameAs(symbol)) {
+    Expression exp = expression.clone();
+    if (numberOfChildren() > 0) {
+      assert(type() == ExpressionNode::Type::Function ||
+             type() == ExpressionNode::Type::Sequence);
+      assert(numberOfChildren() == 1 && symbol.numberOfChildren() == 1);
+      assert(symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
+      Expression symbolVariable = symbol.childAtIndex(0);
+      Expression myVariable = childAtIndex(0);
+      exp = exp.replaceSymbolWithExpression(symbolVariable.convert<Symbol>(),
+                                            myVariable);
+    }
+    Expression p = parent();
+    if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(
+                                    exp, p.indexOfChild(*this))) {
+      exp = Parenthesis::Builder(exp);
+    }
+    replaceWithInPlace(exp);
+    return exp;
+  }
+  return *this;
 }
 
 Expression SymbolAbstract::Expand(const SymbolAbstract &symbol,

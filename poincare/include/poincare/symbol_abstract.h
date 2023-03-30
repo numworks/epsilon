@@ -54,6 +54,8 @@ class SymbolAbstractNode : public ExpressionNode {
 
   // Property
   TrinaryBoolean isPositive(Context *context) const override;
+  Expression replaceSymbolWithExpression(const SymbolAbstract &symbol,
+                                         const Expression &expression) override;
 
   // TreeNode
 #if POINCARE_TREE_LOG
@@ -100,6 +102,8 @@ class SymbolAbstract : public Expression {
   static size_t TruncateExtension(char *dst, const char *src, size_t size);
   static bool matches(const SymbolAbstract &symbol, ExpressionTrinaryTest test,
                       Context *context, void *auxiliary = nullptr);
+  Expression replaceSymbolWithExpression(const SymbolAbstract &symbol,
+                                         const Expression &expression);
 
  protected:
   SymbolAbstract(const SymbolAbstractNode *node) : Expression(node) {}

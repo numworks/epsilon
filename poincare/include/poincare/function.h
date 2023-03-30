@@ -25,8 +25,6 @@ class FunctionNode : public SymbolAbstractNode {
 
   // Properties
   Type type() const override { return Type::Function; }
-  Expression replaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                         const Expression& expression) override;
   int polynomialDegree(Context* context, const char* symbolName) const override;
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 Expression coefficients[]) const override;
@@ -86,8 +84,6 @@ class Function : public SymbolAbstract {
                           Expression child = Expression());
 
   // Simplification
-  Expression replaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                         const Expression& expression);
   Expression shallowReduce(ReductionContext reductionContext);
   Expression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,

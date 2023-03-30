@@ -1,7 +1,6 @@
 #include <poincare/dependency.h>
 #include <poincare/function.h>
 #include <poincare/layout_helper.h>
-#include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
@@ -15,11 +14,6 @@ namespace Poincare {
 FunctionNode::FunctionNode(const char* newName, int length)
     : SymbolAbstractNode() {
   setName(newName, length);
-}
-
-Expression FunctionNode::replaceSymbolWithExpression(
-    const SymbolAbstract& symbol, const Expression& expression) {
-  return Function(this).replaceSymbolWithExpression(symbol, expression);
 }
 
 /* Usual behavior for functions is to expand itself (as well as any function it
@@ -156,28 +150,6 @@ Function Function::Builder(const char* name, size_t length, Expression child) {
     f.replaceChildAtIndexInPlace(0, child);
   }
   return f;
-}
-
-Expression Function::replaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                                 const Expression& expression) {
-  // Replace the symbol in the child
-  childAtIndex(0).replaceSymbolWithExpression(symbol, expression);
-  if (symbol.type() == ExpressionNode::Type::Function &&
-      hasSameNameAs(symbol)) {
-    Expression value = expression.clone();
-    Expression p = parent();
-    Expression variable = symbol.childAtIndex(0);
-    assert(variable.type() == ExpressionNode::Type::Symbol);
-    value = value.replaceSymbolWithExpression(variable.convert<Symbol>(),
-                                              childAtIndex(0));
-    if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(
-                                    value, p.indexOfChild(*this))) {
-      value = Parenthesis::Builder(value);
-    }
-    replaceWithInPlace(value);
-    return value;
-  }
-  return *this;
 }
 
 Expression Function::shallowReduce(ReductionContext reductionContext) {

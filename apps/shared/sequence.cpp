@@ -132,6 +132,13 @@ bool Sequence::isEmpty() {
                                       data->initialConditionSize(1) == 0)));
 }
 
+bool Sequence::isSuitableForCobweb(Poincare::Context *context) const {
+  return type() == Type::SingleRecurrence &&
+         !std::isnan(approximateAtRank<float>(
+             0, reinterpret_cast<SequenceContext *>(context))) &&
+         !mainExpressionContainsForbiddenTerms(context, true, true);
+}
+
 bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
                                                     bool allowRecursion,
                                                     bool forCobweb) const {

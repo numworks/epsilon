@@ -41,7 +41,7 @@ void Range1D::stretchIfTooSmall(float shift) {
    * They are both shifted by shift. */
   if (length() < k_minLength) {
     if (shift < 0) {
-      shift = DefaultLengthAt(m_min) / 2;
+      shift = DefaultLengthAt(m_min) / 2.0f;
     }
     stretchEachBoundBy(shift);
   }

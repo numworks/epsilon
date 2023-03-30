@@ -66,14 +66,24 @@ class HistoryController : public Escher::ViewController,
   CalculationSelectableTableView m_selectableTableView;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
   CalculationStore* m_calculationStore;
-  ComplexListController m_complexController;
+  union UnionController {
+    UnionController(EditExpressionController* editExpressionController)
+        : m_complexController(editExpressionController) {}
+    ~UnionController() { listController()->~ListController(); }
+    ListController* listController() {
+      return static_cast<ListController*>(&m_complexController);
+    }
+    ComplexListController m_complexController;
+    TrigonometryListController m_trigonometryController;
+    UnitListController m_unitController;
+    MatrixListController m_matrixController;
+    VectorListController m_vectorController;
+    FunctionListController m_functionController;
+  };
+  UnionController m_unionController;
+  // These results may be appended to another "main" result
   IntegerListController m_integerController;
   RationalListController m_rationalController;
-  TrigonometryListController m_trigonometryController;
-  UnitListController m_unitController;
-  MatrixListController m_matrixController;
-  VectorListController m_vectorController;
-  FunctionListController m_functionController;
   ScientificNotationListController m_scientificNotationListController;
 };
 

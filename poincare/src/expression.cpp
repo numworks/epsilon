@@ -804,7 +804,7 @@ Evaluation<U> Expression::approximateToEvaluation(
   return e;
 }
 
-Expression Expression::defaultReplaceSymbolWithExpression(
+Expression Expression::deepReplaceSymbolWithExpression(
     const SymbolAbstract &symbol, const Expression expression) {
   /* In this case, replacing a symbol does not alter the number of children,
    * since no other operation (e.g. reduction) is applied. */

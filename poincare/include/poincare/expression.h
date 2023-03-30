@@ -624,8 +624,8 @@ class Expression : public TreeHandle {
                                 Expression coefficients[]) const {
     return node()->getPolynomialCoefficients(context, symbolName, coefficients);
   }
-  Expression defaultReplaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                                const Expression expression);
+  Expression deepReplaceSymbolWithExpression(const SymbolAbstract& symbol,
+                                             const Expression expression);
   /* 'deepReplaceReplaceableSymbols' replaces symbols in place. isCircular
    * indicates if it is circularly defined and has been interrupted.
    * SymbolicComputation defines how to handle functions and undefined symbols.

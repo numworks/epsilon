@@ -891,7 +891,7 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction,
 
   // Handle selection (find a common ancestor to previous and current layout)
   if (moved && isSelecting() && previousLayout != m_layout) {
-    const Node layoutAncestor = m_layout.commonAncestorWith(previousLayout);
+    const Node layoutAncestor = root().commonAncestor(m_layout, previousLayout);
     assert(!layoutAncestor.isUninitialized());
     // Down goes left to right and up goes right to left
     setLayout(layoutAncestor, direction.isUp() ? OMG::Direction::Left()

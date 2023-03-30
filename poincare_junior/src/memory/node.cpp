@@ -176,17 +176,50 @@ const Node Node::root() const {
   return ancestor;
 }
 
-const Node Node::commonAncestorWith(const Node node) const {
-  if (block() > node.block()) {
-    return node.commonAncestorWith(*this);
+const Node Node::commonAncestor(const Node child1, const Node child2) const {
+  /* This method find the common ancestor of child1 and child2 within this tree
+   * it does without going backward at any point. This tree is parsed until the
+   * last node owning both childs is found. */
+  const TypeBlock * block1 = child1.block();
+  const TypeBlock * block2 = child2.block();
+  if (block1 > block2) {
+    return commonAncestor(child2, child1);
   }
-  // *this is leftmost node
-  Node currentNode = node;
-  while (currentNode.block() > block()) {
-    currentNode = currentNode.parent();
-    assert(!currentNode.isUninitialized());
+  assert(block1 <= block2);
+  if (block1 < block()) {
+    return Node();
   }
-  return currentNode;
+  Node parent = Node();
+  Node node = *this;
+  while (true) {
+    assert(block1 >= node.block());
+    const Node nodeNextTree = node.nextTree();
+    const bool descendant1 = block1 < nodeNextTree.block();
+    const bool descendant2 = block2 < nodeNextTree.block();
+    if (!descendant1) {
+      // Neither children are descendants
+      if (parent.isUninitialized()) {
+        // node is the root, no ancestors can be found
+        return Node();
+      }
+      // Try node's next sibling
+      node = nodeNextTree;
+      continue;
+    }
+    if (!descendant2) {
+      // Only child1 is descendant, parent is the common ancestor
+      return parent;
+    }
+    if (block1 == node.block()) {
+      // Either node or parent is the ancestor
+      return node;
+    }
+    // Both children are in this tree, try node's first child
+    parent = node;
+    node = node.nextNode();
+  }
+  assert(false);
+  return Node();
 }
 
 int Node::numberOfDescendants(bool includeSelf) const {

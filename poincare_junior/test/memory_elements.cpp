@@ -242,19 +242,19 @@ QUIZ_CASE(pcj_node) {
   quiz_assert(node2 == node1);
 
   // Node navigation
-  constexpr Tree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
+  constexpr Tree e1 = KMult(KAdd(1_e, 2_e), 3_e, 4_e, KMult(5_e, 6_e));
   constexpr Tree e2 = KPow(5_e, 6_e);
   Node n1 = EditionReference(e1);
   Node n2 = EditionReference(e2);
-  quiz_assert(n1.treeSize() == 14); // TODO: Magic Number
+  quiz_assert(n1.treeSize() == 23); // TODO: Magic Number
   assert_trees_are_equal(n1.nextNode(), KAdd(1_e, 2_e));
   assert_trees_are_equal(n1.nextTree(), e2);
-  assert_trees_are_equal(n2.previousNode(), 4_e);
+  assert_trees_are_equal(n2.previousNode(), 6_e);
   assert_trees_are_equal(n2.previousTree(), e1);
   assert_trees_are_equal(n1.nextNode().nextNode().parent(), n1.nextNode());
   assert_trees_are_equal(n1.nextNode().nextNode().root(), n1);
-  quiz_assert(n1.numberOfDescendants(false) == 5);
-  quiz_assert(n1.numberOfDescendants(true) == 6);
+  quiz_assert(n1.numberOfDescendants(false) == 8);
+  quiz_assert(n1.numberOfDescendants(true) == 9);
   assert_trees_are_equal(n1.childAtIndex(0), n1.nextNode());
   assert_trees_are_equal(n1.childAtIndex(1), n1.nextNode().nextNode().nextNode().nextNode());
   quiz_assert(n1.indexOfChild(n1.childAtIndex(1)) == 1);
@@ -263,10 +263,15 @@ QUIZ_CASE(pcj_node) {
   quiz_assert(n1.hasChild(n1.childAtIndex(2)));
   quiz_assert(!n1.hasSibling(n1.childAtIndex(2)));
   quiz_assert(n1.nextNode().hasSibling(n1.childAtIndex(2)));
-  quiz_assert(n1.commonAncestorWith(n1) == n1);
-  quiz_assert(n1.commonAncestorWith(n1.childAtIndex(0).childAtIndex(1)) == n1);
-  quiz_assert(n1.childAtIndex(0).childAtIndex(1).commonAncestorWith(n1) == n1);
-  quiz_assert(n1.childAtIndex(0).childAtIndex(1).commonAncestorWith(n1.childAtIndex(2)) == n1);
+  quiz_assert(n1.commonAncestor(n1, n1) == n1);
+  quiz_assert(n1.commonAncestor(n1, n1.childAtIndex(0).childAtIndex(1)) == n1);
+  quiz_assert(n1.commonAncestor(n1.childAtIndex(0).childAtIndex(1), n1) == n1);
+  quiz_assert(n1.commonAncestor(n1.childAtIndex(0).childAtIndex(1), n1.childAtIndex(2)) == n1);
+  quiz_assert(n1.commonAncestor(n1.childAtIndex(0).childAtIndex(0), n1.childAtIndex(0).childAtIndex(1)) == n1.childAtIndex(0));
+  quiz_assert(n1.commonAncestor(n1.childAtIndex(3).childAtIndex(0), n1.childAtIndex(3).childAtIndex(1)) == n1.childAtIndex(3));
+  quiz_assert(n1.commonAncestor(n1.childAtIndex(0).childAtIndex(0), n2).isUninitialized());
+  quiz_assert(n1.commonAncestor(n2, n2.childAtIndex(0)).isUninitialized());
+  quiz_assert(n2.commonAncestor(n1.childAtIndex(0).childAtIndex(0), n2.childAtIndex(0)).isUninitialized());
 }
 
 QUIZ_CASE(pcj_node_size) {

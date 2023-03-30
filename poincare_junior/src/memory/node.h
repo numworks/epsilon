@@ -80,7 +80,7 @@ public:
   Node parent() { return Utils::DeconstifyObj(&Node::parent, this);}
   const Node root() const;
   Node root() { return Utils::DeconstifyObj(&Node::root, this);}
-  const Node commonAncestorWith(const Node node) const;
+  const Node commonAncestor(const Node child1, const Node child2) const;
   int numberOfDescendants(bool includeSelf) const;
   const Node childAtIndex(int index) const;
   Node childAtIndex(int index) { return Utils::DeconstifyObj(&Node::childAtIndex, this, index);}

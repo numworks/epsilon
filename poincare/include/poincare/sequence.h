@@ -18,8 +18,6 @@ class SequenceNode : public SymbolAbstractNode {
 #endif
 
   Type type() const override { return Type::Sequence; }
-  Expression replaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                         const Expression& expression) override;
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
 
@@ -69,8 +67,6 @@ class Sequence : public SymbolAbstract {
                           Expression child = Expression());
 
   // Simplification
-  Expression replaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                         const Expression& expression);
   Expression shallowReduce(ReductionContext reductionContext);
   Expression deepReplaceReplaceableSymbols(
       Context* context, TrinaryBoolean* isCircular,

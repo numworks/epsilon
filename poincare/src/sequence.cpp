@@ -5,7 +5,6 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/integer.h>
 #include <poincare/layout_helper.h>
-#include <poincare/parenthesis.h>
 #include <poincare/sequence.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
@@ -16,11 +15,6 @@ namespace Poincare {
 SequenceNode::SequenceNode(const char* newName, int length)
     : SymbolAbstractNode() {
   setName(newName, length);
-}
-
-Expression SequenceNode::replaceSymbolWithExpression(
-    const SymbolAbstract& symbol, const Expression& expression) {
-  return Sequence(this).replaceSymbolWithExpression(symbol, expression);
 }
 
 int SequenceNode::simplificationOrderSameType(const ExpressionNode* e,
@@ -108,24 +102,6 @@ Sequence Sequence::Builder(const char* name, size_t length, Expression child) {
     seq.replaceChildAtIndexInPlace(0, child);
   }
   return seq;
-}
-
-Expression Sequence::replaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                                 const Expression& expression) {
-  // Replace the symbol in the child
-  childAtIndex(0).replaceSymbolWithExpression(symbol, expression);
-  if (symbol.type() == ExpressionNode::Type::Sequence &&
-      hasSameNameAs(symbol)) {
-    Expression value = expression.clone();
-    Expression p = parent();
-    if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(
-                                    value, p.indexOfChild(*this))) {
-      value = Parenthesis::Builder(value);
-    }
-    replaceWithInPlace(value);
-    return value;
-  }
-  return *this;
 }
 
 Expression Sequence::shallowReduce(ReductionContext reductionContext) {

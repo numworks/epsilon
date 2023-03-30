@@ -6,7 +6,6 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/parametered_expression.h>
-#include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
@@ -19,11 +18,6 @@ namespace Poincare {
 
 SymbolNode::SymbolNode(const char* newName, int length) : SymbolAbstractNode() {
   setName(newName, length);
-}
-
-Expression SymbolNode::replaceSymbolWithExpression(
-    const SymbolAbstract& symbol, const Expression& expression) {
-  return Symbol(this).replaceSymbolWithExpression(symbol, expression);
 }
 
 int SymbolNode::polynomialDegree(Context* context,
@@ -219,21 +213,6 @@ bool Symbol::derivate(const ReductionContext& reductionContext, Symbol symbol,
                       Expression symbolValue) {
   replaceWithInPlace(Rational::Builder(strcmp(name(), symbol.name()) == 0));
   return true;
-}
-
-Expression Symbol::replaceSymbolWithExpression(const SymbolAbstract& symbol,
-                                               const Expression& expression) {
-  if (symbol.type() == ExpressionNode::Type::Symbol && hasSameNameAs(symbol)) {
-    Expression value = expression.clone();
-    Expression p = parent();
-    if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(
-                                    value, p.indexOfChild(*this))) {
-      value = Parenthesis::Builder(value);
-    }
-    replaceWithInPlace(value);
-    return value;
-  }
-  return *this;
 }
 
 int Symbol::getPolynomialCoefficients(Context* context, const char* symbolName,

@@ -77,7 +77,7 @@ App::ValuesTab::ValuesTab()
                          &app()->m_functionParameterController) {}
 
 App::App(Snapshot* snapshot)
-    : FunctionApp(snapshot, &m_tabs, I18n::Message::Expressions),
+    : FunctionApp(snapshot, &m_tabs, ListTab::k_title),
       m_functionParameterController(this, I18n::Message::FunctionColor,
                                     I18n::Message::DeleteExpression, this) {}
 

@@ -40,9 +40,6 @@ class InteractiveCurveViewController
   void willExitResponderChain(Responder* nextFirstResponder) override;
 
   // ViewController
-  const char* title() override {
-    return I18n::translate(I18n::Message::GraphTab);
-  }
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::NeverDisplayOwnTitle;
   }

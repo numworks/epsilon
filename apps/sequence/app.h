@@ -77,10 +77,10 @@ class App : public Shared::FunctionApp {
   bool isAcceptableExpression(const Poincare::Expression expression) override;
 
  private:
-  App(Snapshot *snapshot)
-      : FunctionApp(snapshot, &m_tabs, I18n::Message::SequenceTab) {}
+  App(Snapshot *snapshot) : FunctionApp(snapshot, &m_tabs, ListTab::k_title) {}
 
   struct ListTab : public Shared::FunctionApp::ListTab {
+    static constexpr I18n::Message k_title = I18n::Message::SequenceTab;
     ListTab();
     ListController m_listController;
   };

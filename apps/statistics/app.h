@@ -63,11 +63,6 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     return GraphViewModel::IndexOfGraphView(
         snapshot()->graphViewModel()->selectedGraphView());
   }
-  /* Alternate view title is used for the graph tab title, but shouldn't be
-   * visible elsewhere. */
-  const char *alternateViewTitle() override {
-    return I18n::translate(I18n::Message::StatisticsGraphTab);
-  }
   Escher::ViewController::TitlesDisplay alternateViewTitlesDisplay() override {
     return Escher::ViewController::TitlesDisplay::NeverDisplayOwnTitle;
   }
@@ -80,6 +75,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
 
   struct StoreTab : public Escher::Tab {
     StoreTab();
+    static constexpr I18n::Message k_title = I18n::Message::DataTab;
     Escher::ViewController *top() override {
       return &m_storeStackViewController;
     }
@@ -90,6 +86,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
 
   struct GraphTab : public Escher::Tab {
     GraphTab();
+    static constexpr I18n::Message k_title = I18n::Message::StatisticsGraphTab;
     Escher::ViewController *top() override {
       return &m_graphMenuAlternateEmptyViewController;
     }
@@ -114,6 +111,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
 
   struct CalculationTab : public Escher::Tab {
     CalculationTab();
+    static constexpr I18n::Message k_title = I18n::Message::StatTab;
     Escher::ViewController *top() override { return &m_calculationHeader; }
     CalculationController m_calculationController;
     Escher::AlternateEmptyViewController

@@ -63,6 +63,7 @@ class FunctionApp : public ExpressionFieldDelegateApp {
     Escher::StackViewController m_listStackViewController;
   };
   struct GraphTab : public Escher::Tab {
+    static constexpr I18n::Message k_title = I18n::Message::GraphTab;
     GraphTab(Shared::FunctionGraphController *graphController);
     Escher::ViewController *top() override {
       return &m_graphStackViewController;
@@ -72,6 +73,7 @@ class FunctionApp : public ExpressionFieldDelegateApp {
     Escher::StackViewController m_graphStackViewController;
   };
   struct ValuesTab : public Escher::Tab {
+    static constexpr I18n::Message k_title = I18n::Message::ValuesTab;
     ValuesTab(Shared::ValuesController *valuesController);
     Escher::ViewController *top() override {
       return &m_valuesStackViewController;

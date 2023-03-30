@@ -77,7 +77,6 @@ void Pool::logNode(std::ostream &stream, Node node, bool recursive,
   stream << "<Reference id=\"";
   referenceTable()->logIdsForNode(stream, node);
   stream << "\">";
-  // TODO several id per nodes?
   node.log(stream, recursive, verbose, indentation + 1);
   stream << std::endl;
   Indent(stream, indentation);

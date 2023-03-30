@@ -165,7 +165,9 @@ static bool IsTemporaryAutocompletedBracketPair(
 // Return leftParenthesisIndex
 static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(EditionReference rack, int index) {
   int leftParenthesisIndex = index;
+#if 0
   int dummy = 0;
+#endif
   // TODO : Use Iterator
   while (leftParenthesisIndex > 0 &&
 #if 0
@@ -561,7 +563,9 @@ void LayoutCursor::performBackspace() {
     return;
   }
 
+#if 0
   LayoutCursor previousCursor = *this;
+#endif
   const Node leftL = leftLayout();
   if (!leftL.isUninitialized()) {
     Render::DeletionMethod deletionMethod =

@@ -57,6 +57,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   memory_elements.cpp \
   memory_edition.cpp \
   memory_cache.cpp \
+  n_ary.cpp \
   parse.cpp \
   polynomial.cpp \
   set.cpp \

@@ -115,11 +115,14 @@ Expression SymbolAbstract::replaceSymbolWithExpression(
       assert(type() == ExpressionNode::Type::Function ||
              type() == ExpressionNode::Type::Sequence);
       assert(numberOfChildren() == 1 && symbol.numberOfChildren() == 1);
-      assert(symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
+      Expression myVariable = childAtIndex(0).clone();
       Expression symbolVariable = symbol.childAtIndex(0);
-      Expression myVariable = childAtIndex(0);
-      exp = exp.replaceSymbolWithExpression(symbolVariable.convert<Symbol>(),
-                                            myVariable);
+      if (symbolVariable.type() == ExpressionNode::Type::Symbol) {
+        exp = exp.replaceSymbolWithExpression(symbolVariable.convert<Symbol>(),
+                                              myVariable);
+      } else if (!myVariable.isIdenticalTo(symbolVariable)) {
+        return *this;
+      }
     }
     Expression p = parent();
     if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(

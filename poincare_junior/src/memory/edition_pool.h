@@ -100,6 +100,8 @@ class EditionPool final : public Pool {
     return &m_referenceTable;
   }
 
+  /* TODO: if we end up needing too many EditionReference, we could ref-count
+   * them in m_referenceTable and implement a destructor on EditionReference. */
   ReferenceTable m_referenceTable;
   TypeBlock *m_firstBlock;
   int m_numberOfBlocks;

@@ -82,7 +82,7 @@ void LayoutField::ContentView::copySelection(bool intoStoreMenu) {
     layoutToParse.serializeForParsing(buffer, bufferSize);
   }
 #else
-  if (selection.layout().isHorizontal()) {
+  if (Layout::IsHorizontal(selection.layout())) {
     size_t offset = 0;
     for (int i = selection.leftPosition(); i < selection.rightPosition(); i++) {
       offset += Layout(selection.layout().childAtIndex(i))

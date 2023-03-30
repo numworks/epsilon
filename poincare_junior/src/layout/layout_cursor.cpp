@@ -5,6 +5,7 @@
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/layout/k_creator.h>
 #include <poincare_junior/src/n_ary.h>
+#include <poincare_junior/include/layout.h>
 #include "layout_cursor.h"
 
 #include <algorithm>
@@ -35,7 +36,7 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) {
     return Render::Size(layoutToFit(font), font).height();
   }
 
-  if (m_layout.isHorizontal()) {
+  if (Layout::IsHorizontal(m_layout)) {
     return RackLayout::SizeBetweenIndexes(
                m_layout, currentSelection.leftPosition(),
                currentSelection.rightPosition(), font)
@@ -48,7 +49,7 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) {
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) {
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
-  if (!currentSelection.isEmpty() && m_layout.isHorizontal()) {
+  if (!currentSelection.isEmpty() && Layout::IsHorizontal(m_layout)) {
     cursorBaseline = RackLayout::BaselineBetweenIndexes(
         m_layout, currentSelection.leftPosition(),
         currentSelection.rightPosition(), font);
@@ -58,7 +59,7 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) {
   KDCoordinate cursorYOriginInLayout =
       Render::Baseline(m_layout, font) - cursorBaseline;
   KDCoordinate cursorXOffset = 0;
-  if (m_layout.isHorizontal()) {
+  if (Layout::IsHorizontal(m_layout)) {
     cursorXOffset =
         RackLayout::SizeBetweenIndexes(m_layout, 0, m_position, font)
             .width();
@@ -191,7 +192,7 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(EditionReference 
 void LayoutCursor::insertLayout(const Node tree, Context *context,
                                         bool forceRight, bool forceLeft, bool startEdition) {
   assert(!isUninitialized() && isValid());
-  if (tree.isEmpty()) {
+  if (Layout::IsEmpty(tree)) {
     return;
   }
 
@@ -272,7 +273,7 @@ void LayoutCursor::insertLayout(const Node tree, Context *context,
   /* - Step 5 - Add parenthesis around vertical offset
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
-  if (m_layout.isHorizontal() &&
+  if (Layout::IsHorizontal(m_layout) &&
       tree.type() == BlockType::VerticalOffsetLayout &&
       VerticalOffsetLayout::IsSuffixSuperscript(tree)) {
     if (!leftL.isUninitialized() &&
@@ -321,11 +322,11 @@ void LayoutCursor::insertLayout(const Node tree, Context *context,
   // - Step 7 - Insert layout
   int numberOfInsertedChildren = RackLayout::NumberOfLayouts(tree);
   // This will replace current layout with an HorizontalLayout if needed.
-  assert(m_layout.isHorizontal() || m_layout.parent().isUninitialized() ||
-         !m_layout.parent().isHorizontal());
+  assert(Layout::IsHorizontal(m_layout) || m_layout.parent().isUninitialized() ||
+         !Layout::IsHorizontal(m_layout.parent()));
   // With this assert, m_position is guaranteed to be preserved
   m_layout = static_cast<Node>(RackLayout::AddOrMergeLayoutAtIndex(m_layout, tree, &m_position));
-  assert(m_layout.isHorizontal());
+  assert(Layout::IsHorizontal(m_layout));
 
   if (!forceLeft) {
     // Move cursor right of inserted children
@@ -590,13 +591,13 @@ void LayoutCursor::deleteAndResetSelection() {
   }
   int selectionLeftBound = selec.leftPosition();
   int selectionRightBound = selec.rightPosition();
-  if (m_layout.isHorizontal()) {
+  if (Layout::IsHorizontal(m_layout)) {
     for (int i = selectionLeftBound; i < selectionRightBound; i++) {
       NAry::RemoveChildAtIndex(ref, selectionLeftBound);
     }
   } else {
     assert(m_layout.parent().isUninitialized() ||
-           !m_layout.parent().isHorizontal());
+           !Layout::IsHorizontal(m_layout.parent()));
     EditionReference emptyRack = EditionReference::Push<BlockType::RackLayout>(0);
     ref.replaceTreeByNode(emptyRack);
   }
@@ -687,8 +688,8 @@ void LayoutCursor::beautifyLeft(Context *context) {
 
 void LayoutCursor::setLayout(const Node l,
                              OMG::HorizontalDirection sideOfLayout) {
-  if (!l.isHorizontal() && !l.parent().isUninitialized() &&
-      l.parent().isHorizontal()) {
+  if (!Layout::IsHorizontal(l) && !l.parent().isUninitialized() &&
+      Layout::IsHorizontal(l.parent())) {
     m_layout = l.parent();
     m_position = m_layout.indexOfChild(l) + (sideOfLayout.isRight());
     TypeBlock * source = m_isEditing ? EditionPool::sharedEditionPool()->firstBlock() : m_layoutBuffer;
@@ -705,7 +706,7 @@ void LayoutCursor::setLayout(const Node l,
 
 const Node LayoutCursor::leftLayout() {
   assert(!isUninitialized());
-  if (!m_layout.isHorizontal()) {
+  if (!Layout::IsHorizontal(m_layout)) {
     return m_position == 1 ? m_layout : Node();
   }
   if (m_layout.numberOfChildren() == 0 || m_position == 0) {
@@ -716,7 +717,7 @@ const Node LayoutCursor::leftLayout() {
 
 const Node LayoutCursor::rightLayout() {
   assert(!isUninitialized());
-  if (!m_layout.isHorizontal()) {
+  if (!Layout::IsHorizontal(m_layout)) {
     return m_position == 0 ? m_layout : Node();
   }
   if (m_layout.numberOfChildren() == 0 ||
@@ -808,7 +809,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
     currentIndexInNextLayout = nextLayout.indexOfChild(m_layout);
   }
   assert(!nextLayout.isUninitialized());
-  assert(!nextLayout.isHorizontal());
+  assert(!Layout::IsHorizontal(nextLayout));
 
   /* If the cursor is selecting, it should not enter a new layout
    * but select all of it. */
@@ -863,7 +864,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
    * */
   const Node parent = nextLayout.parent();
   const Node previousLayout = m_layout;
-  if (!parent.isUninitialized() && parent.isHorizontal()) {
+  if (!parent.isUninitialized() && Layout::IsHorizontal(parent)) {
     m_layout = parent;
     m_position = m_layout.indexOfChild(nextLayout) + (direction.isRight());
   } else {
@@ -906,7 +907,7 @@ static void ScoreCursorInDescendants(TypeBlock * layoutBuffer, KDPoint p, const 
    * of one child is the left of another one, except if l is the last child.
    * */
   const Node parent = l.parent();
-  bool checkOnlyLeft = !parent.isUninitialized() && parent.isHorizontal() &&
+  bool checkOnlyLeft = !parent.isUninitialized() && Layout::IsHorizontal(parent) &&
                        parent.indexOfChild(l) < parent.numberOfChildren() - 1;
   int numberOfDirectionsToCheck = 1 + !checkOnlyLeft;
   for (int i = 0; i < numberOfDirectionsToCheck; i++) {
@@ -948,7 +949,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
             shouldRedrawLayout);
         if (nextIndex != k_cantMoveIndex) {
           assert(nextIndex != k_outsideIndex);
-          assert(!nextLayout.isHorizontal());
+          assert(!Layout::IsHorizontal(nextLayout));
           m_layout = nextLayout.childAtIndex(nextIndex);
           m_position =
               positionRelativeToNextLayout == Render::PositionInLayout::Left
@@ -983,7 +984,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
                          ? OMG::Direction::Left()
                          : OMG::Direction::Right());
       } else {
-        assert(!p.isHorizontal());
+        assert(!Layout::IsHorizontal(p));
         // We assume the new cursor is the same whatever the font
         LayoutCursor newCursor = ClosestCursorInDescendantsOfLayout(m_layoutBuffer,
             *this, p.childAtIndex(nextIndex), KDFont::Size::Large);
@@ -1186,7 +1187,7 @@ void LayoutCursor::privateDelete(Render::DeletionMethod deletionMethod,
   if (deletionAppliedToParent) {
     setLayout(m_layout.parent(), OMG::Direction::Right());
   }
-  assert(!m_layout.isHorizontal() || m_layout.parent().isUninitialized() || !m_layout.parent().isHorizontal());
+  assert(!Layout::IsHorizontal(m_layout) || m_layout.parent().isUninitialized() || !Layout::IsHorizontal(m_layout.parent()));
   assert(m_position != 0);
   m_position--;
   m_layout = static_cast<Node>(RackLayout::RemoveLayoutAtIndex(m_layout, &m_position));

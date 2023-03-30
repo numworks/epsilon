@@ -5,6 +5,7 @@
 #include "code_point_layout.h"
 #include "vertical_offset_layout.h"
 #include <poincare_junior/src/memory/node_iterator.h>
+#include <poincare_junior/include/layout.h>
 
 namespace PoincareJ {
 
@@ -118,7 +119,7 @@ int Render::IndexAfterHorizontalCursorMove(const Node node, OMG::HorizontalDirec
     assert(currentIndex == k_outsideIndex);
     return k_outsideIndex;
   }
-  if (node.isHorizontal()) {
+  if (Layout::IsHorizontal(node)) {
     nChildren += 1;
   }
   if (nChildren == 1) {

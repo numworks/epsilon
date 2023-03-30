@@ -23,7 +23,7 @@ class LayoutSelection {
   LayoutSelection(const Node n, int startPosition, int endPosition)
       : m_node(n), m_startPosition(startPosition), m_endPosition(endPosition) {
     assert(n.isUninitialized() ||
-           (n.isHorizontal() && 0 <= startPosition &&
+           (Layout::IsHorizontal(n) && 0 <= startPosition &&
             startPosition <= n.numberOfChildren() && 0 <= endPosition &&
             endPosition <= n.numberOfChildren()) ||
            (startPosition >= 0 && startPosition <= 1 && endPosition >= 0 &&
@@ -53,7 +53,7 @@ class LayoutSelection {
   bool containsNode(const Node n) const {
     const TypeBlock* b = n.block();
     return !isEmpty() &&
-           (m_node.isHorizontal()
+           (Layout::IsHorizontal(m_node)
                 ? (b >= m_node.childAtIndex(leftPosition()).block() &&
                    b <= m_node.childAtIndex(rightPosition() - 1).block())
                 : (b >= m_node.block() && b < m_node.nextTree().block()));

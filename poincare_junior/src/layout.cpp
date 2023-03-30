@@ -89,7 +89,7 @@ bool Layout::isEmpty() const {
   send(
     [](const Node tree, void * context) {
       bool  * result = static_cast<bool *>(context);
-      *result = tree.isEmpty();
+      *result = IsEmpty(tree);
     },
     &result
   );

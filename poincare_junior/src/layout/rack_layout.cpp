@@ -3,6 +3,7 @@
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/layout/parsing/rack_parser.h>
 #include <poincare_junior/src/n_ary.h>
+#include <poincare_junior/include/layout.h>
 
 namespace PoincareJ {
 
@@ -82,7 +83,7 @@ void RackLayout::RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont:
 }
 
 int RackLayout::NumberOfLayouts(EditionReference reference) {
-  return static_cast<Node>(reference).isHorizontal() ? reference.numberOfChildren() : 1;
+  return Layout::IsHorizontal(static_cast<Node>(reference)) ? reference.numberOfChildren() : 1;
 }
 
 EditionReference RackLayout::AddOrMergeLayoutAtIndex(EditionReference reference, EditionReference child, int * index) {
@@ -101,13 +102,13 @@ EditionReference RackLayout::RemoveLayoutAtIndex(EditionReference reference, int
 
 // Return the nearest NAry
 EditionReference RackLayout::RackParent(EditionReference reference, int * index) {
-  if (static_cast<Node>(reference).isHorizontal()) {
+  if (Layout::IsHorizontal(static_cast<Node>(reference))) {
     return reference;
   }
   assert(*index <= 1);
   // Find or make a RackLayout parent
   EditionReference parent = reference.parent();
-  if (parent.isUninitialized() || !static_cast<Node>(parent).isHorizontal()) {
+  if (parent.isUninitialized() || !Layout::IsHorizontal(static_cast<Node>(parent))) {
     parent = EditionReference::Push<BlockType::RackLayout>(1);
     reference.insertNodeBeforeNode(parent);
   } else {

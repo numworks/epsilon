@@ -12,6 +12,9 @@ namespace PoincareJ {
 class Layout final : public Reference {
 friend class Expression;
 public:
+  constexpr static bool IsHorizontal(const Node node) { return node.type() == BlockType::RackLayout; }
+  constexpr static bool IsEmpty(const Node node) { return IsHorizontal(node) && node.numberOfChildren() == 0; }
+
   Layout(const Node tree) : Reference(tree) { assert(tree.block()->isLayout()); }
   using Reference::Reference;
   static Layout Parse(const char * text);
@@ -19,6 +22,7 @@ public:
   void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite) const;
   KDSize size(KDFont::Size font) const;
   bool isEmpty() const;
+
 private:
   static EditionReference EditionPoolTextToLayout(const char * text);
 };

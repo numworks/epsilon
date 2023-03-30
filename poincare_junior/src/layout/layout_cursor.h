@@ -6,6 +6,7 @@
 #include <poincare_junior/src/memory/node.h>
 #include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/include/layout.h>
 
 #include "layout_selection.h"
 
@@ -147,7 +148,7 @@ class LayoutCursor final {
 
   int leftMostPosition() const { return 0; }
   int rightmostPosition() const {
-    return m_layout.isHorizontal() ? m_layout.numberOfChildren() : 1;
+    return Layout::IsHorizontal(m_layout) ? m_layout.numberOfChildren() : 1;
   }
   bool horizontalMove(OMG::HorizontalDirection direction,
                       bool* shouldRedrawLayout);

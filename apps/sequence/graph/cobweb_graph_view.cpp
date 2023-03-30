@@ -12,11 +12,13 @@
 #include "ion/unicode/code_point.h"
 #include "kandinsky/color.h"
 #include "kandinsky/measuring_context.h"
+#include "poincare/based_integer.h"
 #include "poincare/coordinate_2D.h"
 #include "poincare/expression.h"
 #include "poincare/function.h"
 #include "poincare/preferences.h"
 #include "poincare/print.h"
+#include "poincare/rational.h"
 #include "poincare/sequence.h"
 #include "poincare/symbol.h"
 
@@ -50,16 +52,24 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
   int nameLength = sequence->name(name, bufferSize);
   KDColor fadedColor =
       KDColor::Blend(sequence->color(), KDColorWhite, k_curveFadeRatio);
-  Poincare::Context *context = App::app()->localContext();
-  /* ExpressionModels are using Symbol(UCodePointUnknown=0x1) as their symbol in
-   * a recursive definition, n is Symbol(0x1)
-   * and u(n) is Poincare::Sequence('u', Symbol(0x1)) */
+  SequenceContext *context =
+      reinterpret_cast<SequenceContext *>(App::app()->localContext());
+  Poincare::Expression function = sequence->expressionClone();
+
+  // Replace initial term by its value, to avoid replacing it by a wrong value
+  // at next step
+  Poincare::Sequence initialSymbol = Poincare::Sequence::Builder(
+      name, strlen(name),
+      Poincare::BasedInteger::Builder(sequence->initialRank()));
+  Poincare::Expression initialExpression =
+      sequence->firstInitialConditionExpressionReduced(context);
+  function.replaceSymbolWithExpression(initialSymbol, initialExpression);
+
+  // Replace u(n) by n: u(n) becomes the variable
   Poincare::Sequence sequenceSymbol = Poincare::Sequence::Builder(
       name, strlen(name), Poincare::Symbol::SystemSymbol());
   Poincare::Symbol variable = Poincare::Symbol::SystemSymbol();
-  Poincare::Expression function =
-      sequence->expressionClone().replaceSymbolWithExpression(sequenceSymbol,
-                                                              variable);
+  function.replaceSymbolWithExpression(sequenceSymbol, variable);
   Curve2DEvaluation<float> evaluateFunction = [](float t, void *model,
                                                  void *context) {
     Poincare::Expression *e = (Poincare::Expression *)model;

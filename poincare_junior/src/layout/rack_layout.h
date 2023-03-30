@@ -20,7 +20,7 @@ public:
   /* RackLayout Simplifications: These methods can be called on any Node
    * targetted by a LayoutCursor. A RackLayout will be inserted if necessary.
    */
-  static int NumberOfLayouts(EditionReference reference);
+  static int NumberOfLayouts(const Node node);
   static EditionReference AddOrMergeLayoutAtIndex(EditionReference reference, EditionReference child, int * index);
   static EditionReference RemoveLayoutAtIndex(EditionReference reference, int * index);
 private:

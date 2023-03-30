@@ -82,8 +82,8 @@ void RackLayout::RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont:
   }
 }
 
-int RackLayout::NumberOfLayouts(EditionReference reference) {
-  return Layout::IsHorizontal(static_cast<Node>(reference)) ? reference.numberOfChildren() : 1;
+int RackLayout::NumberOfLayouts(const Node node) {
+  return Layout::IsHorizontal(node) ? node.numberOfChildren() : 1;
 }
 
 EditionReference RackLayout::AddOrMergeLayoutAtIndex(EditionReference reference, EditionReference child, int * index) {

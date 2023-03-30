@@ -20,14 +20,9 @@ HistoryController::HistoryController(
     : ViewController(editExpressionController),
       m_selectableTableView(this, this, this, this),
       m_calculationStore(calculationStore),
-      m_complexController(editExpressionController),
+      m_unionController(editExpressionController),
       m_integerController(editExpressionController),
       m_rationalController(editExpressionController),
-      m_trigonometryController(editExpressionController),
-      m_unitController(editExpressionController),
-      m_matrixController(editExpressionController),
-      m_vectorController(editExpressionController),
-      m_functionController(editExpressionController),
       m_scientificNotationListController(editExpressionController) {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_calculationHistory[i].setParentResponder(&m_selectableTableView);
@@ -156,25 +151,33 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
                                Calculation::DisplayOutput::ApproximateOnly
                            ? focusCalculation->exactOutput()
                            : a;
-        if (additionalInformations.complex) {
-          vc = &m_complexController;
-        } else if (additionalInformations.unit) {
-          vc = &m_unitController;
-        } else if (additionalInformations.vector) {
-          vc = &m_vectorController;
-        } else if (additionalInformations.matrix) {
-          vc = &m_matrixController;
-        } else if (additionalInformations.directTrigonometry ||
-                   additionalInformations.inverseTrigonometry) {
-          vc = &m_trigonometryController;
-          if (additionalInformations.directTrigonometry) {
-            // Find the angle
-            if (Trigonometry::isDirectTrigonometryFunction(e)) {
-              e = e.childAtIndex(0);
-            } else {
-              Expression focusInput = focusCalculation->input();
-              assert(Trigonometry::isDirectTrigonometryFunction(focusInput));
-              e = focusInput.childAtIndex(0);
+        if (additionalInformations.complex || additionalInformations.unit ||
+            additionalInformations.vector || additionalInformations.matrix ||
+            additionalInformations.directTrigonometry ||
+            additionalInformations.inverseTrigonometry) {
+          // The main controllers have to be initialized before use
+          m_unionController.~UnionController();
+          vc = m_unionController.listController();
+          if (additionalInformations.complex) {
+            new (&m_unionController) ComplexListController(editController);
+          } else if (additionalInformations.unit) {
+            new (&m_unionController) UnitListController(editController);
+          } else if (additionalInformations.vector) {
+            new (&m_unionController) VectorListController(editController);
+          } else if (additionalInformations.matrix) {
+            new (&m_unionController) MatrixListController(editController);
+          } else if (additionalInformations.directTrigonometry ||
+                     additionalInformations.inverseTrigonometry) {
+            new (&m_unionController) TrigonometryListController(editController);
+            if (additionalInformations.directTrigonometry) {
+              // Find the angle
+              if (Trigonometry::isDirectTrigonometryFunction(e)) {
+                e = e.childAtIndex(0);
+              } else {
+                Expression focusInput = focusCalculation->input();
+                assert(Trigonometry::isDirectTrigonometryFunction(focusInput));
+                e = focusInput.childAtIndex(0);
+              }
             }
           }
         } else if (additionalInformations.integer) {
@@ -194,8 +197,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
                  vc == &m_rationalController);
           ChainableExpressionsListController *tail =
               static_cast<ChainableExpressionsListController *>(vc);
-          m_functionController.setTail(tail);
-          vc = &m_functionController;
+          m_unionController.~UnionController();
+          new (&m_unionController) FunctionListController(editController);
+          m_unionController.m_functionController.setTail(tail);
+          vc = m_unionController.listController();
           vc->setExactAndApproximateExpression(focusCalculation->input(), a);
         } else if (additionalInformations.scientificNotation) {
           // TODO function and scientific ?

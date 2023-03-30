@@ -19,6 +19,7 @@ class ListController : public Escher::StackViewController,
  public:
   ListController(EditExpressionController* editExpressionController,
                  Escher::SelectableListViewDelegate* delegate = nullptr);
+  virtual ~ListController() = default;
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

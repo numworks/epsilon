@@ -339,11 +339,11 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
       k_maxNumberOfLayouts) {
     return false;
   }
+#if 0
   // Do not enter parentheses of expression that take no argument like random()
   forceCursorRightOfText =
-      forceCursorRightOfText || resultLayout.numberOfChildren() == 0;
+      forceCursorRightOfText || resultExpression.numberOfChildren() == 0;
 
-#if 0
   /* If the inserted layout is of the form "function()", we want to make
    * the right parenthesis temporary to insert "function(".
    * This is to make the "(" key consistent with the functions keys like cos

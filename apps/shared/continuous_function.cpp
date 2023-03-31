@@ -674,7 +674,9 @@ Expression ContinuousFunction::Model::expressionEquation(
   if (!ComparisonNode::IsBinaryComparison(result, &equationType)) {
     if (result.type() == ExpressionNode::Type::Point ||
         (result.type() == ExpressionNode::Type::List &&
-         static_cast<List &>(result).isListOfPoints(context))) {
+         static_cast<List &>(result).isListOfPoints(context)) ||
+        (result.type() == ExpressionNode::Type::ListSequence &&
+         result.childAtIndex(0).type() == ExpressionNode::Type::Point)) {
       if (computedFunctionSymbol) {
         *computedFunctionSymbol =
             ContinuousFunctionProperties::SymbolType::NoSymbol;

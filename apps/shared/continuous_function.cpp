@@ -490,7 +490,10 @@ Expression ContinuousFunction::Model::expressionReduced(
        * In addition, they are sorted to be travelled from left to right (i.e.
        * in order of ascending x). */
       m_expression = PoincareHelpers::Approximate<double>(
-          ListSort::Builder(m_expression), context);
+          m_expression.type() == ExpressionNode::Type::List
+              ? ListSort::Builder(m_expression)
+              : m_expression,
+          context);
     } else if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
                !thisProperties.isScatterPlot() &&
                (record->fullName() == nullptr ||

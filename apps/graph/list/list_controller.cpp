@@ -158,11 +158,12 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
     layoutField->layout().serializeForParsing(buffer,
                                               TextField::MaxBufferSize());
     Expression parsedExpression = Expression::Parse(buffer, nullptr);
-    if (!parsedExpression.isOfType({
-            ExpressionNode::Type::Comparison,
-            ExpressionNode::Type::Point,
-        }) &&
-        !parsedExpression.deepIsList(nullptr)) {
+    if (parsedExpression.isUninitialized() ||
+        (!parsedExpression.isOfType({
+             ExpressionNode::Type::Comparison,
+             ExpressionNode::Type::Point,
+         }) &&
+         !parsedExpression.deepIsList(nullptr))) {
       layoutField->putCursorOnOneSide(OMG::Direction::Left());
       CodePoint symbol =
           layoutRepresentsPolarFunction(layoutField->layout())

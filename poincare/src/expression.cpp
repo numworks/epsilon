@@ -257,6 +257,7 @@ bool Expression::deepIsList(Context *context) const {
           case ExpressionNode::Type::List:
           case ExpressionNode::Type::ListElement:
           case ExpressionNode::Type::ListSlice:
+          case ExpressionNode::Type::ListSequence:
           case ExpressionNode::Type::ListSort:
           case ExpressionNode::Type::RandintNoRepeat:
             return TrinaryBoolean::True;

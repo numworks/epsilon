@@ -115,7 +115,7 @@ all_src = $(apps_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(li
 $(call object_for,$(all_src)): $(kandinsky_deps)
 
 # kernel_obj are added separately since they require variants resolution
-all_objs = $(call object_for,$(all_src)) $(kernel_obj)
+all_objs = $(call object_for,$(all_src) $(kernel_src))
 .SECONDARY: $(all_objs)
 
 # Load source-based dependencies

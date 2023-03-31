@@ -167,9 +167,9 @@ void AbstractPlotView::drawLabel(KDContext *ctx, KDRect rect, const char *label,
                                  const KDRect labelRect, KDColor color) const {
   if (labelRect.intersects(rect)) {
     ctx->drawString(label, labelRect.origin(),
-                    KDGlyph::Style{.glyphColor = color,
-                                   .backgroundColor = backgroundColor(),
-                                   .font = k_font});
+                    {.glyphColor = color,
+                     .backgroundColor = backgroundColor(),
+                     .font = k_font});
   }
 }
 
@@ -193,9 +193,9 @@ void AbstractPlotView::drawLayout(KDContext *ctx, KDRect rect, Layout layout,
                                        xPosition, yPosition, ignoreMargin);
   if (KDRect(layoutOrigin, layoutSize).intersects(rect)) {
     layout.draw(ctx, layoutOrigin,
-                KDGlyph::Style{.glyphColor = color,
-                               .backgroundColor = backgroundColor(),
-                               .font = k_font});
+                {.glyphColor = color,
+                 .backgroundColor = backgroundColor(),
+                 .font = k_font});
   }
 }
 

@@ -559,12 +559,11 @@ void TextArea::ContentView::drawStringAt(
       std::min(selectionEnd - highlightedDrawStart,
                length - (highlightedDrawStart - text));
 
-  nextPoint = ctx->drawString(
-      highlightedDrawStart, nextPoint,
-      KDGlyph::Style{.glyphColor = textColor,
-                     .backgroundColor = backgroundHighlightColor,
-                     .font = m_font},
-      highlightedDrawLength);
+  nextPoint = ctx->drawString(highlightedDrawStart, nextPoint,
+                              {.glyphColor = textColor,
+                               .backgroundColor = backgroundHighlightColor,
+                               .font = m_font},
+                              highlightedDrawLength);
 
   const char *notHighlightedDrawStart =
       highlightedDrawStart + highlightedDrawLength;

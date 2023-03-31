@@ -23,9 +23,9 @@ void SuggestionTextField::ContentView::drawRect(KDContext* ctx,
     ctx->drawString(
         suggestionSuffix(),
         glyphFrameAtPosition(text(), text() + editedTextLength()).origin(),
-        KDGlyph::Style{.glyphColor = Palette::GrayDark,
-                       .backgroundColor = KDColorWhite,
-                       .font = m_font});
+        {.glyphColor = Palette::GrayDark,
+         .backgroundColor = KDColorWhite,
+         .font = m_font});
   }
 }
 

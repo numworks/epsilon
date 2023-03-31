@@ -75,12 +75,12 @@ void eadk_display_draw_string(const char *text, eadk_point_t point,
   KDContext *ctx = KDIonContext::SharedContext;
   ctx->setOrigin(KDPointZero);
   ctx->setClippingRect(KDRectScreen);
-  ctx->drawString(text, p(point),
-                  KDGlyph::Style{.glyphColor = c(text_color),
-                                 .backgroundColor = c(background_color),
-                                 .font = large_font ? KDFont::Size::Large
-                                                    : KDFont::Size::Small},
-                  255);
+  ctx->drawString(
+      text, p(point),
+      {.glyphColor = c(text_color),
+       .backgroundColor = c(background_color),
+       .font = large_font ? KDFont::Size::Large : KDFont::Size::Small},
+      255);
 }
 
 void eadk_timing_usleep(uint32_t us) {

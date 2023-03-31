@@ -111,10 +111,23 @@ class DoublePairStore {
   }
 
   // Calculations
+  class Parameters {
+   public:
+    Parameters() : m_lnOfX(false), m_lnOfY(false), m_oppositeOfY(false) {}
+    Parameters(bool lnOfX, bool lnOfY, bool oppositeOfY)
+        : m_lnOfX(lnOfX), m_lnOfY(lnOfY), m_oppositeOfY(oppositeOfY) {}
+    bool lnOfValue(int i) const { return i == 0 ? m_lnOfX : m_lnOfY; }
+    bool oppositeOfValue(int i) const { return i == 1 && m_oppositeOfY; }
+    double transformValue(double value, int i) const;
+
+   private:
+    const bool m_lnOfX, m_lnOfY, m_oppositeOfY;
+  };
   void sortColumn(int series, int column, bool delayUpdate = false);
   void sortIndexByColumn(uint8_t *sortedIndex, int series, int column,
                          int startIndex, int endIndex) const;
-  double sumOfColumn(int series, int i, bool lnOfSeries = false) const;
+  double sumOfColumn(int series, int i,
+                     Parameters parameters = Parameters()) const;
 
   /* WARNING: This checksum is too slow. Avoid using it if you can.
    * Use it if you want to check that the list was modified outside this object

@@ -305,6 +305,11 @@ static bool compare(int a, int b, void *ctx, int numberOfElements) {
   return dataA >= dataB || std::isnan(dataA);
 };
 
+double DoublePairStore::Parameters::transformValue(double value, int i) const {
+  value *= oppositeOfValue(i) ? -1.0 : 1.0;
+  return lnOfValue(i) ? std::log(value) : value;
+}
+
 void DoublePairStore::sortColumn(int series, int column, bool delayUpdate) {
   assert(column == 0 || column == 1);
 
@@ -341,12 +346,13 @@ void DoublePairStore::sortIndexByColumn(uint8_t *sortedIndex, int series,
       pack, endIndex - startIndex);
 }
 
-double DoublePairStore::sumOfColumn(int series, int i, bool lnOfSeries) const {
+double DoublePairStore::sumOfColumn(int series, int i,
+                                    Parameters parameters) const {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
   double result = 0;
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    result += lnOfSeries ? log(get(series, i, k)) : get(series, i, k);
+    result += parameters.transformValue(get(series, i, k), i);
   }
   return result;
 }

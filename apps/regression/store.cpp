@@ -338,36 +338,19 @@ double Store::computeDeterminationCoefficient(
   // Ln(Y) change of variable must be replicated here when computing R2.
   bool applyLn = seriesSatisfy(series, FitsLnY);
   bool applyOpposite = applyLn && get(series, 1, 0) < 0.0;
+  Shared::DoublePairStore::Parameters parameters(false, applyLn, applyOpposite);
   // Residual sum of squares
   double ssr = 0;
   // Total sum of squares
   double sst = 0;
   const int numberOfPairs = numberOfPairsOfSeries(series);
   assert(numberOfPairs > 0);
-  double mean = 0.0;
-  if (!applyOpposite) {
-    mean = meanOfColumn(series, 1, applyLn);
-  } else {
-    assert(applyLn);
-    // Compute the mean of ln(-y)
-    for (int k = 0; k < numberOfPairs; k++) {
-      mean += std::log(-get(series, 1, k));
-    }
-    mean /= numberOfPairs;
-  }
+  double mean = meanOfColumn(series, 1, parameters);
   for (int k = 0; k < numberOfPairs; k++) {
     // Difference between the observation and the estimated value of the model
-    double estimation =
-        yValueForXValue(series, get(series, 0, k), globalContext);
-    double observation = get(series, 1, k);
-    if (applyOpposite) {
-      estimation *= -1.0;
-      observation *= -1.0;
-    }
-    if (applyLn) {
-      estimation = std::log(estimation);
-      observation = std::log(observation);
-    }
+    double estimation = parameters.transformValue(
+        yValueForXValue(series, get(series, 0, k), globalContext), 1);
+    double observation = parameters.transformValue(get(series, 1, k), 1);
     if (std::isnan(estimation) || std::isinf(estimation)) {
       // Data Not Suitable for estimation
       return NAN;

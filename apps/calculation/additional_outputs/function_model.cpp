@@ -43,10 +43,10 @@ void FunctionModel::recomputeViewRange() {
   constexpr float k_maxFloat = Shared::InteractiveCurveViewRange::k_maxFloat;
   Zoom zoom(-k_maxFloat, k_maxFloat, 1 / k_xyRatio, context(), k_maxFloat);
 
-  if (m_function.type() != ExpressionNode::Type::Sequence) {
-    zoom.fitPointsOfInterest(evaluator<float>, &m_function, false,
-                             evaluator<double>);
-  }
+  // fitPointsOfInterest is not suited for sequences
+  assert(m_function.type() != ExpressionNode::Type::Sequence);
+  zoom.fitPointsOfInterest(evaluator<float>, &m_function, false,
+                           evaluator<double>);
 
   zoom.fitPoint(Coordinate2D<float>(m_abscissa, m_ordinate));
   zoom.fitPoint(Coordinate2D<float>(0.0f, 0.0f));

@@ -569,7 +569,13 @@ void Parser::parseRightwardsArrow(Expression &leftHandSide,
   if (!m_nextToken.is(Token::Type::EndOfStream) ||
       rightHandSide.isUninitialized() ||
       !rightHandSide.isCombinationOfUnits() ||
-      (!leftHandSide.hasUnit() && !rightHandSide.isPureAngleUnit())) {
+      (!leftHandSide.hasUnit() &&
+       !leftHandSide.recursivelyMatches(
+           [](const Expression e, Context *context) {
+             return e.type() == ExpressionNode::Type::ConstantPhysics;
+           },
+           nullptr, SymbolicComputation::DoNotReplaceAnySymbol) &&
+       !rightHandSide.isPureAngleUnit())) {
     /* UnitConvert expect a unit on the right and an expression with units
      * on the left */
     m_status = Status::Error;

@@ -75,9 +75,9 @@ void AbstractTextField::ContentView::drawRect(KDContext *ctx,
     // Draw the selected text
     ctx->drawString(text() + selectionOffset,
                     glyphFrameAtPosition(text(), textToDraw).origin(),
-                    KDGlyph::Style{.glyphColor = m_textColor,
-                                   .backgroundColor = Palette::Select,
-                                   .font = m_font},
+                    {.glyphColor = m_textColor,
+                     .backgroundColor = Palette::Select,
+                     .font = m_font},
                     selectionLength);
     textToDraw += selectionLength;
     // Draw the non selected text on the right of the selection

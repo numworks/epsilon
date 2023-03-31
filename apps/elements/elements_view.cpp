@@ -134,9 +134,9 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext* ctx,
   KDPoint textOrigin(cell.x() + (cell.width() - symbolSize.width()) / 2,
                      cell.y() + (cell.height() - symbolSize.height()) / 2 + 1);
   ctx->drawString(symbol, textOrigin,
-                  KDGlyph::Style{.glyphColor = colors.fg(),
-                                 .backgroundColor = colors.bg(),
-                                 .font = KDFont::Size::Small});
+                  {.glyphColor = colors.fg(),
+                   .backgroundColor = colors.bg(),
+                   .font = KDFont::Size::Small});
 }
 
 void ElementsView::drawElementBorder(AtomicNumber z, KDColor color,

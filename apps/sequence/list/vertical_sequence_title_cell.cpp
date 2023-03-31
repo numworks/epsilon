@@ -29,9 +29,9 @@ void VerticalSequenceTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
   KDPoint p = KDPoint(bounds().width() - k_equalWidthWithMargins,
                       m_baseline - KDFont::GlyphHeight(k_font) / 2 - 1);
   ctx->drawString("=", p,
-                  KDGlyph::Style{.glyphColor = m_functionColor,
-                                 .backgroundColor = backgroundColor,
-                                 .font = k_font});
+                  {.glyphColor = m_functionColor,
+                   .backgroundColor = backgroundColor,
+                   .font = k_font});
 }
 
 KDRect VerticalSequenceTitleCell::subviewFrame() const {

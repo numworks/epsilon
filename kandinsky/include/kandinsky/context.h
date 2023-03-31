@@ -17,8 +17,7 @@ class KDContext {
   void getPixels(KDRect r, KDColor* pixels);
 
   // Text
-  KDPoint drawString(const char* text, KDPoint p,
-                     KDGlyph::Style style = KDGlyph::Style{},
+  KDPoint drawString(const char* text, KDPoint p, KDGlyph::Style style = {},
                      int maxLength = -1);
   KDPoint alignAndDrawString(const char* text, KDPoint p, KDSize frame,
                              KDGlyph::Format format = {}, int maxLength = -1);

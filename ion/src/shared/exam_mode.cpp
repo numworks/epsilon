@@ -25,15 +25,9 @@ Configuration get() {
 
 void set(Configuration config) {
   assert(!config.isUninitialized());
-  Configuration previous = get();
-
   PersistingBytes::write(config.raw());
 
   if (config.isActive()) {
-    /* Exam mode should be deactivated before setting a new mode. */
-    assert(!previous.isActive());
-    (void)previous;
-
     if (Authentication::clearanceLevel() !=
         Authentication::ClearanceLevel::NumWorks) {
       /* The device will reset on official firmware, and pick up the

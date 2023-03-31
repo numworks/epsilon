@@ -7,7 +7,7 @@ EvenOddBufferTextCell::EvenOddBufferTextCell(KDFont::Size font,
                                              float horizontalAlignment,
                                              float verticalAlignment)
     : EvenOddCell(),
-      m_bufferTextView({{.font = font},
+      m_bufferTextView({.style = {.font = font},
                         .horizontalAlignment = horizontalAlignment,
                         .verticalAlignment = verticalAlignment}) {}
 

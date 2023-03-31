@@ -14,11 +14,12 @@ DetailsListController::DetailsListController(
     : ViewController(parentResponder),
       m_selectableListView(this, this, this),
       m_topElementView(Escher::Palette::WallScreen),
-      m_bottomMessageView(I18n::Message::ElementsDataConditions,
-                          {{.glyphColor = Escher::Palette::GrayDark,
-                            .backgroundColor = Escher::Palette::WallScreen,
-                            .font = KDFont::Size::Small},
-                           .horizontalAlignment = KDGlyph::k_alignCenter}),
+      m_bottomMessageView(
+          I18n::Message::ElementsDataConditions,
+          {.style = {.glyphColor = Escher::Palette::GrayDark,
+                     .backgroundColor = Escher::Palette::WallScreen,
+                     .font = KDFont::Size::Small},
+           .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_view(&m_selectableListView, this, &m_topElementView,
              &m_bottomMessageView) {}
 

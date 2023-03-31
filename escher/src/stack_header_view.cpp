@@ -24,9 +24,9 @@ void StackHeaderView::drawRect(KDContext *ctx, KDRect rect) const {
   // Write title
   KDFont::Size font = KDFont::Size::Small;
   ctx->alignAndDrawString(m_controller->title(), KDPointZero, bounds().size(),
-                          {{.glyphColor = m_textColor,
-                            .backgroundColor = m_backgroundColor,
-                            .font = font},
+                          {.style = {.glyphColor = m_textColor,
+                                     .backgroundColor = m_backgroundColor,
+                                     .font = font},
                            .horizontalAlignment = KDGlyph::k_alignCenter});
 }
 

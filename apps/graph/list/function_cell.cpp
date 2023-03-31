@@ -27,10 +27,10 @@ namespace Graph {
 
 AbstractFunctionCell::AbstractFunctionCell()
     : EvenOddCell(),
-      m_messageTextView(
-          (I18n::Message)0,
-          {{.glyphColor = Palette::GrayDark, .font = KDFont::Size::Small},
-           .verticalAlignment = KDGlyph::k_alignTop}),
+      m_messageTextView((I18n::Message)0,
+                        {.style = {.glyphColor = Palette::GrayDark,
+                                   .font = KDFont::Size::Small},
+                         .verticalAlignment = KDGlyph::k_alignTop}),
       m_functionColor(KDColorBlack),
       m_expressionBackground(KDColorWhite),
       m_ellipsisBackground(KDColorWhite) {}

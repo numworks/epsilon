@@ -21,7 +21,8 @@ ConsoleEditCell::ConsoleEditCell(
       Responder(parentResponder),
       m_promptView(
           nullptr,
-          {{.font = GlobalPreferences::sharedGlobalPreferences->font()}}),
+          {.style = {.font =
+                         GlobalPreferences::sharedGlobalPreferences->font()}}),
       m_textField(this, nullptr, TextField::MaxBufferSize(),
                   inputEventHandlerDelegate, delegate,
                   GlobalPreferences::sharedGlobalPreferences->font()) {}

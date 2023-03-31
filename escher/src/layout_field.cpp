@@ -23,7 +23,7 @@ namespace Escher {
 LayoutField::ContentView::ContentView(KDFont::Size font,
                                       float horizontalAlignment,
                                       float verticalAlignment)
-    : m_expressionView(&m_cursor, {{.font = font},
+    : m_expressionView(&m_cursor, {.style = {.font = font},
                                    .horizontalAlignment = horizontalAlignment,
                                    .verticalAlignment = verticalAlignment}),
       m_cursorView(this),

@@ -50,7 +50,8 @@ ConsoleLineCell::ConsoleLineCell(Responder* parentResponder)
       Responder(parentResponder),
       m_promptView(
           I18n::Message::ConsolePrompt,
-          {{.font = GlobalPreferences::sharedGlobalPreferences->font()}}),
+          {.style = {.font =
+                         GlobalPreferences::sharedGlobalPreferences->font()}}),
       m_scrollableView(this) {}
 
 void ConsoleLineCell::setLine(ConsoleLine line) {

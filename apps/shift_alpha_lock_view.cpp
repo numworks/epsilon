@@ -7,9 +7,9 @@ using namespace Escher;
 ShiftAlphaLockView::ShiftAlphaLockView()
     : View(),
       m_shiftAlphaView(I18n::Message::Default,
-                       {{.glyphColor = KDColorWhite,
-                         .backgroundColor = Palette::YellowDark,
-                         .font = KDFont::Size::Small},
+                       {.style = {.glyphColor = KDColorWhite,
+                                  .backgroundColor = Palette::YellowDark,
+                                  .font = KDFont::Size::Small},
                         .horizontalAlignment = KDGlyph::k_alignRight}),
       m_status(Ion::Events::ShiftAlphaStatus::Default) {}
 

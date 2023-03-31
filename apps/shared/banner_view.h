@@ -49,9 +49,9 @@ class BannerView : public Escher::View {
 
  protected:
   constexpr static KDGlyph::Format k_defaultFormat = {
-      {.glyphColor = KDColorBlack,
-       .backgroundColor = Escher::Palette::GrayMiddle,
-       .font = k_font},
+      .style = {.glyphColor = KDColorBlack,
+                .backgroundColor = Escher::Palette::GrayMiddle,
+                .font = k_font},
       .horizontalAlignment = KDGlyph::k_alignCenter};
 
  private:

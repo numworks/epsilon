@@ -43,8 +43,8 @@ class IntervalController : public Shared::FloatParameterController<double> {
    private:
     constexpr static KDCoordinate k_topMargin = 50;
     constexpr static KDGlyph::Format k_glyphFormat = {
-        {.backgroundColor = Escher::Palette::WallScreen,
-         .font = KDFont::Size::Small},
+        .style = {.backgroundColor = Escher::Palette::WallScreen,
+                  .font = KDFont::Size::Small},
         .horizontalAlignment = KDGlyph::k_alignCenter};
     int numberOfSubviews() const override;
     Escher::View* subviewAtIndex(int index) override;

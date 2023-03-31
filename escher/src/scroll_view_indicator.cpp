@@ -75,9 +75,9 @@ bool ScrollViewArrow::update(bool visible) {
 void ScrollViewArrow::drawRect(KDContext *ctx, KDRect rect) const {
   ctx->fillRect(bounds(), m_backgroundColor);
   ctx->alignAndDrawString(arrow(), KDPointZero, bounds().size(),
-                          {{.glyphColor = k_color,
-                            .backgroundColor = m_backgroundColor,
-                            .font = m_font},
+                          {.style = {.glyphColor = k_color,
+                                     .backgroundColor = m_backgroundColor,
+                                     .font = m_font},
                            .horizontalAlignment = KDGlyph::k_alignLeft,
                            .verticalAlignment = KDGlyph::k_alignCenter},
                           m_visible);

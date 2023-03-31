@@ -32,7 +32,7 @@ class GlyphsView : public View, public CellWidget {
 
   constexpr static KDGlyph::Format k_defaultLabel = {};
   constexpr static KDGlyph::Format k_defaultSubLabel = {
-      {.glyphColor = Palette::GrayDark, .font = KDFont::Size::Small}};
+      .style = {.glyphColor = Palette::GrayDark, .font = KDFont::Size::Small}};
   constexpr static KDGlyph::Format k_defaultAccessory = {
       .horizontalAlignment = KDGlyph::k_alignRight};
 

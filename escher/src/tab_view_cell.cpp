@@ -49,9 +49,9 @@ void TabViewCell::drawRect(KDContext *ctx, KDRect rect) const {
   }
   // Write title
   ctx->alignAndDrawString(m_controller->title(), KDPointZero, bounds().size(),
-                          {{.glyphColor = text,
-                            .backgroundColor = background,
-                            .font = KDFont::Size::Small},
+                          {.style = {.glyphColor = text,
+                                     .backgroundColor = background,
+                                     .font = KDFont::Size::Small},
                            .horizontalAlignment = KDGlyph::k_alignCenter});
 }
 

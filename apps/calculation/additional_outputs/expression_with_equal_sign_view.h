@@ -11,9 +11,9 @@ namespace Calculation {
 class ExpressionWithEqualSignView : public Escher::ExpressionView {
  public:
   ExpressionWithEqualSignView()
-      : m_equalSign(
-            I18n::Message::Equal,
-            {{.font = k_font}, .horizontalAlignment = KDGlyph::k_alignCenter}),
+      : m_equalSign(I18n::Message::Equal,
+                    {.style = {.font = k_font},
+                     .horizontalAlignment = KDGlyph::k_alignCenter}),
         m_showEqual(true) {}
   KDSize minimalSizeForOptimalDisplay() const override;
   void drawRect(KDContext* ctx, KDRect rect) const override;

@@ -76,7 +76,7 @@ VariableBoxController::VariableBoxController(ScriptStore *scriptStore)
   m_originsName[1] = I18n::translate(I18n::Message::BuiltinsAndKeywords);
   // Empty to initialize other class members
   empty();
-  for (int i = 0; i < k_maxNumberOfDisplayedItems; i++) {
+  for (size_t i = 0; i < k_maxNumberOfDisplayedItems; i++) {
     m_itemCells[i].label()->setMaxDisplayedTextLength(
         k_maxNumberOfCharsInLabel);
   }

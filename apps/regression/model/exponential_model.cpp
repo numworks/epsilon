@@ -11,7 +11,6 @@
 
 #include <cmath>
 
-#include "../../shared/linear_regression_store.h"
 #include "../store.h"
 
 using namespace Poincare;
@@ -91,32 +90,12 @@ void ExponentialModel::privateFit(Store* store, int series,
    * This change turns this exponential regression problem into a linear one.
    * If the y values are all negative, one may replace each of them by its
    * opposite. */
-  double sumOfX = 0;
-  double sumOfY = 0;
-  double sumOfXX = 0;
-  double sumOfXY = 0;
-  const int numberOfPoints = store->numberOfPairsOfSeries(series);
-  const int sign = store->get(series, 1, 0) > 0 ? 1 : -1;
-  for (int p = 0; p < numberOfPoints; p++) {
-    const double x = store->get(series, 0, p);
-    const double z = store->get(series, 1, p) * sign;
-    assert(z > 0.0);
-    const double y = std::log(z);
-    sumOfX += x;
-    sumOfY += y;
-    sumOfXX += x * x;
-    sumOfXY += x * y;
-  }
-  const double meanOfX = sumOfX / numberOfPoints;
-  const double meanOfY = sumOfY / numberOfPoints;
-  const double meanOfXX = sumOfXX / numberOfPoints;
-  const double meanOfXY = sumOfXY / numberOfPoints;
-  const double variance = meanOfXX - meanOfX * meanOfX;
-  const double covariance = meanOfXY - meanOfX * meanOfY;
-  const double slope = LinearModelHelper::Slope(covariance, variance);
+  bool firstYIsNegative = store->get(series, 1, 0) < 0.0;
+  Shared::DoublePairStore::Parameters parameters(false, true, firstYIsNegative);
+  modelCoefficients[0] = std::exp(store->yIntercept(series, parameters)) *
+                         (firstYIsNegative ? -1.0 : 1.0);
+  double slope = store->slope(series, parameters);
   modelCoefficients[1] = m_isAbxForm ? std::exp(slope) : slope;
-  modelCoefficients[0] =
-      sign * std::exp(LinearModelHelper::YIntercept(meanOfY, meanOfX, slope));
 }
 
 bool ExponentialModel::dataSuitableForFit(Store* store, int series) const {

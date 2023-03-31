@@ -102,13 +102,15 @@ bool ExponentialModel::dataSuitableForFit(Store* store, int series) const {
   if (!Model::dataSuitableForFit(store, series)) {
     return false;
   }
-  // All Y data must be of the same sign and non-null
   int numberOfPairs = store->numberOfPairsOfSeries(series);
   assert(numberOfPairs > 0);
-  bool coefficientsAreNegative = store->get(series, 1, 0) < 0.0;
+  bool firstYIsNegative = store->get(series, 1, 0) < 0.0;
   for (int j = 0; j < numberOfPairs; j++) {
-    double value = store->get(series, 1, j);
-    if (value == 0.0 || coefficientsAreNegative != (value < 0.0)) {
+    /* Y data points must be of the strict same sign. By opposing both the a
+     * coefficient and the Y data points, we can otherwise apply the
+     * logarithm. */
+    double y = store->get(series, 1, j);
+    if (y == 0.0 || firstYIsNegative != (y < 0.0)) {
       return false;
     }
   }

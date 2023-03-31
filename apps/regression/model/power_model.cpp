@@ -65,9 +65,18 @@ bool PowerModel::dataSuitableForFit(Store* store, int series) const {
   if (!Model::dataSuitableForFit(store, series)) {
     return false;
   }
+  bool firstYIsNegative = store->get(series, 1, 0) < 0.0;
   int numberOfPairs = store->numberOfPairsOfSeries(series);
   for (int j = 0; j < numberOfPairs; j++) {
+    // X data points must be strictly positive
     if (store->get(series, 0, j) < 0) {
+      return false;
+    }
+    /* Y data points must be of the strict same sign. By opposing both the a
+     * coefficient and the Y data points, we can otherwise apply the
+     * logarithm. */
+    double y = store->get(series, 1, j);
+    if (y == 0.0 || firstYIsNegative != (y < 0.0)) {
       return false;
     }
   }

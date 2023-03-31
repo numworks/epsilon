@@ -61,9 +61,9 @@ PopUpController::ContentView::ContentView(Responder* parentResponder,
                      KDFont::Size::Small),
       m_okButton(this, okMessage, okInvocation, KDFont::Size::Small),
       m_warningTextView(warningMessage,
-                        {{.glyphColor = KDColorWhite,
-                          .backgroundColor = KDColorBlack,
-                          .font = KDFont::Size::Small},
+                        {.style = {.glyphColor = KDColorWhite,
+                                   .backgroundColor = KDColorBlack,
+                                   .font = KDFont::Size::Small},
                          .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_detailTextView(detailTextView) {}
 

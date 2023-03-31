@@ -10,9 +10,9 @@ namespace Code {
 SubtitleCell::SubtitleCell()
     : Bordered(),
       HighlightCell(),
-      m_textView({{.glyphColor = k_textColor,
-                   .backgroundColor = k_backgroundColor,
-                   .font = KDFont::Size::Small}}) {}
+      m_textView({.style = {.glyphColor = k_textColor,
+                            .backgroundColor = k_backgroundColor,
+                            .font = KDFont::Size::Small}}) {}
 
 void SubtitleCell::drawRect(KDContext *ctx, KDRect rect) const {
   KDColor backColor = isHighlighted() ? Palette::Select : k_backgroundColor;

@@ -6,9 +6,9 @@ namespace Escher {
 EvenOddMessageTextCell::EvenOddMessageTextCell(KDFont::Size font,
                                                float horizontalAlignment)
     : EvenOddCell(),
-      m_messageTextView(
-          (I18n::Message)0,
-          {{.font = font}, .horizontalAlignment = horizontalAlignment}),
+      m_messageTextView((I18n::Message)0,
+                        {.style = {.font = font},
+                         .horizontalAlignment = horizontalAlignment}),
       m_leftMargin(k_horizontalMargin) {}
 
 void EvenOddMessageTextCell::setAlignment(float horizontalAlignment,

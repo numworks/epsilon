@@ -17,9 +17,9 @@ InterestMenuController::InterestMenuController(
           k_numberOfInterestCells, Escher::MemoizedListViewDataSource>(
           parentResponder),
       m_messageView(I18n::Message::ParameterChoose,
-                    {{.glyphColor = Escher::Palette::GrayDark,
-                      .backgroundColor = Escher::Palette::WallScreen,
-                      .font = KDFont::Size::Small},
+                    {.style = {.glyphColor = Escher::Palette::GrayDark,
+                               .backgroundColor = Escher::Palette::WallScreen,
+                               .font = KDFont::Size::Small},
                      .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_contentView(&m_selectableListView, this, &m_messageView),
       m_interestController(interestController) {

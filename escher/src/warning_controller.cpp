@@ -8,14 +8,14 @@ namespace Escher {
 WarningController::ContentView::ContentView()
     : SolidColorView(KDColorBlack),
       m_textView1((I18n::Message)0,
-                  {{.glyphColor = KDColorWhite,
-                    .backgroundColor = KDColorBlack,
-                    .font = KDFont::Size::Small},
+                  {.style = {.glyphColor = KDColorWhite,
+                             .backgroundColor = KDColorBlack,
+                             .font = KDFont::Size::Small},
                    .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_textView2((I18n::Message)0,
-                  {{.glyphColor = KDColorWhite,
-                    .backgroundColor = KDColorBlack,
-                    .font = KDFont::Size::Small},
+                  {.style = {.glyphColor = KDColorWhite,
+                             .backgroundColor = KDColorBlack,
+                             .font = KDFont::Size::Small},
                    .horizontalAlignment = KDGlyph::k_alignCenter,
                    .verticalAlignment = (1.0f - k_shiftedAlignment)}) {}
 

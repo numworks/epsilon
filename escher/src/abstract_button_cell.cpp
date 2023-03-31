@@ -11,7 +11,7 @@ AbstractButtonCell::AbstractButtonCell(Responder* parentResponder,
     : HighlightCell(),
       Responder(parentResponder),
       m_messageTextView(textBody,
-                        {{.glyphColor = textColor, .font = font},
+                        {.style = {.glyphColor = textColor, .font = font},
                          .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_invocation(invocation),
       m_font(font) {}

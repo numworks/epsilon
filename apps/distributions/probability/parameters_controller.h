@@ -33,9 +33,9 @@ class ParametersController : public Shared::FloatParameterController<double> {
 
  private:
   constexpr static KDGlyph::Format k_format = {
-      {.glyphColor = Escher::Palette::GrayDark,
-       .backgroundColor = Escher::Palette::WallScreen,
-       .font = KDFont::Size::Small},
+      .style = {.glyphColor = Escher::Palette::GrayDark,
+                .backgroundColor = Escher::Palette::WallScreen,
+                .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter};
   int reusableParameterCellCount(int type) override;
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;

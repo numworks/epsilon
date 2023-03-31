@@ -13,7 +13,7 @@ PromptController::MessageViewWithSkip::MessageViewWithSkip(
     uint8_t numberOfMessages)
     : MessageView(messages, colors, numberOfMessages),
       m_skipView(I18n::Message::Skip,
-                 {{.font = KDFont::Size::Small},
+                 {.style = {.font = KDFont::Size::Small},
                   .horizontalAlignment = KDGlyph::k_alignRight}) {}
 
 int PromptController::MessageViewWithSkip::numberOfSubviews() const {

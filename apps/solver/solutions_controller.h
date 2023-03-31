@@ -92,7 +92,8 @@ class SolutionsController : public Escher::ViewController,
    private:
     constexpr static KDFont::Size k_warningMessageFont = KDFont::Size::Small;
     constexpr static KDGlyph::Format k_warningFormat{
-        {.backgroundColor = k_backgroundColor, .font = k_warningMessageFont},
+        .style = {.backgroundColor = k_backgroundColor,
+                  .font = k_warningMessageFont},
         .horizontalAlignment = KDGlyph::k_alignCenter};
 
     bool hideTableView() const {
@@ -112,9 +113,10 @@ class SolutionsController : public Escher::ViewController,
     MessageCell()
         : m_messageView(
               (I18n::Message)0,
-              {{.backgroundColor =
-                    SolutionsController::ContentView::k_backgroundColor,
-                .font = KDFont::Size::Small},
+              {.style =
+                   {.backgroundColor =
+                        SolutionsController::ContentView::k_backgroundColor,
+                    .font = KDFont::Size::Small},
                .verticalAlignment = k_verticalAlignment}) {}
 
     void setBackgroundColor(KDColor color) {

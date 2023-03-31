@@ -30,9 +30,9 @@ class TitleBarView : public Escher::View {
   constexpr static KDCoordinate k_examIconMargin = 93;
   constexpr static KDCoordinate k_examTextWidth = 20;
   constexpr static KDGlyph::Format k_glyphsFormat = {
-      {.glyphColor = KDColorWhite,
-       .backgroundColor = Escher::Palette::YellowDark,
-       .font = KDFont::Size::Small},
+      .style = {.glyphColor = KDColorWhite,
+                .backgroundColor = Escher::Palette::YellowDark,
+                .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter,
       .verticalAlignment = KDGlyph::k_alignCenter};
 

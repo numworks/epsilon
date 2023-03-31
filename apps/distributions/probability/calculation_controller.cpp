@@ -26,7 +26,7 @@ CalculationController::ContentView::ContentView(
     : m_selectableTableView(selectableTableView),
       m_distributionCurveView(distribution, calculation),
       m_unknownParameterBanner(
-          {{.backgroundColor = Escher::Palette::WallScreen},
+          {.style = {.backgroundColor = Escher::Palette::WallScreen},
            .horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
 View *CalculationController::ContentView::subviewAtIndex(int index) {

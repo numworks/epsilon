@@ -30,7 +30,7 @@ class AppCell : public Escher::HighlightCell {
   constexpr static KDCoordinate k_nameWidthMargin = 4;
   constexpr static KDCoordinate k_nameHeightMargin = 1;
   constexpr static KDGlyph::Format k_glyphsFormat = {
-      {.font = KDFont::Size::Small},
+      .style = {.font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter};
   const Escher::TextView* textView() const;
   Escher::ImageView m_iconView;

@@ -38,7 +38,7 @@ LCDTimingTestController::ContentView::ContentView()
     : SolidColorView(KDColorWhite),
       m_lcdTimingStateView({.horizontalAlignment = KDGlyph::k_alignCenter}),
       m_lcdNumberGlyphFailuresView(
-          {{.font = KDFont::Size::Small},
+          {.style = {.font = KDFont::Size::Small},
            .horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
 void LCDTimingTestController::ContentView::setStatus(bool success,

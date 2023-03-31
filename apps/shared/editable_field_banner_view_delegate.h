@@ -16,10 +16,11 @@ class EditableFieldBannerViewDelegate {
       Escher::Responder* parentResponder,
       Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
       Escher::TextFieldDelegate* textFieldDelegate)
-      : m_editableFieldLabel({{.glyphColor = BannerView::TextColor(),
-                               .backgroundColor = BannerView::BackgroundColor(),
-                               .font = BannerView::k_font},
-                              .horizontalAlignment = KDGlyph::k_alignRight}),
+      : m_editableFieldLabel(
+            {.style = {.glyphColor = BannerView::TextColor(),
+                       .backgroundColor = BannerView::BackgroundColor(),
+                       .font = BannerView::k_font},
+             .horizontalAlignment = KDGlyph::k_alignRight}),
         m_editableField(parentResponder, m_textBody, k_bufferSize,
                         inputEventHandlerDelegate, textFieldDelegate,
                         BannerView::k_font, KDGlyph::k_alignLeft,

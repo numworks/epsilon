@@ -8,7 +8,7 @@ namespace Elements {
 ElementsView::ElementsView()
     : m_singleElementView(KDColorWhite),
       m_nameView(I18n::Message::Default,
-                 {{.font = KDFont::Size::Small},
+                 {.style = {.font = KDFont::Size::Small},
                   .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_redrawBackground(true) {}
 

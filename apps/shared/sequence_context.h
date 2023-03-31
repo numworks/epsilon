@@ -63,7 +63,10 @@ class SequenceContext : public Poincare::ContextWithParent {
       : ContextWithParent(parentContext),
         m_sequenceStore(sequenceStore),
         m_floatSequenceContext(this),
-        m_doubleSequenceContext(this) {}
+        m_doubleSequenceContext(this),
+        m_sequenceIsNotComputable{Poincare::TrinaryBoolean::Unknown,
+                                  Poincare::TrinaryBoolean::Unknown,
+                                  Poincare::TrinaryBoolean::Unknown} {}
 
   /* u{n}, v{n} and w{n} must be parsed as sequences in the sequence app
    * so that u{n} can be defined as a function of v{n} without v{n} being
@@ -75,10 +78,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   Poincare::Context::SymbolAbstractType expressionTypeForIdentifier(
       const char* identifier, int length) override;
 
-  void resetCache() {
-    m_floatSequenceContext.resetCache();
-    m_doubleSequenceContext.resetCache();
-  }
+  void resetCache();
 
   template <typename T>
   void stepUntilRank(int sequenceIndex, int rank) {
@@ -104,10 +104,14 @@ class SequenceContext : public Poincare::ContextWithParent {
 
   Sequence* sequenceAtNameIndex(int sequenceIndex) const;
 
+  bool sequenceIsNotComputable(int sequenceIndex);
+
  private:
   SequenceStore* m_sequenceStore;
   TemplatedSequenceContext<float> m_floatSequenceContext;
   TemplatedSequenceContext<double> m_doubleSequenceContext;
+  Poincare::TrinaryBoolean
+      m_sequenceIsNotComputable[SequenceStore::k_maxNumberOfSequences];
 };
 
 }  // namespace Shared

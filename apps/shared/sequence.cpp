@@ -213,11 +213,11 @@ T Sequence::privateEvaluateYAtX(T x, Poincare::Context *context) const {
 
 template <typename T>
 T Sequence::approximateAtRank(int rank, SequenceContext *sqctx) const {
-  if (rank < initialRank() ||
-      (rank >= firstNonInitialRank() && mainExpressionIsNotComputable(sqctx))) {
+  int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
+  if (rank < initialRank() || (rank >= firstNonInitialRank() &&
+                               sqctx->sequenceIsNotComputable(sequenceIndex))) {
     return static_cast<T>(NAN);
   }
-  int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   sqctx->stepUntilRank<T>(sequenceIndex, rank);
   return sqctx->storedValueOfSequenceAtRank<T>(sequenceIndex, rank);
 }

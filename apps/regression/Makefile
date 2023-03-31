@@ -17,6 +17,7 @@ app_regression_test_src += $(addprefix apps/regression/model/,\
   proportional_model.cpp \
   quadratic_model.cpp \
   quartic_model.cpp \
+  transformed_model.cpp \
   trigonometric_model.cpp \
   median_model.cpp \
 )

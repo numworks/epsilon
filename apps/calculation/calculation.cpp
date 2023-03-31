@@ -290,7 +290,8 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
           [](const Expression e, Context *c) {
             return e.isOfType({ExpressionNode::Type::Infinity});
           },
-          nullptr)) {
+          nullptr) ||
+      i.type() == ExpressionNode::Type::Sequence) {
     return AdditionalInformations{};
   }
   /* Using the approximated output instead of the user input to guess the

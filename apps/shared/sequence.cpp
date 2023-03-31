@@ -135,7 +135,7 @@ bool Sequence::isEmpty() {
 bool Sequence::isSuitableForCobweb(Poincare::Context *context) const {
   return type() == Type::SingleRecurrence &&
          !std::isnan(approximateAtRank<float>(
-             0, reinterpret_cast<SequenceContext *>(context))) &&
+             initialRank(), reinterpret_cast<SequenceContext *>(context))) &&
          !mainExpressionContainsForbiddenTerms(context, true, true);
 }
 
@@ -146,14 +146,14 @@ bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
   constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
   char buffer[bufferSize];
   name(buffer, bufferSize);
-  Type type = this->type();
   struct Pack {
     char *name;
     Type type;
+    int initialRank;
     bool recursion;
     bool cobweb;
   };
-  Pack pack{buffer, type, allowRecursion, forCobweb};
+  Pack pack{buffer, type(), initialRank(), allowRecursion, forCobweb};
   return expressionClone().recursivelyMatches(
       [](const Expression e, Context *context, void *arg) {
         Pack *pack = static_cast<Pack *>(arg);
@@ -174,9 +174,16 @@ bool Sequence::mainExpressionContainsForbiddenTerms(Context *context,
         }
         Expression rank = seq.childAtIndex(0);
         Type type = pack->type;
-        if ((type != Type::Explicit && rank.isZero()) ||
-            (type == Type::DoubleRecurrence && rank.isOne())) {
-          return TrinaryBoolean::False;
+        if (rank.type() == ExpressionNode::Type::BasedInteger) {
+          float rankValue = static_cast<const Poincare::BasedInteger &>(rank)
+                                .integer()
+                                .approximate<float>();
+          if ((type != Type::Explicit && rankValue == pack->initialRank) ||
+              (type == Type::DoubleRecurrence &&
+               rankValue == pack->initialRank + 1)) {
+            return TrinaryBoolean::False;
+          }
+          return TrinaryBoolean::True;
         }
         Symbol n = Symbol::SystemSymbol();
         if (pack->recursion &&

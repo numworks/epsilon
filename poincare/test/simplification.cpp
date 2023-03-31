@@ -1836,6 +1836,9 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
 
   assert_parsed_expression_simplify_to("0_°→_rad", "0×_rad");
   assert_parsed_expression_simplify_to("180_°→_rad", "π×_rad");
+
+  assert_parsed_expression_simplify_to("_hplanck→_eV×_s",
+                                       "4.1356676969239ᴇ-15×_eV×_s");
 }
 
 QUIZ_CASE(poincare_simplification_complex_format) {

@@ -234,6 +234,12 @@ QUIZ_CASE(power_regression) {
   // double coefficients2[] = {2.54948, -0.0247463};
   // double r22 = 0.833509;
   // assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r22);
+
+  double x3[] = {0.5, 1.0, 2.0, 3.0};
+  double y3[] = {-8.0, -2.0, -0.5, -0.2222222};
+  double coefficients3[] = {-2.0, -2.0};
+  double r23 = 1.0;
+  assert_regression_is(x3, y3, 4, Model::Type::Power, coefficients3, r23);
 }
 
 QUIZ_CASE(median_regression0) {

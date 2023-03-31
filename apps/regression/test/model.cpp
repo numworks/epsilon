@@ -163,11 +163,17 @@ QUIZ_CASE(quartic_regression) {
 }
 
 QUIZ_CASE(logarithmic_regression) {
-  double x[] = {0.2, 0.5, 5, 7};
+  double x[] = {0.2, 0.5, 5.0, 7.0};
   double y[] = {-11.952, -9.035, -1.695, -0.584};
   double coefficients[] = {-6.81679, 3.19383};
   double r2 = 0.999994;
   assert_regression_is(x, y, 4, Model::Type::Logarithmic, coefficients, r2);
+
+  double x2[] = {0.5, 1.0, 2.0, 3.0};
+  double y2[] = {12.772, 10, 7.227, 5.606};
+  double coefficients2[] = {10.0, -4.0};
+  double r22 = 1.0;
+  assert_regression_is(x2, y2, 4, Model::Type::Logarithmic, coefficients2, r22);
 }
 
 QUIZ_CASE(exponential_regression) {

@@ -43,17 +43,13 @@ double LogarithmicModel::levelSet(double* modelCoefficients, double xMin,
   return std::exp((y - a) / b);
 }
 
-double LogarithmicModel::partialDerivate(double* modelCoefficients,
-                                         int derivateCoefficientIndex,
-                                         double x) const {
-  if (derivateCoefficientIndex == 1) {
-    // Derivate with respect to b: ln(x)
-    assert(x > 0);
-    return std::log(x);
-  }
-  assert(derivateCoefficientIndex == 0);
-  // Derivate with respect to a: 1
-  return 1.0;
+void LogarithmicModel::privateFit(Store* store, int series,
+                                  double* modelCoefficients,
+                                  Poincare::Context* context) {
+  // Y1 = a+b*ln(X1) => Y1 = a+b*Z1 with Z1=ln(X1)
+  Shared::DoublePairStore::Parameters parameters(true, false, false);
+  modelCoefficients[0] = store->yIntercept(series, parameters);
+  modelCoefficients[1] = store->slope(series, parameters);
 }
 
 bool LogarithmicModel::dataSuitableForFit(Store* store, int series) const {

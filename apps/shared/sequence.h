@@ -107,6 +107,13 @@ class Sequence : public Function {
   bool canBeHandledAsExplicit(Poincare::Context *context) const {
     return !mainExpressionContainsForbiddenTerms(context, false, false);
   }
+  /* Sequence u is not computable if main expression contains forbidden terms:
+   * - explicit: any term of u
+   * - simple recurrence: any term of u other than u(n), u(0)
+   * - double recurrence: any term of u other than u(n+1), u(n), u(1), u(0) */
+  bool mainExpressionIsNotComputable(Poincare::Context *context) const {
+    return mainExpressionContainsForbiddenTerms(context, true, false);
+  }
   int order() const { return static_cast<int>(type()); }
   int firstNonInitialRank() const { return initialRank() + order(); }
 
@@ -246,13 +253,6 @@ class Sequence : public Function {
   bool mainExpressionContainsForbiddenTerms(Poincare::Context *context,
                                             bool allowRecursion,
                                             bool forCobweb) const;
-  /* Sequence u is not computable if main expression contains forbidden terms:
-   * - explicit: any term of u
-   * - simple recurrence: any term of u other than u(n), u(0)
-   * - double recurrence: any term of u other than u(n+1), u(n), u(1), u(0) */
-  bool mainExpressionIsNotComputable(Poincare::Context *context) const {
-    return mainExpressionContainsForbiddenTerms(context, true, false);
-  }
 
   DefinitionModel m_definition;
   FirstInitialConditionModel m_firstInitialCondition;

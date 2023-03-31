@@ -224,6 +224,14 @@ TemplatedSequenceContext<T>::protectedExpressionForSymbolAbstract(
   return Float<T>::Builder(result);
 }
 
+void SequenceContext::resetCache() {
+  m_floatSequenceContext.resetCache();
+  m_doubleSequenceContext.resetCache();
+  for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
+    m_sequenceIsNotComputable[i] = Poincare::TrinaryBoolean::Unknown;
+  }
+}
+
 void SequenceContext::tidyDownstreamPoolFrom(char *treePoolCursor) {
   m_sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
@@ -259,6 +267,20 @@ Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
   Sequence *s = m_sequenceStore->modelForRecord(record);
   assert(s->isDefined());
   return s;
+}
+
+bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
+  if (m_sequenceIsNotComputable[sequenceIndex] ==
+      Poincare::TrinaryBoolean::Unknown) {
+    m_sequenceIsNotComputable[sequenceIndex] =
+        sequenceAtNameIndex(sequenceIndex)->mainExpressionIsNotComputable(this)
+            ? Poincare::TrinaryBoolean::True
+            : Poincare::TrinaryBoolean::False;
+  }
+  assert(m_sequenceIsNotComputable[sequenceIndex] !=
+         Poincare::TrinaryBoolean::Unknown);
+  return m_sequenceIsNotComputable[sequenceIndex] ==
+         Poincare::TrinaryBoolean::True;
 }
 
 template class TemplatedSequenceContext<float>;

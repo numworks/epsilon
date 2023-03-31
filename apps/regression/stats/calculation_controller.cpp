@@ -217,7 +217,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   // Double calculation cells
   if (c <= Calculation::SampleStandardDeviationS) {
     int calculationIndex = static_cast<int>(c);
-    using DoubleCalculation = double (Store::*)(int, int, bool) const;
+    using DoubleCalculation =
+        double (Store::*)(int, int, Store::Parameters) const;
     constexpr DoubleCalculation
         calculationMethods[k_numberOfDoubleBufferCalculations] = {
             &Store::meanOfColumn,
@@ -232,17 +233,17 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     double *calculation2 =
         m_memoizedDoubleCalculationCells[series][1] + calculationIndex;
     if (std::isnan(*calculation1) || std::isnan(*calculation2)) {
-      *calculation1 =
-          (m_store->*calculationMethods[calculationIndex])(series, 0, false);
-      *calculation2 =
-          (m_store->*calculationMethods[calculationIndex])(series, 1, false);
+      *calculation1 = (m_store->*calculationMethods[calculationIndex])(
+          series, 0, Store::Parameters());
+      *calculation2 = (m_store->*calculationMethods[calculationIndex])(
+          series, 1, Store::Parameters());
     }
     assert(Poincare::Helpers::EqualOrBothNan(
                *calculation1, (m_store->*calculationMethods[calculationIndex])(
-                                  series, 0, false)) &&
+                                  series, 0, Store::Parameters())) &&
            Poincare::Helpers::EqualOrBothNan(
                *calculation2, (m_store->*calculationMethods[calculationIndex])(
-                                  series, 1, false)));
+                                  series, 1, Store::Parameters())));
     EvenOddDoubleBufferTextCell *myCell =
         static_cast<EvenOddDoubleBufferTextCell *>(cell);
     PoincareHelpers::ConvertFloatToText<double>(

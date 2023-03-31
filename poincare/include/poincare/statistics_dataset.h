@@ -46,15 +46,18 @@ class StatisticsDataset {
       ListComplex<T> evaluationArray[]);
 
   StatisticsDataset(const DatasetColumn<T>* values,
-                    const DatasetColumn<T>* weights)
+                    const DatasetColumn<T>* weights, bool lnOfValues = false,
+                    bool oppositeOfValue = false)
       : m_values(values),
         m_weights(weights),
         m_sortedIndex(FloatList<float>::Builder()),
         m_recomputeSortedIndex(true),
         m_memoizedTotalWeight(NAN),
-        m_lnOfValues(false) {}
-  StatisticsDataset(const DatasetColumn<T>* values)
-      : StatisticsDataset(values, nullptr) {}
+        m_lnOfValues(lnOfValues),
+        m_oppositeOfValues(oppositeOfValue) {}
+  StatisticsDataset(const DatasetColumn<T>* values, bool lnOfValues = false,
+                    bool oppositeOfValue = false)
+      : StatisticsDataset(values, nullptr, lnOfValues, oppositeOfValue) {}
   StatisticsDataset() : StatisticsDataset(nullptr, nullptr) {}
 
   bool isUndefined() { return m_values == nullptr; }
@@ -64,8 +67,6 @@ class StatisticsDataset {
     m_memoizedTotalWeight = NAN;
   }
   int indexAtSortedIndex(int i) const;
-
-  void setLnOfValues(bool b) { m_lnOfValues = b; }
 
   T totalWeight() const;
   T weightedSum() const;
@@ -115,6 +116,7 @@ class StatisticsDataset {
   mutable bool m_recomputeSortedIndex;
   mutable double m_memoizedTotalWeight;
   bool m_lnOfValues;
+  bool m_oppositeOfValues;
 };
 
 }  // namespace Poincare

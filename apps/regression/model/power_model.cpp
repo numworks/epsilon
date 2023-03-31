@@ -54,8 +54,9 @@ double PowerModel::levelSet(double* modelCoefficients, double xMin, double xMax,
 void PowerModel::privateFit(Store* store, int series, double* modelCoefficients,
                             Poincare::Context* context) {
   /* Y1 = aX1^b => ln(Y1) = ln(a) + b*ln(X1)*/
-  modelCoefficients[0] = std::exp(store->yIntercept(series, true));
-  modelCoefficients[1] = store->slope(series, true);
+  Shared::DoublePairStore::Parameters parameters(true, true, false);
+  modelCoefficients[0] = std::exp(store->yIntercept(series, parameters));
+  modelCoefficients[1] = store->slope(series, parameters);
 }
 
 bool PowerModel::dataSuitableForFit(Store* store, int series) const {

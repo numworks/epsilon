@@ -36,8 +36,9 @@ StatisticsDataset<T> StatisticsDataset<T>::BuildFromChildren(
 template <typename T>
 T StatisticsDataset<T>::valueAtIndex(int index) const {
   assert(index >= 0 && index < m_values->length());
-  return m_lnOfValues ? log(m_values->valueAtIndex(index))
-                      : m_values->valueAtIndex(index);
+  T sign = m_oppositeOfValues ? -1.0 : 1.0;
+  return m_lnOfValues ? log(sign * m_values->valueAtIndex(index))
+                      : sign * m_values->valueAtIndex(index);
 }
 
 template <typename T>

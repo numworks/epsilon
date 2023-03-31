@@ -22,8 +22,8 @@ class LogarithmicModel : public Model {
  private:
   Poincare::Expression privateExpression(
       double* modelCoefficients) const override;
-  double partialDerivate(double* modelCoefficients,
-                         int derivateCoefficientIndex, double x) const override;
+  void privateFit(Store* store, int series, double* modelCoefficients,
+                  Poincare::Context* context) override;
   bool dataSuitableForFit(Store* store, int series) const override;
 };
 

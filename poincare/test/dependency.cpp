@@ -120,7 +120,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
    * expression that are nevertheless undefined. */
   assert_reduce_and_store("1→f(x)");
   assert_expression_simplify_to_with_dependencies("f(a)", "1", {"a"});
-  // Check that DeepIsSymbolic works fine and remove parametered dependencies
+  // Check that deepIsSymbolic works fine and remove parametered dependencies
   assert_expression_simplify_to_with_dependencies("f(sum(1/n,n,1,5))", "1",
                                                   {""});
 

@@ -98,8 +98,8 @@ Expression Dependency::shallowReduce(ReductionContext reductionContext) {
   int i = 0;
   while (i < totalNumberOfDependencies) {
     Expression e = dependencies.childAtIndex(i);
-    if (DeepIsSymbolic(e, reductionContext.context(),
-                       reductionContext.symbolicComputation())) {
+    if (e.deepIsSymbolic(reductionContext.context(),
+                         reductionContext.symbolicComputation())) {
       /* If the dependency involves unresolved symbol/function/sequence,
        * the approximation of the dependency could be undef while the
        * whole expression is not, so the check is skipped.

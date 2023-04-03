@@ -8,10 +8,12 @@ extern "C" {
 namespace Escher {
 
 TabViewCell::TabViewCell()
-    : View(), m_active(false), m_selected(false), m_title(nullptr) {}
+    : View(), m_active(false), m_selected(false), m_controller(nullptr) {}
 
-void TabViewCell::setName(const char *title) {
-  m_title = title;
+void TabViewCell::setTabController(TabViewController *controller,
+                                   uint8_t tabNumber) {
+  m_tabNumber = tabNumber;
+  m_controller = controller;
   markRectAsDirty(bounds());
 }
 
@@ -26,7 +28,8 @@ void TabViewCell::setSelected(bool selected) {
 }
 
 KDSize TabViewCell::minimalSizeForOptimalDisplay() const {
-  return KDFont::Font(KDFont::Size::Small)->stringSize(m_title);
+  return KDFont::Font(KDFont::Size::Small)
+      ->stringSize(m_controller->tabName(m_tabNumber));
 }
 
 void TabViewCell::drawRect(KDContext *ctx, KDRect rect) const {
@@ -34,9 +37,7 @@ void TabViewCell::drawRect(KDContext *ctx, KDRect rect) const {
   KDCoordinate width = bounds().width();
   // choose the background color
   KDColor text = m_active ? Palette::PurpleBright : KDColorWhite;
-  KDColor inactiveBackground = Palette::PurpleBright;
-  // TODO : static_cast<TabViewController
-  // *>(m_controller->parentResponder())->tabBackgroundColor();
+  KDColor inactiveBackground = m_controller->tabBackgroundColor();
   KDColor background = m_active ? KDColorWhite : inactiveBackground;
   KDColor selection = m_active ? Palette::Select : Palette::SelectDark;
   background = m_selected ? selection : background;
@@ -48,7 +49,8 @@ void TabViewCell::drawRect(KDContext *ctx, KDRect rect) const {
     ctx->fillRect(KDRect(0, 0, width, height), background);
   }
   // Write title
-  ctx->alignAndDrawString(m_title, KDPointZero, bounds().size(),
+  ctx->alignAndDrawString(m_controller->tabName(m_tabNumber), KDPointZero,
+                          bounds().size(),
                           {.style = {.glyphColor = text,
                                      .backgroundColor = background,
                                      .font = KDFont::Size::Small},
@@ -61,7 +63,7 @@ const char *TabViewCell::className() const { return "TabViewCell"; }
 void TabViewCell::logAttributes(std::ostream &os) const {
   View::logAttributes(os);
   os << " active=\"" << m_active << "\"";
-  os << " name=\"" << m_title << "\"";
+  os << " name=\"" << m_controller->tabName(m_tabNumber) << "\"";
 }
 #endif
 

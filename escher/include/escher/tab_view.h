@@ -16,7 +16,7 @@ class TabView : public View {
   int numberOfTabs() const;
   void drawRect(KDContext *ctx, KDRect rect) const override;
 
-  void addTab(const char *title);
+  void addTab(TabViewController *controller);
   void setActiveIndex(int index);
   void setSelectedIndex(int index);
 

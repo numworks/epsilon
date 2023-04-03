@@ -114,6 +114,11 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
     *shouldRedrawLayout =
         didEnterCurrentPosition(cloneCursor) || *shouldRedrawLayout;
   }
+
+  if (isSelecting() && selection().isEmpty()) {
+    stopSelecting();
+  }
+
   if (*shouldRedrawLayout) {
     invalidateSizesAndPositions();
   }

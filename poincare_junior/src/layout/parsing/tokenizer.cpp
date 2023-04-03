@@ -143,7 +143,7 @@ Token Tokenizer::popToken() {
   if (!m_decoder.nextLayoutIsCodePoint()) {
     return Token(Token::Type::Layout, m_decoder.nextLayout());
   }
-  
+
   /* Save for later use (since m_decoder.position() is altered by
    * popNumber and popIdentifiersString). */
   size_t start = m_decoder.position();
@@ -441,6 +441,7 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
   CodePoint c = m_decoder.nextCodePoint();
   assert(c.isDecimalDigit() || c == '.');
   bool isImplicitAddition = false;
+  bool nextLayoutIsCodePoint = true;
   size_t length = 0;
   // const Unit::Representative * storedUnitRepresentative = nullptr;
   while(true) {
@@ -448,9 +449,12 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     * decimalNumber-unit-decimalNumber-unit...
     * Each loop will check for a pair decimalNumber-unit */
     size_t lengthOfNumber = 0;
-    while (c.isDecimalDigit() || c == '.') {
+    while (nextLayoutIsCodePoint && (c.isDecimalDigit() || c == '.')) {
       lengthOfNumber += UTF8Decoder::CharSizeOfCodePoint(c);
-      c = m_decoder.nextCodePoint();
+      nextLayoutIsCodePoint = m_decoder.nextLayoutIsCodePoint();
+      if (nextLayoutIsCodePoint) {
+        c = m_decoder.nextCodePoint();
+      }
     }
     if (lengthOfNumber == 0) {
       /* If the first element of the pair is not a decimal number,
@@ -460,9 +464,15 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     length += lengthOfNumber;
     size_t currentStringStart = m_decoder.position() - UTF8Decoder::CharSizeOfCodePoint(c);
     size_t lengthOfPotentialUnit = 0;
-    while (IsNonDigitalIdentifierMaterial(c)) {
+    while (nextLayoutIsCodePoint && IsNonDigitalIdentifierMaterial(c)) {
       lengthOfPotentialUnit += UTF8Decoder::CharSizeOfCodePoint(c);
-      c = m_decoder.nextCodePoint();
+      if (m_decoder.nextLayoutIsCodePoint()) {
+        break;
+      }
+      nextLayoutIsCodePoint = m_decoder.nextLayoutIsCodePoint();
+      if (nextLayoutIsCodePoint) {
+        c = m_decoder.nextCodePoint();
+      }
     }
     if (lengthOfPotentialUnit == 0) {
       // Second element is not a unit: the string is not an implicit addition
@@ -490,7 +500,9 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     // }
     // storedUnitRepresentative = unitRepresentative;
   }
-  m_decoder.previousCodePoint();
+  if (nextLayoutIsCodePoint) {
+    m_decoder.previousCodePoint();
+  }
   if (isImplicitAddition) {
     return length;
   }

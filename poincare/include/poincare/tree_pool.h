@@ -74,7 +74,7 @@ class TreePool final {
   int numberOfNodes() const;
 
  private:
-  constexpr static int BufferSize = 32768;
+  constexpr static int BufferSize = 32768 + 8192;
   constexpr static int MaxNumberOfNodes = BufferSize / sizeof(TreeNode);
   constexpr static int k_maxNodeOffset = BufferSize / ByteAlignment;
 #if ASSERTIONS

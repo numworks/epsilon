@@ -13,6 +13,7 @@ class ScrollableTwoExpressionsCell : public Escher::EvenOddCell,
                                KDFont::Size font = KDFont::Size::Large);
   void setLayouts(Poincare::Layout exactLayout,
                   Poincare::Layout approximateLayout);
+  void resetLayouts() { return m_view.resetLayouts(); }
   void setRightIsStrictlyEqual(bool isEqual) {
     return m_view.setRightIsStrictlyEqual(isEqual);
   }

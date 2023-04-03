@@ -25,6 +25,9 @@ class AbstractScrollableMultipleExpressionsView
   virtual void setLayouts(Poincare::Layout leftLayout,
                           Poincare::Layout centerLayout,
                           Poincare::Layout rightLayout);
+  void resetLayouts() {
+    setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
+  }
   void setRightIsStrictlyEqual(bool isEqual) {
     contentCell()->setRightIsStrictlyEqual(isEqual);
   }

@@ -19,7 +19,6 @@ class ScrollableThreeExpressionsView
     setMargins(0, 0, 0, 0);  // margins are already added by MenuCell
     setBackgroundColor(KDColorWhite);
   }
-  void resetMemoization();
   void subviewFrames(KDRect *leftFrame, KDRect *centerFrame,
                      KDRect *approximateSignFrame, KDRect *rightFrame) {
     return m_contentCell.subviewFrames(leftFrame, centerFrame,

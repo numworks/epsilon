@@ -17,10 +17,6 @@ void ScrollableThreeExpressionsView::ContentCell::reloadTextColor() {
   approximateSign()->setTextColor(color);
 }
 
-void ScrollableThreeExpressionsView::resetMemoization() {
-  setLayouts(Layout(), Layout(), Layout());
-}
-
 void ScrollableThreeExpressionsView::setLayouts(Layout leftLayout,
                                                 Layout centerLayout,
                                                 Layout rightLayout) {

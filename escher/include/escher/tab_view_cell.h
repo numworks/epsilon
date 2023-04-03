@@ -4,15 +4,16 @@
 #include <escher/i18n.h>
 #include <escher/text_view.h>
 #include <escher/view.h>
-#include <escher/view_controller.h>
 
 namespace Escher {
+
+class TabViewController;
 
 class TabViewCell : public View {
  public:
   TabViewCell();
   void drawRect(KDContext *ctx, KDRect rect) const override;
-  void setName(const char *title);
+  void setTabController(TabViewController *controller, uint8_t tabNumber);
   void setActive(bool active);
   void setSelected(bool selected);
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -23,9 +24,10 @@ class TabViewCell : public View {
   void logAttributes(std::ostream &os) const override;
 #endif
  private:
+  uint8_t m_tabNumber;
   bool m_active;
   bool m_selected;
-  const char *m_title;
+  TabViewController *m_controller;
 };
 
 }  // namespace Escher

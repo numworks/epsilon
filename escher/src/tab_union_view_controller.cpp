@@ -23,7 +23,7 @@ TabUnionViewController::TabUnionViewController(Responder* parentResponder,
 
 void TabUnionViewController::initView() {
   for (int i = 0; i < m_numberOfChildren; i++) {
-    m_view.m_tabView.addTab(tabName(i));
+    m_view.m_tabView.addTab(this);
   }
 }
 

@@ -160,8 +160,8 @@ const char* TabViewController::tabName(uint8_t index) {
 
 void TabViewController::initView() {
   for (int i = 0; i < m_numberOfChildren; i++) {
-    m_view.m_tabView.addTab(tabName(i));
     children(i)->initView();
+    m_view.m_tabView.addTab(this);
   }
 }
 

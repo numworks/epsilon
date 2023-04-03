@@ -9,6 +9,18 @@ using namespace Poincare;
 
 namespace Elements {
 
+bool DetailsListController::DetailsInnerList::canStoreContentOfCell(
+    Escher::SelectableListView *l, int row) const {
+  const DataField *dataField = DataFieldForRow(row);
+  Layout layout = DataFieldForRow(row)->getLayout(
+      App::app()->elementsViewDataSource()->selectedElement(),
+      PrintFloat::k_numberOfStoredSignificantDigits);
+  return dataField != &ElementsDataBase::ConfigurationField &&
+         dataField != &ElementsDataBase::GroupField &&
+         dataField != &ElementsDataBase::StateField &&
+         !layout.isIdenticalTo(DataField::UnknownValueLayout());
+}
+
 DetailsListController::DetailsListController(
     StackViewController *parentResponder)
     : ViewController(parentResponder),
@@ -40,35 +52,6 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     stack->push(this);
     return true;
   }
-
-  if (e == Ion::Events::Copy || e == Ion::Events::Cut ||
-      e == Ion::Events::Sto || e == Ion::Events::Var) {
-    constexpr size_t size = Escher::Clipboard::k_bufferSize;
-    char buffer[size];
-    int index = selectedRow();
-    const DataField *dataField = DataFieldForRow(index);
-    Layout l = DataFieldForRow(index)->getLayout(
-        App::app()->elementsViewDataSource()->selectedElement(),
-        PrintFloat::k_numberOfStoredSignificantDigits);
-    int length;
-    if (l.isIdenticalTo(DataField::UnknownValueLayout()) ||
-        dataField == &ElementsDataBase::ConfigurationField ||
-        dataField == &ElementsDataBase::GroupField ||
-        dataField == &ElementsDataBase::StateField) {
-      length = strlcpy(buffer, "", size);
-    } else {
-      length = l.serializeForParsing(buffer, size);
-    }
-    assert(length < static_cast<int>(size));
-    (void)length;
-    if (e == Ion::Events::Sto || e == Ion::Events::Var) {
-      App::app()->storeValue(buffer);
-    } else {
-      Escher::Clipboard::SharedClipboard()->store(buffer);
-    }
-    return true;
-  }
-
   return false;
 }
 

@@ -74,9 +74,13 @@ class TreePool final {
   int numberOfNodes() const;
 
  private:
+#ifdef SMALL_POINCARE_POOL
+  constexpr static int BufferSize = 32768;
+#else
   /* 32kb (previous size) + 8kb (newly available size)
    * This can still be increased if needed */
   constexpr static int BufferSize = 32768 + 8192;
+#endif
   constexpr static int MaxNumberOfNodes = BufferSize / sizeof(TreeNode);
   constexpr static int k_maxNodeOffset = BufferSize / ByteAlignment;
 #if ASSERTIONS

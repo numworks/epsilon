@@ -46,6 +46,7 @@ void ResultHomogeneityTableCell::willDisplayCellAtLocation(
     // Override to display "Total" instead
     Escher::EvenOddBufferTextCell *myCell =
         static_cast<Escher::EvenOddBufferTextCell *>(cell);
+    myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     myCell->setText(I18n::translate(I18n::Message::Total));
     myCell->setEven(row % 2 == 0);
   } else {

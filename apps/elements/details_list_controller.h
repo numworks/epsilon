@@ -49,6 +49,13 @@ class DetailsListController : public Escher::ViewController,
 
   static const DataField *DataFieldForRow(int row);
 
+  class DetailsInnerList : public Escher::ListViewWithTopAndBottomViews {
+   public:
+    using Escher::ListViewWithTopAndBottomViews::ListViewWithTopAndBottomViews;
+    bool canStoreContentOfCell(Escher::SelectableListView *l,
+                               int row) const override;
+  };
+
   // Escher::MemoizedListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;
 
@@ -63,7 +70,7 @@ class DetailsListController : public Escher::ViewController,
   Escher::SelectableListView m_selectableListView;
   SingleElementView m_topElementView;
   Escher::MessageTextView m_bottomMessageView;
-  Escher::ListViewWithTopAndBottomViews m_view;
+  DetailsInnerList m_view;
   PhysicalQuantityCell m_cells[k_maxNumberOfDisplayedRows];
 };
 

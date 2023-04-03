@@ -10,9 +10,9 @@
 #include "additional_outputs/trigonometry_list_controller.h"
 #include "additional_outputs/unit_list_controller.h"
 #include "additional_outputs/vector_list_controller.h"
+#include "calculation_selectable_table_view.h"
 #include "calculation_store.h"
 #include "history_view_cell.h"
-#include "selectable_table_view.h"
 
 namespace Calculation {
 

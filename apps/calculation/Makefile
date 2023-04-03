@@ -34,11 +34,11 @@ app_calculation_src = $(addprefix apps/calculation/,\
   additional_outputs/vector_list_controller.cpp \
   additional_outputs/vector_model.cpp \
   app.cpp \
+  calculation_selectable_table_view.cpp \
   edit_expression_controller.cpp \
   expression_field.cpp \
   history_view_cell.cpp \
   history_controller.cpp \
-  selectable_table_view.cpp \
 )
 
 app_calculation_src += $(app_calculation_test_src)

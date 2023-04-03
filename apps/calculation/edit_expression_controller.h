@@ -5,9 +5,9 @@
 #include <apps/shared/text_field_delegate.h>
 #include <poincare/layout.h>
 
+#include "calculation_selectable_table_view.h"
 #include "expression_field.h"
 #include "history_controller.h"
-#include "selectable_table_view.h"
 
 namespace Calculation {
 

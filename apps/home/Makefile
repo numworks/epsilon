@@ -1,7 +1,6 @@
 app_home_src = $(addprefix apps/home/,\
   app.cpp \
   app_cell.cpp \
-  apps_layout.py \
   controller.cpp \
 )
 
@@ -18,11 +17,12 @@ SFLAGS += -I$(BUILD_DIR)
 apps_layout = apps/home/apps_layout.csv
 
 $(eval $(call rule_for, \
-  APPS_LAYOUT, \
-  apps/home/apps_layout.cpp, \
-  $(apps_layout), \
-  $$(PYTHON) apps/home/apps_layout.py --layouts $(apps_layout) --header $$(subst .cpp,.h,$$@) --implementation $$@ --apps $$(EPSILON_APPS), \
+  APPSLYT, \
+  apps/home/apps_layout.h, \
+  apps/home/apps_layout.py $(apps_layout), \
+  $$(PYTHON) apps/home/apps_layout.py --layouts $(apps_layout) --header $$@ --implementation $$(subst .h,.cpp,$$@) --apps $$(EPSILON_APPS), \
   global \
 ))
 
-$(BUILD_DIR)/apps/home/apps_layout.h: $(BUILD_DIR)/apps/home/apps_layout.cpp
+$(BUILD_DIR)/apps/home/apps_layout.cpp: $(BUILD_DIR)/apps/home/apps_layout.h
+apps_src += $(BUILD_DIR)/apps/home/apps_layout.cpp

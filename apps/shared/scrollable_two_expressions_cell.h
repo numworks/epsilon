@@ -29,10 +29,6 @@ class ScrollableTwoExpressionsCell : public Escher::EvenOddCell,
   KDSize minimalSizeForOptimalDisplay() const override {
     return m_view.minimalSizeForOptimalDisplay();
   }
-  void setInnerMargins(KDCoordinate top, KDCoordinate right,
-                       KDCoordinate bottom, KDCoordinate left) {
-    m_view.setMargins(top, right, bottom, left);
-  }
   void setDisplayCenter(bool display) { m_view.setDisplayCenter(display); }
   void didBecomeFirstResponder() override;
   void reinitSelection();

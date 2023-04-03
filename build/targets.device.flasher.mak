@@ -8,6 +8,8 @@ $(error A signable flasher cannot be allowed to write memory)
 endif
 endif
 
+SFLAGS += -DREAD_ONLY=$(READ_ONLY)
+
 flasher_src = $(ion_device_flasher_src) $(liba_src) $(liba_flasher_src) $(kandinsky_src)
 $(BUILD_DIR)/flasher.$(EXE): $(call flavored_object_for,$(flasher_src),$(MODEL))
 $(BUILD_DIR)/flasher.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/epsilon-core/device/flasher

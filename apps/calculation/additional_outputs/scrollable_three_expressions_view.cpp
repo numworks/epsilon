@@ -22,8 +22,8 @@ void ScrollableThreeExpressionsView::setLayouts(Layout formulaLayout,
                                                 Layout approximateLayout) {
   Shared::AbstractScrollableMultipleExpressionsView::setLayouts(
       formulaLayout, exactLayout, approximateLayout);
-  setShowEqual(!exactLayout.isUninitialized() ||
-               !approximateLayout.isUninitialized());
+  setShowEqualSignAfterFormula(!exactLayout.isUninitialized() ||
+                               !approximateLayout.isUninitialized());
 }
 
 ScrollableThreeExpressionsView::SubviewPosition

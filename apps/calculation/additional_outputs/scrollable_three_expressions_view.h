@@ -24,7 +24,9 @@ class ScrollableThreeExpressionsView
     return m_contentCell.subviewFrames(leftFrame, centerFrame,
                                        approximateSignFrame, rightFrame);
   }
-  void setShowEqual(bool showEqual) { m_contentCell.setShowEqual(showEqual); }
+  void setShowEqualSignAfterFormula(bool showEqual) {
+    m_contentCell.setShowEqualSignAfterFormula(showEqual);
+  }
   SubviewPosition leftMostPosition();
   void setHighlightWholeCell(bool highlightWholeCell) {
     m_contentCell.setHighlightWholeCell(highlightWholeCell);
@@ -51,7 +53,7 @@ class ScrollableThreeExpressionsView
     Escher::ExpressionView *leftExpressionView() const override {
       return const_cast<ExpressionWithEqualSignView *>(&m_leftExpressionView);
     }
-    void setShowEqual(bool showEqual) {
+    void setShowEqualSignAfterFormula(bool showEqual) {
       m_leftExpressionView.setShowEqual(showEqual);
     }
     void setHighlightWholeCell(bool highlightWholeCell) {

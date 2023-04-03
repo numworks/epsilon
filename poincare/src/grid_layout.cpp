@@ -76,7 +76,8 @@ void GridLayoutNode::willFillEmptyChildAtIndex(int childIndex) {
   assert(childAtIndex(childIndex)->isEmpty());
   assert(isEditing());
   bool isBottomOfGrid = childIsBottomOfGrid(childIndex);
-  if (childIsRightOfGrid(childIndex) && !numberOfColumnsIsFixed()) {
+  bool isRightOfGrid = childIsRightOfGrid(childIndex);
+  if (isRightOfGrid && !numberOfColumnsIsFixed()) {
     assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))
                ->emptyColor() == EmptyRectangle::Color::Gray);
     colorGrayEmptyLayoutsInYellowInColumnOrRow(true, m_numberOfColumns - 1);
@@ -84,7 +85,8 @@ void GridLayoutNode::willFillEmptyChildAtIndex(int childIndex) {
   }
   if (isBottomOfGrid && !numberOfRowsIsFixed()) {
     assert(static_cast<HorizontalLayoutNode *>(childAtIndex(childIndex))
-               ->emptyColor() == EmptyRectangle::Color::Gray);
+                   ->emptyColor() == EmptyRectangle::Color::Gray ||
+           isRightOfGrid);  // The empty color already changed if isRightOfGrid
     colorGrayEmptyLayoutsInYellowInColumnOrRow(false, m_numberOfRows - 1);
     addEmptyRow(EmptyRectangle::Color::Gray);
   }

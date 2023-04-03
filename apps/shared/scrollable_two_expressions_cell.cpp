@@ -29,7 +29,7 @@ void ScrollableTwoExpressionsCell::reinitSelection() {
           ? ScrollableTwoExpressionsView::SubviewPosition::Center
           : ScrollableTwoExpressionsView::SubviewPosition::Right;
   m_view.setSelectedSubviewPosition(selectedSubview);
-  reloadScroll();
+  m_view.reloadScroll();
 }
 
 }  // namespace Shared

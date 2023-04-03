@@ -64,11 +64,8 @@ void NestedMenuController::BreadcrumbController::updateTitle() {
 /* List Controller */
 
 void NestedMenuController::ListController::didBecomeFirstResponder() {
-  m_selectableTableView->reloadData();
-  Container::activeApp()->setFirstResponder(m_selectableTableView);
-  if (m_selectableTableView->selectedRow() < 0) {
-    m_selectableTableView->selectCell(0);
-  }
+  m_selectableListView->reloadData();
+  Container::activeApp()->setFirstResponder(m_selectableListView);
 }
 
 /* NestedMenuController */

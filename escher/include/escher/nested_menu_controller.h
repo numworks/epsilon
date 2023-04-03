@@ -107,15 +107,15 @@ class NestedMenuController : public StackViewController,
     ListController(Responder* parentResponder, SelectableListView* tableView,
                    I18n::Message title)
         : ViewController(parentResponder),
-          m_selectableTableView(tableView),
+          m_selectableListView(tableView),
           m_title(title) {}
     const char* title() override { return I18n::translate(m_title); }
     void setTitle(I18n::Message title) { m_title = title; }
-    View* view() override { return m_selectableTableView; }
+    View* view() override { return m_selectableListView; }
     void didBecomeFirstResponder() override;
 
    private:
-    SelectableListView* m_selectableTableView;
+    SelectableListView* m_selectableListView;
     I18n::Message m_title;
   };
 

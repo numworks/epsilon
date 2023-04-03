@@ -271,7 +271,7 @@ Expression Symbol::deepReplaceReplaceableSymbols(
    * then circularity should be checked like in Function::involvesCircularity.
    */
   assert(
-      !DeepIsSymbolic(e, nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
+      !e.deepIsSymbolic(nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
 
   replaceWithInPlace(e);
   /* Reset parameteredAncestorsCount, because outer local context is ignored

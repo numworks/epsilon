@@ -334,9 +334,9 @@ bool Expression::IsDiscontinuous(const Expression e, Context *context) {
               context));
 }
 
-bool Expression::DeepIsSymbolic(const Expression e, Context *context,
+bool Expression::deepIsSymbolic(Context *context,
                                 SymbolicComputation replaceSymbols) {
-  return e.recursivelyMatches(
+  return recursivelyMatches(
       [](const Expression e, Context *context, void *auxiliary) {
         if (e.isParameteredExpression()) {
           // Do not check IsSymbolic for parametered child.
@@ -357,7 +357,7 @@ bool Expression::DeepIsSymbolic(const Expression e, Context *context,
               childToAnalyze = childToAnalyze.replaceSymbolWithExpression(
                   static_cast<Symbol &>(parameter), Rational::Builder(0));
             }
-            if (DeepIsSymbolic(childToAnalyze, context, *replaceSymbols)) {
+            if (childToAnalyze.deepIsSymbolic(context, *replaceSymbols)) {
               return TrinaryBoolean::True;
             }
           }

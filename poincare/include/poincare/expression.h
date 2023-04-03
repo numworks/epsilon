@@ -248,8 +248,6 @@ class Expression : public TreeHandle {
   static bool IsPercent(const Expression e, Context* context);
   static bool IsDiscontinuous(const Expression e, Context* context);
   static bool IsSymbolic(const Expression e, Context* context);
-  static bool DeepIsSymbolic(const Expression e, Context* context,
-                             SymbolicComputation replaceSymbols);
 
   typedef bool (*PatternTest)(const Expression& e, Context* context,
                               const char* symbol);
@@ -257,6 +255,7 @@ class Expression : public TreeHandle {
                                  const char* symbol);
   bool isLinearCombinationOfFunction(Context* context, PatternTest testFunction,
                                      const char* symbol) const;
+  bool deepIsSymbolic(Context* context, SymbolicComputation replaceSymbols);
 
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynomial

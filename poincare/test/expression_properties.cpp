@@ -1041,8 +1041,7 @@ void assert_deep_is_symbolic(const char* expression, bool isSymbolic) {
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(
-      Expression::DeepIsSymbolic(e, &context,
-                                 SymbolicComputation::DoNotReplaceAnySymbol) ==
+      e.deepIsSymbolic(&context, SymbolicComputation::DoNotReplaceAnySymbol) ==
           isSymbolic,
       expression);
 }

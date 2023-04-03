@@ -590,8 +590,8 @@ void Parser::parseRightwardsArrow(Expression &leftHandSide,
           nullptr, SymbolicComputation::DoNotReplaceAnySymbol) ||
       leftHandSide.hasUnit(false, true, m_parsingContext.context()) ||
       (!m_parsingContext.context() &&
-       Expression::DeepIsSymbolic(leftHandSide, nullptr,
-                                  SymbolicComputation::DoNotReplaceAnySymbol));
+       leftHandSide.deepIsSymbolic(nullptr,
+                                   SymbolicComputation::DoNotReplaceAnySymbol));
 
   if (!leftHandSideCanBeUnitConvert) {
     m_status = Status::Error;

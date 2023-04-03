@@ -234,6 +234,9 @@ double Store::correlationCoefficient(int series) const {
    * (transformed if series is a TransformedModel). In non-linear and
    * non-transformed regressions, its square is different from the
    * determinationCoefficient R2. it is then hidden to avoid confusion */
+  if (!seriesSatisfy(series, DisplayR)) {
+    return NAN;
+  }
   bool applyLn = seriesSatisfy(series, FitsLnY);
   bool applyOpposite = applyLn && get(series, 1, 0) < 0.0;
   Shared::DoublePairStore::Parameters parameters(seriesSatisfy(series, FitsLnX),

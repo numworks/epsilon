@@ -79,12 +79,8 @@ class Layout : public TreeHandle {
     return type() == LayoutNode::Type::FractionLayout;
   }
   bool shouldCollapseSiblingsOnRight() const;
-  int leftCollapsingAbsorbingChildIndex() const {
-    assert(shouldCollapseSiblingsOnLeft());
-    return 0;
-  }
+  int leftCollapsingAbsorbingChildIndex() const { return 0; }
   int rightCollapsingAbsorbingChildIndex() const {
-    assert(shouldCollapseSiblingsOnRight());
     return type() == LayoutNode::Type::FractionLayout ? 1 : 0;
   }
   bool isCollapsable(int *numberOfOpenParenthesis,

@@ -33,8 +33,8 @@ class ScrollableThreeExpressionsView
     setSelectedSubviewPosition(leftMostPosition());
     reloadScroll();
   }
-  void setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerLayout,
-                  Poincare::Layout rightLayout) override;
+  void setLayouts(Poincare::Layout formulaLayout, Poincare::Layout exactLayout,
+                  Poincare::Layout approximateLayout) override;
 
  private:
   class ContentCell

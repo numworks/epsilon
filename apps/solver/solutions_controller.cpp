@@ -342,7 +342,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
           valueCell->setLayouts(solution->exactLayout(),
                                 solution->approximateLayout());
         }
-        valueCell->setRightIsStrictlyEqual(
+        valueCell->setExactAndApproximateAreStriclyEqual(
             solution->exactAndApproximateAreEqual());
       }
     } else {

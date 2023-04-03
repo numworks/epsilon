@@ -19,8 +19,8 @@ class ScrollableTwoExpressionsCell : public Escher::EvenOddCell,
     m_view.setLayouts(exactLayout);
   }
   void resetLayouts() { return m_view.resetLayouts(); }
-  void setRightIsStrictlyEqual(bool isEqual) {
-    return m_view.setRightIsStrictlyEqual(isEqual);
+  void setExactAndApproximateAreStriclyEqual(bool isEqual) {
+    return m_view.setExactAndApproximateAreStriclyEqual(isEqual);
   }
   void setHighlighted(bool highlight) override {
     m_view.evenOddCell()->setHighlighted(highlight);

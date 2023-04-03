@@ -23,6 +23,8 @@ void MainController::didBecomeFirstResponder() {
 
 bool MainController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    // Reset reduction layout before altering m_buffer
+    m_view.reductionLayoutView()->setLayout(PoincareJ::Layout());
     /* Create temporary Layout and expression to dump into m_buffer.blocks().
      * TODO : CreateBasicReduction from expressions. */
     PoincareJ::Layout tempLayout = m_view.layoutField()->layout();

@@ -23,17 +23,11 @@ class ScrollableTwoExpressionsCell : public Escher::EvenOddCell,
     m_view.evenOddCell()->setHighlighted(highlight);
   }
   void setEven(bool even) override;
-  void reloadScroll() { m_view.reloadScroll(); }
   Escher::Responder* responder() override { return this; }
   Poincare::Layout layout() const override { return m_view.layout(); }
-  Poincare::Layout exactLayout() const {
-    return m_view.layoutAtPosition(
-        AbstractScrollableMultipleExpressionsView::SubviewPosition::Center);
-  }
   KDSize minimalSizeForOptimalDisplay() const override {
     return m_view.minimalSizeForOptimalDisplay();
   }
-  void setDisplayCenter(bool display) { m_view.setDisplayCenter(display); }
   void didBecomeFirstResponder() override;
   void reinitSelection();
 

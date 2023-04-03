@@ -566,21 +566,38 @@ void Parser::parseRightwardsArrow(Expression &leftHandSide,
     return;
   }
 
+  /* UnitConvert expect a unit on the right and nothing else. */
   if (!m_nextToken.is(Token::Type::EndOfStream) ||
       rightHandSide.isUninitialized() ||
-      !rightHandSide.isCombinationOfUnits() ||
-      (!leftHandSide.hasUnit() &&
-       !leftHandSide.recursivelyMatches(
-           [](const Expression e, Context *context) {
-             return e.type() == ExpressionNode::Type::ConstantPhysics;
-           },
-           nullptr, SymbolicComputation::DoNotReplaceAnySymbol) &&
-       !rightHandSide.isPureAngleUnit())) {
-    /* UnitConvert expect a unit on the right and an expression with units
-     * on the left */
+      !rightHandSide.isCombinationOfUnits()) {
     m_status = Status::Error;
     return;
   }
+
+  /* UnitConvert expect an expression with units
+   * on the left
+   * - If rightHandSide is angle unit, no unit on the left means default angle
+   * unit.
+   * - Physical constants contain units.
+   * - Replace symbols in leftHandSide to know if they contain unit.
+   * - Without context, leftHandSide could contain unit inside symbols. */
+  bool leftHandSideCanBeUnitConvert =
+      rightHandSide.isPureAngleUnit() ||
+      leftHandSide.recursivelyMatches(
+          [](const Expression e, Context *context) {
+            return e.type() == ExpressionNode::Type::ConstantPhysics;
+          },
+          nullptr, SymbolicComputation::DoNotReplaceAnySymbol) ||
+      leftHandSide.hasUnit(false, true, m_parsingContext.context()) ||
+      (!m_parsingContext.context() &&
+       Expression::DeepIsSymbolic(leftHandSide, nullptr,
+                                  SymbolicComputation::DoNotReplaceAnySymbol));
+
+  if (!leftHandSideCanBeUnitConvert) {
+    m_status = Status::Error;
+    return;
+  }
+
   leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);
   return;
 }

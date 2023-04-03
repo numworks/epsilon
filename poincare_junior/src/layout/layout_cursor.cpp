@@ -4,6 +4,7 @@
 #include <poincare_junior/src/layout/vertical_offset_layout.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/layout/k_creator.h>
+#include <poincare_junior/src/layout/p_pusher.h>
 #include <poincare_junior/src/n_ary.h>
 #include <poincare_junior/include/layout.h>
 #include "layout_cursor.h"
@@ -411,11 +412,13 @@ void LayoutCursor::addEmptyTenPowerLayout(Context *context) {
   // TODO : Avoid the RackLayout inside a RackLayout
   // insertLayout(RackL("10"_l,KVertOffL(""_l)), false, false, true);
   setEditing(true);
-  EditionReference ref = EditionReference::Push<BlockType::RackLayout>(3);
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('0');
-  EditionReference::Push<BlockType::VerticalOffsetLayout>();
-  EditionReference::Push<BlockType::RackLayout>(0);
+  /* TODO : P_RACKL gets confused with the comma inside the template, so we have
+   *        to surround CodePointLayout pushes with () */
+  EditionReference ref =  P_RACKL(
+    (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1')),
+    (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('0')),
+    P_VERTOFFL(P_RACKL())
+  );
   insertLayout(ref, context, false, false, false);
   setEditing(false);
 }
@@ -437,7 +440,7 @@ void LayoutCursor::insertText(const char *text, Context * context, bool forceCur
   /* - Step 1 -
    * Read the text from left to right and create an Horizontal layout
    * containing the layouts corresponding to each code point. */
-  EditionReference layoutToInsert = EditionReference::Push<BlockType::RackLayout>(0);
+  EditionReference layoutToInsert = P_RACKL();
   EditionReference currentLayout = layoutToInsert;
   // This is only used to check if we properly left the last subscript
   int currentSubscriptDepth = 0;
@@ -457,7 +460,7 @@ void LayoutCursor::insertText(const char *text, Context * context, bool forceCur
         assert(currentSubscriptDepth == 0);
         insertLayout(layoutToInsert, context, forceCursorRightOfText,
                              forceCursorLeftOfText);
-        layoutToInsert = EditionReference::Push<BlockType::RackLayout>(0);
+        layoutToInsert = P_RACKL();
         currentLayout = layoutToInsert;
         forceCursorLeftOfText = true;
         setCursorToFirstEmptyCodePoint = false;

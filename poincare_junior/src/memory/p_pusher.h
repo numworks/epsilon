@@ -9,6 +9,16 @@
 // Returns the 11th argument it has been called with
 #define _PP_ARG_N(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 
+/* TODO : Fix _PP_NARG being confused by args having bigger templates like
+ *        push<CodePointLayout, CodePoint>('0')) */
+
+#define _UNARY_PUSHER(TAG, A)                             \
+  ([&]() {                                                \
+    EditionReference ref = EditionReference::Push<TAG>(); \
+    A;                                                    \
+    return ref;                                           \
+  }())
+
 #define _BINARY_PUSHER(TAG, A, B)                         \
   ([&]() {                                                \
     EditionReference ref = EditionReference::Push<TAG>(); \

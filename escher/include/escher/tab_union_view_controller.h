@@ -65,13 +65,13 @@ class TabUnion : public AbstractTabUnion {
 
   template <class T>
   T* tab() {
-    if constexpr (std::is_same<T, T0>::value) {
+    if constexpr (std::is_same_v<T, T0>) {
       assert(m_activeTab == 0);
       return &m_0;
-    } else if constexpr (std::is_same<T, T1>::value) {
+    } else if constexpr (std::is_same_v<T, T1>) {
       assert(m_activeTab == 1);
       return &m_1;
-    } else if constexpr (std::is_same<T, T2>::value) {
+    } else if constexpr (std::is_same_v<T, T2>) {
       assert(m_activeTab == 2);
       return &m_2;
     } else {

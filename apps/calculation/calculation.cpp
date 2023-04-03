@@ -114,7 +114,7 @@ Expression Calculation::approximateOutput(
 }
 
 Layout Calculation::createInputLayout() {
-  Poincare::ExceptionCheckpoint ecp;
+  ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     Expression e = input();
     if (!e.isUninitialized()) {
@@ -127,11 +127,11 @@ Layout Calculation::createInputLayout() {
 }
 
 Layout Calculation::createExactOutputLayout(bool *couldNotCreateExactLayout) {
-  Poincare::ExceptionCheckpoint ecp;
+  ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     Expression e = exactOutput();
     if (!e.isUninitialized()) {
-      return e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
+      return e.createLayout(Preferences::PrintFloatMode::Decimal,
                             PrintFloat::k_numberOfStoredSignificantDigits,
                             App::app()->localContext());
     }
@@ -142,7 +142,7 @@ Layout Calculation::createExactOutputLayout(bool *couldNotCreateExactLayout) {
 
 Layout Calculation::createApproximateOutputLayout(
     bool *couldNotCreateApproximateLayout) {
-  Poincare::ExceptionCheckpoint ecp;
+  ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     Expression e = approximateOutput(NumberOfSignificantDigits::UserDefined);
     if (!e.isUninitialized()) {
@@ -164,7 +164,7 @@ void Calculation::setHeights(KDCoordinate height, KDCoordinate expandedHeight) {
   m_expandedHeight = expandedHeight;
 }
 
-static bool ShouldOnlyDisplayExactOutput(Poincare::Expression input) {
+static bool ShouldOnlyDisplayExactOutput(Expression input) {
   /* If the input is a "store in a function", do not display the approximate
    * result. This prevents x->f(x) from displaying x = undef. */
   assert(!input.isUninitialized());
@@ -218,8 +218,7 @@ void Calculation::forceDisplayOutput(DisplayOutput d) {
 }
 
 Calculation::EqualSign
-Calculation::exactAndApproximateDisplayedOutputsEqualSign(
-    Poincare::Context *context) {
+Calculation::exactAndApproximateDisplayedOutputsEqualSign(Context *context) {
   // TODO: implement a UserCircuitBreaker
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;
@@ -240,14 +239,14 @@ Calculation::exactAndApproximateDisplayedOutputsEqualSign(
    * We can safely use an exception checkpoint here because we are sure of not
    * modifying any pre-existing node in the pool. We are sure there cannot be a
    * Store in the exactOutput. */
-  Poincare::ExceptionCheckpoint ecp;
+  ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     Expression exactOutputExpression = exactOutput();
     if (input().recursivelyMatches(Expression::IsPercent, context)) {
       /* When the input contains percent, the exact expression is not fully
        * reduced so we need to reduce it again prior to computing equal sign */
       PoincareHelpers::CloneAndSimplify(
-          &exactOutputExpression, context, Poincare::ReductionTarget::User,
+          &exactOutputExpression, context, ReductionTarget::User,
           SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     }
     m_equalSign = Expression::ExactAndApproximateExpressionsAreEqual(

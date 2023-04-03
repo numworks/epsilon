@@ -77,7 +77,7 @@ int ExpressionsListController::numberOfRows() const {
   return nbOfRows;
 }
 
-void ExpressionsListController::setExpression(Poincare::Expression e) {
+void ExpressionsListController::setExpression(Expression e) {
   // Reinitialize memoization
   resetMemoization();
   for (int i = 0; i < k_maxNumberOfRows; i++) {
@@ -117,8 +117,8 @@ int ExpressionsListController::textAtIndex(char *buffer, size_t bufferSize,
                                           App::app()->localContext());
 }
 
-Poincare::Layout ExpressionsListController::getLayoutFromExpression(
-    Expression e, Context *context, Poincare::Preferences *preferences) {
+Layout ExpressionsListController::getLayoutFromExpression(
+    Expression e, Context *context, Preferences *preferences) {
   assert(!e.isUninitialized());
   // Simplify or approximate expression
   Expression approximateExpression;

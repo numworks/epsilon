@@ -97,8 +97,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::
   reloadTextColor();
 }
 
-Poincare::Layout
-AbstractScrollableMultipleExpressionsView::ContentCell::layoutAtPosition(
+Layout AbstractScrollableMultipleExpressionsView::ContentCell::layoutAtPosition(
     SubviewPosition position) const {
   if (position == SubviewPosition::Center) {
     return m_centeredExpressionView.layout();
@@ -306,9 +305,9 @@ AbstractScrollableMultipleExpressionsView::
                                               View* contentCell)
     : ScrollableView(parentResponder, contentCell, this) {}
 
-void AbstractScrollableMultipleExpressionsView::setLayouts(
-    Poincare::Layout leftLayout, Poincare::Layout centerLayout,
-    Poincare::Layout rightLayout) {
+void AbstractScrollableMultipleExpressionsView::setLayouts(Layout leftLayout,
+                                                           Layout centerLayout,
+                                                           Layout rightLayout) {
   bool updateRightLayout =
       contentCell()->rightExpressionView()->setLayout(rightLayout);
   bool updateCenterLayout =

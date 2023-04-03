@@ -1839,6 +1839,9 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
 
   assert_parsed_expression_simplify_to("_hplanck→_eV×_s",
                                        "4.1356676969239ᴇ-15×_eV×_s");
+  assert_reduce_and_store("2_kg→a");
+  assert_parsed_expression_simplify_to("a→g", "2000×_g");
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 }
 
 QUIZ_CASE(poincare_simplification_complex_format) {

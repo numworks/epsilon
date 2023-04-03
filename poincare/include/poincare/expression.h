@@ -321,7 +321,8 @@ class Expression : public TreeHandle {
 
   /* Units */
   Expression removeUnit(Expression* unit) { return node()->removeUnit(unit); }
-  bool hasUnit(bool ignoreAngleUnits = false) const;
+  bool hasUnit(bool ignoreAngleUnits = false, bool replaceSymbols = false,
+               Context* ctx = nullptr) const;
   bool isPureAngleUnit() const;
   bool isInRadians(Context* context) const;
 

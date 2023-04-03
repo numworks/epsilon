@@ -111,6 +111,14 @@ class AbstractMenuCell : public Bordered, public HighlightCell {
   Responder* responder() override;
   void setHighlighted(bool highlight) override;
 
+  // This is only done on accessory for now but could also done on (sub)label
+  const char* text() const override {
+    return constWidget(CellWidget::Type::Accessory)->text();
+  }
+  Poincare::Layout layout() const override {
+    return constWidget(CellWidget::Type::Accessory)->layout();
+  }
+
   bool canBeActivatedByEvent(Ion::Events::Event event) {
     // This is only done on accessory for now but could also done on (sub)label
     return widget(CellWidget::Type::Accessory)->canBeActivatedByEvent(event);

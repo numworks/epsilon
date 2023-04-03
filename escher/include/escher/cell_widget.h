@@ -4,6 +4,7 @@
 #include <escher/responder.h>
 #include <escher/view.h>
 #include <ion/events.h>
+#include <poincare/layout.h>
 
 namespace Escher {
 
@@ -13,6 +14,8 @@ class CellWidget {
   enum class Type { Label, SubLabel, Accessory };
   virtual const View* view() const = 0;
   virtual Responder* responder() { return nullptr; }
+  virtual const char* text() const { return nullptr; }
+  virtual Poincare::Layout layout() const { return Poincare::Layout(); }
   virtual void defaultInitialization(Type type) {}
   virtual void setHighlighted(bool highlighted) {}
   /* This could be replaced by a type like Expressions or Layouts if needed.

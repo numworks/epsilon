@@ -22,6 +22,9 @@ class EditableTextWidget : public CellWidget {
 
   // CellWidget
   const View* view() const override { return m_textField; }
+  const char* text() const override {
+    return !m_textField->isEditing() ? m_textField->text() : nullptr;
+  }
   void setHighlighted(bool highlighted) override {
     m_textField->setBackgroundColor(
         AbstractMenuCell::BackgroundColor(highlighted));
@@ -96,9 +99,6 @@ class MenuCellWithEditableText
   }
 
   Responder* responder() override { return this; }
-  const char* text() const override {
-    return !m_textField.isEditing() ? m_textField.text() : nullptr;
-  }
   void relayout() override { this->layoutSubviews(); }
 };
 

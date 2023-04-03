@@ -11,6 +11,7 @@
 #include "calculation_selectable_table_view.h"
 
 using namespace Escher;
+using namespace Poincare;
 
 namespace Calculation {
 
@@ -42,8 +43,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(
 
 /* HistoryViewCell */
 
-KDCoordinate HistoryViewCell::Height(Calculation *calculation,
-                                     Poincare::Context *context,
+KDCoordinate HistoryViewCell::Height(Calculation *calculation, Context *context,
                                      bool expanded) {
   HistoryViewCell cell(nullptr);
   cell.setCalculation(calculation, expanded, context, true);
@@ -113,7 +113,7 @@ void HistoryViewCell::reloadSubviewHighlight() {
   }
 }
 
-Poincare::Layout HistoryViewCell::layout() const {
+Layout HistoryViewCell::layout() const {
   assert(m_dataSource);
   if (m_dataSource->selectedSubviewType() ==
       HistoryViewCellDataSource::SubviewType::Input) {
@@ -280,14 +280,13 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth,
 void HistoryViewCell::resetMemoization() {
   // Clean the layouts to make room in the pool
   // TODO: maybe do this only when the layout won't change to avoid blinking
-  m_inputView.setLayout(Poincare::Layout());
-  m_scrollableOutputView.setLayouts(Poincare::Layout(), Poincare::Layout(),
-                                    Poincare::Layout());
+  m_inputView.setLayout(Layout());
+  m_scrollableOutputView.setLayouts(Layout(), Layout(), Layout());
   m_calculationCRC32 = 0;
 }
 
 void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
-                                     Poincare::Context *context,
+                                     Context *context,
                                      bool canChangeDisplayOutput) {
   if (m_calculationExpanded != expanded) {
     // Change expanded if needed
@@ -321,7 +320,7 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
    * layout, calling to layoutSubviews() would fail. */
 
   // Create the exact output layout
-  Poincare::Layout exactOutputLayout = Poincare::Layout();
+  Layout exactOutputLayout = Layout();
   if (Calculation::DisplaysExact(calculation->displayOutput(context))) {
     bool couldNotCreateExactLayout = false;
     exactOutputLayout =
@@ -335,7 +334,7 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
       } else {
         /* We should only display the exact result, but we cannot create it
          * -> raise an exception. */
-        Poincare::ExceptionCheckpoint::Raise();
+        ExceptionCheckpoint::Raise();
       }
     }
     KDCoordinate maxVisibleWidth =
@@ -355,7 +354,7 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
   }
 
   // Create the approximate output layout
-  Poincare::Layout approximateOutputLayout;
+  Layout approximateOutputLayout;
   if (calculation->displayOutput(context) ==
       ::Calculation::Calculation::DisplayOutput::ExactOnly) {
     approximateOutputLayout = exactOutputLayout;
@@ -372,15 +371,15 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
          */
         calculation->forceDisplayOutput(
             ::Calculation::Calculation::DisplayOutput::ApproximateOnly);
-        exactOutputLayout = Poincare::Layout();
+        exactOutputLayout = Layout();
         couldNotCreateApproximateLayout = false;
         approximateOutputLayout = calculation->createApproximateOutputLayout(
             &couldNotCreateApproximateLayout);
         if (couldNotCreateApproximateLayout) {
-          Poincare::ExceptionCheckpoint::Raise();
+          ExceptionCheckpoint::Raise();
         }
       } else {
-        Poincare::ExceptionCheckpoint::Raise();
+        ExceptionCheckpoint::Raise();
       }
     }
   }
@@ -397,7 +396,7 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximate ||
       m_calculationExpanded);
-  m_scrollableOutputView.setLayouts(Poincare::Layout(), exactOutputLayout,
+  m_scrollableOutputView.setLayouts(Layout(), exactOutputLayout,
                                     approximateOutputLayout);
   bool isEqual = calculation->exactAndApproximateDisplayedOutputsEqualSign(
                      context) == Calculation::EqualSign::Equal;

@@ -5,6 +5,7 @@
 #include "../app.h"
 
 using namespace Escher;
+using namespace Poincare;
 
 namespace Calculation {
 
@@ -17,12 +18,12 @@ void ScrollableThreeExpressionsView::ContentCell::reloadTextColor() {
 }
 
 void ScrollableThreeExpressionsView::resetMemoization() {
-  setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
+  setLayouts(Layout(), Layout(), Layout());
 }
 
-void ScrollableThreeExpressionsView::setLayouts(Poincare::Layout leftLayout,
-                                                Poincare::Layout centerLayout,
-                                                Poincare::Layout rightLayout) {
+void ScrollableThreeExpressionsView::setLayouts(Layout leftLayout,
+                                                Layout centerLayout,
+                                                Layout rightLayout) {
   Shared::AbstractScrollableMultipleExpressionsView::setLayouts(
       leftLayout, centerLayout, rightLayout);
   setShowEqual(!centerLayout.isUninitialized() ||

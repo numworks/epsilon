@@ -12,8 +12,8 @@ ScrollableTwoExpressionsCell::ScrollableTwoExpressionsCell(
     Responder* parentResponder, float horizontalAlignment, KDFont::Size font)
     : Responder(parentResponder), m_view(this, horizontalAlignment, font) {}
 
-void ScrollableTwoExpressionsCell::setLayouts(
-    Poincare::Layout exactLayout, Poincare::Layout approximateLayout) {
+void ScrollableTwoExpressionsCell::setLayouts(Layout exactLayout,
+                                              Layout approximateLayout) {
   m_view.setLayouts(Layout(), exactLayout, approximateLayout);
 }
 

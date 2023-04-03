@@ -129,7 +129,7 @@ SolutionsController::SolutionsController(Responder *parentResponder)
       GlobalPreferences::sharedGlobalPreferences->discriminantSymbol();
   size_t lenDelta = strlen(delta);
   const char *equalB = "=b";
-  m_delta2Layout = Poincare::HorizontalLayout::Builder(
+  m_delta2Layout = HorizontalLayout::Builder(
       LayoutHelper::String(delta, lenDelta),
       LayoutHelper::String(equalB, strlen(equalB)),
       VerticalOffsetLayout::Builder(
@@ -205,7 +205,7 @@ void SolutionsController::viewDidDisappear() {
   selectCellAtLocation(-1, -1);
   // Destroy exact cell's layouts
   for (size_t i = 0; i < k_numberOfExactValueCells; i++) {
-    m_exactValueCells[i].setLayouts(Poincare::Layout(), Poincare::Layout());
+    m_exactValueCells[i].setLayouts(Layout(), Layout());
   }
 }
 
@@ -277,8 +277,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
        * if it has quotation marks, in which case it can have up to 9
        * chars, including the quotation marks). */
       constexpr size_t k_maxSize =
-          Poincare::SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks +
-          1;
+          SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks + 1;
       char bufferSymbol[k_maxSize + 2];
       if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
         // It's a solution row, get symbol name
@@ -352,11 +351,11 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
           static_cast<ScrollableTwoExpressionsCell *>(cell);
       const char *symbol =
           system->userVariable(j - rowOfUserVariablesMessage - 1);
-      Poincare::Layout layout = PoincareHelpers::CreateLayout(
+      Layout layout = PoincareHelpers::CreateLayout(
           App::app()->localContext()->expressionForSymbolAbstract(
-              Poincare::Symbol::Builder(symbol, strlen(symbol)), false),
+              Symbol::Builder(symbol, strlen(symbol)), false),
           App::app()->localContext());
-      valueCell->setLayouts(Poincare::Layout(), layout);
+      valueCell->setLayouts(Layout(), layout);
     }
   }
   EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
@@ -372,9 +371,8 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
     if (system->type() == SystemOfEquations::Type::GeneralMonovariable) {
       return k_defaultCellHeight;
     }
-    Poincare::Layout exactLayout = system->solution(j)->exactLayout();
-    Poincare::Layout approximateLayout =
-        system->solution(j)->approximateLayout();
+    Layout exactLayout = system->solution(j)->exactLayout();
+    Layout approximateLayout = system->solution(j)->approximateLayout();
     KDCoordinate layoutHeight;
     if (exactLayout.isUninitialized()) {
       assert(!approximateLayout.isUninitialized());
@@ -401,9 +399,9 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
   }
   // TODO: memoize user symbols if too slow
   const char *symbol = system->userVariable(j - rowOfUserVariablesMessage - 1);
-  Poincare::Layout layout = PoincareHelpers::CreateLayout(
+  Layout layout = PoincareHelpers::CreateLayout(
       App::app()->localContext()->expressionForSymbolAbstract(
-          Poincare::Symbol::Builder(symbol, strlen(symbol)), false),
+          Symbol::Builder(symbol, strlen(symbol)), false),
       App::app()->localContext());
   return layout.layoutSize(k_solutionsFont).height() +
          2 * Metric::CommonSmallMargin;

@@ -156,7 +156,7 @@ bool NestedMenuController::selectSubMenu(int selectedRow) {
   }
   m_breadcrumbController.pushTitle(subTitle());
   StackViewController::push(&m_breadcrumbController);
-  m_selectableListView.selectRow(0);
+  m_selectableListView.selectFirstRow();
   Container::activeApp()->setFirstResponder(&m_listController);
   return true;
 }
@@ -180,7 +180,7 @@ bool NestedMenuController::returnToPreviousMenu() {
 
 bool NestedMenuController::returnToRootMenu() {
   resetMemoization();
-  m_selectableListView.selectRow(0);
+  m_selectableListView.selectFirstRow();
   if (stackDepth() > 0) {
     // Reset breadcrumb and stack
     m_stack.reset();

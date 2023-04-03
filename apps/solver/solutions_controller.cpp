@@ -336,12 +336,12 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
          * approximate layout. If the only layout is the exact one, they need to
          * be swapped.
          * FIXME This is quirky and could be changed. */
-        bool noApproximateLayout =
-            solution->approximateLayout().isUninitialized();
-        valueCell->setLayouts(
-            noApproximateLayout ? Layout() : solution->exactLayout(),
-            noApproximateLayout ? solution->exactLayout()
-                                : solution->approximateLayout());
+        if (solution->approximateLayout().isUninitialized()) {
+          valueCell->setLayouts(solution->exactLayout());
+        } else {
+          valueCell->setLayouts(solution->exactLayout(),
+                                solution->approximateLayout());
+        }
         valueCell->setRightIsStrictlyEqual(
             solution->exactAndApproximateAreEqual());
       }
@@ -355,7 +355,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
           App::app()->localContext()->expressionForSymbolAbstract(
               Symbol::Builder(symbol, strlen(symbol)), false),
           App::app()->localContext());
-      valueCell->setLayouts(Layout(), layout);
+      valueCell->setLayouts(layout);
     }
   }
   EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);

@@ -281,7 +281,7 @@ void HistoryViewCell::resetMemoization() {
   // Clean the layouts to make room in the pool
   // TODO: maybe do this only when the layout won't change to avoid blinking
   m_inputView.setLayout(Layout());
-  m_scrollableOutputView.setLayouts(Layout(), Layout(), Layout());
+  m_scrollableOutputView.resetLayouts();
   m_calculationCRC32 = 0;
 }
 

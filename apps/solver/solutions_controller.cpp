@@ -205,7 +205,7 @@ void SolutionsController::viewDidDisappear() {
   selectCellAtLocation(-1, -1);
   // Destroy exact cell's layouts
   for (size_t i = 0; i < k_numberOfExactValueCells; i++) {
-    m_exactValueCells[i].setLayouts(Layout(), Layout());
+    m_exactValueCells[i].resetLayouts();
   }
 }
 

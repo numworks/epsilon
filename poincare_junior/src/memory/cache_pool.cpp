@@ -87,9 +87,14 @@ uint16_t CachePool::storeEditedTree() {
   return id;
 }
 
-bool CachePool::needFreeBlocks(int numberOfBlocks) {
-  m_editionPool.flush();
-  return numberOfBlocks <= k_maxNumberOfBlocks && m_referenceTable.freeOldestBlocks(numberOfBlocks);
+bool CachePool::freeBlocks(int numberOfBlocks, bool flushEditionPool) {
+  if (numberOfBlocks > k_maxNumberOfBlocks || !m_referenceTable.freeOldestBlocks(numberOfBlocks)) {
+    return false;
+  }
+  if (flushEditionPool) {
+    m_editionPool.flush();
+  }
+  return true;
 }
 
 void CachePool::reset() {
@@ -109,7 +114,7 @@ start_execute:
     return storeEditedTree();
   } else {
     // TODO: assert that we don't delete last called treeForIdentifier otherwise can't copyTreeFromAddress if in cache...
-    if (!needFreeBlocks(m_editionPool.fullSize() * 2)) {
+    if (!freeBlocks(m_editionPool.fullSize())) {
       // TODO: try with less demanding reducing context (everything is a float ? SystemTaget?)
       return ReferenceTable::NoNodeIdentifier;
     }

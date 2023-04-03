@@ -17,7 +17,7 @@ public:
   uint16_t storeEditedTree();
 
   EditionPool * editionPool() { return &m_editionPool; }
-  bool needFreeBlocks(int numberOfBlocks);
+  bool freeBlocks(int numberOfBlocks, bool flushEditionPool = true);
   /* reset should be used when all CacheReference have been destroyed to ensure
    * that they won't point to reallocated nodes */
   void reset();
@@ -105,4 +105,3 @@ private:
 }
 
 #endif
-

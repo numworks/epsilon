@@ -74,7 +74,7 @@ start_execute:
     flush();
     return true;
   } else {
-    if (!CachePool::sharedCachePool()->needFreeBlocks(fullSize() * 2)) {
+    if (!CachePool::sharedCachePool()->freeBlocks(fullSize())) {
       return false;
     }
     goto start_execute;

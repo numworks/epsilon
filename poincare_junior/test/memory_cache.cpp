@@ -33,20 +33,28 @@ QUIZ_CASE(pcj_cache_pool) {
   cachePool->storeEditedTree();
   assert_pools_tree_sizes_are(1, 0);
 
-  // needFreeBlocks
+  // freeBlocks
   editionPool->initFromTree(bigTree);
   cachePool->storeEditedTree();
   assert_pools_tree_sizes_are(2, 0);
-  cachePool->needFreeBlocks(1);
+  cachePool->freeBlocks(1);
   assert_pools_tree_sizes_are(1, 0);
-  cachePool->needFreeBlocks(treeSize - 1);
+  cachePool->freeBlocks(treeSize - 1);
   assert_pools_tree_sizes_are(0, 0);
   for (int i = 0; i < 3; i++) {
     editionPool->initFromTree(bigTree);
     cachePool->storeEditedTree();
   }
   assert_pools_tree_sizes_are(3, 0);
-  cachePool->needFreeBlocks(treeSize + 1);
+  cachePool->freeBlocks(treeSize + 1);
+  assert_pools_tree_sizes_are(1, 0);
+  editionPool->initFromTree(bigTree);
+  assert_pools_tree_sizes_are(1, 1);
+  EditionReference ref(editionPool->firstBlock());
+  cachePool->freeBlocks(1, false);
+  assert_trees_are_equal(ref, bigTree);
+  assert_pools_tree_sizes_are(0, 1);
+  cachePool->storeEditedTree();
   assert_pools_tree_sizes_are(1, 0);
 
   // reset
@@ -79,7 +87,7 @@ QUIZ_CASE(pcj_cache_pool_limits) {
 
   // 2. Edit another tree triggering a cache invalidation
   execute_push_tree_and_modify();
-  assert(cachePool->numberOfTrees() < maxNumberOfTreesInCache);
+  assert(cachePool->numberOfTrees() <= maxNumberOfTreesInCache);
   Node lastTree = Node(cachePool->lastBlock()).previousTree();
   assert_trees_are_equal(lastTree, KMult(3_e, 4_e));
 
@@ -177,7 +185,7 @@ QUIZ_CASE(pcj_cache_reference_shared_data) {
   // l is created with e.m_id different from 1
   Layout l = e.toLayout();
   // Forcing e.m_id change
-  cachePool->needFreeBlocks(1);
+  cachePool->freeBlocks(1);
   assert(e.id() == 1);
   // This test should fail if this line is uncommented
   // e = Expression::Parse("2*3");

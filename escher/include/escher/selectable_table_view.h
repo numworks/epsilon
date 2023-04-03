@@ -31,6 +31,9 @@ class SelectableTableView : public TableView, public Responder {
   int selectedColumn() { return m_selectionDataSource->selectedColumn(); }
   void selectRow(int j) { m_selectionDataSource->selectRow(j); }
   void selectColumn(int i) { m_selectionDataSource->selectColumn(i); }
+  void selectFirstRow() {
+    dataSource()->numberOfRows() > 0 ? selectRow(0) : selectRow(-1);
+  }
 
   HighlightCell* selectedCell();
   bool selectCellAtLocation(int col, int row, bool setFirstResponder = true,

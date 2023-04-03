@@ -89,15 +89,8 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   HighlightCell *cell = selectedCell();
   if ((event == Ion::Events::Copy || event == Ion::Events::Cut) ||
       event == Ion::Events::Sto || event == Ion::Events::Var) {
-    if (cell == &m_r2Cell) {
-      if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-        App::app()->storeValue(m_r2Cell.text());
-      } else {
-        Escher::Clipboard::SharedClipboard()->store(m_r2Cell.text());
-      }
-      return true;
-    } else if (cell == &m_regressionEquationCell) {
-      Layout l = m_regressionEquationCell.layout();
+    if (cell == &m_regressionEquationCell) {
+      Layout l = m_regressionEquationCell.label()->layout();
       if (!l.isUninitialized()) {
         constexpr int bufferSize = TextField::MaxBufferSize();
         char buffer[bufferSize];
@@ -110,7 +103,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
         return true;
       }
     }
-    return false;
+    return Escher::ExplicitSelectableListViewController::handleEvent(event);
   }
 
   if (cell == &m_changeRegressionCell &&

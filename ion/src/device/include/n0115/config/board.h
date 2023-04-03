@@ -128,8 +128,9 @@ constexpr uint32_t FlasherLength = 0x10000; // 64KiB
 constexpr uint32_t FlasherOffset = SRAMLength - FlasherLength;
 static_assert(STBootloaderStack < FlasherOffset, "The flasher overlaps ST bootloader stack.");
 
+constexpr uint32_t SignedBinaryOffset = 0;
+
 constexpr uint32_t BenchLength = 0x20000; // 128KiB
-constexpr uint32_t BenchOffset = 0;
 
 constexpr uint32_t BackupSRAMOrigin = 0x40024000;
 constexpr uint32_t BackupSRAMLength = 0x1000; // 4kiB

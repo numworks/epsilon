@@ -7,7 +7,7 @@ namespace Regression {
 
 class ExponentialModel : public TransformedModel {
  public:
-  ExponentialModel(bool isAbxForm = false) : m_isAbxForm(isAbxForm) {}
+  ExponentialModel(bool isAbxForm = false);
   I18n::Message formulaMessage() const override {
     return m_isAbxForm ? I18n::Message::ExponentialAbxRegressionFormula
                        : I18n::Message::ExponentialAebxRegressionFormula;

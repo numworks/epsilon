@@ -16,6 +16,11 @@ using namespace Poincare;
 
 namespace Regression {
 
+PowerModel::PowerModel() : TransformedModel() {
+  assert(applyLnOnX() == Store::FitsLnX(Model::Type::Power));
+  assert(applyLnOnY() == Store::FitsLnY(Model::Type::Power));
+}
+
 Layout PowerModel::templateLayout() const {
   return HorizontalLayout::Builder(
       {CodePointLayout::Builder('a'),

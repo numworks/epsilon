@@ -7,7 +7,7 @@ namespace Regression {
 
 class LogarithmicModel : public TransformedModel {
  public:
-  using TransformedModel::TransformedModel;
+  LogarithmicModel();
   I18n::Message formulaMessage() const override {
     return I18n::Message::LogarithmicRegressionFormula;
   }

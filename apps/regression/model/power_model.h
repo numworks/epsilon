@@ -7,7 +7,7 @@ namespace Regression {
 
 class PowerModel : public TransformedModel {
  public:
-  using TransformedModel::TransformedModel;
+  PowerModel();
   I18n::Message formulaMessage() const override {
     return I18n::Message::PowerRegressionFormula;
   }

@@ -66,6 +66,7 @@ class Store : public Shared::LinearRegressionStore {
   void updateCoefficients(int series, Poincare::Context* globalContext);
   double* coefficientsForSeries(int series, Poincare::Context* globalContext);
   bool coefficientsAreDefined(int series, Poincare::Context* globalContext);
+  double correlationCoefficient(int series) const;
   // R2
   double determinationCoefficientForSeries(int series,
                                            Poincare::Context* globalContext);
@@ -94,10 +95,7 @@ class Store : public Shared::LinearRegressionStore {
   }
   static bool DisplayR(Model::Type type) {
     return type == Model::Type::None || type == Model::Type::LinearApbx ||
-           type == Model::Type::LinearAxpb || type == Model::Type::Power ||
-           type == Model::Type::Logarithmic ||
-           type == Model::Type::ExponentialAbx ||
-           type == Model::Type::ExponentialAebx;
+           type == Model::Type::LinearAxpb || FitsLnY(type) || FitsLnX(type);
   }
   static bool DisplayRSquared(Model::Type type) {
     return HasCoefficients(type) && DisplayR(type);
@@ -122,10 +120,13 @@ class Store : public Shared::LinearRegressionStore {
     return HasCoefficients(type) && !HasMCoefficient(type);
   }
   static bool FitsLnY(Model::Type type) {
-    // Exponential Regression are fitted with a z = ln(+-y) change of variable.
-    // TODO : Add Power model
-    return type == Model::Type::ExponentialAbx ||
+    // These models are fitted with a ln(+-Y) change of variable.
+    return type == Model::Type::Power || type == Model::Type::ExponentialAbx ||
            type == Model::Type::ExponentialAebx;
+  }
+  static bool FitsLnX(Model::Type type) {
+    // These models are fitted with a ln(X) change of variable.
+    return type == Model::Type::Power || type == Model::Type::Logarithmic;
   }
   bool AnyActiveSeriesSatisfy(TypeProperty property) const;
   bool seriesSatisfy(int series, TypeProperty property) const {

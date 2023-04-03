@@ -229,6 +229,26 @@ bool Store::coefficientsAreDefined(int series,
   return true;
 }
 
+double Store::correlationCoefficient(int series) const {
+  /* Returns the correlation coefficient (R) between the series X and Y
+   * (transformed if series is a TransformedModel). In non-linear and
+   * non-transformed regressions, its square is different from the
+   * determinationCoefficient R2. it is then hidden to avoid confusion */
+  bool applyLn = seriesSatisfy(series, FitsLnY);
+  bool applyOpposite = applyLn && get(series, 1, 0) < 0.0;
+  Shared::DoublePairStore::Parameters parameters(seriesSatisfy(series, FitsLnX),
+                                                 applyLn, applyOpposite);
+  double v0 = varianceOfColumn(series, 0, parameters);
+  double v1 = varianceOfColumn(series, 1, parameters);
+  double result = (v0 == 0.0 || v1 == 0.0)
+                      ? 1.0
+                      : covariance(series, parameters) / std::sqrt(v0 * v1);
+  /* Due to errors, coefficient could slightly exceed 1.0. It needs to be
+   * fixed here to prevent r^2 from being bigger than 1. */
+  assert(std::abs(result) <= 1.0 || std::abs(result) - 10 * DBL_EPSILON <= 1.0);
+  return std::clamp(result, -1.0, 1.0);
+}
+
 double Store::determinationCoefficientForSeries(
     int series, Poincare::Context *globalContext) {
   /* Returns the Determination coefficient (R2).
@@ -321,36 +341,36 @@ bool Store::AnyActiveSeriesSatisfy(TypeProperty property) const {
 
 double Store::computeDeterminationCoefficient(
     int series, Poincare::Context *globalContext) {
-  /* Computes and returns the determination coefficient (R2) of the regression.
-   * For linear regressions, it is equal to the square of the correlation
-   * coefficient between the series Y and the evaluated values.
-   * With proportional regression or badly fitted models, R2 can technically be
-   * negative. R2<0 means that the regression is less effective than a
-   * constant set to the series average. It should not happen with regression
-   * models that can fit a constant observation.
-   * R2 does not need to be computed if model is median-median, so we avoid
-   * computation. If needed, it could be computed though.
-   * */
-  if (!seriesSatisfy(series, DisplayR2) &&
-      !seriesSatisfy(series, DisplayRSquared)) {
+  // Computes and returns the determination coefficient of the regression.
+  if (seriesSatisfy(series, DisplayRSquared)) {
+    /* With linear regressions and transformed models (Exponential, Logarithm
+     * and Power), we use r^2, the square of the correlation coefficient between
+     * the series Y (transformed) and the evaluated values.*/
+    double r = correlationCoefficient(series);
+    return r * r;
+  }
+  if (!seriesSatisfy(series, DisplayR2)) {
+    /* R2 does not need to be computed if model is median-median, so we avoid
+     * computation. If needed, it could be computed though. */
     return NAN;
   }
-  // Ln(Y) change of variable must be replicated here when computing R2.
-  bool applyLn = seriesSatisfy(series, FitsLnY);
-  bool applyOpposite = applyLn && get(series, 1, 0) < 0.0;
-  Shared::DoublePairStore::Parameters parameters(false, applyLn, applyOpposite);
+  assert(!seriesSatisfy(series, FitsLnY) && !seriesSatisfy(series, FitsLnX));
+  /* With proportional regression or badly fitted models, R2 can technically be
+   * negative. R2<0 means that the regression is less effective than a
+   * constant set to the series average. It should not happen with regression
+   * models that can fit a constant observation. */
   // Residual sum of squares
   double ssr = 0;
   // Total sum of squares
   double sst = 0;
   const int numberOfPairs = numberOfPairsOfSeries(series);
   assert(numberOfPairs > 0);
-  double mean = meanOfColumn(series, 1, parameters);
+  double mean = meanOfColumn(series, 1);
   for (int k = 0; k < numberOfPairs; k++) {
     // Difference between the observation and the estimated value of the model
-    double estimation = parameters.transformValue(
-        yValueForXValue(series, get(series, 0, k), globalContext), 1);
-    double observation = parameters.transformValue(get(series, 1, k), 1);
+    double estimation =
+        yValueForXValue(series, get(series, 0, k), globalContext);
+    double observation = get(series, 1, k);
     if (std::isnan(estimation) || std::isinf(estimation)) {
       // Data Not Suitable for estimation
       return NAN;

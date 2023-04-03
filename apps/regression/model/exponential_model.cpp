@@ -18,6 +18,16 @@ using namespace Shared;
 
 namespace Regression {
 
+ExponentialModel::ExponentialModel(bool isAbxForm)
+    : TransformedModel(), m_isAbxForm(isAbxForm) {
+  assert(applyLnOnX() == Store::FitsLnX(isAbxForm
+                                            ? Model::Type::ExponentialAbx
+                                            : Model::Type::ExponentialAebx));
+  assert(applyLnOnY() == Store::FitsLnY(isAbxForm
+                                            ? Model::Type::ExponentialAbx
+                                            : Model::Type::ExponentialAebx));
+}
+
 Layout ExponentialModel::templateLayout() const {
   Layout base;
   Layout exponent;

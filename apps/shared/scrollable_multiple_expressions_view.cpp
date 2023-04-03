@@ -90,7 +90,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::setDisplayCenter(
 }
 
 void AbstractScrollableMultipleExpressionsView::ContentCell::
-    setRightIsStrictlyEqual(bool isEqual) {
+    setExactAndApproximateAreStriclyEqual(bool isEqual) {
   m_rightIsStrictlyEqual = isEqual;
   approximateSign()->setMessage(isEqual ? I18n::Message::Equal
                                         : I18n::Message::AlmostEqual);
@@ -305,17 +305,16 @@ AbstractScrollableMultipleExpressionsView::
                                               View* contentCell)
     : ScrollableView(parentResponder, contentCell, this) {}
 
-void AbstractScrollableMultipleExpressionsView::setLayouts(Layout leftLayout,
-                                                           Layout centerLayout,
-                                                           Layout rightLayout) {
+void AbstractScrollableMultipleExpressionsView::setLayouts(
+    Layout formulaLayout, Layout exactLayout, Layout approximateLayout) {
   bool updateRightLayout =
-      contentCell()->rightExpressionView()->setLayout(rightLayout);
+      contentCell()->rightExpressionView()->setLayout(approximateLayout);
   bool updateCenterLayout =
-      contentCell()->centeredExpressionView()->setLayout(centerLayout);
+      contentCell()->centeredExpressionView()->setLayout(exactLayout);
   bool updateLeftLayout = false;
   if (contentCell()->leftExpressionView()) {
     updateLeftLayout =
-        contentCell()->leftExpressionView()->setLayout(leftLayout);
+        contentCell()->leftExpressionView()->setLayout(formulaLayout);
   }
   if (updateLeftLayout || updateCenterLayout || updateRightLayout) {
     contentCell()->reloadTextColor();

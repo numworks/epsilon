@@ -22,20 +22,21 @@ class AbstractScrollableMultipleExpressionsView
   AbstractScrollableMultipleExpressionsView(Responder* parentResponder,
                                             View* contentCell);
   Escher::EvenOddCell* evenOddCell() { return contentCell(); }
-  virtual void setLayouts(Poincare::Layout leftLayout,
-                          Poincare::Layout centerLayout,
-                          Poincare::Layout rightLayout);
-  void setLayouts(Poincare::Layout centerLayout, Poincare::Layout rightLayout) {
-    setLayouts(Poincare::Layout(), centerLayout, rightLayout);
+  virtual void setLayouts(Poincare::Layout formulaLayout,
+                          Poincare::Layout exactLayout,
+                          Poincare::Layout approximateLayout);
+  void setLayouts(Poincare::Layout exactLayout,
+                  Poincare::Layout approximateLayout) {
+    setLayouts(Poincare::Layout(), exactLayout, approximateLayout);
   }
-  void setLayouts(Poincare::Layout rightLayout) {
-    setLayouts(Poincare::Layout(), Poincare::Layout(), rightLayout);
+  void setLayouts(Poincare::Layout exactLayout) {
+    setLayouts(Poincare::Layout(), Poincare::Layout(), exactLayout);
   }
   void resetLayouts() {
     setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
   }
-  void setRightIsStrictlyEqual(bool isEqual) {
-    contentCell()->setRightIsStrictlyEqual(isEqual);
+  void setExactAndApproximateAreStriclyEqual(bool isEqual) {
+    contentCell()->setExactAndApproximateAreStriclyEqual(isEqual);
   }
   SubviewPosition selectedSubviewPosition() {
     return contentCell()->selectedSubviewPosition();
@@ -112,7 +113,7 @@ class AbstractScrollableMultipleExpressionsView
     void setDisplayableCenter(bool displayable) {
       m_displayableCenter = displayable;
     }
-    void setRightIsStrictlyEqual(bool isEqual);
+    void setExactAndApproximateAreStriclyEqual(bool isEqual);
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     Poincare::Layout layout() const override {

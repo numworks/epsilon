@@ -17,13 +17,13 @@ void ScrollableThreeExpressionsView::ContentCell::reloadTextColor() {
   approximateSign()->setTextColor(color);
 }
 
-void ScrollableThreeExpressionsView::setLayouts(Layout leftLayout,
-                                                Layout centerLayout,
-                                                Layout rightLayout) {
+void ScrollableThreeExpressionsView::setLayouts(Layout formulaLayout,
+                                                Layout exactLayout,
+                                                Layout approximateLayout) {
   Shared::AbstractScrollableMultipleExpressionsView::setLayouts(
-      leftLayout, centerLayout, rightLayout);
-  setShowEqual(!centerLayout.isUninitialized() ||
-               !rightLayout.isUninitialized());
+      formulaLayout, exactLayout, approximateLayout);
+  setShowEqual(!exactLayout.isUninitialized() ||
+               !approximateLayout.isUninitialized());
 }
 
 ScrollableThreeExpressionsView::SubviewPosition

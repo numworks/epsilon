@@ -17,7 +17,6 @@ class TabView : public View {
   void drawRect(KDContext *ctx, KDRect rect) const override;
 
   void addTab(const char *title);
-  // TODO: void removeLastTab();
   void setActiveIndex(int index);
   void setSelectedIndex(int index);
 
@@ -32,7 +31,7 @@ class TabView : public View {
   View *subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
-  constexpr static uint8_t k_maxNumberOfTabs = 4;
+  constexpr static uint8_t k_maxNumberOfTabs = 3;
   TabViewCell m_cells[k_maxNumberOfTabs];
   uint8_t m_numberOfTabs;
   int8_t m_activeTabIndex;

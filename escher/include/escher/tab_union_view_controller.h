@@ -71,11 +71,10 @@ class TabUnion : public AbstractTabUnion {
     } else if constexpr (std::is_same_v<T, T1>) {
       assert(m_activeTab == 1);
       return &m_1;
-    } else if constexpr (std::is_same_v<T, T2>) {
+    } else {
+      static_assert(std::is_same_v<T, T2>);
       assert(m_activeTab == 2);
       return &m_2;
-    } else {
-      assert(false);
     }
   }
 

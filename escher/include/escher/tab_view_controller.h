@@ -13,7 +13,7 @@ class TabViewController : public ViewController {
  public:
   TabViewController(Responder* parentResponder, TabViewDataSource* dataSource,
                     ViewController* one, ViewController* two,
-                    ViewController* three, ViewController* four = nullptr);
+                    ViewController* three);
   View* view() override;
   int activeTab() const;
   void selectTab();
@@ -59,7 +59,7 @@ class TabViewController : public ViewController {
   ContentView m_view;
 
   virtual ViewController* children(uint8_t index) { return m_children[index]; }
-  constexpr static uint8_t k_maxNumberOfChildren = 4;
+  constexpr static uint8_t k_maxNumberOfChildren = 3;
   ViewController* m_children[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   TabViewDataSource* m_dataSource;

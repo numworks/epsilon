@@ -43,23 +43,24 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
        * Epsilon version number, the commit hash for this build of Epsilon, the
        * PCB revision number, the flags used at compilation and the bootloader
        * running on the device. */
-      MenuCell<MessageTextView, BufferTextView> *myCell =
-          (MenuCell<MessageTextView, BufferTextView> *)
-              m_selectableListView.selectedCell();
-      const char *currentText = myCell->subLabel()->text();
-      if (strcmp(currentText, Ion::patchLevel()) == 0) {
-        myCell->subLabel()->setText(Ion::pcbVersion());
-      } else if (strcmp(currentText, Ion::pcbVersion()) == 0) {
-        myCell->subLabel()->setText(Ion::compilationFlags());
-      } else if (strcmp(currentText, Ion::compilationFlags()) == 0) {
-        myCell->subLabel()->setText(Ion::runningBootloader());
-      } else if (strcmp(currentText, Ion::runningBootloader()) == 0) {
-        myCell->subLabel()->setText(Ion::epsilonVersion());
-      } else {
-        assert(strcmp(currentText, Ion::epsilonVersion()) == 0);
-        myCell->subLabel()->setText(Ion::patchLevel());
+      assert(m_selectableListView.selectedCell() ==
+             m_cells + k_versionCellIndex);
+
+      using TextGetter = const char *(*)();
+      constexpr TextGetter k_textGettersCycle[] = {
+          &Ion::epsilonVersion, &Ion::patchLevel, &Ion::pcbVersion,
+          &Ion::compilationFlags, &Ion::runningBootloader};
+      constexpr int k_nGetters = std::size(k_textGettersCycle);
+
+      const char *previousText = m_cells[k_versionCellIndex].subLabel()->text();
+      for (int i = 0; i < k_nGetters; i++) {
+        if (strcmp(previousText, k_textGettersCycle[i]()) == 0) {
+          m_cells[k_versionCellIndex].subLabel()->setText(
+              k_textGettersCycle[(i + 1) % k_nGetters]());
+          return true;
+        }
       }
-      return true;
+      assert(false);  // Text not found in cycle
     }
 #if TERMS_OF_USE
     if (selectedRow() == k_termsOfUseCellIndex) {
@@ -78,10 +79,11 @@ HighlightCell *AboutController::reusableCell(int index, int type) {
   return &m_cells[index];
 }
 
-void AboutController::willDisplayCellForIndex(HighlightCell *cell, int index) {
-  GenericSubController::willDisplayCellForIndex(cell, index);
-  MenuCell<MessageTextView, BufferTextView> *myCell =
-      static_cast<MenuCell<MessageTextView, BufferTextView> *>(cell);
+KDCoordinate AboutController::nonMemoizedRowHeight(int index) {
+  return MemoizedListViewDataSource::nonMemoizedRowHeight(index);
+}
+
+void AboutController::viewWillAppear() {
   const char *messages[k_totalNumberOfCell] = {
     Ion::epsilonVersion(),
     Ion::serialNumber(),
@@ -90,12 +92,10 @@ void AboutController::willDisplayCellForIndex(HighlightCell *cell, int index) {
     "",
 #endif
   };
-  assert(index >= 0 && index < k_totalNumberOfCell);
-  myCell->subLabel()->setText(messages[index]);
-}
-
-KDCoordinate AboutController::nonMemoizedRowHeight(int index) {
-  return MemoizedListViewDataSource::nonMemoizedRowHeight(index);
+  for (int i = 0; i < k_totalNumberOfCell; i++) {
+    m_cells[i].subLabel()->setText(messages[i]);
+  }
+  GenericSubController::viewWillAppear();
 }
 
 }  // namespace Settings

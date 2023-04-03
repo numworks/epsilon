@@ -13,6 +13,11 @@ using namespace Poincare;
 
 namespace Regression {
 
+LogarithmicModel::LogarithmicModel() : TransformedModel() {
+  assert(applyLnOnX() == Store::FitsLnX(Model::Type::Logarithmic));
+  assert(applyLnOnY() == Store::FitsLnY(Model::Type::Logarithmic));
+}
+
 Poincare::Expression LogarithmicModel::privateExpression(
     double* modelCoefficients) const {
   double a = modelCoefficients[0];

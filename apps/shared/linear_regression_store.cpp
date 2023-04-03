@@ -109,17 +109,6 @@ double LinearRegressionStore::yIntercept(int series,
                                        slope(series, parameters));
 }
 
-double LinearRegressionStore::correlationCoefficient(int series) const {
-  /* Returns the correlation coefficient (R) between the series X and Y.
-   * In non-linear regressions, its square is different from the
-   * determinationCoefficient It is usually displayed in linear regressions only
-   * to avoid confusion */
-  double v0 = varianceOfColumn(series, 0);
-  double v1 = varianceOfColumn(series, 1);
-  return (v0 == 0.0 || v1 == 0.0) ? 1.0
-                                  : covariance(series) / std::sqrt(v0 * v1);
-}
-
 Poincare::StatisticsDataset<double>
 LinearRegressionStore::createDatasetFromColumn(int series, int i,
                                                Parameters parameters) const {

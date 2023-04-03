@@ -234,12 +234,11 @@ QUIZ_CASE(regression_power) {
   double r2 = 1.0;
   assert_regression_is(x, y, 5, Model::Type::Power, coefficients, r2);
 
-  // TODO : This data produce a wrong fit currently
-  // double x2[] = {1.0, 2.0, 3.0, 4.0};
-  // double y2[] = {2.0, 3.0, 4.0, 1.0};
-  // double coefficients2[] = {2.54948, -0.0247463};
-  // double r22 = 0.833509;
-  // assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r22);
+  double x2[] = {1.0, 2.0, 3.0, 4.0};
+  double y2[] = {2.0, 3.0, 4.0, 1.0};
+  double coefficients2[] = {2.63994478, -0.22182701};
+  double r22 = 0.0492;
+  assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r22);
 
   double x3[] = {0.5, 1.0, 2.0, 3.0};
   double y3[] = {-8.0, -2.0, -0.5, -0.2222222};

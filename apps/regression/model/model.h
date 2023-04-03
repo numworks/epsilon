@@ -47,7 +47,7 @@ class Model {
       Poincare::Preferences::PrintFloatMode displayMode) const;
   Poincare::Expression expression(double* modelCoefficients) const;
 
-  /* Evalute cannot use the expression and approximate it since it would be
+  /* Evaluate cannot use the expression and approximate it since it would be
    * too time consuming. */
   virtual double evaluate(double* modelCoefficients, double x) const = 0;
   virtual double levelSet(double* modelCoefficients, double xMin, double xMax,

@@ -57,7 +57,6 @@ class LinearRegressionStore : public Shared::DoublePairStore {
   }
   double slope(int series, Parameters parameters = Parameters()) const;
   double yIntercept(int series, Parameters parameters = Parameters()) const;
-  double correlationCoefficient(int series) const;  // R
 
  private:
   Poincare::StatisticsDataset<double> createDatasetFromColumn(

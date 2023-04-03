@@ -217,7 +217,8 @@ void Calculation::forceDisplayOutput(DisplayOutput d) {
   m_displayOutput = d;
 }
 
-Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
+Calculation::EqualSign
+Calculation::exactAndApproximateDisplayedOutputsEqualSign(
     Poincare::Context *context) {
   // TODO: implement a UserCircuitBreaker
   if (m_equalSign != EqualSign::Unknown) {
@@ -231,7 +232,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
     return EqualSign::Approximation;
   }
   /* Displaying the right equal symbol is less important than displaying a
-   * result, so we do not want exactAndApproximateDisplayedOutputsAreEqual to
+   * result, so we do not want exactAndApproximateDisplayedOutputsEqualSign to
    * create a pool failure that would prevent from displaying a result that we
    * managed to compute. We thus encapsulate the method in an exception
    * checkpoint: if there was not enough memory on the pool to compute the equal

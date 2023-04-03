@@ -20,7 +20,9 @@ class SelectableListView : public SelectableTableView {
   void didBecomeFirstResponder() override;
   void scrollToCell(int row) { return scrollToCell(0, row); }
   bool selectCell(int row) { return selectCellAtLocation(0, row); }
-  void reloadCell(int row) { return reloadCellAtLocation(0, row); }
+  void reloadCell(int row, bool forceSetFrame = false) {
+    return reloadCellAtLocation(0, row, forceSetFrame);
+  }
   HighlightCell* cell(int row) { return cellAtLocation(0, row); }
   void setDelegate(SelectableListViewDelegate* delegate) {
     m_delegate = delegate;

@@ -105,7 +105,7 @@ class Calculation {
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context* context);
   void forceDisplayOutput(DisplayOutput d);
-  EqualSign exactAndApproximateDisplayedOutputsAreEqual(
+  EqualSign exactAndApproximateDisplayedOutputsEqualSign(
       Poincare::Context* context);
 
   // Additional Informations

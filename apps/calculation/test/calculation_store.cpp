@@ -206,7 +206,7 @@ void assertCalculationIs(const char *input, DisplayOutput display,
   quiz_assert(lastCalculation->displayOutput(context) == display);
   if (sign != EqualSign::Unknown && display != DisplayOutput::ApproximateOnly &&
       display != DisplayOutput::ExactOnly) {
-    quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(
+    quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsEqualSign(
                     context) == sign);
   }
   if (exactOutput) {

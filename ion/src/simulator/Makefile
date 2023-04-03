@@ -25,7 +25,6 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   framebuffer.cpp \
   init.cpp \
   keyboard.cpp \
-  layout.py \
   main.cpp \
   persisting_bytes.cpp \
   random.cpp \
@@ -53,7 +52,7 @@ $(eval $(call rule_for, \
   global \
 ))
 
-$(call object_for,$(ion_src)): $(BUILD_DIR)/ion/src/simulator/shared/layout.cpp
+ion_src += $(BUILD_DIR)/ion/src/simulator/shared/layout.cpp
 
 include ion/src/simulator/$(TARGET)/Makefile
 include ion/src/simulator/external/Makefile

@@ -28,7 +28,6 @@ apps_src += $(addprefix apps/,\
   empty_battery_window.cpp \
   exam_pop_up_controller.cpp \
   global_preferences.cpp \
-  i18n.py \
   init.cpp \
   lock_view.cpp \
   main.cpp \
@@ -71,22 +70,20 @@ i18n_files += $(call i18n_without_universal_for,variables)
 
 $(eval $(call rule_for, \
   I18N, \
-  apps/i18n.cpp, \
-  $(i18n_files) $(country_preferences) $(language_preferences), \
-  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --countrypreferences $(country_preferences) --languagepreferences $(language_preferences) --header $$(subst .cpp,.h,$$@) --implementation $$@ --locales $$(EPSILON_I18N) --countries $$(EPSILON_COUNTRIES) --files $(i18n_files) $(if $(filter $(I18N_COMPRESS),1),--compress,), \
+  apps/i18n.h, \
+  apps/i18n.py $(i18n_files) $(country_preferences) $(language_preferences), \
+  $$(PYTHON) apps/i18n.py --codepoints $(code_points) --countrypreferences $(country_preferences) --languagepreferences $(language_preferences) --header $$@ --implementation $$(subst .h,.cpp,$$@) --locales $$(EPSILON_I18N) --countries $$(EPSILON_COUNTRIES) --files $(i18n_files) $(if $(filter $(I18N_COMPRESS),1),--compress,), \
   global \
 ))
 
-$(BUILD_DIR)/apps/i18n.h: $(BUILD_DIR)/apps/i18n.cpp
+$(BUILD_DIR)/apps/i18n.cpp: $(BUILD_DIR)/apps/i18n.h
+apps_src += $(BUILD_DIR)/apps/i18n.cpp
 
 # Handle PNG files
 
 $(eval $(call depends_on_image,apps/title_bar_view.cpp,apps/exam_icon.png))
 
-$(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/apps/i18n.h
 $(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/python/port/genhdr/qstrdefs.generated.h
-
-$(call object_for,$(apps_src)): $(BUILD_DIR)/apps/home/apps_layout.h
 
 apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_graph_test_src) $(app_distributions_test_src) $(app_inference_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src) $(app_finance_test_src)
 

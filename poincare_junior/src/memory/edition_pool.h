@@ -2,6 +2,7 @@
 #define POINCARE_MEMORY_EDITION_POOL_H
 
 #include "pool.h"
+#include "reference.h"
 
 namespace PoincareJ {
 
@@ -20,6 +21,8 @@ public:
 
   uint16_t referenceNode(Node node);
   void flush();
+
+  bool execute(ActionWithContext action, void * subAction, const void * data, void * address);
 
   Block * pushBlock(Block block);
   void popBlock();

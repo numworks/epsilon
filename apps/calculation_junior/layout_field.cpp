@@ -42,9 +42,11 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 }
 
 void LayoutField::ContentView::clearLayout() {
-  EditionReference emptyRack = EditionReference::Push<BlockType::RackLayout>(0);
-  static_cast<Node>(emptyRack).copyTreeTo(m_layoutBuffer.blocks());
-  emptyRack.removeTree();
+  EditionPool::sharedEditionPool()->execute(
+      [](void *subAction, const void *data) {
+        EditionReference::Push<BlockType::RackLayout>(0);
+      },
+      nullptr, nullptr, m_layoutBuffer.blocks());
   m_cursor = LayoutCursor(m_layoutBuffer.blocks(), node());
 }
 

@@ -62,6 +62,25 @@ void EditionPool::flush() {
   m_referenceTable.reset();
 }
 
+bool EditionPool::execute(ActionWithContext action, void * subAction, const void * data, void * address) {
+  ExceptionCheckpoint checkpoint;
+start_execute:
+  if (ExceptionRun(checkpoint)) {
+    assert(numberOfTrees() == 0);
+    action(subAction, data);
+    // Prevent edition action from leaking: an action create at most one tree
+    assert(numberOfTrees() <= 1);
+    Node(firstBlock()).copyTreeTo(address);
+    flush();
+    return true;
+  } else {
+    if (!CachePool::sharedCachePool()->needFreeBlocks(fullSize() * 2)) {
+      return false;
+    }
+    goto start_execute;
+  }
+}
+
 Block * EditionPool::pushBlock(Block block) {
   if (!checkForEnoughSpace(1)) {
     return nullptr;

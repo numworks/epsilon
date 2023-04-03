@@ -56,18 +56,13 @@ const char* TabViewController::ContentView::className() const {
 TabViewController::TabViewController(Responder* parentResponder,
                                      TabViewDataSource* dataSource,
                                      ViewController* one, ViewController* two,
-                                     ViewController* three,
-                                     ViewController* four)
+                                     ViewController* three)
     : ViewController(parentResponder),
       m_dataSource(dataSource),
       m_isSelected(false) {
-  // assert(one != nullptr);
-  // assert(two != nullptr || (three == nullptr && four == nullptr));
-  // assert(three != nullptr || four == nullptr);
   m_children[0] = one;
   m_children[1] = two;
   m_children[2] = three;
-  m_children[3] = four;
 
   m_numberOfChildren = 0;
   while (m_numberOfChildren < k_maxNumberOfChildren &&

@@ -19,6 +19,9 @@ struct remove_reference<T&&> {
   typedef T type;
 };
 
+template <class T1, class T2>
+inline constexpr bool is_same_v = is_same<T1, T2>::value;
+
 }  // namespace std
 
 #endif

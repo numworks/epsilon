@@ -12,7 +12,7 @@ class TextView : public GlyphsView {
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
-  virtual const char* text() const = 0;
+  const char* text() const override = 0;  // Must implement
   virtual void setText(const char* text) = 0;
 
 #if ESCHER_VIEW_LOGGING

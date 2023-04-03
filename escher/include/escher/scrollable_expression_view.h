@@ -18,7 +18,7 @@ class ScrollableExpressionView
                            KDCoordinate topBottomMargin,
                            KDGlyph::Format format = {});
   ScrollableExpressionView(KDGlyph::Format format = {});
-  Poincare::Layout layout() const;
+  Poincare::Layout layout() const override;
   KDFont::Size font() const { return m_expressionView.font(); }
   void setFont(KDFont::Size font) {
     m_expressionView.setFont(font);

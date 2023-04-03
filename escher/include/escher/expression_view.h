@@ -18,7 +18,7 @@ class ExpressionView : public GlyphsView {
   ExpressionView(KDGlyph::Format format = {})
       : GlyphsView(format), m_horizontalMargin(0) {}
 
-  Poincare::Layout layout() const { return m_layout; }
+  Poincare::Layout layout() const override { return m_layout; }
   bool setLayout(Poincare::Layout layout);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 

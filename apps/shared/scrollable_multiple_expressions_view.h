@@ -41,7 +41,7 @@ class AbstractScrollableMultipleExpressionsView
   }
   void reloadScroll();
   bool handleEvent(Ion::Events::Event event) override;
-  Poincare::Layout layout() const { return contentCell()->layout(); }
+  Poincare::Layout layout() const override { return contentCell()->layout(); }
   Poincare::Layout layoutAtPosition(SubviewPosition position) const {
     return contentCell()->layoutAtPosition(position);
   }

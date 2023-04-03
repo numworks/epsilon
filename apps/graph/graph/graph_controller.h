@@ -40,6 +40,14 @@ class GraphController : public Shared::FunctionGraphController,
       bool computeX, bool computeY,
       Poincare::Range2D originalRange) const override;
 
+  // TextFieldDelegate
+  bool textFieldIsEditable(Escher::AbstractTextField *) override {
+    return !functionStore()
+                ->modelForRecord(recordAtSelectedCurveIndex())
+                ->properties()
+                .isScatterPlot();
+  }
+
   bool displayDerivativeInBanner() const;
   PointsOfInterestCache *pointsOfInterestForRecord(Ion::Storage::Record record);
   PointsOfInterestCache *pointsOfInterestForSelectedRecord() {

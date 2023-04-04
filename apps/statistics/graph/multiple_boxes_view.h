@@ -5,13 +5,14 @@
 #include "box_axis_view.h"
 #include "box_banner_view.h"
 #include "box_view.h"
+#include "data_view_controller.h"
 #include "multiple_data_view.h"
 
 namespace Statistics {
 
 class MultipleBoxesView : public MultipleDataView {
  public:
-  MultipleBoxesView(Store* store, int* selectedBoxCalculation);
+  MultipleBoxesView(Store* store, DataViewController* dataViewController);
   // MultipleDataView
   BoxBannerView* bannerView() override { return &m_bannerView; }
   BoxView* plotViewForSeries(int series) override;

@@ -65,10 +65,10 @@ class PlotController : public DataViewController {
   bool reloadBannerView() override;
   void updateHorizontalIndexAfterSelectingNewSeries(
       int previousSelectedSeries) override {
-    m_selectedIndex =
-        std::floor(totalValues(m_selectedSeries) *
-                   (static_cast<double>(m_selectedIndex) /
-                    static_cast<double>(totalValues(previousSelectedSeries))));
+    setSelectedIndex(
+        std::floor(totalValues(selectedSeries()) *
+                   (static_cast<double>(selectedIndex()) /
+                    static_cast<double>(totalValues(previousSelectedSeries)))));
   }
 
   virtual PlotBannerView *bannerView() = 0;

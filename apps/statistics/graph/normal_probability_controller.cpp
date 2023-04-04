@@ -35,7 +35,7 @@ bool NormalProbabilityController::drawSeriesZScoreLine(int series, float *x,
 
 void NormalProbabilityController::moveCursorToSelectedIndex() {
   m_cursorView.setColor(
-      Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
+      Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()));
   PlotController::moveCursorToSelectedIndex();
 }
 
@@ -53,12 +53,12 @@ void NormalProbabilityController::reloadValueInBanner(
 
 bool NormalProbabilityController::moveSelectionHorizontally(
     OMG::HorizontalDirection direction) {
-  assert(m_selectedSeries >= 0);
+  assert(selectedSeries() >= 0);
   int nextIndex =
-      SanitizeIndex(m_selectedIndex + (direction.isRight() ? 1 : -1),
-                    totalValues(m_selectedSeries));
-  if (nextIndex != m_selectedIndex) {
-    m_selectedIndex = nextIndex;
+      SanitizeIndex(selectedIndex() + (direction.isRight() ? 1 : -1),
+                    totalValues(selectedSeries()));
+  if (nextIndex != selectedIndex()) {
+    setSelectedIndex(nextIndex);
     moveCursorToSelectedIndex();
     return true;
   }

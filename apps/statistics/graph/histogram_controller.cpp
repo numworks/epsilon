@@ -72,13 +72,13 @@ void HistogramController::viewWillAppearBeforeReload() {
 
 void HistogramController::highlightSelection() {
   HistogramView *selectedHistogramView =
-      static_cast<HistogramView *>(m_view.plotViewForSeries(m_selectedSeries));
+      static_cast<HistogramView *>(m_view.plotViewForSeries(selectedSeries()));
   selectedHistogramView->setHighlight(
-      m_store->startOfBarAtIndex(m_selectedSeries, m_selectedIndex),
-      m_store->endOfBarAtIndex(m_selectedSeries, m_selectedIndex));
+      m_store->startOfBarAtIndex(selectedSeries(), selectedIndex()),
+      m_store->endOfBarAtIndex(selectedSeries(), selectedIndex()));
   // if the selectedBar was outside of range, we need to scroll
-  if (m_histogramRange.scrollToSelectedBarIndex(m_selectedSeries,
-                                                m_selectedIndex)) {
+  if (m_histogramRange.scrollToSelectedBarIndex(selectedSeries(),
+                                                selectedIndex())) {
     multipleDataView()->reload();
   }
 }
@@ -97,7 +97,7 @@ static bool fillBufferWithIntervalFormula(
 }
 
 bool HistogramController::reloadBannerView() {
-  if (m_selectedSeries < 0) {
+  if (selectedSeries() < 0) {
     return false;
   }
   KDCoordinate previousHeight =
@@ -111,14 +111,14 @@ bool HistogramController::reloadBannerView() {
   char buffer[k_bufferSize] = "";
 
   // Display series name
-  StoreController::FillSeriesName(m_selectedSeries, buffer, false);
+  StoreController::FillSeriesName(selectedSeries(), buffer, false);
   m_view.bannerView()->seriesName()->setText(buffer);
 
   // Display interval
   double lowerBound =
-      m_store->startOfBarAtIndex(m_selectedSeries, m_selectedIndex);
+      m_store->startOfBarAtIndex(selectedSeries(), selectedIndex());
   double upperBound =
-      m_store->endOfBarAtIndex(m_selectedSeries, m_selectedIndex);
+      m_store->endOfBarAtIndex(selectedSeries(), selectedIndex());
   /* In a worst case scenario, the bounds of the interval can be displayed
    * with 5 significant digits:
    * "Intervalle : [-1.2345ᴇ-123;-1.2345ᴇ-123[\0" is 45 chars, compared to
@@ -138,7 +138,7 @@ bool HistogramController::reloadBannerView() {
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Display frequency
-  double size = m_store->heightOfBarAtIndex(m_selectedSeries, m_selectedIndex);
+  double size = m_store->heightOfBarAtIndex(selectedSeries(), selectedIndex());
   Poincare::Print::CustomPrintf(buffer, k_bufferSize, "%s%s%*.*ed",
                                 I18n::translate(I18n::Message::Frequency),
                                 I18n::translate(I18n::Message::ColonConvention),
@@ -146,7 +146,7 @@ bool HistogramController::reloadBannerView() {
   m_view.bannerView()->frequencyView()->setText(buffer);
 
   // Display relative frequency
-  double relativeFrequency = size / m_store->sumOfOccurrences(m_selectedSeries);
+  double relativeFrequency = size / m_store->sumOfOccurrences(selectedSeries());
   Poincare::Print::CustomPrintf(
       buffer, k_bufferSize, "%s%s%*.*ed",
       I18n::translate(I18n::Message::RelativeFrequency),
@@ -161,17 +161,17 @@ bool HistogramController::reloadBannerView() {
 
 bool HistogramController::moveSelectionHorizontally(
     OMG::HorizontalDirection direction) {
-  int numberOfBars = m_store->numberOfBars(m_selectedSeries);
-  int newSelectedBarIndex = m_selectedIndex;
+  int numberOfBars = m_store->numberOfBars(selectedSeries());
+  int newSelectedBarIndex = selectedIndex();
   do {
     newSelectedBarIndex += direction.isRight() ? 1 : -1;
-  } while (m_store->heightOfBarAtIndex(m_selectedSeries, newSelectedBarIndex) ==
+  } while (m_store->heightOfBarAtIndex(selectedSeries(), newSelectedBarIndex) ==
                0 &&
            newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars);
 
   if (newSelectedBarIndex >= 0 && newSelectedBarIndex < numberOfBars &&
-      m_selectedIndex != newSelectedBarIndex) {
-    m_selectedIndex = newSelectedBarIndex;
+      selectedIndex() != newSelectedBarIndex) {
+    setSelectedIndex(newSelectedBarIndex);
     highlightSelection();
     return true;
   }
@@ -203,7 +203,7 @@ void HistogramController::preinitXRangeParameters(double *xMin, double *xMax) {
 }
 
 void HistogramController::initRangeParameters() {
-  assert(activeSeriesMethod()(m_store, m_selectedSeries));
+  assert(activeSeriesMethod()(m_store, selectedSeries()));
   double barWidth = m_store->barWidth();
   double xMin;
   preinitXRangeParameters(&xMin);
@@ -217,7 +217,7 @@ void HistogramController::initRangeParameters() {
   m_histogramRange.setHistogramXMax(
       xMax + HistogramRange::k_displayRightMarginRatio * (xMax - xMin), true);
 
-  initYRangeParameters(m_selectedSeries);
+  initYRangeParameters(selectedSeries());
 }
 
 void HistogramController::initYRangeParameters(int series) {
@@ -244,7 +244,7 @@ void HistogramController::initYRangeParameters(int series) {
 }
 
 void HistogramController::initBarParameters() {
-  assert(activeSeriesMethod()(m_store, m_selectedSeries));
+  assert(activeSeriesMethod()(m_store, selectedSeries()));
   double xMin;
   double xMax;
   preinitXRangeParameters(&xMin, &xMax);
@@ -287,28 +287,28 @@ void HistogramController::initBarParameters() {
 }
 
 void HistogramController::sanitizeSelectedIndex() {
-  assert(activeSeriesMethod()(m_store, m_selectedSeries));
-  if (m_store->heightOfBarAtIndex(m_selectedSeries, m_selectedIndex) != 0) {
+  assert(activeSeriesMethod()(m_store, selectedSeries()));
+  if (m_store->heightOfBarAtIndex(selectedSeries(), selectedIndex()) != 0) {
     return;
   }
-  int numberOfBars = m_store->numberOfBars(m_selectedSeries);
-  int previousIndex = m_selectedIndex;
+  int numberOfBars = m_store->numberOfBars(selectedSeries());
+  int previousIndex = selectedIndex();
   // search a bar with non null height left of the selected one
-  while (m_store->heightOfBarAtIndex(m_selectedSeries, m_selectedIndex) == 0 &&
-         m_selectedIndex >= 0) {
-    m_selectedIndex--;
+  while (m_store->heightOfBarAtIndex(selectedSeries(), selectedIndex()) == 0 &&
+         selectedIndex() >= 0) {
+    setSelectedIndex(selectedIndex() - 1);
   }
-  if (m_selectedIndex < 0) {
+  if (selectedIndex() < 0) {
     // search a bar with non null height right of the selected one
-    m_selectedIndex = previousIndex + 1;
-    while (m_store->heightOfBarAtIndex(m_selectedSeries, m_selectedIndex) ==
+    setSelectedIndex(previousIndex + 1);
+    while (m_store->heightOfBarAtIndex(selectedSeries(), selectedIndex()) ==
                0 &&
-           m_selectedIndex < numberOfBars) {
-      m_selectedIndex++;
+           selectedIndex() < numberOfBars) {
+      setSelectedIndex(selectedIndex() + 1);
     }
   }
-  assert(m_selectedIndex < numberOfBars);
-  m_histogramRange.scrollToSelectedBarIndex(m_selectedSeries, m_selectedIndex);
+  assert(selectedIndex() < numberOfBars);
+  m_histogramRange.scrollToSelectedBarIndex(selectedSeries(), selectedIndex());
 }
 
 void HistogramController::updateHorizontalIndexAfterSelectingNewSeries(
@@ -343,11 +343,12 @@ void HistogramController::updateHorizontalIndexAfterSelectingNewSeries(
    * */
   double startDifference =
       m_store->startOfBarAtIndex(previousSelectedSeries, 0) -
-      m_store->startOfBarAtIndex(m_selectedSeries, 0);
-  m_selectedIndex += static_cast<int>(startDifference / m_store->barWidth());
-  m_selectedIndex = std::max(
-      std::min(m_selectedIndex, m_store->numberOfBars(m_selectedSeries) - 1),
-      0);
+      m_store->startOfBarAtIndex(selectedSeries(), 0);
+  setSelectedIndex(selectedIndex() +
+                   static_cast<int>(startDifference / m_store->barWidth()));
+  setSelectedIndex(std::max(
+      std::min(selectedIndex(), m_store->numberOfBars(selectedSeries()) - 1),
+      0));
   sanitizeSelectedIndex();
 }
 

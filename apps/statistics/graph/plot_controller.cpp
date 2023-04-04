@@ -22,8 +22,8 @@ PlotController::PlotController(Escher::Responder *parentResponder,
       m_curveView(&m_graphRange, &m_cursor, nullptr, this) {}
 
 void PlotController::moveCursorToSelectedIndex() {
-  double x = valueAtIndex(m_selectedSeries, m_selectedIndex);
-  double y = resultAtIndex(m_selectedSeries, m_selectedIndex);
+  double x = valueAtIndex(selectedSeries(), selectedIndex());
+  double y = resultAtIndex(selectedSeries(), selectedIndex());
   m_cursor.moveTo(x, x, y);
   m_curveView.reload();
 }
@@ -31,15 +31,15 @@ void PlotController::moveCursorToSelectedIndex() {
 void PlotController::viewWillAppearBeforeReload() {
   computeRanges(bannerView()->bounds().height());
   // Sanitize m_selectedBarIndex and cursor's position
-  m_selectedIndex =
-      SanitizeIndex(m_selectedIndex, totalValues(m_selectedSeries));
+  setSelectedIndex(
+      SanitizeIndex(selectedIndex(), totalValues(selectedSeries())));
   moveCursorToSelectedIndex();
 }
 
 bool PlotController::moveSelectionVertically(OMG::VerticalDirection direction) {
-  int previousSeries = m_selectedSeries;
+  int previousSeries = selectedSeries();
   bool result = DataViewController::moveSelectionVertically(direction);
-  if (result && previousSeries != m_selectedSeries) {
+  if (result && previousSeries != selectedSeries()) {
     // Cursor has been moved into another curve, cursor must be switched
     moveCursorToSelectedIndex();
     // Reload to draw selected curve on top
@@ -49,7 +49,7 @@ bool PlotController::moveSelectionVertically(OMG::VerticalDirection direction) {
 }
 
 bool PlotController::reloadBannerView() {
-  if (m_selectedSeries < 0) {
+  if (selectedSeries() < 0) {
     return false;
   }
   KDCoordinate previousHeight =
@@ -64,7 +64,7 @@ bool PlotController::reloadBannerView() {
   char buffer[k_bufferSize] = "";
 
   // Display series name
-  StoreController::FillSeriesName(m_selectedSeries, buffer, false);
+  StoreController::FillSeriesName(selectedSeries(), buffer, false);
   bannerView()->seriesName()->setText(buffer);
 
   // Display selected value

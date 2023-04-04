@@ -60,7 +60,7 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView *plotView, KDContext *ctx,
   for (int i = 0; i < myNumberOfBoxPlotCalculations; i++) {
     KDColor calculationColor = k_unfocusedColor;
     if (plotView->hasFocus()) {
-      if (i == *m_selectedBoxCalculation) {
+      if (i == m_dataViewController->selectedIndex()) {
         continue;
       }
       calculationColor = DoublePairStore::colorOfSeriesAtIndex(m_series);
@@ -70,8 +70,8 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView *plotView, KDContext *ctx,
   }
   // Draw the selected calculation afterward, preventing it being overwritten.
   if (plotView->hasFocus()) {
-    drawCalculation(plotView, ctx, rect, *m_selectedBoxCalculation, lowBound,
-                    upBound, segmentOrd, k_selectedColor, true);
+    drawCalculation(plotView, ctx, rect, m_dataViewController->selectedIndex(),
+                    lowBound, upBound, segmentOrd, k_selectedColor, true);
   }
 }
 
@@ -162,12 +162,13 @@ void BoxPlotPolicy::drawChevron(const AbstractPlotView *plotView,
 
 // BoxView
 
-BoxView::BoxView(Store *store, int series, int *selectedBoxCalculation)
+BoxView::BoxView(Store *store, int series,
+                 DataViewController *dataViewController)
     : PlotView(&m_boxRange), m_boxRange(store) {
   // BoxPlotPolicy
   m_store = store;
   m_series = series;
-  m_selectedBoxCalculation = selectedBoxCalculation;
+  m_dataViewController = dataViewController;
 }
 
 void BoxView::reload(bool resetInterruption, bool force) {
@@ -176,8 +177,8 @@ void BoxView::reload(bool resetInterruption, bool force) {
 }
 
 KDRect BoxView::selectedCalculationRect() const {
-  float calculation =
-      m_store->boxPlotCalculationAtIndex(m_series, *m_selectedBoxCalculation);
+  float calculation = m_store->boxPlotCalculationAtIndex(
+      m_series, m_dataViewController->selectedIndex());
   KDCoordinate minX =
       floatToKDCoordinatePixel(Axis::Horizontal, calculation) - k_leftSideSize;
   KDCoordinate width = k_leftSideSize + k_rightSideSize;
@@ -190,14 +191,15 @@ KDRect BoxView::selectedCalculationRect() const {
 
 bool BoxView::canIncrementSelectedCalculation(int deltaIndex) const {
   assert(deltaIndex != 0);
-  return *m_selectedBoxCalculation + deltaIndex >= 0 &&
-         *m_selectedBoxCalculation + deltaIndex <
+  return m_dataViewController->selectedIndex() + deltaIndex >= 0 &&
+         m_dataViewController->selectedIndex() + deltaIndex <
              m_store->numberOfBoxPlotCalculations(m_series);
 }
 
 void BoxView::incrementSelectedCalculation(int deltaIndex) {
   assert(canIncrementSelectedCalculation(deltaIndex));
-  *m_selectedBoxCalculation += deltaIndex;
+  m_dataViewController->setSelectedIndex(m_dataViewController->selectedIndex() +
+                                         deltaIndex);
 }
 
 KDRect BoxView::rectToReload() {

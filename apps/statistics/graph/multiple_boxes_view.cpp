@@ -7,11 +7,12 @@ using namespace Escher;
 
 namespace Statistics {
 
-MultipleBoxesView::MultipleBoxesView(Store* store, int* selectedBoxCalculation)
+MultipleBoxesView::MultipleBoxesView(Store* store,
+                                     DataViewController* dataViewController)
     : MultipleDataView(store),
-      m_boxView1(store, 0, selectedBoxCalculation),
-      m_boxView2(store, 1, selectedBoxCalculation),
-      m_boxView3(store, 2, selectedBoxCalculation),
+      m_boxView1(store, 0, dataViewController),
+      m_boxView2(store, 1, dataViewController),
+      m_boxView3(store, 2, dataViewController),
       m_axisView(store) {
   static_assert(MultipleBoxesView::BoxToBoxMargin(2) >=
                         BoxPlotPolicy::BoxVerticalMargin() &&

@@ -21,7 +21,10 @@ I18n::Message App::Descriptor::upperName() const {
 
 const Image *App::Descriptor::icon() const { return ImageStore::StatIcon; }
 
-App::Snapshot::Snapshot() : m_storeVersion(0) {
+App::Snapshot::Snapshot()
+    : m_storeVersion(0),
+      m_selectedSeries(-1),
+      m_selectedIndex(DataView::k_defaultSelectedIndex) {
   // Register V1, V2, V3, N1, N2, N3 as reserved names to the sharedStorage.
   static_assert(std::size(DoublePairStore::k_statisticsColumNames) == 2,
                 "Number of reserved lists in statistics changed.");

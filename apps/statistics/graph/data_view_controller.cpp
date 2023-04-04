@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <escher/container.h>
 
+#include "../app.h"
+
 namespace Statistics {
 
 DataViewController::DataViewController(
@@ -15,17 +17,31 @@ DataViewController::DataViewController(
       GraphButtonRowDelegate(header, stackViewController, this,
                              typeViewController),
       m_store(store),
-      m_selectedSeries(-1),
-      m_selectedIndex(DataView::k_defaultSelectedIndex),
       m_tabController(tabController) {
   assert(numberOfButtons(Escher::ButtonRowController::Position::Top) > 0);
+}
+
+int DataViewController::selectedSeries() const {
+  return *App::app()->snapshot()->selectedSeries();
+}
+
+void DataViewController::setSelectedSeries(int selectedSeries) {
+  *App::app()->snapshot()->selectedSeries() = selectedSeries;
+}
+
+int DataViewController::selectedIndex() const {
+  return *App::app()->snapshot()->selectedIndex();
+}
+
+void DataViewController::setSelectedIndex(int selectedIndex) {
+  *App::app()->snapshot()->selectedIndex() = selectedIndex;
 }
 
 void DataViewController::viewWillAppear() {
   ViewController::viewWillAppear();
   sanitizeSeriesIndex();
   dataView()->setDisplayBanner(true);
-  dataView()->selectViewForSeries(m_selectedSeries);
+  dataView()->selectViewForSeries(selectedSeries());
   highlightSelection();
 
   /* Call children's viewWillAppear implementation after sanitizing selected
@@ -50,7 +66,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
       header()->setSelectedButton(-1);
       Escher::Container::activeApp()->setFirstResponder(this);
       dataView()->setDisplayBanner(true);
-      dataView()->selectViewForSeries(m_selectedSeries);
+      dataView()->selectViewForSeries(selectedSeries());
       highlightSelection();
       reloadBannerView();
       return true;
@@ -59,7 +75,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
                          Escher::ButtonRowController::Position::Top)
         ->handleEvent(event);
   }
-  assert(m_selectedSeries >= 0 &&
+  assert(selectedSeries() >= 0 &&
          m_store->hasActiveSeries(activeSeriesMethod()));
   bool isVerticalEvent =
       (event == Ion::Events::Down || event == Ion::Events::Up);
@@ -78,12 +94,12 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
 
 void DataViewController::didEnterResponderChain(Responder* firstResponder) {
   if (!m_store->hasActiveSeries(activeSeriesMethod()) ||
-      !dataView()->plotViewForSeries(m_selectedSeries)->hasFocus()) {
+      !dataView()->plotViewForSeries(selectedSeries())->hasFocus()) {
     header()->setSelectedButton(0);
   } else {
-    assert(activeSeriesMethod()(m_store, m_selectedSeries));
+    assert(activeSeriesMethod()(m_store, selectedSeries()));
     dataView()->setDisplayBanner(true);
-    dataView()->selectViewForSeries(m_selectedSeries);
+    dataView()->selectViewForSeries(selectedSeries());
     highlightSelection();
   }
 }
@@ -94,20 +110,20 @@ void DataViewController::willExitResponderChain(Responder* nextFirstResponder) {
     if (header()->selectedButton() >= 0) {
       header()->setSelectedButton(-1);
     } else if (m_store->hasActiveSeries(activeSeriesMethod())) {
-      assert(m_selectedSeries >= 0);
-      dataView()->deselectViewForSeries(m_selectedSeries);
+      assert(selectedSeries() >= 0);
+      dataView()->deselectViewForSeries(selectedSeries());
       dataView()->setDisplayBanner(false);
     }
   }
 }
 
 void DataViewController::sanitizeSeriesIndex() {
-  // Sanitize m_selectedSeries
-  if (m_selectedSeries < 0 ||
-      !activeSeriesMethod()(m_store, m_selectedSeries)) {
+  // Sanitize selectedSeries()
+  if (selectedSeries() < 0 ||
+      !activeSeriesMethod()(m_store, selectedSeries())) {
     for (int series = 0; series < Store::k_numberOfSeries; series++) {
       if (activeSeriesMethod()(m_store, series)) {
-        m_selectedSeries = series;
+        setSelectedSeries(series);
         return;
       }
     }
@@ -122,16 +138,16 @@ bool DataViewController::moveSelectionVertically(
       m_store->numberOfActiveSeries(activeSeriesMethod())) {
     return false;
   }
-  dataView()->deselectViewForSeries(m_selectedSeries);
+  dataView()->deselectViewForSeries(selectedSeries());
   if (nextSelectedSubview < 0) {
     dataView()->setDisplayBanner(false);
     header()->setSelectedButton(0);
   } else {
-    int previousSelectedSeries = m_selectedSeries;
-    m_selectedSeries = m_store->seriesIndexFromActiveSeriesIndex(
-        nextSelectedSubview, activeSeriesMethod());
+    int previousSelectedSeries = selectedSeries();
+    setSelectedSeries(m_store->seriesIndexFromActiveSeriesIndex(
+        nextSelectedSubview, activeSeriesMethod()));
     updateHorizontalIndexAfterSelectingNewSeries(previousSelectedSeries);
-    dataView()->selectViewForSeries(m_selectedSeries);
+    dataView()->selectViewForSeries(selectedSeries());
     highlightSelection();
   }
   return true;

@@ -30,7 +30,10 @@ class DataViewController : public Escher::ViewController,
       Escher::Responder* previousFirstResponder) override;
   void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
 
-  int selectedSeries() const { return m_selectedSeries; }
+  int selectedSeries() const;
+  void setSelectedSeries(int selectedSeries);
+  int selectedIndex() const;
+  void setSelectedIndex(int selectedIndex);
 
  protected:
   /* Some DataViewController implementations may have a stricter condition.
@@ -52,7 +55,7 @@ class DataViewController : public Escher::ViewController,
 
   virtual int nextSubviewWhenMovingVertically(
       OMG::VerticalDirection direction) const {
-    return m_store->activeSeriesIndexFromSeriesIndex(m_selectedSeries,
+    return m_store->activeSeriesIndexFromSeriesIndex(selectedSeries(),
                                                      activeSeriesMethod()) +
            (direction.isUp() ? -1 : 1);
   }
@@ -60,8 +63,6 @@ class DataViewController : public Escher::ViewController,
       int previousSelectedSeries) = 0;
 
   Store* m_store;
-  int m_selectedSeries;
-  int m_selectedIndex;
 
  private:
   Escher::TabViewController* m_tabController;

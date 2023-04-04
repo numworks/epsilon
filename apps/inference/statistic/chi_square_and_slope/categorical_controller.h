@@ -12,6 +12,7 @@
 #include "inference/models/statistic/chi2_test.h"
 #include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
 #include "inference/statistic/chi_square_and_slope/dynamic_size_table_view_data_source.h"
+#include "inference/statistic/chi_square_and_slope/input_categorical_cell.h"
 
 namespace Inference {
 
@@ -120,9 +121,7 @@ class InputCategoricalController
   }
 
   Statistic* m_statistic;
-  Escher::MenuCellWithEditableText<Escher::MessageTextView,
-                                   Escher::MessageTextView>
-      m_significanceCell;
+  InputCategoricalCell m_significanceCell;
 };
 
 }  // namespace Inference

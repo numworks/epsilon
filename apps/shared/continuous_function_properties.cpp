@@ -226,7 +226,9 @@ void ContinuousFunctionProperties::update(
     }
 
     if (precomputedFunctionSymbol == SymbolType::NoSymbol) {
-      setCaption(I18n::Message::Default);  // TODO
+      setCaption(analyzedExpression.type() == ExpressionNode::Type::Point
+                     ? I18n::Message::PointType
+                     : I18n::Message::ListOfPointsType);
       setCurveParameterType(CurveParameterType::ScatterPlot);
       return;
     }

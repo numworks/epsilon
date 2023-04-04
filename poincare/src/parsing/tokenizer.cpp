@@ -5,6 +5,25 @@
 
 namespace Poincare {
 
+bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
+  /* TODO: It would be better to have a tokenizer working with any
+   * UnicodeDecoder, rather than having to print it in a buffer. */
+  char buffer[SymbolAbstractNode::k_maxNameSize];
+  size_t charLength =
+      decoder.printInBuffer(buffer, SymbolAbstractNode::k_maxNameSize, length);
+  if (charLength == 0) {
+    return false;
+  }
+  ParsingContext pContext(nullptr, ParsingContext::ParsingMethod::Assignment);
+  Tokenizer tokenizer(buffer, &pContext);
+  Token t = tokenizer.popToken();
+  if (t.type() != Token::Type::CustomIdentifier || t.length() != charLength ||
+      !SymbolAbstractNode::NameLengthIsValid(t.text(), t.length())) {
+    return false;
+  }
+  return true;
+}
+
 const CodePoint Tokenizer::nextCodePoint(PopTest popTest, bool* testResult) {
   CodePoint c = m_decoder.nextCodePoint();
   bool shouldPop = popTest(c);

@@ -64,11 +64,11 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Down &&
         m_store->hasActiveSeries(activeSeriesMethod())) {
       header()->setSelectedButton(-1);
-      Escher::Container::activeApp()->setFirstResponder(this);
       dataView()->setDisplayBanner(true);
       dataView()->selectViewForSeries(selectedSeries());
       highlightSelection();
       reloadBannerView();
+      Escher::Container::activeApp()->setFirstResponder(this);
       return true;
     }
     return buttonAtIndex(selectedButton,

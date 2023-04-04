@@ -94,14 +94,13 @@ void TrigonometryListController::setExpression(Expression e) {
   m_approximatedLayouts[index] = getLayoutFromExpression(
       UnitConvert::Builder(withAngleUnit.clone(), degrees), context,
       preferences);
-  index++;
 
   Expression theta = Symbol::Builder(k_symbol);
-  setLineAtIndex(index++, Cosine::Builder(theta), Cosine::Builder(e.clone()),
+  setLineAtIndex(++index, Cosine::Builder(theta), Cosine::Builder(e.clone()),
                  context, preferences);
-  setLineAtIndex(index++, Sine::Builder(theta), Sine::Builder(e.clone()),
+  setLineAtIndex(++index, Sine::Builder(theta), Sine::Builder(e.clone()),
                  context, preferences);
-  setLineAtIndex(index++, Tangent::Builder(theta), Tangent::Builder(e.clone()),
+  setLineAtIndex(++index, Tangent::Builder(theta), Tangent::Builder(e.clone()),
                  context, preferences);
 
   // Set illustration

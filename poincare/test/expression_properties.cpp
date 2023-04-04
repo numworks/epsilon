@@ -951,6 +951,25 @@ QUIZ_CASE(poincare_expression_children_list_length) {
                                     Expression::k_mismatchedLists);
 }
 
+void assert_is_list_of_points(const char* definition, bool truth = true) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(definition, &globalContext, false);
+  quiz_assert_print_if_failure(
+      e.type() == ExpressionNode::Type::List &&
+          static_cast<List&>(e).isListOfPoints(&globalContext) == truth,
+      definition);
+}
+
+QUIZ_CASE(poincare_expression_list_of_points) {
+  assert_is_list_of_points("{}");
+  assert_is_list_of_points("{(1,2)}");
+  assert_is_list_of_points("{(1,-2),(-3.4,5.6)}");
+
+  assert_is_list_of_points("{1,2,3}", false);
+  assert_is_list_of_points("{(1,2),3}", false);
+  assert_is_list_of_points("{(1,2),3,(4,5)}", false);
+}
+
 void assert_is_continuous_between_values(const char* expression, float x1,
                                          float x2, bool isContinuous) {
   Shared::GlobalContext context;

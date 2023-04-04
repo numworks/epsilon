@@ -69,10 +69,10 @@ void TrigonometryListController::setExpression(Expression e) {
           preferences);
     }
     e = angleApproximate;
-    m_anglesAreEqual = false;
+    m_isStrictlyEqual[index] = false;
   } else {
     e = simplifiedAngle;
-    m_anglesAreEqual = true;
+    m_isStrictlyEqual[index] = true;
   }
 
   m_layouts[index] = LayoutHelper::String("θ");
@@ -98,10 +98,13 @@ void TrigonometryListController::setExpression(Expression e) {
   Expression theta = Symbol::Builder(k_symbol);
   setLineAtIndex(++index, Cosine::Builder(theta), Cosine::Builder(e.clone()),
                  context, preferences);
+  updateIsStrictlyEqualAtIndex(index, context);
   setLineAtIndex(++index, Sine::Builder(theta), Sine::Builder(e.clone()),
                  context, preferences);
+  updateIsStrictlyEqualAtIndex(index, context);
   setLineAtIndex(++index, Tangent::Builder(theta), Tangent::Builder(e.clone()),
                  context, preferences);
+  updateIsStrictlyEqualAtIndex(index, context);
 
   // Set illustration
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(e, context);
@@ -112,12 +115,29 @@ void TrigonometryListController::setExpression(Expression e) {
   setShowIllustration(true);
 }
 
+void TrigonometryListController::updateIsStrictlyEqualAtIndex(
+    int index, Context* context) {
+  char exactBuffer[::Constant::MaxSerializedExpressionSize];
+  char approximateBuffer[::Constant::MaxSerializedExpressionSize];
+  m_exactLayouts[index].serializeForParsing(
+      exactBuffer, ::Constant::MaxSerializedExpressionSize);
+  m_approximatedLayouts[index].serializeForParsing(
+      approximateBuffer, ::Constant::MaxSerializedExpressionSize);
+  assert(strcmp(exactBuffer, approximateBuffer) != 0);
+  m_isStrictlyEqual[index] = Expression::ExactAndApproximateExpressionsAreEqual(
+      Expression::Parse(exactBuffer, context),
+      Expression::Parse(approximateBuffer, context));
+}
+
 void TrigonometryListController::willDisplayCellForIndex(
     Escher::HighlightCell* cell, int index) {
-  if (index == 1) {
+  if (typeAtIndex(index) == k_expressionCellType) {
+    int expressionIndex = index - reusableCellCount(k_illustrationCellType);
+    assert(0 <= expressionIndex && expressionIndex < k_numberOfExpressionRows);
     static_cast<AdditionnalResultCell*>(cell)
         ->label()
-        ->setExactAndApproximateAreStriclyEqual(m_anglesAreEqual);
+        ->setExactAndApproximateAreStriclyEqual(
+            m_isStrictlyEqual[expressionIndex]);
   }
   return IllustratedExpressionsListController::willDisplayCellForIndex(cell,
                                                                        index);

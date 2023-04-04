@@ -206,25 +206,32 @@ bool FunctionGraphController::moveCursorVertically(
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
   Poincare::Context *context = textFieldDelegateApp()->localContext();
   int nextSubCurve = 0;
-  int nextActiveFunctionIndex =
+  int nextFunction =
       nextCurveIndexVertically(direction, currentActiveFunctionIndex, context,
                                m_selectedSubCurveIndex, &nextSubCurve);
-  if (nextActiveFunctionIndex < 0) {
+  if (nextFunction < 0) {
     return false;
   }
+
+  moveCursorVerticallyToPosition(nextFunction, nextSubCurve, m_cursor->t());
+  return true;
+}
+
+void FunctionGraphController::moveCursorVerticallyToPosition(int nextFunction,
+                                                             int nextSubCurve,
+                                                             double nextT) {
   // Clip the current t to the domain of the next function
-  ExpiringPointer<Function> f = functionStore()->modelForRecord(
-      recordAtCurveIndex(nextActiveFunctionIndex));
-  double clippedT = m_cursor->t();
+  ExpiringPointer<Function> f =
+      functionStore()->modelForRecord(recordAtCurveIndex(nextFunction));
   if (!std::isnan(f->tMin())) {
     assert(!std::isnan(f->tMax()));
-    clippedT =
-        std::min<double>(f->tMax(), std::max<double>(f->tMin(), clippedT));
+    nextT = std::min<double>(f->tMax(), std::max<double>(f->tMin(), nextT));
   }
+  Poincare::Context *context = textFieldDelegateApp()->localContext();
   Poincare::Coordinate2D<double> cursorPosition =
-      f->evaluateXYAtParameter(clippedT, context, nextSubCurve);
-  m_cursor->moveTo(clippedT, cursorPosition.x(), cursorPosition.y());
-  selectCurveAtIndex(nextActiveFunctionIndex, true);
+      f->evaluateXYAtParameter(nextT, context, nextSubCurve);
+  m_cursor->moveTo(nextT, cursorPosition.x(), cursorPosition.y());
+  selectCurveAtIndex(nextFunction, true);
   // Prevent the abscissaValue from edition if the function is along y
   Escher::Responder *responder = isAlongY(*m_selectedCurveIndex)
                                      ? static_cast<Responder *>(this)
@@ -233,7 +240,6 @@ bool FunctionGraphController::moveCursorVertically(
     Container::activeApp()->setFirstResponder(responder);
   }
   m_selectedSubCurveIndex = nextSubCurve;
-  return true;
 }
 
 bool FunctionGraphController::selectedModelIsValid() const {

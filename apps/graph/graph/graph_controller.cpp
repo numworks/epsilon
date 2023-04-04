@@ -394,18 +394,30 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
                                        bool ignoreMargins) {
   ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
-  if (function->properties().isScatterPlot()) {
-    // TODO Scan the plot to find a point on screen
-    return 0.;
-  }
   if (function->properties().isCartesian()) {
     return FunctionGraphController::defaultCursorT(record, ignoreMargins);
+  }
+
+  Poincare::Context *context = textFieldDelegateApp()->localContext();
+  if (function->properties().isScatterPlot()) {
+    Preferences::ComplexFormat complexFormat =
+        Preferences::sharedPreferences->complexFormat();
+    Preferences::AngleUnit angleUnit =
+        Preferences::sharedPreferences->angleUnit();
+    float t = 0;
+    for (Point p : function->iterateScatterPlot(context)) {
+      if (isCursorVisibleAtPosition(
+              p.approximate2D<float>(context, complexFormat, angleUnit),
+              ignoreMargins)) {
+        return t;
+      }
+      ++t;
+    }
   }
 
   assert(function->properties().isParametric() ||
          function->properties().isPolar() ||
          function->properties().isInversePolar());
-  Poincare::Context *context = textFieldDelegateApp()->localContext();
   float tMin = function->tMin(), tMax = function->tMax();
   float tRange = tMax - tMin;
   constexpr int numberOfRangeSubdivisions = 4;

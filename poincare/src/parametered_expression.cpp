@@ -5,6 +5,8 @@
 #include <poincare/variable_context.h>
 #include <string.h>
 
+#include "parsing/tokenizer.h"
+
 namespace Poincare {
 
 Expression ParameteredExpressionNode::replaceSymbolWithExpression(
@@ -113,10 +115,7 @@ bool ParameteredExpression::ParameterText(UnicodeDecoder& varDecoder,
         cursorLevel--;
         break;
       case ',':
-        if (cursorLevel == 0) {
-          variableFound = true;
-          c = varDecoder.nextCodePoint();
-        }
+        variableFound = cursorLevel == 0;
         break;
     }
   }
@@ -124,34 +123,26 @@ bool ParameteredExpression::ParameterText(UnicodeDecoder& varDecoder,
     return false;
   }
 
-  /* Skip whitespace at the beginning of the parameter name. */
-  while (c != UCodePointNull &&
-         (c == ' ' || c == UCodePointLeftSystemParenthesis)) {
+  size_t startOfVariable = varDecoder.position();
+  do {
     c = varDecoder.nextCodePoint();
-  }
-  size_t variableTextStart = varDecoder.previousGlyphPosition();
-  c = varDecoder.nextCodePoint();
-  while (c != UCodePointNull &&
-         (c.isDecimalDigit() || c.isLatinLetter() || c == '_')) {
+  } while (c != UCodePointNull && c != ',' && c != ')');
+  size_t endOfVariable = varDecoder.position();
+  varDecoder.unsafeSetPosition(startOfVariable);
+  do {
+    // Skip whitespaces
     c = varDecoder.nextCodePoint();
+  } while (c == ' ');
+  varDecoder.previousCodePoint();
+  startOfVariable = varDecoder.position();
+  size_t lengthOfVariable = endOfVariable - startOfVariable - 1;
+
+  if (!Tokenizer::CanBeCustomIdentifier(varDecoder, lengthOfVariable)) {
+    return false;
   }
-  size_t variableTextEnd = varDecoder.previousGlyphPosition();
-  c = varDecoder.nextCodePoint();
-  /* Skip whitespace at the end of the parameter name. */
-  while (c != UCodePointNull &&
-         (c == ' ' || c == UCodePointRightSystemParenthesis)) {
-    c = varDecoder.nextCodePoint();
-  }
-  if (c == UCodePointNull || c == ',' || c == ')') {
-    // Next character must be a ',', ')' or end of string
-    size_t length = variableTextEnd - variableTextStart;
-    if (length > 0) {
-      *parameterLength = length;
-      *parameterStart = variableTextStart;
-      return true;
-    }
-  }
-  return false;
+  *parameterLength = lengthOfVariable;
+  *parameterStart = startOfVariable;
+  return true;
 }
 
 bool ParameteredExpression::ParameterText(const char* text,

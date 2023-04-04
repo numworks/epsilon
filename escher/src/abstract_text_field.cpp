@@ -469,7 +469,6 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
                               &defaultXNTCodePoint)) {
     const char *parameterText;
     size_t parameterLength = bufferLength + 1;
-    decoder.unsafeSetPosition(reinterpret_cast<size_t>(cursorLocation()));
     if (Poincare::ParameteredExpression::ParameterText(
             decoder.stringPosition(), &parameterText, &parameterLength) &&
         bufferLength >= parameterLength) {

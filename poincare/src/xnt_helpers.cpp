@@ -104,7 +104,12 @@ bool FindXNTSymbol(UnicodeDecoder& functionDecoder, bool* defaultXNTHasChanged,
     c = functionDecoder.previousCodePoint();
     location = functionDecoder.position();
   }
-
+  if (functionFound) {
+    // Put decoder at the beginning of the argument
+    c = functionDecoder.nextCodePoint();
+    c = functionDecoder.nextCodePoint();
+    assert(c == '(');
+  }
   return functionFound && !cursorInVariableField;
 }
 

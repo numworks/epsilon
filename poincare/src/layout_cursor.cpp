@@ -514,6 +514,11 @@ void LayoutCursor::insertText(const char *text, Context *context,
       newChild = CombinedCodePointsLayout::Builder(codePoint, nextCodePoint);
       nextCodePoint = decoder.nextCodePoint();
     } else {
+      if (codePoint == UCodePointLeftSystemParenthesis ||
+          codePoint == UCodePointRightSystemParenthesis) {
+        assert(linearMode);  // Handled earlier if not in linear
+        codePoint = codePoint == UCodePointLeftSystemParenthesis ? '(' : ')';
+      }
       newChild = CodePointLayout::Builder(codePoint);
     }
     currentLayout.addOrMergeChildAtIndex(newChild,

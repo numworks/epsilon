@@ -2103,6 +2103,24 @@ QUIZ_CASE(poincare_approximation_piecwise_operator) {
                                            Undefined::Name());
 }
 
+QUIZ_CASE(poincare_approximation_point) {
+  assert_expression_approximates_to<float>("(1,2)", "(1,2)");
+  assert_expression_approximates_to<float>("(1/0,2)", Undefined::Name());
+  assert_expression_approximates_to<float>("(1,2)+3", Undefined::Name());
+  assert_expression_approximates_to<float>("abs((1.23,4.56))",
+                                           Undefined::Name());
+  assert_expression_approximates_to<float>("{(1+2,3+4),(5+6,7+8)}",
+                                           "{(3,7),(11,15)}");
+
+  assert_expression_approximates_to<double>("(1,2)", "(1,2)");
+  assert_expression_approximates_to<double>("(1/0,2)", Undefined::Name());
+  assert_expression_approximates_to<double>("(1,2)+3", Undefined::Name());
+  assert_expression_approximates_to<double>("abs((1.23,4.56))",
+                                            Undefined::Name());
+  assert_expression_approximates_to<double>("{(1+2,3+4),(5+6,7+8)}",
+                                            "{(3,7),(11,15)}");
+}
+
 template void assert_expression_approximates_to_scalar(
     const char *expression, float approximation,
     Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat,

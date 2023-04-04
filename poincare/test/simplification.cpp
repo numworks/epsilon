@@ -2890,3 +2890,14 @@ QUIZ_CASE(poincare_simplification_integral) {
   assert_parsed_expression_simplify_to("int(arccot(x),x,0,x)",
                                        "int(arccot(x),x,0,x)");
 }
+
+QUIZ_CASE(poincare_simplification_point) {
+  assert_parsed_expression_simplify_to("(1,2)", "(1,2)");
+  assert_parsed_expression_simplify_to("(1/0,2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("(1,2)+3", Undefined::Name());
+  assert_parsed_expression_simplify_to("abs((1.23,4.56))", Undefined::Name());
+  assert_parsed_expression_simplify_to("{(1+2,3+4),(5+6,7+8)}",
+                                       "{(3,7),(11,15)}");
+  assert_parsed_expression_simplify_to("sequence((k,-k+1),k,4)",
+                                       "{(1,0),(2,-1),(3,-2),(4,-3)}");
+}

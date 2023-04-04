@@ -26,6 +26,26 @@ size_t UnicodeDecoder::previousGlyphPosition() {
   return resultGlyphPosition;
 }
 
+size_t UnicodeDecoder::printInBuffer(char* buffer, size_t bufferSize,
+                                     size_t printLength) {
+  if (printLength == -1) {
+    printLength = m_end - m_position;
+  }
+  assert(m_position + printLength <= m_end);
+  size_t result = 0;
+  for (int i = 0; i < printLength; i++) {
+    CodePoint c = nextCodePoint();
+    if (result + UTF8Decoder::CharSizeOfCodePoint(c) >= bufferSize) {
+      buffer[0] = 0;
+      return 0;
+    }
+    result +=
+        UTF8Decoder::CodePointToChars(c, buffer + result, bufferSize - result);
+  }
+  buffer[result] = 0;
+  return result;
+}
+
 static inline int leading_ones(uint8_t value) {
   for (int i = 0; i < 8; i++) {
     if (!(value & 0x80)) {

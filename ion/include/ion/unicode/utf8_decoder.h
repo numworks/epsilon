@@ -19,6 +19,8 @@ class UnicodeDecoder {
   size_t start() const { return 0; }
   size_t end() const { return m_end; }
   void unsafeSetPosition(size_t position) { m_position = position; }
+  size_t printInBuffer(char* buffer, size_t bufferSize,
+                       size_t printLength = -1);
 
  protected:
   size_t m_position;

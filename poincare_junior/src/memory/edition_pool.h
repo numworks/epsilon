@@ -22,7 +22,7 @@ public:
   uint16_t referenceNode(Node node);
   void flush();
 
-  bool execute(ActionWithContext action, void * subAction, const void * data, void * address);
+  uint16_t execute(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize);
 
   Block * pushBlock(Block block);
   void popBlock();

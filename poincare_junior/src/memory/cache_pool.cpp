@@ -1,6 +1,5 @@
 #include <assert.h>
 #include "cache_pool.h"
-#include "exception_checkpoint.h"
 #include <string.h>
 
 namespace PoincareJ {
@@ -104,22 +103,7 @@ void CachePool::reset() {
 }
 
 int CachePool::execute(ActionWithContext action, void * subAction, const void * data) {
-  ExceptionCheckpoint checkpoint;
-start_execute:
-  if (ExceptionRun(checkpoint)) {
-    assert(m_editionPool.numberOfTrees() == 0);
-    action(subAction, data);
-    // Prevent edition action from leaking: an action create at most one tree
-    assert(m_editionPool.numberOfTrees() <= 1);
-    return storeEditedTree();
-  } else {
-    // TODO: assert that we don't delete last called treeForIdentifier otherwise can't copyTreeFromAddress if in cache...
-    if (!freeBlocks(m_editionPool.fullSize())) {
-      // TODO: try with less demanding reducing context (everything is a float ? SystemTaget?)
-      return ReferenceTable::NoNodeIdentifier;
-    }
-    goto start_execute;
-  }
+  return m_editionPool.execute(action, subAction, data, nullptr, k_maxNumberOfBlocks);
 }
 
 CachePool::CachePool() :

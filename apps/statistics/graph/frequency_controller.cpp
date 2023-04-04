@@ -25,9 +25,8 @@ void FrequencyController::didBecomeFirstResponder() {
   if (m_curveView.hasFocus()) {
     Escher::Container::activeApp()->setFirstResponder(
         m_bannerViewWithEditableField.value());
-  } else {
-    PlotController::didBecomeFirstResponder();
   }
+  PlotController::didBecomeFirstResponder();
 }
 
 bool FrequencyController::textFieldDidFinishEditing(

@@ -102,9 +102,9 @@ class LayoutCursor final {
 #endif
 
   /* Position and size */
-  KDCoordinate cursorHeight(KDFont::Size font);
-  KDPoint cursorAbsoluteOrigin(KDFont::Size font);
-  KDPoint middleLeftPoint(KDFont::Size font);
+  KDCoordinate cursorHeight(KDFont::Size font) const;
+  KDPoint cursorAbsoluteOrigin(KDFont::Size font) const;
+  KDPoint middleLeftPoint(KDFont::Size font) const;
 
   /* Move */
   // Return false if could not move
@@ -148,9 +148,9 @@ class LayoutCursor final {
   void setLayout(const Node layout,
                  OMG::HorizontalDirection sideOfLayout);
 
-  const Node leftLayout();
-  const Node rightLayout();
-  const Node layoutToFit(KDFont::Size font);
+  const Node leftLayout() const;
+  const Node rightLayout() const;
+  const Node layoutToFit(KDFont::Size font) const;
 
   int leftMostPosition() const { return 0; }
   int rightmostPosition() const {

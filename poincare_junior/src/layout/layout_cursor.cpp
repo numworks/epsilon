@@ -31,7 +31,7 @@ void LayoutCursor::safeSetPosition(int position) {
 }
 #endif
 
-KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) {
+KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
   LayoutSelection currentSelection = selection();
   if (currentSelection.isEmpty()) {
     return Render::Size(layoutToFit(font), font).height();
@@ -47,7 +47,7 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) {
   return Render::Size(m_layout, font).height();
 }
 
-KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) {
+KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
   if (!currentSelection.isEmpty() && Layout::IsHorizontal(m_layout)) {
@@ -72,7 +72,7 @@ KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) {
       .translatedBy(KDPoint(cursorXOffset, cursorYOriginInLayout));
 }
 
-KDPoint LayoutCursor::middleLeftPoint(KDFont::Size font) {
+KDPoint LayoutCursor::middleLeftPoint(KDFont::Size font) const {
   KDPoint origin = cursorAbsoluteOrigin(font);
   return KDPoint(origin.x(), origin.y() + cursorHeight(font) / 2);
 }
@@ -710,7 +710,7 @@ void LayoutCursor::setLayout(const Node l,
   m_position = sideOfLayout.isLeft() ? leftMostPosition() : rightmostPosition();
 }
 
-const Node LayoutCursor::leftLayout() {
+const Node LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
   if (!Layout::IsHorizontal(m_layout)) {
     return m_position == 1 ? m_layout : Node();
@@ -721,7 +721,7 @@ const Node LayoutCursor::leftLayout() {
   return m_layout.childAtIndex(m_position - 1);
 }
 
-const Node LayoutCursor::rightLayout() {
+const Node LayoutCursor::rightLayout() const {
   assert(!isUninitialized());
   if (!Layout::IsHorizontal(m_layout)) {
     return m_position == 0 ? m_layout : Node();
@@ -733,7 +733,7 @@ const Node LayoutCursor::rightLayout() {
   return m_layout.childAtIndex(m_position);
 }
 
-const Node LayoutCursor::layoutToFit(KDFont::Size font) {
+const Node LayoutCursor::layoutToFit(KDFont::Size font) const {
   assert(!isUninitialized());
   const Node leftL = leftLayout();
   const Node rightL = rightLayout();

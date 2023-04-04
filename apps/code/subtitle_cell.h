@@ -40,6 +40,7 @@ class SubtitleCell : public Escher::Bordered, public Escher::HighlightCell {
 
   int numberOfSubviews() const override { return 1; }
   Escher::View* subviewAtIndex(int index) override { return &m_textView; }
+  bool protectedIsSelectable() override { return false; }
 
   Escher::BufferTextView m_textView;
 };

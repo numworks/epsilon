@@ -12,12 +12,12 @@ namespace Statistics {
 class UserPreferences : public Shared::DoublePairStorePreferences {
  public:
   UserPreferences()
-      : m_displayCumulatedFrequencies{false, false, false},
-        m_barWidth(1.0),
+      : m_barWidth(1.0),
         m_firstDrawnBarAbscissa(0.0),
         m_displayOutliers(
             GlobalPreferences::sharedGlobalPreferences->outliersStatus() ==
-            CountryPreferences::OutlierDefaultVisibility::Displayed) {}
+            CountryPreferences::OutlierDefaultVisibility::Displayed),
+        m_displayCumulatedFrequencies{false, false, false} {}
 
   bool displayCumulatedFrequencies(int series) {
     return m_displayCumulatedFrequencies[series];
@@ -38,12 +38,12 @@ class UserPreferences : public Shared::DoublePairStorePreferences {
   void setDisplayOutliers(bool value) { m_displayOutliers = value; }
 
  private:
-  // Cumulated frequencies column display
-  bool m_displayCumulatedFrequencies[Shared::DoublePairStore::k_numberOfSeries];
   // Graph preferences
   double m_barWidth;
   double m_firstDrawnBarAbscissa;
   bool m_displayOutliers;
+  // Cumulated frequencies column display
+  bool m_displayCumulatedFrequencies[Shared::DoublePairStore::k_numberOfSeries];
 };
 
 }  // namespace Statistics

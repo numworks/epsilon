@@ -7,6 +7,7 @@
 #include <escher/switch_view.h>
 
 #include "../store.h"
+#include "data_view_controller.h"
 
 namespace Statistics {
 
@@ -19,7 +20,7 @@ class BoxParameterController
           k_numberOfParameterCells, Escher::RegularListViewDataSource> {
  public:
   BoxParameterController(Escher::Responder* parentResponder, Store* store,
-                         int* selectedBoxCalculation);
+                         DataViewController* dataViewController);
   void viewWillAppear() override;
   const char* title() override {
     return I18n::translate(I18n::Message::StatisticsGraphSettings);
@@ -29,7 +30,7 @@ class BoxParameterController
  private:
   bool handleEvent(Ion::Events::Event event) override;
   Store* m_store;
-  int* m_selectedBoxCalculation;
+  DataViewController* m_dataViewController;
 };
 
 }  // namespace Statistics

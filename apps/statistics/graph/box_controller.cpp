@@ -19,8 +19,8 @@ BoxController::BoxController(Responder *parentResponder,
     : MultipleDataViewController(parentResponder, tabController, header,
                                  stackViewController, typeViewController,
                                  store),
-      m_view(store, &m_selectedIndex),
-      m_boxParameterController(nullptr, store, &m_selectedIndex),
+      m_view(store, this),
+      m_boxParameterController(nullptr, store, this),
       m_parameterButton(this, I18n::Message::StatisticsGraphSettings,
                         Invocation::Builder<BoxController>(
                             [](BoxController *boxController, void *sender) {
@@ -48,11 +48,11 @@ bool BoxController::handleEvent(Ion::Events::Event event) {
 
 bool BoxController::moveSelectionHorizontally(
     OMG::HorizontalDirection direction) {
-  return m_view.moveSelectionHorizontally(m_selectedSeries, direction);
+  return m_view.moveSelectionHorizontally(selectedSeries(), direction);
 }
 
 bool BoxController::reloadBannerView() {
-  if (m_selectedSeries < 0) {
+  if (selectedSeries() < 0) {
     return false;
   }
   KDCoordinate previousHeight =
@@ -66,18 +66,18 @@ bool BoxController::reloadBannerView() {
   char buffer[k_bufferSize] = "";
 
   // Display series name
-  StoreController::FillSeriesName(m_selectedSeries, buffer, false);
+  StoreController::FillSeriesName(selectedSeries(), buffer, false);
   m_view.bannerView()->seriesName()->setText(buffer);
 
   // Display calculation
   int selectedBoxCalculation =
-      m_view.plotViewForSeries(m_selectedSeries)->selectedBoxCalculation();
-  double value = m_store->boxPlotCalculationAtIndex(m_selectedSeries,
+      m_view.plotViewForSeries(selectedSeries())->selectedBoxCalculation();
+  double value = m_store->boxPlotCalculationAtIndex(selectedSeries(),
                                                     selectedBoxCalculation);
   Poincare::Print::CustomPrintf(
       buffer, k_bufferSize, "%s%s%*.*ed",
       I18n::translate(m_store->boxPlotCalculationMessageAtIndex(
-          m_selectedSeries, selectedBoxCalculation)),
+          selectedSeries(), selectedBoxCalculation)),
       I18n::translate(I18n::Message::ColonConvention), value, displayMode,
       precision);
   m_view.bannerView()->calculationValue()->setText(buffer);
@@ -92,25 +92,25 @@ void BoxController::updateHorizontalIndexAfterSelectingNewSeries(
   int resultIndex = -1;
   int previousNumberOfLowerOutliers =
       m_store->numberOfLowerOutliers(previousSelectedSeries);
-  if (m_selectedIndex < previousNumberOfLowerOutliers) {
+  if (selectedIndex() < previousNumberOfLowerOutliers) {
     // Lower outliers were selected, select first lower outlier
     resultIndex = 0;
-  } else if (m_selectedIndex <
+  } else if (selectedIndex() <
              previousNumberOfLowerOutliers + Store::k_numberOfQuantiles) {
     // Quartiles, max/min or median were selected, select same quantile
-    resultIndex = m_selectedIndex +
-                  m_store->numberOfLowerOutliers(m_selectedSeries) -
+    resultIndex = selectedIndex() +
+                  m_store->numberOfLowerOutliers(selectedSeries()) -
                   previousNumberOfLowerOutliers;
   } else {
     // Upper outliers were selected, select first upper outlier
     int numberOfUpperOutliers =
-        m_store->numberOfUpperOutliers(m_selectedSeries);
-    resultIndex = m_store->numberOfBoxPlotCalculations(m_selectedSeries) -
+        m_store->numberOfUpperOutliers(selectedSeries());
+    resultIndex = m_store->numberOfBoxPlotCalculations(selectedSeries()) -
                   (numberOfUpperOutliers == 0 ? 1 : numberOfUpperOutliers);
   }
   assert(resultIndex >= 0 &&
-         resultIndex <= m_store->numberOfBoxPlotCalculations(m_selectedSeries));
-  m_selectedIndex = resultIndex;
+         resultIndex <= m_store->numberOfBoxPlotCalculations(selectedSeries()));
+  setSelectedIndex(resultIndex);
 }
 
 }  // namespace Statistics

@@ -37,11 +37,15 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     uint32_t *storeVersion() { return &m_storeVersion; }
     GraphViewModel *graphViewModel() { return &m_graphViewModel; }
     UserPreferences *userPreferences() { return &m_userPreferences; }
+    int8_t *selectedSeries() { return &m_selectedSeries; }
+    int16_t *selectedIndex() { return &m_selectedIndex; }
 
    private:
     uint32_t m_storeVersion;
-    GraphViewModel m_graphViewModel;
     UserPreferences m_userPreferences;
+    GraphViewModel m_graphViewModel;
+    int8_t m_selectedSeries;
+    int16_t m_selectedIndex;
   };
 
   static App *app() {
@@ -56,6 +60,9 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
   Escher::InputViewController *inputViewController() {
     return &m_inputViewController;
   }
+  Snapshot *snapshot() const {
+    return static_cast<Snapshot *>(Escher::App::snapshot());
+  }
 
  private:
   App(Snapshot *snapshot, Poincare::Context *parentContext);
@@ -68,9 +75,6 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
   }
   void activeViewDidBecomeFirstResponder(
       Escher::ViewController *activeViewController) override;
-  Snapshot *snapshot() const {
-    return static_cast<Snapshot *>(Escher::App::snapshot());
-  }
   void didBecomeActive(Escher::Window *window) override;
 
   struct StoreTab : public Escher::Tab {

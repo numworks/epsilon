@@ -38,24 +38,24 @@ bool FrequencyController::textFieldDidFinishEditing(
     return false;
   }
   // Check if x is out of bounds
-  int n = totalValues(m_selectedSeries);
-  if (newX < valueAtIndex(m_selectedSeries, 0) ||
-      newX > valueAtIndex(m_selectedSeries, n - 1)) {
+  int n = totalValues(selectedSeries());
+  if (newX < valueAtIndex(selectedSeries(), 0) ||
+      newX > valueAtIndex(selectedSeries(), n - 1)) {
     textFieldDelegateApp()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
   // Compute the new selected index
-  m_selectedIndex = n - 1;
+  setSelectedIndex(n - 1);
   for (int i = 0; i < n - 1; i++) {
-    if (valueAtIndex(m_selectedSeries, i + 1) > newX) {
-      m_selectedIndex = i;
+    if (valueAtIndex(selectedSeries(), i + 1) > newX) {
+      setSelectedIndex(i);
       break;
     }
   }
   // Update cursor
-  m_cursor.moveTo(newX, newX, yValueAtAbscissa(m_selectedSeries, newX));
+  m_cursor.moveTo(newX, newX, yValueAtAbscissa(selectedSeries(), newX));
   m_cursorView.setIsRing(newX ==
-                         valueAtIndex(m_selectedSeries, m_selectedIndex));
+                         valueAtIndex(selectedSeries(), selectedIndex()));
   reloadBannerView();
   m_curveView.reload();
   return true;
@@ -98,14 +98,14 @@ void FrequencyController::reloadValueInBanner(
 void FrequencyController::moveCursorToSelectedIndex() {
   m_cursorView.setIsRing(true);
   m_cursorView.setColor(
-      Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
+      Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()));
   PlotController::moveCursorToSelectedIndex();
 }
 
 bool FrequencyController::moveSelectionHorizontally(
     OMG::HorizontalDirection direction) {
-  assert(m_selectedSeries >= 0);
-  int totValues = totalValues(m_selectedSeries);
+  assert(selectedSeries() >= 0);
+  int totValues = totalValues(selectedSeries());
   if (totValues <= 1) {
     return false;
   }
@@ -122,23 +122,23 @@ bool FrequencyController::moveSelectionHorizontally(
    * to a significant value, it will instead snap on this value. */
   double snapFactor = 1.5;
 
-  assert(x >= valueAtIndex(m_selectedSeries, m_selectedIndex));
+  assert(x >= valueAtIndex(selectedSeries(), selectedIndex()));
   int index =
-      (step > 0.0 || x > valueAtIndex(m_selectedSeries, m_selectedIndex))
-          ? m_selectedIndex
-          : m_selectedIndex - 1;
+      (step > 0.0 || x > valueAtIndex(selectedSeries(), selectedIndex()))
+          ? selectedIndex()
+          : selectedIndex() - 1;
   if (index < 0 || (step > 0.0 && index + 1 >= totValues)) {
     // Cursor cannot move further
     return false;
   }
   double xTarget = x + step * snapFactor;
-  double xIndex = valueAtIndex(m_selectedSeries, index);
-  double xNextIndex = valueAtIndex(m_selectedSeries, index + 1);
+  double xIndex = valueAtIndex(selectedSeries(), index);
+  double xNextIndex = valueAtIndex(selectedSeries(), index + 1);
   if (xTarget <= xIndex || xTarget >= xNextIndex) {
     assert((xTarget <= xIndex) == (step < 0.0));
     assert((xTarget >= xNextIndex) == (step > 0.0));
     // Step is too big, snap on the next interesting value
-    m_selectedIndex = index + (step > 0.0);
+    setSelectedIndex(index + (step > 0.0));
     moveCursorToSelectedIndex();
     return true;
   }
@@ -148,7 +148,7 @@ bool FrequencyController::moveSelectionHorizontally(
   x += step;
 
   // Update the newly selected index
-  m_selectedIndex = index;
+  setSelectedIndex(index);
 
   // Simplify cursor's position
   double simplifyFactor = 0.5;
@@ -169,9 +169,9 @@ bool FrequencyController::moveSelectionHorizontally(
 
   // Compute the cursor's position
   double y =
-      yValueForComputedXValues(m_selectedSeries, index, x, xIndex, xNextIndex);
+      yValueForComputedXValues(selectedSeries(), index, x, xIndex, xNextIndex);
   m_cursorView.setColor(
-      Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
+      Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()));
   m_cursor.moveTo(x, x, y);
   m_curveView.reload();
   return true;
@@ -215,14 +215,14 @@ int FrequencyController::nextSubviewWhenMovingVertically(
     /* Browse series in order starting with m_selectingSeries +/- 1
      * This is useful when series are all on the same spot to properly
      * loop. */
-    int seriesIndex = (m_selectedSeries + step * s + Store::k_numberOfSeries) %
+    int seriesIndex = (selectedSeries() + step * s + Store::k_numberOfSeries) %
                       Store::k_numberOfSeries;
-    assert(seriesIndex != m_selectedSeries);
+    assert(seriesIndex != selectedSeries());
     if (!seriesIsActive(seriesIndex)) {
       continue;
     }
     double y = yValueAtAbscissa(seriesIndex, cursorX);
-    if (y == cursorY && seriesIndex * step > m_selectedSeries * step) {
+    if (y == cursorY && seriesIndex * step > selectedSeries() * step) {
       // series is on the same spot and in the right direction in series list
       return seriesIndex;
     }
@@ -241,20 +241,20 @@ void FrequencyController::updateHorizontalIndexAfterSelectingNewSeries(
     int previousSelectedSeries) {
   // Search closest index to cursor
   double currentXValue = m_cursor.x();
-  if (valueAtIndex(m_selectedSeries, 0) >= currentXValue) {
-    m_selectedIndex = 0;
+  if (valueAtIndex(selectedSeries(), 0) >= currentXValue) {
+    setSelectedIndex(0);
     return;
   }
-  int nValues = totalValues(m_selectedSeries);
+  int nValues = totalValues(selectedSeries());
   double previousValue = NAN;
   for (int i = nValues - 1; i >= 0; i--) {
-    double valueAtI = valueAtIndex(m_selectedSeries, i);
+    double valueAtI = valueAtIndex(selectedSeries(), i);
     if (valueAtI <= currentXValue) {
       // +1 if the next index is closer than the current.
       assert(std::isnan(previousValue) || currentXValue < previousValue);
-      m_selectedIndex = i + static_cast<int>(!std::isnan(previousValue) &&
-                                             (currentXValue - valueAtI >
-                                              previousValue - currentXValue));
+      setSelectedIndex(i + static_cast<int>(!std::isnan(previousValue) &&
+                                            (currentXValue - valueAtI >
+                                             previousValue - currentXValue)));
       return;
     }
     previousValue = valueAtI;

@@ -10,6 +10,7 @@
 #include "../store.h"
 #include "box_range.h"
 #include "chevrons.h"
+#include "data_view_controller.h"
 
 namespace Statistics {
 
@@ -71,7 +72,7 @@ class BoxPlotPolicy {
                    OMG::VerticalDirection direction) const;
 
   Store* m_store;
-  int* m_selectedBoxCalculation;
+  DataViewController* m_dataViewController;
   int m_series;
 };
 
@@ -80,13 +81,15 @@ class BoxView
                               Shared::PlotPolicy::NoBanner,
                               Shared::PlotPolicy::NoCursor> {
  public:
-  BoxView(Store* store, int series, int* selectedBoxCalculation);
+  BoxView(Store* store, int series, DataViewController* dataViewController);
 
   // AbstractPlotView
   void reload(bool resetInterruption = false, bool force = false) override;
   void drawBackground(KDContext* ctx, KDRect rect) const override {}
 
-  int selectedBoxCalculation() const { return *m_selectedBoxCalculation; }
+  int selectedBoxCalculation() const {
+    return m_dataViewController->selectedIndex();
+  }
   KDRect selectedCalculationRect() const;
   bool canIncrementSelectedCalculation(int deltaIndex) const;
   void incrementSelectedCalculation(int deltaIndex);

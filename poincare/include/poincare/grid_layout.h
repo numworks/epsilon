@@ -84,11 +84,11 @@ class GridLayoutNode : public Array, public LayoutNode {
   void deleteRowAtIndex(int index);
 
  protected:
+  constexpr static int k_minimalNumberOfRowsAndColumnsWhileEditing = 2;
   // Row and columns
   virtual bool numberOfRowsIsFixed() const { return false; }
   virtual bool numberOfColumnsIsFixed() const { return false; }
   virtual bool isEditing() const = 0;
-  int minimalNumberOfChildrenWhileEditing() const { return 4; }
   bool isColumnEmpty(int index) const {
     return isColumnOrRowEmpty(true, index);
   }

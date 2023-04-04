@@ -208,7 +208,7 @@ int FrequencyController::nextSubviewWhenMovingVertically(
   // Search first curve in direction
   int step = direction.isUp() ? -1 : 1;
   double closestYUpOrDown = NAN;
-  int nextSubview = direction.isUp() ? Store::k_numberOfSeries : -1;
+  int nextSubview = direction.isUp() ? -1 : Store::k_numberOfSeries;
   double cursorY = m_cursor.y();
   double cursorX = m_cursor.x();
   for (int s = 1; s < Store::k_numberOfSeries; s++) {

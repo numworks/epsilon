@@ -46,7 +46,8 @@ LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(
   int rowIndex = rowAtChildIndex(childIndex);
   int columnIndex = columnAtChildIndex(childIndex);
   if (rowIndex == 0 &&
-      minimalNumberOfChildrenWhileEditing() == numberOfChildren()) {
+      numberOfColumns() == k_minimalNumberOfRowsAndColumnsWhileEditing &&
+      numberOfRows() == k_minimalNumberOfRowsAndColumnsWhileEditing) {
     // If only one child is filled, delete the grid and keep the child.
     return DeletionMethod::DeleteParent;
   }
@@ -96,20 +97,20 @@ bool GridLayoutNode::removeEmptyRowOrColumnAtChildIndexIfNeeded(
     int childIndex) {
   assert(childAtIndex(childIndex)->isEmpty());
   assert(isEditing());
-  if (minimalNumberOfChildrenWhileEditing() == numberOfChildren()) {
-    return false;
-  }
   int rowIndex = rowAtChildIndex(childIndex);
   int columnIndex = columnAtChildIndex(childIndex);
   bool isRightOfGrid = childIsInLastNonGrayColumn(childIndex);
   bool isBottomOfGrid = childIsInLastNonGrayRow(childIndex);
   bool changed = false;
   if (isRightOfGrid && !numberOfColumnsIsFixed() &&
+      numberOfColumns() > k_minimalNumberOfRowsAndColumnsWhileEditing &&
       isColumnEmpty(columnIndex)) {
     deleteColumnAtIndex(columnIndex);
     changed = true;
   }
-  if (isBottomOfGrid && !numberOfRowsIsFixed() && isRowEmpty(rowIndex)) {
+  if (isBottomOfGrid && !numberOfRowsIsFixed() &&
+      numberOfRows() > k_minimalNumberOfRowsAndColumnsWhileEditing &&
+      isRowEmpty(rowIndex)) {
     deleteRowAtIndex(rowIndex);
     changed = true;
   }

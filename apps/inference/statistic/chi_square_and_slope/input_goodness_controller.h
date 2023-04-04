@@ -3,6 +3,7 @@
 
 #include "inference/statistic/chi_square_and_slope/categorical_controller.h"
 #include "inference/statistic/chi_square_and_slope/goodness_table_cell.h"
+#include "inference/statistic/chi_square_and_slope/input_categorical_cell.h"
 
 namespace Inference {
 
@@ -37,9 +38,7 @@ class InputGoodnessController : public InputCategoricalController {
   }
   int indexOfEditedParameterAtIndex(int index) const override;
 
-  Escher::MenuCellWithEditableText<Escher::MessageTextView,
-                                   Escher::MessageTextView>
-      m_degreeOfFreedomCell;
+  InputCategoricalCell m_degreeOfFreedomCell;
   GoodnessTableCell m_goodnessTableCell;
 };
 

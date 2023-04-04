@@ -16,8 +16,10 @@ CategoricalController::CategoricalController(Responder *parent,
     : SelectableListViewController<ListViewDataSource>(parent),
       m_nextController(nextController),
       m_next(&m_selectableListView, I18n::Message::Next, invocation,
-             Palette::WallScreenDark) {
+             Palette::WallScreenDark, Metric::CommonMargin) {
   m_selectableListView.setTopMargin(0);
+  m_selectableListView.setLeftMargin(0);
+  m_selectableListView.setRightMargin(0);
   m_selectableListView.setBackgroundColor(Palette::WallScreenDark);
   setScrollViewDelegate(this);
 }
@@ -218,9 +220,8 @@ void InputCategoricalController::willDisplayCellForIndex(
     Escher::HighlightCell *cell, int index) {
   if (index == indexOfSignificanceCell()) {
     assert(cell == &m_significanceCell);
-    m_significanceCell.label()->setMessage(m_statistic->thresholdName());
-    m_significanceCell.subLabel()->setMessage(
-        m_statistic->thresholdDescription());
+    m_significanceCell.setMessages(m_statistic->thresholdName(),
+                                   m_statistic->thresholdDescription());
   }
 }
 

@@ -34,6 +34,7 @@ app_inference_src += $(addprefix apps/inference/statistic/chi_square_and_slope/,
   categorical_type_controller.cpp \
   goodness_table_cell.cpp \
   homogeneity_data_source.cpp \
+  input_categorical_cell.cpp \
   input_goodness_controller.cpp \
   input_homogeneity_controller.cpp \
   input_homogeneity_table_cell.cpp \

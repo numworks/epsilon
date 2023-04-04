@@ -53,8 +53,12 @@ Poincare::Expression Model::expression(double* modelCoefficients) const {
 
 double Model::levelSet(double* modelCoefficients, double xMin, double xMax,
                        double y, Poincare::Context* context) {
+  Expression e = expression(modelCoefficients);
+  if (e.isUninitialized()) {
+    return NAN;
+  }
   return PoincareHelpers::Solver(xMin, xMax, "x", context)
-      .nextIntersection(Number::DecimalNumber(y), expression(modelCoefficients))
+      .nextIntersection(Number::DecimalNumber(y), e)
       .x();
 }
 

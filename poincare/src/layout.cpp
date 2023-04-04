@@ -7,8 +7,11 @@
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/layout_selection.h>
+#include <poincare/linear_layout_decoder.h>
 #include <poincare/square_bracket_pair_layout.h>
 #include <poincare/symbol_abstract.h>
+
+#include "parsing/tokenizer.h"
 
 namespace Poincare {
 
@@ -82,28 +85,20 @@ Layout Layout::XNTLayout() const {
   Layout xntLayout = const_cast<Layout *>(this)->node()->XNTLayout();
   assert(xntLayout.isUninitialized() ||
          xntLayout.numberOfDescendants(true) >= 0);
-  if (!xntLayout.isUninitialized() &&
-      static_cast<size_t>(xntLayout.numberOfDescendants(false)) <=
-          SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks &&
-      xntLayout
-          .recursivelyMatches([](const Layout l) {
-            if (l.type() != LayoutNode::Type::CodePointLayout) {
-              return l.isHorizontal() ? TrinaryBoolean::Unknown
-                                      : TrinaryBoolean::True;
-            }
-            CodePoint c = static_cast<const CodePointLayout &>(l).codePoint();
-            return (c.isDecimalDigit() || c.isLatinLetter() || c == '_')
-                       ? TrinaryBoolean::Unknown
-                       : TrinaryBoolean::True;
-          })
-          .isUninitialized()) {
-    /* Return xnt if :
-     * - it is initialized and only contains horizontal layouts and code points
-     * - all code points are letters, numbers or _
-     * - There are less than k_maxNameLengthWithoutQuotationMarks descendants */
-    return xntLayout;
+  if (xntLayout.isUninitialized() ||
+      (!xntLayout.isHorizontal() &&
+       xntLayout.type() != LayoutNode::Type::CodePointLayout)) {
+    return Layout();
   }
-  return Layout();
+  if (xntLayout.type() == LayoutNode::Type::CodePointLayout) {
+    xntLayout = HorizontalLayout::Builder(xntLayout.clone());
+  }
+  assert(xntLayout.isHorizontal());
+  LinearLayoutDecoder decoder(static_cast<HorizontalLayout &>(xntLayout));
+  if (!Tokenizer::CanBeCustomIdentifier(decoder)) {
+    return Layout();
+  }
+  return xntLayout;
 }
 
 bool Layout::shouldCollapseSiblingsOnRight() const {

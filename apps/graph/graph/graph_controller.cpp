@@ -433,6 +433,53 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
   return currentT;
 }
 
+bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
+  int currentActiveFunctionIndex = *m_selectedCurveIndex;
+  Context *context = textFieldDelegateApp()->localContext();
+  Preferences::ComplexFormat complexFormat =
+      Preferences::sharedPreferences->complexFormat();
+  Preferences::AngleUnit angleUnit =
+      Preferences::sharedPreferences->angleUnit();
+
+  int nextSubCurve = 0;
+  int nextFunction =
+      nextCurveIndexVertically(direction, currentActiveFunctionIndex, context,
+                               m_selectedSubCurveIndex, &nextSubCurve);
+  if (nextFunction < 0) {
+    return false;
+  }
+
+  ExpiringPointer<ContinuousFunction> currentF =
+      functionStore()->modelForRecord(recordAtSelectedCurveIndex());
+  float nextT =
+      currentF->properties().isScatterPlot() && std::isfinite(m_cursor->x())
+          ? m_cursor->x()
+          : m_cursor->t();
+
+  ExpiringPointer<ContinuousFunction> nextF =
+      functionStore()->modelForRecord(recordAtCurveIndex(nextFunction));
+  if (nextF->properties().isScatterPlot()) {
+    double nextX = nextT;
+    nextT = -1;
+    double previousX = -INFINITY;
+    for (Point p : nextF->iterateScatterPlot(context)) {
+      Coordinate2D<double> xy =
+          p.approximate2D<float>(context, complexFormat, angleUnit);
+      if (xy.x() >= nextX) {
+        if (xy.x() - nextX < nextX - previousX) {
+          ++nextT;
+        }
+        break;
+      }
+      ++nextT;
+      previousX = xy.x();
+    }
+  }
+
+  moveCursorVerticallyToPosition(nextFunction, nextSubCurve, nextT);
+  return true;
+}
+
 void GraphController::jumpToLeftRightCurve(double t,
                                            OMG::HorizontalDirection direction,
                                            int functionsCount,

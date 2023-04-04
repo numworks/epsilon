@@ -117,6 +117,7 @@ class GraphController : public Shared::FunctionGraphController,
   Shared::WithRecord *curveParameterControllerWithRecord() override {
     return &m_curveParameterController;
   }
+  bool moveCursorVertically(OMG::VerticalDirection direction) override;
 
   // InteractiveCurveViewController
   void moveCursorAndCenterIfNeeded(double t) override;

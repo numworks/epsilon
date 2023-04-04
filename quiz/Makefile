@@ -19,5 +19,7 @@ runner_src += $(addprefix quiz/src/, \
 
 runner_src += $(BUILD_DIR)/quiz/src/tests_symbols.c
 
+$(call object_for,quiz/src/i18n.cpp): $(BUILD_DIR)/apps/i18n.h
+
 $(call object_for,$(runner_src)): SFLAGS += -Iquiz/src
 $(BUILD_DIR)/quiz/src/%_symbols.o: SFLAGS += -Iquiz/src

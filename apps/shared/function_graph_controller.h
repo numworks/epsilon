@@ -103,6 +103,8 @@ class FunctionGraphController : public InteractiveCurveViewController,
   Ion::Storage::Record recordAtSelectedCurveIndex() const {
     return recordAtCurveIndex(*m_selectedCurveIndex);
   }
+  void moveCursorVerticallyToPosition(int nextFunction, int nextSubCurve,
+                                      double nextT);
 
  private:
   virtual FunctionGraphView *functionGraphView() = 0;

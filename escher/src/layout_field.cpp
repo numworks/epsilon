@@ -188,7 +188,6 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
     if (FindXNTSymbol(decoder, &defaultXNTHasChanged, &defaultXNTCodePoint)) {
       size_t parameterStart;
       size_t parameterLength;
-      decoder.unsafeSetPosition(position);
       if (ParameteredExpression::ParameterText(decoder, &parameterStart,
                                                &parameterLength)) {
         HorizontalLayout parameter = HorizontalLayout::Builder();

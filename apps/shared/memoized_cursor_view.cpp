@@ -74,6 +74,7 @@ bool MemoizedCursorView::eraseCursorIfPossible() {
                           cursorWorkingBuffer);
   ctx->setOrigin(previousOrigin);
   ctx->setClippingRect(previousClippingRect);
+  resetMemoization();
   return true;
 }
 

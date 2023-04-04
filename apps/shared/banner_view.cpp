@@ -123,7 +123,11 @@ Escher::View *BannerView::LabelledView::subviewAtIndex(int index) {
 
 void BannerView::LabelledView::layoutSubviews(bool force) {
   KDSize labelSize = m_labelView->minimalSizeForOptimalDisplay();
-  KDSize infoSize = m_infoView->minimalSizeForOptimalDisplay();
+  KDSize infoMinSize = m_infoView->minimalSizeForOptimalDisplay();
+  KDCoordinate infoWidth =
+      std::min(infoMinSize.width(),
+               static_cast<KDCoordinate>(bounds().width() - labelSize.width()));
+  KDSize infoSize = KDSize(infoWidth, infoMinSize.height());
   KDCoordinate spacing =
       (bounds().width() - labelSize.width() - infoSize.width()) / 2;
   KDCoordinate labelTotalWidth = spacing + labelSize.width();

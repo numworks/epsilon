@@ -33,7 +33,6 @@ $(OUTPUT_LOGS)/edition.xml:
 	@output/debug/simulator/macos/$(EXECUTABLE_FILE) $(RUN_FLAGS)
 
 poincare_log_visualization: $(OUTPUT_LOGS)/cache.xml $(OUTPUT_LOGS)/edition.xml
-	echo $(XML_FILES)
 	@for arg in cache edition; do cp build/poincare_visualization/visualization.html $(OUTPUT_LOGS)/$${arg}.html; sed -i '' "s/XML_FILE/$${arg}.xml/g" $(OUTPUT_LOGS)/$${arg}.html; done
 	@echo "In a browser, go to http://localhost:8000/*.html to visualize the cache logs"
-	@cd $(OUTPUT_LOGS) && $(PYTHON) -m http.server 8000
+	$(PYTHON) -m http.server 8000 --directory $(OUTPUT_LOGS)

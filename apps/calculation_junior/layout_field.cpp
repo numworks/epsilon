@@ -30,12 +30,14 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
   m_isEditing = isEditing;
   markRectAsDirty(bounds());
   bool layoutChanged = false;
+#if 0
   if (isEditing) {
     layoutChanged = m_cursor.didEnterCurrentPosition();
   } else {
     // We're leaving the edition of the current layout
     layoutChanged = m_cursor.didExitPosition();
   }
+#endif
   layoutSubviews();
   markRectAsDirty(bounds());
   return layoutChanged;
@@ -248,7 +250,9 @@ void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
   LayoutCursor previousCursor = *m_contentView.cursor();
   m_contentView.setCursor(
       LayoutCursor(m_contentView.node().block(), m_contentView.node(), side));
+#if 0
   m_contentView.cursor()->didEnterCurrentPosition(previousCursor);
+#endif
 }
 
 void LayoutField::reload(KDSize previousSize) {

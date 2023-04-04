@@ -89,7 +89,9 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
   if (selecting && !isSelecting()) {
     privateStartSelecting();
   }
+#if 0
   LayoutCursor cloneCursor = *this;
+#endif
   bool moved = false;
   if (direction.isVertical()) {
     moved = verticalMove(direction, shouldRedrawLayout);
@@ -109,10 +111,10 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
               &rightmostPositionOfPreviousLayout, context) ||
           *shouldRedrawLayout;
     }
-#endif
     // Ensure that didEnterCurrentPosition is always called by being left of ||
     *shouldRedrawLayout =
         didEnterCurrentPosition(cloneCursor) || *shouldRedrawLayout;
+#endif
   }
 
   if (isSelecting() && selection().isEmpty()) {
@@ -165,20 +167,18 @@ static bool IsTemporaryAutocompletedBracketPair(
 
 // Return leftParenthesisIndex
 static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(EditionReference rack, int index) {
-  int leftParenthesisIndex = index;
 #if 0
+  int leftParenthesisIndex = index;
   int dummy = 0;
-#endif
   // TODO : Use Iterator
   while (leftParenthesisIndex > 0 &&
-#if 0
          Render::IsCollapsable(rack.childAtIndex(leftParenthesisIndex),
                                           &dummy, OMG::Direction::Left())) {
-#else
-         true) {
-#endif
     leftParenthesisIndex--;
   }
+#else
+  int leftParenthesisIndex = 0;
+#endif
   EditionReference parenthesis = EditionReference::Push<BlockType::ParenthesisLayout>();
   EditionReference tempRack = EditionReference::Push<BlockType::RackLayout>(0);
   int i = index;
@@ -306,8 +306,8 @@ void LayoutCursor::insertLayout(const Node tree, Context *context,
 
   // - Step 6 - Find position to point to if layout will me merged
   LayoutCursor previousCursor = *this;
-  Node childToPoint;
 #if 0
+  Node childToPoint;
   bool layoutToInsertIsHorizontal = layout.isHorizontal();
   if (layoutToInsertIsHorizontal) {
     childToPoint = (forceRight || forceLeft)
@@ -349,15 +349,13 @@ void LayoutCursor::insertLayout(const Node tree, Context *context,
       childToPoint = layout.childAtIndex(indexOfChildToPointTo);
     }
   }
-#endif
 
   // - Step 9 - Point to required position
   if (!childToPoint.isUninitialized()) {
-    *this = LayoutCursor(m_layoutBuffer, childToPoint, OMG::Direction::Left(), m_isEditing);
+    *this = LayoutCursor(childToPoint, OMG::Direction::Left());
     didEnterCurrentPosition(previousCursor);
   }
 
-#if 0
   // - Step 10 - Balance brackets
   balanceAutocompletedBracketsAndKeepAValidCursor();
 
@@ -620,9 +618,9 @@ void LayoutCursor::deleteAndResetSelection() {
 #endif
 }
 
+#if 0
 bool LayoutCursor::didEnterCurrentPosition(LayoutCursor previousPosition) {
   bool changed = false;
-#if 0
   if (!previousPosition.isUninitialized() && previousPosition.isValid()) {
     /* Order matters: First show the empty rectangle at position, because when
      * leaving a piecewise operator layout, empty rectangles can be set back
@@ -652,12 +650,10 @@ bool LayoutCursor::didEnterCurrentPosition(LayoutCursor previousPosition) {
   if (changed) {
     invalidateSizesAndPositions();
   }
-#endif
   return changed;
 }
 
 bool LayoutCursor::didExitPosition() {
-#if 0
   if (IsEmptyChildOfGridLayout(m_layout)) {
     /* When exiting a grid, the gray columns and rows will disappear, so
      * before leaving the grid, set the cursor position to a layout that will
@@ -668,10 +664,10 @@ bool LayoutCursor::didExitPosition() {
                   parentGrid->indexOfChild(m_layout.node())))),
               OMG::Direction::Right());
   }
-#endif
   LayoutCursor lc;
   return lc.didEnterCurrentPosition(*this);
 }
+#endif
 
 #if 0
 bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
@@ -904,20 +900,21 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction,
   return moved;
 }
 
-static void ScoreCursorInDescendants(TypeBlock * layoutBuffer, KDPoint p, const Node l,
-                                     KDFont::Size font, LayoutCursor *result) {
+#if 0
+static void ScoreCursorInDescendants(KDPoint p, Layout l, KDFont::Size font,
+                                     LayoutCursor *result) {
   KDCoordinate currentDistance =
       p.squareDistanceTo(result->middleLeftPoint(font));
   /* Put a cursor left and right of l.
    * If l.parent is an HorizontalLayout, just put it left since the right
    * of one child is the left of another one, except if l is the last child.
    * */
-  const Node parent = l.parent();
-  bool checkOnlyLeft = !parent.isUninitialized() && Layout::IsHorizontal(parent) &&
+  Layout parent = l.parent();
+  bool checkOnlyLeft = !parent.isUninitialized() && parent.isHorizontal() &&
                        parent.indexOfChild(l) < parent.numberOfChildren() - 1;
   int numberOfDirectionsToCheck = 1 + !checkOnlyLeft;
   for (int i = 0; i < numberOfDirectionsToCheck; i++) {
-    LayoutCursor tempCursor = LayoutCursor(layoutBuffer,
+    LayoutCursor tempCursor = LayoutCursor(
         l, i == 0 ? OMG::Direction::Left() : OMG::Direction::Right());
     if (currentDistance >
         p.squareDistanceTo(tempCursor.middleLeftPoint(font))) {
@@ -926,17 +923,18 @@ static void ScoreCursorInDescendants(TypeBlock * layoutBuffer, KDPoint p, const 
   }
   int nChildren = l.numberOfChildren();
   for (int i = 0; i < nChildren; i++) {
-    ScoreCursorInDescendants(layoutBuffer, p, l.childAtIndex(i), font, result);
+    ScoreCursorInDescendants(p, l.childAtIndex(i), font, result);
   }
 }
 
-static LayoutCursor ClosestCursorInDescendantsOfLayout(TypeBlock * layoutBuffer,
-    LayoutCursor currentCursor, const Node l, KDFont::Size font) {
-  LayoutCursor result = LayoutCursor(layoutBuffer, l, OMG::Direction::Left());
-  ScoreCursorInDescendants(layoutBuffer, currentCursor.middleLeftPoint(font), l, font,
+static LayoutCursor ClosestCursorInDescendantsOfLayout(
+    LayoutCursor currentCursor, Layout l, KDFont::Size font) {
+  LayoutCursor result = LayoutCursor(l, OMG::Direction::Left());
+  ScoreCursorInDescendants(currentCursor.middleLeftPoint(font), l, font,
                            &result);
   return result;
 }
+#endif
 
 bool LayoutCursor::verticalMoveWithoutSelection(
     OMG::VerticalDirection direction, bool *shouldRedrawLayout) {
@@ -969,30 +967,31 @@ bool LayoutCursor::verticalMoveWithoutSelection(
     }
   }
 
+#if 0
   /* Step 2:
    * Ask ancestor if cursor can move vertically. */
-  Node p = m_layout.parent();
-  Node currentChild = m_layout;
-  Render::PositionInLayout currentPosition =
+  Layout p = m_layout.parent();
+  Layout currentChild = m_layout;
+  LayoutNode::PositionInLayout currentPosition =
       m_position == leftMostPosition()
-          ? Render::PositionInLayout::Left
+          ? LayoutNode::PositionInLayout::Left
           : (m_position == rightmostPosition()
-                 ? Render::PositionInLayout::Right
-                 : Render::PositionInLayout::Middle);
+                 ? LayoutNode::PositionInLayout::Right
+                 : LayoutNode::PositionInLayout::Middle);
   while (!p.isUninitialized()) {
     int childIndex = p.indexOfChild(currentChild);
-    int nextIndex = Render::IndexAfterVerticalCursorMove(p,
+    int nextIndex = p.indexAfterVerticalCursorMove(
         direction, childIndex, currentPosition, shouldRedrawLayout);
-    if (nextIndex != k_cantMoveIndex) {
-      if (nextIndex == k_outsideIndex) {
-        assert(currentPosition != Render::PositionInLayout::Middle);
-        setLayout(p, currentPosition == Render::PositionInLayout::Left
+    if (nextIndex != LayoutNode::k_cantMoveIndex) {
+      if (nextIndex == LayoutNode::k_outsideIndex) {
+        assert(currentPosition != LayoutNode::PositionInLayout::Middle);
+        setLayout(p, currentPosition == LayoutNode::PositionInLayout::Left
                          ? OMG::Direction::Left()
                          : OMG::Direction::Right());
       } else {
-        assert(!Layout::IsHorizontal(p));
+        assert(!p.isHorizontal());
         // We assume the new cursor is the same whatever the font
-        LayoutCursor newCursor = ClosestCursorInDescendantsOfLayout(m_layoutBuffer,
+        LayoutCursor newCursor = ClosestCursorInDescendantsOfLayout(
             *this, p.childAtIndex(nextIndex), KDFont::Size::Large);
         m_layout = newCursor.layout();
         m_position = newCursor.position();
@@ -1001,8 +1000,9 @@ bool LayoutCursor::verticalMoveWithoutSelection(
     }
     currentChild = p;
     p = p.parent();
-    currentPosition = Render::PositionInLayout::Middle;
+    currentPosition = LayoutNode::PositionInLayout::Middle;
   }
+#endif
   return false;
 }
 

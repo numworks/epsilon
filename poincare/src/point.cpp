@@ -26,9 +26,16 @@ Expression PointNode::shallowReduce(const ReductionContext& reductionContext) {
 template <typename T>
 Evaluation<T> PointNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
+  ExpressionNode* p = parent();
+  if (p && !p->isOfType({Type::List, Type::ListSequence})) {
+    return Complex<T>::Undefined();
+  }
   Coordinate2D<T> xy = Point(this).approximate2D<T>(
       approximationContext.context(), approximationContext.complexFormat(),
       approximationContext.angleUnit());
+  if (std::isnan(xy.x()) || std::isnan(xy.y())) {
+    return Complex<T>::Undefined();
+  }
   return PointEvaluation<T>::Builder(xy.x(), xy.y());
 }
 
@@ -42,7 +49,12 @@ Expression Point::shallowReduce(ReductionContext reductionContext) {
   if (!e.isUninitialized()) {
     return e;
   }
-  return *this;
+  Expression p = parent();
+  if (p.isUninitialized() || p.isOfType({ExpressionNode::Type::List,
+                                         ExpressionNode::Type::ListSequence})) {
+    return *this;
+  }
+  return replaceWithUndefinedInPlace();
 }
 
 }  // namespace Poincare

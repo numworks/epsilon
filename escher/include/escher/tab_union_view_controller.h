@@ -28,6 +28,8 @@ class TabUnion : public AbstractTabUnion {
     }
   }
 
+  int activeTab() const { return m_activeTab; }
+
   void setActiveTab(int index) override {
     if (m_activeTab == index) {
       return;

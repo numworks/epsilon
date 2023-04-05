@@ -169,7 +169,7 @@ void TabViewController::viewWillAppear() {
   if (m_dataSource->activeTab() < 0) {
     m_dataSource->setActiveTab(0);
   }
-  m_view.setActiveView(children(m_dataSource->activeTab())->view());
+  m_view.setActiveView(activeViewController()->view());
   activeViewController()->viewWillAppear();
   m_view.m_tabView.setActiveIndex(m_dataSource->activeTab());
 }

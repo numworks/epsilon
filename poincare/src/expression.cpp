@@ -851,7 +851,9 @@ bool Expression::hasUnit(bool ignoreAngleUnits, bool replaceSymbols,
   if (ignoreAngleUnits) {
     return recursivelyMatches(
         [](const Expression e, Context *context) {
-          return e.type() == ExpressionNode::Type::Unit && !e.isPureAngleUnit();
+          return (e.type() == ExpressionNode::Type::Unit &&
+                  !e.isPureAngleUnit()) ||
+                 e.type() == ExpressionNode::Type::ConstantPhysics;
         },
         ctx,
         replaceSymbols
@@ -860,7 +862,8 @@ bool Expression::hasUnit(bool ignoreAngleUnits, bool replaceSymbols,
   }
   return recursivelyMatches(
       [](const Expression e, Context *context) {
-        return e.type() == ExpressionNode::Type::Unit;
+        return e.type() == ExpressionNode::Type::Unit ||
+               e.type() == ExpressionNode::Type::ConstantPhysics;
       },
       ctx,
       replaceSymbols

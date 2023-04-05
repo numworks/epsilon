@@ -578,16 +578,10 @@ void Parser::parseRightwardsArrow(Expression &leftHandSide,
    * on the left
    * - If rightHandSide is angle unit, no unit on the left means default angle
    * unit.
-   * - Physical constants contain units.
    * - Replace symbols in leftHandSide to know if they contain unit.
    * - Without context, leftHandSide could contain unit inside symbols. */
   bool leftHandSideCanBeUnitConvert =
       rightHandSide.isPureAngleUnit() ||
-      leftHandSide.recursivelyMatches(
-          [](const Expression e, Context *context) {
-            return e.type() == ExpressionNode::Type::ConstantPhysics;
-          },
-          nullptr, SymbolicComputation::DoNotReplaceAnySymbol) ||
       leftHandSide.hasUnit(false, true, m_parsingContext.context()) ||
       (!m_parsingContext.context() &&
        leftHandSide.deepIsSymbolic(nullptr,

@@ -77,7 +77,8 @@ bool PlotController::reloadBannerView() {
                                 m_cursor.y(), displayMode, precision);
   bannerView()->result()->setText(buffer);
 
-  bannerView()->reload();
+  dataView()->reload();
+
   KDCoordinate newHeight =
       bannerView()->minimalSizeForOptimalDisplay().height();
   if (previousHeight != newHeight) {

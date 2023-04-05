@@ -41,8 +41,8 @@ uint16_t EditionPool::ReferenceTable::storeNode(Node node) {
 };
 
 void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
-                                              Block *contextSelection1,
-                                              Block *contextSelection2,
+                                              const Block *contextSelection1,
+                                              const Block *contextSelection2,
                                               int contextAlteration) {
   Block *first = static_cast<Block *>(m_pool->firstBlock());
   for (int i = 0; i < m_length; i++) {
@@ -105,6 +105,15 @@ void EditionPool::replaceBlock(Block *previousBlock, Block newBlock) {
 void EditionPool::replaceBlocks(Block *destination, const Block *source,
                                 size_t numberOfBlocks) {
   memcpy(destination, source, numberOfBlocks * sizeof(Block));
+  m_referenceTable.updateNodes(
+      [](uint16_t *offset, Block *testedBlock, const Block *destination,
+         const Block *source, int numberOfBlocks) {
+        if (destination <= testedBlock &&
+            testedBlock < destination + numberOfBlocks) {
+          *offset = ReferenceTable::NoNodeIdentifier;
+        }
+      },
+      destination, source, numberOfBlocks);
 }
 
 bool EditionPool::insertBlocks(Block *destination, Block *source,
@@ -118,8 +127,8 @@ bool EditionPool::insertBlocks(Block *destination, Block *source,
   m_numberOfBlocks += numberOfBlocks;
   memcpy(destination, source, insertionSize);
   m_referenceTable.updateNodes(
-      [](uint16_t *offset, Block *testedBlock, Block *destination, Block *block,
-         int numberOfBlocks) {
+      [](uint16_t *offset, Block *testedBlock, const Block *destination,
+         const Block *block, int numberOfBlocks) {
         if (destination <= testedBlock) {
           *offset += numberOfBlocks;
         }
@@ -135,8 +144,8 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
   memmove(address, address + deletionSize,
           static_cast<Block *>(lastBlock()) - address);
   m_referenceTable.updateNodes(
-      [](uint16_t *offset, Block *testedBlock, Block *address, Block *block,
-         int numberOfBlocks) {
+      [](uint16_t *offset, Block *testedBlock, const Block *address,
+         const Block *block, int numberOfBlocks) {
         if (testedBlock > address) {
           *offset -= numberOfBlocks;
         } else if (testedBlock == address) {
@@ -153,8 +162,8 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
   size_t len = numberOfBlocks * sizeof(Block);
   Memory::Rotate(dst, src, len);
   m_referenceTable.updateNodes(
-      [](uint16_t *offset, Block *testedBlock, Block *dst, Block *src,
-         int nbOfBlocks) {
+      [](uint16_t *offset, Block *testedBlock, const Block *dst,
+         const Block *src, int nbOfBlocks) {
         if (testedBlock >= src && testedBlock < src + nbOfBlocks) {
           *offset += dst - src - (dst > src ? nbOfBlocks : 0);
         } else if ((testedBlock >= src + nbOfBlocks && testedBlock < dst) ||

@@ -87,10 +87,11 @@ class EditionPool final : public Pool {
     ReferenceTable(Pool *pool) : Pool::ReferenceTable(pool) {}
     Node nodeForIdentifier(uint16_t id) const override;
     uint16_t storeNode(Node node) override;
-    typedef void (*AlterSelectedBlock)(uint16_t *, Block *, Block *, Block *,
-                                       int);
-    void updateNodes(AlterSelectedBlock function, Block *contextSelection1,
-                     Block *contextSelection2, int contextAlteration);
+    typedef void (*AlterSelectedBlock)(uint16_t *, Block *, const Block *,
+                                       const Block *, int);
+    void updateNodes(AlterSelectedBlock function,
+                     const Block *contextSelection1,
+                     const Block *contextSelection2, int contextAlteration);
 
    private:
     size_t maxNumberOfReferences() override {

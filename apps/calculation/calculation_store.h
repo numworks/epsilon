@@ -102,8 +102,7 @@ class CalculationStore {
   char *pushUndefined(char *location);
 
   static Poincare::Expression EnhancePushedExpression(
-      Poincare::Expression expression,
-      Poincare::Expression ansExpression = Poincare::Expression());
+      Poincare::Expression expression, Poincare::Context *ansContext = nullptr);
 
   char *const m_buffer;
   const size_t m_bufferSize;

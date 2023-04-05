@@ -89,22 +89,22 @@ ExpiringPointer<Calculation> CalculationStore::push(
         Ion::CircuitBreaker::CheckpointType::Back);
     if (CircuitBreakerRun(checkpoint)) {
       /* Compute Ans now before the store is updated or the last calculation
-       * deleted. */
-      const Expression ans = ansExpression(context);
+       * deleted.
+       * Setting Ans in the context makes it available during the parsing of the
+       * input, namely to know if a rightwards arrow is a unit conversion or a
+       * variable assignment. */
+      Poincare::VariableContext ansContext(Symbol::k_ansAliases.mainAlias(),
+                                           context);
+      ansContext.setExpressionForSymbolAbstract(ansExpression(context),
+                                                Symbol::Ans());
 
       // Push a new, empty Calculation
       cursor = pushEmptyCalculation(cursor);
       assert(cursor != k_pushError);
 
-      /* Setting Ans in the context makes it available during the parsing of the
-       * input, namely to know if a rightwards arrow is a unit conversion or a
-       * variable assignment. */
-      Poincare::VariableContext ansContext(Symbol::k_ansAliases.mainAlias(),
-                                           context);
-      ansContext.setExpressionForSymbolAbstract(ans, Symbol::Ans());
       // Push the input
       inputExpression = Expression::Parse(text, &ansContext);
-      inputExpression = EnhancePushedExpression(inputExpression, ans);
+      inputExpression = EnhancePushedExpression(inputExpression, &ansContext);
       cursor =
           pushSerializedExpression(cursor, inputExpression, maxNumberOfDigits);
       if (cursor == k_pushError) {
@@ -312,11 +312,12 @@ char *CalculationStore::pushUndefined(char *location) {
 }
 
 Expression CalculationStore::EnhancePushedExpression(Expression expression,
-                                                     Expression ansExpression) {
+                                                     Context *ansContext) {
   // Replace Ans
-  if (!ansExpression.isUninitialized()) {
-    expression =
-        expression.replaceSymbolWithExpression(Symbol::Ans(), ansExpression);
+  if (ansContext) {
+    Symbol ans = Symbol::Ans();
+    expression = expression.replaceSymbolWithExpression(
+        ans, ansContext->expressionForSymbolAbstract(ans, false));
   }
   /* Add an angle unit in trigonometric functions if the user could have
    * forgotten to change the angle unit in the preferences.

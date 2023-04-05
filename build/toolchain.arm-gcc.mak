@@ -20,7 +20,7 @@ endif
 
 ifeq ($(LTO),1)
 # Use link-time optimization if LTO=1
-SFLAGS += -flto
+SFLAGS += -flto=auto
 endif
 
 # Get rid of unused symbols. This is also useful even if LTO=1.

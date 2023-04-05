@@ -11,6 +11,9 @@ void DataView::deselectViewForSeries(int series) {
 }
 
 void DataView::setDisplayBanner(bool display) {
+  if (m_displayBanner == display) {
+    return;
+  }
   m_displayBanner = display;
   layoutBanner(false);
 }

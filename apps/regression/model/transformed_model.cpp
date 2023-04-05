@@ -94,9 +94,8 @@ bool TransformedModel::dataSuitableForFit(Store* store, int series) const {
       return false;
     }
     if (applyLnOnY() && (y == 0 || firstYIsNegative != (y < 0.0))) {
-      /* Y data points of the strict same sign. By opposing both the a
-       * coefficient and the Y data points, we can otherwise apply the
-       * logarithm. */
+      /* Y data points of the strict same sign. By opposing both the coefficient
+       * a and the Y data points, we can still apply the logarithm. */
       return false;
     }
   }

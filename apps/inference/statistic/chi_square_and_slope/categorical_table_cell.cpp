@@ -22,6 +22,8 @@ CategoricalTableCell::CategoricalTableCell(
 }
 
 void CategoricalTableCell::didBecomeFirstResponder() {
+  assert(0 <= selectedColumn() &&
+         selectedColumn() < tableViewDataSource()->numberOfColumns());
   if (selectedRow() < 0) {
     selectRow(1);
   } else if (selectedRow() >= tableViewDataSource()->numberOfRows()) {

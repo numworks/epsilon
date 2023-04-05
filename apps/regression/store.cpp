@@ -424,7 +424,7 @@ double Store::computeResidualStandardDeviation(
     double res = residualAtIndexForSeries(series, i, globalContext);
     sum += res * res;
   }
-  return std::sqrt(sum) / (n - nCoeff);
+  return std::sqrt(sum / (n - nCoeff));
 }
 
 Model *Store::regressionModel(int index) {

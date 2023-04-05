@@ -2,14 +2,15 @@
 #define GRAPH_APP_H
 
 #include <apps/apps_container_helper.h>
+#include <apps/shared/continuous_function.h>
 #include <apps/shared/continuous_function_store.h>
+#include <apps/shared/function_app.h>
+#include <apps/shared/interval.h>
 #include <escher/alternate_empty_view_controller.h>
 
-#include "../shared/continuous_function.h"
-#include "../shared/function_app.h"
-#include "../shared/interval.h"
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
+#include "shared/function_toolbox.h"
 #include "values/values_controller.h"
 
 namespace Graph {
@@ -74,6 +75,7 @@ class App : public Shared::FunctionApp {
   FunctionParameterController *parameterController() {
     return &m_functionParameterController;
   }
+  FunctionToolbox *functionToolbox() { return &m_functionToolbox; }
 
  private:
   App(Snapshot *snapshot);
@@ -93,6 +95,7 @@ class App : public Shared::FunctionApp {
   };
 
   FunctionParameterController m_functionParameterController;
+  FunctionToolbox m_functionToolbox;
   Escher::TabUnion<ListTab, GraphTab, ValuesTab> m_tabs;
 };
 

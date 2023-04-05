@@ -157,7 +157,7 @@ void DomainParameterController::switchToolboxContent(
   } else {
     content = FunctionToolbox::AddedCellsContent::ComparisonOperators;
   }
-  FunctionToolbox* toolbox = App::app()->listController()->toolbox();
+  FunctionToolbox* toolbox = App::app()->functionToolbox();
   toolbox->setAddedCellsContent(content);
 }
 

@@ -152,7 +152,7 @@ d3.xml("XML_FILE", function(err, xml) {
     let poolEvents = data.children
     for (const poolEvent of poolEvents) {
       poolEvent.occurences = 1
-      let references = poolEvent.firstElementChild.children
+      let references = references(poolEvent)
       let referenceOffset = 0
       let eventBlockAddress = parseInt(poolEvent.getAttribute("blockAddress"), 16)
       let eventBlockSize = parseInt(poolEvent.getAttribute("blockSize"))

@@ -37,38 +37,38 @@ KDCoordinate LayoutCursor::cursorHeight(KDFont::Size font) const {
     return Render::Size(layoutToFit(font), font).height();
   }
 
-  if (Layout::IsHorizontal(m_layout)) {
+  if (Layout::IsHorizontal(cursorNode())) {
     return RackLayout::SizeBetweenIndexes(
-               m_layout, currentSelection.leftPosition(),
+               cursorNode(), currentSelection.leftPosition(),
                currentSelection.rightPosition(), font)
         .height();
   }
 
-  return Render::Size(m_layout, font).height();
+  return Render::Size(cursorNode(), font).height();
 }
 
 KDPoint LayoutCursor::cursorAbsoluteOrigin(KDFont::Size font) const {
   KDCoordinate cursorBaseline = 0;
   LayoutSelection currentSelection = selection();
-  if (!currentSelection.isEmpty() && Layout::IsHorizontal(m_layout)) {
+  if (!currentSelection.isEmpty() && Layout::IsHorizontal(cursorNode())) {
     cursorBaseline = RackLayout::BaselineBetweenIndexes(
-        m_layout, currentSelection.leftPosition(),
+        cursorNode(), currentSelection.leftPosition(),
         currentSelection.rightPosition(), font);
   } else {
     cursorBaseline = Render::Baseline(layoutToFit(font), font);
   }
   KDCoordinate cursorYOriginInLayout =
-      Render::Baseline(m_layout, font) - cursorBaseline;
+      Render::Baseline(cursorNode(), font) - cursorBaseline;
   KDCoordinate cursorXOffset = 0;
-  if (Layout::IsHorizontal(m_layout)) {
+  if (Layout::IsHorizontal(cursorNode())) {
     cursorXOffset =
-        RackLayout::SizeBetweenIndexes(m_layout, 0, m_position, font)
+        RackLayout::SizeBetweenIndexes(cursorNode(), 0, m_position, font)
             .width();
   } else {
     cursorXOffset =
-        m_position == 1 ? Render::Size(m_layout, font).width() : 0;
+        m_position == 1 ? Render::Size(cursorNode(), font).width() : 0;
   }
-  return Render::AbsoluteOrigin(m_layout, font)
+  return Render::AbsoluteOrigin(cursorNode(), font)
       .translatedBy(KDPoint(cursorXOffset, cursorYOriginInLayout));
 }
 
@@ -192,19 +192,21 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(EditionReference 
 }
 
 /* const Node insertion */
-void LayoutCursor::insertLayout(const Node tree, Context *context,
-                                        bool forceRight, bool forceLeft, bool startEdition) {
+void LayoutBufferCursor::EditionPoolCursor::insertLayout(const void * data) {
+  const InsertLayoutContext * insertLayoutContext = static_cast<const InsertLayoutContext *>(data);
+  const Node tree = insertLayoutContext->m_tree;
+  const Context *context = insertLayoutContext->m_context;
+  bool forceRight = insertLayoutContext->m_forceRight;
+  bool forceLeft = insertLayoutContext->m_forceLeft;
+
   assert(!isUninitialized() && isValid());
   if (Layout::IsEmpty(tree)) {
     return;
   }
 
-  if (startEdition) {
-    setEditing(true);
-  }
   assert(!forceRight || !forceLeft);
   // - Step 1 - Delete selection
-  deleteAndResetSelection();
+  deleteAndResetSelection(nullptr);
 
 #if 0
   // - Step 2 - Beautify the current layout if needed.
@@ -276,7 +278,7 @@ void LayoutCursor::insertLayout(const Node tree, Context *context,
   /* - Step 5 - Add parenthesis around vertical offset
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
-  if (Layout::IsHorizontal(m_layout) &&
+  if (Layout::IsHorizontal(cursorNode()) &&
       tree.type() == BlockType::VerticalOffsetLayout &&
       VerticalOffsetLayout::IsSuffixSuperscript(tree)) {
     if (!leftL.isUninitialized() &&
@@ -285,27 +287,27 @@ void LayoutCursor::insertLayout(const Node tree, Context *context,
       // Insert ^c left of a^b -> turn a^b into (a^b)
       int leftParenthesisIndex =
           ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
-              m_layout,
-              m_layout.indexOfChild(leftL));
+              cursorNode(),
+              cursorNode().indexOfChild(leftL));
       m_position = leftParenthesisIndex + 1;
     }
 
     if (!rightL.isUninitialized() &&
         rightL.type() == BlockType::VerticalOffsetLayout &&
         VerticalOffsetLayout::IsSuffixSuperscript(rightL) &&
-        m_layout.indexOfChild(rightL) > 0) {
+        cursorNode().indexOfChild(rightL) > 0) {
       // Insert ^b right of a in a^c -> turn a^c into (a)^c
       int leftParenthesisIndex =
           ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
-              m_layout,
-              m_layout.indexOfChild(rightL) - 1);
-      m_layout = m_layout.childAtIndex(leftParenthesisIndex).childAtIndex(0);
-      m_position = m_layout.numberOfChildren();
+              cursorNode(),
+              cursorNode().indexOfChild(rightL) - 1);
+      setCursorNode(cursorNode().childAtIndex(leftParenthesisIndex).childAtIndex(0));
+      m_position = cursorNode().numberOfChildren();
     }
   }
 
   // - Step 6 - Find position to point to if layout will me merged
-  LayoutCursor previousCursor = *this;
+  EditionPoolCursor previousCursor = *this;
 #if 0
   Node childToPoint;
   bool layoutToInsertIsHorizontal = layout.isHorizontal();
@@ -327,10 +329,10 @@ void LayoutCursor::insertLayout(const Node tree, Context *context,
   /* AddOrMergeLayoutAtIndex will replace current layout with an
    * HorizontalLayout if needed. With this assert, m_position is guaranteed to
    * be preserved. */
-  assert(Layout::IsHorizontal(m_layout) || m_layout.parent().isUninitialized() ||
-         !Layout::IsHorizontal(m_layout.parent()));
-  m_layout = static_cast<Node>(RackLayout::AddOrMergeLayoutAtIndex(m_layout, tree, &m_position));
-  assert(Layout::IsHorizontal(m_layout));
+  assert(Layout::IsHorizontal(cursorNode()) || cursorNode().parent().isUninitialized() ||
+         !Layout::IsHorizontal(cursorNode().parent()));
+  setCursorNode(static_cast<Node>(RackLayout::AddOrMergeLayoutAtIndex(cursorNode(), tree, &m_position)));
+  assert(Layout::IsHorizontal(cursorNode()));
 
   if (!forceLeft) {
     // Move cursor right of inserted children
@@ -367,49 +369,45 @@ void LayoutCursor::insertLayout(const Node tree, Context *context,
   // - Step 12 - Invalidate layout sizes and positions
   invalidateSizesAndPositions();
 #endif
-
-  if (startEdition) {
-    setEditing(false);
-  }
 }
 
-void LayoutCursor::addEmptyExponentialLayout(Context *context) {
+void LayoutBufferCursor::EditionPoolCursor::addEmptyExponentialLayout(const void * data) {
   // TODO : Avoid the RackLayout inside a RackLayout
-  // insertLayout(RackL("e"_l,KVertOffL(""_l)), false, false, true);
-  setEditing(true);
-  EditionReference ref = EditionReference::Push<BlockType::RackLayout>(2);
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('e');
-  EditionReference::Push<BlockType::VerticalOffsetLayout>();
-  EditionReference::Push<BlockType::RackLayout>(0);
-  insertLayout(ref, context, false, false, false);
-  setEditing(false);
+  // insertLayout(RackL("e"_l,KVertOffL(""_l)), false, false);
+  const Context *context = static_cast<const Context *>(data);
+  EditionReference ref = P_RACKL(
+    (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('e')),
+    (EditionReference::Push<BlockType::VerticalOffsetLayout>(), P_RACKL())
+  );
+  InsertLayoutContext insertLayoutContext{ref, context, false, false};
+  insertLayout(&insertLayoutContext);
 }
 
-void LayoutCursor::addEmptyMatrixLayout(Context *context) {
+void LayoutBufferCursor::addEmptyMatrixLayout(const Context *context) {
 #if 0
   insertLayout(MatrixLayout::EmptyMatrixBuilder());
 #endif
 }
 
-void LayoutCursor::addEmptySquareRootLayout(Context *context) {
+void LayoutBufferCursor::addEmptySquareRootLayout(const Context *context) {
 #if 0
   insertLayout(NthRootLayout::Builder(HorizontalLayout::Builder()));
 #endif
 }
 
-void LayoutCursor::addEmptyPowerLayout(Context *context) {
-  insertLayout(KVertOffL(""_l), context, false, false, true);
+void LayoutBufferCursor::addEmptyPowerLayout(const Context *context) {
+  insertLayout(KVertOffL(""_l), context, false, false);
 }
 
-void LayoutCursor::addEmptySquarePowerLayout(Context *context) {
+void LayoutBufferCursor::addEmptySquarePowerLayout(const Context *context) {
   /* Force the cursor right of the layout. */
-  insertLayout(KVertOffL("2"_l), context, true, false, true);
+  insertLayout(KVertOffL("2"_l), context, true, false);
 }
 
-void LayoutCursor::addEmptyTenPowerLayout(Context *context) {
+void LayoutBufferCursor::EditionPoolCursor::addEmptyTenPowerLayout(const void * data) {
   // TODO : Avoid the RackLayout inside a RackLayout
-  // insertLayout(RackL("10"_l,KVertOffL(""_l)), false, false, true);
-  setEditing(true);
+  // insertLayout(RackL("10"_l,KVertOffL(""_l)), false, false);
+  const Context *context = static_cast<const Context *>(data);
   /* TODO : P_RACKL gets confused with the comma inside the template, so we have
    *        to surround CodePointLayout pushes with () */
   EditionReference ref =  P_RACKL(
@@ -417,23 +415,28 @@ void LayoutCursor::addEmptyTenPowerLayout(Context *context) {
     (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('0')),
     P_VERTOFFL(P_RACKL())
   );
-  insertLayout(ref, context, false, false, false);
-  setEditing(false);
+  InsertLayoutContext insertLayoutContext{ref, context, false, false};
+  insertLayout(&insertLayoutContext);
 }
 
-void LayoutCursor::addFractionLayoutAndCollapseSiblings(Context *context) {
-  insertLayout(KFracL(""_l,""_l), context, false, false, true);
+void LayoutBufferCursor::addFractionLayoutAndCollapseSiblings(const Context *context) {
+  insertLayout(KFracL(""_l,""_l), context, false, false);
 }
 
-void LayoutCursor::insertText(const char *text, Context * context, bool forceCursorRightOfText,
-                              bool forceCursorLeftOfText, bool linearMode) {
+void LayoutBufferCursor::EditionPoolCursor::insertText(const void * data) {
+  const InsertTextContext * insertTextContext = static_cast<const InsertTextContext *>(data);
+  const char *text = insertTextContext->m_text;
+  const Context * context = insertTextContext->m_context;
+  bool forceCursorRightOfText = insertTextContext->m_forceRight;
+  bool forceCursorLeftOfText = insertTextContext->m_forceLeft;
+  bool linearMode = insertTextContext->m_linearMode;
+
   UTF8Decoder decoder(text);
 
   CodePoint codePoint = decoder.nextCodePoint();
   if (codePoint == UCodePointNull) {
     return;
   }
-  setEditing(true);
 
   /* - Step 1 -
    * Read the text from left to right and create an Horizontal layout
@@ -456,8 +459,8 @@ void LayoutCursor::insertText(const char *text, Context * context, bool forceCur
          * the first half of text now, and then insert the end of the text
          * and force the cursor left of it. */
         assert(currentSubscriptDepth == 0);
-        insertLayout(layoutToInsert, context, forceCursorRightOfText,
-                             forceCursorLeftOfText);
+        LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext insertLayoutContext{layoutToInsert, context, forceCursorRightOfText, forceCursorLeftOfText};
+        insertLayout(&insertLayoutContext);
         layoutToInsert = P_RACKL();
         currentLayout = layoutToInsert;
         forceCursorLeftOfText = true;
@@ -551,19 +554,16 @@ void LayoutCursor::insertText(const char *text, Context * context, bool forceCur
   assert(currentSubscriptDepth == 0);
 
   // - Step 2 - Inserted the created layout
-  insertLayout(layoutToInsert, context, forceCursorRightOfText,
-                       forceCursorLeftOfText);
+  LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext insertLayoutContext{layoutToInsert, context, forceCursorRightOfText, forceCursorLeftOfText};
+  insertLayout(&insertLayoutContext);
 
   // TODO: Restore beautification
-  setEditing(false);
 }
 
-void LayoutCursor::performBackspace() {
+void LayoutBufferCursor::EditionPoolCursor::performBackspace(const void * data) {
+  assert(data == nullptr);
   if (isSelecting()) {
-    setEditing(true);
-    deleteAndResetSelection();
-    setEditing(false);
-    return;
+    return deleteAndResetSelection(nullptr);
   }
 
 #if 0
@@ -576,12 +576,12 @@ void LayoutCursor::performBackspace() {
     privateDelete(deletionMethod, false);
   } else {
     assert(m_position == leftMostPosition());
-    const Node p = m_layout.parent();
+    const Node p = cursorNode().parent();
     if (p.isUninitialized()) {
       return;
     }
     Render::DeletionMethod deletionMethod =
-        Render::DeletionMethodForCursorLeftOfChild(p, p.indexOfChild(m_layout));
+        Render::DeletionMethodForCursorLeftOfChild(p, p.indexOfChild(cursorNode()));
     privateDelete(deletionMethod, true);
   }
 #if 0
@@ -590,24 +590,22 @@ void LayoutCursor::performBackspace() {
 #endif
 }
 
-void LayoutCursor::deleteAndResetSelection() {
-  assert(m_isEditing);
-  EditionReference ref(m_layout);
+void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(const void * data) {
+  assert(data == nullptr);
   LayoutSelection selec = selection();
   if (selec.isEmpty()) {
     return;
   }
   int selectionLeftBound = selec.leftPosition();
   int selectionRightBound = selec.rightPosition();
-  if (Layout::IsHorizontal(m_layout)) {
+  if (Layout::IsHorizontal(m_cursorReference)) {
     for (int i = selectionLeftBound; i < selectionRightBound; i++) {
-      NAry::RemoveChildAtIndex(ref, selectionLeftBound);
+      NAry::RemoveChildAtIndex(m_cursorReference, selectionLeftBound);
     }
   } else {
-    assert(m_layout.parent().isUninitialized() ||
-           !Layout::IsHorizontal(m_layout.parent()));
+    assert(m_cursorReference.parent().isUninitialized() || !Layout::IsHorizontal(m_cursorReference.parent()));
     EditionReference emptyRack = EditionReference::Push<BlockType::RackLayout>(0);
-    ref.replaceTreeByNode(emptyRack);
+    m_cursorReference.replaceTreeByTree(emptyRack);
   }
   m_position = selectionLeftBound;
   stopSelecting();
@@ -671,11 +669,11 @@ bool LayoutCursor::didExitPosition() {
 
 #if 0
 bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
-  return m_layout.numberOfChildren() == 0 &&
-         !m_layout.parent().isUninitialized() &&
-         m_layout.parent().type() == BlockType::FractionLayout &&
-         m_layout.parent().indexOfChild(m_layout) == 0 &&
-         m_layout.parent().childAtIndex(1).numberOfChildren() == 0;
+  return cursorNode().numberOfChildren() == 0 &&
+         !cursorNode().parent().isUninitialized() &&
+         cursorNode().parent().type() == BlockType::FractionLayout &&
+         cursorNode().parent().indexOfChild(cursorNode()) == 0 &&
+         cursorNode().parent().childAtIndex(1).numberOfChildren() == 0;
 }
 
 int LayoutCursor::RightmostPossibleCursorPosition(Layout l) {
@@ -696,37 +694,35 @@ void LayoutCursor::setLayout(const Node l,
                              OMG::HorizontalDirection sideOfLayout) {
   if (!Layout::IsHorizontal(l) && !l.parent().isUninitialized() &&
       Layout::IsHorizontal(l.parent())) {
-    m_layout = l.parent();
-    m_position = m_layout.indexOfChild(l) + (sideOfLayout.isRight());
-    assert(cursorOffset() >= 0 && cursorOffset() < k_layoutBufferSize);
+    setCursorNode(l.parent());
+    m_position = cursorNode().indexOfChild(l) + (sideOfLayout.isRight());
     return;
   }
-  m_layout = l;
-  assert(cursorOffset() >= 0 && cursorOffset() < k_layoutBufferSize);
+  setCursorNode(l);
   m_position = sideOfLayout.isLeft() ? leftMostPosition() : rightmostPosition();
 }
 
 const Node LayoutCursor::leftLayout() const {
   assert(!isUninitialized());
-  if (!Layout::IsHorizontal(m_layout)) {
-    return m_position == 1 ? m_layout : Node();
+  if (!Layout::IsHorizontal(cursorNode())) {
+    return m_position == 1 ? cursorNode() : Node();
   }
-  if (m_layout.numberOfChildren() == 0 || m_position == 0) {
+  if (cursorNode().numberOfChildren() == 0 || m_position == 0) {
     return Node();
   }
-  return m_layout.childAtIndex(m_position - 1);
+  return cursorNode().childAtIndex(m_position - 1);
 }
 
 const Node LayoutCursor::rightLayout() const {
   assert(!isUninitialized());
-  if (!Layout::IsHorizontal(m_layout)) {
-    return m_position == 0 ? m_layout : Node();
+  if (!Layout::IsHorizontal(cursorNode())) {
+    return m_position == 0 ? cursorNode() : Node();
   }
-  if (m_layout.numberOfChildren() == 0 ||
-      m_position == m_layout.numberOfChildren()) {
+  if (cursorNode().numberOfChildren() == 0 ||
+      m_position == cursorNode().numberOfChildren()) {
     return Node();
   }
-  return m_layout.childAtIndex(m_position);
+  return cursorNode().childAtIndex(m_position);
 }
 
 const Node LayoutCursor::layoutToFit(KDFont::Size font) const {
@@ -734,7 +730,7 @@ const Node LayoutCursor::layoutToFit(KDFont::Size font) const {
   const Node leftL = leftLayout();
   const Node rightL = rightLayout();
   if (leftL.isUninitialized() && rightL.isUninitialized()) {
-    return m_layout;
+    return cursorNode();
   }
   return leftL.isUninitialized() || (!rightL.isUninitialized() &&
                                      Render::Size(leftL, font).height() <
@@ -804,11 +800,11 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
      * ask its parent what it should do when leaving its only child from
      * from the right (leave the square root).
      * */
-    if (m_layout.parent().isUninitialized()) {
+    if (cursorNode().parent().isUninitialized()) {
       return false;
     }
-    nextLayout = m_layout.parent();
-    currentIndexInNextLayout = nextLayout.indexOfChild(m_layout);
+    nextLayout = cursorNode().parent();
+    currentIndexInNextLayout = nextLayout.indexOfChild(cursorNode());
   }
   assert(!nextLayout.isUninitialized());
   assert(!Layout::IsHorizontal(nextLayout));
@@ -839,7 +835,7 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
      * / -10                                       / -10
      *
      * */
-    m_layout = nextLayout.childAtIndex(newIndex);
+    setCursorNode(nextLayout.childAtIndex(newIndex));
     m_position = direction.isRight() ? leftMostPosition() : rightmostPosition();
     return true;
   }
@@ -865,16 +861,16 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
    *
    * */
   const Node parent = nextLayout.parent();
-  const Node previousLayout = m_layout;
+  const Node previousLayout = cursorNode();
   if (!parent.isUninitialized() && Layout::IsHorizontal(parent)) {
-    m_layout = parent;
-    m_position = m_layout.indexOfChild(nextLayout) + (direction.isRight());
+    setCursorNode(parent);
+    m_position = cursorNode().indexOfChild(nextLayout) + (direction.isRight());
   } else {
-    m_layout = nextLayout;
+    setCursorNode(nextLayout);
     m_position = direction.isRight();
   }
 
-  if (isSelecting() && m_layout != previousLayout) {
+  if (isSelecting() && cursorNode() != previousLayout) {
     /* If the cursor went into the parent, start the selection before
      * the layout that was just left (or after depending on the direction
      * of the selection). */
@@ -885,12 +881,12 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
 
 bool LayoutCursor::verticalMove(OMG::VerticalDirection direction,
                                 bool *shouldRedrawLayout) {
-  const Node previousLayout = m_layout;
+  const Node previousLayout = cursorNode();
   bool moved = verticalMoveWithoutSelection(direction, shouldRedrawLayout);
 
   // Handle selection (find a common ancestor to previous and current layout)
-  if (moved && isSelecting() && previousLayout != m_layout) {
-    const Node layoutAncestor = root().commonAncestor(m_layout, previousLayout);
+  if (moved && isSelecting() && previousLayout != cursorNode()) {
+    const Node layoutAncestor = Node(rootBlock()).commonAncestor(cursorNode(), previousLayout);
     assert(!layoutAncestor.isUninitialized());
     // Down goes left to right and up goes right to left
     setLayout(layoutAncestor, direction.isUp() ? OMG::Direction::Left()
@@ -954,7 +950,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
         if (nextIndex != k_cantMoveIndex) {
           assert(nextIndex != k_outsideIndex);
           assert(!Layout::IsHorizontal(nextLayout));
-          m_layout = nextLayout.childAtIndex(nextIndex);
+          setCursorNode(nextLayout.childAtIndex(nextIndex));
           m_position =
               positionRelativeToNextLayout == Render::PositionInLayout::Left
                   ? leftMostPosition()
@@ -1006,10 +1002,6 @@ bool LayoutCursor::verticalMoveWithoutSelection(
   return false;
 }
 
-void LayoutCursor::privateStartSelecting() { m_startOfSelection = m_position; }
-
-void LayoutCursor::stopSelecting() { m_startOfSelection = -1; }
-
 #if 0
 bool LayoutCursor::setEmptyRectangleVisibilityAtCurrentPosition(
     EmptyRectangle::State state) {
@@ -1052,10 +1044,9 @@ void LayoutCursor::invalidateSizesAndPositions() {
   // TODO: Nothing is memoized for now, maybe implement something ?
 #endif
 
-void LayoutCursor::privateDelete(Render::DeletionMethod deletionMethod,
+void LayoutBufferCursor::EditionPoolCursor::privateDelete(Render::DeletionMethod deletionMethod,
                                  bool deletionAppliedToParent) {
-  assert(!deletionAppliedToParent || !m_layout.parent().isUninitialized());
-  setEditing(true);
+  assert(!deletionAppliedToParent || !m_cursorReference.parent().isUninitialized());
 #if 0
   if (deletionMethod == LayoutNode::DeletionMethod::MoveLeft) {
     bool dummy = false;
@@ -1191,13 +1182,12 @@ void LayoutCursor::privateDelete(Render::DeletionMethod deletionMethod,
 #endif
   assert(deletionMethod == Render::DeletionMethod::DeleteLayout);
   if (deletionAppliedToParent) {
-    setLayout(m_layout.parent(), OMG::Direction::Right());
+    setLayout(m_cursorReference.parent(), OMG::Direction::Right());
   }
-  assert(!Layout::IsHorizontal(m_layout) || m_layout.parent().isUninitialized() || !Layout::IsHorizontal(m_layout.parent()));
+  assert(!Layout::IsHorizontal(m_cursorReference) || m_cursorReference.parent().isUninitialized() || !Layout::IsHorizontal(m_cursorReference.parent()));
   assert(m_position != 0);
   m_position--;
-  m_layout = static_cast<Node>(RackLayout::RemoveLayoutAtIndex(m_layout, &m_position));
-  setEditing(false);
+  setCursorNode(RackLayout::RemoveLayoutAtIndex(m_cursorReference, &m_position));
 }
 
 #if 0
@@ -1322,25 +1312,33 @@ void LayoutCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
 }
 #endif
 
+void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
+  m_position = cursor.m_position;
+  m_startOfSelection = cursor.m_startOfSelection;
+  setCursorNode(rootBlock() + cursor.cursorNodeOffset());
+}
 
-/* When starting edition, the buffered layout is copied in the edition pool and
- * edited there. Once the edition stops, it is dumped back to the buffer. The
- * cursor follow around and can navigate around the tree in both configurations.
- */
-void LayoutCursor::setEditing(bool status) {
-  assert(status != m_isEditing);
-  assert(EditionPool::sharedEditionPool()->numberOfTrees() == m_isEditing);
-  size_t offset = cursorOffset();
-  if (status) {
-    // Clone layout Buffer into the EditionPool
-    EditionReference::Clone(root());
-  } else {
-    // Flush the EditionPool into the layout buffer
-    root().copyTreeTo(m_layoutBuffer);
-    EditionPool::sharedEditionPool()->flush();
-  }
-  m_isEditing = status;
-  m_layout = Node(root().block() + offset);
+bool LayoutBufferCursor::execute(Action action, const void * data) {
+  // TODO : Pass LayoutBufferCursor and use it instead, build editionCursor in the execute
+  ExecutionContext executionContext{this, action, cursorNodeOffset()};
+  // Perform Action within an execution
+  return EditionPool::sharedEditionPool()->execute(
+      [](void * context, const void * data) {
+        ExecutionContext * executionContext = static_cast<ExecutionContext *>(context);
+        LayoutBufferCursor * bufferCursor = executionContext->m_cursor;
+        // Clone layoutBuffer into the EditionPool
+        EditionReference::Clone(Node(executionContext->m_cursor->rootBlock()));
+        // Create a temporary cursor
+        EditionPoolCursor editionCursor = bufferCursor->createEditionPoolCursor();
+        // Perform the action
+        (editionCursor.*(executionContext->m_action))(data);
+        // Apply the changes
+        bufferCursor->setCursorNode(bufferCursor->rootBlock() + editionCursor.cursorNodeOffset());
+        bufferCursor->applyEditionPoolCursor(editionCursor);
+        /* The resulting EditionPool tree will be loaded back into
+         * m_layoutBuffer and EditionPool will be flushed. */
+      },
+      &executionContext, data, m_layoutBuffer, k_layoutBufferSize);
 }
 
 }  // namespace PoincareJ

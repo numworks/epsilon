@@ -46,14 +46,14 @@ class ExpressionView : public AbstractExpressionView {
 
 class ExpressionViewWithCursor : public AbstractExpressionView {
  public:
-  ExpressionViewWithCursor(PoincareJ::LayoutCursor* cursor,
+  ExpressionViewWithCursor(PoincareJ::LayoutBufferCursor* cursor,
                            KDGlyph::Format format = {})
       : AbstractExpressionView(format), m_cursor(cursor) {
     assert(cursor);
   }
 
   PoincareJ::Layout getLayout() const override {
-    return PoincareJ::Layout(m_cursor->layoutBuffer());
+    return PoincareJ::Layout(m_cursor->rootBlock());
   }
   bool setLayout(PoincareJ::Layout layout) override;
 
@@ -61,7 +61,7 @@ class ExpressionViewWithCursor : public AbstractExpressionView {
   PoincareJ::LayoutSelection selection() const override {
     return m_cursor->selection();
   }
-  PoincareJ::LayoutCursor* m_cursor;
+  PoincareJ::LayoutBufferCursor* m_cursor;
 };
 
 }  // namespace CalculationJunior

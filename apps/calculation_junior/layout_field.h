@@ -48,7 +48,7 @@ class LayoutField
   void scrollToCursor() {
     scrollToBaselinedRect(
         m_contentView.cursorRect(),
-        PoincareJ::Render::Baseline(m_contentView.cursor()->layout(),
+        PoincareJ::Render::Baseline(m_contentView.cursor()->cursorNode(),
                                     m_contentView.font()));
   }
   bool isEmpty() const { return layout().isEmpty(); }
@@ -82,7 +82,7 @@ class LayoutField
   // TODO: factorize with Escher::TextField (see TODO of EditableField)
   bool shouldFinishEditing(Ion::Events::Event event) override;
 
-  PoincareJ::LayoutCursor* cursor() { return m_contentView.cursor(); }
+  PoincareJ::LayoutBufferCursor* cursor() { return m_contentView.cursor(); }
   const ExpressionViewWithCursor* expressionView() const {
     return m_contentView.expressionView();
   }
@@ -119,10 +119,10 @@ class LayoutField
     void setBackgroundColor(KDColor c) {
       m_expressionView.setBackgroundColor(c);
     }
-    void setCursor(PoincareJ::LayoutCursor cursor) { m_cursor = cursor; }
+    void setCursor(PoincareJ::LayoutBufferCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(false); }
     KDRect cursorRect() { return relativeChildFrame(&m_cursorView); }
-    PoincareJ::LayoutCursor* cursor() { return &m_cursor; }
+    PoincareJ::LayoutBufferCursor* cursor() { return &m_cursor; }
     const ExpressionViewWithCursor* expressionView() const {
       return &m_expressionView;
     }
@@ -141,13 +141,14 @@ class LayoutField
     Escher::View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     void layoutCursorSubview(bool force);
-    PoincareJ::LayoutCursor m_cursor;
-    ExpressionViewWithCursor m_expressionView;
-    Escher::TextCursorView m_cursorView;
-    bool m_isEditing;
+
     // Buffer where layout being edited is stored. TODO : refine size
     PoincareJ::BlockBuffer<PoincareJ::LayoutCursor::k_layoutBufferSize>
         m_layoutBuffer;
+    PoincareJ::LayoutBufferCursor m_cursor;
+    ExpressionViewWithCursor m_expressionView;
+    Escher::TextCursorView m_cursorView;
+    bool m_isEditing;
   };
   ContentView m_contentView;
   LayoutFieldDelegate* m_delegate;

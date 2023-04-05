@@ -17,7 +17,8 @@ using namespace Escher;
 namespace CalculationJunior {
 
 LayoutField::ContentView::ContentView(KDGlyph::Format format)
-    : m_expressionView(&m_cursor, format),
+    : m_cursor(m_layoutBuffer.blocks(), Node()),
+      m_expressionView(&m_cursor, format),
       m_cursorView(this),
       m_isEditing(false) {
   clearLayout();
@@ -48,8 +49,9 @@ void LayoutField::ContentView::clearLayout() {
       [](void *subAction, const void *data) {
         EditionReference::Push<BlockType::RackLayout>(0);
       },
-      nullptr, nullptr, m_layoutBuffer.blocks());
-  m_cursor = LayoutCursor(m_layoutBuffer.blocks(), node());
+      nullptr, nullptr, m_layoutBuffer.blocks(),
+      PoincareJ::LayoutCursor::k_layoutBufferSize);
+  m_cursor.setLayout(node(), OMG::Direction::Left());
 }
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
@@ -247,9 +249,9 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
 }
 
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
-  LayoutCursor previousCursor = *m_contentView.cursor();
-  m_contentView.setCursor(
-      LayoutCursor(m_contentView.node().block(), m_contentView.node(), side));
+  LayoutBufferCursor previousCursor = *m_contentView.cursor();
+  m_contentView.setCursor(LayoutBufferCursor(m_contentView.node().block(),
+                                             m_contentView.node(), side));
 #if 0
   m_contentView.cursor()->didEnterCurrentPosition(previousCursor);
 #endif
@@ -265,7 +267,8 @@ void LayoutField::reload(KDSize previousSize) {
   markRectAsDirty(bounds());
 }
 
-using LayoutInsertionMethod = void (LayoutCursor::*)(Context *context);
+using LayoutInsertionMethod =
+    void (LayoutBufferCursor::*)(const Context *context);
 
 bool LayoutField::handleEventWithText(const char *text, bool indentation,
                                       bool forceCursorRightOfText) {
@@ -284,23 +287,23 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
   if (currentNumberOfLayouts >=
       PoincareJ::LayoutCursor::k_layoutBufferSize - 6) {
     /* We add -6 because in some cases (Ion::Events::Division,
-     * Ion::Events::Exp...) we let the layout cursor handle the layout insertion
-     * and these events may add at most 6 layouts (e.g *10^). */
+     * Ion::Events::Exp...) we let the layout cursor handle the layout
+     * insertion and these events may add at most 6 layouts (e.g *10^). */
     return false;
   }
 
-  LayoutCursor *cursor = m_contentView.cursor();
+  LayoutBufferCursor *cursor = m_contentView.cursor();
   // Handle special cases
   constexpr Ion::Events::Event specialEvents[] = {
       Ion::Events::Division, Ion::Events::Exp,    Ion::Events::Power,
       Ion::Events::Sqrt,     Ion::Events::Square, Ion::Events::EE};
   constexpr LayoutInsertionMethod handleSpecialEvents[] = {
-      &LayoutCursor::addFractionLayoutAndCollapseSiblings,
-      &LayoutCursor::addEmptyExponentialLayout,
-      &LayoutCursor::addEmptyPowerLayout,
-      &LayoutCursor::addEmptySquareRootLayout,
-      &LayoutCursor::addEmptySquarePowerLayout,
-      &LayoutCursor::addEmptyTenPowerLayout};
+      &LayoutBufferCursor::addFractionLayoutAndCollapseSiblings,
+      &LayoutBufferCursor::addEmptyExponentialLayout,
+      &LayoutBufferCursor::addEmptyPowerLayout,
+      &LayoutBufferCursor::addEmptySquareRootLayout,
+      &LayoutBufferCursor::addEmptySquarePowerLayout,
+      &LayoutBufferCursor::addEmptyTenPowerLayout};
   constexpr int numberOfSpecialEvents = std::size(specialEvents);
   static_assert(numberOfSpecialEvents == std::size(handleSpecialEvents),
                 "Wrong number of layout insertion methods");
@@ -579,9 +582,8 @@ void LayoutField::insertLayoutAtCursor(PoincareJ::Node layout,
   layout = layout.makeEditable();
 #endif
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  m_contentView.cursor()->insertLayout(layout, context(),
-                                       forceCursorRightOfLayout,
-                                       forceCursorLeftOfLayout, true);
+  m_contentView.cursor()->insertLayout(
+      layout, context(), forceCursorRightOfLayout, forceCursorLeftOfLayout);
 
   // Reload
   reload(previousSize);

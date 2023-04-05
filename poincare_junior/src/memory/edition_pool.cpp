@@ -73,6 +73,7 @@ start_execute:
     if (address == nullptr) {
       return CachePool::sharedCachePool()->storeEditedTree();
     } else {
+      assert(Node(firstBlock()).treeSize() <= maxSize);
       Node(firstBlock()).copyTreeTo(address);
       flush();
       return 1;

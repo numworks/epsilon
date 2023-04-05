@@ -42,7 +42,7 @@ namespace PoincareJ {
 // TODO : reimplement Context
 class Context {};
 
-class LayoutCursor final {
+class LayoutCursor {
  public:
   constexpr static KDCoordinate k_cursorWidth = 1;
   // Cursor navigation // TODO : Do not duplicate them everywhere
@@ -54,46 +54,26 @@ class LayoutCursor final {
                 "Maximal number of layouts in a layout field should be equal "
                 "to max number of char in text field");
 
-  /* This constructor either set the cursor at the leftMost or rightmost
-   * position in the layout. */
-  LayoutCursor(TypeBlock * layoutBuffer, Node layout,
-               OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right(), bool isEditing = false)
-      :
-      m_layoutBuffer(layoutBuffer),
-      m_isEditing(isEditing),
-      m_layout(layout),
-      m_startOfSelection(-1) {
-    if (!m_layout.isUninitialized()) {
-      setLayout(m_layout, sideOfLayout);
-    }
-  }
-
-  LayoutCursor() : LayoutCursor(nullptr, Node()) {}
-
-  // LayoutCursor(LayoutCursor& other) :  m_layoutBuffer(other.m_layoutBuffer) {
-  //   m_isEditing = other.m_isEditing;
-  //   m_layout = other.m_layout;
-  //   m_position = other.m_position;
-  //   m_startOfSelection = other.m_startOfSelection;
-  // }
+  LayoutCursor(int position, int startOfSelection) : m_position(position), m_startOfSelection(startOfSelection) {}
 
   // Definition
-  bool isUninitialized() const { return m_layout.isUninitialized(); }
+  bool isUninitialized() const { return cursorNode().isUninitialized(); }
   bool isValid() const {
     return (isUninitialized() || (m_position >= leftMostPosition() &&
                                   m_position <= rightmostPosition()));
   }
 
   // Getters and setters
-  const Node layout() { return m_layout; }
+  virtual const TypeBlock * rootBlock() const = 0;
+  virtual const Node cursorNode() const = 0;
+  void setLayout(const Node layout, OMG::HorizontalDirection sideOfLayout);
   int position() const { return m_position; }
   bool isSelecting() const { return m_startOfSelection >= 0; }
   LayoutSelection selection() const {
     return isSelecting()
-               ? LayoutSelection(m_layout, m_startOfSelection, m_position)
+               ? LayoutSelection(cursorNode(), m_startOfSelection, m_position)
                : LayoutSelection();
   }
-  TypeBlock * layoutBuffer() { return m_layoutBuffer; }
 
 #if 0
   // These will call didEnterCurrentPosition
@@ -113,23 +93,8 @@ class LayoutCursor final {
   bool moveMultipleSteps(OMG::Direction direction, int step, bool selecting,
                          bool* shouldRedrawLayout, Context* context = nullptr);
 
-  /* Layout insertion */
-  void insertLayout(const Node layout, Context* context,
-                            bool forceRight = false, bool forceLeft = false, bool startEdition = false);
-  void addEmptyExponentialLayout(Context* context);
-  void addEmptyMatrixLayout(Context* context);
-  void addEmptyPowerLayout(Context* context);
-  void addEmptySquareRootLayout(Context* context);
-  void addEmptySquarePowerLayout(Context* context);
-  void addEmptyTenPowerLayout(Context* context);
-  void addFractionLayoutAndCollapseSiblings(Context* context);
-  void insertText(const char* text, Context* context, bool forceCursorRightOfText = false,
-                  bool forceCursorLeftOfText = false, bool linearMode = false);
-
   /* Layout deletion */
-  void performBackspace();
-
-  void stopSelecting();
+  void stopSelecting() { m_startOfSelection = -1; }
 
   /* Set empty rectangle visibility and gray rectangle in grids. */
 #if 0
@@ -146,9 +111,9 @@ class LayoutCursor final {
   void beautifyLeft(Context* context);
 #endif
 
- private:
-  void setLayout(const Node layout,
-                 OMG::HorizontalDirection sideOfLayout);
+ protected:
+  virtual void setCursorNode(const Node node) = 0;
+  int cursorNodeOffset() const { return cursorNode().block() - rootBlock(); }
 
   const Node leftLayout() const;
   const Node rightLayout() const;
@@ -156,7 +121,7 @@ class LayoutCursor final {
 
   int leftMostPosition() const { return 0; }
   int rightmostPosition() const {
-    return Layout::IsHorizontal(m_layout) ? m_layout.numberOfChildren() : 1;
+    return Layout::IsHorizontal(cursorNode()) ? cursorNode().numberOfChildren() : 1;
   }
   bool horizontalMove(OMG::HorizontalDirection direction,
                       bool* shouldRedrawLayout);
@@ -164,11 +129,7 @@ class LayoutCursor final {
   bool verticalMoveWithoutSelection(OMG::VerticalDirection direction,
                                     bool* shouldRedrawLayout);
 
-  void privateStartSelecting();
-
-  void deleteAndResetSelection();
-  void privateDelete(Render::DeletionMethod deletionMethod,
-                     bool deletionAppliedToParent);
+  void privateStartSelecting() { m_startOfSelection = m_position; }
 #if 0
   bool setEmptyRectangleVisibilityAtCurrentPosition(
       EmptyRectangle::State state);
@@ -182,23 +143,114 @@ class LayoutCursor final {
 
   void balanceAutocompletedBracketsAndKeepAValidCursor();
 #endif
-  void setEditing(bool status);
-  const Node root() const {
-    return Node(m_isEditing ? EditionPool::sharedEditionPool()->firstBlock() : m_layoutBuffer);
-  }
-  int cursorOffset() const { return m_layout.block() - root().block(); }
 
-  // Buffer of cursor's layout
-  TypeBlock * m_layoutBuffer;
-  // Is editing status
-  bool m_isEditing;
-  // Cursor's node
-  Node m_layout;
   // Cursor's horizontal position
   int m_position;
   /* -1 if no current selection. If m_startOfSelection >= 0, the selection is
    * between m_startOfSelection and m_position */
   int m_startOfSelection;
+};
+
+class LayoutBufferCursor final : public LayoutCursor {
+public:
+  /* This constructor either set the cursor at the leftMost or rightmost
+   * position in the layout. */
+  LayoutBufferCursor(TypeBlock * layoutBuffer, Node layout, OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right()) :
+      LayoutCursor(0, -1),
+      m_layoutBuffer(layoutBuffer) {
+    if (!layout.isUninitialized()) {
+      setLayout(layout, sideOfLayout);
+    }
+  }
+
+  TypeBlock * layoutBuffer() { return m_layoutBuffer; }
+  const TypeBlock * rootBlock() const override { return m_layoutBuffer; }
+  const Node cursorNode() const override { return m_cursorNode; }
+
+  /* Layout insertion */
+  void addEmptyExponentialLayout(const Context* context) {
+    execute(&EditionPoolCursor::addEmptyExponentialLayout, context);
+  }
+  void addEmptyMatrixLayout(const Context* context);
+  void addEmptyPowerLayout(const Context* context);
+  void addEmptySquareRootLayout(const Context* context);
+  void addEmptySquarePowerLayout(const Context* context);
+  void addEmptyTenPowerLayout(const Context* context) {
+    execute(&EditionPoolCursor::addEmptyTenPowerLayout, context);
+  }
+  void addFractionLayoutAndCollapseSiblings(const Context* context);
+  void insertText(const char* text, const Context* context, bool forceRight = false, bool forceLeft = false, bool linearMode = false) {
+    EditionPoolCursor::InsertTextContext insertTextContext{text, context, forceRight, forceLeft, linearMode};
+    execute(&EditionPoolCursor::insertText, &insertTextContext);
+  }
+  void insertLayout(const Node tree, const Context* context, bool forceRight = false, bool forceLeft = false) {
+    EditionPoolCursor::InsertLayoutContext insertLayoutContext{tree, context, forceRight, forceLeft};
+    execute(&EditionPoolCursor::insertLayout, &insertLayoutContext);
+  }
+  void deleteAndResetSelection() {
+    execute(&EditionPoolCursor::deleteAndResetSelection, nullptr);
+  }
+  void performBackspace() {
+    execute(&EditionPoolCursor::performBackspace, nullptr);
+  }
+
+private:
+  class EditionPoolCursor final : public LayoutCursor {
+  friend class LayoutBufferCursor;
+    EditionPoolCursor(int position, int startOfSelection, int cursorOffset) : LayoutCursor(position, startOfSelection) {
+      setCursorNode(Node(rootBlock() + cursorOffset));
+    }
+
+    const TypeBlock * rootBlock() const override {
+      return EditionPool::sharedEditionPool()->firstBlock();
+    }
+    const Node cursorNode() const override { return m_cursorReference; }
+
+    // EditionPoolCursor Actions
+    void performBackspace(const void * nullptrData);
+    void deleteAndResetSelection(const void * nullptrData);
+    void addEmptyExponentialLayout(const void * context);
+    void addEmptyTenPowerLayout(const void * context);
+    struct InsertLayoutContext {
+      const Node m_tree;
+      const Context* m_context;
+      bool m_forceRight, m_forceLeft;
+    };
+    void insertLayout(const void * insertLayoutContext);
+    struct InsertTextContext {
+      const char* m_text;
+      const Context* m_context;
+      bool m_forceRight, m_forceLeft, m_linearMode;
+    };
+    void insertText(const void * insertTextContext);
+    void privateDelete(Render::DeletionMethod deletionMethod, bool deletionAppliedToParent);
+    void setCursorNode(const Node node) override {
+      m_cursorReference = EditionReference(node);
+      assert(cursorNodeOffset() >= 0 && cursorNodeOffset() < k_layoutBufferSize);
+    }
+
+    EditionReference m_cursorReference;
+  };
+  EditionPoolCursor createEditionPoolCursor() const {
+    return EditionPoolCursor(m_position, m_startOfSelection, cursorNodeOffset());
+  }
+  void applyEditionPoolCursor(EditionPoolCursor cursor);
+  typedef void (EditionPoolCursor::*Action)(const void * data);
+  struct ExecutionContext {
+    LayoutBufferCursor * m_cursor;
+    Action m_action;
+    int m_cursorOffset;
+  };
+  bool execute(Action action, const void * data);
+  void setCursorNode(const Node node) override {
+    m_cursorNode = node;
+    assert(cursorNodeOffset() >= 0 && cursorNodeOffset() < k_layoutBufferSize);
+  }
+
+  // Buffer of cursor's layout
+  TypeBlock * m_layoutBuffer;
+  // Cursor's node
+  Node m_cursorNode;
 };
 
 }  // namespace PoincareJ

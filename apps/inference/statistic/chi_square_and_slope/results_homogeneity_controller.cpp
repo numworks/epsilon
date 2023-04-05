@@ -27,6 +27,8 @@ ResultsHomogeneityController::ResultsTableController::ResultsTableController(
       m_resultHomogeneityTable(&m_selectableListView, this, statistic) {}
 
 void ResultsHomogeneityController::ResultsTableController::viewWillAppear() {
+  m_resultHomogeneityTable.selectableTableView()->selectRow(-1);
+  m_selectableListView.selectRow(-1);
   m_selectableListView.reloadData(false);
   CategoricalController::viewWillAppear();
 }

@@ -124,13 +124,13 @@ int CalculationController::numberOfRows() const {
   /* Rows for : title + Mean ... Sum of Products + (CorrelationCoeff) +
    * (Regression) + (Coefficients) + (Residual stddev) + (R2) */
   return 1 + (static_cast<int>(Calculation::SumOfProducts) + 1) +
-         m_store->AnyActiveSeriesSatisfy(Store::DisplayR) +
-         m_store->AnyActiveSeriesSatisfy(Store::HasCoefficients) +
+         m_store->AnyActiveSeriesSatisfies(Store::DisplayR) +
+         m_store->AnyActiveSeriesSatisfies(Store::HasCoefficients) +
          numberOfDisplayedCoefficients() +
-         m_store->AnyActiveSeriesSatisfy(
+         m_store->AnyActiveSeriesSatisfies(
              Store::DisplayResidualStandardDeviation) +
-         m_store->AnyActiveSeriesSatisfy(Store::DisplayR2) +
-         m_store->AnyActiveSeriesSatisfy(Store::DisplayRSquared);
+         m_store->AnyActiveSeriesSatisfies(Store::DisplayR2) +
+         m_store->AnyActiveSeriesSatisfies(Store::DisplayRSquared);
 }
 
 int CalculationController::numberOfColumns() const {
@@ -218,7 +218,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   if (c <= Calculation::SampleStandardDeviationS) {
     int calculationIndex = static_cast<int>(c);
     using DoubleCalculation =
-        double (Store::*)(int, int, Store::Parameters) const;
+        double (Store::*)(int, int, Store::CalculationOptions) const;
     constexpr DoubleCalculation
         calculationMethods[k_numberOfDoubleBufferCalculations] = {
             &Store::meanOfColumn,
@@ -234,16 +234,16 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
         m_memoizedDoubleCalculationCells[series][1] + calculationIndex;
     if (std::isnan(*calculation1) || std::isnan(*calculation2)) {
       *calculation1 = (m_store->*calculationMethods[calculationIndex])(
-          series, 0, Store::Parameters());
+          series, 0, Store::CalculationOptions());
       *calculation2 = (m_store->*calculationMethods[calculationIndex])(
-          series, 1, Store::Parameters());
+          series, 1, Store::CalculationOptions());
     }
     assert(Poincare::Helpers::EqualOrBothNan(
                *calculation1, (m_store->*calculationMethods[calculationIndex])(
-                                  series, 0, Store::Parameters())) &&
+                                  series, 0, Store::CalculationOptions())) &&
            Poincare::Helpers::EqualOrBothNan(
                *calculation2, (m_store->*calculationMethods[calculationIndex])(
-                                  series, 1, Store::Parameters())));
+                                  series, 1, Store::CalculationOptions())));
     EvenOddDoubleBufferTextCell *myCell =
         static_cast<EvenOddDoubleBufferTextCell *>(cell);
     PoincareHelpers::ConvertFloatToText<double>(
@@ -296,8 +296,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
         static_cast<int>(c) - static_cast<int>(Calculation::CoefficientA);
     int numberOfCoefficients =
         m_store->modelForSeries(series)->numberOfCoefficients();
-    if (coefficientIndex <= 0 && Store::HasMCoefficient(type)) {
-      assert(!Store::HasACoefficient(type));
+    if (coefficientIndex <= 0 && Store::HasCoefficientM(type)) {
+      assert(!Store::HasCoefficientA(type));
       // In that case only, M is coefficientIndex 0 and A is coefficientIndex -1
       coefficientIndex = -coefficientIndex - 1;
     }
@@ -483,19 +483,19 @@ CalculationController::Calculation CalculationController::calculationForRow(
   if (row < static_cast<int>(Calculation::CorrelationCoeff)) {
     return static_cast<Calculation>(row);
   }
-  row += !m_store->AnyActiveSeriesSatisfy(Store::DisplayR);
+  row += !m_store->AnyActiveSeriesSatisfies(Store::DisplayR);
   if (row == static_cast<int>(Calculation::CorrelationCoeff)) {
     return Calculation::CorrelationCoeff;
   }
-  row += !m_store->AnyActiveSeriesSatisfy(Store::HasCoefficients);
+  row += !m_store->AnyActiveSeriesSatisfies(Store::HasCoefficients);
   if (row == static_cast<int>(Calculation::Regression)) {
     return Calculation::Regression;
   }
-  row += !m_store->AnyActiveSeriesSatisfy(Store::HasMCoefficient);
+  row += !m_store->AnyActiveSeriesSatisfies(Store::HasCoefficientM);
   if (row == static_cast<int>(Calculation::CoefficientM)) {
     return Calculation::CoefficientM;
   }
-  row += !m_store->AnyActiveSeriesSatisfy(Store::HasACoefficient);
+  row += !m_store->AnyActiveSeriesSatisfies(Store::HasCoefficientA);
   if (row == static_cast<int>(Calculation::CoefficientA)) {
     return Calculation::CoefficientA;
   }
@@ -506,23 +506,23 @@ CalculationController::Calculation CalculationController::calculationForRow(
   }
   row += static_cast<int>(Calculation::CoefficientE) -
          static_cast<int>(Calculation::CoefficientB) + 1 - displayedBCDECoeffs;
-  row +=
-      !m_store->AnyActiveSeriesSatisfy(Store::DisplayResidualStandardDeviation);
+  row += !m_store->AnyActiveSeriesSatisfies(
+      Store::DisplayResidualStandardDeviation);
   if (row == static_cast<int>(Calculation::ResidualStandardDeviation)) {
     return Calculation::ResidualStandardDeviation;
   }
-  row += !m_store->AnyActiveSeriesSatisfy(Store::DisplayR2);
+  row += !m_store->AnyActiveSeriesSatisfies(Store::DisplayR2);
   if (row == static_cast<int>(Calculation::DeterminationCoeff)) {
     return Calculation::DeterminationCoeff;
   }
   assert(row == static_cast<int>(Calculation::NumberOfRows) - 1 &&
-         m_store->AnyActiveSeriesSatisfy(Store::DisplayRSquared));
+         m_store->AnyActiveSeriesSatisfies(Store::DisplayRSquared));
   return static_cast<Calculation>(row);
 }
 
 int CalculationController::numberOfDisplayedCoefficients() const {
-  return m_store->AnyActiveSeriesSatisfy(Store::HasMCoefficient) +
-         m_store->AnyActiveSeriesSatisfy(Store::HasACoefficient) +
+  return m_store->AnyActiveSeriesSatisfies(Store::HasCoefficientM) +
+         m_store->AnyActiveSeriesSatisfies(Store::HasCoefficientA) +
          numberOfDisplayedBCDECoefficients();
 }
 

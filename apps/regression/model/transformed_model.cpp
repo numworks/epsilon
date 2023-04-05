@@ -66,10 +66,10 @@ void TransformedModel::privateFit(Store* store, int series,
   assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries &&
          store->seriesIsActive(series));
   bool opposeY = applyLnOnA() && store->get(series, 1, 0) < 0.0;
-  LinearRegressionStore::Parameters parameters(applyLnOnX(), applyLnOnY(),
-                                               opposeY);
-  modelCoefficients[0] = store->yIntercept(series, parameters);
-  modelCoefficients[1] = store->slope(series, parameters);
+  LinearRegressionStore::CalculationOptions options(applyLnOnX(), applyLnOnY(),
+                                                    opposeY);
+  modelCoefficients[0] = store->yIntercept(series, options);
+  modelCoefficients[1] = store->slope(series, options);
   if (applyLnOnA()) {
     modelCoefficients[0] =
         (opposeY ? -1.0 : 1.0) * std::exp(modelCoefficients[0]);

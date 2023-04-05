@@ -105,7 +105,7 @@ class RegressionController : public Escher::SelectableListViewController<
   // Display X?/Y? only when no other displayed title already names the series.
   bool displaySeriesNameAsTitle() const {
     return !m_displayedFromDataTab &&
-           m_store->seriesSatisfy(m_series, Store::HasCoefficients);
+           m_store->seriesSatisfies(m_series, Store::HasCoefficients);
   }
 
   Escher::MenuCell<Escher::MessageTextView, Escher::ExpressionView>

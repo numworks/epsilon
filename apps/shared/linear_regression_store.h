@@ -35,32 +35,39 @@ class LinearRegressionStore : public Shared::DoublePairStore {
   double doubleCastedNumberOfPairsOfSeries(int series) const;
   double squaredOffsettedValueSumOfColumn(
       int series, int i, double offset = 0,
-      Parameters parameters = Parameters()) const;
-  double squaredValueSumOfColumn(int series, int i,
-                                 Parameters parameters = Parameters()) const;
+      CalculationOptions options = CalculationOptions()) const;
+  double squaredValueSumOfColumn(
+      int series, int i,
+      CalculationOptions options = CalculationOptions()) const;
   double leastSquaredSum(int series) const;
-  double columnProductSum(int series, Parameters parameters) const;
+  double columnProductSum(int series, CalculationOptions options) const;
   double columnProductSum(int series) const {
-    return columnProductSum(series, Parameters());
+    return columnProductSum(series, CalculationOptions());
   }
   double meanOfColumn(int series, int i,
-                      Parameters parameters = Parameters()) const;
-  double varianceOfColumn(int series, int i,
-                          Parameters parameters = Parameters()) const;
-  double standardDeviationOfColumn(int series, int i,
-                                   Parameters parameters = Parameters()) const;
+                      CalculationOptions options = CalculationOptions()) const;
+  double varianceOfColumn(
+      int series, int i,
+      CalculationOptions options = CalculationOptions()) const;
+  double standardDeviationOfColumn(
+      int series, int i,
+      CalculationOptions options = CalculationOptions()) const;
   double sampleStandardDeviationOfColumn(
-      int series, int i, Parameters parameters = Parameters()) const;
-  double covariance(int series, Parameters parameters) const;
+      int series, int i,
+      CalculationOptions options = CalculationOptions()) const;
+  double covariance(int series, CalculationOptions options) const;
   double covariance(int series) const {
-    return covariance(series, Parameters());
+    return covariance(series, CalculationOptions());
   }
-  double slope(int series, Parameters parameters = Parameters()) const;
-  double yIntercept(int series, Parameters parameters = Parameters()) const;
+  double slope(int series,
+               CalculationOptions options = CalculationOptions()) const;
+  double yIntercept(int series,
+                    CalculationOptions options = CalculationOptions()) const;
 
  private:
   Poincare::StatisticsDataset<double> createDatasetFromColumn(
-      int series, int i, Parameters parameters = Parameters()) const;
+      int series, int i,
+      CalculationOptions options = CalculationOptions()) const;
 };
 
 }  // namespace Shared

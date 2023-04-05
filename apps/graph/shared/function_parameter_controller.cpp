@@ -144,8 +144,6 @@ void FunctionParameterController::initializeColumnParameters() {
 }
 
 Shared::ColumnNameHelper *FunctionParameterController::columnNameHelper() {
-  // Ensure valuesController exists
-  assert(App::app()->activeTabIsValuesTab());
   return App::app()->valuesController();
 }
 

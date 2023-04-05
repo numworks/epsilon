@@ -18,7 +18,7 @@ class EvenOddCell : public HighlightCell {
 
   constexpr static KDCoordinate k_horizontalMargin = Metric::SmallCellMargin;
   constexpr static KDGlyph::Format k_smallCellDefaultFormat = {
-      {.font = KDFont::Size::Small},
+      .style = {.font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignRight};
 
  protected:

@@ -9,7 +9,7 @@ class ColumnTitleCell : public EvenOddDoubleBufferTextCell {
  public:
   ColumnTitleCell(Escher::Responder* parentResponder = nullptr)
       : EvenOddDoubleBufferTextCell(
-            parentResponder, {{.font = KDFont::Size::Small},
+            parentResponder, {.style = {.font = KDFont::Size::Small},
                               .horizontalAlignment = KDGlyph::k_alignCenter}),
         m_functionColor(Escher::Palette::Red) {}
   virtual void setColor(KDColor color);

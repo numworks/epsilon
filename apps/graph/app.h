@@ -77,8 +77,6 @@ class App : public Shared::FunctionApp {
   }
   FunctionToolbox *functionToolbox() { return &m_functionToolbox; }
 
-  bool activeTabIsValuesTab() const { return m_tabs.activeTab() == 2; }
-
  private:
   App(Snapshot *snapshot);
 

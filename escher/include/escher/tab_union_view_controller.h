@@ -14,7 +14,8 @@ class Tab {
 class AbstractTabUnion {
  public:
   virtual void setActiveTab(int index) = 0;
-  virtual Tab* tab(int index) = 0;
+  virtual int activeTab() const = 0;
+  virtual Tab* tab() = 0;
 };
 
 // this is a simplified std::variant-like class to hold three tabs
@@ -24,18 +25,18 @@ class TabUnion : public AbstractTabUnion {
   TabUnion() : m_activeTab(-1) {}
   ~TabUnion() {
     if (m_activeTab != -1) {
-      TabUnion::tab(m_activeTab)->~Tab();
+      TabUnion::tab()->~Tab();
     }
   }
 
-  int activeTab() const { return m_activeTab; }
+  int activeTab() const override { return m_activeTab; }
 
   void setActiveTab(int index) override {
     if (m_activeTab == index) {
       return;
     }
     if (m_activeTab != -1) {
-      TabUnion::tab(m_activeTab)->~Tab();
+      TabUnion::tab()->~Tab();
     }
     m_activeTab = index;
     switch (index) {
@@ -52,32 +53,29 @@ class TabUnion : public AbstractTabUnion {
     }
   }
 
-  Tab* tab(int index) override final {
-    assert(m_activeTab == index);
-    switch (index) {
+  template <class T>
+  bool activeTabIsOfType() const {
+    return (m_activeTab == 0 && std::is_same_v<T, T0>) ||
+           (m_activeTab == 1 && std::is_same_v<T, T1>) ||
+           (m_activeTab == 2 && std::is_same_v<T, T2>);
+  }
+
+  Tab* tab() override final {
+    switch (m_activeTab) {
       case 0:
         return static_cast<Tab*>(&m_0);
       case 1:
         return static_cast<Tab*>(&m_1);
       default:
-        assert(index == 2);
+        assert(m_activeTab == 2);
         return static_cast<Tab*>(&m_2);
     }
   }
 
   template <class T>
   T* tab() {
-    if constexpr (std::is_same_v<T, T0>) {
-      assert(m_activeTab == 0);
-      return &m_0;
-    } else if constexpr (std::is_same_v<T, T1>) {
-      assert(m_activeTab == 1);
-      return &m_1;
-    } else {
-      static_assert(std::is_same_v<T, T2>);
-      assert(m_activeTab == 2);
-      return &m_2;
-    }
+    assert(activeTabIsOfType<T>());
+    return static_cast<T*>(tab());
   }
 
  private:
@@ -112,7 +110,8 @@ class TabUnionViewController : public TabViewController {
 
  private:
   ViewController* children(uint8_t index) override {
-    return m_tabs->tab(index)->top();
+    assert(index == m_tabs->activeTab());
+    return m_tabs->tab()->top();
   }
   I18n::Message m_titles[3];
   AbstractTabUnion* m_tabs;

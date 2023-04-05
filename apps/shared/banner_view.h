@@ -12,9 +12,9 @@ class BannerView : public Escher::View {
  public:
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
   constexpr static KDGlyph::Format k_bannerFieldFormat = {
-      {.glyphColor = KDColorBlack,
-       .backgroundColor = Escher::Palette::GrayMiddle,
-       .font = k_font},
+      .style = {.glyphColor = KDColorBlack,
+                .backgroundColor = Escher::Palette::GrayMiddle,
+                .font = k_font},
       .horizontalAlignment = KDGlyph::k_alignCenter};
   constexpr static float k_maxLengthDisplayed =
       Ion::Display::Width / KDFont::GlyphWidth(k_font);

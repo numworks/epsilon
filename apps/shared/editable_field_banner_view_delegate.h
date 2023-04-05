@@ -20,7 +20,7 @@ class EditableFieldBannerViewDelegate {
                               .horizontalAlignment = KDGlyph::k_alignRight}),
         m_editableField(parentResponder, m_textBody, k_bufferSize,
                         inputEventHandlerDelegate, textFieldDelegate,
-                        {BannerView::k_bannerFieldFormat.style,
+                        {.style = BannerView::k_bannerFieldFormat.style,
                          .horizontalAlignment = KDGlyph::k_alignLeft}),
         m_editableView(&m_editableFieldLabel, &m_editableField) {
     m_textBody[0] = 0;

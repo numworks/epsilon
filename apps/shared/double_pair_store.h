@@ -111,14 +111,17 @@ class DoublePairStore {
   }
 
   // Calculations
-  class Parameters {
+  class CalculationOptions {
    public:
-    Parameters() : m_lnOfX(false), m_lnOfY(false), m_oppositeOfY(false) {}
-    Parameters(bool lnOfX, bool lnOfY, bool oppositeOfY)
+    CalculationOptions()
+        : m_lnOfX(false), m_lnOfY(false), m_oppositeOfY(false) {}
+    CalculationOptions(bool lnOfX, bool lnOfY, bool oppositeOfY)
         : m_lnOfX(lnOfX), m_lnOfY(lnOfY), m_oppositeOfY(oppositeOfY) {}
-    bool lnOfValue(int i) const { return i == 0 ? m_lnOfX : m_lnOfY; }
-    bool oppositeOfValue(int i) const { return i == 1 && m_oppositeOfY; }
-    double transformValue(double value, int i) const;
+    bool lnOfValue(int column) const { return column == 0 ? m_lnOfX : m_lnOfY; }
+    bool oppositeOfValue(int column) const {
+      return column == 1 && m_oppositeOfY;
+    }
+    double transformValue(double value, int column) const;
 
    private:
     const bool m_lnOfX, m_lnOfY, m_oppositeOfY;
@@ -127,7 +130,7 @@ class DoublePairStore {
   void sortIndexByColumn(uint8_t *sortedIndex, int series, int column,
                          int startIndex, int endIndex) const;
   double sumOfColumn(int series, int i,
-                     Parameters parameters = Parameters()) const;
+                     CalculationOptions options = CalculationOptions()) const;
 
   /* WARNING: This checksum is too slow. Avoid using it if you can.
    * Use it if you want to check that the list was modified outside this object

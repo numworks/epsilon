@@ -57,7 +57,7 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView *plotView,
                         color);
     }
     //   Mean point is hidden in scatter plots
-    if (m_store->seriesSatisfy(series, Store::HasCoefficients)) {
+    if (m_store->seriesSatisfies(series, Store::HasCoefficients)) {
       Coordinate2D<float> mean(m_store->meanOfColumn(series, 0),
                                m_store->meanOfColumn(series, 1));
       plotView->drawDot(ctx, rect, Dots::Size::Medium, mean, color);

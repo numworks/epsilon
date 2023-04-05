@@ -78,7 +78,7 @@ int Store::closestVerticalDot(OMG::VerticalDirection direction, double x,
     int numberOfDots = numberOfPairsOfSeries(series);
     float xMin = App::app()->graphRange()->xMin();
     float xMax = App::app()->graphRange()->xMax();
-    bool displayMean = seriesSatisfy(series, HasCoefficients);
+    bool displayMean = seriesSatisfies(series, HasCoefficients);
     for (int i = 0; i < numberOfDots + displayMean; i++) {
       double currentX =
           i < numberOfDots ? get(series, 0, i) : meanOfColumn(series, 0);
@@ -234,18 +234,18 @@ double Store::correlationCoefficient(int series) const {
    * (transformed if series is a TransformedModel). In non-linear and
    * non-transformed regressions, its square is different from the
    * determinationCoefficient R2. it is then hidden to avoid confusion */
-  if (!seriesSatisfy(series, DisplayR)) {
+  if (!seriesSatisfies(series, DisplayR)) {
     return NAN;
   }
-  bool applyLn = seriesSatisfy(series, FitsLnY);
+  bool applyLn = seriesSatisfies(series, FitsLnY);
   bool applyOpposite = applyLn && get(series, 1, 0) < 0.0;
-  Shared::DoublePairStore::Parameters parameters(seriesSatisfy(series, FitsLnX),
-                                                 applyLn, applyOpposite);
-  double v0 = varianceOfColumn(series, 0, parameters);
-  double v1 = varianceOfColumn(series, 1, parameters);
+  Shared::DoublePairStore::CalculationOptions options(
+      seriesSatisfies(series, FitsLnX), applyLn, applyOpposite);
+  double v0 = varianceOfColumn(series, 0, options);
+  double v1 = varianceOfColumn(series, 1, options);
   double result = (v0 == 0.0 || v1 == 0.0)
                       ? 1.0
-                      : covariance(series, parameters) / std::sqrt(v0 * v1);
+                      : covariance(series, options) / std::sqrt(v0 * v1);
   /* Due to errors, coefficient could slightly exceed 1.0. It needs to be
    * fixed here to prevent r^2 from being bigger than 1. */
   assert(std::abs(result) <= 1.0 || std::abs(result) - 10 * DBL_EPSILON <= 1.0);
@@ -332,10 +332,10 @@ bool Store::seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const {
   return count >= i;
 }
 
-bool Store::AnyActiveSeriesSatisfy(TypeProperty property) const {
+bool Store::AnyActiveSeriesSatisfies(TypeProperty property) const {
   int numberOfDefinedSeries = numberOfActiveSeries();
   for (int i = 0; i < numberOfDefinedSeries; i++) {
-    if (seriesSatisfy(seriesIndexFromActiveSeriesIndex(i), property)) {
+    if (seriesSatisfies(seriesIndexFromActiveSeriesIndex(i), property)) {
       return true;
     }
   }
@@ -345,19 +345,20 @@ bool Store::AnyActiveSeriesSatisfy(TypeProperty property) const {
 double Store::computeDeterminationCoefficient(
     int series, Poincare::Context *globalContext) {
   // Computes and returns the determination coefficient of the regression.
-  if (seriesSatisfy(series, DisplayRSquared)) {
+  if (seriesSatisfies(series, DisplayRSquared)) {
     /* With linear regressions and transformed models (Exponential, Logarithm
      * and Power), we use r^2, the square of the correlation coefficient between
      * the series Y (transformed) and the evaluated values.*/
     double r = correlationCoefficient(series);
     return r * r;
   }
-  if (!seriesSatisfy(series, DisplayR2)) {
+  if (!seriesSatisfies(series, DisplayR2)) {
     /* R2 does not need to be computed if model is median-median, so we avoid
      * computation. If needed, it could be computed though. */
     return NAN;
   }
-  assert(!seriesSatisfy(series, FitsLnY) && !seriesSatisfy(series, FitsLnX));
+  assert(!seriesSatisfies(series, FitsLnY) &&
+         !seriesSatisfies(series, FitsLnX));
   /* With proportional regression or badly fitted models, R2 can technically be
    * negative. R2<0 means that the regression is less effective than a
    * constant set to the series average. It should not happen with regression

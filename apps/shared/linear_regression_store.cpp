@@ -34,14 +34,14 @@ double LinearRegressionStore::doubleCastedNumberOfPairsOfSeries(
 }
 
 double LinearRegressionStore::squaredOffsettedValueSumOfColumn(
-    int series, int i, double offset, Parameters parameters) const {
-  return createDatasetFromColumn(series, i, parameters)
+    int series, int i, double offset, CalculationOptions options) const {
+  return createDatasetFromColumn(series, i, options)
       .offsettedSquaredSum(offset);
 }
 
 double LinearRegressionStore::squaredValueSumOfColumn(
-    int series, int i, Parameters parameters) const {
-  return squaredOffsettedValueSumOfColumn(series, i, 0.0, parameters);
+    int series, int i, CalculationOptions options) const {
+  return squaredOffsettedValueSumOfColumn(series, i, 0.0, options);
 }
 
 double LinearRegressionStore::leastSquaredSum(int series) const {
@@ -56,66 +56,66 @@ double LinearRegressionStore::leastSquaredSum(int series) const {
                                                                      a, b);
 }
 
-double LinearRegressionStore::columnProductSum(int series,
-                                               Parameters parameters) const {
+double LinearRegressionStore::columnProductSum(
+    int series, CalculationOptions options) const {
   double result = 0;
   int numberOfPairs = numberOfPairsOfSeries(series);
   for (int k = 0; k < numberOfPairs; k++) {
-    double value0 = parameters.transformValue(get(series, 0, k), 0);
-    double value1 = parameters.transformValue(get(series, 1, k), 1);
+    double value0 = options.transformValue(get(series, 0, k), 0);
+    double value1 = options.transformValue(get(series, 1, k), 1);
     result += value0 * value1;
   }
   return result;
 }
 
 double LinearRegressionStore::meanOfColumn(int series, int i,
-                                           Parameters parameters) const {
-  return createDatasetFromColumn(series, i, parameters).mean();
+                                           CalculationOptions options) const {
+  return createDatasetFromColumn(series, i, options).mean();
 }
 
-double LinearRegressionStore::varianceOfColumn(int series, int i,
-                                               Parameters parameters) const {
-  return createDatasetFromColumn(series, i, parameters).variance();
+double LinearRegressionStore::varianceOfColumn(
+    int series, int i, CalculationOptions options) const {
+  return createDatasetFromColumn(series, i, options).variance();
 }
 
 double LinearRegressionStore::standardDeviationOfColumn(
-    int series, int i, Parameters parameters) const {
-  return createDatasetFromColumn(series, i, parameters).standardDeviation();
+    int series, int i, CalculationOptions options) const {
+  return createDatasetFromColumn(series, i, options).standardDeviation();
 }
 
 double LinearRegressionStore::sampleStandardDeviationOfColumn(
-    int series, int i, Parameters parameters) const {
-  return createDatasetFromColumn(series, i, parameters)
-      .sampleStandardDeviation();
+    int series, int i, CalculationOptions options) const {
+  return createDatasetFromColumn(series, i, options).sampleStandardDeviation();
 }
 
 double LinearRegressionStore::covariance(int series,
-                                         Parameters parameters) const {
-  double mean0 = meanOfColumn(series, 0, parameters);
-  double mean1 = meanOfColumn(series, 1, parameters);
-  return columnProductSum(series, parameters) / numberOfPairsOfSeries(series) -
+                                         CalculationOptions options) const {
+  double mean0 = meanOfColumn(series, 0, options);
+  double mean1 = meanOfColumn(series, 1, options);
+  return columnProductSum(series, options) / numberOfPairsOfSeries(series) -
          mean0 * mean1;
 }
 
-double LinearRegressionStore::slope(int series, Parameters parameters) const {
-  return LinearModelHelper::Slope(covariance(series, parameters),
-                                  varianceOfColumn(series, 0, parameters));
+double LinearRegressionStore::slope(int series,
+                                    CalculationOptions options) const {
+  return LinearModelHelper::Slope(covariance(series, options),
+                                  varianceOfColumn(series, 0, options));
 }
 
 double LinearRegressionStore::yIntercept(int series,
-                                         Parameters parameters) const {
-  return LinearModelHelper::YIntercept(meanOfColumn(series, 1, parameters),
-                                       meanOfColumn(series, 0, parameters),
-                                       slope(series, parameters));
+                                         CalculationOptions options) const {
+  return LinearModelHelper::YIntercept(meanOfColumn(series, 1, options),
+                                       meanOfColumn(series, 0, options),
+                                       slope(series, options));
 }
 
 Poincare::StatisticsDataset<double>
-LinearRegressionStore::createDatasetFromColumn(int series, int i,
-                                               Parameters parameters) const {
+LinearRegressionStore::createDatasetFromColumn(
+    int series, int i, CalculationOptions options) const {
   Poincare::StatisticsDataset<double> dataset =
       Poincare::StatisticsDataset<double>(&m_dataLists[series][i],
-                                          parameters.lnOfValue(i),
-                                          parameters.oppositeOfValue(i));
+                                          options.lnOfValue(i),
+                                          options.oppositeOfValue(i));
   return dataset;
 }
 

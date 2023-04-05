@@ -110,14 +110,14 @@ class Store : public Shared::LinearRegressionStore {
            GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
                CountryPreferences::RegressionApp::Variant1;
   }
-  static bool HasMCoefficient(Model::Type type) {
+  static bool HasCoefficientM(Model::Type type) {
     return GlobalPreferences::sharedGlobalPreferences->regressionAppVariant() ==
                CountryPreferences::RegressionApp::Variant1 &&
            (type == Model::Type::LinearAxpb || type == Model::Type::Median);
   }
-  static bool HasACoefficient(Model::Type type) {
+  static bool HasCoefficientA(Model::Type type) {
     // Any regression type not having M coefficient have A coefficient
-    return HasCoefficients(type) && !HasMCoefficient(type);
+    return HasCoefficients(type) && !HasCoefficientM(type);
   }
   static bool FitsLnY(Model::Type type) {
     // These models are fitted with a ln(+-Y) change of variable.
@@ -128,8 +128,8 @@ class Store : public Shared::LinearRegressionStore {
     // These models are fitted with a ln(X) change of variable.
     return type == Model::Type::Power || type == Model::Type::Logarithmic;
   }
-  bool AnyActiveSeriesSatisfy(TypeProperty property) const;
-  bool seriesSatisfy(int series, TypeProperty property) const {
+  bool AnyActiveSeriesSatisfies(TypeProperty property) const;
+  bool seriesSatisfies(int series, TypeProperty property) const {
     return property(seriesRegressionType(series));
   }
 

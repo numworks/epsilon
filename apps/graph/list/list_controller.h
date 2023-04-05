@@ -6,10 +6,10 @@
 
 #include "../graph/graph_controller.h"
 #include "../shared/function_parameter_controller.h"
+#include "../shared/function_toolbox.h"
 #include "editable_function_cell.h"
 #include "function_cell.h"
 #include "function_models_parameter_controller.h"
-#include "function_toolbox.h"
 
 namespace Graph {
 
@@ -66,7 +66,6 @@ class ListController : public Shared::FunctionListController {
   FunctionParameterController* m_parameterController;
   FunctionModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;
-  FunctionToolbox m_functionToolbox;
   bool m_parameterColumnSelected;
 };
 

@@ -286,7 +286,9 @@ void ListController::willDisplayCellForIndex(HighlightCell *cell, int j) {
   functionCell->reloadCell();
 }
 
-FunctionToolbox *ListController::toolbox() { return &m_functionToolbox; }
+FunctionToolbox *ListController::toolbox() {
+  return App::app()->functionToolbox();
+}
 
 void ListController::addModel() {
   Container::activeApp()->displayModalViewController(

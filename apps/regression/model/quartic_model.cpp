@@ -71,7 +71,7 @@ Expression QuarticModel::privateExpression(double* modelCoefficients) const {
                   b >= 0.0),
               Multiplication::Builder(Number::DecimalNumber(std::fabs(c)),
                                       Power::Builder(Symbol::Builder(k_xSymbol),
-                                                     BasedInteger::Builder(3))),
+                                                     BasedInteger::Builder(2))),
               c >= 0.0),
           Multiplication::Builder(Number::DecimalNumber(std::fabs(d)),
                                   Symbol::Builder(k_xSymbol)),

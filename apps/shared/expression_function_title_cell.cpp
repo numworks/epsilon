@@ -9,7 +9,8 @@ namespace Shared {
 
 ExpressionFunctionTitleCell::ExpressionFunctionTitleCell(KDFont::Size font)
     : FunctionTitleCell(),
-      m_titleTextView({{.font = font}, .horizontalAlignment = k_alignment}) {}
+      m_titleTextView(
+          {.style = {.font = font}, .horizontalAlignment = k_alignment}) {}
 
 void ExpressionFunctionTitleCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);

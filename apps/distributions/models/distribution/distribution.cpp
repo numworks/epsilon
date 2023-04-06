@@ -195,4 +195,30 @@ void Distribution::computeUnknownParameterForProbabilityAndBound(
   }
 }
 
+float Distribution::computeXExtremum(bool min) const {
+  /* The uninitialized parameter can be nan. If it's the case, use its default
+   * value to compute the extrema of the range. */
+  double saveUninitializedParameter = NAN;
+  if (m_indexOfUninitializedParameter != k_allParametersAreInitialized &&
+      std::isnan(parameterAtIndex(m_indexOfUninitializedParameter))) {
+    saveUninitializedParameter =
+        parameterAtIndex(m_indexOfUninitializedParameter);
+    const_cast<Distribution*>(this)
+        ->setParameterAtIndexWithoutComputingCurveViewRange(
+            defaultParameterAtIndex(m_indexOfUninitializedParameter),
+            m_indexOfUninitializedParameter);
+  }
+
+  float result = min ? privateComputeXMin() : privateComputeXMax();
+
+  if (!std::isnan(saveUninitializedParameter)) {
+    assert(m_indexOfUninitializedParameter != k_allParametersAreInitialized);
+    const_cast<Distribution*>(this)
+        ->setParameterAtIndexWithoutComputingCurveViewRange(
+            NAN, m_indexOfUninitializedParameter);
+  }
+
+  return result;
+}
+
 }  // namespace Distributions

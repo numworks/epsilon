@@ -33,9 +33,9 @@ class NormalDistribution final : public TwoParametersDistribution {
   enum ParamsOrder { Mu, Sigma };
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override;
-  float xExtremum(bool min) const;
-  float computeXMin() const override { return xExtremum(true); }
-  float computeXMax() const override { return xExtremum(false); }
+  float privateXExtremum(bool min) const;
+  float privateComputeXMin() const override { return privateXExtremum(true); }
+  float privateComputeXMax() const override { return privateXExtremum(false); }
   float computeYMax() const override;
 };
 

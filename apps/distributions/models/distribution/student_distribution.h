@@ -34,8 +34,8 @@ class StudentDistribution : public OneParameterDistribution {
         Poincare::LayoutHelper::String(parameterNameAtIndex(0)),
         I18n::Message::DegreesOfFreedomDefinition};
   }
-  float computeXMin() const override;
-  float computeXMax() const override;
+  float privateComputeXMin() const override;
+  float privateComputeXMax() const override;
   float computeYMax() const override;
 };
 

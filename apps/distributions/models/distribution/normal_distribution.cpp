@@ -32,11 +32,13 @@ void NormalDistribution::setParameterAtIndex(double f, int index) {
   computeCurveViewRange();
 }
 
-float NormalDistribution::xExtremum(bool min) const {
+float NormalDistribution::privateXExtremum(bool min) const {
+  assert(!std::isnan(m_parameters[0]) && !std::isnan(m_parameters[1]));
   int coefficient = (min ? -1 : 1);
   if (m_parameters[1] == 0.0f) {
     return m_parameters[0] + coefficient * 1.0f;
   }
+
   return m_parameters[0] + coefficient * 5.0f * std::fabs(m_parameters[1]);
 }
 

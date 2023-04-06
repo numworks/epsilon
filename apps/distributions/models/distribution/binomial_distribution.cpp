@@ -67,13 +67,13 @@ ParameterRepresentation BinomialDistribution::paramRepresentationAtIndex(
   }
 }
 
-float BinomialDistribution::computeXMin() const {
+float BinomialDistribution::privateComputeXMin() const {
   float min = 0.0f;
   float max = m_parameters[0] > min ? m_parameters[0] : 1.0f;
   return min - k_displayLeftMarginRatio * (max - min);
 }
 
-float BinomialDistribution::computeXMax() const {
+float BinomialDistribution::privateComputeXMax() const {
   float min = 0.0f;
   float max = m_parameters[0] > min ? m_parameters[0] : 1.0f;
   return max + k_displayRightMarginRatio * (max - min);

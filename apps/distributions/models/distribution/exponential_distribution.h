@@ -35,7 +35,7 @@ class ExponentialDistribution final : public OneParameterDistribution {
         Poincare::LayoutHelper::String(parameterNameAtIndex(0)),
         I18n::Message::LambdaExponentialDefinition};
   }
-  float computeXMax() const override;
+  float privateComputeXMax() const override;
   float computeYMax() const override;
 };
 

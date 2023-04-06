@@ -25,7 +25,7 @@ void InputHomogeneityTableCell::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectColumn(1);
   }
-  EditableCategoricalTableCell::didBecomeFirstResponder();
+  CategoricalTableCell::didBecomeFirstResponder();
 }
 
 void InputHomogeneityTableCell::willDisplayCellAtLocation(

@@ -130,7 +130,12 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
   if (cell) {
     // Update first responder
     Responder* r = cell->responder() ? cell->responder() : this;
-    if (setFirstResponder && Container::activeApp()->firstResponder() != r) {
+    if (setFirstResponder &&
+        /* Sometimes reusable cells must be re-set as first responder if the row
+           changed. Other times, the row did not change but the responder did
+           (when going back in previous menu for example). */
+        ((selectedColumn() != previousColumn || selectedRow() != previousRow) ||
+         Container::activeApp()->firstResponder() != r)) {
       Container::activeApp()->setFirstResponder(r);
     }
     // Highlight new cell

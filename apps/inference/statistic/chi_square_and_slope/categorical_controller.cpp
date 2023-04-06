@@ -13,7 +13,7 @@ namespace Inference {
 CategoricalController::CategoricalController(Responder *parent,
                                              ViewController *nextController,
                                              Invocation invocation)
-    : SelectableListViewController<ListViewDataSource>(parent),
+    : SelectableListViewController<ListViewDataSource>(parent, this),
       m_nextController(nextController),
       m_next(&m_selectableListView, I18n::Message::Next, invocation,
              Palette::WallScreenDark, Metric::CommonMargin) {
@@ -98,6 +98,22 @@ bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
       categoricalTableCell()->selectableTableView()->contentOffset().y(),
       m_selectableListView.bounds().height());
   return true;
+}
+
+void CategoricalController::listViewDidChangeSelection(
+    SelectableListView *l, int previousRow, bool withinTemporarySelection) {
+  assert(l == &m_selectableListView);
+  if (previousRow == l->selectedRow() || withinTemporarySelection) {
+    return;
+  }
+  if (previousRow == k_indexOfTableCell) {
+    categoricalTableCell()->selectRow(-1);
+    categoricalTableCell()->layoutSubviews(true);
+  } else if (l->selectedRow() == k_indexOfTableCell &&
+             previousRow > l->selectedRow()) {
+    categoricalTableCell()->selectRow(
+        categoricalTableCell()->tableViewDataSource()->numberOfRows() - 1);
+  }
 }
 
 HighlightCell *CategoricalController::reusableCell(int index, int type) {

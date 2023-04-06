@@ -54,10 +54,10 @@ class CategoricalTableCell : public Escher::HighlightCell,
     return row > 0;
   }
 
+  void layoutSubviews(bool force = false) override;
+
  protected:
   constexpr static int k_bottomMargin = 5;
-
-  void layoutSubviews(bool force = false) override;
   virtual CategoricalController *categoricalController() = 0;
 
   Escher::SelectableTableView m_selectableTableView;

@@ -23,7 +23,8 @@ namespace Inference {
 
 class CategoricalController
     : public Escher::SelectableListViewController<Escher::ListViewDataSource>,
-      public Escher::ScrollViewDelegate {
+      public Escher::ScrollViewDelegate,
+      public Escher::SelectableListViewDelegate {
  public:
   CategoricalController(Escher::Responder* parent,
                         Escher::ViewController* nextController,
@@ -39,6 +40,11 @@ class CategoricalController
   void scrollViewDidChangeOffset(
       ScrollViewDataSource* scrollViewDataSource) override;
   bool updateBarIndicator(bool vertical, bool* visible) override;
+
+  // SelectableListViewDelegate
+  void listViewDidChangeSelection(
+      SelectableListView* l, int previousRow,
+      bool withinTemporarySelection = false) override;
 
   // ListViewDataSource
   int typeAtIndex(int index) const override {

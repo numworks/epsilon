@@ -42,7 +42,7 @@ class HypergeometricDistribution final : public ThreeParametersDistribution {
         Poincare::LayoutHelper::String(parameterNameAtIndex(i)),
         parameterTexts[i]};
   }
-  float computeXMax() const override;
+  float privateComputeXMax() const override;
   float computeYMax() const override;
 };
 

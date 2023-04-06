@@ -31,8 +31,8 @@ class BinomialDistribution final : public TwoParametersDistribution {
   constexpr static double k_defaultP = 0.5;
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override;
-  float computeXMin() const override;
-  float computeXMax() const override;
+  float privateComputeXMin() const override;
+  float privateComputeXMax() const override;
   float computeYMax() const override;
   double evaluateAtDiscreteAbscissa(int k) const override;
 };

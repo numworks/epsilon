@@ -19,7 +19,7 @@ bool GeometricDistribution::authorizedParameterAtIndex(double x,
   return true;
 }
 
-float GeometricDistribution::computeXMax() const {
+float GeometricDistribution::privateComputeXMax() const {
   assert(m_parameter != 0.0f);
   return 5.0f / m_parameter * (1.0f + k_displayRightMarginRatio);
 }

@@ -31,7 +31,7 @@ double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(
       CumulativeDistributiveInverseForProbability(p, m_parameter);
 }
 
-float ChiSquaredDistribution::computeXMax() const {
+float ChiSquaredDistribution::privateComputeXMax() const {
   assert(m_parameter != 0.0);
   return (m_parameter + 5.0f * std::sqrt(m_parameter)) *
          (1.0f + k_displayRightMarginRatio);

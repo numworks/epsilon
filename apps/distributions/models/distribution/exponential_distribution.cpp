@@ -44,14 +44,14 @@ double ExponentialDistribution::cumulativeDistributiveInverseForProbability(
   return -std::log(1.0 - p) / m_parameter;
 }
 
-float ExponentialDistribution::computeXMax() const {
+float ExponentialDistribution::privateComputeXMax() const {
   assert(m_parameter != 0.0f);
   float result = 5.0f / m_parameter;
   if (result <= FLT_EPSILON) {
     result = 1.0f;
   }
   if (std::isinf(result)) {
-    // Lower computeXMax. It is used for drawing so the value is not that
+    // Lower privateComputeXMax. It is used for drawing so the value is not that
     // important.
     return 1.0f / m_parameter;
   }

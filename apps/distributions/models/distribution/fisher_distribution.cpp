@@ -48,7 +48,7 @@ ParameterRepresentation FisherDistribution::paramRepresentationAtIndex(
   }
 }
 
-float FisherDistribution::computeXMax() const {
+float FisherDistribution::privateComputeXMax() const {
   return 5.0f;  // The mode is always < 1
 }
 

@@ -68,7 +68,7 @@ ParameterRepresentation UniformDistribution::paramRepresentationAtIndex(
   }
 }
 
-float UniformDistribution::computeXMin() const {
+float UniformDistribution::privateComputeXMin() const {
   assert(m_parameters[1] >= m_parameters[0]);
   if (m_parameters[1] - m_parameters[0] < FLT_EPSILON) {
     // If parameter is too big, subtracting only 1.0 wouldn't do anything.
@@ -78,7 +78,7 @@ float UniformDistribution::computeXMin() const {
   return m_parameters[0] - 0.6f * (m_parameters[1] - m_parameters[0]);
 }
 
-float UniformDistribution::computeXMax() const {
+float UniformDistribution::privateComputeXMax() const {
   if (m_parameters[1] - m_parameters[0] < FLT_EPSILON) {
     // If parameter is too big, adding only 1.0 wouldn't do anything.
     return m_parameters[0] + std::max(1.0, std::fabs(m_parameters[0]) *

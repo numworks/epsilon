@@ -69,8 +69,13 @@ class Distribution : public Shared::Inference {
   constexpr static double k_maxProbability = 0.9999995;
   constexpr static int k_allParametersAreInitialized = -1;
 
-  float computeXMin() const override {
-    return -k_displayLeftMarginRatio * computeXMax();
+  float computeXMax() const override final { return computeXExtremum(false); }
+  float computeXMin() const override final { return computeXExtremum(true); }
+  float computeXExtremum(bool min) const;
+
+  virtual float privateComputeXMax() const = 0;
+  virtual float privateComputeXMin() const {
+    return -k_displayLeftMarginRatio * privateComputeXMax();
   }
   void setParameterAtIndexWithoutComputingCurveViewRange(double x, int index);
 

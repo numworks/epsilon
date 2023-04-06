@@ -33,7 +33,7 @@ class FisherDistribution final : public TwoParametersDistribution {
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override;
   float mode() const;
-  float computeXMax() const override;
+  float privateComputeXMax() const override;
   float computeYMax() const override;
 };
 

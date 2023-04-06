@@ -36,8 +36,8 @@ class UniformDistribution final : public TwoParametersDistribution {
   enum ParamsOrder { A, B };
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override;
-  float computeXMin() const override;
-  float computeXMax() const override;
+  float privateComputeXMin() const override;
+  float privateComputeXMax() const override;
   float computeYMax() const override;
 };
 

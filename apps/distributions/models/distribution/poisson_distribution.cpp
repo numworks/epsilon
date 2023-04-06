@@ -18,7 +18,7 @@ bool PoissonDistribution::authorizedParameterAtIndex(double x,
   return true;
 }
 
-float PoissonDistribution::computeXMax() const {
+float PoissonDistribution::privateComputeXMax() const {
   assert(m_parameter != 0);
   return (m_parameter + 5.0f * std::sqrt(m_parameter)) *
          (1.0f + k_displayRightMarginRatio);

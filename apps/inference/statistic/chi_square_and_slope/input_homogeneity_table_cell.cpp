@@ -2,6 +2,8 @@
 
 #include <shared/column_parameter_controller.h>
 
+#include "input_homogeneity_controller.h"
+
 using namespace Escher;
 
 namespace Inference {
@@ -10,14 +12,14 @@ InputHomogeneityTableCell::InputHomogeneityTableCell(
     Escher::Responder *parentResponder,
     DynamicSizeTableViewDataSourceDelegate
         *dynamicSizeTableViewDataSourceDelegate,
-    Escher::SelectableTableViewDelegate *selectableTableViewDelegate,
-    HomogeneityTest *test)
+    HomogeneityTest *test,
+    InputHomogeneityController *inputHomogeneityController)
     : EditableCategoricalTableCell(
-          parentResponder, this, selectableTableViewDelegate,
-          dynamicSizeTableViewDataSourceDelegate, test),
+          parentResponder, this, dynamicSizeTableViewDataSourceDelegate, test),
       DynamicCellsDataSource<InferenceEvenOddEditableCell,
                              k_homogeneityTableNumberOfReusableInnerCells>(
-          this) {}
+          this),
+      m_inputHomogeneityController(inputHomogeneityController) {}
 
 void InputHomogeneityTableCell::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
@@ -38,6 +40,15 @@ void InputHomogeneityTableCell::willDisplayCellAtLocation(
         static_cast<InferenceEvenOddBufferCell *>(cell);
     typedCell->setTextColor(Palette::GrayDark);
   }
+}
+
+void InputHomogeneityTableCell::tableViewDidChangeSelection(
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
+  assert(t == &m_selectableTableView);
+  unselectTopLeftCell(t, previousSelectedCol, previousSelectedRow);
+  CategoricalTableCell::tableViewDidChangeSelection(
+      t, previousSelectedCol, previousSelectedRow, withinTemporarySelection);
 }
 
 int InputHomogeneityTableCell::fillColumnName(int column, char *buffer) {
@@ -88,6 +99,10 @@ void InputHomogeneityTableCell::destroyCells() {
   DynamicCellsDataSource<
       InferenceEvenOddBufferCell,
       k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
+}
+
+CategoricalController *InputHomogeneityTableCell::categoricalController() {
+  return m_inputHomogeneityController;
 }
 
 }  // namespace Inference

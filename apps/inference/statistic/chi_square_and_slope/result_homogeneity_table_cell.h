@@ -7,6 +7,8 @@
 
 namespace Inference {
 
+class ResultsTableController;
+
 class ResultHomogeneityTableCell
     : public CategoricalTableCell,
       public HomogeneityTableDataSource,
@@ -14,10 +16,9 @@ class ResultHomogeneityTableCell
           InferenceEvenOddBufferCell,
           k_homogeneityTableNumberOfReusableInnerCells> {
  public:
-  ResultHomogeneityTableCell(
-      Escher::Responder* parentResponder,
-      Escher::SelectableTableViewDelegate* selectableTableViewDelegate,
-      HomogeneityTest* test);
+  ResultHomogeneityTableCell(Escher::Responder* parentResponder,
+                             HomogeneityTest* test,
+                             ResultsTableController* resultsTableController);
 
   enum class Mode : bool { ExpectedValue, Contribution };
   void setMode(Mode mode) { m_mode = mode; }
@@ -42,6 +43,15 @@ class ResultHomogeneityTableCell
     return &m_selectableTableView;
   }
 
+  // SelectableTableViewDelegate
+  void tableViewDidChangeSelection(
+      Escher::SelectableTableView* t, int previousSelectedCol,
+      int previousSelectedRow, bool withinTemporarySelection = false) override;
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
+                                       int row) const override {
+    return col > 0 && row > 0;
+  }
+
  private:
   // HomogeneityTableViewDataSource
   /* The totals are not displayed when in Contribution mode. */
@@ -59,6 +69,7 @@ class ResultHomogeneityTableCell
   }
   void willDisplayInnerCellAtLocation(Escher::HighlightCell* cell, int column,
                                       int row) override;
+  CategoricalController* categoricalController() override;
 
   // DynamicCellsDataSource
   void createCells() override;
@@ -66,6 +77,7 @@ class ResultHomogeneityTableCell
 
   HomogeneityTest* m_statistic;
   Mode m_mode;
+  ResultsTableController* m_resultsTableController;
 };
 
 }  // namespace Inference

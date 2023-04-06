@@ -19,15 +19,6 @@ class InputHomogeneityController : public InputCategoricalController {
     return I18n::translate(I18n::Message::InputHomogeneityControllerTitle);
   }
 
-  // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(
-      Escher::SelectableTableView* t, int previousSelectedCol,
-      int previousSelectedRow, bool withinTemporarySelection = false) override;
-  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
-                                       int row) const override {
-    return col > 0 && row > 0;
-  }
-
  private:
   int indexOfSignificanceCell() const override {
     return k_indexOfTableCell + 1;

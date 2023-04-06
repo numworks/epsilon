@@ -4,21 +4,22 @@
 
 #include "inference/app.h"
 #include "inference/statistic/chi_square_and_slope/input_goodness_controller.h"
+#include "input_slope_controller.h"
 
 using namespace Escher;
 
 namespace Inference {
 
-SlopeTableCell::SlopeTableCell(
-    Responder *parentResponder,
-    DynamicSizeTableViewDataSourceDelegate
-        *dynamicSizeTableViewDataSourceDelegate,
-    SelectableTableViewDelegate *selectableTableViewDelegate,
-    Statistic *statistic, Poincare::Context *parentContext)
+SlopeTableCell::SlopeTableCell(Responder *parentResponder,
+                               DynamicSizeTableViewDataSourceDelegate
+                                   *dynamicSizeTableViewDataSourceDelegate,
+                               Statistic *statistic,
+                               Poincare::Context *parentContext,
+                               InputSlopeController *inputSlopeController)
     : DoubleColumnTableCell(parentResponder,
-                            dynamicSizeTableViewDataSourceDelegate,
-                            selectableTableViewDelegate, statistic),
-      StoreColumnHelper(this, parentContext, this) {
+                            dynamicSizeTableViewDataSourceDelegate, statistic),
+      StoreColumnHelper(this, parentContext, this),
+      m_inputSlopeController(inputSlopeController) {
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
     m_header[i].setColor(Escher::Palette::Red);
     m_header[i].setEven(true);
@@ -47,6 +48,10 @@ void SlopeTableCell::reload() {
   if (!recomputeDimensions()) {
     m_selectableTableView.reloadData(false);
   }
+}
+
+CategoricalController *SlopeTableCell::categoricalController() {
+  return m_inputSlopeController;
 }
 
 }  // namespace Inference

@@ -17,14 +17,15 @@
 
 namespace Inference {
 
+class CategoricalController;
+
 class CategoricalTableCell : public Escher::HighlightCell,
                              public Escher::Responder,
-                             public Escher::SelectableTableViewDataSource {
+                             public Escher::SelectableTableViewDataSource,
+                             public Escher::SelectableTableViewDelegate {
  public:
-  CategoricalTableCell(
-      Escher::Responder *parentResponder,
-      Escher::TableViewDataSource *dataSource,
-      Escher::SelectableTableViewDelegate *selectableTableViewDelegate);
+  CategoricalTableCell(Escher::Responder *parentResponder,
+                       Escher::TableViewDataSource *dataSource);
 
   // Responder
   void didBecomeFirstResponder() override;
@@ -44,10 +45,20 @@ class CategoricalTableCell : public Escher::HighlightCell,
     return m_selectableTableView.minimalSizeForOptimalDisplay();
   }
 
+  // SelectableTableViewDelegate
+  void tableViewDidChangeSelection(
+      Escher::SelectableTableView *t, int previousSelectedCol,
+      int previousSelectedRow, bool withinTemporarySelection = false) override;
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView *t, int col,
+                                       int row) const override {
+    return row > 0;
+  }
+
  protected:
   constexpr static int k_bottomMargin = 5;
 
   void layoutSubviews(bool force = false) override;
+  virtual CategoricalController *categoricalController() = 0;
 
   Escher::SelectableTableView m_selectableTableView;
 
@@ -68,7 +79,6 @@ class EditableCategoricalTableCell
   EditableCategoricalTableCell(
       Escher::Responder *parentResponder,
       Escher::TableViewDataSource *dataSource,
-      Escher::SelectableTableViewDelegate *selectableTableViewDelegate,
       DynamicSizeTableViewDataSourceDelegate *dynamicSizeTableViewDelegate,
       Statistic *statistic);
 
@@ -116,12 +126,10 @@ class DoubleColumnTableCell
       public DynamicCellsDataSource<InferenceEvenOddEditableCell,
                                     k_doubleColumnTableNumberOfReusableCells> {
  public:
-  DoubleColumnTableCell(
-      Escher::Responder *parentResponder,
-      DynamicSizeTableViewDataSourceDelegate
-          *dynamicSizeTableViewDataSourceDelegate,
-      Escher::SelectableTableViewDelegate *selectableTableViewDelegate,
-      Statistic *statistic);
+  DoubleColumnTableCell(Escher::Responder *parentResponder,
+                        DynamicSizeTableViewDataSourceDelegate
+                            *dynamicSizeTableViewDataSourceDelegate,
+                        Statistic *statistic);
 
   // EditableCategoricalTableCell
   CategoricalTableViewDataSource *tableViewDataSource() override {

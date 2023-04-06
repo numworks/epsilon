@@ -8,15 +8,16 @@
 
 namespace Inference {
 
+class InputSlopeController;
+
 class SlopeTableCell : public DoubleColumnTableCell,
                        public Shared::StoreColumnHelper {
  public:
-  SlopeTableCell(
-      Escher::Responder *parentResponder,
-      DynamicSizeTableViewDataSourceDelegate
-          *dynamicSizeTableViewDataSourceDelegate,
-      Escher::SelectableTableViewDelegate *selectableTableViewDelegate,
-      Statistic *statistic, Poincare::Context *parentContext);
+  SlopeTableCell(Escher::Responder *parentResponder,
+                 DynamicSizeTableViewDataSourceDelegate
+                     *dynamicSizeTableViewDataSourceDelegate,
+                 Statistic *statistic, Poincare::Context *parentContext,
+                 InputSlopeController *inputSlopeController);
 
   constexpr static int k_numberOfReusableCells =
       SlopeTStatistic::k_maxNumberOfColumns * k_maxNumberOfReusableRows;
@@ -38,9 +39,11 @@ class SlopeTableCell : public DoubleColumnTableCell,
   }
   Escher::InputViewController *inputViewController() override;
   void reload() override;
+  CategoricalController *categoricalController() override;
 
   Shared::BufferFunctionTitleCell
       m_header[SlopeTStatistic::k_maxNumberOfColumns];
+  InputSlopeController *m_inputSlopeController;
 };
 
 }  // namespace Inference

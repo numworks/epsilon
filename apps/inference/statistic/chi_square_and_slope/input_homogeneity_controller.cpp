@@ -10,15 +10,6 @@ InputHomogeneityController::InputHomogeneityController(
     InputEventHandlerDelegate* inputEventHandlerDelegate)
     : InputCategoricalController(parent, resultsController, statistic,
                                  inputEventHandlerDelegate),
-      m_inputHomogeneityTable(&m_selectableListView, this, this, statistic) {}
-
-void InputHomogeneityController::tableViewDidChangeSelection(
-    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
-  m_inputHomogeneityTable.unselectTopLeftCell(t, previousSelectedCol,
-                                              previousSelectedRow);
-  InputCategoricalController::tableViewDidChangeSelection(
-      t, previousSelectedCol, previousSelectedRow, withinTemporarySelection);
-}
+      m_inputHomogeneityTable(&m_selectableListView, this, statistic, this) {}
 
 }  // namespace Inference

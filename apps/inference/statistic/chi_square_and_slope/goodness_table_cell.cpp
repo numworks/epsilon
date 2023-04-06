@@ -3,6 +3,7 @@
 #include <shared/column_parameter_controller.h>
 
 #include "inference/statistic/chi_square_and_slope/input_goodness_controller.h"
+#include "input_goodness_controller.h"
 
 using namespace Escher;
 
@@ -12,11 +13,9 @@ GoodnessTableCell::GoodnessTableCell(
     Responder* parentResponder,
     DynamicSizeTableViewDataSourceDelegate*
         dynamicSizeTableViewDataSourceDelegate,
-    SelectableTableViewDelegate* selectableTableViewDelegate,
     GoodnessTest* test, InputGoodnessController* inputGoodnessController)
     : DoubleColumnTableCell(parentResponder,
-                            dynamicSizeTableViewDataSourceDelegate,
-                            selectableTableViewDelegate, test),
+                            dynamicSizeTableViewDataSourceDelegate, test),
       m_inputGoodnessController(inputGoodnessController) {
   for (int i = 0; i < GoodnessTest::k_maxNumberOfColumns; i++) {
     m_header[i].setMessage(k_columnHeaders[i]);
@@ -55,6 +54,10 @@ bool GoodnessTableCell::recomputeDimensions() {
 int GoodnessTableCell::fillColumnName(int column, char* buffer) {
   return strlcpy(buffer, I18n::translate(k_columnHeaders[column]),
                  Shared::ColumnParameterController::k_titleBufferSize);
+}
+
+CategoricalController* GoodnessTableCell::categoricalController() {
+  return m_inputGoodnessController;
 }
 
 }  // namespace Inference

@@ -252,6 +252,10 @@ double Store::correlationCoefficient(int series) const {
       seriesSatisfies(series, FitsLnX), applyLn, applyOpposite);
   double v0 = varianceOfColumn(series, 0, options);
   double v1 = varianceOfColumn(series, 1, options);
+  if (std::isnan(v0) || std::isnan(v1)) {
+    // Can happen if applyLn on negative/null values
+    return NAN;
+  }
   double result = (v0 == 0.0 || v1 == 0.0)
                       ? 1.0
                       : covariance(series, options) / std::sqrt(v0 * v1);

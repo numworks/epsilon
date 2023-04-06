@@ -192,23 +192,32 @@ bool Store::updateSeries(int series, bool delayUpdate,
 void Store::updateCoefficients(int series, Poincare::Context *globalContext) {
   assert(series >= 0 && series <= k_numberOfSeries);
   assert(seriesIsActive(series));
-  if (m_recomputeCoefficients[series]) {
-    Model *seriesModel = modelForSeries(series);
-    seriesModel->fit(this, series, m_regressionCoefficients[series],
-                     globalContext);
-    m_recomputeCoefficients[series] = false;
-    storeRegressionFunction(
-        series, seriesModel->expression(m_regressionCoefficients[series]));
-    /* m_determinationCoefficient and m_residualStandardDeviation must be
-     * updated after m_recomputeCoefficients updates to avoid infinite recursive
-     * calls as computeDeterminationCoefficient and residualStandardDeviation
-     * call yValueForXValue which calls coefficientsForSeries which calls
-     * updateCoefficients */
-    m_determinationCoefficient[series] =
-        computeDeterminationCoefficient(series, globalContext);
-    m_residualStandardDeviation[series] =
-        computeResidualStandardDeviation(series, globalContext);
+  if (!m_recomputeCoefficients[series]) {
+    return;
   }
+
+  Model *seriesModel = modelForSeries(series);
+  seriesModel->fit(this, series, m_regressionCoefficients[series],
+                   globalContext);
+  m_recomputeCoefficients[series] = false;
+  storeRegressionFunction(
+      series, seriesModel->expression(m_regressionCoefficients[series]));
+
+  if (!coefficientsAreDefined(series, globalContext)) {
+    m_determinationCoefficient[series] = NAN;
+    m_residualStandardDeviation[series] = NAN;
+    return;
+  }
+
+  /* m_determinationCoefficient and m_residualStandardDeviation must be
+   * updated after m_recomputeCoefficients updates to avoid infinite recursive
+   * calls as computeDeterminationCoefficient and residualStandardDeviation
+   * call yValueForXValue which calls coefficientsForSeries which calls
+   * updateCoefficients */
+  m_determinationCoefficient[series] =
+      computeDeterminationCoefficient(series, globalContext);
+  m_residualStandardDeviation[series] =
+      computeResidualStandardDeviation(series, globalContext);
 }
 
 double *Store::coefficientsForSeries(int series,

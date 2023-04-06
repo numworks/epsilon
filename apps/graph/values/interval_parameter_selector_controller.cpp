@@ -117,6 +117,7 @@ void IntervalParameterSelectorController::setStartEndMessages(
     case Shared::ContinuousFunctionProperties::SymbolType::Radius:
       controller->setStartEndMessages(I18n::Message::RStart,
                                       I18n::Message::REnd);
+      return;
     default:
       assert(symbolType ==
              Shared::ContinuousFunctionProperties::SymbolType::Theta);

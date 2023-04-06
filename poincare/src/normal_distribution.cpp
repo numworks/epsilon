@@ -105,6 +105,9 @@ T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(
 double NormalDistribution::evaluateParameterForProbabilityAndBound(
     int parameterIndex, const double* parameters, double probability,
     double bound, bool isUpperBound) const {
+  if (std::isnan(probability)) {
+    return NAN;
+  }
   assert(probability >= 0.0 && probability <= 1.0);
   if (!isUpperBound) {
     probability = 1.0 - probability;

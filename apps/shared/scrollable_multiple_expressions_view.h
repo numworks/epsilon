@@ -54,6 +54,9 @@ class AbstractScrollableMultipleExpressionsView
     Escher::ScrollableView<
         Escher::ScrollView::ArrowDecorator>::setBackgroundColor(color);
   }
+  void setHighlighted(bool highlighted) override {
+    setBackgroundColor(Escher::AbstractMenuCell::BackgroundColor(highlighted));
+  }
 
  protected:
   class ContentCell : public Escher::EvenOddCell {

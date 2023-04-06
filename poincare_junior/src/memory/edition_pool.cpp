@@ -46,7 +46,7 @@ void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
                                               int contextAlteration) {
   Block *first = static_cast<Block *>(m_pool->firstBlock());
   for (int i = 0; i < m_length; i++) {
-    if (m_nodeOffsetForIdentifier[i] == NoNodeIdentifier) {
+    if (m_nodeOffsetForIdentifier[i] == UninitializedOffset) {
       continue;
     }
     function(&m_nodeOffsetForIdentifier[i],
@@ -110,7 +110,7 @@ void EditionPool::replaceBlocks(Block *destination, const Block *source,
          const Block *source, int numberOfBlocks) {
         if (destination <= testedBlock &&
             testedBlock < destination + numberOfBlocks) {
-          *offset = ReferenceTable::NoNodeIdentifier;
+          *offset = ReferenceTable::UninitializedOffset;
         }
       },
       destination, source, numberOfBlocks);
@@ -149,7 +149,7 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
         if (testedBlock > address) {
           *offset -= numberOfBlocks;
         } else if (testedBlock == address) {
-          *offset = ReferenceTable::NoNodeIdentifier;
+          *offset = ReferenceTable::UninitializedOffset;
         }
       },
       address, nullptr, numberOfBlocks);

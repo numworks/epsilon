@@ -7,6 +7,7 @@
 namespace PoincareJ {
 
 class CachePool final : public Pool {
+  friend class Reference;
   /* The CachePool respects the following assertions:
    * - the referenced addresses are physically linear on the pool,
    * - the pool can be fragmented.

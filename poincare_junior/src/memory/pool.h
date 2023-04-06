@@ -45,6 +45,7 @@ class Pool {
   class ReferenceTable {
    public:
     constexpr static uint16_t NoNodeIdentifier = 0xFFFF;
+    constexpr static uint16_t UninitializedOffset = 0xFFFF;
     constexpr static uint16_t NumberOfSpecialIdentifier = 1;
     ReferenceTable(Pool *pool) : m_length(0), m_pool(pool) {}
     bool isFull() { return numberOfStoredNodes() == maxNumberOfReferences(); }

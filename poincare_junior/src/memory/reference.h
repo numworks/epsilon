@@ -78,18 +78,7 @@ class Reference {
             ,
             size_t dataSize
 #endif
-            )
-      :  // TODO: maybe add a checksum if the m_id has potentially been
-         // reallocated to another tree
-        m_initializer(initializer),
-        m_subInitializer(subInitializer),
-#if ASSERTIONS
-        m_data(data, dataSize),
-#else
-        m_data(data),
-#endif
-        m_id(-1) {
-  }
+  );
 
   const Node getTree() const;
 

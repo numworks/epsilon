@@ -177,4 +177,23 @@ const Node Reference::getTree() const {
              : Node(reinterpret_cast<const TypeBlock *>(m_data.data()));
 }
 
+Reference::Reference(ActionWithContext initializer, void *subInitializer,
+                    const void *data
+#if ASSERTIONS
+                    ,
+                    size_t dataSize
+#endif
+                    )
+    :  // TODO: maybe add a checksum if the m_id has potentially been
+       // reallocated to another tree
+      m_initializer(initializer),
+      m_subInitializer(subInitializer),
+#if ASSERTIONS
+      m_data(data, dataSize),
+#else
+      m_data(data),
+#endif
+      m_id(CachePool::ReferenceTable::NoNodeIdentifier) {
+}
+
 }  // namespace PoincareJ

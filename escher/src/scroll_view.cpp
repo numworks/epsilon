@@ -100,6 +100,9 @@ void ScrollView::scrollToContentPoint(KDPoint p) {
 }
 
 void ScrollView::scrollToContentRect(KDRect rect) {
+  if (rect.isEmpty()) {
+    return;
+  }
   KDRect visibleRect = visibleContentRect();
   /* Compute the farthest corner of the rect to scroll to.
    * By scrolling to it, the whole rect should be displayed.

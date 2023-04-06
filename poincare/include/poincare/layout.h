@@ -31,6 +31,9 @@ class Layout : public TreeHandle {
   // Properties
   LayoutNode::Type type() const { return node()->type(); }
   bool isHorizontal() const { return node()->isHorizontal(); }
+  bool isEmpty() const { return node()->isEmpty(); }
+  // True if horizontal layout with only code points in it
+  bool isCodePointsString() const;
   bool isIdenticalTo(Layout l, bool makeEditable = false) {
     return isUninitialized() ? l.isUninitialized()
                              : node()->isIdenticalTo(l, makeEditable);
@@ -73,7 +76,6 @@ class Layout : public TreeHandle {
    * could succeed, and False if the recursion should stop. */
   typedef TrinaryBoolean (*LayoutTest)(const Layout l);
   Layout recursivelyMatches(LayoutTest test) const;
-  bool isEmpty() const { return node()->isEmpty(); }
 
   bool shouldCollapseSiblingsOnLeft() const {
     return type() == LayoutNode::Type::FractionLayout;

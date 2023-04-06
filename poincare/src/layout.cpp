@@ -33,6 +33,19 @@ Layout Layout::LayoutFromAddress(const void *address, size_t size) {
       TreePool::sharedPool->copyTreeFromAddress(address, size)));
 }
 
+bool Layout::isCodePointsString() const {
+  if (!isHorizontal()) {
+    return false;
+  }
+  int n = numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    if (childAtIndex(i).type() != LayoutNode::Type::CodePointLayout) {
+      return false;
+    }
+  }
+  return true;
+}
+
 void Layout::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
                   LayoutSelection selection, KDColor selectionColor) {
   node()->draw(ctx, p, style, selection, selectionColor);
@@ -86,7 +99,7 @@ Layout Layout::XNTLayout() const {
   assert(xntLayout.isUninitialized() ||
          xntLayout.numberOfDescendants(true) >= 0);
   if (xntLayout.isUninitialized() ||
-      (!xntLayout.isHorizontal() &&
+      (!xntLayout.isCodePointsString() &&
        xntLayout.type() != LayoutNode::Type::CodePointLayout)) {
     return Layout();
   }

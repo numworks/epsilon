@@ -77,6 +77,13 @@ void EditExpressionController::restoreInput() {
   m_contentView.expressionField()->restoreContent(
       snap->cacheBuffer(), *snap->cacheBufferInformationAddress(),
       snap->cacheCursorOffset(), snap->cacheCursorPosition());
+  if (Poincare::Preferences::sharedPreferences->editionMode() ==
+          Poincare::Preferences::EditionMode::Edition1D &&
+      !m_contentView.expressionField()->layout().isCodePointsString()) {
+    // Restored input in incompatible with edition mode.
+    m_contentView.expressionField()->clearLayout();
+    memoizeInput();
+  }
 }
 
 void EditExpressionController::memoizeInput() {

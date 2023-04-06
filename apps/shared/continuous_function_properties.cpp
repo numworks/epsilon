@@ -20,28 +20,35 @@ ContinuousFunctionProperties::getCurveParameter(int index) const {
   using namespace I18n;
   switch (getCurveParameterType()) {
     case CurveParameterType::CartesianFunction:
-      return {index == 0 ? Message::X : Message::Default, true,
+      return {.parameterName = index == 0 ? Message::X : Message::Default,
+              .editable = true,
               .isPreimage = index == 1};
     case CurveParameterType::Line:
-      return {index == 0 ? Message::X : Message::Y, true,
+      return {.parameterName = index == 0 ? Message::X : Message::Y,
+              .editable = true,
               .isPreimage = index == 1};
     case CurveParameterType::HorizontalLine:
-      return {index == 0 ? Message::X : Message::Y, index == 0};
+      return {.parameterName = index == 0 ? Message::X : Message::Y,
+              .editable = index == 0};
     case CurveParameterType::VerticalLine:
-      return {index == 0 ? Message::X : Message::Y, index == 1};
+      return {.parameterName = index == 0 ? Message::X : Message::Y,
+              .editable = index == 1};
     case CurveParameterType::Parametric:
-      return {index == 0   ? Message::T
-              : index == 1 ? Message::XOfT
-                           : Message::YOfT,
-              index == 0};
+      return {.parameterName = index == 0   ? Message::T
+                               : index == 1 ? Message::XOfT
+                                            : Message::YOfT,
+              .editable = index == 0};
     case CurveParameterType::Polar:
-      return {index == 0 ? Message::Theta : Message::R, index == 0};
+      return {.parameterName = index == 0 ? Message::Theta : Message::R,
+              .editable = index == 0};
     case CurveParameterType::InversePolar:
-      return {index == 0 ? Message::R : Message::Theta, index == 0};
+      return {.parameterName = index == 0 ? Message::R : Message::Theta,
+              .editable = index == 0};
     default:
       assert(getCurveParameterType() == CurveParameterType::Default);
       // Conics
-      return {index == 0 ? Message::X : Message::Y, false};
+      return {.parameterName = index == 0 ? Message::X : Message::Y,
+              .editable = false};
   }
 }
 

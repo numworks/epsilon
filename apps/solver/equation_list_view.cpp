@@ -17,7 +17,7 @@ EquationListView::EquationListView(ListController *listController)
   m_listView.setMargins(0);
   m_listView.setVerticalCellOverlap(0);
   listController->setScrollViewDelegate(this);
-  m_scrollBraceView.setMargins(k_margin, k_margin, k_margin, k_margin);
+  m_scrollBraceView.setMargins(k_margin, k_rightMargin, k_margin, k_margin);
   m_scrollBraceView.setBackgroundColor(KDColorWhite);
 }
 

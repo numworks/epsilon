@@ -38,12 +38,9 @@ ListController::ListController(
   m_addNewModelCell.setLeftMargin(k_newModelMargin);
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i].setLeftMargin(EquationListView::k_braceTotalWidth +
-                                       k_expressionMargin);
+                                       Metric::BigCellMargin);
     m_expressionCells[i].setEven(true);
   }
-  m_editableCell.setMargins(
-      EquationListView::k_braceTotalWidth + k_expressionMargin,
-      k_expressionMargin);
 }
 
 int ListController::numberOfButtons(
@@ -258,19 +255,26 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
 }
 
 void ListController::reloadBrace() {
-  EquationListView::BraceStyle braceStyle =
-      modelStore()->numberOfModels() <= 1
-          ? EquationListView::BraceStyle::None
-          : (modelStore()->numberOfModels() == modelStore()->maxNumberOfModels()
-                 ? EquationListView::BraceStyle::Full
-                 : EquationListView::BraceStyle::OneRowShort);
-  m_equationListView.setBraceStyle(braceStyle);
-  KDCoordinate margin = k_expressionMargin;
-  if (modelStore()->numberOfModels() > 1) {
-    margin += EquationListView::k_braceTotalWidth;
+  if (modelStore()->numberOfModels() <= 1) {
+    m_equationListView.setBraceStyle(EquationListView::BraceStyle::None);
+    m_expressionCells[0].setLeftMargin(k_newModelMargin);
+    // Set editable cell margins to keep the text at the same place when editing
+    m_editableCell.expressionField()->setLeftMargin(k_newModelMargin -
+                                                    k_expressionMargin);
+    m_editableCell.setMargins(k_expressionMargin, k_expressionMargin);
+  } else {
+    m_equationListView.setBraceStyle(
+        modelStore()->numberOfModels() == modelStore()->maxNumberOfModels()
+            ? EquationListView::BraceStyle::Full
+            : EquationListView::BraceStyle::OneRowShort);
+    m_expressionCells[0].setLeftMargin(EquationListView::k_braceTotalWidth +
+                                       Metric::BigCellMargin);
+    m_editableCell.expressionField()->setLeftMargin(Metric::BigCellMargin -
+                                                    k_expressionMargin);
+    m_editableCell.setMargins(
+        EquationListView::k_braceTotalWidth + k_expressionMargin,
+        k_expressionMargin);
   }
-  m_expressionCells[0].setLeftMargin(margin);
-  m_editableCell.setMargins(margin, k_expressionMargin);
 }
 
 EquationStore *ListController::modelStore() const {

@@ -1,19 +1,21 @@
 #include "result_homogeneity_table_cell.h"
 
+#include "results_homogeneity_controller.h"
+
 using namespace Escher;
 
 namespace Inference {
 
 ResultHomogeneityTableCell::ResultHomogeneityTableCell(
-    Escher::Responder *parentResponder,
-    Escher::SelectableTableViewDelegate *selectableTableViewDelegate,
-    HomogeneityTest *test)
-    : CategoricalTableCell(parentResponder, this, selectableTableViewDelegate),
+    Escher::Responder *parentResponder, HomogeneityTest *test,
+    ResultsTableController *resultsTableController)
+    : CategoricalTableCell(parentResponder, this),
       DynamicCellsDataSource<InferenceEvenOddBufferCell,
                              k_homogeneityTableNumberOfReusableInnerCells>(
           this),
       m_statistic(test),
-      m_mode(Mode::ExpectedValue) {
+      m_mode(Mode::ExpectedValue),
+      m_resultsTableController(resultsTableController) {
   m_selectableTableView.setBottomMargin(Metric::CellSeparatorThickness);
 }
 
@@ -51,6 +53,17 @@ void ResultHomogeneityTableCell::willDisplayCellAtLocation(
     myCell->setEven(row % 2 == 0);
   } else {
     HomogeneityTableDataSource::willDisplayCellAtLocation(cell, column, row);
+  }
+}
+
+void ResultHomogeneityTableCell::tableViewDidChangeSelection(
+    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
+    bool withinTemporarySelection) {
+  assert(t == &m_selectableTableView);
+  if (unselectTopLeftCell(t, previousSelectedCol, previousSelectedRow) &&
+      t->selectedColumn() == 0) {
+    selectableTableView()->deselectTable();
+    m_resultsTableController->tabController()->selectTab();
   }
 }
 
@@ -104,6 +117,10 @@ void ResultHomogeneityTableCell::destroyCells() {
   DynamicCellsDataSource<
       InferenceEvenOddBufferCell,
       k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
+}
+
+CategoricalController *ResultHomogeneityTableCell::categoricalController() {
+  return m_resultsTableController;
 }
 
 }  // namespace Inference

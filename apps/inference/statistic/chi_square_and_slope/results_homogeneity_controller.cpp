@@ -19,40 +19,27 @@ ResultsHomogeneityController::ResultsHomogeneityController(
 
 // ResultsTableController
 
-ResultsHomogeneityController::ResultsTableController::ResultsTableController(
+ResultsTableController::ResultsTableController(
     Escher::ViewController* resultsController, HomogeneityTest* statistic)
     : CategoricalController(nullptr, resultsController,
                             Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
-      m_resultHomogeneityTable(&m_selectableListView, this, statistic) {}
+      m_resultHomogeneityTable(&m_selectableListView, statistic, this) {}
 
-void ResultsHomogeneityController::ResultsTableController::viewWillAppear() {
+void ResultsTableController::viewWillAppear() {
   m_resultHomogeneityTable.selectableTableView()->selectRow(-1);
   m_selectableListView.selectRow(-1);
   m_selectableListView.reloadData(false);
   CategoricalController::viewWillAppear();
 }
 
-bool ResultsHomogeneityController::ResultsTableController::handleEvent(
-    Ion::Events::Event event) {
+bool ResultsTableController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     m_resultHomogeneityTable.selectableTableView()->deselectTable();
     tabController()->selectTab();
     return true;
   }
   return false;
-}
-
-void ResultsHomogeneityController::ResultsTableController::
-    tableViewDidChangeSelection(SelectableTableView* t, int previousSelectedCol,
-                                int previousSelectedRow,
-                                bool withinTemporarySelection) {
-  if (m_resultHomogeneityTable.unselectTopLeftCell(t, previousSelectedCol,
-                                                   previousSelectedRow) &&
-      t->selectedColumn() == 0) {
-    m_resultHomogeneityTable.selectableTableView()->deselectTable();
-    tabController()->selectTab();
-  }
 }
 
 // SingleModeController

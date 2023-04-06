@@ -7,6 +7,8 @@
 
 namespace Inference {
 
+class InputHomogeneityController;
+
 class InputHomogeneityTableCell
     : public EditableCategoricalTableCell,
       public HomogeneityTableDataSource,
@@ -18,8 +20,8 @@ class InputHomogeneityTableCell
       Escher::Responder* parentResponder,
       DynamicSizeTableViewDataSourceDelegate*
           dynamicSizeTableViewDataSourceDelegate,
-      Escher::SelectableTableViewDelegate* selectableTableViewDelegate,
-      HomogeneityTest* test);
+      HomogeneityTest* test,
+      InputHomogeneityController* inputHomogeneityController);
 
   // Responder
   void didBecomeFirstResponder() override;
@@ -40,6 +42,15 @@ class InputHomogeneityTableCell
     return &m_selectableTableView;
   }
 
+  // SelectableTableViewDelegate
+  void tableViewDidChangeSelection(
+      Escher::SelectableTableView* t, int previousSelectedCol,
+      int previousSelectedRow, bool withinTemporarySelection = false) override;
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
+                                       int row) const override {
+    return col > 0 && row > 0;
+  }
+
  private:
   // ClearColumnHelper
   int fillColumnName(int column, char* buffer) override;
@@ -57,10 +68,12 @@ class InputHomogeneityTableCell
   }
   void willDisplayInnerCellAtLocation(Escher::HighlightCell* cell, int column,
                                       int row) override;
+  CategoricalController* categoricalController() override;
 
   // DynamicCellsDataSource
   void createCells() override;
   void destroyCells() override;
+  InputHomogeneityController* m_inputHomogeneityController;
 };
 
 }  // namespace Inference

@@ -100,40 +100,6 @@ bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
   return true;
 }
 
-void CategoricalController::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
-  int row = t->selectedRow();
-  int col = t->selectedColumn();
-  if (!withinTemporarySelection && previousSelectedRow != t->selectedRow()) {
-    KDCoordinate verticalOffset =
-        categoricalTableCell()->selectableTableView()->contentOffset().y();
-    KDCoordinate tableCellRequiredHeight = categoricalTableCell()
-                                               ->selectableTableView()
-                                               ->minimalSizeForOptimalDisplay()
-                                               .height();
-    KDCoordinate displayedHeight = m_selectableListView.bounds().height();
-    KDCoordinate givenHeight;
-    if (verticalOffset + displayedHeight < tableCellRequiredHeight) {
-      // We need to clip the size of the CategoricalTableCell to force it to
-      // scroll
-      givenHeight = displayedHeight;
-    } else {
-      // We need to enlarge the size of the CategoricalTableCell to authorize it
-      // to scroll downer than its own height
-      givenHeight = tableCellRequiredHeight - verticalOffset;
-    }
-    categoricalTableCell()->selectableTableView()->setSize(
-        KDSize(m_selectableListView.bounds().width(), givenHeight));
-    categoricalTableCell()->selectableTableView()->scrollToCell(col, row);
-    if (categoricalTableCell()->selectableTableView()->contentOffset().y() !=
-        verticalOffset) {
-      // Relayout the whole Categorical table if the scroll change
-      m_selectableListView.reloadData(false);
-    }
-  }
-}
-
 HighlightCell *CategoricalController::reusableCell(int index, int type) {
   if (type == k_indexOfTableCell) {
     return categoricalTableCell();

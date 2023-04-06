@@ -16,12 +16,11 @@ class InputGoodnessController;
 
 class GoodnessTableCell : public DoubleColumnTableCell {
  public:
-  GoodnessTableCell(
-      Escher::Responder *parentResponder,
-      DynamicSizeTableViewDataSourceDelegate
-          *dynamicSizeTableViewDataSourceDelegate,
-      Escher::SelectableTableViewDelegate *selectableTableViewDelegate,
-      GoodnessTest *test, InputGoodnessController *inputGoodnessController);
+  GoodnessTableCell(Escher::Responder *parentResponder,
+                    DynamicSizeTableViewDataSourceDelegate
+                        *dynamicSizeTableViewDataSourceDelegate,
+                    GoodnessTest *test,
+                    InputGoodnessController *inputGoodnessController);
 
   // Responder
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,
@@ -46,6 +45,7 @@ class GoodnessTableCell : public DoubleColumnTableCell {
     return &m_header[index];
   }
   GoodnessTest *statistic() { return static_cast<GoodnessTest *>(m_statistic); }
+  CategoricalController *categoricalController() override;
 
   Escher::EvenOddMessageTextCell m_header[k_maxNumberOfColumns];
   InputGoodnessController *m_inputGoodnessController;

@@ -8,6 +8,36 @@
 
 namespace Inference {
 
+class ResultsTableController : public CategoricalController {
+ public:
+  ResultsTableController(Escher::ViewController *nextController,
+                         HomogeneityTest *statistic);
+
+  // Responder
+  bool handleEvent(Ion::Events::Event event) override;
+
+  // ViewController
+  void viewWillAppear() override;
+  void stackOpenPage(ViewController *nextPage) override {
+    tabController()->stackOpenPage(nextPage);
+  }
+
+  void setMode(ResultHomogeneityTableCell::Mode mode) {
+    m_resultHomogeneityTable.setMode(mode);
+  }
+
+  Escher::TabViewController *tabController() {
+    return static_cast<Escher::TabViewController *>(
+        parentResponder()->parentResponder());
+  }
+
+ private:
+  CategoricalTableCell *categoricalTableCell() override {
+    return &m_resultHomogeneityTable;
+  }
+  ResultHomogeneityTableCell m_resultHomogeneityTable;
+};
+
 class ResultsHomogeneityController : public Escher::TabViewController,
                                      public Escher::TabViewDataSource {
  public:
@@ -27,45 +57,6 @@ class ResultsHomogeneityController : public Escher::TabViewController,
   }
 
  private:
-  class ResultsTableController : public CategoricalController {
-   public:
-    ResultsTableController(Escher::ViewController *nextController,
-                           HomogeneityTest *statistic);
-
-    // Responder
-    bool handleEvent(Ion::Events::Event event) override;
-
-    // ViewController
-    void viewWillAppear() override;
-    void stackOpenPage(ViewController *nextPage) override {
-      tabController()->stackOpenPage(nextPage);
-    }
-
-    // SelectableTableViewDelegate
-    void tableViewDidChangeSelection(
-        Escher::SelectableTableView *t, int previousSelectedCol,
-        int previousSelectedRow,
-        bool withinTemporarySelection = false) override;
-    bool canStoreContentOfCellAtLocation(Escher::SelectableTableView *t,
-                                         int col, int row) const override {
-      return col > 0 && row > 0;
-    }
-
-    void setMode(ResultHomogeneityTableCell::Mode mode) {
-      m_resultHomogeneityTable.setMode(mode);
-    }
-
-   private:
-    Escher::TabViewController *tabController() {
-      return static_cast<Escher::TabViewController *>(
-          parentResponder()->parentResponder());
-    }
-    CategoricalTableCell *categoricalTableCell() override {
-      return &m_resultHomogeneityTable;
-    }
-    ResultHomogeneityTableCell m_resultHomogeneityTable;
-  };
-
   class SingleModeController : public ViewController {
    public:
     SingleModeController(Escher::Responder *responder,

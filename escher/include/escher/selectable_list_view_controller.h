@@ -35,6 +35,7 @@ class SelectableListViewController : public SelectableViewController,
         m_selectableListView(this, this, this, listDelegate) {}
   /* ViewController */
   View* view() override { return &m_selectableListView; }
+  SelectableListView* selectableListView() { return &m_selectableListView; }
 
  protected:
   void didBecomeFirstResponder() override {

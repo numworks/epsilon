@@ -18,6 +18,7 @@ class LinearLayoutDecoder : public UnicodeDecoder {
       : UnicodeDecoder(initialPosition,
                        layoutEnd ? layoutEnd : layout.numberOfChildren()),
         m_layout(layout) {
+    assert(m_layout.isCodePointsString());
     assert(!m_layout.isUninitialized());
   }
   CodePoint nextCodePoint() { return codePointAt(m_position++); }

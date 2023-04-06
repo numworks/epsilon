@@ -160,7 +160,7 @@ void Reference::log() {
 }
 #endif
 
-int Reference::id() const {
+uint16_t Reference::id() const {
   assert(isCacheReference());
   const Node tree = CachePool::sharedCachePool()->nodeForIdentifier(m_id);
   if (tree.isUninitialized()) {

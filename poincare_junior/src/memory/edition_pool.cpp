@@ -90,8 +90,8 @@ bool EditionPool::executeAndDump(ActionWithContext action, void *context,
   return true;
 }
 
-int EditionPool::executeAndCache(ActionWithContext action, void *context,
-                                 const void *data, Relax relax) {
+uint16_t EditionPool::executeAndCache(ActionWithContext action, void *context,
+                                      const void *data, Relax relax) {
   execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
   /* If execute failed, storeEditedTree will handle an empty EditionPool and
    * return a ReferenceTable::NoNodeIdentifier. */

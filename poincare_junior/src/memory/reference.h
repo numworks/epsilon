@@ -69,7 +69,7 @@ class Reference {
   bool isInitialized() const {
     return isCacheReference() || m_data.data() != nullptr;
   }
-  int id() const;  // TODO: make private (public for tests)
+  uint16_t id() const;  // TODO: make private (public for tests)
 
  private:
   Reference(ActionWithContext initializer, void *subInitializer,
@@ -97,7 +97,7 @@ class Reference {
   void *m_subInitializer;
   SharedPointer m_data;
   // m_id must be the last member so that we can checksum non-mutable members
-  mutable int m_id;
+  mutable uint16_t m_id;
 };
 
 }  // namespace PoincareJ

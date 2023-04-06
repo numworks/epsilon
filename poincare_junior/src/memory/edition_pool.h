@@ -26,8 +26,8 @@ class EditionPool final : public Pool {
   constexpr static Relax k_defaultRelax = [](void *context) { return false; };
   bool executeAndDump(ActionWithContext action, void *context, const void *data,
                       void *address, int maxSize, Relax relax = k_defaultRelax);
-  int executeAndCache(ActionWithContext action, void *context, const void *data,
-                      Relax relax = k_defaultRelax);
+  uint16_t executeAndCache(ActionWithContext action, void *context,
+                           const void *data, Relax relax = k_defaultRelax);
 
   void replaceBlock(Block *previousBlock, Block newBlock);
   void replaceBlocks(Block *destination, const Block *newBlocks,

@@ -114,6 +114,8 @@ bool GridLayoutNode::removeEmptyRowOrColumnAtChildIndexIfNeeded(
     deleteRowAtIndex(rowIndex);
     changed = true;
   }
+  assert(numberOfColumns() >= k_minimalNumberOfRowsAndColumnsWhileEditing &&
+         numberOfRows() >= k_minimalNumberOfRowsAndColumnsWhileEditing);
   return changed;
 }
 

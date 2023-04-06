@@ -32,7 +32,8 @@ void setRegressionPoints(Regression::Store* store, int series,
 
 void assert_regression_is(double* xi, double* yi, int numberOfPoints,
                           Model::Type modelType, double* trueCoefficients,
-                          double trueR, double trueR2, bool acceptNAN = false) {
+                          double trueR, double trueR2,
+                          double trueResidualStdDev, bool acceptNAN = false) {
   int series = 0;
   Shared::GlobalContext globalContext;
   Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
@@ -58,6 +59,7 @@ void assert_regression_is(double* xi, double* yi, int numberOfPoints,
 
   double r = store.correlationCoefficient(series);
   double r2 = store.determinationCoefficientForSeries(series, &globalContext);
+  double sr = store.residualStandardDeviation(series, &globalContext);
 
   if (!Store::DisplayR(modelType)) {
     assert(std::isnan(r) && std::isnan(trueR));
@@ -80,6 +82,9 @@ void assert_regression_is(double* xi, double* yi, int numberOfPoints,
     quiz_assert(
         roughly_equal(r2, trueR2, precision, false, nullExpectedPrecision));
   }
+
+  quiz_assert(roughly_equal(sr, trueResidualStdDev, precision, true,
+                            nullExpectedPrecision));
 }
 
 QUIZ_CASE(regression_linear) {
@@ -89,10 +94,11 @@ QUIZ_CASE(regression_linear) {
   double coefficientsApbx[] = {-7.0, 3.4};
   double r = 1.0;
   double r2 = 1.0;
+  double sr = 0.0425;
   assert_regression_is(x, y, 4, Model::Type::LinearAxpb, coefficientsAxpb, r,
-                       r2);
+                       r2, sr);
   assert_regression_is(x, y, 4, Model::Type::LinearApbx, coefficientsApbx, r,
-                       r2);
+                       r2, sr);
 }
 
 QUIZ_CASE(regression_linear_2) {
@@ -102,10 +108,11 @@ QUIZ_CASE(regression_linear_2) {
   double coefficientsApbx[] = {18.1191, 3.31824};
   double r = 0.5857;
   double r2 = 0.343;
+  double sr = 27.642;
   assert_regression_is(x, y, 5, Model::Type::LinearAxpb, coefficientsAxpb, r,
-                       r2);
+                       r2, sr);
   assert_regression_is(x, y, 5, Model::Type::LinearApbx, coefficientsApbx, r,
-                       r2);
+                       r2, sr);
 }
 
 QUIZ_CASE(regression_proportional) {
@@ -113,8 +120,9 @@ QUIZ_CASE(regression_proportional) {
   double y[] = {-41.4851, -29.62186, -6.454245, -53.4976, -18.03325};
   double coefficients[] = {-5.89};
   double r2 = 0.9999648161902982;
+  double sr = 0.2852;
   assert_regression_is(x, y, 5, Model::Type::Proportional, coefficients, NAN,
-                       r2);
+                       r2, sr);
 }
 
 QUIZ_CASE(regression_proportional_2) {
@@ -123,8 +131,9 @@ QUIZ_CASE(regression_proportional_2) {
   double y[numberOfPoints] = {10.0, 6.0, 7.0, 8.0};
   double coefficients[] = {2.12963963};
   double r2 = 0.53227513227513223;
+  double sr = 1.168;
   assert_regression_is(x, y, numberOfPoints, Model::Type::Proportional,
-                       coefficients, NAN, r2);
+                       coefficients, NAN, r2, sr);
 }
 
 QUIZ_CASE(regression_proportional_3) {
@@ -133,8 +142,9 @@ QUIZ_CASE(regression_proportional_3) {
   double y[numberOfPoints] = {0.0, 0.0, 0.0, 0.0};
   double coefficients[] = {0.0};
   double r2 = 1.0;
+  double sr = 0.0;
   assert_regression_is(x, y, numberOfPoints, Model::Type::Proportional,
-                       coefficients, NAN, r2);
+                       coefficients, NAN, r2, sr);
 }
 
 QUIZ_CASE(regression_proportional_4) {
@@ -144,8 +154,9 @@ QUIZ_CASE(regression_proportional_4) {
   double coefficients[] = {0.0};
   // Y is constant, and proportional regression cannot fit it, R2 is null.
   double r2 = 0.0;
+  double sr = 1.2247;
   assert_regression_is(x, y, numberOfPoints, Model::Type::Proportional,
-                       coefficients, NAN, r2);
+                       coefficients, NAN, r2, sr);
 }
 
 QUIZ_CASE(regression_proportional_5) {
@@ -156,8 +167,9 @@ QUIZ_CASE(regression_proportional_5) {
   /* In this case, proportional regression performed poorly compared to a
    * constant regression, R2 is negative. */
   double r2 = -45300.5;
+  double sr = 1.2288;
   assert_regression_is(x, y, numberOfPoints, Model::Type::Proportional,
-                       coefficients, NAN, r2);
+                       coefficients, NAN, r2, sr);
 }
 
 QUIZ_CASE(regression_quadratic) {
@@ -165,7 +177,9 @@ QUIZ_CASE(regression_quadratic) {
   double y[] = {-8241.389, -1194.734, -59.163, -46245.39, -71.774};
   double coefficients[] = {-6.50001, 21.3004, -3.15799};
   double r2 = 1.0;
-  assert_regression_is(x, y, 5, Model::Type::Quadratic, coefficients, NAN, r2);
+  double sr = 0.02477;
+  assert_regression_is(x, y, 5, Model::Type::Quadratic, coefficients, NAN, r2,
+                       sr);
 }
 
 QUIZ_CASE(regression_cubic) {
@@ -173,7 +187,8 @@ QUIZ_CASE(regression_cubic) {
   double y[] = {691.261, 566.498, 20.203, -12.865, -34293.21};
   double coefficients[] = {-21.2015, 16.0141, 4.14522, -12.8658};
   double r2 = 1.0;
-  assert_regression_is(x, y, 5, Model::Type::Cubic, coefficients, NAN, r2);
+  double sr = 0.006858;
+  assert_regression_is(x, y, 5, Model::Type::Cubic, coefficients, NAN, r2, sr);
 }
 
 QUIZ_CASE(regression_quartic) {
@@ -182,7 +197,9 @@ QUIZ_CASE(regression_quartic) {
                 -5308.355, -816.925,  5554.007,  9277.107, -1009.874};
   double coefficients[] = {0.59998, -42.9998, 21.5015, 3.09232, -0.456824};
   double r2 = 1.0;
-  assert_regression_is(x, y, 10, Model::Type::Quartic, coefficients, NAN, r2);
+  double sr = 0.022338;
+  assert_regression_is(x, y, 10, Model::Type::Quartic, coefficients, NAN, r2,
+                       sr);
 }
 
 QUIZ_CASE(regression_logarithmic) {
@@ -191,16 +208,18 @@ QUIZ_CASE(regression_logarithmic) {
   double coefficients1[] = {-6.81679, 3.19383};
   double r1 = 1.0;
   double r21 = 1.0;
+  double sr1 = 0.01879485;
   assert_regression_is(x1, y1, 4, Model::Type::Logarithmic, coefficients1, r1,
-                       r21);
+                       r21, sr1);
 
   double x2[] = {0.5, 1.0, 2.0, 3.0};
   double y2[] = {12.772, 10, 7.227, 5.606};
   double coefficients2[] = {10.0, -4.0};
   double r2 = -1.0;
   double r22 = 1.0;
+  double sr2 = 4.0359318E-4;
   assert_regression_is(x2, y2, 4, Model::Type::Logarithmic, coefficients2, r2,
-                       r22);
+                       r22, sr2);
 }
 
 QUIZ_CASE(regression_exponential) {
@@ -209,8 +228,9 @@ QUIZ_CASE(regression_exponential) {
   double coefficients[] = {-3.4, 0.8};
   double r = 1.0;
   double r2 = 1.0;
+  double sr = 0.0258;
   assert_regression_is(x, y, 6, Model::Type::ExponentialAebx, coefficients, r,
-                       r2);
+                       r2, sr);
 }
 
 QUIZ_CASE(regression_exponential_2) {
@@ -219,8 +239,9 @@ QUIZ_CASE(regression_exponential_2) {
   double coefficients[] = {3000, .1};
   double r = 1.0;
   double r2 = 1.0;
+  double sr = 2.149035E-4;
   assert_regression_is(x, y, 4, Model::Type::ExponentialAebx, coefficients, r,
-                       r2);
+                       r2, sr);
 }
 
 QUIZ_CASE(regression_exponential_3) {
@@ -231,8 +252,9 @@ QUIZ_CASE(regression_exponential_3) {
   double coefficients[] = {-1, -1};
   double r = -1.0;
   double r2 = 1.0;
+  double sr = 1.67164E-8;
   assert_regression_is(x, y, 11, Model::Type::ExponentialAebx, coefficients, r,
-                       r2);
+                       r2, sr);
 }
 
 QUIZ_CASE(regression_exponential_4) {
@@ -241,8 +263,9 @@ QUIZ_CASE(regression_exponential_4) {
   double coefficients[] = {3.4641, -0.179};
   double r = -0.3848;
   double r2 = 0.1481;
+  double sr = 1.66167;
   assert_regression_is(x, y, 4, Model::Type::ExponentialAebx, coefficients, r,
-                       r2);
+                       r2, sr);
 }
 
 QUIZ_CASE(regression_exponential_5) {
@@ -251,8 +274,9 @@ QUIZ_CASE(regression_exponential_5) {
   double coefficients[] = {1.41421, 0.0};
   double r = 0.0;
   double r2 = 0.0;
+  double sr = 0.71744;
   assert_regression_is(x, y, 4, Model::Type::ExponentialAebx, coefficients, r,
-                       r2);
+                       r2, sr);
 }
 
 QUIZ_CASE(regression_exponential_abx) {
@@ -261,8 +285,9 @@ QUIZ_CASE(regression_exponential_abx) {
   double coefficients[] = {1, 2};
   double r = 1.0;
   double r2 = 1.0;
+  double sr = 0.0;
   assert_regression_is(x, y, 4, Model::Type::ExponentialAbx, coefficients, r,
-                       r2);
+                       r2, sr);
 }
 
 QUIZ_CASE(regression_power) {
@@ -271,21 +296,27 @@ QUIZ_CASE(regression_power) {
   double coefficients1[] = {71.8, 2.7};
   double r1 = 1.0;
   double r21 = 1.0;
-  assert_regression_is(x1, y1, 5, Model::Type::Power, coefficients1, r1, r21);
+  double sr1 = 373.1534;
+  assert_regression_is(x1, y1, 5, Model::Type::Power, coefficients1, r1, r21,
+                       sr1);
 
   double x2[] = {1.0, 2.0, 3.0, 4.0};
   double y2[] = {2.0, 3.0, 4.0, 1.0};
   double coefficients2[] = {2.63994478, -0.22182701};
   double r2 = -0.2218;
   double r22 = 0.0492;
-  assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r2, r22);
+  double sr2 = 1.66825;
+  assert_regression_is(x2, y2, 4, Model::Type::Power, coefficients2, r2, r22,
+                       sr2);
 
   double x3[] = {0.5, 1.0, 2.0, 3.0};
   double y3[] = {-8.0, -2.0, -0.5, -0.2222222};
   double coefficients3[] = {-2.0, -2.0};
   double r3 = -1.0;
   double r23 = 1.0;
-  assert_regression_is(x3, y3, 4, Model::Type::Power, coefficients3, r3, r23);
+  double sr3 = 1.03277E-7;
+  assert_regression_is(x3, y3, 4, Model::Type::Power, coefficients3, r3, r23,
+                       sr3);
 }
 
 QUIZ_CASE(regression_median_0) {
@@ -293,26 +324,31 @@ QUIZ_CASE(regression_median_0) {
   double y[] = {4.0, 3.0, 2.0};
   double coefficients[] = {NAN, NAN};
   assert_regression_is(x, y, 3, Model::Type::Median, coefficients, NAN, NAN,
-                       true);
+                       NAN, true);
 }
 
 QUIZ_CASE(regression_median_1) {
   double x[] = {1.0, 2.0, 3.0};
   double y[] = {4.0, 3.0, 2.0};
   double coefficients[] = {-1.0, 5.0};
-  assert_regression_is(x, y, 3, Model::Type::Median, coefficients, NAN, NAN);
+  double sr = 0.0;
+  assert_regression_is(x, y, 3, Model::Type::Median, coefficients, NAN, NAN,
+                       sr);
 }
 
 QUIZ_CASE(regression_median_2) {
   double x[] = {9.0, 7.0, 5.0, 11.0, 31.0, 19.0, 15.0, 25.0, 1.0, 23.0};
   double y[] = {11.0, 734.0, 3.0, 15.0, 55555.0, 31.0, 23.0, 43.0, -5.0, 39.0};
   double coefficients[] = {2.0, -7.0};
-  assert_regression_is(x, y, 10, Model::Type::Median, coefficients, NAN, NAN);
+  double sr = 19623.89656;
+  assert_regression_is(x, y, 10, Model::Type::Median, coefficients, NAN, NAN,
+                       sr);
 }
 
 void assert_trigonometric_regression_is(
     double* xi, double* yi, int numberOfPoints, double* trueCoefficients,
-    Poincare::Preferences::AngleUnit trueCoeffcientsUnit) {
+    Poincare::Preferences::AngleUnit trueCoeffcientsUnit,
+    double residualStdDeviation) {
   // Test the trigonometric regression at all angle units
   const Preferences::AngleUnit previousAngleUnit =
       Preferences::sharedPreferences->angleUnit();
@@ -330,7 +366,7 @@ void assert_trigonometric_regression_is(
         trueCoefficients[0], trueCoefficients[1] * unitFactor,
         trueCoefficients[2] * unitFactor, trueCoefficients[3]};
     assert_regression_is(xi, yi, numberOfPoints, Model::Type::Trigonometric,
-                         coefficientsUnit, NAN, NAN);
+                         coefficientsUnit, NAN, NAN, residualStdDeviation);
   }
   // Restore previous angleUnit
   Poincare::Preferences::sharedPreferences->setAngleUnit(previousAngleUnit);
@@ -344,9 +380,10 @@ QUIZ_CASE(regression_trigonometric_1) {
   double coefficients[] = {2.9723, 0.016780, -1.3067, 12.146};
   int numberOfPoints = std::size(x);
   assert(std::size(y) == numberOfPoints);
-
+  double sr = 0.061848;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian);
+                                     Poincare::Preferences::AngleUnit::Radian,
+                                     sr);
 }
 
 QUIZ_CASE(regression_trigonometric_2) {
@@ -358,9 +395,10 @@ QUIZ_CASE(regression_trigonometric_2) {
   double coefficients[] = {6.42, 0.26, -2.16, 2.82};
   int numberOfPoints = std::size(x);
   assert(std::size(y) == numberOfPoints);
-
+  double sr = 1.5093235;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian);
+                                     Poincare::Preferences::AngleUnit::Radian,
+                                     sr);
 }
 
 QUIZ_CASE(regression_trigonometric_3) {
@@ -370,9 +408,10 @@ QUIZ_CASE(regression_trigonometric_3) {
   double coefficients[] = {22.55, 0.5955, -2.180, 30.86};
   int numberOfPoints = std::size(x);
   assert(std::size(y) == numberOfPoints);
-
+  double sr = 1.2068486;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian);
+                                     Poincare::Preferences::AngleUnit::Radian,
+                                     sr);
 }
 
 QUIZ_CASE(regression_trigonometric_4) {
@@ -389,9 +428,10 @@ QUIZ_CASE(regression_trigonometric_4) {
     y[i] = std::sin(static_cast<double>(i));
   }
   double coefficients[] = {1.0, 1.0, 0.0, 0.0};
-
+  double sr = 0.0;
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients,
-                                     Poincare::Preferences::AngleUnit::Radian);
+                                     Poincare::Preferences::AngleUnit::Radian,
+                                     sr);
 }
 
 QUIZ_CASE(regression_logistic) {
@@ -401,52 +441,59 @@ QUIZ_CASE(regression_logistic) {
   double y1[] = {3.948, 4.694, 2.184, 4.656};
   double coefficients1[] = {6.0, 1.5, 4.7};
   double r21 = NAN;  // 0.9999999917270119;
+  double sr1 = 9.49529E-5;
   assert_regression_is(x1, y1, 4, Model::Type::Logistic, coefficients1, NAN,
-                       r21);
+                       r21, sr1);
 
   double x2[] = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
   double y2[] = {5.0,   9.0,   40.0,  64.0,  144.0,
                  200.0, 269.0, 278.0, 290.0, 295.0};
   double coefficients2[] = {64.9, 1.0, 297.4};
   double r22 = NAN;  // 0.9984396821656006;
+  double sr2 = 7.672929;
   assert_regression_is(x2, y2, 10, Model::Type::Logistic, coefficients2, NAN,
-                       r22);
+                       r22, sr2);
 
   double x3[] = {-400.0, 0.0, 400.0, 450.0, 800.0};
   double y3[] = {1.523, 76.92, 819.8, 882.4, 996.0};
   double coefficients3[] = {12.0, 0.01, 1000.0};
   double r23 = NAN;  // 1.0;
+  double sr3 = 0.01945416;
   assert_regression_is(x3, y3, 5, Model::Type::Logistic, coefficients3, NAN,
-                       r23);
+                       r23, sr3);
 
   double x4[] = {-2.0, -1.0, 0.0, 1.0, 2.0, 3.0};
   double y4[] = {-5.0, -5.0, -4.99, -4.90, -3.56, -0.55};
   double coefficients4[] = {0.001, -3.0, -5.0};
   double r24 = NAN;  // 1.0;
+  double sr4 = 0.002416132;
   assert_regression_is(x4, y4, 6, Model::Type::Logistic, coefficients4, NAN,
-                       r24);
+                       r24, sr4);
 
   double x5[] = {3.0, 7.0, 11.0, 20.0, 43.0};
   double y5[] = {11.66, 13.51, 15.21, 17.38, 18.7};
   double coefficients5[] = {0.88, 0.118, 18.8};
   double r25 = NAN;  // 1.0;
+  double sr5 = 0.06274639;
   assert_regression_is(x5, y5, 5, Model::Type::Logistic, coefficients5, NAN,
-                       r25);
+                       r25, sr5);
 
   double x6[] = {-0.1, -0.09, -0.08, -0.07, -0.06};
   double y6[] = {1.82e-6, 3.66e-6, 7.34e-6, 1.46e-5, 2.91e-5};
   double coefficients6[] = {1.17e-8, 250.0,
                             2.77e-5};  // target : {0.5, 70.0, 0.001};
   double r26 = NAN;  // 0.902321;               // target : 1.0;
+  double sr6 = 4.9002082E-6;
   assert_regression_is(x6, y6, 5, Model::Type::Logistic, coefficients6, NAN,
-                       r26);
+                       r26, sr6);
 
   double x7[] = {1.0, 3.0, 4.0, 6.0, 8.0};
   double y7[] = {4.0, 4.0, 0.0, 58.0, 5.0};
   double coefficients7[] = {3.56e8, 4.256, 31.4};  // No target
   double r27 = NAN;  // 0.4;  // No target (But should be positive)
+  double sr7 = 26.88173;
   assert_regression_is(x7, y7, 5, Model::Type::Logistic, coefficients7, NAN,
-                       r27);
+                       r27, sr7);
 }
 
 // Testing column and regression calculation

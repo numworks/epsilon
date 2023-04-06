@@ -22,12 +22,12 @@ class EquationListView : public Escher::Responder,
       Escher::ScrollViewDataSource* scrollViewDataSource) override;
   void didBecomeFirstResponder() override;
   Escher::SelectableListView* selectableListView() { return &m_listView; }
-  constexpr static KDCoordinate k_margin = 10;
-  // 2*k_margin+BraceView::k_braceWidth;
-  constexpr static KDCoordinate k_braceTotalWidth = 30;
   void layoutSubviews(bool force = false) override;
 
  private:
+  constexpr static KDCoordinate k_margin = 10;
+  constexpr static KDCoordinate k_rightMargin = 8;
+
   int numberOfSubviews() const override;
   Escher::View* subviewAtIndex(int index) override;
 
@@ -41,6 +41,10 @@ class EquationListView : public Escher::Responder,
   Escher::SelectableListView m_listView;
   BraceView m_braceView;
   Escher::ScrollableView<Escher::ScrollView::NoDecorator> m_scrollBraceView;
+
+ public:
+  constexpr static KDCoordinate k_braceTotalWidth =
+      k_margin + k_rightMargin + BraceView::k_braceWidth;
 };
 
 }  // namespace Solver

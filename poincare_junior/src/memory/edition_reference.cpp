@@ -2,6 +2,7 @@
 
 #include <ion/unicode/code_point.h>
 #include <poincare_junior/include/poincare.h>
+#include <poincare_junior/src/expression/k_creator.h>
 #include <string.h>
 
 #include "edition_pool.h"
@@ -132,7 +133,7 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
       continue;
     }
     initializedPlaceHolders += 1;
-    treeNext.insertTreeBeforeNode(editionPool->pushBlock(ZeroBlock));
+    treeNext.insertTreeBeforeNode(0_e);
   }
   // EditionPool : #|# A A # B B B #|0 0 # _
 

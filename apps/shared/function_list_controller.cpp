@@ -85,7 +85,12 @@ void FunctionListController::didBecomeFirstResponder() {
     selectCell(numberOfExpressionRows() - 1);
   }
   footer()->setSelectedButton(-1);
-  Container::activeApp()->setFirstResponder(selectableListView());
+  if (m_editedCellIndex != -1) {
+    // Resume edition if it was interrupted by a store
+    Container::activeApp()->setFirstResponder(expressionField());
+  } else {
+    Container::activeApp()->setFirstResponder(selectableListView());
+  }
 }
 
 /* ExpressionModelListController */

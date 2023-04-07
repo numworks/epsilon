@@ -45,12 +45,14 @@ class DecimalNode final : public NumberNode {
   TrinaryBoolean isPositive(Context* context) const override {
     return BinaryToTrinaryBool(!m_negative);
   }
-  TrinaryBoolean isNull(Context* context) const override {
-    return BinaryToTrinaryBool(unsignedMantissa().isZero());
-  }
 
   // NumberNode
   void setNegative(bool negative) override { m_negative = negative; }
+  bool isZero() const override { return unsignedMantissa().isZero(); }
+  bool isOne() const override { return templatedApproximate<double>() == 1.0; }
+  bool isMinusOne() const override {
+    return templatedApproximate<double>() == -1.0;
+  }
 
   // Approximation
   Evaluation<float> approximate(

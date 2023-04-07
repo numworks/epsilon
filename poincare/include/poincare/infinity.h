@@ -26,9 +26,6 @@ class InfinityNode final : public NumberNode {
   TrinaryBoolean isPositive(Context* context) const override {
     return BinaryToTrinaryBool(!m_negative);
   }
-  TrinaryBoolean isNull(Context* context) const override {
-    return TrinaryBoolean::False;
-  }
 
   // NumberNode
   void setNegative(bool negative) override { m_negative = negative; }

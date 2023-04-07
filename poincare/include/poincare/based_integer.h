@@ -33,12 +33,12 @@ class BasedIntegerNode final : public NumberNode {
   TrinaryBoolean isPositive(Context* context) const override {
     return TrinaryBoolean::True;
   }
-  TrinaryBoolean isNull(Context* context) const override {
-    return BinaryToTrinaryBool(integer().isZero());
-  }
 
   // NumberNode
   void setNegative(bool negative) override { assert(!negative); }
+  bool isZero() const override { return integer().isZero(); }
+  bool isOne() const override { return integer().isOne(); }
+  bool isMinusOne() const override { return integer().isMinusOne(); }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,

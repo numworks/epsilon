@@ -149,12 +149,7 @@ bool Trigonometry::ExpressionIsTangentOrInverseOfTangent(const Expression& e,
       e.childAtIndex(denominatorIndex).type() == ExpressionNode::Type::Power &&
       e.childAtIndex(denominatorIndex).childAtIndex(0).type() ==
           denominatorType &&
-      e.childAtIndex(denominatorIndex).childAtIndex(1).type() ==
-          ExpressionNode::Type::Rational &&
-      e.childAtIndex(denominatorIndex)
-          .childAtIndex(1)
-          .convert<Rational>()
-          .isMinusOne() &&
+      e.childAtIndex(denominatorIndex).childAtIndex(1).isMinusOne() &&
       e.childAtIndex(numeratorIndex)
           .childAtIndex(0)
           .isIdenticalTo(e.childAtIndex(denominatorIndex)
@@ -467,9 +462,7 @@ Expression Trigonometry::shallowReduceInverseFunction(
   if (isArcTanOfCosSin ||
       (e.type() == ExpressionNode::Type::ArcTangent &&
        e.childAtIndex(0).type() == ExpressionNode::Type::Power &&
-       e.childAtIndex(0).childAtIndex(1).type() ==
-           ExpressionNode::Type::Rational &&
-       e.childAtIndex(0).childAtIndex(1).convert<Rational>().isMinusOne())) {
+       e.childAtIndex(0).childAtIndex(1).isMinusOne())) {
     Expression x;
     if (isArcTanOfCosSin) {
       /* (cos(x)/sin(x))^-1 is turned to dep(tan(x),{1/sin(x)} so we don't

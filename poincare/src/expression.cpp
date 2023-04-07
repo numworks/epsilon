@@ -18,6 +18,7 @@
 #include <poincare/list.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
+#include <poincare/number.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
 #include <poincare/piecewise_operator.h>
@@ -88,29 +89,20 @@ Expression Expression::childAtIndex(int i) const {
 /* Properties */
 
 bool Expression::isZero() const {
-  return (type() == ExpressionNode::Type::Rational &&
-          convert<const Rational>().isZero()) ||
-         (type() == ExpressionNode::Type::BasedInteger &&
-          convert<const BasedInteger>().integer().isZero());
+  return isNumber() && convert<const Number>().isZero();
 }
 
 bool Expression::isRationalOne() const {
-  return type() == ExpressionNode::Type::Rational &&
-         convert<const Rational>().isOne();
+  return type() == ExpressionNode::Type::Rational && isOne();
 }
 
 bool Expression::isOne() const {
-  return isRationalOne() || (type() == ExpressionNode::Type::BasedInteger &&
-                             convert<const BasedInteger>().integer().isOne());
+  return isNumber() && convert<const Number>().isOne();
 }
 
 bool Expression::isMinusOne() const {
-  return (type() == ExpressionNode::Type::BasedInteger &&
-          convert<const BasedInteger>().integer().isMinusOne()) ||
-         (type() == ExpressionNode::Type::Opposite &&
-          childAtIndex(0).isOne()) ||
-         (type() == ExpressionNode::Type::Rational &&
-          convert<const Rational>().isMinusOne());
+  return (isNumber() && convert<const Number>().isMinusOne()) ||
+         (type() == ExpressionNode::Type::Opposite && childAtIndex(0).isOne());
 }
 
 bool Expression::isInteger() const {
@@ -778,8 +770,7 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(
       childAtIndex(0).isPositive(reductionContext.context()) ==
           TrinaryBoolean::False) {
     Multiplication m = convert<Multiplication>();
-    if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational &&
-        m.childAtIndex(0).convert<Rational>().isMinusOne()) {
+    if (m.childAtIndex(0).isMinusOne()) {
       // The negative numeral factor is -1, we just remove it
       m.removeChildAtIndexInPlace(0);
       // The multiplication can have only one child after removing -1

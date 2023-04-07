@@ -267,8 +267,7 @@ void LayoutField::reload(KDSize previousSize) {
   markRectAsDirty(bounds());
 }
 
-using LayoutInsertionMethod =
-    void (LayoutBufferCursor::*)(const Context *context);
+using LayoutInsertionMethod = void (LayoutBufferCursor::*)(Context *context);
 
 bool LayoutField::handleEventWithText(const char *text, bool indentation,
                                       bool forceCursorRightOfText) {

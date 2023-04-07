@@ -168,30 +168,30 @@ public:
   const Node cursorNode() const override { return m_cursorNode; }
 
   /* Layout insertion */
-  void addEmptyExponentialLayout(const Context* context) {
+  void addEmptyExponentialLayout(Context* context) {
     execute(&EditionPoolCursor::addEmptyExponentialLayout, context);
   }
-  void addEmptyMatrixLayout(const Context* context);
-  void addEmptyPowerLayout(const Context* context);
-  void addEmptySquareRootLayout(const Context* context);
-  void addEmptySquarePowerLayout(const Context* context);
-  void addEmptyTenPowerLayout(const Context* context) {
+  void addEmptyMatrixLayout(Context* context);
+  void addEmptyPowerLayout(Context* context);
+  void addEmptySquareRootLayout(Context* context);
+  void addEmptySquarePowerLayout(Context* context);
+  void addEmptyTenPowerLayout(Context* context) {
     execute(&EditionPoolCursor::addEmptyTenPowerLayout, context);
   }
-  void addFractionLayoutAndCollapseSiblings(const Context* context);
-  void insertText(const char* text, const Context* context, bool forceRight = false, bool forceLeft = false, bool linearMode = false) {
-    EditionPoolCursor::InsertTextContext insertTextContext{text, context, forceRight, forceLeft, linearMode};
-    execute(&EditionPoolCursor::insertText, &insertTextContext);
+  void addFractionLayoutAndCollapseSiblings(Context* context);
+  void insertText(const char* text, Context* context, bool forceRight = false, bool forceLeft = false, bool linearMode = false) {
+    EditionPoolCursor::InsertTextContext insertTextContext{text, forceRight, forceLeft, linearMode};
+    execute(&EditionPoolCursor::insertText, context, &insertTextContext);
   }
-  void insertLayout(const Node tree, const Context* context, bool forceRight = false, bool forceLeft = false) {
-    EditionPoolCursor::InsertLayoutContext insertLayoutContext{tree, context, forceRight, forceLeft};
-    execute(&EditionPoolCursor::insertLayout, &insertLayoutContext);
+  void insertLayout(const Node tree, Context* context, bool forceRight = false, bool forceLeft = false) {
+    EditionPoolCursor::InsertLayoutContext insertLayoutContext{tree, forceRight, forceLeft};
+    execute(&EditionPoolCursor::insertLayout, context, &insertLayoutContext);
   }
   void deleteAndResetSelection() {
-    execute(&EditionPoolCursor::deleteAndResetSelection, nullptr);
+    execute(&EditionPoolCursor::deleteAndResetSelection);
   }
   void performBackspace() {
-    execute(&EditionPoolCursor::performBackspace, nullptr);
+    execute(&EditionPoolCursor::performBackspace);
   }
 
 private:
@@ -207,22 +207,21 @@ private:
     const Node cursorNode() const override { return m_cursorReference; }
 
     // EditionPoolCursor Actions
-    void performBackspace(const void * nullptrData);
-    void deleteAndResetSelection(const void * nullptrData);
-    void addEmptyExponentialLayout(const void * context);
-    void addEmptyTenPowerLayout(const void * context);
+    void performBackspace(Context *context, const void * nullptrData);
+    void deleteAndResetSelection(Context *context, const void * nullptrData);
+    void addEmptyExponentialLayout(Context *context, const void * nullptrData);
+    void addEmptyTenPowerLayout(Context *context, const void * nullptrData);
     struct InsertLayoutContext {
       const Node m_tree;
-      const Context* m_context;
       bool m_forceRight, m_forceLeft;
     };
-    void insertLayout(const void * insertLayoutContext);
+    void insertLayout(Context *context, const void * insertLayoutContext);
     struct InsertTextContext {
       const char* m_text;
-      const Context* m_context;
       bool m_forceRight, m_forceLeft, m_linearMode;
     };
-    void insertText(const void * insertTextContext);
+    void insertText(Context *context, const void * insertTextContext);
+
     void privateDelete(Render::DeletionMethod deletionMethod, bool deletionAppliedToParent);
     void setCursorNode(const Node node) override {
       m_cursorReference = EditionReference(node);
@@ -235,13 +234,14 @@ private:
     return EditionPoolCursor(m_position, m_startOfSelection, cursorNodeOffset());
   }
   void applyEditionPoolCursor(EditionPoolCursor cursor);
-  typedef void (EditionPoolCursor::*Action)(const void * data);
+  typedef void (EditionPoolCursor::*Action)(Context *context, const void * data);
   struct ExecutionContext {
     LayoutBufferCursor * m_cursor;
     Action m_action;
     int m_cursorOffset;
+    Context * m_context;
   };
-  bool execute(Action action, const void * data);
+  bool execute(Action action, Context *context = nullptr, const void * data = nullptr);
   void setCursorNode(const Node node) override {
     m_cursorNode = node;
     assert(cursorNodeOffset() >= 0 && cursorNodeOffset() < k_layoutBufferSize);

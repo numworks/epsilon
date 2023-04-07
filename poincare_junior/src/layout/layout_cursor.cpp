@@ -192,10 +192,9 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(EditionReference 
 }
 
 /* const Node insertion */
-void LayoutBufferCursor::EditionPoolCursor::insertLayout(const void * data) {
+void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context, const void * data) {
   const InsertLayoutContext * insertLayoutContext = static_cast<const InsertLayoutContext *>(data);
   const Node tree = insertLayoutContext->m_tree;
-  const Context *context = insertLayoutContext->m_context;
   bool forceRight = insertLayoutContext->m_forceRight;
   bool forceLeft = insertLayoutContext->m_forceLeft;
 
@@ -206,7 +205,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(const void * data) {
 
   assert(!forceRight || !forceLeft);
   // - Step 1 - Delete selection
-  deleteAndResetSelection(nullptr);
+  deleteAndResetSelection(context, nullptr);
 
 #if 0
   // - Step 2 - Beautify the current layout if needed.
@@ -371,43 +370,43 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(const void * data) {
 #endif
 }
 
-void LayoutBufferCursor::EditionPoolCursor::addEmptyExponentialLayout(const void * data) {
+void LayoutBufferCursor::EditionPoolCursor::addEmptyExponentialLayout(Context *context, const void * data) {
+  assert(data == nullptr);
   // TODO : Avoid the RackLayout inside a RackLayout
   // insertLayout(RackL("e"_l,KVertOffL(""_l)), false, false);
-  const Context *context = static_cast<const Context *>(data);
   EditionReference ref = P_RACKL(
     (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('e')),
     (EditionReference::Push<BlockType::VerticalOffsetLayout>(), P_RACKL())
   );
-  InsertLayoutContext insertLayoutContext{ref, context, false, false};
-  insertLayout(&insertLayoutContext);
+  InsertLayoutContext insertLayoutContext{ref, false, false};
+  insertLayout(context, &insertLayoutContext);
 }
 
-void LayoutBufferCursor::addEmptyMatrixLayout(const Context *context) {
+void LayoutBufferCursor::addEmptyMatrixLayout(Context *context) {
 #if 0
   insertLayout(MatrixLayout::EmptyMatrixBuilder());
 #endif
 }
 
-void LayoutBufferCursor::addEmptySquareRootLayout(const Context *context) {
+void LayoutBufferCursor::addEmptySquareRootLayout(Context *context) {
 #if 0
   insertLayout(NthRootLayout::Builder(HorizontalLayout::Builder()));
 #endif
 }
 
-void LayoutBufferCursor::addEmptyPowerLayout(const Context *context) {
+void LayoutBufferCursor::addEmptyPowerLayout(Context *context) {
   insertLayout(KVertOffL(""_l), context, false, false);
 }
 
-void LayoutBufferCursor::addEmptySquarePowerLayout(const Context *context) {
+void LayoutBufferCursor::addEmptySquarePowerLayout(Context *context) {
   /* Force the cursor right of the layout. */
   insertLayout(KVertOffL("2"_l), context, true, false);
 }
 
-void LayoutBufferCursor::EditionPoolCursor::addEmptyTenPowerLayout(const void * data) {
+void LayoutBufferCursor::EditionPoolCursor::addEmptyTenPowerLayout(Context *context, const void * data) {
+  assert(data == nullptr);
   // TODO : Avoid the RackLayout inside a RackLayout
   // insertLayout(RackL("10"_l,KVertOffL(""_l)), false, false);
-  const Context *context = static_cast<const Context *>(data);
   /* TODO : P_RACKL gets confused with the comma inside the template, so we have
    *        to surround CodePointLayout pushes with () */
   EditionReference ref =  P_RACKL(
@@ -415,18 +414,17 @@ void LayoutBufferCursor::EditionPoolCursor::addEmptyTenPowerLayout(const void * 
     (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('0')),
     P_VERTOFFL(P_RACKL())
   );
-  InsertLayoutContext insertLayoutContext{ref, context, false, false};
-  insertLayout(&insertLayoutContext);
+  InsertLayoutContext insertLayoutContext{ref, false, false};
+  insertLayout(context, &insertLayoutContext);
 }
 
-void LayoutBufferCursor::addFractionLayoutAndCollapseSiblings(const Context *context) {
+void LayoutBufferCursor::addFractionLayoutAndCollapseSiblings(Context *context) {
   insertLayout(KFracL(""_l,""_l), context, false, false);
 }
 
-void LayoutBufferCursor::EditionPoolCursor::insertText(const void * data) {
+void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context, const void * data) {
   const InsertTextContext * insertTextContext = static_cast<const InsertTextContext *>(data);
   const char *text = insertTextContext->m_text;
-  const Context * context = insertTextContext->m_context;
   bool forceCursorRightOfText = insertTextContext->m_forceRight;
   bool forceCursorLeftOfText = insertTextContext->m_forceLeft;
   bool linearMode = insertTextContext->m_linearMode;
@@ -459,8 +457,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(const void * data) {
          * the first half of text now, and then insert the end of the text
          * and force the cursor left of it. */
         assert(currentSubscriptDepth == 0);
-        LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext insertLayoutContext{layoutToInsert, context, forceCursorRightOfText, forceCursorLeftOfText};
-        insertLayout(&insertLayoutContext);
+        LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext insertLayoutContext{layoutToInsert, forceCursorRightOfText, forceCursorLeftOfText};
+        insertLayout(context, &insertLayoutContext);
         layoutToInsert = P_RACKL();
         currentLayout = layoutToInsert;
         forceCursorLeftOfText = true;
@@ -554,16 +552,16 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(const void * data) {
   assert(currentSubscriptDepth == 0);
 
   // - Step 2 - Inserted the created layout
-  LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext insertLayoutContext{layoutToInsert, context, forceCursorRightOfText, forceCursorLeftOfText};
-  insertLayout(&insertLayoutContext);
+  LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext insertLayoutContext{layoutToInsert, forceCursorRightOfText, forceCursorLeftOfText};
+  insertLayout(context, &insertLayoutContext);
 
   // TODO: Restore beautification
 }
 
-void LayoutBufferCursor::EditionPoolCursor::performBackspace(const void * data) {
+void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context * context, const void * data) {
   assert(data == nullptr);
   if (isSelecting()) {
-    return deleteAndResetSelection(nullptr);
+    return deleteAndResetSelection(context, nullptr);
   }
 
 #if 0
@@ -590,7 +588,7 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(const void * data) 
 #endif
 }
 
-void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(const void * data) {
+void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(Context * context, const void * data) {
   assert(data == nullptr);
   LayoutSelection selec = selection();
   if (selec.isEmpty()) {
@@ -1318,26 +1316,32 @@ void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
   setCursorNode(rootBlock() + cursor.cursorNodeOffset());
 }
 
-bool LayoutBufferCursor::execute(Action action, const void * data) {
-  ExecutionContext executionContext{this, action, cursorNodeOffset()};
+bool LayoutBufferCursor::execute(Action action, Context *context, const void * data) {
+  ExecutionContext executionContext{this, action, cursorNodeOffset(), context};
   // Perform Action within an execution
   return EditionPool::sharedEditionPool()->executeAndDump(
-      [](void * context, const void * data) {
-        ExecutionContext * executionContext = static_cast<ExecutionContext *>(context);
+      [](void * subAction, const void * data) {
+        ExecutionContext * executionContext = static_cast<ExecutionContext *>(subAction);
         LayoutBufferCursor * bufferCursor = executionContext->m_cursor;
         // Clone layoutBuffer into the EditionPool
         EditionReference::Clone(Node(executionContext->m_cursor->rootBlock()));
         // Create a temporary cursor
         EditionPoolCursor editionCursor = bufferCursor->createEditionPoolCursor();
         // Perform the action
-        (editionCursor.*(executionContext->m_action))(data);
+        (editionCursor.*(executionContext->m_action))(executionContext->m_context, data);
         // Apply the changes
         bufferCursor->setCursorNode(bufferCursor->rootBlock() + editionCursor.cursorNodeOffset());
         bufferCursor->applyEditionPoolCursor(editionCursor);
         /* The resulting EditionPool tree will be loaded back into
          * m_layoutBuffer and EditionPool will be flushed. */
       },
-      &executionContext, data, m_layoutBuffer, k_layoutBufferSize);
+      &executionContext, data, m_layoutBuffer, k_layoutBufferSize,
+      [](void * subAction) {
+        // Default implementation illustrating how the context could be relaxed
+        // ExecutionContext * executionContext = static_cast<ExecutionContext *>(subAction);
+        // Context * context = executionContext->m_context;
+        return false;
+      });
 }
 
 }  // namespace PoincareJ

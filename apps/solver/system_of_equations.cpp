@@ -415,6 +415,10 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       Preferences::sharedPreferences->angleUnit();
   Expression exact, approximate;
 
+  bool approximateDuringReduction =
+      type == SolutionType::Formal &&
+      Preferences::sharedPreferences->examMode().forbidExactResults();
+
   if (type == SolutionType::Approximate) {
     approximate = e;
   } else {
@@ -424,9 +428,10 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         m_overrideUserVariables
             ? SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
             : SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
-    e.cloneAndSimplifyAndApproximate(&exact, &approximate, context,
-                                     m_complexFormat, angleUnit, unitFormat,
-                                     symbolicComputation);
+    e.cloneAndSimplifyAndApproximate(
+        &exact, &approximate, context, m_complexFormat, angleUnit, unitFormat,
+        symbolicComputation, UnitConversion::Default,
+        approximateDuringReduction);
   }
   if (approximate.type() == ExpressionNode::Type::Nonreal) {
     return Error::EquationNonreal;
@@ -440,25 +445,29 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
   bool exactAndApproximateAreEqual = false;
 
   if (type != SolutionType::Approximate &&
-      !ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(exact,
-                                                                   context)) {
+      (approximateDuringReduction ||
+       !ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(exact,
+                                                                    context))) {
     exactLayout = PoincareHelpers::CreateLayout(exact, context);
   }
   if (type != SolutionType::Formal) {
     approximateLayout = PoincareHelpers::CreateLayout(approximate, context);
-    if (type == SolutionType::Exact && !exactLayout.isUninitialized()) {
-      char exactBuffer[::Constant::MaxSerializedExpressionSize];
-      char approximateBuffer[::Constant::MaxSerializedExpressionSize];
-      exactLayout.serializeForParsing(exactBuffer,
-                                      ::Constant::MaxSerializedExpressionSize);
-      approximateLayout.serializeForParsing(
-          approximateBuffer, ::Constant::MaxSerializedExpressionSize);
-      if (strcmp(exactBuffer, approximateBuffer) == 0) {
-        exactLayout = Layout();
-      } else if (Expression::ExactAndApproximateExpressionsAreEqual(
-                     exact, Expression::Parse(approximateBuffer, context))) {
-        exactAndApproximateAreEqual = true;
-      }
+  }
+  assert(!approximateLayout.isUninitialized() ||
+         !exactLayout.isUninitialized());
+
+  if (!approximateLayout.isUninitialized() && !exactLayout.isUninitialized()) {
+    char exactBuffer[::Constant::MaxSerializedExpressionSize];
+    char approximateBuffer[::Constant::MaxSerializedExpressionSize];
+    exactLayout.serializeForParsing(exactBuffer,
+                                    ::Constant::MaxSerializedExpressionSize);
+    approximateLayout.serializeForParsing(
+        approximateBuffer, ::Constant::MaxSerializedExpressionSize);
+    if (strcmp(exactBuffer, approximateBuffer) == 0) {
+      exactLayout = Layout();
+    } else if (Expression::ExactAndApproximateExpressionsAreEqual(
+                   exact, Expression::Parse(approximateBuffer, context))) {
+      exactAndApproximateAreEqual = true;
     }
   }
 

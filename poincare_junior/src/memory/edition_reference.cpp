@@ -131,7 +131,7 @@ void EditionReference::detach(bool isTree) {
   Block* source = static_cast<Node>(*this).block();
   pool->moveBlocks(destination, source, sizeToMove);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Detach", destination, sizeToMove, source);
+  Log(LoggerType::Edition, "Detach", destination - sizeToMove, sizeToMove, source);
 #endif
 }
 

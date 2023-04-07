@@ -6,6 +6,15 @@ using namespace PoincareJ;
 
 namespace CalculationJunior {
 
+bool AbstractExpressionView::setLayout(Layout layoutR) {
+  if (!getLayout().treeIsIdenticalTo(layoutR)) {
+    privateSetLayout(layoutR);
+    markRectAsDirty(bounds());
+    return true;
+  }
+  return false;
+}
+
 KDSize AbstractExpressionView::minimalSizeForOptimalDisplay() const {
   if (!getLayout().isInitialized()) {
     return KDSizeZero;
@@ -34,25 +43,6 @@ void AbstractExpressionView::drawRect(KDContext* ctx, KDRect rect) const {
                      m_glyphFormat.style.glyphColor,
                      m_glyphFormat.style.backgroundColor);
   }
-}
-
-bool ExpressionView::setLayout(Layout layoutR) {
-  bool shouldRedraw = !getLayout().treeIsIdenticalTo(layoutR);
-  if (shouldRedraw) {
-    m_layout = layoutR;
-    markRectAsDirty(bounds());
-  }
-  return shouldRedraw;
-}
-
-bool ExpressionViewWithCursor::setLayout(Layout layoutR) {
-  bool shouldRedraw = !getLayout().treeIsIdenticalTo(layoutR);
-  // TODO : Update the cursor if needed.
-  if (shouldRedraw) {
-    layoutR.dumpAt(m_cursor->layoutBuffer());
-    markRectAsDirty(bounds());
-  }
-  return shouldRedraw;
 }
 
 }  // namespace CalculationJunior

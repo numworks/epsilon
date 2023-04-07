@@ -17,7 +17,7 @@ class AbstractExpressionView : public Escher::GlyphsView {
       : Escher::GlyphsView(format), m_horizontalMargin(0) {}
 
   virtual PoincareJ::Layout getLayout() const = 0;
-  virtual bool setLayout(PoincareJ::Layout) = 0;
+  bool setLayout(PoincareJ::Layout layoutR);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
   void setHorizontalMargin(KDCoordinate horizontalMargin) {
@@ -27,6 +27,9 @@ class AbstractExpressionView : public Escher::GlyphsView {
   KDSize minimalSizeForOptimalDisplay() const override;
   KDPoint drawingOrigin() const;
   bool layoutHasNode() const { return getLayout().isInitialized(); }
+
+ protected:
+  virtual void privateSetLayout(PoincareJ::Layout layoutR) = 0;
 
  private:
   virtual PoincareJ::LayoutSelection selection() const {
@@ -38,9 +41,12 @@ class AbstractExpressionView : public Escher::GlyphsView {
 class ExpressionView : public AbstractExpressionView {
  public:
   PoincareJ::Layout getLayout() const override { return m_layout; }
-  bool setLayout(PoincareJ::Layout layout) override;
 
  private:
+  void privateSetLayout(PoincareJ::Layout layoutR) override {
+    m_layout = layoutR;
+  }
+
   mutable PoincareJ::Layout m_layout;
 };
 
@@ -55,9 +61,11 @@ class ExpressionViewWithCursor : public AbstractExpressionView {
   PoincareJ::Layout getLayout() const override {
     return PoincareJ::Layout(m_cursor->rootBlock());
   }
-  bool setLayout(PoincareJ::Layout layout) override;
 
  private:
+  void privateSetLayout(PoincareJ::Layout layoutR) override {
+    layoutR.dumpAt(m_cursor->layoutBuffer());
+  }
   PoincareJ::LayoutSelection selection() const override {
     return m_cursor->selection();
   }

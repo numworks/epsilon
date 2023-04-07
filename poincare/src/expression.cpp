@@ -1309,8 +1309,8 @@ void Expression::cloneAndSimplifyAndApproximate(
     Expression *simplifiedExpression, Expression *approximateExpression,
     Context *context, Preferences::ComplexFormat complexFormat,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-    SymbolicComputation symbolicComputation,
-    UnitConversion unitConversion) const {
+    SymbolicComputation symbolicComputation, UnitConversion unitConversion,
+    bool approximateNonSymbols) const {
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   assert(!approximateExpression || approximateExpression->isUninitialized());
 
@@ -1320,6 +1320,7 @@ void Expression::cloneAndSimplifyAndApproximate(
   ReductionContext userReductionContext = ReductionContext(
       context, complexFormat, angleUnit, unitFormat, ReductionTarget::User,
       symbolicComputation, unitConversion);
+  userReductionContext.setApproximateNonSymbols(approximateNonSymbols);
   ReductionContext reductionContext = userReductionContext;
   bool reduceFailure = false;
   Expression e =

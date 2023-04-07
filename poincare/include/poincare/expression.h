@@ -405,7 +405,8 @@ class Expression : public TreeHandle {
       Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
-      UnitConversion unitConversion = UnitConversion::Default) const;
+      UnitConversion unitConversion = UnitConversion::Default,
+      bool approximateNonSymbols = false) const;
   Expression cloneAndReduce(ReductionContext reductionContext) const;
   // TODO: deepReduceWithSystemCheckpoint should be private but we need to make
   // poincare/text/helper.h a class to be able to friend it

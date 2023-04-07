@@ -66,13 +66,13 @@ T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(
     return NAN;
   }
   if (std::isinf(abscissa)) {
-    return abscissa > static_cast<T>(0.0) ? static_cast<T>(1.0)
-                                          : static_cast<T>(0.0);
+    return abscissa > static_cast<T>(k_standardMu) ? static_cast<T>(1.0)
+                                                   : static_cast<T>(0.0);
   }
-  if (abscissa == static_cast<T>(0.0)) {
+  if (abscissa == static_cast<T>(k_standardMu)) {
     return static_cast<T>(0.5);
   }
-  if (abscissa < static_cast<T>(0.0)) {
+  if (abscissa < static_cast<T>(k_standardMu)) {
     return (static_cast<T>(1.0)) -
            StandardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
   }
@@ -121,7 +121,8 @@ double NormalDistribution::evaluateParameterForProbabilityAndBound(
   }
   assert(parameterIndex == 1);  // sigma
   if (abscissaForStandardDistribution == 0) {
-    return NAN;
+    // Return default value if there is an infinity of possible sigma
+    return k_standardSigma;
   }
   double result = (bound - parameters[0]) / abscissaForStandardDistribution;
   return result > 0.0 ? result : NAN;  // Sigma can't be negative or null

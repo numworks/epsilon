@@ -370,9 +370,9 @@ QUIZ_CASE(poincare_normal_distribution_find_parameters) {
       normalDistribution.evaluateParameterForProbabilityAndBound(
           1, parameters2, 0.8, -3., true),
       NAN, 1.e-3, true);
-  // Infinite values for mu
+  // Infinite values for mu -> mu = 1.
   assert_roughly_equal<double>(
       normalDistribution.evaluateParameterForProbabilityAndBound(1, parameters2,
                                                                  0.5, 1., true),
-      NAN, 1.e-3, true);
+      1., 1.e-3, false);
 }

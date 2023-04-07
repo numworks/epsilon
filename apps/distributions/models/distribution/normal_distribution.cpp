@@ -2,7 +2,6 @@
 
 #include <float.h>
 #include <poincare/layout_helper.h>
-#include <poincare/normal_distribution.h>
 
 #include <cmath>
 

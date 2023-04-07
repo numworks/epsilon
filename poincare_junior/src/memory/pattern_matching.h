@@ -1,7 +1,7 @@
 #ifndef POINCARE_MEMORY_PATTERN_MATCHING_H
 #define POINCARE_MEMORY_PATTERN_MATCHING_H
 
-#include <poincare_junior/src/expression/placeholder.h>
+#include <poincare_junior/src/memory/placeholder.h>
 
 #include <array>
 

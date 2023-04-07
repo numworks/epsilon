@@ -1,10 +1,10 @@
 #include <poincare_junior/include/poincare.h>
 #include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/placeholder.h>
 #include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/memory/cache_pool.h>
+#include <poincare_junior/src/memory/placeholder.h>
 
 #include "node_iterator.h"
 

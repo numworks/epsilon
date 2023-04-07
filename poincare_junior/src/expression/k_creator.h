@@ -3,8 +3,8 @@
 
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/integer.h>
-#include <poincare_junior/src/expression/placeholder.h>
 #include <poincare_junior/src/memory/k_creator.h>
+#include <poincare_junior/src/memory/placeholder.h>
 
 #include <bit>
 

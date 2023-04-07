@@ -93,13 +93,12 @@ Expression ComplexCartesian::shallowBeautify(
       a.makePositiveAnyNegativeNumeralFactor(reductionContext);
   Expression oppositeB =
       b.makePositiveAnyNegativeNumeralFactor(reductionContext);
-  a = oppositeA.isUninitialized() ? a : oppositeA;
-  b = oppositeB.isUninitialized() ? b : oppositeB;
+  bool aIsPositive = oppositeA.isUninitialized();
+  bool bIsPositive = oppositeB.isUninitialized();
+  a = aIsPositive ? a : oppositeA;
+  b = bIsPositive ? b : oppositeB;
   Expression e = Expression::CreateComplexExpression(
-      a, b, Preferences::ComplexFormat::Cartesian,
-      a.isUndefined() || b.isUndefined(), Expression::IsZero(a),
-      Expression::IsOne(a), Expression::IsZero(b), Expression::IsOne(b),
-      !oppositeA.isUninitialized(), !oppositeB.isUninitialized());
+      a, b, Preferences::ComplexFormat::Cartesian, !aIsPositive, !bIsPositive);
   replaceWithInPlace(e);
   return e;
 }

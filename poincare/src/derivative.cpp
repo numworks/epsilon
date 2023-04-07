@@ -317,7 +317,7 @@ Expression Derivative::shallowReduce(ReductionContext reductionContext) {
       reducedDerivative = reducedDerivative.childAtIndex(0);
     }
     replaceChildAtIndexInPlace(0, reducedDerivative);
-    if (Expression::IsZero(reducedDerivative)) {
+    if (reducedDerivative.isZero()) {
       currentDerivationOrder = 0;
     } else {
       currentDerivationOrder--;

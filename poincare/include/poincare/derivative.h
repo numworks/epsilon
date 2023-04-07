@@ -24,7 +24,7 @@ class DerivativeNode final : public ParameteredExpressionNode {
 
  private:
   bool isFirstOrder() const {
-    return Expression::IsOne(Expression(childAtIndex(numberOfChildren() - 1)));
+    return Expression(childAtIndex(numberOfChildren() - 1)).isOne();
   }
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,

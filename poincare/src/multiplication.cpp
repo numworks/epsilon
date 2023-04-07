@@ -758,7 +758,7 @@ Expression Multiplication::shallowBeautify(
       Expression child = childAtIndex(i);
       if (child.type() == ExpressionNode::Type::Power &&
           child.childAtIndex(0).type() == ExpressionNode::Type::Sine &&
-          IsMinusOne(child.childAtIndex(1))) {
+          child.childAtIndex(1).isMinusOne()) {
         for (int j = i + 1; j < numberOfChildren(); j++) {
           // Cosine are after sine in simplification order
           Expression otherChild = childAtIndex(j);
@@ -1545,7 +1545,7 @@ bool Multiplication::factorizeSineAndCosine(
   replaceChildAtIndexInPlace(tanIndex, Power::Builder(tan, tanPower));
   childAtIndex(tanIndex).shallowReduce(reductionContext);
   // Replace cos(x)^q by cos(x)^(p+q) or sin(x)^p by sin(x)^(p+q)
-  if (Expression::IsZero(sumPQ)) {
+  if (sumPQ.isZero()) {
     /* We have to do this because x^0 != 1 because 0^0 is undef
      * so sin(x)^0 creates a dependency. */
     replaceChildAtIndexInPlace(otherIndex, Rational::Builder(1));

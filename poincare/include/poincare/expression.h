@@ -741,12 +741,8 @@ class Expression : public TreeHandle {
                                        Expression expression[]) const;
 
   /* Builder */
-  static bool IsZero(const Expression e);
-  static bool IsOne(const Expression e);
-  static bool IsMinusOne(const Expression e);
   static Expression CreateComplexExpression(
       Expression ra, Expression tb, Preferences::ComplexFormat complexFormat,
-      bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb,
       bool isNegativeRa, bool isNegativeTb);
 };
 

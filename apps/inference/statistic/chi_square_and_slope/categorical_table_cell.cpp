@@ -165,7 +165,7 @@ bool EditableCategoricalTableCell::deleteSelectedValue() {
        * moved up multiple cells, m_inputTableView should be reloaded. */
       m_selectableTableView.reloadData(false);
     }
-    tableView()->selectCellAtClippedLocation(col, row, true);
+    selectableTableView()->selectCellAtClippedLocation(col, row, true);
     return true;
   }
 }
@@ -187,7 +187,7 @@ void EditableCategoricalTableCell::clearSelectedColumn() {
   if (!recomputeDimensions()) {
     m_selectableTableView.reloadData(false);
   }
-  tableView()->selectCellAtClippedLocation(column, 0, false);
+  selectableTableView()->selectCellAtClippedLocation(column, 0, false);
 }
 
 bool EditableCategoricalTableCell::recomputeDimensions() {

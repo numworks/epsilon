@@ -36,7 +36,7 @@ void ResultsHomogeneityController::ResultsTableController::viewWillAppear() {
 bool ResultsHomogeneityController::ResultsTableController::handleEvent(
     Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    m_resultHomogeneityTable.tableView()->deselectTable();
+    m_resultHomogeneityTable.selectableTableView()->deselectTable();
     tabController()->selectTab();
     return true;
   }
@@ -50,7 +50,7 @@ void ResultsHomogeneityController::ResultsTableController::
   if (m_resultHomogeneityTable.unselectTopLeftCell(t, previousSelectedCol,
                                                    previousSelectedRow) &&
       t->selectedColumn() == 0) {
-    m_resultHomogeneityTable.tableView()->deselectTable();
+    m_resultHomogeneityTable.selectableTableView()->deselectTable();
     tabController()->selectTab();
   }
 }

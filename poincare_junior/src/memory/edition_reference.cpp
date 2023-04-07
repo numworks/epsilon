@@ -112,16 +112,15 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
     return *this;
   }
   EditionPool* editionPool = EditionPool::sharedEditionPool();
-  /* This is a representation of the EditionPool:
-   *   # is any block(s) or nodes
-   *   | delimits this reference
-   *   A A and B B B are placeholder match trees
-   *   _ is the end of the EditionPool
-   *   + marks an Addition block
-   *   n is the number of placeholder matches (initializedPlaceHolders)
-   *   " will delimit the created reference
-   */
-  // EditionPool : #|# A A # B B B #|# _
+  /* Following this example :
+   * this (EditionReference): (x + y) * z
+   * pattern: (A + B) * C
+   * structure: A * C + B * C
+   *
+   * EditionPool: ..... | *{2} +{2} x y z | ....
+   * With :
+   * - | delimiting this reference
+   * - *{2} a two children multiplication node (+{2} for addition) */
 
   // Step 2 - Detach placeholder matches
   /* Create ZeroBlock for each context node to be detached so that tree size is
@@ -135,7 +134,8 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
     initializedPlaceHolders += 1;
     treeNext.insertTreeBeforeNode(0_e);
   }
-  // EditionPool : #|# A A # B B B #|0 0 # _
+
+  // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 ....
 
   EditionReference placeholders[Placeholder::Tag::numberOfTags];
   for (uint8_t i = 0; i < Placeholder::Tag::numberOfTags; i++) {
@@ -147,7 +147,7 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
   EditionReference placeholderMatches(
       editionPool->push<BlockType::Addition>(initializedPlaceHolders));
 
-  // EditionPool : #|# A A # B B B #|0 0 # + n _
+  // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 .... +{3}
 
   for (uint8_t i = 0; i < Placeholder::Tag::numberOfTags; i++) {
     if (placeholders[i].isUninitialized()) {
@@ -158,13 +158,13 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
     placeholders[i].detachTree();
   }
 
-  // EditionPool : #|# # # 0 0|# + n A A B B B _
+  // EditionPool: ..... | *{2} +{2} 0 0 0 | .... +{3} x y z
 
   // Step 3 - Replace with placeholder matches only
   replaceTreeByTree(placeholderMatches);
   *this = placeholderMatches;
 
-  // EditionPool : #|+ n A A B B B|# _
+  // EditionPool: ..... | +{3} x y z | ....
 
   // Step 4 - Update context with new placeholder matches position
   for (uint8_t i = 0; i < Placeholder::Tag::numberOfTags; i++) {
@@ -174,13 +174,13 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
   // Step 5 - Build the PatternMatching replacement
   EditionReference createdRef = PatternMatching::Create(structure, ctx);
 
-  // EditionPool : #|+ n A A B B B|#"# B B B # B B B #"_
+  // EditionPool: ..... | +{3} x y z | .... +{2} *{2} x z *{2} y z
 
   // Step 6 - Replace with created structure
   replaceTreeByTree(createdRef);
   *this = createdRef;
 
-  // EditionPool : #|# B B B # B B B #|# _
+  // EditionPool: ..... | +{2} *{2} x z *{2} y z | ....
   return *this;
 }
 

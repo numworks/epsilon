@@ -10,7 +10,9 @@ namespace Distributions {
 
 DiscreteCalculation::DiscreteCalculation(Distribution* distribution)
     : Calculation(distribution),
-      m_abscissa(distribution->defaultComputedValue()) {}
+      m_abscissa(distribution->defaultComputedValue()) {
+  assert(distribution->allParametersAreInitialized());
+}
 
 I18n::Message DiscreteCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);

@@ -11,7 +11,11 @@ namespace Distributions {
 
 RightIntegralCalculation::RightIntegralCalculation(Distribution* distribution)
     : Calculation(distribution),
-      m_lowerBound(distribution->defaultComputedValue()) {}
+      m_lowerBound(distribution->defaultComputedValue()) {
+  if (!distribution->allParametersAreInitialized()) {
+    m_result = k_medianProbability;
+  }
+}
 
 I18n::Message RightIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);

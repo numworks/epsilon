@@ -17,7 +17,9 @@ bool StudentDistribution::authorizedParameterAtIndex(double x,
   return x >= DBL_EPSILON && x <= 200.0;
 }
 
-float StudentDistribution::privateComputeXMin() const { return -privateComputeXMax(); }
+float StudentDistribution::privateComputeXMin() const {
+  return -privateComputeXMax();
+}
 
 float StudentDistribution::privateComputeXMax() const { return 5.0f; }
 

@@ -1237,9 +1237,8 @@ void Expression::beautifyAndApproximateScalar(
     bool tbIsNegative = false;
     makePositive(&ra, &raIsNegative);
     makePositive(&tb, &tbIsNegative);
-    *simplifiedExpression = CreateComplexExpression(
-        ra, tb, complexFormat, ra.isUndefined() || tb.isUndefined(), IsZero(ra),
-        IsOne(ra), IsZero(tb), IsOne(tb), raIsNegative, tbIsNegative);
+    *simplifiedExpression = CreateComplexExpression(ra, tb, complexFormat,
+                                                    raIsNegative, tbIsNegative);
   } else {
     // Step 1: beautifying
     *simplifiedExpression = deepBeautify(userReductionContext);
@@ -1639,25 +1638,10 @@ U Expression::approximateWithValueForSymbol(
 }
 
 /* Builder */
-
-bool Expression::IsZero(const Expression e) {
-  return e.type() == ExpressionNode::Type::Rational &&
-         static_cast<const Rational &>(e).isZero();
-}
-bool Expression::IsOne(const Expression e) {
-  return e.type() == ExpressionNode::Type::Rational &&
-         static_cast<const Rational &>(e).isOne();
-}
-bool Expression::IsMinusOne(const Expression e) {
-  return e.type() == ExpressionNode::Type::Rational &&
-         static_cast<const Rational &>(e).isMinusOne();
-}
-
 Expression Expression::CreateComplexExpression(
     Expression ra, Expression tb, Preferences::ComplexFormat complexFormat,
-    bool undefined, bool isZeroRa, bool isOneRa, bool isZeroTb, bool isOneTb,
     bool isNegativeRa, bool isNegativeTb) {
-  if (undefined) {
+  if (ra.isUndefined() || tb.isUndefined()) {
     return Undefined::Builder();
   }
   List dependencies = List::Builder();
@@ -1667,6 +1651,10 @@ Expression Expression::CreateComplexExpression(
   if (tb.type() == ExpressionNode::Type::Dependency) {
     tb = static_cast<Dependency &>(tb).extractDependencies(dependencies);
   }
+  bool isZeroRa = ra.isZero();
+  bool isOneRa = ra.isOne();
+  bool isZeroTb = tb.isZero();
+  bool isOneTb = tb.isOne();
   Expression result;
   switch (complexFormat) {
     case Preferences::ComplexFormat::Real:

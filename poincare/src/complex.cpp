@@ -64,9 +64,6 @@ Expression ComplexNode<T>::complexToExpression(
   return Expression::CreateComplexExpression(
       Number::FloatNumber<T>(std::fabs(ra)),
       Number::FloatNumber<T>(std::fabs(tb)), complexFormat,
-      (std::isnan(this->real()) || std::isnan(this->imag())),
-      ra == static_cast<T>(0.0), std::fabs(ra) == static_cast<T>(1.0),
-      tb == static_cast<T>(0.0), std::fabs(tb) == static_cast<T>(1.0),
       ra < static_cast<T>(0.0), tb < static_cast<T>(0.0));
 }
 

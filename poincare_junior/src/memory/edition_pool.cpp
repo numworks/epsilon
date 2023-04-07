@@ -118,6 +118,9 @@ void EditionPool::replaceBlocks(Block *destination, const Block *source,
 
 bool EditionPool::insertBlocks(Block *destination, Block *source,
                                size_t numberOfBlocks) {
+  if (destination == source || numberOfBlocks == 0) {
+    return true;
+  }
   if (!checkForEnoughSpace(numberOfBlocks)) {
     return false;
   }
@@ -138,8 +141,10 @@ bool EditionPool::insertBlocks(Block *destination, Block *source,
 }
 
 void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
-  assert(m_numberOfBlocks >= numberOfBlocks);
+  // If this assert triggers, add an escape case
+  assert(numberOfBlocks != 0);
   int deletionSize = numberOfBlocks * sizeof(Block);
+  assert(m_numberOfBlocks >= numberOfBlocks);
   m_numberOfBlocks -= numberOfBlocks;
   memmove(address, address + deletionSize,
           static_cast<Block *>(lastBlock()) - address);
@@ -157,6 +162,9 @@ void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
 
 void EditionPool::moveBlocks(Block *destination, Block *source,
                              size_t numberOfBlocks) {
+  if (destination == source || numberOfBlocks == 0) {
+    return;
+  }
   uint8_t *src = reinterpret_cast<uint8_t *>(source);
   uint8_t *dst = reinterpret_cast<uint8_t *>(destination);
   size_t len = numberOfBlocks * sizeof(Block);

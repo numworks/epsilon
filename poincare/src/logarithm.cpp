@@ -270,9 +270,7 @@ Expression Logarithm::simpleShallowReduce(
   Expression b = childAtIndex(1);
 
   // log(x,0) = log(x,1) = undef
-  if (b.type() == ExpressionNode::Type::Rational &&
-      (static_cast<Rational&>(b).isZero() ||
-       static_cast<Rational&>(b).isOne())) {
+  if (b.isZero() || b.isOne()) {
     return replaceWithUndefinedInPlace();
   }
   if (c.type() == ExpressionNode::Type::Rational) {

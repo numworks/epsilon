@@ -630,8 +630,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
       default:
         break;
     }
-  } else if (baseType == ExpressionNode::Type::Rational &&
-             static_cast<Rational &>(base).isOne() &&
+  } else if (base.isOne() &&
              !index.recursivelyMatches(Expression::IsInfinity, context)) {
     // 1^x -> 1
     trivialResult = Rational::Builder(1);
@@ -916,8 +915,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
     for (int i = 0; i < baseChildren; i++) {
       Expression child = base.childAtIndex(i);
       TrinaryBoolean childSign = child.isPositive(context);
-      if (child.type() == ExpressionNode::Type::Rational &&
-          static_cast<Rational &>(child).isMinusOne()) {
+      if (child.isMinusOne()) {
         // a can't be -1
         continue;
       }

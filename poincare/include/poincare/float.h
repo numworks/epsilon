@@ -21,7 +21,7 @@ namespace Poincare {
 template <typename T>
 class FloatNode final : public NumberNode {
  public:
-  FloatNode(T value = 0.0) : m_value(value) {}
+  FloatNode(T value = static_cast<T>(0.0)) : m_value(value) {}
 
   T value() const { return m_value; }
   void setValue(T value) { m_value = value; }
@@ -41,21 +41,23 @@ class FloatNode final : public NumberNode {
     return (sizeof(T) == sizeof(float)) ? Type::Float : Type::Double;
   }
   TrinaryBoolean isPositive(Context* context) const override {
-    return std::isnan(m_value) ? TrinaryBoolean::Unknown
-                               : BinaryToTrinaryBool(m_value >= 0.0);
+    return std::isnan(m_value)
+               ? TrinaryBoolean::Unknown
+               : BinaryToTrinaryBool(m_value >= static_cast<T>(0.0));
   }
-  TrinaryBoolean isNull(Context* context) const override {
-    return BinaryToTrinaryBool(m_value == 0.0);
-  }
+
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
 
   // NumberNode
   void setNegative(bool negative) override {
-    if ((m_value < 0.0) != negative) {
-      m_value = -1.0 * m_value;
+    if ((m_value < static_cast<T>(0.0)) != negative) {
+      m_value = static_cast<T>(-1.0) * m_value;
     }
   }
+  bool isZero() const override { return m_value == static_cast<T>(0.0); }
+  bool isOne() const override { return m_value == static_cast<T>(1.0); }
+  bool isMinusOne() const override { return m_value == static_cast<T>(-1.0); }
 
   // Layout
   int serialize(char* buffer, int bufferSize,

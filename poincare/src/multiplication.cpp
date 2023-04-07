@@ -1021,8 +1021,7 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
   int i = 1;
   while (i < numberOfChildren()) {
     Expression o = childAtIndex(i);
-    if (o.type() == ExpressionNode::Type::Rational &&
-        static_cast<Rational &>(o).isOne()) {
+    if (o.isOne()) {
       removeChildAtIndexInPlace(i);
       continue;
     }
@@ -1061,10 +1060,7 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
    * If the first child is 1, we remove it if there are other children. */
   {
     const Expression c = childAtIndex(0);
-    bool hasOneOrZeroInfrontOfMultiplication =
-        c.type() == ExpressionNode::Type::Rational &&
-        (static_cast<const Rational &>(c).isOne() ||
-         static_cast<const Rational &>(c).isZero());
+    bool hasOneOrZeroInfrontOfMultiplication = c.isOne() || c.isZero();
     if (hasOneOrZeroInfrontOfMultiplication) {
       // Do not remove 1 or the 0 in front of 1km or 0ft^2
       bool canRemoveOneOrZero = !productHasUnit;
@@ -1080,7 +1076,7 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
           }
         }
       }
-      if (canRemoveOneOrZero && static_cast<const Rational &>(c).isZero()) {
+      if (canRemoveOneOrZero && c.isZero()) {
         // Check that other children don't match inf or matrix
         if (!recursivelyMatches(
                 [](const Expression e, Context *context) {
@@ -1111,9 +1107,7 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
           replaceWithInPlace(result);
           return result;
         }
-      } else if (canRemoveOneOrZero &&
-                 static_cast<const Rational &>(c).isOne() &&
-                 numberOfChildren() > 1) {
+      } else if (canRemoveOneOrZero && c.isOne() && numberOfChildren() > 1) {
         removeChildAtIndexInPlace(0);
       }
     }

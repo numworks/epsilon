@@ -18,9 +18,6 @@ class RationalNode final : public NumberNode {
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative) override { m_negative = negative; }
   bool isInteger() const { return denominator().isOne(); }
-  TrinaryBoolean isNull(Context* context) const override {
-    return BinaryToTrinaryBool(isZero());
-  }
 
   // TreeNode
   size_t size() const override;
@@ -62,11 +59,13 @@ class RationalNode final : public NumberNode {
   T templatedApproximate() const;
 
   // Basic test
-  bool isZero() const { return unsignedNumerator().isZero(); }
-  bool isOne() const { return signedNumerator().isOne() && isInteger(); }
+  bool isZero() const override { return unsignedNumerator().isZero(); }
+  bool isOne() const override {
+    return signedNumerator().isOne() && isInteger();
+  }
   bool isTwo() const { return signedNumerator().isTwo() && isInteger(); }
   bool isThree() const { return signedNumerator().isThree() && isInteger(); }
-  bool isMinusOne() const {
+  bool isMinusOne() const override {
     return signedNumerator().isMinusOne() && isInteger();
   }
   bool isMinusTwo() const {
@@ -129,11 +128,8 @@ class Rational final : public Number {
 
   // BasicTest
   bool isNegative() const { return node()->isNegative(); }
-  bool isZero() const { return node()->isZero(); }
-  bool isOne() const { return node()->isOne(); }
   bool isTwo() const { return node()->isTwo(); }
   bool isThree() const { return node()->isThree(); }
-  bool isMinusOne() const { return node()->isMinusOne(); }
   bool isMinusTwo() const { return node()->isMinusTwo(); }
   bool isHalf() const { return node()->isHalf(); }
   bool isMinusHalf() const { return node()->isMinusHalf(); }

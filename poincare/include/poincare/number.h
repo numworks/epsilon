@@ -29,6 +29,15 @@ class NumberNode : public ExpressionNode {
 
   double doubleApproximation() const;
 
+  // Basic test
+  virtual bool isZero() const { return false; }
+  virtual bool isOne() const { return false; }
+  virtual bool isMinusOne() const { return false; }
+
+  TrinaryBoolean isNull(Context* context) const override {
+    return BinaryToTrinaryBool(isZero());
+  }
+
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 Expression symbolValue) override;
 };
@@ -68,6 +77,10 @@ class Number : public Expression {
 
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 Expression symbolValue);
+
+  bool isZero() const { return node()->isZero(); }
+  bool isOne() const { return node()->isOne(); }
+  bool isMinusOne() const { return node()->isMinusOne(); }
 
  protected:
   Number() : Expression() {}

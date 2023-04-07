@@ -121,8 +121,11 @@ double NormalDistribution::evaluateParameterForProbabilityAndBound(
   }
   assert(parameterIndex == 1);  // sigma
   if (abscissaForStandardDistribution == 0) {
-    // Return default value if there is an infinity of possible sigma
-    return k_standardSigma;
+    if (bound == parameters[0]) {
+      // Return default value if there is an infinity of possible sigma
+      return k_standardSigma;
+    }
+    return NAN;
   }
   double result = (bound - parameters[0]) / abscissaForStandardDistribution;
   return result > 0.0 ? result : NAN;  // Sigma can't be negative or null

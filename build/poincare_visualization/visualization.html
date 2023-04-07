@@ -152,12 +152,12 @@ d3.xml("XML_FILE", function(err, xml) {
     let poolEvents = data.children
     for (const poolEvent of poolEvents) {
       poolEvent.occurences = 1
-      let references = references(poolEvent)
+      let refs = references(poolEvent)
       let referenceOffset = 0
       let eventBlockAddress = parseInt(poolEvent.getAttribute("blockAddress"), 16)
       let eventBlockSize = parseInt(poolEvent.getAttribute("blockSize"))
       let eventPointerAddress = parseInt(poolEvent.getAttribute("pointerAddress"), 16)
-      for (const reference of references) {
+      for (const reference of refs) {
         let rootNode = reference.firstElementChild
         initializeNode(rootNode, referenceOffset, nodesSet, eventBlockAddress, eventBlockSize, eventPointerAddress)
         reference.x = referenceOffset

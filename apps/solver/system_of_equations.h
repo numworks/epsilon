@@ -70,12 +70,8 @@ class SystemOfEquations {
   double approximateResolutionMaximum() const {
     return m_approximateResolutionMaximum;
   }
-  void setApproximateResolutionMinimum(double value) {
-    m_approximateResolutionMinimum = value;
-  }
-  void setApproximateResolutionMaximum(double value) {
-    m_approximateResolutionMaximum = value;
-  }
+  void setApproximateResolutionMinimum(double value);
+  void setApproximateResolutionMaximum(double value);
   Error exactSolve(Poincare::Context* context);
   void approximateSolve(Poincare::Context* context);
 

@@ -35,6 +35,19 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(Context *context) {
   return secondError;
 }
 
+void SystemOfEquations::setApproximateResolutionMinimum(double value) {
+  m_approximateResolutionMinimum = value;
+  if (m_approximateResolutionMinimum >= m_approximateResolutionMaximum) {
+    m_approximateResolutionMaximum = m_approximateResolutionMinimum + 1;
+  }
+}
+void SystemOfEquations::setApproximateResolutionMaximum(double value) {
+  m_approximateResolutionMaximum = value;
+  if (m_approximateResolutionMinimum >= m_approximateResolutionMaximum) {
+    m_approximateResolutionMinimum = m_approximateResolutionMaximum - 1;
+  }
+}
+
 void SystemOfEquations::approximateSolve(Context *context) {
   assert(m_type == Type::GeneralMonovariable);
   assert(m_numberOfResolutionVariables == 1);

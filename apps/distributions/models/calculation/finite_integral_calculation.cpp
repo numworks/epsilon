@@ -9,7 +9,9 @@ namespace Distributions {
 FiniteIntegralCalculation::FiniteIntegralCalculation(Distribution* distribution)
     : Calculation(distribution),
       m_lowerBound(distribution->defaultComputedValue()),
-      m_upperBound(m_lowerBound + 1.0) {}
+      m_upperBound(m_lowerBound + 1.0) {
+  assert(distribution->allParametersAreInitialized());
+}
 
 I18n::Message FiniteIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 3);

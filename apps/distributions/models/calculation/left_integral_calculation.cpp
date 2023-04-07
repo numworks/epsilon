@@ -11,7 +11,11 @@ namespace Distributions {
 
 LeftIntegralCalculation::LeftIntegralCalculation(Distribution* distribution)
     : Calculation(distribution),
-      m_upperBound(distribution->defaultComputedValue()) {}
+      m_upperBound(distribution->defaultComputedValue()) {
+  if (!distribution->allParametersAreInitialized()) {
+    m_result = k_medianProbability;
+  }
+}
 
 I18n::Message LeftIntegralCalculation::legendForParameterAtIndex(int index) {
   assert(index >= 0 && index < 2);

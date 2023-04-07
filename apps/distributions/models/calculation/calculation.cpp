@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "../distribution/distribution.h"
 #include "discrete_calculation.h"
 #include "finite_integral_calculation.h"
 #include "left_integral_calculation.h"
@@ -33,7 +34,11 @@ bool Calculation::Initialize(Calculation* calculation, Type type,
         assert(false);
     }
   }
-  calculation->compute(0);
+  if (distribution->allParametersAreInitialized()) {
+    calculation->compute(0);
+  } else {
+    calculation->computeUnknownDistributionParameter();
+  }
   return changedType;
 }
 

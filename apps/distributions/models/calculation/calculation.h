@@ -38,6 +38,7 @@ class Calculation {
   virtual double upperBound() const;
 
  protected:
+  constexpr static double k_medianProbability = 0.5;
   virtual void compute(int indexKnownElement) = 0;
   virtual void computeUnknownDistributionParameter() { assert(false); }
   Distribution* m_distribution;

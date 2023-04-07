@@ -412,7 +412,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
                                      symbolicComputation);
   }
   if (approximate.type() == ExpressionNode::Type::Nonreal) {
-    return Error::NoError;
+    return Error::EquationNonreal;
   }
   if (type != SolutionType::Formal &&
       approximate.type() == ExpressionNode::Type::Undefined) {

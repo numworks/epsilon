@@ -46,7 +46,7 @@ class TableView : public ScrollView {
   void initSize(KDRect rect);
   void reloadVisibleCellsAtColumn(int column);
   void hideScrollBars() { m_decorator.setVisibility(false); }
-  BarDecorator *decorator() override { return &m_decorator; };
+  BarDecorator *decorator() override { return &m_decorator; }
 
  protected:
 #if ESCHER_VIEW_LOGGING

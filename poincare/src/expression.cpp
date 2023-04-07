@@ -1484,8 +1484,22 @@ Expression Expression::deepReduce(ReductionContext reductionContext) {
       type() == ExpressionNode::Type::Integral) {
     reductionContext.setExpandLogarithm(false);
   }
+
   deepReduceChildren(reductionContext);
-  return shallowReduce(reductionContext);
+  Expression res = shallowReduce(reductionContext);
+
+  if (reductionContext.approximateNonSymbols()) {
+    Expression a = res.approximate<double>(reductionContext.context(),
+                                           reductionContext.complexFormat(),
+                                           reductionContext.angleUnit(), true);
+    if (!a.isUndefined()) {
+      /* approximate can return an Opposite or a Subtraction, so we need to
+       * re-reduce the expression.*/
+      res.replaceWithInPlace(a.shallowReduce(reductionContext));
+    }
+  }
+
+  return res;
 }
 
 Expression Expression::deepRemoveUselessDependencies(

@@ -1,5 +1,6 @@
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/include/expression.h>
+#include <poincare_junior/src/layout/p_pusher.h>
 #include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/n_ary.h>
 #include <ion/unicode/code_point.h>
@@ -9,19 +10,19 @@ namespace PoincareJ {
 
 EditionReference Layout::EditionPoolTextToLayout(const char * text) {
   int n = strlen(text);
-  const EditionReference ref = EditionReference::Push<BlockType::RackLayout>(0);
+  const EditionReference ref = P_RACKL();
   EditionReference currentLayout = ref;
   for (int i = 0; i < n; i++) {
     EditionReference child;
     switch (text[i]) {
     case '(':
       child = EditionReference::Push<BlockType::ParenthesisLayout>();
-      EditionReference::Push<BlockType::RackLayout>(0);
+      P_RACKL();
       NAry::AddOrMergeChildAtIndex(currentLayout, child, currentLayout.numberOfChildren());
       currentLayout = child.childAtIndex(0);
       continue;
     case UCodePointEmpty:
-      child = EditionReference::Push<BlockType::RackLayout>(0);
+      child = P_RACKL();
       break;
     case ')':
       if (!currentLayout.parent().isUninitialized() &&

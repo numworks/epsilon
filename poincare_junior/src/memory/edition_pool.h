@@ -22,7 +22,8 @@ public:
   uint16_t referenceNode(Node node);
   void flush();
 
-  uint16_t execute(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize);
+  bool execute(ActionWithContext action, void * subAction, const void * data, int maxSize);
+  bool executeAndDump(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize);
 
   Block * pushBlock(Block block);
   void popBlock();

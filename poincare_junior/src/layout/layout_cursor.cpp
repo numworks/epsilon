@@ -1319,10 +1319,9 @@ void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
 }
 
 bool LayoutBufferCursor::execute(Action action, const void * data) {
-  // TODO : Pass LayoutBufferCursor and use it instead, build editionCursor in the execute
   ExecutionContext executionContext{this, action, cursorNodeOffset()};
   // Perform Action within an execution
-  return EditionPool::sharedEditionPool()->execute(
+  return EditionPool::sharedEditionPool()->executeAndDump(
       [](void * context, const void * data) {
         ExecutionContext * executionContext = static_cast<ExecutionContext *>(context);
         LayoutBufferCursor * bufferCursor = executionContext->m_cursor;

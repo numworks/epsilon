@@ -103,7 +103,8 @@ void CachePool::reset() {
 }
 
 int CachePool::execute(ActionWithContext action, void * subAction, const void * data) {
-  return m_editionPool.execute(action, subAction, data, nullptr, k_maxNumberOfBlocks);
+  m_editionPool.execute(action, subAction, data, k_maxNumberOfBlocks);
+  return storeEditedTree();
 }
 
 CachePool::CachePool() :

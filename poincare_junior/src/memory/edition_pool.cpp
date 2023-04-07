@@ -62,7 +62,7 @@ void EditionPool::flush() {
   m_referenceTable.reset();
 }
 
-uint16_t EditionPool::execute(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize) {
+bool EditionPool::execute(ActionWithContext action, void * subAction, const void * data, int maxSize) {
   ExceptionCheckpoint checkpoint;
 start_execute:
   if (ExceptionRun(checkpoint)) {
@@ -70,21 +70,27 @@ start_execute:
     action(subAction, data);
     // Prevent edition action from leaking: an action create at most one tree
     assert(numberOfTrees() <= 1);
-    if (address == nullptr) {
-      return CachePool::sharedCachePool()->storeEditedTree();
-    } else {
-      assert(Node(firstBlock()).treeSize() <= maxSize);
-      Node(firstBlock()).copyTreeTo(address);
-      flush();
-      return 1;
-    }
   } else {
+    /* TODO: assert that we don't delete last called treeForIdentifier otherwise
+     * can't copyTreeFromAddress if in cache... */
     int size = fullSize();
-    if (size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::max(size, maxSize - size))) {
-      return ReferenceTable::NoNodeIdentifier;
+    if (size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::min(size, maxSize - size))) {
+      /* TODO: try with less demanding reducing context (everything is a float ?
+       * SystemTarget?) */
+      return false;
     }
     goto start_execute;
   }
+  return true;
+}
+
+bool EditionPool::executeAndDump(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize) {
+  if (!execute(action, subAction, data, maxSize)) {
+    return false;
+  }
+  assert(Node(firstBlock()).treeSize() <= maxSize);
+  Node(firstBlock()).copyTreeTo(address);
+  flush();
 }
 
 Block * EditionPool::pushBlock(Block block) {

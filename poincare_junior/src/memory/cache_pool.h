@@ -22,8 +22,6 @@ public:
    * that they won't point to reallocated nodes */
   void reset();
 
-  int execute(ActionWithContext action, void * subAction, const void * data);
-
   using Pool::firstBlock;
   const TypeBlock * firstBlock() const override { return static_cast<const TypeBlock *>(m_blocks); }
   using Pool::lastBlock;

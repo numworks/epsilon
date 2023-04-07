@@ -22,11 +22,10 @@ public:
   uint16_t referenceNode(Node node);
   void flush();
 
-  // TODO : Make execute private and force the use of a Relax method.
-  bool execute(ActionWithContext action, void * subAction, const void * data, int maxSize);
-  typedef bool (*Relax) (const void * data);
-  bool executeWithRelax(ActionWithContext action, void * subAction, void * data, int maxSize, Relax relax);
-  bool executeAndDump(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize);
+  typedef bool (*Relax) (void * subAction);
+  constexpr static Relax k_defaultRelax = [](void * subAction){ return false; };
+  bool executeAndDump(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize, Relax relax = k_defaultRelax);
+  int executeAndCache(ActionWithContext action, void * subAction, const void * data, Relax relax = k_defaultRelax);
 
   Block * pushBlock(Block block);
   void popBlock();
@@ -49,6 +48,8 @@ public:
 
   constexpr static int k_maxNumberOfReferences = 1024;
 private:
+  bool executeWithRelax(ActionWithContext action, void * subAction, const void * data, int maxSize, Relax relax = k_defaultRelax);
+  bool execute(ActionWithContext action, void * subAction, const void * data, int maxSize);
   // Pool memory
   bool checkForEnoughSpace(size_t numberOfRequiredBlock);
 #if POINCARE_MEMORY_TREE_LOG

@@ -160,10 +160,9 @@ void Reference::log() {
 
 int Reference::id() const {
   assert(isCacheReference());
-  CachePool * cache = CachePool::sharedCachePool();
-  const Node tree = cache->nodeForIdentifier(m_id);
+  const Node tree = CachePool::sharedCachePool()->nodeForIdentifier(m_id);
   if (tree.isUninitialized()) {
-    m_id = cache->execute(m_initializer, m_subInitializer, m_data.data());
+    m_id = EditionPool::sharedEditionPool()->executeAndCache(m_initializer, m_subInitializer, m_data.data());
   }
   return m_id;
 }

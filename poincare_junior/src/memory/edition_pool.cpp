@@ -62,48 +62,19 @@ void EditionPool::flush() {
   m_referenceTable.reset();
 }
 
-bool EditionPool::execute(ActionWithContext action, void * subAction, const void * data, int maxSize) {
-  /* Try to execute the action. Free blocks if it fails, and return false if no
-   * more blocks can be freed. Return true otherwise. */
-  ExceptionCheckpoint checkpoint;
-start_execute:
-  if (ExceptionRun(checkpoint)) {
-    assert(numberOfTrees() == 0);
-    action(subAction, data);
-    // Prevent edition action from leaking: an action create at most one tree
-    assert(numberOfTrees() <= 1);
-  } else {
-    /* TODO: assert that we don't delete last called treeForIdentifier otherwise
-     * can't copyTreeFromAddress if in cache... */
-    int size = fullSize();
-    if (size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::min(size, maxSize - size))) {
-      /* TODO: try with less demanding reducing context (everything is a float ?
-       * SystemTarget?) */
-      return false;
-    }
-    goto start_execute;
-  }
-  return true;
-}
-
-bool EditionPool::executeWithRelax(ActionWithContext action, void * subAction, void * data, int maxSize, Relax relax) {
-  /* If the action couldn't be executed by freeing blocks, relax the data and
-   * try again. */
-  while (!execute(action, subAction, data, maxSize)) {
-    if (!relax(data)) {
-      return false;
-    }
-  }
-  return false;
-}
-
-bool EditionPool::executeAndDump(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize) {
-  if (!execute(action, subAction, data, maxSize)) {
+bool EditionPool::executeAndDump(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize, Relax relax) {
+  if (!executeWithRelax(action, subAction, data, maxSize, relax)) {
     return false;
   }
   assert(Node(firstBlock()).treeSize() <= maxSize);
   Node(firstBlock()).copyTreeTo(address);
   flush();
+  return true;
+}
+
+int EditionPool::executeAndCache(ActionWithContext action, void * subAction, const void * data, Relax relax) {
+  executeWithRelax(action, subAction, data, CachePool::k_maxNumberOfBlocks, relax);
+  return CachePool::sharedCachePool()->storeEditedTree();
 }
 
 Block * EditionPool::pushBlock(Block block) {
@@ -181,6 +152,41 @@ Node EditionPool::initFromAddress(const void * address) {
   memcpy(copiedTree, address, size * sizeof(Block));
   m_numberOfBlocks += size;
   return Node(copiedTree);
+}
+
+bool EditionPool::executeWithRelax(ActionWithContext action, void * subAction, const void * data, int maxSize, Relax relax) {
+  /* If the action couldn't be executed by freeing blocks, relax the data and
+   * try again. */
+  while (!execute(action, subAction, data, maxSize)) {
+    if (!relax(subAction)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool EditionPool::execute(ActionWithContext action, void * subAction, const void * data, int maxSize) {
+  /* Try to execute the action. Free blocks if it fails, and return false if no
+   * more blocks can be freed. Return true otherwise. */
+  ExceptionCheckpoint checkpoint;
+start_execute:
+  if (ExceptionRun(checkpoint)) {
+    assert(numberOfTrees() == 0);
+    action(subAction, data);
+    // Prevent edition action from leaking: an action create at most one tree
+    assert(numberOfTrees() <= 1);
+  } else {
+    /* TODO: assert that we don't delete last called treeForIdentifier otherwise
+     * can't copyTreeFromAddress if in cache... */
+    int size = fullSize();
+    if (size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::min(size, maxSize - size))) {
+      /* TODO: try with less demanding reducing context (everything is a float ?
+       * SystemTarget?) */
+      return false;
+    }
+    goto start_execute;
+  }
+  return true;
 }
 
 bool EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {

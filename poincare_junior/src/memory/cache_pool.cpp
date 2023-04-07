@@ -102,11 +102,6 @@ void CachePool::reset() {
   m_editionPool.flush();
 }
 
-int CachePool::execute(ActionWithContext action, void * subAction, const void * data) {
-  m_editionPool.execute(action, subAction, data, k_maxNumberOfBlocks);
-  return storeEditedTree();
-}
-
 CachePool::CachePool() :
   m_referenceTable(this),
   m_editionPool(static_cast<TypeBlock *>(m_blocks), k_maxNumberOfBlocks)

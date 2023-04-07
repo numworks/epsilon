@@ -45,7 +45,7 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 }
 
 void LayoutField::ContentView::clearLayout() {
-  EditionPool::sharedEditionPool()->execute(
+  EditionPool::sharedEditionPool()->executeAndDump(
       [](void *subAction, const void *data) {
         EditionReference::Push<BlockType::RackLayout>(0);
       },

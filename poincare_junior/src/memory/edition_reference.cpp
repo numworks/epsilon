@@ -94,11 +94,11 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
       m_identifier, static_cast<const PoincareJ::TypeBlock*>(oldBlock));
 }
 
-EditionReference EditionReference::matchAndRewrite(const Node pattern,
-                                                   const Node structure) const {
+EditionReference EditionReference::matchAndCreate(const Node pattern,
+                                                  const Node structure) const {
   PatternMatching::Context ctx = PatternMatching::Match(pattern, *this);
   if (ctx.isUninitialized()) {
-    return *this;
+    return EditionReference();
   }
   return PatternMatching::Create(structure, ctx);
 }

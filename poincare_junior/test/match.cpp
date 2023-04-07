@@ -38,10 +38,12 @@ QUIZ_CASE(pcj_rewrite_replace) {
   EditionReference ref(editionPool->push<BlockType::Addition>(2));
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
-  EditionReference result = ref.matchAndRewrite(p, s);
+  EditionReference result = ref.matchAndCreate(p, s);
   assert_trees_are_equal(result, KMult(2_e, 5_e));
   ref.matchAndReplace(p, s);
   assert_trees_are_equal(result, ref);
+  result = ref.matchAndCreate(p, s);
+  quiz_assert(result.isUninitialized());
 }
 
 QUIZ_CASE(pcj_match_n_ary) {

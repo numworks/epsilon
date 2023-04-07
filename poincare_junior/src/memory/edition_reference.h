@@ -116,8 +116,8 @@ class EditionReference {
   typedef void (*InPlaceTreeFunction)(EditionReference reference);
   void recursivelyEdit(InPlaceTreeFunction treeFunction);
 
-  EditionReference matchAndRewrite(const Node pattern,
-                                   const Node structure) const;
+  EditionReference matchAndCreate(const Node pattern,
+                                  const Node structure) const;
   EditionReference matchAndReplace(const Node pattern, const Node structure);
 
  private:

@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_PLACEHOLDER_H
 
 #include <omg/bit_helper.h>
+#include <omgpj/bit.h>
 #include <poincare_junior/src/memory/node.h>
 #include <poincare_junior/src/memory/value_block.h>
 
@@ -42,17 +43,16 @@ class Placeholder {
   // Tags and filters can be added as long as it fits in a ValueBlock.
   static_assert(k_bitsForTag + k_bitsForFilter <=
                 OMG::BitHelper::numberOfBitsIn<ValueBlock>());
-  constexpr static uint8_t k_tagMask = (1 << k_bitsForTag) - 1;
-  constexpr static uint8_t k_filterMask = (1 << k_bitsForFilter) - 1;
 
   constexpr static uint8_t NodeToValue(const Node n) {
     return static_cast<uint8_t>(*(n.block()->next()));
   }
   constexpr static Tag ValueToTag(uint8_t value) {
-    return static_cast<Tag>((value >> k_bitsForFilter) & k_tagMask);
+    return static_cast<Tag>(Bit::getBitRange(
+        value, k_bitsForFilter + k_bitsForTag - 1, k_bitsForFilter));
   }
   constexpr static Filter ValueToFilter(uint8_t value) {
-    return static_cast<Filter>(value & k_filterMask);
+    return static_cast<Filter>(Bit::getBitRange(value, k_bitsForFilter - 1, 0));
   }
 };
 

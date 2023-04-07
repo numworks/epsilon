@@ -63,6 +63,8 @@ void EditionPool::flush() {
 }
 
 bool EditionPool::execute(ActionWithContext action, void * subAction, const void * data, int maxSize) {
+  /* Try to execute the action. Free blocks if it fails, and return false if no
+   * more blocks can be freed. Return true otherwise. */
   ExceptionCheckpoint checkpoint;
 start_execute:
   if (ExceptionRun(checkpoint)) {
@@ -82,6 +84,17 @@ start_execute:
     goto start_execute;
   }
   return true;
+}
+
+bool EditionPool::executeWithRelax(ActionWithContext action, void * subAction, void * data, int maxSize, Relax relax) {
+  /* If the action couldn't be executed by freeing blocks, relax the data and
+   * try again. */
+  while (!execute(action, subAction, data, maxSize)) {
+    if (!relax(data)) {
+      return false;
+    }
+  }
+  return false;
 }
 
 bool EditionPool::executeAndDump(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize) {

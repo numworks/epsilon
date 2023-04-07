@@ -22,7 +22,10 @@ public:
   uint16_t referenceNode(Node node);
   void flush();
 
+  // TODO : Make execute private and force the use of a Relax method.
   bool execute(ActionWithContext action, void * subAction, const void * data, int maxSize);
+  typedef bool (*Relax) (const void * data);
+  bool executeWithRelax(ActionWithContext action, void * subAction, void * data, int maxSize, Relax relax);
   bool executeAndDump(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize);
 
   Block * pushBlock(Block block);

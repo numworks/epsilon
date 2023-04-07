@@ -62,8 +62,8 @@ class EditionPool final : public Pool {
   void setNumberOfBlocks(int numberOfBlocks) {
     m_numberOfBlocks = numberOfBlocks;
   }
-  void setOffset(uint16_t identifier, const TypeBlock *block) {
-    m_referenceTable.setOffset(identifier, block - firstBlock());
+  void setNodeForIdentifier(uint16_t identifier, Node node) {
+    m_referenceTable.setNodeForIdentifier(identifier, node);
   }
 
   constexpr static int k_maxNumberOfReferences = 1024;
@@ -89,8 +89,8 @@ class EditionPool final : public Pool {
    public:
     ReferenceTable(Pool *pool) : Pool::ReferenceTable(pool) {}
     Node nodeForIdentifier(uint16_t id) const override;
-    void setOffset(uint16_t identifier, uint16_t offset) {
-      nodeOffsetArray()[identifier] = offset;
+    void setNodeForIdentifier(uint16_t identifier, Node node) {
+      nodeOffsetArray()[identifier] = node.block() - m_pool->firstBlock();
     }
     uint16_t storeNode(Node node) override;
     typedef void (*AlterSelectedBlock)(uint16_t *, Block *, const Block *,

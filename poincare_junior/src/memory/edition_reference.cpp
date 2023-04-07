@@ -91,8 +91,8 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
 #endif
   }
   // Restore this offset
-  EditionPool::sharedEditionPool()->setOffset(
-      m_identifier, static_cast<const PoincareJ::TypeBlock*>(oldBlock));
+  EditionPool::sharedEditionPool()->setNodeForIdentifier(m_identifier,
+                                                         Node(oldBlock));
 }
 
 EditionReference EditionReference::matchAndCreate(const Node pattern,

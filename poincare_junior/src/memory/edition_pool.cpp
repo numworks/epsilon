@@ -74,6 +74,8 @@ bool EditionPool::executeAndDump(ActionWithContext action, void * subAction, con
 
 int EditionPool::executeAndCache(ActionWithContext action, void * subAction, const void * data, Relax relax) {
   execute(action, subAction, data, CachePool::k_maxNumberOfBlocks, relax);
+  /* If execute failed, storeEditedTree will handle an empty EditionPool and
+   * return a ReferenceTable::NoNodeIdentifier. */
   return CachePool::sharedCachePool()->storeEditedTree();
 }
 

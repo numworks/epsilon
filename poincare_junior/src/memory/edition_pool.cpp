@@ -62,8 +62,8 @@ void EditionPool::flush() {
   m_referenceTable.reset();
 }
 
-bool EditionPool::executeAndDump(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize, Relax relax) {
-  if (!execute(action, subAction, data, maxSize, relax)) {
+bool EditionPool::executeAndDump(ActionWithContext action, void * context, const void * data, void * address, int maxSize, Relax relax) {
+  if (!execute(action, context, data, maxSize, relax)) {
     return false;
   }
   assert(Node(firstBlock()).treeSize() <= maxSize);
@@ -72,8 +72,8 @@ bool EditionPool::executeAndDump(ActionWithContext action, void * subAction, con
   return true;
 }
 
-int EditionPool::executeAndCache(ActionWithContext action, void * subAction, const void * data, Relax relax) {
-  execute(action, subAction, data, CachePool::k_maxNumberOfBlocks, relax);
+int EditionPool::executeAndCache(ActionWithContext action, void * context, const void * data, Relax relax) {
+  execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
   /* If execute failed, storeEditedTree will handle an empty EditionPool and
    * return a ReferenceTable::NoNodeIdentifier. */
   return CachePool::sharedCachePool()->storeEditedTree();
@@ -156,12 +156,12 @@ Node EditionPool::initFromAddress(const void * address) {
   return Node(copiedTree);
 }
 
-bool EditionPool::execute(ActionWithContext action, void * subAction, const void * data, int maxSize, Relax relax) {
+bool EditionPool::execute(ActionWithContext action, void * context, const void * data, int maxSize, Relax relax) {
   ExceptionCheckpoint checkpoint;
 start_execute:
   if (ExceptionRun(checkpoint)) {
     assert(numberOfTrees() == 0);
-    action(subAction, data);
+    action(context, data);
     // Prevent edition action from leaking: an action create at most one tree
     assert(numberOfTrees() <= 1);
   } else {
@@ -169,8 +169,8 @@ start_execute:
      * can't copyTreeFromAddress if in cache... */
     int size = fullSize();
     /* Free blocks and try again. If no more blocks can be fred, try relaxing
-     * the subAction and try again. Otherwise, return false. */
-    if (size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::min(size, maxSize - size)) || !relax(subAction)) {
+     * the context and try again. Otherwise, return false. */
+    if (size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::min(size, maxSize - size)) || !relax(context)) {
       return false;
     }
     goto start_execute;

@@ -22,10 +22,10 @@ public:
   uint16_t referenceNode(Node node);
   void flush();
 
-  typedef bool (*Relax) (void * subAction);
-  constexpr static Relax k_defaultRelax = [](void * subAction){ return false; };
-  bool executeAndDump(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize, Relax relax = k_defaultRelax);
-  int executeAndCache(ActionWithContext action, void * subAction, const void * data, Relax relax = k_defaultRelax);
+  typedef bool (*Relax) (void * context);
+  constexpr static Relax k_defaultRelax = [](void * context){ return false; };
+  bool executeAndDump(ActionWithContext action, void * context, const void * data, void * address, int maxSize, Relax relax = k_defaultRelax);
+  int executeAndCache(ActionWithContext action, void * context, const void * data, Relax relax = k_defaultRelax);
 
   Block * pushBlock(Block block);
   void popBlock();
@@ -48,7 +48,7 @@ public:
 
   constexpr static int k_maxNumberOfReferences = 1024;
 private:
-  bool execute(ActionWithContext action, void * subAction, const void * data, int maxSize, Relax relax = k_defaultRelax);
+  bool execute(ActionWithContext action, void * context, const void * data, int maxSize, Relax relax = k_defaultRelax);
   // Pool memory
   bool checkForEnoughSpace(size_t numberOfRequiredBlock);
 #if POINCARE_MEMORY_TREE_LOG

@@ -258,19 +258,19 @@ static inline void assert_did_not_overflow(ActionWithContext action) {
 QUIZ_CASE(pcj_integer_overflows) {
   // Construction
   assert_did_overflow(
-      [] (void * subAction, const void * data) {
+      [] (void * context, const void * data) {
         CreateIntegerHandler(OverflowedIntegerString());
       }
     );
   assert_did_not_overflow(
-      [] (void * subAction, const void * data) {
+      [] (void * context, const void * data) {
         CreateIntegerHandler(MaxIntegerString());
       }
     );
 
   // Operations
   assert_did_overflow(
-    [] (void * subAction, const void * data) {
+    [] (void * context, const void * data) {
       EditionReference a = CreateInteger(MaxIntegerString());
       EditionReference b = CreateInteger("1");
       IntegerHandler::Addition(Integer::Handler(a), Integer::Handler(b));
@@ -279,7 +279,7 @@ QUIZ_CASE(pcj_integer_overflows) {
     }
   );
   assert_did_not_overflow(
-    [] (void * subAction, const void * data) {
+    [] (void * context, const void * data) {
       EditionReference a = CreateInteger(MaxIntegerString());
       EditionReference b = CreateInteger("1");
       IntegerHandler::Subtraction(Integer::Handler(a), Integer::Handler(b));
@@ -288,7 +288,7 @@ QUIZ_CASE(pcj_integer_overflows) {
     }
   );
   assert_did_overflow(
-    [] (void * subAction, const void * data) {
+    [] (void * context, const void * data) {
       EditionReference a = CreateInteger(MaxIntegerString());
       EditionReference b = CreateInteger("2");
       IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
@@ -297,7 +297,7 @@ QUIZ_CASE(pcj_integer_overflows) {
     }
   );
   assert_did_not_overflow(
-    [] (void * subAction, const void * data) {
+    [] (void * context, const void * data) {
       EditionReference a = CreateInteger(MaxIntegerString());
       EditionReference b = CreateInteger("1");
       IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));

@@ -31,7 +31,7 @@ private:
 
 class TypeTreeBlock;
 
-typedef void (*ActionWithContext)(void * subAction, const void * data);
+typedef void (*ActionWithContext)(void * context, const void * data);
 
 class Reference {
 public:

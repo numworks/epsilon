@@ -1320,8 +1320,8 @@ bool LayoutBufferCursor::execute(Action action, Context *context, const void * d
   ExecutionContext executionContext{this, action, cursorNodeOffset(), context};
   // Perform Action within an execution
   return EditionPool::sharedEditionPool()->executeAndDump(
-      [](void * subAction, const void * data) {
-        ExecutionContext * executionContext = static_cast<ExecutionContext *>(subAction);
+      [](void * context, const void * data) {
+        ExecutionContext * executionContext = static_cast<ExecutionContext *>(context);
         LayoutBufferCursor * bufferCursor = executionContext->m_cursor;
         // Clone layoutBuffer into the EditionPool
         EditionReference::Clone(executionContext->m_cursor->rootNode());
@@ -1336,9 +1336,9 @@ bool LayoutBufferCursor::execute(Action action, Context *context, const void * d
          * m_layoutBuffer and EditionPool will be flushed. */
       },
       &executionContext, data, m_layoutBuffer, k_layoutBufferSize,
-      [](void * subAction) {
+      [](void * context) {
         // Default implementation illustrating how the context could be relaxed
-        // ExecutionContext * executionContext = static_cast<ExecutionContext *>(subAction);
+        // ExecutionContext * executionContext = static_cast<ExecutionContext *>(context);
         // Context * context = executionContext->m_context;
         return false;
       });

@@ -134,9 +134,11 @@ void ModalViewController::displayModalViewController(
     KDCoordinate rightMargin, bool growingOnly) {
   m_currentModalViewController = vc;
   vc->setParentResponder(this);
-  m_previousResponder = Container::activeApp()->firstResponder();
-  m_previousResponder->modalViewAltersFirstResponder(
+  /* modalViewAltersFirstResponder might change first responder so retrieve
+   * previous responder after calling this function. */
+  Container::activeApp()->firstResponder()->modalViewAltersFirstResponder(
       FirstResponderAlteration::WillSpoil);
+  m_previousResponder = Container::activeApp()->firstResponder();
   m_currentModalViewController->initView();
   m_contentView.presentModalView(vc->view(), verticalAlignment,
                                  horizontalAlignment, topMargin, leftMargin,

@@ -247,8 +247,10 @@ void AppsContainer::handleRunException(bool resetSnapshot) {
     /* The app models can reference layouts or expressions that have been
      * destroyed from the pool. To avoid using them before packing the app
      * (in App::willBecomeInactive for instance), we tidy them early on. */
-    s_activeApp->snapshot()->tidy();
+    App::Snapshot* activeSnapshot = s_activeApp->snapshot();
     if (resetSnapshot) {
+      // Call App::willBecomeInactive before the snapshot is changed
+      switchToBuiltinApp(nullptr);
       /* When an app encountered an exception due to a full pool, the next time
        * the user enters the app, the same exception could happen again which
        * would prevent from reopening the app. To avoid being stuck outside the
@@ -256,9 +258,11 @@ void AppsContainer::handleRunException(bool resetSnapshot) {
        * exception. For instance, the calculation app can encounter an
        * exception when displaying too many huge layouts, if we don't clean the
        * history here, we will be stuck outside the calculation app. */
-      s_activeApp->snapshot()->reset();
+      activeSnapshot->reset();
+    } else {
+      activeSnapshot->tidy();
     }
-    if (s_activeApp->snapshot() == homeAppSnapshot()) {
+    if (activeSnapshot == homeAppSnapshot()) {
       // Reset home selection if already selected
       dispatchEvent(Ion::Events::Back);
     }

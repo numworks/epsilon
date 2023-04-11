@@ -429,16 +429,18 @@ void MenuController::forceTextFieldEditionToAbort(
     bool menuControllerStaysInResponderChain) {
   int selectedRow = m_selectableTableView.selectedRow();
   int selectedColumn = m_selectableTableView.selectedColumn();
-  if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts() &&
-      selectedColumn == 0) {
-    TextField *tf =
-        static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell())
-            ->textField();
-    if (tf->isEditing()) {
-      tf->setEditing(false);
-      privateTextFieldDidAbortEditing(tf, menuControllerStaysInResponderChain);
-    }
+  if (selectedRow < 0 || selectedRow >= m_scriptStore->numberOfScripts() ||
+      selectedColumn != 0) {
+    return;
   }
+  TextField *tf =
+      static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell())
+          ->textField();
+  if (!tf->isEditing()) {
+    return;
+  }
+  tf->setEditing(false);
+  privateTextFieldDidAbortEditing(tf, menuControllerStaysInResponderChain);
 }
 
 void MenuController::privateModalViewAltersFirstResponder(

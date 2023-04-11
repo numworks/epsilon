@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <poincare/coordinate_2D.h>
+#include <poincare/float.h>
 #include <poincare/ieee754.h>
 
 #include <algorithm>
@@ -18,7 +19,7 @@ class Range1D {
 
   static float DefaultLengthAt(float t) {
     return std::max(std::pow(10.f, IEEE754<float>::exponentBase10(t) - 1.f),
-                    k_minLength);
+                    k_minLength + Float<float>::EpsilonLax());
   }
   /* Given any two numbers, RangeBetween will return a range with bounds no
    * more than limit, and length no less than k_minLength. */

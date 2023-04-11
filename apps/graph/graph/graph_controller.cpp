@@ -111,7 +111,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
     if (f->properties().isPolar() || f->properties().isInversePolar() ||
         f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
-      Expression e = f->expressionReduced(context);
+      Expression e = f->expressionApproximated(context);
       if (f->properties().isPolar() || f->properties().isInversePolar()) {
         Expression firstRow, secondRow;
         Expression unknown =
@@ -207,7 +207,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
               return false;
             }
           };
-      if (f->expressionReduced(context).recursivelyMatches(
+      if (f->expressionApproximated(context).recursivelyMatches(
               yieldPiecewise, context,
               SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
               &p)) {

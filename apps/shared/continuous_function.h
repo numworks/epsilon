@@ -111,6 +111,10 @@ class ContinuousFunction : public Function {
   }
   // Update plotType as well as tMin and tMax values.
   void updateModel(Poincare::Context *context, bool wasCartesian);
+  Poincare::Expression expressionApproximated(
+      Poincare::Context *context) const {
+    return m_model.expressionApproximated(this, context);
+  }
 
   /* Evaluation */
 
@@ -167,7 +171,7 @@ class ContinuousFunction : public Function {
 
   /* Solver */
 
-  // If curve expression is based on costly algorithm for approximation
+  // If m_expressionApproximated is based on costly algorithm
   bool basedOnCostlyAlgorithms(Poincare::Context *context) const override;
   /* A solver will be run from 'start' to 'end' on this function. Trim 'start'
    * and 'end' to the interval of definition. */
@@ -295,6 +299,10 @@ class ContinuousFunction : public Function {
     Poincare::Expression expressionReduced(
         const Ion::Storage::Record *record,
         Poincare::Context *context) const override;
+    /* Return the expression reduced with approximated non symbols for faster
+     * plot */
+    Poincare::Expression expressionApproximated(
+        const Ion::Storage::Record *record, Poincare::Context *context) const;
     // Return the expression reduced, and computes plotType
     Poincare::Expression expressionReducedForAnalysis(
         const Ion::Storage::Record *record, Poincare::Context *context) const;
@@ -336,6 +344,7 @@ class ContinuousFunction : public Function {
     // Return size of the record's expression
     size_t expressionSize(const Ion::Storage::Record *record) const override;
     mutable ContinuousFunctionProperties m_properties;
+    mutable Poincare::Expression m_expressionApproximated;
     mutable Poincare::Expression m_expressionDerivate;
   };
 

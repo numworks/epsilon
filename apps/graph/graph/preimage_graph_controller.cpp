@@ -24,7 +24,8 @@ Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
   Solver<double> solver = PoincareHelpers::Solver(
       start, max, ContinuousFunction::k_unknownName, context);
   Expression f =
-      functionStore()->modelForRecord(m_record)->expressionReduced(context);
+      functionStore()->modelForRecord(m_record)->expressionApproximated(
+          context);
   return solver.nextIntersection(Float<double>::Builder(m_image), f);
 }
 

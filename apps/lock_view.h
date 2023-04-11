@@ -3,7 +3,7 @@
 
 #include <escher/transparent_view.h>
 
-class LockView : public Escher::TransparentView {
+class LockView : public Escher::ArbitraryShapedView {
  public:
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;

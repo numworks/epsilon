@@ -4,7 +4,8 @@ using namespace Escher;
 
 namespace Inference {
 
-ZoomHintView::ZoomHintView() {
+ZoomHintView::ZoomHintView()
+    : m_legendPictograms{KeyView::Type::Plus, KeyView::Type::Minus} {
   I18n::Message messages[k_numberOfLegends] = {I18n::Message::ToZoom,
                                                I18n::Message::Or};
   for (int i = 0; i < k_numberOfLegends; i++) {
@@ -12,11 +13,6 @@ ZoomHintView::ZoomHintView() {
     m_legends[i].setMessage(messages[i]);
     m_legends[i].setBackgroundColor(k_backgroundColor);
     m_legends[i].setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-  }
-  KeyView::Type tokenTypes[k_numberOfTokens] = {KeyView::Type::Plus,
-                                                KeyView::Type::Minus};
-  for (int i = 0; i < k_numberOfTokens; i++) {
-    m_legendPictograms[i].setType(tokenTypes[i]);
   }
 }
 

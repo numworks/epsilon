@@ -7,8 +7,9 @@
 
 class BatteryView : public Escher::TransparentView {
  public:
-  BatteryView()
-      : m_chargeState(Ion::Battery::Charge::FULL),
+  BatteryView(View* superview)
+      : TransparentView(superview),
+        m_chargeState(Ion::Battery::Charge::FULL),
         m_isCharging(false),
         m_isPlugged(false) {}
   bool setChargeState(Ion::Battery::Charge chargeState);

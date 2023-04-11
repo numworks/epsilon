@@ -6,7 +6,7 @@
 
 namespace Escher {
 
-class GaugeView : public TransparentView, public CellWidget {
+class GaugeView : public View, public CellWidget {
  public:
   GaugeView();
   float level();

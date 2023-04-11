@@ -31,20 +31,6 @@ const uint8_t arrowDownMask[10][9] = {
 ArrowView::ArrowView()
     : m_direction(OMG::Direction::Up()), m_color(KDColorBlack) {}
 
-void ArrowView::setDirection(OMG::VerticalDirection direction) {
-  if (m_direction != direction) {
-    m_direction = direction;
-    markRectAsDirty(bounds());
-  }
-}
-
-void ArrowView::setColor(KDColor color) {
-  if (m_color != color) {
-    m_color = color;
-    markRectAsDirty(bounds());
-  }
-}
-
 void ArrowView::drawRect(KDContext *ctx, KDRect rect) const {
   KDColor arrowWorkingBuffer[10 * 9];
   ctx->fillRect(bounds(), KDColorWhite);

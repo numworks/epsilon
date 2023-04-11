@@ -5,7 +5,7 @@
 
 namespace Escher {
 
-class EllipsisView : public TransparentView {
+class EllipsisView : public ArbitraryShapedView {
  public:
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;

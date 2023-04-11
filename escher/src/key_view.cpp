@@ -70,11 +70,6 @@ const uint8_t minusMask[KeyView::k_keySize][KeyView::k_keySize] = {
 
 KeyView::KeyView(Type type) : m_type(type) {}
 
-void KeyView::setType(Type type) {
-  m_type = type;
-  markRectAsDirty(bounds());
-}
-
 void KeyView::drawRect(KDContext *ctx, KDRect rect) const {
   /* Draw the key centered on the view. */
   KDCoordinate width = bounds().width();

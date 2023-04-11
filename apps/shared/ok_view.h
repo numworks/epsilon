@@ -5,7 +5,7 @@
 
 namespace Shared {
 
-class OkView : public Escher::TransparentView {
+class OkView : public Escher::ArbitraryShapedView {
  public:
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;

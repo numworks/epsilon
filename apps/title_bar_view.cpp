@@ -17,6 +17,7 @@ using namespace Escher;
 TitleBarView::TitleBarView()
     : View(),
       m_titleView(I18n::Message::Default, k_glyphsFormat),
+      m_batteryView(this),
       m_preferenceView(k_glyphsFormat),
       m_examModeTextView(I18n::Message::Default, k_glyphsFormat) {
   m_preferenceView.setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);

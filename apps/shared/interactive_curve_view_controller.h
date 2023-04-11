@@ -145,7 +145,7 @@ class InteractiveCurveViewController
   Escher::ToggleableDotView m_autoDotView;
   // Range button
   Escher::ButtonState m_rangeButton;
-  Escher::UnequalView m_rangeUnequalView;
+  Escher::ToggleableUnequalView m_rangeUnequalView;
   // Navigation button
   Escher::AbstractButtonCell m_navigationButton;
   // Calculus button

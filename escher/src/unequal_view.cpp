@@ -3,7 +3,9 @@
 
 namespace Escher {
 
-constexpr uint8_t unequalMask[UnequalView::k_size][UnequalView::k_size] = {
+constexpr static KDCoordinate k_size = 9;
+
+constexpr uint8_t unequalMask[k_size][k_size] = {
     {0xff, 0xf6, 0x7e, 0x23, 0x06, 0x23, 0x7e, 0xf6, 0xff},
     {0xf5, 0x3a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3a, 0xf5},
     {0x7d, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0x7f},
@@ -15,16 +17,32 @@ constexpr uint8_t unequalMask[UnequalView::k_size][UnequalView::k_size] = {
     {0xff, 0xf6, 0x7e, 0x23, 0x06, 0x23, 0x7e, 0xf6, 0xff},
 };
 
-void UnequalView::drawRect(KDContext* ctx, KDRect rect) const {
-  if (!m_state) {
-    return;
-  }
+static void drawUnequal(KDContext* ctx, KDRect bounds) {
   /* Draw the symbol aligned on the right of the view and vertically centered.
    */
-  KDRect frame(bounds().width() - k_size, bounds().height() / 2 - k_size / 2,
+  KDRect frame(bounds.width() - k_size, bounds.height() / 2 - k_size / 2,
                k_size, k_size);
   KDColor buffer[k_size * k_size];
   ctx->blendRectWithMask(frame, Palette::GrayDark, &unequalMask[0][0], buffer);
+}
+
+KDSize UnequalView::minimalSizeForOptimalDisplay() const {
+  return KDSize(k_size, k_size);
+}
+
+void UnequalView::drawRect(KDContext* ctx, KDRect rect) const {
+  drawUnequal(ctx, bounds());
+}
+
+KDSize ToggleableUnequalView::minimalSizeForOptimalDisplay() const {
+  return m_state ? KDSize(k_size, k_size) : KDSizeZero;
+}
+
+void ToggleableUnequalView::drawRect(KDContext* ctx, KDRect rect) const {
+  if (!m_state) {
+    return;
+  }
+  drawUnequal(ctx, bounds());
 }
 
 }  // namespace Escher

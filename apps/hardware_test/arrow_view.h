@@ -7,12 +7,10 @@
 
 namespace HardwareTest {
 
-class ArrowView : public Escher::TransparentView {
+class ArrowView : public Escher::ArbitraryShapedView {
  public:
   ArrowView();
   void drawRect(KDContext* ctx, KDRect rect) const override;
-  void setDirection(OMG::VerticalDirection direction);
-  void setColor(KDColor color);
 
  private:
   constexpr static KDCoordinate k_arrowHeight = 10;

@@ -1320,6 +1320,9 @@ void Expression::cloneAndSimplifyAndApproximate(
   ReductionContext userReductionContext = ReductionContext(
       context, complexFormat, angleUnit, unitFormat, ReductionTarget::User,
       symbolicComputation, unitConversion);
+  /* TODO: If approximateNonSymbols is true, maybe the expression should first
+   * be reduced in a normal way and then re-reduced after setting
+   * approximateNonSymbols ? */
   userReductionContext.setApproximateNonSymbols(approximateNonSymbols);
   ReductionContext reductionContext = userReductionContext;
   bool reduceFailure = false;

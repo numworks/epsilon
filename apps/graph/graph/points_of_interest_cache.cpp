@@ -176,13 +176,13 @@ bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
               m_computedStart);
         }
       } else {
-        tidy();
+        tidy(reinterpret_cast<char *>(checkpoint.endOfPoolBeforeCheckpoint()));
         return false;
       }
     } else {
       // TODO : Notify the user that the pool is full
       m_interestingPointsOverflowPool = true;
-      tidy();
+      tidy(reinterpret_cast<char *>(ecp.endOfPoolBeforeCheckpoint()));
       return false;
     }
   }
@@ -309,14 +309,14 @@ void PointsOfInterestCache::append(double x, double y,
   m_list.append(x, y, data, interest, f->isAlongY(), subCurveIndex);
 }
 
-void PointsOfInterestCache::tidy() const {
+void PointsOfInterestCache::tidy(char *treePoolCursor) const {
   ContinuousFunctionStore *store = App::app()->functionStore();
   int n = store->numberOfActiveFunctions();
   for (int i = 0; i < n; i++) {
     store->modelForRecord(store->activeRecordAtIndex(i))
-        ->tidyDownstreamPoolFrom();
+        ->tidyDownstreamPoolFrom(treePoolCursor);
   }
-  App::app()->localContext()->tidyDownstreamPoolFrom();
+  App::app()->localContext()->tidyDownstreamPoolFrom(treePoolCursor);
 }
 
 }  // namespace Graph

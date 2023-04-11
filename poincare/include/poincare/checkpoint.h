@@ -41,6 +41,8 @@ class Checkpoint {
   virtual ~Checkpoint() { protectedDiscard(); }
   Checkpoint &operator=(const Checkpoint &) = delete;
 
+  TreeNode *const endOfPoolBeforeCheckpoint() { return m_endOfPool; }
+
   virtual void discard() const { protectedDiscard(); }
 
  protected:

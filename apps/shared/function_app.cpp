@@ -41,31 +41,6 @@ void FunctionApp::concludeIntrusiveStorageChange() {
    * a -> u(n)
    * u(4) + 2 -> f(x)
    */
-#if 0
-  /* A variable has been modified via the store menu, we need to compute if one
-   * of the functions depends on this variable and update the displayed views if
-   * it is the case. */
-  bool shouldUpdateFunctions = false;
-  for (int i = 0; i < functionStore()->numberOfModels(); i++) {
-    /* Do not skip inactive functions since active ones may depend on them. */
-    Shared::ExpiringPointer<Function> function = functionStore()->modelForRecord(functionStore()->recordAtIndex(i));
-    Symbol symbol = Symbol::Builder(record.name().baseName, record.name().baseNameLength);
-    Expression f = function->isNamed() ? function->expressionClone() : function->originalEquation();
-    /* TODO this condition has false positives when the expression contains a
-     * local context with the modified symbol. An ad-hoc hasSymbol could be
-     * implemented but the best solution is to rework recursivelyMatches to make
-     * it aware of parametered expressions. */
-    if (f.recursivelyMatches([](const Expression e, Context * context, void * symbol) {
-      return e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).isIdenticalTo(*static_cast<Symbol*>(symbol));
-    }, context(), SymbolicComputation::DoNotReplaceAnySymbol, &symbol)) {
-      shouldUpdateFunctions = true;
-      break;
-    }
-  }
-  if (!shouldUpdateFunctions) {
-    return;
-  }
-#endif
   StackViewController* stack = static_cast<StackViewController*>(
       m_tabViewController.activeViewController());
   stack->push(m_activeControllerBeforeStore);

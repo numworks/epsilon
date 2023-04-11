@@ -345,7 +345,7 @@ float ContinuousFunction::autoTMin() const {
 }
 
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context *context) const {
-  return expressionReduced(context).recursivelyMatches(
+  return expressionApproximated(context).recursivelyMatches(
       [](const Expression e, Context *context) {
         return !e.isUninitialized() &&
                (e.type() == ExpressionNode::Type::Sequence ||
@@ -407,7 +407,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   if (t < tMin() || t > tMax()) {
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
-  Expression e = expressionReduced(context);
+  Expression e = expressionApproximated(context);
   Preferences preferences =
       Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(context));
 
@@ -590,6 +590,21 @@ Expression ContinuousFunction::Model::expressionReduced(
     }
   }
   return m_expression;
+}
+
+Poincare::Expression ContinuousFunction::Model::expressionApproximated(
+    const Ion::Storage::Record *record, Poincare::Context *context) const {
+  if (m_expressionApproximated.isUninitialized()) {
+    Expression e = expressionReduced(record, context);
+    Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(
+        complexFormat(record, context));
+    PoincareHelpers::CloneAndReduceApproximatingNonSymbols(
+        &e, context, ReductionTarget::SystemForApproximation,
+        SymbolicComputation::DoNotReplaceAnySymbol,
+        PoincareHelpers::k_defaultUnitConversion, &preferences, false);
+    m_expressionApproximated = e;
+  }
+  return m_expressionApproximated;
 }
 
 Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(
@@ -903,9 +918,11 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(
     char *treePoolCursor) const {
   if (treePoolCursor == nullptr ||
-      m_expressionDerivate.isDownstreamOf(treePoolCursor)) {
+      m_expressionDerivate.isDownstreamOf(treePoolCursor) ||
+      m_expressionApproximated.isDownstreamOf(treePoolCursor)) {
     resetProperties();
     m_expressionDerivate = Expression();
+    m_expressionApproximated = Expression();
   }
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
 }

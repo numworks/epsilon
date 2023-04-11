@@ -15,6 +15,7 @@ class DynamicCellsDataSourceDelegate;
 class DynamicCellsDataSourceDestructor {
  public:
   virtual void destroyCells() = 0;
+  virtual Escher::SelectableTableView* dynamicCellsTableView() = 0;
 };
 
 template <typename T, int N>
@@ -29,6 +30,9 @@ class DynamicCellsDataSource : public DynamicCellsDataSourceDestructor {
   ~DynamicCellsDataSource();
   Escher::HighlightCell* cell(int i);
   void destroyCells() override;
+  Escher::SelectableTableView* dynamicCellsTableView() override {
+    return m_delegate->tableView();
+  }
 
  protected:
   virtual void createCells();

@@ -106,7 +106,6 @@ class MenuController : public Escher::ViewController,
   void addScript();
   void configureScript();
   void editScriptAtIndex(int scriptIndex);
-  void numberedDefaultScriptName(char *buffer);
   void updateAddScriptRowDisplay();
   bool privateTextFieldDidAbortEditing(
       Escher::AbstractTextField *textField,

@@ -9,7 +9,7 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
 
-#include "layout_junior_view.h"
+#include "expression_view.h"
 
 namespace CalculationJunior {
 
@@ -36,8 +36,8 @@ class MainController : public Escher::ViewController {
     void layoutSubviews(bool force = false) override;
 
     Escher::TextField* textField() { return &m_textField; }
-    LayoutJuniorView* inputLayoutView() { return &m_inputLayoutView; }
-    LayoutJuniorView* reductionLayoutView() { return &m_reductionLayoutView; }
+    ExpressionView* inputLayoutView() { return &m_inputLayoutView; }
+    ExpressionView* reductionLayoutView() { return &m_reductionLayoutView; }
     Escher::BufferTextView* approximationTextView() {
       return &m_approximationView;
     }
@@ -45,8 +45,8 @@ class MainController : public Escher::ViewController {
     constexpr static int k_bufferSize = Escher::TextField::MaxBufferSize();
     char m_buffer[k_bufferSize];
     Escher::TextField m_textField;
-    LayoutJuniorView m_inputLayoutView;
-    LayoutJuniorView m_reductionLayoutView;
+    ExpressionView m_inputLayoutView;
+    ExpressionView m_reductionLayoutView;
     Escher::BufferTextView m_approximationView;
   };
   ContentView m_view;

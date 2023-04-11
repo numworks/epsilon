@@ -1,53 +1,45 @@
-#ifndef ESCHER_EXPRESSION_VIEW_H
-#define ESCHER_EXPRESSION_VIEW_H
+#ifndef CALCULATION_JUNIOR_EXPRESSION_VIEW_H
+#define CALCULATION_JUNIOR_EXPRESSION_VIEW_H
 
 #include <escher/glyphs_view.h>
-#include <poincare/layout.h>
-#include <poincare/layout_cursor.h>
+#include <kandinsky/color.h>
+#include <poincare_junior/include/layout.h>
 
-namespace Escher {
+#include "layout_selection.h"
 
-/* This class does not handle the expression layout as the size of the layout is
- * needed to compute the size of table cells hosting the expression. As the size
- * of this cell is determined before we set the expression in the expression
- * view, we cannot use minimalSizeForOptimalDisplay to assess the required
- * size. */
+// TODO : Rename this class LayoutView
 
-class ExpressionView : public GlyphsView {
+namespace CalculationJunior {
+
+class ExpressionView : public Escher::GlyphsView {
  public:
   ExpressionView(KDGlyph::Format format = {})
-      : GlyphsView(format), m_horizontalMargin(0) {}
+      : Escher::GlyphsView(format), m_horizontalMargin(0) {}
 
-  Poincare::Layout layout() const override { return m_layout; }
-  bool setLayout(Poincare::Layout layout);
+  PoincareJ::Layout* getLayout() const { return &m_layout; }
+  bool setLayout(PoincareJ::Layout layout);
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
   void setHorizontalMargin(KDCoordinate horizontalMargin) {
     m_horizontalMargin = horizontalMargin;
   }
-  int numberOfLayouts() const;
+  int numberOfLayouts() const { return m_layout.treeSize(); }
   KDSize minimalSizeForOptimalDisplay() const override;
   KDPoint drawingOrigin() const;
-  bool layoutHasNode() const {
-    return Poincare::TreeNode::IsValidIdentifier(m_layout.identifier()) &&
-           !m_layout.wasErasedByException();
-  }
+  bool layoutHasNode() const { return m_layout.isInitialized(); }
 
  protected:
-  /* Warning: we do not need to delete the previous expression layout when
-   * deleting object or setting a new expression layout. Indeed, the expression
-   * layout is always possessed by a controller which only gives a pointer to
-   * the expression view (without cloning it). The named controller is then
-   * responsible for freeing the expression layout when required. */
   // TODO find better way to have minimalSizeForOptimalDisplay const
-  mutable Poincare::Layout m_layout;
+  mutable PoincareJ::Layout m_layout;
 
  private:
-  virtual Poincare::LayoutSelection selection() const {
-    return Poincare::LayoutSelection();
-  }
+  virtual LayoutSelection selection() const { return LayoutSelection(); }
+
   KDCoordinate m_horizontalMargin;
 };
+
+#if 0
+#include "layout_cursor.h"
 
 class ExpressionViewWithCursor : public ExpressionView {
  public:
@@ -58,12 +50,14 @@ class ExpressionViewWithCursor : public ExpressionView {
   }
 
  private:
-  Poincare::LayoutSelection selection() const override {
+  LayoutSelection selection() const override {
     return m_cursor->selection();
   }
   Poincare::LayoutCursor* m_cursor;
 };
 
-}  // namespace Escher
+#endif
+
+}  // namespace CalculationJunior
 
 #endif

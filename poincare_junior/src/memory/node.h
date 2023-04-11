@@ -81,6 +81,8 @@ public:
   bool hasChild(const Node child) const;
   bool hasAncestor(const Node node, bool includeSelf) const;
   bool hasSibling(const Node e) const;
+  // TODO : Rename this method isRack
+  bool isHorizontal() const { return type() == BlockType::RackLayout && numberOfChildren() == 0; }
 
   constexpr size_t nodeSize(bool head = true) const {
     BlockType t = type();

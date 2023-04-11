@@ -28,7 +28,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
         PoincareJ::Layout::Parse(m_view.textField()->text()));
     /* Dump parsed expression into m_input TypeBlock array.
      * TODO : CreateBasicReduction from expressions. */
-    PoincareJ::Expression::Parse(m_view.inputLayoutView()->layout())
+    PoincareJ::Expression::Parse(m_view.inputLayoutView()->getLayout())
         .dumpAt(m_input);
     // The reduced expression has to live somewhere so layout can be initialized
     m_reducedExpression = PoincareJ::Expression::CreateBasicReduction(m_input);
@@ -54,8 +54,8 @@ MainController::ContentView::ContentView(
       m_buffer(""),
       m_textField(parentResponder, m_buffer, k_bufferSize, textFieldDelegateApp,
                   textFieldDelegateApp),
-      m_inputLayoutView(KDFont::Size::Large),
-      m_reductionLayoutView(KDFont::Size::Large),
+      m_inputLayoutView(),
+      m_reductionLayoutView(),
       m_approximationView(
           KDGlyph::Format{.horizontalAlignment = KDGlyph::k_alignRight}) {}
 

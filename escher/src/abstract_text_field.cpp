@@ -128,6 +128,9 @@ void AbstractTextField::ContentView::setEditing(bool isEditing) {
   if (m_isEditing == isEditing) {
     return;
   }
+  if (!isEditing) {
+    m_isStalled = false;
+  }
   resetSelection();
   m_isEditing = isEditing;
   const char *buffer = editedText();

@@ -1489,7 +1489,15 @@ Expression Expression::deepReduce(ReductionContext reductionContext) {
   deepReduceChildren(reductionContext);
   Expression res = shallowReduce(reductionContext);
 
-  if (reductionContext.approximateNonSymbols()) {
+  /* Do not approximate rationals even if approximateNonSymbols is true because:
+   *   - A lot of reduction algorithms applied to reduced expressions rely on
+   *     rationals and don't work with floats (ex: polynomialDegree).
+   *   - If approximateNonSymbols is used because the examMode forbid exact
+   *     results, it's not a problem to keep rationals since exact results on
+   *     rationals are still allowed.
+   * */
+  if (reductionContext.approximateNonSymbols() &&
+      res.type() != ExpressionNode::Type::Rational) {
     Expression a = res.approximate<double>(reductionContext.context(),
                                            reductionContext.complexFormat(),
                                            reductionContext.angleUnit(), true);

@@ -510,7 +510,7 @@ bool Expression::getLinearCoefficients(
             [](const Expression e, Context *context) {
               return e.isUndefined();
             },
-            context));
+            context, SymbolicComputation::DoNotReplaceAnySymbol));
         return false;
     }
     /* The equation is can be written: a_1*x+a_0 with a_1 and a_0 x-independent.

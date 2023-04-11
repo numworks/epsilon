@@ -65,8 +65,11 @@ int PiecewiseOperatorNode::indexOfFirstTrueCondition(
   while (i + 1 < n) {
     Evaluation<T> condition =
         childAtIndex(i + 1)->approximate(T(), approximationContext);
-    if (condition.type() == EvaluationNode<T>::Type::BooleanEvaluation &&
-        static_cast<BooleanEvaluation<T>&>(condition).value()) {
+    if (condition.type() != EvaluationNode<T>::Type::BooleanEvaluation) {
+      // Undef condition. It can be either true or false
+      return -1;
+    }
+    if (static_cast<BooleanEvaluation<T>&>(condition).value()) {
       return i;
     }
     i += 2;

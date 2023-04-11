@@ -42,6 +42,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
         Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
     m_view.approximationTextView()->setText(buffer);
     m_view.layoutSubviews();
+    return true;
   }
   return false;
 }

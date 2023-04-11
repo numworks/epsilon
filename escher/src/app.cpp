@@ -31,16 +31,11 @@ void App::setFirstResponder(Responder* responder) {
    * not call setFirstResponder. */
 #if ASSERTIONS
   static bool preventRecursion = false;
-  // assert(!preventRecursion);
+  assert(!preventRecursion);
 #endif
-  /* TODO: Calculation::HistoryController relies on the fact that we reselect
-   * the cell to highlight the correct subcell when the cell height is larger
-   * than the screen. Also, the assert(!preventRecursion) is false in this
-   * case. This needs to be fixed to uncomment the assertion and the
-   * optimizaiton when m_firstResponder == responder. */
-  /*if (m_firstResponder == responder) {
+  if (m_firstResponder == responder) {
     return;
-  }*/
+  }
   Responder* previousResponder = m_firstResponder;
   m_firstResponder = responder;
   if (previousResponder) {

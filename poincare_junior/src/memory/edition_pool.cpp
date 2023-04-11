@@ -170,7 +170,7 @@ start_execute:
     int size = fullSize();
     /* Free blocks and try again. If no more blocks can be fred, try relaxing
      * the context and try again. Otherwise, return false. */
-    if (size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::min(size, maxSize - size)) || !relax(context)) {
+    if ((size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::min(size, maxSize - size))) && !relax(context)) {
       return false;
     }
     goto start_execute;

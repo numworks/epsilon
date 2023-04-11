@@ -56,7 +56,7 @@ StackViewController *MenuController::stackViewController() {
 }
 
 void MenuController::willExitResponderChain(Responder *nextFirstResponder) {
-  forceTextFieldEditionToAbort();
+  forceTextFieldEditionToAbort(false);
 }
 
 void MenuController::didBecomeFirstResponder() {
@@ -163,7 +163,7 @@ void MenuController::openConsoleWithScript(Script script) {
 void MenuController::scriptContentEditionDidFinish() { reloadConsole(); }
 
 void MenuController::willExitApp() {
-  forceTextFieldEditionToAbort();
+  forceTextFieldEditionToAbort(false);
   m_editorController.willExitApp();
 }
 
@@ -425,7 +425,8 @@ bool MenuController::privateTextFieldDidAbortEditing(
   return true;
 }
 
-void MenuController::forceTextFieldEditionToAbort() {
+void MenuController::forceTextFieldEditionToAbort(
+    bool menuControllerStaysInResponderChain) {
   int selectedRow = m_selectableTableView.selectedRow();
   int selectedColumn = m_selectableTableView.selectedColumn();
   if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts() &&
@@ -435,8 +436,15 @@ void MenuController::forceTextFieldEditionToAbort() {
             ->textField();
     if (tf->isEditing()) {
       tf->setEditing(false);
-      privateTextFieldDidAbortEditing(tf, false);
+      privateTextFieldDidAbortEditing(tf, menuControllerStaysInResponderChain);
     }
+  }
+}
+
+void MenuController::privateModalViewAltersFirstResponder(
+    FirstResponderAlteration alteration) {
+  if (alteration == FirstResponderAlteration::WillSpoil) {
+    forceTextFieldEditionToAbort(true);
   }
 }
 

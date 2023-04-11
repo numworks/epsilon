@@ -64,7 +64,7 @@ class LayoutCursor {
   }
 
   // Getters and setters
-  virtual const TypeBlock * rootBlock() const = 0;
+  virtual const Node rootNode() const = 0;
   virtual const Node cursorNode() const = 0;
   void setLayout(const Node layout, OMG::HorizontalDirection sideOfLayout);
   int position() const { return m_position; }
@@ -113,7 +113,7 @@ class LayoutCursor {
 
  protected:
   virtual void setCursorNode(const Node node) = 0;
-  int cursorNodeOffset() const { return cursorNode().block() - rootBlock(); }
+  int cursorNodeOffset() const { return cursorNode().block() - rootNode().block(); }
 
   const Node leftLayout() const;
   const Node rightLayout() const;
@@ -164,7 +164,7 @@ public:
   }
 
   TypeBlock * layoutBuffer() { return m_layoutBuffer; }
-  const TypeBlock * rootBlock() const override { return m_layoutBuffer; }
+  const Node rootNode() const override { return Node(m_layoutBuffer); }
   const Node cursorNode() const override { return m_cursorNode; }
 
   /* Layout insertion */
@@ -198,11 +198,11 @@ private:
   class EditionPoolCursor final : public LayoutCursor {
   friend class LayoutBufferCursor;
     EditionPoolCursor(int position, int startOfSelection, int cursorOffset) : LayoutCursor(position, startOfSelection) {
-      setCursorNode(Node(rootBlock() + cursorOffset));
+      setCursorNode(Node(rootNode().block() + cursorOffset));
     }
 
-    const TypeBlock * rootBlock() const override {
-      return EditionPool::sharedEditionPool()->firstBlock();
+    const Node rootNode() const override {
+      return Node(EditionPool::sharedEditionPool()->firstBlock());
     }
     const Node cursorNode() const override { return m_cursorReference; }
 

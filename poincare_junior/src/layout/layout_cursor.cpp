@@ -884,7 +884,7 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction,
 
   // Handle selection (find a common ancestor to previous and current layout)
   if (moved && isSelecting() && previousLayout != cursorNode()) {
-    const Node layoutAncestor = Node(rootBlock()).commonAncestor(cursorNode(), previousLayout);
+    const Node layoutAncestor = rootNode().commonAncestor(cursorNode(), previousLayout);
     assert(!layoutAncestor.isUninitialized());
     // Down goes left to right and up goes right to left
     setLayout(layoutAncestor, direction.isUp() ? OMG::Direction::Left()
@@ -1313,7 +1313,7 @@ void LayoutCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
 void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
   m_position = cursor.m_position;
   m_startOfSelection = cursor.m_startOfSelection;
-  setCursorNode(rootBlock() + cursor.cursorNodeOffset());
+  setCursorNode(rootNode().block() + cursor.cursorNodeOffset());
 }
 
 bool LayoutBufferCursor::execute(Action action, Context *context, const void * data) {
@@ -1324,13 +1324,13 @@ bool LayoutBufferCursor::execute(Action action, Context *context, const void * d
         ExecutionContext * executionContext = static_cast<ExecutionContext *>(subAction);
         LayoutBufferCursor * bufferCursor = executionContext->m_cursor;
         // Clone layoutBuffer into the EditionPool
-        EditionReference::Clone(Node(executionContext->m_cursor->rootBlock()));
+        EditionReference::Clone(executionContext->m_cursor->rootNode());
         // Create a temporary cursor
         EditionPoolCursor editionCursor = bufferCursor->createEditionPoolCursor();
         // Perform the action
         (editionCursor.*(executionContext->m_action))(executionContext->m_context, data);
         // Apply the changes
-        bufferCursor->setCursorNode(bufferCursor->rootBlock() + editionCursor.cursorNodeOffset());
+        bufferCursor->setCursorNode(bufferCursor->rootNode().block() + editionCursor.cursorNodeOffset());
         bufferCursor->applyEditionPoolCursor(editionCursor);
         /* The resulting EditionPool tree will be loaded back into
          * m_layoutBuffer and EditionPool will be flushed. */

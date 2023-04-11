@@ -59,7 +59,7 @@ class ExpressionViewWithCursor : public AbstractExpressionView {
   }
 
   PoincareJ::Layout getLayout() const override {
-    return PoincareJ::Layout(m_cursor->rootBlock());
+    return PoincareJ::Layout(m_cursor->rootNode());
   }
 
  private:

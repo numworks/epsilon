@@ -503,7 +503,7 @@ bool Expression::getLinearCoefficients(
         coefficients[index] = polynomialCoefficients[1];
         break;
       default:
-        /* degree is supposed to be 0 or 1. Otherwise, it means that equation
+        /* Degree is supposed to be 0 or 1. Otherwise, it means that equation
          * is 'undefined' due to the reduction of 0*inf for example.
          * (ie, x*y*inf = 0) */
         assert(!recursivelyMatches(
@@ -516,7 +516,7 @@ bool Expression::getLinearCoefficients(
          * Error::EquationUndefined */
         return false;
     }
-    /* The equation is can be written: a_1*x+a_0 with a_1 and a_0 x-independent.
+    /* The equation can be written: a_1*x+a_0 with a_1 and a_0 x-independent.
      * The equation supposed to be linear in all variables, so we can look for
      * the coefficients linked to the other variables in a_0. */
     equation = polynomialCoefficients[0];

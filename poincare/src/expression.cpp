@@ -511,6 +511,9 @@ bool Expression::getLinearCoefficients(
               return e.isUndefined();
             },
             context, SymbolicComputation::DoNotReplaceAnySymbol));
+        /* Maybe here we would like to return another error than
+         * Error::NonLinearSystem, maybe it would be better to return
+         * Error::EquationUndefined */
         return false;
     }
     /* The equation is can be written: a_1*x+a_0 with a_1 and a_0 x-independent.

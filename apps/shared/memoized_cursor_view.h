@@ -21,7 +21,6 @@ class MemoizedCursorView : public CursorView {
   virtual void drawCursor(KDContext* ctx, KDRect rect) const = 0;
   virtual KDCoordinate size() const = 0;
   virtual KDColor* underneathPixelBuffer() const = 0;
-  void markRectAsDirty(KDRect rect) override;
   KDColor color() const {
     return isHighlighted() ? Escher::Palette::GrayDarkest : m_color;
   }

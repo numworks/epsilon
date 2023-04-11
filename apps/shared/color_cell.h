@@ -7,7 +7,8 @@
 
 namespace Shared {
 
-class ColorView : public Escher::TransparentView, public Escher::CellWidget {
+class ColorView : public Escher::ArbitraryShapedView,
+                  public Escher::CellWidget {
  public:
   const View* view() const override { return this; }
   void drawRect(KDContext* ctx, KDRect rect) const override;

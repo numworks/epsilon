@@ -45,15 +45,6 @@ void MemoizedCursorView::setCursorFrame(View* parent, KDRect f, bool force) {
   CursorView::setCursorFrame(parent, f, force);
 }
 
-void MemoizedCursorView::markRectAsDirty(KDRect rect) {
-  /* The CursorView class inherits from TransparentView, so does
-   * MemoizedCursorView. The method markRectAsDirty is thus overriden to avoid
-   * marking as dirty the backgmemoized of the MemoizedCursorView in its
-   * superview.
-   */
-  View::markRectAsDirty(rect);
-}
-
 bool MemoizedCursorView::eraseCursorIfPossible() {
   if (!m_underneathPixelBufferLoaded) {
     return false;

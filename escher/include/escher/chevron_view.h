@@ -6,7 +6,7 @@
 
 namespace Escher {
 
-class ChevronView : public TransparentView, public CellWidget {
+class ChevronView : public ArbitraryShapedView, public CellWidget {
  public:
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;

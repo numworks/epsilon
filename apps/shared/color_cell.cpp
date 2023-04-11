@@ -18,7 +18,9 @@ KDSize ColorView::minimalSizeForOptimalDisplay() const {
 void ColorView::setColor(KDColor color) {
   if (color != m_color) {
     m_color = color;
-    markRectAsDirty(bounds());
+    // No need to dirty the parent as changing the color doesn't change the
+    // shape
+    View::markRectAsDirty(bounds());
   }
 }
 

@@ -77,7 +77,7 @@ class View {
    * way
    *  - ... and that's all I can think of.
    */
-  virtual void markRectAsDirty(KDRect rect);
+  void markRectAsDirty(KDRect rect);
   void markAbsoluteRectAsDirty(KDRect rect);
 #if ESCHER_VIEW_LOGGING
   virtual const char *className() const;

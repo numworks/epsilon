@@ -1,11 +1,11 @@
 #ifndef SHARED_CURSOR_VIEW_H
 #define SHARED_CURSOR_VIEW_H
 
-#include <escher/transparent_view.h>
+#include <escher/view.h>
 
 namespace Shared {
 
-class CursorView : public Escher::TransparentView {
+class CursorView : public Escher::View {
  public:
   CursorView() : m_highlighted(false) {}
   virtual void setCursorFrame(View* parent, KDRect frame, bool force) {

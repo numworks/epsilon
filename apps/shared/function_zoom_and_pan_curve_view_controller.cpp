@@ -127,7 +127,10 @@ FunctionZoomAndPanCurveViewController::ContentView::curveView() {
 
 /* Legend View */
 
-FunctionZoomAndPanCurveViewController::ContentView::LegendView::LegendView() {
+FunctionZoomAndPanCurveViewController::ContentView::LegendView::LegendView()
+    : m_legendPictograms{KeyView::Type::Up,   KeyView::Type::Down,
+                         KeyView::Type::Left, KeyView::Type::Right,
+                         KeyView::Type::Plus, KeyView::Type::Minus} {
   I18n::Message messages[k_numberOfLegends] = {
       I18n::Message::Move, I18n::Message::ToZoom, I18n::Message::Or};
   for (int i = 0; i < k_numberOfLegends; i++) {
@@ -135,12 +138,6 @@ FunctionZoomAndPanCurveViewController::ContentView::LegendView::LegendView() {
     m_legends[i].setMessage(messages[i]);
     m_legends[i].setBackgroundColor(k_backgroundColor);
     m_legends[i].setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
-  }
-  KeyView::Type tokenTypes[k_numberOfTokens] = {
-      KeyView::Type::Up,    KeyView::Type::Down, KeyView::Type::Left,
-      KeyView::Type::Right, KeyView::Type::Plus, KeyView::Type::Minus};
-  for (int i = 0; i < k_numberOfTokens; i++) {
-    m_legendPictograms[i].setType(tokenTypes[i]);
   }
 }
 

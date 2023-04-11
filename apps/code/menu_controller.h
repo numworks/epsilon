@@ -111,7 +111,9 @@ class MenuController : public Escher::ViewController,
   bool privateTextFieldDidAbortEditing(
       Escher::AbstractTextField *textField,
       bool menuControllerStaysInResponderChain);
-  void forceTextFieldEditionToAbort();
+  void forceTextFieldEditionToAbort(bool menuControllerStaysInResponderChain);
+  void privateModalViewAltersFirstResponder(
+      FirstResponderAlteration alteration) override;
   ScriptStore *m_scriptStore;
   ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   Escher::EvenOddCellWithEllipsis

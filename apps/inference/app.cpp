@@ -96,6 +96,8 @@ void App::didExitPage(ViewController *controller) {
 void App::cleanBuffer(DynamicCellsDataSourceDestructor *destructor) {
   assert(destructor);
   if (m_bufferDestructor) {
+    m_bufferDestructor->dynamicCellsTableView()->selectColumn(0);
+    m_bufferDestructor->dynamicCellsTableView()->selectRow(-1);
     m_bufferDestructor->destroyCells();
   }
   m_bufferDestructor = destructor;

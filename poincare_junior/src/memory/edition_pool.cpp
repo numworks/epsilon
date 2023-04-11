@@ -63,7 +63,7 @@ void EditionPool::flush() {
 }
 
 bool EditionPool::executeAndDump(ActionWithContext action, void * subAction, const void * data, void * address, int maxSize, Relax relax) {
-  if (!executeWithRelax(action, subAction, data, maxSize, relax)) {
+  if (!execute(action, subAction, data, maxSize, relax)) {
     return false;
   }
   assert(Node(firstBlock()).treeSize() <= maxSize);
@@ -73,7 +73,7 @@ bool EditionPool::executeAndDump(ActionWithContext action, void * subAction, con
 }
 
 int EditionPool::executeAndCache(ActionWithContext action, void * subAction, const void * data, Relax relax) {
-  executeWithRelax(action, subAction, data, CachePool::k_maxNumberOfBlocks, relax);
+  execute(action, subAction, data, CachePool::k_maxNumberOfBlocks, relax);
   return CachePool::sharedCachePool()->storeEditedTree();
 }
 
@@ -154,20 +154,7 @@ Node EditionPool::initFromAddress(const void * address) {
   return Node(copiedTree);
 }
 
-bool EditionPool::executeWithRelax(ActionWithContext action, void * subAction, const void * data, int maxSize, Relax relax) {
-  /* If the action couldn't be executed by freeing blocks, relax the data and
-   * try again. */
-  while (!execute(action, subAction, data, maxSize)) {
-    if (!relax(subAction)) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool EditionPool::execute(ActionWithContext action, void * subAction, const void * data, int maxSize) {
-  /* Try to execute the action. Free blocks if it fails, and return false if no
-   * more blocks can be freed. Return true otherwise. */
+bool EditionPool::execute(ActionWithContext action, void * subAction, const void * data, int maxSize, Relax relax) {
   ExceptionCheckpoint checkpoint;
 start_execute:
   if (ExceptionRun(checkpoint)) {
@@ -179,13 +166,14 @@ start_execute:
     /* TODO: assert that we don't delete last called treeForIdentifier otherwise
      * can't copyTreeFromAddress if in cache... */
     int size = fullSize();
-    if (size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::min(size, maxSize - size))) {
-      /* TODO: try with less demanding reducing context (everything is a float ?
-       * SystemTarget?) */
+    /* Free blocks and try again. If no more blocks can be fred, try relaxing
+     * the subAction and try again. Otherwise, return false. */
+    if (size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::min(size, maxSize - size)) || !relax(subAction)) {
       return false;
     }
     goto start_execute;
   }
+  // Action has been successfully executed
   return true;
 }
 

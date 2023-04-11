@@ -48,8 +48,7 @@ public:
 
   constexpr static int k_maxNumberOfReferences = 1024;
 private:
-  bool executeWithRelax(ActionWithContext action, void * subAction, const void * data, int maxSize, Relax relax = k_defaultRelax);
-  bool execute(ActionWithContext action, void * subAction, const void * data, int maxSize);
+  bool execute(ActionWithContext action, void * subAction, const void * data, int maxSize, Relax relax = k_defaultRelax);
   // Pool memory
   bool checkForEnoughSpace(size_t numberOfRequiredBlock);
 #if POINCARE_MEMORY_TREE_LOG

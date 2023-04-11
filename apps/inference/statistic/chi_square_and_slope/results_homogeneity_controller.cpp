@@ -17,18 +17,6 @@ ResultsHomogeneityController::ResultsHomogeneityController(
   TabViewController::initView();
 }
 
-void ResultsHomogeneityController::willResignFirstResponder() {
-  /* "m_isSelected = false" should be in
-   * TabViewController::willResignFirstResponder but this creates problems with
-   * App::setFirstResponder (cf TODO in App::setFirstResponder). When we would
-   * have re-added the shortcut when responder==previousResponder in
-   * App::setFirstResponder, we will be able to merge
-   * TabViewController::willResignFirstResponder and
-   * ResultsHomogeneityController::willResignFirstResponder */
-  m_isSelected = false;
-  TabViewController::willResignFirstResponder();
-}
-
 // ResultsTableController
 
 ResultsHomogeneityController::ResultsTableController::ResultsTableController(

@@ -148,7 +148,10 @@ void TabViewController::didBecomeFirstResponder() {
   setActiveTab(m_dataSource->selectedTab(), !m_isSelected);
 }
 
-void TabViewController::willResignFirstResponder() { setSelectedTab(-1); }
+void TabViewController::willResignFirstResponder() {
+  m_isSelected = false;
+  setSelectedTab(-1);
+}
 
 View* TabViewController::view() { return &m_view; }
 

@@ -25,7 +25,6 @@ class ResultsHomogeneityController : public Escher::TabViewController,
   KDColor tabBackgroundColor() const override {
     return Escher::Palette::GrayDark;
   }
-  void willResignFirstResponder() override;
 
  private:
   class ResultsTableController : public CategoricalController {

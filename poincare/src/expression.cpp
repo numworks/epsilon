@@ -1498,13 +1498,19 @@ Expression Expression::deepReduce(ReductionContext reductionContext) {
    *   - If approximateNonSymbols is used because the examMode forbid exact
    *     results, it's not a problem to keep rationals since exact results on
    *     rationals are still allowed.
+   *
+   * Exclude lists and matrices because their children should already be
+   * approximated if they can be.
    * */
   if (reductionContext.approximateNonSymbols() &&
-      res.type() != ExpressionNode::Type::Rational) {
+      res.type() != ExpressionNode::Type::Rational &&
+      res.type() != ExpressionNode::Type::List &&
+      res.type() != ExpressionNode::Type::Matrix) {
     Expression a = res.approximate<double>(reductionContext.context(),
                                            reductionContext.complexFormat(),
                                            reductionContext.angleUnit(), true);
-    if (!a.isUndefined()) {
+    if (!a.isUndefined() && a.type() != ExpressionNode::Type::List &&
+        a.type() != ExpressionNode::Type::Matrix) {
       /* approximate can return an Opposite or a Subtraction, so we need to
        * re-reduce the expression.*/
       res.replaceWithInPlace(a.shallowReduce(reductionContext));

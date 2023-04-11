@@ -11,6 +11,7 @@
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_message_text_cell.h>
 #include <escher/toggleable_dot_view.h>
+#include <omg/round.h>
 
 #include "derivative_parameter_controller.h"
 #include "interval_parameter_selector_controller.h"
@@ -67,7 +68,8 @@ class ValuesController : public Shared::ValuesController,
  private:
   constexpr static size_t k_maxNumberOfSymbolTypes =
       Shared::ContinuousFunctionProperties::k_numberOfSymbolTypes;
-  constexpr static int k_maxNumberOfDisplayableSymbolTypes = 2;
+  constexpr static int k_maxNumberOfDisplayableSymbolTypes =
+      OMG::Ceil(static_cast<float>(k_maxNumberOfDisplayableColumns) / 2.0f);
   constexpr static int k_maxNumberOfDisplayableAbscissaCells =
       k_maxNumberOfDisplayableSymbolTypes * k_maxNumberOfDisplayableRows;
   constexpr static int k_valuesCellBufferSize =

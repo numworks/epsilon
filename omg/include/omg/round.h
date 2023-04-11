@@ -11,6 +11,12 @@ static inline T LaxToZero(T x) {
                                                          : x;
 }
 
+// std::ceil is not constexpr
+constexpr int Ceil(float f) {
+  const int i = static_cast<int>(f);
+  return f > static_cast<float>(i) ? i + 1 : i;
+}
+
 }  // namespace OMG
 
 #endif

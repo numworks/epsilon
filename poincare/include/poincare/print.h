@@ -45,11 +45,35 @@ class Print {
                           ...);
   static int SafeCustomPrintf(char* buffer, size_t bufferSize,
                               const char* format, ...);
+
+  /* Try to print in buffer, and each time the text is too long, decrease by one
+   * the number of significant digits, until it fits.
+   * For this method, do not pass a number of significant digits as argument to
+   * each printed float/double.
+   * ex:
+   *   CustomPrintfWithMaxNumberOfSignificantDigits(
+   *                 buffer, bufferSize, 7,
+   *                 "Two doubles are %*.*ed and %*.*ed",
+   *                 0.0123456789,
+   *                 Preferences::PrintFloatMode::Scientific,
+   *                 9.8765432109,
+   *                 Preferences::PrintFloatMode::Scientific);
+   * */
+  static int CustomPrintfWithMaxNumberOfSignificantDigits(
+      char* buffer, size_t bufferSize, int maxNumberOfSignificantDigits,
+      const char* format, ...);
+
   static void Capitalize(char* text);
   static void Decapitalize(char* text);
 
  private:
   static int PrivateCustomPrintf(char* buffer, size_t bufferSize,
+                                 const char* format, va_list args) {
+    return PrivateCustomPrintf(buffer, bufferSize, -1, format, args);
+  }
+  // If numberOfSignificantDigits < 0, use numberOfSignificantDigits in va_list
+  static int PrivateCustomPrintf(char* buffer, size_t bufferSize,
+                                 int numberOfSignificantDigits,
                                  const char* format, va_list args);
 };
 

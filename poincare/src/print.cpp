@@ -11,6 +11,7 @@
 namespace Poincare {
 
 int Print::PrivateCustomPrintf(char *buffer, size_t bufferSize,
+                               int numberOfSignificantDigits,
                                const char *format, va_list args) {
   /* We still return the required sizes even if we could not write in the
    * buffer in order to indicate that we overflew the buffer. */
@@ -74,21 +75,24 @@ int Print::PrivateCustomPrintf(char *buffer, size_t bufferSize,
         }
         Preferences::PrintFloatMode displayMode =
             static_cast<Preferences::PrintFloatMode>(va_arg(args, int));
-        int numberOfSignificantDigits = va_arg(args, int);
+        int currentNumberOfSignificantDigits = numberOfSignificantDigits > 0
+                                                   ? numberOfSignificantDigits
+                                                   : va_arg(args, int);
         int glyphLength = PrintFloat::glyphLengthForFloatWithPrecision(
-            numberOfSignificantDigits);
+            currentNumberOfSignificantDigits);
         if (*(format + 5) == 'f') {
           buffer += PrintFloat::ConvertFloatToText(
                         static_cast<float>(value), buffer,
                         bufferSize - (buffer - origin), glyphLength,
-                        numberOfSignificantDigits, displayMode)
+                        currentNumberOfSignificantDigits, displayMode)
                         .CharLength;
         } else {
           assert(*(format + 5) == 'd');
-          buffer += PrintFloat::ConvertFloatToText(
-                        value, buffer, bufferSize - (buffer - origin),
-                        glyphLength, numberOfSignificantDigits, displayMode)
-                        .CharLength;
+          buffer +=
+              PrintFloat::ConvertFloatToText(
+                  value, buffer, bufferSize - (buffer - origin), glyphLength,
+                  currentNumberOfSignificantDigits, displayMode)
+                  .CharLength;
         }
         formatLength = 6;
       }
@@ -121,6 +125,23 @@ int Print::SafeCustomPrintf(char *buffer, size_t bufferSize, const char *format,
   va_start(args, format);
   int length = PrivateCustomPrintf(buffer, bufferSize, format, args);
   va_end(args);
+  return length;
+}
+
+int Print::CustomPrintfWithMaxNumberOfSignificantDigits(
+    char *buffer, size_t bufferSize, int maxNumberOfSignificantDigits,
+    const char *format, ...) {
+  assert(maxNumberOfSignificantDigits > 0);
+  va_list args;
+  va_start(args, format);
+  int length = bufferSize;
+  while (length >= bufferSize && maxNumberOfSignificantDigits > 0) {
+    length = PrivateCustomPrintf(buffer, bufferSize,
+                                 maxNumberOfSignificantDigits, format, args);
+    maxNumberOfSignificantDigits--;
+  }
+  va_end(args);
+  assert(length < static_cast<int>(bufferSize));
   return length;
 }
 

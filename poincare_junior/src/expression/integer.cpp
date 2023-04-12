@@ -662,5 +662,5 @@ uint8_t Integer::Uint8(const Node expression) {
 
 template float PoincareJ::IntegerHandler::to<float>();
 template double PoincareJ::IntegerHandler::to<double>();
-template bool PoincareJ::IntegerHandler::isSignedType<char>() const;
-template bool PoincareJ::IntegerHandler::isUnsignedType<unsigned char>() const;
+template bool PoincareJ::IntegerHandler::isSignedType<int8_t>() const;
+template bool PoincareJ::IntegerHandler::isUnsignedType<uint8_t>() const;

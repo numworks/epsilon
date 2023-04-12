@@ -70,8 +70,8 @@ const char* ResultController::title() {
       Poincare::Preferences::PrintFloatMode::Decimal;
   // At least "..." should fit in the title.
   assert(k_titleBufferSize > strlen("..."));
-  const char* parameterTemplate = "%s=%*.*ed...";
-  const char* lastKnownParameterTemplate = "%s=%*.*ed";
+  constexpr const char* parameterTemplate = "%s=%*.*ed...";
+  constexpr const char* lastKnownParameterTemplate = "%s=%*.*ed";
   // The boolean parameter isn't displayed
   uint8_t doubleParameters = App::GetInterestData()->numberOfDoubleValues();
   uint8_t unknownParam = App::GetInterestData()->getUnknown();

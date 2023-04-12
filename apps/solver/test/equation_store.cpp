@@ -2,7 +2,7 @@
 
 #include "helpers.h"
 
-QUIZ_CASE(equation_solver_error) {
+QUIZ_CASE(solver_error) {
   assert_solves_to_error("cos(x)=0", RequireApproximateSolution);
   assert_solves_to_error("x+y+z+a+b+c+d=0", TooManyVariables);
   assert_solves_to_error("x^2+y=0", NonLinearSystem);
@@ -10,7 +10,7 @@ QUIZ_CASE(equation_solver_error) {
   assert_solves_to_error("x×(x^2×int(1/t,t,0,1)+1)=0", EquationUndefined);
 }
 
-QUIZ_CASE(equation_solve_linear_system) {
+QUIZ_CASE(solver_linear_system) {
   assert_solves_to(
       {"x+y=0", "3x+y+z=-5", "4z-π=0", "a+b+c=0", "a=3", "c=a+2"},
       {"x=(-π-20)/8", "y=(π+20)/8", "z=π/4", "a=3", "b=-8", "c=5"});
@@ -46,7 +46,7 @@ QUIZ_CASE(equation_solve_linear_system) {
   assert_solves_to_no_solution("x-x+2=0");
 }
 
-QUIZ_CASE(equation_solve_polynomials) {
+QUIZ_CASE(solver_polynomial_system) {
   set_complex_format(Cartesian);
   assert_solves_to("(x-3)^2=0", {"x=3", "delta=0"});
   assert_solves_to("(x-π)(x-ln(2))=0",
@@ -73,7 +73,7 @@ QUIZ_CASE(equation_solve_polynomials) {
                    {"x=4", "x=-√(6)×i", "x=√(6)×i", "delta=-11616"});
 }
 
-QUIZ_CASE(equation_solve_approximate) {
+QUIZ_CASE(solver_approximate) {
   Poincare::Preferences::sharedPreferences->setAngleUnit(Degree);
   assert_solves_numerically_to("(3x)^3/(0.1-3x)^3=10^(-8)", -10, 10,
                                {0.000071660});
@@ -130,7 +130,7 @@ QUIZ_CASE(equation_solve_approximate) {
    */
 }
 
-QUIZ_CASE(equation_solve_complex_real) {
+QUIZ_CASE(solver_complex_real) {
   set_complex_format(Real);
   // We still want complex solutions if the input has some complex value
   assert_solves_to("x+i=0", "x=-i");
@@ -155,7 +155,7 @@ QUIZ_CASE(equation_solve_complex_real) {
   reset_complex_format();
 }
 
-QUIZ_CASE(equation_solve_complex_cartesian) {
+QUIZ_CASE(solver_complex_cartesian) {
   set_complex_format(Cartesian);
   assert_solves_to("x+i=0", "x=-i");
   assert_solves_to("x+√(-1)=0", "x=-i");
@@ -168,7 +168,7 @@ QUIZ_CASE(equation_solve_complex_cartesian) {
   reset_complex_format();
 }
 
-QUIZ_CASE(equation_solve_complex_polar) {
+QUIZ_CASE(solver_complex_polar) {
   set_complex_format(Polar);
   assert_solves_to("x+i=0", "x=e^(-(π/2)i)");
   assert_solves_to("x+√(-1)=0", "x=e^(-(π/2)i)");
@@ -180,7 +180,7 @@ QUIZ_CASE(equation_solve_complex_polar) {
   reset_complex_format();
 }
 
-QUIZ_CASE(equation_and_symbolic_computation) {
+QUIZ_CASE(solver_symbolic_computation) {
   /* This test case needs the user defined variable. Indeed, in the equation
    * store, m_variables is just before m_userVariables, so bad fetching in
    * m_variables might fetch into m_userVariables and create problems. */

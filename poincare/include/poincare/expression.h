@@ -288,10 +288,6 @@ class Expression : public TreeHandle {
                              Preferences::AngleUnit angleUnit,
                              Preferences::UnitFormat unitFormat,
                              SymbolicComputation symbolicComputation) const;
-  /* getPolynomialCoefficients fills the table coefficients with the expressions
-   * of the first 3 polynomial coefficients and returns the  polynomial degree.
-   * It is supposed to be called on a reduced expression.
-   * coefficients has up to 3 entries.  */
   constexpr static int k_maxPolynomialDegree = 3;
   constexpr static int k_maxNumberOfPolynomialCoefficients =
       k_maxPolynomialDegree + 1;
@@ -621,6 +617,10 @@ class Expression : public TreeHandle {
   void removeChildrenInPlace(int currentNumberOfChildren) = delete;
 
   /* Properties */
+  /* getPolynomialCoefficients fills the table coefficients with the expressions
+   * of the first 3 polynomial coefficients and returns the  polynomial degree.
+   * It is supposed to be called on a reduced expression.
+   * coefficients has up to 3 entries.  */
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 Expression coefficients[]) const {
     return node()->getPolynomialCoefficients(context, symbolName, coefficients);

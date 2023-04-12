@@ -64,6 +64,14 @@ StoreColumnHelper::StoreColumnHelper(Escher::Responder *responder,
                                 StackViewController::Style::PurpleWhite),
       m_parentContext(parentContext) {}
 
+int StoreColumnHelper::referencedMemoizationId() {
+  // Index without ECC which can't be modified
+  int col = table()->selectedColumn();
+  return DoublePairStore::k_numberOfColumnsPerSeries *
+             store()->seriesAtColumn(col) +
+         store()->relativeColumnIndex(col);
+}
+
 bool StoreColumnHelper::switchSelectedColumnHideStatus() {
   int series = selectedSeries();
   bool previousStatus = store()->seriesIsActive(series);
@@ -84,8 +92,9 @@ void StoreColumnHelper::sortSelectedColumn() {
 }
 
 void StoreColumnHelper::displayFormulaInput() {
-  if (!memoizedFormulaAtColumn(referencedColumn()).isUninitialized()) {
-    fillFormulaInputWithTemplate(memoizedFormulaAtColumn(referencedColumn()));
+  if (!memoizedFormulaAtColumn(referencedMemoizationId()).isUninitialized()) {
+    fillFormulaInputWithTemplate(
+        memoizedFormulaAtColumn(referencedMemoizationId()));
     return;
   }
   Container::activeApp()->displayModalViewController(
@@ -184,7 +193,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
       return false;
     }
     reload();
-    memoizeFormulaAtColumn(formulaLayout, referencedColumn());
+    memoizeFormulaAtColumn(formulaLayout, referencedMemoizationId());
     return true;
   }
   // If formula contains a random formula, evaluate it for each pairs.
@@ -212,7 +221,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     return false;
   }
   reloadSeriesVisibleCells(seriesToFill);
-  memoizeFormulaAtColumn(formulaLayout, referencedColumn());
+  memoizeFormulaAtColumn(formulaLayout, referencedMemoizationId());
   return true;
 }
 

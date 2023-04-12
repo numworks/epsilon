@@ -66,7 +66,8 @@ class Context {
   Node m_array[k_numberOfPlaceholders];
 };
 
-Context Match(const Node pattern, Node source, Context context = Context());
+Context Match(const Node pattern, const Node source,
+              Context context = Context());
 EditionReference Create(const Node structure,
                         const Context context = Context());
 };  // namespace PatternMatching

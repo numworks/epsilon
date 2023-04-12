@@ -23,25 +23,27 @@ void PatternMatching::Context::log() const {
 }
 #endif
 
-PatternMatching::Context PatternMatching::Match(const Node pattern, Node source,
+PatternMatching::Context PatternMatching::Match(const Node pattern,
+                                                const Node source,
                                                 Context result) {
   Pool::Nodes patternNodes = Pool::Nodes(
       pattern.block(), pattern.nextTree().block() - pattern.block());
+  Node currentNode = source;
   for (const Node node : patternNodes) {
     if (node.type() == BlockType::Placeholder) {
       PlaceholderTag placeholder = static_cast<PlaceholderTag>(
           static_cast<uint8_t>(*node.block()->next()));
       if (result[placeholder].isUninitialized()) {
-        result[placeholder] = source;
-      } else if (!result[placeholder].treeIsIdenticalTo(source)) {
+        result[placeholder] = currentNode;
+      } else if (!result[placeholder].treeIsIdenticalTo(currentNode)) {
         return Context();
       }
-      source = source.nextTree();
+      currentNode = currentNode.nextTree();
     } else {
-      if (!node.isIdenticalTo(source)) {
+      if (!node.isIdenticalTo(currentNode)) {
         return Context();
       }
-      source = source.nextNode();
+      currentNode = currentNode.nextNode();
     }
   }
   return result;

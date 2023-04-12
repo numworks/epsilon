@@ -83,9 +83,8 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
 }
 
 EditionReference EditionReference::matchAndRewrite(const Node pattern,
-                                                   const Node structure) {
-  PatternMatching::Context ctx =
-      PatternMatching::Match(pattern, static_cast<Node>(*this));
+                                                   const Node structure) const {
+  PatternMatching::Context ctx = PatternMatching::Match(pattern, *this);
   if (ctx.isUninitialized()) {
     return *this;
   }

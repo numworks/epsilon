@@ -470,13 +470,14 @@ void LayoutCursor::insertText(const char *text, Context *context,
           Layout newChild = VerticalOffsetLayout::Builder(
               HorizontalLayout::Builder(),
               VerticalOffsetLayoutNode::VerticalPosition::Subscript);
+          currentLayout.addOrMergeChildAtIndex(
+              newChild, currentLayout.numberOfChildren());
           currentSubscriptDepth++;
           Layout horizontalChildOfSubscript = newChild.childAtIndex(0);
           assert(horizontalChildOfSubscript.isEmpty());
           currentLayout =
               static_cast<HorizontalLayout &>(horizontalChildOfSubscript);
           codePoint = decoder.nextCodePoint();
-          ;
           continue;
         }
         // UCodePointSystem should be inserted only for system braces

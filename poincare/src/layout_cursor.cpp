@@ -527,7 +527,7 @@ void LayoutCursor::insertText(const char *text, Context *context,
   }
   assert(currentSubscriptDepth == 0);
 
-  // - Step 2 - Inserted the created layout
+  // - Step 2 - Insert the created layout
   insertLayout(layoutToInsert, context, forceCursorRightOfText,
                forceCursorLeftOfText);
 }
@@ -573,7 +573,9 @@ void LayoutCursor::deleteAndResetSelection() {
   } else {
     assert(m_layout.parent().isUninitialized() ||
            !m_layout.parent().isHorizontal());
-    m_layout.replaceWithInPlace(HorizontalLayout::Builder());
+    Layout hLayout = HorizontalLayout::Builder();
+    m_layout.replaceWithInPlace(hLayout);
+    m_layout = hLayout;
   }
   m_position = selectionLeftBound;
   stopSelecting();

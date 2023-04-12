@@ -91,8 +91,8 @@ class Sequence : public Function {
   // Sequence properties
   int numberOfElements() { return order() + 1; }
   Poincare::Layout nameLayout();
-  bool isDefined() override;
-  bool isEmpty() override;
+  bool isDefined() const override;
+  bool isEmpty() const override;
   /* Sequence u (with initial rank i) is suitable for cobweb if:
    * - it is simply recursive
    * - u(n+1) depends only on u(n) or u(i) and not on n, on another sequence or
@@ -168,7 +168,7 @@ class Sequence : public Function {
       return m_initialRank;
     }
     void setInitialRank(int initialRank) { m_initialRank = initialRank; }
-    size_t initialConditionSize(int conditionIndex) {
+    size_t initialConditionSize(int conditionIndex) const {
       assert(conditionIndex >= 0 && conditionIndex < 2);
       return m_initialConditionSizes[conditionIndex];
     }

@@ -107,7 +107,7 @@ Poincare::Layout Sequence::nameLayout() {
           VerticalOffsetLayoutNode::VerticalPosition::Subscript));
 }
 
-bool Sequence::isDefined() {
+bool Sequence::isDefined() const {
   RecordDataBuffer *data = recordData();
   switch (type()) {
     case Type::Explicit:
@@ -123,7 +123,7 @@ bool Sequence::isDefined() {
   }
 }
 
-bool Sequence::isEmpty() {
+bool Sequence::isEmpty() const {
   RecordDataBuffer *data = recordData();
   Type type = data->type();
   return Function::isEmpty() &&

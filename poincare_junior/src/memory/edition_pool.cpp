@@ -168,7 +168,7 @@ start_execute:
     /* TODO: assert that we don't delete last called treeForIdentifier otherwise
      * can't copyTreeFromAddress if in cache... */
     int size = fullSize();
-    /* Free blocks and try again. If no more blocks can be fred, try relaxing
+    /* Free blocks and try again. If no more blocks can be freed, try relaxing
      * the context and try again. Otherwise, return false. */
     if ((size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::min(size, maxSize - size))) && !relax(context)) {
       return false;

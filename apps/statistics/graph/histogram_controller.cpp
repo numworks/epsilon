@@ -83,19 +83,6 @@ void HistogramController::highlightSelection() {
   }
 }
 
-static bool fillBufferWithIntervalFormula(
-    char *buffer, int bufferSize, double lowerBound, double upperBound,
-    Preferences::PrintFloatMode displayMode, int precision) {
-  return bufferSize >
-         Poincare::Print::SafeCustomPrintf(
-             buffer, bufferSize, "%s%s[%*.*ed,%*.*ed%s",
-             I18n::translate(I18n::Message::Interval),
-             I18n::translate(I18n::Message::ColonConvention), lowerBound,
-             displayMode, precision, upperBound, displayMode, precision,
-             GlobalPreferences::sharedGlobalPreferences->openIntervalChar(
-                 false));
-}
-
 bool HistogramController::reloadBannerView() {
   if (selectedSeries() < 0) {
     return false;
@@ -125,16 +112,12 @@ bool HistogramController::reloadBannerView() {
    * k_bufferSize 46 (remembering ᴇ is 3 chars).
    * We add 1 to account for the fact that both calls to sizeof count the null
    * character. */
-  constexpr int intervalDefaultPrecision =
-      (k_bufferSize - sizeof("Intervalle : [;[")) / 2 - sizeof("-.ᴇ-123") + 1;
-  if (!fillBufferWithIntervalFormula(buffer, k_bufferSize, lowerBound,
-                                     upperBound, displayMode, precision)) {
-    bool intervalFitsInBuffer = fillBufferWithIntervalFormula(
-        buffer, k_bufferSize, lowerBound, upperBound, displayMode,
-        intervalDefaultPrecision);
-    assert(intervalFitsInBuffer);
-    (void)intervalFitsInBuffer;  // Silence warning about unused variable
-  }
+  Poincare::Print::CustomPrintfWithMaxNumberOfSignificantDigits(
+      buffer, k_bufferSize, precision, "%s%s[%*.*ed,%*.*ed%s",
+      I18n::translate(I18n::Message::Interval),
+      I18n::translate(I18n::Message::ColonConvention), lowerBound, displayMode,
+      upperBound, displayMode,
+      GlobalPreferences::sharedGlobalPreferences->openIntervalChar(false));
   m_view.bannerView()->intervalView()->setText(buffer);
 
   // Display frequency

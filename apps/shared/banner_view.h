@@ -1,6 +1,7 @@
 #ifndef SHARED_BANNER_VIEW_H
 #define SHARED_BANNER_VIEW_H
 
+#include <escher/even_odd_buffer_text_cell.h>
 #include <escher/metric.h>
 #include <escher/palette.h>
 #include <escher/view.h>
@@ -16,8 +17,7 @@ class BannerView : public Escher::View {
                 .backgroundColor = Escher::Palette::GrayMiddle,
                 .font = k_font},
       .horizontalAlignment = KDGlyph::k_alignCenter};
-  constexpr static float k_maxLengthDisplayed =
-      Ion::Display::Width / KDFont::GlyphWidth(k_font);
+  using BannerBufferTextView = Escher::OneLineBufferTextView<k_font>;
 
   static KDCoordinate HeightGivenNumberOfLines(int linesCount);
   void drawRect(KDContext* ctx, KDRect rect) const override;

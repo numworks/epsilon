@@ -39,7 +39,8 @@ class UnitListController : public ExpressionsListController {
   constexpr static int k_maxNumberOfBufferCells = 2;
 
   using BufferCell =
-      Escher::MenuCell<Escher::BufferTextView, Escher::MessageTextView>;
+      Escher::MenuCell<Escher::OneLineBufferTextView<KDFont::Size::Large>,
+                       Escher::MessageTextView>;
 
   I18n::Message messageAtIndex(int index) override;
   void fillBufferCellAtIndex(BufferCell* bufferCell, int index);

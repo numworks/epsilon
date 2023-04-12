@@ -19,7 +19,7 @@ class ColorsLCDTestController : public Escher::ViewController {
   class ContentView : public Escher::SolidColorView {
    public:
     ContentView();
-    Escher::BufferTextView* colorsLCDStateTextView() {
+    Escher::AbstractBufferTextView* colorsLCDStateTextView() {
       return &m_colorsLCDStateView;
     }
     void setColor(KDColor color) override;
@@ -31,7 +31,7 @@ class ColorsLCDTestController : public Escher::ViewController {
       assert(index == 0);
       return &m_colorsLCDStateView;
     }
-    Escher::BufferTextView m_colorsLCDStateView;
+    Escher::OneLineBufferTextView<> m_colorsLCDStateView;
   };
   constexpr static int k_numberOfAcceptablesGlyphErrors = 1;
   constexpr static const char* k_colorsLCDOKText = "COLORS LCD: OK";

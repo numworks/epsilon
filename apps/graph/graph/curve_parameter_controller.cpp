@@ -67,8 +67,9 @@ const char *CurveParameterController::title() {
 void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell,
                                                        int index) {
   I18n::Message name = I18n::Message::Default;
-  MenuCellWithEditableText<BufferTextView> *parameterCells[] = {
-      &m_abscissaCell, &m_imageCell, &m_derivativeNumberCell};
+  MenuCellWithEditableText<OneLineBufferTextView<KDFont::Size::Large>>
+      *parameterCells[] = {&m_abscissaCell, &m_imageCell,
+                           &m_derivativeNumberCell};
   if (index < function()->properties().numberOfCurveParameters()) {
     ContinuousFunctionProperties::CurveParameter parameter =
         function()->properties().getCurveParameter(index);
@@ -85,7 +86,8 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell,
   }
   if (cell == &m_imageCell || cell == &m_derivativeNumberCell) {
     // The parameter requires a custom name built from the function name
-    constexpr size_t bufferSize = BufferTextView::k_maxNumberOfChar;
+    constexpr size_t bufferSize =
+        Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
     char buffer[bufferSize];
     if (cell == &m_imageCell) {
       function()->nameWithArgument(buffer, bufferSize);
@@ -152,7 +154,8 @@ TextField *CurveParameterController::textFieldOfCellAtIndex(
     HighlightCell *thisCell, int index) {
   assert(cell(index) == &m_abscissaCell || cell(index) == &m_imageCell ||
          cell(index) == &m_derivativeNumberCell);
-  return static_cast<MenuCellWithEditableText<BufferTextView> *>(thisCell)
+  return static_cast<MenuCellWithEditableText<
+      OneLineBufferTextView<KDFont::Size::Large>> *>(thisCell)
       ->textField();
 }
 

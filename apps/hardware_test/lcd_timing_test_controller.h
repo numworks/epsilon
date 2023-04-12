@@ -32,8 +32,8 @@ class LCDTimingTestController : public Escher::ViewController {
       assert(index >= 0 && index < 2);
       return index == 0 ? &m_lcdTimingStateView : &m_lcdNumberGlyphFailuresView;
     }
-    Escher::BufferTextView m_lcdTimingStateView;
-    Escher::BufferTextView m_lcdNumberGlyphFailuresView;
+    Escher::OneLineBufferTextView<> m_lcdTimingStateView;
+    Escher::OneLineBufferTextView<> m_lcdNumberGlyphFailuresView;
   };
   constexpr static int k_errorLimit = 0;
   void runTest();

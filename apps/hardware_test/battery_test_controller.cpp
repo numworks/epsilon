@@ -73,15 +73,18 @@ BatteryTestController::ContentView::ContentView()
       m_batteryChargingView({.style = {.font = KDFont::Size::Small},
                              .horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
-BufferTextView* BatteryTestController::ContentView::batteryStateTextView() {
+AbstractBufferTextView*
+BatteryTestController::ContentView::batteryStateTextView() {
   return &m_batteryStateView;
 }
 
-BufferTextView* BatteryTestController::ContentView::batteryLevelTextView() {
+AbstractBufferTextView*
+BatteryTestController::ContentView::batteryLevelTextView() {
   return &m_batteryLevelView;
 }
 
-BufferTextView* BatteryTestController::ContentView::batteryChargingTextView() {
+AbstractBufferTextView*
+BatteryTestController::ContentView::batteryChargingTextView() {
   return &m_batteryChargingView;
 }
 

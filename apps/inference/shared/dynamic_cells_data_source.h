@@ -1,6 +1,7 @@
 #ifndef INFERENCE_SHARED_DYNAMIC_CELLS_DATA_SOURCE_H
 #define INFERENCE_SHARED_DYNAMIC_CELLS_DATA_SOURCE_H
 
+#include <escher/even_odd_buffer_text_cell.h>
 #include <escher/highlight_cell.h>
 #include <escher/selectable_table_view.h>
 
@@ -8,6 +9,9 @@ namespace Inference {
 
 /* This DataSource allocated its cells in a external buffer provided by the app.
  */
+
+using InferenceEvenOddBufferCell = Escher::FloatEvenOddBufferTextCell<
+    Poincare::Preferences::ShortNumberOfSignificantDigits>;
 
 template <typename T>
 class DynamicCellsDataSourceDelegate;

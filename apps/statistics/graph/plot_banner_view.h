@@ -11,26 +11,26 @@ namespace Statistics {
 class PlotBannerView : public Shared::BannerView {
  public:
   PlotBannerView();
-  Escher::BufferTextView* seriesName() { return &m_seriesName; }
-  Escher::BufferTextView* result() { return &m_result; }
+  BannerBufferTextView* seriesName() { return &m_seriesName; }
+  BannerBufferTextView* result() { return &m_result; }
 
  private:
   constexpr static int k_numberOfSubviews = 3;
   int numberOfSubviews() const override { return k_numberOfSubviews; }
   Escher::View* subviewAtIndex(int index) override;
   virtual Escher::View* valueView() = 0;
-  Escher::BufferTextView m_seriesName;
-  Escher::BufferTextView m_result;
+  BannerBufferTextView m_seriesName;
+  BannerBufferTextView m_result;
 };
 
 class SimplePlotBannerView : public PlotBannerView {
  public:
   SimplePlotBannerView() : m_value(k_bannerFieldFormat) {}
-  Escher::BufferTextView* value() { return &m_value; }
+  BannerBufferTextView* value() { return &m_value; }
 
  private:
   Escher::View* valueView() override { return &m_value; }
-  Escher::BufferTextView m_value;
+  BannerBufferTextView m_value;
 };
 
 class PlotBannerViewWithEditableField
@@ -43,7 +43,7 @@ class PlotBannerViewWithEditableField
       Escher::TextFieldDelegate* textFieldDelegate)
       : Shared::EditableFieldBannerViewDelegate(
             parentResponder, inputEventHandlerDelegate, textFieldDelegate) {}
-  Escher::BufferTextView* valueLabel() { return editableFieldLabel(); }
+  BannerBufferTextView* valueLabel() { return editableFieldLabel(); }
   Escher::TextField* value() { return editableField(); }
 
  private:

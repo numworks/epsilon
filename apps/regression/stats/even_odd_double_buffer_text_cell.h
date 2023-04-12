@@ -32,8 +32,8 @@ class EvenOddDoubleBufferTextCell : public Escher::EvenOddCell,
 
  protected:
   bool m_firstTextSelected;
-  Escher::EvenOddBufferTextCell m_firstBufferTextView;
-  Escher::EvenOddBufferTextCell m_secondBufferTextView;
+  Escher::FloatEvenOddBufferTextCell<> m_firstBufferTextView;
+  Escher::FloatEvenOddBufferTextCell<> m_secondBufferTextView;
 };
 
 }  // namespace Regression

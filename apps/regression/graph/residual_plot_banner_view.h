@@ -14,9 +14,9 @@ class ResidualPlotBannerView : public Shared::BannerView {
       : m_abscissaView(k_bannerFieldFormat),
         m_ordinateView(k_bannerFieldFormat),
         m_stddevView(k_bannerFieldFormat) {}
-  Escher::BufferTextView* abscissaView() { return &m_abscissaView; }
-  Escher::BufferTextView* ordinateView() { return &m_ordinateView; }
-  Escher::BufferTextView* stddevView() { return &m_stddevView; }
+  Escher::AbstractBufferTextView* abscissaView() { return &m_abscissaView; }
+  Escher::AbstractBufferTextView* ordinateView() { return &m_ordinateView; }
+  Escher::AbstractBufferTextView* stddevView() { return &m_stddevView; }
   constexpr static int k_numberOfSubviews = 3;
 
  private:
@@ -26,9 +26,9 @@ class ResidualPlotBannerView : public Shared::BannerView {
                       : (index == 1 ? ordinateView() : stddevView());
   }
 
-  Escher::BufferTextView m_abscissaView;
-  Escher::BufferTextView m_ordinateView;
-  Escher::BufferTextView m_stddevView;
+  BannerBufferTextView m_abscissaView;
+  BannerBufferTextView m_ordinateView;
+  BannerBufferTextView m_stddevView;
 };
 
 }  // namespace Regression

@@ -72,7 +72,7 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static KDCoordinate k_calculationCellWidth =
       Escher::Metric::SmallFontCellWidth(
           Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
-              Poincare::Preferences::VeryLargeNumberOfSignificantDigits),
+              Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision),
           Escher::EvenOddCell::k_horizontalMargin);
 
   typedef struct {
@@ -138,11 +138,12 @@ class CalculationController : public Shared::DoublePairTableController {
       m_calculationTitleCells[k_numberOfCalculationTitleCells];
   Escher::EvenOddMessageTextCell
       m_calculationSymbolCells[k_numberOfCalculationTitleCells];
-  Escher::EvenOddBufferTextCell
+  Escher::SmallFontEvenOddBufferTextCell
       m_calculationModeTitleCells[k_numberOfCalculationTitleCells];
-  Escher::EvenOddBufferTextCell
+  Escher::SmallFontEvenOddBufferTextCell
       m_calculationModeSymbolCells[k_numberOfCalculationTitleCells];
-  Escher::EvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
+  Escher::FloatEvenOddBufferTextCell<>
+      m_calculationCells[k_numberOfCalculationCells];
   Escher::EvenOddCell m_hideableCell[k_numberOfHeaderColumns];
   double m_memoizedCellContent[Store::k_numberOfSeries][k_numberOfCalculations];
   Store* m_store;

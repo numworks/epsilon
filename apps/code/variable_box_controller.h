@@ -95,15 +95,12 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
 
   /* Labels of item cells can be formed from user variables, a char limit is
    * enforced.*/
-  constexpr static int k_maxNumberOfCharsInLabel =
+  constexpr static int k_labelCharSize =
       (Ion::Display::Width - Escher::Metric::PopUpLeftMargin -
        2 * Escher::Metric::CellSeparatorThickness -
        Escher::Metric::CellLeftMargin - Escher::Metric::CellRightMargin -
        Escher::Metric::PopUpRightMargin) /
       KDFont::GlyphWidth(KDFont::Size::Large);
-  static_assert(k_maxNumberOfCharsInLabel <
-                    Escher::BufferTextView::k_maxNumberOfChar,
-                "k_maxNumberOfCharsInLabel is too high");
 
   /* Returns:
    * - a negative int if the node name is before name in alphabetical
@@ -181,7 +178,8 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
                         const char* description = nullptr);
   VariableBoxEmptyController m_variableBoxEmptyController;
   ScriptNode m_scriptNodes[k_maxScriptNodesCount];
-  Escher::MenuCell<Escher::BufferTextView, Escher::PointerTextView>
+  Escher::MenuCell<Escher::BufferTextView<k_labelCharSize>,
+                   Escher::PointerTextView>
       m_itemCells[k_maxNumberOfDisplayedItems];
   SubtitleCell m_subtitleCells[k_maxNumberOfDisplayedSubtitles];
   ScriptStore* m_scriptStore;

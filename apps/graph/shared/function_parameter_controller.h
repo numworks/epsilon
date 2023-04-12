@@ -59,7 +59,7 @@ class FunctionParameterController : public Shared::ListParameterController,
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_detailsCell;
-  Escher::MenuCell<Escher::MessageTextView, Escher::BufferTextView,
+  Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
                    Escher::ChevronView>
       m_functionDomainCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,

@@ -108,8 +108,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
       char buffer[bufferSize];
       Poincare::Print::CustomPrintf(buffer, bufferSize, pattern,
                                     I18n::translate(message), index);
-      EvenOddBufferTextCell *bufferCell =
-          static_cast<EvenOddBufferTextCell *>(cell);
+      AbstractEvenOddBufferTextCell *bufferCell =
+          static_cast<AbstractEvenOddBufferTextCell *>(cell);
       bufferCell->setTextColor(i == 1 ? Palette::GrayDark : KDColorBlack);
       bufferCell->setText(buffer);
       return;
@@ -141,8 +141,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
       // Display a calculation cell
       int seriesIndex = m_store->seriesIndexFromActiveSeriesIndex(i - 2);
       double calculation;
-      EvenOddBufferTextCell *calculationCell =
-          static_cast<EvenOddBufferTextCell *>(cell);
+      AbstractEvenOddBufferTextCell *calculationCell =
+          static_cast<AbstractEvenOddBufferTextCell *>(cell);
       if (j - 1 < (numberOfFixedRows - 1)) {
         int calculationIndex = findCellIndex(j - 1);
         if (std::isnan(m_memoizedCellContent[seriesIndex][calculationIndex])) {
@@ -167,12 +167,12 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
           return;
         }
       }
-      constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
-      constexpr int bufferSize =
-          PrintFloat::charSizeForFloatsWithPrecision(precision);
+      constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
+          Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision);
       char buffer[bufferSize];
-      PoincareHelpers::ConvertFloatToText<double>(calculation, buffer,
-                                                  bufferSize, precision);
+      PoincareHelpers::ConvertFloatToText<double>(
+          calculation, buffer, bufferSize,
+          Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision);
       calculationCell->setText(buffer);
       return;
     }

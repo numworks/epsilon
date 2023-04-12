@@ -80,7 +80,8 @@ double AreaBetweenCurvesGraphController::cursorNextStep(
 }
 
 Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
-  constexpr size_t bufferSize = Escher::BufferTextView::k_maxNumberOfChar;
+  constexpr size_t bufferSize =
+      Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small) + 1;
   char buffer[bufferSize];
   ExpiringPointer<ContinuousFunction> functionF =
       App::app()->functionStore()->modelForRecord(selectedRecord());

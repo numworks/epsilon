@@ -6,7 +6,7 @@
 
 namespace Escher {
 
-class BufferTextHighlightCell : public HighlightCell {
+class SmallBufferTextHighlightCell : public HighlightCell {
  public:
   void setText(const char* text) { m_textView.setText(text); }
   View* subviewAtIndex(int i) override { return &m_textView; }
@@ -22,7 +22,8 @@ class BufferTextHighlightCell : public HighlightCell {
   }
 
  private:
-  BufferTextView m_textView;
+  constexpr static size_t k_bufferSize = 11;  // ad-hoc
+  BufferTextView<k_bufferSize> m_textView;
 };
 
 }  // namespace Escher

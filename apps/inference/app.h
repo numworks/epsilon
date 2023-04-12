@@ -50,8 +50,8 @@ class App : public Shared::ExpressionFieldDelegateApp,
 
     Statistic *statistic() { return m_statisticBuffer.statistic(); }
 
-    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks>
-        *pageQueue() {
+    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks> *
+    pageQueue() {
       return &m_pageQueue;
     }
 
@@ -78,21 +78,16 @@ class App : public Shared::ExpressionFieldDelegateApp,
   void *buffer(size_t offset = 0) { return m_buffer + offset; }
   void cleanBuffer(DynamicCellsDataSourceDestructor *destructor);
 
-  constexpr static int k_bufferSize =
-      std::max({// 824 * 5 = 4120
-                sizeof(ResultCell) * k_maxNumberOfResultCells,
-                // 1040 * 8 = 8320
+  constexpr static int k_bufferSize =  // 21456
+      std::max({sizeof(ResultCell) * k_maxNumberOfResultCells,
                 sizeof(InputParameterCell) * k_maxNumberOfInputParameterCell,
-                // 360 * (5 + 9 + 45) = 21 240
-                sizeof(Escher::EvenOddBufferTextCell) *
+                sizeof(InferenceEvenOddBufferCell) *
                     (k_homogeneityTableNumberOfReusableHeaderCells +
                      k_homogeneityTableNumberOfReusableInnerCells),
-                // 640 * 72 + 360 * (6+12) = 33 840
                 sizeof(Escher::EvenOddEditableTextCell) *
                         k_homogeneityTableNumberOfReusableInnerCells +
-                    sizeof(Escher::EvenOddBufferTextCell) *
+                    sizeof(InferenceEvenOddBufferCell) *
                         k_homogeneityTableNumberOfReusableHeaderCells,
-                // 24 * 640 = 15 360
                 sizeof(Escher::EvenOddEditableTextCell) *
                     k_doubleColumnTableNumberOfReusableCells});
 

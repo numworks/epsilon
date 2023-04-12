@@ -6,45 +6,37 @@
 
 namespace Escher {
 
-BufferTextView::BufferTextView(KDGlyph::Format format)
-    : TextView(format), m_maxDisplayedTextLength(k_maxNumberOfChar - 1) {
-  m_buffer[0] = 0;
-}
-
-const char* BufferTextView::text() const { return m_buffer; }
-
-void BufferTextView::setText(const char* text) {
-  assert(m_maxDisplayedTextLength < sizeof(m_buffer));
-  strlcpy(m_buffer, text, m_maxDisplayedTextLength + 1);
+void AbstractBufferTextView::setText(const char* text) {
+  strlcpy(buffer(), text, maxTextSize());
   markRectAsDirty(bounds());
 }
 
-void BufferTextView::setMessageWithPlaceholders(I18n::Message message, ...) {
+void AbstractBufferTextView::setMessageWithPlaceholders(I18n::Message message,
+                                                        ...) {
   va_list args;
   va_start(args, message);
   privateSetMessageWithPlaceholders(message, args);
   va_end(args);
 }
 
-void BufferTextView::privateSetMessageWithPlaceholders(I18n::Message message,
-                                                       va_list args) {
-  char tempBuffer[k_maxNumberOfChar];
+void AbstractBufferTextView::privateSetMessageWithPlaceholders(
+    I18n::Message message, va_list args) {
   int length = Poincare::Print::PrivateCustomPrintf(
-      tempBuffer, m_maxDisplayedTextLength + 1, I18n::translate(message), args);
-  assert(length <= m_maxDisplayedTextLength);
+      buffer(), maxTextSize(), I18n::translate(message), args);
+  assert(length < maxTextSize());
   (void)length;
-  setText(tempBuffer);
+  markRectAsDirty(bounds());
 }
 
-void BufferTextView::appendText(const char* text) {
-  size_t previousTextLength = strlen(m_buffer);
-  if (previousTextLength < m_maxDisplayedTextLength) {
-    strlcpy(&m_buffer[previousTextLength], text,
-            m_maxDisplayedTextLength + 1 - previousTextLength);
+void AbstractBufferTextView::appendText(const char* text) {
+  size_t previousTextLength = strlen(buffer());
+  if (previousTextLength < maxTextSize() - 1) {
+    strlcpy(buffer() + previousTextLength, text,
+            maxTextSize() - previousTextLength);
   }
 }
 
-KDSize BufferTextView::minimalSizeForOptimalDisplay() const {
+KDSize AbstractBufferTextView::minimalSizeForOptimalDisplay() const {
   return KDFont::Font(font())->stringSize(text());
 }
 

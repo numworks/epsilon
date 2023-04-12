@@ -142,7 +142,7 @@ class CalculationController : public Shared::DoublePairTableController {
   ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCell
       m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
-  Escher::EvenOddBufferTextCell
+  Escher::SmallFontEvenOddBufferTextCell
       m_calculationCells[k_numberOfDisplayableCalculationCells];
   Escher::EvenOddCell m_hideableCell[k_numberOfHeaderColumns];
   Store* m_store;

@@ -9,7 +9,7 @@ ResultHomogeneityTableCell::ResultHomogeneityTableCell(
     Escher::SelectableTableViewDelegate *selectableTableViewDelegate,
     HomogeneityTest *test)
     : CategoricalTableCell(parentResponder, this, selectableTableViewDelegate),
-      DynamicCellsDataSource<EvenOddBufferTextCell,
+      DynamicCellsDataSource<InferenceEvenOddBufferCell,
                              k_homogeneityTableNumberOfReusableInnerCells>(
           this),
       m_statistic(test),
@@ -44,8 +44,8 @@ void ResultHomogeneityTableCell::willDisplayCellAtLocation(
       ((column == 0 && row == innerNumberOfRows()) ||
        (row == 0 && column == innerNumberOfColumns()))) {
     // Override to display "Total" instead
-    Escher::EvenOddBufferTextCell *myCell =
-        static_cast<Escher::EvenOddBufferTextCell *>(cell);
+    InferenceEvenOddBufferCell *myCell =
+        static_cast<InferenceEvenOddBufferCell *>(cell);
     myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);
     myCell->setText(I18n::translate(I18n::Message::Total));
     myCell->setEven(row % 2 == 0);
@@ -56,7 +56,8 @@ void ResultHomogeneityTableCell::willDisplayCellAtLocation(
 
 void ResultHomogeneityTableCell::willDisplayInnerCellAtLocation(
     Escher::HighlightCell *cell, int column, int row) {
-  EvenOddBufferTextCell *myCell = static_cast<EvenOddBufferTextCell *>(cell);
+  InferenceEvenOddBufferCell *myCell =
+      static_cast<InferenceEvenOddBufferCell *>(cell);
 
   double value;
   if (m_mode == Mode::ExpectedValue) {
@@ -80,17 +81,17 @@ void ResultHomogeneityTableCell::willDisplayInnerCellAtLocation(
 
 void ResultHomogeneityTableCell::createCells() {
   if (DynamicCellsDataSource<
-          EvenOddBufferTextCell,
+          InferenceEvenOddBufferCell,
           k_homogeneityTableNumberOfReusableHeaderCells>::m_cells == nullptr) {
-    DynamicCellsDataSource<EvenOddBufferTextCell,
+    DynamicCellsDataSource<InferenceEvenOddBufferCell,
                            k_homogeneityTableNumberOfReusableHeaderCells>::
         createCellsWithOffset(0);
-    DynamicCellsDataSource<EvenOddBufferTextCell,
+    DynamicCellsDataSource<InferenceEvenOddBufferCell,
                            k_homogeneityTableNumberOfReusableInnerCells>::
         createCellsWithOffset(k_homogeneityTableNumberOfReusableHeaderCells *
-                              sizeof(EvenOddBufferTextCell));
+                              sizeof(InferenceEvenOddBufferCell));
     DynamicCellsDataSource<
-        EvenOddBufferTextCell,
+        InferenceEvenOddBufferCell,
         k_homogeneityTableNumberOfReusableHeaderCells>::m_delegate->tableView()
         ->reloadData(false);
   }
@@ -98,10 +99,10 @@ void ResultHomogeneityTableCell::createCells() {
 
 void ResultHomogeneityTableCell::destroyCells() {
   DynamicCellsDataSource<
-      EvenOddBufferTextCell,
+      InferenceEvenOddBufferCell,
       k_homogeneityTableNumberOfReusableInnerCells>::destroyCells();
   DynamicCellsDataSource<
-      EvenOddBufferTextCell,
+      InferenceEvenOddBufferCell,
       k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
 }
 

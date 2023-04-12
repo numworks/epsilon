@@ -77,7 +77,8 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell *cell,
     float min, max;
     bool isAuto = false;
     int i =
-        static_cast<MenuCell<MessageTextView, BufferTextView, ChevronView> *>(
+        static_cast<
+            MenuCell<MessageTextView, OneLineBufferTextView<>, ChevronView> *>(
             cell) -
         m_rangeCells;
     if (i == 0) {

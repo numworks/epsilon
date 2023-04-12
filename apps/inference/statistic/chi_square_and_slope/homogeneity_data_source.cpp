@@ -9,15 +9,15 @@ using namespace Escher;
 namespace Inference {
 
 HomogeneityTableDataSource::HomogeneityTableDataSource()
-    : DynamicCellsDataSource<EvenOddBufferTextCell,
+    : DynamicCellsDataSource<InferenceEvenOddBufferCell,
                              k_homogeneityTableNumberOfReusableHeaderCells>(
           this),
       m_headerPrefix(I18n::Message::Group),
       m_topLeftCell(Escher::Palette::WallScreenDark) {}
 
-void HomogeneityTableDataSource::initCell(EvenOddBufferTextCell, void *cell,
-                                          int index) {
-  static_cast<EvenOddBufferTextCell *>(cell)->setFont(KDFont::Size::Small);
+void HomogeneityTableDataSource::initCell(InferenceEvenOddBufferCell,
+                                          void *cell, int index) {
+  static_cast<InferenceEvenOddBufferCell *>(cell)->setFont(KDFont::Size::Small);
 }
 
 int HomogeneityTableDataSource::reusableCellCount(int type) {
@@ -56,8 +56,8 @@ void HomogeneityTableDataSource::willDisplayCellAtLocation(
   }
   // Headers
   if (row == 0 || column == 0) {
-    Escher::EvenOddBufferTextCell *myCell =
-        static_cast<Escher::EvenOddBufferTextCell *>(cell);
+    InferenceEvenOddBufferCell *myCell =
+        static_cast<InferenceEvenOddBufferCell *>(cell);
     char digit;
     if (row == 0) {
       myCell->setAlignment(KDGlyph::k_alignCenter, KDGlyph::k_alignCenter);

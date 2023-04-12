@@ -155,11 +155,12 @@ void GraphController::reloadBannerView() {
   bool displayMean =
       (*m_selectedDotIndex == numberOfDotsOfCurve(*m_selectedCurveIndex));
   bool displayEquation = (*m_selectedDotIndex < 0);
-  char buffer[k_bannerViewTextBufferSize];
+  char buffer[BannerView::BannerBufferTextView::MaxTextSize()];
   Model::Type modelType = regressionTypeOfCurve(*m_selectedCurveIndex);
   if (displayEquation && coefficientsAreDefined &&
-      buildRegressionExpression(buffer, k_bannerViewTextBufferSize, modelType,
-                                significantDigits, displayMode)) {
+      buildRegressionExpression(buffer,
+                                BannerView::BannerBufferTextView::MaxTextSize(),
+                                modelType, significantDigits, displayMode)) {
     // Regression equation fits in the banner, display it
     m_bannerView.setDisplayParameters(true, false, false);
     m_bannerView.otherView()->setText(buffer);
@@ -173,7 +174,7 @@ void GraphController::reloadBannerView() {
     // Display correlation coefficient
     m_bannerView.setDisplayParameters(true, false, !coefficientsAreDefined);
     Poincare::Print::CustomPrintf(
-        buffer, k_bannerViewTextBufferSize, "r=%*.*ed",
+        buffer, BannerView::BannerBufferTextView::MaxTextSize(), "r=%*.*ed",
         m_store->correlationCoefficient(selectedSeries), displayMode,
         significantDigits);
     m_bannerView.otherView()->setText(buffer);
@@ -188,15 +189,15 @@ void GraphController::reloadBannerView() {
   double x =
       displayMean ? m_store->meanOfColumn(selectedSeries, 0) : m_cursor->x();
   Poincare::Print::CustomPrintf(
-      buffer, Shared::BannerView::k_maxLengthDisplayed - 2, "%*.*ed", x,
-      displayMode, significantDigits);  // -2 for "x="
+      buffer, BannerView::BannerBufferTextView::MaxTextSize() - 3, "%*.*ed", x,
+      displayMode, significantDigits);  // -3 for "x\xCC\x85="
   m_bannerView.abscissaValue()->setText(buffer);
   m_bannerView.abscissaSymbol()->setText(displayMean ? "x\xCC\x85=" : "x=");
 
   double y =
       displayMean ? m_store->meanOfColumn(selectedSeries, 1) : m_cursor->y();
   Poincare::Print::CustomPrintf(
-      buffer, k_bannerViewTextBufferSize, "%s=%*.*ed",
+      buffer, BannerView::BannerBufferTextView::MaxTextSize(), "%s=%*.*ed",
       (displayMean
            ? "y\xCC\x85"
            : (displayEquation ? GlobalPreferences::sharedGlobalPreferences

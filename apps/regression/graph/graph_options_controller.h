@@ -56,7 +56,7 @@ class GraphOptionsController
 
   using RCell =
       Escher::MenuCell<Escher::ExpressionView, Escher::EmptyCellWidget,
-                       Escher::BufferTextView>;
+                       Escher::FloatBufferTextView<>>;
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>

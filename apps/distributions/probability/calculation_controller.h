@@ -89,7 +89,7 @@ class CalculationController : public Escher::ViewController,
     DistributionCurveView* distributionCurveView() {
       return &m_distributionCurveView;
     }
-    Escher::BufferTextView* unknownParameterValue() {
+    Escher::AbstractBufferTextView* unknownParameterValue() {
       return &m_unknownParameterBanner;
     }
     void reload() { layoutSubviews(true); }
@@ -102,7 +102,7 @@ class CalculationController : public Escher::ViewController,
     Escher::View* subviewAtIndex(int index) override;
     Escher::SelectableTableView* m_selectableTableView;
     DistributionCurveView m_distributionCurveView;
-    Escher::BufferTextView m_unknownParameterBanner;
+    Escher::OneLineBufferTextView<KDFont::Size::Large> m_unknownParameterBanner;
   };
   Calculation* m_calculation;
   Distribution* m_distribution;

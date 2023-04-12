@@ -76,7 +76,7 @@ class FormulaTemplateMenuController
       };
 
   using BufferTemplateCell =
-      Escher::MenuCell<Escher::ExpressionView, Escher::BufferTextView>;
+      Escher::MenuCell<Escher::ExpressionView, Escher::OneLineBufferTextView<>>;
   using MessageTemplateCell =
       Escher::MenuCell<Escher::ExpressionView, Escher::MessageTextView>;
 

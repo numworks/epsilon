@@ -15,9 +15,9 @@ class XYBannerView : public BannerView, EditableFieldBannerViewDelegate {
             parentResponder, inputEventHandlerDelegate, textFieldDelegate),
         m_ordinateView(k_bannerFieldFormat) {}
 
-  Escher::BufferTextView* abscissaSymbol() { return editableFieldLabel(); }
+  BannerBufferTextView* abscissaSymbol() { return editableFieldLabel(); }
   Escher::TextField* abscissaValue() { return editableField(); }
-  Escher::BufferTextView* ordinateView() { return &m_ordinateView; }
+  BannerBufferTextView* ordinateView() { return &m_ordinateView; }
   constexpr static int k_numberOfSubviews = 2;
 
  protected:
@@ -28,7 +28,7 @@ class XYBannerView : public BannerView, EditableFieldBannerViewDelegate {
 
  private:
   int numberOfSubviews() const override { return k_numberOfSubviews; }
-  Escher::BufferTextView m_ordinateView;
+  BannerBufferTextView m_ordinateView;
 };
 
 }  // namespace Shared

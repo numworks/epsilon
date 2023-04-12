@@ -137,8 +137,7 @@ void TitleBarView::layoutSubviews(bool force) {
 }
 
 void TitleBarView::refreshPreferences() {
-  constexpr size_t bufferSize = 13;
-  char buffer[bufferSize];
+  char buffer[k_preferenceTextSize];
   Preferences* preferences = Preferences::sharedPreferences;
   // Display Sci/ or Eng/ if the print float mode is not decimal
   const Preferences::PrintFloatMode printFloatMode = preferences->displayMode();
@@ -155,7 +154,7 @@ void TitleBarView::refreshPreferences() {
           ? I18n::Message::Deg
           : (angleUnit == Preferences::AngleUnit::Radian ? I18n::Message::Rad
                                                          : I18n::Message::Gon);
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "%s%s",
+  Poincare::Print::CustomPrintf(buffer, k_preferenceTextSize, "%s%s",
                                 I18n::translate(floatModeMessage),
                                 I18n::translate(angleMessage));
   m_preferenceView.setText(buffer);

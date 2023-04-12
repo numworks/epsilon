@@ -28,7 +28,7 @@ class LEDTestController : public Escher::ViewController {
     Escher::View* subviewAtIndex(int index) override;
     Escher::SolidColorView m_ledColorIndicatorView;
     Escher::SolidColorView m_ledColorOutlineView;
-    Escher::BufferTextView m_ledView;
+    Escher::OneLineBufferTextView<> m_ledView;
     ArrowView m_arrowView;
   };
   void setLEDColor(KDColor color);

@@ -79,8 +79,8 @@ class CalculationParameterController
   Escher::MenuCell<Escher::MessageTextView> m_integralCell;
   Escher::MenuCell<Escher::MessageTextView> m_tangentCell;
   Escher::MenuCell<Escher::MessageTextView> m_rootCell;
-  Escher::MenuCell<Escher::BufferTextView, Escher::EmptyCellWidget,
-                   HideableChevron>
+  Escher::MenuCell<Escher::OneLineBufferTextView<KDFont::Size::Large>,
+                   Escher::EmptyCellWidget, HideableChevron>
       m_areaCell;
   Ion::Storage::Record m_record;
   PreimageParameterController m_preimageParameterController;

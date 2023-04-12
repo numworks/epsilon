@@ -19,7 +19,9 @@ class VBlankTestController : public Escher::ViewController {
   class ContentView : public Escher::SolidColorView {
    public:
     ContentView();
-    Escher::BufferTextView* vBlankStateTextView() { return &m_vBlankStateView; }
+    Escher::AbstractBufferTextView* vBlankStateTextView() {
+      return &m_vBlankStateView;
+    }
     void setColor(KDColor color) override;
 
    private:
@@ -29,7 +31,7 @@ class VBlankTestController : public Escher::ViewController {
       assert(index == 0);
       return &m_vBlankStateView;
     }
-    Escher::BufferTextView m_vBlankStateView;
+    Escher::OneLineBufferTextView<> m_vBlankStateView;
   };
   constexpr static const char* k_vBlankOKText = "VBLANK: OK";
   constexpr static const char* k_vBlankFailTest = "VBLANK: FAIL";

@@ -24,6 +24,7 @@ class TitleBarView : public Escher::View {
   void reload();
 
  private:
+  constexpr static size_t k_preferenceTextSize = 8;
   constexpr static KDCoordinate k_alphaRightMargin = 5;
   constexpr static KDCoordinate k_examIconWidth = 18;
   constexpr static KDCoordinate k_examIconHeight = 9;
@@ -43,7 +44,7 @@ class TitleBarView : public Escher::View {
   Escher::MessageTextView m_titleView;
   BatteryView m_batteryView;
   ShiftAlphaLockView m_shiftAlphaLockView;
-  Escher::BufferTextView m_preferenceView;
+  Escher::BufferTextView<k_preferenceTextSize> m_preferenceView;
   Escher::ImageView m_examModeIconView;
   Escher::MessageTextView m_examModeTextView;
 };

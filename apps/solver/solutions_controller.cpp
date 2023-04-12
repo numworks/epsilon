@@ -269,8 +269,8 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
       deltaCell->setLayout(system->degree() == 2 ? m_delta2Layout
                                                  : m_delta3Layout);
     } else {
-      EvenOddBufferTextCell *symbolCell =
-          static_cast<EvenOddBufferTextCell *>(cell);
+      AbstractEvenOddBufferTextCell *symbolCell =
+          static_cast<AbstractEvenOddBufferTextCell *>(cell);
       /* Holds at maximum the variable name + 2 digits (for 10)
        * Quotation marks are removed to make the cell thinner.
        * (A variable name is either always inferior to 7 chars, except
@@ -319,16 +319,15 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
       assert(system->numberOfSolutions() > 0);
       if (system->type() == SystemOfEquations::Type::GeneralMonovariable) {
         // Get values of the solutions
-        EvenOddBufferTextCell *valueCell =
-            static_cast<EvenOddBufferTextCell *>(cell);
-        constexpr int precision =
-            Preferences::VeryLargeNumberOfSignificantDigits;
-        constexpr int bufferSize =
-            PrintFloat::charSizeForFloatsWithPrecision(precision);
+        AbstractEvenOddBufferTextCell *valueCell =
+            static_cast<AbstractEvenOddBufferTextCell *>(cell);
+
+        constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
+            AbstractEvenOddBufferTextCell::k_defaultPrecision);
         char bufferValue[bufferSize];
         PoincareHelpers::ConvertFloatToText<double>(
             system->solution(j)->approximate(), bufferValue, bufferSize,
-            precision);
+            AbstractEvenOddBufferTextCell::k_defaultPrecision);
         valueCell->setText(bufferValue);
       } else {
         const Solution *solution = system->solution(j);

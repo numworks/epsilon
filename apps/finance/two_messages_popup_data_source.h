@@ -14,12 +14,12 @@ class TwoMessagesPopupDataSource : public Escher::ListViewDataSource {
         m_message2(I18n::Message::Default) {}
   int numberOfRows() const override { return k_numberOfRows; }
   int reusableCellCount(int type) override { return k_numberOfRows; }
-  Escher::BufferTextHighlightCell *reusableCell(int i, int type) override {
+  Escher::SmallBufferTextHighlightCell *reusableCell(int i, int type) override {
     return &m_cells[i];
   }
   void willDisplayCellForIndex(Escher::HighlightCell *cell,
                                int index) override {
-    static_cast<Escher::BufferTextHighlightCell *>(cell)->setText(
+    static_cast<Escher::SmallBufferTextHighlightCell *>(cell)->setText(
         I18n::translate(index == 0 ? m_message1 : m_message2));
   }
   void setMessages(I18n::Message message1, I18n::Message message2) {
@@ -37,7 +37,7 @@ class TwoMessagesPopupDataSource : public Escher::ListViewDataSource {
 
   I18n::Message m_message1;
   I18n::Message m_message2;
-  Escher::BufferTextHighlightCell m_cells[k_numberOfRows];
+  Escher::SmallBufferTextHighlightCell m_cells[k_numberOfRows];
 };
 
 }  // namespace Finance

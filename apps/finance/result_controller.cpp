@@ -14,7 +14,7 @@ using namespace Finance;
 ResultController::ResultController(Escher::StackViewController* parentResponder)
     : Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
-                           Escher::BufferTextView>,
+                           Escher::FloatBufferTextView<>>,
           k_numberOfResultCells, Escher::MemoizedListViewDataSource>(
           parentResponder),
       m_messageView(I18n::Message::CalculatedValues,
@@ -33,10 +33,7 @@ void ResultController::didBecomeFirstResponder() {
       App::GetInterestData()->sublabelForParameter(
           App::GetInterestData()->getUnknown()));
   double value = App::GetInterestData()->computeUnknownValue();
-  constexpr int maxUserPrecision =
-      Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
-  constexpr int bufferSize =
-      Poincare::PrintFloat::charSizeForFloatsWithPrecision(maxUserPrecision);
+  constexpr int bufferSize = Escher::FloatBufferTextView<>::MaxTextSize();
   char buffer[bufferSize];
   int precision =
       Poincare::Preferences::sharedPreferences->numberOfSignificantDigits();

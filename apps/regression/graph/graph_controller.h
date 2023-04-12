@@ -55,9 +55,6 @@ class GraphController : public Shared::InteractiveCurveViewController {
   Poincare::Context *globalContext() const;
 
  private:
-  constexpr static size_t k_bannerViewTextBufferSize =
-      Shared::BannerView::k_maxLengthDisplayed + sizeof("ŷ");
-
   class CurveSelectionController : public Shared::CurveSelectionController {
    public:
     CurveSelectionController(GraphController *graphController)

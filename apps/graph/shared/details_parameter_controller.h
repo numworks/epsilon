@@ -16,7 +16,7 @@ namespace Graph {
 
 using DetailCell =
     Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
-                     Escher::BufferTextView>;
+                     Escher::OneLineBufferTextView<KDFont::Size::Large>>;
 
 class DetailsParameterController : public Escher::SelectableListViewController<
                                        Escher::MemoizedListViewDataSource>,

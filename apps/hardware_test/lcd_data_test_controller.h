@@ -31,8 +31,8 @@ class LCDDataTestController : public Escher::ViewController {
       assert(index >= 0 && index < 2);
       return index == 0 ? &m_lcdDataStateView : &m_lcdNumberPixelFailuresView;
     }
-    Escher::BufferTextView m_lcdDataStateView;
-    Escher::BufferTextView m_lcdNumberPixelFailuresView;
+    Escher::OneLineBufferTextView<> m_lcdDataStateView;
+    Escher::OneLineBufferTextView<> m_lcdNumberPixelFailuresView;
   };
   constexpr static int k_errorLimit = 0;
   void runTest();

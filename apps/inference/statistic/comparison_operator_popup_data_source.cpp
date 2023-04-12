@@ -25,8 +25,8 @@ ComparisonOperatorPopupDataSource::OperatorTypeForRow(int row) {
 
 void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(
     Escher::HighlightCell *cell, int index) {
-  BufferTextHighlightCell *bufferCell =
-      static_cast<BufferTextHighlightCell *>(cell);
+  SmallBufferTextHighlightCell *bufferCell =
+      static_cast<SmallBufferTextHighlightCell *>(cell);
   const char *symbol = m_test->hypothesisSymbol();
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];

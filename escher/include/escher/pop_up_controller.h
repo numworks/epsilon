@@ -88,7 +88,9 @@ class BufferPopUpController : public PopUpController {
   void setMessageWithPlaceholders(I18n::Message message, ...);
 
  private:
-  BufferTextView m_bufferTextView;
+  constexpr static int k_maxNumberOfLines = 5;
+  MultipleLinesBufferTextView<KDFont::Size::Small, k_maxNumberOfLines>
+      m_bufferTextView;
 };
 
 }  // namespace Escher

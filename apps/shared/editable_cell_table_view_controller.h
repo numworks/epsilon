@@ -1,6 +1,7 @@
 #ifndef SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 #define SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 
+#include <escher/even_odd_buffer_text_cell.h>
 #include <escher/regular_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/preferences.h>
@@ -46,7 +47,7 @@ class EditableCellTableViewController : public TabTableController,
       Escher::Metric::SmallEditableCellHeight;
   constexpr static KDCoordinate k_cellWidth =
       Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
-          Poincare::Preferences::VeryLargeNumberOfSignificantDigits) *
+          Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision) *
           KDFont::GlyphWidth(k_cellFont) +
       2 * Escher::Metric::SmallCellMargin;
   constexpr static KDCoordinate k_margin =

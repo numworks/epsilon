@@ -3,38 +3,24 @@
 
 namespace Escher {
 
-EvenOddBufferTextCell::EvenOddBufferTextCell(KDGlyph::Format format)
-    : EvenOddCell(), m_bufferTextView(format) {}
-
-const char* EvenOddBufferTextCell::text() const {
-  return m_bufferTextView.text();
+void AbstractEvenOddBufferTextCell::
+    updateSubviewsBackgroundAfterChangingState() {
+  bufferTextView()->setBackgroundColor(backgroundColor());
 }
 
-void EvenOddBufferTextCell::setText(const char* textContent) {
-  m_bufferTextView.setText(textContent);
-}
+int AbstractEvenOddBufferTextCell::numberOfSubviews() const { return 1; }
 
-void EvenOddBufferTextCell::setTextColor(KDColor textColor) {
-  m_bufferTextView.setTextColor(textColor);
-}
-
-void EvenOddBufferTextCell::updateSubviewsBackgroundAfterChangingState() {
-  m_bufferTextView.setBackgroundColor(backgroundColor());
-}
-
-int EvenOddBufferTextCell::numberOfSubviews() const { return 1; }
-
-View* EvenOddBufferTextCell::subviewAtIndex(int index) {
+View* AbstractEvenOddBufferTextCell::subviewAtIndex(int index) {
   assert(index == 0);
-  return &m_bufferTextView;
+  return bufferTextView();
 }
 
-void EvenOddBufferTextCell::layoutSubviews(bool force) {
+void AbstractEvenOddBufferTextCell::layoutSubviews(bool force) {
   KDRect boundsThis = bounds();
   KDRect boundsBuffer =
       KDRect(boundsThis.left() + k_horizontalMargin, boundsThis.top(),
              boundsThis.width() - 2 * k_horizontalMargin, boundsThis.height());
-  setChildFrame(&m_bufferTextView, boundsBuffer, force);
+  setChildFrame(bufferTextView(), boundsBuffer, force);
 }
 
 }  // namespace Escher

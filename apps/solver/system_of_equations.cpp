@@ -228,6 +228,10 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   }
   ab.setDimensions(m, n + 1);
 
+  assert(!ab.recursivelyMatches(
+      [](const Expression e, Context *context) { return e.isUninitialized(); },
+      context));
+
   // Compute the rank of (A|b)
   int rank = ab.rank(context, m_complexFormat, angleUnit, unitFormat,
                      ReductionTarget::SystemForApproximation, true);

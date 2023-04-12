@@ -45,6 +45,7 @@ class StoreColumnHelper {
                     ClearColumnHelper* clearColumnHelper);
 
   int referencedColumn() { return table()->selectedColumn(); }
+  int referencedMemoizationId();
   ClearColumnHelper* clearColumnHelper() { return m_clearColumnHelper; }
   void selectColumn(int columnIndex) { table()->selectColumn(columnIndex); }
 

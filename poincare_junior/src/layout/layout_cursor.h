@@ -1,13 +1,13 @@
 #ifndef POINCARE_JUNIOR_LAYOUT_CURSOR_H
 #define POINCARE_JUNIOR_LAYOUT_CURSOR_H
 
+#include <escher/text_field.h>
 #include <omg/directions.h>
+#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/layout/empty_rectangle.h>
-#include <poincare_junior/src/memory/node.h>
 #include <poincare_junior/src/layout/render.h>
 #include <poincare_junior/src/memory/edition_reference.h>
-#include <poincare_junior/include/layout.h>
-#include <escher/text_field.h>
+#include <poincare_junior/src/memory/node.h>
 
 #include "layout_selection.h"
 
@@ -54,7 +54,8 @@ class LayoutCursor {
                 "Maximal number of layouts in a layout field should be equal "
                 "to max number of char in text field");
 
-  LayoutCursor(int position, int startOfSelection) : m_position(position), m_startOfSelection(startOfSelection) {}
+  LayoutCursor(int position, int startOfSelection)
+      : m_position(position), m_startOfSelection(startOfSelection) {}
 
   // Definition
   bool isUninitialized() const { return cursorNode().isUninitialized(); }
@@ -113,7 +114,9 @@ class LayoutCursor {
 
  protected:
   virtual void setCursorNode(const Node node) = 0;
-  int cursorNodeOffset() const { return cursorNode().block() - rootNode().block(); }
+  int cursorNodeOffset() const {
+    return cursorNode().block() - rootNode().block();
+  }
 
   const Node leftLayout() const;
   const Node rightLayout() const;
@@ -121,7 +124,8 @@ class LayoutCursor {
 
   int leftMostPosition() const { return 0; }
   int rightmostPosition() const {
-    return Layout::IsHorizontal(cursorNode()) ? cursorNode().numberOfChildren() : 1;
+    return Layout::IsHorizontal(cursorNode()) ? cursorNode().numberOfChildren()
+                                              : 1;
   }
   bool horizontalMove(OMG::HorizontalDirection direction,
                       bool* shouldRedrawLayout);
@@ -152,18 +156,19 @@ class LayoutCursor {
 };
 
 class LayoutBufferCursor final : public LayoutCursor {
-public:
+ public:
   /* This constructor either set the cursor at the leftMost or rightmost
    * position in the layout. */
-  LayoutBufferCursor(TypeBlock * layoutBuffer, Node layout, OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right()) :
-      LayoutCursor(0, -1),
-      m_layoutBuffer(layoutBuffer) {
+  LayoutBufferCursor(
+      TypeBlock* layoutBuffer, Node layout,
+      OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
+      : LayoutCursor(0, -1), m_layoutBuffer(layoutBuffer) {
     if (!layout.isUninitialized()) {
       setLayout(layout, sideOfLayout);
     }
   }
 
-  TypeBlock * layoutBuffer() { return m_layoutBuffer; }
+  TypeBlock* layoutBuffer() { return m_layoutBuffer; }
   const Node rootNode() const override { return Node(m_layoutBuffer); }
   const Node cursorNode() const override { return m_cursorNode; }
 
@@ -179,25 +184,28 @@ public:
     execute(&EditionPoolCursor::addEmptyTenPowerLayout, context);
   }
   void addFractionLayoutAndCollapseSiblings(Context* context);
-  void insertText(const char* text, Context* context, bool forceRight = false, bool forceLeft = false, bool linearMode = false) {
-    EditionPoolCursor::InsertTextContext insertTextContext{text, forceRight, forceLeft, linearMode};
+  void insertText(const char* text, Context* context, bool forceRight = false,
+                  bool forceLeft = false, bool linearMode = false) {
+    EditionPoolCursor::InsertTextContext insertTextContext{
+        text, forceRight, forceLeft, linearMode};
     execute(&EditionPoolCursor::insertText, context, &insertTextContext);
   }
-  void insertLayout(const Node tree, Context* context, bool forceRight = false, bool forceLeft = false) {
-    EditionPoolCursor::InsertLayoutContext insertLayoutContext{tree, forceRight, forceLeft};
+  void insertLayout(const Node tree, Context* context, bool forceRight = false,
+                    bool forceLeft = false) {
+    EditionPoolCursor::InsertLayoutContext insertLayoutContext{tree, forceRight,
+                                                               forceLeft};
     execute(&EditionPoolCursor::insertLayout, context, &insertLayoutContext);
   }
   void deleteAndResetSelection() {
     execute(&EditionPoolCursor::deleteAndResetSelection);
   }
-  void performBackspace() {
-    execute(&EditionPoolCursor::performBackspace);
-  }
+  void performBackspace() { execute(&EditionPoolCursor::performBackspace); }
 
-private:
+ private:
   class EditionPoolCursor final : public LayoutCursor {
-  friend class LayoutBufferCursor;
-    EditionPoolCursor(int position, int startOfSelection, int cursorOffset) : LayoutCursor(position, startOfSelection) {
+    friend class LayoutBufferCursor;
+    EditionPoolCursor(int position, int startOfSelection, int cursorOffset)
+        : LayoutCursor(position, startOfSelection) {
       setCursorNode(Node(rootNode().block() + cursorOffset));
     }
 
@@ -207,48 +215,52 @@ private:
     const Node cursorNode() const override { return m_cursorReference; }
 
     // EditionPoolCursor Actions
-    void performBackspace(Context *context, const void * nullptrData);
-    void deleteAndResetSelection(Context *context, const void * nullptrData);
-    void addEmptyExponentialLayout(Context *context, const void * nullptrData);
-    void addEmptyTenPowerLayout(Context *context, const void * nullptrData);
+    void performBackspace(Context* context, const void* nullptrData);
+    void deleteAndResetSelection(Context* context, const void* nullptrData);
+    void addEmptyExponentialLayout(Context* context, const void* nullptrData);
+    void addEmptyTenPowerLayout(Context* context, const void* nullptrData);
     struct InsertLayoutContext {
       const Node m_tree;
       bool m_forceRight, m_forceLeft;
     };
-    void insertLayout(Context *context, const void * insertLayoutContext);
+    void insertLayout(Context* context, const void* insertLayoutContext);
     struct InsertTextContext {
       const char* m_text;
       bool m_forceRight, m_forceLeft, m_linearMode;
     };
-    void insertText(Context *context, const void * insertTextContext);
+    void insertText(Context* context, const void* insertTextContext);
 
-    void privateDelete(Render::DeletionMethod deletionMethod, bool deletionAppliedToParent);
+    void privateDelete(Render::DeletionMethod deletionMethod,
+                       bool deletionAppliedToParent);
     void setCursorNode(const Node node) override {
       m_cursorReference = EditionReference(node);
-      assert(cursorNodeOffset() >= 0 && cursorNodeOffset() < k_layoutBufferSize);
+      assert(cursorNodeOffset() >= 0 &&
+             cursorNodeOffset() < k_layoutBufferSize);
     }
 
     EditionReference m_cursorReference;
   };
   EditionPoolCursor createEditionPoolCursor() const {
-    return EditionPoolCursor(m_position, m_startOfSelection, cursorNodeOffset());
+    return EditionPoolCursor(m_position, m_startOfSelection,
+                             cursorNodeOffset());
   }
   void applyEditionPoolCursor(EditionPoolCursor cursor);
-  typedef void (EditionPoolCursor::*Action)(Context *context, const void * data);
+  typedef void (EditionPoolCursor::*Action)(Context* context, const void* data);
   struct ExecutionContext {
-    LayoutBufferCursor * m_cursor;
+    LayoutBufferCursor* m_cursor;
     Action m_action;
     int m_cursorOffset;
-    Context * m_context;
+    Context* m_context;
   };
-  bool execute(Action action, Context *context = nullptr, const void * data = nullptr);
+  bool execute(Action action, Context* context = nullptr,
+               const void* data = nullptr);
   void setCursorNode(const Node node) override {
     m_cursorNode = node;
     assert(cursorNodeOffset() >= 0 && cursorNodeOffset() < k_layoutBufferSize);
   }
 
   // Buffer of cursor's layout
-  TypeBlock * m_layoutBuffer;
+  TypeBlock* m_layoutBuffer;
   // Cursor's node
   Node m_cursorNode;
 };

@@ -1,14 +1,15 @@
-#include "helper.h"
-#include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/memory/pattern_matching.h>
 #include <quiz.h>
+
+#include "helper.h"
 
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_placeholders) {
   using namespace PatternMatching::Placeholders;
   constexpr Tree a = A;
-  (void) KAdd(2_e, a, A);
+  (void)KAdd(2_e, a, A);
 }
 
 QUIZ_CASE(pcj_context) {

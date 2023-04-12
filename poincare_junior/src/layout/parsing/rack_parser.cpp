@@ -2,18 +2,16 @@
 
 #include <ion/unicode/utf8_decoder.h>
 // #include <poincare/empty_context.h>
+#include <omgpj/unicode_helper.h>
 #include <poincare_junior/src/expression/approximation.h>
-#include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/expression/integer.h>
+#include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/expression/p_pusher.h>
+#include <poincare_junior/src/layout/parser.h>
+#include <poincare_junior/src/layout/vertical_offset_layout.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
 #include <poincare_junior/src/n_ary.h>
 #include <stdlib.h>
-
-#include <poincare_junior/src/layout/parser.h>
-#include <poincare_junior/src/layout/vertical_offset_layout.h>
-
-#include <omgpj/unicode_helper.h>
 
 #include <algorithm>
 #include <utility>
@@ -25,9 +23,9 @@ namespace PoincareJ {
 EditionReference RackParser::parse() {
   size_t endPosition = m_tokenizer.endPosition();
   // size_t rightwardsArrowPosition = UTF8Helper::CodePointSearch(
-      // m_tokenizer.currentPosition(), UCodePointRightwardsArrow, endPosition);
+  // m_tokenizer.currentPosition(), UCodePointRightwardsArrow, endPosition);
   // if (rightwardsArrowPosition != endPosition) {
-    // return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
+  // return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
   // }
   EditionReference result = initializeFirstTokenAndParseUntilEnd();
   if (m_status == Status::Success) {
@@ -62,7 +60,7 @@ EditionReference RackParser::parseExpressionWithRightwardsArrow(
 
   // Step 1. Parse as unitConversion
   m_parsingContext.setParsingMethod(
-    ParsingContext::ParsingMethod::Classic /*UnitConversion*/);
+      ParsingContext::ParsingMethod::Classic /*UnitConversion*/);
   size_t startingPosition;
   rememberCurrentParsingPosition(&startingPosition);
   EditionReference result = initializeFirstTokenAndParseUntilEnd();
@@ -76,43 +74,43 @@ EditionReference RackParser::parseExpressionWithRightwardsArrow(
   // Step 2. Parse as assignment, starting with rightHandSide.
   // m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
   // m_tokenizer.goToPosition(
-      // rightwardsArrowPosition +
-      // UTF8Decoder::CharSizeOfCodePoint(UCodePointRightwardsArrow));
+  // rightwardsArrowPosition +
+  // UTF8Decoder::CharSizeOfCodePoint(UCodePointRightwardsArrow));
   // EditionReference rightHandSide = initializeFirstTokenAndParseUntilEnd();
   // if (m_nextToken.is(Token::Type::EndOfStream) &&
-      // !rightHandSide.isUninitialized() &&
-      // (rightHandSide.type() ==
-           // ExpressionNode::Type::Symbol  // RightHandSide must be symbol or
-                                         // function.
-       // || (rightHandSide.type() == ExpressionNode::Type::Function &&
-           // rightHandSide.childAtIndex(0).type() ==
-               // ExpressionNode::Type::Symbol))) {
-    // restorePreviousParsingPosition(startingPosition);
-    // m_status = Status::Progress;
-    // m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
-    // EmptyContext tempContext = EmptyContext();
-    // This is instatiated outside the condition so that the pointer is not
-    // lost.
-    // VariableContext assignmentContext("", &tempContext);
-    // if (rightHandSide.type() == ExpressionNode::Type::Function &&
-        // m_parsingContext.context()) {
-      /* If assigning a function, set the function parameter in the context
-       * for parsing leftHandSide.
-       * This is to ensure that 3g->f(g) is correctly parsed */
-      // EditionReference functionParameter = rightHandSide.childAtIndex(0);
-      // assignmentContext = VariableContext(
-          // static_cast<Symbol &>(functionParameter), m_parsingContext.context());
-      // m_parsingContext.setContext(&assignmentContext);
-    // }
-    // Parse leftHandSide
-    // m_nextToken = m_tokenizer.popToken();
-    // EditionReference leftHandSide = parseUntil(Token::Type::RightwardsArrow);
-    // if (m_status != Status::Error) {
-      // m_status = Status::Success;
-      // result = Store::Builder(leftHandSide,
-                              // static_cast<SymbolAbstract &>(rightHandSide));
-      // return result;
-    // }
+  // !rightHandSide.isUninitialized() &&
+  // (rightHandSide.type() ==
+  // ExpressionNode::Type::Symbol  // RightHandSide must be symbol or
+  // function.
+  // || (rightHandSide.type() == ExpressionNode::Type::Function &&
+  // rightHandSide.childAtIndex(0).type() ==
+  // ExpressionNode::Type::Symbol))) {
+  // restorePreviousParsingPosition(startingPosition);
+  // m_status = Status::Progress;
+  // m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
+  // EmptyContext tempContext = EmptyContext();
+  // This is instatiated outside the condition so that the pointer is not
+  // lost.
+  // VariableContext assignmentContext("", &tempContext);
+  // if (rightHandSide.type() == ExpressionNode::Type::Function &&
+  // m_parsingContext.context()) {
+  /* If assigning a function, set the function parameter in the context
+   * for parsing leftHandSide.
+   * This is to ensure that 3g->f(g) is correctly parsed */
+  // EditionReference functionParameter = rightHandSide.childAtIndex(0);
+  // assignmentContext = VariableContext(
+  // static_cast<Symbol &>(functionParameter), m_parsingContext.context());
+  // m_parsingContext.setContext(&assignmentContext);
+  // }
+  // Parse leftHandSide
+  // m_nextToken = m_tokenizer.popToken();
+  // EditionReference leftHandSide = parseUntil(Token::Type::RightwardsArrow);
+  // if (m_status != Status::Error) {
+  // m_status = Status::Success;
+  // result = Store::Builder(leftHandSide,
+  // static_cast<SymbolAbstract &>(rightHandSide));
+  // return result;
+  // }
   // }
   m_status = Status::Error;
   return EditionReference();
@@ -130,22 +128,22 @@ EditionReference RackParser::initializeFirstTokenAndParseUntilEnd() {
 // Private
 
 EditionReference RackParser::parseUntil(Token::Type stoppingType,
-                              EditionReference leftHandSide) {
+                                        EditionReference leftHandSide) {
   typedef void (RackParser::*TokenParser)(EditionReference & leftHandSide,
-                                      Token::Type stoppingType);
+                                          Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
-      &RackParser::parseUnexpected,          // Token::Type::EndOfStream
-      &RackParser::parseRightwardsArrow,     // Token::Type::RightwardsArrow
-      &RackParser::parseAssigmentEqual,      // Token::Type::AssignmentEqual
-      &RackParser::parseUnexpected,          // Token::Type::RightBracket
-      &RackParser::parseUnexpected,          // Token::Type::RightParenthesis
-      &RackParser::parseUnexpected,          // Token::Type::RightBrace
-      &RackParser::parseUnexpected,          // Token::Type::Comma
-      nullptr, //&Parser::parseNorOperator,         // Token::Type::Nor
-      nullptr, //&Parser::parseXorOperator,         // Token::Type::Xor
-      nullptr, //&Parser::parseOrOperator,          // Token::Type::Or
-      nullptr, //&Parser::parseNandOperator,        // Token::Type::Nand
-      nullptr, //&Parser::parseAndOperator,         // Token::Type::And
+      &RackParser::parseUnexpected,       // Token::Type::EndOfStream
+      &RackParser::parseRightwardsArrow,  // Token::Type::RightwardsArrow
+      &RackParser::parseAssigmentEqual,   // Token::Type::AssignmentEqual
+      &RackParser::parseUnexpected,       // Token::Type::RightBracket
+      &RackParser::parseUnexpected,       // Token::Type::RightParenthesis
+      &RackParser::parseUnexpected,       // Token::Type::RightBrace
+      &RackParser::parseUnexpected,       // Token::Type::Comma
+      nullptr,  //&Parser::parseNorOperator,         // Token::Type::Nor
+      nullptr,  //&Parser::parseXorOperator,         // Token::Type::Xor
+      nullptr,  //&Parser::parseOrOperator,          // Token::Type::Or
+      nullptr,  //&Parser::parseNandOperator,        // Token::Type::Nand
+      nullptr,  //&Parser::parseAndOperator,         // Token::Type::And
       &RackParser::parseLogicalOperatorNot,  // Token::Type::Not
       &RackParser::parseComparisonOperator,  // Token::Type::ComparisonOperator
       &RackParser::parseNorthEastArrow,      // Token::Type::NorthEastArrow
@@ -160,9 +158,9 @@ EditionReference RackParser::parseUntil(Token::Type stoppingType,
       &RackParser::parseBang,                // Token::Type::Bang
       &RackParser::
           parseImplicitAdditionBetweenUnits,  // Token::Type::ImplicitAdditionBetweenUnits
-      &RackParser::parseMatrix,                   // Token::Type::LeftBracket
-      &RackParser::parseLeftParenthesis,  // Token::Type::LeftParenthesis
-      &RackParser::parseList,             // Token::Type::LeftBrace
+      &RackParser::parseMatrix,               // Token::Type::LeftBracket
+      &RackParser::parseLeftParenthesis,    // Token::Type::LeftParenthesis
+      &RackParser::parseList,               // Token::Type::LeftBrace
       &RackParser::parseConstant,           // Token::Type::Constant
       &RackParser::parseNumber,             // Token::Type::Number
       &RackParser::parseNumber,             // Token::Type::BinaryNumber
@@ -196,20 +194,20 @@ EditionReference RackParser::parseUntil(Token::Type stoppingType,
                     &RackParser::parseUnexpected,
                 "Wrong order of TokenParsers");
   // static_assert(tokenParsers[static_cast<int>(Token::Type::Nor)] ==
-                    // &Parser::parseNorOperator,
-                // "Wrong order of TokenParsers");
+  // &Parser::parseNorOperator,
+  // "Wrong order of TokenParsers");
   // static_assert(tokenParsers[static_cast<int>(Token::Type::Xor)] ==
-                    // &Parser::parseXorOperator,
-                // "Wrong order of TokenParsers");
+  // &Parser::parseXorOperator,
+  // "Wrong order of TokenParsers");
   // static_assert(tokenParsers[static_cast<int>(Token::Type::Or)] ==
-                    // &Parser::parseOrOperator,
-                // "Wrong order of TokenParsers");
+  // &Parser::parseOrOperator,
+  // "Wrong order of TokenParsers");
   // static_assert(tokenParsers[static_cast<int>(Token::Type::Nand)] ==
-                    // &Parser::parseNandOperator,
-                // "Wrong order of TokenParsers");
+  // &Parser::parseNandOperator,
+  // "Wrong order of TokenParsers");
   // static_assert(tokenParsers[static_cast<int>(Token::Type::And)] ==
-                    // &Parser::parseAndOperator,
-                // "Wrong order of TokenParsers");
+  // &Parser::parseAndOperator,
+  // "Wrong order of TokenParsers");
   static_assert(tokenParsers[static_cast<int>(Token::Type::Not)] ==
                     &RackParser::parseLogicalOperatorNot,
                 "Wrong order of TokenParsers");
@@ -223,30 +221,30 @@ EditionReference RackParser::parseUntil(Token::Type stoppingType,
   static_assert(tokenParsers[static_cast<int>(Token::Type::SouthEastArrow)] ==
                     &RackParser::parseSouthEastArrow,
                 "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Plus)] == &RackParser::parsePlus,
-      "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Minus)] == &RackParser::parseMinus,
-      "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Times)] == &RackParser::parseTimes,
-      "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Slash)] == &RackParser::parseSlash,
-      "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Plus)] ==
+                    &RackParser::parsePlus,
+                "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Minus)] ==
+                    &RackParser::parseMinus,
+                "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Times)] ==
+                    &RackParser::parseTimes,
+                "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Slash)] ==
+                    &RackParser::parseSlash,
+                "Wrong order of TokenParsers");
   static_assert(tokenParsers[static_cast<int>(Token::Type::ImplicitTimes)] ==
                     &RackParser::parseImplicitTimes,
                 "Wrong order of TokenParsers");
   static_assert(tokenParsers[static_cast<int>(Token::Type::Percent)] ==
                     &RackParser::parsePercent,
                 "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Caret)] == &RackParser::parseCaret,
-      "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Bang)] == &RackParser::parseBang,
-      "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Caret)] ==
+                    &RackParser::parseCaret,
+                "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Bang)] ==
+                    &RackParser::parseBang,
+                "Wrong order of TokenParsers");
   static_assert(tokenParsers[static_cast<int>(
                     Token::Type::ImplicitAdditionBetweenUnits)] ==
                     &RackParser::parseImplicitAdditionBetweenUnits,
@@ -273,9 +271,9 @@ EditionReference RackParser::parseUntil(Token::Type stoppingType,
       tokenParsers[static_cast<int>(Token::Type::HexadecimalNumber)] ==
           &RackParser::parseNumber,
       "Wrong order of TokenParsers");
-  static_assert(
-      tokenParsers[static_cast<int>(Token::Type::Unit)] == &RackParser::parseUnit,
-      "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Unit)] ==
+                    &RackParser::parseUnit,
+                "Wrong order of TokenParsers");
   static_assert(tokenParsers[static_cast<int>(Token::Type::ReservedFunction)] ==
                     &RackParser::parseReservedFunction,
                 "Wrong order of TokenParsers");
@@ -354,7 +352,8 @@ void RackParser::isThereImplicitOperator() {
    * to true, so that popToken, popTokenIfType, nextTokenHasPrecedenceOver can
    * handle implicit multiplication. */
   m_pendingImplicitOperator =
-    ((m_nextToken.is(Token::Type::Layout) && m_nextToken.firstLayout().type() != BlockType::VerticalOffsetLayout) ||
+      ((m_nextToken.is(Token::Type::Layout) &&
+        m_nextToken.firstLayout().type() != BlockType::VerticalOffsetLayout) ||
        m_nextToken.is(Token::Type::Number) ||
        m_nextToken.is(Token::Type::Constant) ||
        m_nextToken.is(Token::Type::Unit) ||
@@ -376,11 +375,12 @@ Token::Type RackParser::implicitOperatorType() {
 }
 
 void RackParser::parseUnexpected(EditionReference &leftHandSide,
-                             Token::Type stoppingType) {
+                                 Token::Type stoppingType) {
   m_status = Status::Error;  // Unexpected Token
 }
 
-void RackParser::parseNumber(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parseNumber(EditionReference &leftHandSide,
+                             Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // FIXME
     return;
@@ -389,9 +389,12 @@ void RackParser::parseNumber(EditionReference &leftHandSide, Token::Type stoppin
   size_t start = rack.indexOfChild(m_currentToken.firstLayout());
   size_t end = start + m_currentToken.length();
   OMG::Base base(OMG::Base::Decimal);
-  if (m_currentToken.type() == Token::Type::HexadecimalNumber || m_currentToken.type() == Token::Type::BinaryNumber) {
-    start += 2; // Skip 0b / 0x prefix
-    base = m_currentToken.type() == Token::Type::HexadecimalNumber ? OMG::Base::Hexadecimal : OMG::Base::Binary;
+  if (m_currentToken.type() == Token::Type::HexadecimalNumber ||
+      m_currentToken.type() == Token::Type::BinaryNumber) {
+    start += 2;  // Skip 0b / 0x prefix
+    base = m_currentToken.type() == Token::Type::HexadecimalNumber
+               ? OMG::Base::Hexadecimal
+               : OMG::Base::Binary;
     RackLayoutDecoder decoder(rack, start, end);
     leftHandSide = Integer::Push(decoder, base);
   } else {
@@ -403,10 +406,11 @@ void RackParser::parseNumber(EditionReference &leftHandSide, Token::Type stoppin
        * point, except when there is no point */
       decoder.setPosition(start);
     }
-    size_t smallE =
-      OMG::CodePointSearch(&decoder, 'E');  // UCodePointLatinLetterSmallCapitalE);
+    size_t smallE = OMG::CodePointSearch(
+        &decoder, 'E');  // UCodePointLatinLetterSmallCapitalE);
 
-    RackLayoutDecoder integerDigits(rack, start, std::min(smallE, decimalPoint));
+    RackLayoutDecoder integerDigits(rack, start,
+                                    std::min(smallE, decimalPoint));
     RackLayoutDecoder fractionalDigits(rack, decimalPoint + 1, smallE);
     RackLayoutDecoder exponent(rack, smallE + 1,
                                end);  // TODO may have a minus sign
@@ -415,21 +419,21 @@ void RackParser::parseNumber(EditionReference &leftHandSide, Token::Type stoppin
       // Decimal integer
       leftHandSide = Integer::Push(integerDigits, OMG::Base::Decimal);
     } else {
-      /* Build (integerDigits + fractionalDigits * 10^(-numberOfFractionalDigits))
+      /* Build (integerDigits + fractionalDigits *
+       * 10^(-numberOfFractionalDigits))
        *           * 10^(exponent) */
       leftHandSide = P_MULT(
-        P_ADD(
-          Integer::Push(integerDigits, base),
-          P_MULT(
-            Integer::Push(fractionalDigits, base),
-            P_POW(EditionReference::Clone(10_e),
-                  EditionReference::Push<BlockType::IntegerShort>(
-                    static_cast<int8_t>(-smallE + decimalPoint + 1))))),
-        P_POW(EditionReference::Clone(10_e), Integer::Push(exponent, base)));
+          P_ADD(Integer::Push(integerDigits, base),
+                P_MULT(Integer::Push(fractionalDigits, base),
+                       P_POW(EditionReference::Clone(10_e),
+                             EditionReference::Push<BlockType::IntegerShort>(
+                                 static_cast<int8_t>(-smallE + decimalPoint +
+                                                     1))))),
+          P_POW(EditionReference::Clone(10_e), Integer::Push(exponent, base)));
 
       float value = Approximation::To<float>(leftHandSide);
       leftHandSide = leftHandSide.replaceTreeByTree(
-        EditionReference::Push<BlockType::Float>(value));
+          EditionReference::Push<BlockType::Float>(value));
     }
   }
 
@@ -450,16 +454,18 @@ void RackParser::parseNumber(EditionReference &leftHandSide, Token::Type stoppin
   isThereImplicitOperator();
 }
 
-void RackParser::parsePlus(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parsePlus(EditionReference &leftHandSide,
+                           Token::Type stoppingType) {
   privateParsePlusAndMinus(leftHandSide, true, stoppingType);
 }
 
-void RackParser::parseMinus(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parseMinus(EditionReference &leftHandSide,
+                            Token::Type stoppingType) {
   privateParsePlusAndMinus(leftHandSide, false, stoppingType);
 }
 
-void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide, bool plus,
-                                      Token::Type stoppingType) {
+void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
+                                          bool plus, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     // +2 = 2, -2 = -2
     EditionReference rightHandSide =
@@ -469,7 +475,8 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide, bool p
         leftHandSide = rightHandSide;
       } else {
         // TODO Opposite instead of multiplication by -1
-        rightHandSide.insertNodeBeforeNode(Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
+        rightHandSide.insertNodeBeforeNode(
+            Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
         rightHandSide.insertNodeBeforeNode(-1_e);
         leftHandSide = rightHandSide.previousNode().previousNode();
       }
@@ -479,15 +486,15 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide, bool p
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus)) {
     // if (rightHandSide.type() == ExpressionNode::Type::PercentSimple &&
-        // rightHandSide.childAtIndex(0).type() !=
-            // ExpressionNode::Type::PercentSimple) {
-      /* The condition checks if the percent does not contain a percent because
-       * "4+3%%" should be parsed as "4+((3/100)/100)" rather than "4↗0.03%" */
-      // leftHandSide = PercentAddition::Builder(
-          // leftHandSide, plus
-                            // ? rightHandSide.childAtIndex(0)
-                            // : Opposite::Builder(rightHandSide.childAtIndex(0)));
-      // return;
+    // rightHandSide.childAtIndex(0).type() !=
+    // ExpressionNode::Type::PercentSimple) {
+    /* The condition checks if the percent does not contain a percent because
+     * "4+3%%" should be parsed as "4+((3/100)/100)" rather than "4↗0.03%" */
+    // leftHandSide = PercentAddition::Builder(
+    // leftHandSide, plus
+    // ? rightHandSide.childAtIndex(0)
+    // : Opposite::Builder(rightHandSide.childAtIndex(0)));
+    // return;
     // }
     assert(leftHandSide.nextTree() == rightHandSide);
     if (!plus) {
@@ -496,53 +503,56 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide, bool p
       return;
     }
     if (leftHandSide.type() == BlockType::Addition) {
-      NAry::SetNumberOfChildren(leftHandSide, leftHandSide.numberOfChildren() + 1);
+      NAry::SetNumberOfChildren(leftHandSide,
+                                leftHandSide.numberOfChildren() + 1);
     } else {
-      leftHandSide.insertNodeBeforeNode(Tree<BlockType::Addition, 2, BlockType::Addition>());
+      leftHandSide.insertNodeBeforeNode(
+          Tree<BlockType::Addition, 2, BlockType::Addition>());
       leftHandSide = leftHandSide.previousNode();
     }
   }
 }
 
 void RackParser::parseNorthEastArrow(EditionReference &leftHandSide,
-                                 Token::Type stoppingType) {
+                                     Token::Type stoppingType) {
   privateParseEastArrow(leftHandSide, true, stoppingType);
 }
 
 void RackParser::parseSouthEastArrow(EditionReference &leftHandSide,
-                                 Token::Type stoppingType) {
+                                     Token::Type stoppingType) {
   privateParseEastArrow(leftHandSide, false, stoppingType);
 }
 
-void RackParser::privateParseEastArrow(EditionReference &leftHandSide, bool north,
-                                   Token::Type stoppingType) {
+void RackParser::privateParseEastArrow(EditionReference &leftHandSide,
+                                       bool north, Token::Type stoppingType) {
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus)) {
     // if (rightHandSide.type() == ExpressionNode::Type::PercentSimple &&
-        // rightHandSide.childAtIndex(0).type() !=
-            // ExpressionNode::Type::PercentSimple) {
-      // leftHandSide = PercentAddition::Builder(
-          // leftHandSide, north
-                            // ? rightHandSide.childAtIndex(0)
-                            // : Opposite::Builder(rightHandSide.childAtIndex(0)));
-      // return;
+    // rightHandSide.childAtIndex(0).type() !=
+    // ExpressionNode::Type::PercentSimple) {
+    // leftHandSide = PercentAddition::Builder(
+    // leftHandSide, north
+    // ? rightHandSide.childAtIndex(0)
+    // : Opposite::Builder(rightHandSide.childAtIndex(0)));
+    // return;
     // }
     m_status = Status::Error;
     return;
   }
 }
 
-void RackParser::parseTimes(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parseTimes(EditionReference &leftHandSide,
+                            Token::Type stoppingType) {
   privateParseTimes(leftHandSide, Token::Type::Times);
 }
 
 void RackParser::parseImplicitTimes(EditionReference &leftHandSide,
-                                Token::Type stoppingType) {
+                                    Token::Type stoppingType) {
   privateParseTimes(leftHandSide, Token::Type::ImplicitTimes);
 }
 
-void RackParser::parseImplicitAdditionBetweenUnits(EditionReference &leftHandSide,
-                                               Token::Type stoppingType) {
+void RackParser::parseImplicitAdditionBetweenUnits(
+    EditionReference &leftHandSide, Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
   assert(m_parsingContext.parsingMethod() !=
          ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
@@ -550,8 +560,8 @@ void RackParser::parseImplicitAdditionBetweenUnits(EditionReference &leftHandSid
    * ParsingMethod::ImplicitAdditionBetweenUnits. */
   // TODO we need to be able to set the initial parsing position for this
   // Parser p(m_currentToken.text(), /*m_parsingContext.context(),*/
-           // m_currentToken.text() + m_currentToken.length(),
-           // ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
+  // m_currentToken.text() + m_currentToken.length(),
+  // ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
   // leftHandSide = p.parse();
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;
@@ -560,7 +570,8 @@ void RackParser::parseImplicitAdditionBetweenUnits(EditionReference &leftHandSid
   isThereImplicitOperator();
 }
 
-void RackParser::parseSlash(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parseSlash(EditionReference &leftHandSide,
+                            Token::Type stoppingType) {
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash)) {
     leftHandSide.insertNodeBeforeNode(Tree<BlockType::Division>());
@@ -569,25 +580,29 @@ void RackParser::parseSlash(EditionReference &leftHandSide, Token::Type stopping
 }
 
 void RackParser::privateParseTimes(EditionReference &leftHandSide,
-                               Token::Type stoppingType) {
+                                   Token::Type stoppingType) {
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, stoppingType)) {
     if (leftHandSide.type() == BlockType::Multiplication) {
-      NAry::SetNumberOfChildren(leftHandSide, leftHandSide.numberOfChildren() + 1);
+      NAry::SetNumberOfChildren(leftHandSide,
+                                leftHandSide.numberOfChildren() + 1);
     } else {
-      leftHandSide.insertNodeBeforeNode(Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
+      leftHandSide.insertNodeBeforeNode(
+          Tree<BlockType::Multiplication, 2, BlockType::Multiplication>());
       leftHandSide = leftHandSide.previousNode();
     }
   }
 }
 
-static void turnIntoBinaryNode(Node node, EditionReference &leftHandSide, EditionReference &rightHandSide) {
+static void turnIntoBinaryNode(Node node, EditionReference &leftHandSide,
+                               EditionReference &rightHandSide) {
   assert(leftHandSide.nextTree() == rightHandSide);
   leftHandSide.insertNodeBeforeNode(node);
   leftHandSide = leftHandSide.previousNode();
 }
 
-void RackParser::parseCaret(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parseCaret(EditionReference &leftHandSide,
+                            Token::Type stoppingType) {
   EditionReference rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide,
                           Token::Type::ImplicitTimes)) {
@@ -595,7 +610,8 @@ void RackParser::parseCaret(EditionReference &leftHandSide, Token::Type stopping
       // l         r -> l
       // (POW A B) C -> POW A (POW B C)
       assert(leftHandSide.nextTree() == rightHandSide);
-      leftHandSide.childAtIndex(1).insertNodeBeforeNode(Tree<BlockType::Power>());
+      leftHandSide.childAtIndex(1).insertNodeBeforeNode(
+          Tree<BlockType::Power>());
     } else {
       turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
     }
@@ -603,7 +619,7 @@ void RackParser::parseCaret(EditionReference &leftHandSide, Token::Type stopping
 }
 
 void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
-                                     Token::Type stoppingType) {
+                                         Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Comparison operator must have a left operand
     return;
@@ -612,25 +628,25 @@ void RackParser::parseComparisonOperator(EditionReference &leftHandSide,
   // ComparisonNode::OperatorType operatorType;
   // size_t operatorLength;
   // bool check = ComparisonNode::IsComparisonOperatorString(
-      // m_currentToken.text(), m_currentToken.text() + m_currentToken.length(),
-      // &operatorType, &operatorLength);
+  // m_currentToken.text(), m_currentToken.text() + m_currentToken.length(),
+  // &operatorType, &operatorLength);
   // assert(check);
   // assert(m_currentToken.length() == operatorLength);
   // (void)check;
   // if (parseBinaryOperator(leftHandSide, rightHandSide,
-                          // Token::Type::ComparisonOperator)) {
-    // if (leftHandSide.type() == ExpressionNode::Type::Comparison) {
-      // Comparison leftComparison = static_cast<Comparison &>(leftHandSide);
-      // leftHandSide = leftComparison.addComparison(operatorType, rightHandSide);
-    // } else {
-      // leftHandSide =
-          // Comparison::Builder(leftHandSide, operatorType, rightHandSide);
-    // }
+  // Token::Type::ComparisonOperator)) {
+  // if (leftHandSide.type() == ExpressionNode::Type::Comparison) {
+  // Comparison leftComparison = static_cast<Comparison &>(leftHandSide);
+  // leftHandSide = leftComparison.addComparison(operatorType, rightHandSide);
+  // } else {
+  // leftHandSide =
+  // Comparison::Builder(leftHandSide, operatorType, rightHandSide);
+  // }
   // }
 }
 
 void RackParser::parseAssigmentEqual(EditionReference &leftHandSide,
-                                 Token::Type stoppingType) {
+                                     Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Comparison operator must have a left operand
     return;
@@ -639,12 +655,12 @@ void RackParser::parseAssigmentEqual(EditionReference &leftHandSide,
   if (parseBinaryOperator(leftHandSide, rightHandSide,
                           Token::Type::AssignmentEqual)) {
     // leftHandSide = Comparison::Builder(
-        // leftHandSide, ComparisonNode::OperatorType::Equal, rightHandSide);
+    // leftHandSide, ComparisonNode::OperatorType::Equal, rightHandSide);
   }
 }
 
 void RackParser::parseRightwardsArrow(EditionReference &leftHandSide,
-                                  Token::Type stoppingType) {
+                                      Token::Type stoppingType) {
   /* Rightwards arrow can either be UnitConvert or Store.
    * The expression 3a->m is a store of 3*a into the variable m
    * The expression 3mm->m is a unit conversion of 3mm into meters
@@ -675,20 +691,20 @@ void RackParser::parseRightwardsArrow(EditionReference &leftHandSide,
   }
 
   // if (!m_nextToken.is(Token::Type::EndOfStream) ||
-      // rightHandSide.isUninitialized() ||
-      // !rightHandSide.isCombinationOfUnits() ||
-      // (!leftHandSide.hasUnit() && !rightHandSide.isPureAngleUnit())) {
-    // UnitConvert expect a unit on the right and an expression with units
-     // * on the left
-    // m_status = Status::Error;
-    // return;
+  // rightHandSide.isUninitialized() ||
+  // !rightHandSide.isCombinationOfUnits() ||
+  // (!leftHandSide.hasUnit() && !rightHandSide.isPureAngleUnit())) {
+  // UnitConvert expect a unit on the right and an expression with units
+  // * on the left
+  // m_status = Status::Error;
+  // return;
   // }
   // leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);
   return;
 }
 
 void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
-                                     Token::Type stoppingType) {
+                                         Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Left-hand side should be empty
     return;
@@ -707,45 +723,45 @@ void RackParser::parseLogicalOperatorNot(EditionReference &leftHandSide,
 }
 
 // void Parser::parseBinaryLogicalOperator(
-    // BinaryLogicalOperatorNode::OperatorType operatorType,
-    // EditionReference &leftHandSide, Token::Type stoppingType) {
-  // if (leftHandSide.isUninitialized()) {
-    // m_status = Status::Error;  // Left-hand side missing.
-    // return;
-  // }
-  /* And and Nand have same precedence
-   * Or, Nor and Xor have same precedence */
-  // Token::Type newStoppingType;
-  // if (operatorType == BinaryLogicalOperatorNode::OperatorType::And ||
-      // operatorType == BinaryLogicalOperatorNode::OperatorType::Nand) {
-    // static_assert(Token::Type::Nand < Token::Type::And,
-                  // "Wrong And/Nand precedence.");
-    // newStoppingType = Token::Type::And;
-  // } else {
-    // assert(operatorType == BinaryLogicalOperatorNode::OperatorType::Or ||
-           // operatorType == BinaryLogicalOperatorNode::OperatorType::Nor ||
-           // operatorType == BinaryLogicalOperatorNode::OperatorType::Xor);
-    // static_assert(Token::Type::Nor < Token::Type::Or &&
-                      // Token::Type::Xor < Token::Type::Or,
-                  // "Wrong Or/Nor/Xor precedence.");
-    // newStoppingType = Token::Type::Or;
-  // }
-  // EditionReference rightHandSide =
-      // parseUntil(std::max(stoppingType, newStoppingType));
-  // if (m_status != Status::Progress) {
-    // return;
-  // }
-  // if (rightHandSide.isUninitialized()) {
-    // m_status = Status::Error;
-    // return;
-  // }
-  // leftHandSide =
-      // BinaryLogicalOperator::Builder(leftHandSide, rightHandSide, operatorType);
+// BinaryLogicalOperatorNode::OperatorType operatorType,
+// EditionReference &leftHandSide, Token::Type stoppingType) {
+// if (leftHandSide.isUninitialized()) {
+// m_status = Status::Error;  // Left-hand side missing.
+// return;
+// }
+/* And and Nand have same precedence
+ * Or, Nor and Xor have same precedence */
+// Token::Type newStoppingType;
+// if (operatorType == BinaryLogicalOperatorNode::OperatorType::And ||
+// operatorType == BinaryLogicalOperatorNode::OperatorType::Nand) {
+// static_assert(Token::Type::Nand < Token::Type::And,
+// "Wrong And/Nand precedence.");
+// newStoppingType = Token::Type::And;
+// } else {
+// assert(operatorType == BinaryLogicalOperatorNode::OperatorType::Or ||
+// operatorType == BinaryLogicalOperatorNode::OperatorType::Nor ||
+// operatorType == BinaryLogicalOperatorNode::OperatorType::Xor);
+// static_assert(Token::Type::Nor < Token::Type::Or &&
+// Token::Type::Xor < Token::Type::Or,
+// "Wrong Or/Nor/Xor precedence.");
+// newStoppingType = Token::Type::Or;
+// }
+// EditionReference rightHandSide =
+// parseUntil(std::max(stoppingType, newStoppingType));
+// if (m_status != Status::Progress) {
+// return;
+// }
+// if (rightHandSide.isUninitialized()) {
+// m_status = Status::Error;
+// return;
+// }
+// leftHandSide =
+// BinaryLogicalOperator::Builder(leftHandSide, rightHandSide, operatorType);
 // }
 
 bool RackParser::parseBinaryOperator(const EditionReference &leftHandSide,
-                                 EditionReference &rightHandSide,
-                                 Token::Type stoppingType) {
+                                     EditionReference &rightHandSide,
+                                     Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Left-hand side missing.
     return false;
@@ -762,7 +778,7 @@ bool RackParser::parseBinaryOperator(const EditionReference &leftHandSide,
 }
 
 void RackParser::parseLeftParenthesis(EditionReference &leftHandSide,
-                                  Token::Type stoppingType) {
+                                      Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // FIXME
     return;
@@ -780,7 +796,8 @@ void RackParser::parseLeftParenthesis(EditionReference &leftHandSide,
   isThereImplicitOperator();
 }
 
-void RackParser::parseBang(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parseBang(EditionReference &leftHandSide,
+                           Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Left-hand side missing
   } else {
@@ -790,7 +807,8 @@ void RackParser::parseBang(EditionReference &leftHandSide, Token::Type stoppingT
   isThereImplicitOperator();
 }
 
-void RackParser::parsePercent(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parsePercent(EditionReference &leftHandSide,
+                              Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Left-hand side missing
     return;
@@ -799,39 +817,40 @@ void RackParser::parsePercent(EditionReference &leftHandSide, Token::Type stoppi
   isThereImplicitOperator();
 }
 
-void RackParser::parseConstant(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parseConstant(EditionReference &leftHandSide,
+                               Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
   // leftHandSide =
-      // Constant::Builder(m_currentToken.text(), m_currentToken.length());
+  // Constant::Builder(m_currentToken.text(), m_currentToken.length());
   isThereImplicitOperator();
 }
 
-void RackParser::parseUnit(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parseUnit(EditionReference &leftHandSide,
+                           Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
   // const Unit::Representative *unitRepresentative = nullptr;
   // const Unit::Prefix *unitPrefix = nullptr;
   // if (!Unit::CanParse(m_currentToken.text(), m_currentToken.length(),
-                      // &unitRepresentative, &unitPrefix)) {
-    // m_status = Status::Error;  // Unit does not exist
-    // return;
+  // &unitRepresentative, &unitPrefix)) {
+  // m_status = Status::Error;  // Unit does not exist
+  // return;
   // }
   // leftHandSide = Unit::Builder(unitRepresentative, unitPrefix);
   isThereImplicitOperator();
 }
 
 void RackParser::parseReservedFunction(EditionReference &leftHandSide,
-                                   Token::Type stoppingType) {
+                                       Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
   RackLayoutDecoder decoder = m_currentToken.toDecoder();
-  const Builtin * builtin = Builtin::GetReservedFunction(&decoder);
+  const Builtin *builtin = Builtin::GetReservedFunction(&decoder);
   privateParseReservedFunction(leftHandSide, builtin);
   isThereImplicitOperator();
 }
 
-void RackParser::privateParseReservedFunction(
-    EditionReference &leftHandSide,
-    const Builtin * builtin) {
-  const Aliases * aliasesList = builtin->aliases();
+void RackParser::privateParseReservedFunction(EditionReference &leftHandSide,
+                                              const Builtin *builtin) {
+  const Aliases *aliasesList = builtin->aliases();
   /*if (aliasesList.contains("log") &&
       popTokenIfType(Token::Type::LeftSystemBrace)) {
     // Special case for the log function (e.g. "log\x14{2\x14}(8)")
@@ -897,24 +916,24 @@ void RackParser::privateParseReservedFunction(
 
   EditionReference parameters;
   // if (m_parsingContext.context() &&
-      // ParsingHelper::IsParameteredExpression(*functionHelper)) {
-    // We must make sure that the parameter is parsed as a single variable.
-    // const char *parameterText;
-    // size_t parameterLength;
-    // if (ParameteredExpression::ParameterText(
-            // m_currentToken.text() + m_currentToken.length() + 1, &parameterText,
-            // &parameterLength)) {
-      // Context *oldContext = m_parsingContext.context();
-      // VariableContext parameterContext(
-          // Symbol::Builder(parameterText, parameterLength), oldContext);
-      // m_parsingContext.setContext(&parameterContext);
-      // parameters = parseFunctionParameters();
-      // m_parsingContext.setContext(oldContext);
-    // } else {
-      // parameters = parseFunctionParameters();
-    // }
+  // ParsingHelper::IsParameteredExpression(*functionHelper)) {
+  // We must make sure that the parameter is parsed as a single variable.
+  // const char *parameterText;
+  // size_t parameterLength;
+  // if (ParameteredExpression::ParameterText(
+  // m_currentToken.text() + m_currentToken.length() + 1, &parameterText,
+  // &parameterLength)) {
+  // Context *oldContext = m_parsingContext.context();
+  // VariableContext parameterContext(
+  // Symbol::Builder(parameterText, parameterLength), oldContext);
+  // m_parsingContext.setContext(&parameterContext);
+  // parameters = parseFunctionParameters();
+  // m_parsingContext.setContext(oldContext);
   // } else {
-    parameters = parseFunctionParameters();
+  // parameters = parseFunctionParameters();
+  // }
+  // } else {
+  parameters = parseFunctionParameters();
   // }
 
   if (m_status != Status::Progress) {
@@ -926,22 +945,24 @@ void RackParser::privateParseReservedFunction(
    * sum(1/k, k, 1, n) */
   int numberOfParameters = parameters.numberOfChildren();
   // if ((**functionHelper).minNumberOfChildren() >= 0) {
-    // while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
-      // functionHelper++;
-      // if (functionHelper >= ParsingHelper::ReservedFunctionsUpperBound() ||
-          // !(**functionHelper).aliasesList().isEquivalentTo(aliasesList)) {
-        // m_status = Status::Error;  // Too many parameters provided.
-        // return;
-      // }
-    // }
+  // while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
+  // functionHelper++;
+  // if (functionHelper >= ParsingHelper::ReservedFunctionsUpperBound() ||
+  // !(**functionHelper).aliasesList().isEquivalentTo(aliasesList)) {
+  // m_status = Status::Error;  // Too many parameters provided.
+  // return;
+  // }
+  // }
   // }
 
-  if (numberOfParameters < Builtin::MinNumberOfParameters(builtin->blockType())) {
+  if (numberOfParameters <
+      Builtin::MinNumberOfParameters(builtin->blockType())) {
     m_status = Status::Error;  // Too few parameters provided.
     return;
   }
 
-  if (numberOfParameters > Builtin::MaxNumberOfParameters(builtin->blockType())) {
+  if (numberOfParameters >
+      Builtin::MaxNumberOfParameters(builtin->blockType())) {
     m_status = Status::Error;  // Too many parameters provided.
     return;
   }
@@ -952,16 +973,16 @@ void RackParser::privateParseReservedFunction(
     return;
   }
   // if (powerFunction) {
-    // leftHandSide = Power::Builder(leftHandSide, base);
+  // leftHandSide = Power::Builder(leftHandSide, base);
   // }
 }
 
 void RackParser::parseSequence(EditionReference &leftHandSide, const char *name,
-                           Token::Type rightDelimiter) {
+                               Token::Type rightDelimiter) {
   // assert(m_nextToken.type() ==
-         // ((rightDelimiter == Token::Type::RightSystemBrace)
-              // ? Token::Type::LeftSystemBrace
-              // : Token::Type::LeftParenthesis));
+  // ((rightDelimiter == Token::Type::RightSystemBrace)
+  // ? Token::Type::LeftSystemBrace
+  // : Token::Type::LeftParenthesis));
   popToken();  // Pop the left delimiter
   EditionReference rank = parseUntil(rightDelimiter);
   if (m_status != Status::Progress) {
@@ -974,16 +995,16 @@ void RackParser::parseSequence(EditionReference &leftHandSide, const char *name,
 }
 
 void RackParser::parseSpecialIdentifier(EditionReference &leftHandSide,
-                                    Token::Type stoppingType) {
+                                        Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
   // leftHandSide = ParsingHelper::GetIdentifierBuilder(m_currentToken.text(),
-                                                     // m_currentToken.length())();
+  // m_currentToken.length())();
   isThereImplicitOperator();
   return;
 }
 
 void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
-                                   Token::Type stoppingType) {
+                                       Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
   const Node node = m_currentToken.firstLayout();
   size_t length = m_currentToken.length();
@@ -992,133 +1013,133 @@ void RackParser::parseCustomIdentifier(EditionReference &leftHandSide,
 }
 
 // void Parser::privateParseCustomIdentifier(EditionReference &leftHandSide,
-                                          // const char *name, size_t length,
-                                          // Token::Type stoppingType) {
-  // if (length >= SymbolAbstract::k_maxNameSize) {
-    // m_status = Status::Error;  // Identifier name too long.
-    // return;
-  // }
-  // bool poppedParenthesisIsSystem = false;
+// const char *name, size_t length,
+// Token::Type stoppingType) {
+// if (length >= SymbolAbstract::k_maxNameSize) {
+// m_status = Status::Error;  // Identifier name too long.
+// return;
+// }
+// bool poppedParenthesisIsSystem = false;
 
-  /* Check the context: if the identifier does not already exist as a function,
-   * seq or list, interpret it as a symbol, even if there are parentheses
-   * afterwards.
-   * If there is no context, f(x) is always parsed as a function and u{n} as
-   * a sequence*/
-  // Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
-  // if (m_parsingContext.context() &&
-      // m_parsingContext.parsingMethod() !=
-          // ParsingContext::ParsingMethod::Assignment) {
-    // idType =
-        // m_parsingContext.context()->expressionTypeForIdentifier(name, length);
-    // if (idType != Context::SymbolAbstractType::Function &&
-        // idType != Context::SymbolAbstractType::Sequence &&
-        // idType != Context::SymbolAbstractType::List) {
-      // leftHandSide = Symbol::Builder(name, length);
-      // return;
-    // }
-  // }
+/* Check the context: if the identifier does not already exist as a function,
+ * seq or list, interpret it as a symbol, even if there are parentheses
+ * afterwards.
+ * If there is no context, f(x) is always parsed as a function and u{n} as
+ * a sequence*/
+// Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
+// if (m_parsingContext.context() &&
+// m_parsingContext.parsingMethod() !=
+// ParsingContext::ParsingMethod::Assignment) {
+// idType =
+// m_parsingContext.context()->expressionTypeForIdentifier(name, length);
+// if (idType != Context::SymbolAbstractType::Function &&
+// idType != Context::SymbolAbstractType::Sequence &&
+// idType != Context::SymbolAbstractType::List) {
+// leftHandSide = Symbol::Builder(name, length);
+// return;
+// }
+// }
 
-  // if (idType == Context::SymbolAbstractType::Sequence ||
-      // (idType == Context::SymbolAbstractType::None &&
-       // m_nextToken.type() == Token::Type::LeftSystemBrace)) {
-    /* If the user is not defining a variable and the identifier is already
-     * known to be a sequence, or has an unknown type and is followed
-     * by braces, it's a sequence call. */
-    // if (m_nextToken.type() != Token::Type::LeftSystemBrace &&
-        // m_nextToken.type() != Token::Type::LeftParenthesis) {
-      /* If the identifier is a sequence but not followed by braces, it can
-       * also be followed by parenthesis. If not, it's a syntax error. */
-      // m_status = Status::Error;
-      // return;
-    // }
-    // parseSequence(leftHandSide, name,
-                  // m_nextToken.type() == Token::Type::LeftSystemBrace
-                      // ? Token::Type::RightSystemBrace
-                      // : Token::Type::RightParenthesis);
-    // return;
-  // }
+// if (idType == Context::SymbolAbstractType::Sequence ||
+// (idType == Context::SymbolAbstractType::None &&
+// m_nextToken.type() == Token::Type::LeftSystemBrace)) {
+/* If the user is not defining a variable and the identifier is already
+ * known to be a sequence, or has an unknown type and is followed
+ * by braces, it's a sequence call. */
+// if (m_nextToken.type() != Token::Type::LeftSystemBrace &&
+// m_nextToken.type() != Token::Type::LeftParenthesis) {
+/* If the identifier is a sequence but not followed by braces, it can
+ * also be followed by parenthesis. If not, it's a syntax error. */
+// m_status = Status::Error;
+// return;
+// }
+// parseSequence(leftHandSide, name,
+// m_nextToken.type() == Token::Type::LeftSystemBrace
+// ? Token::Type::RightSystemBrace
+// : Token::Type::RightParenthesis);
+// return;
+// }
 
-  // If the identifier is not followed by parentheses, it is a symbol
-  // if (!popTokenIfType(Token::Type::LeftParenthesis)) {
-    // if (!popTokenIfType(Token::Type::LeftSystemParenthesis)) {
-      // leftHandSide = Symbol::Builder(name, length);
-      // return;
-    // }
-    // poppedParenthesisIsSystem = true;
-  // }
+// If the identifier is not followed by parentheses, it is a symbol
+// if (!popTokenIfType(Token::Type::LeftParenthesis)) {
+// if (!popTokenIfType(Token::Type::LeftSystemParenthesis)) {
+// leftHandSide = Symbol::Builder(name, length);
+// return;
+// }
+// poppedParenthesisIsSystem = true;
+// }
 
-  /* The identifier is followed by parentheses. It can be:
-   * - a function call
-   * - an access to a list element   */
-  // EditionReference parameter = parseCommaSeparatedList();
-  // if (m_status != Status::Progress) {
-    // return;
-  // }
-  // assert(!parameter.isUninitialized());
+/* The identifier is followed by parentheses. It can be:
+ * - a function call
+ * - an access to a list element   */
+// EditionReference parameter = parseCommaSeparatedList();
+// if (m_status != Status::Progress) {
+// return;
+// }
+// assert(!parameter.isUninitialized());
 
-  // int numberOfParameters = parameter.numberOfChildren();
-  // EditionReference result;
-  // if (numberOfParameters == 2) {
-    /* If you change how list accesses are parsed, change it also in parseList
-     * or factorize it. */
-    // result =
-        // ListSlice::Builder(parameter.childAtIndex(0), parameter.childAtIndex(1),
-                           // Symbol::Builder(name, length));
-  // } else if (numberOfParameters == 1) {
-    // parameter = parameter.childAtIndex(0);
-    // if (parameter.type() == ExpressionNode::Type::Symbol &&
-        // strncmp(static_cast<SymbolAbstract &>(parameter).name(), name,
-                // length) == 0) {
-      // m_status =
-          // Status::Error;  // Function and variable must have distinct names.
-      // return;
-    // } else if (idType == Context::SymbolAbstractType::List) {
-      // result = ListElement::Builder(parameter, Symbol::Builder(name, length));
-    // } else {
-      // result = Function::Builder(name, length, parameter);
-    // }
-  // } else {
-    // m_status = Status::Error;
-    // return;
-  // }
+// int numberOfParameters = parameter.numberOfChildren();
+// EditionReference result;
+// if (numberOfParameters == 2) {
+/* If you change how list accesses are parsed, change it also in parseList
+ * or factorize it. */
+// result =
+// ListSlice::Builder(parameter.childAtIndex(0), parameter.childAtIndex(1),
+// Symbol::Builder(name, length));
+// } else if (numberOfParameters == 1) {
+// parameter = parameter.childAtIndex(0);
+// if (parameter.type() == ExpressionNode::Type::Symbol &&
+// strncmp(static_cast<SymbolAbstract &>(parameter).name(), name,
+// length) == 0) {
+// m_status =
+// Status::Error;  // Function and variable must have distinct names.
+// return;
+// } else if (idType == Context::SymbolAbstractType::List) {
+// result = ListElement::Builder(parameter, Symbol::Builder(name, length));
+// } else {
+// result = Function::Builder(name, length, parameter);
+// }
+// } else {
+// m_status = Status::Error;
+// return;
+// }
 
-  // Token::Type correspondingRightParenthesis =
-      // poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis
-                                // : Token::Type::RightParenthesis;
-  // if (!popTokenIfType(correspondingRightParenthesis)) {
-    // m_status = Status::Error;
-    // return;
-  // }
-  // if (m_parsingContext.parsingMethod() ==
-          // ParsingContext::ParsingMethod::Assignment &&
-      // result.type() == ExpressionNode::Type::Function &&
-      // parameter.type() == ExpressionNode::Type::Symbol &&
-      // m_nextToken.type() == Token::Type::AssignmentEqual) {
-    /* Stop parsing for assignment to ensure that, frow now on xy is
-     * understood as x*y.
-     * For example, "func(x) = xy" -> left of the =, we parse for assignment so
-     * "func" is NOT understood as "f*u*n*c", but after the equal we want "xy"
-     * to be understood as "x*y" */
-    // m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
-    // if (m_parsingContext.context()) {
-      /* Set the parameter in the context to ensure that f(t)=t is not
-       * understood as f(t)=1_t
-       * If we decide that functions can be assigned with any parameter,
-       * this will ensure that f(abc)=abc is understood like f(x)=x
-       */
-      // Context *previousContext = m_parsingContext.context();
-      // VariableContext functionAssignmentContext(
-          // static_cast<Symbol &>(parameter), m_parsingContext.context());
-      // m_parsingContext.setContext(&functionAssignmentContext);
-      // We have to parseUntil here so that we do not lose the
-      // functionAssignmentContext pointer.
-      // leftHandSide = parseUntil(stoppingType, result);
-      // m_parsingContext.setContext(previousContext);
-      // return;
-    // }
-  // }
-  // leftHandSide = result;
+// Token::Type correspondingRightParenthesis =
+// poppedParenthesisIsSystem ? Token::Type::RightSystemParenthesis
+// : Token::Type::RightParenthesis;
+// if (!popTokenIfType(correspondingRightParenthesis)) {
+// m_status = Status::Error;
+// return;
+// }
+// if (m_parsingContext.parsingMethod() ==
+// ParsingContext::ParsingMethod::Assignment &&
+// result.type() == ExpressionNode::Type::Function &&
+// parameter.type() == ExpressionNode::Type::Symbol &&
+// m_nextToken.type() == Token::Type::AssignmentEqual) {
+/* Stop parsing for assignment to ensure that, frow now on xy is
+ * understood as x*y.
+ * For example, "func(x) = xy" -> left of the =, we parse for assignment so
+ * "func" is NOT understood as "f*u*n*c", but after the equal we want "xy"
+ * to be understood as "x*y" */
+// m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
+// if (m_parsingContext.context()) {
+/* Set the parameter in the context to ensure that f(t)=t is not
+ * understood as f(t)=1_t
+ * If we decide that functions can be assigned with any parameter,
+ * this will ensure that f(abc)=abc is understood like f(x)=x
+ */
+// Context *previousContext = m_parsingContext.context();
+// VariableContext functionAssignmentContext(
+// static_cast<Symbol &>(parameter), m_parsingContext.context());
+// m_parsingContext.setContext(&functionAssignmentContext);
+// We have to parseUntil here so that we do not lose the
+// functionAssignmentContext pointer.
+// leftHandSide = parseUntil(stoppingType, result);
+// m_parsingContext.setContext(previousContext);
+// return;
+// }
+// }
+// leftHandSide = result;
 // }
 
 EditionReference RackParser::parseFunctionParameters() {
@@ -1127,7 +1148,8 @@ EditionReference RackParser::parseFunctionParameters() {
     return EditionReference();
   }
   if (popTokenIfType(Token::Type::RightParenthesis)) {
-    return EditionReference();// List::Builder();  // The function has no parameter.
+    return EditionReference();  // List::Builder();  // The function has no
+                                // parameter.
   }
   EditionReference commaSeparatedList = parseCommaSeparatedList();
   if (m_status != Status::Progress) {
@@ -1141,7 +1163,8 @@ EditionReference RackParser::parseFunctionParameters() {
   return commaSeparatedList;
 }
 
-void RackParser::parseMatrix(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parseMatrix(EditionReference &leftHandSide,
+                             Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // FIXME
     return;
@@ -1150,23 +1173,23 @@ void RackParser::parseMatrix(EditionReference &leftHandSide, Token::Type stoppin
   // int numberOfRows = 0;
   // int numberOfColumns = 0;
   // while (!popTokenIfType(Token::Type::RightBracket)) {
-    // EditionReference row = parseVector();
-    // if (m_status != Status::Progress) {
-      // return;
-    // }
-    // if ((numberOfRows == 0 &&
-         // (numberOfColumns = row.numberOfChildren()) == 0) ||
-        // (numberOfColumns != row.numberOfChildren())) {
-      // m_status = Status::Error;  // Incorrect matrix.
-      // return;
-    // } else {
-      // matrix.addChildrenAsRowInPlace(row, numberOfRows++);
-    // }
+  // EditionReference row = parseVector();
+  // if (m_status != Status::Progress) {
+  // return;
+  // }
+  // if ((numberOfRows == 0 &&
+  // (numberOfColumns = row.numberOfChildren()) == 0) ||
+  // (numberOfColumns != row.numberOfChildren())) {
+  // m_status = Status::Error;  // Incorrect matrix.
+  // return;
+  // } else {
+  // matrix.addChildrenAsRowInPlace(row, numberOfRows++);
+  // }
   // }
   // if (numberOfRows == 0) {
-    // m_status = Status::Error;  // Empty matrix
+  // m_status = Status::Error;  // Empty matrix
   // } else {
-    // leftHandSide = matrix;
+  // leftHandSide = matrix;
   // }
   isThereImplicitOperator();
 }
@@ -1202,7 +1225,8 @@ EditionReference RackParser::parseCommaSeparatedList() {
   return list;
 }
 
-void RackParser::parseList(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parseList(EditionReference &leftHandSide,
+                           Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // FIXME
     return;
@@ -1234,7 +1258,7 @@ void RackParser::parseList(EditionReference &leftHandSide, Token::Type stoppingT
     int numberOfParameters = parameter.numberOfChildren();
     if (numberOfParameters == 2) {
       // result = ListSlice::Builder(parameter.childAtIndex(0),
-                                  // parameter.childAtIndex(1), result);
+      // parameter.childAtIndex(1), result);
     } else if (numberOfParameters == 1) {
       parameter = parameter.childAtIndex(0);
       // result = ListElement::Builder(parameter, result);
@@ -1247,10 +1271,11 @@ void RackParser::parseList(EditionReference &leftHandSide, Token::Type stoppingT
   isThereImplicitOperator();
 }
 
-void RackParser::parseLayout(EditionReference &leftHandSide, Token::Type stoppingType) {
+void RackParser::parseLayout(EditionReference &leftHandSide,
+                             Token::Type stoppingType) {
   // if (!leftHandSide.isUninitialized()) {
-    // m_status = Status::Error;
-    // return;
+  // m_status = Status::Error;
+  // return;
   // }
   assert(m_currentToken.length() == 1);
   Node layout = m_currentToken.firstLayout();
@@ -1258,25 +1283,26 @@ void RackParser::parseLayout(EditionReference &leftHandSide, Token::Type stoppin
   /* Only layouts that can't be standalone are handled in this switch, others
    * are in Parser::Parse */
   switch (layout.type()) {
-  case BlockType::VerticalOffsetLayout: {
-    if (leftHandSide.isUninitialized()) {
-      m_status = Status::Error;
-      return;
+    case BlockType::VerticalOffsetLayout: {
+      if (leftHandSide.isUninitialized()) {
+        m_status = Status::Error;
+        return;
+      }
+      EditionReference rightHandSide = Parser::Parse(layout.childAtIndex(0));
+      turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
+      break;
     }
-    EditionReference rightHandSide = Parser::Parse(layout.childAtIndex(0));
-    turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
-    break;
-  }
-  default:
-    leftHandSide = Parser::Parse(layout);
+    default:
+      leftHandSide = Parser::Parse(layout);
   }
   isThereImplicitOperator();
 }
 
 bool IsIntegerBaseTenOrEmptyExpression(EditionReference e) {
-  return false;//(e.type() == ExpressionNode::Type::BasedInteger &&
-          // static_cast<BasedInteger &>(e).base() == OMG::Base::Decimal) ||
-         // e.type() == ExpressionNode::Type::EmptyExpression;
+  return false;  //(e.type() == ExpressionNode::Type::BasedInteger &&
+                 // static_cast<BasedInteger &>(e).base() == OMG::Base::Decimal)
+                 // ||
+                 // e.type() == ExpressionNode::Type::EmptyExpression;
 }
 
 bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
@@ -1310,7 +1336,7 @@ bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
         IsIntegerBaseTenOrEmptyExpression(rightHandSide.childAtIndex(1))) {
       // The following expression looks like "int/int" -> it's a mixedFraction
       // leftHandSide = MixedFraction::Builder(
-          // leftHandSide, static_cast<Division &>(rightHandSide));
+      // leftHandSide, static_cast<Division &>(rightHandSide));
       return true;
     }
   }
@@ -1320,8 +1346,8 @@ bool RackParser::generateMixedFractionIfNeeded(EditionReference &leftHandSide) {
 }
 
 void RackParser::rememberCurrentParsingPosition(size_t *tokenizerPosition,
-                                            Token *storedCurrentToken,
-                                            Token *storedNextToken) {
+                                                Token *storedCurrentToken,
+                                                Token *storedNextToken) {
   if (storedCurrentToken) {
     *storedCurrentToken = m_currentToken;
   }
@@ -1332,8 +1358,8 @@ void RackParser::rememberCurrentParsingPosition(size_t *tokenizerPosition,
 }
 
 void RackParser::restorePreviousParsingPosition(size_t tokenizerPosition,
-                                            Token storedCurrentToken,
-                                            Token storedNextToken) {
+                                                Token storedCurrentToken,
+                                                Token storedNextToken) {
   m_tokenizer.goToPosition(tokenizerPosition);
   m_currentToken = storedCurrentToken;
   m_nextToken = storedNextToken;

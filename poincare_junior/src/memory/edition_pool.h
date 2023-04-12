@@ -8,51 +8,63 @@ namespace PoincareJ {
 
 class EditionPool final : public Pool {
   friend class EditionReference;
-public:
-  EditionPool(TypeBlock * firstBlock, size_t size, int numberOfBlocks = 0) :
-    m_referenceTable(this),
-    m_firstBlock(firstBlock),
-    m_numberOfBlocks(numberOfBlocks),
-    m_size(size)
-  {}
 
-  static EditionPool * sharedEditionPool();
-  void reinit(TypeBlock * firstBlock, size_t size);
+ public:
+  EditionPool(TypeBlock *firstBlock, size_t size, int numberOfBlocks = 0)
+      : m_referenceTable(this),
+        m_firstBlock(firstBlock),
+        m_numberOfBlocks(numberOfBlocks),
+        m_size(size) {}
+
+  static EditionPool *sharedEditionPool();
+  void reinit(TypeBlock *firstBlock, size_t size);
 
   uint16_t referenceNode(Node node);
   void flush();
 
-  typedef bool (*Relax) (void * context);
-  constexpr static Relax k_defaultRelax = [](void * context){ return false; };
-  bool executeAndDump(ActionWithContext action, void * context, const void * data, void * address, int maxSize, Relax relax = k_defaultRelax);
-  int executeAndCache(ActionWithContext action, void * context, const void * data, Relax relax = k_defaultRelax);
+  typedef bool (*Relax)(void *context);
+  constexpr static Relax k_defaultRelax = [](void *context) { return false; };
+  bool executeAndDump(ActionWithContext action, void *context, const void *data,
+                      void *address, int maxSize, Relax relax = k_defaultRelax);
+  int executeAndCache(ActionWithContext action, void *context, const void *data,
+                      Relax relax = k_defaultRelax);
 
-  Block * pushBlock(Block block);
+  Block *pushBlock(Block block);
   void popBlock();
-  void replaceBlock(Block * previousBlock, Block newBlock);
-  bool insertBlock(Block * destination, Block block) { return insertBlocks(destination, &block, 1); }
-  bool insertBlocks(Block * destination, Block * source, size_t numberOfBlocks);
-  void removeBlocks(Block * address, size_t numberOfBlocks);
-  void moveBlocks(Block * destination, Block * source, size_t numberOfBlocks);
+  void replaceBlock(Block *previousBlock, Block newBlock);
+  bool insertBlock(Block *destination, Block block) {
+    return insertBlocks(destination, &block, 1);
+  }
+  bool insertBlocks(Block *destination, Block *source, size_t numberOfBlocks);
+  void removeBlocks(Block *address, size_t numberOfBlocks);
+  void moveBlocks(Block *destination, Block *source, size_t numberOfBlocks);
 
-  Node initFromTree(const Node node) { return initFromAddress(static_cast<const void *>(node.block())); }
-  Node initFromAddress(const void * address);
+  Node initFromTree(const Node node) {
+    return initFromAddress(static_cast<const void *>(node.block()));
+  }
+  Node initFromAddress(const void *address);
 
   using Pool::firstBlock;
-  const TypeBlock * firstBlock() const override { return m_firstBlock; }
+  const TypeBlock *firstBlock() const override { return m_firstBlock; }
   using Pool::lastBlock;
   // If EditionPool is empty, first and last blocks are the same one
-  const TypeBlock * lastBlock() const override { return m_firstBlock + m_numberOfBlocks; }
+  const TypeBlock *lastBlock() const override {
+    return m_firstBlock + m_numberOfBlocks;
+  }
   size_t fullSize() const { return m_size; }
-  void setNumberOfBlocks(int numberOfBlocks) { m_numberOfBlocks = numberOfBlocks; }
+  void setNumberOfBlocks(int numberOfBlocks) {
+    m_numberOfBlocks = numberOfBlocks;
+  }
 
   constexpr static int k_maxNumberOfReferences = 1024;
-private:
-  bool execute(ActionWithContext action, void * context, const void * data, int maxSize, Relax relax = k_defaultRelax);
+
+ private:
+  bool execute(ActionWithContext action, void *context, const void *data,
+               int maxSize, Relax relax = k_defaultRelax);
   // Pool memory
   bool checkForEnoughSpace(size_t numberOfRequiredBlock);
 #if POINCARE_MEMORY_TREE_LOG
-  const char * name() override { return "Edition"; }
+  const char *name() override { return "Edition"; }
 #endif
 
   class ReferenceTable : public Pool::ReferenceTable {
@@ -64,25 +76,32 @@ private:
      * - The order of identifiers gives no guarantee on the order of the trees
      *   in the pool.
      */
-  public:
-    ReferenceTable(Pool * pool) : Pool::ReferenceTable(pool) {}
+   public:
+    ReferenceTable(Pool *pool) : Pool::ReferenceTable(pool) {}
     Node nodeForIdentifier(uint16_t id) const override;
     uint16_t storeNode(Node node) override;
-    typedef void (*AlterSelectedBlock)(uint16_t *, Block *, Block *, Block *, int);
-    void updateNodes(AlterSelectedBlock function, Block * contextSelection1, Block * contextSelection2, int contextAlteration);
-  private:
-    size_t maxNumberOfReferences() override { return EditionPool::k_maxNumberOfReferences; }
-    uint16_t * nodeOffsetArray() override { return m_nodeOffsetForIdentifier; }
+    typedef void (*AlterSelectedBlock)(uint16_t *, Block *, Block *, Block *,
+                                       int);
+    void updateNodes(AlterSelectedBlock function, Block *contextSelection1,
+                     Block *contextSelection2, int contextAlteration);
+
+   private:
+    size_t maxNumberOfReferences() override {
+      return EditionPool::k_maxNumberOfReferences;
+    }
+    uint16_t *nodeOffsetArray() override { return m_nodeOffsetForIdentifier; }
     uint16_t m_nodeOffsetForIdentifier[EditionPool::k_maxNumberOfReferences];
   };
-  const ReferenceTable * referenceTable() const override { return &m_referenceTable; }
+  const ReferenceTable *referenceTable() const override {
+    return &m_referenceTable;
+  }
 
   ReferenceTable m_referenceTable;
-  TypeBlock * m_firstBlock;
+  TypeBlock *m_firstBlock;
   int m_numberOfBlocks;
   size_t m_size;
 };
 
-}
+}  // namespace PoincareJ
 
 #endif

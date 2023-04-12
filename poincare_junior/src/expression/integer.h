@@ -1,12 +1,12 @@
 #ifndef POINCARE_EXPRESSION_INTEGER_H
 #define POINCARE_EXPRESSION_INTEGER_H
 
-#include <omg/bit_helper.h>
-#include <omgpj/bit.h>
-#include <omg/enums.h>
 #include <ion/unicode/utf8_decoder.h>
-#include <stdlib.h>
+#include <omg/bit_helper.h>
+#include <omg/enums.h>
+#include <omgpj/bit.h>
 #include <poincare_junior/src/memory/edition_reference.h>
+#include <stdlib.h>
 
 namespace PoincareJ {
 
@@ -19,115 +19,180 @@ typedef uint32_t native_uint_t;
 typedef int32_t native_int_t;
 typedef uint64_t double_native_uint_t;
 
-static_assert(sizeof(native_uint_t) == 2*sizeof(half_native_uint_t), "native_int_t should be twice the size of half_native_uint_t");
-static_assert(sizeof(double_native_uint_t) == 2*sizeof(native_uint_t), "double_native_uint_t should be twice the size of native_uint_t");
+static_assert(sizeof(native_uint_t) == 2 * sizeof(half_native_uint_t),
+              "native_int_t should be twice the size of half_native_uint_t");
+static_assert(sizeof(double_native_uint_t) == 2 * sizeof(native_uint_t),
+              "double_native_uint_t should be twice the size of native_uint_t");
 
 class IntegerHandler;
 
 class WorkingBuffer {
+  /* To compute operations between Integers, we need an array where to store the
+   * intermediate result digits. Instead of allocating it on the stack which
+   * could eventually lead to a stack overflow, we use the remaining space of
+   * the edition pool. In case of overflow, we raise an exception in order to
+   * restart after freeing some cached trees. */
 
-/* To compute operations between Integers, we need an array where to store the
- * intermediate result digits. Instead of allocating it on the stack which could
- * eventually lead to a stack overflow, we use the remaining space of the
- * edition pool. In case of overflow, we raise an exception in order to restart
- * after freeing some cached trees. */
-
-public:
+ public:
   WorkingBuffer();
-  uint8_t * allocate(size_t size);
+  uint8_t *allocate(size_t size);
   /* Clean the working buffer from all integers but the sorted keptInteger. */
   void garbageCollect(std::initializer_list<IntegerHandler *> keptIntegers);
-private:
+
+ private:
   /* We let an offset at the end of the edition pool before the working buffer
    * to be able to push either:
    * - the meta blocks of a Big Int before moving the digits from the
    *   WorkingBuffer to the EditionPool,
    * - the maximal size of an Integer Node that an immediate digit represents.
    */
-  constexpr static size_t k_blockOffset = TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) + sizeof(native_int_t);
-  uint8_t * initialStartOfBuffer() { return reinterpret_cast<uint8_t *>(EditionPool::sharedEditionPool()->lastBlock() + k_blockOffset); }
-  size_t initialSizeOfBuffer() { return (EditionPool::sharedEditionPool()->fullSize() - EditionPool::sharedEditionPool()->size() - k_blockOffset); }
-  uint8_t * m_start;
+  constexpr static size_t k_blockOffset =
+      TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) +
+      sizeof(native_int_t);
+  uint8_t *initialStartOfBuffer() {
+    return reinterpret_cast<uint8_t *>(
+        EditionPool::sharedEditionPool()->lastBlock() + k_blockOffset);
+  }
+  size_t initialSizeOfBuffer() {
+    return (EditionPool::sharedEditionPool()->fullSize() -
+            EditionPool::sharedEditionPool()->size() - k_blockOffset);
+  }
+  uint8_t *m_start;
   size_t m_remainingSize;
 };
 
-
 class IntegerHandler final {
+  /* IntegerHandler don't own their digits but a pointer to the EditionPool
+   * where the digits are stored. For optimization purpose, if the whole number
+   * can be stored in a native_int_t, the IntegerHandler owns it instead of a
+   * pointer. */
 
-/* IntegerHandler don't own their digits but a pointer to the EditionPool where
- * the digits are stored.
- * For optimization purpose, if the whole number can be stored in a native_int_t,
- * the IntegerHandler owns it instead of a pointer. */
+  friend class WorkingBuffer;
 
-friend class WorkingBuffer;
-public:
-  IntegerHandler(const uint8_t * digits = nullptr, uint8_t numberOfDigits = 0, NonStrictSign sign = NonStrictSign::Positive) : m_sign(sign), m_digitAccessor(digits, numberOfDigits), m_numberOfDigits(numberOfDigits) {}
-  IntegerHandler(native_int_t value) : IntegerHandler(abs(value), value >= 0 ? NonStrictSign::Positive : NonStrictSign::Negative) {}
-  IntegerHandler(native_uint_t value, NonStrictSign sign) : m_sign(sign), m_digitAccessor(value), m_numberOfDigits(NumberOfDigits(value)) {}
+ public:
+  IntegerHandler(const uint8_t *digits = nullptr, uint8_t numberOfDigits = 0,
+                 NonStrictSign sign = NonStrictSign::Positive)
+      : m_sign(sign),
+        m_digitAccessor(digits, numberOfDigits),
+        m_numberOfDigits(numberOfDigits) {}
+  IntegerHandler(native_int_t value)
+      : IntegerHandler(abs(value), value >= 0 ? NonStrictSign::Positive
+                                              : NonStrictSign::Negative) {}
+  IntegerHandler(native_uint_t value, NonStrictSign sign)
+      : m_sign(sign),
+        m_digitAccessor(value),
+        m_numberOfDigits(NumberOfDigits(value)) {}
 
-  static IntegerHandler Parse(UnicodeDecoder & decoder, OMG::Base base);
+  static IntegerHandler Parse(UnicodeDecoder &decoder, OMG::Base base);
 
-  template <typename T> static IntegerHandler Allocate(size_t size, WorkingBuffer * buffer);
+  template <typename T>
+  static IntegerHandler Allocate(size_t size, WorkingBuffer *buffer);
 
   uint8_t numberOfDigits() const { return m_numberOfDigits; }
-  uint8_t * digits();
-  StrictSign strictSign() const { return isZero() ? StrictSign::Null : static_cast<StrictSign>(m_sign); }
+  uint8_t *digits();
+  StrictSign strictSign() const {
+    return isZero() ? StrictSign::Null : static_cast<StrictSign>(m_sign);
+  }
   NonStrictSign sign() const { return m_sign; }
-  void setSign(NonStrictSign sign) { m_sign = m_numberOfDigits > 0 ? sign : NonStrictSign::Positive; } // -O is not represented
+  void setSign(NonStrictSign sign) {
+    m_sign = m_numberOfDigits > 0 ? sign : NonStrictSign::Positive;
+  }  // -O is not represented
 
-  bool isOne() const { return (usesImmediateDigit() && immediateDigit() == 1 && m_sign == NonStrictSign::Positive); };
-  bool isMinusOne() const { return (usesImmediateDigit() && immediateDigit() == 1 && m_sign == NonStrictSign::Negative); };
-  bool isTwo() const { return (usesImmediateDigit() && immediateDigit() == 2 && m_sign == NonStrictSign::Positive); };
+  bool isOne() const {
+    return (usesImmediateDigit() && immediateDigit() == 1 &&
+            m_sign == NonStrictSign::Positive);
+  };
+  bool isMinusOne() const {
+    return (usesImmediateDigit() && immediateDigit() == 1 &&
+            m_sign == NonStrictSign::Negative);
+  };
+  bool isTwo() const {
+    return (usesImmediateDigit() && immediateDigit() == 2 &&
+            m_sign == NonStrictSign::Positive);
+  };
   bool isZero() const;
   bool isEven() const { return ((digit(0) & 1) == 0); }
 
-  template <typename T> bool isSignedType() const;
-  template <typename T> bool isUnsignedType() const;
+  template <typename T>
+  bool isSignedType() const;
+  template <typename T>
+  bool isUnsignedType() const;
   operator int8_t() const;
   operator uint8_t() const;
 
   EditionReference pushOnEditionPool();
   void pushDigitsOnEditionPool();
-  template <typename T> T to();
+  template <typename T>
+  T to();
 
   // Arithmetic
-  static int Compare(const IntegerHandler & a, const IntegerHandler & b);
-  static EditionReference Addition(const IntegerHandler & a, const IntegerHandler & b);
-  static EditionReference Subtraction(const IntegerHandler & a, const IntegerHandler & b);
-  static EditionReference Multiplication(const IntegerHandler & a, const IntegerHandler & b);
-  static std::pair<EditionReference, EditionReference> Division(const IntegerHandler & numerator, const IntegerHandler & denominator);
-  static EditionReference Power(const IntegerHandler & i, const IntegerHandler & j);
-  static EditionReference Factorial(const IntegerHandler & i);
+  static int Compare(const IntegerHandler &a, const IntegerHandler &b);
+  static EditionReference Addition(const IntegerHandler &a,
+                                   const IntegerHandler &b);
+  static EditionReference Subtraction(const IntegerHandler &a,
+                                      const IntegerHandler &b);
+  static EditionReference Multiplication(const IntegerHandler &a,
+                                         const IntegerHandler &b);
+  static std::pair<EditionReference, EditionReference> Division(
+      const IntegerHandler &numerator, const IntegerHandler &denominator);
+  static EditionReference Power(const IntegerHandler &i,
+                                const IntegerHandler &j);
+  static EditionReference Factorial(const IntegerHandler &i);
 
   constexpr static uint8_t k_maxNumberOfDigits = 128;
-  constexpr static uint8_t k_maxNumberOfNativeDigits = k_maxNumberOfDigits / sizeof(native_uint_t);
-private:
-  static constexpr float k_digitBase = 1 << sizeof(uint8_t) * Bit::k_numberOfBitsInByte;
-  static int8_t Ucmp(const IntegerHandler & a, const IntegerHandler & b); // -1, 0, or 1
+  constexpr static uint8_t k_maxNumberOfNativeDigits =
+      k_maxNumberOfDigits / sizeof(native_uint_t);
+
+ private:
+  static constexpr float k_digitBase =
+      1 << sizeof(uint8_t) * Bit::k_numberOfBitsInByte;
+  static int8_t Ucmp(const IntegerHandler &a,
+                     const IntegerHandler &b);  // -1, 0, or 1
   /* Warning: Usum, Sum, Mult, Udiv return IntegerHandler whose digits pointer
    * is static working buffers. We could return EditionReference but we save the
    * projection onto the right node type for private methods.
    * The buffer holding one of the IntegerHandler a or b can be used as the
    * workingBuffer because we read a and b )digits before filling the working
    * buffer. */
-  static IntegerHandler Usum(const IntegerHandler & a, const IntegerHandler & b, bool subtract, WorkingBuffer * workingBuffer, bool oneDigitOverflow = false);
-  static IntegerHandler Sum(const IntegerHandler & a, const IntegerHandler & b, bool subtract, WorkingBuffer * workingBuffer, bool oneDigitOverflow = false);
-  static IntegerHandler Mult(const IntegerHandler & a, const IntegerHandler & b, WorkingBuffer * workingBuffer, bool oneDigitOverflow = false);
-  static std::pair<IntegerHandler, IntegerHandler> Udiv(const IntegerHandler & a, const IntegerHandler & b, WorkingBuffer * workingBuffer);
-  IntegerHandler multiplyByPowerOf2(uint8_t pow, WorkingBuffer * workingBuffer) const;
-  IntegerHandler divideByPowerOf2(uint8_t pow, WorkingBuffer * workingBuffer) const;
-  IntegerHandler multiplyByPowerOfBase(uint8_t pow, WorkingBuffer * workingBuffer) const;
-  // sanitize removes the leading zero and recompute the number of digits if necessary
+  static IntegerHandler Usum(const IntegerHandler &a, const IntegerHandler &b,
+                             bool subtract, WorkingBuffer *workingBuffer,
+                             bool oneDigitOverflow = false);
+  static IntegerHandler Sum(const IntegerHandler &a, const IntegerHandler &b,
+                            bool subtract, WorkingBuffer *workingBuffer,
+                            bool oneDigitOverflow = false);
+  static IntegerHandler Mult(const IntegerHandler &a, const IntegerHandler &b,
+                             WorkingBuffer *workingBuffer,
+                             bool oneDigitOverflow = false);
+  static std::pair<IntegerHandler, IntegerHandler> Udiv(
+      const IntegerHandler &a, const IntegerHandler &b,
+      WorkingBuffer *workingBuffer);
+  IntegerHandler multiplyByPowerOf2(uint8_t pow,
+                                    WorkingBuffer *workingBuffer) const;
+  IntegerHandler divideByPowerOf2(uint8_t pow,
+                                  WorkingBuffer *workingBuffer) const;
+  IntegerHandler multiplyByPowerOfBase(uint8_t pow,
+                                       WorkingBuffer *workingBuffer) const;
+  // sanitize removes the leading zero and recompute the number of digits if
+  // necessary
   void sanitize();
-  static size_t NumberOfDigits(native_uint_t value) { return Arithmetic::CeilDivision<size_t>(OMG::BitHelper::numberOfBitsToCountUpTo(value + 1), OMG::BitHelper::k_numberOfBitsInByte); }
+  static size_t NumberOfDigits(native_uint_t value) {
+    return Arithmetic::CeilDivision<size_t>(
+        OMG::BitHelper::numberOfBitsToCountUpTo(value + 1),
+        OMG::BitHelper::k_numberOfBitsInByte);
+  }
 
   // Get HalfNativeDigits, NativeDigits, DoubleNativeDigits
-  template <typename T> uint8_t numberOfDigits() const;
-  template <typename T> T digit(int i) const;
-  template <typename T> void setDigit(T value, int i);
+  template <typename T>
+  uint8_t numberOfDigits() const;
+  template <typename T>
+  T digit(int i) const;
+  template <typename T>
+  void setDigit(T value, int i);
 
   uint8_t digit(int i) const;
-  bool usesImmediateDigit() const { return m_numberOfDigits <= sizeof(native_uint_t); }
+  bool usesImmediateDigit() const {
+    return m_numberOfDigits <= sizeof(native_uint_t);
+  }
   native_uint_t immediateDigit() const {
     assert(usesImmediateDigit());
     return m_digitAccessor.m_digit;
@@ -135,9 +200,9 @@ private:
   NonStrictSign m_sign;
   union Digits {
     Digits(native_uint_t digit = 0) : m_digit(digit) {}
-    Digits(const uint8_t * digits, uint8_t numberOfDigits);
+    Digits(const uint8_t *digits, uint8_t numberOfDigits);
     // In little-endian format
-    const uint8_t * m_digits;
+    const uint8_t *m_digits;
     native_uint_t m_digit;
   };
   Digits m_digitAccessor;
@@ -145,12 +210,16 @@ private:
 };
 
 class Integer {
-public:
-  static EditionReference Push(const char * digits, size_t length, OMG::Base base = OMG::Base::Decimal) {
+ public:
+  static EditionReference Push(const char *digits, size_t length,
+                               OMG::Base base = OMG::Base::Decimal) {
     UTF8Decoder decoder(digits, digits, digits + length);
     return IntegerHandler::Parse(decoder, base).pushOnEditionPool();
   }
-  static EditionReference Push(UnicodeDecoder & decoder, OMG::Base base = OMG::Base::Decimal) { return IntegerHandler::Parse(decoder, base).pushOnEditionPool(); }
+  static EditionReference Push(UnicodeDecoder &decoder,
+                               OMG::Base base = OMG::Base::Decimal) {
+    return IntegerHandler::Parse(decoder, base).pushOnEditionPool();
+  }
   static IntegerHandler Handler(const Node expression);
   static bool IsUint8(const Node expression);
   static uint8_t Uint8(const Node expression);
@@ -168,6 +237,6 @@ public:
   }
 };
 
-}
+}  // namespace PoincareJ
 
 #endif

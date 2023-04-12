@@ -1,19 +1,22 @@
-#include "helper.h"
-#include <poincare_junior/src/n_ary.h>
 #include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/n_ary.h>
 #include <quiz.h>
+
+#include "helper.h"
 
 using namespace PoincareJ;
 
 QUIZ_CASE(pcj_n_ary_manipulation) {
-  EditionReference rackLayout1 = EditionReference::Push<BlockType::RackLayout>(3);
+  EditionReference rackLayout1 =
+      EditionReference::Push<BlockType::RackLayout>(3);
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('x');
   EditionReference::Push<BlockType::VerticalOffsetLayout>();
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('2');
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('+');
   // rackLayout1 is x^2+
 
-  EditionReference rackLayout2 = EditionReference::Push<BlockType::RackLayout>(3);
+  EditionReference rackLayout2 =
+      EditionReference::Push<BlockType::RackLayout>(3);
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('-');
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('4');
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('3');
@@ -28,7 +31,8 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   NAry::RemoveChildAtIndex(rackLayout1, 4);
   // rackLayout1 is x^2-34
 
-  EditionReference rackLayout3 = EditionReference::Push<BlockType::RackLayout>(5);
+  EditionReference rackLayout3 =
+      EditionReference::Push<BlockType::RackLayout>(5);
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('x');
   EditionReference::Push<BlockType::VerticalOffsetLayout>();
   EditionReference::Push<BlockType::CodePointLayout, CodePoint>('2');

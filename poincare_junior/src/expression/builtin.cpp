@@ -1,4 +1,5 @@
 #include "builtin.h"
+
 #include <poincare_junior/src/memory/k_creator.h>
 
 namespace PoincareJ {
@@ -7,13 +8,13 @@ namespace PoincareJ {
  * keys to enable dichotomy. Devise a pattern for maps and move it in OMG. */
 
 constexpr static Builtin s_builtins[] = {
-  { BlockType::Cosine, "cos" },
-  { BlockType::Sine, "sin" },
-  { BlockType::Tangent, "tan" },
-  { BlockType::ArcCosine, BuiltinsAliases::k_acosAliases },
-  { BlockType::ArcSine, BuiltinsAliases::k_asinAliases },
-  { BlockType::ArcTangent, BuiltinsAliases::k_atanAliases },
-  { BlockType::Logarithm, "log" },
+    {BlockType::Cosine, "cos"},
+    {BlockType::Sine, "sin"},
+    {BlockType::Tangent, "tan"},
+    {BlockType::ArcCosine, BuiltinsAliases::k_acosAliases},
+    {BlockType::ArcSine, BuiltinsAliases::k_asinAliases},
+    {BlockType::ArcTangent, BuiltinsAliases::k_atanAliases},
+    {BlockType::Logarithm, "log"},
 };
 
 Aliases Builtin::Name(BlockType type) {
@@ -25,7 +26,7 @@ Aliases Builtin::Name(BlockType type) {
   assert(false);
 }
 
-bool Builtin::HasReservedFunction(UnicodeDecoder * name) {
+bool Builtin::HasReservedFunction(UnicodeDecoder *name) {
   for (auto [block, aliases] : s_builtins) {
     if (aliases.contains(name)) {
       return true;
@@ -34,7 +35,7 @@ bool Builtin::HasReservedFunction(UnicodeDecoder * name) {
   return false;
 }
 
-const Builtin * Builtin::GetReservedFunction(UnicodeDecoder * name) {
+const Builtin *Builtin::GetReservedFunction(UnicodeDecoder *name) {
   for (const Builtin &builtin : s_builtins) {
     if (builtin.second.contains(name)) {
       return &builtin;
@@ -43,40 +44,37 @@ const Builtin * Builtin::GetReservedFunction(UnicodeDecoder * name) {
   assert(false);
 }
 
-uint8_t Builtin::MinNumberOfParameters(BlockType type) {
-  return 1;
-}
+uint8_t Builtin::MinNumberOfParameters(BlockType type) { return 1; }
 
-uint8_t Builtin::MaxNumberOfParameters(BlockType type) {
-  return 1;
-}
+uint8_t Builtin::MaxNumberOfParameters(BlockType type) { return 1; }
 
-EditionReference Builtin::Promote(EditionReference parameterList, BlockType type) {
+EditionReference Builtin::Promote(EditionReference parameterList,
+                                  BlockType type) {
   Node header;
   switch (type) {
-  case BlockType::Cosine:
-    header = Tree<BlockType::Cosine>();
-    break;
-  case BlockType::Sine:
-    header = Tree<BlockType::Sine>();
-    break;
-  case BlockType::Tangent:
-    header = Tree<BlockType::Tangent>();
-    break;
-  case BlockType::ArcCosine:
-    header = Tree<BlockType::ArcCosine>();
-    break;
-  case BlockType::ArcSine:
-    header = Tree<BlockType::ArcSine>();
-    break;
-  case BlockType::ArcTangent:
-    header = Tree<BlockType::ArcTangent>();
-    break;
-  default:
-    assert(false);
+    case BlockType::Cosine:
+      header = Tree<BlockType::Cosine>();
+      break;
+    case BlockType::Sine:
+      header = Tree<BlockType::Sine>();
+      break;
+    case BlockType::Tangent:
+      header = Tree<BlockType::Tangent>();
+      break;
+    case BlockType::ArcCosine:
+      header = Tree<BlockType::ArcCosine>();
+      break;
+    case BlockType::ArcSine:
+      header = Tree<BlockType::ArcSine>();
+      break;
+    case BlockType::ArcTangent:
+      header = Tree<BlockType::ArcTangent>();
+      break;
+    default:
+      assert(false);
   }
   parameterList.replaceNodeByNode(header);
   return parameterList;
 }
 
-}
+}  // namespace PoincareJ

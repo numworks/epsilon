@@ -8,9 +8,10 @@
  *   an efficient but less readable shunting-yard parser. */
 
 // #include "helper.h"
+#include <poincare_junior/src/expression/builtin.h>
+
 #include "parsing_context.h"
 #include "tokenizer.h"
-#include <poincare_junior/src/expression/builtin.h>
 
 namespace PoincareJ {
 
@@ -28,8 +29,8 @@ class RackParser {
    * "=". (so that f(x)=xy is parsed as f(x)=x*y, and not as f*(x)=x*y or as
    * f(x)=xy) */
   RackParser(const Node node, /*Context* context,*/ size_t textEnd = 0,
-         ParsingContext::ParsingMethod parsingMethod =
-             ParsingContext::ParsingMethod::Classic)
+             ParsingContext::ParsingMethod parsingMethod =
+                 ParsingContext::ParsingMethod::Classic)
       : m_parsingContext(/*context,*/ parsingMethod),
         m_status(Status::Progress),
         m_tokenizer(node, &m_parsingContext, textEnd),
@@ -42,8 +43,9 @@ class RackParser {
   Status getStatus() const { return m_status; }
 
  private:
-  EditionReference parseUntil(Token::Type stoppingType,
-                        EditionReference leftHandSide = EditionReference());
+  EditionReference parseUntil(
+      Token::Type stoppingType,
+      EditionReference leftHandSide = EditionReference());
   EditionReference parseExpressionWithRightwardsArrow(
       size_t rightwardsArrowPosition);
   EditionReference initializeFirstTokenAndParseUntilEnd();
@@ -90,7 +92,8 @@ class RackParser {
   void parseImplicitTimes(EditionReference& leftHandSide,
                           Token::Type stoppingType = (Token::Type)0);
   void parseImplicitAdditionBetweenUnits(
-      EditionReference& leftHandSide, Token::Type stoppingType = (Token::Type)0);
+      EditionReference& leftHandSide,
+      Token::Type stoppingType = (Token::Type)0);
   void parseCaret(EditionReference& leftHandSide,
                   Token::Type stoppingType = (Token::Type)0);
   void parseComparisonOperator(EditionReference& leftHandSide,
@@ -100,29 +103,29 @@ class RackParser {
   void parseLogicalOperatorNot(EditionReference& leftHandSide,
                                Token::Type stoppingType = (Token::Type)0);
   // void parseAndOperator(EditionReference& leftHandSide,
-                        // Token::Type stoppingType = (Token::Type)0) {
-    // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::And,
-                               // leftHandSide, stoppingType);
+  // Token::Type stoppingType = (Token::Type)0) {
+  // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::And,
+  // leftHandSide, stoppingType);
   // }
   // void parseNandOperator(EditionReference& leftHandSide,
-                         // Token::Type stoppingType = (Token::Type)0) {
-    // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Nand,
-                               // leftHandSide, stoppingType);
+  // Token::Type stoppingType = (Token::Type)0) {
+  // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Nand,
+  // leftHandSide, stoppingType);
   // }
   // void parseOrOperator(EditionReference& leftHandSide,
-                       // Token::Type stoppingType = (Token::Type)0) {
-    // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Or,
-                               // leftHandSide, stoppingType);
+  // Token::Type stoppingType = (Token::Type)0) {
+  // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Or,
+  // leftHandSide, stoppingType);
   // }
   // void parseXorOperator(EditionReference& leftHandSide,
-                        // Token::Type stoppingType = (Token::Type)0) {
-    // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Xor,
-                               // leftHandSide, stoppingType);
+  // Token::Type stoppingType = (Token::Type)0) {
+  // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Xor,
+  // leftHandSide, stoppingType);
   // }
   // void parseNorOperator(EditionReference& leftHandSide,
-                        // Token::Type stoppingType = (Token::Type)0) {
-    // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Nor,
-                               // leftHandSide, stoppingType);
+  // Token::Type stoppingType = (Token::Type)0) {
+  // parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Nor,
+  // leftHandSide, stoppingType);
   // }
 
   void parseRightwardsArrow(EditionReference& leftHandSide,
@@ -143,19 +146,21 @@ class RackParser {
   void privateParseEastArrow(EditionReference& leftHandSide, bool north,
                              Token::Type stoppingType = (Token::Type)0);
   // void parseBinaryLogicalOperator(
-      // BinaryLogicalOperatorNode::OperatorType operatorType,
-      // EditionReference& leftHandSide, Token::Type stoppingType);
+  // BinaryLogicalOperatorNode::OperatorType operatorType,
+  // EditionReference& leftHandSide, Token::Type stoppingType);
   bool parseBinaryOperator(const EditionReference& leftHandSide,
-                           EditionReference& rightHandSide, Token::Type stoppingType);
+                           EditionReference& rightHandSide,
+                           Token::Type stoppingType);
   EditionReference parseVector();
   EditionReference parseFunctionParameters();
   EditionReference parseCommaSeparatedList();
-  void privateParseTimes(EditionReference& leftHandSide, Token::Type stoppingType);
-  void privateParseReservedFunction(
-      EditionReference& leftHandSide,
-      const Builtin * builtin);
-  void privateParseCustomIdentifier(EditionReference& leftHandSide, const char* name,
-                                    size_t length, Token::Type stoppingType);
+  void privateParseTimes(EditionReference& leftHandSide,
+                         Token::Type stoppingType);
+  void privateParseReservedFunction(EditionReference& leftHandSide,
+                                    const Builtin* builtin);
+  void privateParseCustomIdentifier(EditionReference& leftHandSide,
+                                    const char* name, size_t length,
+                                    Token::Type stoppingType);
   void parseSequence(EditionReference& leftHandSide, const char* name,
                      Token::Type rightDelimiter);
   bool generateMixedFractionIfNeeded(EditionReference& leftHandSide);

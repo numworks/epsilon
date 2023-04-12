@@ -11,9 +11,9 @@ size_t Arithmetic::Gcd(size_t a, size_t b) {
       return i;
     }
     if (i > j) {
-      i = i - j*(i/j);
+      i = i - j * (i / j);
     } else {
-      j = j - i*(j/i);
+      j = j - i * (j / i);
     }
-  } while(true);
+  } while (true);
 }

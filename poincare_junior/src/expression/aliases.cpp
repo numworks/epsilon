@@ -1,16 +1,18 @@
-#include <omgpj/unicode_helper.h>
 #include "aliases.h"
+
+#include <omgpj/unicode_helper.h>
 
 namespace PoincareJ {
 
-int Aliases::maxDifferenceWith(UnicodeDecoder * decoder) const {
+int Aliases::maxDifferenceWith(UnicodeDecoder* decoder) const {
   if (!hasMultipleAliases()) {
-    return OMG::CompareDecoderWithNullTerminatedString(decoder, m_formattedAliases);
+    return OMG::CompareDecoderWithNullTerminatedString(decoder,
+                                                       m_formattedAliases);
   }
   int maxValueOfComparison = 0;
   for (const char* aliasInList : *this) {
     int tempValueOfComparison =
-      OMG::CompareDecoderWithNullTerminatedString(decoder, aliasInList);
+        OMG::CompareDecoderWithNullTerminatedString(decoder, aliasInList);
     if (tempValueOfComparison == 0) {
       return 0;
     }
@@ -22,8 +24,7 @@ int Aliases::maxDifferenceWith(UnicodeDecoder * decoder) const {
   return maxValueOfComparison;
 }
 
-const char* Aliases::nextAlias(
-    const char* currentPositionInAliases) const {
+const char* Aliases::nextAlias(const char* currentPositionInAliases) const {
   if (!hasMultipleAliases()) {
     return nullptr;
   }

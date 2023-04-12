@@ -5,7 +5,8 @@
 // https://stackoverflow.com/questions/2124339/c-preprocessor-va-args-number-of-arguments
 
 // Returns the number of arguments in __VA_ARGS__
-#define _PP_NARG(...) _PP_ARG_N(_0, ## __VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+#define _PP_NARG(...) \
+  _PP_ARG_N(_0, ##__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
 // Returns the 11th argument it has been called with
 #define _PP_ARG_N(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 

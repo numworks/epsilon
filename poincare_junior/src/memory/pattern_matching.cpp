@@ -11,11 +11,14 @@ bool PatternMatching::Context::isUninitialized() const {
   return true;
 }
 
-PatternMatching::Context PatternMatching::Match(const Node pattern, Node source, Context result) {
-  Pool::Nodes patternNodes = Pool::Nodes(pattern.block(), pattern.nextTree().block() - pattern.block());
+PatternMatching::Context PatternMatching::Match(const Node pattern, Node source,
+                                                Context result) {
+  Pool::Nodes patternNodes = Pool::Nodes(
+      pattern.block(), pattern.nextTree().block() - pattern.block());
   for (const Node node : patternNodes) {
     if (node.type() == BlockType::Placeholder) {
-      PlaceholderTag placeholder = static_cast<PlaceholderTag>(static_cast<uint8_t>(*node.block()->next()));
+      PlaceholderTag placeholder = static_cast<PlaceholderTag>(
+          static_cast<uint8_t>(*node.block()->next()));
       if (result[placeholder].isUninitialized()) {
         result[placeholder] = source;
         source = source.nextTree();
@@ -32,13 +35,17 @@ PatternMatching::Context PatternMatching::Match(const Node pattern, Node source,
   return result;
 }
 
-EditionReference PatternMatching::Create(const Node structure, const Context context)  {
+EditionReference PatternMatching::Create(const Node structure,
+                                         const Context context) {
   EditionReference top(EditionPool::sharedEditionPool()->lastBlock());
   // TODO introduce a DFS iterator in node_iterator and use it here
-  Pool::Nodes nodes = Pool::Nodes(structure.block(), structure.nextTree().block() - structure.block());
+  Pool::Nodes nodes = Pool::Nodes(
+      structure.block(), structure.nextTree().block() - structure.block());
   for (const Node node : nodes) {
     if (node.type() == BlockType::Placeholder) {
-      EditionPool::sharedEditionPool()->initFromTree(context[static_cast<PlaceholderTag>(static_cast<uint8_t>(*node.block()->next()))]);
+      EditionPool::sharedEditionPool()->initFromTree(
+          context[static_cast<PlaceholderTag>(
+              static_cast<uint8_t>(*node.block()->next()))]);
     } else {
       for (const Block block : node.blocks()) {
         EditionPool::sharedEditionPool()->pushBlock(block);
@@ -47,4 +54,3 @@ EditionReference PatternMatching::Create(const Node structure, const Context con
   }
   return top;
 }
-

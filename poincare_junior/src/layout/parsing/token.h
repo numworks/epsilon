@@ -6,16 +6,16 @@
  * the successive Tokens, that are then consumed by the Parser.
  * Each Token has a Type and a range (firstLayout, length). */
 
-#include <poincare_junior/src/memory/node.h>
 #include <poincare_junior/src/layout/rack_layout_decoder.h>
+#include <poincare_junior/src/memory/node.h>
 
 namespace PoincareJ {
 
 class Token {
-public:
+ public:
   enum class Type {
     // Ordered from lower to higher precedence to make Parser's job easier
-    EndOfStream = 0, // Must be the first
+    EndOfStream = 0,  // Must be the first
     RightwardsArrow,
     AssignmentEqual,
     RightBracket,
@@ -36,10 +36,10 @@ public:
     Times,
     Slash,
     ImplicitTimes,
-      /* The ImplicitTimes Token allows to parse text where the Times Token is omitted.
-       * Eventhough the Tokenizer will never pop ImplicitTimes Tokens,
-       * the ImplicitTimes Token Type is defined here with the desired precedence,
-       * in order to allow the Parser to insert such Tokens where needed. */
+    /* The ImplicitTimes Token allows to parse text where the Times Token is
+     * omitted. Eventhough the Tokenizer will never pop ImplicitTimes Tokens,
+     * the ImplicitTimes Token Type is defined here with the desired precedence,
+     * in order to allow the Parser to insert such Tokens where needed. */
     Percent,
     Caret,
     Bang,
@@ -60,13 +60,18 @@ public:
     Undefined
   };
 
-  Token(Type type = Type::Undefined) : m_type(type), m_firstLayout(), m_length(0) {};
-  Token(Type type, Node layout, size_t length = 1) : m_type(type), m_firstLayout(layout), m_length(length) {};
+  Token(Type type = Type::Undefined)
+      : m_type(type), m_firstLayout(), m_length(0){};
+  Token(Type type, Node layout, size_t length = 1)
+      : m_type(type), m_firstLayout(layout), m_length(length){};
 
   Type type() const { return m_type; }
   void setType(Type t) { m_type = t; }
   bool is(Type t) const { return m_type == t; }
-  bool isNumber() const { return m_type == Type::Number || m_type == Type::BinaryNumber || m_type == Type::HexadecimalNumber; }
+  bool isNumber() const {
+    return m_type == Type::Number || m_type == Type::BinaryNumber ||
+           m_type == Type::HexadecimalNumber;
+  }
   bool isEndOfStream() const { return is(Type::EndOfStream); }
 
   Node firstLayout() const { return m_firstLayout; }
@@ -83,12 +88,12 @@ public:
     return RackLayoutDecoder(rack, start, start + m_length);
   }
 
-private:
+ private:
   Type m_type;
   Node m_firstLayout;
   size_t m_length;
 };
 
-}
+}  // namespace PoincareJ
 
 #endif

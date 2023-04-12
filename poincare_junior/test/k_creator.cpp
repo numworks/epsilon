@@ -1,6 +1,7 @@
-#include "helper.h"
-#include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/k_creator.h>
+
+#include "helper.h"
 
 using namespace PoincareJ;
 
@@ -19,7 +20,7 @@ QUIZ_CASE(pcj_k_creator) {
   quiz_assert(poly.nodeSize() == 6);
   quiz_assert(poly.treeSize() == 17);
 
-  (void) KPol(Exponents<1>(), "x"_e, 2_e);
+  (void)KPol(Exponents<1>(), "x"_e, 2_e);
 
   quiz_assert(Approximation::To<float>(0.125_e) == 0.125);
   quiz_assert(Approximation::To<float>(-2.5_e) == -2.5);
@@ -42,7 +43,7 @@ QUIZ_CASE(pcj_k_creator_integer) {
   quiz_assert(Integer::Handler(-1234_e).to<double>() == -1234.0);
   quiz_assert(Integer::Handler(123456_e).to<double>() == 123456.0);
   quiz_assert(Integer::Handler(-123456_e).to<double>() == -123456.0);
-  quiz_assert(Integer::Handler( 123456789_e).to<double>() == 123456789.0);
+  quiz_assert(Integer::Handler(123456789_e).to<double>() == 123456789.0);
   quiz_assert(Integer::Handler(-123456789_e).to<double>() == -123456789.0);
 
   quiz_assert(Node(12_e).parent().isUninitialized());

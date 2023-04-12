@@ -1,13 +1,14 @@
+#include "layout_cursor.h"
+
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare_junior/src/layout/rack_layout.h>
+#include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/layout/k_creator.h>
 #include <poincare_junior/src/layout/layout_cursor.h>
+#include <poincare_junior/src/layout/p_pusher.h>
+#include <poincare_junior/src/layout/rack_layout.h>
 #include <poincare_junior/src/layout/vertical_offset_layout.h>
 #include <poincare_junior/src/memory/edition_reference.h>
-#include <poincare_junior/src/layout/k_creator.h>
-#include <poincare_junior/src/layout/p_pusher.h>
 #include <poincare_junior/src/n_ary.h>
-#include <poincare_junior/include/layout.h>
-#include "layout_cursor.h"
 
 #include <algorithm>
 
@@ -166,7 +167,8 @@ static bool IsTemporaryAutocompletedBracketPair(
 #endif
 
 // Return leftParenthesisIndex
-static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(EditionReference rack, int index) {
+static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
+    EditionReference rack, int index) {
 #if 0
   int leftParenthesisIndex = index;
   int dummy = 0;
@@ -179,7 +181,8 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(EditionReference 
 #else
   int leftParenthesisIndex = 0;
 #endif
-  EditionReference parenthesis = EditionReference::Push<BlockType::ParenthesisLayout>();
+  EditionReference parenthesis =
+      EditionReference::Push<BlockType::ParenthesisLayout>();
   EditionReference tempRack = EditionReference::Push<BlockType::RackLayout>(0);
   int i = index;
   while (i >= leftParenthesisIndex) {
@@ -192,8 +195,10 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(EditionReference 
 }
 
 /* const Node insertion */
-void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context, const void * data) {
-  const InsertLayoutContext * insertLayoutContext = static_cast<const InsertLayoutContext *>(data);
+void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
+                                                         const void *data) {
+  const InsertLayoutContext *insertLayoutContext =
+      static_cast<const InsertLayoutContext *>(data);
   const Node tree = insertLayoutContext->m_tree;
   bool forceRight = insertLayoutContext->m_forceRight;
   bool forceLeft = insertLayoutContext->m_forceLeft;
@@ -286,8 +291,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context, const
       // Insert ^c left of a^b -> turn a^b into (a^b)
       int leftParenthesisIndex =
           ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
-              cursorNode(),
-              cursorNode().indexOfChild(leftL));
+              cursorNode(), cursorNode().indexOfChild(leftL));
       m_position = leftParenthesisIndex + 1;
     }
 
@@ -298,9 +302,9 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context, const
       // Insert ^b right of a in a^c -> turn a^c into (a)^c
       int leftParenthesisIndex =
           ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
-              cursorNode(),
-              cursorNode().indexOfChild(rightL) - 1);
-      setCursorNode(cursorNode().childAtIndex(leftParenthesisIndex).childAtIndex(0));
+              cursorNode(), cursorNode().indexOfChild(rightL) - 1);
+      setCursorNode(
+          cursorNode().childAtIndex(leftParenthesisIndex).childAtIndex(0));
       m_position = cursorNode().numberOfChildren();
     }
   }
@@ -328,9 +332,11 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context, const
   /* AddOrMergeLayoutAtIndex will replace current layout with an
    * HorizontalLayout if needed. With this assert, m_position is guaranteed to
    * be preserved. */
-  assert(Layout::IsHorizontal(cursorNode()) || cursorNode().parent().isUninitialized() ||
+  assert(Layout::IsHorizontal(cursorNode()) ||
+         cursorNode().parent().isUninitialized() ||
          !Layout::IsHorizontal(cursorNode().parent()));
-  setCursorNode(static_cast<Node>(RackLayout::AddOrMergeLayoutAtIndex(cursorNode(), tree, &m_position)));
+  setCursorNode(static_cast<Node>(
+      RackLayout::AddOrMergeLayoutAtIndex(cursorNode(), tree, &m_position)));
   assert(Layout::IsHorizontal(cursorNode()));
 
   if (!forceLeft) {
@@ -370,14 +376,14 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context, const
 #endif
 }
 
-void LayoutBufferCursor::EditionPoolCursor::addEmptyExponentialLayout(Context *context, const void * data) {
+void LayoutBufferCursor::EditionPoolCursor::addEmptyExponentialLayout(
+    Context *context, const void *data) {
   assert(data == nullptr);
   // TODO : Avoid the RackLayout inside a RackLayout
   // insertLayout(RackL("e"_l,KVertOffL(""_l)), false, false);
   EditionReference ref = P_RACKL(
-    (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('e')),
-    (EditionReference::Push<BlockType::VerticalOffsetLayout>(), P_RACKL())
-  );
+      (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('e')),
+      (EditionReference::Push<BlockType::VerticalOffsetLayout>(), P_RACKL()));
   InsertLayoutContext insertLayoutContext{ref, false, false};
   insertLayout(context, &insertLayoutContext);
 }
@@ -403,27 +409,30 @@ void LayoutBufferCursor::addEmptySquarePowerLayout(Context *context) {
   insertLayout(KVertOffL("2"_l), context, true, false);
 }
 
-void LayoutBufferCursor::EditionPoolCursor::addEmptyTenPowerLayout(Context *context, const void * data) {
+void LayoutBufferCursor::EditionPoolCursor::addEmptyTenPowerLayout(
+    Context *context, const void *data) {
   assert(data == nullptr);
   // TODO : Avoid the RackLayout inside a RackLayout
   // insertLayout(RackL("10"_l,KVertOffL(""_l)), false, false);
   /* TODO : P_RACKL gets confused with the comma inside the template, so we have
    *        to surround CodePointLayout pushes with () */
-  EditionReference ref =  P_RACKL(
-    (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1')),
-    (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('0')),
-    P_VERTOFFL(P_RACKL())
-  );
+  EditionReference ref = P_RACKL(
+      (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1')),
+      (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('0')),
+      P_VERTOFFL(P_RACKL()));
   InsertLayoutContext insertLayoutContext{ref, false, false};
   insertLayout(context, &insertLayoutContext);
 }
 
-void LayoutBufferCursor::addFractionLayoutAndCollapseSiblings(Context *context) {
-  insertLayout(KFracL(""_l,""_l), context, false, false);
+void LayoutBufferCursor::addFractionLayoutAndCollapseSiblings(
+    Context *context) {
+  insertLayout(KFracL(""_l, ""_l), context, false, false);
 }
 
-void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context, const void * data) {
-  const InsertTextContext * insertTextContext = static_cast<const InsertTextContext *>(data);
+void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
+                                                       const void *data) {
+  const InsertTextContext *insertTextContext =
+      static_cast<const InsertTextContext *>(data);
   const char *text = insertTextContext->m_text;
   bool forceCursorRightOfText = insertTextContext->m_forceRight;
   bool forceCursorLeftOfText = insertTextContext->m_forceLeft;
@@ -457,7 +466,9 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context, const v
          * the first half of text now, and then insert the end of the text
          * and force the cursor left of it. */
         assert(currentSubscriptDepth == 0);
-        LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext insertLayoutContext{layoutToInsert, forceCursorRightOfText, forceCursorLeftOfText};
+        LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext
+            insertLayoutContext{layoutToInsert, forceCursorRightOfText,
+                                forceCursorLeftOfText};
         insertLayout(context, &insertLayoutContext);
         layoutToInsert = P_RACKL();
         currentLayout = layoutToInsert;
@@ -543,22 +554,28 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context, const v
       newChild = CodePointLayout::Builder(codePoint);
     }
 #else
-    EditionReference newChild = EditionReference::Push<BlockType::CodePointLayout, CodePoint>(codePoint);
+    EditionReference newChild =
+        EditionReference::Push<BlockType::CodePointLayout, CodePoint>(
+            codePoint);
 #endif
     int dummy = currentLayout.numberOfChildren();
-    currentLayout = RackLayout::AddOrMergeLayoutAtIndex(currentLayout, newChild, &dummy);
+    currentLayout =
+        RackLayout::AddOrMergeLayoutAtIndex(currentLayout, newChild, &dummy);
     codePoint = nextCodePoint;
   }
   assert(currentSubscriptDepth == 0);
 
   // - Step 2 - Inserted the created layout
-  LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext insertLayoutContext{layoutToInsert, forceCursorRightOfText, forceCursorLeftOfText};
+  LayoutBufferCursor::EditionPoolCursor::InsertLayoutContext
+      insertLayoutContext{layoutToInsert, forceCursorRightOfText,
+                          forceCursorLeftOfText};
   insertLayout(context, &insertLayoutContext);
 
   // TODO: Restore beautification
 }
 
-void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context * context, const void * data) {
+void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context *context,
+                                                             const void *data) {
   assert(data == nullptr);
   if (isSelecting()) {
     return deleteAndResetSelection(context, nullptr);
@@ -579,7 +596,8 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context * context, 
       return;
     }
     Render::DeletionMethod deletionMethod =
-        Render::DeletionMethodForCursorLeftOfChild(p, p.indexOfChild(cursorNode()));
+        Render::DeletionMethodForCursorLeftOfChild(
+            p, p.indexOfChild(cursorNode()));
     privateDelete(deletionMethod, true);
   }
 #if 0
@@ -588,7 +606,8 @@ void LayoutBufferCursor::EditionPoolCursor::performBackspace(Context * context, 
 #endif
 }
 
-void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(Context * context, const void * data) {
+void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
+    Context *context, const void *data) {
   assert(data == nullptr);
   LayoutSelection selec = selection();
   if (selec.isEmpty()) {
@@ -601,8 +620,10 @@ void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(Context * co
       NAry::RemoveChildAtIndex(m_cursorReference, selectionLeftBound);
     }
   } else {
-    assert(m_cursorReference.parent().isUninitialized() || !Layout::IsHorizontal(m_cursorReference.parent()));
-    EditionReference emptyRack = EditionReference::Push<BlockType::RackLayout>(0);
+    assert(m_cursorReference.parent().isUninitialized() ||
+           !Layout::IsHorizontal(m_cursorReference.parent()));
+    EditionReference emptyRack =
+        EditionReference::Push<BlockType::RackLayout>(0);
     m_cursorReference.replaceTreeByTree(emptyRack);
   }
   m_position = selectionLeftBound;
@@ -732,7 +753,7 @@ const Node LayoutCursor::layoutToFit(KDFont::Size font) const {
   }
   return leftL.isUninitialized() || (!rightL.isUninitialized() &&
                                      Render::Size(leftL, font).height() <
-                                     Render::Size(rightL, font).height())
+                                         Render::Size(rightL, font).height())
              ? rightL
              : leftL;
 }
@@ -809,11 +830,11 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction,
 
   /* If the cursor is selecting, it should not enter a new layout
    * but select all of it. */
-  int newIndex = isSelecting() ? k_outsideIndex
-                               : Render::IndexAfterHorizontalCursorMove(
-                                    nextLayout, direction,
-                                    currentIndexInNextLayout,
-                                    shouldRedrawLayout);
+  int newIndex = isSelecting()
+                     ? k_outsideIndex
+                     : Render::IndexAfterHorizontalCursorMove(
+                           nextLayout, direction, currentIndexInNextLayout,
+                           shouldRedrawLayout);
   assert(newIndex != k_cantMoveIndex);
 
   if (newIndex != k_outsideIndex) {
@@ -884,7 +905,8 @@ bool LayoutCursor::verticalMove(OMG::VerticalDirection direction,
 
   // Handle selection (find a common ancestor to previous and current layout)
   if (moved && isSelecting() && previousLayout != cursorNode()) {
-    const Node layoutAncestor = rootNode().commonAncestor(cursorNode(), previousLayout);
+    const Node layoutAncestor =
+        rootNode().commonAncestor(cursorNode(), previousLayout);
     assert(!layoutAncestor.isUninitialized());
     // Down goes left to right and up goes right to left
     setLayout(layoutAncestor, direction.isUp() ? OMG::Direction::Left()
@@ -942,8 +964,8 @@ bool LayoutCursor::verticalMoveWithoutSelection(
     // Repeat for right and left
     for (int i = 0; i < 2; i++) {
       if (!nextLayout.isUninitialized()) {
-        int nextIndex = Render::IndexAfterVerticalCursorMove(nextLayout,
-            direction, k_outsideIndex, positionRelativeToNextLayout,
+        int nextIndex = Render::IndexAfterVerticalCursorMove(
+            nextLayout, direction, k_outsideIndex, positionRelativeToNextLayout,
             shouldRedrawLayout);
         if (nextIndex != k_cantMoveIndex) {
           assert(nextIndex != k_outsideIndex);
@@ -1039,12 +1061,13 @@ void LayoutCursor::invalidateSizesAndPositions() {
   layoutToInvalidate.invalidAllSizesPositionsAndBaselines();
 }
 #else
-  // TODO: Nothing is memoized for now, maybe implement something ?
+// TODO: Nothing is memoized for now, maybe implement something ?
 #endif
 
-void LayoutBufferCursor::EditionPoolCursor::privateDelete(Render::DeletionMethod deletionMethod,
-                                 bool deletionAppliedToParent) {
-  assert(!deletionAppliedToParent || !m_cursorReference.parent().isUninitialized());
+void LayoutBufferCursor::EditionPoolCursor::privateDelete(
+    Render::DeletionMethod deletionMethod, bool deletionAppliedToParent) {
+  assert(!deletionAppliedToParent ||
+         !m_cursorReference.parent().isUninitialized());
 #if 0
   if (deletionMethod == LayoutNode::DeletionMethod::MoveLeft) {
     bool dummy = false;
@@ -1182,10 +1205,13 @@ void LayoutBufferCursor::EditionPoolCursor::privateDelete(Render::DeletionMethod
   if (deletionAppliedToParent) {
     setLayout(m_cursorReference.parent(), OMG::Direction::Right());
   }
-  assert(!Layout::IsHorizontal(m_cursorReference) || m_cursorReference.parent().isUninitialized() || !Layout::IsHorizontal(m_cursorReference.parent()));
+  assert(!Layout::IsHorizontal(m_cursorReference) ||
+         m_cursorReference.parent().isUninitialized() ||
+         !Layout::IsHorizontal(m_cursorReference.parent()));
   assert(m_position != 0);
   m_position--;
-  setCursorNode(RackLayout::RemoveLayoutAtIndex(m_cursorReference, &m_position));
+  setCursorNode(
+      RackLayout::RemoveLayoutAtIndex(m_cursorReference, &m_position));
 }
 
 #if 0
@@ -1316,30 +1342,35 @@ void LayoutBufferCursor::applyEditionPoolCursor(EditionPoolCursor cursor) {
   setCursorNode(rootNode().block() + cursor.cursorNodeOffset());
 }
 
-bool LayoutBufferCursor::execute(Action action, Context *context, const void * data) {
+bool LayoutBufferCursor::execute(Action action, Context *context,
+                                 const void *data) {
   ExecutionContext executionContext{this, action, cursorNodeOffset(), context};
   // Perform Action within an execution
   return EditionPool::sharedEditionPool()->executeAndDump(
-      [](void * context, const void * data) {
-        ExecutionContext * executionContext = static_cast<ExecutionContext *>(context);
-        LayoutBufferCursor * bufferCursor = executionContext->m_cursor;
+      [](void *context, const void *data) {
+        ExecutionContext *executionContext =
+            static_cast<ExecutionContext *>(context);
+        LayoutBufferCursor *bufferCursor = executionContext->m_cursor;
         // Clone layoutBuffer into the EditionPool
         EditionReference::Clone(executionContext->m_cursor->rootNode());
         // Create a temporary cursor
-        EditionPoolCursor editionCursor = bufferCursor->createEditionPoolCursor();
+        EditionPoolCursor editionCursor =
+            bufferCursor->createEditionPoolCursor();
         // Perform the action
-        (editionCursor.*(executionContext->m_action))(executionContext->m_context, data);
+        (editionCursor.*(executionContext->m_action))(
+            executionContext->m_context, data);
         // Apply the changes
-        bufferCursor->setCursorNode(bufferCursor->rootNode().block() + editionCursor.cursorNodeOffset());
+        bufferCursor->setCursorNode(bufferCursor->rootNode().block() +
+                                    editionCursor.cursorNodeOffset());
         bufferCursor->applyEditionPoolCursor(editionCursor);
         /* The resulting EditionPool tree will be loaded back into
          * m_layoutBuffer and EditionPool will be flushed. */
       },
       &executionContext, data, m_layoutBuffer, k_layoutBufferSize,
-      [](void * context) {
+      [](void *context) {
         // Default implementation illustrating how the context could be relaxed
-        // ExecutionContext * executionContext = static_cast<ExecutionContext *>(context);
-        // Context * context = executionContext->m_context;
+        // ExecutionContext * executionContext = static_cast<ExecutionContext
+        // *>(context); Context * context = executionContext->m_context;
         return false;
       });
 }

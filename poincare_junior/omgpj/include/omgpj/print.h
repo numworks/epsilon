@@ -1,9 +1,9 @@
 #ifndef UTILS_PRINT_H
 #define UTILS_PRINT_H
 
-#include <omgpj/assert.h>
 #include <omg/bit_helper.h>
 #include <omg/enums.h>
+#include <omgpj/assert.h>
 #include <stdint.h>
 
 namespace OMG {
@@ -16,17 +16,12 @@ namespace OMG {
 
 namespace Print {
 
-inline constexpr bool IsLowercaseLetter(char c) {
-  return 'a' <= c && c <= 'z';
-}
+inline constexpr bool IsLowercaseLetter(char c) { return 'a' <= c && c <= 'z'; }
 
-inline constexpr bool IsDigit(char c) {
-  return '0' <= c && c <= '9';
-}
+inline constexpr bool IsDigit(char c) { return '0' <= c && c <= '9'; }
 
-}
+}  // namespace Print
 
-}
+}  // namespace OMG
 
 #endif
-

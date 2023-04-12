@@ -1,8 +1,9 @@
 #ifndef POINCARE_MEMORY_EXCEPTION_CHECKPOINT_H
 #define POINCARE_MEMORY_EXCEPTION_CHECKPOINT_H
 
-#include "checkpoint.h"
 #include <setjmp.h>
+
+#include "checkpoint.h"
 
 /* Usage: See comment in checkpoint.h
  *
@@ -10,29 +11,30 @@
  *
  */
 
-#define ExceptionRun(checkpoint) (CheckpointRun(checkpoint, setjmp(*(checkpoint.jumpBuffer())) != 0))
+#define ExceptionRun(checkpoint) \
+  (CheckpointRun(checkpoint, setjmp(*(checkpoint.jumpBuffer())) != 0))
 
 namespace PoincareJ {
 
 class ExceptionCheckpoint final : public Checkpoint {
-public:
+ public:
   static void Raise();
 
   ExceptionCheckpoint();
   ~ExceptionCheckpoint();
 
   bool setActive(bool interruption);
-  jmp_buf * jumpBuffer() { return &m_jumpBuffer; }
-private:
+  jmp_buf* jumpBuffer() { return &m_jumpBuffer; }
+
+ private:
   void rollback() override;
 
-  static ExceptionCheckpoint * s_topmostExceptionCheckpoint;
+  static ExceptionCheckpoint* s_topmostExceptionCheckpoint;
 
   jmp_buf m_jumpBuffer;
-  ExceptionCheckpoint * m_parent;
+  ExceptionCheckpoint* m_parent;
 };
 
-}
+}  // namespace PoincareJ
 
 #endif
-

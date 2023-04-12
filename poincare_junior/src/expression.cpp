@@ -1,9 +1,9 @@
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/layout/parser.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
-#include <poincare_junior/src/layout/parser.h>
 
 namespace PoincareJ {
 
@@ -23,47 +23,48 @@ EditionReference Expression::EditionPoolExpressionToLayout(Node node) {
   return ref;
 }
 
-Expression Expression::Parse(const char * textInput) {
-  return Expression([](const char * text) {
-    EditionReference layout = Layout::EditionPoolTextToLayout(text);
-    Parser::Parse(layout);
-    layout.removeTree();
-    }, textInput);
-}
-
-Expression Expression::Parse(const Layout * layout) {
-  return Expression([](Node node) {
-    Parser::Parse(node);
-    EditionReference(node).removeTree();
-  }, layout);
-}
-
-Expression Expression::CreateBasicReduction(void * expressionAddress) {
+Expression Expression::Parse(const char *textInput) {
   return Expression(
-    [](Node tree) {
-      EditionReference(tree).recursivelyEdit([](EditionReference reference) {
+      [](const char *text) {
+        EditionReference layout = Layout::EditionPoolTextToLayout(text);
+        Parser::Parse(layout);
+        layout.removeTree();
+      },
+      textInput);
+}
+
+Expression Expression::Parse(const Layout *layout) {
+  return Expression(
+      [](Node node) {
+        Parser::Parse(node);
+        EditionReference(node).removeTree();
+      },
+      layout);
+}
+
+Expression Expression::CreateBasicReduction(void *expressionAddress) {
+  return Expression(
+      [](Node tree) {
+        EditionReference(tree).recursivelyEdit([](EditionReference reference) {
           Simplification::BasicReduction(reference);
         });
-    },
-    Node(static_cast<const TypeBlock *>(expressionAddress)));
+      },
+      Node(static_cast<const TypeBlock *>(expressionAddress)));
 }
 
 Layout Expression::toLayout() const {
-  return Layout([](Node node) {
-      EditionPoolExpressionToLayout(node);
-    }, this);
+  return Layout([](Node node) { EditionPoolExpressionToLayout(node); }, this);
 }
 
 float Expression::approximate() const {
   float res;
   send(
-    [](const Node tree, void * res) {
-      float * result = static_cast<float *>(res);
-      *result = Approximation::To<float>(tree);
-    },
-    &res
-  );
+      [](const Node tree, void *res) {
+        float *result = static_cast<float *>(res);
+        *result = Approximation::To<float>(tree);
+      },
+      &res);
   return res;
 }
 
-}
+}  // namespace PoincareJ

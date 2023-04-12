@@ -2,7 +2,7 @@
 
 namespace OMG {
 
-size_t CodePointSearch(UnicodeDecoder * decoder, CodePoint c) {
+size_t CodePointSearch(UnicodeDecoder* decoder, CodePoint c) {
   while (CodePoint codePoint = decoder->nextCodePoint()) {
     if (codePoint == c) {
       return decoder->position() - 1;
@@ -12,7 +12,7 @@ size_t CodePointSearch(UnicodeDecoder * decoder, CodePoint c) {
   return decoder->position();
 }
 
-int CompareDecoders(UnicodeDecoder * a, UnicodeDecoder * b) {
+int CompareDecoders(UnicodeDecoder* a, UnicodeDecoder* b) {
   while (CodePoint c = a->nextCodePoint()) {
     CodePoint d = b->nextCodePoint();
     if (c != d) {
@@ -22,7 +22,8 @@ int CompareDecoders(UnicodeDecoder * a, UnicodeDecoder * b) {
   return b->nextCodePoint();
 }
 
-int CompareDecoderWithNullTerminatedString(UnicodeDecoder * decoder, const char * string) {
+int CompareDecoderWithNullTerminatedString(UnicodeDecoder* decoder,
+                                           const char* string) {
   // TODO this UnicodeDecoder API is aweful
   size_t position = decoder->position();
   UTF8Decoder stringDecoder(string);
@@ -31,4 +32,4 @@ int CompareDecoderWithNullTerminatedString(UnicodeDecoder * decoder, const char 
   return result;
 }
 
-}
+}  // namespace OMG

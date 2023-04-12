@@ -7,8 +7,8 @@
 namespace Memory {
 
 size_t AlignedSize(size_t realSize, size_t alignment);
-bool Rotate(uint8_t * dst, uint8_t * src, size_t len);
+bool Rotate(uint8_t* dst, uint8_t* src, size_t len);
 
-}
+}  // namespace Memory
 
 #endif

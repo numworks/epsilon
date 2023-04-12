@@ -1,17 +1,19 @@
-#include "helper.h"
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/expression/rational.h>
 #include <poincare_junior/src/memory/k_creator.h>
 #include <quiz.h>
 
+#include "helper.h"
+
 using namespace PoincareJ;
 
-static inline EditionReference CreateInteger(const char * digits) {
+static inline EditionReference CreateInteger(const char* digits) {
   size_t length = strlen(digits);
   OMG::Base base = OMG::Base::Decimal;
   size_t prefixLength = strlen("0b");
   assert(prefixLength == strlen("0x"));
-  if (length > prefixLength && digits[0] == '0' && (digits[1] == 'b' || digits[1] == 'x')) {
+  if (length > prefixLength && digits[0] == '0' &&
+      (digits[1] == 'b' || digits[1] == 'x')) {
     base = digits[1] == 'b' ? OMG::Base::Binary : OMG::Base::Hexadecimal;
     digits = digits + prefixLength;
     length -= prefixLength;
@@ -19,7 +21,7 @@ static inline EditionReference CreateInteger(const char * digits) {
   return Integer::Push(digits, length, base);
 }
 
-static inline IntegerHandler CreateIntegerHandler(const char * digits) {
+static inline IntegerHandler CreateIntegerHandler(const char* digits) {
   return Integer::Handler(CreateInteger(digits));
 }
 
@@ -30,12 +32,16 @@ QUIZ_CASE(pcj_integer_constructor) {
   IntegerHandler minusOne(-1);
   IntegerHandler a(12);
   IntegerHandler b(-23);
-  EditionReference::Push<BlockType::IntegerPosBig>(static_cast<uint64_t>(1232424242));
-  EditionReference::Push<BlockType::IntegerNegBig>(static_cast<uint64_t>(23424));
+  EditionReference::Push<BlockType::IntegerPosBig>(
+      static_cast<uint64_t>(1232424242));
+  EditionReference::Push<BlockType::IntegerNegBig>(
+      static_cast<uint64_t>(23424));
   Integer::Push("123", sizeof("123") - 1);
   Integer::Push("-123", sizeof("-123") - 1);
-  Integer::Push("12345678910111213141516", sizeof("12345678910111213141516") - 1);
-  Integer::Push("-12345678910111213141516", sizeof("-12345678910111213141516") - 1);
+  Integer::Push("12345678910111213141516",
+                sizeof("12345678910111213141516") - 1);
+  Integer::Push("-12345678910111213141516",
+                sizeof("-12345678910111213141516") - 1);
   Integer::Push("101011", sizeof("101011") - 1, OMG::Base::Binary);
   Integer::Push("A2B3", sizeof("A2B3") - 1, OMG::Base::Hexadecimal);
   Integer::Push("123", sizeof("123") - 1, OMG::Base::Decimal);
@@ -57,23 +63,29 @@ QUIZ_CASE(pcj_integer_properties) {
   assert(!a.isMinusOne() && minusOne.isMinusOne());
   assert(!a.isTwo() && two.isTwo());
   assert(a.isEven() && !b.isEven());
-  assert(!a.isSignedType<int8_t>() && b.isSignedType<int8_t>() && static_cast<int8_t>(b) == -13);
-  assert(!b.isUnsignedType<uint8_t>() && a.isUnsignedType<uint8_t>() && static_cast<uint8_t>(a) == 254);
+  assert(!a.isSignedType<int8_t>() && b.isSignedType<int8_t>() &&
+         static_cast<int8_t>(b) == -13);
+  assert(!b.isUnsignedType<uint8_t>() && a.isUnsignedType<uint8_t>() &&
+         static_cast<uint8_t>(a) == 254);
 }
 
-static inline void assert_equal(const char * a, const char * b) {
-  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a), CreateIntegerHandler(b)) == 0);
+static inline void assert_equal(const char* a, const char* b) {
+  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
+                                      CreateIntegerHandler(b)) == 0);
 }
-static inline void assert_not_equal(const char * a, const char * b) {
-  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a), CreateIntegerHandler(b)) != 0);
-}
-
-static inline void assert_lower(const char * a, const char * b) {
-  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a), CreateIntegerHandler(b)) < 0);
+static inline void assert_not_equal(const char* a, const char* b) {
+  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
+                                      CreateIntegerHandler(b)) != 0);
 }
 
-static inline void assert_greater(const char * a, const char * b) {
-  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a), CreateIntegerHandler(b)) > 0);
+static inline void assert_lower(const char* a, const char* b) {
+  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
+                                      CreateIntegerHandler(b)) < 0);
+}
+
+static inline void assert_greater(const char* a, const char* b) {
+  quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
+                                      CreateIntegerHandler(b)) > 0);
 }
 
 QUIZ_CASE(pcj_integer_compare) {
@@ -96,9 +108,12 @@ QUIZ_CASE(pcj_integer_compare) {
   assert_equal("0b1011", "11");
 }
 
-static inline void assert_add_to(const char * a, const char * b, const char * c) {
+static inline void assert_add_to(const char* a, const char* b, const char* c) {
   // TODO: remove static_cast<Node> when Hugo's PR is merged
-  quiz_assert(static_cast<Node>(IntegerHandler::Addition(CreateIntegerHandler(a), CreateIntegerHandler(b))).treeIsIdenticalTo(CreateInteger(c)));
+  quiz_assert(
+      static_cast<Node>(IntegerHandler::Addition(CreateIntegerHandler(a),
+                                                 CreateIntegerHandler(b)))
+          .treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -109,26 +124,31 @@ QUIZ_CASE(pcj_integer_addition) {
   assert_add_to("123456789123456789", "1", "123456789123456790");
   assert_add_to("-123456789123456789", "123456789123456789", "0");
   assert_add_to("234", "-234", "0");
-  assert_add_to("18446744073709551616", "18446744073709551368", "36893488147419102984");
-  //2^64+2^64
-  assert_add_to("18446744073709551616", "18446744073709551616", "36893488147419103232");
-  //2^64+2^32
+  assert_add_to("18446744073709551616", "18446744073709551368",
+                "36893488147419102984");
+  // 2^64+2^64
+  assert_add_to("18446744073709551616", "18446744073709551616",
+                "36893488147419103232");
+  // 2^64+2^32
   assert_add_to("18446744073709551616", "4294967296", "18446744078004518912");
-  //2^64+1
+  // 2^64+1
   assert_add_to("18446744073709551616", "1", "18446744073709551617");
-  //2^32+2^32
+  // 2^32+2^32
   assert_add_to("4294967296", "4294967296", "8589934592");
-  //2^32+1
+  // 2^32+1
   assert_add_to("4294967296", "1", "4294967297");
-  //2^16+1
+  // 2^16+1
   assert_add_to("65537", "1", "65538");
-  //2^16+2^16
+  // 2^16+2^16
   assert_add_to("65537", "65537", "131074");
 }
 
-static inline void assert_sub_to(const char * a, const char * b, const char * c) {
+static inline void assert_sub_to(const char* a, const char* b, const char* c) {
   // TODO: remove static_cast<Node> when Hugo's PR is merged
-  quiz_assert(static_cast<Node>(IntegerHandler::Subtraction(CreateIntegerHandler(a), CreateIntegerHandler(b))).treeIsIdenticalTo(CreateInteger(c)));
+  quiz_assert(
+      static_cast<Node>(IntegerHandler::Subtraction(CreateIntegerHandler(a),
+                                                    CreateIntegerHandler(b)))
+          .treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -142,29 +162,32 @@ QUIZ_CASE(pcj_integer_subtraction) {
   assert_sub_to("123456789123456789", "123456789123456789", "0");
   assert_sub_to("18446744073709551616", "18446744073709551368", "248");
 
-  //2^64-2^64
+  // 2^64-2^64
   assert_sub_to("18446744073709551616", "18446744073709551616", "0");
-  //2^64-2^32
+  // 2^64-2^32
   assert_sub_to("18446744073709551616", "4294967296", "18446744069414584320");
-  //2^32-2^64
+  // 2^32-2^64
   assert_sub_to("4294967296", "18446744073709551616", "-18446744069414584320");
-  //2^64-1
+  // 2^64-1
   assert_sub_to("18446744073709551616", "1", "18446744073709551615");
-  //1-2^64
+  // 1-2^64
   assert_sub_to("1", "18446744073709551616", "-18446744073709551615");
-  //2^32-2^32
+  // 2^32-2^32
   assert_sub_to("4294967296", "4294967296", "0");
-  //2^32-1
+  // 2^32-1
   assert_sub_to("4294967296", "1", "4294967295");
-  //2^16-1
+  // 2^16-1
   assert_sub_to("65537", "1", "65536");
-  //2^16-2^16
+  // 2^16-2^16
   assert_sub_to("65537", "65537", "0");
 }
 
-static inline void assert_mult_to(const char * a, const char * b, const char * c) {
+static inline void assert_mult_to(const char* a, const char* b, const char* c) {
   // TODO: remove static_cast<Node> when Hugo's PR is merged
-  quiz_assert(static_cast<Node>(IntegerHandler::Multiplication(CreateIntegerHandler(a), CreateIntegerHandler(b))).treeIsIdenticalTo(CreateInteger(c)));
+  quiz_assert(
+      static_cast<Node>(IntegerHandler::Multiplication(CreateIntegerHandler(a),
+                                                       CreateIntegerHandler(b)))
+          .treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -182,10 +205,13 @@ QUIZ_CASE(pcj_integer_multiplication) {
   assert_mult_to("16013", "773094113280", "12379556035952640");
 }
 
-static inline void assert_div_to(const char * a, const char * b, const char * q, const char * r) {
+static inline void assert_div_to(const char* a, const char* b, const char* q,
+                                 const char* r) {
   // TODO: remove static_cast<Node> when Hugo's PR is merged
-  auto [quotient, remainder] = IntegerHandler::Division(CreateIntegerHandler(a), CreateIntegerHandler(b));
-  quiz_assert(static_cast<Node>(quotient).treeIsIdenticalTo(CreateInteger(q)) && static_cast<Node>(remainder).treeIsIdenticalTo(CreateInteger(r)));
+  auto [quotient, remainder] = IntegerHandler::Division(
+      CreateIntegerHandler(a), CreateIntegerHandler(b));
+  quiz_assert(static_cast<Node>(quotient).treeIsIdenticalTo(CreateInteger(q)) &&
+              static_cast<Node>(remainder).treeIsIdenticalTo(CreateInteger(r)));
   reset_pools();
 }
 
@@ -200,24 +226,39 @@ QUIZ_CASE(pcj_integer_divide) {
   assert_div_to("-576", "-12", "48", "0");
   assert_div_to("576", "-12", "-48", "0");
   assert_div_to("-576", "12", "-48", "0");
-  assert_div_to("12345678910111213141516171819202122232425", "10", "1234567891011121314151617181920212223242", "5");
-  assert_div_to("1234567891011121314151617181920212223242", "10", "123456789101112131415161718192021222324", "2");
-  assert_div_to("123456789101112131415161718192021222324", "10", "12345678910111213141516171819202122232", "4");
-  assert_div_to("12345678910111213141516171819202122232", "10", "1234567891011121314151617181920212223", "2");
-  assert_div_to("1234567891011121314151617181920212223", "10", "123456789101112131415161718192021222", "3");
-  assert_div_to("123456789101112131415161718192021222", "10", "12345678910111213141516171819202122", "2");
-  assert_div_to("12345678910111213141516171819202122", "10", "1234567891011121314151617181920212", "2");
+  assert_div_to("12345678910111213141516171819202122232425", "10",
+                "1234567891011121314151617181920212223242", "5");
+  assert_div_to("1234567891011121314151617181920212223242", "10",
+                "123456789101112131415161718192021222324", "2");
+  assert_div_to("123456789101112131415161718192021222324", "10",
+                "12345678910111213141516171819202122232", "4");
+  assert_div_to("12345678910111213141516171819202122232", "10",
+                "1234567891011121314151617181920212223", "2");
+  assert_div_to("1234567891011121314151617181920212223", "10",
+                "123456789101112131415161718192021222", "3");
+  assert_div_to("123456789101112131415161718192021222", "10",
+                "12345678910111213141516171819202122", "2");
+  assert_div_to("12345678910111213141516171819202122", "10",
+                "1234567891011121314151617181920212", "2");
   assert_div_to("0", "-10", "0", "0");
   assert_div_to("0", "-123456789098760", "0", "0");
   assert_div_to("2305843009213693952", "2305843009213693921", "1", "31");
   assert_div_to(MaxIntegerString(), MaxIntegerString(), "1", "0");
   assert_div_to("18446744073709551615", "10", "1844674407370955161", "5");
-  assert_div_to(MaxIntegerString(), "10", "17976931348623159077293051907890247336179769789423065727343008115773267580550096313270847732240753602112011387987139335765878976881441662249284743063947412437776789342486548527630221960124609411945308295208500576883815068234246288147391311054082723716335051068458629823994724593847971630483535632962422413721", "5");
+  assert_div_to(MaxIntegerString(), "10",
+                "17976931348623159077293051907890247336179769789423065727343008"
+                "11577326758055009631327084773224075360211201138798713933576587"
+                "89768814416622492847430639474124377767893424865485276302219601"
+                "24609411945308295208500576883815068234246288147391311054082723"
+                "716335051068458629823994724593847971630483535632962422413721",
+                "5");
 }
 
-static inline void assert_pow_to(const char * a, const char * b, const char * c) {
+static inline void assert_pow_to(const char* a, const char* b, const char* c) {
   // TODO: remove static_cast<Node> when Hugo's PR is merged
-  quiz_assert(static_cast<Node>(IntegerHandler::Power(CreateIntegerHandler(a), CreateIntegerHandler(b))).treeIsIdenticalTo(CreateInteger(c)));
+  quiz_assert(static_cast<Node>(IntegerHandler::Power(CreateIntegerHandler(a),
+                                                      CreateIntegerHandler(b)))
+                  .treeIsIdenticalTo(CreateInteger(c)));
   reset_pools();
 }
 
@@ -225,25 +266,35 @@ QUIZ_CASE(pcj_integer_pow) {
   assert_pow_to("0", "14", "0");
   assert_pow_to("14", "0", "1");
   assert_pow_to("2", "2", "4");
-  assert_pow_to("12345678910111213141516171819202122232425", "2", "152415787751564791571474464067365843004067618915106260955633159458990465721380625");
+  assert_pow_to("12345678910111213141516171819202122232425", "2",
+                "15241578775156479157147446406736584300406761891510626095563315"
+                "9458990465721380625");
   assert_pow_to("14", "14", "11112006825558016");
 }
 
-static inline void assert_factorial_to(const char * a, const char * b) {
+static inline void assert_factorial_to(const char* a, const char* b) {
   // TODO: remove static_cast<Node> when Hugo's PR is merged
-  quiz_assert(static_cast<Node>(IntegerHandler::Factorial(CreateIntegerHandler(a))).treeIsIdenticalTo(CreateInteger(b)));
+  quiz_assert(
+      static_cast<Node>(IntegerHandler::Factorial(CreateIntegerHandler(a)))
+          .treeIsIdenticalTo(CreateInteger(b)));
   reset_pools();
 }
 
 QUIZ_CASE(pcj_integer_factorial) {
   assert_factorial_to("5", "120");
-  assert_factorial_to("123", "12146304367025329675766243241881295855454217088483382315328918161829235892362167668831156960612640202170735835221294047782591091570411651472186029519906261646730733907419814952960000000000000000000000000000");
+  assert_factorial_to(
+      "123",
+      "121463043670253296757662432418812958554542170884833823153289181618292358"
+      "923621676688311569606126402021707358352212940477825910915704116514721860"
+      "29519906261646730733907419814952960000000000000000000000000000");
 }
 
-static inline void assert_might_overflow(ActionWithContext action, bool overflow) {
-  CachePool * cachePool = CachePool::sharedCachePool();
-  EditionPool * editionPool = EditionPool::sharedEditionPool();
-  const Node tree = cachePool->nodeForIdentifier(editionPool->executeAndCache(action, nullptr, nullptr));
+static inline void assert_might_overflow(ActionWithContext action,
+                                         bool overflow) {
+  CachePool* cachePool = CachePool::sharedCachePool();
+  EditionPool* editionPool = EditionPool::sharedEditionPool();
+  const Node tree = cachePool->nodeForIdentifier(
+      editionPool->executeAndCache(action, nullptr, nullptr));
   quiz_assert(tree.isUninitialized() == overflow);
 }
 
@@ -257,52 +308,40 @@ static inline void assert_did_not_overflow(ActionWithContext action) {
 
 QUIZ_CASE(pcj_integer_overflows) {
   // Construction
-  assert_did_overflow(
-      [] (void * context, const void * data) {
-        CreateIntegerHandler(OverflowedIntegerString());
-      }
-    );
-  assert_did_not_overflow(
-      [] (void * context, const void * data) {
-        CreateIntegerHandler(MaxIntegerString());
-      }
-    );
+  assert_did_overflow([](void* context, const void* data) {
+    CreateIntegerHandler(OverflowedIntegerString());
+  });
+  assert_did_not_overflow([](void* context, const void* data) {
+    CreateIntegerHandler(MaxIntegerString());
+  });
 
   // Operations
-  assert_did_overflow(
-    [] (void * context, const void * data) {
-      EditionReference a = CreateInteger(MaxIntegerString());
-      EditionReference b = CreateInteger("1");
-      IntegerHandler::Addition(Integer::Handler(a), Integer::Handler(b));
-      a.removeTree();
-      b.removeTree();
-    }
-  );
-  assert_did_not_overflow(
-    [] (void * context, const void * data) {
-      EditionReference a = CreateInteger(MaxIntegerString());
-      EditionReference b = CreateInteger("1");
-      IntegerHandler::Subtraction(Integer::Handler(a), Integer::Handler(b));
-      a.removeTree();
-      b.removeTree();
-    }
-  );
-  assert_did_overflow(
-    [] (void * context, const void * data) {
-      EditionReference a = CreateInteger(MaxIntegerString());
-      EditionReference b = CreateInteger("2");
-      IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
-      a.removeTree();
-      b.removeTree();
-    }
-  );
-  assert_did_not_overflow(
-    [] (void * context, const void * data) {
-      EditionReference a = CreateInteger(MaxIntegerString());
-      EditionReference b = CreateInteger("1");
-      IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
-      a.removeTree();
-      b.removeTree();
-    }
-  );
+  assert_did_overflow([](void* context, const void* data) {
+    EditionReference a = CreateInteger(MaxIntegerString());
+    EditionReference b = CreateInteger("1");
+    IntegerHandler::Addition(Integer::Handler(a), Integer::Handler(b));
+    a.removeTree();
+    b.removeTree();
+  });
+  assert_did_not_overflow([](void* context, const void* data) {
+    EditionReference a = CreateInteger(MaxIntegerString());
+    EditionReference b = CreateInteger("1");
+    IntegerHandler::Subtraction(Integer::Handler(a), Integer::Handler(b));
+    a.removeTree();
+    b.removeTree();
+  });
+  assert_did_overflow([](void* context, const void* data) {
+    EditionReference a = CreateInteger(MaxIntegerString());
+    EditionReference b = CreateInteger("2");
+    IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
+    a.removeTree();
+    b.removeTree();
+  });
+  assert_did_not_overflow([](void* context, const void* data) {
+    EditionReference a = CreateInteger(MaxIntegerString());
+    EditionReference b = CreateInteger("1");
+    IntegerHandler::Multiplication(Integer::Handler(a), Integer::Handler(b));
+    a.removeTree();
+    b.removeTree();
+  });
 }

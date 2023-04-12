@@ -1,5 +1,6 @@
-#include <escher/palette.h>
 #include "empty_rectangle.h"
+
+#include <escher/palette.h>
 
 namespace PoincareJ {
 

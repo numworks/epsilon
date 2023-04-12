@@ -1,14 +1,10 @@
 #ifndef UTILS_TROOLEAN_H
 #define UTILS_TROOLEAN_H
 
-#include <stdint.h>
 #include <assert.h>
+#include <stdint.h>
 
-enum class Troolean : int8_t {
-  False = -1,
-  Unknown = 0,
-  True = 1
-};
+enum class Troolean : int8_t { False = -1, Unknown = 0, True = 1 };
 
 /* These three-valued booleans are based on Kleene and Priest logics
  * See wikipedia: https://en.wikipedia.org/wiki/Three-valued_logic

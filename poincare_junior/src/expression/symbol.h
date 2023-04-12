@@ -6,12 +6,14 @@
 namespace PoincareJ {
 
 class Symbol final {
-public:
-  static uint8_t Length(const Node node) { return static_cast<uint8_t>(*node.block()->next()); }
-  static void GetName(const Node node, char * buffer, size_t bufferSize);
-  static const char * NonNullTerminatedName(const Node node);
+ public:
+  static uint8_t Length(const Node node) {
+    return static_cast<uint8_t>(*node.block()->next());
+  }
+  static void GetName(const Node node, char* buffer, size_t bufferSize);
+  static const char* NonNullTerminatedName(const Node node);
 };
 
-}
+}  // namespace PoincareJ
 
 #endif

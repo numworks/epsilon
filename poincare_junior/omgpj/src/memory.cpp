@@ -1,6 +1,6 @@
+#include <assert.h>
 #include <omgpj/arithmetic.h>
 #include <omgpj/memory.h>
-#include <assert.h>
 
 size_t Memory::AlignedSize(size_t realSize, size_t alignment) {
   size_t modulo = realSize % alignment;
@@ -9,7 +9,7 @@ size_t Memory::AlignedSize(size_t realSize, size_t alignment) {
   return result;
 }
 
-bool Memory::Rotate(uint8_t * dst, uint8_t * src, size_t len) {
+bool Memory::Rotate(uint8_t* dst, uint8_t* src, size_t len) {
   /* This method "rotates" an array to insert data at src with length len at
    * address dst.
    *
@@ -37,16 +37,17 @@ bool Memory::Rotate(uint8_t * dst, uint8_t * src, size_t len) {
    * This is a one-move per data algorithm, so it is O(dst - src) if dst > src,
    * else O(src+len - dst). */
 
-  size_t numberOfCycles = Arithmetic::Gcd(len, dst < src ? src - dst : dst - src);
+  size_t numberOfCycles =
+      Arithmetic::Gcd(len, dst < src ? src - dst : dst - src);
   size_t dstAddressOffset = dst < src ? len : dst - len - src;
 
   // We need the limit addresses of the data that will change
-  uint8_t * insertionZoneStart = dst < src ? dst : src;
-  uint8_t * insertionZoneEnd = dst < src ? src + len - 1 : dst - 1;
+  uint8_t* insertionZoneStart = dst < src ? dst : src;
+  uint8_t* insertionZoneEnd = dst < src ? src + len - 1 : dst - 1;
 
-  uint8_t * cycleStartAddress;
-  uint8_t * moveSrcAddress;
-  uint8_t * moveDstAddress;
+  uint8_t* cycleStartAddress;
+  uint8_t* moveSrcAddress;
+  uint8_t* moveDstAddress;
   uint8_t tmpData;
   uint8_t nextTmpData;
 
@@ -58,7 +59,8 @@ bool Memory::Rotate(uint8_t * dst, uint8_t * src, size_t len) {
     // Set the cycle starting destination, dstAddressOffset after the source
     moveDstAddress = moveSrcAddress + dstAddressOffset;
     if (moveDstAddress > insertionZoneEnd) {
-      moveDstAddress = insertionZoneStart + (moveDstAddress - insertionZoneEnd - 1);
+      moveDstAddress =
+          insertionZoneStart + (moveDstAddress - insertionZoneEnd - 1);
     }
     tmpData = *moveSrcAddress;
     do {
@@ -68,7 +70,8 @@ bool Memory::Rotate(uint8_t * dst, uint8_t * src, size_t len) {
       moveSrcAddress = moveDstAddress;
       moveDstAddress = moveSrcAddress + dstAddressOffset;
       if (moveDstAddress > insertionZoneEnd) {
-        moveDstAddress = insertionZoneStart + (moveDstAddress - insertionZoneEnd - 1);
+        moveDstAddress =
+            insertionZoneStart + (moveDstAddress - insertionZoneEnd - 1);
       }
     } while (moveSrcAddress != cycleStartAddress);
   }

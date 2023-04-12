@@ -11,4 +11,3 @@
 #include <omgpj/troolean.h>
 
 #endif
-

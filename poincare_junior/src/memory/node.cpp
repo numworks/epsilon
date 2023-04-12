@@ -1,14 +1,16 @@
-#include "node_iterator.h"
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/expression/symbol.h>
 #include <poincare_junior/src/layout/code_point_layout.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 
+#include "node_iterator.h"
+
 namespace PoincareJ {
 
 #if POINCARE_MEMORY_TREE_LOG
-void Node::log(std::ostream & stream, bool recursive, int indentation, bool verbose) const {
+void Node::log(std::ostream &stream, bool recursive, int indentation,
+               bool verbose) const {
   stream << "\n";
   for (int i = 0; i < indentation; ++i) {
     stream << "  ";
@@ -26,7 +28,8 @@ void Node::log(std::ostream & stream, bool recursive, int indentation, bool verb
   logAttributes(stream);
   bool tagIsClosed = false;
   if (recursive) {
-    for (const auto [child, index] : NodeIterator::Children<Forward, NoEditable>(*this)) {
+    for (const auto [child, index] :
+         NodeIterator::Children<Forward, NoEditable>(*this)) {
       if (!tagIsClosed) {
         stream << ">";
         tagIsClosed = true;
@@ -47,60 +50,64 @@ void Node::log(std::ostream & stream, bool recursive, int indentation, bool verb
   }
 }
 
-void Node::logName(std::ostream & stream) const {
-  constexpr const char * names[] = {
-    // Respect the order of BlockType
-    "Zero",
-    "One",
-    "Two",
-    "Half",
-    "MinusOne",
-    "IntegerShort",
-    "IntegerPosBig",
-    "IntegerNegBig",
-    "RationalShort",
-    "RationalPosBig",
-    "RationalNegBig",
-    "Float",
-    "Constant",
-    "Addition",
-    "Multiplication",
-    "Power",
-    "Factorial",
-    "UserSymbol",
-    "UserFunction",
-    "UserSequence",
-    "Subtraction",
-    "Division",
-    "Set",
-    "List",
-    "Polynomial",
-    "Cosine",
-    "Sine",
-    "Tangent",
-    "ArcCosine",
-    "ArcSine",
-    "ArcTangent",
-    "Logarithm",
-    "RackLayout",
-    "FractionLayout",
-    "ParenthesisLayout",
-    "VerticalOffsetLayout",
-    "CodePointLayout",
-    "TreeBorder",
-    "Placeholder",
-    "SystemList",
+void Node::logName(std::ostream &stream) const {
+  constexpr const char *names[] = {
+      // Respect the order of BlockType
+      "Zero",
+      "One",
+      "Two",
+      "Half",
+      "MinusOne",
+      "IntegerShort",
+      "IntegerPosBig",
+      "IntegerNegBig",
+      "RationalShort",
+      "RationalPosBig",
+      "RationalNegBig",
+      "Float",
+      "Constant",
+      "Addition",
+      "Multiplication",
+      "Power",
+      "Factorial",
+      "UserSymbol",
+      "UserFunction",
+      "UserSequence",
+      "Subtraction",
+      "Division",
+      "Set",
+      "List",
+      "Polynomial",
+      "Cosine",
+      "Sine",
+      "Tangent",
+      "ArcCosine",
+      "ArcSine",
+      "ArcTangent",
+      "Logarithm",
+      "RackLayout",
+      "FractionLayout",
+      "ParenthesisLayout",
+      "VerticalOffsetLayout",
+      "CodePointLayout",
+      "TreeBorder",
+      "Placeholder",
+      "SystemList",
   };
-  static_assert(sizeof(names)/sizeof(const char *) == static_cast<uint8_t>(BlockType::NumberOfTypes));
+  static_assert(sizeof(names) / sizeof(const char *) ==
+                static_cast<uint8_t>(BlockType::NumberOfTypes));
   stream << names[static_cast<uint8_t>(*m_block)];
 }
 
-void Node::logAttributes(std::ostream & stream) const {
+void Node::logAttributes(std::ostream &stream) const {
   if (block()->isNAry()) {
     stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
     if (type() == BlockType::Polynomial) {
       for (int i = 0; i < Polynomial::NumberOfTerms(*this); i++) {
-        stream << " exponent(\"" << i << "\") = \"" << static_cast<int>(static_cast<uint8_t>(*(block()->nextNth(2 + i)))) << "\"";
+        stream << " exponent(\"" << i << "\") = \""
+               << static_cast<int>(
+                      static_cast<uint8_t>(*(block()->nextNth(2 + i))))
+               << "\"";
       }
     }
     return;
@@ -111,14 +118,16 @@ void Node::logAttributes(std::ostream & stream) const {
   }
   if (block()->isUserNamed() || type() == BlockType::CodePointLayout) {
     char buffer[64];
-    (block()->isUserNamed() ? Symbol::GetName : CodePointLayout::GetName)(*this, buffer, sizeof(buffer));
+    (block()->isUserNamed() ? Symbol::GetName : CodePointLayout::GetName)(
+        *this, buffer, sizeof(buffer));
     stream << " value=\"" << buffer << "\"";
   }
 }
 
-void Node::logBlocks(std::ostream & stream, bool recursive, int indentation) const {
+void Node::logBlocks(std::ostream &stream, bool recursive,
+                     int indentation) const {
   for (int i = 0; i < indentation; ++i) {
-      stream << "  ";
+    stream << "  ";
   }
   stream << "[";
   logName(stream);
@@ -126,7 +135,8 @@ void Node::logBlocks(std::ostream & stream, bool recursive, int indentation) con
   int size = nodeSize();
   if (size > 1) {
     for (int i = 1; i < size - 1; i++) {
-      stream << "[" << static_cast<int>(static_cast<uint8_t>(m_block[i])) << "]";
+      stream << "[" << static_cast<int>(static_cast<uint8_t>(m_block[i]))
+             << "]";
     }
     stream << "[";
     logName(stream);
@@ -135,7 +145,8 @@ void Node::logBlocks(std::ostream & stream, bool recursive, int indentation) con
   stream << "\n";
   if (recursive) {
     indentation += 1;
-    for (const auto [child, index] : NodeIterator::Children<Forward, NoEditable>(*this)) {
+    for (const auto [child, index] :
+         NodeIterator::Children<Forward, NoEditable>(*this)) {
       child.logBlocks(stream, recursive, indentation);
     }
   }
@@ -143,7 +154,7 @@ void Node::logBlocks(std::ostream & stream, bool recursive, int indentation) con
 
 #endif
 
-void Node::copyTreeTo(void * address) const {
+void Node::copyTreeTo(void *address) const {
   memcpy(address, m_block, treeSize());
 }
 
@@ -156,17 +167,14 @@ const Node Node::previousNode() const {
   if (!canNavigatePrevious()) {
     return Node();
   }
-  int previousSize = static_cast<TypeBlock *>(m_block->previous())->nodeSize(false);
+  int previousSize =
+      static_cast<TypeBlock *>(m_block->previous())->nodeSize(false);
   return Node(m_block - previousSize);
 }
 
-const Node Node::previousTree() const {
-  return previousRelative(false);
-}
+const Node Node::previousTree() const { return previousRelative(false); }
 
-const Node Node::parent() const {
-  return previousRelative(true);
-}
+const Node Node::parent() const { return previousRelative(true); }
 
 const Node Node::root() const {
   Node ancestor = *this;
@@ -180,8 +188,8 @@ const Node Node::commonAncestor(const Node child1, const Node child2) const {
   /* This method find the common ancestor of child1 and child2 within this tree
    * it does without going backward at any point. This tree is parsed until the
    * last node owning both childs is found. */
-  const TypeBlock * block1 = child1.block();
-  const TypeBlock * block2 = child2.block();
+  const TypeBlock *block1 = child1.block();
+  const TypeBlock *block2 = child2.block();
   if (block1 > block2) {
     return commonAncestor(child2, child1);
   }
@@ -234,7 +242,8 @@ int Node::numberOfDescendants(bool includeSelf) const {
 }
 
 const Node Node::childAtIndex(int i) const {
-  for (const auto [child, index] : NodeIterator::Children<Forward, NoEditable>(*this)) {
+  for (const auto [child, index] :
+       NodeIterator::Children<Forward, NoEditable>(*this)) {
     if (index == i) {
       return child;
     }
@@ -244,7 +253,8 @@ const Node Node::childAtIndex(int i) const {
 
 int Node::indexOfChild(const Node child) const {
   assert(child.m_block != nullptr);
-  for (const auto [c, index] : NodeIterator::Children<Forward, NoEditable>(*this)) {
+  for (const auto [c, index] :
+       NodeIterator::Children<Forward, NoEditable>(*this)) {
     if (child == c) {
       return index;
     }
@@ -260,9 +270,7 @@ int Node::indexInParent() const {
   return p.indexOfChild(*this);
 }
 
-bool Node::hasChild(const Node child) const {
-  return indexOfChild(child) >= 0;
-}
+bool Node::hasChild(const Node child) const { return indexOfChild(child) >= 0; }
 
 bool Node::hasAncestor(const Node node, bool includeSelf) const {
   Node ancestor = *this;
@@ -280,7 +288,8 @@ bool Node::hasSibling(const Node sibling) const {
   if (p == Node()) {
     return false;
   }
-  for (const auto& [child, index]: NodeIterator::Children<Forward, NoEditable>(p)) {
+  for (const auto &[child, index] :
+       NodeIterator::Children<Forward, NoEditable>(p)) {
     if (child == sibling) {
       return true;
     }
@@ -289,7 +298,8 @@ bool Node::hasSibling(const Node sibling) const {
 }
 
 void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
-  for (const auto& [child, index] : NodeIterator::Children<Forward, NoEditable>(*this)) {
+  for (const auto &[child, index] :
+       NodeIterator::Children<Forward, NoEditable>(*this)) {
     child.recursivelyGet(treeFunction);
   }
   (*treeFunction)(*this);
@@ -326,17 +336,18 @@ void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
  *   nextNode's destination, but not previousNode's. */
 
 bool Node::canNavigateNext() const {
-  CachePool * cache(CachePool::sharedCachePool());
-  return m_block->type() != BlockType::TreeBorder
-         && m_block + nodeSize() != cache->firstBlock()
-         && m_block != cache->editionPool()->lastBlock();
+  CachePool *cache(CachePool::sharedCachePool());
+  return m_block->type() != BlockType::TreeBorder &&
+         m_block + nodeSize() != cache->firstBlock() &&
+         m_block != cache->editionPool()->lastBlock();
 }
 
 bool Node::canNavigatePrevious() const {
-  CachePool * cache(CachePool::sharedCachePool());
-  BlockType destinationType = static_cast<TypeBlock *>(m_block->previous())->type();
-  return destinationType != BlockType::TreeBorder
-         && m_block != cache->firstBlock();
+  CachePool *cache(CachePool::sharedCachePool());
+  BlockType destinationType =
+      static_cast<TypeBlock *>(m_block->previous())->type();
+  return destinationType != BlockType::TreeBorder &&
+         m_block != cache->firstBlock();
 }
 
 const Node Node::previousRelative(bool parent) const {
@@ -356,4 +367,4 @@ const Node Node::previousRelative(bool parent) const {
   return parent ? currentNode : closestSibling;
 }
 
-}
+}  // namespace PoincareJ

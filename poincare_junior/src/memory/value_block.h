@@ -7,12 +7,12 @@
 namespace PoincareJ {
 
 class ValueBlock : public Block {
-public:
+ public:
   constexpr ValueBlock(uint8_t value) : Block(value) {}
 };
 
 static_assert(sizeof(ValueBlock) == sizeof(Block));
 
-}
+}  // namespace PoincareJ
 
 #endif

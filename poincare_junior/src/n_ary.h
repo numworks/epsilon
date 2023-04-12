@@ -6,16 +6,21 @@
 namespace PoincareJ {
 
 class NAry {
-public:
-  static void AddChild(EditionReference nary, EditionReference child) { return AddChildAtIndex(nary, child, nary.numberOfChildren()); }
-  static void AddChildAtIndex(EditionReference nary, EditionReference child, int index);
-  static void AddOrMergeChildAtIndex(EditionReference nary, EditionReference child, int index);
+ public:
+  static void AddChild(EditionReference nary, EditionReference child) {
+    return AddChildAtIndex(nary, child, nary.numberOfChildren());
+  }
+  static void AddChildAtIndex(EditionReference nary, EditionReference child,
+                              int index);
+  static void AddOrMergeChildAtIndex(EditionReference nary,
+                                     EditionReference child, int index);
   static EditionReference DetachChildAtIndex(EditionReference nary, int index);
   static void RemoveChildAtIndex(EditionReference nary, int index);
-  static void SetNumberOfChildren(EditionReference reference, size_t numberOfChildren);
+  static void SetNumberOfChildren(EditionReference reference,
+                                  size_t numberOfChildren);
   static EditionReference Flatten(EditionReference reference);
 };
 
-}
+}  // namespace PoincareJ
 
 #endif

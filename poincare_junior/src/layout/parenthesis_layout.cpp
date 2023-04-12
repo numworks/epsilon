@@ -1,4 +1,5 @@
 #include "parenthesis_layout.h"
+
 #include "parser.h"
 
 namespace PoincareJ {
@@ -12,29 +13,31 @@ KDCoordinate ParenthesisLayout::Baseline(const Node node, KDFont::Size font) {
   return Render::Baseline(node.childAtIndex(0), font) + k_verticalPadding;
 }
 
-KDPoint ParenthesisLayout::PositionOfChild(const Node node, int childIndex, KDFont::Size font) {
+KDPoint ParenthesisLayout::PositionOfChild(const Node node, int childIndex,
+                                           KDFont::Size font) {
   return KDPoint(HorizontalPadding(font), k_verticalPadding);
 }
 
-void ParenthesisLayout::RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
+void ParenthesisLayout::RenderNode(const Node node, KDContext* ctx, KDPoint p,
+                                   KDFont::Size font, KDColor expressionColor,
+                                   KDColor backgroundColor) {
   KDSize size = Size(node, font);
-  KDCoordinate y = p.y() + Baseline(node, font) - (KDFont::GlyphSize(font).height()) / 2;
+  KDCoordinate y =
+      p.y() + Baseline(node, font) - (KDFont::GlyphSize(font).height()) / 2;
   KDCoordinate x = p.x();
-  ctx->drawString("(", KDPoint(x, y), KDGlyph::Style{
-    .glyphColor = expressionColor,
-    .backgroundColor = backgroundColor,
-    .font = font}
-  );
+  ctx->drawString("(", KDPoint(x, y),
+                  KDGlyph::Style{.glyphColor = expressionColor,
+                                 .backgroundColor = backgroundColor,
+                                 .font = font});
   x += size.width() - HorizontalPadding(font);
-  ctx->drawString(")", KDPoint(x, y), KDGlyph::Style{
-    .glyphColor = expressionColor,
-    .backgroundColor = backgroundColor,
-    .font = font}
-  );
+  ctx->drawString(")", KDPoint(x, y),
+                  KDGlyph::Style{.glyphColor = expressionColor,
+                                 .backgroundColor = backgroundColor,
+                                 .font = font});
 }
 
 EditionReference ParenthesisLayout::Parse(const Node node) {
   return Parser::Parse(node.childAtIndex(0));
 }
 
-}
+}  // namespace PoincareJ

@@ -1,9 +1,11 @@
 #include "rack_layout.h"
-#include "empty_rectangle.h"
-#include <poincare_junior/src/memory/node_iterator.h>
-#include <poincare_junior/src/layout/parsing/rack_parser.h>
-#include <poincare_junior/src/n_ary.h>
+
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/layout/parsing/rack_parser.h>
+#include <poincare_junior/src/memory/node_iterator.h>
+#include <poincare_junior/src/n_ary.h>
+
+#include "empty_rectangle.h"
 
 namespace PoincareJ {
 
@@ -15,10 +17,12 @@ KDCoordinate RackLayout::Baseline(const Node node, KDFont::Size font) {
   return BaselineBetweenIndexes(node, 0, node.numberOfChildren(), font);
 }
 
-KDPoint RackLayout::PositionOfChild(const Node node, int childIndex, KDFont::Size font) {
+KDPoint RackLayout::PositionOfChild(const Node node, int childIndex,
+                                    KDFont::Size font) {
   KDCoordinate x = 0;
   KDCoordinate childBaseline = 0;
-  for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(node)) {
+  for (auto [child, index] :
+       NodeIterator::Children<Forward, NoEditable>(node)) {
     if (index == childIndex) {
       childBaseline = Render::Baseline(child, font);
       break;
@@ -34,7 +38,8 @@ EditionReference RackLayout::Parse(const Node node) {
   return RackParser(node).parse();
 }
 
-KDSize RackLayout::SizeBetweenIndexes(const Node node, int leftIndex, int rightIndex, KDFont::Size font) {
+KDSize RackLayout::SizeBetweenIndexes(const Node node, int leftIndex,
+                                      int rightIndex, KDFont::Size font) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node.numberOfChildren());
   if (node.numberOfChildren() == 0) {
@@ -58,7 +63,9 @@ KDSize RackLayout::SizeBetweenIndexes(const Node node, int leftIndex, int rightI
   return KDSize(totalWidth, maxUnderBaseline + maxAboveBaseline);
 }
 
-KDCoordinate RackLayout::BaselineBetweenIndexes(const Node node, int leftIndex, int rightIndex, KDFont::Size font) {
+KDCoordinate RackLayout::BaselineBetweenIndexes(const Node node, int leftIndex,
+                                                int rightIndex,
+                                                KDFont::Size font) {
   assert(0 <= leftIndex && leftIndex <= rightIndex &&
          rightIndex <= node.numberOfChildren());
   if (node.numberOfChildren() == 0) {
@@ -76,9 +83,12 @@ bool RackLayout::ShouldDrawEmptyRectangle(const Node node) {
   return node.numberOfChildren() == 0;
 }
 
-void RackLayout::RenderNode(const Node node, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) {
+void RackLayout::RenderNode(const Node node, KDContext* ctx, KDPoint p,
+                            KDFont::Size font, KDColor expressionColor,
+                            KDColor backgroundColor) {
   if (ShouldDrawEmptyRectangle(node)) {
-    EmptyRectangle::DrawEmptyRectangle(ctx, p, font, EmptyRectangle::Color::Yellow);
+    EmptyRectangle::DrawEmptyRectangle(ctx, p, font,
+                                       EmptyRectangle::Color::Yellow);
   }
 }
 
@@ -86,14 +96,17 @@ int RackLayout::NumberOfLayouts(const Node node) {
   return Layout::IsHorizontal(node) ? node.numberOfChildren() : 1;
 }
 
-EditionReference RackLayout::AddOrMergeLayoutAtIndex(EditionReference reference, EditionReference child, int * index) {
+EditionReference RackLayout::AddOrMergeLayoutAtIndex(EditionReference reference,
+                                                     EditionReference child,
+                                                     int* index) {
   assert(*index <= NumberOfLayouts(reference));
   EditionReference nary = RackParent(reference, index);
   NAry::AddOrMergeChildAtIndex(nary, child, *index);
   return nary;
 }
 
-EditionReference RackLayout::RemoveLayoutAtIndex(EditionReference reference, int * index) {
+EditionReference RackLayout::RemoveLayoutAtIndex(EditionReference reference,
+                                                 int* index) {
   assert(*index <= NumberOfLayouts(reference));
   EditionReference nary = RackParent(reference, index);
   NAry::RemoveChildAtIndex(nary, *index);
@@ -101,14 +114,16 @@ EditionReference RackLayout::RemoveLayoutAtIndex(EditionReference reference, int
 }
 
 // Return the nearest NAry
-EditionReference RackLayout::RackParent(EditionReference reference, int * index) {
+EditionReference RackLayout::RackParent(EditionReference reference,
+                                        int* index) {
   if (Layout::IsHorizontal(static_cast<Node>(reference))) {
     return reference;
   }
   assert(*index <= 1);
   // Find or make a RackLayout parent
   EditionReference parent = reference.parent();
-  if (parent.isUninitialized() || !Layout::IsHorizontal(static_cast<Node>(parent))) {
+  if (parent.isUninitialized() ||
+      !Layout::IsHorizontal(static_cast<Node>(parent))) {
     parent = EditionReference::Push<BlockType::RackLayout>(1);
     reference.insertNodeBeforeNode(parent);
   } else {
@@ -121,4 +136,4 @@ EditionReference RackLayout::RackParent(EditionReference reference, int * index)
   return parent;
 }
 
-}
+}  // namespace PoincareJ

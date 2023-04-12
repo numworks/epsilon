@@ -1,6 +1,7 @@
-#include "helper.h"
-#include <poincare_junior/src/expression/set.h>
 #include <poincare_junior/src/expression/k_creator.h>
+#include <poincare_junior/src/expression/set.h>
+
+#include "helper.h"
 
 using namespace PoincareJ;
 

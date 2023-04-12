@@ -2,8 +2,8 @@
 #define POINCARE_JUNIOR_EXPRESSION_ALIASES_H
 
 #include <assert.h>
-#include <string.h>
 #include <ion/unicode/utf8_decoder.h>
+#include <string.h>
 
 /* This class is used to handle name's aliases for reserved functions, units
  * and constants.
@@ -40,7 +40,7 @@ class Aliases {
     return m_formattedAliases + hasMultipleAliases();
   }
 
-  bool contains(UnicodeDecoder * decoder) const {
+  bool contains(UnicodeDecoder* decoder) const {
     return maxDifferenceWith(decoder) == 0;
   }
   bool isEquivalentTo(Aliases other) {
@@ -72,9 +72,7 @@ class Aliases {
   Iterator<Aliases> begin() const {
     return Iterator<Aliases>(*this, mainAlias());
   }
-  Iterator<Aliases> end() const {
-    return Iterator<Aliases>(*this, nullptr);
-  }
+  Iterator<Aliases> end() const { return Iterator<Aliases>(*this, nullptr); }
 
  private:
   constexpr static char k_listStart = '\01';
@@ -82,7 +80,7 @@ class Aliases {
   /* Return 0 if name is alias of this,
    * else, return the max difference value between name and the aliases
    * of this. */
-  int maxDifferenceWith(UnicodeDecoder * decoder) const;
+  int maxDifferenceWith(UnicodeDecoder* decoder) const;
 
   constexpr bool hasMultipleAliases() const {
     return m_formattedAliases[0] == k_listStart;

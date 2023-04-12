@@ -1,5 +1,6 @@
-#include <assert.h>
 #include "cache_pool.h"
+
+#include <assert.h>
 #include <string.h>
 
 namespace PoincareJ {
@@ -24,16 +25,17 @@ uint16_t CachePool::ReferenceTable::storeNode(Node node) {
   return idForIndex(Pool::ReferenceTable::storeNodeAtIndex(node, m_length));
 }
 
-bool CachePool::ReferenceTable::freeOldestBlocks(int numberOfRequiredFreeBlocks) {
+bool CachePool::ReferenceTable::freeOldestBlocks(
+    int numberOfRequiredFreeBlocks) {
   int numberOfFreedBlocks = 0;
   uint16_t newFirstIndex;
   for (uint16_t i = 0; i < m_length; i++) {
-     Node node = Pool::ReferenceTable::nodeForIdentifier(i);
-     numberOfFreedBlocks += node.treeSize();
-     if (numberOfFreedBlocks >= numberOfRequiredFreeBlocks) {
-       newFirstIndex = i + 1;
-       break;
-     }
+    Node node = Pool::ReferenceTable::nodeForIdentifier(i);
+    numberOfFreedBlocks += node.treeSize();
+    if (numberOfFreedBlocks >= numberOfRequiredFreeBlocks) {
+      newFirstIndex = i + 1;
+      break;
+    }
   }
   if (numberOfFreedBlocks < numberOfRequiredFreeBlocks) {
     return false;
@@ -52,11 +54,16 @@ bool CachePool::ReferenceTable::reset() {
   return Pool::ReferenceTable::reset();
 }
 
-void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex, Node * nodeToUpdate) {
+void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex,
+                                                      Node *nodeToUpdate) {
   // Compute before corrupting the reference table
   size_t cachePoolSize = m_pool->size();
-  uint16_t numberOfFreedBlocks = newFirstIndex == m_length ? cachePoolSize : m_nodeOffsetForIdentifier[newFirstIndex];
-  memmove(&m_nodeOffsetForIdentifier[0], &m_nodeOffsetForIdentifier[newFirstIndex], sizeof(uint16_t) * (m_length - newFirstIndex));
+  uint16_t numberOfFreedBlocks = newFirstIndex == m_length
+                                     ? cachePoolSize
+                                     : m_nodeOffsetForIdentifier[newFirstIndex];
+  memmove(&m_nodeOffsetForIdentifier[0],
+          &m_nodeOffsetForIdentifier[newFirstIndex],
+          sizeof(uint16_t) * (m_length - newFirstIndex));
   m_length -= newFirstIndex;
   m_startIdentifier += newFirstIndex;
   for (int i = 0; i < m_length; i++) {
@@ -65,12 +72,13 @@ void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex, No
   if (nodeToUpdate) {
     *nodeToUpdate = Node(nodeToUpdate->block() - numberOfFreedBlocks);
   }
-  static_cast<CachePool *>(m_pool)->translate(numberOfFreedBlocks, cachePoolSize);
+  static_cast<CachePool *>(m_pool)->translate(numberOfFreedBlocks,
+                                              cachePoolSize);
 }
 
 // CachePool
 
-CachePool * CachePool::sharedCachePool() {
+CachePool *CachePool::sharedCachePool() {
   static CachePool s_cache;
   return &s_cache;
 }
@@ -87,7 +95,8 @@ uint16_t CachePool::storeEditedTree() {
 }
 
 bool CachePool::freeBlocks(int numberOfBlocks, bool flushEditionPool) {
-  if (numberOfBlocks > k_maxNumberOfBlocks || !m_referenceTable.freeOldestBlocks(numberOfBlocks)) {
+  if (numberOfBlocks > k_maxNumberOfBlocks ||
+      !m_referenceTable.freeOldestBlocks(numberOfBlocks)) {
     return false;
   }
   if (flushEditionPool) {
@@ -102,20 +111,19 @@ void CachePool::reset() {
   m_editionPool.flush();
 }
 
-CachePool::CachePool() :
-  m_referenceTable(this),
-  m_editionPool(static_cast<TypeBlock *>(m_blocks), k_maxNumberOfBlocks)
-{
-}
+CachePool::CachePool()
+    : m_referenceTable(this),
+      m_editionPool(static_cast<TypeBlock *>(m_blocks), k_maxNumberOfBlocks) {}
 
 void CachePool::resetEditionPool() {
   m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks - size());
 }
 
 void CachePool::translate(uint16_t offset, size_t cachePoolSize) {
-  Block * newFirst = m_blocks + offset;
-  memmove(m_blocks, newFirst, (cachePoolSize + m_editionPool.size()) * sizeof(TypeBlock));
+  Block *newFirst = m_blocks + offset;
+  memmove(m_blocks, newFirst,
+          (cachePoolSize + m_editionPool.size()) * sizeof(TypeBlock));
   resetEditionPool();
 }
 
-}
+}  // namespace PoincareJ

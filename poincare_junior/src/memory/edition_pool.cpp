@@ -1,8 +1,10 @@
-#include <assert.h>
-#include "cache_pool.h"
 #include "edition_pool.h"
-#include "exception_checkpoint.h"
+
+#include <assert.h>
 #include <omgpj.h>
+
+#include "cache_pool.h"
+#include "exception_checkpoint.h"
 
 namespace PoincareJ {
 
@@ -25,31 +27,38 @@ uint16_t EditionPool::ReferenceTable::storeNode(Node node) {
     do {
       n = nodeForIdentifier(index++);
     } while (!n.isUninitialized() && index < k_maxNumberOfReferences);
-    assert(n.isUninitialized()); // Otherwise, the pool is full with non-corrupted references; increment k_maxNumberOfReferences?
+    assert(
+        n.isUninitialized());  // Otherwise, the pool is full with non-corrupted
+                               // references; increment k_maxNumberOfReferences?
     return storeNodeAtIndex(node, index - 1);
   } else {
     return storeNodeAtIndex(node, m_length);
   }
 };
 
-void EditionPool::reinit(TypeBlock * firstBlock, size_t size) {
+void EditionPool::reinit(TypeBlock *firstBlock, size_t size) {
   m_firstBlock = firstBlock;
   m_size = size;
 }
 
-void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function, Block * contextSelection1, Block * contextSelection2, int contextAlteration) {
-  Block * first = static_cast<Block *>(m_pool->firstBlock());
+void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function,
+                                              Block *contextSelection1,
+                                              Block *contextSelection2,
+                                              int contextAlteration) {
+  Block *first = static_cast<Block *>(m_pool->firstBlock());
   for (int i = 0; i < m_length; i++) {
     if (m_nodeOffsetForIdentifier[i] == NoNodeIdentifier) {
       continue;
     }
-    function(&m_nodeOffsetForIdentifier[i], m_nodeOffsetForIdentifier[i] + first, contextSelection1, contextSelection2, contextAlteration);
+    function(&m_nodeOffsetForIdentifier[i],
+             m_nodeOffsetForIdentifier[i] + first, contextSelection1,
+             contextSelection2, contextAlteration);
   }
 }
 
 // EditionTable
 
-EditionPool * EditionPool::sharedEditionPool() {
+EditionPool *EditionPool::sharedEditionPool() {
   return CachePool::sharedCachePool()->editionPool();
 }
 
@@ -62,7 +71,9 @@ void EditionPool::flush() {
   m_referenceTable.reset();
 }
 
-bool EditionPool::executeAndDump(ActionWithContext action, void * context, const void * data, void * address, int maxSize, Relax relax) {
+bool EditionPool::executeAndDump(ActionWithContext action, void *context,
+                                 const void *data, void *address, int maxSize,
+                                 Relax relax) {
   if (!execute(action, context, data, maxSize, relax)) {
     return false;
   }
@@ -72,14 +83,15 @@ bool EditionPool::executeAndDump(ActionWithContext action, void * context, const
   return true;
 }
 
-int EditionPool::executeAndCache(ActionWithContext action, void * context, const void * data, Relax relax) {
+int EditionPool::executeAndCache(ActionWithContext action, void *context,
+                                 const void *data, Relax relax) {
   execute(action, context, data, CachePool::k_maxNumberOfBlocks, relax);
   /* If execute failed, storeEditedTree will handle an empty EditionPool and
    * return a ReferenceTable::NoNodeIdentifier. */
   return CachePool::sharedCachePool()->storeEditedTree();
 }
 
-Block * EditionPool::pushBlock(Block block) {
+Block *EditionPool::pushBlock(Block block) {
   if (!checkForEnoughSpace(1)) {
     return nullptr;
   }
@@ -94,69 +106,80 @@ void EditionPool::popBlock() {
   m_numberOfBlocks--;
 }
 
-void EditionPool::replaceBlock(Block * previousBlock, Block newBlock) {
+void EditionPool::replaceBlock(Block *previousBlock, Block newBlock) {
   *previousBlock = newBlock;
 }
 
-bool EditionPool::insertBlocks(Block * destination, Block * source, size_t numberOfBlocks) {
+bool EditionPool::insertBlocks(Block *destination, Block *source,
+                               size_t numberOfBlocks) {
   if (!checkForEnoughSpace(numberOfBlocks)) {
     return false;
   }
   size_t insertionSize = numberOfBlocks * sizeof(Block);
-  memmove(destination + insertionSize, destination, static_cast<Block *>(lastBlock()) - destination);
+  memmove(destination + insertionSize, destination,
+          static_cast<Block *>(lastBlock()) - destination);
   m_numberOfBlocks += numberOfBlocks;
   memcpy(destination, source, insertionSize);
   m_referenceTable.updateNodes(
-      [](uint16_t * offset, Block * testedBlock, Block * destination, Block * block, int numberOfBlocks) {
+      [](uint16_t *offset, Block *testedBlock, Block *destination, Block *block,
+         int numberOfBlocks) {
         if (destination <= testedBlock) {
           *offset += numberOfBlocks;
-          }
-      }, destination, nullptr, numberOfBlocks);
+        }
+      },
+      destination, nullptr, numberOfBlocks);
   return true;
 }
 
-void EditionPool::removeBlocks(Block * address, size_t numberOfBlocks) {
+void EditionPool::removeBlocks(Block *address, size_t numberOfBlocks) {
   int deletionSize = numberOfBlocks * sizeof(Block);
   m_numberOfBlocks -= numberOfBlocks;
-  memmove(address, address + deletionSize, static_cast<Block *>(lastBlock()) - address);
+  memmove(address, address + deletionSize,
+          static_cast<Block *>(lastBlock()) - address);
   m_referenceTable.updateNodes(
-      [](uint16_t * offset, Block * testedBlock, Block * address, Block * block, int numberOfBlocks) {
+      [](uint16_t *offset, Block *testedBlock, Block *address, Block *block,
+         int numberOfBlocks) {
         if (testedBlock > address) {
           *offset -= numberOfBlocks;
         } else if (testedBlock == address) {
           *offset = ReferenceTable::NoNodeIdentifier;
         }
-      }, address, nullptr, numberOfBlocks);
+      },
+      address, nullptr, numberOfBlocks);
 }
 
-void EditionPool::moveBlocks(Block * destination, Block * source, size_t numberOfBlocks) {
-  uint8_t * src = reinterpret_cast<uint8_t *>(source);
-  uint8_t * dst = reinterpret_cast<uint8_t *>(destination);
+void EditionPool::moveBlocks(Block *destination, Block *source,
+                             size_t numberOfBlocks) {
+  uint8_t *src = reinterpret_cast<uint8_t *>(source);
+  uint8_t *dst = reinterpret_cast<uint8_t *>(destination);
   size_t len = numberOfBlocks * sizeof(Block);
   Memory::Rotate(dst, src, len);
   m_referenceTable.updateNodes(
-      [](uint16_t * offset, Block * testedBlock, Block * dst, Block * src, int nbOfBlocks) {
+      [](uint16_t *offset, Block *testedBlock, Block *dst, Block *src,
+         int nbOfBlocks) {
         if (testedBlock >= src && testedBlock < src + nbOfBlocks) {
           *offset += dst - src - (dst > src ? nbOfBlocks : 0);
         } else if ((testedBlock >= src + nbOfBlocks && testedBlock < dst) ||
                    (testedBlock >= dst && testedBlock < src)) {
           *offset += dst > src ? -nbOfBlocks : nbOfBlocks;
         }
-      }, destination, source, numberOfBlocks);
+      },
+      destination, source, numberOfBlocks);
 }
 
-Node EditionPool::initFromAddress(const void * address) {
+Node EditionPool::initFromAddress(const void *address) {
   size_t size = Node(reinterpret_cast<const TypeBlock *>(address)).treeSize();
   if (!checkForEnoughSpace(size)) {
     return Node();
   }
-  TypeBlock * copiedTree = lastBlock();
+  TypeBlock *copiedTree = lastBlock();
   memcpy(copiedTree, address, size * sizeof(Block));
   m_numberOfBlocks += size;
   return Node(copiedTree);
 }
 
-bool EditionPool::execute(ActionWithContext action, void * context, const void * data, int maxSize, Relax relax) {
+bool EditionPool::execute(ActionWithContext action, void *context,
+                          const void *data, int maxSize, Relax relax) {
   ExceptionCheckpoint checkpoint;
 start_execute:
   if (ExceptionRun(checkpoint)) {
@@ -170,7 +193,9 @@ start_execute:
     int size = fullSize();
     /* Free blocks and try again. If no more blocks can be freed, try relaxing
      * the context and try again. Otherwise, return false. */
-    if ((size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(std::min(size, maxSize - size))) && !relax(context)) {
+    if ((size >= maxSize || !CachePool::sharedCachePool()->freeBlocks(
+                                std::min(size, maxSize - size))) &&
+        !relax(context)) {
       return false;
     }
     goto start_execute;
@@ -187,4 +212,4 @@ bool EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
   return true;
 }
 
-}
+}  // namespace PoincareJ

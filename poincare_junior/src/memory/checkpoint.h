@@ -28,12 +28,11 @@ void interruptableCode() {
 namespace PoincareJ {
 
 class Checkpoint {
-public:
-protected:
+ public:
+ protected:
   virtual void rollback() { EditionPool::sharedEditionPool()->flush(); }
 };
 
-}
+}  // namespace PoincareJ
 
 #endif
-

@@ -8,6 +8,7 @@
  * Parser. */
 
 #include <poincare_junior/src/layout/rack_layout_decoder.h>
+
 #include "parsing_context.h"
 #include "token.h"
 
@@ -15,12 +16,12 @@ namespace PoincareJ {
 
 class Tokenizer {
   friend class InputBeautification;
-public:
-  Tokenizer(const Node node, ParsingContext * parsingContext, size_t textEnd = 0) :
-    m_decoder(node, 0, textEnd),
-    m_parsingContext(parsingContext),
-    m_numberOfStoredIdentifiers(0)
-  {}
+
+ public:
+  Tokenizer(const Node node, ParsingContext* parsingContext, size_t textEnd = 0)
+      : m_decoder(node, 0, textEnd),
+        m_parsingContext(parsingContext),
+        m_numberOfStoredIdentifiers(0) {}
   Token popToken();
 
   // Rewind tokenizer
@@ -28,10 +29,11 @@ public:
   size_t currentPosition() { return m_decoder.position(); }
   size_t endPosition() { return m_decoder.end(); }
 
-private:
-  constexpr static int k_maxNumberOfIdentifiersInList = 10; // Used for m_storedIdentifiersList
+ private:
+  constexpr static int k_maxNumberOfIdentifiersInList =
+      10;  // Used for m_storedIdentifiersList
   typedef bool (*PopTest)(CodePoint c);
-  const CodePoint nextCodePoint(PopTest popTest, bool * testResult = nullptr);
+  const CodePoint nextCodePoint(PopTest popTest, bool* testResult = nullptr);
   static bool IsIdentifierMaterial(const CodePoint c);
   bool canPopCodePoint(const CodePoint c);
   size_t popWhile(PopTest popTest);
@@ -52,7 +54,8 @@ private:
    *
    * This is a right-to-eager tokenizer.
    * When parsing abc, we'll first consider abc, then bc, then c.
-   * This behavior is a convenient way to give precedence to function over symbols
+   * This behavior is a convenient way to give precedence to function over
+   *symbols
    *
    * -- EXAMPLES --
    * Original state :
@@ -81,8 +84,8 @@ private:
    *
    * This is used for instance in the calculation history, where the context
    * might have changed between the time when an expression was entered and the
-   * time it is displayed in the history. We do not save each calculation context
-   * in the history.
+   * time it is displayed in the history. We do not save each calculation
+   *context in the history.
    *
    * Example : xy(5) will be tokenized as x*y*(5) if the context exists
    * but doesn't contain any variable.
@@ -98,8 +101,8 @@ private:
    * */
   size_t popIdentifiersString();
   void fillIdentifiersList();
-  Token popLongestRightMostIdentifier(size_t stringStart, size_t * stringEnd);
-  Token::Type stringTokenType(size_t string, size_t * length) const;
+  Token popLongestRightMostIdentifier(size_t stringStart, size_t* stringEnd);
+  Token::Type stringTokenType(size_t string, size_t* length) const;
 
   /* ========== IMPLICIT ADDITION BETWEEN UNITS ==========
    * An implicit addition between units is an expression like "3h40min32.5s".
@@ -114,7 +117,7 @@ private:
   size_t popImplicitAdditionBetweenUnits();
 
   RackLayoutDecoder m_decoder;
-  ParsingContext * m_parsingContext;
+  ParsingContext* m_parsingContext;
   /* This list is used to memoize the identifiers we already parsed.
    * Ex: When parsing abc, we first turn it into ab*c and store "c",
    * then a*b*c and store "b" and "a". This is useful because we pop
@@ -126,6 +129,6 @@ private:
   int m_numberOfStoredIdentifiers;
 };
 
-}
+}  // namespace PoincareJ
 
 #endif

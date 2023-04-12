@@ -1,10 +1,11 @@
-#include "helper.h"
+#include <kandinsky/ion_context.h>
 #include <poincare_junior/include/expression.h>
 #include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/layout/k_creator.h>
 #include <poincare_junior/src/layout/render.h>
-#include <kandinsky/ion_context.h>
+
+#include "helper.h"
 
 using namespace PoincareJ;
 
@@ -26,24 +27,11 @@ QUIZ_CASE(pcj_layout_creation) {
 }
 
 QUIZ_CASE(pcj_layout_render) {
-  KDContext * ctx = KDIonContext::SharedContext;
+  KDContext* ctx = KDIonContext::SharedContext;
   Layout l = Layout(
-    KRackL(
-      "1+"_l,
-      KParenthesisL(
-        KRackL(
-          "2*"_l,
-          KParenthesisL(
-            KRackL(
-              "1+"_l,
-              KFracL("1"_l, "2"_l)
-            )
-          )
-        )
-      ),
-      KVertOffL("2"_l),
-      "-2"_l
-    )
-  );
-  l.draw(ctx, KDPoint(10,100), KDFont::Size::Large);
+      KRackL("1+"_l,
+             KParenthesisL(KRackL(
+                 "2*"_l, KParenthesisL(KRackL("1+"_l, KFracL("1"_l, "2"_l))))),
+             KVertOffL("2"_l), "-2"_l));
+  l.draw(ctx, KDPoint(10, 100), KDFont::Size::Large);
 }

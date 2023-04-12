@@ -1,16 +1,18 @@
 #ifndef POINCARE_MEMORY_TYPE_BLOCK_H
 #define POINCARE_MEMORY_TYPE_BLOCK_H
 
-#include "block.h"
 #include <ion/unicode/code_point.h>
+
+#include "block.h"
 
 namespace PoincareJ {
 
 /* TODO:
  * - Are Zero, One etc useful?
- * - Short integers could be coded on n-bytes (with n static) instead of 1-byte. Choosing n = 4 and aligning the node could be useful?
+ * - Short integers could be coded on n-bytes (with n static) instead of 1-byte.
+ * Choosing n = 4 and aligning the node could be useful?
  * - aligning all nodes on 4 bytes might speed up every computation
-*/
+ */
 
 /* Node description by type:
  * - Zero Z (same for One, Two, Half, MinusOne, TreeBorder)
@@ -26,7 +28,9 @@ namespace PoincareJ {
  * | RS TAG | SIGNED DIGIT | UNSIGNED DIGIT | RS TAG |
  *
  * - Rational(Pos/Neg)Big RB
- * | RB TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | NUMBER DIGITS | RB |
+ * | RB TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED
+ * NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | NUMBER DIGITS |
+ * RB |
  *
  * - Float F (same for CodePointLayout)
  * | F TAG | VALUE (4 bytes) | F TAG |
@@ -37,8 +41,8 @@ namespace PoincareJ {
  * - Addition A (same for Multiplication, Set, List, RackLayout)
  * | A TAG | NUMBER OF CHILDREN | A TAG |
  *
- * - Power P (same for Factorial, Subtraction, Division, FractionLayout, ParenthesisLayout, VerticalOffsetLayout)
- * | P TAG |
+ * - Power P (same for Factorial, Subtraction, Division, FractionLayout,
+ * ParenthesisLayout, VerticalOffsetLayout) | P TAG |
  *
  * - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | NUMBER CHARS | US TAG |
@@ -54,7 +58,7 @@ namespace PoincareJ {
  * */
 
 enum class BlockType : uint8_t {
-// InternalExpression
+  // InternalExpression
   Zero = 0,
   One = 1,
   Two = 2,
@@ -78,7 +82,7 @@ enum class BlockType : uint8_t {
   UserSymbol,
   UserFunction,
   UserSequence,
-// Expression
+  // Expression
   Subtraction,
   Division,
   Set,
@@ -108,9 +112,15 @@ enum class BlockType : uint8_t {
   NumberOfTypes
 };
 
-#define BLOCK_TYPE_IS_EXPRESSION_NUMBER(type) static_assert(type >= static_cast<BlockType>(0) && type < BlockType::NumberOfNumbersExpression);
-#define BLOCK_TYPE_IS_EXPRESSION(type) static_assert(type >= BlockType::NumberOfNumbersExpression && type < BlockType::NumberOfExpressions);
-#define BLOCK_TYPE_IS_LAYOUT(type) static_assert(type >= BlockType::FirstLayout && type <= BlockType::LastLayout);
+#define BLOCK_TYPE_IS_EXPRESSION_NUMBER(type)        \
+  static_assert(type >= static_cast<BlockType>(0) && \
+                type < BlockType::NumberOfNumbersExpression);
+#define BLOCK_TYPE_IS_EXPRESSION(type)                          \
+  static_assert(type >= BlockType::NumberOfNumbersExpression && \
+                type < BlockType::NumberOfExpressions);
+#define BLOCK_TYPE_IS_LAYOUT(type)                \
+  static_assert(type >= BlockType::FirstLayout && \
+                type <= BlockType::LastLayout);
 
 BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::Zero);
 BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::One);
@@ -151,18 +161,24 @@ BLOCK_TYPE_IS_LAYOUT(BlockType::CodePointLayout);
 // - Optimization: some Integer should have their special tags? 0, 1, 2, 10?
 
 class TypeBlock : public Block {
-public:
-  constexpr TypeBlock(BlockType content = BlockType::Zero) : Block(static_cast<uint8_t>(content)) {
+ public:
+  constexpr TypeBlock(BlockType content = BlockType::Zero)
+      : Block(static_cast<uint8_t>(content)) {
     assert(m_content < static_cast<uint8_t>(BlockType::NumberOfTypes));
     // assert that number are always sorted before other types
-    assert(isNumber() || m_content >= static_cast<uint8_t>(BlockType::NumberOfNumbersExpression));
+    assert(isNumber() ||
+           m_content >=
+               static_cast<uint8_t>(BlockType::NumberOfNumbersExpression));
   }
-  constexpr BlockType type() const {
-    return static_cast<BlockType>(m_content);
-  }
+  constexpr BlockType type() const { return static_cast<BlockType>(m_content); }
 
-  constexpr bool isExpression() const { return m_content < static_cast<uint8_t>(BlockType::NumberOfExpressions); }
-  constexpr bool isLayout() const { return m_content >= static_cast<uint8_t>(BlockType::NumberOfExpressions) && m_content < static_cast<uint8_t>(BlockType::NumberOfLayouts); }
+  constexpr bool isExpression() const {
+    return m_content < static_cast<uint8_t>(BlockType::NumberOfExpressions);
+  }
+  constexpr bool isLayout() const {
+    return m_content >= static_cast<uint8_t>(BlockType::NumberOfExpressions) &&
+           m_content < static_cast<uint8_t>(BlockType::NumberOfLayouts);
+  }
 
   constexpr bool isOfType(std::initializer_list<BlockType> types) const {
     BlockType thisType = type();
@@ -174,11 +190,28 @@ public:
     return false;
   }
 
-  constexpr bool isNAry() const { return isOfType({BlockType::Addition, BlockType::Multiplication, BlockType::RackLayout, BlockType::Set, BlockType::List, BlockType::Polynomial, BlockType::SystemList}); }
-  constexpr bool isInteger() const { return isOfType({BlockType::Zero, BlockType::One, BlockType::Two, BlockType::MinusOne, BlockType::IntegerShort, BlockType::IntegerPosBig, BlockType::IntegerNegBig}); }
-  constexpr bool isRational() const { return isOfType({BlockType::Half, BlockType::RationalShort, BlockType::RationalPosBig, BlockType::RationalNegBig}) || isInteger(); }
-  constexpr bool isNumber() const { return isOfType({BlockType::Float}) || isRational(); }
-  constexpr bool isUserNamed() const { return isOfType({BlockType::UserFunction, BlockType::UserSequence, BlockType::UserSymbol}); }
+  constexpr bool isNAry() const {
+    return isOfType({BlockType::Addition, BlockType::Multiplication,
+                     BlockType::RackLayout, BlockType::Set, BlockType::List,
+                     BlockType::Polynomial, BlockType::SystemList});
+  }
+  constexpr bool isInteger() const {
+    return isOfType({BlockType::Zero, BlockType::One, BlockType::Two,
+                     BlockType::MinusOne, BlockType::IntegerShort,
+                     BlockType::IntegerPosBig, BlockType::IntegerNegBig});
+  }
+  constexpr bool isRational() const {
+    return isOfType({BlockType::Half, BlockType::RationalShort,
+                     BlockType::RationalPosBig, BlockType::RationalNegBig}) ||
+           isInteger();
+  }
+  constexpr bool isNumber() const {
+    return isOfType({BlockType::Float}) || isRational();
+  }
+  constexpr bool isUserNamed() const {
+    return isOfType({BlockType::UserFunction, BlockType::UserSequence,
+                     BlockType::UserSymbol});
+  }
 
   constexpr static size_t NumberOfMetaBlocks(BlockType type) {
     switch (type) {
@@ -194,9 +227,9 @@ public:
       case BlockType::RationalNegBig:
         return 5;
       case BlockType::Float:
-        return 2 + sizeof(float)/sizeof(uint8_t);
+        return 2 + sizeof(float) / sizeof(uint8_t);
       case BlockType::CodePointLayout:
-        return 2 + sizeof(CodePoint)/sizeof(uint8_t);
+        return 2 + sizeof(CodePoint) / sizeof(uint8_t);
       case BlockType::Addition:
       case BlockType::Multiplication:
       case BlockType::Constant:
@@ -221,20 +254,24 @@ public:
     switch (t) {
       case BlockType::IntegerPosBig:
       case BlockType::IntegerNegBig: {
-        uint8_t numberOfDigits = static_cast<uint8_t>(*(head ? next() : previous()));
+        uint8_t numberOfDigits =
+            static_cast<uint8_t>(*(head ? next() : previous()));
         return numberOfMetaBlocks + numberOfDigits;
       }
       case BlockType::RationalPosBig:
       case BlockType::RationalNegBig: {
-        uint8_t numberOfDigits = static_cast<uint8_t>(*(head ? nextNth(3) : previous()));
+        uint8_t numberOfDigits =
+            static_cast<uint8_t>(*(head ? nextNth(3) : previous()));
         return numberOfMetaBlocks + numberOfDigits;
       }
       case BlockType::Polynomial: {
-        uint8_t numberOfTerms = static_cast<uint8_t>(*(head ? next() : previous())) - 1;
+        uint8_t numberOfTerms =
+            static_cast<uint8_t>(*(head ? next() : previous())) - 1;
         return numberOfMetaBlocks + numberOfTerms;
       }
       case BlockType::UserSymbol: {
-        uint8_t numberOfChars = static_cast<uint8_t>(*(head ? next() : previous()));
+        uint8_t numberOfChars =
+            static_cast<uint8_t>(*(head ? next() : previous()));
         return numberOfMetaBlocks + numberOfChars;
       }
       default:
@@ -280,18 +317,22 @@ constexpr TypeBlock TreeBorderBlock = TypeBlock(BlockType::TreeBorder);
 // Surround tree with TreeBorder blocks to allow uninitialized parent detection
 template <int size>
 class BlockBuffer {
-public:
+ public:
   consteval BlockBuffer() {
     m_blocks[0] = TreeBorderBlock;
     m_blocks[size + 1] = TreeBorderBlock;
   }
-  constexpr TypeBlock * blocks() { return static_cast<TypeBlock *>(m_blocks + 1); }
-  consteval const TypeBlock * blocks() const { return static_cast<const TypeBlock *>(m_blocks) + 1; }
+  constexpr TypeBlock *blocks() {
+    return static_cast<TypeBlock *>(m_blocks + 1);
+  }
+  consteval const TypeBlock *blocks() const {
+    return static_cast<const TypeBlock *>(m_blocks) + 1;
+  }
 
-private:
+ private:
   Block m_blocks[size + 2];
 };
 
-}
+}  // namespace PoincareJ
 
 #endif

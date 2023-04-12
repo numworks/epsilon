@@ -9,6 +9,7 @@
 
 #define P_POW(A, B) _BINARY_PUSHER(BlockType::Power, A, B)
 
-// Wrap arguments with EditionReference::Clone if they have Node type to avoid mistakes ?
+// Wrap arguments with EditionReference::Clone if they have Node type to avoid
+// mistakes ?
 
 #endif

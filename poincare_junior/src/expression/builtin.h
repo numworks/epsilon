@@ -2,26 +2,24 @@
 #define POINCARE_EXPRESSION_BUILTINS_H
 
 #include <poincare_junior/src/memory/edition_reference.h>
+
 #include "aliases.h"
 
 namespace PoincareJ {
 
 class Builtin : public std::pair<BlockType, Aliases> {
-public:
+ public:
   using pair::pair;
-  const BlockType blockType() const {
-    return first;
-  }
-  const Aliases * aliases() const {
-    return &second;
-  }
+  const BlockType blockType() const { return first; }
+  const Aliases* aliases() const { return &second; }
   static Aliases Name(BlockType type);
   static Aliases Name(const Node node) { return Name(node.type()); }
-  static bool HasReservedFunction(UnicodeDecoder * name);
-  static const Builtin * GetReservedFunction(UnicodeDecoder * name);
+  static bool HasReservedFunction(UnicodeDecoder* name);
+  static const Builtin* GetReservedFunction(UnicodeDecoder* name);
   static uint8_t MinNumberOfParameters(BlockType type);
   static uint8_t MaxNumberOfParameters(BlockType type);
-  static EditionReference Promote(EditionReference parameterList, BlockType type);
+  static EditionReference Promote(EditionReference parameterList,
+                                  BlockType type);
 };
 
 namespace BuiltinsAliases {
@@ -42,8 +40,8 @@ constexpr static Aliases k_asinAliases = "\01arcsin\00asin\00";
 constexpr static Aliases k_atanAliases = "\01arctan\00atan\00";
 // Other functions
 constexpr static Aliases k_squareRootAliases = "\01√\00sqrt\00";
-}  // namespace AliasesLists
+}  // namespace BuiltinsAliases
 
-}
+}  // namespace PoincareJ
 
 #endif

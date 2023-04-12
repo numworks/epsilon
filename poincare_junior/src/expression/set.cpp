@@ -1,12 +1,14 @@
 #include "set.h"
-#include <poincare_junior/src/n_ary.h>
+
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/memory/node_iterator.h>
+#include <poincare_junior/src/n_ary.h>
 
 namespace PoincareJ {
 
 bool Set::Includes(const Node set, const Node expression) {
-  for (auto [setChild, index] : NodeIterator::Children<Forward, NoEditable>(set)) {
+  for (auto [setChild, index] :
+       NodeIterator::Children<Forward, NoEditable>(set)) {
     int comparison = Comparison::Compare(setChild, expression);
     if (comparison == 0) {
       return true;
@@ -45,7 +47,10 @@ EditionReference Set::Pop(EditionReference set) {
   return expression;
 }
 
-static EditionReference MergeSets(EditionReference set0, EditionReference set1, bool removeChildrenOnlyInSet0, bool pilferSet1Children, bool removeCommonChildrenInSet0) {
+static EditionReference MergeSets(EditionReference set0, EditionReference set1,
+                                  bool removeChildrenOnlyInSet0,
+                                  bool pilferSet1Children,
+                                  bool removeCommonChildrenInSet0) {
   size_t numberOfChildren0 = set0.numberOfChildren();
   size_t numberOfChildren1 = set1.numberOfChildren();
   size_t numberOfChildren0ToScan = numberOfChildren0;
@@ -58,7 +63,7 @@ static EditionReference MergeSets(EditionReference set0, EditionReference set1, 
   }
   while (numberOfChildren0ToScan > 0 && numberOfChildren1ToScan > 0) {
     int comparison = Comparison::Compare(currentChild0, currentChild1);
-    if (comparison < 0) { // Increment child of set 0
+    if (comparison < 0) {  // Increment child of set 0
       EditionReference nextChild0 = currentChild0.nextTree();
       if (removeChildrenOnlyInSet0) {
         currentChild0.removeTree();
@@ -67,7 +72,7 @@ static EditionReference MergeSets(EditionReference set0, EditionReference set1, 
       currentChild0 = nextChild0;
       numberOfChildren0ToScan--;
     }
-    if (comparison == 0) { // Increment both children
+    if (comparison == 0) {  // Increment both children
       EditionReference nextChild0 = currentChild0.nextTree();
       EditionReference nextChild1 = currentChild1.nextTree();
       if (removeCommonChildrenInSet0) {
@@ -83,7 +88,7 @@ static EditionReference MergeSets(EditionReference set0, EditionReference set1, 
       currentChild1 = nextChild1;
       numberOfChildren1ToScan--;
     }
-    if (comparison > 0) { // Increment child of set 1
+    if (comparison > 0) {  // Increment child of set 1
       EditionReference nextChild1 = currentChild1.nextTree();
       if (pilferSet1Children) {
         currentChild0.insertTreeBeforeNode(currentChild1);
@@ -106,7 +111,8 @@ EditionReference Set::Union(EditionReference set0, EditionReference set1) {
   return MergeSets(set0, set1, false, true, false);
 }
 
-EditionReference Set::Intersection(EditionReference set0, EditionReference set1) {
+EditionReference Set::Intersection(EditionReference set0,
+                                   EditionReference set1) {
   return MergeSets(set0, set1, true, false, false);
 }
 
@@ -114,4 +120,4 @@ EditionReference Set::Difference(EditionReference set0, EditionReference set1) {
   return MergeSets(set0, set1, false, false, true);
 }
 
-}
+}  // namespace PoincareJ

@@ -1,31 +1,32 @@
-#include "helper.h"
 #include <poincare_junior/include/expression.h>
+
+#include "helper.h"
 
 using namespace PoincareJ;
 
 // Dummy calculation class to simulate FileSystem or App::Snapshot
 
 class Calculation {
+  /* This is a simplified version of Calculation model:
+   * - the m_inputBuffer simulated the model kept in the app snashot (to be able
+   *   to redraw history when re-entering the application
+   * - the output expression is cached but not persisted in snapshot.
+   *
+   * NB: in the real calculation models: inputLayout, outputLayout are persisted
+   * and input/output are memoized.*/
 
-/* This is a simplified version of Calculation model:
- * - the m_inputBuffer simulated the model kept in the app snashot (to be able
- *   to redraw history when re-entering the application
- * - the output expression is cached but not persisted in snapshot.
- *
- * NB: in the real calculation models: inputLayout, outputLayout are persisted
- * and input/output are memoized.*/
-
-public:
-  Calculation(const char * textInput);
-  TypeBlock * input() { return m_buffer.blocks(); }
+ public:
+  Calculation(const char* textInput);
+  TypeBlock* input() { return m_buffer.blocks(); }
   Expression output() { return m_output; }
-private:
+
+ private:
   constexpr static int k_bufferSize = 128;
   BlockBuffer<k_bufferSize> m_buffer;
   Expression m_output;
 };
 
-Calculation::Calculation(const char * textInput) {
+Calculation::Calculation(const char* textInput) {
   Expression::Parse(textInput).dumpAt(m_buffer.blocks());
   m_output = Expression::CreateBasicReduction(m_buffer.blocks());
 }
@@ -33,7 +34,8 @@ Calculation::Calculation(const char * textInput) {
 QUIZ_CASE(pcj_calculation) {
   Calculation calculation("(1-2)/3/4");
 #if POINCARE_MEMORY_TREE_LOG
-  std::cout << "\n---------------- Push Calculation (1-2)/3/4 ----------------" << std::endl;
+  std::cout << "\n---------------- Push Calculation (1-2)/3/4 ----------------"
+            << std::endl;
   calculation.output().log();
 #endif
 }

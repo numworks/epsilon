@@ -2,13 +2,13 @@
 // #include "helper.h"
 // #include "parser.h"
 #include <ion/unicode/utf8_helper.h>
+#include <omgpj/unicode_helper.h>
 #include <poincare_junior/src/expression/aliases.h>
 #include <poincare_junior/src/expression/builtin.h>
-#include <omgpj/unicode_helper.h>
 
 namespace PoincareJ {
 
-const CodePoint Tokenizer::nextCodePoint(PopTest popTest, bool * testResult) {
+const CodePoint Tokenizer::nextCodePoint(PopTest popTest, bool* testResult) {
   CodePoint c = m_decoder.nextCodePoint();
   bool shouldPop = popTest(c);
   if (testResult != nullptr) {
@@ -47,7 +47,9 @@ size_t Tokenizer::popWhile(PopTest popTest) {
 }
 
 static bool IsNonDigitalIdentifierMaterial(const CodePoint c) {
-  return c.isLatinLetter() || c == '_' || c == UCodePointDegreeSign || c == '\'' || c == '"' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+  return c.isLatinLetter() || c == '_' || c == UCodePointDegreeSign ||
+         c == '\'' || c == '"' || c.isGreekCapitalLetter() ||
+         (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
 }
 
 bool Tokenizer::IsIdentifierMaterial(const CodePoint c) {
@@ -78,7 +80,8 @@ Token Tokenizer::popNumber() {
   size_t fractionalPartLength = 0;
 
   // Check for binary or hexadecimal number
-  if (integralPartLength == 1 && m_decoder.codePointAt(integralPartText) == '0') {
+  if (integralPartLength == 1 &&
+      m_decoder.codePointAt(integralPartText) == '0') {
     // Save string position if no binary/hexadecimal number
     size_t string = m_decoder.position();
     // Look for "0b"
@@ -89,10 +92,13 @@ Token Tokenizer::popNumber() {
       hexa = canPopCodePoint('x');
     }
     if (binary || hexa) {
-      size_t binaryOrHexaLength = binary ? popBinaryDigits() : popHexadecimalDigits();
+      size_t binaryOrHexaLength =
+          binary ? popBinaryDigits() : popHexadecimalDigits();
       if (binaryOrHexaLength > 0) {
-        Token result(binary ? Token::Type::BinaryNumber : Token::Type::HexadecimalNumber);
-        result.setRange(m_decoder.layoutAt(integralPartText), integralPartLength + 1 + binaryOrHexaLength);
+        Token result(binary ? Token::Type::BinaryNumber
+                            : Token::Type::HexadecimalNumber);
+        result.setRange(m_decoder.layoutAt(integralPartText),
+                        integralPartLength + 1 + binaryOrHexaLength);
         return result;
       } else {
         // Rewind before 'b'/'x' letter
@@ -115,7 +121,7 @@ Token Tokenizer::popNumber() {
   size_t exponentPartText = m_decoder.position();
   size_t exponentPartLength = 0;
   bool exponentIsNegative = false;
-  if (canPopCodePoint('E')) { // UCodePointLatinLetterSmallCapitalE)) {
+  if (canPopCodePoint('E')) {  // UCodePointLatinLetterSmallCapitalE)) {
     exponentIsNegative = canPopCodePoint('-');
     exponentPartText = m_decoder.position();
     exponentPartLength = popDigits();
@@ -125,8 +131,11 @@ Token Tokenizer::popNumber() {
   }
 
   Token result(Token::Type::Number);
-  // result.setExpression(Number::ParseNumber(integralPartText, integralPartLength, fractionalPartText, fractionalPartLength, exponentIsNegative, exponentPartText, exponentPartLength));
-  result.setRange(m_decoder.layoutAt(integralPartText), exponentPartText - integralPartText + exponentPartLength);
+  // result.setExpression(Number::ParseNumber(integralPartText,
+  // integralPartLength, fractionalPartText, fractionalPartLength,
+  // exponentIsNegative, exponentPartText, exponentPartLength));
+  result.setRange(m_decoder.layoutAt(integralPartText),
+                  exponentPartText - integralPartText + exponentPartLength);
   return result;
 }
 
@@ -138,7 +147,8 @@ Token Tokenizer::popToken() {
     return m_storedIdentifiersList[m_numberOfStoredIdentifiers];
   }
   // Skip whitespaces
-  while (canPopCodePoint(' ')) {}
+  while (canPopCodePoint(' ')) {
+  }
 
   if (!m_decoder.nextLayoutIsCodePoint()) {
     return Token(Token::Type::Layout, m_decoder.nextLayout());
@@ -151,17 +161,23 @@ Token Tokenizer::popToken() {
   /* If the next code point is the start of a number, we do not want to pop it
    * because popNumber needs this code point. */
   bool nextCodePointIsNeitherDotNorDigit = true;
-  const CodePoint c = nextCodePoint([](CodePoint cp) { return cp != '.' && !cp.isDecimalDigit(); }, &nextCodePointIsNeitherDotNorDigit);
+  const CodePoint c = nextCodePoint(
+      [](CodePoint cp) { return cp != '.' && !cp.isDecimalDigit(); },
+      &nextCodePointIsNeitherDotNorDigit);
 
   // According to c, recognize the Token::Type.
   if (!nextCodePointIsNeitherDotNorDigit) {
     /* An implicit addition between units always starts with a number. So we
      * check here if there is one. If the parsingMethod is already Implicit
      * AdditionBetweenUnits, we don't need to check it again. */
-    if (m_parsingContext->parsingMethod() != ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
-      size_t lengthOfImplicitAdditionBetweenUnits = popImplicitAdditionBetweenUnits();
+    if (m_parsingContext->parsingMethod() !=
+        ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
+      size_t lengthOfImplicitAdditionBetweenUnits =
+          popImplicitAdditionBetweenUnits();
       if (lengthOfImplicitAdditionBetweenUnits > 0) {
-        return Token(Token::Type::ImplicitAdditionBetweenUnits, m_decoder.layoutAt(start), lengthOfImplicitAdditionBetweenUnits);
+        return Token(Token::Type::ImplicitAdditionBetweenUnits,
+                     m_decoder.layoutAt(start),
+                     lengthOfImplicitAdditionBetweenUnits);
       }
     }
     // Pop number
@@ -173,17 +189,21 @@ Token Tokenizer::popToken() {
   }
 
   if (IsIdentifierMaterial(c)) {
-    // if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
-      /* If currently popping an implicit addition, we have already
-       * checked that any identifier is a unit. */
-      // Token result(Token::Type::Unit);
-      // result.setRange(m_decoder.layoutAt(start), UTF8Decoder::CharSizeOfCodePoint(c) + popWhile(IsNonDigitalIdentifierMaterial));
-      // assert(Unit::CanParse(result.text(), result.length(), nullptr, nullptr));
-      // return result;
+    // if (m_parsingContext->parsingMethod() ==
+    // ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
+    /* If currently popping an implicit addition, we have already
+     * checked that any identifier is a unit. */
+    // Token result(Token::Type::Unit);
+    // result.setRange(m_decoder.layoutAt(start),
+    // UTF8Decoder::CharSizeOfCodePoint(c) +
+    // popWhile(IsNonDigitalIdentifierMaterial));
+    // assert(Unit::CanParse(result.text(), result.length(), nullptr, nullptr));
+    // return result;
     // }
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();
-    assert(m_numberOfStoredIdentifiers == 0); // assert we're done with previous tokenization
+    assert(m_numberOfStoredIdentifiers ==
+           0);  // assert we're done with previous tokenization
     fillIdentifiersList();
     assert(m_numberOfStoredIdentifiers > 0);
     // The identifiers list is filled, go back to beginning of popToken
@@ -193,15 +213,10 @@ Token Tokenizer::popToken() {
     /* Those code points form a contiguous range in the utf-8 code points set,
      * we can thus search faster with this lookup table. */
     constexpr Token::Type typeForCodePoint[] = {
-      Token::Type::LeftParenthesis,
-      Token::Type::RightParenthesis,
-      Token::Type::Times,
-      Token::Type::Plus,
-      Token::Type::Comma,
-      Token::Type::Minus,
-      Token::Type::Undefined,
-      Token::Type::Slash
-    };
+        Token::Type::LeftParenthesis, Token::Type::RightParenthesis,
+        Token::Type::Times,           Token::Type::Plus,
+        Token::Type::Comma,           Token::Type::Minus,
+        Token::Type::Undefined,       Token::Type::Slash};
     /* The dot code point is the second last of that range, but it is matched
      * before (with popNumber). */
     assert(c != '.');
@@ -210,20 +225,23 @@ Token Tokenizer::popToken() {
 
   // ComparisonNode::OperatorType comparisonOperatorType;
   // size_t comparisonOperatorLength;
-  // if (ComparisonNode::IsComparisonOperatorString(start, m_decoder.stringEnd(), &comparisonOperatorType, &comparisonOperatorLength)) {
-    /* Change precedence of equal when assigning a function.
-     * This ensures that "f(x) = x and 1" is parsed as
-     * "f(x) = (x and 1)" and not "(f(x) = x) and 1" */
-    // Token result(
-      // comparisonOperatorType == ComparisonNode::OperatorType::Equal && m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment ?
-      // Token::Type::AssignmentEqual :
-      // Token::Type::ComparisonOperator
-    // );
-    // result.setRange(m_decoder.layoutAt(start), comparisonOperatorLength);
-    /* Set decoder after comparison operator in case not all codepoints
-     * were popped. */
-    // m_decoder.setPosition(start + comparisonOperatorLength);
-    // return result;
+  // if (ComparisonNode::IsComparisonOperatorString(start,
+  // m_decoder.stringEnd(), &comparisonOperatorType, &comparisonOperatorLength))
+  // {
+  /* Change precedence of equal when assigning a function.
+   * This ensures that "f(x) = x and 1" is parsed as
+   * "f(x) = (x and 1)" and not "(f(x) = x) and 1" */
+  // Token result(
+  // comparisonOperatorType == ComparisonNode::OperatorType::Equal &&
+  // m_parsingContext->parsingMethod() ==
+  // ParsingContext::ParsingMethod::Assignment ? Token::Type::AssignmentEqual :
+  // Token::Type::ComparisonOperator
+  // );
+  // result.setRange(m_decoder.layoutAt(start), comparisonOperatorLength);
+  /* Set decoder after comparison operator in case not all codepoints
+   * were popped. */
+  // m_decoder.setPosition(start + comparisonOperatorLength);
+  // return result;
   // }
 
   if (c == 0) {
@@ -233,35 +251,35 @@ Token Tokenizer::popToken() {
   // All the remaining cases are single codepoint tokens
   Node layout = m_decoder.layoutAt(start);
   switch (c) {
-  case UCodePointMultiplicationSign:
-  case UCodePointMiddleDot:
-    return Token(Token::Type::Times, layout);
-  case '^':
-    return Token(Token::Type::Caret, layout);
-  case '!':
-    return Token(Token::Type::Bang, layout);
-  case UCodePointNorthEastArrow:
-    return Token(Token::Type::NorthEastArrow, layout);
-  case UCodePointSouthEastArrow:
-    return Token(Token::Type::SouthEastArrow, layout);
-  case '%':
-    return Token(Token::Type::Percent, layout);
-  case '[':
-    return Token(Token::Type::LeftBracket, layout);
-  case ']':
-    return Token(Token::Type::RightBracket, layout);
-  case '{':
-    return Token(Token::Type::LeftBrace, layout);
-  case '}':
-    return Token(Token::Type::RightBrace, layout);
-  case UCodePointSquareRoot:
-    return Token(Token::Type::ReservedFunction, layout);
-  case UCodePointRightwardsArrow:
-    return Token(Token::Type::RightwardsArrow, layout);
-  case UCodePointInfinity:
-    return Token(Token::Type::SpecialIdentifier, layout);
-  default:
-    return Token(Token::Type::Undefined, layout);
+    case UCodePointMultiplicationSign:
+    case UCodePointMiddleDot:
+      return Token(Token::Type::Times, layout);
+    case '^':
+      return Token(Token::Type::Caret, layout);
+    case '!':
+      return Token(Token::Type::Bang, layout);
+    case UCodePointNorthEastArrow:
+      return Token(Token::Type::NorthEastArrow, layout);
+    case UCodePointSouthEastArrow:
+      return Token(Token::Type::SouthEastArrow, layout);
+    case '%':
+      return Token(Token::Type::Percent, layout);
+    case '[':
+      return Token(Token::Type::LeftBracket, layout);
+    case ']':
+      return Token(Token::Type::RightBracket, layout);
+    case '{':
+      return Token(Token::Type::LeftBrace, layout);
+    case '}':
+      return Token(Token::Type::RightBrace, layout);
+    case UCodePointSquareRoot:
+      return Token(Token::Type::ReservedFunction, layout);
+    case UCodePointRightwardsArrow:
+      return Token(Token::Type::RightwardsArrow, layout);
+    case UCodePointInfinity:
+      return Token(Token::Type::SpecialIdentifier, layout);
+    default:
+      return Token(Token::Type::Undefined, layout);
   }
 }
 
@@ -280,7 +298,8 @@ void Tokenizer::fillIdentifiersList() {
        * list of token. */
       m_numberOfStoredIdentifiers = 0;
     }
-    Token rightMostToken = popLongestRightMostIdentifier(identifiersStringStart, &currentStringEnd);
+    Token rightMostToken = popLongestRightMostIdentifier(identifiersStringStart,
+                                                         &currentStringEnd);
     m_storedIdentifiersList[m_numberOfStoredIdentifiers] = rightMostToken;
     m_numberOfStoredIdentifiers++;
   }
@@ -288,12 +307,13 @@ void Tokenizer::fillIdentifiersList() {
    * will sometimes not parse the whole identifiers string.
    * If it's the case, rewind decoder to the end of the right-most parsed token
    * */
-  Token rightMostParsedToken =  m_storedIdentifiersList[0];
+  Token rightMostParsedToken = m_storedIdentifiersList[0];
   m_decoder.setPosition(rightMostParsedToken.firstLayout());
   m_decoder.setPosition(m_decoder.position() + rightMostParsedToken.length());
 }
 
-Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart, size_t * stringEnd) {
+Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart,
+                                               size_t* stringEnd) {
   RackLayoutDecoder decoder(m_decoder.mainLayout(), stringStart);
   Token::Type tokenType = Token::Type::Undefined;
   /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
@@ -321,7 +341,8 @@ Token Tokenizer::popLongestRightMostIdentifier(size_t stringStart, size_t * stri
   return Token(tokenType, m_decoder.layoutAt(stringStart), tokenLength);
 }
 
-static bool stringIsACodePointFollowedByNumbers(Node layout, size_t string, size_t length) {
+static bool stringIsACodePointFollowedByNumbers(Node layout, size_t string,
+                                                size_t length) {
   RackLayoutDecoder tempDecoder(layout, string);
   CodePoint c = tempDecoder.nextCodePoint();
   if (!IsNonDigitalIdentifierMaterial(c)) {
@@ -336,11 +357,12 @@ static bool stringIsACodePointFollowedByNumbers(Node layout, size_t string, size
   return true;
 }
 
-static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(Node layout, size_t string, size_t * length, Token::Type * returnType) {
+static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
+    Node layout, size_t string, size_t* length, Token::Type* returnType) {
   RackLayoutDecoder tempDecoder(layout, string);
   CodePoint c = tempDecoder.nextCodePoint();
   size_t identifierLength = 0;
-  while(identifierLength < *length && !c.isDecimalDigit()) {
+  while (identifierLength < *length && !c.isDecimalDigit()) {
     identifierLength += UTF8Decoder::CharSizeOfCodePoint(c);
     c = tempDecoder.nextCodePoint();
   }
@@ -354,81 +376,95 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(Node layout, size_
     return true;
   }
   // if (ParsingHelper::IsSpecialIdentifierName(string, identifierLength)) {
-    // *returnType = Token::Type::SpecialIdentifier;
-    // *length = identifierLength;
-    // return true;
+  // *returnType = Token::Type::SpecialIdentifier;
+  // *length = identifierLength;
+  // return true;
   // }
   return false;
 }
 
-
-Token::Type Tokenizer::stringTokenType(size_t string, size_t * length) const {
+Token::Type Tokenizer::stringTokenType(size_t string, size_t* length) const {
   // If there are two \" around an identifier, it is a forced custom identifier
   size_t lastCharOfString = string + *length - 1;
-  RackLayoutDecoder insideQuotes(m_decoder.mainLayout(), string + 1, lastCharOfString);
-  if (*length > 2 && m_decoder.codePointAt(string) == '"' && m_decoder.codePointAt(lastCharOfString) == '"' && OMG::CodePointSearch(&insideQuotes, '"') == lastCharOfString) {
+  RackLayoutDecoder insideQuotes(m_decoder.mainLayout(), string + 1,
+                                 lastCharOfString);
+  if (*length > 2 && m_decoder.codePointAt(string) == '"' &&
+      m_decoder.codePointAt(lastCharOfString) == '"' &&
+      OMG::CodePointSearch(&insideQuotes, '"') == lastCharOfString) {
     return Token::Type::CustomIdentifier;
   }
   // if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {
-    // return Token::Type::SpecialIdentifier;
+  // return Token::Type::SpecialIdentifier;
   // }
   // if (Constant::IsConstant(string, *length)) {
-    // return Token::Type::Constant;
+  // return Token::Type::Constant;
   // }
   RackLayoutDecoder subString(m_decoder.mainLayout(), string, string + *length);
   if (BuiltinsAliases::k_thetaAliases.contains(&subString)) {
     return Token::Type::CustomIdentifier;
   }
   Token::Type logicalOperatorType;
-  // if (ParsingHelper::IsLogicalOperator(string, *length, &logicalOperatorType)) {
-    // return logicalOperatorType;
+  // if (ParsingHelper::IsLogicalOperator(string, *length,
+  // &logicalOperatorType)) { return logicalOperatorType;
   // }
   if (m_decoder.codePointAt(string) == '_') {
     // if (Unit::CanParse(string, *length, nullptr, nullptr)) {
-      // return Token::Type::Unit;
+    // return Token::Type::Unit;
     // }
     // Only constants and units can be prefixed with a '_'
     return Token::Type::Undefined;
   }
-  // if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(string, *length, ListMinimum::s_functionHelper.aliasesList().mainAlias()) == 0) {
-    /* Special case for "min".
-     * min() = minimum(), min = minute.
-     * We handle this now so that min is never understood as a CustomIdentifier
-     * (3->min is not allowed, just like 3->cos) */
-    // return *(string + *length) == '(' ? Token::Type::ReservedFunction : Token::Type::Unit;
+  // if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(string,
+  // *length, ListMinimum::s_functionHelper.aliasesList().mainAlias()) == 0) {
+  /* Special case for "min".
+   * min() = minimum(), min = minute.
+   * We handle this now so that min is never understood as a CustomIdentifier
+   * (3->min is not allowed, just like 3->cos) */
+  // return *(string + *length) == '(' ? Token::Type::ReservedFunction :
+  // Token::Type::Unit;
   // }
   if (Builtin::HasReservedFunction(&subString)) {
     return Token::Type::ReservedFunction;
   }
   /* When parsing for unit conversion, the identifier "m" should always
    * be understood as the unit and not the variable. */
-  // if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string, *length, nullptr, nullptr)) {
-    // return Token::Type::Unit;
+  // if (m_parsingContext->parsingMethod() ==
+  // ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string,
+  // *length, nullptr, nullptr)) { return Token::Type::Unit;
   // }
-  bool hasUnitOnlyCodePoint = false; //UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + *length) || UTF8Helper::HasCodePoint(string, '\'', string + *length) || UTF8Helper::HasCodePoint(string, '"', string + *length);
+  bool hasUnitOnlyCodePoint =
+      false;  // UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string +
+              // *length) || UTF8Helper::HasCodePoint(string, '\'', string +
+              // *length) || UTF8Helper::HasCodePoint(string, '"', string +
+              // *length);
   // if (!hasUnitOnlyCodePoint // CustomIdentifiers can't contain °, ' or "
-      // && (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment
-        // || m_parsingContext->context() == nullptr
-        // || m_parsingContext->context()->expressionTypeForIdentifier(string, *length) != Context::SymbolAbstractType::None)) {
-    // return Token::Type::CustomIdentifier;
+  // && (m_parsingContext->parsingMethod() ==
+  // ParsingContext::ParsingMethod::Assignment
+  // || m_parsingContext->context() == nullptr
+  // || m_parsingContext->context()->expressionTypeForIdentifier(string,
+  // *length) != Context::SymbolAbstractType::None)) {
+  // return Token::Type::CustomIdentifier;
   // }
   /* If not unit conversion and "m" has been or is being assigned by the user
    * it's understood as a variable before being understood as a unit.
    * That's why the following condition is checked after the previous one. */
-  // if (m_parsingContext->parsingMethod() != ParsingContext::ParsingMethod::UnitConversion
-      // && m_parsingContext->context()
-      // && m_parsingContext->context()->canRemoveUnderscoreToUnits()
-      // && Unit::CanParse(string, *length, nullptr, nullptr)) {
-    // return Token::Type::Unit;
+  // if (m_parsingContext->parsingMethod() !=
+  // ParsingContext::ParsingMethod::UnitConversion
+  // && m_parsingContext->context()
+  // && m_parsingContext->context()->canRemoveUnderscoreToUnits()
+  // && Unit::CanParse(string, *length, nullptr, nullptr)) {
+  // return Token::Type::Unit;
   // }
   // "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
   Token::Type type;
-  if (stringIsASpecialIdentifierOrALogFollowedByNumbers(m_decoder.mainLayout(), string, length, &type)) {
+  if (stringIsASpecialIdentifierOrALogFollowedByNumbers(
+          m_decoder.mainLayout(), string, length, &type)) {
     // If true, the length has been modified to match the end of the identifier
     return type;
   }
   // "x12" should not be parsed as "x*12" but "x12"
-  if (!hasUnitOnlyCodePoint && stringIsACodePointFollowedByNumbers(m_decoder.mainLayout(), string, *length)) {
+  if (!hasUnitOnlyCodePoint && stringIsACodePointFollowedByNumbers(
+                                   m_decoder.mainLayout(), string, *length)) {
     return Token::Type::CustomIdentifier;
   }
   return Token::Type::Undefined;
@@ -444,10 +480,10 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
   bool nextLayoutIsCodePoint = true;
   size_t length = 0;
   // const Unit::Representative * storedUnitRepresentative = nullptr;
-  while(true) {
+  while (true) {
     /* Check if the string is of the form:
-    * decimalNumber-unit-decimalNumber-unit...
-    * Each loop will check for a pair decimalNumber-unit */
+     * decimalNumber-unit-decimalNumber-unit...
+     * Each loop will check for a pair decimalNumber-unit */
     size_t lengthOfNumber = 0;
     while (nextLayoutIsCodePoint && (c.isDecimalDigit() || c == '.')) {
       lengthOfNumber += UTF8Decoder::CharSizeOfCodePoint(c);
@@ -462,7 +498,8 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
       break;
     }
     length += lengthOfNumber;
-    size_t currentStringStart = m_decoder.position() - UTF8Decoder::CharSizeOfCodePoint(c);
+    size_t currentStringStart =
+        m_decoder.position() - UTF8Decoder::CharSizeOfCodePoint(c);
     size_t lengthOfPotentialUnit = 0;
     while (nextLayoutIsCodePoint && IsNonDigitalIdentifierMaterial(c)) {
       lengthOfPotentialUnit += UTF8Decoder::CharSizeOfCodePoint(c);
@@ -482,21 +519,20 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     length += lengthOfPotentialUnit;
     // const Unit::Representative * unitRepresentative;
     // const Unit::Prefix * unitPrefix;
-    // if (!Unit::CanParse(currentStringStart, lengthOfPotentialUnit, &unitRepresentative, &unitPrefix)) {
-      // Second element is not a unit: the string is not an implicit addition
-      // isImplicitAddition = false;
-      // break;
+    // if (!Unit::CanParse(currentStringStart, lengthOfPotentialUnit,
+    // &unitRepresentative, &unitPrefix)) { Second element is not a unit: the
+    // string is not an implicit addition isImplicitAddition = false; break;
     // }
     // if (storedUnitRepresentative != nullptr) {
-      // Warning: The order of AllowImplicitAddition arguments matter
-      // if (Unit::AllowImplicitAddition(unitRepresentative, storedUnitRepresentative)) {
-        // There is at least 2 units allowing for implicit addition
-        // isImplicitAddition = true;
-      // } else {
-        // Implicit addition not allowed between this unit and the previous one
-        // isImplicitAddition = false;
-        // break;
-      // }
+    // Warning: The order of AllowImplicitAddition arguments matter
+    // if (Unit::AllowImplicitAddition(unitRepresentative,
+    // storedUnitRepresentative)) { There is at least 2 units allowing for
+    // implicit addition isImplicitAddition = true;
+    // } else {
+    // Implicit addition not allowed between this unit and the previous one
+    // isImplicitAddition = false;
+    // break;
+    // }
     // }
     // storedUnitRepresentative = unitRepresentative;
   }
@@ -511,4 +547,4 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
   return 0;
 }
 
-}
+}  // namespace PoincareJ

@@ -6,7 +6,7 @@
 namespace PoincareJ {
 
 class Algebraic final {
-public:
+ public:
   static void Expand(EditionReference node);
   // develop product of sum
   // develop integer power of sum
@@ -16,14 +16,19 @@ public:
   static EditionReference Rationalize(EditionReference node);
   static EditionReference SideRelations(Node expression);
 
-  static EditionReference Numerator(EditionReference expression) { return NormalFormator(expression, true); }
-  static EditionReference Denominator(EditionReference expression) { return NormalFormator(expression, false); }
+  static EditionReference Numerator(EditionReference expression) {
+    return NormalFormator(expression, true);
+  }
+  static EditionReference Denominator(EditionReference expression) {
+    return NormalFormator(expression, false);
+  }
 
-private:
+ private:
   static EditionReference RationalizeAddition(EditionReference expression);
-  static EditionReference NormalFormator(EditionReference expression, bool numerator);
+  static EditionReference NormalFormator(EditionReference expression,
+                                         bool numerator);
 };
 
-}
+}  // namespace PoincareJ
 
 #endif

@@ -2,12 +2,10 @@
 
 namespace PoincareJ {
 
-ExceptionCheckpoint * ExceptionCheckpoint::s_topmostExceptionCheckpoint;
+ExceptionCheckpoint* ExceptionCheckpoint::s_topmostExceptionCheckpoint;
 
-ExceptionCheckpoint::ExceptionCheckpoint() :
-  m_parent(s_topmostExceptionCheckpoint)
-{
-}
+ExceptionCheckpoint::ExceptionCheckpoint()
+    : m_parent(s_topmostExceptionCheckpoint) {}
 
 ExceptionCheckpoint::~ExceptionCheckpoint() {
   s_topmostExceptionCheckpoint = m_parent;
@@ -31,5 +29,4 @@ void ExceptionCheckpoint::Raise() {
   assert(false);
 }
 
-}
-
+}  // namespace PoincareJ

@@ -1,8 +1,9 @@
 #ifndef POINCARE_EXPRESSION_APPROXIMATION_H
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
-#include <cmath>
 #include <poincare_junior/src/memory/node.h>
+
+#include <cmath>
 
 namespace PoincareJ {
 
@@ -14,27 +15,38 @@ namespace PoincareJ {
  */
 
 class Approximation final {
-public:
+ public:
   template <typename T>
   static T To(const Node node);
 
   template <typename T>
-  static T FloatAddition(T a, T b) { return a + b; }
+  static T FloatAddition(T a, T b) {
+    return a + b;
+  }
   template <typename T>
-  static T FloatMultiplication(T a, T b) { return a * b; }
+  static T FloatMultiplication(T a, T b) {
+    return a * b;
+  }
   template <typename T>
-  static T FloatPower(T a, T b) { return std::pow(a, b); }
+  static T FloatPower(T a, T b) {
+    return std::pow(a, b);
+  }
   template <typename T>
-  static T FloatSubtraction(T a, T b) { return a - b; }
+  static T FloatSubtraction(T a, T b) {
+    return a - b;
+  }
   template <typename T>
-  static T FloatDivision(T a, T b) { return a / b; }
-private:
+  static T FloatDivision(T a, T b) {
+    return a / b;
+  }
+
+ private:
   template <typename T>
-  using Reductor = T (*)(T,T);
+  using Reductor = T (*)(T, T);
   template <typename T>
   static T MapAndReduce(const Node node, Reductor<T> reductor);
 };
 
-}
+}  // namespace PoincareJ
 
 #endif

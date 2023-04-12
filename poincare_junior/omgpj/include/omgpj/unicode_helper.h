@@ -5,10 +5,11 @@
 
 namespace OMG {
 
-size_t CodePointSearch(UnicodeDecoder * decoder, CodePoint c);
-int CompareDecoders(UnicodeDecoder * a, UnicodeDecoder * b);
-int CompareDecoderWithNullTerminatedString(UnicodeDecoder * decoder, const char * string);
+size_t CodePointSearch(UnicodeDecoder* decoder, CodePoint c);
+int CompareDecoders(UnicodeDecoder* a, UnicodeDecoder* b);
+int CompareDecoderWithNullTerminatedString(UnicodeDecoder* decoder,
+                                           const char* string);
 
-}
+}  // namespace OMG
 
 #endif

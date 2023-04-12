@@ -214,8 +214,9 @@ T Sequence::privateEvaluateYAtX(T x, Poincare::Context *context) const {
 template <typename T>
 T Sequence::approximateAtRank(int rank, SequenceContext *sqctx) const {
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
-  if (rank < initialRank() || (rank >= firstNonInitialRank() &&
-                               sqctx->sequenceIsNotComputable(sequenceIndex))) {
+  if (!isDefined() || rank < initialRank() ||
+      (rank >= firstNonInitialRank() &&
+       sqctx->sequenceIsNotComputable(sequenceIndex))) {
     return static_cast<T>(NAN);
   }
   sqctx->stepUntilRank<T>(sequenceIndex, rank);

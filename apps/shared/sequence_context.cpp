@@ -265,6 +265,8 @@ Sequence *SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
       m_sequenceStore->recordAtNameIndex(sequenceIndex);
   assert(!record.isNull());
   Sequence *s = m_sequenceStore->modelForRecord(record);
+  /* The case !isDefined() should have been escaped in
+   * Sequence::approximateAtRank. */
   assert(s->isDefined());
   return s;
 }

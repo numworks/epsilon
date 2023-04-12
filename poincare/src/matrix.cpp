@@ -150,6 +150,12 @@ int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
       [](const Expression e, Context *context) { return e.isUninitialized(); },
       context));
 
+  if (recursivelyMatches(
+          [](const Expression e, Context *context) { return e.isUndefined(); },
+          context)) {
+    return -1;
+  }
+
   Expression m;
   ReductionContext systemReductionContext = ReductionContext(
       context, complexFormat, angleUnit, unitFormat, reductionTarget);

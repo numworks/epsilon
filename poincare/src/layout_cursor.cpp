@@ -1061,7 +1061,6 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod,
     Layout parentOfFraction = fraction.parent();
     if (parentOfFraction.isUninitialized() ||
         !parentOfFraction.isHorizontal()) {
-      assert(m_position == 0);
       fraction.replaceWithInPlace(numerator);
       m_layout = numerator;
     } else {

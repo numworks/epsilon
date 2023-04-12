@@ -34,8 +34,8 @@ void InputHomogeneityTableCell::willDisplayCellAtLocation(
       (row == 0 && column != 0 && column == numberOfColumns() - 1 &&
        column < k_maxNumberOfColumns)) {
     /* The last column/row is empty and has its title grayed out. */
-    Escher::EvenOddBufferTextCell *typedCell =
-        static_cast<Escher::EvenOddBufferTextCell *>(cell);
+    InferenceEvenOddBufferCell *typedCell =
+        static_cast<InferenceEvenOddBufferCell *>(cell);
     typedCell->setTextColor(Palette::GrayDark);
   }
 }
@@ -61,19 +61,19 @@ void InputHomogeneityTableCell::createCells() {
   // We could equivalently use DynamicCellsDataSource<EvenOddEditableTextCell,
   // k_homogeneityTableNumberOfReusableInnerCells>::m_cells
   if (DynamicCellsDataSource<
-          EvenOddBufferTextCell,
+          InferenceEvenOddBufferCell,
           k_homogeneityTableNumberOfReusableHeaderCells>::m_cells == nullptr) {
-    DynamicCellsDataSource<EvenOddBufferTextCell,
+    DynamicCellsDataSource<InferenceEvenOddBufferCell,
                            k_homogeneityTableNumberOfReusableHeaderCells>::
         createCellsWithOffset(0);
     DynamicCellsDataSource<EvenOddEditableTextCell,
                            k_homogeneityTableNumberOfReusableInnerCells>::
         createCellsWithOffset(k_homogeneityTableNumberOfReusableHeaderCells *
-                              sizeof(EvenOddBufferTextCell));
+                              sizeof(InferenceEvenOddBufferCell));
     // We could equivalently use DynamicCellsDataSource<EvenOddEditableTextCell,
     // k_homogeneityTableNumberOfReusableInnerCells>::m_delegate
     DynamicCellsDataSource<
-        EvenOddBufferTextCell,
+        InferenceEvenOddBufferCell,
         k_homogeneityTableNumberOfReusableHeaderCells>::m_delegate->tableView()
         ->reloadData(false);
   }
@@ -84,7 +84,7 @@ void InputHomogeneityTableCell::destroyCells() {
       EvenOddEditableTextCell,
       k_homogeneityTableNumberOfReusableInnerCells>::destroyCells();
   DynamicCellsDataSource<
-      EvenOddBufferTextCell,
+      InferenceEvenOddBufferCell,
       k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
 }
 

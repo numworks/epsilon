@@ -60,7 +60,7 @@ class RangeParameterController : public Escher::SelectableListViewController<
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::UnequalView>
       m_normalizeCell;
-  Escher::MenuCell<Escher::MessageTextView, Escher::BufferTextView,
+  Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
                    Escher::ChevronView>
       m_rangeCells[k_numberOfRangeCells];
   Escher::ButtonCell m_okButton;

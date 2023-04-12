@@ -27,12 +27,14 @@ class BufferFunctionTitleCell : public FunctionTitleCell {
 
  protected:
   KDRect bufferTextViewFrame() const;
-  Escher::EvenOddBufferTextCell* bufferTextView() { return &m_bufferTextView; }
+  Escher::SmallFontEvenOddBufferTextCell* bufferTextView() {
+    return &m_bufferTextView;
+  }
 
  private:
   constexpr static float k_verticalAlignment = KDGlyph::k_alignCenter;
 
-  Escher::EvenOddBufferTextCell m_bufferTextView;
+  Escher::SmallFontEvenOddBufferTextCell m_bufferTextView;
 };
 
 }  // namespace Shared

@@ -68,9 +68,14 @@ class CurveParameterController
   static constexpr size_t k_titleSize =
       40;  // "Berechnen auf der türkisen Kurve"
   char m_title[k_titleSize];
-  Escher::MenuCellWithEditableText<Escher::BufferTextView> m_abscissaCell;
-  Escher::MenuCellWithEditableText<Escher::BufferTextView> m_imageCell;
-  Escher::MenuCellWithEditableText<Escher::BufferTextView>
+  Escher::MenuCellWithEditableText<
+      Escher::OneLineBufferTextView<KDFont::Size::Large>>
+      m_abscissaCell;
+  Escher::MenuCellWithEditableText<
+      Escher::OneLineBufferTextView<KDFont::Size::Large>>
+      m_imageCell;
+  Escher::MenuCellWithEditableText<
+      Escher::OneLineBufferTextView<KDFont::Size::Large>>
       m_derivativeNumberCell;
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>

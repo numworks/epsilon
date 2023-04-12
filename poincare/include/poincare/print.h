@@ -5,11 +5,11 @@
 #include <stddef.h>
 
 namespace Escher {
-class BufferTextView;
+class AbstractBufferTextView;
 }
 namespace Poincare {
 class Print {
-  friend class Escher::BufferTextView;
+  friend class Escher::AbstractBufferTextView;
 
  public:
   /* Custom printf which supports the following formats:

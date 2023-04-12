@@ -16,7 +16,7 @@ namespace Inference {
 
 using ResultCell =
     Escher::MenuCell<Escher::ExpressionView, Escher::MessageTextView,
-                     Escher::BufferTextView>;
+                     Escher::FloatBufferTextView<>>;
 /* A ResultsDataSource is a TableViewDataSource which is meant to
  * represent data provided (and computed) by a Statistic.
  */

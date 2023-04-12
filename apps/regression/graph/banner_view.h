@@ -17,7 +17,7 @@ class BannerView : public Shared::XYBannerView {
   BannerView(Escher::Responder* parentResponder,
              Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
              Escher::TextFieldDelegate* textFieldDelegate);
-  Escher::BufferTextView* otherView() { return &m_otherView; }
+  BannerBufferTextView* otherView() { return &m_otherView; }
   void setDisplayParameters(bool displayOtherView, bool otherViewIsFirst,
                             bool displayDataNotSuitable);
 
@@ -28,7 +28,7 @@ class BannerView : public Shared::XYBannerView {
   }
   Escher::View* subviewAtIndex(int index) override;
 
-  Escher::BufferTextView m_otherView;
+  BannerBufferTextView m_otherView;
   Escher::MessageTextView m_dataNotSuitableView;
   bool m_displayOtherView;
   bool m_otherViewIsFirst;

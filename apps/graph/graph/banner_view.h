@@ -14,9 +14,9 @@ class BannerView : public Shared::XYBannerView {
              Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
              Escher::TextFieldDelegate* textFieldDelegate);
 
-  Escher::BufferTextView* derivativeView() { return &m_derivativeView; }
-  Escher::BufferTextView* aView() { return &m_aView; }
-  Escher::BufferTextView* bView() { return &m_bView; }
+  BannerBufferTextView* derivativeView() { return &m_derivativeView; }
+  BannerBufferTextView* aView() { return &m_aView; }
+  BannerBufferTextView* bView() { return &m_bView; }
   int numberOfInterestMessages() const;
   void addInterestMessage(I18n::Message message, Shared::CursorView* cursor);
   void emptyInterestMessages(Shared::CursorView* cursor);
@@ -39,10 +39,10 @@ class BannerView : public Shared::XYBannerView {
   }
 
   Escher::MessageTextView m_interestMessageView[k_maxNumberOfInterests];
-  Escher::BufferTextView m_derivativeView;
+  BannerBufferTextView m_derivativeView;
   Escher::MessageTextView m_tangentEquationView;
-  Escher::BufferTextView m_aView;
-  Escher::BufferTextView m_bView;
+  BannerBufferTextView m_aView;
+  BannerBufferTextView m_bView;
   bool m_showInterest : 1;
   bool m_showDerivative : 1;
   bool m_showTangent : 1;

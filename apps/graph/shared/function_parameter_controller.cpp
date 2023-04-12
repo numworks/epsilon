@@ -94,7 +94,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell *cell,
       m_functionDomainCell.label()->setMessage(I18n::Message::FunctionDomain);
       double min = function->tMin();
       double max = function->tMax();
-      constexpr int bufferSize = BufferTextView::k_maxNumberOfChar;
+      constexpr int bufferSize = OneLineBufferTextView<>::MaxTextSize();
       char buffer[bufferSize];
       writeInterval(buffer, bufferSize, min, max,
                     Preferences::VeryShortNumberOfSignificantDigits,

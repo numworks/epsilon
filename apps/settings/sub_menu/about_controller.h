@@ -32,7 +32,7 @@ class AboutController : public GenericSubController {
   constexpr static int k_termsOfUseCellIndex = 3;
 #endif
 
-  Escher::MenuCell<Escher::MessageTextView, Escher::BufferTextView>
+  Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>>
       m_cells[k_totalNumberOfCell];
   Shared::MessagePopUpController m_hardwareTestPopUpController;
 };

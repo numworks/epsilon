@@ -58,7 +58,8 @@ void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int i,
   }
   // Handle hidden cells
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
-  EvenOddBufferTextCell *myCell = static_cast<EvenOddBufferTextCell *>(cell);
+  AbstractEvenOddBufferTextCell *myCell =
+      static_cast<AbstractEvenOddBufferTextCell *>(cell);
   if (j > numberOfElementsInCol + 1) {
     myCell->setText("");
     myCell->hide();
@@ -72,12 +73,12 @@ void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int i,
     // Special case : last row and NaN
     myCell->setText("");
   } else {
-    const int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-        Preferences::VeryLargeNumberOfSignificantDigits);
+    constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
+        AbstractEvenOddBufferTextCell::k_defaultPrecision);
     char buffer[bufferSize];
     Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
         value, buffer, bufferSize,
-        Preferences::VeryLargeNumberOfSignificantDigits,
+        AbstractEvenOddBufferTextCell::k_defaultPrecision,
         Preferences::sharedPreferences->displayMode());
     myCell->setText(buffer);
     KDColor textColor = m_store->seriesIsActive(m_store->seriesAtColumn(i))

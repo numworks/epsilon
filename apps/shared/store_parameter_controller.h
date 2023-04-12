@@ -38,7 +38,8 @@ class StoreParameterController : public ColumnParameterController {
   constexpr static int k_numberOfCells = k_clearCellType + 1;
 
   StoreColumnHelper* m_storeColumnHelper;
-  Escher::MenuCell<Escher::BufferTextView> m_clearColumn;
+  Escher::MenuCell<Escher::OneLineBufferTextView<KDFont::Size::Large>>
+      m_clearColumn;
 
  private:
   ColumnNameHelper* columnNameHelper() override;

@@ -18,9 +18,9 @@ namespace Inference {
 class HomogeneityTableDataSource
     : public CategoricalTableViewDataSource,
       public DynamicCellsDataSource<
-          Escher::EvenOddBufferTextCell,
+          InferenceEvenOddBufferCell,
           k_homogeneityTableNumberOfReusableHeaderCells>,
-      public DynamicCellsDataSourceDelegate<Escher::EvenOddBufferTextCell> {
+      public DynamicCellsDataSourceDelegate<InferenceEvenOddBufferCell> {
  public:
   HomogeneityTableDataSource();
 
@@ -34,7 +34,7 @@ class HomogeneityTableDataSource
                                  int row) override;
 
   // DynamicCellsDataSource
-  void initCell(Escher::EvenOddBufferTextCell, void* cell, int index) override;
+  void initCell(InferenceEvenOddBufferCell, void* cell, int index) override;
 
   // SelectableTableViewDelegate
   bool unselectTopLeftCell(Escher::SelectableTableView* t,

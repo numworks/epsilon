@@ -6,25 +6,59 @@
 
 namespace Escher {
 
-class EvenOddBufferTextCell : public EvenOddCell {
+class AbstractEvenOddBufferTextCell : public EvenOddCell {
  public:
-  EvenOddBufferTextCell(KDGlyph::Format = k_smallCellDefaultFormat);
-  const char* text() const override;
-  void setFont(KDFont::Size font) { m_bufferTextView.setFont(font); }
-  KDFont::Size font() const { return m_bufferTextView.font(); }
+  constexpr static int k_defaultPrecision =
+      Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
+  const char* text() const override { return constBufferTextView()->text(); }
+  void setFont(KDFont::Size font) { bufferTextView()->setFont(font); }
+  KDFont::Size font() const { return constBufferTextView()->font(); }
   void setAlignment(float horizontalAlignment, float verticalAlignment) {
-    m_bufferTextView.setAlignment(horizontalAlignment, verticalAlignment);
+    bufferTextView()->setAlignment(horizontalAlignment, verticalAlignment);
   }
-  void setText(const char* textContent);
-  void setTextColor(KDColor textColor);
+  void setText(const char* textContent) {
+    bufferTextView()->setText(textContent);
+  }
+  void setTextColor(KDColor textColor) {
+    bufferTextView()->setTextColor(textColor);
+  }
 
  protected:
   void updateSubviewsBackgroundAfterChangingState() override;
   int numberOfSubviews() const override;
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  BufferTextView m_bufferTextView;
+  virtual AbstractBufferTextView* bufferTextView() = 0;
+  AbstractBufferTextView* constBufferTextView() const {
+    return const_cast<AbstractEvenOddBufferTextCell*>(this)->bufferTextView();
+  };
 };
+
+template <class BufferTextViewClass>
+class EvenOddBufferTextCell : public AbstractEvenOddBufferTextCell {
+#ifndef PLATFORM_DEVICE
+  // Poor's man constraint
+  static_assert(
+      std::is_base_of<AbstractBufferTextView, BufferTextViewClass>(),
+      "EvenOddBufferTextCell must be templated with a BufferTextView class");
+#endif
+ public:
+  EvenOddBufferTextCell(KDGlyph::Format format = k_smallCellDefaultFormat)
+      : AbstractEvenOddBufferTextCell(), m_bufferTextView(format) {}
+
+ private:
+  AbstractBufferTextView* bufferTextView() override {
+    return &m_bufferTextView;
+  }
+  BufferTextViewClass m_bufferTextView;
+};
+
+template <int numberOfSignificantDigits =
+              AbstractEvenOddBufferTextCell::k_defaultPrecision>
+using FloatEvenOddBufferTextCell =
+    EvenOddBufferTextCell<FloatBufferTextView<numberOfSignificantDigits>>;
+using SmallFontEvenOddBufferTextCell =
+    EvenOddBufferTextCell<OneLineBufferTextView<KDFont::Size::Small>>;
 
 }  // namespace Escher
 

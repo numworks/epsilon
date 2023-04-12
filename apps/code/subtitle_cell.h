@@ -21,7 +21,7 @@ class SubtitleCell : public Escher::Bordered, public Escher::HighlightCell {
   // Actual height is 24 with the overlapping pixel from SelectableTableView.
   constexpr static KDCoordinate k_subtitleRowHeight = 23;
 
-  Escher::BufferTextView* textView() { return &m_textView; }
+  Escher::AbstractBufferTextView* textView() { return &m_textView; }
 
  private:
   /* Text can be formed from user input (script names).
@@ -33,7 +33,7 @@ class SubtitleCell : public Escher::Bordered, public Escher::HighlightCell {
        Escher::Metric::PopUpRightMargin) /
       KDFont::GlyphWidth(KDFont::Size::Small);
   static_assert(k_maxNumberOfCharsInBuffer <
-                    Escher::BufferTextView::k_maxNumberOfChar,
+                    Escher::OneLineBufferTextView<>::MaxTextSize(),
                 "k_maxNumberOfCharsInBuffer is too high");
   constexpr static KDColor k_backgroundColor = Escher::Palette::WallScreen;
   constexpr static KDColor k_textColor = Escher::Palette::BlueishGray;
@@ -42,7 +42,7 @@ class SubtitleCell : public Escher::Bordered, public Escher::HighlightCell {
   Escher::View* subviewAtIndex(int index) override { return &m_textView; }
   bool protectedIsSelectable() override { return false; }
 
-  Escher::BufferTextView m_textView;
+  Escher::OneLineBufferTextView<> m_textView;
 };
 
 }  // namespace Code

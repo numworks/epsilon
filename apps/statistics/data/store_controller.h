@@ -85,7 +85,7 @@ class StoreController : public Shared::StoreController {
 
   Store* m_store;
   StoreParameterController m_storeParameterController;
-  Escher::EvenOddBufferTextCell
+  Escher::FloatEvenOddBufferTextCell<>
       m_nonEditableCells[k_maxNumberOfNonEditableCells];
 };
 

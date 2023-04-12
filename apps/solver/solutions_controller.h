@@ -174,7 +174,7 @@ class SolutionsController : public Escher::ViewController,
       KDFont::GlyphWidth(k_solutionsFont) *
           (Poincare::SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks +
            2) +
-      2 * Escher::EvenOddBufferTextCell::k_horizontalMargin;
+      2 * Escher::AbstractEvenOddBufferTextCell::k_horizontalMargin;
   constexpr static int k_valueCellWidth = 190;
 
   // Number of cells
@@ -218,13 +218,13 @@ class SolutionsController : public Escher::ViewController,
   int userVariablesMessageRow() const;
   I18n::Message noSolutionMessage();
 
-  Escher::EvenOddBufferTextCell m_symbolCells[k_numberOfSymbolCells];
+  Escher::SmallFontEvenOddBufferTextCell m_symbolCells[k_numberOfSymbolCells];
   Escher::EvenOddExpressionCell m_deltaCell;
   Poincare::Layout m_delta2Layout;
   Poincare::Layout m_delta3Layout;
   Shared::ScrollableTwoExpressionsCell
       m_exactValueCells[k_numberOfExactValueCells];
-  Escher::EvenOddBufferTextCell
+  Escher::FloatEvenOddBufferTextCell<>
       m_approximateValueCells[k_numberOfApproximateValueCells];
   MessageCell m_messageCells[k_numberOfMessageCells];
   EmptyCell m_emptyCell[k_numberOfEmptyCells];

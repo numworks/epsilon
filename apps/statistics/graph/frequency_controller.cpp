@@ -81,7 +81,7 @@ void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
 void FrequencyController::reloadValueInBanner(
     Poincare::Preferences::PrintFloatMode displayMode, int precision) {
   constexpr static int k_bufferSize =
-      Shared::BannerView::k_maxLengthDisplayed + 1;
+      Shared::BannerView::BannerBufferTextView::MaxTextSize();
   char buffer[k_bufferSize] = "";
   Poincare::Print::CustomPrintf(
       buffer, k_bufferSize, "%s%s",

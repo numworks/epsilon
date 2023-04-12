@@ -76,10 +76,6 @@ VariableBoxController::VariableBoxController(ScriptStore *scriptStore)
   m_originsName[1] = I18n::translate(I18n::Message::BuiltinsAndKeywords);
   // Empty to initialize other class members
   empty();
-  for (size_t i = 0; i < k_maxNumberOfDisplayedItems; i++) {
-    m_itemCells[i].label()->setMaxDisplayedTextLength(
-        k_maxNumberOfCharsInLabel);
-  }
 }
 
 bool VariableBoxController::handleEvent(Ion::Events::Event event) {
@@ -113,7 +109,7 @@ KDCoordinate VariableBoxController::nonMemoizedRowHeight(int index) {
   assert(index >= 0 && index < numberOfRows());
   int cellType = typeAndOriginAtLocation(index);
   if (cellType == k_itemCellType) {
-    MenuCell<BufferTextView, PointerTextView> tempCell;
+    MenuCell<BufferTextView<k_labelCharSize>, PointerTextView> tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   SubtitleCell tempCell;
@@ -158,15 +154,16 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
   int cellType =
       typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
-    MenuCell<BufferTextView, PointerTextView> *typedCell =
-        static_cast<MenuCell<BufferTextView, PointerTextView> *>(cell);
+    MenuCell<BufferTextView<k_labelCharSize>, PointerTextView> *typedCell =
+        static_cast<
+            MenuCell<BufferTextView<k_labelCharSize>, PointerTextView> *>(cell);
     ScriptNode *node = scriptNodeAtIndex(
         index - (m_displaySubtitles ? cumulatedOriginsCount : 0));
     /* Use a temporary buffer to crop label name, as strlen(node->name()) may be
      * greater than node->nameLength() */
     const size_t labelLength =
-        std::min(node->nameLength(), k_maxNumberOfCharsInLabel);
-    char temp_buffer[k_maxNumberOfCharsInLabel + 1];
+        std::min(node->nameLength(), k_labelCharSize - 1);
+    char temp_buffer[k_labelCharSize];
     assert(strlen(node->name()) >= labelLength);
     memcpy(temp_buffer, node->name(), labelLength);
     temp_buffer[labelLength] = 0;
@@ -1182,8 +1179,8 @@ bool VariableBoxController::addNodeIfMatches(
                   I18n::translate(I18n::Message::ImportedModulesAndScripts)) ==
                0)) ||
          strlen(nodeName) +
-                 (nodeType == ScriptNode::Type::WithParentheses ? 2 : 0) <=
-             k_maxNumberOfCharsInLabel);
+                 (nodeType == ScriptNode::Type::WithParentheses ? 2 : 0) <
+             k_labelCharSize);
 
   // Step 2.2: Add any new import source name
   if (nodeOrigin == m_originsCount && m_displaySubtitles) {

@@ -18,9 +18,9 @@ class BatteryTestController : public Escher::ViewController {
   class ContentView : public Escher::SolidColorView {
    public:
     ContentView();
-    Escher::BufferTextView* batteryStateTextView();
-    Escher::BufferTextView* batteryLevelTextView();
-    Escher::BufferTextView* batteryChargingTextView();
+    Escher::AbstractBufferTextView* batteryStateTextView();
+    Escher::AbstractBufferTextView* batteryLevelTextView();
+    Escher::AbstractBufferTextView* batteryChargingTextView();
     constexpr static int k_maxNumberOfCharacters = 20;
     void setColor(KDColor color) override;
 
@@ -29,9 +29,9 @@ class BatteryTestController : public Escher::ViewController {
     int numberOfSubviews() const override;
     Escher::View* subviewAtIndex(int index) override;
     constexpr static int k_margin = 4;
-    Escher::BufferTextView m_batteryStateView;
-    Escher::BufferTextView m_batteryLevelView;
-    Escher::BufferTextView m_batteryChargingView;
+    Escher::OneLineBufferTextView<> m_batteryStateView;
+    Escher::OneLineBufferTextView<> m_batteryLevelView;
+    Escher::OneLineBufferTextView<> m_batteryChargingView;
   };
   constexpr static const char* k_batteryOKText = "BATTERY: OK";
   constexpr static const char* k_batteryNeedChargingText =

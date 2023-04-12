@@ -16,7 +16,7 @@ class ComparisonOperatorPopupDataSource : public Escher::ListViewDataSource {
   ComparisonOperatorPopupDataSource(Test* test) : m_test(test) {}
   int numberOfRows() const override { return k_numberOfOperators; }
   int reusableCellCount(int type) override { return k_numberOfOperators; }
-  Escher::BufferTextHighlightCell* reusableCell(int i, int type) override {
+  Escher::SmallBufferTextHighlightCell* reusableCell(int i, int type) override {
     return &m_cells[i];
   }
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
@@ -31,7 +31,7 @@ class ComparisonOperatorPopupDataSource : public Escher::ListViewDataSource {
                       it */
     return 0;
   }
-  Escher::BufferTextHighlightCell m_cells[k_numberOfOperators];
+  Escher::SmallBufferTextHighlightCell m_cells[k_numberOfOperators];
   Test* m_test;
 };
 

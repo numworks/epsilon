@@ -173,22 +173,24 @@ void FormulaTemplateMenuController::fillSubLabelBuffer(BufferTemplateCell *cell,
                                                        int index) {
   I18n::Message message =
       k_subLabelMessages[index + k_numberOfExpressionCellsWithMessage];
-  char buffer[BufferTextView::k_maxNumberOfChar];
+  constexpr size_t k_bufferSize =
+      Escher::OneLineBufferTextView<>::MaxTextSize();
+  char buffer[k_bufferSize];
   if (index == 0) {
     char name1[DoublePairStore::k_columnNamesLength + 1];
     char name2[DoublePairStore::k_columnNamesLength + 1];
     char *columnNames[2] = {name1, name2};
     fillSumColumnNames(columnNames);
-    Print::CustomPrintf(buffer, BufferTextView::k_maxNumberOfChar + 1,
-                        I18n::translate(message), name1, name2);
+    Print::CustomPrintf(buffer, k_bufferSize, I18n::translate(message), name1,
+                        name2);
     cell->subLabel()->setText(buffer);
     return;
   }
   assert(index == 1);
   char columnName[DoublePairStore::k_columnNamesLength + 1];
   fillOtherAppColumnName(columnName);
-  Print::CustomPrintf(buffer, BufferTextView::k_maxNumberOfChar + 1,
-                      I18n::translate(message), columnName);
+  Print::CustomPrintf(buffer, k_bufferSize, I18n::translate(message),
+                      columnName);
   cell->subLabel()->setText(buffer);
 }
 

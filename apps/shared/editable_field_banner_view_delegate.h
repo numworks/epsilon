@@ -27,7 +27,9 @@ class EditableFieldBannerViewDelegate {
   }
 
  protected:
-  Escher::BufferTextView* editableFieldLabel() { return &m_editableFieldLabel; }
+  BannerView::BannerBufferTextView* editableFieldLabel() {
+    return &m_editableFieldLabel;
+  }
   Escher::TextField* editableField() { return &m_editableField; }
   Escher::View* editablView() { return &m_editableView; }
 
@@ -35,7 +37,7 @@ class EditableFieldBannerViewDelegate {
   constexpr static KDCoordinate k_bufferSize =
       Poincare::PrintFloat::k_maxFloatCharSize;
 
-  Escher::BufferTextView m_editableFieldLabel;
+  BannerView::BannerBufferTextView m_editableFieldLabel;
   Escher::TextField m_editableField;
   BannerView::LabelledView m_editableView;
   char m_textBody[k_bufferSize];

@@ -112,8 +112,9 @@ bool CalculationController::canStoreContentOfCellAtLocation(
     return false;
   }
   if (c == Calculation::CorrelationCoeff || c > Calculation::Regression) {
-    EvenOddBufferTextCell *bufferCell =
-        static_cast<EvenOddBufferTextCell *>(t->cellAtLocation(col, row));
+    AbstractEvenOddBufferTextCell *bufferCell =
+        static_cast<AbstractEvenOddBufferTextCell *>(
+            t->cellAtLocation(col, row));
     return strcmp(bufferCell->text(), I18n::translate(I18n::Message::Dash)) &&
            strcmp(bufferCell->text(), I18n::translate(I18n::Message::Disabled));
   }
@@ -137,11 +138,11 @@ int CalculationController::numberOfColumns() const {
   return 2 + m_store->numberOfActiveSeries();
 }
 
-void DashBufferCell(EvenOddBufferTextCell *bufferCell) {
+void DashBufferCell(AbstractEvenOddBufferTextCell *bufferCell) {
   bufferCell->setText(I18n::translate(I18n::Message::Dash));
 }
 
-void DisableBufferCell(EvenOddBufferTextCell *bufferCell) {
+void DisableBufferCell(AbstractEvenOddBufferTextCell *bufferCell) {
   bufferCell->setTextColor(Palette::GrayDark);
   bufferCell->setText(I18n::translate(I18n::Message::Disabled));
 }
@@ -201,17 +202,16 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     I18n::Message message = Store::HasCoefficients(type)
                                 ? model->formulaMessage()
                                 : I18n::Message::Dash;
-    static_cast<EvenOddBufferTextCell *>(cell)->setText(
+    static_cast<AbstractEvenOddBufferTextCell *>(cell)->setText(
         I18n::translate(message));
-    static_cast<EvenOddBufferTextCell *>(cell)->setTextColor(KDColorBlack);
+    static_cast<AbstractEvenOddBufferTextCell *>(cell)->setTextColor(
+        KDColorBlack);
     return;
   }
 
   assert(i > 1 && j > 0);
-  const int numberSignificantDigits =
-      Preferences::VeryLargeNumberOfSignificantDigits;
-  constexpr int bufferSize =
-      PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
+  constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
+      AbstractEvenOddBufferTextCell::k_defaultPrecision);
   char buffer[bufferSize];
 
   // Double calculation cells
@@ -247,10 +247,12 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     EvenOddDoubleBufferTextCell *myCell =
         static_cast<EvenOddDoubleBufferTextCell *>(cell);
     PoincareHelpers::ConvertFloatToText<double>(
-        *calculation1, buffer, bufferSize, numberSignificantDigits);
+        *calculation1, buffer, bufferSize,
+        AbstractEvenOddBufferTextCell::k_defaultPrecision);
     myCell->setFirstText(buffer);
     PoincareHelpers::ConvertFloatToText<double>(
-        *calculation2, buffer, bufferSize, numberSignificantDigits);
+        *calculation2, buffer, bufferSize,
+        AbstractEvenOddBufferTextCell::k_defaultPrecision);
     myCell->setSecondText(buffer);
     return;
   }
@@ -258,8 +260,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
   // Single calculation cells
   Poincare::Context *globContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
-  EvenOddBufferTextCell *bufferCell =
-      static_cast<EvenOddBufferTextCell *>(cell);
+  AbstractEvenOddBufferTextCell *bufferCell =
+      static_cast<AbstractEvenOddBufferTextCell *>(cell);
   bufferCell->setTextColor(KDColorBlack);
   double result = NAN;
 
@@ -332,8 +334,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
       return DashBufferCell(bufferCell);
     }
   }
-  PoincareHelpers::ConvertFloatToText<double>(result, buffer, bufferSize,
-                                              numberSignificantDigits);
+  PoincareHelpers::ConvertFloatToText<double>(
+      result, buffer, bufferSize,
+      AbstractEvenOddBufferTextCell::k_defaultPrecision);
   bufferCell->setText(buffer);
 }
 

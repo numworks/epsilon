@@ -9,7 +9,8 @@
 
 namespace Inference {
 
-class IntervalConclusionView : public Escher::BufferTextView {
+class IntervalConclusionView
+    : public Escher::MultipleLinesBufferTextView<KDFont::Size::Large, 2> {
  public:
   IntervalConclusionView();
   void setInterval(double center, double marginOfError);

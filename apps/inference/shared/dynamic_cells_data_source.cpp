@@ -97,11 +97,9 @@ static_assert(k_resultDataSourceNumberOfReusableCells ==
               "k_resultDataSourceNumberOfReusableCells should be updated with "
               "ResultsDataSource::k_numberOfReusableCells");
 template class DynamicCellsDataSource<
-    Escher::EvenOddBufferTextCell,
-    k_homogeneityTableNumberOfReusableHeaderCells>;
+    InferenceEvenOddBufferCell, k_homogeneityTableNumberOfReusableHeaderCells>;
 template class DynamicCellsDataSource<
-    Escher::EvenOddBufferTextCell,
-    k_homogeneityTableNumberOfReusableInnerCells>;
+    InferenceEvenOddBufferCell, k_homogeneityTableNumberOfReusableInnerCells>;
 template class DynamicCellsDataSource<
     Escher::EvenOddEditableTextCell,
     k_homogeneityTableNumberOfReusableInnerCells>;

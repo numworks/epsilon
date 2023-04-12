@@ -45,14 +45,14 @@ void ResidualPlotController::updateCursor() {
                                 y, displayMode, significantDigits);
   m_bannerView.ordinateView()->setText(buffer);
 
-  Poincare::Print::CustomPrintf(
-      buffer, bufferSize, "%s%s%*.*ed",
+  Poincare::Print::CustomPrintfWithMaxNumberOfSignificantDigits(
+      buffer, bufferSize, significantDigits, "%s%s%*.*ed",
       I18n::translate(I18n::Message::ResidualStandardDeviation),
       I18n::translate(I18n::Message::ColonConvention),
       m_store->residualStandardDeviation(
           m_selectedSeriesIndex,
           AppsContainerHelper::sharedAppsContainerGlobalContext()),
-      displayMode, significantDigits);
+      displayMode);
   m_bannerView.stddevView()->setText(buffer);
 
   m_curveView.reload();

@@ -80,6 +80,7 @@ HighlightCell* EquationModelsParameterController::reusableCell(int index,
   if (type == k_emptyModelCellType) {
     return &m_emptyModelCell;
   }
+  assert(type == k_modelCellType);
   return &m_modelCells[index];
 }
 

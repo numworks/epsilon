@@ -2,6 +2,7 @@
 #define INFERENCE_SHARED_DYNAMIC_CELLS_DATA_SOURCE_H
 
 #include <escher/even_odd_buffer_text_cell.h>
+#include <escher/even_odd_editable_text_cell.h>
 #include <escher/highlight_cell.h>
 #include <escher/selectable_table_view.h>
 
@@ -11,6 +12,8 @@ namespace Inference {
  */
 
 using InferenceEvenOddBufferCell = Escher::FloatEvenOddBufferTextCell<
+    Poincare::Preferences::ShortNumberOfSignificantDigits>;
+using InferenceEvenOddEditableCell = Escher::EvenOddEditableTextCell<
     Poincare::Preferences::ShortNumberOfSignificantDigits>;
 
 template <typename T>

@@ -204,7 +204,8 @@ Escher::EvenOddExpressionCell *ValuesController::valueCells(int j) {
   return &m_valueCells[j];
 }
 
-Escher::EvenOddEditableTextCell *ValuesController::abscissaCells(int j) {
+Escher::AbstractEvenOddEditableTextCell *ValuesController::abscissaCells(
+    int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableRows);
   return &m_abscissaCells[j];
 }

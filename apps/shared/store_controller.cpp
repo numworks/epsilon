@@ -96,15 +96,15 @@ void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int i,
   // Handle hidden cells
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
   if (j > numberOfElementsInCol + 1) {
-    Escher::EvenOddEditableTextCell *myCell =
-        static_cast<Escher::EvenOddEditableTextCell *>(cell);
+    Escher::AbstractEvenOddEditableTextCell *myCell =
+        static_cast<Escher::AbstractEvenOddEditableTextCell *>(cell);
     myCell->editableTextCell()->textField()->setText("");
     myCell->hide();
     return;
   }
   if (typeAtLocation(i, j) == k_editableCellType) {
-    Escher::EvenOddEditableTextCell *myCell =
-        static_cast<Escher::EvenOddEditableTextCell *>(cell);
+    Escher::AbstractEvenOddEditableTextCell *myCell =
+        static_cast<Escher::AbstractEvenOddEditableTextCell *>(cell);
     myCell->show();
     KDColor textColor =
         (m_store->seriesIsActive(m_store->seriesAtColumn(i)) ||

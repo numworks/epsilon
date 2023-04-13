@@ -94,7 +94,7 @@ class StoreController : public EditableCellTableViewController,
   void memoizeFormulaAtColumn(Poincare::Layout formula, int column) override;
 
   PrefacedTableView m_prefacedTableView;
-  Escher::EvenOddEditableTextCell
+  Escher::EvenOddEditableTextCell<>
       m_editableCells[k_maxNumberOfDisplayableCells];
   DoublePairStore* m_store;
   Poincare::Layout

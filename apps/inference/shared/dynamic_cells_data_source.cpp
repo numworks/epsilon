@@ -101,9 +101,8 @@ template class DynamicCellsDataSource<
 template class DynamicCellsDataSource<
     InferenceEvenOddBufferCell, k_homogeneityTableNumberOfReusableInnerCells>;
 template class DynamicCellsDataSource<
-    Escher::EvenOddEditableTextCell,
-    k_homogeneityTableNumberOfReusableInnerCells>;
-template class DynamicCellsDataSource<Escher::EvenOddEditableTextCell,
+    InferenceEvenOddEditableCell, k_homogeneityTableNumberOfReusableInnerCells>;
+template class DynamicCellsDataSource<InferenceEvenOddEditableCell,
                                       k_doubleColumnTableNumberOfReusableCells>;
 template class DynamicCellsDataSource<
     Escher::MenuCellWithEditableText<Escher::ExpressionView,

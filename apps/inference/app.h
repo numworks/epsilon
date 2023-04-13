@@ -78,17 +78,17 @@ class App : public Shared::ExpressionFieldDelegateApp,
   void *buffer(size_t offset = 0) { return m_buffer + offset; }
   void cleanBuffer(DynamicCellsDataSourceDestructor *destructor);
 
-  constexpr static int k_bufferSize =  // 21456
+  constexpr static int k_bufferSize =  // 21056
       std::max({sizeof(ResultCell) * k_maxNumberOfResultCells,
                 sizeof(InputParameterCell) * k_maxNumberOfInputParameterCell,
                 sizeof(InferenceEvenOddBufferCell) *
                     (k_homogeneityTableNumberOfReusableHeaderCells +
                      k_homogeneityTableNumberOfReusableInnerCells),
-                sizeof(Escher::EvenOddEditableTextCell) *
+                sizeof(InferenceEvenOddEditableCell) *
                         k_homogeneityTableNumberOfReusableInnerCells +
                     sizeof(InferenceEvenOddBufferCell) *
                         k_homogeneityTableNumberOfReusableHeaderCells,
-                sizeof(Escher::EvenOddEditableTextCell) *
+                sizeof(InferenceEvenOddEditableCell) *
                     k_doubleColumnTableNumberOfReusableCells});
 
   TELEMETRY_ID("Inference");

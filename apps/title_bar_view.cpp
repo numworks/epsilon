@@ -17,7 +17,6 @@ using namespace Escher;
 TitleBarView::TitleBarView()
     : View(),
       m_titleView(I18n::Message::Default, k_glyphsFormat),
-      m_batteryView(this),
       m_preferenceView(k_glyphsFormat),
       m_examModeTextView(I18n::Message::Default, k_glyphsFormat) {
   m_preferenceView.setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
@@ -27,7 +26,7 @@ TitleBarView::TitleBarView()
 void TitleBarView::drawRect(KDContext* ctx, KDRect rect) const {
   /* As we cheated to layout the title view, we have to fill a very thin
    * rectangle at the top with the background color. */
-  ctx->fillRect(KDRect(0, 0, bounds().width(), 2), Palette::YellowDark);
+  ctx->fillRect(KDRect(0, 0, bounds().width(), 2), k_backgroundColor);
 }
 
 void TitleBarView::setTitle(I18n::Message title) {

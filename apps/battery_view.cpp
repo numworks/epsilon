@@ -2,6 +2,8 @@
 
 #include <escher/palette.h>
 
+#include "title_bar_view.h"
+
 using namespace Escher;
 
 /*
@@ -103,6 +105,9 @@ void BatteryView::drawRect(KDContext *ctx, KDRect rect) const {
   /* We draw from left to right. The middle part representing the battery
    *'content' depends on the charge */
 
+  // Draw the background
+  ctx->fillRect(bounds(), TitleBarView::k_backgroundColor);
+
   // Draw the left part
   ctx->fillRect(KDRect(0, 0, k_elementWidth, k_batteryHeight), KDColorWhite);
 
@@ -141,7 +146,7 @@ void BatteryView::drawRect(KDContext *ctx, KDRect rect) const {
                    (k_batteryHeight - k_tickHeight) / 2, k_tickWidth,
                    k_tickHeight);
       KDColor tickWorkingBuffer[k_tickHeight * k_tickWidth];
-      ctx->blendRectWithMask(frame, Palette::YellowDark,
+      ctx->blendRectWithMask(frame, TitleBarView::k_backgroundColor,
                              (const uint8_t *)tickMask, tickWorkingBuffer);
     }
   }

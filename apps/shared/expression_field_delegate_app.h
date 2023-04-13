@@ -6,6 +6,9 @@
 
 #include "text_field_delegate_app.h"
 
+/* TODO: This class should be refactored/deleted as well as
+ * InputEventHandlerDelegateApp and TextFieldDelegateApp. */
+
 namespace Shared {
 
 class ExpressionFieldDelegateApp : public TextFieldDelegateApp,

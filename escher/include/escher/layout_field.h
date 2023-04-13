@@ -101,9 +101,7 @@ class LayoutField
   void insertLayoutAtCursor(Poincare::Layout layoutR,
                             bool forceCursorRightOfLayout = false,
                             bool forceCursorLeftOfLayout = false);
-  TextCursorView* textCursorView() override {
-    return m_contentView.textCursorView();
-  }
+  View* cursorSuperView() override { return &m_contentView; }
 
   class ContentView : public View {
    public:
@@ -116,7 +114,9 @@ class LayoutField
     }
     void setCursor(Poincare::LayoutCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(false); }
-    KDRect cursorRect() { return relativeChildFrame(&m_cursorView); }
+    KDRect cursorRect() {
+      return relativeChildFrame(TextCursorView::sharedTextCursor);
+    }
     Poincare::LayoutCursor* cursor() { return &m_cursor; }
     const ExpressionView* expressionView() const { return &m_expressionView; }
     ExpressionView* expressionView() { return &m_expressionView; }
@@ -126,7 +126,6 @@ class LayoutField
     // Selection
     void copySelection(Poincare::Context* context, bool intoStoreMenu);
     KDFont::Size font() const { return m_expressionView.font(); }
-    TextCursorView* textCursorView() { return &m_cursorView; }
 
    private:
     int numberOfSubviews() const override { return 2; }
@@ -135,7 +134,6 @@ class LayoutField
     void layoutCursorSubview(bool force);
     Poincare::LayoutCursor m_cursor;
     ExpressionViewWithCursor m_expressionView;
-    TextCursorView m_cursorView;
     bool m_isEditing;
   };
   ContentView m_contentView;

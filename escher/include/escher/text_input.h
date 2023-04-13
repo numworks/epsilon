@@ -44,7 +44,6 @@ class TextInput
                 float horizontalAlignment = KDGlyph::k_alignLeft,
                 float verticalAlignment = KDGlyph::k_alignCenter)
         : View(),
-          m_cursorView(this),
           m_cursorLocation(nullptr),
           m_selectionStart(nullptr),
           m_horizontalAlignment(horizontalAlignment),
@@ -62,7 +61,6 @@ class TextInput
     }
     void setCursorLocation(const char *cursorLocation);
     KDRect cursorRect();
-    TextCursorView *textCursorView() { return &m_cursorView; }
 
     // Virtual text get/add/remove
     virtual const char *text() const = 0;
@@ -98,7 +96,6 @@ class TextInput
                                         const char *position) const = 0;
     virtual KDRect dirtyRectFromPosition(const char *position,
                                          bool includeFollowingLines) const;
-    TextCursorView m_cursorView;
     const char *m_cursorLocation;
     const char *m_selectionStart;
     float m_horizontalAlignment;
@@ -109,7 +106,7 @@ class TextInput
     int numberOfSubviews() const override { return 1; }
     View *subviewAtIndex(int index) override {
       assert(index == 0);
-      return &m_cursorView;
+      return TextCursorView::sharedTextCursor;
     }
     virtual const char *editedText() const = 0;
     virtual size_t editedTextLength() const = 0;
@@ -133,9 +130,7 @@ class TextInput
  private:
   virtual void willSetCursorLocation(const char **location) {}
   virtual bool privateRemoveEndOfLine();
-  TextCursorView *textCursorView() override {
-    return contentView()->textCursorView();
-  }
+  View *cursorSuperView() override { return contentView(); }
 };
 
 }  // namespace Escher

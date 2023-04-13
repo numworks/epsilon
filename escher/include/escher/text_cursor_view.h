@@ -3,6 +3,7 @@
 
 #include <escher/responder.h>
 #include <escher/transparent_view.h>
+#include <omg/global_box.h>
 
 namespace Escher {
 
@@ -14,9 +15,10 @@ class TextCursorView : public TransparentView {
  public:
   constexpr static KDCoordinate k_width = 1;
 
-  TextCursorView(View* superview)
-      : TransparentView(superview), m_visible(true) {}
+  TextCursorView() : TransparentView(nullptr), m_visible(true) {}
   ~TextCursorView();
+
+  static OMG::GlobalBox<TextCursorView> sharedTextCursor;
 
   // View
   void drawRect(KDContext* ctx, KDRect rect) const override;
@@ -26,7 +28,7 @@ class TextCursorView : public TransparentView {
  private:
   void setVisible(bool visible);
   void switchVisible() { setVisible(!m_visible); }
-  void setBlinking(bool blinking);
+  void setBlinking(bool blinking, View* superView = nullptr);
   void layoutSubviews(bool force) override { willMove(); }
 
   bool m_visible;
@@ -34,19 +36,24 @@ class TextCursorView : public TransparentView {
 
 template <typename ResponderType>
 class WithBlinkingTextCursor : public ResponderType {
+#ifndef PLATFORM_DEVICE
+  // Poor's man constraint
+  static_assert(std::is_base_of<Responder, ResponderType>(),
+                "Cursor needs a responder");
+#endif
  public:
   using ResponderType::ResponderType;
   void didBecomeFirstResponder() override {
-    textCursorView()->setBlinking(true);
+    TextCursorView::sharedTextCursor->setBlinking(true, cursorSuperView());
     ResponderType::didBecomeFirstResponder();
   }
   void willResignFirstResponder() override {
-    textCursorView()->setBlinking(false);
+    TextCursorView::sharedTextCursor->setBlinking(false);
     ResponderType::willResignFirstResponder();
   }
 
  private:
-  virtual TextCursorView* textCursorView() = 0;
+  virtual View* cursorSuperView() = 0;
 };
 
 }  // namespace Escher

@@ -16,7 +16,7 @@ class ListViewDataSource : public TableViewDataSource {
   virtual void willDisplayCellForIndex(HighlightCell* cell, int index) {}
   virtual int typeAtIndex(int index) const { return 0; }
   // Used to easily override nonMemoizedRowHeight
-  KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell* cell,
+  KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell* tempCell,
                                                  int index);
 
  protected:

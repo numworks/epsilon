@@ -344,7 +344,8 @@ float ContinuousFunction::autoTMin() const {
                                               : 0.f);
 }
 
-bool ContinuousFunction::basedOnCostlyAlgorithms(Context *context) const {
+bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
+    Context *context) const {
   return expressionApproximated(context).recursivelyMatches(
       [](const Expression e, Context *context) {
         return !e.isUninitialized() &&

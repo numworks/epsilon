@@ -172,7 +172,7 @@ class ContinuousFunction : public Function {
   /* Solver */
 
   // If m_expressionApproximated is based on costly algorithm
-  bool basedOnCostlyAlgorithms(Poincare::Context *context) const override;
+  bool approximationBasedOnCostlyAlgorithms(Poincare::Context *context) const;
   /* A solver will be run from 'start' to 'end' on this function. Trim 'start'
    * and 'end' to the interval of definition. */
   void trimResolutionInterval(double *start, double *end) const;

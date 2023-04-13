@@ -141,11 +141,6 @@ class Sequence : public Function {
   // 255 + 1 (to take into account a double recursive sequence) fits in 3 digits
   constexpr static int k_initialRankNumberOfDigits = 3;
 
-  // Range
-  bool basedOnCostlyAlgorithms(Poincare::Context *context) const override {
-    return true;
-  }
-
  private:
   constexpr static KDFont::Size k_layoutFont = KDFont::Size::Large;
 

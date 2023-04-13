@@ -87,6 +87,15 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void *model,
   return Coordinate2D<T>(t, value);
 }
 
+static bool basedOnCostlyAlgorithms(Poincare::Expression e) {
+  return e.recursivelyMatches([](const Expression e, Context *context) {
+    return !e.isUninitialized() &&
+           (e.type() == ExpressionNode::Type::Sequence ||
+            e.type() == ExpressionNode::Type::Integral ||
+            e.type() == ExpressionNode::Type::Derivative);
+  });
+}
+
 Range2D GraphController::optimalRange(bool computeX, bool computeY,
                                       Range2D originalRange) const {
   Context *context = App::app()->localContext();
@@ -105,7 +114,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
   for (int i = 0; i < nbFunctions; i++) {
     ExpiringPointer<ContinuousFunction> f =
         store->modelForRecord(store->activeRecordAtIndex(i));
-    if (f->basedOnCostlyAlgorithms(context)) {
+    if (f->approximationBasedOnCostlyAlgorithms(context)) {
       continue;
     }
     if (f->properties().isPolar() || f->properties().isInversePolar() ||
@@ -232,7 +241,8 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
               store->modelForRecord(store->activeRecordAtIndex(j));
           if (!g->properties()
                    .canComputeIntersectionsWithFunctionsAlongSameVariable() ||
-              g->isAlongY() != alongY || g->basedOnCostlyAlgorithms(context)) {
+              g->isAlongY() != alongY ||
+              g->approximationBasedOnCostlyAlgorithms(context)) {
             continue;
           }
           zoom.fitIntersections(evaluator<float>, mainF, evaluator<float>,
@@ -247,7 +257,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
     for (int i = 0; i < nbFunctions; i++) {
       ExpiringPointer<ContinuousFunction> f =
           store->modelForRecord(store->activeRecordAtIndex(i));
-      if (f->basedOnCostlyAlgorithms(context) ||
+      if (f->approximationBasedOnCostlyAlgorithms(context) ||
           !f->properties().isCartesian()) {
         continue;
       }

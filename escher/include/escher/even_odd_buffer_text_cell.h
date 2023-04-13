@@ -10,9 +10,9 @@ class AbstractEvenOddBufferTextCell : public EvenOddCell {
  public:
   constexpr static int k_defaultPrecision =
       Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
-  const char* text() const override { return constBufferTextView()->text(); }
+  const char* text() const override { return bufferTextView()->text(); }
   void setFont(KDFont::Size font) { bufferTextView()->setFont(font); }
-  KDFont::Size font() const { return constBufferTextView()->font(); }
+  KDFont::Size font() const { return bufferTextView()->font(); }
   void setAlignment(float horizontalAlignment, float verticalAlignment) {
     bufferTextView()->setAlignment(horizontalAlignment, verticalAlignment);
   }
@@ -29,7 +29,7 @@ class AbstractEvenOddBufferTextCell : public EvenOddCell {
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   virtual AbstractBufferTextView* bufferTextView() = 0;
-  AbstractBufferTextView* constBufferTextView() const {
+  AbstractBufferTextView* bufferTextView() const {
     return const_cast<AbstractEvenOddBufferTextCell*>(this)->bufferTextView();
   };
 };

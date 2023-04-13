@@ -41,8 +41,8 @@ class BufferTextView : public AbstractBufferTextView {
   constexpr static size_t MaxTextSize() { return BufferSize; }
 
  protected:
-  char* buffer() { return m_buffer; }
-  int maxTextSize() const { return BufferSize; }
+  char* buffer() override { return m_buffer; }
+  int maxTextSize() const override { return BufferSize; }
   char m_buffer[BufferSize];
 };
 

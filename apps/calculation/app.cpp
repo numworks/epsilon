@@ -68,7 +68,8 @@ bool App::layoutFieldDidReceiveEvent(::LayoutField *layoutField,
       layoutField, event);
 }
 
-bool App::isAcceptableExpression(const Poincare::Expression expression) {
+bool App::isAcceptableExpression(Escher::EditableField *field,
+                                 const Poincare::Expression expression) {
   /* Override ExpressionFieldDelegateApp because Store is acceptable, and
    * ans has an expression. */
   {

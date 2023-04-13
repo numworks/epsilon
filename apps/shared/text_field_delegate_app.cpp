@@ -35,7 +35,7 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(
       // Empty field, let the textfield handle the event
       return false;
     }
-    if (!isAcceptableText(textField->text())) {
+    if (!isAcceptableText(textField, textField->text())) {
       return true;
     }
   }
@@ -45,9 +45,10 @@ bool TextFieldDelegateApp::textFieldDidReceiveEvent(
   return false;
 }
 
-bool TextFieldDelegateApp::isAcceptableText(const char *text) {
+bool TextFieldDelegateApp::isAcceptableText(EditableField *field,
+                                            const char *text) {
   Expression exp = Expression::Parse(text, localContext());
-  bool isAcceptable = isAcceptableExpression(exp);
+  bool isAcceptable = isAcceptableExpression(field, exp);
   if (!isAcceptable) {
     displayWarning(I18n::Message::SyntaxError);
   }
@@ -110,7 +111,8 @@ bool TextFieldDelegateApp::isFinishingEvent(Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp) {
+bool TextFieldDelegateApp::isAcceptableExpression(EditableField *field,
+                                                  const Expression exp) {
   // Most TextFieldDelegateApps shouldn't accept Store.
   return !(exp.isUninitialized() || exp.type() == ExpressionNode::Type::Store);
 }

@@ -20,7 +20,7 @@ class TextFieldDelegateApp : public InputEventHandlerDelegateApp,
                                     Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
                                 Ion::Events::Event event) override;
-  bool isAcceptableText(const char* text);
+  bool isAcceptableText(Escher::EditableField* field, const char* text);
   template <typename T>
   T parseInputtedFloatValue(const char* text);
   template <typename T>
@@ -34,7 +34,8 @@ class TextFieldDelegateApp : public InputEventHandlerDelegateApp,
   TextFieldDelegateApp(Snapshot* snapshot,
                        Escher::ViewController* rootViewController);
   bool isFinishingEvent(Ion::Events::Event event);
-  virtual bool isAcceptableExpression(const Poincare::Expression expression);
+  virtual bool isAcceptableExpression(Escher::EditableField* field,
+                                      const Poincare::Expression expression);
   static bool ExpressionCanBeSerialized(const Poincare::Expression expression,
                                         bool replaceAns,
                                         Poincare::Expression ansExpression,

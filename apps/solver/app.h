@@ -65,7 +65,8 @@ class App : public Shared::ExpressionFieldDelegateApp {
  private:
   App(Snapshot *snapshot);
   // TextFieldDelegateApp
-  bool isAcceptableExpression(const Poincare::Expression expression) override;
+  bool isAcceptableExpression(Escher::EditableField *field,
+                              const Poincare::Expression expression) override;
 
   // Controllers
   SolutionsController m_solutionsController;

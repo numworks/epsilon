@@ -51,6 +51,10 @@ class ListController : public Shared::ExpressionModelListController,
   /* Specific to Solver */
   void resolveEquations();
 
+  Escher::ExpressionField* expressionField() override {
+    return m_editableCell.expressionField();
+  }
+
  private:
   constexpr static int k_maxNumberOfRows =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
@@ -66,9 +70,6 @@ class ListController : public Shared::ExpressionModelListController,
 
   // ListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  Escher::ExpressionField* expressionField() override {
-    return m_editableCell.expressionField();
-  }
 
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];

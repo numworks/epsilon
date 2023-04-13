@@ -74,7 +74,8 @@ class App : public Shared::FunctionApp {
   ValuesController *valuesController() override {
     return &m_tabs.tab<ValuesTab>()->m_valuesController;
   }
-  bool isAcceptableExpression(const Poincare::Expression expression) override;
+  bool isAcceptableExpression(Escher::EditableField *field,
+                              const Poincare::Expression expression) override;
 
  private:
   App(Snapshot *snapshot) : FunctionApp(snapshot, &m_tabs, ListTab::k_title) {}

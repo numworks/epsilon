@@ -74,10 +74,11 @@ void App::Snapshot::tidy() {
   functionStore()->tidyDownstreamPoolFrom();
 }
 
-bool App::isAcceptableExpression(const Poincare::Expression exp) {
+bool App::isAcceptableExpression(Escher::EditableField *field,
+                                 const Poincare::Expression exp) {
   /* Complete ExpressionFieldDelegateApp acceptable conditions by not accepting
    * any OperatorType. */
-  return ExpressionFieldDelegateApp::isAcceptableExpression(exp) &&
+  return ExpressionFieldDelegateApp::isAcceptableExpression(field, exp) &&
          exp.type() != ExpressionNode::Type::Comparison;
 }
 

@@ -88,8 +88,9 @@ EditionReference Algebraic::NormalFormator(EditionReference expression,
   if (expression.block()->isRational()) {
     IntegerHandler ator = numerator ? Rational::Numerator(expression)
                                     : Rational::Denominator(expression);
-    expression.replaceNodeByNode(ator.pushOnEditionPool());
-    return expression;
+    EditionReference result = ator.pushOnEditionPool();
+    expression.replaceNodeByNode(result);
+    return result;
   }
   BlockType type = expression.type();
   if (type == BlockType::Power) {

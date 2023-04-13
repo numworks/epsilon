@@ -394,8 +394,11 @@ EditionReference PolynomialParser::Parse(EditionReference expression,
 std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
     EditionReference expression, EditionReference variable) {
   if (Comparison::AreEqual(expression, variable)) {
-    expression.replaceTreeByTree(Node(&OneBlock));
-    return std::make_pair(expression, static_cast<uint8_t>(1));
+    // TODO: Optimize replaceTreeByTree to remove the need for this clone
+    EditionReference one(
+        EditionPool::sharedEditionPool()->clone(Node(&OneBlock)));
+    expression.replaceTreeByTree(one);
+    return std::make_pair(one, static_cast<uint8_t>(1));
   }
   PatternMatching::Context ctx(variable);
   ctx = PatternMatching::Match(
@@ -406,8 +409,11 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
     if (Integer::IsUint8(exponent)) {
       uint8_t exp = Integer::Uint8(exponent);
       assert(exp > 1);
-      expression.replaceTreeByTree(Node(&OneBlock));
-      return std::make_pair(expression, exp);
+      // TODO: Optimize replaceTreeByTree to remove the need for this clone
+      EditionReference one(
+          EditionPool::sharedEditionPool()->clone(Node(&OneBlock)));
+      expression.replaceTreeByTree(one);
+      return std::make_pair(one, exp);
     }
   }
   if (expression.type() == BlockType::Multiplication) {

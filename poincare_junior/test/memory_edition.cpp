@@ -100,34 +100,38 @@ QUIZ_CASE(pcj_edition_reference) {
   reference3.replaceNodeByNode(reference3);
   assert_pool_contains(editionPool, {k_expression0, 10_e, k_expression1, 8_e,
                                      k_expression0, 10_e, 9_e});
-  reference3.replaceNodeByNode(11_e);
+  EditionReference reference4(11_e);
+  reference3.replaceNodeByNode(reference4);
   assert_pool_contains(editionPool, {k_expression0, 10_e, k_expression1, 11_e,
                                      k_expression0, 10_e, 9_e});
-  reference3.replaceNodeByTree(k_expression1);
+  EditionReference reference5(k_expression1);
+  reference4.replaceNodeByTree(reference5);
   assert_pool_contains(editionPool, {k_expression0, 10_e, k_expression1,
                                      k_expression1, k_expression0, 10_e, 9_e});
-  reference0.replaceTreeByNode(12_e);
+  EditionReference reference6(12_e);
+  reference0.replaceTreeByNode(reference6);
   assert_pool_contains(editionPool, {k_expression0, 10_e, k_expression1,
                                      k_expression1, 12_e, 10_e, 9_e});
-  reference1.replaceTreeByTree(k_expression0);
+  EditionReference reference7(k_expression0);
+  reference1.replaceTreeByTree(reference7);
   assert_pool_contains(editionPool, {k_expression0, 10_e, k_expression0,
                                      k_expression1, 12_e, 10_e, 9_e});
 
   // Removals
-  reference0.removeNode();
+  reference6.removeNode();
   assert_pool_contains(editionPool, {k_expression0, 10_e, k_expression0,
                                      k_expression1, 10_e, 9_e});
-  reference1.removeTree();
+  reference7.removeTree();
   assert_pool_contains(editionPool,
                        {k_expression0, 10_e, k_expression1, 10_e, 9_e});
 
   // Detach
-  EditionReference(reference3.childAtIndex(0)).detachTree();
-  reference3.insertTreeAfterNode(13_e);
+  EditionReference(reference5.childAtIndex(0)).detachTree();
+  reference5.insertTreeAfterNode(13_e);
   assert_pool_contains(editionPool, {k_expression0, 10_e, KPow(13_e, 7_e), 10_e,
                                      9_e, KSub(5_e, 6_e)});
-  EditionReference(reference3.childAtIndex(1)).detachNode();
-  reference3.insertTreeAfterNode(14_e);
+  EditionReference(reference5.childAtIndex(1)).detachNode();
+  reference5.insertTreeAfterNode(14_e);
   assert_pool_contains(editionPool, {k_expression0, 10_e, KPow(14_e, 13_e),
                                      10_e, 9_e, KSub(5_e, 6_e), 7_e});
 }

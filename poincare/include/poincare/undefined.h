@@ -23,6 +23,9 @@ class UndefinedNode : public NumberNode {
   }
 
   // NumberNode
+  bool isZero() const override { return false; }
+  bool isOne() const override { return false; }
+  bool isMinusOne() const override { return false; }
   void setNegative(bool negative) override {}
 
   // Approximation

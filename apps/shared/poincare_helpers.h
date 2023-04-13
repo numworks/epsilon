@@ -207,7 +207,7 @@ inline void CloneAndReduce(
       symbolicComputation, unitConversion));
 }
 
-inline void CloneAndReduceApproximatingNonSymbols(
+inline void CloneAndApproximateKeepingSymbols(
     Poincare::Expression* e, Poincare::Context* context,
     Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
@@ -215,13 +215,13 @@ inline void CloneAndReduceApproximatingNonSymbols(
     Poincare::Preferences* preferences =
         Poincare::Preferences::sharedPreferences,
     bool updateComplexFormatAndAngleUnit = true) {
-  *e = e->cloneAndReduce(Poincare::ReductionContext(
+  *e = e->cloneAndApproximateKeepingSymbols(Poincare::ReductionContext(
       context,
       ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit,
                                   *e, context),
       preferences->angleUnit(),
       GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
-      symbolicComputation, unitConversion, true, true, true, true));
+      symbolicComputation, unitConversion));
 }
 
 inline void ReduceAndRemoveUnit(

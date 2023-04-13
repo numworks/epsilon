@@ -406,7 +406,7 @@ class Expression : public TreeHandle {
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       UnitConversion unitConversion = UnitConversion::Default,
-      bool approximateNonSymbols = false) const;
+      bool approximateKeepingSymbols = false) const;
   Expression cloneAndReduce(ReductionContext reductionContext) const;
   // TODO: deepReduceWithSystemCheckpoint should be private but we need to make
   // poincare/text/helper.h a class to be able to friend it
@@ -480,6 +480,9 @@ class Expression : public TreeHandle {
   U approximateWithValueForSymbol(const char* symbol, U x, Context* context,
                                   Preferences::ComplexFormat complexFormat,
                                   Preferences::AngleUnit angleUnit) const;
+  // This should be called on reduced expression. Approximation is in double
+  Expression cloneAndApproximateKeepingSymbols(
+      ReductionContext reductionContext) const;
 
   /* This class is meant to contain data about named functions (e.g. sin,
    * tan...) in one place: their name, their number of children and a pointer to
@@ -735,6 +738,12 @@ class Expression : public TreeHandle {
   Evaluation<U> approximateToEvaluation(
       Context* context, Preferences::ComplexFormat complexFormat,
       Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
+
+  Expression deepApproximateKeepingSymbols(ReductionContext reductionContext,
+                                           bool* wasApproximated);
+  // Return the number of approximated children
+  int deepApproximateChildrenKeepingSymbols(
+      const ReductionContext& reductionContext);
 
   /* Properties */
   int defaultGetPolynomialCoefficients(Context* context, const char* symbol,

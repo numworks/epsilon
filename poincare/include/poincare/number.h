@@ -30,9 +30,9 @@ class NumberNode : public ExpressionNode {
   double doubleApproximation() const;
 
   // Basic test
-  virtual bool isZero() const { return false; }
-  virtual bool isOne() const { return false; }
-  virtual bool isMinusOne() const { return false; }
+  virtual bool isZero() const = 0;
+  virtual bool isOne() const = 0;
+  virtual bool isMinusOne() const = 0;
 
   TrinaryBoolean isNull(Context* context) const override {
     return BinaryToTrinaryBool(isZero());

@@ -1,3 +1,4 @@
+#include <poincare/checkpoint.h>
 #include <poincare/tree_handle.h>
 #include <poincare/tree_node.h>
 #include <poincare/tree_pool.h>
@@ -7,6 +8,11 @@ namespace Poincare {
 // Node operations
 
 void TreeNode::release(int currentNumberOfChildren) {
+  if (!isAfterTopmostCheckpoint()) {
+    /* Do not decrease reference counters outside of the current checkpoint
+     * since they were not increased. */
+    return;
+  }
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
     deleteParentIdentifierInChildren();
@@ -30,6 +36,11 @@ void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
     return;
   }
   updateParentIdentifierInChildren();
+}
+
+// Checkpoint
+bool TreeNode::isAfterTopmostCheckpoint() const {
+  return this >= Checkpoint::TopmostEndOfPool();
 }
 
 // Hierarchy

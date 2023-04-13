@@ -63,10 +63,28 @@ class TreeNode {
 
   // Node operations
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }
-  void retain() { m_referenceCounter++; }
+  /* Do not increase reference counters outside of the current checkpoint since
+   * they won't be decreased if an exception is raised.
+   *
+   * WARNING: ref counters have an bugged behaviour in this case:
+   *  Expression a = Cosine::Builder();
+   *  Expression b;
+   *  Checkpoint() {
+   *    ...
+   *    b = a;
+   *    ...
+   *  }
+   *
+   * Here, the ref counter of the cos is not incremented while a and b point
+   * towards it.
+   * */
+  void retain() { m_referenceCounter += isAfterTopmostCheckpoint(); }
   void release(int currentNumberOfChildren);
   void rename(uint16_t identifier, bool unregisterPreviousIdentifier,
               bool skipChildrenUpdate = false);
+
+  // Checkpoint
+  bool isAfterTopmostCheckpoint() const;
 
   // Hierarchy
   TreeNode *parent() const;

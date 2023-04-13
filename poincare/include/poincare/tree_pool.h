@@ -93,10 +93,9 @@ class TreePool final {
   void unregisterNode(TreeNode *node) { freeIdentifier(node->identifier()); }
   void updateNodeForIdentifierFromNode(TreeNode *node);
   void renameNode(TreeNode *node, bool unregisterPreviousIdentifier = true) {
-    assert(IsAfterTopmostCheckpoint(node));
+    assert(node->isAfterTopmostCheckpoint());
     node->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }
-  static bool IsAfterTopmostCheckpoint(TreeNode *node);
 
   // Iterators
   TreeNode *first() const {

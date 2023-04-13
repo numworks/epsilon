@@ -62,11 +62,6 @@ const App::Descriptor *App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-void App::didBecomeActive(Escher::Window *window) {
-  // Delay loadMemoizedFormulasFromSnapshot to tab activation
-  ExpressionFieldDelegateApp::didBecomeActive(window);
-}
-
 App::StoreTab::StoreTab()
     : m_storeController(&m_storeHeader, app(), &app()->m_store, &m_storeHeader,
                         app()->m_context),

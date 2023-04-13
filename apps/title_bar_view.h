@@ -23,6 +23,8 @@ class TitleBarView : public Escher::View {
   void refreshPreferences();
   void reload();
 
+  constexpr static KDColor k_backgroundColor = Escher::Palette::YellowDark;
+
  private:
   constexpr static size_t k_preferenceTextSize = sizeof("tech/rad");
   constexpr static KDCoordinate k_alphaRightMargin = 5;
@@ -32,7 +34,7 @@ class TitleBarView : public Escher::View {
   constexpr static KDCoordinate k_examTextWidth = 20;
   constexpr static KDGlyph::Format k_glyphsFormat = {
       .style = {.glyphColor = KDColorWhite,
-                .backgroundColor = Escher::Palette::YellowDark,
+                .backgroundColor = k_backgroundColor,
                 .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter,
       .verticalAlignment = KDGlyph::k_alignCenter};

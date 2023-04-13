@@ -5,11 +5,10 @@
 #include <escher/transparent_view.h>
 #include <ion.h>
 
-class BatteryView : public Escher::TransparentView {
+class BatteryView : public Escher::View {
  public:
-  BatteryView(View* superview)
-      : TransparentView(superview),
-        m_chargeState(Ion::Battery::Charge::FULL),
+  BatteryView()
+      : m_chargeState(Ion::Battery::Charge::FULL),
         m_isCharging(false),
         m_isPlugged(false) {}
   bool setChargeState(Ion::Battery::Charge chargeState);

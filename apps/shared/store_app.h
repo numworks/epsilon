@@ -16,16 +16,16 @@ class StoreApp : public ExpressionFieldDelegateApp {
    public:
     Snapshot();
 
-    bool memoizeFormulaAtColumn(Poincare::Layout formula, int column);
-    Poincare::Layout memoizedFormulaAtColumn(int column) const;
+    bool memoizeFormula(Poincare::Layout formula, int index);
+    Poincare::Layout memoizedFormula(int index) const;
 
    private:
     constexpr static size_t k_bufferSize = Escher::TextField::MaxBufferSize();
-    constexpr static int k_numberOfColumns =
+    constexpr static int k_numberOfMemoizedFormulas =
         DoublePairStore::k_numberOfColumnsPerSeries *
         DoublePairStore::k_numberOfSeries;
 
-    char m_memoizedFormulasBuffer[k_numberOfColumns][k_bufferSize];
+    char m_memoizedFormulasBuffer[k_numberOfMemoizedFormulas][k_bufferSize];
   };
 
   static StoreApp *storeApp() {

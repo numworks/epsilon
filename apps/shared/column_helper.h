@@ -45,7 +45,7 @@ class StoreColumnHelper {
                     ClearColumnHelper* clearColumnHelper);
 
   int referencedColumn() { return table()->selectedColumn(); }
-  int referencedMemoizationId();
+  int formulaMemoizationIndex(int column);
   ClearColumnHelper* clearColumnHelper() { return m_clearColumnHelper; }
   void selectColumn(int columnIndex) { table()->selectColumn(columnIndex); }
 
@@ -85,10 +85,10 @@ class StoreColumnHelper {
   void reloadSeriesVisibleCells(int series, int relativeColumn = -1);
 
  private:
-  virtual Poincare::Layout memoizedFormulaAtColumn(int column) {
+  virtual Poincare::Layout memoizedFormula(int index) {
     return Poincare::Layout();
   }
-  virtual void memoizeFormulaAtColumn(Poincare::Layout formula, int column) {}
+  virtual void memoizeFormula(Poincare::Layout formula, int index) {}
 
   ClearColumnHelper* m_clearColumnHelper;
   /* Fill with formula */

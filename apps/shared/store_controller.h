@@ -87,19 +87,19 @@ class StoreController : public EditableCellTableViewController,
                          int columnIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;
 
-  Poincare::Layout memoizedFormulaAtColumn(int column) override {
-    return m_memoizedFormulaForColumn[column];
+  Poincare::Layout memoizedFormula(int index) override {
+    return m_memoizedFormulas[index];
   }
   void resetMemoizedFormulasForSeries(int series);
-  void memoizeFormulaAtColumn(Poincare::Layout formula, int column) override;
+  void memoizeFormula(Poincare::Layout formula, int index) override;
 
   PrefacedTableView m_prefacedTableView;
   Escher::EvenOddEditableTextCell<>
       m_editableCells[k_maxNumberOfDisplayableCells];
   DoublePairStore* m_store;
   Poincare::Layout
-      m_memoizedFormulaForColumn[DoublePairStore::k_numberOfSeries *
-                                 DoublePairStore::k_numberOfColumnsPerSeries];
+      m_memoizedFormulas[DoublePairStore::k_numberOfSeries *
+                         DoublePairStore::k_numberOfColumnsPerSeries];
 
  private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;

@@ -5,34 +5,33 @@ using namespace Poincare;
 namespace Shared {
 
 StoreApp::Snapshot::Snapshot() {
-  for (int i = 0; i < k_numberOfColumns; i++) {
+  for (int i = 0; i < k_numberOfMemoizedFormulas; i++) {
     m_memoizedFormulasBuffer[i][0] = 0;
   }
 }
 
-bool StoreApp::Snapshot::memoizeFormulaAtColumn(Poincare::Layout formula,
-                                                int column) {
-  assert(column >= 0 && column < k_numberOfColumns);
+bool StoreApp::Snapshot::memoizeFormula(Poincare::Layout formula, int index) {
+  assert(index >= 0 && index < k_numberOfMemoizedFormulas);
   if (formula.isUninitialized()) {
-    m_memoizedFormulasBuffer[column][0] = 0;
+    m_memoizedFormulasBuffer[index][0] = 0;
     return false;
   }
   size_t formulaLength = formula.serializeParsedExpression(
-      m_memoizedFormulasBuffer[column], k_bufferSize,
+      m_memoizedFormulasBuffer[index], k_bufferSize,
       StoreApp::storeApp()->localContext());
   if (formulaLength == k_bufferSize - 1) {
     // Formula is too long
-    m_memoizedFormulasBuffer[column][0] = 0;
+    m_memoizedFormulasBuffer[index][0] = 0;
     return false;
   }
   return true;
 }
 
-Layout StoreApp::Snapshot::memoizedFormulaAtColumn(int column) const {
-  if (m_memoizedFormulasBuffer[column][0] == 0) {
+Layout StoreApp::Snapshot::memoizedFormula(int index) const {
+  if (m_memoizedFormulasBuffer[index][0] == 0) {
     return Layout();
   }
-  Expression e = Expression::Parse(m_memoizedFormulasBuffer[column],
+  Expression e = Expression::Parse(m_memoizedFormulasBuffer[index],
                                    StoreApp::storeApp()->localContext());
   return e.createLayout(
       Preferences::sharedPreferences->displayMode(),

@@ -34,6 +34,8 @@ RangeParameterController::RangeParameterController(
           parentResponder, inputEventHandlerDelegate, &m_tempInteractiveRange,
           &m_confirmPopUpController) {
   m_normalizeCell.label()->setMessage(I18n::Message::MakeOrthonormal);
+  m_rangeCells[0].label()->setMessage(I18n::Message::ValuesOfX);
+  m_rangeCells[1].label()->setMessage(I18n::Message::ValuesOfY);
 }
 
 int RangeParameterController::typeAtIndex(int index) const {
@@ -82,7 +84,6 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell *cell,
             cell) -
         m_rangeCells;
     if (i == 0) {
-      m_rangeCells[0].label()->setMessage(I18n::Message::ValuesOfX);
       if (m_tempInteractiveRange.xAuto()) {
         isAuto = true;
       } else {
@@ -91,7 +92,6 @@ void RangeParameterController::willDisplayCellForIndex(HighlightCell *cell,
       }
     } else {
       assert(i == 1);
-      m_rangeCells[1].label()->setMessage(I18n::Message::ValuesOfY);
       if (m_tempInteractiveRange.yAuto()) {
         isAuto = true;
       } else {

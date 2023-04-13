@@ -4,38 +4,27 @@
 
 namespace Escher {
 
-EvenOddEditableTextCell::EvenOddEditableTextCell(
-    Responder* parentResponder,
-    InputEventHandlerDelegate* inputEventHandlerDelegate,
-    TextFieldDelegate* delegate, KDGlyph::Format format)
-    : EvenOddCell(),
-      Responder(parentResponder),
-      m_editableCell(this, inputEventHandlerDelegate, delegate, format) {}
-
-EditableTextCell* EvenOddEditableTextCell::editableTextCell() {
-  return &m_editableCell;
+void AbstractEvenOddEditableTextCell::
+    updateSubviewsBackgroundAfterChangingState() {
+  editableTextCell()->textField()->setBackgroundColor(backgroundColor());
 }
 
-void EvenOddEditableTextCell::updateSubviewsBackgroundAfterChangingState() {
-  m_editableCell.textField()->setBackgroundColor(backgroundColor());
-}
+int AbstractEvenOddEditableTextCell::numberOfSubviews() const { return 1; }
 
-int EvenOddEditableTextCell::numberOfSubviews() const { return 1; }
-
-View* EvenOddEditableTextCell::subviewAtIndex(int index) {
+View* AbstractEvenOddEditableTextCell::subviewAtIndex(int index) {
   assert(index == 0);
-  return &m_editableCell;
+  return editableTextCell();
 }
 
-void EvenOddEditableTextCell::layoutSubviews(bool force) {
-  setChildFrame(&m_editableCell,
+void AbstractEvenOddEditableTextCell::layoutSubviews(bool force) {
+  setChildFrame(editableTextCell(),
                 KDRect(bounds().left(), bounds().top(),
                        bounds().width() - k_rightMargin, bounds().height()),
                 force);
 }
 
-void EvenOddEditableTextCell::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_editableCell);
+void AbstractEvenOddEditableTextCell::didBecomeFirstResponder() {
+  Container::activeApp()->setFirstResponder(editableTextCell());
 }
 
 }  // namespace Escher

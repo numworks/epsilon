@@ -15,7 +15,7 @@ InputHomogeneityTableCell::InputHomogeneityTableCell(
     : EditableCategoricalTableCell(
           parentResponder, this, selectableTableViewDelegate,
           dynamicSizeTableViewDataSourceDelegate, test),
-      DynamicCellsDataSource<EvenOddEditableTextCell,
+      DynamicCellsDataSource<InferenceEvenOddEditableCell,
                              k_homogeneityTableNumberOfReusableInnerCells>(
           this) {}
 
@@ -51,14 +51,15 @@ int InputHomogeneityTableCell::fillColumnName(int column, char *buffer) {
 
 void InputHomogeneityTableCell::willDisplayInnerCellAtLocation(
     Escher::HighlightCell *cell, int column, int row) {
-  Escher::EvenOddEditableTextCell *myCell =
-      static_cast<Escher::EvenOddEditableTextCell *>(cell);
+  InferenceEvenOddEditableCell *myCell =
+      static_cast<InferenceEvenOddEditableCell *>(cell);
   willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(),
                                  myCell, column, row, tableModel());
 }
 
 void InputHomogeneityTableCell::createCells() {
-  // We could equivalently use DynamicCellsDataSource<EvenOddEditableTextCell,
+  // We could equivalently use
+  // DynamicCellsDataSource<InferenceEvenOddEditableCell,
   // k_homogeneityTableNumberOfReusableInnerCells>::m_cells
   if (DynamicCellsDataSource<
           InferenceEvenOddBufferCell,
@@ -66,11 +67,12 @@ void InputHomogeneityTableCell::createCells() {
     DynamicCellsDataSource<InferenceEvenOddBufferCell,
                            k_homogeneityTableNumberOfReusableHeaderCells>::
         createCellsWithOffset(0);
-    DynamicCellsDataSource<EvenOddEditableTextCell,
+    DynamicCellsDataSource<InferenceEvenOddEditableCell,
                            k_homogeneityTableNumberOfReusableInnerCells>::
         createCellsWithOffset(k_homogeneityTableNumberOfReusableHeaderCells *
                               sizeof(InferenceEvenOddBufferCell));
-    // We could equivalently use DynamicCellsDataSource<EvenOddEditableTextCell,
+    // We could equivalently use
+    // DynamicCellsDataSource<InferenceEvenOddEditableCell,
     // k_homogeneityTableNumberOfReusableInnerCells>::m_delegate
     DynamicCellsDataSource<
         InferenceEvenOddBufferCell,
@@ -81,7 +83,7 @@ void InputHomogeneityTableCell::createCells() {
 
 void InputHomogeneityTableCell::destroyCells() {
   DynamicCellsDataSource<
-      EvenOddEditableTextCell,
+      InferenceEvenOddEditableCell,
       k_homogeneityTableNumberOfReusableInnerCells>::destroyCells();
   DynamicCellsDataSource<
       InferenceEvenOddBufferCell,

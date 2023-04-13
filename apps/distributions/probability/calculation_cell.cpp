@@ -55,7 +55,9 @@ void CalculationCell::drawRect(KDContext* ctx, KDRect rect) const {
   }
 }
 
-EditableTextCell* CalculationCell::editableTextCell() { return &m_calculation; }
+AbstractEditableTextCell* CalculationCell::editableTextCell() {
+  return &m_calculation;
+}
 
 MessageTextView* CalculationCell::messageTextView() { return &m_text; }
 

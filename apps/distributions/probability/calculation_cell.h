@@ -20,7 +20,7 @@ class CalculationCell : public Escher::HighlightCell {
   void setHighlighted(bool highlight) override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void drawRect(KDContext* ctx, KDRect rect) const override;
-  Escher::EditableTextCell* editableTextCell();
+  Escher::AbstractEditableTextCell* editableTextCell();
   Escher::MessageTextView* messageTextView();
   const char* text() const override { return m_calculation.text(); }
 
@@ -32,7 +32,7 @@ class CalculationCell : public Escher::HighlightCell {
   void layoutSubviews(bool force = false) override;
   KDCoordinate calculationCellWidth() const;
   Escher::MessageTextView m_text;
-  Escher::EditableTextCell m_calculation;
+  Escher::EditableTextCell<> m_calculation;
   bool m_isResponder;
 };
 

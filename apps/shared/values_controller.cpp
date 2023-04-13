@@ -37,7 +37,7 @@ void ValuesController::setupSelectableTableViewAndCells(
     Escher::InputEventHandlerDelegate *inputEventHandlerDelegate) {
   int numberOfAbscissaCells = abscissaCellsCount();
   for (int i = 0; i < numberOfAbscissaCells; i++) {
-    EvenOddEditableTextCell *c = abscissaCells(i);
+    AbstractEvenOddEditableTextCell *c = abscissaCells(i);
     c->setParentResponder(selectableTableView());
     c->editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate,
                                                      this);

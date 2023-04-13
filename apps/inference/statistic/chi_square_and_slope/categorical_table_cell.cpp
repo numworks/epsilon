@@ -133,9 +133,10 @@ bool EditableCategoricalTableCell::handleEvent(Ion::Events::Event event) {
   return CategoricalTableCell::handleEvent(event);
 }
 
-void EditableCategoricalTableCell::initCell(EvenOddEditableTextCell, void *cell,
-                                            int index) {
-  EvenOddEditableTextCell *c = static_cast<EvenOddEditableTextCell *>(cell);
+void EditableCategoricalTableCell::initCell(InferenceEvenOddEditableCell,
+                                            void *cell, int index) {
+  InferenceEvenOddEditableCell *c =
+      static_cast<InferenceEvenOddEditableCell *>(cell);
   c->setParentResponder(&m_selectableTableView);
   c->editableTextCell()->textField()->setDelegates(App::app(), this);
 }
@@ -222,7 +223,7 @@ DoubleColumnTableCell::DoubleColumnTableCell(
     : EditableCategoricalTableCell(
           parentResponder, this, selectableTableViewDelegate,
           dynamicSizeTableViewDataSourceDelegate, statistic),
-      DynamicCellsDataSource<Escher::EvenOddEditableTextCell,
+      DynamicCellsDataSource<InferenceEvenOddEditableCell,
                              k_doubleColumnTableNumberOfReusableCells>(this) {}
 
 int DoubleColumnTableCell::reusableCellCount(int type) {
@@ -246,8 +247,8 @@ void DoubleColumnTableCell::willDisplayCellAtLocation(
   if (j == 0) {  // Header
     return;
   }
-  Escher::EvenOddEditableTextCell *myCell =
-      static_cast<Escher::EvenOddEditableTextCell *>(cell);
+  InferenceEvenOddEditableCell *myCell =
+      static_cast<InferenceEvenOddEditableCell *>(cell);
   willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(),
                                  myCell, i, j - 1, tableModel());
 }

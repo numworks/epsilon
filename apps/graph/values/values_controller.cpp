@@ -108,7 +108,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell *cell, int i,
         static_cast<EvenOddExpressionCell *>(eoCell)->setLayout(Layout());
       } else {
         assert(typeAtLoc == k_editableValueCellType);
-        static_cast<Escher::EvenOddEditableTextCell *>(eoCell)
+        static_cast<Escher::AbstractEvenOddEditableTextCell *>(eoCell)
             ->editableTextCell()
             ->textField()
             ->setText("");
@@ -486,7 +486,8 @@ EvenOddExpressionCell *ValuesController::valueCells(int j) {
   return &m_valueCells[j];
 }
 
-Escher::EvenOddEditableTextCell *ValuesController::abscissaCells(int j) {
+Escher::AbstractEvenOddEditableTextCell *ValuesController::abscissaCells(
+    int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells);
   return &m_abscissaCells[j];
 }

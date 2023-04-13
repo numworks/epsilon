@@ -101,8 +101,8 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(
   }
   // The cell is editable
   if (cellAtLocationIsEditable(i, j)) {
-    EvenOddEditableTextCell *myEditableValueCell =
-        static_cast<EvenOddEditableTextCell *>(cell);
+    AbstractEvenOddEditableTextCell *myEditableValueCell =
+        static_cast<AbstractEvenOddEditableTextCell *>(cell);
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
         AbstractEvenOddBufferTextCell::k_defaultPrecision);
     char buffer[bufferSize];

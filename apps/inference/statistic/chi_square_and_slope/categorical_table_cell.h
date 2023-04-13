@@ -61,7 +61,7 @@ class CategoricalTableCell : public Escher::HighlightCell,
 class EditableCategoricalTableCell
     : public CategoricalTableCell,
       public Shared::TextFieldDelegate,
-      public DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell>,
+      public DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>,
       public DynamicSizeTableViewDataSource,
       public Shared::ClearColumnHelper {
  public:
@@ -82,9 +82,8 @@ class EditableCategoricalTableCell
   // Responder
   bool handleEvent(Ion::Events::Event e) override;
 
-  // DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell>
-  void initCell(Escher::EvenOddEditableTextCell, void *cell,
-                int index) override;
+  // DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>
+  void initCell(InferenceEvenOddEditableCell, void *cell, int index) override;
 
   // DynamicSizeTableViewDataSource
   virtual bool recomputeDimensions();
@@ -114,7 +113,7 @@ class EditableCategoricalTableCell
 class DoubleColumnTableCell
     : public EditableCategoricalTableCell,
       public CategoricalTableViewDataSource,
-      public DynamicCellsDataSource<Escher::EvenOddEditableTextCell,
+      public DynamicCellsDataSource<InferenceEvenOddEditableCell,
                                     k_doubleColumnTableNumberOfReusableCells> {
  public:
   DoubleColumnTableCell(

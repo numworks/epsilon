@@ -11,7 +11,7 @@ class InputHomogeneityTableCell
     : public EditableCategoricalTableCell,
       public HomogeneityTableDataSource,
       public DynamicCellsDataSource<
-          Escher::EvenOddEditableTextCell,
+          InferenceEvenOddEditableCell,
           k_homogeneityTableNumberOfReusableInnerCells> {
  public:
   InputHomogeneityTableCell(
@@ -52,7 +52,7 @@ class InputHomogeneityTableCell
   // HomogeneityTableViewDataSource
   Escher::HighlightCell* innerCell(int i) override {
     return DynamicCellsDataSource<
-        Escher::EvenOddEditableTextCell,
+        InferenceEvenOddEditableCell,
         k_homogeneityTableNumberOfReusableInnerCells>::cell(i);
   }
   void willDisplayInnerCellAtLocation(Escher::HighlightCell* cell, int column,

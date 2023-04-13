@@ -10,21 +10,14 @@
 
 namespace Escher {
 
-class EditableTextCell : public HighlightCell, public Responder {
+class AbstractEditableTextCell : public HighlightCell, public Responder {
  public:
-  EditableTextCell(
-      Responder* parentResponder = nullptr,
-      InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
-      TextFieldDelegate* delegate = nullptr, KDGlyph::Format format = {});
-  TextField* textField();
+  AbstractEditableTextCell(Responder* parentResponder)
+      : HighlightCell(), Responder(parentResponder) {}
+  virtual TextField* textField() = 0;
   void setHighlighted(bool highlight) override;
   Responder* responder() override { return this; }
-  const char* text() const override {
-    if (!m_textField.isEditing()) {
-      return m_textField.text();
-    }
-    return nullptr;
-  }
+  const char* text() const override;
   int numberOfSubviews() const override;
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
@@ -34,8 +27,31 @@ class EditableTextCell : public HighlightCell, public Responder {
  private:
   constexpr static KDCoordinate k_separatorThickness =
       Metric::CellSeparatorThickness;
+  virtual char* textBody() = 0;
+};
+
+template <int NumberOfSignificantDigits =
+              Poincare::PrintFloat::k_numberOfStoredSignificantDigits>
+class EditableTextCell : public AbstractEditableTextCell {
+ public:
+  EditableTextCell(
+      Responder* parentResponder = nullptr,
+      InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
+      TextFieldDelegate* delegate = nullptr, KDGlyph::Format format = {})
+      : AbstractEditableTextCell(parentResponder),
+        m_textField(this, m_textBody, k_bufferSize, inputEventHandlerDelegate,
+                    delegate, format) {}
+
+  constexpr static size_t k_bufferSize =
+      Poincare::PrintFloat::charSizeForFloatsWithPrecision(
+          NumberOfSignificantDigits);
+
+  TextField* textField() override { return &m_textField; }
+
+ private:
+  char* textBody() override { return m_textBody; }
   TextField m_textField;
-  char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
+  char m_textBody[k_bufferSize];
 };
 
 }  // namespace Escher

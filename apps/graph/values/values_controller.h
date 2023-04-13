@@ -132,7 +132,7 @@ class ValuesController : public Shared::ValuesController,
   int abscissaCellsCount() const override {
     return k_maxNumberOfDisplayableAbscissaCells;
   }
-  Escher::EvenOddEditableTextCell *abscissaCells(int j) override;
+  Escher::AbstractEvenOddEditableTextCell *abscissaCells(int j) override;
   int abscissaTitleCellsCount() const override {
     return k_maxNumberOfDisplayableSymbolTypes;
   }
@@ -162,7 +162,7 @@ class ValuesController : public Shared::ValuesController,
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
   Escher::EvenOddMessageTextCell
       m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
-  Escher::EvenOddEditableTextCell
+  Escher::EvenOddEditableTextCell<>
       m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
   FunctionParameterController *m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;

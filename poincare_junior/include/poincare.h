@@ -15,16 +15,13 @@ void Shutdown();
 
 #if POINCARE_POOL_VISUALIZATION
 
-enum class LoggerType {
-  Cache = 0,
-  Edition = 1,
-  NumberOfLoggers
-};
+enum class LoggerType { Cache = 0, Edition = 1, NumberOfLoggers };
 
 std::ofstream& Logger(LoggerType type);
 __attribute__((__used__)) void ResetLogger(LoggerType type);
 __attribute__((__used__)) void CloseLogger(LoggerType type);
-void Log(LoggerType type, const char * event, void * blockAddress = nullptr, size_t blockSize = INT_MAX, void * pointerAddress = nullptr);
+void Log(LoggerType type, const char* event, void* blockAddress = nullptr,
+         size_t blockSize = INT_MAX, void* pointerAddress = nullptr);
 
 #endif
 

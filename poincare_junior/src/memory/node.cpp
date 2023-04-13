@@ -11,7 +11,7 @@ namespace PoincareJ {
 
 #if POINCARE_MEMORY_TREE_LOG
 
-void Node::log(std::ostream& stream, bool recursive, bool verbose,
+void Node::log(std::ostream &stream, bool recursive, bool verbose,
                int indentation) const {
   stream << "\n";
   Indent(stream, indentation);

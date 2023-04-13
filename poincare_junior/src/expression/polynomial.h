@@ -106,7 +106,6 @@ class PolynomialParser final {
                                            EditionReference variables,
                                            size_t variableIndex = 0);
 
-
  private:
   static EditionReference Parse(EditionReference expression,
                                 EditionReference variable);

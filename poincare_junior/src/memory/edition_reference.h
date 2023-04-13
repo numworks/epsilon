@@ -38,18 +38,10 @@ class EditionReference {
   uint16_t identifier() const { return m_identifier; }
 
   /* Hierarchy */
-  Node nextNode() {
-    return static_cast<Node>(*this).nextNode();
-  }
-  Node nextTree() {
-    return static_cast<Node>(*this).nextTree();
-  }
-  Node previousNode() {
-    return static_cast<Node>(*this).previousNode();
-  }
-  Node previousTree() {
-    return static_cast<Node>(*this).previousTree();
-  }
+  Node nextNode() { return static_cast<Node>(*this).nextNode(); }
+  Node nextTree() { return static_cast<Node>(*this).nextTree(); }
+  Node previousNode() { return static_cast<Node>(*this).previousNode(); }
+  Node previousTree() { return static_cast<Node>(*this).previousTree(); }
   bool hasChild(EditionReference t) const {
     return static_cast<Node>(*this).hasChild(t);
   }
@@ -108,10 +100,18 @@ class EditionReference {
   void insertTreeBeforeNode(EditionReference treeToInsert) {
     insertTreeBeforeNode(static_cast<Node>(treeToInsert));
   }
-  void replaceNodeByNode(EditionReference t) { replaceNodeByNode(static_cast<Node>(t)); }
-  void replaceNodeByTree(EditionReference t) { replaceNodeByTree(static_cast<Node>(t)); }
-  void replaceTreeByNode(EditionReference t) { replaceTreeByNode(static_cast<Node>(t)); }
-  void replaceTreeByTree(EditionReference t) { replaceTreeByTree(static_cast<Node>(t)); }
+  void replaceNodeByNode(EditionReference t) {
+    replaceNodeByNode(static_cast<Node>(t));
+  }
+  void replaceNodeByTree(EditionReference t) {
+    replaceNodeByTree(static_cast<Node>(t));
+  }
+  void replaceTreeByNode(EditionReference t) {
+    replaceTreeByNode(static_cast<Node>(t));
+  }
+  void replaceTreeByTree(EditionReference t) {
+    replaceTreeByTree(static_cast<Node>(t));
+  }
 
   typedef void (*InPlaceTreeFunction)(EditionReference reference);
   void recursivelyEdit(InPlaceTreeFunction treeFunction);

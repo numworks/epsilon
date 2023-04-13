@@ -37,14 +37,16 @@ PatternMatching::Context PatternMatching::Match(const Node pattern, Node source,
 
 EditionReference PatternMatching::Create(const Node structure,
                                          const Context context) {
-  EditionPool * editionPool = EditionPool::sharedEditionPool();
+  EditionPool *editionPool = EditionPool::sharedEditionPool();
   Node top = editionPool->lastBlock();
   // TODO introduce a DFS iterator in node_iterator and use it here
   Pool::Nodes nodes = Pool::Nodes(
       structure.block(), structure.nextTree().block() - structure.block());
   for (const Node node : nodes) {
     if (node.type() == BlockType::Placeholder) {
-      editionPool->clone(context[static_cast<PlaceholderTag>(static_cast<uint8_t>(*node.block()->next()))], true);
+      editionPool->clone(context[static_cast<PlaceholderTag>(
+                             static_cast<uint8_t>(*node.block()->next()))],
+                         true);
     } else {
       editionPool->clone(node, false);
     }

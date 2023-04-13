@@ -23,8 +23,7 @@ class Simplification {
   static void ReduceNumbersInNAry(EditionReference reference,
                                   NumberOperation operation);
   static EditionReference ProjectionReduction(
-      EditionReference reference,
-      Node (*PushProjectedEExpression)(),
+      EditionReference reference, Node (*PushProjectedEExpression)(),
       Node (*PushInverse)());
 };
 

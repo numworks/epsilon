@@ -1,8 +1,9 @@
 #include "poincare_junior/include/poincare.h"
-#include "poincare_junior/src/memory/cache_pool.h"
-#include "poincare_junior/src/memory/edition_pool.h"
 
 #include <assert.h>
+
+#include "poincare_junior/src/memory/cache_pool.h"
+#include "poincare_junior/src/memory/edition_pool.h"
 
 #if POINCARE_POOL_VISUALIZATION
 #include <filesystem>
@@ -20,18 +21,22 @@ void Shutdown() {
 }
 
 #if POINCARE_POOL_VISUALIZATION
-static bool s_forceClosed[static_cast<int>(LoggerType::NumberOfLoggers)] = {false, false};
+static bool s_forceClosed[static_cast<int>(LoggerType::NumberOfLoggers)] = {
+    false, false};
 
 std::ofstream& Logger(LoggerType type) {
-  static std::ofstream s_loggerFiles[static_cast<int>(LoggerType::NumberOfLoggers)];
+  static std::ofstream
+      s_loggerFiles[static_cast<int>(LoggerType::NumberOfLoggers)];
   int indexOfType = static_cast<int>(type);
-  std::ofstream &file = s_loggerFiles[indexOfType];
+  std::ofstream& file = s_loggerFiles[indexOfType];
   if (s_forceClosed[indexOfType]) {
     file = std::ofstream("/dev/null");
   }
   if (!file.is_open()) {
     std::filesystem::create_directories("./output/logs");
-    const char * fileName = type == LoggerType::Cache ? "./output/logs/cache.xml" : "./output/logs/edition.xml";
+    const char* fileName = type == LoggerType::Cache
+                               ? "./output/logs/cache.xml"
+                               : "./output/logs/edition.xml";
     file.open(fileName, std::ofstream::out | std::ofstream::trunc);
     file << "<?xml version=\"1.0\"?>\n<Data>\n";
   }
@@ -39,9 +44,7 @@ std::ofstream& Logger(LoggerType type) {
   return file;
 }
 
-void ResetLogger(LoggerType type) {
-  Logger(type).close();
-}
+void ResetLogger(LoggerType type) { Logger(type).close(); }
 
 void CloseLogger(LoggerType type) {
   Logger(type) << "</Data>" << std::endl;
@@ -49,7 +52,8 @@ void CloseLogger(LoggerType type) {
   s_forceClosed[static_cast<int>(type)] = true;
 }
 
-void Log(LoggerType type, const char * event, void * blockAddress, size_t blockSize, void * pointerAddress) {
+void Log(LoggerType type, const char* event, void* blockAddress,
+         size_t blockSize, void* pointerAddress) {
   Logger(type) << "  <" << event;
   if (blockAddress) {
     Logger(type) << " blockAddress=\"" << blockAddress << "\"";
@@ -61,14 +65,14 @@ void Log(LoggerType type, const char * event, void * blockAddress, size_t blockS
     Logger(type) << " pointerAddress=\"" << pointerAddress << "\"";
   }
   Logger(type) << ">\n";
-  Pool * pool;
+  Pool* pool;
   Pool::LogFormat format;
   if (type == LoggerType::Cache) {
-   pool = CachePool::sharedCachePool();
-   format = Pool::LogFormat::Tree;
+    pool = CachePool::sharedCachePool();
+    format = Pool::LogFormat::Tree;
   } else {
-   pool = EditionPool::sharedEditionPool();
-   format = Pool::LogFormat::Flat;
+    pool = EditionPool::sharedEditionPool();
+    format = Pool::LogFormat::Flat;
   }
   pool->log(Logger(type), format, true, 2);
   Logger(type) << "\n  </" << event << ">" << std::endl;

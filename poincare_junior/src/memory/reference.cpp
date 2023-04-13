@@ -178,12 +178,12 @@ const Node Reference::getTree() const {
 }
 
 Reference::Reference(ActionWithContext initializer, void *subInitializer,
-                    const void *data
+                     const void *data
 #if ASSERTIONS
-                    ,
-                    size_t dataSize
+                     ,
+                     size_t dataSize
 #endif
-                    )
+                     )
     :  // TODO: maybe add a checksum if the m_id has potentially been
        // reallocated to another tree
       m_initializer(initializer),

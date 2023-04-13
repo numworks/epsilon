@@ -81,7 +81,7 @@ class ReductionContext : public ComputationContext {
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       UnitConversion unitConversion = UnitConversion::Default,
       bool shouldExpandMultiplication = true, bool shouldCheckMatrices = true,
-      bool shouldExpandLogarithm = true, bool approximateNonSymbols = false)
+      bool shouldExpandLogarithm = true)
       : ComputationContext(context, complexFormat, angleUnit),
         m_unitFormat(unitFormat),
         m_target(target),
@@ -89,8 +89,7 @@ class ReductionContext : public ComputationContext {
         m_unitConversion(unitConversion),
         m_shouldExpandMultiplication(shouldExpandMultiplication),
         m_shouldCheckMatrices(shouldCheckMatrices),
-        m_shouldExpandLogarithm(shouldExpandLogarithm),
-        m_approximateNonSymbols(approximateNonSymbols) {}
+        m_shouldExpandLogarithm(shouldExpandLogarithm) {}
   ReductionContext()
       : ReductionContext(nullptr, Preferences::ComplexFormat::Cartesian,
                          Preferences::AngleUnit::Radian,
@@ -124,10 +123,6 @@ class ReductionContext : public ComputationContext {
     m_shouldExpandLogarithm = shouldExpandLogarithm;
   }
   bool shouldExpandLogarithm() const { return m_shouldExpandLogarithm; }
-  void setApproximateNonSymbols(bool approximate) {
-    m_approximateNonSymbols = approximate;
-  }
-  bool approximateNonSymbols() const { return m_approximateNonSymbols; }
 
  private:
   Preferences::UnitFormat m_unitFormat;
@@ -137,7 +132,6 @@ class ReductionContext : public ComputationContext {
   bool m_shouldExpandMultiplication;
   bool m_shouldCheckMatrices;
   bool m_shouldExpandLogarithm;
-  bool m_approximateNonSymbols;
 };
 
 class ApproximationContext : public ComputationContext {

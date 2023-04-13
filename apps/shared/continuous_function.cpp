@@ -599,7 +599,7 @@ Poincare::Expression ContinuousFunction::Model::expressionApproximated(
     Expression e = expressionReduced(record, context);
     Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(
         complexFormat(record, context));
-    PoincareHelpers::CloneAndReduceApproximatingNonSymbols(
+    PoincareHelpers::CloneAndApproximateKeepingSymbols(
         &e, context, ReductionTarget::SystemForApproximation,
         SymbolicComputation::DoNotReplaceAnySymbol,
         PoincareHelpers::k_defaultUnitConversion, &preferences, false);

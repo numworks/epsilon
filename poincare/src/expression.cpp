@@ -1300,7 +1300,7 @@ void Expression::cloneAndSimplifyAndApproximate(
     Context *context, Preferences::ComplexFormat complexFormat,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation, UnitConversion unitConversion,
-    bool approximateNonSymbols) const {
+    bool approximateKeepingSymbols) const {
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   assert(!approximateExpression || approximateExpression->isUninitialized());
 
@@ -1310,14 +1310,13 @@ void Expression::cloneAndSimplifyAndApproximate(
   ReductionContext userReductionContext = ReductionContext(
       context, complexFormat, angleUnit, unitFormat, ReductionTarget::User,
       symbolicComputation, unitConversion);
-  /* TODO: If approximateNonSymbols is true, maybe the expression should first
-   * be reduced in a normal way and then re-reduced after setting
-   * approximateNonSymbols ? */
-  userReductionContext.setApproximateNonSymbols(approximateNonSymbols);
   ReductionContext reductionContext = userReductionContext;
   bool reduceFailure = false;
   Expression e =
       cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
+  if (approximateKeepingSymbols) {
+    e = cloneAndApproximateKeepingSymbols(reductionContext);
+  }
   if (reduceFailure ||
       (type() == ExpressionNode::Type::Store &&
        !static_cast<const Store *>(this)->isTrulyReducedInShallowReduce())) {
@@ -1478,36 +1477,8 @@ Expression Expression::deepReduce(ReductionContext reductionContext) {
       type() == ExpressionNode::Type::Integral) {
     reductionContext.setExpandLogarithm(false);
   }
-
   deepReduceChildren(reductionContext);
-  Expression res = shallowReduce(reductionContext);
-
-  /* Do not approximate rationals even if approximateNonSymbols is true because:
-   *   - A lot of reduction algorithms applied to reduced expressions rely on
-   *     rationals and don't work with floats (ex: polynomialDegree).
-   *   - If approximateNonSymbols is used because the examMode forbid exact
-   *     results, it's not a problem to keep rationals since exact results on
-   *     rationals are still allowed.
-   *
-   * Exclude lists and matrices because their children should already be
-   * approximated if they can be.
-   * */
-  if (reductionContext.approximateNonSymbols() &&
-      res.type() != ExpressionNode::Type::Rational &&
-      res.type() != ExpressionNode::Type::List &&
-      res.type() != ExpressionNode::Type::Matrix) {
-    Expression a = res.approximate<double>(reductionContext.context(),
-                                           reductionContext.complexFormat(),
-                                           reductionContext.angleUnit(), true);
-    if (!a.isUndefined() && a.type() != ExpressionNode::Type::List &&
-        a.type() != ExpressionNode::Type::Matrix) {
-      /* approximate can return an Opposite or a Subtraction, so we need to
-       * re-reduce the expression.*/
-      res.replaceWithInPlace(a.shallowReduce(reductionContext));
-    }
-  }
-
-  return res;
+  return shallowReduce(reductionContext);
 }
 
 Expression Expression::deepRemoveUselessDependencies(
@@ -1626,6 +1597,78 @@ U Expression::approximateWithValueForSymbol(
   VariableContext variableContext = VariableContext(symbol, context);
   variableContext.setApproximationForVariable<U>(x);
   return approximateToScalar<U>(&variableContext, complexFormat, angleUnit);
+}
+
+Expression Expression::cloneAndApproximateKeepingSymbols(
+    ReductionContext reductionContext) const {
+  Expression res = clone();
+  bool dummy = false;
+  return res.deepApproximateKeepingSymbols(reductionContext, &dummy);
+}
+
+Expression Expression::deepApproximateKeepingSymbols(
+    ReductionContext reductionContext, bool *wasApproximated) {
+  *wasApproximated = false;
+  int nChildren = numberOfChildren();
+  int numberOfApproximatedChildren =
+      deepApproximateChildrenKeepingSymbols(reductionContext);
+
+  /* If no child was approximated, no need to change the expression.
+   * No need to approximate lists and matrices. Approximating their children is
+   * enough. */
+  if ((numberOfApproximatedChildren == 0 && nChildren > 0) ||
+      type() == ExpressionNode::Type::List ||
+      type() == ExpressionNode::Type::Matrix) {
+    return *this;
+  }
+
+  Expression a = approximate<double>(reductionContext.context(),
+                                     reductionContext.complexFormat(),
+                                     reductionContext.angleUnit(), true);
+  /* If approximation is undef, it means the expression can't be approximated
+   * and might contain symbols.
+   * Lists and matrices are excluded because they could contain undef children
+   * without returning true to isUndefined() */
+  if (!a.isUndefined() && a.type() != ExpressionNode::Type::List &&
+      a.type() != ExpressionNode::Type::Matrix) {
+    /* approximate can return an Opposite or a Subtraction, so we need to
+     * re-reduce the expression.*/
+    replaceWithInPlace(a);
+    *wasApproximated = true;
+    return a.shallowReduce(reductionContext);
+  }
+
+  if (nChildren == 0) {
+    return *this;
+  }
+
+  /* If at least 1 child was approximated, re-reduce.
+   * Example: if this is "x + cos(3) + cos(2)",
+   * after approximating children it becomes "x - 0.99 - 0.41".
+   * It needs now to be reduced to "x - 1.4" */
+  return shallowReduce(reductionContext);
+}
+
+int Expression::deepApproximateChildrenKeepingSymbols(
+    const ReductionContext &reductionContext) {
+  const int childrenCount = numberOfChildren();
+  int numberOfApproximatedChildren = 0;
+  bool parameteredExpression = isParameteredExpression();
+  bool storeExpression = type() == ExpressionNode::Type::Store;
+  for (int i = 0; i < childrenCount; i++) {
+    // Do not approximate right of a store or inside a parametered expression
+    if ((parameteredExpression &&
+         (i == ParameteredExpression::ParameterChildIndex() ||
+          i == ParameteredExpression::ParameteredChildIndex())) ||
+        (storeExpression && i == 1)) {
+      continue;
+    }
+    bool thisChildWasApproximated = false;
+    childAtIndex(i).deepApproximateKeepingSymbols(reductionContext,
+                                                  &thisChildWasApproximated);
+    numberOfApproximatedChildren += thisChildWasApproximated;
+  }
+  return numberOfApproximatedChildren;
 }
 
 /* Builder */

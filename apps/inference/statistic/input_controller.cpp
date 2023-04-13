@@ -25,6 +25,14 @@ InputController::InputController(Escher::StackViewController *parent,
   m_okButton.setMessage(I18n::Message::Next);
 }
 
+KDCoordinate InputController::nonMemoizedRowHeight(int j) {
+  if (typeAtIndex(j) == k_parameterCellType) {
+    InputParameterCell tempCell;
+    return heightForCellAtIndexWithWidthInit(&tempCell, j);
+  }
+  return Shared::FloatParameterController<double>::nonMemoizedRowHeight(j);
+}
+
 void InputController::initCell(InputParameterCell, void *cell, int index) {
   InputParameterCell *c = static_cast<InputParameterCell *>(cell);
   c->setParentResponder(&m_selectableListView);

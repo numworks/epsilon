@@ -41,6 +41,7 @@ class InputController
   void buttonAction() override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   KDCoordinate separatorBeforeRow(int index) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
 
   void initCell(InputParameterCell, void* cell, int index) override;
   Escher::SelectableTableView* tableView() override {

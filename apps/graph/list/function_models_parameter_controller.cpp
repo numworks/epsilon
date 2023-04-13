@@ -47,7 +47,9 @@ Escher::HighlightCell* FunctionModelsParameterController::cell(int index) {
   if (index == 0) {
     return &m_emptyModelCell;
   }
-  return &m_modelCells[index - 1];
+  int i = index - 1;
+  assert(0 <= i && i < k_numberOfExpressionCells);
+  return &m_modelCells[i];
 }
 
 const char* FunctionModelsParameterController::title() {

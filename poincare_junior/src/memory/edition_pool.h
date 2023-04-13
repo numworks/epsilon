@@ -43,10 +43,13 @@ class EditionPool final : public Pool {
   void removeBlocks(Block *address, size_t numberOfBlocks);
   void moveBlocks(Block *destination, Block *source, size_t numberOfBlocks);
 
-  Node initFromTree(const Node node) {
-    return initFromAddress(static_cast<const void *>(node.block()));
-  }
+  // Initialize trees
   Node initFromAddress(const void *address, bool isTree = true);
+  Node clone(const Node node, bool isTree = true) {
+    return initFromAddress(static_cast<const void *>(node.block()), isTree);
+  }
+  template <BlockType blockType, typename... Types>
+  Node push(Types... args);
 
   using Pool::firstBlock;
   const TypeBlock *firstBlock() const override { return m_firstBlock; }

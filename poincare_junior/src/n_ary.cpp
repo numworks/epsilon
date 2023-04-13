@@ -15,9 +15,9 @@ void NAry::AddChildAtIndex(EditionReference nary, EditionReference child,
    * private AddChildAtIndex method bypassing this check. */
   // assert(child.parent().isUninitialized());
   if (index == nary.numberOfChildren()) {
-    nary.nextTree().insertTreeBeforeNode(child);
+    EditionReference(nary.nextTree()).insertTreeBeforeNode(child);
   } else {
-    nary.childAtIndex(index).insertTreeBeforeNode(child);
+    EditionReference(nary.childAtIndex(index)).insertTreeBeforeNode(child);
   }
   SetNumberOfChildren(nary, nary.numberOfChildren() + 1);
 }

@@ -10,13 +10,15 @@ namespace PoincareJ {
 
 EditionReference Layout::EditionPoolTextToLayout(const char *text) {
   int n = strlen(text);
+  EditionPool *editionPool = EditionPool::sharedEditionPool();
   const EditionReference ref = P_RACKL();
   EditionReference currentLayout = ref;
   for (int i = 0; i < n; i++) {
     EditionReference child;
     switch (text[i]) {
       case '(':
-        child = EditionReference::Push<BlockType::ParenthesisLayout>();
+        child =
+            EditionReference(editionPool->push<BlockType::ParenthesisLayout>());
         P_RACKL();
         NAry::AddOrMergeChildAtIndex(currentLayout, child,
                                      currentLayout.numberOfChildren());
@@ -34,8 +36,8 @@ EditionReference Layout::EditionPoolTextToLayout(const char *text) {
         }
         // Jump to default case
       default:
-        child = EditionReference::Push<BlockType::CodePointLayout, CodePoint>(
-            text[i]);
+        child = EditionReference(
+            editionPool->push<BlockType::CodePointLayout, CodePoint>(text[i]));
         break;
     }
     NAry::AddOrMergeChildAtIndex(currentLayout, child,

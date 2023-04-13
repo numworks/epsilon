@@ -5,7 +5,6 @@
 #include <string.h>
 
 #include "edition_pool.h"
-#include "node_constructor.h"
 #include "node_iterator.h"
 #include "pattern_matching.h"
 
@@ -17,8 +16,11 @@ EditionReference::EditionReference(Node node) {
     return;
   }
   EditionPool* pool = EditionPool::sharedEditionPool();
+  // TODO: maybe make an assertion(pool->contains(node.block()))
+  // and force developers to write EditionReference(EditionPool::clone(2_e))
   if (!pool->contains(node.block()) && node.block() != pool->lastBlock()) {
-    node = pool->initFromTree(node);
+    *this = EditionReference(pool->clone(node));
+    return;
   }
   m_identifier = EditionPool::sharedEditionPool()->referenceNode(node);
 }
@@ -31,56 +33,9 @@ void EditionReference::log() const {
 }
 #endif
 
-template <BlockType blockType, typename... Types>
-EditionReference EditionReference::Push(Types... args) {
-  EditionPool* pool = EditionPool::sharedEditionPool();
-  TypeBlock* newNode = pool->lastBlock();
-
-  size_t i = 0;
-  bool endOfNode = false;
-  do {
-    Block block;
-    endOfNode = NodeConstructor::CreateBlockAtIndexForType<blockType>(
-        &block, i++, args...);
-    pool->pushBlock(block);
-  } while (!endOfNode);
-#if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Push", newNode, i);
-#endif
-  return EditionReference(Node(newNode));
-}
-
-EditionReference EditionReference::Clone(const Node node, bool isTree) {
-  Node newNode = EditionPool::sharedEditionPool()->initFromAddress(static_cast<const void *>(node.block()), isTree);
-#if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Clone", newNode.block(), isTree ? node.treeSize() : node.nodeSize());
-#endif
-  return EditionReference(newNode);
-}
-
 EditionReference::operator const Node() const {
   Node n = EditionPool::sharedEditionPool()->nodeForIdentifier(m_identifier);
   return n;
-}
-
-EditionReference EditionReference::replaceNodeByNode(EditionReference t) {
-  replaceNodeByNode(static_cast<Node>(t));
-  return t;
-}
-
-EditionReference EditionReference::replaceNodeByTree(EditionReference t) {
-  replaceNodeByTree(static_cast<Node>(t));
-  return t;
-}
-
-EditionReference EditionReference::replaceTreeByNode(EditionReference t) {
-  replaceTreeByNode(static_cast<Node>(t));
-  return t;
-}
-
-EditionReference EditionReference::replaceTreeByTree(EditionReference t) {
-  replaceTreeByTree(static_cast<Node>(t));
-  return t;
 }
 
 void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
@@ -138,9 +93,9 @@ EditionReference EditionReference::matchAndRewrite(const Node pattern,
 }
 
 void EditionReference::remove(bool isTree) {
-  Block * b = block();
+  Block* b = block();
   size_t size = isTree ? static_cast<Node>(*this).treeSize()
-                      : static_cast<Node>(*this).nodeSize();
+                       : static_cast<Node>(*this).nodeSize();
   EditionPool::sharedEditionPool()->removeBlocks(b, size);
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Remove", nullptr, INT_MAX, b);
@@ -148,16 +103,17 @@ void EditionReference::remove(bool isTree) {
 }
 
 void EditionReference::insert(Node nodeToInsert, bool before, bool isTree) {
-  Node destination = before ? *this : nextNode();
+  Node destination = before ? static_cast<Node>(*this) : nextNode();
   EditionPool* pool = EditionPool::sharedEditionPool();
   size_t sizeToInsert =
       isTree ? nodeToInsert.treeSize() : nodeToInsert.nodeSize();
   if (pool->contains(nodeToInsert.block())) {
     pool->moveBlocks(destination.block(), nodeToInsert.block(), sizeToInsert);
 #if POINCARE_POOL_VISUALIZATION
-    Block * dst = destination.block();
-    Block * addedBlock = dst >= nodeToInsert.block() ? dst - sizeToInsert : dst;
-    Log(LoggerType::Edition, "Insert", addedBlock, sizeToInsert, nodeToInsert.block());
+    Block* dst = destination.block();
+    Block* addedBlock = dst >= nodeToInsert.block() ? dst - sizeToInsert : dst;
+    Log(LoggerType::Edition, "Insert", addedBlock, sizeToInsert,
+        nodeToInsert.block());
 #endif
   } else {
     pool->insertBlocks(destination.block(), nodeToInsert.block(), sizeToInsert);
@@ -174,59 +130,9 @@ void EditionReference::detach(bool isTree) {
                              : static_cast<Node>(*this).nodeSize();
   pool->moveBlocks(destination, static_cast<Node>(*this).block(), sizeToMove);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "Detach", destination, sizeToMove, static_cast<Node>(*this).block());
+  Log(LoggerType::Edition, "Detach", destination, sizeToMove,
+      static_cast<Node>(*this).block());
 #endif
 }
 
 }  // namespace PoincareJ
-
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::Addition, int>(int);
-template PoincareJ::EditionReference PoincareJ::EditionReference::Push<
-    PoincareJ::BlockType::Multiplication, int>(int);
-template PoincareJ::EditionReference PoincareJ::EditionReference::Push<
-    PoincareJ::BlockType::Constant, char16_t>(char16_t);
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::Power>();
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::Factorial>();
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::Subtraction>();
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::Division>();
-template PoincareJ::EditionReference PoincareJ::EditionReference::Push<
-    PoincareJ::BlockType::IntegerShort>(int8_t);
-template PoincareJ::EditionReference PoincareJ::EditionReference::Push<
-    PoincareJ::BlockType::IntegerPosBig>(uint64_t);
-template PoincareJ::EditionReference PoincareJ::EditionReference::Push<
-    PoincareJ::BlockType::IntegerNegBig>(uint64_t);
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::Float, float>(float);
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::MinusOne>();
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::Set>(int);
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::Half>();
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::Zero>();
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::One>();
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::Two>();
-template PoincareJ::EditionReference PoincareJ::EditionReference::Push<
-    PoincareJ::BlockType::RationalShort>(int8_t, uint8_t);
-template PoincareJ::EditionReference PoincareJ::EditionReference::Push<
-    PoincareJ::BlockType::Polynomial, int, int>(int, int);
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::RackLayout, int>(int);
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::SystemList, int>(int);
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::FractionLayout>();
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::ParenthesisLayout>();
-template PoincareJ::EditionReference
-PoincareJ::EditionReference::Push<PoincareJ::BlockType::VerticalOffsetLayout>();
-template PoincareJ::EditionReference PoincareJ::EditionReference::Push<
-    PoincareJ::BlockType::CodePointLayout, CodePoint>(CodePoint);

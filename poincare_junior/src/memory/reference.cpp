@@ -113,7 +113,7 @@ Reference::Reference(InitializerFromTreeInplace initializer,
                    * may be erased if the editionPool needs space and flushes
                    * the CachePool. */
                   Node editedTree =
-                      EditionPool::sharedEditionPool()->initFromTree(tree);
+                      EditionPool::sharedEditionPool()->clone(tree);
                   return (reinterpret_cast<InitializerFromTreeInplace>(
                       context))(editedTree);
                 },

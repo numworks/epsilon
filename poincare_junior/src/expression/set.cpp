@@ -33,7 +33,7 @@ EditionReference Set::Add(EditionReference set, Node expression) {
   }
   if (child == set || Comparison::Compare(child, expression) < 0) {
     // Empty set or all elements are < expression
-    child.nextTree().insertTreeBeforeNode(expression);
+    EditionReference(child.nextTree()).insertTreeBeforeNode(expression);
   }
   NAry::SetNumberOfChildren(set, set.numberOfChildren() + 1);
   return set;
@@ -59,7 +59,7 @@ static EditionReference MergeSets(EditionReference set0, EditionReference set1,
   EditionReference currentChild1 = set1.nextNode();
   if (pilferSet1Children) {
     // Move set1 right after set0 to easily pilfer children
-    set0.nextTree().insertTreeBeforeNode(set1);
+    EditionReference(set0.nextTree()).insertTreeBeforeNode(set1);
   }
   while (numberOfChildren0ToScan > 0 && numberOfChildren1ToScan > 0) {
     int comparison = Comparison::Compare(currentChild0, currentChild1);

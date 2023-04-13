@@ -355,20 +355,21 @@ QUIZ_CASE(pcj_constexpr_tree_constructor) {
 }
 
 QUIZ_CASE(pcj_edition_node_constructor) {
+  EditionPool* editionPool = EditionPool::sharedEditionPool();
   assert_node_equals_blocks(
-      EditionReference::Push<BlockType::IntegerPosBig>(
+      editionPool->push<BlockType::IntegerPosBig>(
           static_cast<uint64_t>(1232424242)),
       {TypeBlock(BlockType::IntegerPosBig), ValueBlock(4), ValueBlock(0x32),
        ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4),
        TypeBlock(BlockType::IntegerPosBig)});
   assert_node_equals_blocks(
-      EditionReference::Push<BlockType::IntegerNegBig>(
+      editionPool->push<BlockType::IntegerNegBig>(
           static_cast<uint64_t>(1232424242)),
       {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32),
        ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4),
        TypeBlock(BlockType::IntegerNegBig)});
   assert_node_equals_blocks(
-      EditionReference::Push<BlockType::IntegerNegBig>(
+      editionPool->push<BlockType::IntegerNegBig>(
           static_cast<uint64_t>(1232424242)),
       {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32),
        ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4),
@@ -521,7 +522,7 @@ QUIZ_CASE(pcj_node) {
   // operator==
   Node node0 = 42_e;
   Node node1 =
-      EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(42));
+      editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(42));
   quiz_assert(node0 != node1 && *node0.block() == *node1.block());
   Node node2(editionPool->firstBlock());
   quiz_assert(node2 == node1);
@@ -569,10 +570,11 @@ QUIZ_CASE(pcj_node) {
 }
 
 QUIZ_CASE(pcj_node_size) {
-  Node node = EditionReference::Push<BlockType::IntegerPosBig>(
+  EditionPool* editionPool = EditionPool::sharedEditionPool();
+  Node node = editionPool->push<BlockType::IntegerPosBig>(
       static_cast<uint64_t>(0x00FF0000));
   quiz_assert(node.nodeSize() == 7);
-  node = static_cast<Node>(EditionReference::Push<BlockType::IntegerNegBig>(
+  node = static_cast<Node>(editionPool->push<BlockType::IntegerNegBig>(
       static_cast<uint64_t>(0x0000FF00)));
   quiz_assert(node.nodeSize() == 6);
 }

@@ -12,13 +12,13 @@ namespace PoincareJ {
 // TODO: tests
 
 EditionReference Algebraic::Rationalize(EditionReference expression) {
+  EditionPool* editionPool = EditionPool::sharedEditionPool();
   if (expression.block()->isRational()) {
-    EditionReference fraction =
-        EditionReference::Push<BlockType::Multiplication>(2);
+    EditionReference fraction(editionPool->push<BlockType::Multiplication>(2));
     Rational::Numerator(expression).pushOnEditionPool();
-    EditionReference::Push<BlockType::Power>();
+    editionPool->push<BlockType::Power>();
     Rational::Denominator(expression).pushOnEditionPool();
-    EditionReference::Push<BlockType::MinusOne>();
+    editionPool->push<BlockType::MinusOne>();
     expression.replaceTreeByTree(fraction);
     return fraction;
   }
@@ -43,13 +43,14 @@ EditionReference Algebraic::Rationalize(EditionReference expression) {
 
 EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
   assert(expression.type() == BlockType::Addition);
+  EditionPool* editionPool = EditionPool::sharedEditionPool();
   EditionReference commonDenominator = EditionReference(KMult());
   // Step 1: We want to compute the common denominator, b*d
   for (std::pair<EditionReference, int> indexedNode :
        NodeIterator::Children<Forward, Editable>(expression)) {
     EditionReference child = std::get<EditionReference>(indexedNode);
     child = Rationalize(child);
-    EditionReference denominator = Denominator(EditionReference::Clone(child));
+    EditionReference denominator = Denominator(editionPool->clone(child));
     NAry::AddChild(commonDenominator, denominator);  // FIXME: do we need LCM?
   }
   // basic reduction commonDenominator
@@ -63,21 +64,20 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
        NodeIterator::Children<Forward, Editable>(expression)) {
     EditionReference child = std::get<EditionReference>(indexedNode);
     // Create Mult(child, commonDenominator) = a*b * b*d
-    EditionReference multiplication =
-        EditionReference::Push<BlockType::Multiplication>(1);
+    EditionReference multiplication(
+        editionPool->push<BlockType::Multiplication>(1));
     child.insertNodeBeforeNode(multiplication);
-    child.nextTree().insertTreeBeforeNode(
-        EditionReference::Clone(commonDenominator));
+    EditionReference(child.nextTree())
+        .insertTreeBeforeNode(editionPool->clone(commonDenominator));
     // TODO basicReduction of child
   }
   // Create Mult(expression, Pow)
-  EditionReference fraction =
-      EditionReference::Push<BlockType::Multiplication>(2);
+  EditionReference fraction(editionPool->push<BlockType::Multiplication>(2));
   fraction.insertTreeAfterNode(expression);
   // Create Pow(commonDenominator, -1)
-  EditionReference power = EditionReference::Push<BlockType::Power>();
+  EditionReference power(editionPool->push<BlockType::Power>());
   power.insertTreeAfterNode(commonDenominator);
-  commonDenominator.nextTree().insertTreeBeforeNode(-1_e);
+  EditionReference(commonDenominator.nextTree()).insertTreeBeforeNode(-1_e);
   // TODO basicReduction of power
   // TODO basicReduction of fraction
   return fraction;

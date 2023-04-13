@@ -16,10 +16,6 @@ class EditionReference {
   __attribute__((__used__)) void log() const;
 #endif
 
-  template <BlockType blockType, typename... Types>
-  static EditionReference Push(Types... args);
-  static EditionReference Clone(const Node node, bool isTree = true);
-
   /* Comparison */
   inline bool operator==(const EditionReference& t) const {
     return m_identifier == t.identifier() ||
@@ -42,17 +38,17 @@ class EditionReference {
   uint16_t identifier() const { return m_identifier; }
 
   /* Hierarchy */
-  EditionReference nextNode() {
-    return EditionReference(static_cast<Node>(*this).nextNode());
+  Node nextNode() {
+    return static_cast<Node>(*this).nextNode();
   }
-  EditionReference nextTree() {
-    return EditionReference(static_cast<Node>(*this).nextTree());
+  Node nextTree() {
+    return static_cast<Node>(*this).nextTree();
   }
-  EditionReference previousNode() {
-    return EditionReference(static_cast<Node>(*this).previousNode());
+  Node previousNode() {
+    return static_cast<Node>(*this).previousNode();
   }
-  EditionReference previousTree() {
-    return EditionReference(static_cast<Node>(*this).previousTree());
+  Node previousTree() {
+    return static_cast<Node>(*this).previousTree();
   }
   bool hasChild(EditionReference t) const {
     return static_cast<Node>(*this).hasChild(t);
@@ -69,9 +65,9 @@ class EditionReference {
   int indexOfChild(EditionReference t) const {
     return static_cast<Node>(*this).indexOfChild(t);
   }
-  EditionReference parent() const { return static_cast<Node>(*this).parent(); }
-  EditionReference childAtIndex(int i) const {
-    return EditionReference(static_cast<Node>(*this).childAtIndex(i));
+  Node parent() const { return static_cast<Node>(*this).parent(); }
+  Node childAtIndex(int i) const {
+    return static_cast<Node>(*this).childAtIndex(i);
   }
   int numberOfDescendants(bool includeSelf) const {
     return static_cast<Node>(*this).numberOfDescendants(includeSelf);
@@ -112,10 +108,10 @@ class EditionReference {
   void insertTreeBeforeNode(EditionReference treeToInsert) {
     insertTreeBeforeNode(static_cast<Node>(treeToInsert));
   }
-  EditionReference replaceNodeByNode(EditionReference t);
-  EditionReference replaceNodeByTree(EditionReference t);
-  EditionReference replaceTreeByNode(EditionReference t);
-  EditionReference replaceTreeByTree(EditionReference t);
+  void replaceNodeByNode(EditionReference t) { replaceNodeByNode(static_cast<Node>(t)); }
+  void replaceNodeByTree(EditionReference t) { replaceNodeByTree(static_cast<Node>(t)); }
+  void replaceTreeByNode(EditionReference t) { replaceTreeByNode(static_cast<Node>(t)); }
+  void replaceTreeByTree(EditionReference t) { replaceTreeByTree(static_cast<Node>(t)); }
 
   typedef void (*InPlaceTreeFunction)(EditionReference reference);
   void recursivelyEdit(InPlaceTreeFunction treeFunction);

@@ -422,18 +422,20 @@ void RackParser::parseNumber(EditionReference &leftHandSide,
       /* Build (integerDigits + fractionalDigits *
        * 10^(-numberOfFractionalDigits))
        *           * 10^(exponent) */
+      EditionPool *editionPool = EditionPool::sharedEditionPool();
       leftHandSide = P_MULT(
           P_ADD(Integer::Push(integerDigits, base),
                 P_MULT(Integer::Push(fractionalDigits, base),
-                       P_POW(EditionReference::Clone(10_e),
-                             EditionReference::Push<BlockType::IntegerShort>(
+                       P_POW(editionPool->clone(10_e),
+                             editionPool->push<BlockType::IntegerShort>(
                                  static_cast<int8_t>(-smallE + decimalPoint +
                                                      1))))),
-          P_POW(EditionReference::Clone(10_e), Integer::Push(exponent, base)));
+          P_POW(editionPool->clone(10_e), Integer::Push(exponent, base)));
 
       float value = Approximation::To<float>(leftHandSide);
-      leftHandSide = leftHandSide.replaceTreeByTree(
-          EditionReference::Push<BlockType::Float>(value));
+      EditionReference number = editionPool->push<BlockType::Float>(value);
+      leftHandSide.replaceTreeByTree(number);
+      leftHandSide = number;
     }
   }
 
@@ -496,7 +498,7 @@ void RackParser::privateParsePlusAndMinus(EditionReference &leftHandSide,
     // : Opposite::Builder(rightHandSide.childAtIndex(0)));
     // return;
     // }
-    assert(leftHandSide.nextTree() == rightHandSide);
+    assert(leftHandSide.nextTree() == static_cast<Node>(rightHandSide));
     if (!plus) {
       leftHandSide.insertNodeBeforeNode(Tree<BlockType::Subtraction>());
       leftHandSide = leftHandSide.previousNode();
@@ -596,7 +598,7 @@ void RackParser::privateParseTimes(EditionReference &leftHandSide,
 
 static void turnIntoBinaryNode(Node node, EditionReference &leftHandSide,
                                EditionReference &rightHandSide) {
-  assert(leftHandSide.nextTree() == rightHandSide);
+  assert(leftHandSide.nextTree() == static_cast<Node>(rightHandSide));
   leftHandSide.insertNodeBeforeNode(node);
   leftHandSide = leftHandSide.previousNode();
 }
@@ -609,9 +611,9 @@ void RackParser::parseCaret(EditionReference &leftHandSide,
     if (leftHandSide.type() == BlockType::Power) {
       // l         r -> l
       // (POW A B) C -> POW A (POW B C)
-      assert(leftHandSide.nextTree() == rightHandSide);
-      leftHandSide.childAtIndex(1).insertNodeBeforeNode(
-          Tree<BlockType::Power>());
+      assert(leftHandSide.nextTree() == static_cast<Node>(rightHandSide));
+      EditionReference(leftHandSide.childAtIndex(1))
+          .insertNodeBeforeNode(Tree<BlockType::Power>());
     } else {
       turnIntoBinaryNode(Tree<BlockType::Power>(), leftHandSide, rightHandSide);
     }
@@ -1212,7 +1214,8 @@ EditionReference RackParser::parseVector() {
 }
 
 EditionReference RackParser::parseCommaSeparatedList() {
-  EditionReference list = EditionReference::Push<BlockType::SystemList>(0);
+  EditionReference list =
+      EditionPool::sharedEditionPool()->push<BlockType::SystemList>(0);
   int length = 0;
   do {
     parseUntil(Token::Type::Comma);

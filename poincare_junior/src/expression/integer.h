@@ -120,24 +120,20 @@ class IntegerHandler final {
   operator int8_t() const;
   operator uint8_t() const;
 
-  EditionReference pushOnEditionPool();
+  Node pushOnEditionPool();
   void pushDigitsOnEditionPool();
   template <typename T>
   T to();
 
   // Arithmetic
   static int Compare(const IntegerHandler &a, const IntegerHandler &b);
-  static EditionReference Addition(const IntegerHandler &a,
-                                   const IntegerHandler &b);
-  static EditionReference Subtraction(const IntegerHandler &a,
-                                      const IntegerHandler &b);
-  static EditionReference Multiplication(const IntegerHandler &a,
-                                         const IntegerHandler &b);
-  static std::pair<EditionReference, EditionReference> Division(
-      const IntegerHandler &numerator, const IntegerHandler &denominator);
-  static EditionReference Power(const IntegerHandler &i,
-                                const IntegerHandler &j);
-  static EditionReference Factorial(const IntegerHandler &i);
+  static Node Addition(const IntegerHandler &a, const IntegerHandler &b);
+  static Node Subtraction(const IntegerHandler &a, const IntegerHandler &b);
+  static Node Multiplication(const IntegerHandler &a, const IntegerHandler &b);
+  static std::pair<Node, Node> Division(const IntegerHandler &numerator,
+                                        const IntegerHandler &denominator);
+  static Node Power(const IntegerHandler &i, const IntegerHandler &j);
+  static Node Factorial(const IntegerHandler &i);
 
   constexpr static uint8_t k_maxNumberOfDigits = 128;
   constexpr static uint8_t k_maxNumberOfNativeDigits =
@@ -150,9 +146,9 @@ class IntegerHandler final {
                      const IntegerHandler &b);  // -1, 0, or 1
   /* Warning: Usum, Sum, Mult, Udiv return IntegerHandler whose digits pointer
    * is static working buffers. We could return EditionReference but we save the
-   * projection onto the right node type for private methods.
+   * projection onto the right node type for public methods.
    * The buffer holding one of the IntegerHandler a or b can be used as the
-   * workingBuffer because we read a and b )digits before filling the working
+   * workingBuffer because we read a and b digits before filling the working
    * buffer. */
   static IntegerHandler Usum(const IntegerHandler &a, const IntegerHandler &b,
                              bool subtract, WorkingBuffer *workingBuffer,
@@ -211,13 +207,13 @@ class IntegerHandler final {
 
 class Integer {
  public:
-  static EditionReference Push(const char *digits, size_t length,
-                               OMG::Base base = OMG::Base::Decimal) {
+  static Node Push(const char *digits, size_t length,
+                   OMG::Base base = OMG::Base::Decimal) {
     UTF8Decoder decoder(digits, digits, digits + length);
     return IntegerHandler::Parse(decoder, base).pushOnEditionPool();
   }
-  static EditionReference Push(UnicodeDecoder &decoder,
-                               OMG::Base base = OMG::Base::Decimal) {
+  static Node Push(UnicodeDecoder &decoder,
+                   OMG::Base base = OMG::Base::Decimal) {
     return IntegerHandler::Parse(decoder, base).pushOnEditionPool();
   }
   static IntegerHandler Handler(const Node expression);

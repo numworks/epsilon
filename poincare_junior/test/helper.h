@@ -18,15 +18,15 @@ inline EditionReference createSimpleExpression() {
 #if POINCARE_MEMORY_TREE_LOG
   std::cout << "\n--- Create (1 + 2) * 3 * (4 + 5) ---" << std::endl;
 #endif
-  EditionReference multiplication =
-      EditionReference::Push<BlockType::Multiplication>(3);
-  EditionReference::Push<BlockType::Addition>(2);
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-  EditionReference::Push<BlockType::Addition>(2);
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(5));
+  EditionPool * editionPool = EditionPool::sharedEditionPool();
+  EditionReference multiplication(editionPool->push<BlockType::Multiplication>(3));
+  editionPool->push<BlockType::Addition>(2);
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  editionPool->push<BlockType::Addition>(2);
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   return multiplication;
 }
 

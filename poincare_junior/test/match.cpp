@@ -34,11 +34,12 @@ QUIZ_CASE(pcj_match) {
 
 QUIZ_CASE(pcj_rewrite) {
   using namespace PatternMatching::Placeholders;
+  EditionPool* editionPool = EditionPool::sharedEditionPool();
   Node p = KAdd(A, A);
   Node s = KMult(2_e, A);
-  EditionReference ref = EditionReference::Push<BlockType::Addition>(2);
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(5));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(5));
+  EditionReference ref(editionPool->push<BlockType::Addition>(2));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   EditionReference result = ref.matchAndRewrite(p, s);
   assert_trees_are_equal(result, KMult(2_e, 5_e));
 }

@@ -9,14 +9,15 @@ namespace PoincareJ {
 
 EditionReference Expression::EditionPoolExpressionToLayout(Node node) {
   assert(node.block()->isExpression());
+  EditionPool *editionPool = EditionPool::sharedEditionPool();
   // node == -1+2*3
-  EditionReference ref = EditionReference::Push<BlockType::RackLayout>(6);
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('-');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('+');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('2');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('*');
-  EditionReference::Push<BlockType::CodePointLayout, CodePoint>('3');
+  EditionReference ref(editionPool->push<BlockType::RackLayout>(6));
+  editionPool->push<BlockType::CodePointLayout, CodePoint>('-');
+  editionPool->push<BlockType::CodePointLayout, CodePoint>('1');
+  editionPool->push<BlockType::CodePointLayout, CodePoint>('+');
+  editionPool->push<BlockType::CodePointLayout, CodePoint>('2');
+  editionPool->push<BlockType::CodePointLayout, CodePoint>('*');
+  editionPool->push<BlockType::CodePointLayout, CodePoint>('3');
   // Remove node from EditionReference
   EditionReference nodeRef(node);
   nodeRef.removeTree();

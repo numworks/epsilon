@@ -1,7 +1,6 @@
 #include "edition_pool.h"
 
 #include <assert.h>
-#include <poincare_junior/include/poincare.h>
 #include <omgpj.h>
 #include <poincare_junior/include/poincare.h>
 
@@ -9,6 +8,7 @@
 
 #include "cache_pool.h"
 #include "exception_checkpoint.h"
+#include "node_constructor.h"
 
 namespace PoincareJ {
 
@@ -175,6 +175,10 @@ Node EditionPool::initFromAddress(const void *address, bool isTree) {
   m_numberOfBlocks += size;
   replaceBlocks(copiedTree, static_cast<const Block *>(address),
                 size * sizeof(Block));
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "Copy", copiedTree,
+      isTree ? Node(copiedTree).treeSize() : Node(copiedTree).nodeSize());
+#endif
   return Node(copiedTree);
 }
 
@@ -204,6 +208,24 @@ start_execute:
   return true;
 }
 
+template <BlockType blockType, typename... Types>
+Node EditionPool::push(Types... args) {
+  TypeBlock *newNode = lastBlock();
+
+  size_t i = 0;
+  bool endOfNode = false;
+  do {
+    Block block;
+    endOfNode = NodeConstructor::CreateBlockAtIndexForType<blockType>(
+        &block, i++, args...);
+    pushBlock(block);
+  } while (!endOfNode);
+#if POINCARE_POOL_VISUALIZATION
+  Log(LoggerType::Edition, "Push", newNode, i);
+#endif
+  return Node(newNode);
+}
+
 bool EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
   if (m_numberOfBlocks + numberOfRequiredBlock > m_size) {
     ExceptionCheckpoint::Raise();
@@ -213,3 +235,56 @@ bool EditionPool::checkForEnoughSpace(size_t numberOfRequiredBlock) {
 }
 
 }  // namespace PoincareJ
+
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Addition, int>(int);
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Multiplication, int>(int);
+template PoincareJ::Node PoincareJ::EditionPool::push<
+    PoincareJ::BlockType::Constant, char16_t>(char16_t);
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Power>();
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Factorial>();
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Subtraction>();
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Division>();
+template PoincareJ::Node
+    PoincareJ::EditionPool::push<PoincareJ::BlockType::IntegerShort>(int8_t);
+template PoincareJ::Node
+    PoincareJ::EditionPool::push<PoincareJ::BlockType::IntegerPosBig>(uint64_t);
+template PoincareJ::Node
+    PoincareJ::EditionPool::push<PoincareJ::BlockType::IntegerNegBig>(uint64_t);
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Float, float>(float);
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::MinusOne>();
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Set>(int);
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Half>();
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Zero>();
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::One>();
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Two>();
+template PoincareJ::Node
+    PoincareJ::EditionPool::push<PoincareJ::BlockType::RationalShort>(int8_t,
+                                                                      uint8_t);
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::Polynomial, int, int>(int,
+                                                                         int);
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::RackLayout, int>(int);
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::SystemList, int>(int);
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::FractionLayout>();
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::ParenthesisLayout>();
+template PoincareJ::Node
+PoincareJ::EditionPool::push<PoincareJ::BlockType::VerticalOffsetLayout>();
+template PoincareJ::Node PoincareJ::EditionPool::push<
+    PoincareJ::BlockType::CodePointLayout, CodePoint>(CodePoint);

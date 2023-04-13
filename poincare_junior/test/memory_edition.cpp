@@ -12,7 +12,7 @@ QUIZ_CASE(pcj_edition_pool) {
 
   constexpr Tree k_expression = KMult(KAdd(1_e, 2_e), 3_e, 4_e);
   const Node handingNode = static_cast<Node>(k_expression);
-  const Node editedNode = pool->initFromTree(handingNode);
+  const Node editedNode = pool->clone(handingNode);
   assert(pool->size() == handingNode.treeSize());
   assert(pool->numberOfTrees() == 1);
 
@@ -73,9 +73,9 @@ QUIZ_CASE(pcj_edition_reference) {
   assert(reference0 != reference1);
 
   // Constructors
-  EditionReference::Clone(reference0);
-  EditionReference reference3 =
-      EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(8));
+  editionPool->clone(reference0);
+  EditionReference reference3 = EditionReference(
+      editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(8)));
   assert_pool_contains(editionPool,
                        {k_expression0, k_expression1, k_expression0, 8_e});
 
@@ -122,11 +122,11 @@ QUIZ_CASE(pcj_edition_reference) {
                        {k_expression0, 10_e, k_expression1, 10_e, 9_e});
 
   // Detach
-  reference3.childAtIndex(0).detachTree();
+  EditionReference(reference3.childAtIndex(0)).detachTree();
   reference3.insertTreeAfterNode(13_e);
   assert_pool_contains(editionPool, {k_expression0, 10_e, KPow(13_e, 7_e), 10_e,
                                      9_e, KSub(5_e, 6_e)});
-  reference3.childAtIndex(1).detachNode();
+  EditionReference(reference3.childAtIndex(1)).detachNode();
   reference3.insertTreeAfterNode(14_e);
   assert_pool_contains(editionPool, {k_expression0, 10_e, KPow(14_e, 13_e),
                                      10_e, 9_e, KSub(5_e, 6_e), 7_e});

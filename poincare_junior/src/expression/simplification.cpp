@@ -36,7 +36,8 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
   while (index + 1 < nbOfChildren && child0.block()->isNumber() &&
          child1.block()->isNumber()) {
     EditionReference reducedChild = operation(child0, child1);
-    child0 = child0.replaceTreeByTree(reducedChild);
+    child0.replaceTreeByTree(reducedChild);
+    child0 = reducedChild;
     child1.removeTree();
     child1 = child0.nextTree();
     index++;
@@ -48,8 +49,8 @@ EditionReference Simplification::DivisionReduction(EditionReference reference) {
   assert(reference.type() == BlockType::Division);
   return ProjectionReduction(
       reference,
-      []() { return EditionReference::Push<BlockType::Multiplication>(2); },
-      []() { return EditionReference::Push<BlockType::Power>(); });
+      []() { return EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2); },
+      []() { return EditionPool::sharedEditionPool()->push<BlockType::Power>(); });
 }
 
 EditionReference Simplification::SubtractionReduction(
@@ -57,23 +58,24 @@ EditionReference Simplification::SubtractionReduction(
   assert(reference.type() == BlockType::Subtraction);
   return ProjectionReduction(
       reference,
-      []() { return EditionReference::Push<BlockType::Addition>(2); },
-      []() { return EditionReference::Push<BlockType::Multiplication>(2); });
+      []() { return EditionPool::sharedEditionPool()->push<BlockType::Addition>(2); },
+      []() { return EditionPool::sharedEditionPool()->push<BlockType::Multiplication>(2); });
 }
 
 EditionReference Simplification::DistributeMultiplicationOverAddition(
     EditionReference reference) {
+  EditionPool * editionPool = EditionPool::sharedEditionPool();
   for (auto [child, index] :
        NodeIterator::Children<Forward, Editable>(reference)) {
     if (child.type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
       EditionReference add =
-          EditionReference(EditionReference::Push<BlockType::Addition>(
+          EditionReference(editionPool->push<BlockType::Addition>(
               child.numberOfChildren()));
       for (auto [additionChild, additionIndex] :
            NodeIterator::Children<Forward, Editable>(child)) {
         // Copy a multiplication
-        EditionReference multCopy = EditionReference::Clone(reference);
+        EditionReference multCopy = editionPool->clone(reference);
         // Find the addition to be replaced
         EditionReference additionCopy =
             EditionReference(multCopy.childAtIndex(index));
@@ -93,8 +95,8 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
 }
 
 EditionReference Simplification::ProjectionReduction(
-    EditionReference division, EditionReference (*PushProjectedEExpression)(),
-    EditionReference (*PushInverse)()) {
+    EditionReference division, Node (*PushProjectedEExpression)(),
+    Node (*PushInverse)()) {
   /* Rule a / b --> a * b^-1 (or a - b --> a + b * -1) */
   // Create empty * (or +)
   EditionReference multiplication(PushProjectedEExpression());
@@ -112,7 +114,7 @@ EditionReference Simplification::ProjectionReduction(
   // Move second child
   power.insertTreeAfterNode(childrenReferences[1]);
   // Complete: a * b^-1 (or a + b * -1)
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(-1));
+  EditionPool::sharedEditionPool()->push<BlockType::IntegerShort>(static_cast<int8_t>(-1));
   // Replace single-noded division (or subtraction) by the new multiplication
   // (or addition)
   division.replaceNodeByTree(multiplication);

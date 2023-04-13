@@ -105,44 +105,43 @@ IntegerHandler IntegerHandler::Allocate(size_t size, WorkingBuffer *buffer) {
   }
 }
 
-EditionReference IntegerHandler::pushOnEditionPool() {
+Node IntegerHandler::pushOnEditionPool() {
+  EditionPool *editionPool = EditionPool::sharedEditionPool();
   if (isZero()) {
-    return EditionReference::Push<BlockType::Zero>();
+    return editionPool->push<BlockType::Zero>();
   }
   if (isOne()) {
-    return EditionReference::Push<BlockType::One>();
+    return editionPool->push<BlockType::One>();
   }
   if (isTwo()) {
-    return EditionReference::Push<BlockType::Two>();
+    return editionPool->push<BlockType::Two>();
   }
   if (isMinusOne()) {
-    return EditionReference::Push<BlockType::MinusOne>();
+    return editionPool->push<BlockType::MinusOne>();
   }
   if (isSignedType<int8_t>()) {
-    return EditionReference::Push<BlockType::IntegerShort>(
+    return editionPool->push<BlockType::IntegerShort>(
         static_cast<int8_t>(*this));
   }
-  EditionPool *pool = EditionPool::sharedEditionPool();
   TypeBlock typeBlock(sign() == NonStrictSign::Negative
                           ? BlockType::IntegerNegBig
                           : BlockType::IntegerPosBig);
-  EditionReference reference =
-      EditionReference(Node(pool->pushBlock(typeBlock)));
-  pool->pushBlock(m_numberOfDigits);
+  Node node = Node(editionPool->pushBlock(typeBlock));
+  editionPool->pushBlock(m_numberOfDigits);
   pushDigitsOnEditionPool();
-  pool->pushBlock(m_numberOfDigits);
-  pool->pushBlock(typeBlock);
+  editionPool->pushBlock(m_numberOfDigits);
+  editionPool->pushBlock(typeBlock);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "PushInteger", reference.block(), static_cast<Node>(reference).treeSize());
+  Log(LoggerType::Edition, "PushInteger", node.block(), node.treeSize());
 #endif
-  return reference;
+  return node;
 }
 
 void IntegerHandler::pushDigitsOnEditionPool() {
-  EditionPool *pool = EditionPool::sharedEditionPool();
+  EditionPool *editionPool = EditionPool::sharedEditionPool();
   assert(m_numberOfDigits <= k_maxNumberOfDigits);
   for (size_t i = 0; i < m_numberOfDigits; i++) {
-    pool->pushBlock(ValueBlock(digit(i)));
+    editionPool->pushBlock(ValueBlock(digit(i)));
   }
 }
 
@@ -279,14 +278,14 @@ int8_t IntegerHandler::Ucmp(const IntegerHandler &a, const IntegerHandler &b) {
   return 0;
 }
 
-EditionReference IntegerHandler::Addition(const IntegerHandler &a,
-                                          const IntegerHandler &b) {
+Node IntegerHandler::Addition(const IntegerHandler &a,
+                              const IntegerHandler &b) {
   WorkingBuffer workingBuffer;
   return Sum(a, b, false, &workingBuffer).pushOnEditionPool();
 }
 
-EditionReference IntegerHandler::Subtraction(const IntegerHandler &a,
-                                             const IntegerHandler &b) {
+Node IntegerHandler::Subtraction(const IntegerHandler &a,
+                                 const IntegerHandler &b) {
   WorkingBuffer workingBuffer;
   return Sum(a, b, true, &workingBuffer).pushOnEditionPool();
 }
@@ -358,8 +357,8 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler &a,
   return sum;
 }
 
-EditionReference IntegerHandler::Multiplication(const IntegerHandler &a,
-                                                const IntegerHandler &b) {
+Node IntegerHandler::Multiplication(const IntegerHandler &a,
+                                    const IntegerHandler &b) {
   WorkingBuffer workingBuffer;
   return Mult(a, b, &workingBuffer).pushOnEditionPool();
 }
@@ -424,7 +423,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler &a,
   return mult;
 }
 
-std::pair<EditionReference, EditionReference> IntegerHandler::Division(
+std::pair<Node, Node> IntegerHandler::Division(
     const IntegerHandler &numerator, const IntegerHandler &denominator) {
   WorkingBuffer workingBuffer;
   auto [quotient, remainder] = Udiv(numerator, denominator, &workingBuffer);
@@ -441,8 +440,8 @@ std::pair<EditionReference, EditionReference> IntegerHandler::Division(
    * override the other one. */
   assert(quotient.usesImmediateDigit() || remainder.usesImmediateDigit() ||
          quotient.digits() < remainder.digits());
-  EditionReference q = quotient.pushOnEditionPool();
-  EditionReference r = remainder.pushOnEditionPool();
+  Node q = quotient.pushOnEditionPool();
+  Node r = remainder.pushOnEditionPool();
   return std::make_pair(q, r);
 }
 
@@ -579,8 +578,7 @@ IntegerHandler IntegerHandler::multiplyByPowerOfBase(
   return mult;
 }
 
-EditionReference IntegerHandler::Power(const IntegerHandler &i,
-                                       const IntegerHandler &j) {
+Node IntegerHandler::Power(const IntegerHandler &i, const IntegerHandler &j) {
   assert(j.sign() == NonStrictSign::Positive);
   if (j.isZero()) {
     // TODO : handle 0^0.
@@ -613,7 +611,7 @@ EditionReference IntegerHandler::Power(const IntegerHandler &i,
   return Mult(i1, i2, &workingBuffer).pushOnEditionPool();
 }
 
-EditionReference IntegerHandler::Factorial(const IntegerHandler &i) {
+Node IntegerHandler::Factorial(const IntegerHandler &i) {
   assert(i.sign() == NonStrictSign::Positive);
   IntegerHandler j(2);
   IntegerHandler result(1);

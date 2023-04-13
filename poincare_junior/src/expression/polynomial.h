@@ -41,7 +41,7 @@ class Polynomial final {
   static uint8_t Degree(const Node polynomial) {
     return ExponentAtIndex(polynomial, 0);
   }
-  static EditionReference LeadingCoefficient(EditionReference polynomial) {
+  static Node LeadingCoefficient(Node polynomial) {
     assert(NumberOfTerms(polynomial) > 0);
     return polynomial.childAtIndex(1);
   }
@@ -49,7 +49,7 @@ class Polynomial final {
     assert(polynomial.type() == BlockType::Polynomial);
     return polynomial.numberOfChildren() - 1;
   }
-  static EditionReference Variable(const Node polynomial) {
+  static Node Variable(const Node polynomial) {
     assert(polynomial.type() == BlockType::Polynomial);
     return polynomial.childAtIndex(0);
   }
@@ -101,10 +101,11 @@ class Polynomial final {
 
 class PolynomialParser final {
  public:
-  static EditionReference GetVariables(const Node expression);
+  static Node GetVariables(const Node expression);
   static EditionReference RecursivelyParse(EditionReference expression,
                                            EditionReference variables,
                                            size_t variableIndex = 0);
+
 
  private:
   static EditionReference Parse(EditionReference expression,

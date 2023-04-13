@@ -24,8 +24,8 @@ class Simplification {
                                   NumberOperation operation);
   static EditionReference ProjectionReduction(
       EditionReference reference,
-      EditionReference (*PushProjectedEExpression)(),
-      EditionReference (*PushInverse)());
+      Node (*PushProjectedEExpression)(),
+      Node (*PushInverse)());
 };
 
 }  // namespace PoincareJ

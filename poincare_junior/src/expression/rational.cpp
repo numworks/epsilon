@@ -90,32 +90,30 @@ IntegerHandler Rational::Denominator(const Node node) {
   }
 }
 
-EditionReference Rational::Push(IntegerHandler numerator,
-                                IntegerHandler denominator) {
+Node Rational::Push(IntegerHandler numerator, IntegerHandler denominator) {
   assert(!denominator.isZero());
   if (denominator.isOne()) {
     return numerator.pushOnEditionPool();
   }
+  EditionPool *pool = EditionPool::sharedEditionPool();
   if (numerator.isOne() && denominator.isTwo()) {
-    return EditionReference::Push<BlockType::Half>();
+    return pool->push<BlockType::Half>();
   }
   if (numerator.isSignedType<int8_t>() &&
       denominator.isUnsignedType<uint8_t>()) {
-    return EditionReference::Push<BlockType::RationalShort>(
+    return pool->push<BlockType::RationalShort>(
         static_cast<int8_t>(numerator), static_cast<uint8_t>(denominator));
   }
-  EditionPool *pool = EditionPool::sharedEditionPool();
   TypeBlock typeBlock(numerator.sign() == NonStrictSign::Negative
                           ? BlockType::RationalNegBig
                           : BlockType::RationalPosBig);
-  EditionReference reference =
-      EditionReference(Node(pool->pushBlock(typeBlock)));
+  Node node(pool->pushBlock(typeBlock));
   uint8_t numberOfDigitsOfNumerator = numerator.numberOfDigits();
   uint8_t numberOfDigitsOfDenominator = numerator.numberOfDigits();
   if (numberOfDigitsOfNumerator > UINT8_MAX - numberOfDigitsOfDenominator) {
     // TODO: set error type to be "Unrepresentable rational"
     ExceptionCheckpoint::Raise();
-    return EditionReference();
+    return Node();
   }
   pool->pushBlock(ValueBlock(numberOfDigitsOfNumerator));
   pool->pushBlock(ValueBlock(numberOfDigitsOfDenominator));
@@ -125,9 +123,9 @@ EditionReference Rational::Push(IntegerHandler numerator,
       ValueBlock(numberOfDigitsOfNumerator + numberOfDigitsOfDenominator));
   pool->pushBlock(typeBlock);
 #if POINCARE_POOL_VISUALIZATION
-  Log(LoggerType::Edition, "PushRational", reference.block(), static_cast<Node>(reference).treeSize());
+  Log(LoggerType::Edition, "PushRational", node.block(), node.treeSize());
 #endif
-  return reference;
+  return node;
 }
 
 void Rational::SetSign(EditionReference reference, NonStrictSign sign) {
@@ -137,7 +135,7 @@ void Rational::SetSign(EditionReference reference, NonStrictSign sign) {
   reference.replaceNodeByNode(Push(numerator, denominator));
 }
 
-EditionReference Rational::Addition(const Node i, const Node j) {
+Node Rational::Addition(const Node i, const Node j) {
   // a/b + c/d
   EditionReference ad =
       IntegerHandler::Multiplication(Numerator(i), Denominator(j));
@@ -149,32 +147,32 @@ EditionReference Rational::Addition(const Node i, const Node j) {
   cb.removeTree();
   EditionReference newDenominator =
       IntegerHandler::Multiplication(Denominator(i), Denominator(j));
-  EditionReference result = Rational::Push(newNumerator, newDenominator);
+  Node result = Rational::Push(newNumerator, newDenominator);
   newNumerator.removeTree();
   newDenominator.removeTree();
   return result;
 }
 
-EditionReference Rational::Multiplication(const Node i, const Node j) {
+Node Rational::Multiplication(const Node i, const Node j) {
   EditionReference newNumerator =
       IntegerHandler::Multiplication(Numerator(i), Numerator(j));
   EditionReference newDenominator =
       IntegerHandler::Multiplication(Denominator(i), Denominator(j));
-  EditionReference result = Rational::Push(newNumerator, newDenominator);
+  Node result = Rational::Push(newNumerator, newDenominator);
   newNumerator.removeTree();
   newDenominator.removeTree();
   return result;
 }
 
-EditionReference Rational::IntegerPower(const Node i, const Node j) {
+Node Rational::IntegerPower(const Node i, const Node j) {
   assert(!(Number::IsZero(i) && Sign(j) == NonStrictSign::Negative));
   IntegerHandler absJ = Integer::Handler(j);
   absJ.setSign(NonStrictSign::Positive);
   EditionReference newNumerator = IntegerHandler::Power(Numerator(i), absJ);
   EditionReference newDenominator = IntegerHandler::Power(Denominator(i), absJ);
-  EditionReference result = Sign(j) == NonStrictSign::Negative
-                                ? Rational::Push(newDenominator, newNumerator)
-                                : Rational::Push(newNumerator, newDenominator);
+  Node result = Sign(j) == NonStrictSign::Negative
+                    ? Rational::Push(newDenominator, newNumerator)
+                    : Rational::Push(newNumerator, newDenominator);
   newNumerator.removeTree();
   newDenominator.removeTree();
   return result;

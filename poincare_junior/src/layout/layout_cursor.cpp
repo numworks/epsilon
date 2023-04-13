@@ -181,9 +181,10 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(
 #else
   int leftParenthesisIndex = 0;
 #endif
+  EditionPool *editionPool = EditionPool::sharedEditionPool();
   EditionReference parenthesis =
-      EditionReference::Push<BlockType::ParenthesisLayout>();
-  EditionReference tempRack = EditionReference::Push<BlockType::RackLayout>(0);
+      editionPool->push<BlockType::ParenthesisLayout>();
+  EditionReference tempRack = editionPool->push<BlockType::RackLayout>(0);
   int i = index;
   while (i >= leftParenthesisIndex) {
     EditionReference child = NAry::DetachChildAtIndex(rack, i);
@@ -381,9 +382,10 @@ void LayoutBufferCursor::EditionPoolCursor::addEmptyExponentialLayout(
   assert(data == nullptr);
   // TODO : Avoid the RackLayout inside a RackLayout
   // insertLayout(RackL("e"_l,KVertOffL(""_l)), false, false);
+  EditionPool *editionPool = EditionPool::sharedEditionPool();
   EditionReference ref = P_RACKL(
-      (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('e')),
-      (EditionReference::Push<BlockType::VerticalOffsetLayout>(), P_RACKL()));
+      (editionPool->push<BlockType::CodePointLayout, CodePoint>('e')),
+      (editionPool->push<BlockType::VerticalOffsetLayout>(), P_RACKL()));
   InsertLayoutContext insertLayoutContext{ref, false, false};
   insertLayout(context, &insertLayoutContext);
 }
@@ -412,14 +414,15 @@ void LayoutBufferCursor::addEmptySquarePowerLayout(Context *context) {
 void LayoutBufferCursor::EditionPoolCursor::addEmptyTenPowerLayout(
     Context *context, const void *data) {
   assert(data == nullptr);
+  EditionPool *editionPool = EditionPool::sharedEditionPool();
   // TODO : Avoid the RackLayout inside a RackLayout
   // insertLayout(RackL("10"_l,KVertOffL(""_l)), false, false);
   /* TODO : P_RACKL gets confused with the comma inside the template, so we have
    *        to surround CodePointLayout pushes with () */
-  EditionReference ref = P_RACKL(
-      (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('1')),
-      (EditionReference::Push<BlockType::CodePointLayout, CodePoint>('0')),
-      P_VERTOFFL(P_RACKL()));
+  EditionReference ref =
+      P_RACKL((editionPool->push<BlockType::CodePointLayout, CodePoint>('1')),
+              (editionPool->push<BlockType::CodePointLayout, CodePoint>('0')),
+              P_VERTOFFL(P_RACKL()));
   InsertLayoutContext insertLayoutContext{ref, false, false};
   insertLayout(context, &insertLayoutContext);
 }
@@ -555,8 +558,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertText(Context *context,
     }
 #else
     EditionReference newChild =
-        EditionReference::Push<BlockType::CodePointLayout, CodePoint>(
-            codePoint);
+        EditionPool::sharedEditionPool()
+            ->push<BlockType::CodePointLayout, CodePoint>(codePoint);
 #endif
     int dummy = currentLayout.numberOfChildren();
     currentLayout =
@@ -623,7 +626,7 @@ void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
     assert(m_cursorReference.parent().isUninitialized() ||
            !Layout::IsHorizontal(m_cursorReference.parent()));
     EditionReference emptyRack =
-        EditionReference::Push<BlockType::RackLayout>(0);
+        EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0);
     m_cursorReference.replaceTreeByTree(emptyRack);
   }
   m_position = selectionLeftBound;
@@ -1352,7 +1355,8 @@ bool LayoutBufferCursor::execute(Action action, Context *context,
             static_cast<ExecutionContext *>(context);
         LayoutBufferCursor *bufferCursor = executionContext->m_cursor;
         // Clone layoutBuffer into the EditionPool
-        EditionReference::Clone(executionContext->m_cursor->rootNode());
+        EditionPool::sharedEditionPool()->clone(
+            executionContext->m_cursor->rootNode());
         // Create a temporary cursor
         EditionPoolCursor editionCursor =
             bufferCursor->createEditionPoolCursor();

@@ -124,7 +124,7 @@ EditionReference RackLayout::RackParent(EditionReference reference,
   EditionReference parent = reference.parent();
   if (parent.isUninitialized() ||
       !Layout::IsHorizontal(static_cast<Node>(parent))) {
-    parent = EditionReference::Push<BlockType::RackLayout>(1);
+    parent = EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(1);
     reference.insertNodeBeforeNode(parent);
   } else {
     // TODO : This is not supposed to happen with cursor layouts.

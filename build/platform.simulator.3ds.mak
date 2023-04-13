@@ -1,5 +1,7 @@
 TOOLCHAIN = devkitarm
 EXE = elf
 
+EPSILON_TELEMETRY ?= 0
+
 HANDY_TARGETS_EXTENSIONS = 3dsx cia
 

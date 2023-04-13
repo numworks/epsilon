@@ -19,6 +19,10 @@ void Ion::Timing::msleep(uint32_t ms) {
     svcSleepThread((s64) ms * 1000);
 }
 
+uint64_t Ion::Timing::millis() {
+    return svcGetSystemTick() / (1000 * 1000);
+}
+
 int main(int argc, char * argv[]) {
   Ion::Simulator::Main::init();
 

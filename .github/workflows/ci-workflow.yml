@@ -8,30 +8,32 @@ on:
       triggerIos:
         description: 'Run iOS tests'
         required: true
-        default: 'no'
+        default: 'yes'
       triggerMacos:
         description: 'Run macOS tests'
         required: true
-        default: 'no'
+        default: 'yes'
       trigger3DS:
         description: 'Run 3DS tests'
         required: true
-        default: 'no'
+        default: 'yes'
 jobs:
   nintendo_3ds:
-    if: github.event.inputs.trigger3DS == 'yes'
+    if: github.event.inputs.trigger3DS == 'yes' || github.event.inputs.trigger3DS == ''
     runs-on: ubuntu-latest
+    container: devkitpro/devkitarm:latest
     steps:
-      - run: wget https://github.com/devkitPro/pacman/releases/download/v1.0.2/devkitpro-pacman.amd64.deb -O /tmp/devkitpro-pacman.deb
-      - run: yes | sudo dpkg -i /tmp/devkitpro-pacman.deb
-      - run: yes | sudo dkp-pacman -Syu --needed devkitARM 3dstools libctru
-      - run: echo ::set-env name=DEVKITPRO::/opt/devkitpro
-      - run: echo ::set-env name=DEVKITARM::/opt/devkitpro/devkitARM
-      - run: echo ::set-env name=PATH::$DEVKITPRO/tools/bin:$DEVKITARM/bin:$PATH
-
       - uses: actions/checkout@v1
         with:
           submodules: true
+      - run: sudo apt-get update
+      - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config -y
+      - run: yes | sudo dkp-pacman -S --needed devkitARM 3dstools libctru
+      - run: wget https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.18.3/makerom-v0.18.3-ubuntu_x86_64.zip
+      - run: unzip makerom-v0.18.3-ubuntu_x86_64.zip
+      - run: rm makerom-v0.18.3-ubuntu_x86_64.zip
+      - run: chmod +x ./makerom
+      - run: echo "PATH=.:$PATH" >> $GITHUB_ENV
       - run: make -j2 PLATFORM=simulator TARGET=3ds
       - run: make -j2 PLATFORM=simulator TARGET=3ds epsilon.cia
       - uses: actions/upload-artifact@master
@@ -278,7 +280,7 @@ jobs:
           name: epsilon-linux.bin
           path: output/release/simulator/linux/epsilon.bin
   macos:
-    if: github.event.inputs.triggerMacos == 'yes'
+    if: github.event.inputs.triggerMacos == 'yes' || github.event.inputs.triggerMacos == ''
     runs-on: macOS-latest
     steps:
       - run: brew install numworks/tap/epsilon-sdk
@@ -293,7 +295,7 @@ jobs:
           name: epsilon-macos.zip
           path: output/release/simulator/macos/epsilon.app
   ios:
-    if: github.event.inputs.triggerIos == 'yes'
+    if: github.event.inputs.triggerIos == 'yes' || github.event.inputs.triggerIos == ''
     runs-on: macOS-latest
     steps:
       - run: brew install numworks/tap/epsilon-sdk

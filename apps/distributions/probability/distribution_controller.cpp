@@ -81,8 +81,8 @@ void DistributionController::willDisplayCellForIndex(HighlightCell *cell,
 }
 
 KDCoordinate DistributionController::defaultRowHeight() {
-  DistributionCell cell;
-  return heightForCellAtIndexWithWidthInit(&cell, 0);
+  DistributionCell tempCell;
+  return heightForCellAtIndexWithWidthInit(&tempCell, 0);
 }
 
 void DistributionController::setDistributionAccordingToIndex(int index) {

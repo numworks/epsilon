@@ -72,13 +72,13 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int index) {
 }
 
 KDCoordinate ListViewDataSource::heightForCellAtIndexWithWidthInit(
-    HighlightCell* cell, int index) {
+    HighlightCell* tempCell, int index) {
   // Warning: this copy the size of a random cell of the table
-  if (!cell->isVisible()) {
+  if (!tempCell->isVisible()) {
     return 0;
   }
-  cell->setSize(reusableCell(0, typeAtIndex(index))->bounds().size());
-  return heightForCellAtIndex(cell, index);
+  tempCell->setSize(reusableCell(0, typeAtIndex(index))->bounds().size());
+  return heightForCellAtIndex(tempCell, index);
 }
 
 KDCoordinate ListViewDataSource::heightForCellAtIndex(HighlightCell* cell,

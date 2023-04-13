@@ -2,7 +2,7 @@
 #define APPS_BATTERY_VIEW_H
 
 #include <escher/metric.h>
-#include <escher/transparent_view.h>
+#include <escher/view.h>
 #include <ion.h>
 
 class BatteryView : public Escher::View {

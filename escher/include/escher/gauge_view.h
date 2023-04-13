@@ -2,7 +2,7 @@
 #define ESCHER_GAUGE_VIEW_H
 
 #include <escher/cell_widget.h>
-#include <escher/transparent_view.h>
+#include <escher/view.h>
 
 namespace Escher {
 

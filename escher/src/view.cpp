@@ -1,4 +1,3 @@
-#include <escher/transparent_view.h>
 #include <escher/view.h>
 #include <kandinsky/ion_context.h>
 

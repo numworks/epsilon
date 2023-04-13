@@ -1,7 +1,7 @@
 #ifndef ESCHER_KEY_VIEW_H
 #define ESCHER_KEY_VIEW_H
 
-#include <escher/transparent_view.h>
+#include <escher/arbitrary_shaped_view.h>
 
 namespace Escher {
 

@@ -2,7 +2,7 @@
 #define ESCHER_TEXT_CURSOR_VIEW_H
 
 #include <escher/responder.h>
-#include <escher/transparent_view.h>
+#include <escher/view.h>
 #include <omg/global_box.h>
 
 namespace Escher {

@@ -12,7 +12,11 @@ ButtonState::ButtonState(Responder* parentResponder, I18n::Message textBody,
                          textColor),
       m_stateView(stateView) {}
 
-void ButtonState::setState(bool state) { m_stateView->setState(state); }
+void ButtonState::setState(bool state) {
+  m_stateView->setState(state);
+  // Some stateViews like dot and unequal are transparent
+  markRectAsDirty(relativeChildFrame(m_stateView));
+}
 
 View* ButtonState::subviewAtIndex(int index) {
   assert(index >= 0 && index < 2);

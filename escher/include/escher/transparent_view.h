@@ -18,7 +18,7 @@ class ArbitraryShapedView : public View {
   int numberOfSubviews() const final override { return 0; }
 };
 
-class TransparentView : public View {
+class TransparentView : public ArbitraryShapedView {
  public:
   TransparentView(View* superview) : m_superview(superview) {
     assert(superview);
@@ -30,7 +30,6 @@ class TransparentView : public View {
   void markRectAsDirty(KDRect rect);
 
  private:
-  int numberOfSubviews() const final override { return 0; }
   View* m_superview;
 };
 

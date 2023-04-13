@@ -13,7 +13,7 @@ class AbstractEvenOddEditableTextCell : public EvenOddCell, public Responder {
       : EvenOddCell(), Responder(parentResponder) {}
   virtual AbstractEditableTextCell* editableTextCell() = 0;
   Responder* responder() override { return this; }
-  const char* text() const override { return constEditableTextCell()->text(); }
+  const char* text() const override { return editableTextCell()->text(); }
   void didBecomeFirstResponder() override;
   void setFont(KDFont::Size font) {
     editableTextCell()->textField()->setFont(font);
@@ -21,7 +21,7 @@ class AbstractEvenOddEditableTextCell : public EvenOddCell, public Responder {
 
  private:
   constexpr static KDCoordinate k_rightMargin = Escher::Metric::SmallCellMargin;
-  const AbstractEditableTextCell* constEditableTextCell() const {
+  const AbstractEditableTextCell* editableTextCell() const {
     return const_cast<AbstractEvenOddEditableTextCell*>(this)
         ->editableTextCell();
   }

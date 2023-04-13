@@ -87,15 +87,12 @@ static int normalizationSignificantBits(float xMin, float xMax, float yMin,
   if (loss > 0.f) {
     loss = 0.f;
   }
-  return std::floor(loss + 23.f - 2.f);
+  return std::max(static_cast<int>(std::floor(loss + 23.f - 2.f)), 0);
 }
 
 bool Range2D::ratioIs(float r) const {
   int significantBits =
       normalizationSignificantBits(xMin(), xMax(), yMin(), yMax());
-  if (significantBits <= 0) {
-    return false;
-  }
   float thisRatio = ratio();
   /* The last N (= 23 - significantBits) bits of "ratio" mantissa have become
    * insignificant. "tolerance" is the difference between ratio with those N

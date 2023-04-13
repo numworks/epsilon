@@ -250,9 +250,7 @@ void StoreController::resetMemoizedFormulasForSeries(int series) {
 }
 
 void StoreController::loadMemoizedFormulasFromSnapshot() {
-  for (int i = 0; i < DoublePairStore::k_numberOfSeries *
-                          DoublePairStore::k_numberOfColumnsPerSeries;
-       i++) {
+  for (int i = 0; i < StoreApp::Snapshot::k_numberOfMemoizedFormulas; i++) {
     if (m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(i)) == 0) {
       /* The series could have been emptied outside of the app. If it's the
        * case, reset the memoized formula. */

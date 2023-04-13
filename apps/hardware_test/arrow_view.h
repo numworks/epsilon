@@ -1,7 +1,7 @@
 #ifndef HARDWARE_TEST_ARROW_VIEW_H
 #define HARDWARE_TEST_ARROW_VIEW_H
 
-#include <escher/transparent_view.h>
+#include <escher/arbitrary_shaped_view.h>
 #include <ion.h>
 #include <omg/directions.h>
 

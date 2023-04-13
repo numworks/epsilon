@@ -1,7 +1,7 @@
 #ifndef SHARED_OK_VIEW_H
 #define SHARED_OK_VIEW_H
 
-#include <escher/transparent_view.h>
+#include <escher/arbitrary_shaped_view.h>
 
 namespace Shared {
 

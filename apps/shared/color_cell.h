@@ -1,9 +1,9 @@
 #ifndef SHARED_COLOR_CELL_H
 #define SHARED_COLOR_CELL_H
 
+#include <escher/arbitrary_shaped_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/transparent_view.h>
 
 namespace Shared {
 

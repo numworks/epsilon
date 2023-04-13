@@ -1,8 +1,8 @@
 #ifndef ESCHER_CHEVRON_VIEW_H
 #define ESCHER_CHEVRON_VIEW_H
 
+#include <escher/arbitrary_shaped_view.h>
 #include <escher/cell_widget.h>
-#include <escher/transparent_view.h>
 
 namespace Escher {
 

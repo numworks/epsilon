@@ -181,7 +181,7 @@ double PowerNode::degreeForSortingAddition(bool symbolsOnly) const {
 // Private
 
 template <typename T>
-Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(
+std::complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(
     const std::complex<T> c, T p, T q) {
   // Assert p and q are in fact integers
   assert(std::round(p) == p);
@@ -199,21 +199,21 @@ Complex<T> PowerNode::computeNotPrincipalRealRootOfRationalPow(
     std::complex<T> absc = c;
     absc.real(std::fabs(absc.real()));
     // compute |c|^(p/q) which is a real
-    Complex<T> absCPowD = PowerNode::computeOnComplex<T>(
+    std::complex<T> absCPowD = PowerNode::computeOnComplex<T>(
         absc, std::complex<T>(p / q), Preferences::ComplexFormat::Real);
     /* As q is odd, c^(p/q) = (sign(c)^(1/q))^p * |c|^(p/q)
      *                      = sign(c)^p         * |c|^(p/q)
      *                      = -|c|^(p/q) iff c < 0 and p odd */
     return c.real() < static_cast<T>(0.0) &&
                    std::pow(static_cast<T>(-1.0), p) < static_cast<T>(0.0)
-               ? Complex<T>::Builder(-absCPowD.complexAtIndex(0))
+               ? -absCPowD
                : absCPowD;
   }
-  return Complex<T>::Undefined();
+  return complexNAN<T>();
 }
 
 template <typename T>
-Complex<T> PowerNode::computeOnComplex(
+std::complex<T> PowerNode::computeOnComplex(
     const std::complex<T> c, const std::complex<T> d,
     Preferences::ComplexFormat complexFormat) {
   if (c.imag() == static_cast<T>(0.0) && c.real() < static_cast<T>(0.0) &&
@@ -221,7 +221,7 @@ Complex<T> PowerNode::computeOnComplex(
        (d.real() == -INFINITY && c.real() >= static_cast<T>(-1.0)))) {
     /* x^inf with x <= -1 and x^(-inf) with -1 <= x <= 0 are approximated to
      * complex infinity, which we don't handle. We decide to return undef. */
-    return Complex<T>::Undefined();
+    return complexNAN<T>();
   }
   std::complex<T> result;
   if (c.imag() == static_cast<T>(0.0) && d.imag() == static_cast<T>(0.0) &&
@@ -232,7 +232,7 @@ Complex<T> PowerNode::computeOnComplex(
         std::fabs(d.real()) == INFINITY) {
       /* On simulator, std::pow(1,Inf) is approximated to 1, which is not the
        * behavior we want. */
-      return Complex<T>::RealUndefined();
+      return complexRealNAN<T>();
     }
 #endif
     /* pow: (R+, R) -> R+ (2^1.3 ~ 2.46)
@@ -267,13 +267,12 @@ Complex<T> PowerNode::computeOnComplex(
      * Neglecting it could cause visual artefacts when plotting x^x with a
      * cartesian complex format. The issue is still visible when x is so small
      * that result is 0, which is plotted even though it is "complex". */
-    return Complex<T>::Builder(result);
+    return result;
   }
   std::complex<T> precision =
       d.real() < static_cast<T>(0.0) ? std::pow(c, static_cast<T>(-1.0)) : c;
-  return Complex<T>::Builder(
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
-          result, precision, d, false));
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
+      result, precision, d, false);
 }
 
 // Layout
@@ -447,7 +446,8 @@ Evaluation<T> PowerNode::templatedApproximate(
     if (std::isnan(p) || std::isnan(q)) {
       goto defaultApproximation;
     }
-    Complex<T> result = computeNotPrincipalRealRootOfRationalPow(c, p, q);
+    Complex<T> result =
+        Complex<T>::Builder(computeNotPrincipalRealRootOfRationalPow(c, p, q));
     if (!result.isUndefined()) {
       return std::move(result);
     }
@@ -1802,14 +1802,15 @@ bool Power::RationalExponentShouldNotBeReduced(const Rational &b,
          powerNumerator > FLT_MAX || powerDenominator > FLT_MAX;
 }
 
-template Complex<float> PowerNode::computeOnComplex<float>(
+template std::complex<float> PowerNode::computeOnComplex<float>(
     std::complex<float>, std::complex<float>, Preferences::ComplexFormat);
-template Complex<double> PowerNode::computeOnComplex<double>(
+template std::complex<double> PowerNode::computeOnComplex<double>(
     std::complex<double>, std::complex<double>, Preferences::ComplexFormat);
 
-template Complex<double> PowerNode::computeNotPrincipalRealRootOfRationalPow<
-    double>(std::complex<double>, double, double);
-template Complex<float>
+template std::complex<double>
+PowerNode::computeNotPrincipalRealRootOfRationalPow<double>(
+    std::complex<double>, double, double);
+template std::complex<float>
 PowerNode::computeNotPrincipalRealRootOfRationalPow<float>(std::complex<float>,
                                                            float, float);
 

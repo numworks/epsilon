@@ -37,12 +37,12 @@ int SquareRootNode::serialize(char *buffer, int bufferSize,
 }
 
 template <typename T>
-Complex<T> SquareRootNode::computeOnComplex(const std::complex<T> c,
-                                            Preferences::ComplexFormat,
-                                            Preferences::AngleUnit angleUnit) {
+std::complex<T> SquareRootNode::computeOnComplex(
+    const std::complex<T> c, Preferences::ComplexFormat,
+    Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::sqrt(c);
-  return Complex<T>::Builder(
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c));
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result,
+                                                                      c);
 }
 
 Expression SquareRootNode::shallowReduce(

@@ -49,9 +49,9 @@ class FactorialNode final : public ExpressionNode {
 
   // Evaluation
   template <typename T>
-  static Complex<T> computeOnComplex(const std::complex<T> c,
-                                     Preferences::ComplexFormat complexFormat,
-                                     Preferences::AngleUnit angleUnit);
+  static std::complex<T> computeOnComplex(
+      const std::complex<T> c, Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit);
   Evaluation<float> approximate(
       SinglePrecision p,
       const ApproximationContext& approximationContext) const override {

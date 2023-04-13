@@ -76,7 +76,7 @@ Evaluation<T> RandintNode::templateApproximate(
       this, approximationContext,
       [](const std::complex<T>* c, int numberOfComplexes,
          Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void* ctx) {
+         Preferences::AngleUnit angleUnit, void* ctx) -> std::complex<T> {
         T a;
         T b;
         if (numberOfComplexes == 1) {
@@ -96,15 +96,15 @@ Evaluation<T> RandintNode::templateApproximate(
         if (std::isnan(a) || std::isnan(b) || std::isinf(a) || std::isinf(b) ||
             a != static_cast<double_native_int_t>(a) ||
             b != static_cast<double_native_int_t>(b)) {
-          return Complex<T>::RealUndefined();
+          return complexRealNAN<T>();
         }
         Integer integerResult =
             Integer::RandomInt(static_cast<double_native_int_t>(a),
                                static_cast<double_native_int_t>(b));
         if (integerResult.isOverflow()) {
-          return Complex<T>::RealUndefined();
+          return complexRealNAN<T>();
         }
-        return Complex<T>::Builder(integerResult.approximate<T>());
+        return integerResult.approximate<T>();
       });
 }
 

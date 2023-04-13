@@ -31,10 +31,10 @@ class AbsoluteValueNode final : public ExpressionNode {
 
   // Approximation
   template <typename T>
-  static Complex<T> computeOnComplex(const std::complex<T> c,
-                                     Preferences::ComplexFormat complexFormat,
-                                     Preferences::AngleUnit angleUnit) {
-    return Complex<T>::Builder(std::abs(c));
+  static std::complex<T> computeOnComplex(
+      const std::complex<T> c, Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit) {
+    return std::abs(c);
   }
   Evaluation<float> approximate(
       SinglePrecision p,

@@ -60,6 +60,16 @@ class Complex final : public Evaluation<T> {
   }
 };
 
+template <typename T>
+std::complex<T> complexNAN() {
+  return std::complex<T>(NAN, NAN);
+}
+
+template <typename T>
+std::complex<T> complexRealNAN() {
+  return std::complex<T>(NAN, 0.0);
+}
+
 }  // namespace Poincare
 
 #endif

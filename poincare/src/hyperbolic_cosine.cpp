@@ -23,16 +23,15 @@ int HyperbolicCosineNode::serialize(
 }
 
 template <typename T>
-Complex<T> HyperbolicCosineNode::computeOnComplex(
+std::complex<T> HyperbolicCosineNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat,
     Preferences::AngleUnit angleUnit) {
   /* If c is real and large (over 100.0), the float evaluation of std::cosh
    * will return image = NaN when it should be 0.0. */
-  return Complex<T>::Builder(
-      ApproximationHelper::MakeResultRealIfInputIsReal<T>(
-          ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
-              std::cosh(c), c),
-          c));
+  return ApproximationHelper::MakeResultRealIfInputIsReal<T>(
+      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::cosh(c),
+                                                                   c),
+      c);
 }
 
 bool HyperbolicCosineNode::derivate(const ReductionContext& reductionContext,
@@ -57,9 +56,10 @@ Expression HyperbolicCosine::unaryFunctionDifferential(
   return HyperbolicSine::Builder(childAtIndex(0).clone());
 }
 
-template Complex<float> Poincare::HyperbolicCosineNode::computeOnComplex<float>(
-    std::complex<float>, Preferences::ComplexFormat, Preferences::AngleUnit);
-template Complex<double> Poincare::HyperbolicCosineNode::computeOnComplex<
+template std::complex<float> Poincare::HyperbolicCosineNode::computeOnComplex<
+    float>(std::complex<float>, Preferences::ComplexFormat,
+           Preferences::AngleUnit);
+template std::complex<double> Poincare::HyperbolicCosineNode::computeOnComplex<
     double>(std::complex<double>, Preferences::ComplexFormat complexFormat,
             Preferences::AngleUnit);
 

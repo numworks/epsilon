@@ -48,10 +48,10 @@ class RealPartNode final : public ExpressionNode {
   }
   // Evaluation
   template <typename T>
-  static Complex<T> computeOnComplex(const std::complex<T> c,
-                                     Preferences::ComplexFormat complexFormat,
-                                     Preferences::AngleUnit angleUnit) {
-    return Complex<T>::Builder(std::real(c));
+  static std::complex<T> computeOnComplex(
+      const std::complex<T> c, Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit) {
+    return std::real(c);
   }
   Evaluation<float> approximate(
       SinglePrecision p,

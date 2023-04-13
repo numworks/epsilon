@@ -15,16 +15,15 @@ int CosecantNode::numberOfChildren() const {
 }
 
 template <typename T>
-Complex<T> CosecantNode::computeOnComplex(
+std::complex<T> CosecantNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat complexFormat,
     Preferences::AngleUnit angleUnit) {
   std::complex<T> denominator =
-      SineNode::computeOnComplex<T>(c, complexFormat, angleUnit)
-          .complexAtIndex(0);
+      SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
   if (denominator == static_cast<T>(0.0)) {
-    return Complex<T>::Undefined();
+    return complexNAN<T>();
   }
-  return Complex<T>::Builder(std::complex<T>(1) / denominator);
+  return std::complex<T>(1) / denominator;
 }
 
 Layout CosecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,

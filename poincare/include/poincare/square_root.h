@@ -33,9 +33,9 @@ class SquareRootNode final : public ExpressionNode {
 #endif
 
   template <typename T>
-  static Complex<T> computeOnComplex(const std::complex<T> c,
-                                     Preferences::ComplexFormat complexFormat,
-                                     Preferences::AngleUnit angleUnit);
+  static std::complex<T> computeOnComplex(
+      const std::complex<T> c, Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit);
 
  private:
   // Layout

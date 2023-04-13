@@ -49,21 +49,21 @@ Expression FactorialNode::shallowReduce(
 }
 
 template <typename T>
-Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c,
-                                           Preferences::ComplexFormat,
-                                           Preferences::AngleUnit angleUnit) {
+std::complex<T> FactorialNode::computeOnComplex(
+    const std::complex<T> c, Preferences::ComplexFormat,
+    Preferences::AngleUnit angleUnit) {
   T n = c.real();
   if (c.imag() != 0 || std::isnan(n) || n != (int)n || n < 0) {
-    return Complex<T>::RealUndefined();
+    return complexRealNAN<T>();
   }
   T result = 1;
   for (int i = 1; i <= (int)n; i++) {
     result *= static_cast<T>(i);
     if (std::isinf(result)) {
-      return Complex<T>::Builder(result);
+      return result;
     }
   }
-  return Complex<T>::Builder(std::round(result));
+  return std::round(result);
 }
 
 Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,

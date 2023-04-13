@@ -35,12 +35,12 @@ class PowerNode final : public ExpressionNode {
                                 Expression coefficients[]) const override;
 
   template <typename T>
-  static Complex<T> computeNotPrincipalRealRootOfRationalPow(
+  static std::complex<T> computeNotPrincipalRealRootOfRationalPow(
       const std::complex<T> c, T p, T q);
   template <typename T>
-  static Complex<T> computeOnComplex(const std::complex<T> c,
-                                     const std::complex<T> d,
-                                     Preferences::ComplexFormat complexFormat);
+  static std::complex<T> computeOnComplex(
+      const std::complex<T> c, const std::complex<T> d,
+      Preferences::ComplexFormat complexFormat);
   template <typename T>
   static Evaluation<T> Compute(Evaluation<T> eval1, Evaluation<T> eval2,
                                Preferences::ComplexFormat complexFormat) {

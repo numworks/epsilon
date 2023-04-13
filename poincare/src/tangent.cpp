@@ -35,9 +35,9 @@ int TangentNode::serialize(char* buffer, int bufferSize,
 }
 
 template <typename T>
-Complex<T> TangentNode::computeOnComplex(const std::complex<T> c,
-                                         Preferences::ComplexFormat,
-                                         Preferences::AngleUnit angleUnit) {
+std::complex<T> TangentNode::computeOnComplex(
+    const std::complex<T> c, Preferences::ComplexFormat,
+    Preferences::AngleUnit angleUnit) {
   std::complex<T> angleInput = Trigonometry::ConvertToRadian(c, angleUnit);
   std::complex<T> res = std::tan(angleInput);
   /* tan should be undefined at (2n+1)*pi/2 for any integer n.
@@ -51,11 +51,10 @@ Complex<T> TangentNode::computeOnComplex(const std::complex<T> c,
    */
   std::complex<T> sin = std::sin(angleInput);
   if (sin == std::complex<T>(1) || sin == std::complex<T>(-1)) {
-    res = std::complex<T>(NAN, NAN);
+    res = complexNAN<T>();
   }
-  return Complex<T>::Builder(
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(res,
-                                                                   angleInput));
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
+      res, angleInput);
 }
 
 Expression TangentNode::shallowReduce(

@@ -135,7 +135,7 @@ Evaluation<T> DistributionDispatcherNode::templatedApproximate(
       this, approximationContext,
       [](const std::complex<T> *c, int numberOfComplexes,
          Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void *ctx) {
+         Preferences::AngleUnit angleUnit, void *ctx) -> std::complex<T> {
         const DistributionDispatcherNode *self =
             static_cast<DistributionDispatcherNode *>(ctx);
         int childIndex = 0;
@@ -155,8 +155,7 @@ Evaluation<T> DistributionDispatcherNode::templatedApproximate(
             DistributionMethod::Get(self->m_methodType);
         const Distribution *distribution =
             Distribution::Get(self->m_distributionType);
-        return Complex<T>::Builder(
-            function->EvaluateAtAbscissa(abscissa, distribution, parameters));
+        return function->EvaluateAtAbscissa(abscissa, distribution, parameters);
       },
       ApproximationHelper::UndefinedOnBooleans, true,
       static_cast<void *>(const_cast<DistributionDispatcherNode *>(this)));

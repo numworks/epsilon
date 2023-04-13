@@ -24,7 +24,7 @@ int HyperbolicArcSineNode::serialize(
 }
 
 template <typename T>
-Complex<T> HyperbolicArcSineNode::computeOnComplex(
+std::complex<T> HyperbolicArcSineNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat,
     Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::asinh(c);
@@ -36,14 +36,14 @@ Complex<T> HyperbolicArcSineNode::computeOnComplex(
   if (c.real() == 0 && c.imag() < 1) {
     result.real(-result.real());  // other side of the cut
   }
-  return Complex<T>::Builder(
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c));
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result,
+                                                                      c);
 }
 
-template Complex<float> Poincare::HyperbolicArcSineNode::computeOnComplex<
+template std::complex<float> Poincare::HyperbolicArcSineNode::computeOnComplex<
     float>(std::complex<float>, Preferences::ComplexFormat,
            Preferences::AngleUnit);
-template Complex<double> Poincare::HyperbolicArcSineNode::computeOnComplex<
+template std::complex<double> Poincare::HyperbolicArcSineNode::computeOnComplex<
     double>(std::complex<double>, Preferences::ComplexFormat complexFormat,
             Preferences::AngleUnit);
 

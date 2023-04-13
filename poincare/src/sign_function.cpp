@@ -49,19 +49,19 @@ bool SignFunctionNode::derivate(const ReductionContext& reductionContext,
 }
 
 template <typename T>
-Complex<T> SignFunctionNode::computeOnComplex(
+std::complex<T> SignFunctionNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat,
     Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0 || std::isnan(c.real())) {
-    return Complex<T>::RealUndefined();
+    return complexRealNAN<T>();
   }
   if (c.real() == 0) {
-    return Complex<T>::Builder(0.0);
+    return 0.0;
   }
   if (c.real() < 0) {
-    return Complex<T>::Builder(-1.0);
+    return -1.0;
   }
-  return Complex<T>::Builder(1.0);
+  return 1.0;
 }
 
 Expression SignFunction::shallowReduce(ReductionContext reductionContext) {

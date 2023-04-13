@@ -30,9 +30,9 @@ std::complex<T> MakeResultRealIfInputIsReal(std::complex<T> result,
 // Map on mutliple children
 template <typename T>
 using ComplexesCompute =
-    Complex<T> (*)(const std::complex<T>* c, int numberOfComplexes,
-                   Preferences::ComplexFormat complexFormat,
-                   Preferences::AngleUnit angleUnit, void* context);
+    std::complex<T> (*)(const std::complex<T>* c, int numberOfComplexes,
+                        Preferences::ComplexFormat complexFormat,
+                        Preferences::AngleUnit angleUnit, void* context);
 template <typename T>
 using BooleansCompute = Evaluation<T> (*)(const bool* b, int numberOfBooleans,
                                           void* context);
@@ -50,9 +50,9 @@ Evaluation<T> Map(const ExpressionNode* expression,
 
 // Map on one child
 template <typename T>
-using ComplexCompute = Complex<T> (*)(const std::complex<T> c,
-                                      Preferences::ComplexFormat complexFormat,
-                                      Preferences::AngleUnit angleUnit);
+using ComplexCompute = std::complex<T> (*)(
+    const std::complex<T> c, Preferences::ComplexFormat complexFormat,
+    Preferences::AngleUnit angleUnit);
 template <typename T>
 using BooleanCompute = Evaluation<T> (*)(const bool b);
 template <typename T>
@@ -69,8 +69,8 @@ Evaluation<T> MapOneChild(const ExpressionNode* expression,
 // Lambda computation function
 template <typename T>
 using ComplexAndComplexReduction =
-    Complex<T> (*)(const std::complex<T> c1, const std::complex<T> c2,
-                   Preferences::ComplexFormat complexFormat);
+    std::complex<T> (*)(const std::complex<T> c1, const std::complex<T> c2,
+                        Preferences::ComplexFormat complexFormat);
 template <typename T>
 using ComplexAndMatrixReduction =
     MatrixComplex<T> (*)(const std::complex<T> c, const MatrixComplex<T> m,

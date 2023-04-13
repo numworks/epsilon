@@ -32,9 +32,9 @@ class MultiplicationNode final : public NAryInfixExpressionNode {
 
   // Approximation
   template <typename T>
-  static Complex<T> computeOnComplex(const std::complex<T> c,
-                                     const std::complex<T> d,
-                                     Preferences::ComplexFormat complexFormat);
+  static std::complex<T> computeOnComplex(
+      const std::complex<T> c, const std::complex<T> d,
+      Preferences::ComplexFormat complexFormat);
   template <typename T>
   static MatrixComplex<T> computeOnComplexAndMatrix(
       const std::complex<T> c, const MatrixComplex<T> m,

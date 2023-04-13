@@ -52,9 +52,9 @@ Expression ArcCosineNode::unaryFunctionDifferential(
 }
 
 template <typename T>
-Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c,
-                                           Preferences::ComplexFormat,
-                                           Preferences::AngleUnit angleUnit) {
+std::complex<T> ArcCosineNode::computeOnComplex(
+    const std::complex<T> c, Preferences::ComplexFormat,
+    Preferences::AngleUnit angleUnit) {
   std::complex<T> result;
   if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
     /* acos: [-1;1] -> R
@@ -76,8 +76,7 @@ Complex<T> ArcCosineNode::computeOnComplex(const std::complex<T> c,
   }
   result =
       ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c);
-  return Complex<T>::Builder(
-      Trigonometry::ConvertRadianToAngleUnit(result, angleUnit));
+  return Trigonometry::ConvertRadianToAngleUnit(result, angleUnit);
 }
 
 bool ArcCosine::derivate(const ReductionContext& reductionContext,

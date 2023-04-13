@@ -21,9 +21,7 @@ using namespace Poincare;
 namespace Escher {
 
 LayoutField::ContentView::ContentView(KDGlyph::Format format)
-    : m_expressionView(&m_cursor, format),
-      m_cursorView(this),
-      m_isEditing(false) {
+    : m_expressionView(&m_cursor, format), m_isEditing(false) {
   clearLayout();
 }
 
@@ -97,7 +95,7 @@ void LayoutField::ContentView::copySelection(Context *context,
 
 View *LayoutField::ContentView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());
-  View *m_views[] = {&m_expressionView, &m_cursorView};
+  View *m_views[] = {&m_expressionView, TextCursorView::sharedTextCursor};
   return m_views[index];
 }
 
@@ -114,13 +112,14 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
      * scrolling to the beginning when switching to the history. This way,
      * when calling scrollToCursor after layoutCursorSubview, we don't lose
      * sight of the cursor. */
-    expressionView()->setChildFrame(
-        &m_cursorView, KDRect(cursorTopLeftPosition, KDSizeZero), force);
+    expressionView()->setChildFrame(TextCursorView::sharedTextCursor,
+                                    KDRect(cursorTopLeftPosition, KDSizeZero),
+                                    force);
     return;
   }
-  m_cursorView.willMove();
+  TextCursorView::sharedTextCursor->willMove();
   expressionView()->setChildFrame(
-      &m_cursorView,
+      TextCursorView::sharedTextCursor,
       KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth,
              m_cursor.cursorHeight(font())),
       force);

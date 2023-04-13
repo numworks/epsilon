@@ -14,8 +14,6 @@ class TransparentView : public View {
 
  protected:
   void markRectAsDirty(KDRect rect);
-
- private:
   View* m_superview;
 };
 

@@ -199,8 +199,9 @@ KDSize AbstractTextField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize stringSize = KDFont::Font(m_font)->stringSize(text());
   assert(stringSize.height() == KDFont::GlyphHeight(m_font));
   if (m_isEditing) {
-    return KDSize(stringSize.width() +
-                      m_cursorView.minimalSizeForOptimalDisplay().width(),
+    return KDSize(stringSize.width() + TextCursorView::sharedTextCursor
+                                           ->minimalSizeForOptimalDisplay()
+                                           .width(),
                   stringSize.height());
   }
   return stringSize;
@@ -302,7 +303,7 @@ size_t AbstractTextField::ContentView::deleteSelection() {
 
 void AbstractTextField::ContentView::layoutSubviews(bool force) {
   if (!m_isEditing) {
-    setChildFrame(&m_cursorView, KDRectZero, force);
+    setChildFrame(TextCursorView::sharedTextCursor, KDRectZero, force);
     return;
   }
   TextInput::ContentView::layoutSubviews(force);
@@ -314,7 +315,7 @@ KDRect AbstractTextField::ContentView::glyphFrameAtPosition(
   assert(position >= buffer);
   KDSize glyphSize = KDFont::GlyphSize(m_font);
   KDCoordinate cursorWidth =
-      m_cursorView.minimalSizeForOptimalDisplay().width();
+      TextCursorView::sharedTextCursor->minimalSizeForOptimalDisplay().width();
   KDCoordinate horizontalOffset =
       m_horizontalAlignment == 0.0f
           ? 0.0f

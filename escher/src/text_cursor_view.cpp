@@ -3,6 +3,8 @@
 
 namespace Escher {
 
+OMG::GlobalBox<TextCursorView> TextCursorView::sharedTextCursor;
+
 TextCursorView::~TextCursorView() { BlinkTimer::RegisterCursor(nullptr); }
 
 void TextCursorView::drawRect(KDContext *ctx, KDRect rect) const {
@@ -24,11 +26,14 @@ void TextCursorView::willMove() {
   // No need to mark rect as dirty since it will be moved
 }
 
-void TextCursorView::setBlinking(bool blinking) {
+void TextCursorView::setBlinking(bool blinking, View *superView) {
   if (blinking) {
+    assert(superView);
+    m_superview = superView;
     BlinkTimer::RegisterCursor(const_cast<TextCursorView *>(this));
   } else {
     BlinkTimer::RegisterCursor(nullptr);
+    m_superview = nullptr;
   }
 }
 

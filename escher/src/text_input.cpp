@@ -19,7 +19,7 @@ void TextInput::ContentView::setCursorLocation(const char* location) {
   const char* adjustedLocation =
       std::min(location, editedText() + editedTextLength());
   m_cursorLocation = adjustedLocation;
-  m_cursorView.willMove();
+  TextCursorView::sharedTextCursor->willMove();
   layoutSubviews();
 }
 
@@ -68,7 +68,7 @@ void TextInput::ContentView::reloadRectFromPosition(
 }
 
 void TextInput::ContentView::layoutSubviews(bool force) {
-  setChildFrame(&m_cursorView, cursorRect(), force);
+  setChildFrame(TextCursorView::sharedTextCursor, cursorRect(), force);
 }
 
 void TextInput::ContentView::reloadRectFromAndToPositions(const char* start,

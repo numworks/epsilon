@@ -50,8 +50,8 @@ class App : public Shared::ExpressionFieldDelegateApp,
 
     Statistic *statistic() { return m_statisticBuffer.statistic(); }
 
-    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks> *
-    pageQueue() {
+    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks>
+        *pageQueue() {
       return &m_pageQueue;
     }
 

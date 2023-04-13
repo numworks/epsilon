@@ -7,7 +7,7 @@
 
 namespace Escher {
 
-class TextCursorView : public TransparentView {
+class TextCursorView : public View {
   friend class BlinkTimer;
   template <typename ResponderType>
   friend class WithBlinkingTextCursor;
@@ -15,7 +15,7 @@ class TextCursorView : public TransparentView {
  public:
   constexpr static KDCoordinate k_width = 1;
 
-  TextCursorView() : TransparentView(nullptr), m_visible(true) {}
+  TextCursorView() : m_visible(true) {}
   ~TextCursorView();
 
   static OMG::GlobalBox<TextCursorView> sharedTextCursor;
@@ -28,9 +28,10 @@ class TextCursorView : public TransparentView {
  private:
   void setVisible(bool visible);
   void switchVisible() { setVisible(!m_visible); }
-  void setBlinking(bool blinking, View* superView = nullptr);
+  void setBlinking(bool blinking, View* field = nullptr);
   void layoutSubviews(bool force) override { willMove(); }
 
+  View* m_field;
   bool m_visible;
 };
 

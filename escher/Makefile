@@ -91,7 +91,6 @@ escher_src += $(addprefix escher/src/,\
   toggleable_view.cpp \
   toolbox.cpp \
   transparent_image_view.cpp \
-  transparent_view.cpp \
   unequal_view.cpp \
   view.cpp \
   view_controller.cpp \

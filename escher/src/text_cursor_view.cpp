@@ -26,14 +26,14 @@ void TextCursorView::willMove() {
   // No need to mark rect as dirty since it will be moved
 }
 
-void TextCursorView::setBlinking(bool blinking, View *superView) {
+void TextCursorView::setBlinking(bool blinking, View *field) {
   if (blinking) {
-    assert(superView);
-    m_superview = superView;
+    assert(field);
+    m_field = field;
     BlinkTimer::RegisterCursor(const_cast<TextCursorView *>(this));
   } else {
     BlinkTimer::RegisterCursor(nullptr);
-    m_superview = nullptr;
+    m_field = nullptr;
   }
 }
 
@@ -42,7 +42,12 @@ void TextCursorView::setVisible(bool visible) {
     return;
   }
   m_visible = visible;
-  markRectAsDirty(bounds());
+  if (visible) {
+    markRectAsDirty(bounds());
+  } else {
+    // Redraw the part under the cursor
+    m_field->markAbsoluteRectAsDirty(absoluteFrame());
+  }
 }
 
 }  // namespace Escher

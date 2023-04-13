@@ -63,7 +63,8 @@ class App : public Shared::ExpressionFieldDelegateApp {
                                   Ion::Events::Event event) override;
 
   // TextFieldDelegateApp
-  bool isAcceptableExpression(const Poincare::Expression expression) override;
+  bool isAcceptableExpression(Escher::EditableField *field,
+                              const Poincare::Expression expression) override;
 
   Snapshot *snapshot() const {
     return static_cast<Snapshot *>(

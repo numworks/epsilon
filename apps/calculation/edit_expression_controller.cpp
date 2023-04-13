@@ -152,7 +152,8 @@ bool EditExpressionController::inputViewDidReceiveEvent(
     /* The input text store in m_workingBuffer might have been correct the first
      * time but then be too long when replacing ans in another context */
     Shared::TextFieldDelegateApp *myApp = App::app();
-    if (!myApp->isAcceptableText(m_workingBuffer)) {
+    if (!myApp->isAcceptableText(m_contentView.expressionField(),
+                                 m_workingBuffer)) {
       return true;
     }
     if (m_calculationStore

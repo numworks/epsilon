@@ -66,7 +66,7 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(
       displayWarning(I18n::Message::SyntaxError);
       return true;
     }
-    if (!isAcceptableExpression(e)) {
+    if (!isAcceptableExpression(layoutField, e)) {
       displayWarning(I18n::Message::SyntaxError);
       return true;
     }
@@ -77,9 +77,10 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(
   return false;
 }
 
-bool ExpressionFieldDelegateApp::isAcceptableExpression(const Expression exp) {
+bool ExpressionFieldDelegateApp::isAcceptableExpression(EditableField* field,
+                                                        const Expression exp) {
   /* Override TextFieldDelegateApp because most ExpressionFieldDelegateApp
-   * accept comparison operatoras. They should also be serializeable. */
+   * accept comparison operators. They should also be serializeable. */
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store &&
          TextFieldDelegateApp::ExpressionCanBeSerialized(
              exp, false, Poincare::Expression(), localContext());

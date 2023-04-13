@@ -19,7 +19,8 @@ class ExpressionFieldDelegateApp : public TextFieldDelegateApp,
                                       Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
-  bool isAcceptableExpression(const Poincare::Expression expression) override;
+  bool isAcceptableExpression(Escher::EditableField* field,
+                              const Poincare::Expression expression) override;
   void storeValue(const char* text = "") override;
 
  protected:

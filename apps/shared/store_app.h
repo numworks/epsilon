@@ -40,8 +40,6 @@ class StoreApp : public ExpressionFieldDelegateApp {
   using ExpressionFieldDelegateApp::ExpressionFieldDelegateApp;
   virtual StoreController *storeController() = 0;
 
-  void didBecomeActive(Escher::Window *window) override;
-
  private:
   bool storageCanChangeForRecordName(
       const Ion::Storage::Record::Name recordName) const override {

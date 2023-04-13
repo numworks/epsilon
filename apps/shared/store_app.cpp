@@ -39,9 +39,4 @@ Layout StoreApp::Snapshot::memoizedFormula(int index) const {
       StoreApp::storeApp()->localContext());
 }
 
-void StoreApp::didBecomeActive(Escher::Window *window) {
-  storeController()->loadMemoizedFormulasFromSnapshot();
-  ExpressionFieldDelegateApp::didBecomeActive(window);
-}
-
 }  // namespace Shared

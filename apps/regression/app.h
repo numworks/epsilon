@@ -74,7 +74,6 @@ class App : public Shared::StoreApp {
 
  private:
   App(Snapshot *snapshot, Poincare::Context *parentContext);
-  void didBecomeActive(Escher::Window *window) override;
 
   struct StoreTab : public Escher::Tab {
     StoreTab();

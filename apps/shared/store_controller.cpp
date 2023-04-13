@@ -244,8 +244,8 @@ int StoreController::numberOfElementsInColumn(int columnIndex) const {
 void StoreController::resetMemoizedFormulasForSeries(int series) {
   assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
   for (int i = 0; i < DoublePairStore::k_numberOfColumnsPerSeries; i++) {
-    memoizeFormulaAtColumn(
-        Layout(), series * DoublePairStore::k_numberOfColumnsPerSeries + i);
+    memoizeFormula(Layout(),
+                   series * DoublePairStore::k_numberOfColumnsPerSeries + i);
   }
 }
 
@@ -256,19 +256,17 @@ void StoreController::loadMemoizedFormulasFromSnapshot() {
     if (m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(i)) == 0) {
       /* The series could have been emptied outside of the app. If it's the
        * case, reset the memoized formula. */
-      m_memoizedFormulaForColumn[i] = Layout();
+      m_memoizedFormulas[i] = Layout();
     } else {
-      m_memoizedFormulaForColumn[i] =
-          StoreApp::storeApp()->storeAppSnapshot()->memoizedFormulaAtColumn(i);
+      m_memoizedFormulas[i] =
+          StoreApp::storeApp()->storeAppSnapshot()->memoizedFormula(i);
     }
   }
 }
 
-void StoreController::memoizeFormulaAtColumn(Poincare::Layout formula,
-                                             int column) {
-  m_memoizedFormulaForColumn[column] = formula;
-  StoreApp::storeApp()->storeAppSnapshot()->memoizeFormulaAtColumn(formula,
-                                                                   column);
+void StoreController::memoizeFormula(Poincare::Layout formula, int index) {
+  m_memoizedFormulas[index] = formula;
+  StoreApp::storeApp()->storeAppSnapshot()->memoizeFormula(formula, index);
 }
 
 }  // namespace Shared

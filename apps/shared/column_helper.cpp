@@ -64,12 +64,11 @@ StoreColumnHelper::StoreColumnHelper(Escher::Responder *responder,
                                 StackViewController::Style::PurpleWhite),
       m_parentContext(parentContext) {}
 
-int StoreColumnHelper::referencedMemoizationId() {
+int StoreColumnHelper::formulaMemoizationIndex(int column) {
   // Index without ECC which can't be modified
-  int col = table()->selectedColumn();
   return DoublePairStore::k_numberOfColumnsPerSeries *
-             store()->seriesAtColumn(col) +
-         store()->relativeColumnIndex(col);
+             store()->seriesAtColumn(column) +
+         store()->relativeColumnIndex(column);
 }
 
 bool StoreColumnHelper::switchSelectedColumnHideStatus() {
@@ -92,9 +91,9 @@ void StoreColumnHelper::sortSelectedColumn() {
 }
 
 void StoreColumnHelper::displayFormulaInput() {
-  if (!memoizedFormulaAtColumn(referencedMemoizationId()).isUninitialized()) {
-    fillFormulaInputWithTemplate(
-        memoizedFormulaAtColumn(referencedMemoizationId()));
+  int index = formulaMemoizationIndex(referencedColumn());
+  if (!memoizedFormula(index).isUninitialized()) {
+    fillFormulaInputWithTemplate(memoizedFormula(index));
     return;
   }
   Container::activeApp()->displayModalViewController(
@@ -193,7 +192,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
       return false;
     }
     reload();
-    memoizeFormulaAtColumn(formulaLayout, referencedMemoizationId());
+    memoizeFormula(formulaLayout, formulaMemoizationIndex(referencedColumn()));
     return true;
   }
   // If formula contains a random formula, evaluate it for each pairs.
@@ -221,7 +220,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     return false;
   }
   reloadSeriesVisibleCells(seriesToFill);
-  memoizeFormulaAtColumn(formulaLayout, referencedMemoizationId());
+  memoizeFormula(formulaLayout, formulaMemoizationIndex(referencedColumn()));
   return true;
 }
 

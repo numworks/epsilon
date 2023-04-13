@@ -2,9 +2,10 @@
 
 namespace Escher {
 
-void Toggleable::setState(bool state) {
+void ToggleableView::setState(bool state) {
   if (m_state != state) {
     m_state = state;
+    markRectAsDirty(bounds());
   }
 }
 

@@ -7,9 +7,7 @@
 
 namespace Escher {
 
-class SwitchView final : public Toggleable,
-                         public ArbitraryShapedView,
-                         public CellWidget {
+class SwitchView final : public ToggleableView, public CellWidget {
  public:
   /* k_switchHeight and k_switchWidth are the dimensions of the switch
    * (including the outline of the switch). */

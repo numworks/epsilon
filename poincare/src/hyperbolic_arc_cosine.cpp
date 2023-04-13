@@ -24,7 +24,7 @@ int HyperbolicArcCosineNode::serialize(
 }
 
 template <typename T>
-Complex<T> HyperbolicArcCosineNode::computeOnComplex(
+std::complex<T> HyperbolicArcCosineNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat,
     Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::acosh(c);
@@ -32,15 +32,17 @@ Complex<T> HyperbolicArcCosineNode::computeOnComplex(
    * on this cut. We followed the convention chosen by the lib c++ of llvm on
    * ]-inf+0i, 1+0i] (warning: atanh takes the other side of the cut values on
    * ]-inf-0i, 1-0i[).*/
-  return Complex<T>::Builder(
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c));
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result,
+                                                                      c);
 }
 
-template Complex<float> Poincare::HyperbolicArcCosineNode::computeOnComplex<
-    float>(std::complex<float>, Preferences::ComplexFormat,
-           Preferences::AngleUnit);
-template Complex<double> Poincare::HyperbolicArcCosineNode::computeOnComplex<
-    double>(std::complex<double>, Preferences::ComplexFormat complexFormat,
-            Preferences::AngleUnit);
+template std::complex<float>
+    Poincare::HyperbolicArcCosineNode::computeOnComplex<float>(
+        std::complex<float>, Preferences::ComplexFormat,
+        Preferences::AngleUnit);
+template std::complex<double>
+Poincare::HyperbolicArcCosineNode::computeOnComplex<double>(
+    std::complex<double>, Preferences::ComplexFormat complexFormat,
+    Preferences::AngleUnit);
 
 }  // namespace Poincare

@@ -25,7 +25,7 @@ int HyperbolicArcTangentNode::serialize(
 }
 
 template <typename T>
-Complex<T> HyperbolicArcTangentNode::computeOnComplex(
+std::complex<T> HyperbolicArcTangentNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat,
     Preferences::AngleUnit angleUnit) {
   std::complex<T> result = std::atanh(c);
@@ -37,15 +37,17 @@ Complex<T> HyperbolicArcTangentNode::computeOnComplex(
   if (c.imag() == 0 && c.real() > 1) {
     result.imag(-result.imag());  // other side of the cut
   }
-  return Complex<T>::Builder(
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result, c));
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(result,
+                                                                      c);
 }
 
-template Complex<float> Poincare::HyperbolicArcTangentNode::computeOnComplex<
-    float>(std::complex<float>, Preferences::ComplexFormat,
-           Preferences::AngleUnit);
-template Complex<double> Poincare::HyperbolicArcTangentNode::computeOnComplex<
-    double>(std::complex<double>, Preferences::ComplexFormat complexFormat,
-            Preferences::AngleUnit);
+template std::complex<float>
+    Poincare::HyperbolicArcTangentNode::computeOnComplex<float>(
+        std::complex<float>, Preferences::ComplexFormat,
+        Preferences::AngleUnit);
+template std::complex<double>
+Poincare::HyperbolicArcTangentNode::computeOnComplex<double>(
+    std::complex<double>, Preferences::ComplexFormat complexFormat,
+    Preferences::AngleUnit);
 
 }  // namespace Poincare

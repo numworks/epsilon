@@ -94,12 +94,9 @@ Evaluation<U> LogarithmNode::templatedApproximate(
         assert(numberOfComplexes == 2);
         std::complex<U> x = c[0];
         std::complex<U> n = c[1];
-        return Complex<U>::Builder(
-            DivisionNode::computeOnComplex<U>(
-                computeOnComplex(x, complexFormat, angleUnit).complexAtIndex(0),
-                computeOnComplex(n, complexFormat, angleUnit).complexAtIndex(0),
-                complexFormat)
-                .complexAtIndex(0));
+        return DivisionNode::computeOnComplex<U>(
+            computeOnComplex(x, complexFormat, angleUnit),
+            computeOnComplex(n, complexFormat, angleUnit), complexFormat);
       });
 }
 

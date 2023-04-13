@@ -39,10 +39,10 @@ Expression ComplexArgumentNode::shallowReduce(
 }
 
 template <typename T>
-Complex<T> ComplexArgumentNode::computeOnComplex(
+std::complex<T> ComplexArgumentNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat,
     Preferences::AngleUnit angleUnit) {
-  return Complex<T>::Builder(std::arg(c));
+  return std::arg(c);
 }
 
 Expression ComplexArgument::shallowReduce(ReductionContext reductionContext) {

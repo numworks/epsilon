@@ -16,19 +16,17 @@ int CotangentNode::numberOfChildren() const {
 }
 
 template <typename T>
-Complex<T> CotangentNode::computeOnComplex(
+std::complex<T> CotangentNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat complexFormat,
     Preferences::AngleUnit angleUnit) {
   std::complex<T> denominator =
-      SineNode::computeOnComplex<T>(c, complexFormat, angleUnit)
-          .complexAtIndex(0);
+      SineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
   std::complex<T> numerator =
-      CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit)
-          .complexAtIndex(0);
+      CosineNode::computeOnComplex<T>(c, complexFormat, angleUnit);
   if (denominator == static_cast<T>(0.0)) {
-    return Complex<T>::Undefined();
+    return complexNAN<T>();
   }
-  return Complex<T>::Builder(numerator / denominator);
+  return numerator / denominator;
 }
 
 Layout CotangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,

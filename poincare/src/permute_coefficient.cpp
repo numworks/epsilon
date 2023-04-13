@@ -57,25 +57,25 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(
       this, approximationContext,
       [](const std::complex<T> *c, int numberOfComplexes,
          Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void *ctx) {
+         Preferences::AngleUnit angleUnit, void *ctx) -> std::complex<T> {
         assert(numberOfComplexes == 2);
         T n = ComplexNode<T>::ToScalar(c[0]);
         T k = ComplexNode<T>::ToScalar(c[1]);
         if (std::isnan(n) || std::isnan(k) || n != std::round(n) ||
             k != std::round(k) || n < 0.0f || k < 0.0f) {
-          return Complex<T>::RealUndefined();
+          return complexRealNAN<T>();
         }
         if (k > n) {
-          return Complex<T>::Builder(0.0);
+          return 0.0;
         }
         T result = 1;
         for (int i = (int)n - (int)k + 1; i <= (int)n; i++) {
           result *= i;
           if (std::isinf(result) || std::isnan(result)) {
-            return Complex<T>::Builder(result);
+            return result;
           }
         }
-        return Complex<T>::Builder(std::round(result));
+        return std::round(result);
       });
 }
 

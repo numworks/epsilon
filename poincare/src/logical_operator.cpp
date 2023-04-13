@@ -82,7 +82,7 @@ Evaluation<T> LogicalOperatorNotNode::templatedApproximate(
   return ApproximationHelper::MapOneChild<T>(
       this, approximationContext,
       [](const std::complex<T> c, Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit) { return Complex<T>::Undefined(); },
+         Preferences::AngleUnit angleUnit) { return complexNAN<T>(); },
       [](const bool b) {
         Evaluation<T> result = BooleanEvaluation<T>::Builder(!b);
         return result;
@@ -192,7 +192,7 @@ Evaluation<T> BinaryLogicalOperatorNode::templatedApproximate(
       [](const std::complex<T> *c, int numberOfComplexes,
          Preferences::ComplexFormat complexFormat,
          Preferences::AngleUnit angleUnit,
-         void *context) { return Complex<T>::Undefined(); },
+         void *context) { return complexNAN<T>(); },
       [](const bool *b, int numberOfBooleans, void *context) {
         assert(numberOfBooleans == 2);
         Evaluation<T> result = BooleanEvaluation<T>::Builder(

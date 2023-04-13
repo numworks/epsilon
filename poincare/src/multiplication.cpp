@@ -120,7 +120,7 @@ double MultiplicationNode::degreeForSortingAddition(bool symbolsOnly) const {
 }
 
 template <typename T>
-Complex<T> MultiplicationNode::computeOnComplex(
+std::complex<T> MultiplicationNode::computeOnComplex(
     const std::complex<T> c, const std::complex<T> d,
     Preferences::ComplexFormat complexFormat) {
   // Special case to prevent (inf,0)*(1,0) from returning (inf, nan).
@@ -128,20 +128,20 @@ Complex<T> MultiplicationNode::computeOnComplex(
     constexpr T zero = static_cast<T>(0.0);
     // Handle case of pure imaginary/real multiplications
     if (c.imag() == zero && d.imag() == zero) {
-      return Complex<T>::Builder(c.real() * d.real(), zero);
+      return std::complex<T>(c.real() * d.real(), zero);
     }
     if (c.real() == zero && d.real() == zero) {
-      return Complex<T>::Builder(-c.imag() * d.imag(), zero);
+      return std::complex<T>(-c.imag() * d.imag(), zero);
     }
     if (c.imag() == zero && d.real() == zero) {
-      return Complex<T>::Builder(zero, c.real() * d.imag());
+      return std::complex<T>(zero, c.real() * d.imag());
     }
     if (c.real() == zero && d.imag() == zero) {
-      return Complex<T>::Builder(zero, c.imag() * d.real());
+      return std::complex<T>(zero, c.imag() * d.real());
     }
     // Other cases are left to the standard library, and might return NaN.
   }
-  return Complex<T>::Builder(c * d);
+  return c * d;
 }
 
 template <typename T>
@@ -1656,10 +1656,10 @@ template MatrixComplex<double> MultiplicationNode::computeOnComplexAndMatrix<
     double>(std::complex<double> const, const MatrixComplex<double>,
             Preferences::ComplexFormat);
 
-template Complex<float> MultiplicationNode::computeOnComplex<float>(
+template std::complex<float> MultiplicationNode::computeOnComplex<float>(
     const std::complex<float>, const std::complex<float>,
     Preferences::ComplexFormat);
-template Complex<double> MultiplicationNode::computeOnComplex<double>(
+template std::complex<double> MultiplicationNode::computeOnComplex<double>(
     const std::complex<double>, const std::complex<double>,
     Preferences::ComplexFormat);
 

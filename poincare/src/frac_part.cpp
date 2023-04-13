@@ -34,13 +34,13 @@ Expression FracPartNode::shallowReduce(
 }
 
 template <typename T>
-Complex<T> FracPartNode::computeOnComplex(const std::complex<T> c,
-                                          Preferences::ComplexFormat,
-                                          Preferences::AngleUnit angleUnit) {
+std::complex<T> FracPartNode::computeOnComplex(
+    const std::complex<T> c, Preferences::ComplexFormat,
+    Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
-    return Complex<T>::RealUndefined();
+    return complexRealNAN<T>();
   }
-  return Complex<T>::Builder(c.real() - std::floor(c.real()));
+  return c.real() - std::floor(c.real());
 }
 
 Expression FracPart::shallowReduce(ReductionContext reductionContext) {

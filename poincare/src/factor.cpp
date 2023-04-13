@@ -54,9 +54,9 @@ Evaluation<T> FactorNode::templatedApproximate(
       [](const std::complex<T> c, Preferences::ComplexFormat complexFormat,
          Preferences::AngleUnit angleUnit) {
         if (std::isnan(ComplexNode<T>::ToScalar(c))) {
-          return Complex<T>::Undefined();
+          return complexNAN<T>();
         }
-        return Complex<T>::Builder(c);
+        return c;
       });
 }
 

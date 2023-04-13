@@ -15,11 +15,11 @@ int ArcSecantNode::numberOfChildren() const {
 }
 
 template <typename T>
-Complex<T> ArcSecantNode::computeOnComplex(
+std::complex<T> ArcSecantNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat complexFormat,
     Preferences::AngleUnit angleUnit) {
   if (c == static_cast<T>(0.0)) {
-    return Complex<T>::Undefined();
+    return complexNAN<T>();
   }
   return ArcCosineNode::computeOnComplex<T>(std::complex<T>(1) / c,
                                             complexFormat, angleUnit);

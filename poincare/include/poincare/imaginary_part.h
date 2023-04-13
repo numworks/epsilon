@@ -45,10 +45,10 @@ class ImaginaryPartNode final : public ExpressionNode {
   }
   // Evaluation
   template <typename T>
-  static Complex<T> computeOnComplex(const std::complex<T> c,
-                                     Preferences::ComplexFormat complexFormat,
-                                     Preferences::AngleUnit angleUnit) {
-    return Complex<T>::Builder(std::imag(c));
+  static std::complex<T> computeOnComplex(
+      const std::complex<T> c, Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit) {
+    return std::imag(c);
   }
   Evaluation<float> approximate(
       SinglePrecision p,

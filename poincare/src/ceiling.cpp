@@ -34,18 +34,18 @@ int CeilingNode::serialize(char* buffer, int bufferSize,
 }
 
 template <typename T>
-Complex<T> CeilingNode::computeOnComplex(const std::complex<T> c,
-                                         Preferences::ComplexFormat,
-                                         Preferences::AngleUnit angleUnit) {
+std::complex<T> CeilingNode::computeOnComplex(
+    const std::complex<T> c, Preferences::ComplexFormat,
+    Preferences::AngleUnit angleUnit) {
   if (c.imag() != 0) {
-    return Complex<T>::RealUndefined();
+    return complexRealNAN<T>();
   }
   /* Assume low deviation from natural numbers are errors */
   T delta = std::fabs((std::round(c.real()) - c.real()) / c.real());
   if (delta <= Float<T>::Epsilon()) {
-    return Complex<T>::Builder(std::round(c.real()));
+    return std::round(c.real());
   }
-  return Complex<T>::Builder(std::ceil(c.real()));
+  return std::ceil(c.real());
 }
 
 Expression CeilingNode::shallowReduce(

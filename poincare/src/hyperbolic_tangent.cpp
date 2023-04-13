@@ -24,12 +24,11 @@ int HyperbolicTangentNode::serialize(
 }
 
 template <typename T>
-Complex<T> HyperbolicTangentNode::computeOnComplex(
+std::complex<T> HyperbolicTangentNode::computeOnComplex(
     const std::complex<T> c, Preferences::ComplexFormat,
     Preferences::AngleUnit angleUnit) {
-  return Complex<T>::Builder(
-      ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::tanh(c),
-                                                                   c));
+  return ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(
+      std::tanh(c), c);
 }
 
 bool HyperbolicTangentNode::derivate(const ReductionContext& reductionContext,
@@ -56,10 +55,10 @@ Expression HyperbolicTangent::unaryFunctionDifferential(
                         Rational::Builder(-2));
 }
 
-template Complex<float> Poincare::HyperbolicTangentNode::computeOnComplex<
+template std::complex<float> Poincare::HyperbolicTangentNode::computeOnComplex<
     float>(std::complex<float>, Preferences::ComplexFormat,
            Preferences::AngleUnit);
-template Complex<double> Poincare::HyperbolicTangentNode::computeOnComplex<
+template std::complex<double> Poincare::HyperbolicTangentNode::computeOnComplex<
     double>(std::complex<double>, Preferences::ComplexFormat complexFormat,
             Preferences::AngleUnit);
 

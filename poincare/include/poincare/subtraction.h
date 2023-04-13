@@ -31,10 +31,10 @@ class SubtractionNode final : public ExpressionNode {
 
   // Approximation
   template <typename T>
-  static Complex<T> computeOnComplex(const std::complex<T> c,
-                                     const std::complex<T> d,
-                                     Preferences::ComplexFormat complexFormat) {
-    return Complex<T>::Builder(c - d);
+  static std::complex<T> computeOnComplex(
+      const std::complex<T> c, const std::complex<T> d,
+      Preferences::ComplexFormat complexFormat) {
+    return c - d;
   }
 
   template <typename T>

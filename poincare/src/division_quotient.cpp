@@ -53,15 +53,15 @@ Evaluation<T> DivisionQuotientNode::templatedApproximate(
       this, approximationContext,
       [](const std::complex<T> *c, int numberOfComplexes,
          Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void *ctx) {
+         Preferences::AngleUnit angleUnit, void *ctx) -> std::complex<T> {
         assert(numberOfComplexes == 2);
         T f1 = ComplexNode<T>::ToScalar(c[0]);
         T f2 = ComplexNode<T>::ToScalar(c[1]);
         if (std::isnan(f1) || std::isnan(f2) || f1 != (int)f1 ||
             f2 != (int)f2) {
-          return Complex<T>::RealUndefined();
+          return complexRealNAN<T>();
         }
-        return Complex<T>::Builder(DivisionQuotient::TemplatedQuotient(f1, f2));
+        return DivisionQuotient::TemplatedQuotient(f1, f2);
       });
 }
 

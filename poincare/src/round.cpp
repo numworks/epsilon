@@ -39,7 +39,7 @@ Evaluation<T> RoundNode::templatedApproximate(
       this, approximationContext,
       [](const std::complex<T>* c, int numberOfComplexes,
          Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void* ctx) {
+         Preferences::AngleUnit angleUnit, void* ctx) -> std::complex<T> {
         assert(numberOfComplexes == 2 || numberOfComplexes == 1);
         T f1 = ComplexNode<T>::ToScalar(c[0]);
         T f2;
@@ -49,10 +49,10 @@ Evaluation<T> RoundNode::templatedApproximate(
           f2 = ComplexNode<T>::ToScalar(c[1]);
         }
         if (std::isnan(f2) || f2 != std::round(f2)) {
-          return Complex<T>::RealUndefined();
+          return complexRealNAN<T>();
         }
         T err = std::pow(10, std::floor(f2));
-        return Complex<T>::Builder(std::round(f1 * err) / err);
+        return std::round(f1 * err) / err;
       });
 }
 

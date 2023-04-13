@@ -32,10 +32,10 @@ class AdditionNode final : public NAryInfixExpressionNode {
 
   // Evaluation
   template <typename T>
-  static Complex<T> computeOnComplex(const std::complex<T> c,
-                                     const std::complex<T> d,
-                                     Preferences::ComplexFormat complexFormat) {
-    return Complex<T>::Builder(c + d);
+  static std::complex<T> computeOnComplex(
+      const std::complex<T> c, const std::complex<T> d,
+      Preferences::ComplexFormat complexFormat) {
+    return c + d;
   }
   template <typename T>
   static MatrixComplex<T> computeOnMatrices(

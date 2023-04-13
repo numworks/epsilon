@@ -23,7 +23,7 @@ class ArcCotangentNode final : public ExpressionNode {
   Type type() const override { return Type::ArcCotangent; }
 
   template <typename T>
-  static Complex<T> computeOnComplex(
+  static std::complex<T> computeOnComplex(
       const std::complex<T> c, Preferences::ComplexFormat complexFormat,
       Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
 

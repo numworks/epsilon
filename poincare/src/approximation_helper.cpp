@@ -115,13 +115,14 @@ ListComplex<T> ElementWiseOnListAndComplex(
   int nChildren = l.numberOfChildren();
   for (int i = 0; i < nChildren; i++) {
     std::complex<T> complexAtIndex = l.complexAtIndex(i);
-    Evaluation<T> computedNewComplex;
+    std::complex<T> computedNewComplex;
     if (complexFirst) {
       computedNewComplex = computeOnComplexes(c, complexAtIndex, complexFormat);
     } else {
       computedNewComplex = computeOnComplexes(complexAtIndex, c, complexFormat);
     }
-    result.addChildAtIndexInPlace(computedNewComplex, i, i);
+    result.addChildAtIndexInPlace(Complex<T>::Builder(computedNewComplex), i,
+                                  i);
   }
   return result;
 }
@@ -139,8 +140,8 @@ ListComplex<T> ElementWiseOnLists(
   int nChildren = l1.numberOfChildren();
   for (int i = 0; i < nChildren; i++) {
     result.addChildAtIndexInPlace(
-        computeOnComplexes(l1.complexAtIndex(i), l2.complexAtIndex(i),
-                           complexFormat),
+        Complex<T>::Builder(computeOnComplexes(
+            l1.complexAtIndex(i), l2.complexAtIndex(i), complexFormat)),
         i, i);
   }
   return result;
@@ -219,9 +220,10 @@ Evaluation<T> ApproximationHelper::Map(
     }
     return isBooleanEvaluation
                ? booleansCompute(booleansArray, numberOfParameters, context)
-               : compute(complexesArray, numberOfParameters,
-                         approximationContext.complexFormat(),
-                         approximationContext.angleUnit(), context);
+               : Complex<T>::Builder(
+                     compute(complexesArray, numberOfParameters,
+                             approximationContext.complexFormat(),
+                             approximationContext.angleUnit(), context));
   }
   ListComplex<T> resultList = ListComplex<T>::Builder();
   for (int k = 0; k < listLength; k++) {
@@ -250,9 +252,10 @@ Evaluation<T> ApproximationHelper::Map(
           booleansCompute(booleansArray, numberOfParameters, context), k, k);
     } else {
       resultList.addChildAtIndexInPlace(
-          compute(complexesArray, numberOfParameters,
-                  approximationContext.complexFormat(),
-                  approximationContext.angleUnit(), context),
+          Complex<T>::Builder(compute(complexesArray, numberOfParameters,
+                                      approximationContext.complexFormat(),
+                                      approximationContext.angleUnit(),
+                                      context)),
           k, k);
     }
   }
@@ -302,8 +305,8 @@ Evaluation<T> ApproximationHelper::Reduce(
   // If element is complex
   if (eval1.type() == EvaluationNode<T>::Type::Complex) {
     if (eval2.type() == EvaluationNode<T>::Type::Complex) {
-      return computeOnComplexes(eval1.complexAtIndex(0),
-                                eval2.complexAtIndex(0), complexFormat);
+      return Complex<T>::Builder(computeOnComplexes(
+          eval1.complexAtIndex(0), eval2.complexAtIndex(0), complexFormat));
     } else if (eval2.type() == EvaluationNode<T>::Type::ListComplex) {
       if (!mapOnList) {
         return Complex<T>::Undefined();
@@ -385,8 +388,9 @@ MatrixComplex<T> ApproximationHelper::ElementWiseOnMatrixAndComplex(
   MatrixComplex<T> matrix = MatrixComplex<T>::Builder();
   int childrenNumber = m.numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
-    matrix.addChildAtIndexInPlace(
-        computeOnComplexes(m.complexAtIndex(i), c, complexFormat), i, i);
+    matrix.addChildAtIndexInPlace(Complex<T>::Builder(computeOnComplexes(
+                                      m.complexAtIndex(i), c, complexFormat)),
+                                  i, i);
   }
   matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
   return matrix;
@@ -405,8 +409,8 @@ MatrixComplex<T> ApproximationHelper::ElementWiseOnMatrices(
   int childrenNumber = m.numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
     matrix.addChildAtIndexInPlace(
-        computeOnComplexes(m.complexAtIndex(i), n.complexAtIndex(i),
-                           complexFormat),
+        Complex<T>::Builder(computeOnComplexes(
+            m.complexAtIndex(i), n.complexAtIndex(i), complexFormat)),
         i, i);
   }
   matrix.setDimensions(m.numberOfRows(), m.numberOfColumns());
@@ -476,27 +480,27 @@ template Poincare::MatrixComplex<float>
 Poincare::ApproximationHelper::ElementWiseOnMatrixAndComplex<float>(
     const Poincare::MatrixComplex<float>, const std::complex<float>,
     Poincare::Preferences::ComplexFormat,
-    Poincare::Complex<float> (*)(std::complex<float>, std::complex<float>,
-                                 Poincare::Preferences::ComplexFormat));
+    std::complex<float> (*)(std::complex<float>, std::complex<float>,
+                            Poincare::Preferences::ComplexFormat));
 template Poincare::MatrixComplex<double>
 Poincare::ApproximationHelper::ElementWiseOnMatrixAndComplex<double>(
     const Poincare::MatrixComplex<double>, std::complex<double> const,
     Poincare::Preferences::ComplexFormat,
-    Poincare::Complex<double> (*)(std::complex<double>, std::complex<double>,
-                                  Poincare::Preferences::ComplexFormat));
+    std::complex<double> (*)(std::complex<double>, std::complex<double>,
+                             Poincare::Preferences::ComplexFormat));
 
 template Poincare::MatrixComplex<float>
 Poincare::ApproximationHelper::ElementWiseOnMatrices<float>(
     const Poincare::MatrixComplex<float>, const Poincare::MatrixComplex<float>,
     Poincare::Preferences::ComplexFormat,
-    Poincare::Complex<float> (*)(std::complex<float>, std::complex<float>,
-                                 Poincare::Preferences::ComplexFormat));
+    std::complex<float> (*)(std::complex<float>, std::complex<float>,
+                            Poincare::Preferences::ComplexFormat));
 template Poincare::MatrixComplex<double>
 Poincare::ApproximationHelper::ElementWiseOnMatrices<double>(
     const Poincare::MatrixComplex<double>,
     const Poincare::MatrixComplex<double>, Poincare::Preferences::ComplexFormat,
-    Poincare::Complex<double> (*)(std::complex<double>, std::complex<double>,
-                                  Poincare::Preferences::ComplexFormat));
+    std::complex<double> (*)(std::complex<double>, std::complex<double>,
+                             Poincare::Preferences::ComplexFormat));
 
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::Reduce(
     Poincare::Evaluation<float> eval1, Poincare::Evaluation<float> eval2,

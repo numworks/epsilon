@@ -52,7 +52,7 @@ Evaluation<T> NthRootNode::templatedApproximate(
       this, approximationContext,
       [](const std::complex<T>* c, int numberOfComplexes,
          Preferences::ComplexFormat complexFormat,
-         Preferences::AngleUnit angleUnit, void* ctx) {
+         Preferences::AngleUnit angleUnit, void* ctx) -> std::complex<T> {
         assert(numberOfComplexes == 2);
         std::complex<T> basec = c[0];
         std::complex<T> indexc = c[1];
@@ -63,10 +63,10 @@ Evaluation<T> NthRootNode::templatedApproximate(
             indexc.imag() == 0.0 &&
             std::round(indexc.real()) == indexc.real()) {
           // root(x, q) with q integer and x real
-          Complex<T> result =
+          std::complex<T> result =
               PowerNode::computeNotPrincipalRealRootOfRationalPow(
                   basec, static_cast<T>(1.0), indexc.real());
-          if (!result.isUndefined()) {
+          if (!std::isnan(result.real()) && !std::isnan(result.imag())) {
             return result;
           }
         }

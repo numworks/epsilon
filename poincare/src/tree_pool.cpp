@@ -74,8 +74,8 @@ void TreePool::removeChildrenAndDestroy(TreeNode *nodeToDestroy,
 
 void TreePool::moveNodes(TreeNode *destination, TreeNode *source,
                          size_t moveSize) {
-  assert(IsAfterTopmostCheckpoint(destination));
-  assert(IsAfterTopmostCheckpoint(source));
+  assert(destination->isAfterTopmostCheckpoint());
+  assert(source->isAfterTopmostCheckpoint());
   assert(moveSize % 4 == 0);
   assert((((uintptr_t)source) % 4) == 0);
   assert((((uintptr_t)destination) % 4) == 0);
@@ -129,7 +129,7 @@ int TreePool::numberOfNodes() const {
 }
 
 void *TreePool::alloc(size_t size) {
-  assert(IsAfterTopmostCheckpoint(last()));
+  assert(last()->isAfterTopmostCheckpoint());
 #if ASSERTIONS
   assert(!s_treePoolLocked);
 #endif
@@ -144,7 +144,7 @@ void *TreePool::alloc(size_t size) {
 }
 
 void TreePool::dealloc(TreeNode *node, size_t size) {
-  assert(IsAfterTopmostCheckpoint(node));
+  assert(node->isAfterTopmostCheckpoint());
 #if ASSERTIONS
   assert(!s_treePoolLocked);
 #endif
@@ -183,10 +183,6 @@ void TreePool::updateNodeForIdentifierFromNode(TreeNode *node) {
   for (TreeNode *n : Nodes(node)) {
     registerNode(n);
   }
-}
-
-bool TreePool::IsAfterTopmostCheckpoint(TreeNode *node) {
-  return node >= Checkpoint::TopmostEndOfPool();
 }
 
 // Reset IdentifierStack, make all identifiers available

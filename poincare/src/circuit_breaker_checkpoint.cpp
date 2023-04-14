@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 
 namespace Poincare {

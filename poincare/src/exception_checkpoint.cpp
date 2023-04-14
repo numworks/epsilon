@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <poincare/exception_checkpoint.h>
 
 namespace Poincare {

@@ -1,4 +1,3 @@
-#include <poincare/checkpoint.h>
 #include <poincare/tree_handle.h>
 #include <poincare/tree_node.h>
 #include <poincare/tree_pool.h>
@@ -36,11 +35,6 @@ void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
     return;
   }
   updateParentIdentifierInChildren();
-}
-
-// Checkpoint
-bool TreeNode::isAfterTopmostCheckpoint() const {
-  return this >= Checkpoint::TopmostEndOfPool();
 }
 
 // Hierarchy

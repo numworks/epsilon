@@ -9,6 +9,7 @@
 #include <iostream>
 #include <ostream>
 #endif
+#include <poincare/checkpoint.h>
 #include <poincare/helpers.h>
 #include <poincare/preferences.h>
 
@@ -84,7 +85,9 @@ class TreeNode {
               bool skipChildrenUpdate = false);
 
   // Checkpoint
-  bool isAfterTopmostCheckpoint() const;
+  bool isAfterTopmostCheckpoint() const {
+    return this >= Checkpoint::TopmostEndOfPool();
+  }
 
   // Hierarchy
   TreeNode *parent() const;

@@ -287,10 +287,10 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
         return true;
       }
     }
-  }
-  if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
-    cursor->addEmptyMatrixLayout(context());
-    return true;
+    if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
+      cursor->addEmptyMatrixLayout(context());
+      return true;
+    }
   }
   // Single keys are not parsed to avoid changing " or g to _" or _g
   Expression resultExpression = UTF8Helper::StringGlyphLength(text) > 1

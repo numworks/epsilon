@@ -67,7 +67,7 @@ class TreeNode {
   /* Do not increase reference counters outside of the current checkpoint since
    * they won't be decreased if an exception is raised.
    *
-   * WARNING: ref counters have an bugged behaviour in this case:
+   * WARNING: ref counters have a bugged behaviour in this case:
    *  Expression a = Cosine::Builder();
    *  Expression b;
    *  Checkpoint() {

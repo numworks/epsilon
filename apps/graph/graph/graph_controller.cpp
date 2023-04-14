@@ -413,6 +413,7 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
       }
       ++t;
     }
+    return 0.;
   }
 
   assert(function->properties().isParametric() ||

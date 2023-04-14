@@ -344,6 +344,9 @@ class ContinuousFunction : public Function {
     // Return size of the record's expression
     size_t expressionSize(const Ion::Storage::Record *record) const override;
     mutable ContinuousFunctionProperties m_properties;
+    /* m_expression is used for values table and points of interest.
+     * m_expressionApproximated is used for plot and autozoom.
+     */
     mutable Poincare::Expression m_expressionApproximated;
     mutable Poincare::Expression m_expressionDerivate;
   };

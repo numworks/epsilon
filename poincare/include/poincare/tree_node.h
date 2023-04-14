@@ -177,6 +177,8 @@ class TreeNode {
       return Iterator(static_cast<T *>(m_node->nextSibling()));
     }
 
+    T *node() const { return m_node; }
+
    private:
     T *m_node;
     int m_firstIndex;

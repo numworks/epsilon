@@ -205,6 +205,30 @@ void assert_expression_simplifies_and_approximates_to(
       numberOfDigits);
 }
 
+void assert_expression_approximates_keeping_symbols_to(
+    const char *expression, const char *simplifiedExpression,
+    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+    Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
+  int numberOfDigits = 10;
+  numberOfDigits = numberOfSignificantDigits > 0 ? numberOfSignificantDigits
+                                                 : numberOfDigits;
+  assert_parsed_expression_process_to(
+      expression, simplifiedExpression, SystemForApproximation, complexFormat,
+      angleUnit, unitFormat, ReplaceAllDefinedSymbolsWithDefinition,
+      DefaultUnitConversion,
+      [](Expression e, ReductionContext reductionContext) {
+        Expression simplifiedExpression;
+        e.cloneAndSimplifyAndApproximate(
+            &simplifiedExpression, nullptr, reductionContext.context(),
+            reductionContext.complexFormat(), reductionContext.angleUnit(),
+            reductionContext.unitFormat(),
+            reductionContext.symbolicComputation(),
+            reductionContext.unitConversion(), true);
+        return simplifiedExpression;
+      },
+      numberOfDigits);
+}
+
 template <typename T>
 void assert_expression_simplifies_approximates_to(
     const char *expression, const char *approximation,

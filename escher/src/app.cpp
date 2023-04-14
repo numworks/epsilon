@@ -29,14 +29,10 @@ bool App::processEvent(Ion::Events::Event event) {
 void App::setFirstResponder(Responder* responder, bool force) {
   /* This flag is used only in DEBUG to ensure that didEnterResponderChain do
    * not call setFirstResponder.
-   *
-   * TODO:
-   * Calculation::HistoryController::tableViewDidChangeSelectionAndDidScroll
-   * makes the assert(!preventRecursion) false. This needs to be fixed to
-   * uncomment the assertion. */
+   * */
 #if ASSERTIONS
   static bool preventRecursion = false;
-  // assert(!preventRecursion);
+  assert(force || !preventRecursion);
 #endif
   if (!force && m_firstResponder == responder) {
     return;

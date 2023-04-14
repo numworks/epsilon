@@ -337,7 +337,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
          * be swapped.
          * FIXME This is quirky and could be changed. */
         if (solution->approximateLayout().isUninitialized()) {
-          valueCell->setLayouts(solution->exactLayout());
+          valueCell->setLayouts(Layout(), solution->exactLayout());
         } else {
           valueCell->setLayouts(solution->exactLayout(),
                                 solution->approximateLayout());
@@ -355,7 +355,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
           App::app()->localContext()->expressionForSymbolAbstract(
               Symbol::Builder(symbol, strlen(symbol)), false),
           App::app()->localContext());
-      valueCell->setLayouts(layout);
+      valueCell->setLayouts(Layout(), layout);
     }
   }
   EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);

@@ -25,13 +25,6 @@ class AbstractScrollableMultipleExpressionsView
   virtual void setLayouts(Poincare::Layout formulaLayout,
                           Poincare::Layout exactLayout,
                           Poincare::Layout approximateLayout);
-  void setLayouts(Poincare::Layout exactLayout,
-                  Poincare::Layout approximateLayout) {
-    setLayouts(Poincare::Layout(), exactLayout, approximateLayout);
-  }
-  void setLayouts(Poincare::Layout exactLayout) {
-    setLayouts(Poincare::Layout(), Poincare::Layout(), exactLayout);
-  }
   void resetLayouts() {
     setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
   }

@@ -200,12 +200,14 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
                                                          const void *data) {
   const InsertLayoutContext *insertLayoutContext =
       static_cast<const InsertLayoutContext *>(data);
-  const Node tree = insertLayoutContext->m_tree;
   bool forceRight = insertLayoutContext->m_forceRight;
   bool forceLeft = insertLayoutContext->m_forceLeft;
 
+  // We need to keep track of the node in case it lives in the edition pool
+  EditionReference ref(insertLayoutContext->m_tree);
+
   assert(!isUninitialized() && isValid());
-  if (Layout::IsEmpty(tree)) {
+  if (Layout::IsEmpty(ref)) {
     return;
   }
 
@@ -284,8 +286,8 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
    * To avoid ambiguity between a^(b^c) and (a^b)^c when representing a^b^c,
    * add parentheses to make (a^b)^c. */
   if (Layout::IsHorizontal(cursorNode()) &&
-      tree.type() == BlockType::VerticalOffsetLayout &&
-      VerticalOffsetLayout::IsSuffixSuperscript(tree)) {
+      ref.type() == BlockType::VerticalOffsetLayout &&
+      VerticalOffsetLayout::IsSuffixSuperscript(ref)) {
     if (!leftL.isUninitialized() &&
         leftL.type() == BlockType::VerticalOffsetLayout &&
         VerticalOffsetLayout::IsSuffixSuperscript(leftL)) {
@@ -310,9 +312,9 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
     }
   }
 
+#if 0
   // - Step 6 - Find position to point to if layout will me merged
   EditionPoolCursor previousCursor = *this;
-#if 0
   Node childToPoint;
   bool layoutToInsertIsHorizontal = layout.isHorizontal();
   if (layoutToInsertIsHorizontal) {
@@ -329,7 +331,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
 #endif
 
   // - Step 7 - Insert layout
-  int numberOfInsertedChildren = RackLayout::NumberOfLayouts(tree);
+  int numberOfInsertedChildren = RackLayout::NumberOfLayouts(ref);
   /* AddOrMergeLayoutAtIndex will replace current layout with an
    * HorizontalLayout if needed. With this assert, m_position is guaranteed to
    * be preserved. */
@@ -337,7 +339,7 @@ void LayoutBufferCursor::EditionPoolCursor::insertLayout(Context *context,
          cursorNode().parent().isUninitialized() ||
          !Layout::IsHorizontal(cursorNode().parent()));
   setCursorNode(static_cast<Node>(
-      RackLayout::AddOrMergeLayoutAtIndex(cursorNode(), tree, &m_position)));
+      RackLayout::AddOrMergeLayoutAtIndex(cursorNode(), ref, &m_position)));
   assert(Layout::IsHorizontal(cursorNode()));
 
   if (!forceLeft) {

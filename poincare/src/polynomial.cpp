@@ -404,55 +404,68 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
         *root3 = Undefined::Builder();
         return 0;
       }
-      /* cardano is only null when there is a triple root. */
-      assert(cardano.isNull(context) != TrinaryBoolean::True);
-      int loneRealRootIndex = -1;
-      float minimalImaginaryPart = static_cast<float>(INFINITY);
-      for (int i = 0; i < 3; i++) {
-        /* The roots can be computed from Cardano's number using the cube roots
-         * of unity. */
-        Expression cz = Multiplication::Builder(cardano.clone(), roots[i]);
-        roots[i] = Division::Builder(
-            Addition::Builder(
-                {b.clone(), cz.clone(), Division::Builder(delta0, cz.clone())}),
+      /* cardano is only null when there is a triple root. This should have been
+       * already handled when computing delta, since delta should be equal to 0
+       * in this case. This means there was approximation errors during
+       * computation of delta. Restore correct delta value here. */
+      if (cardano.isNull(context) == TrinaryBoolean::True) {
+        // -b / 3a
+        *root1 = Division::Builder(
+            b.clone(),
             Multiplication::Builder(Rational::Builder(-3), a.clone()));
-        if (approximate) {
-          if (equationIsReal && deltaSign > 0) {
-            /* delta > 0, the three solutions are real. We need to get rid of
-             * the imaginary part that might have appeared. */
-            roots[i] = RealPart::Builder(roots[i]);
-          }
-          roots[i] = roots[i].approximate<double>(
-              context, complexContext.complexFormat(),
-              complexContext.angleUnit());
-          if (equationIsReal && deltaSign < 0) {
-            /* We know there is exactly one real root (and two complex
-             * conjugate). Because of approximation errors, this real root can
-             * have an infinitesimal imaginary size. As such, we strip the
-             * imaginary part from the root with the smallest imaginary part. */
-            float im = std::fabs(
-                ImaginaryPart::Builder(roots[i]).approximateToScalar<float>(
-                    context, complexContext.complexFormat(),
-                    complexContext.angleUnit()));
-            if (im < minimalImaginaryPart) {
-              minimalImaginaryPart = im;
-              loneRealRootIndex = i;
+        *root2 = Undefined::Builder();
+        *root3 = Undefined::Builder();
+        *delta = Rational::Builder(0);
+      } else {
+        int loneRealRootIndex = -1;
+        float minimalImaginaryPart = static_cast<float>(INFINITY);
+        for (int i = 0; i < 3; i++) {
+          /* The roots can be computed from Cardano's number using the cube
+           * roots of unity. */
+          Expression cz = Multiplication::Builder(cardano.clone(), roots[i]);
+          roots[i] = Division::Builder(
+              Addition::Builder({b.clone(), cz.clone(),
+                                 Division::Builder(delta0, cz.clone())}),
+              Multiplication::Builder(Rational::Builder(-3), a.clone()));
+          if (approximate) {
+            if (equationIsReal && deltaSign > 0) {
+              /* delta > 0, the three solutions are real. We need to get rid of
+               * the imaginary part that might have appeared. */
+              roots[i] = RealPart::Builder(roots[i]);
             }
+            roots[i] = roots[i].approximate<double>(
+                context, complexContext.complexFormat(),
+                complexContext.angleUnit());
+            if (equationIsReal && deltaSign < 0) {
+              /* We know there is exactly one real root (and two complex
+               * conjugate). Because of approximation errors, this real root can
+               * have an infinitesimal imaginary size. As such, we strip the
+               * imaginary part from the root with the smallest imaginary part.
+               */
+              float im = std::fabs(
+                  ImaginaryPart::Builder(roots[i]).approximateToScalar<float>(
+                      context, complexContext.complexFormat(),
+                      complexContext.angleUnit()));
+              if (im < minimalImaginaryPart) {
+                minimalImaginaryPart = im;
+                loneRealRootIndex = i;
+              }
+            }
+          } else {
+            roots[i] = roots[i].cloneAndReduceOrSimplify(reductionContext,
+                                                         beautifyRoots);
           }
-        } else {
-          roots[i] = roots[i].cloneAndReduceOrSimplify(reductionContext,
-                                                       beautifyRoots);
         }
+        if (loneRealRootIndex >= 0) {
+          roots[loneRealRootIndex] =
+              RealPart::Builder(roots[loneRealRootIndex])
+                  .approximate<double>(context, complexContext.complexFormat(),
+                                       complexContext.angleUnit());
+        }
+        *root1 = roots[0];
+        *root2 = roots[1];
+        *root3 = roots[2];
       }
-      if (loneRealRootIndex >= 0) {
-        roots[loneRealRootIndex] =
-            RealPart::Builder(roots[loneRealRootIndex])
-                .approximate<double>(context, complexContext.complexFormat(),
-                                     complexContext.angleUnit());
-      }
-      *root1 = roots[0];
-      *root2 = roots[1];
-      *root3 = roots[2];
     }
   }
 
@@ -689,7 +702,6 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1,
   } else {
     *approximate = false;
   }
-  assert(C.isNull(reductionContext.context()) != TrinaryBoolean::True);
   return C;
 }
 }  // namespace Poincare

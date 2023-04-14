@@ -3,7 +3,7 @@
 
 namespace Poincare {
 
-TreeNode* Checkpoint::TopmostEndOfPool() { return nullptr; }
+Checkpoint* Checkpoint::s_topmost = nullptr;
 
 bool ExceptionCheckpoint::setActive(bool interruption) { return false; }
 

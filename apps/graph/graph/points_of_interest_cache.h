@@ -76,7 +76,7 @@ class PointsOfInterestCache {
   void computeBetween(float start, float end);
   void append(double x, double y, Poincare::Solver<double>::Interest,
               uint32_t data = 0, int subCurveIndex = 0);
-  void tidy(char* treePoolCursor) const;
+  void tidyDownstreamPoolFrom(char* treePoolCursor) const;
 
   Ion::Storage::Record
       m_record;  // This is not const because of the copy constructor

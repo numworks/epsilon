@@ -93,7 +93,9 @@ Expression SignFunction::shallowReduce(ReductionContext reductionContext) {
   } else {
     Evaluation<float> childApproximated = child.node()->approximate(
         1.0f, ApproximationContext(reductionContext, true));
-    assert(childApproximated.type() == EvaluationNode<float>::Type::Complex);
+    if (childApproximated.type() != EvaluationNode<float>::Type::Complex) {
+      return replaceWithUndefinedInPlace();
+    }
     Complex<float> c = static_cast<Complex<float>&>(childApproximated);
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
       // c's approximation has no sign (c is complex or NAN)

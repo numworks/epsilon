@@ -136,7 +136,7 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
            (when going back in previous menu for example). */
         ((selectedColumn() != previousColumn || selectedRow() != previousRow) ||
          Container::activeApp()->firstResponder() != r)) {
-      Container::activeApp()->setFirstResponder(r);
+      Container::activeApp()->setFirstResponder(r, true);
     }
     // Highlight new cell
     cell->setHighlighted(true);

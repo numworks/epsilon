@@ -35,7 +35,7 @@ void HistoryViewCellDataSource::setSelectedSubviewType(
   if (selectedCell) {
     selectedCell->reloadSubviewHighlight();
     selectedCell->cellDidSelectSubview(subviewType, previousSubviewType);
-    Container::activeApp()->setFirstResponder(selectedCell);
+    Container::activeApp()->setFirstResponder(selectedCell, true);
   }
   if (previouslySelectedCell) {
     previouslySelectedCell->cellDidSelectSubview(SubviewType::Input);

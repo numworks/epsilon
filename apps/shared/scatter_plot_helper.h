@@ -12,44 +12,28 @@ namespace Shared {
 class ScatterPlotIterable {
   friend class ContinuousFunction;
 
-  class Iterator {
-   public:
-    Iterator(Poincare::Expression expression, int i)
-        : m_index(i), m_expression(expression) {}
+  using ExpressionIterable =
+      Poincare::TreeHandle::Direct<Poincare::Expression,
+                                   Poincare::ExpressionNode>;
 
-    bool operator!=(const Iterator& other) const {
-      assert(m_expression == other.m_expression);
-      return m_index != other.m_index;
-    }
-    Iterator& operator++() {
-      ++m_index;
-      return *this;
-    }
-    Poincare::Point operator*() const {
-      assert(m_index < ListLength(m_expression));
-      Poincare::Expression e =
-          m_expression.type() == Poincare::ExpressionNode::Type::List
-              ? m_expression.childAtIndex(m_index)
-              : m_expression;
-      assert(e.type() == Poincare::ExpressionNode::Type::Point);
+  class Iterator : public ExpressionIterable::Iterator {
+   public:
+    Iterator(ExpressionIterable::Iterator iter)
+        : ExpressionIterable::Iterator(iter) {}
+    Poincare::Point operator*() {
+      Poincare::Expression e = ExpressionIterable::Iterator::operator*();
       return static_cast<Poincare::Point&>(e);
     }
-
-   private:
-    int m_index;
-    Poincare::Expression m_expression;
   };
 
  public:
-  Iterator begin() const { return Iterator(m_expression, 0); }
-  Iterator end() const {
-    return Iterator(m_expression, ListLength(m_expression));
-  }
+  Iterator begin() const { return m_iterable.begin(); }
+  Iterator end() const { return m_iterable.end(); }
 
   int length() const { return ListLength(m_expression); }
 
  private:
-  ScatterPlotIterable(Poincare::Expression e) : m_expression(e) {
+  ScatterPlotIterable(Poincare::Expression e) : m_iterable(e), m_expression(e) {
     assert(e.type() == Poincare::ExpressionNode::Type::Point ||
            (e.type() == Poincare::ExpressionNode::Type::List &&
             static_cast<Poincare::List&>(e).isListOfPoints(nullptr)));
@@ -61,6 +45,7 @@ class ScatterPlotIterable {
                : 1;
   }
 
+  ExpressionIterable m_iterable;
   Poincare::Expression m_expression;
 };
 

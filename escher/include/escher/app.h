@@ -55,7 +55,7 @@ class App : public Responder {
    * App * pointing to a Derived App would have undefined behaviour. */
   virtual ~App() = default;
   Snapshot* snapshot() const { return m_snapshot; }
-  void setFirstResponder(Responder* responder);
+  void setFirstResponder(Responder* responder, bool force = false);
   Responder* firstResponder() { return m_firstResponder; }
   virtual bool processEvent(Ion::Events::Event event);
   void displayModalViewController(ViewController* vc, float verticalAlignment,

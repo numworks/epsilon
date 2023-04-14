@@ -26,21 +26,21 @@ bool App::processEvent(Ion::Events::Event event) {
   return false;
 }
 
-void App::setFirstResponder(Responder* responder) {
+void App::setFirstResponder(Responder* responder, bool force) {
   /* This flag is used only in DEBUG to ensure that didEnterResponderChain do
-   * not call setFirstResponder. */
+   * not call setFirstResponder.
+   *
+   * TODO:
+   * Calculation::HistoryController::tableViewDidChangeSelectionAndDidScroll
+   * makes the assert(!preventRecursion) false. This needs to be fixed to
+   * uncomment the assertion. */
 #if ASSERTIONS
   static bool preventRecursion = false;
   // assert(!preventRecursion);
 #endif
-  /* TODO: Calculation::HistoryController relies on the fact that we reselect
-   * the cell to highlight the correct subcell when the cell height is larger
-   * than the screen. Also, the assert(!preventRecursion) is false in this
-   * case. This needs to be fixed to uncomment the assertion and the
-   * optimizaiton when m_firstResponder == responder. */
-  /*if (m_firstResponder == responder) {
+  if (!force && m_firstResponder == responder) {
     return;
-  }*/
+  }
   Responder* previousResponder = m_firstResponder;
   m_firstResponder = responder;
   if (previousResponder) {

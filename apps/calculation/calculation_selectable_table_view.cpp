@@ -112,7 +112,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(
    * relayouted in "setContentOffset".*/
   cell = static_cast<HistoryViewCell *>(selectedCell());
   assert(cell);
-  Container::activeApp()->setFirstResponder(cell);
+  Container::activeApp()->setFirstResponder(cell, true);
 }
 
 }  // namespace Calculation

@@ -6,9 +6,9 @@
 
 // Returns the number of arguments in __VA_ARGS__
 #define _PP_NARG(...) \
-  _PP_ARG_N(_0, ##__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+  _PP_ARG_N(__VA_ARGS__ __VA_OPT__(, ) 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
 // Returns the 11th argument it has been called with
-#define _PP_ARG_N(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
+#define _PP_ARG_N(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 
 /* TODO : Fix _PP_NARG being confused by args having bigger templates like
  *        push<CodePointLayout, CodePoint>('0')) */

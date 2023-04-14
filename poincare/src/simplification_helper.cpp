@@ -39,18 +39,19 @@ void SimplificationHelper::defaultDeepReduceChildren(
 Expression SimplificationHelper::defaultShallowReduce(
     Expression e, ReductionContext* reductionContext,
     BooleanReduction booleanParameter, UnitReduction unitParameter,
-    MatrixReduction matrixParameter, ListReduction listParameter) {
-  // Step1. Shallow reduce undefined
+    MatrixReduction matrixParameter, ListReduction listParameter,
+    PointReduction pointParameter) {
+  // Step 1: Shallow reduce undefined
   Expression res = shallowReduceUndefined(e);
   if (!res.isUninitialized()) {
     return res;
   }
-  // Step2. Bubble up dependencies
+  // Step 2: Bubble up dependencies
   res = bubbleUpDependencies(e, *reductionContext);
   if (!res.isUninitialized()) {
     return res;
   }
-  // Step3. Handle units
+  // Step 3: Handle units
   if (unitParameter == UnitReduction::BanUnits) {
     res = shallowReduceBanningUnits(e);
   } else if (unitParameter == UnitReduction::ExtractUnitsOfFirstChild) {
@@ -59,23 +60,30 @@ Expression SimplificationHelper::defaultShallowReduce(
   if (!res.isUninitialized()) {
     return res;
   }
-  // Step4. Handle matrices
+  // Step 4: Handle matrices
   if (matrixParameter == MatrixReduction::UndefinedOnMatrix) {
     res = undefinedOnMatrix(e, reductionContext);
     if (!res.isUninitialized()) {
       return res;
     }
   }
-  // Step5. Handle lists
+  // Step 5: Handle lists
   if (listParameter == ListReduction::DistributeOverLists) {
     res = distributeReductionOverLists(e, *reductionContext);
     if (!res.isUninitialized()) {
       return res;
     }
   }
-  // Step6. Handle booleans
+  // Step 6: Handle booleans
   if (booleanParameter == BooleanReduction::UndefinedOnBooleans) {
     res = undefinedOnBooleans(e);
+    if (!res.isUninitialized()) {
+      return res;
+    }
+  }
+  // Step 7: Handle points
+  if (pointParameter == PointReduction::UndefinedOnPoint) {
+    res = undefinedOnPoint(e);
     if (!res.isUninitialized()) {
       return res;
     }
@@ -161,6 +169,16 @@ Expression SimplificationHelper::undefinedOnBooleans(Expression e) {
   int n = e.numberOfChildren();
   for (int i = 0; i < n; i++) {
     if (e.childAtIndex(i).hasBooleanValue()) {
+      return e.replaceWithUndefinedInPlace();
+    }
+  }
+  return Expression();
+}
+
+Expression SimplificationHelper::undefinedOnPoint(Expression e) {
+  int n = e.numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    if (e.childAtIndex(i).type() == ExpressionNode::Type::Point) {
       return e.replaceWithUndefinedInPlace();
     }
   }

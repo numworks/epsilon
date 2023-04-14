@@ -49,12 +49,7 @@ Expression Point::shallowReduce(ReductionContext reductionContext) {
   if (!e.isUninitialized()) {
     return e;
   }
-  Expression p = parent();
-  if (p.isUninitialized() || p.isOfType({ExpressionNode::Type::List,
-                                         ExpressionNode::Type::ListSequence})) {
-    return *this;
-  }
-  return replaceWithUndefinedInPlace();
+  return *this;
 }
 
 }  // namespace Poincare

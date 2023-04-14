@@ -23,7 +23,8 @@ class PressToTestController : public Escher::SelectableListViewController<
   }
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("PressToTest");
-  void didBecomeFirstResponder() override;
+  void didEnterResponderChain(
+      Escher::Responder* previousFirstResponder) override;
   int numberOfRows() const override;
   int typeAtIndex(int index) const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;

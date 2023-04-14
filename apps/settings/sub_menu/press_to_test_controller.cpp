@@ -184,7 +184,8 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void PressToTestController::didBecomeFirstResponder() {
+void PressToTestController::didEnterResponderChain(
+    Responder *previousFirstResponder) {
   // Reset selection and params only if exam mode has been activated.
   if (Preferences::sharedPreferences->examMode().isActive()) {
     resetController();

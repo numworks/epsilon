@@ -20,6 +20,8 @@ class ScatterPlotIterable {
    public:
     Iterator(ExpressionIterable::Iterator iter)
         : ExpressionIterable::Iterator(iter) {}
+    Iterator(Poincare::ExpressionNode* node)
+        : ExpressionIterable::Iterator(node) {}
     Poincare::Point operator*() {
       Poincare::Expression e = ExpressionIterable::Iterator::operator*();
       return static_cast<Poincare::Point&>(e);
@@ -27,7 +29,11 @@ class ScatterPlotIterable {
   };
 
  public:
-  Iterator begin() const { return m_iterable.begin(); }
+  Iterator begin() const {
+    return m_expression.type() == Poincare::ExpressionNode::Type::Point
+               ? Iterator(m_iterable.node())
+               : m_iterable.begin();
+  }
   Iterator end() const { return m_iterable.end(); }
 
   int length() const { return ListLength(m_expression); }

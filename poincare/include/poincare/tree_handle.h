@@ -156,6 +156,8 @@ class TreeHandle {
     Iterator begin() const { return m_nodeIterable.begin(); }
     Iterator end() const { return m_nodeIterable.end(); }
 
+    Node* node() const { return m_nodeIterable.node(); }
+
    private:
     TreeNode::Direct<Node> m_nodeIterable;
   };

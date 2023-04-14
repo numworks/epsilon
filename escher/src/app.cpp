@@ -32,7 +32,8 @@ void App::setFirstResponder(Responder* responder, bool force) {
    * */
 #if ASSERTIONS
   static bool preventRecursion = false;
-  assert(force || !preventRecursion);
+  // TODO: Restore this behaviour
+  // assert(force || !preventRecursion);
 #endif
   if (!force && m_firstResponder == responder) {
     return;

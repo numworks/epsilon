@@ -163,7 +163,8 @@ Evaluation<T> ApproximationHelper::Map(
   for (int i = 0; i < numberOfParameters; i++) {
     evaluationArray[i] =
         expression->childAtIndex(i)->approximate(T(), approximationContext);
-    if (evaluationArray[i].type() == EvaluationNode<T>::Type::MatrixComplex) {
+    if (evaluationArray[i].type() == EvaluationNode<T>::Type::MatrixComplex ||
+        evaluationArray[i].type() == EvaluationNode<T>::Type::Point) {
       return Complex<T>::Undefined();
     }
     if (evaluationArray[i].type() == EvaluationNode<T>::Type::ListComplex) {
@@ -283,7 +284,9 @@ Evaluation<T> ApproximationHelper::Reduce(
     MatrixAndComplexReduction<T> computeOnMatrixAndComplex,
     MatrixAndMatrixReduction<T> computeOnMatrices, bool mapOnList) {
   if (eval1.type() == EvaluationNode<T>::Type::BooleanEvaluation ||
-      eval2.type() == EvaluationNode<T>::Type::BooleanEvaluation) {
+      eval2.type() == EvaluationNode<T>::Type::BooleanEvaluation ||
+      eval1.type() == EvaluationNode<T>::Type::Point ||
+      eval2.type() == EvaluationNode<T>::Type::Point) {
     return Complex<T>::Undefined();
   }
   // If element is complex

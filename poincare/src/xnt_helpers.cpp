@@ -107,7 +107,9 @@ bool FindXNTSymbol(UnicodeDecoder& functionDecoder, bool* defaultXNTHasChanged,
   if (functionFound) {
     // Put decoder at the beginning of the argument
     c = functionDecoder.nextCodePoint();
-    c = functionDecoder.nextCodePoint();
+    do {
+      c = functionDecoder.nextCodePoint();
+    } while (c == ' ');
     assert(c == '(');
   }
   return functionFound && !cursorInVariableField;

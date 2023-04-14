@@ -159,9 +159,14 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * */
   if (!storeExpression.isUninitialized()) {
     assert(storeExpression.type() == ExpressionNode::Type::Store);
-    static_cast<Store &>(storeExpression).storeValueForSymbol(context);
-    exactOutputExpression = context->expressionForSymbolAbstract(
-        static_cast<Store &>(storeExpression).symbol(), false);
+    if (static_cast<Store &>(storeExpression).storeValueForSymbol(context)) {
+      exactOutputExpression = context->expressionForSymbolAbstract(
+          static_cast<Store &>(storeExpression).symbol(), false);
+      assert(!exactOutputExpression.isUninitialized());
+    } else {
+      exactOutputExpression = Undefined::Builder();
+      approximateOutputExpression = Undefined::Builder();
+    }
   }
 
   if (m_inUsePreferences.examMode().forbidUnits() &&

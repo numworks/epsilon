@@ -138,6 +138,32 @@ class TreeHandle {
   static TreeHandle BuilderWithChildren(TreeNode::Initializer initializer,
                                         size_t size, const Tuple& children);
 
+  // Iterator
+  template <typename Handle, typename Node>
+  class Direct final {
+   public:
+    Direct(Handle handle, int firstIndex = 0)
+        : m_nodeIterable(handle.node(), firstIndex) {}
+
+    class Iterator : public TreeNode::Direct<Node>::Iterator {
+     public:
+      Iterator(typename TreeNode::Direct<Node>::Iterator iter)
+          : TreeNode::Direct<Node>::Iterator(iter) {}
+      Handle operator*() {
+        return Handle(TreeNode::Direct<Node>::Iterator::operator*());
+      }
+    };
+    Iterator begin() const { return m_nodeIterable.begin(); }
+    Iterator end() const { return m_nodeIterable.end(); }
+
+   private:
+    TreeNode::Direct<Node> m_nodeIterable;
+  };
+
+  Direct<TreeHandle, TreeNode> directChildren() const {
+    return Direct<TreeHandle, TreeNode>(*this);
+  }
+
  protected:
   /* Constructor */
   TreeHandle(const TreeNode* node);

@@ -225,6 +225,7 @@ tests_src += $(addprefix python/test/,\
   ion.cpp \
   kandinsky.cpp \
   math.cpp \
+  numpy.cpp \
   random.cpp \
   time.cpp \
   turtle.cpp \

@@ -26,10 +26,6 @@ Expression PointNode::shallowReduce(const ReductionContext& reductionContext) {
 template <typename T>
 Evaluation<T> PointNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
-  ExpressionNode* p = parent();
-  if (p && !p->isOfType({Type::List, Type::ListSequence})) {
-    return Complex<T>::Undefined();
-  }
   Coordinate2D<T> xy = Point(this).approximate2D<T>(
       approximationContext.context(), approximationContext.complexFormat(),
       approximationContext.angleUnit());

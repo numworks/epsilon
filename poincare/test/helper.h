@@ -159,6 +159,12 @@ void assert_expression_simplifies_and_approximates_to(
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits = -1);
+void assert_expression_approximates_keeping_symbols_to(
+    const char* expression, const char* simplifiedExpression,
+    Poincare::Preferences::AngleUnit angleUnit = Degree,
+    Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
+    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
+    int numberOfSignificantDigits = -1);
 template <typename T>
 void assert_expression_simplifies_approximates_to(
     const char* expression, const char* approximation,

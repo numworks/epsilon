@@ -2091,7 +2091,7 @@ QUIZ_CASE(poincare_approximation_booleans) {
   assert_expression_approximates_to<float>("True + 3", Undefined::Name());
 }
 
-QUIZ_CASE(poincare_approximation_piecwise_operator) {
+QUIZ_CASE(poincare_approximation_piecewise_operator) {
   assert_expression_approximates_to<float>("piecewise(3,1<0,2)", "2");
   assert_expression_approximates_to<float>("piecewise(3,1>0,2)", "3");
   assert_expression_approximates_to<float>("piecewise(3,0>1,4,0>2,5,0<6,2)",
@@ -2119,6 +2119,15 @@ QUIZ_CASE(poincare_approximation_point) {
                                             Undefined::Name());
   assert_expression_approximates_to<double>("{(1+2,3+4),(5+6,7+8)}",
                                             "{(3,7),(11,15)}");
+}
+
+QUIZ_CASE(poincare_approximation_keeping_symbols) {
+  assert_expression_approximates_keeping_symbols_to("ln(10)+cos(10)+3x",
+                                                    "3×x+3.287392846");
+  assert_expression_approximates_keeping_symbols_to(
+      "cos(4/3+ln(x-1/2))", "cos(ln(x-0.5)+1.333333333)");
+  assert_expression_approximates_keeping_symbols_to("int(x,x,0,2)+int(x,x,0,x)",
+                                                    "int(x,x,0,x)+2");
 }
 
 template void assert_expression_approximates_to_scalar(

@@ -229,6 +229,7 @@ void AbstractLabeledAxis::reloadAxis(AbstractPlotView* plotView,
   for (size_t i = 0; i < n; i++) {
     computeLabel(i, plotView, axis);
   }
+  computeLabelsRelativePosition(plotView, axis);
 }
 
 int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView* plotView,
@@ -255,9 +256,6 @@ KDRect AbstractLabeledAxis::labelRect(int i, float t,
     return KDRectZero;
   }
 
-  if (i == 0) {
-    computeLabelsRelativePosition(plotView, axis);
-  }
   AbstractPlotView::RelativePosition xRelative, yRelative;
   if (axis == AbstractPlotView::Axis::Horizontal) {
     if (t == 0.f && m_otherAxis) {

@@ -20,8 +20,8 @@ void AbstractPlotView::reload(bool resetInterruption, bool force) {
     markRectAsDirty(
         KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight));
   }
-  reloadAxes();
   layoutSubviews();
+  reloadAxes();
 }
 
 void AbstractPlotView::setCursorView(CursorView *cursorView) {

@@ -75,7 +75,10 @@ Expression ListSequence::shallowReduce(ReductionContext reductionContext) {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this, &reductionContext,
         SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits);
+        SimplificationHelper::UnitReduction::BanUnits,
+        SimplificationHelper::MatrixReduction::DefinedOnMatrix,
+        SimplificationHelper::ListReduction::DoNotDistributeOverLists,
+        SimplificationHelper::PointReduction::DefinedOnPoint);
     if (!e.isUninitialized()) {
       return e;
     }

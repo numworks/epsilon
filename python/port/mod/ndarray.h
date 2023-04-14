@@ -8,6 +8,8 @@
  *
  * Copyright (c) 2019-2021 Zoltán Vörös
  *               2020 Jeff Epler for Adafruit Industries
+ *
+ * Some minor changes were made by NumWorks team.
 */
 
 #ifndef _NDARRAY_
@@ -219,11 +221,25 @@ mp_obj_t ndarray_flatten(size_t , const mp_obj_t *, mp_map_t *);
 MP_DECLARE_CONST_FUN_OBJ_KW(ndarray_flatten_obj);
 #endif
 
+#if NDARRAY_HAS_DTYPE
 mp_obj_t ndarray_dtype(mp_obj_t );
+#endif
+
+#if NDARRAY_HAS_ITEMSIZE
 mp_obj_t ndarray_itemsize(mp_obj_t );
+#endif
+
+#if NDARRAY_HAS_SIZE
 mp_obj_t ndarray_size(mp_obj_t );
+#endif
+
+#if NDARRAY_HAS_SHAPE
 mp_obj_t ndarray_shape(mp_obj_t );
+#endif
+
+#if NDARRAY_HAS_STRIDES
 mp_obj_t ndarray_strides(mp_obj_t );
+#endif
 
 #if NDARRAY_HAS_RESHAPE
 mp_obj_t ndarray_reshape_core(mp_obj_t , mp_obj_t , bool );
@@ -236,7 +252,7 @@ mp_obj_t ndarray_tobytes(mp_obj_t );
 MP_DECLARE_CONST_FUN_OBJ_1(ndarray_tobytes_obj);
 #endif
 
-#if NDARRAY_HAS_TOBYTES
+#if NDARRAY_HAS_TOLIST
 mp_obj_t ndarray_tolist(mp_obj_t );
 MP_DECLARE_CONST_FUN_OBJ_1(ndarray_tolist_obj);
 #endif

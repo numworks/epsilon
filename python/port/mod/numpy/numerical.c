@@ -9,6 +9,8 @@
  * Copyright (c) 2019-2021 Zoltán Vörös
  *               2020 Scott Shawcroft for Adafruit Industries
  *               2020 Taku Fukada
+ *
+ * Some minor changes were made by NumWorks team.
 */
 
 #include <math.h>
@@ -569,9 +571,11 @@ static mp_obj_t numerical_function(size_t n_args, const mp_obj_t *pos_args, mp_m
         mp_raise_TypeError(translate("axis must be None, or an integer"));
     }
 
+#if ULAB_NUMPY_HAS_ALL | ULAB_NUMPY_HAS_ANY
     if((optype == NUMERICAL_ALL) || (optype == NUMERICAL_ANY)) {
         return numerical_all_any(oin, axis, optype);
     }
+#endif
     if(mp_obj_is_type(oin, &mp_type_tuple) || mp_obj_is_type(oin, &mp_type_list) ||
         mp_obj_is_type(oin, &mp_type_range)) {
         switch(optype) {

@@ -142,6 +142,7 @@ typedef long mp_off_t;
 extern const struct _mp_obj_module_t modion_module;
 extern const struct _mp_obj_module_t modkandinsky_module;
 extern const struct _mp_obj_module_t modmatplotlib_module;
+extern const struct _mp_obj_module_t ulab_numpy_module;
 extern const struct _mp_obj_module_t modpyplot_module;
 extern const struct _mp_obj_module_t modtime_module;
 extern const struct _mp_obj_module_t modturtle_module;
@@ -152,5 +153,6 @@ extern const struct _mp_obj_module_t modturtle_module;
       {MP_ROM_QSTR(MP_QSTR_matplotlib), MP_ROM_PTR(&modmatplotlib_module)}, \
       {MP_ROM_QSTR(MP_QSTR_matplotlib_dot_pyplot),                          \
        MP_ROM_PTR(&modpyplot_module)},                                      \
+      {MP_ROM_QSTR(MP_QSTR_numpy), MP_ROM_PTR(&ulab_numpy_module)},         \
       {MP_ROM_QSTR(MP_QSTR_time), MP_ROM_PTR(&modtime_module)},             \
       {MP_ROM_QSTR(MP_QSTR_turtle), MP_ROM_PTR(&modturtle_module)},

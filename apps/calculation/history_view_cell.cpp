@@ -396,7 +396,8 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximate ||
       m_calculationExpanded);
-  m_scrollableOutputView.setLayouts(exactOutputLayout, approximateOutputLayout);
+  m_scrollableOutputView.setLayouts(Layout(), exactOutputLayout,
+                                    approximateOutputLayout);
   bool isEqual = calculation->exactAndApproximateDisplayedOutputsEqualSign(
                      context) == Calculation::EqualSign::Equal;
   m_scrollableOutputView.setExactAndApproximateAreStriclyEqual(isEqual);

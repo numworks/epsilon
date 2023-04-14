@@ -537,6 +537,12 @@ class Expression : public TreeHandle {
   /* Tuple */
   typedef std::initializer_list<Expression> Tuple;
 
+  /* Iterator */
+  friend Direct<Expression, ExpressionNode>;
+  Direct<Expression, ExpressionNode> directChildren() const {
+    return Direct<Expression, ExpressionNode>(*this);
+  }
+
  protected:
   Expression(const ExpressionNode* n) : TreeHandle(n) {}
 

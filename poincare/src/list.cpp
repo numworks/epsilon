@@ -197,10 +197,10 @@ bool List::isListOfPoints(Context* context) const {
   int n = numberOfChildren();
   for (int i = 0; i < n; i++) {
     Expression e = childAtIndex(i);
-    if (e.type() != ExpressionNode::Type::Point) {
+    if (!e.isUndefined() && e.type() != ExpressionNode::Type::Point) {
+      assert(!IsSymbolic(e, context));
       return false;
     }
-    // TODO Replace variables in context
   }
   return true;
 }

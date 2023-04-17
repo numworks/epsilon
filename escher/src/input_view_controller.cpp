@@ -15,8 +15,7 @@ InputViewController::ExpressionInputBarController::ExpressionInputBarController(
 
 void InputViewController::ExpressionInputBarController::
     didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(
-      m_expressionInputBar.expressionField());
+  Container::activeApp()->setFirstResponder(m_expressionInputBar.layoutField());
 }
 
 InputViewController::InputViewController(
@@ -36,15 +35,15 @@ void InputViewController::edit(Ion::Events::Event event, void* context,
   m_successAction = Invocation(successAction, context);
   m_failureAction = Invocation(failureAction, context);
   displayModalViewController(&m_expressionInputBarController, 1.0f, 1.0f);
-  m_expressionInputBarController.expressionField()->handleEvent(event);
+  m_expressionInputBarController.layoutField()->handleEvent(event);
 }
 
 bool InputViewController::isEditing() {
-  return m_expressionInputBarController.expressionField()->isEditing();
+  return m_expressionInputBarController.layoutField()->isEditing();
 }
 
 void InputViewController::abortEditionAndDismiss() {
-  m_expressionInputBarController.expressionField()->clearAndSetEditing(false);
+  m_expressionInputBarController.layoutField()->clearAndSetEditing(false);
   dismissModal();
 }
 
@@ -75,7 +74,7 @@ void InputViewController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
 }
 
 void InputViewController::layoutFieldDidChangeSize(LayoutField* layoutField) {
-  if (m_expressionInputBarController.expressionField()
+  if (m_expressionInputBarController.layoutField()
           ->inputViewHeightDidChange()) {
     /* Reload the whole view only if the LayoutField's height did actually
      * change. */
@@ -86,7 +85,7 @@ void InputViewController::layoutFieldDidChangeSize(LayoutField* layoutField) {
      * to be relayouted.
      * We force the relayout because the frame stays the same but we need to
      * propagate a relayout to the content of the field scroll view. */
-    m_expressionInputBarController.expressionField()->layoutSubviews(true);
+    m_expressionInputBarController.layoutField()->layoutSubviews(true);
   }
 }
 

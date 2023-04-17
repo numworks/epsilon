@@ -87,7 +87,7 @@ void FunctionListController::didBecomeFirstResponder() {
   footer()->setSelectedButton(-1);
   if (m_editedCellIndex != -1) {
     // Resume edition if it was interrupted by a store
-    Container::activeApp()->setFirstResponder(expressionField());
+    Container::activeApp()->setFirstResponder(layoutField());
   } else {
     Container::activeApp()->setFirstResponder(selectableListView());
   }

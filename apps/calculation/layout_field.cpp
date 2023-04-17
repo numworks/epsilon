@@ -1,9 +1,9 @@
+#include "layout_field.h"
+
 #include <apps/i18n.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/symbol.h>
-
-#include "layout_field.h"
 
 using namespace Escher;
 using namespace Poincare;

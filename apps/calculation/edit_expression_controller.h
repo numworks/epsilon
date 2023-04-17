@@ -59,8 +59,8 @@ class EditExpressionController : public Escher::ViewController,
                 LayoutFieldDelegate* layoutFieldDelegate);
     void reload();
     CalculationSelectableTableView* mainView() { return m_mainView; }
-    Escher::LayoutField* expressionField() {
-      return m_expressionInputBar.expressionField();
+    Escher::LayoutField* layoutField() {
+      return m_expressionInputBar.layoutField();
     }
 
    private:

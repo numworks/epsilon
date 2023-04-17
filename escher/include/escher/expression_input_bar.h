@@ -15,8 +15,8 @@ class AbstractExpressionInputBar : public View {
   int numberOfSubviews() const override { return 2; }
   View* subviewAtIndex(int index) override;
   KDSize minimalSizeForOptimalDisplay() const override;
-  virtual const LayoutField* expressionField() const = 0;
-  virtual LayoutField* expressionField() = 0;
+  virtual const LayoutField* layoutField() const = 0;
+  virtual LayoutField* layoutField() = 0;
 
  protected:
   constexpr static KDCoordinate k_margin = Metric::ExpressionViewMargin;
@@ -39,11 +39,11 @@ class TemplatedExpressionInputBar : public AbstractExpressionInputBar {
                               LayoutFieldDelegate* layoutFieldDelegate)
       : AbstractExpressionInputBar(),
         m_field(parentResponder, inputEventHandler, layoutFieldDelegate) {
-    expressionField()->setMargins(k_margin);
+    layoutField()->setMargins(k_margin);
   }
 
-  const LayoutField* expressionField() const override { return &m_field; }
-  LayoutField* expressionField() override { return &m_field; }
+  const LayoutField* layoutField() const override { return &m_field; }
+  LayoutField* layoutField() override { return &m_field; }
 
  private:
   T m_field;

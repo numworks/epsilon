@@ -20,10 +20,10 @@ class InputViewController : public ModalViewController,
                       InputEventHandlerDelegate* inputEventHandlerDelegate,
                       LayoutFieldDelegate* layoutFieldDelegate);
   const char* textBody() {
-    return m_expressionInputBarController.expressionField()->text();
+    return m_expressionInputBarController.layoutField()->text();
   }
   void setTextBody(const char* text) {
-    m_expressionInputBarController.expressionField()->setText(text);
+    m_expressionInputBarController.layoutField()->setText(text);
   }
   void edit(Ion::Events::Event event, void* context,
             Invocation::Action successAction, Invocation::Action failureAction);
@@ -61,9 +61,7 @@ class InputViewController : public ModalViewController,
         ExpressionInputBarController&& other) = delete;
     void didBecomeFirstResponder() override;
     View* view() override { return &m_expressionInputBar; }
-    LayoutField* expressionField() {
-      return m_expressionInputBar.expressionField();
-    }
+    LayoutField* layoutField() { return m_expressionInputBar.layoutField(); }
 
    private:
     ExpressionInputBar m_expressionInputBar;

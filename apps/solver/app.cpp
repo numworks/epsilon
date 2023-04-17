@@ -61,7 +61,7 @@ bool App::isAcceptableExpression(EditableField* field,
   /* Complete ExpressionFieldDelegateApp acceptable conditions by only accepting
    * the Equal OperatorType in the list of equations. */
   return ExpressionFieldDelegateApp::isAcceptableExpression(field, exp) &&
-         (field != m_listController.expressionField() ||
+         (field != m_listController.layoutField() ||
           Poincare::ComparisonNode::IsBinaryEquality(exp));
 }
 

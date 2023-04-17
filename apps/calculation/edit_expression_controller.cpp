@@ -62,26 +62,26 @@ EditExpressionController::EditExpressionController(
 
 void EditExpressionController::insertTextBody(const char *text) {
   Container::activeApp()->setFirstResponder(this);
-  m_contentView.expressionField()->handleEventWithText(text, false, true);
+  m_contentView.layoutField()->handleEventWithText(text, false, true);
   memoizeInput();
 }
 
 void EditExpressionController::didBecomeFirstResponder() {
   m_contentView.mainView()->scrollToBottom();
-  m_contentView.expressionField()->setEditing(true);
-  Container::activeApp()->setFirstResponder(m_contentView.expressionField());
+  m_contentView.layoutField()->setEditing(true);
+  Container::activeApp()->setFirstResponder(m_contentView.layoutField());
 }
 
 void EditExpressionController::restoreInput() {
   App::Snapshot *snap = App::app()->snapshot();
-  m_contentView.expressionField()->restoreContent(
+  m_contentView.layoutField()->restoreContent(
       snap->cacheBuffer(), *snap->cacheBufferInformationAddress(),
       snap->cacheCursorOffset(), snap->cacheCursorPosition());
   if (Poincare::Preferences::sharedPreferences->editionMode() ==
           Poincare::Preferences::EditionMode::Edition1D &&
-      !m_contentView.expressionField()->layout().isCodePointsString()) {
+      !m_contentView.layoutField()->layout().isCodePointsString()) {
     // Restored input in incompatible with edition mode.
-    m_contentView.expressionField()->clearLayout();
+    m_contentView.layoutField()->clearLayout();
     memoizeInput();
   }
 }
@@ -89,7 +89,7 @@ void EditExpressionController::restoreInput() {
 void EditExpressionController::memoizeInput() {
   App::Snapshot *snap = App::app()->snapshot();
   *snap->cacheBufferInformationAddress() =
-      m_contentView.expressionField()->dumpContent(
+      m_contentView.layoutField()->dumpContent(
           snap->cacheBuffer(), k_cacheBufferSize, snap->cacheCursorOffset(),
           snap->cacheCursorPosition());
 }
@@ -127,7 +127,7 @@ void EditExpressionController::layoutFieldDidAbortEditing(
 
 void EditExpressionController::layoutFieldDidChangeSize(
     ::LayoutField *layoutField) {
-  if (m_contentView.expressionField()->inputViewHeightDidChange()) {
+  if (m_contentView.layoutField()->inputViewHeightDidChange()) {
     /* Reload the whole view only if the LayoutField's height did actually
      * change. */
     reloadView();
@@ -137,7 +137,7 @@ void EditExpressionController::layoutFieldDidChangeSize(
      * to be relayouted.
      * We force the relayout because the frame stays the same but we need to
      * propagate a relayout to the content of the field scroll view. */
-    m_contentView.expressionField()->layoutSubviews(true);
+    m_contentView.layoutField()->layoutSubviews(true);
   }
 }
 
@@ -152,7 +152,7 @@ bool EditExpressionController::inputViewDidReceiveEvent(
     /* The input text store in m_workingBuffer might have been correct the first
      * time but then be too long when replacing ans in another context */
     Shared::TextFieldDelegateApp *myApp = App::app();
-    if (!myApp->isAcceptableText(m_contentView.expressionField(),
+    if (!myApp->isAcceptableText(m_contentView.layoutField(),
                                  m_workingBuffer)) {
       return true;
     }
@@ -167,13 +167,12 @@ bool EditExpressionController::inputViewDidReceiveEvent(
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
       clearWorkingBuffer();
-      m_contentView.expressionField()->setEditing(false);
+      m_contentView.layoutField()->setEditing(false);
       Container::activeApp()->setFirstResponder(m_historyController);
     }
     return true;
   }
-  if (event == Ion::Events::Clear &&
-      m_contentView.expressionField()->isEmpty()) {
+  if (event == Ion::Events::Clear && m_contentView.layoutField()->isEmpty()) {
     m_calculationStore->deleteAll();
     m_historyController->reload();
     return true;
@@ -204,7 +203,7 @@ bool EditExpressionController::inputViewDidFinishEditing(const char *text,
           ->push(m_workingBuffer, context, HistoryViewCell::Height)
           .pointer()) {
     m_historyController->reload();
-    m_contentView.expressionField()->clearAndSetEditing(true);
+    m_contentView.layoutField()->clearAndSetEditing(true);
     telemetryReportEvent("Input", m_workingBuffer);
     return true;
   }
@@ -213,8 +212,8 @@ bool EditExpressionController::inputViewDidFinishEditing(const char *text,
 
 bool EditExpressionController::inputViewDidAbortEditing(const char *text) {
   if (text != nullptr) {
-    m_contentView.expressionField()->clearAndSetEditing(true);
-    m_contentView.expressionField()->setText(text);
+    m_contentView.layoutField()->clearAndSetEditing(true);
+    m_contentView.layoutField()->setText(text);
   }
   return false;
 }

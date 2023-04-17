@@ -8,15 +8,15 @@ EditableExpressionModelCell::EditableExpressionModelCell(
     InputEventHandlerDelegate* inputEventHandlerDelegate,
     LayoutFieldDelegate* layoutDelegate, KDGlyph::Format format)
     : HighlightCell(),
-      m_expressionField(parentResponder, inputEventHandlerDelegate,
-                        layoutDelegate, format),
+      m_layoutField(parentResponder, inputEventHandlerDelegate, layoutDelegate,
+                    format),
       m_leftMargin(0),
       m_rightMargin(0) {
-  m_expressionField.setLeftMargin(Metric::EditableExpressionAdditionalMargin);
+  m_layoutField.setLeftMargin(Metric::EditableExpressionAdditionalMargin);
 }
 
 KDSize EditableExpressionModelCell::minimalSizeForOptimalDisplay() const {
-  KDSize expressionSize = m_expressionField.minimalSizeForOptimalDisplay();
+  KDSize expressionSize = m_layoutField.minimalSizeForOptimalDisplay();
   return KDSize(m_leftMargin + expressionSize.width() + m_rightMargin,
                 expressionSize.height());
 }
@@ -39,7 +39,7 @@ void EditableExpressionModelCell::drawRect(KDContext* ctx, KDRect rect) const {
 
 void EditableExpressionModelCell::layoutSubviews(bool force) {
   setChildFrame(
-      &m_expressionField,
+      &m_layoutField,
       KDRect(m_leftMargin, 0, bounds().width() - m_leftMargin - m_rightMargin,
              bounds().height()),
       force);

@@ -61,7 +61,7 @@ class InputViewController : public ModalViewController,
         ExpressionInputBarController&& other) = delete;
     void didBecomeFirstResponder() override;
     View* view() override { return &m_expressionInputBar; }
-    ExpressionField* expressionField() {
+    LayoutField* expressionField() {
       return m_expressionInputBar.expressionField();
     }
 

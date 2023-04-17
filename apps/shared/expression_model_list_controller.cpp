@@ -204,8 +204,7 @@ void ExpressionModelListController::finishEdition() {
 bool ExpressionModelListController::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Poincare::Layout layout,
     Ion::Events::Event event) {
-  editSelectedRecordWithText(
-      static_cast<ExpressionField *>(layoutField)->text());
+  editSelectedRecordWithText(static_cast<LayoutField *>(layoutField)->text());
   finishEdition();
   return true;
 }

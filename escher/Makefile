@@ -23,7 +23,6 @@ escher_src += $(addprefix escher/src/,\
   editable_expression_model_cell.cpp \
   editable_text_cell.cpp \
   ellipsis_view.cpp \
-  expression_field.cpp \
   even_odd_cell.cpp \
   even_odd_cell_with_ellipsis.cpp \
   even_odd_buffer_text_cell.cpp \

@@ -77,7 +77,7 @@ void InputViewController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
 void InputViewController::layoutFieldDidChangeSize(LayoutField* layoutField) {
   if (m_expressionInputBarController.expressionField()
           ->inputViewHeightDidChange()) {
-    /* Reload the whole view only if the ExpressionField's height did actually
+    /* Reload the whole view only if the LayoutField's height did actually
      * change. */
     reloadModal();
   } else {

@@ -2,7 +2,7 @@
 #define ESCHER_EDITABLE_SEQUENCE_CELL_H
 
 #include <escher/editable_expression_model_cell.h>
-#include <escher/expression_field.h>
+#include <escher/layout_field.h>
 
 #include "sequence_cell.h"
 

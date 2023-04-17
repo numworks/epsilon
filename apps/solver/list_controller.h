@@ -51,7 +51,7 @@ class ListController : public Shared::ExpressionModelListController,
   /* Specific to Solver */
   void resolveEquations();
 
-  Escher::ExpressionField* expressionField() override {
+  Escher::LayoutField* expressionField() override {
     return m_editableCell.expressionField();
   }
 

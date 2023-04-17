@@ -120,6 +120,16 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
       force);
 }
 
+LayoutField::ContentView::ContentView(KDGlyph::Format format)
+    : m_expressionView(&m_cursor, format), m_isEditing(false) {
+  clearLayout();
+}
+
+/* TODO: This buffer could probably be shared with some other temporary
+ * space. It can't be shared with the one from TextField if we want to remove
+ * double buffering in TextField and still open the store menu within texts. */
+static char s_draftBuffer[AbstractTextField::MaxBufferSize()];
+
 LayoutField::LayoutField(Responder *parentResponder,
                          InputEventHandlerDelegate *inputEventHandlerDelegate,
                          LayoutFieldDelegate *layoutFieldDelegate,
@@ -128,11 +138,11 @@ LayoutField::LayoutField(Responder *parentResponder,
                                              this),
       EditableField(inputEventHandlerDelegate),
       m_contentView(format),
-      m_layoutFieldDelegate(layoutFieldDelegate) {}
-
-LayoutField::ContentView::ContentView(KDGlyph::Format format)
-    : m_expressionView(&m_cursor, format), m_isEditing(false) {
-  clearLayout();
+      m_layoutFieldDelegate(layoutFieldDelegate),
+      m_inputViewMemoizedHeight(0),
+      m_draftBuffer(s_draftBuffer),
+      m_draftBufferSize(AbstractTextField::MaxBufferSize()) {
+  setBackgroundColor(KDColorWhite);
 }
 
 void LayoutField::setDelegates(
@@ -397,6 +407,66 @@ bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
     return true;
   }
   return false;
+}
+
+void LayoutField::didBecomeFirstResponder() {
+  m_inputViewMemoizedHeight = inputViewHeight();
+  WithBlinkingTextCursor<
+      ScrollableView<ScrollView::NoDecorator>>::didBecomeFirstResponder();
+}
+
+KDSize LayoutField::minimalSizeForOptimalDisplay() const {
+  return KDSize(ScrollView::minimalSizeForOptimalDisplay().width(),
+                inputViewHeight());
+}
+
+const char *LayoutField::text() {
+  layout().serializeForParsing(m_draftBuffer, m_draftBufferSize);
+  return m_draftBuffer;
+}
+
+void LayoutField::setText(const char *text) {
+  clearLayout();
+  handleEventWithText(text, false, true);
+}
+
+bool LayoutField::inputViewHeightDidChange() {
+  KDCoordinate newHeight = inputViewHeight();
+  bool didChange = m_inputViewMemoizedHeight != newHeight;
+  m_inputViewMemoizedHeight = newHeight;
+  return didChange;
+}
+
+void LayoutField::reload() {
+  if (!linearMode()) {
+    // Currently used only for its baseline effect, useless in linearMode
+    reload(KDSizeZero);
+  }
+}
+
+void LayoutField::restoreContent(const char *buffer, size_t size,
+                                 int *cursorOffset, int *position) {
+  if (size == 0) {
+    return;
+  }
+  setLayout(Layout::LayoutFromAddress(buffer, size));
+  if (*cursorOffset != -1) {
+    const LayoutNode *cursorNode = reinterpret_cast<const LayoutNode *>(
+        reinterpret_cast<char *>(layout().node()) + *cursorOffset);
+    LayoutCursor restoredCursor = LayoutCursor(Layout(cursorNode));
+    restoredCursor.safeSetPosition(*position);
+    *cursor() = restoredCursor;
+  }
+}
+
+void LayoutField::setTextEditionBuffer(char *buffer, size_t bufferSize) {
+  m_draftBuffer = buffer;
+  m_draftBufferSize = bufferSize;
+}
+
+KDCoordinate LayoutField::inputViewHeight() const {
+  return std::max(k_minimalHeight,
+                  ScrollView::minimalSizeForOptimalDisplay().height());
 }
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {

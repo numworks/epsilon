@@ -2,7 +2,7 @@
 #define ESCHER_EDITABLE_EXPRESSION_MODEL_CELL_H
 
 #include <escher/even_odd_cell.h>
-#include <escher/expression_field.h>
+#include <escher/layout_field.h>
 
 namespace Escher {
 
@@ -44,13 +44,13 @@ class EditableExpressionModelCell : public HighlightCell {
     return m_expressionField.expressionView()->font();
   }
   void drawRect(KDContext* ctx, KDRect rect) const override;
-  ExpressionField* expressionField() { return &m_expressionField; }
+  LayoutField* expressionField() { return &m_expressionField; }
 
  protected:
   int numberOfSubviews() const override { return 1; }
   View* subviewAtIndex(int index) override { return &m_expressionField; }
   void layoutSubviews(bool force = false) override;
-  ExpressionField m_expressionField;
+  LayoutField m_expressionField;
   KDCoordinate m_leftMargin;
   KDCoordinate m_rightMargin;
 };

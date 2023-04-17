@@ -3,8 +3,8 @@
 
 #include <apps/i18n.h>
 #include <escher/even_odd_message_text_cell.h>
-#include <escher/expression_field.h>
 #include <escher/input_view_controller.h>
+#include <escher/layout_field.h>
 #include <escher/selectable_list_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
@@ -70,7 +70,7 @@ class ExpressionModelListController
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
   void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   // EditableCell
-  virtual Escher::ExpressionField* expressionField() = 0;
+  virtual Escher::LayoutField* expressionField() = 0;
   int16_t m_editedCellIndex;
 
  private:

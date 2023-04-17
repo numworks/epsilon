@@ -1,7 +1,7 @@
 #ifndef ESCHER_EDITABLE_FUNCTION_CELL_H
 #define ESCHER_EDITABLE_FUNCTION_CELL_H
 
-#include <escher/expression_field.h>
+#include <escher/layout_field.h>
 
 #include "function_cell.h"
 
@@ -12,7 +12,7 @@ class EditableFunctionCell : public AbstractFunctionCell {
   EditableFunctionCell(Escher::Responder* parentResponder,
                        Escher::InputEventHandlerDelegate* inputEventHandler,
                        Escher::LayoutFieldDelegate* layoutFieldDelegate);
-  Escher::ExpressionField* expressionField() { return &m_expressionField; }
+  Escher::LayoutField* expressionField() { return &m_expressionField; }
 
  private:
   constexpr static KDCoordinate k_expressionMargin = 5;
@@ -26,7 +26,7 @@ class EditableFunctionCell : public AbstractFunctionCell {
     return m_expressionField.expressionView();
   }
   Escher::View* mainView() override { return &m_expressionField; }
-  Escher::ExpressionField m_expressionField;
+  Escher::LayoutField m_expressionField;
 };
 
 }  // namespace Graph

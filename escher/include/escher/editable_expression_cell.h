@@ -2,8 +2,8 @@
 #define ESCHER_EDITABLE_EXPRESSION_CELL_H
 
 #include <escher/bordered.h>
-#include <escher/expression_field.h>
 #include <escher/highlight_cell.h>
+#include <escher/layout_field.h>
 #include <escher/layout_field_delegate.h>
 #include <escher/metric.h>
 #include <escher/responder.h>
@@ -20,7 +20,7 @@ class EditableExpressionCell : public Bordered,
       Responder* parentResponder = nullptr,
       InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
       LayoutFieldDelegate* layoutDelegate = nullptr);
-  ExpressionField* expressionField() { return &m_expressionField; }
+  LayoutField* expressionField() { return &m_expressionField; }
   void setHighlighted(bool highlight) override;
   Responder* responder() override { return this; }
   int numberOfSubviews() const override { return 1; }
@@ -38,7 +38,7 @@ class EditableExpressionCell : public Bordered,
   constexpr static KDCoordinate k_topMargin = k_margin + 1;
   constexpr static KDCoordinate k_separatorThickness =
       Metric::CellSeparatorThickness;
-  ExpressionField m_expressionField;
+  LayoutField m_expressionField;
   char m_expressionBody[Poincare::PrintFloat::k_maxFloatCharSize];
 };
 

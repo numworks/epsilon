@@ -57,7 +57,7 @@ class ListController : public Shared::FunctionListController {
   Escher::HighlightCell* functionCells(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int j) override;
   Shared::ContinuousFunctionStore* modelStore() const override;
-  Escher::ExpressionField* expressionField() override {
+  Escher::LayoutField* expressionField() override {
     return m_editableCell.expressionField();
   }
 

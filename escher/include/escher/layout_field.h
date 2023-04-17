@@ -19,8 +19,6 @@ class LayoutField
     : public WithBlinkingTextCursor<ScrollableView<ScrollView::NoDecorator>>,
       public ScrollViewDataSource,
       public EditableField {
-  friend class ExpressionField;
-
  public:
   LayoutField(Responder* parentResponder,
               InputEventHandlerDelegate* inputEventHandlerDelegate,
@@ -56,6 +54,7 @@ class LayoutField
   /* Always keep the full margins on a layout field, as it would otherwise lead
    * to weird cropping during edition. */
   float marginPortionTolerance() const override { return 0.f; }
+  using ScrollView::layoutSubviews;
 
   /* Responder */
   bool handleEventWithText(const char* text, bool indentation = false,
@@ -64,12 +63,31 @@ class LayoutField
   bool handleStoreEvent() override;
   // TODO: factorize with TextField (see TODO of EditableField)
   bool shouldFinishEditing(Ion::Events::Event event) override;
+  void didBecomeFirstResponder() override;
+
+  /* View */
+  KDSize minimalSizeForOptimalDisplay() const override;
 
   Poincare::LayoutCursor* cursor() { return m_contentView.cursor(); }
   const ExpressionView* expressionView() const {
     return m_contentView.expressionView();
   }
   ExpressionView* expressionView() { return m_contentView.expressionView(); }
+
+  /* Warning: this function is VERY dangerous! Indeed: sometimes the
+   * m_layoutField might overflow the m_textBuffer once serialized
+   * and still have been accepted before because the model can hold a longer
+   * buffer. This is the case in the application 'Calculation' and we do not
+   * use text() there... TODO: change text() for fillTextInBuffer?*/
+  const char* text();
+  void setText(const char* text);
+  bool inputViewHeightDidChange();
+  void reload();
+  void restoreContent(const char* buffer, size_t size, int* cursorOffset,
+                      int* position);
+  void setTextEditionBuffer(char* buffer, size_t bufferSize);
+
+  virtual KDCoordinate inputViewHeight() const;
 
  protected:
   bool linearMode() const {
@@ -79,6 +97,8 @@ class LayoutField
 
  private:
   constexpr static int k_maxNumberOfLayouts = 220;
+  constexpr static KDCoordinate k_minimalHeight =
+      KDFont::GlyphHeight(KDFont::Size::Large);
   static_assert(k_maxNumberOfLayouts == TextField::MaxBufferSize(),
                 "Maximal number of layouts in a layout field should be equal "
                 "to max number of char in text field");
@@ -126,8 +146,12 @@ class LayoutField
     ExpressionViewWithCursor m_expressionView;
     bool m_isEditing;
   };
+
   ContentView m_contentView;
   LayoutFieldDelegate* m_layoutFieldDelegate;
+  KDCoordinate m_inputViewMemoizedHeight;
+  char* m_draftBuffer;
+  size_t m_draftBufferSize;
 };
 
 }  // namespace Escher

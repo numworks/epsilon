@@ -439,8 +439,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     return true;
   }
   if (event == Ion::Events::Back && isEditing()) {
-    clearLayout();
-    setEditing(false);
+    clearAndSetEditing(false);
     m_delegate->layoutFieldDidAbortEditing(this);
     return true;
   }

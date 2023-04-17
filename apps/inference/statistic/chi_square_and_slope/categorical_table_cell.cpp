@@ -208,7 +208,7 @@ void EditableCategoricalTableCell::clearSelectedColumn() {
   int column = m_selectableTableView.selectedColumn();
   tableModel()->deleteParametersInColumn(relativeColumnIndex(column));
   tableModel()->recomputeData();
-  selectableTableView()->selectCellAtClippedLocation(column, 0, false);
+  selectableTableView()->selectCellAtClippedLocation(column, 1, false);
   if (!recomputeDimensions()) {
     m_selectableTableView.reloadData(false);
   }

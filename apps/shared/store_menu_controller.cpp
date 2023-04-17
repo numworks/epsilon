@@ -29,6 +29,7 @@ void StoreMenuController::open() {
 }
 
 void StoreMenuController::close() {
+  m_cell.expressionField()->setEditing(false);
   Container::activeApp()->modalViewController()->dismissModal();
 }
 

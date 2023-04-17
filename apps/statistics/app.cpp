@@ -148,7 +148,7 @@ void App::activeViewDidBecomeFirstResponder(
 void App::didBecomeActive(Escher::Window *windows) {
   // Sorted indexes are not kept in the snapshot, they have been invalidated.
   m_store.invalidateSortedIndexes();
-  ExpressionFieldDelegateApp::didBecomeActive(windows);
+  LayoutFieldDelegateApp::didBecomeActive(windows);
 }
 
 }  // namespace Statistics

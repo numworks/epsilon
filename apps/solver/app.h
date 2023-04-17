@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 
-#include "../shared/expression_field_delegate_app.h"
+#include "../shared/layout_field_delegate_app.h"
 #include "../shared/shared_app.h"
 #include "equation_store.h"
 #include "interval_controller.h"
@@ -14,7 +14,7 @@
 
 namespace Solver {
 
-class App : public Shared::ExpressionFieldDelegateApp {
+class App : public Shared::LayoutFieldDelegateApp {
  public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {

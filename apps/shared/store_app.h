@@ -2,14 +2,14 @@
 #define STORE_APP_H
 
 #include <apps/shared/double_pair_store.h>
-#include <apps/shared/expression_field_delegate_app.h>
+#include <apps/shared/layout_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
 #include <apps/shared/store_controller.h>
 #include <escher/tab_view_data_source.h>
 
 namespace Shared {
 
-class StoreApp : public ExpressionFieldDelegateApp {
+class StoreApp : public LayoutFieldDelegateApp {
  public:
   class Snapshot : public Shared::SharedApp::Snapshot,
                    public Escher::TabViewDataSource {
@@ -38,7 +38,7 @@ class StoreApp : public ExpressionFieldDelegateApp {
   }
 
  protected:
-  using ExpressionFieldDelegateApp::ExpressionFieldDelegateApp;
+  using LayoutFieldDelegateApp::LayoutFieldDelegateApp;
   virtual StoreController *storeController() = 0;
 
  private:

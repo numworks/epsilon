@@ -7,16 +7,16 @@
 #include <escher/tab_view_data_source.h>
 
 #include "curve_view_cursor.h"
-#include "expression_field_delegate_app.h"
 #include "function_graph_controller.h"
 #include "function_list_controller.h"
 #include "function_store.h"
+#include "layout_field_delegate_app.h"
 #include "shared_app.h"
 #include "values_controller.h"
 
 namespace Shared {
 
-class FunctionApp : public ExpressionFieldDelegateApp {
+class FunctionApp : public LayoutFieldDelegateApp {
  public:
   class Snapshot : public Shared::SharedApp::Snapshot,
                    public Escher::TabViewDataSource {

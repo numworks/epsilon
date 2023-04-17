@@ -9,7 +9,7 @@
 #include "input_event_handler_delegate_app.h"
 
 /* TODO: This class should be refactored/deleted as well as
- * InputEventHandlerDelegateApp and ExpressionFieldDelegateApp. */
+ * InputEventHandlerDelegateApp and LayoutFieldDelegateApp. */
 
 namespace Shared {
 

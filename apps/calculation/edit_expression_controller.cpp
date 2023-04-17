@@ -106,8 +106,8 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(
   if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
     return true;
   }
-  return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField,
-                                                                  event);
+  return layoutFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField,
+                                                              event);
 }
 
 bool EditExpressionController::layoutFieldDidHandleEvent(

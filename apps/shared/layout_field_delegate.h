@@ -6,7 +6,7 @@
 
 namespace Shared {
 
-class ExpressionFieldDelegateApp;
+class LayoutFieldDelegateApp;
 
 class LayoutFieldDelegate : public Escher::LayoutFieldDelegate {
  public:
@@ -21,7 +21,7 @@ class LayoutFieldDelegate : public Escher::LayoutFieldDelegate {
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
 
  protected:
-  ExpressionFieldDelegateApp* expressionFieldDelegateApp() const;
+  LayoutFieldDelegateApp* layoutFieldDelegateApp() const;
 };
 
 }  // namespace Shared

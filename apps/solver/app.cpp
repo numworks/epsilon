@@ -26,7 +26,7 @@ void App::Snapshot::reset() {
 }
 
 void App::prepareForIntrusiveStorageChange() {
-  ExpressionFieldDelegateApp::prepareForIntrusiveStorageChange();
+  LayoutFieldDelegateApp::prepareForIntrusiveStorageChange();
   m_stackViewController.popUntilDepth(1, true);
 }
 
@@ -40,7 +40,7 @@ void App::Snapshot::tidy() {
 }
 
 App::App(Snapshot* snapshot)
-    : ExpressionFieldDelegateApp(snapshot, &m_stackViewController),
+    : LayoutFieldDelegateApp(snapshot, &m_stackViewController),
       m_solutionsController(&m_alternateEmptyViewController),
       m_intervalController(nullptr, this),
       m_alternateEmptyViewController(nullptr, &m_solutionsController,
@@ -58,9 +58,9 @@ App::App(Snapshot* snapshot)
 
 bool App::isAcceptableExpression(EditableField* field,
                                  const Poincare::Expression exp) {
-  /* Complete ExpressionFieldDelegateApp acceptable conditions by only accepting
+  /* Complete LayoutFieldDelegateApp acceptable conditions by only accepting
    * the Equal OperatorType in the list of equations. */
-  return ExpressionFieldDelegateApp::isAcceptableExpression(field, exp) &&
+  return LayoutFieldDelegateApp::isAcceptableExpression(field, exp) &&
          (field != m_listController.layoutField() ||
           Poincare::ComparisonNode::IsBinaryEquality(exp));
 }

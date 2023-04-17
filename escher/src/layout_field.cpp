@@ -20,11 +20,6 @@ using namespace Poincare;
 
 namespace Escher {
 
-LayoutField::ContentView::ContentView(KDGlyph::Format format)
-    : m_expressionView(&m_cursor, format), m_isEditing(false) {
-  clearLayout();
-}
-
 bool LayoutField::ContentView::setEditing(bool isEditing) {
   if (m_isEditing == isEditing) {
     return false;
@@ -125,6 +120,28 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
       force);
 }
 
+LayoutField::LayoutField(Responder *parentResponder,
+                         InputEventHandlerDelegate *inputEventHandlerDelegate,
+                         LayoutFieldDelegate *layoutFieldDelegate,
+                         KDGlyph::Format format)
+    : WithBlinkingTextCursor<ScrollableView>(parentResponder, &m_contentView,
+                                             this),
+      EditableField(inputEventHandlerDelegate),
+      m_contentView(format),
+      m_layoutFieldDelegate(layoutFieldDelegate) {}
+
+LayoutField::ContentView::ContentView(KDGlyph::Format format)
+    : m_expressionView(&m_cursor, format), m_isEditing(false) {
+  clearLayout();
+}
+
+void LayoutField::setDelegates(
+    InputEventHandlerDelegate *inputEventHandlerDelegate,
+    LayoutFieldDelegate *layoutFieldDelegate) {
+  m_inputEventHandlerDelegate = inputEventHandlerDelegate;
+  m_layoutFieldDelegate = layoutFieldDelegate;
+}
+
 void LayoutField::setEditing(bool isEditing) {
   KDSize previousLayoutSize = m_contentView.minimalSizeForOptimalDisplay();
   if (m_contentView.setEditing(isEditing)) {
@@ -173,6 +190,11 @@ size_t LayoutField::dumpContent(char *buffer, size_t bufferSize,
     *position = cursor()->position();
   }
   return size;
+}
+
+void LayoutField::setBackgroundColor(KDColor c) {
+  ScrollableView::setBackgroundColor(c);
+  m_contentView.setBackgroundColor(c);
 }
 
 bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {

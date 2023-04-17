@@ -25,17 +25,9 @@ class LayoutField
   LayoutField(Responder* parentResponder,
               InputEventHandlerDelegate* inputEventHandlerDelegate,
               LayoutFieldDelegate* layoutFieldDelegate = nullptr,
-              KDGlyph::Format format = {})
-      : WithBlinkingTextCursor<ScrollableView>(parentResponder, &m_contentView,
-                                               this),
-        EditableField(inputEventHandlerDelegate),
-        m_contentView(format),
-        m_layoutFieldDelegate(layoutFieldDelegate) {}
+              KDGlyph::Format format = {});
   void setDelegates(InputEventHandlerDelegate* inputEventHandlerDelegate,
-                    LayoutFieldDelegate* layoutFieldDelegate) {
-    m_inputEventHandlerDelegate = inputEventHandlerDelegate;
-    m_layoutFieldDelegate = layoutFieldDelegate;
-  }
+                    LayoutFieldDelegate* layoutFieldDelegate);
   Poincare::Context* context() const;
   bool isEditing() const override { return m_contentView.isEditing(); }
   void setEditing(bool isEditing) override final;
@@ -60,10 +52,7 @@ class LayoutField
                      int* position);
 
   // ScrollableView
-  void setBackgroundColor(KDColor c) override {
-    ScrollableView::setBackgroundColor(c);
-    m_contentView.setBackgroundColor(c);
-  }
+  void setBackgroundColor(KDColor c) override;
   /* Always keep the full margins on a layout field, as it would otherwise lead
    * to weird cropping during edition. */
   float marginPortionTolerance() const override { return 0.f; }

@@ -314,8 +314,7 @@ KDRect AbstractTextField::ContentView::glyphFrameAtPosition(
   assert(buffer != nullptr && position != nullptr);
   assert(position >= buffer);
   KDSize glyphSize = KDFont::GlyphSize(m_font);
-  KDCoordinate cursorWidth =
-      TextCursorView::sharedTextCursor->minimalSizeForOptimalDisplay().width();
+  KDCoordinate cursorWidth = TextCursorView::k_width;
   KDCoordinate horizontalOffset =
       m_horizontalAlignment == 0.0f
           ? 0.0f

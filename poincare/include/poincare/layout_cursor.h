@@ -36,8 +36,6 @@ namespace Poincare {
 
 class LayoutCursor final {
  public:
-  constexpr static KDCoordinate k_cursorWidth = 1;
-
   /* This constructor either set the cursor at the leftMost or rightmost
    * position in the layout. */
   LayoutCursor(Layout layout,

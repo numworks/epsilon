@@ -34,7 +34,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Minus && isEditing() &&
       fieldContainsSingleMinusSymbol()) {
     setText(Poincare::Symbol::k_ansAliases.mainAlias());
-    // The Minus symbol will be addded by ::ExpressionField::handleEvent
+    // The Minus symbol will be addded by Escher::LayoutField::handleEvent
   }
   if (event == Ion::Events::Division && isEditing()) {
     if (m_divisionCycleWithAns == Poincare::TrinaryBoolean::Unknown) {
@@ -44,7 +44,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
     }
     return handleDivision();
   }
-  return ::ExpressionField::handleEvent(event);
+  return Escher::LayoutField::handleEvent(event);
 }
 
 bool ExpressionField::fieldContainsSingleMinusSymbol() const {
@@ -112,7 +112,7 @@ bool ExpressionField::handleDivision() {
      * which is not the wanted behavior when pressing the Division key) */
     switch (m_currentStep) {
       case DivisionCycleStep::Start:
-        handled = ::ExpressionField::handleEvent(event);
+        handled = Escher::LayoutField::handleEvent(event);
         /* In 1D we always cycle
          * In 2D we cycle only if the default handleEvent created an empty
          * fraction */
@@ -131,7 +131,7 @@ bool ExpressionField::handleDivision() {
         if (editionIn1D) {
           // 1D: NumeratorOfEmptyFraction -> MixedFraction
           m_currentStep = DivisionCycleStep::MixedFraction;
-          handled = ::ExpressionField::handleEvent(
+          handled = Escher::LayoutField::handleEvent(
               Ion::Events::Space);  // TODO : OR handleEventWithText(" ");
           assert(handled);
           event = Ion::Events::Left;
@@ -157,11 +157,11 @@ bool ExpressionField::handleDivision() {
         if (editionIn1D) {
           // 1D: MixedFraction -> DenominatorOfEmptyFraction
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
-          handled = ::ExpressionField::handleEvent(
+          handled = Escher::LayoutField::handleEvent(
               Ion::Events::Right);  // TODO : OR m_textField.moveCursorRight();
                                     // but protected in TextInput
           assert(handled);
-          handled = ::ExpressionField::handleEvent(
+          handled = Escher::LayoutField::handleEvent(
               Ion::Events::Backspace);  // TODO : OR
                                         // m_textField.removePreviousGlyph();
           assert(handled);
@@ -173,7 +173,7 @@ bool ExpressionField::handleDivision() {
         break;
     }
   }
-  return ::ExpressionField::handleEvent(event);
+  return Escher::LayoutField::handleEvent(event);
 }
 
 }  // namespace Calculation

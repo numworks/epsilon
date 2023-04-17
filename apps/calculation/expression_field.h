@@ -6,13 +6,13 @@
 
 namespace Calculation {
 
-class ExpressionField : public Escher::ExpressionField {
+class ExpressionField : public Escher::LayoutField {
  public:
   ExpressionField(Escher::Responder* parentResponder,
                   Escher::InputEventHandlerDelegate* inputEventHandler,
                   Escher::LayoutFieldDelegate* layoutFieldDelegate)
-      : Escher::ExpressionField(parentResponder, inputEventHandler,
-                                layoutFieldDelegate),
+      : Escher::LayoutField(parentResponder, inputEventHandler,
+                            layoutFieldDelegate),
         m_currentStep(DivisionCycleStep::Start),
         m_divisionCycleWithAns(Poincare::TrinaryBoolean::Unknown) {}
 

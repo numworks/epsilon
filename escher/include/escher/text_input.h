@@ -14,7 +14,7 @@ namespace Escher {
 class TextInput
     : public WithBlinkingTextCursor<ScrollableView<ScrollView::NoDecorator>>,
       public ScrollViewDataSource {
-  friend class ExpressionField;
+  friend class LayoutField;
 
  public:
   TextInput(Responder *parentResponder, View *contentView)

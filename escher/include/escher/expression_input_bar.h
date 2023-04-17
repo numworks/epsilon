@@ -1,7 +1,7 @@
 #ifndef ESCHER_EXPRESSION_INPUT_BAR_H
 #define ESCHER_EXPRESSION_INPUT_BAR_H
 
-#include <escher/expression_field.h>
+#include <escher/layout_field.h>
 #include <escher/metric.h>
 #include <escher/solid_color_view.h>
 
@@ -15,8 +15,8 @@ class AbstractExpressionInputBar : public View {
   int numberOfSubviews() const override { return 2; }
   View* subviewAtIndex(int index) override;
   KDSize minimalSizeForOptimalDisplay() const override;
-  virtual const ExpressionField* expressionField() const = 0;
-  virtual ExpressionField* expressionField() = 0;
+  virtual const LayoutField* expressionField() const = 0;
+  virtual LayoutField* expressionField() = 0;
 
  protected:
   constexpr static KDCoordinate k_margin = Metric::ExpressionViewMargin;
@@ -42,14 +42,14 @@ class TemplatedExpressionInputBar : public AbstractExpressionInputBar {
     expressionField()->setMargins(k_margin);
   }
 
-  const ExpressionField* expressionField() const override { return &m_field; }
-  ExpressionField* expressionField() override { return &m_field; }
+  const LayoutField* expressionField() const override { return &m_field; }
+  LayoutField* expressionField() override { return &m_field; }
 
  private:
   T m_field;
 };
 
-using ExpressionInputBar = TemplatedExpressionInputBar<ExpressionField>;
+using ExpressionInputBar = TemplatedExpressionInputBar<LayoutField>;
 
 }  // namespace Escher
 

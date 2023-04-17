@@ -170,12 +170,11 @@ bool ListController::layoutFieldDidFinishEditing(LayoutField *layoutField,
   return true;
 }
 
-bool ListController::layoutFieldDidAbortEditing(
+void ListController::layoutFieldDidAbortEditing(
     Escher::LayoutField *layoutField) {
   ExpressionModelListController::layoutFieldDidAbortEditing(layoutField);
   reloadBrace();
   reloadButtonMessage();
-  return true;
 }
 
 void ListController::editExpression(Ion::Events::Event event) {

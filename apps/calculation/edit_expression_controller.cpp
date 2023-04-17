@@ -120,9 +120,9 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   return inputViewDidFinishEditing(nullptr, layoutR);
 }
 
-bool EditExpressionController::layoutFieldDidAbortEditing(
+void EditExpressionController::layoutFieldDidAbortEditing(
     ::LayoutField *layoutField) {
-  return inputViewDidAbortEditing(nullptr);
+  inputViewDidAbortEditing(nullptr);
 }
 
 void EditExpressionController::layoutFieldDidChangeSize(

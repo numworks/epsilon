@@ -17,7 +17,7 @@ class LayoutFieldDelegate : public Escher::LayoutFieldDelegate {
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
                                    Poincare::Layout layoutR,
                                    Ion::Events::Event event) override;
-  bool layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
+  void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
 
  protected:

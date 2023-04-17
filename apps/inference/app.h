@@ -11,7 +11,7 @@
 
 #include "models/statistic_buffer.h"
 #include "shared/dynamic_cells_data_source.h"
-#include "shared/expression_field_delegate_app.h"
+#include "shared/layout_field_delegate_app.h"
 #include "statistic/chi_square_and_slope/categorical_type_controller.h"
 #include "statistic/chi_square_and_slope/input_goodness_controller.h"
 #include "statistic/chi_square_and_slope/input_homogeneity_controller.h"
@@ -27,7 +27,7 @@
 
 namespace Inference {
 
-class App : public Shared::ExpressionFieldDelegateApp,
+class App : public Shared::LayoutFieldDelegateApp,
             public Shared::MenuControllerDelegate {
  public:
   // Descriptor

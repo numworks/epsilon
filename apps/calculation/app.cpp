@@ -41,7 +41,7 @@ App::Snapshot::Snapshot()
     : m_calculationStore(m_calculationBuffer, k_calculationBufferSize) {}
 
 App::App(Snapshot *snapshot)
-    : ExpressionFieldDelegateApp(snapshot, &m_editExpressionController),
+    : LayoutFieldDelegateApp(snapshot, &m_editExpressionController),
       m_historyController(&m_editExpressionController,
                           snapshot->calculationStore()),
       m_editExpressionController(&m_modalViewController, this,
@@ -54,8 +54,8 @@ bool App::textFieldDidReceiveEvent(AbstractTextField *textField,
       textField->text()[0] == 0) {
     return true;
   }
-  return Shared::ExpressionFieldDelegateApp::textFieldDidReceiveEvent(textField,
-                                                                      event);
+  return Shared::LayoutFieldDelegateApp::textFieldDidReceiveEvent(textField,
+                                                                  event);
 }
 
 bool App::layoutFieldDidReceiveEvent(::LayoutField *layoutField,
@@ -64,13 +64,13 @@ bool App::layoutFieldDidReceiveEvent(::LayoutField *layoutField,
       layoutField->isEmpty()) {
     return true;
   }
-  return Shared::ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(
-      layoutField, event);
+  return Shared::LayoutFieldDelegateApp::layoutFieldDidReceiveEvent(layoutField,
+                                                                    event);
 }
 
 bool App::isAcceptableExpression(Escher::EditableField *field,
                                  const Poincare::Expression expression) {
-  /* Override ExpressionFieldDelegateApp because Store is acceptable, and
+  /* Override LayoutFieldDelegateApp because Store is acceptable, and
    * ans has an expression. */
   {
     Expression ansExpression = static_cast<Snapshot *>(snapshot())
@@ -87,7 +87,7 @@ bool App::isAcceptableExpression(Escher::EditableField *field,
 void App::didBecomeActive(Window *window) {
   m_editExpressionController.restoreInput();
   m_historyController.recomputeHistoryCellHeightsIfNeeded();
-  Shared::ExpressionFieldDelegateApp::didBecomeActive(window);
+  Shared::LayoutFieldDelegateApp::didBecomeActive(window);
 }
 
 }  // namespace Calculation

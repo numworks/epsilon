@@ -4,7 +4,7 @@
 #include <apps/i18n.h>
 #include <escher/stack_view_controller.h>
 
-#include "../shared/expression_field_delegate_app.h"
+#include "../shared/layout_field_delegate_app.h"
 #include "../shared/shared_app.h"
 #include "data.h"
 #include "interest_controller.h"
@@ -14,7 +14,7 @@
 
 namespace Finance {
 
-class App : public Shared::ExpressionFieldDelegateApp {
+class App : public Shared::LayoutFieldDelegateApp {
  public:
   // Descriptor
   class Descriptor : public Shared::TextFieldDelegateApp::Descriptor {

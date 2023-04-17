@@ -8,7 +8,7 @@
 #include "store_menu_controller.h"
 
 /* TODO: This class should be refactored/deleted as well as
- * TextFieldDelegateApp and ExpressionFieldDelegateApp. */
+ * TextFieldDelegateApp and LayoutFieldDelegateApp. */
 
 namespace Shared {
 

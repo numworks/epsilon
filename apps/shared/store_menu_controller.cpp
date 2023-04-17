@@ -1,6 +1,6 @@
 #include "store_menu_controller.h"
 
-#include <apps/shared/expression_field_delegate_app.h>
+#include <apps/shared/layout_field_delegate_app.h>
 #include <escher/clipboard.h>
 #include <escher/invocation.h>
 #include <poincare/store.h>
@@ -121,8 +121,8 @@ void StoreMenuController::openAbortWarning() {
 }
 
 bool StoreMenuController::parseAndStore(const char* text) {
-  ExpressionFieldDelegateApp* app =
-      static_cast<ExpressionFieldDelegateApp*>(Container::activeApp());
+  LayoutFieldDelegateApp* app =
+      static_cast<LayoutFieldDelegateApp*>(Container::activeApp());
   Poincare::Context* context = app->localContext();
   Expression input = Expression::Parse(text, context);
   if (input.isUninitialized()) {

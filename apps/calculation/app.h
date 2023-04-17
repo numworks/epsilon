@@ -3,7 +3,7 @@
 
 #include <new>
 
-#include "../shared/expression_field_delegate_app.h"
+#include "../shared/layout_field_delegate_app.h"
 #include "../shared/shared_app.h"
 #include "calculation_store.h"
 #include "edit_expression_controller.h"
@@ -11,7 +11,7 @@
 
 namespace Calculation {
 
-class App : public Shared::ExpressionFieldDelegateApp {
+class App : public Shared::LayoutFieldDelegateApp {
  public:
   class Descriptor : public Escher::App::Descriptor {
    public:
@@ -67,8 +67,7 @@ class App : public Shared::ExpressionFieldDelegateApp {
                               const Poincare::Expression expression) override;
 
   Snapshot *snapshot() const {
-    return static_cast<Snapshot *>(
-        Shared::ExpressionFieldDelegateApp::snapshot());
+    return static_cast<Snapshot *>(Shared::LayoutFieldDelegateApp::snapshot());
   }
 
  private:

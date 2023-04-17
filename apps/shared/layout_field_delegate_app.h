@@ -1,5 +1,5 @@
-#ifndef SHARED_EXPRESSION_FIELD_DELEGATE_APP_H
-#define SHARED_EXPRESSION_FIELD_DELEGATE_APP_H
+#ifndef SHARED_LAYOUT_FIELD_DELEGATE_APP_H
+#define SHARED_LAYOUT_FIELD_DELEGATE_APP_H
 
 #include <escher/layout_field_delegate.h>
 #include <poincare/store.h>
@@ -11,13 +11,13 @@
 
 namespace Shared {
 
-class ExpressionFieldDelegateApp : public TextFieldDelegateApp,
-                                   public Escher::LayoutFieldDelegate {
+class LayoutFieldDelegateApp : public TextFieldDelegateApp,
+                               public Escher::LayoutFieldDelegate {
   friend class StoreMenuController;
   friend class MathVariableBoxController;
 
  public:
-  virtual ~ExpressionFieldDelegateApp() = default;
+  virtual ~LayoutFieldDelegateApp() = default;
   bool layoutFieldShouldFinishEditing(Escher::LayoutField* layoutField,
                                       Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
@@ -27,8 +27,8 @@ class ExpressionFieldDelegateApp : public TextFieldDelegateApp,
   void storeValue(const char* text = "") override;
 
  protected:
-  ExpressionFieldDelegateApp(Snapshot* snapshot,
-                             Escher::ViewController* rootViewController);
+  LayoutFieldDelegateApp(Snapshot* snapshot,
+                         Escher::ViewController* rootViewController);
   bool handleEvent(Ion::Events::Event event) override;
   bool isStoreMenuOpen() const;
 

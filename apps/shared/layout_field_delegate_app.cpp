@@ -1,4 +1,4 @@
-#include "expression_field_delegate_app.h"
+#include "layout_field_delegate_app.h"
 
 #include <apps/i18n.h>
 #include <escher/layout_field.h>
@@ -9,17 +9,17 @@ using namespace Poincare;
 
 namespace Shared {
 
-ExpressionFieldDelegateApp::ExpressionFieldDelegateApp(
+LayoutFieldDelegateApp::LayoutFieldDelegateApp(
     Snapshot* snapshot, ViewController* rootViewController)
     : TextFieldDelegateApp(snapshot, rootViewController),
       LayoutFieldDelegate() {}
 
-bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(
+bool LayoutFieldDelegateApp::layoutFieldShouldFinishEditing(
     LayoutField* layoutField, Ion::Events::Event event) {
   return isFinishingEvent(event);
 }
 
-bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(
+bool LayoutFieldDelegateApp::layoutFieldDidReceiveEvent(
     LayoutField* layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (layoutField->isEmpty()) {
@@ -77,16 +77,16 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(
   return false;
 }
 
-bool ExpressionFieldDelegateApp::isAcceptableExpression(EditableField* field,
-                                                        const Expression exp) {
-  /* Override TextFieldDelegateApp because most ExpressionFieldDelegateApp
+bool LayoutFieldDelegateApp::isAcceptableExpression(EditableField* field,
+                                                    const Expression exp) {
+  /* Override TextFieldDelegateApp because most LayoutFieldDelegateApp
    * accept comparison operators. They should also be serializeable. */
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store &&
          TextFieldDelegateApp::ExpressionCanBeSerialized(
              exp, false, Poincare::Expression(), localContext());
 }
 
-bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event event) {
+bool LayoutFieldDelegateApp::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {
     storeValue();
     return true;
@@ -94,7 +94,7 @@ bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event event) {
   return TextFieldDelegateApp::handleEvent(event);
 }
 
-void ExpressionFieldDelegateApp::storeValue(const char* text) {
+void LayoutFieldDelegateApp::storeValue(const char* text) {
   if (m_modalViewController.isDisplayingModal()) {
     return;
   }
@@ -102,7 +102,7 @@ void ExpressionFieldDelegateApp::storeValue(const char* text) {
   m_storeMenuController.open();
 }
 
-bool ExpressionFieldDelegateApp::isStoreMenuOpen() const {
+bool LayoutFieldDelegateApp::isStoreMenuOpen() const {
   return m_modalViewController.currentModalViewController() ==
          &m_storeMenuController;
 }

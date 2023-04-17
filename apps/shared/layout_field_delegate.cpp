@@ -1,6 +1,6 @@
 #include "layout_field_delegate.h"
 
-#include "expression_field_delegate_app.h"
+#include "layout_field_delegate_app.h"
 
 using namespace Escher;
 using namespace Poincare;
@@ -9,34 +9,32 @@ namespace Shared {
 
 bool LayoutFieldDelegate::layoutFieldShouldFinishEditing(
     LayoutField *layoutField, Ion::Events::Event event) {
-  return expressionFieldDelegateApp()->layoutFieldShouldFinishEditing(
-      layoutField, event);
+  return layoutFieldDelegateApp()->layoutFieldShouldFinishEditing(layoutField,
+                                                                  event);
 }
 
 bool LayoutFieldDelegate::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                      Ion::Events::Event event) {
-  return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField,
-                                                                  event);
+  return layoutFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField,
+                                                              event);
 }
 
 bool LayoutFieldDelegate::layoutFieldDidFinishEditing(
     LayoutField *layoutField, Layout layoutR, Ion::Events::Event event) {
-  return expressionFieldDelegateApp()->layoutFieldDidFinishEditing(
-      layoutField, layoutR, event);
+  return layoutFieldDelegateApp()->layoutFieldDidFinishEditing(layoutField,
+                                                               layoutR, event);
 }
 
 void LayoutFieldDelegate::layoutFieldDidAbortEditing(LayoutField *layoutField) {
-  expressionFieldDelegateApp()->layoutFieldDidAbortEditing(layoutField);
+  layoutFieldDelegateApp()->layoutFieldDidAbortEditing(layoutField);
 }
 
 void LayoutFieldDelegate::layoutFieldDidChangeSize(LayoutField *layoutField) {
-  return expressionFieldDelegateApp()->layoutFieldDidChangeSize(layoutField);
+  return layoutFieldDelegateApp()->layoutFieldDidChangeSize(layoutField);
 }
 
-ExpressionFieldDelegateApp *LayoutFieldDelegate::expressionFieldDelegateApp()
-    const {
-  return static_cast<ExpressionFieldDelegateApp *>(
-      Escher::Container::activeApp());
+LayoutFieldDelegateApp *LayoutFieldDelegate::layoutFieldDelegateApp() const {
+  return static_cast<LayoutFieldDelegateApp *>(Escher::Container::activeApp());
 }
 
 }  // namespace Shared

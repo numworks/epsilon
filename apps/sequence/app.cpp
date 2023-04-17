@@ -76,9 +76,9 @@ void App::Snapshot::tidy() {
 
 bool App::isAcceptableExpression(Escher::EditableField *field,
                                  const Poincare::Expression exp) {
-  /* Complete ExpressionFieldDelegateApp acceptable conditions by not accepting
+  /* Complete LayoutFieldDelegateApp acceptable conditions by not accepting
    * any OperatorType. */
-  return ExpressionFieldDelegateApp::isAcceptableExpression(field, exp) &&
+  return LayoutFieldDelegateApp::isAcceptableExpression(field, exp) &&
          exp.type() != ExpressionNode::Type::Comparison;
 }
 

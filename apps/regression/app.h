@@ -62,8 +62,7 @@ class App : public Shared::StoreApp {
     return &m_inputViewController;
   }
   Snapshot *snapshot() const {
-    return static_cast<Snapshot *>(
-        Shared::ExpressionFieldDelegateApp::snapshot());
+    return static_cast<Snapshot *>(Shared::LayoutFieldDelegateApp::snapshot());
   }
   Shared::InteractiveCurveViewRange *graphRange() const {
     return snapshot()->graphRange();

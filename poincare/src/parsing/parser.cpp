@@ -1152,26 +1152,29 @@ void Parser::defaultParseLeftParenthesis(bool isSystemParenthesis,
     Token currentToken, nextToken;
     rememberCurrentParsingPosition(&cursor, &currentToken, &nextToken);
     Expression result = parseCommaSeparatedList();
-    if (!result.isUninitialized() && result.numberOfChildren() == 2 &&
-        popTokenIfType(endToken)) {
+    if (!result.isUninitialized() && result.numberOfChildren() == 2) {
       leftHandSide =
           Point::Builder(result.childAtIndex(0), result.childAtIndex(1));
-      return;
+    } else {
+      restorePreviousParsingPosition(cursor, currentToken, nextToken);
     }
-    restorePreviousParsingPosition(cursor, currentToken, nextToken);
   }
 
-  leftHandSide = parseUntil(endToken);
-  if (m_status != Status::Progress) {
-    return;
+  if (leftHandSide.isUninitialized()) {
+    leftHandSide = parseUntil(endToken);
+    if (m_status != Status::Progress) {
+      return;
+    }
+    if (!isSystemParenthesis) {
+      leftHandSide = Parenthesis::Builder(leftHandSide);
+    }
   }
+
   if (!popTokenIfType(endToken)) {
     m_status = Status::Error;  // Right parenthesis missing.
     return;
   }
-  if (!isSystemParenthesis) {
-    leftHandSide = Parenthesis::Builder(leftHandSide);
-  }
+
   isThereImplicitOperator();
 }
 

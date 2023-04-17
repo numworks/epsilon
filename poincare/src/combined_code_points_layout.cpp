@@ -13,7 +13,7 @@ int CombinedCodePointsLayoutNode::serialize(
   int numberOfChar =
       SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
   numberOfChar += SerializationHelper::CodePoint(
-      buffer + numberOfChar, bufferSize - numberOfChar, m_CombinedCodePoints);
+      buffer + numberOfChar, bufferSize - numberOfChar, m_combinedCodePoint);
   return numberOfChar;
 }
 
@@ -29,7 +29,7 @@ void CombinedCodePointsLayoutNode::render(KDContext *ctx, KDPoint p,
 bool CombinedCodePointsLayoutNode::protectedIsIdenticalTo(Layout l) {
   assert(l.type() == Type::CombinedCodePointsLayout);
   CombinedCodePointsLayout &cpl = static_cast<CombinedCodePointsLayout &>(l);
-  return CombinedCodePoints() == cpl.CombinedCodePoints() &&
+  return combinedCodePoint() == cpl.combinedCodePoint() &&
          CodePointLayoutNode::protectedIsIdenticalTo(l);
 }
 

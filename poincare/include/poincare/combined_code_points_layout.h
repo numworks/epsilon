@@ -9,15 +9,15 @@ namespace Poincare {
 class CombinedCodePointsLayoutNode final : public CodePointLayoutNode {
  public:
   CombinedCodePointsLayoutNode(CodePoint mainCodePoint,
-                               CodePoint CombinedCodePoints)
+                               CodePoint combinedCodePoint)
       : CodePointLayoutNode(mainCodePoint),
-        m_CombinedCodePoints(CombinedCodePoints) {}
+        m_combinedCodePoint(combinedCodePoint) {}
 
   // Layout
   Type type() const override { return Type::CombinedCodePointsLayout; }
 
   // CodePointLayout
-  CodePoint CombinedCodePoints() const { return m_CombinedCodePoints; }
+  CodePoint combinedCodePoint() const { return m_combinedCodePoint; }
 
   // LayoutNode
   int serialize(char *buffer, int bufferSize,
@@ -41,14 +41,14 @@ class CombinedCodePointsLayoutNode final : public CodePointLayoutNode {
 
   bool isNotEqualOperator() const {
     return m_codePoint == '=' &&
-           m_CombinedCodePoints == UCodePointCombiningLongSolidusOverlay;
+           m_combinedCodePoint == UCodePointCombiningLongSolidusOverlay;
   }
 
  private:
   void render(KDContext *ctx, KDPoint p, KDGlyph::Style style) override;
   bool protectedIsIdenticalTo(Layout l) override;
 
-  CodePoint m_CombinedCodePoints;
+  CodePoint m_combinedCodePoint;
 };
 
 class CombinedCodePointsLayout final : public CodePointLayout {
@@ -56,10 +56,10 @@ class CombinedCodePointsLayout final : public CodePointLayout {
   CombinedCodePointsLayout(const CodePointLayoutNode *n) : CodePointLayout(n) {}
   static CombinedCodePointsLayout Builder(CodePoint mainCodePoint,
                                           CodePoint CombinedCodePoints);
-  CodePoint CombinedCodePoints() const {
+  CodePoint combinedCodePoint() const {
     return const_cast<CombinedCodePointsLayout *>(this)
         ->node()
-        ->CombinedCodePoints();
+        ->combinedCodePoint();
   }
   CombinedCodePointsLayoutNode *node() {
     return static_cast<CombinedCodePointsLayoutNode *>(Layout::node());

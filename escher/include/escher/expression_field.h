@@ -15,7 +15,6 @@ class ExpressionField : public LayoutField {
                   LayoutFieldDelegate* layoutFieldDelegate,
                   KDGlyph::Format format = {});
 
-  void clearAndSetEditing(bool isEditing);
   /* Warning: this function is VERY dangerous! Indeed: sometimes the
    * m_layoutField might overflow the m_textBuffer once serialized
    * and still have been accepted before because the model can hold a longer

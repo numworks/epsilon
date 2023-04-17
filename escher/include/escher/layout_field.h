@@ -38,8 +38,9 @@ class LayoutField
   }
   Poincare::Context* context() const;
   bool isEditing() const override { return m_contentView.isEditing(); }
-  void setEditing(bool isEditing) override;
+  void setEditing(bool isEditing) override final;
   void clearLayout();
+  void clearAndSetEditing(bool isEditing);
   void scrollToCursor() {
     scrollToBaselinedRect(
         m_contentView.cursorRect(),

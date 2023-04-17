@@ -138,6 +138,11 @@ void LayoutField::clearLayout() {
   reloadScroll();      // Put the scroll to offset 0
 }
 
+void LayoutField::clearAndSetEditing(bool isEditing) {
+  clearLayout();
+  setEditing(isEditing);
+}
+
 void LayoutField::setLayout(Poincare::Layout newLayout) {
   m_contentView.clearLayout();
   KDSize previousSize = minimalSizeForOptimalDisplay();

@@ -76,11 +76,14 @@ ListComplex<T> ListComplex<T>::sort() {
 
         Evaluation<T> eI = list->childAtIndex(i);
         Evaluation<T> eJ = list->childAtIndex(j);
-        if (eI.type() == EvaluationNode<T>::Type::Point &&
-            eJ.type() == EvaluationNode<T>::Type::Point) {
-          return static_cast<PointEvaluation<T> &>(eI).xy().isGreaterThan(
-              static_cast<PointEvaluation<T> &>(eJ).xy(),
-              ListSort::k_nanIsGreatest);
+        if (eI.type() == EvaluationNode<T>::Type::Point) {
+          if (eJ.isUndefined()) {
+            return !ListSort::k_nanIsGreatest;
+          } else if (eJ.type() == EvaluationNode<T>::Type::Point) {
+            return static_cast<PointEvaluation<T> &>(eI).xy().isGreaterThan(
+                static_cast<PointEvaluation<T> &>(eJ).xy(),
+                ListSort::k_nanIsGreatest);
+          }
         }
 
         float xI = eI.toScalar();

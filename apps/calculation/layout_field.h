@@ -1,16 +1,16 @@
-#ifndef CALCULATION_EXPRESSION_INPUT_BAR_H
-#define CALCULATION_EXPRESSION_INPUT_BAR_H
+#ifndef CALCULATION_LAYOUT_FIELD_H
+#define CALCULATION_LAYOUT_FIELD_H
 
 #include <escher/expression_input_bar.h>
 #include <poincare/trinary_boolean.h>
 
 namespace Calculation {
 
-class ExpressionField : public Escher::LayoutField {
+class LayoutField : public Escher::LayoutField {
  public:
-  ExpressionField(Escher::Responder* parentResponder,
-                  Escher::InputEventHandlerDelegate* inputEventHandler,
-                  Escher::LayoutFieldDelegate* layoutFieldDelegate)
+  LayoutField(Escher::Responder* parentResponder,
+              Escher::InputEventHandlerDelegate* inputEventHandler,
+              Escher::LayoutFieldDelegate* layoutFieldDelegate)
       : Escher::LayoutField(parentResponder, inputEventHandler,
                             layoutFieldDelegate),
         m_currentStep(DivisionCycleStep::Start),
@@ -35,7 +35,7 @@ class ExpressionField : public Escher::LayoutField {
   Poincare::TrinaryBoolean m_divisionCycleWithAns;
 };
 
-using ExpressionInputBar = Escher::TemplatedExpressionInputBar<ExpressionField>;
+using ExpressionInputBar = Escher::TemplatedExpressionInputBar<LayoutField>;
 
 }  // namespace Calculation
 

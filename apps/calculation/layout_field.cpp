@@ -1,16 +1,16 @@
-#include "expression_field.h"
-
 #include <apps/i18n.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/symbol.h>
+
+#include "layout_field.h"
 
 using namespace Escher;
 using namespace Poincare;
 
 namespace Calculation {
 
-bool ExpressionField::handleEvent(Ion::Events::Event event) {
+bool LayoutField::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::Division && event.isKeyPress()) {
     m_divisionCycleWithAns = Poincare::TrinaryBoolean::Unknown;
   }
@@ -47,7 +47,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
   return Escher::LayoutField::handleEvent(event);
 }
 
-bool ExpressionField::fieldContainsSingleMinusSymbol() const {
+bool LayoutField::fieldContainsSingleMinusSymbol() const {
   if (layout().isHorizontal() && layout().numberOfChildren() == 1) {
     Layout child = layout().childAtIndex(0);
     if (child.type() == LayoutNode::Type::CodePointLayout) {
@@ -57,7 +57,7 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
   return false;
 }
 
-bool ExpressionField::handleDivision() {
+bool LayoutField::handleDivision() {
   assert(m_divisionCycleWithAns != Poincare::TrinaryBoolean::Unknown);
   bool mixedFractionsEnabled =
       Poincare::Preferences::sharedPreferences->mixedFractionsAreEnabled();

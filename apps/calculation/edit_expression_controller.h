@@ -6,8 +6,8 @@
 #include <poincare/layout.h>
 
 #include "calculation_selectable_table_view.h"
-#include "expression_field.h"
 #include "history_controller.h"
+#include "layout_field.h"
 
 namespace Calculation {
 

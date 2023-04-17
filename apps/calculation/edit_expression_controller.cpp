@@ -128,7 +128,7 @@ void EditExpressionController::layoutFieldDidAbortEditing(
 void EditExpressionController::layoutFieldDidChangeSize(
     ::LayoutField *layoutField) {
   if (m_contentView.expressionField()->inputViewHeightDidChange()) {
-    /* Reload the whole view only if the ExpressionField's height did actually
+    /* Reload the whole view only if the LayoutField's height did actually
      * change. */
     reloadView();
   } else {

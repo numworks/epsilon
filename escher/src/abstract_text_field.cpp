@@ -199,9 +199,7 @@ KDSize AbstractTextField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize stringSize = KDFont::Font(m_font)->stringSize(text());
   assert(stringSize.height() == KDFont::GlyphHeight(m_font));
   if (m_isEditing) {
-    return KDSize(stringSize.width() + TextCursorView::sharedTextCursor
-                                           ->minimalSizeForOptimalDisplay()
-                                           .width(),
+    return KDSize(stringSize.width() + TextCursorView::k_width,
                   stringSize.height());
   }
   return stringSize;
@@ -301,12 +299,8 @@ size_t AbstractTextField::ContentView::deleteSelection() {
   return removedLength;
 }
 
-void AbstractTextField::ContentView::layoutSubviews(bool force) {
-  if (!m_isEditing) {
-    setChildFrame(TextCursorView::sharedTextCursor, KDRectZero, force);
-    return;
-  }
-  TextInput::ContentView::layoutSubviews(force);
+KDRect AbstractTextField::ContentView::cursorRect() const {
+  return m_isEditing ? TextInput::ContentView::cursorRect() : KDRectZero;
 }
 
 KDRect AbstractTextField::ContentView::glyphFrameAtPosition(

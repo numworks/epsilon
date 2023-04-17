@@ -88,17 +88,18 @@ void LayoutField::ContentView::copySelection(Context *context,
 }
 
 View *LayoutField::ContentView::subviewAtIndex(int index) {
-  assert(0 <= index && index < numberOfSubviews());
-  View *m_views[] = {&m_layoutView, TextCursorView::sharedTextCursor};
-  return m_views[index];
+  if (index == 0) {
+    return &m_layoutView;
+  }
+  return TextCursorView::CursorFieldView::subviewAtIndex(index);
 }
 
 void LayoutField::ContentView::layoutSubviews(bool force) {
   setChildFrame(&m_layoutView, bounds(), force);
-  layoutCursorSubview(force);
+  TextCursorView::CursorFieldView::layoutSubviews(force);
 }
 
-void LayoutField::ContentView::layoutCursorSubview(bool force) {
+KDRect LayoutField::ContentView::cursorRect() const {
   KDPoint cursorTopLeftPosition = m_layoutView.drawingOrigin().translatedBy(
       m_cursor.cursorAbsoluteOrigin(font()));
   if (!m_isEditing) {
@@ -106,17 +107,10 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
      * scrolling to the beginning when switching to the history. This way,
      * when calling scrollToCursor after layoutCursorSubview, we don't lose
      * sight of the cursor. */
-    layoutView()->setChildFrame(TextCursorView::sharedTextCursor,
-                                KDRect(cursorTopLeftPosition, KDSizeZero),
-                                force);
-    return;
+    return KDRect(cursorTopLeftPosition, KDSizeZero);
   }
-  TextCursorView::sharedTextCursor->willMove();
-  layoutView()->setChildFrame(
-      TextCursorView::sharedTextCursor,
-      KDRect(cursorTopLeftPosition, TextCursorView::k_width,
-             m_cursor.cursorHeight(font())),
-      force);
+  return KDRect(cursorTopLeftPosition, TextCursorView::k_width,
+                m_cursor.cursorHeight(font()));
 }
 
 LayoutField::ContentView::ContentView(KDGlyph::Format format)
@@ -133,8 +127,8 @@ LayoutField::LayoutField(Responder *parentResponder,
                          InputEventHandlerDelegate *inputEventHandlerDelegate,
                          LayoutFieldDelegate *layoutFieldDelegate,
                          KDGlyph::Format format)
-    : WithBlinkingTextCursor<ScrollableView>(parentResponder, &m_contentView,
-                                             this),
+    : TextCursorView::WithBlinkingCursor<ScrollableView>(parentResponder,
+                                                         &m_contentView, this),
       EditableField(inputEventHandlerDelegate),
       m_contentView(format),
       m_layoutFieldDelegate(layoutFieldDelegate),
@@ -409,7 +403,7 @@ bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
 
 void LayoutField::didBecomeFirstResponder() {
   m_inputViewMemoizedHeight = inputViewHeight();
-  WithBlinkingTextCursor<
+  TextCursorView::WithBlinkingCursor<
       ScrollableView<ScrollView::NoDecorator>>::didBecomeFirstResponder();
 }
 

@@ -5,6 +5,23 @@ namespace Escher {
 
 OMG::GlobalBox<TextCursorView> TextCursorView::sharedTextCursor;
 
+void TextCursorView::CursorFieldView::layoutCursorSubview(bool force) {
+  if (TextCursorView::sharedTextCursor->isInField(this)) {
+    TextCursorView::sharedTextCursor->willMove();
+    setChildFrame(TextCursorView::sharedTextCursor, cursorRect(), force);
+  }
+}
+
+int TextCursorView::CursorFieldView::numberOfSubviews() const {
+  return TextCursorView::sharedTextCursor->isInField(this) ? 1 : 0;
+}
+
+View* TextCursorView::CursorFieldView::subviewAtIndex(int index) {
+  assert(index == numberOfSubviews() - 1 &&
+         TextCursorView::sharedTextCursor->isInField(this));
+  return TextCursorView::sharedTextCursor;
+}
+
 void TextCursorView::drawRect(KDContext* ctx, KDRect rect) const {
   if (m_visible) {
     KDCoordinate height = bounds().height();
@@ -16,9 +33,14 @@ KDSize TextCursorView::minimalSizeForOptimalDisplay() const {
   return KDSize(k_width, 0);
 }
 
-void TextCursorView::setInField(View* field) {
-  setVisible(field);
+void TextCursorView::setInField(TextCursorView::CursorFieldView* field) {
+  if (!field) {
+    setVisible(false);
+    m_field = nullptr;
+    return;
+  }
   m_field = field;
+  m_field->layoutCursorSubview(true);
 }
 
 void TextCursorView::willMove() {

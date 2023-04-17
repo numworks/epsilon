@@ -19,11 +19,10 @@ void TextInput::ContentView::setCursorLocation(const char* location) {
   const char* adjustedLocation =
       std::min(location, editedText() + editedTextLength());
   m_cursorLocation = adjustedLocation;
-  TextCursorView::sharedTextCursor->willMove();
   layoutSubviews();
 }
 
-KDRect TextInput::ContentView::cursorRect() {
+KDRect TextInput::ContentView::cursorRect() const {
   return glyphFrameAtPosition(editedText(), m_cursorLocation);
 }
 
@@ -65,10 +64,6 @@ void TextInput::ContentView::setAlignment(float horizontalAlignment,
 void TextInput::ContentView::reloadRectFromPosition(
     const char* position, bool includeFollowingLines) {
   markRectAsDirty(dirtyRectFromPosition(position, includeFollowingLines));
-}
-
-void TextInput::ContentView::layoutSubviews(bool force) {
-  setChildFrame(TextCursorView::sharedTextCursor, cursorRect(), force);
 }
 
 void TextInput::ContentView::reloadRectFromAndToPositions(const char* start,

@@ -45,7 +45,7 @@ class ListController : public Shared::ExpressionModelListController,
                                    Poincare::Layout layout,
                                    Ion::Events::Event event) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
-  bool layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
+  void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   /* ExpressionModelListController */
   void editExpression(Ion::Events::Event event) override;
   /* Specific to Solver */

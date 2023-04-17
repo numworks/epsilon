@@ -210,10 +210,9 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
   return true;
 }
 
-bool ExpressionModelListController::layoutFieldDidAbortEditing(
+void ExpressionModelListController::layoutFieldDidAbortEditing(
     Escher::LayoutField *layoutField) {
   finishEdition();
-  return true;
 }
 
 }  // namespace Shared

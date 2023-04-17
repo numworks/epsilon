@@ -69,10 +69,9 @@ bool InputViewController::layoutFieldDidFinishEditing(
   return false;
 }
 
-bool InputViewController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
+void InputViewController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
   inputViewDidAbortEditing();
   m_layoutFieldDelegate->layoutFieldDidAbortEditing(layoutField);
-  return true;
 }
 
 void InputViewController::layoutFieldDidChangeSize(LayoutField* layoutField) {

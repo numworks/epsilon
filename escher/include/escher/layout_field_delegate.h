@@ -20,9 +20,7 @@ class LayoutFieldDelegate : public ContextProvider {
                                            Ion::Events::Event event) {
     return false;
   }
-  virtual bool layoutFieldDidAbortEditing(LayoutField* layoutField) {
-    return false;
-  }
+  virtual void layoutFieldDidAbortEditing(LayoutField* layoutField) {}
   virtual bool layoutFieldDidHandleEvent(LayoutField* layoutField,
                                          bool returnValue,
                                          bool layoutDidChange) {

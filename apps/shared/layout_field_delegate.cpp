@@ -25,8 +25,8 @@ bool LayoutFieldDelegate::layoutFieldDidFinishEditing(
       layoutField, layoutR, event);
 }
 
-bool LayoutFieldDelegate::layoutFieldDidAbortEditing(LayoutField *layoutField) {
-  return expressionFieldDelegateApp()->layoutFieldDidAbortEditing(layoutField);
+void LayoutFieldDelegate::layoutFieldDidAbortEditing(LayoutField *layoutField) {
+  expressionFieldDelegateApp()->layoutFieldDidAbortEditing(layoutField);
 }
 
 void LayoutFieldDelegate::layoutFieldDidChangeSize(LayoutField *layoutField) {

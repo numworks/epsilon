@@ -51,7 +51,7 @@ class StoreMenuController : public Escher::ModalViewController,
                                    Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(Escher::LayoutField* layoutField,
                                   Ion::Events::Event event) override;
-  bool layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
+  void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
 
  private:

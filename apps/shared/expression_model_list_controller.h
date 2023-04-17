@@ -68,7 +68,7 @@ class ExpressionModelListController
                                    Poincare::Layout layout,
                                    Ion::Events::Event event) override;
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
-  bool layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
+  void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   // EditableCell
   virtual Escher::ExpressionField* expressionField() = 0;
   int16_t m_editedCellIndex;

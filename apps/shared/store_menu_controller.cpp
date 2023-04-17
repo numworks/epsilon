@@ -168,14 +168,13 @@ bool StoreMenuController::layoutFieldDidFinishEditing(
   return parseAndStore(buffer);
 }
 
-bool StoreMenuController::layoutFieldDidAbortEditing(
+void StoreMenuController::layoutFieldDidAbortEditing(
     Escher::LayoutField* layoutField) {
   /* Since dismissing the controller will call layoutFieldDidChangeSize, we need
    * to set the flag to avoid reloadData from happening which would otherwise
    * setFirstResponder on the store menu while it is hidden. */
   m_preventReload = true;
   close();
-  return true;
 }
 
 bool StoreMenuController::layoutFieldDidReceiveEvent(

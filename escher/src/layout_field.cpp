@@ -46,8 +46,7 @@ void LayoutField::ContentView::clearLayout() {
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize evSize = m_layoutView.minimalSizeForOptimalDisplay();
-  return KDSize(evSize.width() + Poincare::LayoutCursor::k_cursorWidth,
-                evSize.height());
+  return KDSize(evSize.width() + TextCursorView::k_width, evSize.height());
 }
 
 void LayoutField::ContentView::copySelection(Context *context,
@@ -115,7 +114,7 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
   TextCursorView::sharedTextCursor->willMove();
   layoutView()->setChildFrame(
       TextCursorView::sharedTextCursor,
-      KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth,
+      KDRect(cursorTopLeftPosition, TextCursorView::k_width,
              m_cursor.cursorHeight(font())),
       force);
 }

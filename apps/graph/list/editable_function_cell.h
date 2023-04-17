@@ -12,7 +12,7 @@ class EditableFunctionCell : public AbstractFunctionCell {
   EditableFunctionCell(Escher::Responder* parentResponder,
                        Escher::InputEventHandlerDelegate* inputEventHandler,
                        Escher::LayoutFieldDelegate* layoutFieldDelegate);
-  Escher::LayoutField* expressionField() { return &m_expressionField; }
+  Escher::LayoutField* layoutField() { return &m_layoutField; }
 
  private:
   constexpr static KDCoordinate k_expressionMargin = 5;
@@ -20,13 +20,13 @@ class EditableFunctionCell : public AbstractFunctionCell {
   void layoutSubviews(bool force = false) override;
   void updateSubviewsBackgroundAfterChangingState() override;
   const Escher::ExpressionView* expressionView() const override {
-    return m_expressionField.expressionView();
+    return m_layoutField.expressionView();
   }
   Escher::ExpressionView* expressionView() override {
-    return m_expressionField.expressionView();
+    return m_layoutField.expressionView();
   }
-  Escher::View* mainView() override { return &m_expressionField; }
-  Escher::LayoutField m_expressionField;
+  Escher::View* mainView() override { return &m_layoutField; }
+  Escher::LayoutField m_layoutField;
 };
 
 }  // namespace Graph

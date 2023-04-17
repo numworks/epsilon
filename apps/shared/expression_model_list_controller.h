@@ -70,7 +70,7 @@ class ExpressionModelListController
   void layoutFieldDidChangeSize(Escher::LayoutField* layoutField) override;
   void layoutFieldDidAbortEditing(Escher::LayoutField* layoutField) override;
   // EditableCell
-  virtual Escher::LayoutField* expressionField() = 0;
+  virtual Escher::LayoutField* layoutField() = 0;
   int16_t m_editedCellIndex;
 
  private:

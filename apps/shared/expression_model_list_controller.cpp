@@ -151,14 +151,14 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
         Constant::MaxSerializedExpressionSize;
     char initialTextContent[initialTextContentMaxSize];
     getTextForSelectedRecord(initialTextContent, initialTextContentMaxSize);
-    expressionField()->setText(initialTextContent);
+    layoutField()->setText(initialTextContent);
   }
-  expressionField()->setEditing(true);
-  Container::activeApp()->setFirstResponder(expressionField());
+  layoutField()->setEditing(true);
+  Container::activeApp()->setFirstResponder(layoutField());
   if (!(event == Ion::Events::OK || event == Ion::Events::EXE)) {
-    expressionField()->handleEvent(event);
+    layoutField()->handleEvent(event);
   }
-  layoutFieldDidChangeSize(expressionField());
+  layoutFieldDidChangeSize(layoutField());
 }
 
 bool ExpressionModelListController::editSelectedRecordWithText(

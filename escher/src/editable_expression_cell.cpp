@@ -12,8 +12,8 @@ EditableExpressionCell::EditableExpressionCell(
     LayoutFieldDelegate* layoutDelegate)
     : HighlightCell(),
       Responder(parentResponder),
-      m_expressionField(this, inputEventHandlerDelegate, layoutDelegate) {
-  m_expressionField.setMargins(k_topMargin, k_margin, k_margin, k_margin);
+      m_layoutField(this, inputEventHandlerDelegate, layoutDelegate) {
+  m_layoutField.setMargins(k_topMargin, k_margin, k_margin, k_margin);
   m_expressionBody[0] = 0;
 }
 
@@ -27,16 +27,16 @@ void EditableExpressionCell::setHighlighted(bool highlight) {
 }
 
 void EditableExpressionCell::layoutSubviews(bool force) {
-  setChildFrame(&m_expressionField, bounds().trimmedBy(k_separatorThickness),
+  setChildFrame(&m_layoutField, bounds().trimmedBy(k_separatorThickness),
                 force);
 }
 
 void EditableExpressionCell::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_expressionField);
+  Container::activeApp()->setFirstResponder(&m_layoutField);
 }
 
 KDSize EditableExpressionCell::minimalSizeForOptimalDisplay() const {
-  KDSize size = m_expressionField.minimalSizeForOptimalDisplay();
+  KDSize size = m_layoutField.minimalSizeForOptimalDisplay();
   return KDSize(size.width(), std::max(size.height(), k_minimalHeigh));
 }
 

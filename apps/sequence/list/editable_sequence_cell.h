@@ -14,10 +14,10 @@ class EditableSequenceCell : public AbstractSequenceCell {
                        Escher::InputEventHandlerDelegate* inputEventHandler,
                        Escher::LayoutFieldDelegate* layoutFieldDelegate)
       : AbstractSequenceCell(),
-        m_expressionField(parentResponder, inputEventHandler,
-                          layoutFieldDelegate) {}
+        m_expressionModelCell(parentResponder, inputEventHandler,
+                              layoutFieldDelegate) {}
   Escher::EditableExpressionModelCell* expressionCell() override {
-    return &m_expressionField;
+    return &m_expressionModelCell;
   }
   void updateSubviewsBackgroundAfterChangingState() override {
     m_expressionBackground = backgroundColor();
@@ -27,7 +27,7 @@ class EditableSequenceCell : public AbstractSequenceCell {
 
  private:
   static constexpr KDCoordinate k_expressionMargin = 5;
-  Escher::EditableExpressionModelCell m_expressionField;
+  Escher::EditableExpressionModelCell m_expressionModelCell;
 };
 
 }  // namespace Sequence

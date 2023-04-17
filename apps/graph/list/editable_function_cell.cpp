@@ -11,11 +11,10 @@ EditableFunctionCell::EditableFunctionCell(
     Escher::InputEventHandlerDelegate* inputEventHandler,
     Escher::LayoutFieldDelegate* layoutFieldDelegate)
     : AbstractFunctionCell(),
-      m_expressionField(parentResponder, inputEventHandler,
-                        layoutFieldDelegate) {
+      m_layoutField(parentResponder, inputEventHandler, layoutFieldDelegate) {
   // We set a dummy message for the height computation
   m_messageTextView.setMessage(I18n::Message::UnhandledType);
-  m_expressionField.setLeftMargin(Metric::EditableExpressionAdditionalMargin);
+  m_layoutField.setLeftMargin(Metric::EditableExpressionAdditionalMargin);
 }
 
 void EditableFunctionCell::layoutSubviews(bool force) {
@@ -26,7 +25,7 @@ void EditableFunctionCell::layoutSubviews(bool force) {
   KDCoordinate leftMargin = k_colorIndicatorThickness + k_expressionMargin;
   KDCoordinate rightMargin = k_expressionMargin + k_parametersColumnWidth;
   KDCoordinate availableWidth = bounds().width() - leftMargin - rightMargin;
-  setChildFrame(&m_expressionField,
+  setChildFrame(&m_layoutField,
                 KDRect(leftMargin, 0, availableWidth, bounds().height()),
                 force);
   setChildFrame(&m_messageTextView, KDRectZero, force);

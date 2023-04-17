@@ -29,7 +29,7 @@ void StoreMenuController::open() {
 }
 
 void StoreMenuController::close() {
-  m_cell.expressionField()->setEditing(false);
+  m_cell.layoutField()->setEditing(false);
   Container::activeApp()->modalViewController()->dismissModal();
 }
 
@@ -71,22 +71,22 @@ StoreMenuController::StoreMenuController()
                                    Metric::PopUpRightMargin,
                                0),
                         false);
-  m_cell.expressionField()->setTextEditionBuffer(
+  m_cell.layoutField()->setTextEditionBuffer(
       m_savedDraftTextBuffer, AbstractTextField::MaxBufferSize());
 }
 
 void StoreMenuController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_listController);
-  m_cell.expressionField()->reload();
+  m_cell.layoutField()->reload();
 }
 
 void StoreMenuController::setText(const char* text) {
   m_preventReload = true;
-  m_cell.expressionField()->clearAndSetEditing(true);
-  m_cell.expressionField()->handleEventWithText(text, false, true);
-  m_cell.expressionField()->handleEventWithText("→");
+  m_cell.layoutField()->clearAndSetEditing(true);
+  m_cell.layoutField()->handleEventWithText(text, false, true);
+  m_cell.layoutField()->handleEventWithText("→");
   if (text[0] == 0) {
-    m_cell.expressionField()->putCursorOnOneSide(OMG::Direction::Left());
+    m_cell.layoutField()->putCursorOnOneSide(OMG::Direction::Left());
   }
   m_stackViewController.setupActiveView();
   m_preventReload = false;

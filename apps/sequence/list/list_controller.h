@@ -84,8 +84,8 @@ class ListController : public Shared::FunctionListController {
   bool removeModelRow(Ion::Storage::Record record) override;
   Shared::SequenceStore* modelStore() const override;
   KDCoordinate nameWidth(int nameLength) const;
-  Escher::LayoutField* expressionField() override {
-    return m_editableCell.expressionCell()->expressionField();
+  Escher::LayoutField* layoutField() override {
+    return m_editableCell.expressionCell()->layoutField();
   }
 
   SequenceCell m_sequenceCells[k_maxNumberOfRows];

@@ -19,38 +19,32 @@ class EditableExpressionModelCell : public HighlightCell {
       Responder* parentResponder,
       InputEventHandlerDelegate* inputEventHandlerDelegate,
       LayoutFieldDelegate* layoutDelegate, KDGlyph::Format format = {});
-  void setLayout(Poincare::Layout layout) {
-    m_expressionField.setLayout(layout);
-  }
+  void setLayout(Poincare::Layout layout) { m_layoutField.setLayout(layout); }
   void setTextColor(KDColor textColor) {
-    m_expressionField.expressionView()->setTextColor(textColor);
+    m_layoutField.expressionView()->setTextColor(textColor);
   }
   void setFont(KDFont::Size font) {
-    m_expressionField.expressionView()->setFont(font);
+    m_layoutField.expressionView()->setFont(font);
   }
   KDSize minimalSizeForOptimalDisplay() const override;
   void setAlignment(float horizontalAlignment, float verticalAlignment) {
-    m_expressionField.expressionView()->setAlignment(horizontalAlignment,
-                                                     verticalAlignment);
+    m_layoutField.expressionView()->setAlignment(horizontalAlignment,
+                                                 verticalAlignment);
   }
   void setMargins(KDCoordinate leftMargin, KDCoordinate rightMargin);
   KDPoint drawingOrigin() const {
-    return m_expressionField.expressionView()->drawingOrigin();
+    return m_layoutField.expressionView()->drawingOrigin();
   }
-  Poincare::Layout layout() const override {
-    return m_expressionField.layout();
-  }
-  KDFont::Size font() const {
-    return m_expressionField.expressionView()->font();
-  }
+  Poincare::Layout layout() const override { return m_layoutField.layout(); }
+  KDFont::Size font() const { return m_layoutField.expressionView()->font(); }
   void drawRect(KDContext* ctx, KDRect rect) const override;
-  LayoutField* expressionField() { return &m_expressionField; }
+  LayoutField* layoutField() { return &m_layoutField; }
 
  protected:
   int numberOfSubviews() const override { return 1; }
-  View* subviewAtIndex(int index) override { return &m_expressionField; }
+  View* subviewAtIndex(int index) override { return &m_layoutField; }
   void layoutSubviews(bool force = false) override;
-  LayoutField m_expressionField;
+  LayoutField m_layoutField;
   KDCoordinate m_leftMargin;
   KDCoordinate m_rightMargin;
 };

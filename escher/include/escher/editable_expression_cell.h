@@ -20,11 +20,11 @@ class EditableExpressionCell : public Bordered,
       Responder* parentResponder = nullptr,
       InputEventHandlerDelegate* inputEventHandlerDelegate = nullptr,
       LayoutFieldDelegate* layoutDelegate = nullptr);
-  LayoutField* expressionField() { return &m_expressionField; }
+  LayoutField* layoutField() { return &m_layoutField; }
   void setHighlighted(bool highlight) override;
   Responder* responder() override { return this; }
   int numberOfSubviews() const override { return 1; }
-  View* subviewAtIndex(int index) override { return &m_expressionField; }
+  View* subviewAtIndex(int index) override { return &m_layoutField; }
   void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -38,7 +38,7 @@ class EditableExpressionCell : public Bordered,
   constexpr static KDCoordinate k_topMargin = k_margin + 1;
   constexpr static KDCoordinate k_separatorThickness =
       Metric::CellSeparatorThickness;
-  LayoutField m_expressionField;
+  LayoutField m_layoutField;
   char m_expressionBody[Poincare::PrintFloat::k_maxFloatCharSize];
 };
 

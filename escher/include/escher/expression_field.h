@@ -2,9 +2,6 @@
 #define ESCHER_EXPRESSION_FIELD_H
 
 #include <escher/layout_field.h>
-#include <escher/layout_field_delegate.h>
-#include <escher/metric.h>
-#include <poincare/layout.h>
 
 namespace Escher {
 

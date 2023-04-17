@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <escher/expression_field.h>
-#include <poincare/preferences.h>
 
 #include <algorithm>
 

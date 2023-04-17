@@ -44,7 +44,7 @@ bool InputViewController::isEditing() {
 }
 
 void InputViewController::abortEditionAndDismiss() {
-  m_expressionInputBarController.expressionField()->setEditing(false);
+  m_expressionInputBarController.expressionField()->clearAndSetEditing(false);
   dismissModal();
 }
 

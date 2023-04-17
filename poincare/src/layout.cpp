@@ -39,7 +39,8 @@ bool Layout::isCodePointsString() const {
   }
   int n = numberOfChildren();
   for (int i = 0; i < n; i++) {
-    if (childAtIndex(i).type() != LayoutNode::Type::CodePointLayout) {
+    if (childAtIndex(i).type() != LayoutNode::Type::CodePointLayout &&
+        childAtIndex(i).type() != LayoutNode::Type::CombinedCodePointsLayout) {
       return false;
     }
   }
@@ -100,13 +101,13 @@ Layout Layout::XNTLayout() const {
          xntLayout.numberOfDescendants(true) >= 0);
   if (xntLayout.isUninitialized() ||
       (!xntLayout.isCodePointsString() &&
-       xntLayout.type() != LayoutNode::Type::CodePointLayout)) {
+       xntLayout.type() != LayoutNode::Type::CodePointLayout &&
+       xntLayout.type() != LayoutNode::Type::CombinedCodePointsLayout)) {
     return Layout();
   }
-  if (xntLayout.type() == LayoutNode::Type::CodePointLayout) {
+  if (!xntLayout.isHorizontal()) {
     xntLayout = HorizontalLayout::Builder(xntLayout.clone());
   }
-  assert(xntLayout.isHorizontal());
   LinearLayoutDecoder decoder(static_cast<HorizontalLayout &>(xntLayout));
   if (!Tokenizer::CanBeCustomIdentifier(decoder)) {
     return Layout();

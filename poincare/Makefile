@@ -22,6 +22,7 @@ poincare_src += $(addprefix poincare/src/,\
   letter_a_with_sub_and_superscript_layout.cpp \
   letter_c_with_sub_and_superscript_layout.cpp \
   letter_with_sub_and_superscript_layout.cpp \
+  linear_layout_decoder.cpp \
   list_sequence_layout.cpp \
   matrix_layout.cpp \
   nth_root_layout.cpp \

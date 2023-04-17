@@ -24,7 +24,7 @@ class TitleBarView : public Escher::View {
   void reload();
 
  private:
-  constexpr static size_t k_preferenceTextSize = 8;
+  constexpr static size_t k_preferenceTextSize = sizeof("tech/rad");
   constexpr static KDCoordinate k_alphaRightMargin = 5;
   constexpr static KDCoordinate k_examIconWidth = 18;
   constexpr static KDCoordinate k_examIconHeight = 9;

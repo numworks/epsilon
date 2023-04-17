@@ -25,11 +25,6 @@ ExpressionField::ExpressionField(
   setBackgroundColor(KDColorWhite);
 }
 
-void ExpressionField::clearAndSetEditing(bool isEditing) {
-  clearLayout();
-  LayoutField::setEditing(isEditing);
-}
-
 const char *ExpressionField::text() {
   layout().serializeForParsing(m_draftBuffer, m_draftBufferSize);
   return m_draftBuffer;

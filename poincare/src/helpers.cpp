@@ -136,19 +136,22 @@ bool Helpers::ListEvaluationComparisonAtIndex(int i, int j, void *context,
 
   ExpressionNode *eI = list->childAtIndex(i);
   ExpressionNode *eJ = list->childAtIndex(j);
-  if (eI->type() == ExpressionNode::Type::Point &&
-      eJ->type() == ExpressionNode::Type::Point) {
-    Point pI(static_cast<PointNode *>(eI));
-    Point pJ(static_cast<PointNode *>(eJ));
-    return pI
-        .approximate2D<float>(approximationContext->context(),
-                              approximationContext->complexFormat(),
-                              approximationContext->angleUnit(), true)
-        .isGreaterThan(
-            pJ.approximate2D<float>(approximationContext->context(),
-                                    approximationContext->complexFormat(),
-                                    approximationContext->angleUnit(), true),
-            *nanIsGreatest);
+  if (eI->type() == ExpressionNode::Type::Point) {
+    if (eJ->isUndefined()) {
+      return !*nanIsGreatest;
+    } else if (eJ->type() == ExpressionNode::Type::Point) {
+      Point pI(static_cast<PointNode *>(eI));
+      Point pJ(static_cast<PointNode *>(eJ));
+      return pI
+          .approximate2D<float>(approximationContext->context(),
+                                approximationContext->complexFormat(),
+                                approximationContext->angleUnit(), true)
+          .isGreaterThan(
+              pJ.approximate2D<float>(approximationContext->context(),
+                                      approximationContext->complexFormat(),
+                                      approximationContext->angleUnit(), true),
+              *nanIsGreatest);
+    }
   }
 
   float xI =

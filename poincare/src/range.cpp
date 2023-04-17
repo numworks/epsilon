@@ -104,7 +104,7 @@ bool Range2D::ratioIs(float r) const {
   return std::fabs(thisRatio - r) <= tolerance;
 }
 
-void Range2D::setRatio(float r, bool shrink) {
+bool Range2D::setRatio(float r, bool shrink) {
   float currentR = ratio();
   Range1D* toEdit;
   float newLength;
@@ -117,7 +117,12 @@ void Range2D::setRatio(float r, bool shrink) {
   }
   float c = toEdit->center();
   newLength *= 0.5f;
+  if (c - newLength == c + newLength) {
+    // Precision is to small for the edited range
+    return false;
+  }
   *toEdit = Range1D(c - newLength, c + newLength);
+  return true;
 }
 
 }  // namespace Poincare

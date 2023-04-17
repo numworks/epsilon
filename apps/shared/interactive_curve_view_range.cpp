@@ -281,17 +281,18 @@ void InteractiveCurveViewRange::protectedNormalize(bool canChangeX,
   bool shrink = thisRange.ratio() > NormalYXRatio() ? !canChangeX : !canChangeY;
 
   if (!shrink || canShrink) {
-    thisRange.setRatio(NormalYXRatio(), shrink);
+    bool canSetRatio = thisRange.setRatio(NormalYXRatio(), shrink);
+    if (canSetRatio) {
+      protectedSetX(*thisRange.x(), k_maxFloat);
+      protectedSetY(*thisRange.y(), k_maxFloat);
 
-    protectedSetX(*thisRange.x(), k_maxFloat);
-    protectedSetY(*thisRange.y(), k_maxFloat);
-
-    /* The range should be close to orthonormal, unless :
-     *   - it has been clipped because the maximum bounds have been reached.
-     *   - the the bounds are too close and of too large a magnitude, leading to
-     *     a drastic loss of significance. */
-    assert(isOrthonormal() || xMin() <= -k_maxFloat || xMax() >= k_maxFloat ||
-           yMin() <= -k_maxFloat || yMax() >= k_maxFloat);
+      /* The range should be close to orthonormal, unless :
+       *   - it has been clipped because the maximum bounds have been reached.
+       *   - the the bounds are too close and of too large a magnitude, leading
+       * to a drastic loss of significance. */
+      assert(isOrthonormal() || xMin() <= -k_maxFloat || xMax() >= k_maxFloat ||
+             yMin() <= -k_maxFloat || yMax() >= k_maxFloat);
+    }
   }
   setZoomNormalize(isOrthonormal());
 }

@@ -12,14 +12,14 @@ class BlinkTimer : public Timer {
   static_assert(k_blinkPeriod > TickDuration,
                 "BlinkTimer period is shorter than one tick.");
 
-  static void RegisterCursor(TextCursorView* cursor);
-
   BlinkTimer() : Timer(k_blinkPeriod / TickDuration) {}
 
   void forceCursorVisible();
 
  private:
-  static TextCursorView* s_cursor;
+  static TextCursorView* SharedCursor() {
+    return TextCursorView::sharedTextCursor;
+  }
 
   bool fire() override;
 };

@@ -130,7 +130,7 @@ class TextInput
  private:
   virtual void willSetCursorLocation(const char **location) {}
   virtual bool privateRemoveEndOfLine();
-  View *cursorSuperView() override { return contentView(); }
+  View *cursorField() override { return contentView(); }
 };
 
 }  // namespace Escher

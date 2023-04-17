@@ -109,7 +109,7 @@ class LayoutField
   void insertLayoutAtCursor(Poincare::Layout layoutR,
                             bool forceCursorRightOfLayout = false,
                             bool forceCursorLeftOfLayout = false);
-  View* cursorSuperView() override { return &m_contentView; }
+  View* cursorField() override { return &m_contentView; }
 
   class ContentView : public View {
    public:

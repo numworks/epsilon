@@ -15,8 +15,7 @@ class TextCursorView : public View {
  public:
   constexpr static KDCoordinate k_width = 1;
 
-  TextCursorView() : m_visible(true) {}
-  ~TextCursorView();
+  TextCursorView() : m_visible(false) {}
 
   static OMG::GlobalBox<TextCursorView> sharedTextCursor;
 
@@ -25,10 +24,12 @@ class TextCursorView : public View {
   KDSize minimalSizeForOptimalDisplay() const override;
   void willMove();
 
+  bool shouldBlink() { return m_field; }
+
  private:
   void setVisible(bool visible);
   void switchVisible() { setVisible(!m_visible); }
-  void setBlinking(bool blinking, View* field = nullptr);
+  void setInField(View* field);
   void layoutSubviews(bool force) override { willMove(); }
 
   View* m_field;
@@ -45,16 +46,16 @@ class WithBlinkingTextCursor : public ResponderType {
  public:
   using ResponderType::ResponderType;
   void didBecomeFirstResponder() override {
-    TextCursorView::sharedTextCursor->setBlinking(true, cursorSuperView());
+    TextCursorView::sharedTextCursor->setInField(cursorField());
     ResponderType::didBecomeFirstResponder();
   }
   void willResignFirstResponder() override {
-    TextCursorView::sharedTextCursor->setBlinking(false);
+    TextCursorView::sharedTextCursor->setInField(nullptr);
     ResponderType::willResignFirstResponder();
   }
 
  private:
-  virtual View* cursorSuperView() = 0;
+  virtual View* cursorField() = 0;
 };
 
 }  // namespace Escher

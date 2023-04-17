@@ -279,9 +279,7 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
   }
   int numberOfTerms = NumberOfTerms(polynomial);
   if (numberOfTerms == 0) {
-    EditionReference result = EditionReference(&ZeroBlock);
-    polynomial.replaceTreeByTree(result);
-    return result;
+    return EditionReference(polynomial.replaceTreeByTree(&ZeroBlock));
   }
   if (numberOfTerms == 1 && ExponentAtIndex(polynomial, 0) == 0) {
     EditionReference result = polynomial.childAtIndex(1);
@@ -394,11 +392,9 @@ EditionReference PolynomialParser::Parse(EditionReference expression,
 std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
     EditionReference expression, EditionReference variable) {
   if (Comparison::AreEqual(expression, variable)) {
-    // TODO: Optimize replaceTreeByTree to remove the need for this clone
-    EditionReference one(
-        EditionPool::sharedEditionPool()->clone(Node(&OneBlock)));
-    expression.replaceTreeByTree(one);
-    return std::make_pair(one, static_cast<uint8_t>(1));
+    return std::make_pair(
+        EditionReference(expression.replaceTreeByTree(&OneBlock)),
+        static_cast<uint8_t>(1));
   }
   PatternMatching::Context ctx;
   ctx[Placeholder::NodeToTag(A_e)] = static_cast<Node>(variable);
@@ -408,11 +404,8 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
     if (Integer::IsUint8(exponent)) {
       uint8_t exp = Integer::Uint8(exponent);
       assert(exp > 1);
-      // TODO: Optimize replaceTreeByTree to remove the need for this clone
-      EditionReference one(
-          EditionPool::sharedEditionPool()->clone(Node(&OneBlock)));
-      expression.replaceTreeByTree(one);
-      return std::make_pair(one, exp);
+      return std::make_pair(
+          EditionReference(expression.replaceTreeByTree(&OneBlock)), exp);
     }
   }
   if (expression.type() == BlockType::Multiplication) {

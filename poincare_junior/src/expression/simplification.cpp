@@ -38,8 +38,7 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
   while (index + 1 < nbOfChildren && child0.block()->isNumber() &&
          child1.block()->isNumber()) {
     EditionReference reducedChild = operation(child0, child1);
-    child0.replaceTreeByTree(reducedChild);
-    child0 = reducedChild;
+    child0 = child0.replaceTreeByTree(reducedChild);
     child1.removeTree();
     child1 = child0.nextTree();
     index++;

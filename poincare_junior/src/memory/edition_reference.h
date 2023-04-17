@@ -78,10 +78,10 @@ class EditionReference {
   void insertTreeBeforeNode(Node nodeToInsert) {
     insert(nodeToInsert, true, true);
   }
-  void replaceNodeByNode(Node n) { replaceBy(n, false, false); }
-  void replaceNodeByTree(Node n) { replaceBy(n, false, true); }
-  void replaceTreeByNode(Node n) { replaceBy(n, true, false); }
-  void replaceTreeByTree(Node n) { replaceBy(n, true, true); }
+  Node replaceNodeByNode(Node n) { return replaceBy(n, false, false); }
+  Node replaceNodeByTree(Node n) { return replaceBy(n, false, true); }
+  Node replaceTreeByNode(Node n) { return replaceBy(n, true, false); }
+  Node replaceTreeByTree(Node n) { return replaceBy(n, true, true); }
   void removeNode() { remove(false); }
   void removeTree() { remove(true); }
   void detachNode() { detach(false); }
@@ -100,17 +100,17 @@ class EditionReference {
   void insertTreeBeforeNode(EditionReference treeToInsert) {
     insertTreeBeforeNode(static_cast<Node>(treeToInsert));
   }
-  void replaceNodeByNode(EditionReference t) {
-    replaceNodeByNode(static_cast<Node>(t));
+  Node replaceNodeByNode(EditionReference t) {
+    return replaceNodeByNode(static_cast<Node>(t));
   }
-  void replaceNodeByTree(EditionReference t) {
-    replaceNodeByTree(static_cast<Node>(t));
+  Node replaceNodeByTree(EditionReference t) {
+    return replaceNodeByTree(static_cast<Node>(t));
   }
-  void replaceTreeByNode(EditionReference t) {
-    replaceTreeByNode(static_cast<Node>(t));
+  Node replaceTreeByNode(EditionReference t) {
+    return replaceTreeByNode(static_cast<Node>(t));
   }
-  void replaceTreeByTree(EditionReference t) {
-    replaceTreeByTree(static_cast<Node>(t));
+  Node replaceTreeByTree(EditionReference t) {
+    return replaceTreeByTree(static_cast<Node>(t));
   }
 
   typedef void (*InPlaceTreeFunction)(EditionReference reference);
@@ -122,7 +122,7 @@ class EditionReference {
 
  private:
   void insert(Node nodeToInsert, bool before, bool isTree);
-  void replaceBy(Node n, bool oldIsTree, bool newIsTree);
+  Node replaceBy(Node n, bool oldIsTree, bool newIsTree);
   void detach(bool isTree);
   void remove(bool isTree);
   uint16_t m_identifier;

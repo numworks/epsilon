@@ -627,7 +627,7 @@ void LayoutBufferCursor::EditionPoolCursor::deleteAndResetSelection(
            !Layout::IsHorizontal(m_cursorReference.parent()));
     EditionReference emptyRack =
         EditionPool::sharedEditionPool()->push<BlockType::RackLayout>(0);
-    m_cursorReference.replaceTreeByTree(emptyRack);
+    m_cursorReference = m_cursorReference.replaceTreeByTree(emptyRack);
   }
   m_position = selectionLeftBound;
   stopSelecting();

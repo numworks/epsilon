@@ -101,16 +101,12 @@ QUIZ_CASE(pcj_edition_reference) {
   reference3.replaceNodeByNode(reference3);
   assert_pool_contains(editionPool, {k_expression0, 10_e, k_expression1, 8_e,
                                      k_expression0, 10_e, 9_e});
-  // TODO: add tests about replacing a tree/node by a tree/node which doesn't
-  // live on the edition pool once replaceTreeByTree returns a Node
-  EditionReference reference4(11_e);
-  reference3.replaceNodeByNode(reference4);
   // TODO: Restore dangling reference on replaceBy
-  //   quiz_assert(static_cast<Node>(reference3).isUninitialized());
+  reference3 = reference3.replaceNodeByNode(11_e);
+  // quiz_assert(static_cast<Node>(reference3).isUninitialized());
   assert_pool_contains(editionPool, {k_expression0, 10_e, k_expression1, 11_e,
                                      k_expression0, 10_e, 9_e});
-  EditionReference reference5(k_expression1);
-  reference4.replaceNodeByTree(reference5);
+  EditionReference reference5 = reference3.replaceNodeByTree(k_expression1);
   assert_pool_contains(editionPool, {k_expression0, 10_e, k_expression1,
                                      k_expression1, k_expression0, 10_e, 9_e});
 

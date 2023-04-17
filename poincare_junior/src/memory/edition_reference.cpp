@@ -46,7 +46,7 @@ void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
   (*treeFunction)(*this);
 }
 
-void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
+Node EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
   EditionPool* pool = EditionPool::sharedEditionPool();
   Node oldNode = *this;
   int oldSize = oldIsTree ? oldNode.treeSize() : oldNode.nodeSize();
@@ -54,7 +54,7 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
   Block* oldBlock = oldNode.block();
   Block* newBlock = newNode.block();
   if (oldBlock == newBlock && oldSize == newSize) {
-    return;
+    return newNode;
   }
 
   const bool poolContainsNew = pool->contains(newNode.block());
@@ -93,6 +93,7 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
   // Restore this offset
   EditionPool::sharedEditionPool()->setNodeForIdentifier(m_identifier,
                                                          Node(oldBlock));
+  return Node(oldBlock);
 }
 
 EditionReference EditionReference::matchAndCreate(const Node pattern,

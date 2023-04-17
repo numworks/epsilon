@@ -73,8 +73,7 @@ EditionReference Builtin::Promote(EditionReference parameterList,
     default:
       assert(false);
   }
-  parameterList.replaceNodeByNode(header);
-  return header;
+  return EditionReference(parameterList.replaceNodeByNode(header));
 }
 
 }  // namespace PoincareJ

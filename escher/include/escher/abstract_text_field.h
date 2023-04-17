@@ -42,11 +42,13 @@ class AbstractTextField : public TextInput, public EditableField {
   // EditableField
   bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
   void setEditing(bool isEditing) override {
-    assert(!isEditing || m_delegate->textFieldIsEditable(this));
+    assert(!isEditing || isEditable());
     contentView()->setEditing(isEditing);
   }
   bool isEditing() const override;
   bool shouldFinishEditing(Ion::Events::Event event) override;
+
+  bool isEditable() { return m_delegate->textFieldIsEditable(this); }
 
   void setDelegates(InputEventHandlerDelegate *inputEventHandlerDelegate,
                     TextFieldDelegate *delegate);

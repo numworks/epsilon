@@ -486,6 +486,9 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
 }
 
 bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {
+  if (!isEditable()) {
+    return true;
+  }
   constexpr int bufferSize = Poincare::SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];
   size_t length = insertXNTChars(xnt, buffer, bufferSize - 1);
@@ -504,7 +507,7 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
   assert(!contentView()->isStalled());
   size_t previousTextLength = strlen(text());
-  bool fieldIsEditable = m_delegate->textFieldIsEditable(this);
+  bool fieldIsEditable = isEditable();
   bool didHandleEvent = false;
 
   // Handle move and selection

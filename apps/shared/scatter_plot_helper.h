@@ -3,6 +3,7 @@
 
 #include <poincare/expression.h>
 #include <poincare/list.h>
+#include <poincare/list_sort.h>
 #include <poincare/point.h>
 
 #include "poincare_helpers.h"
@@ -21,9 +22,19 @@ class ScatterPlotIterable {
     Iterator(ExpressionIterable::Iterator iter)
         : ExpressionIterable::Iterator(iter) {}
     using ExpressionIterable::Iterator::Iterator;
-    Poincare::Point operator*() {
+    Poincare::Point operator*() const {
       Poincare::Expression e = ExpressionIterable::Iterator::operator*();
+      assert(e.type() == Poincare::ExpressionNode::Type::Point);
       return static_cast<Poincare::Point&>(e);
+    }
+    /* This will stop iteration as soon as an undefined expression is reached.
+     * It relies on the fact that the iterator will only ever be compared to
+     * end(). It also makes use of the fact that undefined expression will be at
+     * the end of a sorted list. */
+    static_assert(Poincare::ListSort::k_nanIsGreatest);
+    bool operator!=(const Iterator& rhs) const {
+      return this->ExpressionIterable::Iterator::operator!=(rhs) &&
+             !ExpressionIterable::Iterator::operator*().isUndefined();
     }
   };
 

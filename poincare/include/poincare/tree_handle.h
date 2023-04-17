@@ -141,7 +141,7 @@ class TreeHandle {
      public:
       Iterator(Node* node) : m_handle(NodePointerInPool(node)), m_node(node) {}
 
-      Handle operator*() { return m_handle; }
+      Handle operator*() const { return m_handle; }
       bool operator!=(const Iterator& rhs) const {
         return m_handle != rhs.m_handle;
       }

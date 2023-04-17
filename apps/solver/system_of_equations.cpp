@@ -446,7 +446,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
   }
   if (type != SolutionType::Formal) {
     approximateLayout = PoincareHelpers::CreateLayout(approximate, context);
-    if (type == SolutionType::Exact) {
+    if (type == SolutionType::Exact && !exactLayout.isUninitialized()) {
       char exactBuffer[::Constant::MaxSerializedExpressionSize];
       char approximateBuffer[::Constant::MaxSerializedExpressionSize];
       exactLayout.serializeForParsing(exactBuffer,

@@ -117,6 +117,10 @@ void TrigonometryListController::setExpression(Expression e) {
 
 void TrigonometryListController::updateIsStrictlyEqualAtIndex(
     int index, Context* context) {
+  if (m_approximatedLayouts[index].isUninitialized()) {
+    /* Only one layout is displayed, so there is no equal sign. */
+    return;
+  }
   char exactBuffer[::Constant::MaxSerializedExpressionSize];
   char approximateBuffer[::Constant::MaxSerializedExpressionSize];
   m_exactLayouts[index].serializeForParsing(

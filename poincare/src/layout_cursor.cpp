@@ -289,17 +289,18 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
 
   // - Step 6 - Find position to point to if layout will me merged
   LayoutCursor previousCursor = *this;
-  Layout childToPoint;
+  Layout layoutToPoint;
+  OMG::HorizontalDirection directionOfLayoutToPoint = OMG::Direction::Left();
   bool layoutToInsertIsHorizontal = layout.isHorizontal();
   if (layoutToInsertIsHorizontal) {
-    childToPoint = (forceRight || forceLeft)
-                       ? Layout()
-                       : static_cast<HorizontalLayout &>(layout)
-                             .deepChildToPointToWhenInserting();
-    if (!childToPoint.isUninitialized() &&
+    layoutToPoint = (forceRight || forceLeft)
+                        ? Layout()
+                        : static_cast<HorizontalLayout &>(layout)
+                              .deepChildToPointToWhenInserting();
+    if (!layoutToPoint.isUninitialized() &&
         AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
-            childToPoint.type())) {
-      childToPoint = childToPoint.childAtIndex(0);
+            layoutToPoint.type())) {
+      layoutToPoint = layoutToPoint.childAtIndex(0);
     }
   }
 
@@ -330,17 +331,19 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
    * not merged */
   if (!layoutToInsertIsHorizontal) {
     collapseSiblingsOfLayout(layout);
-    int indexOfChildToPointTo =
-        (forceRight || forceLeft) ? LayoutNode::k_outsideIndex
-                                  : layout.indexOfChildToPointToWhenInserting();
-    if (indexOfChildToPointTo != LayoutNode::k_outsideIndex) {
-      childToPoint = layout.childAtIndex(indexOfChildToPointTo);
+    if (forceRight || forceLeft) {
+      layoutToPoint = layout;
+      directionOfLayoutToPoint =
+          forceLeft ? OMG::Direction::Left() : OMG::Direction::Right();
+    } else {
+      layoutToPoint =
+          layout.childAtIndex(layout.indexOfChildToPointToWhenInserting());
     }
   }
 
   // - Step 9 - Point to required position
-  if (!childToPoint.isUninitialized()) {
-    *this = LayoutCursor(childToPoint, OMG::Direction::Left());
+  if (!layoutToPoint.isUninitialized()) {
+    *this = LayoutCursor(layoutToPoint, directionOfLayoutToPoint);
     didEnterCurrentPosition(previousCursor);
   }
 

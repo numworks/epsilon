@@ -132,15 +132,15 @@ int Print::CustomPrintfWithMaxNumberOfSignificantDigits(
     char *buffer, size_t bufferSize, int maxNumberOfSignificantDigits,
     const char *format, ...) {
   assert(maxNumberOfSignificantDigits > 0);
-  va_list args;
-  va_start(args, format);
   int length = bufferSize;
   while (length >= bufferSize && maxNumberOfSignificantDigits > 0) {
+    va_list args;
+    va_start(args, format);
     length = PrivateCustomPrintf(buffer, bufferSize,
                                  maxNumberOfSignificantDigits, format, args);
     maxNumberOfSignificantDigits--;
+    va_end(args);
   }
-  va_end(args);
   assert(length < static_cast<int>(bufferSize));
   return length;
 }

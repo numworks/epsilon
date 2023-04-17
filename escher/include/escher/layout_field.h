@@ -15,10 +15,10 @@
 
 namespace Escher {
 
-class LayoutField
-    : public WithBlinkingTextCursor<ScrollableView<ScrollView::NoDecorator>>,
-      public ScrollViewDataSource,
-      public EditableField {
+class LayoutField : public TextCursorView::WithBlinkingCursor<
+                        ScrollableView<ScrollView::NoDecorator>>,
+                    public ScrollViewDataSource,
+                    public EditableField {
  public:
   LayoutField(Responder* parentResponder,
               InputEventHandlerDelegate* inputEventHandlerDelegate,
@@ -109,9 +109,11 @@ class LayoutField
   void insertLayoutAtCursor(Poincare::Layout layoutR,
                             bool forceCursorRightOfLayout = false,
                             bool forceCursorLeftOfLayout = false);
-  View* cursorField() override { return &m_contentView; }
+  TextCursorView::CursorFieldView* cursorCursorFieldView() override {
+    return &m_contentView;
+  }
 
-  class ContentView : public View {
+  class ContentView : public TextCursorView::CursorFieldView {
    public:
     ContentView(KDGlyph::Format format);
     bool isEditing() const { return m_isEditing; }
@@ -120,9 +122,6 @@ class LayoutField
     void setBackgroundColor(KDColor c) { m_layoutView.setBackgroundColor(c); }
     void setCursor(Poincare::LayoutCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(false); }
-    KDRect cursorRect() {
-      return relativeChildFrame(TextCursorView::sharedTextCursor);
-    }
     Poincare::LayoutCursor* cursor() { return &m_cursor; }
     const LayoutView* layoutView() const { return &m_layoutView; }
     LayoutView* layoutView() { return &m_layoutView; }
@@ -133,12 +132,15 @@ class LayoutField
     void copySelection(Poincare::Context* context, bool intoStoreMenu);
     KDFont::Size font() const { return m_layoutView.font(); }
 
+    KDRect cursorRect() const override;
+
    private:
-    int numberOfSubviews() const override { return 2; }
+    int numberOfSubviews() const override {
+      return 1 + TextCursorView::CursorFieldView::numberOfSubviews();
+    }
     View* subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
-    void layoutCursorSubview(bool force);
-    Poincare::LayoutCursor m_cursor;
+    mutable Poincare::LayoutCursor m_cursor;
     LayoutViewWithCursor m_layoutView;
     bool m_isEditing;
   };

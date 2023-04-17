@@ -6,7 +6,7 @@ namespace Escher {
 
 void Init() {
   KDIonContext::SharedContext.init();
-  TextCursorView::sharedTextCursor.init();
+  TextCursorView::InitSharedCursor();
 }
 
 }  // namespace Escher

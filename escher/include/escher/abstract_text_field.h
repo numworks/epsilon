@@ -118,13 +118,13 @@ class AbstractTextField : public TextInput, public EditableField {
     bool isStalled() const { return m_isStalled; }
     void setStalled(bool stalled) { m_isStalled = stalled; }
 
+    KDRect cursorRect() const override;
+
    protected:
     KDRect glyphFrameAtPosition(const char *buffer,
                                 const char *position) const override;
 
    private:
-    void layoutSubviews(bool force = false) override;
-
     char *m_textBuffer;
     size_t m_textBufferSize;
     KDColor m_textColor;

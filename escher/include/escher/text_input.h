@@ -11,15 +11,15 @@
 
 namespace Escher {
 
-class TextInput
-    : public WithBlinkingTextCursor<ScrollableView<ScrollView::NoDecorator>>,
-      public ScrollViewDataSource {
+class TextInput : public TextCursorView::WithBlinkingCursor<
+                      ScrollableView<ScrollView::NoDecorator>>,
+                  public ScrollViewDataSource {
   friend class LayoutField;
 
  public:
   TextInput(Responder *parentResponder, View *contentView)
-      : WithBlinkingTextCursor<ScrollableView>(parentResponder, contentView,
-                                               this) {}
+      : TextCursorView::WithBlinkingCursor<ScrollableView>(parentResponder,
+                                                           contentView, this) {}
   void setFont(KDFont::Size font) { contentView()->setFont(font); }
   const char *text() const { return nonEditableContentView()->text(); }
   bool removePreviousGlyph();
@@ -38,12 +38,12 @@ class TextInput
   void setAlignment(float horizontalAlignment, float verticalAlignment);
 
  protected:
-  class ContentView : public View {
+  class ContentView : public TextCursorView::CursorFieldView {
    public:
     ContentView(KDFont::Size font,
                 float horizontalAlignment = KDGlyph::k_alignLeft,
                 float verticalAlignment = KDGlyph::k_alignCenter)
-        : View(),
+        : TextCursorView::CursorFieldView(),
           m_cursorLocation(nullptr),
           m_selectionStart(nullptr),
           m_horizontalAlignment(horizontalAlignment),
@@ -60,7 +60,7 @@ class TextInput
       return m_cursorLocation;
     }
     void setCursorLocation(const char *cursorLocation);
-    KDRect cursorRect();
+    KDRect cursorRect() const override;
 
     // Virtual text get/add/remove
     virtual const char *text() const = 0;
@@ -90,7 +90,6 @@ class TextInput
                                 bool includeFollowingLines = false);
 
    protected:
-    void layoutSubviews(bool force = false) override;
     void reloadRectFromAndToPositions(const char *start, const char *end);
     virtual KDRect glyphFrameAtPosition(const char *buffer,
                                         const char *position) const = 0;
@@ -103,11 +102,6 @@ class TextInput
     KDFont::Size m_font;
 
    private:
-    int numberOfSubviews() const override { return 1; }
-    View *subviewAtIndex(int index) override {
-      assert(index == 0);
-      return TextCursorView::sharedTextCursor;
-    }
     virtual const char *editedText() const = 0;
     virtual size_t editedTextLength() const = 0;
   };
@@ -130,7 +124,9 @@ class TextInput
  private:
   virtual void willSetCursorLocation(const char **location) {}
   virtual bool privateRemoveEndOfLine();
-  View *cursorField() override { return contentView(); }
+  TextCursorView::CursorFieldView *cursorCursorFieldView() override {
+    return contentView();
+  }
 };
 
 }  // namespace Escher

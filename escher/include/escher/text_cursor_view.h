@@ -7,55 +7,71 @@
 
 namespace Escher {
 
+/* Only the object sharedTextCursor should be of this class, since only 1 cursor
+ * is displayed at a time. */
 class TextCursorView : public View {
   friend class BlinkTimer;
-  template <typename ResponderType>
-  friend class WithBlinkingTextCursor;
 
  public:
   constexpr static KDCoordinate k_width = 1;
+  static void InitSharedCursor() { sharedTextCursor.init(); }
 
   TextCursorView() : m_visible(false) {}
-
-  static OMG::GlobalBox<TextCursorView> sharedTextCursor;
 
   // View
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
-  void willMove();
 
-  bool shouldBlink() { return m_field; }
+  /* All content view containing a cursor should inherit from this class. */
+  class CursorFieldView : public View {
+   public:
+    void layoutCursorSubview(bool force = false);
+    virtual KDRect cursorRect() const = 0;
+
+   protected:
+    void layoutSubviews(bool force = false) override { layoutCursorSubview(); }
+    int numberOfSubviews() const override;
+    View* subviewAtIndex(int index) override;
+  };
+
+  /* All responders containing a view containing a cursor should inherit from
+   * this class. */
+  template <typename ResponderType>
+  class WithBlinkingCursor : public ResponderType {
+#ifndef PLATFORM_DEVICE
+    // Poor's man constraint
+    static_assert(std::is_base_of<Responder, ResponderType>(),
+                  "Cursor needs a responder");
+#endif
+   public:
+    using ResponderType::ResponderType;
+    void didBecomeFirstResponder() override {
+      TextCursorView::sharedTextCursor->setInField(cursorCursorFieldView());
+      ResponderType::didBecomeFirstResponder();
+    }
+    void willResignFirstResponder() override {
+      TextCursorView::sharedTextCursor->setInField(nullptr);
+      ResponderType::willResignFirstResponder();
+    }
+
+   private:
+    virtual CursorFieldView* cursorCursorFieldView() = 0;
+  };
 
  private:
+  /* Keep this private so that only CursorFieldView and WithBlinkingCursor can
+   * reach this object. */
+  static OMG::GlobalBox<TextCursorView> sharedTextCursor;
+
+  bool isInField(const CursorFieldView* field) { return m_field == field; }
+  bool shouldBlink() { return m_field; }
   void setVisible(bool visible);
   void switchVisible() { setVisible(!m_visible); }
-  void setInField(View* field);
-  void layoutSubviews(bool force) override { willMove(); }
+  void willMove();
+  void setInField(CursorFieldView* field);
 
-  View* m_field;
+  CursorFieldView* m_field;
   bool m_visible;
-};
-
-template <typename ResponderType>
-class WithBlinkingTextCursor : public ResponderType {
-#ifndef PLATFORM_DEVICE
-  // Poor's man constraint
-  static_assert(std::is_base_of<Responder, ResponderType>(),
-                "Cursor needs a responder");
-#endif
- public:
-  using ResponderType::ResponderType;
-  void didBecomeFirstResponder() override {
-    TextCursorView::sharedTextCursor->setInField(cursorField());
-    ResponderType::didBecomeFirstResponder();
-  }
-  void willResignFirstResponder() override {
-    TextCursorView::sharedTextCursor->setInField(nullptr);
-    ResponderType::willResignFirstResponder();
-  }
-
- private:
-  virtual View* cursorField() = 0;
 };
 
 }  // namespace Escher

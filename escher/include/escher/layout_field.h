@@ -24,17 +24,17 @@ class LayoutField
  public:
   LayoutField(Responder* parentResponder,
               InputEventHandlerDelegate* inputEventHandlerDelegate,
-              LayoutFieldDelegate* delegate = nullptr,
+              LayoutFieldDelegate* layoutFieldDelegate = nullptr,
               KDGlyph::Format format = {})
       : WithBlinkingTextCursor<ScrollableView>(parentResponder, &m_contentView,
                                                this),
         EditableField(inputEventHandlerDelegate),
         m_contentView(format),
-        m_delegate(delegate) {}
+        m_layoutFieldDelegate(layoutFieldDelegate) {}
   void setDelegates(InputEventHandlerDelegate* inputEventHandlerDelegate,
-                    LayoutFieldDelegate* delegate) {
+                    LayoutFieldDelegate* layoutFieldDelegate) {
     m_inputEventHandlerDelegate = inputEventHandlerDelegate;
-    m_delegate = delegate;
+    m_layoutFieldDelegate = layoutFieldDelegate;
   }
   Poincare::Context* context() const;
   bool isEditing() const override { return m_contentView.isEditing(); }
@@ -138,7 +138,7 @@ class LayoutField
     bool m_isEditing;
   };
   ContentView m_contentView;
-  LayoutFieldDelegate* m_delegate;
+  LayoutFieldDelegate* m_layoutFieldDelegate;
 };
 
 }  // namespace Escher

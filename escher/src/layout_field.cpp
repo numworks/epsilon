@@ -154,7 +154,8 @@ void LayoutField::setLayout(Poincare::Layout newLayout) {
 }
 
 Context *LayoutField::context() const {
-  return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
+  return (m_layoutFieldDelegate != nullptr) ? m_layoutFieldDelegate->context()
+                                            : nullptr;
 }
 
 size_t LayoutField::dumpContent(char *buffer, size_t bufferSize,
@@ -236,8 +237,8 @@ void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
 
 void LayoutField::reload(KDSize previousSize) {
   KDSize newSize = minimalSizeForOptimalDisplay();
-  if (m_delegate && previousSize.height() != newSize.height()) {
-    m_delegate->layoutFieldDidChangeSize(this);
+  if (m_layoutFieldDelegate && previousSize.height() != newSize.height()) {
+    m_layoutFieldDelegate->layoutFieldDidChangeSize(this);
   }
   m_contentView.cursorPositionChanged();
   scrollToCursor();
@@ -369,7 +370,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
 }
 
 bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
-  if (m_delegate->layoutFieldShouldFinishEditing(this, event)) {
+  if (m_layoutFieldDelegate->layoutFieldShouldFinishEditing(this, event)) {
     m_contentView.cursor()->stopSelecting();
     return true;
   }
@@ -398,15 +399,17 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   } else {
     reload(previousSize);
   }
-  return m_delegate ? m_delegate->layoutFieldDidHandleEvent(
-                          this, didHandleEvent, shouldRedrawLayout)
-                    : didHandleEvent;
+  return m_layoutFieldDelegate
+             ? m_layoutFieldDelegate->layoutFieldDidHandleEvent(
+                   this, didHandleEvent, shouldRedrawLayout)
+             : didHandleEvent;
 }
 
 bool LayoutField::privateHandleEvent(Ion::Events::Event event,
                                      bool *shouldRedrawLayout,
                                      bool *shouldUpdateCursor) {
-  if (m_delegate && m_delegate->layoutFieldDidReceiveEvent(this, event)) {
+  if (m_layoutFieldDelegate &&
+      m_layoutFieldDelegate->layoutFieldDidReceiveEvent(this, event)) {
     return true;
   }
   if (handleBoxEvent(event)) {
@@ -416,11 +419,12 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
     *shouldUpdateCursor = false;
     return true;
   }
-  if (isEditing() && m_delegate &&
-      m_delegate->layoutFieldShouldFinishEditing(
+  if (isEditing() && m_layoutFieldDelegate &&
+      m_layoutFieldDelegate->layoutFieldShouldFinishEditing(
           this, event)) {  // TODO use class method?
     setEditing(false);
-    if (m_delegate->layoutFieldDidFinishEditing(this, layout(), event)) {
+    if (m_layoutFieldDelegate->layoutFieldDidFinishEditing(this, layout(),
+                                                           event)) {
       // Reinit layout for next use
       clearLayout();
     } else {
@@ -440,7 +444,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event,
   }
   if (event == Ion::Events::Back && isEditing()) {
     clearAndSetEditing(false);
-    m_delegate->layoutFieldDidAbortEditing(this);
+    m_layoutFieldDelegate->layoutFieldDidAbortEditing(this);
     return true;
   }
   char buffer[Ion::Events::EventData::k_maxDataSize] = {0};

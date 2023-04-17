@@ -1,6 +1,8 @@
 #ifndef SHARED_PLOT_VIEW_POLICIES_H
 #define SHARED_PLOT_VIEW_POLICIES_H
 
+#include <stdint.h>
+
 #include "plot_view.h"
 #include "plot_view_axes.h"
 #include "plot_view_banners.h"

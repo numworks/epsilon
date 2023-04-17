@@ -6,14 +6,6 @@
 #include <initializer_list>
 
 namespace Poincare {
-/* TODO: implement an iterator over the children, so we can use "for (TreeHandle
- * c : children)" instead of a for loop over the child index. This should be
- * faster, as we do not have to recompute childAtIndex(i) at each iteration.
- * Caution:
- *  - The iterator should be specialized for Expression, Layout...
- *  - We cannot compose with a TreeNode iterator as the node pointers might
- *  change during the loop. */
-
 /* A TreeHandle references a TreeNode stored somewhere is the Expression Pool,
  * and identified by its idenfier.
  * Any method that can possibly move the object ("break the this")
@@ -142,24 +134,69 @@ class TreeHandle {
   template <typename Handle, typename Node>
   class Direct final {
    public:
-    Direct(Handle handle, int firstIndex = 0)
-        : m_nodeIterable(handle.node(), firstIndex) {}
+    Direct(const Handle handle, int firstIndex = 0)
+        : m_handle(handle), m_firstIndex(firstIndex) {}
 
-    class Iterator : public TreeNode::Direct<Node>::Iterator {
+    class Iterator {
      public:
-      Iterator(typename TreeNode::Direct<Node>::Iterator iter)
-          : TreeNode::Direct<Node>::Iterator(iter) {}
-      Handle operator*() {
-        return Handle(TreeNode::Direct<Node>::Iterator::operator*());
-      }
-    };
-    Iterator begin() const { return m_nodeIterable.begin(); }
-    Iterator end() const { return m_nodeIterable.end(); }
+      Iterator(Node* node) : m_handle(NodePointerInPool(node)), m_node(node) {}
 
-    Node* node() const { return m_nodeIterable.node(); }
+      Handle operator*() { return m_handle; }
+      bool operator!=(const Iterator& rhs) const {
+        return m_handle != rhs.m_handle;
+      }
+      Iterator& operator++() {
+        m_node = static_cast<Node*>(m_node->nextSibling());
+        m_handle = Handle(NodePointerInPool(m_node));
+        return *this;
+      }
+
+     private:
+      /* This iterator needs to keep both a node and a handle:
+       * - a handle to ensure termination even if tree modifications move the
+       * next sibling.
+       * - a node to make sure it keeps navigating the same tree even if the
+       * curent node is moved.
+       * e.g. Pool is: |-|abs|a|b|*|
+       *      We want to iterate over the subtraction and move its children in
+       *      the multiplication.
+       * 1) |+|abs|a|b|*|
+       *        ^      ^end
+       *        current node
+       *
+       * 2) |+|ghost|b|*|abs|a|
+       *         ^     ^end
+       *    Here the address of |*| has changed, but the end iterator still
+       *    refers to it because it holds a handle. However, by holding a
+       *    pointer to its current node, iteration will continue from where
+       *    |abs|a| was, instead of where it has been moved.
+       * */
+      Handle m_handle;
+      Node* m_node;
+    };
+
+    Iterator begin() const {
+      TreeNode* node = m_handle.node()->next();
+      for (int i = 0; i < m_firstIndex; i++) {
+        node = node->nextSibling();
+      }
+      return Iterator(static_cast<Node*>(node));
+    }
+    Iterator end() const {
+      return Iterator(static_cast<Node*>(m_handle.node()->nextSibling()));
+    }
+
+    Node* node() const { return m_handle.node(); }
 
    private:
-    TreeNode::Direct<Node> m_nodeIterable;
+    static Node* NodePointerInPool(Node* node) {
+      return reinterpret_cast<char*>(node) < TreePool::sharedPool->cursor()
+                 ? node
+                 : nullptr;
+    }
+
+    Handle m_handle;
+    int m_firstIndex;
   };
 
   Direct<TreeHandle, TreeNode> directChildren() const {

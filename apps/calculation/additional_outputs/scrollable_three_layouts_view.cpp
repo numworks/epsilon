@@ -1,4 +1,4 @@
-#include "scrollable_three_expressions_view.h"
+#include "scrollable_three_layouts_view.h"
 
 #include <poincare/exception_checkpoint.h>
 
@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Calculation {
 
-void ScrollableThreeExpressionsView::ContentCell::reloadTextColor() {
+void ScrollableThreeLayoutsView::ContentCell::reloadTextColor() {
   KDColor color = displayCenter() && !rightIsStrictlyEqual()
                       ? Palette::GrayVeryDark
                       : KDColorBlack;
@@ -17,17 +17,17 @@ void ScrollableThreeExpressionsView::ContentCell::reloadTextColor() {
   approximateSign()->setTextColor(color);
 }
 
-void ScrollableThreeExpressionsView::setLayouts(Layout formulaLayout,
-                                                Layout exactLayout,
-                                                Layout approximateLayout) {
+void ScrollableThreeLayoutsView::setLayouts(Layout formulaLayout,
+                                            Layout exactLayout,
+                                            Layout approximateLayout) {
   Shared::AbstractScrollableMultipleLayoutsView::setLayouts(
       formulaLayout, exactLayout, approximateLayout);
   setShowEqualSignAfterFormula(!exactLayout.isUninitialized() ||
                                !approximateLayout.isUninitialized());
 }
 
-ScrollableThreeExpressionsView::SubviewPosition
-ScrollableThreeExpressionsView::leftMostPosition() {
+ScrollableThreeLayoutsView::SubviewPosition
+ScrollableThreeLayoutsView::leftMostPosition() {
   if (!m_contentCell.m_leftLayoutView.layout().isUninitialized()) {
     return SubviewPosition::Left;
   } else if (displayCenter()) {

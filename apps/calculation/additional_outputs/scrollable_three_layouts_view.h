@@ -1,5 +1,5 @@
-#ifndef CALCULATION_SCROLLABLE_THREE_EXPRESSIONS_CELL_H
-#define CALCULATION_SCROLLABLE_THREE_EXPRESSIONS_CELL_H
+#ifndef CALCULATION_SCROLLABLE_THREE_LAYOUTS_CELL_H
+#define CALCULATION_SCROLLABLE_THREE_LAYOUTS_CELL_H
 
 #include <escher/menu_cell.h>
 #include <poincare/layout.h>
@@ -10,10 +10,10 @@
 
 namespace Calculation {
 
-class ScrollableThreeExpressionsView
+class ScrollableThreeLayoutsView
     : public Shared::AbstractScrollableMultipleLayoutsView {
  public:
-  ScrollableThreeExpressionsView(Responder *parentResponder = nullptr)
+  ScrollableThreeLayoutsView(Responder *parentResponder = nullptr)
       : Shared::AbstractScrollableMultipleLayoutsView(parentResponder,
                                                       &m_contentCell) {
     setMargins(0, 0, 0, 0);  // margins are already added by MenuCell
@@ -41,7 +41,7 @@ class ScrollableThreeExpressionsView
  private:
   class ContentCell
       : public Shared::AbstractScrollableMultipleLayoutsView::ContentCell {
-    friend ScrollableThreeExpressionsView;
+    friend ScrollableThreeLayoutsView;
 
    public:
     using Shared::AbstractScrollableMultipleLayoutsView::ContentCell::

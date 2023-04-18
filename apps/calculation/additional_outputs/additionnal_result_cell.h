@@ -6,17 +6,16 @@
 #include <escher/palette.h>
 
 #include "apps/i18n.h"
-#include "scrollable_three_expressions_view.h"
+#include "scrollable_three_layouts_view.h"
 
 namespace Calculation {
 
 class AdditionnalResultCell
-    : public Escher::MenuCell<ScrollableThreeExpressionsView,
+    : public Escher::MenuCell<ScrollableThreeLayoutsView,
                               Escher::MessageTextView> {
  public:
   AdditionnalResultCell(I18n::Message subLabelMessage = I18n::Message::Default)
-      : Escher::MenuCell<ScrollableThreeExpressionsView,
-                         Escher::MessageTextView>(),
+      : Escher::MenuCell<ScrollableThreeLayoutsView, Escher::MessageTextView>(),
         m_highlightWholeCell(false) {}
 
   void setHighlighted(bool highlight) override {
@@ -24,7 +23,7 @@ class AdditionnalResultCell
     if (!m_highlightWholeCell) {
       return;
     }
-    Escher::MenuCell<ScrollableThreeExpressionsView,
+    Escher::MenuCell<ScrollableThreeLayoutsView,
                      Escher::MessageTextView>::setHighlighted(highlight);
   }
 

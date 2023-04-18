@@ -489,7 +489,7 @@ size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
 
 bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {
   if (!isEditable()) {
-    return true;
+    return false;
   }
   constexpr int bufferSize = Poincare::SymbolAbstractNode::k_maxNameSize;
   char buffer[bufferSize];

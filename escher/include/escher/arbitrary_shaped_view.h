@@ -11,6 +11,12 @@ namespace Escher {
  */
 
 class ArbitraryShapedView : public View {
+ private:
+  /* Mark markRectAsDirty private to forbid the pattern
+   * setState() {
+   *  state = ...;
+   *  markRectAsDirty(bounds());
+   * } */
   using View::markRectAsDirty;
   int numberOfSubviews() const final override { return 0; }
 };

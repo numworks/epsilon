@@ -211,7 +211,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
   ContinuousFunctionStore *store = App::app()->functionStore();
   Context *context = App::app()->localContext();
   ExpiringPointer<ContinuousFunction> f = store->modelForRecord(m_record);
-  Expression e = f->expressionReduced(context);
+  Expression e = f->expressionApproximated(context);
 
   if (start < 0.f && 0.f < end) {
     for (int curveIndex = 0; curveIndex < f->numberOfSubCurves();
@@ -272,7 +272,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     if (!g->shouldDisplayIntersections()) {
       continue;
     }
-    Expression e2 = g->expressionReduced(context);
+    Expression e2 = g->expressionApproximated(context);
     Solver<double> solver = PoincareHelpers::Solver<double>(
         start, end, ContinuousFunction::k_unknownName, context);
     solver.setSearchStep(searchStep);

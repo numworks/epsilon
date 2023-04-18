@@ -35,10 +35,9 @@ class ModalViewEmptyController : public ViewController {
     virtual int numberOfMessageTextViews() const = 0;
     virtual MessageTextView *messageTextViewAtIndex(int index) = 0;
     bool hasExpressionView() const {
-      return const_cast<ModalViewEmptyView *>(this)->expressionView() !=
-             nullptr;
+      return const_cast<ModalViewEmptyView *>(this)->layoutView() != nullptr;
     }
-    virtual LayoutView *expressionView() { return nullptr; }
+    virtual LayoutView *layoutView() { return nullptr; }
   };
 };
 

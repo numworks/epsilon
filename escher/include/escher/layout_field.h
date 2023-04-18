@@ -38,10 +38,10 @@ class LayoutField
   }
   bool isEmpty() const { return layout().isEmpty(); }
   Poincare::Layout layout() const {
-    return m_contentView.expressionView()->layout();
+    return m_contentView.layoutView()->layout();
   }
   bool layoutHasNode() const {
-    return m_contentView.expressionView()->layoutHasNode();
+    return m_contentView.layoutView()->layoutHasNode();
   }
   bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
   void putCursorOnOneSide(OMG::HorizontalDirection side);
@@ -69,10 +69,8 @@ class LayoutField
   KDSize minimalSizeForOptimalDisplay() const override;
 
   Poincare::LayoutCursor* cursor() { return m_contentView.cursor(); }
-  const LayoutView* expressionView() const {
-    return m_contentView.expressionView();
-  }
-  LayoutView* expressionView() { return m_contentView.expressionView(); }
+  const LayoutView* layoutView() const { return m_contentView.layoutView(); }
+  LayoutView* layoutView() { return m_contentView.layoutView(); }
 
   /* Warning: this function is VERY dangerous! Indeed: sometimes the
    * m_layoutField might overflow the m_textBuffer once serialized
@@ -119,23 +117,21 @@ class LayoutField
     bool isEditing() const { return m_isEditing; }
     // returns True if LayoutField should reload
     bool setEditing(bool isEditing);
-    void setBackgroundColor(KDColor c) {
-      m_expressionView.setBackgroundColor(c);
-    }
+    void setBackgroundColor(KDColor c) { m_layoutView.setBackgroundColor(c); }
     void setCursor(Poincare::LayoutCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(false); }
     KDRect cursorRect() {
       return relativeChildFrame(TextCursorView::sharedTextCursor);
     }
     Poincare::LayoutCursor* cursor() { return &m_cursor; }
-    const LayoutView* expressionView() const { return &m_expressionView; }
-    LayoutView* expressionView() { return &m_expressionView; }
+    const LayoutView* layoutView() const { return &m_layoutView; }
+    LayoutView* layoutView() { return &m_layoutView; }
     void clearLayout();
     // View
     KDSize minimalSizeForOptimalDisplay() const override;
     // Selection
     void copySelection(Poincare::Context* context, bool intoStoreMenu);
-    KDFont::Size font() const { return m_expressionView.font(); }
+    KDFont::Size font() const { return m_layoutView.font(); }
 
    private:
     int numberOfSubviews() const override { return 2; }
@@ -143,7 +139,7 @@ class LayoutField
     void layoutSubviews(bool force = false) override;
     void layoutCursorSubview(bool force);
     Poincare::LayoutCursor m_cursor;
-    LayoutViewWithCursor m_expressionView;
+    LayoutViewWithCursor m_layoutView;
     bool m_isEditing;
   };
 

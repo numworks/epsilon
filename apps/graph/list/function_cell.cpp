@@ -53,7 +53,7 @@ void AbstractFunctionCell::drawRect(KDContext* ctx, KDRect rect) const {
 
 KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
   KDCoordinate expressionHeight =
-      expressionView()->minimalSizeForOptimalDisplay().height();
+      layoutView()->minimalSizeForOptimalDisplay().height();
   KDCoordinate minimalHeight = k_margin + expressionHeight + k_margin;
   if (displayFunctionType()) {
     KDCoordinate messageHeight =
@@ -115,7 +115,7 @@ void FunctionCell::updateSubviewsBackgroundAfterChangingState() {
   if (displayFunctionType()) {
     m_messageTextView.setBackgroundColor(m_expressionBackground);
   }
-  expressionView()->setBackgroundColor(m_expressionBackground);
+  layoutView()->setBackgroundColor(m_expressionBackground);
 }
 
 void FunctionCell::setParameterSelected(bool selected) {

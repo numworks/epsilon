@@ -5,25 +5,22 @@ using namespace Poincare;
 namespace Escher {
 
 EvenOddExpressionCell::EvenOddExpressionCell(KDGlyph::Format format)
-    : EvenOddCell(),
-      m_expressionView(format),
-      m_leftMargin(0),
-      m_rightMargin(0) {}
+    : EvenOddCell(), m_layoutView(format), m_leftMargin(0), m_rightMargin(0) {}
 
 void EvenOddExpressionCell::setLayout(Layout layoutR) {
-  m_expressionView.setLayout(layoutR);
+  m_layoutView.setLayout(layoutR);
 }
 
 void EvenOddExpressionCell::setBackgroundColor(KDColor backgroundColor) {
-  m_expressionView.setBackgroundColor(backgroundColor);
+  m_layoutView.setBackgroundColor(backgroundColor);
 }
 
 void EvenOddExpressionCell::setTextColor(KDColor textColor) {
-  m_expressionView.setTextColor(textColor);
+  m_layoutView.setTextColor(textColor);
 }
 
 KDSize EvenOddExpressionCell::minimalSizeForOptimalDisplay() const {
-  KDSize expressionSize = m_expressionView.minimalSizeForOptimalDisplay();
+  KDSize expressionSize = m_layoutView.minimalSizeForOptimalDisplay();
   return KDSize(m_leftMargin + expressionSize.width() + m_rightMargin,
                 expressionSize.height());
 }
@@ -48,19 +45,19 @@ void EvenOddExpressionCell::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 void EvenOddExpressionCell::updateSubviewsBackgroundAfterChangingState() {
-  m_expressionView.setBackgroundColor(backgroundColor());
+  m_layoutView.setBackgroundColor(backgroundColor());
 }
 
 int EvenOddExpressionCell::numberOfSubviews() const { return 1; }
 
 View* EvenOddExpressionCell::subviewAtIndex(int index) {
   assert(index == 0);
-  return &m_expressionView;
+  return &m_layoutView;
 }
 
 void EvenOddExpressionCell::layoutSubviews(bool force) {
   setChildFrame(
-      &m_expressionView,
+      &m_layoutView,
       KDRect(m_leftMargin, 0, bounds().width() - m_leftMargin - m_rightMargin,
              bounds().height()),
       force);

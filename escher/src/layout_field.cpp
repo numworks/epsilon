@@ -40,12 +40,12 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 
 void LayoutField::ContentView::clearLayout() {
   HorizontalLayout h = HorizontalLayout::Builder();
-  m_expressionView.setLayout(h);
+  m_layoutView.setLayout(h);
   m_cursor = LayoutCursor(h);
 }
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
-  KDSize evSize = m_expressionView.minimalSizeForOptimalDisplay();
+  KDSize evSize = m_layoutView.minimalSizeForOptimalDisplay();
   return KDSize(evSize.width() + Poincare::LayoutCursor::k_cursorWidth,
                 evSize.height());
 }
@@ -90,30 +90,30 @@ void LayoutField::ContentView::copySelection(Context *context,
 
 View *LayoutField::ContentView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());
-  View *m_views[] = {&m_expressionView, TextCursorView::sharedTextCursor};
+  View *m_views[] = {&m_layoutView, TextCursorView::sharedTextCursor};
   return m_views[index];
 }
 
 void LayoutField::ContentView::layoutSubviews(bool force) {
-  setChildFrame(&m_expressionView, bounds(), force);
+  setChildFrame(&m_layoutView, bounds(), force);
   layoutCursorSubview(force);
 }
 
 void LayoutField::ContentView::layoutCursorSubview(bool force) {
-  KDPoint cursorTopLeftPosition = m_expressionView.drawingOrigin().translatedBy(
+  KDPoint cursorTopLeftPosition = m_layoutView.drawingOrigin().translatedBy(
       m_cursor.cursorAbsoluteOrigin(font()));
   if (!m_isEditing) {
     /* We keep track of the cursor's position to prevent the input field from
      * scrolling to the beginning when switching to the history. This way,
      * when calling scrollToCursor after layoutCursorSubview, we don't lose
      * sight of the cursor. */
-    expressionView()->setChildFrame(TextCursorView::sharedTextCursor,
-                                    KDRect(cursorTopLeftPosition, KDSizeZero),
-                                    force);
+    layoutView()->setChildFrame(TextCursorView::sharedTextCursor,
+                                KDRect(cursorTopLeftPosition, KDSizeZero),
+                                force);
     return;
   }
   TextCursorView::sharedTextCursor->willMove();
-  expressionView()->setChildFrame(
+  layoutView()->setChildFrame(
       TextCursorView::sharedTextCursor,
       KDRect(cursorTopLeftPosition, LayoutCursor::k_cursorWidth,
              m_cursor.cursorHeight(font())),
@@ -121,7 +121,7 @@ void LayoutField::ContentView::layoutCursorSubview(bool force) {
 }
 
 LayoutField::ContentView::ContentView(KDGlyph::Format format)
-    : m_expressionView(&m_cursor, format), m_isEditing(false) {
+    : m_layoutView(&m_cursor, format), m_isEditing(false) {
   clearLayout();
 }
 
@@ -174,7 +174,7 @@ void LayoutField::clearAndSetEditing(bool isEditing) {
 void LayoutField::setLayout(Poincare::Layout newLayout) {
   m_contentView.clearLayout();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  const_cast<LayoutView *>(m_contentView.expressionView())
+  const_cast<LayoutView *>(m_contentView.layoutView())
       ->setLayout(newLayout.makeEditable());
   putCursorOnOneSide(OMG::Direction::Right());
   reload(previousSize);
@@ -251,7 +251,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   }
 
   // Do not insert layout if it has too many descendants
-  if (m_contentView.expressionView()->numberOfLayouts() +
+  if (m_contentView.layoutView()->numberOfLayouts() +
           xnt.numberOfDescendants(true) >=
       k_maxNumberOfLayouts) {
     return true;
@@ -263,7 +263,7 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
 void LayoutField::putCursorOnOneSide(OMG::HorizontalDirection side) {
   LayoutCursor previousCursor = *m_contentView.cursor();
   m_contentView.setCursor(
-      LayoutCursor(m_contentView.expressionView()->layout(), side));
+      LayoutCursor(m_contentView.layoutView()->layout(), side));
   m_contentView.cursor()->didEnterCurrentPosition(previousCursor);
 }
 
@@ -292,8 +292,7 @@ bool LayoutField::handleEventWithText(const char *text, bool indentation,
     return true;
   }
 
-  int currentNumberOfLayouts =
-      m_contentView.expressionView()->numberOfLayouts();
+  int currentNumberOfLayouts = m_contentView.layoutView()->numberOfLayouts();
   if (currentNumberOfLayouts >= k_maxNumberOfLayouts - 6) {
     /* We add -6 because in some cases (Ion::Events::Division,
      * Ion::Events::Exp...) we let the layout cursor handle the layout insertion

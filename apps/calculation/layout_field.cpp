@@ -11,20 +11,20 @@ namespace Calculation {
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::Division && event.isKeyPress()) {
-    m_divisionCycleWithAns = Poincare::TrinaryBoolean::Unknown;
+    m_divisionCycleWithAns = TrinaryBoolean::Unknown;
   }
   if (event == Ion::Events::Back) {
     return false;
   }
   if (event == Ion::Events::Ans) {
-    handleEventWithText(Poincare::Symbol::k_ansAliases.mainAlias());
+    handleEventWithText(Symbol::k_ansAliases.mainAlias());
     return true;
   }
   if (isEditing() && isEmpty() &&
       (event == Ion::Events::Multiplication || event == Ion::Events::Plus ||
        event == Ion::Events::Power || event == Ion::Events::Square ||
        event == Ion::Events::Sto)) {
-    handleEventWithText(Poincare::Symbol::k_ansAliases.mainAlias());
+    handleEventWithText(Symbol::k_ansAliases.mainAlias());
   }
   if (event == Ion::Events::Sto) {
     handleEventWithText("→");
@@ -32,14 +32,14 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Minus && isEditing() &&
       fieldContainsSingleMinusSymbol()) {
-    setText(Poincare::Symbol::k_ansAliases.mainAlias());
+    setText(Symbol::k_ansAliases.mainAlias());
     // The Minus symbol will be addded by Escher::LayoutField::handleEvent
   }
   if (event == Ion::Events::Division && isEditing()) {
-    if (m_divisionCycleWithAns == Poincare::TrinaryBoolean::Unknown) {
+    if (m_divisionCycleWithAns == TrinaryBoolean::Unknown) {
       m_currentStep = DivisionCycleStep::Start;
-      m_divisionCycleWithAns = isEmpty() ? Poincare::TrinaryBoolean::True
-                                         : Poincare::TrinaryBoolean::False;
+      m_divisionCycleWithAns =
+          isEmpty() ? TrinaryBoolean::True : TrinaryBoolean::False;
     }
     return handleDivision();
   }
@@ -57,14 +57,14 @@ bool LayoutField::fieldContainsSingleMinusSymbol() const {
 }
 
 bool LayoutField::handleDivision() {
-  assert(m_divisionCycleWithAns != Poincare::TrinaryBoolean::Unknown);
+  assert(m_divisionCycleWithAns != TrinaryBoolean::Unknown);
   bool mixedFractionsEnabled =
-      Poincare::Preferences::sharedPreferences->mixedFractionsAreEnabled();
+      Preferences::sharedPreferences->mixedFractionsAreEnabled();
   bool editionIn1D = linearMode();
   Ion::Events::Event event = Ion::Events::Division;
   bool handled = true;
 
-  if (m_divisionCycleWithAns == Poincare::TrinaryBoolean::True) {
+  if (m_divisionCycleWithAns == TrinaryBoolean::True) {
     /* When we are in the "Ans" case, the cycle is the following :
      * Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction (->
      * MixedFraction) -> DenominatorOfAnsFraction -> etc with the mixed fraction
@@ -95,10 +95,10 @@ bool LayoutField::handleDivision() {
         assert(m_currentStep == DivisionCycleStep::Start ||
                m_currentStep == DivisionCycleStep::MixedFraction);
         m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
-        setText(Poincare::Symbol::k_ansAliases.mainAlias());
+        setText(Symbol::k_ansAliases.mainAlias());
     }
   } else if (mixedFractionsEnabled) {
-    assert(m_divisionCycleWithAns == Poincare::TrinaryBoolean::False);
+    assert(m_divisionCycleWithAns == TrinaryBoolean::False);
     /* When we are in NOT the "Ans" case, the cycle is the following :
      *   - in 1D: Start -> DenominatorOfEmptyFraction ->
      * NumeratorOfEmptyFraction   -> MixedFraction -> DenominatorOfEmptyFraction
@@ -123,7 +123,7 @@ bool LayoutField::handleDivision() {
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         }
         if (!handled) {
-          m_divisionCycleWithAns = Poincare::TrinaryBoolean::Unknown;
+          m_divisionCycleWithAns = TrinaryBoolean::Unknown;
         }
         return handled;
       case DivisionCycleStep::NumeratorOfEmptyFraction:

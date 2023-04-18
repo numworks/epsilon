@@ -1,7 +1,7 @@
 #ifndef SHARED_SCROLLABLE_TWO_EXPRESSIONS_CELL_H
 #define SHARED_SCROLLABLE_TWO_EXPRESSIONS_CELL_H
 
-#include "scrollable_multiple_expressions_view.h"
+#include "scrollable_multiple_layouts_view.h"
 
 namespace Shared {
 
@@ -37,7 +37,7 @@ class ScrollableTwoExpressionsCell : public Escher::EvenOddCell,
   void layoutSubviews(bool force = false) override {
     setChildFrame(&m_view, bounds(), force);
   }
-  ScrollableTwoExpressionsView m_view;
+  ScrollableTwoLayoutsView m_view;
 };
 
 }  // namespace Shared

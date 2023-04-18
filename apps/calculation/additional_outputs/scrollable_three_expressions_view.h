@@ -4,7 +4,7 @@
 #include <escher/menu_cell.h>
 #include <poincare/layout.h>
 
-#include "../../shared/scrollable_multiple_expressions_view.h"
+#include "../../shared/scrollable_multiple_layouts_view.h"
 #include "../calculation.h"
 #include "layout_with_equal_sign_view.h"
 
@@ -50,11 +50,11 @@ class ScrollableThreeExpressionsView
       return m_highlightWholeCell ? defaultBackgroundColor() : KDColorWhite;
     }
     void setEven(bool even) override { return; }
-    Escher::LayoutView *leftExpressionView() const override {
-      return const_cast<LayoutWithEqualSignView *>(&m_leftExpressionView);
+    Escher::LayoutView *leftLayoutView() const override {
+      return const_cast<LayoutWithEqualSignView *>(&m_leftLayoutView);
     }
     void setShowEqualSignAfterFormula(bool showEqual) {
-      m_leftExpressionView.setShowEqual(showEqual);
+      m_leftLayoutView.setShowEqual(showEqual);
     }
     void setHighlightWholeCell(bool highlightWholeCell) {
       m_highlightWholeCell = highlightWholeCell;
@@ -62,7 +62,7 @@ class ScrollableThreeExpressionsView
 
    private:
     void reloadTextColor() override;
-    LayoutWithEqualSignView m_leftExpressionView;
+    LayoutWithEqualSignView m_leftLayoutView;
     bool m_highlightWholeCell;
   };
 

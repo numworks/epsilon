@@ -118,10 +118,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       m_selectableTableView.deselectTable();
       Shared::ExpiringPointer<Calculation> calculation =
           calculationAtIndex(focusRow);
-      ScrollableTwoExpressionsView::SubviewPosition outputSubviewPosition =
+      ScrollableTwoLayoutsView::SubviewPosition outputSubviewPosition =
           selectedCell->outputView()->selectedSubviewPosition();
       if (outputSubviewPosition ==
-              ScrollableTwoExpressionsView::SubviewPosition::Right &&
+              ScrollableTwoLayoutsView::SubviewPosition::Right &&
           calculation->displayOutput(context) !=
               Calculation::DisplayOutput::ExactOnly) {
         editController->insertTextBody(calculation->approximateOutputText(

@@ -13,7 +13,7 @@ void ScrollableThreeExpressionsView::ContentCell::reloadTextColor() {
   KDColor color = displayCenter() && !rightIsStrictlyEqual()
                       ? Palette::GrayVeryDark
                       : KDColorBlack;
-  rightExpressionView()->setTextColor(color);
+  rightLayoutView()->setTextColor(color);
   approximateSign()->setTextColor(color);
 }
 
@@ -28,7 +28,7 @@ void ScrollableThreeExpressionsView::setLayouts(Layout formulaLayout,
 
 ScrollableThreeExpressionsView::SubviewPosition
 ScrollableThreeExpressionsView::leftMostPosition() {
-  if (!m_contentCell.m_leftExpressionView.layout().isUninitialized()) {
+  if (!m_contentCell.m_leftLayoutView.layout().isUninitialized()) {
     return SubviewPosition::Left;
   } else if (displayCenter()) {
     return SubviewPosition::Center;

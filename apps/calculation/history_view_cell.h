@@ -4,7 +4,7 @@
 #include <escher/even_odd_cell_with_ellipsis.h>
 #include <escher/scrollable_layout_view.h>
 
-#include "../shared/scrollable_multiple_expressions_view.h"
+#include "../shared/scrollable_multiple_layouts_view.h"
 #include "calculation.h"
 
 namespace Calculation {
@@ -72,7 +72,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Shared::ScrollableTwoExpressionsView* outputView() {
+  Shared::ScrollableTwoLayoutsView* outputView() {
     return &m_scrollableOutputView;
   }
   Escher::ScrollableLayoutView* inputView() { return &m_inputView; }
@@ -96,7 +96,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   Calculation::DisplayOutput m_calculationDisplayOutput;
   Calculation::AdditionalInformations m_calculationAdditionInformations;
   Escher::ScrollableLayoutView m_inputView;
-  Shared::ScrollableTwoExpressionsView m_scrollableOutputView;
+  Shared::ScrollableTwoLayoutsView m_scrollableOutputView;
   Escher::EvenOddCellWithEllipsis m_ellipsis;
   HistoryViewCellDataSource* m_dataSource;
   bool m_calculationExpanded;

@@ -1,4 +1,4 @@
-#include "scrollable_multiple_expressions_view.h"
+#include "scrollable_multiple_layouts_view.h"
 
 #include <apps/i18n.h>
 #include <assert.h>
@@ -12,12 +12,12 @@ namespace Shared {
 
 AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
     float horizontalAlignment, KDFont::Size font)
-    : m_rightExpressionView({.style = {.font = font}}),
+    : m_rightLayoutView({.style = {.font = font}}),
       m_approximateSign(
           k_defaultApproximateMessage,
           {.style = {.glyphColor = Palette::GrayVeryDark, .font = font},
            .horizontalAlignment = KDGlyph::k_alignCenter}),
-      m_centeredExpressionView({.style = {.font = font}}),
+      m_centeredLayoutView({.style = {.font = font}}),
       m_selectedSubviewPosition(SubviewPosition::Center),
       m_displayCenter(true),
       m_horizontalAlignment(horizontalAlignment) {}
@@ -44,23 +44,23 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::
       highlight && m_selectedSubviewPosition == SubviewPosition::Center
           ? Palette::Select
           : defaultColor;
-  m_centeredExpressionView.setBackgroundColor(color);
+  m_centeredLayoutView.setBackgroundColor(color);
   color = highlight && m_selectedSubviewPosition == SubviewPosition::Right
               ? Palette::Select
               : defaultColor;
-  m_rightExpressionView.setBackgroundColor(color);
+  m_rightLayoutView.setBackgroundColor(color);
   m_approximateSign.setBackgroundColor(defaultColor);
-  if (leftExpressionView()) {
+  if (leftLayoutView()) {
     color = highlight && m_selectedSubviewPosition == SubviewPosition::Left
                 ? Palette::Select
                 : defaultColor;
-    leftExpressionView()->setBackgroundColor(color);
+    leftLayoutView()->setBackgroundColor(color);
   }
 }
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::reloadTextColor() {
-  m_rightExpressionView.setTextColor(displayCenter() ? Palette::GrayVeryDark
-                                                     : KDColorBlack);
+  m_rightLayoutView.setTextColor(displayCenter() ? Palette::GrayVeryDark
+                                                 : KDColorBlack);
 }
 
 KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
@@ -99,13 +99,13 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::
 Layout AbstractScrollableMultipleLayoutsView::ContentCell::layoutAtPosition(
     SubviewPosition position) const {
   if (position == SubviewPosition::Center) {
-    return m_centeredExpressionView.layout();
+    return m_centeredLayoutView.layout();
   } else if (position == SubviewPosition::Right) {
-    return m_rightExpressionView.layout();
+    return m_rightLayoutView.layout();
   }
   assert(position == SubviewPosition::Left);
-  assert(leftExpressionView());
-  return leftExpressionView()->layout();
+  assert(leftLayoutView());
+  return leftLayoutView()->layout();
 }
 
 int AbstractScrollableMultipleLayoutsView::ContentCell::numberOfSubviews()
@@ -114,7 +114,7 @@ int AbstractScrollableMultipleLayoutsView::ContentCell::numberOfSubviews()
   if (displayCenter()) {
     nbOfSubviews += 2;
   }
-  if (leftExpressionView()) {
+  if (leftLayoutView()) {
     nbOfSubviews += 1;
   }
   return nbOfSubviews;
@@ -125,10 +125,8 @@ KDCoordinate AbstractScrollableMultipleLayoutsView::ContentCell::baseline(
     KDCoordinate* rightBaseline) const {
   // Left view
   KDCoordinate leftViewBaseline =
-      (leftExpressionView() &&
-       !leftExpressionView()->layout().isUninitialized())
-          ? leftExpressionView()->layout().baseline(
-                leftExpressionView()->font())
+      (leftLayoutView() && !leftLayoutView()->layout().isUninitialized())
+          ? leftLayoutView()->layout().baseline(leftLayoutView()->font())
           : 0;
   if (leftBaseline != nullptr) {
     *leftBaseline = leftViewBaseline;
@@ -136,16 +134,16 @@ KDCoordinate AbstractScrollableMultipleLayoutsView::ContentCell::baseline(
 
   // Center view
   KDCoordinate centerViewBaseline =
-      displayCenter() ? m_centeredExpressionView.layout().baseline(font()) : 0;
+      displayCenter() ? m_centeredLayoutView.layout().baseline(font()) : 0;
   if (centerBaseline != nullptr) {
     *centerBaseline = centerViewBaseline;
   }
 
   // Right view
   KDCoordinate rightViewBaseline =
-      m_rightExpressionView.layout().isUninitialized()
+      m_rightLayoutView.layout().isUninitialized()
           ? 0
-          : m_rightExpressionView.layout().baseline(font());
+          : m_rightLayoutView.layout().baseline(font());
   if (rightBaseline != nullptr) {
     *rightBaseline = rightViewBaseline;
   }
@@ -157,13 +155,13 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
     KDRect* leftFrame, KDRect* centerFrame, KDRect* approximateSignFrame,
     KDRect* rightFrame) {
   // Subviews sizes
-  KDSize leftSize = leftExpressionView()
-                        ? leftExpressionView()->minimalSizeForOptimalDisplay()
+  KDSize leftSize = leftLayoutView()
+                        ? leftLayoutView()->minimalSizeForOptimalDisplay()
                         : KDSizeZero;
-  KDSize centerSize =
-      displayCenter() ? m_centeredExpressionView.minimalSizeForOptimalDisplay()
-                      : KDSizeZero;
-  KDSize rightSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
+  KDSize centerSize = displayCenter()
+                          ? m_centeredLayoutView.minimalSizeForOptimalDisplay()
+                          : KDSizeZero;
+  KDSize rightSize = m_rightLayoutView.minimalSizeForOptimalDisplay();
 
   // Compute baselines
   KDCoordinate leftBaseline = 0;
@@ -174,15 +172,14 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
 
   // Layout left view
   KDCoordinate currentWidth = 0;
-  if (leftExpressionView() &&
-      !leftExpressionView()->layout().isUninitialized()) {
+  if (leftLayoutView() && !leftLayoutView()->layout().isUninitialized()) {
     assert(leftFrame != nullptr);
     *leftFrame = KDRect(currentWidth, viewBaseline - leftBaseline, leftSize);
     currentWidth += leftSize.width() +
                     AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
   }
 
-  // Layout center expression
+  // Layout center layout
   if (displayCenter()) {
     assert(centerFrame != nullptr && approximateSignFrame != nullptr);
     KDSize approximateSignSize =
@@ -201,7 +198,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
                     approximateSignSize.width();
   }
 
-  // Layout right expression
+  // Layout right layout
   assert(rightFrame != nullptr);
   *rightFrame = KDRect(currentWidth, viewBaseline - rightBaseline, rightSize);
   currentWidth += rightSize.width();
@@ -217,7 +214,7 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
             : 0;
     KDPoint offset = KDPoint(horizontalOffset, 0);
     *rightFrame = rightFrame->translatedBy(offset);
-    if (leftExpressionView()) {
+    if (leftLayoutView()) {
       *leftFrame = leftFrame->translatedBy(offset);
     }
     if (displayCenter()) {
@@ -233,9 +230,8 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
   KDCoordinate height = 0;
 
   KDSize leftSize = KDSizeZero;
-  if (leftExpressionView() &&
-      !leftExpressionView()->layout().isUninitialized()) {
-    leftSize = leftExpressionView()->minimalSizeForOptimalDisplay();
+  if (leftLayoutView() && !leftLayoutView()->layout().isUninitialized()) {
+    leftSize = leftLayoutView()->minimalSizeForOptimalDisplay();
     width += leftSize.width() +
              AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
     height = std::max(height, leftSize.height());
@@ -243,7 +239,7 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
 
   KDSize centerSize = KDSizeZero;
   if (displayCenter() || (forceFullDisplay && displayableCenter())) {
-    centerSize = m_centeredExpressionView.minimalSizeForOptimalDisplay();
+    centerSize = m_centeredLayoutView.minimalSizeForOptimalDisplay();
     width += centerSize.width() +
              2 * AbstractScrollableMultipleLayoutsView::k_horizontalMargin +
              m_approximateSign.minimalSizeForOptimalDisplay().width();
@@ -251,8 +247,8 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
   }
 
   KDSize rightSize = KDSizeZero;
-  if (!m_rightExpressionView.layout().isUninitialized()) {
-    rightSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
+  if (!m_rightLayoutView.layout().isUninitialized()) {
+    rightSize = m_rightLayoutView.minimalSizeForOptimalDisplay();
     width += rightSize.width();
   }
 
@@ -263,12 +259,12 @@ KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
 
 View* AbstractScrollableMultipleLayoutsView::ContentCell::subviewAtIndex(
     int index) {
-  bool leftIsVisible = leftExpressionView() != nullptr;
+  bool leftIsVisible = leftLayoutView() != nullptr;
   if (leftIsVisible && index == 0) {
-    return leftExpressionView();
+    return leftLayoutView();
   }
-  View* views[3] = {&m_rightExpressionView, &m_approximateSign,
-                    &m_centeredExpressionView};
+  View* views[3] = {&m_rightLayoutView, &m_approximateSign,
+                    &m_centeredLayoutView};
   return views[index - leftIsVisible];
 }
 
@@ -284,15 +280,15 @@ void AbstractScrollableMultipleLayoutsView::ContentCell::layoutSubviews(
   KDRect approximateSignFrame = KDRectZero;
   KDRect rightFrame = KDRectZero;
   subviewFrames(&leftFrame, &centerFrame, &approximateSignFrame, &rightFrame);
-  if (leftExpressionView() != nullptr) {
-    setChildFrame(leftExpressionView(), leftFrame, force);
+  if (leftLayoutView() != nullptr) {
+    setChildFrame(leftLayoutView(), leftFrame, force);
   }
-  if (centeredExpressionView() != nullptr) {
-    setChildFrame(centeredExpressionView(), centerFrame, force);
+  if (centeredLayoutView() != nullptr) {
+    setChildFrame(centeredLayoutView(), centerFrame, force);
   }
   setChildFrame(&m_approximateSign, approximateSignFrame, force);
-  if (rightExpressionView() != nullptr) {
-    setChildFrame(rightExpressionView(), rightFrame, force);
+  if (rightLayoutView() != nullptr) {
+    setChildFrame(rightLayoutView(), rightFrame, force);
   }
 }
 
@@ -303,17 +299,17 @@ AbstractScrollableMultipleLayoutsView::AbstractScrollableMultipleLayoutsView(
 void AbstractScrollableMultipleLayoutsView::setLayouts(
     Layout formulaLayout, Layout exactLayout, Layout approximateLayout) {
   bool updateRightLayout =
-      contentCell()->rightExpressionView()->setLayout(approximateLayout);
+      contentCell()->rightLayoutView()->setLayout(approximateLayout);
   bool updateCenterLayout =
-      contentCell()->centeredExpressionView()->setLayout(exactLayout);
+      contentCell()->centeredLayoutView()->setLayout(exactLayout);
   bool updateLeftLayout = false;
-  if (contentCell()->leftExpressionView()) {
+  if (contentCell()->leftLayoutView()) {
     updateLeftLayout =
-        contentCell()->leftExpressionView()->setLayout(formulaLayout);
+        contentCell()->leftLayoutView()->setLayout(formulaLayout);
   }
   if (updateLeftLayout || updateCenterLayout || updateRightLayout) {
     contentCell()->reloadTextColor();
-    // Reload expressions layouts
+    // Reload layouts layouts
     contentCell()->layoutSubviews();
     // Reload the scroll content view layout (the content size might have
     // changed)
@@ -328,12 +324,12 @@ void AbstractScrollableMultipleLayoutsView::setLayouts(
 void AbstractScrollableMultipleLayoutsView::reloadScroll() {
   if (selectedSubviewPosition() == SubviewPosition::Right) {
     /* Scroll to the right extremity, then back to the beginning of the right
-     * expression. This ensures that the beginning of the expression is in
+     * layout. This ensures that the beginning of the layout is in
      * frame, and that as much of it as possible is visible. */
     scrollToContentPoint(KDPoint(contentCell()->bounds().width(), 0));
     scrollToContentPoint(
         KDPoint(contentCell()->bounds().width() -
-                    contentCell()->rightExpressionView()->bounds().width(),
+                    contentCell()->rightLayoutView()->bounds().width(),
                 0));
   } else {
     /* Scroll to the left extremity. */
@@ -350,49 +346,48 @@ bool AbstractScrollableMultipleLayoutsView::handleEvent(
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     bool leftIsVisible = false;
     KDCoordinate leftWidth = 0;
-    if (contentCell()->leftExpressionView()) {
+    if (contentCell()->leftLayoutView()) {
       leftWidth = contentCell()
-                      ->leftExpressionView()
+                      ->leftLayoutView()
                       ->minimalSizeForOptimalDisplay()
                       .width();
       leftIsVisible = leftWidth - contentOffset().x() > 0;
     }
-    KDCoordinate rightExpressionWidth = contentCell()
-                                            ->rightExpressionView()
-                                            ->minimalSizeForOptimalDisplay()
-                                            .width();
-    bool rightExpressionIsVisible = minimalSizeForOptimalDisplay().width() -
-                                        rightExpressionWidth -
-                                        contentOffset().x() <
-                                    bounds().width();
-    bool centeredExpressionIsVisibleOnTheLeft = false;
-    bool centeredExpressionIsVisibleOnTheRight = false;
+    KDCoordinate rightLayoutWidth = contentCell()
+                                        ->rightLayoutView()
+                                        ->minimalSizeForOptimalDisplay()
+                                        .width();
+    bool rightLayoutIsVisible = minimalSizeForOptimalDisplay().width() -
+                                    rightLayoutWidth - contentOffset().x() <
+                                bounds().width();
+    bool centeredLayoutIsVisibleOnTheLeft = false;
+    bool centeredLayoutIsVisibleOnTheRight = false;
     if (contentCell()->displayCenter()) {
-      KDCoordinate centerExpressionWidth = contentCell()
-                                               ->centeredExpressionView()
-                                               ->minimalSizeForOptimalDisplay()
-                                               .width();
+      KDCoordinate centerLayoutWidth = contentCell()
+                                           ->centeredLayoutView()
+                                           ->minimalSizeForOptimalDisplay()
+                                           .width();
       KDCoordinate signWidth = contentCell()
                                    ->approximateSign()
                                    ->minimalSizeForOptimalDisplay()
                                    .width();
-      centeredExpressionIsVisibleOnTheLeft = leftWidth + k_horizontalMargin +
-                                                 centerExpressionWidth -
-                                                 contentOffset().x() >
-                                             0;
-      centeredExpressionIsVisibleOnTheRight =
-          minimalSizeForOptimalDisplay().width() - rightExpressionWidth -
-              signWidth - centerExpressionWidth - 2 * k_horizontalMargin -
+      centeredLayoutIsVisibleOnTheLeft = leftWidth + k_horizontalMargin +
+                                             centerLayoutWidth -
+                                             contentOffset().x() >
+                                         0;
+      centeredLayoutIsVisibleOnTheRight =
+          minimalSizeForOptimalDisplay().width() - rightLayoutWidth -
+              signWidth - centerLayoutWidth - 2 * k_horizontalMargin -
               contentOffset().x() <
           bounds().width();
     }
     // Select center
     if ((event == Ion::Events::Left &&
          selectedSubviewPosition() == SubviewPosition::Right &&
-         centeredExpressionIsVisibleOnTheLeft) ||
+         centeredLayoutIsVisibleOnTheLeft) ||
         (event == Ion::Events::Right &&
          selectedSubviewPosition() == SubviewPosition::Left &&
-         centeredExpressionIsVisibleOnTheRight)) {
+         centeredLayoutIsVisibleOnTheRight)) {
       setSelectedSubviewPosition(SubviewPosition::Center);
       return true;
     }
@@ -408,10 +403,10 @@ bool AbstractScrollableMultipleLayoutsView::handleEvent(
     }
     if ((event == Ion::Events::Right &&
          selectedSubviewPosition() == SubviewPosition::Center &&
-         rightExpressionIsVisible) ||
+         rightLayoutIsVisible) ||
         (event == Ion::Events::Right &&
          selectedSubviewPosition() == SubviewPosition::Left &&
-         rightExpressionIsVisible)) {
+         rightLayoutIsVisible)) {
       setSelectedSubviewPosition(SubviewPosition::Right);
       return true;
     }
@@ -419,8 +414,7 @@ bool AbstractScrollableMultipleLayoutsView::handleEvent(
   return ScrollableView::handleEvent(event);
 }
 
-KDSize ScrollableTwoExpressionsView::minimalSizeForOptimalDisplayFullSize()
-    const {
+KDSize ScrollableTwoLayoutsView::minimalSizeForOptimalDisplayFullSize() const {
   KDSize res = contentCell()->minimalSizeForOptimalDisplayFullSize();
   return KDSize(res.width() + leftMargin() + rightMargin(),
                 res.height() + topMargin() + bottomMargin());

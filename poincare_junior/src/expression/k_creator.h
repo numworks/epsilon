@@ -4,7 +4,6 @@
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/memory/k_creator.h>
-#include <poincare_junior/src/memory/placeholder.h>
 
 #include <bit>
 
@@ -301,43 +300,6 @@ template <String S>
 consteval auto operator"" _e() {
   return typename Variable<S>::tree();
 }
-
-#define PLACEHOLDER(tag, filter)                                            \
-  Tree<BlockType::Placeholder, Placeholder::ParamsToValue((tag), (filter)), \
-       BlockType::Placeholder>();
-
-constexpr Tree A_e =
-    PLACEHOLDER(Placeholder::Tag::A, Placeholder::MatchFilter::None);
-constexpr Tree AAdd_e =
-    PLACEHOLDER(Placeholder::Tag::A, Placeholder::MatchFilter::Addition);
-constexpr Tree AMul_e =
-    PLACEHOLDER(Placeholder::Tag::A, Placeholder::MatchFilter::Multiplication);
-constexpr Tree A1_e =
-    PLACEHOLDER(Placeholder::Tag::A, Placeholder::CreateFilter::FirstChild);
-constexpr Tree A2_e = PLACEHOLDER(Placeholder::Tag::A,
-                                  Placeholder::CreateFilter::ExcludeFirstChild);
-
-constexpr Tree B_e =
-    PLACEHOLDER(Placeholder::Tag::B, Placeholder::MatchFilter::None);
-constexpr Tree BAdd_e =
-    PLACEHOLDER(Placeholder::Tag::B, Placeholder::MatchFilter::Addition);
-constexpr Tree BMul_e =
-    PLACEHOLDER(Placeholder::Tag::B, Placeholder::MatchFilter::Multiplication);
-constexpr Tree B1_e =
-    PLACEHOLDER(Placeholder::Tag::B, Placeholder::CreateFilter::FirstChild);
-constexpr Tree B2_e = PLACEHOLDER(Placeholder::Tag::B,
-                                  Placeholder::CreateFilter::ExcludeFirstChild);
-
-constexpr Tree C_e =
-    PLACEHOLDER(Placeholder::Tag::C, Placeholder::MatchFilter::None);
-constexpr Tree CAdd_e =
-    PLACEHOLDER(Placeholder::Tag::C, Placeholder::MatchFilter::Addition);
-constexpr Tree CMul_e =
-    PLACEHOLDER(Placeholder::Tag::C, Placeholder::MatchFilter::Multiplication);
-constexpr Tree C1_e =
-    PLACEHOLDER(Placeholder::Tag::C, Placeholder::CreateFilter::FirstChild);
-constexpr Tree C2_e = PLACEHOLDER(Placeholder::Tag::C,
-                                  Placeholder::CreateFilter::ExcludeFirstChild);
 
 }  // namespace PoincareJ
 

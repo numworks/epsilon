@@ -503,7 +503,7 @@ List BuildList(Expression (&elements)[N]) {
   return l;
 }
 
-QUIZ_CASE(poincare_parse_lists) {
+QUIZ_CASE(poincare_parsing_lists) {
   assert_parsed_expression_is("{}", List::Builder());
   {
     Expression elements[] = {BasedInteger::Builder(1)};
@@ -531,7 +531,7 @@ QUIZ_CASE(poincare_parse_lists) {
   assert_text_not_parsable("{,2,3}");
 }
 
-QUIZ_CASE(poincare_parse_lists_access) {
+QUIZ_CASE(poincare_parsing_lists_access) {
   {
     Expression elements[] = {BasedInteger::Builder(2)};
     assert_parsed_expression_is(
@@ -1415,7 +1415,7 @@ QUIZ_CASE(poincare_parsing_adding_missing_parentheses) {
                                           BasedInteger::Builder(3))))));
 }
 
-QUIZ_CASE(poincare_parse_mixed_fraction) {
+QUIZ_CASE(poincare_parsing_mixed_fraction) {
   assert_parsed_expression_is(
       "1 2/3",
       MixedFraction::Builder(BasedInteger::Builder(1),
@@ -1453,7 +1453,7 @@ QUIZ_CASE(poincare_parse_mixed_fraction) {
           Division::Builder(Decimal::Builder(2.5), BasedInteger::Builder(3))));
 }
 
-QUIZ_CASE(poincare_parse_function_assignment) {
+QUIZ_CASE(poincare_parsing_function_assignment) {
   assert_parsed_expression_is(
       "f(x)=xy",
       Comparison::Builder(Multiplication::Builder(
@@ -1522,7 +1522,7 @@ QUIZ_CASE(poincare_parsing_east_arrows) {
           BasedInteger::Builder(4)));
 }
 
-QUIZ_CASE(poincare_parse_logic) {
+QUIZ_CASE(poincare_parsing_logic) {
   assert_parsed_expression_is(
       "True and False", BinaryLogicalOperator::Builder(
                             Boolean::Builder(true), Boolean::Builder(false),
@@ -1601,7 +1601,7 @@ QUIZ_CASE(poincare_parse_logic) {
           BinaryLogicalOperatorNode::OperatorType::Or));
 }
 
-QUIZ_CASE(poincare_parse_points) {
+QUIZ_CASE(poincare_parsing_points) {
   assert_parsed_expression_is(
       "(0,1)",
       Point::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1)));

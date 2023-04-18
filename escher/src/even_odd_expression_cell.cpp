@@ -20,9 +20,9 @@ void EvenOddExpressionCell::setTextColor(KDColor textColor) {
 }
 
 KDSize EvenOddExpressionCell::minimalSizeForOptimalDisplay() const {
-  KDSize expressionSize = m_layoutView.minimalSizeForOptimalDisplay();
-  return KDSize(m_leftMargin + expressionSize.width() + m_rightMargin,
-                expressionSize.height());
+  KDSize layoutSize = m_layoutView.minimalSizeForOptimalDisplay();
+  return KDSize(m_leftMargin + layoutSize.width() + m_rightMargin,
+                layoutSize.height());
 }
 
 void EvenOddExpressionCell::setLeftMargin(KDCoordinate margin) {

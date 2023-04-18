@@ -23,7 +23,7 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   // EvenOddCell
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
-  // - Expression View
+  // - Layout View
   void setTextColor(KDColor textColor) {
     layoutView()->setTextColor(textColor);
   }

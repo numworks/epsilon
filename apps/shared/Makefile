@@ -79,7 +79,7 @@ app_shared_src = $(addprefix apps/shared/,\
   range_parameter_controller.cpp \
   round_cursor_view.cpp \
   scrollable_multiple_layouts_view.cpp \
-  scrollable_two_expressions_cell.cpp \
+  scrollable_two_layouts_cell.cpp \
   sequence.cpp \
   sequence_context.cpp \
   sequence_store.cpp \

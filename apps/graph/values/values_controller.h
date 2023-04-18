@@ -5,7 +5,7 @@
 #include <apps/shared/continuous_function_store.h>
 #include <apps/shared/expression_function_title_cell.h>
 #include <apps/shared/interval_parameter_controller.h>
-#include <apps/shared/scrollable_two_expressions_cell.h>
+#include <apps/shared/scrollable_two_layouts_cell.h>
 #include <apps/shared/values_controller.h>
 #include <escher/button_state.h>
 #include <escher/even_odd_editable_text_cell.h>

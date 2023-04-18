@@ -1,16 +1,16 @@
-#ifndef SHARED_SCROLLABLE_TWO_EXPRESSIONS_CELL_H
-#define SHARED_SCROLLABLE_TWO_EXPRESSIONS_CELL_H
+#ifndef SHARED_SCROLLABLE_TWO_LAYOUTS_CELL_H
+#define SHARED_SCROLLABLE_TWO_LAYOUTS_CELL_H
 
 #include "scrollable_multiple_layouts_view.h"
 
 namespace Shared {
 
-class ScrollableTwoExpressionsCell : public Escher::EvenOddCell,
-                                     public Escher::Responder {
+class ScrollableTwoLayoutsCell : public Escher::EvenOddCell,
+                                 public Escher::Responder {
  public:
-  ScrollableTwoExpressionsCell(Escher::Responder* parentResponder = nullptr,
-                               float horizontalAlignment = KDGlyph::k_alignLeft,
-                               KDFont::Size font = KDFont::Size::Large);
+  ScrollableTwoLayoutsCell(Escher::Responder* parentResponder = nullptr,
+                           float horizontalAlignment = KDGlyph::k_alignLeft,
+                           KDFont::Size font = KDFont::Size::Large);
   void setLayouts(Poincare::Layout exactLayout,
                   Poincare::Layout approximateLayout) {
     m_view.setLayouts(Poincare::Layout(), exactLayout, approximateLayout);

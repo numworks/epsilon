@@ -1,4 +1,4 @@
-#include "scrollable_two_expressions_cell.h"
+#include "scrollable_two_layouts_cell.h"
 
 #include <assert.h>
 #include <escher/container.h>
@@ -8,22 +8,23 @@ using namespace Poincare;
 
 namespace Shared {
 
-ScrollableTwoExpressionsCell::ScrollableTwoExpressionsCell(
-    Responder* parentResponder, float horizontalAlignment, KDFont::Size font)
+ScrollableTwoLayoutsCell::ScrollableTwoLayoutsCell(Responder* parentResponder,
+                                                   float horizontalAlignment,
+                                                   KDFont::Size font)
     : Responder(parentResponder), m_view(this, horizontalAlignment, font) {}
 
-void ScrollableTwoExpressionsCell::setEven(bool even) {
+void ScrollableTwoLayoutsCell::setEven(bool even) {
   EvenOddCell::setEven(even);
   m_view.setBackgroundColor(backgroundColor());
   m_view.evenOddCell()->setEven(even);
 }
 
-void ScrollableTwoExpressionsCell::didBecomeFirstResponder() {
+void ScrollableTwoLayoutsCell::didBecomeFirstResponder() {
   reinitSelection();
   Container::activeApp()->setFirstResponder(&m_view);
 }
 
-void ScrollableTwoExpressionsCell::reinitSelection() {
+void ScrollableTwoLayoutsCell::reinitSelection() {
   ScrollableTwoLayoutsView::SubviewPosition selectedSubview =
       m_view.displayCenter() ? ScrollableTwoLayoutsView::SubviewPosition::Center
                              : ScrollableTwoLayoutsView::SubviewPosition::Right;

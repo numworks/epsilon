@@ -2125,9 +2125,9 @@ QUIZ_CASE(poincare_approximation_keeping_symbols) {
   assert_expression_approximates_keeping_symbols_to("ln(10)+cos(10)+3x",
                                                     "3×x+3.287392846");
   assert_expression_approximates_keeping_symbols_to(
-      "cos(4/3+ln(x-1/2))", "cos(ln(x-0.5)+1.333333333)");
+      "cos(4/3+ln(x-1/2))", "cos(ln(2×x-1)+0.6401861528)");
   assert_expression_approximates_keeping_symbols_to(
-      "ln(ln(ln(10+10)))+ln(ln(ln(x+10)))", "ln(ln(ln(x+10)))+0.09275118141");
+      "ln(ln(ln(10+10)))+ln(ln(ln(x+10)))", "ln(ln(ln(x+10)))+0.09275118142");
   assert_expression_approximates_keeping_symbols_to("int(x,x,0,2)+int(x,x,0,x)",
                                                     "int(x,x,0,x)+2");
   assert_expression_approximates_keeping_symbols_to(

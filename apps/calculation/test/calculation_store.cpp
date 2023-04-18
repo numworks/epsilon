@@ -233,7 +233,7 @@ QUIZ_CASE(calculation_significant_digits) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
-  assertCalculationIs("11123456789", DisplayOutput::ExactAndApproximate,
+  assertCalculationIs("11123456789", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "11123456789", "1.112345679ᴇ10",
                       "11123456789", &globalContext, &store);
   assertCalculationIs("1123456789", DisplayOutput::ApproximateOnly,
@@ -249,10 +249,10 @@ QUIZ_CASE(calculation_display_exact_approximate) {
       Preferences::sharedPreferences->angleUnit();
   Preferences::sharedPreferences->setAngleUnit(Preferences::AngleUnit::Degree);
 
-  assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate,
+  assertCalculationIs("1/2", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Equal, "1/2", "0.5", "0.5", &globalContext,
                       &store);
-  assertCalculationIs("1/3", DisplayOutput::ExactAndApproximate,
+  assertCalculationIs("1/3", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "1/3", "0.3333333333",
                       "0.33333333333333", &globalContext, &store);
   assertCalculationIs("1/(2i)", DisplayOutput::ExactAndApproximate,
@@ -381,7 +381,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 
   assertCalculationIs("1+1", DisplayOutput::ApproximateOnly, EqualSign::Unknown,
                       nullptr, "2", "2", &globalContext, &store);
-  assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate,
+  assertCalculationIs("1/2", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Equal, "1/2", "0.5", nullptr, &globalContext,
                       &store);
   assertCalculationIs("0.5", DisplayOutput::ExactAndApproximateToggle,
@@ -668,7 +668,7 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("√(-1)", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "i", "i", &globalContext,
                       &store);
-  assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximate,
+  assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "ln(-2)", nullptr, nullptr,
                       &globalContext, &store);
   assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ApproximateOnly,
@@ -692,7 +692,7 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("√(-1)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "e^\u0012π/2×i\u0013", nullptr,
                       nullptr, &globalContext, &store);
-  assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximate,
+  assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "ln(-2)", nullptr, nullptr,
                       &globalContext, &store);
   assertCalculationIs(

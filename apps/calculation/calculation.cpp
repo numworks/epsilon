@@ -199,7 +199,8 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
           inputExp, outputExp,
           approximateOutput(NumberOfSignificantDigits::UserDefined), context)) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (inputExp.recursivelyMatches(Expression::IsApproximate, context) ||
+  } else if (inputExp.isIdenticalTo(outputExp) ||
+             inputExp.recursivelyMatches(Expression::IsApproximate, context) ||
              outputExp.recursivelyMatches(Expression::IsApproximate, context) ||
              inputExp.recursivelyMatches(Expression::IsPercent, context)) {
     m_displayOutput = DisplayOutput::ExactAndApproximateToggle;

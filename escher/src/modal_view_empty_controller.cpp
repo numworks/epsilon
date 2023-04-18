@@ -59,15 +59,15 @@ View *ModalViewEmptyController::ModalViewEmptyView::subviewAtIndex(int index) {
 
 void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {
   const int numberOfMessageViews = numberOfMessageTextViews();
-  const bool hasExpression = hasLayoutView();
+  const bool hasLayout = hasLayoutView();
   KDCoordinate width = bounds().width() - 2 * k_separatorThickness;
   KDCoordinate height = bounds().height() - 2 * k_separatorThickness;
   KDCoordinate textHeight = KDFont::GlyphHeight(k_font);
   KDCoordinate layoutHeight =
-      hasExpression ? layoutView()->minimalSizeForOptimalDisplay().height() : 0;
+      hasLayout ? layoutView()->minimalSizeForOptimalDisplay().height() : 0;
   KDCoordinate margin =
       (height - numberOfMessageViews * textHeight - layoutHeight) / 2;
-  if (hasExpression) {
+  if (hasLayout) {
     setChildFrame(layoutView(),
                   KDRect(k_separatorThickness,
                          k_separatorThickness + margin +
@@ -77,7 +77,7 @@ void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {
   }
   KDCoordinate currentHeight = k_separatorThickness;
   for (uint8_t i = 0; i < numberOfMessageViews; i++) {
-    if (hasExpression && i == k_layoutViewRowIndex) {
+    if (hasLayout && i == k_layoutViewRowIndex) {
       currentHeight += layoutHeight;
     }
     KDCoordinate h = (i == 0 || i == numberOfMessageViews - 1)

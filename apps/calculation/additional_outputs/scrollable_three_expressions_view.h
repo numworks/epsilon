@@ -11,11 +11,11 @@
 namespace Calculation {
 
 class ScrollableThreeExpressionsView
-    : public Shared::AbstractScrollableMultipleExpressionsView {
+    : public Shared::AbstractScrollableMultipleLayoutsView {
  public:
   ScrollableThreeExpressionsView(Responder *parentResponder = nullptr)
-      : Shared::AbstractScrollableMultipleExpressionsView(parentResponder,
-                                                          &m_contentCell) {
+      : Shared::AbstractScrollableMultipleLayoutsView(parentResponder,
+                                                      &m_contentCell) {
     setMargins(0, 0, 0, 0);  // margins are already added by MenuCell
     setBackgroundColor(KDColorWhite);
   }
@@ -40,11 +40,11 @@ class ScrollableThreeExpressionsView
 
  private:
   class ContentCell
-      : public Shared::AbstractScrollableMultipleExpressionsView::ContentCell {
+      : public Shared::AbstractScrollableMultipleLayoutsView::ContentCell {
     friend ScrollableThreeExpressionsView;
 
    public:
-    using Shared::AbstractScrollableMultipleExpressionsView::ContentCell::
+    using Shared::AbstractScrollableMultipleLayoutsView::ContentCell::
         ContentCell;
     KDColor backgroundColor() const override {
       return m_highlightWholeCell ? defaultBackgroundColor() : KDColorWhite;

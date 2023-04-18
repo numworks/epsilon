@@ -22,7 +22,7 @@ class MathToolbox : public Escher::Toolbox {
    * necessary for now since no leaf of toolbox is longer than the cell width.
    */
   using LeafCell =
-      Escher::MenuCell<Escher::ExpressionView, Escher::MessageTextView>;
+      Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView>;
   bool selectSubMenu(int selectedRow) override;
   bool selectLeaf(int selectedRow) override;
   const Escher::ToolboxMessageTree* rootModel() const override;

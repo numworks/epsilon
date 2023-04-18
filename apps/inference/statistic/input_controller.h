@@ -13,7 +13,7 @@
 namespace Inference {
 
 using InputParameterCell =
-    Escher::MenuCellWithEditableText<Escher::ExpressionView,
+    Escher::MenuCellWithEditableText<Escher::LayoutView,
                                      Escher::MessageTextView>;
 
 class InputController

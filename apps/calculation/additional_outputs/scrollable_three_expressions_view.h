@@ -50,7 +50,7 @@ class ScrollableThreeExpressionsView
       return m_highlightWholeCell ? defaultBackgroundColor() : KDColorWhite;
     }
     void setEven(bool even) override { return; }
-    Escher::ExpressionView *leftExpressionView() const override {
+    Escher::LayoutView *leftExpressionView() const override {
       return const_cast<ExpressionWithEqualSignView *>(&m_leftExpressionView);
     }
     void setShowEqualSignAfterFormula(bool showEqual) {

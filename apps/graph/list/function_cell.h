@@ -4,7 +4,7 @@
 #include <apps/i18n.h>
 #include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/message_text_view.h>
 #include <escher/metric.h>
 
@@ -51,8 +51,8 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
-  virtual const Escher::ExpressionView* expressionView() const = 0;
-  virtual Escher::ExpressionView* expressionView() = 0;
+  virtual const Escher::LayoutView* expressionView() const = 0;
+  virtual Escher::LayoutView* expressionView() = 0;
   virtual Escher::View* mainView() = 0;
 
   constexpr static KDCoordinate k_margin = Escher::Metric::BigCellMargin;
@@ -75,14 +75,12 @@ class FunctionCell : public AbstractFunctionCell {
 
  private:
   void updateSubviewsBackgroundAfterChangingState() override;
-  const Escher::ExpressionView* expressionView() const override {
+  const Escher::LayoutView* expressionView() const override {
     return &m_expressionView;
   }
-  Escher::ExpressionView* expressionView() override {
-    return &m_expressionView;
-  }
-  Escher::ExpressionView* mainView() override { return &m_expressionView; }
-  Escher::ExpressionView m_expressionView;
+  Escher::LayoutView* expressionView() override { return &m_expressionView; }
+  Escher::LayoutView* mainView() override { return &m_expressionView; }
+  Escher::LayoutView m_expressionView;
   bool m_parameterSelected;
 };
 

@@ -3,7 +3,7 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
@@ -108,7 +108,7 @@ class RegressionController : public Escher::SelectableListViewController<
            m_store->seriesSatisfies(m_series, Store::HasCoefficients);
   }
 
-  Escher::MenuCell<Escher::MessageTextView, Escher::ExpressionView>
+  Escher::MenuCell<Escher::MessageTextView, Escher::LayoutView>
       m_regressionCells[k_numberOfCells];
   Store* m_store;
   int m_series;

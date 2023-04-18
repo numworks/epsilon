@@ -2,7 +2,7 @@
 #define DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H
 
 #include <apps/shared/float_parameter_controller.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/list_view_with_top_and_bottom_views.h>
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
@@ -54,8 +54,7 @@ class ParametersController : public Shared::FloatParameterController<double> {
   Escher::MessageTextView m_headerView;
   Escher::MessageTextView m_bottomView;
   Escher::ListViewWithTopAndBottomViews m_contentView;
-  Escher::MenuCellWithEditableText<Escher::ExpressionView,
-                                   Escher::MessageTextView>
+  Escher::MenuCellWithEditableText<Escher::LayoutView, Escher::MessageTextView>
       m_menuListCell[k_maxNumberOfCells];
   Distribution* m_distribution;
   CalculationController* m_calculationController;

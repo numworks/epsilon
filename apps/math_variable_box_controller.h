@@ -2,7 +2,7 @@
 #define APPS_MATH_VARIABLE_BOX_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/nested_menu_controller.h>
@@ -50,8 +50,8 @@ class MathVariableBoxController : public Escher::NestedMenuController {
   constexpr static KDFont::Size k_subLabelFont = KDFont::Size::Small;
   constexpr static int k_defineVariableCellType = 2;
 
-  using LeafCell = Escher::MenuCell<Escher::ExpressionView,
-                                    Escher::ScrollableExpressionView>;
+  using LeafCell =
+      Escher::MenuCell<Escher::LayoutView, Escher::ScrollableExpressionView>;
   LeafCell* leafCellAtIndex(int index) override;
   int defineVariableCellIndex() const { return numberOfRows() - 1; }
   Escher::NestedMenuController::NodeCell* nodeCellAtIndex(int index) override;

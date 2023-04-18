@@ -64,8 +64,8 @@ void ParametersController::willDisplayCellForIndex(HighlightCell *cell,
   if (index == numberOfRows() - 1) {
     return;
   }
-  MenuCellWithEditableText<ExpressionView, MessageTextView> *myCell =
-      static_cast<MenuCellWithEditableText<ExpressionView, MessageTextView> *>(
+  MenuCellWithEditableText<LayoutView, MessageTextView> *myCell =
+      static_cast<MenuCellWithEditableText<LayoutView, MessageTextView> *>(
           cell);
   myCell->label()->setLayout(m_distribution->parameterSymbolAtIndex(index));
   myCell->subLabel()->setMessage(
@@ -87,8 +87,8 @@ HighlightCell *ParametersController::reusableParameterCell(int index,
 TextField *ParametersController::textFieldOfCellAtIndex(HighlightCell *cell,
                                                         int index) {
   assert(typeAtIndex(index) == k_parameterCellType);
-  return static_cast<
-             MenuCellWithEditableText<ExpressionView, MessageTextView> *>(cell)
+  return static_cast<MenuCellWithEditableText<LayoutView, MessageTextView> *>(
+             cell)
       ->textField();
 }
 

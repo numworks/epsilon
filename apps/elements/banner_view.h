@@ -2,7 +2,7 @@
 #define ELEMENTS_BANNER_VIEW_H
 
 #include <escher/ellipsis_view.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/palette.h>
 #include <escher/solid_color_view.h>
 #include <escher/view.h>
@@ -76,7 +76,7 @@ class BannerView : public Escher::View {
 
   SuggestionTextField m_textField;
   DotView m_dotView;
-  Escher::ExpressionView m_legendView;
+  Escher::LayoutView m_legendView;
   EllipsisButton m_button;
 };
 

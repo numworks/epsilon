@@ -1,7 +1,7 @@
 #ifndef SEQUENCE_SEQUENCE_TOOLBOX_H
 #define SEQUENCE_SEQUENCE_TOOLBOX_H
 
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <poincare/layout.h>
 
@@ -36,8 +36,7 @@ class SequenceToolbox : public MathToolbox {
     return m_messageTreeModel == rootModel() ? m_numberOfAddedCells : 0;
   }
   bool selectAddedCell(int selectedRow);
-  Escher::MenuCell<Escher::ExpressionView>
-      m_addedCells[k_maxNumberOfDisplayedRows];
+  Escher::MenuCell<Escher::LayoutView> m_addedCells[k_maxNumberOfDisplayedRows];
   Poincare::Layout m_addedCellLayout[k_maxNumberOfDisplayedRows];
   int m_numberOfAddedCells;
 };

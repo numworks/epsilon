@@ -105,7 +105,7 @@ template class DynamicCellsDataSource<
 template class DynamicCellsDataSource<InferenceEvenOddEditableCell,
                                       k_doubleColumnTableNumberOfReusableCells>;
 template class DynamicCellsDataSource<
-    Escher::MenuCellWithEditableText<Escher::ExpressionView,
+    Escher::MenuCellWithEditableText<Escher::LayoutView,
                                      Escher::MessageTextView>,
     k_maxNumberOfInputParameterCell>;
 template class DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>;

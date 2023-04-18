@@ -1,7 +1,7 @@
 #ifndef ELEMENTS_DETAILS_LIST_CONTROLLER
 #define ELEMENTS_DETAILS_LIST_CONTROLLER
 
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/list_view_with_top_and_bottom_views.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
@@ -64,8 +64,8 @@ class DetailsListController : public Escher::ViewController,
   }
 
   using PhysicalQuantityCell =
-      Escher::MenuCell<Escher::ExpressionView, Escher::MessageTextView,
-                       Escher::ExpressionView>;
+      Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
+                       Escher::LayoutView>;
 
   Escher::SelectableListView m_selectableListView;
   SingleElementView m_topElementView;

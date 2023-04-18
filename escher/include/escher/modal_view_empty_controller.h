@@ -2,7 +2,7 @@
 #define ESCHER_EMPTY_MODAL_VIEW_EMPTY_CONTROLLER_H
 
 #include <escher/bordered.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/message_text_view.h>
 #include <escher/view_controller.h>
 
@@ -38,7 +38,7 @@ class ModalViewEmptyController : public ViewController {
       return const_cast<ModalViewEmptyView *>(this)->expressionView() !=
              nullptr;
     }
-    virtual ExpressionView *expressionView() { return nullptr; }
+    virtual LayoutView *expressionView() { return nullptr; }
   };
 };
 

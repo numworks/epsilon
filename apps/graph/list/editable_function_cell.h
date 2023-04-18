@@ -19,10 +19,10 @@ class EditableFunctionCell : public AbstractFunctionCell {
   int numberOfSubviews() const override { return 2; }
   void layoutSubviews(bool force = false) override;
   void updateSubviewsBackgroundAfterChangingState() override;
-  const Escher::ExpressionView* expressionView() const override {
+  const Escher::LayoutView* expressionView() const override {
     return m_layoutField.expressionView();
   }
-  Escher::ExpressionView* expressionView() override {
+  Escher::LayoutView* expressionView() override {
     return m_layoutField.expressionView();
   }
   Escher::View* mainView() override { return &m_layoutField; }

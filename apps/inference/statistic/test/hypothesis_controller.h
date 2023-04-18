@@ -3,9 +3,9 @@
 
 #include <escher/button_cell.h>
 #include <escher/dropdown_widget.h>
-#include <escher/expression_view.h>
 #include <escher/highlight_cell.h>
 #include <escher/input_event_handler_delegate.h>
+#include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
@@ -87,7 +87,7 @@ class HypothesisController
   ComparisonOperatorPopupDataSource m_operatorDataSource;
 
   InputParameterCell m_h0;
-  Escher::MenuCell<Escher::ExpressionView, Escher::MessageTextView,
+  Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
                    Escher::DropdownWidget>
       m_ha;
   Escher::Dropdown m_haDropdown;

@@ -1,7 +1,7 @@
 #ifndef SETTINGS_PREFERENCES_CONTROLLER_H
 #define SETTINGS_PREFERENCES_CONTROLLER_H
 
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 
@@ -30,7 +30,7 @@ class PreferencesController : public GenericSubController {
   Poincare::Layout layoutForPreferences(I18n::Message message);
   void setPreferenceWithValueIndex(I18n::Message message, int valueIndex);
   int valueIndexForPreference(I18n::Message message) const;
-  Escher::MenuCell<Escher::MessageTextView, Escher::ExpressionView>
+  Escher::MenuCell<Escher::MessageTextView, Escher::LayoutView>
       m_cells[k_totalNumberOfCell];
 };
 

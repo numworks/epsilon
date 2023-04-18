@@ -174,7 +174,7 @@ void LayoutField::clearAndSetEditing(bool isEditing) {
 void LayoutField::setLayout(Poincare::Layout newLayout) {
   m_contentView.clearLayout();
   KDSize previousSize = minimalSizeForOptimalDisplay();
-  const_cast<ExpressionView *>(m_contentView.expressionView())
+  const_cast<LayoutView *>(m_contentView.expressionView())
       ->setLayout(newLayout.makeEditable());
   putCursorOnOneSide(OMG::Direction::Right());
   reload(previousSize);

@@ -41,10 +41,10 @@ class Metric {
   // Misc margins
   constexpr static KDCoordinate BannerTextMargin = 2;
   constexpr static KDCoordinate EllipsisCellWidth = 37;
-  constexpr static KDCoordinate ExpressionViewMargin = 5;
+  constexpr static KDCoordinate LayoutViewMargin = 5;
   constexpr static KDCoordinate ExpressionInputBarMinimalHeight = 37;
   constexpr static KDCoordinate EditableExpressionAdditionalMargin =
-      BigCellMargin - ExpressionViewMargin;
+      BigCellMargin - LayoutViewMargin;
   constexpr static KDCoordinate FractionAndConjugateHorizontalMargin = 2;
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
   constexpr static KDCoordinate MinimalBracketAndParenthesisChildHeight = 16;

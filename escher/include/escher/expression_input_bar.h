@@ -19,7 +19,7 @@ class AbstractExpressionInputBar : public View {
   virtual LayoutField* layoutField() = 0;
 
  protected:
-  constexpr static KDCoordinate k_margin = Metric::ExpressionViewMargin;
+  constexpr static KDCoordinate k_margin = Metric::LayoutViewMargin;
 
  private:
   constexpr static KDCoordinate k_minimalHeight =

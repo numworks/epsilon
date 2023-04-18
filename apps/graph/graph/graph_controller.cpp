@@ -87,15 +87,6 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void *model,
   return Coordinate2D<T>(t, value);
 }
 
-static bool basedOnCostlyAlgorithms(Poincare::Expression e) {
-  return e.recursivelyMatches([](const Expression e, Context *context) {
-    return !e.isUninitialized() &&
-           (e.type() == ExpressionNode::Type::Sequence ||
-            e.type() == ExpressionNode::Type::Integral ||
-            e.type() == ExpressionNode::Type::Derivative);
-  });
-}
-
 Range2D GraphController::optimalRange(bool computeX, bool computeY,
                                       Range2D originalRange) const {
   Context *context = App::app()->localContext();

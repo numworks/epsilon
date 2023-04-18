@@ -34,7 +34,7 @@ class ModalViewEmptyController : public ViewController {
     void layoutSubviews(bool force = false) override;
     virtual int numberOfMessageTextViews() const = 0;
     virtual MessageTextView *messageTextViewAtIndex(int index) = 0;
-    bool hasExpressionView() const {
+    bool hasLayoutView() const {
       return const_cast<ModalViewEmptyView *>(this)->layoutView() != nullptr;
     }
     virtual LayoutView *layoutView() { return nullptr; }

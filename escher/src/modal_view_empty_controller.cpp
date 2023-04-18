@@ -49,7 +49,7 @@ void ModalViewEmptyController::ModalViewEmptyView::reload() {
 View *ModalViewEmptyController::ModalViewEmptyView::subviewAtIndex(int index) {
   if (hasExpressionView()) {
     if (index == k_expressionViewRowIndex) {
-      return expressionView();
+      return layoutView();
     }
     return messageTextViewAtIndex(index +
                                   (index < k_expressionViewRowIndex ? 0 : -1));
@@ -64,12 +64,11 @@ void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {
   KDCoordinate height = bounds().height() - 2 * k_separatorThickness;
   KDCoordinate textHeight = KDFont::GlyphHeight(k_font);
   KDCoordinate layoutHeight =
-      hasExpression ? expressionView()->minimalSizeForOptimalDisplay().height()
-                    : 0;
+      hasExpression ? layoutView()->minimalSizeForOptimalDisplay().height() : 0;
   KDCoordinate margin =
       (height - numberOfMessageViews * textHeight - layoutHeight) / 2;
   if (hasExpression) {
-    setChildFrame(expressionView(),
+    setChildFrame(layoutView(),
                   KDRect(k_separatorThickness,
                          k_separatorThickness + margin +
                              k_expressionViewRowIndex * textHeight,

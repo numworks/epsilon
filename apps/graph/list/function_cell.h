@@ -18,20 +18,16 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
-  Poincare::Layout layout() const override {
-    return expressionView()->layout();
-  }
+  Poincare::Layout layout() const override { return layoutView()->layout(); }
 
   // EvenOddCell
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
   // - Expression View
   void setTextColor(KDColor textColor) {
-    expressionView()->setTextColor(textColor);
+    layoutView()->setTextColor(textColor);
   }
-  void setLayout(Poincare::Layout layout) {
-    expressionView()->setLayout(layout);
-  }
+  void setLayout(Poincare::Layout layout) { layoutView()->setLayout(layout); }
 
   // - Message Text View
   void setMessage(I18n::Message message) {
@@ -51,8 +47,8 @@ class AbstractFunctionCell : public Escher::EvenOddCell {
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
-  virtual const Escher::LayoutView* expressionView() const = 0;
-  virtual Escher::LayoutView* expressionView() = 0;
+  virtual const Escher::LayoutView* layoutView() const = 0;
+  virtual Escher::LayoutView* layoutView() = 0;
   virtual Escher::View* mainView() = 0;
 
   constexpr static KDCoordinate k_margin = Escher::Metric::BigCellMargin;
@@ -75,12 +71,12 @@ class FunctionCell : public AbstractFunctionCell {
 
  private:
   void updateSubviewsBackgroundAfterChangingState() override;
-  const Escher::LayoutView* expressionView() const override {
-    return &m_expressionView;
+  const Escher::LayoutView* layoutView() const override {
+    return &m_layoutView;
   }
-  Escher::LayoutView* expressionView() override { return &m_expressionView; }
-  Escher::LayoutView* mainView() override { return &m_expressionView; }
-  Escher::LayoutView m_expressionView;
+  Escher::LayoutView* layoutView() override { return &m_layoutView; }
+  Escher::LayoutView* mainView() override { return &m_layoutView; }
+  Escher::LayoutView m_layoutView;
   bool m_parameterSelected;
 };
 

@@ -12,16 +12,16 @@ class EvenOddExpressionCell : public EvenOddCell {
   void setLayout(Poincare::Layout layout);
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
-  void setFont(KDFont::Size font) { m_expressionView.setFont(font); }
+  void setFont(KDFont::Size font) { m_layoutView.setFont(font); }
   KDSize minimalSizeForOptimalDisplay() const override;
   void setAlignment(float horizontalAlignment, float verticalAlignment) {
-    m_expressionView.setAlignment(horizontalAlignment, verticalAlignment);
+    m_layoutView.setAlignment(horizontalAlignment, verticalAlignment);
   }
   void setLeftMargin(KDCoordinate margin);
   void setRightMargin(KDCoordinate margin);
-  KDPoint drawingOrigin() const { return m_expressionView.drawingOrigin(); }
-  Poincare::Layout layout() const override { return m_expressionView.layout(); }
-  KDFont::Size font() const { return m_expressionView.font(); }
+  KDPoint drawingOrigin() const { return m_layoutView.drawingOrigin(); }
+  Poincare::Layout layout() const override { return m_layoutView.layout(); }
+  KDFont::Size font() const { return m_layoutView.font(); }
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  protected:
@@ -29,7 +29,7 @@ class EvenOddExpressionCell : public EvenOddCell {
   int numberOfSubviews() const override;
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  LayoutView m_expressionView;
+  LayoutView m_layoutView;
   KDCoordinate m_leftMargin;
   KDCoordinate m_rightMargin;
 };

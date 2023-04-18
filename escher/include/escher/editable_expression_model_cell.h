@@ -21,22 +21,20 @@ class EditableExpressionModelCell : public HighlightCell {
       LayoutFieldDelegate* layoutDelegate, KDGlyph::Format format = {});
   void setLayout(Poincare::Layout layout) { m_layoutField.setLayout(layout); }
   void setTextColor(KDColor textColor) {
-    m_layoutField.expressionView()->setTextColor(textColor);
+    m_layoutField.layoutView()->setTextColor(textColor);
   }
-  void setFont(KDFont::Size font) {
-    m_layoutField.expressionView()->setFont(font);
-  }
+  void setFont(KDFont::Size font) { m_layoutField.layoutView()->setFont(font); }
   KDSize minimalSizeForOptimalDisplay() const override;
   void setAlignment(float horizontalAlignment, float verticalAlignment) {
-    m_layoutField.expressionView()->setAlignment(horizontalAlignment,
-                                                 verticalAlignment);
+    m_layoutField.layoutView()->setAlignment(horizontalAlignment,
+                                             verticalAlignment);
   }
   void setMargins(KDCoordinate leftMargin, KDCoordinate rightMargin);
   KDPoint drawingOrigin() const {
-    return m_layoutField.expressionView()->drawingOrigin();
+    return m_layoutField.layoutView()->drawingOrigin();
   }
   Poincare::Layout layout() const override { return m_layoutField.layout(); }
-  KDFont::Size font() const { return m_layoutField.expressionView()->font(); }
+  KDFont::Size font() const { return m_layoutField.layoutView()->font(); }
   void drawRect(KDContext* ctx, KDRect rect) const override;
   LayoutField* layoutField() { return &m_layoutField; }
 

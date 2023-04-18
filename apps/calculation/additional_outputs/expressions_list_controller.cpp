@@ -85,7 +85,7 @@ void ExpressionsListController::setExpression(Expression e) {
     m_exactLayouts[i] = Layout();
     m_approximatedLayouts[i] = Layout();
     m_cells[i].label()->setSelectedSubviewPosition(
-        ScrollableThreeExpressionsView::SubviewPosition::Left);
+        ScrollableThreeLayoutsView::SubviewPosition::Left);
   }
   m_expression = e;
 }
@@ -93,23 +93,22 @@ void ExpressionsListController::setExpression(Expression e) {
 int ExpressionsListController::textAtIndex(char *buffer, size_t bufferSize,
                                            HighlightCell *cell, int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  ScrollableThreeExpressionsView::SubviewPosition position =
+  ScrollableThreeLayoutsView::SubviewPosition position =
       static_cast<AdditionnalResultCell *>(cell)
           ->label()
           ->selectedSubviewPosition();
   Layout layout;
-  if (position == ScrollableThreeExpressionsView::SubviewPosition::Left) {
+  if (position == ScrollableThreeLayoutsView::SubviewPosition::Left) {
     // If the line is formula = exact, insert exact instead of formula
     if (!m_exactLayouts[index].isUninitialized()) {
       layout = m_exactLayouts[index];
     } else {
       layout = m_layouts[index];
     }
-  } else if (position ==
-             ScrollableThreeExpressionsView::SubviewPosition::Center) {
+  } else if (position == ScrollableThreeLayoutsView::SubviewPosition::Center) {
     layout = m_exactLayouts[index];
   } else {
-    assert(position == ScrollableThreeExpressionsView::SubviewPosition::Right);
+    assert(position == ScrollableThreeLayoutsView::SubviewPosition::Right);
     layout = m_approximatedLayouts[index];
   }
   assert(!layout.isUninitialized());

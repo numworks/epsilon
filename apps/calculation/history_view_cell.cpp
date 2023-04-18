@@ -137,8 +137,8 @@ void HistoryViewCell::reloadOutputSelection(
       Calculation::DisplayOutput::ExactAndApproximate) {
     m_scrollableOutputView.setSelectedSubviewPosition(
         previousType == HistoryViewCellDataSource::SubviewType::Ellipsis
-            ? Shared::ScrollableTwoExpressionsView::SubviewPosition::Right
-            : Shared::ScrollableTwoExpressionsView::SubviewPosition::Center);
+            ? Shared::ScrollableTwoLayoutsView::SubviewPosition::Right
+            : Shared::ScrollableTwoLayoutsView::SubviewPosition::Center);
   } else {
     assert(
         (m_calculationDisplayOutput ==
@@ -147,7 +147,7 @@ void HistoryViewCell::reloadOutputSelection(
          Calculation::DisplayOutput::ExactAndApproximateToggle) ||
         (m_calculationDisplayOutput == Calculation::DisplayOutput::ExactOnly));
     m_scrollableOutputView.setSelectedSubviewPosition(
-        Shared::ScrollableTwoExpressionsView::SubviewPosition::Right);
+        Shared::ScrollableTwoLayoutsView::SubviewPosition::Right);
   }
 }
 

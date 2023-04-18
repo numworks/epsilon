@@ -24,10 +24,9 @@ void ScrollableTwoExpressionsCell::didBecomeFirstResponder() {
 }
 
 void ScrollableTwoExpressionsCell::reinitSelection() {
-  ScrollableTwoExpressionsView::SubviewPosition selectedSubview =
-      m_view.displayCenter()
-          ? ScrollableTwoExpressionsView::SubviewPosition::Center
-          : ScrollableTwoExpressionsView::SubviewPosition::Right;
+  ScrollableTwoLayoutsView::SubviewPosition selectedSubview =
+      m_view.displayCenter() ? ScrollableTwoLayoutsView::SubviewPosition::Center
+                             : ScrollableTwoLayoutsView::SubviewPosition::Right;
   m_view.setSelectedSubviewPosition(selectedSubview);
   m_view.reloadScroll();
 }

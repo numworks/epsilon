@@ -1,5 +1,5 @@
-#ifndef SHARED_SCROLLABLE_MULTIPLE_EXPRESSIONS_VIEW_H
-#define SHARED_SCROLLABLE_MULTIPLE_EXPRESSIONS_VIEW_H
+#ifndef SHARED_SCROLLABLE_MULTIPLE_LAYOUTS_VIEW_H
+#define SHARED_SCROLLABLE_MULTIPLE_LAYOUTS_VIEW_H
 
 #include <apps/i18n.h>
 #include <escher/even_odd_cell.h>
@@ -72,30 +72,27 @@ class AbstractScrollableMultipleLayoutsView
     KDSize minimalSizeForOptimalDisplay() const override;
     KDSize minimalSizeForOptimalDisplayFullSize() const;
     KDFont::Size font() const {
-      assert(m_rightExpressionView.font() == m_centeredExpressionView.font());
-      return m_rightExpressionView.font();
+      assert(m_rightLayoutView.font() == m_centeredLayoutView.font());
+      return m_rightLayoutView.font();
     }
-    virtual Escher::LayoutView* leftExpressionView() const { return nullptr; }
-    Escher::LayoutView* rightExpressionView() { return &m_rightExpressionView; }
-    Escher::LayoutView* centeredExpressionView() {
-      return &m_centeredExpressionView;
-    }
+    virtual Escher::LayoutView* leftLayoutView() const { return nullptr; }
+    Escher::LayoutView* rightLayoutView() { return &m_rightLayoutView; }
+    Escher::LayoutView* centeredLayoutView() { return &m_centeredLayoutView; }
     Escher::MessageTextView* approximateSign() { return &m_approximateSign; }
     SubviewPosition selectedSubviewPosition() const {
       return m_selectedSubviewPosition;
     }
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
     bool displayApproximateSign() const {
-      return displayCenter() &&
-             !m_rightExpressionView.layout().isUninitialized();
+      return displayCenter() && !m_rightLayoutView.layout().isUninitialized();
     }
     bool displayCenter() const {
       return m_displayCenter &&
-             !m_centeredExpressionView.layout().isUninitialized();
+             !m_centeredLayoutView.layout().isUninitialized();
     }
     bool displayableCenter() const {
       return m_displayableCenter &&
-             !m_centeredExpressionView.layout().isUninitialized();
+             !m_centeredLayoutView.layout().isUninitialized();
     }
     bool rightIsStrictlyEqual() const { return m_rightIsStrictlyEqual; }
     void setDisplayCenter(bool display);
@@ -121,9 +118,9 @@ class AbstractScrollableMultipleLayoutsView
     void updateSubviewsBackgroundAfterChangingState() override;
     KDSize privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const;
     View* subviewAtIndex(int index) override;
-    Escher::LayoutView m_rightExpressionView;
+    Escher::LayoutView m_rightLayoutView;
     Escher::MessageTextView m_approximateSign;
-    Escher::LayoutView m_centeredExpressionView;
+    Escher::LayoutView m_centeredLayoutView;
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;
     bool m_displayableCenter;
@@ -134,12 +131,11 @@ class AbstractScrollableMultipleLayoutsView
   virtual const ContentCell* contentCell() const = 0;
 };
 
-class ScrollableTwoExpressionsView
-    : public AbstractScrollableMultipleLayoutsView {
+class ScrollableTwoLayoutsView : public AbstractScrollableMultipleLayoutsView {
  public:
-  ScrollableTwoExpressionsView(Escher::Responder* parentResponder,
-                               float horizontalAlignment = KDGlyph::k_alignLeft,
-                               KDFont::Size font = KDFont::Size::Large)
+  ScrollableTwoLayoutsView(Escher::Responder* parentResponder,
+                           float horizontalAlignment = KDGlyph::k_alignLeft,
+                           KDFont::Size font = KDFont::Size::Large)
       : AbstractScrollableMultipleLayoutsView(parentResponder, &m_contentCell),
         m_contentCell(horizontalAlignment, font) {
     setMargins(

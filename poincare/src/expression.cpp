@@ -1328,7 +1328,7 @@ void Expression::cloneAndSimplifyAndApproximate(
   }
 
   if (approximateKeepingSymbols) {
-    e = cloneAndApproximateKeepingSymbols(reductionContext);
+    e = e.cloneAndApproximateKeepingSymbols(reductionContext);
   }
 
   // Step 2: we approximate and beautify the reduced expression

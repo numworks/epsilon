@@ -1314,9 +1314,7 @@ void Expression::cloneAndSimplifyAndApproximate(
   bool reduceFailure = false;
   Expression e =
       cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
-  if (approximateKeepingSymbols) {
-    e = cloneAndApproximateKeepingSymbols(reductionContext);
-  }
+
   if (reduceFailure ||
       (type() == ExpressionNode::Type::Store &&
        !static_cast<const Store *>(this)->isTrulyReducedInShallowReduce())) {
@@ -1327,6 +1325,10 @@ void Expression::cloneAndSimplifyAndApproximate(
           context, complexFormat, angleUnit);
     }
     return;
+  }
+
+  if (approximateKeepingSymbols) {
+    e = cloneAndApproximateKeepingSymbols(reductionContext);
   }
 
   // Step 2: we approximate and beautify the reduced expression

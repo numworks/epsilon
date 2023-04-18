@@ -330,9 +330,9 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
         valueCell->setText(bufferValue);
       } else {
         const Solution *solution = system->solution(j);
-        ScrollableTwoExpressionsCell *valueCell =
-            static_cast<ScrollableTwoExpressionsCell *>(cell);
-        /* ScrollableTwoExpressionsCell will always try to display its
+        ScrollableTwoLayoutsCell *valueCell =
+            static_cast<ScrollableTwoLayoutsCell *>(cell);
+        /* ScrollableTwoLayoutsCell will always try to display its
          * approximate layout. If the only layout is the exact one, they need to
          * be swapped.
          * FIXME This is quirky and could be changed. */
@@ -347,8 +347,8 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
       }
     } else {
       // It's a user variable row, get values of the solutions or discriminant
-      ScrollableTwoExpressionsCell *valueCell =
-          static_cast<ScrollableTwoExpressionsCell *>(cell);
+      ScrollableTwoLayoutsCell *valueCell =
+          static_cast<ScrollableTwoLayoutsCell *>(cell);
       const char *symbol =
           system->userVariable(j - rowOfUserVariablesMessage - 1);
       Layout layout = PoincareHelpers::CreateLayout(

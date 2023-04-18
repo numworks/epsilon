@@ -143,7 +143,7 @@ class LayoutField
     void layoutSubviews(bool force = false) override;
     void layoutCursorSubview(bool force);
     Poincare::LayoutCursor m_cursor;
-    ExpressionViewWithCursor m_expressionView;
+    LayoutViewWithCursor m_expressionView;
     bool m_isEditing;
   };
 

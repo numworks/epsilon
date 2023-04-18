@@ -49,10 +49,10 @@ class LayoutView : public GlyphsView {
   KDCoordinate m_horizontalMargin;
 };
 
-class ExpressionViewWithCursor : public LayoutView {
+class LayoutViewWithCursor : public LayoutView {
  public:
-  ExpressionViewWithCursor(Poincare::LayoutCursor* cursor,
-                           KDGlyph::Format format = {})
+  LayoutViewWithCursor(Poincare::LayoutCursor* cursor,
+                       KDGlyph::Format format = {})
       : LayoutView(format), m_cursor(cursor) {
     assert(cursor);
   }

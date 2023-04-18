@@ -165,6 +165,8 @@ void ConvertExpressionToLayout(EditionReference layoutParent,
   expressionReference.removeNode();
 }
 
+/* TODO: ConvertExpressionToLayout is a very temporary implementation and must
+ * be improved must be improved in the future. */
 EditionReference Expression::EditionPoolExpressionToLayout(Node node) {
   assert(node.block()->isExpression());
   EditionReference ref =

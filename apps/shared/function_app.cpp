@@ -20,10 +20,13 @@ void FunctionApp::prepareForIntrusiveStorageChange() {
   if (stack->depth() >
       Shared::InteractiveCurveViewController::k_graphControllerStackDepth) {
     /* Close the details/curve menu/calculation views (minimum...)/column header
-     * since they may not make sense with the updated function. */
+     * since they may not make sense with the updated function.
+     * Do not setup the active view, as the view controller will be popped next
+     * anyway. This also gives time to the text field to stop editing if
+     * stalled. */
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
-        true);
+        false);
   }
   /* Changing the storage may have deactivated all active functions. We pop
    * then push to make sur the graph gets updated to its empty counterpart if

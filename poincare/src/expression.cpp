@@ -1623,20 +1623,24 @@ Expression Expression::deepApproximateKeepingSymbols(
     return *this;
   }
 
-  Expression a = approximate<double>(reductionContext.context(),
-                                     reductionContext.complexFormat(),
-                                     reductionContext.angleUnit(), true);
-  /* If approximation is undef, it means the expression can't be approximated
-   * and might contain symbols.
-   * Lists and matrices are excluded because they could contain undef children
-   * without returning true to isUndefined() */
-  if (!a.isUndefined() && a.type() != ExpressionNode::Type::List &&
-      a.type() != ExpressionNode::Type::Matrix) {
-    /* approximate can return an Opposite or a Subtraction, so we need to
-     * re-reduce the expression.*/
-    replaceWithInPlace(a);
-    *wasApproximated = true;
-    return a.shallowReduce(reductionContext);
+  /* It's useless to try to approximate if at least one of the children could
+   * not be approximated, because it means it contains symbols. */
+  if (numberOfApproximatedChildren == nChildren || isParameteredExpression()) {
+    Expression a = approximate<double>(reductionContext.context(),
+                                       reductionContext.complexFormat(),
+                                       reductionContext.angleUnit(), true);
+    /* If approximation is undef, it means the expression can't be approximated
+     * and might contain symbols.
+     * Lists and matrices are excluded because they could contain undef children
+     * without returning true to isUndefined() */
+    if (!a.isUndefined() && a.type() != ExpressionNode::Type::List &&
+        a.type() != ExpressionNode::Type::Matrix) {
+      /* approximate can return an Opposite or a Subtraction, so we need to
+       * re-reduce the expression.*/
+      replaceWithInPlace(a);
+      *wasApproximated = true;
+      return a.shallowReduce(reductionContext);
+    }
   }
 
   if (nChildren == 0) {

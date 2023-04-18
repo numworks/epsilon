@@ -31,7 +31,7 @@ escher_src += $(addprefix escher/src/,\
   even_odd_message_text_cell.cpp \
   explicit_list_view_data_source.h \
   expression_input_bar.cpp \
-  expression_view.cpp \
+  layout_view.cpp \
   gauge_view.cpp \
   glyphs_view.cpp \
   highlight_cell.cpp \

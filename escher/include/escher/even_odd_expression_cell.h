@@ -2,7 +2,7 @@
 #define ESCHER_EVEN_ODD_EXPRESSION_CELL_H
 
 #include <escher/even_odd_cell.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 
 namespace Escher {
 
@@ -29,7 +29,7 @@ class EvenOddExpressionCell : public EvenOddCell {
   int numberOfSubviews() const override;
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  ExpressionView m_expressionView;
+  LayoutView m_expressionView;
   KDCoordinate m_leftMargin;
   KDCoordinate m_rightMargin;
 };

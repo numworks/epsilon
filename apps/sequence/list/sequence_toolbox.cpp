@@ -40,7 +40,7 @@ HighlightCell *SequenceToolbox::reusableCell(int index, int type) {
 
 void SequenceToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
   if (typeAtIndex(index) == k_addedCellType) {
-    static_cast<MenuCell<ExpressionView> *>(cell)->label()->setLayout(
+    static_cast<MenuCell<LayoutView> *>(cell)->label()->setLayout(
         m_addedCellLayout[index]);
     cell->reloadCell();
     return;
@@ -50,7 +50,7 @@ void SequenceToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
 
 KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int index) {
   if (typeAtIndex(index) == k_addedCellType) {
-    MenuCell<ExpressionView> tempCell;
+    MenuCell<LayoutView> tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   return MathToolbox::nonMemoizedRowHeight(index);

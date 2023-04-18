@@ -1,5 +1,5 @@
-#ifndef ESCHER_EXPRESSION_VIEW_H
-#define ESCHER_EXPRESSION_VIEW_H
+#ifndef ESCHER_LAYOUT_VIEW_H
+#define ESCHER_LAYOUT_VIEW_H
 
 #include <escher/glyphs_view.h>
 #include <poincare/layout.h>
@@ -13,9 +13,9 @@ namespace Escher {
  * view, we cannot use minimalSizeForOptimalDisplay to assess the required
  * size. */
 
-class ExpressionView : public GlyphsView {
+class LayoutView : public GlyphsView {
  public:
-  ExpressionView(KDGlyph::Format format = {})
+  LayoutView(KDGlyph::Format format = {})
       : GlyphsView(format), m_horizontalMargin(0) {}
 
   Poincare::Layout layout() const override { return m_layout; }
@@ -49,11 +49,11 @@ class ExpressionView : public GlyphsView {
   KDCoordinate m_horizontalMargin;
 };
 
-class ExpressionViewWithCursor : public ExpressionView {
+class ExpressionViewWithCursor : public LayoutView {
  public:
   ExpressionViewWithCursor(Poincare::LayoutCursor* cursor,
                            KDGlyph::Format format = {})
-      : ExpressionView(format), m_cursor(cursor) {
+      : LayoutView(format), m_cursor(cursor) {
     assert(cursor);
   }
 

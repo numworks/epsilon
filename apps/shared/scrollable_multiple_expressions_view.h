@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/even_odd_cell.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/message_text_view.h>
 #include <escher/metric.h>
 #include <escher/scrollable_view.h>
@@ -75,13 +75,9 @@ class AbstractScrollableMultipleExpressionsView
       assert(m_rightExpressionView.font() == m_centeredExpressionView.font());
       return m_rightExpressionView.font();
     }
-    virtual Escher::ExpressionView* leftExpressionView() const {
-      return nullptr;
-    }
-    Escher::ExpressionView* rightExpressionView() {
-      return &m_rightExpressionView;
-    }
-    Escher::ExpressionView* centeredExpressionView() {
+    virtual Escher::LayoutView* leftExpressionView() const { return nullptr; }
+    Escher::LayoutView* rightExpressionView() { return &m_rightExpressionView; }
+    Escher::LayoutView* centeredExpressionView() {
       return &m_centeredExpressionView;
     }
     Escher::MessageTextView* approximateSign() { return &m_approximateSign; }
@@ -125,9 +121,9 @@ class AbstractScrollableMultipleExpressionsView
     void updateSubviewsBackgroundAfterChangingState() override;
     KDSize privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const;
     View* subviewAtIndex(int index) override;
-    Escher::ExpressionView m_rightExpressionView;
+    Escher::LayoutView m_rightExpressionView;
     Escher::MessageTextView m_approximateSign;
-    Escher::ExpressionView m_centeredExpressionView;
+    Escher::LayoutView m_centeredExpressionView;
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;
     bool m_displayableCenter;

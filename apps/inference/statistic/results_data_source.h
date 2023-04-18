@@ -3,8 +3,8 @@
 
 #include <escher/buffer_text_view.h>
 #include <escher/button_cell.h>
-#include <escher/expression_view.h>
 #include <escher/invocation.h>
+#include <escher/layout_view.h>
 #include <escher/list_view_data_source.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
@@ -14,9 +14,8 @@
 
 namespace Inference {
 
-using ResultCell =
-    Escher::MenuCell<Escher::ExpressionView, Escher::MessageTextView,
-                     Escher::FloatBufferTextView<>>;
+using ResultCell = Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
+                                    Escher::FloatBufferTextView<>>;
 /* A ResultsDataSource is a TableViewDataSource which is meant to
  * represent data provided (and computed) by a Statistic.
  */

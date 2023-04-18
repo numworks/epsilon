@@ -10,7 +10,7 @@ namespace Graph {
  *  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
  * |####|  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _                   |              |
  * |####|  |                             |                   |              |
- * |####|  |   ExpressionView            |                   |              |
+ * |####|  |   LayoutView                |                   |              |
  * |####|  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|                   | EllipsisView |
  * |####|  _ _ _ _ _ _ _ _ _ _                               |              |
  * |####|  | MessageTextView |                               |              |
@@ -21,7 +21,7 @@ namespace Graph {
  * - Leftmost rectangle is the color indicator.
  * - There are no borders to draw
  * - EllipsisView dictates the minimal height of the cell
- * - ExpressionView is cropped in width, but can take significant height
+ * - LayoutView is cropped in width, but can take significant height
  * - If inactive, both color indicator and all texts are set to gray
  */
 

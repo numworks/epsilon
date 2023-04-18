@@ -1,4 +1,4 @@
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/palette.h>
 #include <poincare/code_point_layout.h>
 
@@ -8,7 +8,7 @@ using namespace Poincare;
 
 namespace Escher {
 
-bool ExpressionView::setLayout(Layout layoutR) {
+bool LayoutView::setLayout(Layout layoutR) {
   /* Check m_layout.wasErasedByException(), otherwise accessing m_layout would
    * result in an ACCESS ERROR. */
   bool shouldRedraw =
@@ -22,11 +22,11 @@ bool ExpressionView::setLayout(Layout layoutR) {
   return shouldRedraw;
 }
 
-int ExpressionView::numberOfLayouts() const {
+int LayoutView::numberOfLayouts() const {
   return m_layout.numberOfDescendants(true);
 }
 
-KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
+KDSize LayoutView::minimalSizeForOptimalDisplay() const {
   if (m_layout.isUninitialized()) {
     return KDSizeZero;
   }
@@ -35,7 +35,7 @@ KDSize ExpressionView::minimalSizeForOptimalDisplay() const {
                 expressionSize.height());
 }
 
-KDPoint ExpressionView::drawingOrigin() const {
+KDPoint LayoutView::drawingOrigin() const {
   KDSize expressionSize = m_layout.layoutSize(font());
   return KDPoint(
       m_horizontalMargin + m_glyphFormat.horizontalAlignment *
@@ -46,7 +46,7 @@ KDPoint ExpressionView::drawingOrigin() const {
                  (bounds().height() - expressionSize.height())));
 }
 
-void ExpressionView::drawRect(KDContext* ctx, KDRect rect) const {
+void LayoutView::drawRect(KDContext* ctx, KDRect rect) const {
   ctx->fillRect(rect, m_glyphFormat.style.backgroundColor);
   if (!m_layout.isUninitialized()) {
     m_layout.draw(ctx, drawingOrigin(), m_glyphFormat.style, selection());

@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/nested_menu_controller.h>
@@ -76,9 +76,9 @@ class FormulaTemplateMenuController
       };
 
   using BufferTemplateCell =
-      Escher::MenuCell<Escher::ExpressionView, Escher::OneLineBufferTextView<>>;
+      Escher::MenuCell<Escher::LayoutView, Escher::OneLineBufferTextView<>>;
   using MessageTemplateCell =
-      Escher::MenuCell<Escher::ExpressionView, Escher::MessageTextView>;
+      Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView>;
 
   int relativeCellIndex(int index, CellType type);
   bool shouldDisplayOtherAppCell() const;

@@ -114,8 +114,8 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
 void PreferencesController::willDisplayCellForIndex(HighlightCell *cell,
                                                     int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
-  MenuCell<MessageTextView, ExpressionView> *myCell =
-      static_cast<MenuCell<MessageTextView, ExpressionView> *>(cell);
+  MenuCell<MessageTextView, LayoutView> *myCell =
+      static_cast<MenuCell<MessageTextView, LayoutView> *>(cell);
   I18n::Message message = m_messageTreeModel->childAtIndex(index)->label();
   myCell->subLabel()->setLayout(layoutForPreferences(message));
   myCell->subLabel()->setFont(
@@ -123,7 +123,7 @@ void PreferencesController::willDisplayCellForIndex(HighlightCell *cell,
 }
 
 KDCoordinate PreferencesController::nonMemoizedRowHeight(int index) {
-  MenuCell<MessageTextView, ExpressionView> tempCell;
+  MenuCell<MessageTextView, LayoutView> tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 

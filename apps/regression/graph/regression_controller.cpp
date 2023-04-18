@@ -83,7 +83,7 @@ bool RegressionController::handleEvent(Ion::Events::Event event) {
 }
 KDCoordinate RegressionController::nonMemoizedRowHeight(int j) {
   assert(j >= 0 && j < numberOfRows());
-  MenuCell<MessageTextView, ExpressionView> tempCell;
+  MenuCell<MessageTextView, LayoutView> tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
@@ -96,8 +96,8 @@ HighlightCell *RegressionController::reusableCell(int index, int type) {
 void RegressionController::willDisplayCellForIndex(HighlightCell *cell,
                                                    int index) {
   assert(index >= 0 && index < numberOfRows());
-  MenuCell<MessageTextView, ExpressionView> *castedCell =
-      static_cast<MenuCell<MessageTextView, ExpressionView> *>(cell);
+  MenuCell<MessageTextView, LayoutView> *castedCell =
+      static_cast<MenuCell<MessageTextView, LayoutView> *>(cell);
   Model *model = m_store->regressionModel(ModelTypeAtIndex(index));
   castedCell->label()->setMessage(model->name());
   castedCell->subLabel()->setLayout(model->templateLayout());

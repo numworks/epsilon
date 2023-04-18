@@ -1,8 +1,8 @@
 #ifndef ESCHER_SCROLLABLE_EXPRESSION_VIEW_H
 #define ESCHER_SCROLLABLE_EXPRESSION_VIEW_H
 
-#include <escher/expression_view.h>
 #include <escher/glyphs_view.h>
+#include <escher/layout_view.h>
 #include <escher/scroll_view_data_source.h>
 #include <escher/scrollable_view.h>
 
@@ -38,7 +38,7 @@ class ScrollableExpressionView
   void setHighlighted(bool highlighted) override;
 
  private:
-  ExpressionView m_expressionView;
+  LayoutView m_expressionView;
 };
 
 }  // namespace Escher

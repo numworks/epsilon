@@ -10,7 +10,7 @@ KDSize ExpressionWithEqualSignView::minimalSizeForOptimalDisplay() const {
   if (m_layout.isUninitialized()) {
     return KDSizeZero;
   }
-  KDSize expressionSize = ExpressionView::minimalSizeForOptimalDisplay();
+  KDSize expressionSize = LayoutView::minimalSizeForOptimalDisplay();
   if (!m_showEqual) {
     return expressionSize;
   }
@@ -22,8 +22,8 @@ KDSize ExpressionWithEqualSignView::minimalSizeForOptimalDisplay() const {
 
 void ExpressionWithEqualSignView::drawRect(KDContext* ctx, KDRect rect) const {
   // Do not color the whole background to avoid coloring behind the equal symbol
-  ExpressionView::drawRect(
-      ctx, KDRect(0, 0, ExpressionView::minimalSizeForOptimalDisplay()));
+  LayoutView::drawRect(
+      ctx, KDRect(0, 0, LayoutView::minimalSizeForOptimalDisplay()));
 }
 
 View* ExpressionWithEqualSignView::subviewAtIndex(int index) {
@@ -32,7 +32,7 @@ View* ExpressionWithEqualSignView::subviewAtIndex(int index) {
 }
 
 void ExpressionWithEqualSignView::layoutSubviews(bool force) {
-  KDSize expressionSize = ExpressionView::minimalSizeForOptimalDisplay();
+  KDSize expressionSize = LayoutView::minimalSizeForOptimalDisplay();
   KDSize equalSize = m_equalSign.minimalSizeForOptimalDisplay();
   KDCoordinate expressionBaseline = layout().baseline(k_font);
   if (!m_showEqual) {

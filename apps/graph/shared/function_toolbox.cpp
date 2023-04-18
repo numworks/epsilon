@@ -88,7 +88,7 @@ HighlightCell *FunctionToolbox::reusableCell(int index, int type) {
 void FunctionToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
   if (typeAtIndex(index) == k_addedCellType) {
     assert(index < addedCellsAtRoot());
-    static_cast<MenuCell<ExpressionView> *>(cell)->label()->setLayout(
+    static_cast<MenuCell<LayoutView> *>(cell)->label()->setLayout(
         m_addedCellLayout[index]);
     cell->reloadCell();
     return;
@@ -98,7 +98,7 @@ void FunctionToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
 
 KDCoordinate FunctionToolbox::nonMemoizedRowHeight(int index) {
   if (typeAtIndex(index) == k_addedCellType) {
-    MenuCell<ExpressionView> tempCell;
+    MenuCell<LayoutView> tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   return MathToolbox::nonMemoizedRowHeight(index);

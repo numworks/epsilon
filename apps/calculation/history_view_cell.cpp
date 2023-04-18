@@ -183,13 +183,13 @@ View *HistoryViewCell::subviewAtIndex(int index) {
    * However, the order determines the order of redrawing as well. For several
    * reasons listed after, changing subview selection often redraws the entire
    * m_scrollableOutputView even if it seems unecessary:
-   * - Before feeding new Layouts to ExpressionViews, we reset the hold layouts
+   * - Before feeding new Layouts to LayoutViews, we reset the hold layouts
    *   in order to empty the Poincare pool and have more space to compute new
    *   layouts.
-   * - Even if we did not do that, ExpressionView::setLayout doesn't avoid
+   * - Even if we did not do that, LayoutView::setLayout doesn't avoid
    *   redrawing when the previous expression is identical (for reasons
-   *   explained in expression_view.cpp)
-   * - Because of the toggling burger view, ExpressionViews often have the same
+   *   explained in layout_view.cpp)
+   * - Because of the toggling burger view, LayoutViews often have the same
    *   absolute frame but a different relative frame which leads to redrawing
    *   them anyway.
    * All these reasons cause a blinking which can be avoided if we redraw the

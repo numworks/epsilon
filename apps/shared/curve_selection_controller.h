@@ -2,7 +2,7 @@
 #define SHARED_CURVE_SELECTION_CONTROLLER
 
 #include <escher/chevron_view.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/list_view_data_source.h>
 #include <escher/menu_cell.h>
 #include <escher/selectable_list_view_controller.h>
@@ -17,15 +17,15 @@ namespace Shared {
  */
 template <typename Accessory>
 class CurveSelectionCellWithAccessory
-    : public Escher::MenuCell<Escher::ExpressionView, Escher::EmptyCellWidget,
+    : public Escher::MenuCell<Escher::LayoutView, Escher::EmptyCellWidget,
                               Accessory> {
  public:
   CurveSelectionCellWithAccessory()
-      : Escher::MenuCell<Escher::ExpressionView, Escher::EmptyCellWidget,
+      : Escher::MenuCell<Escher::LayoutView, Escher::EmptyCellWidget,
                          Accessory>(),
         m_color(KDColorBlack) {}
   void drawRect(KDContext *ctx, KDRect rect) const override {
-    Escher::MenuCell<Escher::ExpressionView, Escher::EmptyCellWidget,
+    Escher::MenuCell<Escher::LayoutView, Escher::EmptyCellWidget,
                      Accessory>::drawRect(ctx, rect);
     // Draw the color indicator
     assert(m_color != KDColorBlack);  // Check that the color was set

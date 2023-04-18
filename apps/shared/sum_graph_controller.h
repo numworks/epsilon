@@ -1,7 +1,7 @@
 #ifndef SHARED_SUM_GRAPH_CONTROLLER_H
 #define SHARED_SUM_GRAPH_CONTROLLER_H
 
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <poincare/print_float.h>
 
 #include "expiring_pointer.h"
@@ -115,7 +115,7 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
     void layoutSubviews(Step step, bool force);
     Poincare::Layout defaultSumResultLayout(const char* resultBuffer);
 
-    Escher::ExpressionView m_sum;
+    Escher::LayoutView m_sum;
     Escher::MessageTextView m_legend;
     Escher::TextField m_editableZone;
     char m_textBuffer[k_editableZoneBufferSize];

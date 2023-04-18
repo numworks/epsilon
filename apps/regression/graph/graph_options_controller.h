@@ -5,7 +5,7 @@
 #include <escher/buffer_text_view.h>
 #include <escher/button_cell.h>
 #include <escher/chevron_view.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/scrollable_expression_view.h>
@@ -54,9 +54,8 @@ class GraphOptionsController
   bool displayR2Cell() const;
   bool displayResidualPlotCell() const;
 
-  using RCell =
-      Escher::MenuCell<Escher::ExpressionView, Escher::EmptyCellWidget,
-                       Escher::FloatBufferTextView<>>;
+  using RCell = Escher::MenuCell<Escher::LayoutView, Escher::EmptyCellWidget,
+                                 Escher::FloatBufferTextView<>>;
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>

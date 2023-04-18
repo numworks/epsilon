@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/container.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 #include <escher/list_view_data_source.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>

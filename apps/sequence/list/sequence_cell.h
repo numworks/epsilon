@@ -2,7 +2,7 @@
 #define SEQUENCE_SEQUENCE_CELL_H
 
 #include <escher/even_odd_cell.h>
-#include <escher/expression_view.h>
+#include <escher/layout_view.h>
 
 #include "vertical_sequence_title_cell.h"
 

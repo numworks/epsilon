@@ -2,8 +2,8 @@
 #define ESCHER_LAYOUT_FIELD_H
 
 #include <escher/editable_field.h>
-#include <escher/expression_view.h>
 #include <escher/layout_field_delegate.h>
+#include <escher/layout_view.h>
 #include <escher/scrollable_view.h>
 #include <escher/text_cursor_view.h>
 #include <escher/text_field.h>
@@ -69,10 +69,10 @@ class LayoutField
   KDSize minimalSizeForOptimalDisplay() const override;
 
   Poincare::LayoutCursor* cursor() { return m_contentView.cursor(); }
-  const ExpressionView* expressionView() const {
+  const LayoutView* expressionView() const {
     return m_contentView.expressionView();
   }
-  ExpressionView* expressionView() { return m_contentView.expressionView(); }
+  LayoutView* expressionView() { return m_contentView.expressionView(); }
 
   /* Warning: this function is VERY dangerous! Indeed: sometimes the
    * m_layoutField might overflow the m_textBuffer once serialized
@@ -128,8 +128,8 @@ class LayoutField
       return relativeChildFrame(TextCursorView::sharedTextCursor);
     }
     Poincare::LayoutCursor* cursor() { return &m_cursor; }
-    const ExpressionView* expressionView() const { return &m_expressionView; }
-    ExpressionView* expressionView() { return &m_expressionView; }
+    const LayoutView* expressionView() const { return &m_expressionView; }
+    LayoutView* expressionView() { return &m_expressionView; }
     void clearLayout();
     // View
     KDSize minimalSizeForOptimalDisplay() const override;

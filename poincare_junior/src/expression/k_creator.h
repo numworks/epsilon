@@ -307,37 +307,37 @@ consteval auto operator"" _e() {
        BlockType::Placeholder>();
 
 constexpr Tree A_e =
-    PLACEHOLDER(Placeholder::Tag::A, Placeholder::Filter::None);
+    PLACEHOLDER(Placeholder::Tag::A, Placeholder::MatchFilter::None);
 constexpr Tree AAdd_e =
-    PLACEHOLDER(Placeholder::Tag::A, Placeholder::Filter::Addition);
+    PLACEHOLDER(Placeholder::Tag::A, Placeholder::MatchFilter::Addition);
 constexpr Tree AMul_e =
-    PLACEHOLDER(Placeholder::Tag::A, Placeholder::Filter::Multiplication);
+    PLACEHOLDER(Placeholder::Tag::A, Placeholder::MatchFilter::Multiplication);
 constexpr Tree A1_e =
-    PLACEHOLDER(Placeholder::Tag::A, Placeholder::Filter::First);
-constexpr Tree A2_e =
-    PLACEHOLDER(Placeholder::Tag::A, Placeholder::Filter::Others);
+    PLACEHOLDER(Placeholder::Tag::A, Placeholder::CreateFilter::FirstChild);
+constexpr Tree A2_e = PLACEHOLDER(Placeholder::Tag::A,
+                                  Placeholder::CreateFilter::ExcludeFirstChild);
 
 constexpr Tree B_e =
-    PLACEHOLDER(Placeholder::Tag::B, Placeholder::Filter::None);
+    PLACEHOLDER(Placeholder::Tag::B, Placeholder::MatchFilter::None);
 constexpr Tree BAdd_e =
-    PLACEHOLDER(Placeholder::Tag::B, Placeholder::Filter::Addition);
+    PLACEHOLDER(Placeholder::Tag::B, Placeholder::MatchFilter::Addition);
 constexpr Tree BMul_e =
-    PLACEHOLDER(Placeholder::Tag::B, Placeholder::Filter::Multiplication);
+    PLACEHOLDER(Placeholder::Tag::B, Placeholder::MatchFilter::Multiplication);
 constexpr Tree B1_e =
-    PLACEHOLDER(Placeholder::Tag::B, Placeholder::Filter::First);
-constexpr Tree B2_e =
-    PLACEHOLDER(Placeholder::Tag::B, Placeholder::Filter::Others);
+    PLACEHOLDER(Placeholder::Tag::B, Placeholder::CreateFilter::FirstChild);
+constexpr Tree B2_e = PLACEHOLDER(Placeholder::Tag::B,
+                                  Placeholder::CreateFilter::ExcludeFirstChild);
 
 constexpr Tree C_e =
-    PLACEHOLDER(Placeholder::Tag::C, Placeholder::Filter::None);
+    PLACEHOLDER(Placeholder::Tag::C, Placeholder::MatchFilter::None);
 constexpr Tree CAdd_e =
-    PLACEHOLDER(Placeholder::Tag::C, Placeholder::Filter::Addition);
+    PLACEHOLDER(Placeholder::Tag::C, Placeholder::MatchFilter::Addition);
 constexpr Tree CMul_e =
-    PLACEHOLDER(Placeholder::Tag::C, Placeholder::Filter::Multiplication);
+    PLACEHOLDER(Placeholder::Tag::C, Placeholder::MatchFilter::Multiplication);
 constexpr Tree C1_e =
-    PLACEHOLDER(Placeholder::Tag::C, Placeholder::Filter::First);
-constexpr Tree C2_e =
-    PLACEHOLDER(Placeholder::Tag::C, Placeholder::Filter::Others);
+    PLACEHOLDER(Placeholder::Tag::C, Placeholder::CreateFilter::FirstChild);
+constexpr Tree C2_e = PLACEHOLDER(Placeholder::Tag::C,
+                                  Placeholder::CreateFilter::ExcludeFirstChild);
 
 }  // namespace PoincareJ
 

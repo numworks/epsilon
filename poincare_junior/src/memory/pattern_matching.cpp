@@ -31,11 +31,11 @@ PatternMatching::Context PatternMatching::Match(const Node pattern,
     if (node.type() == BlockType::Placeholder) {
       Placeholder::Tag tag = Placeholder::NodeToTag(node);
       if (result[tag].isUninitialized()) {
-        Placeholder::Filter filter = Placeholder::NodeToFilter(node);
-        if (!(filter == Placeholder::Filter::None ||
-              (filter == Placeholder::Filter::Addition &&
+        Placeholder::MatchFilter filter = Placeholder::NodeToMatchFilter(node);
+        if (!(filter == Placeholder::MatchFilter::None ||
+              (filter == Placeholder::MatchFilter::Addition &&
                currentNode.type() == BlockType::Addition) ||
-              (filter == Placeholder::Filter::Multiplication &&
+              (filter == Placeholder::MatchFilter::Multiplication &&
                currentNode.type() == BlockType::Multiplication))) {
           return Context();
         }
@@ -67,10 +67,10 @@ EditionReference PatternMatching::Create(const Node structure,
       continue;
     }
     Placeholder::Tag tag = Placeholder::NodeToTag(node);
-    Placeholder::Filter filter = Placeholder::NodeToFilter(node);
+    Placeholder::CreateFilter filter = Placeholder::NodeToCreateFilter(node);
     Node nodeToInsert = context[tag];
     assert(!nodeToInsert.isUninitialized());
-    if (filter == Placeholder::Filter::Others) {
+    if (filter == Placeholder::CreateFilter::ExcludeFirstChild) {
       int childrenToInsert = nodeToInsert.numberOfChildren() - 1;
       bool isAddition = (nodeToInsert.type() == BlockType::Addition);
       if (childrenToInsert > 1) {
@@ -89,10 +89,10 @@ EditionReference PatternMatching::Create(const Node structure,
         assert(childrenToInsert == 1);
         nodeToInsert = nodeToInsert.childAtIndex(1);
       }
-    } else if (filter == Placeholder::Filter::First) {
+    } else if (filter == Placeholder::CreateFilter::FirstChild) {
       nodeToInsert = nodeToInsert.childAtIndex(0);
     } else {
-      assert(filter == Placeholder::Filter::None);
+      assert(filter == Placeholder::CreateFilter::None);
     }
     editionPool->clone(nodeToInsert, true);
   }

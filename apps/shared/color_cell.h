@@ -7,8 +7,9 @@
 
 namespace Shared {
 
-class ColorView : public Escher::ArbitraryShapedView,
-                  public Escher::CellWidget {
+/* Not ArbitraryShapedView since the shape never changes, the parent does not
+ * need to be invalidated */
+class ColorView : public Escher::View, public Escher::CellWidget {
  public:
   const View* view() const override { return this; }
   void drawRect(KDContext* ctx, KDRect rect) const override;

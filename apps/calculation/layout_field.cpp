@@ -5,7 +5,6 @@
 #include <poincare/horizontal_layout.h>
 #include <poincare/symbol.h>
 
-using namespace Escher;
 using namespace Poincare;
 
 namespace Calculation {

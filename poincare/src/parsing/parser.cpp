@@ -1148,25 +1148,20 @@ void Parser::defaultParseLeftParenthesis(bool isSystemParenthesis,
                              : Token::Type::RightParenthesis;
 
   if (!isSystemParenthesis) {
-    const char *cursor;
-    Token currentToken, nextToken;
-    rememberCurrentParsingPosition(&cursor, &currentToken, &nextToken);
     Expression result = parseCommaSeparatedList();
     if (!result.isUninitialized() && result.numberOfChildren() == 2) {
       leftHandSide =
           Point::Builder(result.childAtIndex(0), result.childAtIndex(1));
+    } else if (!result.isUninitialized() && result.numberOfChildren() == 1) {
+      leftHandSide = Parenthesis::Builder(result.childAtIndex(0));
     } else {
-      restorePreviousParsingPosition(cursor, currentToken, nextToken);
+      m_status = Status::Error;
+      return;
     }
-  }
-
-  if (leftHandSide.isUninitialized()) {
+  } else {
     leftHandSide = parseUntil(endToken);
     if (m_status != Status::Progress) {
       return;
-    }
-    if (!isSystemParenthesis) {
-      leftHandSide = Parenthesis::Builder(leftHandSide);
     }
   }
 

@@ -39,7 +39,7 @@ void ModalViewEmptyController::ModalViewEmptyView::drawRect(KDContext *ctx,
 }
 
 int ModalViewEmptyController::ModalViewEmptyView::numberOfSubviews() const {
-  return numberOfMessageTextViews() + hasExpressionView();
+  return numberOfMessageTextViews() + hasLayoutView();
 }
 
 void ModalViewEmptyController::ModalViewEmptyView::reload() {
@@ -47,7 +47,7 @@ void ModalViewEmptyController::ModalViewEmptyView::reload() {
 }
 
 View *ModalViewEmptyController::ModalViewEmptyView::subviewAtIndex(int index) {
-  if (hasExpressionView()) {
+  if (hasLayoutView()) {
     if (index == k_layoutViewRowIndex) {
       return layoutView();
     }
@@ -59,7 +59,7 @@ View *ModalViewEmptyController::ModalViewEmptyView::subviewAtIndex(int index) {
 
 void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {
   const int numberOfMessageViews = numberOfMessageTextViews();
-  const bool hasExpression = hasExpressionView();
+  const bool hasExpression = hasLayoutView();
   KDCoordinate width = bounds().width() - 2 * k_separatorThickness;
   KDCoordinate height = bounds().height() - 2 * k_separatorThickness;
   KDCoordinate textHeight = KDFont::GlyphHeight(k_font);

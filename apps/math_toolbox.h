@@ -5,7 +5,7 @@
 #include <escher/container.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/scrollable_expression_view.h>
+#include <escher/scrollable_layout_view.h>
 #include <escher/toolbox.h>
 
 class MathToolbox : public Escher::Toolbox {
@@ -18,7 +18,7 @@ class MathToolbox : public Escher::Toolbox {
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 
  protected:
-  /* These could have a ScrollableExpressionView as label, but it's not
+  /* These could have a ScrollableLayoutView as label, but it's not
    * necessary for now since no leaf of toolbox is longer than the cell width.
    */
   using LeafCell =

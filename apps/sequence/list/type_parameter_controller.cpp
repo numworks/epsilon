@@ -22,9 +22,9 @@ TypeParameterController::TypeParameterController(Responder *parentResponder,
                                                  KDCoordinate rightMargin,
                                                  KDCoordinate bottomMargin,
                                                  KDCoordinate leftMargin)
-    : SelectableCellListPage<
-          MenuCell<ScrollableExpressionView, MessageTextView>, k_numberOfCells,
-          RegularListViewDataSource>(parentResponder),
+    : SelectableCellListPage<MenuCell<ScrollableLayoutView, MessageTextView>,
+                             k_numberOfCells, RegularListViewDataSource>(
+          parentResponder),
       m_listController(list) {
   for (int i = 0; i < k_numberOfCells; i++) {
     cellAtIndex(i)->label()->setParentResponder(&m_selectableListView);
@@ -139,8 +139,8 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell *cell,
       VerticalOffsetLayout::Builder(
           LayoutHelper::String(subscripts[j], strlen(subscripts[j])),
           VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-  MenuCell<ScrollableExpressionView, MessageTextView> *myCell =
-      static_cast<MenuCell<ScrollableExpressionView, MessageTextView> *>(cell);
+  MenuCell<ScrollableLayoutView, MessageTextView> *myCell =
+      static_cast<MenuCell<ScrollableLayoutView, MessageTextView> *>(cell);
   myCell->label()->setLayout(m_layouts[j]);
   myCell->label()->setFont(font);
 }

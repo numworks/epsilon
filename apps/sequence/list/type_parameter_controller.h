@@ -4,7 +4,7 @@
 #include <escher/even_odd_expression_cell.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/scrollable_expression_view.h>
+#include <escher/scrollable_layout_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/layout.h>
@@ -19,7 +19,7 @@ constexpr int k_numberOfCells = 3;
 
 class TypeParameterController
     : public Escher::SelectableCellListPage<
-          Escher::MenuCell<Escher::ScrollableExpressionView,
+          Escher::MenuCell<Escher::ScrollableLayoutView,
                            Escher::MessageTextView>,
           k_numberOfCells, Escher::RegularListViewDataSource> {
  public:

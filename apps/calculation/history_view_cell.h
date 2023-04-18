@@ -2,7 +2,7 @@
 #define CALCULATION_HISTORY_VIEW_CELL_H
 
 #include <escher/even_odd_cell_with_ellipsis.h>
-#include <escher/scrollable_expression_view.h>
+#include <escher/scrollable_layout_view.h>
 
 #include "../shared/scrollable_multiple_expressions_view.h"
 #include "calculation.h"
@@ -75,7 +75,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   Shared::ScrollableTwoExpressionsView* outputView() {
     return &m_scrollableOutputView;
   }
-  Escher::ScrollableExpressionView* inputView() { return &m_inputView; }
+  Escher::ScrollableLayoutView* inputView() { return &m_inputView; }
   Calculation::AdditionalInformations additionalInformations() const {
     return m_calculationAdditionInformations;
   }
@@ -95,7 +95,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
   Calculation::AdditionalInformations m_calculationAdditionInformations;
-  Escher::ScrollableExpressionView m_inputView;
+  Escher::ScrollableLayoutView m_inputView;
   Shared::ScrollableTwoExpressionsView m_scrollableOutputView;
   Escher::EvenOddCellWithEllipsis m_ellipsis;
   HistoryViewCellDataSource* m_dataSource;

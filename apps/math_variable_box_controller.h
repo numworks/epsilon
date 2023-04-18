@@ -6,7 +6,7 @@
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/nested_menu_controller.h>
-#include <escher/scrollable_expression_view.h>
+#include <escher/scrollable_layout_view.h>
 #include <ion.h>
 
 class MathVariableBoxController : public Escher::NestedMenuController {
@@ -51,7 +51,7 @@ class MathVariableBoxController : public Escher::NestedMenuController {
   constexpr static int k_defineVariableCellType = 2;
 
   using LeafCell =
-      Escher::MenuCell<Escher::LayoutView, Escher::ScrollableExpressionView>;
+      Escher::MenuCell<Escher::LayoutView, Escher::ScrollableLayoutView>;
   LeafCell* leafCellAtIndex(int index) override;
   int defineVariableCellIndex() const { return numberOfRows() - 1; }
   Escher::NestedMenuController::NodeCell* nodeCellAtIndex(int index) override;

@@ -407,7 +407,17 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
       /* cardano is only null when there is a triple root. This should have been
        * already handled when computing delta, since delta should be equal to 0
        * in this case. This means there was approximation errors during
-       * computation of delta. Restore correct delta value here. */
+       * computation of delta. Restore correct delta value here.
+       *
+       * Example:
+       * For the family of equations (111 111 000 000 000 x - K)^3 = 0,
+       * delta should be equal to zero, but it's not due to approximations
+       * errors. For K = 6, we find cardano == 0, so the error is caught here.
+       * But for K = 2 or K = 9, we still find delta != 0 and cardano != 0, so
+       * the error is not fixed.
+       *
+       * TODO: Enhance delta computation and/or add a formal solve of equations
+       * of type (AX+B)^3=0. */
       if (cardano.isNull(context) == TrinaryBoolean::True) {
         // -b / 3a
         *root1 = Division::Builder(

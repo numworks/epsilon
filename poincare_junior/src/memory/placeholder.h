@@ -40,18 +40,26 @@ class Placeholder {
   consteval static uint8_t ParamsToValue(Tag tag, CreateFilter filter) {
     return ParamsToValue(tag, static_cast<uint8_t>(filter));
   }
-  constexpr static Tag NodeToTag(const Node n) {
-    return ValueToTag(NodeToValue(n));
+  constexpr static Tag NodeToTag(const Node placeholder) {
+    return ValueToTag(NodeToValue(placeholder));
   }
 
-  constexpr static uint8_t NodeToFilter(const Node n) {
-    return ValueToFilter(NodeToValue(n));
+  constexpr static uint8_t NodeToFilter(const Node placeholder) {
+    return ValueToFilter(NodeToValue(placeholder));
   }
-  constexpr static MatchFilter NodeToMatchFilter(const Node n) {
-    return static_cast<MatchFilter>(NodeToFilter(n));
+  constexpr static MatchFilter NodeToMatchFilter(const Node placeholder) {
+    return static_cast<MatchFilter>(NodeToFilter(placeholder));
   }
-  constexpr static CreateFilter NodeToCreateFilter(const Node n) {
-    return static_cast<CreateFilter>(NodeToFilter(n));
+  constexpr static CreateFilter NodeToCreateFilter(const Node placeholder) {
+    return static_cast<CreateFilter>(NodeToFilter(placeholder));
+  }
+  constexpr static bool MatchNode(const Node placeholder, const Node n) {
+    Placeholder::MatchFilter filter = NodeToMatchFilter(placeholder);
+    return filter == MatchFilter::None ||
+           (filter == MatchFilter::Addition &&
+            n.type() == BlockType::Addition) ||
+           (filter == MatchFilter::Multiplication &&
+            n.type() == BlockType::Multiplication);
   }
 
  private:
@@ -78,8 +86,9 @@ class Placeholder {
   consteval static uint8_t ParamsToValue(Tag tag, uint8_t filter) {
     return tag | (filter << k_bitsForTag);
   }
-  constexpr static uint8_t NodeToValue(const Node n) {
-    return static_cast<uint8_t>(*(n.block()->next()));
+  constexpr static uint8_t NodeToValue(const Node placeholder) {
+    assert(placeholder.type() == BlockType::Placeholder);
+    return static_cast<uint8_t>(*(placeholder.block()->next()));
   }
   constexpr static Tag ValueToTag(uint8_t value) {
     return static_cast<Tag>(Bit::getBitRange(value, k_bitsForTag - 1, 0));

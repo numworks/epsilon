@@ -1,5 +1,7 @@
 #include "pattern_matching.h"
 
+#include "../n_ary.h"
+
 using namespace PoincareJ;
 
 bool PatternMatching::Context::isUninitialized() const {
@@ -31,12 +33,7 @@ PatternMatching::Context PatternMatching::Match(const Node pattern,
     if (node.type() == BlockType::Placeholder) {
       Placeholder::Tag tag = Placeholder::NodeToTag(node);
       if (result[tag].isUninitialized()) {
-        Placeholder::MatchFilter filter = Placeholder::NodeToMatchFilter(node);
-        if (!(filter == Placeholder::MatchFilter::None ||
-              (filter == Placeholder::MatchFilter::Addition &&
-               currentNode.type() == BlockType::Addition) ||
-              (filter == Placeholder::MatchFilter::Multiplication &&
-               currentNode.type() == BlockType::Multiplication))) {
+        if (!(Placeholder::MatchNode(node, currentNode))) {
           return Context();
         }
         result[tag] = currentNode;
@@ -72,13 +69,10 @@ EditionReference PatternMatching::Create(const Node structure,
     assert(!nodeToInsert.isUninitialized());
     if (filter == Placeholder::CreateFilter::ExcludeFirstChild) {
       int childrenToInsert = nodeToInsert.numberOfChildren() - 1;
-      bool isAddition = (nodeToInsert.type() == BlockType::Addition);
       if (childrenToInsert > 1) {
-        if (isAddition) {
-          editionPool->push<BlockType::Addition>(childrenToInsert);
-        } else {
-          editionPool->push<BlockType::Multiplication>(childrenToInsert);
-        }
+        assert(nodeToInsert.isNAry());
+        NAry::SetNumberOfChildren(editionPool->clone(nodeToInsert, false),
+                                  childrenToInsert);
         nodeToInsert = nodeToInsert.childAtIndex(1);
         for (int i = 0; i < childrenToInsert; i++) {
           editionPool->clone(nodeToInsert, true);

@@ -1668,6 +1668,14 @@ int Expression::deepApproximateChildrenKeepingSymbols(
         (storeExpression && i == 1)) {
       continue;
     }
+    Expression child = childAtIndex(i);
+    /* Do not approximate e if it's the base of a log, so that log(...,e) can
+     * be later beautified into ln(...). */
+    if (type() == ExpressionNode::Type::Logarithm && i == 1 &&
+        child.type() == ExpressionNode::Type::ConstantMaths &&
+        static_cast<Constant &>(child).isExponentialE()) {
+      continue;
+    }
     bool thisChildWasApproximated = false;
     childAtIndex(i).deepApproximateKeepingSymbols(reductionContext,
                                                   &thisChildWasApproximated);

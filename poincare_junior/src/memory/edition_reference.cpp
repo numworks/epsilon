@@ -115,7 +115,9 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
    * EditionPool: ..... | *{2} +{2} x y z | ....
    * With :
    * - | delimiting this reference
-   * - *{2} a two children multiplication node (+{2} for addition) */
+   * - *{2} a two children multiplication node
+   * - +{2} a two children addition
+   * - _{2} a two children systemList */
 
   // Step 2 - Detach placeholder matches
   /* Create ZeroBlock for each context node to be detached so that tree size is
@@ -138,11 +140,11 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
     placeholders[i] = EditionReference(ctx[i]);
   }
 
-  // Detach placeholder matches at the end of the EditionPool in an addition
+  // Detach placeholder matches at the end of the EditionPool in a system list
   EditionReference placeholderMatches(
-      editionPool->push<BlockType::Addition>(initializedPlaceHolders));
+      editionPool->push<BlockType::SystemList>(initializedPlaceHolders));
 
-  // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 .... +{3}
+  // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 .... _{3}
 
   for (uint8_t i = 0; i < Placeholder::Tag::numberOfTags; i++) {
     if (placeholders[i].isUninitialized()) {
@@ -153,13 +155,13 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
     placeholders[i].detachTree();
   }
 
-  // EditionPool: ..... | *{2} +{2} 0 0 0 | .... +{3} x y z
+  // EditionPool: ..... | *{2} +{2} 0 0 0 | .... _{3} x y z
 
   // Step 3 - Replace with placeholder matches only
   replaceTreeByTree(placeholderMatches);
   *this = placeholderMatches;
 
-  // EditionPool: ..... | +{3} x y z | ....
+  // EditionPool: ..... | _{3} x y z | ....
 
   // Step 4 - Update context with new placeholder matches position
   for (uint8_t i = 0; i < Placeholder::Tag::numberOfTags; i++) {
@@ -169,7 +171,7 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
   // Step 5 - Build the PatternMatching replacement
   EditionReference createdRef = PatternMatching::Create(structure, ctx);
 
-  // EditionPool: ..... | +{3} x y z | .... +{2} *{2} x z *{2} y z
+  // EditionPool: ..... | _{3} x y z | .... +{2} *{2} x z *{2} y z
 
   // Step 6 - Replace with created structure
   replaceTreeByTree(createdRef);

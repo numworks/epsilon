@@ -1603,9 +1603,8 @@ U Expression::approximateWithValueForSymbol(
 
 Expression Expression::cloneAndApproximateKeepingSymbols(
     ReductionContext reductionContext) const {
-  Expression res = clone();
   bool dummy = false;
-  return res.deepApproximateKeepingSymbols(reductionContext, &dummy);
+  return clone().deepApproximateKeepingSymbols(reductionContext, &dummy);
 }
 
 Expression Expression::deepApproximateKeepingSymbols(

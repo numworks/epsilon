@@ -1625,7 +1625,7 @@ Expression Expression::deepApproximateKeepingSymbols(
 
   /* It's useless to try to approximate if at least one of the children could
    * not be approximated, because it means it contains symbols. */
-  if (numberOfApproximatedChildren == nChildren || isParameteredExpression()) {
+  if (numberOfApproximatedChildren == nChildren) {
     Expression a = approximate<double>(reductionContext.context(),
                                        reductionContext.complexFormat(),
                                        reductionContext.angleUnit(), true);
@@ -1661,24 +1661,26 @@ int Expression::deepApproximateChildrenKeepingSymbols(
   bool parameteredExpression = isParameteredExpression();
   bool storeExpression = type() == ExpressionNode::Type::Store;
   for (int i = 0; i < childrenCount; i++) {
-    // Do not approximate right of a store or inside a parametered expression
-    if ((parameteredExpression &&
-         (i == ParameteredExpression::ParameterChildIndex() ||
-          i == ParameteredExpression::ParameteredChildIndex())) ||
-        (storeExpression && i == 1)) {
-      continue;
-    }
     Expression child = childAtIndex(i);
-    /* Do not approximate e if it's the base of a log, so that log(...,e) can
-     * be later beautified into ln(...). */
-    if (type() == ExpressionNode::Type::Logarithm && i == 1 &&
-        child.type() == ExpressionNode::Type::ConstantMaths &&
-        static_cast<Constant &>(child).isExponentialE()) {
-      continue;
+    bool thisChildWasApproximated = true;
+    /* Do not approximate:
+     * - inside a parametered expression.
+     * - right of a store.
+     * - if child is e and it's the base of a log (so that `log(...,e)` can
+     *   be later beautified into `ln(...)`).
+     * Still increment numberOfApproximatedChildren in these cases so that the
+     * parent knows it can try to approximate even if those were not
+     * approximated. */
+    if (!((parameteredExpression &&
+           (i == ParameteredExpression::ParameterChildIndex() ||
+            i == ParameteredExpression::ParameteredChildIndex())) ||
+          (storeExpression && i == 1) ||
+          (type() == ExpressionNode::Type::Logarithm && i == 1 &&
+           child.type() == ExpressionNode::Type::ConstantMaths &&
+           static_cast<Constant &>(child).isExponentialE()))) {
+      childAtIndex(i).deepApproximateKeepingSymbols(reductionContext,
+                                                    &thisChildWasApproximated);
     }
-    bool thisChildWasApproximated = false;
-    childAtIndex(i).deepApproximateKeepingSymbols(reductionContext,
-                                                  &thisChildWasApproximated);
     numberOfApproximatedChildren += thisChildWasApproximated;
   }
   return numberOfApproximatedChildren;

@@ -383,6 +383,7 @@ void AbstractTextField::setText(const char *text) {
 bool AbstractTextField::privateHandleEventWhileEditing(
     Ion::Events::Event event) {
   assert(isEditing());
+  assert(isEditable());
   if (shouldFinishEditing(event)) {
     /* If textFieldDidFinishEditing displays a pop-up (because of an unvalid
      * text for instance), the text field will call willResignFirstResponder.
@@ -461,6 +462,7 @@ void AbstractTextField::removePreviousGlyphIfRepetition(
 // TODO : Handle cycling with non-default layouts.
 size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint,
                                          char *buffer, size_t bufferLength) {
+  assert(isEditable());
   if (!isEditing()) {
     reinitDraftTextBuffer();
     setEditing(true);
@@ -631,6 +633,7 @@ bool AbstractTextField::privateHandleSelectEvent(Ion::Events::Event event) {
 bool AbstractTextField::handleEventWithText(const char *eventText,
                                             bool indentation,
                                             bool forceCursorRightOfText) {
+  assert(isEditable());
   if (!isEditing()) {
     reinitDraftTextBuffer();
     setEditing(true);
@@ -681,6 +684,7 @@ bool AbstractTextField::handleEventWithText(const char *eventText,
 }
 
 void AbstractTextField::removeWholeText() {
+  assert(isEditable());
   reinitDraftTextBuffer();
   resetSelection();
   markRectAsDirty(bounds());

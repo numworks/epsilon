@@ -1,5 +1,5 @@
-#ifndef CALCULATION_EXPRESSION_WITH_EQUAL_SIGN_VIEW_H
-#define CALCULATION_EXPRESSION_WITH_EQUAL_SIGN_VIEW_H
+#ifndef CALCULATION_LAYOUT_WITH_EQUAL_SIGN_VIEW_H
+#define CALCULATION_LAYOUT_WITH_EQUAL_SIGN_VIEW_H
 
 #include <apps/i18n.h>
 #include <escher/layout_view.h>
@@ -8,9 +8,9 @@
 
 namespace Calculation {
 
-class ExpressionWithEqualSignView : public Escher::LayoutView {
+class LayoutWithEqualSignView : public Escher::LayoutView {
  public:
-  ExpressionWithEqualSignView()
+  LayoutWithEqualSignView()
       : m_equalSign(I18n::Message::Equal,
                     {.style = {.font = k_font},
                      .horizontalAlignment = KDGlyph::k_alignCenter}),

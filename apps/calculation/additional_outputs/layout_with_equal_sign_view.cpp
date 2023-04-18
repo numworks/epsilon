@@ -1,4 +1,4 @@
-#include "expression_with_equal_sign_view.h"
+#include "layout_with_equal_sign_view.h"
 
 #include <escher/metric.h>
 
@@ -6,7 +6,7 @@ using namespace Escher;
 
 namespace Calculation {
 
-KDSize ExpressionWithEqualSignView::minimalSizeForOptimalDisplay() const {
+KDSize LayoutWithEqualSignView::minimalSizeForOptimalDisplay() const {
   if (m_layout.isUninitialized()) {
     return KDSizeZero;
   }
@@ -20,18 +20,18 @@ KDSize ExpressionWithEqualSignView::minimalSizeForOptimalDisplay() const {
       expressionSize.height());
 }
 
-void ExpressionWithEqualSignView::drawRect(KDContext* ctx, KDRect rect) const {
+void LayoutWithEqualSignView::drawRect(KDContext* ctx, KDRect rect) const {
   // Do not color the whole background to avoid coloring behind the equal symbol
   LayoutView::drawRect(
       ctx, KDRect(0, 0, LayoutView::minimalSizeForOptimalDisplay()));
 }
 
-View* ExpressionWithEqualSignView::subviewAtIndex(int index) {
+View* LayoutWithEqualSignView::subviewAtIndex(int index) {
   assert(index == 0);
   return &m_equalSign;
 }
 
-void ExpressionWithEqualSignView::layoutSubviews(bool force) {
+void LayoutWithEqualSignView::layoutSubviews(bool force) {
   KDSize expressionSize = LayoutView::minimalSizeForOptimalDisplay();
   KDSize equalSize = m_equalSign.minimalSizeForOptimalDisplay();
   KDCoordinate expressionBaseline = layout().baseline(k_font);

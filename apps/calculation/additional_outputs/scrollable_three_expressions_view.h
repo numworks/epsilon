@@ -6,7 +6,7 @@
 
 #include "../../shared/scrollable_multiple_expressions_view.h"
 #include "../calculation.h"
-#include "expression_with_equal_sign_view.h"
+#include "layout_with_equal_sign_view.h"
 
 namespace Calculation {
 
@@ -51,7 +51,7 @@ class ScrollableThreeExpressionsView
     }
     void setEven(bool even) override { return; }
     Escher::LayoutView *leftExpressionView() const override {
-      return const_cast<ExpressionWithEqualSignView *>(&m_leftExpressionView);
+      return const_cast<LayoutWithEqualSignView *>(&m_leftExpressionView);
     }
     void setShowEqualSignAfterFormula(bool showEqual) {
       m_leftExpressionView.setShowEqual(showEqual);
@@ -62,7 +62,7 @@ class ScrollableThreeExpressionsView
 
    private:
     void reloadTextColor() override;
-    ExpressionWithEqualSignView m_leftExpressionView;
+    LayoutWithEqualSignView m_leftExpressionView;
     bool m_highlightWholeCell;
   };
 

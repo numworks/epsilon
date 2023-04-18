@@ -33,7 +33,7 @@ size_t UnicodeDecoder::printInBuffer(char* buffer, size_t bufferSize,
   }
   assert(m_position + printLength <= m_end);
   size_t result = 0;
-  for (int i = 0; i < printLength; i++) {
+  while (result < printLength) {
     CodePoint c = nextCodePoint();
     if (result + UTF8Decoder::CharSizeOfCodePoint(c) >= bufferSize) {
       buffer[0] = 0;

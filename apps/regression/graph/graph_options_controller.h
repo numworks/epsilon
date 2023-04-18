@@ -8,7 +8,7 @@
 #include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/scrollable_expression_view.h>
+#include <escher/scrollable_layout_view.h>
 
 #include "../store.h"
 #include "go_to_parameter_controller.h"
@@ -60,7 +60,7 @@ class GraphOptionsController
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>
       m_changeRegressionCell;
-  Escher::MenuCell<Escher::ScrollableExpressionView, Escher::MessageTextView>
+  Escher::MenuCell<Escher::ScrollableLayoutView, Escher::MessageTextView>
       m_regressionEquationCell;
   RCell m_rCell;
   RCell m_r2Cell;

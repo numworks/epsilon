@@ -1,5 +1,5 @@
-#ifndef ESCHER_SCROLLABLE_EXPRESSION_VIEW_H
-#define ESCHER_SCROLLABLE_EXPRESSION_VIEW_H
+#ifndef ESCHER_SCROLLABLE_LAYOUT_VIEW_H
+#define ESCHER_SCROLLABLE_LAYOUT_VIEW_H
 
 #include <escher/glyphs_view.h>
 #include <escher/layout_view.h>
@@ -8,16 +8,14 @@
 
 namespace Escher {
 
-class ScrollableExpressionView
-    : public ScrollableView<ScrollView::ArrowDecorator>,
-      public ScrollViewDataSource,
-      public CellWidget {
+class ScrollableLayoutView : public ScrollableView<ScrollView::ArrowDecorator>,
+                             public ScrollViewDataSource,
+                             public CellWidget {
  public:
-  ScrollableExpressionView(Responder* parentResponder,
-                           KDCoordinate leftRightMargin,
-                           KDCoordinate topBottomMargin,
-                           KDGlyph::Format format = {});
-  ScrollableExpressionView(KDGlyph::Format format = {});
+  ScrollableLayoutView(Responder* parentResponder, KDCoordinate leftRightMargin,
+                       KDCoordinate topBottomMargin,
+                       KDGlyph::Format format = {});
+  ScrollableLayoutView(KDGlyph::Format format = {});
   Poincare::Layout layout() const override;
   KDFont::Size font() const { return m_expressionView.font(); }
   void setFont(KDFont::Size font) {

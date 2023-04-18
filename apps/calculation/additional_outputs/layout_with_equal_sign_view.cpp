@@ -10,14 +10,14 @@ KDSize LayoutWithEqualSignView::minimalSizeForOptimalDisplay() const {
   if (m_layout.isUninitialized()) {
     return KDSizeZero;
   }
-  KDSize expressionSize = LayoutView::minimalSizeForOptimalDisplay();
+  KDSize layoutSize = LayoutView::minimalSizeForOptimalDisplay();
   if (!m_showEqual) {
-    return expressionSize;
+    return layoutSize;
   }
   KDSize equalSize = m_equalSign.minimalSizeForOptimalDisplay();
   return KDSize(
-      expressionSize.width() + equalSize.width() + Metric::CommonLargeMargin,
-      expressionSize.height());
+      layoutSize.width() + equalSize.width() + Metric::CommonLargeMargin,
+      layoutSize.height());
 }
 
 void LayoutWithEqualSignView::drawRect(KDContext* ctx, KDRect rect) const {
@@ -32,17 +32,16 @@ View* LayoutWithEqualSignView::subviewAtIndex(int index) {
 }
 
 void LayoutWithEqualSignView::layoutSubviews(bool force) {
-  KDSize expressionSize = LayoutView::minimalSizeForOptimalDisplay();
+  KDSize layoutSize = LayoutView::minimalSizeForOptimalDisplay();
   KDSize equalSize = m_equalSign.minimalSizeForOptimalDisplay();
-  KDCoordinate expressionBaseline = layout().baseline(k_font);
+  KDCoordinate layoutBaseline = layout().baseline(k_font);
   if (!m_showEqual) {
     setChildFrame(&m_equalSign, KDRectZero, force);
   } else {
-    setChildFrame(
-        &m_equalSign,
-        KDRect(expressionSize.width() + Metric::CommonLargeMargin,
-               expressionBaseline - equalSize.height() / 2, equalSize),
-        force);
+    setChildFrame(&m_equalSign,
+                  KDRect(layoutSize.width() + Metric::CommonLargeMargin,
+                         layoutBaseline - equalSize.height() / 2, equalSize),
+                  force);
   }
 }
 

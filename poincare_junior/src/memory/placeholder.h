@@ -26,7 +26,7 @@ class Placeholder {
   };
 
   consteval static uint8_t ParamsToValue(Tag tag, Filter filter) {
-    return (tag << k_bitsForFilter) | filter;
+    return tag | (filter << k_bitsForTag);
   }
   constexpr static Tag NodeToTag(const Node n) {
     return ValueToTag(NodeToValue(n));
@@ -48,11 +48,11 @@ class Placeholder {
     return static_cast<uint8_t>(*(n.block()->next()));
   }
   constexpr static Tag ValueToTag(uint8_t value) {
-    return static_cast<Tag>(Bit::getBitRange(
-        value, k_bitsForFilter + k_bitsForTag - 1, k_bitsForFilter));
+    return static_cast<Tag>(Bit::getBitRange(value, k_bitsForTag - 1, 0));
   }
   constexpr static Filter ValueToFilter(uint8_t value) {
-    return static_cast<Filter>(Bit::getBitRange(value, k_bitsForFilter - 1, 0));
+    return static_cast<Filter>(Bit::getBitRange(
+        value, k_bitsForTag + k_bitsForFilter - 1, k_bitsForTag));
   }
 };
 

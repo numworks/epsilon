@@ -22,7 +22,7 @@ Integer extractInteger(const Expression e) {
   return static_cast<const BasedInteger &>(e).integer();
 }
 
-void RationalListController::setExpression(Poincare::Expression e) {
+void RationalListController::setExpression(Expression e) {
   ExpressionsListController::setExpression(e);
   assert(!m_expression.isUninitialized());
   static_assert(k_maxNumberOfRows >= 2,

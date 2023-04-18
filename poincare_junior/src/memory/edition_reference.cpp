@@ -56,44 +56,38 @@ Node EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
   if (oldBlock == newBlock && oldSize == newSize) {
     return newNode;
   }
-
-  const bool poolContainsNew = pool->contains(newNode.block());
-  bool newIsAfterOld = poolContainsNew && newBlock > oldBlock;
-  // Fractal schemes
-  assert(!(poolContainsNew && newIsTree && oldNode.hasAncestor(newNode, true)));
-  if (newIsAfterOld && oldIsTree && newNode.hasAncestor(oldNode, true)) {
+  Block* finalBlock = oldBlock;
+  if (pool->contains(newNode.block())) {
+    // Fractal scheme
+    assert(!(newIsTree && oldNode.hasAncestor(newNode, true)));
+    if (oldIsTree && newNode.hasAncestor(oldNode, true)) {
+      oldSize -= newSize;
+    }
     pool->moveBlocks(oldBlock, newBlock, newSize);
-    // #|OLD1 NEW OLD2 # -> // # NEW|OLD1 OLD2 #
-    newIsAfterOld = false;
-    newBlock = oldBlock;
-    oldBlock += newSize;
-    oldSize -= newSize;
-  }
-  // Remove oldBlock, this offset will be invalidated
-  pool->removeBlocks(oldBlock, oldSize);
-  if (poolContainsNew) {
-    if (newIsAfterOld) {
-      // #|OLD # NEW # -> #|# NEW #
+    if (oldBlock > newBlock) {
+      finalBlock -= newSize;
+    }
+    pool->removeBlocks(finalBlock + newSize, oldSize);
+#if POINCARE_POOL_VISUALIZATION
+    if (oldBlock < newBlock) {
       newBlock -= oldSize;
     }
-    pool->moveBlocks(oldBlock, newBlock, newSize);
-    if (!newIsAfterOld) {
-      // # NEW #|# -> # #|NEW #
-      oldBlock -= newSize;
-    }
-#if POINCARE_POOL_VISUALIZATION
-    Log(LoggerType::Edition, "Replace", oldBlock, newSize, newBlock);
+    Log(LoggerType::Edition, "Replace", finalBlock, newSize, newBlock);
 #endif
   } else {
-    pool->insertBlocks(oldBlock, newBlock, newSize);
+    size_t minSize = std::min(oldSize, newSize);
+    pool->replaceBlocks(oldBlock, newBlock, minSize);
+    if (oldSize > newSize) {
+      pool->removeBlocks(oldBlock + minSize, oldSize - newSize);
+    } else {
+      pool->insertBlocks(oldBlock + minSize, newBlock + minSize,
+                         newSize - oldSize);
+    }
 #if POINCARE_POOL_VISUALIZATION
-    Log(LoggerType::Edition, "Replace", oldBlock, newSize);
+    Log(LoggerType::Edition, "Replace", finalBlock, newSize);
 #endif
   }
-  // Restore this offset
-  EditionPool::sharedEditionPool()->setNodeForIdentifier(m_identifier,
-                                                         Node(oldBlock));
-  return Node(oldBlock);
+  return Node(finalBlock);
 }
 
 EditionReference EditionReference::matchAndCreate(const Node pattern,

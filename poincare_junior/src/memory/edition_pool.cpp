@@ -108,7 +108,7 @@ void EditionPool::replaceBlocks(Block *destination, const Block *source,
   m_referenceTable.updateNodes(
       [](uint16_t *offset, Block *testedBlock, const Block *destination,
          const Block *source, int numberOfBlocks) {
-        if (destination <= testedBlock &&
+        if (testedBlock >= destination &&
             testedBlock < destination + numberOfBlocks) {
           *offset = ReferenceTable::UninitializedOffset;
         }

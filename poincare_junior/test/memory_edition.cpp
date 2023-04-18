@@ -74,104 +74,82 @@ QUIZ_CASE(pcj_edition_reference) {
 
   // Constructors
   editionPool->clone(ref0);
-  EditionReference ref3 = EditionReference(
+  EditionReference ref2 = EditionReference(
       editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(8)));
   assert_pool_contains(editionPool, {k_expr0, k_expr1, k_expr0, 8_e});
 
   // Insertions
-  ref3.insertNodeAfterNode(9_e);
+  ref2.insertNodeAfterNode(9_e);
   assert_pool_contains(editionPool, {k_expr0, k_expr1, k_expr0, 8_e, 9_e});
-  ref3.insertNodeAfterNode(EditionReference(10_e));
+  ref2.insertNodeAfterNode(EditionReference(10_e));
   assert_pool_contains(editionPool,
                        {k_expr0, k_expr1, k_expr0, 8_e, 10_e, 9_e});
-  ref3.insertTreeAfterNode(ref0);
+  ref2.insertTreeAfterNode(ref0);
   assert_pool_contains(editionPool,
                        {k_expr1, k_expr0, 8_e, k_expr0, 10_e, 9_e});
-  ref3.insertNodeBeforeNode(EditionReference(10_e));
+  ref2.insertNodeBeforeNode(EditionReference(10_e));
   assert_pool_contains(editionPool,
                        {k_expr1, k_expr0, 10_e, 8_e, k_expr0, 10_e, 9_e});
-  ref3.insertTreeBeforeNode(ref1);
+  ref2.insertTreeBeforeNode(ref1);
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
 
   // Replacements
-  ref3.replaceNodeByNode(ref3);
+  ref0 = ref2;  // 8_e
+  assert_trees_are_equal(ref0, 8_e);
+  ref1 = ref0.nextTree();  // k_expr0
+  ref2 = ref1.nextTree();  // 10_e
+
+  // Replacements by same
+  ref2 = ref2.replaceNodeByTree(ref2);
   assert_pool_contains(editionPool,
                        {k_expr0, 10_e, k_expr1, 8_e, k_expr0, 10_e, 9_e});
-  // TODO: Restore dangling reference on replaceBy
-  ref3 = ref3.replaceNodeByNode(11_e);
-  // quiz_assert(static_cast<Node>(ref3).isUninitialized());
+
+  // Replacements from Node outside of the EditionPool
+  ref0 = ref0.replaceNodeByNode(9_e);  // Same size
   assert_pool_contains(editionPool,
-                       {k_expr0, 10_e, k_expr1, 11_e, k_expr0, 10_e, 9_e});
-
-  EditionReference ref5 = ref3.replaceNodeByTree(k_expr1);
+                       {k_expr0, 10_e, k_expr1, 9_e, k_expr0, 10_e, 9_e});
+  ref1 = ref1.replaceTreeByNode(10_e);  // Smaller size
   assert_pool_contains(editionPool,
-                       {k_expr0, 10_e, k_expr1, k_expr1, k_expr0, 10_e, 9_e});
-
-  EditionReference subref5(ref5.childAtIndex(0).childAtIndex(1));
-  assert_trees_are_equal(subref5, k_subExpr1);
-  ref5.replaceTreeByTree(subref5);
-  assert_pool_contains(
-      editionPool, {k_expr0, 10_e, k_expr1, k_subExpr1, k_expr0, 10_e, 9_e});
-
-  EditionReference ref6(
-      editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(12)));
-  ref5.insertTreeBeforeNode(ref6);
-  EditionReference ref7(
-      editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(13)));
-  ref5.insertTreeBeforeNode(ref7);
-
-  assert_pool_contains(editionPool, {k_expr0, 10_e, k_expr1, 12_e, 13_e,
-                                     k_subExpr1, k_expr0, 10_e, 9_e});
-
-  ref7.replaceTreeByTree(ref6);
-  assert_pool_contains(editionPool, {k_expr0, 10_e, k_expr1, 12_e, k_subExpr1,
-                                     k_expr0, 10_e, 9_e});
-
-  ref6.replaceTreeByTree(ref5);
-  assert_pool_contains(
-      editionPool, {k_expr0, 10_e, k_expr1, k_subExpr1, k_expr0, 10_e, 9_e});
-
-  ref5.replaceTreeByTree(k_expr1);
+                       {k_expr0, 10_e, k_expr1, 9_e, 10_e, 10_e, 9_e});
+  ref2 = ref2.replaceNodeByTree(k_expr1);  // Bigger size
   assert_pool_contains(editionPool,
-                       {k_expr0, 10_e, k_expr1, k_expr1, k_expr0, 10_e, 9_e});
+                       {k_expr0, 10_e, k_expr1, 9_e, 10_e, k_expr1, 9_e});
 
-  ref0.replaceTreeByNode(12_e);
-  assert_pool_contains(editionPool,
-                       {k_expr0, 10_e, k_expr1, k_expr1, 12_e, 10_e, 9_e});
-
-  EditionReference subRef1(ref1.childAtIndex(0).childAtIndex(1));
-  assert_trees_are_equal(subRef1, k_subExpr1);
-
-  EditionReference ref8(k_expr0);
-  ref1.replaceTreeByTree(ref8);
-  assert_pool_contains(editionPool,
-                       {k_expr0, 10_e, k_expr0, k_expr1, 12_e, 10_e, 9_e});
+  // Replacements from nodes living in the EditionPool
+  EditionReference subRef0(ref2.childAtIndex(0).childAtIndex(1));
+  EditionReference subRef1(ref2.childAtIndex(0));
+  ref2 = ref2.replaceTreeByTree(subRef0);  // Child
   quiz_assert(subRef1.isUninitialized());
+  ref1.replaceNodeByNode(ref0);  // Before
+  quiz_assert(ref1.isUninitialized());
+  assert_pool_contains(editionPool,
+                       {k_expr0, 10_e, k_expr1, 9_e, k_subExpr1, 9_e});
+  ref0.replaceTreeByTree(ref2);  // After
+  quiz_assert(ref0.isUninitialized());
+  assert_pool_contains(editionPool, {k_expr0, 10_e, k_expr1, k_subExpr1, 9_e});
 
   // Removals
-  ref0.removeNode();
-  quiz_assert(ref0.isUninitialized());
-  assert_pool_contains(editionPool,
-                       {k_expr0, 10_e, k_expr0, k_expr1, 10_e, 9_e});
-  ref8.removeTree();
-  assert_pool_contains(editionPool, {k_expr0, 10_e, k_expr1, 10_e, 9_e});
+  ref0 = EditionReference(editionPool->firstBlock());  // k_expr0
+  ref1 = ref0.nextTree();                              // 10_e
+  ref2 = ref1.nextTree();                              // k_expr1
+
+  ref2.removeTree();
+  quiz_assert(ref2.isUninitialized());
+  ref1.removeNode();
+  quiz_assert(ref1.isUninitialized());
+  assert_pool_contains(editionPool, {k_expr0, k_subExpr1, 9_e});
 
   // Detach
-  EditionReference(ref5.childAtIndex(0)).detachTree();
-  ref5.insertTreeAfterNode(13_e);
+  subRef0 = EditionReference(ref0.childAtIndex(0));
+  subRef0.insertTreeBeforeNode(13_e);
+  subRef0.detachTree();
   assert_pool_contains(
-      editionPool, {k_expr0, 10_e, KPow(13_e, 7_e), 10_e, 9_e, KSub(5_e, 6_e)});
-  EditionReference(ref5.childAtIndex(1)).detachNode();
-  ref5.insertTreeAfterNode(14_e);
-  assert_pool_contains(editionPool, {k_expr0, 10_e, KPow(14_e, 13_e), 10_e, 9_e,
-                                     KSub(5_e, 6_e), 7_e});
+      editionPool, {KMult(13_e, 3_e, 4_e), k_subExpr1, 9_e, KAdd(1_e, 2_e)});
 }
 
 QUIZ_CASE(pcj_edition_reference_reallocation) {
   CachePool::sharedCachePool()->reset();
-  constexpr Tree k_expression = 1_e;
-
   EditionReference reference0(0_e);
   for (size_t i = 0; i < EditionPool::k_maxNumberOfReferences - 1; i++) {
     EditionReference reference1(1_e);

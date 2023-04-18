@@ -1643,15 +1643,15 @@ Expression Expression::deepApproximateKeepingSymbols(
     }
   }
 
-  if (nChildren == 0) {
-    return *this;
+  if (numberOfApproximatedChildren > 0) {
+    /* If at least 1 child was approximated, re-reduce.
+     * Example: if this is "x + cos(3) + cos(2)",
+     * after approximating children it becomes "x - 0.99 - 0.41".
+     * It needs now to be reduced to "x - 1.4" */
+    return shallowReduce(reductionContext);
   }
 
-  /* If at least 1 child was approximated, re-reduce.
-   * Example: if this is "x + cos(3) + cos(2)",
-   * after approximating children it becomes "x - 0.99 - 0.41".
-   * It needs now to be reduced to "x - 1.4" */
-  return shallowReduce(reductionContext);
+  return *this;
 }
 
 int Expression::deepApproximateChildrenKeepingSymbols(

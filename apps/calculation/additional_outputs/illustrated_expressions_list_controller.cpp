@@ -77,7 +77,7 @@ void IllustratedExpressionsListController::
     return;
   }
   /* But scroll to the top when we select the first
-   * ScrollableThreeExpressionsCell in order display the
+   * AdditionnalResultCell in order display the
    * illustration cell. */
   if (l->selectedRow() == 1 && showIllustration()) {
     l->scrollToCell(0);

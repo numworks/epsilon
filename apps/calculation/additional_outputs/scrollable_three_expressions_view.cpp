@@ -20,7 +20,7 @@ void ScrollableThreeExpressionsView::ContentCell::reloadTextColor() {
 void ScrollableThreeExpressionsView::setLayouts(Layout formulaLayout,
                                                 Layout exactLayout,
                                                 Layout approximateLayout) {
-  Shared::AbstractScrollableMultipleExpressionsView::setLayouts(
+  Shared::AbstractScrollableMultipleLayoutsView::setLayouts(
       formulaLayout, exactLayout, approximateLayout);
   setShowEqualSignAfterFormula(!exactLayout.isUninitialized() ||
                                !approximateLayout.isUninitialized());

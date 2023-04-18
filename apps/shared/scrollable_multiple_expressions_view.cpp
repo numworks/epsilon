@@ -10,7 +10,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell(
+AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
     float horizontalAlignment, KDFont::Size font)
     : m_rightExpressionView({.style = {.font = font}}),
       m_approximateSign(
@@ -22,14 +22,13 @@ AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell(
       m_displayCenter(true),
       m_horizontalAlignment(horizontalAlignment) {}
 
-KDColor
-AbstractScrollableMultipleExpressionsView::ContentCell::backgroundColor()
+KDColor AbstractScrollableMultipleLayoutsView::ContentCell::backgroundColor()
     const {
   KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
   return background;
 }
 
-void AbstractScrollableMultipleExpressionsView::ContentCell::setHighlighted(
+void AbstractScrollableMultipleLayoutsView::ContentCell::setHighlighted(
     bool highlight) {
   // Do not call HighlightCell::setHighlighted to avoid marking all cell as
   // dirty
@@ -37,7 +36,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::setHighlighted(
   updateSubviewsBackgroundAfterChangingState();
 }
 
-void AbstractScrollableMultipleExpressionsView::ContentCell::
+void AbstractScrollableMultipleLayoutsView::ContentCell::
     updateSubviewsBackgroundAfterChangingState() {
   KDColor defaultColor = backgroundColor();
   bool highlight = isHighlighted();
@@ -59,37 +58,37 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::
   }
 }
 
-void AbstractScrollableMultipleExpressionsView::ContentCell::reloadTextColor() {
+void AbstractScrollableMultipleLayoutsView::ContentCell::reloadTextColor() {
   m_rightExpressionView.setTextColor(displayCenter() ? Palette::GrayVeryDark
                                                      : KDColorBlack);
 }
 
-KDSize AbstractScrollableMultipleExpressionsView::ContentCell::
+KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
     minimalSizeForOptimalDisplay() const {
   return privateMinimalSizeForOptimalDisplay(false);
 }
 
-KDSize AbstractScrollableMultipleExpressionsView::ContentCell::
+KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
     minimalSizeForOptimalDisplayFullSize() const {
   return privateMinimalSizeForOptimalDisplay(true);
 }
 
-void AbstractScrollableMultipleExpressionsView::ContentCell::
+void AbstractScrollableMultipleLayoutsView::ContentCell::
     setSelectedSubviewPosition(
-        AbstractScrollableMultipleExpressionsView::SubviewPosition
+        AbstractScrollableMultipleLayoutsView::SubviewPosition
             subviewPosition) {
   m_selectedSubviewPosition = subviewPosition;
   setHighlighted(isHighlighted());
 }
 
-void AbstractScrollableMultipleExpressionsView::ContentCell::setDisplayCenter(
+void AbstractScrollableMultipleLayoutsView::ContentCell::setDisplayCenter(
     bool display) {
   m_displayCenter = display;
   reloadTextColor();
   layoutSubviews();
 }
 
-void AbstractScrollableMultipleExpressionsView::ContentCell::
+void AbstractScrollableMultipleLayoutsView::ContentCell::
     setExactAndApproximateAreStriclyEqual(bool isEqual) {
   m_rightIsStrictlyEqual = isEqual;
   approximateSign()->setMessage(isEqual ? I18n::Message::Equal
@@ -97,7 +96,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::
   reloadTextColor();
 }
 
-Layout AbstractScrollableMultipleExpressionsView::ContentCell::layoutAtPosition(
+Layout AbstractScrollableMultipleLayoutsView::ContentCell::layoutAtPosition(
     SubviewPosition position) const {
   if (position == SubviewPosition::Center) {
     return m_centeredExpressionView.layout();
@@ -109,7 +108,7 @@ Layout AbstractScrollableMultipleExpressionsView::ContentCell::layoutAtPosition(
   return leftExpressionView()->layout();
 }
 
-int AbstractScrollableMultipleExpressionsView::ContentCell::numberOfSubviews()
+int AbstractScrollableMultipleLayoutsView::ContentCell::numberOfSubviews()
     const {
   int nbOfSubviews = 1;
   if (displayCenter()) {
@@ -121,7 +120,7 @@ int AbstractScrollableMultipleExpressionsView::ContentCell::numberOfSubviews()
   return nbOfSubviews;
 }
 
-KDCoordinate AbstractScrollableMultipleExpressionsView::ContentCell::baseline(
+KDCoordinate AbstractScrollableMultipleLayoutsView::ContentCell::baseline(
     KDCoordinate* leftBaseline, KDCoordinate* centerBaseline,
     KDCoordinate* rightBaseline) const {
   // Left view
@@ -154,7 +153,7 @@ KDCoordinate AbstractScrollableMultipleExpressionsView::ContentCell::baseline(
   return std::max({leftViewBaseline, centerViewBaseline, rightViewBaseline});
 }
 
-void AbstractScrollableMultipleExpressionsView::ContentCell::subviewFrames(
+void AbstractScrollableMultipleLayoutsView::ContentCell::subviewFrames(
     KDRect* leftFrame, KDRect* centerFrame, KDRect* approximateSignFrame,
     KDRect* rightFrame) {
   // Subviews sizes
@@ -179,9 +178,8 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::subviewFrames(
       !leftExpressionView()->layout().isUninitialized()) {
     assert(leftFrame != nullptr);
     *leftFrame = KDRect(currentWidth, viewBaseline - leftBaseline, leftSize);
-    currentWidth +=
-        leftSize.width() +
-        AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
+    currentWidth += leftSize.width() +
+                    AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
   }
 
   // Layout center expression
@@ -191,18 +189,16 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::subviewFrames(
         m_approximateSign.minimalSizeForOptimalDisplay();
     *centerFrame =
         KDRect(currentWidth, viewBaseline - centerBaseline, centerSize);
-    currentWidth +=
-        AbstractScrollableMultipleExpressionsView::k_horizontalMargin +
-        centerSize.width();
+    currentWidth += AbstractScrollableMultipleLayoutsView::k_horizontalMargin +
+                    centerSize.width();
     *approximateSignFrame =
         displayApproximateSign()
             ? KDRect(currentWidth,
                      viewBaseline - approximateSignSize.height() / 2,
                      approximateSignSize)
             : KDRectZero;
-    currentWidth +=
-        AbstractScrollableMultipleExpressionsView::k_horizontalMargin +
-        approximateSignSize.width();
+    currentWidth += AbstractScrollableMultipleLayoutsView::k_horizontalMargin +
+                    approximateSignSize.width();
   }
 
   // Layout right expression
@@ -231,7 +227,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::subviewFrames(
   }
 }
 
-KDSize AbstractScrollableMultipleExpressionsView::ContentCell::
+KDSize AbstractScrollableMultipleLayoutsView::ContentCell::
     privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const {
   KDCoordinate width = 0;
   KDCoordinate height = 0;
@@ -241,7 +237,7 @@ KDSize AbstractScrollableMultipleExpressionsView::ContentCell::
       !leftExpressionView()->layout().isUninitialized()) {
     leftSize = leftExpressionView()->minimalSizeForOptimalDisplay();
     width += leftSize.width() +
-             AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
+             AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
     height = std::max(height, leftSize.height());
   }
 
@@ -249,7 +245,7 @@ KDSize AbstractScrollableMultipleExpressionsView::ContentCell::
   if (displayCenter() || (forceFullDisplay && displayableCenter())) {
     centerSize = m_centeredExpressionView.minimalSizeForOptimalDisplay();
     width += centerSize.width() +
-             2 * AbstractScrollableMultipleExpressionsView::k_horizontalMargin +
+             2 * AbstractScrollableMultipleLayoutsView::k_horizontalMargin +
              m_approximateSign.minimalSizeForOptimalDisplay().width();
     height = std::max(height, centerSize.height());
   }
@@ -265,7 +261,7 @@ KDSize AbstractScrollableMultipleExpressionsView::ContentCell::
   return KDSize(width, height);
 }
 
-View* AbstractScrollableMultipleExpressionsView::ContentCell::subviewAtIndex(
+View* AbstractScrollableMultipleLayoutsView::ContentCell::subviewAtIndex(
     int index) {
   bool leftIsVisible = leftExpressionView() != nullptr;
   if (leftIsVisible && index == 0) {
@@ -276,7 +272,7 @@ View* AbstractScrollableMultipleExpressionsView::ContentCell::subviewAtIndex(
   return views[index - leftIsVisible];
 }
 
-void AbstractScrollableMultipleExpressionsView::ContentCell::layoutSubviews(
+void AbstractScrollableMultipleLayoutsView::ContentCell::layoutSubviews(
     bool force) {
   if (bounds().width() <= 0 || bounds().height() <= 0) {
     // TODO Make this behaviour in a non-virtual layoutSublviews, and all layout
@@ -300,12 +296,11 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::layoutSubviews(
   }
 }
 
-AbstractScrollableMultipleExpressionsView::
-    AbstractScrollableMultipleExpressionsView(Responder* parentResponder,
-                                              View* contentCell)
+AbstractScrollableMultipleLayoutsView::AbstractScrollableMultipleLayoutsView(
+    Responder* parentResponder, View* contentCell)
     : ScrollableView(parentResponder, contentCell, this) {}
 
-void AbstractScrollableMultipleExpressionsView::setLayouts(
+void AbstractScrollableMultipleLayoutsView::setLayouts(
     Layout formulaLayout, Layout exactLayout, Layout approximateLayout) {
   bool updateRightLayout =
       contentCell()->rightExpressionView()->setLayout(approximateLayout);
@@ -330,7 +325,7 @@ void AbstractScrollableMultipleExpressionsView::setLayouts(
   }
 }
 
-void AbstractScrollableMultipleExpressionsView::reloadScroll() {
+void AbstractScrollableMultipleLayoutsView::reloadScroll() {
   if (selectedSubviewPosition() == SubviewPosition::Right) {
     /* Scroll to the right extremity, then back to the beginning of the right
      * expression. This ensures that the beginning of the expression is in
@@ -345,12 +340,12 @@ void AbstractScrollableMultipleExpressionsView::reloadScroll() {
     ScrollableView::reloadScroll();
   }
 }
-void AbstractScrollableMultipleExpressionsView::setDisplayCenter(bool display) {
+void AbstractScrollableMultipleLayoutsView::setDisplayCenter(bool display) {
   contentCell()->setDisplayCenter(display);
   layoutSubviews();
 }
 
-bool AbstractScrollableMultipleExpressionsView::handleEvent(
+bool AbstractScrollableMultipleLayoutsView::handleEvent(
     Ion::Events::Event event) {
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     bool leftIsVisible = false;

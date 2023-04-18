@@ -87,7 +87,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(
     Poincare::Layout inputLayout = cell->inputView()->layout();
     /* Default value of 0 for the baseline is the same as the one given to the
      * output baseline in
-     * AbstractScrollableMultipleExpressionsView::ContentCell::baseline. */
+     * AbstractScrollableMultipleLayoutsView::ContentCell::baseline. */
     KDCoordinate inputBaseline =
         inputLayout.isUninitialized()
             ? 0

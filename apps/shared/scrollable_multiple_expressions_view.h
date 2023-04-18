@@ -10,7 +10,7 @@
 
 namespace Shared {
 
-class AbstractScrollableMultipleExpressionsView
+class AbstractScrollableMultipleLayoutsView
     : public Escher::ScrollableView<Escher::ScrollView::ArrowDecorator>,
       public Escher::ScrollViewDataSource,
       public Escher::CellWidget {
@@ -19,8 +19,8 @@ class AbstractScrollableMultipleExpressionsView
       Escher::Metric::CommonLargeMargin;
   enum class SubviewPosition : uint8_t { Left = 0, Center = 1, Right = 2 };
 
-  AbstractScrollableMultipleExpressionsView(Responder* parentResponder,
-                                            View* contentCell);
+  AbstractScrollableMultipleLayoutsView(Responder* parentResponder,
+                                        View* contentCell);
   Escher::EvenOddCell* evenOddCell() { return contentCell(); }
   virtual void setLayouts(Poincare::Layout formulaLayout,
                           Poincare::Layout exactLayout,
@@ -135,13 +135,12 @@ class AbstractScrollableMultipleExpressionsView
 };
 
 class ScrollableTwoExpressionsView
-    : public AbstractScrollableMultipleExpressionsView {
+    : public AbstractScrollableMultipleLayoutsView {
  public:
   ScrollableTwoExpressionsView(Escher::Responder* parentResponder,
                                float horizontalAlignment = KDGlyph::k_alignLeft,
                                KDFont::Size font = KDFont::Size::Large)
-      : AbstractScrollableMultipleExpressionsView(parentResponder,
-                                                  &m_contentCell),
+      : AbstractScrollableMultipleLayoutsView(parentResponder, &m_contentCell),
         m_contentCell(horizontalAlignment, font) {
     setMargins(
         Escher::Metric::CommonSmallMargin, Escher::Metric::CommonLargeMargin,

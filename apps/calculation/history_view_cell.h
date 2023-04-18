@@ -39,7 +39,7 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   constexpr static KDCoordinate k_margin = Escher::Metric::CommonSmallMargin;
   constexpr static KDCoordinate k_inputOutputViewsVerticalMargin = k_margin;
   constexpr static KDCoordinate k_inputViewHorizontalMargin =
-      Shared::AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
+      Shared::AbstractScrollableMultipleLayoutsView::k_horizontalMargin;
   constexpr static KDCoordinate k_maxCellHeight = Ion::Display::Height * 2;
 
   static KDCoordinate Height(Calculation* calculation,

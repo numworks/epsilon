@@ -30,20 +30,19 @@ KDSize LayoutView::minimalSizeForOptimalDisplay() const {
   if (m_layout.isUninitialized()) {
     return KDSizeZero;
   }
-  KDSize expressionSize = m_layout.layoutSize(font());
-  return KDSize(expressionSize.width() + 2 * m_horizontalMargin,
-                expressionSize.height());
+  KDSize layoutSize = m_layout.layoutSize(font());
+  return KDSize(layoutSize.width() + 2 * m_horizontalMargin,
+                layoutSize.height());
 }
 
 KDPoint LayoutView::drawingOrigin() const {
-  KDSize expressionSize = m_layout.layoutSize(font());
+  KDSize layoutSize = m_layout.layoutSize(font());
   return KDPoint(
-      m_horizontalMargin + m_glyphFormat.horizontalAlignment *
-                               (bounds().width() - 2 * m_horizontalMargin -
-                                expressionSize.width()),
-      std::max<KDCoordinate>(
-          0, m_glyphFormat.verticalAlignment *
-                 (bounds().height() - expressionSize.height())));
+      m_horizontalMargin +
+          m_glyphFormat.horizontalAlignment *
+              (bounds().width() - 2 * m_horizontalMargin - layoutSize.width()),
+      std::max<KDCoordinate>(0, m_glyphFormat.verticalAlignment *
+                                    (bounds().height() - layoutSize.height())));
 }
 
 void LayoutView::drawRect(KDContext* ctx, KDRect rect) const {

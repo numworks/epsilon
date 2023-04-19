@@ -37,7 +37,6 @@ class TwoMeansZInterval : public Interval {
     p = TwoMeans::ProcessParamaterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);
   }
-  void compute() override { TwoMeans::ComputeZInterval(this); }
   const char* estimateSymbol() const override {
     return TwoMeans::EstimateSymbol();
   }
@@ -79,6 +78,7 @@ class TwoMeansZInterval : public Interval {
   float computeYMax() const override {
     return DistributionZ::YMax(m_degreesOfFreedom);
   }
+  void privateCompute() override { TwoMeans::ComputeZInterval(this); }
 
   double m_params[TwoMeans::k_numberOfParams];
 };

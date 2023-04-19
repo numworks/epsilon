@@ -39,8 +39,6 @@ class TwoMeansTInterval : public Interval {
     Interval::setParameterAtIndex(p, index);
   }
 
-  void compute() override { TwoMeans::ComputeTInterval(this); }
-
   const char* estimateSymbol() const override {
     return TwoMeans::EstimateSymbol();
   }
@@ -82,6 +80,8 @@ class TwoMeansTInterval : public Interval {
   float computeYMax() const override {
     return DistributionT::YMax(m_degreesOfFreedom);
   }
+
+  void privateCompute() override { TwoMeans::ComputeTInterval(this); }
 
   double m_params[TwoMeans::k_numberOfParams];
 };

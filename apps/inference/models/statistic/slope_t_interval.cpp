@@ -2,12 +2,10 @@
 
 namespace Inference {
 
-void SlopeTInterval::compute() {
+void SlopeTInterval::privateCompute() {
   double n = doubleCastedNumberOfPairsOfSeries(0);
   m_degreesOfFreedom = n - 2.0;
-  m_zCritical = computeIntervalCriticalValue();
   m_SE = computeStandardError();
-  m_marginOfError = m_zCritical * m_SE;
   m_estimate = slope(0);
 }
 

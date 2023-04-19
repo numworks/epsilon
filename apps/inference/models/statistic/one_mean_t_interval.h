@@ -37,8 +37,6 @@ class OneMeanTInterval : public Interval {
     Interval::setParameterAtIndex(p, index);
   }
 
-  void compute() override { OneMean::ComputeTInterval(this); }
-
   const char* estimateSymbol() const override {
     return OneMean::EstimateSymbol();
   }
@@ -74,6 +72,8 @@ class OneMeanTInterval : public Interval {
   float computeYMax() const override {
     return DistributionT::YMax(m_degreesOfFreedom);
   }
+
+  void privateCompute() override { OneMean::ComputeTInterval(this); }
 
   double m_params[OneMean::k_numberOfParams];
 };

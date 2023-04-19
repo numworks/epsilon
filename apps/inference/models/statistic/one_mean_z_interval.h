@@ -35,7 +35,6 @@ class OneMeanZInterval : public Interval {
     p = OneMean::ProcessParamaterForIndex(p, index);
     Interval::setParameterAtIndex(p, index);
   }
-  void compute() override { OneMean::ComputeZInterval(this); }
   const char* estimateSymbol() const override {
     return OneMean::EstimateSymbol();
   }
@@ -70,6 +69,7 @@ class OneMeanZInterval : public Interval {
   float computeYMax() const override {
     return DistributionZ::YMax(m_degreesOfFreedom);
   }
+  void privateCompute() override { OneMean::ComputeZInterval(this); }
 
   double m_params[OneMean::k_numberOfParams];
 };

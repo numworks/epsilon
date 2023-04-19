@@ -6,11 +6,13 @@ Inference::Inference() : MemoizedCurveViewRange() {}
 
 void Inference::computeCurveViewRange() {
   // x range
+  assert(computeXMin() < computeXMax());
   Poincare::Range1D xRange(computeXMin(), computeXMax());
   xRange.stretchIfTooSmall();
   protectedSetX(xRange);
 
   // y range
+  assert(computeYMin() < computeYMax());
   Poincare::Range1D yRange(computeYMin(), computeYMax());
   if (!yRange.isValid()) {
     yRange = DefaultYRange();

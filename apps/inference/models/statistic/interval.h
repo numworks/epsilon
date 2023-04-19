@@ -91,9 +91,15 @@ class Interval : public Statistic {
    * for the normalized distribution. */
   double intervalCriticalValue() const { return m_zCritical; };
   /* Returns the variance estimated from the sample. */
-  double standardError() const { return m_SE; };
+  double standardError() const {
+    assert(m_SE >= 0);
+    return m_SE;
+  };
   /* Returns the half-width of the confidence interval. */
-  double marginOfError() const { return m_marginOfError; };
+  double marginOfError() const {
+    assert(m_marginOfError >= 0);
+    return m_marginOfError;
+  };
 
   // Output
   int numberOfResults() const override {

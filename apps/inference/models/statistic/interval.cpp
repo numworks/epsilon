@@ -93,11 +93,13 @@ bool Interval::isGraphable() const {
 }
 
 float Interval::computeXMin() const {
+  assert(const_cast<Interval *>(this)->largestMarginOfError() >= 0);
   return estimate() - const_cast<Interval *>(this)->largestMarginOfError() *
                           k_intervalMarginRatio;
 }
 
 float Interval::computeXMax() const {
+  assert(const_cast<Interval *>(this)->largestMarginOfError() >= 0);
   return estimate() + const_cast<Interval *>(this)->largestMarginOfError() *
                           k_intervalMarginRatio;
 }

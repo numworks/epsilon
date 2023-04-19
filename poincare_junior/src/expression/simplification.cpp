@@ -3,11 +3,14 @@
 #include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
+#include <poincare_junior/src/memory/placeholder.h>
 #include <poincare_junior/src/n_ary.h>
 
 #include "number.h"
 
 namespace PoincareJ {
+
+using namespace Placeholders;
 
 EditionReference Simplification::SystematicReduction(
     EditionReference reference) {
@@ -47,56 +50,76 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
 }
 
 EditionReference Simplification::ExpandPower(EditionReference reference) {
-  Node expMulContracted = KPow(e_e, AAdd_e);
-  Node expMulExpanded = KMult(KPow(e_e, A1_e), KPow(e_e, A2_e));
+  Node expMulContracted = KPow(e_e, KPlaceholder<A, FilterAddition>());
+  Node expMulExpanded =
+      KMult(KPow(e_e, KPlaceholder<A, FilterFirstChild>()),
+            KPow(e_e, KPlaceholder<A, FilterExcludeFirstChild>()));
   reference = reference.matchAndReplace(expMulContracted, expMulExpanded);
-  Node expExpContracted = KPow(e_e, AMul_e);
-  Node expExpExpanded = KPow(KPow(e_e, A1_e), A2_e);
+  Node expExpContracted = KPow(e_e, KPlaceholder<A, FilterMultiplication>());
+  Node expExpExpanded = KPow(KPow(e_e, KPlaceholder<A, FilterFirstChild>()),
+                             KPlaceholder<A, FilterExcludeFirstChild>());
   reference = reference.matchAndReplace(expExpContracted, expExpExpanded);
   return reference;
 }
 
 EditionReference Simplification::ContractPower(EditionReference reference) {
-  /* TODO : Make it so that we could have this with C_e being any (or none)
-   *        other children at any place in the KMult.
-   * Node expMulExpanded = KMult(KPow(e_e, A_e), KPow(e_e, B_e), C_e);
-   * Node expMulContracted = KMult(KPow(e_e, KAdd(A_e, B_e)), C_e);
+  /* TODO : Make it so that we could have this with
+   * KPlaceholder<C>() being any (or none) other children at any
+   * place in the KMult. Node expMulExpanded = KMult(KPow(e_e,
+   * KPlaceholder<A>()), KPow(e_e,
+   * KPlaceholder<B>()), KPlaceholder<C>()); Node
+   * expMulContracted = KMult(KPow(e_e, KAdd(KPlaceholder<A>(),
+   * KPlaceholder<B>())), KPlaceholder<C>());
    */
-  Node expMulExpanded = KMult(KPow(e_e, A_e), KPow(e_e, B_e));
-  Node expMulContracted = KPow(e_e, KAdd(A_e, B_e));
+  Node expMulExpanded =
+      KMult(KPow(e_e, KPlaceholder<A>()), KPow(e_e, KPlaceholder<B>()));
+  Node expMulContracted = KPow(e_e, KAdd(KPlaceholder<A>(), KPlaceholder<B>()));
   reference = reference.matchAndReplace(expMulExpanded, expMulContracted);
-  Node expExpExpanded = KPow(KPow(e_e, A_e), B_e);
-  Node expExpContracted = KPow(e_e, KMult(A_e, B_e));
+  Node expExpExpanded = KPow(KPow(e_e, KPlaceholder<A>()), KPlaceholder<B>());
+  Node expExpContracted =
+      KPow(e_e, KMult(KPlaceholder<A>(), KPlaceholder<B>()));
   reference = reference.matchAndReplace(expExpExpanded, expExpContracted);
   return reference;
 }
 
 EditionReference Simplification::ExpandTrigonometric(
     EditionReference reference) {
-  Node sinContracted = KSin(AAdd_e);
+  Node sinContracted = KSin(KPlaceholder<A, FilterAddition>());
   Node sinExpanded =
-      KAdd(KMult(KSin(A1_e), KCos(A2_e)), KMult(KCos(A1_e), KSin(A2_e)));
+      KAdd(KMult(KSin(KPlaceholder<A, FilterFirstChild>()),
+                 KCos(KPlaceholder<A, FilterExcludeFirstChild>())),
+           KMult(KCos(KPlaceholder<A, FilterFirstChild>()),
+                 KSin(KPlaceholder<A, FilterExcludeFirstChild>())));
   reference = reference.matchAndReplace(sinContracted, sinExpanded);
-  Node cosContracted = KCos(AAdd_e);
+  Node cosContracted = KCos(KPlaceholder<A, FilterAddition>());
   Node cosExpanded =
-      KSub(KMult(KCos(A1_e), KCos(A2_e)), KMult(KSin(A1_e), KSin(A2_e)));
+      KSub(KMult(KCos(KPlaceholder<A, FilterFirstChild>()),
+                 KCos(KPlaceholder<A, FilterExcludeFirstChild>())),
+           KMult(KSin(KPlaceholder<A, FilterFirstChild>()),
+                 KSin(KPlaceholder<A, FilterExcludeFirstChild>())));
   reference = reference.matchAndReplace(cosContracted, cosExpanded);
   return reference;
 }
 
 EditionReference Simplification::ContractTrigonometric(
     EditionReference reference) {
-  Node sinSinExpanded = KMult(KSin(A_e), KSin(B_e));
+  Node sinSinExpanded = KMult(KSin(KPlaceholder<A>()), KSin(KPlaceholder<B>()));
   Node sinSinContracted =
-      KDiv(KSub(KCos(KSub(A_e, B_e)), KCos(KAdd(A_e, B_e))), 2_e);
+      KDiv(KSub(KCos(KSub(KPlaceholder<A>(), KPlaceholder<B>())),
+                KCos(KAdd(KPlaceholder<A>(), KPlaceholder<B>()))),
+           2_e);
   reference = reference.matchAndReplace(sinSinExpanded, sinSinContracted);
-  Node cosCosExpanded = KMult(KCos(A_e), KCos(B_e));
+  Node cosCosExpanded = KMult(KCos(KPlaceholder<A>()), KCos(KPlaceholder<B>()));
   Node cosCosContracted =
-      KDiv(KAdd(KCos(KSub(A_e, B_e)), KCos(KAdd(A_e, B_e))), 2_e);
+      KDiv(KAdd(KCos(KSub(KPlaceholder<A>(), KPlaceholder<B>())),
+                KCos(KAdd(KPlaceholder<A>(), KPlaceholder<B>()))),
+           2_e);
   reference = reference.matchAndReplace(cosCosExpanded, cosCosContracted);
-  Node sinCosExpanded = KMult(KSin(A_e), KCos(B_e));
+  Node sinCosExpanded = KMult(KSin(KPlaceholder<A>()), KCos(KPlaceholder<B>()));
   Node sinCosContracted =
-      KDiv(KAdd(KSin(KSub(A_e, B_e)), KSin(KAdd(A_e, B_e))), 2_e);
+      KDiv(KAdd(KSin(KSub(KPlaceholder<A>(), KPlaceholder<B>())),
+                KSin(KAdd(KPlaceholder<A>(), KPlaceholder<B>()))),
+           2_e);
   reference = reference.matchAndReplace(sinCosExpanded, sinCosContracted);
   return reference;
 }

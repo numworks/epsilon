@@ -397,10 +397,12 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(
         static_cast<uint8_t>(1));
   }
   PatternMatching::Context ctx;
-  ctx[Placeholder::NodeToTag(A_e)] = static_cast<Node>(variable);
-  ctx = PatternMatching::Match(KPow(A_e, B_e), expression, ctx);
+  ctx[Placeholders::A] = static_cast<Node>(variable);
+  ctx = PatternMatching::Match(
+      KPow(KPlaceholder<Placeholders::A>(), KPlaceholder<Placeholders::B>()),
+      expression, ctx);
   if (!ctx.isUninitialized()) {
-    Node exponent = ctx[Placeholder::NodeToTag(B_e)];
+    Node exponent = ctx[Placeholders::B];
     if (Integer::IsUint8(exponent)) {
       uint8_t exp = Integer::Uint8(exponent);
       assert(exp > 1);

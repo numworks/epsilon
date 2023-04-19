@@ -99,6 +99,22 @@ class Placeholder {
   }
 };
 
+namespace Placeholders {
+static constexpr Placeholder::Tag A = Placeholder::Tag::A;
+static constexpr Placeholder::Tag B = Placeholder::Tag::B;
+static constexpr Placeholder::Tag C = Placeholder::Tag::C;
+
+static constexpr Placeholder::MatchFilter FilterAddition =
+    Placeholder::MatchFilter::Addition;
+static constexpr Placeholder::MatchFilter FilterMultiplication =
+    Placeholder::MatchFilter::Multiplication;
+
+static constexpr Placeholder::CreateFilter FilterFirstChild =
+    Placeholder::CreateFilter::FirstChild;
+static constexpr Placeholder::CreateFilter FilterExcludeFirstChild =
+    Placeholder::CreateFilter::ExcludeFirstChild;
+}  // namespace Placeholders
+
 }  // namespace PoincareJ
 
 #endif

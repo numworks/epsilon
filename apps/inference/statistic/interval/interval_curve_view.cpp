@@ -176,8 +176,8 @@ IntervalCurveView::IntervalCurveView(Interval* interval,
 }
 
 void IntervalCurveView::reload(bool resetInterruption, bool force) {
-  // Temporarily set the interval with selected threshold so that the axis
-  // displays the right bounds
+  /* Temporarily set the interval with selected threshold so that the axis
+   * displays the right bounds */
   float mainThreshold = m_interval->threshold();
   m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(
       m_interval->threshold(), *m_selectedIntervalIndex));

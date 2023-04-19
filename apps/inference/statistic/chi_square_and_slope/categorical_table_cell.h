@@ -32,7 +32,6 @@ class CategoricalTableCell : public Escher::HighlightCell,
   bool handleEvent(Ion::Events::Event e) override;
 
   // HighlightCell
-  // Avoid reloading the whole table when
   void reloadCell() override {}
   Responder *responder() override { return this; }
 

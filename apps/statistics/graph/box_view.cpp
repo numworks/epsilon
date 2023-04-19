@@ -37,8 +37,8 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView *plotView, KDContext *ctx,
                        BoxHeight(numberOfSeries)),
                 color);
 
-  // Draw the horizontal lines linking the box to the whiskers
-  // Compute the middle from the pixels for a better precision
+  /* Draw the horizontal lines linking the box to the whiskers
+   * Compute the middle from the pixels for a better precision */
   float segmentOrd = plotView->pixelToFloat(
       Axis::Vertical,
       (k_verticalSideSize + BoxHeight(numberOfSeries) + k_verticalSideSize) /

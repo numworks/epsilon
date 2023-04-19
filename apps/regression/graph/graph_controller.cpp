@@ -319,8 +319,8 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     double dotDistanceX =
         std::fabs(dotAbscissa(closesDotCurve, dotSelected) - x);
     if (dotDistanceX != 0) {
-      // The regression X distance to the point is 0, so it is closer than the
-      // dot.
+      /* The regression X distance to the point is 0, so it is closer than the
+       * dot. */
       validDot = false;
     } else {
       // Compare the y distances

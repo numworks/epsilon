@@ -25,8 +25,8 @@ class ContinuousFunctionProperties {
   constexpr static CodePoint k_noSymbol = UCodePointEmpty;  // TODO
   constexpr static char k_ordinateName[2] = {k_ordinateSymbol, '\0'};
 
-  // Units are not handled when plotting function. The default unit does not
-  // matter
+  /* Units are not handled when plotting function. The default unit does not
+   * matter */
   constexpr static Poincare::Preferences::UnitFormat k_defaultUnitFormat =
       Poincare::Preferences::UnitFormat::Metric;
 

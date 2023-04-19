@@ -41,8 +41,8 @@ class RegressionController : public Escher::SelectableListViewController<
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 
  private:
-  // In all variants, Model::Type::None isn't made available.
-  // Default - Hides LinearApbx
+  /* In all variants, Model::Type::None isn't made available.
+   * Default - Hides LinearApbx */
   constexpr static int k_defaultNumberOfRows = Model::k_numberOfModels - 2;
   constexpr static Model::Type DefaultModelTypeAtIndex(int index) {
     return static_cast<Model::Type>(index + 1);

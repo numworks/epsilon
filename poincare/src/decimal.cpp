@@ -462,8 +462,8 @@ Decimal Decimal::Builder(const char *integralPart, int integralPartLength,
   }
   Integer numerator(integralPart, integralPartLength, false);
   assert(!numerator.isOverflow());
-  // Special case for 0.??? : get rid of useless 0s in front of the
-  // integralPartLength
+  /* Special case for 0.??? : get rid of useless 0s in front of the
+   * integralPartLength */
   if (fractionalPart != nullptr && integralPartLength == 1 &&
       UTF8Helper::CodePointIs(integralPart, '0')) {
     integralPartLength = 0;

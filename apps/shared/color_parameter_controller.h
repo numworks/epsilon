@@ -38,13 +38,11 @@ class ColorParameterController : public Escher::SelectableListViewController<
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 
  private:
+  // Remaining cell can be above and below so we add +2
   constexpr static int k_numberOfCells =
       Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(
           Escher::AbstractMenuCell::k_minimalLargeFontCellHeight,
-          Escher::Metric::TabHeight +
-              2 * Escher::Metric::StackTitleHeight);  // Remaining cell can be
-                                                      // above and below so we
-                                                      // add +2
+          Escher::Metric::TabHeight + 2 * Escher::Metric::StackTitleHeight);
 
   KDCoordinate defaultRowHeight() override;
   ExpiringPointer<Function> function();

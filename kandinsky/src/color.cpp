@@ -20,9 +20,8 @@ KDColor KDColor::Blend(KDColor first, KDColor second, uint8_t alpha) {
     return first;
   }
 
-  // We want to do first*alpha + second*(1-alpha)
-  // First is RRRRR GGGGGG BBBBB
-  // Second is same
+  /* We want to do first*alpha + second*(1-alpha)
+   * First and Second are RRRRR GGGGGG BBBBB */
 
   uint16_t oneMinusAlpha = 0x100 - alpha;
   uint16_t red = first.red() * alpha + second.red() * oneMinusAlpha;

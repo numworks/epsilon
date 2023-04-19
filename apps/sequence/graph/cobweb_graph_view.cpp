@@ -56,8 +56,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView *plotView,
       reinterpret_cast<SequenceContext *>(App::app()->localContext());
   Poincare::Expression function = sequence->expressionClone();
 
-  // Replace initial term by its value, to avoid replacing it by a wrong value
-  // at next step
+  /* Replace initial term by its value, to avoid replacing it by a wrong value
+   * at next step */
   Poincare::Sequence initialSymbol = Poincare::Sequence::Builder(
       name, strlen(name),
       Poincare::BasedInteger::Builder(sequence->initialRank()));

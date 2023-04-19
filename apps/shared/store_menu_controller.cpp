@@ -46,8 +46,8 @@ StoreMenuController::StoreMenuController()
       m_cell(this, nullptr, this),
       m_abortController(Invocation::Builder<StoreMenuController>(
                             [](StoreMenuController* storeMenu, void* sender) {
-                              // Close the warning and then the store menu which
-                              // are both modals
+                              /* Close the warning and then the store menu which
+                               * are both modals */
                               storeMenu->dismissModal();
                               storeMenu->close();
                               return true;
@@ -153,8 +153,8 @@ bool StoreMenuController::parseAndStore(const char* text) {
   bool storeImpossible = !store.storeValueForSymbol(context);
   app->concludeIntrusiveStorageChange();
   if (storeImpossible) {
-    // TODO: we could detect this before the close and open the warning over the
-    // store menu
+    /* TODO: we could detect this before the close and open the warning over the
+     * store menu */
     app->displayWarning(I18n::Message::VariableCantBeEdited);
   }
   return true;

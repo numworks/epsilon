@@ -117,8 +117,8 @@ Expression Factorial::shallowReduce(ReductionContext reductionContext) {
     }
     Rational fact =
         Rational::Builder(Integer::Factorial(r.unsignedIntegerNumerator()));
-    assert(!fact.numeratorOrDenominatorIsInfinity());  // because fact <
-                                                       // k_maxOperandValue!
+    // Because fact < k_maxOperandValue!
+    assert(!fact.numeratorOrDenominatorIsInfinity());
     replaceWithInPlace(fact);
     return std::move(fact);
   }

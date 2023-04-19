@@ -177,8 +177,8 @@ class TreeHandle {
     }
   }
 
-  // WARNING: if the children table is the result of a cast, the object
-  // downcasted has to be the same size as a TreeHandle.
+  /* WARNING: if the children table is the result of a cast, the object
+   * downcasted has to be the same size as a TreeHandle. */
   template <class T, class U>
   static T NAryBuilder(const Tuple& children = {});
   template <class T, class U>

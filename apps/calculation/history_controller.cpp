@@ -51,8 +51,8 @@ void HistoryController::reload() {
    */
   if (numberOfRows() > 0) {
     m_selectableTableView.scrollToBottom();
-    // Force to reload last added cell (hide the burger and exact output if
-    // necessary)
+    /* Force to reload last added cell (hide the burger and exact output if
+     * necessary) */
     tableViewDidChangeSelectionAndDidScroll(&m_selectableTableView, 0, -1);
   }
 }
@@ -359,15 +359,15 @@ void HistoryController::historyViewCellDidChangeSelection(
     m_selectableTableView.reloadData(false);
   }
 
-  // It might be necessary to scroll to the sub type if the cell overflows the
-  // screen
+  /* It might be necessary to scroll to the sub type if the cell overflows the
+   * screen */
   if (selectedRow() >= 0) {
     m_selectableTableView.scrollToSubviewOfTypeOfCellAtLocation(
         type, m_selectableTableView.selectedColumn(),
         m_selectableTableView.selectedRow());
   }
-  // Fill the selected cell and the previous selected cell because cells
-  // repartition might have changed
+  /* Fill the selected cell and the previous selected cell because cells
+   * repartition might have changed */
   *cell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
   *previousCell =
       static_cast<HistoryViewCell *>(m_selectableTableView.cellAtLocation(

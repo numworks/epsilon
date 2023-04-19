@@ -408,12 +408,12 @@ class Expression : public TreeHandle {
       UnitConversion unitConversion = UnitConversion::Default,
       bool approximateKeepingSymbols = false) const;
   Expression cloneAndReduce(ReductionContext reductionContext) const;
-  // TODO: deepReduceWithSystemCheckpoint should be private but we need to make
-  // poincare/text/helper.h a class to be able to friend it
+  /* TODO: deepReduceWithSystemCheckpoint should be private but we need to make
+   * poincare/text/helper.h a class to be able to friend it */
   Expression cloneAndDeepReduceWithSystemCheckpoint(
       ReductionContext* reductionContext, bool* reduceFailure) const;
-  // TODO: reduceAndRemoveUnit should be private but we need to make
-  // poincare/text/helper.h a class to be able to friend it
+  /* TODO: reduceAndRemoveUnit should be private but we need to make
+   * poincare/text/helper.h a class to be able to friend it */
   Expression reduceAndRemoveUnit(const ReductionContext& reductionContext,
                                  Expression* Unit);
   Expression cloneAndReduceOrSimplify(ReductionContext reductionContext,
@@ -452,9 +452,9 @@ class Expression : public TreeHandle {
    * calling this function. */
   int lengthOfListChildren() const;
 
-  /* Approximation Helper */
-  // These methods reset the sApproximationEncounteredComplex flag. They should
-  // not be use to implement node approximation
+  /* Approximation Helper
+   * These methods reset the sApproximationEncounteredComplex flag. They should
+   * not be use to implement node approximation */
   template <typename U>
   static U ParseAndSimplifyAndApproximateToScalar(
       const char* text, Context* context,

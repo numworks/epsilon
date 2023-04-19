@@ -127,9 +127,9 @@ int PowerNode::getPolynomialCoefficients(Context *context,
 bool PowerNode::isReal(Context *context, bool canContainMatrices) const {
   Expression base(childAtIndex(0));
   Expression index(childAtIndex(1));
-  // Both base and index are real and:
-  // - either base > 0
-  // - or index is an integer
+  /* Both base and index are real and:
+   *   - either base > 0
+   *   - or index is an integer */
   if (base.isReal(context, canContainMatrices) &&
       index.isReal(context, canContainMatrices) &&
       (base.isPositive(context) == TrinaryBoolean::True ||
@@ -618,8 +618,8 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
         trivialResult = Rational::Builder(0);
         break;
       case TrinaryBoolean::True:
-        // +inf^+x -> +inf
-        // -inf^+x -> +inf * (-1)^+x
+        /* +inf^+x -> +inf
+         * -inf^+x -> +inf * (-1)^+x */
         trivialResult = Infinity::Builder(false);
         if (baseIsPositive == TrinaryBoolean::False) {
           Power p = Power::Builder(Rational::Builder(-1), index);
@@ -1423,8 +1423,8 @@ Expression Power::denominator(const ReductionContext &reductionContext) const {
   if (positiveIndex.isUninitialized()) {
     return Expression();
   }
-  // we cannot shallowReduce pow as it is not attached to its parent yet
-  // if y was -1, pow is now x^1, denominator is then only x
+  /* We cannot shallowReduce pow as it is not attached to its parent yet.
+   * If y was -1, pow is now x^1, denominator is then only x. */
   if (positiveIndex.isRationalOne()) {
     return pow.childAtIndex(0);
   }

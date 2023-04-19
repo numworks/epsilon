@@ -114,8 +114,8 @@ class TreeNode {
   // AddChild collateral effect
   virtual void didChangeArity(int newNumberOfChildren) {}
 
-  // Serialization
-  // Return the number of chars written, without the null-terminating char.
+  /* Serialization
+   * Return the number of chars written, without the null-terminating char. */
   virtual int serialize(char *buffer, int bufferSize,
                         Preferences::PrintFloatMode floatDisplayMode,
                         int numberOfSignificantDigits) const {

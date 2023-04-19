@@ -102,8 +102,8 @@ void IllustratedExpressionsListController::setLineAtIndex(
       expression.approximate<double>(context, preferences->complexFormat(),
                                      preferences->angleUnit()),
       context, preferences);
-  // Make it editable to have Horiz(CodePoint("-"),CodePoint("1") ==
-  // String("-1")
+  /* Make it editable to have Horiz(CodePoint("-"),CodePoint("1") ==
+   * String("-1") */
   m_exactLayouts[index] = exact;
   m_approximatedLayouts[index] =
       exact.isIdenticalTo(approximated, true) ? Layout() : approximated;

@@ -6,8 +6,9 @@
 
 namespace Shared {
 
-// These classes exist only to have default constructors with default messages.
-// They can't be in Escher because I18n messages are compiled after Escher is.
+/* These classes exist only to have default constructors with default messages.
+ * They can't be in Escher because I18n messages are compiled after Escher is.
+ */
 
 class MessagePopUpController : public Escher::MessagePopUpController {
  public:

@@ -31,10 +31,9 @@ namespace Poincare {
 /* The original Appache implementation has been modified to use the libc
  * library. */
 double erfInv(double x) {
-  // beware that the logarithm argument must be
-  // commputed as (1.0 - x) * (1.0 + x),
-  // it must NOT be simplified as 1.0 - x * x as this
-  // would induce rounding errors near the boundaries +/-1
+  /* Beware that the logarithm argument must be computed as (1.0-x)*(1.0+x)
+   * It must NOT be simplified as (1.0-x*x) as this would induce rounding
+   * errors near the boundaries +/-1 */
   double w = -std::log((1.0 - x) * (1.0 + x));
   double p;
 
@@ -104,14 +103,13 @@ double erfInv(double x) {
     p = 1.0103004648645343977 + p * w;
     p = 4.8499064014085844221 + p * w;
   } else {
-    // this branch does not appears in the original code, it
-    // was added because the previous branch does not handle
-    // x = +/-1 correctly. In this case, w is positive infinity
-    // and as the first coefficient (-2.71e-11) is negative.
-    // Once the first multiplication is done, p becomes negative
-    // infinity and remains so throughout the polynomial evaluation.
-    // So the branch above incorrectly returns negative infinity
-    // instead of the correct positive infinity.
+    /* This branch does not appears in the original code, it was added because
+     * the previous branch does not handle x = +/-1 correctly. In this case, w
+     * is positive infinity and as the first coefficient (-2.71e-11) is
+     * negative. Once the first multiplication is done, p becomes negative
+     * infinity and remains so throughout the polynomial evaluation. So the
+     * branch above incorrectly returns negative infinity instead of the correct
+     * positive infinity. */
     p = INFINITY;
   }
   return p * x;

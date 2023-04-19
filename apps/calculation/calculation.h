@@ -82,8 +82,8 @@ class Calculation {
   const char* exactOutputText() const {
     return m_inputText + strlen(m_inputText) + 1;
   }
-  // See comment in approximateOutput implementation explaining the need of two
-  // approximateOutputTexts
+  /* See comment in approximateOutput implementation explaining the need of two
+   * approximateOutputTexts. */
   const char* approximateOutputText(
       NumberOfSignificantDigits numberOfSignificantDigits) const;
 

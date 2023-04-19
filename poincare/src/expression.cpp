@@ -1204,8 +1204,8 @@ void Expression::beautifyAndApproximateScalar(
       // Clone the ComplexCartesian to use it to compute the approximation
       ComplexCartesian ecomplexClone =
           ecomplex.clone().convert<ComplexCartesian>();
-      // To minimize the error on the approximation, we reduce the number of
-      // nodes in the expression by beautifying
+      /* To minimize the error on the approximation, we reduce the number of
+       * nodes in the expression by beautifying */
       ecomplexClone.real().deepBeautify(userReductionContext);
       ecomplexClone.imag().deepBeautify(userReductionContext);
       *approximateExpression =

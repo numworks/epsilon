@@ -51,8 +51,8 @@ float ExponentialDistribution::privateComputeXMax() const {
     result = 1.0f;
   }
   if (std::isinf(result)) {
-    // Lower privateComputeXMax. It is used for drawing so the value is not that
-    // important.
+    /* Lower privateComputeXMax. It is used for drawing so the value is not that
+     * important. */
     return 1.0f / m_parameter;
   }
   return result * (1.0f + k_displayRightMarginRatio);

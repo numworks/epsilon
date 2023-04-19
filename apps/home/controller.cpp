@@ -98,9 +98,8 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   // Handle Down when less than 3 icons at last row
   if (event == Ion::Events::Down &&
       selectionDataSource()->selectedRow() == numberOfRows() - 2) {
-    assert(selectionDataSource()->selectedColumn() >
-           columnOfLastIcon());  // Otherwise would have been handled by
-                                 // SelectableTableView
+    // Otherwise would have been handled by SelectableTableView
+    assert(selectionDataSource()->selectedColumn() > columnOfLastIcon());
     return m_view.selectableTableView()->selectCellAtLocation(
         columnOfLastIcon(), numberOfRows() - 1);
   }

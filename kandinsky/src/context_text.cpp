@@ -103,13 +103,11 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
         codePoint = decoder.nextCodePoint();
       }
       KDFont::Font(style.font)->colorizeGlyphBuffer(&palette, &glyphBuffer);
-      // Push the character on the screen
-      fillRectWithPixels(
-          KDRect(position, glyphSize), glyphBuffer.colorBuffer(),
-          glyphBuffer.colorBuffer()  // It's OK to trash the content of the
-                                     // color buffer since we'll re-fetch it for
-                                     // the next char anyway
-      );
+      /* Push the character on the screen
+       * It's OK to trash the content of the color buffer since we'll re-fetch
+       * it for the next char anyway */
+      fillRectWithPixels(KDRect(position, glyphSize), glyphBuffer.colorBuffer(),
+                         glyphBuffer.colorBuffer());
       position = position.translatedBy(KDPoint(glyphSize.width(), 0));
     }
   }

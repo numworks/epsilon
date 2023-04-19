@@ -159,8 +159,9 @@ Expression BinomialCoefficient::shallowReduce(
     Rational factor = Rational::Builder(nMinusI, kMinusI);
     result = Rational::Multiplication(result, factor);
   }
-  // As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~10^89
-  // If n was negative, k - n < k_maxNValue, result < binomial(-150,150) ~10^88
+  /* As we cap the n < k_maxNValue = 300, result < binomial(300, 150) ~10^89
+   * If n was negative, k - n < k_maxNValue, result < binomial(-150,150) ~10^88
+   */
   assert(!result.numeratorOrDenominatorIsInfinity());
   replaceWithInPlace(result);
   return std::move(result);

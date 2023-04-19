@@ -345,8 +345,8 @@ Expression Derivative::shallowReduce(ReductionContext reductionContext) {
     return result.deepReduce(reductionContext);
   }
 
-  // If derivation fails, we still need to decrease the derivation order
-  // according to what was already done.
+  /* If derivation fails, we still need to decrease the derivation order
+   * according to what was already done. */
   replaceChildAtIndexInPlace(numberOfChildren() - 1,
                              Rational::Builder(currentDerivationOrder));
   Dependency d = Dependency::Builder(Undefined::Builder(), listOfDependencies);

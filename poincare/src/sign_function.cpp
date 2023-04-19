@@ -98,8 +98,8 @@ Expression SignFunction::shallowReduce(ReductionContext reductionContext) {
     }
     Complex<float> c = static_cast<Complex<float>&>(childApproximated);
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
-      // c's approximation has no sign (c is complex or NAN)
-      // sign(-x) = -sign(x)
+      /* c's approximation has no sign (c is complex or NAN)
+       * sign(-x) = -sign(x) */
       Expression oppChild =
           child.makePositiveAnyNegativeNumeralFactor(reductionContext);
       if (oppChild.isUninitialized()) {
@@ -109,9 +109,9 @@ Expression SignFunction::shallowReduce(ReductionContext reductionContext) {
       Multiplication m = Multiplication::Builder(Rational::Builder(-1));
       replaceWithInPlace(m);
       m.addChildAtIndexInPlace(sign, 1, 1);
-      // sign does not need to be shallowReduced because x = -NAN --> x = NAN
-      return std::move(m);  // m does not need to be shallowReduced, -1*sign
-                            // cannot be reduced
+      /* sign doesn't need to be shallowReduced because x = -NAN --> x = NAN
+       * m doesn't need to be shallowReduced because -1*sign cannot be reduced*/
+      return std::move(m);
     }
     resultSign = Rational::Builder(c.real() > 0 ? 1 : (c.real() < 0 ? -1 : 0));
   }

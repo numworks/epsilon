@@ -403,8 +403,8 @@ size_t TextArea::Text::removeText(const char *start, const char *end) {
     UTF8Helper::CountGlyphsInLine(text(), &b, &a, start, end);
 
     if (a + b > k_maxLineChars) {
-      // Resulting line would exceed limits, no text is removed
-      // TODO error message: Add Message to explain failure to remove text
+      /* Resulting line would exceed limits, no text is removed
+       * TODO error message: Add Message to explain failure to remove text */
       return 0;
     }
   }
@@ -509,8 +509,8 @@ void TextArea::ContentView::drawRect(KDContext *ctx, KDRect rect) const {
 
   KDSize glyphSize = KDFont::GlyphSize(m_font);
 
-  // We want to draw even partially visible characters. So we need to round
-  // down for the top left corner and up for the bottom right one.
+  /* We want to draw even partially visible characters. So we need to round
+   * down for the top left corner and up for the bottom right one. */
   Text::Position topLeft(rect.x() / glyphSize.width(),
                          rect.y() / glyphSize.height());
   Text::Position bottomRight(rect.right() / glyphSize.width() + 1,

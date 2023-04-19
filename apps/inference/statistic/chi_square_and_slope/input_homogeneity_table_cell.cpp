@@ -69,9 +69,9 @@ void InputHomogeneityTableCell::willDisplayInnerCellAtLocation(
 }
 
 void InputHomogeneityTableCell::createCells() {
-  // We could equivalently use
-  // DynamicCellsDataSource<InferenceEvenOddEditableCell,
-  // k_homogeneityTableNumberOfReusableInnerCells>::m_cells
+  /* We could equivalently use
+   * DynamicCellsDataSource<InferenceEvenOddEditableCell,
+   * k_homogeneityTableNumberOfReusableInnerCells>::m_cells */
   if (DynamicCellsDataSource<
           InferenceEvenOddBufferCell,
           k_homogeneityTableNumberOfReusableHeaderCells>::m_cells == nullptr) {
@@ -82,9 +82,9 @@ void InputHomogeneityTableCell::createCells() {
                            k_homogeneityTableNumberOfReusableInnerCells>::
         createCellsWithOffset(k_homogeneityTableNumberOfReusableHeaderCells *
                               sizeof(InferenceEvenOddBufferCell));
-    // We could equivalently use
-    // DynamicCellsDataSource<InferenceEvenOddEditableCell,
-    // k_homogeneityTableNumberOfReusableInnerCells>::m_delegate
+    /* We could equivalently use
+     * DynamicCellsDataSource<InferenceEvenOddEditableCell,
+     * k_homogeneityTableNumberOfReusableInnerCells>::m_delegate */
     DynamicCellsDataSource<
         InferenceEvenOddBufferCell,
         k_homogeneityTableNumberOfReusableHeaderCells>::m_delegate->tableView()

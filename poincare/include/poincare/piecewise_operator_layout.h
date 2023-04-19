@@ -60,8 +60,8 @@ class PiecewiseOperatorLayout /*final*/ : public GridLayout {
   void addRow(Layout leftLayout, Layout rightLayout = Layout());
 
  private:
-  using GridLayout::addChildAtIndexInPlace;  // Make private. Use addRow
-                                             // instead.
+  // Make private. Use addRow instead.
+  using GridLayout::addChildAtIndexInPlace;
   PiecewiseOperatorLayoutNode *node() const {
     return static_cast<PiecewiseOperatorLayoutNode *>(Layout::node());
   }

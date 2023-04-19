@@ -96,8 +96,8 @@ Layout IntegralLayoutNode::XNTLayout(int childIndex) const {
   return LayoutNode::XNTLayout();
 }
 
-// Return pointer to the first or the last integral from left to right
-// (considering multiple integrals in a row)
+/* Return pointer to the first or the last integral from left to right
+ * (considering multiple integrals in a row). */
 IntegralLayoutNode *IntegralLayoutNode::mostNestedIntegral(
     NestedPosition position) {
   IntegralLayoutNode *p = this;
@@ -109,8 +109,8 @@ IntegralLayoutNode *IntegralLayoutNode::mostNestedIntegral(
   return p;
 }
 
-// Return pointer to the integral immediately on the right. If none is found,
-// return nullptr
+/* Return pointer to the integral immediately on the right. If none is found,
+ * return nullptr */
 IntegralLayoutNode *IntegralLayoutNode::nextNestedIntegral() {
   LayoutNode *integrand = integrandLayout();
   if (integrand->type() == Type::IntegralLayout) {
@@ -125,8 +125,8 @@ IntegralLayoutNode *IntegralLayoutNode::nextNestedIntegral() {
   return nullptr;
 }
 
-// Return pointer to the integral immediately on the left. If none is found,
-// return nullptr
+/* Return pointer to the integral immediately on the left. If none is found,
+ * return nullptr */
 IntegralLayoutNode *IntegralLayoutNode::previousNestedIntegral() {
   assert(type() == Type::IntegralLayout);
   LayoutNode *p = parent();
@@ -138,8 +138,8 @@ IntegralLayoutNode *IntegralLayoutNode::previousNestedIntegral() {
     if (p->childAtIndex(0) == this) {
       return static_cast<IntegralLayoutNode *>(p);
     } else {
-      // If this is not parent's integrand, it means that it is either a bound
-      // or differential
+      /* If this is not parent's integrand, it means that it is either a bound
+       * or differential */
       return nullptr;
     }
   } else if (p->isHorizontal()) {
@@ -149,9 +149,9 @@ IntegralLayoutNode *IntegralLayoutNode::previousNestedIntegral() {
       return nullptr;
     }
     if (p->numberOfChildren() == 1 && prev->type() == Type::IntegralLayout) {
-      // We can consider the integrals in a row only if the horizontal layout
-      // just contains an integral The horizontal layout must be the previous
-      // integral's integrand
+      /* We can consider the integrals in a row only if the horizontal layout
+       * just contains an integral The horizontal layout must be the previous
+       * integral's integrand */
       if (prev->childAtIndex(0) == p) {
         return static_cast<IntegralLayoutNode *>(prev);
       }
@@ -289,8 +289,8 @@ KDCoordinate IntegralLayoutNode::computeBaseline(KDFont::Size font) {
            std::max(integrandLayout()->baseline(font),
                     differentialLayout()->baseline(font));
   } else {
-    // If integrals are in a row, they must have the same baseline. Since the
-    // last integral has the lowest, we take this one for all the others
+    /* If integrals are in a row, they must have the same baseline. Since the
+     * last integral has the lowest, we take this one for all the others */
     return last->baseline(font);
   }
 }
@@ -326,8 +326,8 @@ KDPoint IntegralLayoutNode::positionOfChild(LayoutNode *child,
 }
 
 KDCoordinate IntegralLayoutNode::centralArgumentHeight(KDFont::Size font) {
-  // When integrals are in a row, the last one is the tallest. We take its
-  // central argument height to define the one of the others integrals
+  /* When integrals are in a row, the last one is the tallest. We take its
+   * central argument height to define the one of the others integrals */
   IntegralLayoutNode *last = mostNestedIntegral(NestedPosition::Next);
   if (this == last) {
     KDCoordinate integrandHeight = integrandLayout()->layoutSize(font).height();

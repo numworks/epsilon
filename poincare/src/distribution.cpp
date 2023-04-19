@@ -119,10 +119,10 @@ double Distribution::
         std::fabs(result.x() - bx) < FLT_EPSILON)) {
     /* We would like to put this as an assertion, but sometimes we do get
      * false result: we replace them with inf to make the problem obvious to
-     * the student. */
-    assert(
-        false);  // TODO this assert is used to hunt a case where that happens.
-                 // If it doesn't, then we can remove this block of code
+     * the student.
+     * TODO this assert is used to hunt a case where that happens. If it
+     * doesn't, then we can remove this block of code*/
+    assert(false);
     return p > 0.5 ? INFINITY : -INFINITY;
   }
   return result.x();

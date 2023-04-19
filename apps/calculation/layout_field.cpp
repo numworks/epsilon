@@ -156,13 +156,11 @@ bool LayoutField::handleDivision() {
         if (editionIn1D) {
           // 1D: MixedFraction -> DenominatorOfEmptyFraction
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
-          handled = Escher::LayoutField::handleEvent(
-              Ion::Events::Right);  // TODO : OR m_textField.moveCursorRight();
-                                    // but protected in TextInput
+          // TODO: OR m_textField.moveCursorRight(); but protected in TextInput
+          handled = Escher::LayoutField::handleEvent(Ion::Events::Right);
           assert(handled);
-          handled = Escher::LayoutField::handleEvent(
-              Ion::Events::Backspace);  // TODO : OR
-                                        // m_textField.removePreviousGlyph();
+          // TODO : OR m_textField.removePreviousGlyph();
+          handled = Escher::LayoutField::handleEvent(Ion::Events::Backspace);
           assert(handled);
         } else {
           // 2D: MixedFraction -> NumeratorOfEmptyFraction

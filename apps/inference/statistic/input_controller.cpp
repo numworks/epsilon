@@ -43,8 +43,9 @@ void InputController::InputTitle(Escher::ViewController *vc,
                                  Statistic *statistic, char *titleBuffer,
                                  size_t titleBufferSize) {
   if (statistic->hasHypothesisParameters()) {
-    // H0:<first symbol>=<firstParam> Ha:<first symbol><operator
-    // symbol><firstParams> α=<threshold>
+    /* H0:<first symbol>=<firstParam>
+     * Ha:<first symbol><operator symbol><firstParams>
+     * α=<threshold> */
     const char *symbol = statistic->hypothesisSymbol();
     const char *op = Poincare::ComparisonNode::ComparisonOperatorString(
         statistic->hypothesisParams()->comparisonOperator());
@@ -156,8 +157,8 @@ TextField *InputController::textFieldOfCellAtIndex(HighlightCell *cell,
 }
 
 bool InputController::handleEvent(Ion::Events::Event event) {
-  // If the previous controller was the hypothesis controller, the pop on Left
-  // event is unable.
+  /* If the previous controller was the hypothesis controller, the pop on Left
+   * event is unable. */
   return !m_statistic->hasHypothesisParameters() &&
          popFromStackViewControllerOnLeftEvent(event);
 }

@@ -476,9 +476,9 @@ void VariableBoxController::insertTextInCaller(const char *text,
 
 void VariableBoxController::loadBuiltinNodes(const char *textToAutocomplete,
                                              int textToAutocompleteLength) {
-  // TODO Could be great to use strings defined in STATIC const char *const
-  // tok_kw[] in python/lexer.c
-  /* The commented values do not work with our current MicroPython but might
+  /* TODO Could be great to use strings defined in STATIC const char *const
+   * tok_kw[] in python/lexer.c
+   * The commented values do not work with our current MicroPython but might
    * work later, which is why we keep them. */
   const struct {
     const char *name;
@@ -1127,8 +1127,9 @@ bool VariableBoxController::addNodeIfMatches(
     return true;
   }
 
-  // Step 2: Add Node
-  // Step 2.1: find where to add the node (and check that it doesn't exist yet)
+  /* Step 2: Add Node
+   *  Step 2.1: find where to add the node (and check that it doesn't exist yet)
+   */
   size_t insertionIndex = m_nodesCount;
   if (nodeOrigin == k_builtinsOrigin) {
     /* For builtin nodes, we don't need to check whether the node was already
@@ -1139,9 +1140,9 @@ bool VariableBoxController::addNodeIfMatches(
     insertionIndex = nodesCountForOrigin(k_currentScriptOrigin) +
                      nodesCountForOrigin(k_builtinsOrigin);
   } else {
-    // Look where to add
-    // This could be faster with dichotomia, but there is no speed problem for
-    // now
+    /* Look where to add
+     * This could be faster with dichotomia, but there is no speed problem for
+     * now */
     size_t cumulatedNodeCount = 0;
     for (uint8_t origin = 0; origin < m_originsCount; ++origin) {
       size_t originNodesCount = nodesCountForOrigin(origin);
@@ -1182,20 +1183,20 @@ bool VariableBoxController::addNodeIfMatches(
                  (nodeType == ScriptNode::Type::WithParentheses ? 2 : 0) <
              k_labelCharSize);
 
-  // Step 2.2: Add any new import source name
+  //   Step 2.2: Add any new import source name
   if (nodeOrigin == m_originsCount && m_displaySubtitles) {
     assert(nodeOrigin >= k_importedOrigin);
     assert(nodeSourceName != nullptr);
     m_originsName[m_originsCount] = nodeSourceName;
   }
 
-  // Step 2.3: Shift all the following nodes
+  //   Step 2.3: Shift all the following nodes
   assert(insertionIndex >= 0);
   for (size_t i = m_nodesCount; i > insertionIndex; i--) {
     m_scriptNodes[i] = m_scriptNodes[i - 1];
   }
 
-  // Step 2.4: Add the node
+  //   Step 2.4: Add the node
   m_scriptNodes[insertionIndex] =
       ScriptNode(nodeType, nodeName, nodeNameLength, nullptr,
                  m_displaySubtitles ? nodeDescription : nodeSourceName);

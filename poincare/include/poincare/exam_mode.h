@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: CC-BY-NC-ND-4.0
-// Caution: Dutch exam mode is subject to a compliance certification by a
-// government agency. Distribution of a non-certified Dutch exam mode is
-// illegal.
+/* SPDX-License-Identifier: CC-BY-NC-ND-4.0
+ * Caution: Dutch exam mode is subject to a compliance certification by a
+ * government agency. Distribution of a non-certified Dutch exam mode is
+ * illegal. */
 
 #ifndef POINCARE_EXAM_MODE_H
 #define POINCARE_EXAM_MODE_H

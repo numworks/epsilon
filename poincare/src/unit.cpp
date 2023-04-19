@@ -1250,8 +1250,8 @@ Expression Unit::BuildSplit(double value, const Unit* units, int length,
 
   double baseRatio = units->node()->representative()->ratio();
   double basedValue = value / baseRatio;
-  // WARNING: Maybe this should be compared to 0.0 instead of EpsilonLax ? (see
-  // below)
+  /* WARNING: Maybe this should be compared to 0.0 instead of EpsilonLax ? (see
+   * below) */
   if (std::isinf(basedValue) ||
       std::fabs(basedValue) < Float<double>::EpsilonLax()) {
     return Multiplication::Builder(Number::FloatNumber(basedValue), units[0]);

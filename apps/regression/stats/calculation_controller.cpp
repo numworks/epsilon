@@ -83,8 +83,8 @@ void CalculationController::tableViewDidChangeSelectionAndDidScroll(
     bool firstSubCellSelected = true;
     if (previousSelectedCol > 1 && previousSelectedRow >= 0 &&
         previousSelectedRow <= k_numberOfDoubleBufferCalculations) {
-      // If we come from another double text cell, we have to update
-      // subselection
+      /* If we come from another double text cell, we have to update
+       * subselection */
       EvenOddDoubleBufferTextCell *myPreviousCell =
           static_cast<EvenOddDoubleBufferTextCell *>(
               t->cellAtLocation(previousSelectedCol, previousSelectedRow));

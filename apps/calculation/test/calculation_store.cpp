@@ -455,8 +455,8 @@ QUIZ_CASE(calculation_symbolic_computation) {
   // Destroy records
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 
-  // 2 - Circularly defined functions
-  //   A - f(x) = g(x) = f(x)
+  /* 2 - Circularly defined functions
+   *   A - f(x) = g(x) = f(x) */
   assertMainCalculationOutputIs("1→f(x)", "1", &globalContext, &store);
   assertMainCalculationOutputIs("f(x)→g(x)", "f(x)", &globalContext, &store);
   assertMainCalculationOutputIs("g(x)→f(x)", "g(x)", &globalContext, &store);

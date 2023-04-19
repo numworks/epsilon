@@ -45,8 +45,8 @@ int SymbolNode::getVariables(Context* context, isVariableTest isVariable,
    * expanded and replaced. */
   if (isVariable(m_name, context)) {
     int index = 0;
-    // variables is in fact of type
-    // char[k_maxNumberOfVariables][maxSizeVariable]
+    /* variables is in fact of type
+     * char[k_maxNumberOfVariables][maxSizeVariable] */
     while (index < maxSizeVariable * Expression::k_maxNumberOfVariables &&
            variables[index] != 0) {
       if (strcmp(m_name, &variables[index]) == 0) {
@@ -93,9 +93,8 @@ Expression SymbolNode::deepReplaceReplaceableSymbols(
 ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
   UTF8Decoder decoder(m_name);
   decoder.nextCodePoint();
-  if (decoder.nextCodePoint() ==
-      UCodePointNull) {  // nextCodePoint asserts that the first character is
-                         // non-null
+  // nextCodePoint asserts that the first character is  non-null
+  if (decoder.nextCodePoint() == UCodePointNull) {
     return LayoutShape::OneLetter;
   }
   return LayoutShape::MoreLetters;

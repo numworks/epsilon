@@ -9,8 +9,8 @@
 
 namespace Shared {
 
-// ExpressionModelStore is a handle to
-// Ion::Storage::FileSystem::sharedFileSystem
+/* ExpressionModelStore is a handle to
+ * Ion::Storage::FileSystem::sharedFileSystem */
 
 class ExpressionModelStore {
   // TODO find better name (once we remove ExpressionModelStore?)

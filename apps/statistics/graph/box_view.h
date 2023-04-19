@@ -42,9 +42,9 @@ class BoxPlotPolicy {
   // A calculation may be a quantile or an outlier. It has chevrons if selected.
   constexpr static KDCoordinate k_biggestCalculationWidth =
       std::max({k_quantileBarWidth, Chevrons::k_chevronWidth, k_outlierSize});
-  // Object and its center:       --o-- (5)   --o--- (6)
-  // Right pixels to be dirtied:  ##    (2)   ##     (2)
-  // Left pixels to be dirtied:     ### (3)     #### (4)
+  /* Object and its center:       --o-- (5)   --o--- (6)
+   * Right pixels to be dirtied:  ##    (2)   ##     (2)
+   * Left pixels to be dirtied:     ### (3)     #### (4) */
   constexpr static KDCoordinate k_leftSideSize =
       (k_biggestCalculationWidth - 1) / 2;
   constexpr static KDCoordinate k_rightSideSize =

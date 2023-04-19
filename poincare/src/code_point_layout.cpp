@@ -82,8 +82,8 @@ KDCoordinate CodePointLayoutNode::computeBaseline(KDFont::Size font) {
 
 void CodePointLayoutNode::render(KDContext *ctx, KDPoint p,
                                  KDGlyph::Style style) {
-  // Handle the case of the middle dot which has to be drawn by hand since it is
-  // thinner than the other glyphs.
+  /* Handle the case of the middle dot which has to be drawn by hand since it is
+   * thinner than the other glyphs. */
   if (m_codePoint == UCodePointMiddleDot) {
     int width = k_middleDotWidth;
     int height = KDFont::GlyphHeight(style.font);
@@ -93,8 +93,7 @@ void CodePointLayoutNode::render(KDContext *ctx, KDPoint p,
         style.glyphColor);
     return;
   }
-  // General case
-  // Null-terminating char
+  // General case. + 1 for null-terminating char
   constexpr int bufferSize = sizeof(CodePoint) / sizeof(char) + 1;
   char buffer[bufferSize];
   SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);

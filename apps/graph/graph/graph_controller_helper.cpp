@@ -107,9 +107,9 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     if (std::fabs(static_cast<float>(tCursor)) >= pixelWidth &&
         ((dir < 0.0) != (tCursor < 0.0)) &&
         std::fabs(static_cast<float>(t)) < pixelWidth) {
-      // Use a pixel width as a margin, ensuring t mostly stays at the same
-      // pixel Round t to 0 if it is going into that direction, and is close
-      // enough
+      /* Use a pixel width as a margin, ensuring t mostly stays at the same
+       * pixel Round t to 0 if it is going into that direction, and is close
+       * enough. */
       t = 0.0;
     } else {
       // Round t to a simpler value, displayed at the same index

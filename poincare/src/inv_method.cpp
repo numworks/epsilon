@@ -47,8 +47,7 @@ Expression InverseMethod::shallowReduce(Expression *x,
         }
         return expression->replaceWithUndefinedInPlace();
       }
-      // n if a == 1
-      // TODO: false if p == 0 ?
+      // n if a == 1 (TODO: false if p == 0 ?)
       Expression n = parameters[0];
       expression->replaceWithInPlace(n);
       return n;

@@ -80,8 +80,8 @@ Evaluation<T> IntegralNode::templatedApproximate(
       std::isnan(firstChildScalarValueForArgument(a, approximationContext));
   bool fIsNanInB =
       std::isnan(firstChildScalarValueForArgument(b, approximationContext));
-  // The integrand has a singularity on a bound of the interval, use tanh-sinh
-  // quadrature
+  /* The integrand has a singularity on a bound of the interval, use tanh-sinh
+   * quadrature */
   if (fIsNanInA || fIsNanInB) {
     /* When we have a singularity at a bound, we want to evaluate the integrand
      * really close to the bound since the area there is non-negligible.  If the
@@ -278,9 +278,10 @@ IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(
           maxWjFj = std::max(maxWjFj, std::abs(weight * leftValue));
           result += weight * leftValue;
         }
-        // criterion used in boost: abs(y * weights) > abs(L1_I0 *
-        // tail_tolerance) but L1_IO is abs(pi/2 * f(0)) before the first row
-        // and tail_tolerance = tolerance^2
+        /* Criterion used in boost:
+         * abs(y * weights) > abs(L1_I0 * tail_tolerance)
+         * but L1_IO is abs(pi/2 * f(0)) before the first row and
+         * tail_tolerance = tolerance^2 */
         if (std::abs(weight * leftValue) < Float<T>::EpsilonLax())
           leftOk = false;
       }

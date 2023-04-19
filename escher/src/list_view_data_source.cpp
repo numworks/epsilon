@@ -86,8 +86,8 @@ KDCoordinate ListViewDataSource::heightForCellAtIndex(HighlightCell* cell,
   if (!cell->isVisible()) {
     return 0;
   }
-  // Some cells have to know their width to be able to compute their required
-  // height
+  /* Some cells have to know their width to be able to compute their required
+   * height */
   assert(cell->bounds().width() != 0);
   // Setup cell as if it was to be displayed
   willDisplayCellForIndex(cell, index);

@@ -27,8 +27,8 @@ void SandboxController::viewWillAppear() { redrawWindow(); }
 void SandboxController::viewDidDisappear() { modturtle_view_did_disappear(); }
 
 bool SandboxController::handleEvent(Ion::Events::Event event) {
-  // The sandbox handles or "absorbs" all keyboard events except Home (preemtive
-  // interruption), USBEnumeration and OnOff
+  /* The sandbox handles or "absorbs" all keyboard events except Home (preemtive
+   * interruption), USBEnumeration and OnOff */
   if (event == Ion::Events::Home || event == Ion::Events::OnOff ||
       event == Ion::Events::USBEnumeration) {
     stackViewController()->pop();

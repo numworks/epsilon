@@ -54,8 +54,8 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
       continue;
     }
 
-    // We redraw the current subview by passing the rectangle previously redrawn
-    // (by the parent view or previous sister views) as forced to be redraw.
+    /* We redraw the current subview by passing the rectangle previously redrawn
+     * (by the parent view or previous sister views) as forced to be redraw. */
     KDRect subviewRedrawnArea = subview->redraw(visibleRect, redrawnArea);
 
     // We expand the redrawn area to include the area just drawn.
@@ -103,8 +103,8 @@ void View::setFrame(KDRect frame, bool force) {
    * can either mark an area of our superview as dirty, or mark our whole frame
    * as dirty. We pick the second option because it is more efficient. */
   markRectAsDirty(bounds());
-  // FIXME: m_dirtyRect = bounds(); would be more correct (in case the view is
-  // being shrinked)
+  /* FIXME: m_dirtyRect = bounds(); would be more correct (in case the view is
+   * being shrinked) */
 
   if (!m_frame.isEmpty()) {
     layoutSubviews(force);

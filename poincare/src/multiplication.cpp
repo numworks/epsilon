@@ -244,9 +244,9 @@ MultiplicationNode::OperatorSymbolBetween(ExpressionNode::LayoutShape left,
       }
       // fall-through
     default:
-      // case ExpressionNode::LayoutShape::BoundaryPunctuation:
-      // case ExpressionNode::LayoutShape::Fraction:
-      // case ExpressionNode::LayoutShape::Root:
+      /* case ExpressionNode::LayoutShape::BoundaryPunctuation:
+       * case ExpressionNode::LayoutShape::Fraction:
+       * case ExpressionNode::LayoutShape::Root: */
       switch (right) {
         case ExpressionNode::LayoutShape::Decimal:
         case ExpressionNode::LayoutShape::Integer:
@@ -328,8 +328,8 @@ Layout MultiplicationNode::createLayout(
         bool leftIsUnit = ExpressionIsUnit(left, nullptr);
         bool rightIsUnit = ExpressionIsUnit(right, &forceMarginOfRightUnit);
         if (rightIsUnit && leftIsUnit) {
-          // Both children are unit: symbol is always a middle dot with no
-          // margin
+          /* Both children are unit: symbol is always a middle dot with no
+           * margin */
           Layout symbolLayout = CodePointLayout::Builder(
               CodePointForOperatorSymbol(MultiplicationSymbol::MiddleDot));
           symbolLayout.setMargin(false);
@@ -562,8 +562,8 @@ Expression Multiplication::shallowBeautify(
   // Step 1: Turn -n*A into -(n*A)
   Expression noNegativeNumeral =
       makePositiveAnyNegativeNumeralFactor(reductionContext);
-  // If one negative numeral factor was made positive, we turn the expression in
-  // an Opposite
+  /* If one negative numeral factor was made positive, we turn the expression in
+   * an Opposite */
   if (!noNegativeNumeral.isUninitialized()) {
     Opposite o = Opposite::Builder();
     noNegativeNumeral.replaceWithInPlace(o);
@@ -1166,15 +1166,15 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
       }
       Expression e = childAtIndex(i);
       if (e.type() != ExpressionNode::Type::ComplexCartesian) {
-        // the Multiplication is sorted so ComplexCartesian nodes are the last
-        // ones
+        /* The Multiplication is sorted so ComplexCartesian nodes are the last
+         * ones. */
         break;
       }
       child =
           child.multiply(static_cast<ComplexCartesian &>(e), reductionContext);
     }
-    // The real children are both factors of the real and the imaginary
-    // multiplication
+    /* The real children are both factors of the real and the imaginary
+     * multiplication. */
     Multiplication real = *this;
     Multiplication imag = clone().convert<Multiplication>();
     real.addChildAtIndexInPlace(child.real(), real.numberOfChildren(),
@@ -1211,13 +1211,14 @@ void Multiplication::mergeInChildByFactorizingBase(
     int i, Expression e, const ReductionContext &reductionContext,
     List dependenciesCreatedDuringReduction) {
   /* This function replace the child at index i by its factorization with e. e
-   * and childAtIndex(i) are supposed to have a common base. */
-  // Step 1: Find the new exponent
-  // pi^2*pi^3 -> pi^(2+3) -> pi^5
+   * and childAtIndex(i) are supposed to have a common base.
+   *
+   * Step 1: Find the new exponent
+   * pi^2*pi^3 -> pi^(2+3) -> pi^5 */
   Expression s =
       Addition::Builder(CreateExponent(childAtIndex(i)), CreateExponent(e));
-  // Step 2: Create the new Power
-  // pi^2*pi^-2 -> pi^0 -> 1
+  /* Step 2: Create the new Power
+   * pi^2*pi^-2 -> pi^0 -> 1 */
   Expression p = Power::Builder(Base(childAtIndex(i).clone()), s);
   s.shallowReduce(reductionContext);
 

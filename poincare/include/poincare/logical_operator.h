@@ -9,8 +9,10 @@ namespace Poincare {
 
 class LogicalOperatorNode : public ExpressionNode {
  public:
-  // not: 2, (and, nand): 1, (or, xor, nor): 0. -1 if not a logical operator
-  // type.
+  /* not: 2
+   * and, nand: 1
+   * or, xor, nor: 0
+   * -1 if not a logical operator type. */
   static int LogicalOperatorTypePrecedence(
       const ExpressionNode* operatorExpression);
 

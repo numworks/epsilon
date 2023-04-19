@@ -51,8 +51,7 @@ Expression NAryExpressionNode::squashUnaryHierarchyInPlace() {
 }
 
 void NAryExpression::mergeSameTypeChildrenInPlace() {
-  // Multiplication is associative: a*(b*c)->a*b*c
-  // The same goes for Addition
+  // Multiplication is associative: a*(b*c)->a*b*c. The same goes for Addition
   ExpressionNode::Type parentType = type();
   int i = 0;
   while (i < numberOfChildren()) {

@@ -58,11 +58,9 @@ KDSize PiecewiseOperatorLayoutNode::computeSize(KDFont::Size font) {
     // If there is only 1 row and the condition is empty, shrink the size
     sizeWithoutBrace = KDSize(columnWidth(0, font), sizeWithoutBrace.height());
   }
+  // Add a right margin of size k_curlyBraceWidth
   KDSize sizeWithBrace = KDSize(
-      sizeWithoutBrace.width() +
-          2 * CurlyBraceLayoutNode::k_curlyBraceWidth,  // Add a right margin of
-                                                        // size
-                                                        // k_curlyBraceWidth
+      sizeWithoutBrace.width() + 2 * CurlyBraceLayoutNode::k_curlyBraceWidth,
       CurlyBraceLayoutNode::HeightGivenChildHeight(sizeWithoutBrace.height()));
   return sizeWithBrace;
 }

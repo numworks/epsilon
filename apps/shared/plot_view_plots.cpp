@@ -426,8 +426,8 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView *plotView,
     assert(y > 0.f); /* TODO This method is not ready to display histogram with
                         negative values. */
 
-    // Step 2: Compute pixels
-    // Step 2.1: Bar width
+    /* Step 2: Compute pixels
+     *   Step 2.1: Bar width */
     KDCoordinate left = plotView->floatToKDCoordinatePixel(
         AbstractPlotView::Axis::Horizontal, x);
     KDCoordinate leftOfNextBar = plotView->floatToKDCoordinatePixel(
@@ -446,13 +446,13 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView *plotView,
       barWidth = k_hollowBarWidth;
     }
 
-    // Step 2.2: Bar height
+    //   Step 2.2: Bar height
     KDCoordinate top =
         plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical, y);
     KDCoordinate barHeight = plotViewHeight - top;
     assert(barHeight >= 0);
 
-    // Step 3: Draw
+    //   Step 3: Draw
     KDColor color =
         m_highlightTest && m_highlightTest(xCenter, m_model, m_context)
             ? m_highlightColor

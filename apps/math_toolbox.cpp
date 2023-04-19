@@ -329,8 +329,8 @@ constexpr ToolboxMessageTree electricitOtherChildren[] = {
                              I18n::Message::UnitInductanceHenry),
     ToolboxMessageTree::Leaf(I18n::Message::UnitChargeCoulombSymbol,
                              I18n::Message::UnitChargeCoulomb),
-    // ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensMilliSymbol,
-    // I18n::Message::UnitConductanceSiemensMilli),
+    /* ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensMilliSymbol,
+     * I18n::Message::UnitConductanceSiemensMilli), */
     ToolboxMessageTree::Leaf(I18n::Message::UnitConductanceSiemensSymbol,
                              I18n::Message::UnitConductanceSiemens),
     ToolboxMessageTree::Leaf(I18n::Message::UnitMagneticFieldTeslaSymbol,

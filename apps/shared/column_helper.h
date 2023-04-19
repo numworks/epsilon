@@ -14,8 +14,8 @@ namespace Shared {
 class ColumnNameHelper {
  public:
   virtual Escher::SelectableTableView* table() = 0;
-  // this is an ad hoc value. Most of the time, colum_name are very short like
-  // "X1", "n" or "f(x)"
+  /* this is an ad hoc value. Most of the time, colum_name are very short like
+   * "X1", "n" or "f(x)" */
   constexpr static int k_maxSizeOfColumnName = 16;
   virtual int fillColumnName(int columnIndex, char* buffer) = 0;
 

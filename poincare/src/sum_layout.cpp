@@ -5,9 +5,9 @@
 #include <algorithm>
 
 namespace Poincare {
-// Stores a single branch of the sigma symbol
-// Data is stored so that every two line a white pixel must be added. This way
-// the branch's slope is respected
+/* Stores a single branch of the sigma symbol
+ * Data is stored so that every two line a white pixel must be added. This way
+ * the branch's slope is respected */
 constexpr static int k_significantPixelWidth = 6;
 const uint8_t symbolPixelOneBranchLargeFont
     [((SequenceLayoutNode::SymbolHeight(KDFont::Size::Large) - 1) / 2) *
@@ -34,8 +34,8 @@ void SumLayoutNode::render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
   uint8_t symbolPixel[SymbolHeight(font) * SymbolWidth(font)];
   int whiteOffset;
 
-  // Taking care of the first line which is a black straight line at the
-  // exception of the first pixel
+  /* Taking care of the first line which is a black straight line at the
+   * exception of the first pixel. */
   symbolPixel[0] = 0x30;
   for (int j = 0; j < SymbolWidth(font); j++) {
     symbolPixel[j] = 0x00;

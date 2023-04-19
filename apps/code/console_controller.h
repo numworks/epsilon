@@ -92,8 +92,8 @@ class ConsoleController : public Escher::ViewController,
  private:
   constexpr static const char* k_importCommand1 = "from ";
   constexpr static const char* k_importCommand2 = " import *";
-  // strlen(k_importCommand1) + strlen(k_importCommand2) +
-  // TextField::maxBufferSize()
+  /* strlen(k_importCommand1) + strlen(k_importCommand2) +
+   * TextField::maxBufferSize() */
   constexpr static size_t k_maxImportCommandSize =
       5 + 9 + Escher::TextField::MaxBufferSize();
   constexpr static int k_lineCellType = 0;

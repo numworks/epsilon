@@ -118,19 +118,19 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
             Symbol::Builder(ContinuousFunction::k_unknownName,
                             strlen(ContinuousFunction::k_unknownName));
         if (f->properties().isPolar()) {
-          // Turn r(theta) into f(theta) = [x(theta), y(theta)]
-          // x(theta) = cos(theta)*r(theta)
+          /* Turn r(theta) into f(theta) = [x(theta), y(theta)]
+           *   x(theta) = cos(theta)*r(theta) */
           firstRow = Multiplication::Builder(Cosine::Builder(unknown.clone()),
                                              e.clone());
-          // y(theta) = sin(theta)*r(theta)
+          //   y(theta) = sin(theta)*r(theta)
           secondRow = Multiplication::Builder(Sine::Builder(unknown.clone()),
                                               e.clone());
         } else {
-          // Turn theta(r) into f(r) = [x(r), y(r)]
-          // x(r) = r*cos(theta(r))
+          /* Turn theta(r) into f(r) = [x(r), y(r)]
+           *   x(r) = r*cos(theta(r)) */
           firstRow = Multiplication::Builder(unknown.clone(),
                                              Cosine::Builder(e.clone()));
-          // y(theta) = r*sin(theta(r))
+          //  y(theta) = r*sin(theta(r))
           secondRow = Multiplication::Builder(unknown.clone(),
                                               Sine::Builder(e.clone()));
         }

@@ -116,7 +116,7 @@ class AbstractTextField : public TextInput, public EditableField {
 
     void stallOrStopEditing();
     bool isStalled() const { return m_isStalled; }
-    void setStalled(bool stalled) { m_isStalled = stalled; }
+    void setStalled(bool stalled) { m_isStalled = stalled && m_isEditing; }
 
     KDRect cursorRect() const override;
 

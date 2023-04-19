@@ -53,7 +53,7 @@ T StudentDistribution::CumulativeDistributiveInverseForProbability(
   };
 
   double xmin, xmax;
-  findBoundsForBinarySearch(evaluation, &args, xmin, xmax);
+  FindBoundsForBinarySearch(evaluation, &args, xmin, xmax);
   assert((xmin < xmax) && std::isfinite(xmin) && std::isfinite(xmax));
 
   // Compute inverse using SolverAlgorithms::IncreasingFunctionRoot

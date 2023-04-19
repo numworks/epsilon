@@ -239,6 +239,16 @@ void Parser::popToken() {
       m_status = Status::Error;  // Expression misses a rightHandSide
     } else {
       m_nextToken = m_tokenizer.popToken();
+      if (m_nextToken.type() == Token::Type::AssignmentEqual) {
+        assert(m_parsingContext.parsingMethod() ==
+               ParsingContext::ParsingMethod::Assignment);
+        /* Stop parsing for assignment to ensure that, frow now on xy is
+         * understood as x*y. For example, "func(x) = xy" -> left of the =, we
+         * parse for assignment so "func" is NOT understood as "f*u*n*c", but
+         * after the equal we want "xy" to be understood as "x*y" */
+        m_parsingContext.setParsingMethod(
+            ParsingContext::ParsingMethod::Classic);
+      }
     }
   }
 }
@@ -1015,33 +1025,24 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
     m_status = Status::Error;
     return;
   }
-  if (m_parsingContext.parsingMethod() ==
-          ParsingContext::ParsingMethod::Assignment &&
-      result.type() == ExpressionNode::Type::Function &&
+  if (result.type() == ExpressionNode::Type::Function &&
       parameter.type() == ExpressionNode::Type::Symbol &&
-      m_nextToken.type() == Token::Type::AssignmentEqual) {
-    /* Stop parsing for assignment to ensure that, frow now on xy is
-     * understood as x*y.
-     * For example, "func(x) = xy" -> left of the =, we parse for assignment so
-     * "func" is NOT understood as "f*u*n*c", but after the equal we want "xy"
-     * to be understood as "x*y" */
-    m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
-    if (m_parsingContext.context()) {
-      /* Set the parameter in the context to ensure that f(t)=t is not
-       * understood as f(t)=1_t
-       * If we decide that functions can be assigned with any parameter,
-       * this will ensure that f(abc)=abc is understood like f(x)=x
-       */
-      Context *previousContext = m_parsingContext.context();
-      VariableContext functionAssignmentContext(
-          static_cast<Symbol &>(parameter), m_parsingContext.context());
-      m_parsingContext.setContext(&functionAssignmentContext);
-      // We have to parseUntil here so that we do not lose the
-      // functionAssignmentContext pointer.
-      leftHandSide = parseUntil(stoppingType, result);
-      m_parsingContext.setContext(previousContext);
-      return;
-    }
+      m_nextToken.type() == Token::Type::AssignmentEqual &&
+      m_parsingContext.context()) {
+    /* Set the parameter in the context to ensure that f(t)=t is not
+     * understood as f(t)=1_t
+     * If we decide that functions can be assigned with any parameter,
+     * this will ensure that f(abc)=abc is understood like f(x)=x
+     */
+    Context *previousContext = m_parsingContext.context();
+    VariableContext functionAssignmentContext(static_cast<Symbol &>(parameter),
+                                              m_parsingContext.context());
+    m_parsingContext.setContext(&functionAssignmentContext);
+    // We have to parseUntil here so that we do not lose the
+    // functionAssignmentContext pointer.
+    leftHandSide = parseUntil(stoppingType, result);
+    m_parsingContext.setContext(previousContext);
+    return;
   }
   leftHandSide = result;
 }

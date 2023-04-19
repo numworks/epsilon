@@ -125,7 +125,7 @@ Expression Parser::parseUntil(Token::Type stoppingType,
   constexpr static TokenParser tokenParsers[] = {
       &Parser::parseUnexpected,          // Token::Type::EndOfStream
       &Parser::parseRightwardsArrow,     // Token::Type::RightwardsArrow
-      &Parser::parseAssigmentEqual,      // Token::Type::AssignmentEqual
+      &Parser::parseAssignmentEqual,     // Token::Type::AssignmentEqual
       &Parser::parseUnexpected,          // Token::Type::RightSystemParenthesis
       &Parser::parseUnexpected,          // Token::Type::RightSystemBrace
       &Parser::parseUnexpected,          // Token::Type::RightBracket
@@ -174,7 +174,7 @@ Expression Parser::parseUntil(Token::Type stoppingType,
                 "Wrong order of TokenParsers");
   assert_order(Token::Type::EndOfStream, Parser::parseUnexpected);
   assert_order(Token::Type::RightwardsArrow, Parser::parseRightwardsArrow);
-  assert_order(Token::Type::AssignmentEqual, Parser::parseAssigmentEqual);
+  assert_order(Token::Type::AssignmentEqual, Parser::parseAssignmentEqual);
   assert_order(Token::Type::RightSystemParenthesis, Parser::parseUnexpected);
   assert_order(Token::Type::RightBracket, Parser::parseUnexpected);
   assert_order(Token::Type::RightParenthesis, Parser::parseUnexpected);
@@ -521,8 +521,8 @@ void Parser::parseComparisonOperator(Expression &leftHandSide,
   }
 }
 
-void Parser::parseAssigmentEqual(Expression &leftHandSide,
-                                 Token::Type stoppingType) {
+void Parser::parseAssignmentEqual(Expression &leftHandSide,
+                                  Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error;  // Comparison operator must have a left operand
     return;

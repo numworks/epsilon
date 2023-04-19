@@ -191,4 +191,7 @@ QUIZ_CASE(poincare_solver_intersections) {
       {XY(-0.609961198731614, 0.2019362602),
        XY(-0.00516870705322244, -1.984467163),
        XY(2.00005000450738, -3.999949993), XY(3.75110444134456, 0.8174712058)});
+  /* This serves the purpose of checking if no fake intersection is found
+   * around -1.479, which was the case at some point in history. */
+  assert_intersections_are("x^(2x^92)", "3", -1.5, -1.47, {});
 }

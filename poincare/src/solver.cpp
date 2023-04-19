@@ -65,7 +65,10 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void *aux,
     if (interest != Interest::None) {
       Coordinate2D<T> solution = honeAndRoundSolution(
           f, aux, start.x(), end.x(), interest, hone, discontinuityTest);
-      if (std::isfinite(solution.x()) && validSolution(solution.x())) {
+      if (std::isfinite(solution.x()) &&
+          (std::isfinite(solution.y()) ||
+           interest == Interest::Discontinuity) &&
+          validSolution(solution.x())) {
         definitiveSolution = solution;
         definitiveInterest = interest;
         break;

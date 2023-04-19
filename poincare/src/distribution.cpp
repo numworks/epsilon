@@ -11,6 +11,8 @@
 #include <poincare/student_distribution.h>
 #include <poincare/uniform_distribution.h>
 
+#include <algorithm>
+
 namespace Poincare {
 
 const Distribution *Distribution::Get(Type type) {
@@ -74,7 +76,7 @@ void Distribution::FindBoundsForBinarySearch(
   }
   // Enlarge interval to avoid bounds being too close to solution
   xmax += 1;
-  xmin -= 1;
+  xmin = std::max(static_cast<T>(0), xmin - 1);
 
   assert(iteration != k_maxNumberOfIterations);
 

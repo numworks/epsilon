@@ -59,7 +59,7 @@ T Chi2Distribution::CumulativeDistributiveInverseForProbability(T probability,
            args->proba;
   };
 
-  double xmin, xmax;  // IncreasingFunctionRoot requires double
+  double xmin, xmax;
   FindBoundsForBinarySearch(evaluation, &args, xmin, xmax);
 
   Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(

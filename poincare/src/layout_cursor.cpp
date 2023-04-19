@@ -421,8 +421,6 @@ void LayoutCursor::insertText(const char *text, Context *context,
    * containing the layouts corresponding to each code point. */
   HorizontalLayout layoutToInsert = HorizontalLayout::Builder();
   HorizontalLayout currentLayout = layoutToInsert;
-  // This is only used to check if we properly left the last subscript
-  int currentSubscriptDepth = 0;
 
   bool setCursorToFirstEmptyCodePoint =
       linearMode && !forceCursorLeftOfText && !forceCursorRightOfText;
@@ -436,7 +434,6 @@ void LayoutCursor::insertText(const char *text, Context *context,
         /* To force cursor at first empty code point in linear mode, insert
          * the first half of text now, and then insert the end of the text
          * and force the cursor left of it. */
-        assert(currentSubscriptDepth == 0);
         insertLayout(layoutToInsert, context, forceCursorRightOfText,
                      forceCursorLeftOfText);
         layoutToInsert = HorizontalLayout::Builder();
@@ -458,7 +455,14 @@ void LayoutCursor::insertText(const char *text, Context *context,
      * encountered, leave the subscript and continue the insertion in its
      * parent. */
     if (codePoint == UCodePointSystem) {
-      // UCodePointSystem should be inserted only for system braces
+      /* UCodePointSystem should be inserted only for system braces.
+       * Sometimes though, a code point system can be alone at the end of the
+       * inserted text. This happens for example when copy-pasting a very long
+       * text containing subscripts. The '{' or '}' codepoint can be cropped
+       * because the clipboard buffer is too short. */
+      if (nextCodePoint == UCodePointNull) {
+        break;
+      }
       assert(nextCodePoint == '{' || nextCodePoint == '}');
       if (linearMode) {
         // Convert u\x14{n\x14} into u(n)
@@ -472,7 +476,6 @@ void LayoutCursor::insertText(const char *text, Context *context,
               VerticalOffsetLayoutNode::VerticalPosition::Subscript);
           currentLayout.addOrMergeChildAtIndex(
               newChild, currentLayout.numberOfChildren());
-          currentSubscriptDepth++;
           Layout horizontalChildOfSubscript = newChild.childAtIndex(0);
           assert(horizontalChildOfSubscript.isEmpty());
           currentLayout =
@@ -481,9 +484,8 @@ void LayoutCursor::insertText(const char *text, Context *context,
           continue;
         }
         // UCodePointSystem should be inserted only for system braces
-        assert(nextCodePoint == '}' && currentSubscriptDepth > 0);
+        assert(nextCodePoint == '}');
         // Leave the subscript
-        currentSubscriptDepth--;
         Layout subscript = currentLayout;
         while (subscript.type() != LayoutNode::Type::VerticalOffsetLayout) {
           subscript = subscript.parent();
@@ -526,7 +528,6 @@ void LayoutCursor::insertText(const char *text, Context *context,
                                          currentLayout.numberOfChildren());
     codePoint = nextCodePoint;
   }
-  assert(currentSubscriptDepth == 0);
 
   // - Step 2 - Insert the created layout
   insertLayout(layoutToInsert, context, forceCursorRightOfText,

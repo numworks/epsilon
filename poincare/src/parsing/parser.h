@@ -102,8 +102,8 @@ class Parser {
                                  Token::Type stoppingType = (Token::Type)0);
   void parseComparisonOperator(Expression& leftHandSide,
                                Token::Type stoppingType = (Token::Type)0);
-  void parseAssigmentEqual(Expression& leftHandSide,
-                           Token::Type stoppingType = (Token::Type)0);
+  void parseAssignmentEqual(Expression& leftHandSide,
+                            Token::Type stoppingType = (Token::Type)0);
   void parseLogicalOperatorNot(Expression& leftHandSide,
                                Token::Type stoppingType = (Token::Type)0);
   void parseAndOperator(Expression& leftHandSide,

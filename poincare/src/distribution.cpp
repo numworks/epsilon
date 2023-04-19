@@ -50,7 +50,7 @@ const Distribution *Distribution::Get(Type type) {
 }
 
 template <typename T>
-void Distribution::findBoundsForBinarySearch(
+void Distribution::FindBoundsForBinarySearch(
     typename Solver<T>::FunctionEvaluation cumulativeDistributionEvaluation,
     const void *auxiliary, T &xmin, T &xmax) {
   /* We'll simply test [0, 10], [10, 100], [100, 1000] ... until we find a
@@ -126,9 +126,9 @@ double Distribution::
   return result.x();
 }
 
-template void Distribution::findBoundsForBinarySearch<float>(
+template void Distribution::FindBoundsForBinarySearch<float>(
     Solver<float>::FunctionEvaluation, void const *, float &, float &);
-template void Distribution::findBoundsForBinarySearch<double>(
+template void Distribution::FindBoundsForBinarySearch<double>(
     Solver<double>::FunctionEvaluation, void const *, double &, double &);
 
 }  // namespace Poincare

@@ -97,7 +97,7 @@ class Distribution {
    * cumulativeDistributionEvaluation(xmax)
    */
   template <typename T>
-  static void findBoundsForBinarySearch(
+  static void FindBoundsForBinarySearch(
       typename Solver<T>::FunctionEvaluation cumulativeDistributionEvaluation,
       const void* auxiliary, T& xmin, T& xmax);
   double cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(

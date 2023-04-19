@@ -31,8 +31,6 @@ class TwoProportionsZInterval : public Interval {
     Interval::setParameterAtIndex(p, index);
   }
 
-  void compute() override { TwoProportions::ComputeInterval(this); }
-
   const char* estimateSymbol() const override {
     return TwoProportions::EstimateSymbol();
   }
@@ -77,6 +75,8 @@ class TwoProportionsZInterval : public Interval {
   float computeYMax() const override {
     return DistributionZ::YMax(m_degreesOfFreedom);
   }
+
+  void privateCompute() override { TwoProportions::ComputeInterval(this); }
 
   double m_params[TwoProportions::k_numberOfParams];
 };

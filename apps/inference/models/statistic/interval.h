@@ -16,9 +16,9 @@ class Interval : public Statistic {
  public:
   Interval()
       : m_estimate(NAN),
-        m_zCritical(NAN),
         m_SE(NAN),  // Initialize to make sure m_SE != 0 by default and
                     // test-statistics are graphable.
+        m_zCritical(NAN),
         m_marginOfError(NAN) {}
   virtual ~Interval();
   SubApp subApp() const override { return SubApp::Interval; }
@@ -108,6 +108,8 @@ class Interval : public Statistic {
   void resultAtIndex(int index, double* value, Poincare::Layout* message,
                      I18n::Message* subMessage, int* precision) override;
 
+  void compute() override;
+
   // CurveViewRange
   bool isGraphable() const override;
 
@@ -123,17 +125,18 @@ class Interval : public Statistic {
   float computeXMin() const override;
   float computeXMax() const override;
 
-  double computeIntervalCriticalValue();
-
   mutable Poincare::Layout m_estimateLayout;
   double m_estimate;
-  double m_zCritical;
   double m_SE;
-  double m_marginOfError;
 
  private:
   enum ResultOrder { Estimate, Critical, SE, ME, IntervalDegree };
   float largestMarginOfError();
+  double computeIntervalCriticalValue();
+  virtual void privateCompute() = 0;
+
+  double m_zCritical;
+  double m_marginOfError;
 };
 
 }  // namespace Inference

@@ -204,4 +204,10 @@ void Interval::resultAtIndex(int index, double *value,
   }
 }
 
+void Interval::compute() {
+  privateCompute();
+  m_zCritical = computeIntervalCriticalValue();
+  m_marginOfError = m_zCritical * m_SE;
+}
+
 }  // namespace Inference

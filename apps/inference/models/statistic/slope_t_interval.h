@@ -33,8 +33,6 @@ class SlopeTInterval : public Interval, public SlopeTStatistic {
   }
   bool validateInputs() override { return SlopeTStatistic::validateInputs(); }
 
-  void compute() override;
-
   // Distribution: t
   const char* estimateSymbol() const override { return "x̅"; }
   Poincare::Layout testCriticalValueSymbol() override {
@@ -73,6 +71,8 @@ class SlopeTInterval : public Interval, public SlopeTStatistic {
   float computeYMax() const override {
     return DistributionT::YMax(m_degreesOfFreedom);
   }
+
+  void privateCompute() override;
 };
 
 }  // namespace Inference

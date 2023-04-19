@@ -31,8 +31,6 @@ class OneProportionZInterval : public Interval {
     Interval::setParameterAtIndex(p, index);
   }
 
-  void compute() override { OneProportion::ComputeInterval(this); }
-
   const char* estimateSymbol() const override {
     return OneProportion::EstimateSymbol();
   }
@@ -77,6 +75,8 @@ class OneProportionZInterval : public Interval {
   float computeYMax() const override {
     return DistributionZ::YMax(m_degreesOfFreedom);
   }
+
+  void privateCompute() override { OneProportion::ComputeInterval(this); }
 
   double m_params[OneProportion::k_numberOfParams];
 };

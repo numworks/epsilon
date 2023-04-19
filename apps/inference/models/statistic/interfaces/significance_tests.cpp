@@ -204,11 +204,9 @@ void OneMean::ComputeTTest(Test* t) {
 }
 
 void OneMean::ComputeZInterval(Interval* i) {
-  i->m_zCritical = i->computeIntervalCriticalValue();
   i->m_estimate = X(i->parametersArray());
   i->m_SE =
       ComputeStandardError(S(i->parametersArray()), N(i->parametersArray()));
-  i->m_marginOfError = i->m_zCritical * i->m_SE;
 }
 
 void OneMean::ComputeTInterval(Interval* i) {
@@ -288,10 +286,8 @@ void OneProportion::ComputeTest(Test* t) {
 }
 
 void OneProportion::ComputeInterval(Interval* i) {
-  i->m_zCritical = i->computeIntervalCriticalValue();
   i->m_estimate = X(i->parametersArray()) / N(i->parametersArray());
   i->m_SE = ComputeStandardError(i->m_estimate, N(i->parametersArray()));
-  i->m_marginOfError = i->m_zCritical * i->m_SE;
 }
 
 double OneProportion::ComputeZ(double p0, double p, double n) {
@@ -508,12 +504,10 @@ void TwoMeans::ComputeTTest(Test* t) {
 }
 
 void TwoMeans::ComputeZInterval(Interval* i) {
-  i->m_zCritical = i->computeIntervalCriticalValue();
   i->m_estimate = X1(i->parametersArray()) - X2(i->parametersArray());
   i->m_SE =
       ComputeStandardError(S1(i->parametersArray()), N1(i->parametersArray()),
                            S2(i->parametersArray()), N2(i->parametersArray()));
-  i->m_marginOfError = i->m_zCritical * i->m_SE;
 }
 
 void TwoMeans::ComputeTInterval(Interval* i) {
@@ -569,10 +563,8 @@ void PooledTwoMeans::ComputeInterval(Interval* i) {
   double s2 = S2(params);
   double x2 = X2(params);
   i->m_degreesOfFreedom = n1 + n2 - 2.;
-  i->m_zCritical = i->computeIntervalCriticalValue();
   i->m_estimate = x1 - x2;
   i->m_SE = ComputeStandardError(n1, s1, n2, s2);
-  i->m_marginOfError = i->m_zCritical * i->m_SE;
 }
 
 double PooledTwoMeans::ComputeStandardError(double n1, double s1, double n2,
@@ -707,14 +699,12 @@ void TwoProportions::ComputeTest(Test* t) {
 }
 
 void TwoProportions::ComputeInterval(Interval* i) {
-  i->m_zCritical = i->computeIntervalCriticalValue();
   i->m_estimate =
       ComputeEstimate(X1(i->parametersArray()), N1(i->parametersArray()),
                       X2(i->parametersArray()), N2(i->parametersArray()));
   i->m_SE =
       ComputeStandardError(X1(i->parametersArray()), N1(i->parametersArray()),
                            X2(i->parametersArray()), N2(i->parametersArray()));
-  i->m_marginOfError = i->m_zCritical * i->m_SE;
 }
 
 double TwoProportions::ComputeZ(double deltaP0, double x1, double n1, double x2,

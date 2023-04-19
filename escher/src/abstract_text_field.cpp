@@ -364,6 +364,9 @@ size_t AbstractTextField::draftTextLength() const {
 }
 
 void AbstractTextField::setText(const char *text) {
+  if (contentView()->isStalled()) {
+    return;
+  }
   reloadScroll();
   contentView()->setText(text);
   if (contentView()->text() == contentView()->editedText()) {

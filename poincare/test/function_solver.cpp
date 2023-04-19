@@ -185,10 +185,10 @@ QUIZ_CASE(poincare_solver_intersections) {
   assert_intersections_are("cos(x)", "2", -1., 500., {});
   assert_intersections_are("cos(x)", "1", 500., -1, {XY(360., 1.), XY(0., 1.)});
   assert_intersections_are("x", "x^3", -1e-2, 2., {XY(0., 0.), XY(1., 1.)});
-  // TODO assert_intersections_are("x", "√(x)", -666., 666., { XY(0., 0.),
-  // XY(1., 1.) });
-  // TODO assert_intersections_are("x^2-3x-2", "log(x^2-2x)", -8., 10., {
-  // XY(-0.609961198731614, 0.2019362602), XY(i-0.00516870705322244,
-  // -1.984467163), XY(2.00005000450738i, -3.999949993), XY(3.75110444134456,
-  // 0.8174712058) });
+  assert_intersections_are("x", "√(x)", -666., 666., {XY(0., 0.), XY(1., 1.)});
+  assert_intersections_are(
+      "x^2-3x-2", "log(x^2-2x)", -8., 10.,
+      {XY(-0.609961198731614, 0.2019362602),
+       XY(-0.00516870705322244, -1.984467163),
+       XY(2.00005000450738, -3.999949993), XY(3.75110444134456, 0.8174712058)});
 }

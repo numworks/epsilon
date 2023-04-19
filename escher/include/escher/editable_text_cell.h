@@ -40,7 +40,9 @@ class EditableTextCell : public AbstractEditableTextCell {
       TextFieldDelegate* delegate = nullptr, KDGlyph::Format format = {})
       : AbstractEditableTextCell(parentResponder),
         m_textField(this, m_textBody, k_bufferSize, inputEventHandlerDelegate,
-                    delegate, format) {}
+                    delegate, format) {
+    m_textBody[0] = 0;
+  }
 
   constexpr static size_t k_bufferSize =
       Poincare::PrintFloat::charSizeForFloatsWithPrecision(

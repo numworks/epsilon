@@ -1470,6 +1470,17 @@ QUIZ_CASE(poincare_parsing_function_assignment) {
                                                   Symbol::Builder("y", 1))),
       false, true);
 
+  /* Ensure y=ax is not understood as "y"="ax" but "y"="a"*"x" when parsing for
+   * assignment. (The "parsing for assignment" should apply only to left
+   * handside of the comparison). */
+  assert_parsed_expression_is(
+      "y=ax",
+      Comparison::Builder(Symbol::Builder("y", 1),
+                          ComparisonNode::OperatorType::Equal,
+                          Multiplication::Builder(Symbol::Builder("a", 1),
+                                                  Symbol::Builder("x", 1))),
+      false, true);
+
   // Without assignment "f(x)=4=3" is "Comparison(f*(x), equal, 4, equal, 3)"
   Comparison comparison = Comparison::Builder(
       Multiplication::Builder(Symbol::Builder("f", 1),

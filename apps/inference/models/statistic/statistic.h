@@ -103,7 +103,10 @@ class Statistic : public Shared::Inference {
   }
   double parameterAtIndex(int i) const override;
   void setParameterAtIndex(double f, int i) override;
-  double threshold() const { return m_threshold; }
+  double threshold() const {
+    assert(0 <= m_threshold && m_threshold <= 1);
+    return m_threshold;
+  }
   void setThreshold(double s) { m_threshold = s; }
   virtual bool validateInputs() { return true; };
 

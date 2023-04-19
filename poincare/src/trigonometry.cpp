@@ -234,8 +234,8 @@ Expression Trigonometry::shallowReduceDirectFunction(
     return result;
   }
 
-  // Step 3. Look for an expression of type "cos(asin(x))" or "sin(acos(x)),
-  // return sqrt(1-x^2) These equalities are true on complexes
+  /* Step 3. Look for an expression of type "cos(asin(x))" or "sin(acos(x)),
+   * return sqrt(1-x^2) These equalities are true on complexes */
   if ((e.type() == ExpressionNode::Type::Cosine &&
        e.childAtIndex(0).type() == ExpressionNode::Type::ArcSine) ||
       (e.type() == ExpressionNode::Type::Sine &&
@@ -259,10 +259,10 @@ Expression Trigonometry::shallowReduceDirectFunction(
     return sqrt.shallowReduce(reductionContext);
   }
 
-  // Step 4. Look for an expression of type "cos(atan(x))" or "sin(atan(x))"
-  // cos(atan(x)) --> 1/sqrt(1+x^2)
-  // sin(atan(x)) --> x/sqrt(1+x^2)
-  // These equalities are true on complexes
+  /* Step 4. Look for an expression of type "cos(atan(x))" or "sin(atan(x))"
+   * cos(atan(x)) --> 1/sqrt(1+x^2)
+   * sin(atan(x)) --> x/sqrt(1+x^2)
+   * These equalities are true on complexes */
   if ((e.type() == ExpressionNode::Type::Cosine ||
        e.type() == ExpressionNode::Type::Sine) &&
       e.childAtIndex(0).type() == ExpressionNode::Type::ArcTangent) {
@@ -423,8 +423,8 @@ Expression Trigonometry::shallowReduceInverseFunction(
             ->approximate(float(), ApproximationContext(reductionContext, true))
             .toScalar();
     if (!(std::isinf(x) || std::isnan(x))) {
-      // We translate the result within [-π,π] for acos(cos), [-π/2,π/2] for
-      // asin(sin) and atan(tan)
+      /* We translate the result within [-π,π] for acos(cos), [-π/2,π/2] for
+       * asin(sin) and atan(tan) */
       float k = (e.type() == ExpressionNode::Type::ArcCosine)
                     ? std::floor(x / pi)
                     : std::floor((x + pi / 2.0f) / pi);
@@ -454,8 +454,8 @@ Expression Trigonometry::shallowReduceInverseFunction(
     }
   }
 
-  // Step 2. Look for an expression of type atan(1/x) or atan(cos/sin), return
-  // sign(x)*π/2-atan(x)
+  /* Step 2. Look for an expression of type atan(1/x) or atan(cos/sin), return
+   * sign(x)*π/2-atan(x) */
   bool isArcTanOfCosSin =
       e.type() == ExpressionNode::Type::ArcTangent &&
       ExpressionIsEquivalentToInverseOfTangent(e.childAtIndex(0));
@@ -520,8 +520,8 @@ Expression Trigonometry::shallowReduceInverseFunction(
         e.childAtIndex(0).makePositiveAnyNegativeNumeralFactor(
             reductionContext);
     if (!positiveArg.isUninitialized()) {
-      // The argument was made positive
-      // acos(-x) = π-acos(x)
+      /* The argument was made positive
+       * acos(-x) = π-acos(x) */
       if (e.type() == ExpressionNode::Type::ArcCosine) {
         Expression pi = PiExpressionInAngleUnit(angleUnit);
         Subtraction s = Subtraction::Builder();
@@ -610,8 +610,8 @@ Expression Trigonometry::shallowReduceInverseAdvancedFunction(
       e.replaceWithInPlace(result);
       return result.shallowReduce(reductionContext);
     }
-    // Step 1.2. Do not reduce ArcCotangent when we do not know if child is null
-    // and target is not User
+    /* Step 1.2. Do not reduce ArcCotangent when we do not know if child is null
+     * and target is not User. */
     if (isNull == TrinaryBoolean::Unknown &&
         reductionContext.target() != ReductionTarget::User) {
       return e;

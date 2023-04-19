@@ -22,8 +22,8 @@ Expression CDFRangeMethod::shallowReduce(Expression* abscissae,
       expression->replaceWithInPlace(result);
       return result;
     }
-    // TODO: return CDF of the same distributions with the same parameters
-    // tcdfrange(-inf, 4, 5) => tcdf(4, 5)
+    /* TODO: return CDF of the same distributions with the same parameters
+     * tcdfrange(-inf, 4, 5) => tcdf(4, 5) */
   }
 
   return *expression;

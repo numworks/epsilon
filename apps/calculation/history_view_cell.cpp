@@ -212,8 +212,8 @@ bool HistoryViewCell::ViewsCanBeSingleLine(KDCoordinate inputViewWidth,
 void HistoryViewCell::layoutSubviews(bool force) {
   KDRect frameBounds = bounds();
   if (bounds().width() <= 0 || bounds().height() <= 0) {
-    // TODO Make this behaviour in a non-virtual layoutSublviews, and all layout
-    // subviews should become privateLayoutSubviews
+    /* TODO Make this behaviour in a non-virtual layoutSublviews, and all layout
+     * subviews should become privateLayoutSubviews */
     return;
   }
   KDRect ellipsisFrame = KDRectZero;
@@ -222,8 +222,8 @@ void HistoryViewCell::layoutSubviews(bool force) {
   computeSubviewFrames(frameBounds.width(), frameBounds.height(),
                        &ellipsisFrame, &inputFrame, &outputFrame);
 
-  // Required even if ellipsisFrame is KDRectZero, to mark previous rect as
-  // dirty
+  /* Required even if ellipsisFrame is KDRectZero, to mark previous rect as
+   * dirty */
   setChildFrame(&m_ellipsis, ellipsisFrame, force);
   setChildFrame(&m_inputView, inputFrame, force);
   setChildFrame(&m_scrollableOutputView, outputFrame, force);
@@ -279,8 +279,8 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth,
 }
 
 void HistoryViewCell::resetMemoization() {
-  // Clean the layouts to make room in the pool
-  // TODO: maybe do this only when the layout won't change to avoid blinking
+  /* Clean the layouts to make room in the pool
+   * TODO: maybe do this only when the layout won't change to avoid blinking */
   m_inputView.setLayout(Layout());
   m_scrollableOutputView.resetLayouts();
   m_calculationCRC32 = 0;
@@ -386,8 +386,8 @@ void HistoryViewCell::setCalculation(Calculation *calculation, bool expanded,
   }
   m_calculationDisplayOutput = calculation->displayOutput(context);
 
-  // We must set which subviews are displayed before setLayouts to mark the
-  // right rectangle as dirty
+  /* We must set which subviews are displayed before setLayouts to mark the
+   * right rectangle as dirty */
   m_scrollableOutputView.setDisplayableCenter(
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximate ||

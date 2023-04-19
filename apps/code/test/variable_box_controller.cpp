@@ -43,8 +43,8 @@ void assert_variables_are(const char *script,
     quiz_assert(i == index);
     const char *autocompletionI = varBox.autocompletionAlternativeAtIndex(
         nameToCompleteLength, &textToInsertLength, &addParentheses, i, &index);
-    // If false, the autocompletion has cycled: there are not as many results as
-    // expected
+    /* If false, the autocompletion has cycled: there are not as many results as
+     * expected */
     quiz_assert(i == index);
     quiz_assert(strncmp(*(expectedVariables + i),
                         autocompletionI - nameToCompleteLength,

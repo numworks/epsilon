@@ -11,9 +11,9 @@ void TransparentImageView::drawRect(KDContext *ctx, KDRect rect) const {
     ImageView::drawRect(ctx, rect);
     return;
   }
-  // Draw transparent image, blended with background color
-  // We could also implement blending with the screen with
-  // ctx->blendRectWithMask
+  /* Draw transparent image, blended with background color
+   * We could also implement blending with the screen with
+   * ctx->blendRectWithMask */
 
   assert(bounds().width() == m_image->width());
   assert(bounds().height() == m_image->height());
@@ -23,8 +23,8 @@ void TransparentImageView::drawRect(KDContext *ctx, KDRect rect) const {
                         (sizeof(KDColor) + sizeof(uint8_t));
 
   assert(pixelBufferSize <= k_maxPixelBufferSize);
-  assert(Ion::stackSafe());  // That's a VERY big buffer we're allocating on the
-                             // stack
+  // That's a VERY big buffer we're allocating on the stack
+  assert(Ion::stackSafe());
 
   Ion::decompress(m_image->compressedPixelData(),
                   reinterpret_cast<uint8_t *>(pixelBuffer),

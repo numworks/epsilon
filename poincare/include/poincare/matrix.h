@@ -96,8 +96,8 @@ class Matrix final : public Expression {
            Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
            ReductionTarget reductionTarget, bool inPlace = false);
   Expression createTrace();
-  // Inverse the array in-place. Array has to be given in the form
-  // array[row_index][column_index]
+  /* Inverse the array in-place. Array has to be given in the form
+   * array[row_index][column_index] */
   template <typename T>
   static int ArrayInverse(T* array, int numberOfRows, int numberOfColumns);
   static Matrix CreateIdentity(int dim);

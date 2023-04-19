@@ -197,8 +197,8 @@ void ContinuousFunction::getLineParameters(double *slope, double *intercept,
       ContinuousFunctionProperties::k_defaultUnitFormat,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   assert(d <= 1);
-  // Degree might vary depending on symbols definition and complex format.
-  // Approximate and return the two line coefficients
+  /* Degree might vary depending on symbols definition and complex format.
+   * Approximate and return the two line coefficients */
   if (d < 0) {
     *slope = NAN;
     *intercept = NAN;

@@ -31,9 +31,10 @@ namespace Poincare {
  * lead to a stack overflow, we keep a static working buffer. We actually need
  * two of them because division involves inner multiplications and additions
  * (which would override the division digits if there were using the same
- * buffer). */
-// TODO: we might want to go back to allocating the native_uint_t arrays on the
-// stack once we increase the stack size from 32k to?
+ * buffer).
+ *
+ * TODO: we might want to go back to allocating the native_uint_t arrays on the
+ * stack once we increase the stack size from 32k to? */
 
 static native_uint_t s_workingBuffer[Integer::k_maxNumberOfDigits + 1];
 static native_uint_t s_workingBufferDivision[Integer::k_maxNumberOfDigits + 1];
@@ -314,9 +315,10 @@ T Integer::approximate() const {
   uint64_t mantissa = 0;
   /* Shift the most significant int to the left of the mantissa. The most
    * significant 1 will be ignore at the end when inserting the mantissa in
-   * the resulting uint64_t (as required by IEEE754). */
-  // Shift operator behavior is undefined if the right operand is negative, or
-  // greater than or equal to the length in bits of the promoted left operand
+   * the resulting uint64_t (as required by IEEE754).
+   *
+   * Shift operator behavior is undefined if the right operand is negative, or
+   * greater than or equal to the length in bits of the promoted left operand */
   assert(IEEE754<T>::size() - numberOfBitsInLastDigit >= 0 &&
          IEEE754<T>::size() - numberOfBitsInLastDigit < 64);
   mantissa |=
@@ -693,8 +695,8 @@ IntegerDivision Integer::udiv(const Integer &numerator,
   // qDigits is a half_native_uint_t array and enable one digit overflow
   half_native_uint_t *qDigits =
       reinterpret_cast<half_native_uint_t *>(s_workingBufferDivision);
-  // The quotient q has at maximum m+1 half digits but we set an extra half
-  // digit to 0 to enable to easily convert it from half digits to digits
+  /* The quotient q has at maximum m+1 half digits but we set an extra half
+   * digit to 0 to enable to easily convert it from half digits to digits */
   memset(qDigits, 0,
          std::max(m + 1 + 1, 2 * k_maxNumberOfDigits) *
              sizeof(half_native_uint_t));

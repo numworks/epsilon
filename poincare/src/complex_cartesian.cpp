@@ -179,9 +179,9 @@ Expression ComplexCartesian::argument(
   Expression a = real();
   Expression b = imag();
   if (b.isNull(reductionContext.context()) != TrinaryBoolean::True) {
-    // TODO: Handle TrinaryBoolean::Unknown
-    // if b != 0, argument = sign(b) * π/2 - atan(a/b)
-    // First, compute atan(a/b) or (π/180)*atan(a/b)
+    /* TODO: Handle TrinaryBoolean::Unknown
+     * if b != 0, argument = sign(b) * π/2 - atan(a/b)
+     * First, compute atan(a/b) or (π/180)*atan(a/b) */
     Expression divab = Division::Builder(a, b.clone());
     Expression arcTangent = ArcTangent::Builder(divab);
     divab.shallowReduce(reductionContext);
@@ -255,8 +255,8 @@ ComplexCartesian ComplexCartesian::squareRoot(
     const ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
-  // A: (1/2)*sqrt(2*(sqrt(a^2+b^2)+a))
-  // B: (1/2)*sqrt(2*(sqrt(a^2+b^2)-a))*sign(b)
+  /* A: (1/2)*sqrt(2*(sqrt(a^2+b^2)+a))
+   * B: (1/2)*sqrt(2*(sqrt(a^2+b^2)-a))*sign(b) */
   Expression normA = clone().convert<ComplexCartesian>().norm(reductionContext);
   Expression normB = normA.clone();
   // A = (1/2)*sqrt(2*(sqrt(a^2+b^2)+a))
@@ -284,8 +284,8 @@ ComplexCartesian ComplexCartesian::powerInteger(
   assert(n > 0);
   assert(b.isNull(reductionContext.context()) != TrinaryBoolean::True);
 
-  // Special case: a == 0 (otherwise, we are going to introduce undefined
-  // expressions - a^0 = NAN) (b*i)^n = b^n*i^n with i^n == i, -i, 1 or -1
+  /* Special case: a == 0 (otherwise, we are going to introduce undefined
+   * expressions - a^0 = NAN) (b*i)^n = b^n*i^n with i^n == i, -i, 1 or -1 */
   if (a.isNull(reductionContext.context()) == TrinaryBoolean::True) {
     ComplexCartesian result;
     Expression bpow = Power::Builder(b, Rational::Builder(n));
@@ -302,9 +302,9 @@ ComplexCartesian ComplexCartesian::powerInteger(
     bpow.shallowReduce(reductionContext);
     return result;
   }
-  // (a+ib) = a^n+i*b*a^(n-1)+(-1)*b^2*a^(n-2)+(-i)*b^3*a^(n-3)+b^3*a^(n-4)+...
-  // Real part: A = a^n+(-1)*b^2*a^(n-2)+...
-  // Imaginary part: B = b*a^(n-1)
+  /* (a+ib) = a^n+i*b*a^(n-1)+(-1)*b^2*a^(n-2)+(-i)*b^3*a^(n-3)+b^3*a^(n-4)+...
+   * Real part: A = a^n+(-1)*b^2*a^(n-2)+...
+   * Imaginary part: B = b*a^(n-1) */
   Addition A = Addition::Builder();
   Addition B = Addition::Builder();
   ComplexCartesian result = ComplexCartesian::Builder(A, B);
@@ -344,8 +344,8 @@ ComplexCartesian ComplexCartesian::multiply(
   Expression b = imag();
   Expression c = other.real();
   Expression d = other.imag();
-  // (a+ib) * (c+id) = (ac-bd)+i*(ad+bc)
-  // Compute ac-bd
+  /* (a+ib) * (c+id) = (ac-bd)+i*(ad+bc)
+   * Compute ac-bd */
   Expression ac = Multiplication::Builder(a.clone(), c.clone());
   Expression bd = Multiplication::Builder(b.clone(), d.clone());
   Subtraction A = Subtraction::Builder(ac, bd);

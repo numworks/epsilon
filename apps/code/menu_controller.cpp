@@ -356,8 +356,8 @@ void MenuController::addScript() {
     renameSelectedScript();
     return;
   }
-  // Adding a new script is called when !m_scriptStore.isFull() which guarantees
-  // that the available space in the storage is big enough
+  /* Adding a new script is called when !m_scriptStore.isFull() which guarantees
+   * that the available space in the storage is big enough */
   assert(false);
 }
 

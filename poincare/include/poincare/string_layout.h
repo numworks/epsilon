@@ -43,8 +43,8 @@ class StringLayoutNode : public LayoutNode {
 #endif
 
  private:
-  // We only display thousands separator if there is more than 4 digits (12 345
-  // but 1234)
+  /* We only display thousands separator if there is more than 4 digits (12 345
+   * but 1234) */
   constexpr static int k_minDigitsForThousandSeparator = 5;
 
   bool protectedIsIdenticalTo(Layout l) override;

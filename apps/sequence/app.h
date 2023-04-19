@@ -56,9 +56,9 @@ class App : public Shared::FunctionApp {
     return static_cast<Snapshot *>(Escher::App::snapshot());
   }
   TELEMETRY_ID("Sequence");
-  // TODO: override variableBox to lock sequence in the variable box once they
-  // appear there NestedMenuController * variableBox(InputEventHandler *
-  // textInput) override;
+  /* TODO: override variableBox to lock sequence in the variable box once they
+   * appear there NestedMenuController * variableBox(InputEventHandler *
+   * textInput) override; */
   CodePoint XNT() override { return 'n'; }
   Shared::SequenceContext *localContext() override {
     return static_cast<Shared::GlobalContext *>(

@@ -214,8 +214,8 @@ class ContinuousFunction : public Function {
 
   /* Range */
 
-  // Return step computed from t range or NAN if properties().isCartesian() is
-  // true.
+  /* Return step computed from t range or NAN if properties().isCartesian() is
+   * true. */
   float rangeStep() const override;
 
   /* Expressions */

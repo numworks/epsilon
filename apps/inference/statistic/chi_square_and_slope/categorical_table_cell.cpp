@@ -52,12 +52,12 @@ void CategoricalTableCell::tableViewDidChangeSelection(
         categoricalController()->view()->bounds().height();
     KDCoordinate givenHeight;
     if (verticalOffset + displayedHeight < tableCellRequiredHeight) {
-      // We need to clip the size of the CategoricalTableCell to force it to
-      // scroll
+      /* We need to clip the size of the CategoricalTableCell to force it to
+       * scroll */
       givenHeight = displayedHeight;
     } else {
-      // We need to enlarge the size of the CategoricalTableCell to authorize it
-      // to scroll downer than its own height
+      /* We need to enlarge the size of the CategoricalTableCell to authorize it
+       * to scroll downer than its own height */
       givenHeight = tableCellRequiredHeight - verticalOffset;
     }
     m_selectableTableView.setSize(

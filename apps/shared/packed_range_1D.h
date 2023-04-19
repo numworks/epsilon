@@ -33,8 +33,8 @@ class __attribute__((packed)) PackedRange1D final {
                   void (Poincare::Range1D::*setter)(float, float));
 
 #if __EMSCRIPTEN__
-  // See comment about emscripten alignment in
-  // Shared::Function::RecordDataBuffer
+  /* See comment about emscripten alignment in
+   * Shared::Function::RecordDataBuffer */
   static_assert(sizeof(emscripten_align1_float) == sizeof(float),
                 "emscripten_align1_float should have the same size as float");
   emscripten_align1_float m_min;

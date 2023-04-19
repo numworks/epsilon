@@ -30,8 +30,8 @@ KDColor AbstractScrollableMultipleLayoutsView::ContentCell::backgroundColor()
 
 void AbstractScrollableMultipleLayoutsView::ContentCell::setHighlighted(
     bool highlight) {
-  // Do not call HighlightCell::setHighlighted to avoid marking all cell as
-  // dirty
+  /* Do not call HighlightCell::setHighlighted to avoid marking all cell as
+   * dirty */
   setHighlightedWithoutReload(highlight);
   updateSubviewsBackgroundAfterChangingState();
 }
@@ -271,8 +271,8 @@ View* AbstractScrollableMultipleLayoutsView::ContentCell::subviewAtIndex(
 void AbstractScrollableMultipleLayoutsView::ContentCell::layoutSubviews(
     bool force) {
   if (bounds().width() <= 0 || bounds().height() <= 0) {
-    // TODO Make this behaviour in a non-virtual layoutSublviews, and all layout
-    // subviews should become privateLayoutSubviews
+    /* TODO Make this behaviour in a non-virtual layoutSublviews, and all layout
+     * subviews should become privateLayoutSubviews */
     return;
   }
   KDRect leftFrame = KDRectZero;
@@ -311,8 +311,8 @@ void AbstractScrollableMultipleLayoutsView::setLayouts(
     contentCell()->reloadTextColor();
     // Reload layouts layouts
     contentCell()->layoutSubviews();
-    // Reload the scroll content view layout (the content size might have
-    // changed)
+    /* Reload the scroll content view layout (the content size might have
+     * changed) */
     layoutSubviews();
     /* TODO revert commit 87e48361961d1?
      * We can call reloadScroll here instead of in didBecome firstResponder,

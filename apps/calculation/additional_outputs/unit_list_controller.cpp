@@ -71,16 +71,16 @@ void UnitListController::setExpression(Poincare::Expression e) {
   resetMemoization();
   m_expression = e;
 
-  // I. Handle expression cells
-  // 0. Initialize expressions and layouts
+  /* I. Handle expression cells
+   *   0. Initialize expressions and layouts */
   Poincare::Expression expressions[k_maxNumberOfExpressionCells];
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
     m_layouts[i] = Layout();
     expressions[i] = Expression();
   }
 
-  /* 1. First rows: miscellaneous classic units for some dimensions, in both
-   * metric and imperial units. */
+  /*   1. First rows: miscellaneous classic units for some dimensions, in both
+   *      metric and imperial units. */
   Expression copy = m_expression.clone();
   Expression units;
   // Reduce to be able to recognize units
@@ -113,7 +113,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
     // Needs to be defined for the unit comparison but is not used with angles
     siExpression = m_expression;
   } else {
-    // 2. SI units only
+    //  2. SI units only
     assert(numberOfExpressions < k_maxNumberOfExpressionCells - 1);
     expressions[numberOfExpressions] = m_expression;
     Shared::PoincareHelpers::CloneAndSimplify(
@@ -126,12 +126,12 @@ void UnitListController::setExpression(Poincare::Expression e) {
     numberOfExpressions++;
   }
 
-  /* 3. Get rid of duplicates
+  /*  3. Get rid of duplicates
    * We find duplicates by comparing the serializations, to eliminate
    * expressions that only differ by the types of their number nodes. */
   Expression reduceExpression = m_expression;
-  // Make m_expression comparable to expressions (turn BasedInteger into
-  // Rational for instance)
+  /* Make m_expression comparable to expressions (turn BasedInteger into
+   * Rational for instance) */
   Shared::PoincareHelpers::CloneAndSimplify(
       &reduceExpression, App::app()->localContext(), ReductionTarget::User,
       Poincare::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
@@ -144,8 +144,8 @@ void UnitListController::setExpression(Poincare::Expression e) {
     int size1 = PoincareHelpers::Serialize(expressions[currentExpressionIndex],
                                            buffer1, buffersSize);
     for (int i = 0; i < currentExpressionIndex + 1; i++) {
-      // Compare the currentExpression to all previous expressions and to
-      // m_expression
+      /* Compare the currentExpression to all previous expressions and to
+       * m_expression */
       Expression comparedExpression =
           i == currentExpressionIndex ? reduceExpression : expressions[i];
       assert(!comparedExpression.isUninitialized());
@@ -160,8 +160,8 @@ void UnitListController::setExpression(Poincare::Expression e) {
         }
         // Remove last expression
         expressions[numberOfExpressions] = Expression();
-        // The current expression has been discarded, no need to increment the
-        // current index
+        /* The current expression has been discarded, no need to increment the
+         * current index. */
         duplicateFound = true;
         break;
       }
@@ -194,13 +194,13 @@ void UnitListController::setExpression(Poincare::Expression e) {
     }
   }
 
-  // II. Handle buffer cells
-  // 0. Initialize reference values
+  /* II. Handle buffer cells
+   *   0. Initialize reference values */
   for (size_t i = 0; i < k_maxNumberOfBufferCells; i++) {
     m_referenceValues[i] = nullptr;
   }
 
-  // 1. Extract value and unit of SI expression
+  //   1. Extract value and unit of SI expression
   assert(siExpression.hasUnit());
   Expression clone = siExpression.clone();
   Expression unit;
@@ -210,7 +210,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
       UnitConversion::None);
   m_SIValue = PoincareHelpers::ApproximateToScalar<double>(
       clone, App::app()->localContext());
-  // 2. Set upper and lower reference values
+  //   2. Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
       m_SIValue, unit, m_referenceValues, &m_tableIndexForComparison);
 

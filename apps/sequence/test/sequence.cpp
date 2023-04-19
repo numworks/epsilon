@@ -131,8 +131,8 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results3, types, definitions, conditions1,
                              conditions2);
 
-  // u independent, v defined with u
-  // u(n) = n; v(n) = u(n)+n
+  /* u independent, v defined with u
+   * u(n) = n; v(n) = u(n)+n */
   double results4[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
       {0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0},
@@ -194,8 +194,8 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results8, types, definitions, conditions1,
                              conditions2);
 
-  // u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0; v(n+1) = u(n)+u(n+1)+n, v(0) =
-  // 0
+  /* u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0;
+   * v(n+1) = u(n)+u(n+1)+n, v(0) = 0 */
   double results9[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0},
       {0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0, 133.0},
@@ -231,8 +231,8 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results11, types, definitions, conditions1,
                              conditions2);
 
-  // u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0; v(n+2) = u(n)+u(n+1)+n, v(0) =
-  // 0, v(1)=0
+  /* u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0;
+   * v(n+2) = u(n)+u(n+1)+n, v(0) = 0, v(1)=0; */
   double results12[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0},
       {0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0},
@@ -309,8 +309,8 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results17, types, definitions, conditions1,
                              conditions2);
 
-  // u(n+2) = v(n+1)+u(n+1)+v(n)+u(n)+n, u(1) = 0, u(0) = 0; v(n+1) = u(n)+n,
-  // v(0)=0
+  /* u(n+2) = v(n+1)+u(n+1)+v(n)+u(n)+n, u(1) = 0, u(0) = 0;
+   * v(n+1) = u(n)+n, v(0)=0 */
   double results18[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 0.0, 0.0, 2.0, 7.0, 19.0, 46.0, 105.0, 233.0, 509.0},
       {0.0, 0.0, 1.0, 2.0, 5.0, 11.0, 24.0, 52.0, 112.0, 241.0},
@@ -362,8 +362,9 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results21, types, definitions, conditions1,
                              conditions2);
 
-  // u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0; v(n) = 9+n; w(n+1) = w(n)+2,
-  // w(0) = 0
+  /* u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0;
+   * v(n) = 9+n;
+   * w(n+1) = w(n)+2, w(0) = 0 */
   double results22[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0},
       {9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0},
@@ -380,8 +381,9 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results22, types, definitions, conditions1,
                              conditions2);
 
-  // u(n+1) = u(n)+n, u(0) = 0; v(n) = 9+n; w(n+2) = w(n+1)+w(n)+2, w(0) = 0,
-  // w(1) = 0
+  /* u(n+1) = u(n)+n, u(0) = 0;
+   * v(n) = 9+n;
+   * w(n+2) = w(n+1)+w(n)+2, w(0) = 0, w(1) = 0 */
   double results23[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0},
       {9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0},
@@ -395,8 +397,8 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results23, types, definitions, conditions1,
                              conditions2);
 
-  // v depends on u, w depends on v & u independent
-  // u(n) = n ; v(n+1) = u(n)+1, v(0) = 0, w(n) = 2+v(n)
+  /* v depends on u, w depends on v & u independent
+   * u(n) = n ; v(n+1) = u(n)+1, v(0) = 0, w(n) = 2+v(n) */
   double results24[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
       {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
@@ -422,9 +424,10 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results25, types, definitions, conditions1,
                              conditions2);
 
-  // v depends on u, w depends on u and v & u independent
-  // u(n) = n ; v(n+1) = u(n)+1, v(0) = 0, w(n+2) = 2+v(n+1)+u(n+1), w(0) = 0,
-  // w(1) = 0
+  /* v depends on u, w depends on u and v & u independent
+   * u(n) = n
+   * v(n+1) = u(n)+1, v(0) = 0
+   * w(n+2) = 2+v(n+1)+u(n+1), w(0) = 0, w(1) = 0 */
   double results26[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
       {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
@@ -436,9 +439,10 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results26, types, definitions, conditions1,
                              conditions2);
 
-  // v depends on u, w depends on v & u depends on w
-  // u(n+1) = w(n)+1, u(0) = 0; v(n+1) = u(n)+1, v(0) = 0, w(n+1) = v(n)+2, w(0)
-  // = 0
+  /* v depends on u, w depends on v & u depends on w
+   * u(n+1) = w(n)+1, u(0) = 0
+   * v(n+1) = u(n)+1, v(0) = 0
+   * w(n+1) = v(n)+2, w(0) = 0 */
   double results27[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 1.0, 3.0, 4.0, 5.0, 7.0, 8.0, 9.0, 11.0, 12.0},
       {0.0, 1.0, 2.0, 4.0, 5.0, 6.0, 8.0, 9.0, 10.0, 12.0},
@@ -455,8 +459,8 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results27, types, definitions, conditions1,
                              conditions2);
 
-  // v depends on u, w depends on v & u depends on w
-  // u(n) = w(n); v(n) = u(n), w(n) = v(n)
+  /* v depends on u, w depends on v & u depends on w
+   * u(n) = w(n); v(n) = u(n), w(n) = v(n) */
   double results28[SequenceStore::k_maxNumberOfSequences][10] = {
       {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
       {NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
@@ -474,8 +478,8 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results28, types, definitions, conditions1,
                              conditions2);
 
-  // u independent, v depends on u(3)
-  // u(n) = n; v(n) = u(5)+n
+  /* u independent, v depends on u(3)
+   * u(n) = n; v(n) = u(5)+n */
   double results29[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
       {5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0},
@@ -494,8 +498,8 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results29, types, definitions, conditions1,
                              conditions2);
 
-  // u independent, v depends on u(2)
-  // u(n) = n; v(n+1) = v(n)-u(2)
+  /* u independent, v depends on u(2)
+   * u(n) = n; v(n+1) = v(n)-u(2) */
   double results30[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
       {2.0, 0.0, -2.0, -4.0, -6.0, -8.0, -10.0, -12.0, -14.0, -16.0},
@@ -510,8 +514,8 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results30, types, definitions, conditions1,
                              conditions2);
 
-  // u and v interdependent
-  // u(n+2) = n + v(3) + u(n+1) - u(n); v(n) = u(n) - u(1)
+  /* u and v interdependent
+   * u(n+2) = n + v(3) + u(n+1) - u(n); v(n) = u(n) - u(1) */
   double results31[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 3.0, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
       {-3.0, 0.0, NAN, NAN, NAN, NAN, NAN, NAN, NAN, NAN},
@@ -525,8 +529,8 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results31, types, definitions, conditions1,
                              conditions2);
 
-  // u is independent, v depends on u(120) and w(5), w depends on u(8)
-  // u(n) = n; v(n+2) = v(n+1) + v(n) + u(120); w(n+1) = w(n) - u(8)
+  /* u is independent, v depends on u(120) and w(5), w depends on u(8)
+   * u(n) = n; v(n+2) = v(n+1) + v(n) + u(120); w(n+1) = w(n) - u(8) */
   double results32[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0},
       {46.0, 6.0, 172.0, 298.0, 590.0, 1008.0, 1718.0, 2846.0, 4684.0, 7650.0},
@@ -546,8 +550,8 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results32, types, definitions, conditions1,
                              conditions2);
 
-  // u independent, v depends on u(n+6)
-  // u(n) = 9n; v(n+1) = u(n+6)+v(0); v(0) = 9
+  /* u independent, v depends on u(n+6)
+   * u(n) = 9n; v(n+1) = u(n+6)+v(0); v(0) = 9 */
   double results33[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 9.0, 18.0, 27.0, 36.0, 45.0, 54.0, 63.0, 72.0, 81.0},
       {9.0, 63.0, 72.0, 81.0, 90.0, 99.0, 108.0, 117.0, 126.0, 135.0},

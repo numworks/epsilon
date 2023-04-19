@@ -75,8 +75,7 @@ Expression MatrixInverse::shallowReduce(ReductionContext reductionContext) {
       replaceWithInPlace(result);
       return result.shallowReduce(reductionContext);
     }
-    // The matrix could not be inverted exactly
-    // TODO Poincare error?
+    // The matrix could not be inverted exactly. TODO: Poincare error?
     return *this;
   }
   Expression result = Power::Builder(c, Rational::Builder(-1));

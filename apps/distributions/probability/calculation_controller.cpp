@@ -131,8 +131,8 @@ KDCoordinate CalculationController::nonMemoizedColumnWidth(int i) {
   if (i == 0) {
     return m_dropdown.minimalSizeForOptimalDisplay().width();
   }
-  // WARNING: that is possible only because we know which view cell corresponds
-  // to which cell
+  /* WARNING: that is possible only because we know which view cell corresponds
+   * to which cell */
   return m_calculationCells[i - 1].minimalSizeForOptimalDisplay().width();
 }
 
@@ -171,8 +171,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     }
     constexpr int bufferSize = Constants::k_largeBufferSize;
     char buffer[bufferSize];
-    // FIXME: Leo has not decided yet if we should use the prefered mode instead
-    // of always using scientific mode
+    /* FIXME: It has not been decided yet if we should use the prefered mode
+     * instead of always using scientific mode */
     Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
         m_calculation->parameterAtIndex(i - 1), buffer, bufferSize,
         Poincare::Preferences::VeryLargeNumberOfSignificantDigits,
@@ -187,8 +187,8 @@ bool CalculationController::textFieldDidHandleEvent(
     /* We do not reload the responder because it would setEditing(false)
      * the textField and the input would not be handled properly. */
     m_selectableTableView.reloadData(false);
-    // The textField frame might have increased which forces to reload the
-    // textField scroll
+    /* The textField frame might have increased which forces to reload the
+     * textField scroll */
     textField->scrollToCursor();
   }
   return returnValue;

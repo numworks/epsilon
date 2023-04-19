@@ -136,8 +136,8 @@ class Sequence : public Function {
 
   Poincare::Expression sumBetweenBounds(
       double start, double end, Poincare::Context *context) const override;
-  constexpr static int k_maxInitialRank =
-      255;  // m_initialRank is capped by 255
+  // m_initialRank is capped by 255
+  constexpr static int k_maxInitialRank = 255;
   // 255 + 1 (to take into account a double recursive sequence) fits in 3 digits
   constexpr static int k_initialRankNumberOfDigits = 3;
 

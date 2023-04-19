@@ -115,16 +115,14 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
 
   // Main table
   if (hideRowPreface) {
-    m_mainTableView->setTopMargin(
-        m_mainTableViewTopMargin);  // WARNING: If preface row can change, top
-                                    // margin is dependant on row frozen (follow
-                                    // the implementation used for column
-                                    // preface)
+    /* WARNING: If preface row can change, top margin is dependant on row frozen
+     * (follow the implementation used for column preface) */
+    m_mainTableView->setTopMargin(m_mainTableViewTopMargin);
     setChildFrame(m_mainTableView, rect, force);
   } else {
-    // WARNING: If we need a separator below the preface row, we should set a
-    // bottom margin for rowPrefaceView here (follow the implementation used for
-    // column preface)
+    /* WARNING: If we need a separator below the preface row, we should set a
+     * bottom margin for rowPrefaceView here (follow the implementation used for
+     * column preface) */
     m_mainTableView->setTopMargin(0);
     setChildFrame(m_mainTableView,
                   KDRect(rect.x(), rect.y() + rowPrefaceHeight, rect.width(),

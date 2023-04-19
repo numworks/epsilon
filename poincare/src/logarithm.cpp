@@ -172,8 +172,8 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
     if (base.type() == ExpressionNode::Type::Rational &&
         !static_cast<Rational&>(base).isNegative() &&
         !static_cast<Rational&>(base).isZero()) {
-      // log(+inf,a) with a < 1 --> -inf
-      // log(+inf,a) with a > 1 --> inf
+      /* log(+inf,a) with a < 1 --> -inf
+       * log(+inf,a) with a > 1 --> inf */
       if (static_cast<Rational&>(base).signedIntegerNumerator().isLowerThan(
               static_cast<Rational&>(base).integerDenominator())) {
         c = c.setSign(false, reductionContext);
@@ -248,8 +248,8 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
           r.integerDenominator(), b, a, true);
       r = Rational::Builder(newNumerator, newDenomitor);
     }
-    // log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime
-    // decomposition)
+    /* log(r) = a0log(p0)+a1log(p1)+... with r = p0^a0*p1^a1*... (Prime
+     * decomposition) */
     a.addChildAtIndexInPlace(splitLogarithmInteger(r.signedIntegerNumerator(),
                                                    false, reductionContext),
                              a.numberOfChildren(), a.numberOfChildren());
@@ -319,8 +319,8 @@ bool Logarithm::parentIsAPowerOfSameBase() const {
           : false;
   if (thisIsPowerExponent) {
     Expression powerOperand0 = parentExpression.childAtIndex(0);
-    // powerOperand0 has already been reduced so can be compared to
-    // childAtIndex(1)
+    /* powerOperand0 has already been reduced so can be compared to
+     * childAtIndex(1) */
     if (powerOperand0.isIdenticalTo(childAtIndex(1))) {
       return true;
     }

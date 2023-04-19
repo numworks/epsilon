@@ -312,8 +312,8 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
      * so simply bind them all. */
 
     assert(firstVariableInRow < variable);
-    // No row uniquely qualifies the current variable, bind it to a parameter.
-    // Add the row variable=parameter to increase the rank of the system.
+    /* No row uniquely qualifies the current variable, bind it to a parameter.
+     * Add the row variable=parameter to increase the rank of the system. */
     for (int i = 0; i < n; i++) {
       ab.addChildAtIndexInPlace(Rational::Builder(i == variable ? 1 : 0),
                                 abChildren, abChildren);

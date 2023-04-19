@@ -175,8 +175,8 @@ double Model::chi2(Store* store, int series, double* modelCoefficients) const {
   return result;
 }
 
-// a'(k,k) = a(k,k) * (1 + lambda)
-// a'(k,l) = a(l,k) when (k != l)
+/* a'(k,k) = a(k,k) * (1 + lambda)
+ * a'(k,l) = a(l,k) when (k != l) */
 double Model::alphaPrimeCoefficient(Store* store, int series,
                                     double* modelCoefficients, int k, int l,
                                     double lambda) const {

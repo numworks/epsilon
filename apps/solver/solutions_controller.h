@@ -177,9 +177,9 @@ class SolutionsController : public Escher::ViewController,
       2 * Escher::AbstractEvenOddBufferTextCell::k_horizontalMargin;
   constexpr static int k_valueCellWidth = 190;
 
-  // Number of cells
-  // When displaying approximate solutions for cos(x) = 0 between 0 and 1800 and
-  // scrolling down
+  /* Number of cells
+   * When displaying approximate solutions for cos(x) = 0 between 0 and 1800 and
+   * scrolling down */
   constexpr static int k_maxNumberOfVisibleCells =
       (Ion::Display::Height - 3 * Escher::Metric::TitleBarHeight) /
           k_defaultCellHeight +

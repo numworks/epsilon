@@ -16,8 +16,9 @@ class Interval : public Statistic {
  public:
   Interval()
       : m_estimate(NAN),
-        m_SE(NAN),  // Initialize to make sure m_SE != 0 by default and
-                    // test-statistics are graphable.
+        /* Initialize to make sure m_SE != 0 by default and test-statistics are
+         * graphable. */
+        m_SE(NAN),
         m_zCritical(NAN),
         m_marginOfError(NAN) {}
   virtual ~Interval();

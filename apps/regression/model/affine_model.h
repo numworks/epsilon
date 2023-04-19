@@ -7,8 +7,8 @@
 
 namespace Regression {
 
-// This is a pure virtual class that factorises all regression models that
-// compute an affine function (linear model and median-median model)
+/* This is a pure virtual class that factorises all regression models that
+ * compute an affine function (linear model and median-median model) */
 class AffineModel : public Model {
  public:
   using Model::Model;

@@ -59,8 +59,8 @@ bool ShouldNeverDisplayReduction(Poincare::Expression input,
 bool ShouldNeverDisplayExactOutput(Poincare::Expression exactOutput,
                                    Poincare::Context* context) {
   return
-      // Force all outputs to be ApproximateOnly if required by the exam mode
-      // configuration
+      /* Force all outputs to be ApproximateOnly if required by the exam mode
+       * configuration */
       ExactExpressionIsForbidden(exactOutput) ||
       // Lists or Matrices with only nonreal/undefined children
       (exactOutput.isOfType(

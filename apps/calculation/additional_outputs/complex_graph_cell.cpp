@@ -22,8 +22,8 @@ void ComplexGraphPolicy::drawPlot(const AbstractPlotView* plotView,
   float b = std::fabs(imag) * ellipseScale;
   float th = real < 0.f ? 3.f * M_PI_4 : M_PI_4;
   th = imag < 0.f ? -th : th;
-  // Avoid flat ellipsis for edge cases (for real = 0, the case imag = 0 is
-  // excluded)
+  /* Avoid flat ellipsis for edge cases (for real = 0, the case imag = 0 is
+   * excluded) */
   if (real == 0.0f) {
     a = 1.f * ellipseScale;
     th = imag < 0.f ? -M_PI_2 : M_PI_2;

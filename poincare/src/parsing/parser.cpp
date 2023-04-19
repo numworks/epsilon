@@ -70,18 +70,17 @@ Expression Parser::parseExpressionWithRightwardsArrow(
   Expression rightHandSide = initializeFirstTokenAndParseUntilEnd();
   if (m_nextToken.is(Token::Type::EndOfStream) &&
       !rightHandSide.isUninitialized() &&
-      (rightHandSide.type() ==
-           ExpressionNode::Type::Symbol  // RightHandSide must be symbol or
-                                         // function.
-       || (rightHandSide.type() == ExpressionNode::Type::Function &&
-           rightHandSide.childAtIndex(0).type() ==
-               ExpressionNode::Type::Symbol))) {
+      // RightHandSide must be symbol or function.
+      (rightHandSide.type() == ExpressionNode::Type::Symbol ||
+       (rightHandSide.type() == ExpressionNode::Type::Function &&
+        rightHandSide.childAtIndex(0).type() ==
+            ExpressionNode::Type::Symbol))) {
     restorePreviousParsingPosition(startingPosition);
     m_status = Status::Progress;
     m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
     EmptyContext tempContext = EmptyContext();
-    // This is instatiated outside the condition so that the pointer is not
-    // lost.
+    /* This is instatiated outside the condition so that the pointer is not
+     * lost. */
     VariableContext assignmentContext("", &tempContext);
     if (rightHandSide.type() == ExpressionNode::Type::Function &&
         m_parsingContext.context()) {
@@ -328,14 +327,14 @@ void Parser::parseNumber(Expression &leftHandSide, Token::Type stoppingType) {
   if (generateMixedFractionIfNeeded(leftHandSide)) {
     return;
   }
-  if (m_nextToken.isNumber()  // No implicit multiplication between two numbers
-                              // No implicit multiplication between a
-                              // hexadecimal number and an identifier (avoid
-                              // parsing 0x2abch as 0x2ABC*h)
-      || (m_currentToken.is(Token::Type::HexadecimalNumber) &&
-          (m_nextToken.is(Token::Type::CustomIdentifier) ||
-           m_nextToken.is(Token::Type::SpecialIdentifier) ||
-           m_nextToken.is(Token::Type::ReservedFunction)))) {
+  /* No implicit multiplication between two numbers.
+   * No implicit multiplication between a hexadecimal number and an identifier
+   * (avoid parsing 0x2abch as 0x2ABC*h). */
+  if (m_nextToken.isNumber() ||
+      (m_currentToken.is(Token::Type::HexadecimalNumber) &&
+       (m_nextToken.is(Token::Type::CustomIdentifier) ||
+        m_nextToken.is(Token::Type::SpecialIdentifier) ||
+        m_nextToken.is(Token::Type::ReservedFunction)))) {
     m_status = Status::Error;
     return;
   }
@@ -1038,8 +1037,8 @@ void Parser::privateParseCustomIdentifier(Expression &leftHandSide,
     VariableContext functionAssignmentContext(static_cast<Symbol &>(parameter),
                                               m_parsingContext.context());
     m_parsingContext.setContext(&functionAssignmentContext);
-    // We have to parseUntil here so that we do not lose the
-    // functionAssignmentContext pointer.
+    /* We have to parseUntil here so that we do not lose the
+     * functionAssignmentContext pointer. */
     leftHandSide = parseUntil(stoppingType, result);
     m_parsingContext.setContext(previousContext);
     return;

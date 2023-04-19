@@ -267,9 +267,9 @@ void CartesianConic::centerConic() {
   double f = m_f;
   double h;
   double k;
-  // Replacing x with x-h and y with y-k in order to cancel :
-  // - D and F if C is null : Ax^2 + Ey = 0
-  // - D and E otherwise    : Ax^2 + Cy^2 = F
+  /* Replacing x with x-h and y with y-k in order to cancel :
+   *  - D and F if C is null : Ax^2 + Ey = 0
+   *  - D and E otherwise    : Ax^2 + Cy^2 = F */
   assert(a != 0.0);
   h = d / (2 * a);
   if (c != 0.0) {
@@ -548,8 +548,8 @@ ParametricConic::ParametricConic(const Expression& e, Context* context,
     return;
   }
 
-  // Detect parabola (x , y) = (a*f(t) , b*f(t)^2)
-  // TODO: This does not detect parabolas of the form (a*f(t)+c, b*f(t)^2+d)
+  /* Detect parabola (x , y) = (a*f(t) , b*f(t)^2)
+   * TODO: This does not detect parabolas of the form (a*f(t)+c, b*f(t)^2+d) */
   Expression quotientWithXSquared = Division::Builder(
       Power::Builder(xOfT.clone(), Rational::Builder(2)), yOfT.clone());
   quotientWithXSquared = quotientWithXSquared.cloneAndReduce(

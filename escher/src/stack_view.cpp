@@ -95,8 +95,8 @@ void StackView::layoutSubviews(bool force) {
   // Border frame
   if (m_contentView) {
     if (m_headersOverlapHeaders && numberOfStacks > 0) {
-      // Last separator is drawn by last header, so content needs to be offset a
-      // bit
+      /* Last separator is drawn by last header, so content needs to be offset a
+       * bit */
       heightOffset += Metric::CellSeparatorThickness;
     }
     if (borderShouldOverlapContent()) {

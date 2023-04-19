@@ -139,8 +139,8 @@ Number Number::Multiplication(const Number &i, const Number &j) {
 Number Number::Power(const Number &i, const Number &j) {
   return BinaryOperation(
       i, j,
-      // Rational ^ Rational should not be handled here, but in
-      // Power::shallowReduce
+      /* Rational ^ Rational should not be handled here, but in
+       * Power::shallowReduce */
       [](const Rational &i, const Rational &j) {
         assert(false);
         return Rational::Builder(Integer::Overflow(false));
@@ -155,8 +155,8 @@ int Number::NaturalOrder(const Number &i, const Number &j) {
     return Rational::NaturalOrder(static_cast<const Rational &>(i),
                                   static_cast<const Rational &>(j));
   }
-  // one of the operand is Undefined/Infinity/Float or the Rational addition
-  // overflowed
+  /* One of the operand is Undefined/Infinity/Float or the Rational addition
+   * overflowed. */
   if (i.node()->doubleApproximation() < j.node()->doubleApproximation()) {
     return -1;
   } else if (i.node()->doubleApproximation() ==

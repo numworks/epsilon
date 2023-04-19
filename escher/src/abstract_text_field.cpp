@@ -105,16 +105,16 @@ void AbstractTextField::ContentView::setText(const char *text) {
   size_t maxBufferSize = m_isEditing ? draftTextBufferSize() : m_textBufferSize;
   char *buffer = const_cast<char *>(this->text());
   if (textRealLength > maxBufferSize - 1) {
-    // The text was too long to be copied
-    // TODO Maybe add a warning for the user?
+    /* The text was too long to be copied
+     * TODO Maybe add a warning for the user? */
     buffer[0] = 0;
     return;
   }
   int textLength = std::min(textRealLength, maxBufferSize - 1);
   // Copy the text
   strlcpy(buffer, text, maxBufferSize);
-  // Replace System parentheses (used to keep layout tree structure) by normal
-  // parentheses
+  /* Replace System parentheses (used to keep layout tree structure) by normal
+   * parentheses */
   Poincare::SerializationHelper::
       ReplaceSystemParenthesesAndBracesByUserParentheses(buffer);
   // Update the draft text length
@@ -177,8 +177,8 @@ bool AbstractTextField::ContentView::insertTextAtLocation(const char *text,
   memmove(location + textLength, location,
           (buffer + editedLength + 1) - location);
 
-  // Caution! One byte will be overridden by the null-terminating char of
-  // strlcpy
+  /* Caution: One byte will be overridden by the null-terminating char of
+   * strlcpy */
   size_t copySize = std::min(
       textLength + 1,
       static_cast<size_t>((buffer + draftTextBufferSize()) - location));
@@ -658,8 +658,8 @@ bool AbstractTextField::handleEventWithText(const char *eventText,
         return false;
       }
     }
-    // Replace System parentheses (used to keep layout tree structure) by normal
-    // parentheses
+    /* Replace System parentheses (used to keep layout tree structure) by normal
+     * parentheses */
     Poincare::SerializationHelper::
         ReplaceSystemParenthesesAndBracesByUserParentheses(buffer);
 

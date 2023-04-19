@@ -85,19 +85,18 @@ int Store::closestVerticalDot(OMG::VerticalDirection direction, double x,
       double currentY =
           i < numberOfDots ? get(series, 1, i) : meanOfColumn(series, 1);
       if (xMin <= currentX &&
-          currentX <= xMax  // The next dot is within the window abscissa bounds
-          && (std::fabs(currentX - x) <=
-              std::fabs(nextX -
-                        x))  // The next dot is the closest to x in abscissa
-          &&
-          ((currentY > y && direction.isUp())  // The next dot is above/under y
-           || (currentY < y && direction.isDown()) ||
+          // The next dot is within the window abscissa bounds
+          currentX <= xMax &&
+          // The next dot is the closest to x in abscissa
+          (std::fabs(currentX - x) <= std::fabs(nextX - x)) &&
+          // The next dot is above/under y
+          ((currentY > y && direction.isUp()) ||
+           (currentY < y && direction.isDown()) ||
            (currentY == y &&
             ((currentDot < 0 && direction.isUp()) ||
              ((direction.isDown()) == (series > currentSeries))))) &&
-          (nextX != currentX  // Edge case: if 2 dots have the same abscissa but
-                              // different ordinates
-           || ((currentY <= nextY) == (direction.isUp())))) {
+          // Edge case: if 2 dots have the same abscissa but different ordinates
+          (nextX != currentX || ((currentY <= nextY) == (direction.isUp())))) {
         nextX = currentX;
         nextY = currentY;
         nextDot = i;
@@ -402,10 +401,10 @@ double Store::computeDeterminationCoefficient(int series,
     return (ssr <= DBL_EPSILON) ? 1.0 : 0.0;
   }
   double r2 = 1.0 - ssr / sst;
-  // Check if regression fit was optimal.
-  // TODO : Optimize regression fitting so that r2 cannot be negative.
-  // assert(r2 >= 0 || seriesRegressionType(series) ==
-  // Model::Type::Proportional);
+  /* Check if regression fit was optimal.
+   * TODO : Optimize regression fitting so that r2 cannot be negative.
+   * assert(r2 >= 0 || seriesRegressionType(series) ==
+   * Model::Type::Proportional); */
   return r2;
 }
 

@@ -147,7 +147,7 @@ Node Rational::Addition(const Node i, const Node j) {
   cb.removeTree();
   EditionReference newDenominator =
       IntegerHandler::Multiplication(Denominator(i), Denominator(j));
-  Node result = Rational::Push(newNumerator, newDenominator);
+  EditionReference result = Rational::Push(newNumerator, newDenominator);
   newNumerator.removeTree();
   newDenominator.removeTree();
   return result;
@@ -158,7 +158,7 @@ Node Rational::Multiplication(const Node i, const Node j) {
       IntegerHandler::Multiplication(Numerator(i), Numerator(j));
   EditionReference newDenominator =
       IntegerHandler::Multiplication(Denominator(i), Denominator(j));
-  Node result = Rational::Push(newNumerator, newDenominator);
+  EditionReference result = Rational::Push(newNumerator, newDenominator);
   newNumerator.removeTree();
   newDenominator.removeTree();
   return result;
@@ -170,9 +170,9 @@ Node Rational::IntegerPower(const Node i, const Node j) {
   absJ.setSign(NonStrictSign::Positive);
   EditionReference newNumerator = IntegerHandler::Power(Numerator(i), absJ);
   EditionReference newDenominator = IntegerHandler::Power(Denominator(i), absJ);
-  Node result = Sign(j) == NonStrictSign::Negative
-                    ? Rational::Push(newDenominator, newNumerator)
-                    : Rational::Push(newNumerator, newDenominator);
+  EditionReference result = Sign(j) == NonStrictSign::Negative
+                                ? Rational::Push(newDenominator, newNumerator)
+                                : Rational::Push(newNumerator, newDenominator);
   newNumerator.removeTree();
   newDenominator.removeTree();
   return result;

@@ -193,7 +193,17 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
   float tMax = plotView->rangeMax(axis) + plotView->pixelLength(axis);
   int i = 0;
   float t = tickPosition(i, plotView, axis);
-  while (t <= tMax) {
+  /* maxNumberOfTicks is there to ensure that we do not draw too much ticks
+   * when reaching limit cases. For example, tMax = 1.0E+8 and tickStep = 0.5,
+   * when t == tMax, increasing if by tickstep will give:
+   *  t = tMax + tickStep, but tMax + tickStep == tMax because of float
+   * precision. Which means the condition t <= tMax in the loop will never be
+   * reached. */
+  int maxNumberOfTicks =
+      std::ceil((tMax - plotView->rangeMin(axis)) / tickStep(plotView, axis)) +
+      1;
+  assert(maxNumberOfTicks >= 2);
+  while (t <= tMax && i < maxNumberOfTicks) {
     if (drawTicks) {
       plotView->drawTick(ctx, rect, axis, t, k_color);
     }

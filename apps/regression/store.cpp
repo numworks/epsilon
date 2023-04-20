@@ -12,6 +12,7 @@
 
 #include "app.h"
 
+using namespace Poincare;
 using namespace Shared;
 
 namespace Regression {
@@ -63,8 +64,7 @@ void Store::setSeriesRegressionType(int series, Model::Type type) {
 
 int Store::closestVerticalDot(OMG::VerticalDirection direction, double x,
                               double y, int currentSeries, int currentDot,
-                              int *nextSeries,
-                              Poincare::Context *globalContext) {
+                              int *nextSeries, Context *globalContext) {
   double nextX = INFINITY;
   double nextY = INFINITY;
   int nextDot = -1;
@@ -189,7 +189,7 @@ bool Store::updateSeries(int series, bool delayUpdate,
 
 /* Calculations */
 
-void Store::updateCoefficients(int series, Poincare::Context *globalContext) {
+void Store::updateCoefficients(int series, Context *globalContext) {
   assert(series >= 0 && series <= k_numberOfSeries);
   assert(seriesIsActive(series));
   if (!m_recomputeCoefficients[series]) {
@@ -220,14 +220,12 @@ void Store::updateCoefficients(int series, Poincare::Context *globalContext) {
       computeResidualStandardDeviation(series, globalContext);
 }
 
-double *Store::coefficientsForSeries(int series,
-                                     Poincare::Context *globalContext) {
+double *Store::coefficientsForSeries(int series, Context *globalContext) {
   updateCoefficients(series, globalContext);
   return m_regressionCoefficients[series];
 }
 
-bool Store::coefficientsAreDefined(int series,
-                                   Poincare::Context *globalContext) {
+bool Store::coefficientsAreDefined(int series, Context *globalContext) {
   double *coefficients = coefficientsForSeries(series, globalContext);
   int numberOfCoefficients = modelForSeries(series)->numberOfCoefficients();
   for (int i = 0; i < numberOfCoefficients; i++) {
@@ -258,26 +256,25 @@ double Store::correlationCoefficient(int series) const {
   }
   /* Compare v0 and v1 to EpsilonLax to check if they are equal to zero (since
    * approximation errors could give them > 0 while they are not.)*/
-  double result = (std::abs(v0) < Poincare::Float<double>::EpsilonLax() ||
-                   std::abs(v1) < Poincare::Float<double>::EpsilonLax())
+  double result = (std::abs(v0) < Float<double>::EpsilonLax() ||
+                   std::abs(v1) < Float<double>::EpsilonLax())
                       ? 1.0
                       : covariance(series, options) / std::sqrt(v0 * v1);
   /* Due to errors, coefficient could slightly exceed 1.0. It needs to be
    * fixed here to prevent r^2 from being bigger than 1. */
-  assert(std::abs(result) <= 1.0 + 10 * Poincare::Float<double>::EpsilonLax());
+  assert(std::abs(result) <= 1.0 + 10 * Float<double>::EpsilonLax());
   return std::clamp(result, -1.0, 1.0);
 }
 
-double Store::determinationCoefficientForSeries(
-    int series, Poincare::Context *globalContext) {
+double Store::determinationCoefficientForSeries(int series,
+                                                Context *globalContext) {
   /* Returns the Determination coefficient (R2).
    * It will be updated if the regression has been updated */
   updateCoefficients(series, globalContext);
   return m_determinationCoefficient[series];
 }
 
-double Store::residualStandardDeviation(int series,
-                                        Poincare::Context *globalContext) {
+double Store::residualStandardDeviation(int series, Context *globalContext) {
   updateCoefficients(series, globalContext);
   return m_residualStandardDeviation[series];
 }
@@ -305,15 +302,13 @@ float Store::minValueOfColumn(int series, int i) const {
   return minColumn;
 }
 
-double Store::yValueForXValue(int series, double x,
-                              Poincare::Context *globalContext) {
+double Store::yValueForXValue(int series, double x, Context *globalContext) {
   Model *model = regressionModel(m_regressionTypes[series]);
   double *coefficients = coefficientsForSeries(series, globalContext);
   return model->evaluate(coefficients, x);
 }
 
-double Store::xValueForYValue(int series, double y,
-                              Poincare::Context *globalContext) {
+double Store::xValueForYValue(int series, double y, Context *globalContext) {
   Model *model = regressionModel(m_regressionTypes[series]);
   double *coefficients = coefficientsForSeries(series, globalContext);
   return model->levelSet(coefficients, App::app()->graphRange()->xMin(),
@@ -321,7 +316,7 @@ double Store::xValueForYValue(int series, double y,
 }
 
 double Store::residualAtIndexForSeries(int series, int index,
-                                       Poincare::Context *globalContext) {
+                                       Context *globalContext) {
   double x = get(series, 0, index);
   return get(series, 1, index) - yValueForXValue(series, x, globalContext);
 }
@@ -358,8 +353,8 @@ bool Store::AnyActiveSeriesSatisfies(TypeProperty property) const {
   return false;
 }
 
-double Store::computeDeterminationCoefficient(
-    int series, Poincare::Context *globalContext) {
+double Store::computeDeterminationCoefficient(int series,
+                                              Context *globalContext) {
   // Computes and returns the determination coefficient of the regression.
   if (seriesSatisfies(series, DisplayRSquared)) {
     /* With linear regressions and transformed models (Exponential, Logarithm
@@ -414,8 +409,8 @@ double Store::computeDeterminationCoefficient(
   return r2;
 }
 
-double Store::computeResidualStandardDeviation(
-    int series, Poincare::Context *globalContext) {
+double Store::computeResidualStandardDeviation(int series,
+                                               Context *globalContext) {
   int nCoeff =
       regressionModel(m_regressionTypes[series])->numberOfCoefficients();
   int n = numberOfPairsOfSeries(series);
@@ -459,16 +454,14 @@ Ion::Storage::Record Store::functionRecord(int series) const {
       ->recordBaseNamedWithExtension(name, Ion::Storage::regExtension);
 }
 
-void Store::storeRegressionFunction(int series,
-                                    Poincare::Expression expression) const {
+void Store::storeRegressionFunction(int series, Expression expression) const {
   if (expression.isUninitialized()) {
     return deleteRegressionFunction(series);
   }
   char name[k_functionNameSize];
   BuildFunctionName(series, name, k_functionNameSize);
   expression = expression.replaceSymbolWithExpression(
-      Poincare::Symbol::Builder(Model::k_xSymbol),
-      Poincare::Symbol::SystemSymbol());
+      Symbol::Builder(Model::k_xSymbol), Symbol::SystemSymbol());
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       name, Ion::Storage::regExtension, expression.addressInPool(),
       expression.size(), true);

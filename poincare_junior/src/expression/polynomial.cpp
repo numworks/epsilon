@@ -226,10 +226,15 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
     polB.removeTree();
     return std::make_pair(EditionReference(&ZeroBlock), polA);
   }
+  bool isXCloned = false;
   EditionReference x = Variable(polA);
   if (polB.type() == BlockType::Polynomial &&
-      Comparison::Compare(x, Variable(polB)) > 0) {
+      Comparison::Compare(x, Variable(polB)) >= 0) {
     x = Variable(polB);
+  } else {
+    // Clone x since polA may be altered
+    x = editionPool->clone(x);
+    isXCloned = true;
   }
   uint8_t degreeA, degreeB;
   EditionReference leadingCoeffA, leadingCoeffB;
@@ -260,6 +265,9 @@ std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(
     extractDegreeAndLeadingCoefficient(polA, x, &degreeA, &leadingCoeffA);
   }
   polB.removeTree();
+  if (isXCloned) {
+    x.removeTree();
+  }
   return std::make_pair(currentQuotient, polA);
 }
 

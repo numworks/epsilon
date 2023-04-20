@@ -1,13 +1,15 @@
 #include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/expression/polynomial.h>
 
+#include <iostream>
+
 #include "helper.h"
 
 using namespace PoincareJ;
 
 void assert_polynomial_is_parsed(const Node node, const Node expectedVariables,
                                  const Node expectedPolynomial) {
-  CachePool::sharedCachePool()->editionPool()->flush();
+  EditionPool::sharedEditionPool()->flush();
   EditionReference variables = PolynomialParser::GetVariables(node);
   assert_trees_are_equal(variables, expectedVariables);
   EditionReference ref(node);
@@ -40,6 +42,7 @@ QUIZ_CASE(pcj_polynomial_parsing) {
 }
 
 QUIZ_CASE(pcj_polynomial_operations) {
+  EditionPool* editionPool(EditionPool::sharedEditionPool());
   /* A = x^2 + 3*x*y + y + 1 */
   Node polA =
       KPol(Exponents<2, 1, 0>(), "x"_e, 1_e, KPol(Exponents<1>(), "y"_e, 3_e),
@@ -54,9 +57,10 @@ QUIZ_CASE(pcj_polynomial_operations) {
       EditionReference(KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e, 1_e,
                             KPol(Exponents<2, 1>(), "y"_e, 2_e, 10_e),
                             KPol(Exponents<1, 0>(), "y"_e, 1_e, 24_e))));
-  CachePool::sharedCachePool()->editionPool()->flush();
+  editionPool->flush();
 
-  /* A * B = x^5 + 3yx^4 + (2y^2+8y+1)*x^3 + (6y^3+21y^2+23)x^2 + (2y^3+9y^2+
+  /* A * B = x^5 + 3yx^4 + (2y^2+8y+1)*x^3 + (6y^3+21y^2+23)x^2 +
+  (2y^3+9y^2+
    * 76y)x + 23y + 23 */
   assert_trees_are_equal(
       Polynomial::Multiplication(EditionReference(polA),
@@ -67,7 +71,7 @@ QUIZ_CASE(pcj_polynomial_operations) {
                             KPol(Exponents<3, 2, 0>(), "y"_e, 6_e, 21_e, 23_e),
                             KPol(Exponents<3, 2, 1>(), "y"_e, 2_e, 9_e, 76_e),
                             KPol(Exponents<1, 0>(), "y"_e, 23_e, 23_e))));
-  CachePool::sharedCachePool()->editionPool()->flush();
+  editionPool->flush();
 
   /* Test variable order:
    * (y^2) + ((y+1)x + 1 = (y+1)x + y^2 + 1 */
@@ -78,10 +82,8 @@ QUIZ_CASE(pcj_polynomial_operations) {
                                KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e), 1_e))),
       KPol(Exponents<1, 0>(), "x"_e, KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e),
            KPol(Exponents<2, 0>(), "y"_e, 1_e, 1_e)));
-  CachePool::sharedCachePool()->editionPool()->flush();
+  editionPool->flush();
 
-  // TODO: Fix this test
-#if 0
   // A = x^2y^2 + y
   polA = KPol(Exponents<2, 0>(), "x"_e, KPol(Exponents<2>(), "y"_e, 1_e),
               KPol(Exponents<1>(), "y"_e, 1_e));
@@ -93,5 +95,4 @@ QUIZ_CASE(pcj_polynomial_operations) {
       quotient,
       KPol(Exponents<1, 0>(), "x"_e, KPol(Exponents<1>(), "y"_e, 1_e), -1_e));
   assert_trees_are_equal(remainder, KPol(Exponents<1, 0>(), "y"_e, 1_e, 1_e));
-#endif
 }

@@ -43,7 +43,7 @@ void EditExpressionController::ContentView::layoutSubviews(bool force) {
 
 void EditExpressionController::ContentView::reload() {
   layoutSubviews();
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 EditExpressionController::EditExpressionController(

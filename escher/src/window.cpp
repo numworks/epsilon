@@ -8,7 +8,7 @@ namespace Escher {
 
 void Window::redraw(bool force) {
   if (force) {
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
   Ion::Display::waitForVBlank();
   View::redraw(bounds());
@@ -16,7 +16,7 @@ void Window::redraw(bool force) {
 
 void Window::setContentView(View* contentView) {
   m_contentView = contentView;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
   layoutSubviews();
 }
 

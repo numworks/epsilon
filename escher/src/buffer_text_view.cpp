@@ -8,7 +8,7 @@ namespace Escher {
 
 void AbstractBufferTextView::setText(const char* text) {
   strlcpy(buffer(), text, maxTextSize());
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void AbstractBufferTextView::setMessageWithPlaceholders(I18n::Message message,
@@ -25,7 +25,7 @@ void AbstractBufferTextView::privateSetMessageWithPlaceholders(
       buffer(), maxTextSize(), I18n::translate(message), args);
   assert(length < maxTextSize());
   (void)length;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void AbstractBufferTextView::appendText(const char* text) {

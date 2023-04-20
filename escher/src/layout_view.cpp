@@ -17,7 +17,7 @@ bool LayoutView::setLayout(Layout layoutR) {
    * counters are properly handled. */
   m_layout = layoutR;
   if (shouldRedraw) {
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
   return shouldRedraw;
 }

@@ -10,7 +10,7 @@ void MessageTextView::setText(const char* text) { assert(false); }
 void MessageTextView::setMessage(I18n::Message message) {
   if (message != m_message) {
     m_message = message;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
 }
 

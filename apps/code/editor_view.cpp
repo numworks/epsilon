@@ -97,7 +97,7 @@ void EditorView::GutterView::setOffset(KDCoordinate offset) {
     return;
   }
   m_offset = offset;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 KDSize EditorView::GutterView::minimalSizeForOptimalDisplay() const {

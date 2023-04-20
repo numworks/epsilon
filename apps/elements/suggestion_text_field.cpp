@@ -36,7 +36,7 @@ KDSize SuggestionTextField::ContentView::minimalSizeForOptimalDisplay() const {
 
 void SuggestionTextField::ContentView::setSuggestion(const char* suggestion) {
   m_suggestion = suggestion;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 // SuggestionTextField

@@ -27,7 +27,7 @@ void GaugeView::setLevel(float level) {
     level = level < 0 ? 0 : level;
     level = level > 1 ? 1 : level;
     m_level = level;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
 }
 
@@ -35,7 +35,7 @@ void GaugeView::setHighlighted(bool highlighted) {
   KDColor backgroundColor = AbstractMenuCell::BackgroundColor(highlighted);
   if (m_backgroundColor != backgroundColor) {
     m_backgroundColor = backgroundColor;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
 }
 

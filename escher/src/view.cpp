@@ -98,7 +98,7 @@ void View::setFrame(KDRect frame, bool force) {
     }
     if (frame.size() == m_frame.size()) {
       translate(frame.origin().relativeTo(m_frame.origin()));
-      markRectAsDirty(bounds());
+      markWholeFrameAsDirty();
       return;
     }
   }

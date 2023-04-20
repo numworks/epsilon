@@ -25,7 +25,7 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
     return false;
   }
   m_isEditing = isEditing;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
   bool layoutChanged = false;
   if (isEditing) {
     layoutChanged = m_cursor.didEnterCurrentPosition();
@@ -34,7 +34,7 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
     layoutChanged = m_cursor.didExitPosition();
   }
   layoutSubviews();
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
   return layoutChanged;
 }
 
@@ -267,7 +267,7 @@ void LayoutField::reload(KDSize previousSize) {
   }
   m_contentView.cursorPositionChanged();
   scrollToCursor();
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 using LayoutInsertionMethod =

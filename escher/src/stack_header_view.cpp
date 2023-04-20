@@ -14,7 +14,7 @@ StackHeaderView::StackHeaderView(ViewController *controller, KDColor textColor,
       m_backgroundColor(backgroundColor),
       m_separatorColor(separatorColor),
       m_controller(controller) {
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void StackHeaderView::drawRect(KDContext *ctx, KDRect rect) const {

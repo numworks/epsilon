@@ -42,12 +42,12 @@ AbstractTextField::ContentView::ContentView(char *textBuffer,
 void AbstractTextField::ContentView::setBackgroundColor(
     KDColor backgroundColor) {
   m_backgroundColor = backgroundColor;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void AbstractTextField::ContentView::setTextColor(KDColor textColor) {
   m_textColor = textColor;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void AbstractTextField::ContentView::drawRect(KDContext *ctx,
@@ -121,7 +121,7 @@ void AbstractTextField::ContentView::setText(const char *text) {
   if (buffer == s_draftTextBuffer) {
     s_currentDraftTextLength = textLength;
   }
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void AbstractTextField::ContentView::setEditing(bool isEditing) {
@@ -141,7 +141,7 @@ void AbstractTextField::ContentView::setEditing(bool isEditing) {
   if (m_cursorLocation < buffer || m_cursorLocation > buffer + textLength) {
     m_cursorLocation = buffer + textLength;
   }
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
   layoutSubviews();
 }
 
@@ -683,7 +683,7 @@ void AbstractTextField::removeWholeText() {
   assert(isEditable());
   reinitDraftTextBuffer();
   resetSelection();
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
   layoutSubviews();
   reloadScroll();
 }

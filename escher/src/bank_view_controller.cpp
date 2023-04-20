@@ -42,7 +42,7 @@ void BankViewController::viewDidDisappear() {
 void BankViewController::ContentView::setSubview(View* view) {
   m_subview = view;
   layoutSubviews();
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 }  // namespace Escher

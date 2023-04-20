@@ -111,7 +111,7 @@ bool ModalViewController::ContentView::isDisplayingModal() const {
 }
 
 void ModalViewController::ContentView::reload() {
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
   layoutSubviews();
 }
 

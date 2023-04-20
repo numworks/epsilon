@@ -4,12 +4,12 @@ namespace Escher {
 
 SolidColorView::SolidColorView(KDColor color) : View(), m_color(color) {}
 
-void SolidColorView::reload() { markRectAsDirty(bounds()); }
+void SolidColorView::reload() { markWholeFrameAsDirty(); }
 
 void SolidColorView::setColor(KDColor color) {
   if (m_color != color) {
     m_color = color;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
 }
 

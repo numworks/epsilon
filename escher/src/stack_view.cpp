@@ -16,7 +16,7 @@ StackView::StackView(Style style, bool extendVertically)
 void StackView::setContentView(View* view) {
   m_contentView = view;
   layoutSubviews();
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void StackView::setupHeadersBorderOverlaping(

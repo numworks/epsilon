@@ -56,7 +56,7 @@ bool BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
                     : chargeState;
   if (m_lowBatteryAnimationState) {
     m_lowBatteryAnimationState--;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
     return true;
   }
   if (m_chargeState == chargeState) {
@@ -64,14 +64,14 @@ bool BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
   }
   m_chargeState = chargeState;
   updateBatteryAnimation();
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
   return true;
 }
 
 bool BatteryView::setIsCharging(bool isCharging) {
   if (m_isCharging != isCharging) {
     m_isCharging = isCharging;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
     return true;
   }
   return false;
@@ -80,7 +80,7 @@ bool BatteryView::setIsCharging(bool isCharging) {
 bool BatteryView::setIsPlugged(bool isPlugged) {
   if (m_isPlugged != isPlugged) {
     m_isPlugged = isPlugged;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
     return true;
   }
   return false;

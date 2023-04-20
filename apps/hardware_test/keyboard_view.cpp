@@ -6,7 +6,7 @@ namespace HardwareTest {
 
 void KeyboardView::setTestedKeyIndex(int i) {
   m_keyboardModel.setTestedKeyIndex(i);
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void KeyboardView::drawRect(KDContext* ctx, KDRect rect) const {

@@ -40,7 +40,7 @@ int GraphView::selectedRecordIndex() const {
 void GraphView::setFocus(bool focus) {
   if (focus != hasFocus()) {
     /* Points of interest change visibility when the focus changes. */
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
   FunctionGraphView::setFocus(focus);
 }

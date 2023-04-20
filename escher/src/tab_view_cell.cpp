@@ -14,17 +14,17 @@ void TabViewCell::setTabController(TabViewController *controller,
                                    uint8_t tabNumber) {
   m_tabNumber = tabNumber;
   m_controller = controller;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void TabViewCell::setActive(bool active) {
   m_active = active;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void TabViewCell::setSelected(bool selected) {
   m_selected = selected;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 KDSize TabViewCell::minimalSizeForOptimalDisplay() const {

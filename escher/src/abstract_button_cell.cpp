@@ -37,7 +37,7 @@ void AbstractButtonCell::setHighlighted(bool highlight) {
   KDColor backgroundColor =
       highlight ? highlightedBackgroundColor() : KDColorWhite;
   m_messageTextView.setBackgroundColor(backgroundColor);
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 KDSize AbstractButtonCell::minimalSizeForOptimalDisplay() const {

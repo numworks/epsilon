@@ -24,7 +24,7 @@ class HighlightCell : public View {
   void setHighlightedWithoutReload(bool highlight) {
     m_state = highlight ? State::Highlighted : State::Visible;
   }
-  virtual void reloadCell() { markRectAsDirty(bounds()); }
+  virtual void reloadCell() { markWholeFrameAsDirty(); }
   virtual Responder* responder() { return nullptr; }
   virtual const char* text() const { return nullptr; }
   virtual Poincare::Layout layout() const { return Poincare::Layout(); }

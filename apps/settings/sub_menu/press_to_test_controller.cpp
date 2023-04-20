@@ -74,7 +74,10 @@ ExamMode::PressToTestFlags PressToTestController::getPressToTestParams() {
 
 KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
   if (typeAtIndex(j) == k_buttonCellType) {
-    return heightForCellAtIndex(&m_activateButton, j);
+    /* Do not call heightForCellAtIndex since bounds can be empty (when exam
+     * mode is on). Moreover, willDisplayCellForIndex does nothing for
+     * m_activateButton. */
+    return m_activateButton.minimalSizeForOptimalDisplay().height();
   }
   assert(typeAtIndex(j) == k_switchCellType);
   PressToTestSwitch tempCell;

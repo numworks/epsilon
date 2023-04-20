@@ -160,15 +160,15 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
 
 void StoreController::handleDeleteEvent(bool authorizeNonEmptyRowDeletion,
                                         bool *didDeleteRow) {
-  int i = selectedColumn();
-  int j = selectedRow();
-  assert(i >= 0 && i < numberOfColumns());
-  int series = m_store->seriesAtColumn(i);
-  assert(j >= 0);
-  if (j == 0 || j > numberOfElementsInColumn(i)) {
+  int col = selectedColumn();
+  int row = selectedRow();
+  assert(col >= 0 && col < numberOfColumns());
+  int series = m_store->seriesAtColumn(col);
+  assert(row >= 0);
+  if (row == 0 || row > numberOfElementsInColumn(col)) {
     return;
   }
-  if (deleteCellValue(series, i, j, authorizeNonEmptyRowDeletion)) {
+  if (deleteCellValue(series, col, row, authorizeNonEmptyRowDeletion)) {
     // A row has been deleted
     if (didDeleteRow) {
       *didDeleteRow = true;
@@ -180,7 +180,7 @@ void StoreController::handleDeleteEvent(bool authorizeNonEmptyRowDeletion,
     }
     reloadSeriesVisibleCells(series);
   }
-  if (m_store->lengthOfColumn(series, m_store->relativeColumnIndex(i)) == 0) {
+  if (m_store->lengthOfColumn(series, m_store->relativeColumnIndex(col)) == 0) {
     resetMemoizedFormulasForSeries(series);
   }
 }

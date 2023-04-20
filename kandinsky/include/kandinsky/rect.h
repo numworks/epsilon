@@ -54,6 +54,7 @@ class KDRect {
   bool operator==(const KDRect &other) const {
     return (m_origin == other.origin() && m_size == other.size());
   }
+  bool operator!=(const KDRect &other) const { return !(other == *this); }
 
   void setOrigin(KDPoint origin) { m_origin = origin; }
   void setSize(KDSize size) { m_size = size; }

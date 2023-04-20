@@ -797,14 +797,11 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
   if (baseType == ExpressionNode::Type::Rational &&
       indexType == ExpressionNode::Type::Addition &&
       index.childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-    Rational rationalBase = static_cast<Rational &>(base);
-    Addition additionIndex = static_cast<Addition &>(index);
-    Rational rationalIndex = index.childAtIndex(0).convert<Rational>();
-    Expression p1 =
-        PowerRationalRational(rationalBase, rationalIndex, reductionContext);
-    if ((rationalIndex.unsignedIntegerNumerator().isOne() &&
-         !rationalIndex.isInteger()) ||
-        p1.isUninitialized()) {
+    /* clone base and index since PowerRationalRational could alter base and/or
+     * index, and make this corrupted when escaping because reduction failed. */
+    Rational rationalIndex = index.childAtIndex(0).clone().convert<Rational>();
+    if (rationalIndex.unsignedIntegerNumerator().isOne() &&
+        !rationalIndex.isInteger()) {
       /* Escape here to avoid infinite loops with the multiplication.
        * TODO: do something more sensible here:
        * - add rule (-rational)^x --> (-1)^x*rational^x so we only consider
@@ -814,6 +811,13 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
        *   this rule in that case */
       return *this;
     }
+    Rational rationalBase = base.clone().convert<Rational>();
+    Expression p1 =
+        PowerRationalRational(rationalBase, rationalIndex, reductionContext);
+    if (p1.isUninitialized()) {
+      return *this;
+    }
+    Addition additionIndex = static_cast<Addition &>(index);
     additionIndex.removeChildAtIndexInPlace(0);
     /* If the addition had only 2 children. */
     additionIndex.squashUnaryHierarchyInPlace();
@@ -1458,11 +1462,7 @@ Expression Power::PowerRationalRational(
     }
     base.setSign(true);
     Expression res2 = PowerRationalRational(base, index, reductionContext);
-    /* PowerRationalRational doesn't alter its arguments: restore the sign of
-     * the base. */
-    base.setSign(false);
     if (res2.isUninitialized()) {
-      base.setSign(false);
       return Expression();
     } else {
       res.addChildAtIndexInPlace(res2, res.numberOfChildren(),
@@ -1490,11 +1490,7 @@ Expression Power::PowerRationalRational(
       return std::move(base);
     }
     index.setSign(true);
-    Expression res = PowerRationalRational(base, index, reductionContext);
-    /* PowerRationalRational doesn't alter its arguments: restore the sign of
-     * the index. */
-    index.setSign(false);
-    return res;
+    return PowerRationalRational(base, index, reductionContext);
   }
   assert(!index.isNegative());
   /* We are handling an expression of the form (p/q)^(a/b), with a and b

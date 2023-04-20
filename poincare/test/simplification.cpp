@@ -982,6 +982,9 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("√(-arcsin(-e-1))", "√(-arcsin(-e-1))");
   assert_parsed_expression_simplify_to("((-e^3)×cos(2))^(1/3)",
                                        "e×root(-cos(2),3)");
+  // assert this does not crash
+  assert_parsed_expression_simplify_to(
+      "90000000005^(x+0.5)", "90000000005^\u0012\u00122×x+1\u0013/2\u0013");
 }
 
 QUIZ_CASE(poincare_simplification_factorial) {

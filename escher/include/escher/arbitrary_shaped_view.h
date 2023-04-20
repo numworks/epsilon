@@ -15,9 +15,11 @@ class ArbitraryShapedView : public View {
   /* Mark markRectAsDirty private to forbid the pattern
    * setState() {
    *  state = ...;
-   *  markWholeFrameAsDirty();
+   *  markRectAsDirty(bounds());
    * } */
+  using View::markAbsoluteRectAsDirty;
   using View::markRectAsDirty;
+  using View::markWholeFrameAsDirty;
   int numberOfSubviews() const final override { return 0; }
 };
 

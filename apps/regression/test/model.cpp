@@ -336,6 +336,20 @@ QUIZ_CASE(regression_power) {
   constexpr double sr3 = 1.03277E-7;
   assert_regression_is(x3, y3, std::size(x3), Model::Type::Power, coefficients3,
                        r3, r23, sr3);
+
+  /* Check for approximations errors (here, since we take the ln of the column,
+   * the variance of column y is not exactly evaluated to 0.0. Check that r is
+   * properly computed.) */
+  constexpr double x4[] = {1., 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
+  constexpr double y4[] = {10.0, 10.0, 10.0, 10.0, 10.0,
+                           10.0, 10.0, 10.0, 10.0, 10.0};
+  static_assert(std::size(x4) == std::size(y4), "Column sizes are different");
+  constexpr double coefficients4[] = {10.0, -2.75494376E-15};  // FIXME
+  constexpr double r4 = 1.0;
+  constexpr double r24 = 1.0;
+  constexpr double sr4 = 0.0;
+  assert_regression_is(x4, y4, std::size(x4), Model::Type::Power, coefficients4,
+                       r4, r24, sr4);
 }
 
 QUIZ_CASE(regression_median_0) {

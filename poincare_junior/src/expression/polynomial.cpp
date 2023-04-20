@@ -147,6 +147,7 @@ EditionReference Polynomial::Operation(
     uint8_t nbOfTermsB = NumberOfTerms(polB);
     variableB.removeTree();
     EditionReference result(&ZeroBlock);
+    assert(i < nbOfTermsB);
     while (i < nbOfTermsB) {
       EditionReference nextCoefficientB = coefficientB.nextTree();
       result = operationMonomialAndReduce(
@@ -169,6 +170,7 @@ void Polynomial::MultiplicationMonomial(
   uint8_t exponent = std::get<uint8_t>(monomial);
   EditionReference coefficient = std::get<EditionReference>(monomial);
   int nbOfTerms = NumberOfTerms(polynomial);
+  assert(0 < nbOfTerms);
   for (int i = 0; i < nbOfTerms; i++) {
     // * x^exponent
     SetExponentAtIndex(polynomial, i,

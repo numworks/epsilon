@@ -256,7 +256,10 @@ double Store::correlationCoefficient(int series) const {
     // Can happen if applyLn on negative/null values
     return NAN;
   }
-  double result = (v0 == 0.0 || v1 == 0.0)
+  /* Compare v0 and v1 to EpsilonLax to check if they are equal to zero (since
+   * approximation errors could give them > 0 while they are not.)*/
+  double result = (std::abs(v0) < Poincare::Float<double>::EpsilonLax() ||
+                   std::abs(v1) < Poincare::Float<double>::EpsilonLax())
                       ? 1.0
                       : covariance(series, options) / std::sqrt(v0 * v1);
   /* Due to errors, coefficient could slightly exceed 1.0. It needs to be

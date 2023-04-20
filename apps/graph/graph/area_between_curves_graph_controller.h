@@ -20,7 +20,7 @@ class AreaBetweenCurvesGraphController : public IntegralGraphController {
   void setSecondRecord(Ion::Storage::Record record);
 
  private:
-  void makeCursorVisible() override;
+  void makeCursorVisibleOnSecondCurve(float x) override;
   double cursorNextStep(double position,
                         OMG::HorizontalDirection direction) override;
   Poincare::Layout createFunctionLayout() override;

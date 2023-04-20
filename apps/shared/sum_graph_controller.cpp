@@ -118,6 +118,9 @@ void SumGraphController::makeCursorVisibleAndReload() {
 }
 void SumGraphController::makeCursorVisible() {
   float position = m_cursor->x();
+  if (std::isnan(position)) {
+    return;
+  }
   ExpiringPointer<Function> function =
       FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
   float y =

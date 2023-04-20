@@ -164,5 +164,5 @@ void TitleBarView::refreshPreferences() {
 
 void TitleBarView::reload() {
   refreshPreferences();
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }

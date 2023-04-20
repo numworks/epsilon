@@ -19,7 +19,7 @@ bool ScrollViewBar::update(KDCoordinate totalContentLength,
   if (m_offset != offset || m_visibleLength != visibleLength) {
     m_offset = offset;
     m_visibleLength = visibleLength;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
   return visible();
 }
@@ -66,7 +66,7 @@ ScrollViewArrow::ScrollViewArrow()
 
 bool ScrollViewArrow::update(bool visible) {
   if (m_visible != visible) {
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
   m_visible = visible;
   return visible;

@@ -19,7 +19,7 @@ class StackView : public View {
                                     bool headersOverlapContent,
                                     KDColor headersContentBorderColor);
   void pushStack(ViewController* controller);
-  void reload() { markRectAsDirty(bounds()); }
+  void reload() { markWholeFrameAsDirty(); }
   void resetStack() { m_stackHeaderViews.reset(); }
 
  protected:

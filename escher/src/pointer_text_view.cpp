@@ -9,7 +9,7 @@ PointerTextView::PointerTextView(const char* text, KDGlyph::Format format)
 void PointerTextView::setText(const char* text) {
   if (text != m_text) {
     m_text = text;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
 }
 

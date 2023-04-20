@@ -20,7 +20,7 @@ class InterestView : public Escher::View {
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  private:
-  void dirtyBounds() { markRectAsDirty(bounds()); }
+  void dirtyBounds() { markWholeFrameAsDirty(); }
   GraphView* m_parentView;
 };
 

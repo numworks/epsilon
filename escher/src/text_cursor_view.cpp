@@ -57,7 +57,7 @@ void TextCursorView::setVisible(bool visible) {
   }
   m_visible = visible;
   if (visible) {
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   } else {
     // Redraw the part under the cursor
     m_field->markAbsoluteRectAsDirty(absoluteFrame());

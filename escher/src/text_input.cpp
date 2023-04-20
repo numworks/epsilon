@@ -10,7 +10,7 @@ namespace Escher {
 
 void TextInput::ContentView::setFont(KDFont::Size font) {
   m_font = font;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void TextInput::ContentView::setCursorLocation(const char* location) {
@@ -58,7 +58,7 @@ void TextInput::ContentView::setAlignment(float horizontalAlignment,
                                           float verticalAlignment) {
   m_horizontalAlignment = horizontalAlignment;
   m_verticalAlignment = verticalAlignment;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void TextInput::ContentView::reloadRectFromPosition(

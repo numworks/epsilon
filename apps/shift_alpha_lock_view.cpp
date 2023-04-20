@@ -42,7 +42,7 @@ bool ShiftAlphaLockView::setStatus(Ion::Events::ShiftAlphaStatus status) {
         assert(false);
     }
     layoutSubviews();
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
     return true;
   }
   return false;

@@ -24,7 +24,7 @@ Code128BView::Code128BView() : View(), m_moduleWidth(0), m_data{nullptr} {}
 
 void Code128BView::setData(const char* data) {
   m_data = data;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void Code128BView::layoutSubviews(bool force) { updateModuleWidth(); }

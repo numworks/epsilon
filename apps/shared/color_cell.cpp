@@ -18,7 +18,7 @@ KDSize ColorView::minimalSizeForOptimalDisplay() const {
 void ColorView::setColor(KDColor color) {
   if (color != m_color) {
     m_color = color;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
 }
 

@@ -62,7 +62,7 @@ HistogramView::HistogramView(Store *store, int series,
 
 void HistogramView::reload(bool resetInterruption, bool force) {
   AbstractPlotView::reload(resetInterruption, force);
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void HistogramView::setHighlight(float start, float end) {

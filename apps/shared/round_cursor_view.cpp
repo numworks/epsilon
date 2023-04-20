@@ -7,7 +7,7 @@ namespace Shared {
 void AbstractRoundCursorView::setIsRing(bool isRing) {
   if (isRing != m_isRing) {
     m_isRing = isRing;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
 }
 

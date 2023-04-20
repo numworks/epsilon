@@ -60,7 +60,7 @@ void AppCell::setExternalApp(Ion::ExternalApps::App app) {
 void AppCell::setVisible(bool visible) {
   if (isVisible() != visible) {
     Escher::HighlightCell::setVisible(visible);
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
 }
 

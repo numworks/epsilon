@@ -76,7 +76,7 @@ class Controller : public Escher::ViewController,
     void drawRect(KDContext* ctx, KDRect rect) const override {
       ctx->fillRect(bounds(), KDColorWhite);
     }
-    void reload() { markRectAsDirty(bounds()); }
+    void reload() { markWholeFrameAsDirty(); }
     void reloadBottomRow(SimpleTableViewDataSource* dataSource,
                          int lastIconColumn);
 

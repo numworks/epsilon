@@ -14,7 +14,7 @@ class IntervalConclusionView
  public:
   IntervalConclusionView();
   void setInterval(double center, double marginOfError);
-  void reload() { markRectAsDirty(bounds()); }
+  void reload() { markWholeFrameAsDirty(); }
 };
 
 }  // namespace Inference

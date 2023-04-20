@@ -13,14 +13,14 @@ TabViewController::ContentView::ContentView()
 void TabViewController::ContentView::setActiveView(View* view) {
   m_activeView = view;
   layoutSubviews();
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void TabViewController::ContentView::setDisplayTabs(bool display) {
   if (display != m_displayTabs) {
     m_displayTabs = display;
     layoutSubviews();
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
 }
 

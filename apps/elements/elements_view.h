@@ -17,7 +17,7 @@ class ElementsView : public Escher::View {
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
   void cursorMoved();
-  void reload() { markRectAsDirty(bounds()); }
+  void reload() { markWholeFrameAsDirty(); }
   void dirtyBackground() { m_redrawBackground = true; }
 
  private:

@@ -62,7 +62,7 @@ void LocalizationController::ContentView::modeHasChanged() {
   if (!bounds().isEmpty()) {
     layoutSubviews();
   }
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void LocalizationController::ContentView::layoutSubviews(bool force) {

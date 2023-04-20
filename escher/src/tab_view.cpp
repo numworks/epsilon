@@ -24,7 +24,7 @@ void TabView::addTab(TabViewController *controller) {
   uint8_t tabIndex = m_numberOfTabs;
   m_cells[tabIndex].setTabController(controller, tabIndex);
   m_numberOfTabs++;
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void TabView::setActiveIndex(int index) {

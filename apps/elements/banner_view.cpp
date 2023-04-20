@@ -20,7 +20,7 @@ void BannerView::DotView::drawRect(KDContext* ctx, KDRect rect) const {
 
 void BannerView::DotView::setColor(KDColor color) {
   if (color != m_color) {
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
     m_color = color;
   }
 }
@@ -47,7 +47,7 @@ void BannerView::drawRect(KDContext* ctx, KDRect rect) const {
 void BannerView::reload() {
   if (!(displayTextField() || m_textField.bounds().isEmpty())) {
     /* Text field will disappear, we need to redraw the full background */
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
   layoutSubviews();
 }

@@ -31,7 +31,7 @@ void ImageView::drawRect(KDContext *ctx, KDRect rect) const {
 void ImageView::setImage(const Image *image) {
   if (image != m_image) {
     m_image = image;
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
   }
 }
 

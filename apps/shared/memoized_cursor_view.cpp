@@ -25,7 +25,7 @@ KDSize MemoizedCursorView::minimalSizeForOptimalDisplay() const {
 void MemoizedCursorView::setColor(KDColor color) {
   m_color = color;
   eraseCursorIfPossible();
-  markRectAsDirty(bounds());
+  markWholeFrameAsDirty();
 }
 
 void MemoizedCursorView::setCursorFrame(View* parent, KDRect f, bool force) {
@@ -39,7 +39,7 @@ void MemoizedCursorView::setCursorFrame(View* parent, KDRect f, bool force) {
   if (eraseCursorIfPossible()) {
     // Set the frame
     m_frame = f.translatedBy(parent->absoluteOrigin());
-    markRectAsDirty(bounds());
+    markWholeFrameAsDirty();
     return;
   }
   CursorView::setCursorFrame(parent, f, force);

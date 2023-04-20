@@ -30,7 +30,7 @@ AbstractButtonCell *ButtonRowController::ContentView::buttonAtIndex(
   return m_delegate->buttonAtIndex(index, m_position);
 }
 
-void ButtonRowController::ContentView::reload() { markRectAsDirty(bounds()); }
+void ButtonRowController::ContentView::reload() { markWholeFrameAsDirty(); }
 
 int ButtonRowController::ContentView::numberOfSubviews() const {
   return numberOfButtons() + 1;

@@ -797,7 +797,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
   if (baseType == ExpressionNode::Type::Rational &&
       indexType == ExpressionNode::Type::Addition &&
       index.childAtIndex(0).type() == ExpressionNode::Type::Rational) {
-    /* clone base and index since PowerRationalRational could alter base and/or
+    /* Clone base and index since PowerRationalRational could alter base and/or
      * index, and make this corrupted when escaping because reduction failed. */
     Rational rationalIndex = index.childAtIndex(0).clone().convert<Rational>();
     if (rationalIndex.unsignedIntegerNumerator().isOne() &&

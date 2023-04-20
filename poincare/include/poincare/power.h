@@ -141,7 +141,8 @@ class Power final : public ExpressionTwoChildren<Power, PowerNode> {
   constexpr static int k_maxExactPowerMatrix = 100;
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;
 
-  // Simplification
+  /* Simplification
+   * WARNING: These two methods alter there arguments */
   static Expression PowerRationalRational(
       Rational base, Rational index, const ReductionContext& reductionContext);
   static Expression PowerIntegerRational(

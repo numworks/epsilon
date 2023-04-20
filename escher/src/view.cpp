@@ -111,9 +111,7 @@ void View::setFrame(KDRect frame, bool force) {
    * There are two ways to declare this, which are semantically equivalent: we
    * can either mark an area of our superview as dirty, or mark our whole frame
    * as dirty. We pick the second option because it is more efficient. */
-  markRectAsDirty(bounds());
-  /* FIXME: m_dirtyRect = bounds(); would be more correct (in case the view is
-   * being shrinked) */
+  m_dirtyRect = m_frame;
 
   if (!m_frame.isEmpty()) {
     layoutSubviews(force);

@@ -117,7 +117,8 @@ bool Range2D::setRatio(float r, bool shrink) {
   }
   float c = toEdit->center();
   newLength *= 0.5f;
-  if (c - newLength == c + newLength) {
+  if (c == toEdit->min() || c == toEdit->max() ||
+      c - newLength == c + newLength) {
     // Precision is to small for the edited range
     return false;
   }

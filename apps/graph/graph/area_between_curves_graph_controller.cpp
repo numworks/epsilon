@@ -39,26 +39,16 @@ void AreaBetweenCurvesGraphController::setSecondRecord(
   m_graphView->selectSecondRecord(record);
 }
 
-void AreaBetweenCurvesGraphController::makeCursorVisible() {
-  float position = m_cursor->x();
-  ExpiringPointer<Shared::Function> functionF =
-      FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
-  float yF =
-      functionF
-          ->evaluateXYAtParameter(position, FunctionApp::app()->localContext())
-          .y();
-  // Do not zoom out if user is selecting first parameter
-  makeDotVisible(position, yF, m_step != Step::FirstParameter);
+void AreaBetweenCurvesGraphController::makeCursorVisibleOnSecondCurve(float x) {
   assert(!secondSelectedRecord().isNull());
   ExpiringPointer<Shared::Function> functionG =
       FunctionApp::app()->functionStore()->modelForRecord(
           secondSelectedRecord());
   float yG =
-      functionG
-          ->evaluateXYAtParameter(position, FunctionApp::app()->localContext())
+      functionG->evaluateXYAtParameter(x, FunctionApp::app()->localContext())
           .y();
   // zoomOut is always true so that the user can see both dots
-  makeDotVisible(position, yG, true);
+  makeDotVisible(x, yG, true);
 }
 
 double AreaBetweenCurvesGraphController::cursorNextStep(

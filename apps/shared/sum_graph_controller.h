@@ -34,7 +34,8 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
  protected:
   virtual bool moveCursorHorizontallyToPosition(double position);
   void makeCursorVisibleAndReload();
-  virtual void makeCursorVisible();
+  void makeCursorVisible();
+  virtual void makeCursorVisibleOnSecondCurve(float x);
   void makeDotVisible(float x, float y, bool zoomOut);
   Ion::Storage::Record selectedRecord() {
     return m_graphView->selectedRecord();

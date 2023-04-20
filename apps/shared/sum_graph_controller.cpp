@@ -126,8 +126,12 @@ void SumGraphController::makeCursorVisible() {
           .y();
   // Do not zoom out if user is selecting first parameter
   makeDotVisible(position, y, m_step != Step::FirstParameter);
+  makeCursorVisibleOnSecondCurve(position);
+}
+
+void SumGraphController::makeCursorVisibleOnSecondCurve(float x) {
   // zoomOut is always true so that the user can see both dots
-  makeDotVisible(position, 0.0, true);
+  makeDotVisible(x, 0.0, true);
 }
 
 void SumGraphController::makeDotVisible(float x, float y, bool zoomOut) {

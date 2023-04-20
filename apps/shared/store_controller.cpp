@@ -180,7 +180,9 @@ void StoreController::handleDeleteEvent(bool authorizeNonEmptyRowDeletion,
     }
     reloadSeriesVisibleCells(series);
   }
-  if (m_store->lengthOfColumn(series, m_store->relativeColumnIndex(col)) == 0) {
+  // If selectedColumn() changed, it means that the column has been deleted.
+  if (col == selectedColumn() &&
+      m_store->lengthOfColumn(series, m_store->relativeColumnIndex(col)) == 0) {
     resetMemoizedFormulasForSeries(series);
   }
 }

@@ -49,6 +49,11 @@ class DoublePairTableController
     return row > 0 && col > 1;
   }
 
+  bool cellAtLocationIsSelectable(Escher::HighlightCell *cell, int col,
+                                  int row) override {
+    return row > 0 || col > 1;
+  }
+
  protected:
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   constexpr static KDCoordinate k_cellHeight =

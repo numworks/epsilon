@@ -38,12 +38,6 @@ class CalculationController : public Shared::DoublePairTableController {
   // ViewController
   TELEMETRY_ID("Calculation");
 
-  // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(Escher::SelectableTableView* t,
-                                   int previousSelectedCol,
-                                   int previousSelectedRow,
-                                   bool withinTemporarySelection) override;
-
  private:
   constexpr static int k_fixedMaxNumberOfRows = 17;
   constexpr static int k_numberOfCalculationCells =

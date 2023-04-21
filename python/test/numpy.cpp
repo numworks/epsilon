@@ -15,10 +15,11 @@ QUIZ_CASE(python_numpy) {
   env = init_environement();
   assert_command_execution_succeeds(env, "import numpy as np");
   assert_command_execution_succeeds(env, "arr1 = np.array([1,3,5,4])");
-  assert_command_execution_succeeds(
-      env, "np.cos(arr1)",
-      "array([0.5403023058681398, -0.9899924966004454, 0.2836621854632262, "
-      "-0.6536436208636119], dtype=float64)\n");
+  /* TODO: We cannot test floating results due to precision disparity in
+   * platforms. We should somehow use roughly equal when comparing the outputs.
+   */
+  assert_command_execution_succeeds(env, "np.cos(np.array([0, np.pi]))",
+                                    "array([1.0, -1.0], dtype=float64)\n");
   assert_command_execution_succeeds(env, "arr2 = np.arange(1,5)");
   assert_command_execution_succeeds(env, "np.linspace(1,10,2)",
                                     "array([1.0, 10.0], dtype=float64)\n");
@@ -44,9 +45,8 @@ QUIZ_CASE(python_numpy) {
   assert_command_execution_succeeds(env, "np.mean(arr1)", "3.25\n");
   assert_command_execution_succeeds(env, "np.median(arr1)", "3.5\n");
   assert_command_execution_succeeds(
-      env, "np.polyfit(arr1,arr2,3)",
-      "array([-0.4999999999997726, 4.499999999998181, -10.99999999999454, "
-      "7.999999999995907], dtype=float64)\n");
+      env, "np.polyfit(np.array([1,2,3,4]),np.array([1,2,3,4]),1)",
+      "array([1.0, 0.0], dtype=float64)\n");
   assert_command_execution_succeeds(env, "np.polyval([1,2,3],[1])",
                                     "array([6.0], dtype=float64)\n");
   assert_command_execution_succeeds(env, "np.size(arr1)", "4\n");

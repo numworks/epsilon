@@ -394,9 +394,8 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c,
                        e.type() == ExpressionNode::Type::Infinity;
               },
               context)) {
-        assert(approximate);
-        if (approximateSolutions != nullptr) {
-          *approximateSolutions = approximate;
+        if (approximateSolutions) {
+          *approximateSolutions = true;
         }
         // Due to overflows, cardano contains infinite or couldn't be computed
         *root1 = Undefined::Builder();

@@ -28,6 +28,7 @@ double smallestPositive(double x, double y) {
 }
 
 CartesianConic::CartesianConic(const Expression e, Context* context,
+                               Preferences::ComplexFormat complexFormat,
                                const char* x, const char* y)
     : Conic(),
       m_a(0.0),
@@ -43,8 +44,6 @@ CartesianConic::CartesianConic(const Expression e, Context* context,
    * A*x^2 + B*x*y + C*y^2 + D*x + E*y + F = 0
    * In this constructor, we extract the coefficients parameters.
    * We then compute the conic's type and canonize the coefficients. */
-  Preferences::ComplexFormat complexFormat =
-      Preferences::sharedPreferences->complexFormat();
   Preferences::AngleUnit angleUnit =
       Preferences::sharedPreferences->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
@@ -428,9 +427,8 @@ double CartesianConic::getRadius() const {
 }
 
 PolarConic::PolarConic(const Expression& e, Context* context,
+                       Preferences::ComplexFormat complexFormat,
                        const char* theta) {
-  Preferences::ComplexFormat complexFormat =
-      Preferences::sharedPreferences->complexFormat();
   Preferences::AngleUnit angleUnit =
       Preferences::sharedPreferences->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
@@ -521,9 +519,8 @@ PolarConic::PolarConic(const Expression& e, Context* context,
 }
 
 ParametricConic::ParametricConic(const Expression& e, Context* context,
+                                 Preferences::ComplexFormat complexFormat,
                                  const char* symbol) {
-  Preferences::ComplexFormat complexFormat =
-      Preferences::sharedPreferences->complexFormat();
   Preferences::AngleUnit angleUnit =
       Preferences::sharedPreferences->angleUnit();
   Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;

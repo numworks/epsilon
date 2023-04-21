@@ -264,6 +264,7 @@ void DetailsParameterController::setLineDetailsValues(double slope,
 
 void DetailsParameterController::setConicDetailsValues(Poincare::Conic *conic) {
   Conic::Shape type = function()->properties().conicShape();
+  assert(type == conic->conicType().shape);
   double cx, cy;
   if (type == Conic::Shape::Parabola) {
     conic->getSummit(&cx, &cy);

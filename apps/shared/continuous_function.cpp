@@ -220,7 +220,7 @@ CartesianConic ContinuousFunction::cartesianConicParameters(
     Context *context) const {
   assert(properties().isConic() && properties().isCartesian());
   return CartesianConic(expressionReducedForAnalysis(context), context,
-                        k_unknownName);
+                        complexFormat(context), k_unknownName);
 }
 
 double ContinuousFunction::evaluateCurveParameter(int index, double cursorT,
@@ -618,9 +618,9 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(
   Expression result =
       expressionEquation(record, context, &computedEquationType,
                          &computedFunctionSymbol, &isCartesianEquation);
+  Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(
+      complexFormat(record, context));
   if (!result.isUndefined()) {
-    Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(
-        complexFormat(record, context));
     PoincareHelpers::CloneAndReduce(
         &result, context, ReductionTarget::SystemForAnalysis,
         // Symbols have already been replaced.
@@ -630,7 +630,8 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(
   if (!m_properties.isInitialized()) {
     // Use the computed equation to update the plot type.
     m_properties.update(result, originalEquation(record, UCodePointUnknown),
-                        context, computedEquationType, computedFunctionSymbol,
+                        context, preferences.complexFormat(),
+                        computedEquationType, computedFunctionSymbol,
                         isCartesianEquation);
   }
   return result;

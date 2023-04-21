@@ -129,6 +129,7 @@ class ContinuousFunctionProperties {
   void update(const Poincare::Expression reducedEquation,
               const Poincare::Expression inputEquation,
               Poincare::Context* context,
+              Poincare::Preferences::ComplexFormat complexFormat,
               Poincare::ComparisonNode::OperatorType precomputedOperatorType,
               SymbolType precomputedFunctionSymbol, bool isCartesianEquation);
 
@@ -221,19 +222,23 @@ class ContinuousFunctionProperties {
       Poincare::Context* context);
   void setCartesianEquationProperties(
       const Poincare::Expression& analyzedExpression,
-      Poincare::Context* context, int xDeg, int yDeg,
+      Poincare::Context* context,
+      Poincare::Preferences::ComplexFormat complexFormat, int xDeg, int yDeg,
       Poincare::TrinaryBoolean highestCoefficientIsPositive);
   void setPolarFunctionProperties(
       const Poincare::Expression& analyzedExpression,
-      Poincare::Context* context);
+      Poincare::Context* context,
+      Poincare::Preferences::ComplexFormat complexFormat);
   void setParametricFunctionProperties(
       const Poincare::Expression& analyzedExpression,
-      Poincare::Context* context);
+      Poincare::Context* context,
+      Poincare::Preferences::ComplexFormat complexFormat);
 
   // If equation has a NonNull coeff. Can also compute last coeff sign.
   static bool HasNonNullCoefficients(
       const Poincare::Expression equation, const char* symbolName,
       Poincare::Context* context,
+      Poincare::Preferences::ComplexFormat complexFormat,
       Poincare::TrinaryBoolean* highestDegreeCoefficientIsPositive);
   // If equation should be allowed when implicit plots are forbidden.
   static bool IsExplicitEquation(const Poincare::Expression equation,

@@ -6,10 +6,12 @@
 
 using namespace Poincare;
 
-CartesianConic getConicFromExpression(const char* expression) {
+CartesianConic getConicFromExpression(
+    const char* expression, Preferences::ComplexFormat complexFormat =
+                                Preferences::ComplexFormat::Cartesian) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
-  return CartesianConic(e, &globalContext);
+  return CartesianConic(e, &globalContext, complexFormat);
 }
 
 void quiz_assert_undefined(const char* expression) {

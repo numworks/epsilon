@@ -415,7 +415,8 @@ class Expression : public TreeHandle {
   /* TODO: deepReduceWithSystemCheckpoint should be private but we need to make
    * poincare/test/helper.h a class to be able to friend it */
   Expression cloneAndDeepReduceWithSystemCheckpoint(
-      ReductionContext* reductionContext, bool* reduceFailure) const;
+      ReductionContext* reductionContext, bool* reduceFailure,
+      bool approximateDuringReduction = false) const;
   Expression cloneAndReduceAndRemoveUnit(ReductionContext reductionContext,
                                          Expression* unit) const;
   Expression cloneAndReduceOrSimplify(ReductionContext reductionContext,
@@ -482,7 +483,7 @@ class Expression : public TreeHandle {
   U approximateWithValueForSymbol(const char* symbol, U x, Context* context,
                                   Preferences::ComplexFormat complexFormat,
                                   Preferences::AngleUnit angleUnit) const;
-  // This should be called on reduced expression. Approximation is in double
+  // This also reduces the expression. Approximation is in double.
   Expression cloneAndApproximateKeepingSymbols(
       ReductionContext reductionContext) const;
 
@@ -742,10 +743,11 @@ class Expression : public TreeHandle {
       Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
 
   Expression deepApproximateKeepingSymbols(ReductionContext reductionContext,
-                                           bool* wasApproximated);
-  // Return the number of approximated children
-  int deepApproximateChildrenKeepingSymbols(
-      const ReductionContext& reductionContext);
+                                           bool* parentShouldApproximate,
+                                           bool* parentShouldReduce);
+  void deepApproximateChildrenKeepingSymbols(
+      const ReductionContext& reductionContextbool, bool* shouldApproximate,
+      bool* shouldReduce);
 
   /* Properties */
   int defaultGetPolynomialCoefficients(Context* context, const char* symbol,

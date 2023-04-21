@@ -1311,8 +1311,8 @@ void Expression::cloneAndSimplifyAndApproximate(
       symbolicComputation, unitConversion);
   ReductionContext reductionContext = userReductionContext;
   bool reduceFailure = false;
-  Expression e =
-      cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
+  Expression e = cloneAndDeepReduceWithSystemCheckpoint(
+      &reductionContext, &reduceFailure, approximateKeepingSymbols);
 
   if (reduceFailure ||
       (type() == ExpressionNode::Type::Store &&
@@ -1324,10 +1324,6 @@ void Expression::cloneAndSimplifyAndApproximate(
           context, complexFormat, angleUnit);
     }
     return;
-  }
-
-  if (approximateKeepingSymbols) {
-    e = e.cloneAndApproximateKeepingSymbols(reductionContext);
   }
 
   // Step 2: we approximate and beautify the reduced expression
@@ -1400,13 +1396,18 @@ Expression Expression::cloneAndReduceAndRemoveUnit(
 }
 
 Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
-    ReductionContext *reductionContext, bool *reduceFailure) const {
+    ReductionContext *reductionContext, bool *reduceFailure,
+    bool approximateDuringReduction) const {
   /* We tried first with the supplied ReductionTarget. If the reduction failed
    * without any user interruption (too many nodes were generated), we try again
    * with ReductionTarget::SystemForApproximation. */
   *reduceFailure = false;
 #if __EMSCRIPTEN__
   Expression e = clone().deepReduce(*reductionContext);
+  if (approximateDuringReduction) {
+    bool dummy = false;
+    e = e.deepApproximateKeepingSymbols(*reductionContext, &dummy, &dummy);
+  }
   {
     if (ExceptionCheckpoint::HasBeenInterrupted()) {
       ExceptionCheckpoint::ClearInterruption();
@@ -1416,6 +1417,10 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
       }
       reductionContext->setTarget(ReductionTarget::SystemForApproximation);
       e = clone().deepReduce(*reductionContext);
+      if (approximateDuringReduction) {
+        bool dummy = false;
+        e = e.deepApproximateKeepingSymbols(*reductionContext, &dummy, &dummy);
+      }
       if (ExceptionCheckpoint::HasBeenInterrupted()) {
         ExceptionCheckpoint::ClearInterruption();
       failure:
@@ -1430,6 +1435,23 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
       e = clone().deepReduce(*reductionContext);
+      if (approximateDuringReduction) {
+        /* It is always needed to reduce when approximating keeping symbols to
+         * catch reduction failure and abort if necessary.
+         *
+         * The expression is reduced before and not during approximation keeping
+         * symbols even because deepApproximateKeepingSymbols can only partially
+         * reduce the expression.
+         *
+         * For example, if e="x*x+x^2":
+         * "x*x" will be reduced to "x^rational(2)", while "x^2" will be
+         * reduced/approximated to "x^float(2.)".
+         * Then "x^rational(2)+x^float(2.)" won't be able to reduce to
+         * "2*x^float(2.)" because float(2.) != rational(2.).
+         * This does not happen if e is reduced beforehand. */
+        bool dummy = false;
+        e = e.deepApproximateKeepingSymbols(*reductionContext, &dummy, &dummy);
+      }
     } else {
       /* We don't want to tidy all the Pool in the case we are in a nested
        * cloneAndDeepReduceWithSystemCheckpoint: cleaning all the pool might
@@ -1441,6 +1463,11 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
         // System interruption, try again with another ReductionTarget
         reductionContext->setTarget(ReductionTarget::SystemForApproximation);
         e = clone().deepReduce(*reductionContext);
+        if (approximateDuringReduction) {
+          bool dummy = false;
+          e = e.deepApproximateKeepingSymbols(*reductionContext, &dummy,
+                                              &dummy);
+        }
       } else {
         *reduceFailure = true;
       }
@@ -1603,74 +1630,63 @@ U Expression::approximateWithValueForSymbol(
 
 Expression Expression::cloneAndApproximateKeepingSymbols(
     ReductionContext reductionContext) const {
-  bool dummy = false;
-  return clone().deepApproximateKeepingSymbols(reductionContext, &dummy);
+  bool dummy;
+  return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &dummy,
+                                                true);
 }
 
 Expression Expression::deepApproximateKeepingSymbols(
-    ReductionContext reductionContext, bool *wasApproximated) {
-  *wasApproximated = false;
-  int nChildren = numberOfChildren();
-  int numberOfApproximatedChildren =
-      deepApproximateChildrenKeepingSymbols(reductionContext);
-
-  /* If no child was approximated, no need to change the expression.
-   * No need to approximate lists and matrices. Approximating their children is
+    ReductionContext reductionContext, bool *parentShouldApproximate,
+    bool *parentShouldReduce) {
+  *parentShouldApproximate = false;
+  *parentShouldReduce = false;
+  bool thisShouldApproximate, thisShouldReduce;
+  deepApproximateChildrenKeepingSymbols(
+      reductionContext, &thisShouldApproximate, &thisShouldReduce);
+  /* No need to approximate lists and matrices. Approximating their children is
    * enough. */
-  if ((numberOfApproximatedChildren == 0 && nChildren > 0) ||
-      type() == ExpressionNode::Type::List ||
-      type() == ExpressionNode::Type::Matrix) {
-    return *this;
-  }
-
-  /* It's useless to try to approximate if at least one of the children could
-   * not be approximated, because it means it contains symbols. */
-  if (numberOfApproximatedChildren == nChildren) {
+  if (thisShouldApproximate && !IsSymbolic(*this, nullptr) &&
+      type() != ExpressionNode::Type::List &&
+      type() != ExpressionNode::Type::Matrix) {
     Expression a = approximate<double>(reductionContext.context(),
                                        reductionContext.complexFormat(),
                                        reductionContext.angleUnit(), true);
-    /* If approximation is undef, it means the expression can't be approximated
-     * and might contain symbols.
-     * Lists and matrices are excluded because they could contain undef children
-     * without returning true to isUndefined() */
-    if (!a.isUndefined() && a.type() != ExpressionNode::Type::List &&
-        a.type() != ExpressionNode::Type::Matrix) {
-      /* approximate can return an Opposite or a Subtraction, so we need to
-       * re-reduce the expression.*/
-      replaceWithInPlace(a);
-      *wasApproximated = true;
-      return a.shallowReduce(reductionContext);
-    }
+    replaceWithInPlace(a);
+    *parentShouldApproximate = true;
+    *parentShouldReduce = true;
+    /* approximate can return an Opposite or a Subtraction, so we need to
+     * re-reduce the expression.*/
+    return a.shallowReduce(reductionContext);
   }
 
-  if (numberOfApproximatedChildren > 0) {
+  if (thisShouldReduce) {
     /* If at least 1 child was approximated, re-reduce.
      * Example: if this is "x + cos(3) + cos(2)",
      * after approximating children it becomes "x - 0.99 - 0.41".
      * It needs now to be reduced to "x - 1.4" */
+    *parentShouldReduce = true;
     return shallowReduce(reductionContext);
   }
 
   return *this;
 }
 
-int Expression::deepApproximateChildrenKeepingSymbols(
-    const ReductionContext &reductionContext) {
+void Expression::deepApproximateChildrenKeepingSymbols(
+    const ReductionContext &reductionContext, bool *shouldApproximate,
+    bool *shouldReduce) {
+  *shouldApproximate = true;
+  *shouldReduce = false;
   const int childrenCount = numberOfChildren();
-  int numberOfApproximatedChildren = 0;
   bool parameteredExpression = isParameteredExpression();
   bool storeExpression = type() == ExpressionNode::Type::Store;
   for (int i = 0; i < childrenCount; i++) {
     Expression child = childAtIndex(i);
-    bool thisChildWasApproximated = true;
     /* Do not approximate:
      * - inside a parametered expression.
      * - right of a store.
      * - if child is e and it's the base of a log (so that `log(...,e)` can
      *   be later beautified into `ln(...)`).
-     * Still increment numberOfApproximatedChildren in these cases so that the
-     * parent knows it can try to approximate even if those were not
-     * approximated. */
+     */
     if (!((parameteredExpression &&
            (i == ParameteredExpression::ParameterChildIndex() ||
             i == ParameteredExpression::ParameteredChildIndex())) ||
@@ -1678,12 +1694,20 @@ int Expression::deepApproximateChildrenKeepingSymbols(
           (type() == ExpressionNode::Type::Logarithm && i == 1 &&
            child.type() == ExpressionNode::Type::ConstantMaths &&
            static_cast<Constant &>(child).isExponentialE()))) {
-      childAtIndex(i).deepApproximateKeepingSymbols(reductionContext,
-                                                    &thisChildWasApproximated);
+      bool thisShouldApproximate, thisShouldReduce;
+      childAtIndex(i).deepApproximateKeepingSymbols(
+          reductionContext, &thisShouldApproximate, &thisShouldReduce);
+      /* If at least 1 child failed approximation, no need to approximate: it
+       * means it has symbols */
+      *shouldApproximate = *shouldApproximate && thisShouldApproximate;
+      /* If at least 1 child changed, re-reduce its parent. */
+      *shouldReduce = *shouldReduce || thisShouldReduce;
     }
-    numberOfApproximatedChildren += thisChildWasApproximated;
   }
-  return numberOfApproximatedChildren;
+  if (storeExpression) {
+    *shouldApproximate = false;
+    *shouldReduce = false;
+  }
 }
 
 /* Builder */

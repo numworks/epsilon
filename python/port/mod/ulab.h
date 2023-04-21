@@ -69,7 +69,7 @@
 // The default threshold for pretty printing. These variables can be overwritten
 // at run-time via the set_printoptions() function
 #ifndef ULAB_HAS_PRINTOPTIONS
-#define ULAB_HAS_PRINTOPTIONS               (1)
+#define ULAB_HAS_PRINTOPTIONS               (0)
 #endif
 #define NDARRAY_PRINT_THRESHOLD             10
 #define NDARRAY_PRINT_EDGEITEMS             3

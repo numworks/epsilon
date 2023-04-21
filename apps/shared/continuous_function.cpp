@@ -428,9 +428,9 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       }
       point = point = e.childAtIndex(tInt);
     }
-    assert(!point.isUninitialized() &&
-               point.type() == ExpressionNode::Type::Point ||
-           point.isUndefined());
+    assert(
+        !point.isUninitialized() &&
+        (point.type() == ExpressionNode::Type::Point || point.isUndefined()));
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }

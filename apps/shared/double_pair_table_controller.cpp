@@ -24,7 +24,6 @@ Responder* DoublePairTableController::responderWhenEmpty() {
 
 bool DoublePairTableController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    selectableTableView()->deselectTable();
     tabController()->selectTab();
     return true;
   }

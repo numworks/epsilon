@@ -8,11 +8,14 @@ namespace Calculation {
 
 class VectorModel : public Shared::MemoizedCurveViewRange {
  public:
-  VectorModel() : Shared::MemoizedCurveViewRange(), m_vector{NAN, NAN} {}
+  VectorModel()
+      : Shared::MemoizedCurveViewRange(), m_vector{NAN, NAN}, m_angle(NAN) {}
 
   void setVector(float x, float y);
+  void setAngle(float angle) { m_angle = angle; }
   float vectorX() const { return m_vector[0]; }
   float vectorY() const { return m_vector[1]; }
+  float angle() const { return m_angle; }
 
  private:
   // Margin used to separate the drawings from the curve view's border
@@ -27,6 +30,7 @@ class VectorModel : public Shared::MemoizedCurveViewRange {
       static_cast<float>(k_width) / static_cast<float>(k_height);
   void recomputeViewRange();
   float m_vector[2];
+  float m_angle;
 };
 
 }  // namespace Calculation

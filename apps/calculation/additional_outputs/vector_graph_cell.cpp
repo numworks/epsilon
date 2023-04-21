@@ -18,11 +18,8 @@ void VectorGraphPolicy::drawPlot(const AbstractPlotView* plotView,
 
   float x = m_model->vectorX();
   float y = m_model->vectorY();
-  float length = std::sqrt(std::pow(x, 2.f) + std::pow(y, 2.f));
-  float angle =
-      y >= 0.f ? std::acos(x / length) : 2 * M_PI - std::acos(x / length);
-  assert(std::isfinite(x) && std::isfinite(y) && std::isfinite(length) &&
-         std::isfinite(angle));
+  float angle = m_model->angle();
+  assert(std::isfinite(x) && std::isfinite(y) && std::isfinite(angle));
 
   // - Draw label
   constexpr float smallAngle = M_PI / 30.f;  // Ad hoc

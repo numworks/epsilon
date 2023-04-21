@@ -961,13 +961,31 @@ void assert_is_list_of_points(const char* definition, bool truth = true) {
 }
 
 QUIZ_CASE(poincare_expression_list_of_points) {
+  assert_reduce_and_store("(1,2)→a");
+  assert_reduce_and_store("3→b");
+
   assert_is_list_of_points("{}");
   assert_is_list_of_points("{(1,2)}");
   assert_is_list_of_points("{(1,-2),(-3.4,5.6)}");
+  assert_is_list_of_points("{undef}");
+  assert_is_list_of_points("{x}");
+  assert_is_list_of_points("{a,(3,4)}");
+  assert_is_list_of_points("{a,undef,(3,4)}");
+  assert_is_list_of_points("{a,x,(3,4)}");
 
   assert_is_list_of_points("{1,2,3}", false);
   assert_is_list_of_points("{(1,2),3}", false);
   assert_is_list_of_points("{(1,2),3,(4,5)}", false);
+  assert_is_list_of_points("{undef,1}", false);
+  assert_is_list_of_points("{b}", false);
+
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
+  /*
+  assert_reduce_and_store("42.3+inf→a");
+  assert_expression_has_property("a", &context, Expression::IsInfinity);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  */
 }
 
 void assert_is_continuous_between_values(const char* expression, float x1,

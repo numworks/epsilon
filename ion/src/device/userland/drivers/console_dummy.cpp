@@ -9,6 +9,8 @@ void writeChar(char c) {}
 
 bool clear() { return false; }
 
+void startReception() {}
+
 bool transmissionDone() { return true; }
 
 }  // namespace Console

@@ -25,6 +25,8 @@ bool clear() {
   return false;
 }
 
+void startReception() {}
+
 bool transmissionDone() { return true; }
 
 }  // namespace Console

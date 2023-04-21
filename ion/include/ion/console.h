@@ -8,11 +8,12 @@ void writeChar(char c);
 // Return true if the screen could be cleared
 bool clear();
 char readChar();
+void startReception();
+bool transmissionDone();
 
 // The lines are NULL-terminated
 void writeLine(const char* line, bool appendCRLF = true);
 void readLine(char* line, int maxLineLength);
-bool transmissionDone();
 
 }  // namespace Console
 }  // namespace Ion

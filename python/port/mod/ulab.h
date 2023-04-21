@@ -7,6 +7,8 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2019-2022 Zoltán Vörös
+ *
+ * Some minor changes were made by NumWorks team.
 */
 
 #ifndef __ULAB__
@@ -73,6 +75,9 @@
 #endif
 #define NDARRAY_PRINT_THRESHOLD             10
 #define NDARRAY_PRINT_EDGEITEMS             3
+
+// determines, whether an array's dtype should be printed with the array
+#define NUMWORKS_PRINT_DTYPE                  (0)
 
 // determines, whether the dtype is an object, or simply a character
 // the object implementation is numpythonic, but requires more space

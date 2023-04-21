@@ -9,6 +9,8 @@
  * Copyright (c) 2019-2022 Zoltán Vörös
  *               2020 Jeff Epler for Adafruit Industries
  *               2020 Taku Fukada
+ *
+ * Some minor changes were made by NumWorks team.
 */
 
 #include <unistd.h>
@@ -525,6 +527,7 @@ void ndarray_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t ki
         ndarray_print_bracket(print, 0, self->shape[ULAB_MAX_DIMS-4], "]");
         #endif
     }
+    #if NUMWORKS_PRINT_DTYPE
     mp_print_str(print, ", dtype=");
     if(self->boolean) {
         mp_print_str(print, "bool)");
@@ -549,6 +552,9 @@ void ndarray_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t ki
         mp_print_str(print, "float64)");
         #endif
     }
+    #else
+    mp_print_str(print, ")");
+    #endif
 }
 
 void ndarray_assign_elements(ndarray_obj_t *ndarray, mp_obj_t iterable, uint8_t dtype, size_t *idx) {

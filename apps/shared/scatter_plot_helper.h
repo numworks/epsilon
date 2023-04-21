@@ -51,8 +51,7 @@ class ScatterPlotIterable {
 
  private:
   ScatterPlotIterable(Poincare::Expression e) : m_iterable(e), m_expression(e) {
-    assert(e.type() == Poincare::ExpressionNode::Type::Point ||
-           e.isUndefined() ||
+    assert(Poincare::Expression::IsPoint(e, nullptr) ||
            (e.type() == Poincare::ExpressionNode::Type::List &&
             static_cast<Poincare::List&>(e).isListOfPoints(nullptr)));
   }

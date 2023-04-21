@@ -248,6 +248,9 @@ class Expression : public TreeHandle {
   static bool IsPercent(const Expression e, Context* context);
   static bool IsDiscontinuous(const Expression e, Context* context);
   static bool IsSymbolic(const Expression e, Context* context);
+  static bool IsPoint(const Expression e, Context*) {
+    return e.isUndefined() || e.type() == ExpressionNode::Type::Point;
+  }
 
   typedef bool (*PatternTest)(const Expression& e, Context* context,
                               const char* symbol);

@@ -414,7 +414,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
 
   if (properties().isScatterPlot()) {
     Expression point;
-    if (e.isUndefined() || e.type() == ExpressionNode::Type::Point) {
+    if (Expression::IsPoint(e, context)) {
       if (t != static_cast<T>(0.)) {
         return Coordinate2D<T>();
       }
@@ -428,9 +428,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       }
       point = point = e.childAtIndex(tInt);
     }
-    assert(
-        !point.isUninitialized() &&
-        (point.type() == ExpressionNode::Type::Point || point.isUndefined()));
+    assert(!point.isUninitialized() && Expression::IsPoint(point, context));
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }

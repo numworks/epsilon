@@ -202,10 +202,10 @@ bool List::isListOfPoints(Context* context) const {
     if (IsSymbolic(e, context)) {
       Expression ve = context->expressionForSymbolAbstract(
           static_cast<SymbolAbstract&>(e), false);
-      if (!ve.isUninitialized() && ve.type() != ExpressionNode::Type::Point) {
+      if (!(ve.isUninitialized() || IsPoint(ve, context))) {
         return false;
       }
-    } else if (!(e.isUndefined() || e.type() == ExpressionNode::Type::Point)) {
+    } else if (!IsPoint(e, context)) {
       return false;
     }
   }

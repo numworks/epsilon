@@ -26,10 +26,6 @@ class CalculationController : public Shared::DoublePairTableController {
   void viewWillAppear() override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(Escher::SelectableTableView* t,
-                                   int previousSelectedCol,
-                                   int previousSelectedRow,
-                                   bool withinTemporarySelection) override;
   void tableViewDidChangeSelectionAndDidScroll(
       Escher::SelectableTableView* t, int previousSelectedCol,
       int previousSelectedRow, bool withinTemporarySelection) override;

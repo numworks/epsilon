@@ -44,28 +44,6 @@ void CalculationController::viewWillAppear() {
   Shared::DoublePairTableController::viewWillAppear();
 }
 
-void CalculationController::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
-  if (withinTemporarySelection) {
-    return;
-  }
-  /* To prevent selecting cell with no content (top left corner of the table),
-   * as soon as the selected cell is the top left corner, we either reselect
-   * the previous cell or select the tab controller depending on from which cell
-   * the selection comes. This trick does not create an endless loop as the
-   * previous cell cannot be the top left corner cell if it also is the
-   * selected one. */
-  if (t->selectedRow() == 0 && t->selectedColumn() <= 1) {
-    if (previousSelectedCol <= 1 && previousSelectedRow == 1) {
-      selectableTableView()->deselectTable();
-      tabController()->selectTab();
-    } else {
-      t->selectCellAtLocation(selectedColumn(), 1);
-    }
-  }
-}
-
 // TableViewDataSource
 
 int CalculationController::numberOfColumns() const {

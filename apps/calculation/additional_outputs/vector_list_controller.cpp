@@ -76,15 +76,6 @@ void VectorListController::setExpression(Poincare::Expression e) {
           PoincareHelpers::ApproximateToScalar<float>(x, context);
       float yApproximation =
           PoincareHelpers::ApproximateToScalar<float>(y, context);
-      if (std::isfinite(xApproximation * xApproximation +
-                        yApproximation * yApproximation) &&
-          (xApproximation != 0.f || yApproximation != 0.f)) {
-        m_model.setVector(xApproximation, yApproximation);
-        illustrationCell()->reloadCell();
-        setShowIllustration(true);
-      } else {
-        setShowIllustration(false);
-      }
       x = static_cast<Matrix &>(normalized).matrixChild(0, 0);
       y = static_cast<Matrix &>(normalized)
               .matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);
@@ -99,6 +90,16 @@ void VectorListController::setExpression(Poincare::Expression e) {
       setLineAtIndex(index++,
                      Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta),
                      angle, context, &preferencesCopy);
+      float angleApproximation =
+          PoincareHelpers::ApproximateToScalar<float>(angle, context);
+      if (std::isfinite(xApproximation) && std::isfinite(yApproximation) &&
+          std::isfinite(angleApproximation) &&
+          (xApproximation != 0.f || yApproximation != 0.f)) {
+        m_model.setVector(xApproximation, yApproximation);
+        m_model.setAngle(angleApproximation);
+        setShowIllustration(true);
+        illustrationCell()->reloadCell();
+      }
     }
   }
 }

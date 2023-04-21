@@ -11,6 +11,8 @@
 #include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 
+#include "poincare/symbol_abstract.h"
+
 namespace Poincare {
 
 // ListNode
@@ -197,8 +199,13 @@ bool List::isListOfPoints(Context* context) const {
   int n = numberOfChildren();
   for (int i = 0; i < n; i++) {
     Expression e = childAtIndex(i);
-    if (!e.isUndefined() && e.type() != ExpressionNode::Type::Point) {
-      assert(!IsSymbolic(e, context));
+    if (IsSymbolic(e, context)) {
+      Expression ve = context->expressionForSymbolAbstract(
+          static_cast<SymbolAbstract&>(e), false);
+      if (!ve.isUninitialized() && ve.type() != ExpressionNode::Type::Point) {
+        return false;
+      }
+    } else if (!(e.isUndefined() || e.type() == ExpressionNode::Type::Point)) {
       return false;
     }
   }

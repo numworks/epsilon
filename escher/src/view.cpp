@@ -8,11 +8,13 @@ extern "C" {
 namespace Escher {
 
 void View::markRectAsDirty(KDRect rect) {
-  m_dirtyRect = m_dirtyRect.unionedWith(rect.translatedBy(m_frame.origin()));
+  markAbsoluteRectAsDirty(rect.translatedBy(m_frame.origin()));
 }
 
 void View::markAbsoluteRectAsDirty(KDRect rect) {
-  m_dirtyRect = m_dirtyRect.unionedWith(rect);
+  /* Intersect with m_frame before unioning to avoid KDCoordinate overflow. */
+  m_dirtyRect = m_dirtyRect.intersectedWith(m_frame).unionedWith(
+      rect.intersectedWith(m_frame));
 }
 
 KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
@@ -78,13 +80,13 @@ void View::setChildFrame(View *child, KDRect frame, bool force) {
    * redrawn in the superview is the old frame minus the part covered by the new
    * frame.
    *
-   * Check first if m_dirtyRect contains m_frame. If it does, it's useless to
+   * Check first if m_dirtyRect == m_frame. If it is, it's useless to
    * compute previousFrame since everything is already dirty.
    * WARNING: When this->setFrame is called, m_frame changes which makes
    * relativeChildFrame return a wrong value. Fortunately, in this case,
    * m_dirtyRect == m_frame so we can avoid calling relativeChildFrame.
    * */
-  if (!m_dirtyRect.containsRect(m_frame)) {
+  if (m_dirtyRect != m_frame) {
     KDRect previousFrame = relativeChildFrame(child);
     markRectAsDirty(previousFrame.differencedWith(frame));
   }
@@ -111,7 +113,7 @@ void View::setFrame(KDRect frame, bool force) {
    * There are two ways to declare this, which are semantically equivalent: we
    * can either mark an area of our superview as dirty, or mark our whole frame
    * as dirty. We pick the second option because it is more efficient. */
-  m_dirtyRect = m_frame;
+  markWholeFrameAsDirty();
 
   if (!m_frame.isEmpty()) {
     layoutSubviews(force);

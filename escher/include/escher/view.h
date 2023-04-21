@@ -79,7 +79,9 @@ class View {
    */
   void markRectAsDirty(KDRect rect);
   void markAbsoluteRectAsDirty(KDRect rect);
-  void markWholeFrameAsDirty() { markAbsoluteRectAsDirty(m_frame); }
+  // Doing this is equivalent to markAbsoluteRectAsDirty(m_frame) but faster
+  void markWholeFrameAsDirty() { m_dirtyRect = m_frame; }
+
 #if ESCHER_VIEW_LOGGING
   virtual const char *className() const;
   virtual void logAttributes(std::ostream &os) const;

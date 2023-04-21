@@ -625,6 +625,15 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
   }
   layout = layout.makeEditable();
   KDSize previousSize = minimalSizeForOptimalDisplay();
+  KDSize insertionSize = layout.layoutSize(KDFont::Size::Large);
+  if (insertionSize.height() > KDCOORDINATE_MAX / 2 - previousSize.height() ||
+      insertionSize.width() > KDCOORDINATE_MAX / 2 - previousSize.width()) {
+    /* This is an ad-hoc limit set to prevent KDCoordinate overflow when
+     * computing the dimensions and position of layouts and cursor.
+     * This is almost seemless for the user since the layouts that reach this
+     * size are never used for a meaningful purpose. */
+    return;
+  }
   m_contentView.cursor()->insertLayout(
       layout, context(), forceCursorRightOfLayout, forceCursorLeftOfLayout);
 

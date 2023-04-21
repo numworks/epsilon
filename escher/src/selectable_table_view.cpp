@@ -86,8 +86,7 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
 
   if (!cellAtLocationIsSelectable(col, row)) {
     /* If the cell is not selectable, go down by default.
-     * This behaviour is only implemented for Explicit
-     */
+     * This behaviour is only implemented for Explicit. */
     row = indexOfNextSelectableRow(1, col, row);
   }
   // There should always be at least 1 selectable cell in the column
@@ -96,20 +95,11 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
   // Unhighlight previous cell
   unhighlightSelectedCell();
 
+  // Selection
   int previousColumn = selectedColumn();
   int previousRow = selectedRow();
   selectColumn(col);
   selectRow(row);
-
-  /* The delegate is notified:
-   * - after changing the selected cell but before scrolling: for instance,
-   *   ExpressionModelListController needs to update its memoized cell before
-   *   being able to scroll;
-   * - after scrolling: for instance, the calculation history table might
-   *   change its cell content when selected (output toggling, ellipsis
-   * toggling) and thus need to access the right used cell - which is defined
-   * only after scrolling.
-   */
 
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, previousColumn, previousRow,

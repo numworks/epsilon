@@ -2135,6 +2135,11 @@ QUIZ_CASE(poincare_approximation_keeping_symbols) {
   assert_expression_approximates_keeping_symbols_to("{x,undef,3/4+x,1/2}",
                                                     "{x,undef,x+0.75,0.5}");
   assert_expression_approximates_keeping_symbols_to("3/5→x", "0.6→x");
+  assert_expression_approximates_keeping_symbols_to("4×kg×s^(-3)", "undef");
+  assert_expression_approximates_keeping_symbols_to("piecewise(T×x<0)",
+                                                    "undef");
+  // Check that it still reduces
+  assert_expression_approximates_keeping_symbols_to("x^2+x×x", "2×x^2");
 }
 
 template void assert_expression_approximates_to_scalar(

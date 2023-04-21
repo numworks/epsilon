@@ -1,6 +1,7 @@
 #include "vector_list_controller.h"
 
 #include <apps/global_preferences.h>
+#include <omg/round.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/vertical_offset_layout.h>
@@ -94,7 +95,8 @@ void VectorListController::setExpression(Poincare::Expression e) {
           PoincareHelpers::ApproximateToScalar<float>(angle, context);
       if (std::isfinite(xApproximation) && std::isfinite(yApproximation) &&
           std::isfinite(angleApproximation) &&
-          (xApproximation != 0.f || yApproximation != 0.f)) {
+          (OMG::LaxToZero(xApproximation) != 0.f ||
+           OMG::LaxToZero(yApproximation) != 0.f)) {
         m_model.setVector(xApproximation, yApproximation);
         m_model.setAngle(angleApproximation);
         setShowIllustration(true);

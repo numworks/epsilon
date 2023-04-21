@@ -14,6 +14,26 @@ using namespace Shared;
 
 namespace Calculation {
 
+static Expression enhancePushedExpression(Expression expression,
+                                          Context *ansContext = nullptr) {
+  // Replace Ans
+  if (ansContext) {
+    Symbol ans = Symbol::Ans();
+    expression = expression.replaceSymbolWithExpression(
+        ans, ansContext->expressionForSymbolAbstract(ans, false));
+  }
+  /* Add an angle unit in trigonometric functions if the user could have
+   * forgotten to change the angle unit in the preferences.
+   * Ex: If angleUnit = rad, cos(4)->cos(4rad)
+   *     If angleUnit = deg, cos(π)->cos(π°)
+   * */
+  if (!Preferences::sharedPreferences->examMode().forbidUnits()) {
+    expression = Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+        expression, Preferences::sharedPreferences->angleUnit());
+  }
+  return expression;
+}
+
 // Public
 
 CalculationStore::CalculationStore(char *buffer, size_t bufferSize)
@@ -104,7 +124,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
       // Push the input
       inputExpression = Expression::Parse(text, &ansContext);
-      inputExpression = EnhancePushedExpression(inputExpression, &ansContext);
+      inputExpression = enhancePushedExpression(inputExpression, &ansContext);
       cursor =
           pushSerializedExpression(cursor, inputExpression, maxNumberOfDigits);
       if (cursor == k_pushError) {
@@ -120,7 +140,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
           &approximateOutputExpression, context);
 
       // Post-processing of store expression
-      exactOutputExpression = EnhancePushedExpression(exactOutputExpression);
+      exactOutputExpression = enhancePushedExpression(exactOutputExpression);
       if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
         storeExpression = exactOutputExpression;
         Expression exactStoredExpression =
@@ -314,26 +334,6 @@ char *CalculationStore::pushUndefined(char *location) {
   return pushSerializedExpression(
       location, Undefined::Builder(),
       m_inUsePreferences.numberOfSignificantDigits());
-}
-
-Expression CalculationStore::EnhancePushedExpression(Expression expression,
-                                                     Context *ansContext) {
-  // Replace Ans
-  if (ansContext) {
-    Symbol ans = Symbol::Ans();
-    expression = expression.replaceSymbolWithExpression(
-        ans, ansContext->expressionForSymbolAbstract(ans, false));
-  }
-  /* Add an angle unit in trigonometric functions if the user could have
-   * forgotten to change the angle unit in the preferences.
-   * Ex: If angleUnit = rad, cos(4)->cos(4rad)
-   *     If angleUnit = deg, cos(π)->cos(π°)
-   * */
-  if (!Preferences::sharedPreferences->examMode().forbidUnits()) {
-    expression = Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
-        expression, Preferences::sharedPreferences->angleUnit());
-  }
-  return expression;
 }
 
 }  // namespace Calculation

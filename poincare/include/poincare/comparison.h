@@ -101,7 +101,7 @@ class ComparisonNode : public ExpressionNode {
   }
 
   // Layout
-  LayoutShape leftLayoutShape() const override { return LayoutShape::Default; };
+  LayoutShape leftLayoutShape() const override { return LayoutShape::Default; }
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits,
                       Context* context) const override;

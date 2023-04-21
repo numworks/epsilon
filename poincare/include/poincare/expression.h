@@ -318,6 +318,7 @@ class Expression : public TreeHandle {
   float getNumericalValue();
 
   /* Units */
+  // Call this method on properly reduced expressions only
   Expression removeUnit(Expression* unit) { return node()->removeUnit(unit); }
   bool hasUnit(bool ignoreAngleUnits = false, bool replaceSymbols = false,
                Context* ctx = nullptr) const;
@@ -412,13 +413,11 @@ class Expression : public TreeHandle {
       bool approximateKeepingSymbols = false) const;
   Expression cloneAndReduce(ReductionContext reductionContext) const;
   /* TODO: deepReduceWithSystemCheckpoint should be private but we need to make
-   * poincare/text/helper.h a class to be able to friend it */
+   * poincare/test/helper.h a class to be able to friend it */
   Expression cloneAndDeepReduceWithSystemCheckpoint(
       ReductionContext* reductionContext, bool* reduceFailure) const;
-  /* TODO: reduceAndRemoveUnit should be private but we need to make
-   * poincare/text/helper.h a class to be able to friend it */
-  Expression reduceAndRemoveUnit(const ReductionContext& reductionContext,
-                                 Expression* Unit);
+  Expression cloneAndReduceAndRemoveUnit(ReductionContext reductionContext,
+                                         Expression* unit) const;
   Expression cloneAndReduceOrSimplify(ReductionContext reductionContext,
                                       bool beautify) {
     return beautify ? cloneAndSimplify(reductionContext)

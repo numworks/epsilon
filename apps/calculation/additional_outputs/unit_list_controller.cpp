@@ -81,11 +81,11 @@ void UnitListController::setExpression(Poincare::Expression e) {
 
   /*   1. First rows: miscellaneous classic units for some dimensions, in both
    *      metric and imperial units. */
-  Expression copy = m_expression.clone();
+  Expression copy = m_expression;
   Expression units;
   // Reduce to be able to recognize units
-  PoincareHelpers::ReduceAndRemoveUnit(&copy, App::app()->localContext(),
-                                       ReductionTarget::User, &units);
+  PoincareHelpers::CloneAndReduceAndRemoveUnit(
+      &copy, App::app()->localContext(), ReductionTarget::User, &units);
   double value = Shared::PoincareHelpers::ApproximateToScalar<double>(
       copy, App::app()->localContext());
   ReductionContext reductionContext(
@@ -202,14 +202,13 @@ void UnitListController::setExpression(Poincare::Expression e) {
 
   //   1. Extract value and unit of SI expression
   assert(siExpression.hasUnit());
-  Expression clone = siExpression.clone();
   Expression unit;
-  PoincareHelpers::ReduceAndRemoveUnit(
-      &clone, App::app()->localContext(), ReductionTarget::User, &unit,
+  PoincareHelpers::CloneAndReduceAndRemoveUnit(
+      &siExpression, App::app()->localContext(), ReductionTarget::User, &unit,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
       UnitConversion::None);
   m_SIValue = PoincareHelpers::ApproximateToScalar<double>(
-      clone, App::app()->localContext());
+      siExpression, App::app()->localContext());
   //   2. Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
       m_SIValue, unit, m_referenceValues, &m_tableIndexForComparison);

@@ -793,10 +793,10 @@ void assert_reduced_expression_unit_is(const char* expression,
                               SystemForApproximation);
   Expression e = parse_expression(expression, &globalContext, false);
   Expression u1;
-  e = e.reduceAndRemoveUnit(redContext, &u1);
+  e = e.cloneAndReduceAndRemoveUnit(redContext, &u1);
   Expression e2 = parse_expression(unit, &globalContext, false);
   Expression u2;
-  e2.reduceAndRemoveUnit(redContext, &u2);
+  e2.cloneAndReduceAndRemoveUnit(redContext, &u2);
   quiz_assert_print_if_failure(
       u1.isUninitialized() == u2.isUninitialized() &&
           (u1.isUninitialized() || u1.isIdenticalTo(u2)),
@@ -823,7 +823,7 @@ void assert_additional_results_compute_to(
                        ReplaceAllSymbolsWithUndefined, DefaultUnitConversion);
   Expression units;
   Expression e = parse_expression(expression, &globalContext, false)
-                     .reduceAndRemoveUnit(reductionContext, &units);
+                     .cloneAndReduceAndRemoveUnit(reductionContext, &units);
   double value =
       e.approximateToScalar<double>(&globalContext, Cartesian, Degree);
 

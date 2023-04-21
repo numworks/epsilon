@@ -64,7 +64,7 @@ Expression UnitConvert::shallowBeautify(
     reductionContextWithUnits.setSymbolicComputation(
         SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     Expression unit;
-    Expression childWithoutUnit = childAtIndex(1).clone().reduceAndRemoveUnit(
+    Expression childWithoutUnit = childAtIndex(1).cloneAndReduceAndRemoveUnit(
         reductionContextWithUnits, &unit);
     if (childWithoutUnit.isUndefined() || unit.isUninitialized()) {
       // There is no unit on the right
@@ -93,9 +93,10 @@ Expression UnitConvert::shallowBeautify(
   }
 
   // Divide the left member by the new unit
-  Expression division = Division::Builder(childAtIndex(0), unit.clone());
   Expression divisionUnit;
-  division = division.reduceAndRemoveUnit(reductionContext, &divisionUnit);
+  Expression division =
+      Division::Builder(childAtIndex(0), unit.clone())
+          .cloneAndReduceAndRemoveUnit(reductionContext, &divisionUnit);
   if (!divisionUnit.isUninitialized()) {
     if (unit.isPureAngleUnit()) {
       // Try again with the current angle unit
@@ -105,7 +106,8 @@ Expression UnitConvert::shallowBeautify(
       division =
           Multiplication::Builder(division, divisionUnit, currentAngleUnit);
       divisionUnit = Expression();
-      division = division.reduceAndRemoveUnit(reductionContext, &divisionUnit);
+      division =
+          division.cloneAndReduceAndRemoveUnit(reductionContext, &divisionUnit);
       if (!divisionUnit.isUninitialized()) {
         return replaceWithUndefinedInPlace();
       }

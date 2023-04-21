@@ -1227,11 +1227,11 @@ int Unit::SetAdditionalExpressions(Expression units, double value,
   if (representative->dimensionVector() ==
       AngleRepresentative::Default().dimensionVector()) {
     /* Angles are the only unit where we want to display the exact value. */
-    Expression exactValue = exactOutput.clone();
     Expression unit;
     ReductionContext childContext = reductionContext;
     childContext.setUnitConversion(UnitConversion::None);
-    exactValue = exactValue.reduceAndRemoveUnit(childContext, &unit);
+    Expression exactValue =
+        exactOutput.cloneAndReduceAndRemoveUnit(childContext, &unit);
     assert(unit.type() == ExpressionNode::Type::Unit);
     return static_cast<const AngleRepresentative*>(
                static_cast<Unit&>(unit).representative())

@@ -873,12 +873,11 @@ bool Expression::isPureAngleUnit() const {
 }
 
 bool Expression::isInRadians(Context *context) const {
-  Expression thisClone = clone();
   Expression units;
   ReductionContext reductionContext;
   reductionContext.setContext(context);
   reductionContext.setUnitConversion(UnitConversion::None);
-  thisClone.reduceAndRemoveUnit(reductionContext, &units);
+  Expression thisClone = cloneAndReduceAndRemoveUnit(reductionContext, &units);
   return !units.isUninitialized() &&
          units.type() == ExpressionNode::Type::Unit &&
          units.convert<Unit>().representative() ==
@@ -1392,11 +1391,12 @@ Expression Expression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
   return *this;
 }
 
-Expression Expression::reduceAndRemoveUnit(
-    const ReductionContext &reductionContext, Expression *Unit) {
-  /* RemoveUnit has to be called on reduced expression. reduce method is called
-   * instead of deepReduce to catch interrupted simplification. */
-  return deepReduce(reductionContext).removeUnit(Unit);
+Expression Expression::cloneAndReduceAndRemoveUnit(
+    ReductionContext reductionContext, Expression *unit) const {
+  bool reductionFailed = false;
+  Expression e = cloneAndDeepReduceWithSystemCheckpoint(&reductionContext,
+                                                        &reductionFailed);
+  return reductionFailed ? e : e.removeUnit(unit);
 }
 
 Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
@@ -1556,7 +1556,7 @@ Expression Expression::approximateKeepingUnits(
   if (hasUnit()) {
     ReductionContext childContext = reductionContext;
     childContext.setUnitConversion(UnitConversion::None);
-    expressionWithoutUnits = clone().reduceAndRemoveUnit(childContext, &units);
+    expressionWithoutUnits = cloneAndReduceAndRemoveUnit(childContext, &units);
   }
   Expression approximationWithoutUnits = expressionWithoutUnits.approximate<U>(
       reductionContext.context(), reductionContext.complexFormat(),

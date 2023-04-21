@@ -21,8 +21,8 @@ void TrigonometryListController::setExpression(Expression e) {
   size_t index = 0;
 
   Expression unit;
-  Shared::PoincareHelpers::ReduceAndRemoveUnit(&e, context,
-                                               ReductionTarget::User, &unit);
+  Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
+      &e, context, ReductionTarget::User, &unit);
 
   if (!unit.isUninitialized()) {
     assert(unit.isPureAngleUnit() &&

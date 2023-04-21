@@ -42,8 +42,6 @@ void CategoricalTableCell::tableViewDidChangeSelection(
     SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
     bool withinTemporarySelection) {
   assert(t == &m_selectableTableView);
-  int row = t->selectedRow();
-  int col = t->selectedColumn();
   if (withinTemporarySelection || previousSelectedRow == t->selectedRow()) {
     return;
   }
@@ -64,7 +62,7 @@ void CategoricalTableCell::tableViewDidChangeSelection(
   }
   m_selectableTableView.setSize(
       KDSize(categoricalController()->view()->bounds().width(), givenHeight));
-  m_selectableTableView.scrollToCell(col, row);
+  m_selectableTableView.scrollToCell(t->selectedColumn(), t->selectedRow());
   if (m_selectableTableView.contentOffset().y() != verticalOffset) {
     // Relayout the whole Categorical table if the scroll change
     categoricalController()->selectableListView()->reloadData(false);

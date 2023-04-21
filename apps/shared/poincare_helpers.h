@@ -224,7 +224,7 @@ inline void CloneAndApproximateKeepingSymbols(
       symbolicComputation, unitConversion));
 }
 
-inline void ReduceAndRemoveUnit(
+inline void CloneAndReduceAndRemoveUnit(
     Poincare::Expression* e, Poincare::Context* context,
     Poincare::ReductionTarget target, Poincare::Expression* unit,
     Poincare::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
@@ -232,10 +232,15 @@ inline void ReduceAndRemoveUnit(
     Poincare::Preferences* preferences =
         Poincare::Preferences::sharedPreferences,
     bool updateComplexFormatAndAngleUnit = true) {
-  PoincareHelpers::CloneAndReduce(e, context, target, symbolicComputation,
-                                  unitConversion, preferences,
-                                  updateComplexFormatAndAngleUnit);
-  *e = e->removeUnit(unit);
+  *e = e->cloneAndReduceAndRemoveUnit(
+      Poincare::ReductionContext(
+          context,
+          ComplexFormatForPreferences(
+              preferences, updateComplexFormatAndAngleUnit, *e, context),
+          preferences->angleUnit(),
+          GlobalPreferences::sharedGlobalPreferences->unitFormat(), target,
+          symbolicComputation, unitConversion),
+      unit);
 }
 
 // This method automatically updates complex format and angle unit

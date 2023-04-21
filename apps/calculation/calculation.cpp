@@ -328,7 +328,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     if (!directExpression.isUninitialized()) {
       Expression angle = directExpression.childAtIndex(0);
       Expression unit;
-      PoincareHelpers::ReduceAndRemoveUnit(
+      PoincareHelpers::CloneAndReduceAndRemoveUnit(
           &angle, globalContext, ReductionTarget::SystemForApproximation,
           &unit);
       // The angle must be real.
@@ -342,7 +342,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   if (o.hasUnit()) {
     AdditionalInformations additionalInformations = {};
     Expression unit;
-    PoincareHelpers::ReduceAndRemoveUnit(
+    PoincareHelpers::CloneAndReduceAndRemoveUnit(
         &o, globalContext, ReductionTarget::User, &unit,
         SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined,
         UnitConversion::None);

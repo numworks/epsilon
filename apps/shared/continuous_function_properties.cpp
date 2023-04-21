@@ -137,6 +137,7 @@ void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(
 void ContinuousFunctionProperties::update(
     const Poincare::Expression reducedEquation,
     const Poincare::Expression inputEquation, Context* context,
+    Preferences::ComplexFormat complexFormat,
     ComparisonNode::OperatorType precomputedOperatorType,
     SymbolType precomputedFunctionSymbol, bool isCartesianEquation) {
   reset();
@@ -211,7 +212,8 @@ void ContinuousFunctionProperties::update(
         setErrorStatusAndUpdateCaption(Status::Undefined);
         return;
       }
-      setParametricFunctionProperties(analyzedExpression, context);
+      setParametricFunctionProperties(analyzedExpression, context,
+                                      complexFormat);
       if (genericCaptionOnly) {
         setCaption(I18n::Message::ParametricEquationType);
       }
@@ -234,7 +236,7 @@ void ContinuousFunctionProperties::update(
     }
 
     assert(precomputedFunctionSymbol == SymbolType::Theta);
-    setPolarFunctionProperties(analyzedExpression, context);
+    setPolarFunctionProperties(analyzedExpression, context, complexFormat);
     if (genericCaptionOnly) {
       setCaption(I18n::Message::PolarEquationType);
     }
@@ -257,7 +259,7 @@ void ContinuousFunctionProperties::update(
       willBeAlongX ? k_ordinateName : Function::k_unknownName;
   TrinaryBoolean highestCoefficientIsPositive = TrinaryBoolean::Unknown;
   if (!HasNonNullCoefficients(analyzedExpression, symbolName, context,
-                              &highestCoefficientIsPositive)) {
+                              complexFormat, &highestCoefficientIsPositive)) {
     // The equation must have at least one nonNull coefficient.
     setErrorStatusAndUpdateCaption(Status::Unhandled);
     return;
@@ -288,8 +290,8 @@ void ContinuousFunctionProperties::update(
     }
   }
 
-  setCartesianEquationProperties(analyzedExpression, context, xDeg, yDeg,
-                                 highestCoefficientIsPositive);
+  setCartesianEquationProperties(analyzedExpression, context, complexFormat,
+                                 xDeg, yDeg, highestCoefficientIsPositive);
   if (genericCaptionOnly) {
     setCaption(I18n::Message::EquationType);
   }
@@ -398,7 +400,8 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(
 
 void ContinuousFunctionProperties::setCartesianEquationProperties(
     const Poincare::Expression& analyzedExpression, Poincare::Context* context,
-    int xDeg, int yDeg, TrinaryBoolean highestCoefficientIsPositive) {
+    Preferences::ComplexFormat complexFormat, int xDeg, int yDeg,
+    TrinaryBoolean highestCoefficientIsPositive) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(status() == Status::Enabled && isCartesian());
 
@@ -459,8 +462,8 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
     /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
      * details. Otherwise, try to identify a conic.
      * For instance, x*y=1 as an hyperbola. */
-    CartesianConic equationConic =
-        CartesianConic(analyzedExpression, context, Function::k_unknownName);
+    CartesianConic equationConic = CartesianConic(
+        analyzedExpression, context, complexFormat, Function::k_unknownName);
     setConicShape(equationConic.conicType().shape);
     switch (conicShape()) {
       case Conic::Shape::Hyperbola:
@@ -482,7 +485,8 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
 }
 
 void ContinuousFunctionProperties::setPolarFunctionProperties(
-    const Expression& analyzedExpression, Context* context) {
+    const Expression& analyzedExpression, Context* context,
+    Preferences::ComplexFormat complexFormat) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(status() == Status::Enabled && isPolar());
 
@@ -528,8 +532,8 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
   }
 
   // Detect polar conics
-  PolarConic conicProperties =
-      PolarConic(analyzedExpression, context, Function::k_unknownName);
+  PolarConic conicProperties = PolarConic(
+      analyzedExpression, context, complexFormat, Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
     case Conic::Shape::Hyperbola:
@@ -551,8 +555,8 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(
 }
 
 void ContinuousFunctionProperties::setParametricFunctionProperties(
-    const Poincare::Expression& analyzedExpression,
-    Poincare::Context* context) {
+    const Poincare::Expression& analyzedExpression, Poincare::Context* context,
+    Preferences::ComplexFormat complexFormat) {
   assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(status() == Status::Enabled && isParametric());
   assert(analyzedExpression.type() == ExpressionNode::Type::Matrix &&
@@ -611,8 +615,8 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(
   }
 
   // Detect polar conics
-  ParametricConic conicProperties =
-      ParametricConic(analyzedExpression, context, Function::k_unknownName);
+  ParametricConic conicProperties = ParametricConic(
+      analyzedExpression, context, complexFormat, Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
     case Conic::Shape::Hyperbola:
@@ -655,10 +659,8 @@ bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation,
 
 bool ContinuousFunctionProperties::HasNonNullCoefficients(
     const Expression equation, const char* symbolName, Context* context,
+    Preferences::ComplexFormat complexFormat,
     TrinaryBoolean* highestDegreeCoefficientIsPositive) {
-  Preferences::ComplexFormat complexFormat =
-      Preferences::UpdatedComplexFormatWithExpressionInput(
-          Preferences::sharedPreferences->complexFormat(), equation, context);
   Preferences::AngleUnit angleUnit =
       Preferences::sharedPreferences->angleUnit();
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];

@@ -45,7 +45,7 @@ class CategoricalTableCell : public Escher::HighlightCell,
   }
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(
+  void tableViewDidChangeSelectionAndDidScroll(
       Escher::SelectableTableView *t, int previousSelectedCol,
       int previousSelectedRow, bool withinTemporarySelection = false) override;
   bool canStoreContentOfCellAtLocation(Escher::SelectableTableView *t, int col,

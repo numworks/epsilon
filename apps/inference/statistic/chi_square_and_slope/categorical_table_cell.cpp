@@ -38,19 +38,15 @@ bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {
   return false;
 }
 
-void CategoricalTableCell::tableViewDidChangeSelection(
+void CategoricalTableCell::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
     bool withinTemporarySelection) {
   assert(t == &m_selectableTableView);
   if (withinTemporarySelection || previousSelectedRow == t->selectedRow()) {
     return;
   }
-  KDCoordinate verticalOffset = m_selectableTableView.contentOffset().y();
-  m_selectableTableView.scrollToCell(t->selectedColumn(), t->selectedRow());
-  if (m_selectableTableView.contentOffset().y() != verticalOffset) {
-    // Relayout the whole Categorical table if the scroll change
-    categoricalController()->selectableListView()->reloadData(false);
-  }
+  // TODO: Relayout the whole Categorical table ONLY if scroll changed
+  categoricalController()->selectableListView()->reloadData(false);
 }
 
 void CategoricalTableCell::layoutSubviews(bool force) {

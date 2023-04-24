@@ -152,6 +152,12 @@ mp_obj_t create_arange(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
     if(args[3].u_obj != mp_const_none) {
         dtype = (uint8_t)mp_obj_get_int(args[3].u_obj);
     }
+
+    // bail out, if the range cannot be constructed
+    if(step == MICROPY_FLOAT_CONST(0.0)) {
+        mp_raise_msg(&mp_type_ZeroDivisionError, MP_ERROR_TEXT("divide by zero"));
+    }
+
     ndarray_obj_t *ndarray;
     if((stop - start)/step <= 0) {
         ndarray = ndarray_new_linear_array(0, dtype);

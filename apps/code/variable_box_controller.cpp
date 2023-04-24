@@ -207,24 +207,16 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
   myCell->textView()->appendText(I18n::translate(suffix));
 }
 
-void VariableBoxController::listViewDidChangeSelection(
+void VariableBoxController::listViewDidChangeSelectionAndDidScroll(
     SelectableListView *l, int previousSelectedRow,
     bool withinTemporarySelection) {
   if (withinTemporarySelection || !m_displaySubtitles) {
     return;
   }
-  // Make sure subtitle cells cannot be selected
-  const int currentSelectedRow = selectedRow();
-  if (currentSelectedRow >= 0 &&
-      typeAtIndex(currentSelectedRow) == k_subtitleCellType) {
-    if (currentSelectedRow == 0) {
-      // We scroll to the first cell, otherwise it will never appear again
-      l->scrollToCell(0);
-      l->selectCell(1);
-    } else {
-      l->selectCell(selectedRow() +
-                    (previousSelectedRow < currentSelectedRow ? 1 : -1));
-    }
+  if (l->selectedRow() == 1) {
+    /* Subtitle cell is not selectable so when we select row 1, scroll to
+     * the top to display the subtitle. */
+    l->scrollToCell(0);
   }
 }
 

@@ -104,8 +104,6 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
 
   // Main table
   if (hideRowPreface) {
-    /* WARNING: If preface row can change, top margin is dependant on row frozen
-     * (follow the implementation used for column preface) */
     m_mainTableView->setTopMargin(m_mainTableViewTopMargin);
     setChildFrame(m_mainTableView, rect, force);
   } else {

@@ -15,7 +15,7 @@ class VectorListController : public IllustratedExpressionsListController {
   void setExpression(Poincare::Expression e) override;
 
  private:
-  Escher::HighlightCell* illustrationCell() override { return &m_graphCell; }
+  IllustrationCell* illustrationCell() override { return &m_graphCell; }
   I18n::Message messageAtIndex(int index) override;
   // Map from cell index to message index
   constexpr static int k_maxNumberOfOutputRows = 3;

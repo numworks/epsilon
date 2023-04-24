@@ -22,9 +22,7 @@ class ComplexListController : public IllustratedExpressionsListController {
 
  private:
   constexpr static CodePoint k_symbol = 'z';
-  Escher::HighlightCell* illustrationCell() override {
-    return &m_complexGraphCell;
-  }
+  IllustrationCell* illustrationCell() override { return &m_complexGraphCell; }
   I18n::Message messageAtIndex(int index) override {
     return I18n::Message::Default;
   };

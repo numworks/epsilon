@@ -102,8 +102,8 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
   bool hideColumnPreface =
       m_mainTableView->selectedRow() == -1 ||
       m_columnPrefaceDataSource.prefaceColumn() == -1 ||
-      m_columnPrefaceDataSource.prefaceIsAfterOffset(
-          m_mainTableView->contentOffset().x(), m_mainTableView->leftMargin());
+      (m_mainTableView->contentOffset().x() - m_mainTableView->leftMargin() <=
+       m_columnPrefaceDataSource.cumulatedWidthBeforePrefaceColumn());
   if (hideColumnPreface) {
     // Main table and row preface
     m_mainTableView->setLeftMargin(m_mainTableViewLeftMargin);
@@ -165,14 +165,13 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
   layoutScrollbars(force);
 }
 
-bool PrefacedTwiceTableView::ColumnPrefaceDataSource::prefaceIsAfterOffset(
-    KDCoordinate offsetX, KDCoordinate leftMargin) const {
+KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::
+    cumulatedWidthBeforePrefaceColumn() const {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  // x offset includes left margin
-  bool result = offsetX - leftMargin <=
-                m_mainDataSource->cumulatedWidthBeforeIndex(m_prefaceColumn) +
-                    m_mainDataSource->separatorBeforeColumn(m_prefaceColumn);
+  KDCoordinate result =
+      m_mainDataSource->cumulatedWidthBeforeIndex(m_prefaceColumn) +
+      m_mainDataSource->separatorBeforeColumn(m_prefaceColumn);
   m_mainDataSource->lockMemoization(false);
   return result;
 }

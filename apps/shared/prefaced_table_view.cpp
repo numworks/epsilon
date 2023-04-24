@@ -98,10 +98,9 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
       m_prefacedDelegate &&
       rowPrefaceHeight > m_prefacedDelegate->maxRowPrefaceHeight();
   bool hideRowPreface =
-      rowPrefaceIsTooLarge ||
-      m_rowPrefaceDataSource.prefaceIsAfterOffset(
-          m_mainTableView->contentOffset().y(), m_mainTableView->topMargin()) ||
-      m_mainTableView->selectedRow() == -1;
+      m_mainTableView->selectedRow() == -1 || rowPrefaceIsTooLarge ||
+      (m_mainTableView->contentOffset().y() - m_mainTableView->topMargin() <=
+       m_rowPrefaceDataSource.cumulatedHeightBeforePrefaceRow());
 
   // Main table
   if (hideRowPreface) {
@@ -233,14 +232,14 @@ int PrefacedTableView::IntermediaryDataSource::
   return result;
 }
 
-bool PrefacedTableView::RowPrefaceDataSource::prefaceIsAfterOffset(
-    KDCoordinate offsetY, KDCoordinate topMargin) const {
+KDCoordinate
+PrefacedTableView::RowPrefaceDataSource::cumulatedHeightBeforePrefaceRow()
+    const {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  // y offset includes top margin
-  bool result = offsetY - topMargin <=
-                m_mainDataSource->cumulatedHeightBeforeIndex(m_prefaceRow) +
-                    m_mainDataSource->separatorBeforeRow(m_prefaceRow);
+  KDCoordinate result =
+      m_mainDataSource->cumulatedHeightBeforeIndex(m_prefaceRow) +
+      m_mainDataSource->separatorBeforeRow(m_prefaceRow);
   m_mainDataSource->lockMemoization(false);
   return result;
 }

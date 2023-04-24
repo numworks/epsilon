@@ -133,8 +133,7 @@ class PrefacedTableView : public Escher::View,
           m_prefaceRow(prefaceRow),
           m_rowHeigthManager(this) {}
 
-    bool prefaceIsAfterOffset(KDCoordinate offsetY,
-                              KDCoordinate topMargin) const;
+    KDCoordinate cumulatedHeightBeforePrefaceRow() const;
     int numberOfRows() const override { return 1; }
     KDCoordinate separatorBeforeRow(int index) override { return 0; }
 

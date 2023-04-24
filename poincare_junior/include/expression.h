@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_H
 
 #include <poincare_junior/include/layout.h>
+#include <poincare_junior/src/expression/integer.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/reference.h>
 
@@ -21,6 +22,14 @@ class Expression final : public Reference {
   float approximate() const;
 
  private:
+  static void ConvertIntegerHandlerToLayout(EditionReference layoutParent,
+                                            IntegerHandler handler);
+  static void ConvertInfixOperatorToLayout(
+      EditionReference layoutParent, EditionReference expressionReference);
+  static void ConvertPowerOrDivisionToLayout(
+      EditionReference layoutParent, EditionReference expressionReference);
+  static void ConvertExpressionToLayout(EditionReference layoutParent,
+                                        EditionReference expressionReference);
   static EditionReference EditionPoolExpressionToLayout(Node node);
 };
 

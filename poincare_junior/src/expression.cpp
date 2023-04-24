@@ -10,8 +10,8 @@
 
 namespace PoincareJ {
 
-void ConvertIntegerHandlerToLayout(EditionReference layoutParent,
-                                   IntegerHandler handler) {
+void Expression::ConvertIntegerHandlerToLayout(EditionReference layoutParent,
+                                               IntegerHandler handler) {
   EditionPool *editionPool = EditionPool::sharedEditionPool();
   if (handler.strictSign() == StrictSign::Negative) {
     NAry::AddChild(
@@ -41,9 +41,48 @@ void ConvertIntegerHandlerToLayout(EditionReference layoutParent,
   }
 }
 
+void Expression::ConvertInfixOperatorToLayout(
+    EditionReference layoutParent, EditionReference expressionReference) {
+  BlockType type = expressionReference.type();
+  assert(type == BlockType::Addition || type == BlockType::Multiplication ||
+         type == BlockType::Subtraction);
+  CodePoint codepoint = (type == BlockType::Addition)         ? '+'
+                        : (type == BlockType::Multiplication) ? '*'
+                                                              : '-';
+  int childNumber = expressionReference.numberOfChildren();
+  for (int i = 0; i < childNumber; i++) {
+    if (i > 0) {
+      NAry::AddChild(
+          layoutParent,
+          EditionPool::sharedEditionPool()
+              ->push<BlockType::CodePointLayout, CodePoint>(codepoint));
+    }
+    ConvertExpressionToLayout(layoutParent, expressionReference.nextNode());
+  }
+}
+
+void Expression::ConvertPowerOrDivisionToLayout(
+    EditionReference layoutParent, EditionReference expressionReference) {
+  EditionPool *editionPool = EditionPool::sharedEditionPool();
+  BlockType type = expressionReference.type();
+  EditionReference createdLayout;
+  if (type == BlockType::Division) {
+    createdLayout = editionPool->push<BlockType::FractionLayout>();
+    ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
+                              expressionReference.nextNode());
+  } else {
+    assert(type == BlockType::Power);
+    ConvertExpressionToLayout(layoutParent, expressionReference.nextNode());
+    createdLayout = editionPool->push<BlockType::VerticalOffsetLayout>();
+  }
+  ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
+                            expressionReference.nextNode());
+  NAry::AddChild(layoutParent, createdLayout);
+}
+
 // Remove expressionReference while converting it to a layout in layoutParent
-void ConvertExpressionToLayout(EditionReference layoutParent,
-                               EditionReference expressionReference) {
+void Expression::ConvertExpressionToLayout(
+    EditionReference layoutParent, EditionReference expressionReference) {
   assert(Layout::IsHorizontal(layoutParent));
   BlockType type = expressionReference.type();
   EditionPool *editionPool = EditionPool::sharedEditionPool();
@@ -60,57 +99,15 @@ void ConvertExpressionToLayout(EditionReference layoutParent,
   }
 
   switch (type) {
-    case BlockType::Addition: {
-      int childNumber = expressionReference.numberOfChildren();
-      for (int i = 0; i < childNumber; i++) {
-        if (i > 0) {
-          NAry::AddChild(
-              layoutParent,
-              editionPool->push<BlockType::CodePointLayout, CodePoint>('+'));
-        }
-        ConvertExpressionToLayout(layoutParent, expressionReference.nextNode());
-      }
+    case BlockType::Addition:
+    case BlockType::Multiplication:
+    case BlockType::Subtraction:
+      ConvertInfixOperatorToLayout(layoutParent, expressionReference);
       break;
-    }
-    case BlockType::Multiplication: {
-      int childNumber = expressionReference.numberOfChildren();
-      for (int i = 0; i < childNumber; i++) {
-        if (i > 0) {
-          NAry::AddChild(
-              layoutParent,
-              editionPool->push<BlockType::CodePointLayout, CodePoint>('*'));
-        }
-        ConvertExpressionToLayout(layoutParent, expressionReference.nextNode());
-      }
+    case BlockType::Power:
+    case BlockType::Division:
+      ConvertPowerOrDivisionToLayout(layoutParent, expressionReference);
       break;
-    }
-    case BlockType::Power: {
-      ConvertExpressionToLayout(layoutParent, expressionReference.nextNode());
-      EditionReference createdLayout =
-          editionPool->push<BlockType::VerticalOffsetLayout>();
-      ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
-                                expressionReference.nextNode());
-      NAry::AddChild(layoutParent, createdLayout);
-      break;
-    }
-    case BlockType::Subtraction: {
-      ConvertExpressionToLayout(layoutParent, expressionReference.nextNode());
-      NAry::AddChild(
-          layoutParent,
-          editionPool->push<BlockType::CodePointLayout, CodePoint>('-'));
-      ConvertExpressionToLayout(layoutParent, expressionReference.nextNode());
-      break;
-    }
-    case BlockType::Division: {
-      EditionReference createdLayout =
-          editionPool->push<BlockType::FractionLayout>();
-      ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
-                                expressionReference.nextNode());
-      ConvertExpressionToLayout(editionPool->push<BlockType::RackLayout>(0),
-                                expressionReference.nextNode());
-      NAry::AddChild(layoutParent, createdLayout);
-      break;
-    }
     case BlockType::Zero:
     case BlockType::MinusOne:
     case BlockType::One:

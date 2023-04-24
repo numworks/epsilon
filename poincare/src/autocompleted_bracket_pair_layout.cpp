@@ -46,6 +46,16 @@ static HorizontalLayout HorizontalChild(Layout l) {
 void AutocompletedBracketPairLayoutNode::BalanceBrackets(
     HorizontalLayout hLayout, HorizontalLayout *cursorLayout,
     int *cursorPosition) {
+  PrivateBalanceBrackets(Type::ParenthesisLayout, hLayout, cursorLayout,
+                         cursorPosition);
+  PrivateBalanceBrackets(Type::CurlyBraceLayout, hLayout, cursorLayout,
+                         cursorPosition);
+}
+
+void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
+    Type type, HorizontalLayout hLayout, HorizontalLayout *cursorLayout,
+    int *cursorPosition) {
+  assert(IsAutoCompletedBracketPairType(type));
   /* Read hLayout from left to right, and create a copy of it with balanced
    * brackets.
    *
@@ -69,7 +79,6 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(
   HorizontalLayout writtenLayout = result;
 
   assert((cursorLayout == nullptr) == (cursorPosition == nullptr));
-  bool placedCursor = (cursorLayout == nullptr);
 
   while (true) {
     /* -- Step 0 -- Set the new cursor position
@@ -80,18 +89,38 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(
         readIndex == *cursorPosition) {
       *cursorLayout = writtenLayout;
       *cursorPosition = writtenLayout.numberOfChildren();
-      placedCursor = true;
     }
 
     if (readIndex < readLayout.numberOfChildren()) {
       /* -- Step 1 -- The reading arrived at a layout that is not a bracket:
        * juste add it to the written layout and continue reading. */
       Layout readChild = readLayout.childAtIndex(readIndex);
-      if (!IsAutoCompletedBracketPairType(readChild.type())) {
+      if (readChild.type() != type) {
         assert(!readChild.isHorizontal());
-        writtenLayout.addOrMergeChildAtIndex(readChild.clone(),
+        Layout readClone = readChild.clone();
+        writtenLayout.addOrMergeChildAtIndex(readClone,
                                              writtenLayout.numberOfChildren());
         readIndex++;
+
+        /* If cursor is inside the added cloned layout, set its layout inside
+         * the clone by keeping the same adress offset as in the original. */
+        if (cursorLayout && cursorLayout->node() >= readChild.node() &&
+            cursorLayout->node() < readChild.node()->nextSibling()) {
+          int cursorOffset = reinterpret_cast<char *>(cursorLayout->node()) -
+                             reinterpret_cast<char *>(readChild.node());
+          Layout l = Layout(reinterpret_cast<LayoutNode *>(
+              reinterpret_cast<char *>(readClone.node()) + cursorOffset));
+          assert(l.isHorizontal());
+          *cursorLayout = static_cast<HorizontalLayout &>(l);
+        }
+
+        /* If the inserted child is a bracket pair of another type, balance
+         * inside of it. */
+        if (IsAutoCompletedBracketPairType(readClone.type())) {
+          HorizontalLayout h = HorizontalChild(readClone);
+          PrivateBalanceBrackets(type, h, cursorLayout, cursorPosition);
+        }
+
         continue;
       }
 
@@ -129,7 +158,7 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(
        *      and the current result is        : "A+(|]"
        * */
       if (!bracketNode->isTemporary(Side::Left)) {
-        Layout newBracket = BuildFromBracketType(readChild.type());
+        Layout newBracket = BuildFromBracketType(type);
         static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())
             ->setTemporary(Side::Right, true);
         writtenLayout.addOrMergeChildAtIndex(newBracket,
@@ -155,7 +184,7 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(
      * bracket.
      * */
     Layout readBracket = readLayout.parent();
-    assert(IsAutoCompletedBracketPairType(readBracket.type()));
+    assert(readBracket.type() == type);
     AutocompletedBracketPairLayoutNode *readBracketNode =
         static_cast<AutocompletedBracketPairLayoutNode *>(readBracket.node());
 
@@ -169,7 +198,7 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(
      * Check the temporary status of the RIGHT side of the bracket to know
      * if a bracket should be closed in the written layout.
      *
-     *  - If the right side is TEMPORARY, do not add close a bracket in the
+     *  - If the right side is TEMPORARY, do not close a bracket in the
      *    written layout.
      *    Ex: hLayout = "(A+B]+C"
      *      if the current reading is at '|' : "(A+B|]+C"
@@ -205,11 +234,10 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(
     }
 
     Layout writtenBracket = writtenLayout.parent();
-    if (!writtenBracket.isUninitialized() &&
-        writtenBracket.type() == readBracket.type()) {
+    if (!writtenBracket.isUninitialized()) {
       /* The current written layout is in a bracket of the same type:
        * Close the bracket and continue writing in its parent. */
-      assert(IsAutoCompletedBracketPairType(writtenBracket.type()));
+      assert(writtenBracket.type() == type);
       AutocompletedBracketPairLayoutNode *writtenBracketNode =
           static_cast<AutocompletedBracketPairLayoutNode *>(
               writtenBracket.node());
@@ -221,7 +249,7 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(
 
     /* Right side is permanent but no matching bracket was opened: create a
      * new one opened on the left. */
-    Layout newBracket = BuildFromBracketType(readBracket.type());
+    Layout newBracket = BuildFromBracketType(type);
     static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())
         ->setTemporary(Side::Left, true);
     HorizontalLayout newWrittenLayout = HorizontalLayout::Builder(newBracket);
@@ -248,11 +276,6 @@ void AutocompletedBracketPairLayoutNode::BalanceBrackets(
     newBracket.replaceChildAtIndexInPlace(0, writtenLayout);
     writtenLayout = newWrittenLayout;
   }
-
-  /* This assert can be removed if at some point a cursorLayout is passed
-   * to this method but could be unaffected by the balancing of brackets. */
-  assert(placedCursor);
-  (void)placedCursor;
 
   /* Now that the result is ready to replace hLayout, replaceWithInPlace
    * cannot be used since hLayout might not have a parent.

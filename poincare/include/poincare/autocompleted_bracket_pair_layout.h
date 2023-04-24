@@ -65,6 +65,9 @@ class AutocompletedBracketPairLayoutNode : public BracketPairLayoutNode {
 
  private:
   constexpr static uint8_t k_temporaryBlendAlpha = 0x60;
+  static void PrivateBalanceBrackets(Type type, HorizontalLayout hLayout,
+                                     HorizontalLayout* cursorLayout,
+                                     int* cursorPosition);
 
   LayoutNode* childOnSide(Side side) const;
 

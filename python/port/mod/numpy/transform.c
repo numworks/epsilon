@@ -380,7 +380,7 @@ mp_obj_t transform_dot(mp_obj_t _m1, mp_obj_t _m2) {
     if(ndim == 2) { // matrix times matrix -> matrix
         shape = ndarray_shape_vector(0, 0, shape1, shape2);
     } else { // matrix times vector -> vector, vector times vector -> vector (size 1)
-        shape = ndarray_shape_vector(0, 0, 0, shape1);
+        shape = ndarray_shape_vector(0, 0, 0, shape1 * shape2);
     }
     ndarray_obj_t *results = ndarray_new_dense_ndarray(ndim, shape, NDARRAY_FLOAT);
     mp_float_t *rarray = (mp_float_t *)results->array;

@@ -93,12 +93,12 @@ class Interval : public Statistic {
   double intervalCriticalValue() const { return m_zCritical; };
   /* Returns the variance estimated from the sample. */
   double standardError() const {
-    assert(m_SE >= 0);
+    assert(std::isnan(m_SE) || m_SE >= 0);
     return m_SE;
   };
   /* Returns the half-width of the confidence interval. */
   double marginOfError() const {
-    assert(m_marginOfError >= 0);
+    assert(std::isnan(m_marginOfError) || m_marginOfError >= 0);
     return m_marginOfError;
   };
 

@@ -64,10 +64,9 @@ void IllustratedExpressionsListController::
   if (withinTemporarySelection) {
     return;
   }
-  /* But scroll to the top when we select the first
-   * AdditionnalResultCell in order display the
-   * illustration cell. */
   if (l->selectedRow() == 1 && showIllustration()) {
+    /* Illustration cell is not selectable so when we select row 1, scroll to
+     * the top to display the illustration. */
     l->scrollToCell(0);
   }
 }

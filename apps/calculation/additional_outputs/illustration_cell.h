@@ -16,6 +16,7 @@ class IllustrationCell : public Escher::Bordered, public Escher::HighlightCell {
   View* subviewAtIndex(int index) override { return view(); }
   void layoutSubviews(bool force = false) override;
   virtual View* view() = 0;
+  bool protectedIsSelectable() override { return false; }
 };
 
 }  // namespace Calculation

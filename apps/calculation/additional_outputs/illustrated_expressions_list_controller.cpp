@@ -57,18 +57,6 @@ void IllustratedExpressionsListController::willDisplayCellForIndex(
       cell, index - showIllustration());
 }
 
-void IllustratedExpressionsListController::listViewDidChangeSelection(
-    SelectableListView* l, int previousSelectedRow,
-    bool withinTemporarySelection) {
-  if (withinTemporarySelection) {
-    return;
-  }
-  // Forbid selecting Illustration cell
-  if (l->selectedRow() == 0 && showIllustration()) {
-    l->selectRow(1);
-  }
-}
-
 void IllustratedExpressionsListController::
     listViewDidChangeSelectionAndDidScroll(SelectableListView* l,
                                            int previousSelectedRow,

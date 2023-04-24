@@ -9,9 +9,6 @@ class SelectableListView;
 
 class SelectableListViewDelegate : public SelectableTableViewDelegate {
  public:
-  virtual void listViewDidChangeSelection(
-      SelectableListView* l, int previousRow,
-      bool withinTemporarySelection = false) {}
   virtual void listViewDidChangeSelectionAndDidScroll(
       SelectableListView* l, int previousRow,
       bool withinTemporarySelection = false) {}
@@ -20,9 +17,6 @@ class SelectableListViewDelegate : public SelectableTableViewDelegate {
   }
 
  private:
-  void tableViewDidChangeSelection(
-      SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
-      bool withinTemporarySelection) override final;
   void tableViewDidChangeSelectionAndDidScroll(
       SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
       bool withinTemporarySelection) override final;

@@ -6,14 +6,6 @@ namespace Escher {
 /* These methods are in the cpp to avoid a dependency loop between delegates and
  * views. */
 
-void SelectableListViewDelegate::tableViewDidChangeSelection(
-    SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
-  return listViewDidChangeSelection(static_cast<SelectableListView*>(t),
-                                    previousSelectedRow,
-                                    withinTemporarySelection);
-}
-
 void SelectableListViewDelegate::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
     bool withinTemporarySelection) {

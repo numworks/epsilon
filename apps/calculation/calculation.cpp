@@ -211,12 +211,6 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
   return m_displayOutput;
 }
 
-void Calculation::forceDisplayOutput(DisplayOutput d) {
-  // Heights haven't been computed yet
-  assert(m_height == -1 && m_expandedHeight == -1);
-  m_displayOutput = d;
-}
-
 Calculation::EqualSign
 Calculation::exactAndApproximateDisplayedOutputsEqualSign(Context *context) {
   // TODO: implement a UserCircuitBreaker

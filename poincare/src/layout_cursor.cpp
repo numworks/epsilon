@@ -216,8 +216,8 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
    * should make the parenthesis permanent.
    * "(3+4]|" -> insert "x" -> "(3+4)x|"
    *
-   * There is an exception to this: If a new parenthesis, temporary on the
-   * other side, is inserted, you only want to make the inner brackets
+   * There is an exception to this: If a new bracket of the same type, temporary
+   * on the other side, is inserted, you only want to make the inner brackets
    * permanent.
    *
    * Examples:
@@ -238,22 +238,28 @@ void LayoutCursor::insertLayout(Layout layout, Context *context,
   if (!leftL.isUninitialized() &&
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
           leftL.type())) {
+    Layout leftMostInsertedLayout =
+        LeftOrRightmostLayout(layout, OMG::Direction::Left());
+    bool makeLeftLPerma = leftMostInsertedLayout.type() != leftL.type() ||
+                          !IsTemporaryAutocompletedBracketPair(
+                              leftMostInsertedLayout,
+                              AutocompletedBracketPairLayoutNode::Side::Left);
     static_cast<AutocompletedBracketPairLayoutNode *>(leftL.node())
-        ->makeChildrenPermanent(
-            AutocompletedBracketPairLayoutNode::Side::Right,
-            !IsTemporaryAutocompletedBracketPair(
-                LeftOrRightmostLayout(layout, OMG::Direction::Left()),
-                AutocompletedBracketPairLayoutNode::Side::Left));
+        ->makeChildrenPermanent(AutocompletedBracketPairLayoutNode::Side::Right,
+                                makeLeftLPerma);
   }
   if (!rightL.isUninitialized() &&
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(
           rightL.type())) {
+    Layout rightMostInsertedLayout =
+        LeftOrRightmostLayout(layout, OMG::Direction::Right());
+    bool makeRightLPerma = rightMostInsertedLayout.type() != rightL.type() ||
+                           !IsTemporaryAutocompletedBracketPair(
+                               rightMostInsertedLayout,
+                               AutocompletedBracketPairLayoutNode::Side::Right);
     static_cast<AutocompletedBracketPairLayoutNode *>(rightL.node())
-        ->makeChildrenPermanent(
-            AutocompletedBracketPairLayoutNode::Side::Left,
-            !IsTemporaryAutocompletedBracketPair(
-                LeftOrRightmostLayout(layout, OMG::Direction::Right()),
-                AutocompletedBracketPairLayoutNode::Side::Right));
+        ->makeChildrenPermanent(AutocompletedBracketPairLayoutNode::Side::Left,
+                                makeRightLPerma);
   }
 
   /* - Step 5 - Add parenthesis around vertical offset

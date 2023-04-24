@@ -147,6 +147,7 @@ bool KDRect::isUnder(KDPoint p) const { return (p.y() <= bottom()); }
 bool KDRect::isEmpty() const { return (width() <= 0 || height() <= 0); }
 
 KDRect KDRect::paddedWith(KDCoordinate value) const {
+  assert(!SumOverflowsKDCoordinate(value, value));
   assert(!SumOverflowsKDCoordinate(x(), -value));
   assert(!SumOverflowsKDCoordinate(x(), -value));
   assert(!SumOverflowsKDCoordinate(width(), 2 * value));

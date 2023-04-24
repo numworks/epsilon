@@ -100,7 +100,7 @@ bool CategoricalController::updateBarIndicator(bool vertical, bool *visible) {
   return true;
 }
 
-void CategoricalController::listViewDidChangeSelection(
+void CategoricalController::listViewDidChangeSelectionAndDidScroll(
     SelectableListView *l, int previousRow, bool withinTemporarySelection) {
   assert(l == &m_selectableListView);
   if (previousRow == l->selectedRow() || withinTemporarySelection) {

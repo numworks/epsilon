@@ -6,6 +6,7 @@
 
 #include "../calculation_store.h"
 #include "chained_expressions_list_controller.h"
+#include "illustration_cell.h"
 
 namespace Calculation {
 
@@ -63,7 +64,7 @@ class IllustratedExpressionsListController
   int textAtIndex(char* buffer, size_t bufferSize, Escher::HighlightCell* cell,
                   int index) override;
   // Cells
-  virtual Escher::HighlightCell* illustrationCell() = 0;
+  virtual IllustrationCell* illustrationCell() = 0;
   bool m_showIllustration;
 };
 

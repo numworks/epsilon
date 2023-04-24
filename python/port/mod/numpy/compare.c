@@ -8,6 +8,8 @@
  *
  * Copyright (c) 2020-2021 Zoltán Vörös
  *               2020 Jeff Epler for Adafruit Industries
+ *
+ * Some minor changes were made by NumWorks team.
 */
 
 #include <math.h>
@@ -125,6 +127,7 @@ static mp_obj_t compare_function(mp_obj_t x1, mp_obj_t x2, uint8_t op) {
     return mp_const_none; // we should never reach this point
 }
 
+#if ULAB_NUMPY_HAS_EQUAL | ULAB_NUMPY_HAS_NOTEQUAL
 static mp_obj_t compare_equal_helper(mp_obj_t x1, mp_obj_t x2, uint8_t comptype) {
     // scalar comparisons should return a single object of mp_obj_t type
     mp_obj_t result = compare_function(x1, x2, comptype);
@@ -136,6 +139,7 @@ static mp_obj_t compare_equal_helper(mp_obj_t x1, mp_obj_t x2, uint8_t comptype)
     }
     return result;
 }
+#endif
 
 #if ULAB_NUMPY_HAS_CLIP
 

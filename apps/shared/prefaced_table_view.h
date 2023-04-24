@@ -36,9 +36,6 @@ class PrefacedTableView : public Escher::View,
   }
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(
-      Escher::SelectableTableView* t, int previousSelectedCol,
-      int previousSelectedRow, bool withinTemporarySelection = false) override;
   void tableViewDidChangeSelectionAndDidScroll(
       Escher::SelectableTableView* t, int previousSelectedCol,
       int previousSelectedRow, bool withinTemporarySelection = false) override;

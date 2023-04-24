@@ -101,11 +101,6 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
   selectColumn(col);
   selectRow(row);
 
-  if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this, previousColumn, previousRow,
-                                            withinTemporarySelection);
-  }
-
   // Scroll
   if (selectedRow() >= 0) {
     scrollToCell(selectedColumn(), selectedRow());
@@ -220,9 +215,6 @@ void SelectableTableView::deselectTable(bool withinTemporarySelection) {
   selectColumn(0);
   selectRow(-1);
   if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this, previousSelectedCol,
-                                            previousSelectedRow,
-                                            withinTemporarySelection);
     m_delegate->tableViewDidChangeSelectionAndDidScroll(
         this, previousSelectedCol, previousSelectedRow,
         withinTemporarySelection);

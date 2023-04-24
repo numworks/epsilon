@@ -44,9 +44,6 @@ class ResultHomogeneityTableCell
   }
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(
-      Escher::SelectableTableView* t, int previousSelectedCol,
-      int previousSelectedRow, bool withinTemporarySelection = false) override;
   bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
                                        int row) const override {
     return col > 0 && row > 0;

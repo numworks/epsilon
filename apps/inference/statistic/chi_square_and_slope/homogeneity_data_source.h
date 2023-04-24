@@ -36,10 +36,6 @@ class HomogeneityTableDataSource
   // DynamicCellsDataSource
   void initCell(InferenceEvenOddBufferCell, void* cell, int index) override;
 
-  // SelectableTableViewDelegate
-  bool unselectTopLeftCell(Escher::SelectableTableView* t,
-                           int previousSelectedCol, int previousSelectedRow);
-
   constexpr static int k_columnWidth = 82;
   // 5 - we take into account the potential "Total" column
   constexpr static int k_numberOfReusableColumns =

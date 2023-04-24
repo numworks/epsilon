@@ -56,17 +56,6 @@ void ResultHomogeneityTableCell::willDisplayCellAtLocation(
   }
 }
 
-void ResultHomogeneityTableCell::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
-  assert(t == &m_selectableTableView);
-  if (unselectTopLeftCell(t, previousSelectedCol, previousSelectedRow) &&
-      t->selectedColumn() == 0) {
-    selectableTableView()->deselectTable();
-    m_resultsTableController->tabController()->selectTab();
-  }
-}
-
 void ResultHomogeneityTableCell::willDisplayInnerCellAtLocation(
     Escher::HighlightCell *cell, int column, int row) {
   InferenceEvenOddBufferCell *myCell =

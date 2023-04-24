@@ -13,7 +13,9 @@ HomogeneityTableDataSource::HomogeneityTableDataSource()
                              k_homogeneityTableNumberOfReusableHeaderCells>(
           this),
       m_headerPrefix(I18n::Message::Group),
-      m_topLeftCell(Escher::Palette::WallScreenDark) {}
+      m_topLeftCell(Escher::Palette::WallScreenDark) {
+  m_topLeftCell.hide();
+}
 
 void HomogeneityTableDataSource::initCell(InferenceEvenOddBufferCell,
                                           void *cell, int index) {
@@ -81,18 +83,6 @@ void HomogeneityTableDataSource::willDisplayCellAtLocation(
   } else {
     willDisplayInnerCellAtLocation(cell, column - 1, row - 1);
   }
-}
-
-bool HomogeneityTableDataSource::unselectTopLeftCell(SelectableTableView *t,
-                                                     int previousSelectedCol,
-                                                     int previousSelectedRow) {
-  // Prevent top left selection
-  if (t->selectedRow() == 0 && t->selectedColumn() == 0) {
-    t->selectRow(previousSelectedRow);
-    t->selectColumn(previousSelectedCol);
-    return true;
-  }
-  return false;
 }
 
 }  // namespace Inference

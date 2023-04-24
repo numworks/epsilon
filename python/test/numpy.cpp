@@ -43,8 +43,10 @@ QUIZ_CASE(python_numpy) {
   assert_command_execution_succeeds(
       env, "np.polyfit(np.array([1,2,3,4]),np.array([1,2,3,4]),1)",
       "array([1.0, 0.0])\n");
-  assert_command_execution_succeeds(env, "np.polyval([1,2,3],[1])",
+  assert_command_execution_succeeds(env, "np.polyval([1,2,3],1)",
                                     "array([6.0])\n");
+  assert_command_execution_succeeds(env, "np.polyval([1,2,3],[1, 2])",
+                                    "array([6.0, 11.0])\n");
   assert_command_execution_succeeds(env, "np.size(arr1)", "4\n");
   assert_command_execution_succeeds(env, "np.sort(arr1)",
                                     "array([1.0, 3.0, 4.0, 5.0])\n");

@@ -495,6 +495,9 @@
 #define ULAB_NUMPY_HAS_POLYFIT          (1)
 #endif
 
+// determines, whether polyval should handle non-arrays as second argument
+#define NUMWORKS_POLYVAL_ON_FLOATS      (1)
+
 #ifndef ULAB_NUMPY_HAS_POLYVAL
 #define ULAB_NUMPY_HAS_POLYVAL          (1)
 #endif

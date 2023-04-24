@@ -42,7 +42,7 @@ class CategoricalController
   bool updateBarIndicator(bool vertical, bool* visible) override;
 
   // SelectableListViewDelegate
-  void listViewDidChangeSelection(
+  void listViewDidChangeSelectionAndDidScroll(
       SelectableListView* l, int previousRow,
       bool withinTemporarySelection = false) override;
 

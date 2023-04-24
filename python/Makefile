@@ -1,6 +1,8 @@
 SFLAGS += -Ipython/src
 SFLAGS += -Ipython/port
 SFLAGS += -I$(BUILD_DIR)/python/port
+# Add NumWorks Ulab config
+SFLAGS += -DULAB_CONFIG_FILE="\"numworks_ulab_config.h\""
 
 # How to maintain this Makefile
 # - Copy PY_CORE_O_BASENAME from py.mk into py_src

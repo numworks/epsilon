@@ -42,15 +42,6 @@ void InputHomogeneityTableCell::willDisplayCellAtLocation(
   }
 }
 
-void InputHomogeneityTableCell::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
-  assert(t == &m_selectableTableView);
-  unselectTopLeftCell(t, previousSelectedCol, previousSelectedRow);
-  CategoricalTableCell::tableViewDidChangeSelection(
-      t, previousSelectedCol, previousSelectedRow, withinTemporarySelection);
-}
-
 int InputHomogeneityTableCell::fillColumnName(int column, char *buffer) {
   int length = strlcpy(buffer, I18n::translate(I18n::Message::Group),
                        Shared::ColumnParameterController::k_titleBufferSize);

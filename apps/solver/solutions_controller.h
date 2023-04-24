@@ -56,9 +56,6 @@ class SolutionsController : public Escher::ViewController,
   void didBecomeFirstResponder() override;
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(
-      Escher::SelectableTableView *t, int previousSelectedCol,
-      int previousSelectedRow, bool withinTemporarySelection = false) override;
   bool canStoreContentOfCellAtLocation(Escher::SelectableTableView *t, int col,
                                        int row) const override {
     return col > 0;
@@ -142,6 +139,7 @@ class SolutionsController : public Escher::ViewController,
     void layoutSubviews(bool force = false) override {
       setChildFrame(&m_messageView, bounds(), force);
     }
+    bool protectedIsSelectable() override { return false; }
     Escher::MessageTextView m_messageView;
   };
 

@@ -149,6 +149,9 @@ SolutionsController::SolutionsController(Responder *parentResponder)
                                   KDGlyph::k_alignCenter);
     m_symbolCells[i].setFont(k_solutionsFont);
   }
+  for (int i = 0; i < k_numberOfEmptyCells; ++i) {
+    m_emptyCell[i].hide();
+  }
 }
 
 /* ViewController */
@@ -471,23 +474,6 @@ void SolutionsController::didBecomeFirstResponder() {
   if (system->numberOfSolutions() > 0) {
     Container::activeApp()->setFirstResponder(
         m_contentView.selectableTableView());
-  }
-}
-
-void SolutionsController::tableViewDidChangeSelection(
-    SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
-  const int rowOfUserVariablesMessage = userVariablesMessageRow();
-  if (rowOfUserVariablesMessage < 0) {
-    return;
-  }
-  // Forbid the selection of the messages row and its empty row
-  if (t->selectedRow() == rowOfUserVariablesMessage ||
-      t->selectedRow() == rowOfUserVariablesMessage - 1) {
-    t->selectCellAtLocation(
-        t->selectedColumn(),
-        rowOfUserVariablesMessage +
-            (rowOfUserVariablesMessage < previousSelectedRow ? -2 : 1));
   }
 }
 

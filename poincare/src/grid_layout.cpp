@@ -45,10 +45,11 @@ LayoutNode::DeletionMethod GridLayoutNode::deletionMethodForCursorLeftOfChild(
   assert(isEditing());
   int rowIndex = rowAtChildIndex(childIndex);
   int columnIndex = columnAtChildIndex(childIndex);
-  if (rowIndex == 0 &&
+  if (rowIndex == 0 && columnIndex == 0 &&
       numberOfColumns() == k_minimalNumberOfRowsAndColumnsWhileEditing &&
       numberOfRows() == k_minimalNumberOfRowsAndColumnsWhileEditing) {
-    // If only one child is filled, delete the grid and keep the child.
+    /* If the top left child is filled and the cursor is left of it, delete the
+     * grid and keep the child. */
     return DeletionMethod::DeleteParent;
   }
 

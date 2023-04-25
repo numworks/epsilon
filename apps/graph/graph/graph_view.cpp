@@ -571,9 +571,12 @@ void GraphView::drawPointsOfInterest(KDContext *ctx, KDRect rect) {
         static_cast<Coordinate2D<float>>(p.xy());
 
     KDRect dotRelativeRect = dotRect(k_dotSize, dotCoordinates);
-    // If the dot intersects the dirty rect, force the redraw
-    if (!dotRelativeRect.translatedBy(absoluteOrigin())
-             .intersects(dirtyRect()) &&
+    /* If the dot intersects the dirty rect, force the redraw.
+     * Either dotRelativeRect or dirtyRect needs to be translated, as one is
+     * relative and the other absolute. Since dotRect might have been clamped to
+     * KDCOORDINATE_MAX, translating dirtyRect is safer. */
+    if (!dotRelativeRect.intersects(
+            dirtyRect().translatedBy(absoluteOrigin().opposite())) &&
         wasAlreadyDrawn) {
       continue;
     }

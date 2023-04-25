@@ -190,11 +190,12 @@ class Expression : public TreeHandle {
   bool isBasedIntegerCappedBy(const char* integerString) const;
   bool isDivisionOfIntegers() const;
   bool isAlternativeFormOfRationalNumber() const;
+  template <typename T>
   bool hasDefinedComplexApproximation(Context* context,
                                       Preferences::ComplexFormat complexFormat,
                                       Preferences::AngleUnit angleUnit,
-                                      float* returnRealPart = nullptr,
-                                      float* returnImagPart = nullptr) const;
+                                      T* returnRealPart = nullptr,
+                                      T* returnImagPart = nullptr) const;
   bool isCombinationOfUnits() const { return node()->isCombinationOfUnits(); }
   /* This two functions only return true if the discontinuity is not asymptotic
    * (i.e. for the functions random, randint, round, floor and ceil).

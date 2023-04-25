@@ -294,8 +294,8 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   Preferences::ComplexFormat complexFormat =
       Preferences::UpdatedComplexFormatWithExpressionInput(
           preferences->complexFormat(), a, nullptr);
-  bool isComplex = a.hasDefinedComplexApproximation(nullptr, complexFormat,
-                                                    preferences->angleUnit());
+  bool isComplex = a.hasDefinedComplexApproximation<double>(
+      nullptr, complexFormat, preferences->angleUnit());
   /* Trigonometry additional results are displayed if either input or output is
    * a direct or inverse trigonometric function. Indeed, we want to capture both
    * cases:

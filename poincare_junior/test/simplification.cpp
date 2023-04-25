@@ -12,8 +12,9 @@ QUIZ_CASE(pcj_simplification_expansion) {
 
   EditionReference ref2(KCos(KAdd(π_e, KPow("x"_e, 2_e))));
   ref2 = Simplification::ExpandTrigonometric(ref2);
-  assert_trees_are_equal(ref2, KSub(KMult(KCos(π_e), KCos(KPow("x"_e, 2_e))),
-                                    KMult(KSin(π_e), KSin(KPow("x"_e, 2_e)))));
+  assert_trees_are_equal(ref2,
+                         KAdd(KMult(KCos(π_e), KCos(KPow("x"_e, 2_e))),
+                              KMult(-1_e, KSin(π_e), KSin(KPow("x"_e, 2_e)))));
 
   EditionReference ref3(KPow(e_e, KAdd(1_e, 2_e, 3_e)));
   ref3 = Simplification::ExpandPower(ref3);
@@ -29,7 +30,8 @@ QUIZ_CASE(pcj_simplification_contraction) {
   EditionReference ref2(KMult(KSin(KLog(3_e)), KCos(KAdd(1_e, KLog("x"_e)))));
   ref2 = Simplification::ContractTrigonometric(ref2);
   assert_trees_are_equal(
-      ref2, KDiv(KAdd(KSin(KSub(KLog(3_e), KAdd(1_e, KLog("x"_e)))),
-                      KSin(KAdd(KLog(3_e), KAdd(1_e, KLog("x"_e))))),
-                 2_e));
+      ref2,
+      KMult(0.5_e,
+            KAdd(KSin(KAdd(KLog(3_e), KMult(-1_e, KAdd(1_e, KLog("x"_e))))),
+                 KSin(KAdd(KLog(3_e), KAdd(1_e, KLog("x"_e)))))));
 }

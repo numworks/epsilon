@@ -93,9 +93,9 @@ EditionReference Simplification::ExpandTrigonometric(
   reference = reference.matchAndReplace(sinContracted, sinExpanded);
   Node cosContracted = KCos(KPlaceholder<A, FilterAddition>());
   Node cosExpanded =
-      KSub(KMult(KCos(KPlaceholder<A, FilterFirstChild>()),
+      KAdd(KMult(KCos(KPlaceholder<A, FilterFirstChild>()),
                  KCos(KPlaceholder<A, FilterExcludeFirstChild>())),
-           KMult(KSin(KPlaceholder<A, FilterFirstChild>()),
+           KMult(-1_e, KSin(KPlaceholder<A, FilterFirstChild>()),
                  KSin(KPlaceholder<A, FilterExcludeFirstChild>())));
   reference = reference.matchAndReplace(cosContracted, cosExpanded);
   return reference;
@@ -104,22 +104,20 @@ EditionReference Simplification::ExpandTrigonometric(
 EditionReference Simplification::ContractTrigonometric(
     EditionReference reference) {
   Node sinSinExpanded = KMult(KSin(KPlaceholder<A>()), KSin(KPlaceholder<B>()));
-  Node sinSinContracted =
-      KDiv(KSub(KCos(KSub(KPlaceholder<A>(), KPlaceholder<B>())),
-                KCos(KAdd(KPlaceholder<A>(), KPlaceholder<B>()))),
-           2_e);
+  Node sinSinContracted = KMult(
+      0.5_e,
+      KAdd(KCos(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>()))),
+           KMult(-1_e, KCos(KAdd(KPlaceholder<A>(), KPlaceholder<B>())))));
   reference = reference.matchAndReplace(sinSinExpanded, sinSinContracted);
   Node cosCosExpanded = KMult(KCos(KPlaceholder<A>()), KCos(KPlaceholder<B>()));
-  Node cosCosContracted =
-      KDiv(KAdd(KCos(KSub(KPlaceholder<A>(), KPlaceholder<B>())),
-                KCos(KAdd(KPlaceholder<A>(), KPlaceholder<B>()))),
-           2_e);
+  Node cosCosContracted = KMult(
+      0.5_e, KAdd(KCos(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>()))),
+                  KCos(KAdd(KPlaceholder<A>(), KPlaceholder<B>()))));
   reference = reference.matchAndReplace(cosCosExpanded, cosCosContracted);
   Node sinCosExpanded = KMult(KSin(KPlaceholder<A>()), KCos(KPlaceholder<B>()));
-  Node sinCosContracted =
-      KDiv(KAdd(KSin(KSub(KPlaceholder<A>(), KPlaceholder<B>())),
-                KSin(KAdd(KPlaceholder<A>(), KPlaceholder<B>()))),
-           2_e);
+  Node sinCosContracted = KMult(
+      0.5_e, KAdd(KSin(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>()))),
+                  KSin(KAdd(KPlaceholder<A>(), KPlaceholder<B>()))));
   reference = reference.matchAndReplace(sinCosExpanded, sinCosContracted);
   return reference;
 }

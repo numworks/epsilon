@@ -112,8 +112,6 @@ class InputCategoricalTableCell
     return const_cast<InputCategoricalTableCell *>(this)->tableModel();
   }
 
-  bool didChangeSize(int numberOfRows, int numberOfColumns);
-
   Statistic *m_statistic;
   int m_numberOfRows;
   int m_numberOfColumns;

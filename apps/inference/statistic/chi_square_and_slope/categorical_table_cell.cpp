@@ -196,7 +196,14 @@ void InputCategoricalTableCell::clearSelectedColumn() {
 bool InputCategoricalTableCell::recomputeDimensions() {
   // Return true if size changed
   Chi2Test::Index2D dimensions = tableModel()->computeDimensions();
-  return didChangeSize(dimensions.row, dimensions.col);
+  if (m_numberOfRows == dimensions.row && m_numberOfColumns == dimensions.col) {
+    return false;
+  }
+  m_numberOfRows = dimensions.row;
+  m_numberOfColumns = dimensions.col;
+  static_cast<InputCategoricalController *>(categoricalController())
+      ->tableViewDataSourceDidChangeSize();
+  return true;
 }
 
 Table *InputCategoricalTableCell::tableModel() {
@@ -212,18 +219,6 @@ Table *InputCategoricalTableCell::tableModel() {
   assert(m_statistic->subApp() == Statistic::SubApp::Interval);
   assert(m_statistic->significanceTestType() == SignificanceTestType::Slope);
   return static_cast<SlopeTInterval *>(m_statistic);
-}
-
-bool InputCategoricalTableCell::didChangeSize(int numberOfRows,
-                                              int numberOfColumns) {
-  if (m_numberOfRows == numberOfRows && m_numberOfColumns == numberOfColumns) {
-    return false;
-  }
-  m_numberOfRows = numberOfRows;
-  m_numberOfColumns = numberOfColumns;
-  static_cast<InputCategoricalController *>(categoricalController())
-      ->tableViewDataSourceDidChangeSize();
-  return true;
 }
 
 /* DoubleColumnTableCell */

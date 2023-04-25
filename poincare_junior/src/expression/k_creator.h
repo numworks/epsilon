@@ -47,8 +47,18 @@ consteval auto KLog(Args... args) {
 }
 
 template <class... Args>
+consteval auto KExp(Args... args) {
+  return KUnary<BlockType::Exponential>(args...);
+}
+
+template <class... Args>
 consteval auto KFact(Args... args) {
   return KUnary<BlockType::Factorial>(args...);
+}
+
+template <class... Args>
+consteval auto KTrig(Args... args) {
+  return KBinary<BlockType::Trig>(args...);
 }
 
 template <class... Args>

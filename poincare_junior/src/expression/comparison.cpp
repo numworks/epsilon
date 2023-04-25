@@ -69,6 +69,7 @@ int Comparison::Compare(const Node node0, const Node node1) {
       case BlockType::ArcSine:
       case BlockType::ArcTangent:
       case BlockType::Logarithm:
+      case BlockType::Exponential:
       case BlockType::Factorial:
         return CompareFirstChild(node0, node1, ScanDirection::Forward);
       default:

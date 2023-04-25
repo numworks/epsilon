@@ -30,7 +30,7 @@ class InputGoodnessController : public InputCategoricalController {
  private:
   constexpr static int k_indexOfDegreeOfFreedom = 1;
 
-  EditableCategoricalTableCell* categoricalTableCell() override {
+  InputCategoricalTableCell* categoricalTableCell() override {
     return &m_goodnessTableCell;
   }
   int indexOfSignificanceCell() const override {

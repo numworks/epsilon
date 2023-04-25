@@ -49,7 +49,7 @@ class InputSlopeController : public InputCategoricalController,
     TitlesDisplay m_titlesDisplay;
   };
 
-  EditableCategoricalTableCell *categoricalTableCell() override {
+  InputCategoricalTableCell *categoricalTableCell() override {
     return &m_slopeTableCell;
   }
   int indexOfSignificanceCell() const override {

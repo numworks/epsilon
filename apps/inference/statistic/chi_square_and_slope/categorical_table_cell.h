@@ -68,14 +68,14 @@ class CategoricalTableCell : public Escher::HighlightCell,
   }
 };
 
-class EditableCategoricalTableCell
+class InputCategoricalTableCell
     : public CategoricalTableCell,
       public Shared::TextFieldDelegate,
       public DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>,
       public DynamicSizeTableViewDataSource,
       public Shared::ClearColumnHelper {
  public:
-  EditableCategoricalTableCell(
+  InputCategoricalTableCell(
       Escher::Responder *parentResponder,
       Escher::TableViewDataSource *dataSource,
       DynamicSizeTableViewDataSourceDelegate *dynamicSizeTableViewDelegate,
@@ -113,14 +113,14 @@ class EditableCategoricalTableCell
   bool deleteSelectedValue();
   Table *tableModel();
   const Table *constTableModel() const {
-    return const_cast<EditableCategoricalTableCell *>(this)->tableModel();
+    return const_cast<InputCategoricalTableCell *>(this)->tableModel();
   }
 
   Statistic *m_statistic;
 };
 
 class DoubleColumnTableCell
-    : public EditableCategoricalTableCell,
+    : public InputCategoricalTableCell,
       public CategoricalTableViewDataSource,
       public DynamicCellsDataSource<InferenceEvenOddEditableCell,
                                     k_doubleColumnTableNumberOfReusableCells> {
@@ -130,7 +130,7 @@ class DoubleColumnTableCell
                             *dynamicSizeTableViewDataSourceDelegate,
                         Statistic *statistic);
 
-  // EditableCategoricalTableCell
+  // InputCategoricalTableCell
   CategoricalTableViewDataSource *tableViewDataSource() override {
     return this;
   }

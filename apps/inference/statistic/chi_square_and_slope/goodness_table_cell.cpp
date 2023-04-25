@@ -28,8 +28,8 @@ bool GoodnessTableCell::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, const char* text,
     Ion::Events::Event event) {
   int previousDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
-  if (EditableCategoricalTableCell::textFieldDidFinishEditing(textField, text,
-                                                              event)) {
+  if (InputCategoricalTableCell::textFieldDidFinishEditing(textField, text,
+                                                           event)) {
     int newDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
     if (previousDegreeOfFreedom != newDegreeOfFreedom) {
       statistic()->setDegreeOfFreedom(newDegreeOfFreedom);
@@ -42,7 +42,7 @@ bool GoodnessTableCell::textFieldDidFinishEditing(
 
 bool GoodnessTableCell::recomputeDimensions() {
   // Update degree of freedom if Number of non-empty rows changed
-  if (EditableCategoricalTableCell::recomputeDimensions()) {
+  if (InputCategoricalTableCell::recomputeDimensions()) {
     int newDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
     statistic()->setDegreeOfFreedom(newDegreeOfFreedom);
     m_inputGoodnessController->updateDegreeOfFreedomCell();

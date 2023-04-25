@@ -1018,6 +1018,17 @@ bool Expression::ExactAndApproximateExpressionsAreEqual(
     Expression exactExpression, Expression approximateExpression) {
   assert(!exactExpression.isUninitialized() &&
          !approximateExpression.isUninitialized());
+
+  /* Turn floats and doubles into decimal so that they can be compared to
+   * rationnals. */
+  if (approximateExpression.type() == ExpressionNode::Type::Double) {
+    approximateExpression = Decimal::Builder(
+        static_cast<Float<double> &>(approximateExpression).value());
+  } else if (approximateExpression.type() == ExpressionNode::Type::Float) {
+    approximateExpression = Decimal::Builder(
+        static_cast<Float<float> &>(approximateExpression).value());
+  }
+
   if (approximateExpression.isAlternativeFormOfRationalNumber() &&
       exactExpression.isAlternativeFormOfRationalNumber()) {
     /* The only case of exact and approximate expressions being different
@@ -1029,6 +1040,7 @@ bool Expression::ExactAndApproximateExpressionsAreEqual(
         approximateExpression.clone().deepReduce(reductionContext);
     return exp0.isIdenticalTo(exp1);
   }
+
   /* Check deeply for equality, because the expression can be a list, a matrix
    * or a complex composed of rationals.
    * Ex: i/2 == 0.5i */
@@ -1048,6 +1060,7 @@ bool Expression::ExactAndApproximateExpressionsAreEqual(
     }
     return true;
   }
+
   return false;
 }
 

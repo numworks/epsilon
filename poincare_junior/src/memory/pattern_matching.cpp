@@ -74,6 +74,11 @@ EditionReference PatternMatching::Create(const Node structure,
         NAry::SetNumberOfChildren(editionPool->clone(nodeToInsert, false),
                                   childrenToInsert);
         nodeToInsert = nodeToInsert.childAtIndex(1);
+        /* TODO: this could be optimized. We compute the treeSize multiple times
+         * (in clone and in nextTree) with no need - this is a big memcpy that
+         * could be done without looping through children (even if we need to
+         * add an API wrapping the memcpy in EditionPool to ensure to log the
+         * copy there) */
         for (int i = 0; i < childrenToInsert; i++) {
           editionPool->clone(nodeToInsert, true);
           nodeToInsert = nodeToInsert.nextTree();

@@ -1016,6 +1016,8 @@ bool Expression::containsSameDependency(
 
 bool Expression::ExactAndApproximateExpressionsAreEqual(
     Expression exactExpression, Expression approximateExpression) {
+  assert(!exactExpression.isUninitialized() &&
+         !approximateExpression.isUninitialized());
   if (approximateExpression.isAlternativeFormOfRationalNumber() &&
       exactExpression.isAlternativeFormOfRationalNumber()) {
     /* The only case of exact and approximate expressions being different

@@ -63,4 +63,8 @@ QUIZ_CASE(python_numpy) {
   assert_command_execution_succeeds(
       env, "np.cross(np.array([1,2,3]),np.array([3,4,5]))",
       "array([-2.0, 4.0, -2.0], dtype=float64)\n");
+  assert_command_execution_succeeds(env, "np.arange(0,0)",
+                                    "array([], dtype=int16)\n");
+  assert_command_execution_fails(env, "np.arange(0,3,0)");
+  assert_command_execution_fails(env, "np.concatenate((0,0))");
 }

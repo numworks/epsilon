@@ -194,15 +194,17 @@ void InputCategoricalTableCell::clearSelectedColumn() {
 }
 
 bool InputCategoricalTableCell::recomputeDimensions() {
-  // Return true if size changed
   Chi2Test::Index2D dimensions = tableModel()->computeDimensions();
   if (m_numberOfRows == dimensions.row && m_numberOfColumns == dimensions.col) {
     return false;
   }
   m_numberOfRows = dimensions.row;
   m_numberOfColumns = dimensions.col;
-  static_cast<InputCategoricalController *>(categoricalController())
-      ->tableViewDataSourceDidChangeSize();
+  /* Relayout when inner table changes size. We need to reload the table because
+   * its width might change but it won't relayout as its frame isn't changed by
+   * the InputCategoricalController */
+  selectableTableView()->reloadData(false);
+  categoricalController()->selectableListView()->reloadData(false);
   return true;
 }
 

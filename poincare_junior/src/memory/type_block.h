@@ -96,6 +96,8 @@ enum class BlockType : uint8_t {
   ArcSine,
   ArcTangent,
   Logarithm,
+  Log,
+  Ln,
   Exponential,
   Trig,
   NumberOfExpressions,
@@ -149,6 +151,8 @@ BLOCK_TYPE_IS_EXPRESSION(BlockType::ArcCosine);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::ArcSine);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::ArcTangent);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Logarithm);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Log);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Ln);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Exponential);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Trig);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Factorial);
@@ -301,6 +305,7 @@ class TypeBlock : public Block {
       case BlockType::Division:
       case BlockType::FractionLayout:
       case BlockType::Trig:
+      case BlockType::Logarithm:
         return 2;
       case BlockType::Cosine:
       case BlockType::Sine:
@@ -308,7 +313,8 @@ class TypeBlock : public Block {
       case BlockType::ArcCosine:
       case BlockType::ArcSine:
       case BlockType::ArcTangent:
-      case BlockType::Logarithm:
+      case BlockType::Log:
+      case BlockType::Ln:
       case BlockType::Exponential:
       case BlockType::Factorial:
       case BlockType::ParenthesisLayout:

@@ -43,7 +43,12 @@ consteval auto KATan(Args... args) {
 
 template <class... Args>
 consteval auto KLog(Args... args) {
-  return KUnary<BlockType::Logarithm>(args...);
+  return KUnary<BlockType::Log>(args...);
+}
+
+template <class... Args>
+consteval auto KLn(Args... args) {
+  return KUnary<BlockType::Ln>(args...);
 }
 
 template <class... Args>
@@ -54,6 +59,11 @@ consteval auto KExp(Args... args) {
 template <class... Args>
 consteval auto KFact(Args... args) {
   return KUnary<BlockType::Factorial>(args...);
+}
+
+template <class... Args>
+consteval auto KLogarithm(Args... args) {
+  return KBinary<BlockType::Logarithm>(args...);
 }
 
 template <class... Args>

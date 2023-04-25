@@ -161,7 +161,8 @@ class Zoom {
   void privateFitPoint(Coordinate2D<float> xy, bool flipped = false);
 
   /* m_interestingRange is edited by fitFullFunction, fitPointsOfInterest and
-   * fitIntersections, and will always be included in the final range. */
+   * fitIntersections, and will always be included in the final range, up to
+   * values of ±m_floatMax. */
   Range2D m_interestingRange;
   Range2D m_magnitudeRange;
   Range2D m_forcedRange;

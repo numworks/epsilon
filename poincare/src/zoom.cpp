@@ -33,6 +33,18 @@ Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
   return zoom.range(false, false);
 }
 
+static bool rangeIsValidZoom(Range1D range, Range1D interestingRange,
+                             float maxFloat) {
+  return (range.min() <=
+              interestingRange.min() +
+                  Float<float>::Epsilon() * std::fabs(interestingRange.min()) ||
+          !std::isfinite(interestingRange.min())) &&
+         (interestingRange.max() -
+                  Float<float>::Epsilon() * std::fabs(interestingRange.max()) <=
+              range.max() ||
+          !std::isfinite(interestingRange.max()));
+}
+
 Range2D Zoom::range(bool beautify, bool forceNormalization) const {
   Range2D result;
   Range2D pretty =
@@ -44,33 +56,15 @@ Range2D Zoom::range(bool beautify, bool forceNormalization) const {
 
   bool xRangeIsForced = m_forcedRange.x()->isValid();
   bool yRangeIsForced = m_forcedRange.y()->isValid();
+  assert(xRangeIsForced || (yRangeIsForced && forceNormalization) ||
+         rangeIsValidZoom(*result.x(), *m_interestingRange.x(), m_maxFloat));
+  assert(yRangeIsForced || (xRangeIsForced && forceNormalization) ||
+         rangeIsValidZoom(*result.y(), *m_interestingRange.y(), m_maxFloat));
+
   assert(!xRangeIsForced || (result.xMin() == m_forcedRange.xMin() &&
                              result.xMax() == m_forcedRange.xMax()));
-  assert(
-      !m_interestingRange.x()->isValid() || xRangeIsForced ||
-      (yRangeIsForced && forceNormalization) ||
-      ((result.xMin() <= m_interestingRange.xMin() +
-                             Float<float>::Epsilon() *
-                                 std::fabs(m_interestingRange.xMin()) ||
-        !std::isfinite(m_interestingRange.xMin())) &&
-       (m_interestingRange.xMax() - Float<float>::Epsilon() *
-                                        std::fabs(m_interestingRange.xMax()) <=
-            result.xMax() ||
-        !std::isfinite(m_interestingRange.xMax()))));
-
   assert(!yRangeIsForced || (result.yMin() == m_forcedRange.yMin() &&
                              result.yMax() == m_forcedRange.yMax()));
-  assert(
-      !m_interestingRange.y()->isValid() || yRangeIsForced ||
-      (xRangeIsForced && forceNormalization) ||
-      ((result.yMin() <= m_interestingRange.yMin() +
-                             Float<float>::Epsilon() *
-                                 std::fabs(m_interestingRange.yMin()) ||
-        !std::isfinite(m_interestingRange.yMin())) &&
-       (m_interestingRange.yMax() - Float<float>::Epsilon() *
-                                        std::fabs(m_interestingRange.yMax()) <=
-            result.yMax() ||
-        !std::isfinite(m_interestingRange.yMax()))));
   (void)xRangeIsForced;
   (void)yRangeIsForced;
   assert(result.x()->isValid() && result.y()->isValid() &&

@@ -115,7 +115,7 @@ class App : public Shared::LayoutFieldDelegateApp,
   // Controllers
   TestGraphController m_testGraphController;
   IntervalGraphController m_intervalGraphController;
-  ResultsHomogeneityController m_homogeneityResultsController;
+  ResultsHomogeneityTabController m_homogeneityResultsController;
   InputHomogeneityController m_inputHomogeneityController;
   InputGoodnessController m_inputGoodnessController;
   InputSlopeController m_inputSlopeController;

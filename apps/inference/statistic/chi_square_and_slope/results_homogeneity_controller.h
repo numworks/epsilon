@@ -8,10 +8,10 @@
 
 namespace Inference {
 
-class ResultsTableController : public CategoricalController {
+class ResultsHomogeneityController : public CategoricalController {
  public:
-  ResultsTableController(Escher::ViewController *nextController,
-                         HomogeneityTest *statistic);
+  ResultsHomogeneityController(Escher::ViewController *nextController,
+                               HomogeneityTest *statistic);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -38,12 +38,12 @@ class ResultsTableController : public CategoricalController {
   ResultsHomogeneityTableCell m_resultsHomogeneityTable;
 };
 
-class ResultsHomogeneityController : public Escher::TabViewController,
-                                     public Escher::TabViewDataSource {
+class ResultsHomogeneityTabController : public Escher::TabViewController,
+                                        public Escher::TabViewDataSource {
  public:
-  ResultsHomogeneityController(Escher::StackViewController *parent,
-                               Escher::ViewController *nextController,
-                               HomogeneityTest *statistic);
+  ResultsHomogeneityTabController(Escher::StackViewController *parent,
+                                  Escher::ViewController *nextController,
+                                  HomogeneityTest *statistic);
 
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
@@ -60,7 +60,7 @@ class ResultsHomogeneityController : public Escher::TabViewController,
   class SingleModeController : public ViewController {
    public:
     SingleModeController(Escher::Responder *responder,
-                         ResultsTableController *tableController)
+                         ResultsHomogeneityController *tableController)
         : Escher::ViewController(responder),
           m_tableController(tableController) {}
     Escher::View *view() override { return m_tableController->view(); }
@@ -71,7 +71,7 @@ class ResultsHomogeneityController : public Escher::TabViewController,
 
    protected:
     void switchToTableWithMode(ResultsHomogeneityTableCell::Mode mode);
-    ResultsTableController *m_tableController;
+    ResultsHomogeneityController *m_tableController;
   };
 
   class ExpectedValuesController : public SingleModeController {
@@ -100,7 +100,7 @@ class ResultsHomogeneityController : public Escher::TabViewController,
     }
   };
 
-  ResultsTableController m_tableController;
+  ResultsHomogeneityController m_tableController;
   ExpectedValuesController m_expectedValuesController;
   ContributionsController m_contributionsController;
 };

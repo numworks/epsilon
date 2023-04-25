@@ -7,7 +7,7 @@
 
 namespace Inference {
 
-class ResultsTableController;
+class ResultsHomogeneityController;
 
 class ResultsHomogeneityTableCell
     : public CategoricalTableCell,
@@ -16,9 +16,9 @@ class ResultsHomogeneityTableCell
           InferenceEvenOddBufferCell,
           k_homogeneityTableNumberOfReusableInnerCells> {
  public:
-  ResultsHomogeneityTableCell(Escher::Responder* parentResponder,
-                              HomogeneityTest* test,
-                              ResultsTableController* resultsTableController);
+  ResultsHomogeneityTableCell(
+      Escher::Responder* parentResponder, HomogeneityTest* test,
+      ResultsHomogeneityController* resultsTableController);
 
   enum class Mode : bool { ExpectedValue, Contribution };
   void setMode(Mode mode) { m_mode = mode; }
@@ -74,7 +74,7 @@ class ResultsHomogeneityTableCell
 
   HomogeneityTest* m_statistic;
   Mode m_mode;
-  ResultsTableController* m_resultsTableController;
+  ResultsHomogeneityController* m_resultsTableController;
 };
 
 }  // namespace Inference

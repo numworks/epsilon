@@ -8,7 +8,7 @@ namespace Inference {
 
 ResultsHomogeneityTableCell::ResultsHomogeneityTableCell(
     Escher::Responder *parentResponder, HomogeneityTest *test,
-    ResultsTableController *resultsTableController)
+    ResultsHomogeneityController *resultsTableController)
     : CategoricalTableCell(parentResponder, this),
       DynamicCellsDataSource<InferenceEvenOddBufferCell,
                              k_homogeneityTableNumberOfReusableInnerCells>(

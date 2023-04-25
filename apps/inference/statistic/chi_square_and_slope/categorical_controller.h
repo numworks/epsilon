@@ -17,7 +17,7 @@
 namespace Inference {
 
 /* Common controller between InputHomogeneityController,
- * InputGoodnessController and ResultsHomogeneityController.
+ * InputGoodnessController and ResultsHomogeneityTabController.
  * A CategoricalController is a table whose first cell is also a table of class
  * CategoricalTableCell. */
 

@@ -1404,7 +1404,8 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
   *reduceFailure = false;
 #if __EMSCRIPTEN__
   Expression e = clone().deepReduce(*reductionContext);
-  if (approximateDuringReduction) {
+  if (approximateDuringReduction &&
+      !ExceptionCheckpoint::HasBeenInterrupted()) {
     bool dummy = false;
     e = e.deepApproximateKeepingSymbols(*reductionContext, &dummy, &dummy);
   }
@@ -1417,7 +1418,8 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
       }
       reductionContext->setTarget(ReductionTarget::SystemForApproximation);
       e = clone().deepReduce(*reductionContext);
-      if (approximateDuringReduction) {
+      if (approximateDuringReduction &&
+          !ExceptionCheckpoint::HasBeenInterrupted()) {
         bool dummy = false;
         e = e.deepApproximateKeepingSymbols(*reductionContext, &dummy, &dummy);
       }

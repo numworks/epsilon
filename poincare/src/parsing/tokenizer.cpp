@@ -415,12 +415,15 @@ static bool stringIsACodePointFollowedByNumbers(const char* string,
 static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
     const char* string, size_t* length, Token::Type* returnType) {
   UTF8Decoder tempDecoder(string);
-  CodePoint c = tempDecoder.nextCodePoint();
+  CodePoint c = UCodePointNull;
   size_t identifierLength = 0;
-  while (identifierLength < *length && !c.isDecimalDigit()) {
+  while (identifierLength < *length &&
+         /* c is assigned to here instead of inside the loop body to avoid
+            calling nextCodePoint beyond the terminating null. */
+         !(c = tempDecoder.nextCodePoint()).isDecimalDigit()) {
     identifierLength += UTF8Decoder::CharSizeOfCodePoint(c);
-    c = tempDecoder.nextCodePoint();
   }
+
   if (identifierLength == *length) {
     return false;
   }

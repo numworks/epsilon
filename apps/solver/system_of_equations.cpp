@@ -448,9 +448,11 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       (approximateDuringReduction ||
        !ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(exact,
                                                                     context))) {
+    assert(!exact.isUninitialized());
     exactLayout = PoincareHelpers::CreateLayout(exact, context);
   }
   if (type != SolutionType::Formal) {
+    assert(!approximate.isUninitialized());
     approximateLayout = PoincareHelpers::CreateLayout(approximate, context);
   }
   assert(!approximateLayout.isUninitialized() ||
@@ -466,7 +468,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     if (strcmp(exactBuffer, approximateBuffer) == 0) {
       exactLayout = Layout();
     } else if (Expression::ExactAndApproximateExpressionsAreEqual(
-                   exact, Expression::Parse(approximateBuffer, context))) {
+                   exact, approximate)) {
       exactAndApproximateAreEqual = true;
     }
   }

@@ -55,6 +55,17 @@ const char *CodePointSearch(const char *s, CodePoint c,
     codePoint = decoder.nextCodePoint();
     nextPointer = decoder.stringPosition();
   }
+  if (codePoint != c) {
+    /* Do not return currentPosition as is. If the decoder stopped because of an
+     * ill-formed code point, currentPosition is not the end of the string,
+     * which would be misinterpreted by the caller. */
+    if (stoppingPosition) {
+      return stoppingPosition;
+    }
+    while (*currentPointer != '\0') {
+      ++currentPointer;
+    }
+  }
   return currentPointer;
 }
 

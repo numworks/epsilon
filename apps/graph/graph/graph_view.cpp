@@ -570,14 +570,16 @@ void GraphView::drawPointsOfInterest(KDContext *ctx, KDRect rect) {
     Coordinate2D<float> dotCoordinates =
         static_cast<Coordinate2D<float>>(p.xy());
 
-    KDRect rectForDot = dotRect(k_dotSize, dotCoordinates);
+    KDRect dotRelativeRect = dotRect(k_dotSize, dotCoordinates);
     // If the dot intersects the dirty rect, force the redraw
-    if (!rectForDot.intersects(dirtyRect()) && wasAlreadyDrawn) {
+    if (!dotRelativeRect.translatedBy(absoluteOrigin())
+             .intersects(dirtyRect()) &&
+        wasAlreadyDrawn) {
       continue;
     }
     // If the dot is below the cursor, erase the cursor and redraw it
     KDRect frameOfCursor = cursorView() ? cursorFrame() : KDRectZero;
-    bool redrawCursor = frameOfCursor.intersects(rectForDot);
+    bool redrawCursor = frameOfCursor.intersects(dotRelativeRect);
     if (redrawCursor) {
       // Erase cursor and make rect dirty
       assert(cursorView());

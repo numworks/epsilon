@@ -49,7 +49,7 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
   NAry::SetNumberOfChildren(reference, nbOfChildren - index);
 }
 
-EditionReference Simplification::ExpandPower(EditionReference reference) {
+EditionReference Simplification::ExpandExp(EditionReference reference) {
   Node expMulContracted = KPow(e_e, KPlaceholder<A, FilterAddition>());
   Node expMulExpanded =
       KMult(KPow(e_e, KPlaceholder<A, FilterFirstChild>()),
@@ -62,14 +62,13 @@ EditionReference Simplification::ExpandPower(EditionReference reference) {
   return reference;
 }
 
-EditionReference Simplification::ContractPower(EditionReference reference) {
-  /* TODO : Make it so that we could have this with
-   * KPlaceholder<C>() being any (or none) other children at any
-   * place in the KMult. Node expMulExpanded = KMult(KPow(e_e,
-   * KPlaceholder<A>()), KPow(e_e,
-   * KPlaceholder<B>()), KPlaceholder<C>()); Node
-   * expMulContracted = KMult(KPow(e_e, KAdd(KPlaceholder<A>(),
-   * KPlaceholder<B>())), KPlaceholder<C>());
+EditionReference Simplification::ContractExp(EditionReference reference) {
+  /* TODO : Make it so that we could have this with KPlaceholder<C>() being any
+   *        (or none) other children at any place in the KMult :
+   * Node expMulExpanded = KMult(KPow(e_e, KPlaceholder<A>()),
+   *                           KPow(e_e, KPlaceholder<B>()), KPlaceholder<C>());
+   * Node expMulContracted = KMult(
+   *  KPow(e_e, KAdd(KPlaceholder<A>(), KPlaceholder<B>())), KPlaceholder<C>());
    */
   Node expMulExpanded =
       KMult(KPow(e_e, KPlaceholder<A>()), KPow(e_e, KPlaceholder<B>()));
@@ -103,6 +102,8 @@ EditionReference Simplification::ExpandTrigonometric(
 
 EditionReference Simplification::ContractTrigonometric(
     EditionReference reference) {
+  /* TODO : Similarly to ContractExp's comment, make it so that we could
+   *        handle any (or none) other children at any place in this KMult. */
   Node sinSinExpanded = KMult(KSin(KPlaceholder<A>()), KSin(KPlaceholder<B>()));
   Node sinSinContracted = KMult(
       0.5_e,

@@ -7,7 +7,7 @@ using namespace PoincareJ;
 
 QUIZ_CASE(pcj_simplification_expansion) {
   EditionReference ref1(KPow(e_e, KAdd(1_e, 2_e)));
-  ref1 = Simplification::ExpandPower(ref1);
+  ref1 = Simplification::ExpandExp(ref1);
   assert_trees_are_equal(ref1, KMult(KPow(e_e, 1_e), KPow(e_e, 2_e)));
 
   EditionReference ref2(KCos(KAdd(π_e, KPow("x"_e, 2_e))));
@@ -17,14 +17,14 @@ QUIZ_CASE(pcj_simplification_expansion) {
                               KMult(-1_e, KSin(π_e), KSin(KPow("x"_e, 2_e)))));
 
   EditionReference ref3(KPow(e_e, KAdd(1_e, 2_e, 3_e)));
-  ref3 = Simplification::ExpandPower(ref3);
+  ref3 = Simplification::ExpandExp(ref3);
   assert_trees_are_equal(ref3,
                          KMult(KPow(e_e, 1_e), KPow(e_e, KAdd(2_e, 3_e))));
 }
 
 QUIZ_CASE(pcj_simplification_contraction) {
   EditionReference ref1(KMult(KPow(e_e, 1_e), KPow(e_e, 2_e)));
-  ref1 = Simplification::ContractPower(ref1);
+  ref1 = Simplification::ContractExp(ref1);
   assert_trees_are_equal(ref1, KPow(e_e, KAdd(1_e, 2_e)));
 
   EditionReference ref2(KMult(KSin(KLog(3_e)), KCos(KAdd(1_e, KLog("x"_e)))));

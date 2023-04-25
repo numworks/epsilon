@@ -13,8 +13,8 @@ class Simplification {
     return reference;
   }
 
-  static EditionReference ContractPower(EditionReference reference);
-  static EditionReference ExpandPower(EditionReference reference);
+  static EditionReference ContractExp(EditionReference reference);
+  static EditionReference ExpandExp(EditionReference reference);
   static EditionReference ContractTrigonometric(EditionReference reference);
   static EditionReference ExpandTrigonometric(EditionReference reference);
 

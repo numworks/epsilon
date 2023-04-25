@@ -106,7 +106,7 @@ class InputCategoricalController
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 
  protected:
-  EditableCategoricalTableCell* categoricalTableCell() override = 0;
+  InputCategoricalTableCell* categoricalTableCell() override = 0;
   virtual int indexOfSignificanceCell() const = 0;
   int indexOfNextCell() const override { return indexOfSignificanceCell() + 1; }
   bool handleEditedValue(int i, double p, Escher::AbstractTextField* textField,

@@ -58,9 +58,9 @@ void CategoricalTableCell::layoutSubviews(bool force) {
                 force);
 }
 
-/* EditableCategoricalTableCell */
+/* InputCategoricalTableCell */
 
-EditableCategoricalTableCell::EditableCategoricalTableCell(
+InputCategoricalTableCell::InputCategoricalTableCell(
     Escher::Responder *parentResponder, Escher::TableViewDataSource *dataSource,
     DynamicSizeTableViewDataSourceDelegate *dynamicSizeTableViewDelegate,
     Statistic *statistic)
@@ -70,7 +70,7 @@ EditableCategoricalTableCell::EditableCategoricalTableCell(
   m_selectableTableView.setBottomMargin(k_bottomMargin);
 }
 
-bool EditableCategoricalTableCell::textFieldShouldFinishEditing(
+bool InputCategoricalTableCell::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE ||
          (event == Ion::Events::Right &&
@@ -84,7 +84,7 @@ bool EditableCategoricalTableCell::textFieldShouldFinishEditing(
          (event == Ion::Events::Up && m_selectableTableView.selectedRow() > 0);
 }
 
-bool EditableCategoricalTableCell::textFieldDidFinishEditing(
+bool InputCategoricalTableCell::textFieldDidFinishEditing(
     Escher::AbstractTextField *textField, const char *text,
     Ion::Events::Event event) {
   double p = textFieldDelegateApp()->parseInputtedFloatValue<double>(text);
@@ -120,7 +120,7 @@ bool EditableCategoricalTableCell::textFieldDidFinishEditing(
   return true;
 }
 
-bool EditableCategoricalTableCell::handleEvent(Ion::Events::Event event) {
+bool InputCategoricalTableCell::handleEvent(Ion::Events::Event event) {
   int column = m_selectableTableView.selectedColumn();
   int row = m_selectableTableView.selectedRow();
   int cellType = tableViewDataSource()->typeAtLocation(column, row);
@@ -135,15 +135,15 @@ bool EditableCategoricalTableCell::handleEvent(Ion::Events::Event event) {
   return CategoricalTableCell::handleEvent(event);
 }
 
-void EditableCategoricalTableCell::initCell(InferenceEvenOddEditableCell,
-                                            void *cell, int index) {
+void InputCategoricalTableCell::initCell(InferenceEvenOddEditableCell,
+                                         void *cell, int index) {
   InferenceEvenOddEditableCell *c =
       static_cast<InferenceEvenOddEditableCell *>(cell);
   c->setParentResponder(&m_selectableTableView);
   c->editableTextCell()->textField()->setDelegates(App::app(), this);
 }
 
-bool EditableCategoricalTableCell::deleteSelectedValue() {
+bool InputCategoricalTableCell::deleteSelectedValue() {
   int row = m_selectableTableView.selectedRow(),
       col = m_selectableTableView.selectedColumn();
   assert(relativeRowIndex(row) >= 0 && relativeColumnIndex(col) >= 0);
@@ -173,7 +173,7 @@ bool EditableCategoricalTableCell::deleteSelectedValue() {
   }
 }
 
-int EditableCategoricalTableCell::numberOfElementsInColumn(int column) const {
+int InputCategoricalTableCell::numberOfElementsInColumn(int column) const {
   int n = constTableModel()->maxNumberOfRows();
   column = relativeColumnIndex(column);
   int res = 0;
@@ -183,7 +183,7 @@ int EditableCategoricalTableCell::numberOfElementsInColumn(int column) const {
   return res;
 }
 
-void EditableCategoricalTableCell::clearSelectedColumn() {
+void InputCategoricalTableCell::clearSelectedColumn() {
   int column = m_selectableTableView.selectedColumn();
   tableModel()->deleteParametersInColumn(relativeColumnIndex(column));
   tableModel()->recomputeData();
@@ -193,13 +193,13 @@ void EditableCategoricalTableCell::clearSelectedColumn() {
   }
 }
 
-bool EditableCategoricalTableCell::recomputeDimensions() {
+bool InputCategoricalTableCell::recomputeDimensions() {
   // Return true if size changed
   Chi2Test::Index2D dimensions = tableModel()->computeDimensions();
   return didChangeSize(dimensions.row, dimensions.col);
 }
 
-Table *EditableCategoricalTableCell::tableModel() {
+Table *InputCategoricalTableCell::tableModel() {
   if (m_statistic->subApp() == Statistic::SubApp::Test) {
     if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
       return static_cast<SlopeTTest *>(m_statistic);
@@ -221,9 +221,9 @@ DoubleColumnTableCell::DoubleColumnTableCell(
     DynamicSizeTableViewDataSourceDelegate
         *dynamicSizeTableViewDataSourceDelegate,
     Statistic *statistic)
-    : EditableCategoricalTableCell(parentResponder, this,
-                                   dynamicSizeTableViewDataSourceDelegate,
-                                   statistic),
+    : InputCategoricalTableCell(parentResponder, this,
+                                dynamicSizeTableViewDataSourceDelegate,
+                                statistic),
       DynamicCellsDataSource<InferenceEvenOddEditableCell,
                              k_doubleColumnTableNumberOfReusableCells>(this) {}
 

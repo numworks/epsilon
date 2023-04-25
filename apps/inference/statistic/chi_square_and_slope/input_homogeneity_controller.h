@@ -23,7 +23,7 @@ class InputHomogeneityController : public InputCategoricalController {
   int indexOfSignificanceCell() const override {
     return k_indexOfTableCell + 1;
   }
-  EditableCategoricalTableCell* categoricalTableCell() override {
+  InputCategoricalTableCell* categoricalTableCell() override {
     return &m_inputHomogeneityTable;
   }
 

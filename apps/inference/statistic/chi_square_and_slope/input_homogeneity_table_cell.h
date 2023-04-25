@@ -10,7 +10,7 @@ namespace Inference {
 class InputHomogeneityController;
 
 class InputHomogeneityTableCell
-    : public EditableCategoricalTableCell,
+    : public InputCategoricalTableCell,
       public HomogeneityTableDataSource,
       public DynamicCellsDataSource<
           InferenceEvenOddEditableCell,
@@ -26,7 +26,7 @@ class InputHomogeneityTableCell
   // Responder
   void didBecomeFirstResponder() override;
 
-  // EditableCategoricalTableCell
+  // InputCategoricalTableCell
   CategoricalTableViewDataSource* tableViewDataSource() override {
     return this;
   }

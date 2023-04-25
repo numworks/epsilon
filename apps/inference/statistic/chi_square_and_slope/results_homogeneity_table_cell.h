@@ -29,7 +29,7 @@ class ResultsHomogeneityTableCell
   // View
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
-  // EditableCategoricalTableCell
+  // InputCategoricalTableCell
   CategoricalTableViewDataSource* tableViewDataSource() override {
     return this;
   }

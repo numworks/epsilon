@@ -14,8 +14,8 @@ InputHomogeneityTableCell::InputHomogeneityTableCell(
         *dynamicSizeTableViewDataSourceDelegate,
     HomogeneityTest *test,
     InputHomogeneityController *inputHomogeneityController)
-    : EditableCategoricalTableCell(
-          parentResponder, this, dynamicSizeTableViewDataSourceDelegate, test),
+    : InputCategoricalTableCell(parentResponder, this,
+                                dynamicSizeTableViewDataSourceDelegate, test),
       DynamicCellsDataSource<InferenceEvenOddEditableCell,
                              k_homogeneityTableNumberOfReusableInnerCells>(
           this),

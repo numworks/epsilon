@@ -96,7 +96,7 @@ Expression NAryExpression::checkChildrenAreRationalIntegersAndUpdate(
        * complex format to force imaginary part approximation. */
       if (!c.isReal(reductionContext.context(),
                     reductionContext.shouldCheckMatrices()) &&
-          c.hasDefinedComplexApproximation(
+          c.hasDefinedComplexApproximation<float>(
               reductionContext.context(), Preferences::ComplexFormat::Cartesian,
               reductionContext.angleUnit())) {
         return replaceWithUndefinedInPlace();

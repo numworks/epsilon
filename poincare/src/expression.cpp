@@ -568,26 +568,27 @@ bool Expression::isAlternativeFormOfRationalNumber() const {
           childAtIndex(0).isAlternativeFormOfRationalNumber());
 }
 
+template <typename T>
 bool Expression::hasDefinedComplexApproximation(
     Context *context, Preferences::ComplexFormat complexFormat,
-    Preferences::AngleUnit angleUnit, float *returnRealPart,
-    float *returnImagPart) const {
+    Preferences::AngleUnit angleUnit, T *returnRealPart,
+    T *returnImagPart) const {
   if (complexFormat == Preferences::ComplexFormat::Real) {
     return false;
   }
   /* We return true when both real and imaginary approximation are defined and
    * imaginary part is not null. */
-  Evaluation<float> approximation = node()->approximate(
-      float(), ApproximationContext(context, complexFormat, angleUnit));
-  if (approximation.type() != EvaluationNode<float>::Type::Complex) {
+  Evaluation<T> approximation = node()->approximate(
+      T(), ApproximationContext(context, complexFormat, angleUnit));
+  if (approximation.type() != EvaluationNode<T>::Type::Complex) {
     return false;
   }
-  Complex<float> z = static_cast<Complex<float> &>(approximation);
-  float b = z.imag();
-  if (b == 0.0f || std::isinf(b) || std::isnan(b)) {
+  Complex<T> z = static_cast<Complex<T> &>(approximation);
+  T b = z.imag();
+  if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {
     return false;
   }
-  float a = z.real();
+  T a = z.real();
   if (std::isinf(a) || std::isnan(a)) {
     return false;
   }
@@ -1962,4 +1963,14 @@ template double Expression::approximateWithValueForSymbol(
 
 template Expression Expression::approximateKeepingUnits<double>(
     const ReductionContext &reductionContext) const;
+
+template bool Expression::hasDefinedComplexApproximation<float>(
+    Context *context, Preferences::ComplexFormat complexFormat,
+    Preferences::AngleUnit angleUnit, float *returnRealPart,
+    float *returnImagPart) const;
+template bool Expression::hasDefinedComplexApproximation<double>(
+    Context *context, Preferences::ComplexFormat complexFormat,
+    Preferences::AngleUnit angleUnit, double *returnRealPart,
+    double *returnImagPart) const;
+
 }  // namespace Poincare

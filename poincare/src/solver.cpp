@@ -178,8 +178,20 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Expression &e1,
   nextRoot(*memoizedDifference);
   if (m_lastInterest == Interest::Root) {
     m_lastInterest = Interest::Intersection;
-    m_yResult = e1.approximateWithValueForSymbol<T>(
-        m_unknown, m_xStart, m_context, m_complexFormat, m_angleUnit);
+    T y1 = e1.approximateWithValueForSymbol<T>(m_unknown, m_xStart, m_context,
+                                               m_complexFormat, m_angleUnit);
+    T y2 = e2.approximateWithValueForSymbol<T>(m_unknown, m_xStart, m_context,
+                                               m_complexFormat, m_angleUnit);
+    if (!std::isfinite(y1) || !std::isfinite(y2)) {
+      /* Sometimes, with expressions e1 and e2 that take extreme values like x^x
+       * or undef expressions in specific points like x^2/x, the root of the
+       * difference yields an infinite or a nan value when e1 or e2 is
+       * evaluated. It means the intersection was incorrectly computed, and the
+       * search continues. */
+      m_lastInterest = Interest::None;
+      return nextIntersection(e1, e2, memoizedDifference);
+    }
+    m_yResult = y1;
   }
   return result();
 }

@@ -4,9 +4,9 @@ using namespace Escher;
 
 namespace Inference {
 
-// ResultsHomogeneityController
+// ResultsHomogeneityTabController
 
-ResultsHomogeneityController::ResultsHomogeneityController(
+ResultsHomogeneityTabController::ResultsHomogeneityTabController(
     Escher::StackViewController* parent, Escher::ViewController* nextController,
     HomogeneityTest* statistic)
     : TabViewController(parent, this, &m_expectedValuesController,
@@ -17,23 +17,23 @@ ResultsHomogeneityController::ResultsHomogeneityController(
   TabViewController::initView();
 }
 
-// ResultsTableController
+// ResultsHomogeneityController
 
-ResultsTableController::ResultsTableController(
+ResultsHomogeneityController::ResultsHomogeneityController(
     Escher::ViewController* resultsController, HomogeneityTest* statistic)
     : CategoricalController(nullptr, resultsController,
                             Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
       m_resultsHomogeneityTable(&m_selectableListView, statistic, this) {}
 
-void ResultsTableController::viewWillAppear() {
+void ResultsHomogeneityController::viewWillAppear() {
   m_resultsHomogeneityTable.selectableTableView()->selectRow(-1);
   m_selectableListView.selectRow(-1);
   m_selectableListView.reloadData(false);
   CategoricalController::viewWillAppear();
 }
 
-bool ResultsTableController::handleEvent(Ion::Events::Event event) {
+bool ResultsHomogeneityController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     m_resultsHomogeneityTable.selectableTableView()->deselectTable();
     tabController()->selectTab();
@@ -44,8 +44,8 @@ bool ResultsTableController::handleEvent(Ion::Events::Event event) {
 
 // SingleModeController
 
-void ResultsHomogeneityController::SingleModeController::switchToTableWithMode(
-    ResultsHomogeneityTableCell::Mode mode) {
+void ResultsHomogeneityTabController::SingleModeController::
+    switchToTableWithMode(ResultsHomogeneityTableCell::Mode mode) {
   m_tableController->setMode(mode);
   m_tableController->setParentResponder(this);
 }

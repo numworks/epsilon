@@ -17,10 +17,7 @@ class InputHomogeneityTableCell
           k_homogeneityTableNumberOfReusableInnerCells> {
  public:
   InputHomogeneityTableCell(
-      Escher::Responder* parentResponder,
-      DynamicSizeTableViewDataSourceDelegate*
-          dynamicSizeTableViewDataSourceDelegate,
-      HomogeneityTest* test,
+      Escher::Responder* parentResponder, HomogeneityTest* test,
       InputHomogeneityController* inputHomogeneityController);
 
   // Responder

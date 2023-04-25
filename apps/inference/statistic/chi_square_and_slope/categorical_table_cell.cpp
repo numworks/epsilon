@@ -62,11 +62,11 @@ void CategoricalTableCell::layoutSubviews(bool force) {
 
 InputCategoricalTableCell::InputCategoricalTableCell(
     Escher::Responder *parentResponder, Escher::TableViewDataSource *dataSource,
-    DynamicSizeTableViewDataSourceDelegate *dynamicSizeTableViewDelegate,
     Statistic *statistic)
     : CategoricalTableCell(parentResponder, dataSource),
-      DynamicSizeTableViewDataSource(dynamicSizeTableViewDelegate),
-      m_statistic(statistic) {
+      m_statistic(statistic),
+      m_numberOfRows(0),
+      m_numberOfColumns(0) {
   m_selectableTableView.setBottomMargin(k_bottomMargin);
 }
 
@@ -214,16 +214,23 @@ Table *InputCategoricalTableCell::tableModel() {
   return static_cast<SlopeTInterval *>(m_statistic);
 }
 
+bool InputCategoricalTableCell::didChangeSize(int numberOfRows,
+                                              int numberOfColumns) {
+  if (m_numberOfRows == numberOfRows && m_numberOfColumns == numberOfColumns) {
+    return false;
+  }
+  m_numberOfRows = numberOfRows;
+  m_numberOfColumns = numberOfColumns;
+  static_cast<InputCategoricalController *>(categoricalController())
+      ->tableViewDataSourceDidChangeSize();
+  return true;
+}
+
 /* DoubleColumnTableCell */
 
-DoubleColumnTableCell::DoubleColumnTableCell(
-    Escher::Responder *parentResponder,
-    DynamicSizeTableViewDataSourceDelegate
-        *dynamicSizeTableViewDataSourceDelegate,
-    Statistic *statistic)
-    : InputCategoricalTableCell(parentResponder, this,
-                                dynamicSizeTableViewDataSourceDelegate,
-                                statistic),
+DoubleColumnTableCell::DoubleColumnTableCell(Escher::Responder *parentResponder,
+                                             Statistic *statistic)
+    : InputCategoricalTableCell(parentResponder, this, statistic),
       DynamicCellsDataSource<InferenceEvenOddEditableCell,
                              k_doubleColumnTableNumberOfReusableCells>(this) {}
 

@@ -10,12 +10,9 @@ using namespace Escher;
 namespace Inference {
 
 GoodnessTableCell::GoodnessTableCell(
-    Responder* parentResponder,
-    DynamicSizeTableViewDataSourceDelegate*
-        dynamicSizeTableViewDataSourceDelegate,
-    GoodnessTest* test, InputGoodnessController* inputGoodnessController)
-    : DoubleColumnTableCell(parentResponder,
-                            dynamicSizeTableViewDataSourceDelegate, test),
+    Responder* parentResponder, GoodnessTest* test,
+    InputGoodnessController* inputGoodnessController)
+    : DoubleColumnTableCell(parentResponder, test),
       m_inputGoodnessController(inputGoodnessController) {
   for (int i = 0; i < GoodnessTest::k_maxNumberOfColumns; i++) {
     m_header[i].setMessage(k_columnHeaders[i]);

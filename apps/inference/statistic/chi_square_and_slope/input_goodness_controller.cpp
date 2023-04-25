@@ -12,7 +12,7 @@ InputGoodnessController::InputGoodnessController(
                                  inputEventHandlerDelegate),
       m_degreeOfFreedomCell(&m_selectableListView, inputEventHandlerDelegate,
                             this),
-      m_goodnessTableCell(&m_selectableListView, this, statistic, this) {
+      m_goodnessTableCell(&m_selectableListView, statistic, this) {
   m_degreeOfFreedomCell.setMessages(I18n::Message::DegreesOfFreedom);
 }
 

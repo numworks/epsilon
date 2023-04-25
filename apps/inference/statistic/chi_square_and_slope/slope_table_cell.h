@@ -13,10 +13,8 @@ class InputSlopeController;
 class SlopeTableCell : public DoubleColumnTableCell,
                        public Shared::StoreColumnHelper {
  public:
-  SlopeTableCell(Escher::Responder *parentResponder,
-                 DynamicSizeTableViewDataSourceDelegate
-                     *dynamicSizeTableViewDataSourceDelegate,
-                 Statistic *statistic, Poincare::Context *parentContext,
+  SlopeTableCell(Escher::Responder *parentResponder, Statistic *statistic,
+                 Poincare::Context *parentContext,
                  InputSlopeController *inputSlopeController);
 
   constexpr static int k_numberOfReusableCells =

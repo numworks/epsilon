@@ -33,7 +33,7 @@ PatternMatching::Context PatternMatching::Match(const Node pattern,
     if (node.type() == BlockType::Placeholder) {
       Placeholder::Tag tag = Placeholder::NodeToTag(node);
       if (result[tag].isUninitialized()) {
-        if (!(Placeholder::MatchNode(node, currentNode))) {
+        if (!(Placeholder::MatchesNode(node, currentNode))) {
           return Context();
         }
         result[tag] = currentNode;
@@ -67,7 +67,7 @@ EditionReference PatternMatching::Create(const Node structure,
     Placeholder::CreateFilter filter = Placeholder::NodeToCreateFilter(node);
     Node nodeToInsert = context[tag];
     assert(!nodeToInsert.isUninitialized());
-    if (filter == Placeholder::CreateFilter::ExcludeFirstChild) {
+    if (filter == Placeholder::CreateFilter::NonFirstChild) {
       int childrenToInsert = nodeToInsert.numberOfChildren() - 1;
       if (childrenToInsert > 1) {
         assert(nodeToInsert.isNAry());

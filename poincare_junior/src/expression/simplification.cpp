@@ -53,11 +53,11 @@ EditionReference Simplification::ExpandExp(EditionReference reference) {
   Node expMulContracted = KPow(e_e, KPlaceholder<A, FilterAddition>());
   Node expMulExpanded =
       KMult(KPow(e_e, KPlaceholder<A, FilterFirstChild>()),
-            KPow(e_e, KPlaceholder<A, FilterExcludeFirstChild>()));
+            KPow(e_e, KPlaceholder<A, FilterNonFirstChild>()));
   reference = reference.matchAndReplace(expMulContracted, expMulExpanded);
   Node expExpContracted = KPow(e_e, KPlaceholder<A, FilterMultiplication>());
   Node expExpExpanded = KPow(KPow(e_e, KPlaceholder<A, FilterFirstChild>()),
-                             KPlaceholder<A, FilterExcludeFirstChild>());
+                             KPlaceholder<A, FilterNonFirstChild>());
   reference = reference.matchAndReplace(expExpContracted, expExpExpanded);
   return reference;
 }
@@ -84,18 +84,16 @@ EditionReference Simplification::ContractExp(EditionReference reference) {
 EditionReference Simplification::ExpandTrigonometric(
     EditionReference reference) {
   Node sinContracted = KSin(KPlaceholder<A, FilterAddition>());
-  Node sinExpanded =
-      KAdd(KMult(KSin(KPlaceholder<A, FilterFirstChild>()),
-                 KCos(KPlaceholder<A, FilterExcludeFirstChild>())),
-           KMult(KCos(KPlaceholder<A, FilterFirstChild>()),
-                 KSin(KPlaceholder<A, FilterExcludeFirstChild>())));
+  Node sinExpanded = KAdd(KMult(KSin(KPlaceholder<A, FilterFirstChild>()),
+                                KCos(KPlaceholder<A, FilterNonFirstChild>())),
+                          KMult(KCos(KPlaceholder<A, FilterFirstChild>()),
+                                KSin(KPlaceholder<A, FilterNonFirstChild>())));
   reference = reference.matchAndReplace(sinContracted, sinExpanded);
   Node cosContracted = KCos(KPlaceholder<A, FilterAddition>());
-  Node cosExpanded =
-      KAdd(KMult(KCos(KPlaceholder<A, FilterFirstChild>()),
-                 KCos(KPlaceholder<A, FilterExcludeFirstChild>())),
-           KMult(-1_e, KSin(KPlaceholder<A, FilterFirstChild>()),
-                 KSin(KPlaceholder<A, FilterExcludeFirstChild>())));
+  Node cosExpanded = KAdd(KMult(KCos(KPlaceholder<A, FilterFirstChild>()),
+                                KCos(KPlaceholder<A, FilterNonFirstChild>())),
+                          KMult(-1_e, KSin(KPlaceholder<A, FilterFirstChild>()),
+                                KSin(KPlaceholder<A, FilterNonFirstChild>())));
   reference = reference.matchAndReplace(cosContracted, cosExpanded);
   return reference;
 }

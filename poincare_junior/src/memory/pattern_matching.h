@@ -26,7 +26,7 @@ class Context {
 #endif
 
  private:
-  Node m_array[Placeholder::Tag::numberOfTags];
+  Node m_array[Placeholder::Tag::NumberOfTags];
 };
 
 Context Match(const Node pattern, const Node source,

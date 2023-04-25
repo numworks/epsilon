@@ -124,7 +124,7 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
    * preserved. */
   EditionReference treeNext = nextTree();
   int initializedPlaceHolders = 0;
-  for (uint8_t i = 0; i < Placeholder::Tag::numberOfTags; i++) {
+  for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     if (ctx[i].isUninitialized()) {
       continue;
     }
@@ -134,8 +134,8 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
 
   // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 ....
 
-  EditionReference placeholders[Placeholder::Tag::numberOfTags];
-  for (uint8_t i = 0; i < Placeholder::Tag::numberOfTags; i++) {
+  EditionReference placeholders[Placeholder::Tag::NumberOfTags];
+  for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     // Keep track of placeholder matches before detaching them
     placeholders[i] = EditionReference(ctx[i]);
   }
@@ -146,7 +146,7 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
 
   // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 .... _{3}
 
-  for (uint8_t i = 0; i < Placeholder::Tag::numberOfTags; i++) {
+  for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     if (placeholders[i].isUninitialized()) {
       continue;
     }
@@ -164,7 +164,7 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
   // EditionPool: ..... | _{3} x y z | ....
 
   // Step 4 - Update context with new placeholder matches position
-  for (uint8_t i = 0; i < Placeholder::Tag::numberOfTags; i++) {
+  for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     ctx[i] = static_cast<Node>(placeholders[i]);
   }
 

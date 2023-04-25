@@ -8,11 +8,11 @@
 
 namespace PoincareJ {
 
-/* Note : This class could use an union to hide bit manipulation */
+/* TODO: This class could use an union to hide bit manipulation */
 class Placeholder {
  public:
   // Using plain enum for tag to simplify PatternMatching Context usage.
-  enum Tag : uint8_t { A = 0, B, C, numberOfTags };
+  enum Tag : uint8_t { A = 0, B, C, NumberOfTags };
 
   enum class MatchFilter : uint8_t {
     // Match any node
@@ -21,7 +21,7 @@ class Placeholder {
     Addition,
     // Match Multiplication nodes
     Multiplication,
-    numberOfFilters
+    NumberOfFilters
   };
 
   enum class CreateFilter : uint8_t {
@@ -29,9 +29,9 @@ class Placeholder {
     None = 0,
     // Replace with the first child of matched nAry
     FirstChild,
-    // Replace with all but first children of matched nAry
-    ExcludeFirstChild,
-    numberOfFilters
+    // Replace with non-first children of matched nAry
+    NonFirstChild,
+    NumberOfFilters
   };
 
   consteval static uint8_t ParamsToValue(Tag tag, MatchFilter filter) {
@@ -53,7 +53,7 @@ class Placeholder {
   constexpr static CreateFilter NodeToCreateFilter(const Node placeholder) {
     return static_cast<CreateFilter>(NodeToFilter(placeholder));
   }
-  constexpr static bool MatchNode(const Node placeholder, const Node n) {
+  constexpr static bool MatchesNode(const Node placeholder, const Node n) {
     Placeholder::MatchFilter filter = NodeToMatchFilter(placeholder);
     return filter == MatchFilter::None ||
            (filter == MatchFilter::Addition &&
@@ -64,13 +64,13 @@ class Placeholder {
 
  private:
   constexpr static size_t k_bitsForTag =
-      OMG::BitHelper::numberOfBitsToCountUpTo(Tag::numberOfTags);
+      OMG::BitHelper::numberOfBitsToCountUpTo(Tag::NumberOfTags);
   constexpr static size_t k_bitsForMatchFilter =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<uint8_t>(MatchFilter::numberOfFilters));
+          static_cast<uint8_t>(MatchFilter::NumberOfFilters));
   constexpr static size_t k_bitsForCreateFilter =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<uint8_t>(CreateFilter::numberOfFilters));
+          static_cast<uint8_t>(CreateFilter::NumberOfFilters));
   // Tags and filters can be added as long as it fits in a ValueBlock.
   static_assert(k_bitsForTag + k_bitsForMatchFilter <=
                 OMG::BitHelper::numberOfBitsIn<ValueBlock>());
@@ -111,8 +111,8 @@ static constexpr Placeholder::MatchFilter FilterMultiplication =
 
 static constexpr Placeholder::CreateFilter FilterFirstChild =
     Placeholder::CreateFilter::FirstChild;
-static constexpr Placeholder::CreateFilter FilterExcludeFirstChild =
-    Placeholder::CreateFilter::ExcludeFirstChild;
+static constexpr Placeholder::CreateFilter FilterNonFirstChild =
+    Placeholder::CreateFilter::NonFirstChild;
 }  // namespace Placeholders
 
 }  // namespace PoincareJ

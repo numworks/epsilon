@@ -10,7 +10,7 @@ using namespace Placeholders;
 
 QUIZ_CASE(pcj_context) {
   PatternMatching::Context ctx;
-  ctx[Placeholder::NodeToTag(KPlaceholder<A>())] = KAdd(2_e, 1_e);
+  ctx[Placeholder::A] = KAdd(2_e, 1_e);
   Node structure = KMult(5_e, KAdd(KPlaceholder<A>(), KPlaceholder<A>()));
   EditionReference exp = PatternMatching::Create(structure, ctx);
   assert_trees_are_equal(exp, KMult(5_e, KAdd(KAdd(2_e, 1_e), KAdd(2_e, 1_e))));
@@ -19,10 +19,10 @@ QUIZ_CASE(pcj_context) {
 QUIZ_CASE(pcj_match) {
   Node t = KAdd(2_e, 1_e);
   PatternMatching::Context ctx = PatternMatching::Match(KPlaceholder<A>(), t);
-  assert_trees_are_equal(ctx[Placeholder::NodeToTag(KPlaceholder<A>())], t);
+  assert_trees_are_equal(ctx[Placeholder::A], t);
   PatternMatching::Context ctx2 =
       PatternMatching::Match(KAdd(KPlaceholder<A>(), 1_e), t);
-  assert_trees_are_equal(ctx2[Placeholder::NodeToTag(KPlaceholder<A>())], 2_e);
+  assert_trees_are_equal(ctx2[Placeholder::A], 2_e);
   PatternMatching::Context ctx3 =
       PatternMatching::Match(KAdd(KPlaceholder<A>(), 2_e), t);
   quiz_assert(ctx3.isUninitialized());
@@ -30,8 +30,8 @@ QUIZ_CASE(pcj_match) {
   Node t2 = KAdd(1_e, 1_e, 2_e);
   Node p = KAdd(KPlaceholder<A>(), KPlaceholder<A>(), KPlaceholder<B>());
   PatternMatching::Context ctx4 = PatternMatching::Match(p, t2);
-  assert_trees_are_equal(ctx4[Placeholder::NodeToTag(KPlaceholder<A>())], 1_e);
-  assert_trees_are_equal(ctx4[Placeholder::NodeToTag(KPlaceholder<B>())], 2_e);
+  assert_trees_are_equal(ctx4[Placeholder::A], 1_e);
+  assert_trees_are_equal(ctx4[Placeholder::B], 2_e);
 }
 
 QUIZ_CASE(pcj_rewrite_replace) {
@@ -59,14 +59,12 @@ QUIZ_CASE(pcj_match_n_ary) {
                   .isUninitialized());
   Node pattern = KMult(KPlaceholder<A, FilterAddition>(), KPlaceholder<B>());
   PatternMatching::Context ctx = PatternMatching::Match(pattern, source);
-  assert_trees_are_equal(ctx[Placeholder::NodeToTag(KPlaceholder<A>())],
-                         KAdd(1_e, 2_e, 3_e));
-  assert_trees_are_equal(ctx[Placeholder::NodeToTag(KPlaceholder<B>())],
-                         KAdd(4_e, 5_e));
+  assert_trees_are_equal(ctx[Placeholder::A], KAdd(1_e, 2_e, 3_e));
+  assert_trees_are_equal(ctx[Placeholder::B], KAdd(4_e, 5_e));
 
-  Node structure = KAdd(
-      KMult(KPlaceholder<A, FilterFirstChild>(), KPlaceholder<B>()),
-      KMult(KPlaceholder<A, FilterExcludeFirstChild>(), KPlaceholder<B>()));
+  Node structure =
+      KAdd(KMult(KPlaceholder<A, FilterFirstChild>(), KPlaceholder<B>()),
+           KMult(KPlaceholder<A, FilterNonFirstChild>(), KPlaceholder<B>()));
   EditionReference result = PatternMatching::Create(structure, ctx);
   assert_trees_are_equal(result, KAdd(KMult(1_e, KAdd(4_e, 5_e)),
                                       KMult(KAdd(2_e, 3_e), KAdd(4_e, 5_e))));

@@ -187,10 +187,11 @@ void InputCategoricalTableCell::clearSelectedColumn() {
   int column = m_selectableTableView.selectedColumn();
   tableModel()->deleteParametersInColumn(relativeColumnIndex(column));
   tableModel()->recomputeData();
-  selectableTableView()->selectCellAtClippedLocation(column, 1, false);
+  m_selectableTableView.deselectTable();
   if (!recomputeDimensions()) {
     m_selectableTableView.reloadData(false);
   }
+  selectableTableView()->selectCellAtClippedLocation(column, 1, false);
 }
 
 bool InputCategoricalTableCell::recomputeDimensions() {

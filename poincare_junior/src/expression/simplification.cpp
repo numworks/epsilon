@@ -50,13 +50,12 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
 }
 
 EditionReference Simplification::ExpandExp(EditionReference reference) {
-  Node expMulContracted = KPow(e_e, KPlaceholder<A, FilterAddition>());
-  Node expMulExpanded =
-      KMult(KPow(e_e, KPlaceholder<A, FilterFirstChild>()),
-            KPow(e_e, KPlaceholder<A, FilterNonFirstChild>()));
+  Node expMulContracted = KExp(KPlaceholder<A, FilterAddition>());
+  Node expMulExpanded = KMult(KExp(KPlaceholder<A, FilterFirstChild>()),
+                              KExp(KPlaceholder<A, FilterNonFirstChild>()));
   reference = reference.matchAndReplace(expMulContracted, expMulExpanded);
-  Node expExpContracted = KPow(e_e, KPlaceholder<A, FilterMultiplication>());
-  Node expExpExpanded = KPow(KPow(e_e, KPlaceholder<A, FilterFirstChild>()),
+  Node expExpContracted = KExp(KPlaceholder<A, FilterMultiplication>());
+  Node expExpExpanded = KPow(KExp(KPlaceholder<A, FilterFirstChild>()),
                              KPlaceholder<A, FilterNonFirstChild>());
   reference = reference.matchAndReplace(expExpContracted, expExpExpanded);
   return reference;
@@ -65,60 +64,48 @@ EditionReference Simplification::ExpandExp(EditionReference reference) {
 EditionReference Simplification::ContractExp(EditionReference reference) {
   /* TODO : Make it so that we could have this with KPlaceholder<C>() being any
    *        (or none) other children at any place in the KMult :
-   * Node expMulExpanded = KMult(KPow(e_e, KPlaceholder<A>()),
-   *                           KPow(e_e, KPlaceholder<B>()), KPlaceholder<C>());
+   * Node expMulExpanded = KMult(KExp(KPlaceholder<A>()),
+   *                             KExp(KPlaceholder<B>()), KPlaceholder<C>());
    * Node expMulContracted = KMult(
-   *  KPow(e_e, KAdd(KPlaceholder<A>(), KPlaceholder<B>())), KPlaceholder<C>());
+   *  KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>())), KPlaceholder<C>());
    */
-  Node expMulExpanded =
-      KMult(KPow(e_e, KPlaceholder<A>()), KPow(e_e, KPlaceholder<B>()));
-  Node expMulContracted = KPow(e_e, KAdd(KPlaceholder<A>(), KPlaceholder<B>()));
+  Node expMulExpanded = KMult(KExp(KPlaceholder<A>()), KExp(KPlaceholder<B>()));
+  Node expMulContracted = KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>()));
   reference = reference.matchAndReplace(expMulExpanded, expMulContracted);
-  Node expExpExpanded = KPow(KPow(e_e, KPlaceholder<A>()), KPlaceholder<B>());
-  Node expExpContracted =
-      KPow(e_e, KMult(KPlaceholder<A>(), KPlaceholder<B>()));
-  reference = reference.matchAndReplace(expExpExpanded, expExpContracted);
-  return reference;
+  Node expExpExpanded = KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>());
+  Node expExpContracted = KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>()));
+  return reference.matchAndReplace(expExpExpanded, expExpContracted);
 }
 
 EditionReference Simplification::ExpandTrigonometric(
     EditionReference reference) {
-  Node sinContracted = KSin(KPlaceholder<A, FilterAddition>());
-  Node sinExpanded = KAdd(KMult(KSin(KPlaceholder<A, FilterFirstChild>()),
-                                KCos(KPlaceholder<A, FilterNonFirstChild>())),
-                          KMult(KCos(KPlaceholder<A, FilterFirstChild>()),
-                                KSin(KPlaceholder<A, FilterNonFirstChild>())));
-  reference = reference.matchAndReplace(sinContracted, sinExpanded);
-  Node cosContracted = KCos(KPlaceholder<A, FilterAddition>());
-  Node cosExpanded = KAdd(KMult(KCos(KPlaceholder<A, FilterFirstChild>()),
-                                KCos(KPlaceholder<A, FilterNonFirstChild>())),
-                          KMult(-1_e, KSin(KPlaceholder<A, FilterFirstChild>()),
-                                KSin(KPlaceholder<A, FilterNonFirstChild>())));
-  reference = reference.matchAndReplace(cosContracted, cosExpanded);
-  return reference;
+  /* KTrig : If second element is __, return ___ :
+   * (-1,-sin),(0,cos),(1,sin),(2,-cos) */
+  Node contracted = KTrig(KPlaceholder<A, FilterAddition>(), KPlaceholder<C>());
+  Node expanded =
+      KAdd(KMult(KTrig(KPlaceholder<A, FilterFirstChild>(), KPlaceholder<C>()),
+                 KTrig(KPlaceholder<A, FilterNonFirstChild>(), 0_e)),
+           KMult(KTrig(KPlaceholder<A, FilterFirstChild>(),
+                       KAdd(KPlaceholder<C>(), -1_e)),
+                 KTrig(KPlaceholder<A, FilterNonFirstChild>(), 1_e)));
+  return reference.matchAndReplace(contracted, expanded);
+  // TODO: If replaced, simplify resulting KTrigs
 }
 
 EditionReference Simplification::ContractTrigonometric(
     EditionReference reference) {
-  /* TODO : Similarly to ContractExp's comment, make it so that we could
-   *        handle any (or none) other children at any place in this KMult. */
-  Node sinSinExpanded = KMult(KSin(KPlaceholder<A>()), KSin(KPlaceholder<B>()));
-  Node sinSinContracted = KMult(
-      0.5_e,
-      KAdd(KCos(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>()))),
-           KMult(-1_e, KCos(KAdd(KPlaceholder<A>(), KPlaceholder<B>())))));
-  reference = reference.matchAndReplace(sinSinExpanded, sinSinContracted);
-  Node cosCosExpanded = KMult(KCos(KPlaceholder<A>()), KCos(KPlaceholder<B>()));
-  Node cosCosContracted = KMult(
-      0.5_e, KAdd(KCos(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>()))),
-                  KCos(KAdd(KPlaceholder<A>(), KPlaceholder<B>()))));
-  reference = reference.matchAndReplace(cosCosExpanded, cosCosContracted);
-  Node sinCosExpanded = KMult(KSin(KPlaceholder<A>()), KCos(KPlaceholder<B>()));
-  Node sinCosContracted = KMult(
-      0.5_e, KAdd(KSin(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>()))),
-                  KSin(KAdd(KPlaceholder<A>(), KPlaceholder<B>()))));
-  reference = reference.matchAndReplace(sinCosExpanded, sinCosContracted);
-  return reference;
+  Node expanded = KMult(KTrig(KPlaceholder<A>(), KPlaceholder<C>()),
+                        KTrig(KPlaceholder<B>(), KPlaceholder<D>()));
+  // (C+D-2CD) Is equivalent to (C!=D) when C and D are either 0 or 1
+  Node contracted =
+      KMult(0.5_e,
+            KAdd(KTrig(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>())),
+                       KAdd(KPlaceholder<C>(), KPlaceholder<D>(),
+                            KMult(-2_e, KPlaceholder<C>(), KPlaceholder<D>()))),
+                 KTrig(KAdd(KPlaceholder<A>(), KPlaceholder<B>()),
+                       KAdd(KPlaceholder<D>(), KPlaceholder<C>()))));
+  return reference.matchAndReplace(expanded, contracted);
+  // TODO: If replaced, simplify resulting KTrigs
 }
 
 EditionReference Simplification::DivisionReduction(EditionReference reference) {

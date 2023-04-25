@@ -12,7 +12,7 @@ namespace PoincareJ {
 class Placeholder {
  public:
   // Using plain enum for tag to simplify PatternMatching Context usage.
-  enum Tag : uint8_t { A = 0, B, C, NumberOfTags };
+  enum Tag : uint8_t { A = 0, B, C, D, NumberOfTags };
 
   enum class MatchFilter : uint8_t {
     // Match any node
@@ -103,6 +103,7 @@ namespace Placeholders {
 static constexpr Placeholder::Tag A = Placeholder::Tag::A;
 static constexpr Placeholder::Tag B = Placeholder::Tag::B;
 static constexpr Placeholder::Tag C = Placeholder::Tag::C;
+static constexpr Placeholder::Tag D = Placeholder::Tag::D;
 
 static constexpr Placeholder::MatchFilter FilterAddition =
     Placeholder::MatchFilter::Addition;

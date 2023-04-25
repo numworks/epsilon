@@ -10,8 +10,19 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
                                        KDContext* ctx, KDRect rect) const {
   assert(m_model && plotView);
 
-  float s = std::sin(m_model->angle());
-  float c = std::cos(m_model->angle());
+  float angle = m_model->angle();
+  assert(std::isfinite(angle) && 0 <= angle &&
+         angle < 2 * M_PI + Float<float>::EpsilonLax());
+  if (!std::isfinite(angle)) {
+    /* This should not happen, but if it does, it freezes the software in
+     * production, so we add an escape just in case it still happens.
+     * TODO: If the assert above and the assert(std::isfinite(angle)) in
+     * TrigonometryListController are never triggered, this code can be
+     * removed.*/
+    return;
+  }
+  float s = std::sin(angle);
+  float c = std::cos(angle);
 
   // - Draw sine and cosine projections
   plotView->drawDashedStraightSegment(
@@ -25,8 +36,6 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
                     Palette::Red);
 
   // - Draw angle arc and label
-  float angle = m_model->angle();
-  assert(0 <= angle && angle < 2 * M_PI + Float<float>::EpsilonLax());
   constexpr float k_arcRatio = 0.2;
   constexpr float k_labelRatio = 0.32;
   bool labelOnLine =

@@ -5,7 +5,6 @@
 #include <escher/table_view_data_source.h>
 
 #include "inference/models/statistic/table.h"
-#include "inference/statistic/chi_square_and_slope/dynamic_size_table_view_data_source.h"
 #include "inference/text_helpers.h"
 
 namespace Inference {

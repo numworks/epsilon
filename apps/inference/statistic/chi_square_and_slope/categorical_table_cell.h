@@ -72,14 +72,11 @@ class InputCategoricalTableCell
     : public CategoricalTableCell,
       public Shared::TextFieldDelegate,
       public DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>,
-      public DynamicSizeTableViewDataSource,
       public Shared::ClearColumnHelper {
  public:
-  InputCategoricalTableCell(
-      Escher::Responder *parentResponder,
-      Escher::TableViewDataSource *dataSource,
-      DynamicSizeTableViewDataSourceDelegate *dynamicSizeTableViewDelegate,
-      Statistic *statistic);
+  InputCategoricalTableCell(Escher::Responder *parentResponder,
+                            Escher::TableViewDataSource *dataSource,
+                            Statistic *statistic);
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,
@@ -94,7 +91,6 @@ class InputCategoricalTableCell
   // DynamicCellsDataSourceDelegate<InferenceEvenOddEditableCell>
   void initCell(InferenceEvenOddEditableCell, void *cell, int index) override;
 
-  // DynamicSizeTableViewDataSource
   virtual bool recomputeDimensions();
 
  protected:
@@ -116,7 +112,11 @@ class InputCategoricalTableCell
     return const_cast<InputCategoricalTableCell *>(this)->tableModel();
   }
 
+  bool didChangeSize(int numberOfRows, int numberOfColumns);
+
   Statistic *m_statistic;
+  int m_numberOfRows;
+  int m_numberOfColumns;
 };
 
 class DoubleColumnTableCell
@@ -126,8 +126,6 @@ class DoubleColumnTableCell
                                     k_doubleColumnTableNumberOfReusableCells> {
  public:
   DoubleColumnTableCell(Escher::Responder *parentResponder,
-                        DynamicSizeTableViewDataSourceDelegate
-                            *dynamicSizeTableViewDataSourceDelegate,
                         Statistic *statistic);
 
   // InputCategoricalTableCell

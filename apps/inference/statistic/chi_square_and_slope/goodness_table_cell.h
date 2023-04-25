@@ -16,10 +16,7 @@ class InputGoodnessController;
 
 class GoodnessTableCell : public DoubleColumnTableCell {
  public:
-  GoodnessTableCell(Escher::Responder *parentResponder,
-                    DynamicSizeTableViewDataSourceDelegate
-                        *dynamicSizeTableViewDataSourceDelegate,
-                    GoodnessTest *test,
+  GoodnessTableCell(Escher::Responder *parentResponder, GoodnessTest *test,
                     InputGoodnessController *inputGoodnessController);
 
   // Responder
@@ -27,7 +24,6 @@ class GoodnessTableCell : public DoubleColumnTableCell {
                                  const char *text,
                                  Ion::Events::Event event) override;
 
-  // DynamicSizeTableViewDataSource
   bool recomputeDimensions() override;
 
  private:

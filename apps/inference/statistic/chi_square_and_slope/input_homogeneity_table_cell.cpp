@@ -9,13 +9,9 @@ using namespace Escher;
 namespace Inference {
 
 InputHomogeneityTableCell::InputHomogeneityTableCell(
-    Escher::Responder *parentResponder,
-    DynamicSizeTableViewDataSourceDelegate
-        *dynamicSizeTableViewDataSourceDelegate,
-    HomogeneityTest *test,
+    Escher::Responder *parentResponder, HomogeneityTest *test,
     InputHomogeneityController *inputHomogeneityController)
-    : InputCategoricalTableCell(parentResponder, this,
-                                dynamicSizeTableViewDataSourceDelegate, test),
+    : InputCategoricalTableCell(parentResponder, this, test),
       DynamicCellsDataSource<InferenceEvenOddEditableCell,
                              k_homogeneityTableNumberOfReusableInnerCells>(
           this),

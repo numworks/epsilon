@@ -10,14 +10,10 @@ using namespace Escher;
 
 namespace Inference {
 
-SlopeTableCell::SlopeTableCell(Responder *parentResponder,
-                               DynamicSizeTableViewDataSourceDelegate
-                                   *dynamicSizeTableViewDataSourceDelegate,
-                               Statistic *statistic,
+SlopeTableCell::SlopeTableCell(Responder *parentResponder, Statistic *statistic,
                                Poincare::Context *parentContext,
                                InputSlopeController *inputSlopeController)
-    : DoubleColumnTableCell(parentResponder,
-                            dynamicSizeTableViewDataSourceDelegate, statistic),
+    : DoubleColumnTableCell(parentResponder, statistic),
       StoreColumnHelper(this, parentContext, this),
       m_inputSlopeController(inputSlopeController) {
   for (int i = 0; i < k_maxNumberOfColumns; i++) {

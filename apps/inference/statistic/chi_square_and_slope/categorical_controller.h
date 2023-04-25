@@ -11,7 +11,6 @@
 
 #include "inference/models/statistic/chi2_test.h"
 #include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
-#include "inference/statistic/chi_square_and_slope/dynamic_size_table_view_data_source.h"
 #include "inference/statistic/chi_square_and_slope/input_categorical_cell.h"
 
 namespace Inference {
@@ -73,10 +72,8 @@ class CategoricalController
 /* Common Controller between InputHomogeneityController and
  * InputGoodnessController. */
 
-class InputCategoricalController
-    : public CategoricalController,
-      public Shared::ParameterTextFieldDelegate,
-      public DynamicSizeTableViewDataSourceDelegate {
+class InputCategoricalController : public CategoricalController,
+                                   public Shared::ParameterTextFieldDelegate {
  public:
   InputCategoricalController(
       Escher::StackViewController* parent,
@@ -98,8 +95,7 @@ class InputCategoricalController
     return Escher::ViewController::TitlesDisplay::DisplayLastTitle;
   }
 
-  // DynamicSizeTableViewDataSourceDelegate
-  void tableViewDataSourceDidChangeSize() override;
+  void tableViewDataSourceDidChangeSize();
 
   // ListViewDataSource
   Escher::HighlightCell* reusableCell(int index, int type) override;

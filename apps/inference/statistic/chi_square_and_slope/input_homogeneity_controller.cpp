@@ -10,6 +10,6 @@ InputHomogeneityController::InputHomogeneityController(
     InputEventHandlerDelegate* inputEventHandlerDelegate)
     : InputCategoricalController(parent, resultsController, statistic,
                                  inputEventHandlerDelegate),
-      m_inputHomogeneityTable(&m_selectableListView, this, statistic, this) {}
+      m_inputHomogeneityTable(&m_selectableListView, statistic, this) {}
 
 }  // namespace Inference

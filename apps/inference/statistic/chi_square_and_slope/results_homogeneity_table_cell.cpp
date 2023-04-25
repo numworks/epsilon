@@ -1,4 +1,4 @@
-#include "result_homogeneity_table_cell.h"
+#include "results_homogeneity_table_cell.h"
 
 #include "results_homogeneity_controller.h"
 
@@ -6,7 +6,7 @@ using namespace Escher;
 
 namespace Inference {
 
-ResultHomogeneityTableCell::ResultHomogeneityTableCell(
+ResultsHomogeneityTableCell::ResultsHomogeneityTableCell(
     Escher::Responder *parentResponder, HomogeneityTest *test,
     ResultsTableController *resultsTableController)
     : CategoricalTableCell(parentResponder, this),
@@ -19,7 +19,7 @@ ResultHomogeneityTableCell::ResultHomogeneityTableCell(
   m_selectableTableView.setBottomMargin(Metric::CellSeparatorThickness);
 }
 
-void ResultHomogeneityTableCell::didBecomeFirstResponder() {
+void ResultsHomogeneityTableCell::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectColumn(1);
   }
@@ -32,7 +32,7 @@ void ResultHomogeneityTableCell::didBecomeFirstResponder() {
   CategoricalTableCell::didBecomeFirstResponder();
 }
 
-void ResultHomogeneityTableCell::drawRect(KDContext *ctx, KDRect rect) const {
+void ResultsHomogeneityTableCell::drawRect(KDContext *ctx, KDRect rect) const {
   CategoricalTableCell::drawRect(ctx, rect);
   // Draw over the next cell border to hide it
   ctx->fillRect(KDRect(0, bounds().height() - Metric::CellSeparatorThickness,
@@ -40,7 +40,7 @@ void ResultHomogeneityTableCell::drawRect(KDContext *ctx, KDRect rect) const {
                 m_selectableTableView.backgroundColor());
 }
 
-void ResultHomogeneityTableCell::willDisplayCellAtLocation(
+void ResultsHomogeneityTableCell::willDisplayCellAtLocation(
     Escher::HighlightCell *cell, int column, int row) {
   if (m_mode == Mode::ExpectedValue &&
       ((column == 0 && row == innerNumberOfRows()) ||
@@ -56,7 +56,7 @@ void ResultHomogeneityTableCell::willDisplayCellAtLocation(
   }
 }
 
-void ResultHomogeneityTableCell::willDisplayInnerCellAtLocation(
+void ResultsHomogeneityTableCell::willDisplayInnerCellAtLocation(
     Escher::HighlightCell *cell, int column, int row) {
   InferenceEvenOddBufferCell *myCell =
       static_cast<InferenceEvenOddBufferCell *>(cell);
@@ -81,7 +81,7 @@ void ResultHomogeneityTableCell::willDisplayInnerCellAtLocation(
   myCell->setEven(row % 2 == 1);
 }
 
-void ResultHomogeneityTableCell::createCells() {
+void ResultsHomogeneityTableCell::createCells() {
   if (DynamicCellsDataSource<
           InferenceEvenOddBufferCell,
           k_homogeneityTableNumberOfReusableHeaderCells>::m_cells == nullptr) {
@@ -99,7 +99,7 @@ void ResultHomogeneityTableCell::createCells() {
   }
 }
 
-void ResultHomogeneityTableCell::destroyCells() {
+void ResultsHomogeneityTableCell::destroyCells() {
   DynamicCellsDataSource<
       InferenceEvenOddBufferCell,
       k_homogeneityTableNumberOfReusableInnerCells>::destroyCells();
@@ -108,7 +108,7 @@ void ResultHomogeneityTableCell::destroyCells() {
       k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
 }
 
-CategoricalController *ResultHomogeneityTableCell::categoricalController() {
+CategoricalController *ResultsHomogeneityTableCell::categoricalController() {
   return m_resultsTableController;
 }
 

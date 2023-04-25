@@ -24,10 +24,10 @@ ResultsTableController::ResultsTableController(
     : CategoricalController(nullptr, resultsController,
                             Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
-      m_resultHomogeneityTable(&m_selectableListView, statistic, this) {}
+      m_resultsHomogeneityTable(&m_selectableListView, statistic, this) {}
 
 void ResultsTableController::viewWillAppear() {
-  m_resultHomogeneityTable.selectableTableView()->selectRow(-1);
+  m_resultsHomogeneityTable.selectableTableView()->selectRow(-1);
   m_selectableListView.selectRow(-1);
   m_selectableListView.reloadData(false);
   CategoricalController::viewWillAppear();
@@ -35,7 +35,7 @@ void ResultsTableController::viewWillAppear() {
 
 bool ResultsTableController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
-    m_resultHomogeneityTable.selectableTableView()->deselectTable();
+    m_resultsHomogeneityTable.selectableTableView()->deselectTable();
     tabController()->selectTab();
     return true;
   }
@@ -45,7 +45,7 @@ bool ResultsTableController::handleEvent(Ion::Events::Event event) {
 // SingleModeController
 
 void ResultsHomogeneityController::SingleModeController::switchToTableWithMode(
-    ResultHomogeneityTableCell::Mode mode) {
+    ResultsHomogeneityTableCell::Mode mode) {
   m_tableController->setMode(mode);
   m_tableController->setParentResponder(this);
 }

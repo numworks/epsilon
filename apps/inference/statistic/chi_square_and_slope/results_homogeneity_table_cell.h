@@ -1,5 +1,5 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULT_HOMOGENEITY_TABLE_CELL_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULT_HOMOGENEITY_TABLE_CELL_H
+#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULTS_HOMOGENEITY_TABLE_CELL_H
+#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULTS_HOMOGENEITY_TABLE_CELL_H
 
 #include "inference/models/statistic/homogeneity_test.h"
 #include "inference/statistic/chi_square_and_slope/categorical_table_cell.h"
@@ -9,16 +9,16 @@ namespace Inference {
 
 class ResultsTableController;
 
-class ResultHomogeneityTableCell
+class ResultsHomogeneityTableCell
     : public CategoricalTableCell,
       public HomogeneityTableDataSource,
       public DynamicCellsDataSource<
           InferenceEvenOddBufferCell,
           k_homogeneityTableNumberOfReusableInnerCells> {
  public:
-  ResultHomogeneityTableCell(Escher::Responder* parentResponder,
-                             HomogeneityTest* test,
-                             ResultsTableController* resultsTableController);
+  ResultsHomogeneityTableCell(Escher::Responder* parentResponder,
+                              HomogeneityTest* test,
+                              ResultsTableController* resultsTableController);
 
   enum class Mode : bool { ExpectedValue, Contribution };
   void setMode(Mode mode) { m_mode = mode; }

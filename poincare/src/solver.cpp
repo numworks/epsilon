@@ -191,7 +191,9 @@ Coordinate2D<T> Solver<T>::nextIntersection(const Expression &e1,
       m_lastInterest = Interest::None;
       return nextIntersection(e1, e2, memoizedDifference);
     }
-    m_yResult = y1;
+    /* Result is not always exactly the same due to approximation errors. Take
+     * the middle of the two values. */
+    m_yResult = (y1 + y2) / 2.;
   }
   return result();
 }

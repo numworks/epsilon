@@ -182,14 +182,6 @@ void InputCategoricalController::viewWillAppear() {
   CategoricalController::viewWillAppear();
 }
 
-void InputCategoricalController::tableViewDataSourceDidChangeSize() {
-  /* Relayout when inner table changes size. We need to reload the table because
-   * its width might change but it won't relayout as its frame isn't changed by
-   * the InputCategoricalController */
-  categoricalTableCell()->selectableTableView()->reloadData(false);
-  m_selectableListView.reloadData(false);
-}
-
 HighlightCell *InputCategoricalController::reusableCell(int index, int type) {
   if (type == indexOfSignificanceCell()) {
     return &m_significanceCell;

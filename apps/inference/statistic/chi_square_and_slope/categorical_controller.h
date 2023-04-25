@@ -95,8 +95,6 @@ class InputCategoricalController : public CategoricalController,
     return Escher::ViewController::TitlesDisplay::DisplayLastTitle;
   }
 
-  void tableViewDataSourceDidChangeSize();
-
   // ListViewDataSource
   Escher::HighlightCell* reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;

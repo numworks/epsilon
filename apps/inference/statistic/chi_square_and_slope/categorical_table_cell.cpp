@@ -27,7 +27,7 @@ void CategoricalTableCell::didBecomeFirstResponder() {
   if (selectedRow() < 0) {
     selectRow(1);
   }
-  Escher::Container::activeApp()->setFirstResponder(selectableTableView());
+  Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {
@@ -168,7 +168,7 @@ bool InputCategoricalTableCell::deleteSelectedValue() {
        * moved up multiple cells, m_inputTableView should be reloaded. */
       m_selectableTableView.reloadData(false);
     }
-    selectableTableView()->selectCellAtClippedLocation(col, row, true);
+    m_selectableTableView.selectCellAtClippedLocation(col, row, true);
     return true;
   }
 }
@@ -191,7 +191,7 @@ void InputCategoricalTableCell::clearSelectedColumn() {
   if (!recomputeDimensions()) {
     m_selectableTableView.reloadData(false);
   }
-  selectableTableView()->selectCellAtClippedLocation(column, 1, false);
+  m_selectableTableView.selectCellAtClippedLocation(column, 1, false);
 }
 
 bool InputCategoricalTableCell::recomputeDimensions() {
@@ -204,7 +204,7 @@ bool InputCategoricalTableCell::recomputeDimensions() {
   /* Relayout when inner table changes size. We need to reload the table because
    * its width might change but it won't relayout as its frame isn't changed by
    * the InputCategoricalController */
-  selectableTableView()->reloadData(false);
+  m_selectableTableView.reloadData(false);
   categoricalController()->selectableListView()->reloadData(false);
   return true;
 }

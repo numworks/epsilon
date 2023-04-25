@@ -4,7 +4,7 @@
 #include <escher/tab_view_controller.h>
 
 #include "inference/statistic/chi_square_and_slope/categorical_controller.h"
-#include "inference/statistic/chi_square_and_slope/result_homogeneity_table_cell.h"
+#include "inference/statistic/chi_square_and_slope/results_homogeneity_table_cell.h"
 
 namespace Inference {
 
@@ -22,8 +22,8 @@ class ResultsTableController : public CategoricalController {
     tabController()->stackOpenPage(nextPage);
   }
 
-  void setMode(ResultHomogeneityTableCell::Mode mode) {
-    m_resultHomogeneityTable.setMode(mode);
+  void setMode(ResultsHomogeneityTableCell::Mode mode) {
+    m_resultsHomogeneityTable.setMode(mode);
   }
 
   Escher::TabViewController *tabController() {
@@ -33,9 +33,9 @@ class ResultsTableController : public CategoricalController {
 
  private:
   CategoricalTableCell *categoricalTableCell() override {
-    return &m_resultHomogeneityTable;
+    return &m_resultsHomogeneityTable;
   }
-  ResultHomogeneityTableCell m_resultHomogeneityTable;
+  ResultsHomogeneityTableCell m_resultsHomogeneityTable;
 };
 
 class ResultsHomogeneityController : public Escher::TabViewController,
@@ -70,7 +70,7 @@ class ResultsHomogeneityController : public Escher::TabViewController,
     void viewWillAppear() override { m_tableController->viewWillAppear(); }
 
    protected:
-    void switchToTableWithMode(ResultHomogeneityTableCell::Mode mode);
+    void switchToTableWithMode(ResultsHomogeneityTableCell::Mode mode);
     ResultsTableController *m_tableController;
   };
 
@@ -82,7 +82,7 @@ class ResultsHomogeneityController : public Escher::TabViewController,
           I18n::Message::HomogeneityResultsExpectedValuesTitle);
     }
     void viewWillAppear() override {
-      switchToTableWithMode(ResultHomogeneityTableCell::Mode::ExpectedValue);
+      switchToTableWithMode(ResultsHomogeneityTableCell::Mode::ExpectedValue);
       SingleModeController::viewWillAppear();
     }
   };
@@ -95,7 +95,7 @@ class ResultsHomogeneityController : public Escher::TabViewController,
           I18n::Message::HomogeneityResultsContributionsTitle);
     }
     void viewWillAppear() override {
-      switchToTableWithMode(ResultHomogeneityTableCell::Mode::Contribution);
+      switchToTableWithMode(ResultsHomogeneityTableCell::Mode::Contribution);
       SingleModeController::viewWillAppear();
     }
   };

@@ -4,6 +4,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/vertical_offset_layout.h>
 
@@ -44,13 +45,22 @@ TypeParameterController::TypeParameterController(Responder *parentResponder,
 }
 
 const char *TypeParameterController::title() {
-  if (m_record.isNull()) {
-    return I18n::translate(I18n::Message::ChooseSequenceType);
-  }
-  return I18n::translate(I18n::Message::SequenceType);
+  return I18n::translate(isNewModel() ? I18n::Message::ChooseSequenceType
+                                      : I18n::Message::SequenceType);
 }
 
 void TypeParameterController::viewWillAppear() {
+  const char *nextName = isNewModel() ? SequenceStore::FirstAvailableName()
+                                      : sequence()->fullName();
+  assert(nextName != nullptr);
+  constexpr char *subscripts[k_numberOfCells] = {"n", "n+1", "n+2"};
+  for (size_t j = 0; j < k_numberOfCells; j++) {
+    cellAtIndex(j)->label()->setLayout(HorizontalLayout::Builder(
+        CodePointLayout::Builder(nextName[0]),
+        VerticalOffsetLayout::Builder(
+            LayoutHelper::String(subscripts[j], strlen(subscripts[j])),
+            VerticalOffsetLayoutNode::VerticalPosition::Subscript)));
+  }
   ViewController::viewWillAppear();
   m_selectableListView.reloadData();
 }
@@ -61,14 +71,14 @@ void TypeParameterController::viewDidDisappear() {
 }
 
 void TypeParameterController::didBecomeFirstResponder() {
-  selectCell(m_record == nullptr ? 0
-                                 : static_cast<uint8_t>(sequence()->type()));
+  selectCell(isNewModel() ? k_indexOfExplicit
+                          : static_cast<uint8_t>(sequence()->type()));
   SelectableListViewController::didBecomeFirstResponder();
 }
 
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (!m_record.isNull()) {
+    if (!isNewModel()) {
       Shared::Sequence::Type sequenceType =
           static_cast<Shared::Sequence::Type>(selectedRow());
       if (sequence()->type() != sequenceType) {
@@ -106,55 +116,19 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     m_listController->editExpression(Ion::Events::OK);
     return true;
   }
-  if (event == Ion::Events::Left && !m_record.isNull()) {
+  if (event == Ion::Events::Left && !isNewModel()) {
     stackController()->pop();
     return true;
   }
-  if (m_record.isNull() &&
+  if (isNewModel() &&
       m_listController->handleEventOnExpressionInTemplateMenu(event)) {
     return true;
   }
   return false;
 }
 
-void TypeParameterController::willDisplayCellForIndex(HighlightCell *cell,
-                                                      int j) {
-  const char *nextName = SequenceStore::FirstAvailableName();
-  KDFont::Size font = KDFont::Size::Large;
-  if (!m_record.isNull()) {
-    nextName = sequence()->fullName();
-    font = KDFont::Size::Small;
-  }
-  if (nextName == nullptr) {
-    /* When unselecting this controller, rowHeight and willDisplayCellForIndex
-     * might be called with a null record while the sequence still exists.
-     * NextName is then the next available name which is nullptr when dealing
-     * with last sequence. As it won't be actually displayed, we use a default
-     * placeholder. */
-    nextName = "?";
-  }
-  const char *subscripts[3] = {"n", "n+1", "n+2"};
-  m_layouts[j] = HorizontalLayout::Builder(
-      CodePointLayout::Builder(nextName[0]),
-      VerticalOffsetLayout::Builder(
-          LayoutHelper::String(subscripts[j], strlen(subscripts[j])),
-          VerticalOffsetLayoutNode::VerticalPosition::Subscript));
-  MenuCell<ScrollableLayoutView, MessageTextView> *myCell =
-      static_cast<MenuCell<ScrollableLayoutView, MessageTextView> *>(cell);
-  myCell->label()->setLayout(m_layouts[j]);
-  myCell->label()->setFont(font);
-}
-
-void TypeParameterController::setRecord(Ion::Storage::Record record) {
-  m_record = record;
-}
-
 SequenceStore *TypeParameterController::sequenceStore() {
   return App::app()->functionStore();
-}
-
-StackViewController *TypeParameterController::stackController() const {
-  return (StackViewController *)parentResponder();
 }
 
 }  // namespace Sequence

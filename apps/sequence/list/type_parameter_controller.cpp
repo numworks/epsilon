@@ -53,7 +53,7 @@ void TypeParameterController::viewWillAppear() {
   const char *nextName = isNewModel() ? SequenceStore::FirstAvailableName()
                                       : sequence()->fullName();
   assert(nextName != nullptr);
-  constexpr char *subscripts[k_numberOfCells] = {"n", "n+1", "n+2"};
+  const char *subscripts[k_numberOfCells] = {"n", "n+1", "n+2"};
   for (size_t j = 0; j < k_numberOfCells; j++) {
     cellAtIndex(j)->label()->setLayout(HorizontalLayout::Builder(
         CodePointLayout::Builder(nextName[0]),

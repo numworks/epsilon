@@ -252,7 +252,11 @@ bool Expression::deepIsList(Context *context) const {
           case ExpressionNode::Type::ListSequence:
           case ExpressionNode::Type::ListSort:
           case ExpressionNode::Type::RandintNoRepeat:
-            return TrinaryBoolean::True;
+            return (!e.parent().isUninitialized() &&
+                    e.parent().type() == ExpressionNode::Type::Dependency &&
+                    e.parent().indexOfChild(e) > 0)
+                       ? TrinaryBoolean::False
+                       : TrinaryBoolean::True;
 
           /* These expressions have a list as argument but are never lists, we
            * must stop the search. */
@@ -943,7 +947,7 @@ bool Expression::isReal(Context *context, bool canContainMatrices) const {
            ExpressionNode::Type::Factorial, ExpressionNode::Type::Floor,
            ExpressionNode::Type::FracPart, ExpressionNode::Type::ImaginaryPart,
            ExpressionNode::Type::RealPart})) {
-    return !deepIsMatrix(context, canContainMatrices);
+    return !deepIsMatrix(context, canContainMatrices) && !deepIsList(context);
   }
 
   // NAryExpresions are real if all children are real

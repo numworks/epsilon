@@ -77,9 +77,7 @@ class StatisticsDataset {
       StatisticsDataset<T> dataset, double a, double b) const;
 
   T mean() const { return weightedSum() / totalWeight(); }
-  /* We use the Var(X) = E[(X-E[X])^2] definition instead of Var(X) = E[X^2] -
-   * E[X]^2 to ensure a positive result and to minimize rounding errors */
-  T variance() const { return offsettedSquaredSum(mean()) / totalWeight(); }
+  T variance() const;
   T standardDeviation() const { return std::sqrt(variance()); }
   T sampleStandardDeviation() const;
 

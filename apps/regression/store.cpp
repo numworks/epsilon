@@ -261,8 +261,10 @@ double Store::correlationCoefficient(int series) const {
                       : covariance(series, options) / std::sqrt(v0 * v1);
   /* Due to errors, coefficient could slightly exceed 1.0. It needs to be
    * fixed here to prevent r^2 from being bigger than 1. */
-  assert(std::abs(result) <= 1.0 + Float<double>::SqrtEpsilonLax());
-  return std::clamp(result, -1.0, 1.0);
+  if (std::abs(result) <= 1.0 + Float<double>::SqrtEpsilonLax()) {
+    return std::clamp(result, -1.0, 1.0);
+  }
+  return NAN;
 }
 
 double Store::determinationCoefficientForSeries(int series,

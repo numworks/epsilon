@@ -20,7 +20,7 @@ class DependencyNode : public ExpressionNode {
   Type type() const override { return Type::Dependency; }
   int polynomialDegree(Context* context,
                        const char* symbolName) const override {
-    return childAtIndex(0)->polynomialDegree(context, symbolName);
+    return mainExpression()->polynomialDegree(context, symbolName);
   }
   int getPolynomialCoefficients(Context* context, const char* symbolName,
                                 Expression coefficients[]) const override;
@@ -33,11 +33,11 @@ class DependencyNode : public ExpressionNode {
                       int numberOfSignificantDigits,
                       Context* context) const override {
     assert(false);
-    return childAtIndex(0)->createLayout(floatDisplayMode,
-                                         numberOfSignificantDigits, context);
+    return mainExpression()->createLayout(floatDisplayMode,
+                                          numberOfSignificantDigits, context);
   }
   LayoutShape leftLayoutShape() const override {
-    return childAtIndex(0)->leftLayoutShape();
+    return mainExpression()->leftLayoutShape();
   }
 
   // Evaluation
@@ -61,12 +61,16 @@ class DependencyNode : public ExpressionNode {
   template <typename T>
   Evaluation<T> templatedApproximate(
       const ApproximationContext& approximationContext) const;
+
+  ExpressionNode* mainExpression() const;
+  ExpressionNode* dependenciesList() const;
 };
 
 class Dependency : public Expression {
   friend class DependencyNode;
 
  public:
+  constexpr static int k_indexOfMainExpression = 0;
   constexpr static int k_indexOfDependenciesList = 1;
   Dependency(const DependencyNode* n) : Expression(n) {}
   static Dependency Builder(Expression expression,
@@ -79,7 +83,7 @@ class Dependency : public Expression {
   Expression shallowReduce(ReductionContext reductionContext);
 
   int numberOfDependencies() const {
-    return childAtIndex(k_indexOfDependenciesList).numberOfChildren();
+    return dependenciesList().numberOfChildren();
   }
   void addDependency(Expression newDependency);
 
@@ -91,8 +95,8 @@ class Dependency : public Expression {
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
       void* auxiliary = nullptr) const {
-    return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols,
-                                              auxiliary);
+    return mainExpression().recursivelyMatches(test, context, replaceSymbols,
+                                               auxiliary);
   }
 
   Expression removeUselessDependencies(
@@ -104,6 +108,14 @@ class Dependency : public Expression {
                 "UCodePointSystem value was modified");
   constexpr static Expression::FunctionHelper s_functionHelper =
       Expression::FunctionHelper("\u0014dep", 2, &UntypedBuilder);
+
+ private:
+  Expression mainExpression() const {
+    return childAtIndex(k_indexOfMainExpression);
+  }
+  Expression dependenciesList() const {
+    return childAtIndex(k_indexOfDependenciesList);
+  }
 };
 
 }  // namespace Poincare

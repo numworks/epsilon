@@ -26,11 +26,12 @@ bool DependencyNode::derivate(const ReductionContext &reductionContext,
 int DependencyNode::getPolynomialCoefficients(Context *context,
                                               const char *symbolName,
                                               Expression coefficients[]) const {
-  int result = childAtIndex(0)->getPolynomialCoefficients(context, symbolName,
-                                                          coefficients);
+  int result = mainExpression()->getPolynomialCoefficients(context, symbolName,
+                                                           coefficients);
   for (int i = 0; i < result; i++) {
     coefficients[i] = Dependency::Builder(
-        coefficients[i], Expression(childAtIndex(1)).clone().convert<List>());
+        coefficients[i],
+        Expression(dependenciesList()).clone().convert<List>());
   }
   return result;
 }
@@ -61,7 +62,14 @@ Evaluation<T> DependencyNode::templatedApproximate(
       return Complex<T>::Undefined();
     }
   }
-  return childAtIndex(0)->approximate(static_cast<T>(1), approximationContext);
+  return mainExpression()->approximate(static_cast<T>(1), approximationContext);
+}
+
+ExpressionNode *DependencyNode::mainExpression() const {
+  return childAtIndex(Dependency::k_indexOfMainExpression);
+}
+ExpressionNode *DependencyNode::dependenciesList() const {
+  return childAtIndex(Dependency::k_indexOfDependenciesList);
 }
 
 // Dependency
@@ -70,12 +78,12 @@ void Dependency::deepReduceChildren(const ReductionContext &reductionContext) {
   assert(numberOfChildren() == 2);
 
   /* Main expression is reduced with the same reduction target as the parent */
-  childAtIndex(0).deepReduce(reductionContext);
+  mainExpression().deepReduce(reductionContext);
 
   /* List of dependencies is reduced with target SystemForAnalysis */
   ReductionContext depContext = reductionContext;
   depContext.setTarget(ReductionTarget::SystemForAnalysis);
-  childAtIndex(1).deepReduce(depContext);
+  dependenciesList().deepReduce(depContext);
 }
 
 Expression Dependency::shallowReduce(ReductionContext reductionContext) {
@@ -83,8 +91,8 @@ Expression Dependency::shallowReduce(ReductionContext reductionContext) {
    * We do this here because we do not want to do this in List::shallowReduce
    * since most of lists do not want to bubble up their undef and dependencies.
    * (because {undef} != undef) */
-  SimplificationHelper::defaultShallowReduce(
-      childAtIndex(k_indexOfDependenciesList), &reductionContext);
+  SimplificationHelper::defaultShallowReduce(dependenciesList(),
+                                             &reductionContext);
 
   Expression e =
       SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
@@ -92,7 +100,7 @@ Expression Dependency::shallowReduce(ReductionContext reductionContext) {
     return e;
   }
 
-  Expression dependencies = childAtIndex(k_indexOfDependenciesList);
+  Expression dependencies = dependenciesList();
   assert(dependencies.type() == ExpressionNode::Type::List);
   int totalNumberOfDependencies = numberOfDependencies();
   int i = 0;
@@ -119,8 +127,8 @@ Expression Dependency::shallowReduce(ReductionContext reductionContext) {
     }
   }
 
-  if (childAtIndex(0).isUndefined() || totalNumberOfDependencies == 0) {
-    Expression trueExpression = childAtIndex(0);
+  if (mainExpression().isUndefined() || totalNumberOfDependencies == 0) {
+    Expression trueExpression = mainExpression();
     replaceWithInPlace(trueExpression);
     return trueExpression;
   }
@@ -129,7 +137,7 @@ Expression Dependency::shallowReduce(ReductionContext reductionContext) {
 }
 
 void Dependency::addDependency(Expression newDependency) {
-  Expression dependencies = childAtIndex(k_indexOfDependenciesList);
+  Expression dependencies = dependenciesList();
   if (dependencies.type() == ExpressionNode::Type::List) {
     List listChild = static_cast<List &>(dependencies);
     listChild.addChildAtIndexInPlace(
@@ -143,7 +151,7 @@ void Dependency::addDependency(Expression newDependency) {
 Expression Dependency::extractDependencies(List l) {
   int previousNumberOfChildren = l.numberOfChildren();
 
-  Expression dependencies = childAtIndex(k_indexOfDependenciesList);
+  Expression dependencies = dependenciesList();
   if (dependencies.isUndefined()) {
     l.addChildAtIndexInPlace(dependencies, previousNumberOfChildren,
                              previousNumberOfChildren);
@@ -169,7 +177,7 @@ Expression Dependency::extractDependencies(List l) {
     }
   }
 
-  Expression newRef = childAtIndex(0);
+  Expression newRef = mainExpression();
   replaceWithInPlace(newRef);
   return newRef;
 }
@@ -187,7 +195,7 @@ Expression Dependency::UntypedBuilder(Expression children) {
 Expression Dependency::removeUselessDependencies(
     const ReductionContext &reductionContext) {
   // Step 1: Break dependencies into smaller expressions
-  Expression dependenciesExpression = childAtIndex(k_indexOfDependenciesList);
+  Expression dependenciesExpression = dependenciesList();
   assert(dependenciesExpression.type() == ExpressionNode::Type::List);
   List dependencies = static_cast<List &>(dependenciesExpression);
   for (int i = 0; i < dependencies.numberOfChildren(); i++) {
@@ -224,8 +232,7 @@ Expression Dependency::removeUselessDependencies(
     return e;
   }
   Dependency expandedDependency = static_cast<Dependency &>(e);
-  Expression tempList =
-      expandedDependency.childAtIndex(k_indexOfDependenciesList);
+  Expression tempList = expandedDependency.dependenciesList();
   List newDependencies = static_cast<List &>(tempList);
 
   /* Step 2: Remove duplicate dependencies and dependencies contained in others
@@ -245,14 +252,13 @@ Expression Dependency::removeUselessDependencies(
     }
   }
 
-  Expression tempList2 =
-      expandedDependency.childAtIndex(k_indexOfDependenciesList);
+  Expression tempList2 = expandedDependency.dependenciesList();
   newDependencies = static_cast<List &>(tempList2);
   /* Step 3: Remove dependencies already contained in main expression.
    * dep(x^2+1,{x}) -> x^2+1 */
   for (int i = 0; i < newDependencies.numberOfChildren(); i++) {
     Expression depI = newDependencies.childAtIndex(i);
-    if (expandedDependency.childAtIndex(0).containsSameDependency(
+    if (expandedDependency.mainExpression().containsSameDependency(
             depI, reductionContext)) {
       newDependencies.removeChildAtIndexInPlace(i);
       i--;

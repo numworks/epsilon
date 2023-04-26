@@ -20,6 +20,8 @@ AbstractScrollableMultipleLayoutsView::ContentCell::ContentCell(
       m_centeredLayoutView({.style = {.font = font}}),
       m_selectedSubviewPosition(SubviewPosition::Center),
       m_displayCenter(true),
+      m_displayableCenter(true),
+      m_rightIsStrictlyEqual(false),
       m_horizontalAlignment(horizontalAlignment) {}
 
 KDColor AbstractScrollableMultipleLayoutsView::ContentCell::backgroundColor()

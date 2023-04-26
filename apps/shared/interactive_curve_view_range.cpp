@@ -365,6 +365,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
     if (newRange.ratioIs(NormalYXRatio())) {
       bool canSetRatio = newRangeWithMargins.setRatio(NormalYXRatio(), false);
       assert(!canSetRatio || newRangeWithMargins.ratioIs(NormalYXRatio()));
+      (void)canSetRatio;
     }
 
     if (computeX) {

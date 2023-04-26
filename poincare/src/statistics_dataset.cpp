@@ -106,6 +106,15 @@ T StatisticsDataset<T>::squaredSumOffsettedByLinearTransformationOfDataset(
 }
 
 template <typename T>
+T StatisticsDataset<T>::variance() const {
+  /* We use the Var(X) = E[(X-E[X])^2] definition instead of Var(X) = E[X^2] -
+   * E[X]^2 to ensure a positive result and to minimize rounding errors */
+  T m = mean();
+  T v = offsettedSquaredSum(m) / totalWeight();
+  return std::abs(v / m) < Float<double>::EpsilonLax() ? 0.0 : v;
+}
+
+template <typename T>
 T StatisticsDataset<T>::sampleStandardDeviation() const {
   T weight = totalWeight();
   return std::sqrt(weight / (weight - 1.0)) * standardDeviation();

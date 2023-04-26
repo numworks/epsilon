@@ -10,6 +10,8 @@ namespace Settings {
 
 class AlternateSwitchAndImage : public Escher::CellWidget {
  public:
+  AlternateSwitchAndImage() : m_displayImage(false) {}
+
   void setDisplayImage(bool state) { m_displayImage = state; }
 
   Escher::SwitchView* switchView() { return &m_switch; }

@@ -53,23 +53,22 @@ void StringLayoutNode::render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
     return;
   }
   // Draw the thousand separators
-  int firstSeparatorIndex = firstNonDigitIndex() - 3 * nThousandsSeparators - 1;
+  size_t firstSeparatorIndex = firstNonDigitIndex() - 3 * nThousandsSeparators;
   // Use this buffer to draw group of 3 digits.
   char groupedNumbersBuffer[4];
   // Draw the first separator first
-  strlcpy(groupedNumbersBuffer, m_string, firstSeparatorIndex + 2);
+  strlcpy(groupedNumbersBuffer, m_string, firstSeparatorIndex + 1);
   p = ctx->drawString(groupedNumbersBuffer, p, style);
   p = p.translatedBy(KDPoint(Escher::Metric::ThousandsSeparatorWidth, 0));
   // Draw the other separators.
-  for (int i = 0; i < nThousandsSeparators - 1; i++) {
-    strlcpy(groupedNumbersBuffer, &m_string[firstSeparatorIndex + i * 3 + 1],
-            4);
+  for (size_t i = 0; i < nThousandsSeparators - 1; i++) {
+    strlcpy(groupedNumbersBuffer, m_string + firstSeparatorIndex + i * 3, 4);
     p = ctx->drawString(groupedNumbersBuffer, p, style);
     p = p.translatedBy(KDPoint(Escher::Metric::ThousandsSeparatorWidth, 0));
   }
   // Draw the end of the string.
   ctx->drawString(
-      &m_string[firstSeparatorIndex + 3 * (nThousandsSeparators - 1) + 1], p,
+      m_string + firstSeparatorIndex + 3 * (nThousandsSeparators - 1), p,
       style);
 }
 

@@ -13,13 +13,11 @@ namespace Sequence {
 
 class ListController;
 
-constexpr int k_numberOfCells = 3;
-
 class TypeParameterController
     : public Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::ScrollableLayoutView,
                            Escher::MessageTextView>,
-          k_numberOfCells, Escher::RegularListViewDataSource> {
+          3, Escher::RegularListViewDataSource> {
  public:
   TypeParameterController(Escher::Responder* parentResponder,
                           ListController* list, KDCoordinate topMargin = 0,

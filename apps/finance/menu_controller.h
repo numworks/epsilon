@@ -13,13 +13,11 @@
 
 namespace Finance {
 
-constexpr int k_numberOfFinanceCells = 2;
-
 class MenuController
     : public Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
-          k_numberOfFinanceCells, Escher::RegularListViewDataSource> {
+          2, Escher::RegularListViewDataSource> {
  public:
   MenuController(Escher::StackViewController* parentResponder,
                  InterestMenuController* interestMenuController);

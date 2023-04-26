@@ -16,8 +16,7 @@ CategoricalTypeController::CategoricalTypeController(
     : Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::ChevronView>,
-          k_numberOfCategoricalCells, Escher::RegularListViewDataSource>(
-          parent),
+          k_numberOfCells, Escher::RegularListViewDataSource>(parent),
       m_statistic(statistic),
       m_inputGoodnessController(inputGoodnessController),
       m_inputHomogeneityController(inputHomogeneityController) {

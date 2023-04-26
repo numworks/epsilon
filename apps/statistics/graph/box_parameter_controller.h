@@ -11,13 +11,11 @@
 
 namespace Statistics {
 
-constexpr static int k_numberOfParameterCells = 1;
-
 class BoxParameterController
     : public Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::SwitchView>,
-          k_numberOfParameterCells, Escher::RegularListViewDataSource> {
+          1, Escher::RegularListViewDataSource> {
  public:
   BoxParameterController(Escher::Responder* parentResponder, Store* store,
                          DataViewController* dataViewController);

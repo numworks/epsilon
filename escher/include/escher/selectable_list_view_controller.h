@@ -69,6 +69,8 @@ class SelectableCellListPage : public SelectableListViewController<DataSource> {
                 "There should'nt be a need for more than 5 reusable cells.");
 
  public:
+  constexpr static int k_numberOfCells = NumberOfCells;
+
   SelectableCellListPage(Responder* parent,
                          SelectableListViewDelegate* tableDelegate = nullptr)
       : SelectableListViewController<DataSource>(parent, tableDelegate) {}

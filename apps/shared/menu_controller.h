@@ -8,8 +8,6 @@
 
 namespace Shared {
 
-constexpr int k_menuControllerMaxNumberOfCells = 2;
-
 class MenuControllerDelegate {
  public:
   virtual void selectSubApp(int subAppIndex) = 0;
@@ -17,9 +15,9 @@ class MenuControllerDelegate {
   virtual int numberOfSubApps() const = 0;
 };
 
-class MenuController : public Escher::SelectableCellListPage<
-                           Escher::SubappCell, k_menuControllerMaxNumberOfCells,
-                           Escher::MemoizedListViewDataSource> {
+class MenuController
+    : public Escher::SelectableCellListPage<
+          Escher::SubappCell, 2, Escher::MemoizedListViewDataSource> {
  public:
   MenuController(
       Escher::StackViewController *parentResponder,
@@ -33,7 +31,7 @@ class MenuController : public Escher::SelectableCellListPage<
   int numberOfRows() const override { return m_delegate->numberOfSubApps(); }
 
  private:
-  Escher::ViewController *m_controllers[k_menuControllerMaxNumberOfCells];
+  Escher::ViewController *m_controllers[k_numberOfCells];
   MenuControllerDelegate *m_delegate;
 };
 

@@ -17,13 +17,11 @@ namespace Inference {
 class InputGoodnessController;
 class InputHomogeneityController;
 
-constexpr static int k_numberOfCategoricalCells = 2;
-
 class CategoricalTypeController
     : public Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::ChevronView>,
-          k_numberOfCategoricalCells, Escher::RegularListViewDataSource> {
+          2, Escher::RegularListViewDataSource> {
  public:
   CategoricalTypeController(
       Escher::StackViewController* parent, Chi2Test* statistic,

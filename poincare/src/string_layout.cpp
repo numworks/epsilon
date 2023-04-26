@@ -54,8 +54,10 @@ void StringLayoutNode::render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
   }
   // Draw the thousand separators
   size_t firstSeparatorIndex = firstNonDigitIndex() - 3 * nThousandsSeparators;
-  // Use this buffer to draw group of 3 digits.
-  char groupedNumbersBuffer[4];
+  // Use this buffer to draw group of 3 digits (+ the "-" if needed).
+  constexpr size_t k_bufferSize = 5;
+  char groupedNumbersBuffer[k_bufferSize];
+  assert(firstSeparatorIndex < k_bufferSize);
   // Draw the first separator first
   strlcpy(groupedNumbersBuffer, m_string, firstSeparatorIndex + 1);
   p = ctx->drawString(groupedNumbersBuffer, p, style);

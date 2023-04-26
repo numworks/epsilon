@@ -22,8 +22,8 @@ bool PercentSimpleNode::childAtIndexNeedsUserParentheses(
   if (child.type() == Type::Conjugate) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
-  return child.isOfType(
-      {Type::Subtraction, Type::Addition, Type::Multiplication});
+  return child.isOfType({Type::Subtraction, Type::Addition,
+                         Type::Multiplication, Type::Opposite});
 }
 
 // Layout

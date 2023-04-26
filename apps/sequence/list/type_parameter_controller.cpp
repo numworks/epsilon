@@ -66,6 +66,10 @@ void TypeParameterController::viewWillAppear() {
 }
 
 void TypeParameterController::viewDidDisappear() {
+  // Tidy layouts
+  for (size_t i = 0; i < k_numberOfCells; i++) {
+    cellAtIndex(i)->label()->setLayout(Layout());
+  }
   m_selectableListView.deselectTable();
   ViewController::viewDidDisappear();
 }

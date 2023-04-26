@@ -23,7 +23,8 @@ class Layout : public TreeHandle {
   Layout(const LayoutNode *node) : TreeHandle(node) {}
   Layout clone() const;
   LayoutNode *node() const {
-    assert(isUninitialized() || !TreeHandle::node()->isGhost());
+    assert(isUninitialized() ||
+           (TreeHandle::node() && !TreeHandle::node()->isGhost()));
     return static_cast<LayoutNode *>(TreeHandle::node());
   }
   static Layout LayoutFromAddress(const void *address, size_t size);

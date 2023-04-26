@@ -166,6 +166,73 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
   return reference;
 }
 
+EditionReference Simplification::SystemProjection(EditionReference reference) {
+  /* Use an EditionReference to track the end since the tree is being edited.
+   * Push a zero block in case reference is last in the EditionPool. */
+  EditionReference nextTree(
+      EditionPool::sharedEditionPool()->push<BlockType::Zero>());
+  EditionReference(reference.nextTree()).insertTreeBeforeNode(nextTree);
+  const Node root = reference.block();
+  Node node = root;
+  /* TODO: Most of the projections could be optimized by simply replacing and
+   * inserting nodes. This optimization could be applied in matchAndReplace. See
+   * comment in matchAndReplace. */
+  while (nextTree.block() > node.block()) {
+    BlockType type = node.type();
+    EditionReference ref(node);
+    switch (type) {
+      case BlockType::Subtraction:
+        ref.matchAndReplace(
+            KSub(KPlaceholder<A>(), KPlaceholder<B>()),
+            KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>())));
+        break;
+      case BlockType::Cosine:
+        ref.matchAndReplace(KCos(KPlaceholder<A>()),
+                            KTrig(KPlaceholder<A>(), 0_e));
+        break;
+      case BlockType::Sine:
+        ref.matchAndReplace(KSin(KPlaceholder<A>()),
+                            KTrig(KPlaceholder<A>(), 1_e));
+        break;
+      case BlockType::Tangent:
+        /* TODO: Tangent will duplicate its children, replacing it after
+         * everything else may be an optimization. */
+        ref = ref.matchAndReplace(
+            KTan(KPlaceholder<A>()),
+            KMult(KTrig(KPlaceholder<A>(), 1_e),
+                  KPow(KTrig(KPlaceholder<A>(), 0_e), -1_e)));
+        break;
+      case BlockType::Power:
+        if (node.nextNode().treeIsIdenticalTo(e_e)) {
+          ref.matchAndReplace(KPow(e_e, KPlaceholder<A>()),
+                              KExp(KPlaceholder<A>()));
+        } else if (!node.nextNode().nextTree().block()->isInteger()) {
+          ref.matchAndReplace(
+              KPow(KPlaceholder<A>(), KPlaceholder<B>()),
+              KExp(KMult(KLn(KPlaceholder<A>()), KPlaceholder<B>())));
+        }
+        break;
+      case BlockType::Logarithm:
+        ref.matchAndReplace(KLogarithm(KPlaceholder<A>(), e_e),
+                            KLn(KPlaceholder<A>()))
+            .matchAndReplace(KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()),
+                             KMult(KLn(KPlaceholder<A>()),
+                                   KPow(KLn(KPlaceholder<B>()), -1_e)));
+        break;
+      case BlockType::Log:
+        ref.matchAndReplace(
+            KLog(KPlaceholder<A>()),
+            KMult(KLn(KPlaceholder<A>()), KPow(KLn(10_e), -1_e)));
+        break;
+      default:
+        break;
+    }
+    node = node.nextNode();
+  }
+  nextTree.removeTree();
+  return EditionReference(root);
+}
+
 EditionReference Simplification::ProjectionReduction(
     EditionReference division, Node (*PushProjectedEExpression)(),
     Node (*PushInverse)()) {

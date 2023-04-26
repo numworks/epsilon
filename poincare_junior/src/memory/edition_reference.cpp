@@ -101,6 +101,24 @@ EditionReference EditionReference::matchAndCreate(const Node pattern,
 
 EditionReference EditionReference::matchAndReplace(const Node pattern,
                                                    const Node structure) {
+  /* TODO: When possible this could be optimized by deleting all non-placeholder
+   * pattern nodes and then inserting all the non-placeholder structure nodes.
+   * For example : Pattern : +{4} A 1 B C A     Structure : *{4} 2 B A A
+   *                                                EditionPool : +{4} x 1 y z x
+   * 1 - Only keep structure's matched placeholders
+   *                                                EditionPool : y x
+   * 2 - Insert structure Nodes
+   *                                                EditionPool : *{4} 2 y x A
+   * 3 - Replace duplicated placeholders
+   *                                                EditionPool : *{4} 2 y x x
+   *
+   * Some difficulties:
+   *  - Detect if it is possible : BA->AB isn't but ABCBA->BCA is.
+   *  - Handle PlaceHolder's CreateFilter such as FirstChild.
+   *  - Implement a method allowing the insertion of uncompleted nodes :
+   *      void insert(Block * startSrc, Block * endSrc, Block * dst)
+   */
+
   // Step 1 - Match the pattern
   PatternMatching::Context ctx = PatternMatching::Match(pattern, *this);
   if (ctx.isUninitialized()) {

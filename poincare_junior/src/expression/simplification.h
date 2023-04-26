@@ -23,6 +23,8 @@ class Simplification {
   static EditionReference DistributeMultiplicationOverAddition(
       EditionReference reference);
 
+  static EditionReference SystemProjection(EditionReference reference);
+
  private:
   typedef EditionReference (*NumberOperation)(const Node, const Node);
   static void ReduceNumbersInNAry(EditionReference reference,

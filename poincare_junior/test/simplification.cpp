@@ -38,3 +38,32 @@ QUIZ_CASE(pcj_simplification_contraction) {
                  KTrig(KAdd(KLog(3_e), KAdd(1_e, KLog("x"_e))),
                        KAdd(0_e, 1_e)))));
 }
+
+QUIZ_CASE(pcj_simplification_projection) {
+  EditionReference ref(KCos(KSin(KTan(
+      KPow(KPow(KPow(e_e, KLogarithm(KLogarithm(KLog(π_e), 2_e), e_e)), π_e),
+           3_e)))));
+  ref = Simplification::SystemProjection(ref);
+  assert_trees_are_equal(
+      ref,
+      KTrig(
+          KTrig(
+              KMult(KTrig(KPow(KExp(KMult(KLn(KExp(KLn(KMult(
+                                              KLn(KMult(KLn(π_e),
+                                                        KPow(KLn(10_e), -1_e))),
+                                              KPow(KLn(2_e), -1_e))))),
+                                          π_e)),
+                               3_e),
+                          1_e),
+                    KPow(KTrig(KPow(KExp(KMult(
+                                        KLn(KExp(KLn(KMult(
+                                            KLn(KMult(KLn(π_e),
+                                                      KPow(KLn(10_e), -1_e))),
+                                            KPow(KLn(2_e), -1_e))))),
+                                        π_e)),
+                                    3_e),
+                               0_e),
+                         -1_e)),
+              1_e),
+          0_e));
+}

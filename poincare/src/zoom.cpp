@@ -33,6 +33,7 @@ Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
   return zoom.range(false, false);
 }
 
+#if ASSERTIONS
 static bool rangeIsValidZoom(Range1D range, Range1D interestingRange,
                              float maxFloat) {
   return (range.min() <=
@@ -44,6 +45,7 @@ static bool rangeIsValidZoom(Range1D range, Range1D interestingRange,
               range.max() ||
           !std::isfinite(interestingRange.max()));
 }
+#endif
 
 Range2D Zoom::range(bool beautify, bool forceNormalization) const {
   Range2D result;
@@ -53,7 +55,7 @@ Range2D Zoom::range(bool beautify, bool forceNormalization) const {
   result.x()->setMax(pretty.xMax(), m_maxFloat);
   result.y()->setMin(pretty.yMin(), m_maxFloat);
   result.y()->setMax(pretty.yMax(), m_maxFloat);
-
+#if ASSERTIONS
   bool xRangeIsForced = m_forcedRange.x()->isValid();
   bool yRangeIsForced = m_forcedRange.y()->isValid();
   assert(xRangeIsForced || (yRangeIsForced && forceNormalization) ||
@@ -65,10 +67,9 @@ Range2D Zoom::range(bool beautify, bool forceNormalization) const {
                              result.xMax() == m_forcedRange.xMax()));
   assert(!yRangeIsForced || (result.yMin() == m_forcedRange.yMin() &&
                              result.yMax() == m_forcedRange.yMax()));
-  (void)xRangeIsForced;
-  (void)yRangeIsForced;
   assert(result.x()->isValid() && result.y()->isValid() &&
          !result.x()->isEmpty() && !result.y()->isEmpty());
+#endif
   return result;
 }
 

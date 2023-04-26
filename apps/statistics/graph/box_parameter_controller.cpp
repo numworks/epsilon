@@ -9,8 +9,7 @@ BoxParameterController::BoxParameterController(
     DataViewController* dataViewController)
     : SelectableCellListPage<
           MenuCell<MessageTextView, EmptyCellWidget, SwitchView>,
-          k_numberOfParameterCells, Escher::RegularListViewDataSource>(
-          parentResponder),
+          k_numberOfCells, Escher::RegularListViewDataSource>(parentResponder),
       m_store(store),
       m_dataViewController(dataViewController) {
   cellAtIndex(0)->label()->setMessage(I18n::Message::DisplayOutliers);

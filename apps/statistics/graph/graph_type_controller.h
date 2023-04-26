@@ -19,10 +19,9 @@ namespace Statistics {
 using GraphTypeCell =
     Escher::MenuCell<Escher::TransparentImageView, Escher::MessageTextView>;
 
-constexpr int k_numberOfCells = 4;
 class GraphTypeController
     : public Escher::AlternateEmptyViewDelegate,
-      public Escher::SelectableCellListPage<GraphTypeCell, k_numberOfCells,
+      public Escher::SelectableCellListPage<GraphTypeCell, 4,
                                             Escher::RegularListViewDataSource> {
  public:
   GraphTypeController(Escher::Responder* parentResponder,

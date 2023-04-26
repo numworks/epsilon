@@ -12,13 +12,11 @@
 
 namespace Finance {
 
-constexpr int k_numberOfResultCells = 1;
-
 class ResultController
     : public Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::FloatBufferTextView<>>,
-          k_numberOfResultCells, Escher::MemoizedListViewDataSource> {
+          1, Escher::MemoizedListViewDataSource> {
  public:
   ResultController(Escher::StackViewController* parentResponder);
 

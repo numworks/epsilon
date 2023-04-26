@@ -16,13 +16,12 @@
 
 namespace Finance {
 
-constexpr int k_numberOfInterestCells = InterestData::k_maxNumberOfUnknowns;
-
 class InterestMenuController
     : public Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
-          k_numberOfInterestCells, Escher::MemoizedListViewDataSource> {
+          InterestData::k_maxNumberOfUnknowns,
+          Escher::MemoizedListViewDataSource> {
  public:
   InterestMenuController(Escher::StackViewController* parentResponder,
                          InterestController* interestController);

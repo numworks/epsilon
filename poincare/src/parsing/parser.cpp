@@ -840,7 +840,8 @@ void Parser::privateParseReservedFunction(
     /* We must make sure that the parameter is parsed as a single variable. */
     const char *parameterText;
     size_t parameterLength;
-    if (ParameteredExpression::ParameterText(
+    if (strlen(m_currentToken.text()) > m_currentToken.length() &&
+        ParameteredExpression::ParameterText(
             m_currentToken.text() + m_currentToken.length() + 1, &parameterText,
             &parameterLength)) {
       Context *oldContext = m_parsingContext.context();

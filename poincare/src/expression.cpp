@@ -252,11 +252,10 @@ bool Expression::deepIsList(Context *context) const {
           case ExpressionNode::Type::ListSequence:
           case ExpressionNode::Type::ListSort:
           case ExpressionNode::Type::RandintNoRepeat:
-            return (!e.parent().isUninitialized() &&
-                    e.parent().type() == ExpressionNode::Type::Dependency &&
-                    e.parent().indexOfChild(e) > 0)
-                       ? TrinaryBoolean::False
-                       : TrinaryBoolean::True;
+            return BinaryToTrinaryBool(e.parent().isUninitialized() ||
+                                       e.parent().type() !=
+                                           ExpressionNode::Type::Dependency ||
+                                       e.parent().indexOfChild(e) == 0);
 
           /* These expressions have a list as argument but are never lists, we
            * must stop the search. */

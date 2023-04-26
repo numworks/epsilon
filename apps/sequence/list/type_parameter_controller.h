@@ -1,15 +1,13 @@
 #ifndef SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
 #define SEQUENCE_TYPE_PARAMATER_CONTROLLER_H
 
+#include <apps/shared/sequence_store.h>
 #include <escher/even_odd_expression_cell.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/scrollable_layout_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
-#include <poincare/layout.h>
-
-#include "../../shared/sequence_store.h"
 
 namespace Sequence {
 
@@ -33,8 +31,7 @@ class TypeParameterController
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int j) override;
-  void setRecord(Ion::Storage::Record record);
+  void setRecord(Ion::Storage::Record record) { m_record = record; }
 
  private:
   constexpr static int k_indexOfExplicit =
@@ -44,13 +41,16 @@ class TypeParameterController
   constexpr static int k_indexOfDoubleRecurrence =
       static_cast<int>(Shared::Sequence::Type::DoubleRecurrence);
 
-  Escher::StackViewController* stackController() const;
+  Escher::StackViewController* stackController() const {
+    return static_cast<Escher::StackViewController*>(parentResponder());
+  }
   Shared::Sequence* sequence() {
-    assert(!m_record.isNull());
+    assert(!isNewModel());
     return sequenceStore()->modelForRecord(m_record);
   }
   Shared::SequenceStore* sequenceStore();
-  Poincare::Layout m_layouts[k_numberOfCells];
+  bool isNewModel() const { return m_record.isNull(); }
+
   Ion::Storage::Record m_record;
   ListController* m_listController;
 };

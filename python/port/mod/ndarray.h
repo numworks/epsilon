@@ -19,6 +19,7 @@
 #include "py/binary.h"
 #include "py/objstr.h"
 #include "py/objlist.h"
+#include "py/objtuple.h"
 
 #include "ulab.h"
 

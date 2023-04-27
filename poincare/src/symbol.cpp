@@ -266,9 +266,11 @@ Expression Symbol::deepReplaceReplaceableSymbols(
     return replaceWithUndefinedInPlace();
   }
 
-  /* If symbols outside of parametered expressions can depend on each other,
-   * then circularity should be checked like in Function::involvesCircularity.
-   */
+  /* A symbol outside parametered expressions are not supposed to depend on
+   * another symbol, the latter is directly replaced by its expression (cf
+   * Store::deepReduceChildren). If we decide to allow symbols to depend on
+   * other symbols, then circularity should be checked like in
+   * Function::involvesCircularity. */
   assert(
       !e.deepIsSymbolic(nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
 

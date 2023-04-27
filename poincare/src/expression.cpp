@@ -128,11 +128,16 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
   }
   assert(testResult == TrinaryBoolean::Unknown && !isUninitialized());
 
-  // Handle dependencies, symbols and functions
+  // Handle dependencies, store, symbols and functions
   ExpressionNode::Type t = type();
   if (t == ExpressionNode::Type::Dependency) {
     Expression e = *this;
     return static_cast<Dependency &>(e).dependencyRecursivelyMatches(
+        test, context, replaceSymbols, auxiliary);
+  }
+  if (t == ExpressionNode::Type::Store) {
+    Expression e = *this;
+    return static_cast<Store &>(e).storeRecursivelyMatches(
         test, context, replaceSymbols, auxiliary);
   }
   if (t == ExpressionNode::Type::Symbol ||

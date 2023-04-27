@@ -58,6 +58,14 @@ class Store final : public ExpressionTwoChildren<Store, StoreNode> {
   Expression shallowReduce(ReductionContext reductionContext);
   bool storeValueForSymbol(Context* context) const;
 
+  bool storeRecursivelyMatches(
+      ExpressionTrinaryTest test, Context* context,
+      SymbolicComputation replaceSymbols =
+          SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+      void* auxiliary = nullptr) const {
+    return value().recursivelyMatches(test, context, replaceSymbols, auxiliary);
+  }
+
  private:
   StoreNode* node() const {
     return static_cast<StoreNode*>(Expression::node());

@@ -439,6 +439,7 @@ class Expression : public TreeHandle {
 
   Expression deepRemoveUselessDependencies(
       const ReductionContext& reductionContext);
+  Expression deepReplaceSymbols(const ReductionContext& reductionContext);
 
   /* 'ExpressionWithoutSymbols' replaces symbols in place and returns an
    * uninitialized expression if it is circularly defined.

@@ -331,7 +331,7 @@ bool Expression::IsDiscontinuous(const Expression e, Context *context) {
 }
 
 bool Expression::deepIsSymbolic(Context *context,
-                                SymbolicComputation replaceSymbols) {
+                                SymbolicComputation replaceSymbols) const {
   return recursivelyMatches(
       [](const Expression e, Context *context, void *auxiliary) {
         if (e.isParameteredExpression()) {

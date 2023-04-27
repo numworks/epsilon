@@ -259,7 +259,8 @@ class Expression : public TreeHandle {
                                  const char* symbol);
   bool isLinearCombinationOfFunction(Context* context, PatternTest testFunction,
                                      const char* symbol) const;
-  bool deepIsSymbolic(Context* context, SymbolicComputation replaceSymbols);
+  bool deepIsSymbolic(Context* context,
+                      SymbolicComputation replaceSymbols) const;
 
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynomial

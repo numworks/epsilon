@@ -19,8 +19,10 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
                            bool firstDrawnRecord) const {
   Shared::Sequence* s = m_sequenceStore->modelForRecord(record);
 
-  float xStep = std::ceil(pixelWidth());
-  float xMin = range()->xMin(), xMax = range()->xMax();
+  int xStep = static_cast<int>(std::ceil(pixelWidth()));
+  int xMin = static_cast<int>(std::ceil(range()->xMin()));
+  int xMax = static_cast<int>(std::floor(range()->xMax()));
+  assert(xStep > 0 && xMin <= xMax);
 
   for (int x = xMin; x <= xMax; x += xStep) {
     float y = s->evaluateXYAtParameter(static_cast<float>(x), context()).y();

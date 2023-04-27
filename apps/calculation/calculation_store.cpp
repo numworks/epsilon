@@ -148,7 +148,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
         approximateOutputExpression =
             PoincareHelpers::ApproximateKeepingUnits<double>(
                 exactStoredExpression, context);
-        if (storeExpression.childAtIndex(1).type() ==
+        if (static_cast<Store &>(storeExpression).symbol().type() ==
                 ExpressionNode::Type::Symbol &&
             ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(
                 inputExpression, exactStoredExpression,

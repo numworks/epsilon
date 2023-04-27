@@ -1,5 +1,6 @@
 extern "C" {
 #include "modpyplot.h"
+#include "../../ndarray.h"
 }
 #include <assert.h>
 #include <escher/palette.h>
@@ -17,6 +18,11 @@ static int paletteIndex = 0;
 
 static size_t extractArgument(mp_obj_t arg, mp_obj_t **items) {
   size_t itemLength;
+#if NDARRAY_HAS_TOLIST
+  if (mp_obj_is_type(arg, &ulab_ndarray_type)) {
+    arg = ndarray_tolist(arg);
+  }
+#endif
   if (mp_obj_is_type(arg, &mp_type_tuple) ||
       mp_obj_is_type(arg, &mp_type_list)) {
     mp_obj_get_array(arg, &itemLength, items);
@@ -316,15 +322,21 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args,
   mp_obj_t *edgeItems;
   size_t nBins;
   // bin arg
-  if (n_args >= 2 && (mp_obj_is_type(args[1], &mp_type_tuple) ||
-                      mp_obj_is_type(args[1], &mp_type_list))) {
+  mp_obj_t arrayArg = args[1];
+#if NDARRAY_HAS_TOLIST
+    if (mp_obj_is_type(arrayArg, &ulab_ndarray_type)) {
+      arrayArg = ndarray_tolist(arrayArg);
+    }
+#endif
+  if (n_args >= 2 && (mp_obj_is_type(arrayArg, &mp_type_tuple) ||
+                      mp_obj_is_type(arrayArg, &mp_type_list))) {
     size_t nEdges;
-    mp_obj_get_array(args[1], &nEdges, &edgeItems);
+    mp_obj_get_array(arrayArg, &nEdges, &edgeItems);
     nBins = nEdges - 1;
   } else {
     nBins = 10;
     if (n_args >= 2) {
-      nBins = mp_obj_get_int(args[1]);
+      nBins = mp_obj_get_int(arrayArg);
     }
 
     mp_float_t binWidth = (max - min) / nBins;

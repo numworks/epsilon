@@ -556,7 +556,7 @@ const ToolboxMessageTree NumpyModuleChildren[] = {
                              I18n::Message::PythonNumpyMin, false,
                              I18n::Message::PythonCommandNumpyMinWithoutArg),
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMean,
-                             I18n::Message::PythonArgMax, false,
+                             I18n::Message::PythonMean, false,
                              I18n::Message::PythonCommandMeanWithoutArg),
     ToolboxMessageTree::Leaf(I18n::Message::PythonCommandMedian,
                              I18n::Message::PythonMedian, false,

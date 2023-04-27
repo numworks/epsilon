@@ -1020,7 +1020,7 @@ bool Expression::ExactAndApproximateExpressionsAreEqual(
          !approximateExpression.isUninitialized());
 
   /* Turn floats and doubles into decimal so that they can be compared to
-   * rationnals. */
+   * rationals. */
   if (approximateExpression.type() == ExpressionNode::Type::Double) {
     approximateExpression = Decimal::Builder(
         static_cast<Float<double> &>(approximateExpression).value());

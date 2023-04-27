@@ -118,6 +118,7 @@ WithCurves::CurveDrawing::CurveDrawing(Curve2D curve, void *context,
       m_dashed(dashed),
       m_patternWithoutCurve(false),
       m_drawStraightLinesEarly(true) {
+  assert(std::isfinite(m_tEnd) && std::isfinite(m_tStart));
   // Assert that the chosen step is not too small (ad-hoc value)
   assert((m_tEnd - m_tStart) / m_tStep < 10e5);
 }

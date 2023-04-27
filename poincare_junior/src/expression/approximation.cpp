@@ -36,8 +36,25 @@ T Approximation::To(const Node node) {
       return Approximation::MapAndReduce(node, FloatSubtraction<T>);
     case BlockType::Power:
       return Approximation::MapAndReduce(node, FloatPower<T>);
+    case BlockType::Logarithm:
+      return Approximation::MapAndReduce(node, FloatLog<T>);
+    case BlockType::Trig:
+      return Approximation::MapAndReduce(node, FloatTrig<T>);
+    case BlockType::Exponential:
+      return std::exp(Approximation::To<T>(node.nextNode()));
+    case BlockType::Log:
+      return std::log10(Approximation::To<T>(node.nextNode()));
+    case BlockType::Ln:
+      return std::log(Approximation::To<T>(node.nextNode()));
+    case BlockType::Cosine:
+      return std::cos(Approximation::To<T>(node.nextNode()));
+    case BlockType::Sine:
+      return std::sin(Approximation::To<T>(node.nextNode()));
+    case BlockType::Tangent:
+      return std::tan(Approximation::To<T>(node.nextNode()));
     default:
-      assert(false);
+      // TODO: Implement more BlockTypes
+      return NAN;
   };
 }
 

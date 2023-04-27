@@ -47,6 +47,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
 )
 
 tests_src += $(addprefix poincare_junior/test/,\
+  approximation.cpp \
   calculation.cpp \
   elementary_tree_manipulations.cpp \
   expression_comparison.cpp \

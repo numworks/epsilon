@@ -39,6 +39,16 @@ class Approximation final {
   static T FloatDivision(T a, T b) {
     return a / b;
   }
+  template <typename T>
+  static T FloatLog(T a, T b) {
+    return std::log2(a) / std::log2(b);
+  }
+  template <typename T>
+  static T FloatTrig(T a, T b) {
+    assert(b == -1.0 || b == 0.0 || b == 1.0 || b == 2.0);
+    return ((b == -1.0 || b == 2.0) ? -1.0 : 1.0) *
+           (((static_cast<int>(b) + 2) % 2 == 0) ? std::cos(a) : std::sin(a));
+  }
 
  private:
   template <typename T>

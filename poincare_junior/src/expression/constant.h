@@ -29,9 +29,9 @@ class Constant final {
   static T To(enum Type type) {
     switch (type) {
       case Constant::Type::Pi:
-        return 3.14;
+        return M_PI;
       case Constant::Type::E:
-        return 2.72;
+        return M_E;
       default:
         assert(false);
     }

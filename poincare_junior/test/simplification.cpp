@@ -40,12 +40,12 @@ QUIZ_CASE(pcj_simplification_contraction) {
 }
 
 QUIZ_CASE(pcj_simplification_projection) {
-  EditionReference ref(KCos(KSin(KTan(
+  EditionReference ref1(KCos(KSin(KTan(
       KPow(KPow(KPow(e_e, KLogarithm(KLogarithm(KLog(π_e), 2_e), e_e)), π_e),
            3_e)))));
-  ref = Simplification::SystemProjection(ref);
+  ref1 = Simplification::SystemProjection(ref1);
   assert_trees_are_equal(
-      ref,
+      ref1,
       KTrig(
           KTrig(
               KMult(KTrig(KPow(KExp(KMult(KLn(KExp(KLn(KMult(
@@ -66,4 +66,14 @@ QUIZ_CASE(pcj_simplification_projection) {
                          -1_e)),
               1_e),
           0_e));
+
+  EditionReference ref2(KAdd(KCos(KSub(2065_e, 2065_e)), KPow(e_e, "x"_e)));
+  ref2 = Simplification::SystemProjection(
+      ref2, Simplification::ProjectionContext::WithFloats);
+  assert_trees_are_equal(
+      ref2,
+      KAdd(KTrig(KAdd(2065.0_e, KMult(-1.0_e, 2065.0_e)), 0.0_e), KExp("x"_e)));
+  ref2 = Simplification::SystemProjection(
+      ref2, Simplification::ProjectionContext::WithApproximation);
+  assert_trees_are_equal(ref2, KAdd(1.0_e, KExp("x"_e)));
 }

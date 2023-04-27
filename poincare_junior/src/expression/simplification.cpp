@@ -1,5 +1,6 @@
 #include "simplification.h"
 
+#include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/pattern_matching.h>
@@ -166,7 +167,11 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
   return reference;
 }
 
-EditionReference Simplification::SystemProjection(EditionReference reference) {
+EditionReference Simplification::SystemProjection(EditionReference reference,
+                                                  ProjectionContext context) {
+  if (context == ProjectionContext::WithApproximation) {
+    reference = Approximation::ReplaceWithApproximation(reference);
+  }
   // Use an EditionReference to track the end since the tree is being edited.
   EditionReference nextTree = reference.nextTree();
   const Node root = reference.block();
@@ -177,6 +182,11 @@ EditionReference Simplification::SystemProjection(EditionReference reference) {
   while (nextTree.block() > node.block()) {
     BlockType type = node.type();
     EditionReference ref(node);
+    if (context == ProjectionContext::WithFloats && ref.block()->isInteger()) {
+      ref = Approximation::ReplaceWithApproximation(ref);
+      node = node.nextNode();
+      continue;
+    }
     switch (type) {
       case BlockType::Subtraction:
         ref.matchAndReplace(

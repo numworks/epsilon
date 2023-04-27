@@ -23,7 +23,14 @@ class Simplification {
   static EditionReference DistributeMultiplicationOverAddition(
       EditionReference reference);
 
-  static EditionReference SystemProjection(EditionReference reference);
+  enum class ProjectionContext {
+    Default,
+    WithFloats,
+    WithApproximation,
+  };
+  static EditionReference SystemProjection(
+      EditionReference reference,
+      ProjectionContext complexity = ProjectionContext::Default);
 
  private:
   typedef EditionReference (*NumberOperation)(const Node, const Node);

@@ -504,11 +504,8 @@ bool Expression::getLinearCoefficients(
         /* Degree is supposed to be 0 or 1. Otherwise, it means that equation
          * is 'undefined' due to the reduction of 0*inf for example.
          * (ie, x*y*inf = 0) */
-        assert(!recursivelyMatches(
-            [](const Expression e, Context *context) {
-              return e.isUndefined();
-            },
-            context, SymbolicComputation::DoNotReplaceAnySymbol));
+        assert(!recursivelyMatches(Expression::IsUndefined, context,
+                                   SymbolicComputation::DoNotReplaceAnySymbol));
         /* Maybe here we would like to return another error than
          * Error::NonLinearSystem, maybe it would be better to return
          * Error::EquationUndefined */

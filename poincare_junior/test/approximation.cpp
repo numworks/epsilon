@@ -41,3 +41,14 @@ QUIZ_CASE(pcj_approximation) {
 
   quiz_assert(std::isnan(Approximation::To<float>("x"_e)));
 }
+
+QUIZ_CASE(pcj_approximation_replace) {
+  EditionReference ref1(KAdd(1_e, 2_e, 10.5_e));
+  ref1 = Approximation::ReplaceWithApproximation(ref1);
+  assert_trees_are_equal(ref1, 13.5_e);
+
+  EditionReference ref2(
+      KMult(2.0_e, KDiv("x"_e, KAdd(1_e, 2.0_e)), KAdd(1_e, 2_e, 10.5_e)));
+  ref2 = Approximation::ReplaceWithApproximation(ref2);
+  assert_trees_are_equal(ref2, KMult(2.0_e, KDiv("x"_e, 3.0_e), 13.5_e));
+}

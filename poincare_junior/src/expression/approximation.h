@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_APPROXIMATION_H
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
+#include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/node.h>
 
 #include <cmath>
@@ -49,8 +50,10 @@ class Approximation final {
     return ((b == -1.0 || b == 2.0) ? -1.0 : 1.0) *
            (((static_cast<int>(b) + 2) % 2 == 0) ? std::cos(a) : std::sin(a));
   }
+  static EditionReference ReplaceWithApproximation(EditionReference ref);
 
  private:
+  static bool ApproximateAndReplaceEveryScalar(EditionReference ref);
   template <typename T>
   using Reductor = T (*)(T, T);
   template <typename T>

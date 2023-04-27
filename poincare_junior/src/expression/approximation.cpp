@@ -73,6 +73,35 @@ T Approximation::MapAndReduce(const Node node, Reductor<T> reductor) {
   return res;
 }
 
+EditionReference Approximation::ReplaceWithApproximation(EditionReference ref) {
+  const Node root = ref;
+  ApproximateAndReplaceEveryScalar(ref);
+  return EditionReference(root);
+}
+
+bool Approximation::ApproximateAndReplaceEveryScalar(EditionReference ref) {
+  bool hasApproximatedEveryChild = true;
+  EditionReference nextTree = ref.nextTree();
+  Node node = ref.nextNode();
+  while (nextTree.block() > node.block()) {
+    // Approximate anyway
+    hasApproximatedEveryChild =
+        ApproximateAndReplaceEveryScalar(node) && hasApproximatedEveryChild;
+    node = node.nextTree();
+  }
+  if (!hasApproximatedEveryChild) {
+    // TODO: Partially approximate additions and multiplication anyway
+    return false;
+  }
+  float approx = Approximation::To<float>(ref);
+  if (std::isnan(approx)) {
+    return false;
+  }
+  ref = ref.replaceTreeByTree(
+      EditionPool::sharedEditionPool()->push<BlockType::Float>(approx));
+  return true;
+}
+
 }  // namespace PoincareJ
 
 template float PoincareJ::Approximation::To<float>(const PoincareJ::Node);

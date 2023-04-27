@@ -11,16 +11,16 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
   assert(m_model && plotView);
 
   float angle = m_model->angle();
-  assert(std::isfinite(angle) && 0 <= angle &&
-         angle < 2 * M_PI + Float<float>::EpsilonLax());
+#if 0
   if (!std::isfinite(angle)) {
-    /* This should not happen, but if it does, it freezes the software in
-     * production, so we add an escape just in case it still happens.
-     * TODO: If the assert above and the assert(std::isfinite(angle)) in
-     * TrigonometryListController are never triggered, this code can be
-     * removed.*/
+    /* I think this should not happen, but if it does, restore this code so
+     * that the angle is not drawn, and remove the assert(std::isfinite(angle))
+     * in TrigonometryListController. */
     return;
   }
+#endif
+  assert(std::isfinite(angle) && 0 <= angle &&
+         angle < 2 * M_PI + Float<float>::EpsilonLax());
   float s = std::sin(angle);
   float c = std::cos(angle);
 

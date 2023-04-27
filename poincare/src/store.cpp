@@ -15,6 +15,13 @@ Expression StoreNode::shallowReduce(const ReductionContext& reductionContext) {
   return Store(this).shallowReduce(reductionContext);
 }
 
+Expression StoreNode::deepReplaceReplaceableSymbols(
+    Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
+    SymbolicComputation symbolicComputation) {
+  return Store(this).deepReplaceReplaceableSymbols(
+      context, isCircular, parameteredAncestorsCount, symbolicComputation);
+}
+
 template <typename T>
 Evaluation<T> StoreNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {
@@ -40,6 +47,18 @@ Expression Store::shallowReduce(ReductionContext reductionContext) {
 bool Store::storeValueForSymbol(Context* context) const {
   assert(!value().isUninitialized());
   return context->setExpressionForSymbolAbstract(value(), symbol());
+}
+
+Expression Store::deepReplaceReplaceableSymbols(
+    Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
+    SymbolicComputation symbolicComputation) {
+  // Only the value of a symbol should have no free variables
+  if (symbol().type() == ExpressionNode::Type::Symbol) {
+    Expression value = childAtIndex(0).deepReplaceReplaceableSymbols(
+        context, isCircular, parameteredAncestorsCount, symbolicComputation);
+    replaceChildAtIndexInPlace(0, value);
+  }
+  return *this;
 }
 
 }  // namespace Poincare

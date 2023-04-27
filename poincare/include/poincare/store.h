@@ -20,6 +20,10 @@ class StoreNode final : public RightwardsArrowExpressionNode {
  private:
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;
+  Expression deepReplaceReplaceableSymbols(
+      Context* context, TrinaryBoolean* isCircular,
+      int parameteredAncestorsCount,
+      SymbolicComputation symbolicComputation) override;
   // Evalutation
   Evaluation<float> approximate(
       SinglePrecision p,
@@ -57,6 +61,9 @@ class Store final : public ExpressionTwoChildren<Store, StoreNode> {
   void deepReduceChildren(const ReductionContext& reductionContext);
   Expression shallowReduce(ReductionContext reductionContext);
   bool storeValueForSymbol(Context* context) const;
+  Expression deepReplaceReplaceableSymbols(
+      Context* context, TrinaryBoolean* isCircular,
+      int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
 
   bool storeRecursivelyMatches(
       ExpressionTrinaryTest test, Context* context,

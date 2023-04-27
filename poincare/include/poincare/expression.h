@@ -241,6 +241,12 @@ class Expression : public TreeHandle {
                     bool isReduced = true) const;
   bool deepIsList(Context* context) const;
   // Set of ExpressionTest that can be used with recursivelyMatches
+  static bool IsUninitialized(const Expression e, Context* context) {
+    return e.isUninitialized();
+  }
+  static bool IsUndefined(const Expression e, Context* context) {
+    return e.isUndefined();
+  }
   static bool IsNAry(const Expression e, Context* context);
   static bool IsApproximate(const Expression e, Context* context);
   static bool IsRandom(const Expression e, Context* context);

@@ -146,13 +146,8 @@ int Matrix::rank(Context *context, Preferences::ComplexFormat complexFormat,
                  Preferences::AngleUnit angleUnit,
                  Preferences::UnitFormat unitFormat,
                  ReductionTarget reductionTarget, bool inPlace) {
-  assert(!recursivelyMatches(
-      [](const Expression e, Context *context) { return e.isUninitialized(); },
-      context));
-
-  if (recursivelyMatches(
-          [](const Expression e, Context *context) { return e.isUndefined(); },
-          context)) {
+  assert(!recursivelyMatches(Expression::IsUninitialized, context));
+  if (recursivelyMatches(Expression::IsUndefined, context)) {
     return -1;
   }
 

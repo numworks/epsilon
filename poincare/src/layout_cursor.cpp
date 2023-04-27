@@ -566,6 +566,7 @@ void LayoutCursor::performBackspace() {
     privateDelete(deletionMethod, true);
   }
   removeEmptyRowOrColumnOfGridParentIfNeeded();
+  balanceAutocompletedBracketsAndKeepAValidCursor();
   didEnterCurrentPosition(previousCursor), invalidateSizesAndPositions();
 }
 
@@ -591,6 +592,7 @@ void LayoutCursor::deleteAndResetSelection() {
   m_position = selectionLeftBound;
   stopSelecting();
   removeEmptyRowOrColumnOfGridParentIfNeeded();
+  balanceAutocompletedBracketsAndKeepAValidCursor();
   didEnterCurrentPosition();
   invalidateSizesAndPositions();
 }
@@ -1046,7 +1048,6 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod,
     }
     bool dummy = false;
     move(OMG::Direction::Left(), false, &dummy);
-    balanceAutocompletedBracketsAndKeepAValidCursor();
     return;
   }
 

@@ -167,11 +167,8 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
 }
 
 EditionReference Simplification::SystemProjection(EditionReference reference) {
-  /* Use an EditionReference to track the end since the tree is being edited.
-   * Push a zero block in case reference is last in the EditionPool. */
-  EditionReference nextTree(
-      EditionPool::sharedEditionPool()->push<BlockType::Zero>());
-  EditionReference(reference.nextTree()).insertTreeBeforeNode(nextTree);
+  // Use an EditionReference to track the end since the tree is being edited.
+  EditionReference nextTree = reference.nextTree();
   const Node root = reference.block();
   Node node = root;
   /* TODO: Most of the projections could be optimized by simply replacing and
@@ -229,7 +226,6 @@ EditionReference Simplification::SystemProjection(EditionReference reference) {
     }
     node = node.nextNode();
   }
-  nextTree.removeTree();
   return EditionReference(root);
 }
 

@@ -38,7 +38,8 @@ class EditionPool final : public Pool {
   bool insertBlock(Block *destination, Block block) {
     return insertBlocks(destination, &block, 1);
   }
-  bool insertBlocks(Block *destination, Block *source, size_t numberOfBlocks);
+  bool insertBlocks(Block *destination, const Block *source,
+                    size_t numberOfBlocks);
   void popBlock() { removeBlocks(lastBlock() - 1, 1); }
   void removeBlocks(Block *address, size_t numberOfBlocks);
   void moveBlocks(Block *destination, Block *source, size_t numberOfBlocks);

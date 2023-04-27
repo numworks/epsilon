@@ -113,10 +113,10 @@ void EditionPool::replaceBlocks(Block *destination, const Block *source,
           *offset = ReferenceTable::UninitializedOffset;
         }
       },
-      destination, source, numberOfBlocks);
+      destination, nullptr, numberOfBlocks);
 }
 
-bool EditionPool::insertBlocks(Block *destination, Block *source,
+bool EditionPool::insertBlocks(Block *destination, const Block *source,
                                size_t numberOfBlocks) {
   if (destination == source || numberOfBlocks == 0) {
     return true;
@@ -185,13 +185,11 @@ void EditionPool::moveBlocks(Block *destination, Block *source,
 Node EditionPool::initFromAddress(const void *address, bool isTree) {
   Node node = Node(reinterpret_cast<const TypeBlock *>(address));
   size_t size = isTree ? node.treeSize() : node.nodeSize();
-  if (!checkForEnoughSpace(size)) {
+  TypeBlock *copiedTree = lastBlock();
+  if (!insertBlocks(copiedTree, static_cast<const Block *>(address),
+                    size * sizeof(Block))) {
     return Node();
   }
-  TypeBlock *copiedTree = lastBlock();
-  m_numberOfBlocks += size;
-  replaceBlocks(copiedTree, static_cast<const Block *>(address),
-                size * sizeof(Block));
 #if POINCARE_POOL_VISUALIZATION
   Log(LoggerType::Edition, "Copy", copiedTree,
       isTree ? Node(copiedTree).treeSize() : Node(copiedTree).nodeSize());

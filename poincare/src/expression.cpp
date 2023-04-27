@@ -1497,6 +1497,8 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
   if (*reduceFailure) {
     // Cloning outside of ecp's scope in case it raises an exception
     e = clone();
+    // Replace symbols
+    e = e.deepReplaceSymbols(*reductionContext);
   }
   e = e.deepRemoveUselessDependencies(*reductionContext);
   assert(!e.isUninitialized());
@@ -1541,6 +1543,14 @@ Expression Expression::deepRemoveUselessDependencies(
     result.childAtIndex(i).deepRemoveUselessDependencies(reductionContext);
   }
   return result;
+}
+
+Expression Expression::deepReplaceSymbols(
+    const ReductionContext &reductionContext) {
+  Expression result = Expression::ExpressionWithoutSymbols(
+      *this, reductionContext.context(),
+      reductionContext.symbolicComputation());
+  return result.isUninitialized() ? Undefined::Builder() : result;
 }
 
 Expression Expression::setSign(bool positive,

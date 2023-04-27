@@ -773,6 +773,11 @@ static Expression AddAngleUnitToDirectFunctionIfNeeded(
   assert(e.numberOfChildren() == 1 && !e.childAtIndex(0).isUninitialized());
 
   Expression child = e.childAtIndex(0);
+
+  if (child.isZero()) {
+    return e;
+  }
+
   bool containsPi = false;
   bool containsOtherChildrenThanCombinationOfNumberAndPi =
       child.recursivelyMatches(

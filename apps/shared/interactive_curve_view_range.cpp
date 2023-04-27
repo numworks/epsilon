@@ -320,25 +320,27 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
    * setZoomNormalize to refresh the button in case the graph does not end up
    * normalized. */
   setZoomNormalize(false);
-
   if (m_delegate && (computeX || computeY)) {
     Range2D newRange;
-
+    bool useMemoizedAutoRange =
+        m_delegate->shouldMemoizeAutoRange() && computeX && computeY;
     {
       CircuitBreakerCheckpoint checkpoint(
           Ion::CircuitBreaker::CheckpointType::Back);
       if (CircuitBreakerRun(checkpoint)) {
         uint32_t storeChecksum =
-            Ion::Storage::FileSystem::sharedFileSystem->checksum();
-        if (computeX && computeY &&
-            m_storeChecksumOfLastComputedAutoRange == storeChecksum) {
-          newRange = m_autoRange;
+            useMemoizedAutoRange
+                ? Ion::Storage::FileSystem::sharedFileSystem->checksum()
+                : 0;
+        if (useMemoizedAutoRange &&
+            m_storeChecksumOfLastMemoizedAutoRange == storeChecksum) {
+          newRange = m_memoizedAutoRange;
         } else {
           newRange =
               m_delegate->optimalRange(computeX, computeY, memoizedRange());
-          if (computeX && computeY) {
-            m_autoRange = newRange;
-            m_storeChecksumOfLastComputedAutoRange = storeChecksum;
+          if (useMemoizedAutoRange) {
+            m_memoizedAutoRange = newRange;
+            m_storeChecksumOfLastMemoizedAutoRange = storeChecksum;
           }
         }
       } else {

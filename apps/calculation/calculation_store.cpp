@@ -142,6 +142,12 @@ ExpiringPointer<Calculation> CalculationStore::push(
       // Post-processing of store expression
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);
       if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
+        assert(static_cast<Store &>(exactOutputExpression).symbol().type() !=
+                   ExpressionNode::Type::Symbol ||
+               !static_cast<Store &>(exactOutputExpression)
+                    .value()
+                    .deepIsSymbolic(
+                        nullptr, SymbolicComputation::DoNotReplaceAnySymbol));
         storeExpression = exactOutputExpression;
         Expression exactStoredExpression =
             static_cast<Store &>(storeExpression).value();

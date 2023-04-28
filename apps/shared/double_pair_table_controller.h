@@ -6,6 +6,7 @@
 #include <escher/button_row_controller.h>
 #include <escher/prefaced_twice_table_view.h>
 #include <escher/regular_table_view_data_source.h>
+#include <escher/solid_color_cell.h>
 #include <escher/tab_view_controller.h>
 
 #include "double_pair_store.h"
@@ -58,6 +59,8 @@ class DoublePairTableController
   constexpr static KDCoordinate k_margin = 8;
   constexpr static KDCoordinate k_scrollBarMargin =
       Escher::Metric::CommonRightMargin;
+  // Title & Symbol
+  constexpr static int k_numberOfHeaderColumns = 2;
 
   // TableViewDataSource
   KDCoordinate defaultRowHeight() override { return k_cellHeight; }
@@ -73,6 +76,8 @@ class DoublePairTableController
 
   Escher::PrefacedTwiceTableView m_prefacedTwiceTableView;
   Escher::SelectableTableView m_selectableTableView;
+
+  Escher::SolidColorCell m_hideableCell[k_numberOfHeaderColumns];
 };
 
 }  // namespace Shared

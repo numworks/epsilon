@@ -341,14 +341,11 @@ bool MenuController::textFieldDidHandleEvent(AbstractTextField *textField,
 
 void MenuController::addScript() {
   Script::ErrorStatus error = m_scriptStore->addNewScript();
-  if (error == Script::ErrorStatus::None) {
-    updateAddScriptRowDisplay();
-    renameSelectedScript();
-    return;
-  }
   /* Adding a new script is called when !m_scriptStore.isFull() which guarantees
    * that the available space in the storage is big enough */
-  assert(false);
+  assert(error == Script::ErrorStatus::None);
+  updateAddScriptRowDisplay();
+  renameSelectedScript();
 }
 
 void MenuController::configureScript() {

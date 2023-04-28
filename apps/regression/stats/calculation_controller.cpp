@@ -27,8 +27,6 @@ CalculationController::CalculationController(Responder *parentResponder,
     m_doubleCalculationCells[i].setParentResponder(&m_selectableTableView);
   }
   for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
-    m_titleCells[i].setAlignment(KDGlyph::k_alignRight, KDGlyph::k_alignCenter);
-    m_titleCells[i].setMessageFont(KDFont::Size::Small);
     m_titleSymbolCells[i].setAlignment(KDGlyph::k_alignCenter,
                                        KDGlyph::k_alignCenter);
     m_titleSymbolCells[i].setMessageFont(KDFont::Size::Small);
@@ -333,7 +331,7 @@ KDCoordinate CalculationController::nonMemoizedColumnWidth(int column) {
 HighlightCell *CalculationController::reusableCell(int index, int type) {
   if (type == k_calculationTitleCellType) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
-    return &m_titleCells[index];
+    return &m_calculationTitleCells[index];
   }
   if (type == k_calculationSymbolCellType) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableRows);

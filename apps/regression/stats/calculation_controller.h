@@ -6,7 +6,6 @@
 #include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_expression_cell.h>
-#include <escher/even_odd_message_text_cell.h>
 #include <poincare/preferences.h>
 
 #include "../store.h"
@@ -130,7 +129,6 @@ class CalculationController : public Shared::DoublePairTableController {
   int numberOfDisplayedBCDECoefficients() const;
   void resetMemoization(bool force = true) override;
 
-  Escher::EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
   Escher::EvenOddMessageTextCell
       m_titleSymbolCells[k_maxNumberOfDisplayableRows];
   ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];

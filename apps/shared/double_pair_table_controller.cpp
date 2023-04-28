@@ -18,6 +18,11 @@ DoublePairTableController::DoublePairTableController(
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
     m_hideableCell[i].setColor(m_selectableTableView.backgroundColor());
   }
+  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
+    m_calculationTitleCells[i].setAlignment(KDGlyph::k_alignRight,
+                                            KDGlyph::k_alignCenter);
+    m_calculationTitleCells[i].setMessageFont(KDFont::Size::Small);
+  }
 }
 
 Responder* DoublePairTableController::responderWhenEmpty() {

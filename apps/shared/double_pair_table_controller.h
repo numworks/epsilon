@@ -4,6 +4,7 @@
 #include <apps/i18n.h>
 #include <escher/alternate_empty_view_controller.h>
 #include <escher/button_row_controller.h>
+#include <escher/even_odd_message_text_cell.h>
 #include <escher/prefaced_twice_table_view.h>
 #include <escher/regular_table_view_data_source.h>
 #include <escher/solid_color_cell.h>
@@ -78,6 +79,8 @@ class DoublePairTableController
   Escher::SelectableTableView m_selectableTableView;
 
   Escher::SolidColorCell m_hideableCell[k_numberOfHeaderColumns];
+  Escher::EvenOddMessageTextCell
+      m_calculationTitleCells[k_maxNumberOfDisplayableRows];
 };
 
 }  // namespace Shared

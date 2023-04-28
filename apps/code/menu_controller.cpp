@@ -193,19 +193,19 @@ KDCoordinate MenuController::nonMemoizedColumnWidth(int i) {
 
 HighlightCell *MenuController::reusableCell(int index, int type) {
   assert(index >= 0);
-  if (type == ScriptCellType) {
+  if (type == k_scriptCellType) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableScriptCells);
     return &m_scriptCells[index];
   }
-  if (type == ScriptParameterCellType) {
+  if (type == k_scriptParameterCellType) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableScriptCells);
     return &m_scriptParameterCells[index];
   }
-  if (type == AddScriptCellType) {
+  if (type == k_addScriptCellType) {
     assert(index == 0);
     return &m_addNewScriptCell;
   }
-  if (type == EmptyCellType) {
+  if (type == k_emptyCellType) {
     return &m_emptyCell;
   }
   assert(false);
@@ -213,13 +213,13 @@ HighlightCell *MenuController::reusableCell(int index, int type) {
 }
 
 int MenuController::reusableCellCount(int type) {
-  if (type == AddScriptCellType) {
+  if (type == k_addScriptCellType) {
     return 1;
   }
-  if (type == ScriptCellType || type == ScriptParameterCellType) {
+  if (type == k_scriptCellType || type == k_scriptParameterCellType) {
     return k_maxNumberOfDisplayableScriptCells;
   }
-  if (type == EmptyCellType) {
+  if (type == k_emptyCellType) {
     return 1;
   }
   assert(false);
@@ -231,15 +231,15 @@ int MenuController::typeAtLocation(int i, int j) {
   assert(j >= 0 && j < numberOfRows());
   if (i == 0) {
     if (j == numberOfRows() - 1 && m_shouldDisplayAddScriptRow) {
-      return AddScriptCellType;
+      return k_addScriptCellType;
     }
-    return ScriptCellType;
+    return k_scriptCellType;
   }
   assert(i == 1);
   if (j == numberOfRows() - 1 && m_shouldDisplayAddScriptRow) {
-    return EmptyCellType;
+    return k_emptyCellType;
   }
-  return ScriptParameterCellType;
+  return k_scriptParameterCellType;
 }
 
 void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell *cell,

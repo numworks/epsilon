@@ -1,6 +1,10 @@
 extern "C" {
 #include "modpyplot.h"
+// WARNING: ulab.h MUST be included before checking NDARRAY_HAS_TOLIST
+#include "../../ulab.h"
+#if NDARRAY_HAS_TOLIST
 #include "../../ndarray.h"
+#endif
 }
 #include <assert.h>
 #include <escher/palette.h>

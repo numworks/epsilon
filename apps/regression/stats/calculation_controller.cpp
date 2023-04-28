@@ -26,11 +26,6 @@ CalculationController::CalculationController(Responder *parentResponder,
   for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
     m_doubleCalculationCells[i].setParentResponder(&m_selectableTableView);
   }
-  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
-    m_titleSymbolCells[i].setAlignment(KDGlyph::k_alignCenter,
-                                       KDGlyph::k_alignCenter);
-    m_titleSymbolCells[i].setMessageFont(KDFont::Size::Small);
-  }
   resetMemoization();
 }
 
@@ -335,7 +330,7 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
   }
   if (type == k_calculationSymbolCellType) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
-    return &m_titleSymbolCells[index];
+    return &m_calculationSymbolCells[index];
   }
   if (type == k_columnTitleCellType) {
     assert(index >= 0 && index < Store::k_numberOfSeries);

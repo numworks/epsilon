@@ -22,6 +22,9 @@ DoublePairTableController::DoublePairTableController(
     m_calculationTitleCells[i].setAlignment(KDGlyph::k_alignRight,
                                             KDGlyph::k_alignCenter);
     m_calculationTitleCells[i].setMessageFont(KDFont::Size::Small);
+    m_calculationSymbolCells[i].setAlignment(KDGlyph::k_alignCenter,
+                                             KDGlyph::k_alignCenter);
+    m_calculationSymbolCells[i].setMessageFont(KDFont::Size::Small);
   }
 }
 

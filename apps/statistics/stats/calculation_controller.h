@@ -125,8 +125,6 @@ class CalculationController : public Shared::DoublePairTableController {
 
   Shared::BufferFunctionTitleCell
       m_seriesTitleCells[k_numberOfSeriesTitleCells];
-  Escher::EvenOddMessageTextCell
-      m_calculationSymbolCells[k_maxNumberOfDisplayableRows];
   Escher::SmallFontEvenOddBufferTextCell
       m_calculationModeTitleCells[k_maxNumberOfDisplayableRows];
   Escher::SmallFontEvenOddBufferTextCell

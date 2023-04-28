@@ -81,6 +81,8 @@ class DoublePairTableController
   Escher::SolidColorCell m_hideableCell[k_numberOfHeaderColumns];
   Escher::EvenOddMessageTextCell
       m_calculationTitleCells[k_maxNumberOfDisplayableRows];
+  Escher::EvenOddMessageTextCell
+      m_calculationSymbolCells[k_maxNumberOfDisplayableRows];
 };
 
 }  // namespace Shared

@@ -95,18 +95,17 @@ void ValuesController::viewDidDisappear() {
 void ValuesController::willDisplayCellAtLocation(HighlightCell *cell, int i,
                                                  int j) {
   // Handle hidden cells
-  int typeAtLoc = typeAtLocation(i, j);
-  if (typeAtLoc == k_notEditableValueCellType ||
-      typeAtLoc == k_editableValueCellType) {
+  int type = typeAtLocation(i, j);
+  if (type == k_notEditableValueCellType || type == k_editableValueCellType) {
     const int numberOfElementsInCol = numberOfElementsInColumn(i);
     EvenOddCell *eoCell = static_cast<EvenOddCell *>(cell);
     eoCell->setVisible(j <= numberOfElementsInCol + 1);
     if (j >= numberOfElementsInCol + 1) {
       static_cast<EvenOddCell *>(cell)->setEven(j % 2 == 0);
-      if (typeAtLoc == k_notEditableValueCellType) {
+      if (type == k_notEditableValueCellType) {
         static_cast<EvenOddExpressionCell *>(eoCell)->setLayout(Layout());
       } else {
-        assert(typeAtLoc == k_editableValueCellType);
+        assert(type == k_editableValueCellType);
         static_cast<Escher::AbstractEvenOddEditableTextCell *>(eoCell)
             ->editableTextCell()
             ->textField()

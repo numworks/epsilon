@@ -53,11 +53,11 @@ int HomogeneityTableDataSource::typeAtLocation(int i, int j) {
 
 void HomogeneityTableDataSource::willDisplayCellAtLocation(
     Escher::HighlightCell *cell, int column, int row) {
-  if (row == 0 && column == 0) {
-    return;  // Top left
+  int type = typeAtLocation(column, row);
+  if (type == k_typeOfTopLeftCell) {
+    return;
   }
-  // Headers
-  if (row == 0 || column == 0) {
+  if (type == k_typeOfHeaderCells) {
     InferenceEvenOddBufferCell *myCell =
         static_cast<InferenceEvenOddBufferCell *>(cell);
     char digit;
@@ -81,6 +81,7 @@ void HomogeneityTableDataSource::willDisplayCellAtLocation(
     myCell->setText(txt);
     myCell->setTextColor(KDColorBlack);
   } else {
+    assert(type == k_typeOfInnerCells);
     willDisplayInnerCellAtLocation(cell, column - 1, row - 1);
   }
 }

@@ -97,10 +97,10 @@ class MenuController : public Escher::ViewController,
   constexpr static int k_maxNumberOfDisplayableScriptCells = 5;  // = 240/50
   constexpr static int k_parametersColumnWidth =
       Escher::Metric::EllipsisCellWidth;
-  constexpr static int AddScriptCellType = 0;
-  constexpr static int ScriptCellType = 1;
-  constexpr static int ScriptParameterCellType = 2;
-  constexpr static int EmptyCellType = 3;
+  constexpr static int k_addScriptCellType = 0;
+  constexpr static int k_scriptCellType = 1;
+  constexpr static int k_scriptParameterCellType = 2;
+  constexpr static int k_emptyCellType = 3;
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int i) override;
   void addScript();

@@ -552,7 +552,9 @@ Expression ContinuousFunction::Model::expressionReduced(
           newExpr.addChildAtIndexInPlace(root2, 0, 0);
           newExpr.addChildAtIndexInPlace(root1, 1, 1);
           newExpr.setDimensions(2, 1);
-          m_expression = newExpr;
+          /* Shallow reduce the matrix in case the equation could approximate to
+           * a list. */
+          m_expression = newExpr.shallowReduce(reductionContext);
         }
       } else {
         /* TODO : We could handle simple equations of any degree by solving the

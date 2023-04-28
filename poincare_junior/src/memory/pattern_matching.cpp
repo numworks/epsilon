@@ -23,31 +23,41 @@ void PatternMatching::Context::log() const {
 }
 #endif
 
+void RecursiveMatchTrees(const Node source, const Node pattern,
+                         PatternMatching::Context *result,
+                         TypeBlock *lastBlock) {
+  if (pattern.block() >= lastBlock) {
+    assert(pattern.block() == lastBlock);
+    return;
+  }
+  Node nextNode;
+  if (pattern.type() == BlockType::Placeholder) {
+    Placeholder::Tag tag = Placeholder::NodeToTag(pattern);
+    if (result->getNode(tag).isUninitialized()) {
+      if (!(Placeholder::MatchesNode(pattern, source))) {
+        *result = PatternMatching::Context();
+        return;
+      }
+      result->setNode(tag, source);
+    } else if (!result->getNode(tag).treeIsIdenticalTo(source)) {
+      *result = PatternMatching::Context();
+      return;
+    }
+    nextNode = source.nextTree();
+  } else {
+    if (!source.isIdenticalTo(pattern)) {
+      *result = PatternMatching::Context();
+      return;
+    }
+    nextNode = source.nextNode();
+  }
+  return RecursiveMatchTrees(nextNode, pattern.nextNode(), result, lastBlock);
+}
+
 PatternMatching::Context PatternMatching::Match(const Node pattern,
                                                 const Node source,
                                                 Context result) {
-  Pool::Nodes patternNodes = Pool::Nodes(
-      pattern.block(), pattern.nextTree().block() - pattern.block());
-  Node currentNode = source;
-  for (const Node node : patternNodes) {
-    if (node.type() == BlockType::Placeholder) {
-      Placeholder::Tag tag = Placeholder::NodeToTag(node);
-      if (result.getNode(tag).isUninitialized()) {
-        if (!(Placeholder::MatchesNode(node, currentNode))) {
-          return Context();
-        }
-        result.setNode(tag, currentNode);
-      } else if (!result.getNode(tag).treeIsIdenticalTo(currentNode)) {
-        return Context();
-      }
-      currentNode = currentNode.nextTree();
-    } else {
-      if (!node.isIdenticalTo(currentNode)) {
-        return Context();
-      }
-      currentNode = currentNode.nextNode();
-    }
-  }
+  RecursiveMatchTrees(source, pattern, &result, pattern.nextTree().block());
   return result;
 }
 

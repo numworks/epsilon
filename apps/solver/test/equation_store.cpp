@@ -8,6 +8,11 @@ QUIZ_CASE(solver_error) {
   assert_solves_to_error("x^2+y=0", NonLinearSystem);
   assert_solves_to_error("x^3+x^2+1=int(1/t,t,0,1)", EquationUndefined);
   assert_solves_to_error("x×(x^2×int(1/t,t,0,1)+1)=0", EquationUndefined);
+  Poincare::Preferences::sharedPreferences->setComplexFormat(
+      Poincare::Preferences::ComplexFormat::Real);
+  assert_solves_to_error("x-arcsin(10)=0", EquationNonreal);
+  Poincare::Preferences::sharedPreferences->setComplexFormat(
+      Poincare::Preferences::ComplexFormat::Cartesian);
 }
 
 QUIZ_CASE(solver_linear_system) {

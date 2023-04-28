@@ -212,11 +212,8 @@ int MenuController::reusableCellCount(int type) {
   if (type == k_scriptCellType || type == k_scriptParameterCellType) {
     return k_maxNumberOfDisplayableScriptCells;
   }
-  if (type == k_emptyCellType) {
-    return 1;
-  }
-  assert(false);
-  return 0;
+  assert(type == k_emptyCellType);
+  return 1;
 }
 
 int MenuController::typeAtLocation(int i, int j) {

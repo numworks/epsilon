@@ -227,8 +227,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
 void StoreColumnHelper::reloadSeriesVisibleCells(int series,
                                                  int relativeColumn) {
   // Reload visible cells of the series and, if not -1, relative column
-  int nbOfColumns = DoublePairStore::k_numberOfColumnsPerSeries *
-                    DoublePairStore::k_numberOfSeries;
+  int nbOfColumns = table()->totalNumberOfColumns();
   for (int i = 0; i < nbOfColumns; i++) {
     if (store()->seriesAtColumn(i) == series &&
         (relativeColumn == -1 ||

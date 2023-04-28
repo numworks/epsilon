@@ -90,7 +90,7 @@ class StoreController : public EditableCellTableViewController,
   Poincare::Layout memoizedFormula(int index) override {
     return m_memoizedFormulas[index];
   }
-  void resetMemoizedFormulasForSeries(int series);
+  void resetMemoizedFormulasOfEmptyColumns(int series);
   void memoizeFormula(Poincare::Layout formula, int index) override;
 
   PrefacedTableView m_prefacedTableView;

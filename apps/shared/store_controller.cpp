@@ -180,11 +180,7 @@ void StoreController::handleDeleteEvent(bool authorizeNonEmptyRowDeletion,
     }
     reloadSeriesVisibleCells(series);
   }
-  // If selectedColumn() changed, it means that the column has been deleted.
-  if (col == selectedColumn() &&
-      m_store->lengthOfColumn(series, m_store->relativeColumnIndex(col)) == 0) {
-    resetMemoizedFormulasForSeries(series);
-  }
+  resetMemoizedFormulasOfEmptyColumns(series);
 }
 
 void StoreController::didBecomeFirstResponder() {
@@ -243,11 +239,13 @@ int StoreController::numberOfElementsInColumn(int columnIndex) const {
   return m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(columnIndex));
 }
 
-void StoreController::resetMemoizedFormulasForSeries(int series) {
+void StoreController::resetMemoizedFormulasOfEmptyColumns(int series) {
   assert(series >= 0 && series < DoublePairStore::k_numberOfSeries);
   for (int i = 0; i < DoublePairStore::k_numberOfColumnsPerSeries; i++) {
-    memoizeFormula(Layout(),
-                   series * DoublePairStore::k_numberOfColumnsPerSeries + i);
+    if (m_store->lengthOfColumn(series, i) == 0) {
+      memoizeFormula(Layout(),
+                     series * DoublePairStore::k_numberOfColumnsPerSeries + i);
+    }
   }
 }
 

@@ -22,7 +22,7 @@ void StoreController::clearSelectedColumn() {
   int series = m_store->seriesAtColumn(selectedColumn());
   m_store->deleteColumn(series, m_store->relativeColumnIndex(selectedColumn()));
   selectCellAtLocation(selectedColumn(), 1);
-  resetMemoizedFormulasForSeries(series);
+  resetMemoizedFormulasOfEmptyColumns(series);
 }
 
 InputViewController* StoreController::inputViewController() {

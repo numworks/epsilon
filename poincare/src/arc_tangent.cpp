@@ -46,6 +46,10 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c,
      * complex(9.9996666866652E-3,5.5511151231258E-17)
      * - atan(0.03) = 9.9996666866652E-3 */
     result = std::atan(c.real());
+  } else if (c.real() == 0 && std::abs(c.imag()) == static_cast<T>(1.0)) {
+    /* The case c = ±i is caught here because std::atan(i) return i*inf when it
+     * should be undef. (same as log(0) in Logarithm::computeOnComplex)*/
+    result = std::complex<T>(NAN, NAN);
   } else {
     result = std::atan(c);
     /* atan has a branch cut on ]-inf*i, -i[U]i, +inf*i[: it is then multivalued

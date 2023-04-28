@@ -15,6 +15,9 @@ DoublePairTableController::DoublePairTableController(
   m_prefacedTwiceTableView.setMargins(k_margin, k_scrollBarMargin,
                                       k_scrollBarMargin, k_margin);
   m_prefacedTwiceTableView.setMarginDelegate(this);
+  for (int i = 0; i < k_numberOfHeaderColumns; i++) {
+    m_hideableCell[i].setColor(m_selectableTableView.backgroundColor());
+  }
 }
 
 Responder* DoublePairTableController::responderWhenEmpty() {

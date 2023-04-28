@@ -1249,6 +1249,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // On [-i, i]
   assert_expression_approximates_to<float>("atan(0.2×i)", "0.202733×i", Radian,
                                            MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<float>("atan(i)", Undefined::Name());
   // Symmetry: odd
   assert_expression_approximates_to<float>(
       "atan(-0.2×i)", "-0.202733×i", Radian, MetricUnitFormat, Cartesian, 6);
@@ -1283,8 +1284,8 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // Key values
   assert_expression_approximates_to<float>("atan(0)", "0", Degree);
   assert_expression_approximates_to<float>("atan(0)", "0", Gradian);
-  assert_expression_approximates_to<double>("atan(-i)", "-∞×i", Radian);
-  assert_expression_approximates_to<double>("atan(i)", "∞×i", Radian);
+  assert_expression_approximates_to<double>("atan(-i)", Undefined::Name());
+  assert_expression_approximates_to<double>("atan(i)", Undefined::Name());
   // Advanced function : acot
   assert_expression_approximates_to<double>("arccot(-0.45765755436029)",
                                             "-1.1415926535898", Radian);

@@ -38,7 +38,8 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c,
                                             Preferences::ComplexFormat,
                                             Preferences::AngleUnit angleUnit) {
   std::complex<T> result;
-  if (c.imag() == 0 && std::fabs(c.real()) <= static_cast<T>(1.0)) {
+  if (c.imag() == static_cast<T>(0.) &&
+      std::fabs(c.real()) <= static_cast<T>(1.)) {
     /* atan: R -> R
      * In these cases we rather use std::atan(double) because atan on complexes
      * is not as precise as atan on double in std library. For instance,
@@ -46,7 +47,8 @@ Complex<T> ArcTangentNode::computeOnComplex(const std::complex<T> c,
      * complex(9.9996666866652E-3,5.5511151231258E-17)
      * - atan(0.03) = 9.9996666866652E-3 */
     result = std::atan(c.real());
-  } else if (c.real() == 0 && std::abs(c.imag()) == static_cast<T>(1.0)) {
+  } else if (c.real() == static_cast<T>(0.) &&
+             std::abs(c.imag()) == static_cast<T>(1.)) {
     /* The case c = ±i is caught here because std::atan(i) return i*inf when it
      * should be undef. (same as log(0) in Logarithm::computeOnComplex)*/
     result = std::complex<T>(NAN, NAN);

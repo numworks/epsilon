@@ -10,6 +10,7 @@
 #include <poincare/symbol.h>
 
 #include "app.h"
+#include "poincare/empty_context.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -276,7 +277,15 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
    * variables to parameters. */
   m_hasMoreSolutions = true;
 
-  constexpr size_t parameterNameSize = 1 + 2 + 1;  // 't' + 2 digits + '\0'
+  /* Use an empty context to avoid replacing the t? parameters with a value if
+   * the user stored something in them but they are not used by the system.
+   * Symbols that matter have already been replaced when reducing the equations.
+   */
+  Poincare::EmptyContext emptyContext;
+  context = &emptyContext;
+
+  // 't' + 2 digits + '\0'
+  constexpr size_t parameterNameSize = 1 + 2 + 1;
   char parameterName[parameterNameSize] = {k_parameterPrefix};
   size_t parameterIndex = n - rank == 1 ? 0 : 1;
   uint32_t usedParameterIndices = tagParametersUsedAsVariables();

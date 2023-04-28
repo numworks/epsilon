@@ -1499,6 +1499,12 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
     e = clone();
     // Replace symbols
     e = e.deepReplaceSymbols(*reductionContext);
+    // Check undef
+    if (e.recursivelyMatches(Expression::IsUndefined,
+                             reductionContext->context(),
+                             SymbolicComputation::DoNotReplaceAnySymbol)) {
+      return Undefined::Builder();
+    }
   }
   e = e.deepRemoveUselessDependencies(*reductionContext);
   assert(!e.isUninitialized());

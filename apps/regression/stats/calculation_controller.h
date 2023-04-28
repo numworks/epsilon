@@ -87,7 +87,7 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static int k_doubleBufferCalculationCellType = 2;
   constexpr static int k_standardCalculationCellType = 3;
   constexpr static int k_hideableCellType = 4;
-  constexpr static int k_symbolCalculationTitleCellType = 5;
+  constexpr static int k_calculationSymbolCellType = 5;
   // Cell sizes
   constexpr static KDCoordinate k_titleCalculationCellWidth =
       Escher::Metric::SmallFontCellWidth(

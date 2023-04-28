@@ -51,6 +51,11 @@ class SolutionsController : public Escher::ViewController,
   Escher::HighlightCell *reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
+  bool cellAtLocationIsSelectable(Escher::HighlightCell *cell, int col,
+                                  int row) override {
+    return typeAtLocation(col, row) != k_messageCellType &&
+           typeAtLocation(col, row) != k_emptyCellType;
+  }
 
   // Responder
   void didBecomeFirstResponder() override;

@@ -32,7 +32,7 @@ class SelectableTableView : public TableView, public Responder {
   void selectRow(int j) { m_selectionDataSource->selectRow(j); }
   void selectColumn(int i) { m_selectionDataSource->selectColumn(i); }
   void selectFirstRow() {
-    dataSource()->numberOfRows() > 0 ? selectRow(0) : selectRow(-1);
+    totalNumberOfRows() > 0 ? selectRow(0) : selectRow(-1);
   }
 
   HighlightCell* selectedCell();

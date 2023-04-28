@@ -20,7 +20,7 @@ CalculationSelectableTableView::CalculationSelectableTableView(
 void CalculationSelectableTableView::scrollToBottom() {
   KDCoordinate contentOffsetX = contentOffset().x();
   KDCoordinate contentOffsetY =
-      dataSource()->cumulatedHeightBeforeIndex(dataSource()->numberOfRows()) -
+      dataSource()->cumulatedHeightBeforeIndex(totalNumberOfRows()) -
       maxContentHeightDisplayableWithoutScrolling();
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }

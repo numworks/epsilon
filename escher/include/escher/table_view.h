@@ -31,6 +31,8 @@ class TableView : public ScrollView {
   int numberOfDisplayableColumns() const {
     return m_contentView.numberOfDisplayableColumns();
   }
+  int totalNumberOfRows() { return dataSource()->numberOfRows(); }
+  int totalNumberOfColumns() { return dataSource()->numberOfColumns(); }
 
   /* This method computes the minimal scrolling needed to properly display the
    * requested cell. */

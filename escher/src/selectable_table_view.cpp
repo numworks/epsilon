@@ -26,8 +26,8 @@ HighlightCell* SelectableTableView::selectedCell() {
 
 int SelectableTableView::firstOrLastSelectableColumnOrRow(bool first,
                                                           bool searchForRow) {
-  int nColumnsOrRow = searchForRow ? dataSource()->numberOfRows()
-                                   : dataSource()->numberOfColumns();
+  int nColumnsOrRow =
+      searchForRow ? totalNumberOfRows() : totalNumberOfColumns();
   if (nColumnsOrRow == 0) {
     return 0;
   }
@@ -48,16 +48,15 @@ int SelectableTableView::firstOrLastSelectableColumnOrRow(bool first,
 int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, int col,
                                                           int row,
                                                           bool searchForRow) {
-  assert((searchForRow && col < dataSource()->numberOfColumns() && col >= 0) ||
-         (!searchForRow && row < dataSource()->numberOfRows() && row >= 0));
+  assert((searchForRow && col < totalNumberOfColumns() && col >= 0) ||
+         (!searchForRow && row < totalNumberOfRows() && row >= 0));
   assert(delta != 0);
   // Let's call our variable cow, as a shortcut for col-or-row
   int cow = searchForRow ? row : col;
   int selectableCow = -1;
   int step = delta > 0 ? 1 : -1;
-  const int lastCow = (searchForRow ? dataSource()->numberOfRows()
-                                    : dataSource()->numberOfColumns()) -
-                      1;
+  const int lastCow =
+      (searchForRow ? totalNumberOfRows() : totalNumberOfColumns()) - 1;
   while (delta) {
     cow += step;
     if (cow < 0 || cow > lastCow) {
@@ -79,8 +78,8 @@ int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, int col,
 bool SelectableTableView::selectCellAtLocation(int col, int row,
                                                bool setFirstResponder,
                                                bool withinTemporarySelection) {
-  if (row < 0 || col < 0 || row >= dataSource()->numberOfRows() ||
-      col >= dataSource()->numberOfColumns()) {
+  if (row < 0 || col < 0 || row >= totalNumberOfRows() ||
+      col >= totalNumberOfColumns()) {
     return false;
   }
 
@@ -132,8 +131,8 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
 
 bool SelectableTableView::selectCellAtClippedLocation(
     int col, int row, bool setFirstResponder, bool withinTemporarySelection) {
-  col = std::clamp(col, 0, dataSource()->numberOfColumns() - 1);
-  row = std::clamp(row, 0, dataSource()->numberOfRows() - 1);
+  col = std::clamp(col, 0, totalNumberOfColumns() - 1);
+  row = std::clamp(row, 0, totalNumberOfRows() - 1);
   if (row == selectedRow() && col == selectedColumn()) {
     // Cell was already selected.
     return false;
@@ -143,7 +142,7 @@ bool SelectableTableView::selectCellAtClippedLocation(
 }
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
-  assert(dataSource()->numberOfRows() > 0);
+  assert(totalNumberOfRows() > 0);
   int step = Ion::Events::longPressFactor();
   int col = selectedColumn();
   int row = selectedRow();

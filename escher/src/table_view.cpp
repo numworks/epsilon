@@ -32,7 +32,7 @@ void TableView::reloadVisibleCellsAtColumn(int column) {
   }
   int firstVisibleRow = firstDisplayedRowIndex();
   int lastVisibleRow = std::max(firstVisibleRow + numberOfDisplayableRows(),
-                                m_contentView.dataSource()->numberOfRows() - 1);
+                                totalNumberOfRows() - 1);
 
   for (int row = firstVisibleRow; row <= lastVisibleRow; row++) {
     reloadCellAtLocation(column, row);

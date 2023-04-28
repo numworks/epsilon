@@ -530,6 +530,7 @@ QUIZ_CASE(poincare_properties_is_real) {
   assert_expression_is_not_real("i^3.4");
   assert_expression_is_not_real("2^(3.4i)");
   assert_expression_is_not_real("(-2)^0.4");
+  assert_expression_is_not_real("abs(sum({0}×k,k,0,0))");
 }
 
 void assert_reduced_expression_polynomial_degree(

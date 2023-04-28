@@ -1612,6 +1612,7 @@ QUIZ_CASE(poincare_approximation_map_on_list) {
   assert_expression_approximates_to<float>("sin({0,π})", "{0,0}", Radian);
   assert_expression_approximates_to<float>("{2,3.4}-{0.1,3.1}", "{1.9,0.3}");
   assert_expression_approximates_to<float>("tan({0,π/4})", "{0,1}", Radian);
+  assert_expression_approximates_to<float>("abs(sum({0}×k,k,0,0))", "{0}");
 }
 
 QUIZ_CASE(poincare_approximation_probability) {

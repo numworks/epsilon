@@ -41,7 +41,7 @@ CalculationController::CalculationController(Responder *parentResponder,
 
 void CalculationController::viewWillAppear() {
   resetMemoization();
-  Shared::DoublePairTableController::viewWillAppear();
+  DoublePairTableController::viewWillAppear();
 }
 
 void CalculationController::tableViewDidChangeSelectionAndDidScroll(
@@ -135,7 +135,7 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
     size_t series = m_store->seriesIndexFromActiveSeriesIndex(
         column - k_numberOfHeaderColumns);
     assert(series < DoublePairStore::k_numberOfSeries);
-    char buffer[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
+    char buffer[ClearColumnHelper::k_maxSizeOfColumnName];
     m_store->fillColumnName(series, 0, buffer);
     myCell->setFirstText(buffer);
     m_store->fillColumnName(series, 1, buffer);
@@ -212,10 +212,10 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
       *calculation2 = (m_store->*calculationMethods[calculationIndex])(
           series, 1, Store::CalculationOptions());
     }
-    assert(Poincare::Helpers::EqualOrBothNan(
+    assert(Helpers::EqualOrBothNan(
                *calculation1, (m_store->*calculationMethods[calculationIndex])(
                                   series, 0, Store::CalculationOptions())) &&
-           Poincare::Helpers::EqualOrBothNan(
+           Helpers::EqualOrBothNan(
                *calculation2, (m_store->*calculationMethods[calculationIndex])(
                                   series, 1, Store::CalculationOptions())));
     EvenOddDoubleBufferTextCell *myCell =
@@ -232,7 +232,7 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
   }
 
   // Single calculation cells
-  Poincare::Context *globContext =
+  Context *globContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   AbstractEvenOddBufferTextCell *bufferCell =
       static_cast<AbstractEvenOddBufferTextCell *>(cell);
@@ -252,16 +252,16 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
     if (std::isnan(*calculation)) {
       *calculation = (m_store->*calculationMethods[calculationIndex])(series);
     }
-    assert((c == Calculation::NumberOfDots &&
-            Poincare::Helpers::EqualOrBothNan(
-                *calculation,
-                m_store->doubleCastedNumberOfPairsOfSeries(series))) ||
-           (c == Calculation::Covariance &&
-            Poincare::Helpers::EqualOrBothNan(*calculation,
-                                              m_store->covariance(series))) ||
-           (c == Calculation::SumOfProducts &&
-            Poincare::Helpers::EqualOrBothNan(
-                *calculation, m_store->columnProductSum(series))));
+    assert(
+        (c == Calculation::NumberOfDots &&
+         Helpers::EqualOrBothNan(
+             *calculation,
+             m_store->doubleCastedNumberOfPairsOfSeries(series))) ||
+        (c == Calculation::Covariance &&
+         Helpers::EqualOrBothNan(*calculation, m_store->covariance(series))) ||
+        (c == Calculation::SumOfProducts &&
+         Helpers::EqualOrBothNan(*calculation,
+                                 m_store->columnProductSum(series))));
     result = *calculation;
   } else if (c >= Calculation::CoefficientM && c <= Calculation::CoefficientE) {
     if (!m_store->coefficientsAreDefined(series, globContext)) {

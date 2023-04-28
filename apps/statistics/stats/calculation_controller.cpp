@@ -41,7 +41,7 @@ CalculationController::CalculationController(Responder *parentResponder,
 
 void CalculationController::viewWillAppear() {
   resetMemoization();
-  Shared::DoublePairTableController::viewWillAppear();
+  DoublePairTableController::viewWillAppear();
 }
 
 // TableViewDataSource
@@ -87,8 +87,8 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
       // The NL "Modus 100" is the longest possible text here.
       constexpr static int bufferSize = sizeof("Modus 100") / sizeof(char);
       char buffer[bufferSize];
-      Poincare::Print::CustomPrintf(buffer, bufferSize, pattern,
-                                    I18n::translate(message), index);
+      Print::CustomPrintf(buffer, bufferSize, pattern, I18n::translate(message),
+                          index);
       AbstractEvenOddBufferTextCell *bufferCell =
           static_cast<AbstractEvenOddBufferTextCell *>(cell);
       bufferCell->setTextColor(column == 1 ? Palette::GrayDark : KDColorBlack);
@@ -151,11 +151,11 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
         }
       }
       constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-          Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision);
+          AbstractEvenOddBufferTextCell::k_defaultPrecision);
       char buffer[bufferSize];
       PoincareHelpers::ConvertFloatToText<double>(
           calculation, buffer, bufferSize,
-          Escher::AbstractEvenOddBufferTextCell::k_defaultPrecision);
+          AbstractEvenOddBufferTextCell::k_defaultPrecision);
       calculationCell->setText(buffer);
       return;
     }
@@ -244,7 +244,7 @@ int CalculationController::typeAtLocation(int column, int row) {
 
 KDCoordinate CalculationController::separatorBeforeColumn(int column) {
   return typeAtLocation(column, 0) == k_seriesTitleCellType
-             ? Escher::Metric::TableSeparatorThickness
+             ? Metric::TableSeparatorThickness
              : 0;
 }
 

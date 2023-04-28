@@ -82,7 +82,7 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static int k_numberOfDisplayableCalculationCells =
       Store::k_numberOfSeries * k_maxNumberOfDisplayableRows;
   // Cell types
-  constexpr static int k_standardCalculationTitleCellType = 0;
+  constexpr static int k_calculationTitleCellType = 0;
   constexpr static int k_columnTitleCellType = 1;
   constexpr static int k_doubleBufferCalculationCellType = 2;
   constexpr static int k_standardCalculationCellType = 3;

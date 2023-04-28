@@ -331,7 +331,7 @@ KDCoordinate CalculationController::nonMemoizedColumnWidth(int column) {
 }
 
 HighlightCell *CalculationController::reusableCell(int index, int type) {
-  if (type == k_standardCalculationTitleCellType) {
+  if (type == k_calculationTitleCellType) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
     return &m_titleCells[index];
   }
@@ -356,7 +356,7 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
 }
 
 int CalculationController::reusableCellCount(int type) {
-  if (type == k_standardCalculationTitleCellType ||
+  if (type == k_calculationTitleCellType ||
       type == k_symbolCalculationTitleCellType) {
     return k_maxNumberOfDisplayableRows;
   }
@@ -378,7 +378,7 @@ int CalculationController::typeAtLocation(int column, int row) {
     return k_hideableCellType;
   }
   if (column == 0) {
-    return k_standardCalculationTitleCellType;
+    return k_calculationTitleCellType;
   }
   if (column == 1) {
     return k_symbolCalculationTitleCellType;

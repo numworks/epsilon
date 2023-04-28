@@ -136,7 +136,7 @@ void TrigonometryListController::updateIsStrictlyEqualAtIndex(
 void TrigonometryListController::willDisplayCellForIndex(
     Escher::HighlightCell* cell, int index) {
   if (typeAtIndex(index) == k_expressionCellType) {
-    int expressionIndex = index - reusableCellCount(k_illustrationCellType);
+    int expressionIndex = index - showIllustration();
     assert(0 <= expressionIndex && expressionIndex < k_numberOfExpressionRows);
     static_cast<AdditionnalResultCell*>(cell)
         ->label()

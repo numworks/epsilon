@@ -87,7 +87,7 @@ const char *Args::get(const char *argument, bool pop) {
 
 const char *Args::pop(const char *const *keys, size_t numberOfKeys) {
   const char *result = nullptr;
-  for (int i = 0; !result && i < numberOfKeys; i++) {
+  for (size_t i = 0; !result && i < numberOfKeys; i++) {
     result = pop(keys[i]);
   }
   return result;
@@ -104,7 +104,7 @@ bool Args::popFlag(const char *argument) {
 
 bool Args::popFlags(const char *const *flags, size_t numberOfFlags) {
   bool result = false;
-  for (int i = 0; !result && i < numberOfFlags; i++) {
+  for (size_t i = 0; !result && i < numberOfFlags; i++) {
     result = popFlag(flags[i]);
   }
   return result;

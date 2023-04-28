@@ -63,7 +63,7 @@ void StringLayoutNode::render(KDContext *ctx, KDPoint p, KDGlyph::Style style) {
   p = ctx->drawString(groupedNumbersBuffer, p, style);
   p = p.translatedBy(KDPoint(Escher::Metric::ThousandsSeparatorWidth, 0));
   // Draw the other separators.
-  for (size_t i = 0; i < nThousandsSeparators - 1; i++) {
+  for (int i = 0; i < nThousandsSeparators - 1; i++) {
     strlcpy(groupedNumbersBuffer, m_string + firstSeparatorIndex + i * 3, 4);
     p = ctx->drawString(groupedNumbersBuffer, p, style);
     p = p.translatedBy(KDPoint(Escher::Metric::ThousandsSeparatorWidth, 0));

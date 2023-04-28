@@ -29,7 +29,7 @@ void AbstractBufferTextView::privateSetMessageWithPlaceholders(
 }
 
 void AbstractBufferTextView::appendText(const char* text) {
-  size_t previousTextLength = strlen(buffer());
+  int previousTextLength = strlen(buffer());
   if (previousTextLength < maxTextSize() - 1) {
     strlcpy(buffer() + previousTextLength, text,
             maxTextSize() - previousTextLength);

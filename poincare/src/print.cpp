@@ -133,7 +133,8 @@ int Print::CustomPrintfWithMaxNumberOfSignificantDigits(
     const char *format, ...) {
   assert(maxNumberOfSignificantDigits > 0);
   int length = bufferSize;
-  while (length >= bufferSize && maxNumberOfSignificantDigits > 0) {
+  while (length >= static_cast<int>(bufferSize) &&
+         maxNumberOfSignificantDigits > 0) {
     va_list args;
     va_start(args, format);
     length = PrivateCustomPrintf(buffer, bufferSize,

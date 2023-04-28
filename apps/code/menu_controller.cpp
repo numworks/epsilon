@@ -180,15 +180,11 @@ void MenuController::willDisplayCellAtLocation(HighlightCell *cell, int i,
 }
 
 KDCoordinate MenuController::nonMemoizedColumnWidth(int i) {
-  switch (i) {
-    case 0:
-      return m_selectableTableView.bounds().width() - k_parametersColumnWidth;
-    case 1:
-      return k_parametersColumnWidth;
-    default:
-      assert(false);
-      return 0;
+  if (i == 0) {
+    return m_selectableTableView.bounds().width() - k_parametersColumnWidth;
   }
+  assert(i == 1);
+  return k_parametersColumnWidth;
 }
 
 HighlightCell *MenuController::reusableCell(int index, int type) {

@@ -28,7 +28,7 @@ size_t UnicodeDecoder::previousGlyphPosition() {
 
 size_t UnicodeDecoder::printInBuffer(char* buffer, size_t bufferSize,
                                      size_t printLength) {
-  if (printLength == -1) {
+  if (printLength == static_cast<size_t>(-1)) {
     printLength = m_end - m_position;
   }
   assert(m_position + printLength <= m_end);

@@ -344,6 +344,7 @@ void MenuController::addScript() {
   /* Adding a new script is called when !m_scriptStore.isFull() which guarantees
    * that the available space in the storage is big enough */
   assert(error == Script::ErrorStatus::None);
+  (void)error;  // Silence the compiler
   updateAddScriptRowDisplay();
   renameSelectedScript();
 }

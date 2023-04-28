@@ -130,6 +130,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       t = tCursor + dir * minimalAbsoluteStep;
     }
   } else if (function->properties().isScatterPlot()) {
+    // Silence warning for step being potentially uninitialized.
+    step = 1.0;
     float newT = std::floor(t + dir);
     if (0.f <= newT && newT < function->iterateScatterPlot(context).length()) {
       t = newT;

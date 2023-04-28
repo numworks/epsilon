@@ -154,7 +154,7 @@ void assert_solves_numerically_to(const char *equation, double min, double max,
         system->approximateSolve(&solverContext);
 
         quiz_assert(strcmp(system->variable(0), variable) == 0);
-        int i = 0;
+        size_t i = 0;
         for (double solution : solutions) {
           assert_roughly_equal(system->solution(i++)->approximate(), solution,
                                1E-5);

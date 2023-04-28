@@ -134,9 +134,10 @@ protected:
     KDColor m_highlightColor;
     KDColor m_borderColor;
   };
+  };
+
 };
 
-}
-}
+};
 
 #endif

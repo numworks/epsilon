@@ -46,6 +46,15 @@ public:
   double startOfBarAtIndex(int series, int index) const;
   double endOfBarAtIndex(int series, int index) const;
   int numberOfBars(int series) const;
+
+  // Histogram curve overlay drawing
+  bool drawCurveOverHistogram() const { return userPreferences()->drawCurveOverHistogram(); };
+  void setDrawCurveOverHistogram(bool value) { userPreferences()->setCurveOverHistogram(value);}
+  double normalCurveOverHistogramMu() const { return userPreferences()->normalCurveOverHistogramMu(); };
+  void setNormalCurveOverHistogramMu(double value) const { userPreferences()->setNormalCurveOverHistogramMu(value); };
+  double normalCurveOverHistogramSigma() const { return userPreferences()->normalCurveOverHistogramSigma(); };
+  void setNormalCurveOverHistogramSigma(double value) const { userPreferences()->setNormalCurveOverHistogramSigma(value); };
+
   // Box plot
   bool displayOutliers() const { return userPreferences()->displayOutliers(); }
   void setDisplayOutliers(bool displayOutliers) { userPreferences()->setDisplayOutliers(displayOutliers); }

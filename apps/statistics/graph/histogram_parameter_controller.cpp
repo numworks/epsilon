@@ -27,7 +27,8 @@ void HistogramParameterController::viewWillAppear() {
   // Initialize temporary parameters to the extracted value.
   m_tempBarWidth = extractParameterAtIndex(0);
   m_tempFirstDrawnBarAbscissa = extractParameterAtIndex(1);
-  assert(authorizedParameters(m_tempBarWidth, m_tempFirstDrawnBarAbscissa));
+  m_tempDrawCurve = extractParameterAtIndex(2);
+  assert(authorizedParameters(m_tempBarWidth, m_tempFirstDrawnBarAbscissa, m_tempDrawCurve));
   FloatParameterController::viewWillAppear();
 }
 
@@ -40,15 +41,15 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
     return;
   }
   MessageTableCellWithEditableTextWithMessage * myCell = static_cast<MessageTableCellWithEditableTextWithMessage *>(cell);
-  I18n::Message labels[k_numberOfCells] = {I18n::Message::RectangleWidth, I18n::Message::BarStart};
-  I18n::Message sublabels[k_numberOfCells] = {I18n::Message::RectangleWidthDescription, I18n::Message::BarStartDescrition};
+  I18n::Message labels[k_numberOfCells] = {I18n::Message::RectangleWidth, I18n::Message::BarStart, I18n::Message::DrawCurveOnHistogram};
+  I18n::Message sublabels[k_numberOfCells] = {I18n::Message::RectangleWidthDescription, I18n::Message::BarStartDescrition, I18n::Message::DrawCurveOnHistogramDescription};
   myCell->setMessage(labels[index]);
   myCell->setSubLabelMessage(sublabels[index]);
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
 bool HistogramParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back && (extractParameterAtIndex(0) != parameterAtIndex(0) || extractParameterAtIndex(1) != parameterAtIndex(1))) {
+  if (event == Ion::Events::Back && (extractParameterAtIndex(0) != parameterAtIndex(0) || extractParameterAtIndex(1) != parameterAtIndex(1) || extractParameterAtIndex(2) != parameterAtIndex(2))) {
     // Temporary values are different, open pop-up to confirm discarding values
     m_confirmPopUpController.presentModally();
     return true;
@@ -58,26 +59,47 @@ bool HistogramParameterController::handleEvent(Ion::Events::Event event) {
 
 double HistogramParameterController::extractParameterAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfCells);
-  return index == 0 ? m_store->barWidth() : m_store->firstDrawnBarAbscissa();
+  switch (index)
+  {
+  case 0:
+    return m_store->barWidth();
+  case 1:
+    return m_store->firstDrawnBarAbscissa();
+  case 2:
+    return m_store->drawCurveOverHistogram() ? 1.0 : 0.0;
+  }
 }
 
 double HistogramParameterController::parameterAtIndex(int index) {
   assert(index >= 0 && index < k_numberOfCells);
-  return index == 0 ? m_tempBarWidth : m_tempFirstDrawnBarAbscissa;
+  switch (index)
+  {
+  case 0:
+    return m_tempBarWidth;
+  case 1:
+    return m_tempFirstDrawnBarAbscissa;
+  case 2:
+    return m_tempDrawCurve;
+  }
 }
 
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex, double value) {
-  assert(parameterIndex == 0 || parameterIndex == 1);
+  assert(parameterIndex == 0 || parameterIndex == 1 || parameterIndex == 2);
   const double nextBarWidth = parameterIndex == 0 ? value : m_tempBarWidth;
-  const double nextFirstDrawnBarAbscissa = parameterIndex == 0 ? m_tempFirstDrawnBarAbscissa : value;
-  if (!authorizedParameters(nextBarWidth, nextFirstDrawnBarAbscissa)) {
+  const double nextFirstDrawnBarAbscissa = parameterIndex == 1 ? value: m_tempFirstDrawnBarAbscissa;
+  const double nextDrawCurve = parameterIndex == 2 ? value: m_tempDrawCurve;
+
+
+  if (!authorizedParameters(nextBarWidth, nextFirstDrawnBarAbscissa, nextDrawCurve)) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
   if (parameterIndex == 0) {
     m_tempBarWidth = value;
-  } else {
+  } else if (parameterIndex == 1) {
     m_tempFirstDrawnBarAbscissa = value;
+  } else if (parameterIndex == 2) {
+    m_tempDrawCurve = value;
   }
   return true;
 }
@@ -89,17 +111,24 @@ HighlightCell * HistogramParameterController::reusableParameterCell(int index, i
 
 void HistogramParameterController::buttonAction() {
   // Update parameters values and proceed.
-  assert(authorizedParameters(m_tempBarWidth, m_tempFirstDrawnBarAbscissa));
+  assert(authorizedParameters(m_tempBarWidth, m_tempFirstDrawnBarAbscissa, m_tempDrawCurve));
   m_store->setBarWidth(m_tempBarWidth);
   m_store->setFirstDrawnBarAbscissa(m_tempFirstDrawnBarAbscissa);
+  m_store->setDrawCurveOverHistogram(m_tempDrawCurve == 1.0);
   FloatParameterController::buttonAction();
 }
 
-bool HistogramParameterController::authorizedParameters(double barWidth, double firstDrawnBarAbscissa) {
+bool HistogramParameterController::authorizedParameters(double barWidth, double firstDrawnBarAbscissa, double drawCurve) {
   if (barWidth < 0.0) {
     // The bar width cannot be negative
     return false;
   }
+
+  if (drawCurve != 0.0 && drawCurve != 1.0) {
+    // temporary hack: this should be a boolean
+    return false;
+  }
+
   assert(DoublePairStore::k_numberOfSeries > 0);
   for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
     if (!Shared::DoublePairStore::DefaultValidSeries(m_store, i)) {

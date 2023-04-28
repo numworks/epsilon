@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <cmath>
 
+using namespace Poincare;
 using namespace Shared;
 
 namespace Statistics {
@@ -41,6 +42,25 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KD
 
   HistogramDrawing histogram(histogramLevels, m_store, context, highlights, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, true, color, k_selectedBarColor, borderColor);
   histogram.draw(plotView, ctx, rect);
+
+  if (m_store->drawCurveOverHistogram()) {
+    // We want to overlay a function plot over the histogram
+    // this code is taken from apps/graph/graph/graph_view.cpp
+
+    // TODO: find a way to fit a normal distribution into a Curve2DEvaluation so that the curve itself can be drawn
+
+    double µ = m_store->normalCurveOverHistogramMu();
+    double σ = m_store->normalCurveOverHistogramSigma();
+    double one_on_sigma_sqrt_tau = 1.0/(σ * 2.506628274631000502415765284811);
+    Curve2DEvaluation<float> normalCurve = [µ, σ, one_on_sigma_sqrt_tau](float t, void *, void *) {
+      double exponent = (t - µ) / σ;
+      double output = one_on_sigma_sqrt_tau * std::exp(exponent * exponent * -0.5);
+      return Coordinate2D<float>(t, output);
+    };
+
+    CurveDrawing curve(Curve2D(normalCurve), context, 0.0, 10.0, 0.1, KDColorBlue, true, false);
+    curve.draw(plotView, ctx, rect);
+  }
 }
 
 // HistogramView

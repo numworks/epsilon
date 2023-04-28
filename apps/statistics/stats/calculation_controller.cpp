@@ -19,7 +19,7 @@ CalculationController::CalculationController(Responder *parentResponder,
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
     m_seriesTitleCells[i].setFont(KDFont::Size::Small);
   }
-  for (int i = 0; i < k_numberOfCalculationTitleCells; i++) {
+  for (int i = 0; i < k_maxNumberOfDisplayableRows; i++) {
     m_calculationTitleCells[i].setAlignment(KDGlyph::k_alignRight,
                                             KDGlyph::k_alignCenter);
     m_calculationTitleCells[i].setMessageFont(KDFont::Size::Small);
@@ -205,13 +205,13 @@ int CalculationController::reusableCellCount(int type) {
     case k_hideableCellType:
       return 2;
     case k_calculationTitleCellType:
-      return k_numberOfCalculationTitleCells;
+      return k_maxNumberOfDisplayableRows;
     case k_calculationSymbolCellType:
-      return k_numberOfCalculationTitleCells;
+      return k_maxNumberOfDisplayableRows;
     case k_calculationModeTitleCellType:
-      return k_numberOfCalculationTitleCells;
+      return k_maxNumberOfDisplayableRows;
     case k_calculationModeSymbolCellType:
-      return k_numberOfCalculationTitleCells;
+      return k_maxNumberOfDisplayableRows;
     case k_seriesTitleCellType:
       return k_numberOfSeriesTitleCells;
     default:

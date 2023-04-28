@@ -44,8 +44,6 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static int k_numberOfCalculationCells =
       3 * k_maxNumberOfDisplayableRows;
   constexpr static int k_numberOfSeriesTitleCells = 3;
-  constexpr static int k_numberOfCalculationTitleCells =
-      k_maxNumberOfDisplayableRows;
   constexpr static int k_numberOfHeaderColumns = 2;  // Title & Symbol
 
   constexpr static int k_calculationTitleCellType = 0;
@@ -130,13 +128,13 @@ class CalculationController : public Shared::DoublePairTableController {
   Shared::BufferFunctionTitleCell
       m_seriesTitleCells[k_numberOfSeriesTitleCells];
   Escher::EvenOddMessageTextCell
-      m_calculationTitleCells[k_numberOfCalculationTitleCells];
+      m_calculationTitleCells[k_maxNumberOfDisplayableRows];
   Escher::EvenOddMessageTextCell
-      m_calculationSymbolCells[k_numberOfCalculationTitleCells];
+      m_calculationSymbolCells[k_maxNumberOfDisplayableRows];
   Escher::SmallFontEvenOddBufferTextCell
-      m_calculationModeTitleCells[k_numberOfCalculationTitleCells];
+      m_calculationModeTitleCells[k_maxNumberOfDisplayableRows];
   Escher::SmallFontEvenOddBufferTextCell
-      m_calculationModeSymbolCells[k_numberOfCalculationTitleCells];
+      m_calculationModeSymbolCells[k_maxNumberOfDisplayableRows];
   Escher::FloatEvenOddBufferTextCell<>
       m_calculationCells[k_numberOfCalculationCells];
   Escher::SolidColorCell m_hideableCell[k_numberOfHeaderColumns];

@@ -67,6 +67,8 @@ class DoublePairStore {
     return std::max(lengthOfColumn(series, 0), lengthOfColumn(series, 1));
   }
   int lengthOfColumn(int series, int i) const {
+    assert(series >= 0 && series < k_numberOfSeries && i >= 0 &&
+           i < k_numberOfColumnsPerSeries);
     return m_dataLists[series][i].length();
   }
 

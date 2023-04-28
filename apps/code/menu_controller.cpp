@@ -201,11 +201,8 @@ HighlightCell *MenuController::reusableCell(int index, int type) {
     assert(index == 0);
     return &m_addNewScriptCell;
   }
-  if (type == k_emptyCellType) {
-    return &m_emptyCell;
-  }
-  assert(false);
-  return nullptr;
+  assert(type == k_emptyCellType);
+  return &m_emptyCell;
 }
 
 int MenuController::reusableCellCount(int type) {

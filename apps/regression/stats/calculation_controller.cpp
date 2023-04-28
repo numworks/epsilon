@@ -335,7 +335,7 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
     return &m_titleCells[index];
   }
-  if (type == k_symbolCalculationTitleCellType) {
+  if (type == k_calculationSymbolCellType) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
     return &m_titleSymbolCells[index];
   }
@@ -357,7 +357,7 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
 
 int CalculationController::reusableCellCount(int type) {
   if (type == k_calculationTitleCellType ||
-      type == k_symbolCalculationTitleCellType) {
+      type == k_calculationSymbolCellType) {
     return k_maxNumberOfDisplayableRows;
   }
   if (type == k_columnTitleCellType) {
@@ -381,7 +381,7 @@ int CalculationController::typeAtLocation(int column, int row) {
     return k_calculationTitleCellType;
   }
   if (column == 1) {
-    return k_symbolCalculationTitleCellType;
+    return k_calculationSymbolCellType;
   }
   if (row == 0) {
     return k_columnTitleCellType;

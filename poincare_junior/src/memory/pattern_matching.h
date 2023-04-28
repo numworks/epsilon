@@ -17,8 +17,8 @@ namespace PatternMatching {
 
 class Context {
  public:
-  Node& operator[](uint8_t tag) { return m_array[tag]; }
-  const Node& operator[](uint8_t tag) const { return m_array[tag]; }
+  Node getNode(uint8_t tag) const { return m_array[tag]; }
+  void setNode(uint8_t tag, Node node) { m_array[tag] = node; }
   bool isUninitialized() const;
 
 #if POINCARE_MEMORY_TREE_LOG

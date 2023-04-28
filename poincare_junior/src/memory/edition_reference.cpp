@@ -144,13 +144,13 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
   int initializedPlaceHolders = 0;
   EditionReference placeholders[Placeholder::Tag::NumberOfTags];
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
-    if (ctx[i].isUninitialized()) {
+    if (ctx.getNode(i).isUninitialized()) {
       continue;
     }
     initializedPlaceHolders += 1;
     treeNext.insertTreeBeforeNode(0_e);
     // Keep track of placeholder matches before detaching them
-    placeholders[i] = EditionReference(ctx[i]);
+    placeholders[i] = EditionReference(ctx.getNode(i));
   }
 
   // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 ....
@@ -165,8 +165,8 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
     if (placeholders[i].isUninitialized()) {
       continue;
     }
-    // Warning : From this point forward, ctx[i] is no longer reliable.
-    ctx[i] = Node();
+    // Warning : From this point forward, ctx.getNode(i) is no longer reliable.
+    ctx.setNode(i, Node());
     placeholders[i].detachTree();
   }
 
@@ -180,7 +180,7 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
 
   // Step 4 - Update context with new placeholder matches position
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
-    ctx[i] = static_cast<Node>(placeholders[i]);
+    ctx.setNode(i, static_cast<Node>(placeholders[i]));
   }
 
   // Step 5 - Build the PatternMatching replacement

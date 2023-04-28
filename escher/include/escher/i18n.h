@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+/* This macro is defined dans python/port/mod/ndarray.h and conflicts with
+ * I18n::translate. */
+#undef translate
+
 namespace I18n {
 enum class Message : uint16_t;
 enum class Language : uint8_t;

@@ -286,4 +286,10 @@ QUIZ_CASE(solver_symbolic_computation) {
   set("x", "1");
   assert_solves_to_error("x^5+x^2+x+1=0", RequireApproximateSolution);
   unset("x");
+
+  set("t", "1");
+  set("a", "2");
+  assert_solves_to_infinite_solutions({"ax=y"}, {"x=t/2", "y=t"});
+  unset("a");
+  unset("t");
 }

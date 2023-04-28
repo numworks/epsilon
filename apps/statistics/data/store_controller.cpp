@@ -139,7 +139,7 @@ void StoreController::clearSelectedColumn() {
   if (column == 0) {
     m_store->deleteAllPairsOfSeries(series);
     selectCellAtLocation(selectedColumn(), 1);
-    resetMemoizedFormulasForSeries(series);
+    resetMemoizedFormulasOfEmptyColumns(series);
   } else {
     m_store->resetColumn(series, column);
   }

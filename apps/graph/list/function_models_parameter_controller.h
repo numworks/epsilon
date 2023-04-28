@@ -45,23 +45,30 @@ class FunctionModelsParameterController
     Parametric,
     Polar,
     Piecewise,
+    Point,
+    ListOfPoints,
     NumberOfModels
   };
 
   constexpr static Model layoutDefault[] = {
-      Model::Function,  Model::Line,  Model::Inequality, Model::Inverse,
-      Model::Piecewise, Model::Conic, Model::Parametric, Model::Polar,
+      Model::Function,   Model::Line,  Model::Inequality,   Model::Inverse,
+      Model::Piecewise,  Model::Point, Model::ListOfPoints, Model::Conic,
+      Model::Parametric, Model::Polar,
   };
 
   constexpr static Model layoutVariant1[] = {
       // US
-      Model::Equation,  Model::Function, Model::Inequality, Model::Inverse,
-      Model::Piecewise, Model::Conic,    Model::Parametric, Model::Polar};
+      Model::Equation,     Model::Function, Model::Inequality, Model::Point,
+      Model::ListOfPoints, Model::Inverse,  Model::Piecewise,  Model::Conic,
+      Model::Parametric,   Model::Polar,
+  };
 
   constexpr static Model layoutVariant2[] = {
       // PT
-      Model::Function, Model::Piecewise, Model::LineVariant, Model::Inequality,
-      Model::Conic,    Model::Inverse,   Model::Polar,       Model::Parametric,
+      Model::Function,     Model::Piecewise,  Model::LineVariant,
+      Model::Inequality,   Model::Conic,      Model::Inverse,
+      Model::Polar,        Model::Parametric, Model::Point,
+      Model::ListOfPoints,
   };
 
   constexpr static int k_numberOfExpressionModels =
@@ -73,18 +80,22 @@ class FunctionModelsParameterController
       "Template layouts are assumed to be the same length in all countries");
   constexpr static int k_numberOfExpressionCells = std::size(layoutDefault);
 
-  constexpr static const char* k_models[static_cast<int>(
-      Model::NumberOfModels)] = {"",
-                                 "y=x",
-                                 "f(x)=x",
-                                 "x+y+1=0",
-                                 "x+y=1",
-                                 "x+y≤0",
-                                 "x=√(y)",
-                                 "x^2+y^2+x*y+x+y=0",
-                                 "f(t)=[[cos(t)][sin(t)]]",
-                                 "r=cos(θ)",
-                                 "f(x)=piecewise(-x,x<0,x,x≥0)"};
+  constexpr static const char*
+      k_models[static_cast<int>(Model::NumberOfModels)] = {
+          "",
+          "y=x",
+          "f(x)=x",
+          "x+y+1=0",
+          "x+y=1",
+          "x+y≤0",
+          "x=√(y)",
+          "x^2+y^2+x*y+x+y=0",
+          "f(t)=[[cos(t)][sin(t)]]",
+          "r=cos(θ)",
+          "f(x)=piecewise(-x,x<0,x,x≥0)",
+          "(2,3)",
+          "{(2,3),(3,5)}",
+      };
   constexpr static const char* k_lineModelWhenForbidden = "y=x-1";
   constexpr static const char* k_inequationModelWhenForbidden = "y≤x";
   // Piecewise is the longest named model
@@ -104,7 +115,10 @@ class FunctionModelsParameterController
           I18n::Message::ConicNamedTemplate,
           I18n::Message::ParametricEquationType,
           I18n::Message::PolarEquationType,
-          I18n::Message::PiecewiseFunction};
+          I18n::Message::PiecewiseFunction,
+          I18n::Message::PointType,
+          I18n::Message::ListOfPointsType,
+      };
   // The models list depends on the current country
   static const Model* Models();
   // Some models may be hidden.

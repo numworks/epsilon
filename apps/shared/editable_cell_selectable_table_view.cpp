@@ -41,8 +41,8 @@ bool EditableCellSelectableTableView::selectNonHiddenCellAtClippedLocation(
   // Clip i to retrieve a valid seriesIndex
   if (i < 0) {
     i = 0;
-  } else if (i >= dataSource()->numberOfColumns()) {
-    i = dataSource()->numberOfColumns() - 1;
+  } else if (i >= totalNumberOfColumns()) {
+    i = totalNumberOfColumns() - 1;
   }
   int nRowsAtColumn = m_tableViewController->numberOfRowsAtColumn(i);
   if (j >= nRowsAtColumn) {

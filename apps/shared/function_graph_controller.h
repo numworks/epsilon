@@ -26,7 +26,6 @@ class FunctionGraphController : public InteractiveCurveViewController,
   void viewWillAppear() override;
 
   // InteractiveCurveViewRangeDelegate
-  bool shouldMemoizeAutoRange() const override { return true; }
   void tidyModels() override;
 
   // InteractiveCurveViewController

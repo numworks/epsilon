@@ -21,7 +21,9 @@ class InteractiveCurveViewRangeDelegate {
                                 bool isMin, float top, float bottom, float left,
                                 float right);
 
-  virtual bool shouldMemoizeAutoRange() const = 0;
+  virtual uint32_t autoZoomChecksum() const {
+    return Ion::Storage::FileSystem::sharedFileSystem->checksum();
+  }
   virtual Poincare::Range2D optimalRange(
       bool computeX, bool computeY, Poincare::Range2D originalRange) const = 0;
   virtual float addMargin(float x, float range, bool isVertical,

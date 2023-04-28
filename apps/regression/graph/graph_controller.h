@@ -43,14 +43,9 @@ class GraphController : public Shared::InteractiveCurveViewController {
   bool moveCursorVertically(OMG::VerticalDirection direction) override;
 
   // InteractiveCurveViewRangeDelegate
-  /* Auto-zoom should not be memoized because memoization use the FileSystem
-   * checksum to know if the store has changed. Since the hidden status of each
-   * series is not stored in the FileSystem, AutoZoom would not be recomputed
-   * after changing the hidden status of a series. Furthermore, the optimal
-   * range of this graph is very fast to compute since it just fits the
-   * regression points, so it's not a problem to compute it each time the view
-   * appears. */
-  bool shouldMemoizeAutoRange() const override { return false; }
+  uint32_t autoZoomChecksum() const override {
+    return m_store->storeChecksum();
+  }
   Poincare::Range2D optimalRange(
       bool computeX, bool computeY,
       Poincare::Range2D originalRange) const override;

@@ -322,18 +322,15 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
   setZoomNormalize(false);
   if (m_delegate && (computeX || computeY)) {
     Range2D newRange;
-    bool useMemoizedAutoRange =
-        m_delegate->shouldMemoizeAutoRange() && computeX && computeY;
+    bool useMemoizedAutoRange = computeX && computeY;
     {
       CircuitBreakerCheckpoint checkpoint(
           Ion::CircuitBreaker::CheckpointType::Back);
       if (CircuitBreakerRun(checkpoint)) {
-        uint32_t storeChecksum =
-            useMemoizedAutoRange
-                ? Ion::Storage::FileSystem::sharedFileSystem->checksum()
-                : 0;
+        uint32_t storeChecksum;
         if (useMemoizedAutoRange &&
-            m_storeChecksumOfLastMemoizedAutoRange == storeChecksum) {
+            (storeChecksum = m_delegate->autoZoomChecksum()) ==
+                m_storeChecksumOfLastMemoizedAutoRange) {
           newRange = m_memoizedAutoRange;
         } else {
           newRange =

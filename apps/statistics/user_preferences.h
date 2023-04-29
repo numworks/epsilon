@@ -16,7 +16,9 @@ public:
     m_barWidth(1.0),
     m_firstDrawnBarAbscissa(0.0),
     m_displayOutliers(GlobalPreferences::sharedGlobalPreferences()->outliersStatus() == CountryPreferences::OutlierDefaultVisibility::Displayed),
-    m_curveDrawnOver(false)
+    m_curveDrawnOver(false),
+    m_curveMu(3.0),
+    m_curveSigma(1.0)
     {}
 
   bool displayCumulatedFrequencies(int series) { return m_displayCumulatedFrequencies[series]; }

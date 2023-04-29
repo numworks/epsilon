@@ -63,17 +63,13 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KD
     // curve.setPrecisionOptions(false, nullptr, NoDiscontinuity);
     // curve.draw(plotView, ctx, rect);
 
-    constexpr float segmentLength = 2.f;
-    float radiusInPixel = std::max(100 / plotView->pixelWidth(), 200 / plotView->pixelHeight());
-    float angleStep = segmentLength / radiusInPixel;
-    float parameters[] = { 200, 200, 100, 200 };
-    Curve2DEvaluation<float> arc = [](float t, void * model, void *) {
-      // Store* s = reinterpret_cast<Store * >(model);
+    Curve2DEvaluation<float> gauss = [](float t, void * model, void *) {
+      Store* s = reinterpret_cast<Store * >(model);
       // assert(s);
-      // double µ = s->normalCurveOverHistogramMu();
-      // double σ = s->normalCurveOverHistogramSigma();
-      double µ = 0.0;
-      double σ = 1.0;
+      double µ = s->normalCurveOverHistogramMu();
+      double σ = s->normalCurveOverHistogramSigma();
+      // double µ = 0.0;
+      // double σ = 1.0;
       double one_on_sigma_sqrt_tau = 1.0/(σ * 2.506628274631000502415765284811);
       double exponent = (t - µ) / σ;
       double output = one_on_sigma_sqrt_tau * std::exp(exponent * exponent * -0.5);
@@ -83,7 +79,7 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KD
     float axisMin = plotView->rangeMin(AbstractPlotView::Axis::Horizontal);
     float axisMax = plotView->rangeMax(AbstractPlotView::Axis::Horizontal);
 
-    CurveDrawing plot(Curve2D(arc, parameters), context, axisMin, axisMax, angleStep, KDColorBlack, false);
+    CurveDrawing plot(Curve2D(gauss, m_store), context, axisMin, axisMax, 0.01, KDColorBlack, false);
     plot.setPrecisionOptions(false, nullptr, NoDiscontinuity);
     plot.draw(plotView, ctx, rect);
   }

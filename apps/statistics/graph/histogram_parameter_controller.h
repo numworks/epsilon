@@ -16,7 +16,7 @@ public:
   int numberOfRows() const override { return 1+k_numberOfCells; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
-  constexpr static int k_numberOfCells = 3;
+  constexpr static int k_numberOfCells = 5;
   double extractParameterAtIndex(int index);
   bool handleEvent(Ion::Events::Event event) override;
   double parameterAtIndex(int index) override;
@@ -24,7 +24,7 @@ private:
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override { return k_numberOfCells; }
   void buttonAction() override;
-  bool authorizedParameters(double tempBarWidth, double tempFirstDrawnBarAbscissa, double tempDrawCurve);
+  bool authorizedParameters(double tempBarWidth, double tempFirstDrawnBarAbscissa, double tempDrawCurve, double tempCurveMu, double tempCurveSigma);
   Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfCells];
   Store * m_store;
   Shared::MessagePopUpController m_confirmPopUpController;
@@ -32,6 +32,8 @@ private:
   double m_tempBarWidth;
   double m_tempFirstDrawnBarAbscissa;
   double m_tempDrawCurve;
+  double m_tempCurveMu;
+  double m_tempCurveSigma;
 };
 
 }

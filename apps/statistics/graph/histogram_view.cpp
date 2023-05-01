@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <cmath>
 
+using namespace Poincare;
 using namespace Shared;
 
 namespace Statistics {
@@ -41,6 +42,33 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KD
 
   HistogramDrawing histogram(histogramLevels, m_store, context, highlights, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, true, color, k_selectedBarColor, borderColor);
   histogram.draw(plotView, ctx, rect);
+
+  if (m_store->drawCurveOverHistogram()) {
+    // We want to overlay a function plot over the histogram
+    Curve2DEvaluation<float> gauss = [](float t, void * model, void *) {
+      Store* s = reinterpret_cast<Store * >(model);
+
+
+      double µ = s->normalCurveOverHistogramMu();
+      double σ = s->normalCurveOverHistogramSigma();
+
+      double exponent = (t - µ) / σ;
+      double gauss =  std::exp(exponent * exponent * -0.5);
+
+      // Normally, the Gauss curve includes the 1/σ√2π term. This is to rescale it.
+      // However, since the histogram is already drawn in such a way that the highest bar
+      // reaches one, this rescaling isn't necessary and would only make the curve too flat.
+
+      return Coordinate2D<float>(t, gauss);
+    };
+
+    float axisMin = plotView->rangeMin(AbstractPlotView::Axis::Horizontal);
+    float axisMax = plotView->rangeMax(AbstractPlotView::Axis::Horizontal);
+
+    CurveDrawing plot(Curve2D(gauss, m_store), context, axisMin, axisMax, 0.01, KDColorBlack, false);
+    plot.setPrecisionOptions(false, nullptr, NoDiscontinuity);
+    plot.draw(plotView, ctx, rect);
+  }
 }
 
 // HistogramView

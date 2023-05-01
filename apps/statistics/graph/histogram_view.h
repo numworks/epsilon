@@ -4,11 +4,11 @@
 #include <poincare/print_float.h>
 #include "../store.h"
 #include <apps/constant.h>
- #include <apps/shared/plot_view_policies.h>
+#include <apps/shared/plot_view_policies.h>
 
 namespace Statistics {
 
-class HistogramPlotPolicy : public Shared::PlotPolicy::WithHistogram {
+class HistogramPlotPolicy : public Shared::PlotPolicy::WithHistogram, public Shared::PlotPolicy::WithCurves {
 protected:
   constexpr static KDColor k_notSelectedHistogramColor =  Escher::Palette::GrayWhite;
   constexpr static KDColor k_notSelectedHistogramBorderColor = Escher::Palette::GrayMiddle;

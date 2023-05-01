@@ -45,18 +45,21 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KD
 
   if (m_store->drawCurveOverHistogram()) {
     // We want to overlay a function plot over the histogram
-
     Curve2DEvaluation<float> gauss = [](float t, void * model, void *) {
       Store* s = reinterpret_cast<Store * >(model);
-      // assert(s);
+
+
       double µ = s->normalCurveOverHistogramMu();
       double σ = s->normalCurveOverHistogramSigma();
-      // double µ = 0.0;
-      // double σ = 1.0;
-      double one_on_sigma_sqrt_tau = 1.0/(σ * 2.506628274631000502415765284811);
+
       double exponent = (t - µ) / σ;
-      double output = one_on_sigma_sqrt_tau * std::exp(exponent * exponent * -0.5);
-      return Coordinate2D<float>(t, output);
+      double gauss =  std::exp(exponent * exponent * -0.5);
+
+      // Normally, the Gauss curve includes the 1/σ√2π term. This is to rescale it.
+      // However, since the histogram is already drawn in such a way that the highest bar
+      // reaches one, this rescaling isn't necessary and would only make the curve too flat.
+
+      return Coordinate2D<float>(t, gauss);
     };
 
     float axisMin = plotView->rangeMin(AbstractPlotView::Axis::Horizontal);

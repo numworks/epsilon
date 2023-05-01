@@ -45,23 +45,6 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KD
 
   if (m_store->drawCurveOverHistogram()) {
     // We want to overlay a function plot over the histogram
-    // this code is taken from apps/graph/graph/graph_view.cpp
-
-    // TODO: find a way to fit a normal distribution into a Curve2DEvaluation so that the curve itself can be drawn
-
-    
-
-    // auto lambda = [µ, σ, one_on_sigma_sqrt_tau](float t, void * model, void *) {
-    //   double exponent = (t - µ) / σ;
-    //   double output = one_on_sigma_sqrt_tau * std::exp(exponent * exponent * -0.5);
-    //   return Coordinate2D<float>(t, output);
-    // };
-
-    // Curve2DEvaluation<float> normalCurve = (lambda, nullptr);
-
-    // CurveDrawing curve(Curve2D(normalCurve), context, 0.0, 10.0, 0.1, KDColorBlue, true, false);
-    // curve.setPrecisionOptions(false, nullptr, NoDiscontinuity);
-    // curve.draw(plotView, ctx, rect);
 
     Curve2DEvaluation<float> gauss = [](float t, void * model, void *) {
       Store* s = reinterpret_cast<Store * >(model);

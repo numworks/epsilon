@@ -118,7 +118,8 @@ int ContinuousFunctionCache::indexForParameter(
     return -1;
   }
   float delta = (t - m_tMin) / m_tStep;
-  if (delta < 0 || delta > INT_MAX) {
+  // Conversion from int to float changes INT_MAX from 2147483647 to 2147483648
+  if (delta < 0 || delta >= static_cast<float>(INT_MAX)) {
     return -1;
   }
   int res = std::round(delta);
@@ -161,7 +162,8 @@ void ContinuousFunctionCache::pan(ContinuousFunction *function, float newTMin) {
 
   float dT = (newTMin - m_tMin) / m_tStep;
   m_tMin = newTMin;
-  if (std::fabs(dT) > INT_MAX) {
+  // Conversion from int to float changes INT_MAX from 2147483647 to 2147483648
+  if (std::fabs(dT) >= static_cast<float>(INT_MAX)) {
     clear();
     return;
   }

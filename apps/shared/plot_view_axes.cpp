@@ -217,7 +217,7 @@ float SimpleAxis::tickPosition(int i, const AbstractPlotView* plotView,
                                AbstractPlotView::Axis axis) const {
   float step = tickStep(plotView, axis);
   float tMin = plotView->rangeMin(axis);
-  assert(std::fabs(std::round(tMin / step)) < INT_MAX);
+  assert(std::fabs(std::round(tMin / step)) < static_cast<float>(INT_MAX));
   int indexOfOrigin = std::floor(-tMin / step);
   return step * (i - indexOfOrigin);
 }

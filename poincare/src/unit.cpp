@@ -90,7 +90,7 @@ UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
       /* We limit to INT_MAX / 3 because an exponent might get bigger with
        * simplification. As a worst case scenario, (_s²_m²_kg/_A²)^n should be
        * simplified to (_s^5_S)^n. If 2*n is under INT_MAX, 5*n might not. */
-      if (std::fabs(exponentFloat) < INT_MAX / 3) {
+      if (std::fabs(exponentFloat) < static_cast<float>(INT_MAX) / 3.0) {
         // Exponent can be safely casted as int
         exponent = static_cast<int>(std::round(exponentFloat));
         assert(std::fabs(exponentFloat - static_cast<float>(exponent)) <= 0.5f);

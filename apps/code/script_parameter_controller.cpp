@@ -9,7 +9,7 @@ namespace Code {
 ScriptParameterController::ScriptParameterController(
     Responder *parentResponder, I18n::Message title,
     MenuController *menuController)
-    : SelectableListViewController(parentResponder),
+    : ExplicitSelectableListViewController(parentResponder),
       m_pageTitle(title),
       m_script(Ion::Storage::Record()),
       m_menuController(menuController) {
@@ -33,9 +33,7 @@ const char *ScriptParameterController::title() {
 }
 
 bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
-  int index = selectedRow();
-  int type = typeAtIndex(index);
-  AbstractMenuCell *cell = reusableCell(index, type);
+  AbstractMenuCell *cell = static_cast<AbstractMenuCell *>(selectedCell());
   if (!cell->canBeActivatedByEvent(event)) {
     return false;
   }
@@ -70,11 +68,10 @@ void ScriptParameterController::viewWillAppear() {
 
 void ScriptParameterController::didBecomeFirstResponder() {
   selectCell(0);
-  SelectableListViewController<
-      MemoizedListViewDataSource>::didBecomeFirstResponder();
+  ExplicitSelectableListViewController::didBecomeFirstResponder();
 }
 
-AbstractMenuCell *ScriptParameterController::reusableCell(int index, int type) {
+AbstractMenuCell *ScriptParameterController::cell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
   AbstractMenuCell *cells[k_totalNumberOfCell] = {

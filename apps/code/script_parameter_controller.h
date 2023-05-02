@@ -15,8 +15,8 @@ namespace Code {
 
 class MenuController;
 
-class ScriptParameterController : public Escher::SelectableListViewController<
-                                      Escher::MemoizedListViewDataSource> {
+class ScriptParameterController
+    : public Escher::ExplicitSelectableListViewController {
  public:
   ScriptParameterController(Escher::Responder* parentResponder,
                             I18n::Message title,
@@ -32,7 +32,7 @@ class ScriptParameterController : public Escher::SelectableListViewController<
   TELEMETRY_ID("ScriptParameter");
 
   /* MemoizedListViewDataSource */
-  Escher::AbstractMenuCell* reusableCell(int index, int type) override;
+  Escher::AbstractMenuCell* cell(int index) override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 

@@ -92,15 +92,11 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
   if (std::isnan(x)) {
     return true;
   }
-  FunctionApp *myApp = FunctionApp::app();
-  assert(!selectedRecord().isNull());
-  ExpiringPointer<Function> function =
-      myApp->functionStore()->modelForRecord(selectedRecord());
-
-  /* TODO We would like to assert that the function is not a parametered
+  /* m_cursorView is a vertical bar so no need to compute its ordinate.
+   *
+   * TODO We would like to assert that the function is not a parametered
    * function, so we can indeed evaluate the function for parameter x. */
-  double y = function->evaluateXYAtParameter(x, myApp->localContext()).y();
-  m_cursor->moveTo(x, x, y);
+  m_cursor->moveTo(x, x, 0);
   if (m_step == Step::SecondParameter) {
     assert(allowEndLowerThanStart() || m_cursor->x() >= m_startSum);
     m_graphView->setAreaHighlight(std::min(m_startSum, m_cursor->x()),

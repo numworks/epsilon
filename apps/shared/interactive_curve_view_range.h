@@ -45,9 +45,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   float roundLimit(float y, float range, bool isMin);
 
   // MemoizedCurveViewRange
-  float xGridUnit() const override {
-    return m_zoomNormalize ? yGridUnit() : MemoizedCurveViewRange::xGridUnit();
-  }
+  float xGridUnit() const override;
   float yGridUnit() const override;
 
   // CurveViewWindow

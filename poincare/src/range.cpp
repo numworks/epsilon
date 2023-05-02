@@ -32,8 +32,10 @@ void Range1D::zoom(float ratio, float center) {
 }
 
 void Range1D::stretchEachBoundBy(float shift) {
+  assert(shift >= 0.0f);
   m_min -= shift;
   m_max += shift;
+  assert(std::isnan(length()) || length() >= k_minLength);
 }
 
 void Range1D::stretchIfTooSmall(float shift) {
@@ -45,7 +47,7 @@ void Range1D::stretchIfTooSmall(float shift) {
     }
     stretchEachBoundBy(shift);
   }
-  assert(length() >= k_minLength || std::isnan(length()));
+  assert(std::isnan(length()) || length() >= k_minLength);
 }
 
 void Range1D::privateSet(float t, bool isMin, float limit) {
@@ -120,6 +122,8 @@ bool Range2D::setRatio(float r, bool shrink) {
     toEdit = &m_y;
     newLength = m_x.length() * r;
   }
+  assert((shrink && newLength <= toEdit->length()) ||
+         (!shrink && newLength >= toEdit->length()));
   float c = toEdit->center();
   newLength *= 0.5f;
   if (c == toEdit->min() || c == toEdit->max() ||

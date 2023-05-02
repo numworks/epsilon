@@ -20,7 +20,7 @@ template <typename T>
 static bool isScalarEvaluationType(typename EvaluationNode<T>::Type type) {
   return type == EvaluationNode<T>::Type::Complex ||
          type == EvaluationNode<T>::Type::BooleanEvaluation ||
-         type == EvaluationNode<T>::Type::Point;
+         type == EvaluationNode<T>::Type::PointEvaluation;
 }
 
 template <typename T>
@@ -76,10 +76,10 @@ ListComplex<T> ListComplex<T>::sort() {
 
         Evaluation<T> eI = list->childAtIndex(i);
         Evaluation<T> eJ = list->childAtIndex(j);
-        if (eI.type() == EvaluationNode<T>::Type::Point) {
+        if (eI.type() == EvaluationNode<T>::Type::PointEvaluation) {
           if (eJ.isUndefined()) {
             return !ListSort::k_nanIsGreatest;
-          } else if (eJ.type() == EvaluationNode<T>::Type::Point) {
+          } else if (eJ.type() == EvaluationNode<T>::Type::PointEvaluation) {
             return static_cast<PointEvaluation<T> &>(eI).xy().isGreaterThan(
                 static_cast<PointEvaluation<T> &>(eJ).xy(),
                 ListSort::k_nanIsGreatest);

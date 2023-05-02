@@ -24,7 +24,7 @@ class EvaluationNode : public TreeNode {
     Complex,
     MatrixComplex,
     ListComplex,
-    Point
+    PointEvaluation
   };
   EvaluationNode<T> *childAtIndex(int index) const {
     return static_cast<EvaluationNode<T> *>(TreeNode::childAtIndex(index));

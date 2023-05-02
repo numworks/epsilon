@@ -15,7 +15,7 @@ class PointEvaluationNode final : public EvaluationNode<T> {
 
   // EvaluationNode
   typename EvaluationNode<T>::Type type() const override {
-    return EvaluationNode<T>::Type::Point;
+    return EvaluationNode<T>::Type::PointEvaluation;
   }
   bool isUndefined() const override {
     return std::isnan(m_x) || std::isnan(m_y);

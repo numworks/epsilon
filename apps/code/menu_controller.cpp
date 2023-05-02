@@ -1,6 +1,7 @@
 #include "menu_controller.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/expression_model_list_controller.h>
 #include <assert.h>
 #include <escher/metric.h>
 #include <ion/events.h>
@@ -38,7 +39,8 @@ MenuController::MenuController(Responder *parentResponder, App *pythonDelegate,
       m_shouldDisplayAddScriptRow(true) {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.hideScrollBars();
-  m_addNewScriptCell.setLeftMargin(Metric::BigCellMargin);
+  m_addNewScriptCell.setLeftMargin(
+      Shared::ExpressionModelListController::k_newModelMargin);
   m_addNewScriptCell.setMessage(I18n::Message::AddScript);
   for (int i = 0; i < k_maxNumberOfDisplayableScriptCells; i++) {
     m_scriptCells[i].setParentResponder(&m_selectableTableView);

@@ -31,6 +31,10 @@ class ExpressionModelListController
   bool handleEventOnExpressionInTemplateMenu(Ion::Events::Event event) {
     return handleEventOnExpression(event, true);
   }
+  /* We want all ListControllers to use the same margin and the one in Grapher
+   * asserts it is aligned with its other cells. */
+  constexpr static KDCoordinate k_newModelMargin =
+      Escher::Metric::BigCellMargin + 3;
 
  protected:
   constexpr static KDFont::Size k_font = KDFont::Size::Large;
@@ -38,10 +42,6 @@ class ExpressionModelListController
   constexpr static int k_expressionCellType = 0;
   constexpr static int k_addNewModelCellType = 1;
   constexpr static int k_editableCellType = 2;
-  /* We want all ListControllers to use the same margin and the one in Grapher
-   * asserts it is aligned with its other cells. */
-  constexpr static KDCoordinate k_newModelMargin =
-      Escher::Metric::BigCellMargin + 3;
   // ListViewDataSource
   int numberOfRows() const override { return numberOfExpressionRows(); }
   int typeAtIndex(int index) const override;

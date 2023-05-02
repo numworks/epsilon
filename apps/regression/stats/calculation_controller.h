@@ -36,7 +36,7 @@ class CalculationController : public Shared::DoublePairTableController {
   int reusableCellCount(int type) override;
   int typeAtLocation(int column, int row) override;
   KDCoordinate separatorBeforeColumn(int column) override {
-    return typeAtLocation(column, 0) == k_columnTitleCellType
+    return typeAtLocation(column, 0) == k_seriesTitleCellType
                ? Escher::Metric::TableSeparatorThickness
                : 0;
   }
@@ -79,7 +79,7 @@ class CalculationController : public Shared::DoublePairTableController {
       Store::k_numberOfSeries * k_maxNumberOfDisplayableRows;
   // Cell types
   constexpr static int k_calculationTitleCellType = 0;
-  constexpr static int k_columnTitleCellType = 1;
+  constexpr static int k_seriesTitleCellType = 1;
   constexpr static int k_doubleBufferCalculationCellType = 2;
   constexpr static int k_standardCalculationCellType = 3;
   constexpr static int k_hideableCellType = 4;

@@ -1,4 +1,4 @@
-AddScript = "Aggiungere script"
+AddScript = "Aggiungi uno script"
 AllowedCharactersaz09 = "Caratteri consentiti : a-z, 0-9, _"
 Autocomplete = "Autocompletamento"
 AutoImportScript = "Auto importazione"

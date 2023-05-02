@@ -29,11 +29,6 @@ CalculationController::CalculationController(Responder *parentResponder,
   resetMemoization();
 }
 
-void CalculationController::viewWillAppear() {
-  resetMemoization();
-  DoublePairTableController::viewWillAppear();
-}
-
 void CalculationController::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
     KDPoint previousOffset, bool withinTemporarySelection) {

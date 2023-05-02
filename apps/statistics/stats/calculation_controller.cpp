@@ -30,11 +30,6 @@ CalculationController::CalculationController(Responder *parentResponder,
   resetMemoization();
 }
 
-void CalculationController::viewWillAppear() {
-  resetMemoization();
-  DoublePairTableController::viewWillAppear();
-}
-
 // TableViewDataSource
 
 int CalculationController::numberOfColumns() const {

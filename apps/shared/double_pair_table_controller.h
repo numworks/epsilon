@@ -35,6 +35,7 @@ class DoublePairTableController
 
   // ViewController
   Escher::View *view() override { return &m_prefacedTwiceTableView; }
+  void viewWillAppear() override;
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

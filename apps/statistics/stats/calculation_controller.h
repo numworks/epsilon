@@ -19,8 +19,6 @@ class CalculationController : public Shared::DoublePairTableController {
   CalculationController(Escher::Responder* parentResponder,
                         Escher::ButtonRowController* header, Store* store);
 
-  void viewWillAppear() override;
-
   // TableViewDataSource
   int numberOfRows() const override {
     return fixedNumberOfRows() + m_store->totalNumberOfModes() +

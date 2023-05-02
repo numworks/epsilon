@@ -17,6 +17,7 @@ class FunctionGraphPolicy {
   void drawPlot(const AbstractPlotView *plotView, KDContext *ctx,
                 KDRect rect) const;
 
+  virtual Ion::Storage::Record initModelBeforeDrawingPlot(int modelIndex) const;
   virtual int numberOfDrawnRecords() const = 0;
   virtual void drawRecord(Ion::Storage::Record record, int index, KDContext *,
                           KDRect, bool firstDrawnRecord) const = 0;
@@ -58,6 +59,9 @@ class FunctionGraphView
   }
 
  protected:
+  Ion::Storage::Record initModelBeforeDrawingPlot(
+      int modelIndex) const override;
+
   float m_highlightedStart;
   float m_highlightedEnd;
   Ion::Storage::Record m_selectedRecord;

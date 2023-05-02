@@ -60,6 +60,7 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
   if (!(m_min <= m_max)) {
     (isMin ? m_max : m_min) = *bound;
   }
+  assert(std::isnan(length()) || length() >= 0);
   if (length() < k_minLength) {
     float l = DefaultLengthAt(m_min);
     if (m_min != limit && (isMin || m_max == -limit)) {

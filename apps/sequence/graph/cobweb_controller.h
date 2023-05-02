@@ -21,17 +21,23 @@ class CobwebController : public Shared::SimpleInteractiveCurveViewController,
  public:
   CobwebController(Responder* parentResponder,
                    Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-                   GraphController* graphController, GraphView* graphView,
-                   CurveViewRange* graphRange, Shared::CurveViewCursor* cursor,
+                   GraphView* graphView, CurveViewRange* graphRange,
+                   Shared::CurveViewCursor* cursor,
                    Shared::XYBannerView* bannerView,
                    Shared::CursorView* cursorView,
                    Shared::SequenceStore* sequenceStore);
   const char* title() override;
   TELEMETRY_ID("Cobweb");
   void viewWillAppear() override;
-  void viewDidDisappear() override;
   void setRecord(Ion::Storage::Record record);
   bool isRecordSuitable() const;
+
+  bool stepIsInitialized() const { return m_step >= 0; }
+  void resetStep() { m_step = -1; }
+  int rankAtCurrentStep() const {
+    assert(m_step >= 0);
+    return rankAtStep(m_step);
+  }
 
  private:
   void setStep(int step);
@@ -44,8 +50,7 @@ class CobwebController : public Shared::SimpleInteractiveCurveViewController,
   }
   Shared::AbstractPlotView* curveView() override { return &m_graphView; }
   Shared::XYBannerView* bannerView() override { return m_bannerView; };
-  int rankAtStep(int step) { return step + sequence()->initialRank(); }
-  int rankAtCurrentStep() { return rankAtStep(m_step); }
+  int rankAtStep(int step) const { return step + sequence()->initialRank(); }
   void reloadBannerView() override;
   bool handleLeftRightEvent(Ion::Events::Event event) override;
   bool handleEnter() override;
@@ -55,7 +60,6 @@ class CobwebController : public Shared::SimpleInteractiveCurveViewController,
   bool updateStep(int delta);
   Shared::ExpiringPointer<Shared::Sequence> sequence() const;
   CobwebGraphView m_graphView;
-  GraphController* m_graphController;
   Shared::CurveViewCursor* m_cursor;
   Shared::XYBannerView* m_bannerView;
   Shared::InteractiveCurveViewRange m_graphRange;

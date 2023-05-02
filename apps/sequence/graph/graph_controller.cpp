@@ -34,7 +34,7 @@ GraphController::GraphController(
       m_sequenceSelectionController(this),
       m_termSumController(this, inputEventHandlerDelegate, &m_view,
                           interactiveRange, m_cursor),
-      m_cobwebController(this, inputEventHandlerDelegate, this, &m_view,
+      m_cobwebController(this, inputEventHandlerDelegate, &m_view,
                          interactiveRange, m_cursor, &m_bannerView,
                          &m_cursorView, sequenceStore),
       m_sequenceStore(sequenceStore) {
@@ -49,6 +49,10 @@ I18n::Message GraphController::emptyMessage() {
 }
 
 void GraphController::viewWillAppear() {
+  if (m_cobwebController.stepIsInitialized()) {
+    moveToRank(m_cobwebController.rankAtCurrentStep());
+    m_cobwebController.resetStep();
+  }
   m_view.setCursorView(&m_cursorView);
   m_cursorView.resetMemoization();
   m_smallestRank = m_sequenceStore->smallestInitialRank();

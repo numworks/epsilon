@@ -180,6 +180,13 @@ Evaluation<T> ApproximationHelper::Map(
       } else if (listLength != newLength) {
         return Complex<T>::Undefined();
       }
+      for (int j = 0; j < newLength; j++) {
+        Evaluation<T> child = evaluationArray[i].childAtIndex(j);
+        if (child.type() == EvaluationNode<T>::Type::MatrixComplex ||
+            child.type() == EvaluationNode<T>::Type::PointEvaluation) {
+          return Complex<T>::Undefined();
+        }
+      }
     }
   }
 

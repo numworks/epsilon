@@ -846,27 +846,18 @@ int Expression::getPolynomialReducedCoefficients(
 
 bool Expression::hasUnit(bool ignoreAngleUnits, bool replaceSymbols,
                          Context *ctx) const {
-  if (ignoreAngleUnits) {
-    return recursivelyMatches(
-        [](const Expression e, Context *context) {
-          return (e.type() == ExpressionNode::Type::Unit &&
-                  !e.isPureAngleUnit()) ||
-                 e.type() == ExpressionNode::Type::ConstantPhysics;
-        },
-        ctx,
-        replaceSymbols
-            ? SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
-            : SymbolicComputation::DoNotReplaceAnySymbol);
-  }
   return recursivelyMatches(
-      [](const Expression e, Context *context) {
-        return e.type() == ExpressionNode::Type::Unit ||
+      [](const Expression e, Context *context, void *arg) {
+        bool ignoreAngleUnits = *(static_cast<bool *>(arg));
+        return (e.type() == ExpressionNode::Type::Unit &&
+                (!ignoreAngleUnits || !e.isPureAngleUnit())) ||
                e.type() == ExpressionNode::Type::ConstantPhysics;
       },
       ctx,
       replaceSymbols
           ? SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
-          : SymbolicComputation::DoNotReplaceAnySymbol);
+          : SymbolicComputation::DoNotReplaceAnySymbol,
+      &ignoreAngleUnits);
 }
 
 bool Expression::isPureAngleUnit() const {

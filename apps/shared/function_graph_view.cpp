@@ -33,8 +33,9 @@ void FunctionGraphPolicy::drawPlot(const AbstractPlotView* plotView,
       continue;
     }
 
-    // Get the record before the checkpoint because it can change the pool
-    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(index);
+    /* In case it's not already memoized, init the model in the function store
+     * before the checkpoint because it can change the pool. */
+    Ion::Storage::Record record = initModelBeforeDrawingPlot(index);
 
     CircuitBreakerCheckpoint checkpoint(
         Ion::CircuitBreaker::CheckpointType::Back);
@@ -47,6 +48,14 @@ void FunctionGraphPolicy::drawPlot(const AbstractPlotView* plotView,
     }
     firstDrawnRecord = false;
   }
+}
+
+Ion::Storage::Record FunctionGraphPolicy::initModelBeforeDrawingPlot(
+    int modelIndex) const {
+  Ion::Storage::Record record =
+      functionStore()->activeRecordAtIndex(modelIndex);
+  functionStore()->modelForRecord(record);
+  return record;
 }
 
 bool FunctionGraphPolicy::allFunctionsInterrupted() const {
@@ -163,6 +172,16 @@ void FunctionGraphView::reloadBetweenBounds(float start, float end) {
   KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound - pixelLowerBound,
                           bounds().height() - m_banner->bounds().height()));
   markRectAsDirty(dirtyZone);
+}
+
+Ion::Storage::Record FunctionGraphView::initModelBeforeDrawingPlot(
+    int modelIndex) const {
+  Ion::Storage::Record record =
+      FunctionGraphPolicy::initModelBeforeDrawingPlot(modelIndex);
+  if (record == m_selectedRecord && !m_secondSelectedRecord.isNull()) {
+    functionStore()->modelForRecord(m_secondSelectedRecord);
+  }
+  return record;
 }
 
 }  // namespace Shared

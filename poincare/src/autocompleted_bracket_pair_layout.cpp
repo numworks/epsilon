@@ -56,6 +56,30 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
     Type type, HorizontalLayout hLayout, HorizontalLayout *cursorLayout,
     int *cursorPosition) {
   assert(IsAutoCompletedBracketPairType(type));
+
+  /* TODO: Layout::recursivelyMatched should take a context and the type should
+   * be put in it, instead of creating 2 different functions. */
+  assert(type == Type::ParenthesisLayout || type == Type::CurlyBraceLayout);
+  if ((type == Type::ParenthesisLayout &&
+       hLayout
+           .recursivelyMatches([](const Layout l) {
+             return l.type() == Type::ParenthesisLayout
+                        ? TrinaryBoolean::True
+                        : TrinaryBoolean::Unknown;
+           })
+           .isUninitialized()) ||
+      (type == Type::CurlyBraceLayout &&
+       hLayout
+           .recursivelyMatches([](const Layout l) {
+             return l.type() == Type::CurlyBraceLayout
+                        ? TrinaryBoolean::True
+                        : TrinaryBoolean::Unknown;
+           })
+           .isUninitialized())) {
+    // Escape function if there is nothing to balance
+    return;
+  }
+
   /* Read hLayout from left to right, and create a copy of it with balanced
    * brackets.
    *

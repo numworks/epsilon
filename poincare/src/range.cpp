@@ -124,6 +124,10 @@ bool Range2D::setRatio(float r, bool shrink) {
   }
   assert((shrink && newLength <= toEdit->length()) ||
          (!shrink && newLength >= toEdit->length()));
+  if (newLength < Range1D::k_minLength) {
+    assert(shrink);
+    return setRatio(r, false);
+  }
   float c = toEdit->center();
   newLength *= 0.5f;
   if (c == toEdit->min() || c == toEdit->max() ||
@@ -132,6 +136,8 @@ bool Range2D::setRatio(float r, bool shrink) {
     return false;
   }
   *toEdit = Range1D(c - newLength, c + newLength);
+  assert(std::isnan(toEdit->length()) ||
+         toEdit->length() >= Range1D::k_minLength);
   return true;
 }
 

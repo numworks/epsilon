@@ -65,7 +65,8 @@ class Store : public Shared::LinearRegressionStore {
   // Calculation
   void updateCoefficients(int series, Poincare::Context* globalContext);
   double* coefficientsForSeries(int series, Poincare::Context* globalContext);
-  bool coefficientsAreDefined(int series, Poincare::Context* globalContext);
+  bool coefficientsAreDefined(int series, Poincare::Context* globalContext,
+                              bool finite = false);
   double correlationCoefficient(int series) const;
   // R2
   double determinationCoefficientForSeries(int series,

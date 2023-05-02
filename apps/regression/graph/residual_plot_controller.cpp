@@ -102,6 +102,7 @@ void ResidualPlotController::viewWillAppear() {
     yMin = std::min(yMin, y);
     yMax = std::max(yMax, y);
   }
+  assert(xMin <= xMax && yMin <= yMax);
   m_range.calibrate(xMin, xMax, yMin, yMax, view()->bounds().height(),
                     m_bannerView.bounds().height());
 

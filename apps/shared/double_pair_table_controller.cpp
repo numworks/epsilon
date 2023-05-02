@@ -28,6 +28,11 @@ DoublePairTableController::DoublePairTableController(
   }
 }
 
+void DoublePairTableController::viewWillAppear() {
+  resetMemoization();
+  TabTableController::viewWillAppear();
+}
+
 Responder* DoublePairTableController::responderWhenEmpty() {
   tabController()->selectTab();
   return tabController();

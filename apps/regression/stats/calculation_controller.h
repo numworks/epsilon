@@ -22,8 +22,6 @@ class CalculationController : public Shared::DoublePairTableController {
   // View Controller
   TELEMETRY_ID("Calculation");
 
-  void viewWillAppear() override;
-
   // SelectableTableViewDelegate
   void tableViewDidChangeSelectionAndDidScroll(
       Escher::SelectableTableView* t, int previousSelectedCol,

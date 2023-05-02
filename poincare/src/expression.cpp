@@ -1361,7 +1361,8 @@ void Expression::cloneAndSimplifyAndApproximate(
 
 Expression Expression::ExpressionWithoutSymbols(
     Expression e, Context *context, SymbolicComputation symbolicComputation) {
-  if (e.isUninitialized()) {
+  if (e.isUninitialized() ||
+      symbolicComputation == SymbolicComputation::DoNotReplaceAnySymbol) {
     return e;
   }
 

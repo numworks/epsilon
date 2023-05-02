@@ -58,8 +58,10 @@ void ComplexListController::setExactAndApproximateExpression(
   assert(hasComplexApprox);
   (void)hasComplexApprox;  // Silence the compiler;
 
-  m_model.setComplex(std::complex<float>(realPart, imagPart));
-  setShowIllustration(true);
+  std::complex<float> floatZ(realPart, imagPart);
+  m_model.setComplex(floatZ);
+  setShowIllustration(std::isfinite(floatZ.real()) &&
+                      std::isfinite(floatZ.imag()));
 }
 
 }  // namespace Calculation

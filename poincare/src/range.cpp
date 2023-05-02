@@ -63,7 +63,8 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
   assert(std::isnan(length()) || length() >= 0);
   if (length() < k_minLength) {
     float l = DefaultLengthAt(m_min);
-    if (m_min != limit && (isMin || m_max == -limit)) {
+    assert(m_min - l >= -limit || m_max + l <= limit);
+    if ((isMin && m_max + l <= limit) || (!isMin && m_min - l < -limit)) {
       m_max += l;
     } else {
       m_min -= l;
@@ -72,6 +73,8 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
   assert(isValid());
   assert(!(isEmpty() && std::isfinite(m_max)));
   assert(std::isnan(length()) || length() >= k_minLength);
+  assert(-limit <= m_min && m_min <= limit);
+  assert(-limit <= m_max && m_max <= limit);
 }
 
 // Range2D

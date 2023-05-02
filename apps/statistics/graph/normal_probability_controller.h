@@ -51,10 +51,15 @@ class NormalProbabilityController : public PlotController,
   // PlotController
   void reloadValueInBanner(Poincare::Preferences::PrintFloatMode displayMode,
                            int precision) override;
-  // Hide series having invalid total values.
+  /* Hide series having invalid total values. Since this method can be called
+   * from the rescue of a checkpoint, it must check for handles without their
+   * nodes. */
   Shared::DoublePairStore::ActiveSeriesTest activeSeriesMethod()
       const override {
-    return Store::ActiveSeriesAndValidTotalNormalProbabilities;
+    return [](const Shared::DoublePairStore *store, int i) {
+      return !store->listWasErasedByException(i) &&
+             Store::ActiveSeriesAndValidTotalNormalProbabilities(store, i);
+    };
   };
   bool moveSelectionHorizontally(OMG::HorizontalDirection direction) override;
   void computeYBounds(float *yMin, float *yMax) const override;

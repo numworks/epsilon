@@ -164,6 +164,11 @@ class DoublePairStore {
            value <= Poincare::Range1D::k_maxFloat;
   }
 
+  bool listWasErasedByException(int i) const {
+    return m_dataLists[i][0].wasErasedByException() ||
+           m_dataLists[i][1].wasErasedByException();
+  }
+
  protected:
   void initListsInPool();
   double defaultValue(int series, int i, int j) const;

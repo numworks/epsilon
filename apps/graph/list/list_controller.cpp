@@ -29,7 +29,6 @@ ListController::ListController(
       m_parameterColumnSelected(false) {
   static_assert(k_newModelMargin == FunctionCell::k_colorIndicatorThickness +
                                         Metric::BigCellMargin);
-  m_addNewModelCell.setLeftMargin(k_newModelMargin);
 }
 
 /* TableViewDataSource */

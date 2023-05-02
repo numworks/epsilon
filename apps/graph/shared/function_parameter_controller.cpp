@@ -125,14 +125,15 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
     m_selectableListView.reloadCell(selectedRow());
     return true;
   }
+  bool result = Shared::ListParameterController::handleEvent(event);
   // We want left to pop into graph -> calculate but not into list
-  if (event == Ion::Events::Left &&
+  if (!result && event == Ion::Events::Left &&
       stack->depth() >
           InteractiveCurveViewController::k_graphControllerStackDepth + 1) {
     stack->pop();
     return true;
   }
-  return Shared::ListParameterController::handleEvent(event);
+  return result;
 }
 
 ExpiringPointer<ContinuousFunction> FunctionParameterController::function() {

@@ -32,10 +32,6 @@ CalculationController::CalculationController(Responder *parentResponder,
 
 // TableViewDataSource
 
-int CalculationController::numberOfColumns() const {
-  return 2 + m_store->numberOfActiveSeries();
-}
-
 void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
                                                 int row) {
   if (column <= 1 && row == 0) {

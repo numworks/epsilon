@@ -30,7 +30,6 @@ class CalculationController : public Shared::DoublePairTableController {
 
   // TableViewDataSource
   int numberOfRows() const override;
-  int numberOfColumns() const override;
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;

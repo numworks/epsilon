@@ -48,10 +48,10 @@ void ComplexListController::setExactAndApproximateExpression(
                  context, &preferencesComplex);
 
   // Set Complex illustration
-  float realPart;
-  float imagPart;
+  double realPart;
+  double imagPart;
   bool hasComplexApprox =
-      approximateExpression.hasDefinedComplexApproximation<float>(
+      approximateExpression.hasDefinedComplexApproximation<double>(
           context, preferencesComplex.complexFormat(),
           preferencesComplex.angleUnit(), &realPart, &imagPart);
 

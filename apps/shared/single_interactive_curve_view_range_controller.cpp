@@ -96,32 +96,33 @@ bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(
 }
 
 void SingleInteractiveCurveViewRangeController::confirmParameters() {
-  if (parametersAreDifferent()) {
-    // Deactivate auto status before updating values.
-    if (m_editXRange) {
-      m_range->setXAuto(false);
-      m_range->setXMin(m_rangeParam.min());
-      m_range->setXMax(m_rangeParam.max());
-      m_range->setXAuto(m_autoParam);
-      if (m_autoParam && m_range->yAuto()) {
-        /* yMin and yMax must also be updated. We could avoid having to store
-         * these values if we called m_range->computeRanges() instead, but it
-         * would cost a significant computation time. */
-        assert(!std::isnan(m_secondaryRangeParam.min()) &&
-               !std::isnan(m_secondaryRangeParam.max()));
-        m_range->setYAuto(false);
-        m_range->setYMin(m_secondaryRangeParam.min());
-        m_range->setYMax(m_secondaryRangeParam.max());
-        m_range->setYAuto(true);
-      }
-    } else {
-      m_range->setYAuto(false);
-      m_range->setYMin(m_rangeParam.min());
-      m_range->setYMax(m_rangeParam.max());
-      m_range->setYAuto(m_autoParam);
-    }
-    assert(!parametersAreDifferent());
+  if (!parametersAreDifferent()) {
+    return;
   }
+  // Deactivate auto status before updating values.
+  if (m_editXRange) {
+    m_range->setXAuto(false);
+    m_range->setXMin(m_rangeParam.min());
+    m_range->setXMax(m_rangeParam.max());
+    m_range->setXAuto(m_autoParam);
+    if (m_autoParam && m_range->yAuto()) {
+      /* yMin and yMax must also be updated. We could avoid having to store
+       * these values if we called m_range->computeRanges() instead, but it
+       * would cost a significant computation time. */
+      assert(!std::isnan(m_secondaryRangeParam.min()) &&
+             !std::isnan(m_secondaryRangeParam.max()));
+      m_range->setYAuto(false);
+      m_range->setYMin(m_secondaryRangeParam.min());
+      m_range->setYMax(m_secondaryRangeParam.max());
+      m_range->setYAuto(true);
+    }
+  } else {
+    m_range->setYAuto(false);
+    m_range->setYMin(m_rangeParam.min());
+    m_range->setYMax(m_rangeParam.max());
+    m_range->setYAuto(m_autoParam);
+  }
+  assert(!parametersAreDifferent());
 }
 
 }  // namespace Shared

@@ -231,11 +231,13 @@ int Symbol::getPolynomialCoefficients(Context* context, const char* symbolName,
 Expression Symbol::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
-  /* These two symbolic computations parameters make no sense in this method.
-   * They are therefore not handled. */
-  assert(symbolicComputation !=
-             SymbolicComputation::ReplaceAllSymbolsWithUndefined &&
-         symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol);
+  /* This symbolic computation parameters make no sense in this method.
+   * It is therefore not handled. */
+  assert(symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol);
+  if (symbolicComputation ==
+      SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
+    return replaceWithUndefinedInPlace();
+  }
   if (symbolicComputation ==
           SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions ||
       isSystemSymbol()) {

@@ -196,12 +196,15 @@ Expression Function::shallowReduce(ReductionContext reductionContext) {
 Expression Function::deepReplaceReplaceableSymbols(
     Context* context, TrinaryBoolean* isCircular, int parameteredAncestorsCount,
     SymbolicComputation symbolicComputation) {
-  /* These two symbolic computations parameters make no sense in this method.
-   * They are therefore not handled. */
-  assert(symbolicComputation !=
-             SymbolicComputation::ReplaceAllSymbolsWithUndefined &&
-         symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol);
+  /* This symbolic computation parameters make no sense in this method.
+   * It is therefore not handled. */
+  assert(symbolicComputation != SymbolicComputation::DoNotReplaceAnySymbol);
   assert(*isCircular != TrinaryBoolean::True);
+
+  if (symbolicComputation ==
+      SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
+    return replaceWithUndefinedInPlace();
+  }
 
   /* Check for circularity only when a function is encountered so that
    * it is not uselessly checked each time deepReplaceReplaceableSymbols is

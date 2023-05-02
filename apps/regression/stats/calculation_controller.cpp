@@ -113,14 +113,15 @@ void DisableBufferCell(AbstractEvenOddBufferTextCell *bufferCell) {
 
 void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
                                                 int row) {
-  if (column <= 1 && row == 0) {
+  int type = typeAtLocation(column, row);
+  if (type == k_hideableCellType) {
     return;
   }
   EvenOddCell *myCell = static_cast<EvenOddCell *>(cell);
   myCell->setEven(row % 2 == 0);
 
   // Coordinate and series title
-  if (row == 0 && column > 1) {
+  if (type == k_columnTitleCellType) {
     ColumnTitleCell *myCell = static_cast<ColumnTitleCell *>(cell);
     size_t series = m_store->seriesIndexFromActiveSeriesIndex(
         column - k_numberOfHeaderColumns);
@@ -139,12 +140,15 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
   bool forbidStatsDiagnostics =
       Preferences::sharedPreferences->examMode().forbidStatsDiagnostics();
   // Calculation title and symbols
-  if (column <= 1) {
+  if (type == k_calculationTitleCellType ||
+      type == k_calculationSymbolCellType) {
     EvenOddMessageTextCell *myCell =
         static_cast<EvenOddMessageTextCell *>(cell);
-    myCell->setTextColor(column == 0 ? KDColorBlack : Palette::GrayDark);
-    I18n::Message message =
-        (column == 0) ? MessageForCalculation(c) : SymbolForCalculation(c);
+    myCell->setTextColor(
+        type == k_calculationTitleCellType ? KDColorBlack : Palette::GrayDark);
+    I18n::Message message = type == k_calculationTitleCellType
+                                ? MessageForCalculation(c)
+                                : SymbolForCalculation(c);
     myCell->setMessage(message);
     if ((c == Calculation::CorrelationCoeff ||
          c == Calculation::DeterminationCoeff || c == Calculation::RSquared) &&
@@ -158,12 +162,12 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
   size_t series = m_store->seriesIndexFromActiveSeriesIndex(
       column - k_numberOfHeaderColumns);
   assert(series < DoublePairStore::k_numberOfSeries);
-  Model::Type type = m_store->seriesRegressionType(series);
+  Model::Type regressionType = m_store->seriesRegressionType(series);
 
   // Regression cell
   if (c == Calculation::Regression) {
     Model *model = m_store->modelForSeries(series);
-    I18n::Message message = Store::HasCoefficients(type)
+    I18n::Message message = Store::HasCoefficients(regressionType)
                                 ? model->formulaMessage()
                                 : I18n::Message::Dash;
     static_cast<AbstractEvenOddBufferTextCell *>(cell)->setText(
@@ -173,7 +177,8 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
     return;
   }
 
-  assert(column > 1 && row > 0);
+  assert(type == k_doubleBufferCalculationCellType ||
+         type == k_standardCalculationCellType);
   constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
       AbstractEvenOddBufferTextCell::k_defaultPrecision);
   char buffer[bufferSize];
@@ -262,8 +267,8 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
         static_cast<int>(c) - static_cast<int>(Calculation::CoefficientA);
     int numberOfCoefficients =
         m_store->modelForSeries(series)->numberOfCoefficients();
-    if (coefficientIndex <= 0 && Store::HasCoefficientM(type)) {
-      assert(!Store::HasCoefficientA(type));
+    if (coefficientIndex <= 0 && Store::HasCoefficientM(regressionType)) {
+      assert(!Store::HasCoefficientA(regressionType));
       // In that case only, M is coefficientIndex 0 and A is coefficientIndex -1
       coefficientIndex = -coefficientIndex - 1;
     }
@@ -274,7 +279,7 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
         m_store->coefficientsForSeries(series, globContext)[coefficientIndex];
   } else if (c == Calculation::CorrelationCoeff) {
     // This could be memoized but don't seem to slow the table down for now.
-    if (!Store::DisplayR(type)) {
+    if (!Store::DisplayR(regressionType)) {
       return DashBufferCell(bufferCell);
     }
     if (forbidStatsDiagnostics) {
@@ -282,14 +287,16 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
     }
     result = m_store->correlationCoefficient(series);
   } else if (c == Calculation::ResidualStandardDeviation) {
-    if (!Store::DisplayResidualStandardDeviation(type)) {
+    if (!Store::DisplayResidualStandardDeviation(regressionType)) {
       return DashBufferCell(bufferCell);
     }
     result = m_store->residualStandardDeviation(series, globContext);
   } else {
     assert(c == Calculation::DeterminationCoeff || c == Calculation::RSquared);
-    if ((c == Calculation::DeterminationCoeff && Store::DisplayR2(type)) ||
-        (c == Calculation::RSquared && Store::DisplayRSquared(type))) {
+    if ((c == Calculation::DeterminationCoeff &&
+         Store::DisplayR2(regressionType)) ||
+        (c == Calculation::RSquared &&
+         Store::DisplayRSquared(regressionType))) {
       if (forbidStatsDiagnostics) {
         return DisableBufferCell(bufferCell);
       }

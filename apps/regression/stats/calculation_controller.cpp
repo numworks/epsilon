@@ -169,7 +169,7 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
   }
 
   assert(type == k_doubleBufferCalculationCellType ||
-         type == k_standardCalculationCellType);
+         type == k_calculationCellType);
   constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
       AbstractEvenOddBufferTextCell::k_defaultPrecision);
   char buffer[bufferSize];
@@ -360,7 +360,7 @@ int CalculationController::reusableCellCount(int type) {
   if (type == k_hideableCellType) {
     return k_numberOfHeaderColumns;
   }
-  assert(type == k_standardCalculationCellType);
+  assert(type == k_calculationCellType);
   return k_numberOfDisplayableCalculationCells;
 }
 
@@ -380,7 +380,7 @@ int CalculationController::typeAtLocation(int column, int row) {
   if (row > 0 && row <= k_numberOfDoubleBufferCalculations) {
     return k_doubleBufferCalculationCellType;
   }
-  return k_standardCalculationCellType;
+  return k_calculationCellType;
 }
 
 I18n::Message CalculationController::MessageForCalculation(Calculation c) {

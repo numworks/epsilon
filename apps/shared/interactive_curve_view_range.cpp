@@ -138,28 +138,32 @@ static float vectorLengthForMove(float v, float x) {
 
 void InteractiveCurveViewRange::panWithVector(float x, float y) {
   Range1D xRange(xMin(), xMax());
-  x = OMG::WithGreatestAbs(vectorLengthForMove(x, xMin()),
-                           vectorLengthForMove(x, xMax()));
-  xRange.setMin(xMin() + x, k_maxFloat);
-  xRange.setMax(xMax() + x, k_maxFloat);
-  if (xRange.min() != xMin() + x || xRange.max() != xMax() + x) {
-    return;
+  if (x != 0.f) {
+    x = OMG::WithGreatestAbs(vectorLengthForMove(x, xMin()),
+                             vectorLengthForMove(x, xMax()));
+    xRange.setMin(xMin() + x, k_maxFloat);
+    xRange.setMax(xMax() + x, k_maxFloat);
+    if (xRange.min() != xMin() + x || xRange.max() != xMax() + x) {
+      return;
+    }
   }
 
   Range1D yRange(yMin(), yMax());
-  y = OMG::WithGreatestAbs(vectorLengthForMove(y, yMin()),
-                           vectorLengthForMove(y, yMax()));
-  yRange.setMin(yMin() + y, k_maxFloat);
-  yRange.setMax(yMax() + y, k_maxFloat);
-  if (yRange.min() != yMin() + y || yRange.max() != yMax() + y) {
-    return;
+  if (y != 0.f) {
+    y = OMG::WithGreatestAbs(vectorLengthForMove(y, yMin()),
+                             vectorLengthForMove(y, yMax()));
+    yRange.setMin(yMin() + y, k_maxFloat);
+    yRange.setMax(yMax() + y, k_maxFloat);
+    if (yRange.min() != yMin() + y || yRange.max() != yMax() + y) {
+      return;
+    }
   }
 
   if (x != 0.f || y != 0.f) {
     setZoomAuto(false);
+    protectedSetX(xRange, k_maxFloat);
+    protectedSetY(yRange, k_maxFloat);
   }
-  protectedSetX(xRange, k_maxFloat);
-  protectedSetY(yRange, k_maxFloat);
 }
 
 void InteractiveCurveViewRange::normalize() {

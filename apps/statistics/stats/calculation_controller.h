@@ -51,9 +51,6 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static int k_calculationCellType = 4;
   constexpr static int k_seriesTitleCellType = 5;
   constexpr static int k_hideableCellType = 6;
-  constexpr static KDCoordinate k_calculationTitleCellWidth =
-      Escher::Metric::SmallFontCellWidth(
-          k_titleNumberOfChars, Escher::Metric::CellVerticalElementMargin);
   constexpr static KDCoordinate CalculationSymbolCellWidth(int maxChars) {
     return Escher::Metric::SmallFontCellWidth(
         maxChars, Escher::Metric::CellVerticalElementMargin);

@@ -88,9 +88,6 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static int k_hideableCellType = 4;
   constexpr static int k_calculationSymbolCellType = 5;
   // Cell sizes
-  constexpr static KDCoordinate k_titleCalculationCellWidth =
-      Escher::Metric::SmallFontCellWidth(
-          k_titleNumberOfChars, Escher::Metric::CellVerticalElementMargin);
   /* Margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here.
    * Calculation width should at least be able to hold two numbers with

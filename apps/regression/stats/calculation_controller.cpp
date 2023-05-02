@@ -306,7 +306,7 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
 
 KDCoordinate CalculationController::nonMemoizedColumnWidth(int column) {
   if (column == 0) {
-    return k_titleCalculationCellWidth;
+    return k_calculationTitleCellWidth;
   }
   if (column == 1) {
     return k_symbolColumnWidth;

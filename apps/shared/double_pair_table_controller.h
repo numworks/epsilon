@@ -23,8 +23,6 @@ class DoublePairTableController
       public Escher::SelectableTableViewDelegate,
       public Escher::PrefacedTableView::MarginDelegate {
  public:
-  constexpr static int k_titleNumberOfChars = 22;
-
   DoublePairTableController(Escher::Responder *parentResponder,
                             Escher::ButtonRowController *header);
 
@@ -62,6 +60,11 @@ class DoublePairTableController
       Escher::Metric::CommonRightMargin;
   // Title & Symbol
   constexpr static int k_numberOfHeaderColumns = 2;
+  // Cell sizes
+  constexpr static int k_titleNumberOfChars = 22;
+  constexpr static KDCoordinate k_calculationTitleCellWidth =
+      Escher::Metric::SmallFontCellWidth(
+          k_titleNumberOfChars, Escher::Metric::CellVerticalElementMargin);
 
   // TableViewDataSource
   KDCoordinate defaultRowHeight() override { return k_cellHeight; }

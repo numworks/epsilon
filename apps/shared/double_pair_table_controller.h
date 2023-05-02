@@ -52,6 +52,11 @@ class DoublePairTableController
     return row > 0 && column > 1;
   }
 
+  // TableViewDataSource
+  int numberOfColumns() const override {
+    return 2 + store()->numberOfActiveSeries();
+  }
+
  protected:
   constexpr static int k_maxNumberOfDisplayableRows = 11;
   constexpr static KDCoordinate k_cellHeight =

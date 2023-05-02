@@ -93,10 +93,6 @@ int CalculationController::numberOfRows() const {
          m_store->AnyActiveSeriesSatisfies(Store::DisplayRSquared);
 }
 
-int CalculationController::numberOfColumns() const {
-  return 2 + m_store->numberOfActiveSeries();
-}
-
 void DashBufferCell(AbstractEvenOddBufferTextCell *bufferCell) {
   bufferCell->setText(I18n::translate(I18n::Message::Dash));
 }

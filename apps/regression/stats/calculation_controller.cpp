@@ -112,7 +112,7 @@ void CalculationController::fillCellForLocation(HighlightCell *cell, int column,
   myCell->setEven(row % 2 == 0);
 
   // Coordinate and series title
-  if (type == k_columnTitleCellType) {
+  if (type == k_seriesTitleCellType) {
     ColumnTitleCell *myCell = static_cast<ColumnTitleCell *>(cell);
     size_t series = m_store->seriesIndexFromActiveSeriesIndex(
         column - k_numberOfHeaderColumns);
@@ -330,7 +330,7 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
     assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
     return &m_calculationSymbolCells[index];
   }
-  if (type == k_columnTitleCellType) {
+  if (type == k_seriesTitleCellType) {
     assert(index >= 0 && index < Store::k_numberOfSeries);
     return &m_columnTitleCells[index];
   }
@@ -351,7 +351,7 @@ int CalculationController::reusableCellCount(int type) {
       type == k_calculationSymbolCellType) {
     return k_maxNumberOfDisplayableRows;
   }
-  if (type == k_columnTitleCellType) {
+  if (type == k_seriesTitleCellType) {
     return Store::k_numberOfSeries;
   }
   if (type == k_doubleBufferCalculationCellType) {
@@ -375,7 +375,7 @@ int CalculationController::typeAtLocation(int column, int row) {
     return k_calculationSymbolCellType;
   }
   if (row == 0) {
-    return k_columnTitleCellType;
+    return k_seriesTitleCellType;
   }
   if (row > 0 && row <= k_numberOfDoubleBufferCalculations) {
     return k_doubleBufferCalculationCellType;

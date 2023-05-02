@@ -22,6 +22,7 @@ ExpressionModelListController::ExpressionModelListController(
       m_addNewModelCell({{.font = k_font}}),
       m_editedCellIndex(-1) {
   m_addNewModelCell.setMessage(text);
+  m_addNewModelCell.setLeftMargin(k_newModelMargin);
 }
 
 int ExpressionModelListController::numberOfExpressionRows() const {

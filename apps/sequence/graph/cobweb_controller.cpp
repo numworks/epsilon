@@ -26,16 +26,15 @@ namespace Sequence {
 CobwebController::CobwebController(
     Responder* parentResponder,
     Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-    GraphController* graphController, GraphView* graphView,
-    CurveViewRange* graphRange, CurveViewCursor* cursor,
+    GraphView* graphView, CurveViewRange* graphRange, CurveViewCursor* cursor,
     XYBannerView* bannerView, CursorView* cursorView,
     SequenceStore* sequenceStore)
     : Shared::SimpleInteractiveCurveViewController(parentResponder, cursor),
       m_graphView(&m_graphRange, cursor, bannerView, cursorView),
-      m_graphController(graphController),
       m_cursor(cursor),
       m_bannerView(bannerView),
       m_graphRange(),
+      m_step(-1),
       m_sequenceStore(sequenceStore) {}
 
 const char* CobwebController::title() {
@@ -62,10 +61,6 @@ void CobwebController::viewWillAppear() {
   m_graphView.setCursorView(nullptr);
   m_graphView.setFocus(true);
   reloadBannerView();
-}
-
-void CobwebController::viewDidDisappear() {
-  m_graphController->moveToRank(rankAtCurrentStep());
 }
 
 void CobwebController::setupRange() {

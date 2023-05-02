@@ -58,10 +58,9 @@ bool MemoizedCursorView::eraseCursorIfPossible() {
   KDContext* ctx = KDIonContext::SharedContext;
   KDPoint previousOrigin = ctx->origin();
   KDRect previousClippingRect = ctx->clippingRect();
-  KDRect rectToErase = currentFrame.intersectedWith(previousClippingRect);
-  ctx->setOrigin(rectToErase.origin());
-  ctx->setClippingRect(rectToErase);
-  ctx->fillRectWithPixels(KDRect(0, 0, rectToErase.size()),
+  ctx->setOrigin(currentFrame.origin());
+  ctx->setClippingRect(currentFrame.intersectedWith(previousClippingRect));
+  ctx->fillRectWithPixels(KDRect(0, 0, currentFrame.size()),
                           underneathPixelBuffer(), cursorWorkingBuffer);
   ctx->setOrigin(previousOrigin);
   ctx->setClippingRect(previousClippingRect);

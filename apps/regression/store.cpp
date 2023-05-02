@@ -224,11 +224,13 @@ double *Store::coefficientsForSeries(int series, Context *globalContext) {
   return m_regressionCoefficients[series];
 }
 
-bool Store::coefficientsAreDefined(int series, Context *globalContext) {
+bool Store::coefficientsAreDefined(int series, Context *globalContext,
+                                   bool finite) {
   double *coefficients = coefficientsForSeries(series, globalContext);
   int numberOfCoefficients = modelForSeries(series)->numberOfCoefficients();
   for (int i = 0; i < numberOfCoefficients; i++) {
-    if (std::isnan(coefficients[i])) {
+    if (std::isnan(coefficients[i]) ||
+        (finite && !std::isfinite(coefficients[i]))) {
       return false;
     }
   }

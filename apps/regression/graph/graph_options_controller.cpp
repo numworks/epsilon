@@ -219,7 +219,9 @@ bool GraphOptionsController::displayR2Cell() const {
 }
 
 bool GraphOptionsController::displayResidualPlotCell() const {
-  return displayRegressionEquationCell();
+  return m_store->coefficientsAreDefined(
+      m_graphController->selectedSeriesIndex(),
+      m_graphController->globalContext(), true);
 }
 
 }  // namespace Regression

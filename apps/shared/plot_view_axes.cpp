@@ -203,7 +203,7 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
       std::ceil((tMax - plotView->rangeMin(axis)) / tickStep(plotView, axis)) +
       1;
   assert(maxNumberOfTicks >= 2);
-  while (t <= tMax && i < maxNumberOfTicks) {
+  while (t < tMax && i < maxNumberOfTicks) {
     if (drawTicks) {
       plotView->drawTick(ctx, rect, axis, t, k_color);
     }

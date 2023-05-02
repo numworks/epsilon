@@ -53,8 +53,11 @@ uint32_t ApproximationHelper::PositiveIntegerApproximationIfPossible(
     const ApproximationContext &approximationContext) {
   Evaluation<T> evaluation = expression->approximate(T(), approximationContext);
   T scalar = std::abs(evaluation.toScalar());
+  /* Conversion from uint32 to float changes UINT32_MAX from 4294967295 to
+   * 4294967296. */
   if (std::isnan(scalar) || scalar != std::round(scalar) ||
-      scalar > UINT32_MAX || !IsIntegerRepresentationAccurate(scalar)) {
+      scalar >= static_cast<T>(UINT32_MAX) ||
+      !IsIntegerRepresentationAccurate(scalar)) {
     /* PositiveIntegerApproximationIfPossible returns undefined result if scalar
      * cannot be accurately represented as an unsigned integer. */
     *isUndefined = true;

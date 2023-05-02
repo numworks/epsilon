@@ -94,7 +94,7 @@ class Range2D {
     m_y.zoom(ratio, p.y());
   }
   // Return false if failed
-  bool setRatio(float r, bool shrink);
+  bool setRatio(float r, bool shrink, float limit);
 
  private:
   Range1D m_x;

@@ -306,17 +306,11 @@ void InteractiveCurveViewRange::protectedNormalize(bool canChangeX,
   bool shrink = thisRange.ratio() > NormalYXRatio() ? !canChangeX : !canChangeY;
 
   if (!shrink || canShrink) {
-    bool canSetRatio = thisRange.setRatio(NormalYXRatio(), shrink);
+    bool canSetRatio = thisRange.setRatio(NormalYXRatio(), shrink, k_maxFloat);
     if (canSetRatio) {
       protectedSetX(*thisRange.x(), k_maxFloat);
       protectedSetY(*thisRange.y(), k_maxFloat);
-
-      /* The range should be close to orthonormal, unless :
-       *   - it has been clipped because the maximum bounds have been reached.
-       *   - the the bounds are too close and of too large a magnitude, leading
-       * to a drastic loss of significance. */
-      assert(isOrthonormal() || xMin() <= -k_maxFloat || xMax() >= k_maxFloat ||
-             yMin() <= -k_maxFloat || yMax() >= k_maxFloat);
+      assert(isOrthonormal());
     }
   }
   setZoomNormalize(isOrthonormal());
@@ -387,7 +381,8 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
         Range2D(computeX ? *newRangeWithMargins.x() : Range1D(xMin(), xMax()),
                 computeY ? *newRangeWithMargins.y() : Range1D(yMin(), yMax()));
     if (newRange.ratioIs(NormalYXRatio())) {
-      bool canSetRatio = newRangeWithMargins.setRatio(NormalYXRatio(), false);
+      bool canSetRatio =
+          newRangeWithMargins.setRatio(NormalYXRatio(), false, k_maxFloat);
       assert(!canSetRatio || newRangeWithMargins.ratioIs(NormalYXRatio()));
       (void)canSetRatio;
     }

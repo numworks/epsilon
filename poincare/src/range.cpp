@@ -111,7 +111,7 @@ bool Range2D::ratioIs(float r) const {
   return std::fabs(thisRatio - r) <= tolerance;
 }
 
-bool Range2D::setRatio(float r, bool shrink) {
+bool Range2D::setRatio(float r, bool shrink, float limit) {
   float currentR = ratio();
   Range1D* toEdit;
   float newLength;
@@ -126,13 +126,14 @@ bool Range2D::setRatio(float r, bool shrink) {
          (!shrink && newLength >= toEdit->length()));
   if (newLength < Range1D::k_minLength) {
     assert(shrink);
-    return setRatio(r, false);
+    return setRatio(r, false, limit);
   }
   float c = toEdit->center();
   newLength *= 0.5f;
   if (c == toEdit->min() || c == toEdit->max() ||
-      c - newLength == c + newLength) {
-    // Precision is to small for the edited range
+      c - newLength == c + newLength || c - newLength < -limit ||
+      c + newLength > limit) {
+    // Precision is to small for the edited range or limits are overstepped
     return false;
   }
   *toEdit = Range1D(c - newLength, c + newLength);

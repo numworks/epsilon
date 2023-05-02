@@ -130,8 +130,14 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   setZoomNormalize(isOrthonormal());
 }
 
+static float vectorLengthForMove(float v, float x) {
+  float minLength = std::nextafter(x, std::copysign(INFINITY, v)) - x;
+  return std::fabs(v) < std::fabs(minLength) ? minLength : v;
+}
+
 void InteractiveCurveViewRange::panWithVector(float x, float y) {
   Range1D xRange(xMin(), xMax());
+  x = std::max(vectorLengthForMove(x, xMin()), vectorLengthForMove(x, xMax()));
   xRange.setMin(xMin() + x, k_maxFloat);
   xRange.setMax(xMax() + x, k_maxFloat);
   if (xRange.min() != xMin() + x || xRange.max() != xMax() + x) {
@@ -139,6 +145,7 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
   }
 
   Range1D yRange(yMin(), yMax());
+  y = std::max(vectorLengthForMove(y, yMin()), vectorLengthForMove(y, yMax()));
   yRange.setMin(yMin() + y, k_maxFloat);
   yRange.setMax(yMax() + y, k_maxFloat);
   if (yRange.min() != yMin() + y || yRange.max() != yMax() + y) {

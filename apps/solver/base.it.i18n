@@ -1,5 +1,5 @@
 SolverAppCapital = "EQUAZIONI"
-AddEquation = "Aggiungi equazione"
+AddEquation = "Aggiungi un'equazione"
 ResolveEquation = "Risolvi l'equazione"
 ResolveSystem = "Risolvi il sistema"
 UseEquationModel = "Utilizza un modello di equazione"

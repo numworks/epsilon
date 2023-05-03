@@ -352,6 +352,7 @@ void InteractiveCurveViewController::setCurveViewAsMainView(
   curveView()->setFocus(true);
   Container::activeApp()->setFirstResponder(this);
   reloadBannerView();
+  panToMakeCursorVisible();
   curveView()->reload(resetInterrupted, forceReload);
 }
 

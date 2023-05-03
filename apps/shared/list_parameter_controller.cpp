@@ -57,8 +57,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
 
   if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
     function()->setActive(!function()->isActive());
-    resetMemoization();
-    m_selectableListView.reloadData();
+    m_selectableListView.reloadCell(selectedRow());
     return true;
   }
   if (cell == &m_colorCell && m_colorCell.canBeActivatedByEvent(event)) {

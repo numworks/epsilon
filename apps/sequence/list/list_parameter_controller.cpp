@@ -110,8 +110,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
     App::app()->localContext()->resetCache();
     function()->setActive(!function()->isActive());
-    resetMemoization();
-    m_selectableListView.reloadData();
+    m_selectableListView.reloadCell(selectedRow());
     return true;
   }
   return Shared::ListParameterController::handleEvent(event);

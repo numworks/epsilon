@@ -31,10 +31,7 @@ void TangentGraphController::viewWillAppear() {
   m_graphView->setFocus(true);
   m_bannerView->setDisplayParameters(false, true, true);
   reloadBannerView();
-  m_graphRange->panToMakePointVisible(
-      m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(),
-      cursorRightMarginRatio(), cursorBottomMarginRatio(),
-      cursorLeftMarginRatio(), curveView()->pixelWidth());
+  panToMakeCursorVisible();
   m_graphView->reload();
 }
 
@@ -60,10 +57,7 @@ bool TangentGraphController::textFieldDidFinishEditing(
   double y =
       function->evaluate2DAtParameter(floatBody, myApp->localContext()).y();
   m_cursor->moveTo(floatBody, floatBody, y);
-  interactiveCurveViewRange()->panToMakePointVisible(
-      m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(),
-      cursorRightMarginRatio(), cursorBottomMarginRatio(),
-      cursorLeftMarginRatio(), curveView()->pixelWidth());
+  panToMakeCursorVisible();
   reloadBannerView();
   curveView()->reload();
   return true;

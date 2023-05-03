@@ -90,10 +90,7 @@ void GraphController::moveToRank(int n) {
       xyValues(selectedCurveIndex(), n, textFieldDelegateApp()->localContext())
           .y();
   m_cursor->moveTo(n, n, y);
-  interactiveCurveViewRange()->panToMakePointVisible(
-      m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(),
-      cursorRightMarginRatio(), cursorBottomMarginRatio(),
-      cursorLeftMarginRatio(), curveView()->pixelWidth());
+  panToMakeCursorVisible();
   reloadBannerView();
   m_view.reload();
 }

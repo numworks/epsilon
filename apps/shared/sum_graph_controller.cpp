@@ -30,10 +30,7 @@ SumGraphController::SumGraphController(
 
 void SumGraphController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
-  m_graphRange->panToMakePointVisible(
-      m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(),
-      cursorRightMarginRatio(), cursorBottomMarginRatio(),
-      cursorLeftMarginRatio(), curveView()->pixelWidth());
+  panToMakeCursorVisible();
   m_graphView->setBannerView(&m_legendView);
   m_graphView->setCursorView(&m_cursorView);
   m_graphView->setFocus(true);

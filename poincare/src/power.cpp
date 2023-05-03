@@ -142,6 +142,7 @@ bool PowerNode::isReal(Context *context, bool canContainMatrices) const {
 
 bool PowerNode::childAtIndexNeedsUserParentheses(const Expression &child,
                                                  int childIndex) const {
+  assert(child.type() != Type::Dependency);
   if (childIndex > 0) {
     return false;
   }

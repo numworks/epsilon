@@ -31,13 +31,13 @@ Layout AutocompletedBracketPairLayoutNode::BuildFromBracketType(
   return CurlyBraceLayout::Builder();
 }
 
-static HorizontalLayout HorizontalParent(Layout l) {
+static HorizontalLayout horizontalParent(Layout l) {
   Layout p = l.parent();
   assert(!p.isUninitialized() && p.isHorizontal());
   return static_cast<HorizontalLayout &>(p);
 }
 
-static HorizontalLayout HorizontalChild(Layout l) {
+static HorizontalLayout horizontalChild(Layout l) {
   Layout c = l.childAtIndex(0);
   assert(!c.isUninitialized() && c.isHorizontal());
   return static_cast<HorizontalLayout &>(c);
@@ -45,7 +45,7 @@ static HorizontalLayout HorizontalChild(Layout l) {
 
 /* This function counts the number of parent brackets until it reaches a bracket
  * of another type or the top layout. */
-static int BracketNestingLevel(HorizontalLayout h, LayoutNode::Type type) {
+static int bracketNestingLevel(HorizontalLayout h, LayoutNode::Type type) {
   assert(
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(type));
   Layout parent = h.parent();
@@ -131,7 +131,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
    * comment after the while loop) */
   int cursorNestingLevel = -1;
   if (cursorLayout && *cursorPosition == 0) {
-    cursorNestingLevel = BracketNestingLevel(*cursorLayout, type);
+    cursorNestingLevel = bracketNestingLevel(*cursorLayout, type);
   }
 
   while (true) {
@@ -171,7 +171,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
         /* If the inserted child is a bracket pair of another type, balance
          * inside of it. */
         if (IsAutoCompletedBracketPairType(readClone.type())) {
-          HorizontalLayout h = HorizontalChild(readClone);
+          HorizontalLayout h = horizontalChild(readClone);
           PrivateBalanceBrackets(type, h, cursorLayout, cursorPosition);
         }
 
@@ -185,7 +185,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
       /* - Step 2.1 - Read
        * The reading enters the brackets and continues inside it.
        */
-      readLayout = HorizontalChild(readChild);
+      readLayout = horizontalChild(readChild);
       readIndex = 0;
 
       /* - Step 2.2 - Write
@@ -217,7 +217,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
             ->setTemporary(Side::Right, true);
         writtenLayout.addOrMergeChildAtIndex(newBracket,
                                              writtenLayout.numberOfChildren());
-        writtenLayout = HorizontalChild(newBracket);
+        writtenLayout = horizontalChild(newBracket);
       }
       continue;
     }
@@ -245,7 +245,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
     /* - Step 4.1. - Read
      * The reading goes out of the bracket and continues in its parent.
      * */
-    readLayout = HorizontalParent(readBracket);
+    readLayout = horizontalParent(readBracket);
     readIndex = readLayout.indexOfChild(readBracket) + 1;
 
     /* - Step 4.2 - Write
@@ -297,7 +297,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
               writtenBracket.node());
       assert(writtenBracketNode->isTemporary(Side::Right));
       writtenBracketNode->setTemporary(Side::Right, false);
-      writtenLayout = HorizontalParent(writtenBracket);
+      writtenLayout = horizontalParent(writtenBracket);
       continue;
     }
 
@@ -332,11 +332,11 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
    * The code is a bit dirty though, I just could not find an easy way to fix
    * all these cases. */
   if (cursorNestingLevel >= 0 && *cursorPosition == 0) {
-    int newCursorNestingLevel = BracketNestingLevel(*cursorLayout, type);
+    int newCursorNestingLevel = bracketNestingLevel(*cursorLayout, type);
     while (newCursorNestingLevel > cursorNestingLevel && *cursorPosition == 0) {
       Layout p = cursorLayout->parent();
       assert(!p.isUninitialized() && p.type() == type);
-      HorizontalLayout h = HorizontalParent(p);
+      HorizontalLayout h = horizontalParent(p);
       *cursorPosition = h.indexOfChild(p);
       *cursorLayout = h;
       newCursorNestingLevel--;

@@ -70,7 +70,8 @@ typedef enum {
 
 VariableBoxController::VariableBoxController(ScriptStore *scriptStore)
     : AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),
-      m_scriptStore(scriptStore) {
+      m_scriptStore(scriptStore),
+      m_displaySubtitles(true) {
   // ScriptInProgress and BuiltinsAndKeywords subtitle cells
   m_originsName[0] = I18n::translate(I18n::Message::ScriptInProgress);
   m_originsName[1] = I18n::translate(I18n::Message::BuiltinsAndKeywords);

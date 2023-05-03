@@ -80,10 +80,7 @@ void CalculationGraphController::viewWillAppear() {
                                               Solver<double>::Interest::None);
     m_bannerView->setDisplayParameters(false, false, false);
     reloadBannerView();
-    m_graphRange->panToMakePointVisible(
-        m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(),
-        cursorRightMarginRatio(), cursorBottomMarginRatio(),
-        cursorLeftMarginRatio(), curveView()->pixelWidth());
+    panToMakeCursorVisible();
   }
   m_graphView->setInterest(specialInterest());
   m_graphView->reload();

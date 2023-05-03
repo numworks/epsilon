@@ -33,10 +33,7 @@ bool SimpleInteractiveCurveViewController::handleLeftRightEvent(
   if (moveCursorHorizontally(OMG::Direction(event),
                              Ion::Events::longPressFactor())) {
     reloadBannerView();
-    bool moved = interactiveCurveViewRange()->panToMakePointVisible(
-        m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(),
-        cursorRightMarginRatio(), cursorBottomMarginRatio(),
-        cursorLeftMarginRatio(), curveView()->pixelWidth());
+    bool moved = panToMakeCursorVisible();
     /* Restart drawing of interrupted curves when the window pans. */
     curveView()->reload(moved);
     return true;

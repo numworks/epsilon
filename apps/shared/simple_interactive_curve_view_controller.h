@@ -61,6 +61,12 @@ class SimpleInteractiveCurveViewController : public ZoomCurveViewController,
             bannerHeight) /
            (constCurveView()->bounds().height() - 1);
   }
+  bool panToMakeCursorVisible() {
+    return interactiveCurveViewRange()->panToMakePointVisible(
+        m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(),
+        cursorRightMarginRatio(), cursorBottomMarginRatio(),
+        cursorLeftMarginRatio(), curveView()->pixelWidth());
+  }
 
   CurveViewCursor *m_cursor;
 };

@@ -16,9 +16,11 @@ namespace Distributions {
 class Distribution : public Shared::Inference {
  public:
   Distribution(Poincare::Distribution::Type type)
-      : m_calculationBuffer(this),
+      : m_calculationBuffer(),
         m_distribution(Poincare::Distribution::Get(type)),
-        m_indexOfUninitializedParameter(-1) {}
+        m_indexOfUninitializedParameter(-1) {
+    m_calculationBuffer.init(this);
+  }
 
   static bool Initialize(Distribution* distribution,
                          Poincare::Distribution::Type type);
@@ -81,15 +83,17 @@ class Distribution : public Shared::Inference {
 
   union CalculationBuffer {
    public:
-    CalculationBuffer(Distribution* distribution) {
-      new (&m_leftIntegralCalculation) LeftIntegralCalculation(distribution);
-    }
+    CalculationBuffer() {}
     ~CalculationBuffer() { calculation()->~Calculation(); }
     // Rule of 5
     CalculationBuffer(const CalculationBuffer& other) = delete;
     CalculationBuffer(CalculationBuffer&& other) = delete;
     CalculationBuffer& operator=(const CalculationBuffer& other) = delete;
     CalculationBuffer& operator=(CalculationBuffer&& other) = delete;
+
+    void init(Distribution* distribution) {
+      new (&m_leftIntegralCalculation) LeftIntegralCalculation(distribution);
+    }
 
     Calculation* calculation() { return reinterpret_cast<Calculation*>(this); }
 

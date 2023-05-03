@@ -16,7 +16,7 @@ StoreParameterController::StoreParameterController(
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
-  if (typeAtIndex(selectedRow()) == k_changeRegressionCellType &&
+  if (selectedCell() == &m_changeRegressionCell &&
       m_changeRegressionCell.canBeActivatedByEvent(event)) {
     RegressionController *regressionController =
         App::app()->regressionController();
@@ -28,33 +28,24 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return Shared::StoreParameterController::handleEvent(event);
 }
 
-int StoreParameterController::typeAtIndex(int index) const {
-  if (index == k_changeRegressionCellIndex) {
-    return k_changeRegressionCellType;
-  }
-  return Shared::StoreParameterController::typeAtIndex(
-      index - (index > k_changeRegressionCellIndex));
-}
-
-AbstractMenuCell *StoreParameterController::reusableCell(int index, int type) {
+AbstractMenuCell *StoreParameterController::cell(int index) {
   assert(index >= 0 && index < numberOfRows());
-  if (type == k_changeRegressionCellType) {
+  if (index == k_changeRegressionCellIndex) {
     return &m_changeRegressionCell;
   }
-  return Shared::StoreParameterController::reusableCell(index, type);
+  return Shared::StoreParameterController::cell(
+      index - (index > k_changeRegressionCellIndex));
 }
 
 void StoreParameterController::willDisplayCellForIndex(
     Escher::HighlightCell *cell, int index) {
-  if (typeAtIndex(index) == k_changeRegressionCellType) {
-    assert(cell == &m_changeRegressionCell);
+  if (cell == &m_changeRegressionCell) {
     Store *regressionStore = static_cast<Store *>(m_storeColumnHelper->store());
     m_changeRegressionCell.subLabel()->setMessage(
         regressionStore->modelForSeries(m_storeColumnHelper->selectedSeries())
             ->name());
     return;
   }
-  assert(cell != &m_changeRegressionCell);
   Shared::StoreParameterController::willDisplayCellForIndex(cell, index);
 }
 

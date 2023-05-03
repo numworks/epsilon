@@ -7,7 +7,7 @@ namespace Solver {
 
 class Solution {
  public:
-  Solution() : m_approximate(NAN) {}
+  Solution() : m_approximate(NAN), m_exactAndApproximateAreEqual(true) {}
   Solution(Poincare::Layout exactLayout, Poincare::Layout approximateLayout,
            double approximate, bool exactAndApproximateAreEqual)
       : m_approximate(approximate),

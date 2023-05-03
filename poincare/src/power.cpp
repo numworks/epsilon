@@ -142,25 +142,24 @@ bool PowerNode::isReal(Context *context, bool canContainMatrices) const {
 
 bool PowerNode::childAtIndexNeedsUserParentheses(const Expression &child,
                                                  int childIndex) const {
-  if (childIndex == 0) {
-    if ((child.isNumber() && static_cast<const Number &>(child).isPositive() ==
-                                 TrinaryBoolean::False) ||
-        (child.type() == Type::Rational &&
-         !static_cast<const Rational &>(child).isInteger())) {
-      /* ^(-2.3, 4) --> (-2.3)^{4}
-       * ^(2/3, 4) --> (2/3)^{4}   */
-      return true;
-    }
-    if (child.type() == Type::Conjugate) {
-      return childAtIndexNeedsUserParentheses(child.childAtIndex(0),
-                                              childIndex);
-    }
-    // ^(2+3,4) --> (2+3)^{4}
-    return child.isOfType({Type::Power, Type::Subtraction, Type::Opposite,
-                           Type::Multiplication, Type::Division, Type::Addition,
-                           Type::MixedFraction});
+  if (childIndex > 0) {
+    return false;
   }
-  return false;
+  if ((child.isNumber() && static_cast<const Number &>(child).isPositive() ==
+                               TrinaryBoolean::False) ||
+      (child.type() == Type::Rational &&
+       !static_cast<const Rational &>(child).isInteger())) {
+    /* ^(-2.3, 4) --> (-2.3)^{4}
+     * ^(2/3, 4) --> (2/3)^{4}   */
+    return true;
+  }
+  if (child.type() == Type::Conjugate) {
+    return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
+  }
+  // ^(2+3,4) --> (2+3)^{4}
+  return child.isOfType({Type::Power, Type::Subtraction, Type::Opposite,
+                         Type::Multiplication, Type::Division, Type::Addition,
+                         Type::MixedFraction});
 }
 
 double PowerNode::degreeForSortingAddition(bool symbolsOnly) const {

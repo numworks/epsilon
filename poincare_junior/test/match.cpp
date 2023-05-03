@@ -18,18 +18,20 @@ QUIZ_CASE(pcj_context) {
 
 QUIZ_CASE(pcj_match) {
   Node t = KAdd(2_e, 1_e);
-  PatternMatching::Context ctx = PatternMatching::Match(KPlaceholder<A>(), t);
+  PatternMatching::Context ctx;
+  quiz_assert(PatternMatching::Match(KPlaceholder<A>(), t, &ctx));
   assert_trees_are_equal(ctx.getNode(Placeholder::A), t);
-  PatternMatching::Context ctx2 =
-      PatternMatching::Match(KAdd(KPlaceholder<A>(), 1_e), t);
+  PatternMatching::Context ctx2;
+  quiz_assert(PatternMatching::Match(KAdd(KPlaceholder<A>(), 1_e), t, &ctx2));
   assert_trees_are_equal(ctx2.getNode(Placeholder::A), 2_e);
-  PatternMatching::Context ctx3 =
-      PatternMatching::Match(KAdd(KPlaceholder<A>(), 2_e), t);
+  PatternMatching::Context ctx3;
+  quiz_assert(!PatternMatching::Match(KAdd(KPlaceholder<A>(), 2_e), t, &ctx3));
   quiz_assert(ctx3.isUninitialized());
 
   Node t2 = KAdd(1_e, 1_e, 2_e);
   Node p = KAdd(KPlaceholder<A>(), KPlaceholder<A>(), KPlaceholder<B>());
-  PatternMatching::Context ctx4 = PatternMatching::Match(p, t2);
+  PatternMatching::Context ctx4;
+  quiz_assert(PatternMatching::Match(p, t2, &ctx4));
   assert_trees_are_equal(ctx4.getNode(Placeholder::A), 1_e);
   assert_trees_are_equal(ctx4.getNode(Placeholder::B), 2_e);
 }
@@ -51,14 +53,16 @@ QUIZ_CASE(pcj_rewrite_replace) {
 
 QUIZ_CASE(pcj_match_n_ary) {
   Node source = KMult(KAdd(1_e, 2_e, 3_e), KAdd(4_e, 5_e));
-  quiz_assert(PatternMatching::Match(KPlaceholder<B, FilterAddition>(), source)
-                  .isUninitialized());
-  quiz_assert(PatternMatching::Match(KMult(KPlaceholder<A, FilterAddition>(),
-                                           KPlaceholder<A, FilterAddition>()),
-                                     source)
-                  .isUninitialized());
+  PatternMatching::Context ctx;
+  quiz_assert(
+      !PatternMatching::Match(KPlaceholder<B, FilterAddition>(), source, &ctx));
+  quiz_assert(ctx.isUninitialized());
+  quiz_assert(!PatternMatching::Match(KMult(KPlaceholder<A, FilterAddition>(),
+                                            KPlaceholder<A, FilterAddition>()),
+                                      source, &ctx));
+  quiz_assert(ctx.isUninitialized());
   Node pattern = KMult(KPlaceholder<A, FilterAddition>(), KPlaceholder<B>());
-  PatternMatching::Context ctx = PatternMatching::Match(pattern, source);
+  quiz_assert(PatternMatching::Match(pattern, source, &ctx));
   assert_trees_are_equal(ctx.getNode(Placeholder::A), KAdd(1_e, 2_e, 3_e));
   assert_trees_are_equal(ctx.getNode(Placeholder::B), KAdd(4_e, 5_e));
 

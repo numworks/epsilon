@@ -29,8 +29,7 @@ class Context {
   Node m_array[Placeholder::Tag::NumberOfTags];
 };
 
-Context Match(const Node pattern, const Node source,
-              Context context = Context());
+bool Match(const Node pattern, const Node source, Context* context);
 EditionReference Create(const Node structure,
                         const Context context = Context());
 

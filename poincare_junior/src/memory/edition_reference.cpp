@@ -92,8 +92,8 @@ Node EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
 
 EditionReference EditionReference::matchAndCreate(const Node pattern,
                                                   const Node structure) const {
-  PatternMatching::Context ctx = PatternMatching::Match(pattern, *this);
-  if (ctx.isUninitialized()) {
+  PatternMatching::Context ctx;
+  if (!PatternMatching::Match(pattern, *this, &ctx)) {
     return EditionReference();
   }
   return PatternMatching::Create(structure, ctx);
@@ -120,8 +120,8 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
    */
 
   // Step 1 - Match the pattern
-  PatternMatching::Context ctx = PatternMatching::Match(pattern, *this);
-  if (ctx.isUninitialized()) {
+  PatternMatching::Context ctx;
+  if (!PatternMatching::Match(pattern, *this, &ctx)) {
     return *this;
   }
   EditionPool* editionPool = EditionPool::sharedEditionPool();

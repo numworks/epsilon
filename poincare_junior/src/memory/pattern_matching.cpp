@@ -23,42 +23,44 @@ void PatternMatching::Context::log() const {
 }
 #endif
 
-void RecursiveMatchTrees(const Node source, const Node pattern,
+bool RecursiveMatchTrees(const Node source, const Node pattern,
                          PatternMatching::Context *result,
                          TypeBlock *lastBlock) {
   if (pattern.block() >= lastBlock) {
     assert(pattern.block() == lastBlock);
-    return;
+    return true;
   }
   Node nextNode;
   if (pattern.type() == BlockType::Placeholder) {
     Placeholder::Tag tag = Placeholder::NodeToTag(pattern);
     if (result->getNode(tag).isUninitialized()) {
       if (!(Placeholder::MatchesNode(pattern, source))) {
-        *result = PatternMatching::Context();
-        return;
+        return false;
       }
       result->setNode(tag, source);
     } else if (!result->getNode(tag).treeIsIdenticalTo(source)) {
-      *result = PatternMatching::Context();
-      return;
+      return false;
     }
     nextNode = source.nextTree();
   } else {
     if (!source.isIdenticalTo(pattern)) {
-      *result = PatternMatching::Context();
-      return;
+      return false;
     }
     nextNode = source.nextNode();
   }
   return RecursiveMatchTrees(nextNode, pattern.nextNode(), result, lastBlock);
 }
 
-PatternMatching::Context PatternMatching::Match(const Node pattern,
-                                                const Node source,
-                                                Context result) {
-  RecursiveMatchTrees(source, pattern, &result, pattern.nextTree().block());
-  return result;
+bool PatternMatching::Match(const Node pattern, const Node source,
+                            Context *result) {
+  // Use a temporary context to preserve result in case no match is found.
+  Context ctx = *result;
+  bool success =
+      RecursiveMatchTrees(source, pattern, &ctx, pattern.nextTree().block());
+  if (success) {
+    *result = ctx;
+  }
+  return success;
 }
 
 EditionReference PatternMatching::Create(const Node structure,

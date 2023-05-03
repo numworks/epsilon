@@ -19,6 +19,9 @@ class GraphView : public Shared::FunctionGraphView {
   }
   void drawRecord(Ion::Storage::Record record, int index, KDContext* ctx,
                   KDRect rect, bool firstDrawnRecord) const override;
+  int nextDotIndex(Shared::Sequence* sequence, int currentIndex,
+                   OMG::HorizontalDirection direction = OMG::Direction::Right(),
+                   int scrollSpeed = 1) const;
   void tidyModel(int i) const override {
     m_sequenceStore->modelForRecord(m_sequenceStore->activeRecordAtIndex(i))
         ->tidyDownstreamPoolFrom();

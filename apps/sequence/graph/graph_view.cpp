@@ -19,12 +19,10 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
                            bool firstDrawnRecord) const {
   Shared::Sequence* s = m_sequenceStore->modelForRecord(record);
 
-  int xStep = static_cast<int>(std::ceil(pixelWidth()));
-  assert(xStep > 0);
-  int xMin = static_cast<int>(std::ceil(range()->xMin()));
+  int xMin = static_cast<int>(std::ceil(range()->xMin())) - 1;
   int xMax = static_cast<int>(std::floor(range()->xMax()));
-
-  for (int x = xMin; x <= xMax; x += xStep) {
+  int x = xMin;
+  while ((x = nextDotIndex(s, x)) <= xMax) {
     float y = s->evaluateXYAtParameter(static_cast<float>(x), context()).y();
     if (std::isnan(y)) {
       continue;
@@ -36,6 +34,28 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
       drawStraightSegment(ctx, rect, Axis::Vertical, x, y, 0.f, color);
     }
   }
+}
+
+int GraphView::nextDotIndex(Shared::Sequence* sequence, int currentIndex,
+                            OMG::HorizontalDirection direction,
+                            int scrollSpeed) const {
+  assert(scrollSpeed > 0);
+  int initialRank = sequence->initialRank();
+  if (currentIndex < initialRank ||
+      (currentIndex == initialRank && direction.isLeft())) {
+    return initialRank;
+  }
+  int step = static_cast<int>(std::ceil(pixelWidth()));
+  assert(step > 0);
+  int result = currentIndex;
+  if ((result - initialRank) % step != 0) {
+    result -= (result - initialRank) % step;
+    scrollSpeed -= direction.isLeft();
+  }
+  result += scrollSpeed * step * (direction.isRight() ? 1 : -1);
+  assert((result - initialRank) % step == 0);
+  assert(result >= initialRank);
+  return result;
 }
 
 }  // namespace Sequence

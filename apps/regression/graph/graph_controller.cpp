@@ -129,10 +129,9 @@ bool GraphController::buildRegressionExpression(
   if (length >= static_cast<int>(bufferSize - 1) || length == 0) {
     return false;
   }
-  length =
-      SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
-          buffer, length);
-  return true;
+  return SerializationHelper::
+             ReplaceSystemParenthesesAndBracesByUserParentheses(
+                 buffer, length) < static_cast<int>(bufferSize - 1);
 }
 
 // SimpleInteractiveCurveViewController

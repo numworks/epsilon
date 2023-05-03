@@ -41,8 +41,7 @@ int GraphView::nextDotIndex(Shared::Sequence* sequence, int currentIndex,
                             int scrollSpeed) const {
   assert(scrollSpeed > 0);
   int initialRank = sequence->initialRank();
-  if (currentIndex < initialRank ||
-      (currentIndex == initialRank && direction.isLeft())) {
+  if (currentIndex < initialRank) {
     return initialRank;
   }
   int step = static_cast<int>(std::ceil(pixelWidth()));
@@ -54,7 +53,10 @@ int GraphView::nextDotIndex(Shared::Sequence* sequence, int currentIndex,
   }
   result += scrollSpeed * step * (direction.isRight() ? 1 : -1);
   assert((result - initialRank) % step == 0);
-  assert(result >= initialRank);
+  if (result < initialRank) {
+    assert(direction.isLeft());
+    return initialRank;
+  }
   return result;
 }
 

@@ -43,7 +43,9 @@ static HorizontalLayout HorizontalChild(Layout l) {
   return static_cast<HorizontalLayout &>(c);
 }
 
-static int NumberOfBracketParents(HorizontalLayout h, LayoutNode::Type type) {
+/* This function counts the number of parent brackets until it reaches a bracket
+ * of another type or the top layout. */
+static int BracketNestingLevel(HorizontalLayout h, LayoutNode::Type type) {
   assert(
       AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(type));
   Layout parent = h.parent();
@@ -51,6 +53,7 @@ static int NumberOfBracketParents(HorizontalLayout h, LayoutNode::Type type) {
   while (!parent.isUninitialized() && parent.type() == type) {
     AutocompletedBracketPairLayoutNode *parentNode =
         static_cast<AutocompletedBracketPairLayoutNode *>(parent.node());
+    // If both sides are temp, the bracket will be removed so it is ignored
     result += !parentNode->isTemporary(
                   AutocompletedBracketPairLayoutNode::Side::Left) ||
               !parentNode->isTemporary(
@@ -128,7 +131,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
    * comment after the while loop) */
   int cursorNestingLevel = -1;
   if (cursorLayout && *cursorPosition == 0) {
-    cursorNestingLevel = NumberOfBracketParents(*cursorLayout, type);
+    cursorNestingLevel = BracketNestingLevel(*cursorLayout, type);
   }
 
   while (true) {
@@ -329,7 +332,7 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
    * The code is a bit dirty though, I just could not find an easy way to fix
    * all these cases. */
   if (cursorNestingLevel >= 0 && *cursorPosition == 0) {
-    int newCursorNestingLevel = NumberOfBracketParents(*cursorLayout, type);
+    int newCursorNestingLevel = BracketNestingLevel(*cursorLayout, type);
     while (newCursorNestingLevel > cursorNestingLevel && *cursorPosition == 0) {
       Layout p = cursorLayout->parent();
       assert(!p.isUninitialized() && p.type() == type);

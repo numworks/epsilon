@@ -40,7 +40,7 @@ class LayoutCursor final {
    * position in the layout. */
   LayoutCursor(Layout layout,
                OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
-      : m_startOfSelection(-1) {
+      : m_position(0), m_startOfSelection(-1) {
     if (!layout.isUninitialized()) {
       setLayout(layout, sideOfLayout);
     }

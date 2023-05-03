@@ -54,7 +54,7 @@ double TransformedModel::levelSet(double* modelCoefficients, double xMin,
   }
   double transformedY = (opposeY ? -1.0 : 1.0) * y;
   if (applyLnOnY()) {
-    y = std::log(y);
+    transformedY = std::log(transformedY);
   }
   double transformedX = (transformedY - a) / b;
   return applyLnOnX() ? std::exp(transformedX) : transformedX;

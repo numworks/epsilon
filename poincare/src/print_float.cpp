@@ -285,27 +285,16 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
   }
 
   // Number of chars for the mantissa
-  int numberOfCharsForMantissaWithoutSign = 0;
-  if (mode == Preferences::PrintFloatMode::Decimal) {
-    if (exponentInBase10 >= 0) {
-      numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits;
-    } else {
-      /* exponentInBase10 < 0, so we add |exponentInBase10| to count 0 added
-       * before significant digits */
-      numberOfCharsForMantissaWithoutSign =
-          numberOfSignificantDigits - exponentInBase10;
-    }
-  } else if (mode == Preferences::PrintFloatMode::Scientific) {
-    numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits;
-  } else {
-    assert(mode == Preferences::PrintFloatMode::Engineering);
-    numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits;
+  int numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits;
+  if (mode == Preferences::PrintFloatMode::Decimal && exponentInBase10 < 0) {
+    // Add |exponentInBase10| to count 0 added before significant digits
+    numberOfCharsForMantissaWithoutSign -= exponentInBase10;
   }
 
   /* The number of digits in a mantissa is capped because the maximal int64_t is
    * 2^63 - 1. As our mantissa is an integer built from an int64_t, we assert
    * that we stay beyond this threshold during computation. */
-  assert(numberOfSignificantDigits < std::log10(std::pow(2.0f, 63.0f)));
+  assert(numberOfSignificantDigits < 63.0f * std::log10(2.0f));
 
   // Remove/Add the zeroes on the right side of the mantissa
   Long dividend = Long((int64_t)mantissa);

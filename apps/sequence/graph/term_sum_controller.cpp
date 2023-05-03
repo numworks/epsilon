@@ -25,7 +25,7 @@ TermSumController::TermSumController(
     Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
     GraphView* graphView, CurveViewRange* graphRange, CurveViewCursor* cursor)
     : SumGraphController(parentResponder, inputEventHandlerDelegate, graphView,
-                         graphRange, cursor, UCodePointNArySummation) {}
+                         graphRange, cursor) {}
 
 const char* TermSumController::title() {
   return I18n::translate(I18n::Message::TermSum);

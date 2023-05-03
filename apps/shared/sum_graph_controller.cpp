@@ -21,12 +21,12 @@ SumGraphController::SumGraphController(
     Responder *parentResponder,
     Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
     FunctionGraphView *graphView, InteractiveCurveViewRange *range,
-    CurveViewCursor *cursor, CodePoint sumSymbol)
+    CurveViewCursor *cursor)
     : SimpleInteractiveCurveViewController(parentResponder, cursor),
       m_step(Step::FirstParameter),
       m_graphRange(range),
       m_graphView(graphView),
-      m_legendView(this, inputEventHandlerDelegate, sumSymbol) {}
+      m_legendView(this, inputEventHandlerDelegate) {}
 
 void SumGraphController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
@@ -216,7 +216,8 @@ void SumGraphController::reloadBannerView() {
     result = NAN;
   }
   m_result = result;
-  m_legendView.setSumLayout(m_step, m_startSum, endSum, result, functionLayout);
+  m_legendView.setSumLayout(m_step, m_startSum, endSum, result, functionLayout,
+                            sumSymbol());
 }
 
 Poincare::Expression SumGraphController::createSumExpression(
@@ -230,13 +231,11 @@ Poincare::Expression SumGraphController::createSumExpression(
 
 SumGraphController::LegendView::LegendView(
     SumGraphController *controller,
-    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
-    CodePoint sumSymbol)
+    Escher::InputEventHandlerDelegate *inputEventHandlerDelegate)
     : m_sum(k_glyphsFormat),
       m_legend(I18n::Message::Default, k_glyphsFormat),
       m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize,
-                     inputEventHandlerDelegate, controller, k_glyphsFormat),
-      m_sumSymbol(sumSymbol) {
+                     inputEventHandlerDelegate, controller, k_glyphsFormat) {
   m_textBuffer[0] = 0;
 }
 
@@ -265,9 +264,10 @@ void SumGraphController::LegendView::setEditableZone(double d) {
 
 void SumGraphController::LegendView::setSumLayout(Step step, double start,
                                                   double end, double result,
-                                                  Layout functionLayout) {
+                                                  Layout functionLayout,
+                                                  CodePoint sumSymbol) {
   constexpr int sigmaLength = 2;
-  const CodePoint sigma[sigmaLength] = {' ', m_sumSymbol};
+  const CodePoint sigma[sigmaLength] = {' ', sumSymbol};
   Layout sumLayout = LayoutHelper::CodePointsToLayout(sigma, sigmaLength);
   if (step != Step::FirstParameter) {
     static_assert(k_valuesBufferSize <= k_editableZoneBufferSize);
@@ -297,7 +297,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
         /* If function is uninitialized, display "Area = "
          * This case should not occur with a sum of terms of a sequence
          * If it does, "Area = " should be replaced with "Sum = " */
-        assert(m_sumSymbol == UCodePointIntegral);
+        assert(sumSymbol == UCodePointIntegral);
         sumLayout = defaultSumResultLayout(buffer);
       } else {
         sumLayout = HorizontalLayout::Builder(
@@ -308,7 +308,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
           /* If layout is too large, display "Area = "
            * This case should not occur with a sum of terms of a sequence
            * If it does, "Area = " should be replaced with "Sum = " */
-          assert(m_sumSymbol == UCodePointIntegral);
+          assert(sumSymbol == UCodePointIntegral);
           sumLayout = defaultSumResultLayout(buffer);
         }
       }

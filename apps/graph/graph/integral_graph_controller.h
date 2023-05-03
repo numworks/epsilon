@@ -20,6 +20,7 @@ class IntegralGraphController : public Shared::SumGraphController {
                         OMG::HorizontalDirection direction) override;
 
  private:
+  CodePoint sumSymbol() const override { return UCodePointIntegral; }
   I18n::Message legendMessageAtStep(Step step) override;
   Poincare::Layout createFunctionLayout() override;
 };

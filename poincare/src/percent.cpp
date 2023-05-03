@@ -19,6 +19,7 @@ namespace Poincare {
 
 bool PercentSimpleNode::childAtIndexNeedsUserParentheses(
     const Expression& child, int childIndex) const {
+  assert(child.type() != Type::Dependency);
   if (child.type() == Type::Conjugate) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }

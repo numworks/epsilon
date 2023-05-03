@@ -27,6 +27,7 @@ int SubtractionNode::polynomialDegree(Context* context,
 
 bool SubtractionNode::childAtIndexNeedsUserParentheses(const Expression& child,
                                                        int childIndex) const {
+  assert(child.type() != Type::Dependency);
   if (childIndex == 0) {
     // First operand of a subtraction never requires parentheses
     return false;

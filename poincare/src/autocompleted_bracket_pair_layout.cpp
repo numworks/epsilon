@@ -43,6 +43,27 @@ static HorizontalLayout HorizontalChild(Layout l) {
   return static_cast<HorizontalLayout &>(c);
 }
 
+static int NumberOfBracketParents(HorizontalLayout h, LayoutNode::Type type) {
+  assert(
+      AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(type));
+  Layout parent = h.parent();
+  int result = 0;
+  while (!parent.isUninitialized() && parent.type() == type) {
+    AutocompletedBracketPairLayoutNode *parentNode =
+        static_cast<AutocompletedBracketPairLayoutNode *>(parent.node());
+    result += !parentNode->isTemporary(
+                  AutocompletedBracketPairLayoutNode::Side::Left) ||
+              !parentNode->isTemporary(
+                  AutocompletedBracketPairLayoutNode::Side::Right);
+    Layout p = parent.parent();
+    if (p.isUninitialized()) {
+      break;
+    }
+    parent = p.parent();
+  }
+  return result;
+}
+
 void AutocompletedBracketPairLayoutNode::BalanceBrackets(
     HorizontalLayout hLayout, HorizontalLayout *cursorLayout,
     int *cursorPosition) {
@@ -103,6 +124,12 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
   HorizontalLayout writtenLayout = result;
 
   assert((cursorLayout == nullptr) == (cursorPosition == nullptr));
+  /* This is used to retrieve a proper cursor position after balancing. (see
+   * comment after the while loop) */
+  int cursorNestingLevel = -1;
+  if (cursorLayout && *cursorPosition == 0) {
+    cursorNestingLevel = NumberOfBracketParents(*cursorLayout, type);
+  }
 
   while (true) {
     /* -- Step 0 -- Set the new cursor position
@@ -277,21 +304,6 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
     static_cast<AutocompletedBracketPairLayoutNode *>(newBracket.node())
         ->setTemporary(Side::Left, true);
     HorizontalLayout newWrittenLayout = HorizontalLayout::Builder(newBracket);
-    if (*cursorPosition == 0 && *cursorLayout == writtenLayout) {
-      /* FIXME: This is currently a quick-fix for the following problem:
-       * If the hLayout is "12[34)", it should be balanced into "[1234)".
-       * The problem occurs if the cursor is before the 1: "|12[34)"
-       * It's unclear if the result should be "[|1234)" or "|[1234)"
-       * This ensures that the result will be the second one: "|[1234)"
-       * so that when deleting a left parenthesis, the cursor stays out of
-       * it: "(|1234)" -> Backspace -> "|[1234)"
-       * But it means that the behaviour is not really what you expect in
-       * the following case: "[(|123))" -> Backspace -> "|[[1234))" while it
-       * would be better to have "[(|123))" -> Backspace -> "[|[1234))".
-       * This might be solved by remembering if the cursor was in or out of
-       * the bracket when it was encountered from the left. */
-      *cursorLayout = newWrittenLayout;
-    }
     if (writtenLayout == result) {
       result = newWrittenLayout;
     } else {
@@ -299,6 +311,33 @@ void AutocompletedBracketPairLayoutNode::PrivateBalanceBrackets(
     }
     newBracket.replaceChildAtIndexInPlace(0, writtenLayout);
     writtenLayout = newWrittenLayout;
+  }
+
+  /* This is a fix for the following problem:
+   * If the hLayout is "12[34)", it should be balanced into "[1234)".
+   * The problem occurs if the cursor is before the 1: "|12[34)"
+   * It's unclear if the result should be "[|1234)" or "|[1234)"
+   * This ensures that the result will be the second one: "|[1234)"
+   * so that when deleting a left parenthesis, the cursor stays out of
+   * it: "(|1234)" -> Backspace -> "|[1234)"
+   * It also handles the following cases:
+   *   * "[(|123))" -> Backspace -> "[|[1234))"
+   *   * "[|[123))" -> Backspace -> "|[[1234))"
+   *   * "1+((|2))" -> Backspace -> "[1+|(2))"
+   *   * "1+((|2)]" -> Backspace -> "1+(|2)"
+   *
+   * The code is a bit dirty though, I just could not find an easy way to fix
+   * all these cases. */
+  if (cursorNestingLevel >= 0 && *cursorPosition == 0) {
+    int newCursorNestingLevel = NumberOfBracketParents(*cursorLayout, type);
+    while (newCursorNestingLevel > cursorNestingLevel && *cursorPosition == 0) {
+      Layout p = cursorLayout->parent();
+      assert(!p.isUninitialized() && p.type() == type);
+      HorizontalLayout h = HorizontalParent(p);
+      *cursorPosition = h.indexOfChild(p);
+      *cursorLayout = h;
+      newCursorNestingLevel--;
+    }
   }
 
   /* Now that the result is ready to replace hLayout, replaceWithInPlace

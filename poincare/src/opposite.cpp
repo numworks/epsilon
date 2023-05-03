@@ -40,7 +40,7 @@ bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression& child,
     return true;
   }
   if (child.type() == Type::Conjugate) {
-    return childAtIndexNeedsUserParentheses(child.childAtIndex(0), 0);
+    return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
   return child.isOfType({Type::Addition, Type::Subtraction, Type::Opposite});
 }

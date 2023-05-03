@@ -557,8 +557,7 @@ Expression Multiplication::shallowBeautify(
   /* Beautifying a Multiplication consists in several possible operations:
    * - Add Opposite ((-3)*x -> -(3*x), useful when printing fractions)
    * - Recognize derived units in the product of units
-   * - Creating a Division if relevant
-   */
+   * - Creating a Division if relevant */
 
   // Step 1: Turn -n*A into -(n*A)
   Expression noNegativeNumeral =
@@ -848,8 +847,7 @@ Expression Multiplication::shallowReduce(ReductionContext reductionContext) {
   /* MultiplicationNode is associative, so let's start by merging children
    * which also are multiplications themselves.
    * TODO If the parent Expression is a Multiplication, one should perhaps
-   * return now and let the parent do the reduction.
-   */
+   * return now and let the parent do the reduction. */
   mergeSameTypeChildrenInPlace();
 
   Context *context = reductionContext.context();

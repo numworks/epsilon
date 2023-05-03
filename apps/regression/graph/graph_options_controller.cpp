@@ -152,10 +152,9 @@ void GraphOptionsController::fillCell(HighlightCell *cell) {
     m_changeRegressionCell.subLabel()->setMessage(model->name());
     return;
   }
-  const int significantDigits =
-      Preferences::sharedPreferences->numberOfSignificantDigits();
+  const int significantDigits = Preferences::VeryLargeNumberOfSignificantDigits;
   Preferences::PrintFloatMode displayMode =
-      Preferences::sharedPreferences->displayMode();
+      Preferences::PrintFloatMode::Decimal;
   if (cell == &m_regressionEquationCell) {
     double *coefficients = m_store->coefficientsForSeries(
         series, m_graphController->globalContext());
@@ -193,8 +192,11 @@ void GraphOptionsController::fillCell(HighlightCell *cell) {
     double value = isRCell ? m_store->correlationCoefficient(series)
                            : m_store->determinationCoefficientForSeries(
                                  series, m_graphController->globalContext());
-    Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
-        value, buffer, bufferSize, significantDigits, displayMode);
+    int insertedChars =
+        Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
+            value, buffer, bufferSize, significantDigits, displayMode);
+    assert(insertedChars < bufferSize);
+    (void)insertedChars;  // Silence warnings
     rCell->accessory()->setText(buffer);
   }
 }

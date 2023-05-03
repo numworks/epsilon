@@ -29,20 +29,18 @@ void StoreParameterController::initializeColumnParameters() {
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
-  int index = selectedRow();
-  int type = typeAtIndex(index);
-  AbstractMenuCell* cell = reusableCell(index, type);
+  AbstractMenuCell* cell = static_cast<AbstractMenuCell*>(selectedCell());
   if (!cell->canBeActivatedByEvent(event)) {
     return false;
   }
-  if (type == k_sortCellType) {
+  if (cell == &m_sortCell) {
     m_storeColumnHelper->sortSelectedColumn();
     stackView()->pop();
-  } else if (type == k_fillFormulaCellType) {
+  } else if (cell == &m_fillFormula) {
     stackView()->pop();
     m_storeColumnHelper->displayFormulaInput();
     return true;
-  } else if (type == k_hideCellType) {
+  } else if (cell == &m_hideCell) {
     bool canSwitchHideStatus =
         m_storeColumnHelper->switchSelectedColumnHideStatus();
     if (!canSwitchHideStatus) {
@@ -51,7 +49,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
       m_selectableListView.reloadSelectedCell();
     }
   } else {
-    assert(type == k_clearCellType);
+    assert(cell == &m_clearColumn);
     stackView()->pop();
     m_storeColumnHelper->clearColumnHelper()
         ->presentClearSelectedColumnPopupIfClearable();
@@ -59,16 +57,18 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-AbstractMenuCell* StoreParameterController::reusableCell(int index, int type) {
-  assert(type >= 0 && type < k_numberOfCells);
-  AbstractMenuCell* reusableCells[k_numberOfCells] = {
-      &m_sortCell, &m_fillFormula, &m_hideCell, &m_clearColumn};
-  return reusableCells[type];
+AbstractMenuCell* StoreParameterController::cell(int index) {
+  assert(index >= 0 && index < k_numberOfCells);
+  AbstractMenuCell* cells[] = {&m_sortCell, &m_fillFormula, &m_hideCell,
+                               &m_clearColumn};
+  static_assert(std::size(cells) == k_numberOfCells,
+                "StoreParameterController::k_numberOfCells is deprecated");
+  return cells[index];
 }
 
 void StoreParameterController::willDisplayCellForIndex(
     Escher::HighlightCell* cell, int index) {
-  if (typeAtIndex(index) == k_hideCellType) {
+  if (cell == &m_hideCell) {
     m_hideCell.accessory()->setState(
         m_storeColumnHelper->selectedSeriesIsActive());
   }

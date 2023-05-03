@@ -20,26 +20,19 @@ class StoreParameterController : public ColumnParameterController {
                            StoreColumnHelper* storeColumnHelper);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfCells; }
-  int reusableCellCount(int type) override { return 1; }
-  int typeAtIndex(int index) const override {
-    assert(index < k_numberOfCells);
-    return index;
-  }
-  Escher::AbstractMenuCell* reusableCell(int index, int type) override;
+  Escher::AbstractMenuCell* cell(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   void initializeColumnParameters() override;
 
  protected:
-  // For these cells, type defines the orders
-  constexpr static int k_sortCellType = 0;
-  constexpr static int k_fillFormulaCellType = k_sortCellType + 1;
-  constexpr static int k_hideCellType = k_fillFormulaCellType + 1;
-  constexpr static int k_clearCellType = k_hideCellType + 1;
-  constexpr static int k_numberOfCells = k_clearCellType + 1;
+  constexpr static int k_numberOfCells = 4;
 
   StoreColumnHelper* m_storeColumnHelper;
   Escher::MenuCell<Escher::OneLineBufferTextView<KDFont::Size::Large>>
       m_clearColumn;
+  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                   Escher::SwitchView>
+      m_hideCell;
 
  private:
   ColumnNameHelper* columnNameHelper() override;
@@ -47,9 +40,6 @@ class StoreParameterController : public ColumnParameterController {
 
   Escher::MenuCell<Escher::MessageTextView> m_fillFormula;
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView> m_sortCell;
-  Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
-                   Escher::SwitchView>
-      m_hideCell;
 };
 
 }  // namespace Shared

@@ -15,7 +15,7 @@ class CalculusColumnParameterController : public ColumnParameterController {
 
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
-  Escher::HighlightCell* reusableCell(int index, int type) override {
+  Escher::HighlightCell* cell(int index) override {
     assert(index == 0);
     return &m_hideColumn;
   }

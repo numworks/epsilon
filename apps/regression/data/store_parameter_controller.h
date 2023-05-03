@@ -20,13 +20,10 @@ class StoreParameterController : public Shared::StoreParameterController {
   int numberOfRows() const override {
     return Shared::StoreParameterController::numberOfRows() + 1;
   }
-  int typeAtIndex(int index) const override;
-  Escher::AbstractMenuCell* reusableCell(int index, int type) override;
+  Escher::AbstractMenuCell* cell(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 
  private:
-  constexpr static int k_changeRegressionCellType =
-      Shared::StoreParameterController::k_numberOfCells;
   constexpr static int k_changeRegressionCellIndex = 2;
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,

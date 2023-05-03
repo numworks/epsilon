@@ -19,12 +19,12 @@ ValuesParameterController::ValuesParameterController(
 }
 
 bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
-  if (selectedRow() == k_indexOfClearColumn &&
+  if (selectedCell() == &m_clearColumn &&
       m_clearColumn.canBeActivatedByEvent(event)) {
     stackView()->pop();
     m_valuesController->presentClearSelectedColumnPopupIfClearable();
     return true;
-  } else if (selectedRow() == k_indexOfSetInterval &&
+  } else if (selectedCell() == &m_setInterval &&
              m_setInterval.canBeActivatedByEvent(event)) {
     IntervalParameterController* intervalParameterController =
         m_valuesController->intervalParameterController();
@@ -44,13 +44,13 @@ ColumnNameHelper* ValuesParameterController::columnNameHelper() {
   return m_valuesController;
 }
 
-HighlightCell* ValuesParameterController::reusableCell(int index, int type) {
+HighlightCell* ValuesParameterController::cell(int index) {
   assert(index >= 0);
   assert(index < k_totalNumberOfCell);
-  static_assert(
-      k_totalNumberOfCell == 2,
-      "Shared::ValuesParameterController::reusableCell is deprecated.");
   HighlightCell* cells[] = {&m_clearColumn, &m_setInterval};
+  static_assert(
+      std::size(cells) == k_totalNumberOfCell,
+      "Shared::ValuesParameterController::k_totalNumberOfCell is deprecated.");
   return cells[index];
 }
 

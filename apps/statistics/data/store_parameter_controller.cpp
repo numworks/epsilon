@@ -43,16 +43,16 @@ void StoreParameterController::initializeColumnParameters() {
 }
 
 bool StoreParameterController::handleEvent(Ion::Events::Event event) {
-  int type = typeAtIndex(selectedRow());
-  if ((type == k_displayCumulatedFrequencyCellType &&
+  Escher::HighlightCell* cell = selectedCell();
+  if ((cell == &m_displayCumulatedFrequencyCell &&
        m_displayCumulatedFrequencyCell.canBeActivatedByEvent(event)) ||
-      (type == k_hideCumulatedFrequencyCellType &&
+      (cell == &m_hideCumulatedFrequencyCell &&
        m_hideCumulatedFrequencyCell.canBeActivatedByEvent(event))) {
     bool previousStatus = m_store->displayCumulatedFrequenciesForSeries(
         m_storeColumnHelper->selectedSeries());
     m_store->setDisplayCumulatedFrequenciesForSeries(
         m_storeColumnHelper->selectedSeries(), !previousStatus);
-    if (type == k_hideCumulatedFrequencyCellType) {
+    if (cell == &m_hideCumulatedFrequencyCell) {
       // We are in the options of column CF
       assert(previousStatus);
       m_storeColumnHelper->selectColumn(m_columnIndex - 1);
@@ -69,48 +69,31 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
 
 int StoreParameterController::numberOfRows() const {
   return m_isCumulatedFrequencyColumnSelected
-             ? k_indexOfHideCumulatedFrequencyCell + 1
+             ? k_hideCFIndex + 1
              : Shared::StoreParameterController::numberOfRows() + 1;
 }
 
-int StoreParameterController::typeAtIndex(int index) const {
+Escher::AbstractMenuCell* StoreParameterController::cell(int index) {
   assert(index >= 0 && index < numberOfRows());
-  if (index == numberOfRows() - 1) {
-    return m_isCumulatedFrequencyColumnSelected
-               ? k_hideCumulatedFrequencyCellType
-               : k_displayCumulatedFrequencyCellType;
+  if (m_isCumulatedFrequencyColumnSelected && index == k_hideCFIndex) {
+    return &m_hideCumulatedFrequencyCell;
+  } else if (!m_isCumulatedFrequencyColumnSelected &&
+             index == k_displayCFIndex) {
+    return &m_displayCumulatedFrequencyCell;
   }
-  return Shared::StoreParameterController::typeAtIndex(index);
-}
-
-Escher::AbstractMenuCell* StoreParameterController::reusableCell(int index,
-                                                                 int type) {
-  assert(index >= 0 && index < numberOfRows());
-  switch (type) {
-    case k_displayCumulatedFrequencyCellType:
-      return &m_displayCumulatedFrequencyCell;
-    case k_hideCumulatedFrequencyCellType:
-      return &m_hideCumulatedFrequencyCell;
-    default:
-      return Shared::StoreParameterController::reusableCell(index, type);
-  }
+  return Shared::StoreParameterController::cell(index);
 }
 
 void StoreParameterController::willDisplayCellForIndex(
     Escher::HighlightCell* cell, int index) {
-  int type = typeAtIndex(index);
-  if (type == k_displayCumulatedFrequencyCellType) {
-    assert(cell == &m_displayCumulatedFrequencyCell);
+  if (cell == &m_displayCumulatedFrequencyCell) {
     m_displayCumulatedFrequencyCell.accessory()->setState(
         m_store->displayCumulatedFrequenciesForSeries(
             m_storeColumnHelper->selectedSeries()));
     return;
-  } else if (type == k_hideCumulatedFrequencyCellType) {
-    assert(cell == &m_hideCumulatedFrequencyCell);
+  } else if (cell == &m_hideCumulatedFrequencyCell) {
     return;
   }
-  assert(cell != &m_displayCumulatedFrequencyCell &&
-         cell != &m_hideCumulatedFrequencyCell);
   Shared::StoreParameterController::willDisplayCellForIndex(cell, index);
 }
 

@@ -9,20 +9,20 @@ namespace Inference {
 
 class SlopeColumnParameterController : public Shared::StoreParameterController {
  public:
-  using StoreParameterController::StoreParameterController;
+  SlopeColumnParameterController(Escher::Responder* parentResponder,
+                                 Shared::StoreColumnHelper* storeColumnHelper)
+      : Shared::StoreParameterController(parentResponder, storeColumnHelper) {
+    // Do not display an option to hide series
+    m_hideCell.hide();
+  }
   Escher::ViewController::TitlesDisplay titlesDisplay() override {
     return m_titlesDisplay;
   }
   void setTitlesDisplay(Escher::ViewController::TitlesDisplay titlesDisplay) {
     m_titlesDisplay = titlesDisplay;
   }
-  int numberOfRows() const override { return std::size(k_typesOrder); }
-  int typeAtIndex(int index) const override { return k_typesOrder[index]; }
 
  private:
-  constexpr static int k_typesOrder[] = {k_sortCellType, k_fillFormulaCellType,
-                                         k_clearCellType};
-
   Escher::ViewController::TitlesDisplay m_titlesDisplay;
 };
 

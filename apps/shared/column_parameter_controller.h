@@ -24,12 +24,13 @@ class ColumnParameters {
   char m_titleBuffer[k_titleBufferSize];
 };
 
-class ColumnParameterController : public Escher::SelectableListViewController<
-                                      Escher::MemoizedListViewDataSource>,
-                                  public ColumnParameters {
+class ColumnParameterController
+    : public Escher::ExplicitSelectableListViewController,
+      public ColumnParameters {
  public:
   ColumnParameterController(Escher::Responder* parentResponder)
-      : SelectableListViewController(parentResponder), ColumnParameters() {}
+      : Escher::ExplicitSelectableListViewController(parentResponder),
+        ColumnParameters() {}
   void viewWillAppear() override;
   const char* title() override { return m_titleBuffer; }
 

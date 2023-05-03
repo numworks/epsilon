@@ -18,20 +18,16 @@ class StoreParameterController : public Shared::StoreParameterController {
   void initializeColumnParameters() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  int typeAtIndex(int index) const override;
-  Escher::AbstractMenuCell* reusableCell(int index, int type) override;
+  Escher::AbstractMenuCell* cell(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 
  private:
-  /* When displayed, HideCumulatedFrequencyCell is last and second.
+  /* When displayed, hideCumulatedFrequencyCell is last and second.
    * Remaining Shared::StoreParameterController are not displayed:
    * m_fillFormula, m_hideCell and m_clearColumn */
-  constexpr static int k_indexOfHideCumulatedFrequencyCell =
-      Shared::StoreParameterController::k_fillFormulaCellType;
-  constexpr static int k_displayCumulatedFrequencyCellType =
+  constexpr static int k_hideCFIndex = 2;
+  constexpr static int k_displayCFIndex =
       Shared::StoreParameterController::k_numberOfCells;
-  constexpr static int k_hideCumulatedFrequencyCellType =
-      k_displayCumulatedFrequencyCellType + 1;
 
   I18n::Message sortMessage() override {
     return (m_columnIndex % 2 == 0) ? I18n::Message::SortValues

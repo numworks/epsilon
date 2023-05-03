@@ -88,7 +88,7 @@ bool DisplayModeController::textFieldDidFinishEditing(
   }
   Preferences::sharedPreferences->setNumberOfSignificantDigits(
       (char)std::round(floatBody));
-  m_selectableListView.reloadCell(selectedRow());
+  m_selectableListView.reloadSelectedCell();
   if (event == Ion::Events::Up || event == Ion::Events::OK) {
     m_selectableListView.handleEvent(event);
   }

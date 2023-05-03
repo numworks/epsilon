@@ -46,7 +46,7 @@ bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
     m_menuController->renameSelectedScript();
   } else if (cell == &m_autoImportScript) {
     m_script.toggleAutoImportation();
-    m_selectableListView.reloadCell(selectedRow());
+    m_selectableListView.reloadSelectedCell();
     m_menuController->reloadConsole();
     Container::activeApp()->setFirstResponder(&m_selectableListView);
   } else {

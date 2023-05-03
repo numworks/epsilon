@@ -136,7 +136,7 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(
     return false;
   }
   resetMemoization();
-  m_selectableListView.reloadCell(activeCell());
+  m_selectableListView.reloadSelectedCell();
   m_selectableListView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
     m_selectableListView.selectCell(row + 1);

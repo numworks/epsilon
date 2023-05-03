@@ -58,7 +58,7 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
           m_cells[k_versionCellIndex].subLabel()->setText(
               k_textGettersCycle[(i + 1) % k_nGetters]());
           // Reload frame with new text length
-          m_selectableListView.reloadCell(k_versionCellIndex, true);
+          m_selectableListView.reloadSelectedCell(true);
           return true;
         }
       }

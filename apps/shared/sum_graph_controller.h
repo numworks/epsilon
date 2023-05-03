@@ -19,7 +19,7 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
       Responder* parentResponder,
       Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
       FunctionGraphView* curveView, InteractiveCurveViewRange* range,
-      CurveViewCursor* cursor, CodePoint sumSymbol);
+      CurveViewCursor* cursor);
 
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
@@ -50,6 +50,7 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
   FunctionGraphView* m_graphView;
 
  private:
+  virtual CodePoint sumSymbol() const = 0;
   float cursorTopMarginRatio() const override { return 0.06f; }
   float cursorBottomMarginRatio() const override { return 0.28f; }
   bool handleLeftRightEvent(Ion::Events::Event event) override;
@@ -72,8 +73,7 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
   class LegendView : public Escher::View {
    public:
     LegendView(SumGraphController* controller,
-               Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
-               CodePoint sumSymbol);
+               Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
     LegendView(const LegendView& other) = delete;
     LegendView(LegendView&& other) = delete;
 
@@ -86,7 +86,7 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
     void setLegendMessage(I18n::Message message, Step step);
     void setEditableZone(double d);
     void setSumLayout(Step step, double start, double end, double result,
-                      Poincare::Layout functionLayout);
+                      Poincare::Layout functionLayout, CodePoint sumSymbol);
 
    private:
     constexpr static size_t k_editableZoneBufferSize =
@@ -120,7 +120,6 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
     Escher::MessageTextView m_legend;
     Escher::TextField m_editableZone;
     char m_textBuffer[k_editableZoneBufferSize];
-    CodePoint m_sumSymbol;
   };
 
   LegendView m_legendView;

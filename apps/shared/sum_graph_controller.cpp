@@ -275,6 +275,8 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
     Layout endLayout;
     if (step == Step::SecondParameter) {
       endLayout = HorizontalLayout::Builder();
+      static_cast<HorizontalLayout &>(endLayout).setEmptyVisibility(
+          EmptyRectangle::State::Hidden);
     } else {
       PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
           end, buffer, k_valuesBufferSize, k_valuesPrecision,

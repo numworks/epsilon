@@ -98,7 +98,7 @@ bool SymbolAbstract::matches(const SymbolAbstract &symbol,
                              void *auxiliary) {
   // Undefined symbols must be preserved.
   Expression e = SymbolAbstract::Expand(
-      symbol, context, false,
+      symbol, context, true,
       SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   return !e.isUninitialized() &&
          e.recursivelyMatches(test, context,

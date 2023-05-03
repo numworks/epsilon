@@ -230,7 +230,7 @@ Expression Function::deepReplaceReplaceableSymbols(
                                    symbolicComputation);
   assert(isCircularFromHere == TrinaryBoolean::False);
 
-  Expression e = context->expressionForSymbolAbstract(*this, false);
+  Expression e = context->expressionForSymbolAbstract(*this, true);
   /* On undefined function, ReplaceDefinedFunctionsWithDefinitions is equivalent
    * to ReplaceAllDefinedSymbolsWithDefinition, like in shallowReduce. */
   if (e.isUninitialized()) {

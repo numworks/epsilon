@@ -89,7 +89,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
 
   if (type == k_popUpCellType) {
     globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
-    m_selectableListView.reloadCell(m_selectableListView.selectedRow());
+    m_selectableListView.reloadSelectedCell();
   } else if (type == k_brightnessCellType) {
     int delta = Ion::Backlight::MaxBrightness /
                 GlobalPreferences::NumberOfBrightnessStates;
@@ -97,7 +97,7 @@ bool MainController::handleEvent(Ion::Events::Event event) {
     globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel() +
                                           GaugeView::DirectionForEvent(event) *
                                               delta);
-    m_selectableListView.reloadCell(m_selectableListView.selectedRow());
+    m_selectableListView.reloadSelectedCell();
   } else {
     assert(type == k_defaultCellType);
     int modelIndex = getModelIndex(selectedRow());

@@ -91,7 +91,7 @@ bool ExplicitFloatParameterController::textFieldDidFinishEditing(
     return false;
   }
   resetMemoization();
-  m_selectableListView.reloadCell(selectedRow());
+  m_selectableListView.reloadSelectedCell();
   m_selectableListView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
     m_selectableListView.selectCell(selectedRow() + 1);

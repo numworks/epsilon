@@ -43,7 +43,6 @@ class FloatParameterController : public Escher::SelectableListViewController<
   constexpr static int k_buttonCellType = 1;
 
   enum class InfinityTolerance { None, PlusInfinity, MinusInfinity };
-  int activeCell() { return selectedRow(); }
   Escher::StackViewController *stackController() {
     return static_cast<Escher::StackViewController *>(parentResponder());
   }

@@ -53,7 +53,7 @@ bool ListParameterController::textFieldDidFinishEditing(
   App::app()->snapshot()->updateInterval();
   // Invalidate sequence context cache when changing sequence type
   App::app()->localContext()->resetCache();
-  m_selectableListView.reloadCell(selectedRow());
+  m_selectableListView.reloadSelectedCell();
   m_selectableListView.handleEvent(event);
   return true;
 }
@@ -110,7 +110,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
     App::app()->localContext()->resetCache();
     function()->setActive(!function()->isActive());
-    m_selectableListView.reloadCell(selectedRow());
+    m_selectableListView.reloadSelectedCell();
     return true;
   }
   return Shared::ListParameterController::handleEvent(event);

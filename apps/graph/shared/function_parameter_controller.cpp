@@ -122,7 +122,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   if (cell == &m_derivativeCell &&
       m_derivativeCell.canBeActivatedByEvent(event)) {
     function()->setDisplayDerivative(!function()->displayDerivative());
-    m_selectableListView.reloadCell(selectedRow());
+    m_selectableListView.reloadSelectedCell();
     return true;
   }
   bool result = Shared::ListParameterController::handleEvent(event);

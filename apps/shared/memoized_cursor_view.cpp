@@ -22,9 +22,9 @@ KDSize MemoizedCursorView::minimalSizeForOptimalDisplay() const {
   return KDSize(size(), size());
 }
 
-void MemoizedCursorView::setColor(KDColor color) {
+void MemoizedCursorView::setColor(KDColor color, const Escher::View* parent) {
   m_color = color;
-  eraseCursorIfPossible();
+  eraseCursorIfPossible(parent);
   markWholeFrameAsDirty();
 }
 
@@ -36,7 +36,7 @@ void MemoizedCursorView::setCursorFrame(View* parent, KDRect f, bool force) {
   }
   /* We want to avoid drawing the curve just because the cursor has been
    * repositioned, as it is very slow for non cartesian curves.*/
-  if (eraseCursorIfPossible()) {
+  if (eraseCursorIfPossible(parent)) {
     // Set the frame
     m_frame = f.translatedBy(parent->absoluteOrigin());
     markWholeFrameAsDirty();
@@ -45,7 +45,7 @@ void MemoizedCursorView::setCursorFrame(View* parent, KDRect f, bool force) {
   CursorView::setCursorFrame(parent, f, force);
 }
 
-bool MemoizedCursorView::eraseCursorIfPossible() {
+bool MemoizedCursorView::eraseCursorIfPossible(const Escher::View* parent) {
   if (!m_underneathPixelBufferLoaded) {
     return false;
   }
@@ -54,12 +54,13 @@ bool MemoizedCursorView::eraseCursorIfPossible() {
     return false;
   }
   // Erase the cursor
+  assert(parent);
   KDColor cursorWorkingBuffer[size() * size()];
   KDContext* ctx = KDIonContext::SharedContext;
   KDPoint previousOrigin = ctx->origin();
   KDRect previousClippingRect = ctx->clippingRect();
   ctx->setOrigin(currentFrame.origin());
-  ctx->setClippingRect(currentFrame.intersectedWith(previousClippingRect));
+  ctx->setClippingRect(currentFrame.intersectedWith(parent->absoluteFrame()));
   ctx->fillRectWithPixels(KDRect(0, 0, currentFrame.size()),
                           underneathPixelBuffer(), cursorWorkingBuffer);
   ctx->setOrigin(previousOrigin);

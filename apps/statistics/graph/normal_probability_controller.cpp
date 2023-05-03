@@ -35,7 +35,8 @@ bool NormalProbabilityController::drawSeriesZScoreLine(int series, float *x,
 
 void NormalProbabilityController::moveCursorToSelectedIndex() {
   m_cursorView.setColor(
-      Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()));
+      Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()),
+      &m_curveView);
   PlotController::moveCursorToSelectedIndex();
 }
 

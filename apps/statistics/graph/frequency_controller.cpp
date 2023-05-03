@@ -97,7 +97,8 @@ void FrequencyController::reloadValueInBanner(
 void FrequencyController::moveCursorToSelectedIndex() {
   m_cursorView.setIsRing(true);
   m_cursorView.setColor(
-      Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()));
+      Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()),
+      &m_curveView);
   PlotController::moveCursorToSelectedIndex();
 }
 
@@ -170,7 +171,8 @@ bool FrequencyController::moveSelectionHorizontally(
   double y =
       yValueForComputedXValues(selectedSeries(), index, x, xIndex, xNextIndex);
   m_cursorView.setColor(
-      Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()));
+      Shared::DoublePairStore::colorOfSeriesAtIndex(selectedSeries()),
+      &m_curveView);
   m_cursor.moveTo(x, x, y);
   m_curveView.reload();
   return true;

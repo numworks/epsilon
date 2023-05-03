@@ -394,7 +394,7 @@ void GraphController::setRoundCrossCursorView() {
   m_cursorView.setIsRing(!round);
   assert(selectedSeriesIndex() <
          static_cast<int>(Palette::numberOfDataColors()));
-  m_cursorView.setColor(Palette::DataColor[selectedSeriesIndex()]);
+  m_cursorView.setColor(Palette::DataColor[selectedSeriesIndex()], &m_view);
 }
 
 Range2D GraphController::optimalRange(bool computeX, bool computeY,

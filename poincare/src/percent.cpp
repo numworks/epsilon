@@ -262,7 +262,11 @@ Expression PercentAddition::deepBeautify(
   Expression child0 = e.childAtIndex(0);
   child0 = child0.deepBeautify(reductionContext);
   // We add missing Parentheses after beautifying the parent and child
-  if (e.node()->childAtIndexNeedsUserParentheses(child0, 0)) {
+  if (e.node()->childAtIndexNeedsUserParentheses(child0, 0) ||
+      (!e.parent().isUninitialized() &&
+       e.parent().type() == ExpressionNode::Type::Multiplication &&
+       e.parent().indexOfChild(e) > 0 &&
+       child0.type() == ExpressionNode::Type::Opposite)) {
     e.replaceChildAtIndexInPlace(0, Parenthesis::Builder(child0));
   }
   // Skip the Addition's shallowBeautify

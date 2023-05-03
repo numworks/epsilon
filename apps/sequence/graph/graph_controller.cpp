@@ -143,21 +143,16 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
 
 bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
                                              int scrollSpeed) {
-  double xCursorPosition = std::round(m_cursor->x());
-  if (direction.isLeft() && xCursorPosition <= m_smallestRank) {
-    return false;
-  }
-  // The cursor moves by step that is larger than 1 and than a pixel's width.
-  const int step = std::ceil(m_view.pixelWidth()) * scrollSpeed;
-  double x =
-      direction.isRight() ? xCursorPosition + step : xCursorPosition - step;
-  if (x < 0.0) {
-    return false;
-  }
+  int xCursorPosition = std::round(m_cursor->x());
   Shared::Sequence *s =
       functionStore()->modelForRecord(recordAtSelectedCurveIndex());
-  double y =
-      s->evaluateXYAtParameter(x, textFieldDelegateApp()->localContext()).y();
+  int x = m_view.nextDotIndex(s, xCursorPosition, direction, scrollSpeed);
+  if (x == xCursorPosition) {
+    return false;
+  }
+  double y = s->evaluateXYAtParameter(static_cast<double>(x),
+                                      textFieldDelegateApp()->localContext())
+                 .y();
   m_cursor->moveTo(x, x, y);
   return true;
 }

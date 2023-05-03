@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <ion/unicode/utf8_helper.h>
+#include <poincare/tree_pool.h>
 
 #include "clipboard.h"
 #include "code_icon.h"
@@ -120,6 +121,9 @@ bool App::textInputDidReceiveEvent(InputEventHandler *textInput,
 
 void App::initPythonWithUser(const void *pythonUser) {
   if (!m_pythonUser) {
+    /* Tree pool will be used as an extension of the heap. */
+    Poincare::TreePool::sharedPool.deinit();
+
     char *heap = pythonHeap();
     MicroPython::init(heap, heap + k_pythonHeapSize);
   }
@@ -130,6 +134,9 @@ void App::deinitPython() {
   if (m_pythonUser) {
     MicroPython::deinit();
     m_pythonUser = nullptr;
+    /* Re-construct the tree pool, which might have been ovewritten by the heap.
+     */
+    Poincare::TreePool::sharedPool.init();
   }
 }
 

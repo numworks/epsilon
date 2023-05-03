@@ -122,7 +122,7 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   if (cell == &m_derivativeCell &&
       m_derivativeCell.canBeActivatedByEvent(event)) {
     function()->setDisplayDerivative(!function()->displayDerivative());
-    m_selectableListView.reloadData();
+    m_selectableListView.reloadCell(selectedRow());
     return true;
   }
   // We want left to pop into graph -> calculate but not into list

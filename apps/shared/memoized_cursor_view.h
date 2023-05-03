@@ -12,7 +12,7 @@ class MemoizedCursorView : public CursorView {
   MemoizedCursorView() : m_underneathPixelBufferLoaded(false) {}
   void drawRect(KDContext* ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
-  void setColor(KDColor color) override;
+  void setColor(KDColor color, const Escher::View* parent) override;
   void setCursorFrame(View* parent, KDRect frame, bool force) override;
   void resetMemoization() const { m_underneathPixelBufferLoaded = false; }
   void redrawCursor(KDRect rect);
@@ -28,7 +28,7 @@ class MemoizedCursorView : public CursorView {
 
  private:
   KDColor m_color;
-  bool eraseCursorIfPossible();
+  bool eraseCursorIfPossible(const Escher::View* parent);
 };
 
 }  // namespace Shared

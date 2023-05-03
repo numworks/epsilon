@@ -12,7 +12,7 @@ class CursorView : public Escher::View {
     parent->setChildFrame(this, frame, force);
   }
   void setHighlighted(bool highlighted) { m_highlighted = highlighted; }
-  virtual void setColor(KDColor color) {}
+  virtual void setColor(KDColor color, const Escher::View* parent) {}
 
  protected:
   bool isHighlighted() const { return m_highlighted; }

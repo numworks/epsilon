@@ -75,7 +75,7 @@ void FunctionGraphController::selectCurveAtIndex(int curveIndex,
   Ion::Storage::Record r = recordAtCurveIndex(curveIndex);
   functionGraphView()->selectRecord(r);
   functionGraphView()->cursorView()->setColor(
-      functionStore()->colorForRecord(r));
+      functionStore()->colorForRecord(r), functionGraphView());
   // Force reload to display the selected function on top
   if (willBeVisible) {
     functionGraphView()->reload(false, true);

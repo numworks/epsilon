@@ -95,6 +95,8 @@ Evaluation<T> ParameteredExpressionNode::approximateFirstChildWithArgument(
 bool ParameteredExpression::ParameterText(UnicodeDecoder& varDecoder,
                                           size_t* parameterStart,
                                           size_t* parameterLength) {
+  static_assert(ParameterChildIndex() == 1,
+                "ParameteredExpression::ParameterText is deprecated");
   /* Find the beginning of the parameter. Count parentheses to handle the
    * presence of functions with several parameters in the parametered
    * expression. */
@@ -115,6 +117,7 @@ bool ParameteredExpression::ParameterText(UnicodeDecoder& varDecoder,
         cursorLevel--;
         break;
       case ',':
+        // The parameter is the second argument of parametered expressions
         variableFound = cursorLevel == 0;
         break;
     }

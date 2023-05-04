@@ -44,17 +44,29 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
 
   EditionReference addition1 = editionPool->push<BlockType::Addition>(3);
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  editionPool->push<BlockType::Addition>(3);
+  editionPool->push<BlockType::Multiplication>(2);
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   editionPool->push<BlockType::Addition>(2);
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-  // addition1 is 1+(2+3)
+  editionPool->push<BlockType::Addition>(1);
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(6));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(7));
+  // addition1 is 1+(2*3+4+5)+((+6)+7)
   NAry::Flatten(addition1);
-  // addition1 is 1+2+3
+  // addition1 is 1+2*3+4+5+6+7
 
-  EditionReference addition2 = editionPool->push<BlockType::Addition>(3);
+  EditionReference addition2 = editionPool->push<BlockType::Addition>(6);
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  editionPool->push<BlockType::Multiplication>(2);
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(2));
   editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(5));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(6));
+  editionPool->push<BlockType::IntegerShort>(static_cast<int8_t>(7));
   // addition2 is 1+2+3
 
   assert_trees_are_equal(addition1, addition2);

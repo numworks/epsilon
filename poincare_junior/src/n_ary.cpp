@@ -64,13 +64,17 @@ void NAry::SetNumberOfChildren(EditionReference reference,
 
 EditionReference NAry::Flatten(EditionReference reference) {
   assert(static_cast<Node>(reference).isNAry());
-  size_t numberOfChildren = 0;
-  for (auto [child, index] :
-       NodeIterator::Children<Forward, Editable>(reference)) {
+  size_t numberOfChildren = reference.numberOfChildren();
+  size_t childIndex = 0;
+  Node child = reference.nextNode();
+  while (childIndex < numberOfChildren) {
     if (reference.type() == child.type()) {
-      child.removeNode();
+      numberOfChildren += child.numberOfChildren() - 1;
+      EditionReference(child).removeNode();
+    } else {
+      child = child.nextTree();
+      childIndex++;
     }
-    numberOfChildren++;
   }
   SetNumberOfChildren(reference, numberOfChildren);
   return reference;

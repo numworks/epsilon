@@ -70,6 +70,7 @@ class App : public Shared::StoreApp {
   GraphController *graphController() {
     return &m_tabs.tab<GraphTab>()->m_graphController;
   }
+  void willBecomeInactive() override;
 
  private:
   App(Snapshot *snapshot, Poincare::Context *parentContext);

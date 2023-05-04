@@ -219,6 +219,14 @@ void Store::updateCoefficients(int series, Context *globalContext) {
       computeResidualStandardDeviation(series, globalContext);
 }
 
+void Store::updateCoefficientsForAllSeries(Context *globalContext) {
+  for (int series = 0; series < k_numberOfSeries; series++) {
+    if (seriesIsActive(series)) {
+      updateCoefficients(series, globalContext);
+    }
+  }
+}
+
 double *Store::coefficientsForSeries(int series, Context *globalContext) {
   updateCoefficients(series, globalContext);
   return m_regressionCoefficients[series];

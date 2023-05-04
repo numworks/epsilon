@@ -48,10 +48,8 @@ void CalculationController::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
     KDPoint previousOffset, bool withinTemporarySelection) {
   assert(t == &m_selectableTableView);
-  if (withinTemporarySelection) {
-    return;
-  }
-  if (t->selectedColumn() > 1 && t->selectedRow() >= 0 &&
+  if (!withinTemporarySelection && t->selectedColumn() > 1 &&
+      t->selectedRow() >= 0 &&
       t->selectedRow() <= k_numberOfDoubleBufferCalculations) {
     /* If we are on a double text cell, we have to choose which subcell to
      * select It has to be done after the scroll for the selectedCell to be

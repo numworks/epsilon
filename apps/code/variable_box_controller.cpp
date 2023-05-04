@@ -212,10 +212,8 @@ void VariableBoxController::listViewDidChangeSelectionAndDidScroll(
     SelectableListView *l, int previousSelectedRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
   assert(l == &m_selectableListView);
-  if (withinTemporarySelection || !m_displaySubtitles) {
-    return;
-  }
-  if (l->selectedRow() == 1) {
+  if (!withinTemporarySelection && m_displaySubtitles &&
+      l->selectedRow() == 1) {
     /* Subtitle cell is not selectable so when we select row 1, scroll to
      * the top to display the subtitle. */
     l->scrollToCell(0);

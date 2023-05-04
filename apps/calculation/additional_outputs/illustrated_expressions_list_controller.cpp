@@ -63,10 +63,8 @@ void IllustratedExpressionsListController::
                                            KDPoint previousOffset,
                                            bool withinTemporarySelection) {
   assert(l == m_listController.selectableListView());
-  if (withinTemporarySelection) {
-    return;
-  }
-  if (l->selectedRow() == 1 && showIllustration()) {
+  if (!withinTemporarySelection && l->selectedRow() == 1 &&
+      showIllustration()) {
     /* Illustration cell is not selectable so when we select row 1, scroll to
      * the top to display the illustration. */
     l->scrollToCell(0);

@@ -133,7 +133,7 @@ bool ListController::completeEquation(InputEventHandler *equationField,
     // Insert "f(x)=", with f the default function name and x the symbol
     fillWithDefaultFunctionEquation(buffer, k_bufferSize,
                                     &m_modelsParameterController, symbol);
-    return equationField->handleEventWithText(buffer);
+    return equationField->handleEventWithText(buffer, false, true);
   }
   // Insert the name, symbol and equation symbol of the existing function
   constexpr size_t k_bufferSize =
@@ -145,7 +145,7 @@ bool ListController::completeEquation(InputEventHandler *equationField,
   nameLength += strlcpy(buffer + nameLength, f->properties().equationSymbol(),
                         k_bufferSize - nameLength);
   assert(nameLength < k_bufferSize);
-  return equationField->handleEventWithText(buffer);
+  return equationField->handleEventWithText(buffer, false, true);
 }
 
 // TODO: factorize with solver

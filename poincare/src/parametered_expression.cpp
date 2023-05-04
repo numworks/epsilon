@@ -96,7 +96,7 @@ bool ParameteredExpression::ParameterText(UnicodeDecoder& varDecoder,
                                           size_t* parameterStart,
                                           size_t* parameterLength) {
   static_assert(ParameterChildIndex() == 1,
-                "ParameteredExpression::ParameterText is deprecated");
+                "ParameteredExpression::ParameterText is outdated");
   /* Find the beginning of the parameter. Count parentheses to handle the
    * presence of functions with several parameters in the parametered
    * expression. */

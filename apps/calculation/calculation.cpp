@@ -256,6 +256,11 @@ Calculation::exactAndApproximateDisplayedOutputsEqualSign(Context *context) {
   }
 }
 
+static bool expressionIsInterestingFunction(Expression e) {
+  return !e.isNumber() && !e.isOfType({ExpressionNode::Type::ConstantMaths,
+                                       ExpressionNode::Type::Sequence});
+}
+
 Calculation::AdditionalInformations Calculation::additionalInformations() {
   if (Preferences::sharedPreferences->examMode().forbidAdditionalResults() ||
       strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal),
@@ -369,11 +374,9 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   }
   // We want a single numerical value and to avoid showing the identity function
   bool isInterestingFunction =
-      !i.isNumber() && i.type() != ExpressionNode::Type::Sequence &&
-      i.type() != ExpressionNode::Type::ConstantMaths &&
+      expressionIsInterestingFunction(i) &&
       !(i.type() == ExpressionNode::Type::Opposite &&
-        (i.childAtIndex(0).isNumber() ||
-         i.childAtIndex(0).type() == ExpressionNode::Type::ConstantMaths));
+        !expressionIsInterestingFunction(i.childAtIndex(0)));
   assert(!a.isUndefined());
   if (isInterestingFunction && a.type() != ExpressionNode::Type::Nonreal &&
       i.numberOfNumericalValues() == 1) {

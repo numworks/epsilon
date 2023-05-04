@@ -95,6 +95,7 @@ void ListViewWithTopAndBottomViews::layoutSubviews(bool force) {
 void ListViewWithTopAndBottomViews::listViewDidChangeSelectionAndDidScroll(
     SelectableListView* l, int previousSelectedRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
+  assert(l == m_list);
   if (!withinTemporarySelection && previousOffset != l->contentOffset()) {
     // Properly re-layout top and bottom view depending on the scroll
     layoutSubviews(false);

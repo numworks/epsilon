@@ -275,6 +275,7 @@ void ConsoleController::willDisplayCellForIndex(HighlightCell *cell,
 void ConsoleController::listViewDidChangeSelectionAndDidScroll(
     Escher::SelectableListView *l, int previousSelectedRow,
     KDPoint previousOffset, bool withinTemporarySelection) {
+  assert(l == &m_selectableTableView);
   if (withinTemporarySelection) {
     return;
   }

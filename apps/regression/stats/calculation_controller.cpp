@@ -47,6 +47,7 @@ void CalculationController::viewWillAppear() {
 void CalculationController::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
     KDPoint previousOffset, bool withinTemporarySelection) {
+  assert(t == &m_selectableTableView);
   if (withinTemporarySelection) {
     return;
   }

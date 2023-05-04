@@ -254,11 +254,11 @@ Expression PercentAddition::shallowBeautify(
 
 Expression PercentAddition::deepBeautify(
     const ReductionContext& reductionContext) {
+  /* We override deepBeautify to prevent the shallow reduce of the addition
+   * because we need to preserve the order. */
   Expression e = shallowBeautify(reductionContext);
   assert(e.type() == ExpressionNode::Type::Multiplication);
   assert(e.numberOfChildren() == 2);
-  /* Overriding deepBeautify to prevent the shallow reduce of the addition
-   * because we need to preserve the order. */
   Expression child0 = e.childAtIndex(0);
   child0 = child0.deepBeautify(reductionContext);
   // We add missing Parentheses after beautifying the parent and child

@@ -164,6 +164,13 @@ void LayoutField::clearAndSetEditing(bool isEditing) {
   setEditing(isEditing);
 }
 
+void LayoutField::scrollToCursor() {
+  KDRect cursorRect = m_contentView.cursorRect();
+  KDCoordinate cursorBaseline =
+      m_contentView.cursor()->layout().baseline(m_contentView.font());
+  scrollToBaselinedRect(cursorRect, cursorBaseline);
+}
+
 void LayoutField::setLayout(Poincare::Layout newLayout) {
   m_contentView.clearLayout();
   KDSize previousSize = minimalSizeForOptimalDisplay();

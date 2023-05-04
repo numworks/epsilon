@@ -31,11 +31,8 @@ class LayoutField : public TextCursorView::WithBlinkingCursor<
   void setEditing(bool isEditing) override final;
   void clearLayout();
   void clearAndSetEditing(bool isEditing);
-  void scrollToCursor() {
-    scrollToBaselinedRect(
-        m_contentView.cursorRect(),
-        m_contentView.cursor()->layout().baseline(m_contentView.font()));
-  }
+  void scrollToCursor();
+
   bool isEmpty() const { return layout().isEmpty(); }
   Poincare::Layout layout() const {
     return m_contentView.layoutView()->layout();

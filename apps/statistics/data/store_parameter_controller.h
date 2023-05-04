@@ -25,7 +25,7 @@ class StoreParameterController : public Shared::StoreParameterController {
   /* When displayed, hideCumulatedFrequencyCell is last and second.
    * Remaining Shared::StoreParameterController are not displayed:
    * m_fillFormula, m_hideCell and m_clearColumn */
-  constexpr static int k_hideCFIndex = 2;
+  constexpr static int k_hideCFIndex = 1;
   constexpr static int k_displayCFIndex =
       Shared::StoreParameterController::k_numberOfCells;
 

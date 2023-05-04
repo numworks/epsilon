@@ -274,7 +274,7 @@ void ConsoleController::willDisplayCellForIndex(HighlightCell *cell,
 
 void ConsoleController::listViewDidChangeSelectionAndDidScroll(
     Escher::SelectableListView *l, int previousSelectedRow,
-    bool withinTemporarySelection) {
+    KDPoint previousOffset, bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }

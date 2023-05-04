@@ -244,7 +244,7 @@ void MenuController::willDisplayScriptTitleCellForIndex(HighlightCell *cell,
 
 void MenuController::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
+    KDPoint previousOffset, bool withinTemporarySelection) {
   if (selectedRow() == numberOfRows() - 1 && selectedColumn() == 1 &&
       m_shouldDisplayAddScriptRow) {
     t->selectCellAtLocation(0, numberOfRows() - 1);

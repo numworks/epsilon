@@ -209,7 +209,7 @@ void VariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
 }
 
 void VariableBoxController::listViewDidChangeSelectionAndDidScroll(
-    SelectableListView *l, int previousSelectedRow,
+    SelectableListView *l, int previousSelectedRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
   if (withinTemporarySelection || !m_displaySubtitles) {
     return;

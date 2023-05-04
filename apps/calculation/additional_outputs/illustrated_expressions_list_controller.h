@@ -37,7 +37,7 @@ class IllustratedExpressionsListController
   // SelectableListViewDelegate
   void listViewDidChangeSelectionAndDidScroll(
       Escher::SelectableListView* t, int previousSelectedRow,
-      bool withinTemporarySelection) override;
+      KDPoint previousOffset, bool withinTemporarySelection) override;
 
   /* Since we can't focus the illustration, we need to keep its height small
    * enough for a sufficient part of the first expressionCell to be visible when

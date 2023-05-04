@@ -93,13 +93,12 @@ void ListViewWithTopAndBottomViews::layoutSubviews(bool force) {
 }
 
 void ListViewWithTopAndBottomViews::listViewDidChangeSelectionAndDidScroll(
-    SelectableListView* l, int previousSelectedRow,
+    SelectableListView* l, int previousSelectedRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
-  if (withinTemporarySelection) {
-    return;
+  if (!withinTemporarySelection && previousOffset != l->contentOffset()) {
+    // Properly re-layout top and bottom view depending on the scroll
+    layoutSubviews(false);
   }
-  // Properly re-layout top and bottom view depending on the scroll
-  layoutSubviews(false);
 }
 
 void ListViewWithTopAndBottomViews::reload() {

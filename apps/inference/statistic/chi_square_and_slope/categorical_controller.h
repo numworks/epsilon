@@ -42,7 +42,7 @@ class CategoricalController
 
   // SelectableListViewDelegate
   void listViewDidChangeSelectionAndDidScroll(
-      SelectableListView* l, int previousRow,
+      SelectableListView* l, int previousRow, KDPoint previousOffset,
       bool withinTemporarySelection = false) override;
 
   // ListViewDataSource

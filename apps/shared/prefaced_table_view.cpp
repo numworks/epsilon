@@ -65,11 +65,13 @@ void PrefacedTableView::resetContentOffset() {
 
 void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(
     Escher::SelectableTableView* t, int previousSelectedCol,
-    int previousSelectedRow, bool withinTemporarySelection) {
+    int previousSelectedRow, KDPoint previousOffset,
+    bool withinTemporarySelection) {
   assert(t == m_mainTableView);
   if (m_mainTableDelegate) {
     m_mainTableDelegate->tableViewDidChangeSelectionAndDidScroll(
-        t, previousSelectedCol, previousSelectedRow, withinTemporarySelection);
+        t, previousSelectedCol, previousSelectedRow, previousOffset,
+        withinTemporarySelection);
   }
   if (m_mainTableView->selectedRow() == -1) {
     resetContentOffset();

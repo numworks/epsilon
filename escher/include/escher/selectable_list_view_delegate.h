@@ -10,7 +10,7 @@ class SelectableListView;
 class SelectableListViewDelegate : public SelectableTableViewDelegate {
  public:
   virtual void listViewDidChangeSelectionAndDidScroll(
-      SelectableListView* l, int previousRow,
+      SelectableListView* l, int previousRow, KDPoint previousOffset,
       bool withinTemporarySelection = false) {}
   virtual bool canStoreContentOfCell(SelectableListView* l, int row) const {
     return true;
@@ -19,7 +19,7 @@ class SelectableListViewDelegate : public SelectableTableViewDelegate {
  private:
   void tableViewDidChangeSelectionAndDidScroll(
       SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
-      bool withinTemporarySelection) override final;
+      KDPoint previousOffset, bool withinTemporarySelection) override final;
   bool canStoreContentOfCellAtLocation(SelectableTableView* t, int col,
                                        int row) const override final;
 };

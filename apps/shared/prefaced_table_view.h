@@ -38,7 +38,8 @@ class PrefacedTableView : public Escher::View,
   // SelectableTableViewDelegate
   void tableViewDidChangeSelectionAndDidScroll(
       Escher::SelectableTableView* t, int previousSelectedCol,
-      int previousSelectedRow, bool withinTemporarySelection = false) override;
+      int previousSelectedRow, KDPoint previousOffset,
+      bool withinTemporarySelection = false) override;
   bool canStoreContentOfCellAtLocation(Escher::SelectableTableView* t, int col,
                                        int row) const override {
     return m_mainTableDelegate

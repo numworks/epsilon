@@ -16,7 +16,7 @@ class SelectableTableViewDelegate : public ContextProvider {
    * when the selection change is 'real' or within temporary selection. */
   virtual void tableViewDidChangeSelectionAndDidScroll(
       SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
-      bool withinTemporarySelection = false) {}
+      KDPoint previousOffset, bool withinTemporarySelection = false) {}
   virtual bool canStoreContentOfCellAtLocation(SelectableTableView* t, int col,
                                                int row) const {
     return true;

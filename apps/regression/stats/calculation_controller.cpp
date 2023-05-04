@@ -46,7 +46,7 @@ void CalculationController::viewWillAppear() {
 
 void CalculationController::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
+    KDPoint previousOffset, bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;
   }

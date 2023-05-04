@@ -34,7 +34,7 @@ class ListParameterController : public Shared::ListParameterController,
                                  Ion::Events::Event event) override;
   void listViewDidChangeSelectionAndDidScroll(
       Escher::SelectableListView *l, int previousSelectedRow,
-      bool withinTemporarySelection) override;
+      KDPoint previousOffset, bool withinTemporarySelection) override;
 
   // MemoizedListViewDataSource
   Escher::HighlightCell *cell(int index) override;

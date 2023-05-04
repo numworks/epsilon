@@ -62,7 +62,7 @@ class ConsoleController : public Escher::ViewController,
   // SelectableTableViewDelegate
   void listViewDidChangeSelectionAndDidScroll(
       Escher::SelectableListView* l, int previousSelectedRow,
-      bool withinTemporarySelection) override;
+      KDPoint previousOffset, bool withinTemporarySelection) override;
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,

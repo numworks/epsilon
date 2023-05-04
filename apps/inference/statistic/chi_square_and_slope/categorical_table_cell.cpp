@@ -40,13 +40,11 @@ bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {
 
 void CategoricalTableCell::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
+    KDPoint previousOffset, bool withinTemporarySelection) {
   assert(t == &m_selectableTableView);
-  if (withinTemporarySelection || previousSelectedRow == t->selectedRow()) {
-    return;
+  if (!withinTemporarySelection && previousOffset != t->contentOffset()) {
+    categoricalController()->selectableListView()->reloadData(false);
   }
-  // TODO: Relayout the whole Categorical table ONLY if scroll changed
-  categoricalController()->selectableListView()->reloadData(false);
 }
 
 void CategoricalTableCell::layoutSubviews(bool force) {

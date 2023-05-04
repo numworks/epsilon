@@ -40,7 +40,8 @@ class Controller : public Escher::ViewController,
   }
   void tableViewDidChangeSelectionAndDidScroll(
       Escher::SelectableTableView* t, int previousSelectedCol,
-      int previousSelectedRow, bool withinTemporarySelection) override;
+      int previousSelectedRow, KDPoint previousOffset,
+      bool withinTemporarySelection) override;
 
  private:
   // SimpleTableViewDataSource

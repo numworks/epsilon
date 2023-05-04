@@ -152,7 +152,8 @@ bool ListController::completeEquation(InputEventHandler *equationField,
 bool ListController::layoutFieldDidReceiveEvent(LayoutField *layoutField,
                                                 Ion::Events::Event event) {
   m_parameterColumnSelected = false;
-  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) &&
+      !layoutField->layout().hasTopLevelEquationSymbol()) {
     char buffer[TextField::MaxBufferSize()];
     layoutField->layout().serializeForParsing(buffer,
                                               TextField::MaxBufferSize());

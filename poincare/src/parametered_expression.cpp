@@ -124,9 +124,24 @@ bool ParameteredExpression::ParameterText(UnicodeDecoder& varDecoder,
   }
 
   size_t startOfVariable = varDecoder.position();
-  do {
+  // Parameter name can be nested in system parentheses. Skip them
+  c = varDecoder.nextCodePoint();
+  bool hasSystemParenthesis = (c == UCodePointLeftSystemParenthesis);
+  if (hasSystemParenthesis) {
+    startOfVariable = varDecoder.position();
+  }
+  CodePoint previousC = UCodePointUnknown;
+  while (c != UCodePointNull && c != ',' && c != ')') {
+    previousC = c;
     c = varDecoder.nextCodePoint();
-  } while (c != UCodePointNull && c != ',' && c != ')');
+  }
+  // Skip system parenthesis if needed
+  if (hasSystemParenthesis) {
+    if (previousC != UCodePointRightSystemParenthesis) {
+      return false;
+    }
+    varDecoder.previousCodePoint();
+  }
   size_t endOfVariable = varDecoder.position();
   varDecoder.unsafeSetPosition(startOfVariable);
   do {

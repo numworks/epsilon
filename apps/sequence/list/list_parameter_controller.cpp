@@ -61,6 +61,7 @@ bool ListParameterController::textFieldDidFinishEditing(
 void ListParameterController::listViewDidChangeSelectionAndDidScroll(
     SelectableListView *l, int previousSelectedRow, KDPoint previousOffset,
     bool withinTemporarySelection) {
+  assert(l == &m_selectableListView);
   if (withinTemporarySelection || previousSelectedRow == l->selectedRow()) {
     return;
   }

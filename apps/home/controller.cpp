@@ -148,6 +148,7 @@ int Controller::numberOfIcons() const {
 void Controller::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
     KDPoint previousOffset, bool withinTemporarySelection) {
+  assert(t == m_view.selectableTableView());
   if (withinTemporarySelection) {
     return;
   }

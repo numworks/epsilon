@@ -62,6 +62,7 @@ void IllustratedExpressionsListController::
                                            int previousSelectedRow,
                                            KDPoint previousOffset,
                                            bool withinTemporarySelection) {
+  assert(l == m_listController.selectableListView());
   if (withinTemporarySelection) {
     return;
   }

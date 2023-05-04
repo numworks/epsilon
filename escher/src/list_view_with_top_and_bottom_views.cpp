@@ -163,6 +163,10 @@ KDRect ListViewWithTopAndBottomViews::setListFrame(KDCoordinate* yOffset,
   /* Set frame a first time now so that minimalSizeForOptimalDisplay can
    * be computed */
   setChildFrame(m_list, currentResult, force);
+  *yOffset = std::min<KDCoordinate>(
+      *yOffset, std::max(0, m_list->minimalSizeForOptimalDisplay().height() -
+                                currentResult.height()));
+
   bool lastRowSelected = selectedRow == m_listDataSource->numberOfRows() - 1;
   KDCoordinate tableBottom = currentResult.top() +
                              m_list->minimalSizeForOptimalDisplay().height() -

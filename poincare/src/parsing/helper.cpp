@@ -81,13 +81,13 @@ bool ParsingHelper::IsParameteredExpression(
          helper == &Derivative::s_functionHelperFirstOrder ||
          helper == &Integral::s_functionHelper ||
          helper == &ListSequence::s_functionHelper ||
-         helper == &Product::s_functionHelper
+         helper == &Product::s_functionHelper ||
          /* The string "sum" will give off the ListSum function helper. Since we
             call IsParameteredExpression before parsing the parameters, we
             cannot distinguish between the two. We make sure in parser.cpp that
             being considered a parametered expression does not cause problems
             for the parsing of ListSum. */
-         || helper == &ListSum::s_functionHelper;
+         helper == &ListSum::s_functionHelper;
 }
 
 bool ParsingHelper::IsPowerableFunction(

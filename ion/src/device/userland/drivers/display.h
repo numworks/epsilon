@@ -14,7 +14,7 @@ namespace Display {
 void drawString(const char* text, KDPoint point, bool largeFont,
                 KDColor textColor, KDColor backgroundColor);
 
-}
+}  // namespace Display
 }  // namespace Ion
 
 #endif

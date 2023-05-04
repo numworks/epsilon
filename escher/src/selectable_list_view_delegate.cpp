@@ -8,9 +8,9 @@ namespace Escher {
 
 void SelectableListViewDelegate::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView* t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
+    KDPoint previousOffset, bool withinTemporarySelection) {
   return listViewDidChangeSelectionAndDidScroll(
-      static_cast<SelectableListView*>(t), previousSelectedRow,
+      static_cast<SelectableListView*>(t), previousSelectedRow, previousOffset,
       withinTemporarySelection);
 }
 

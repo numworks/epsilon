@@ -32,7 +32,7 @@ class ListViewWithTopAndBottomViews : public View,
 
   /* SelectableListViewDelegate */
   void listViewDidChangeSelectionAndDidScroll(
-      SelectableListView* l, int previousSelectedRow,
+      SelectableListView* l, int previousSelectedRow, KDPoint previousOffset,
       bool withinTemporarySelection = false) override;
 
   void reload();

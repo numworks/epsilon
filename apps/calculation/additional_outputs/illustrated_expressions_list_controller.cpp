@@ -60,6 +60,7 @@ void IllustratedExpressionsListController::willDisplayCellForIndex(
 void IllustratedExpressionsListController::
     listViewDidChangeSelectionAndDidScroll(SelectableListView* l,
                                            int previousSelectedRow,
+                                           KDPoint previousOffset,
                                            bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;

@@ -40,7 +40,7 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
   /* SelectableListViewDelegate */
   void listViewDidChangeSelectionAndDidScroll(
       Escher::SelectableListView* l, int previousSelectedRow,
-      bool withinTemporarySelection = false) override;
+      KDPoint previousOffset, bool withinTemporarySelection = false) override;
 
   // AlternateEmptyNestedMenuController
   Escher::ViewController* emptyViewController() override {

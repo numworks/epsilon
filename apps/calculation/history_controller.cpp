@@ -53,7 +53,8 @@ void HistoryController::reload() {
     m_selectableTableView.scrollToBottom();
     /* Force to reload last added cell (hide the burger and exact output if
      * necessary) */
-    tableViewDidChangeSelectionAndDidScroll(&m_selectableTableView, 0, -1);
+    tableViewDidChangeSelectionAndDidScroll(&m_selectableTableView, 0, -1,
+                                            KDPointZero);
   }
 }
 
@@ -263,7 +264,7 @@ Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(
 
 void HistoryController::tableViewDidChangeSelectionAndDidScroll(
     SelectableTableView *t, int previousSelectedCol, int previousSelectedRow,
-    bool withinTemporarySelection) {
+    KDPoint previousOffset, bool withinTemporarySelection) {
   if (withinTemporarySelection || previousSelectedRow == selectedRow()) {
     return;
   }

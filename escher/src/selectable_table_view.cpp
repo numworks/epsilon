@@ -94,9 +94,11 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
   // Unhighlight previous cell
   unhighlightSelectedCell();
 
-  // Selection
   int previousColumn = selectedColumn();
   int previousRow = selectedRow();
+  KDPoint previousOffset = contentOffset();
+
+  // Selection
   selectColumn(col);
   selectRow(row);
 
@@ -107,7 +109,8 @@ bool SelectableTableView::selectCellAtLocation(int col, int row,
 
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelectionAndDidScroll(
-        this, previousColumn, previousRow, withinTemporarySelection);
+        this, previousColumn, previousRow, previousOffset,
+        withinTemporarySelection);
   }
 
   HighlightCell* cell = selectedCell();
@@ -211,11 +214,12 @@ void SelectableTableView::deselectTable(bool withinTemporarySelection) {
   unhighlightSelectedCell();
   int previousSelectedCol = selectedColumn();
   int previousSelectedRow = selectedRow();
+  KDPoint previousOffset = contentOffset();
   selectColumn(0);
   selectRow(-1);
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelectionAndDidScroll(
-        this, previousSelectedCol, previousSelectedRow,
+        this, previousSelectedCol, previousSelectedRow, previousOffset,
         withinTemporarySelection);
   }
 }

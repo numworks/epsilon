@@ -261,11 +261,19 @@ Expression PercentAddition::deepBeautify(
   assert(e.numberOfChildren() == 2);
   Expression child0 = e.childAtIndex(0);
   child0 = child0.deepBeautify(reductionContext);
-  // We add missing Parentheses after beautifying the parent and child
+  Expression parent = e.parent();
+  /* We add missing Parentheses after beautifying the parent and child. If
+   * parent is a multiplication, then we will have a multiplication children of
+   * a multiplication (not wanted when an expression is reduced), and we need to
+   * adjust parenthesis. Indeed if 5*(-3+4%) will be beautified in
+   * 5*(-3*(1+4/100)), then in -3*(1+4/100) we will not add parenthesis around
+   * -3 since it is the first child of this multiplication, but within the
+   * parent multiplication, we will need one since it is not anymore the first
+   * child. */
   if (e.node()->childAtIndexNeedsUserParentheses(child0, 0) ||
-      (!e.parent().isUninitialized() &&
-       e.parent().type() == ExpressionNode::Type::Multiplication &&
-       e.parent().indexOfChild(e) > 0 &&
+      (!parent.isUninitialized() &&
+       parent.type() == ExpressionNode::Type::Multiplication &&
+       parent.indexOfChild(e) > 0 &&
        child0.type() == ExpressionNode::Type::Opposite)) {
     e.replaceChildAtIndexInPlace(0, Parenthesis::Builder(child0));
   }

@@ -9,7 +9,10 @@
 namespace Ion {
 namespace Display {
 
-void drawString(const char* text, KDPoint point, KDGlyph::Style style);
+/* WARNING: Do not change signature of this function since it's exposed to
+ * external apps */
+void drawString(const char* text, KDPoint point, bool largeFont,
+                KDColor textColor, KDColor backgroundColor);
 
 }
 }  // namespace Ion

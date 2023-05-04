@@ -412,6 +412,7 @@ void LayoutField::didBecomeFirstResponder() {
   m_inputViewMemoizedHeight = inputViewHeight();
   TextCursorView::WithBlinkingCursor<
       ScrollableView<ScrollView::NoDecorator>>::didBecomeFirstResponder();
+  scrollToCursor();
 }
 
 KDSize LayoutField::minimalSizeForOptimalDisplay() const {

@@ -16,6 +16,8 @@ static Context *context() { return App::app()->localContext(); }
 
 void FunctionModel::setParameters(Expression function, float abscissa,
                                   float ordinate) {
+  // We do not want to display additional results for sequences.
+  assert(function.type() != ExpressionNode::Type::Sequence);
   m_function = function;
   m_abscissa = abscissa;
   m_ordinate = ordinate;

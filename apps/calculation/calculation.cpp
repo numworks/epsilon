@@ -284,8 +284,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
           [](const Expression e, Context *c) {
             return e.isOfType({ExpressionNode::Type::Infinity});
           },
-          nullptr) ||
-      i.type() == ExpressionNode::Type::Sequence) {
+          nullptr)) {
     return AdditionalInformations{};
   }
   /* Using the approximated output instead of the user input to guess the
@@ -370,7 +369,8 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   }
   // We want a single numerical value and to avoid showing the identity function
   bool isInterestingFunction =
-      !i.isNumber() && i.type() != ExpressionNode::Type::ConstantMaths &&
+      !i.isNumber() && i.type() != ExpressionNode::Type::Sequence &&
+      i.type() != ExpressionNode::Type::ConstantMaths &&
       !(i.type() == ExpressionNode::Type::Opposite &&
         (i.childAtIndex(0).isNumber() ||
          i.childAtIndex(0).type() == ExpressionNode::Type::ConstantMaths));

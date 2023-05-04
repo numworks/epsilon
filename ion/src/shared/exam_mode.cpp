@@ -8,6 +8,23 @@
 namespace Ion {
 namespace ExamMode {
 
+static void updateLed(Configuration config) {
+  assert(!config.isUninitialized());
+  if (config.isActive()) {
+    constexpr uint16_t blinkPeriod = 1000;  // in ms
+    constexpr float blinkDutyCycle = 0.1f;
+    KDColor color = config.color();
+    if (color != KDColorBlack) {
+      LED::setColor(color);
+      LED::setBlinking(blinkPeriod, blinkDutyCycle);
+      LED::setLock(true);
+    }
+  } else {
+    LED::setLock(false);
+    LED::setColor(KDColorBlack);
+  }
+}
+
 Configuration get() {
   Configuration config(PersistingBytes::read());
   if (config.isUninitialized() ||
@@ -19,34 +36,23 @@ Configuration get() {
      * exam mode. */
     config = Configuration(Ruleset::Off);
     set(config);
+    return config;
   }
+  // Set LED the first time exam mode is retrieved
+  updateLed(config);
   return config;
 }
 
 void set(Configuration config) {
   assert(!config.isUninitialized());
   PersistingBytes::write(config.raw());
-
-  if (config.isActive()) {
-    if (Authentication::clearanceLevel() !=
-        Authentication::ClearanceLevel::NumWorks) {
-      /* The device will reset on official firmware, and pick up the
-       * configuration left in the persisting bytes. */
-      Reset::core();
-    }
-
-    constexpr uint16_t blinkPeriod = 1000;  // in ms
-    constexpr float blinkDutyCycle = 0.1f;
-    KDColor color = config.color();
-    if (color != KDColorBlack) {
-      LED::setColor(config.color());
-      LED::setBlinking(blinkPeriod, blinkDutyCycle);
-      LED::setLock(true);
-    }
-  } else {
-    LED::setLock(false);
-    LED::setColor(KDColorBlack);
+  if (config.isActive() && Authentication::clearanceLevel() !=
+                               Authentication::ClearanceLevel::NumWorks) {
+    /* The device will reset on official firmware, and pick up the
+     * configuration left in the persisting bytes. */
+    Reset::core();
   }
+  updateLed(config);
 }
 
 // Class Configuration

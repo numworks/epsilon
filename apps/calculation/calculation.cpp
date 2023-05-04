@@ -258,7 +258,8 @@ Calculation::exactAndApproximateDisplayedOutputsEqualSign(Context *context) {
 
 static bool expressionIsInterestingFunction(Expression e) {
   return !e.isNumber() && !e.isOfType({ExpressionNode::Type::ConstantMaths,
-                                       ExpressionNode::Type::Sequence});
+                                       ExpressionNode::Type::Sequence,
+                                       ExpressionNode::Type::UnitConvert});
 }
 
 Calculation::AdditionalInformations Calculation::additionalInformations() {

@@ -62,12 +62,6 @@ const App::Descriptor *App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-void App::willBecomeInactive() {
-  m_store.updateCoefficientsForAllSeries(
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
-  Shared::StoreApp::willBecomeInactive();
-}
-
 App::StoreTab::StoreTab()
     : m_storeController(&m_storeHeader, app(), &app()->m_store, &m_storeHeader,
                         app()->m_context),

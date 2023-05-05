@@ -140,7 +140,9 @@ class ContinuousFunction : public Function {
   /* Derivative */
 
   // If derivative should be displayed
-  bool displayDerivative() const { return recordData()->displayDerivative(); }
+  bool displayDerivative() const {
+    return canDisplayDerivative() && recordData()->displayDerivative();
+  }
   // Set derivative display status
   void setDisplayDerivative(bool display) {
     return recordData()->setDisplayDerivative(display);

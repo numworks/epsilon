@@ -309,15 +309,10 @@ Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
   return LayoutHelper::String(buffer, size);
 }
 
-bool GraphController::displayDerivativeInBanner() const {
-  Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  return functionStore()->modelForRecord(record)->displayDerivative() &&
-         functionStore()->modelForRecord(record)->canDisplayDerivative();
-}
-
 void GraphController::reloadBannerView() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  bool displayDerivative = displayDerivativeInBanner();
+  bool displayDerivative =
+      functionStore()->modelForRecord(record)->displayDerivative();
   m_bannerView.setDisplayParameters(true, displayDerivative, false);
   FunctionGraphController::reloadBannerView();
   if (!displayDerivative) {

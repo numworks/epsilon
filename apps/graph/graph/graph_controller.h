@@ -48,7 +48,6 @@ class GraphController : public Shared::FunctionGraphController,
                 .isScatterPlot();
   }
 
-  bool displayDerivativeInBanner() const;
   PointsOfInterestCache *pointsOfInterestForRecord(Ion::Storage::Record record);
   PointsOfInterestCache *pointsOfInterestForSelectedRecord() {
     return pointsOfInterestForRecord(recordAtSelectedCurveIndex());

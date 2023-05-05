@@ -228,8 +228,7 @@ bool CurveParameterController::shouldDisplayCalculation() const {
 }
 
 bool CurveParameterController::shouldDisplayDerivative() const {
-  return function()->canDisplayDerivative() &&
-         m_graphController->displayDerivativeInBanner();
+  return function()->displayDerivative();
 }
 
 }  // namespace Graph

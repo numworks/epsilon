@@ -43,19 +43,15 @@ ValuesController::ValuesController(
                 return true;
               },
               this),
-          k_cellFont) {
+          k_cellFont),
+      m_hasAtLeastOneSumColumn(false) {
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
   setDefaultStartEndMessages();
   initValueCells();
 }
 
-// TableSize1DManager (height)
-bool ValuesController::hasAtLeastOneSumColumn() {
-  return numberOfColumns() > (1 + functionStore()->numberOfActiveFunctions());
-}
-
 KDCoordinate ValuesController::computeSizeAtIndex(int i) {
-  return (i == 0 && hasAtLeastOneSumColumn())
+  return (i == 0 && m_hasAtLeastOneSumColumn)
              ? k_sumLayoutHeight
              : RegularTableSize1DManager::computeSizeAtIndex(i);
 }
@@ -64,14 +60,14 @@ KDCoordinate ValuesController::computeCumulatedSizeBeforeIndex(
     int i, KDCoordinate defaultSize) {
   return RegularTableSize1DManager::computeCumulatedSizeBeforeIndex(
              i, defaultSize) +
-         (i > 0 && hasAtLeastOneSumColumn()) *
+         (i > 0 && m_hasAtLeastOneSumColumn) *
              (k_sumLayoutHeight - defaultSize);
 }
 
 int ValuesController::computeIndexAfterCumulatedSize(KDCoordinate offset,
                                                      KDCoordinate defaultSize) {
   return RegularTableSize1DManager::computeIndexAfterCumulatedSize(
-      offset - (offset >= defaultSize && hasAtLeastOneSumColumn()) *
+      offset - (offset >= defaultSize && m_hasAtLeastOneSumColumn) *
                    (k_sumLayoutHeight - defaultSize),
       defaultSize);
 }
@@ -132,12 +128,15 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
 
 void ValuesController::updateNumberOfColumns() const {
   m_numberOfColumns = numberOfAbscissaColumns();
+  m_hasAtLeastOneSumColumn = false;
   int numberOfActiveSequences = functionStore()->numberOfActiveFunctions();
   for (int k = 0; k < numberOfActiveSequences; k++) {
     Shared::ExpiringPointer<Shared::Sequence> seq =
         functionStore()->modelForRecord(
             functionStore()->activeRecordAtIndex(k));
-    m_numberOfColumns += 1 + seq->displaySum();
+    bool displaySum = seq->displaySum();
+    m_numberOfColumns += 1 + displaySum;
+    m_hasAtLeastOneSumColumn |= displaySum;
   }
 }
 

@@ -87,4 +87,15 @@ EditionReference NAry::SquashIfUnary(EditionReference reference) {
   return reference;
 }
 
+EditionReference NAry::SquashIfEmpty(EditionReference reference) {
+  if (reference.numberOfChildren() >= 1) {
+    return reference;
+  }
+  // Return the neutral element
+  BlockType type = reference.type();
+  assert(type == BlockType::Addition || type == BlockType::Multiplication);
+  return EditionReference(reference.replaceTreeByTree(
+      type == BlockType::Addition ? &ZeroBlock : &OneBlock));
+}
+
 }  // namespace PoincareJ

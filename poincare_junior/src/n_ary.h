@@ -20,6 +20,7 @@ class NAry {
                                   size_t numberOfChildren);
   static EditionReference Flatten(EditionReference reference);
   static EditionReference SquashIfUnary(EditionReference reference);
+  static EditionReference SquashIfEmpty(EditionReference reference);
 };
 
 }  // namespace PoincareJ

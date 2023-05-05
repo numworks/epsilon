@@ -22,7 +22,8 @@ class SmallBufferTextHighlightCell : public HighlightCell {
   }
 
  private:
-  constexpr static size_t k_bufferSize = 11;  // ad-hoc
+  // ad-hoc currently µ1-µ2≠1.123E7
+  constexpr static size_t k_bufferSize = 20;
   BufferTextView<k_bufferSize> m_textView;
 };
 

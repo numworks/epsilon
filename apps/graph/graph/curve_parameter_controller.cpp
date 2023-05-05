@@ -16,14 +16,12 @@ namespace Graph {
 CurveParameterController::CurveParameterController(
     Escher::InputEventHandlerDelegate *inputEventHandlerDelegate,
     InteractiveCurveViewRange *graphRange, BannerView *bannerView,
-    CurveViewCursor *cursor, GraphView *graphView,
-    GraphController *graphController)
+    CurveViewCursor *cursor, GraphView *graphView)
     : ExplicitFloatParameterController(parentResponder()),
       m_abscissaCell(&m_selectableListView, inputEventHandlerDelegate, this),
       m_imageCell(&m_selectableListView, inputEventHandlerDelegate, this),
       m_derivativeNumberCell(&m_selectableListView, inputEventHandlerDelegate,
                              this),
-      m_graphController(graphController),
       m_graphRange(graphRange),
       m_cursor(cursor),
       m_preimageGraphController(nullptr, graphView, bannerView, graphRange,

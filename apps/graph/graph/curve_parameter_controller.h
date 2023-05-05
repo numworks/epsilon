@@ -22,8 +22,7 @@ class CurveParameterController
   CurveParameterController(
       Escher::InputEventHandlerDelegate* inputEventHandlerDelegate,
       Shared::InteractiveCurveViewRange* graphRange, BannerView* bannerView,
-      Shared::CurveViewCursor* cursor, GraphView* graphView,
-      GraphController* graphController);
+      Shared::CurveViewCursor* cursor, GraphView* graphView);
   const char* title() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }
@@ -83,7 +82,6 @@ class CurveParameterController
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>
       m_optionsCell;
-  GraphController* m_graphController;
   Shared::InteractiveCurveViewRange* m_graphRange;
   Shared::CurveViewCursor* m_cursor;
   PreimageGraphController m_preimageGraphController;

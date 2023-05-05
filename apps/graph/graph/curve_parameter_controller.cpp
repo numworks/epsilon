@@ -106,8 +106,22 @@ float CurveParameterController::parameterAtIndex(int index) {
     return function()->approximateDerivative(m_cursor->x(),
                                              App::app()->localContext());
   }
-  return function()->evaluateCurveParameter(index, m_cursor->t(), m_cursor->x(),
-                                            m_cursor->y(),
+  float t = m_cursor->t();
+  float x = m_cursor->x();
+  float y = m_cursor->y();
+  if (function()->properties().isScatterPlot() &&
+      (t != std::round(t) ||
+       t >= function()->iterateScatterPlot(nullptr).length())) {
+    /* FIXME This will display the first point of a multi-point scatter plot
+     * when accessed through the Calculate button, which is not super useful,
+     * but there is no real alternative barring some UX changes. */
+    t = 0.f;
+    Poincare::Coordinate2D<float> xy =
+        function()->evaluateXYAtParameter(t, nullptr);
+    x = xy.x();
+    y = xy.y();
+  }
+  return function()->evaluateCurveParameter(index, t, x, y,
                                             App::app()->localContext());
 }
 

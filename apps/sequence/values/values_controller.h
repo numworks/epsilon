@@ -53,7 +53,6 @@ class ValuesController : public Shared::ValuesController,
 
   // TableSize1DManager (height)
   constexpr static KDCoordinate k_sumLayoutHeight = 52;
-  bool hasAtLeastOneSumColumn();
   KDCoordinate computeSizeAtIndex(int i) override;
   KDCoordinate computeCumulatedSizeBeforeIndex(
       int i, KDCoordinate defaultSize) override;
@@ -124,6 +123,7 @@ class ValuesController : public Shared::ValuesController,
   SumColumnParameterController m_sumColumnParameterController;
   Escher::AbstractButtonCell m_setIntervalButton;
   mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
+  mutable bool m_hasAtLeastOneSumColumn;
 
   Escher::RegularTableSize1DManager m_widthManager;
 };

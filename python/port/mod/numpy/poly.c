@@ -148,10 +148,10 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(poly_polyfit_obj, 2, 3, poly_polyfit);
 #if ULAB_NUMPY_HAS_POLYVAL
 
 static mp_float_t poly_eval(mp_float_t x, mp_float_t *p, uint8_t plen) {
-    mp_float_t y = p[0];
-    for(uint8_t j=0; j < plen-1; j++) {
+    mp_float_t y = 0.;
+    for(uint8_t j=0; j < plen; j++) {
         y *= x;
-        y += p[j+1];
+        y += p[j];
     }
     return y;
 }

@@ -318,10 +318,10 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       return AdditionalInformations{.inverseTrigonometry = true};
     }
     Expression directExpression;
-    if (Trigonometry::isDirectTrigonometryFunction(i)) {
-      directExpression = i;
-    } else if (Trigonometry::isDirectTrigonometryFunction(o)) {
+    if (Trigonometry::isDirectTrigonometryFunction(o)) {
       directExpression = o;
+    } else if (Trigonometry::isDirectTrigonometryFunction(i)) {
+      directExpression = i;
     }
 
     if (!directExpression.isUninitialized()) {

@@ -666,8 +666,14 @@ Expression Addition::factorizeOnCommonDenominator(
       commonDenominator.addMissingFactors(currentDenominator, reductionContext);
     }
   }
-  if (commonDenominator.numberOfChildren() == 0) {
-    // If commonDenominator is empty this means that no child was a fraction.
+  if (commonDenominator.numberOfChildren() == 0 ||
+      commonDenominator.recursivelyMatches(Expression::IsUndefined,
+                                           reductionContext.context())) {
+    /* If commonDenominator is empty this means that no child was a fraction.
+     * commonDenominator can have an undef child when reducing with Infinity
+     * expression. For example, 1^(-inf) is not reduced, so factorising
+     * 1^(-inf) + 10 will give (1^inf * 1^(-inf) + 1^inf * 10) / 1^(-inf)
+     * and 1^(inf-inf) will be undef.*/
     while (a.numberOfChildren() > 0) {
       // Put back the "random" children
       addChildAtIndexInPlace(a.childAtIndex(0), numberOfChildren(),

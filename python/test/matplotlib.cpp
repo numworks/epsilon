@@ -88,6 +88,7 @@ QUIZ_CASE(python_matplotlib_pyplot_grid) {
 QUIZ_CASE(python_matplotlib_pyplot_hist) {
   TestExecutionEnvironment env = init_environement();
   assert_command_execution_succeeds(env, "from matplotlib.pyplot import *");
+  assert_command_execution_succeeds(env, "hist(0)");
   assert_command_execution_succeeds(env, "hist([2,3,4,5,6])");
   assert_command_execution_succeeds(env, "hist([2,3,4,5,6],23)");
   assert_command_execution_succeeds(env, "hist([2,3,4,5,6],[0,2,3])");

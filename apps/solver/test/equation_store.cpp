@@ -141,6 +141,7 @@ QUIZ_CASE(solver_complex_real) {
   assert_solves_to("x+i=0", "x=-i");
   assert_solves_to_error("x+√(-1)=0", EquationNonreal);
   assert_solves_to("x^2+x+1=0", {"delta=-3"});
+  assert_solves_to("x^2+x+π=0", {"delta=-4π+1"});
   assert_solves_to_error("x^2-√(-1)=0", EquationNonreal);
   assert_solves_to_error("x+√(-1)×√(-1)=0", EquationNonreal);
   assert_solves_to("root(-8,3)*x+3=0", "x=3/2");

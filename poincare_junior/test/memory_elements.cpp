@@ -661,6 +661,7 @@ QUIZ_CASE(pcj_node) {
   quiz_assert(n1.hasChild(n1.childAtIndex(2)));
   quiz_assert(!n1.hasSibling(n1.childAtIndex(2)));
   quiz_assert(n1.nextNode().hasSibling(n1.childAtIndex(2)));
+
   quiz_assert(n1.commonAncestor(n1, n1) == n1);
   quiz_assert(n1.commonAncestor(n1, n1.childAtIndex(0).childAtIndex(1)) == n1);
   quiz_assert(n1.commonAncestor(n1.childAtIndex(0).childAtIndex(1), n1) == n1);
@@ -678,6 +679,16 @@ QUIZ_CASE(pcj_node) {
   quiz_assert(
       n2.commonAncestor(n1.childAtIndex(0).childAtIndex(0), n2.childAtIndex(0))
           .isUninitialized());
+
+  quiz_assert(n1.parentOfDescendant(n1).isUninitialized());
+  quiz_assert(n1.parentOfDescendant(n2).isUninitialized());
+  quiz_assert(n2.parentOfDescendant(n1).isUninitialized());
+  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(0)) == n1);
+  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(1)) == n1);
+  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(0).childAtIndex(1)) ==
+              n1.childAtIndex(0));
+  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(3).childAtIndex(0)) ==
+              n1.childAtIndex(3));
 }
 
 QUIZ_CASE(pcj_node_size) {

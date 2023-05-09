@@ -408,7 +408,8 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
       solutionsAreApproximate ? SolutionType::Approximate : SolutionType::Exact;
   for (size_t i = 0; i < numberOfSolutions; i++) {
     Error error = registerSolution(x[i], context, type);
-    if (error != Error::NoError) {
+    // Ignore EquationNonreal error on solutions since delta may still be real.
+    if (error != Error::NoError && error != Error::EquationNonreal) {
       return error;
     }
   }

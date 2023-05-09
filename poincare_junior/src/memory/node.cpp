@@ -240,10 +240,12 @@ const Node Node::commonAncestor(const Node child1, const Node child2) const {
   return Node();
 }
 
-const Node Node::parentOfDescendant(const Node descendant) const {
+const Node Node::parentOfDescendant(const Node descendant,
+                                    int *position) const {
   /* This method find the parent of child within this tree without going
    * backward at any point. This tree is parsed until the last node owning the
-   * child is found. */
+   * child is found. This also find position in the parent. */
+  *position = 0;
   const TypeBlock *descendantBlock = descendant.block();
   if (descendantBlock < block()) {
     return Node();
@@ -260,6 +262,7 @@ const Node Node::parentOfDescendant(const Node descendant) const {
         return Node();
       }
       // Try node's next sibling
+      *position = *position + 1;
       node = nodeNextTree;
       continue;
     }
@@ -268,6 +271,7 @@ const Node Node::parentOfDescendant(const Node descendant) const {
     }
     // descendant is in this tree, try node's first child
     parent = node;
+    *position = 0;
     node = node.nextNode();
   }
   assert(false);

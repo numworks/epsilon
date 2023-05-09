@@ -100,7 +100,7 @@ class Node {
   const Node root() const;
   Node root() { return Utils::DeconstifyObj(&Node::root, this); }
   const Node commonAncestor(const Node child1, const Node child2) const;
-  const Node parentOfDescendant(const Node descendant) const;
+  const Node parentOfDescendant(const Node descendant, int *position) const;
   int numberOfDescendants(bool includeSelf) const;
   const Node childAtIndex(int index) const;
   Node childAtIndex(int index) {

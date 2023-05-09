@@ -680,15 +680,20 @@ QUIZ_CASE(pcj_node) {
       n2.commonAncestor(n1.childAtIndex(0).childAtIndex(0), n2.childAtIndex(0))
           .isUninitialized());
 
-  quiz_assert(n1.parentOfDescendant(n1).isUninitialized());
-  quiz_assert(n1.parentOfDescendant(n2).isUninitialized());
-  quiz_assert(n2.parentOfDescendant(n1).isUninitialized());
-  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(0)) == n1);
-  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(1)) == n1);
-  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(0).childAtIndex(1)) ==
-              n1.childAtIndex(0));
-  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(3).childAtIndex(0)) ==
-              n1.childAtIndex(3));
+  int position;
+  quiz_assert(n1.parentOfDescendant(n1, &position).isUninitialized());
+  quiz_assert(n1.parentOfDescendant(n2, &position).isUninitialized());
+  quiz_assert(n2.parentOfDescendant(n1, &position).isUninitialized());
+  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(0), &position) == n1);
+  quiz_assert(position == 0);
+  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(1), &position) == n1);
+  quiz_assert(position == 1);
+  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(3).childAtIndex(0),
+                                    &position) == n1.childAtIndex(3));
+  quiz_assert(position == 0);
+  quiz_assert(n1.parentOfDescendant(n1.childAtIndex(0).childAtIndex(1),
+                                    &position) == n1.childAtIndex(0));
+  quiz_assert(position == 1);
 }
 
 QUIZ_CASE(pcj_node_size) {

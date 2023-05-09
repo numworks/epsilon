@@ -328,7 +328,7 @@ mp_obj_t modpyplot_hist(size_t n_args, const mp_obj_t *args,
   // bin arg
   mp_obj_t arrayArg = args[1];
 #if NDARRAY_HAS_TOLIST
-    if (mp_obj_is_type(arrayArg, &ulab_ndarray_type)) {
+    if (n_args >= 2 && mp_obj_is_type(arrayArg, &ulab_ndarray_type)) {
       arrayArg = ndarray_tolist(arrayArg);
     }
 #endif

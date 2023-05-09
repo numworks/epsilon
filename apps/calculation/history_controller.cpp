@@ -146,6 +146,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
             calculationAtIndex(focusRow);
         assert(focusCalculation->displayOutput(context) !=
                Calculation::DisplayOutput::ExactOnly);
+        Expression i = focusCalculation->input();
         Expression a = focusCalculation->approximateOutput(
             Calculation::NumberOfSignificantDigits::Maximal);
         Expression e = focusCalculation->displayOutput(context) !=
@@ -175,18 +176,16 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
               if (Trigonometry::isDirectTrigonometryFunction(e)) {
                 e = e.childAtIndex(0);
               } else {
-                Expression focusInput = focusCalculation->input();
-                assert(Trigonometry::isDirectTrigonometryFunction(focusInput));
-                e = focusInput.childAtIndex(0);
+                assert(Trigonometry::isDirectTrigonometryFunction(i));
+                e = i.childAtIndex(0);
               }
             }
           }
         } else if (additionalInformations.integer) {
           vc = &m_integerController;
         } else if (additionalInformations.rational) {
-          Expression focusInput = focusCalculation->input();
-          if (isFractionInput(focusInput)) {
-            e = focusInput;
+          if (isFractionInput(i)) {
+            e = i;
           }
           vc = &m_rationalController;
         }
@@ -202,7 +201,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           new (&m_unionController) FunctionListController(editController);
           m_unionController.m_functionController.setTail(tail);
           vc = m_unionController.listController();
-          vc->setExactAndApproximateExpression(focusCalculation->input(), a);
+          vc->setExactAndApproximateExpression(i, a);
         } else if (additionalInformations.scientificNotation) {
           // TODO function and scientific ?
           assert(vc == nullptr || vc == &m_integerController ||

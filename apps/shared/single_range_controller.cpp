@@ -124,9 +124,11 @@ void SingleRangeController::setAutoStatus(bool autoParam) {
   m_autoParam = autoParam;
   if (m_autoParam) {
     setAutoRange();
+    resetMemoization();
+    m_selectableListView.reloadData();
+  } else {
+    m_selectableListView.reloadCell(0);
   }
-  resetMemoization();
-  m_selectableListView.reloadData();
 }
 
 }  // namespace Shared

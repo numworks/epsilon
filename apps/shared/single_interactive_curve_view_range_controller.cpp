@@ -50,37 +50,30 @@ void SingleInteractiveCurveViewRangeController::extractParameters() {
   m_secondaryRangeParam.setMax(NAN);
 }
 
-void SingleInteractiveCurveViewRangeController::setAutoStatus(bool autoParam) {
-  if (m_autoParam == autoParam) {
-    return;
-  }
-  m_autoParam = autoParam;
-  if (m_autoParam) {
-    if (m_editXRange ? m_range->xAuto() : m_range->yAuto()) {
-      // Parameters are already computed in m_range
-      extractParameters();
+void SingleInteractiveCurveViewRangeController::setAutoRange() {
+  assert(m_autoParam);
+  if (m_editXRange ? m_range->xAuto() : m_range->yAuto()) {
+    // Parameters are already computed in m_range
+    extractParameters();
+  } else {
+    /* Create and update a temporary InteractiveCurveViewRange to recompute
+     * parameters. */
+    Shared::InteractiveCurveViewRange tempRange(*m_range);
+    if (m_editXRange) {
+      tempRange.setXAuto(m_autoParam);
     } else {
-      /* Create and update a temporary InteractiveCurveViewRange to recompute
-       * parameters. */
-      Shared::InteractiveCurveViewRange tempRange(*m_range);
-      if (m_editXRange) {
-        tempRange.setXAuto(m_autoParam);
-      } else {
-        tempRange.setYAuto(m_autoParam);
-      }
-      tempRange.computeRanges();
-      m_rangeParam.setMin(m_editXRange ? tempRange.xMin() : tempRange.yMin());
-      m_rangeParam.setMax(m_editXRange ? tempRange.xMax() : tempRange.yMax());
-      if (m_editXRange) {
-        /* The y range has been updated too and must be stored for
-         * confirmParameters. */
-        m_secondaryRangeParam.setMin(tempRange.yMin());
-        m_secondaryRangeParam.setMax(tempRange.yMax());
-      }
+      tempRange.setYAuto(m_autoParam);
+    }
+    tempRange.computeRanges();
+    m_rangeParam.setMin(m_editXRange ? tempRange.xMin() : tempRange.yMin());
+    m_rangeParam.setMax(m_editXRange ? tempRange.xMax() : tempRange.yMax());
+    if (m_editXRange) {
+      /* The y range has been updated too and must be stored for
+       * confirmParameters. */
+      m_secondaryRangeParam.setMin(tempRange.yMin());
+      m_secondaryRangeParam.setMax(tempRange.yMax());
     }
   }
-  resetMemoization();
-  m_selectableListView.reloadData();
 }
 
 bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(

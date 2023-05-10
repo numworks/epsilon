@@ -29,7 +29,7 @@ class SingleInteractiveCurveViewRangeController : public SingleRangeController {
   }
   bool parametersAreDifferent() override;
   void extractParameters() override;
-  void setAutoStatus(bool autoParam) override;
+  void setAutoRange() override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
   void confirmParameters() override;
   void pop(bool onConfirmation) override { stackController()->pop(); }

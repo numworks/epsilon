@@ -110,4 +110,16 @@ float SingleRangeController::parameterAtIndex(int index) {
   return (index == 1 ? m_rangeParam.min() : m_rangeParam.max());
 }
 
+void SingleRangeController::setAutoStatus(bool autoParam) {
+  if (m_autoParam == autoParam) {
+    return;
+  }
+  m_autoParam = autoParam;
+  if (m_autoParam) {
+    setAutoRange();
+  }
+  resetMemoization();
+  m_selectableListView.reloadData();
+}
+
 }  // namespace Shared

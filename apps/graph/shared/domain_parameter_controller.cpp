@@ -93,17 +93,10 @@ void DomainParameterController::extractParameters() {
   assert(!parametersAreDifferent());
 }
 
-void DomainParameterController::setAutoStatus(bool autoParam) {
-  if (m_autoParam == autoParam) {
-    return;
-  }
-  m_autoParam = autoParam;
-  if (m_autoParam) {
-    setParameterAtIndex(1, function()->autoTMin());
-    setParameterAtIndex(2, function()->autoTMax());
-  }
-  resetMemoization();
-  m_selectableListView.reloadData();
+void DomainParameterController::setAutoRange() {
+  assert(m_autoParam);
+  setParameterAtIndex(1, function()->autoTMin());
+  setParameterAtIndex(2, function()->autoTMax());
 }
 
 bool DomainParameterController::setParameterAtIndex(int parameterIndex,

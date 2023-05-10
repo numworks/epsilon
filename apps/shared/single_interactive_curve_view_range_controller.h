@@ -30,7 +30,7 @@ class SingleInteractiveCurveViewRangeController : public SingleRangeController {
   bool parametersAreDifferent() override;
   void extractParameters() override;
   void setAutoRange() override;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  float limit() const override { return InteractiveCurveViewRange::k_maxFloat; }
   void confirmParameters() override;
   void pop(bool onConfirmation) override { stackController()->pop(); }
 

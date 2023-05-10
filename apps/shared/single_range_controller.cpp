@@ -82,6 +82,13 @@ HighlightCell *SingleRangeController::reusableParameterCell(int index,
   return &m_boundsCells[index - 1];
 }
 
+bool SingleRangeController::setParameterAtIndex(int parameterIndex, float f) {
+  assert(parameterIndex == 1 || parameterIndex == 2);
+  parameterIndex == 1 ? m_rangeParam.setMin(f, limit())
+                      : m_rangeParam.setMax(f, limit());
+  return true;
+}
+
 TextField *SingleRangeController::textFieldOfCellAtIndex(HighlightCell *cell,
                                                          int index) {
   assert(typeAtIndex(index) == k_parameterCellType);

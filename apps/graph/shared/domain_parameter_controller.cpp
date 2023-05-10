@@ -99,13 +99,6 @@ void DomainParameterController::setAutoRange() {
   setParameterAtIndex(2, function()->autoTMax());
 }
 
-bool DomainParameterController::setParameterAtIndex(int parameterIndex,
-                                                    float f) {
-  parameterIndex == 1 ? m_rangeParam.setMin(f, INFINITY)
-                      : m_rangeParam.setMax(f, INFINITY);
-  return true;
-}
-
 void DomainParameterController::confirmParameters() {
   function()->setTAuto(m_autoParam);
   if (!m_autoParam) {

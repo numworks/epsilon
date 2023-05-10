@@ -44,7 +44,7 @@ class DomainParameterController : public Shared::SingleRangeController {
   // Extracts parameters from function, setting m_tempDomain parameters.
   void extractParameters() override;
   void setAutoRange() override;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  float limit() const override { return INFINITY; }
   // Applies temporary parameters to function.
   void confirmParameters() override;
   void pop(bool onConfirmation) override {

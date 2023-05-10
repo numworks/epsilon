@@ -76,18 +76,6 @@ void SingleInteractiveCurveViewRangeController::setAutoRange() {
   }
 }
 
-bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(
-    int parameterIndex, float f) {
-  assert(parameterIndex >= 1 && parameterIndex < k_numberOfTextCells + 1);
-  // Apply InteractiveCurveViewRange float bounds
-  if (parameterIndex == 1) {
-    m_rangeParam.setMin(f, InteractiveCurveViewRange::k_maxFloat);
-  } else {
-    m_rangeParam.setMax(f, InteractiveCurveViewRange::k_maxFloat);
-  }
-  return true;
-}
-
 void SingleInteractiveCurveViewRangeController::confirmParameters() {
   if (!parametersAreDifferent()) {
     return;

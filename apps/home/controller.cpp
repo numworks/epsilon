@@ -276,7 +276,7 @@ void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previo
    * (so the previous one is always visible). */
   int appIndex = (t->selectedColumn()+t->selectedRow()*k_numberOfColumns)+1;
   if (appIndex >= this->numberOfIcons()+1) {
-    t->selectCellAtLocation((this->numberOfIcons()%3)-1, (this->numberOfIcons() / k_numberOfColumns));
+    t->selectCellAtLocation((this->numberOfIcons()%k_numberOfColumns)-1, (this->numberOfIcons() / k_numberOfColumns));
   }
 }
 

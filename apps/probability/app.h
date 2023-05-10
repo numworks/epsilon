@@ -57,7 +57,7 @@ public:
     void deleteDistributionAndCalculation();
     void initializeDistributionAndCalculation();
 
-#if __EMSCRIPTEN__
+#if (defined __EMSCRIPTEN__) || (defined _FXCG)
     constexpr static int k_distributionAlignments[] = {alignof(BinomialDistribution),alignof(ExponentialDistribution), alignof(NormalDistribution), alignof(PoissonDistribution), alignof(UniformDistribution), 0};
     constexpr static size_t k_distributionAlignment = max(k_distributionAlignments);
     constexpr static int k_calculationAlignments[] = {alignof(LeftIntegralCalculation),alignof(FiniteIntegralCalculation), alignof(RightIntegralCalculation), 0};

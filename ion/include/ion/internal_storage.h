@@ -195,7 +195,7 @@ public:
 class StorageHelper {
 public:
   static uint16_t unalignedShort(char * address) {
-#if __EMSCRIPTEN__
+#if (defined __EMSCRIPTEN__) || (defined _FXCG)
     uint8_t f1 = *(address);
     uint8_t f2 = *(address+1);
     uint16_t f = (uint16_t)f1 + (((uint16_t)f2)<<8);
@@ -205,7 +205,7 @@ public:
 #endif
   }
   static void writeUnalignedShort(uint16_t value, char * address) {
-#if __EMSCRIPTEN__
+#if (defined __EMSCRIPTEN__) || (defined _FXCG)
     *((uint8_t *)address) = (uint8_t)(value & ((1 << 8) - 1));
     *((uint8_t *)address+1) = (uint8_t)(value >> 8);
 #else

@@ -127,7 +127,10 @@ Integer::Integer(native_int_t i) : TreeHandle(TreeNode::NoNodeIdentifier) {
 
 Integer::Integer(double_native_int_t i) {
   double_native_uint_t j = i < 0 ? -i : i;
-  native_uint_t * d = (native_uint_t *)&j;
+  native_uint_t d[2] = {
+    static_cast<native_uint_t>(j & 0xFFFFFFFF),
+    static_cast<native_uint_t>(j >> 32)
+  };
   native_uint_t leastSignificantDigit = *d;
   native_uint_t mostSignificantDigit = *(d+1);
   uint8_t numberOfDigits = (mostSignificantDigit == 0) ? 1 : 2;
@@ -165,7 +168,8 @@ Integer::Integer(const char * digits, size_t length, bool negative, Base b) :
     Integer base((int)b);
     for (size_t i = 0; i < length; i++) {
       *this = Multiplication(*this, base);
-      *this = Addition(*this, Integer(integerFromCharDigit(*digits)));
+      Integer toAdd = Integer(integerFromCharDigit(*digits));
+      *this = Addition(*this, toAdd);
       digits++;
     }
   }
@@ -495,7 +499,10 @@ Integer Integer::multiplication(const Integer & a, const Integer & b, bool oneDi
        * otherwise the product might end up being computed on single_native size
        * and then zero-padded. */
       double_native_uint_t p = aDigit*bDigit + carry + (double_native_uint_t)(s_workingBuffer[i+j]); // TODO: Prove it cannot overflow double_native type
-      native_uint_t * l = (native_uint_t *)&p;
+      native_uint_t l[2] = {
+        static_cast<native_uint_t>(p & 0xFFFFFFFF),
+        static_cast<native_uint_t>(p >> 32)
+      };
       if (i+j < (uint8_t) k_maxNumberOfDigits+oneDigitOverflow) {
         s_workingBuffer[i+j] = l[0];
       } else {
@@ -605,17 +612,30 @@ Integer Integer::divideByPowerOf2(uint8_t pow) const {
 // return this*(2^16)^pow
 Integer Integer::multiplyByPowerOfBase(uint8_t pow) const {
   int nbOfHalfDigits = numberOfHalfDigits();
-  half_native_uint_t * digits = reinterpret_cast<half_native_uint_t *>(s_workingBuffer);
+  native_uint_t * digits = s_workingBuffer;
   /* The number of half digits of the built integer is nbOfHalfDigits+pow.
    * Still, we set an extra half digit to 0 to easily convert half digits to
    * digits. */
-  memset(digits, 0, sizeof(half_native_uint_t)*(nbOfHalfDigits+pow+1));
-  for (uint8_t i = 0; i < nbOfHalfDigits; i++) {
-    digits[i+pow] = halfDigit(i);
+  memset(digits, 0, (sizeof(native_uint_t)/2)*(nbOfHalfDigits+pow+1));
+  for (uint8_t i = 0; i < nbOfHalfDigits; i += 2) {
+    native_uint_t toSet = halfDigit(i);
+    if (i+1 < nbOfHalfDigits) {
+      toSet |= (native_uint_t)halfDigit(i+1) << 16;
+    }
+    int index = i+pow;
+    // If it's on an even index, we can just set the value
+    if (index % 2 == 0) {
+      digits[index/2] = toSet;
+    } else {
+      // If it's on an odd index, we need to shift the value
+      digits[index/2] |= toSet << 16;
+      digits[index/2+1] |= toSet >> 16;
+    }
   }
   nbOfHalfDigits += pow;
-  return BuildInteger((native_uint_t *)digits, nbOfHalfDigits%2 == 1 ? nbOfHalfDigits/2+1 : nbOfHalfDigits/2, false, true);
+  return BuildInteger(digits, nbOfHalfDigits%2 == 1 ? nbOfHalfDigits/2+1 : nbOfHalfDigits/2, false, true);
 }
+
 
 IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denominator) {
   if (denominator.isOverflow()) {
@@ -679,6 +699,14 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
     qNumberOfDigits--;
   }
   int qNumberOfDigitsInBase32 = qNumberOfDigits%2 == 1 ? qNumberOfDigits/2+1 : qNumberOfDigits/2;
+  // Swap each pair of digits in qDigits if on a big-endian architecture
+  #ifdef _BIG_ENDIAN
+  for (int i = 0; i < qNumberOfDigitsInBase32; i++) {
+    half_native_uint_t tmp = qDigits[i*2];
+    qDigits[i*2] = qDigits[i*2+1];
+    qDigits[i*2+1] = tmp;
+  }
+  #endif
   IntegerDivision div = {.quotient = BuildInteger((native_uint_t *)qDigits, qNumberOfDigitsInBase32, false), .remainder = A};
   if (pow > 0 && !div.remainder.isZero()) {
     div.remainder = div.remainder.divideByPowerOf2(pow);

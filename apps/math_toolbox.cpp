@@ -854,6 +854,10 @@ const ToolboxMessageTree Physics[] = {
 
 
 const ToolboxMessageTree menu[] = {
+  #ifdef _FXCG
+  // There is no factorial button on the fx-CG calculators
+  ToolboxMessageTree::Leaf(I18n::Message::FactorialCommandWithArg, I18n::Message::Factorial, false, I18n::Message::FactorialCommand),
+  #endif
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
   ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
   ToolboxMessageTree::Leaf(I18n::Message::LogCommandWithArg, I18n::Message::BasedLogarithm),

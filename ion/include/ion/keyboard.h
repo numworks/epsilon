@@ -26,6 +26,12 @@ constexpr Key ValidKeys[] = {
 constexpr int NumberOfKeys  = 54;
 constexpr int NumberOfValidKeys  = 46;
 
+enum class ModSimState : uint8_t {
+  None,
+  ForceOn,
+  ForceOff,
+};
+
 class State {
 public:
   constexpr State(uint64_t s = 0) :
@@ -50,8 +56,25 @@ public:
   void clearKey(Key k) {
     m_bitField &= ~((uint64_t)1 << (uint8_t)k);
   }
+  void setSimulatedShift(ModSimState s) {
+    m_simulateShiftState = s;
+  }
+  ModSimState simulatedShift() const {
+    return m_simulateShiftState;
+  }
+  void setSimulatedAlpha(ModSimState s) {
+    m_simulateAlphaState = s;
+  }
+  ModSimState simulatedAlpha() const {
+    return m_simulateAlphaState;
+  }
 private:
   uint64_t m_bitField;
+
+  // Simulated key states
+  // These override the real key states and are used to map keys to keys under modifiers
+  ModSimState m_simulateShiftState = ModSimState::None;
+  ModSimState m_simulateAlphaState = ModSimState::None;
 };
 
 State scan();

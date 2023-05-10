@@ -1,0 +1,165 @@
+#ifndef LIBA_BRIDGE_CMATH_H
+#define LIBA_BRIDGE_CMATH_H
+
+#include_next <cmath>
+
+#define	M_E		2.7182818284590452354	/* e */
+#define	M_LOG2E		1.4426950408889634074	/* log 2e */
+#define	M_LOG10E	0.43429448190325182765	/* log 10e */
+#define	M_LN2		0.69314718055994530942	/* log e2 */
+#define	M_LN10		2.30258509299404568402	/* log e10 */
+#define	M_PI		3.14159265358979323846	/* pi */
+#define	M_PI_2		1.57079632679489661923	/* pi/2 */
+#define	M_PI_4		0.78539816339744830962	/* pi/4 */
+#define	M_1_PI		0.31830988618379067154	/* 1/pi */
+#define	M_2_PI		0.63661977236758134308	/* 2/pi */
+#define	M_2_SQRTPI	1.12837916709551257390	/* 2/sqrt(pi) */
+#define	M_SQRT2		1.41421356237309504880	/* sqrt(2) */
+#define	M_SQRT1_2	0.70710678118654752440	/* 1/sqrt(2) */
+
+#if (_FXCG)
+namespace std {
+  // functions
+  using ::acosh;
+  using ::acoshf;
+  using ::acoshl;
+
+  using ::asinh;
+  using ::asinhf;
+  using ::asinhl;
+
+  using ::atanh;
+  using ::atanhf;
+  using ::atanhl;
+
+  using ::cbrt;
+  using ::cbrtf;
+  using ::cbrtl;
+
+  using ::copysign;
+  using ::copysignf;
+  using ::copysignl;
+
+  using ::erf;
+  using ::erff;
+  using ::erfl;
+
+  using ::erfc;
+  using ::erfcf;
+  using ::erfcl;
+
+  using ::exp2;
+  using ::exp2f;
+  using ::exp2l;
+
+  using ::expm1;
+  using ::expm1f;
+  using ::expm1l;
+
+  using ::fdim;
+  using ::fdimf;
+  using ::fdiml;
+
+  using ::fma;
+  using ::fmaf;
+  using ::fmal;
+
+  using ::fmax;
+  using ::fmaxf;
+  using ::fmaxl;
+
+  using ::fmin;
+  using ::fminf;
+  using ::fminl;
+
+  using ::hypot;
+  using ::hypotf;
+  using ::hypotl;
+
+  using ::ilogb;
+  using ::ilogbf;
+  using ::ilogbl;
+
+  using ::lgamma;
+  using ::lgammaf;
+  using ::lgammal;
+
+  using ::llrint;
+  using ::llrintf;
+  using ::llrintl;
+
+  using ::llround;
+  using ::llroundf;
+  using ::llroundl;
+
+  using ::log1p;
+  using ::log1pf;
+  using ::log1pl;
+
+  using ::log2;
+  using ::log2f;
+  using ::log2l;
+
+  using ::logb;
+  using ::logbf;
+  using ::logbl;
+
+  using ::lrint;
+  using ::lrintf;
+  using ::lrintl;
+
+  using ::lround;
+  using ::lroundf;
+  using ::lroundl;
+
+  using ::nan;
+  using ::nanf;
+  using ::nanl;
+
+  using ::nearbyint;
+  using ::nearbyintf;
+  using ::nearbyintl;
+
+  using ::nextafter;
+  using ::nextafterf;
+  using ::nextafterl;
+
+  using ::nexttoward;
+  using ::nexttowardf;
+  using ::nexttowardl;
+
+  using ::remainder;
+  using ::remainderf;
+  using ::remainderl;
+
+  using ::remquo;
+  using ::remquof;
+  using ::remquol;
+
+  using ::rint;
+  using ::rintf;
+  using ::rintl;
+
+  using ::round;
+  using ::roundf;
+  using ::roundl;
+
+  using ::scalbln;
+  using ::scalblnf;
+  using ::scalblnl;
+
+  using ::scalbn;
+  using ::scalbnf;
+  using ::scalbnl;
+
+  using ::tgamma;
+  using ::tgammaf;
+  using ::tgammal;
+
+  using ::trunc;
+  using ::truncf;
+  using ::truncl;
+}
+#endif
+
+#endif

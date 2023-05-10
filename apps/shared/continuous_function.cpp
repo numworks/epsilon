@@ -270,7 +270,7 @@ void ContinuousFunction::rangeForDisplay(float * xMin, float * xMax, float * yMi
   }
 
   if (!basedOnCostlyAlgorithms(context)) {
-    Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) {
+    Zoom::ValueAtAbscissa evaluation = [](float x, Context * context, const void * auxiliary) -> float {
       /* When evaluating sin(x)/x close to zero using the standard sine function,
        * one can detect small variations, while the cardinal sine is supposed to be
        * locally monotonous. To smooth our such variations, we round the result of

@@ -1,3 +1,4 @@
+#include <ion/keyboard.h>
 #include <ion/events.h>
 #include <ion/timing.h>
 #include <assert.h>
@@ -84,6 +85,16 @@ static inline Event innerGetEvent(int * timeout) {
       Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitioningFromUpToDown));
       bool shift = isShiftActive() || state.keyDown(Keyboard::Key::Shift);
       bool alpha = isAlphaActive() || state.keyDown(Keyboard::Key::Alpha);
+
+      // Allow the detected states to be overriden by the simulated states
+      // This is used for key mapping
+      if (state.simulatedShift() != Keyboard::ModSimState::None) {
+        shift = state.simulatedShift() == Keyboard::ModSimState::ForceOn;
+      }
+      if (state.simulatedAlpha() != Keyboard::ModSimState::None) {
+        alpha = state.simulatedAlpha() == Keyboard::ModSimState::ForceOn;
+      }
+
       bool lock = isLockActive();
       
       if (   key == Keyboard::Key::Left

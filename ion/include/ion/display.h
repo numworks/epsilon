@@ -23,8 +23,15 @@ void pullRect(KDRect r, KDColor * pixels);
 
 bool waitForVBlank();
 
+#ifndef _FXCG
 constexpr int Width = 320;
 constexpr int Height = 240;
+#else
+constexpr int Width = 396;
+constexpr int Height = 224;
+#endif
+
+// TODO: Adjust this on the Casio calculator
 constexpr int WidthInTenthOfMillimeter = 576;
 constexpr int HeightInTenthOfMillimeter = 432;
 

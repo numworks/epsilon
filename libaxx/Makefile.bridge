@@ -1,0 +1,3 @@
+SFLAGS += -Ilibaxx/include/bridge
+
+# libaxx_src += libaxx/src/bridge.c

@@ -49,7 +49,12 @@ protected:
   static constexpr KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::LargeNumberOfSignificantDigits) * 7 + 2*Metric::CellMargin + Metric::TableSeparatorThickness; // KDFont::SmallFont->glyphSize().width() = 7
 
   constexpr static int k_maxNumberOfEditableCells = (Ion::Display::Width/k_cellWidth+2) * ((Ion::Display::Height - Metric::TitleBarHeight - Metric::TabHeight)/k_cellHeight+2);
+  #ifndef _FXCG
   constexpr static int k_numberOfTitleCells = 4;
+  #else
+  // This is different here due to the changed screen resolution
+  constexpr static int k_numberOfTitleCells = 5;
+  #endif
   static constexpr int k_titleCellType = 0;
   static constexpr int k_editableCellType = 1;
 

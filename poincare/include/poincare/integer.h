@@ -5,6 +5,14 @@
 #include <assert.h>
 #include <poincare/horizontal_layout.h>
 
+#ifdef _FXCG
+#include <gint/display.h>
+#include <gint/keyboard.h>
+#include <stdio.h>
+#else
+#include <stdio.h>
+#endif
+
 namespace Poincare {
 
 class ExpressionLayout;
@@ -13,12 +21,17 @@ class LayoutNode;
 class Integer;
 struct IntegerDivision;
 
-#ifdef _3DS
+#if (defined _3DS) || (defined _FXCG)
 typedef unsigned short half_native_uint_t;
+static_assert(sizeof(half_native_uint_t) == sizeof(uint16_t));
 typedef int native_int_t;
+static_assert(sizeof(native_int_t) == sizeof(int32_t));
 typedef long long int double_native_int_t;
+static_assert(sizeof(double_native_int_t) == sizeof(int64_t));
 typedef unsigned int native_uint_t;
+static_assert(sizeof(native_uint_t) == sizeof(uint32_t));
 typedef unsigned long long int double_native_uint_t;
+static_assert(sizeof(double_native_uint_t) == sizeof(uint64_t));
 #else
 typedef uint16_t half_native_uint_t;
 typedef int32_t native_int_t;
@@ -199,7 +212,12 @@ private:
     if (i >= numberOfHalfDigits()) {
       return 0;
     }
-    return (usesImmediateDigit() ? ((half_native_uint_t *)&m_digit)[i] : ((half_native_uint_t *)digits())[i]);
+    native_uint_t d = usesImmediateDigit() ? m_digit : digits()[i/2];
+    if (i % 2 == 0) {
+      return d & 0xFFFF;
+    } else {
+      return d >> 16;
+    }
   }
 
   native_uint_t digit(uint8_t i) const {

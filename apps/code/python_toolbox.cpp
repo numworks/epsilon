@@ -503,6 +503,15 @@ const ToolboxMessageTree modulesChildren[] = {
 
 const ToolboxMessageTree catalogChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandPound, I18n::Message::PythonPound, false),
+  #ifdef _FXCG
+  // There is no question mark button on the fx-CG calculators
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandColon, I18n::Message::PythonColon, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandSemicon, I18n::Message::PythonSemicon, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandExclamationMark, I18n::Message::PythonExclamationMark, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandLessThan, I18n::Message::PythonLessThan, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandGreaterThan, I18n::Message::PythonGreaterThan, false),
+  ToolboxMessageTree::Leaf(I18n::Message::PythonCommandQuestionMark, I18n::Message::PythonQuestionMark, false),
+  #endif
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandPercent, I18n::Message::PythonPercent, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommand1J, I18n::Message::Python1J, false),
   ToolboxMessageTree::Leaf(I18n::Message::PythonCommandLF, I18n::Message::PythonLF, false),

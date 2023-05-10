@@ -1,5 +1,6 @@
 #include "about_controller.h"
 #include "../../../python/src/py/mpconfig.h"
+#include "poincare/division.h"
 #include <assert.h>
 #include <cmath>
 #include <apps/settings/main_controller.h>

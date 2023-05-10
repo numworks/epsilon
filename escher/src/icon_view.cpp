@@ -1,6 +1,7 @@
 #include <escher/icon_view.h>
 extern "C" {
 #include <assert.h>
+#include <stdint.h>
 }
 #include <ion.h>
 #include <kandinsky.h>
@@ -42,6 +43,13 @@ void IconView::drawRect(KDContext * ctx, KDRect rect) const {
     size,
     iconBufferSize * sizeof(KDColor)
   );
+
+  // If we are on a big-endian CPU, we need to swap the bytes
+  #if _BIG_ENDIAN
+  for (uint32_t i = 0; i < iconBufferSize; i++) {
+    pixelBuffer[i] = KDColor::RGB16(__builtin_bswap16(pixelBuffer[i]));
+  }
+  #endif
 
   //We push the first 6 lines of the image so that they are truncated on the sides
   ctx->fillRectWithPixels(KDRect(6, 0, m_frame.width()-12, 1),pixelBuffer+6, nullptr);

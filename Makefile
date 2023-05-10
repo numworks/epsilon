@@ -93,6 +93,7 @@ help:
 	@echo "  make PLATFORM=simulator TARGET=web"
 	@echo "  make PLATFORM=simulator TARGET=windows"
 	@echo "  make PLATFORM=simulator TARGET=3ds"
+	@echo "  make PLATFORM=simulator TARGET=fxcg"
 
 .PHONY: doc
 doc:
@@ -127,6 +128,7 @@ ifndef USE_LIBA
 endif
 ifeq ($(USE_LIBA),0)
 include liba/Makefile.bridge
+include libaxx/Makefile.bridge
 else
 SFLAGS += -ffreestanding -nostdinc -nostdlib
 include liba/Makefile

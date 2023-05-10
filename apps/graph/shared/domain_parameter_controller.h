@@ -43,7 +43,7 @@ class DomainParameterController : public Shared::SingleRangeController {
   bool parametersAreDifferent() override;
   // Extracts parameters from function, setting m_tempDomain parameters.
   void extractParameters() override;
-  void setAutoStatus(bool autoParam) override;
+  void setAutoRange() override;
   bool setParameterAtIndex(int parameterIndex, float f) override;
   // Applies temporary parameters to function.
   void confirmParameters() override;

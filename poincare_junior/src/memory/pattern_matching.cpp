@@ -130,8 +130,8 @@ bool PatternMatching::MatchNodes(Node source, Node pattern, Context *context,
           tagNode = tagNode.nextTree();
           source = source.nextTree();
         }
-      } else if (Placeholder::NodeToMatchFilter(pattern) ==
-                 Placeholder::MatchFilter::AnyTrees) {
+      } else if (Placeholder::NodeToFilter(pattern) ==
+                 Placeholder::Filter::AnyTrees) {
         /* MatchAnyTrees will try to absorb consecutive trees in this
          * placeholder (as little as possible) and match the rest of the nodes.
          */
@@ -216,25 +216,10 @@ EditionReference PatternMatching::CreateTree(const Node structure,
       continue;
     }
     Placeholder::Tag tag = Placeholder::NodeToTag(node);
-    // TODO: Remove unused CreateFilter
-    Placeholder::CreateFilter filter = Placeholder::NodeToCreateFilter(node);
     Node nodeToInsert = context.getNode(tag);
     int treesToInsert = context.getNumberOfTrees(tag);
-    assert(!nodeToInsert.isUninitialized());
     // Multiple trees can only be inserted into simple nArys
-    assert((filter == Placeholder::CreateFilter::None && treesToInsert == 1) ||
-           withinNAry);
-    if (filter == Placeholder::CreateFilter::NonFirstChild &&
-        treesToInsert > 1) {
-      // Skip first child
-      treesToInsert--;
-      nodeToInsert = nodeToInsert.nextTree();
-    } else if (filter == Placeholder::CreateFilter::FirstChild &&
-               treesToInsert > 1) {
-      // Skip other childs
-      treesToInsert = 1;
-    }
-    assert(treesToInsert >= 0);
+    assert(!nodeToInsert.isUninitialized() && treesToInsert >= 0);
     if (treesToInsert == 0) {
       assert(withinNAry);
       /* Insert nothing and decrement the number of children which accounted for

@@ -152,22 +152,18 @@ struct String {
   constexpr const char& operator[](std::size_t i) const { return m_data[i]; }
 };
 
-template <Placeholder::Tag Tag, Placeholder::MatchFilter Filter>
+template <Placeholder::Tag Tag>
 consteval auto KPlaceholder() {
-  return Tree<BlockType::Placeholder, Placeholder::ParamsToValue(Tag, Filter),
-              BlockType::Placeholder>();
-}
-
-template <Placeholder::Tag Tag, Placeholder::CreateFilter Filter>
-consteval auto KPlaceholder() {
-  return Tree<BlockType::Placeholder, Placeholder::ParamsToValue(Tag, Filter),
+  return Tree<BlockType::Placeholder,
+              Placeholder::ParamsToValue(Tag, Placeholder::Filter::None),
               BlockType::Placeholder>();
 }
 
 template <Placeholder::Tag Tag>
-consteval auto KPlaceholder() {
-  // MatchFilter or CreateFilter doesn't matter with None
-  return KPlaceholder<Tag, Placeholder::MatchFilter::None>();
+consteval auto KAnyTreesPlaceholder() {
+  return Tree<BlockType::Placeholder,
+              Placeholder::ParamsToValue(Tag, Placeholder::Filter::AnyTrees),
+              BlockType::Placeholder>();
 }
 
 }  // namespace PoincareJ

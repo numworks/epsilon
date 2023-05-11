@@ -51,14 +51,14 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
 }
 
 EditionReference Simplification::ExpandExp(EditionReference reference) {
-  Node expMulContracted = KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>(),
-                                    KPlaceholder<C, FilterAnyTrees>()));
+  Node expMulContracted = KExp(
+      KAdd(KPlaceholder<A>(), KPlaceholder<B>(), KAnyTreesPlaceholder<C>()));
   Node expMulExpanded = KMult(KExp(KPlaceholder<A>()),
                               KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())));
   reference = reference.matchAndReplace(expMulContracted, expMulExpanded);
 
-  Node expExpContracted = KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>(),
-                                     KPlaceholder<C, FilterAnyTrees>()));
+  Node expExpContracted = KExp(
+      KMult(KPlaceholder<A>(), KPlaceholder<B>(), KAnyTreesPlaceholder<C>()));
   Node expExpExpanded = KPow(KExp(KPlaceholder<A>()),
                              KMult(KPlaceholder<B>(), KPlaceholder<C>()));
   reference = reference.matchAndReplace(expExpContracted, expExpExpanded);
@@ -67,9 +67,9 @@ EditionReference Simplification::ExpandExp(EditionReference reference) {
 
 EditionReference Simplification::ContractExp(EditionReference reference) {
   Node expMulExpanded =
-      KMult(KPlaceholder<C, FilterAnyTrees>(), KExp(KPlaceholder<A>()),
-            KPlaceholder<D, FilterAnyTrees>(), KExp(KPlaceholder<B>()),
-            KPlaceholder<E, FilterAnyTrees>());
+      KMult(KAnyTreesPlaceholder<C>(), KExp(KPlaceholder<A>()),
+            KAnyTreesPlaceholder<D>(), KExp(KPlaceholder<B>()),
+            KAnyTreesPlaceholder<E>());
   Node expMulContracted =
       KMult(KPlaceholder<C>(), KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>())),
             KPlaceholder<D>(), KPlaceholder<E>());
@@ -84,9 +84,9 @@ EditionReference Simplification::ExpandTrigonometric(
     EditionReference reference) {
   /* KTrig : If second element is __, return ___ :
    * (-1,-sin),(0,cos),(1,sin),(2,-cos) */
-  Node contracted = KTrig(KAdd(KPlaceholder<A>(), KPlaceholder<B>(),
-                               KPlaceholder<C, FilterAnyTrees>()),
-                          KPlaceholder<D>());
+  Node contracted = KTrig(
+      KAdd(KPlaceholder<A>(), KPlaceholder<B>(), KAnyTreesPlaceholder<C>()),
+      KPlaceholder<D>());
   Node expanded =
       KAdd(KMult(KTrig(KPlaceholder<A>(), KPlaceholder<D>()),
                  KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<C>()), 0_e)),
@@ -98,11 +98,10 @@ EditionReference Simplification::ExpandTrigonometric(
 
 EditionReference Simplification::ContractTrigonometric(
     EditionReference reference) {
-  Node expanded = KMult(KPlaceholder<E, FilterAnyTrees>(),
-                        KTrig(KPlaceholder<A>(), KPlaceholder<C>()),
-                        KPlaceholder<F, FilterAnyTrees>(),
-                        KTrig(KPlaceholder<B>(), KPlaceholder<D>()),
-                        KPlaceholder<G, FilterAnyTrees>());
+  Node expanded = KMult(
+      KAnyTreesPlaceholder<E>(), KTrig(KPlaceholder<A>(), KPlaceholder<C>()),
+      KAnyTreesPlaceholder<F>(), KTrig(KPlaceholder<B>(), KPlaceholder<D>()),
+      KAnyTreesPlaceholder<G>());
   /* KTrigDiff : If booth elements are 1 or both are 0, return 0. 1 Otherwise.
    * TODO: This is the only place this is used. It might not be worth it.  */
   Node contracted =

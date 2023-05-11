@@ -83,8 +83,14 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   size_t length = Ion::Events::copyText(static_cast<uint8_t>(event), eventText,
                                         Ion::Events::EventData::k_maxDataSize);
   if (length == 1 && eventText[0] >= '0' && eventText[0] <= '9') {
-    int iconIndex =
-        eventText[0] == '0' ? numberOfIcons() - 1 : eventText[0] - '1';
+    int iconIndex;
+    if (eventText[0] == '0') {
+      // Settings app is the last visible builtin app
+      iconIndex = numberOfIcons() - 1 -
+                  AppsContainer::sharedAppsContainer()->numberOfExternalApps();
+    } else {
+      iconIndex = eventText[0] - '1';
+    }
     int col = columnOfIconAtIndex(iconIndex);
     int row = rowOfIconAtIndex(iconIndex);
     if (col == m_view.selectableTableView()->selectedColumn() &&

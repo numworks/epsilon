@@ -27,6 +27,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   AppsContainer();
   virtual int numberOfBuiltinApps() = 0;
   int numberOfApps() { return numberOfExternalApps() + numberOfBuiltinApps(); }
+  int numberOfExternalApps() { return Ion::ExternalApps::numberOfApps(); }
   virtual Escher::App::Snapshot* appSnapshotAtIndex(int index) = 0;
   Ion::ExternalApps::App externalAppAtIndex(int index);
   Escher::App::Snapshot* initialAppSnapshot();
@@ -63,9 +64,6 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
     m_initialAppSnapshot = snapshot;
   }
 #endif
-
- protected:
-  int numberOfExternalApps() { return Ion::ExternalApps::numberOfApps(); }
 
  private:
   Escher::Window* window() override;

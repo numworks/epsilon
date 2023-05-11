@@ -21,6 +21,7 @@ class NAry {
   static EditionReference Flatten(EditionReference reference);
   static EditionReference SquashIfUnary(EditionReference reference);
   static EditionReference SquashIfEmpty(EditionReference reference);
+  static EditionReference Sanitize(EditionReference reference);
 };
 
 }  // namespace PoincareJ

@@ -98,4 +98,12 @@ EditionReference NAry::SquashIfEmpty(EditionReference reference) {
       type == BlockType::Addition ? &ZeroBlock : &OneBlock));
 }
 
+EditionReference NAry::Sanitize(EditionReference reference) {
+  reference = Flatten(reference);
+  if (reference.numberOfChildren() == 0) {
+    return SquashIfEmpty(reference);
+  }
+  return SquashIfUnary(reference);
+}
+
 }  // namespace PoincareJ

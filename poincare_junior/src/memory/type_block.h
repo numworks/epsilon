@@ -213,6 +213,10 @@ class TypeBlock : public Block {
                      BlockType::RackLayout, BlockType::Set, BlockType::List,
                      BlockType::Polynomial, BlockType::SystemList});
   }
+  // NAry with a single metaBlock for number of children
+  constexpr bool isSimpleNAry() const {
+    return isNAry() && nodeSize(true) == 3;
+  }
   constexpr bool isInteger() const {
     return isOfType({BlockType::Zero, BlockType::One, BlockType::Two,
                      BlockType::MinusOne, BlockType::IntegerShort,

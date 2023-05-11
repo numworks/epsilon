@@ -8,12 +8,37 @@
 using namespace PoincareJ;
 using namespace Placeholders;
 
+void assert_no_match(Node source, Node pattern) {
+  PatternMatching::Context ctx;
+  quiz_assert(!PatternMatching::Match(pattern, source, &ctx));
+  quiz_assert(ctx.isUninitialized());
+}
+
+// TODO : Factorize more tests with assert_match_and_create
+void assert_match_and_create(Node source, Node pattern, Node structure,
+                             Node output) {
+  PatternMatching::Context ctx;
+  quiz_assert(PatternMatching::Match(pattern, source, &ctx));
+  // Also test with an already matching context
+  quiz_assert(PatternMatching::Match(pattern, source, &ctx));
+
+  EditionReference createdRef = PatternMatching::Create(structure, ctx);
+  assert_trees_are_equal(createdRef, output);
+  createdRef.removeTree();
+  // Also test with matchAndReplace
+  EditionReference replacedSourceClone =
+      EditionReference(EditionPool::sharedEditionPool()->clone(source))
+          .matchAndReplace(pattern, structure);
+  assert_trees_are_equal(replacedSourceClone, output);
+  replacedSourceClone.removeTree();
+}
+
 QUIZ_CASE(pcj_context) {
   PatternMatching::Context ctx;
-  ctx.setNode(Placeholder::A, KAdd(2_e, 1_e));
+  ctx.setNode(Placeholder::A, KAdd(2_e, 1_e), 1);
   Node structure = KMult(5_e, KAdd(KPlaceholder<A>(), KPlaceholder<A>()));
   EditionReference exp = PatternMatching::Create(structure, ctx);
-  assert_trees_are_equal(exp, KMult(5_e, KAdd(KAdd(2_e, 1_e), KAdd(2_e, 1_e))));
+  assert_trees_are_equal(exp, KMult(5_e, KAdd(2_e, 1_e, 2_e, 1_e)));
 }
 
 QUIZ_CASE(pcj_match) {
@@ -52,24 +77,43 @@ QUIZ_CASE(pcj_rewrite_replace) {
 }
 
 QUIZ_CASE(pcj_match_n_ary) {
-  Node source = KMult(KAdd(1_e, 2_e, 3_e), KAdd(4_e, 5_e));
-  PatternMatching::Context ctx;
-  quiz_assert(
-      !PatternMatching::Match(KPlaceholder<B, FilterAddition>(), source, &ctx));
-  quiz_assert(ctx.isUninitialized());
-  quiz_assert(!PatternMatching::Match(KMult(KPlaceholder<A, FilterAddition>(),
-                                            KPlaceholder<A, FilterAddition>()),
-                                      source, &ctx));
-  quiz_assert(ctx.isUninitialized());
-  Node pattern = KMult(KPlaceholder<A, FilterAddition>(), KPlaceholder<B>());
-  quiz_assert(PatternMatching::Match(pattern, source, &ctx));
-  assert_trees_are_equal(ctx.getNode(Placeholder::A), KAdd(1_e, 2_e, 3_e));
-  assert_trees_are_equal(ctx.getNode(Placeholder::B), KAdd(4_e, 5_e));
+  assert_no_match(
+      KMult(KAdd(1_e, 2_e, 3_e), KAdd(1_e, 2_e)),
+      KMult(KAdd(KPlaceholder<A, FilterAnyTrees>()), KAdd(KPlaceholder<A>())));
 
-  Node structure =
-      KAdd(KMult(KPlaceholder<A, FilterFirstChild>(), KPlaceholder<B>()),
-           KMult(KPlaceholder<A, FilterNonFirstChild>(), KPlaceholder<B>()));
-  EditionReference result = PatternMatching::Create(structure, ctx);
-  assert_trees_are_equal(result, KAdd(KMult(1_e, KAdd(4_e, 5_e)),
-                                      KMult(KAdd(2_e, 3_e), KAdd(4_e, 5_e))));
+  assert_no_match(
+      KAdd(1_e, 2_e, 3_e, 4_e),
+      KAdd(KPlaceholder<A, FilterAnyTrees>(), 3_e, KPlaceholder<B>(), 4_e));
+
+  assert_match_and_create(
+      KMult(KAdd(1_e, 2_e, 3_e), KAdd(1_e, 2_e)),
+      KMult(KAdd(KPlaceholder<A>(), KPlaceholder<B, FilterAnyTrees>()),
+            KPlaceholder<C>()),
+      KAdd(KMult(KPlaceholder<A>(), KPlaceholder<C>()),
+           KMult(KAdd(KPlaceholder<B>()), KPlaceholder<C>())),
+      KAdd(KMult(1_e, KAdd(1_e, 2_e)), KMult(KAdd(2_e, 3_e), KAdd(1_e, 2_e))));
+
+  assert_match_and_create(
+      KAdd(1_e, 2_e, 3_e),
+      KAdd(KPlaceholder<A, FilterAnyTrees>(), KPlaceholder<B>(), 3_e,
+           KPlaceholder<C, FilterAnyTrees>()),
+      KAdd(KPlaceholder<A>(), 0_e, KPlaceholder<B>(), 0_e, KPlaceholder<C>(),
+           0_e),
+      KAdd(1_e, 0_e, 2_e, 0_e, 0_e));
+
+  assert_match_and_create(
+      KAdd(1_e, 2_e, 3_e, KMult(2_e, 3_e), 3_e),
+      KAdd(KPlaceholder<A, FilterAnyTrees>(), KPlaceholder<B, FilterAnyTrees>(),
+           KMult(KPlaceholder<C, FilterAnyTrees>(), KPlaceholder<B>()),
+           KPlaceholder<B>()),
+      KAdd(KPlaceholder<A>(), 0_e, KPlaceholder<B>(), 0_e, KPlaceholder<C>(),
+           0_e),
+      KAdd(1_e, 2_e, 0_e, 3_e, 0_e, 2_e, 0_e));
+
+  assert_match_and_create(KSub(KAdd(1_e, 2_e, 3_e), KAdd(2_e, 3_e)),
+                          KSub(KAdd(KPlaceholder<A, FilterAnyTrees>(),
+                                    KPlaceholder<B, FilterAnyTrees>(),
+                                    KPlaceholder<C, FilterAnyTrees>()),
+                               KAdd(KPlaceholder<B>())),
+                          KAdd(KPlaceholder<A>(), KPlaceholder<C>()), 1_e);
 }

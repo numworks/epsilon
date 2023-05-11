@@ -12,24 +12,25 @@ namespace PoincareJ {
 class Placeholder {
  public:
   // Using plain enum for tag to simplify PatternMatching Context usage.
-  enum Tag : uint8_t { A = 0, B, C, D, NumberOfTags };
+  enum Tag : uint8_t { A = 0, B, C, D, E, F, G, NumberOfTags };
 
   enum class MatchFilter : uint8_t {
-    // Match any node
+    // Match any tree
     None = 0,
-    // Match Addition nodes
-    Addition,
-    // Match Multiplication nodes
-    Multiplication,
+    // Match 0 or any number of consecutive trees
+    AnyTrees,
+    // Unused filter making MatchFilter and CreateFilter size equal.
+    Unused,
     NumberOfFilters
   };
 
+  // TODO : Remove CreateFilter
   enum class CreateFilter : uint8_t {
     // Replaces with matched node
     None = 0,
-    // Replace with the first child of matched nAry
+    // Replace with the first tree of matched AnyTrees (if there is one)
     FirstChild,
-    // Replace with non-first children of matched nAry
+    // Replace with non-first trees of matched AnyTrees (if there are trees)
     NonFirstChild,
     NumberOfFilters
   };
@@ -52,14 +53,6 @@ class Placeholder {
   }
   constexpr static CreateFilter NodeToCreateFilter(const Node placeholder) {
     return static_cast<CreateFilter>(NodeToFilter(placeholder));
-  }
-  constexpr static bool MatchesNode(const Node placeholder, const Node n) {
-    Placeholder::MatchFilter filter = NodeToMatchFilter(placeholder);
-    return filter == MatchFilter::None ||
-           (filter == MatchFilter::Addition &&
-            n.type() == BlockType::Addition) ||
-           (filter == MatchFilter::Multiplication &&
-            n.type() == BlockType::Multiplication);
   }
 
  private:
@@ -104,11 +97,12 @@ static constexpr Placeholder::Tag A = Placeholder::Tag::A;
 static constexpr Placeholder::Tag B = Placeholder::Tag::B;
 static constexpr Placeholder::Tag C = Placeholder::Tag::C;
 static constexpr Placeholder::Tag D = Placeholder::Tag::D;
+static constexpr Placeholder::Tag E = Placeholder::Tag::E;
+static constexpr Placeholder::Tag F = Placeholder::Tag::F;
+static constexpr Placeholder::Tag G = Placeholder::Tag::G;
 
-static constexpr Placeholder::MatchFilter FilterAddition =
-    Placeholder::MatchFilter::Addition;
-static constexpr Placeholder::MatchFilter FilterMultiplication =
-    Placeholder::MatchFilter::Multiplication;
+static constexpr Placeholder::MatchFilter FilterAnyTrees =
+    Placeholder::MatchFilter::AnyTrees;
 
 static constexpr Placeholder::CreateFilter FilterFirstChild =
     Placeholder::CreateFilter::FirstChild;

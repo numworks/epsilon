@@ -51,28 +51,30 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
 }
 
 EditionReference Simplification::ExpandExp(EditionReference reference) {
-  Node expMulContracted = KExp(KPlaceholder<A, FilterAddition>());
-  Node expMulExpanded = KMult(KExp(KPlaceholder<A, FilterFirstChild>()),
-                              KExp(KPlaceholder<A, FilterNonFirstChild>()));
+  Node expMulContracted = KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>(),
+                                    KPlaceholder<C, FilterAnyTrees>()));
+  Node expMulExpanded = KMult(KExp(KPlaceholder<A>()),
+                              KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())));
   reference = reference.matchAndReplace(expMulContracted, expMulExpanded);
-  Node expExpContracted = KExp(KPlaceholder<A, FilterMultiplication>());
-  Node expExpExpanded = KPow(KExp(KPlaceholder<A, FilterFirstChild>()),
-                             KPlaceholder<A, FilterNonFirstChild>());
+
+  Node expExpContracted = KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>(),
+                                     KPlaceholder<C, FilterAnyTrees>()));
+  Node expExpExpanded = KPow(KExp(KPlaceholder<A>()),
+                             KMult(KPlaceholder<B>(), KPlaceholder<C>()));
   reference = reference.matchAndReplace(expExpContracted, expExpExpanded);
   return reference;
 }
 
 EditionReference Simplification::ContractExp(EditionReference reference) {
-  /* TODO : Make it so that we could have this with KPlaceholder<C>() being any
-   *        (or none) other children at any place in the KMult :
-   * Node expMulExpanded = KMult(KExp(KPlaceholder<A>()),
-   *                             KExp(KPlaceholder<B>()), KPlaceholder<C>());
-   * Node expMulContracted = KMult(
-   *  KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>())), KPlaceholder<C>());
-   */
-  Node expMulExpanded = KMult(KExp(KPlaceholder<A>()), KExp(KPlaceholder<B>()));
-  Node expMulContracted = KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>()));
+  Node expMulExpanded =
+      KMult(KPlaceholder<C, FilterAnyTrees>(), KExp(KPlaceholder<A>()),
+            KPlaceholder<D, FilterAnyTrees>(), KExp(KPlaceholder<B>()),
+            KPlaceholder<E, FilterAnyTrees>());
+  Node expMulContracted =
+      KMult(KPlaceholder<C>(), KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>())),
+            KPlaceholder<D>(), KPlaceholder<E>());
   reference = reference.matchAndReplace(expMulExpanded, expMulContracted);
+
   Node expExpExpanded = KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>());
   Node expExpContracted = KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>()));
   return reference.matchAndReplace(expExpExpanded, expExpContracted);
@@ -82,28 +84,34 @@ EditionReference Simplification::ExpandTrigonometric(
     EditionReference reference) {
   /* KTrig : If second element is __, return ___ :
    * (-1,-sin),(0,cos),(1,sin),(2,-cos) */
-  Node contracted = KTrig(KPlaceholder<A, FilterAddition>(), KPlaceholder<C>());
+  Node contracted = KTrig(KAdd(KPlaceholder<A>(), KPlaceholder<B>(),
+                               KPlaceholder<C, FilterAnyTrees>()),
+                          KPlaceholder<D>());
   Node expanded =
-      KAdd(KMult(KTrig(KPlaceholder<A, FilterFirstChild>(), KPlaceholder<C>()),
-                 KTrig(KPlaceholder<A, FilterNonFirstChild>(), 0_e)),
-           KMult(KTrig(KPlaceholder<A, FilterFirstChild>(),
-                       KAdd(KPlaceholder<C>(), -1_e)),
-                 KTrig(KPlaceholder<A, FilterNonFirstChild>(), 1_e)));
+      KAdd(KMult(KTrig(KPlaceholder<A>(), KPlaceholder<D>()),
+                 KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<C>()), 0_e)),
+           KMult(KTrig(KPlaceholder<A>(), KAdd(KPlaceholder<D>(), -1_e)),
+                 KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<C>()), 1_e)));
   return reference.matchAndReplace(contracted, expanded);
   // TODO: If replaced, simplify resulting KTrigs
 }
 
 EditionReference Simplification::ContractTrigonometric(
     EditionReference reference) {
-  Node expanded = KMult(KTrig(KPlaceholder<A>(), KPlaceholder<C>()),
-                        KTrig(KPlaceholder<B>(), KPlaceholder<D>()));
+  Node expanded = KMult(KPlaceholder<E, FilterAnyTrees>(),
+                        KTrig(KPlaceholder<A>(), KPlaceholder<C>()),
+                        KPlaceholder<F, FilterAnyTrees>(),
+                        KTrig(KPlaceholder<B>(), KPlaceholder<D>()),
+                        KPlaceholder<G, FilterAnyTrees>());
   /* KTrigDiff : If booth elements are 1 or both are 0, return 0. 1 Otherwise.
    * TODO: This is the only place this is used. It might not be worth it.  */
-  Node contracted = KMult(
-      0.5_e, KAdd(KTrig(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>())),
-                        KTrigDiff(KPlaceholder<C>(), KPlaceholder<D>())),
-                  KTrig(KAdd(KPlaceholder<A>(), KPlaceholder<B>()),
-                        KAdd(KPlaceholder<D>(), KPlaceholder<C>()))));
+  Node contracted =
+      KMult(KPlaceholder<E>(), 0.5_e,
+            KAdd(KTrig(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>())),
+                       KTrigDiff(KPlaceholder<C>(), KPlaceholder<D>())),
+                 KTrig(KAdd(KPlaceholder<A>(), KPlaceholder<B>()),
+                       KAdd(KPlaceholder<D>(), KPlaceholder<C>()))),
+            KPlaceholder<F>(), KPlaceholder<G>());
   return reference.matchAndReplace(expanded, contracted);
   // TODO: If replaced, simplify resulting KTrigs
 }

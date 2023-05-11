@@ -13,27 +13,84 @@
 
 namespace PoincareJ {
 
-namespace PatternMatching {
-
-class Context {
+class PatternMatching {
  public:
-  Node getNode(uint8_t tag) const { return m_array[tag]; }
-  void setNode(uint8_t tag, Node node) { m_array[tag] = node; }
-  bool isUninitialized() const;
+  class Context {
+   public:
+    Node getNode(uint8_t tag) const { return m_array[tag]; }
+    uint8_t getNumberOfTrees(uint8_t tag) const { return m_numberOfTrees[tag]; }
+    void setNode(uint8_t tag, Node node, uint8_t numberOfTrees) {
+      m_array[tag] = node;
+      m_numberOfTrees[tag] = numberOfTrees;
+    }
+    void setNumberOfTrees(uint8_t tag, uint8_t numberOfTrees) {
+      m_numberOfTrees[tag] = numberOfTrees;
+    }
+    bool isUninitialized() const;
 
 #if POINCARE_MEMORY_TREE_LOG
-  __attribute__((__used__)) void log() const;
+    __attribute__((__used__)) void log() const;
 #endif
 
+   private:
+    Node m_array[Placeholder::Tag::NumberOfTags];
+    uint8_t m_numberOfTrees[Placeholder::Tag::NumberOfTags];
+  };
+
+  static bool Match(const Node pattern, const Node source, Context *context);
+  static EditionReference Create(const Node structure,
+                                 const Context context = Context()) {
+    return CreateTree(structure, context, Node());
+  }
+
  private:
-  Node m_array[Placeholder::Tag::NumberOfTags];
+  /* During Match, MatchContext allow keeping track of matched Nary sizes.
+   * It keeps track of both source and pattern.
+   * For example, we want to prevent source Add(Mult(1,2),3) from matching with
+   * pattern Add(Mult(1), 2, 3). At some point, local source will be Mult(1,2)
+   * and local pattern will be Mult(1). */
+  class MatchContext {
+   public:
+    MatchContext(Node source, Node pattern);
+    bool reachedLimit(Node node, bool global, bool source) const {
+      return ReachedLimit(
+          node, global ? (source ? m_globalSourceEnd : m_globalPatternEnd)
+                       : (source ? m_localSourceEnd : m_localPatternEnd));
+    }
+    // Return the number of siblings right of node in local context.
+    int remainingLocalTrees(Node node) const;
+    void setLocal(Node source, Node pattern);
+    /* From a local pattern and source node, sets the local context (node's
+     * parents) */
+    void setLocalFromChild(Node source, Node pattern);
+
+   private:
+    static bool ReachedLimit(Node node, const TypeBlock *end) {
+      assert(node.block() <= end);
+      return node.block() == end;
+    }
+
+    // Local context
+    Node m_localSourceRoot;
+    TypeBlock *m_localSourceEnd;
+    TypeBlock *m_localPatternEnd;
+    // Global context
+    const Node m_globalSourceRoot;
+    const Node m_globalPatternRoot;
+    const TypeBlock *m_globalSourceEnd;
+    const TypeBlock *m_globalPatternEnd;
+  };
+
+  // Match an AnyTree Placeholder
+  static bool MatchAnyTrees(Placeholder::Tag tag, Node source, Node pattern,
+                            Context *context, MatchContext matchContext);
+  // Match source with pattern with given MatchContext constraints.
+  static bool MatchNodes(Node source, Node pattern, Context *context,
+                         MatchContext matchContext);
+  // Create structure tree with context's placeholder nodes in EditionPool
+  static EditionReference CreateTree(const Node structure,
+                                     const Context context, Node insertedNAry);
 };
-
-bool Match(const Node pattern, const Node source, Context* context);
-EditionReference Create(const Node structure,
-                        const Context context = Context());
-
-};  // namespace PatternMatching
 
 }  // namespace PoincareJ
 

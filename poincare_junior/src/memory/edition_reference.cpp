@@ -147,10 +147,22 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
     if (ctx.getNode(i).isUninitialized()) {
       continue;
     }
-    initializedPlaceHolders += 1;
-    treeNext.insertTreeBeforeNode(0_e);
+    for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
+      initializedPlaceHolders++;
+      treeNext.insertTreeBeforeNode(0_e);
+    }
     // Keep track of placeholder matches before detaching them
-    placeholders[i] = EditionReference(ctx.getNode(i));
+    int numberOfTrees = ctx.getNumberOfTrees(i);
+    if (ctx.getNode(i).isUninitialized()) {
+      placeholders[i] = EditionReference();
+    } else if (numberOfTrees == 0) {
+      // Use the last block so that placeholders[i] stays initialized
+      placeholders[i] = EditionReference(editionPool->lastBlock());
+    } else {
+      placeholders[i] = EditionReference(ctx.getNode(i));
+    }
+    // Invalidate context before anything is detached.
+    ctx.setNode(i, Node(), numberOfTrees);
   }
 
   // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 ....
@@ -165,9 +177,11 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
     if (placeholders[i].isUninitialized()) {
       continue;
     }
-    // Warning : From this point forward, ctx.getNode(i) is no longer reliable.
-    ctx.setNode(i, Node());
-    placeholders[i].detachTree();
+    // Get a Node to the first placeholder tree, and detach as many as necessary
+    Node trees = placeholders[i].block();
+    for (int j = 0; j < ctx.getNumberOfTrees(i); j++) {
+      EditionReference(trees).detachTree();
+    }
   }
 
   // EditionPool: ..... | *{2} +{2} 0 0 0 | .... _{3} x y z
@@ -180,7 +194,7 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
 
   // Step 4 - Update context with new placeholder matches position
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
-    ctx.setNode(i, static_cast<Node>(placeholders[i]));
+    ctx.setNode(i, static_cast<Node>(placeholders[i]), ctx.getNumberOfTrees(i));
   }
 
   // Step 5 - Build the PatternMatching replacement

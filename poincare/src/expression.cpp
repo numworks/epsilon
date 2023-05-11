@@ -1446,7 +1446,7 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
     char *treePoolCursor = TreePool::sharedPool->cursor();
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
-      e = clone().deepReduce(*reductionContext);
+      Expression reduced = clone().deepReduce(*reductionContext);
       if (approximateDuringReduction) {
         /* It is always needed to reduce when approximating keeping symbols to
          * catch reduction failure and abort if necessary.
@@ -1462,8 +1462,10 @@ Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(
          * "2*x^float(2.)" because float(2.) != rational(2.).
          * This does not happen if e is reduced beforehand. */
         bool dummy = false;
-        e = e.deepApproximateKeepingSymbols(*reductionContext, &dummy, &dummy);
+        reduced = reduced.deepApproximateKeepingSymbols(*reductionContext,
+                                                        &dummy, &dummy);
       }
+      e = reduced;
     } else {
       /* We don't want to tidy all the Pool in the case we are in a nested
        * cloneAndDeepReduceWithSystemCheckpoint: cleaning all the pool might

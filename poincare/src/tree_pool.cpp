@@ -216,9 +216,7 @@ void TreePool::IdentifierStack::remove(uint16_t j) {
    * list instead of a stack. */
   for (uint16_t i = 0; i < m_currentIndex; i++) {
     if (m_availableIdentifiers[i] == j) {
-      memmove(m_availableIdentifiers + i, m_availableIdentifiers + i + 1,
-              (m_currentIndex - i - 1) * sizeof(uint16_t));
-      m_currentIndex -= 1;
+      m_availableIdentifiers[i] = m_availableIdentifiers[--m_currentIndex];
       return;
     }
   }

@@ -109,9 +109,22 @@ QUIZ_CASE(pcj_match_n_ary) {
       KAdd(1_e, 2_e, 0_e, 3_e, 0_e, 2_e, 0_e));
 
   assert_match_and_create(
-      KSub(KAdd(1_e, 2_e, 3_e), KAdd(2_e, 3_e)),
-      KSub(KAdd(KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<B>(),
-                KAnyTreesPlaceholder<C>()),
-           KAdd(KPlaceholder<B>())),
-      KAdd(KPlaceholder<A>(), KPlaceholder<C>()), 1_e);
+      KMult(KAdd(1_e, 2_e, 3_e), 4_e, KAdd(2_e, 3_e)),
+      KMult(KAdd(KAnyTreesPlaceholder<A>(), KAnyTreesPlaceholder<B>(),
+                 KAnyTreesPlaceholder<C>()),
+            KAnyTreesPlaceholder<D>(), KAdd(KPlaceholder<B>())),
+      KAdd(KAnyTreesPlaceholder<D>(), KPlaceholder<A>(), KPlaceholder<C>()),
+      KAdd(4_e, 1_e));
+
+  /* TODO: In this example we first try with 0 trees in A and 1 tree in B.
+   *       Then, we perform a costly match and fail at the very end.
+   *       We try again with 1 tree in A and 0 in B, and uselessly perform the
+   *       exact same costly Match with no success.
+   *       This should be optimized. */
+  assert_no_match(
+      KAdd(1_e, 1_e, 2_e, KMult(1_e, 2_e, 3_e, 3_e), 2_e),
+      KAdd(KAnyTreesPlaceholder<A>(), 1_e, KAnyTreesPlaceholder<B>(), 2_e,
+           KMult(KAnyTreesPlaceholder<C>(), KPlaceholder<D>(),
+                 KAnyTreesPlaceholder<E>(), KPlaceholder<D>()),
+           1_e));
 }

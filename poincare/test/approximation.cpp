@@ -600,6 +600,9 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("√(-1)", "i");
   assert_expression_approximates_to<double>("√(-1)", "i");
 
+  assert_expression_approximates_to<float>("√(5ᴇ-37)", "7.071068ᴇ-19");
+  assert_expression_approximates_to<double>("√(5ᴇ-79)", "7.0710678118655ᴇ-40");
+
   assert_expression_approximates_to<float>("sum(r,r, 4, 10)", "49");
   assert_expression_approximates_to<double>("sum(k,k, 4, 10)", "49");
 

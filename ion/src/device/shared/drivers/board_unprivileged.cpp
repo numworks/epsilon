@@ -19,21 +19,28 @@ KernelHeader *kernelHeader() {
 }
 
 UserlandHeader *userlandHeader() {
+  return userlandHeader(isRunningSlotA() ? Slot::A : Slot::B);
+}
+
+UserlandHeader *userlandHeader(Slot slot) {
   uint32_t slotOffset =
-      isRunningSlotA() ? Config::SlotAOffset : Config::SlotBOffset;
+      slot == Slot::A ? Config::SlotAOffset : Config::SlotBOffset;
   return reinterpret_cast<UserlandHeader *>(Config::UserlandVirtualOrigin +
                                             slotOffset);
 }
 
 uint32_t userlandStart() {
-  return reinterpret_cast<uint32_t>(userlandHeader()) + sizeof(UserlandHeader);
+  return userlandStart(isRunningSlotA() ? Slot::A : Slot::B);
 }
 
-uint32_t userlandEnd() {
-  // On running slot, userland range is USERLAND + SIGNATURE + EXTERN APPS
-  // || SP* HEADER | KERNEL | USERLAND | SIGNATURE | EXTERN APPS | PERSISTING
-  // BYTES
-  return reinterpret_cast<uint32_t>(&_persisting_bytes_buffer_start);
+uint32_t userlandStart(Slot slot) {
+  return reinterpret_cast<uint32_t>(userlandHeader(slot)) +
+         sizeof(UserlandHeader);
+}
+
+uint32_t userlandEnd(Slot slot) {
+  return reinterpret_cast<uint32_t>(userlandHeader(slot)) +
+         Config::UserlandLength;
 }
 
 uint32_t securityLevel() {

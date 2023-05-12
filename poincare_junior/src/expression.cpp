@@ -83,6 +83,8 @@ void Expression::ConvertPowerOrDivisionToLayout(
 // Remove expressionReference while converting it to a layout in layoutParent
 void Expression::ConvertExpressionToLayout(
     EditionReference layoutParent, EditionReference expressionReference) {
+  /* TODO: ConvertExpressionToLayout is a very temporary implementation and must
+   *      be improved in the future. */
   assert(Layout::IsHorizontal(layoutParent));
   BlockType type = expressionReference.type();
   EditionPool *editionPool = EditionPool::sharedEditionPool();
@@ -162,8 +164,6 @@ void Expression::ConvertExpressionToLayout(
   expressionReference.removeNode();
 }
 
-/* TODO: ConvertExpressionToLayout is a very temporary implementation and must
- * be improved must be improved in the future. */
 EditionReference Expression::EditionPoolExpressionToLayout(Node node) {
   assert(node.block()->isExpression());
   EditionReference ref =

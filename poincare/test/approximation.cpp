@@ -600,6 +600,14 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("√(-1)", "i");
   assert_expression_approximates_to<double>("√(-1)", "i");
 
+  assert_expression_approximates_to<float>("√(i)", "0.7071068+0.7071068×i");
+  assert_expression_approximates_to<double>(
+      "√(i)", "0.70710678118655+0.70710678118655×i");
+
+  assert_expression_approximates_to<float>("√(-1-i)", "0.4550898-1.098684×i");
+  assert_expression_approximates_to<double>(
+      "√(-1-i)", "0.45508986056223-1.0986841134678×i");
+
   assert_expression_approximates_to<float>("√(5ᴇ-37)", "7.071068ᴇ-19");
   assert_expression_approximates_to<double>("√(5ᴇ-79)", "7.0710678118655ᴇ-40");
 

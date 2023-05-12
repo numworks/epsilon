@@ -109,6 +109,12 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
       fillRectWithPixels(KDRect(position, glyphSize), glyphBuffer.colorBuffer(),
                          glyphBuffer.colorBuffer());
       position = position.translatedBy(KDPoint(glyphSize.width(), 0));
+      if (origin().x() + position.x() > Ion::Display::Width) {
+        // fast forward until line feed
+        while (codePoint != UCodePointLineFeed && codePoint != UCodePointNull) {
+          codePoint = decoder.nextCodePoint();
+        }
+      }
     }
   }
   return position;

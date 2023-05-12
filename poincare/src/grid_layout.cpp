@@ -103,16 +103,16 @@ bool GridLayoutNode::removeEmptyRowOrColumnAtChildIndexIfNeeded(
   bool isRightOfGrid = childIsInLastNonGrayColumn(childIndex);
   bool isBottomOfGrid = childIsInLastNonGrayRow(childIndex);
   bool changed = false;
-  if (isRightOfGrid && !numberOfColumnsIsFixed() &&
-      numberOfColumns() > k_minimalNumberOfRowsAndColumnsWhileEditing &&
-      isColumnEmpty(columnIndex)) {
-    deleteColumnAtIndex(columnIndex);
+  while (isRightOfGrid && !numberOfColumnsIsFixed() &&
+         numberOfColumns() > k_minimalNumberOfRowsAndColumnsWhileEditing &&
+         isColumnEmpty(columnIndex)) {
+    deleteColumnAtIndex(columnIndex--);
     changed = true;
   }
-  if (isBottomOfGrid && !numberOfRowsIsFixed() &&
-      numberOfRows() > k_minimalNumberOfRowsAndColumnsWhileEditing &&
-      isRowEmpty(rowIndex)) {
-    deleteRowAtIndex(rowIndex);
+  while (isBottomOfGrid && !numberOfRowsIsFixed() &&
+         numberOfRows() > k_minimalNumberOfRowsAndColumnsWhileEditing &&
+         isRowEmpty(rowIndex)) {
+    deleteRowAtIndex(rowIndex--);
     changed = true;
   }
   assert(numberOfColumns() >= k_minimalNumberOfRowsAndColumnsWhileEditing &&

@@ -37,6 +37,8 @@ QUIZ_CASE(pcj_approximation) {
   assert_approximation_is(KExp(2_e), M_E * M_E);
   assert_approximation_is(KLog(100_e), 2.f);
   assert_approximation_is(KLn(e_e), 1.f);
+  assert_approximation_is(KAbs(100_e), 100.f);
+  assert_approximation_is(KAbs(-2.31_e), 2.31f);
   assert_approximation_is(KCos(π_e), -1.f);
   assert_approximation_is(KSin(π_e), 0.f);
   assert_approximation_is(KTan(0_e), 0.f);

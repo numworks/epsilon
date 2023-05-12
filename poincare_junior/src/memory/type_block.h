@@ -87,6 +87,7 @@ enum class BlockType : uint8_t {
   Cosine,
   Tangent,
   // 1 - C - Other expressions in Alphabetic order
+  Abs,
   ArcCosine,
   ArcSine,
   ArcTangent,
@@ -147,6 +148,7 @@ BLOCK_TYPE_IS_EXPRESSION(BlockType::Constant);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Addition);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Multiplication);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Power);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Abs);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Cosine);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Sine);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Tangent);
@@ -316,6 +318,7 @@ class TypeBlock : public Block {
       case BlockType::TrigDiff:
       case BlockType::Logarithm:
         return 2;
+      case BlockType::Abs:
       case BlockType::Cosine:
       case BlockType::Sine:
       case BlockType::Tangent:

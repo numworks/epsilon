@@ -8,6 +8,7 @@ namespace PoincareJ {
  * keys to enable dichotomy. Devise a pattern for maps and move it in OMG. */
 
 constexpr static Builtin s_builtins[] = {
+    {BlockType::Abs, "abs"},
     {BlockType::Cosine, "cos"},
     {BlockType::Sine, "sin"},
     {BlockType::Tangent, "tan"},
@@ -54,6 +55,9 @@ EditionReference Builtin::Promote(EditionReference parameterList,
                                   BlockType type) {
   Node header;
   switch (type) {
+    case BlockType::Abs:
+      header = Tree<BlockType::Abs>();
+      break;
     case BlockType::Cosine:
       header = Tree<BlockType::Cosine>();
       break;

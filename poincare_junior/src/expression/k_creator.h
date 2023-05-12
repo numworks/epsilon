@@ -12,6 +12,11 @@ namespace PoincareJ {
 // Constructors
 
 template <class... Args>
+consteval auto KAbs(Args... args) {
+  return KUnary<BlockType::Abs>(args...);
+}
+
+template <class... Args>
 consteval auto KCos(Args... args) {
   return KUnary<BlockType::Cosine>(args...);
 }

@@ -48,6 +48,8 @@ T Approximation::To(const Node node) {
       return std::log10(Approximation::To<T>(node.nextNode()));
     case BlockType::Ln:
       return std::log(Approximation::To<T>(node.nextNode()));
+    case BlockType::Abs:
+      return std::abs(Approximation::To<T>(node.nextNode()));
     case BlockType::Cosine:
       return std::cos(Approximation::To<T>(node.nextNode()));
     case BlockType::Sine:

@@ -74,6 +74,7 @@ void Node::logName(std::ostream &stream) const {
       "Sine",
       "Cosine",
       "Tangent",
+      "Abs",
       "ArcCosine",
       "ArcSine",
       "ArcTangent",

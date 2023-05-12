@@ -50,6 +50,44 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
   NAry::SetNumberOfChildren(reference, nbOfChildren - index);
 }
 
+EditionReference Simplification::ContractAbs(EditionReference reference) {
+  Node AbsExpanded = KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
+                           KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>());
+  Node AbsContracted =
+      KMult(KPlaceholder<A>(),
+            KAbs(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
+            KPlaceholder<D>());
+  reference = reference.matchAndReplace(AbsExpanded, AbsContracted);
+  return reference;
+}
+
+EditionReference Simplification::ExpandAbs(EditionReference reference) {
+  Node AbsContracted =
+      KAbs(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()));
+  Node AbsExpanded =
+      KMult(KAbs(KPlaceholder<A>()), KAbs(KMult(KPlaceholder<B>())));
+  reference = reference.matchAndReplace(AbsContracted, AbsExpanded);
+  return reference;
+}
+
+EditionReference Simplification::ContractLn(EditionReference reference) {
+  Node LnExpanded = KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
+                         KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>());
+  Node LnContracted =
+      KAdd(KPlaceholder<A>(),
+           KLn(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
+           KPlaceholder<D>());
+  reference = reference.matchAndReplace(LnExpanded, LnContracted);
+  return reference;
+}
+
+EditionReference Simplification::ExpandLn(EditionReference reference) {
+  Node LnContracted = KLn(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()));
+  Node LnExpanded = KAdd(KLn(KPlaceholder<A>()), KLn(KMult(KPlaceholder<B>())));
+  reference = reference.matchAndReplace(LnContracted, LnExpanded);
+  return reference;
+}
+
 EditionReference Simplification::ExpandExp(EditionReference reference) {
   Node expMulContracted = KExp(
       KAdd(KPlaceholder<A>(), KPlaceholder<B>(), KAnyTreesPlaceholder<C>()));

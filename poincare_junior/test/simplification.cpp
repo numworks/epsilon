@@ -20,6 +20,14 @@ QUIZ_CASE(pcj_simplification_expansion) {
   EditionReference ref3(KExp(KAdd(1_e, 2_e, 3_e)));
   ref3 = Simplification::ExpandExp(ref3);
   assert_trees_are_equal(ref3, KMult(KExp(1_e), KExp(KAdd(2_e, 3_e))));
+
+  EditionReference ref4(KAbs(KMult(1_e, 2_e)));
+  ref4 = Simplification::ExpandAbs(ref4);
+  assert_trees_are_equal(ref4, KMult(KAbs(1_e), KAbs(2_e)));
+
+  EditionReference ref5(KLn(KMult(1_e, 2_e, 3_e)));
+  ref5 = Simplification::ExpandLn(ref5);
+  assert_trees_are_equal(ref5, KAdd(KLn(1_e), KLn(KMult(2_e, 3_e))));
 }
 
 QUIZ_CASE(pcj_simplification_contraction) {
@@ -36,6 +44,14 @@ QUIZ_CASE(pcj_simplification_contraction) {
             KAdd(KTrig(KAdd(KLog(3_e), KMult(-1_e, KAdd(1_e, KLog("x"_e)))),
                        KTrigDiff(1_e, 0_e)),
                  KTrig(KAdd(KLog(3_e), 1_e, KLog("x"_e)), KAdd(0_e, 1_e)))));
+
+  EditionReference ref4(KMult(KAbs(1_e), KAbs(KMult(2_e, 3_e))));
+  ref4 = Simplification::ContractAbs(ref4);
+  assert_trees_are_equal(ref4, KAbs(KMult(1_e, 2_e, 3_e)));
+
+  EditionReference ref5(KAdd(KLn(1_e), KLn(2_e), 3_e, 4_e));
+  ref5 = Simplification::ContractLn(ref5);
+  assert_trees_are_equal(ref5, KAdd(KLn(KMult(1_e, 2_e)), 3_e, 4_e));
 }
 
 QUIZ_CASE(pcj_simplification_projection) {

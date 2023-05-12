@@ -124,21 +124,18 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
    * preserved. */
   EditionReference treeNext = nextTree();
   int initializedPlaceHolders = 0;
+  EditionReference placeholders[Placeholder::Tag::NumberOfTags];
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     if (ctx[i].isUninitialized()) {
       continue;
     }
     initializedPlaceHolders += 1;
     treeNext.insertTreeBeforeNode(0_e);
-  }
-
-  // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 ....
-
-  EditionReference placeholders[Placeholder::Tag::NumberOfTags];
-  for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     // Keep track of placeholder matches before detaching them
     placeholders[i] = EditionReference(ctx[i]);
   }
+
+  // EditionPool: ..... | *{2} +{2} x y z | 0 0 0 ....
 
   // Detach placeholder matches at the end of the EditionPool in a system list
   EditionReference placeholderMatches(

@@ -52,8 +52,8 @@ bool DomainParameterController::textFieldDidFinishEditing(
       text = Infinity::Name(false);
     }
   }
-  return FloatParameterController<float>::textFieldDidFinishEditing(
-      textField, text, event);
+  return SingleRangeController::textFieldDidFinishEditing(textField, text,
+                                                          event);
 }
 
 bool DomainParameterController::textFieldDidAbortEditing(
@@ -97,20 +97,17 @@ void DomainParameterController::setAutoStatus(bool autoParam) {
   if (m_autoParam == autoParam) {
     return;
   }
-  if (autoParam) {
+  m_autoParam = autoParam;
+  if (m_autoParam) {
     setParameterAtIndex(1, function()->autoTMin());
     setParameterAtIndex(2, function()->autoTMax());
   }
-  m_autoParam = autoParam;
   resetMemoization();
   m_selectableListView.reloadData();
 }
 
 bool DomainParameterController::setParameterAtIndex(int parameterIndex,
                                                     float f) {
-  /* Setting Min (or Max) parameter can alter the previously set Max
-   * (or Min) parameter if Max <= Min. It also disable the auto domain. */
-  m_autoParam = false;
   parameterIndex == 1 ? m_rangeParam.setMin(f, INFINITY)
                       : m_rangeParam.setMax(f, INFINITY);
   return true;

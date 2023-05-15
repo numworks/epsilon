@@ -57,7 +57,7 @@ class HypothesisController
   bool textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
   bool textFieldIsEditable(Escher::AbstractTextField* textField) override {
     assert(selectedRow() == 0);
-    return m_test->significanceTestType() != SignificanceTestType::Slope;
+    return m_h0.textFieldIsEditable(textField);
   }
   bool textFieldIsStorable(Escher::AbstractTextField* textField) override {
     return false;

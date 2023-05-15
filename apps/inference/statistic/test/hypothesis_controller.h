@@ -56,8 +56,8 @@ class HypothesisController
                                  Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
   bool textFieldIsEditable(Escher::AbstractTextField* textField) override {
-    return selectedRow() != 0 ||
-           m_test->significanceTestType() != SignificanceTestType::Slope;
+    assert(selectedRow() == 0);
+    return m_test->significanceTestType() != SignificanceTestType::Slope;
   }
   bool textFieldIsStorable(Escher::AbstractTextField* textField) override {
     return false;

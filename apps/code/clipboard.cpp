@@ -78,6 +78,9 @@ const UTF8Helper::TextPair *Clipboard::PythonTextPairs() {
           UTF8Helper::TextPair("π", "pi"),
           UTF8Helper::TextPair("×", "*"),
           UTF8Helper::TextPair("·", "*"),
+          UTF8Helper::TextPair("≠", "!="),
+          UTF8Helper::TextPair("≤", "<="),
+          UTF8Helper::TextPair("≥", ">="),
           UTF8Helper::TextPair("][", "], ["),
       };
   return k_pythonTextPairs;

@@ -669,8 +669,12 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
    * log(x^y, x) is handled by the parent logarithm, but x^log(y,x) is handled
    * here. */
   Expression p = parent();
+  // Avoid expanding e^(π+2) in ln(e^(π+2))
   if (!p.isUninitialized() && p.indexOfChild(*this) == 0 &&
-      isLogarithmOfSameBase(p)) {  // Avoid expanding e^(π+2) in ln(e^(π+2))
+      isLogarithmOfSameBase(p) &&
+      (p.numberOfChildren() == 1 || !p.childAtIndex(1).hasUnit())) {
+    /* The has unit condition is a hack to avoid the banUnits used by the log
+     * from stumbling upon unexpanded powers of units with log(N^2,N) */
     return *this;
   }
 

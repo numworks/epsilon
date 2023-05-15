@@ -737,6 +737,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("log(_s)", "undef");
   assert_parsed_expression_simplify_to("log(_s,2)", "undef");
   assert_parsed_expression_simplify_to("log(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("log(_N^2,_N)", "undef");
   assert_parsed_expression_simplify_to("norm(_s)", "undef");
   assert_parsed_expression_simplify_to("normcdf(_s,2,3)", "undef");
   assert_parsed_expression_simplify_to("normcdf(2,_s,3)", "undef");

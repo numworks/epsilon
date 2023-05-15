@@ -123,6 +123,8 @@ HighlightCell* HypothesisController::cell(int index) {
 
 void HypothesisController::didBecomeFirstResponder() {
   selectCell(0);
+  m_h0.setEditable(m_test->significanceTestType() !=
+                   SignificanceTestType::Slope);
   m_haDropdown.selectRow(
       static_cast<int>(m_test->hypothesisParams()->comparisonOperator()));
   m_haDropdown.init();

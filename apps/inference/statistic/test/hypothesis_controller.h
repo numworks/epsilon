@@ -56,8 +56,9 @@ class HypothesisController
                                  Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
   bool textFieldIsEditable(Escher::AbstractTextField* textField) override {
-    assert(selectedRow() == 0);
-    return m_h0.textFieldIsEditable(textField);
+    // AbstractWithEditableText shortcuts the delegates chain.
+    assert(false);
+    return true;
   }
   bool textFieldIsStorable(Escher::AbstractTextField* textField) override {
     return false;

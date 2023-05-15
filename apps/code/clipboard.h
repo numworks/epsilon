@@ -8,7 +8,7 @@ namespace Code {
 
 class Clipboard : public Escher::Clipboard {
  public:
-  constexpr static int k_numberOfPythonTextPairs = 11;
+  constexpr static int k_numberOfPythonTextPairs = 14;
 
   static Clipboard* sharedClipboard();
   static const UTF8Helper::TextPair* PythonTextPairs();

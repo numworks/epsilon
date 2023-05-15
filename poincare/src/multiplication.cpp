@@ -606,7 +606,11 @@ Expression Multiplication::shallowBeautify(
         Expression divisionUnit;
         division = division.cloneAndReduceAndRemoveUnit(reductionContext,
                                                         &divisionUnit);
-        assert(divisionUnit.isUninitialized());
+        if (!divisionUnit.isUninitialized()) {
+          // the division should have no unit, this means the reduction failed
+          result = Undefined::Builder();
+          goto replace_by_result;
+        }
         division = division.shallowReduce(reductionContext)
                        .shallowBeautify(reductionContext);
         result = Multiplication::Builder(division, toUnit);

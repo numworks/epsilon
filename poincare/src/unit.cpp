@@ -47,7 +47,7 @@ void UnitNode::DimensionVector::addAllCoefficients(const DimensionVector other,
 }
 
 UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
-    const Expression baseUnits) {
+    const Expression baseUnits, bool canIgnoreCoefficients) {
   /* Returns the vector of Base units with integer exponents. If rational, the
    * closest integer will be used. */
   DimensionVector nullVector = {
@@ -97,6 +97,9 @@ UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
       } else {
         /* Base units vector will ignore this coefficient, to avoid exponent
          * overflow. In any way, shallowBeautify will conserve homogeneity. */
+        if (!canIgnoreCoefficients) {
+          return nullVector;
+        }
         exponent = 0;
       }
       factor = factor.childAtIndex(0);
@@ -1195,7 +1198,7 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit,
     return false;
   }
   UnitNode::DimensionVector vector =
-      UnitNode::DimensionVector::FromBaseUnits(unit);
+      UnitNode::DimensionVector::FromBaseUnits(unit, false);
   const Representative* representative =
       Representative::RepresentativeForDimension(vector);
 

@@ -27,8 +27,8 @@ void assert_match_and_create(Node source, Node pattern, Node structure,
   createdRef.removeTree();
   // Also test with matchAndReplace
   EditionReference replacedSourceClone =
-      EditionReference(EditionPool::sharedEditionPool()->clone(source))
-          .matchAndReplace(pattern, structure);
+      EditionReference(EditionPool::sharedEditionPool()->clone(source));
+  replacedSourceClone.matchAndReplace(pattern, structure);
   assert_trees_are_equal(replacedSourceClone, output);
   replacedSourceClone.removeTree();
 }

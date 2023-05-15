@@ -57,7 +57,7 @@ EditionReference Simplification::ContractAbs(EditionReference reference) {
       KMult(KPlaceholder<A>(),
             KAbs(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
             KPlaceholder<D>());
-  reference = reference.matchAndReplace(AbsExpanded, AbsContracted);
+  reference.matchAndReplace(AbsExpanded, AbsContracted);
   return reference;
 }
 
@@ -66,7 +66,7 @@ EditionReference Simplification::ExpandAbs(EditionReference reference) {
       KAbs(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()));
   Node AbsExpanded =
       KMult(KAbs(KPlaceholder<A>()), KAbs(KMult(KPlaceholder<B>())));
-  reference = reference.matchAndReplace(AbsContracted, AbsExpanded);
+  reference.matchAndReplace(AbsContracted, AbsExpanded);
   return reference;
 }
 
@@ -77,14 +77,14 @@ EditionReference Simplification::ContractLn(EditionReference reference) {
       KAdd(KPlaceholder<A>(),
            KLn(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
            KPlaceholder<D>());
-  reference = reference.matchAndReplace(LnExpanded, LnContracted);
+  reference.matchAndReplace(LnExpanded, LnContracted);
   return reference;
 }
 
 EditionReference Simplification::ExpandLn(EditionReference reference) {
   Node LnContracted = KLn(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()));
   Node LnExpanded = KAdd(KLn(KPlaceholder<A>()), KLn(KMult(KPlaceholder<B>())));
-  reference = reference.matchAndReplace(LnContracted, LnExpanded);
+  reference.matchAndReplace(LnContracted, LnExpanded);
   return reference;
 }
 
@@ -93,13 +93,13 @@ EditionReference Simplification::ExpandExp(EditionReference reference) {
       KAdd(KPlaceholder<A>(), KPlaceholder<B>(), KAnyTreesPlaceholder<C>()));
   Node expMulExpanded = KMult(KExp(KPlaceholder<A>()),
                               KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())));
-  reference = reference.matchAndReplace(expMulContracted, expMulExpanded);
+  reference.matchAndReplace(expMulContracted, expMulExpanded);
 
   Node expExpContracted = KExp(
       KMult(KPlaceholder<A>(), KPlaceholder<B>(), KAnyTreesPlaceholder<C>()));
   Node expExpExpanded = KPow(KExp(KPlaceholder<A>()),
                              KMult(KPlaceholder<B>(), KPlaceholder<C>()));
-  reference = reference.matchAndReplace(expExpContracted, expExpExpanded);
+  reference.matchAndReplace(expExpContracted, expExpExpanded);
   return reference;
 }
 
@@ -111,11 +111,12 @@ EditionReference Simplification::ContractExp(EditionReference reference) {
   Node expMulContracted =
       KMult(KPlaceholder<C>(), KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>())),
             KPlaceholder<D>(), KPlaceholder<E>());
-  reference = reference.matchAndReplace(expMulExpanded, expMulContracted);
+  reference.matchAndReplace(expMulExpanded, expMulContracted);
 
   Node expExpExpanded = KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>());
   Node expExpContracted = KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>()));
-  return reference.matchAndReplace(expExpExpanded, expExpContracted);
+  reference.matchAndReplace(expExpExpanded, expExpContracted);
+  return reference;
 }
 
 EditionReference Simplification::ExpandTrigonometric(
@@ -130,8 +131,9 @@ EditionReference Simplification::ExpandTrigonometric(
                  KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<C>()), 0_e)),
            KMult(KTrig(KPlaceholder<A>(), KAdd(KPlaceholder<D>(), -1_e)),
                  KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<C>()), 1_e)));
-  return reference.matchAndReplace(contracted, expanded);
+  reference.matchAndReplace(contracted, expanded);
   // TODO: If replaced, simplify resulting KTrigs
+  return reference;
 }
 
 EditionReference Simplification::ContractTrigonometric(
@@ -149,8 +151,9 @@ EditionReference Simplification::ContractTrigonometric(
                  KTrig(KAdd(KPlaceholder<A>(), KPlaceholder<B>()),
                        KAdd(KPlaceholder<D>(), KPlaceholder<C>()))),
             KPlaceholder<F>(), KPlaceholder<G>());
-  return reference.matchAndReplace(expanded, contracted);
+  reference.matchAndReplace(expanded, contracted);
   // TODO: If replaced, simplify resulting KTrigs
+  return reference;
 }
 
 EditionReference Simplification::DivisionReduction(EditionReference reference) {
@@ -249,10 +252,9 @@ EditionReference Simplification::SystemProjection(EditionReference reference,
       case BlockType::Tangent:
         /* TODO: Tangent will duplicate its children, replacing it after
          * everything else may be an optimization. */
-        ref = ref.matchAndReplace(
-            KTan(KPlaceholder<A>()),
-            KMult(KTrig(KPlaceholder<A>(), 1_e),
-                  KPow(KTrig(KPlaceholder<A>(), 0_e), -1_e)));
+        ref.matchAndReplace(KTan(KPlaceholder<A>()),
+                            KMult(KTrig(KPlaceholder<A>(), 1_e),
+                                  KPow(KTrig(KPlaceholder<A>(), 0_e), -1_e)));
         break;
       case BlockType::Power:
         if (node.nextNode().treeIsIdenticalTo(e_e)) {
@@ -265,11 +267,12 @@ EditionReference Simplification::SystemProjection(EditionReference reference,
         }
         break;
       case BlockType::Logarithm:
-        ref.matchAndReplace(KLogarithm(KPlaceholder<A>(), e_e),
-                            KLn(KPlaceholder<A>()))
-            .matchAndReplace(KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()),
-                             KMult(KLn(KPlaceholder<A>()),
-                                   KPow(KLn(KPlaceholder<B>()), -1_e)));
+        if (!ref.matchAndReplace(KLogarithm(KPlaceholder<A>(), e_e),
+                                 KLn(KPlaceholder<A>()))) {
+          ref.matchAndReplace(KLogarithm(KPlaceholder<A>(), KPlaceholder<B>()),
+                              KMult(KLn(KPlaceholder<A>()),
+                                    KPow(KLn(KPlaceholder<B>()), -1_e)));
+        }
         break;
       case BlockType::Log:
         ref.matchAndReplace(

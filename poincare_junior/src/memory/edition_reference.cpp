@@ -99,8 +99,8 @@ EditionReference EditionReference::matchAndCreate(const Node pattern,
   return PatternMatching::Create(structure, ctx);
 }
 
-EditionReference EditionReference::matchAndReplace(const Node pattern,
-                                                   const Node structure) {
+bool EditionReference::matchAndReplace(const Node pattern,
+                                       const Node structure) {
   /* TODO: When possible this could be optimized by deleting all non-placeholder
    * pattern nodes and then inserting all the non-placeholder structure nodes.
    * For example : Pattern : +{4} A 1 B C A     Structure : *{4} 2 B A A
@@ -122,7 +122,7 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
   // Step 1 - Match the pattern
   PatternMatching::Context ctx;
   if (!PatternMatching::Match(pattern, *this, &ctx)) {
-    return *this;
+    return false;
   }
   EditionPool* editionPool = EditionPool::sharedEditionPool();
   /* Following this example :
@@ -207,7 +207,7 @@ EditionReference EditionReference::matchAndReplace(const Node pattern,
   *this = createdRef;
 
   // EditionPool: ..... | +{2} *{2} x z *{2} y z | ....
-  return *this;
+  return true;
 }
 
 void EditionReference::remove(bool isTree) {

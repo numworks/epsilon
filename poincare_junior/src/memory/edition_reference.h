@@ -118,7 +118,8 @@ class EditionReference {
 
   EditionReference matchAndCreate(const Node pattern,
                                   const Node structure) const;
-  EditionReference matchAndReplace(const Node pattern, const Node structure);
+  // Return true if reference has been replaced.
+  bool matchAndReplace(const Node pattern, const Node structure);
 
  private:
   void insert(Node nodeToInsert, bool before, bool isTree);

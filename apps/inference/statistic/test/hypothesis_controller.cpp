@@ -67,8 +67,9 @@ bool HypothesisController::handleEvent(Ion::Events::Event event) {
 
 bool HypothesisController::textFieldDidReceiveEvent(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
-  if (textFieldIsEditable(textField) &&
-      (event == Ion::Events::OK || event == Ion::Events::EXE) &&
+  // If the textField is not editable, then it shouldn't enter responder chain.
+  assert(selectedRow() == 0 && m_h0.textFieldIsEditable(textField));
+  if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
       !textField->isEditing()) {
     // Remove prefix to edit text
     textField->setText(textField->text() + strlen(symbolPrefix()) +

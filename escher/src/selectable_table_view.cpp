@@ -185,8 +185,15 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
         strlcpy(buffer, text, bufferSize);
       } else {
         assert(!layout.isUninitialized());
-        layout.serializeParsedExpression(
-            buffer, bufferSize, m_delegate ? m_delegate->context() : nullptr);
+        if (layout.serializeParsedExpression(
+                buffer, bufferSize,
+                m_delegate ? m_delegate->context() : nullptr) ==
+            bufferSize - 1) {
+          /* The layout is too large to be serialized in the buffer. Returning
+           * false will open an empty store which is better than a broken
+           * text. */
+          return false;
+        };
       }
     }
     // Step 2: Determine where to store it

@@ -80,6 +80,9 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
     if (codePoint == UCodePointLineFeed) {
       assert(position.y() < KDCOORDINATE_MAX - glyphSize.height());
       position = KDPoint(0, position.y() + glyphSize.height());
+      if (origin().y() + position.y() >= Ion::Display::Height) {
+        break;
+      }
       codePoint = decoder.nextCodePoint();
     } else if (codePoint == UCodePointCarriageReturn) {
       // Ignore '\r' that are added for compatibility
@@ -109,7 +112,7 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
       fillRectWithPixels(KDRect(position, glyphSize), glyphBuffer.colorBuffer(),
                          glyphBuffer.colorBuffer());
       position = position.translatedBy(KDPoint(glyphSize.width(), 0));
-      if (origin().x() + position.x() > Ion::Display::Width) {
+      if (origin().x() + position.x() >= Ion::Display::Width) {
         // fast forward until line feed
         while (codePoint != UCodePointLineFeed && codePoint != UCodePointNull) {
           codePoint = decoder.nextCodePoint();

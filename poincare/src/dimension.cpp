@@ -44,15 +44,14 @@ Evaluation<T> DimensionNode::templatedApproximate(
   if (input.type() == EvaluationNode<T>::Type::ListComplex) {
     return Complex<T>::Builder(std::complex<T>(input.numberOfChildren()));
   }
-  std::complex<T> operands[2];
-  if (input.type() == EvaluationNode<T>::Type::MatrixComplex) {
-    operands[0] =
-        std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfRows());
-    operands[1] = std::complex<T>(
-        static_cast<MatrixComplex<T>&>(input).numberOfColumns());
-    return MatrixComplex<T>::Builder(operands, 1, 2);
+  if (input.type() != EvaluationNode<T>::Type::MatrixComplex ||
+      input.isUndefined()) {
+    return Complex<T>::Undefined();
   }
-  return Complex<T>::Undefined();
+  std::complex<T> operands[] = {
+      std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfRows()),
+      std::complex<T>(static_cast<MatrixComplex<T>&>(input).numberOfColumns())};
+  return MatrixComplex<T>::Builder(operands, 1, 2);
 }
 
 Expression Dimension::shallowReduce(ReductionContext reductionContext) {

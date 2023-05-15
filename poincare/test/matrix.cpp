@@ -23,3 +23,17 @@ QUIZ_CASE(poincare_matrix_rank) {
   assert_has_rank("[[1,-1,0][0,1,2][0,1,2][0,1,2][0,1,2][0,1,2]]", 2);
   assert_has_rank("[[1,0,0,0,0,0][-1,1,1,1,1,1][0,2,2,2,2,2]]", 2);
 }
+
+QUIZ_CASE(poincare_matrix_undef) {
+  assert_expression_approximates_to<float>("cross([[0]],[[0]])", "undef");
+  assert_expression_approximates_to<float>("det(cross([[0]],[[0]]))", "undef");
+  assert_expression_approximates_to<float>("dim(cross([[0]],[[0]]))", "undef");
+  assert_expression_approximates_to<float>("inverse(cross([[0]],[[0]]))",
+                                           "undef");
+  assert_expression_approximates_to<float>("norm(cross([[0]],[[0]]))", "undef");
+  assert_expression_approximates_to<float>("ref(cross([[0]],[[0]]))", "undef");
+  assert_expression_approximates_to<float>("trace(cross([[0]],[[0]]))",
+                                           "undef");
+  assert_expression_approximates_to<float>("transpose(cross([[0]],[[0]]))",
+                                           "undef");
+}

@@ -105,6 +105,9 @@ MatrixComplex<T> MatrixComplexNode<T>::inverse() const {
 
 template <typename T>
 MatrixComplex<T> MatrixComplexNode<T>::transpose() const {
+  if (isUndefined()) {
+    return MatrixComplex<T>::Undefined();
+  }
   // Intentionally swapping dimensions for transpose
   MatrixComplex<T> result = MatrixComplex<T>::Builder();
   for (int j = 0; j < numberOfColumns(); j++) {

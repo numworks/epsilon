@@ -60,7 +60,8 @@ class UnitNode final : public ExpressionNode {
   struct DimensionVector {
     // SupportSize is defined as the number of distinct base units.
     size_t supportSize() const;
-    static DimensionVector FromBaseUnits(const Expression baseUnits);
+    static DimensionVector FromBaseUnits(const Expression baseUnits,
+                                         bool canIgnoreCoefficients = true);
     const int coefficientAtIndex(size_t i) const {
       assert(i < k_numberOfBaseUnits);
       const int coefficients[k_numberOfBaseUnits] = {time,

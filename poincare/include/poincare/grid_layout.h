@@ -29,7 +29,7 @@ class GridLayoutNode : public Array, public LayoutNode {
     return KDSize(width(font), height(font));
   }
   void willFillEmptyChildAtIndex(int childIndex);
-  bool removeEmptyRowOrColumnAtChildIndexIfNeeded(int childIndex);
+  int removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex);
   virtual void startEditing() = 0;
   virtual void stopEditing() = 0;
 

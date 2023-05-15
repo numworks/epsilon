@@ -94,30 +94,30 @@ void GridLayoutNode::willFillEmptyChildAtIndex(int childIndex) {
   }
 }
 
-bool GridLayoutNode::removeEmptyRowOrColumnAtChildIndexIfNeeded(
-    int childIndex) {
+int GridLayoutNode::removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex) {
   assert(childAtIndex(childIndex)->isEmpty());
   assert(isEditing());
   int rowIndex = rowAtChildIndex(childIndex);
   int columnIndex = columnAtChildIndex(childIndex);
   bool isRightOfGrid = childIsInLastNonGrayColumn(childIndex);
   bool isBottomOfGrid = childIsInLastNonGrayRow(childIndex);
-  bool changed = false;
+  int newColumnIndex = columnIndex;
+  int newRowIndex = rowIndex;
   while (isRightOfGrid && !numberOfColumnsIsFixed() &&
          numberOfColumns() > k_minimalNumberOfRowsAndColumnsWhileEditing &&
          isColumnEmpty(columnIndex)) {
+    newColumnIndex = columnIndex;
     deleteColumnAtIndex(columnIndex--);
-    changed = true;
   }
   while (isBottomOfGrid && !numberOfRowsIsFixed() &&
          numberOfRows() > k_minimalNumberOfRowsAndColumnsWhileEditing &&
          isRowEmpty(rowIndex)) {
+    newRowIndex = rowIndex;
     deleteRowAtIndex(rowIndex--);
-    changed = true;
   }
   assert(numberOfColumns() >= k_minimalNumberOfRowsAndColumnsWhileEditing &&
          numberOfRows() >= k_minimalNumberOfRowsAndColumnsWhileEditing);
-  return changed;
+  return indexAtRowColumn(newRowIndex, newColumnIndex);
 }
 
 // Protected

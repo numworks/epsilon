@@ -82,7 +82,7 @@ UnitNode::DimensionVector UnitNode::DimensionVector::FromBaseUnits(
                                 .node()
                                 ->templatedApproximate<float>();
       if (exponentFloat != std::round(exponentFloat)) {
-        /* If non-integer exponents are found, we round a null vector so that
+        /* If non-integer exponents are found, we return a null vector so that
          * Multiplication::shallowBeautify will not attempt to find derived
          * units. */
         return nullVector;

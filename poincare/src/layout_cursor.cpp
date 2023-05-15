@@ -1162,18 +1162,9 @@ void LayoutCursor::removeEmptyRowOrColumnOfGridParentIfNeeded() {
   Layout parentGrid = m_layout.parent();
   GridLayoutNode *gridNode = static_cast<GridLayoutNode *>(parentGrid.node());
   int currentChildIndex = parentGrid.indexOfChild(m_layout);
-  int currentRow = gridNode->rowAtChildIndex(currentChildIndex);
-  int currentColumn = gridNode->columnAtChildIndex(currentChildIndex);
-  int rows = gridNode->numberOfRows();
-  int cols = gridNode->numberOfColumns();
-  bool changed =
-      gridNode->removeEmptyRowOrColumnAtChildIndexIfNeeded(currentChildIndex);
-  if (changed) {
-    int deletedRows = rows - gridNode->numberOfRows();
-    int deletedCols = cols - gridNode->numberOfColumns();
-    int newChildIndex = gridNode->indexAtRowColumn(
-        currentRow - std::max(0, deletedRows - 1),
-        currentColumn - std::max(0, deletedCols - 1));
+  int newChildIndex =
+      gridNode->removeTrailingEmptyRowOrColumnAtChildIndex(currentChildIndex);
+  if (parentGrid.childAtIndex(newChildIndex) != m_layout) {
     assert(parentGrid.numberOfChildren() > newChildIndex);
     *this = LayoutCursor(parentGrid.childAtIndex(newChildIndex));
     didEnterCurrentPosition();

@@ -99,10 +99,10 @@ class App : public Shared::InputEventHandlerDelegateApp {
      * buffer if Code is not the largest app.
      * We must also make sure in the linker script that the pool is located
      * right after the Apps buffer. */
-    assert(Poincare::TreePool::sharedPool->numberOfNodes() == 0);
-    assert(static_cast<void *>(m_pythonHeap + k_pythonHeapSize) <=
-           static_cast<void *>(Poincare::TreePool::sharedPool +
-                               sizeof(Poincare::TreePool)));
+    assert(static_cast<char *>(m_pythonHeap + k_pythonHeapSize) <=
+           static_cast<char *>(
+               static_cast<void *>(Poincare::TreePool::sharedPool)) +
+               sizeof(Poincare::TreePool));
     return m_pythonHeap;
   }
   constexpr static int k_pythonHeapExtensionSize =

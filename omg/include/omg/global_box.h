@@ -46,6 +46,8 @@ class alignas(T) GlobalBox {
   }
   T* operator->() { return get(); }
   operator T*() { return get(); }
+  // Box initialization is not required to use its raw address
+  operator void*() { return m_buffer; }
 
  private:
   uint8_t m_buffer[sizeof(T)];

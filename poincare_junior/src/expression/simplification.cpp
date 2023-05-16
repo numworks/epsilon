@@ -50,110 +50,139 @@ void Simplification::ReduceNumbersInNAry(EditionReference reference,
   NAry::SetNumberOfChildren(reference, nbOfChildren - index);
 }
 
-EditionReference Simplification::ContractAbs(EditionReference reference) {
-  Node AbsExpanded = KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
-                           KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>());
-  Node AbsContracted =
+bool Simplification::Contract(EditionReference* e) {
+  switch (e->type()) {
+    case BlockType::Addition:
+      // Replace with an Addition, which cannot be contracted further.
+      return ContractLn(e);
+    case BlockType::Multiplication:
+      /* These contract methods replace with a Multiplication.
+       * They must be called successively, so a | is used instead of || so that
+       * there are all evaluated. */
+      return ContractAbs(e) | ContractTrigonometric(e) | ContractExpMult(e);
+    case BlockType::Power:
+      // Replace with an Exponential, which cannot be contracted further.
+      return ContractExpPow(e);
+    default:
+      return false;
+  }
+}
+
+bool Simplification::Expand(EditionReference* e) {
+  /* None of these Expand methods replace with a BlockType that can be expanded
+   * again. Otherwise, one would have to call Expand(e) again upon success. */
+  switch (e->type()) {
+    case BlockType::Abs:
+      return ExpandAbs(e);
+    case BlockType::Ln:
+      return ExpandLn(e);
+    case BlockType::Exponential:
+      return ExpandExp(e);
+    case BlockType::Trig:
+      return ExpandTrigonometric(e);
+    default:
+      return false;
+  }
+}
+
+bool Simplification::ContractAbs(EditionReference* reference) {
+  // TODO : Ensure NAry children are sorted before and after.
+  // A*|B|*|C|*D = A*|BC|*D
+  return reference->matchAndReplace(
+      KMult(KAnyTreesPlaceholder<A>(), KAbs(KPlaceholder<B>()),
+            KAbs(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KMult(KPlaceholder<A>(),
             KAbs(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
-            KPlaceholder<D>());
-  reference.matchAndReplace(AbsExpanded, AbsContracted);
-  return reference;
+            KPlaceholder<D>()));
 }
 
-EditionReference Simplification::ExpandAbs(EditionReference reference) {
-  Node AbsContracted =
-      KAbs(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()));
-  Node AbsExpanded =
-      KMult(KAbs(KPlaceholder<A>()), KAbs(KMult(KPlaceholder<B>())));
-  reference.matchAndReplace(AbsContracted, AbsExpanded);
-  return reference;
+bool Simplification::ExpandAbs(EditionReference* reference) {
+  // |AB| = |A|*|B|
+  return reference->matchAndReplace(
+      KAbs(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>())),
+      KMult(KAbs(KPlaceholder<A>()), KAbs(KMult(KPlaceholder<B>()))));
 }
 
-EditionReference Simplification::ContractLn(EditionReference reference) {
-  Node LnExpanded = KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
-                         KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>());
-  Node LnContracted =
+bool Simplification::ContractLn(EditionReference* reference) {
+  // TODO : Ensure NAry children are sorted before and after.
+  // A? + Ln(B) + Ln(C) + D? = A + ln(BC) + D
+  return reference->matchAndReplace(
+      KAdd(KAnyTreesPlaceholder<A>(), KLn(KPlaceholder<B>()),
+           KLn(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
       KAdd(KPlaceholder<A>(),
            KLn(KMult(KPlaceholder<B>(), KAnyTreesPlaceholder<C>())),
-           KPlaceholder<D>());
-  reference.matchAndReplace(LnExpanded, LnContracted);
-  return reference;
+           KPlaceholder<D>()));
 }
 
-EditionReference Simplification::ExpandLn(EditionReference reference) {
-  Node LnContracted = KLn(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()));
-  Node LnExpanded = KAdd(KLn(KPlaceholder<A>()), KLn(KMult(KPlaceholder<B>())));
-  reference.matchAndReplace(LnContracted, LnExpanded);
-  return reference;
+bool Simplification::ExpandLn(EditionReference* reference) {
+  // ln(AB) = Ln(A) + Ln(B)
+  return reference->matchAndReplace(
+      KLn(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>())),
+      KAdd(KLn(KPlaceholder<A>()), KLn(KMult(KPlaceholder<B>()))));
 }
 
-EditionReference Simplification::ExpandExp(EditionReference reference) {
-  Node expMulContracted = KExp(
-      KAdd(KPlaceholder<A>(), KPlaceholder<B>(), KAnyTreesPlaceholder<C>()));
-  Node expMulExpanded = KMult(KExp(KPlaceholder<A>()),
-                              KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())));
-  reference.matchAndReplace(expMulContracted, expMulExpanded);
-
-  Node expExpContracted = KExp(
-      KMult(KPlaceholder<A>(), KPlaceholder<B>(), KAnyTreesPlaceholder<C>()));
-  Node expExpExpanded = KPow(KExp(KPlaceholder<A>()),
-                             KMult(KPlaceholder<B>(), KPlaceholder<C>()));
-  reference.matchAndReplace(expExpContracted, expExpExpanded);
-  return reference;
+bool Simplification::ExpandExp(EditionReference* reference) {
+  return
+      // e^(A+B+C?) = e^A * e^(B+C)
+      reference->matchAndReplace(
+          KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>(),
+                    KAnyTreesPlaceholder<C>())),
+          KMult(KExp(KPlaceholder<A>()),
+                KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())))) ||
+      // e^ABC? = (e^A)^(BC)
+      reference->matchAndReplace(
+          KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>(),
+                     KAnyTreesPlaceholder<C>())),
+          KPow(KExp(KPlaceholder<A>()),
+               KMult(KPlaceholder<B>(), KPlaceholder<C>())));
 }
 
-EditionReference Simplification::ContractExp(EditionReference reference) {
-  Node expMulExpanded =
-      KMult(KAnyTreesPlaceholder<C>(), KExp(KPlaceholder<A>()),
-            KAnyTreesPlaceholder<D>(), KExp(KPlaceholder<B>()),
-            KAnyTreesPlaceholder<E>());
-  Node expMulContracted =
-      KMult(KPlaceholder<C>(), KExp(KAdd(KPlaceholder<A>(), KPlaceholder<B>())),
-            KPlaceholder<D>(), KPlaceholder<E>());
-  reference.matchAndReplace(expMulExpanded, expMulContracted);
-
-  Node expExpExpanded = KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>());
-  Node expExpContracted = KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>()));
-  reference.matchAndReplace(expExpExpanded, expExpContracted);
-  return reference;
+bool Simplification::ContractExpMult(EditionReference* reference) {
+  // TODO : Ensure NAry children are sorted before and after.
+  // A? * e^B * e^C * D? = A * e^(B+C) * D
+  return reference->matchAndReplace(
+      KMult(KAnyTreesPlaceholder<A>(), KExp(KPlaceholder<B>()),
+            KExp(KPlaceholder<C>()), KAnyTreesPlaceholder<D>()),
+      KMult(KPlaceholder<A>(), KExp(KAdd(KPlaceholder<B>(), KPlaceholder<C>())),
+            KPlaceholder<D>()));
 }
 
-EditionReference Simplification::ExpandTrigonometric(
-    EditionReference reference) {
-  /* KTrig : If second element is __, return ___ :
-   * (-1,-sin),(0,cos),(1,sin),(2,-cos) */
-  Node contracted = KTrig(
-      KAdd(KPlaceholder<A>(), KPlaceholder<B>(), KAnyTreesPlaceholder<C>()),
-      KPlaceholder<D>());
-  Node expanded =
+bool Simplification::ContractExpPow(EditionReference* reference) {
+  // (e^A)^B = e^AB
+  return reference->matchAndReplace(
+      KPow(KExp(KPlaceholder<A>()), KPlaceholder<B>()),
+      KExp(KMult(KPlaceholder<A>(), KPlaceholder<B>())));
+}
+
+bool Simplification::ExpandTrigonometric(EditionReference* reference) {
+  // If second element is -1/0/1/2, KTrig is -sin/cos/sin/-cos
+  // TODO : Ensure trig second element is reduced before and after.
+  // Trig(A+B+C?, D) = Trig(A, D)*Trig(B+C, 0) + Trig(A, D-1)*Trig(B+C, 1)
+  return reference->matchAndReplace(
+      KTrig(
+          KAdd(KPlaceholder<A>(), KPlaceholder<B>(), KAnyTreesPlaceholder<C>()),
+          KPlaceholder<D>()),
       KAdd(KMult(KTrig(KPlaceholder<A>(), KPlaceholder<D>()),
                  KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<C>()), 0_e)),
            KMult(KTrig(KPlaceholder<A>(), KAdd(KPlaceholder<D>(), -1_e)),
-                 KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<C>()), 1_e)));
-  reference.matchAndReplace(contracted, expanded);
-  // TODO: If replaced, simplify resulting KTrigs
-  return reference;
+                 KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<C>()), 1_e))));
 }
 
-EditionReference Simplification::ContractTrigonometric(
-    EditionReference reference) {
-  Node expanded = KMult(
-      KAnyTreesPlaceholder<E>(), KTrig(KPlaceholder<A>(), KPlaceholder<C>()),
-      KAnyTreesPlaceholder<F>(), KTrig(KPlaceholder<B>(), KPlaceholder<D>()),
-      KAnyTreesPlaceholder<G>());
+bool Simplification::ContractTrigonometric(EditionReference* reference) {
   /* KTrigDiff : If booth elements are 1 or both are 0, return 0. 1 Otherwise.
-   * TODO: This is the only place this is used. It might not be worth it.  */
-  Node contracted =
-      KMult(KPlaceholder<E>(), 0.5_e,
-            KAdd(KTrig(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>())),
-                       KTrigDiff(KPlaceholder<C>(), KPlaceholder<D>())),
-                 KTrig(KAdd(KPlaceholder<A>(), KPlaceholder<B>()),
-                       KAdd(KPlaceholder<D>(), KPlaceholder<C>()))),
-            KPlaceholder<F>(), KPlaceholder<G>());
-  reference.matchAndReplace(expanded, contracted);
-  // TODO: If replaced, simplify resulting KTrigs
-  return reference;
+   * TODO: This is the only place this is used. It might not be worth it. */
+  // A?*Trig(B, C)*Trig(D, E)*F? = A*0.5*(Trig(B-D, C+E-2CE) + Trig(B+D, E+C))*F
+  return reference->matchAndReplace(
+      KMult(KAnyTreesPlaceholder<A>(),
+            KTrig(KPlaceholder<B>(), KPlaceholder<C>()),
+            KTrig(KPlaceholder<D>(), KPlaceholder<E>()),
+            KAnyTreesPlaceholder<F>()),
+      KMult(KPlaceholder<A>(), 0.5_e,
+            KAdd(KTrig(KAdd(KPlaceholder<B>(), KMult(-1_e, KPlaceholder<D>())),
+                       KTrigDiff(KPlaceholder<C>(), KPlaceholder<E>())),
+                 KTrig(KAdd(KPlaceholder<B>(), KPlaceholder<D>()),
+                       KAdd(KPlaceholder<E>(), KPlaceholder<C>()))),
+            KPlaceholder<F>()));
 }
 
 EditionReference Simplification::DivisionReduction(EditionReference reference) {

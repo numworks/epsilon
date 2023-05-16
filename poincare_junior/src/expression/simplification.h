@@ -13,14 +13,18 @@ class Simplification {
     return reference;
   }
 
-  static EditionReference ContractAbs(EditionReference reference);
-  static EditionReference ExpandAbs(EditionReference reference);
-  static EditionReference ContractLn(EditionReference reference);
-  static EditionReference ExpandLn(EditionReference reference);
-  static EditionReference ContractExp(EditionReference reference);
-  static EditionReference ExpandExp(EditionReference reference);
-  static EditionReference ContractTrigonometric(EditionReference reference);
-  static EditionReference ExpandTrigonometric(EditionReference reference);
+  static bool Expand(EditionReference *reference);
+  static bool Contract(EditionReference *reference);
+
+  static bool ContractAbs(EditionReference *reference);
+  static bool ExpandAbs(EditionReference *reference);
+  static bool ContractLn(EditionReference *reference);
+  static bool ExpandLn(EditionReference *reference);
+  static bool ContractExpMult(EditionReference *reference);
+  static bool ContractExpPow(EditionReference *reference);
+  static bool ExpandExp(EditionReference *reference);
+  static bool ContractTrigonometric(EditionReference *reference);
+  static bool ExpandTrigonometric(EditionReference *reference);
 
   static EditionReference DivisionReduction(EditionReference reference);
   static EditionReference SubtractionReduction(EditionReference reference);

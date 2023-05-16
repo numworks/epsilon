@@ -59,7 +59,8 @@ namespace PoincareJ {
  * */
 
 enum class BlockType : uint8_t {
-  // InternalExpression
+  // 1 - Expression
+  // 1 - A - Numbers
   Zero = 0,
   One = 1,
   Two = 2,
@@ -74,35 +75,36 @@ enum class BlockType : uint8_t {
   RationalNegBig,
   Float,
   NumberOfNumbersExpression,
-
-  Constant = NumberOfNumbersExpression,
-  Addition,
-  Multiplication,
+  // 1 - B - Order dependant expressions
+  Multiplication = NumberOfNumbersExpression,
   Power,
+  Addition,
   Factorial,
-  UserSymbol,
-  UserFunction,
-  UserSequence,
-  // Expression
-  Subtraction,
   Division,
-  Set,
-  List,
-  Polynomial,
-  Cosine,
+  Constant,
+  UserSymbol,
   Sine,
+  Cosine,
   Tangent,
+  // 1 - C - Other expressions in Alphabetic order
   ArcCosine,
   ArcSine,
   ArcTangent,
-  Logarithm,
-  Log,
-  Ln,
   Exponential,
+  Ln,
+  Log,
+  Logarithm,
+  Polynomial,
+  Subtraction,
   Trig,
   TrigDiff,
+  UserFunction,
+  UserSequence,
+  // 1 - D - Order dependant expressions
+  List,
+  Set,
   NumberOfExpressions,
-  // Layout
+  // 2 - Layout
   FirstLayout = NumberOfExpressions,
   RackLayout = FirstLayout,
   FractionLayout,
@@ -111,7 +113,7 @@ enum class BlockType : uint8_t {
   CodePointLayout,
   LastLayout = CodePointLayout,
   NumberOfLayouts,
-  // Misc
+  // 3 - Others
   TreeBorder = NumberOfLayouts,
   Placeholder,
   SystemList,

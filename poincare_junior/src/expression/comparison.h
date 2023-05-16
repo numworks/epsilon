@@ -23,8 +23,7 @@ class Comparison {
   static int ComparePolynomial(const Node node0, const Node node1);
   static int CompareChildren(const Node node0, const Node node1,
                              ScanDirection scanDirection);
-  static int CompareFirstChild(const Node node0, const Node node1,
-                               ScanDirection scanDirection);
+  static int CompareLastChild(const Node node0, const Node node1);
 };
 
 }  // namespace PoincareJ

@@ -44,38 +44,24 @@ int Comparison::Compare(const Node node0, const Node node1) {
       case BlockType::Multiplication:
         return CompareChildren(node0, node1, ScanDirection::Backward);
 #endif
+      /* TODO : Either sort Addition/Multiplication children backward or restore
+       *        backward scan direction in CompareChildren. */
       default:
         return CompareChildren(node0, node1, ScanDirection::Forward);
     }
   } else {
     assert(type0 < type1);
-    switch (type0) {
-      case BlockType::Power: {
-        int comparisonBase = Compare(node0.childAtIndex(0), node1);
-        if (comparisonBase != 0) {
-          return 1;
-        }
-        return Compare(node0.childAtIndex(1), &OneBlock);
+    if (type0 == BlockType::Power) {
+      int comparisonBase = Compare(node0.childAtIndex(0), node1);
+      if (comparisonBase != 0) {
+        return 1;
       }
-      case BlockType::Addition:
-      case BlockType::Multiplication:
-#if POINCARE_JUNIOR_BACKWARD_SCAN
-        return CompareFirstChild(node0, node1, ScanDirection::Backward);
-#endif
-      case BlockType::Cosine:
-      case BlockType::Sine:
-      case BlockType::Tangent:
-      case BlockType::ArcCosine:
-      case BlockType::ArcSine:
-      case BlockType::ArcTangent:
-      case BlockType::Log:
-      case BlockType::Ln:
-      case BlockType::Exponential:
-      case BlockType::Factorial:
-        return CompareFirstChild(node0, node1, ScanDirection::Forward);
-      default:
-        return -1;
+      return Compare(node0.childAtIndex(1), &OneBlock);
     }
+    if (type0 == BlockType::Addition || type0 == BlockType::Multiplication) {
+      return CompareLastChild(node0, node1);
+    }
+    return -1;
   }
 }
 
@@ -180,15 +166,14 @@ int Comparison::CompareChildren(const Node node0, const Node node1,
   return 0;
 }
 
-int Comparison::CompareFirstChild(const Node node0, Node node1,
-                                  ScanDirection direction) {
-  uint8_t indexOfChild =
-      direction == ScanDirection::Forward ? 0 : node0.numberOfChildren() - 1;
-  int comparisonWithChild = Compare(node0.childAtIndex(indexOfChild), node1);
+int Comparison::CompareLastChild(const Node node0, Node node1) {
+  int m = node0.numberOfChildren();
+  // Otherwise, node0 should be sanitized beforehand.
+  assert(m > 1);
+  int comparisonWithChild = Compare(node0.childAtIndex(m - 1), node1);
   if (comparisonWithChild != 0) {
     return comparisonWithChild;
   }
-  assert(node0.numberOfChildren() > 1);
   return 1;
 }
 

@@ -22,7 +22,15 @@ class NAry {
   static EditionReference SquashIfUnary(EditionReference reference);
   static EditionReference SquashIfEmpty(EditionReference reference);
   static EditionReference Sanitize(EditionReference reference);
-  static void SortChildren(EditionReference reference);
+  /* With comparePowBaseInMult, Power uses its base for comparison in
+   * multiplications.
+   * TODO: Use a true comparePowBaseInMult everywhere except right after
+   *       SystemProjection to assert the expression no longer contains powers
+   *       that could slip in-between two nodes of the same type (which could
+   *       cause issues in most pattern matches). We may need a similar setup
+   *       with Additions/Multiplications. */
+  static void SortChildren(EditionReference reference,
+                           bool comparePowBaseInMult = true);
 };
 
 }  // namespace PoincareJ

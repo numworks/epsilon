@@ -243,6 +243,8 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
   return reference;
 }
 
+/* The order of nodes in NAry is not a concern here. They will be sorted in
+ * SystemReduction. */
 EditionReference Simplification::SystemProjection(EditionReference reference,
                                                   ProjectionContext context) {
   if (context == ProjectionContext::ApproximateToFloat) {

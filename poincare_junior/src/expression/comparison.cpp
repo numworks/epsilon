@@ -9,7 +9,8 @@
 
 namespace PoincareJ {
 
-int Comparison::Compare(const Node node0, const Node node1) {
+int Comparison::Compare(const Node node0, const Node node1,
+                        bool comparePowBase) {
   BlockType type0 = node0.type();
   BlockType type1 = node1.type();
   TypeBlock* block0 = node0.block();
@@ -51,7 +52,7 @@ int Comparison::Compare(const Node node0, const Node node1) {
     }
   } else {
     assert(type0 < type1);
-    if (type0 == BlockType::Power) {
+    if (comparePowBase && type0 == BlockType::Power) {
       int comparisonBase = Compare(node0.childAtIndex(0), node1);
       if (comparisonBase != 0) {
         return 1;

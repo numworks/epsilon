@@ -12,7 +12,8 @@ class Comparison {
    * -1 if block0 < block1
    *  0 if block0 == block1
    */
-  static int Compare(const Node node0, const Node node1);
+  static int Compare(const Node node0, const Node node1,
+                     bool comparePowBase = true);
   static bool AreEqual(const Node node0, const Node node1);
   static bool ContainsSubtree(const Node tree, const Node subtree);
 

@@ -623,6 +623,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
   TrinaryBoolean indexIsPositive = index.isPositive(context);
   TrinaryBoolean indexNull = index.isNull(context);
   if (base.type() == ExpressionNode::Type::Infinity) {
+    // Step 3.1: base is infinity
     if (indexNull == TrinaryBoolean::True) {
       // inf^0 -> undef
       return replaceWithUndefinedInPlace();
@@ -647,11 +648,18 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
     }
   } else if (base.isOne() &&
              !index.recursivelyMatches(Expression::IsInfinity, context)) {
-    // 1^x -> 1
+    /* Step 3.2: base is 1
+     * 1^x -> 1 */
     trivialResult = Rational::Builder(1);
+  } else if (index.isOne()) {
+    /* Step 3.3: index is 1
+     * x^1 -> x */
+    replaceWithInPlace(base);
+    return base;
   } else {
     TrinaryBoolean baseNull = base.isNull(context);
     if (baseNull == TrinaryBoolean::True) {
+      // Step 3.4: base is 0
       if (indexIsPositive == TrinaryBoolean::False ||
           indexNull == TrinaryBoolean::True) {
         // 0^0 or 0^-x -> undef
@@ -662,7 +670,8 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
         trivialResult = Rational::Builder(0);
       }
     } else if (indexNull == TrinaryBoolean::True) {
-      // x^0 -> 1 or dep(1, {x^0})
+      /* Step 3.5: index is 0
+       * x^0 -> 1 or dep(1, {x^0}) */
       if (baseNull == TrinaryBoolean::Unknown) {
         List depList = List::Builder();
         depList.addChildAtIndexInPlace(
@@ -854,10 +863,6 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
     return *this;
   }
   Rational rationalIndex = static_cast<Rational &>(index);
-  if (rationalIndex.isOne()) {
-    replaceWithInPlace(base);
-    return base;
-  }
 
   /* Step 8
    * Handle the case of base being a number */

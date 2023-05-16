@@ -217,6 +217,14 @@ template <typename T>
 Complex<T> PowerNode::computeOnComplex(
     const std::complex<T> c, const std::complex<T> d,
     Preferences::ComplexFormat complexFormat) {
+#if !PLATFORM_DEVICE
+  if (std::fabs(c.real()) == static_cast<T>(1.0) &&
+      std::fabs(d.real()) == INFINITY) {
+    /* On simulator, std::pow(1,Inf) is approximated to 1, which is not the
+     * behavior we want. */
+    return Complex<T>::RealUndefined();
+  }
+#endif
   std::complex<T> result;
   if (c.imag() == static_cast<T>(0.0) && d.imag() == static_cast<T>(0.0) &&
       c.real() != static_cast<T>(0.0) &&

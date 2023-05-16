@@ -134,6 +134,10 @@ QUIZ_CASE(poincare_approximation_infinity) {
   // Power
   assert_expression_approximates_to<double>("0^inf", "0");
   assert_expression_approximates_to<double>("0^(-inf)", Undefined::Name());
+  assert_expression_approximates_to<double>("1^inf", Undefined::Name());
+  assert_expression_approximates_to<double>("1^(-inf)", Undefined::Name());
+  assert_expression_approximates_to<double>("(-1)^inf", Undefined::Name());
+  assert_expression_approximates_to<double>("(-1)^(-inf)", Undefined::Name());
   assert_expression_approximates_to<double>("2^inf", "∞");
   assert_expression_approximates_to<double>("2^(-inf)", "0");
   assert_expression_approximates_to<double>("(-2)^inf", "∞");  // complex ∞

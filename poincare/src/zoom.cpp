@@ -98,7 +98,7 @@ static Range1D computeNewBoundsAfterZoomingOut(float t, Range1D oldRange,
   float k = oldRange.length() / (1.f - (minMargin + maxMargin));
   float newMin = oldRange.min() - k * minMargin;
   float newMax = oldRange.max() + k * maxMargin;
-  return Range1D(newMin, newMax);
+  return Range1D(newMin, newMax, limit);
 }
 
 void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped, float leftMargin,
@@ -106,9 +106,11 @@ void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped, float leftMargin,
   float xL = m_interestingRange.x()->length(),
         yL = m_interestingRange.y()->length();
   Range1D xRWithoutMargins(m_interestingRange.xMin() + leftMargin * xL,
-                           m_interestingRange.xMax() - rightMargin * xL);
+                           m_interestingRange.xMax() - rightMargin * xL,
+                           m_maxFloat);
   Range1D yRWithoutMargins(m_interestingRange.yMin() + bottomMargin * yL,
-                           m_interestingRange.yMax() - topMargin * yL);
+                           m_interestingRange.yMax() - topMargin * yL,
+                           m_maxFloat);
   Range1D xR = computeNewBoundsAfterZoomingOut(
       xy.x(), xRWithoutMargins, leftMargin, rightMargin, m_maxFloat);
   Range1D yR = computeNewBoundsAfterZoomingOut(
@@ -440,25 +442,28 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f,
   return p->f1(pb.x(), p->model1, p->context);
 }
 
-static Range1D sanitationHelper(Range1D range, float defaultHalfLength) {
+static Range1D sanitationHelper(Range1D range, float defaultHalfLength,
+                                float limit) {
   if (!range.isValid()) {
-    range = Range1D(0.f, 0.f);
+    range = Range1D(0.f, 0.f, limit);
   }
   if (range.length() < Range1D::k_minLength) {
     float c = range.min();
-    range = Range1D(c - defaultHalfLength, c + defaultHalfLength);
+    range = Range1D(c - defaultHalfLength, c + defaultHalfLength, limit);
   }
   return range;
 }
 
 Range2D Zoom::sanitize2DHelper(Range2D range) const {
-  Range1D xRange = m_forcedRange.x()->isValid()
-                       ? *m_forcedRange.x()
-                       : sanitationHelper(*range.x(), m_defaultHalfLength);
-  Range1D yRange = m_forcedRange.y()->isValid()
-                       ? *m_forcedRange.y()
-                       : sanitationHelper(*range.y(), xRange.length() * 0.5f *
-                                                          m_normalRatio);
+  Range1D xRange =
+      m_forcedRange.x()->isValid()
+          ? *m_forcedRange.x()
+          : sanitationHelper(*range.x(), m_defaultHalfLength, m_maxFloat);
+  Range1D yRange =
+      m_forcedRange.y()->isValid()
+          ? *m_forcedRange.y()
+          : sanitationHelper(*range.y(), xRange.length() * 0.5f * m_normalRatio,
+                             m_maxFloat);
   return Range2D(xRange, yRange);
 }
 
@@ -542,14 +547,14 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
   if (interestingRange->isValid() &&
       interestingCenter - lengthUnderCenter > interestingRange->min()) {
     *rangeToEdit = Range1D(interestingRange->min(),
-                           interestingRange->min() + normalLength);
+                           interestingRange->min() + normalLength, m_maxFloat);
   } else if (interestingRange->isValid() &&
              interestingCenter + lengthOverCenter < interestingRange->max()) {
     *rangeToEdit = Range1D(interestingRange->max() - normalLength,
-                           interestingRange->max());
+                           interestingRange->max(), m_maxFloat);
   } else {
     *rangeToEdit = Range1D(interestingCenter - lengthUnderCenter,
-                           interestingCenter + lengthOverCenter);
+                           interestingCenter + lengthOverCenter, m_maxFloat);
   }
 
   return saneRange;

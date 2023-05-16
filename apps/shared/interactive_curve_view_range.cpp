@@ -137,7 +137,7 @@ static float vectorLengthForMove(float v, float x) {
 }
 
 void InteractiveCurveViewRange::panWithVector(float x, float y) {
-  Range1D xRange(xMin(), xMax());
+  Range1D xRange(xMin(), xMax(), k_maxFloat);
   if (x != 0.f) {
     x = OMG::WithGreatestAbs(vectorLengthForMove(x, xMin()),
                              vectorLengthForMove(x, xMax()));
@@ -148,7 +148,7 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
     }
   }
 
-  Range1D yRange(yMin(), yMax());
+  Range1D yRange(yMin(), yMax(), k_maxFloat);
   if (y != 0.f) {
     y = OMG::WithGreatestAbs(vectorLengthForMove(y, yMin()),
                              vectorLengthForMove(y, yMax()));
@@ -187,7 +187,7 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
     float newXMax = position + range / 2.0f;
     if (xMax() != newXMax) {
       setZoomAuto(false);
-      protectedSetX(Range1D(newXMax - range, newXMax), k_maxFloat);
+      protectedSetX(Range1D(newXMax - range, newXMax, k_maxFloat), k_maxFloat);
     }
   } else {
     float range = yMax() - yMin();
@@ -197,8 +197,9 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
     float newYMax = position + range / 2.0f;
     if (yMax() != newYMax) {
       setZoomAuto(false);
-      protectedSetY(Range1D(position - 0.5f * range, position + 0.5f * range),
-                    k_maxFloat);
+      protectedSetY(
+          Range1D(position - 0.5f * range, position + 0.5f * range, k_maxFloat),
+          k_maxFloat);
     }
   }
 
@@ -222,7 +223,7 @@ bool InteractiveCurveViewRange::panToMakePointVisible(
           -k_maxFloat,
           std::floor((x - leftMargin - xMin()) / pixelWidth) * pixelWidth +
               xMin());
-      protectedSetX(Range1D(newXMin, newXMin + xRange), k_maxFloat);
+      protectedSetX(Range1D(newXMin, newXMin + xRange, k_maxFloat), k_maxFloat);
     }
     const float rightMargin = rightMarginRatio * xRange;
     if (x > xMax() - rightMargin && xMax() < k_maxFloat) {
@@ -231,7 +232,7 @@ bool InteractiveCurveViewRange::panToMakePointVisible(
           k_maxFloat,
           std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth +
               xMax());
-      protectedSetX(Range1D(newXMax - xRange, newXMax), k_maxFloat);
+      protectedSetX(Range1D(newXMax - xRange, newXMax, k_maxFloat), k_maxFloat);
     }
   }
   if (std::isfinite(y)) {
@@ -240,13 +241,13 @@ bool InteractiveCurveViewRange::panToMakePointVisible(
     if (y < yMin() + bottomMargin && yMin() > -k_maxFloat) {
       moved = true;
       const float newYMin = std::max(-k_maxFloat, y - bottomMargin);
-      protectedSetY(Range1D(newYMin, newYMin + yRange), k_maxFloat);
+      protectedSetY(Range1D(newYMin, newYMin + yRange, k_maxFloat), k_maxFloat);
     }
     const float topMargin = topMarginRatio * yRange;
     if (y > yMax() - topMargin && yMax() < k_maxFloat) {
       moved = true;
       const float newYMax = std::min(k_maxFloat, y + topMargin);
-      protectedSetY(Range1D(newYMax - yRange, newYMax), k_maxFloat);
+      protectedSetY(Range1D(newYMax - yRange, newYMax, k_maxFloat), k_maxFloat);
     }
   }
 
@@ -378,8 +379,10 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
 
     Range2D newRangeWithMargins = m_delegate->addMargins(newRange);
     newRangeWithMargins =
-        Range2D(computeX ? *newRangeWithMargins.x() : Range1D(xMin(), xMax()),
-                computeY ? *newRangeWithMargins.y() : Range1D(yMin(), yMax()));
+        Range2D(computeX ? *newRangeWithMargins.x()
+                         : Range1D(xMin(), xMax(), k_maxFloat),
+                computeY ? *newRangeWithMargins.y()
+                         : Range1D(yMin(), yMax(), k_maxFloat));
     if (newRange.ratioIs(NormalYXRatio())) {
       bool canSetRatio =
           newRangeWithMargins.setRatio(NormalYXRatio(), false, k_maxFloat);

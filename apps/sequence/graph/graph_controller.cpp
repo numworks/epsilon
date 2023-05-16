@@ -106,7 +106,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY,
   Range2D result;
   if (computeX) {
     float xMin = interestingXMin();
-    *result.x() = Range1D(xMin, xMin + k_defaultXHalfRange);
+    *result.x() = Range1D(xMin, xMin + k_defaultXHalfRange, k_maxFloat);
   } else {
     *result.x() = *originalRange.x();
   }

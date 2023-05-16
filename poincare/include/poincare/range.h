@@ -25,7 +25,9 @@ class Range1D {
    * more than limit, and length no less than k_minLength. */
   static Range1D RangeBetween(float a, float b, float limit = k_maxFloat);
 
-  constexpr Range1D(float min = NAN, float max = NAN) : m_min(min), m_max(max) {
+  constexpr Range1D(float min = NAN, float max = NAN, float limit = k_maxFloat)
+      : m_min(std::clamp(min, -limit, limit)),
+        m_max(std::clamp(max, -limit, limit)) {
     assert(m_min <= m_max || (std::isnan(m_min) && std::isnan(max)));
   }
 
@@ -50,8 +52,8 @@ class Range1D {
   float center() const { return 0.5f * (m_min + m_max); }
   void extend(float t, float limit);
   void zoom(float ratio, float center);
-  void stretchEachBoundBy(float shift);
-  void stretchIfTooSmall(float shift = -1);
+  void stretchEachBoundBy(float shift, float limit = k_maxFloat);
+  void stretchIfTooSmall(float shift = -1, float limit = k_maxFloat);
 
  private:
   void privateSet(float t, bool isMin, float limit);

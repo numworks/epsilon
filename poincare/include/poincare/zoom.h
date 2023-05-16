@@ -49,7 +49,9 @@ class Zoom {
    * If beautify is false, the range will only be sanitized, without attempting
    * to improve its ratio. */
   Range2D range(bool beautify, bool forceNormalization) const;
-  void setBounds(float min, float max) { m_bounds = Range1D(min, max); }
+  void setBounds(float min, float max) {
+    m_bounds = Range1D(min, max, m_maxFloat);
+  }
   void setForcedRange(Range2D range) { m_forcedRange = range; }
   /* These four functions will extend both X and Y axes. */
   void fitPoint(Coordinate2D<float> xy, bool flipped = false,

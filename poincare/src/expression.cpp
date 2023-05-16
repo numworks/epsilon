@@ -1006,8 +1006,9 @@ bool Expression::containsSameDependency(
 
 bool Expression::ExactAndApproximateExpressionsAreEqual(
     Expression exactExpression, Expression approximateExpression) {
-  assert(!exactExpression.isUninitialized() &&
-         !approximateExpression.isUninitialized());
+  assert(!exactExpression.isUninitialized());
+  assert(!approximateExpression.isUninitialized());
+  assert(approximateExpression.type() != ExpressionNode::Type::Undefined);
 
   /* Turn floats and doubles into decimal so that they can be compared to
    * rationals. */

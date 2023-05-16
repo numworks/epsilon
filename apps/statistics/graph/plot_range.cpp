@@ -32,11 +32,12 @@ void PlotRange::calibrate(KDCoordinate width, KDCoordinate height,
     yTopOffset = yBottomOffset = (yMin != 0.0f ? std::fabs(yMin) : 1.0f);
   }
 
-  protectedSetX(
-      Poincare::Range1D(seriesXMin - xSideOffset, seriesXMax + xSideOffset),
-      INFINITY);
-  protectedSetY(Poincare::Range1D(yMin - yBottomOffset, yMax + yTopOffset),
+  protectedSetX(Poincare::Range1D(seriesXMin - xSideOffset,
+                                  seriesXMax + xSideOffset, INFINITY),
                 INFINITY);
+  protectedSetY(
+      Poincare::Range1D(yMin - yBottomOffset, yMax + yTopOffset, INFINITY),
+      INFINITY);
 }
 
 }  // namespace Statistics

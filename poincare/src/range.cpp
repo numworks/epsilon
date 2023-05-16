@@ -31,23 +31,27 @@ void Range1D::zoom(float ratio, float center) {
   m_max = (m_max - center) * ratio + center;
 }
 
-void Range1D::stretchEachBoundBy(float shift) {
+void Range1D::stretchEachBoundBy(float shift, float limit) {
   assert(shift >= 0.0f);
-  m_min -= shift;
-  m_max += shift;
+  m_min = std::max(m_min - shift, -limit);
+  m_max = std::min(m_max + shift, limit);
   assert(std::isnan(length()) || length() >= k_minLength);
+  assert(-limit <= m_min && m_min <= limit);
+  assert(-limit <= m_max && m_max <= limit);
 }
 
-void Range1D::stretchIfTooSmall(float shift) {
+void Range1D::stretchIfTooSmall(float shift, float limit) {
   /* Handle cases where limits are too close or equal.
    * They are both shifted by shift. */
   if (length() < k_minLength) {
     if (shift < 0) {
       shift = DefaultLengthAt(m_min) / 2.0f;
     }
-    stretchEachBoundBy(shift);
+    stretchEachBoundBy(shift, limit);
   }
   assert(std::isnan(length()) || length() >= k_minLength);
+  assert(-limit <= m_min && m_min <= limit);
+  assert(-limit <= m_max && m_max <= limit);
 }
 
 void Range1D::privateSet(float t, bool isMin, float limit) {

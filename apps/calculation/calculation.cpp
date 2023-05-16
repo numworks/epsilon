@@ -187,8 +187,9 @@ Calculation::DisplayOutput Calculation::displayOutput(Context *context) {
        * output. Indeed, in this case, the layouts are identical. */
       strcmp(approximateOutputText(NumberOfSignificantDigits::UserDefined),
              exactOutputText()) == 0 ||
-      // If the approximate output is 'nonreal' or the exact result is 'undef'
+      // If the exact result is 'undef'
       strcmp(exactOutputText(), Undefined::Name()) == 0 ||
+      // If the approximate output is 'nonreal'
       strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal),
              Nonreal::Name()) == 0 ||
       /* If the approximate output is 'undef' and the input and exactOutput are

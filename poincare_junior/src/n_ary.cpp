@@ -1,6 +1,7 @@
 #include "n_ary.h"
 
 #include <assert.h>
+#include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
 namespace PoincareJ {
@@ -104,6 +105,29 @@ EditionReference NAry::Sanitize(EditionReference reference) {
     return SquashIfEmpty(reference);
   }
   return SquashIfUnary(reference);
+}
+
+void NAry::SortChildren(EditionReference reference) {
+  // Non simple NArys (Polynomial) rely on children order.
+  assert(reference.block()->isSimpleNAry());
+  Node nary = reference;
+  /* TODO : This sort is far from being optimized. Calls of childAtIndex are
+   *        very expensive here. A better swap could also be implemented. */
+  List::Sort(
+      [](int i, int j, void* context, int numberOfElements) {
+        Node nary = *static_cast<Node*>(context);
+        EditionReference refI = nary.childAtIndex(i);
+        EditionReference refJ = nary.childAtIndex(j);
+        EditionReference refJNext = refJ.nextTree();
+        refI.insertTreeBeforeNode(refJ);
+        refJNext.insertTreeBeforeNode(refI);
+      },
+      [](int i, int j, void* context, int numberOfElements) {
+        Node nary = *static_cast<Node*>(context);
+        return Comparison::Compare(nary.childAtIndex(i),
+                                   nary.childAtIndex(j)) >= 0;
+      },
+      &nary, reference.numberOfChildren());
 }
 
 }  // namespace PoincareJ

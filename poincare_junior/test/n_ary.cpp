@@ -1,3 +1,4 @@
+#include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/n_ary.h>
 #include <quiz.h>
@@ -70,4 +71,13 @@ QUIZ_CASE(pcj_n_ary_manipulation) {
   // addition2 is 1+2+3
 
   assert_trees_are_equal(addition1, addition2);
+
+  // Sort
+  EditionReference addition3 =
+      editionPool->clone(KAdd(KTrig(3_e, 0_e), 1_e, KTrig(2_e, 1_e), 0_e,
+                              KTrig(1_e, 0_e), 3_e, KMult(1_e, 0_e, 2_e), 1_e));
+  NAry::SortChildren(addition3);
+  assert_trees_are_equal(
+      addition3, KAdd(0_e, 1_e, 1_e, 3_e, KMult(1_e, 0_e, 2_e), KTrig(1_e, 0_e),
+                      KTrig(2_e, 1_e), KTrig(3_e, 0_e)));
 }

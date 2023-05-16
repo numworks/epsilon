@@ -95,13 +95,13 @@ void ion_main(int argc, const char *const argv[]) {
       sSkipAssertions = true;
     }
   }
+#endif
   /* s_stackStart must be defined as early as possible to ensure that there
    * cannot be allocated memory pointers before. Otherwise, with MicroPython for
    * example, stack pointer could go backward after initialization and allocated
    * memory pointers could be overlooked during mark procedure. */
   volatile int stackTop;
   Ion::setStackStart((void *)(&stackTop));
-#endif
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     ion_main_inner(testFilter);

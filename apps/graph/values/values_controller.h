@@ -69,7 +69,7 @@ class ValuesController : public Shared::ValuesController,
   constexpr static size_t k_maxNumberOfSymbolTypes =
       Shared::ContinuousFunctionProperties::k_numberOfSymbolTypes;
   constexpr static int k_maxNumberOfDisplayableSymbolTypes =
-      OMG::Ceil(static_cast<float>(k_maxNumberOfDisplayableColumns) / 2.0f);
+      OMG::CeilDivision(k_maxNumberOfDisplayableColumns, 2);
   constexpr static int k_maxNumberOfDisplayableAbscissaCells =
       k_maxNumberOfDisplayableSymbolTypes * k_maxNumberOfDisplayableRows;
   constexpr static int k_valuesCellBufferSize =

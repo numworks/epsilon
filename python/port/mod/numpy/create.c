@@ -8,6 +8,8 @@
  * Copyright (c) 2020 Jeff Epler for Adafruit Industries
  *               2019-2021 Zoltán Vörös
  *               2020 Taku Fukada
+ *
+ * Some minor changes were made by NumWorks team.
 */
 
 #include <math.h>
@@ -166,7 +168,8 @@ mp_obj_t create_arange(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
     if((stop - start)/step <= 0) {
         ndarray = ndarray_new_linear_array(0, dtype);
     } else {
-        size_t len = (size_t)(MICROPY_FLOAT_C_FUN(ceil)((stop - start) / step));
+        mp_float_t nb = MICROPY_FLOAT_C_FUN(ceil)((stop - start) / step);
+        size_t len = nb >= SIZE_MAX ? SIZE_MAX : (size_t)nb;
         stop = start + (len - 1) * step;
         ndarray = create_linspace_arange(start, step, stop, len, dtype);
     }

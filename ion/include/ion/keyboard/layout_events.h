@@ -3,6 +3,7 @@
 
 #include <ion/events.h>
 #include <ion/unicode/code_point.h>
+#include <string.h>
 
 #include "event_data.h"
 

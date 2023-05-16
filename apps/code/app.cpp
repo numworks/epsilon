@@ -122,6 +122,7 @@ bool App::textInputDidReceiveEvent(InputEventHandler *textInput,
 void App::initPythonWithUser(const void *pythonUser) {
   if (!m_pythonUser) {
     /* Tree pool will be used as an extension of the heap. */
+    assert(Poincare::TreePool::sharedPool->numberOfNodes() == 0);
     Poincare::TreePool::sharedPool.deinit();
 
     char *heap = pythonHeap();

@@ -74,3 +74,15 @@ set pagination off
 #monitor reset halt
 
 # continue
+
+# This is required for breakpoints in external flash to be set in hardware mode
+# TODO: replace this with a proper flash configuration using openocd flash bank
+define manual_memory_map_n0110
+  delete mem
+  mem 0x00000000 0x00200000 rw nocache
+  mem 0x00200000 0x00210000 ro nocache
+  mem 0x00210000 0x08000000 rw nocache
+  mem 0x08000000 0x08010000 ro nocache
+  mem 0x08010000 0x90000000 rw nocache
+  mem 0x90000000 0x90400000 ro nocache
+end

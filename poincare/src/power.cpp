@@ -225,6 +225,13 @@ Complex<T> PowerNode::computeOnComplex(
     return Complex<T>::RealUndefined();
   }
 #endif
+  if (c.imag() == static_cast<T>(0.0) && c.real() < static_cast<T>(0.0) &&
+      ((d.real() == INFINITY && c.real() <= static_cast<T>(-1.0)) ||
+       (d.real() == -INFINITY && c.real() >= static_cast<T>(-1.0)))) {
+    /* x^inf with x <= -1 and x^(-inf) with -1 <= x <= 0 are approximated to
+     * complex infinity, which we don't handle. We decide to return undef. */
+    return Complex<T>::Undefined();
+  }
   std::complex<T> result;
   if (c.imag() == static_cast<T>(0.0) && d.imag() == static_cast<T>(0.0) &&
       c.real() != static_cast<T>(0.0) &&

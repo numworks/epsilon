@@ -646,20 +646,26 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
       default:
         break;
     }
+  } else if (index.type() == ExpressionNode::Type::Infinity &&
+             (base.isOne() || base.isMinusOne() ||
+              base.type() == ExpressionNode::Type::ComplexCartesian)) {
+    /* Step 3.2: index is infinity
+     * if x=+-1 or x is complex: x^+inf or x^-inf -> undef */
+    trivialResult = Undefined::Builder();
   } else if (base.isOne() &&
              !index.recursivelyMatches(Expression::IsInfinity, context)) {
-    /* Step 3.2: base is 1
+    /* Step 3.3: base is 1
      * 1^x -> 1 */
     trivialResult = Rational::Builder(1);
   } else if (index.isOne()) {
-    /* Step 3.3: index is 1
+    /* Step 3.4: index is 1
      * x^1 -> x */
     replaceWithInPlace(base);
     return base;
   } else {
     TrinaryBoolean baseNull = base.isNull(context);
     if (baseNull == TrinaryBoolean::True) {
-      // Step 3.4: base is 0
+      // Step 3.5: base is 0
       if (indexIsPositive == TrinaryBoolean::False ||
           indexNull == TrinaryBoolean::True) {
         // 0^0 or 0^-x -> undef
@@ -670,7 +676,7 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
         trivialResult = Rational::Builder(0);
       }
     } else if (indexNull == TrinaryBoolean::True) {
-      /* Step 3.5: index is 0
+      /* Step 3.6: index is 0
        * x^0 -> 1 or dep(1, {x^0}) */
       if (baseNull == TrinaryBoolean::Unknown) {
         List depList = List::Builder();

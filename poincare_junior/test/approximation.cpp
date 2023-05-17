@@ -12,6 +12,7 @@ using namespace PoincareJ;
 void assert_approximation_is(Node n, float f) {
   float approx = Approximation::To<float>(n);
   bool result = Float::RoughlyEqual<float>(approx, f, FLT_EPSILON);
+#if POINCARE_MEMORY_TREE_LOG
   if (!result) {
     std::cout << "Approximation test failure with: \n";
     n.log();
@@ -20,6 +21,7 @@ void assert_approximation_is(Node n, float f) {
     std::cout << "Relative difference is : " << std::fabs((approx - f) / f)
               << "\n";
   }
+#endif
   quiz_assert(result);
 }
 

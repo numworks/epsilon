@@ -25,8 +25,8 @@ class Simplification {
 
   enum class ProjectionContext {
     Default,
-    WithFloats,
-    WithApproximation,
+    NumbersToFloat,
+    ApproximateToFloat,
   };
   static EditionReference SystemProjection(
       EditionReference reference,

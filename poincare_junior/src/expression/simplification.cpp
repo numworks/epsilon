@@ -169,7 +169,7 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
 
 EditionReference Simplification::SystemProjection(EditionReference reference,
                                                   ProjectionContext context) {
-  if (context == ProjectionContext::WithApproximation) {
+  if (context == ProjectionContext::ApproximateToFloat) {
     return Approximation::ReplaceWithApproximation(reference);
   }
   const Node root = reference.block();
@@ -182,7 +182,8 @@ EditionReference Simplification::SystemProjection(EditionReference reference,
     treesToProject--;
     BlockType type = node.type();
     EditionReference ref(node);
-    if (context == ProjectionContext::WithFloats && ref.block()->isInteger()) {
+    if (context == ProjectionContext::NumbersToFloat &&
+        ref.block()->isInteger()) {
       ref = Approximation::ReplaceWithApproximation(ref);
       node = node.nextTree();
       continue;

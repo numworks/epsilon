@@ -50,12 +50,14 @@ Expression TrigonometryCheatTable::simplify(
     outputType = Type::AngleInRadians;
   } else {
     // Turn to Radian
-    /* We only shallow reduce and not deep reduce since:
-     * - radianToAngleUnit creates a multiplication of reduced children
-     * - if we deep reduce, the complexity becomes exponential for
-     * for expressions like sin(sin(sin(sin(...)))) */
-    exp = exp.clone().angleUnitToRadian(angleUnit).shallowReduce(
-        reductionContext);
+    if (angleUnit != Preferences::AngleUnit::Radian) {
+      /* We only shallow reduce and not deep reduce since:
+       * - radianToAngleUnit creates a multiplication of reduced children
+       * - if we deep reduce, the complexity becomes exponential for
+       * for expressions like sin(sin(sin(sin(...)))) */
+      exp = exp.clone().angleUnitToRadian(angleUnit).shallowReduce(
+          reductionContext);
+    }
     inputType = Type::AngleInRadians;
     outputType = trigonometricFunctionType;
   }

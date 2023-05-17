@@ -20,8 +20,12 @@ bool ExpressionNode::isNumber() const {
                    Type::Undefined});
 }
 
-bool ExpressionNode::isRandom() const {
-  return isOfType({Type::Random, Type::Randint, Type::RandintNoRepeat});
+bool ExpressionNode::isRandomNumber() const {
+  return type() == Type::Random || type() == Type::Randint;
+}
+
+bool ExpressionNode::isRandomList() const {
+  return type() == Type::RandintNoRepeat;
 }
 
 bool ExpressionNode::isParameteredExpression() const {

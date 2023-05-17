@@ -160,7 +160,9 @@ class ExpressionNode : public TreeNode {
     return TrinaryBoolean::Unknown;
   }
   bool isNumber() const;
-  bool isRandom() const;
+  bool isRandomNumber() const;
+  bool isRandomList() const;
+  bool isRandom() const { return isRandomNumber() || isRandomList(); }
   bool isParameteredExpression() const;
   bool isCombinationOfUnits() const;
   bool isUndefined() const {

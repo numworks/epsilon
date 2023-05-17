@@ -217,14 +217,6 @@ template <typename T>
 Complex<T> PowerNode::computeOnComplex(
     const std::complex<T> c, const std::complex<T> d,
     Preferences::ComplexFormat complexFormat) {
-#if !PLATFORM_DEVICE
-  if (std::fabs(c.real()) == static_cast<T>(1.0) &&
-      std::fabs(d.real()) == INFINITY) {
-    /* On simulator, std::pow(1,Inf) is approximated to 1, which is not the
-     * behavior we want. */
-    return Complex<T>::RealUndefined();
-  }
-#endif
   if (c.imag() == static_cast<T>(0.0) && c.real() < static_cast<T>(0.0) &&
       ((d.real() == INFINITY && c.real() <= static_cast<T>(-1.0)) ||
        (d.real() == -INFINITY && c.real() >= static_cast<T>(-1.0)))) {
@@ -236,6 +228,14 @@ Complex<T> PowerNode::computeOnComplex(
   if (c.imag() == static_cast<T>(0.0) && d.imag() == static_cast<T>(0.0) &&
       c.real() != static_cast<T>(0.0) &&
       (c.real() > static_cast<T>(0.0) || std::round(d.real()) == d.real())) {
+#if !PLATFORM_DEVICE
+    if (std::fabs(c.real()) == static_cast<T>(1.0) &&
+        std::fabs(d.real()) == INFINITY) {
+      /* On simulator, std::pow(1,Inf) is approximated to 1, which is not the
+       * behavior we want. */
+      return Complex<T>::RealUndefined();
+    }
+#endif
     /* pow: (R+, R) -> R+ (2^1.3 ~ 2.46)
      * pow: (R-, N) -> R+ ((-2)^3 = -8)
      * In these cases we rather use std::pow(double, double) because:

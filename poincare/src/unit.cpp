@@ -1216,8 +1216,6 @@ int Unit::SetAdditionalExpressions(Expression units, double value,
                                    Expression* dest, int availableLength,
                                    const ReductionContext& reductionContext,
                                    Expression exactOutput) {
-  assert(ShouldDisplayAdditionalOutputs(value, units,
-                                        reductionContext.unitFormat()));
   if (units.isUninitialized()) {
     return 0;
   }

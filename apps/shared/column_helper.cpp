@@ -145,6 +145,7 @@ bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(
 }
 
 bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
+  assert(!formula.isUninitialized());
   int columnToFill = store()->relativeColumnIndex(referencedColumn());
   int seriesToFill = store()->seriesAtColumn(referencedColumn());
   if (ComparisonNode::IsBinaryEquality(formula)) {
@@ -196,10 +197,8 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     return true;
   }
   // If formula contains a random formula, evaluate it for each pairs.
-  bool evaluateForEachPairs =
-      formula.recursivelyMatches([](const Expression e, Context *context) {
-        return !e.isUninitialized() && e.isRandom();
-      });
+  bool evaluateForEachPairs = formula.recursivelyMatches(
+      [](const Expression e, Context *context) { return e.isRandom(); });
   double evaluation =
       PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
   if (std::isnan(evaluation)) {

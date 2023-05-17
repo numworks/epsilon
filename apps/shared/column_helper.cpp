@@ -173,6 +173,12 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
   PoincareHelpers::CloneAndSimplify(
       &formula, &storeContext, ReductionTarget::SystemForApproximation,
       SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+
+  if (formula.recursivelyMatches([](const Expression e, Context *context) {
+        return e.isRandomList();
+      })) {
+    formula = PoincareHelpers::Approximate<double>(formula, &storeContext);
+  }
   if (formula.isUndefined()) {
     return displayNotSuitableWarning();
   }
@@ -198,7 +204,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
   }
   // If formula contains a random formula, evaluate it for each pairs.
   bool evaluateForEachPairs = formula.recursivelyMatches(
-      [](const Expression e, Context *context) { return e.isRandom(); });
+      [](const Expression e, Context *context) { return e.isRandomNumber(); });
   double evaluation =
       PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
   if (std::isnan(evaluation)) {

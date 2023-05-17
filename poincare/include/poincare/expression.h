@@ -183,6 +183,8 @@ class Expression : public TreeHandle {
   bool isOne() const;
   bool isMinusOne() const;
   bool isInteger() const;
+  bool isRandomNumber() const { return node()->isRandomNumber(); }
+  bool isRandomList() const { return node()->isRandomList(); }
   bool isRandom() const { return node()->isRandom(); }
   bool isParameteredExpression() const {
     return node()->isParameteredExpression();

@@ -109,11 +109,10 @@ QUIZ_CASE(poincare_simplification_infinity) {
   // Power
   assert_parsed_expression_simplify_to("0^inf", "0");
   assert_parsed_expression_simplify_to("0^(-inf)", "undef");
-  assert_parsed_expression_simplify_to("1^inf", "1^∞");
-  assert_parsed_expression_simplify_to("1^(-inf)", "1^\U00000012-∞\U00000013");
-  assert_parsed_expression_simplify_to("(-1)^inf", "(-1)^∞");
-  assert_parsed_expression_simplify_to("(-1)^(-inf)",
-                                       "(-1)^\U00000012-∞\U00000013");
+  assert_parsed_expression_simplify_to("1^inf", "undef");
+  assert_parsed_expression_simplify_to("1^(-inf)", "undef");
+  assert_parsed_expression_simplify_to("(-1)^inf", "undef");
+  assert_parsed_expression_simplify_to("(-1)^(-inf)", "undef");
   assert_parsed_expression_simplify_to("2^inf", "2^∞");
   assert_expression_simplifies_approximates_to<float>("2^inf", "∞");
   assert_parsed_expression_simplify_to("2^(-inf)", "2^\U00000012-∞\U00000013");
@@ -135,17 +134,10 @@ QUIZ_CASE(poincare_simplification_infinity) {
                                        "(-1/5)^\U00000012-∞\U00000013");
   assert_expression_simplifies_approximates_to<float>("(-0.2)^(-inf)",
                                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("i^inf", "1^∞×cos(∞×π)+1^∞×sin(∞×π)×i");
-  assert_parsed_expression_simplify_to(
-      "i^(-inf)",
-      "1^\U00000012-∞\U00000013×cos(∞×π)-1^\U00000012-∞\U00000013×sin(∞×π)×i");
-  assert_parsed_expression_simplify_to(
-      "(3+4i)^inf",
-      "5^∞×cos(-∞×arctan(3/4)+∞×π)+5^∞×sin(-∞×arctan(3/4)+∞×π)×i");
-  assert_parsed_expression_simplify_to(
-      "(3+4i)^(-inf)",
-      "5^\U00000012-∞\U00000013×cos(∞×arctan(3/"
-      "4)-∞×π)+5^\U00000012-∞\U00000013×sin(∞×arctan(3/4)-∞×π)×i");
+  assert_parsed_expression_simplify_to("i^inf", "undef");
+  assert_parsed_expression_simplify_to("i^(-inf)", "undef");
+  assert_parsed_expression_simplify_to("(3+4i)^inf", "undef");
+  assert_parsed_expression_simplify_to("(3+4i)^(-inf)", "undef");
   assert_parsed_expression_simplify_to("inf^0", "undef");
   assert_parsed_expression_simplify_to("1^(X^inf)", "1^\u0012X^∞\u0013");
   assert_parsed_expression_simplify_to("inf^(-1)", "0");

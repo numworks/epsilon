@@ -170,21 +170,21 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(
 EditionReference Simplification::SystemProjection(EditionReference reference,
                                                   ProjectionContext context) {
   if (context == ProjectionContext::WithApproximation) {
-    reference = Approximation::ReplaceWithApproximation(reference);
+    return Approximation::ReplaceWithApproximation(reference);
   }
-  // Use an EditionReference to track the end since the tree is being edited.
-  EditionReference nextTree = reference.nextTree();
   const Node root = reference.block();
   Node node = root;
   /* TODO: Most of the projections could be optimized by simply replacing and
    * inserting nodes. This optimization could be applied in matchAndReplace. See
    * comment in matchAndReplace. */
-  while (nextTree.block() > node.block()) {
+  int treesToProject = 1;
+  while (treesToProject > 0) {
+    treesToProject--;
     BlockType type = node.type();
     EditionReference ref(node);
     if (context == ProjectionContext::WithFloats && ref.block()->isInteger()) {
       ref = Approximation::ReplaceWithApproximation(ref);
-      node = node.nextNode();
+      node = node.nextTree();
       continue;
     }
     switch (type) {
@@ -234,6 +234,7 @@ EditionReference Simplification::SystemProjection(EditionReference reference,
       default:
         break;
     }
+    treesToProject += node.numberOfChildren();
     node = node.nextNode();
   }
   return EditionReference(root);

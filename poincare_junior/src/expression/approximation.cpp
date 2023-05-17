@@ -81,9 +81,9 @@ EditionReference Approximation::ReplaceWithApproximation(EditionReference ref) {
 
 bool Approximation::ApproximateAndReplaceEveryScalar(EditionReference ref) {
   bool hasApproximatedEveryChild = true;
-  EditionReference nextTree = ref.nextTree();
   Node node = ref.nextNode();
-  while (nextTree.block() > node.block()) {
+  int numberOfChildren = ref.numberOfChildren();
+  for (int i = 0; i < numberOfChildren; i++) {
     // Approximate anyway
     hasApproximatedEveryChild =
         ApproximateAndReplaceEveryScalar(node) && hasApproximatedEveryChild;

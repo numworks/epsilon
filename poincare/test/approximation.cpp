@@ -130,6 +130,24 @@ QUIZ_CASE(poincare_approximation_infinity) {
   assert_expression_approximates_to<double>("(inf×i)×(2)", "∞×i");
   // (inf+i)×(2) = inf * 2 - 1 * 0 + i * (inf * 0 + 1 * 2), inf * 0 return NAN
   assert_expression_approximates_to<double>("(inf+i)×(2)", Undefined::Name());
+
+  // Power
+  assert_expression_approximates_to<double>("0^inf", "0");
+  assert_expression_approximates_to<double>("0^(-inf)", Undefined::Name());
+  assert_expression_approximates_to<double>("2^inf", "∞");
+  assert_expression_approximates_to<double>("2^(-inf)", "0");
+  assert_expression_approximates_to<double>("(-2)^inf", "∞");  // complex ∞
+  assert_expression_approximates_to<double>("(-2)^(-inf)", "0");
+  assert_expression_approximates_to<double>("0.2^inf", "0");
+  assert_expression_approximates_to<double>("0.2^(-inf)", "∞");
+  assert_expression_approximates_to<double>("(-0.2)^inf", "0");
+  assert_expression_approximates_to<double>("(-0.2)^(-inf)", "∞");  // complex ∞
+  assert_expression_approximates_to<double>("i^inf", Undefined::Name());
+  assert_expression_approximates_to<double>("i^(-inf)", Undefined::Name());
+  assert_expression_approximates_to<double>("(-i)^inf", Undefined::Name());
+  assert_expression_approximates_to<double>("(-i)^(-inf)", Undefined::Name());
+  assert_expression_approximates_to<double>("(3+4i)^inf", Undefined::Name());
+  assert_expression_approximates_to<double>("(3+4i)^(-inf)", "0");
 }
 
 QUIZ_CASE(poincare_approximation_addition) {

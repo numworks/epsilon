@@ -215,7 +215,8 @@ void TableView::ContentView::layoutSubviews(bool force,
                                             bool updateCellContent) {
   /* The number of cells might change during the layouting so it needs to be
    * recomputed at each step of the for loop. */
-  for (int index = 0; index < numberOfDisplayableCells(); index++) {
+  int n = numberOfDisplayableCells();
+  for (int index = 0; index < n; index++) {
     HighlightCell* cell = reusableCellAtIndex(index);
     int col = absoluteColumnIndexFromSubviewIndex(index);
     int row = absoluteRowIndexFromSubviewIndex(index);

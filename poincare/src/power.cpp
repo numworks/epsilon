@@ -1436,7 +1436,9 @@ Expression Power::ChainedPowerBuilder(Expression leftSide,
 
 // Simplification
 Expression Power::denominator(const ReductionContext &reductionContext) const {
-  if (childAtIndex(0).type() == ExpressionNode::Type::Unit) {
+  if (childAtIndex(0).type() == ExpressionNode::Type::Unit ||
+      childAtIndex(1).type() == ExpressionNode::Type::Infinity) {
+    // x^-inf can be different from 1/x^inf
     return Expression();
   }
   Expression pow = clone();

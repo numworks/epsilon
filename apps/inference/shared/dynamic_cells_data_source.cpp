@@ -92,10 +92,6 @@ static_assert(k_inputControllerNumberOfReusableCells ==
                   InputController::k_numberOfReusableCells,
               "k_inputControllerNumberOfReusableCells should be updated with "
               "InputController::k_numberOfReusableCells");
-static_assert(k_resultDataSourceNumberOfReusableCells ==
-                  ResultsDataSource::k_numberOfReusableCells,
-              "k_resultDataSourceNumberOfReusableCells should be updated with "
-              "ResultsDataSource::k_numberOfReusableCells");
 template class DynamicCellsDataSource<
     InferenceEvenOddBufferCell, k_homogeneityTableNumberOfReusableHeaderCells>;
 template class DynamicCellsDataSource<

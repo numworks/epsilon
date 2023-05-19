@@ -15,12 +15,11 @@ using namespace Escher;
 namespace Inference {
 
 ResultsController::ResultsController(
-    Escher::StackViewController *parent, Statistic *statistic,
+    StackViewController *parent, Statistic *statistic,
     TestGraphController *testGraphController,
     IntervalGraphController *intervalGraphController,
-    Escher::InputEventHandlerDelegate *handler,
-    Escher::TextFieldDelegate *textFieldDelegate)
-    : Escher::ViewController(parent),
+    InputEventHandlerDelegate *handler, TextFieldDelegate *textFieldDelegate)
+    : ViewController(parent),
       m_selectableListView(this, &m_resultsDataSource, this),
       m_title(I18n::Message::CalculatedValues,
               {.style = {.glyphColor = Palette::GrayDark,
@@ -38,7 +37,7 @@ ResultsController::ResultsController(
 
 void ResultsController::didBecomeFirstResponder() {
   selectCell(0);
-  Escher::Container::activeApp()->setFirstResponder(&m_selectableListView);
+  Container::activeApp()->setFirstResponder(&m_selectableListView);
   m_resultsDataSource.resetMemoization();
   m_contentView.reload();
 }
@@ -78,7 +77,7 @@ bool ResultsController::ButtonAction(ResultsController *controller, void *s) {
     App::app()->displayWarning(I18n::Message::InvalidValues);
     return false;
   }
-  Escher::ViewController *graph;
+  ViewController *graph;
   if (controller->m_statistic->subApp() == Statistic::SubApp::Test) {
     graph = controller->m_testGraphController;
   } else {

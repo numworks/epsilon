@@ -64,7 +64,6 @@ app_inference_src += $(addprefix apps/inference/statistic/,\
   comparison_operator_popup_data_source.cpp \
   input_controller.cpp \
   results_controller.cpp \
-  results_data_source.cpp \
   test_controller.cpp \
   type_controller.cpp \
 )

@@ -43,9 +43,7 @@ class ListViewDataSource : public TableViewDataSource {
   KDCoordinate nonMemoizedColumnWidth(int index) override final {
     return TableViewDataSource::nonMemoizedColumnWidth(index);
   }
-  // Only used in an assert
-  bool canReusableIndexBeAssumed(int index, int type,
-                                 int reusableCellCount) const;
+  int typeIndexFromIndex(int index);
 };
 
 template <int N>

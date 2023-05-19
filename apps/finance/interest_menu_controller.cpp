@@ -11,11 +11,8 @@ using namespace Finance;
 InterestMenuController::InterestMenuController(
     Escher::StackViewController* parentResponder,
     InterestController* interestController)
-    : Escher::SelectableCellListPage<
-          Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
-                           Escher::ChevronView>,
-          k_numberOfCells, Escher::StandardMemoizedListViewDataSource>(
-          parentResponder),
+    : Escher::SelectableListViewController<
+          Escher::StandardMemoizedListViewDataSource>(parentResponder),
       m_messageView(I18n::Message::ParameterChoose,
                     {.style = {.glyphColor = Escher::Palette::GrayDark,
                                .backgroundColor = Escher::Palette::WallScreen,
@@ -30,9 +27,9 @@ void InterestMenuController::didBecomeFirstResponder() {
   resetMemoization(true);
   int nRows = numberOfRows();
   for (int i = 0; i < nRows; i++) {
-    cellAtIndex(i)->label()->setMessage(
+    m_cells[i].label()->setMessage(
         App::GetInterestData()->labelForParameter(paramaterAtIndex(i)));
-    cellAtIndex(i)->subLabel()->setMessage(
+    m_cells[i].subLabel()->setMessage(
         App::GetInterestData()->sublabelForParameter(paramaterAtIndex(i)));
   }
   m_contentView.reload();
@@ -40,7 +37,7 @@ void InterestMenuController::didBecomeFirstResponder() {
 
 bool InterestMenuController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
-  if (cellAtIndex(0)->canBeActivatedByEvent(event)) {
+  if (m_cells[0].canBeActivatedByEvent(event)) {
     App::GetInterestData()->setUnknown(paramaterAtIndex(selectedRow()));
     stackOpenPage(m_interestController);
     return true;

@@ -8,11 +8,12 @@
 #include "inference/app.h"
 #include "inference/constants.h"
 
+using namespace Escher;
+
 namespace Inference {
 
 ResultsDataSource::ResultsDataSource(
-    Escher::Responder *parent, Statistic *statistic,
-    Escher::Invocation invocation,
+    Responder *parent, Statistic *statistic, Invocation invocation,
     DynamicCellsDataSourceDelegate<ResultCell> *dynamicCellsDataSourceDelegate)
     : MemoizedListViewDataSource(),
       DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>(
@@ -25,12 +26,11 @@ int ResultsDataSource::numberOfRows() const {
 }
 
 KDCoordinate ResultsDataSource::defaultColumnWidth() {
-  return Ion::Display::Width - Escher::Metric::CommonLeftMargin -
-         Escher::Metric::CommonRightMargin;
+  return Ion::Display::Width - Metric::CommonLeftMargin -
+         Metric::CommonRightMargin;
 }
 
-void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell *cell,
-                                                int i) {
+void ResultsDataSource::willDisplayCellForIndex(HighlightCell *cell, int i) {
   if (i < numberOfRows() - 1) {
     ResultCell *messageCell = static_cast<ResultCell *>(cell);
     double value;
@@ -50,7 +50,7 @@ void ResultsDataSource::willDisplayCellForIndex(Escher::HighlightCell *cell,
   }
 }
 
-Escher::HighlightCell *ResultsDataSource::reusableCell(int index, int type) {
+HighlightCell *ResultsDataSource::reusableCell(int index, int type) {
   if (type == k_resultCellType) {
     return cell(index);
   }

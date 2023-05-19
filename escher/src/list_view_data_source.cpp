@@ -18,36 +18,21 @@ void ListViewDataSource::initCellSize(TableView* view) {
   }
 }
 
-bool ListViewDataSource::canReusableIndexBeAssumed(
-    int index, int type, int reusableCellCount) const {
-  /* Ensure the reusable cell index "j" can be assumed from the cell index
-   * "index" */
-  if (reusableCellCount <= 0) {
-    // Cells of this type must be stored as reusable cells.
-    return false;
+int ListViewDataSource::typeIndexFromIndex(int index) {
+  // TODO: use typeIndexFromSubviewIndex?
+  int type = typeAtIndex(index);
+  assert(reusableCellCount(type) > 0);
+  if (reusableCellCount(type) == 1) {
+    return 0;
   }
-  if (reusableCellCount == 1) {
-    // There is only one cell of this type, j = 0
-    return true;
-  }
-  /* TODO : It should be ensured here that the cell at index is visible.
-   * For example, we could have 7 rows and 7 reusable cells of a unique type
-   * but the first row is not visible because of a scroll. The accurate index
-   * would then have to be j = index - 1.
-   * It is assumed here that ListViewDataSource::nonMemoizedRowHeight is only
-   * used with lists and types for which the reusableCellCount is exactly the
-   * minimal number of displayable cells. */
-  if (numberOfRows() == reusableCellCount) {
-    // All rows are reusable cells of the same type, j = index
-    return true;
-  }
+  int typeIndex = 0;
   for (int i = 0; i < index; i++) {
-    if (typeAtIndex(i) != type) {
-      return false;
+    if (typeAtIndex(i) == type) {
+      typeIndex++;
     }
   }
-  /* All previous cells are of the same type, j = index */
-  return true;
+  assert(typeIndex < reusableCellCount(type));
+  return typeIndex;
 }
 
 KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int index) {
@@ -63,12 +48,8 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int index) {
    * visually duplicated. */
   assert(index < numberOfRows());
   int type = typeAtIndex(index);
-  int thisReusableCellCount = reusableCellCount(type);
-  assert(canReusableIndexBeAssumed(index, type, thisReusableCellCount));
-  // We can assume the reusable index
-  int j = (thisReusableCellCount == 1) ? 0 : index;
-  assert(j < thisReusableCellCount);
-  return heightForCellAtIndex(reusableCell(j, type), index);
+  int typeIndex = typeIndexFromIndex(index);
+  return heightForCellAtIndex(reusableCell(typeIndex, type), index);
 }
 
 KDCoordinate ListViewDataSource::heightForCellAtIndexWithWidthInit(

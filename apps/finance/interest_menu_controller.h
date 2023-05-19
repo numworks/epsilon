@@ -16,12 +16,12 @@
 
 namespace Finance {
 
-class InterestMenuController
-    : public Escher::SelectableCellListPage<
-          Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
-                           Escher::ChevronView>,
-          InterestData::k_maxNumberOfUnknowns,
-          Escher::StandardMemoizedListViewDataSource> {
+using InterestMenuCell =
+    Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                     Escher::ChevronView>;
+
+class InterestMenuController : public Escher::SelectableListViewController<
+                                   Escher::StandardMemoizedListViewDataSource> {
  public:
   InterestMenuController(Escher::StackViewController* parentResponder,
                          InterestController* interestController);
@@ -33,11 +33,20 @@ class InterestMenuController
   }
   Escher::View* view() override { return &m_contentView; }
   int numberOfRows() const override;
+  int reusableCellCount(int type) override {
+    return InterestData::k_maxNumberOfUnknowns;
+  }
+  Escher::HighlightCell* reusableCell(int i, int type) override {
+    assert(type == 0);
+    assert(i >= 0 && i < InterestData::k_maxNumberOfUnknowns);
+    return &m_cells[i];
+  }
 
  private:
   uint8_t paramaterAtIndex(int index) const;
 
   Escher::MessageTextView m_messageView;
+  InterestMenuCell m_cells[InterestData::k_maxNumberOfUnknowns];
   Escher::ListViewWithTopAndBottomViews m_contentView;
   InterestController* m_interestController;
 };

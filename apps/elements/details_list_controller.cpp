@@ -23,8 +23,7 @@ bool DetailsListController::DetailsInnerList::canStoreContentOfCell(
 
 DetailsListController::DetailsListController(
     StackViewController *parentResponder)
-    : ViewController(parentResponder),
-      m_selectableListView(this, this, this),
+    : SelectableListViewController(parentResponder),
       m_topElementView(Escher::Palette::WallScreen),
       m_bottomMessageView(
           I18n::Message::ElementsDataConditions,

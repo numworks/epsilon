@@ -12,9 +12,8 @@
 
 namespace Elements {
 
-class DetailsListController : public Escher::ViewController,
-                              public Escher::StandardMemoizedListViewDataSource,
-                              public Escher::SelectableListViewDataSource {
+class DetailsListController : public Escher::SelectableListViewController<
+                                  Escher::StandardMemoizedListViewDataSource> {
  public:
   DetailsListController(Escher::StackViewController *parentResponder);
 
@@ -67,7 +66,6 @@ class DetailsListController : public Escher::ViewController,
       Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
                        Escher::LayoutView>;
 
-  Escher::SelectableListView m_selectableListView;
   SingleElementView m_topElementView;
   Escher::MessageTextView m_bottomMessageView;
   DetailsInnerList m_view;

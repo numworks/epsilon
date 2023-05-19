@@ -12,11 +12,8 @@
 using namespace Finance;
 
 ResultController::ResultController(Escher::StackViewController* parentResponder)
-    : Escher::SelectableCellListPage<
-          Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
-                           Escher::FloatBufferTextView<>>,
-          k_numberOfCells, Escher::StandardMemoizedListViewDataSource>(
-          parentResponder),
+    : Escher::SelectableListViewController<
+          Escher::StandardMemoizedListViewDataSource>(parentResponder),
       m_messageView(I18n::Message::CalculatedValues,
                     {.style = {.glyphColor = Escher::Palette::GrayDark,
                                .backgroundColor = Escher::Palette::WallScreen,
@@ -27,11 +24,10 @@ ResultController::ResultController(Escher::StackViewController* parentResponder)
 void ResultController::didBecomeFirstResponder() {
   /* Build the result cell here because it only needs to be updated once this
    * controller become first responder. */
-  cellAtIndex(0)->label()->setMessage(App::GetInterestData()->labelForParameter(
+  m_cell.label()->setMessage(App::GetInterestData()->labelForParameter(
       App::GetInterestData()->getUnknown()));
-  cellAtIndex(0)->subLabel()->setMessage(
-      App::GetInterestData()->sublabelForParameter(
-          App::GetInterestData()->getUnknown()));
+  m_cell.subLabel()->setMessage(App::GetInterestData()->sublabelForParameter(
+      App::GetInterestData()->getUnknown()));
   double value = App::GetInterestData()->computeUnknownValue();
   constexpr int bufferSize = Escher::FloatBufferTextView<>::MaxTextSize();
   char buffer[bufferSize];
@@ -40,7 +36,7 @@ void ResultController::didBecomeFirstResponder() {
   Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
       value, buffer, bufferSize, precision,
       Poincare::Preferences::PrintFloatMode::Decimal);
-  cellAtIndex(0)->accessory()->setText(buffer);
+  m_cell.accessory()->setText(buffer);
   resetMemoization(true);
   selectRow(-1);
   m_contentView.reload();
@@ -48,11 +44,11 @@ void ResultController::didBecomeFirstResponder() {
 
 bool ResultController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-    Escher::Clipboard::SharedClipboard()->store(cellAtIndex(0)->text());
+    Escher::Clipboard::SharedClipboard()->store(m_cell.text());
     return true;
   }
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-    App::app()->storeValue(cellAtIndex(0)->text());
+    App::app()->storeValue(m_cell.text());
     return true;
   }
   return popFromStackViewControllerOnLeftEvent(event);

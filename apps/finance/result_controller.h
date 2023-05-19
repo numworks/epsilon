@@ -12,11 +12,12 @@
 
 namespace Finance {
 
-class ResultController
-    : public Escher::SelectableCellListPage<
-          Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
-                           Escher::FloatBufferTextView<>>,
-          1, Escher::StandardMemoizedListViewDataSource> {
+using ResultCell =
+    Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
+                     Escher::FloatBufferTextView<>>;
+
+class ResultController : public Escher::SelectableListViewController<
+                             Escher::StandardMemoizedListViewDataSource> {
  public:
   ResultController(Escher::StackViewController* parentResponder);
 
@@ -27,6 +28,12 @@ class ResultController
     return ViewController::TitlesDisplay::DisplayLastAndThirdToLast;
   }
   Escher::View* view() override { return &m_contentView; }
+  int numberOfRows() const override { return 1; }
+  int reusableCellCount(int type) override { return 1; }
+  Escher::HighlightCell* reusableCell(int i, int type) override {
+    assert(type == 0 && i == 0);
+    return &m_cell;
+  }
 
  private:
   constexpr static int k_titleBufferSize =
@@ -34,6 +41,7 @@ class ResultController
   char m_titleBuffer[k_titleBufferSize];
 
   Escher::MessageTextView m_messageView;
+  ResultCell m_cell;
   Escher::ListViewWithTopAndBottomViews m_contentView;
 };
 

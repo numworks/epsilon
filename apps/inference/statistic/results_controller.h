@@ -7,15 +7,13 @@
 #include <escher/input_event_handler_delegate.h>
 #include <escher/invocation.h>
 #include <escher/layout_view.h>
-#include <escher/list_view_data_source.h>
 #include <escher/list_view_with_top_and_bottom_views.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
 #include <escher/palette.h>
-#include <escher/selectable_table_view.h>
+#include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
-#include <escher/view_controller.h>
 
 #include "inference/models/statistic/statistic.h"
 #include "inference/shared/dynamic_cells_data_source.h"
@@ -28,9 +26,8 @@ using ResultCell = Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
                                     Escher::FloatBufferTextView<>>;
 
 class ResultsController
-    : public Escher::ViewController,
-      public Escher::SelectableListViewDataSource,
-      public Escher::StandardMemoizedListViewDataSource,
+    : public Escher::SelectableListViewController<
+          Escher::StandardMemoizedListViewDataSource>,
       public DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>,
       public DynamicCellsDataSourceDelegate<ResultCell> {
  public:
@@ -65,7 +62,6 @@ class ResultsController
   }
 
  protected:
-  Escher::SelectableListView m_selectableListView;
   Escher::MessageTextView m_title;
   Escher::ListViewWithTopAndBottomViews m_contentView;
 

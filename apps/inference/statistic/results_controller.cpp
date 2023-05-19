@@ -19,10 +19,8 @@ ResultsController::ResultsController(
     TestGraphController *testGraphController,
     IntervalGraphController *intervalGraphController,
     InputEventHandlerDelegate *handler, TextFieldDelegate *textFieldDelegate)
-    : ViewController(parent),
-      MemoizedListViewDataSource(),
+    : SelectableListViewController(parent),
       DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>(this),
-      m_selectableListView(this, this, this),
       m_title(I18n::Message::CalculatedValues,
               {.style = {.glyphColor = Palette::GrayDark,
                          .backgroundColor = Palette::WallScreen,

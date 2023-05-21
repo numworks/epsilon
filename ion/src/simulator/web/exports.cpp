@@ -35,3 +35,6 @@ void IonSimulatorEventsPushEvent(int eventNumber) {
     Ion::Events::replayFrom(j);
   }
 }
+
+int SDL_LockMutex(SDL_mutex *) { return 0; }
+int SDL_UnlockMutex(SDL_mutex *) { return 0; }

@@ -19,14 +19,13 @@ ResultsController::ResultsController(
     TestGraphController *testGraphController,
     IntervalGraphController *intervalGraphController,
     InputEventHandlerDelegate *handler, TextFieldDelegate *textFieldDelegate)
-    : SelectableListViewController(parent),
+    : SelectableListViewWithTopAndBottomViews(parent, &m_title),
       DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>(this),
       m_title(I18n::Message::CalculatedValues,
               {.style = {.glyphColor = Palette::GrayDark,
                          .backgroundColor = Palette::WallScreen,
                          .font = KDFont::Size::Small},
                .horizontalAlignment = KDGlyph::k_alignCenter}),
-      m_contentView(&m_selectableListView, this, &m_title),
       m_statistic(statistic),
       m_testGraphController(testGraphController),
       m_intervalGraphController(intervalGraphController),
@@ -38,7 +37,7 @@ void ResultsController::didBecomeFirstResponder() {
   selectCell(0);
   Container::activeApp()->setFirstResponder(&m_selectableListView);
   resetMemoization();
-  m_contentView.reload();
+  m_selectableListView.reloadData();
 }
 
 ViewController::TitlesDisplay ResultsController::titlesDisplay() {

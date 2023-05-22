@@ -17,7 +17,9 @@ bool NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(
   if (child.type() == Type::Conjugate || child.type() == Type::PercentSimple) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
-  if (numberOfChildren() > 1 && child.type() == Type::Comparison) {
+  if (numberOfChildren() > 1 &&
+      child.isOfType({Type::Comparison, Type::BinaryLogicalOperator,
+                      Type::LogicalOperatorNot})) {
     return true;
   }
   return false;

@@ -286,13 +286,12 @@ Expression Logarithm::simpleShallowReduce(
       return result;
     }
   }
-  bool infiniteArg =
-      c.recursivelyMatches(Expression::IsInfinity, reductionContext.context());
   // log(x,x) = 1 with x != inf, and log(inf,inf) = undef
   if (c.isIdenticalTo(b)) {
-    Expression result = infiniteArg
-                            ? Undefined::Builder().convert<Expression>()
-                            : Rational::Builder(1).convert<Expression>();
+    Expression result =
+        c.recursivelyMatches(Expression::IsInfinity, reductionContext.context())
+            ? Undefined::Builder().convert<Expression>()
+            : Rational::Builder(1).convert<Expression>();
     replaceWithInPlace(result);
     return result;
   }

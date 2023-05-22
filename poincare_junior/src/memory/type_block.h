@@ -100,6 +100,7 @@ enum class BlockType : uint8_t {
   Ln,
   Exponential,
   Trig,
+  TrigDiff,
   NumberOfExpressions,
   // Layout
   FirstLayout = NumberOfExpressions,
@@ -155,6 +156,7 @@ BLOCK_TYPE_IS_EXPRESSION(BlockType::Log);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Ln);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Exponential);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Trig);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::TrigDiff);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Factorial);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::UserSymbol);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::UserFunction);
@@ -305,6 +307,7 @@ class TypeBlock : public Block {
       case BlockType::Division:
       case BlockType::FractionLayout:
       case BlockType::Trig:
+      case BlockType::TrigDiff:
       case BlockType::Logarithm:
         return 2;
       case BlockType::Cosine:

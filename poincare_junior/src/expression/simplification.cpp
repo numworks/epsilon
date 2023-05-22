@@ -97,14 +97,12 @@ EditionReference Simplification::ContractTrigonometric(
     EditionReference reference) {
   Node expanded = KMult(KTrig(KPlaceholder<A>(), KPlaceholder<C>()),
                         KTrig(KPlaceholder<B>(), KPlaceholder<D>()));
-  // (C+D-2CD) Is equivalent to (C!=D) when C and D are either 0 or 1
-  Node contracted =
-      KMult(0.5_e,
-            KAdd(KTrig(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>())),
-                       KAdd(KPlaceholder<C>(), KPlaceholder<D>(),
-                            KMult(-2_e, KPlaceholder<C>(), KPlaceholder<D>()))),
-                 KTrig(KAdd(KPlaceholder<A>(), KPlaceholder<B>()),
-                       KAdd(KPlaceholder<D>(), KPlaceholder<C>()))));
+  // KTrigDiff : If booth elements are 1 or both are 0, return 0. 1 Otherwise.
+  Node contracted = KMult(
+      0.5_e, KAdd(KTrig(KAdd(KPlaceholder<A>(), KMult(-1_e, KPlaceholder<B>())),
+                        KTrigDiff(KPlaceholder<C>(), KPlaceholder<D>())),
+                  KTrig(KAdd(KPlaceholder<A>(), KPlaceholder<B>()),
+                        KAdd(KPlaceholder<D>(), KPlaceholder<C>()))));
   return reference.matchAndReplace(expanded, contracted);
   // TODO: If replaced, simplify resulting KTrigs
 }

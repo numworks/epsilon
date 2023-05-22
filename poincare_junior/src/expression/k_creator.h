@@ -72,6 +72,11 @@ consteval auto KTrig(Args... args) {
 }
 
 template <class... Args>
+consteval auto KTrigDiff(Args... args) {
+  return KBinary<BlockType::TrigDiff>(args...);
+}
+
+template <class... Args>
 consteval auto KDiv(Args... args) {
   return KBinary<BlockType::Division>(args...);
 }

@@ -88,6 +88,7 @@ void Node::logName(std::ostream &stream) const {
       "Ln",
       "Exponential",
       "Trig",
+      "TrigDiff",
       "RackLayout",
       "FractionLayout",
       "ParenthesisLayout",

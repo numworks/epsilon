@@ -40,6 +40,8 @@ T Approximation::To(const Node node) {
       return Approximation::MapAndReduce(node, FloatLog<T>);
     case BlockType::Trig:
       return Approximation::MapAndReduce(node, FloatTrig<T>);
+    case BlockType::TrigDiff:
+      return Approximation::MapAndReduce(node, FloatTrigDiff<T>);
     case BlockType::Exponential:
       return std::exp(Approximation::To<T>(node.nextNode()));
     case BlockType::Log:

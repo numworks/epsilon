@@ -50,6 +50,13 @@ class Approximation final {
     return ((b == -1.0 || b == 2.0) ? -1.0 : 1.0) *
            (((static_cast<int>(b) + 2) % 2 == 0) ? std::cos(a) : std::sin(a));
   }
+  template <typename T>
+  static T FloatTrigDiff(T a, T b) {
+    // TODO : This should be systemReduced
+    assert(false);
+    assert((a == 0.0 || a == 1.0) && (b == 0.0 || b == 1.0));
+    return static_cast<T>(a == b ? 0.0 : 1.0);
+  }
   static EditionReference ReplaceWithApproximation(EditionReference ref);
 
  private:

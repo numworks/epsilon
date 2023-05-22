@@ -34,7 +34,7 @@ QUIZ_CASE(pcj_simplification_contraction) {
       ref2,
       KMult(0.5_e,
             KAdd(KTrig(KAdd(KLog(3_e), KMult(-1_e, KAdd(1_e, KLog("x"_e)))),
-                       KAdd(1_e, 0_e, KMult(-2_e, 1_e, 0_e))),
+                       KTrigDiff(1_e, 0_e)),
                  KTrig(KAdd(KLog(3_e), KAdd(1_e, KLog("x"_e))),
                        KAdd(0_e, 1_e)))));
 }

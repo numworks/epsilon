@@ -8,6 +8,8 @@
 namespace Escher {
 
 class ListViewDataSource : public TableViewDataSource {
+  friend class ListViewWithTopAndBottomViewsDataSource;
+
  public:
   void initCellSize(TableView* view) override;
   /* reusableCellCount have a default implementation for specific simple

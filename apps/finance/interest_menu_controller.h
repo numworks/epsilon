@@ -2,13 +2,10 @@
 #define FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H
 
 #include <escher/chevron_view.h>
-#include <escher/list_view_data_source.h>
-#include <escher/list_view_with_top_and_bottom_views.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
-#include <escher/selectable_list_view_controller.h>
+#include <escher/selectable_list_view_with_top_and_bottom_views.h>
 #include <escher/stack_view_controller.h>
-#include <escher/view_controller.h>
 #include <ion/events.h>
 
 #include "data.h"
@@ -20,8 +17,8 @@ using InterestMenuCell =
     Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                      Escher::ChevronView>;
 
-class InterestMenuController : public Escher::SelectableListViewController<
-                                   Escher::StandardMemoizedListViewDataSource> {
+class InterestMenuController
+    : public Escher::SelectableListViewWithTopAndBottomViews {
  public:
   InterestMenuController(Escher::StackViewController* parentResponder,
                          InterestController* interestController);
@@ -31,7 +28,6 @@ class InterestMenuController : public Escher::SelectableListViewController<
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
-  Escher::View* view() override { return &m_contentView; }
   int numberOfRows() const override;
   int reusableCellCount(int type) override {
     return InterestData::k_maxNumberOfUnknowns;
@@ -47,7 +43,6 @@ class InterestMenuController : public Escher::SelectableListViewController<
 
   Escher::MessageTextView m_messageView;
   InterestMenuCell m_cells[InterestData::k_maxNumberOfUnknowns];
-  Escher::ListViewWithTopAndBottomViews m_contentView;
   InterestController* m_interestController;
 };
 

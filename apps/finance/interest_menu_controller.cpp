@@ -11,14 +11,13 @@ using namespace Finance;
 InterestMenuController::InterestMenuController(
     Escher::StackViewController* parentResponder,
     InterestController* interestController)
-    : Escher::SelectableListViewController<
-          Escher::StandardMemoizedListViewDataSource>(parentResponder),
+    : Escher::SelectableListViewWithTopAndBottomViews(parentResponder,
+                                                      &m_messageView),
       m_messageView(I18n::Message::ParameterChoose,
                     {.style = {.glyphColor = Escher::Palette::GrayDark,
                                .backgroundColor = Escher::Palette::WallScreen,
                                .font = KDFont::Size::Small},
                      .horizontalAlignment = KDGlyph::k_alignCenter}),
-      m_contentView(&m_selectableListView, this, &m_messageView),
       m_interestController(interestController) {
   selectRow(0);
 }
@@ -32,13 +31,13 @@ void InterestMenuController::didBecomeFirstResponder() {
     m_cells[i].subLabel()->setMessage(
         App::GetInterestData()->sublabelForParameter(paramaterAtIndex(i)));
   }
-  m_contentView.reload();
+  m_selectableListView.reloadData();
 }
 
 bool InterestMenuController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
   if (m_cells[0].canBeActivatedByEvent(event)) {
-    App::GetInterestData()->setUnknown(paramaterAtIndex(selectedRow()));
+    App::GetInterestData()->setUnknown(paramaterAtIndex(innerSelectedRow()));
     stackOpenPage(m_interestController);
     return true;
   }

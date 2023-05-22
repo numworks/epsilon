@@ -1,17 +1,12 @@
 #ifndef INFERENCE_STATISTIC_RESULTS_CONTROLLER_H
 #define INFERENCE_STATISTIC_RESULTS_CONTROLLER_H
 
-#include <apps/i18n.h>
 #include <escher/buffer_text_view.h>
 #include <escher/button_cell.h>
 #include <escher/input_event_handler_delegate.h>
-#include <escher/invocation.h>
 #include <escher/layout_view.h>
-#include <escher/list_view_with_top_and_bottom_views.h>
 #include <escher/menu_cell.h>
-#include <escher/message_text_view.h>
-#include <escher/palette.h>
-#include <escher/selectable_list_view_controller.h>
+#include <escher/selectable_list_view_with_top_and_bottom_views.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 
@@ -26,8 +21,7 @@ using ResultCell = Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
                                     Escher::FloatBufferTextView<>>;
 
 class ResultsController
-    : public Escher::SelectableListViewController<
-          Escher::StandardMemoizedListViewDataSource>,
+    : public Escher::SelectableListViewWithTopAndBottomViews,
       public DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>,
       public DynamicCellsDataSourceDelegate<ResultCell> {
  public:
@@ -43,7 +37,6 @@ class ResultsController
   ViewController::TitlesDisplay titlesDisplay() override;
   const char* title() override;
   void didBecomeFirstResponder() override;
-  Escher::View* view() override { return &m_contentView; }
 
   // StandardMemoizedListViewDataSource
   int numberOfRows() const override;
@@ -63,8 +56,6 @@ class ResultsController
 
  protected:
   Escher::MessageTextView m_title;
-  Escher::ListViewWithTopAndBottomViews m_contentView;
-
   Statistic* m_statistic;
 
   TestGraphController* m_testGraphController;

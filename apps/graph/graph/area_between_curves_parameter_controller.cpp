@@ -37,10 +37,9 @@ AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(
 AreaBetweenCurvesParameterController::AreaBetweenCurvesParameterController(
     Responder *parentResponder,
     AreaBetweenCurvesGraphController *areaGraphController)
-    : SelectableListViewController(parentResponder),
+    : SelectableListViewWithTopAndBottomViews(parentResponder, &m_topView),
       m_mainRecord(nullptr),
       m_areaGraphController(areaGraphController),
-      m_contentView(&m_selectableListView, this, &m_topView),
       m_topView(I18n::Message::SelectSecondCurve,
                 {.style = {.glyphColor = Palette::GrayDark,
                            .backgroundColor = Palette::WallScreen,
@@ -93,7 +92,7 @@ bool AreaBetweenCurvesParameterController::handleEvent(
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_areaGraphController->setRecord(m_mainRecord);
     m_areaGraphController->setSecondRecord(
-        DerivableActiveFunctionAtIndex(selectedRow(), m_mainRecord));
+        DerivableActiveFunctionAtIndex(innerSelectedRow(), m_mainRecord));
     stack->popUntilDepth(
         Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
         true);

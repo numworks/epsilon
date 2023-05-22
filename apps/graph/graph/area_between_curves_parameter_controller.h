@@ -2,16 +2,14 @@
 #define GRAPH_AREA_BETWEEN_CURVES_PARAMETER_CONTROLLER
 
 #include <apps/shared/curve_selection_controller.h>
-#include <escher/list_view_with_top_and_bottom_views.h>
-#include <escher/selectable_list_view_controller.h>
+#include <escher/selectable_list_view_with_top_and_bottom_views.h>
 
 #include "area_between_curves_graph_controller.h"
 
 namespace Graph {
 
 class AreaBetweenCurvesParameterController
-    : public Escher::SelectableListViewController<
-          Escher::StandardMemoizedListViewDataSource> {
+    : public Escher::SelectableListViewWithTopAndBottomViews {
  public:
   static Ion::Storage::Record DerivableActiveFunctionAtIndex(
       int index, Ion::Storage::Record excludedRecord);
@@ -40,7 +38,6 @@ class AreaBetweenCurvesParameterController
   }
 
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
-  Escher::View* view() override { return &m_contentView; }
 
  private:
   constexpr static int k_maxNumberOfDisplayableRows =
@@ -51,7 +48,6 @@ class AreaBetweenCurvesParameterController
 
   Ion::Storage::Record m_mainRecord;
   AreaBetweenCurvesGraphController* m_areaGraphController;
-  Escher::ListViewWithTopAndBottomViews m_contentView;
   Escher::MessageTextView m_topView;
   Shared::CurveSelectionCell m_cells[k_maxNumberOfDisplayableRows];
 };

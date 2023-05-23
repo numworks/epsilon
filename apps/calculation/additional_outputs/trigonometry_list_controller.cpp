@@ -121,12 +121,17 @@ void TrigonometryListController::updateIsStrictlyEqualAtIndex(
     /* Only one layout is displayed, so there is no equal sign. */
     return;
   }
-  char exactBuffer[::Constant::MaxSerializedExpressionSize];
   char approximateBuffer[::Constant::MaxSerializedExpressionSize];
-  m_exactLayouts[index].serializeForParsing(
-      exactBuffer, ::Constant::MaxSerializedExpressionSize);
   m_approximatedLayouts[index].serializeForParsing(
       approximateBuffer, ::Constant::MaxSerializedExpressionSize);
+  if (strcmp(approximateBuffer, Undefined::Name()) == 0) {
+    // Hide exact result if approximation is undef (e.g tan(1.5707963267949))
+    m_exactLayouts[index] = Layout();
+    return;
+  }
+  char exactBuffer[::Constant::MaxSerializedExpressionSize];
+  m_exactLayouts[index].serializeForParsing(
+      exactBuffer, ::Constant::MaxSerializedExpressionSize);
   assert(strcmp(exactBuffer, approximateBuffer) != 0);
   m_isStrictlyEqual[index] = Expression::ExactAndApproximateExpressionsAreEqual(
       Expression::Parse(exactBuffer, context),

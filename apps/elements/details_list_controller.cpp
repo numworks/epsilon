@@ -9,30 +9,17 @@ using namespace Poincare;
 
 namespace Elements {
 
-bool DetailsListController::DetailsInnerList::canStoreContentOfCell(
-    Escher::SelectableListView *l, int row) const {
-  const DataField *dataField = DataFieldForRow(row);
-  Layout layout = DataFieldForRow(row)->getLayout(
-      App::app()->elementsViewDataSource()->selectedElement(),
-      PrintFloat::k_numberOfStoredSignificantDigits);
-  return dataField != &ElementsDataBase::ConfigurationField &&
-         dataField != &ElementsDataBase::GroupField &&
-         dataField != &ElementsDataBase::StateField &&
-         !layout.isIdenticalTo(DataField::UnknownValueLayout());
-}
-
 DetailsListController::DetailsListController(
     StackViewController *parentResponder)
-    : SelectableListViewController(parentResponder),
+    : SelectableListViewWithTopAndBottomViews(
+          parentResponder, &m_topElementView, &m_bottomMessageView),
       m_topElementView(Escher::Palette::WallScreen),
       m_bottomMessageView(
           I18n::Message::ElementsDataConditions,
           {.style = {.glyphColor = Escher::Palette::GrayDark,
                      .backgroundColor = Escher::Palette::WallScreen,
                      .font = KDFont::Size::Small},
-           .horizontalAlignment = KDGlyph::k_alignCenter}),
-      m_view(&m_selectableListView, this, &m_topElementView,
-             &m_bottomMessageView) {}
+           .horizontalAlignment = KDGlyph::k_alignCenter}) {}
 
 bool DetailsListController::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::Plus || e == Ion::Events::Minus) {
@@ -54,7 +41,9 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
   return false;
 }
 
-void DetailsListController::didBecomeFirstResponder() { m_view.reload(); }
+void DetailsListController::didBecomeFirstResponder() {
+  m_selectableListView.reloadData();
+}
 
 const char *DetailsListController::title() {
   return I18n::translate(ElementsDataBase::Name(
@@ -93,6 +82,20 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell *cell,
       Preferences::sharedPreferences->numberOfSignificantDigits();
   typedCell->label()->setLayout(dataField->fieldSymbolLayout());
   typedCell->accessory()->setLayout(dataField->getLayout(z, significantDigits));
+}
+
+bool DetailsListController::canStoreContentOfCell(SelectableListView *l,
+                                                  int row) const {
+  assert(l == &m_selectableListView);
+  int innerRow = innerRowFromRow(row);
+  const DataField *dataField = DataFieldForRow(innerRow);
+  Layout layout = DataFieldForRow(innerRow)->getLayout(
+      App::app()->elementsViewDataSource()->selectedElement(),
+      PrintFloat::k_numberOfStoredSignificantDigits);
+  return dataField != &ElementsDataBase::ConfigurationField &&
+         dataField != &ElementsDataBase::GroupField &&
+         dataField != &ElementsDataBase::StateField &&
+         !layout.isIdenticalTo(DataField::UnknownValueLayout());
 }
 
 KDCoordinate DetailsListController::nonMemoizedRowHeight(int j) {

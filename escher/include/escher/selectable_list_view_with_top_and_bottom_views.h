@@ -98,8 +98,10 @@ class SelectableListViewWithTopAndBottomViews
   void setTopView(View* view) { m_dataSource.setTopView(view); }
   void setBottomView(View* view) { m_dataSource.setBottomView(view); }
 
-  ListViewWithTopAndBottomViewsDataSource m_dataSource;
   SelectableListView m_selectableListView;
+
+ private:
+  ListViewWithTopAndBottomViewsDataSource m_dataSource;
 };
 
 }  // namespace Escher

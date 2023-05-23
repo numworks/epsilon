@@ -21,6 +21,7 @@ class ListViewWithTopAndBottomViewsDataSource
 
   bool hasTopView() const { return m_topCell.hasView(); }
   bool hasBottomView() const { return m_bottomCell.hasView(); }
+  void setBottomView(View* view) { m_bottomCell.setView(view); }
 
  protected:
   KDCoordinate nonMemoizedRowHeight(int j) override;
@@ -39,6 +40,7 @@ class ListViewWithTopAndBottomViewsDataSource
       return m_view->minimalSizeForOptimalDisplay();
     }
     bool hasView() const { return m_view; }
+    void setView(View* view) { m_view = view; }
 
    protected:
     int numberOfSubviews() const override { return 1; }
@@ -81,6 +83,9 @@ class SelectableListViewWithTopAndBottomViews
       SelectableListView* l, int previousRow, KDPoint previousOffset,
       bool withinTemporarySelection = false) override;
   void selectFirstCell() { selectCell(m_dataSource.hasTopView()); }
+  void selectLastCell() {
+    selectCell(m_dataSource.numberOfRows() - 1 - m_dataSource.hasBottomView());
+  }
 
  protected:
   void didBecomeFirstResponder() override {
@@ -91,6 +96,8 @@ class SelectableListViewWithTopAndBottomViews
     return row - m_dataSource.hasTopView();
   }
   int innerSelectedRow() const { return innerRowFromRow(selectedRow()); }
+  void setBottomView(View* view) { m_dataSource.setBottomView(view); }
+
   ListViewWithTopAndBottomViewsDataSource m_dataSource;
   SelectableListView m_selectableListView;
 };

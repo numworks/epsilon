@@ -15,7 +15,8 @@ using namespace Escher;
 namespace Settings {
 
 PressToTestController::PressToTestController(Responder *parentResponder)
-    : SelectableListViewController(parentResponder),
+    : SelectableListViewWithTopAndBottomViews(
+          parentResponder, &m_topMessageView, &m_bottomMessageView),
       m_topMessageView(I18n::Message::Default,
                        {.style = {.glyphColor = Palette::GrayDark,
                                   .backgroundColor = Palette::WallScreen,
@@ -26,8 +27,6 @@ PressToTestController::PressToTestController(Responder *parentResponder)
                                      .backgroundColor = Palette::WallScreen,
                                      .font = KDFont::Size::Small},
                            .horizontalAlignment = KDGlyph::k_alignCenter}),
-      m_view(&m_selectableListView, this, &m_topMessageView,
-             &m_bottomMessageView),
       m_tempPressToTestParams{},
       m_activateButton(
           &m_selectableListView, I18n::Message::ActivateTestMode,
@@ -57,7 +56,7 @@ PressToTestController::PressToTestController(Responder *parentResponder)
 }
 
 void PressToTestController::resetController() {
-  selectCell(0);
+  selectFirstCell();
   if (Preferences::sharedPreferences->examMode().isActive()) {
     // Reset switches states to press-to-test current parameter.
     m_tempPressToTestParams =
@@ -149,17 +148,17 @@ void PressToTestController::setMessages() {
     assert(Preferences::sharedPreferences->examMode().ruleset() ==
            ExamMode::Ruleset::PressToTest);
     m_topMessageView.setMessage(I18n::Message::PressToTestActiveIntro);
-    m_view.setBottomView(&m_bottomMessageView);
+    setBottomView(&m_bottomMessageView);
   } else {
     m_topMessageView.setMessage(I18n::Message::PressToTestIntro1);
-    m_view.setBottomView(nullptr);
+    setBottomView(nullptr);
   }
 }
 
 bool PressToTestController::handleEvent(Ion::Events::Event event) {
-  int row = selectedRow();
+  int row = innerSelectedRow();
   if (typeAtIndex(row) == k_switchCellType &&
-      static_cast<PressToTestSwitch *>(m_selectableListView.cell(row))
+      static_cast<PressToTestSwitch *>(m_selectableListView.cell(selectedRow()))
           ->canBeActivatedByEvent(event) &&
       !Preferences::sharedPreferences->examMode().isActive()) {
     assert(row >= 0 && row < k_numberOfSwitchCells);
@@ -175,7 +174,7 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
     if (!Preferences::sharedPreferences->examMode().isActive() &&
         !(m_tempPressToTestParams == ExamMode::PressToTestFlags{})) {
       // Scroll to validation cell if m_confirmPopUpController is discarded.
-      selectCell(numberOfRows() - 1);
+      selectLastCell();
       // Open pop-up to confirm discarding values
       m_confirmPopUpController.presentModally();
     } else {
@@ -192,10 +191,10 @@ void PressToTestController::didBecomeFirstResponder() {
   if (Preferences::sharedPreferences->examMode().isActive()) {
     resetController();
   }
-  assert(selectedRow() >= 0);
+  assert(selectedRow() >= 1);
   setMessages();
   resetMemoization();
-  m_view.reload();
+  m_selectableListView.reloadData();
 }
 
 int PressToTestController::numberOfRows() const {

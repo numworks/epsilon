@@ -4,18 +4,15 @@
 #include <apps/i18n.h>
 #include <apps/shared/pop_up_controller.h>
 #include <escher/button_cell.h>
-#include <escher/list_view_data_source.h>
-#include <escher/list_view_with_top_and_bottom_views.h>
-#include <escher/selectable_list_view_controller.h>
-#include <escher/view_controller.h>
+#include <escher/selectable_list_view_with_top_and_bottom_views.h>
 #include <poincare/preferences.h>
 
 #include "press_to_test_switch.h"
 
 namespace Settings {
 
-class PressToTestController : public Escher::SelectableListViewController<
-                                  Escher::StandardMemoizedListViewDataSource> {
+class PressToTestController
+    : public Escher::SelectableListViewWithTopAndBottomViews {
  public:
   PressToTestController(Escher::Responder* parentResponder);
   const char* title() override {
@@ -34,7 +31,6 @@ class PressToTestController : public Escher::SelectableListViewController<
     return typeAtIndex(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
   }
   Poincare::ExamMode::PressToTestFlags getPressToTestParams();
-  Escher::View* view() override { return &m_view; }
   void resetController();
 
  private:
@@ -52,7 +48,6 @@ class PressToTestController : public Escher::SelectableListViewController<
 
   Escher::MessageTextView m_topMessageView;
   Escher::MessageTextView m_bottomMessageView;
-  Escher::ListViewWithTopAndBottomViews m_view;
   PressToTestSwitch m_switchCells[k_numberOfReusableSwitchCells];
   Poincare::ExamMode::PressToTestFlags m_tempPressToTestParams;
   Escher::ButtonCell m_activateButton;

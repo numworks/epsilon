@@ -26,7 +26,6 @@ class ExplicitFloatParameterController
   bool handleEvent(Ion::Events::Event event) override;
 
   void willDisplayCellForIndex(Escher::HighlightCell *cell, int index) override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
   bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,

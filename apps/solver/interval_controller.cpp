@@ -15,9 +15,7 @@ IntervalController::IntervalController(
     InputEventHandlerDelegate *inputEventHandlerDelegate)
     : FloatParameterController<double>(parentResponder),
       m_instructions(I18n::Message::ApproximateSolutionIntervalInstruction,
-                     {.style = {.backgroundColor = Palette::WallScreen,
-                                .font = KDFont::Size::Small},
-                      .horizontalAlignment = KDGlyph::k_alignCenter}),
+                     k_messageFormat),
       m_shouldReplaceFunctionsButNotSymbols(false) {
   setTopView(&m_instructions);
   m_okButton.setMessage(I18n::Message::ResolveEquation);

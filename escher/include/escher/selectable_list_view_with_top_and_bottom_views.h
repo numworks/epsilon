@@ -85,6 +85,12 @@ class SelectableListViewWithTopAndBottomViews
       bool withinTemporarySelection = false) override;
 
  protected:
+  constexpr static KDGlyph::Format k_messageFormat = {
+      .style = {.glyphColor = Escher::Palette::GrayDark,
+                .backgroundColor = Escher::Palette::WallScreen,
+                .font = KDFont::Size::Small},
+      .horizontalAlignment = KDGlyph::k_alignCenter};
+
   void didBecomeFirstResponder() override;
   int innerRowFromRow(int row) const {
     assert(row >= m_dataSource.hasTopView());

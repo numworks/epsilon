@@ -30,11 +30,6 @@ class ParametersController : public Shared::FloatParameterController<double> {
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 
  private:
-  constexpr static KDGlyph::Format k_format = {
-      .style = {.glyphColor = Escher::Palette::GrayDark,
-                .backgroundColor = Escher::Palette::WallScreen,
-                .font = KDFont::Size::Small},
-      .horizontalAlignment = KDGlyph::k_alignCenter};
   int reusableParameterCellCount(int type) override;
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,

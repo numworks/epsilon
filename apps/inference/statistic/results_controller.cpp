@@ -15,11 +15,7 @@ ResultsController::ResultsController(
     IntervalGraphController *intervalGraphController)
     : SelectableListViewWithTopAndBottomViews(parent, &m_title),
       DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>(this),
-      m_title(I18n::Message::CalculatedValues,
-              {.style = {.glyphColor = Palette::GrayDark,
-                         .backgroundColor = Palette::WallScreen,
-                         .font = KDFont::Size::Small},
-               .horizontalAlignment = KDGlyph::k_alignCenter}),
+      m_title(I18n::Message::CalculatedValues, k_messageFormat),
       m_statistic(statistic),
       m_testGraphController(testGraphController),
       m_intervalGraphController(intervalGraphController),

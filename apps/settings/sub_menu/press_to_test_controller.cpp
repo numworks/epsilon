@@ -17,16 +17,9 @@ namespace Settings {
 PressToTestController::PressToTestController(Responder *parentResponder)
     : SelectableListViewWithTopAndBottomViews(
           parentResponder, &m_topMessageView, &m_bottomMessageView),
-      m_topMessageView(I18n::Message::Default,
-                       {.style = {.glyphColor = Palette::GrayDark,
-                                  .backgroundColor = Palette::WallScreen,
-                                  .font = KDFont::Size::Small},
-                        .horizontalAlignment = KDGlyph::k_alignCenter}),
+      m_topMessageView(I18n::Message::Default, k_messageFormat),
       m_bottomMessageView(I18n::Message::ToDeactivatePressToTest1,
-                          {.style = {.glyphColor = KDColorBlack,
-                                     .backgroundColor = Palette::WallScreen,
-                                     .font = KDFont::Size::Small},
-                           .horizontalAlignment = KDGlyph::k_alignCenter}),
+                          k_messageFormat),
       m_tempPressToTestParams{},
       m_activateButton(
           &m_selectableListView, I18n::Message::ActivateTestMode,

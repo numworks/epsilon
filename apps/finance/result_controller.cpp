@@ -14,11 +14,7 @@ using namespace Finance;
 ResultController::ResultController(Escher::StackViewController* parentResponder)
     : Escher::SelectableListViewWithTopAndBottomViews(parentResponder,
                                                       &m_messageView),
-      m_messageView(I18n::Message::CalculatedValues,
-                    {.style = {.glyphColor = Escher::Palette::GrayDark,
-                               .backgroundColor = Escher::Palette::WallScreen,
-                               .font = KDFont::Size::Small},
-                     .horizontalAlignment = KDGlyph::k_alignCenter}) {}
+      m_messageView(I18n::Message::CalculatedValues, k_messageFormat) {}
 
 void ResultController::didBecomeFirstResponder() {
   /* Build the result cell here because it only needs to be updated once this

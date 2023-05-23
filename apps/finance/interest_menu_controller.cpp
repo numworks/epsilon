@@ -13,11 +13,7 @@ InterestMenuController::InterestMenuController(
     InterestController* interestController)
     : Escher::SelectableListViewWithTopAndBottomViews(parentResponder,
                                                       &m_messageView),
-      m_messageView(I18n::Message::ParameterChoose,
-                    {.style = {.glyphColor = Escher::Palette::GrayDark,
-                               .backgroundColor = Escher::Palette::WallScreen,
-                               .font = KDFont::Size::Small},
-                     .horizontalAlignment = KDGlyph::k_alignCenter}),
+      m_messageView(I18n::Message::ParameterChoose, k_messageFormat),
       m_interestController(interestController) {
   selectRow(0);
 }

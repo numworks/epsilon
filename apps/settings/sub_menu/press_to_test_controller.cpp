@@ -191,10 +191,8 @@ void PressToTestController::didBecomeFirstResponder() {
   if (Preferences::sharedPreferences->examMode().isActive()) {
     resetController();
   }
-  assert(selectedRow() >= 1);
   setMessages();
-  resetMemoization();
-  m_selectableListView.reloadData();
+  SelectableListViewWithTopAndBottomViews::didBecomeFirstResponder();
 }
 
 int PressToTestController::numberOfRows() const {

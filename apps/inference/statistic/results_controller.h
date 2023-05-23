@@ -32,7 +32,6 @@ class ResultsController
   // ViewController
   ViewController::TitlesDisplay titlesDisplay() override;
   const char* title() override;
-  void didBecomeFirstResponder() override;
 
   // StandardMemoizedListViewDataSource
   int numberOfRows() const override;

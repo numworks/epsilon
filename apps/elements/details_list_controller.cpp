@@ -41,10 +41,6 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
   return false;
 }
 
-void DetailsListController::didBecomeFirstResponder() {
-  m_selectableListView.reloadData();
-}
-
 const char *DetailsListController::title() {
   return I18n::translate(ElementsDataBase::Name(
       App::app()->elementsViewDataSource()->selectedElement()));

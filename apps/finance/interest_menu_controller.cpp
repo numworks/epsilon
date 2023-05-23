@@ -23,7 +23,6 @@ InterestMenuController::InterestMenuController(
 }
 
 void InterestMenuController::didBecomeFirstResponder() {
-  resetMemoization(true);
   int nRows = numberOfRows();
   for (int i = 0; i < nRows; i++) {
     m_cells[i].label()->setMessage(
@@ -31,7 +30,7 @@ void InterestMenuController::didBecomeFirstResponder() {
     m_cells[i].subLabel()->setMessage(
         App::GetInterestData()->sublabelForParameter(paramaterAtIndex(i)));
   }
-  m_selectableListView.reloadData();
+  SelectableListViewWithTopAndBottomViews::didBecomeFirstResponder();
 }
 
 bool InterestMenuController::handleEvent(Ion::Events::Event event) {

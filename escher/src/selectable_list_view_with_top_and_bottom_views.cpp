@@ -107,4 +107,10 @@ void SelectableListViewWithTopAndBottomViews::
   }
 }
 
+void SelectableListViewWithTopAndBottomViews::didBecomeFirstResponder() {
+  resetMemoization();
+  selectFirstCell();
+  m_selectableListView.reloadData();
+}
+
 }  // namespace Escher

@@ -15,7 +15,7 @@ class StoreColumnHelper;
 
 class FormulaTemplateMenuController
     : public Escher::SelectableListViewController<
-          Escher::MemoizedListViewDataSource> {
+          Escher::StandardMemoizedListViewDataSource> {
  public:
   constexpr static int k_maxSizeOfTemplateText = 30;
   FormulaTemplateMenuController(Escher::Responder* parentResponder,

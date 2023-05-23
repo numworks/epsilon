@@ -14,7 +14,7 @@
 namespace Regression {
 
 class RegressionController : public Escher::SelectableListViewController<
-                                 Escher::MemoizedListViewDataSource> {
+                                 Escher::StandardMemoizedListViewDataSource> {
  public:
   RegressionController(Escher::Responder* parentResponder, Store* store);
   void setSeries(int series) { m_series = series; }

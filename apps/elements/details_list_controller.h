@@ -13,7 +13,7 @@
 namespace Elements {
 
 class DetailsListController : public Escher::ViewController,
-                              public Escher::MemoizedListViewDataSource,
+                              public Escher::StandardMemoizedListViewDataSource,
                               public Escher::SelectableListViewDataSource {
  public:
   DetailsListController(Escher::StackViewController *parentResponder);

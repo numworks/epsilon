@@ -48,16 +48,17 @@ class ListViewDataSource : public TableViewDataSource {
                                  int reusableCellCount) const;
 };
 
+template <int N>
 class MemoizedListViewDataSource : public ListViewDataSource {
  public:
   MemoizedListViewDataSource() : m_heightManager(this) {}
 
  private:
   TableSize1DManager* rowHeightManager() override { return &m_heightManager; }
-  /* If needed, MemoizedListViewDataSource can be templated with <N> to change
-   * the size of MemoizedRowHeightManager */
-  MemoizedRowHeightManager<7> m_heightManager;
+  MemoizedRowHeightManager<N> m_heightManager;
 };
+
+using StandardMemoizedListViewDataSource = MemoizedListViewDataSource<7>;
 
 class RegularListViewDataSource : public ListViewDataSource {
  private:

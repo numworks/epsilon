@@ -14,7 +14,8 @@ InterestMenuController::InterestMenuController(
     : Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
-          k_numberOfCells, Escher::MemoizedListViewDataSource>(parentResponder),
+          k_numberOfCells, Escher::StandardMemoizedListViewDataSource>(
+          parentResponder),
       m_messageView(I18n::Message::ParameterChoose,
                     {.style = {.glyphColor = Escher::Palette::GrayDark,
                                .backgroundColor = Escher::Palette::WallScreen,

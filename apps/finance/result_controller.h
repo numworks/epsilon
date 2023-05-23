@@ -16,7 +16,7 @@ class ResultController
     : public Escher::SelectableCellListPage<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::FloatBufferTextView<>>,
-          1, Escher::MemoizedListViewDataSource> {
+          1, Escher::StandardMemoizedListViewDataSource> {
  public:
   ResultController(Escher::StackViewController* parentResponder);
 

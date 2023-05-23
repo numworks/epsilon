@@ -20,7 +20,7 @@ using ResultCell = Escher::MenuCell<Escher::LayoutView, Escher::MessageTextView,
  * represent data provided (and computed) by a Statistic.
  */
 class ResultsDataSource
-    : public Escher::MemoizedListViewDataSource,
+    : public Escher::StandardMemoizedListViewDataSource,
       public DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells> {
  public:
   ResultsDataSource(Escher::Responder* parent, Statistic* statistic,

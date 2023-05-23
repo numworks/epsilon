@@ -11,7 +11,7 @@ namespace Graph {
 
 class AreaBetweenCurvesParameterController
     : public Escher::SelectableListViewController<
-          Escher::MemoizedListViewDataSource> {
+          Escher::StandardMemoizedListViewDataSource> {
  public:
   static Ion::Storage::Record DerivableActiveFunctionAtIndex(
       int index, Ion::Storage::Record excludedRecord);

@@ -9,7 +9,7 @@ namespace Escher {
  * type. It basically means that the reusableCell mecanism is erased which
  * results in easier manipulation of heterogeneous cells but should not be used
  * in list with a long or dynamic cell count. */
-class ExplicitListViewDataSource : public MemoizedListViewDataSource {
+class ExplicitListViewDataSource : public StandardMemoizedListViewDataSource {
  public:
   int typeAtIndex(int index) const override final { return index; }
   int reusableCellCount(int type) override final { return 1; }

@@ -2,7 +2,7 @@
 #define SHARED_FLOAT_PARAMETER_CONTROLLER_H
 
 #include <escher/button_cell.h>
-#include <escher/selectable_list_view_controller.h>
+#include <escher/selectable_list_view_with_top_and_bottom_views.h>
 #include <escher/stack_view_controller.h>
 #include <escher/text_field.h>
 
@@ -15,16 +15,15 @@ namespace Shared {
 
 template <typename T>
 class FloatParameterController
-    : public Escher::SelectableListViewController<
-          Escher::StandardMemoizedListViewDataSource>,
+    : public Escher::SelectableListViewWithTopAndBottomViews,
       public ParameterTextFieldDelegate {
  public:
   FloatParameterController(Escher::Responder *parentResponder);
-  void didBecomeFirstResponder() override;
-  void viewWillAppear() override;
-  void viewDidDisappear() override;
+
+  // SelectableListViewWithTopAndBottomViews
   bool handleEvent(Ion::Events::Event event) override;
 
+  // MemoizedListViewDataSource
   int typeAtIndex(int index) const override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell *reusableCell(int index, int type) override;
@@ -33,6 +32,8 @@ class FloatParameterController
   KDCoordinate separatorBeforeRow(int index) override {
     return typeAtIndex(index) == k_buttonCellType ? k_defaultRowSeparator : 0;
   }
+
+  // ParameterTextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField *textField,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField *textField,

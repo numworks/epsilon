@@ -17,7 +17,6 @@ ParametersController::ParametersController(
     : FloatParameterController<double>(parentResponder),
       m_headerView(I18n::Message::DefineParameters, k_format),
       m_bottomView(I18n::Message::LeaveAFieldEmpty, k_format),
-      m_contentView(&m_selectableListView, this, &m_headerView, &m_bottomView),
       m_distribution(distribution),
       m_calculationController(calculationController) {
   assert(m_distribution != nullptr);
@@ -26,6 +25,7 @@ ParametersController::ParametersController(
     m_menuListCell[i].setParentResponder(&m_selectableListView);
     m_menuListCell[i].setDelegates(inputEventHandlerDelegate, this);
   }
+  setTopView(&m_headerView);
 }
 
 const char *ParametersController::title() {
@@ -46,12 +46,12 @@ void ParametersController::reinitCalculation() {
 
 void ParametersController::viewWillAppear() {
   if (m_distribution->canHaveUninitializedParameter()) {
-    m_contentView.setBottomView(&m_bottomView);
+    setBottomView(&m_bottomView);
   } else {
-    m_contentView.setBottomView(nullptr);
+    setBottomView(nullptr);
   }
   resetMemoization();
-  m_contentView.reload();
+  m_selectableListView.reloadData();
   FloatParameterController::viewWillAppear();
 }
 

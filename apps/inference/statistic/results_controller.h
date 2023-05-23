@@ -3,12 +3,10 @@
 
 #include <escher/buffer_text_view.h>
 #include <escher/button_cell.h>
-#include <escher/input_event_handler_delegate.h>
 #include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <escher/selectable_list_view_with_top_and_bottom_views.h>
 #include <escher/stack_view_controller.h>
-#include <escher/text_field_delegate.h>
 
 #include "inference/models/statistic/statistic.h"
 #include "inference/shared/dynamic_cells_data_source.h"
@@ -27,9 +25,7 @@ class ResultsController
  public:
   ResultsController(Escher::StackViewController* parent, Statistic* statistic,
                     TestGraphController* testGraphController,
-                    IntervalGraphController* intervalGraphController,
-                    Escher::InputEventHandlerDelegate* handler,
-                    Escher::TextFieldDelegate* textFieldDelegate);
+                    IntervalGraphController* intervalGraphController);
 
   static bool ButtonAction(ResultsController* controller, void* s);
 

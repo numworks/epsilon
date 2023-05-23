@@ -171,8 +171,8 @@ class ValuesController : public Shared::ValuesController,
   Escher::AbstractButtonCell m_setIntervalButton;
   Escher::ButtonState m_exactValuesButton;
   Escher::ToggleableDotView m_exactValuesDotView;
-  Escher::ShortMemoizedColumnWidthManager m_widthManager;
-  Escher::LongMemoizedRowHeightManager m_heightManager;
+  Escher::MemoizedColumnWidthManager<7> m_widthManager;
+  Escher::MemoizedRowHeightManager<10> m_heightManager;
   bool m_exactValuesAreActivated;
   mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
 };

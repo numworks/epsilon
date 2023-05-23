@@ -128,10 +128,5 @@ class MemoizedRowHeightManager : public TemplatedMemoizedTableSize1DManager<N> {
   KDCoordinate nonMemoizedCumulatedSizeBeforeIndex(int i) const override;
 };
 
-using ShortMemoizedColumnWidthManager = MemoizedColumnWidthManager<7>;
-using MemoizedOneRowHeightManager = MemoizedRowHeightManager<1>;
-using ShortMemoizedRowHeightManager = MemoizedRowHeightManager<7>;
-using LongMemoizedRowHeightManager = MemoizedRowHeightManager<10>;
-
 }  // namespace Escher
 #endif

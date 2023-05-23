@@ -152,7 +152,7 @@ class PrefacedTableView : public Escher::View,
     }
 
     const int m_prefaceRow;
-    Escher::MemoizedOneRowHeightManager m_rowHeigthManager;
+    Escher::MemoizedRowHeightManager<1> m_rowHeigthManager;
   };
 
   void layoutSubviewsInRect(KDRect rect, bool force);

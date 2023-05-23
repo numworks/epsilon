@@ -14,7 +14,7 @@ KDCoordinate ListViewWithTopAndBottomViewsDataSource::separatorBeforeRow(
   }
   if ((hasTopView() && index == 1) ||
       (hasBottomView() && index == numberOfRows() - 1)) {
-    return Metric::TableSeparatorThickness;
+    return Metric::CommonLargeMargin;
   }
   assert(index >= hasTopView());
   return m_innerDataSource->separatorBeforeRow(index - hasTopView());
@@ -81,8 +81,8 @@ SelectableListViewWithTopAndBottomViews::
     : SelectableViewController(parentResponder),
       m_selectableListView(this, &m_dataSource, this, this),
       m_dataSource(this, topView, bottomView) {
-  m_selectableListView.setTopMargin(Metric::CommonMargin / 2);
-  m_selectableListView.setBottomMargin(Metric::CommonMargin / 2);
+  m_selectableListView.setTopMargin(Metric::CommonLargeMargin);
+  m_selectableListView.setBottomMargin(Metric::CommonLargeMargin);
 }
 
 void SelectableListViewWithTopAndBottomViews::

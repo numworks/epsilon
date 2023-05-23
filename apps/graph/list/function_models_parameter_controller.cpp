@@ -152,10 +152,6 @@ int FunctionModelsParameterController::numberOfRows() const {
   return 1 + k_numberOfExpressionCells;
 };
 
-KDCoordinate FunctionModelsParameterController::nonMemoizedRowHeight(int j) {
-  return heightForCellAtIndex(cell(j), j);
-}
-
 const FunctionModelsParameterController::Model*
 FunctionModelsParameterController::Models() {
   CountryPreferences::GraphTemplatesLayout layout =

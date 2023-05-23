@@ -863,7 +863,7 @@ QUIZ_CASE(poincare_approximation_unique_random) {
 QUIZ_CASE(poincare_approximation_integral) {
   assert_expression_approximates_to<float>("int(x,x, 1, 2)", "1.5");
   assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");
-  assert_expression_approximates_to<float>("int(1/x,x,0,1)", "undef");
+  assert_expression_approximates_to<float>("int(1/x,x,0,1)", Undefined::Name());
 
   assert_expression_approximates_to<float>("int(1+cos(a),a, 0, 180)", "180");
   assert_expression_approximates_to<double>("int(1+cos(a),a, 0, 180)", "180");
@@ -895,7 +895,8 @@ QUIZ_CASE(poincare_approximation_integral) {
   assert_expression_approximates_to<double>("int(e^(-x)/√(x),x,0,inf)",
                                             "1.7724", Radian, MetricUnitFormat,
                                             Cartesian, 5);
-  assert_expression_approximates_to<double>("int(1,x,inf,0)", "undef");
+  assert_expression_approximates_to<double>("int(1,x,inf,0)",
+                                            Undefined::Name());
   assert_expression_approximates_to<double>("int(e^(-x),x,inf,0)", "-1");
 
   // singularities
@@ -1678,7 +1679,7 @@ QUIZ_CASE(poincare_approximation_probability) {
   assert_expression_approximates_to<double>("geompdf(1,1)", "1");
   assert_expression_approximates_to<double>("geompdf(2,0.5)", "0.25");
   assert_expression_approximates_to<double>("geompdf(2,1)", "0");
-  assert_expression_approximates_to<double>("geompdf(1,0)", "undef");
+  assert_expression_approximates_to<double>("geompdf(1,0)", Undefined::Name());
   assert_expression_approximates_to<double>("geomcdf(2,0.5)", "0.75");
   assert_expression_approximates_to<double>("geomcdfrange(2,3,0.5)", "0.375");
   assert_expression_approximates_to<double>("geomcdfrange(2,2,0.5)", "0.25");
@@ -1702,8 +1703,10 @@ QUIZ_CASE(poincare_approximation_probability) {
                                             "0.60937014162821");
   assert_expression_approximates_to<double>("invhgeom(.5,4,2,3)", "1");
   assert_expression_approximates_to<double>("invhgeom(.6,40,20,30)", "15");
-  assert_expression_approximates_to<double>("invhgeom(-1,4,2,3)", "undef");
-  assert_expression_approximates_to<double>("invhgeom(0,4,2,2)", "undef");
+  assert_expression_approximates_to<double>("invhgeom(-1,4,2,3)",
+                                            Undefined::Name());
+  assert_expression_approximates_to<double>("invhgeom(0,4,2,2)",
+                                            Undefined::Name());
   assert_expression_approximates_to<double>("invhgeom(0,4,2,3)", "0");
   assert_expression_approximates_to<double>("invhgeom(1,4,2,3)", "2");
 
@@ -2170,9 +2173,10 @@ QUIZ_CASE(poincare_approximation_keeping_symbols) {
   assert_expression_approximates_keeping_symbols_to("{x,undef,3/4+x,1/2}",
                                                     "{x,undef,x+0.75,0.5}");
   assert_expression_approximates_keeping_symbols_to("3/5→x", "0.6→x");
-  assert_expression_approximates_keeping_symbols_to("4×kg×s^(-3)", "undef");
+  assert_expression_approximates_keeping_symbols_to("4×kg×s^(-3)",
+                                                    Undefined::Name());
   assert_expression_approximates_keeping_symbols_to("piecewise(T×x<0)",
-                                                    "undef");
+                                                    Undefined::Name());
   // Check that it still reduces
   assert_expression_approximates_keeping_symbols_to("x^2+x×x", "2×x^2");
 }

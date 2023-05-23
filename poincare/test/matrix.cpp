@@ -1,5 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/matrix.h>
+#include <poincare/undefined.h>
 
 #include "helper.h"
 
@@ -25,15 +26,20 @@ QUIZ_CASE(poincare_matrix_rank) {
 }
 
 QUIZ_CASE(poincare_matrix_undef) {
-  assert_expression_approximates_to<float>("cross([[0]],[[0]])", "undef");
-  assert_expression_approximates_to<float>("det(cross([[0]],[[0]]))", "undef");
-  assert_expression_approximates_to<float>("dim(cross([[0]],[[0]]))", "undef");
+  assert_expression_approximates_to<float>("cross([[0]],[[0]])",
+                                           Undefined::Name());
+  assert_expression_approximates_to<float>("det(cross([[0]],[[0]]))",
+                                           Undefined::Name());
+  assert_expression_approximates_to<float>("dim(cross([[0]],[[0]]))",
+                                           Undefined::Name());
   assert_expression_approximates_to<float>("inverse(cross([[0]],[[0]]))",
-                                           "undef");
-  assert_expression_approximates_to<float>("norm(cross([[0]],[[0]]))", "undef");
-  assert_expression_approximates_to<float>("ref(cross([[0]],[[0]]))", "undef");
+                                           Undefined::Name());
+  assert_expression_approximates_to<float>("norm(cross([[0]],[[0]]))",
+                                           Undefined::Name());
+  assert_expression_approximates_to<float>("ref(cross([[0]],[[0]]))",
+                                           Undefined::Name());
   assert_expression_approximates_to<float>("trace(cross([[0]],[[0]]))",
-                                           "undef");
+                                           Undefined::Name());
   assert_expression_approximates_to<float>("transpose(cross([[0]],[[0]]))",
-                                           "undef");
+                                           Undefined::Name());
 }

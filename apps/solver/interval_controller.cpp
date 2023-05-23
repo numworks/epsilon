@@ -10,57 +10,16 @@ using namespace Escher;
 
 namespace Solver {
 
-IntervalController::ContentView::ContentView(
-    SelectableTableView *selectableTableView)
-    : m_instructions0(I18n::Message::ApproximateSolutionIntervalInstruction0,
-                      k_glyphFormat),
-      m_instructions1(I18n::Message::ApproximateSolutionIntervalInstruction1,
-                      k_glyphFormat),
-      m_selectableTableView(selectableTableView) {}
-
-void IntervalController::ContentView::drawRect(KDContext *ctx,
-                                               KDRect rect) const {
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_topMargin),
-                Palette::WallScreen);
-}
-
-int IntervalController::ContentView::numberOfSubviews() const { return 3; }
-
-View *IntervalController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 5);
-  if (index == 0) {
-    return &m_instructions0;
-  }
-  if (index == 1) {
-    return &m_instructions1;
-  }
-  return m_selectableTableView;
-}
-
-void IntervalController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate textHeight = KDFont::GlyphHeight(KDFont::Size::Small);
-  setChildFrame(
-      &m_instructions0,
-      KDRect(0, k_topMargin / 2 - textHeight, bounds().width(), textHeight),
-      force);
-  setChildFrame(&m_instructions1,
-                KDRect(0, k_topMargin / 2, bounds().width(), textHeight),
-                force);
-  setChildFrame(
-      m_selectableTableView,
-      KDRect(0, k_topMargin, bounds().width(), bounds().height() - k_topMargin),
-      force);
-}
-
-/* IntervalController Controller */
-
 IntervalController::IntervalController(
     Responder *parentResponder,
     InputEventHandlerDelegate *inputEventHandlerDelegate)
     : FloatParameterController<double>(parentResponder),
-      m_contentView(&m_selectableListView),
+      m_instructions(I18n::Message::ApproximateSolutionIntervalInstruction,
+                     {.style = {.backgroundColor = Palette::WallScreen,
+                                .font = KDFont::Size::Small},
+                      .horizontalAlignment = KDGlyph::k_alignCenter}),
       m_shouldReplaceFunctionsButNotSymbols(false) {
-  m_selectableListView.setTopMargin(0);
+  setTopView(&m_instructions);
   m_okButton.setMessage(I18n::Message::ResolveEquation);
   for (int i = 0; i < k_maxNumberOfCells; i++) {
     m_intervalCell[i].setParentResponder(&m_selectableListView);

@@ -523,7 +523,7 @@ QUIZ_CASE(poincare_properties_is_real) {
   assert_expression_is_not_real("1×23×3×[[1,2]]");
   assert_expression_is_real("π");
   assert_expression_is_not_real("nonreal");
-  assert_expression_is_not_real("undef");
+  assert_expression_is_not_real(Undefined::Name());
   assert_expression_is_real("2.3");
   assert_expression_is_real("2^3.4");
   assert_expression_is_real("(-2)^(-3)");

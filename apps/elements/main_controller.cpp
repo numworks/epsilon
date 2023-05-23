@@ -70,7 +70,7 @@ bool MainController::handleEvent(Ion::Events::Event e) {
   }
 
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
-    m_detailsController.selectCell(0);
+    m_detailsController.selectFirstCell();
     stackOpenPage(&m_detailsController);
     return true;
   }

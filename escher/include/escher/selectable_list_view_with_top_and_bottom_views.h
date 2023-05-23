@@ -80,6 +80,7 @@ class SelectableListViewWithTopAndBottomViews
   void listViewDidChangeSelectionAndDidScroll(
       SelectableListView* l, int previousRow, KDPoint previousOffset,
       bool withinTemporarySelection = false) override;
+  void selectFirstCell() { selectCell(m_dataSource.hasTopView()); }
 
  protected:
   void didBecomeFirstResponder() override {

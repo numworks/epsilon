@@ -1,5 +1,6 @@
 #include <poincare/float.h>
 #include <poincare/trigonometry_cheat_table.h>
+#include <poincare/undefined.h>
 
 namespace Poincare {
 
@@ -114,7 +115,7 @@ Expression TrigonometryCheatTable::simplify(
 const TrigonometryCheatTable* TrigonometryCheatTable::Table() {
   static const Row sTableRows[] = {
       Row(Row::Pair("π*(-2)^(-1)", -1.5707963267948966f), Row::Pair(""),
-          Row::Pair("-1", -1.0f), Row::Pair("undef")),
+          Row::Pair("-1", -1.0f), Row::Pair(Undefined::Name())),
       Row(Row::Pair("π*(-5)*12^(-1)", -1.3089969389957472f), Row::Pair(""),
           Row::Pair("(-1)*6^(1/2)*4^(-1)-2^(1/2)*4^(-1)", -0.9659258262890683f),
           Row::Pair("-(3^(1/2)+2)", -3.7320508075688776f)),
@@ -192,7 +193,7 @@ const TrigonometryCheatTable* TrigonometryCheatTable::Table() {
           Row::Pair("6^(1/2)*4^(-1)+2^(1/2)*4^(-1)", 0.9659258262890683f),
           Row::Pair("3^(1/2)+2", 3.7320508075688776f)),
       Row(Row::Pair("π*2^(-1)", 1.5707963267948966f), Row::Pair("0", 0.0f),
-          Row::Pair("1", 1.0f), Row::Pair("undef")),
+          Row::Pair("1", 1.0f), Row::Pair(Undefined::Name())),
       Row(Row::Pair("π*7*12^(-1)", 1.832595714594046f),
           Row::Pair("-6^(1/2)*4^(-1)+2^(1/2)*4^(-1)", -0.25881904510252063f),
           Row::Pair(""), Row::Pair("")),

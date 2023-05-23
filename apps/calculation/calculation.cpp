@@ -264,7 +264,7 @@ static bool expressionIsInterestingFunction(Expression e) {
 Calculation::AdditionalInformations Calculation::additionalInformations() {
   if (Preferences::sharedPreferences->examMode().forbidAdditionalResults() ||
       strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal),
-             "undef") == 0) {
+             Undefined::Name()) == 0) {
     return AdditionalInformations();
   }
   Preferences *preferences = Preferences::sharedPreferences;

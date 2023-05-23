@@ -21,6 +21,7 @@ class ListViewWithTopAndBottomViewsDataSource
 
   bool hasTopView() const { return m_topCell.hasView(); }
   bool hasBottomView() const { return m_bottomCell.hasView(); }
+  void setTopView(View* view) { m_topCell.setView(view); }
   void setBottomView(View* view) { m_bottomCell.setView(view); }
 
  protected:
@@ -94,6 +95,7 @@ class SelectableListViewWithTopAndBottomViews
   void selectLastCell() {
     selectCell(m_dataSource.numberOfRows() - 1 - m_dataSource.hasBottomView());
   }
+  void setTopView(View* view) { m_dataSource.setTopView(view); }
   void setBottomView(View* view) { m_dataSource.setBottomView(view); }
 
   ListViewWithTopAndBottomViewsDataSource m_dataSource;

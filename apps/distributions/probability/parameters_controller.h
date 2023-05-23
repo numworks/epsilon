@@ -3,7 +3,6 @@
 
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/layout_view.h>
-#include <escher/list_view_with_top_and_bottom_views.h>
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
 
@@ -23,7 +22,6 @@ class ParametersController : public Shared::FloatParameterController<double> {
   ViewController::TitlesDisplay titlesDisplay() override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
-  Escher::View* view() override { return &m_contentView; }
   bool handleEvent(Ion::Events::Event event) override;
   void reinitCalculation();
   void viewWillAppear() override;
@@ -53,7 +51,6 @@ class ParametersController : public Shared::FloatParameterController<double> {
   constexpr static int k_maxNumberOfCells = 3;
   Escher::MessageTextView m_headerView;
   Escher::MessageTextView m_bottomView;
-  Escher::ListViewWithTopAndBottomViews m_contentView;
   Escher::MenuCellWithEditableText<Escher::LayoutView, Escher::MessageTextView>
       m_menuListCell[k_maxNumberOfCells];
   Distribution* m_distribution;

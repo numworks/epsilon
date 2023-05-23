@@ -67,9 +67,8 @@ void IntervalParameterController::willDisplayCellForIndex(HighlightCell *cell,
 
 double IntervalParameterController::parameterAtIndex(int index) {
   GetterPointer getters[k_totalNumberOfCell] = {
-      &Shared::Interval::IntervalParameters::start,
-      &Shared::Interval::IntervalParameters::end,
-      &Shared::Interval::IntervalParameters::step};
+      &Interval::IntervalParameters::start, &Interval::IntervalParameters::end,
+      &Interval::IntervalParameters::step};
   return (SharedTempIntervalParameters()->*getters[index])();
 }
 
@@ -91,9 +90,9 @@ bool IntervalParameterController::setParameterAtIndex(int parameterIndex,
     SharedTempIntervalParameters()->setEnd(g);
   }
   SetterPointer setters[k_totalNumberOfCell] = {
-      &Shared::Interval::IntervalParameters::setStart,
-      &Shared::Interval::IntervalParameters::setEnd,
-      &Shared::Interval::IntervalParameters::setStep};
+      &Interval::IntervalParameters::setStart,
+      &Interval::IntervalParameters::setEnd,
+      &Interval::IntervalParameters::setStep};
   (SharedTempIntervalParameters()->*setters[parameterIndex])(f);
   return true;
 }

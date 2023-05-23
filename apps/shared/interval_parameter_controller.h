@@ -11,8 +11,7 @@
 
 namespace Shared {
 
-class IntervalParameterController
-    : public Shared::FloatParameterController<double> {
+class IntervalParameterController : public FloatParameterController<double> {
  public:
   IntervalParameterController(
       Escher::Responder* parentResponder,
@@ -48,7 +47,7 @@ class IntervalParameterController
   I18n::Message m_title;
   I18n::Message m_startMessage;
   I18n::Message m_endMessage;
-  Shared::MessagePopUpController m_confirmPopUpController;
+  MessagePopUpController m_confirmPopUpController;
 };
 
 }  // namespace Shared

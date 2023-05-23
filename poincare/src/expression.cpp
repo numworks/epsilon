@@ -1036,27 +1036,24 @@ bool Expression::ExactAndApproximateExpressionsAreEqual(
     return exp0.isIdenticalTo(exp1);
   }
 
-  /* Check deeply for equality, because the expression can be a list, a matrix
-   * or a complex composed of rationals.
-   * Ex: i/2 == 0.5i */
-  if (exactExpression.type() == approximateExpression.type() &&
-      exactExpression.numberOfChildren() ==
+  if (exactExpression.type() != approximateExpression.type() ||
+      exactExpression.numberOfChildren() !=
           approximateExpression.numberOfChildren()) {
-    int nChildren = exactExpression.numberOfChildren();
-    if (nChildren == 0) {
-      return true;
-    }
-    for (int i = 0; i < nChildren; i++) {
-      if (!ExactAndApproximateExpressionsAreEqual(
-              exactExpression.childAtIndex(i),
-              approximateExpression.childAtIndex(i))) {
-        return false;
-      }
-    }
-    return true;
+    return false;
   }
 
-  return false;
+  /* Check deeply for equality, because the expression can be a list, a matrix
+   * or a complex composed of rationals.
+   * Ex: 1 + i/2 == 1 + 0.5i */
+  int nChildren = exactExpression.numberOfChildren();
+  for (int i = 0; i < nChildren; i++) {
+    if (!ExactAndApproximateExpressionsAreEqual(
+            exactExpression.childAtIndex(i),
+            approximateExpression.childAtIndex(i))) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /* Layout Helper */

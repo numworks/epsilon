@@ -109,10 +109,18 @@ class MemoizedColumnWidthManager
       : TemplatedMemoizedTableSize1DManager<N>(dataSource) {}
 
  protected:
-  int numberOfLines() const override;
-  KDCoordinate sizeAtIndex(int i) const override;
-  KDCoordinate nonMemoizedSizeAtIndex(int i) const override;
-  KDCoordinate nonMemoizedCumulatedSizeBeforeIndex(int i) const override;
+  int numberOfLines() const override {
+    return this->m_dataSource->numberOfColumns();
+  }
+  KDCoordinate sizeAtIndex(int i) const override {
+    return this->m_dataSource->columnWidth(i);
+  }
+  KDCoordinate nonMemoizedSizeAtIndex(int i) const override {
+    return this->m_dataSource->nonMemoizedColumnWidth(i, true);
+  }
+  KDCoordinate nonMemoizedCumulatedSizeBeforeIndex(int i) const override {
+    return this->m_dataSource->nonMemoizedCumulatedWidthBeforeIndex(i);
+  }
 };
 
 template <int N>
@@ -122,10 +130,18 @@ class MemoizedRowHeightManager : public TemplatedMemoizedTableSize1DManager<N> {
       : TemplatedMemoizedTableSize1DManager<N>(dataSource) {}
 
  protected:
-  int numberOfLines() const override;
-  KDCoordinate sizeAtIndex(int i) const override;
-  KDCoordinate nonMemoizedSizeAtIndex(int i) const override;
-  KDCoordinate nonMemoizedCumulatedSizeBeforeIndex(int i) const override;
+  int numberOfLines() const override {
+    return this->m_dataSource->numberOfRows();
+  }
+  KDCoordinate sizeAtIndex(int i) const override {
+    return this->m_dataSource->rowHeight(i);
+  }
+  KDCoordinate nonMemoizedSizeAtIndex(int i) const override {
+    return this->m_dataSource->nonMemoizedRowHeight(i, true);
+  }
+  KDCoordinate nonMemoizedCumulatedSizeBeforeIndex(int i) const override {
+    return this->m_dataSource->nonMemoizedCumulatedHeightBeforeIndex(i);
+  }
 };
 
 }  // namespace Escher

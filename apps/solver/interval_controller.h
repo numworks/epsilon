@@ -15,7 +15,6 @@ class IntervalController : public Shared::FloatParameterController<double> {
       Escher::Responder* parentResponder,
       Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);
   const char* title() override;
-  Escher::View* view() override { return &m_contentView; }
   TELEMETRY_ID("Interval");
   int numberOfRows() const override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
@@ -35,26 +34,9 @@ class IntervalController : public Shared::FloatParameterController<double> {
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  const char* text,
                                  Ion::Events::Event event) override;
-  class ContentView : public Escher::View {
-   public:
-    ContentView(Escher::SelectableTableView* selectableTableView);
-    void drawRect(KDContext* ctx, KDRect rect) const override;
 
-   private:
-    constexpr static KDCoordinate k_topMargin = 50;
-    constexpr static KDGlyph::Format k_glyphFormat = {
-        .style = {.backgroundColor = Escher::Palette::WallScreen,
-                  .font = KDFont::Size::Small},
-        .horizontalAlignment = KDGlyph::k_alignCenter};
-    int numberOfSubviews() const override;
-    Escher::View* subviewAtIndex(int index) override;
-    void layoutSubviews(bool force = false) override;
-    Escher::MessageTextView m_instructions0;
-    Escher::MessageTextView m_instructions1;
-    Escher::SelectableTableView* m_selectableTableView;
-  };
-  ContentView m_contentView;
   constexpr static int k_maxNumberOfCells = 2;
+  Escher::MessageTextView m_instructions;
   Escher::MenuCellWithEditableText<Escher::MessageTextView>
       m_intervalCell[k_maxNumberOfCells];
   bool m_shouldReplaceFunctionsButNotSymbols;

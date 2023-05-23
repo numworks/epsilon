@@ -126,7 +126,6 @@ class FunctionModelsParameterController
   static const char* ModelString(Model model);
   static const char* ModelWithDefaultName(Model model, char buffer[],
                                           size_t bufferSize);
-  Escher::StackViewController* stackController() const;
   Escher::MenuCell<Escher::MessageTextView> m_emptyModelCell;
   Escher::MenuCell<Escher::ScrollableLayoutView, Escher::MessageTextView>
       m_modelCells[k_numberOfExpressionCells];

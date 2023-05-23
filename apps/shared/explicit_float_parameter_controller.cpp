@@ -68,10 +68,6 @@ void ExplicitFloatParameterController::willDisplayCellForIndex(
   textFieldOfCellAtIndex(cell, index)->setText(buffer);
 }
 
-KDCoordinate ExplicitFloatParameterController::nonMemoizedRowHeight(int j) {
-  return SelectableListViewController::nonMemoizedRowHeight(j);
-}
-
 bool ExplicitFloatParameterController::textFieldShouldFinishEditing(
     AbstractTextField *textField, Ion::Events::Event event) {
   return (event == Ion::Events::Down && selectedRow() < numberOfRows() - 1) ||

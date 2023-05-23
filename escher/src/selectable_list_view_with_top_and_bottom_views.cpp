@@ -79,8 +79,8 @@ SelectableListViewWithTopAndBottomViews::
     SelectableListViewWithTopAndBottomViews(Responder* parentResponder,
                                             View* topView, View* bottomView)
     : SelectableViewController(parentResponder),
-      m_dataSource(this, topView, bottomView),
-      m_selectableListView(this, &m_dataSource, this, this) {
+      m_selectableListView(this, &m_dataSource, this, this),
+      m_dataSource(this, topView, bottomView) {
   m_selectableListView.setTopMargin(Metric::CommonMargin / 2);
   m_selectableListView.setBottomMargin(Metric::CommonMargin / 2);
 }

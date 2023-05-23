@@ -15,8 +15,8 @@ ParametersController::ParametersController(
     InputEventHandlerDelegate *inputEventHandlerDelegate,
     Distribution *distribution, CalculationController *calculationController)
     : FloatParameterController<double>(parentResponder),
-      m_headerView(I18n::Message::DefineParameters, k_format),
-      m_bottomView(I18n::Message::LeaveAFieldEmpty, k_format),
+      m_headerView(I18n::Message::DefineParameters, k_messageFormat),
+      m_bottomView(I18n::Message::LeaveAFieldEmpty, k_messageFormat),
       m_distribution(distribution),
       m_calculationController(calculationController) {
   assert(m_distribution != nullptr);

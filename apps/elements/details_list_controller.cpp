@@ -14,12 +14,8 @@ DetailsListController::DetailsListController(
     : SelectableListViewWithTopAndBottomViews(
           parentResponder, &m_topElementView, &m_bottomMessageView),
       m_topElementView(Escher::Palette::WallScreen),
-      m_bottomMessageView(
-          I18n::Message::ElementsDataConditions,
-          {.style = {.glyphColor = Escher::Palette::GrayDark,
-                     .backgroundColor = Escher::Palette::WallScreen,
-                     .font = KDFont::Size::Small},
-           .horizontalAlignment = KDGlyph::k_alignCenter}) {}
+      m_bottomMessageView(I18n::Message::ElementsDataConditions,
+                          k_messageFormat) {}
 
 bool DetailsListController::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::Plus || e == Ion::Events::Minus) {

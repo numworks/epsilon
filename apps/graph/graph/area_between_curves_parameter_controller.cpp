@@ -40,11 +40,7 @@ AreaBetweenCurvesParameterController::AreaBetweenCurvesParameterController(
     : SelectableListViewWithTopAndBottomViews(parentResponder, &m_topView),
       m_mainRecord(nullptr),
       m_areaGraphController(areaGraphController),
-      m_topView(I18n::Message::SelectSecondCurve,
-                {.style = {.glyphColor = Palette::GrayDark,
-                           .backgroundColor = Palette::WallScreen,
-                           .font = KDFont::Size::Small},
-                 .horizontalAlignment = KDGlyph::k_alignCenter}) {}
+      m_topView(I18n::Message::SelectSecondCurve, k_messageFormat) {}
 
 const char *AreaBetweenCurvesParameterController::title() {
   return I18n::translate(I18n::Message::AreaBetweenCurves);

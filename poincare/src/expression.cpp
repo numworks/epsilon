@@ -1008,7 +1008,11 @@ bool Expression::ExactAndApproximateExpressionsAreEqual(
     Expression exactExpression, Expression approximateExpression) {
   assert(!exactExpression.isUninitialized());
   assert(!approximateExpression.isUninitialized());
-  assert(approximateExpression.type() != ExpressionNode::Type::Undefined);
+  /* exactExpression shouldn't be displayed if approximateExpression is
+   * undefined. Since this method is recursive, only assert at the root of the
+   * expression. */
+  assert(!approximateExpression.parent().isUninitialized() ||
+         approximateExpression.type() != ExpressionNode::Type::Undefined);
 
   /* Turn floats and doubles into decimal so that they can be compared to
    * rationals. */

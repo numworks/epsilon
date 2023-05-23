@@ -15,7 +15,7 @@
 namespace Settings {
 
 class PressToTestController : public Escher::SelectableListViewController<
-                                  Escher::MemoizedListViewDataSource> {
+                                  Escher::StandardMemoizedListViewDataSource> {
  public:
   PressToTestController(Escher::Responder* parentResponder);
   const char* title() override {

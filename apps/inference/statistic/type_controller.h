@@ -16,7 +16,7 @@
 namespace Inference {
 
 class TypeController : public Escher::SelectableListViewController<
-                           Escher::MemoizedListViewDataSource> {
+                           Escher::StandardMemoizedListViewDataSource> {
  public:
   TypeController(Escher::StackViewController* parent,
                  HypothesisController* hypothesisController,

@@ -14,8 +14,9 @@
 
 namespace Shared {
 
-class RangeParameterController : public Escher::SelectableListViewController<
-                                     Escher::MemoizedListViewDataSource> {
+class RangeParameterController
+    : public Escher::SelectableListViewController<
+          Escher::StandardMemoizedListViewDataSource> {
  public:
   RangeParameterController(
       Escher::Responder *parentResponder,

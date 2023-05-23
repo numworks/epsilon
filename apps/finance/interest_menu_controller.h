@@ -21,7 +21,7 @@ class InterestMenuController
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
           InterestData::k_maxNumberOfUnknowns,
-          Escher::MemoizedListViewDataSource> {
+          Escher::StandardMemoizedListViewDataSource> {
  public:
   InterestMenuController(Escher::StackViewController* parentResponder,
                          InterestController* interestController);

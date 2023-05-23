@@ -18,7 +18,7 @@
 namespace Escher {
 
 class NestedMenuController : public StackViewController,
-                             public MemoizedListViewDataSource,
+                             public StandardMemoizedListViewDataSource,
                              public SelectableListViewDataSource,
                              public SelectableListViewDelegate,
                              public PervasiveBox {

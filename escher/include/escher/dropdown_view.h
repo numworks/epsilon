@@ -71,7 +71,7 @@ class Dropdown : public PopupItemView, public Responder {
    * return PopupViews. */
 
   class DropdownPopupController : public ViewController,
-                                  public MemoizedListViewDataSource {
+                                  public StandardMemoizedListViewDataSource {
    public:
     friend Dropdown;
     DropdownPopupController(Responder* parentResponder,

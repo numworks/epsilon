@@ -15,9 +15,10 @@
 
 namespace Shared {
 
-class LocalizationController : public Escher::ViewController,
-                               public Escher::MemoizedListViewDataSource,
-                               public Escher::SelectableListViewDataSource {
+class LocalizationController
+    : public Escher::ViewController,
+      public Escher::StandardMemoizedListViewDataSource,
+      public Escher::SelectableListViewDataSource {
  public:
   static int IndexOfCountry(I18n::Country country);
   static I18n::Country CountryAtIndex(int i);

@@ -19,7 +19,7 @@ class InputController;
 class InputSlopeController;
 
 class TestController : public Escher::SelectableListViewController<
-                           Escher::MemoizedListViewDataSource> {
+                           Escher::StandardMemoizedListViewDataSource> {
  public:
   TestController(Escher::StackViewController* parentResponder,
                  HypothesisController* hypothesisController,

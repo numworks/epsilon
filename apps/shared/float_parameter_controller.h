@@ -14,9 +14,10 @@ namespace Shared {
  * parameterAtIndex and setParameterAtIndex). */
 
 template <typename T>
-class FloatParameterController : public Escher::SelectableListViewController<
-                                     Escher::MemoizedListViewDataSource>,
-                                 public ParameterTextFieldDelegate {
+class FloatParameterController
+    : public Escher::SelectableListViewController<
+          Escher::StandardMemoizedListViewDataSource>,
+      public ParameterTextFieldDelegate {
  public:
   FloatParameterController(Escher::Responder *parentResponder);
   void didBecomeFirstResponder() override;

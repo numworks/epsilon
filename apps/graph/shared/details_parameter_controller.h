@@ -18,9 +18,10 @@ using DetailCell =
     Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                      Escher::OneLineBufferTextView<KDFont::Size::Large>>;
 
-class DetailsParameterController : public Escher::SelectableListViewController<
-                                       Escher::MemoizedListViewDataSource>,
-                                   public Escher::SelectableListViewDelegate {
+class DetailsParameterController
+    : public Escher::SelectableListViewController<
+          Escher::StandardMemoizedListViewDataSource>,
+      public Escher::SelectableListViewDelegate {
  public:
   DetailsParameterController(Escher::Responder* parentResponder);
 

@@ -15,7 +15,7 @@ class ListController;
 
 class EquationModelsParameterController
     : public Escher::SelectableListViewController<
-          Escher::MemoizedListViewDataSource> {
+          Escher::StandardMemoizedListViewDataSource> {
  public:
   EquationModelsParameterController(Escher::Responder* parentResponder,
                                     EquationStore* equationStore,

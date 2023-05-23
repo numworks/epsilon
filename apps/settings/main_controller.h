@@ -32,7 +32,7 @@ extern const MessageTree
 extern const MessageTree s_model;
 
 class MainController : public Escher::SelectableListViewController<
-                           Escher::MemoizedListViewDataSource> {
+                           Escher::StandardMemoizedListViewDataSource> {
  public:
   MainController(Escher::Responder* parentResponder,
                  Escher::InputEventHandlerDelegate* inputEventHandlerDelegate);

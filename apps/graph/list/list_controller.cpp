@@ -23,7 +23,7 @@ ListController::ListController(
                                      I18n::Message::AddFunction),
       m_editableCell(this, this, this),
       m_parameterController(functionParameterController),
-      m_modelsParameterController(this, nullptr, this),
+      m_modelsParameterController(this, this),
       m_modelsStackController(nullptr, &m_modelsParameterController,
                               StackViewController::Style::PurpleWhite),
       m_parameterColumnSelected(false) {

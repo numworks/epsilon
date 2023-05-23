@@ -24,7 +24,6 @@ class FunctionModelsParameterController
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
   Escher::HighlightCell* cell(int index) override;
   static int DefaultName(char buffer[], size_t bufferSize);

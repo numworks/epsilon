@@ -19,7 +19,6 @@ class FunctionModelsParameterController
     : public Escher::ExplicitSelectableListViewController {
  public:
   FunctionModelsParameterController(Escher::Responder* parentResponder,
-                                    void* functionStore,
                                     ListController* listController);
   const char* title() override;
   void viewWillAppear() override;
@@ -132,7 +131,6 @@ class FunctionModelsParameterController
   Escher::MenuCell<Escher::ScrollableLayoutView, Escher::MessageTextView>
       m_modelCells[k_numberOfExpressionCells];
   Poincare::Layout m_layouts[k_numberOfExpressionCells];
-  void* m_functionStore;
   ListController* m_listController;
 };
 

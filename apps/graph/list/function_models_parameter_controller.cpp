@@ -18,10 +18,8 @@ using namespace Escher;
 namespace Graph {
 
 FunctionModelsParameterController::FunctionModelsParameterController(
-    Responder* parentResponder, void* functionStore,
-    ListController* listController)
+    Responder* parentResponder, ListController* listController)
     : ExplicitSelectableListViewController(parentResponder),
-      m_functionStore(functionStore),
       m_listController(listController) {
   m_emptyModelCell.label()->setMessage(I18n::Message::Empty);
   m_selectableListView.setMargins(0);

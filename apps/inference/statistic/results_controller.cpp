@@ -27,13 +27,6 @@ ResultsController::ResultsController(
              Invocation::Builder<ResultsController>(
                  &ResultsController::ButtonAction, this)) {}
 
-void ResultsController::didBecomeFirstResponder() {
-  selectCell(0);
-  Container::activeApp()->setFirstResponder(&m_selectableListView);
-  resetMemoization();
-  m_selectableListView.reloadData();
-}
-
 ViewController::TitlesDisplay ResultsController::titlesDisplay() {
   if (m_statistic->subApp() == Statistic::SubApp::Interval ||
       (m_statistic->significanceTestType() ==

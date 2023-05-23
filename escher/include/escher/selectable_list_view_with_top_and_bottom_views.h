@@ -82,20 +82,18 @@ class SelectableListViewWithTopAndBottomViews
   void listViewDidChangeSelectionAndDidScroll(
       SelectableListView* l, int previousRow, KDPoint previousOffset,
       bool withinTemporarySelection = false) override;
-  void selectFirstCell() { selectCell(m_dataSource.hasTopView()); }
-  void selectLastCell() {
-    selectCell(m_dataSource.numberOfRows() - 1 - m_dataSource.hasBottomView());
-  }
 
  protected:
-  void didBecomeFirstResponder() override {
-    Container::activeApp()->setFirstResponder(&m_selectableListView);
-  }
+  void didBecomeFirstResponder() override;
   int innerRowFromRow(int row) const {
     assert(row >= m_dataSource.hasTopView());
     return row - m_dataSource.hasTopView();
   }
   int innerSelectedRow() const { return innerRowFromRow(selectedRow()); }
+  void selectFirstCell() { selectCell(m_dataSource.hasTopView()); }
+  void selectLastCell() {
+    selectCell(m_dataSource.numberOfRows() - 1 - m_dataSource.hasBottomView());
+  }
   void setBottomView(View* view) { m_dataSource.setBottomView(view); }
 
   ListViewWithTopAndBottomViewsDataSource m_dataSource;

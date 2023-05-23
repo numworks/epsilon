@@ -1,10 +1,5 @@
 #include "results_controller.h"
 
-#include <apps/i18n.h>
-#include <escher/input_event_handler_delegate.h>
-#include <escher/invocation.h>
-#include <escher/stack_view_controller.h>
-#include <escher/text_field_delegate.h>
 #include <poincare/print.h>
 
 #include "inference/app.h"
@@ -17,8 +12,7 @@ namespace Inference {
 ResultsController::ResultsController(
     StackViewController *parent, Statistic *statistic,
     TestGraphController *testGraphController,
-    IntervalGraphController *intervalGraphController,
-    InputEventHandlerDelegate *handler, TextFieldDelegate *textFieldDelegate)
+    IntervalGraphController *intervalGraphController)
     : SelectableListViewWithTopAndBottomViews(parent, &m_title),
       DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>(this),
       m_title(I18n::Message::CalculatedValues,

@@ -54,6 +54,39 @@ QUIZ_CASE(pcj_simplification_contraction) {
   assert_trees_are_equal(ref5, KAdd(KLn(KMult(1_e, 2_e)), 3_e, 4_e));
 }
 
+QUIZ_CASE(pcj_simplification_algebraic_expansion) {
+  // A?*(B+C)*D? = A*D*B + A*D*C
+  EditionReference ref1(KMult(2_e, KAdd("x"_e, 1_e), "y"_e));
+  quiz_assert(Simplification::AlgebraicExpand(&ref1));
+  assert_trees_are_equal(
+      ref1, KAdd(KMult(2_e, "x"_e, "y"_e), KMult(2_e, 1_e, "y"_e)));
+  // (A*B)^C = A^C * B^C
+  EditionReference ref2(KPow(KMult(5_e, "x"_e, "y"_e), 4_e));
+  quiz_assert(Simplification::AlgebraicExpand(&ref2));
+  assert_trees_are_equal(ref2,
+                         KMult(KPow(5_e, 4_e), KPow(KMult("x"_e, "y"_e), 4_e)));
+  // (A + B)^2 = (A^2 + 2*A*B + B^2)
+  EditionReference ref3(KPow(KAdd(KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)), 2_e));
+  quiz_assert(Simplification::AlgebraicExpand(&ref3));
+  assert_trees_are_equal(ref3,
+                         KAdd(KPow(KTrig("x"_e, 0_e), 2_e),
+                              KMult(2_e, KTrig("x"_e, 0_e), KTrig("x"_e, 1_e)),
+                              KPow(KTrig("x"_e, 1_e), 2_e)));
+}
+
+QUIZ_CASE(pcj_simplification_algebraic_contraction) {
+  // A? + B?*C*D? + E?*C*F? + G? = A + C*(B*D + E*F) + G
+  EditionReference ref1(
+      KAdd("x"_e, KMult(2_e, "y"_e), KMult("y"_e, "x"_e), "z"_e));
+  quiz_assert(Simplification::AlgebraicContract(&ref1));
+  assert_trees_are_equal(ref1,
+                         KAdd("x"_e, KMult("y"_e, KAdd(2_e, "x"_e)), "z"_e));
+  // A? * B^C * D? * E^C * F? = A * (B*E)^C * D * F
+  EditionReference ref2(KMult(KPow(5_e, 4_e), KPow(KMult("x"_e, "y"_e), 4_e)));
+  quiz_assert(Simplification::AlgebraicContract(&ref2));
+  assert_trees_are_equal(ref2, KPow(KMult(5_e, "x"_e, "y"_e), 4_e));
+}
+
 QUIZ_CASE(pcj_simplification_projection) {
   EditionReference ref1(KCos(KSin(KTan(
       KPow(KPow(KPow(e_e, KLogarithm(KLogarithm(KLog(π_e), 2_e), e_e)), π_e),

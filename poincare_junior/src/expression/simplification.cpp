@@ -182,6 +182,96 @@ bool Simplification::ContractTrigonometric(EditionReference* reference) {
             KPlaceholder<F>()));
 }
 
+// Algebraic expand/contract
+
+bool Simplification::AlgebraicContract(EditionReference* e) {
+  /* All of these contract methods replace with the same type. Otherwise, one
+   * would have to call AlgebraicContract(e) again upon success. */
+  switch (e->type()) {
+    case BlockType::Addition:
+      return ContractMult(e);
+    case BlockType::Multiplication:
+      return ContractPower(e);
+    default:
+      return false;
+  }
+}
+
+bool Simplification::AlgebraicExpand(EditionReference* e) {
+  /* None of these Expand methods replace with a structure that can be expanded
+   * again. Otherwise, one would have to call Expand(e) again upon success. */
+  switch (e->type()) {
+    case BlockType::Power:
+      return ExpandPower(e);
+    case BlockType::Multiplication:
+      return ExpandMult(e);
+    default:
+      return false;
+  }
+}
+
+bool Simplification::ContractMult(EditionReference* reference) {
+  // A? + B?*C*D? + E?*C*F? + G? = A + C*(B*D + E*F) + G
+  // TODO: Also match BCD+C, C+ECF, C+C, BCD+H?+ECF
+  return reference->matchAndReplace(
+      KAdd(KAnyTreesPlaceholder<A>(),
+           KMult(KAnyTreesPlaceholder<B>(), KPlaceholder<C>(),
+                 KAnyTreesPlaceholder<D>()),
+           KMult(KAnyTreesPlaceholder<E>(), KPlaceholder<C>(),
+                 KAnyTreesPlaceholder<F>()),
+           KAnyTreesPlaceholder<G>()),
+      KAdd(KPlaceholder<A>(),
+           KMult(KPlaceholder<C>(),
+                 KAdd(KMult(KPlaceholder<B>(), KPlaceholder<D>()),
+                      KMult(KPlaceholder<E>(), KPlaceholder<F>()))),
+           KPlaceholder<G>()));
+}
+
+bool Simplification::ExpandMult(EditionReference* reference) {
+  // A?*(B+C)*D? = A*B*D + A*C*D
+  return reference->matchAndReplace(
+      KMult(KAnyTreesPlaceholder<A>(),
+            KAdd(KPlaceholder<B>(), KAnyTreesPlaceholder<C>()),
+            KAnyTreesPlaceholder<D>()),
+      KAdd(KMult(KPlaceholder<A>(), KPlaceholder<B>(), KPlaceholder<D>()),
+           KMult(KPlaceholder<A>(), KAdd(KPlaceholder<C>()),
+                 KPlaceholder<D>())));
+}
+
+bool Simplification::ContractPower(EditionReference* reference) {
+  /* TODO: The pattern could be simplified once Power nodes are sorted by second
+   *       children. */
+  // A? * B^C * D? * E^C * F? = A * (B*E)^C * D * F
+  // TODO: Assert C is  an integer.
+  return reference->matchAndReplace(
+      KMult(
+          KAnyTreesPlaceholder<A>(), KPow(KPlaceholder<B>(), KPlaceholder<C>()),
+          KAnyTreesPlaceholder<D>(), KPow(KPlaceholder<E>(), KPlaceholder<C>()),
+          KAnyTreesPlaceholder<F>()),
+      KMult(
+          KPlaceholder<A>(),
+          KPow(KMult(KPlaceholder<B>(), KPlaceholder<E>()), KPlaceholder<C>()),
+          KPlaceholder<D>(), KPlaceholder<F>()));
+}
+
+bool Simplification::ExpandPower(EditionReference* reference) {
+  return
+      // (A*B)^C = A^C * B^C
+      // TODO: Assert C is an integer
+      reference->matchAndReplace(
+          KPow(KMult(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()),
+               KPlaceholder<C>()),
+          KMult(KPow(KPlaceholder<A>(), KPlaceholder<C>()),
+                KPow(KMult(KPlaceholder<B>()), KPlaceholder<C>()))) ||
+      // (A + B)^2 = (A^2 + 2*A*B + B^2)
+      // TODO: Implement a more general (A + B)^C expand.
+      reference->matchAndReplace(
+          KPow(KAdd(KPlaceholder<A>(), KAnyTreesPlaceholder<B>()), 2_e),
+          KAdd(KPow(KPlaceholder<A>(), 2_e),
+               KMult(2_e, KPlaceholder<A>(), KAdd(KPlaceholder<B>())),
+               KPow(KAdd(KPlaceholder<B>()), 2_e)));
+}
+
 EditionReference Simplification::DivisionReduction(EditionReference reference) {
   assert(reference.type() == BlockType::Division);
   return ProjectionReduction(

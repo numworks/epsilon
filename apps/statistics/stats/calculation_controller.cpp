@@ -203,25 +203,12 @@ int CalculationController::reusableCellCount(int type) {
 }
 
 int CalculationController::typeAtLocation(int column, int row) {
-  assert(column >= 0 && column < numberOfColumns());
-  assert(row >= 0 && row < numberOfRows());
-  if (column <= 1 && row == 0) {
-    return k_hideableCellType;
-  }
-  if (column <= 1) {
-    assert(row > 0);
-    if (row < fixedNumberOfRows() ||
-        (showModeFrequency() && row == numberOfRows() - 1)) {
-      return column == 0 ? k_calculationTitleCellType
-                         : k_calculationSymbolCellType;
-    }
+  if (column <= 1 && fixedNumberOfRows() <= row && row <= numberOfRows() - 2) {
+    assert(showModeFrequency());
     return column == 0 ? k_calculationModeTitleCellType
                        : k_calculationModeSymbolCellType;
   }
-  if (row == 0) {
-    return k_seriesTitleCellType;
-  }
-  return k_calculationCellType;
+  return DoublePairTableController::typeAtLocation(column, row);
 }
 
 KDCoordinate CalculationController::separatorBeforeColumn(int column) {

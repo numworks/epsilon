@@ -40,14 +40,10 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static int k_numberOfCalculationCells =
       3 * k_maxNumberOfDisplayableRows;
   constexpr static int k_numberOfSeriesTitleCells = 3;
+  // Cell types
+  constexpr static int k_calculationModeTitleCellType = 5;
+  constexpr static int k_calculationModeSymbolCellType = 6;
 
-  constexpr static int k_calculationTitleCellType = 0;
-  constexpr static int k_calculationSymbolCellType = 1;
-  constexpr static int k_calculationModeTitleCellType = 2;
-  constexpr static int k_calculationModeSymbolCellType = 3;
-  constexpr static int k_calculationCellType = 4;
-  constexpr static int k_seriesTitleCellType = 5;
-  constexpr static int k_hideableCellType = 6;
   constexpr static KDCoordinate CalculationSymbolCellWidth(int maxChars) {
     return Escher::Metric::SmallFontCellWidth(
         maxChars, Escher::Metric::CellVerticalElementMargin);

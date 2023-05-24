@@ -39,14 +39,6 @@ void LayoutNode::draw(KDContext *ctx, KDPoint p, KDGlyph::Style style,
   KDPoint renderingOriginWithMargin =
       absoluteOriginWithMargin(style.font).translatedBy(p);
   KDSize size = layoutSize(style.font);
-
-  if (size.height() <= 0 || size.width() <= 0 ||
-      size.height() > KDCOORDINATE_MAX - renderingAbsoluteOrigin.y() ||
-      size.width() > KDCOORDINATE_MAX - renderingAbsoluteOrigin.x()) {
-    // Layout size overflows KDCoordinate
-    return;
-  }
-
   ctx->fillRect(KDRect(renderingOriginWithMargin, size), style.backgroundColor);
   if (!selection.isEmpty() && selection.layout().node() == this &&
       isHorizontal()) {

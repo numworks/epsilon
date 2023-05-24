@@ -141,7 +141,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       if (CircuitBreakerRun(checkpoint)) {
         Calculation::AdditionalInformations additionalInformations =
             selectedCell->additionalInformations();
-        ListController *vc = nullptr;
+        ExpressionsListController *vc = nullptr;
         ExpiringPointer<Calculation> focusCalculation =
             calculationAtIndex(focusRow);
         assert(focusCalculation->displayOutput(context) !=

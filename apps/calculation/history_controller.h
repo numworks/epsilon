@@ -70,9 +70,9 @@ class HistoryController : public Escher::ViewController,
   union UnionController {
     UnionController(EditExpressionController* editExpressionController)
         : m_complexController(editExpressionController) {}
-    ~UnionController() { listController()->~ListController(); }
-    ListController* listController() {
-      return static_cast<ListController*>(&m_complexController);
+    ~UnionController() { listController()->~ExpressionsListController(); }
+    ExpressionsListController* listController() {
+      return static_cast<ExpressionsListController*>(&m_complexController);
     }
     ComplexListController m_complexController;
     TrigonometryListController m_trigonometryController;

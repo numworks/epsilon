@@ -19,31 +19,29 @@ class CalculationController : public Shared::DoublePairTableController {
   CalculationController(Escher::Responder* parentResponder,
                         Escher::ButtonRowController* header, Store* store);
 
+  // ViewController
+  TELEMETRY_ID("Calculation");
+
   // TableViewDataSource
   int numberOfRows() const override {
     return fixedNumberOfRows() + m_store->totalNumberOfModes() +
            showModeFrequency();
   }
-  bool showModeFrequency() const { return m_store->totalNumberOfModes() > 0; }
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int column, int row) override;
 
-  // ViewController
-  TELEMETRY_ID("Calculation");
+  bool showModeFrequency() const { return m_store->totalNumberOfModes() > 0; }
 
  private:
+  // Number of cells
   constexpr static int k_fixedMaxNumberOfRows = 17;
   // Cell types
   constexpr static int k_calculationModeTitleCellType = 5;
   constexpr static int k_calculationModeSymbolCellType = 6;
-
-  constexpr static KDCoordinate CalculationSymbolCellWidth(int maxChars) {
-    return Escher::Metric::SmallFontCellWidth(
-        maxChars, Escher::Metric::CellVerticalElementMargin);
-  }
+  // Cell sizes
   /* Margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here. */
   constexpr static KDCoordinate k_calculationCellWidth =
@@ -104,10 +102,11 @@ class CalculationController : public Shared::DoublePairTableController {
   KDCoordinate nonMemoizedColumnWidth(int column) override;
   void resetMemoization(bool force = true) override;
 
-  int findCellIndex(int i) const;
-
-  int fixedNumberOfRows() const;
+  // DoublePairTableController
   Shared::DoublePairStore* store() const override { return m_store; }
+
+  int findCellIndex(int i) const;
+  int fixedNumberOfRows() const;
 
   Shared::BufferFunctionTitleCell
       m_seriesTitleCells[k_numberOfSeriesTitleCells];

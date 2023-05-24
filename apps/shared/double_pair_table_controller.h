@@ -46,7 +46,7 @@ class DoublePairTableController
 
   // RegularHeightTableViewDataSource
   bool canSelectCellAtLocation(int column, int row) override {
-    return row > 0 || column > 1;
+    return typeAtLocation(column, row) != k_hideableCellType;
   }
   bool canStoreCellAtLocation(int column, int row) override {
     return row > 0 && column > 1;
@@ -56,6 +56,7 @@ class DoublePairTableController
   int numberOfColumns() const override {
     return 2 + store()->numberOfActiveSeries();
   }
+  int typeAtLocation(int column, int row) override;
 
  protected:
   constexpr static int k_maxNumberOfDisplayableRows = 11;
@@ -71,6 +72,12 @@ class DoublePairTableController
   constexpr static KDCoordinate k_calculationTitleCellWidth =
       Escher::Metric::SmallFontCellWidth(
           k_titleNumberOfChars, Escher::Metric::CellVerticalElementMargin);
+  // Cell types
+  constexpr static int k_hideableCellType = 0;
+  constexpr static int k_seriesTitleCellType = 1;
+  constexpr static int k_calculationTitleCellType = 2;
+  constexpr static int k_calculationSymbolCellType = 3;
+  constexpr static int k_calculationCellType = 4;
 
   // TableViewDataSource
   KDCoordinate defaultRowHeight() override { return k_cellHeight; }

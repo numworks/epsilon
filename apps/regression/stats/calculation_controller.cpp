@@ -342,6 +342,7 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
     assert(index >= 0 && index < k_numberOfHeaderColumns);
     return &m_hideableCell[index];
   }
+  assert(type == k_calculationCellType);
   assert(index >= 0 && index < k_numberOfDisplayableCalculationCells);
   return &m_calculationCells[index];
 }
@@ -365,22 +366,10 @@ int CalculationController::reusableCellCount(int type) {
 }
 
 int CalculationController::typeAtLocation(int column, int row) {
-  if (column <= 1 && row == 0) {
-    return k_hideableCellType;
-  }
-  if (column == 0) {
-    return k_calculationTitleCellType;
-  }
-  if (column == 1) {
-    return k_calculationSymbolCellType;
-  }
-  if (row == 0) {
-    return k_seriesTitleCellType;
-  }
-  if (row > 0 && row <= k_numberOfDoubleBufferCalculations) {
+  if (column > 1 && row > 0 && row <= k_numberOfDoubleBufferCalculations) {
     return k_doubleBufferCalculationCellType;
   }
-  return k_calculationCellType;
+  return DoublePairTableController::typeAtLocation(column, row);
 }
 
 I18n::Message CalculationController::MessageForCalculation(Calculation c) {

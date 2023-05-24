@@ -78,12 +78,7 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static int k_numberOfDisplayableCalculationCells =
       Store::k_numberOfSeries * k_maxNumberOfDisplayableRows;
   // Cell types
-  constexpr static int k_calculationTitleCellType = 0;
-  constexpr static int k_seriesTitleCellType = 1;
-  constexpr static int k_doubleBufferCalculationCellType = 2;
-  constexpr static int k_calculationCellType = 3;
-  constexpr static int k_hideableCellType = 4;
-  constexpr static int k_calculationSymbolCellType = 5;
+  constexpr static int k_doubleBufferCalculationCellType = 5;
   // Cell sizes
   /* Margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here.

@@ -20,7 +20,7 @@ CalculationController::CalculationController(Responder *parentResponder,
                                              ButtonRowController *header,
                                              Store *store)
     : DoublePairTableController(parentResponder, header), m_store(store) {
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+  for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
     m_columnTitleCells[i].setParentResponder(&m_selectableTableView);
   }
   for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
@@ -331,7 +331,7 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
     return &m_calculationSymbolCells[index];
   }
   if (type == k_seriesTitleCellType) {
-    assert(index >= 0 && index < Store::k_numberOfSeries);
+    assert(index >= 0 && index < k_numberOfSeriesTitleCells);
     return &m_columnTitleCells[index];
   }
   if (type == k_doubleBufferCalculationCellType) {
@@ -343,26 +343,15 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
     return &m_hideableCell[index];
   }
   assert(type == k_calculationCellType);
-  assert(index >= 0 && index < k_numberOfDisplayableCalculationCells);
+  assert(index >= 0 && index < k_numberOfCalculationCells);
   return &m_calculationCells[index];
 }
 
 int CalculationController::reusableCellCount(int type) {
-  if (type == k_calculationTitleCellType ||
-      type == k_calculationSymbolCellType) {
-    return k_maxNumberOfDisplayableRows;
-  }
-  if (type == k_seriesTitleCellType) {
-    return Store::k_numberOfSeries;
-  }
   if (type == k_doubleBufferCalculationCellType) {
     return k_numberOfDoubleCalculationCells;
   }
-  if (type == k_hideableCellType) {
-    return k_numberOfHeaderColumns;
-  }
-  assert(type == k_calculationCellType);
-  return k_numberOfDisplayableCalculationCells;
+  return DoublePairTableController::reusableCellCount(type);
 }
 
 int CalculationController::typeAtLocation(int column, int row) {
@@ -499,7 +488,7 @@ int CalculationController::numberOfDisplayedBCDECoefficients() const {
 
 void CalculationController::resetMemoization(bool force) {
   DoublePairTableController::resetMemoization(force);
-  for (int s = 0; s < Store::k_numberOfSeries; s++) {
+  for (int s = 0; s < k_numberOfSeriesTitleCells; s++) {
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < k_numberOfDoubleBufferCalculations; j++) {
         m_memoizedDoubleCalculationCells[s][i][j] = NAN;

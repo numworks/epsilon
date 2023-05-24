@@ -37,9 +37,6 @@ class CalculationController : public Shared::DoublePairTableController {
 
  private:
   constexpr static int k_fixedMaxNumberOfRows = 17;
-  constexpr static int k_numberOfCalculationCells =
-      3 * k_maxNumberOfDisplayableRows;
-  constexpr static int k_numberOfSeriesTitleCells = 3;
   // Cell types
   constexpr static int k_calculationModeTitleCellType = 5;
   constexpr static int k_calculationModeSymbolCellType = 6;

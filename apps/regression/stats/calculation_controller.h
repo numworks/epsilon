@@ -74,9 +74,7 @@ class CalculationController : public Shared::DoublePairTableController {
   constexpr static int k_numberOfMemoizedSingleBufferCalculations = 3;
   // Displayable cells
   constexpr static int k_numberOfDoubleCalculationCells =
-      Store::k_numberOfSeries * k_numberOfDoubleBufferCalculations;
-  constexpr static int k_numberOfDisplayableCalculationCells =
-      Store::k_numberOfSeries * k_maxNumberOfDisplayableRows;
+      k_numberOfSeriesTitleCells * k_numberOfDoubleBufferCalculations;
   // Cell types
   constexpr static int k_doubleBufferCalculationCellType = 5;
   // Cell sizes
@@ -118,16 +116,16 @@ class CalculationController : public Shared::DoublePairTableController {
   int numberOfDisplayedBCDECoefficients() const;
   void resetMemoization(bool force = true) override;
 
-  ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];
+  ColumnTitleCell m_columnTitleCells[k_numberOfSeriesTitleCells];
   EvenOddDoubleBufferTextCell
       m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
   Escher::SmallFontEvenOddBufferTextCell
-      m_calculationCells[k_numberOfDisplayableCalculationCells];
+      m_calculationCells[k_numberOfCalculationCells];
   Store* m_store;
-  double m_memoizedDoubleCalculationCells[Store::k_numberOfSeries][2]
+  double m_memoizedDoubleCalculationCells[k_numberOfSeriesTitleCells][2]
                                          [k_numberOfDoubleBufferCalculations];
   double m_memoizedSimpleCalculationCells
-      [Store::k_numberOfSeries][k_numberOfMemoizedSingleBufferCalculations];
+      [k_numberOfSeriesTitleCells][k_numberOfMemoizedSingleBufferCalculations];
 };
 
 }  // namespace Regression

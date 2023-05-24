@@ -77,6 +77,22 @@ KDCoordinate DoublePairTableController::columnPrefaceRightMargin() {
   return 0;
 }
 
+int DoublePairTableController::reusableCellCount(int type) {
+  switch (type) {
+    case k_hideableCellType:
+      return k_numberOfHeaderColumns;
+    case k_seriesTitleCellType:
+      return k_numberOfSeriesTitleCells;
+    case k_calculationTitleCellType:
+      return k_maxNumberOfDisplayableRows;
+    case k_calculationSymbolCellType:
+      return k_maxNumberOfDisplayableRows;
+    default:
+      assert(type == k_calculationCellType);
+      return k_numberOfCalculationCells;
+  }
+}
+
 int DoublePairTableController::typeAtLocation(int column, int row) {
   assert(0 <= column && column < numberOfColumns());
   assert(0 <= row && row < numberOfRows());

@@ -56,6 +56,7 @@ class DoublePairTableController
   int numberOfColumns() const override {
     return 2 + store()->numberOfActiveSeries();
   }
+  int reusableCellCount(int type) override;
   int typeAtLocation(int column, int row) override;
 
  protected:
@@ -65,8 +66,11 @@ class DoublePairTableController
   constexpr static KDCoordinate k_margin = 8;
   constexpr static KDCoordinate k_scrollBarMargin =
       Escher::Metric::CommonRightMargin;
-  // Title & Symbol
+  // Number of cells
   constexpr static int k_numberOfHeaderColumns = 2;
+  constexpr static int k_numberOfSeriesTitleCells = 3;
+  constexpr static int k_numberOfCalculationCells =
+      k_numberOfSeriesTitleCells * k_maxNumberOfDisplayableRows;
   // Cell sizes
   constexpr static int k_titleNumberOfChars = 22;
   constexpr static KDCoordinate k_calculationTitleCellWidth =

@@ -183,23 +183,11 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
 }
 
 int CalculationController::reusableCellCount(int type) {
-  switch (type) {
-    case k_hideableCellType:
-      return 2;
-    case k_calculationTitleCellType:
-      return k_maxNumberOfDisplayableRows;
-    case k_calculationSymbolCellType:
-      return k_maxNumberOfDisplayableRows;
-    case k_calculationModeTitleCellType:
-      return k_maxNumberOfDisplayableRows;
-    case k_calculationModeSymbolCellType:
-      return k_maxNumberOfDisplayableRows;
-    case k_seriesTitleCellType:
-      return k_numberOfSeriesTitleCells;
-    default:
-      assert(type == k_calculationCellType);
-      return k_numberOfCalculationCells;
+  if (type == k_calculationModeTitleCellType ||
+      type == k_calculationModeSymbolCellType) {
+    return k_maxNumberOfDisplayableRows;
   }
+  return DoublePairTableController::reusableCellCount(type);
 }
 
 int CalculationController::typeAtLocation(int column, int row) {

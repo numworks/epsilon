@@ -41,8 +41,8 @@ class StoreController : public Shared::StoreController {
                ? k_nonEditableCellType
                : Shared::StoreController::typeAtLocation(i, j);
   }
-  void willDisplayCellAtLocation(Escher::HighlightCell* cell, int i,
-                                 int j) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell* cell, int column,
+                                 int row) override;
 
  private:
   constexpr static int k_cumulatedFrequencyRelativeColumnIndex = 2;

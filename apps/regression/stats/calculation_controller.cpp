@@ -125,18 +125,18 @@ void DisableBufferCell(AbstractEvenOddBufferTextCell *bufferCell) {
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
-                                                      int i, int j) {
-  if (i <= 1 && j == 0) {
+                                                      int column, int row) {
+  if (column <= 1 && row == 0) {
     return;
   }
   EvenOddCell *myCell = static_cast<EvenOddCell *>(cell);
-  myCell->setEven(j % 2 == 0);
+  myCell->setEven(row % 2 == 0);
 
   // Coordinate and series title
-  if (j == 0 && i > 1) {
+  if (row == 0 && column > 1) {
     ColumnTitleCell *myCell = static_cast<ColumnTitleCell *>(cell);
-    size_t series =
-        m_store->seriesIndexFromActiveSeriesIndex(i - k_numberOfHeaderColumns);
+    size_t series = m_store->seriesIndexFromActiveSeriesIndex(
+        column - k_numberOfHeaderColumns);
     assert(series < DoublePairStore::k_numberOfSeries);
     char buffer[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
     m_store->fillColumnName(series, 0, buffer);
@@ -148,16 +148,16 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     return;
   }
 
-  const Calculation c = calculationForRow(j);
+  const Calculation c = calculationForRow(row);
   bool forbidStatsDiagnostics =
       Preferences::sharedPreferences->examMode().forbidStatsDiagnostics();
   // Calculation title and symbols
-  if (i <= 1) {
+  if (column <= 1) {
     EvenOddMessageTextCell *myCell =
         static_cast<EvenOddMessageTextCell *>(cell);
-    myCell->setTextColor(i == 0 ? KDColorBlack : Palette::GrayDark);
+    myCell->setTextColor(column == 0 ? KDColorBlack : Palette::GrayDark);
     I18n::Message message =
-        (i == 0) ? MessageForCalculation(c) : SymbolForCalculation(c);
+        (column == 0) ? MessageForCalculation(c) : SymbolForCalculation(c);
     myCell->setMessage(message);
     if ((c == Calculation::CorrelationCoeff ||
          c == Calculation::DeterminationCoeff || c == Calculation::RSquared) &&
@@ -168,8 +168,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     return;
   }
 
-  size_t series =
-      m_store->seriesIndexFromActiveSeriesIndex(i - k_numberOfHeaderColumns);
+  size_t series = m_store->seriesIndexFromActiveSeriesIndex(
+      column - k_numberOfHeaderColumns);
   assert(series < DoublePairStore::k_numberOfSeries);
   Model::Type type = m_store->seriesRegressionType(series);
 
@@ -186,7 +186,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     return;
   }
 
-  assert(i > 1 && j > 0);
+  assert(column > 1 && row > 0);
   constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
       AbstractEvenOddBufferTextCell::k_defaultPrecision);
   char buffer[bufferSize];

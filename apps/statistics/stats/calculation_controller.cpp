@@ -51,15 +51,15 @@ int CalculationController::numberOfColumns() const {
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
-                                                      int i, int j) {
+                                                      int column, int row) {
   EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
-  evenOddCell->setEven(j % 2 == 0);
-  int type = typeAtLocation(i, j);
+  evenOddCell->setEven(row % 2 == 0);
+  int type = typeAtLocation(column, row);
   int numberOfFixedRows = fixedNumberOfRows();
   switch (type) {
     case k_seriesTitleCellType: {
       // Display a series title cell
-      int seriesNumber = m_store->seriesIndexFromActiveSeriesIndex(i - 2);
+      int seriesNumber = m_store->seriesIndexFromActiveSeriesIndex(column - 2);
       char titleBuffer[] = {'V', static_cast<char>('1' + seriesNumber), '/',
                             'N', static_cast<char>('1' + seriesNumber), 0};
       BufferFunctionTitleCell *seriesTitleCell =
@@ -71,16 +71,16 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     }
     case k_calculationModeTitleCellType:
     case k_calculationModeSymbolCellType: {
-      assert((i == 0 && type == k_calculationModeTitleCellType) ||
-             (i == 1 && type == k_calculationModeSymbolCellType));
+      assert((column == 0 && type == k_calculationModeTitleCellType) ||
+             (column == 1 && type == k_calculationModeSymbolCellType));
       // Mode title and symbol cells have an index value
-      const char *pattern =
-          (m_store->totalNumberOfModes() == 1 ? "%s"
-                                              : (i == 0 ? "%s %i" : "%s%i"));
+      const char *pattern = (m_store->totalNumberOfModes() == 1
+                                 ? "%s"
+                                 : (column == 0 ? "%s %i" : "%s%i"));
       I18n::Message message =
-          (i == 0 ? I18n::Message::Mode : I18n::Message::ModeSymbol);
-      int index = j - numberOfFixedRows + 1;
-      assert(j >= 1);
+          (column == 0 ? I18n::Message::Mode : I18n::Message::ModeSymbol);
+      int index = row - numberOfFixedRows + 1;
+      assert(row >= 1);
       // The NL "Modus 100" is the longest possible text here.
       constexpr static int bufferSize = sizeof("Modus 100") / sizeof(char);
       char buffer[bufferSize];
@@ -88,41 +88,43 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
                                     I18n::translate(message), index);
       AbstractEvenOddBufferTextCell *bufferCell =
           static_cast<AbstractEvenOddBufferTextCell *>(cell);
-      bufferCell->setTextColor(i == 1 ? Palette::GrayDark : KDColorBlack);
+      bufferCell->setTextColor(column == 1 ? Palette::GrayDark : KDColorBlack);
       bufferCell->setText(buffer);
       return;
     }
     case k_calculationTitleCellType:
     case k_calculationSymbolCellType: {
-      assert(j >= 1 && ((i == 0 && type == k_calculationTitleCellType) ||
-                        (i == 1 && type == k_calculationSymbolCellType)));
+      assert(row >= 1 &&
+             ((column == 0 && type == k_calculationTitleCellType) ||
+              (column == 1 && type == k_calculationSymbolCellType)));
       // Display a calculation title or symbol
       I18n::Message message;
-      if (j - 1 < numberOfFixedRows - 1) {
-        int messageIndex = findCellIndex(j - 1);
-        message = i == 1 ? k_calculationRows[messageIndex].symbol
-                         : k_calculationRows[messageIndex].title;
+      if (row - 1 < numberOfFixedRows - 1) {
+        int messageIndex = findCellIndex(row - 1);
+        message = column == 1 ? k_calculationRows[messageIndex].symbol
+                              : k_calculationRows[messageIndex].title;
       } else {
         // titles index does not include the Mode Frequency messages
-        assert(showModeFrequency() && j == numberOfRows() - 1);
+        assert(showModeFrequency() && row == numberOfRows() - 1);
         I18n::Message modeFrequencyTitles[k_numberOfHeaderColumns] = {
             I18n::Message::ModeFrequency, I18n::Message::ModeFrequencySymbol};
-        message = modeFrequencyTitles[i];
+        message = modeFrequencyTitles[column];
       }
       EvenOddMessageTextCell *calcTitleCell =
           static_cast<EvenOddMessageTextCell *>(cell);
-      calcTitleCell->setTextColor(i == 1 ? Palette::GrayDark : KDColorBlack);
+      calcTitleCell->setTextColor(column == 1 ? Palette::GrayDark
+                                              : KDColorBlack);
       calcTitleCell->setMessage(message);
       return;
     }
     case k_calculationCellType: {
       // Display a calculation cell
-      int seriesIndex = m_store->seriesIndexFromActiveSeriesIndex(i - 2);
+      int seriesIndex = m_store->seriesIndexFromActiveSeriesIndex(column - 2);
       double calculation;
       AbstractEvenOddBufferTextCell *calculationCell =
           static_cast<AbstractEvenOddBufferTextCell *>(cell);
-      if (j - 1 < (numberOfFixedRows - 1)) {
-        int calculationIndex = findCellIndex(j - 1);
+      if (row - 1 < (numberOfFixedRows - 1)) {
+        int calculationIndex = findCellIndex(row - 1);
         if (std::isnan(m_memoizedCellContent[seriesIndex][calculationIndex])) {
           m_memoizedCellContent[seriesIndex][calculationIndex] =
               (m_store->*k_calculationRows[calculationIndex].calculationMethod)(
@@ -134,10 +136,10 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
                (std::isnan(calculation) &&
                 std::isnan((m_store->*k_calculationRows[calculationIndex]
                                           .calculationMethod)(seriesIndex))));
-      } else if (showModeFrequency() && j == numberOfRows() - 1) {
+      } else if (showModeFrequency() && row == numberOfRows() - 1) {
         calculation = m_store->modeFrequency(seriesIndex);
       } else {
-        int modeIndex = j - numberOfFixedRows;
+        int modeIndex = row - numberOfFixedRows;
         if (modeIndex < m_store->numberOfModes(seriesIndex)) {
           calculation = m_store->modeAtIndex(seriesIndex, modeIndex);
         } else {

@@ -30,8 +30,8 @@ class Controller : public Escher::ViewController,
   int numberOfColumns() const override { return k_numberOfColumns; }
   Escher::HighlightCell* reusableCell(int index) override;
   int reusableCellCount() const override { return k_numberOfReusableCells; }
-  void willDisplayCellAtLocation(Escher::HighlightCell* cell, int i,
-                                 int j) override;
+  void willDisplayCellAtLocation(Escher::HighlightCell* cell, int column,
+                                 int row) override;
   bool cellAtLocationIsSelectable(Escher::HighlightCell* cell, int column,
                                   int row) override {
     assert(column >= 0 && column < numberOfColumns() && row >= 0 &&

@@ -91,28 +91,28 @@ int EditableCellTableViewController::numberOfRows() const {
 }
 
 void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(
-    HighlightCell *cell, int i, int j,
+    HighlightCell *cell, int column, int row,
     Preferences::PrintFloatMode floatDisplayMode) {
-  static_cast<EvenOddCell *>(cell)->setEven(j % 2 == 0);
-  if (j == 0) {
-    setTitleCellText(cell, i);
-    setTitleCellStyle(cell, i);
+  static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
+  if (row == 0) {
+    setTitleCellText(cell, column);
+    setTitleCellStyle(cell, column);
     return;
   }
   // The cell is editable
-  if (cellAtLocationIsEditable(i, j)) {
+  if (cellAtLocationIsEditable(column, row)) {
     AbstractEvenOddEditableTextCell *myEditableValueCell =
         static_cast<AbstractEvenOddEditableTextCell *>(cell);
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
         AbstractEvenOddBufferTextCell::k_defaultPrecision);
     char buffer[bufferSize];
     // Special case 1: last row and NaN
-    if (j == numberOfElementsInColumn(i) + 1 ||
-        std::isnan(dataAtLocation(i, j))) {
+    if (row == numberOfElementsInColumn(column) + 1 ||
+        std::isnan(dataAtLocation(column, row))) {
       buffer[0] = 0;
     } else {
       PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
-          dataAtLocation(i, j), buffer, bufferSize,
+          dataAtLocation(column, row), buffer, bufferSize,
           AbstractEvenOddBufferTextCell::k_defaultPrecision, floatDisplayMode);
     }
     myEditableValueCell->editableTextCell()->textField()->setText(buffer);

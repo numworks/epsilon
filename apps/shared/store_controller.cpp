@@ -91,30 +91,30 @@ int StoreController::typeAtLocation(int i, int j) {
   return j == 0 ? k_titleCellType : k_editableCellType;
 }
 
-void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int i,
-                                                int j) {
+void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int column,
+                                                int row) {
   // Handle hidden cells
-  const int numberOfElementsInCol = numberOfElementsInColumn(i);
-  if (j > numberOfElementsInCol + 1) {
+  const int numberOfElementsInCol = numberOfElementsInColumn(column);
+  if (row > numberOfElementsInCol + 1) {
     Escher::AbstractEvenOddEditableTextCell *myCell =
         static_cast<Escher::AbstractEvenOddEditableTextCell *>(cell);
     myCell->editableTextCell()->textField()->setText("");
     myCell->hide();
     return;
   }
-  if (typeAtLocation(i, j) == k_editableCellType) {
+  if (typeAtLocation(column, row) == k_editableCellType) {
     Escher::AbstractEvenOddEditableTextCell *myCell =
         static_cast<Escher::AbstractEvenOddEditableTextCell *>(cell);
     myCell->show();
     KDColor textColor =
-        (m_store->seriesIsActive(m_store->seriesAtColumn(i)) ||
-         m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(i)) == 0)
+        (m_store->seriesIsActive(m_store->seriesAtColumn(column)) ||
+         m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(column)) == 0)
             ? KDColorBlack
             : Palette::GrayDark;
     myCell->editableTextCell()->textField()->setTextColor(textColor);
   }
   willDisplayCellAtLocationWithDisplayMode(
-      cell, i, j, Preferences::sharedPreferences->displayMode());
+      cell, column, row, Preferences::sharedPreferences->displayMode());
 }
 
 KDCoordinate StoreController::separatorBeforeColumn(int index) {

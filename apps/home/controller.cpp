@@ -124,10 +124,11 @@ HighlightCell *Controller::reusableCell(int index) {
   return &m_reusableCells[index];
 }
 
-void Controller::willDisplayCellAtLocation(HighlightCell *cell, int i, int j) {
+void Controller::willDisplayCellAtLocation(HighlightCell *cell, int column,
+                                           int row) {
   AppCell *appCell = static_cast<AppCell *>(cell);
   AppsContainer *container = AppsContainer::sharedAppsContainer();
-  int appIdx = indexOfAppAtColumnAndRow(i, j);
+  int appIdx = indexOfAppAtColumnAndRow(column, row);
   if (appIdx >= container->numberOfApps()) {
     appCell->setVisible(false);
   } else {

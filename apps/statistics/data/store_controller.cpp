@@ -51,24 +51,26 @@ int StoreController::numberOfColumns() const {
   return result;
 }
 
-void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int i,
-                                                int j) {
-  if (!isCumulatedFrequencyCell(i, j)) {
-    return Shared::StoreController::willDisplayCellAtLocation(cell, i, j);
+void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int column,
+                                                int row) {
+  if (!isCumulatedFrequencyCell(column, row)) {
+    return Shared::StoreController::willDisplayCellAtLocation(cell, column,
+                                                              row);
   }
   // Handle hidden cells
-  const int numberOfElementsInCol = numberOfElementsInColumn(i);
+  const int numberOfElementsInCol = numberOfElementsInColumn(column);
   AbstractEvenOddBufferTextCell *myCell =
       static_cast<AbstractEvenOddBufferTextCell *>(cell);
-  if (j > numberOfElementsInCol + 1) {
+  if (row > numberOfElementsInCol + 1) {
     myCell->setText("");
     myCell->hide();
     return;
   }
   myCell->show();
-  myCell->setEven(j % 2 == 0);
+  myCell->setEven(row % 2 == 0);
 
-  double value = (j == numberOfElementsInCol + 1) ? NAN : dataAtLocation(i, j);
+  double value =
+      (row == numberOfElementsInCol + 1) ? NAN : dataAtLocation(column, row);
   if (std::isnan(value)) {
     // Special case : last row and NaN
     myCell->setText("");
@@ -81,7 +83,7 @@ void StoreController::willDisplayCellAtLocation(HighlightCell *cell, int i,
         AbstractEvenOddBufferTextCell::k_defaultPrecision,
         Preferences::sharedPreferences->displayMode());
     myCell->setText(buffer);
-    KDColor textColor = m_store->seriesIsActive(m_store->seriesAtColumn(i))
+    KDColor textColor = m_store->seriesIsActive(m_store->seriesAtColumn(column))
                             ? KDColorBlack
                             : Palette::GrayDark;
     myCell->setTextColor(textColor);

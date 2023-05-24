@@ -22,7 +22,6 @@ app_calculation_src = $(addprefix apps/calculation/,\
   additional_outputs/illustration_cell.cpp \
   additional_outputs/integer_list_controller.cpp \
   additional_outputs/scrollable_three_layouts_view.cpp \
-  additional_outputs/list_controller.cpp \
   additional_outputs/matrix_list_controller.cpp \
   additional_outputs/rational_list_controller.cpp \
   additional_outputs/scientific_notation_list_controller.cpp \

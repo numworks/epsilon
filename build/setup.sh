@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+# This script should be run from root epsilon folder for init_git_pre_push_hook to work
+
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -106,5 +109,15 @@ install_windows_binary_deps() {
   fi
 }
 
+init_git_pre_push_hook() {
+  # Create a git hook to prevent push on master branch without confirmation
+  # See build/git/pre-push for details
+  echo "Creating pre-push hook to prevent unwanted push on master."
+  cp build/git/pre-push .git/hooks/pre-push
+  chmod +x .git/hooks/pre-push
+  git init
+}
+
 install_binary_deps
 install_python_deps
+init_git_pre_push_hook

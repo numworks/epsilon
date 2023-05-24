@@ -12,6 +12,7 @@ class TrigonometryListController : public IllustratedExpressionsListController {
   TrigonometryListController(EditExpressionController* editExpressionController)
       : IllustratedExpressionsListController(editExpressionController),
         m_graphCell(&m_model) {}
+  // Theses expressions are the expressions of the angle, not the user input
   void setExactAndApproximateExpression(
       Poincare::Expression exactExpression,
       Poincare::Expression approximateExpression) override;

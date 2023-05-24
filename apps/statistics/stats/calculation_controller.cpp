@@ -156,7 +156,8 @@ KDCoordinate CalculationController::nonMemoizedColumnWidth(int column) {
     int numberOfChars = (numberOfModes < 10      ? 4
                          : (numberOfModes < 100) ? 5
                                                  : 6);
-    return CalculationSymbolCellWidth(numberOfChars);
+    return Metric::SmallFontCellWidth(numberOfChars,
+                                      Metric::CellVerticalElementMargin);
   }
   return k_calculationCellWidth;
 }

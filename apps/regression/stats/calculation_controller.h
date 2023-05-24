@@ -22,12 +22,6 @@ class CalculationController : public Shared::DoublePairTableController {
   // View Controller
   TELEMETRY_ID("Calculation");
 
-  // SelectableTableViewDelegate
-  void tableViewDidChangeSelectionAndDidScroll(
-      Escher::SelectableTableView* t, int previousSelectedCol,
-      int previousSelectedRow, KDPoint previousOffset,
-      bool withinTemporarySelection) override;
-
   // TableViewDataSource
   int numberOfRows() const override;
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
@@ -36,6 +30,12 @@ class CalculationController : public Shared::DoublePairTableController {
   int reusableCellCount(int type) override;
   int typeAtLocation(int column, int row) override;
   bool canStoreCellAtLocation(int column, int row) override;
+
+  // SelectableTableViewDelegate
+  void tableViewDidChangeSelectionAndDidScroll(
+      Escher::SelectableTableView* t, int previousSelectedCol,
+      int previousSelectedRow, KDPoint previousOffset,
+      bool withinTemporarySelection) override;
 
  private:
   enum class Calculation : uint8_t {
@@ -101,15 +101,16 @@ class CalculationController : public Shared::DoublePairTableController {
 
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int column) override;
+  void resetMemoization(bool force = true) override;
 
+  // DoublePairTableController
   Shared::DoublePairStore* store() const override { return m_store; }
+
   static I18n::Message MessageForCalculation(Calculation c);
   static I18n::Message SymbolForCalculation(Calculation c);
-
   Calculation calculationForRow(int row) const;
   int numberOfDisplayedCoefficients() const;
   int numberOfDisplayedBCDECoefficients() const;
-  void resetMemoization(bool force = true) override;
 
   ColumnTitleCell m_seriesTitleCells[k_numberOfSeriesTitleCells];
   EvenOddDoubleBufferTextCell

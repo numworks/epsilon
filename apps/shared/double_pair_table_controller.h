@@ -62,18 +62,19 @@ class DoublePairTableController
   KDCoordinate separatorBeforeColumn(int index) override;
 
  protected:
-  constexpr static int k_maxNumberOfDisplayableRows = 11;
-  constexpr static KDCoordinate k_cellHeight =
-      Escher::Metric::SmallEditableCellHeight;
+  // Margins
   constexpr static KDCoordinate k_margin = 8;
   constexpr static KDCoordinate k_scrollBarMargin =
       Escher::Metric::CommonRightMargin;
   // Number of cells
+  constexpr static int k_maxNumberOfDisplayableRows = 11;
   constexpr static int k_numberOfHeaderColumns = 2;
   constexpr static int k_numberOfSeriesTitleCells = 3;
   constexpr static int k_numberOfCalculationCells =
       k_numberOfSeriesTitleCells * k_maxNumberOfDisplayableRows;
   // Cell sizes
+  constexpr static KDCoordinate k_cellHeight =
+      Escher::Metric::SmallEditableCellHeight;
   constexpr static int k_titleNumberOfChars = 22;
   constexpr static KDCoordinate k_calculationTitleCellWidth =
       Escher::Metric::SmallFontCellWidth(

@@ -97,10 +97,9 @@ int ExamModeController::reusableCellCount(int type) {
   return k_maxNumberOfCells;
 }
 
-void ExamModeController::willDisplayCellForIndex(HighlightCell *cell,
-                                                 int index) {
+void ExamModeController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
-      examModeActivationMessage(index));
+      examModeActivationMessage(row));
 }
 
 int ExamModeController::initialSelectedRow() const {

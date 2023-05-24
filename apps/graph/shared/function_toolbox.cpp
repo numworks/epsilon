@@ -85,15 +85,15 @@ HighlightCell *FunctionToolbox::reusableCell(int index, int type) {
   return MathToolbox::reusableCell(index, type);
 }
 
-void FunctionToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
-  if (typeAtIndex(index) == k_addedCellType) {
-    assert(index < addedCellsAtRoot());
+void FunctionToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  if (typeAtIndex(row) == k_addedCellType) {
+    assert(row < addedCellsAtRoot());
     static_cast<MenuCell<LayoutView> *>(cell)->label()->setLayout(
-        m_addedCellLayout[index]);
+        m_addedCellLayout[row]);
     cell->reloadCell();
     return;
   }
-  MathToolbox::willDisplayCellForIndex(cell, index);
+  MathToolbox::willDisplayCellAtRow(cell, row);
 }
 
 KDCoordinate FunctionToolbox::nonMemoizedRowHeight(int index) {

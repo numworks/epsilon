@@ -33,8 +33,8 @@ void ListParameterController::viewWillAppear() {
   m_selectableListView.reloadData();
 }
 
-void ListParameterController::willDisplayCellForIndex(HighlightCell *cell,
-                                                      int index) {
+void ListParameterController::willDisplayCellAtRow(HighlightCell *cell,
+                                                   int row) {
   if (cell == &m_enableCell && !m_record.isNull()) {
     m_enableCell.accessory()->setState(function()->isActive());
   }

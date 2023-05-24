@@ -23,7 +23,7 @@ class IntervalParameterController : public FloatParameterController<double> {
   void setInterval(Interval* interval);
   const char* title() override;
   void setTitle(I18n::Message title) { m_title = title; }
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   int numberOfRows() const override;
   void setStartEndMessages(I18n::Message startMessage,
                            I18n::Message endMessage);

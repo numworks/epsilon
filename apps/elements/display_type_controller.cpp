@@ -30,12 +30,11 @@ bool DisplayTypeController::handleEvent(Ion::Events::Event e) {
   return SelectableListViewController::handleEvent(e);
 }
 
-void DisplayTypeController::willDisplayCellForIndex(HighlightCell *cell,
-                                                    int index) {
+void DisplayTypeController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   assert(cell - static_cast<HighlightCell *>(m_cells) <
          static_cast<int>(k_numberOfCells * sizeof(m_cells[0])));
   static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
-      k_fields[index]->fieldLegend());
+      k_fields[row]->fieldLegend());
 }
 
 }  // namespace Elements

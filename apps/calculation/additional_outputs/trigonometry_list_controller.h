@@ -17,7 +17,7 @@ class TrigonometryListController : public IllustratedExpressionsListController {
       Poincare::Expression exactAngle,
       Poincare::Expression approximateAngle) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
 
   /* See comment in parent class for why we need this. Since we need to display
    * fractions of radians in the angle cell, we reduce the graph further. */

@@ -123,9 +123,9 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-void CalculationParameterController::willDisplayCellForIndex(
-    HighlightCell *cell, int index) {
-  assert(index >= 0 && index <= numberOfRows());
+void CalculationParameterController::willDisplayCellAtRow(HighlightCell *cell,
+                                                          int row) {
+  assert(row >= 0 && row <= numberOfRows());
   if (cell != &m_areaCell) {
     return;
   }

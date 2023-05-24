@@ -70,16 +70,16 @@ void ScriptParameterController::didBecomeFirstResponder() {
   ExplicitSelectableListViewController::didBecomeFirstResponder();
 }
 
-AbstractMenuCell *ScriptParameterController::cell(int index) {
-  assert(index >= 0);
-  assert(index < k_totalNumberOfCell);
+AbstractMenuCell *ScriptParameterController::cell(int row) {
+  assert(row >= 0);
+  assert(row < k_totalNumberOfCell);
   AbstractMenuCell *cells[k_totalNumberOfCell] = {
       &m_executeScript, &m_renameScript, &m_autoImportScript, &m_deleteScript};
-  return cells[index];
+  return cells[row];
 }
 
-void ScriptParameterController::willDisplayCellForIndex(HighlightCell *cell,
-                                                        int index) {
+void ScriptParameterController::willDisplayCellAtRow(HighlightCell *cell,
+                                                     int row) {
   if (cell == &m_autoImportScript && !m_script.isNull()) {
     m_autoImportScript.accessory()->setState(m_script.autoImportation());
   }

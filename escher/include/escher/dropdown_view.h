@@ -100,7 +100,7 @@ class Dropdown : public PopupItemView, public Responder {
       return m_listViewDataSource->reusableCellCount(type);
     }
     PopupItemView* reusableCell(int index, int type) override;
-    void willDisplayCellForIndex(HighlightCell* cell, int index) override;
+    void willDisplayCellAtRow(HighlightCell* cell, int row) override;
     void resetMemoization(bool force = true) override;
     HighlightCell* innerCellAtIndex(int index);
 

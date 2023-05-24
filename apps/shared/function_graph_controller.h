@@ -42,8 +42,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
     int numberOfRows() const override {
       return graphController()->functionStore()->numberOfActiveFunctions();
     }
-    void willDisplayCellForIndex(Escher::HighlightCell *cell,
-                                 int index) override;
+    void willDisplayCellAtRow(Escher::HighlightCell *cell, int row) override;
     void didBecomeFirstResponder() override;
 
    protected:

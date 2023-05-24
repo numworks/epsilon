@@ -74,8 +74,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
       return m_cells + index;
     }
     int reusableCellCount(int type) override { return Store::k_numberOfSeries; }
-    void willDisplayCellForIndex(Escher::HighlightCell *cell,
-                                 int index) override;
+    void willDisplayCellAtRow(Escher::HighlightCell *cell, int row) override;
 
    private:
     KDCoordinate nonMemoizedRowHeight(int j) override;

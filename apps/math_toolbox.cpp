@@ -911,8 +911,8 @@ bool MathToolbox::displayMessageTreeDisabledPopUp(
   return false;
 }
 
-void MathToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
-  const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(index);
+void MathToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(row);
   KDColor textColor =
       isMessageTreeDisabled(messageTree) ? Palette::GrayDark : KDColorBlack;
   if (messageTree->numberOfChildren() == 0) {
@@ -925,7 +925,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
             CountryPreferences::ListsStatsOrderInToolbox::Alternate &&
         m_messageTreeModel->childrenList() == listsStatsChildren) {
       // We are in lists stats sub-menu
-      messageTree = messageTreeModelAtIndex(alternateListsStatsOrder[index]);
+      messageTree = messageTreeModelAtIndex(alternateListsStatsOrder[row]);
     }
     LeafCell *myCell = static_cast<LeafCell *>(cell);
     const char *text = I18n::translate(messageTree->label());
@@ -961,7 +961,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
                static_cast<void *>(m_leafCells + k_maxNumberOfDisplayedRows));
     static_cast<NestedMenuController::NodeCell *>(cell)->label()->setTextColor(
         textColor);
-    Escher::Toolbox::willDisplayCellForIndex(cell, index);
+    Escher::Toolbox::willDisplayCellAtRow(cell, row);
   }
 }
 

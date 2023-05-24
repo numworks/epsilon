@@ -264,11 +264,10 @@ int ConsoleController::typeAtIndex(int index) const {
   }
 }
 
-void ConsoleController::willDisplayCellForIndex(HighlightCell *cell,
-                                                int index) {
-  if (index < m_consoleStore.numberOfLines()) {
+void ConsoleController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  if (row < m_consoleStore.numberOfLines()) {
     static_cast<ConsoleLineCell *>(cell)->setLine(
-        m_consoleStore.lineAtIndex(index));
+        m_consoleStore.lineAtIndex(row));
   }
 }
 

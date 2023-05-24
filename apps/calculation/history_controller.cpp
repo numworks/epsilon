@@ -306,15 +306,14 @@ int HistoryController::reusableCellCount(int type) {
   return k_maxNumberOfDisplayedRows;
 }
 
-void HistoryController::willDisplayCellForIndex(HighlightCell *cell,
-                                                int index) {
+void HistoryController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   HistoryViewCell *myCell = static_cast<HistoryViewCell *>(cell);
   Poincare::Context *context = App::app()->localContext();
   myCell->setCalculation(
-      calculationAtIndex(index).pointer(),
-      index == selectedRow() && selectedSubviewType() == SubviewType::Output,
+      calculationAtIndex(row).pointer(),
+      row == selectedRow() && selectedSubviewType() == SubviewType::Output,
       context);
-  myCell->setEven(index % 2 == 0);
+  myCell->setEven(row % 2 == 0);
   myCell->reloadSubviewHighlight();
 }
 
@@ -376,11 +375,11 @@ void HistoryController::historyViewCellDidChangeSelection(
   *previousCell =
       static_cast<HistoryViewCell *>(m_selectableTableView.cellAtLocation(
           previousSelectedCol, previousSelectedRow));
-  /* 'reloadData' calls 'willDisplayCellForIndex' for each cell while the table
+  /* 'reloadData' calls 'willDisplayCellAtRow' for each cell while the table
    * has been deselected. To reload the expanded cell, we call one more time
-   * 'willDisplayCellForIndex' but once the right cell has been selected. */
+   * 'willDisplayCellAtRow' but once the right cell has been selected. */
   if (*cell) {
-    willDisplayCellForIndex(*cell, selectedRow());
+    willDisplayCellAtRow(*cell, selectedRow());
   }
 }
 

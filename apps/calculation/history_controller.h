@@ -36,7 +36,7 @@ class HistoryController : public Escher::ViewController,
   int numberOfRows() const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   void setSelectedSubviewType(SubviewType subviewType, bool sameCell,
                               int previousSelectedX = -1,
                               int previousSelectedY = -1) override;

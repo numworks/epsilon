@@ -116,18 +116,18 @@ HighlightCell *ListController::reusableCell(int index, int type) {
   }
 }
 
-void ListController::willDisplayCellForIndex(HighlightCell *cell, int index) {
-  if (!isAddEmptyRow(index)) {
+void ListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  if (!isAddEmptyRow(row)) {
     AbstractSequenceCell *sequenceCell =
         static_cast<AbstractSequenceCell *>(cell);
     // Update the expression cell first since the title's baseline depends on it
-    willDisplayExpressionCellAtIndex(sequenceCell->expressionCell(), index);
-    willDisplayTitleCellAtIndex(sequenceCell->titleCell(), index,
+    willDisplayExpressionCellAtIndex(sequenceCell->expressionCell(), row);
+    willDisplayTitleCellAtIndex(sequenceCell->titleCell(), row,
                                 sequenceCell->expressionCell());
     sequenceCell->setParameterSelected(m_parameterColumnSelected);
   }
   EvenOddCell *myCell = static_cast<EvenOddCell *>(cell);
-  myCell->setEven(modelIndexForRow(index) % 2 == 0);
+  myCell->setEven(modelIndexForRow(row) % 2 == 0);
   myCell->reloadCell();
 }
 

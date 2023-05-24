@@ -51,7 +51,7 @@ class LocalizationController
     return &m_cells[index];
   }
 
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
 
  protected:
   class ContentView : public Escher::View {

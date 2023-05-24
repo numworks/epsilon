@@ -38,14 +38,14 @@ HighlightCell *SequenceToolbox::reusableCell(int index, int type) {
   return MathToolbox::reusableCell(index, type);
 }
 
-void SequenceToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
-  if (typeAtIndex(index) == k_addedCellType) {
+void SequenceToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  if (typeAtIndex(row) == k_addedCellType) {
     static_cast<MenuCell<LayoutView> *>(cell)->label()->setLayout(
-        m_addedCellLayout[index]);
+        m_addedCellLayout[row]);
     cell->reloadCell();
     return;
   }
-  MathToolbox::willDisplayCellForIndex(cell, index);
+  MathToolbox::willDisplayCellAtRow(cell, row);
 }
 
 KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int index) {

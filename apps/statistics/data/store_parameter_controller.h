@@ -19,7 +19,7 @@ class StoreParameterController : public Shared::StoreParameterController {
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
   Escher::AbstractMenuCell* cell(int index) override;
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
 
  private:
   /* When displayed, hideCumulatedFrequencyCell is last and second.

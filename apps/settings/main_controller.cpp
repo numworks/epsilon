@@ -184,13 +184,13 @@ int MainController::typeAtIndex(int index) const {
   };
 }
 
-void MainController::willDisplayCellForIndex(HighlightCell *cell, int index) {
+void MainController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   GlobalPreferences *globalPreferences =
       GlobalPreferences::sharedGlobalPreferences;
   Preferences *preferences = Preferences::sharedPreferences;
-  int modelIndex = getModelIndex(index);
+  int modelIndex = getModelIndex(row);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
-  int type = typeAtIndex(index);
+  int type = typeAtIndex(row);
   if (type == k_brightnessCellType) {
     assert(&m_brightnessCell == cell);
     m_brightnessCell.label()->setMessage(title);

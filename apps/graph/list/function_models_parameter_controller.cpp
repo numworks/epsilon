@@ -59,12 +59,12 @@ void FunctionModelsParameterController::viewWillAppear() {
   m_selectableListView.reloadData();
 }
 
-void FunctionModelsParameterController::willDisplayCellForIndex(
-    Escher::HighlightCell* cell, int index) {
+void FunctionModelsParameterController::willDisplayCellAtRow(
+    Escher::HighlightCell* cell, int row) {
   if (cell == &m_emptyModelCell) {
     return;
   }
-  int i = index - 1;
+  int i = row - 1;
   Model model = Models()[i];
   char buffer[k_maxSizeOfNamedModel];
   Poincare::Expression e = Expression::Parse(

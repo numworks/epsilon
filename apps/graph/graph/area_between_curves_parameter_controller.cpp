@@ -67,11 +67,11 @@ void AreaBetweenCurvesParameterController::viewWillAppear() {
   m_selectableListView.reloadData();
 }
 
-void AreaBetweenCurvesParameterController::willDisplayCellForIndex(
-    Escher::HighlightCell *cell, int index) {
+void AreaBetweenCurvesParameterController::willDisplayCellAtRow(
+    Escher::HighlightCell *cell, int row) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(
-          DerivableActiveFunctionAtIndex(index, m_mainRecord));
+          DerivableActiveFunctionAtIndex(row, m_mainRecord));
   static_cast<CurveSelectionCell *>(cell)->setColor(function->color());
   static_cast<CurveSelectionCell *>(cell)->label()->setLayout(
       function->layout().clone());

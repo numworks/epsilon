@@ -95,12 +95,12 @@ FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(
          Metric::CellSeparatorThickness;
 }
 
-void FunctionGraphController::FunctionSelectionController::
-    willDisplayCellForIndex(HighlightCell *cell, int index) {
-  assert(index < graphController()->numberOfCurves());
+void FunctionGraphController::FunctionSelectionController::willDisplayCellAtRow(
+    HighlightCell *cell, int row) {
+  assert(row < graphController()->numberOfCurves());
   ExpiringPointer<Function> function =
       graphController()->functionStore()->modelForRecord(
-          graphController()->recordAtCurveIndex(index));
+          graphController()->recordAtCurveIndex(row));
   static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(
       function->color());
   static_cast<CurveSelectionCellWithChevron *>(cell)->label()->setLayout(

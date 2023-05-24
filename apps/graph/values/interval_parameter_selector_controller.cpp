@@ -56,11 +56,11 @@ HighlightCell *IntervalParameterSelectorController::reusableCell(int index) {
   return m_intervalParameterCell + index;
 }
 
-void IntervalParameterSelectorController::willDisplayCellForIndex(
-    HighlightCell *cell, int index) {
-  assert(0 <= index && index < numberOfRows());
+void IntervalParameterSelectorController::willDisplayCellAtRow(
+    HighlightCell *cell, int row) {
+  assert(0 <= row && row < numberOfRows());
   Shared::ContinuousFunctionProperties::SymbolType symbolType =
-      symbolTypeAtRow(index);
+      symbolTypeAtRow(row);
   static_cast<MenuCell<MessageTextView, EmptyCellWidget, ChevronView> *>(cell)
       ->label()
       ->setMessage(messageForType(symbolType));

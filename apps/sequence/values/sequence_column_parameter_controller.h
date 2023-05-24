@@ -23,7 +23,7 @@ class SequenceColumnParameterController
     assert(index == 0);
     return &m_showSumCell;
   }
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 
  private:

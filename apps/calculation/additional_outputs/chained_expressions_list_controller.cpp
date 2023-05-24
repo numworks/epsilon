@@ -55,13 +55,13 @@ KDCoordinate ChainedExpressionsListController::nonMemoizedRowHeight(int index) {
   return ExpressionsListController::nonMemoizedRowHeight(index);
 }
 
-void ChainedExpressionsListController::willDisplayCellForIndex(
-    HighlightCell* cell, int index) {
+void ChainedExpressionsListController::willDisplayCellAtRow(HighlightCell* cell,
+                                                            int row) {
   int numberOfOwnedCells = ExpressionsListController::numberOfRows();
-  if (index >= numberOfOwnedCells) {
-    return m_tail->willDisplayCellForIndex(cell, index - numberOfOwnedCells);
+  if (row >= numberOfOwnedCells) {
+    return m_tail->willDisplayCellAtRow(cell, row - numberOfOwnedCells);
   }
-  return ExpressionsListController::willDisplayCellForIndex(cell, index);
+  return ExpressionsListController::willDisplayCellAtRow(cell, row);
 }
 
 int ChainedExpressionsListController::numberOfRows() const {

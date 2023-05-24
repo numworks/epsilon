@@ -142,7 +142,7 @@ KDPoint Dropdown::DropdownPopupController::topLeftCornerForSelection(
 KDCoordinate Dropdown::DropdownPopupController::defaultColumnWidth() {
   if (m_memoizedCellWidth < 0) {
     HighlightCell *cell = reusableCell(0, 0);
-    willDisplayCellForIndex(cell, 0);
+    willDisplayCellAtRow(cell, 0);
     m_memoizedCellWidth = cell->minimalSizeForOptimalDisplay().width();
   }
   return m_memoizedCellWidth;
@@ -150,7 +150,7 @@ KDCoordinate Dropdown::DropdownPopupController::defaultColumnWidth() {
 
 KDCoordinate Dropdown::DropdownPopupController::nonMemoizedRowHeight(int j) {
   HighlightCell *cell = reusableCell(0, 0);
-  willDisplayCellForIndex(cell, 0);
+  willDisplayCellAtRow(cell, 0);
   return cell->minimalSizeForOptimalDisplay().height();
 }
 
@@ -160,13 +160,13 @@ PopupItemView *Dropdown::DropdownPopupController::reusableCell(int index,
   return &m_popupViews[index];
 }
 
-void Dropdown::DropdownPopupController::willDisplayCellForIndex(
-    HighlightCell *cell, int index) {
+void Dropdown::DropdownPopupController::willDisplayCellAtRow(
+    HighlightCell *cell, int row) {
   PopupItemView *popupView = static_cast<PopupItemView *>(cell);
   popupView->setInnerCell(
-      m_listViewDataSource->reusableCell(index, typeAtIndex(index)));
+      m_listViewDataSource->reusableCell(row, typeAtIndex(row)));
   popupView->setPopping(true);
-  m_listViewDataSource->willDisplayCellForIndex(popupView->innerCell(), index);
+  m_listViewDataSource->willDisplayCellAtRow(popupView->innerCell(), row);
 }
 
 void Dropdown::DropdownPopupController::resetMemoization(bool force) {
@@ -201,15 +201,15 @@ void Dropdown::reloadAllCells() {
   m_popup.m_selectableListView.reloadData(false);
   if (!m_isPoppingUp) {
     /* Build the innerCell so that is has the right width.
-     * Mimicking Dropdown::DropdownPopupController::willDisplayCellForIndex
+     * Mimicking Dropdown::DropdownPopupController::willDisplayCellAtRow
      * without altering highlight status and popping status.
      * TODO : rework this entire class so that this isn't necessary. */
     int index = m_popup.m_selectionDataSource.selectedRow();
     PopupItemView *cell =
         static_cast<PopupItemView *>(m_popup.reusableCell(index, 0));
     cell->setInnerCell(m_popup.innerCellAtIndex(index));
-    m_popup.m_listViewDataSource->willDisplayCellForIndex(cell->innerCell(),
-                                                          index);
+    m_popup.m_listViewDataSource->willDisplayCellAtRow(cell->innerCell(),
+                                                       index);
   }
   PopupItemView::reloadCell();
 }

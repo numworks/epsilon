@@ -18,9 +18,9 @@ int Toolbox::numberOfRows() const {
 
 int Toolbox::reusableCellCount(int type) { return maxNumberOfDisplayedRows(); }
 
-void Toolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
-  assert(typeAtIndex(index) == k_nodeCellType);
-  const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(index);
+void Toolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  assert(typeAtIndex(row) == k_nodeCellType);
+  const ToolboxMessageTree *messageTree = messageTreeModelAtIndex(row);
   assert(messageTree->numberOfChildren() != 0);
   NestedMenuController::NodeCell *myCell =
       static_cast<NestedMenuController::NodeCell *>(cell);

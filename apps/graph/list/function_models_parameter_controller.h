@@ -24,7 +24,7 @@ class FunctionModelsParameterController
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   Escher::HighlightCell* cell(int index) override;
   static int DefaultName(char buffer[], size_t bufferSize);
   /* Tell if the country prefers y=x or f(x)=x */

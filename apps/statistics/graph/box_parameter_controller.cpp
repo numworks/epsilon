@@ -21,8 +21,8 @@ void BoxParameterController::viewWillAppear() {
   cellAtIndex(0)->accessory()->setState(m_store->displayOutliers());
 }
 
-void BoxParameterController::willDisplayCellForIndex(HighlightCell* cell,
-                                                     int index) {}
+void BoxParameterController::willDisplayCellAtRow(HighlightCell* cell,
+                                                  int row) {}
 
 bool BoxParameterController::handleEvent(Ion::Events::Event event) {
   if (cellAtIndex(0)->canBeActivatedByEvent(event)) {

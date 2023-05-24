@@ -166,18 +166,17 @@ void TrigonometryListController::updateIsStrictlyEqualAtIndex(
       Expression::Parse(approximateBuffer, context));
 }
 
-void TrigonometryListController::willDisplayCellForIndex(
-    Escher::HighlightCell* cell, int index) {
-  if (typeAtIndex(index) == k_expressionCellType) {
-    int expressionIndex = index - showIllustration();
+void TrigonometryListController::willDisplayCellAtRow(
+    Escher::HighlightCell* cell, int row) {
+  if (typeAtIndex(row) == k_expressionCellType) {
+    int expressionIndex = row - showIllustration();
     assert(0 <= expressionIndex && expressionIndex < k_numberOfExpressionRows);
     static_cast<AdditionnalResultCell*>(cell)
         ->label()
         ->setExactAndApproximateAreStriclyEqual(
             m_isStrictlyEqual[expressionIndex]);
   }
-  return IllustratedExpressionsListController::willDisplayCellForIndex(cell,
-                                                                       index);
+  return IllustratedExpressionsListController::willDisplayCellAtRow(cell, row);
 }
 
 KDCoordinate TrigonometryListController::nonMemoizedRowHeight(int j) {

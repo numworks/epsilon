@@ -38,13 +38,13 @@ bool ColorParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ColorParameterController::willDisplayCellForIndex(HighlightCell *cell,
-                                                       int index) {
+void ColorParameterController::willDisplayCellAtRow(HighlightCell *cell,
+                                                    int row) {
   ColorCell *colorCell = static_cast<ColorCell *>(cell);
-  assert(index >= 0);
-  assert(index < ColorNames::k_count);
-  colorCell->label()->setMessage(ColorNames::k_messages[index]);
-  colorCell->accessory()->setColor(ColorNames::k_colors[index]);
+  assert(row >= 0);
+  assert(row < ColorNames::k_count);
+  colorCell->label()->setMessage(ColorNames::k_messages[row]);
+  colorCell->accessory()->setColor(ColorNames::k_colors[row]);
 }
 
 KDCoordinate ColorParameterController::defaultRowHeight() {

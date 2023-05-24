@@ -53,14 +53,13 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int index) {
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
-void UnitListController::willDisplayCellForIndex(HighlightCell *cell,
-                                                 int index) {
-  if (typeAtIndex(index) == k_expressionCellType) {
-    return ExpressionsListController::willDisplayCellForIndex(cell, index);
+void UnitListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  if (typeAtIndex(row) == k_expressionCellType) {
+    return ExpressionsListController::willDisplayCellAtRow(cell, row);
   }
   BufferCell *myCell = static_cast<BufferCell *>(cell);
-  fillBufferCellAtIndex(myCell, index - m_numberOfExpressionCells);
-  myCell->subLabel()->setMessage(messageAtIndex(index));
+  fillBufferCellAtIndex(myCell, row - m_numberOfExpressionCells);
+  myCell->subLabel()->setMessage(messageAtIndex(row));
 }
 
 int UnitListController::numberOfRows() const {

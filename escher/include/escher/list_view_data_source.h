@@ -15,7 +15,7 @@ class ListViewDataSource : public TableViewDataSource {
   /* reusableCellCount have a default implementation for specific simple
    * lists. Most implementations should override them.*/
   int reusableCellCount(int type) override { return numberOfRows(); }
-  virtual void willDisplayCellForIndex(HighlightCell* cell, int index) {}
+  virtual void willDisplayCellAtRow(HighlightCell* cell, int row) {}
   virtual int typeAtIndex(int index) const { return 0; }
   // Used to easily override nonMemoizedRowHeight
   KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell* tempCell,
@@ -34,7 +34,7 @@ class ListViewDataSource : public TableViewDataSource {
   void willDisplayCellAtLocation(HighlightCell* cell, int column,
                                  int row) override final {
     if (cell->isVisible()) {  // Frame is already set to zero if hidden
-      willDisplayCellForIndex(cell, row);
+      willDisplayCellAtRow(cell, row);
     }
   }
   int typeAtLocation(int col, int row) override final {

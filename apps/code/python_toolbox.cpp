@@ -1089,10 +1089,10 @@ KDCoordinate PythonToolbox::nonMemoizedRowHeight(int index) {
   return Escher::Toolbox::nonMemoizedRowHeight(index);
 }
 
-void PythonToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
+void PythonToolbox::willDisplayCellAtRow(HighlightCell *cell, int row) {
   const ToolboxMessageTree *messageTree =
       static_cast<const ToolboxMessageTree *>(
-          m_messageTreeModel->childAtIndex(index));
+          m_messageTreeModel->childAtIndex(row));
   // Message is leaf
   if (messageTree->numberOfChildren() == 0) {
     ToolboxLeafCell *myCell = static_cast<ToolboxLeafCell *>(cell);
@@ -1108,7 +1108,7 @@ void PythonToolbox::willDisplayCellForIndex(HighlightCell *cell, int index) {
     myCell->subLabel()->setMessage(messageTree->text());
     return;
   }
-  Escher::Toolbox::willDisplayCellForIndex(cell, index);
+  Escher::Toolbox::willDisplayCellAtRow(cell, row);
 }
 
 void PythonToolbox::scrollToLetter(char letter) {

@@ -38,10 +38,10 @@ bool SequenceColumnParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void SequenceColumnParameterController::willDisplayCellForIndex(
-    Escher::HighlightCell* cell, int index) {
-  Shared::ColumnParameterController::willDisplayCellForIndex(cell, index);
-  assert(index == 0 && cell == &m_showSumCell);
+void SequenceColumnParameterController::willDisplayCellAtRow(
+    Escher::HighlightCell* cell, int row) {
+  Shared::ColumnParameterController::willDisplayCellAtRow(cell, row);
+  assert(row == 0 && cell == &m_showSumCell);
   ExpiringPointer<Shared::Sequence> currentSequence =
       GlobalContext::sequenceStore->modelForRecord(m_record);
   m_showSumCell.accessory()->setState(currentSequence->displaySum());

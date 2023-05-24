@@ -32,7 +32,7 @@ class ColorParameterController : public Escher::SelectableListViewController<
   }
   int reusableCellCount() const override { return k_numberOfCells; }
   int numberOfRows() const override { return ColorNames::k_count; }
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
 
   // ColorParameterController
   void setRecord(Ion::Storage::Record record) { m_record = record; }

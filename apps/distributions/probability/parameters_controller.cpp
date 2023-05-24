@@ -59,22 +59,21 @@ int ParametersController::numberOfRows() const {
   return 1 + m_distribution->numberOfParameters();
 }
 
-void ParametersController::willDisplayCellForIndex(HighlightCell *cell,
-                                                   int index) {
-  if (index == numberOfRows() - 1) {
+void ParametersController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  if (row == numberOfRows() - 1) {
     return;
   }
   MenuCellWithEditableText<LayoutView, MessageTextView> *myCell =
       static_cast<MenuCellWithEditableText<LayoutView, MessageTextView> *>(
           cell);
-  myCell->label()->setLayout(m_distribution->parameterSymbolAtIndex(index));
+  myCell->label()->setLayout(m_distribution->parameterSymbolAtIndex(row));
   myCell->subLabel()->setMessage(
-      m_distribution->parameterDefinitionAtIndex(index));
-  if (m_distribution->uninitializedParameterIndex() == index) {
-    textFieldOfCellAtIndex(cell, index)->setText("");
+      m_distribution->parameterDefinitionAtIndex(row));
+  if (m_distribution->uninitializedParameterIndex() == row) {
+    textFieldOfCellAtIndex(cell, row)->setText("");
     return;
   }
-  FloatParameterController::willDisplayCellForIndex(cell, index);
+  FloatParameterController::willDisplayCellAtRow(cell, row);
 }
 
 HighlightCell *ParametersController::reusableParameterCell(int index,

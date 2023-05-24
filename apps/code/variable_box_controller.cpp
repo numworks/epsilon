@@ -147,19 +147,18 @@ int VariableBoxController::reusableCellCount(int type) {
   return k_maxNumberOfDisplayedItems;
 }
 
-void VariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
-                                                    int index) {
-  assert(index >= 0 && index < numberOfRows());
+void VariableBoxController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  assert(row >= 0 && row < numberOfRows());
   uint8_t cellOrigin = k_currentScriptOrigin;
   int cumulatedOriginsCount = 0;
   int cellType =
-      typeAndOriginAtLocation(index, &cellOrigin, &cumulatedOriginsCount);
+      typeAndOriginAtLocation(row, &cellOrigin, &cumulatedOriginsCount);
   if (cellType == k_itemCellType) {
     MenuCell<BufferTextView<k_labelCharSize>, PointerTextView> *typedCell =
         static_cast<
             MenuCell<BufferTextView<k_labelCharSize>, PointerTextView> *>(cell);
     ScriptNode *node = scriptNodeAtIndex(
-        index - (m_displaySubtitles ? cumulatedOriginsCount : 0));
+        row - (m_displaySubtitles ? cumulatedOriginsCount : 0));
     /* Use a temporary buffer to crop label name, as strlen(node->name()) may be
      * greater than node->nameLength() */
     const size_t labelLength =

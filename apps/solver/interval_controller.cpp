@@ -31,17 +31,16 @@ const char *IntervalController::title() {
 
 int IntervalController::numberOfRows() const { return k_maxNumberOfCells + 1; }
 
-void IntervalController::willDisplayCellForIndex(HighlightCell *cell,
-                                                 int index) {
-  if (index == numberOfRows() - 1) {
+void IntervalController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  if (row == numberOfRows() - 1) {
     return;
   }
   I18n::Message labels[k_maxNumberOfCells] = {I18n::Message::XMin,
                                               I18n::Message::XMax};
   MenuCellWithEditableText<MessageTextView> *myCell =
       static_cast<MenuCellWithEditableText<MessageTextView> *>(cell);
-  myCell->label()->setMessage(labels[index]);
-  FloatParameterController::willDisplayCellForIndex(cell, index);
+  myCell->label()->setMessage(labels[row]);
+  FloatParameterController::willDisplayCellAtRow(cell, row);
 }
 
 HighlightCell *IntervalController::reusableParameterCell(int index, int type) {

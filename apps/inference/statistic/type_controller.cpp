@@ -88,16 +88,16 @@ int TypeController::numberOfRows() const {
   return m_statistic->numberOfAvailableDistributions();
 }
 
-void TypeController::willDisplayCellForIndex(Escher::HighlightCell *cell,
-                                             int i) {
-  assert(i <= indexOfZTest());
+void TypeController::willDisplayCellAtRow(Escher::HighlightCell *cell,
+                                          int row) {
+  assert(row <= indexOfZTest());
   I18n::Message message;
-  if (i == k_indexOfTTest) {
+  if (row == k_indexOfTTest) {
     message = m_statistic->tDistributionName();
-  } else if (i == indexOfZTest()) {
+  } else if (row == indexOfZTest()) {
     message = m_statistic->zDistributionName();
   } else {
-    assert(i == k_indexOfPooledTest);
+    assert(row == k_indexOfPooledTest);
     message = m_statistic->tPooledDistributionName();
   }
 

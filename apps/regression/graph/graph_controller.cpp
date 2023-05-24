@@ -105,9 +105,9 @@ KDCoordinate GraphController::CurveSelectionController::nonMemoizedRowHeight(
          Metric::CellBottomMargin;
 }
 
-void GraphController::CurveSelectionController::willDisplayCellForIndex(
-    HighlightCell *cell, int index) {
-  int series = graphController()->seriesIndexFromCurveIndex(index);
+void GraphController::CurveSelectionController::willDisplayCellAtRow(
+    HighlightCell *cell, int row) {
+  int series = graphController()->seriesIndexFromCurveIndex(row);
   const char *name = Store::SeriesTitle(series);
   static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(
       DoublePairStore::colorOfSeriesAtIndex(series));

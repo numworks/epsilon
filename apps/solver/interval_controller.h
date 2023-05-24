@@ -17,7 +17,7 @@ class IntervalController : public Shared::FloatParameterController<double> {
   const char* title() override;
   TELEMETRY_ID("Interval");
   int numberOfRows() const override;
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   void setShouldReplaceFuncionsButNotSymbols(
       bool shouldReplaceFunctionsButNotSymbols) {
     m_shouldReplaceFunctionsButNotSymbols = shouldReplaceFunctionsButNotSymbols;

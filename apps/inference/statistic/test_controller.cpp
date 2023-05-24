@@ -102,16 +102,16 @@ int TestController::numberOfRows() const {
   return m_statistic->numberOfSignificancesTestTypes();
 }
 
-void TestController::willDisplayCellForIndex(HighlightCell *cell, int index) {
+void TestController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   MenuCell<MessageTextView, MessageTextView, ChevronView> *c =
       static_cast<MenuCell<MessageTextView, MessageTextView, ChevronView> *>(
           cell);
-  if (index == virtualIndexOfSlope()) {
+  if (row == virtualIndexOfSlope()) {
     c->label()->setMessage(I18n::Message::Slope);
     c->subLabel()->setMessage(m_statistic->tStatisticMessage());
     return;
   }
-  switch (index) {
+  switch (row) {
     case k_indexOfOneProp:
       c->label()->setMessage(I18n::Message::TestOneProp);
       c->subLabel()->setMessage(m_statistic->zStatisticMessage());
@@ -129,7 +129,7 @@ void TestController::willDisplayCellForIndex(HighlightCell *cell, int index) {
       c->subLabel()->setMessage(m_statistic->tOrZStatisticMessage());
       return;
     default:
-      assert(index == k_indexOfCategorical);
+      assert(row == k_indexOfCategorical);
       c->label()->setMessage(I18n::Message::TestCategorical);
       c->subLabel()->setMessage(I18n::Message::X2Test);
       return;

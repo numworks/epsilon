@@ -38,7 +38,7 @@ class DetailsParameterController
   // MemoizedListViewDataSource
   int numberOfRows() const override { return 1 + detailsNumberOfSections(); }
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   DetailCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfDataPoints; }
   int typeAtIndex(int index) const override { return 0; }

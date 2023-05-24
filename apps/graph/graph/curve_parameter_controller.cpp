@@ -62,21 +62,21 @@ const char *CurveParameterController::title() {
   return m_title;
 }
 
-void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell,
-                                                       int index) {
+void CurveParameterController::willDisplayCellAtRow(HighlightCell *cell,
+                                                    int row) {
   I18n::Message name = I18n::Message::Default;
   MenuCellWithEditableText<OneLineBufferTextView<KDFont::Size::Large>>
       *parameterCells[] = {&m_abscissaCell, &m_imageCell,
                            &m_derivativeNumberCell};
-  if (index < function()->properties().numberOfCurveParameters()) {
+  if (row < function()->properties().numberOfCurveParameters()) {
     ContinuousFunctionProperties::CurveParameter parameter =
-        function()->properties().getCurveParameter(index);
+        function()->properties().getCurveParameter(row);
     name = parameter.parameterName;
-    parameterCells[index]->setEditable(parameter.editable);
+    parameterCells[row]->setEditable(parameter.editable);
   }
   if (name != I18n::Message::Default) {
-    parameterCells[index]->label()->setMessageWithPlaceholders(name);
-    ExplicitFloatParameterController::willDisplayCellForIndex(cell, index);
+    parameterCells[row]->label()->setMessageWithPlaceholders(name);
+    ExplicitFloatParameterController::willDisplayCellAtRow(cell, row);
     return;
   }
   if (cell == &m_derivativeNumberCell) {
@@ -93,8 +93,8 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell,
       assert(cell == &m_derivativeNumberCell);
       function()->derivativeNameWithArgument(buffer, bufferSize);
     }
-    parameterCells[index]->label()->setText(buffer);
-    ExplicitFloatParameterController::willDisplayCellForIndex(cell, index);
+    parameterCells[row]->label()->setText(buffer);
+    ExplicitFloatParameterController::willDisplayCellAtRow(cell, row);
   }
 }
 

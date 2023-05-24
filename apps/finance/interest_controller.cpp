@@ -61,13 +61,12 @@ bool InterestController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-void InterestController::willDisplayCellForIndex(HighlightCell *cell,
-                                                 int index) {
-  int type = typeAtIndex(index);
+void InterestController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  int type = typeAtIndex(row);
   if (type == k_buttonCellType) {
     return;
   }
-  uint8_t param = interestParamaterAtIndex(index);
+  uint8_t param = interestParamaterAtIndex(row);
   if (type == k_dropdownCellType) {
     assert(&m_dropdownCell == cell);
     m_dropdownCell.label()->setMessage(
@@ -82,8 +81,8 @@ void InterestController::willDisplayCellForIndex(HighlightCell *cell,
   myCell->label()->setMessage(App::GetInterestData()->labelForParameter(param));
   myCell->subLabel()->setMessage(
       App::GetInterestData()->sublabelForParameter(param));
-  return Shared::FloatParameterController<double>::willDisplayCellForIndex(
-      cell, index);
+  return Shared::FloatParameterController<double>::willDisplayCellAtRow(cell,
+                                                                        row);
 }
 
 int InterestController::typeAtIndex(int index) const {

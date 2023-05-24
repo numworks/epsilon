@@ -133,20 +133,20 @@ int MathVariableBoxController::reusableCellCount(int type) {
   return k_numberOfMenuRows;
 }
 
-void MathVariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
-                                                        int index) {
+void MathVariableBoxController::willDisplayCellAtRow(HighlightCell *cell,
+                                                     int row) {
   if (m_currentPage == Page::RootMenu) {
-    if (index == defineVariableCellIndex()) {
+    if (row == defineVariableCellIndex()) {
       return;
     }
     Escher::NestedMenuController::NodeCell *myCell =
         static_cast<Escher::NestedMenuController::NodeCell *>(cell);
-    myCell->label()->setMessage(nodeLabel(pageAtIndex(index)));
+    myCell->label()->setMessage(nodeLabel(pageAtIndex(row)));
     myCell->reloadCell();
     return;
   }
   LeafCell *myCell = static_cast<LeafCell *>(cell);
-  Storage::Record record = recordAtIndex(index);
+  Storage::Record record = recordAtIndex(row);
   char symbolName[Shared::Function::k_maxNameWithArgumentSize];
   size_t symbolLength = 0;
   Layout symbolLayout;
@@ -185,7 +185,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell *cell,
     symbolLayout = LayoutHelper::String(symbolName, symbolLength);
   }
   myCell->label()->setLayout(symbolLayout);
-  myCell->subLabel()->setLayout(expressionLayoutForRecord(record, index));
+  myCell->subLabel()->setLayout(expressionLayoutForRecord(record, row));
   myCell->subLabel()->reloadScroll();
   myCell->reloadCell();
 }

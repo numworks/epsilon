@@ -33,7 +33,7 @@ class DetailsListController : public Escher::ListWithTopAndBottomController {
 
   // Escher::ListViewDataSource
   int typeAtIndex(int index) const override { return 0; }
-  void willDisplayCellForIndex(Escher::HighlightCell *cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell *cell, int row) override;
 
   bool canStoreContentOfCell(Escher::SelectableListView *l,
                              int row) const override;

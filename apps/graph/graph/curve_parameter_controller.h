@@ -26,7 +26,7 @@ class CurveParameterController
   const char* title() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   void viewWillAppear() override;
   TitlesDisplay titlesDisplay() override {
     return TitlesDisplay::DisplayLastTitle;

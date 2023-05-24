@@ -49,20 +49,19 @@ void IntervalParameterController::setStartEndMessages(
   m_endMessage = endMessage;
 }
 
-void IntervalParameterController::willDisplayCellForIndex(HighlightCell *cell,
-                                                          int index) {
-  if (index == numberOfRows() - 1) {
+void IntervalParameterController::willDisplayCellAtRow(HighlightCell *cell,
+                                                       int row) {
+  if (row == numberOfRows() - 1) {
     return;
   }
 
   MenuCellWithEditableText<MessageTextView> *myCell =
       static_cast<MenuCellWithEditableText<MessageTextView> *>(cell);
-  assert(index >= 0 && index < 3);
-  I18n::Message m = index == 0
-                        ? m_startMessage
-                        : (index == 1 ? m_endMessage : I18n::Message::Step);
+  assert(row >= 0 && row < 3);
+  I18n::Message m = row == 0 ? m_startMessage
+                             : (row == 1 ? m_endMessage : I18n::Message::Step);
   myCell->label()->setMessage(m);
-  FloatParameterController::willDisplayCellForIndex(cell, index);
+  FloatParameterController::willDisplayCellAtRow(cell, row);
 }
 
 double IntervalParameterController::parameterAtIndex(int index) {

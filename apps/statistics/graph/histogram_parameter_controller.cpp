@@ -42,9 +42,9 @@ const char *HistogramParameterController::title() {
   return I18n::translate(I18n::Message::StatisticsGraphSettings);
 }
 
-void HistogramParameterController::willDisplayCellForIndex(HighlightCell *cell,
-                                                           int index) {
-  if (index == numberOfRows() - 1) {
+void HistogramParameterController::willDisplayCellAtRow(HighlightCell *cell,
+                                                        int row) {
+  if (row == numberOfRows() - 1) {
     return;
   }
   MenuCellWithEditableText<MessageTextView, MessageTextView> *myCell =
@@ -55,9 +55,9 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell *cell,
   I18n::Message sublabels[k_numberOfCells] = {
       I18n::Message::RectangleWidthDescription,
       I18n::Message::BarStartDescrition};
-  myCell->label()->setMessage(labels[index]);
-  myCell->subLabel()->setMessage(sublabels[index]);
-  FloatParameterController::willDisplayCellForIndex(cell, index);
+  myCell->label()->setMessage(labels[row]);
+  myCell->subLabel()->setMessage(sublabels[row]);
+  FloatParameterController::willDisplayCellAtRow(cell, row);
 }
 
 bool HistogramParameterController::handleEvent(Ion::Events::Event event) {

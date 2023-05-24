@@ -23,8 +23,8 @@ ComparisonOperatorPopupDataSource::OperatorTypeForRow(int row) {
   }
 }
 
-void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(
-    Escher::HighlightCell *cell, int index) {
+void ComparisonOperatorPopupDataSource::willDisplayCellAtRow(
+    Escher::HighlightCell *cell, int row) {
   SmallBufferTextHighlightCell *bufferCell =
       static_cast<SmallBufferTextHighlightCell *>(cell);
   const char *symbol = m_test->hypothesisSymbol();
@@ -33,7 +33,7 @@ void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(
   Poincare::Print::CustomPrintf(
       buffer, bufferSize, "%s%s%*.*ed", symbol,
       Poincare::ComparisonNode::ComparisonOperatorString(
-          OperatorTypeForRow(index)),
+          OperatorTypeForRow(row)),
       m_test->hypothesisParams()->firstParam(),
       Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits);

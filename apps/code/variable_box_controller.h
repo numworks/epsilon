@@ -29,7 +29,7 @@ class VariableBoxController : public AlternateEmptyNestedMenuController {
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtIndex(int i) const override;
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
   bool cellAtLocationIsSelectable(Escher::HighlightCell* cell, int i,
                                   int j) override {
     /* Sometimes the cell is not yet populated so we can't check

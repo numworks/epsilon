@@ -60,10 +60,10 @@ HighlightCell *FloatParameterController<T>::reusableCell(int index, int type) {
 }
 
 template <typename T>
-void FloatParameterController<T>::willDisplayCellForIndex(HighlightCell *cell,
-                                                          int index) {
-  if (typeAtIndex(index) == k_buttonCellType ||
-      textFieldOfCellAtIndex(cell, index)->isEditing()) {
+void FloatParameterController<T>::willDisplayCellAtRow(HighlightCell *cell,
+                                                       int row) {
+  if (typeAtIndex(row) == k_buttonCellType ||
+      textFieldOfCellAtIndex(cell, row)->isEditing()) {
     return;
   }
   constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
@@ -71,9 +71,9 @@ void FloatParameterController<T>::willDisplayCellForIndex(HighlightCell *cell,
       PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
   PoincareHelpers::ConvertFloatToTextWithDisplayMode<T>(
-      parameterAtIndex(index), buffer, bufferSize, precision,
+      parameterAtIndex(row), buffer, bufferSize, precision,
       Preferences::PrintFloatMode::Decimal);
-  textFieldOfCellAtIndex(cell, index)->setText(buffer);
+  textFieldOfCellAtIndex(cell, row)->setText(buffer);
 }
 
 template <typename T>

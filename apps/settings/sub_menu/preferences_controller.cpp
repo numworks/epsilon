@@ -111,12 +111,11 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
   }
 }
 
-void PreferencesController::willDisplayCellForIndex(HighlightCell *cell,
-                                                    int index) {
-  GenericSubController::willDisplayCellForIndex(cell, index);
+void PreferencesController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  GenericSubController::willDisplayCellAtRow(cell, row);
   MenuCell<MessageTextView, LayoutView> *myCell =
       static_cast<MenuCell<MessageTextView, LayoutView> *>(cell);
-  I18n::Message message = m_messageTreeModel->childAtIndex(index)->label();
+  I18n::Message message = m_messageTreeModel->childAtIndex(row)->label();
   myCell->subLabel()->setLayout(layoutForPreferences(message));
   myCell->subLabel()->setFont(
       message == I18n::Message::SmallFont ? k_layoutFont : KDFont::Size::Large);

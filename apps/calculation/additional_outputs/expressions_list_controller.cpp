@@ -54,15 +54,15 @@ KDCoordinate ExpressionsListController::nonMemoizedRowHeight(int index) {
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
-void ExpressionsListController::willDisplayCellForIndex(HighlightCell *cell,
-                                                        int index) {
+void ExpressionsListController::willDisplayCellAtRow(HighlightCell *cell,
+                                                     int row) {
   /* Note : To further optimize memoization space in the pool, layout
    * serialization could be memoized instead, and layout would be recomputed
    * here, when setting cell's layout. */
   AdditionnalResultCell *myCell = static_cast<AdditionnalResultCell *>(cell);
-  myCell->label()->setLayouts(m_layouts[index], m_exactLayouts[index],
-                              m_approximatedLayouts[index]);
-  myCell->subLabel()->setMessage(messageAtIndex(index));
+  myCell->label()->setLayouts(m_layouts[row], m_exactLayouts[row],
+                              m_approximatedLayouts[row]);
+  myCell->subLabel()->setMessage(messageAtIndex(row));
 }
 
 int ExpressionsListController::numberOfRows() const {

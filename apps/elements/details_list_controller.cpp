@@ -59,12 +59,11 @@ KDCoordinate DetailsListController::separatorBeforeRow(int index) {
   return 0;
 }
 
-void DetailsListController::willDisplayCellForIndex(HighlightCell *cell,
-                                                    int index) {
+void DetailsListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   AtomicNumber z = App::app()->elementsViewDataSource()->selectedElement();
   assert(ElementsDataBase::IsElement(z));
   PhysicalQuantityCell *typedCell = static_cast<PhysicalQuantityCell *>(cell);
-  const DataField *dataField = DataFieldForRow(index);
+  const DataField *dataField = DataFieldForRow(row);
 
   I18n::Message sublabel = I18n::Message::Default;
   if (dataField != &ElementsDataBase::GroupField) {

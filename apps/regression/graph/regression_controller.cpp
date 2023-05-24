@@ -93,12 +93,11 @@ HighlightCell *RegressionController::reusableCell(int index, int type) {
   return &m_regressionCells[index];
 }
 
-void RegressionController::willDisplayCellForIndex(HighlightCell *cell,
-                                                   int index) {
-  assert(index >= 0 && index < numberOfRows());
+void RegressionController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  assert(row >= 0 && row < numberOfRows());
   MenuCell<MessageTextView, LayoutView> *castedCell =
       static_cast<MenuCell<MessageTextView, LayoutView> *>(cell);
-  Model *model = m_store->regressionModel(ModelTypeAtIndex(index));
+  Model *model = m_store->regressionModel(ModelTypeAtIndex(row));
   castedCell->label()->setMessage(model->name());
   castedCell->subLabel()->setLayout(model->templateLayout());
 }

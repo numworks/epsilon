@@ -44,24 +44,24 @@ KDCoordinate DetailsParameterController::nonMemoizedRowHeight(int j) {
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
-void DetailsParameterController::willDisplayCellForIndex(HighlightCell *cell,
-                                                         int index) {
-  assert(0 <= index && index < k_numberOfDataPoints);
+void DetailsParameterController::willDisplayCellAtRow(HighlightCell *cell,
+                                                      int row) {
+  assert(0 <= row && row < k_numberOfDataPoints);
   DetailCell *myCell = static_cast<DetailCell *>(cell);
-  if (index == k_indexOfCurveTypeRow) {
+  if (row == k_indexOfCurveTypeRow) {
     myCell->label()->setMessage(I18n::Message::CurveType);
     myCell->subLabel()->setMessage(I18n::Message::Default);
     myCell->accessory()->setText(
         I18n::translate(function()->properties().caption()));
   } else {
-    myCell->label()->setMessage(detailsTitle(index - 1));
-    double value = detailsValue(index - 1);
-    if (index - 1 == 0 && functionIsNonVerticalLine()) {
+    myCell->label()->setMessage(detailsTitle(row - 1));
+    double value = detailsValue(row - 1);
+    if (row - 1 == 0 && functionIsNonVerticalLine()) {
       assert(std::isnan(value));
       /* For the line's equation cell, we want the detail description (y=mx+b)
        * to be displayed as the value would : a large font accessory. */
       myCell->accessory()->setText(
-          I18n::translate(detailsDescription(index - 1)));
+          I18n::translate(detailsDescription(row - 1)));
       myCell->subLabel()->setMessage(I18n::Message::Default);
     } else {
       constexpr int precision =
@@ -73,7 +73,7 @@ void DetailsParameterController::willDisplayCellForIndex(HighlightCell *cell,
           value, buffer, bufferSize, precision,
           Poincare::Preferences::PrintFloatMode::Decimal);
       myCell->accessory()->setText(buffer);
-      myCell->subLabel()->setMessage(detailsDescription(index - 1));
+      myCell->subLabel()->setMessage(detailsDescription(row - 1));
     }
   }
 }

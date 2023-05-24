@@ -57,7 +57,7 @@ class ConsoleController : public Escher::ViewController,
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtIndex(int index) const override;
-  void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override;
 
   // SelectableTableViewDelegate
   void listViewDidChangeSelectionAndDidScroll(

@@ -92,8 +92,7 @@ void StoreMenuController::setText(const char* text) {
   m_preventReload = false;
 }
 
-void StoreMenuController::willDisplayCellForIndex(HighlightCell* cell,
-                                                  int index) {
+void StoreMenuController::willDisplayCellAtRow(HighlightCell* cell, int row) {
   m_cell.reloadCell();
 }
 

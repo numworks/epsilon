@@ -31,24 +31,24 @@ void FormulaTemplateMenuController::viewWillAppear() {
   selectCell(0);
 }
 
-void FormulaTemplateMenuController::willDisplayCellForIndex(HighlightCell *cell,
-                                                            int i) {
-  assert(i < k_numberOfTemplates);
-  CellType type = static_cast<CellType>(typeAtIndex(i));
+void FormulaTemplateMenuController::willDisplayCellAtRow(HighlightCell *cell,
+                                                         int row) {
+  assert(row < k_numberOfTemplates);
+  CellType type = static_cast<CellType>(typeAtIndex(row));
   if (type == CellType::EmptyTemplate) {
     return;
   }
   computeUninitializedLayouts();
-  int index = relativeCellIndex(i, type);
+  int index = relativeCellIndex(row, type);
   if (type == CellType::TemplateWithMessage) {
     MessageTemplateCell *myCell = static_cast<MessageTemplateCell *>(cell);
-    myCell->label()->setLayout(m_layouts[i - 1]);
+    myCell->label()->setLayout(m_layouts[row - 1]);
     myCell->subLabel()->setMessage(k_subLabelMessages[index]);
     return;
   }
   assert(type == CellType::TemplateWithBuffer);
   BufferTemplateCell *myCell = static_cast<BufferTemplateCell *>(cell);
-  myCell->label()->setLayout(m_layouts[i - 1]);
+  myCell->label()->setLayout(m_layouts[row - 1]);
   fillSubLabelBuffer(myCell, index);
 }
 

@@ -67,7 +67,7 @@ ExamMode::PressToTestFlags PressToTestController::getPressToTestParams() {
 KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
   if (typeAtIndex(j) == k_buttonCellType) {
     /* Do not call heightForCellAtIndex since bounds can be empty (when exam
-     * mode is on). Moreover, willDisplayCellForIndex does nothing for
+     * mode is on). Moreover, willDisplayCellAtRow does nothing for
      * m_activateButton. */
     return m_activateButton.minimalSizeForOptimalDisplay().height();
   }
@@ -212,21 +212,20 @@ int PressToTestController::reusableCellCount(int type) {
   return type == k_buttonCellType ? 1 : k_numberOfReusableSwitchCells;
 }
 
-void PressToTestController::willDisplayCellForIndex(HighlightCell *cell,
-                                                    int index) {
-  if (typeAtIndex(index) == k_buttonCellType) {
+void PressToTestController::willDisplayCellAtRow(HighlightCell *cell, int row) {
+  if (typeAtIndex(row) == k_buttonCellType) {
     assert(!Preferences::sharedPreferences->examMode().isActive());
     return;
   }
   PressToTestSwitch *myCell = static_cast<PressToTestSwitch *>(cell);
   // A true params means the feature is disabled,
-  bool featureIsDisabled = getParamAtIndex(index);
-  myCell->label()->setMessage(LabelAtIndex(index));
+  bool featureIsDisabled = getParamAtIndex(row);
+  myCell->label()->setMessage(LabelAtIndex(row));
   myCell->label()->setTextColor(
       Preferences::sharedPreferences->examMode().isActive() && featureIsDisabled
           ? Palette::GrayDark
           : KDColorBlack);
-  myCell->subLabel()->setMessage(SubLabelAtIndex(index));
+  myCell->subLabel()->setMessage(SubLabelAtIndex(row));
   // Switch is toggled if the feature must stay activated.
   myCell->accessory()->switchView()->setState(!featureIsDisabled);
   myCell->accessory()->setDisplayImage(

@@ -35,7 +35,7 @@ class DisplayTypeController : public Escher::SelectableListViewController<
   int numberOfRows() const override { return k_numberOfRows; }
 
   // Escher::ListViewDataSource
-  void willDisplayCellForIndex(Escher::HighlightCell *cell, int index) override;
+  void willDisplayCellAtRow(Escher::HighlightCell *cell, int row) override;
 
  private:
   constexpr static size_t k_numberOfRows = 8;

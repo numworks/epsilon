@@ -48,13 +48,13 @@ KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(int j) {
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
-void IllustratedExpressionsListController::willDisplayCellForIndex(
-    HighlightCell* cell, int index) {
-  if (typeAtIndex(index) == k_illustrationCellType) {
+void IllustratedExpressionsListController::willDisplayCellAtRow(
+    HighlightCell* cell, int row) {
+  if (typeAtIndex(row) == k_illustrationCellType) {
     return;
   }
-  ChainedExpressionsListController::willDisplayCellForIndex(
-      cell, index - showIllustration());
+  ChainedExpressionsListController::willDisplayCellAtRow(
+      cell, row - showIllustration());
 }
 
 void IllustratedExpressionsListController::

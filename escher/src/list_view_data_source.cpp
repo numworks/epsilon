@@ -38,9 +38,9 @@ int ListViewDataSource::typeIndexFromIndex(int index) {
 
 KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int index) {
   /* We should always use a temporary cell here because we call
-   * willDisplayCellForIndex on it and this may alter the visual layouting. In
+   * willDisplayCellAtRow on it and this may alter the visual layouting. In
    * overriden implementations of this method, we know the type of the cell
-   * expected in willDisplayCellForIndex so we can instanciate a temporary cell
+   * expected in willDisplayCellAtRow so we can instanciate a temporary cell
    * with the right type. Here, we don't know the type, so we assume that the
    * list is simple enough to use the method typeIndexFromIndex defined above.*/
   assert(0 <= index && index < numberOfRows());
@@ -70,7 +70,7 @@ KDCoordinate ListViewDataSource::heightForCellAtIndex(HighlightCell* cell,
    * height */
   assert(cell->bounds().width() != 0);
   // Setup cell as if it was to be displayed
-  willDisplayCellForIndex(cell, index);
+  willDisplayCellAtRow(cell, index);
   // Return cell's height
   return cell->minimalSizeForOptimalDisplay().height();
 }

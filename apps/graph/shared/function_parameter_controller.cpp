@@ -75,9 +75,9 @@ int writeInterval(char *buffer, int bufferSize, double min, double max,
       intervalBracket(max, false));
 }
 
-void FunctionParameterController::willDisplayCellForIndex(HighlightCell *cell,
-                                                          int index) {
-  Shared::ListParameterController::willDisplayCellForIndex(cell, index);
+void FunctionParameterController::willDisplayCellAtRow(HighlightCell *cell,
+                                                       int row) {
+  Shared::ListParameterController::willDisplayCellAtRow(cell, row);
   if (cell == &m_derivativeCell) {
     m_derivativeCell.accessory()->setState(function()->displayDerivative());
     return;

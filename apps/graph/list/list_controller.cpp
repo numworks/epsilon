@@ -197,7 +197,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
     return Shared::FunctionListController::expressionRowHeight(j);
   }
   FunctionCell tempCell;
-  willDisplayCellForIndex(&tempCell, j);
+  willDisplayCellAtRow(&tempCell, j);
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
 
@@ -259,16 +259,16 @@ int ListController::maxNumberOfDisplayableRows() {
   return k_maxNumberOfDisplayableRows;
 }
 
-HighlightCell *ListController::functionCells(int index) {
-  assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
-  return &m_expressionCells[index];
+HighlightCell *ListController::functionCells(int row) {
+  assert(row >= 0 && row < k_maxNumberOfDisplayableRows);
+  return &m_expressionCells[row];
 }
 
-void ListController::willDisplayCellForIndex(HighlightCell *cell, int j) {
+void ListController::willDisplayCellAtRow(HighlightCell *cell, int row) {
   assert(cell != nullptr);
   EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
-  evenOddCell->setEven(j % 2 == 0);
-  int type = typeAtIndex(j);
+  evenOddCell->setEven(row % 2 == 0);
+  int type = typeAtIndex(row);
   if (type == k_addNewModelCellType) {
     evenOddCell->reloadCell();
     return;
@@ -277,7 +277,7 @@ void ListController::willDisplayCellForIndex(HighlightCell *cell, int j) {
   AbstractFunctionCell *functionCell =
       static_cast<AbstractFunctionCell *>(cell);
   ExpiringPointer<ContinuousFunction> f =
-      modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
+      modelStore()->modelForRecord(modelStore()->recordAtIndex(row));
   if (type == k_expressionCellType) {
     functionCell->setLayout(f->layout());
     functionCell->setMessage(

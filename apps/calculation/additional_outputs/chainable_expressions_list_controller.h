@@ -25,9 +25,8 @@ class ChainableExpressionsListController : public ExpressionsListController {
   KDCoordinate nonMemoizedRowHeight(int j) override {
     return ExpressionsListController::nonMemoizedRowHeight(j);
   }
-  void willDisplayCellForIndex(Escher::HighlightCell* cell,
-                               int index) override {
-    return ExpressionsListController::willDisplayCellForIndex(cell, index);
+  void willDisplayCellAtRow(Escher::HighlightCell* cell, int row) override {
+    return ExpressionsListController::willDisplayCellAtRow(cell, row);
   }
   int numberOfRows() const override final {
     return ExpressionsListController::numberOfRows();

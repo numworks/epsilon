@@ -219,16 +219,16 @@ KDCoordinate LocalizationController::nonMemoizedRowHeight(int j) {
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 
-void LocalizationController::willDisplayCellForIndex(HighlightCell *cell,
-                                                     int index) {
+void LocalizationController::willDisplayCellAtRow(HighlightCell *cell,
+                                                  int row) {
   if (mode() == Mode::Language) {
     static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
-        I18n::LanguageNames[index]);
+        I18n::LanguageNames[row]);
     return;
   }
   assert(mode() == Mode::Country);
   static_cast<MenuCell<MessageTextView> *>(cell)->label()->setMessage(
-      I18n::CountryNames[static_cast<uint8_t>(CountryAtIndex(index))]);
+      I18n::CountryNames[static_cast<uint8_t>(CountryAtIndex(row))]);
 }
 
 void LocalizationController::setVerticalMargins() {

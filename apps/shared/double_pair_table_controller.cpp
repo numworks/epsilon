@@ -124,4 +124,10 @@ int DoublePairTableController::typeAtLocation(int column, int row) {
   return k_calculationCellType;
 }
 
+KDCoordinate DoublePairTableController::separatorBeforeColumn(int index) {
+  return typeAtLocation(index, 0) == k_seriesTitleCellType
+             ? Metric::TableSeparatorThickness
+             : 0;
+}
+
 }  // namespace Shared

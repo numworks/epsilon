@@ -162,23 +162,18 @@ KDCoordinate CalculationController::nonMemoizedColumnWidth(int column) {
 }
 
 HighlightCell *CalculationController::reusableCell(int index, int type) {
-  assert(index >= 0 && index < reusableCellCount(type));
+  assert(0 <= index && index < reusableCellCount(type));
   switch (type) {
-    case k_hideableCellType:
-      return &m_hideableCell[index];
-    case k_calculationTitleCellType:
-      return &m_calculationTitleCells[index];
-    case k_calculationSymbolCellType:
-      return &m_calculationSymbolCells[index];
+    case k_seriesTitleCellType:
+      return &m_seriesTitleCells[index];
+    case k_calculationCellType:
+      return &m_calculationCells[index];
     case k_calculationModeTitleCellType:
       return &m_calculationModeTitleCells[index];
     case k_calculationModeSymbolCellType:
       return &m_calculationModeSymbolCells[index];
-    case k_seriesTitleCellType:
-      return &m_seriesTitleCells[index];
     default:
-      assert(type == k_calculationCellType);
-      return &m_calculationCells[index];
+      return DoublePairTableController::reusableCell(index, type);
   }
 }
 

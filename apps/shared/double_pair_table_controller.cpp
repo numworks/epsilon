@@ -77,6 +77,19 @@ KDCoordinate DoublePairTableController::columnPrefaceRightMargin() {
   return 0;
 }
 
+HighlightCell* DoublePairTableController::reusableCell(int index, int type) {
+  assert(0 <= index && index < reusableCellCount(type));
+  switch (type) {
+    case k_hideableCellType:
+      return &m_hideableCell[index];
+    case k_calculationTitleCellType:
+      return &m_calculationTitleCells[index];
+    default:
+      assert(k_calculationSymbolCellType);
+      return &m_calculationSymbolCells[index];
+  }
+}
+
 int DoublePairTableController::reusableCellCount(int type) {
   switch (type) {
     case k_hideableCellType:

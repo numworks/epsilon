@@ -56,6 +56,7 @@ class DoublePairTableController
   int numberOfColumns() const override {
     return 2 + store()->numberOfActiveSeries();
   }
+  Escher::HighlightCell *reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int column, int row) override;
 

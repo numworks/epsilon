@@ -21,7 +21,7 @@ CalculationController::CalculationController(Responder *parentResponder,
                                              Store *store)
     : DoublePairTableController(parentResponder, header), m_store(store) {
   for (int i = 0; i < k_numberOfSeriesTitleCells; i++) {
-    m_columnTitleCells[i].setParentResponder(&m_selectableTableView);
+    m_seriesTitleCells[i].setParentResponder(&m_selectableTableView);
   }
   for (int i = 0; i < k_numberOfDoubleCalculationCells; i++) {
     m_doubleCalculationCells[i].setParentResponder(&m_selectableTableView);
@@ -322,29 +322,17 @@ KDCoordinate CalculationController::nonMemoizedColumnWidth(int column) {
 }
 
 HighlightCell *CalculationController::reusableCell(int index, int type) {
-  if (type == k_calculationTitleCellType) {
-    assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
-    return &m_calculationTitleCells[index];
+  assert(0 <= index && index < reusableCellCount(type));
+  switch (type) {
+    case k_seriesTitleCellType:
+      return &m_seriesTitleCells[index];
+    case k_calculationCellType:
+      return &m_calculationCells[index];
+    case k_doubleBufferCalculationCellType:
+      return &m_doubleCalculationCells[index];
+    default:
+      return DoublePairTableController::reusableCell(index, type);
   }
-  if (type == k_calculationSymbolCellType) {
-    assert(index >= 0 && index < k_maxNumberOfDisplayableRows);
-    return &m_calculationSymbolCells[index];
-  }
-  if (type == k_seriesTitleCellType) {
-    assert(index >= 0 && index < k_numberOfSeriesTitleCells);
-    return &m_columnTitleCells[index];
-  }
-  if (type == k_doubleBufferCalculationCellType) {
-    assert(index >= 0 && index < k_numberOfDoubleCalculationCells);
-    return &m_doubleCalculationCells[index];
-  }
-  if (type == k_hideableCellType) {
-    assert(index >= 0 && index < k_numberOfHeaderColumns);
-    return &m_hideableCell[index];
-  }
-  assert(type == k_calculationCellType);
-  assert(index >= 0 && index < k_numberOfCalculationCells);
-  return &m_calculationCells[index];
 }
 
 int CalculationController::reusableCellCount(int type) {

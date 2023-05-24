@@ -116,7 +116,7 @@ class CalculationController : public Shared::DoublePairTableController {
   int numberOfDisplayedBCDECoefficients() const;
   void resetMemoization(bool force = true) override;
 
-  ColumnTitleCell m_columnTitleCells[k_numberOfSeriesTitleCells];
+  ColumnTitleCell m_seriesTitleCells[k_numberOfSeriesTitleCells];
   EvenOddDoubleBufferTextCell
       m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
   Escher::SmallFontEvenOddBufferTextCell

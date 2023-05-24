@@ -69,6 +69,7 @@ void TrigonometryListController::setExactAndApproximateExpression(
           simplifiedAngle, context)) {
     Expression angleApproximate = approximateExpression;
     if (angleApproximate.isUninitialized()) {
+      assert(!e.isUndefined());
       /* In case of direct trigonometry, the approximate expression of the angle
        * is not yet computed, so it needs to be computed here.
        * Do not approximate the FracPart, which could lead to truncation error

@@ -32,7 +32,7 @@ class EditableCellTableViewController : public TabTableController,
 
   int numberOfRows() const override;
   void willDisplayCellAtLocationWithDisplayMode(
-      Escher::HighlightCell* cell, int i, int j,
+      Escher::HighlightCell* cell, int column, int row,
       Poincare::Preferences::PrintFloatMode mode);
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;

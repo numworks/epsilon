@@ -92,16 +92,16 @@ void ValuesController::viewDidDisappear() {
 
 // TableViewDataSource
 
-void ValuesController::willDisplayCellAtLocation(HighlightCell *cell, int i,
-                                                 int j) {
+void ValuesController::willDisplayCellAtLocation(HighlightCell *cell,
+                                                 int column, int row) {
   // Handle hidden cells
-  int type = typeAtLocation(i, j);
+  int type = typeAtLocation(column, row);
   if (type == k_notEditableValueCellType || type == k_editableValueCellType) {
-    const int numberOfElementsInCol = numberOfElementsInColumn(i);
+    const int numberOfElementsInCol = numberOfElementsInColumn(column);
     EvenOddCell *eoCell = static_cast<EvenOddCell *>(cell);
-    eoCell->setVisible(j <= numberOfElementsInCol + 1);
-    if (j >= numberOfElementsInCol + 1) {
-      static_cast<EvenOddCell *>(cell)->setEven(j % 2 == 0);
+    eoCell->setVisible(row <= numberOfElementsInCol + 1);
+    if (row >= numberOfElementsInCol + 1) {
+      static_cast<EvenOddCell *>(cell)->setEven(row % 2 == 0);
       if (type == k_notEditableValueCellType) {
         static_cast<EvenOddExpressionCell *>(eoCell)->setLayout(Layout());
       } else {
@@ -114,7 +114,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell *cell, int i,
       return;
     }
   }
-  Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
+  Shared::ValuesController::willDisplayCellAtLocation(cell, column, row);
 }
 
 int ValuesController::typeAtLocation(int i, int j) {

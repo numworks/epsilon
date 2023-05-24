@@ -137,20 +137,20 @@ int ValuesController::numberOfColumns() const {
   return m_numberOfColumns;
 }
 
-void ValuesController::willDisplayCellAtLocation(HighlightCell *cell, int i,
-                                                 int j) {
+void ValuesController::willDisplayCellAtLocation(HighlightCell *cell,
+                                                 int column, int row) {
   willDisplayCellAtLocationWithDisplayMode(
-      cell, i, j, Preferences::sharedPreferences->displayMode());
-  int typeAtLoc = typeAtLocation(i, j);
+      cell, column, row, Preferences::sharedPreferences->displayMode());
+  int typeAtLoc = typeAtLocation(column, row);
   // The cell is not a title cell and not editable
   if (typeAtLoc == k_notEditableValueCellType) {
     // Special case: last row
-    if (j == numberOfElementsInColumn(i) + k_numberOfTitleRows) {
+    if (row == numberOfElementsInColumn(column) + k_numberOfTitleRows) {
       static_cast<EvenOddExpressionCell *>(cell)->setLayout(
           HorizontalLayout::Builder());
     } else {
       static_cast<EvenOddExpressionCell *>(cell)->setLayout(
-          memoizedLayoutForCell(i, j));
+          memoizedLayoutForCell(column, row));
     }
     return;
   }

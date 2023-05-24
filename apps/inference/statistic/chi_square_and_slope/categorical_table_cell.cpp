@@ -247,14 +247,14 @@ HighlightCell *DoubleColumnTableCell::reusableCell(int i, int type) {
 }
 
 void DoubleColumnTableCell::willDisplayCellAtLocation(
-    Escher::HighlightCell *cell, int i, int j) {
-  if (j == 0) {  // Header
+    Escher::HighlightCell *cell, int column, int row) {
+  if (row == 0) {  // Header
     return;
   }
   InferenceEvenOddEditableCell *myCell =
       static_cast<InferenceEvenOddEditableCell *>(cell);
   willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(),
-                                 myCell, i, j - 1, tableModel());
+                                 myCell, column, row - 1, tableModel());
 }
 
 }  // namespace Inference

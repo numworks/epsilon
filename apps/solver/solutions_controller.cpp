@@ -238,33 +238,33 @@ int SolutionsController::numberOfRows() const {
   return numberOfRows;
 }
 
-void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
-                                                    int j) {
+void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell,
+                                                    int column, int row) {
   SystemOfEquations *system = App::app()->system();
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
-  if (j == rowOfUserVariablesMessage - 1) {
+  if (row == rowOfUserVariablesMessage - 1) {
     return;  // Empty row
   }
-  if (j == rowOfUserVariablesMessage) {
+  if (row == rowOfUserVariablesMessage) {
     // Predefined variable used/ignored message
-    assert(i >= 0);
+    assert(column >= 0);
     MessageCell *messageCell = static_cast<MessageCell *>(cell);
     // Message is split across two cells : |**** used | predefined  vars ****|
-    messageCell->setHorizontalAlignment(i == 0 ? 1.0f : 0.0f);
+    messageCell->setHorizontalAlignment(column == 0 ? 1.0f : 0.0f);
     if (usedUserVariables()) {
       messageCell->setMessage(
-          i == 0 ? I18n::Message::PredefinedVariablesUsedLeft
-                 : I18n::Message::PredefinedVariablesUsedRight);
+          column == 0 ? I18n::Message::PredefinedVariablesUsedLeft
+                      : I18n::Message::PredefinedVariablesUsedRight);
     } else {
       messageCell->setMessage(
-          i == 0 ? I18n::Message::PredefinedVariablesIgnoredLeft
-                 : I18n::Message::PredefinedVariablesIgnoredRight);
+          column == 0 ? I18n::Message::PredefinedVariablesIgnoredLeft
+                      : I18n::Message::PredefinedVariablesIgnoredRight);
     }
     return;
   }
-  if (i == 0) {
+  if (column == 0) {
     if (system->type() == SystemOfEquations::Type::PolynomialMonovariable &&
-        j == static_cast<int>(system->numberOfSolutions()) - 1) {
+        row == static_cast<int>(system->numberOfSolutions()) - 1) {
       // Formula of the discriminant
       assert(system->degree() == 2 || system->degree() == 3);
       EvenOddExpressionCell *deltaCell =
@@ -282,12 +282,13 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
       constexpr size_t k_maxSize =
           SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks + 1;
       char bufferSymbol[k_maxSize + 2];
-      if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
+      if (rowOfUserVariablesMessage < 0 ||
+          row < rowOfUserVariablesMessage - 1) {
         // It's a solution row, get symbol name
         if (system->type() == SystemOfEquations::Type::LinearSystem) {
           /* The system has more than one variable: the cell text is the
            * variable name */
-          const char *varName = system->variable(j);
+          const char *varName = system->variable(row);
           SymbolAbstractNode::NameWithoutQuotationMarks(
               bufferSymbol, k_maxSize, varName, strlen(varName));
         } else {
@@ -296,10 +297,10 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
           const char *varName = system->variable(0);
           int length = SymbolAbstractNode::NameWithoutQuotationMarks(
               bufferSymbol, k_maxSize, varName, strlen(varName));
-          if (j < 9) {
-            bufferSymbol[length++] = j + '1';
+          if (row < 9) {
+            bufferSymbol[length++] = row + '1';
           } else {
-            assert(j == 9);
+            assert(row == 9);
             bufferSymbol[length++] = '1';
             bufferSymbol[length++] = '0';
           }
@@ -309,14 +310,14 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
         // It's a user variable row, get variable name
         assert(rowOfUserVariablesMessage >= 0);
         const char *varName =
-            system->userVariable(j - rowOfUserVariablesMessage - 1);
+            system->userVariable(row - rowOfUserVariablesMessage - 1);
         SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, k_maxSize,
                                                       varName, strlen(varName));
       }
       symbolCell->setText(bufferSymbol);
     }
   } else {
-    if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
+    if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
       // It's a solution row
       assert(system->numberOfSolutions() > 0);
       if (system->type() == SystemOfEquations::Type::GeneralMonovariable) {
@@ -328,11 +329,11 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
             AbstractEvenOddBufferTextCell::k_defaultPrecision);
         char bufferValue[bufferSize];
         PoincareHelpers::ConvertFloatToText<double>(
-            system->solution(j)->approximate(), bufferValue, bufferSize,
+            system->solution(row)->approximate(), bufferValue, bufferSize,
             AbstractEvenOddBufferTextCell::k_defaultPrecision);
         valueCell->setText(bufferValue);
       } else {
-        const Solution *solution = system->solution(j);
+        const Solution *solution = system->solution(row);
         ScrollableTwoLayoutsCell *valueCell =
             static_cast<ScrollableTwoLayoutsCell *>(cell);
         /* ScrollableTwoLayoutsCell will always try to display its
@@ -353,7 +354,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
       ScrollableTwoLayoutsCell *valueCell =
           static_cast<ScrollableTwoLayoutsCell *>(cell);
       const char *symbol =
-          system->userVariable(j - rowOfUserVariablesMessage - 1);
+          system->userVariable(row - rowOfUserVariablesMessage - 1);
       Layout layout = PoincareHelpers::CreateLayout(
           App::app()->localContext()->expressionForSymbolAbstract(
               Symbol::Builder(symbol, strlen(symbol)), false),
@@ -362,7 +363,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell *cell, int i,
     }
   }
   EvenOddCell *evenOddCell = static_cast<EvenOddCell *>(cell);
-  evenOddCell->setEven(j % 2 == 0);
+  evenOddCell->setEven(row % 2 == 0);
 }
 
 KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {

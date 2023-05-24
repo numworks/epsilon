@@ -23,7 +23,8 @@ class TableViewDataSource {
   virtual void initCellSize(TableView* view) {}
   virtual int numberOfRows() const = 0;
   virtual int numberOfColumns() const = 0;
-  virtual void willDisplayCellAtLocation(HighlightCell* cell, int i, int j);
+  virtual void willDisplayCellAtLocation(HighlightCell* cell, int column,
+                                         int row);
   virtual bool cellAtLocationIsSelectable(HighlightCell* cell, int i, int j) {
     /* TODO: If cell is nullptr because it's a reusable cell not populated
      * yet, this can't check if the cell is selectable.

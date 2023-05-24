@@ -151,16 +151,16 @@ HighlightCell *CalculationController::reusableCell(int index, int type) {
 }
 
 void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
-                                                      int i, int j) {
-  if (i > 0) {
+                                                      int column, int row) {
+  if (column > 0) {
     CalculationCell *myCell = static_cast<CalculationCell *>(cell);
     myCell->messageTextView()->setMessage(
-        m_calculation->legendForParameterAtIndex(i - 1));
+        m_calculation->legendForParameterAtIndex(column - 1));
     bool calculationCellIsResponder = true;
     if (((!m_distribution->isSymmetrical() ||
           !m_distribution->isContinuous()) &&
-         i == 3) ||
-        (m_calculation->type() == Calculation::Type::Discrete && i == 2)) {
+         column == 3) ||
+        (m_calculation->type() == Calculation::Type::Discrete && column == 2)) {
       calculationCellIsResponder = false;
     }
     myCell->setResponder(calculationCellIsResponder);
@@ -174,7 +174,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell *cell,
     /* FIXME: It has not been decided yet if we should use the prefered mode
      * instead of always using scientific mode */
     Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(
-        m_calculation->parameterAtIndex(i - 1), buffer, bufferSize,
+        m_calculation->parameterAtIndex(column - 1), buffer, bufferSize,
         Poincare::Preferences::VeryLargeNumberOfSignificantDigits,
         Poincare::Preferences::PrintFloatMode::Decimal);
     field->setText(buffer);

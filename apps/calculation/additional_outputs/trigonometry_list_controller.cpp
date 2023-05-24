@@ -12,13 +12,17 @@ using namespace Poincare;
 
 namespace Calculation {
 
-void TrigonometryListController::setExpression(Expression e) {
-  IllustratedExpressionsListController::setExpression(e);
+void TrigonometryListController::setExactAndApproximateExpression(
+    Poincare::Expression exactExpression,
+    Poincare::Expression approximateExpression) {
+  IllustratedExpressionsListController::setExactAndApproximateExpression(
+      exactExpression, approximateExpression);
 
   Preferences* preferences = Preferences::sharedPreferences;
   Preferences::AngleUnit userAngleUnit = preferences->angleUnit();
   Context* context = App::app()->localContext();
   size_t index = 0;
+  Expression e = exactExpression;
 
   Expression unit;
   Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
@@ -54,19 +58,33 @@ void TrigonometryListController::setExpression(Expression e) {
           }) ||
       Shared::ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(
           simplifiedAngle, context)) {
-    /* Do not approximate the FracPart, which could lead to truncation error
-     * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
-     * the same sine and cosine. */
-    Expression angleApproximate = ArcCosine::Builder(Cosine::Builder(e));
-    angleApproximate = Shared::PoincareHelpers::Approximate<double>(
-        angleApproximate, context, preferences);
-    /* acos has its values in [0,π[, use the sign of the sine to find the right
-     * semicircle. */
-    if (Shared::PoincareHelpers::ApproximateToScalar<double>(
-            Sine::Builder(e), context, preferences) < 0) {
+    Expression angleApproximate = approximateExpression;
+    if (angleApproximate.isUninitialized()) {
+      /* In case of direct trigonometry, the approximate expression of the angle
+       * is not yet computed, so it needs to be computed here.
+       * Do not approximate the FracPart, which could lead to truncation error
+       * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
+       * the same sine and cosine. */
+      angleApproximate = ArcCosine::Builder(Cosine::Builder(e));
       angleApproximate = Shared::PoincareHelpers::Approximate<double>(
-          Subtraction::Builder(period.clone(), angleApproximate), context,
-          preferences);
+          angleApproximate, context, preferences);
+      /* acos has its values in [0,π[, use the sign of the sine to find the
+       * right semicircle. */
+      if (Shared::PoincareHelpers::ApproximateToScalar<double>(
+              Sine::Builder(e), context, preferences) < 0) {
+        angleApproximate = Shared::PoincareHelpers::Approximate<double>(
+            Subtraction::Builder(period.clone(), angleApproximate), context,
+            preferences);
+      }
+    } else {
+      angleApproximate = Shared::PoincareHelpers::Approximate<double>(
+          angleApproximate, context, preferences);
+      // Set the angle in [0, 2π] if it was in [-π, π]
+      if (angleApproximate.isPositive(context) == TrinaryBoolean::False) {
+        angleApproximate = Shared::PoincareHelpers::Approximate<double>(
+            Addition::Builder(period.clone(), angleApproximate), context,
+            preferences);
+      }
     }
     e = angleApproximate;
     m_isStrictlyEqual[index] = false;

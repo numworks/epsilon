@@ -12,7 +12,9 @@ class TrigonometryListController : public IllustratedExpressionsListController {
   TrigonometryListController(EditExpressionController* editExpressionController)
       : IllustratedExpressionsListController(editExpressionController),
         m_graphCell(&m_model) {}
-  void setExpression(Poincare::Expression e) override;
+  void setExactAndApproximateExpression(
+      Poincare::Expression exactExpression,
+      Poincare::Expression approximateExpression) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell* cell, int index) override;
 

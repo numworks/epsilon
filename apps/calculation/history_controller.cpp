@@ -179,6 +179,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
                 assert(Trigonometry::isDirectTrigonometryFunction(i));
                 e = i.childAtIndex(0);
               }
+              /* The approximation of the new e is not yet computed and will be
+               * by the controller. */
+              a = Expression();
             }
           }
         } else if (additionalInformations.integer) {

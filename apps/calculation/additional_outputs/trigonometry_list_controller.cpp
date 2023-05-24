@@ -127,7 +127,9 @@ void TrigonometryListController::setExactAndApproximateExpression(
   // Set illustration
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(e, context);
   // Convert angle to radians
-  angle = angle * M_PI / Trigonometry::PiInAngleUnit(userAngleUnit);
+  if (userAngleUnit != Preferences::AngleUnit::Radian) {
+    angle = angle * M_PI / Trigonometry::PiInAngleUnit(userAngleUnit);
+  }
   assert(std::isfinite(angle));
   m_model.setAngle(angle);
   setShowIllustration(true);

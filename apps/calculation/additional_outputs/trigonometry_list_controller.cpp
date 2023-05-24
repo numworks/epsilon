@@ -24,35 +24,44 @@ void TrigonometryListController::setExactAndApproximateExpression(
   size_t index = 0;
   Expression e = exactExpression;
 
+  Expression simplifiedAngle;
+  Expression period;
   Expression unit;
   Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
       &e, context, ReductionTarget::User, &unit);
 
-  if (!unit.isUninitialized()) {
-    assert(unit.isPureAngleUnit() &&
-           static_cast<Unit&>(unit).representative() ==
-               Unit::k_angleRepresentatives +
-                   Unit::k_radianRepresentativeIndex);
-    /* After a reduction, all angle units are converted to radians, so we
-     * convert e again here to fit the angle unit that will be used in
-     * reductions below. */
-    e = Multiplication::Builder(
-        e, Trigonometry::UnitConversionFactor(Preferences::AngleUnit::Radian,
-                                              userAngleUnit));
+  if (!e.isUndefined()) {
+    if (!unit.isUninitialized()) {
+      assert(unit.isPureAngleUnit() &&
+             static_cast<Unit&>(unit).representative() ==
+                 Unit::k_angleRepresentatives +
+                     Unit::k_radianRepresentativeIndex);
+      /* After a reduction, all angle units are converted to radians, so we
+       * convert e again here to fit the angle unit that will be used in
+       * reductions below. */
+      e = Multiplication::Builder(
+          e, Trigonometry::UnitConversionFactor(Preferences::AngleUnit::Radian,
+                                                userAngleUnit));
+    }
+
+    period = Multiplication::Builder(
+        Rational::Builder(2),
+        Trigonometry::PiExpressionInAngleUnit(userAngleUnit));
+    // Use the reduction of frac part to compute mod 1 on rationals
+    simplifiedAngle = Multiplication::Builder(
+        FracPart::Builder(Division::Builder(e, period.clone())),
+        period.clone());
+    Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context,
+                                              ReductionTarget::User);
   }
 
-  Expression period = Multiplication::Builder(
-      Rational::Builder(2),
-      Trigonometry::PiExpressionInAngleUnit(userAngleUnit));
-  // Use the reduction of frac part to compute mod 1 on rationals
-  Expression simplifiedAngle = Multiplication::Builder(
-      FracPart::Builder(Division::Builder(e, period.clone())), period.clone());
-  Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context,
-                                            ReductionTarget::User);
-  /* Approximate the angle if the fractional part could not be reduced (because
-   * the angle is not a multiple of pi), or if displaying the exact expression
-   * is forbidden. */
-  if (simplifiedAngle.recursivelyMatches(
+  /* Approximate the angle if:
+   * - The reduction failed
+   * - The fractional part could not be reduced (because the angle is not a
+   * multiple of pi)
+   * - Displaying the exact expression is forbidden. */
+  if (simplifiedAngle.isUninitialized() ||
+      simplifiedAngle.recursivelyMatches(
           [](const Expression e, Context* context) {
             return e.type() == ExpressionNode::Type::FracPart;
           }) ||

@@ -194,12 +194,6 @@ int CalculationController::typeAtLocation(int column, int row) {
   return DoublePairTableController::typeAtLocation(column, row);
 }
 
-KDCoordinate CalculationController::separatorBeforeColumn(int column) {
-  return typeAtLocation(column, 0) == k_seriesTitleCellType
-             ? Metric::TableSeparatorThickness
-             : 0;
-}
-
 int CalculationController::findCellIndex(int i) const {
   int returnIndex = 0;
   while (returnIndex <= fixedNumberOfRows()) {

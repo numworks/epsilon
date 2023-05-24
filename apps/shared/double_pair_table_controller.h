@@ -59,6 +59,7 @@ class DoublePairTableController
   Escher::HighlightCell *reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int column, int row) override;
+  KDCoordinate separatorBeforeColumn(int index) override;
 
  protected:
   constexpr static int k_maxNumberOfDisplayableRows = 11;

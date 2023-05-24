@@ -30,7 +30,6 @@ class CalculationController : public Shared::DoublePairTableController {
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int column, int row) override;
-  KDCoordinate separatorBeforeColumn(int column) override;
 
   // ViewController
   TELEMETRY_ID("Calculation");

@@ -15,7 +15,7 @@ namespace Calculation {
 
 void IllustratedExpressionsListController::didBecomeFirstResponder() {
   selectCell(showIllustration());
-  ListController::didBecomeFirstResponder();
+  ExpressionsListController::didBecomeFirstResponder();
 }
 
 int IllustratedExpressionsListController::numberOfRows() const {

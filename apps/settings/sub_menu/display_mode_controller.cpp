@@ -24,7 +24,7 @@ DisplayModeController::DisplayModeController(
 
 KDCoordinate DisplayModeController::nonMemoizedRowHeight(int row) {
   if (row == numberOfRows() - 1) {
-    // Do not call heightForCellAtIndex as it will reset edited text.
+    // Do not call heightForCellAtRow as it will reset edited text.
     return m_editableCell.minimalSizeForOptimalDisplay().height();
   }
   return PreferencesController::nonMemoizedRowHeight(row);

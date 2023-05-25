@@ -71,7 +71,7 @@ KDCoordinate EquationModelsParameterController::nonMemoizedRowHeight(int row) {
   if (type == k_modelCellType) {
     reusableCellIndex -= reusableCellCount(k_emptyModelCellType);
   }
-  return heightForCellAtIndex(reusableCell(reusableCellIndex, type), row);
+  return heightForCellAtRow(reusableCell(reusableCellIndex, type), row);
 }
 
 HighlightCell* EquationModelsParameterController::reusableCell(int index,

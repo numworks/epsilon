@@ -1,5 +1,9 @@
+#include <poincare_junior/include/expression.h>
+#include <poincare_junior/include/layout.h>
 #include <poincare_junior/src/expression/k_creator.h>
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/layout/k_creator.h>
+#include <poincare_junior/src/layout/parsing/rack_parser.h>
 
 #include "helper.h"
 
@@ -111,4 +115,45 @@ QUIZ_CASE(pcj_simplification_projection) {
   ref2 = Simplification::SystemProjection(
       ref2, Simplification::ProjectionContext::ApproximateToFloat);
   assert_trees_are_equal(ref2, KAdd(1.0_e, KExp("x"_e)));
+}
+
+#include <iostream>
+#define QUIZ_ASSERT(test)                                   \
+  if (!(test)) {                                            \
+    std::cerr << "Assert failed " << __LINE__ << std::endl; \
+  }
+
+QUIZ_CASE(pcj_compare) {
+  QUIZ_ASSERT(Compare("a"_e, "a"_e) == 0);
+  QUIZ_ASSERT(Compare("a"_e, "b"_e) == -1);
+  QUIZ_ASSERT(Compare("b"_e, "a"_e) == 1);
+  EditionReference c(KAdd(2_e, "a"_e));
+  EditionReference d(KAdd(3_e, "a"_e));
+  EditionReference e(KAdd(2_e, "b"_e));
+  QUIZ_ASSERT(Compare(2_e, 3_e) == -1);
+  QUIZ_ASSERT(Compare(c, d) == 1);
+}
+
+void simplifies_to(const char* input, const char* output) {
+  EditionReference inputLayout = Layout::EditionPoolTextToLayout(input);
+  EditionReference expression = RackParser(inputLayout).parse();
+  quiz_assert(!expression.isUninitialized());
+  EditionReference reduced = Simplification::AutomaticSimplify(expression);
+  quiz_assert(!reduced.isUninitialized());
+  EditionReference outputLayout =
+      Expression::EditionPoolExpressionToLayout(reduced);
+  quiz_assert(!outputLayout.isUninitialized());
+  constexpr size_t bufferSize = 256;
+  char buffer[bufferSize];
+  *Layout::Serialize(outputLayout, buffer, buffer + bufferSize) = 0;
+  bool b = strcmp(output, buffer) == 0;
+  if (!b) {
+    std::cout << output << " vs " << buffer << std::endl;
+  }
+  quiz_assert(b);
+}
+
+QUIZ_CASE(pcj_simplification) {
+  simplifies_to("2+2", "4");
+  simplifies_to("2*2+(2*3* (2^2))", "28");
 }

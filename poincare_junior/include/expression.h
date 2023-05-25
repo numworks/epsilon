@@ -21,6 +21,8 @@ class Expression final : public Reference {
   Layout toLayout() const;
   float approximate() const;
 
+  static EditionReference EditionPoolExpressionToLayout(Node node);
+
  private:
   static void ConvertIntegerHandlerToLayout(EditionReference layoutParent,
                                             IntegerHandler handler);
@@ -30,7 +32,6 @@ class Expression final : public Reference {
       EditionReference layoutParent, EditionReference expressionReference);
   static void ConvertExpressionToLayout(EditionReference layoutParent,
                                         EditionReference expressionReference);
-  static EditionReference EditionPoolExpressionToLayout(Node node);
 };
 
 static_assert(sizeof(Expression) == sizeof(Reference));

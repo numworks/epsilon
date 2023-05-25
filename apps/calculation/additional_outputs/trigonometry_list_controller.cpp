@@ -13,24 +13,33 @@ using namespace Poincare;
 namespace Calculation {
 
 void TrigonometryListController::setExactAndApproximateExpression(
-    Poincare::Expression exactExpression,
-    Poincare::Expression approximateExpression) {
+    Poincare::Expression exactAngle, Poincare::Expression approximateAngle) {
   IllustratedExpressionsListController::setExactAndApproximateExpression(
-      exactExpression, approximateExpression);
+      exactAngle, approximateAngle);
 
   Preferences* preferences = Preferences::sharedPreferences;
   Preferences::AngleUnit userAngleUnit = preferences->angleUnit();
   Context* context = App::app()->localContext();
   size_t index = 0;
-  Expression e = exactExpression;
+
+  Expression period = Multiplication::Builder(
+      Rational::Builder(2),
+      Trigonometry::PiExpressionInAngleUnit(userAngleUnit));
 
   Expression simplifiedAngle;
-  Expression period;
   Expression unit;
-  Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
-      &e, context, ReductionTarget::User, &unit);
 
-  if (!e.isUndefined()) {
+  // If the approximate angle is in [-π, π], set it in [0, 2π]
+  if (!approximateAngle.isUninitialized() &&
+      approximateAngle.isPositive(context) == TrinaryBoolean::False) {
+    approximateAngle = Addition::Builder(period.clone(), approximateAngle);
+  }
+
+  Shared::PoincareHelpers::CloneAndReduceAndRemoveUnit(
+      &exactAngle, context, ReductionTarget::User, &unit);
+
+  // Set exact angle in [0, 2π]
+  if (!exactAngle.isUndefined()) {
     if (!unit.isUninitialized()) {
       assert(unit.isPureAngleUnit() &&
              static_cast<Unit&>(unit).representative() ==
@@ -39,17 +48,14 @@ void TrigonometryListController::setExactAndApproximateExpression(
       /* After a reduction, all angle units are converted to radians, so we
        * convert e again here to fit the angle unit that will be used in
        * reductions below. */
-      e = Multiplication::Builder(
-          e, Trigonometry::UnitConversionFactor(Preferences::AngleUnit::Radian,
-                                                userAngleUnit));
+      exactAngle = Multiplication::Builder(
+          exactAngle, Trigonometry::UnitConversionFactor(
+                          Preferences::AngleUnit::Radian, userAngleUnit));
     }
 
-    period = Multiplication::Builder(
-        Rational::Builder(2),
-        Trigonometry::PiExpressionInAngleUnit(userAngleUnit));
     // Use the reduction of frac part to compute mod 1 on rationals
     simplifiedAngle = Multiplication::Builder(
-        FracPart::Builder(Division::Builder(e, period.clone())),
+        FracPart::Builder(Division::Builder(exactAngle, period.clone())),
         period.clone());
     Shared::PoincareHelpers::CloneAndSimplify(&simplifiedAngle, context,
                                               ReductionTarget::User);
@@ -67,46 +73,36 @@ void TrigonometryListController::setExactAndApproximateExpression(
           }) ||
       Shared::ExpressionDisplayPermissions::ShouldNeverDisplayExactOutput(
           simplifiedAngle, context)) {
-    Expression angleApproximate = approximateExpression;
-    if (angleApproximate.isUninitialized()) {
-      assert(!e.isUndefined());
+    if (approximateAngle.isUninitialized()) {
+      assert(!exactAngle.isUndefined());
       /* In case of direct trigonometry, the approximate expression of the angle
        * is not yet computed, so it needs to be computed here.
        * Do not approximate the FracPart, which could lead to truncation error
        * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
        * the same sine and cosine. */
-      angleApproximate = ArcCosine::Builder(Cosine::Builder(e));
-      angleApproximate = Shared::PoincareHelpers::Approximate<double>(
-          angleApproximate, context, preferences);
+      approximateAngle =
+          ArcCosine::Builder(Cosine::Builder(exactAngle.clone()));
       /* acos has its values in [0,π[, use the sign of the sine to find the
        * right semicircle. */
       if (Shared::PoincareHelpers::ApproximateToScalar<double>(
-              Sine::Builder(e), context, preferences) < 0) {
-        angleApproximate = Shared::PoincareHelpers::Approximate<double>(
-            Subtraction::Builder(period.clone(), angleApproximate), context,
-            preferences);
-      }
-    } else {
-      angleApproximate = Shared::PoincareHelpers::Approximate<double>(
-          angleApproximate, context, preferences);
-      // Set the angle in [0, 2π] if it was in [-π, π]
-      if (angleApproximate.isPositive(context) == TrinaryBoolean::False) {
-        angleApproximate = Shared::PoincareHelpers::Approximate<double>(
-            Addition::Builder(period.clone(), angleApproximate), context,
-            preferences);
+              Sine::Builder(exactAngle), context, preferences) < 0) {
+        approximateAngle =
+            Subtraction::Builder(period.clone(), approximateAngle);
       }
     }
-    e = angleApproximate;
+    approximateAngle = Shared::PoincareHelpers::Approximate<double>(
+        approximateAngle, context, preferences);
+    exactAngle = approximateAngle;
     m_isStrictlyEqual[index] = false;
   } else {
-    e = simplifiedAngle;
+    exactAngle = simplifiedAngle;
     m_isStrictlyEqual[index] = true;
   }
 
   m_layouts[index] = LayoutHelper::String("θ");
 
   Expression withAngleUnit = Multiplication::Builder(
-      e.clone(),
+      exactAngle.clone(),
       Unit::Builder(
           UnitNode::AngleRepresentative::DefaultRepresentativeForAngleUnit(
               userAngleUnit)));
@@ -124,19 +120,19 @@ void TrigonometryListController::setExactAndApproximateExpression(
       preferences);
 
   Expression theta = Symbol::Builder(k_symbol);
-  setLineAtIndex(++index, Cosine::Builder(theta), Cosine::Builder(e.clone()),
-                 context, preferences);
+  setLineAtIndex(++index, Cosine::Builder(theta),
+                 Cosine::Builder(exactAngle.clone()), context, preferences);
   updateIsStrictlyEqualAtIndex(index, context);
-  setLineAtIndex(++index, Sine::Builder(theta), Sine::Builder(e.clone()),
-                 context, preferences);
+  setLineAtIndex(++index, Sine::Builder(theta),
+                 Sine::Builder(exactAngle.clone()), context, preferences);
   updateIsStrictlyEqualAtIndex(index, context);
-  setLineAtIndex(++index, Tangent::Builder(theta), Tangent::Builder(e.clone()),
-                 context, preferences);
+  setLineAtIndex(++index, Tangent::Builder(theta),
+                 Tangent::Builder(exactAngle.clone()), context, preferences);
   updateIsStrictlyEqualAtIndex(index, context);
 
   // Set illustration
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(
-      approximateExpression.isUninitialized() ? e : approximateExpression,
+      approximateAngle.isUninitialized() ? exactAngle : approximateAngle,
       context);
   // Convert angle to radians
   if (userAngleUnit != Preferences::AngleUnit::Radian) {

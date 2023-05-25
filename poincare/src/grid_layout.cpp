@@ -238,14 +238,14 @@ KDPoint GridLayoutNode::positionOfChild(LayoutNode *l, KDFont::Size font) {
 
 // Private
 
-KDCoordinate GridLayoutNode::rowBaseline(int i, KDFont::Size font) {
+KDCoordinate GridLayoutNode::rowBaseline(int row, KDFont::Size font) {
   assert(m_numberOfColumns > 0);
   KDCoordinate rowBaseline = 0;
-  int j = 0;
-  for (LayoutNode *l : childrenFromIndex(i * m_numberOfColumns)) {
+  int column = 0;
+  for (LayoutNode *l : childrenFromIndex(row * m_numberOfColumns)) {
     rowBaseline = std::max(rowBaseline, l->baseline(font));
-    j++;
-    if (j >= m_numberOfColumns) {
+    column++;
+    if (column >= m_numberOfColumns) {
       break;
     }
   }
